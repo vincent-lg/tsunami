@@ -45,7 +45,7 @@ from bases.parser_cmd import ParserCMD
 # de le spécifier à chaque lancement du programme.
 # Utiliser un port différent précisé dans la ligne de commande a surtout
 # été mis en place pour créer de multiples essions de test du MUD
-PORT = 4000
+port = 4000
 
 # On créée un analyseur de la ligne de commande
 parser_cmd = ParserCMD()
@@ -53,9 +53,9 @@ parser_cmd.interpreter()
 
 # Si le port est spécifié dans la ligne de commande, on le change
 if "port" in parser_cmd.keys():
-    PORT = parser_cmd["port"]
+    port = parser_cmd["port"]
 
-# On créée l'importeur et on lance le processus d'instanciation des modules.
+# On crée l'importeur et on lance le processus d'instanciation des modules.
 importeur = Importeur()
 importeur.tout_charger()
 importeur.tout_instancier(parser_cmd)
@@ -69,9 +69,9 @@ log = importeur.log.creer_logger("", "sup", "kassie.log")
 # le constructeur de ServeurConnexion (voir reseau/connexions/serveur.py)
 # Par défaut, on précise simplement son port d'écoute.
 
-serveur = ConnexionServeur(PORT)
+serveur = ConnexionServeur(port)
 serveur.init() # Initialisation, le socket serveur se met en écoute
-log.info("Le serveur est à présent en écoute sur le port {0}".format(PORT))
+log.info("Le serveur est à présent en écoute sur le port {0}".format(port))
 
 # Configuration des fonctions de callback
 # Note: si vous souhaitez modifier le comportement en cas de connexion
