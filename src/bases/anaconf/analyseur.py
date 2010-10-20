@@ -28,14 +28,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+from collections import OrderedDict
+
 """Ce fichier définit la classe Analyseur détaillée plus bas.
 
-Note: on doit importer dans ce fichier les classes et fonctions susceptibles
-d'être évaluées dans l'un ou l'autre des fichiers de configuration.
-
-Pour par exemple faire appel à la méthode randrange, il est nécessaire de
-l'importer dans ce fichier. Elle pourra alors être utilisée dans n'importe
-quel fichier de configuration.
+Note : l'analyse se fait par évaluation de chaînes contenant du code Python.
+Si ces chaînes font référence à des objets, fonctions, méthodes, elles doivent
+être définies dans les globales de l'interpréteur grâce à la méthode
+'set_globales'. Voir l'aide pour plus d'informations.
 
 """
 
@@ -57,9 +57,12 @@ class Analyseur:
         Une ligne peut être découpée en plusieurs morceaux. Un signe \ doit
         être placé à la fin de la ligne qui doit se prolonger. Ce signe
         n'a aucun effet sur la dernière ligne du fichier.
+        Une ligne peut également être un commentaire, elle commencera alors par
+        '#' et sera ignorée.
         Note: si dans le fichier de configuration, une référence est faite
         à une fonction ou une classe, il est nécessaire que la fonction ou
-        classe soit importée dans ce fichier-ci.
+        classe soit déclarée comme globales de l'interpréteur (voir
+        'set_globales').
     -   Lors de la lecture, chaque nom de donnée est stockée à même l'objet,
         en tant qu'attribut propre. Ainsi les noms des donénes devront
         respecter une syntaxe propre, sans espaces ni accents ni caractères
@@ -67,6 +70,7 @@ class Analyseur:
         de n'avoir aucun caractère en majuscule, pour des raisons de 
         convention. Le résultat de la donnée est enregistrée en tant
         que valeur de l'attribut, mais non interprétée.
+        Les commentaire sont également conservés à des fins de réécriture.
     -   On demande à l'objet d'obtenir la valeur d'une donnée. Dans ce cas et
         dans ce cas uniquement, la donnée est interprétée, puis retournée.
         On se base sur la fonction eval pour interpréter la donnée.
@@ -85,26 +89,27 @@ class Analyseur:
     def __init__(self, nom_fichier, defauts):
         """Permet de lire et enregistrer les données de configuration propres
         au fichier de configuration. On passe en paramètre du constructeur
-        le nom du fichier devant être lu, et un dictionnaire contenant la
-        configuration de base du fichier. Si aucune configuration n'est trouvée
-        dans le fichier, ou si celui-ci est absent, voire partiellement
-        renseigné, ce dictionnaire servira à réécrire un fichier complet.
+        le nom du fichier devant être lu, et un fichier défaut sous la forme
+        d'une chaîne de caractères.
+        Si aucune configuration n'est trouvée dans le fichier, ou si celui-ci
+        est absent, voire partiellement renseigné, ce dictionnaire servira à
+        réécrire un fichier complet.
         
         En outre, si des données "périmées" sont trouvées dans le fichier de
         configuration, elles seront supprimées. Ces données "périmées"
         sont des données qui apparaissent dans le fichier de configuration,
-        mais non dans le dictionnaire defauts. C'est pourquoi mettre à jour
-        le dictionnaire defauts est si important.
+        mais non dans la chaîne defauts. C'est pourquoi mettre à jour
+        la chaîne defauts est si important.
         
         La configuration trouvée dans le fichier prime naturellement sur
-        celle par défaut. Le dictionnaire defauts n'est utilisé que si des
+        celle par défaut. La chaîne defauts n'est utilisé que si des
         données ne sont pas trouvées, ou pour effacer des données périmées.
         
         """
-        # On ne stock dans l'objet aucun attribut qui ne soit pas une donnée
-        # de configuration
+        self.globales = {}
         # On cherche le fichier pour commencer
-        recupere = {}
+        # On garde une trace des lignes du fichier
+        lignes = OrderedDict()
         if not os.path.exists(nom_fichier):
             print("Le fichier de configuration {0} n'existe pas encore" \
                     .format(nom_fichier))
@@ -115,8 +120,9 @@ class Analyseur:
                 contenu = fichier_conf.read()
                 # On va supprimer les espaces et tabulations en début de ligne
                 t_contenu = []
-                for ligne in contenu.split('\n'):
+                for no, ligne in enumerate(contenu.split('\n')):
                     t_contenu.append(ligne.strip())
+                    lignes[no] = ligne.strip()
                 contenu = "\n".join(t_contenu)
                 # On imbrique les lignes découpées
                 # Elles finissent par un signe \
@@ -177,3 +183,18 @@ class Analyseur:
         else:
             raise ValueError("la donnée '{0}' n'a pu être trouvée dans " \
                     "cette configuration".format(nom))
+    
+    def set_globales(self, globales):
+        """Paramètre les globales, données sous la forme d'un dictionnaires.
+        Ces globales sont utilisées dans l'évaluation de données de
+        configuration.
+        Si par exemple une de vos données de configuration fait appel à la
+        fonction 'randrange', il faut l'ajouter dans les globales.
+        >>> import random
+        >>> analyseur = Analyseur("....cfg")
+        >>> analyseur.set_globales({"randrange":random.randrange})
+        >>> analyseur.hasard # contient randrange(8)
+        6
+        
+        """
+        self.globales = globales

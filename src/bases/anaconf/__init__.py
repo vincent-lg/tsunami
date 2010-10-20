@@ -28,15 +28,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Anaconf, définissant le module primaire
-du même nom.
+"""Ce fichier contient la classe Anaconf, un analyseur de fichier
+de configurations.
 
 """
 
 import os
 
-from abstraits.module import *
-from primaires.anaconf.analyseur import Analyseur
+from bases.anaconf.analyseur import Analyseur
 
 # Dossier d'enregistrement des fichiers de configuration
 # Vous pouvez changer cette variable, ou bien spécifier l'option en
@@ -44,25 +43,19 @@ from primaires.anaconf.analyseur import Analyseur
 REP_CONFIG = os.path.expanduser("~") + os.sep + "kassie" + os.sep + "config"
 
 class Anaconf(Module):
-    """Classe du module 'anaconf'.
-    
-    Ce module gère la lecture, l'écriture et l'interprétation de fichiers de
-    configuration.
+    """Cette classe gère la lecture, l'écriture et l'interprétation de fichiers
+    de configuration.
     
     Chaque module primaire ou secondaire ayant besoin d'enregistrer des
     informations de configuration devra passer par anaconf.
+    C'est également vrai pour les informations du corps
+    (configuration générale).
     
     """
-    def __init__(self, importeur, parser_cmd):
+    def __init__(self, parser_cmd):
         """Constructeur du module"""
-        Module.__init__(self, importeur, parser_cmd, "anaconf", "primaire")
-
-    def config(self):
-        """Méthode de configuration. On se base sur
-        parser_cmd pour savoir si un dossier d'enregistrement
-        des fichiers de configuration a été défini.
+        self.parser_cmd = parser_cmd
         
-        """
         global REP_CONFIG
         if "chemin-configuration" in self.parser_cmd.keys():
             REP_CONFIG = self.parser_cmd["chemin-configuration"]
@@ -71,14 +64,14 @@ class Anaconf(Module):
         if not os.path.exists(REP_CONFIG):
             os.makedirs(REP_CONFIG)
         
-        Module.config(self)
-
     def charger_config(self, chemin, defauts):
         """Cette méthode permet de charger une configuration contenue dans
-        le fichier passé en paramètre. Le paramètre defauts est un
-        dictionnaire contenant les données par défaut.
+        le fichier passé en paramètre.
+        Le paramètre 'defauts' est une chaîne écrite comme un fichier
+        de configuration, analysé comme tel et contenant les données par
+        défaut.
         Si certaines données ne sont pas trouvées, on les met à jour grâce
-        à ce dictionnaire.
+        à ce paramètre et on met à jour le fichier de configuration.
         
         """
         global REP_CONFIG
