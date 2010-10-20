@@ -1,0 +1,14 @@
+Ce dossier contient des exemples d'implémentation de Kassie dans ses
+différentes versions. Des exemples seront ajoutés et retirés en fonction de
+l'avancement du projet.
+
+Chaque exemple contient une explication sur son utilité.
+
+NOTE IMPORTANTE: pour pouvoir lancer chaque exemple directement, il est
+nécessaire d'étendre le PYTHONPATH. En effet, l'architecture du projet
+se base sur des chemins relatifs menant à chaque module. On trouvera
+généralement ces quelques lignes en tête de chaque exemple :
+
+1 import os
+2 import sys
+3 sys.path.append(os.getcwd() + "/../src")
