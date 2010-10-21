@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-from collections import OrderedDict
+from bases.anaconf.fichier_configuration import FichierConfiguration
 
 """Ce fichier définit la classe Analyseur détaillée plus bas.
 
@@ -70,7 +70,7 @@ class Analyseur:
         de n'avoir aucun caractère en majuscule, pour des raisons de 
         convention. Le résultat de la donnée est enregistrée en tant
         que valeur de l'attribut, mais non interprétée.
-        Les commentaire sont également conservés à des fins de réécriture.
+        Les commentaires sont tout simplement ignorés.
     -   On demande à l'objet d'obtenir la valeur d'une donnée. Dans ce cas et
         dans ce cas uniquement, la donnée est interprétée, puis retournée.
         On se base sur la fonction eval pour interpréter la donnée.
@@ -86,7 +86,7 @@ class Analyseur:
         Cela est rendu possible par la redéfinition de __getattribute__
     
     """
-    def __init__(self, nom_fichier, defauts):
+    def __init__(self, nom_fichier, defaut):
         """Permet de lire et enregistrer les données de configuration propres
         au fichier de configuration. On passe en paramètre du constructeur
         le nom du fichier devant être lu, et un fichier défaut sous la forme
@@ -108,8 +108,7 @@ class Analyseur:
         """
         self.globales = {}
         # On cherche le fichier pour commencer
-        # On garde une trace des lignes du fichier
-        lignes = OrderedDict()
+        fichier_charge = None
         if not os.path.exists(nom_fichier):
             print("Le fichier de configuration {0} n'existe pas encore" \
                     .format(nom_fichier))
@@ -117,57 +116,35 @@ class Analyseur:
             print("{0} n'est pas un fichier".format(nom_fichier))
         else: # on va pouvoir lire le fichier
             with open(nom_fichier, 'r') as fichier_conf:
-                contenu = fichier_conf.read()
-                # On va supprimer les espaces et tabulations en début de ligne
-                t_contenu = []
-                for no, ligne in enumerate(contenu.split('\n')):
-                    t_contenu.append(ligne.strip())
-                    lignes[no] = ligne.strip()
-                contenu = "\n".join(t_contenu)
-                # On imbrique les lignes découpées
-                # Elles finissent par un signe \
-                contenu = contenu.replace("\\\n", "")
-                # A présent, on lit les données
-                for i,ligne in enumerate(contenu.split("\n")):
-                    if ligne == "":
-                        continue
-                    elif "=" not in ligne:
-                        print("Le signe '=' n'a pas été trouvé sur la ligne " \
-                                "{0}: {1}".format(i+1, ligne))
-                    else:
-                        nom_donnee = ligne.split("=")[0]
-                        donnee = "=".join(ligne.split("=")[1:])
-                        nom_donnee = nom_donnee.strip()
-                        donnee = donnee.strip()
-                        recupere[nom_donnee] = donnee
-                
-        # On convertit les valeurs de defauts en chaînes de caractères
-        for nom in defauts.keys():
-            defauts[nom] = str(defauts[nom])
+                contenu = fichier_conf.read()           
+            # On analyse le fichier de configuration
+            fichier_charge = FichierConfiguration(contenu)
         
-        # On met à jour self.__dict__ en fonction de defauts
-        complet = dict(defauts)
-        complet.update(recupere)
-
-        # On supprime les noms de données qui n'ont plus court (ceux qui
-        # sont stockés dans le fichier mais n'ont aucune valeur par défaut)
-        for nom in list(complet.keys()):
-            if nom not in defauts.keys():
-                del complet[nom]
+        # On analyse le fichier par défaut
+        fichier_defaut = FichierConfiguration(defaut)
+        
+        # On met à jour self
+        complet = dict(fichier_defaut.donnees)
+        if fichier_charge:
+            complet.update(fichier_charge.donnees)
 
         # On met à jour self.__dict__
         self.__dict__.update(complet)
 
         # On réenregistre le fichier de configuration si nécessaire
-        if defauts.keys() != recupere.keys():
+        if fichier_charge is None or fichier_defaut.donnees.keys() != \
+                fichier_charge.donnees.keys():
             print("On enregistre la nouvelle configuration")
             try:
                 fichier_conf = open(nom_fichier, 'w')
             except IOError:
                 print("Le fichier de configuration ne peut pas être édité")
             else:
-                for nom, donnee in self.__dict__.items():
-                    fichier_conf.write("{0} = {1}\n".format(nom, donnee))
+                # On demande au fichier par défaut de prendre en compte les
+                # données de configuration du fichier chargé
+                if fichier_charge:
+                    fichier_defaut.mettre_a_jour(fichier_charge)
+                fichier_conf.write(fichier_defaut.fichier.strip("\n"))
                 fichier_conf.close()
 
     def __getattribute__(self, nom):

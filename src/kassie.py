@@ -38,20 +38,22 @@ from reseau.connexions.serveur import *
 from reseau.fonctions.callbacks import *
 from bases.importeur import Importeur
 from bases.parser_cmd import ParserCMD
+from bases.anaconf import *
+from corps.config import pere
 
-# Changez ici le port par défaut
-# Le port par défaut peut être modifié par des options de la ligne
-# de commande, mais vous pouvez aussi le changer ici sans avoir besoin
-# de le spécifier à chaque lancement du programme.
-# Utiliser un port différent précisé dans la ligne de commande a surtout
-# été mis en place pour créer de multiples essions de test du MUD
-port = 4000
-
-# On créée un analyseur de la ligne de commande
+# On crée un analyseur de la ligne de commande
 parser_cmd = ParserCMD()
 parser_cmd.interpreter()
 
+# On charge la configuration du fichier global du projet
+config_globale = Anaconf(parser_cmd).charger_config("kassie.cfg", pere)
+
+# On prend comme base le port présent dans le fichier de configuration
+port = config_globale.port
+
 # Si le port est spécifié dans la ligne de commande, on le change
+# Utiliser un port différent précisé dans la ligne de commande a surtout
+# été mis en place pour créer de multiples sessions de test du MUD
 if "port" in parser_cmd.keys():
     port = parser_cmd["port"]
 
@@ -62,7 +64,7 @@ importeur.tout_instancier(parser_cmd)
 importeur.tout_configurer()
 importeur.tout_initialiser()
 
-# On se créée un logger
+# On se crée un logger
 log = importeur.log.creer_logger("", "sup", "kassie.log")
 
 # Vous pouvez changer les paramètres du serveur, telles que spécifiées dans

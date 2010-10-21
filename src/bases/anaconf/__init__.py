@@ -42,7 +42,7 @@ from bases.anaconf.analyseur import Analyseur
 # ligne de commande
 REP_CONFIG = os.path.expanduser("~") + os.sep + "kassie" + os.sep + "config"
 
-class Anaconf(Module):
+class Anaconf:
     """Cette classe gère la lecture, l'écriture et l'interprétation de fichiers
     de configuration.
     
@@ -64,7 +64,7 @@ class Anaconf(Module):
         if not os.path.exists(REP_CONFIG):
             os.makedirs(REP_CONFIG)
         
-    def charger_config(self, chemin, defauts):
+    def charger_config(self, chemin, defaut):
         """Cette méthode permet de charger une configuration contenue dans
         le fichier passé en paramètre.
         Le paramètre 'defauts' est une chaîne écrite comme un fichier
@@ -80,5 +80,5 @@ class Anaconf(Module):
         rep = os.path.split(chemin)[0]
         if not os.path.exists(rep):
             os.makedirs(rep)
-        return Analyseur(chemin, defauts)
+        return Analyseur(chemin, defaut)
 
