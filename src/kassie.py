@@ -45,8 +45,16 @@ from corps.config import pere
 parser_cmd = ParserCMD()
 parser_cmd.interpreter()
 
+# On crée l'importeur et on lance le processus d'instanciation des modules.
+importeur = Importeur()
+importeur.tout_charger()
+importeur.tout_instancier(parser_cmd)
+importeur.tout_configurer()
+importeur.tout_initialiser()
+
 # On charge la configuration du fichier global du projet
-config_globale = Anaconf(parser_cmd).charger_config("kassie.cfg", pere)
+config_globale = Anaconf(importeur, parser_cmd).charger_config("kassie.cfg", \
+        "modèle global", pere)
 
 # On prend comme base le port présent dans le fichier de configuration
 port = config_globale.port
@@ -57,13 +65,6 @@ port = config_globale.port
 if "port" in parser_cmd.keys():
     port = parser_cmd["port"]
 
-# On crée l'importeur et on lance le processus d'instanciation des modules.
-importeur = Importeur()
-importeur.tout_charger()
-importeur.tout_instancier(parser_cmd)
-importeur.tout_configurer()
-importeur.tout_initialiser()
-
 # On se crée un logger
 log = importeur.log.creer_logger("", "sup", "kassie.log")
 
@@ -71,7 +72,8 @@ log = importeur.log.creer_logger("", "sup", "kassie.log")
 # le constructeur de ServeurConnexion (voir reseau/connexions/serveur.py)
 # Par défaut, on précise simplement son port d'écoute.
 
-serveur = ConnexionServeur(port)
+serveur = ConnexionServeur(port, config_globale.nb_clients_attente, \
+        config_globale.nb_max_connectes)
 serveur.init() # Initialisation, le socket serveur se met en écoute
 log.info("Le serveur est à présent en écoute sur le port {0}".format(port))
 

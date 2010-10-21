@@ -42,14 +42,16 @@ class FichierConfiguration:
     de l'analyser et de placer les données dans un dictionnaire.
     
     """
-    def __init__(self, chaine):
+    def __init__(self, nom, chaine, logger):
         """Constructeur d'un fichier de configuration.
         On lui passe la chaîne lue dans le fichier, non analysée.
         Cette chaîne contient donc les données brutes, il faut l'analyser.
         
         """
+        self.nom = nom
         self.fichier = chaine
         self.donnees = {}
+        self.logger = logger
         # On analyse la chaîne
         t_contenu = []
         for ligne in chaine.split('\n'):
@@ -65,8 +67,8 @@ class FichierConfiguration:
             elif ligne.startswith("#"): # c'est un commentaire
                 continue
             elif "=" not in ligne:
-                print("Le signe '=' n'a pas été trouvé sur la ligne " \
-                        "{0}: {1}".format(i+1, ligne))
+                self.logger.warning("[{0}:{1}]: le signe '=' n'a pas été trouvé " \
+                        "('{2}')".format(self.nom, i+1, ligne))
             else:
                 nom_donnee = ligne.split("=")[0].strip()
                 donnee = "=".join(ligne.split("=")[1:]).strip()

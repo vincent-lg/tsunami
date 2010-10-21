@@ -86,7 +86,7 @@ class Analyseur:
         Cela est rendu possible par la redéfinition de __getattribute__
     
     """
-    def __init__(self, nom_fichier, defaut):
+    def __init__(self, nom_fichier, nom_defaut, defaut, logger):
         """Permet de lire et enregistrer les données de configuration propres
         au fichier de configuration. On passe en paramètre du constructeur
         le nom du fichier devant être lu, et un fichier défaut sous la forme
@@ -107,21 +107,25 @@ class Analyseur:
         
         """
         self.globales = {}
+        self._logger = logger
         # On cherche le fichier pour commencer
         fichier_charge = None
         if not os.path.exists(nom_fichier):
-            print("Le fichier de configuration {0} n'existe pas encore" \
-                    .format(nom_fichier))
+            self._logger.info("Le fichier de configuration {0} n'existe pas " \
+                    "encore".format(nom_fichier))
         elif not os.path.isfile(nom_fichier):
-            print("{0} n'est pas un fichier".format(nom_fichier))
+            self._logger.info("Le fichier de configuration {0} n'est pas un " \
+                    "fichier, accès impossible".format(nom_fichier))
         else: # on va pouvoir lire le fichier
             with open(nom_fichier, 'r') as fichier_conf:
                 contenu = fichier_conf.read()           
             # On analyse le fichier de configuration
-            fichier_charge = FichierConfiguration(contenu)
+            fichier_charge = FichierConfiguration(nom_fichier, contenu, \
+                    self._logger)
         
         # On analyse le fichier par défaut
-        fichier_defaut = FichierConfiguration(defaut)
+        fichier_defaut = FichierConfiguration(nom_defaut, defaut, \
+                self._logger)
         
         # On met à jour self
         complet = dict(fichier_defaut.donnees)
@@ -134,11 +138,11 @@ class Analyseur:
         # On réenregistre le fichier de configuration si nécessaire
         if fichier_charge is None or fichier_defaut.donnees.keys() != \
                 fichier_charge.donnees.keys():
-            print("On enregistre la nouvelle configuration")
+            self._logger.info("On réécrit le fichier {0}".format(nom_fichier))
             try:
                 fichier_conf = open(nom_fichier, 'w')
             except IOError:
-                print("Le fichier de configuration ne peut pas être édité")
+                self._logger.warning("Le fichier de configuration ne peut pas être édité")
             else:
                 # On demande au fichier par défaut de prendre en compte les
                 # données de configuration du fichier chargé

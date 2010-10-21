@@ -52,9 +52,10 @@ class Anaconf:
     (configuration générale).
     
     """
-    def __init__(self, parser_cmd):
+    def __init__(self, importeur, parser_cmd):
         """Constructeur du module"""
         self.parser_cmd = parser_cmd
+        self.importeur = importeur
         
         global REP_CONFIG
         if "chemin-configuration" in self.parser_cmd.keys():
@@ -64,7 +65,7 @@ class Anaconf:
         if not os.path.exists(REP_CONFIG):
             os.makedirs(REP_CONFIG)
         
-    def charger_config(self, chemin, defaut):
+    def charger_config(self, chemin, nom_defaut, defaut):
         """Cette méthode permet de charger une configuration contenue dans
         le fichier passé en paramètre.
         Le paramètre 'defauts' est une chaîne écrite comme un fichier
@@ -76,9 +77,11 @@ class Anaconf:
         """
         global REP_CONFIG
         chemin = REP_CONFIG + os.sep + chemin
+        nom_fichier = os.path.split(chemin)[1].split(".")[0]
+        logger = self.importeur.log.creer_logger("anaconf", nom_fichier)
         # On construit le répertoire si il n'existe pas
         rep = os.path.split(chemin)[0]
         if not os.path.exists(rep):
             os.makedirs(rep)
-        return Analyseur(chemin, defaut)
+        return Analyseur(chemin, nom_defaut, defaut, logger)
 

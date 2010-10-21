@@ -41,4 +41,14 @@ pere = r"""
 # Cette option est ignorée si un port est précisé en ligne de commande
 port = 4000
 
+# Nombre maximum de clients en attente
+# C'est le nombre de connexions en attente, non encore acceptées
+# Il est inutile de mettre un nombre trop élevé (5 suffit sauf contraintes
+# particulières)
+nb_clients_attente = 5
+
+# Nombre maximum de connectés
+# Mettre à -1 pour un nombre infini de connectés
+nb_max_connectes = -1
+
 """
