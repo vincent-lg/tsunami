@@ -108,6 +108,7 @@ class Analyseur:
         """
         self.globales = {}
         self._logger = logger
+        self._logger.filtrer_niveau("warning")
         # On cherche le fichier pour commencer
         fichier_charge = None
         if not os.path.exists(nom_fichier):
