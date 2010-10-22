@@ -60,6 +60,11 @@ nb_max_connectes = -1
 # ou bien passer ce chemin en argument de la ligne de commande
 
 # Chemin vers les logs
-chemin_logs = "C:\\klogs"
+# Si aucune valeur n'est précisée après le signe '=', c'est la configuration
+# du module qui est prise en compte
+# Voir la variable 'REP_LOGS' dans le fichier 'src/primaires/logs/__init__.py'
+# Si un chemin est précisé en argument de la ligne de commande, il est
+# de toute façon prioritaire
+chemin_logs = 
 
 """

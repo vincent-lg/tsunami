@@ -157,7 +157,7 @@ class Analyseur:
         la donnée interprétée.
         
         """
-        if nom.startswith("_"):
+        if nom.startswith("_") or not object.__getattribute__(self, nom):
             return object.__getattribute__(self, nom)
         elif nom in self.__dict__.keys():
             attribut = object.__getattribute__(self, nom)
