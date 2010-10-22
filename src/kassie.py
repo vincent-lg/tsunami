@@ -34,6 +34,9 @@ Vous pouvez le renommer en fonction du nom choisi de votre projet.
 
 """
 
+import signal
+import sys
+
 from reseau.connexions.serveur import *
 from reseau.fonctions.callbacks import *
 from bases.importeur import Importeur
@@ -41,6 +44,18 @@ from bases.parser_cmd import ParserCMD
 from bases.anaconf import *
 from corps.config import pere
 
+# Définition de la fonction appelée quand on arrête le MUD avec CTRL + C
+def arreter_mud(signal, frame):
+    global importeur, log
+    importeur.tout_detruire()
+    log.info("Fin de la session\n\n\n")
+    sys.exit(0)
+
+# On relie cette fonction avec la levée de signal SIGINT et SIGTERM
+signal.signal(signal.SIGINT, arreter_mud)
+signal.signal(signal.SIGTERM, arreter_mud)
+
+## Configuration du projet et lancement du MUD
 # On crée un analyseur de la ligne de commande
 parser_cmd = ParserCMD()
 parser_cmd.interpreter()

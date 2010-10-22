@@ -62,9 +62,18 @@ nb_max_connectes = -1
 # Chemin vers les logs
 # Si aucune valeur n'est précisée après le signe '=', c'est la configuration
 # du module qui est prise en compte
-# Voir la variable 'REP_LOGS' dans le fichier 'src/primaires/logs/__init__.py'
+# Voir la variable 'REP_LOGS' dans le fichier 'src/primaires/log/__init__.py'
 # Si un chemin est précisé en argument de la ligne de commande, il est
 # de toute façon prioritaire
 chemin_logs = 
+
+# Chemin vers les fichiers-données
+# Si aucune valeur n'est précisée après le signe '=', c'est la configuration
+# du module qui est prise en compte
+# Voir la variable 'REP_ENRS' dans le fichier
+# 'src/primaires/supenr/__init__.py'
+# Si un chemin est précisé en argument de la ligne de commande, il est
+# de toute façon prioritaire
+chemin_enregistrement = 
 
 """
