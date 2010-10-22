@@ -45,16 +45,20 @@ from corps.config import pere
 parser_cmd = ParserCMD()
 parser_cmd.interpreter()
 
-# On crée l'importeur et on lance le processus d'instanciation des modules.
+# On crée l'importeur et on lance le processus d'instanciation des modules
 importeur = Importeur()
 importeur.tout_charger()
 importeur.tout_instancier(parser_cmd)
+
+# On charge la configuration globale du projet
+anaconf = Anaconf(importeur, parser_cmd)
+config_globale = anaconf.get_config("globale", "kassie.cfg", \
+        "modèle global", pere)
+
+# On configure et initialise les modules
+importeur.transmettre_conf(anaconf)
 importeur.tout_configurer()
 importeur.tout_initialiser()
-
-# On charge la configuration du fichier global du projet
-config_globale = Anaconf(importeur, parser_cmd).charger_config("kassie.cfg", \
-        "modèle global", pere)
 
 # On prend comme base le port présent dans le fichier de configuration
 port = config_globale.port

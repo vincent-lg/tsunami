@@ -51,4 +51,15 @@ nb_clients_attente = 5
 # Mettre à -1 pour un nombre infini de connectés
 nb_max_connectes = -1
 
+
+## Chemins d'accès
+
+# Bien entendu, il est impossible de configurer ici le chemin vers les
+# fichiers de configuration. Pour changer ces données, il faut directement
+# éditer 'src\bases\anaconf' en changeant la valeur de la variable 'REP_CONFIG'
+# ou bien passer ce chemin en argument de la ligne de commande
+
+# Chemin vers les logs
+chemin_logs = "C:\\klogs"
+
 """

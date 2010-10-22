@@ -129,6 +129,14 @@ class Importeur:
             if type(module) is type: # on doit l'instancier
                 setattr(self, nom_module, module(self, parser_cmd))
 
+    def transmettre_conf(self, config):
+        """Transmet l'analyseur global des fichiers de configuration
+        (anaconf')
+        
+        """
+        for module in self.__dict__.values():
+          module.anaconf = config
+    
     def tout_configurer(self):
         """Méthode permettant de configurer tous les modules qui en ont besoin.
         Les modules qui doivent être configuré sont ceux instanciés.

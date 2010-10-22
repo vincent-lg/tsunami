@@ -75,6 +75,9 @@ class Log(Module):
         
         """
         global REP_LOGS
+        config_globale = self.anaconf.get_config("globale")
+        REP_LOGS = config_globale.chemin_logs
+        
         if "chemin-logs" in self.parser_cmd.keys():
             REP_LOGS = self.parser_cmd["chemin-logs"]
         

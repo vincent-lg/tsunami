@@ -89,6 +89,7 @@ class Module:
         """
         self.importeur = importeur
         self.parser_cmd = parser_cmd
+        self.anaconf = None
         self.nom = nom
         self.type = m_type
         self.statut = INSTANCIE
