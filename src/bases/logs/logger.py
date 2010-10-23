@@ -28,12 +28,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+from bases.logs.message import Message
+
 """Ce fichier définit la classe Logger, détaillée plus bas."""
 
 import os
 import time
-
-from primaires.log.message import Message
 
 # Constantes prédéfinies
 # Niveaux d'erreur
@@ -75,14 +75,6 @@ class Logger:
         demander que seuls les informations critiques soient affichées
         dans la console
 
-    NOTE IMPORTANTE: le logger doit s'abstenir de logger des messages
-    pendant un certain lapse de temps. Les messages à logger sont alors
-    stockées dans une fil d'attente et enregistrées après coup.
-    C'est le module 'log' lui-même qui change l'information d'état
-    et autorise le logger à écrire en temps réel ses messages.
-    En effet, tant que le module log se configure, aucun message ne devra
-    être enregistré.
-    
     NOTE IMPORTANTE : sauf depuis l'intérieur de la classe, on ne doit pas
     appeler les méthodes log et log_formate. Elles ne sont ici que pour
     garantir une certaine généricité de l'enregistrement des fichiers de log.
@@ -90,6 +82,7 @@ class Logger:
     et fatal, respectivement pour chaque niveau d'erreur.
 
     """
+    en_fil = True # par défaut on log en fil d'attente
     def __init__(self, rep_base, sous_rep, nom_fichier, nom_logger, \
             console=True, format=FORMAT, niveau_min=INFO):
         """Constructeur du logger. Seuls les quatre premiers paramètres
@@ -106,8 +99,8 @@ class Logger:
         
         """
         self.nom = nom_logger
-        self.en_fil = True # par défaut, on stock en fil d'attente
-        self.fil_attente = [] # liste des messages en attente d'être écrits
+        self.en_fil = type(self).en_fil # par défaut, on met en fil d'attente
+        self.fil_attente = [] # fil d'attente des messages à sauver
         self.rep_base = rep_base
         self.sous_rep = sous_rep
         self.nom_fichier = nom_fichier
@@ -135,9 +128,6 @@ class Logger:
     def filtrer_niveau(self, niveau_str):
         """Permet de changer le niveau minimum de filtrage des messages.
         ATTENTION : le niveau est donné sous la forme d'une chaîne.
-        En efffet, les autres modules n'ont pas accès aux différents niveaux
-        de message. On se base sur le dictionnaire REV_NIVEAUX pour trouver
-        l'entier correspondant.
         
         """
         self.niveau_min = REV_NIVEAUX[niveau_str]
@@ -206,9 +196,8 @@ class Logger:
         return doit
 
     def log_formate(self, niveau, message, formate, module):
-        """Cette méthode permet de logger un message déjà formaté. les
-        méthodes log et enregistrer_fil_attente font directement appel
-        à elle.
+        """Cette méthode permet de logger un message déjà formaté. La
+        méthodes log fait directement appel à elle.
         
         """
         self.ouvrir_fichier()
@@ -248,7 +237,7 @@ class Logger:
         for message in self.fil_attente:
             self.log_formate(message.niveau, message.message, \
                     message.message_formate,self.nom)
-
+    
     def debug(self, message):
         """Méthode permettant de logger un niveau de message DEBUG"""
         self.log(DEBUG, message, self.nom)

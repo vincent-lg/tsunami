@@ -27,7 +27,23 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""Modèle du fichier de configuration du corps."""
+"""Modèle du fichier de configuration du corps.
+
+Dans ce fichier se trouve, dans une chaîne de caractère enregistrée dans la
+variable 'pere',  le fichier de configuration globale par défaut.
+Si des options doivent être ajoutées, elles le sont ici et seront directement
+répercutées dans le fichier de configuration utilisé. Les anciennes données ne
+seront naturellement pas écrasées par cette nouvelle configuration.
+
+NOTE IMPORTANTE: les données présentes dans ce fichier sont interprétées comme
+des données Python. Si vous voulez mettre une chaîne de caractère, n'oubliez
+pas de l'entourer de guillemets ou d'apostrophes. Si vous voulez décrire un
+chemin Windows avec des anti-slashs '\', n'oubliez pas de les échapper.
+
+Exemple :
+chemin = "C:\\kassie\\logs"
+
+"""
 
 pere = r"""
 # Ce fichier contient des informations générales sur le projet. Il
@@ -56,7 +72,7 @@ nb_max_connectes = -1
 
 # Bien entendu, il est impossible de configurer ici le chemin vers les
 # fichiers de configuration. Pour changer ces données, il faut directement
-# éditer 'src\bases\anaconf' en changeant la valeur de la variable 'REP_CONFIG'
+# éditer 'src/bases/anaconf' en changeant la valeur de la variable 'REP_CONFIG'
 # ou bien passer ce chemin en argument de la ligne de commande
 
 # Chemin vers les logs

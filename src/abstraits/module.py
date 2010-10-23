@@ -75,11 +75,8 @@ class Module:
     il est fortement déconseillé de faire référence à d'autres modules lors
     de la construction du module (méthode __init__).
     
-    De même, on passe le parser de commande pour avoir la liste des options
-    précisées par l'utilisateur.
-
     """
-    def __init__(self, importeur, parser_cmd, nom, m_type="inconnu"):
+    def __init__(self, importeur, nom, m_type="inconnu"):
         """Constructeur d'un module.
         Par défaut, on lui attribue surtout un nom IDENTIFIANT, sans accents
         ni espaces, qui sera le nom du package même.
@@ -88,8 +85,6 @@ class Module:
 
         """
         self.importeur = importeur
-        self.parser_cmd = parser_cmd
-        self.anaconf = None
         self.nom = nom
         self.type = m_type
         self.statut = INSTANCIE
@@ -117,7 +112,7 @@ class Module:
         """Méthode d'initialisation.
         Dans cette méthode, on se charge, en fonction de la configuration
         (éventuelle), de "lancer" le module. Tout ce qui est lancé dans
-        cette méthode doit s'interrompre dans la méthode destroy.
+        cette méthode doit s'interrompre dans la méthode detruire.
         
         """
         self.statut = INITIALISE
@@ -126,6 +121,7 @@ class Module:
         """Méthode d'arrêt ou de déchargement du module.
         On l'appelle avant l'arrêt du MUD (en cas de reboot total) ou
         si l'on souhaite décharger ou recharger complètement un module.
+        
         """
         self.statut = DETRUIT
     

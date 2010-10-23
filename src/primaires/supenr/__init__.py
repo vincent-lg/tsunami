@@ -48,9 +48,9 @@ class Supenr(Module):
     Ce module gère l'enregistrement des données et leur récupération.
     
     """
-    def __init__(self, importeur, parser_cmd):
+    def __init__(self, importeur):
         """Constructeur du module"""
-        Module.__init__(self, importeur, parser_cmd, "supenr", "primaire")
+        Module.__init__(self, importeur, "supenr", "primaire")
     
     def config(self):
         """Méthode de configuration. On se base sur
@@ -59,12 +59,13 @@ class Supenr(Module):
         
         """
         global REP_ENRS
-        config_globale = self.anaconf.get_config("globale")
+        parser_cmd = type(self.importeur).parser_cmd
+        config_globale = type(self.importeur).anaconf.get_config("globale")
         if config_globale.chemin_enregistrement:
             REP_ENRS = config_globale.chemin_enregistrement
         
-        if "chemin-enregistrement" in self.parser_cmd.keys():
-            REP_ENRS = self.parser_cmd["chemin-enregistrement"]
+        if "chemin-enregistrement" in parser_cmd.keys():
+            REP_ENRS = parser_cmd["chemin-enregistrement"]
         
         # On construit le répertoire si il n'existe pas
         if not os.path.exists(REP_ENRS):

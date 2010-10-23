@@ -70,18 +70,15 @@ class Diffact(Module):
     temps moyen du Watch Dog.
     
     """
-    def __init__(self, importeur, parser_cmd):
+    def __init__(self, importeur):
         """Constructeur du module"""
-        Module.__init__(self, importeur, parser_cmd, "diffact", "primaire")
+        Module.__init__(self, importeur, "diffact", "primaire")
         self.actions = {} # {nom_action:action_differee}
-        self.logger = None
+        self.logger = type(self.importeur).man_logs.creer_logger("diffact", \
+                "diffact")
     
     def config(self):
-        """Redéfinition de la configuration du module.
-        On créée un logger portant le nom du module.
-        
-        """
-        self.logger = self.importeur.log.creer_logger("diffact", "diffact")
+        """Redéfinition de la configuration du module."""
         Module.config(self)
 
     def boucle(self):

@@ -36,6 +36,7 @@ de configurations.
 import os
 
 from bases.anaconf.analyseur import Analyseur
+from bases.logs import man_logs
 
 # Dossier d'enregistrement des fichiers de configuration
 # Vous pouvez changer cette variable, ou bien spécifier l'option en
@@ -52,15 +53,18 @@ class Anaconf:
     (configuration générale).
     
     """
-    def __init__(self, importeur, parser_cmd):
+    def __init__(self):
         """Constructeur du module"""
-        global REP_CONFIG
-        self.parser_cmd = parser_cmd
-        self.importeur = importeur
         self.configs = {}
+    
+    def config(self, parser_cmd):
+        """Méthode de configuration.
+        L'attribut 'parser_cmd' a dû être renseigné avant l'appel.
         
-        if "chemin-configuration" in self.parser_cmd.keys():
-            REP_CONFIG = self.parser_cmd["chemin-configuration"]
+        """
+        global REP_CONFIG
+        if "chemin-configuration" in parser_cmd.keys():
+            REP_CONFIG = parser_cmd["chemin-configuration"]
         
         # On construit le répertoire si il n'existe pas
         if not os.path.exists(REP_CONFIG):
@@ -89,8 +93,8 @@ class Anaconf:
                 raise RuntimeError("le chargement de l'analyseur {0} " \
                         "a échoué. Aucun chemin passé en paramètre".format( \
                         nom_id))
-            logger = self.importeur.log.creer_logger("anaconf", nom_id)
-           # On construit le répertoire si il n'existe pas
+            logger = man_logs.creer_logger("anaconf", nom_id)
+            # On construit le répertoire si il n'existe pas
             rep = os.path.split(chemin)[0]
             if not os.path.exists(rep):
                 os.makedirs(rep)
@@ -101,3 +105,5 @@ class Anaconf:
         # On retourne l'analyseur
         return self.configs[nom_id]
 
+# On crée l'anaconf (analyseur des fichiers de configuration)
+anaconf = Anaconf()

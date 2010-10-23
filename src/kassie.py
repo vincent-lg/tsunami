@@ -41,7 +41,8 @@ from reseau.connexions.serveur import *
 from reseau.fonctions.callbacks import *
 from bases.importeur import Importeur
 from bases.parser_cmd import ParserCMD
-from bases.anaconf import *
+from bases.anaconf import anaconf
+from bases.logs import man_logs
 from corps.config import pere
 
 # Définition de la fonction appelée quand on arrête le MUD avec CTRL + C
@@ -56,23 +57,33 @@ def arreter_mud(signal, frame):
 # On relie cette fonction avec la levée de signal SIGINT et SIGTERM
 signal.signal(signal.SIGINT, arreter_mud)
 signal.signal(signal.SIGTERM, arreter_mud)
+
 ## Configuration du projet et lancement du MUD
 # On crée un analyseur de la ligne de commande
 parser_cmd = ParserCMD()
 parser_cmd.interpreter()
 
-# On crée l'importeur et on lance le processus d'instanciation des modules
-importeur = Importeur()
-importeur.tout_charger()
-importeur.tout_instancier(parser_cmd)
+# On configure anaconf
+anaconf.config(parser_cmd)
 
 # On charge la configuration globale du projet
-anaconf = Anaconf(importeur, parser_cmd)
 config_globale = anaconf.get_config("globale", "kassie.cfg", \
         "modèle global", pere)
 
+# Onc onfigure man_logs
+man_logs.config(anaconf, parser_cmd)
+
+# On se crée un logger
+log = man_logs.creer_logger("", "sup", "kassie.log")
+
+# On crée l'importeur, gérant les différents modules (primaires et secondaires)
+importeur = Importeur(parser_cmd, anaconf, man_logs)
+
+# On lance le processus d'instanciation des modules
+importeur.tout_charger()
+importeur.tout_instancier()
+
 # On configure et initialise les modules
-importeur.transmettre_conf(anaconf)
 importeur.tout_configurer()
 importeur.tout_initialiser()
 
@@ -84,9 +95,6 @@ port = config_globale.port
 # été mis en place pour créer de multiples sessions de test du MUD
 if "port" in parser_cmd.keys():
     port = parser_cmd["port"]
-
-# On se crée un logger
-log = importeur.log.creer_logger("", "sup", "kassie.log")
 
 # Vous pouvez changer les paramètres du serveur, telles que spécifiées dans
 # le constructeur de ServeurConnexion (voir reseau/connexions/serveur.py)

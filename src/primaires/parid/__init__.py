@@ -37,6 +37,6 @@ from abstraits.module import *
 
 class Parid(Module):
     """Classe du module Parid (à écrire)"""
-    def __init__(self, importeur, parser_cmd):
+    def __init__(self, importeur):
         """Constructeur du module"""
-        Module.__init__(self, importeur, parser_cmd, "parid", "primaire")
+        Module.__init__(self, importeur, "parid", "primaire")

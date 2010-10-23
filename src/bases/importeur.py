@@ -40,15 +40,15 @@ Il est possible de changer ces variables mais dans ce cas, une réorganisation
 du projet s'impose.
 
 Dans chaque module, on s'occupera de charger l'objet le représentant.
-Par exemple, le module anaconf se définit comme suit :
-*   un package anaconf contenu dans REP_PRIMAIRES
+Par exemple, le module diffact se définit comme suit :
+*   un package diffact contenu dans REP_PRIMAIRES
     *   un fichier __init__.py
-        *   une classe Anaconf
+        *   une classe Diffact
 
-On créée un objet chargé de représenter le module. C'est cet objet qui
+On crée un objet chargé de représenter le module. C'est cet objet qui
 possède les méthodes génériques chargées d'initialiser, configurer, lancer
 et arrêter un module. Les autres fichiers du module sont une boîte noir
-inconnu pour l'importeur.
+inconnue pour l'importeur.
 
 """
 
@@ -69,20 +69,31 @@ class Importeur:
 
     """
     nb_importeurs = 0
-
-    def __init__(self):
+    parser_cmd = None # parser de la ligne de commande
+    anaconf = None # analyseur des fichiers de configuration
+    man_logs = None # gestionnaire des loggers
+    
+    def __init__(self, parser_cmd, anaconf, man_logs):
         """Constructeur de l'importeur. Il vérifie surtout
         qu'un seul est créé.
         
-        Il prend en paramètre le parser de commande qu'il doit transmettre
-        à chaque module.
+        Il prend en paramètre :
+        -   le parser de commande
+        -   l'analyseur des fichiers de configuration
+        -   le gestionnaire des loggers
+        Ces trois informations sont stockées comme des attributs de classe
+        et transmises aux modules au moment de leur création.
         
         """
         Importeur.nb_importeurs += 1
         if Importeur.nb_importeurs > 1:
             raise RuntimeError("{0} importeurs ont été créés".format( \
                 Importeur.nb_importeurs))
-
+        
+        Importeur.parser_cmd = parser_cmd
+        Importeur.anaconf = anaconf
+        Importeur.man_logs = man_logs
+    
     def __str__(self):
         """Retourne sous ue forme un peu plus lisible les modules importés."""
         ret = []
@@ -112,7 +123,7 @@ class Importeur:
                         nom_package.capitalize())
                 setattr(self, nom_package, module)
 
-    def tout_instancier(self, parser_cmd):
+    def tout_instancier(self):
         """Cette méthode permet d'instancier les modules chargés auparavant.
         On se base sur le type du module (classe ou objet)
         pour le créer ou non.
@@ -122,21 +133,15 @@ class Importeur:
 
         NOTE IMPORTANTE: on passe au constructeur de chaque module
         self, c'est-à-dire l'importeur. Les modules en ont en effet
-        besoin pour interragir entre eux.
-
+        besoin pour interragir entre eux et avoir accès au parser de
+        la ligne de commande, à l'analyseur des fichiers de configuration
+        et au gestionnaire des loggers.
+        
         """
         for nom_module, module in self.__dict__.items():
             if type(module) is type: # on doit l'instancier
-                setattr(self, nom_module, module(self, parser_cmd))
+                setattr(self, nom_module, module(self))
 
-    def transmettre_conf(self, config):
-        """Transmet l'analyseur global des fichiers de configuration
-        (anaconf')
-        
-        """
-        for module in self.__dict__.values():
-          module.anaconf = config
-    
     def tout_configurer(self):
         """Méthode permettant de configurer tous les modules qui en ont besoin.
         Les modules qui doivent être configuré sont ceux instanciés.
@@ -189,7 +194,7 @@ class Importeur:
         """
         return nom in self.__dict__.keys()
 
-    def charger_module(self, parser_cmd, m_type, nom):
+    def charger_module(self, m_type, nom):
         """Méthode permettant de charger un module en fonction de son type et
         de son nom.
         
@@ -243,13 +248,13 @@ class Importeur:
         else:
             print("{0} n'est pas dans les attributs de l'importeur".format(nom))
 
-    def recharger_module(self, parser_cmd, m_type, nom):
+    def recharger_module(self, m_type, nom):
         """Cette méthode permet de recharger un module. Elle passe par :
         -   decharger_module
         -   charger_module
         
         """
-        self.decharger_module(parser_cmd, m_type, nom)
+        self.decharger_module(m_type, nom)
         self.charger_module(m_type, nom)
 
     def config_module(self, nom):
