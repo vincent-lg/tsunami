@@ -45,7 +45,9 @@ from bases.anaconf import *
 from corps.config import pere
 
 # Définition de la fonction appelée quand on arrête le MUD avec CTRL + C
+# Le lancement du MUD se trouve sous la fonction
 def arreter_mud(signal, frame):
+    """Fonction appelée pour arrêter le MUD proprement"""
     global importeur, log
     importeur.tout_detruire()
     log.info("Fin de la session\n\n\n")
@@ -54,7 +56,6 @@ def arreter_mud(signal, frame):
 # On relie cette fonction avec la levée de signal SIGINT et SIGTERM
 signal.signal(signal.SIGINT, arreter_mud)
 signal.signal(signal.SIGTERM, arreter_mud)
-
 ## Configuration du projet et lancement du MUD
 # On crée un analyseur de la ligne de commande
 parser_cmd = ParserCMD()
@@ -89,8 +90,7 @@ log = importeur.log.creer_logger("", "sup", "kassie.log")
 
 # Vous pouvez changer les paramètres du serveur, telles que spécifiées dans
 # le constructeur de ServeurConnexion (voir reseau/connexions/serveur.py)
-# Par défaut, on précise simplement son port d'écoute.
-
+# La plupart des informations se trouve dans la configuration globale
 serveur = ConnexionServeur(port, config_globale.nb_clients_attente, \
         config_globale.nb_max_connectes)
 serveur.init() # Initialisation, le socket serveur se met en écoute
