@@ -28,7 +28,49 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Log, détaillée plus bas."""
+"""Ce fichier contient la classe Log, détaillée plus bas.
+
+Il permet d'instancier un objet de cette classe, appelée man_logs
+(gestionnaire des loggers). Cet objet sera importé par le corps et les modules
+qui ont beson de logger certaines choses. Depuis cette classe, on peut créer
+un logger avec certains paramètres. Ce logger peut ensuite être utilisé pour
+enregistrer des messages propres à une fonciton, un module, une action du
+corps...
+
+Mode d'emplois :
+*   Commencez par importer man_logs (objet pour manipuler les loggers)
+    >>> from bases.log import man_logs
+*   Si c'est la première fois que man_logs est appelé, il doit être configuré
+    (c'est logiquement le fichier principal, à la racine du projet, qui se charge
+    de cette tâche)
+    >>> man_logs.config(anaconf, parser_cmd)
+    Note: anaconf est la configuration globale du projet. parser_cmd
+    est le parser de la ligne de commande (certaines options utiles aux logs
+    peuvent y être spécifiées)
+*   Vous pouvez ensuite créer un logger grâce à la méthode creer_logger
+    >>> logger = man_logs.creer_logger(
+    ...         sous_rep, nom_logger, nom_fichier)
+    Note:
+    -   sous_rep est le sous-répertoire menant au logger. On parle de sous-
+        répertoire car il se construit à la suite de REP_LOGS, le chemin
+        à donner ici est donc l'arborescence interne des fichiers de logs
+        Par exemple : 'diffact'
+        Le répertoire 'diffact' sera construit dans le dossier 'REP_LOGS'.
+    -   le nom du logger : il identifie de façon unique un logger. SI le nom
+        du fichier n'est pas précisé, il sert comme base
+        Evitez de donner un nom peu explicite tel que 'erreurs', cela
+        pourrait entraîner des conflits.
+        Si ce logger est chargé des erreurs du module 'diffact', donner un nom
+        comme 'diffact:erreurs' par exemple
+    -   le nom de fichier (facultatif quoique préférable)
+        Lui donner de préférence l'extension .log
+NOTE IMPORTANTE: on peut créer des loggers avant que man_logs ne soit
+configuré. Toutefois, étant donné que man_logs ne sait pas encore où
+enregistrer les fichiers de log, il les stock en mémoire en attendant
+d'être configuré. Les messages sont affiché en console sans délai mais ils ne
+seront écrit en fichier qu'après la configuration de man_logs.
+
+"""
 
 import os
 import time

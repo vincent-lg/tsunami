@@ -70,7 +70,7 @@ anaconf.config(parser_cmd)
 config_globale = anaconf.get_config("globale", "kassie.cfg", \
         "modèle global", pere)
 
-# Onc onfigure man_logs
+# On configure man_logs
 man_logs.config(anaconf, parser_cmd)
 
 # On se crée un logger
