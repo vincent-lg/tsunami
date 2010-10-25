@@ -31,6 +31,60 @@
 """Ce fichier contient la classe Anaconf, un analyseur de fichier
 de configurations.
 
+Une instance de cette classe est créée à la fin du fichier.
+Cette instance sera la seule nécessaire pour manipuler des données de
+configuration.
+
+Mode d'emplois :
+*   On importe l'instance 'anaconf' :
+    >>> from bases.anaconf import anaconf
+*   Si c'est la première fois qu'on le manipule, on doit le configurer :
+    >>> anaconf.config(parser_cmd) # le parser de la ligne de commande
+    Normalement c'est la tâche du fichier principal à la racine du projet.
+*   On peut ensuite créer et manipuler des données de configuration
+    Pour créer un analyseur d'une donnée de configuration, on appelle
+    'get_config' en lui passant en paramètre :
+    -   nom_id : un nom identifiant
+        Il doit identifier de manière unique un analyseur.
+        Si l'analyseur est propre à un module, préférer mettre un nom
+        comme 'nom_du_module:nom_analyseur'
+        Ce nom sera nécessaire si on souhaite récupérer la configuration
+        depuis un autre point du code ('get_config crée un analyseur
+        si il n'existe pas, retourne celui existant sinon)
+    -   le chemin menant au fichier de configuration. Celui-ci doit être
+        un chemin relatif, à partir de REP_CONFIG
+    -   le nom du fichier par défaut [1]
+    -   la chaîne de configuration par défaut [1]
+    Ces trois derniers paramètres ne sont indispensables que si on veut créer
+    un analyseur. Si on souhaite en récupérer un existant, on n'a besoin que de
+    préciser le nom identifiant 'nom_id'.
+*   Avec cet analyseur, vous pouvez ensuite avoir accès aux données
+    configurées. Si dans le fichier de configuration vous trouvez :
+        ma_donnee = 5 * 12
+    Vous pourrez accéder à l'attribut 'ma_donnee' de votre analyseur qui
+    contiendra 60 (voir la note plus bas).
+
+[1] L'analyse des données de configuration s'effectue depuis un modèle
+    contenu en dur dans le code. Chaque module a charge de ses modèles de
+    configuration. Pour le corps, voir dans src/corps/config.py
+    Ces modèles sont enregistrés dans une chaîne de caractère du même
+    format qu'un fichier de configuration. Ce modèle permet à l'analyseur
+    de savoir quelles données doivent être définies dans le fichier de
+    configuration analysée. Si les données ne sont pas présentes dans le
+    fichier analysé, on prend leur valeur par défaut dans le modèle.
+    Le modèle permet également de construire un fichier si certaines données
+    manquent ou même si le fichier de configuration n'existe pas.
+    On doit également donner un nom au modèle. Celui-ci est interprété comme
+    un fichier de configuration et si une erreur est détectée, c'est ce nom
+    qui sera loggé pour avertir d'une erreur. Les modèles ne doivent
+    naturellement pas en comporter (alors que les fichiers de configuration le
+    peuvent jusqu'à un certain point).
+
+NOTE IMPORTANTE: les données présentes dans un modèle sont interprétées
+    comme du code Python. Si vous devez mettre une chaîne de caractère comme
+    donnée de configuration, n'oubliez donc pas de l'entourer de guillemets ou
+    autres délimiteurs.
+
 """
 
 import os
@@ -59,7 +113,6 @@ class Anaconf:
     
     def config(self, parser_cmd):
         """Méthode de configuration.
-        L'attribut 'parser_cmd' a dû être renseigné avant l'appel.
         
         """
         global REP_CONFIG

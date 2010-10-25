@@ -82,31 +82,36 @@ class Analyseur:
     *   le constructeur d'Analyseur construit un objet contenant deux
         attributs, port et attente_connexion
     *   quand on souhaite y accéder, on interprète la donnée
-        Autrement dit, analyseur.port appellera eval(3933)
+        Autrement dit, analyseur.port appellera eval("3933")
         Cela est rendu possible par la redéfinition de __getattribute__
     
     """
     def __init__(self, nom_fichier, nom_defaut, defaut, logger):
         """Permet de lire et enregistrer les données de configuration propres
-        au fichier de configuration. On passe en paramètre du constructeur
-        le nom du fichier devant être lu, et un fichier défaut sous la forme
-        d'une chaîne de caractères.
-        Si aucune configuration n'est trouvée dans le fichier, ou si celui-ci
-        est absent, voire partiellement renseigné, ce dictionnaire servira à
-        réécrire un fichier complet.
+        au fichier de configuration.
         
-        En outre, si des données "périmées" sont trouvées dans le fichier de
-        configuration, elles seront supprimées. Ces données "périmées"
-        sont des données qui apparaissent dans le fichier de configuration,
-        mais non dans la chaîne defauts. C'est pourquoi mettre à jour
-        la chaîne defauts est si important.
+        Notez qu'un analyseur doit être construit depuis la méthode
+        'get_config' d''anaconf' et non directement.
+        On passe en paramètre du constructeur :
+        *   Le nom du fichier de configuration. Il permet naturellement
+            de l'ouvrir, étape indispensable pour l'analyser
+        *   Le nom du fichier par défaut (il s'agit d'un repère, si une erreur
+            est trouvée dans l'interprétation du modèl
+        *   La chaîne contenant le fichier de configuration par défaut.
+            Cette chaîne se trouve en dur dans le code. Elle est
+            indispensable : un fichier de configuration ne peut être interprété
+            sans son modèle. Pour le modèle de la configuration globale, voir :
+            src/corps/config.py
+        *   Le logger : il est propre à cet analyseur et permet de faire
+            remonter les erreurs liées à l'interprétation du modèle ou du
+            fichier de configuration
         
         La configuration trouvée dans le fichier prime naturellement sur
         celle par défaut. La chaîne defauts n'est utilisé que si des
         données ne sont pas trouvées, ou pour effacer des données périmées.
         
         """
-        self.globales = {}
+        self._globales = {}
         self._logger = logger
         self._logger.filtrer_niveau("warning")
         # On cherche le fichier pour commencer
@@ -179,4 +184,4 @@ class Analyseur:
         6
         
         """
-        self.globales = globales
+        self._globales = globales

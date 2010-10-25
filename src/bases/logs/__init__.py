@@ -44,7 +44,7 @@ Mode d'emplois :
     (c'est logiquement le fichier principal, à la racine du projet, qui se charge
     de cette tâche)
     >>> man_logs.config(anaconf, parser_cmd)
-    Note: anaconf est la configuration globale du projet. parser_cmd
+    Note: anaconf est l'objet gérant a configuration du projet. parser_cmd
     est le parser de la ligne de commande (certaines options utiles aux logs
     peuvent y être spécifiées)
 *   Vous pouvez ensuite créer un logger grâce à la méthode creer_logger
@@ -54,8 +54,9 @@ Mode d'emplois :
     -   sous_rep est le sous-répertoire menant au logger. On parle de sous-
         répertoire car il se construit à la suite de REP_LOGS, le chemin
         à donner ici est donc l'arborescence interne des fichiers de logs
-        Par exemple : 'diffact'
-        Le répertoire 'diffact' sera construit dans le dossier 'REP_LOGS'.
+        Par exemple : 'diffact/erreurs'
+        Le répertoire 'erreurs' sera construit dans le dossier 'diffact',
+        lui-même construit dans le dossier REP_LOGS .
     -   le nom du logger : il identifie de façon unique un logger. SI le nom
         du fichier n'est pas précisé, il sert comme base
         Evitez de donner un nom peu explicite tel que 'erreurs', cela
@@ -64,6 +65,7 @@ Mode d'emplois :
         comme 'diffact:erreurs' par exemple
     -   le nom de fichier (facultatif quoique préférable)
         Lui donner de préférence l'extension .log
+
 NOTE IMPORTANTE: on peut créer des loggers avant que man_logs ne soit
 configuré. Toutefois, étant donné que man_logs ne sait pas encore où
 enregistrer les fichiers de log, il les stock en mémoire en attendant
@@ -98,12 +100,14 @@ class ManLogs:
         self.loggers = {} # {nom_logger:logger}
     
     def config(self, anaconf, parser_cmd):
-        """Configuration du man_logs"""
+        """Configuration du manager"""
         global REP_LOGS
         config_globale = anaconf.get_config("globale")
+        # Si le chemin est précisé dans la configuration globale
         if config_globale.chemin_logs:
             REP_LOGS = config_globale.chemin_logs
         
+        # Si le chemin est précisé en argument de la ligne de commande
         if "chemin-logs" in parser_cmd.keys():
             REP_LOGS = self.parser_cmd["chemin-logs"]
         
@@ -111,8 +115,11 @@ class ManLogs:
         if not os.path.exists(REP_LOGS):
             os.makedirs(REP_LOGS)
         
+        # Tous les loggers créés avant la configuration du manager
+        # doivent être configurés également. On leur donne le répertoire
+        # d'enregistrement des logs et on leur demande de s'enregistrer
+        # dans des fichiers
         for logger in self.loggers.values():
-            logger.en_fil = False
             Logger.en_fil = False
             logger.rep_base = REP_LOGS
             logger.verif_rep()
@@ -135,4 +142,7 @@ class ManLogs:
         return logger
 
 # On crée le 'man_logs' (gestionnaire des loggers)
+# Cet objet sera celui directement manipulé par le corps ou les modules
+# souhaitant logger des informations (c'est-à-dire une majorité)
+# Aucun autre objet de la classe ManLogs n'a besoin d'être créé
 man_logs = ManLogs()
