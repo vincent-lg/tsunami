@@ -138,6 +138,7 @@ class ManLogs:
             nom_fichier = "{0}.log".format(nom_logger)
 
         logger = Logger(REP_LOGS, sous_rep, nom_fichier, nom_logger)
+        logger.verif_rep()
         self.loggers[nom_logger] = logger
         return logger
 

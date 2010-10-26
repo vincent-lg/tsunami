@@ -105,9 +105,9 @@ class ObjetID:
     """
     id_actuel = 1 # on compte à partir de 1
     groupe = "" # la chaîne contenant le nom du groupe préfixant l'ID
-    _fil_attente = set() # fil d'attente des objets à enregistrer
-    _sup_enr = None # superviseur d'enregistrement
+    _supenr = None # superviseur d'enregistrement
     sous_rep = "" # sous répertoire menant de _chemin_enr aux données du groupe
+    groupes = []
     
     def __init__(self):
         """Constructeur de la classe. On incrémente l'id_actuel du groupe.
@@ -133,8 +133,8 @@ class ObjetID:
         
         """
         object.__setattr__(self, nom_attr, val_attr)
-        if self._statut == Statut.INITIALISE:
-            ObjetID._fil_attente.add(self)
+        if self._statut == StatutObjet.INITIALISE and ObjetID._supenr:
+            ObjetID._supenr.fil_attente.add(self)
     
     def enregistrer(self):
         """Enregistre l'objet dans un fichier.

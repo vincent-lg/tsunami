@@ -37,7 +37,7 @@ import os
 import pickle
 
 from abstraits.module import *
-from abstraits.id import est_objet_id
+from abstraits.id import ObjetID, est_objet_id
 
 # Dossier d'enregistrement des fichiers-données
 # Vous pouvez changer cette variable, ou bien spécifier l'option en
@@ -78,6 +78,12 @@ class Supenr(Module):
         if not os.path.exists(REP_ENRS):
             os.makedirs(REP_ENRS)
         
+        ObjetID._supenr = self
+        for chemin in ObjetID.groupes:
+            chemin = REP_ENRS + os.sep + chemin
+            if not os.path.exists(chemin):
+                os.makedirs(chemin)
+
         Module.config(self)
     
     def construire_rep(self, sous_rep):
@@ -98,7 +104,7 @@ class Supenr(Module):
             raise runtimeError("l'objet {0} n'est aps un objet ID. On ne " \
                     "peut l'enregistrer".format(objet))
         chemin_dest = REP_ENRS + os.sep + type(objet).sous_rep
-        nom_fichier = str(objet.id) + ".sav"
+        nom_fichier = str(objet.id.id) + ".sav"
         chemin_dest += os.sep + nom_fichier
         # On essaye d'ouvrir le fichier
         try:
@@ -108,10 +114,41 @@ class Supenr(Module):
                     "n'a pas pu être ouvert : {2}".format(chemin_dest, \
                     objet, io_err))
         else:
-            pickler = pickle.Pickler(chemin_dest)
+            pickler = pickle.Pickler(fichier_enr)
             pickler.memo = self.pic_memo
             pickler.dump(objet)
         finally:
+            if "fichier_dest" in locals():
+                fichier_dest.close()
+    
+    def boucle(self):
+        """Méthode appelée à chaque tour de boucle synchro"""
+        # On enregistre les objets en attente
+        self.enregistrer_fil_attente()
+    
+    def enregistrer_fil_attente(self):
+        """On enregistre la fil d'attente. On appelle la méthode 'enregistrer'
+        de chaque objet contenu dans le set 'self.fil_attente'.
+        
+        """
+        for objet in self.fil_attente:
+            objet.enregistrer()
+        self.fil_attente.clear()
+    
+    def charger(self, sous_rep, nom_fichier):
+        """Charge le fichier indiqué et retourne l'objet dépicklé"""
+        global REP_ENRS
+        chemin_dest = REP_ENRS + os.sep + sous_rep + os.sep + nom_fichier
+        objet = None
+        try:
+            fichier_enr = open(chemin_dest, 'wb')
+        except IOError as io_err:
+            self.logger.warning("Le fichier {0} n'a pas pu être ovuert " \
+                    ": {1}".format(chemin_dest, io_err))
+        else:
+            unpickler = pickle.Unpickler(fichier_enr)
+            unpickler.memo = self.unpic_memo
+            objet = unpickler.load()
+        finally:
             fichier_dest.close()
-
-
+        return objet
