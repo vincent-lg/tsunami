@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit la classe Module, détaillée plus bas."""
+"""Ce package définit la classe Module, détaillée plus bas."""
 
 # Statuts
 INSTANCIE = 0

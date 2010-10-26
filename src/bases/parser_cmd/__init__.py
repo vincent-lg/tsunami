@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier est définit un parser de la ligne de commande.
+"""Ce fichier définit un parser de la ligne de commande.
 
 Le parser analyse la ligne de commande en se basant sur le module getopt
 et traite chaque cas indépendemment.
