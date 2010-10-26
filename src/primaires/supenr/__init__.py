@@ -34,8 +34,10 @@ du même nom.
 """
 
 import os
+import pickle
 
 from abstraits.module import *
+from abstraits.id import est_objet_id
 
 # Dossier d'enregistrement des fichiers-données
 # Vous pouvez changer cette variable, ou bien spécifier l'option en
@@ -51,6 +53,11 @@ class Supenr(Module):
     def __init__(self, importeur):
         """Constructeur du module"""
         Module.__init__(self, importeur, "supenr", "primaire")
+        self.fil_attente = set() # fil d'attente des objets à enregistrer
+        self.pic_memo = {} # mémo des picklers
+        self.unpic_memo = {} # mémo des dépicklers
+        self.logger = type(self.importeur).man_logs.creer_logger("supenr", \
+                "supenr")
     
     def config(self):
         """Méthode de configuration. On se base sur
@@ -72,10 +79,39 @@ class Supenr(Module):
             os.makedirs(REP_ENRS)
         
         Module.config(self)
-
-    def init(self):
-        """Redéfinition de l'initialisation.
+    
+    def construire_rep(self, sous_rep):
+        """Construit le chemin REP_ENRS / sous_rep si il n'existe pas"""
+        global REP_ENRS
+        chemin = REP_ENRS + os.sep + sous_rep
+        if not os.path.exists(chemin):
+            os.makedirs(chemin)
+    
+    def enregistrer(self, objet):
+        """Méthode appelée pour enregistrer un objet dans un fichier. Cette
+        méthode est appelée par la méthode 'boucle' de ce module, ou par
+        appel à la méthode 'enregistrer' de l'objet lui-même.
         
         """
-        Module.init(self)
+        global REP_ENRS
+        if not est_objet_id(objet):
+            raise runtimeError("l'objet {0} n'est aps un objet ID. On ne " \
+                    "peut l'enregistrer".format(objet))
+        chemin_dest = REP_ENRS + os.sep + type(objet).sous_rep
+        nom_fichier = str(objet.id) + ".sav"
+        chemin_dest += os.sep + nom_fichier
+        # On essaye d'ouvrir le fichier
+        try:
+            fichier_enr = open(chemin_dest, 'wb')
+        except IOError as io_err:
+            self.logger.warning("Le fichier {0} destiné à enregistrer {1} " \
+                    "n'a pas pu être ouvert : {2}".format(chemin_dest, \
+                    objet, io_err))
+        else:
+            pickler = pickle.Pickler(chemin_dest)
+            pickler.memo = self.pic_memo
+            pickler.dump(objet)
+        finally:
+            fichier_dest.close()
+
 

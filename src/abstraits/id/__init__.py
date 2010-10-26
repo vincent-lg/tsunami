@@ -31,10 +31,24 @@
 """Ce package définit les objets et fonctions nécessaires à la manipulation
 d'objets identifiées par des ID. La classe ObjetID, détaillée plus bas,
 donne plus d'informations sur ces objets.
+Ces objets sont aussi destinés à être enregistrés dans des fichiers grâce au
+module Pickle.
 
 """
 
-from abstraits.objet_id.id import ID
+import os
+import pickle
+
+from abstraits.id.id import ID
+
+class StatutObjet:
+    """Classe définissant, sous la forme d'attributs de classe, les différents
+    statuts d'un objet.
+    
+    """
+    EN_CONSTRUCTION = 0
+    INITIALISE = 1
+    DETRUIT = 2
 
 class ObjetID:
     """Cette classe abstraite peut être héritée des objets qui souhaitent
@@ -55,9 +69,45 @@ class ObjetID:
     (probablement une salle) dont le numéro identifiant est 45. Ainsi, on ne
     risque pas de le confondre avec 'joueurs:45'.
     
+    Les objets instanciés depuis cette classe sont également conçus pour être
+    enregistrés dans des fichiers par sérialisation. Ainsi, chaque
+    objet destiné à être directement enregistré dans un fichier devra
+    posséder un identifiant, et donc hériter de cette classe. En revanche,
+    il n'est pas nécessaire que chaque attribut enregistré dans l'objet soit
+    identifié (voir selon les besoins, au cas par cas);
+        
+    Note: un mécanisme est mis en place pour que, si un objet possède en
+    attribut une référence vers un autre objet, la référence soit conservée.
+    Cela signifie que si deux objets possèdent un attribut pointant
+    vers le même objet, ce sera toujours vrai après la récupération
+    des objets enregistrés. Voir 'enregistrer' pour plus d'informations.
+    
+    Mode d'emplois :
+        Si vous souhaitez définir un nouveau groupe identifiant,
+        vous devez hériter de cette classe et redéfinir, dans la sous-classe,
+        l'attribut de classe 'groupe' en lui donnant le nom de votre nouveau
+        groupe sous la forme d'une chaîne.
+        Par exemple :
+        >>> # création du groupe destiné à enregistrer des salles
+        >>> class Salle(ObjetID):
+        ...     '''Si l'on veut créer une nouvelle salle, on passe par cette
+        ...     classe.
+        ...     
+        ...     '''
+        ...     groupe = "salles"
+        Quand vous créerez votre première salle, elle aura pour ID 'salles:1'
+        la seconde aura pour ID 'salles:2' et ainsi de suite.
+        Vous pouvez également redéfinir l'attribut de classe 'sous_rep'
+        qui contient le chemin relatif menant à vos données enregistrées
+        (ce chemin sera naturellement différent pour chaque groupe).
+        NE REDEFINISSEZ PAS LES AUTRES ATTRIBUTS DE CLASSE.
+    
     """
     id_actuel = 1 # on compte à partir de 1
     groupe = "" # la chaîne contenant le nom du groupe préfixant l'ID
+    _fil_attente = set() # fil d'attente des objets à enregistrer
+    _sup_enr = None # superviseur d'enregistrement
+    sous_rep = "" # sous répertoire menant de _chemin_enr aux données du groupe
     
     def __init__(self):
         """Constructeur de la classe. On incrémente l'id_actuel du groupe.
@@ -66,8 +116,43 @@ class ObjetID:
         et l'identifiant entier le caractérisant.
         
         """
+        self._statut = StatutObjet.EN_CONSTRUCTION
         self.id = ID(type(self).groupe, type(self).id_actuel)
         type(self).id_actuel += 1
+        # On laisse aux sous-classes redéfinissant le constructeur
+        # la tâche de changer le statut de EN_CONSTRUCTION à INITIALISE
+        # à la fin de l'appel au constructeur
+    
+    def __setattr__(self, nom_attr, val_attr):
+        """Méthode appelée lorsqu'on cherche à modifier un attribut
+        de l'objet. Si l'objet est initialisé, on le place dans l'ensemble
+        des objets à enregistrer. On ne l'enregistre pas immédiatement
+        mais bien plus tôt à chaque tour de boucle synchro. Cela limite
+        les accès disque et oppose une légère résistance en cas de corruption
+        de données.
+        
+        """
+        object.__setattr__(self, nom_attr, val_attr)
+        if self._statut == Statut.INITIALISE:
+            ObjetID._fil_attente.add(self)
+    
+    def enregistrer(self):
+        """Enregistre l'objet dans un fichier.
+        Le superviseur (attribut de classe _supenr) doit être défini.
+        Le chemin d'enregistrement est déterminé par l'attribut 'racine_enr'
+        du superviseur 'supenr', suivi du chemin définit pour le groupe
+        (attribut de classe '_sous_rep'). Le nom du fichier est l'identifiant
+        de l'objet avec l'extension '.sav'.
+        
+        Note: l'objet doit être initialisé.
+        
+        """
+        if ObjetID._supenr:
+            supenr = ObjetID._supenr
+            supenr.enregistrer(self)
+        else:
+            raise RuntimeError("impossible d'enregistrer {0} : le " \
+                    "superviseur 'supenr' n'a pas été trouvé".format(self))
 
 # Fonctions liées à la manipulation de ces objets
 
