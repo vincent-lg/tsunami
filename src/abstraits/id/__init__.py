@@ -34,6 +34,12 @@ donne plus d'informations sur ces objets.
 Ces objets sont aussi destinés à être enregistrés dans des fichiers grâce au
 module Pickle.
 
+[1] Les objets issus des sous-classes d'ObjetID sont destinés à être
+    enregistré dans des fichiers. Leur récupération est également automatisée :
+    Au chargement du module 'supenr', les différents groupes sont
+    récupérés et les objets chargés pour chaque groupe se retrouvent dans une
+    liste en attribut de la sous-classe (sous_classe.objets').
+
 """
 
 import os
@@ -107,8 +113,23 @@ class ObjetID:
     groupe = "" # la chaîne contenant le nom du groupe préfixant l'ID
     _supenr = None # superviseur d'enregistrement
     sous_rep = "" # sous répertoire menant de _chemin_enr aux données du groupe
-    groupes = []
+    groupes = {} # dictionnaire des groupes créés ({nom_groupe:classe})
+    objets = [] # Voir la note [1]
     
+    # Méthodes de classe
+    def ajouter_groupe(groupe):
+        """Méthode appelée lors de la construction de groupes d'ID.
+        Après la définition de la sous-classe héritée d'ObjetID,
+        cette méthode doit e^tre appelée (on lui passe en paramètre la
+        sous-classe). Cette méthode permet de garder une trace des groupes
+        créés et de leur ID actuelle.
+        
+        """
+        ObjetID.groupes[groupe.groupe] = groupe
+        groupe.id_actuel = 1
+        groupe.objets = []
+    
+    # Méthodes d'instance
     def __init__(self):
         """Constructeur de la classe. On incrémente l'id_actuel du groupe.
         Dans le même temps, on crée un attribut nommé id dans l'objet
@@ -122,6 +143,15 @@ class ObjetID:
         # On laisse aux sous-classes redéfinissant le constructeur
         # la tâche de changer le statut de EN_CONSTRUCTION à INITIALISE
         # à la fin de l'appel au constructeur
+    
+    def __setstate__(self, dico_attrs):
+        """Méthode appelée lors de la sérialisation d'un objet hérité
+        d'ObjetID.
+        
+        """
+        self.__dict__.update(dico_attrs)
+        if self.id.id >= type(self).id_actuel:
+            type(self).id_actuel = self.id.id + 1
     
     def __setattr__(self, nom_attr, val_attr):
         """Méthode appelée lorsqu'on cherche à modifier un attribut
@@ -153,6 +183,21 @@ class ObjetID:
         else:
             raise RuntimeError("impossible d'enregistrer {0} : le " \
                     "superviseur 'supenr' n'a pas été trouvé".format(self))
+    
+    def detruire(self):
+        """Méthode appelée pour détruire l'objet.
+        Elle change son statut en StatutObjet.DETRUIT.
+        Elle va également demander au superviseur de détruire le fichier
+        contenant l'objet.
+        
+        """
+        self._statut = StatutObjet.DETRUIT
+        if ObjetID._supenr:
+            supenr = ObjetID._supenr
+            supenr.detruire_fichier(self)
+        else:
+            raise RuntimeError("impossible de supprimer {0} : le " \
+                    "superviseur 'supenr' n'a pas été trouvé".format(self))
 
 # Fonctions liées à la manipulation de ces objets
 
@@ -162,3 +207,12 @@ def est_objet_id(objet):
     
     """
     return isinstance(objet, ObjetID)
+
+def existe(objet):
+    """Retourne True si l'objet existe c'est-à-dire :
+    -   si il n'est pas None
+    -   si il n'est pas ObjetID et détruit
+    
+    """
+    return objet is None or (est_objet_id(objet) and objet._statut != \
+            StatutObjet.DETRUIT)

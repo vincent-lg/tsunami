@@ -79,11 +79,16 @@ class Supenr(Module):
             os.makedirs(REP_ENRS)
         
         ObjetID._supenr = self
-        for chemin in ObjetID.groupes:
+        for groupe in ObjetID.groupes.values():
+            chemin = groupe.sous_rep
             chemin = REP_ENRS + os.sep + chemin
             if not os.path.exists(chemin):
                 os.makedirs(chemin)
-
+            objets = self.charger_groupe(groupe)
+            groupe.objets = objets
+            self.logger.info("{0} objets chargés dans le groupe {1}".format( \
+                    len(objets), groupe.groupe))
+        
         Module.config(self)
     
     def construire_rep(self, sous_rep):
@@ -101,7 +106,7 @@ class Supenr(Module):
         """
         global REP_ENRS
         if not est_objet_id(objet):
-            raise runtimeError("l'objet {0} n'est aps un objet ID. On ne " \
+            raise TuntimeError("l'objet {0} n'est pas un objet ID. On ne " \
                     "peut l'enregistrer".format(objet))
         chemin_dest = REP_ENRS + os.sep + type(objet).sous_rep
         nom_fichier = str(objet.id.id) + ".sav"
@@ -118,8 +123,27 @@ class Supenr(Module):
             pickler.memo = self.pic_memo
             pickler.dump(objet)
         finally:
-            if "fichier_dest" in locals():
-                fichier_dest.close()
+            if "fichier_enr" in locals():
+                fichier_enr.close()
+    
+    def detruire_fichier(self, objet):
+        """Méthode appelée pour détruire le fichier contenant l'objet
+        passé en paramètre.
+        
+        """
+        global REP_ENRS
+        if not est_objet_id(objet):
+            raise RuntimeError("l'objet {0} n'est pas un objet ID. On ne " \
+                    "peut le supprimer".format(objet))
+        chemin_dest = REP_ENRS + os.sep + type(objet).sous_rep
+        nom_fichier = str(objet.id.id) + ".sav"
+        chemin_dest += os.sep + nom_fichier
+        try:
+            os.remove(chemin_dest)
+        except OSError as os_err:
+            self.logger.warning("Le fichier {0} censé enregistrer {1} " \
+                    "n'a pas pu être supprimé : {2}".format(chemin_dest, \
+                    objet, os_err))
     
     def boucle(self):
         """Méthode appelée à chaque tour de boucle synchro"""
@@ -141,14 +165,39 @@ class Supenr(Module):
         chemin_dest = REP_ENRS + os.sep + sous_rep + os.sep + nom_fichier
         objet = None
         try:
-            fichier_enr = open(chemin_dest, 'wb')
+            fichier_enr = open(chemin_dest, 'rb')
         except IOError as io_err:
-            self.logger.warning("Le fichier {0} n'a pas pu être ovuert " \
+            self.logger.warning("Le fichier {0} n'a pas pu être ouvert " \
                     ": {1}".format(chemin_dest, io_err))
         else:
             unpickler = pickle.Unpickler(fichier_enr)
             unpickler.memo = self.unpic_memo
             objet = unpickler.load()
         finally:
-            fichier_dest.close()
+            if "fichier_enr" in locals():
+                fichier_enr.close()
+        
         return objet
+    
+    def charger_groupe(self, groupe):
+        """Cette fonction permet de charger tout un groupe d'un coup, d'un
+        seul.
+        Elle prend en paramètre la sous-classe d'ObjetID définissant le
+        groupe.
+        Elle retourne la liste des objets chargés.
+        
+        """
+        global REP_ENRS
+        chemin_dest = REP_ENRS + os.sep + groupe.sous_rep
+        objets = [] # liste des objets récupérés
+        if not os.path.exists(chemin_dest):
+            self.logger.warning("Le dossier {0} devant contenir le groupe " \
+                    "{1} n'existe pas".format(chemin_dest, groupe.groupe))
+        else:
+            liste_fichier = sorted(os.listdir(chemin_dest))
+            for nom_fichier in liste_fichier:
+                objet = self.charger(groupe.sous_rep, nom_fichier)
+                if objet is not None:
+                    objets.append(objet)
+        
+        return objets
