@@ -31,14 +31,14 @@
 """Ce fichier définit la classe ID détaillée plus bas;"""
 
 class ID:
-    """Cette classe est représente un identifiant unique d'un objet quelconque.
-    Elle est utilisée par abstraits.objets_id.ObjetID et ne doit pas être
+    """Cette classe représente un identifiant unique d'un objet quelconque.
+    Elle est utilisée par abstraits.id.ObjetID et ne doit pas être
     instanciée ailleurs.
     
-    Voir : abstraits/objet_id.py pour plus d'informations
+    Voir : abstraits/id/__init__.py pour plus d'informations.
     
     Un identifiant se compose :
-    -   d'un préfixe (str)
+    -   d'un nom de groupe (str)
     -   d'un identifiant (int)
     
     """

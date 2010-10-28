@@ -48,6 +48,18 @@ class Supenr(Module):
     """Classe du module 'supenr'.
     
     Ce module gère l'enregistrement des données et leur récupération.
+    Les objets enregistrés doivent dériver indirectement de
+    'abstraits.id.ObjetID' (voir 'abstraits/id/__init__.py' pour plus
+    d'informations).
+    
+    Habituellement, il n'est pas nécessaire de manipuler directement
+    ce module. Il suffit de créer un nouveau groupe d'identification
+    et de créer ses objets dérivés de ce groupe, sans se préoccuper
+    de leur enregistrement (celui-ci sera automatique).
+    Lors de la configuration de 'supenr', il récupérera les différents
+    fichiers-données enregistrés lors de la dernière session et les stockera
+    dans l'attribut de classe 'objets' du groupe, sous la forme d'une liste
+    d'objets.
     
     """
     def __init__(self, importeur):
@@ -63,6 +75,8 @@ class Supenr(Module):
         """Méthode de configuration. On se base sur
         parser_cmd pour savoir si un dossier d'enregistrement
         des fichiers-données a été défini.
+        Cette donnée peut également se trouver dans les données globales de
+        configuration.
         
         """
         global REP_ENRS
@@ -79,6 +93,18 @@ class Supenr(Module):
             os.makedirs(REP_ENRS)
         
         ObjetID._supenr = self
+        
+        Module.config(self)
+    
+    def init(self):
+        """Méthode d'initialisation du module.
+        On récupère les différents objets des groupes d'identification.
+        Note importante : il est important dans ce contexte que le module
+        'supenr' ait la priorité en initialisation par rapport aux autres
+        modules l'utilisant.
+        
+        """
+        global REP_ENRS
         for groupe in ObjetID.groupes.values():
             chemin = groupe.sous_rep
             chemin = REP_ENRS + os.sep + chemin
@@ -89,7 +115,7 @@ class Supenr(Module):
             self.logger.info("{0} objets chargés dans le groupe {1}".format( \
                     len(objets), groupe.groupe))
         
-        Module.config(self)
+        Module.init(self)
     
     def construire_rep(self, sous_rep):
         """Construit le chemin REP_ENRS / sous_rep si il n'existe pas"""

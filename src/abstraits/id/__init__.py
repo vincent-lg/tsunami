@@ -32,13 +32,14 @@
 d'objets identifiées par des ID. La classe ObjetID, détaillée plus bas,
 donne plus d'informations sur ces objets.
 Ces objets sont aussi destinés à être enregistrés dans des fichiers grâce au
-module Pickle.
+module pickle.
 
 [1] Les objets issus des sous-classes d'ObjetID sont destinés à être
     enregistré dans des fichiers. Leur récupération est également automatisée :
     Au chargement du module 'supenr', les différents groupes sont
     récupérés et les objets chargés pour chaque groupe se retrouvent dans une
     liste en attribut de la sous-classe (sous_classe.objets').
+    Voir la méthode 'config' du superviseur 'supenr'.
 
 """
 
@@ -63,11 +64,10 @@ class ObjetID:
     Celui-ci se base sur deux données :
     -   une chaîne de caractère identifiant le groupe d'objets. Ce préfixe
         est nécessaire quand on souhaite grouper plusieurs objets dans
-        une structure, un dictionnaire par exemple. Le module primaire parid
-        associe un dictionnaire par groupe d'objet et cela permet de retrouver
-        la classe concernée par le préfixe. Quand on souhaite créer
-        un nouveau groupe, on doit hériter cette classe en lui donnant
-        un nom de groupe qui sera utilisé pour chaque objet créé
+        une structure, un dictionnaire par exemple.
+        Quand on souhaite créer un nouveau groupe, on doit hériter cette
+        classe en lui donnant un nom de groupe qui sera utilisé pour chaque
+        objet créé
     -   un entier identifiant clairement le numéro de l'objet. Cet entier
         s'incrémente à chaque fois que l'on créée un objet du groupe
     
@@ -89,7 +89,7 @@ class ObjetID:
     des objets enregistrés. Voir 'enregistrer' pour plus d'informations.
     
     Mode d'emplois :
-        Si vous souhaitez définir un nouveau groupe identifiant,
+    -   Si vous souhaitez définir un nouveau groupe identifiant,
         vous devez hériter de cette classe et redéfinir, dans la sous-classe,
         l'attribut de classe 'groupe' en lui donnant le nom de votre nouveau
         groupe sous la forme d'une chaîne.
@@ -101,12 +101,26 @@ class ObjetID:
         ...     
         ...     '''
         ...     groupe = "salles"
-        Quand vous créerez votre première salle, elle aura pour ID 'salles:1'
+        ...     sous_rep = "salles" # sous-répertoire d'enregistrement
+        Quand vous créerez votre première salle, elle aura pour ID 'salles:1',
         la seconde aura pour ID 'salles:2' et ainsi de suite.
-        Vous pouvez également redéfinir l'attribut de classe 'sous_rep'
-        qui contient le chemin relatif menant à vos données enregistrées
-        (ce chemin sera naturellement différent pour chaque groupe).
-        NE REDEFINISSEZ PAS LES AUTRES ATTRIBUTS DE CLASSE.
+        Vous devez également redéfinir l'attribut de classe 'sous_rep' qui
+        contient le chemin relatif menant aux données de votre groupe.
+        NE REDEFINISSEZ PAS LES AUTRES ATTRIBUTS DE CLASSE DE 'ObjetID'
+    -   Après avoir définit votre classe, vous devez l'ajouter en tant que
+        groupe d'identification. Utilisez pour cela la méthode de classe
+        'ajouter_groupe' de 'ObjetID' en lui passant en paramètre votre sous-
+        classe nouvellement créée :
+        >>> ObjetID.ajouter_groupe(Salle)
+    -   Vous pouvez ensuite créer des salles. Elles seront automatiquement
+        enregistrées dès leur création (voir l'aide du constructeur d'ObjetID)
+        jusqu'à leur destruction. Elles seront également récupérées
+        au lancement du MUD, automatiquement, grâce au module 'supenr'.
+        Dans notre exemple, au lancement du MUD, une liste contenant les
+        salles récupérées par dé-sérialisation sera écrite dans l'attribut de
+        classe 'objets' de votre groupe. 'Salle.objets' contiendra, après la
+        récupération des données, la liste des salles récupérées
+        automatiquement par 'supenr'.
     
     """
     id_actuel = 1 # on compte à partir de 1
@@ -114,13 +128,13 @@ class ObjetID:
     _supenr = None # superviseur d'enregistrement
     sous_rep = "" # sous répertoire menant de _chemin_enr aux données du groupe
     groupes = {} # dictionnaire des groupes créés ({nom_groupe:classe})
-    objets = [] # Voir la note [1]
+    objets = [] # Liste des objets du groupe récupérés par 'supenr'
     
     # Méthodes de classe
     def ajouter_groupe(groupe):
         """Méthode appelée lors de la construction de groupes d'ID.
         Après la définition de la sous-classe héritée d'ObjetID,
-        cette méthode doit e^tre appelée (on lui passe en paramètre la
+        cette méthode doit être appelée (on lui passe en paramètre la
         sous-classe). Cette méthode permet de garder une trace des groupes
         créés et de leur ID actuelle.
         
@@ -135,6 +149,18 @@ class ObjetID:
         Dans le même temps, on crée un attribut nommé id dans l'objet
         manipulé. On associe à cet attribut un ID contenant le nom du groupe
         et l'identifiant entier le caractérisant.
+        Les objets créés sont conçus de telle sorte que si on modifie un de
+        leurs attributs, ils soient sauvés dans un fichier. Toutefois,
+        pour éviter de les enregistrer dès la création, on paramètre leur
+        statut en tant qu'initialisé (voir plus haut la classe 'StatutObjet').
+        Dans le constructeur de la sous-classe héritée de 'ObjetID', il
+        ne faudra pas oublier de passer ce statut à 'INITIALISE'.
+        On peut également vouloir enregistrer l'objet dès sa création.
+        ...     def __init__(self, ...):
+        ...             ObjetID.__init__(self)
+        ...             # ... autres actions ...
+        ...             self._statut = StatutObjet.INITIALISE
+        ...             self.enregistrer()
         
         """
         self._statut = StatutObjet.EN_CONSTRUCTION
@@ -168,11 +194,8 @@ class ObjetID:
     
     def enregistrer(self):
         """Enregistre l'objet dans un fichier.
-        Le superviseur (attribut de classe _supenr) doit être défini.
-        Le chemin d'enregistrement est déterminé par l'attribut 'racine_enr'
-        du superviseur 'supenr', suivi du chemin définit pour le groupe
-        (attribut de classe '_sous_rep'). Le nom du fichier est l'identifiant
-        de l'objet avec l'extension '.sav'.
+        Le superviseur (attribut de classe _supenr) doit être défini car on
+        redirige vers sa méthode 'enregistrer'.
         
         Note: l'objet doit être initialisé.
         
@@ -198,6 +221,7 @@ class ObjetID:
         else:
             raise RuntimeError("impossible de supprimer {0} : le " \
                     "superviseur 'supenr' n'a pas été trouvé".format(self))
+
 
 # Fonctions liées à la manipulation de ces objets
 
