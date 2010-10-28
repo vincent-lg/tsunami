@@ -72,6 +72,7 @@ class Importeur:
     parser_cmd = None # parser de la ligne de commande
     anaconf = None # analyseur des fichiers de configuration
     man_logs = None # gestionnaire des loggers
+    logger = None # le logger de l'importeur
     
     def __init__(self, parser_cmd, anaconf, man_logs):
         """Constructeur de l'importeur. Il vérifie surtout
@@ -93,6 +94,7 @@ class Importeur:
         Importeur.parser_cmd = parser_cmd
         Importeur.anaconf = anaconf
         Importeur.man_logs = man_logs
+        Importeur.logger = man_logs.creer_logger("", "importeur", "")
     
     def __str__(self):
         """Retourne sous ue forme un peu plus lisible les modules importés."""
@@ -109,12 +111,15 @@ class Importeur:
 
         """
         # On commence par parcourir les modules primaires
+        Importeur.logger.debug("Chargement des modules :")
         for nom_package in os.listdir(os.getcwd() + "/" + REP_PRIMAIRES):
             if not nom_package.startswith("__"):
                 package = __import__(REP_PRIMAIRES + "." + nom_package)
                 module = getattr(getattr(package, nom_package), \
                         nom_package.capitalize())
                 setattr(self, nom_package, module)
+                Importeur.logger.debug("  Le module {0} a été chargé".format( \
+                        nom_package))
         # On fait de même avec les modules secondaires
         for nom_package in os.listdir(os.getcwd() + "/" + REP_SECONDAIRES):
             if not nom_package.startswith("__"):
@@ -122,6 +127,8 @@ class Importeur:
                 module = getattr(getattr(package, nom_package), \
                         nom_package.capitalize())
                 setattr(self, nom_package, module)
+                Importeur.logger.debug("  Le module {0} a été chargé".format( \
+                        nom_package))
 
     def tout_instancier(self):
         """Cette méthode permet d'instancier les modules chargés auparavant.
@@ -137,10 +144,45 @@ class Importeur:
         la ligne de commande, à l'analyseur des fichiers de configuration
         et au gestionnaire des loggers.
         
+        L'ordre d'instanciation des modules est contenue dans la configuration
+        globale ('modules_a_instancier').
+        Les modules à ignorer sont également définis dans cette configuration
+        globale. Leur instance est supprimée de l'importeur.
+        
         """
+        conf_glb = Importeur.anaconf.get_config("globale")
+        # On supprime avant tout les modules à ignorer
+        Importeur.logger.debug("Suppression des modules à ignorer :")
+        for nom_module in conf_glb.modules_a_ignorer:
+            if hasattr(self, nom_module): # le module est chargé
+                delattr(self, nom_module)
+                Importeur.logger.debug("  Le module {0} a été ignorré et " \
+                        "supprimé de l'importeur".format(nom_module))
+            else:
+                Importeur.logger.warning("  Le module {0} n'a pas été " \
+                        "instancié et ne peut être ignoré".format(nom_module))
+        
+        # On instancie d'abord les modules prioritaires
+        # (c'est-à-dire ceux définis dans la donnée de configuration)
+        Importeur.logger.debug("Instanciation des modules prioritaires :")
+        for nom_module in conf_glb.modules_a_instancier:
+            if hasattr(self, nom_module): # le module est chargé
+                module = getattr(self, nom_module)
+                if type(module) is type: # on doit l'instancier
+                    setattr(self, nom_module, module(self))
+                    Importeur.logger.debug("  Le module {0} a été " \
+                            "instancié".format(nom_module))
+                else:
+                    Importeur.logger.warning("  Le module {0} n'a pas été " \
+                            "instancié".format(nom_module))
+        
+        # On charge les modules restant
+        Importeur.logger.debug("Instanciation des modules restant :")
         for nom_module, module in self.__dict__.items():
             if type(module) is type: # on doit l'instancier
                 setattr(self, nom_module, module(self))
+                Importeur.logger.debug("  Le module {0} a été " \
+                        "instancié".format(nom_module))
 
     def tout_configurer(self):
         """Méthode permettant de configurer tous les modules qui en ont besoin.
@@ -152,27 +194,79 @@ class Importeur:
         tout_instancier doit être appelée auparavant.
         
         """
+        conf_glb = Importeur.anaconf.get_config("globale")
+        Importeur.logger.debug("Configuration des modules :")
+        # On configure d'abord les modules à configurer en priorité
+        Importeur.logger.debug("Configuration des modules prioritaires :")
+        for nom_module in conf_glb.modules_a_configurer:
+            if hasattr(self, nom_module): # le module est chargé
+                module = getattr(self, nom_module)
+                if module.statut == INSTANCIE:
+                    module.config()
+                    Importeur.logger.debug("  Le module {0} a été " \
+                            "configuré".format(nom_module))
+        # Configuration des modules restant
+        Importeur.logger.debug("Configuration des modules restant :")
         for module in self.__dict__.values():
             if module.statut == INSTANCIE:
                 module.config()
-
+                Importeur.logger.debug("  Le module {0} a été " \
+                        "configuré".format(module.nom))
+    
     def tout_initialiser(self):
         """Méthode permettant d'initialiser tous les modules qui en ont besoin.
         Les modules à initialiser sont ceux configuré.
         
         """
+        conf_glb = Importeur.anaconf.get_config("globale")
+        Importeur.logger.debug("Initialisation des modules :")
+        # On initialise d'abord les modules à initialiser en priorité
+        Importeur.logger.debug("Initialisation des modules prioritaires :")
+        for nom_module in conf_glb.modules_a_initialiser:
+            if hasattr(self, nom_module): # le module est chargé
+                module = getattr(self, nom_module)
+                if module.statut == CONFIGURE:
+                    module.init()
+                    Importeur.logger.debug("  Le module {0} a été " \
+                            "initialisé".format(nom_module))
+        
+        # Initialisation des modules restants
+        Importeur.logger.debug("Initialisation des modules restant :")
         for module in self.__dict__.values():
             if module.statut == CONFIGURE:
                 module.init()
+                Importeur.logger.debug("  Le module {0} a été " \
+                        "initialisé".format(module.nom))
 
     def tout_detruire(self):
         """Méthode permettant de détruire tous les modules qui en ont besoin.
         Les modules à détruire sont ceux initialisés.
         
+        NOTE IMPORTANTE: on peut préciser dans le fichier de configuration
+        globale une liste des modules à détruire. Les modules de cette liste
+        seront détruits après les autres, et non avant.
+        
         """
+        conf_glb = Importeur.anaconf.get_config("globale")
+        Importeur.logger.debug("Destruction des modules :")
+        # On détruit d'abord les modules qui ne sont pas à garder en priorité
         for module in self.__dict__.values():
-            if module.statut == INITIALISE:
+            if module.statut == INITIALISE and \
+                    module.nom not in conf_glb.modules_a_detruire:
                 module.detruire()
+                Importeur.logger.debug("  Le module {0} a été " \
+                        "détruit".format(module.nom))
+        
+        # On détruit enfin les modules à détruire en dernier
+        Importeur.logger.debug("Destruction des modules à détruire en " \
+                "dernier :")
+        for nom_module in conf_glb.modules_a_initialiser:
+            if hasattr(self, nom_module): # le module est chargé
+                module = getattr(self, nom_module)
+                if module.statut == INITIALISE:
+                    module.detruire()
+                    Importeur.logger.debug("  Le module {0} a été " \
+                            "détruit".format(nom_module))
 
     def boucle(self):
         """Méthode appelée à chaque tour de boucle synchro.

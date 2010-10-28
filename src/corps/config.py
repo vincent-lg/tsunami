@@ -92,4 +92,34 @@ chemin_logs =
 # de toute façon prioritaire
 chemin_enregistrement = 
 
+## Configuration des modules
+
+# Cette rubrique permet de spécifier un ordre d'isntanciation,
+# de configuration, d'initialisation et de destruction des modules.
+# Cette configuration mélange les modules primaires et secondaires sans
+# distinction.
+# Note: inutile de spécifier tous les modules dans les listes. Ceux qui
+# ne sont pas précisés seront traités dans le désordre, après ceux spécifiés.
+# Tous les modules sont automatiquement chargés.
+# En revanche, les modules placés dans la liste 'modules_a_ignorer' ne
+# sont pas instanciés, mais supprimés de l'importeur.
+
+# Ordre d'instanciation des modules
+modules_a_instancier = ['supenr']
+
+# Ordre de configuration des modules
+modules_a_configurer = ['supenr']
+
+# Ordre d'initialisation des modules
+modules_a_initialiser = ['supenr']
+
+# Ordre de destruction des modules
+# ATTENTION ! Ces modules ne seront pas ceux détruits en premier mais bien
+# ceux à détruire en dernier, après les autres modules non spécifiés.
+modules_a_detruire = []
+
+# Liste des modules à ignorer (ils ne seront pas instanciés, mais quand-même
+# chargés)
+modules_a_ignorer = []
+
 """
