@@ -46,6 +46,7 @@ module pickle.
 import os
 import pickle
 
+from abstraits.obase import BaseObj
 from abstraits.id.id import ID
 
 class StatutObjet:
@@ -57,7 +58,7 @@ class StatutObjet:
     INITIALISE = 1
     DETRUIT = 2
 
-class ObjetID:
+class ObjetID(BaseObj):
     """Cette classe abstraite peut être héritée des objets qui souhaitent
     obtenir un identifiant unique, propre à chaque objet créé.
 
@@ -123,10 +124,14 @@ class ObjetID:
         automatiquement par 'supenr'.
     
     """
-    id_actuel = 1 # on compte à partir de 1
+    # Attributs à redéfinir en sous-classe
     groupe = "" # la chaîne contenant le nom du groupe préfixant l'ID
-    _supenr = None # superviseur d'enregistrement
+    id_actuel = 1 # on compte à partir de 1
     sous_rep = "" # sous répertoire menant de _chemin_enr aux données du groupe
+    attributs = {} # Dictionnaire des attributs et de leur valeur par défaut
+    
+    # Attributs à ne pas redéfinir
+    _supenr = None # superviseur d'enregistrement
     groupes = {} # dictionnaire des groupes créés ({nom_groupe:classe})
     objets = [] # Liste des objets du groupe récupérés par 'supenr'
     
@@ -153,29 +158,26 @@ class ObjetID:
         leurs attributs, ils soient sauvés dans un fichier. Toutefois,
         pour éviter de les enregistrer dès la création, on paramètre leur
         statut en tant qu'initialisé (voir plus haut la classe 'StatutObjet').
-        Dans le constructeur de la sous-classe héritée de 'ObjetID', il
-        ne faudra pas oublier de passer ce statut à 'INITIALISE'.
-        On peut également vouloir enregistrer l'objet dès sa création.
-        ...     def __init__(self, ...):
-        ...             ObjetID.__init__(self)
-        ...             # ... autres actions ...
-        ...             self._statut = StatutObjet.INITIALISE
-        ...             self.enregistrer()
+        Après avoir appelé le constructeur de BaseObj qui écrit les attributs
+        par défaut de l'objet, on repasse ce statut en 'INITIALISE' et on
+        enregistre l'objet.
         
         """
         self._statut = StatutObjet.EN_CONSTRUCTION
         self.id = ID(type(self).groupe, type(self).id_actuel)
         type(self).id_actuel += 1
-        # On laisse aux sous-classes redéfinissant le constructeur
-        # la tâche de changer le statut de EN_CONSTRUCTION à INITIALISE
-        # à la fin de l'appel au constructeur
+        # Appel du constructeur de BaseObj
+        BaseObj.__init__(self)
+        # On change le statut et enregistre l'objet
+        self._statut = StatutObjet.INITIALISE
+        self.enregistrement()
     
     def __setstate__(self, dico_attrs):
         """Méthode appelée lors de la sérialisation d'un objet hérité
         d'ObjetID.
         
         """
-        self.__dict__.update(dico_attrs)
+        BaseObj.__setstate__(self, dico_attrs)
         if self.id.id >= type(self).id_actuel:
             type(self).id_actuel = self.id.id + 1
     
