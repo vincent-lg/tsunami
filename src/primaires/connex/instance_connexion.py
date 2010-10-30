@@ -28,30 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit les fonctions de callback, appelées dans le cadre
-d'évènements serveur (connexion d'un client, déconnexion, réception
-d'un message...)
+"""Ce fichier définit la classe InstanceConnexion, détaillée plus bas."""
 
-Elles prennent toutes le préfixe cb_ (callback)
 
-"""
+from abstraits.id import ObjetID, StatutObjet
 
-fin_ligne = "\r\n"
+# Attributs de la classe
+dic_attributs = {
+    "client": None,
+    "contextes": {},
+    "contexte_actuel": None,
+    "personnage": None,
+}
 
-def cb_connexion(serveur, importeur, logger, client):
-    """Que se passe-t-il quand client se connecte ?"""
-    logger.info("Connexion du client {0}".format(client))
-    importeur.connex.ajouter_instance(client)
+class InstanceConnexion(ObjetID):
+    groupe = "connexions"
+    sous_rep = "connexions"
+    attributs = dic_attributs
+    def __init__(self, client):
+        """Constructeur d'une instance de connexion."""
+        ObjetID.__init__(self)
+        self.client = client
 
-def cb_deconnexion(serveur, importeur, logger, client):
-    """Que se passe-t-il quand client se déconnecte ?"""
-    logger.info("Déconnexion du client {0} : {1}".format(client, client.retour))
-    importeur.connex.retirer_instance(client)
 
-def cb_reception(serveur, importeur, logger, client):
-    """Que se passe-t-il quand client envoie un message au serveur ?"""
-    msg = client.get_message_decode()
-    #print("J'ai réceptionné {0}".format(msg))
-    for c in serveur.clients.values():
-        c.envoyer("<{0}> {1}{2}".format(client.n_id, msg, fin_ligne).encode())
-
+ObjetID.ajouter_groupe(InstanceConnexion)

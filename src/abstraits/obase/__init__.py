@@ -75,5 +75,5 @@ class BaseObj:
     
     def __setstate__(self, dico_attrs):
         """Méthode appelée lors de la dé-sérialisation de l'objet"""
-        dico_attrs.update(type(self).attributs)
-        self.__dict__.update(dico_attrs)
+        type(self).attributs.update(dico_attrs)
+        self.__dict__.update(type(self).attributs)

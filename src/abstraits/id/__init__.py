@@ -170,14 +170,16 @@ class ObjetID(BaseObj):
         BaseObj.__init__(self)
         # On change le statut et enregistre l'objet
         self._statut = StatutObjet.INITIALISE
-        self.enregistrement()
+        self.enregistrer()
     
     def __setstate__(self, dico_attrs):
         """Méthode appelée lors de la sérialisation d'un objet hérité
         d'ObjetID.
         
         """
+        self._statut = StatutObjet.EN_CONSTRUCTION
         BaseObj.__setstate__(self, dico_attrs)
+        self._statut = StatutObjet.INITIALISE
         if self.id.id >= type(self).id_actuel:
             type(self).id_actuel = self.id.id + 1
     
@@ -191,8 +193,7 @@ class ObjetID(BaseObj):
         
         """
         object.__setattr__(self, nom_attr, val_attr)
-        if self._statut == StatutObjet.INITIALISE and ObjetID._supenr:
-            ObjetID._supenr.fil_attente.add(self)
+        self.enregistrer()
     
     def enregistrer(self):
         """Enregistre l'objet dans un fichier.
@@ -203,8 +204,8 @@ class ObjetID(BaseObj):
         
         """
         if ObjetID._supenr:
-            supenr = ObjetID._supenr
-            supenr.enregistrer(self)
+            if self._statut == StatutObjet.INITIALISE:
+                ObjetID._supenr.fil_attente.add(self)
         else:
             raise RuntimeError("impossible d'enregistrer {0} : le " \
                     "superviseur 'supenr' n'a pas été trouvé".format(self))

@@ -182,7 +182,7 @@ class Supenr(Module):
         
         """
         for objet in self.fil_attente:
-            objet.enregistrer()
+            self.enregistrer(objet)
         self.fil_attente.clear()
     
     def charger(self, sous_rep, nom_fichier):

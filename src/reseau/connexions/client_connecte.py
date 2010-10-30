@@ -58,7 +58,7 @@ class ClientConnecte:
             - le port sortant du client
 
         """
-        self.id = ClientConnecte.id_courant
+        self.n_id = ClientConnecte.id_courant
         ClientConnecte.id_courant += 1
 
         # Notre socket connecté
@@ -82,7 +82,7 @@ class ClientConnecte:
     def __str__(self):
         """On affiche l'ID du client, son ip et son port entrant"""
         return "{0} ({1}:{2}, {3})".format( \
-            self.id, self.adresse_ip, self.port, self.socket.fileno())
+            self.n_id, self.adresse_ip, self.port, self.socket.fileno())
 
     def nettoyer(self, message):
         """Cette méthode se charge de nettoyer le message passé en paramètre.

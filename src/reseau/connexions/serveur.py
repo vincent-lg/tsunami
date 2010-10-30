@@ -186,10 +186,10 @@ class ConnexionServeur:
         """
         client = ClientConnecte(socket, infos)
         # On ajoute le client au dictionnaire des clients (id-client)
-        self.clients[client.id] = client
+        self.clients[client.n_id] = client
 
         # On renseigne le dictionnaire {socket.fileno():id_client}
-        self.filenos[socket.fileno()] = client.id
+        self.filenos[socket.fileno()] = client.n_id
 
         # On appelle la fonction de callback "connexion"
         self.callbacks["connexion"].executer(client)
@@ -209,8 +209,8 @@ class ConnexionServeur:
         self.callbacks["deconnexion"].executer(client)
 
         # On supprime le client des clients connectés
-        if client.id in self.clients.keys():
-            del self.clients[client.id]
+        if client.n_id in self.clients.keys():
+            del self.clients[client.n_id]
 
         # On supprime le socket des filenos enregistrés
         if client.socket.fileno() in self.filenos.keys():
