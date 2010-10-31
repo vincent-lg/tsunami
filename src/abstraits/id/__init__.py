@@ -37,9 +37,9 @@ module pickle.
 [1] Les objets issus des sous-classes d'ObjetID sont destinés à être
     enregistré dans des fichiers. Leur récupération est également automatisée :
     Au chargement du module 'supenr', les différents groupes sont
-    récupérés et les objets chargés pour chaque groupe se retrouvent dans une
-    liste en attribut de la sous-classe (sous_classe.objets').
-    Voir la méthode 'config' du superviseur 'supenr'.
+    récupérés. Si vous voulez récupérer les objets d'un groupe, appelez
+    la méthode 'charger_groupe' de 'supenr' en lui passant en paramètre
+    la sous-classe contenant le groupe.
 
 """
 
@@ -133,7 +133,6 @@ class ObjetID(BaseObj):
     # Attributs à ne pas redéfinir
     _supenr = None # superviseur d'enregistrement
     groupes = {} # dictionnaire des groupes créés ({nom_groupe:classe})
-    objets = [] # Liste des objets du groupe récupérés par 'supenr'
     
     # Méthodes de classe
     def ajouter_groupe(groupe):
@@ -146,7 +145,6 @@ class ObjetID(BaseObj):
         """
         ObjetID.groupes[groupe.groupe] = groupe
         groupe.id_actuel = 1
-        groupe.objets = []
     
     # Méthodes d'instance
     def __init__(self):
@@ -193,7 +191,8 @@ class ObjetID(BaseObj):
         
         """
         object.__setattr__(self, nom_attr, val_attr)
-        self.enregistrer()
+        if not nom_attr.startswith("_"):
+            self.enregistrer()
     
     def enregistrer(self):
         """Enregistre l'objet dans un fichier.
