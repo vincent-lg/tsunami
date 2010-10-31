@@ -35,6 +35,7 @@ INSTANCIE = 0
 CONFIGURE = 1
 INITIALISE = 2
 DETRUIT = 3
+ARRETE = 4
 
 # Dictionnaire permettant de faire correspondre un statut à une chaîne
 STATUTS = {
@@ -42,6 +43,7 @@ STATUTS = {
     CONFIGURE:"configuré",
     INITIALISE:"initialisé",
     DETRUIT:"détruit",
+    ARRETE:"arrêté",
 }
 
 class Module:
@@ -53,6 +55,8 @@ class Module:
     -   config : configuration du module
     -   init : initialisation du module (ne pas confondre avec le constructeur)
     -   detruire : destruction du module, appelée lors du déchargement
+    -   arreter : arrête COMPLET d'un module (n'est appelé qu'en cas
+        d'arrêt contrôlé du programme)
     
     L'initialisation est la phase la plus importante. Elle se charge,
     en fonction de la configuration définie et instanciée dans config,
@@ -118,12 +122,20 @@ class Module:
         self.statut = INITIALISE
 
     def detruire(self):
-        """Méthode d'arrêt ou de déchargement du module.
+        """Méthode de déchargement du module.
         On l'appelle avant l'arrêt du MUD (en cas de reboot total) ou
         si l'on souhaite décharger ou recharger complètement un module.
         
         """
         self.statut = DETRUIT
+    
+    def arreter(self):
+        """Méthode d'arrêt du module.
+        On l'appelle avant l'arrêt du MUD (en cas de reboot total).
+        On ne l'appelle PAS si l'on souhaite recharger le module.
+        
+        """
+        self.statut = ARRETE
     
     def boucle(self):
         """Méthode appelée à chaque tour de boucle synchro."""

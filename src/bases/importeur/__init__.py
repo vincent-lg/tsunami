@@ -74,7 +74,7 @@ class Importeur:
     man_logs = None # gestionnaire des loggers
     logger = None # le logger de l'importeur
     
-    def __init__(self, parser_cmd, anaconf, man_logs):
+    def __init__(self, parser_cmd, anaconf, man_logs, serveur):
         """Constructeur de l'importeur. Il vérifie surtout
         qu'un seul est créé.
         
@@ -82,6 +82,7 @@ class Importeur:
         -   le parser de commande
         -   l'analyseur des fichiers de configuration
         -   le gestionnaire des loggers
+        -   le serveur
         Ces trois informations sont stockées comme des attributs de classe
         et transmises aux modules au moment de leur création.
         
@@ -94,6 +95,7 @@ class Importeur:
         Importeur.parser_cmd = parser_cmd
         Importeur.anaconf = anaconf
         Importeur.man_logs = man_logs
+        Importeur.serveur = serveur
         Importeur.logger = man_logs.creer_logger("", "importeur", "")
     
     def __str__(self):
@@ -268,6 +270,17 @@ class Importeur:
                     Importeur.logger.debug("  Le module {0} a été " \
                             "détruit".format(nom_module))
 
+    def tout_arreter(self):
+        """Méthode permettant d'arrêter tous les modules.
+        Cette méthode ne doit être appelée qu'en cas d'arrêt complet du MUD,
+        en cas de reboot total par exemple.
+        
+        """
+        for module in self.__dict__.values():
+            module.arreter()
+            Importeur.logger.debug("  Le module {0} a été " \
+                        "arrêté".format(module.nom))
+    
     def boucle(self):
         """Méthode appelée à chaque tour de boucle synchro.
         Elle doit faire appel à la méthode boucle de chaque module primaire
@@ -312,7 +325,7 @@ class Importeur:
             package = __import__(rep + "." + nom)
             module = getattr(getattr(package, nom), \
                     nom.capitalize())
-            setattr(self, nom, module(self, parser_cmd))
+            setattr(self, nom, module(self))
 
     def decharger_module(self, m_type, nom):
         """Méthode permettant de décharger un module.
@@ -337,7 +350,7 @@ class Importeur:
                 del sys.modules[cle]
 
         if self.module_est_charge(nom):
-            getattr(self, nom).detuire()
+            getattr(self, nom).detruire()
             delattr(self, nom)
         else:
             print("{0} n'est pas dans les attributs de l'importeur".format(nom))
@@ -350,7 +363,9 @@ class Importeur:
         """
         self.decharger_module(m_type, nom)
         self.charger_module(m_type, nom)
-
+        self.config_module(nom)
+        self.init_module(nom)
+    
     def config_module(self, nom):
         """Méthode chargée de configurer ou reconfigurer un module."""
         if self.module_est_charge(nom):

@@ -51,6 +51,7 @@ def arreter_mud(signal, frame):
     """Fonction appelée pour arrêter le MUD proprement"""
     global importeur, log
     importeur.tout_detruire()
+    importeur.tout_arreter()
     log.info("Fin de la session\n\n\n")
     sys.exit(0)
 
@@ -76,17 +77,6 @@ man_logs.config(anaconf, parser_cmd)
 # On se crée un logger
 log = man_logs.creer_logger("", "sup", "kassie.log")
 
-# On crée l'importeur, gérant les différents modules (primaires et secondaires)
-importeur = Importeur(parser_cmd, anaconf, man_logs)
-
-# On lance le processus d'instanciation des modules
-importeur.tout_charger()
-importeur.tout_instancier()
-
-# On configure et initialise les modules
-importeur.tout_configurer()
-importeur.tout_initialiser()
-
 # On prend comme base le port présent dans le fichier de configuration
 port = config_globale.port
 
@@ -101,7 +91,20 @@ if "port" in parser_cmd.keys():
 # La plupart des informations se trouve dans la configuration globale
 serveur = ConnexionServeur(port, config_globale.nb_clients_attente, \
         config_globale.nb_max_connectes)
-serveur.init() # Initialisation, le socket serveur se met en écoute
+
+# On crée l'importeur, gérant les différents modules (primaires et secondaires)
+importeur = Importeur(parser_cmd, anaconf, man_logs, serveur)
+
+# On lance le processus d'instanciation des modules
+importeur.tout_charger()
+importeur.tout_instancier()
+
+# On configure et initialise les modules
+importeur.tout_configurer()
+importeur.tout_initialiser()
+
+# Initialisation du serveur
+serveur.init() # le socket serveur se met en écoute
 log.info("Le serveur est à présent en écoute sur le port {0}".format(port))
 
 # Configuration des fonctions de callback
