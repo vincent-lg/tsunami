@@ -47,6 +47,36 @@ class Connex(Module):
         self.instances = {}
         Module.__init__(self, importeur, "connex", "primaire")
     
+    def init(self):
+        """Initialisation du module.
+        On récupère les instances de connexion et on les stock dans
+        'self.instances' si elles sont encore connectées.
+        En cas de crash, les anciennes connexions n'ont pas pu être effacées.
+        Cette méthode se charge de faire le ménage également.
+        
+        """
+        objets = self.importeur.supenr.charger_groupe(InstanceConnexion)
+        for inst in objets:
+            if inst.client.n_id in type(self.importeur).serveur.clients.keys():
+                inst.client = type(self.importeur).serveur.clients[ \
+                        inst.client.n_id]
+                self.instances[inst.client.n_id] = inst
+            else:
+                inst.detruire()
+        
+        ClientConnecte.id_courant = InstanceConnexion.id_actuel
+        Module.init(self)
+    
+    def arreter(self):
+        """Méthode d'arrêt du module.
+        On supprime toutes les instances de connexion.
+        
+        """
+        for n_id in list(self.instances.keys()):
+            self.retirer_instance(n_id)
+        
+        Module.arreter(self)
+    
     def __getitem__(self, item):
         """Méthode appelée quand on fait connex[item].
         L'item peut être de plusieurs types :

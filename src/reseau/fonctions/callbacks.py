@@ -51,7 +51,7 @@ def cb_deconnexion(serveur, importeur, logger, client):
 def cb_reception(serveur, importeur, logger, client):
     """Que se passe-t-il quand client envoie un message au serveur ?"""
     msg = client.get_message_decode()
-    #print("J'ai réceptionné {0}".format(msg))
-    for c in serveur.clients.values():
-        c.envoyer("<{0}> {1}{2}".format(client.n_id, msg, fin_ligne).encode())
+    if msg == 'reload_connex':
+        print("Rechargement du module primaire 'connex'")
+        importeur.recharger_module("primaire", "connex")
 

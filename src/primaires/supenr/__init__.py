@@ -98,10 +98,6 @@ class Supenr(Module):
     
     def init(self):
         """Méthode d'initialisation du module.
-        On récupère les différents objets des groupes d'identification.
-        Note importante : il est important dans ce contexte que le module
-        'supenr' ait la priorité en initialisation par rapport aux autres
-        modules l'utilisant.
         
         """
         global REP_ENRS
@@ -110,10 +106,6 @@ class Supenr(Module):
             chemin = REP_ENRS + os.sep + chemin
             if not os.path.exists(chemin):
                 os.makedirs(chemin)
-            objets = self.charger_groupe(groupe)
-            groupe.objets = objets
-            self.logger.info("{0} objets chargés dans le groupe {1}".format( \
-                    len(objets), groupe.groupe))
         
         Module.init(self)
     
