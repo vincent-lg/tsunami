@@ -47,7 +47,7 @@ Par exemple, le module diffact se définit comme suit :
 
 On crée un objet chargé de représenter le module. C'est cet objet qui
 possède les méthodes génériques chargées d'initialiser, configurer, lancer
-et arrêter un module. Les autres fichiers du module sont une boîte noir
+et arrêter un module. Les autres fichiers du module sont une boîte noire
 inconnue pour l'importeur.
 
 """
@@ -99,7 +99,7 @@ class Importeur:
         Importeur.logger = man_logs.creer_logger("", "importeur", "")
     
     def __str__(self):
-        """Retourne sous ue forme un peu plus lisible les modules importés."""
+        """Retourne sous une forme un peu plus lisible les modules importés."""
         ret = []
         for nom_module in self.__dict__.keys():
             ret.append("{0}: {1}".format(nom_module, getattr(self, \
@@ -109,7 +109,7 @@ class Importeur:
 
     def tout_charger(self):
         """Méthode appelée pour charger les modules primaires et secondaires.
-        Par défaut, on importe tout mais on ne créée rien.
+        Par défaut, on importe tout mais on ne crée rien.
 
         """
         # On commence par parcourir les modules primaires
@@ -142,11 +142,11 @@ class Importeur:
 
         NOTE IMPORTANTE: on passe au constructeur de chaque module
         self, c'est-à-dire l'importeur. Les modules en ont en effet
-        besoin pour interragir entre eux et avoir accès au parser de
+        besoin pour interagir entre eux et avoir accès au parser de
         la ligne de commande, à l'analyseur des fichiers de configuration
         et au gestionnaire des loggers.
         
-        L'ordre d'instanciation des modules est contenue dans la configuration
+        L'ordre d'instanciation des modules est contenu dans la configuration
         globale ('modules_a_instancier').
         Les modules à ignorer sont également définis dans cette configuration
         globale. Leur instance est supprimée de l'importeur.
@@ -158,7 +158,7 @@ class Importeur:
         for nom_module in conf_glb.modules_a_ignorer:
             if hasattr(self, nom_module): # le module est chargé
                 delattr(self, nom_module)
-                Importeur.logger.debug("  Le module {0} a été ignorré et " \
+                Importeur.logger.debug("  Le module {0} a été ignoré et " \
                         "supprimé de l'importeur".format(nom_module))
             else:
                 Importeur.logger.warning("  Le module {0} n'a pas été " \
@@ -178,8 +178,8 @@ class Importeur:
                     Importeur.logger.warning("  Le module {0} n'a pas été " \
                             "instancié".format(nom_module))
         
-        # On charge les modules restant
-        Importeur.logger.debug("Instanciation des modules restant :")
+        # On charge les modules restants
+        Importeur.logger.debug("Instanciation des modules restants :")
         for nom_module, module in self.__dict__.items():
             if type(module) is type: # on doit l'instancier
                 setattr(self, nom_module, module(self))
@@ -188,7 +188,7 @@ class Importeur:
 
     def tout_configurer(self):
         """Méthode permettant de configurer tous les modules qui en ont besoin.
-        Les modules qui doivent être configuré sont ceux instanciés.
+        Les modules qui doivent être configurés sont ceux instanciés.
         
         Attention: les modules non encore instanciés sont à l'état de classe.
         Tous les modules doivent donc être instanciés au minimum avant
@@ -207,8 +207,8 @@ class Importeur:
                     module.config()
                     Importeur.logger.debug("  Le module {0} a été " \
                             "configuré".format(nom_module))
-        # Configuration des modules restant
-        Importeur.logger.debug("Configuration des modules restant :")
+        # Configuration des modules restants
+        Importeur.logger.debug("Configuration des modules restants :")
         for module in self.__dict__.values():
             if module.statut == INSTANCIE:
                 module.config()
@@ -217,7 +217,7 @@ class Importeur:
     
     def tout_initialiser(self):
         """Méthode permettant d'initialiser tous les modules qui en ont besoin.
-        Les modules à initialiser sont ceux configuré.
+        Les modules à initialiser sont ceux configurés.
         
         """
         conf_glb = Importeur.anaconf.get_config("globale")
@@ -233,7 +233,7 @@ class Importeur:
                             "initialisé".format(nom_module))
         
         # Initialisation des modules restants
-        Importeur.logger.debug("Initialisation des modules restant :")
+        Importeur.logger.debug("Initialisation des modules restants :")
         for module in self.__dict__.values():
             if module.statut == CONFIGURE:
                 module.init()
@@ -307,7 +307,7 @@ class Importeur:
         
         Si le module est déjà chargé, on ne fait rien.
 
-        Note: à la différence de tout_charger, cette méthode créée directement
+        Note: à la différence de tout_charger, cette méthode crée directement
         l'objet gérant le module.
         
         """
@@ -359,6 +359,8 @@ class Importeur:
         """Cette méthode permet de recharger un module. Elle passe par :
         -   decharger_module
         -   charger_module
+        -   config_module
+        -   init_module
         
         """
         self.decharger_module(m_type, nom)

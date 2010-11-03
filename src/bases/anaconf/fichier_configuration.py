@@ -93,7 +93,7 @@ class FichierConfiguration:
                 t_match = re.search(r"^" + nom_don + r" *=", self.fichier, re.M)
                 if t_match is None:
                     # La donnée n'a pas été trouvée
-                    raise RuntimeError("la donnée {0} n'a pas été trouvée " \
+                    raise RuntimeError("La donnée {0} n'a pas été trouvée " \
                             "dans le fichier à mettre à jour".format(nom_don))
                 debut = t_match.start()
                 egal = t_match.end()

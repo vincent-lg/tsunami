@@ -32,11 +32,11 @@
 
 Chaque module secondaire se trouve dans un sous-package.
 
-Les modules secondaires n'ayant aucune relation d'inter-dépendance entre eux,
+Les modules secondaires n'ayant aucune relation d'interdépendance entre eux,
 aucun ordre d'instanciation n'est défini. On peut les charger dans le désordre,
 ou même ne pas en charger certains.
 
-Règles d'inter-dépendance :
+Règles d'interdépendance :
 -  les modules secondaires peuvent appeler des modules primaires
 -  les modules secondaires ne peuvent s'appeler entre eux
 

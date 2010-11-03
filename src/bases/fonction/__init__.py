@@ -36,7 +36,7 @@ class Fonction:
 
     """
     def __init__(self, fonction, *args, **kwargs):
-        """Créée  un objet Fonction gardant la fonction et les paramètres
+        """Crée  un objet Fonction gardant la fonction et les paramètres
         à appeler. Pour exécuter cette fonction, on utilise la méthode d'objet
         exec().
 

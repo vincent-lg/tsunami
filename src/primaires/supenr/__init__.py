@@ -65,7 +65,7 @@ class Supenr(Module):
     def __init__(self, importeur):
         """Constructeur du module"""
         Module.__init__(self, importeur, "supenr", "primaire")
-        self.fil_attente = set() # fil d'attente des objets à enregistrer
+        self.file_attente = set() # file d'attente des objets à enregistrer
         self.pic_memo = {} # mémo des picklers
         self.unpic_memo = {} # mémo des dépicklers
         self.logger = type(self.importeur).man_logs.creer_logger("supenr", \
@@ -88,7 +88,7 @@ class Supenr(Module):
         if "chemin-enregistrement" in parser_cmd.keys():
             REP_ENRS = parser_cmd["chemin-enregistrement"]
         
-        # On construit le répertoire si il n'existe pas
+        # On construit le répertoire s'il n'existe pas
         if not os.path.exists(REP_ENRS):
             os.makedirs(REP_ENRS)
         
@@ -110,7 +110,7 @@ class Supenr(Module):
         Module.init(self)
     
     def construire_rep(self, sous_rep):
-        """Construit le chemin REP_ENRS / sous_rep si il n'existe pas"""
+        """Construit le chemin REP_ENRS / sous_rep s'il n'existe pas"""
         global REP_ENRS
         chemin = REP_ENRS + os.sep + sous_rep
         if not os.path.exists(chemin):
@@ -124,7 +124,7 @@ class Supenr(Module):
         """
         global REP_ENRS
         if not est_objet_id(objet):
-            raise TuntimeError("l'objet {0} n'est pas un objet ID. On ne " \
+            raise TuntimeError("L'objet {0} n'est pas un objet ID. On ne " \
                     "peut l'enregistrer".format(objet))
         chemin_dest = REP_ENRS + os.sep + type(objet).sous_rep
         nom_fichier = str(objet.id.id) + ".sav"
@@ -151,7 +151,7 @@ class Supenr(Module):
         """
         global REP_ENRS
         if not est_objet_id(objet):
-            raise RuntimeError("l'objet {0} n'est pas un objet ID. On ne " \
+            raise RuntimeError("L'objet {0} n'est pas un objet ID. On ne " \
                     "peut le supprimer".format(objet))
         chemin_dest = REP_ENRS + os.sep + type(objet).sous_rep
         nom_fichier = str(objet.id.id) + ".sav"
@@ -166,16 +166,16 @@ class Supenr(Module):
     def boucle(self):
         """Méthode appelée à chaque tour de boucle synchro"""
         # On enregistre les objets en attente
-        self.enregistrer_fil_attente()
+        self.enregistrer_file_attente()
     
-    def enregistrer_fil_attente(self):
-        """On enregistre la fil d'attente. On appelle la méthode 'enregistrer'
-        de chaque objet contenu dans le set 'self.fil_attente'.
+    def enregistrer_file_attente(self):
+        """On enregistre la file d'attente. On appelle la méthode 'enregistrer'
+        de chaque objet contenu dans le set 'self.file_attente'.
         
         """
-        for objet in self.fil_attente:
+        for objet in self.file_attente:
             self.enregistrer(objet)
-        self.fil_attente.clear()
+        self.file_attente.clear()
     
     def charger(self, sous_rep, nom_fichier):
         """Charge le fichier indiqué et retourne l'objet dépicklé"""

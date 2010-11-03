@@ -86,7 +86,7 @@ port = config_globale.port
 if "port" in parser_cmd.keys():
     port = parser_cmd["port"]
 
-# Vous pouvez changer les paramètres du serveur, telles que spécifiées dans
+# Vous pouvez changer les paramètres du serveur, tels que spécifiés dans
 # le constructeur de ServeurConnexion (voir reseau/connexions/serveur.py)
 # La plupart des informations se trouve dans la configuration globale
 serveur = ConnexionServeur(port, config_globale.nb_clients_attente, \

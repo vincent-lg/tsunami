@@ -51,11 +51,11 @@ class Module:
     ou secondaire.
     
     Chacun des modules primaires ou secondaires devra hériter de cette classe.
-    Elle reprend les méthodes d'un module, appelée dans l'ordre :
+    Elle reprend les méthodes d'un module, appelées dans l'ordre :
     -   config : configuration du module
     -   init : initialisation du module (ne pas confondre avec le constructeur)
     -   detruire : destruction du module, appelée lors du déchargement
-    -   arreter : arrête COMPLET d'un module (n'est appelé qu'en cas
+    -   arreter : arrêt COMPLET d'un module (n'est appelé qu'en cas
         d'arrêt contrôlé du programme)
     
     L'initialisation est la phase la plus importante. Elle se charge,
@@ -105,7 +105,7 @@ class Module:
         Note: cette méthode est également utilisée pour recharger la
         configuration. Si on doit faire certaines actions dans le cadre
         de la première configuration, se baser sur le statut qui doit être
-        INSTANCIE. Si il est INITIALISE, cela signifie que le module
+        INSTANCIE. S'il est INITIALISE, cela signifie que le module
         a été configuré une fois au moins.
 
         """

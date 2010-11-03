@@ -46,7 +46,7 @@ class Diffact(Module):
     
     Exemples :
     -   si une commande doit faire une pause pendant 3 secondes, au moment
-        de la pause, la commande s'arrête et créée une action différée
+        de la pause, la commande s'arrête et crée une action différée
         qui devra s'exécuter dans 3 secondes. Il sera nécessaire de dédier
         l'exécution de cette action à une fonction ou méthode, en lui précisant
         un certain nombre de paramètres
@@ -100,7 +100,7 @@ class Diffact(Module):
         
         """
         if nom_action in self.actions.keys():
-            self.logger.warning("l'action différée {0} existe déjà. " \
+            self.logger.warning("L'action différée {0} existe déjà. " \
                     "L'ancienne sera écrasée".format(nom_action))
         action = ActionDifferee(nom_action, tps, ref_fonc, *args, **kwargs)
         self.actions[nom_action] = action
