@@ -36,8 +36,8 @@ from abstraits.id import ObjetID, StatutObjet
 # Attributs de la classe
 dic_attributs = {
     "client": None,
-    "contextes": {},
-    "contexte_actuel": None,
+    "contextes_courant": {},
+    "contexte_selectionne": None,
     "personnage": None,
 }
 
