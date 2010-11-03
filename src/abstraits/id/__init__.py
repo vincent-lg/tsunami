@@ -29,7 +29,7 @@
 
 
 """Ce package définit les objets et fonctions nécessaires à la manipulation
-d'objets identifiées par des ID. La classe ObjetID, détaillée plus bas,
+d'objets identifiés par des ID. La classe ObjetID, détaillée plus bas,
 donne plus d'informations sur ces objets.
 Ces objets sont aussi destinés à être enregistrés dans des fichiers grâce au
 module pickle.
@@ -63,14 +63,14 @@ class ObjetID(BaseObj):
     obtenir un identifiant unique, propre à chaque objet créé.
 
     Celui-ci se base sur deux données :
-    -   une chaîne de caractère identifiant le groupe d'objets. Ce préfixe
+    -   une chaîne de caractères identifiant le groupe d'objets. Ce préfixe
         est nécessaire quand on souhaite grouper plusieurs objets dans
         une structure, un dictionnaire par exemple.
         Quand on souhaite créer un nouveau groupe, on doit hériter cette
         classe en lui donnant un nom de groupe qui sera utilisé pour chaque
-        objet créé
+        objet créé ;
     -   un entier identifiant clairement le numéro de l'objet. Cet entier
-        s'incrémente à chaque fois que l'on créée un objet du groupe
+        s'incrémente à chaque fois que l'on crée un objet du groupe.
     
     Exemple : 'salles:45' fait référence à un objet du groupe 'salles'
     (probablement une salle) dont le numéro identifiant est 45. Ainsi, on ne
@@ -89,7 +89,7 @@ class ObjetID(BaseObj):
     vers le même objet, ce sera toujours vrai après la récupération
     des objets enregistrés. Voir 'enregistrer' pour plus d'informations.
     
-    Mode d'emplois :
+    Mode d'emploi :
     -   Si vous souhaitez définir un nouveau groupe identifiant,
         vous devez hériter de cette classe et redéfinir, dans la sous-classe,
         l'attribut de classe 'groupe' en lui donnant le nom de votre nouveau
@@ -108,7 +108,7 @@ class ObjetID(BaseObj):
         Vous devez également redéfinir l'attribut de classe 'sous_rep' qui
         contient le chemin relatif menant aux données de votre groupe.
         NE REDEFINISSEZ PAS LES AUTRES ATTRIBUTS DE CLASSE DE 'ObjetID'
-    -   Après avoir définit votre classe, vous devez l'ajouter en tant que
+    -   Après avoir défini votre classe, vous devez l'ajouter en tant que
         groupe d'identification. Utilisez pour cela la méthode de classe
         'ajouter_groupe' de 'ObjetID' en lui passant en paramètre votre sous-
         classe nouvellement créée :
@@ -118,7 +118,7 @@ class ObjetID(BaseObj):
         jusqu'à leur destruction. Elles seront également récupérées
         au lancement du MUD, automatiquement, grâce au module 'supenr'.
         Dans notre exemple, au lancement du MUD, une liste contenant les
-        salles récupérées par dé-sérialisation sera écrite dans l'attribut de
+        salles récupérées par désérialisation sera écrite dans l'attribut de
         classe 'objets' de votre groupe. 'Salle.objets' contiendra, après la
         récupération des données, la liste des salles récupérées
         automatiquement par 'supenr'.
@@ -127,7 +127,7 @@ class ObjetID(BaseObj):
     # Attributs à redéfinir en sous-classe
     groupe = "" # la chaîne contenant le nom du groupe préfixant l'ID
     id_actuel = 1 # on compte à partir de 1
-    sous_rep = "" # sous répertoire menant de _chemin_enr aux données du groupe
+    sous_rep = "" # sous-répertoire menant de _chemin_enr aux données du groupe
     attributs = {} # Dictionnaire des attributs et de leur valeur par défaut
     
     # Attributs à ne pas redéfinir
@@ -140,7 +140,7 @@ class ObjetID(BaseObj):
         Après la définition de la sous-classe héritée d'ObjetID,
         cette méthode doit être appelée (on lui passe en paramètre la
         sous-classe). Cette méthode permet de garder une trace des groupes
-        créés et de leur ID actuelle.
+        créés et de leur ID actuel.
         
         """
         ObjetID.groupes[groupe.groupe] = groupe
@@ -171,7 +171,7 @@ class ObjetID(BaseObj):
         self.enregistrer()
     
     def __setstate__(self, dico_attrs):
-        """Méthode appelée lors de la sérialisation d'un objet hérité
+        """Méthode appelée lors de la désérialisation d'un objet hérité
         d'ObjetID.
         
         """
@@ -185,7 +185,7 @@ class ObjetID(BaseObj):
         """Méthode appelée lorsqu'on cherche à modifier un attribut
         de l'objet. Si l'objet est initialisé, on le place dans l'ensemble
         des objets à enregistrer. On ne l'enregistre pas immédiatement
-        mais bien plus tôt à chaque tour de boucle synchro. Cela limite
+        mais à chaque tour de boucle synchro. Cela limite
         les accès disque et oppose une légère résistance en cas de corruption
         de données.
         
@@ -236,8 +236,8 @@ def est_objet_id(objet):
 
 def existe(objet):
     """Retourne True si l'objet existe c'est-à-dire :
-    -   si il n'est pas None
-    -   si il n'est pas ObjetID et détruit
+    -   s'il n'est pas None
+    -   s'il n'est pas ObjetID et détruit
     
     """
     return objet is None or (est_objet_id(objet) and objet._statut != \

@@ -43,13 +43,13 @@ import os
 import sys
 
 class Analyseur:
-    """Cette classe définit un gestionnaire de fichier de configuration chargé
+    """Cette classe définit un gestionnaire de fichiers de configuration chargé
     de lire, écrire et interpréter les données de configuration.
     
     Le schéma d'exécution est le suivant :
     -   On souhaite charger un fichier de configuration. Le fichier est lu,
         mis en mémoire et filtré. La forme des données de configuration
-        est des plus simple : une ligne, constituée du nom de l'information
+        est des plus simples : une ligne, constituée du nom de l'information
         suivie d'un signe égal (=) puis du résultat. Le résultat de la donnée
         sera interprété par Python à l'aide de la fonction eval, au moment
         où elle sera demandée. Cela permet d'avoir des données variables,
@@ -63,13 +63,13 @@ class Analyseur:
         à une fonction ou une classe, il est nécessaire que la fonction ou
         classe soit déclarée comme globales de l'interpréteur (voir
         'set_globales').
-    -   Lors de la lecture, chaque nom de donnée est stockée à même l'objet,
+    -   Lors de la lecture, chaque nom de donnée est stocké à même l'objet,
         en tant qu'attribut propre. Ainsi les noms des donénes devront
         respecter une syntaxe propre, sans espaces ni accents ni caractères
         spéciaux, hormis le signe souligné (_). Il est également préférable
         de n'avoir aucun caractère en majuscule, pour des raisons de 
-        convention. Le résultat de la donnée est enregistrée en tant
-        que valeur de l'attribut, mais non interprétée.
+        convention. Le résultat de la donnée est enregistré en tant
+        que valeur de l'attribut, mais non interprété.
         Les commentaires sont tout simplement ignorés.
     -   On demande à l'objet d'obtenir la valeur d'une donnée. Dans ce cas et
         dans ce cas uniquement, la donnée est interprétée, puis retournée.
@@ -96,7 +96,7 @@ class Analyseur:
         *   Le nom du fichier de configuration. Il permet naturellement
             de l'ouvrir, étape indispensable pour l'analyser
         *   Le nom du fichier par défaut (il s'agit d'un repère, si une erreur
-            est trouvée dans l'interprétation du modèl
+            est trouvée dans l'interprétation du modèle)
         *   La chaîne contenant le fichier de configuration par défaut.
             Cette chaîne se trouve en dur dans le code. Elle est
             indispensable : un fichier de configuration ne peut être interprété
@@ -107,7 +107,7 @@ class Analyseur:
             fichier de configuration
         
         La configuration trouvée dans le fichier prime naturellement sur
-        celle par défaut. La chaîne defauts n'est utilisé que si des
+        celle par défaut. La chaîne defaut n'est utilisé que si des
         données ne sont pas trouvées, ou pour effacer des données périmées.
         
         """
@@ -168,7 +168,7 @@ class Analyseur:
             attribut = object.__getattribute__(self, nom)
             return eval(attribut)
         else:
-            raise ValueError("la donnée '{0}' n'a pu être trouvée dans " \
+            raise ValueError("La donnée '{0}' n'a pu être trouvée dans " \
                     "cette configuration".format(nom))
     
     def set_globales(self, globales):

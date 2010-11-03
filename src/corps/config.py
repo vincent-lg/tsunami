@@ -29,14 +29,14 @@
 
 """Modèle du fichier de configuration du corps.
 
-Dans ce fichier se trouve, dans une chaîne de caractère enregistrée dans la
+Dans ce fichier se trouve, dans une chaîne de caractères enregistrée dans la
 variable 'pere',  le fichier de configuration globale par défaut.
 Si des options doivent être ajoutées, elles le sont ici et seront directement
 répercutées dans le fichier de configuration utilisé. Les anciennes données ne
 seront naturellement pas écrasées par cette nouvelle configuration.
 
 NOTE IMPORTANTE: les données présentes dans ce fichier sont interprétées comme
-des données Python. Si vous voulez mettre une chaîne de caractère, n'oubliez
+des données Python. Si vous voulez mettre une chaîne de caractères, n'oubliez
 pas de l'entourer de guillemets ou d'apostrophes. Si vous voulez décrire un
 chemin Windows avec des anti-slashs '\', n'oubliez pas de les échapper.
 
@@ -118,7 +118,7 @@ modules_a_initialiser = ['supenr']
 # ceux à détruire en dernier, après les autres modules non spécifiés.
 modules_a_detruire = []
 
-# Liste des modules à ignorer (ils ne seront pas instanciés, mais quand-même
+# Liste des modules à ignorer (ils ne seront pas instanciés, mais quand même
 # chargés)
 modules_a_ignorer = []
 

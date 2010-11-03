@@ -31,7 +31,7 @@
 """Ce fichier contient la classe Message, définie plus bas."""
 
 class Message:
-    """Cette classe représente un message de log stockée par la fil
+    """Cette classe représente un message de log stocké par la fil
     d'attente du Logger.
     
     """

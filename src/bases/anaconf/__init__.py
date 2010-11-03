@@ -28,14 +28,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Anaconf, un analyseur de fichier
-de configurations.
+"""Ce fichier contient la classe Anaconf, un analyseur de fichiers
+de configuration.
 
 Une instance de cette classe est créée à la fin du fichier.
 Cette instance sera la seule nécessaire pour manipuler des données de
 configuration.
 
-Mode d'emplois :
+Mode d'emploi :
 *   On importe l'instance 'anaconf' :
     >>> from bases.anaconf import anaconf
 *   Si c'est la première fois qu'on le manipule, on doit le configurer :
@@ -50,7 +50,7 @@ Mode d'emplois :
         comme 'nom_du_module:nom_analyseur'
         Ce nom sera nécessaire si on souhaite récupérer la configuration
         depuis un autre point du code ('get_config crée un analyseur
-        si il n'existe pas, retourne celui existant sinon)
+        s'il n'existe pas, retourne celui existant sinon)
     -   le chemin menant au fichier de configuration. Celui-ci doit être
         un chemin relatif, à partir de REP_CONFIG
     -   le nom du fichier par défaut [1]
@@ -67,7 +67,7 @@ Mode d'emplois :
 [1] L'analyse des données de configuration s'effectue depuis un modèle
     contenu en dur dans le code. Chaque module a charge de ses modèles de
     configuration. Pour le corps, voir dans src/corps/config.py
-    Ces modèles sont enregistrés dans une chaîne de caractère du même
+    Ces modèles sont enregistrés dans une chaîne de caractères du même
     format qu'un fichier de configuration. Ce modèle permet à l'analyseur
     de savoir quelles données doivent être définies dans le fichier de
     configuration analysée. Si les données ne sont pas présentes dans le
@@ -119,7 +119,7 @@ class Anaconf:
         if "chemin-configuration" in parser_cmd.keys():
             REP_CONFIG = parser_cmd["chemin-configuration"]
         
-        # On construit le répertoire si il n'existe pas
+        # On construit le répertoire s'il n'existe pas
         if not os.path.exists(REP_CONFIG):
             os.makedirs(REP_CONFIG)
         
@@ -130,7 +130,7 @@ class Anaconf:
         Le paramètre 'nom_id' sert d'identifiant pour les configurations déjà
         chargées.
         Le paramètre 'defauts' est une chaîne écrite comme un fichier
-        de configuration, analysé comme tel et contenant les données par
+        de configuration, analysée comme telle et contenant les données par
         défaut.
         Si certaines données ne sont pas trouvées, on les met à jour grâce
         à ce paramètre et on met à jour le fichier de configuration.
@@ -143,11 +143,11 @@ class Anaconf:
             # Cela revient à charger le fichier de configuration
             # ATTENTION : si le chemin est laissé vide, on lève une exception
             if chemin == "":
-                raise RuntimeError("le chargement de l'analyseur {0} " \
+                raise RuntimeError("Le chargement de l'analyseur {0} " \
                         "a échoué. Aucun chemin passé en paramètre".format( \
                         nom_id))
             logger = man_logs.creer_logger("anaconf", nom_id)
-            # On construit le répertoire si il n'existe pas
+            # On construit le répertoire s'il n'existe pas
             rep = os.path.split(chemin)[0]
             if not os.path.exists(rep):
                 os.makedirs(rep)

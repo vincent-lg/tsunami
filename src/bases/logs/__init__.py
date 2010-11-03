@@ -30,14 +30,14 @@
 
 """Ce fichier contient la classe Log, détaillée plus bas.
 
-Il permet d'instancier un objet de cette classe, appelée man_logs
+Il permet d'instancier un objet de cette classe, appelé man_logs
 (gestionnaire des loggers). Cet objet sera importé par le corps et les modules
 qui ont beson de logger certaines choses. Depuis cette classe, on peut créer
 un logger avec certains paramètres. Ce logger peut ensuite être utilisé pour
 enregistrer des messages propres à une fonciton, un module, une action du
 corps...
 
-Mode d'emplois :
+Mode d'emploi :
 *   Commencez par importer man_logs (objet pour manipuler les loggers)
     >>> from bases.log import man_logs
 *   Si c'est la première fois que man_logs est appelé, il doit être configuré
@@ -57,8 +57,8 @@ Mode d'emplois :
         Par exemple : 'diffact/erreurs'
         Le répertoire 'erreurs' sera construit dans le dossier 'diffact',
         lui-même construit dans le dossier REP_LOGS .
-    -   le nom du logger : il identifie de façon unique un logger. SI le nom
-        du fichier n'est pas précisé, il sert comme base
+    -   le nom du logger : il identifie de façon unique un logger. Si le nom
+        du fichier n'est pas précisé, il sert comme base.
         Evitez de donner un nom peu explicite tel que 'erreurs', cela
         pourrait entraîner des conflits.
         Si ce logger est chargé des erreurs du module 'diffact', donner un nom
@@ -68,9 +68,9 @@ Mode d'emplois :
 
 NOTE IMPORTANTE: on peut créer des loggers avant que man_logs ne soit
 configuré. Toutefois, étant donné que man_logs ne sait pas encore où
-enregistrer les fichiers de log, il les stock en mémoire en attendant
-d'être configuré. Les messages sont affiché en console sans délai mais ils ne
-seront écrit en fichier qu'après la configuration de man_logs.
+enregistrer les fichiers de log, il les stocke en mémoire en attendant
+d'être configuré. Les messages sont affichés en console sans délai mais ils ne
+seront écrits en fichier qu'après la configuration de man_logs.
 
 """
 
@@ -80,7 +80,7 @@ import time
 from bases.logs.logger import *
 
 # Dossier d'enregistrement des fichiers de log
-# Vous pouvez changer  directement cette variable, ou bien la modifier
+# Vous pouvez changer directement cette variable, ou bien la modifier
 # dans les fichiers de configuration, ou encore la passer en argument
 # de la ligne de commande
 REP_LOGS = os.path.expanduser("~") + os.sep + "kassie" + os.sep + "logs"

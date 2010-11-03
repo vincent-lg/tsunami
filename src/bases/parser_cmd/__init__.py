@@ -31,7 +31,7 @@
 """Ce fichier définit un parser de la ligne de commande.
 
 Le parser analyse la ligne de commande en se basant sur le module getopt
-et traite chaque cas indépendemment.
+et traite chaque cas indépendamment.
 
 """
 
@@ -54,7 +54,7 @@ class ParserCMD(dict):
         disponibles.
         
         A noter que le corps et les modules primaires sont seuls à pouvoir
-        être configuré via la ligne de commande, sauf option générique.
+        être configurés via la ligne de commande, sauf option générique.
         
         """
         # Syntaxe des options attendues
@@ -87,7 +87,7 @@ class ParserCMD(dict):
         
         # Analyse itérative des options
         for nom, val in opts:
-            # On test successivement chaque nom
+            # On teste successivement chaque nom
             # Préférer tester chaque option dans l'ordre alphabétique
             if nom in ["-c", "--chemin-configuration"]:
                 self["chemin-configuration"] = val

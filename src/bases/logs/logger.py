@@ -72,7 +72,7 @@ class Logger:
     -   un format d'enregistrement des messages
     -   un niveau minimum pour afficher le message. A noter que tous les
         messages sont enregistrés dans le fichier. Mais on peut par exemple
-        demander que seuls les informations critiques soient affichées
+        demander que seules les informations critiques soient affichées
         dans la console
 
     NOTE IMPORTANTE : sauf depuis l'intérieur de la classe, on ne doit pas
@@ -82,7 +82,7 @@ class Logger:
     et fatal, respectivement pour chaque niveau d'erreur.
 
     """
-    en_fil = True # par défaut on log en fil d'attente
+    en_file = True # par défaut on log en file d'attente
     def __init__(self, rep_base, sous_rep, nom_fichier, nom_logger, \
             console=True, format=FORMAT, niveau_min=INFO):
         """Constructeur du logger. Seuls les quatre premiers paramètres
@@ -99,8 +99,8 @@ class Logger:
         
         """
         self.nom = nom_logger
-        self.en_fil = type(self).en_fil # par défaut, on met en fil d'attente
-        self.fil_attente = [] # fil d'attente des messages à sauver
+        self.en_file = type(self).en_file # par défaut, on met en file d'attente
+        self.file_attente = [] # file d'attente des messages à sauver
         self.rep_base = rep_base
         self.sous_rep = sous_rep
         self.nom_fichier = nom_fichier
@@ -134,7 +134,7 @@ class Logger:
 
     def verif_rep(self):
         """Cette méthode vérifie si le répertoire de log existe.
-        Si ce n'est pas le cas, on le créée.
+        Si ce n'est pas le cas, on le crée.
 
         """
         rep = self.rep_complet
@@ -160,7 +160,7 @@ class Logger:
             self.fichier = None
 
     def formater(self, niveau, message):
-        """Méthode retournant la chaîne formattée.
+        """Méthode retournant la chaîne formatée.
         
         Si des formats spécifiques sont ajoutés, les définir ici.
         On définit un format spécifique comme une partie de chaîne entourée
@@ -216,8 +216,8 @@ class Logger:
         """
         s_niveau = NIVEAUX[niveau]
         f_message = self.formater(s_niveau, message)
-        if self.en_fil:
-            self.fil_attente.append(Message(s_niveau, message, f_message))
+        if self.en_file:
+            self.file_attente.append(Message(s_niveau, message, f_message))
             if self.doit_afficher(niveau, module):
                 print(message)
         else:
@@ -226,15 +226,15 @@ class Logger:
 
             self.log_formate(niveau, message, f_message, self.nom)
 
-    def enregistrer_fil_attente(self):
+    def enregistrer_file_attente(self):
         """Cette méthode ne doit être appelée qu'une fois.
-        Elle permet d'enregistrer la fil d'attente du logger.
-        Cette fil d'attente s'est remplie pendant que le module 'log' se
+        Elle permet d'enregistrer la file d'attente du logger.
+        Cette file d'attente s'est remplie pendant que le module 'log' se
         configurait. Dès son initialisation, le module demande à cette méthode
-        que la fil d'attente de chaque logger créé soit enregistrée.
+        que la file d'attente de chaque logger créé soit enregistrée.
         
         """
-        for message in self.fil_attente:
+        for message in self.file_attente:
             self.log_formate(message.niveau, message.message, \
                     message.message_formate,self.nom)
     

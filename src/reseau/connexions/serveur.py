@@ -47,7 +47,7 @@ des instructions à effectuer dans les cas suivants :
 Ces fonctions, ainsi que leurs paramètres, sont à préciser avant
 l'initialisation et le lancement du serveur.
 
-Par défaut, ces fonctions de callback vallent None.
+Par défaut, ces fonctions de callback valent None.
 
 """
 
@@ -59,7 +59,7 @@ from reseau.connexions.client_connecte import ClientConnecte
 from bases.fonction import *
 
 class ConnexionServeur:
-    """Cette classe représente le socket en écoute sur le port choisit
+    """Cette classe représente le socket en écoute sur le port choisi
     dont le rôle est d'ajouter de nouveaux clients et de gérer leurs messages.
     
     Sur une architecture réseau simple, elle n'a besoin d'être instanciée
@@ -74,8 +74,8 @@ class ConnexionServeur:
     
     def __init__(self, port, nb_clients_attente=5, nb_max_connectes=-1, \
             attente_connexion=0.05, attente_reception=0.05):
-        """Créée un socket en écoute sur le port spécifié.
-        - port : le port surlequel on écoute (>1024)
+        """Crée un socket en écoute sur le port spécifié.
+        - port : le port sur lequel on écoute (>1024)
         - nb_clients_attente : le nombre maximum de clients en attente de
           connexion. Ce nombre est passé à la méthode listen du socket
         - nb_max_connectes : le nombre maximum de clients connectés
@@ -86,12 +86,12 @@ class ConnexionServeur:
         - attente_connexion : temps pendant lequel on attend de nouvelles
           connexions. C'est en fait le Time Out passé à select.select
           quand il s'agit de surveiller les clients qui souhaitent se
-          connecter. Ce temps est précisé en seconde (0.05 s = 50 ms)
+          connecter. Ce temps est précisé en secondes (0.05 s = 50 ms)
           Si on souhaite un Time Out infini mettre cette variable à None.
         - attente_reception : temps indiquant pendant combien de temps
           on attend un message à réceptionner sur les clients déjà connectés.
           Ce nombre est passé comme Time Out de select.select quand il s'agit
-          de surveiller les sockets connectés. Ce temps est précisé en seconde
+          de surveiller les sockets connectés. Ce temps est précisé en secondes
           (0.05 s = 50 ms)
           Si on souhaite un Time Out infini mettre cette variable à None.
         
@@ -124,7 +124,7 @@ class ConnexionServeur:
 
         # Fonctions de callback
         self.callbacks = {
-            # declencheur : (fonction, parametres)
+            # déclencheur : (fonction, parametres)
             "connexion":Fonction(None),
             "deconnexion":Fonction(None),
             "reception":Fonction(None),
@@ -155,7 +155,7 @@ class ConnexionServeur:
     def get_client_depuis_socket(self, socket):
         """Cette méthode retourne le client connecté, en fonction du
         socket passé en paramètre. On se base sur le fileno() du socket
-        pour retrouver l'ID du client et sur le dictionnaaire filenos
+        pour retrouver l'ID du client et sur le dictionnaire filenos
         faisant la correspondance.
 
         On retourne le client trouvé.
@@ -164,7 +164,7 @@ class ConnexionServeur:
         try:
             return self.clients[self.filenos[socket.fileno()]]
         except KeyError:
-            raise KeyError("le socket n. {0} n'est pas un socket client" \
+            raise KeyError("Le socket n. {0} n'est pas un socket client" \
                     .format(socket.fileno()))
 
     def get_clients_sockets(self):
@@ -232,7 +232,7 @@ class ConnexionServeur:
         attente_connexion spécifié dans le constructeur de l'objet.
 
         Elle se charge d'ajouter les clients connectés à la liste
-        des clients si le nombre maximum de connecté n'est pas excédé.
+        des clients si le nombre maximum de connectés n'est pas excédé.
 
         Dans le cas contraire, on envoie au client un message par défaut
         et on le déconnecte du serveur.
@@ -267,7 +267,7 @@ class ConnexionServeur:
                         "supplementaires.".encode())
                     socket.close()
                 else:
-                    # On créée notre client
+                    # On crée notre client
                     client = self.ajouter_client(socket, infos)
 
     def verifier_receptions(self):

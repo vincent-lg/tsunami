@@ -49,7 +49,7 @@ class Connex(Module):
     
     def init(self):
         """Initialisation du module.
-        On récupère les instances de connexion et on les stock dans
+        On récupère les instances de connexion et on les stocke dans
         'self.instances' si elles sont encore connectées.
         En cas de crash, les anciennes connexions n'ont pas pu être effacées.
         Cette méthode se charge de faire le ménage également.
@@ -87,14 +87,14 @@ class Connex(Module):
         if isinstance(item, ClientConnecte):
             item = item.n_id
         if item not in self.instances.keys():
-            raise KeyError("l'ID {0} ne se trouve pas dans les instances " \
+            raise KeyError("L'ID {0} ne se trouve pas dans les instances " \
                     "connectées".format(repr(item)))
         return self.instances[item]
     
     def ajouter_instance(self, client):
         """Cette méthode permet d'ajouter une instance de connexion.
         Elle est appelée quand la connexion est établie avec le serveur.
-        Ainsi, l'instance de connexion set créée avec des paramètres par
+        Ainsi, l'instance de connexion est créée avec des paramètres par
         défaut.
         
         """

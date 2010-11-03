@@ -33,9 +33,9 @@
 import socket
 
 class ClientConnecte:
-    """Cette classe est une classe envelope d'un socket.
+    """Cette classe est une classe enveloppe d'un socket.
     Elle reprend les méthodes utiles à la manipulation des sockets et possède
-    quelques attributs et méthodes implémentées pour faciliter son insertion dans
+    quelques attributs et méthodes implémentés pour faciliter son insertion dans
     un serveur TCP.
     
     Cette classe est appelée pour héberger un client connecté, c'est-à-dire
@@ -50,7 +50,7 @@ class ClientConnecte:
     def __init__(self, socket_connecte, infos):
         """Constructeur standard.
         
-        On donne à la connexion créée une ID qui lui sera propre.
+        On donne à la connexion créée un ID qui lui sera propre.
         Les paramètres à entrer sont :
         - le socket retourné par la méthode accept()
         - les infos de connexion, un tuple contenant :
@@ -126,7 +126,7 @@ class ClientConnecte:
         try:
             actuel = encodages[decodage]
         except IndexError:
-            raise UnicodeError("aucun encodage n'a pu etre utilise " \
+            raise UnicodeError("Aucun encodage n'a pu etre utilise " \
                     "sur cette chaine")
         try:
             n_message = message.decode(actuel)
@@ -135,8 +135,8 @@ class ClientConnecte:
             return self.decoder(message, decodage+1)
 
     def envoyer(self, message):
-        """Envoie d'un message au socket.
-        Le message est déjà encodé. Ce n'set plus un type str.
+        """Envoi d'un message au socket.
+        Le message est déjà encodé. Ce n'est plus un type str.
         """
         self.socket.send(message)
 
@@ -196,7 +196,7 @@ class ClientConnecte:
         """Méthode appelée pour déconnecter un client.
         - on ferme la connexion du socket
         - on met à jour le booléen self.connecte
-        - on stock le message retourné dans self.retour
+        - on stocke le message retourné dans self.retour
 
         """
         self.socket.close()

@@ -35,18 +35,18 @@ class BaseObj:
     directement ou indirectement dans un fichier.
     
     Rappelons que :
-    *   Les objets destinés à être DIRECTEMENT enregistré dans des fichiers
+    *   Les objets destinés à être DIRECTEMENT enregistrés dans des fichiers
         doivent être hérités de 'ObjetID' (voir abstraits/id/__init__.py)
-        La clases ObjetID hérite elle-même de BaseObj.
-    *   Les objets destinés à être INDIRECTEMENT enregistré dans des fichiers
+        La classe ObjetID hérite elle-même de BaseObj.
+    *   Les objets destinés à être INDIRECTEMENT enregistrés dans des fichiers
         doivent être hérités de BaseObj.
         Ces objets sont ceux destinés à être enregistrés dans des fichiers
         sous la forme d'attributs d'autres objets par exemple.
     
     On se base sur un dictionnaire représentant les attributs, lui-même étant
     un attribut de classe :
-    -   les clés sont constitués des noms des attributs
-    -   les valeurs sont les valeurs par défaut des attributs correspondant
+    -   les clés sont constituées des noms des attributs
+    -   les valeurs sont les valeurs par défaut des attributs correspondants
     
     Exemple d'utilisation :
     >>> from abstraits.obase import BaseObj
@@ -74,7 +74,7 @@ class BaseObj:
         self.__dict__.update(type(self).attributs)
     
     def __setstate__(self, dico_attrs):
-        """Méthode appelée lors de la dé-sérialisation de l'objet"""
+        """Méthode appelée lors de la désérialisation de l'objet"""
         attributs = dict(type(self).attributs)
         attributs.update(dico_attrs)
         self.__dict__.update(attributs)
