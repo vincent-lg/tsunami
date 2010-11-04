@@ -123,7 +123,7 @@ class ManLogs:
             Logger.en_fil = False
             logger.rep_base = REP_LOGS
             logger.verif_rep()
-            logger.enregistrer_fil_attente()
+            logger.enregistrer_file_attente()
     
     def creer_logger(self, sous_rep, nom_logger, nom_fichier=""):
         """Retourne un nouveau logger.
