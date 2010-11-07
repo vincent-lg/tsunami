@@ -205,8 +205,9 @@ class Logger:
             # On essaye d'écrire dans le fichier
             try:
                 self.fichier.write(formate + "\n")
-            except IOError:
+            except IOError as io_err:
                 pass
+        
         self.fermer_fichier()
 
     def log(self, niveau, message, module):
@@ -216,14 +217,14 @@ class Logger:
         """
         s_niveau = NIVEAUX[niveau]
         f_message = self.formater(s_niveau, message)
-        if self.en_file:
+        if Logger.en_file:
             self.file_attente.append(Message(s_niveau, message, f_message))
             if self.doit_afficher(niveau, module):
                 print(message)
         else:
             if self.doit_afficher(niveau, module):
                 print(message)
-
+            
             self.log_formate(niveau, message, f_message, self.nom)
 
     def enregistrer_file_attente(self):

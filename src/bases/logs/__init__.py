@@ -120,7 +120,7 @@ class ManLogs:
         # d'enregistrement des logs et on leur demande de s'enregistrer
         # dans des fichiers
         for logger in self.loggers.values():
-            Logger.en_fil = False
+            Logger.en_file = False
             logger.rep_base = REP_LOGS
             logger.verif_rep()
             logger.enregistrer_file_attente()
