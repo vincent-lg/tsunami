@@ -46,7 +46,7 @@ STATUTS = {
     ARRETE:"arrêté",
 }
 
-class Module:
+class BaseModule:
     """Cette classe est une classe abstraite définissant un module, primaire
     ou secondaire.
     

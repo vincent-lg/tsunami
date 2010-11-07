@@ -43,7 +43,7 @@ Dans chaque module, on s'occupera de charger l'objet le représentant.
 Par exemple, le module diffact se définit comme suit :
 *   un package diffact contenu dans REP_PRIMAIRES
     *   un fichier __init__.py
-        *   une classe Diffact
+        *   une classe Module
 
 On crée un objet chargé de représenter le module. C'est cet objet qui
 possède les méthodes génériques chargées d'initialiser, configurer, lancer
@@ -122,8 +122,7 @@ class Importeur:
         for nom_package in os.listdir(os.getcwd() + "/" + REP_PRIMAIRES):
             if not nom_package.startswith("__"):
                 package = __import__(REP_PRIMAIRES + "." + nom_package)
-                module = getattr(getattr(package, nom_package), \
-                        nom_package.capitalize())
+                module = getattr(getattr(package, nom_package), "Module")
                 setattr(self, nom_package, module)
                 Importeur.logger.debug("  Le module {0} a été chargé".format( \
                         nom_package))
@@ -131,8 +130,7 @@ class Importeur:
         for nom_package in os.listdir(os.getcwd() + "/" + REP_SECONDAIRES):
             if not nom_package.startswith("__"):
                 package = __import__(REP_SECONDAIRES + "." + nom_package)
-                module = getattr(getattr(package, nom_package), \
-                        nom_package.capitalize())
+                module = getattr(getattr(package, nom_package), "Module")
                 setattr(self, nom_package, module)
                 Importeur.logger.debug("  Le module {0} a été chargé".format( \
                         nom_package))

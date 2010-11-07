@@ -28,10 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Supenr, définissant le module primaire
-du même nom.
-
-"""
+"""Ce fichier contient le module primaire supenr."""
 
 import os
 import pickle
@@ -44,7 +41,7 @@ from abstraits.id import ObjetID, est_objet_id
 # ligne de commande
 REP_ENRS = os.path.expanduser("~") + os.sep + "kassie" + os.sep + "enregistrements"
 
-class Supenr(Module):
+class Module(BaseModule):
     """Classe du module 'supenr'.
     
     Ce module gère l'enregistrement des données et leur récupération.
@@ -64,7 +61,7 @@ class Supenr(Module):
     """
     def __init__(self, importeur):
         """Constructeur du module"""
-        Module.__init__(self, importeur, "supenr", "primaire")
+        BaseModule.__init__(self, importeur, "supenr", "primaire")
         self.file_attente = set() # file d'attente des objets à enregistrer
         self.pic_memo = {} # mémo des picklers
         self.unpic_memo = {} # mémo des dépicklers
@@ -94,7 +91,7 @@ class Supenr(Module):
         
         ObjetID._supenr = self
         
-        Module.config(self)
+        BaseModule.config(self)
     
     def init(self):
         """Méthode d'initialisation du module.
@@ -107,7 +104,7 @@ class Supenr(Module):
             if not os.path.exists(chemin):
                 os.makedirs(chemin)
         
-        Module.init(self)
+        BaseModule.init(self)
     
     def construire_rep(self, sous_rep):
         """Construit le chemin REP_ENRS / sous_rep s'il n'existe pas"""

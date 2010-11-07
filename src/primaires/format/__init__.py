@@ -28,22 +28,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Format définissant le module primaire
-du même nom.
-
-"""
+"""Fichier contenant le module primaire format."""
 
 from abstraits.module import *
 from primaires.format.message import Message
 
-class Format(Module):
+class Module(BaseModule):
     """Cette classe décrit le module primaire Format, chargé du formatage,
     notamment du formattage des messages à envoyer aux clients.
     
     """
     def __init__(self, importeur):
         """Constructeur du module"""
-        Module.__init__(self, importeur, "format", "primaire")
+        BaseModule.__init__(self, importeur, "format", "primaire")
     
     def formater(self, message):
         """Retourne le message formatté.

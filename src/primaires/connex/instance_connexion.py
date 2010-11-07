@@ -38,6 +38,38 @@ class InstanceConnexion:
     
     """
     def __init__(self, client):
-        """Constructeur d'une instance de connexion."""
+        """Constructeur d'une instance de connexion.
+        On peut y trouver trois informations :
+        *   le client connecté
+        *   le personnage (à None par défaut)
+        *   le contexte
+        
+        """
         self.client = client
         self.personnage = None
+        self.contexte = None
+    
+    def envoyer(self, message):
+        pass
+    def receptionner(self, message):
+        """Cette méthode est appelée quand l'instance de connexion
+        réceptionne un message. Deux cas sont psosibles :
+        *   contexte n'est pas None
+            Dans ce cas, on demande au contexte de traiter le message.
+            On lui passe en paramètre l'instance.
+        *   contexte est à None
+            Dans ce cas, on envoie le message au personnage qui se charge
+            de l'interpréter.
+        
+        Note: cela fait que les contextes peuvent accepter soit une instance
+        de connexion, soit un personnage. Les contextes à attendre
+        une instance ne seront pas nombreux : ce seront ceux appelés
+        à la connexion / création de compte. Tous les autres auront un
+        personnage défini.
+             
+        """
+        if self.contexte: # le personnage ne semble pas encore connecté
+            self.contexte.receptionner(self, message)
+        else:
+            self.personnage.receptionner(message)
+

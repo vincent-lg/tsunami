@@ -28,10 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Connex définissant le module primaire
-du même nom.
-
-"""
+"""Fichier contenant le module primaire connex."""
 
 from abstraits.module import *
 from primaires.connex.instance_connexion import InstanceConnexion
@@ -40,15 +37,15 @@ from reseau.connexions.client_connecte import ClientConnecte
 # Nom du groupe fictif
 NOM_GROUPE = "connexions"
 
-class Connex(Module):
+class Module(BaseModule):
     """Module gérant les connexions et faisant donc le lien entre les clients
     connectés et les joueurs, ou leur instance de connexion.
     
     """
     def __init__(self, importeur):
         """Constructeur du module"""
+        BaseModule.__init__(self, importeur, "connex", "primaire")
         self.instances = {}
-        Module.__init__(self, importeur, "connex", "primaire")
     
     def init(self):
         """Initialisation du module.
@@ -58,7 +55,6 @@ class Connex(Module):
         Cette méthode se charge de faire le ménage également.
         
         """
-        
         if NOM_GROUPE in type(self.importeur).parid:
             objets = type(self.importeur).parid[NOM_GROUPE].values()
             print("On récupère de parid")
@@ -76,7 +72,7 @@ class Connex(Module):
         # On ajoute le dictionnaire 'instances' comme groupe fictif de 'parid'
         type(self.importeur).parid[NOM_GROUPE] = self.instances
         
-        Module.init(self)
+        BaseModule.init(self)
     
     def __getitem__(self, item):
         """Méthode appelée quand on fait connex[item].

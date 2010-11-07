@@ -28,14 +28,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Interpreteur définissant le module primaire
-du même nom.
-
-"""
+"""Fichier contenant le module primaire interpreteur."""
 
 from abstraits.module import *
 
-class Interpreteur(Module):
+class Module(BaseModule):
     """Cette classe est la classe-mère de tous les interpréteurs.
     Elle recense les différents contextes, en crée certains et permet
     à chaque module de créer ses propres contextes, commandes, éditeurs...
@@ -43,5 +40,5 @@ class Interpreteur(Module):
     """
     def __init__(self, importeur):
         """Constructeur du module"""
-        Module.__init__(self, importeur, "interpreteur", "primaire")
+        BaseModule.__init__(self, importeur, "interpreteur", "primaire")
 

@@ -28,15 +28,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Diffact définissant le module primaire
-du même nom.
-
-"""
+"""Fichier contenant le module primaire diffact."""
 
 from abstraits.module import *
 from primaires.diffact.action_differee import ActionDifferee
 
-class Diffact(Module):
+class Module(BaseModule):
     """Cette classe contient les informations du module primaire diffact.
     Ce module permet de gérer des actions différés.
     Typiquement, quand un module primaire ou secondaire doit se mettre en pause
@@ -72,15 +69,11 @@ class Diffact(Module):
     """
     def __init__(self, importeur):
         """Constructeur du module"""
-        Module.__init__(self, importeur, "diffact", "primaire")
+        BaseModule.__init__(self, importeur, "diffact", "primaire")
         self.actions = {} # {nom_action:action_differee}
         self.logger = type(self.importeur).man_logs.creer_logger("diffact", \
                 "diffact")
     
-    def config(self):
-        """Redéfinition de la configuration du module."""
-        Module.config(self)
-
     def boucle(self):
         """Redéfinition de la méthode boucle du Module.
         Cette méthode est appelée pour chaque module, à chaque tour de boucle
