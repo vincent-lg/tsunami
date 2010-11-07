@@ -37,6 +37,9 @@ from abstraits.module import *
 from primaires.connex.instance_connexion import InstanceConnexion
 from reseau.connexions.client_connecte import ClientConnecte
 
+# Nom du groupe fictif
+NOM_GROUPE = "connexions"
+
 class Connex(Module):
     """Module gérant les connexions et faisant donc le lien entre les clients
     connectés et les joueurs, ou leur instance de connexion.
@@ -55,27 +58,25 @@ class Connex(Module):
         Cette méthode se charge de faire le ménage également.
         
         """
-        objets = self.importeur.supenr.charger_groupe(InstanceConnexion)
+        
+        if NOM_GROUPE in type(self.importeur).parid:
+            objets = type(self.importeur).parid[NOM_GROUPE].values()
+            print("On récupère de parid")
+        else:
+            objets = []
+            print("On récupère rien")
+        
         for inst in objets:
             if inst.client.n_id in type(self.importeur).serveur.clients.keys():
                 inst.client = type(self.importeur).serveur.clients[ \
                         inst.client.n_id]
                 self.instances[inst.client.n_id] = inst
-            else:
-                inst.detruire()
+                print("On récupère", inst)
         
-        ClientConnecte.id_courant = InstanceConnexion.id_actuel
+        # On ajoute le dictionnaire 'instances' comme groupe fictif de 'parid'
+        type(self.importeur).parid[NOM_GROUPE] = self.instances
+        
         Module.init(self)
-    
-    def arreter(self):
-        """Méthode d'arrêt du module.
-        On supprime toutes les instances de connexion.
-        
-        """
-        for n_id in list(self.instances.keys()):
-            self.retirer_instance(n_id)
-        
-        Module.arreter(self)
     
     def __getitem__(self, item):
         """Méthode appelée quand on fait connex[item].
@@ -113,5 +114,4 @@ class Connex(Module):
             raise KeyError("l'ID {0} ne se trouve pas dans les instances " \
                     "connectées".format(repr(client)))
         instance = self.instances[client]
-        instance.detruire()
         del self.instances[client]

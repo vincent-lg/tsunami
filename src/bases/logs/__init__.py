@@ -96,11 +96,11 @@ class ManLogs:
 
     """
     def __init__(self):
-        """Constructeur du manager"""
+        """Constructeur du gestionnaire"""
         self.loggers = {} # {nom_logger:logger}
     
     def config(self, anaconf, parser_cmd):
-        """Configuration du manager"""
+        """Configuration du gestionnaire"""
         global REP_LOGS
         config_globale = anaconf.get_config("globale")
         # Si le chemin est précisé dans la configuration globale
@@ -115,7 +115,7 @@ class ManLogs:
         if not os.path.exists(REP_LOGS):
             os.makedirs(REP_LOGS)
         
-        # Tous les loggers créés avant la configuration du manager
+        # Tous les loggers créés avant la configuration du gestionnaire
         # doivent être configurés également. On leur donne le répertoire
         # d'enregistrement des logs et on leur demande de s'enregistrer
         # dans des fichiers

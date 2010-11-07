@@ -73,8 +73,10 @@ class Importeur:
     anaconf = None # analyseur des fichiers de configuration
     man_logs = None # gestionnaire des loggers
     logger = None # le logger de l'importeur
+    parid = None
+    serveur = None
     
-    def __init__(self, parser_cmd, anaconf, man_logs, serveur):
+    def __init__(self, parser_cmd, anaconf, man_logs, parid, serveur):
         """Constructeur de l'importeur. Il vérifie surtout
         qu'un seul est créé.
         
@@ -82,9 +84,11 @@ class Importeur:
         -   le parser de commande
         -   l'analyseur des fichiers de configuration
         -   le gestionnaire des loggers
+        -   le gestionnaire des IDs
         -   le serveur
-        Ces trois informations sont stockées comme des attributs de classe
-        et transmises aux modules au moment de leur création.
+        Ces informations sont stockées comme des attributs de classe.
+        Si un module souaite y faire apel il n'aura qu'à faire
+        'Importeur.attribut'.
         
         """
         Importeur.nb_importeurs += 1
@@ -95,6 +99,7 @@ class Importeur:
         Importeur.parser_cmd = parser_cmd
         Importeur.anaconf = anaconf
         Importeur.man_logs = man_logs
+        Importeur.parid = parid
         Importeur.serveur = serveur
         Importeur.logger = man_logs.creer_logger("", "importeur", "")
     

@@ -108,7 +108,7 @@ class Anaconf:
     
     """
     def __init__(self):
-        """Constructeur du module"""
+        """Constructeur du gestionnaire"""
         self.configs = {}
     
     def config(self, parser_cmd):

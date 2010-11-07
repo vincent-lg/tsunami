@@ -43,6 +43,7 @@ from bases.importeur import Importeur
 from bases.parser_cmd import ParserCMD
 from bases.anaconf import anaconf
 from bases.logs import man_logs
+from bases.parid import parid
 from corps.config import pere
 
 # Définition de la fonction appelée quand on arrête le MUD avec CTRL + C
@@ -93,7 +94,7 @@ serveur = ConnexionServeur(port, config_globale.nb_clients_attente, \
         config_globale.nb_max_connectes)
 
 # On crée l'importeur, gérant les différents modules (primaires et secondaires)
-importeur = Importeur(parser_cmd, anaconf, man_logs, serveur)
+importeur = Importeur(parser_cmd, anaconf, man_logs, parid, serveur)
 
 # On lance le processus d'instanciation des modules
 importeur.tout_charger()

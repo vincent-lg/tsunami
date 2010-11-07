@@ -31,24 +31,13 @@
 """Ce fichier définit la classe InstanceConnexion, détaillée plus bas."""
 
 
-from abstraits.id import ObjetID, StatutObjet
-
-# Attributs de la classe
-dic_attributs = {
-    "client": None,
-    "contextes_courant": {},
-    "contexte_selectionne": None,
-    "personnage": None,
-}
-
-class InstanceConnexion(ObjetID):
-    groupe = "connexions"
-    sous_rep = "connexions"
-    attributs = dic_attributs
+class InstanceConnexion:
+    """Classe représentant une instance de connexion.
+    Elle est là pour faire la jonction entre un client connecté et un
+    personnage.
+    
+    """
     def __init__(self, client):
         """Constructeur d'une instance de connexion."""
-        ObjetID.__init__(self)
         self.client = client
-
-
-ObjetID.ajouter_groupe(InstanceConnexion)
+        self.personnage = None

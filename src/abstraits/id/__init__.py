@@ -133,6 +133,7 @@ class ObjetID(BaseObj):
     # Attributs à ne pas redéfinir
     _supenr = None # superviseur d'enregistrement
     groupes = {} # dictionnaire des groupes créés ({nom_groupe:classe})
+    parid = None # gestionnaire des ID
     
     # Méthodes de classe
     def ajouter_groupe(groupe):
@@ -145,6 +146,7 @@ class ObjetID(BaseObj):
         """
         ObjetID.groupes[groupe.groupe] = groupe
         groupe.id_actuel = 1
+        ObjetID.parid[groupe.groupe] = {}
     
     # Méthodes d'instance
     def __init__(self):
@@ -166,6 +168,8 @@ class ObjetID(BaseObj):
         type(self).id_actuel += 1
         # Appel du constructeur de BaseObj
         BaseObj.__init__(self)
+        # On l'ajoute dans le parid
+        ObjetID.parid[self.id.groupe][self.id.id] = self
         # On change le statut et enregistre l'objet
         self._statut = StatutObjet.INITIALISE
         self.enregistrer()
@@ -180,6 +184,9 @@ class ObjetID(BaseObj):
         self._statut = StatutObjet.INITIALISE
         if self.id.id >= type(self).id_actuel:
             type(self).id_actuel = self.id.id + 1
+        
+        # On l'ajoute dans parid
+        ObjetID.parid[self.id.groupe][self.id.id] = self
     
     def __setattr__(self, nom_attr, val_attr):
         """Méthode appelée lorsqu'on cherche à modifier un attribut
