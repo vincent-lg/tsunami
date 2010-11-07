@@ -30,6 +30,7 @@
 
 """Ce fichier définit la classe InstanceConnexion, détaillée plus bas."""
 
+from primaires.connex.motd import MOTD
 
 class InstanceConnexion:
     """Classe représentant une instance de connexion.
@@ -41,28 +42,35 @@ class InstanceConnexion:
         """Constructeur d'une instance de connexion.
         On peut y trouver trois informations :
         *   le client connecté
-        *   le personnage (à None par défaut)
+        *   l'emetteur
         *   le contexte
         
         """
         self.client = client
-        self.personnage = None
+        self.emetteur = None
         self.contexte = None
+        self.client.envoyer(MOTD.encode())
     
     def envoyer(self, message):
-        pass
+        """Envoie au client le message.
+        Le message passé doit être un type bytes.
+        On l'envoie donc telle quelle.
+        
+        """
+        client.envoyer(message)
+    
     def receptionner(self, message):
         """Cette méthode est appelée quand l'instance de connexion
         réceptionne un message. Deux cas sont psosibles :
         *   contexte n'est pas None
             Dans ce cas, on demande au contexte de traiter le message.
-            On lui passe en paramètre l'instance.
+            On lui passe en paramètre l'instance (self)
         *   contexte est à None
-            Dans ce cas, on envoie le message au personnage qui se charge
+            Dans ce cas, on envoie le message à l'émetteur qui se charge
             de l'interpréter.
         
         Note: cela fait que les contextes peuvent accepter soit une instance
-        de connexion, soit un personnage. Les contextes à attendre
+        de connexion, soit un émetteur. Les contextes à attendre
         une instance ne seront pas nombreux : ce seront ceux appelés
         à la connexion / création de compte. Tous les autres auront un
         personnage défini.
@@ -71,5 +79,5 @@ class InstanceConnexion:
         if self.contexte: # le personnage ne semble pas encore connecté
             self.contexte.receptionner(self, message)
         else:
-            self.personnage.receptionner(message)
+            self.emetteur.receptionner(message)
 

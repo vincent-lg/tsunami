@@ -28,17 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire interpreteur."""
+"""Package des différents contextes utiles à la connexion et la création de
+compte.
 
-from abstraits.module import *
-
-class Module(BaseModule):
-    """Cette classe est la classe gérant tous les interpréteurs.
-    Elle recense les différents contextes, en crée certains et permet
-    à chaque module de créer ses propres contextes, commandes, éditeurs...
-    
-    """
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "interpreteur", "primaire")
-        self.contextes = {} # Dictionnaire des contextes
+"""

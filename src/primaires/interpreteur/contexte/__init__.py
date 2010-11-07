@@ -70,23 +70,24 @@ class Contexte:
     Pour plus d'informations, visiter les sous-paquets.
 
     """
+    importeur = None
     
-    def __init__(self, nom, **kwargs):
-        """Constructeur d'un contexte.
-        Le nom est un identifiant. Il n'a pas besoin, à proprement parlé,
-        d'être unique. Cependant, il faut être conscient du fait que
-        le module 'interpreteur' conserve certains contextes créés.
-        
-        Certains contextes, comme l'interpréteur de commande en mode connecté
-        (le plus souvent utilisé), la connexion au MUD, la création de compte,
-        etc..., sont uniques et n'ont pas intérêt à être déclarés plusieurs
-        fois. Pour ceux-là, le nom fait office d'identifiant.
-        
-        On peut également préciser bien d'autres paramètres, qui seront écrits
-        comme attribut du contexte. Ces attributs sont propres au type de
-        contexte et peuvent être variable d'un contexte à l'autre.
+    def __init__(self, nom):
+        """Constructeur d'un contexte."""
+        pass
+    
+    def accueil(self, emt):
+        """Retourne un message d'accueil à l'émetteur.
+        Ce message est envoyé à chaque fois que le joueur arrive dans ce
+        contexte.
         
         """
-        self.__dict__.update(kwargs)
-        self.nom = nom
+        return ""
     
+    def interpreter(self, emt, msg):
+        """Méthode appelée quand le contexte reçoit un message à interpréter.
+            emt - l'émetteur du message
+            msg - le message sous la forme d'une chaîne
+        
+        """
+        pass

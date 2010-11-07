@@ -28,17 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire interpreteur."""
+"""Ce fichier définit la classe Compte."""
 
-from abstraits.module import *
+from abstraits.id import ObjetID
 
-class Module(BaseModule):
-    """Cette classe est la classe gérant tous les interpréteurs.
-    Elle recense les différents contextes, en crée certains et permet
-    à chaque module de créer ses propres contextes, commandes, éditeurs...
+# Attributs d'un compte
+dic_attributs = {
+    "nom":"",
+    "mot_de_passe":"",
+    "adresse_email":"",
+    "encodage":"",
+    "joueurs":{}, # {id_joueur:joueur}
+}
+
+class Compte(ObjetID):
+    """Classe représentant un compte.
+    On peut y trouver différentes informations :
+    *   le nom (naturellement), identifiant du compte
+    *   le mot de passe chiffré, protégeant le compte
+    *   une adresse e-mail valide
+    *   un encodage de sortie
+    *   la liste des joueurs liés à ce compte
     
     """
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "interpreteur", "primaire")
-        self.contextes = {} # Dictionnaire des contextes
+    groupe = "comptes"
+    sous_rep = "comptes"
+    attributs = dic_attributs
+    
+    def __init__(self, nom_compte):
+        """Constructeur d'un compte."""
+        ObjetID.__init__(self)
+        self.nom = nom_compte
+
+ObjetID.ajouter_groupe(Compte)

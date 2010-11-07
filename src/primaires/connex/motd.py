@@ -28,17 +28,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire interpreteur."""
+"""Ce fichier contient le MOTD (Message Of The Day). C'est le message
+que reçoit un client qui vient de se connecter.
 
-from abstraits.module import *
+En général, il s'agit d'un message de présentation, un dessin ASCII, un rappel
+du nom du MUD, éventuellement de la version, des auteurs / contributeurs,
+du code-base...
 
-class Module(BaseModule):
-    """Cette classe est la classe gérant tous les interpréteurs.
-    Elle recense les différents contextes, en crée certains et permet
-    à chaque module de créer ses propres contextes, commandes, éditeurs...
-    
-    """
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "interpreteur", "primaire")
-        self.contextes = {} # Dictionnaire des contextes
+"""
+
+MOTD = r"""
+Kassie, version de développement.
+
+"""

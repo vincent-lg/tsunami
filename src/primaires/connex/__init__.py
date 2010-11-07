@@ -33,6 +33,7 @@
 from abstraits.module import *
 from primaires.connex.instance_connexion import InstanceConnexion
 from reseau.connexions.client_connecte import ClientConnecte
+from primaires.connex.compte import Compte
 
 # Nom du groupe fictif
 NOM_GROUPE = "connexions"
@@ -46,21 +47,23 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "connex", "primaire")
         self.instances = {}
+        self.cnx_logger = type(self.importeur).man_logs.creer_logger( \
+                "connex", "connexions")
+        # Comptes
+        self.comptes = {}
+        self.cpt_logger = type(self.importeur).man_logs.creer_logger( \
+                "connex", "comptes")
     
     def init(self):
         """Initialisation du module.
         On récupère les instances de connexion et on les stocke dans
         'self.instances' si elles sont encore connectées.
-        En cas de crash, les anciennes connexions n'ont pas pu être effacées.
-        Cette méthode se charge de faire le ménage également.
         
         """
         if NOM_GROUPE in type(self.importeur).parid:
             objets = type(self.importeur).parid[NOM_GROUPE].values()
-            print("On récupère de parid")
         else:
             objets = []
-            print("On récupère rien")
         
         for inst in objets:
             if inst.client.n_id in type(self.importeur).serveur.clients.keys():
@@ -71,6 +74,14 @@ class Module(BaseModule):
         
         # On ajoute le dictionnaire 'instances' comme groupe fictif de 'parid'
         type(self.importeur).parid[NOM_GROUPE] = self.instances
+        
+        # On récupère les comptes
+        comptes = self.importeur.supenr.charger_groupe(Compte)
+        for compte in comptes:
+            self.comptes[compte.id.id] = compte
+        
+        self.cpt_logger.info("{0} compte(s) récupéré(s)".format( \
+                len(self.comptes)))
         
         BaseModule.init(self)
     
