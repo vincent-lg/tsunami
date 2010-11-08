@@ -70,6 +70,7 @@ class Contexte:
     Pour plus d'informations, visiter les sous-paquets.
 
     """
+
     importeur = None
     
     def __init__(self, nom):

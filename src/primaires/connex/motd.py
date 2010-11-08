@@ -37,7 +37,20 @@ du code-base...
 
 """
 
-MOTD = r"""
-Kassie, version de développement.
+MOTD = """
+Bienvenue sur
+
+ ,ggg,        gg                                                
+dP""Y8b       dP                                                
+Yb, `88      d8'                                                
+ `"  88    ,dP'                                    gg           
+     88aaad8"                                      ""           
+     88\"\"\"\"Yb,      ,gggg,gg    ,g,       ,g,      gg    ,ggg,  
+     88     "8b    dP"  "Y8I   ,8'8,     ,8'8,     88   i8" "8i 
+     88      `8i  i8'    ,8I  ,8'  Yb   ,8'  Yb    88   I8, ,8I 
+     88       Yb,,d8,   ,d8b,,8'_   8) ,8'_   8) _,88,_ `YbadP' 
+     88        Y8P"Y8888P"`Y8P' "YY8P8PP' "YY8P8P8P""Y8888P"Y888
+     
+                                                Version de developpement
 
 """

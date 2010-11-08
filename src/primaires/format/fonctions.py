@@ -32,8 +32,8 @@
 à envoyer.
 
 Fonctions à appliquer à la réception de message :
--   echaper_sp_cars : échapper les caractères spéciaux utilisés pour les codes
-    couleurs ou les codes de formattage
+-   echapper_sp_cars : échapper les caractères spéciaux utilisés pour les codes
+    couleurs ou les codes de formatage
 
 Fonctions à appliquer à l'émission de message :
 -   convertir_nl : convertir les sauts de ligne '\n' dans un format
@@ -44,14 +44,14 @@ Fonctions à appliquer à l'émission de message :
 
 """
 
-# Constantes de formattage
+# Constantes de formatage
 sp_cars_a_echapper = { # caractères à échapper
     "|":"|bar|",
 }
 
-sp_cars_a_replacer = {} # dictionnaire miroir de sp_cars_a_echapper
+sp_cars_a_remplacer = {} # dictionnaire miroir de sp_cars_a_echapper
 for cle, val in sp_cars_a_echapper.items():
-    sp_cars_a_replacer[val] = cle
+    sp_cars_a_remplacer[val] = cle
 
 NL = "\r\n"
 
@@ -75,26 +75,26 @@ def echapper_sp_cars(msg):
 
 def convertir_nl(msg):
     """Cette fonction est appelée pour convertir les sauts de ligne '\n'
-    en saut de ligne compris par tous les clients (y compris telnet).
+    en sauts de ligne compris par tous les clients (y compris telnet).
     
     """
     return msg.replace("\n", NL)
 
 def ajouter_couleurs(msg):
-    """Cette fonction est appelée pour convertir les codes de formattage
+    """Cette fonction est appelée pour convertir les codes de formatage
     couleur en leur équivalent ANSI.
     A CODER.
     
     """
     return msg
 
-def replacer_sp_cars(msg):
-    """On replace les caractères d'échappement d'un message, ceux échappés
+def remplacer_sp_cars(msg):
+    """On remplace les caractères d'échappement d'un message, ceux échappés
     par la méthode 'echapper_sp_cars' à la réception du message.
     
-    On se base sur le dictionnaire miroir 'sp_cars_a_replacer'.
+    On se base sur le dictionnaire miroir 'sp_cars_a_remplacer'.
     
     """
-    for code_car, a_repl in sp_cars_a_replacer.items():
-        msg = msg.replace(code_car, a_repl)
+    for code_car, a_repl in sp_cars_a_remplacer.items():
+        msg = msg.remplace(code_car, a_repl)
     return msg

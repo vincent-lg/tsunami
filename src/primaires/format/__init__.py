@@ -35,7 +35,7 @@ from primaires.format.message import Message
 
 class Module(BaseModule):
     """Cette classe décrit le module primaire Format, chargé du formatage,
-    notamment du formattage des messages à envoyer aux clients.
+    notamment du formatage des messages à envoyer aux clients.
     
     """
     def __init__(self, importeur):
@@ -43,7 +43,7 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "format", "primaire")
     
     def formater(self, message):
-        """Retourne le message formatté.
+        """Retourne le message formaté.
         Voir: primaires.format.message
         
         """
