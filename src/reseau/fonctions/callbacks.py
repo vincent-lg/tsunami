@@ -54,4 +54,6 @@ def cb_reception(serveur, importeur, logger, client):
     if msg == 'reload_connex':
         print("Rechargement du module primaire 'connex'")
         importeur.recharger_module("primaire", "connex")
-
+    else:
+        instance = importeur.connex[client]
+        instance.receptionner(msg)

@@ -36,6 +36,60 @@ développés dans ce package.
 
 """
 
+from primaires.format.fonctions import *
+
+class OptionsContexte:
+    """Options du contexte.
+    
+    Liste des options :
+    Options de réception :
+    *   echp_sp_cars - échapper les caractères spéciaux du message :
+        Si cette option est à True, les caractères spéciaux entrés
+        par le client seront échappés.
+        Si cette option est à False, les caractères spéciaux ne seront pas
+        échappés ce qui permet au client d'entrer des caractères spéciaux (sauts
+        de ligne, couleurs...).
+    
+    Options d'envoie :
+    *   ncod - encoder les messages à envoyer :
+        Si cette option est à True, on encode le message avant de l'envoyer
+        en fonction de l'encodage précisé (voir l'option emt_ncod)
+        Si cette option est à False, on n'encode rien avant d'envoyer
+        (on part donc du principe qu'on reçoit un type 'bytes')
+    *   emt_ncod - encoder les messages à envoyer grâce à l'encodage de
+        l'émetteur :
+        Pour que cette option soit prise en compte, l'option 'ncod' doit être
+        à True.
+        Si l'option 'emt_ncod' est à True, on encodera les messages à envoyer
+        en fonction de l'encodage précisé danss l'émetteur (attribut
+        'encodage' de l'objet 'emt')
+        Si cette option est à False, on encode grâce à l'encodage par défaut
+        (Utf-8).
+    *   sup_accents - on supprime les accents du message avant de l'envoyer
+        Attention : cette option n'est efficace que si 'ncod' est à True.
+    
+    Options de navigation :
+    *   rci_ctx_prec - raccourci vers le contexte précédent :
+        Si un contexte précédent est entré dans cette option, le client pourra
+        l'atteindre automatiquement en entrant le raccourci de retour
+        (voir la constante 'RCI_PREC')
+    
+    """
+    def __init__(self):
+        """Constructeur par défaut des options"""
+        # Options de réception
+        self.echp_sp_cars = True
+        
+        # Options d'envoie
+        self.emt_ncod = True
+        self.sup_accents = False
+        self.ncod = True
+        
+        # Options de navigation
+        self.rci_ctx_prec = ""
+
+RCI_PREC = "/"
+
 class Contexte:
     """Classe abstraite définissant un contexte.
     Si vous voulez utiliser un contexte :
@@ -70,12 +124,17 @@ class Contexte:
     Pour plus d'informations, visiter les sous-paquets.
 
     """
-
     importeur = None
     
     def __init__(self, nom):
         """Constructeur d'un contexte."""
-        pass
+        self.nom = nom
+        type(self).importeur.interpreteur.ajouter_contexte(self)
+        self.opts = OptionsContexte()
+    
+    def get_prompt(self, emt):
+        """Retourne le prompt qui sera affiché à chaque message envoyé"""
+        return ""
     
     def accueil(self, emt):
         """Retourne un message d'accueil à l'émetteur.
@@ -85,6 +144,28 @@ class Contexte:
         """
         return ""
     
+    def deconnecter(self, emt):
+        """Méthode appelée quand l'émetteur se déconnecte du contexte
+        (déconnexion non demandée, on ne sort pas du contexte naturellement)
+        
+        """
+        pass
+    
+    def get_contexte(self, nom_contexte):
+        """Récupère depuis l'interpréteur l'instance du contexte
+        dont le nom est fourni.
+        
+        """
+        return type(self).importeur.interpreteur.contextes[nom_contexte]
+
+    def migrer_contexte(self, emt, nom_contexte):
+        """Cas de transfert de contexte.
+        
+        """
+        nouveau_contexte = self.get_contexte(nom_contexte)
+        emt.migrer_contexte(nouveau_contexte)
+        self.envoyer(emt, emt.contexte_actuel.accueil(emt))
+    
     def interpreter(self, emt, msg):
         """Méthode appelée quand le contexte reçoit un message à interpréter.
             emt - l'émetteur du message
@@ -92,3 +173,35 @@ class Contexte:
         
         """
         pass
+    
+    def receptionner(self, emt, msg):
+        """Méthode appelée quand le contexte reçoit un message.
+        On le redirige vers 'interpreter' après avoir appliqué les options
+        de réception.
+        
+        CETTE METHODE NE DOIT PAS ETRE REDEFINIE.
+        
+        """
+        if self.opts.echp_sp_cars:
+            msg = echapper_sp_cars(msg)
+        
+        # Si un contexte précédent est défini et que le client a entré
+        # RCI_PREC, on retourne au contexte précédent
+        if self.opts.rci_ctx_prec and msg == RCI_PREC:
+            self.migrer_contexte(emt, self.opts.rci_ctx_prec)
+        else:
+            self.interpreter(emt, msg)
+    
+    def envoyer(self, emt, msg):
+        """Méthode appelée quand on souhaite envoyer un message à
+        l'émetteur.
+        
+        """
+        msg = remplacer_sp_cars(msg)
+        if self.opts.ncod:
+            if self.opts.emt_ncod:
+                msg = msg.encode(emt.encodage)
+            else:
+                msg = msg.encode()
+        emt.envoyer(msg)
+        emt.envoyer(b"\n\n" + self.get_prompt(emt).encode())

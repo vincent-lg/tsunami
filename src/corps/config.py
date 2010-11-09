@@ -111,7 +111,7 @@ modules_a_instancier = ['supenr']
 modules_a_configurer = ['supenr']
 
 # Ordre d'initialisation des modules
-modules_a_initialiser = ['supenr']
+modules_a_initialiser = ['supenr', 'interpreteur']
 
 # Ordre de destruction des modules
 # ATTENTION ! Ces modules ne seront pas ceux détruits en premier mais bien

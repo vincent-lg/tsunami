@@ -38,6 +38,8 @@ class InstanceConnexion:
     personnage.
     
     """
+    importeur = None
+    
     def __init__(self, client):
         """Constructeur d'une instance de connexion.
         On peut y trouver trois informations :
@@ -49,7 +51,15 @@ class InstanceConnexion:
         self.client = client
         self.emetteur = None
         self.contexte = None
-        self.client.envoyer(MOTD.encode())
+        self.envoyer(MOTD.encode())
+        self.contexte = type(self).importeur.interpreteur.contextes[ \
+                'entrer_nom']
+        self.contexte.migrer_contexte(self, 'entrer_nom')
+    
+    def _get_contexte_actuel(self):
+        return self.contexte
+    
+    contexte_actuel = property(_get_contexte_actuel)
     
     def envoyer(self, message):
         """Envoie au client le message.
@@ -57,7 +67,7 @@ class InstanceConnexion:
         On l'envoie donc telle quelle.
         
         """
-        client.envoyer(message)
+        self.client.envoyer(message)
     
     def receptionner(self, message):
         """Cette méthode est appelée quand l'instance de connexion
@@ -80,4 +90,15 @@ class InstanceConnexion:
             self.contexte.receptionner(self, message)
         else:
             self.emetteur.receptionner(message)
-
+    
+    def migrer_contexte(self, nouveau_contexte):
+        """Méthode de migration d'un contexte à un autre.
+        On peut passer le contexte sous la forme d'une chaîne.
+        Dans ce cas, on le cherche dans l'interpréteur.
+        
+        """
+        if type(nouveau_contexte) is str:
+            nouveau_contexte = type(self).importeur.interpreteur.contextes[ \
+                    nouveau_contexte]
+            self.envoyer(nouveau_contexte.accueil(self).encode())
+        self.contexte = nouveau_contexte

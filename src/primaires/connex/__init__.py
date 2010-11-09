@@ -34,6 +34,7 @@ from abstraits.module import *
 from primaires.connex.instance_connexion import InstanceConnexion
 from reseau.connexions.client_connecte import ClientConnecte
 from primaires.connex.compte import Compte
+from primaires.connex.contextes import liste_contextes
 
 # Nom du groupe fictif
 NOM_GROUPE = "connexions"
@@ -46,6 +47,7 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "connex", "primaire")
+        InstanceConnexion.importeur = self.importeur
         self.instances = {}
         self.cnx_logger = type(self.importeur).man_logs.creer_logger( \
                 "connex", "connexions")
@@ -70,7 +72,6 @@ class Module(BaseModule):
                 inst.client = type(self.importeur).serveur.clients[ \
                         inst.client.n_id]
                 self.instances[inst.client.n_id] = inst
-                print("On récupère", inst)
         
         # On ajoute le dictionnaire 'instances' comme groupe fictif de 'parid'
         type(self.importeur).parid[NOM_GROUPE] = self.instances
@@ -82,6 +83,12 @@ class Module(BaseModule):
         
         self.cpt_logger.info("{0} compte(s) récupéré(s)".format( \
                 len(self.comptes)))
+        
+        # On instancie les contextes chargés
+        # Leur instanciation a pour effet leur ajout dans les contextes de
+        # l'interpréteur
+        for contexte in liste_contextes:
+            contexte()
         
         BaseModule.init(self)
     
@@ -122,3 +129,19 @@ class Module(BaseModule):
                     "connectées".format(repr(client)))
         instance = self.instances[client]
         del self.instances[client]
+    
+    def ajouter_compte(self, nom_compte):
+        """Méthode appelée pour ajouter un compte identifié par son nom"""
+        nouv_compte = Compte(nom_compte)
+        self.logger.cpt.info("Création du compte {0}: {1}".format( \
+                nom_compte, compte))
+        self.comptes[compte.id.id] = nouv_compte
+    
+    def supprimer_compte(self, compte):
+        """Supprime le compte 'compte'"""
+        if compte.id.id in self.comptes.keys():
+            del self.comptes[compte.id.id]
+            compte.detruire()
+        else:
+            raise KeyError("le compte {0} n'est pas dans la liste " \
+                    "des comptes existants".format(compte))

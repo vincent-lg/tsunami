@@ -69,7 +69,7 @@ def echapper_sp_cars(msg):
     sp_cars_a_echapper.
     
     """
-    for car, a_repl in sp_cars_a_echapper.values():
+    for car, a_repl in sp_cars_a_echapper.items():
         msg = msg.replace(car, a_repl)
     return msg
 
@@ -96,5 +96,5 @@ def remplacer_sp_cars(msg):
     
     """
     for code_car, a_repl in sp_cars_a_remplacer.items():
-        msg = msg.remplace(code_car, a_repl)
+        msg = msg.replace(code_car, a_repl)
     return msg

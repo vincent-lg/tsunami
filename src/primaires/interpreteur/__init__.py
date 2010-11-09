@@ -31,6 +31,7 @@
 """Fichier contenant le module primaire interpreteur."""
 
 from abstraits.module import *
+from primaires.interpreteur.contexte import Contexte
 
 class Module(BaseModule):
     """Cette classe est la classe gérant tous les interpréteurs.
@@ -42,3 +43,11 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "interpreteur", "primaire")
         self.contextes = {} # Dictionnaire des contextes
+        Contexte.importeur = importeur
+    
+    def ajouter_contexte(self, nouv_contexte):
+        """Ajoute le contexte dans le dictionnaire self.contextes.
+        On se sert du nom comme identifiant du contexte.
+        
+        """
+        self.contextes[nouv_contexte.nom] = nouv_contexte

@@ -36,7 +36,7 @@ class Message:
     """Classe définissant un message.
     Ce message est créé depuis une chaîne de caractères.
     Certains codes présents dans cette chaîne permettent d'ajouter quelques
-    informations de formatage (des sauts de ligne, de la couleur...).
+    informations de formattage (des sauts de ligne, de la couleur...).
     
     Il suffit ensuite de demander à convertir ce message en une nouvelle
     chaîne (on peut utiliser pour ce faire la fonction 'str()').
@@ -44,13 +44,13 @@ class Message:
     """
     def __init__(self, msg_chn):
         """On passe en paramètre du constructeur le message comme une
-        chaîne de caractères.
+        chaîne de caractère.
         
         """
         # Opérations sur la chaîne
         msg_chn = convertir_nl(msg_chn)
         msg_chn = ajouter_couleurs(msg_chn)
-        msg_chn = remplacer_sp_cars(msg_chn)
+        msg_chn = replacer_sp_cars(msg_chn)
         
         # On l'enregistre en tant qu'attribut
         self.chaine = msg_chn

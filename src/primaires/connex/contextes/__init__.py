@@ -32,3 +32,9 @@
 compte.
 
 """
+
+from primaires.connex.contextes.entrer_nom import EntrerNom
+
+liste_contextes = [
+    EntrerNom,
+]
