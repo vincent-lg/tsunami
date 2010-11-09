@@ -326,8 +326,7 @@ class Importeur:
             print("Le module {0} est déjà chargé.".format(nom))
         else:
             package = __import__(rep + "." + nom)
-            module = getattr(getattr(package, nom), \
-                    nom.capitalize())
+            module = getattr(getattr(package, nom), "Module")
             setattr(self, nom, module(self))
 
     def decharger_module(self, m_type, nom):
