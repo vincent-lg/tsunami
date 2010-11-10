@@ -88,6 +88,20 @@ ACCENTS = {
     "ç":"c",
 }
 
+# Couleurs
+COULEURS = {
+    # Balise: code ANSI
+    "|nr|": "\x1b[1m\x1b[30m", # noir
+    "|rg|": "\x1b[1m\x1b[31m", # rouge
+    "|vr|": "\x1b[1m\x1b[32m", # vert
+    "|jn|": "\x1b[1m\x1b[33m", # jaune
+    "|bl|": "\x1b[1m\x1b[34m", # bleu
+    "|mg|": "\x1b[1m\x1b[35m", # magenta
+    "|cy|": "\x1b[1m\x1b[36m", # cyan
+    "|bc|": "\x1b[1m\x1b[37m", # blanc
+    "|ff|": "\x1b[0m",  # fin de formattage
+}
+
 # Fonctions à appliquer à la réception de messages
 
 def echapper_sp_cars(msg):
@@ -111,14 +125,19 @@ def convertir_nl(msg):
     en sauts de ligne compris par tous les clients (y compris telnet).
     
     """
-    return msg.replace("\n", NL)
+    msg = msg.replace("\n", NL)
+    print("c", repr(msg))
+    return msg
 
 def ajouter_couleurs(msg):
     """Cette fonction est appelée pour convertir les codes de formatage
     couleur en leur équivalent ANSI.
-    A CODER.
+    On se base sur la constante dictionnaire 'COULEURS'.
     
     """
+    for balise, code_ansi in COULEURS.items():
+        msg = msg.replace(balise, code_ansi)
+    
     return msg
 
 def remplacer_sp_cars(msg):

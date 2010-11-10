@@ -28,9 +28,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-from primaires.interpreteur.contexte import Contexte
-
 import re
+
+from primaires.interpreteur.contexte import Contexte
+from primaires.connex.motd import MOTD
 
 ## Constantes
 # Regex
@@ -59,9 +60,11 @@ class EntrerNom(Contexte):
     
     def accueil(self, emt):
         """Message d'accueil"""
-        return "    Entrez le nom de votre compte\n" \
-                "    ou nouveau pour en créer un nouveau\n" \
-                "    Un seul compte est autorisé par personne."
+        return \
+            "{motd}\n" \
+            "    Entrez le nom de votre compte\n" \
+            "    ou |bc|nouveau|ff| pour en créer un nouveau\n" \
+            "    |mg|Un seul compte est autorisé par personne|ff|.".format(motd = MOTD)
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""

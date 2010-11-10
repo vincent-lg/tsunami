@@ -211,6 +211,15 @@ class Contexte:
         l'émetteur.
         
         """
+        # On ajotue le prompt à msg
+        msg += "\n\n" + self.get_prompt(emt)
+        # Ajout de la couleur
+        msg = ajouter_couleurs(msg)
+        
+        # On remplace les sauts de ligne
+        msg = convertir_nl(msg)
+        
+        # On échappe les caractères spéciaux
         msg = remplacer_sp_cars(msg)
         if self.opts.ncod:
             # Suppression des accents si l'option est activée
@@ -221,4 +230,3 @@ class Contexte:
             else:
                 msg = msg.encode()
         emt.envoyer(msg)
-        emt.envoyer(b"\n\n" + self.get_prompt(emt).encode())
