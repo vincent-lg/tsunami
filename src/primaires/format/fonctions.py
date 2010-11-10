@@ -91,14 +91,23 @@ ACCENTS = {
 # Couleurs
 COULEURS = {
     # Balise: code ANSI
-    "|nr|": "\x1b[1m\x1b[30m", # noir
-    "|rg|": "\x1b[1m\x1b[31m", # rouge
-    "|vr|": "\x1b[1m\x1b[32m", # vert
-    "|jn|": "\x1b[1m\x1b[33m", # jaune
-    "|bl|": "\x1b[1m\x1b[34m", # bleu
-    "|mg|": "\x1b[1m\x1b[35m", # magenta
-    "|cy|": "\x1b[1m\x1b[36m", # cyan
-    "|bc|": "\x1b[1m\x1b[37m", # blanc
+    "|nr|": "\x1b[0;30m", # noir
+    "|rg|": "\x1b[0;31m", # rouge
+    "|vr|": "\x1b[0;32m", # vert
+    "|mr|": "\x1b[0;33m", # marron
+    "|bl|": "\x1b[0;34m", # bleu
+    "|mg|": "\x1b[0;35m", # magenta
+    "|cy|": "\x1b[0;36m", # cyan
+    "|gr|": "\x1b[0;37m", # gris
+    "|grf|": "\x1b[1;30m", # gris foncé
+    "|rg|": "\x1b[1;31m", # rouge clair
+    "|vrc|": "\x1b[1;32m", # vert clair
+    "|jn|": "\x1b[1;33m", # jaune
+    "|blc|": "\x1b[1;34m", # bleu clair
+    "|mgc|": "\x1b[1;35m", # magenta clair
+    "|cyb|": "\x1b[1;36m", # cyan clair
+    "|bc|": "\x1b[1;37m", # blanc
+    
     "|ff|": "\x1b[0m",  # fin de formattage
 }
 
