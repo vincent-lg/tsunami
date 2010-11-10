@@ -53,7 +53,7 @@ class EntrerNom(Contexte):
     """
     def __init__(self):
         """Constructeur du contexte"""
-        Contexte.__init__(self, "entrer_nom")
+        Contexte.__init__(self, "connex:entrer_nom")
         self.opts.emt_ncod = False
     
     def get_prompt(self, emt):

@@ -158,11 +158,25 @@ class Contexte:
         """
         return type(self).importeur.interpreteur.contextes[nom_contexte]
 
-    def migrer_contexte(self, emt, nom_contexte):
-        """Cas de transfert de contexte.
+    def actualiser(self, emt):
+        """Méthode appelée pour boucler sur le contexte courant.
+        Cela veut dire qu'on ne change pas de contexte, on migre vers 'self'.
+        L'émetteur reçoit ainsi le message d'accueil du contexte.
         
         """
-        nouveau_contexte = self.get_contexte(nom_contexte)
+        self.migrer_contexte(emt, self)
+    
+    def migrer_contexte(self, emt, contexte):
+        """Cas de transfert de contexte.
+        Le contexte peut être donné sous la forme d'un nom (type 'str')
+        ou d'un objet contexte.
+        
+        """
+        if type(contexte) is str:
+            nouveau_contexte = self.get_contexte(contexte)
+        else:
+            nouveau_contexte = contexte
+        
         emt.migrer_contexte(nouveau_contexte)
         self.envoyer(emt, emt.contexte_actuel.accueil(emt))
     

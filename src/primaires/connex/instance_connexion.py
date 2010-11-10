@@ -50,11 +50,10 @@ class InstanceConnexion:
         """
         self.client = client
         self.emetteur = None
-        self.contexte = None
         self.envoyer(MOTD.encode())
         self.contexte = type(self).importeur.interpreteur.contextes[ \
-                'entrer_nom']
-        self.contexte.migrer_contexte(self, 'entrer_nom')
+                "connex:entrer_nom"]
+        self.contexte.actualiser(self)
     
     def _get_contexte_actuel(self):
         return self.contexte
