@@ -178,7 +178,7 @@ class Contexte:
             nouveau_contexte = contexte
         
         emt.migrer_contexte(nouveau_contexte)
-        self.envoyer(emt, emt.contexte_actuel.accueil(emt))
+        emt.contexte_actuel.envoyer(emt, emt.contexte_actuel.accueil(emt))
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand le contexte reçoit un message à interpréter.

@@ -52,7 +52,7 @@ class InstanceConnexion:
         self.emetteur = None
         self.envoyer(MOTD.encode())
         self.contexte = type(self).importeur.interpreteur.contextes[ \
-                "connex:entrer_nom"]
+                "connex:connexion:entrer_nom"]
         self.contexte.actualiser(self)
     
     def _get_contexte_actuel(self):

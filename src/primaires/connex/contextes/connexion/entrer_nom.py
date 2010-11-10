@@ -35,30 +35,26 @@ import re
 ## Constantes
 # Regex
 RE_NOUVEAU = re.compile(r"^nouveau$", re.I)
-RE_NOM_VALIDE = re.compile(r"^[A-Za-z0-9]{3,15}$", re.I)
 
 class EntrerNom(Contexte):
     """Contexte demandant au client d'entrer le nom de son compte.
+    Ce contexte est censément le premier appelé à la connexion d'un client.
     Plusieurs sorties possibles :
     *   Le client entre une demande de nouveau compte (voir RE_NOUVEAU) :
-        Dans ce cas, on redirige sur le contexte 'creer_compte_nom'
-    *   Le client entre un nom valide (voir RE_NOM_VALIDE) :
-        *   Le nom de compte existe
-            Dans ce cas, on le redirige sur le contexte 'entrer_mdp'
-        *   Le nom de compte n'existe pas
-            On affiche l'erreur correspondante et on boucle
-    *   Le nom de compte est invalide :
-        Dans ce cas, on affiche une erreur correspondante et on boucle
+        Dans ce cas, on redirige sur le contexte 'connex:creation:entrer_nom'
+    *   Le client entre un nom de compte existant (c'est-à-dire
+        créé, au moins partiellement)
+    *   Sinon, on affiche une erreur (le compte n'existe pas)
     
     """
     def __init__(self):
         """Constructeur du contexte"""
-        Contexte.__init__(self, "connex:entrer_nom")
+        Contexte.__init__(self, "connex:connexion:entrer_nom")
         self.opts.emt_ncod = False
     
     def get_prompt(self, emt):
         """Message de prompt"""
-        return "Compte: "
+        return "Compte : "
     
     def accueil(self, emt):
         """Message d'accueil"""
@@ -69,8 +65,9 @@ class EntrerNom(Contexte):
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
         if RE_NOUVEAU.search(msg): # le client demande un nouveau compte
-            self.envoyer(emt, "nouveau joueur")
-        elif RE_NOM_VALIDE.search(msg):
-            self.envoyer(emt, "nom valide")
+            self.migrer_contexte(emt, "connex:creation:entrer_nom")
+        elif type(self).importeur.connex.compte_est_cree(msg):
+            self.envoyer(emt, "compte déjà créé")
         else:
-            self.envoyer(emt, "nom invalide")
+            self.envoyer(emt, "Ce compte n'existe pas. Entrez nouveau si " \
+                    "vous souhaitez en créer un.")

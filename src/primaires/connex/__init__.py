@@ -145,3 +145,22 @@ class Module(BaseModule):
         else:
             raise KeyError("le compte {0} n'est pas dans la liste " \
                     "des comptes existants".format(compte))
+    
+    def _get_nom_comptes(self):
+        """Retourne sous la forme d'un tuple la liste des noms de comptes
+        créés ou en cours de création.
+        
+        """
+        noms = []
+        for compte in self.comptes.values():
+            noms.append(compte.nom)
+        
+        return tuple(noms)
+    
+    nom_comptes = property(_get_nom_comptes)
+    
+    def compte_est_cree(self, nom_compte):
+        """Return True si le compte est créé, False sinon.
+        
+        """
+        return nom_compte in self.nom_comptes

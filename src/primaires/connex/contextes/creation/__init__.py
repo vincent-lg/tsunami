@@ -28,21 +28,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des différents contextes utiles à la connexion et la création de
-compte.
+"""Ce package définit les contextes de création de compte.
+Pour les contextes de connexion de client, voir ../connexion.
 
 """
 
-# Contextes de connexion
-from primaires.connex.contextes.connexion.entrer_nom import EntrerNom
-
-# Contextes de création de compte
-from primaires.connex.contextes.creation.nouveau_nom import NouveauNom
-
-liste_contextes = [
-    # Contexes de connexion
-    EntrerNom,
-    
-    # Contextes de création de compte
-    NouveauNom,
-]
