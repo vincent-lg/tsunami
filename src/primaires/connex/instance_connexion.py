@@ -62,7 +62,7 @@ class InstanceConnexion:
     def envoyer(self, message):
         """Envoie au client le message.
         Le message passé doit être un type bytes.
-        On l'envoie donc telle quelle.
+        On l'envoie donc tel quel.
         
         """
         self.client.envoyer(message)
@@ -77,7 +77,7 @@ class InstanceConnexion:
             Dans ce cas, on envoie le message à l'émetteur qui se charge
             de l'interpréter.
         
-        Note: cela fait que les contextes peuvent accepter soit une instance
+        Note : cela fait que les contextes peuvent accepter soit une instance
         de connexion, soit un émetteur. Les contextes à attendre
         une instance ne seront pas nombreux : ce seront ceux appelés
         à la connexion / création de compte. Tous les autres auront un
