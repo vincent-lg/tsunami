@@ -58,19 +58,18 @@ class EntrerNom(Contexte):
     
     def get_prompt(self, emt):
         """Message de prompt"""
-        return "Compte: "
+        return "Votre compte :"
     
     def accueil(self, emt):
         """Message d'accueil"""
-        return "    Entrez le nom de votre compte\n" \
-                "    ou nouveau pour en créer un nouveau\n" \
-                "    Un seul compte est autorisé par personne."
+        return "Entrez votre nom de compte ou 'nouveau' pour en creer un.\n" \
+                "Un seul compte par personne est autorise."
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
         if RE_NOUVEAU.search(msg): # le client demande un nouveau compte
-            self.envoyer(emt, "nouveau joueur")
+            self.envoyer(emt, "Nouveau joueur")
         elif RE_NOM_VALIDE.search(msg):
-            self.envoyer(emt, "nom valide")
+            self.envoyer(emt, "Nom valide")
         else:
-            self.envoyer(emt, "nom invalide")
+            self.envoyer(emt, "Nom invalide")
