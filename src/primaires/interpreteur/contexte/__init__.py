@@ -213,6 +213,9 @@ class Contexte:
         """
         msg = remplacer_sp_cars(msg)
         if self.opts.ncod:
+            # Suppression des accents si l'option est activée
+            if self.opts.sup_accents:
+                msg = supprimer_accents(msg)
             if self.opts.emt_ncod:
                 msg = msg.encode(emt.encodage)
             else:

@@ -55,6 +55,39 @@ for cle, val in sp_cars_a_echapper.items():
 
 NL = "\r\n"
 
+ACCENTS = {
+    # Accent:lettre non accentuée
+    # Lettres majuscules
+    "É":"E",
+    "À":"A",
+    "È":"E",
+    "Ù":"U",
+    "Â":"A",
+    "Ê":"E",
+    "Î":"I",
+    "Ô":"O",
+    "Û":"U",
+    "Ä":"A",
+    "Ë":"E",
+    "Ï":"I",
+    "Ç":"C",
+    
+    # Lettres minuscules
+    "é":"e",
+    "à":"a",
+    "è":"e",
+    "ù":"u",
+    "â":"a",
+    "ê":"e",
+    "î":"i",
+    "ô":"o",
+    "û":"u",
+    "ä":"a",
+    "ë":"e",
+    "ï":"i",
+    "ç":"c",
+}
+
 # Fonctions à appliquer à la réception de messages
 
 def echapper_sp_cars(msg):
@@ -97,4 +130,14 @@ def remplacer_sp_cars(msg):
     """
     for code_car, a_repl in sp_cars_a_remplacer.items():
         msg = msg.replace(code_car, a_repl)
+    return msg
+
+def supprimer_accents(msg):
+    """Cette fonction permet, avant émission du message, de retirer
+    les accents. On se base sur ACCENTS pour ce faire.
+    
+    """
+    for acc, non_acc in ACCENTS.items():
+        msg = msg.replace(acc, non_acc)
+    
     return msg

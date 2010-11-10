@@ -51,6 +51,7 @@ class NouveauNom(Contexte):
         """Constructeur du contexte"""
         Contexte.__init__(self, "connex:creation:entrer_nom")
         self.opts.emt_ncod = False
+        self.opts.sup_accents = True
     
     def get_prompt(self, emt):
         """Message de prompt"""
