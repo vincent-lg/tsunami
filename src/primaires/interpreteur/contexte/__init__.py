@@ -67,9 +67,12 @@ class OptionsContexte:
         (Utf-8).
     *   sup_accents - on supprime les accents du message avant de l'envoyer
         Attention : cette option n'est efficace que si 'ncod' est à True.
-    *   prompt_clr : colorisation du prompt
+    *   prompt_clr - colorisation du prompt :
         Si un code couleur est précisé dans cette option, on l'applique au
         prompt pour le faire ressortir sur le texte
+    *   prompt_prf - préfixage du prompt
+        Contient une chaîne de caractères (str) qui est utilisée en tant que
+        préfixe du prompt, pour le faire ressortir par rapport aux instructions
     
     Options de navigation :
     *   rci_ctx_prec - raccourci vers le contexte précédent :
@@ -83,11 +86,12 @@ class OptionsContexte:
         # Options de réception
         self.echp_sp_cars = True
         
-        # Options d'envoie
+        # Options d'envoi
         self.emt_ncod = True
         self.sup_accents = False
         self.ncod = True
         self.prompt_clr = "|mr|"
+        self.prompt_prf = "* "
         
         # Options de navigation
         self.rci_ctx_prec = ""
@@ -217,6 +221,8 @@ class Contexte:
         """
         # On ajoute le prompt à msg
         prompt = self.get_prompt(emt)
+        if self.opts.prompt_prf and self.opts.ncod:
+            prompt = self.opts.prompt_prf + prompt
         if self.opts.prompt_clr and self.opts.ncod:
             prompt = self.opts.prompt_clr + prompt + "|ff|"
         if type(msg) == bytes:

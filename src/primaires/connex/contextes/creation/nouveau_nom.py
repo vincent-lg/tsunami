@@ -52,6 +52,7 @@ class NouveauNom(Contexte):
         Contexte.__init__(self, "connex:creation:entrer_nom")
         self.opts.emt_ncod = False
         self.opts.sup_accents = True
+        self.opts.rci_ctx_prec = "connex:connexion:entrer_nom"
     
     def get_prompt(self, emt):
         """Message de prompt"""
@@ -63,9 +64,7 @@ class NouveauNom(Contexte):
             "\n" \
             "Entrez un |grf|nom|ff| pour votre nouveau compte, ou |grf|/|ff| " \
 			"pour revenir à l'écran précédent.\n" \
-            "Ce nom vous sera demandé à chaque connexion ; il correspond " \
-			"à celui\n" \
-			"de votre personnage en jeu." \
+            "Ce nom vous sera demandé à chaque connexion, ne l'oubliez pas !"
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
@@ -73,8 +72,6 @@ class NouveauNom(Contexte):
         msg = msg.lower()
         if msg in type(self).importeur.connex.nom_comptes:
             self.envoyer(emt, "Ce nom de compte est déjà réservé.")
-        elif msg == "/":
-            self.migrer_contexte(emt, "connex:connexion:entrer_nom")
         elif len(msg) > 15 or len(msg) < 3:
             self.envoyer(emt, "|rg|Le nom doit faire entre 3 et 15 " \
                             "caractères de longueur.|ff|")

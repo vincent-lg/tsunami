@@ -63,7 +63,7 @@ class EntrerNom(Contexte):
         return \
             "{motd}" \
             "Entrez votre nom de compte ou |grf|nouveau|ff| pour en créer un." \
-			"\n" \
+            "\n" \
             "|rg|Un seul compte par personne est autorisé.|ff|".format(motd = MOTD)
     
     def interpreter(self, emt, msg):
@@ -74,4 +74,4 @@ class EntrerNom(Contexte):
             self.envoyer(emt, "Compte déjà créé !")
         else:
             self.envoyer(emt, "Ce compte n'existe pas. Entrez |grf|nouveau|ff| " \
-							"si vous souhaitez le créer.")
+                            "si vous souhaitez le créer.")
