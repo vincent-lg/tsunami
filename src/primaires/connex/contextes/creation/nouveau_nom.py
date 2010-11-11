@@ -34,7 +34,7 @@ import re
 
 ## Constantes
 # Regex
-RE_NOM_VALIDE = re.compile(r"^[A-Za-z0-9]{3,15}$", re.I)
+RE_NOM_VALIDE = re.compile(r"^[A-Za-z0-9]+$", re.I)
 
 class NouveauNom(Contexte):
     """Premier contexte appelé à la création d'un compte.
@@ -55,16 +55,17 @@ class NouveauNom(Contexte):
     
     def get_prompt(self, emt):
         """Message de prompt"""
-        return "Nouveau nom de compte : "
+        return "Votre nom : "
     
     def accueil(self, emt):
         """Message d'accueil"""
         return \
-            "\n\n" \
-            "    Entrez le nom de votre nouveau compte.\n" \
-            "    Ce nom vous sera demandé à chaque connexion.\n" \
-            "    Les caractères spéciaux ne sont pas autorisés dans ce nom.\n" \
-            "    Les noms de compte ne sont pas sensibles à la casse."
+            "\n" \
+            "Entrez un |grf|nom|ff| pour votre nouveau compte, ou |grf|/|ff| " \
+			"pour revenir à l'écran précédent.\n" \
+            "Ce nom vous sera demandé à chaque connexion ; il correspond " \
+			"à celui\n" \
+			"de votre personnage en jeu." \
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
@@ -72,7 +73,13 @@ class NouveauNom(Contexte):
         msg = msg.lower()
         if msg in type(self).importeur.connex.nom_comptes:
             self.envoyer(emt, "Ce nom de compte est déjà réservé.")
-        elif RE_NOM_VALIDE.search(msg):
-            self.envoyer(emt, "nnom valide")
+        elif msg == "/":
+            self.migrer_contexte(emt, "connex:connexion:entrer_nom")
+        elif len(msg) > 15 or len(msg) < 3:
+            self.envoyer(emt, "|rg|Le nom doit faire entre 3 et 15 " \
+                            "caractères de longueur.|ff|")
+        elif RE_NOM_VALIDE.search(msg) is None:
+            self.envoyer(emt, "|rg|Les caractères spéciaux ne sont pas " \
+                            "autorisés.|ff|")
         else:
-            self.envoyer(emt, "nom invalide")
+            self.envoyer(emt, "Nom valide.")

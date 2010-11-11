@@ -87,7 +87,7 @@ class OptionsContexte:
         self.emt_ncod = True
         self.sup_accents = False
         self.ncod = True
-        self.prompt_clr = "|jn|"
+        self.prompt_clr = "|mr|"
         
         # Options de navigation
         self.rci_ctx_prec = ""

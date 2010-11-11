@@ -56,22 +56,22 @@ class EntrerNom(Contexte):
     
     def get_prompt(self, emt):
         """Message de prompt"""
-        return "Compte : "
+        return "Votre compte : "
     
     def accueil(self, emt):
         """Message d'accueil"""
         return \
-            "{motd}\n" \
-            "    Entrez le nom de votre compte\n" \
-            "    ou |bc|nouveau|ff| pour en créer un nouveau\n" \
-            "    |mg|Un seul compte est autorisé par personne|ff|.".format(motd = MOTD)
+            "{motd}" \
+            "Entrez votre nom de compte ou |grf|nouveau|ff| pour en créer un." \
+			"\n" \
+            "|rg|Un seul compte par personne est autorisé.|ff|".format(motd = MOTD)
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
         if RE_NOUVEAU.search(msg): # le client demande un nouveau compte
             self.migrer_contexte(emt, "connex:creation:entrer_nom")
         elif type(self).importeur.connex.compte_est_cree(msg):
-            self.envoyer(emt, "compte déjà créé")
+            self.envoyer(emt, "Compte déjà créé !")
         else:
-            self.envoyer(emt, "Ce compte n'existe pas. Entrez nouveau si " \
-                    "vous souhaitez en créer un.")
+            self.envoyer(emt, "Ce compte n'existe pas. Entrez |grf|nouveau|ff| " \
+							"si vous souhaitez le créer.")
