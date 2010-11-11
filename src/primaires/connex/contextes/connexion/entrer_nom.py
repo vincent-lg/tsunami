@@ -61,9 +61,8 @@ class EntrerNom(Contexte):
     def accueil(self, emt):
         """Message d'accueil"""
         return \
-            "{motd}" \
-            "Entrez votre nom de compte ou |grf|nouveau|ff| pour en créer un." \
-            "\n" \
+            "\nEntrez votre |grf|nom de compte|ff| ou |grf|nouveau|ff| pour " \
+            "en créer un.\n" \
             "|rg|Un seul compte par personne est autorisé.|ff|".format(motd = MOTD)
     
     def interpreter(self, emt, msg):

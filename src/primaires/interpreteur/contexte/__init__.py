@@ -53,32 +53,30 @@ class OptionsContexte:
     Options d'envoie :
     *   ncod - encoder les messages à envoyer :
         Si cette option est à True, on encode le message avant de l'envoyer
-        en fonction de l'encodage précisé (voir l'option emt_ncod)
+        en fonction de l'encodage précisé (voir l'option emt_ncod et suivantes).
         Si cette option est à False, on n'encode rien avant d'envoyer
-        (on part donc du principe qu'on reçoit un type 'bytes')
+        (on part donc du principe qu'on reçoit un type 'bytes').
     *   emt_ncod - encoder les messages à envoyer grâce à l'encodage de
         l'émetteur :
-        Pour que cette option soit prise en compte, l'option 'ncod' doit être
-        à True.
         Si l'option 'emt_ncod' est à True, on encodera les messages à envoyer
         en fonction de l'encodage précisé danss l'émetteur (attribut
-        'encodage' de l'objet 'emt')
+        'encodage' de l'objet 'emt').
         Si cette option est à False, on encode grâce à l'encodage par défaut
         (Utf-8).
     *   sup_accents - on supprime les accents du message avant de l'envoyer
-        Attention : cette option n'est efficace que si 'ncod' est à True.
     *   prompt_clr - colorisation du prompt :
         Si un code couleur est précisé dans cette option, on l'applique au
         prompt pour le faire ressortir sur le texte
-    *   prompt_prf - préfixage du prompt
+    *   prompt_prf - préfixage du prompt :
         Contient une chaîne de caractères (str) qui est utilisée en tant que
-        préfixe du prompt, pour le faire ressortir par rapport aux instructions
+        préfixe du prompt, pour le faire ressortir par rapport aux instructions.
+    Ces dernières options dépendent de l'activation ou non de l'option ncod.
     
     Options de navigation :
     *   rci_ctx_prec - raccourci vers le contexte précédent :
         Si un contexte précédent est entré dans cette option, le client pourra
         l'atteindre automatiquement en entrant le raccourci de retour
-        (voir la constante 'RCI_PREC')
+        (voir la constante 'RCI_PREC').
     
     """
     def __init__(self):

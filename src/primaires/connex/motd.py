@@ -55,5 +55,4 @@ Yb, `88      d8'
 
                                         Version de developpement
 
-
 """

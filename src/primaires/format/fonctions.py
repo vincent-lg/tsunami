@@ -28,14 +28,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit plusieurs fonctions propres au formatage de messages
+"""Ce fichier définit plusieurs fonctions propres au formatage des messages
 à envoyer.
 
-Fonctions à appliquer à la réception de message :
+Fonctions à appliquer à la réception d'un message :
 -   echapper_sp_cars : échapper les caractères spéciaux utilisés pour les codes
     couleurs ou les codes de formatage
 
-Fonctions à appliquer à l'émission de message :
+Fonctions à appliquer à l'émission d'un message :
 -   convertir_nl : convertir les sauts de ligne '\n' dans un format
     universellement interprété
 -   ajouter_couleurs : ajouter les couleurs en fonction des codes de
@@ -100,9 +100,9 @@ COULEURS = {
     "|cy|": "\x1b[0;36m", # cyan
     "|gr|": "\x1b[0;37m", # gris
     "|grf|": "\x1b[1;30m", # gris foncé
-    "|rg|": "\x1b[1;31m", # rouge clair
+    "|rgc|": "\x1b[1;31m", # rouge clair
     "|vrc|": "\x1b[1;32m", # vert clair
-    "|jn|": "\x1b[1;33m", # jaune
+    "|jnc|": "\x1b[1;33m", # jaune
     "|blc|": "\x1b[1;34m", # bleu clair
     "|mgc|": "\x1b[1;35m", # magenta clair
     "|cyb|": "\x1b[1;36m", # cyan clair

@@ -50,6 +50,9 @@ class InstanceConnexion:
         """
         self.client = client
         self.emetteur = None
+        # Le MOTD est affiché ici afin de ne pas le renvoyer plus tard
+        # dans le contexte d'accueil
+        self.envoyer(MOTD.encode())
         self.contexte = type(self).importeur.interpreteur.contextes[ \
                 "connex:connexion:entrer_nom"]
         self.contexte.actualiser(self)
@@ -84,7 +87,7 @@ class InstanceConnexion:
         personnage défini.
              
         """
-        if self.contexte: # le personnage ne semble pas encore connecté
+        if self.contexte: # Le personnage ne semble pas encore connecté
             self.contexte.receptionner(self, message)
         else:
             self.emetteur.receptionner(message)

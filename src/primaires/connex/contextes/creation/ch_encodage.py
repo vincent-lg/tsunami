@@ -42,17 +42,19 @@ class ChangerEncodage(Contexte):
     On affiche au client plusieurs possibilités d'encodage.
     Il est censé afficher celui qu'il voit correctement.
     On part du principe que l'encodage de sortie est le même que l'encodage
-    d'entré. Ainsi, une fois que le client a choisi son encodage, on le
+    d'entrée. Ainsi, une fois que le client a choisi son encodage, on le
     répercute sur l'encodage du client.
     
     """
     def __init__(self):
         """Constructeur du contexte"""
         Contexte.__init__(self, "connex:creation:changer_encodage")
-        self.opts.ncod = False # on devra passer à 'envoyer' une chaîne de bytes
+        self.opts.ncod = False # On devra passer à 'envoyer' une chaîne de bytes
+        self.opts.rci_ctx_prec = "connex:creation:entrer_nom"
     
     def get_prompt(self, emt):
         """Message de prompt"""
+        # Comme l'option ncod est activée, le préfixe est affiché en dur
         return b"* Choisissez votre encodage : "
     
     def accueil(self, emt):

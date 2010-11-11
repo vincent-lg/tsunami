@@ -40,11 +40,12 @@ class NouveauNom(Contexte):
     """Premier contexte appelé à la création d'un compte.
     On demande simplement au client d'entrer un nom de compte valide.
     Plusieurs sorties possibles :
-    *   Le client entre un nom de compte existant(les noms de compte
+    *   Le client entre un nom de compte existant (les noms de compte
         ne sont pas sensibles à la casse)
-    *   Le client entre un nom de compte valide :
-        Dans ce cas, on redirige vers 'connex:creation:entrer_ncod'
     *   Le client entre un nom de compte invalide
+    Dans ces deux cas on boucle sur le contexte
+    *   Le client entre un nom de compte valide :
+    Là, on redirige vers 'connex:creation:changer_enodage'
     
     """
     def __init__(self):
@@ -68,7 +69,7 @@ class NouveauNom(Contexte):
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
-        # On passe le message en minuscule
+        # On passe le message en minuscules
         msg = msg.lower()
         if msg in type(self).importeur.connex.nom_comptes:
             self.envoyer(emt, "Ce nom de compte est déjà réservé.")

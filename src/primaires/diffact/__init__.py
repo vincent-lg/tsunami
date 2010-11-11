@@ -94,7 +94,7 @@ class Module(BaseModule):
         """
         if nom_action in self.actions.keys():
             self.logger.warning("L'action différée {0} existe déjà. " \
-                    "L'ancienne sera écrasée".format(nom_action))
+                    "L'ancienne sera écrasée.".format(nom_action))
         action = ActionDifferee(nom_action, tps, ref_fonc, *args, **kwargs)
         self.actions[nom_action] = action
         self.logger.debug("Ajout de l'action {0} exécutée dans {1}s".format( \

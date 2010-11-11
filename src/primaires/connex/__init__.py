@@ -81,8 +81,14 @@ class Module(BaseModule):
         for compte in comptes:
             self.comptes[compte.id.id] = compte
         
-        self.cpt_logger.info("{0} compte(s) récupéré(s)".format( \
-                len(self.comptes)))
+        # On affiche proprement le nombre de comptes (un peu verbeux mais-)
+        nombre_comptes = len(self.comptes)
+        if nombre_comptes == 0:
+            self.cpt_logger.info("Aucun compte récupéré")
+        elif nombre_comptes == 1:
+            self.cpt_logger.info("1 compte récupéré")
+        else:
+            self.cpt_logger.info("{0} comptes récupérés".format(len(self.comptes)))
         
         # On instancie les contextes chargés
         # Leur instanciation a pour effet leur ajout dans les contextes de
@@ -125,7 +131,7 @@ class Module(BaseModule):
         if isinstance(client, ClientConnecte):
             client = client.n_id
         if client not in self.instances:
-            raise KeyError("l'ID {0} ne se trouve pas dans les instances " \
+            raise KeyError("L'ID {0} ne se trouve pas dans les instances " \
                     "connectées".format(repr(client)))
         instance = self.instances[client]
         del self.instances[client]
@@ -144,7 +150,7 @@ class Module(BaseModule):
             del self.comptes[compte.id.id]
             compte.detruire()
         else:
-            raise KeyError("le compte {0} n'est pas dans la liste " \
+            raise KeyError("Le compte {0} n'est pas dans la liste " \
                     "des comptes existants".format(compte))
     
     def _get_nom_comptes(self):
