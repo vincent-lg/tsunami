@@ -30,41 +30,44 @@
 
 from primaires.interpreteur.contexte import Contexte
 
-import re
-
 ## Constantes
-# Regex
-RE_NOM_VALIDE = re.compile(r"^[A-Za-z0-9]{3,15}$", re.I)
+ENCODAGES = [
+    'Utf-8',
+    'Latin-1',
+    'cp850',
+    'cp1250'
+]
 
-class NouveauNom(Contexte):
-    """Premier contexte appelé à la création d'un compte.
-    On demande simplement au client d'entrer un nom de compte valide.
-    Plusieurs sorties possibles :
-    *   Le client entre un nom de compte existant(les noms de compte
-        ne sont pas sensibles à la casse)
-    *   Le client entre un nom de compte valide :
-        Dans ce cas, on redirige vers 'connex:creation:entrer_ncod'
-    *   Le client entre un nom de compte invalide
+class ChangerEncodage(Contexte):
+    """Contexte de changement d'encodage.
+    On affiche au client plusieurs possibilités d'encodage.
+    Il est censé afficher celui qu'il voit correctement.
+    On part du principe que l'encodage de sortie est le même que l'encodage
+    d'entré. Ainsi, une fois que le client a choisi son encodage, on le
+    répercute sur l'encodage du client.
     
     """
     def __init__(self):
         """Constructeur du contexte"""
-        Contexte.__init__(self, "connex:creation:entrer_nom")
-        self.opts.emt_ncod = False
-        self.opts.sup_accents = True
+        Contexte.__init__(self, "connex:creation:changer_encodage")
+        self.ncod = False # on devra passer à 'envoyer' une chaîne de bytes
     
     def get_prompt(self, emt):
         """Message de prompt"""
-        return "Nouveau nom de compte : "
+        return b"Choisissez votre encodage : "
     
     def accueil(self, emt):
         """Message d'accueil"""
-        return \
-            "\n\n" \
-            "    Entrez le nom de votre nouveau compte.\n" \
-            "    Ce nom vous sera demandé à chaque connexion.\n" \
-            "    Les caractères spéciaux ne sont pas autorisés dans ce nom.\n" \
-            "    Les noms de compte ne sont pas sensibles à la casse."
+        ret = b"\n\n"
+        ret += b"    Choisissez l'encodage qui s'affiche correctement " \
+            b"chez vous\n" \
+            b"    Pour ce faire, entrez le numero correspondant dans la " \
+            b"liste ci-dessous :\n"
+        test = "une phrase avec des caractères accentués"
+        for i, encodage in enumerate(ENCODAGES):
+            ret += b"\n     {0}- {1} : {2}".format(str(i).encode(), \
+                    encodage.encode(), test.encode(encodage))
+        return ret
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
