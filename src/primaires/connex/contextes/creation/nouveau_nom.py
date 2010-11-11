@@ -61,7 +61,7 @@ class NouveauNom(Contexte):
     def accueil(self, emt):
         """Message d'accueil"""
         return \
-            "\n" \
+            "\n------= Création d'un compte =------\n" \
             "Entrez un |grf|nom|ff| pour votre nouveau compte, ou |grf|/|ff| " \
 			"pour revenir à l'écran précédent.\n" \
             "Ce nom vous sera demandé à chaque connexion, ne l'oubliez pas !"

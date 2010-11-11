@@ -53,22 +53,23 @@ class ChangerEncodage(Contexte):
     
     def get_prompt(self, emt):
         """Message de prompt"""
-        return b"Choisissez votre encodage : "
+        return b"* Choisissez votre encodage : "
     
     def accueil(self, emt):
         """Message d'accueil"""
-        ret = b"\n\n"
-        ret += b"    Choisissez l'encodage qui s'affiche correctement " \
-            b"chez vous\n" \
-            b"    Pour ce faire, entrez le numero correspondant dans la " \
+        ret = b"\n------= Choix de l'encodage =-------\n"
+        ret += b"Choisissez l'encodage qui s'affiche correctement chez vous.\n" \
+            b"Pour ce faire, entrez le numero correspondant dans la " \
             b"liste ci-dessous :\n"
-        test = "une phrase avec des caractères accentués".encode( \
-                'Utf-8').decode()
+        test = "Caractères accentués en ".encode('Utf-8').decode()
         for i, encodage in enumerate(ENCODAGES):
-            ret += b"\n     " + str(i).encode() + b"- " + \
-                    encodage.encode() + b" : " + test.encode(encodage)
+            ret += b"\n  " + str(i).encode() + b" - " + \
+                    test.encode(encodage) + encodage.encode()
         return ret
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
-        pass
+        if msg != "0" and msg != "1" and msg != "2":
+            self.envoyer(emt, b"L'entree saisie n'est pas valide.")
+        else:
+            pass
