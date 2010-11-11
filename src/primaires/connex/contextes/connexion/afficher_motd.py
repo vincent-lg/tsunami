@@ -28,25 +28,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des différents contextes utiles à la connexion et la création de
-compte.
+from primaires.interpreteur.contexte import Contexte
+from primaires.connex.motd import MOTD
 
-"""
-
-# Contextes de connexion
-from primaires.connex.contextes.connexion.afficher_motd import AfficherMOTD
-from primaires.connex.contextes.connexion.entrer_nom import EntrerNom
-
-# Contextes de création de compte
-from primaires.connex.contextes.creation.nouveau_nom import NouveauNom
-from primaires.connex.contextes.creation.ch_encodage import ChangerEncodage
-
-liste_contextes = [
-    # Contexes de connexion
-    AfficherMOTD,
-    EntrerNom,
+class AfficherMOTD(Contexte):
+    """Contexte affichant le MOTD.
+    On est censé être dirigé sur ce contexte à la création de compte et
+    immédiatement redirigé sur 'connex:connexion:entrer_nom'.
     
-    # Contextes de création de compte
-    NouveauNom,
-    ChangerEncodage
-]
+    """
+    def __init__(self):
+        """Constructeur du contexte"""
+        Contexte.__init__(self, "connex:connexion:afficher_MOTD")
+        self.opts.emt_ncod = False
+    
+    def get_prompt(self, emt):
+        """Message de prompt"""
+        return ""
+    
+    def accueil(self, emt):
+        """Message d'accueil"""
+        return MOTD

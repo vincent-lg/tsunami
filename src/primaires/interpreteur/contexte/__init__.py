@@ -219,17 +219,18 @@ class Contexte:
         """
         # On ajoute le prompt à msg
         prompt = self.get_prompt(emt)
-        if self.opts.prompt_prf and self.opts.ncod:
+        if prompt and self.opts.prompt_prf and self.opts.ncod:
             prompt = self.opts.prompt_prf + prompt
-        if self.opts.prompt_clr and self.opts.ncod:
+        if prompt and self.opts.prompt_clr and self.opts.ncod:
             prompt = self.opts.prompt_clr + prompt + "|ff|"
-        if type(msg) == bytes:
-            sep = b"\n\n"
-            if type(prompt) == str:
-                prompt = prompt.encode()
-            msg += sep + prompt
-        else:
-            msg += "\n\n" + prompt
+        if prompt:
+            if type(msg) == bytes:
+                sep = b"\n\n"
+                if type(prompt) == str:
+                    prompt = prompt.encode()
+                msg += sep + prompt
+            else:
+                msg += "\n\n" + prompt
         if type(msg) == str:
             # Ajout de la couleur
             msg = ajouter_couleurs(msg)

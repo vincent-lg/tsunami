@@ -50,12 +50,10 @@ class InstanceConnexion:
         """
         self.client = client
         self.emetteur = None
-        # Le MOTD est affiché ici afin de ne pas le renvoyer plus tard
-        # dans le contexte d'accueil
-        self.envoyer(MOTD.encode())
         self.contexte = type(self).importeur.interpreteur.contextes[ \
-                "connex:connexion:entrer_nom"]
+                "connex:connexion:afficher_MOTD"]
         self.contexte.actualiser(self)
+        self.contexte.migrer_contexte(self, "connex:connexion:entrer_nom")
     
     def _get_contexte_actuel(self):
         return self.contexte
