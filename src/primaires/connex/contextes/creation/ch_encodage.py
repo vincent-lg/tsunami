@@ -30,59 +30,45 @@
 
 from primaires.interpreteur.contexte import Contexte
 
-import re
-
 ## Constantes
-# Regex
-RE_NOM_VALIDE = re.compile(r"^[A-Za-z0-9]+$", re.I)
+ENCODAGES = [
+    'Utf-8',
+    'Latin-1',
+    'cp850',
+]
 
-class NouveauNom(Contexte):
-    """Premier contexte appelé à la création d'un compte.
-    On demande simplement au client d'entrer un nom de compte valide.
-    Plusieurs sorties possibles :
-    *   Le client entre un nom de compte existant(les noms de compte
-        ne sont pas sensibles à la casse)
-    *   Le client entre un nom de compte valide :
-        Dans ce cas, on redirige vers 'connex:creation:entrer_ncod'
-    *   Le client entre un nom de compte invalide
+class ChangerEncodage(Contexte):
+    """Contexte de changement d'encodage.
+    On affiche au client plusieurs possibilités d'encodage.
+    Il est censé afficher celui qu'il voit correctement.
+    On part du principe que l'encodage de sortie est le même que l'encodage
+    d'entré. Ainsi, une fois que le client a choisi son encodage, on le
+    répercute sur l'encodage du client.
     
     """
     def __init__(self):
         """Constructeur du contexte"""
-        Contexte.__init__(self, "connex:creation:entrer_nom")
-        self.opts.emt_ncod = False
-        self.opts.sup_accents = True
+        Contexte.__init__(self, "connex:creation:changer_encodage")
+        self.opts.ncod = False # on devra passer à 'envoyer' une chaîne de bytes
     
     def get_prompt(self, emt):
         """Message de prompt"""
-        return "Votre nom : "
+        return b"Choisissez votre encodage : "
     
     def accueil(self, emt):
         """Message d'accueil"""
-        return \
-            "\n" \
-            "Entrez un |grf|nom|ff| pour votre nouveau compte, ou |grf|/|ff| " \
-			"pour revenir à l'écran précédent.\n" \
-            "Ce nom vous sera demandé à chaque connexion ; il correspond " \
-			"à celui\n" \
-			"de votre personnage en jeu." \
+        ret = b"\n\n"
+        ret += b"    Choisissez l'encodage qui s'affiche correctement " \
+            b"chez vous\n" \
+            b"    Pour ce faire, entrez le numero correspondant dans la " \
+            b"liste ci-dessous :\n"
+        test = "une phrase avec des caractères accentués".encode( \
+                'Utf-8').decode()
+        for i, encodage in enumerate(ENCODAGES):
+            ret += b"\n     " + str(i).encode() + b"- " + \
+                    encodage.encode() + b" : " + test.encode(encodage)
+        return ret
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
-        # On passe le message en minuscule
-        msg = msg.lower()
-        if msg in type(self).importeur.connex.nom_comptes:
-            self.envoyer(emt, "Ce nom de compte est déjà réservé.")
-        elif msg == "/":
-            self.migrer_contexte(emt, "connex:connexion:entrer_nom")
-        elif len(msg) > 15 or len(msg) < 3:
-            self.envoyer(emt, "|rg|Le nom doit faire entre 3 et 15 " \
-                            "caractères de longueur.|ff|")
-        elif RE_NOM_VALIDE.search(msg) is None:
-            self.envoyer(emt, "|rg|Les caractères spéciaux ne sont pas " \
-                            "autorisés.|ff|")
-        else:
-            # On crée le compte correspondant
-            compte = type(self).importeur.connex.ajouter_compte(msg)
-            emt.emetteur = compte
-            self.migrer_contexte(emt, "connex:creation:changer_encodage")
+        pass
