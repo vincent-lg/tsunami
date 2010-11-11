@@ -35,7 +35,6 @@ ENCODAGES = [
     'Utf-8',
     'Latin-1',
     'cp850',
-    'cp1250'
 ]
 
 class ChangerEncodage(Contexte):
@@ -50,7 +49,7 @@ class ChangerEncodage(Contexte):
     def __init__(self):
         """Constructeur du contexte"""
         Contexte.__init__(self, "connex:creation:changer_encodage")
-        self.ncod = False # on devra passer à 'envoyer' une chaîne de bytes
+        self.opts.ncod = False # on devra passer à 'envoyer' une chaîne de bytes
     
     def get_prompt(self, emt):
         """Message de prompt"""
@@ -63,19 +62,13 @@ class ChangerEncodage(Contexte):
             b"chez vous\n" \
             b"    Pour ce faire, entrez le numero correspondant dans la " \
             b"liste ci-dessous :\n"
-        test = "une phrase avec des caractères accentués"
+        test = "une phrase avec des caractères accentués".encode( \
+                'Utf-8').decode()
         for i, encodage in enumerate(ENCODAGES):
-            ret += b"\n     {0}- {1} : {2}".format(str(i).encode(), \
-                    encodage.encode(), test.encode(encodage))
+            ret += b"\n     " + str(i).encode() + b"- " + \
+                    encodage.encode() + b" : " + test.encode(encodage)
         return ret
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
-        # On passe le message en minuscule
-        msg = msg.lower()
-        if msg in type(self).importeur.connex.nom_comptes:
-            self.envoyer(emt, "Ce nom de compte est déjà réservé.")
-        elif RE_NOM_VALIDE.search(msg):
-            self.envoyer(emt, "nom valide")
-        else:
-            self.envoyer(emt, "nom invalide")
+        pass

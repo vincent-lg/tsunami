@@ -73,6 +73,9 @@ class NouveauNom(Contexte):
         if msg in type(self).importeur.connex.nom_comptes:
             self.envoyer(emt, "Ce nom de compte est déjà réservé.")
         elif RE_NOM_VALIDE.search(msg):
-            self.envoyer(emt, "nom valide")
+            # On crée le compte correspondant
+            compte = type(self).importeur.connex.ajouter_compte(msg)
+            emt.emetteur = compte
+            self.migrer_contexte(emt, "connex:creation:changer_encodage")
         else:
             self.envoyer(emt, "nom invalide")

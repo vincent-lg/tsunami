@@ -134,8 +134,10 @@ def convertir_nl(msg):
     en sauts de ligne compris par tous les clients (y compris telnet).
     
     """
-    msg = msg.replace("\n", NL)
-    print("c", repr(msg))
+    if type(msg) == bytes:
+        msg = msg.replace(b"\n", NL.encode())
+    else:
+        msg = msg.replace("\n", NL)
     return msg
 
 def ajouter_couleurs(msg):

@@ -211,7 +211,7 @@ class ObjetID(BaseObj):
         """
         if ObjetID._supenr:
             if self._statut == StatutObjet.INITIALISE:
-                ObjetID._supenr.fil_attente.add(self)
+                ObjetID._supenr.file_attente.add(self)
         else:
             raise RuntimeError("impossible d'enregistrer {0} : le " \
                     "superviseur 'supenr' n'a pas été trouvé".format(self))

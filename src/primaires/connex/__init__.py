@@ -133,9 +133,10 @@ class Module(BaseModule):
     def ajouter_compte(self, nom_compte):
         """Méthode appelée pour ajouter un compte identifié par son nom"""
         nouv_compte = Compte(nom_compte)
-        self.logger.cpt.info("Création du compte {0}: {1}".format( \
+        self.cpt_logger.info("Création du compte {0}: {1}".format( \
                 nom_compte, compte))
-        self.comptes[compte.id.id] = nouv_compte
+        self.comptes[nouv_compte.id.id] = nouv_compte
+        return nouv_compte
     
     def supprimer_compte(self, compte):
         """Supprime le compte 'compte'"""
