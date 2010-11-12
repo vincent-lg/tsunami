@@ -71,7 +71,4 @@ class ChangerEncodage(Contexte):
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
-        if msg != "0" and msg != "1" and msg != "2":
-            self.envoyer(emt, b"L'entree saisie n'est pas valide.")
-        else:
-            pass
+        pass
