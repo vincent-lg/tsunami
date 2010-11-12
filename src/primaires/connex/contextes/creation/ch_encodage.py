@@ -35,6 +35,7 @@ ENCODAGES = [
     'Utf-8',
     'Latin-1',
     'cp850',
+    'cp1252',
 ]
 
 class ChangerEncodage(Contexte):
