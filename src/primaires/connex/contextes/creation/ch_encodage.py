@@ -65,7 +65,7 @@ class ChangerEncodage(Contexte):
             b"liste ci-dessous :\n"
         test = "Caractères accentués en ".encode('Utf-8').decode()
         for i, encodage in enumerate(ENCODAGES):
-            ret += b"\n  " + str(i).encode() + b" - " + \
+            ret += b"\n  " + str(i+1).encode() + b" - " + \
                     test.encode(encodage) + encodage.encode()
         return ret
     
