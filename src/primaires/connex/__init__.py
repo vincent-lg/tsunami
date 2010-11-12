@@ -134,19 +134,24 @@ class Module(BaseModule):
             raise KeyError("L'ID {0} ne se trouve pas dans les instances " \
                     "connectées".format(repr(client)))
         instance = self.instances[client]
+        if instance.contexte_actuel:
+            instance.contexte_actuel.deconnecter(instance)
+        
         del self.instances[client]
     
     def ajouter_compte(self, nom_compte):
         """Méthode appelée pour ajouter un compte identifié par son nom"""
         nouv_compte = Compte(nom_compte)
         self.cpt_logger.info("Création du compte {0}: {1}".format( \
-                nom_compte, compte))
+                nom_compte, nouv_compte))
         self.comptes[nouv_compte.id.id] = nouv_compte
         return nouv_compte
     
     def supprimer_compte(self, compte):
         """Supprime le compte 'compte'"""
         if compte.id.id in self.comptes.keys():
+            self.cpt_logger.info("Suppression du compte {0}: {1}".format( \
+                    compte.nom, compte))
             del self.comptes[compte.id.id]
             compte.detruire()
         else:

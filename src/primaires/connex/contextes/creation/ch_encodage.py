@@ -50,7 +50,6 @@ class ChangerEncodage(Contexte):
         """Constructeur du contexte"""
         Contexte.__init__(self, "connex:creation:changer_encodage")
         self.opts.ncod = False # On devra passer à 'envoyer' une chaîne de bytes
-        self.opts.rci_ctx_prec = "connex:creation:entrer_nom"
     
     def get_prompt(self, emt):
         """Message de prompt"""
@@ -68,6 +67,10 @@ class ChangerEncodage(Contexte):
             ret += b"\n  " + str(i).encode() + b" - " + \
                     test.encode(encodage) + encodage.encode()
         return ret
+    
+    def deconnecter(self, emt):
+        """En cas de décnonexion du joueur, on supprime son compte"""
+        type(self).importeur.connex.supprimer_compte(emt.emetteur)
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""

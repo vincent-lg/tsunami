@@ -174,6 +174,10 @@ class ObjetID(BaseObj):
         self._statut = StatutObjet.INITIALISE
         self.enregistrer()
     
+    def __str__(self):
+        """Affichage ou convertion en chaîne"""
+        return str(self.id)
+    
     def __setstate__(self, dico_attrs):
         """Méthode appelée lors de la désérialisation d'un objet hérité
         d'ObjetID.

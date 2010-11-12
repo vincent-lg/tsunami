@@ -57,7 +57,7 @@ class NouveauNom(Contexte):
     
     def get_prompt(self, emt):
         """Message de prompt"""
-        return "Votre nom : "
+        return "Votre nom de compte : "
     
     def accueil(self, emt):
         """Message d'accueil"""
