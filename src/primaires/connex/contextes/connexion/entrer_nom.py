@@ -35,7 +35,7 @@ from primaires.connex.motd import MOTD
 
 ## Constantes
 # Regex
-RE_NOUVEAU = re.compile(r"^nouveau$", re.I)
+RE_NOUVEAU = None # on ne connaît pas la chaîne
 
 class EntrerNom(Contexte):
     """Contexte demandant au client d'entrer le nom de son compte.
@@ -50,9 +50,12 @@ class EntrerNom(Contexte):
     """
     def __init__(self):
         """Constructeur du contexte"""
+        global RE_NOUVEAU
         Contexte.__init__(self, "connex:connexion:entrer_nom")
         self.opts.emt_ncod = False
         self.opts.sup_accents = True
+        cnx_cfg = type(self).importeur.anaconf.get_config("connex")
+        RE_NOUVEAU = re.compile("^{0}$".format(cnx_cfg.chaine_nouveau), re.I)
     
     def get_prompt(self, emt):
         """Message de prompt"""
@@ -60,10 +63,12 @@ class EntrerNom(Contexte):
     
     def accueil(self, emt):
         """Message d'accueil"""
+        cnx_cfg = type(self).importeur.anaconf.get_config("connex")
         return \
-            "\nEntrez votre |grf|nom de compte|ff| ou |grf|nouveau|ff| pour " \
+            "\nEntrez votre |grf|nom de compte|ff| ou |grf|{0}|ff| pour " \
             "en créer un.\n" \
-            "|rg|Un seul compte par personne est autorisé.|ff|".format(motd = MOTD)
+            "|rg|Un seul compte par personne est autorisé.|ff|".format( \
+            cnx_cfg.chaine_nouveau)
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
