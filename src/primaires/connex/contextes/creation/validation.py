@@ -1,4 +1,4 @@
-# -*-coding:Utf-8 -*
+﻿# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -27,32 +27,29 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from primaires.interpreteur.contexte import Contexte
 
-"""Package des différents contextes utiles à la connexion et la création de
-compte.
-
-"""
-
-# Contextes de connexion
-from primaires.connex.contextes.connexion.afficher_motd import AfficherMOTD
-from primaires.connex.contextes.connexion.entrer_nom import EntrerNom
-
-# Contextes de création de compte
-from primaires.connex.contextes.creation.nouveau_nom import NouveauNom
-from primaires.connex.contextes.creation.ch_encodage import ChangerEncodage
-from primaires.connex.contextes.creation.entrer_pass import EntrerPass
-from primaires.connex.contextes.creation.entrer_email import EntrerEmail
-from primaires.connex.contextes.creation.validation import Validation
-
-liste_contextes = [
-    # Contexes de connexion
-    AfficherMOTD,
-    EntrerNom,
+class Validation(Contexte):
     
-    # Contextes de création de compte
-    NouveauNom,
-    ChangerEncodage,
-    EntrerPass,
-    EntrerEmail,
-    Validation
-]
+    def __init__(self):
+        """Constructeur du contexte"""
+        Contexte.__init__(self, "connex:creation:validation")
+        self.opts.rci_ctx_prec = "connex:creation:entrer_email"
+    
+    def get_prompt(self, emt):
+        """Message de prompt"""
+        # Comme l'option ncod est activée, le préfixe est affiché en dur
+        return "Code de validation : "
+    
+    def accueil(self, emt):
+        """Message d'accueil"""
+        return \
+            "\n-----= Validation de l'email =------\n" \
+            "Blabla validation"
+    
+    def deconnecter(self, emt):
+        """En cas de déconexion du joueur, on supprime son compte"""
+        type(self).importeur.connex.supprimer_compte(emt.emetteur)
+    
+    def interpreter(self, emt, msg):
+        self.migrer_contexte(emt, "connex:creation:entrer_nom")

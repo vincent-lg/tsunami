@@ -170,6 +170,19 @@ class Module(BaseModule):
             raise KeyError("Le compte {0} n'est pas dans la liste " \
                     "des comptes existants".format(compte))
     
+    def _get_email_comptes(self):
+        """Retourne sous la forme d'un tuple la liste des emails de comptes
+        créés ou en cours de création.
+        
+        """
+        emails = []
+        for compte in self.comptes.values():
+            emails.append(compte.adresse_email)
+        
+        return tuple(emails)
+    
+    email_comptes = property(_get_email_comptes)
+    
     def _get_nom_comptes(self):
         """Retourne sous la forme d'un tuple la liste des noms de comptes
         créés ou en cours de création.

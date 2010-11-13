@@ -91,3 +91,4 @@ class EntrerPass(Contexte):
             h.update(mot_de_passe)
             mot_de_passe = h.digest()
             emt.emetteur.mot_de_passe = mot_de_passe
+            self.migrer_contexte(emt, "connex:creation:entrer_email")

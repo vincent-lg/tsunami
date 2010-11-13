@@ -61,7 +61,7 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "email", "primaire")
         self.logger = type(self.importeur).man_logs.creer_logger("email", \
                 "emails", "envoyes.log")
-        self.serveur_mail = True # un serveur mail est configuré
+        self.serveur_mail = False # un serveur mail est configuré
         self.nom_hote = "" # aucun nom d'hôte configuré par défaut
         
         # Le nom d'hôte se configure dans le fichier de configuration. Mais on
@@ -86,7 +86,7 @@ class Module(BaseModule):
         BaseModule.config(self)
     
     def envoyer(self, destinateur, destinataires, sujet, corps):
-        """Méthode appelée pou envoyer un message.
+        """Méthode appelée pour envoyer un message.
         Si le serveur mail n'est pas actif ou que le nom d'hôte n'est aps
         précisé, on n'envoie rien du tout.
         
