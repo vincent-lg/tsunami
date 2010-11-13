@@ -1,4 +1,4 @@
-# -*-coding:Utf-8 -*
+﻿# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -30,15 +30,7 @@
 
 from primaires.interpreteur.contexte import Contexte
 
-## Constantes
-ENCODAGES = [
-    'Utf-8',
-    'Latin-1',
-    'cp850',
-    'cp1252',
-]
-
-class ChangerEncodage(Contexte):
+class EntrerPass(Contexte):
     """Contexte de changement d'encodage.
     On affiche au client plusieurs possibilités d'encodage.
     Il est censé afficher celui qu'il voit correctement.
@@ -49,29 +41,26 @@ class ChangerEncodage(Contexte):
     """
     def __init__(self):
         """Constructeur du contexte"""
-        Contexte.__init__(self, "connex:creation:changer_encodage")
-        self.opts.ncod = False # On devra passer à 'envoyer' une chaîne de bytes
+        Contexte.__init__(self, "connex:creation:entrer_pass")
+        self.opts.emt_ncod = False
+        self.opts.sup_accents = True
+        self.opts.rci_ctx_prec = "connex:creation:changer_encodage"
     
     def get_prompt(self, emt):
         """Message de prompt"""
         # Comme l'option ncod est activée, le préfixe est affiché en dur
-        return b"* Choisissez votre encodage : "
+        return "Votre mot de passe : "
     
     def accueil(self, emt):
         """Message d'accueil"""
-        ret = b"\n------= Choix de l'encodage =-------\n"
-        ret += b"Le parametrage de l'encodage est necessaire pour " \
-            b"permettre une optimisation\n" \
-            b"de l'affichage dans votre client, et par la un meilleur " \
-            b"confort de jeu.\n" \
-            b"Choisissez donc un encodage qui s'affiche correctement chez vous.\n" \
-            b"Pour ce faire, entrez le numero correspondant dans la " \
-            b"liste ci-dessous :\n"
-        test = "Caractères accentués en ".encode('Utf-8').decode()
-        for i, encodage in enumerate(ENCODAGES):
-            ret += b"\n  " + str(i+1).encode() + b" - " + \
-                    test.encode(encodage) + encodage.encode()
-        return ret
+        return \
+            "\n-----= Choix du mot de passe =------\n" \
+            "Votre |grf|mot de passe|ff| devrait dans l'idéal faire au moins 8 " \
+            "caractères\n" \
+            "et comprendre lettres, chiffres et caractères " \
+            "spéciaux pour plus de\n" \
+            "sécurité ; dans tous les cas prenez garde à vous en souvenir.\n" \
+            "Si vous voulez revenir au choix de l'encodage, entrez |grf|/|ff|."
     
     def deconnecter(self, emt):
         """En cas de décnonexion du joueur, on supprime son compte"""
@@ -79,12 +68,3 @@ class ChangerEncodage(Contexte):
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
-        emt.emetteur.encodage = 'test'
-        """
-        try:
-            emt.emetteur.encodage = ENCODAGES[int(msg)-1]
-        except:
-            self.envoyer(emt, b"Le nombre entre n'est pas valide !")
-        else:
-            self.migrer_contexte(emt, "connex:creation:entrer_pass")
-        """

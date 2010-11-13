@@ -40,6 +40,7 @@ from primaires.connex.contextes.connexion.entrer_nom import EntrerNom
 # Contextes de création de compte
 from primaires.connex.contextes.creation.nouveau_nom import NouveauNom
 from primaires.connex.contextes.creation.ch_encodage import ChangerEncodage
+from primaires.connex.contextes.creation.entrer_pass import EntrerPass
 
 liste_contextes = [
     # Contexes de connexion
@@ -48,5 +49,6 @@ liste_contextes = [
     
     # Contextes de création de compte
     NouveauNom,
-    ChangerEncodage
+    ChangerEncodage,
+    EntrerPass
 ]
