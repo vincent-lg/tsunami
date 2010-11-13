@@ -138,7 +138,10 @@ class ClientConnecte:
         """Envoi d'un message au socket.
         Le message est déjà encodé. Ce n'est plus un type str.
         """
-        self.socket.send(message)
+        try:
+            self.socket.send(message)
+        except socket.error:
+            self.deconnecter("perte de la connexion")
 
     def recevoir(self):
         """Cette méthode se charge de réceptionner le message en attente.
@@ -151,6 +154,7 @@ class ClientConnecte:
             message = self.socket.recv(1024)
         except socket.error:
             self.deconnecter("perte de la connexion")
+            return
         if message == b"":
             self.deconnecter("perte de la connexion")
         else:

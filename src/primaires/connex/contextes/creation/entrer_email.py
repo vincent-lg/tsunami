@@ -79,5 +79,5 @@ class EntrerEmail(Contexte):
                 self.migrer_contexte(emt, "connex:creation:validation")
             else:
                 emt.emetteur.valid = True
-                self.migrer_contexte(emt, "connex:creation:entrer_nom")
+                self.migrer_contexte(emt, "connex:connexion:entrer_nom")
     

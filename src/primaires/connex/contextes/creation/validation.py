@@ -52,4 +52,4 @@ class Validation(Contexte):
         type(self).importeur.connex.supprimer_compte(emt.emetteur)
     
     def interpreter(self, emt, msg):
-        self.migrer_contexte(emt, "connex:creation:entrer_nom")
+        self.migrer_contexte(emt, "connex:connexion:entrer_nom")
