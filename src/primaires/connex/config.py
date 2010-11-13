@@ -32,11 +32,28 @@
 
 cfg_connex = r"""
 # Ce fichier contient la configuration du module primaire connex.
-# Sont paramétrables diverses options regroupées par contexte (création
-# d'un perso : hash employé pour le mot de passe, clef de salage). D'autres
-# options se grefferont probablement par la suite.
+# Sont paramétrables diverses options paramétrant la connexion
+# d'un client et la création de compte / personnage.
 
-## Création d'un personnage
+### Création d'un personnage
+
+## Choix du nom du compte
+
+# Chaîne à entrer pour créer un nouveau compte :
+# Par défaut, c'est simplement 'nouveau' mais vous pouvez lui donner un autre
+# nom. Le client devra entrer cette chaîne pour créer un nouveau compte.
+# Il ne pourra naturellement pas créer un compte avec ce nom.
+# Evitez de modifier cette chaîne après le premier lancement de votre serveur.
+# Certains comptes pourraient devenir inaccessibles, avec un peu de malchance.
+chaine_nouveau = "nouveau"
+
+# Noms interdits :
+# Cette liste contient les noms de compte considérés comme interdits
+# Vous pouvez par exemple y ajouter le nom de votre projet
+noms_interdits = ["kassie"]
+
+## Protection du mot de passe
+
 # Chiffrement du mot de passe
 # Par défaut, le mot de passe est haché en sha256. Cette valeur ne peut être
 # changée qu'avant la création du premier compte sur le serveur, car une

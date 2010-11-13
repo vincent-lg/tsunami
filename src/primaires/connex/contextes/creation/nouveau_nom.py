@@ -36,6 +36,10 @@ import re
 # Regex
 RE_NOM_VALIDE = re.compile(r"^[A-Za-z0-9]+$", re.I)
 
+# Tailles du nom du compte
+min = 3
+max = 15
+
 class NouveauNom(Contexte):
     """Premier contexte appelé à la création d'un compte.
     On demande simplement au client d'entrer un nom de compte valide.
@@ -69,13 +73,19 @@ class NouveauNom(Contexte):
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
+        cnx_cfg = type(self).importeur.anaconf.get_config("connex")
         # On passe le message en minuscules
         msg = msg.lower()
-        if msg in type(self).importeur.connex.nom_comptes:
+        noms_interdits = list(cnx_cfg.noms_interdits)
+        noms_interdits.append(cnx_cfg.chaine_nouveau)
+        if msg in noms_interdits:
+            self.envoyer(emt, "Ce nom de compte est interdit. " \
+                    "Choisissez-en un autre.")
+        elif msg in type(self).importeur.connex.nom_comptes:
             self.envoyer(emt, "Ce nom de compte est déjà réservé.")
-        elif len(msg) > 15 or len(msg) < 3:
-            self.envoyer(emt, "|rg|Le nom doit faire entre 3 et 15 " \
-                            "caractères de longueur.|ff|")
+        elif len(msg) < min or len(msg) > max:
+            self.envoyer(emt, "|rg|Le nom doit faire entre {0} et {1} " \
+                            "caractères de longueur.|ff|".format(min, max))
         elif RE_NOM_VALIDE.search(msg) is None:
             self.envoyer(emt, "|rg|Les caractères spéciaux ne sont pas " \
                             "autorisés.|ff|")
