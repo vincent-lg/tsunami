@@ -100,7 +100,7 @@ class BaseObj:
         # Pour résumer, on considère que c'est le dernier objet enregistré le
         # plus à jour.
         if self.p_id in type(self).trace_p_ids.keys():
-            if self._ts > type(self).trace_p_ids[self.p_id]:
+            if self._ts > type(self).trace_p_ids[self.p_id]._ts:
                 # self est plus récent que celui de trace_p_ids
                 type(self).trace_p_ids[self.p_id].__dict__.update( \
                         self.__dict__)
