@@ -30,6 +30,8 @@
 
 """Ce fichier définit la classe BaseObj définie plus bas."""
 
+import time
+
 class BaseObj:
     """Cette classe définit la base d'un objet destiné à être enregistré,
     directement ou indirectement dans un fichier.
@@ -69,12 +71,39 @@ class BaseObj:
     
     """
     attributs = {} # dictionnaire des attributs
+    
+    # Dictionnaires à NE PAS redéfinir dans les sous-classes :
+    trace_p_ids = {}
+    
     def __init__(self):
         """Constructeur. On copie tous les attributs dans self"""
         self.__dict__.update(type(self).attributs)
+        self.p_id = id(self)
+    
+    def __getstate__(self):
+        """Au moment de l'enregistrement, on met à jour le timestamp"""
+        self._ts = time.time()
+        return self.__dict__
     
     def __setstate__(self, dico_attrs):
         """Méthode appelée lors de la désérialisation de l'objet"""
         attributs = dict(type(self).attributs)
         attributs.update(dico_attrs)
         self.__dict__.update(attributs)
+        # Si l'objet est déjà tracé dans trace_p_ids, on réc upère son __dict__
+        # Sinon, on ajoute son __dict__ dans trace_p_ids
+        # Note importante: à chaque fois qu'un objet est sauvegardé, il
+        # enregistre le timestamp de cette sauvegarde.
+        # Si on trouve une référence vers le même objet mais dont le timestamp
+        # de son enregistrement est supérieur à celui enregistré dans
+        # trace_p_ids, c'est le plus récent qui est conservé.
+        # Pour résumer, on considère que c'est le dernier objet enregistré le
+        # plus à jour.
+        if self.p_id in type(self).trace_p_ids.keys():
+            if self._ts > type(self).trace_p_ids[self.p_id]:
+                # self est plus récent que celui de trace_p_ids
+                type(self).trace_p_ids[self.p_id].__dict__.update( \
+                        self.__dict__)
+            self.__dict__ = type(self).trace_p_ids[self.p_id].__dict__
+        else:
+            type(self).trace_p_ids[self.p_id] = self

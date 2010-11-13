@@ -63,8 +63,6 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "supenr", "primaire")
         self.file_attente = set() # file d'attente des objets à enregistrer
-        self.pic_memo = {} # mémo des picklers
-        self.unpic_memo = {} # mémo des dépicklers
         self.logger = type(self.importeur).man_logs.creer_logger("supenr", \
                 "supenr")
     
@@ -135,7 +133,6 @@ class Module(BaseModule):
                     objet, io_err))
         else:
             pickler = pickle.Pickler(fichier_enr)
-            pickler.memo = self.pic_memo
             pickler.dump(objet)
         finally:
             if "fichier_enr" in locals():
@@ -186,7 +183,6 @@ class Module(BaseModule):
                     ": {1}".format(chemin_dest, io_err))
         else:
             unpickler = pickle.Unpickler(fichier_enr)
-            unpickler.memo = self.unpic_memo
             objet = unpickler.load()
         finally:
             if "fichier_enr" in locals():
