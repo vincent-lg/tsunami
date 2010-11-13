@@ -27,8 +27,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-
 from primaires.interpreteur.contexte import Contexte
+
+import hashlib
+import re
+
+# Regex
+RE_PASS_VALIDE = re.compile(r"^[a-zA-Z0-9{}/\[\]()+=$_*@^\"'`£#-]+$", re.I)
 
 class EntrerPass(Contexte):
     """Contexte de changement d'encodage.
@@ -42,8 +47,6 @@ class EntrerPass(Contexte):
     def __init__(self):
         """Constructeur du contexte"""
         Contexte.__init__(self, "connex:creation:entrer_pass")
-        self.opts.emt_ncod = False
-        self.opts.sup_accents = True
         self.opts.rci_ctx_prec = "connex:creation:changer_encodage"
     
     def get_prompt(self, emt):
@@ -55,11 +58,11 @@ class EntrerPass(Contexte):
         """Message d'accueil"""
         return \
             "\n-----= Choix du mot de passe =------\n" \
-            "Votre |grf|mot de passe|ff| devrait dans l'idéal faire au moins 8 " \
-            "caractères\n" \
-            "et comprendre lettres, chiffres et caractères " \
-            "spéciaux pour plus de\n" \
-            "sécurité ; dans tous les cas prenez garde à vous en souvenir.\n" \
+            "Entrez un |grf|mot de passe|ff| de plus de 6 caractères ; il " \
+            "correspond à\n" \
+            "votre compte uniquement, veillez à vous en souvenir et à " \
+            "ne le divulguer\n" \
+            "sous aucun prétexte.\n" \
             "Si vous voulez revenir au choix de l'encodage, entrez |grf|/|ff|."
     
     def deconnecter(self, emt):
@@ -68,3 +71,24 @@ class EntrerPass(Contexte):
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
+        if len(msg) < 6:
+            self.envoyer(emt, "|rg|Pour des raisons de sécurité, le mot de " \
+                            "passe doit faire au minimum\n" \
+                            "6 caractères.|ff|")
+        elif RE_PASS_VALIDE.search(msg) is None:
+            self.envoyer(emt, "|rg|Le mot de passe entré contient des " \
+                            "caractères non autorisés ; les caractères\n" \
+                            "admis sont les lettres (majuscules et " \
+                            "minuscules, sans accents), les\n" \
+                            "chiffres et certains caractères spéciaux " \
+                            "(|ff||grf|{}/\[\]()+=$_*@^\"'`£#-|ff||rg|).|ff|")
+        else:
+            # Ceci sera stocké dans les fichiers de config
+            TYPE_CHIFFREMENT = "sha256"
+            CLEF_SALAGE = "salee_"
+            
+            mot_de_passe = str(CLEF_SALAGE + msg).encode()
+            h = hashlib.new(TYPE_CHIFFREMENT)
+            h.update(mot_de_passe)
+            mot_de_passe = h.digest()
+            emt.emetteur.mot_de_passe = mot_de_passe

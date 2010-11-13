@@ -242,7 +242,7 @@ class Contexte:
             if self.opts.sup_accents:
                 msg = supprimer_accents(msg)
             if self.opts.emt_ncod:
-                msg = msg.encode(emt.encodage)
+                msg = msg.encode(emt.emetteur.encodage)
             else:
                 msg = msg.encode()
         

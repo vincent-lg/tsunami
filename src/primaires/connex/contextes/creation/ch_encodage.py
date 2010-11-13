@@ -85,7 +85,7 @@ class ChangerEncodage(Contexte):
             if choix < 1 or choix > len(ENCODAGES):
                 raise ValueError
         except ValueError:
-            self.envoyer(emt, b"Le nombre entre n'est pas valide. Veuillez reessayer.")
+            self.envoyer(emt, b"Le nombre entre n'est pas valide.")
         else:
             emt.emetteur.encodage = ENCODAGES[choix - 1]
             self.migrer_contexte(emt, "connex:creation:entrer_pass")
