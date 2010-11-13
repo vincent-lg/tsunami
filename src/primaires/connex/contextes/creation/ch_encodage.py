@@ -79,12 +79,13 @@ class ChangerEncodage(Contexte):
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
-        emt.emetteur.encodage = 'test'
-        """
+        # On essaye d'abord de convertir le choix de l'utilisateur
         try:
-            emt.emetteur.encodage = ENCODAGES[int(msg)-1]
-        except:
-            self.envoyer(emt, b"Le nombre entre n'est pas valide !")
+            choix = int(msg)
+            if choix < 1 or choix > len(ENCODAGES):
+                raise ValueError
+        except ValueError:
+            self.envoyer(emt, b"Le nombre entre n'est pas valide. Veuillez reessayer.")
         else:
+            emt.emetteur.encodage = ENCODAGES[choix - 1]
             self.migrer_contexte(emt, "connex:creation:entrer_pass")
-        """
