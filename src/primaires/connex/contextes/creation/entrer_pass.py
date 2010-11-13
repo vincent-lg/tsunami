@@ -71,6 +71,9 @@ class EntrerPass(Contexte):
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
+        TYPE_CHIFFREMENT = type(self.importeur).anaconf.get_config("connex").type_chiffrement
+        CLEF_SALAGE = type(self.importeur).anaconf.get_config("connex").clef_salage
+        
         if len(msg) < 6:
             self.envoyer(emt, "|rg|Pour des raisons de sécurité, le mot de " \
                             "passe doit faire au minimum\n" \
@@ -83,10 +86,6 @@ class EntrerPass(Contexte):
                             "chiffres et certains caractères spéciaux " \
                             "(|ff||grf|{}/\[\]()+=$_*@^\"'`£#-|ff||rg|).|ff|")
         else:
-            # Ceci sera stocké dans les fichiers de config
-            TYPE_CHIFFREMENT = "sha256"
-            CLEF_SALAGE = "salee_"
-            
             mot_de_passe = str(CLEF_SALAGE + msg).encode()
             h = hashlib.new(TYPE_CHIFFREMENT)
             h.update(mot_de_passe)

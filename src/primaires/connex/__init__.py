@@ -35,6 +35,7 @@ from primaires.connex.instance_connexion import InstanceConnexion
 from reseau.connexions.client_connecte import ClientConnecte
 from primaires.connex.compte import Compte
 from primaires.connex.contextes import liste_contextes
+from primaires.connex.config import cfg_connex
 
 # Nom du groupe fictif
 NOM_GROUPE = "connexions"
@@ -55,6 +56,17 @@ class Module(BaseModule):
         self.comptes = {}
         self.cpt_logger = type(self.importeur).man_logs.creer_logger( \
                 "connex", "comptes")
+    
+    def config(self):
+        """Configuration du module.
+        On crée le fichier de configuration afin de l'utiliser plus tard
+        dans les contextes.
+        
+        """
+        type(self.importeur).anaconf.get_config("connex", \
+            "connex/connex.cfg", "modele connexion", cfg_connex)
+        
+        BaseModule.config(self)
     
     def init(self):
         """Initialisation du module.
