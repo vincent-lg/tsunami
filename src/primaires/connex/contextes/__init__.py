@@ -41,6 +41,7 @@ from primaires.connex.contextes.connexion.entrer_nom import EntrerNom
 from primaires.connex.contextes.creation.nouveau_nom import NouveauNom
 from primaires.connex.contextes.creation.ch_encodage import ChangerEncodage
 from primaires.connex.contextes.creation.entrer_pass import EntrerPass
+from primaires.connex.contextes.creation.confirmer_pass import ConfirmerPass
 from primaires.connex.contextes.creation.entrer_email import EntrerEmail
 from primaires.connex.contextes.creation.validation import Validation
 
@@ -53,6 +54,7 @@ liste_contextes = [
     NouveauNom,
     ChangerEncodage,
     EntrerPass,
+    ConfirmerPass,
     EntrerEmail,
     Validation
 ]
