@@ -29,8 +29,6 @@
 
 from primaires.interpreteur.contexte import Contexte
 
-import hashlib
-
 class ConfirmerPass(Contexte):
     """Contexte de changement d'encodage.
     On affiche au client plusieurs possibilités d'encodage.
@@ -66,12 +64,7 @@ class ConfirmerPass(Contexte):
         config_connex = type(self).importeur.anaconf.get_config("connex")
         type_chiffrement = config_connex.type_chiffrement
         clef_salage = config_connex.clef_salage
-        # On hache le passe pour le tester
-        mot_de_passe = str(clef_salage + msg).encode()
-        h = hashlib.new(type_chiffrement)
-        h.update(mot_de_passe)
-        mot_de_passe = h.digest()
-        if emt.emetteur.mot_de_passe == mot_de_passe:
+        if emt.emetteur.mot_de_passe == emt.emetteur.hash_mot_de_pass(clef_salage,type_chiffrement,msg):
             self.migrer_contexte(emt, "connex:creation:entrer_email")
         else:
             self.envoyer(emt, "Votre confirmation est invalide ! Si cette " \

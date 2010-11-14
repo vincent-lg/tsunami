@@ -32,6 +32,8 @@
 
 from abstraits.id import ObjetID
 
+import hashlib
+
 # Attributs d'un compte
 dic_attributs = {
     "nom":"",
@@ -65,11 +67,10 @@ class Compte(ObjetID):
         ObjetID.__init__(self)
         self.nom = nom_compte
     
-    def hash_mot_de_pass(chiffrement, salage):
-        self.mot_de_passe = str(salage + self.mot_de_passe).encode()
+    def hash_mot_de_pass(self,salage,chiffrement,mot_de_passe):
+        mot_de_passe = str(salage + mot_de_passe).encode()
         h = hashlib.new(chiffrement)
-        h.update(self.mot_de_passe)
-        self.mot_de_passe = h.digest()
-        emt.emetteur.mot_de_passe = self.mot_de_passe
+        h.update(mot_de_passe)
+        return h.digest()
 
 ObjetID.ajouter_groupe(Compte)

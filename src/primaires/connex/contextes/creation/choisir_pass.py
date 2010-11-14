@@ -29,7 +29,6 @@
 
 from primaires.interpreteur.contexte import Contexte
 
-import hashlib
 import re
 
 # Regex
@@ -88,10 +87,7 @@ class ChoisirPass(Contexte):
                             "(|ff||grf|{}/\[\]()+=$_*@^\"'`£#-|ff||rg|).|ff|")
         else:
             # Hash du mot de passe
-            mot_de_passe = str(clef_salage + msg).encode()
-            h = hashlib.new(type_chiffrement)
-            h.update(mot_de_passe)
-            mot_de_passe = h.digest()
+            emt.emetteur.mot_de_passe = emt.emetteur.hash_mot_de_pass(clef_salage,type_chiffrement,msg)
+            
             # Enregistrement et redirection vers la suite
-            emt.emetteur.mot_de_passe = mot_de_passe
             self.migrer_contexte(emt, "connex:creation:confirmer_pass")

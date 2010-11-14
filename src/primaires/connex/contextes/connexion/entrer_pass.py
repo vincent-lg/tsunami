@@ -40,7 +40,6 @@
 import re
 import random
 import string
-import hashlib
 
 from primaires.interpreteur.contexte import Contexte
 
@@ -93,18 +92,21 @@ class EntrerPass(Contexte):
     
     def sendNewMdp(self, emt):
         
-        mdp = string.join(random.sample("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10),'')
+        mdp = "".join(random.sample("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10))
         
         cnx_cfg = type(self.importeur).anaconf.get_config("connex")
         
-        hash_mot_de_pass(cnx_cfg.type_chiffrement, cnx_cfg.clef_salage)
+        emt.emetteur.mot_de_passe = emt.emetteur.hash_mot_de_pass( cnx_cfg.clef_salage,cnx_cfg.type_chiffrement,mdp)
         
+        #TODO
         type(self).importeur.email.envoyer( \
-            "TODO", #TODO\
+            admin_mail, \
             emt.emetteur.adresse_email, \
-            "Nouveau mot de passe pour {0} sur {1}".format(emt.emetteur.nom), \
-            msg_newmdp(compte = emt.emetteur.nom,MUD="TODO",Y=cnx_cfg.nombre_avant_nouveau, password=mot_de_passe) #TODO\
+            "Nouveau mot de passe pour {nom} sur {MUD}".format(nom=emt.emetteur.nom,MUD="TODO"), \
+            msg_newmdp.format(compte = emt.emetteur.nom,MUD="TODO",Y=cnx_cfg.nombre_avant_nouveau, password=mdp) \
         )
+        
+        emt.emetteur.tentatives_intrusion = 0
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
@@ -113,15 +115,15 @@ class EntrerPass(Contexte):
         
         if msg==cnx_cfg.chaine_oubli:
             self.sendNewMdp(emt)
+            self.envoyer(emt,"Un mail avec un nouveau mot de passe vous a été envoyé")
+            return
         
         cnx_cfg = type(self.importeur).anaconf.get_config("connex")
         
-        mot_de_passe = str(cnx_cfg.clef_salage + msg).encode()
-        h = hashlib.new(cnx_cfg.type_chiffrement)
-        h.update(mot_de_passe)
-        mot_de_passe = h.digest()
+        mot_de_passe = emt.emetteur.hash_mot_de_pass(cnx_cfg.clef_salage,cnx_cfg.type_chiffrement,msg)
         
         if emt.emetteur.mot_de_passe == mot_de_passe:
+            emt.emetteur.tentatives_intrusion = 0
             if emt.emetteur.valide == True:
                 self.migrer_contexte(emt, "connex:connexion:choisir_personnage")
             else:
@@ -130,7 +132,7 @@ class EntrerPass(Contexte):
             emt.emetteur.tentatives_intrusion += 1
             if emt.emetteur.tentatives_intrusion==cnx_cfg.nombre_avant_avertissement:
                 #TODO
-                objet = "X tentatives de connexions au compte {compte} sur {MUD}".format( \
+                objet = "{X} tentatives de connexions au compte {compte} sur {MUD}".format( \
                     X = cnx_cfg.nombre_avant_avertissement, \
                     compte = emt.emetteur.nom, \
                     MUD = "TODO" \
@@ -144,13 +146,13 @@ class EntrerPass(Contexte):
                 )
                 type(self).importeur.email.envoyer(destinateur,emt.emetteur.adresse_email,objet,message)
                 type(self).importeur.email.envoyer(destinateur,admin_mail,objet,message)
-            elif emt.emetteur.tentatives_intrusion==cnx_cfg.nombre_avant_nouveau:
+            elif emt.emetteur.tentatives_intrusion>=cnx_cfg.nombre_avant_nouveau:
                 self.sendNewMdp(emt)
                 #TODO
                 objet = "{X} tentatives de connexions au compte {compte} sur {MUD}".format( \
                     X = cnx_cfg.nombre_avant_nouveau, \
                     compte = emt.emetteur.nom, \
-                    MUD = TODO
+                    MUD = "TODO"
                 )
                 #TODO
                 message = msg_admin_tentatives.format( \
@@ -159,7 +161,8 @@ class EntrerPass(Contexte):
                     compte = emt.emetteur.nom, \
                     ip = emt.client.adresse_ip \
                 )
-                type(self).importeur.email.envoyer(destinateur,admin_mail,objets,message)
+                type(self).importeur.email.envoyer(destinateur,admin_mail,objet,message)
+            
             
             if emt.tentatives_intrusion % 3 == 2:
                 emt.client.deconnecter("Trop de tentative de connexion")
