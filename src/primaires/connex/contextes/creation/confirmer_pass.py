@@ -30,12 +30,8 @@
 from primaires.interpreteur.contexte import Contexte
 
 import hashlib
-import re
 
-# Regex
-RE_PASS_VALIDE = re.compile(r"^[a-zA-Z0-9{}/\[\]()+=$_*@^\"'`£#-]+$", re.I)
-
-class EntrerPass(Contexte):
+class ConfirmerPass(Contexte):
     """Contexte de changement d'encodage.
     On affiche au client plusieurs possibilités d'encodage.
     Il est censé afficher celui qu'il voit correctement.
@@ -46,24 +42,17 @@ class EntrerPass(Contexte):
     """
     def __init__(self):
         """Constructeur du contexte"""
-        Contexte.__init__(self, "connex:creation:entrer_pass")
-        self.opts.rci_ctx_prec = "connex:creation:changer_encodage"
+        Contexte.__init__(self, "connex:creation:confirmer_pass")
+        self.opts.rci_ctx_prec = "connex:creation:entrer_pass"
     
     def get_prompt(self, emt):
         """Message de prompt"""
         # Comme l'option ncod est activée, le préfixe est affiché en dur
-        return "Votre mot de passe : "
+        return "Confirmez le mot de passe : "
     
     def accueil(self, emt):
         """Message d'accueil"""
-        return \
-            "\n-----= Choix du mot de passe =------\n" \
-            "Entrez un |grf|mot de passe|ff| de plus de 6 caractères ; il " \
-            "correspond à\n" \
-            "votre compte uniquement, veillez à vous en souvenir et à " \
-            "ne le divulguer\n" \
-            "sous aucun prétexte.\n" \
-            "Si vous voulez revenir au choix de l'encodage, entrez |grf|/|ff|."
+        return ""
     
     def deconnecter(self, emt):
         """En cas de décnonexion du joueur, on supprime son compte"""
@@ -74,23 +63,4 @@ class EntrerPass(Contexte):
         TYPE_CHIFFREMENT = type(self.importeur).anaconf.get_config("connex").type_chiffrement
         CLEF_SALAGE = type(self.importeur).anaconf.get_config("connex").clef_salage
         
-        if len(msg) < 6:
-            self.envoyer(emt, "|rg|Pour des raisons de sécurité, le mot de " \
-                            "passe doit faire au minimum\n" \
-                            "6 caractères.|ff|")
-        elif RE_PASS_VALIDE.search(msg) is None:
-            self.envoyer(emt, "|rg|Le mot de passe entré contient des " \
-                            "caractères non autorisés ; les caractères\n" \
-                            "admis sont les lettres (majuscules et " \
-                            "minuscules, sans accents), les\n" \
-                            "chiffres et certains caractères spéciaux " \
-                            "(|ff||grf|{}/\[\]()+=$_*@^\"'`£#-|ff||rg|).|ff|")
-        else:
-            # Hash du mot de passe
-            mot_de_passe = str(CLEF_SALAGE + msg).encode()
-            h = hashlib.new(TYPE_CHIFFREMENT)
-            h.update(mot_de_passe)
-            mot_de_passe = h.digest()
-            # Enregistrement et redirection vers la suite
-            emt.emetteur.mot_de_passe = mot_de_passe
-            self.migrer_contexte(emt, "connex:creation:confirmer_pass")
+        self.migrer_contexte(emt, "connex:creation:entrer_email")
