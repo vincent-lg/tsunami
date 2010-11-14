@@ -73,11 +73,11 @@ class NouveauNom(Contexte):
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
-        cnx_cfg = type(self).importeur.anaconf.get_config("connex")
+        config_connex = type(self).importeur.anaconf.get_config("connex")
+        noms_interdits = list(config_connex.noms_interdits)
+        noms_interdits.append(config_connex.chaine_nouveau)
         # On passe le message en minuscules
         msg = msg.lower()
-        noms_interdits = list(cnx_cfg.noms_interdits)
-        noms_interdits.append(cnx_cfg.chaine_nouveau)
         if msg in noms_interdits:
             self.envoyer(emt, "Ce nom de compte est interdit. " \
                     "Choisissez-en un autre.")

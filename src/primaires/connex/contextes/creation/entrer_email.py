@@ -54,8 +54,7 @@ class EntrerEmail(Contexte):
         """Message d'accueil"""
         return \
             "\n------= Entrez adresse email =------\n" \
-            "Entrez votre adresse |grf|email|ff| pour votre nouveau compte\nou |grf|/|ff| " \
-            "pour revenir à l'écran précédent.\n" \
+            "Entrez votre |grf|adresse email|ff| pour votre nouveau compte.\n" \
             "Avant de pouvoir utiliser votre compte, un e-mail contenant\n" \
             "un code de validation vous sera envoyé à cette adresse.\n" \
             "Veillez donc à ce qu'elle soit valide."

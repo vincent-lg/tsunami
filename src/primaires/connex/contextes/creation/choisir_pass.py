@@ -35,7 +35,7 @@ import re
 # Regex
 RE_PASS_VALIDE = re.compile(r"^[a-zA-Z0-9{}/\[\]()+=$_*@^\"'`£#-]+$", re.I)
 
-class EntrerPass(Contexte):
+class ChoisirPass(Contexte):
     """Contexte de changement d'encodage.
     On affiche au client plusieurs possibilités d'encodage.
     Il est censé afficher celui qu'il voit correctement.
@@ -46,7 +46,7 @@ class EntrerPass(Contexte):
     """
     def __init__(self):
         """Constructeur du contexte"""
-        Contexte.__init__(self, "connex:creation:entrer_pass")
+        Contexte.__init__(self, "connex:creation:choisir_pass")
         self.opts.rci_ctx_prec = "connex:creation:changer_encodage"
     
     def get_prompt(self, emt):
@@ -71,8 +71,9 @@ class EntrerPass(Contexte):
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
-        TYPE_CHIFFREMENT = type(self.importeur).anaconf.get_config("connex").type_chiffrement
-        CLEF_SALAGE = type(self.importeur).anaconf.get_config("connex").clef_salage
+        config_connex = type(self).importeur.anaconf.get_config("connex")
+        type_chiffrement = config_connex.type_chiffrement
+        clef_salage = config_connex.clef_salage
         
         if len(msg) < 6:
             self.envoyer(emt, "|rg|Pour des raisons de sécurité, le mot de " \
@@ -87,8 +88,8 @@ class EntrerPass(Contexte):
                             "(|ff||grf|{}/\[\]()+=$_*@^\"'`£#-|ff||rg|).|ff|")
         else:
             # Hash du mot de passe
-            mot_de_passe = str(CLEF_SALAGE + msg).encode()
-            h = hashlib.new(TYPE_CHIFFREMENT)
+            mot_de_passe = str(clef_salage + msg).encode()
+            h = hashlib.new(type_chiffrement)
             h.update(mot_de_passe)
             mot_de_passe = h.digest()
             # Enregistrement et redirection vers la suite

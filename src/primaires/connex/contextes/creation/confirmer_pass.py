@@ -43,7 +43,7 @@ class ConfirmerPass(Contexte):
     def __init__(self):
         """Constructeur du contexte"""
         Contexte.__init__(self, "connex:creation:confirmer_pass")
-        self.opts.rci_ctx_prec = "connex:creation:entrer_pass"
+        self.opts.rci_ctx_prec = "connex:creation:choisir_pass"
     
     def get_prompt(self, emt):
         """Message de prompt"""
@@ -52,7 +52,10 @@ class ConfirmerPass(Contexte):
     
     def accueil(self, emt):
         """Message d'accueil"""
-        return ""
+        return \
+            "\n---------= Confirmation =-----------\n" \
+            "Entrez une nouvelle fois votre mot de passe pour éviter une " \
+            "faute de frappe."
     
     def deconnecter(self, emt):
         """En cas de décnonexion du joueur, on supprime son compte"""
@@ -60,7 +63,19 @@ class ConfirmerPass(Contexte):
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
-        TYPE_CHIFFREMENT = type(self.importeur).anaconf.get_config("connex").type_chiffrement
-        CLEF_SALAGE = type(self.importeur).anaconf.get_config("connex").clef_salage
-        
-        self.migrer_contexte(emt, "connex:creation:entrer_email")
+        config_connex = type(self).importeur.anaconf.get_config("connex")
+        type_chiffrement = config_connex.type_chiffrement
+        clef_salage = config_connex.clef_salage
+        # On hache le passe pour le tester
+        mot_de_passe = str(clef_salage + msg).encode()
+        h = hashlib.new(type_chiffrement)
+        h.update(mot_de_passe)
+        mot_de_passe = h.digest()
+        if emt.emetteur.mot_de_passe == mot_de_passe:
+            self.migrer_contexte(emt, "connex:creation:entrer_email")
+        else:
+            self.envoyer(emt, "Votre confirmation est invalide ! Si cette " \
+                            "erreur persiste, vous vous\n" \
+                            "êtes peut-être trompé en indiquant votre mot de " \
+                            "passe à l'étape précédente. Dans ce\n" \
+                            "cas, entrez |grf|/|ff| pour retourner en arrière.")
