@@ -98,4 +98,28 @@ class Validation(Contexte):
     
     def interpreter(self, emt, msg):
         """Interpréteur du contexte"""
-        pass
+        if msg == emt.emetteur.code_validation:
+            emt.emetteur.valide = True
+            emt.emetteur.code_validation = ""
+            emt.emetteur.tentatives_validation = 0
+            self.migrer_vers(emt, "connex:connexion:choix_personnages")
+        else:
+            emt.emetteur.tentatives_validation += 1
+            if emt.emetteur.tentatives_validation == 3:
+                # Génération d'un nouveau code de validation
+                code = generer_code()
+                emt.emetteur.code_validation = code
+                destinateur = "info"
+                destinataire = emt.emetteur.adresse_email
+                sujet = "Validation du compte {0}".format(emt.emetteur.nom)
+                corps = msg_validation.format(code = code)
+                type(self).importeur.email.envoyer(destinateur, destinataire, \
+                    sujet, corps)
+                emt.emetteur.tentatives_validation = 0
+                self.envoyer(emt, \
+                    "Vous avez entré 3 codes de validation incorrects.\n" \
+                    "Un nouveau code de validation vous a été envoyé à " \
+                    "l'adresse {0}.".format(emt.emetteur.adresse_email))
+            else:
+                self.envoyer(emt, "Ce code de validation est incorrect. " \
+                        "Veuillez l'entrer à nouveau.")

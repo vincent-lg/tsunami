@@ -69,7 +69,7 @@ class EntrerEmail(Contexte):
         # On passe le message en minuscules
         msg = msg.lower()
         if msg in type(self).importeur.connex.email_comptes:
-            self.envoyer(emt, "Cette adrese email à déjà été utilisé.")
+            self.envoyer(emt, "Cette adresse e-mail a déjà été utilisée.")
         elif RE_MAIL_VALIDE.search(msg) is None:
             self.envoyer(emt, "|rg|Ceci n'est pas une adresse mail valide.|ff|")
         else:
