@@ -88,7 +88,7 @@ class Module(BaseModule):
     
     def envoyer(self, destinateur, destinataires, sujet, corps):
         """Méthode appelée pour envoyer un message.
-        Si le serveur mail n'est pas actif ou que le nom d'hôte n'est aps
+        Si le serveur mail n'est pas actif ou que le nom d'hôte n'est pas
         précisé, on n'envoie rien du tout.
         
         Le destinateur doit être soit un alias, soit un nom, mais pas une adresse.

@@ -47,6 +47,17 @@ cfg_connex = r"""
 # Certains comptes pourraient devenir inaccessibles, avec un peu de malchance.
 chaine_nouveau = "nouveau"
 
+# Chaîne à entrer si on a oublié son mot de passe
+# Par défaut, c'est simplement 'oubli' mais vous pouvez lui donner un autre
+# nom. Le client devra entrer cette chaîne à la place de son mot de passe
+# Et un nouveau mot de passe lui sera envoyé
+# Evitez de modifier cette chaîne après le premier lancement de votre serveur.
+# Certains comptes pourraient devenir inaccessibles, avec un peu de malchance.
+chaine_oubli = "oubli"
+
+nombre_avant_avertissement = 3
+nombre_avant_nouveau = 20
+
 # Noms interdits :
 # Cette liste contient les noms de compte considérés comme interdits
 # Vous pouvez par exemple y ajouter le nom de votre projet

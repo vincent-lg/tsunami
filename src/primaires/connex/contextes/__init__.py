@@ -36,6 +36,8 @@ compte.
 # Contextes de connexion
 from primaires.connex.contextes.connexion.afficher_motd import AfficherMOTD
 from primaires.connex.contextes.connexion.entrer_nom import EntrerNom
+from primaires.connex.contextes.connexion.entrer_pass import EntrerPass
+from primaires.connex.contextes.connexion.choisir_personnage import ChoisirPersonnage
 
 # Contextes de création de compte
 from primaires.connex.contextes.creation.nouveau_nom import NouveauNom
@@ -49,6 +51,8 @@ liste_contextes = [
     # Contexes de connexion
     AfficherMOTD,
     EntrerNom,
+    EntrerPass,
+    ChoisirPersonnage,
     
     # Contextes de création de compte
     NouveauNom,

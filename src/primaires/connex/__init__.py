@@ -92,6 +92,8 @@ class Module(BaseModule):
         comptes = self.importeur.supenr.charger_groupe(Compte)
         for compte in comptes:
             self.comptes[compte.id.id] = compte
+            if compte.valide==False:
+                self.supprimer_compte(compte)
         
         # On affiche proprement le nombre de comptes (un peu verbeux mais-)
         nombre_comptes = len(self.comptes)
@@ -169,6 +171,13 @@ class Module(BaseModule):
         else:
             raise KeyError("Le compte {0} n'est pas dans la liste " \
                     "des comptes existants".format(compte))
+    
+    def get_compte(self, nom):
+        """Récupère le compte 'compte'"""
+        for compte in self.comptes.values():
+            if compte.nom==nom:
+                return compte
+        return None
     
     def _get_email_comptes(self):
         """Retourne sous la forme d'un tuple la liste des emails de comptes

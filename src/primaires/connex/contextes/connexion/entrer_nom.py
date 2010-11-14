@@ -75,7 +75,9 @@ class EntrerNom(Contexte):
         if RE_NOUVEAU.search(msg): # le client demande un nouveau compte
             self.migrer_contexte(emt, "connex:creation:entrer_nom")
         elif type(self).importeur.connex.compte_est_cree(msg):
-            self.envoyer(emt, "Compte déjà créé !")
+            print (type(self).importeur.connex.get_compte(msg))
+            emt.emetteur = type(self).importeur.connex.get_compte(msg)
+            self.migrer_contexte(emt, "connex:connexion:entrer_pass")
         else:
             self.envoyer(emt, "Ce compte n'existe pas. Entrez |grf|nouveau|ff| " \
                             "si vous souhaitez le créer.")

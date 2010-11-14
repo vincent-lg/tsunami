@@ -64,5 +64,12 @@ class Compte(ObjetID):
         """Constructeur d'un compte."""
         ObjetID.__init__(self)
         self.nom = nom_compte
+    
+    def hash_mot_de_pass(chiffrement, salage):
+        self.mot_de_passe = str(salage + self.mot_de_passe).encode()
+        h = hashlib.new(chiffrement)
+        h.update(self.mot_de_passe)
+        self.mot_de_passe = h.digest()
+        emt.emetteur.mot_de_passe = self.mot_de_passe
 
 ObjetID.ajouter_groupe(Compte)

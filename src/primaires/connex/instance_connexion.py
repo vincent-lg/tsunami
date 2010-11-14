@@ -54,6 +54,7 @@ class InstanceConnexion:
                 "connex:connexion:afficher_MOTD"]
         self.contexte.actualiser(self)
         self.contexte.migrer_contexte(self, "connex:connexion:entrer_nom")
+        self.tentatives_intrusion = 0
     
     def _get_contexte_actuel(self):
         return self.contexte
