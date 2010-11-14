@@ -38,6 +38,11 @@ dic_attributs = {
     "mot_de_passe":"",
     "adresse_email":"",
     "encodage":"",
+    "valide":False,
+    "code_validation":"",
+    "msg_validation":False, # à True si le message de validation a été envoyé
+    "tentatives_validation":0, # tentatives de validation
+    "tentatives_intrusion":0, # tentatives d'intrusion (mot de passe erroné)
     "joueurs":{}, # {id_joueur:joueur}
 }
 

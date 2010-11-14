@@ -30,7 +30,12 @@
 from primaires.interpreteur.contexte import Contexte
 
 class Validation(Contexte):
+    """Contexte de validation.
+    On envoie un mail au client contenant un code pour valider son compte.
+    Si le client entre trois fois de suite un code héroné, on renvoie un
+    nouveau code.
     
+    """
     def __init__(self):
         """Constructeur du contexte"""
         Contexte.__init__(self, "connex:creation:validation")
@@ -38,7 +43,6 @@ class Validation(Contexte):
     
     def get_prompt(self, emt):
         """Message de prompt"""
-        # Comme l'option ncod est activée, le préfixe est affiché en dur
         return "Code de validation : "
     
     def accueil(self, emt):
@@ -46,10 +50,6 @@ class Validation(Contexte):
         return \
             "\n-----= Validation de l'email =------\n" \
             "Blabla validation"
-    
-    def deconnecter(self, emt):
-        """En cas de déconexion du joueur, on supprime son compte"""
-        type(self).importeur.connex.supprimer_compte(emt.emetteur)
     
     def interpreter(self, emt, msg):
         self.migrer_contexte(emt, "connex:connexion:entrer_nom")
