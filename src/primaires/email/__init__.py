@@ -38,6 +38,7 @@ from socket import error as SocketError
 from abstraits.module import *
 from abstraits.id import ObjetID, est_objet_id
 from primaires.email.config import cfg_email
+from primaires.format.fonctions import supprimer_accents
 
 class Module(BaseModule):
     """Classe du module 'email'.
@@ -111,7 +112,7 @@ class Module(BaseModule):
                 
                 mail = MIMEText(corps.encode("Utf-8"), "plain", "Utf-8")
                 mail["From"] = "{0}@{1}".format(destinateur, self.nom_hote)
-                mail["Subject"] = sujet
+                mail["Subject"] = supprimer_accents(sujet)
                 mail["To"] = destinataires
                 
                 # Si le destinataire est une chaîne, on la met en liste

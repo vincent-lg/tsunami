@@ -56,5 +56,5 @@ liste_contextes = [
     EntrerPass,
     ConfirmerPass,
     EntrerEmail,
-    Validation
+    Validation,
 ]

@@ -138,6 +138,14 @@ class Contexte:
         type(self).importeur.interpreteur.ajouter_contexte(self)
         self.opts = OptionsContexte()
     
+    def entrer(self, emt):
+        """Méthode appelée quand l'émetteur entre dans le contexte"""
+        pass
+    
+    def sortir(self, emt):
+        """Méthode appelée quand l'émetteur sort du contexte"""
+        pass
+    
     def get_prompt(self, emt):
         """Retourne le prompt qui sera affiché à chaque message envoyé"""
         return ""
@@ -183,7 +191,9 @@ class Contexte:
         else:
             nouveau_contexte = contexte
         
+        emt.contexte_actuel.sortir(emt)
         emt.migrer_contexte(nouveau_contexte)
+        emt.contexte_actuel.entrer(emt)
         emt.contexte_actuel.envoyer(emt, emt.contexte_actuel.accueil(emt))
     
     def interpreter(self, emt, msg):

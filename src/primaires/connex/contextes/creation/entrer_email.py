@@ -45,7 +45,6 @@ class EntrerEmail(Contexte):
     def __init__(self):
         """Constructeur du contexte"""
         Contexte.__init__(self, "connex:creation:entrer_email")
-        self.opts.emt_ncod = False
     
     def get_prompt(self, emt):
         """Message de prompt"""
@@ -55,9 +54,11 @@ class EntrerEmail(Contexte):
         """Message d'accueil"""
         return \
             "\n------= Entrez adresse email =------\n" \
-            "Entrez votre adresse |grf|email|ff| pour votre nouveau compte, ou |grf|/|ff| " \
+            "Entrez votre adresse |grf|email|ff| pour votre nouveau compte\nou |grf|/|ff| " \
             "pour revenir à l'écran précédent.\n" \
-            "Un mail vous sera envoyé donc l'adresse doit être valide!"
+            "Avant de pouvoir utiliser votre compte, un e-mail contenant\n" \
+            "un code de validation vous sera envoyé à cette adresse.\n" \
+            "Veillez donc à ce qu'elle soit valide."
     
     def deconnecter(self, emt):
         """En cas de déconexion du joueur, on supprime son compte"""
@@ -73,11 +74,10 @@ class EntrerEmail(Contexte):
             self.envoyer(emt, "|rg|Ceci n'est pas une adresse mail valide.|ff|")
         else:
             emt.emetteur.adresse_email = msg
-            type(self).importeur.email.config()
             config = type(self).importeur.anaconf.get_config("email")
             if config.serveur_mail:
                 self.migrer_contexte(emt, "connex:creation:validation")
             else:
-                emt.emetteur.valid = True
+                emt.emetteur.valide = True
                 self.migrer_contexte(emt, "connex:connexion:entrer_nom")
     

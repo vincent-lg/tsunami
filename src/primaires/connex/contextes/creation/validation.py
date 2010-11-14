@@ -29,6 +29,34 @@
 
 from primaires.interpreteur.contexte import Contexte
 
+# Message de validation
+msg_validation = \
+    "Votre demande de création de compte a bien été enregistrée.\n" \
+    "Pour valider ce compte, vous devez recopier le code ci-dessous dans " \
+    "votre client, puis valider.\n\n" \
+    "Code de validation : {code}\n\n" \
+    "Note : si vous avez été déconnecté du jeu dans l'intervalle, " \
+    "reconnectez-vous. En entrant votre nom de compte nouvellement créé " \
+    "puis votre mot de passe, vous serez automatiquement redirigé vers " \
+    "l'étape de validation où le code vous sera demandé pour valider le " \
+    "compte et pouvoir, enfin, commencer à jouer."
+
+from random import randrange
+
+def generer_code():
+    """Fonction chargée de générer un code aléatoire
+    Elle retourne le code sous la forme d'une chaîne.
+    
+    """
+    caracteres = "0123456789" # caractères constituant le code
+    taille = 6 # taille du code de validation
+    code = ""
+    for i in range(taille):
+        code += caracteres[randrange(len(caracteres))]
+    
+    return code
+
+
 class Validation(Contexte):
     """Contexte de validation.
     On envoie un mail au client contenant un code pour valider son compte.
@@ -41,6 +69,20 @@ class Validation(Contexte):
         Contexte.__init__(self, "connex:creation:validation")
         self.opts.rci_ctx_prec = "connex:creation:entrer_email"
     
+    def entrer(self, emt):
+        """Méthode appelée quand emt entre dans le contexte"""
+        if not emt.emetteur.msg_validation:
+            # Le message de validation n'a pas été envoyé
+            # Génération du code de validation
+            code = generer_code()
+            emt.emetteur.code_validation = code
+            destinateur = "info"
+            destinataire = emt.emetteur.adresse_email
+            sujet = "Validation du compte {0}".format(emt.emetteur.nom)
+            corps = msg_validation.format(code = code)
+            type(self).importeur.email.envoyer(destinateur, destinataire, \
+                    sujet, corps)
+    
     def get_prompt(self, emt):
         """Message de prompt"""
         return "Code de validation : "
@@ -48,8 +90,12 @@ class Validation(Contexte):
     def accueil(self, emt):
         """Message d'accueil"""
         return \
-            "\n-----= Validation de l'email =------\n" \
-            "Blabla validation"
+            "\n-----= Validation du compte =------\n" \
+            "Un message vient de vous être envoyé à votre adresse {0}.\n" \
+            "Il contient un code de validation que vous devez recopier ici.\n" \
+            "Ce code permet de valider votre compte, il est donc " \
+            "indispensable.".format(emt.emetteur.adresse_email)
     
     def interpreter(self, emt, msg):
-        self.migrer_contexte(emt, "connex:connexion:entrer_nom")
+        """Interpréteur du contexte"""
+        pass
