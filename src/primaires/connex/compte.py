@@ -67,10 +67,11 @@ class Compte(ObjetID):
         ObjetID.__init__(self)
         self.nom = nom_compte
     
-    def hash_mot_de_pass(self,salage,chiffrement,mot_de_passe):
-        mot_de_passe = str(salage + mot_de_passe).encode()
-        h = hashlib.new(chiffrement)
+    def hash_mot_de_pass(self, clef_salage, type_chiffrement, mot_de_passe):
+        mot_de_passe = str(clef_salage + mot_de_passe).encode()
+        h = hashlib.new(type_chiffrement)
         h.update(mot_de_passe)
+        
         return h.digest()
 
 ObjetID.ajouter_groupe(Compte)

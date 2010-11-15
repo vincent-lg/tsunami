@@ -32,14 +32,15 @@
 
 cfg_connex = r"""
 # Ce fichier contient la configuration du module primaire connex.
-# Sont paramétrables diverses options paramétrant la connexion
+# Sont paramétrables diverses options liées à la connexion
 # d'un client et la création de compte / personnage.
+
 
 ### Création d'un personnage
 
 ## Choix du nom du compte
 
-# Chaîne à entrer pour créer un nouveau compte :
+# Chaîne à entrer pour créer un nouveau compte
 # Par défaut, c'est simplement 'nouveau' mais vous pouvez lui donner un autre
 # nom. Le client devra entrer cette chaîne pour créer un nouveau compte.
 # Il ne pourra naturellement pas créer un compte avec ce nom.
@@ -47,18 +48,7 @@ cfg_connex = r"""
 # Certains comptes pourraient devenir inaccessibles, avec un peu de malchance.
 chaine_nouveau = "nouveau"
 
-# Chaîne à entrer si on a oublié son mot de passe
-# Par défaut, c'est simplement 'oubli' mais vous pouvez lui donner un autre
-# nom. Le client devra entrer cette chaîne à la place de son mot de passe
-# Et un nouveau mot de passe lui sera envoyé
-# Evitez de modifier cette chaîne après le premier lancement de votre serveur.
-# Certains comptes pourraient devenir inaccessibles, avec un peu de malchance.
-chaine_oubli = "oubli"
-
-nombre_avant_avertissement = 3
-nombre_avant_nouveau = 20
-
-# Noms interdits :
+# Noms interdits
 # Cette liste contient les noms de compte considérés comme interdits
 # Vous pouvez par exemple y ajouter le nom de votre projet
 noms_interdits = ["kassie"]
@@ -78,4 +68,24 @@ type_chiffrement = "sha256"
 # mot de passe juste avant de le hacher.
 clef_salage = "salee_"
 
+
+### Connexion
+
+# Chaîne à entrer si on a oublié son mot de passe
+# Par défaut, c'est simplement 'oubli' mais vous pouvez lui donner un autre
+# nom. Le client devra entrer cette chaîne à la place de son mot de passe,
+# un nouveau mot de passe lui sera envoyé.
+# Evitez de modifier cette chaîne après le premier lancement de votre serveur.
+# Certains comptes pourraient devenir inaccessibles, avec un peu de malchance.
+chaine_oubli = "oubli"
+
+# Paramétrages des avertissements
+# Ces deux nombres configurent respectivement le nombre d'essais autorisés
+# avant d'envoyer un message d'avertissement et de déconnecter le client.
+# Au bout de 3 entrées erronées par défaut, le client est déconnecté et un mail
+# automatique est envoyé au possesseur du compte ; au bout de 20 par défaut
+# le mot de passe est réinitialisé et envoyé par mail. Dans les deux cas, un
+# autre mail avertit l'admin principal.
+nombre_avant_avertissement = 3
+nombre_avant_nouveau = 20
 """
