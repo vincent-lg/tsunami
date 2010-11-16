@@ -51,7 +51,7 @@ class ConfirmerPass(Contexte):
     def accueil(self, emt):
         """Message d'accueil"""
         return \
-            "\n---------= Confirmation =-----------\n" \
+            "\n|tit|---------= Confirmation =-----------|ff|\n" \
             "Entrez une nouvelle fois votre mot de passe pour éviter une " \
             "faute de frappe."
     

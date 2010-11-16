@@ -53,7 +53,7 @@ class EntrerEmail(Contexte):
     def accueil(self, emt):
         """Message d'accueil"""
         return \
-            "\n------= Entrez adresse email =------\n" \
+            "\n|tit|------= Entrez adresse email =------|ff|\n" \
             "Entrez votre |grf|adresse email|ff| pour votre nouveau compte.\n" \
             "Avant de pouvoir utiliser votre compte, un e-mail contenant\n" \
             "un code de validation vous sera envoyé à cette adresse.\n" \

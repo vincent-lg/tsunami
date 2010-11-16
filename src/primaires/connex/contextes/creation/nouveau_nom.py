@@ -35,10 +35,9 @@ import re
 ## Constantes
 # Regex
 RE_NOM_VALIDE = re.compile(r"^[A-Za-z0-9]+$", re.I)
-
 # Tailles du nom du compte
-min = 3
-max = 15
+MIN = 3
+MAX = 15
 
 class NouveauNom(Contexte):
     """Premier contexte appelé à la création d'un compte.
@@ -47,9 +46,9 @@ class NouveauNom(Contexte):
     *   Le client entre un nom de compte existant (les noms de compte
         ne sont pas sensibles à la casse)
     *   Le client entre un nom de compte invalide
-    Dans ces deux cas on boucle sur le contexte
-    *   Le client entre un nom de compte valide :
-    Là, on redirige vers 'connex:creation:changer_enodage'
+    Dans ces deux cas on boucle sur le contexte.
+    *   Le client entre un nom de compte valide
+    Là, on redirige vers 'connex:creation:changer_enodage'.
     
     """
     def __init__(self):
@@ -66,9 +65,10 @@ class NouveauNom(Contexte):
     def accueil(self, emt):
         """Message d'accueil"""
         return \
-            "\n------= Création d'un compte =------\n" \
-            "Entrez un |cmd|nom|ff| pour votre nouveau compte, ou |cmd|/|ff| " \
-			"pour revenir à l'écran précédent.\n" \
+            "\n|tit|------= Création d'un compte =------|ff|\n" \
+            "Bienvenue dans notre monde !\n" \
+            "Entrez un |cmd|nom|ff| pour créer un compte, ou |cmd|/|ff| pour " \
+			"revenir à l'écran précédent.\n" \
             "Ce nom vous sera demandé à chaque connexion, ne l'oubliez pas !"
     
     def interpreter(self, emt, msg):
@@ -83,7 +83,7 @@ class NouveauNom(Contexte):
                     "Choisissez-en un autre.|ff|")
         elif msg in type(self).importeur.connex.nom_comptes:
             self.envoyer(emt, "|att|Ce nom de compte est déjà réservé.|ff|")
-        elif len(msg) < min or len(msg) > max:
+        elif len(msg) < MIN or len(msg) > MAX:
             self.envoyer(emt, "|err|Le nom doit faire entre {0} et {1} " \
                             "caractères de longueur.|ff|".format(min, max))
         elif RE_NOM_VALIDE.search(msg) is None:

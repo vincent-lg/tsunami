@@ -50,6 +50,7 @@ class Message:
         # Création du dictionnaire des options
         FORMAT = {
             "|cmd|": config.couleur_cmd,
+            "|tit|": cfg_charte.couleur_titre,
             "|att|": config.couleur_attention,
             "|err|": config.couleur_erreur,
         }

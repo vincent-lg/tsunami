@@ -60,6 +60,9 @@ cfg_charte = r"""
 # 'Entrez votre |cmd|mot de passe|ff| pour vous identifier."
 couleur_cmd = "|grf|"
 
+# Couleur des titres
+couleur_titre = "|bl|"
+
 # Couleur des messages importants
 # Deux niveaux de messages, les messages de warning et les messages d'erreur.
 # Raccourcis correspondantes : |att| et |err|

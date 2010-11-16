@@ -235,8 +235,9 @@ class Contexte:
         cfg_charte = type(self.importeur).anaconf.get_config("charte_graph")
         FORMAT = {
             "|cmd|": cfg_charte.couleur_cmd,
+            "|tit|": cfg_charte.couleur_titre,
             "|att|": cfg_charte.couleur_attention,
-            "|err|": cfg_charte.couleur_erreur,
+            "|err|": cfg_charte.couleur_erreur
         }
         # On ajoute le prompt à msg
         prompt = self.get_prompt(emt)

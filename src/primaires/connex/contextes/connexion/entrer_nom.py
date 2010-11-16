@@ -65,9 +65,9 @@ class EntrerNom(Contexte):
         """Message d'accueil"""
         cnx_cfg = type(self).importeur.anaconf.get_config("connex")
         return \
-            "\nEntrez votre |grf|nom de compte|ff| ou |grf|{0}|ff| pour " \
+            "\nEntrez votre |cmd|nom de compte|ff| ou |cmd|{0}|ff| pour " \
             "en créer un.\n" \
-            "|rg|Un seul compte par personne est autorisé.|ff|".format( \
+            "|att|Un seul compte par personne est autorisé.|ff|".format( \
             cnx_cfg.chaine_nouveau)
     
     def interpreter(self, emt, msg):

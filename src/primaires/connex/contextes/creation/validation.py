@@ -90,7 +90,7 @@ class Validation(Contexte):
     def accueil(self, emt):
         """Message d'accueil"""
         return \
-            "\n-----= Validation du compte =------\n" \
+            "\n|tit|-----= Validation du compte =------|ff|\n" \
             "Un message vient de vous être envoyé à votre adresse {0}.\n" \
             "Il contient un code de validation que vous devez recopier ici.\n" \
             "Ce code permet de valider votre compte, il est donc " \
