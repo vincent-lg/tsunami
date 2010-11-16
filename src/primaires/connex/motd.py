@@ -41,16 +41,16 @@ MOTD = """
 Bienvenue sur
 
 
-|bl| ,ggg,        gg                                                |ff|
-|mg|dP""Y8b       dP                                                |ff|
-|cy|Yb, `88      d8'                                                |ff|
-|rgc| `"  88    ,dP'                                    gg           |ff|
-|vrc|     88aaad8"                                      ""           |ff|
-|jn|     88''''Yb,      ,gggg,gg    ,g,       ,g,      gg    ,ggg,  |ff|
-|blc|     88     "8b    dP"  "Y8I   ,8'8,     ,8'8,     88   i8" "8i |ff|
-|mgc|     88      `8i  i8'    ,8I  ,8'  Yb   ,8'  Yb    88   I8, ,8I |ff|
-|cyb|     88       Yb,,d8,   ,d8b,,8'_   8) ,8'_   8) _,88,_ `YbadP' |ff|
-|bc|     88        Y8P"Y8888P"`Y8P' "YY8P"PP' "YY8P"88P""Y8888P"Y888|ff|
+ ,ggg,        gg                                                
+dP""Y8b       dP                                                
+Yb, `88      d8'                                                
+ `"  88    ,dP'                                    gg           
+     88aaad8"                                      ""           
+     88''''Yb,      ,gggg,gg    ,g,       ,g,      gg    ,ggg,  
+     88     "8b    dP"  "Y8I   ,8'8,     ,8'8,     88   i8" "8i 
+     88      `8i  i8'    ,8I  ,8'  Yb   ,8'  Yb    88   I8, ,8I 
+     88       Yb,,d8,   ,d8b,,8'_   8) ,8'_   8) _,88,_ `YbadP' 
+     88        Y8P"Y8888P"`Y8P' "YY8P"PP' "YY8P"88P""Y8888P"Y888
 
 
                                         Version de developpement
