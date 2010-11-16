@@ -242,6 +242,8 @@ class Contexte:
             else:
                 msg += "\n\n" + prompt
         if type(msg) == str:
+            # Ajout de la mise en forme
+            msg = ajouter_forme(msg)
             # Ajout de la couleur
             msg = ajouter_couleurs(msg)
             

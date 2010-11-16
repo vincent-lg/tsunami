@@ -67,7 +67,7 @@ class NouveauNom(Contexte):
         """Message d'accueil"""
         return \
             "\n------= Création d'un compte =------\n" \
-            "Entrez un |grf|nom|ff| pour votre nouveau compte, ou |grf|/|ff| " \
+            "Entrez un |cmd|nom|ff| pour votre nouveau compte, ou |cmd|/|ff| " \
 			"pour revenir à l'écran précédent.\n" \
             "Ce nom vous sera demandé à chaque connexion, ne l'oubliez pas !"
     
@@ -79,15 +79,15 @@ class NouveauNom(Contexte):
         # On passe le message en minuscules
         msg = msg.lower()
         if msg in noms_interdits:
-            self.envoyer(emt, "Ce nom de compte est interdit. " \
-                    "Choisissez-en un autre.")
+            self.envoyer(emt, "|att|Ce nom de compte est interdit. " \
+                    "Choisissez-en un autre.|ff|")
         elif msg in type(self).importeur.connex.nom_comptes:
-            self.envoyer(emt, "Ce nom de compte est déjà réservé.")
+            self.envoyer(emt, "|att|Ce nom de compte est déjà réservé.|ff|")
         elif len(msg) < min or len(msg) > max:
-            self.envoyer(emt, "|rg|Le nom doit faire entre {0} et {1} " \
+            self.envoyer(emt, "|err|Le nom doit faire entre {0} et {1} " \
                             "caractères de longueur.|ff|".format(min, max))
         elif RE_NOM_VALIDE.search(msg) is None:
-            self.envoyer(emt, "|rg|Les caractères spéciaux ne sont pas " \
+            self.envoyer(emt, "|err|Les caractères spéciaux ne sont pas " \
                             "autorisés.|ff|")
         else:
             # On crée le compte correspondant

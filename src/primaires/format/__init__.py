@@ -32,6 +32,7 @@
 
 from abstraits.module import *
 from primaires.format.message import Message
+from primaires.format.config import cfg_charte
 
 class Module(BaseModule):
     """Cette classe décrit le module primaire Format, chargé du formatage,
@@ -41,6 +42,17 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "format", "primaire")
+    
+    def config(self):
+        """Configuration du module.
+        On crée le fichier de configuration afin de l'utiliser plus tard
+        pour la mise en forme.
+        
+        """
+        type(self.importeur).anaconf.get_config("charte_graph", \
+            "format/charte.cfg", "modele charte graphique", cfg_charte)
+        
+        BaseModule.config(self)
     
     def formater(self, message):
         """Retourne le message formaté.

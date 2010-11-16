@@ -49,8 +49,9 @@ class Message:
         """
         # Opérations sur la chaîne
         msg_chn = convertir_nl(msg_chn)
+        msg_chn = ajouter_forme(msg_chn)
         msg_chn = ajouter_couleurs(msg_chn)
-        msg_chn = replacer_sp_cars(msg_chn)
+        msg_chn = remplacer_sp_cars(msg_chn)
         
         # On l'enregistre en tant qu'attribut
         self.chaine = msg_chn
