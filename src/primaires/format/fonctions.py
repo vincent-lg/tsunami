@@ -38,25 +38,25 @@ Fonctions à appliquer à la réception d'un message :
 Fonctions à appliquer à l'émission d'un message :
 -   convertir_nl : convertir les sauts de ligne '\n' dans un format
     universellement interprété
--   ajouter_couleurs : ajouter les couleurs en fonction des codes de
-    formattage
+-   ajouter_couleurs : ajoute les couleurs en fonction des codes de
+    formatage
 -   replacer_sp_cars : reconvertir les caractères d'échappement
 
 """
 
 # Constantes de formatage
-sp_cars_a_echapper = { # caractères à échapper
+sp_cars_a_echapper = { # Caractères à échapper
     "|":"|bar|",
 }
 
-sp_cars_a_remplacer = {} # dictionnaire miroir de sp_cars_a_echapper
+sp_cars_a_remplacer = {} # Dictionnaire miroir de sp_cars_a_echapper
 for cle, val in sp_cars_a_echapper.items():
     sp_cars_a_remplacer[val] = cle
 
 NL = "\r\n"
 
 ACCENTS = {
-    # Accent:lettre non accentuée
+    # accent:lettre non accentuée
     # Lettres majuscules
     "É":"E",
     "À":"A",
@@ -90,7 +90,7 @@ ACCENTS = {
 
 # Couleurs
 COULEURS = {
-    # Balise: code ANSI
+    # balise: code ANSI
     "|nr|": "\x1b[0;30m",  # noir
     "|rg|": "\x1b[0;31m",  # rouge
     "|vr|": "\x1b[0;32m",  # vert
@@ -140,27 +140,18 @@ def convertir_nl(msg):
         msg = msg.replace("\n", NL)
     return msg
 
-def ajouter_forme(msg):
-    """Cette fonction est appelée pour ajouter la mise en forme préconfigurée
-    d'un message. Voir le dictionnaire correspondant et le fichier config.py.
-    
-    """
-    couleur_cmd = "|grf|"
-    couleur_attention = "|vr|"
-    couleur_erreur = "|rg|"
-    
-    msg = msg.replace("|cmd|", couleur_cmd)
-    msg = msg.replace("|att|", couleur_attention)
-    msg = msg.replace("|err|", couleur_erreur)
-    
-    return msg
-
-def ajouter_couleurs(msg):
+def ajouter_couleurs(msg, dic_form):
     """Cette fonction est appelée pour convertir les codes de formatage
-    couleur en leur équivalent ANSI.
+    couleur en leur équivalent ANSI. Elle gère aussi le formatage des
+    raccourcis de mise en forme (voir config.py). Le deuxième argument est
+    le dictionnaire de ces raccourcis.
     On se base sur la constante dictionnaire 'COULEURS'.
     
     """
+    # On transforme les raccourcis de mise en forme, puis on colorise en ANSI
+    for balise, couleur in dic_form.items():
+        msg = msg.replace(balise, couleur)
+    
     for balise, code_ansi in COULEURS.items():
         msg = msg.replace(balise, code_ansi)
     
@@ -175,11 +166,12 @@ def remplacer_sp_cars(msg):
     """
     for code_car, a_repl in sp_cars_a_remplacer.items():
         msg = msg.replace(code_car, a_repl)
+    
     return msg
 
 def supprimer_accents(msg):
     """Cette fonction permet, avant émission du message, de retirer
-    les accents. On se base sur ACCENTS pour ce faire.
+    les accents. On se base pour ce faire sur ACCENTS.
     
     """
     for acc, non_acc in ACCENTS.items():

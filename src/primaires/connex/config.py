@@ -88,4 +88,5 @@ chaine_oubli = "oubli"
 # autre mail avertit l'admin principal.
 nombre_avant_avertissement = 3
 nombre_avant_nouveau = 20
+
 """

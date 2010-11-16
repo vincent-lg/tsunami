@@ -78,7 +78,7 @@ class OptionsContexte:
         l'atteindre automatiquement en entrant le raccourci de retour
         (voir la constante 'RCI_PREC').
     
-    """
+    """    
     def __init__(self):
         """Constructeur par défaut des options"""
         # Options de réception
@@ -88,8 +88,8 @@ class OptionsContexte:
         self.emt_ncod = True
         self.sup_accents = False
         self.ncod = True
-        self.prompt_clr = "|mr|"
-        self.prompt_prf = "* "
+        self.prompt_clr = ""
+        self.prompt_prf = ""
         
         # Options de navigation
         self.rci_ctx_prec = ""
@@ -137,6 +137,10 @@ class Contexte:
         self.nom = nom
         type(self).importeur.interpreteur.ajouter_contexte(self)
         self.opts = OptionsContexte()
+        # Chargement du fichier de configuration de la charte graphique
+        cfg_charte = type(self.importeur).anaconf.get_config("charte_graph")
+        self.opts.prompt_clr = cfg_charte.couleur_prompt
+        self.opts.prompt_prf = cfg_charte.prefixe_prompt
     
     def entrer(self, emt):
         """Méthode appelée quand l'émetteur entre dans le contexte"""
@@ -227,6 +231,13 @@ class Contexte:
         l'émetteur.
         
         """
+        # Création du dico des raccourcis de mise en forme
+        cfg_charte = type(self.importeur).anaconf.get_config("charte_graph")
+        FORMAT = {
+            "|cmd|": cfg_charte.couleur_cmd,
+            "|att|": cfg_charte.couleur_attention,
+            "|err|": cfg_charte.couleur_erreur,
+        }
         # On ajoute le prompt à msg
         prompt = self.get_prompt(emt)
         if prompt and self.opts.prompt_prf and self.opts.ncod:
@@ -242,10 +253,8 @@ class Contexte:
             else:
                 msg += "\n\n" + prompt
         if type(msg) == str:
-            # Ajout de la mise en forme
-            msg = ajouter_forme(msg)
             # Ajout de la couleur
-            msg = ajouter_couleurs(msg)
+            msg = ajouter_couleurs(msg, FORMAT)
             
             # On échappe les caractères spéciaux
             msg = remplacer_sp_cars(msg)

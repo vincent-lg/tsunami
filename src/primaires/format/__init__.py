@@ -36,7 +36,7 @@ from primaires.format.config import cfg_charte
 
 class Module(BaseModule):
     """Cette classe décrit le module primaire Format, chargé du formatage,
-    notamment du formatage des messages à envoyer aux clients.
+    notamment des messages à envoyer aux clients.
     
     """
     def __init__(self, importeur):
@@ -56,8 +56,9 @@ class Module(BaseModule):
     
     def formater(self, message):
         """Retourne le message formaté.
-        Voir: primaires.format.message
+        Voir : primaires.format.message
         
         """
-        nv_message = Message(message)
+        nv_message = Message(message, \
+                        type(self.importeur).anaconf.get_config("charte_graph"))
         return nv_message
