@@ -69,13 +69,15 @@ class NouveauNom(Contexte):
             "Bienvenue dans notre monde !\n" \
             "Entrez un |cmd|nom|ff| pour créer un compte, ou |cmd|/|ff| pour " \
 			"revenir à l'écran précédent.\n" \
-            "Ce nom vous sera demandé à chaque connexion, ne l'oubliez pas !"
+            "Ce |cmd|nom|ff| vous sera demandé à chaque connexion, ne " \
+            "l'oubliez pas !"
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
         config_connex = type(self).importeur.anaconf.get_config("connex")
         noms_interdits = list(config_connex.noms_interdits)
         noms_interdits.append(config_connex.chaine_nouveau)
+        
         # On passe le message en minuscules
         msg = msg.lower()
         if msg in noms_interdits:
@@ -85,7 +87,7 @@ class NouveauNom(Contexte):
             self.envoyer(emt, "|att|Ce nom de compte est déjà réservé.|ff|")
         elif len(msg) < MIN or len(msg) > MAX:
             self.envoyer(emt, "|err|Le nom doit faire entre {0} et {1} " \
-                            "caractères de longueur.|ff|".format(min, max))
+                            "caractères de longueur.|ff|".format(MIN, MAX))
         elif RE_NOM_VALIDE.search(msg) is None:
             self.envoyer(emt, "|err|Les caractères spéciaux ne sont pas " \
                             "autorisés.|ff|")

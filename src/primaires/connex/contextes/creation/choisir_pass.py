@@ -31,8 +31,11 @@ from primaires.interpreteur.contexte import Contexte
 
 import re
 
+## Constantes
 # Regex
 RE_PASS_VALIDE = re.compile(r"^[a-zA-Z0-9{}/\[\]()+=$_*@^\"'`£#-]+$", re.I)
+# Taille mini du mot de passe
+MIN = 6
 
 class ChoisirPass(Contexte):
     """Contexte de changement d'encodage.
@@ -56,13 +59,13 @@ class ChoisirPass(Contexte):
     def accueil(self, emt):
         """Message d'accueil"""
         return \
-            "\n|tit|-----= Choix du mot de passe =------|ff|\n" \
-            "Entrez un |grf|mot de passe|ff| de plus de 6 caractères ; il " \
+            "\n|tit|------= Choix du mot de passe =-----|ff|\n" \
+            "Entrez un |cmd|mot de passe|ff| de plus de 6 caractères ; il " \
             "correspond à\n" \
             "votre compte uniquement, veillez à vous en souvenir et à " \
             "ne le divulguer\n" \
             "sous aucun prétexte.\n" \
-            "Si vous voulez revenir au choix de l'encodage, entrez |grf|/|ff|."
+            "Si vous voulez revenir au choix de l'encodage, entrez |cmd|/|ff|."
     
     def deconnecter(self, emt):
         """En cas de décnonexion du joueur, on supprime son compte"""
@@ -74,20 +77,19 @@ class ChoisirPass(Contexte):
         type_chiffrement = config_connex.type_chiffrement
         clef_salage = config_connex.clef_salage
         
-        if len(msg) < 6:
-            self.envoyer(emt, "|rg|Pour des raisons de sécurité, le mot de " \
+        if len(msg) < MIN:
+            self.envoyer(emt, "|err|Pour des raisons de sécurité, le mot de " \
                             "passe doit faire au minimum\n" \
-                            "6 caractères.|ff|")
+                            "{0} caractères.|ff|".format(MIN))
         elif RE_PASS_VALIDE.search(msg) is None:
-            self.envoyer(emt, "|rg|Le mot de passe entré contient des " \
+            self.envoyer(emt, "|err|Le mot de passe entré contient des " \
                             "caractères non autorisés ; les caractères\n" \
                             "admis sont les lettres (majuscules et " \
                             "minuscules, sans accents), les\n" \
-                            "chiffres et certains caractères spéciaux " \
-                            "(|ff||grf|{}/\[\]()+=$_*@^\"'`£#-|ff||rg|).|ff|")
+                            "chiffres et certains caractères spéciaux : " \
+                            "|ff||cmd|{}/\[\]()+=$_*@^\"'`£#-|ff||err|.|ff|")
         else:
             # Hash du mot de passe
-            emt.emetteur.mot_de_passe = emt.emetteur.hash_mot_de_pass(clef_salage,type_chiffrement,msg)
-            
-            # Enregistrement et redirection vers la suite
+            emt.emetteur.mot_de_passe = \
+                emt.emetteur.hash_mot_de_pass(clef_salage,type_chiffrement,msg)
             self.migrer_contexte(emt, "connex:creation:confirmer_pass")

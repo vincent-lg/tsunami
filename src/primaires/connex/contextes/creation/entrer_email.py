@@ -48,16 +48,18 @@ class EntrerEmail(Contexte):
     
     def get_prompt(self, emt):
         """Message de prompt"""
-        return "Votre email : "
+        return "Votre adresse : "
     
     def accueil(self, emt):
         """Message d'accueil"""
         return \
-            "\n|tit|------= Entrez adresse email =------|ff|\n" \
-            "Entrez votre |grf|adresse email|ff| pour votre nouveau compte.\n" \
-            "Avant de pouvoir utiliser votre compte, un e-mail contenant\n" \
-            "un code de validation vous sera envoyé à cette adresse.\n" \
-            "Veillez donc à ce qu'elle soit valide."
+            "\n|tit|----------= Adresse mail =----------|ff|\n" \
+            "Entrez une |cmd|adresse mail|ff| de contact pour votre compte. " \
+            "Un message sera envoyé\n" \
+            "à |cmd|cette adresse|ff| pour valider ce compte ; elle sera " \
+            "aussi utilisée si\n" \
+            "vous perdez votre |cmd|mot de passe|ff|. Veillez donc à ce " \
+            "qu'elle soit valide."
     
     def deconnecter(self, emt):
         """En cas de déconexion du joueur, on supprime son compte"""
@@ -65,16 +67,17 @@ class EntrerEmail(Contexte):
     
     def interpreter(self, emt, msg):
         """Méthode appelée quand un message est réceptionné"""
+        config_email = type(self).importeur.anaconf.get_config("email")
+        
         # On passe le message en minuscules
         msg = msg.lower()
         if msg in type(self).importeur.connex.email_comptes:
-            self.envoyer(emt, "Cette adresse e-mail a déjà été utilisée.")
+            self.envoyer(emt, "|att|Cette adresse mail est déjà utilisée.|ff|")
         elif RE_MAIL_VALIDE.search(msg) is None:
-            self.envoyer(emt, "|rg|Ceci n'est pas une adresse mail valide.|ff|")
+            self.envoyer(emt, "|err|L'adresse spécifiée n'est pas valide.|ff|")
         else:
             emt.emetteur.adresse_email = msg
-            config = type(self).importeur.anaconf.get_config("email")
-            if config.serveur_mail:
+            if config_email.serveur_mail:
                 self.migrer_contexte(emt, "connex:creation:validation")
             else:
                 emt.emetteur.valide = True

@@ -55,14 +55,14 @@ class ChangerEncodage(Contexte):
     def get_prompt(self, emt):
         """Message de prompt"""
         # Comme l'option ncod est activée, le préfixe est affiché en dur
-        return b"* Choisissez votre encodage : "
+        return b""
     
     def accueil(self, emt):
         """Message d'accueil"""
         ret = b"\n------= Choix de l'encodage =-------\n"
         ret += b"Le parametrage de l'encodage est necessaire pour " \
             b"permettre une optimisation\n" \
-            b"de l'affichage dans votre client, et par la un meilleur " \
+            b"de l'affichage dans votre client, et ainsi un meilleur " \
             b"confort de jeu.\n" \
             b"Choisissez donc un encodage qui s'affiche correctement chez vous.\n" \
             b"Pour ce faire, entrez le numero correspondant dans la " \
@@ -71,6 +71,7 @@ class ChangerEncodage(Contexte):
         for i, encodage in enumerate(ENCODAGES):
             ret += b"\n  " + str(i+1).encode() + b" - " + \
                     test.encode(encodage) + encodage.encode()
+        ret += b"\n\n"
         return ret
     
     def deconnecter(self, emt):

@@ -51,9 +51,9 @@ class ConfirmerPass(Contexte):
     def accueil(self, emt):
         """Message d'accueil"""
         return \
-            "\n|tit|---------= Confirmation =-----------|ff|\n" \
-            "Entrez une nouvelle fois votre mot de passe pour éviter une " \
-            "faute de frappe."
+            "\n|tit|----------= Confirmation =----------|ff|\n" \
+            "Entrez une nouvelle fois votre |cmd|mot de passe|ff| pour " \
+            "éviter une faute de frappe."
     
     def deconnecter(self, emt):
         """En cas de décnonexion du joueur, on supprime son compte"""
@@ -64,11 +64,14 @@ class ConfirmerPass(Contexte):
         config_connex = type(self).importeur.anaconf.get_config("connex")
         type_chiffrement = config_connex.type_chiffrement
         clef_salage = config_connex.clef_salage
-        if emt.emetteur.mot_de_passe == emt.emetteur.hash_mot_de_pass(clef_salage,type_chiffrement,msg):
+        
+        if emt.emetteur.mot_de_passe == \
+            emt.emetteur.hash_mot_de_pass(clef_salage,type_chiffrement,msg):
             self.migrer_contexte(emt, "connex:creation:entrer_email")
         else:
-            self.envoyer(emt, "Votre confirmation est invalide ! Si cette " \
-                            "erreur persiste, vous vous\n" \
+            self.envoyer(emt, "|att|Votre confirmation est invalide ! Si " \
+                            "cette erreur persiste, vous vous\n" \
                             "êtes peut-être trompé en indiquant votre mot de " \
-                            "passe à l'étape précédente. Dans ce\n" \
-                            "cas, entrez |grf|/|ff| pour retourner en arrière.")
+                            "passe à l'étape précédente.\n" \
+                            "Dans ce cas, entrez |ff||cmd|/|ff||att| pour " \
+                            "retourner en arrière.|ff|")
