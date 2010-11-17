@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la configuration par défaut du module 'email'."""
+"""Ce fichier contient la configuration par défaut du module 'format'"""
 
 cfg_charte = r"""
 # Ce fichier contient la configuration du module primaire format.
