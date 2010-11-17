@@ -102,8 +102,8 @@ class Module(BaseModule):
         """
         if self.serveur_mail:
             if not self.nom_hote: # le nom d'hôte n'est pas précisé
-                self.logger.warning("Impossible d'envoyer le mail à({0}) " \
-                        "sujet({1}) car le nom d'hôte n'est pas précisé " \
+                self.logger.warning("Impossible d'envoyer le mail à {0} " \
+                        "(sujet : {1}) car le nom d'hôte n'est pas précisé " \
                         "dans les données de configuration".format( \
                         destinataires, sujet))
             else:
@@ -127,6 +127,6 @@ class Module(BaseModule):
                             mail.as_string())
                     smtp.close()
                 except SocketError as err:
-                    self.logger.warning("Impossible d'envoyer le mail à({0}) " \
-                            "sujet({1}) : {2}".format(destinataires, \
+                    self.logger.warning("Impossible d'envoyer le mail à {0} " \
+                            "(sujet : {1}) : {2}".format(destinataires, \
                             sujet, err))

@@ -61,7 +61,7 @@ cfg_charte = r"""
 couleur_cmd = "|grf|"
 
 # Couleur des titres
-couleur_titre = "|bl|"
+couleur_titre = "|mr|"
 
 # Couleur des messages importants
 # Deux niveaux de messages, les messages de warning et les messages d'erreur.
@@ -76,7 +76,7 @@ couleur_erreur = "|rg|"
 
 # Couleur du prompt
 # Ceci est la couleur du prompt, surtout utilisée lors de l'inscription.
-couleur_prompt = "|mr|"
+couleur_prompt = "|cy|"
 
 # Préfixe du prompt
 # Ce préfixe est placé devant le prompt, surtout lors de l'inscription.
