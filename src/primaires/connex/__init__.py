@@ -104,11 +104,9 @@ class Module(BaseModule):
         else:
             self.cpt_logger.info("{0} comptes récupérés".format(len(self.comptes)))
         
-        # On instancie les contextes chargés
-        # Leur instanciation a pour effet leur ajout dans les contextes de
-        # l'interpréteur
+        # On ajoute les contextes chargés dans l'interpréteur
         for contexte in liste_contextes:
-            contexte()
+            self.importeur.interpreteur.contextes[contexte.nom] = contexte
         
         BaseModule.init(self)
     

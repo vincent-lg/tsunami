@@ -31,6 +31,7 @@
 """Ce fichier définit la classe InstanceConnexion, détaillée plus bas."""
 
 from primaires.connex.motd import MOTD
+from primaires.format.fonctions import *
 
 class InstanceConnexion:
     """Classe représentant une instance de connexion.
@@ -51,9 +52,9 @@ class InstanceConnexion:
         self.client = client
         self.emetteur = None
         self.contexte = type(self).importeur.interpreteur.contextes[ \
-                "connex:connexion:afficher_MOTD"]
-        self.contexte.actualiser(self)
-        self.contexte.migrer_contexte(self, "connex:connexion:entrer_nom")
+                "connex:connexion:afficher_MOTD"](self)
+        self.contexte.actualiser()
+        self.contexte.migrer_contexte("connex:connexion:entrer_nom")
         self.tentatives_intrusion = 0
     
     def _get_contexte_actuel(self):
@@ -61,13 +62,51 @@ class InstanceConnexion:
     
     contexte_actuel = property(_get_contexte_actuel)
     
-    def envoyer(self, message):
+    def envoyer(self, msg):
         """Envoie au client le message.
-        Le message passé doit être un type bytes.
-        On l'envoie donc tel quel.
+        On est capable d'envoyer deux types de message :
+        *   un type str : dans ce cas, on l'encode et on peut y appliquer
+            pas mal d'options du contexte
+        *   un type bytes : on l'envoie tel quel ou presque
         
         """
-        self.client.envoyer(message)
+        # Création du dictionnaire des raccourcis de mise en forme
+        cfg_charte = type(self.importeur).anaconf.get_config("charte_graph")
+        # On ajoute le prompt à msg
+        prompt = self.contexte.get_prompt()
+        if type(msg) == str:
+            if prompt:
+                if self.contexte.opts.prompt_prf:
+                    prompt = self.contexte.opts.prompt_prf + prompt
+                if self.contexte.opts.prompt_clr:
+                    prompt = self.contexte.opts.prompt_clr + prompt + "|ff|"
+        if prompt:
+            if type(msg) == bytes:
+                sep = b"\n\n"
+                if type(prompt) == str:
+                    prompt = prompt.encode()
+            else:
+                sep = "\n\n"
+            msg += sep + prompt
+        if type(msg) == str:
+            # Ajout de la couleur
+            msg = ajouter_couleurs(msg, cfg_charte)
+            
+            # On échappe les caractères spéciaux
+            msg = remplacer_sp_cars(msg)
+            
+            # Suppression des accents si l'option du contexte est activée
+            if self.contexte.opts.sup_accents:
+                msg = supprimer_accents(msg)
+            if self.emetteur:
+                msg = msg.encode(self.emetteur.encodage)
+            else:
+                msg = msg.encode()
+        
+        # On remplace les sauts de ligne
+        msg = convertir_nl(msg)
+        
+        self.client.envoyer(msg)
     
     def receptionner(self, message):
         """Cette méthode est appelée quand l'instance de connexion
@@ -87,7 +126,7 @@ class InstanceConnexion:
              
         """
         if self.contexte: # Le personnage ne semble pas encore connecté
-            self.contexte.receptionner(self, message)
+            self.contexte.receptionner(message)
         else:
             self.emetteur.receptionner(message)
     
@@ -100,5 +139,5 @@ class InstanceConnexion:
         if type(nouveau_contexte) is str:
             nouveau_contexte = type(self).importeur.interpreteur.contextes[ \
                     nouveau_contexte]
-            self.envoyer(nouveau_contexte.accueil(self).encode())
+            self.envoyer(nouveau_contexte.accueil())
         self.contexte = nouveau_contexte

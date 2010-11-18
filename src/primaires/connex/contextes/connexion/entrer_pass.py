@@ -75,15 +75,17 @@ class EntrerPass(Contexte):
     A la fin soit on aboutit
     
     """
-    def __init__(self):
-        """Constructeur du contexte"""
-        Contexte.__init__(self, "connex:connexion:entrer_pass")
+    nom = "connex:connexion:entrer_pass"
     
-    def get_prompt(self, emt):
+    def __init__(self, poss):
+        """Constructeur du contexte"""
+        Contexte.__init__(self, poss)
+    
+    def get_prompt(self):
         """Message de prompt"""
         return "Mot de passe : "
     
-    def accueil(self, emt):
+    def accueil(self):
         """Message d'accueil"""
         cnx_cfg = type(self.importeur).anaconf.get_config("connex")
         return \
@@ -91,46 +93,48 @@ class EntrerPass(Contexte):
         " et un nouveau vous sera envoyé.".format(cnx_cfg.chaine_oubli)
     
     def sendNewMdp(self, emt):
-        
-        mdp = "".join(random.sample("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10))
-        
         cnx_cfg = type(self.importeur).anaconf.get_config("connex")
         
-        emt.emetteur.mot_de_passe = emt.emetteur.hash_mot_de_pass( cnx_cfg.clef_salage,cnx_cfg.type_chiffrement,mdp)
+        mdp = "".join(random.sample("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10))
+        self.poss.emetteur.mot_de_passe = \
+                self.poss.emetteur.hash_mot_de_pass(cnx_cfg.clef_salage, 
+                cnx_cfg.type_chiffrement, mdp)
         
         #TODO
         type(self).importeur.email.envoyer( \
             admin_mail, \
             emt.emetteur.adresse_email, \
-            "Nouveau mot de passe pour {nom} sur {MUD}".format(nom=emt.emetteur.nom,MUD="TODO"), \
-            msg_newmdp.format(compte = emt.emetteur.nom,MUD="TODO",Y=cnx_cfg.nombre_avant_nouveau, password=mdp) \
+            "Nouveau mot de passe pour {nom} sur {MUD}".format( \
+            nom=emt.emetteur.nom, MUD="TODO"), \
+            msg_newmdp.format(compte = emt.emetteur.nom, MUD="TODO", \
+            Y=cnx_cfg.nombre_avant_nouveau, password=mdp) \
         )
         
-        emt.emetteur.tentatives_intrusion = 0
+        self.poss.emetteur.tentatives_intrusion = 0
     
-    def interpreter(self, emt, msg):
+    def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
-        
         cnx_cfg = type(self.importeur).anaconf.get_config("connex")
         
-        if msg==cnx_cfg.chaine_oubli:
+        if msg == cnx_cfg.chaine_oubli:
             self.sendNewMdp(emt)
-            self.envoyer(emt,"Un mail avec un nouveau mot de passe vous a été envoyé")
-            return
+            self.poss.envoyer(emt,"Un mail avec un nouveau mot de passe vous " \
+                    "a été envoyé")
         
         cnx_cfg = type(self.importeur).anaconf.get_config("connex")
         
         mot_de_passe = emt.emetteur.hash_mot_de_pass(cnx_cfg.clef_salage,cnx_cfg.type_chiffrement,msg)
         
-        if emt.emetteur.mot_de_passe == mot_de_passe:
-            emt.emetteur.tentatives_intrusion = 0
-            if emt.emetteur.valide == True:
-                self.migrer_contexte(emt, "connex:connexion:choisir_personnage")
+        if self.poss.emetteur.mot_de_passe == mot_de_passe:
+            self.poss.emetteur.tentatives_intrusion = 0
+            if self.poss.emetteur.valide:
+                self.migrer_contexte("connex:connexion:choisir_personnage")
             else:
-                self.migrer_contexte(emt, "connex:creation:validation")
+                self.migrer_contexte("connex:creation:validation")
         else:
-            emt.emetteur.tentatives_intrusion += 1
-            if emt.emetteur.tentatives_intrusion==cnx_cfg.nombre_avant_avertissement:
+            self.poss.emetteur.tentatives_intrusion += 1
+            if self.poss.emetteur.tentatives_intrusion == \
+                    cnx_cfg.nombre_avant_avertissement:
                 #TODO
                 objet = "{X} tentatives de connexions au compte {compte} sur {MUD}".format( \
                     X = cnx_cfg.nombre_avant_avertissement, \

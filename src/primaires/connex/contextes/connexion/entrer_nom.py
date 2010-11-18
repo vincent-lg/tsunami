@@ -48,20 +48,21 @@ class EntrerNom(Contexte):
     *   Sinon, on affiche une erreur (le compte n'existe pas)
     
     """
-    def __init__(self):
+    nom = "connex:connexion:entrer_nom"
+    
+    def __init__(self, poss):
         """Constructeur du contexte"""
         global RE_NOUVEAU
-        Contexte.__init__(self, "connex:connexion:entrer_nom")
-        self.opts.emt_ncod = False
+        Contexte.__init__(self, poss)
         self.opts.sup_accents = True
         cnx_cfg = type(self).importeur.anaconf.get_config("connex")
         RE_NOUVEAU = re.compile("^{0}$".format(cnx_cfg.chaine_nouveau), re.I)
     
-    def get_prompt(self, emt):
+    def get_prompt(self):
         """Message de prompt"""
         return "Votre compte : "
     
-    def accueil(self, emt):
+    def accueil(self):
         """Message d'accueil"""
         cnx_cfg = type(self).importeur.anaconf.get_config("connex")
         return \
@@ -70,14 +71,16 @@ class EntrerNom(Contexte):
             "|att|Un seul compte par personne est autorisé.|ff|".format( \
             cnx_cfg.chaine_nouveau)
     
-    def interpreter(self, emt, msg):
+    def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
+        cnx_cfg = type(self).importeur.anaconf.get_config("connex")
         if RE_NOUVEAU.search(msg): # le client demande un nouveau compte
-            self.migrer_contexte(emt, "connex:creation:entrer_nom")
+            self.migrer_contexte("connex:creation:entrer_nom")
         elif type(self).importeur.connex.compte_est_cree(msg):
-            print (type(self).importeur.connex.get_compte(msg))
-            emt.emetteur = type(self).importeur.connex.get_compte(msg)
-            self.migrer_contexte(emt, "connex:connexion:entrer_pass")
+            print(type(self).importeur.connex.get_compte(msg))
+            self.poss.emetteur = type(self).importeur.connex.get_compte(msg)
+            self.migrer_contexte("connex:connexion:entrer_pass")
         else:
-            self.envoyer(emt, "Ce compte n'existe pas. Entrez |grf|nouveau|ff| " \
-                            "si vous souhaitez le créer.")
+            self.poss.envoyer("|err|Ce compte n'existe pas.|ff|\n" \
+                    "Entrez |grf|{0}|ff| si vous souhaitez le créer.".format( \
+                    cnx_cfg.chaine_nouveau))

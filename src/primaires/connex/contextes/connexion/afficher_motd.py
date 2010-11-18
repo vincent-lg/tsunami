@@ -37,15 +37,17 @@ class AfficherMOTD(Contexte):
     immédiatement redirigé sur 'connex:connexion:entrer_nom'.
     
     """
-    def __init__(self):
-        """Constructeur du contexte"""
-        Contexte.__init__(self, "connex:connexion:afficher_MOTD")
-        self.opts.emt_ncod = False
+    nom = "connex:connexion:afficher_MOTD"
     
-    def get_prompt(self, emt):
+    def __init__(self, poss):
+        """Constructeur du contexte"""
+        Contexte.__init__(self, poss)
+        self.opts.sup_accents = True
+    
+    def get_prompt(self):
         """Message de prompt"""
         return ""
     
-    def accueil(self, emt):
+    def accueil(self):
         """Message d'accueil"""
         return MOTD
