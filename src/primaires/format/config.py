@@ -70,9 +70,8 @@ couleur_attention = "|vr|"
 couleur_erreur = "|rg|"
 
 # Si vous voulez ajouter des raccourcis de mise en forme, complétez ce fichier
-# (sans oublier de documenter) et les dicos dans primaires.interpreteur.contexte
-# et primaires.format.message. Ensuite yapuka utiliser vos raccourcis tout neufs
-# dans un quelconque contexte.
+# (sans oublier de documenter) et le dico dans primaires.format.fonctions.
+# Ensuite yapuka utiliser vos raccourcis tout neufs dans un quelconque contexte.
 
 # Couleur du prompt
 # Ceci est la couleur du prompt, surtout utilisée lors de l'inscription.

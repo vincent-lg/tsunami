@@ -46,18 +46,10 @@ class Message:
         """On passe en paramètre du constructeur le message comme une
         chaîne de caractère, et l'objet de configuration (voir config.py).
         
-        """
-        # Création du dictionnaire des options
-        FORMAT = {
-            "|cmd|": config.couleur_cmd,
-            "|tit|": cfg_charte.couleur_titre,
-            "|att|": config.couleur_attention,
-            "|err|": config.couleur_erreur,
-        }
-        
+        """        
         # Opérations sur la chaîne
         msg_chn = convertir_nl(msg_chn)
-        msg_chn = ajouter_couleurs(msg_chn, FORMAT)
+        msg_chn = ajouter_couleurs(msg_chn, config)
         msg_chn = remplacer_sp_cars(msg_chn)
         
         # On l'enregistre en tant qu'attribut

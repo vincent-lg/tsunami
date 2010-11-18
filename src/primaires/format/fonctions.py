@@ -140,7 +140,7 @@ def convertir_nl(msg):
         msg = msg.replace("\n", NL)
     return msg
 
-def ajouter_couleurs(msg, dic_form):
+def ajouter_couleurs(msg, config):
     """Cette fonction est appelée pour convertir les codes de formatage
     couleur en leur équivalent ANSI. Elle gère aussi le formatage des
     raccourcis de mise en forme (voir config.py). Le deuxième argument est
@@ -148,8 +148,16 @@ def ajouter_couleurs(msg, dic_form):
     On se base sur la constante dictionnaire 'COULEURS'.
     
     """
+    # Création du dictionnaire des options
+    FORMAT = {
+        "|cmd|": config.couleur_cmd,
+        "|tit|": config.couleur_titre,
+        "|att|": config.couleur_attention,
+        "|err|": config.couleur_erreur,
+    }
+    
     # On transforme les raccourcis de mise en forme, puis on colorise en ANSI
-    for balise, couleur in dic_form.items():
+    for balise, couleur in FORMAT.items():
         msg = msg.replace(balise, couleur)
     
     for balise, code_ansi in COULEURS.items():
