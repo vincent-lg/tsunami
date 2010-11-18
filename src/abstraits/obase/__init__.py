@@ -107,3 +107,4 @@ class BaseObj:
             self.__dict__ = type(self).trace_p_ids[self.p_id].__dict__
         else:
             type(self).trace_p_ids[self.p_id] = self
+            self.p_id = id(self)
