@@ -147,7 +147,7 @@ class Module(BaseModule):
                     "connectées".format(repr(client)))
         instance = self.instances[client]
         if instance.contexte_actuel:
-            instance.contexte_actuel.deconnecter(instance)
+            instance.contexte_actuel.deconnecter()
         
         del self.instances[client]
     

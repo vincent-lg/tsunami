@@ -27,15 +27,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# TODO: primaire/interpreteur/contexte/__init__.py
-
-# TODO: et si il y a pas de serveur mail configuré ?
-# TODO: Mutualisé le code de hash
-# TODO: Adresse mail admin, pour le from des messages et a qui envoyé ceux pour administrateur
-# TODO: Oublie mieux dans le nom du compte plutôt que le mot de passe pour les oublies de pseudo
-
 # TODO: Message compte bien crée
+# TODO: Commenter
+# TODO: Couleur
+# TODO: Nom du MUD
+# TODO: Adresse email
 # TODO: Logger les erreurs
+# TODO: Message quand on quitte
+# TODO: Désactiver les protextions quand les variables sont à 0
 
 import re
 import random
@@ -45,29 +44,33 @@ from primaires.interpreteur.contexte import Contexte
 
 ## Constantes
 
+# Chaine de charactère où sont choisis les charactères pour les mot de passe
+char_mdp = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
 # Email envoyé au bout de X tentatives
-msg_user_tentatives = \
+obj_alerte = "{X} tentatives de connexions au compte {nom} sur {MUD}"
+msg_alerte_user = \
     "{X} fois de suite un mot de passe erroné a été entré pour essayé " \
-    "de se connecté à votre compte : {compte} sur {MUD}\n" \
+    "de se connecté à votre compte : {nom} sur {MUD}\n" \
     "Si vous ne vous rappelez plus de votre mot de passe vous pouvez\n" \
     "Entrez {oubli} à la place de votre mot de passe et un nouveau " \
     "vous sera envoyé\n"
-
-# Email envoyé au bout de X tentatives
-msg_admin_tentatives = \
+msg_alerte_admin = \
     "{X} fois de suite un mot de passe erroné a été entré pour essayé " \
-    "de se connecté au compte : {compte} sur {MUD}\n" \
+    "de se connecté au compte : {nom} sur {MUD}\n" \
     "L'adresse IP de la dernière connexion est : {ip}\n"
 
 # Email pour envoyé le nouveau mot de passe
-msg_newmdp = \
-    "Un nouveau mot de passe pour le compte {compte} " \
+obj_nouveau_mdp = "Nouveau mot de passe pour {nom} sur {MUD}"
+msg_nouveau_mdp = \
+    "Un nouveau mot de passe pour le compte {nom} " \
     "sur {MUD} vous a été crée ceux-ci suite à votre demande" \
     "ou à {Y} tentatives erronées\n\n" \
     "Nouveau mot de passe : {password}"
 
-destinateur = "admin"
-admin_mail = "root@localhost"
+emmetteur = "info"
+#TODO
+admin_mail = "davyg@localhost"
 
 class EntrerPass(Contexte):
     """Contexte demandant au client son mot de passe
@@ -75,6 +78,7 @@ class EntrerPass(Contexte):
     A la fin soit on aboutit
     
     """
+    
     nom = "connex:connexion:entrer_pass"
     
     def __init__(self, poss):
@@ -92,86 +96,111 @@ class EntrerPass(Contexte):
         "\nEntrez votre mot de passe, si vous l'avez oublié entrez {0}" \
         " et un nouveau vous sera envoyé.".format(cnx_cfg.chaine_oubli)
     
-    def sendNewMdp(self, emt):
+    def envoieNouveauMDP(self):
+        
+        mdp = "".join(random.sample(char_mdp , 10))
+        
         cnx_cfg = type(self.importeur).anaconf.get_config("connex")
         
-        mdp = "".join(random.sample("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10))
-        self.poss.emetteur.mot_de_passe = \
-                self.poss.emetteur.hash_mot_de_pass(cnx_cfg.clef_salage, 
-                cnx_cfg.type_chiffrement, mdp)
+        emt = self.poss.emetteur
+        
+        emt.mot_de_passe = emt.hash_mot_de_pass(
+            cnx_cfg.clef_salage,cnx_cfg.type_chiffrement,mdp)
+        
+        mail = emt.adresse_email
         
         #TODO
-        type(self).importeur.email.envoyer( \
-            admin_mail, \
-            emt.emetteur.adresse_email, \
-            "Nouveau mot de passe pour {nom} sur {MUD}".format( \
-            nom=emt.emetteur.nom, MUD="TODO"), \
-            msg_newmdp.format(compte = emt.emetteur.nom, MUD="TODO", \
-            Y=cnx_cfg.nombre_avant_nouveau, password=mdp) \
-        )
+        objet = obj_nouveau_mdp.format(nom = emt.nom, MUD="TODO")
         
-        self.poss.emetteur.tentatives_intrusion = 0
+        #TODO
+        message = msg_nouveau_mdp.format(nom = emt.nom, MUD="TODO",
+            Y=cnx_cfg.nbr_avant_nouveau,password=mdp)
+        
+        type(self).importeur.email.envoyer(emmetteur,mail,objet,message)
+        
+        emt.nbr_essaie = 0
+    
+    def alerte(self):
+        
+        emt = self.poss.emetteur
+        
+        X = type(self.importeur).anaconf.get_config("connex").nbr_avant_alerte
+        oubli = type(self.importeur).anaconf.get_config("connex").chaine_oubli
+        
+        mail = emt.adresse_email
+        
+        #TODO
+        objet = obj_alerte.format(nom = emt.nom, MUD = "TODO", X = X)
+        
+        #TODO
+        message = msg_alerte_user.format(nom = emt.nom, MUD = "TODO", X = X, \
+             ip =self.poss.client.adresse_ip, oubli=oubli)
+        
+        type(self).importeur.email.envoyer(emmetteur,mail,objet,message)
+        
+        #TODO
+        message = msg_alerte_admin.format(nom = emt.nom, MUD = "TODO", X = X,
+            ip = self.poss.client.adresse_ip)
+        
+        type(self).importeur.email.envoyer(emmetteur,admin_mail,objet,message)
+    
+    def action(self):
+        
+        emt = self.poss.emetteur
+        
+        X = type(self.importeur).anaconf.get_config("connex").nbr_avant_nouveau
+        
+        self.envoieNouveauMDP()
+        
+        #TODO
+        objet = obj_alerte.format(nom = emt.nom, MUD = "TODO", X = X)
+        
+        #TODO
+        message = msg_alerte_admin.format(nom = emt.nom, MUD = "TODO",
+            X = X, ip = self.poss.client.adresse_ip)
+        
+        type(self).importeur.email.envoyer(emmetteur,admin_mail,objet,message)
     
     def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
+        
+        emt = self.poss.emetteur
+        
         cnx_cfg = type(self.importeur).anaconf.get_config("connex")
         
         if msg == cnx_cfg.chaine_oubli:
-            self.sendNewMdp(emt)
-            self.poss.envoyer(emt,"Un mail avec un nouveau mot de passe vous " \
-                    "a été envoyé")
+            self.envoieNouveauMDP()
+            self.poss.envoyer( \
+                "Un nouveau mot de passe vous a été envoyé par mail")
+            return
         
         cnx_cfg = type(self.importeur).anaconf.get_config("connex")
         
-        mot_de_passe = emt.emetteur.hash_mot_de_pass(cnx_cfg.clef_salage,cnx_cfg.type_chiffrement,msg)
+        mot_de_passe = emt.hash_mot_de_pass(\
+            cnx_cfg.clef_salage,\
+            cnx_cfg.type_chiffrement,\
+            msg\
+        )
         
-        if self.poss.emetteur.mot_de_passe == mot_de_passe:
-            self.poss.emetteur.tentatives_intrusion = 0
-            if self.poss.emetteur.valide:
+        if emt.mot_de_passe == mot_de_passe:
+            emt.nbr_essaie = 0
+            if emt.valide:
                 self.migrer_contexte("connex:connexion:choisir_personnage")
             else:
                 self.migrer_contexte("connex:creation:validation")
         else:
-            self.poss.emetteur.tentatives_intrusion += 1
-            if self.poss.emetteur.tentatives_intrusion == \
-                    cnx_cfg.nombre_avant_avertissement:
-                #TODO
-                objet = "{X} tentatives de connexions au compte {compte} sur {MUD}".format( \
-                    X = cnx_cfg.nombre_avant_avertissement, \
-                    compte = emt.emetteur.nom, \
-                    MUD = "TODO" \
-                )
-                #TODO
-                message = msg_admin_tentatives.format( \
-                    X = cnx_cfg.nombre_avant_avertissement, \
-                    MUD = "TODO", \
-                    compte = emt.emetteur.nom, \
-                    ip = emt.client.adresse_ip \
-                )
-                type(self).importeur.email.envoyer(destinateur,emt.emetteur.adresse_email,objet,message)
-                type(self).importeur.email.envoyer(destinateur,admin_mail,objet,message)
-            elif emt.emetteur.tentatives_intrusion>=cnx_cfg.nombre_avant_nouveau:
-                self.sendNewMdp(emt)
-                #TODO
-                objet = "{X} tentatives de connexions au compte {compte} sur {MUD}".format( \
-                    X = cnx_cfg.nombre_avant_nouveau, \
-                    compte = emt.emetteur.nom, \
-                    MUD = "TODO"
-                )
-                #TODO
-                message = msg_admin_tentatives.format( \
-                    X = cnx_cfg.nombre_avant_nouveau, \
-                    MUD = "TODO", \
-                    compte = emt.emetteur.nom, \
-                    ip = emt.client.adresse_ip \
-                )
-                type(self).importeur.email.envoyer(destinateur,admin_mail,objet,message)
+            emt.nbr_essaie += 1
             
+            if emt.nbr_essaie == cnx_cfg.nbr_avant_alerte:
+                self.alerte()
+            elif emt.nbr_essaie>=cnx_cfg.nbr_avant_nouveau:
+                self.action()
             
-            if emt.tentatives_intrusion % 3 == 2:
-                emt.client.deconnecter("Trop de tentative de connexion")
-            #TODO prévenir qu'on le jarte
-            emt.tentatives_intrusion += 1
-            self.envoyer(emt, "Password incorrect. " \
-                        "Veuillez l'entrer à nouveau.")
+            if ( self.poss.nbr_essaie+1) % cnx_cfg.nbr_avant_logout == 0:
+                #TODO:pas jolie
+                 self.poss.envoyer("Déconnexion trop d'essaie.")
+                 self.poss.client.deconnecter("Trop de tentative de mot de passe")
+                 return
+            self.poss.nbr_essaie += 1
+            self.poss.envoyer("Password incorrect.")
             

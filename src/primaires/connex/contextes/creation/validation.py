@@ -123,3 +123,4 @@ class Validation(Contexte):
             else:
                 self.envoyer(emt, "Ce code de validation est incorrect. " \
                         "Veuillez l'entrer à nouveau.")
+                raise("test")

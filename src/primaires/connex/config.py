@@ -86,7 +86,14 @@ chaine_oubli = "oubli"
 # automatique est envoyé au possesseur du compte ; au bout de 20 par défaut
 # le mot de passe est réinitialisé et envoyé par mail. Dans les deux cas, un
 # autre mail avertit l'admin principal.
-nombre_avant_avertissement = 3
-nombre_avant_nouveau = 20
+nbr_avant_alerte = 3
+nbr_avant_nouveau = 20
+
+# Paramétrages des déconnexion et de l'attente
+# Le premier nombre paramètre le nombre de tentative pour rentrer un mot de passe
+# avant d'être déconnecté. Le second paramètre le nombre de seconde à attendre
+# entre deux mots de passes.
+nbr_avant_logout = 3
+seconde_to_wait = 1
 
 """

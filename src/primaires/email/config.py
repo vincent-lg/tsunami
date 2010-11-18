@@ -44,7 +44,7 @@ cfg_email = r"""
 serveur_mail = True
 
 ## Nom d'hôte
-# Modifiez cette donnée poru spécifier le nom d'hôte de votre serveur
+# Modifiez cette donnée pour spécifier le nom d'hôte de votre serveur
 # d'e-mail. Si vous précisez "exemple.com" en nom d'hôte, les messages envoyés
 # depuis l'alias "info" seront envoyés depuis l'adresse "info@exemple.com".
 # Si vous précisez une chaîne vide en nom d'hôte, aucun mail ne pourra être
