@@ -74,7 +74,7 @@ class Validation(Contexte):
     
     def entrer(self):
         """Méthode appelée quand emt entre dans le contexte"""
-        if not self.poss.emetteur.msg_validation:
+        if not self.poss.emetteur.code_validation:
             # Le message de validation n'a pas été envoyé
             # Génération du code de validation
             code = generer_code()
