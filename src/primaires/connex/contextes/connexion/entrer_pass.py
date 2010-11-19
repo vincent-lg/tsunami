@@ -38,16 +38,15 @@
 
 import re
 import random
-import string
 
 from primaires.interpreteur.contexte import Contexte
 
 ## Constantes
 
-# Chaine de charactère où sont choisis les charactères pour les mot de passe
+# Chaîne de caractère où sont choisis les caractères pour les mots de passe
 char_mdp = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-# Email envoyé au bout de X tentatives
+# E-mail envoyé au bout de X tentatives
 obj_alerte = "{X} tentatives de connexions au compte {nom} sur {MUD}"
 msg_alerte_user = \
     "{X} fois de suite un mot de passe erroné a été entré pour essayé " \
@@ -68,7 +67,7 @@ msg_nouveau_mdp = \
     "ou à {Y} tentatives erronées\n\n" \
     "Nouveau mot de passe : {password}"
 
-emmetteur = "info"
+destinateur = "info"
 #TODO
 admin_mail = "davyg@localhost"
 
@@ -116,7 +115,7 @@ class EntrerPass(Contexte):
         message = msg_nouveau_mdp.format(nom = emt.nom, MUD="TODO",
             Y=cnx_cfg.nbr_avant_nouveau,password=mdp)
         
-        type(self).importeur.email.envoyer(emmetteur,mail,objet,message)
+        type(self).importeur.email.envoyer(destinateur, mail, objet, message)
         
         emt.nbr_essaie = 0
     
@@ -136,13 +135,14 @@ class EntrerPass(Contexte):
         message = msg_alerte_user.format(nom = emt.nom, MUD = "TODO", X = X, \
              ip =self.poss.client.adresse_ip, oubli=oubli)
         
-        type(self).importeur.email.envoyer(emmetteur,mail,objet,message)
+        type(self).importeur.email.envoyer(destinateur, mail, objet, message)
         
         #TODO
         message = msg_alerte_admin.format(nom = emt.nom, MUD = "TODO", X = X,
             ip = self.poss.client.adresse_ip)
         
-        type(self).importeur.email.envoyer(emmetteur,admin_mail,objet,message)
+        type(self).importeur.email.envoyer(destinateur, admin_mail, objet, \
+                message)
     
     def action(self):
         
@@ -159,7 +159,8 @@ class EntrerPass(Contexte):
         message = msg_alerte_admin.format(nom = emt.nom, MUD = "TODO",
             X = X, ip = self.poss.client.adresse_ip)
         
-        type(self).importeur.email.envoyer(emmetteur,admin_mail,objet,message)
+        type(self).importeur.email.envoyer(destinateur, admin_mail, objet, \
+                message)
     
     def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
@@ -198,9 +199,10 @@ class EntrerPass(Contexte):
             
             if ( self.poss.nbr_essaie+1) % cnx_cfg.nbr_avant_logout == 0:
                 #TODO:pas jolie
-                 self.poss.envoyer("Déconnexion trop d'essaie.")
-                 self.poss.client.deconnecter("Trop de tentative de mot de passe")
-                 return
+                self.poss.envoyer("Déconnexion trop d'essaie.")
+                self.poss.deconnecter("Mot de passe, trop de tentatives " \
+                        "erronnées")
+
             self.poss.nbr_essaie += 1
             self.poss.envoyer("Password incorrect.")
             

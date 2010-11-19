@@ -110,6 +110,14 @@ class Module(BaseModule):
         
         BaseModule.init(self)
     
+    def boucle(self):
+        """A chaque tour de boucle synchro, on envoie la file d'attente des
+        instances de connexion.
+        
+        """
+        for inst in self.instances.values():
+            inst.envoyer_file_attente()
+    
     def __getitem__(self, item):
         """Méthode appelée quand on fait connex[item].
         L'item peut être de plusieurs types :

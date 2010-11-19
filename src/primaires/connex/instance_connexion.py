@@ -47,10 +47,18 @@ class InstanceConnexion:
         *   le client connecté
         *   l'emetteur
         *   le contexte
+        *   la file d'attente des messages à envoyer [1]
+        
+        [1] Quand on envoie un message grâce à la fonction 'envoyer',
+            on ne l'envoie pas directement au client.
+            On stock le message dans la file d'attente. A chaque tour de
+            boucle synchro, ou en cas de déconnexion du client, on lui envoie
+            toute la file d'attente d'un coup.
         
         """
         self.client = client
         self.emetteur = None
+        self.file_attente = [] # file d'attente des messages à envoyer
         self.contexte = type(self).importeur.interpreteur.contextes[ \
                 "connex:connexion:afficher_MOTD"](self)
         self.contexte.actualiser()
@@ -62,6 +70,57 @@ class InstanceConnexion:
     
     contexte_actuel = property(_get_contexte_actuel)
     
+    def _get_encodage(self):
+        """Retourne l'encodage de l'émetteur ou 'Utf-8'."""
+        encodage = "Utf-8"
+        if self.emetteur:
+            encodage = self.emetteur.encodage
+        
+        return encodage
+    
+    encodage = property(_get_encodage)
+    
+    def deconnecter(self, msg):
+        """Méthode pour déconnecter le client"""
+        self.envoyer_file_attente(ajt_prompt = False)
+        if self.client:
+            self.client.deconnecter(msg)
+            self.client = None
+    
+    # Fonctions de préparation avant l'envoie
+    def formatter_message(self, msg):
+        """Retourne le message formatté en fonction des diverses options
+        du contexte et aussi du type d'entrée.
+        msg peut être une chaîne non encodée ('str') ou encodée ('bytes').
+        
+        Dans tous les cas, on retourne une chaîne encodée ('bytes').
+        
+        """
+        # On récupère les informations de formattage (charte graphique)
+        cfg_charte = type(self.importeur).anaconf.get_config("charte_graph")
+        
+        # On convertit tout en bytes, c'est plus simple ainsi
+        # On doit déduire l'encodage qui sera éventuellement utilisé
+        encodage = self.encodage
+        
+        msg = get_bytes(msg, encodage)
+        
+        # Ajout de la couleur
+        msg = ajouter_couleurs(msg, cfg_charte)
+        
+        # On remplace les caractères spéciaux
+        msg = remplacer_sp_cars(msg)
+        
+        # Suppression des accents si l'option du contexte est activée
+        if self.contexte.opts.sup_accents:
+            msg = supprimer_accents(msg)
+        
+        
+        # On remplace les sauts de ligne
+        msg = convertir_nl(msg)
+        
+        return msg
+
     def envoyer(self, msg):
         """Envoie au client le message.
         On est capable d'envoyer deux types de message :
@@ -69,44 +128,63 @@ class InstanceConnexion:
             pas mal d'options du contexte
         *   un type bytes : on l'envoie tel quel ou presque
         
+        Note importante : le message n'est pas envoyé directement au client.
+        Il est stocké, sous la forme d'une chaîne bytes, dans la file
+        d'attente et envoyé dans deux circonstances :
+        *   si on demande à l'instance connexion de se déconnecter
+            Dans ce cas, aucun prompt n'est envoyé.
+        *   à chaque tour de la boucle synchro
+        
         """
-        # Création du dictionnaire des raccourcis de mise en forme
-        cfg_charte = type(self.importeur).anaconf.get_config("charte_graph")
-        # On ajoute le prompt à msg
-        prompt = self.contexte.get_prompt()
-        if type(msg) == str:
-            if prompt:
-                if self.contexte.opts.prompt_prf:
-                    prompt = self.contexte.opts.prompt_prf + prompt
-                if self.contexte.opts.prompt_clr:
-                    prompt = self.contexte.opts.prompt_clr + prompt + "|ff|"
-        if prompt:
-            if type(msg) == bytes:
-                sep = b"\n\n"
-                if type(prompt) == str:
-                    prompt = prompt.encode()
-            else:
-                sep = "\n\n"
-            msg += sep + prompt
-        if type(msg) == str:
-            # Ajout de la couleur
-            msg = ajouter_couleurs(msg, cfg_charte)
-            
-            # On échappe les caractères spéciaux
-            msg = remplacer_sp_cars(msg)
-            
-            # Suppression des accents si l'option du contexte est activée
-            if self.contexte.opts.sup_accents:
-                msg = supprimer_accents(msg)
-            if self.emetteur:
-                msg = msg.encode(self.emetteur.encodage)
-            else:
-                msg = msg.encode()
+        msg = self.formatter_message(msg)
+        self.file_attente.append(msg)
+    
+    def get_prompt(self):
+        """Méthode retournant le prompt déduit du contexte.
+        Le prompt retournée est encodé.
         
-        # On remplace les sauts de ligne
-        msg = convertir_nl(msg)
+        """
+        prompt = self.formatter_message(self.contexte.get_prompt())
         
-        self.client.envoyer(msg)
+        # Préfixes et suffixes du prompt
+        pfx_prompt = self.contexte.opts.prompt_prf
+        sfx_prompt = ""
+        
+        # Prompt coloré
+        if self.contexte.opts.prompt_clr:
+            pfx_prompt += self.contexte.opts.prompt_clr
+            sfx_prompt += "|ff|"
+        
+        pfx_prompt = self.formatter_message(pfx_prompt)
+        sfx_prompt = self.formatter_message(sfx_prompt)
+        
+        # On ajoute les préfixes et suffixes au prompt
+        prompt = pfx_prompt + prompt + sfx_prompt
+        
+        return prompt
+
+    def get_file_attente(self):
+        """Récupère la file d'attente.
+        Retourne les messages sous la forme d'un type bytes (chaîne encodée).
+        
+        """
+        msg = NL.join(self.file_attente)
+        
+        return msg
+    
+    def envoyer_file_attente(self, ajt_prompt = True):
+        """On récupère puis envoie la file d'attente des messages à envoyer.
+        On ajoute le prompt à la fine d'attente si ajt_prompt est à True.
+        
+        """
+        if self.file_attente:
+            msg = self.get_file_attente()
+            self.file_attente = []
+            if ajt_prompt:
+                msg += 2 * NL + self.get_prompt()
+        
+            if self.client:
+                self.client.envoyer(msg)
     
     def receptionner(self, message):
         """Cette méthode est appelée quand l'instance de connexion
