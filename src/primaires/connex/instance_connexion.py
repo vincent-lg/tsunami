@@ -73,7 +73,7 @@ class InstanceConnexion:
     def _get_encodage(self):
         """Retourne l'encodage de l'émetteur ou 'Utf-8'."""
         encodage = "Utf-8"
-        if self.emetteur:
+        if self.emetteur and self.emetteur.encodage:
             encodage = self.emetteur.encodage
         
         return encodage

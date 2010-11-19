@@ -55,7 +55,7 @@ class ChangerEncodage(Contexte):
     
     def get_prompt(self):
         """Message de prompt"""
-        return b"* Entrez un numero d'encodage : "
+        return b"Entrez un numero d'encodage : "
     
     def accueil(self):
         """Message d'accueil"""
