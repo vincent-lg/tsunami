@@ -55,8 +55,8 @@ class EntrerNom(Contexte):
         global RE_NOUVEAU
         Contexte.__init__(self, poss)
         self.opts.sup_accents = True
-        cnx_cfg = type(self).importeur.anaconf.get_config("connex")
-        RE_NOUVEAU = re.compile("^{0}$".format(cnx_cfg.chaine_nouveau), re.I)
+        cfg_connex = type(self).importeur.anaconf.get_config("connex")
+        RE_NOUVEAU = re.compile("^{0}$".format(cfg_connex.chaine_nouveau), re.I)
     
     def get_prompt(self):
         """Message de prompt"""
@@ -64,16 +64,16 @@ class EntrerNom(Contexte):
     
     def accueil(self):
         """Message d'accueil"""
-        cnx_cfg = type(self).importeur.anaconf.get_config("connex")
+        cfg_connex = type(self).importeur.anaconf.get_config("connex")
         return \
             "\nEntrez votre |cmd|nom de compte|ff| ou |cmd|{0}|ff| pour " \
             "en créer un.\n" \
             "|att|Un seul compte par personne est autorisé.|ff|".format( \
-            cnx_cfg.chaine_nouveau)
+            cfg_connex.chaine_nouveau)
     
     def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
-        cnx_cfg = type(self).importeur.anaconf.get_config("connex")
+        cfg_connex = type(self).importeur.anaconf.get_config("connex")
         if RE_NOUVEAU.search(msg): # le client demande un nouveau compte
             self.migrer_contexte("connex:creation:entrer_nom")
         elif type(self).importeur.connex.compte_est_cree(msg):
@@ -83,4 +83,4 @@ class EntrerNom(Contexte):
         else:
             self.poss.envoyer("|err|Ce compte n'existe pas.|ff|\n" \
                     "Entrez |grf|{0}|ff| si vous souhaitez le créer.".format( \
-                    cnx_cfg.chaine_nouveau))
+                    cfg_connex.chaine_nouveau))
