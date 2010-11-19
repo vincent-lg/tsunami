@@ -141,7 +141,6 @@ class ClientConnecte:
         try:
             self.socket.send(message)
         except socket.error:
-            raise("blabla")
             self.deconnecter("perte de la connexion")
 
     def recevoir(self):

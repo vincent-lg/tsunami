@@ -27,14 +27,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# TODO: Message compte bien crée
 # TODO: Commenter
-# TODO: Couleur
+# TODO: Message, couleur et tous
 # TODO: Nom du MUD
 # TODO: Adresse email
 # TODO: Logger les erreurs
-# TODO: Message quand on quitte
-# TODO: Désactiver les protextions quand les variables sont à 0
+# TODO: Rajouter l'attente entre deux tentatives
 
 import re
 import random
@@ -71,11 +69,18 @@ destinateur = "info"
 #TODO
 admin_mail = "davyg@localhost"
 
+#TODO
 class EntrerPass(Contexte):
-    """Contexte demandant au client son mot de passe
-    Ce contexte est censément le premier appelé à la connexion d'un client.
-    A la fin soit on aboutit
-    
+    """Contexte demandant au client son mot de passe.
+    On peut aboutir à la validation du compte si elle n'est pas fait
+    ou alors au choix du personage si tous se passe bien.
+    Le nombre de tentative de connexion est limité : un message d'alerte sera
+    envoyé après un certain nombre d'essaie et un nouveau mot de passe sera
+    envoyé après un autre nombre d'essaie. De plus l'utilisateur se fait
+    déconnecté après un certain nombre d'essai. Tout ceci est configurable
+    dans le fichier de configuration de connex.
+    On peut aussi se faire envoyer un nouveau mot de passe si on a oublié le
+    sien.
     """
     
     nom = "connex:connexion:entrer_pass"
@@ -97,23 +102,18 @@ class EntrerPass(Contexte):
     
     def envoieNouveauMDP(self):
         
-        mdp = "".join(random.sample(char_mdp , 10))
-        
         cnx_cfg = type(self.importeur).anaconf.get_config("connex")
-        
+        mdp = "".join(random.sample(char_mdp ,10))
         emt = self.poss.emetteur
-        
-        emt.mot_de_passe = emt.hash_mot_de_pass(
-            cnx_cfg.clef_salage,cnx_cfg.type_chiffrement,mdp)
-        
         mail = emt.adresse_email
-        
+        emt.mot_de_passe = emt.hash_mot_de_pass(
+            cnx_cfg.clef_salage, cnx_cfg.type_chiffrement, mdp)
         #TODO
         objet = obj_nouveau_mdp.format(nom = emt.nom, MUD="TODO")
-        
         #TODO
-        message = msg_nouveau_mdp.format(nom = emt.nom, MUD="TODO",
-            Y=cnx_cfg.nbr_avant_nouveau,password=mdp)
+        message = msg_nouveau_mdp.format(nom = emt.nom, MUD="TODO", \
+                                         Y = cnx_cfg.nbr_avant_nouveau, \
+                                         password=mdp)
         
         type(self).importeur.email.envoyer(destinateur, mail, objet, message)
         
@@ -121,88 +121,75 @@ class EntrerPass(Contexte):
     
     def alerte(self):
         
-        emt = self.poss.emetteur
-        
-        X = type(self.importeur).anaconf.get_config("connex").nbr_avant_alerte
         oubli = type(self.importeur).anaconf.get_config("connex").chaine_oubli
+        X = type(self.importeur).anaconf.get_config("connex").nbr_avant_alerte
         
-        mail = emt.adresse_email
-        
-        #TODO
-        objet = obj_alerte.format(nom = emt.nom, MUD = "TODO", X = X)
-        
-        #TODO
-        message = msg_alerte_user.format(nom = emt.nom, MUD = "TODO", X = X, \
-             ip =self.poss.client.adresse_ip, oubli=oubli)
-        
-        type(self).importeur.email.envoyer(destinateur, mail, objet, message)
+        mail = self.poss.emetteur.adresse_email
+        nom = self.poss.emetteur.nom
+        ip = self.poss.client.adresse_ip
         
         #TODO
-        message = msg_alerte_admin.format(nom = emt.nom, MUD = "TODO", X = X,
-            ip = self.poss.client.adresse_ip)
+        objet = obj_alerte.format(nom = nom, MUD = "TODO", X = X)
+        #TODO
+        messageAdmin = msg_alerte_user.format(nom = nom, MUD = "TODO", X = X, \
+                                              ip = ip, oubli=oubli)
+        #TODO
+        messageUser = msg_alerte_admin.format(nom = nom, MUD = "TODO", X = X, \
+                                              ip = self.poss.client.adresse_ip)
         
+        type(self).importeur.email.envoyer(destinateur, mail, objet, \
+                                           messageAdmin)
         type(self).importeur.email.envoyer(destinateur, admin_mail, objet, \
-                message)
+                                           messageUser)
     
     def action(self):
         
-        emt = self.poss.emetteur
-        
+        nom = self.poss.emetteur.nom
         X = type(self.importeur).anaconf.get_config("connex").nbr_avant_nouveau
+        #TODO
+        objet = obj_alerte.format(nom = nom, MUD = "TODO", X = X)
+        #TODO
+        message = msg_alerte_admin.format(nom = nom, MUD = "TODO", X = X, \
+                                          ip = self.poss.client.adresse_ip)
         
         self.envoieNouveauMDP()
         
-        #TODO
-        objet = obj_alerte.format(nom = emt.nom, MUD = "TODO", X = X)
-        
-        #TODO
-        message = msg_alerte_admin.format(nom = emt.nom, MUD = "TODO",
-            X = X, ip = self.poss.client.adresse_ip)
-        
         type(self).importeur.email.envoyer(destinateur, admin_mail, objet, \
-                message)
+                                           message)
     
     def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
         
         emt = self.poss.emetteur
-        
         cnx_cfg = type(self.importeur).anaconf.get_config("connex")
+        mot_de_passe = emt.hash_mot_de_pass(cnx_cfg.clef_salage, \
+                                            cnx_cfg.type_chiffrement, msg)
+        
+        self.poss.nbr_essaie += 1
+        emt.nbr_essaie += 1
         
         if msg == cnx_cfg.chaine_oubli:
             self.envoieNouveauMDP()
             self.poss.envoyer( \
                 "Un nouveau mot de passe vous a été envoyé par mail")
-            return
-        
-        cnx_cfg = type(self.importeur).anaconf.get_config("connex")
-        
-        mot_de_passe = emt.hash_mot_de_pass(\
-            cnx_cfg.clef_salage,\
-            cnx_cfg.type_chiffrement,\
-            msg\
-        )
-        
-        if emt.mot_de_passe == mot_de_passe:
+        elif emt.mot_de_passe == mot_de_passe:
+            
             emt.nbr_essaie = 0
+            
             if emt.valide:
                 self.migrer_contexte("connex:connexion:choix_personnages")
             else:
                 self.migrer_contexte("connex:creation:validation")
-        else:
-            emt.nbr_essaie += 1
             
+        else:
             if emt.nbr_essaie == cnx_cfg.nbr_avant_alerte:
                 self.alerte()
-            elif emt.nbr_essaie>=cnx_cfg.nbr_avant_nouveau:
+            elif emt.nbr_essaie == cnx_cfg.nbr_avant_nouveau:
                 self.action()
-            
-            if ( self.poss.nbr_essaie+1) % cnx_cfg.nbr_avant_logout == 0:
-                #TODO:pas jolie
+            if self.poss.nbr_essaie != 0 and self.poss.nbr_essaie % \
+               cnx_cfg.nbr_avant_logout == 0:
                 self.poss.envoyer("Déconnexion trop d'essaie.")
-                self.poss.deconnecter("Mot de passe, trop de tentatives " \
-                        "erronnées")
-
-            self.poss.nbr_essaie += 1
-            self.poss.envoyer("Password incorrect.")
+                self.poss.deconnecter("Déconnexion trop d'essaie.")
+            else:
+                self.poss.envoyer("Password incorrect.")
             
