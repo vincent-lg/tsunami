@@ -54,6 +54,7 @@ def generer_code():
     for i in range(taille):
         code += caracteres[randrange(len(caracteres))]
     
+    print("Code:", code)
     return code
 
 
@@ -64,63 +65,65 @@ class Validation(Contexte):
     nouveau code.
     
     """
-    def __init__(self):
+    nom = "connex:creation:validation"
+    
+    def __init__(self, poss):
         """Constructeur du contexte"""
-        Contexte.__init__(self, "connex:creation:validation")
+        Contexte.__init__(self, poss)
         self.opts.rci_ctx_prec = "connex:creation:entrer_email"
     
-    def entrer(self, emt):
+    def entrer(self):
         """Méthode appelée quand emt entre dans le contexte"""
-        if not emt.emetteur.msg_validation:
+        if not self.poss.emetteur.msg_validation:
             # Le message de validation n'a pas été envoyé
             # Génération du code de validation
             code = generer_code()
-            emt.emetteur.code_validation = code
+            self.poss.emetteur.code_validation = code
             destinateur = "info"
-            destinataire = emt.emetteur.adresse_email
-            sujet = "Validation du compte {0}".format(emt.emetteur.nom)
+            destinataire = self.poss.emetteur.adresse_email
+            sujet = "Validation du compte {0}".format(self.poss.emetteur.nom)
             corps = msg_validation.format(code = code)
             type(self).importeur.email.envoyer(destinateur, destinataire, \
                     sujet, corps)
     
-    def get_prompt(self, emt):
+    def get_prompt(self):
         """Message de prompt"""
         return "Code de validation : "
     
-    def accueil(self, emt):
+    def accueil(self):
         """Message d'accueil"""
         return \
             "\n|tit|-----= Validation du compte =------|ff|\n" \
             "Un message vient de vous être envoyé à votre adresse {0}.\n" \
             "Il contient un code de validation que vous devez recopier ici.\n" \
             "Ce code permet de valider votre compte, il est donc " \
-            "indispensable.".format(emt.emetteur.adresse_email)
+            "indispensable.".format(self.poss.emetteur.adresse_email)
     
-    def interpreter(self, emt, msg):
+    def interpreter(self, msg):
         """Interpréteur du contexte"""
-        if msg == emt.emetteur.code_validation:
-            emt.emetteur.valide = True
-            emt.emetteur.code_validation = ""
-            emt.emetteur.tentatives_validation = 0
-            self.migrer_vers(emt, "connex:connexion:choix_personnages")
+        if msg == self.poss.emetteur.code_validation:
+            self.poss.emetteur.valide = True
+            self.poss.emetteur.code_validation = ""
+            self.poss.emetteur.tentatives_validation = 0
+            self.migrer_contexte("connex:connexion:choix_personnages")
         else:
-            emt.emetteur.tentatives_validation += 1
-            if emt.emetteur.tentatives_validation == 3:
+            self.poss.emetteur.tentatives_validation += 1
+            if self.poss.emetteur.tentatives_validation == 3:
                 # Génération d'un nouveau code de validation
                 code = generer_code()
-                emt.emetteur.code_validation = code
+                self.poss.emetteur.code_validation = code
                 destinateur = "info"
-                destinataire = emt.emetteur.adresse_email
-                sujet = "Validation du compte {0}".format(emt.emetteur.nom)
+                destinataire = self.poss.emetteur.adresse_email
+                sujet = "Validation du compte {0}".format( \
+                        self.poss.emetteur.nom)
                 corps = msg_validation.format(code = code)
                 type(self).importeur.email.envoyer(destinateur, destinataire, \
                     sujet, corps)
-                emt.emetteur.tentatives_validation = 0
-                self.envoyer(emt, \
+                self.poss.emetteur.tentatives_validation = 0
+                self.poss.envoyer( \
                     "Vous avez entré 3 codes de validation incorrects.\n" \
                     "Un nouveau code de validation vous a été envoyé à " \
-                    "l'adresse {0}.".format(emt.emetteur.adresse_email))
+                    "l'adresse {0}.".format(self.poss.emetteur.adresse_email))
             else:
-                self.envoyer(emt, "Ce code de validation est incorrect. " \
+                self.poss.envoyer("Ce code de validation est incorrect. " \
                         "Veuillez l'entrer à nouveau.")
-                raise("test")

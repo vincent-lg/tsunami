@@ -38,25 +38,23 @@ RE_PASS_VALIDE = re.compile(r"^[a-zA-Z0-9{}/\[\]()+=$_*@^\"'`£#-]+$", re.I)
 MIN = 6
 
 class ChoisirPass(Contexte):
-    """Contexte de changement d'encodage.
-    On affiche au client plusieurs possibilités d'encodage.
-    Il est censé afficher celui qu'il voit correctement.
-    On part du principe que l'encodage de sortie est le même que l'encodage
-    d'entrée. Ainsi, une fois que le client a choisi son encodage, on le
-    répercute sur l'encodage du client.
+    """Contexte du choix de mot de passe.
+    Le client doit choisir un mot de passe sécurisant l'accès au compte
+    nouvellement créée.
     
     """
-    def __init__(self):
+    nom = "connex:creation:choisir_pass"
+    
+    def __init__(self, poss):
         """Constructeur du contexte"""
-        Contexte.__init__(self, "connex:creation:choisir_pass")
+        Contexte.__init__(self, poss)
         self.opts.rci_ctx_prec = "connex:creation:changer_encodage"
     
-    def get_prompt(self, emt):
+    def get_prompt(self):
         """Message de prompt"""
-        # Comme l'option ncod est activée, le préfixe est affiché en dur
         return "Votre mot de passe : "
     
-    def accueil(self, emt):
+    def accueil(self):
         """Message d'accueil"""
         return \
             "\n|tit|------= Choix du mot de passe =-----|ff|\n" \
@@ -67,22 +65,22 @@ class ChoisirPass(Contexte):
             "sous aucun prétexte.\n" \
             "Si vous voulez revenir au choix de l'encodage, entrez |cmd|/|ff|."
     
-    def deconnecter(self, emt):
+    def deconnecter(self):
         """En cas de décnonexion du joueur, on supprime son compte"""
-        type(self).importeur.connex.supprimer_compte(emt.emetteur)
+        type(self).importeur.connex.supprimer_compte(self.poss.emetteur)
     
-    def interpreter(self, emt, msg):
+    def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
         config_connex = type(self).importeur.anaconf.get_config("connex")
         type_chiffrement = config_connex.type_chiffrement
         clef_salage = config_connex.clef_salage
         
         if len(msg) < MIN:
-            self.envoyer(emt, "|err|Pour des raisons de sécurité, le mot de " \
+            self.poss.envoyer("|err|Pour des raisons de sécurité, le mot de " \
                             "passe doit faire au minimum\n" \
                             "{0} caractères.|ff|".format(MIN))
         elif RE_PASS_VALIDE.search(msg) is None:
-            self.envoyer(emt, "|err|Le mot de passe entré contient des " \
+            self.poss.envoyer("|err|Le mot de passe entré contient des " \
                             "caractères non autorisés ; les caractères\n" \
                             "admis sont les lettres (majuscules et " \
                             "minuscules, sans accents), les\n" \
@@ -90,6 +88,7 @@ class ChoisirPass(Contexte):
                             "|ff||cmd|{}/\[\]()+=$_*@^\"'`£#-|ff||err|.|ff|")
         else:
             # Hash du mot de passe
-            emt.emetteur.mot_de_passe = \
-                emt.emetteur.hash_mot_de_pass(clef_salage,type_chiffrement,msg)
-            self.migrer_contexte(emt, "connex:creation:confirmer_pass")
+            self.poss.emetteur.mot_de_passe = \
+                self.poss.emetteur.hash_mot_de_pass(clef_salage, \
+                type_chiffrement, msg)
+            self.migrer_contexte("connex:creation:confirmer_pass")

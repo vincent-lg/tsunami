@@ -38,48 +38,53 @@ RE_MAIL_VALIDE = re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b", re.I)
 
 class EntrerEmail(Contexte):
     """Contexte du choix de l'adresse mail.
-    On récupère l'adresse email et on envoit un mail avec le code de
+    On récupère l'adresse email pour envoyer un mail avec le code de
     validation qui sera récupéré par le contexte suivant
+    Note: si le serveur mail n'est pas actif (option configurable), on valide
+    automatiquement le compte.
     
     """
-    def __init__(self):
+    nom = "connex:creation:entrer_email"
+    
+    def __init__(self, poss):
         """Constructeur du contexte"""
-        Contexte.__init__(self, "connex:creation:entrer_email")
+        Contexte.__init__(self, poss)
     
-    def get_prompt(self, emt):
+    def get_prompt(self):
         """Message de prompt"""
-        return "Votre adresse : "
+        return "Votre adresse de courriel : "
     
-    def accueil(self, emt):
+    def accueil(self):
         """Message d'accueil"""
         return \
-            "\n|tit|----------= Adresse mail =----------|ff|\n" \
-            "Entrez une |cmd|adresse mail|ff| de contact pour votre compte. " \
+            "\n|tit|----------= Adresse de couriel =----------|ff|\n" \
+            "Entrez une |cmd|adresse e-mail|ff| de contact pour votre compte. " \
             "Un message sera envoyé\n" \
             "à |cmd|cette adresse|ff| pour valider ce compte ; elle sera " \
             "aussi utilisée si\n" \
             "vous perdez votre |cmd|mot de passe|ff|. Veillez donc à ce " \
             "qu'elle soit valide."
     
-    def deconnecter(self, emt):
+    def deconnecter(self):
         """En cas de déconexion du joueur, on supprime son compte"""
-        type(self).importeur.connex.supprimer_compte(emt.emetteur)
+        type(self).importeur.connex.supprimer_compte(self.poss.emetteur)
     
-    def interpreter(self, emt, msg):
+    def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
         config_email = type(self).importeur.anaconf.get_config("email")
         
         # On passe le message en minuscules
         msg = msg.lower()
         if msg in type(self).importeur.connex.email_comptes:
-            self.envoyer(emt, "|att|Cette adresse mail est déjà utilisée.|ff|")
+            self.poss.envoyer("|err|Cette adresse e-mail est déjà utilisée " \
+                    "par un autre compte.|ff|\nChoisissez-en une autre.")
         elif RE_MAIL_VALIDE.search(msg) is None:
-            self.envoyer(emt, "|err|L'adresse spécifiée n'est pas valide.|ff|")
+            self.poss.envoyer("|err|L'adresse spécifiée n'est pas valide.|ff|")
         else:
-            emt.emetteur.adresse_email = msg
+            self.poss.emetteur.adresse_email = msg
             if config_email.serveur_mail:
-                self.migrer_contexte(emt, "connex:creation:validation")
+                self.migrer_contexte("connex:creation:validation")
             else:
-                emt.emetteur.valide = True
-                self.migrer_contexte(emt, "connex:connexion:entrer_nom")
+                self.poss.emetteur.valide = True
+                self.migrer_contexte("connex:connexion:choix_personnages")
     

@@ -34,24 +34,21 @@ import hashlib
 
 from primaires.interpreteur.contexte import Contexte
 
-## Constantes
-
 class ChoisirPersonnage(Contexte):
-    """
+    """Contexte du choix de personnage
     
     """
-    def __init__(self):
+    nom = "connex:connexion:choix_personnages"
+    
+    def __init__(self, poss):
         """Constructeur du contexte"""
-        Contexte.__init__(self, "connex:connexion:choisir_personnage")
+        Contexte.__init__(self, poss)
     
-    def get_prompt(self, emt):
+    def get_prompt(self):
         """Message de prompt"""
         return "Choisir personnage : "
     
-    def accueil(self, emt):
+    def accueil(self):
         """Message d'accueil"""
-        return "\nVous etes connecté."
+        return "\nVous êtes connecté."
     
-    def interpreter(self, emt, msg):
-        """Méthode appelée quand un message est réceptionné"""
-        

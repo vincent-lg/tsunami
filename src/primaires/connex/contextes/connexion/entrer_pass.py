@@ -170,7 +170,7 @@ class EntrerPass(Contexte):
         
         if msg == cnx_cfg.chaine_oubli:
             self.envoieNouveauMDP()
-            self.poss.envoyer( \
+            self.poss.envoyer( \
                 "Un nouveau mot de passe vous a été envoyé par mail")
             return
         
@@ -185,7 +185,7 @@ class EntrerPass(Contexte):
         if emt.mot_de_passe == mot_de_passe:
             emt.nbr_essaie = 0
             if emt.valide:
-                self.migrer_contexte("connex:connexion:choisir_personnage")
+                self.migrer_contexte("connex:connexion:choix_personnages")
             else:
                 self.migrer_contexte("connex:creation:validation")
         else:

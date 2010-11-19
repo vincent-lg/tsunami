@@ -51,18 +51,19 @@ class NouveauNom(Contexte):
     Là, on redirige vers 'connex:creation:changer_enodage'.
     
     """
-    def __init__(self):
+    nom = "connex:creation:entrer_nom"
+    
+    def __init__(self, poss):
         """Constructeur du contexte"""
-        Contexte.__init__(self, "connex:creation:entrer_nom")
-        self.opts.emt_ncod = False
+        Contexte.__init__(self, poss)
         self.opts.sup_accents = True
         self.opts.rci_ctx_prec = "connex:connexion:entrer_nom"
     
-    def get_prompt(self, emt):
+    def get_prompt(self):
         """Message de prompt"""
         return "Votre nom de compte : "
     
-    def accueil(self, emt):
+    def accueil(self):
         """Message d'accueil"""
         return \
             "\n|tit|------= Création d'un compte =------|ff|\n" \
@@ -72,7 +73,7 @@ class NouveauNom(Contexte):
             "Ce |cmd|nom|ff| vous sera demandé à chaque connexion, ne " \
             "l'oubliez pas !"
     
-    def interpreter(self, emt, msg):
+    def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
         config_connex = type(self).importeur.anaconf.get_config("connex")
         noms_interdits = list(config_connex.noms_interdits)
@@ -81,18 +82,18 @@ class NouveauNom(Contexte):
         # On passe le message en minuscules
         msg = msg.lower()
         if msg in noms_interdits:
-            self.envoyer(emt, "|att|Ce nom de compte est interdit. " \
+            self.poss.envoyer("|err|Ce nom de compte est interdit. " \
                     "Choisissez-en un autre.|ff|")
         elif msg in type(self).importeur.connex.nom_comptes:
-            self.envoyer(emt, "|att|Ce nom de compte est déjà réservé.|ff|")
+            self.poss.envoyer("|err|Ce nom de compte est déjà réservé.|ff|")
         elif len(msg) < MIN or len(msg) > MAX:
-            self.envoyer(emt, "|err|Le nom doit faire entre {0} et {1} " \
+            self.poss.envoyer("|err|Le nom doit faire entre {0} et {1} " \
                             "caractères de longueur.|ff|".format(MIN, MAX))
         elif RE_NOM_VALIDE.search(msg) is None:
-            self.envoyer(emt, "|err|Les caractères spéciaux ne sont pas " \
+            self.poss.envoyer("|err|Les caractères spéciaux ne sont pas " \
                             "autorisés.|ff|")
         else:
             # On crée le compte correspondant
             compte = type(self).importeur.connex.ajouter_compte(msg)
-            emt.emetteur = compte
-            self.migrer_contexte(emt, "connex:creation:changer_encodage")
+            self.poss.emetteur = compte
+            self.migrer_contexte("connex:creation:changer_encodage")

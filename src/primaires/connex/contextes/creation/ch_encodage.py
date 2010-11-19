@@ -47,17 +47,17 @@ class ChangerEncodage(Contexte):
     répercute sur l'encodage du client.
     
     """
-    def __init__(self):
+    nom = "connex:creation:changer_encodage"
+    
+    def __init__(self, poss):
         """Constructeur du contexte"""
-        Contexte.__init__(self, "connex:creation:changer_encodage")
-        self.opts.ncod = False # On devra passer à 'envoyer' une chaîne de bytes
+        Contexte.__init__(self, poss)
     
-    def get_prompt(self, emt):
+    def get_prompt(self):
         """Message de prompt"""
-        # Comme l'option ncod est activée, le préfixe est affiché en dur
-        return b""
+        return b"* Entrez un numero d'encodage : "
     
-    def accueil(self, emt):
+    def accueil(self):
         """Message d'accueil"""
         ret = b"\n------= Choix de l'encodage =-------\n"
         ret += b"Le parametrage de l'encodage est necessaire pour " \
@@ -66,19 +66,21 @@ class ChangerEncodage(Contexte):
             b"confort de jeu.\n" \
             b"Choisissez donc un encodage qui s'affiche correctement chez vous.\n" \
             b"Pour ce faire, entrez le numero correspondant dans la " \
-            b"liste ci-dessous :\n"
-        test = "Caractères accentués en ".encode('Utf-8').decode()
+            b"liste ci-dessous :\n\n" \
+            b"Note : si plusieurs encodages s'affichent correctement dans " \
+                b"votre client,\nchoisissez le premier des encodages qui " \
+                b"s'affiche correctement.\n"
+        test = "Caractères accentués en "
         for i, encodage in enumerate(ENCODAGES):
             ret += b"\n  " + str(i+1).encode() + b" - " + \
                     test.encode(encodage) + encodage.encode()
-        ret += b"\n\n"
         return ret
     
-    def deconnecter(self, emt):
-        """En cas de décnonexion du joueur, on supprime son compte"""
-        type(self).importeur.connex.supprimer_compte(emt.emetteur)
+    def deconnecter(self):
+        """En cas de décnonexion du client, on supprime son compte"""
+        type(self).importeur.connex.supprimer_compte(self.poss.emetteur)
     
-    def interpreter(self, emt, msg):
+    def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
         # On essaye d'abord de convertir le choix de l'utilisateur
         try:
@@ -86,7 +88,7 @@ class ChangerEncodage(Contexte):
             if choix < 1 or choix > len(ENCODAGES):
                 raise ValueError
         except ValueError:
-            self.envoyer(emt, b"Le nombre entre n'est pas valide.")
+            self.poss.envoyer(b"Le nombre entre n'est pas valide.")
         else:
-            emt.emetteur.encodage = ENCODAGES[choix - 1]
-            self.migrer_contexte(emt, "connex:creation:choisir_pass")
+            self.poss.emetteur.encodage = ENCODAGES[choix - 1]
+            self.migrer_contexte("connex:creation:choisir_pass")

@@ -86,7 +86,7 @@ class OptionsContexte:
 RCI_PREC = "/"
 
 dic_attributs = { # dictionnaire des attributs de Contexte
-    "opts":OptionsContexte(),
+    "opts":None,
     "poss":None, # possesseur du contexte
 }
 
@@ -132,6 +132,7 @@ class Contexte(BaseObj):
         """Constructeur d'un contexte."""
         BaseObj.__init__(self)
         self.poss = poss
+        self.opts = OptionsContexte()
         # Récupération du fichier de configuration de la charte graphique
         cfg_charte = type(self.importeur).anaconf.get_config("charte_graph")
         self.opts.prompt_clr = cfg_charte.couleur_prompt

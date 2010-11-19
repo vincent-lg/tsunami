@@ -92,7 +92,7 @@ class Module(BaseModule):
         comptes = self.importeur.supenr.charger_groupe(Compte)
         for compte in comptes:
             self.comptes[compte.id.id] = compte
-            if compte.valide==False:
+            if not compte.valide:
                 self.supprimer_compte(compte)
         
         # On affiche proprement le nombre de comptes (un peu verbeux mais-)

@@ -30,48 +30,48 @@
 from primaires.interpreteur.contexte import Contexte
 
 class ConfirmerPass(Contexte):
-    """Contexte de changement d'encodage.
-    On affiche au client plusieurs possibilités d'encodage.
-    Il est censé afficher celui qu'il voit correctement.
-    On part du principe que l'encodage de sortie est le même que l'encodage
-    d'entrée. Ainsi, une fois que le client a choisi son encodage, on le
-    répercute sur l'encodage du client.
+    """Contexte de confirmation de mot de passe.
+    Le client doit entrer une nouvelle fois le mot de passe qu'il a choisi au
+    contexte précédent.
     
     """
-    def __init__(self):
+    nom = "connex:creation:confirmer_pass"
+    
+    def __init__(self, poss):
         """Constructeur du contexte"""
-        Contexte.__init__(self, "connex:creation:confirmer_pass")
+        Contexte.__init__(self, poss)
         self.opts.rci_ctx_prec = "connex:creation:choisir_pass"
     
-    def get_prompt(self, emt):
+    def get_prompt(self):
         """Message de prompt"""
-        # Comme l'option ncod est activée, le préfixe est affiché en dur
         return "Confirmez le mot de passe : "
     
-    def accueil(self, emt):
+    def accueil(self):
         """Message d'accueil"""
         return \
             "\n|tit|----------= Confirmation =----------|ff|\n" \
             "Entrez une nouvelle fois votre |cmd|mot de passe|ff| pour " \
-            "éviter une faute de frappe."
+            "le confirmer."
     
-    def deconnecter(self, emt):
+    def deconnecter(self):
         """En cas de décnonexion du joueur, on supprime son compte"""
-        type(self).importeur.connex.supprimer_compte(emt.emetteur)
+        type(self).importeur.connex.supprimer_compte(self.poss.emetteur)
     
-    def interpreter(self, emt, msg):
+    def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
         config_connex = type(self).importeur.anaconf.get_config("connex")
         type_chiffrement = config_connex.type_chiffrement
         clef_salage = config_connex.clef_salage
         
-        if emt.emetteur.mot_de_passe == \
-            emt.emetteur.hash_mot_de_pass(clef_salage,type_chiffrement,msg):
-            self.migrer_contexte(emt, "connex:creation:entrer_email")
+        if self.poss.emetteur.mot_de_passe == \
+            self.poss.emetteur.hash_mot_de_pass(clef_salage, \
+                type_chiffrement, msg):
+            self.migrer_contexte("connex:creation:entrer_email")
         else:
-            self.envoyer(emt, "|att|Votre confirmation est invalide ! Si " \
-                            "cette erreur persiste, vous vous\n" \
-                            "êtes peut-être trompé en indiquant votre mot de " \
-                            "passe à l'étape précédente.\n" \
-                            "Dans ce cas, entrez |ff||cmd|/|ff||att| pour " \
-                            "retourner en arrière.|ff|")
+            self.poss.envoyer("|err|Le mot de passe de confirmation " \
+                    "ne correspond pas à celui entré à l'étape\nprécédente.\n" \
+                    "Si cette erreur persiste, vous vous " \
+                    "êtes peut-être trompé en indiquant votre\nmot de " \
+                    "passe la première fois.\n" \
+                    "Dans ce cas, entrez |ff||cmd|/|ff||err| pour " \
+                    "retourner à l'étape précédente.|ff|")
