@@ -182,6 +182,8 @@ class InstanceConnexion:
             self.file_attente = []
             if ajt_prompt:
                 msg += 2 * NL + self.get_prompt()
+            else:
+                msg += NL
         
             if self.client:
                 self.client.envoyer(msg)
