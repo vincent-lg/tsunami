@@ -188,9 +188,12 @@ def remplacer_sp_cars(msg):
 def supprimer_accents(msg):
     """Cette fonction permet, avant émission du message, de retirer
     les accents. On se base pour ce faire sur ACCENTS.
+    ATTENTION : cette fonction doit accepter 'str' et 'bytes'.
     
     """
     for acc, non_acc in ACCENTS.items():
-        msg = msg.replace(acc.encode(), non_acc.encode())
+        if type(msg) == bytes:
+            acc, non_acc = acc.encode(), non_acc.encode()
+        msg = msg.replace(acc, non_acc)
     
     return msg
