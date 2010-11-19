@@ -109,11 +109,11 @@ class EntrerPass(Contexte):
         emt.mot_de_passe = emt.hash_mot_de_pass(
             cnx_cfg.clef_salage, cnx_cfg.type_chiffrement, mdp)
         #TODO
-        objet = obj_nouveau_mdp.format(nom = emt.nom, MUD="TODO")
+        objet = obj_nouveau_mdp.format(nom = emt.nom, MUD = "TODO")
         #TODO
-        message = msg_nouveau_mdp.format(nom = emt.nom, MUD="TODO", \
+        message = msg_nouveau_mdp.format(nom = emt.nom, MUD = "TODO", \
                                          Y = cnx_cfg.nbr_avant_nouveau, \
-                                         password=mdp)
+                                         password = mdp)
         
         type(self).importeur.email.envoyer(destinateur, mail, objet, message)
         
@@ -132,7 +132,7 @@ class EntrerPass(Contexte):
         objet = obj_alerte.format(nom = nom, MUD = "TODO", X = X)
         #TODO
         messageAdmin = msg_alerte_user.format(nom = nom, MUD = "TODO", X = X, \
-                                              ip = ip, oubli=oubli)
+                                              ip = ip, oubli = oubli)
         #TODO
         messageUser = msg_alerte_admin.format(nom = nom, MUD = "TODO", X = X, \
                                               ip = self.poss.client.adresse_ip)
