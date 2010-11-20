@@ -53,6 +53,10 @@ chaine_nouveau = "nouveau"
 # Vous pouvez par exemple y ajouter le nom de votre projet
 noms_interdits = ["kassie"]
 
+# Tailles minimum et maximum du nom de compte
+taille_min = 3
+taille_max = 15
+
 ## Protection du mot de passe
 
 # Chiffrement du mot de passe
@@ -67,6 +71,9 @@ type_chiffrement = "sha256"
 # par dictionnaire. Par défaut "salee_", c'est un préfixe ajouté devant le
 # mot de passe juste avant de le hacher.
 clef_salage = "salee_"
+
+# Taille minimum du mot de passe
+pass_min = 6
 
 
 ### Connexion

@@ -71,14 +71,15 @@ class ChoisirPass(Contexte):
     
     def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
-        config_connex = type(self).importeur.anaconf.get_config("connex")
-        type_chiffrement = config_connex.type_chiffrement
-        clef_salage = config_connex.clef_salage
+        cfg_connex = type(self).importeur.anaconf.get_config("connex")
+        type_chiffrement = cfg_connex.type_chiffrement
+        clef_salage = cfg_connex.clef_salage
+        min = cfg_connex.pass_min
         
-        if len(msg) < MIN:
+        if len(msg) < min:
             self.poss.envoyer("|err|Pour des raisons de sécurité, le mot de " \
                             "passe doit faire au minimum\n" \
-                            "{0} caractères.|ff|".format(MIN))
+                            "{0} caractères.|ff|".format(min))
         elif RE_PASS_VALIDE.search(msg) is None:
             self.poss.envoyer("|err|Le mot de passe entré contient des " \
                             "caractères non autorisés ; les caractères\n" \

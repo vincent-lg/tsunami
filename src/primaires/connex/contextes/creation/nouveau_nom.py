@@ -35,9 +35,6 @@ import re
 ## Constantes
 # Regex
 RE_NOM_VALIDE = re.compile(r"^[A-Za-z0-9]+$", re.I)
-# Tailles du nom du compte
-MIN = 3
-MAX = 15
 
 class NouveauNom(Contexte):
     """Premier contexte appelé à la création d'un compte.
@@ -75,9 +72,11 @@ class NouveauNom(Contexte):
     
     def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
-        config_connex = type(self).importeur.anaconf.get_config("connex")
-        noms_interdits = list(config_connex.noms_interdits)
-        noms_interdits.append(config_connex.chaine_nouveau)
+        cfg_connex = type(self).importeur.anaconf.get_config("connex")
+        noms_interdits = list(cfg_connex.noms_interdits)
+        noms_interdits.append(cfg_connex.chaine_nouveau)
+        min = cfg_connex.taille_min
+        max = cfg_connex.taille_max
         
         # On passe le message en minuscules
         msg = msg.lower()
@@ -86,9 +85,9 @@ class NouveauNom(Contexte):
                     "Choisissez-en un autre.|ff|")
         elif msg in type(self).importeur.connex.nom_comptes:
             self.poss.envoyer("|err|Ce nom de compte est déjà réservé.|ff|")
-        elif len(msg) < MIN or len(msg) > MAX:
+        elif len(msg) < min or len(msg) > max:
             self.poss.envoyer("|err|Le nom doit faire entre {0} et {1} " \
-                            "caractères de longueur.|ff|".format(MIN, MAX))
+                            "caractères de longueur.|ff|".format(min, max))
         elif RE_NOM_VALIDE.search(msg) is None:
             self.poss.envoyer("|err|Les caractères spéciaux ne sont pas " \
                             "autorisés.|ff|")
