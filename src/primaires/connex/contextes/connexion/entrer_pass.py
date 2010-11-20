@@ -27,7 +27,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# TODO: Commenter
 # TODO: Message, couleur et tous
 # TODO: Nom du MUD
 # TODO: Adresse email
@@ -88,6 +87,10 @@ class EntrerPass(Contexte):
     def __init__(self, poss):
         """Constructeur du contexte"""
         Contexte.__init__(self, poss)
+        self.attente = False
+        """self.logger = type(self.importeur).man_logs.creer_logger( \
+                "entrer_pass", \
+                "emails", "envoyes.log")"""
     
     def get_prompt(self):
         """Message de prompt"""
@@ -97,11 +100,11 @@ class EntrerPass(Contexte):
         """Message d'accueil"""
         cnx_cfg = type(self.importeur).anaconf.get_config("connex")
         return \
-        "\nEntrez votre mot de passe, si vous l'avez oublié entrez {0}" \
-        " et un nouveau vous sera envoyé.".format(cnx_cfg.chaine_oubli)
+            "\nEntrez votre |cmd|mot de passe|ff| ou |cmd|{0}|ff| si vous " \
+            "l'avez oublié.\n".format(cnx_cfg.chaine_oubli)
     
     def envoieNouveauMDP(self):
-        
+        """Envoie un nouveau mot de passe à l'utilisateur."""
         cnx_cfg = type(self.importeur).anaconf.get_config("connex")
         mdp = "".join(random.sample(char_mdp ,10))
         emt = self.poss.emetteur
@@ -120,10 +123,10 @@ class EntrerPass(Contexte):
         emt.nbr_essaie = 0
     
     def alerte(self):
-        
+        """Méthode appelé quand il y a eu trop de tentative. Elle envoie un
+        message à l'admin et à l'utilisateur."""
         oubli = type(self.importeur).anaconf.get_config("connex").chaine_oubli
         X = type(self.importeur).anaconf.get_config("connex").nbr_avant_alerte
-        
         mail = self.poss.emetteur.adresse_email
         nom = self.poss.emetteur.nom
         ip = self.poss.client.adresse_ip
@@ -143,7 +146,9 @@ class EntrerPass(Contexte):
                                            messageUser)
     
     def action(self):
-        
+        """Méthode appelé quand il y a eu beaucoup trop de tentative.
+        Elle envoie un message à l'admin et envoie un nouveau mot de
+        passe à l'utilisateur."""
         nom = self.poss.emetteur.nom
         X = type(self.importeur).anaconf.get_config("connex").nbr_avant_nouveau
         #TODO
@@ -173,14 +178,11 @@ class EntrerPass(Contexte):
             self.poss.envoyer( \
                 "Un nouveau mot de passe vous a été envoyé par mail")
         elif emt.mot_de_passe == mot_de_passe:
-            
             emt.nbr_essaie = 0
-            
             if emt.valide:
                 self.migrer_contexte("connex:connexion:choix_personnages")
             else:
                 self.migrer_contexte("connex:creation:validation")
-            
         else:
             if emt.nbr_essaie == cnx_cfg.nbr_avant_alerte:
                 self.alerte()
@@ -192,4 +194,5 @@ class EntrerPass(Contexte):
                 self.poss.deconnecter("Déconnexion trop d'essaie.")
             else:
                 self.poss.envoyer("Password incorrect.")
+                self.attente = True
             
