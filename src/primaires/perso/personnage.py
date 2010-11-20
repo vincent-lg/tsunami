@@ -28,50 +28,22 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit la classe Compte."""
-
-import hashlib
+"""Fichier contenant la classe Personnage, détaillée plus bas."""
 
 from abstraits.id import ObjetID
 
-# Attributs d'un compte
-dic_attributs = {
-    "nom":"",
-    "mot_de_passe":"",
-    "adresse_email":"",
-    "encodage":"",
-    "valide":False,
-    "code_validation":"",
-    "msg_validation":False, # à True si le message de validation a été envoyé
-    "tentatives_validation":0, # tentatives de validation
-    "nbr_essaie":0, # tentatives d'intrusion (mot de passe erroné)
-    "joueurs":{}, # {id_joueur:joueur}
+dic_attributs = { # dictionnaire des attributs d'un personnage
 }
 
-class Compte(ObjetID):
-    """Classe représentant un compte.
-    On peut y trouver différentes informations :
-    *   le nom (naturellement), identifiant du compte
-    *   le mot de passe chiffré, protégeant le compte
-    *   une adresse e-mail valide
-    *   un encodage de sortie
-    *   la liste des joueurs liés à ce compte
+class Personnage(ObjetID):
+    """Classe représentant un personnage.
+    C'est une classe abstraite. Elle doit être héritée pour faire des joueurs
+    et NPCs. Ces autres classes peuvent être également héritées, à leur tour.
     
     """
-    groupe = "comptes"
-    sous_rep = "comptes"
+    groupe = "personnages"
+    sous_rep = "personnages"
     attributs = dic_attributs
     
-    def __init__(self, nom_compte):
-        """Constructeur d'un compte."""
+    def __init__(self):
         ObjetID.__init__(self)
-        self.nom = nom_compte
-    
-    def hash_mot_de_pass(self, clef_salage, type_chiffrement, mot_de_passe):
-        mot_de_passe = str(clef_salage + mot_de_passe).encode()
-        h = hashlib.new(type_chiffrement)
-        h.update(mot_de_passe)
-        
-        return h.digest()
-
-ObjetID.ajouter_groupe(Compte)
