@@ -28,50 +28,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit la classe Compte."""
+"""Fichier contenant le module primaire perso."""
 
-import hashlib
+from abstraits.module import *
 
-from abstraits.id import ObjetID
-
-# Attributs d'un compte
-dic_attributs = {
-    "nom":"",
-    "mot_de_passe":"",
-    "adresse_email":"",
-    "encodage":"",
-    "valide":False,
-    "code_validation":"",
-    "msg_validation":False, # à True si le message de validation a été envoyé
-    "tentatives_validation":0, # tentatives de validation
-    "nbr_essaie":0, # tentatives d'intrusion (mot de passe erroné)
-    "joueurs":{}, # {id_joueur:joueur}
-}
-
-class Compte(ObjetID):
-    """Classe représentant un compte.
-    On peut y trouver différentes informations :
-    *   le nom (naturellement), identifiant du compte
-    *   le mot de passe chiffré, protégeant le compte
-    *   une adresse e-mail valide
-    *   un encodage de sortie
-    *   la liste des joueurs liés à ce compte
+class Module(BaseModule):
+    """Module gérant la classe Personnage qui sera héritée pour construire
+    des joueurs et NPCs. Les mécanismes propres au personnage (c'est-à-dire
+    indépendant de la connexion et liées à l'univers) seront gérées ici.
+    
+    En revanche, les contextes de connexion ou de création d'un personnage
+    ne se trouve pas ici (il s'agit d'informations propres à un joueur, non
+    à un NPC.
     
     """
-    groupe = "comptes"
-    sous_rep = "comptes"
-    attributs = dic_attributs
-    
-    def __init__(self, nom_compte):
-        """Constructeur d'un compte."""
-        ObjetID.__init__(self)
-        self.nom = nom_compte
-    
-    def hash_mot_de_pass(self, clef_salage, type_chiffrement, mot_de_passe):
-        mot_de_passe = str(clef_salage + mot_de_passe).encode()
-        h = hashlib.new(type_chiffrement)
-        h.update(mot_de_passe)
-        
-        return h.digest()
-
-ObjetID.ajouter_groupe(Compte)
+    def __init__(self, importeur):
+        """Constructeur du module"""
+        BaseModule.__init__(self, importeur, "perso", "primaire")
