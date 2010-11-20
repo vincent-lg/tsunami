@@ -77,7 +77,15 @@ class BaseObj:
     
     def __init__(self):
         """Constructeur. On copie tous les attributs dans self"""
-        self.__dict__.update(type(self).attributs)
+        attributs = dict(type(self).attributs)
+        # On parcourt les descendants éventuels de la classe
+        # Ainsi, on ajoute au dictionnaire des attributs les attributs des
+        # objets-parents
+        for classe in type(self).__bases:
+            if hasattr(self, "attributs"):
+                n_attributs = dict(classe.attributs)
+                attributs = n_attributs.update(attributs)
+        self.__dict__.update(attributs)
         self.p_id = id(self)
     
     def __getstate__(self):
