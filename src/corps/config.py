@@ -51,6 +51,11 @@ pere = r"""
 # l'exécution du projet, pour les prendre en compte il faudra demander au corps
 # de recharger ces informations.
 
+## Configuration générale
+
+# Nom de votre MUD
+nom = "Kassie"
+
 ## Configuration de la connexion
 
 # Numéro de port

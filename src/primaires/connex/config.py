@@ -92,7 +92,8 @@ chaine_oubli = "oubli"
 # Au bout de 3 entrées erronées par défaut, le client est déconnecté et un mail
 # automatique est envoyé au possesseur du compte ; au bout de 20 par défaut
 # le mot de passe est réinitialisé et envoyé par mail. Dans les deux cas, un
-# autre mail avertit l'admin principal.
+# autre mail avertit l'admin principal. Les décompte sont remis à zéro lors
+# d'une connexion réussi ou lors d'un changement de mot de passe.
 nbr_avant_alerte = 3
 nbr_avant_nouveau = 20
 

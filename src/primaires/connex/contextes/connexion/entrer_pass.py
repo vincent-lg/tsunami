@@ -27,12 +27,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# TODO: Message, couleur et tous
-# TODO: Nom du MUD
-# TODO: Adresse email
-# TODO: Logger les erreurs
-# TODO: Rajouter l'attente entre deux tentatives
-
 import re
 import random
 
@@ -65,10 +59,7 @@ msg_nouveau_mdp = \
     "Nouveau mot de passe : {password}"
 
 destinateur = "info"
-#TODO
-admin_mail = "davyg@localhost"
 
-#TODO
 class EntrerPass(Contexte):
     """Contexte demandant au client son mot de passe.
     On peut aboutir à la validation du compte si elle n'est pas fait
@@ -88,9 +79,8 @@ class EntrerPass(Contexte):
         """Constructeur du contexte"""
         Contexte.__init__(self, poss)
         self.attente = False
-        """self.logger = type(self.importeur).man_logs.creer_logger( \
-                "entrer_pass", \
-                "emails", "envoyes.log")"""
+        self.logger = type(self.importeur).man_logs.creer_logger("entrer_pass", \
+                "entrer_pass", "entrer_pass.log")
     
     def get_prompt(self):
         """Message de prompt"""
@@ -109,17 +99,15 @@ class EntrerPass(Contexte):
         mdp = "".join(random.sample(char_mdp ,10))
         emt = self.poss.emetteur
         mail = emt.adresse_email
+        nomMUD = type(self.importeur).anaconf.get_config("globale").nom
         emt.mot_de_passe = emt.hash_mot_de_pass(
             cnx_cfg.clef_salage, cnx_cfg.type_chiffrement, mdp)
-        #TODO
-        objet = obj_nouveau_mdp.format(nom = emt.nom, MUD = "TODO")
-        #TODO
-        message = msg_nouveau_mdp.format(nom = emt.nom, MUD = "TODO", \
-                                         Y = cnx_cfg.nbr_avant_nouveau, \
-                                         password = mdp)
+        objet = obj_nouveau_mdp.format(nom=emt.nom, MUD=nomMUD)
+        message = msg_nouveau_mdp.format(nom=emt.nom, MUD=nomMUD, \
+                                         password=mdp, \
+                                         Y=cnx_cfg.nbr_avant_nouveau)
         
         type(self).importeur.email.envoyer(destinateur, mail, objet, message)
-        
         emt.nbr_essaie = 0
     
     def alerte(self):
@@ -130,19 +118,19 @@ class EntrerPass(Contexte):
         mail = self.poss.emetteur.adresse_email
         nom = self.poss.emetteur.nom
         ip = self.poss.client.adresse_ip
+        nomMUD = type(self.importeur).anaconf.get_config("globale").nom
+        admin = type(self.importeur).anaconf.get_config("email").adminMail
+        objet = obj_alerte.format(nom=nom, MUD=nomMUD, X=X)
+        messageAdmin = msg_alerte_user.format(nom=nom, MUD=nomMUD, X=X, ip=ip, \
+                                              oubli=oubli)
+        messageUser = msg_alerte_admin.format(nom=nom, MUD=nomMUD, X=X, ip=ip)
         
-        #TODO
-        objet = obj_alerte.format(nom = nom, MUD = "TODO", X = X)
-        #TODO
-        messageAdmin = msg_alerte_user.format(nom = nom, MUD = "TODO", X = X, \
-                                              ip = ip, oubli = oubli)
-        #TODO
-        messageUser = msg_alerte_admin.format(nom = nom, MUD = "TODO", X = X, \
-                                              ip = self.poss.client.adresse_ip)
-        
+        self.logger.warning("Mot de passe erroné pour {nom}, {X} essaie " \
+            "depuis la dernière connexion réussi, ip : {ip}.".format(nom=nom, \
+            X=X,ip=ip))
         type(self).importeur.email.envoyer(destinateur, mail, objet, \
                                            messageAdmin)
-        type(self).importeur.email.envoyer(destinateur, admin_mail, objet, \
+        type(self).importeur.email.envoyer(destinateur, admin, objet, \
                                            messageUser)
     
     def action(self):
@@ -150,49 +138,62 @@ class EntrerPass(Contexte):
         Elle envoie un message à l'admin et envoie un nouveau mot de
         passe à l'utilisateur."""
         nom = self.poss.emetteur.nom
+        ip=self.poss.client.adresse_ip
+        nomMUD = type(self.importeur).anaconf.get_config("globale").nom
+        admin = type(self.importeur).anaconf.get_config("email").adminMail
         X = type(self.importeur).anaconf.get_config("connex").nbr_avant_nouveau
-        #TODO
-        objet = obj_alerte.format(nom = nom, MUD = "TODO", X = X)
-        #TODO
-        message = msg_alerte_admin.format(nom = nom, MUD = "TODO", X = X, \
-                                          ip = self.poss.client.adresse_ip)
+        objet = obj_alerte.format(nom=nom, MUD=nomMUD, X=X)
+        message = msg_alerte_admin.format(nom=nom, MUD=nomMUD, X=X, ip=ip)
         
+        self.logger.warning("Mot de passe erroné pour {nom}, {X} essaie " \
+            "depuis la dernière connexion réussi, ip : {ip}.".format(nom=nom, \
+            X=X,ip=ip))
         self.envoieNouveauMDP()
-        
-        type(self).importeur.email.envoyer(destinateur, admin_mail, objet, \
+        type(self).importeur.email.envoyer(destinateur, admin, objet, \
                                            message)
+    
+    def stopAttendre(self):
+        self.attente = False
+        self.poss.envoyer("Mot de passe incorrect")
     
     def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
-        
-        emt = self.poss.emetteur
-        cnx_cfg = type(self.importeur).anaconf.get_config("connex")
-        mot_de_passe = emt.hash_mot_de_pass(cnx_cfg.clef_salage, \
-                                            cnx_cfg.type_chiffrement, msg)
-        
-        self.poss.nbr_essaie += 1
-        emt.nbr_essaie += 1
-        
-        if msg == cnx_cfg.chaine_oubli:
-            self.envoieNouveauMDP()
-            self.poss.envoyer( \
-                "Un nouveau mot de passe vous a été envoyé par mail")
-        elif emt.mot_de_passe == mot_de_passe:
-            emt.nbr_essaie = 0
-            if emt.valide:
-                self.migrer_contexte("connex:connexion:choix_personnages")
-            else:
-                self.migrer_contexte("connex:creation:validation")
-        else:
-            if emt.nbr_essaie == cnx_cfg.nbr_avant_alerte:
-                self.alerte()
-            elif emt.nbr_essaie == cnx_cfg.nbr_avant_nouveau:
-                self.action()
-            if self.poss.nbr_essaie != 0 and self.poss.nbr_essaie % \
-               cnx_cfg.nbr_avant_logout == 0:
-                self.poss.envoyer("Déconnexion trop d'essaie.")
-                self.poss.deconnecter("Déconnexion trop d'essaie.")
-            else:
-                self.poss.envoyer("Password incorrect.")
-                self.attente = True
+        if not self.attente:
+            emt = self.poss.emetteur
+            cnx_cfg = type(self.importeur).anaconf.get_config("connex")
+            mot_de_passe = emt.hash_mot_de_pass(cnx_cfg.clef_salage, \
+                                                cnx_cfg.type_chiffrement, msg)
             
+            self.poss.nbr_essaie += 1
+            emt.nbr_essaie += 1
+            
+            if msg == cnx_cfg.chaine_oubli:
+                self.envoieNouveauMDP()
+                self.poss.envoyer( \
+                    "Un nouveau mot de passe vous a été envoyé par mail")
+            elif emt.mot_de_passe == mot_de_passe:
+                emt.nbr_essaie = 0
+                if emt.valide:
+                    self.migrer_contexte("connex:connexion:choix_personnages")
+                else:
+                    self.migrer_contexte("connex:creation:validation")
+            else:
+                self.logger.debug("Mot de passe erroné pour {nom}, {X} " \
+                    "essaie depuis la dernière connexion réussi. Et {Y} " \
+                    "depuis la connexion de {ip}.".format(nom=emt.nom, \
+                    X=emt.nbr_essaie, Y=self.poss.nbr_essaie, \
+                    ip=self.poss.client.adresse_ip))
+                if emt.nbr_essaie == cnx_cfg.nbr_avant_alerte:
+                    self.alerte()
+                elif emt.nbr_essaie == cnx_cfg.nbr_avant_nouveau:
+                    self.action()
+                if self.poss.nbr_essaie != 0 and self.poss.nbr_essaie % \
+                   cnx_cfg.nbr_avant_logout == 0:
+                    self.poss.envoyer("Mot de passe incorrect")
+                    self.poss.envoyer("Déconnexion trop d'essaie.")
+                    self.poss.deconnecter("Déconnexion trop d'essaie.")
+                else:
+                    self.attente = True
+                    type(self).importeur.diffact.ajouter_action( \
+                        "mot de passe erroné", cnx_cfg.seconde_to_wait, \
+                        self.stopAttendre)

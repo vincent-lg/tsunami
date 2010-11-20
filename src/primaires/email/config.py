@@ -52,4 +52,7 @@ serveur_mail = True
 # et que le nom d'hôte est une chaîne vide, une erreur sera loggée.
 nom_hote = ""
 
+# Adresse mail de l'administrateur
+adminMail = "admin@kassie.fr"
+
 """
