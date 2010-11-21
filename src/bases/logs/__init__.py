@@ -109,7 +109,7 @@ class ManLogs:
         
         # Si le chemin est précisé en argument de la ligne de commande
         if "chemin-logs" in parser_cmd.keys():
-            REP_LOGS = self.parser_cmd["chemin-logs"]
+            REP_LOGS = parser_cmd["chemin-logs"]
         
         # On construit le répertoire si il n'existe pas
         if not os.path.exists(REP_LOGS):
