@@ -63,6 +63,9 @@ class ClientConnecte:
 
         # Notre socket connecté
         self.socket = socket_connecte
+        # Configuration du socket
+        # On traite les messages MSG_OOB comme des messages standards
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_OOBINLINE, True)
 
         # Informations de connexion
         self.adresse_ip = infos[0]

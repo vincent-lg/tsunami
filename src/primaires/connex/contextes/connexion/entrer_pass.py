@@ -63,7 +63,7 @@ destinateur = "info"
 class EntrerPass(Contexte):
     """Contexte demandant au client son mot de passe.
     On peut aboutir à la validation du compte si elle n'est pas fait
-    ou alors au choix du personage si tous se passe bien.
+    ou alors au choix du personage si tout se passe bien.
     Le nombre de tentative de connexion est limité : un message d'alerte sera
     envoyé après un certain nombre d'essaie et un nouveau mot de passe sera
     envoyé après un autre nombre d'essaie. De plus l'utilisateur se fait
@@ -71,8 +71,8 @@ class EntrerPass(Contexte):
     dans le fichier de configuration de connex.
     On peut aussi se faire envoyer un nouveau mot de passe si on a oublié le
     sien.
-    """
     
+    """
     nom = "connex:connexion:entrer_pass"
     
     def __init__(self, poss):
