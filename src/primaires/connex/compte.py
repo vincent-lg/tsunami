@@ -44,7 +44,7 @@ dic_attributs = {
     "code_validation":"",
     "msg_validation":False, # à True si le message de validation a été envoyé
     "tentatives_validation":0, # tentatives de validation
-    "nbr_essaie":0, # tentatives d'intrusion (mot de passe erroné)
+    "nb_essais":0, # tentatives d'intrusion (mot de passe erroné)
     "joueurs":{}, # {id_joueur:joueur}
 }
 

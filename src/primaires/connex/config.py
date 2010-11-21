@@ -102,6 +102,6 @@ nbr_avant_nouveau = 20
 # avant d'être déconnecté. Le second paramètre le nombre de seconde à attendre
 # entre deux mots de passes.
 nbr_avant_logout = 3
-seconde_to_wait = 1
+seconde_à_attendre = 1
 
 """
