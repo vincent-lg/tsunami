@@ -79,8 +79,8 @@ class EntrerPass(Contexte):
         """Constructeur du contexte"""
         Contexte.__init__(self, poss)
         self.attente = False
-        self.logger = type(self.importeur).man_logs.creer_logger("entrer_pass", \
-                "entrer_pass", "entrer_pass.log")
+        self.logger = type(self.importeur).man_logs.creer_logger(
+            "entrer_pass", "entrer_pass", "entrer_pass.log")
     
     def get_prompt(self):
         """Message de prompt"""
@@ -121,8 +121,8 @@ class EntrerPass(Contexte):
         nom_MUD = type(self.importeur).anaconf.get_config("globale").nom
         admin = type(self.importeur).anaconf.get_config("email").adminMail
         objet = obj_alerte.format(nom=nom, MUD=nom_MUD, X=X)
-        message_admin = msg_alerte_user.format(nom=nom, MUD=nom_MUD, X=X, ip=ip, \
-                                              oubli=oubli)
+        message_admin = msg_alerte_user.format(nom=nom, MUD=nom_MUD, X=X,
+                                               ip=ip, oubli=oubli)
         message_user = msg_alerte_admin.format(nom=nom, MUD=nom_MUD, X=X, ip=ip)
         
         self.logger.warning("Mot de passe erroné pour {nom}, {X} essaie " \
