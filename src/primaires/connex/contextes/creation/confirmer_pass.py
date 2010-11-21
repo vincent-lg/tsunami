@@ -50,7 +50,7 @@ class ConfirmerPass(Contexte):
         """Message d'accueil"""
         return \
             "\n|tit|----------= Confirmation =----------|ff|\n" \
-            "Entrez une nouvelle fois votre |cmd|mot de passe|ff| pour " \
+            "Entrez une nouvelle fois votre |ent|mot de passe|ff| pour " \
             "le confirmer."
     
     def deconnecter(self):
@@ -59,19 +59,19 @@ class ConfirmerPass(Contexte):
     
     def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
-        config_connex = type(self).importeur.anaconf.get_config("connex")
-        type_chiffrement = config_connex.type_chiffrement
-        clef_salage = config_connex.clef_salage
+        cfg_connex = type(self).importeur.anaconf.get_config("connex")
+        type_chiffrement = cfg_connex.type_chiffrement
+        clef_salage = cfg_connex.clef_salage
         
         if self.poss.emetteur.mot_de_passe == \
             self.poss.emetteur.hash_mot_de_pass(clef_salage, \
                 type_chiffrement, msg):
             self.migrer_contexte("connex:creation:entrer_email")
         else:
-            self.poss.envoyer("|err|Le mot de passe de confirmation " \
-                    "ne correspond pas à celui entré à l'étape\nprécédente.\n" \
-                    "Si cette erreur persiste, vous vous " \
-                    "êtes peut-être trompé en indiquant votre\nmot de " \
-                    "passe la première fois.\n" \
+            self.poss.envoyer("|err|Le mot de passe de confirmation ne" \
+                    "correspond pas à celui entré à l'étape\n" \
+                    "précédente. Si cette erreur persiste, vous vous " \
+                    "êtes peut-être trompé\n" \
+                    "en indiquant votre mot de passe la première fois.\n" \
                     "Dans ce cas, entrez |ff||cmd|/|ff||err| pour " \
                     "retourner à l'étape précédente.|ff|")

@@ -65,9 +65,9 @@ class NouveauNom(Contexte):
         return \
             "\n|tit|------= Création d'un compte =------|ff|\n" \
             "Bienvenue dans notre monde !\n" \
-            "Entrez un |cmd|nom|ff| pour créer un compte, ou |cmd|/|ff| pour " \
+            "Entrez un |ent|nom|ff| pour créer un compte, ou |cmd|/|ff| pour " \
 			"revenir à l'écran précédent.\n" \
-            "Ce |cmd|nom|ff| vous sera demandé à chaque connexion, ne " \
+            "Ce nom vous sera demandé à chaque connexion, ne " \
             "l'oubliez pas !"
     
     def interpreter(self, msg):

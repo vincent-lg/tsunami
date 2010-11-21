@@ -57,10 +57,10 @@ class EntrerEmail(Contexte):
     def accueil(self):
         """Message d'accueil"""
         return \
-            "\n|tit|----------= Adresse de couriel =----------|ff|\n" \
-            "Entrez une |cmd|adresse e-mail|ff| de contact pour votre compte. " \
+            "\n|tit|----------= Adresse mail =----------|ff|\n" \
+            "Entrez une |cmd|adresse mail|ff| de contact pour votre compte. " \
             "Un message sera envoyé\n" \
-            "à |cmd|cette adresse|ff| pour valider ce compte ; elle sera " \
+            "à cette adresse pour valider le compte ; elle sera " \
             "aussi utilisée si\n" \
             "vous perdez votre |cmd|mot de passe|ff|. Veillez donc à ce " \
             "qu'elle soit valide."
@@ -71,18 +71,18 @@ class EntrerEmail(Contexte):
     
     def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
-        config_email = type(self).importeur.anaconf.get_config("email")
+        cfg_email = type(self).importeur.anaconf.get_config("email")
         
         # On passe le message en minuscules
         msg = msg.lower()
         if msg in type(self).importeur.connex.email_comptes:
             self.poss.envoyer("|err|Cette adresse e-mail est déjà utilisée " \
-                    "par un autre compte.|ff|\nChoisissez-en une autre.")
+                    "par un autre compte. Choisissez-en une autre.|ff|")
         elif RE_MAIL_VALIDE.search(msg) is None:
             self.poss.envoyer("|err|L'adresse spécifiée n'est pas valide.|ff|")
         else:
             self.poss.emetteur.adresse_email = msg
-            if config_email.serveur_mail:
+            if cfg_email.serveur_mail:
                 self.migrer_contexte("connex:creation:validation")
             else:
                 self.poss.emetteur.valide = True
