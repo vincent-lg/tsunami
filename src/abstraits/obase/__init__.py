@@ -81,10 +81,11 @@ class BaseObj:
         # On parcourt les descendants éventuels de la classe
         # Ainsi, on ajoute au dictionnaire des attributs les attributs des
         # objets-parents
-        for classe in type(self).__bases:
-            if hasattr(self, "attributs"):
+        for classe in type(self).__bases__:
+            if hasattr(classe, "attributs"):
                 n_attributs = dict(classe.attributs)
-                attributs = n_attributs.update(attributs)
+                n_attributs.update(attributs)
+                attributs = n_attributs
         self.__dict__.update(attributs)
         self.p_id = id(self)
     

@@ -51,7 +51,7 @@ class InstanceConnexion:
         
         [1] Quand on envoie un message grâce à la fonction 'envoyer',
             on ne l'envoie pas directement au client.
-            On stock le message dans la file d'attente. A chaque tour de
+            On stocke le message dans la file d'attente. A chaque tour de
             boucle synchro, ou en cas de déconnexion du client, on lui envoie
             toute la file d'attente d'un coup.
         
@@ -59,8 +59,8 @@ class InstanceConnexion:
         self.client = client
         self.emetteur = None
         self.file_attente = [] # file d'attente des messages à envoyer
-        self.contexte = type(self).importeur.interpreteur.contextes[ \
-                "connex:connexion:afficher_MOTD"](self)
+        self.contexte = type(self).importeur.interpreteur. \
+            contextes["connex:connexion:afficher_MOTD"](self)
         self.contexte.actualiser()
         self.contexte.migrer_contexte("connex:connexion:entrer_nom")
         self.nbr_essaie = 0
@@ -87,9 +87,9 @@ class InstanceConnexion:
             self.client.deconnecter(msg)
             self.client = None
     
-    # Fonctions de préparation avant l'envoie
-    def formatter_message(self, msg):
-        """Retourne le message formatté en fonction des diverses options
+    # Fonctions de préparation avant l'envoi
+    def formater_message(self, msg):
+        """Retourne le message formaté en fonction des diverses options
         du contexte et aussi du type d'entrée.
         msg peut être une chaîne non encodée ('str') ou encodée ('bytes').
         
@@ -102,25 +102,20 @@ class InstanceConnexion:
         # On convertit tout en bytes, c'est plus simple ainsi
         # On doit déduire l'encodage qui sera éventuellement utilisé
         encodage = self.encodage
-        
         msg = get_bytes(msg, encodage)
         
         # Ajout de la couleur
         msg = ajouter_couleurs(msg, cfg_charte)
-        
         # On remplace les caractères spéciaux
         msg = remplacer_sp_cars(msg)
-        
         # Suppression des accents si l'option du contexte est activée
         if self.contexte.opts.sup_accents:
             msg = supprimer_accents(msg)
-        
-        
         # On remplace les sauts de ligne
         msg = convertir_nl(msg)
         
         return msg
-
+    
     def envoyer(self, msg):
         """Envoie au client le message.
         On est capable d'envoyer deux types de message :
@@ -136,33 +131,32 @@ class InstanceConnexion:
         *   à chaque tour de la boucle synchro
         
         """
-        msg = self.formatter_message(msg)
+        msg = self.formater_message(msg)
         self.file_attente.append(msg)
     
     def get_prompt(self):
         """Méthode retournant le prompt déduit du contexte.
-        Le prompt retournée est encodé.
+        Le prompt retourné est encodé.
         
         """
-        prompt = self.formatter_message(self.contexte.get_prompt())
+        prompt = self.formater_message(self.contexte.get_prompt())
         
-        # Préfixes et suffixes du prompt
-        pfx_prompt = self.contexte.opts.prompt_prf
-        sfx_prompt = ""
-        
-        # Prompt coloré
-        if self.contexte.opts.prompt_clr:
-            pfx_prompt += self.contexte.opts.prompt_clr
-            sfx_prompt += "|ff|"
-        
-        pfx_prompt = self.formatter_message(pfx_prompt)
-        sfx_prompt = self.formatter_message(sfx_prompt)
+        # Préfixe et suffixe du prompt
+        if prompt:
+            pfx_prompt = self.contexte.opts.prompt_prf
+            sfx_prompt = ""
+            # Coloration du prompt
+            if self.contexte.opts.prompt_clr:
+                pfx_prompt = self.contexte.opts.prompt_clr + pfx_prompt
+                sfx_prompt += "|ff|"
+            pfx_prompt = self.formater_message(pfx_prompt)
+            sfx_prompt = self.formater_message(sfx_prompt)
         
         # On ajoute les préfixes et suffixes au prompt
         prompt = pfx_prompt + prompt + sfx_prompt
         
         return prompt
-
+    
     def get_file_attente(self):
         """Récupère la file d'attente.
         Retourne les messages sous la forme d'un type bytes (chaîne encodée).
@@ -173,7 +167,7 @@ class InstanceConnexion:
         return msg
     
     def envoyer_file_attente(self, ajt_prompt = True):
-        """On récupère puis envoie la file d'attente des messages à envoyer.
+        """On récupère puis on envoie la file d'attente des messages à envoyer.
         On ajoute le prompt à la fine d'attente si ajt_prompt est à True.
         
         """
@@ -190,10 +184,10 @@ class InstanceConnexion:
     
     def receptionner(self, message):
         """Cette méthode est appelée quand l'instance de connexion
-        réceptionne un message. Deux cas sont psosibles :
+        réceptionne un message. Deux cas sont possibles :
         *   contexte n'est pas None
             Dans ce cas, on demande au contexte de traiter le message.
-            On lui passe en paramètre l'instance (self)
+            On lui passe en paramètre l'instance (self).
         *   contexte est à None
             Dans ce cas, on envoie le message à l'émetteur qui se charge
             de l'interpréter.
@@ -203,7 +197,7 @@ class InstanceConnexion:
         une instance ne seront pas nombreux : ce seront ceux appelés
         à la connexion / création de compte. Tous les autres auront un
         personnage défini.
-             
+        
         """
         if self.contexte: # Le personnage ne semble pas encore connecté
             self.contexte.receptionner(message)
@@ -217,7 +211,7 @@ class InstanceConnexion:
         
         """
         if type(nouveau_contexte) is str:
-            nouveau_contexte = type(self).importeur.interpreteur.contextes[ \
-                    nouveau_contexte]
+            nouveau_contexte = type(self).importeur.interpreteur. \
+                contextes[nouveau_contexte]
             self.envoyer(nouveau_contexte.accueil())
         self.contexte = nouveau_contexte
