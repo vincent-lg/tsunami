@@ -53,6 +53,9 @@ serveur_mail = True
 nom_hote = ""
 
 # Adresse mail de l'administrateur
-adminMail = "admin@kassie.fr"
+# Les e-mails destinés à l'administrateur seront envoyés à cette adresse.
+# Elle n'est pas nécessairement du même nom de domaine que le serveur, elle
+# peut très bien être une adresse hotmail, gmail, yahoo...
+admin_mail = "admin@kassie.fr"
 
 """

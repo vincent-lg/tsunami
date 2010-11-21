@@ -28,12 +28,46 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la configuration par défaut du module 'email'."""
+"""Ce fichier contient la configuration par défaut du module 'connex'."""
 
 cfg_connex = r"""
 # Ce fichier contient la configuration du module primaire connex.
 # Sont paramétrables diverses options liées à la connexion
 # d'un client et la création de compte / personnage.
+
+
+### Connexion
+
+## Inforemation de mot de passe
+
+# Chaîne à entrer si on a oublié son mot de passe
+# Par défaut, c'est simplement 'oubli' mais vous pouvez lui donner un autre
+# nom. Le client devra entrer cette chaîne à la place de son mot de passe,
+# un nouveau mot de passe lui sera envoyé.
+# Evitez de modifier cette chaîne après le premier lancement de votre serveur.
+# Certains comptes pourraient devenir inaccessibles, bien que la probabilité
+# soit faible.
+chaine_oubli = "oubli"
+
+# Paramétrages des avertissements
+# Ces deux nombres configurent respectivement le nombre d'essais autorisés
+# avant d'envoyer un message d'avertissement et de déconnecter le client.
+# Au bout de 3 entrées erronées par défaut, le client est déconnecté et un
+# e-mail automatique est envoyé au détenteur du compte.
+# Au bout de 20 par défaut, le mot de passe est réinitialisé et envoyé par
+# e-mail. Dans les deux cas, l'administrateur est avertir par e-mail.
+# Les décompte sont remis à zéro lors d'une connexion réussi ou lors d'un
+# changement de mot de passe.
+nb_avant_alerte = 3
+nb_avant_nouveau = 20
+
+# Paramétrages des déconnexions et de l'attente
+# Le premier nombre paramètre le nombre de tentatives pour rentrer un mot de
+# passe avant d'être déconnecté. Le second paramètre le nombre de secondes
+# à attendre avant une nouvelle entrée (3 secondes suffisent virtuellement à
+# éviter le brut-forcing d'un compte).
+nb_avant_deconnexion = 3
+secondes_a_attendre = 3
 
 
 ### Création d'un personnage
@@ -74,34 +108,5 @@ clef_salage = "salee_"
 
 # Taille minimum du mot de passe
 pass_min = 6
-
-
-### Connexion
-
-# Chaîne à entrer si on a oublié son mot de passe
-# Par défaut, c'est simplement 'oubli' mais vous pouvez lui donner un autre
-# nom. Le client devra entrer cette chaîne à la place de son mot de passe,
-# un nouveau mot de passe lui sera envoyé.
-# Evitez de modifier cette chaîne après le premier lancement de votre serveur.
-# Certains comptes pourraient devenir inaccessibles, avec un peu de malchance.
-chaine_oubli = "oubli"
-
-# Paramétrages des avertissements
-# Ces deux nombres configurent respectivement le nombre d'essais autorisés
-# avant d'envoyer un message d'avertissement et de déconnecter le client.
-# Au bout de 3 entrées erronées par défaut, le client est déconnecté et un mail
-# automatique est envoyé au possesseur du compte ; au bout de 20 par défaut
-# le mot de passe est réinitialisé et envoyé par mail. Dans les deux cas, un
-# autre mail avertit l'admin principal. Les décompte sont remis à zéro lors
-# d'une connexion réussi ou lors d'un changement de mot de passe.
-nbr_avant_alerte = 3
-nbr_avant_nouveau = 20
-
-# Paramétrages des déconnexion et de l'attente
-# Le premier nombre paramètre le nombre de tentative pour rentrer un mot de passe
-# avant d'être déconnecté. Le second paramètre le nombre de seconde à attendre
-# entre deux mots de passes.
-nbr_avant_logout = 3
-seconde_à_attendre = 1
 
 """

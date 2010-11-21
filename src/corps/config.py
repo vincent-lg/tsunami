@@ -99,7 +99,7 @@ chemin_enregistrement =
 
 ## Configuration des modules
 
-# Cette rubrique permet de spécifier un ordre d'isntanciation,
+# Cette rubrique permet de spécifier un ordre d'instanciation,
 # de configuration, d'initialisation et de destruction des modules.
 # Cette configuration mélange les modules primaires et secondaires sans
 # distinction.
