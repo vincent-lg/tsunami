@@ -158,10 +158,11 @@ def ajouter_couleurs(msg, config):
     """
     # Création du dictionnaire des options
     FORMAT = {
-        b"|cmd|": config.couleur_cmd.encode(),
         b"|tit|": config.couleur_titre.encode(),
+        b"|cmd|": config.couleur_cmd.encode(),
+        b"|ent|": config.couleur_entree.encode(),
         b"|att|": config.couleur_attention.encode(),
-        b"|err|": config.couleur_erreur.encode(),
+        b"|err|": config.couleur_erreur.encode()
     }
     
     # On transforme les raccourcis de mise en forme, puis on colorise en ANSI

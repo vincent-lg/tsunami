@@ -151,9 +151,8 @@ class InstanceConnexion:
                 sfx_prompt += "|ff|"
             pfx_prompt = self.formater_message(pfx_prompt)
             sfx_prompt = self.formater_message(sfx_prompt)
-        
-        # On ajoute les préfixes et suffixes au prompt
-        prompt = pfx_prompt + prompt + sfx_prompt
+            # On ajoute les préfixes et suffixes au prompt
+            prompt = pfx_prompt + prompt + sfx_prompt
         
         return prompt
     

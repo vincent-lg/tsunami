@@ -34,7 +34,7 @@ cfg_charte = r"""
 # Ce fichier contient la configuration du module primaire format.
 # Il paramètre la "charte graphique" du moteur (raccourcis de formatage et
 # quelques options).
-# /!\ Ces valeurs sont nécessaires au bon fonctionnement du moteur !
+# /!\ Ces valeurs sont indispensables au bon fonctionnement du moteur !
 # Les couleurs disponibles :
 #   |nr|  - noir
 #   |rg|  - rouge
@@ -53,15 +53,32 @@ cfg_charte = r"""
 #   |cyb| - cyan clair
 #   |bc|  - blanc
 
-# Couleur des commandes
-# Les commandes dans les messages envoyées au client, seront signalées par la
-# couleur paramétrée ci-dessous, à condition de les entourer des raccourcis
-# |cmd| et |ff|. Par exemple :
-# 'Entrez votre |cmd|mot de passe|ff| pour vous identifier."
-couleur_cmd = "|grf|"
+
+## Raccourcis de formatage
+
+# Ces raccourcis doivent être utilisées tels quels dans un message envoyé au
+# client, suivis de |ff| pour arrêter la coloration. Par exemple :
+# 'Entrez |cmd|/|ff| pour vous identifier.'
 
 # Couleur des titres
+# Couleur utilisée principalement sur les titres des contextes de création.
+# Raccourci correspondant : |tit|
 couleur_titre = "|mr|"
+
+# Couleur des commandes
+# Les commandes à entrer telles quelles, sont signalées au client par la
+# couleur paramétrée ci-dessous.
+# Raccourci correspondant : |cmd|
+couleur_cmd = "|grf|"
+
+# Couleur des entrées
+# Contrairement au raccourci précédent, celui-ci correspond indications de
+# valeurs à entrer par le client. Par exemple :
+# 'Entrez |ent|votre mot de passe|ff| pour vous connecter."
+# Par défaut, la couleur est la même, à vous de la changer si vous souhaitez
+# établir une distinction.
+# Raccourci correspondant : |ent|
+couleur_entree = "|grf|"
 
 # Couleur des messages importants
 # Deux niveaux de messages, les messages de warning et les messages d'erreur.
@@ -72,6 +89,9 @@ couleur_erreur = "|rg|"
 # Si vous voulez ajouter des raccourcis de mise en forme, complétez ce fichier
 # (sans oublier de documenter) et le dico dans primaires.format.fonctions.
 # Ensuite yapuka utiliser vos raccourcis tout neufs dans un quelconque contexte.
+
+
+## Options de mise en forme
 
 # Couleur du prompt
 # Ceci est la couleur du prompt, surtout utilisée lors de l'inscription.
