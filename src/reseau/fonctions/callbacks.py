@@ -36,8 +36,6 @@ Elles prennent toutes le préfixe cb_ (callback)
 
 """
 
-fin_ligne = "\r\n"
-
 def cb_connexion(serveur, importeur, logger, client):
     """Que se passe-t-il quand client se connecte ?"""
     logger.info("Connexion du client {0}".format(client))
@@ -51,9 +49,5 @@ def cb_deconnexion(serveur, importeur, logger, client):
 def cb_reception(serveur, importeur, logger, client):
     """Que se passe-t-il quand client envoie un message au serveur ?"""
     msg = client.get_message_decode()
-    if msg == 'reload_connex':
-        print("Rechargement du module primaire 'connex'")
-        importeur.recharger_module("primaire", "connex")
-    else:
-        instance = importeur.connex[client]
-        instance.receptionner(msg)
+    instance = importeur.connex[client]
+    instance.receptionner(msg)

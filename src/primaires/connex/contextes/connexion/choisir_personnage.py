@@ -28,11 +28,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import re
-import random
-import string
-import hashlib
 
 from primaires.interpreteur.contexte import Contexte
+
+# Constantes
+cmd_creer = "c"
+cmd_supprimer = "s"
+cmd_quitter = "q"
 
 class ChoisirPersonnage(Contexte):
     """Contexte du choix de personnage
@@ -46,9 +48,60 @@ class ChoisirPersonnage(Contexte):
     
     def get_prompt(self):
         """Message de prompt"""
-        return "Choisir personnage : "
+        return "Votre choix : "
     
     def accueil(self):
         """Message d'accueil"""
-        return "\nVous êtes connecté."
+        ret = \
+            "\n|tit|------= Choix du personnage =-----|ff|\n" \
+            "Entrez un des |ent|nombres|ff| ou |ent|lettres|ff| ci-dessous :\n"
+        
+        # On va calculer la marge gauche
+        m_g = 1
+        
+        for i, joueur in enumerate(self.poss.emetteur.joueurs):
+            no = "|cmd" + str(i + 1) + "|ff|"
+            ret += "\n"
+            ret += str(no).rjust(len(no) + m_g)
+            ret += " pour se connecter avec le joueur {0}".format(joueur.nom)
+        
+        if len(self.poss.emetteur.joueurs) > 0:
+            # on saute deux lignes
+            ret += "\n\n"
+        
+        ret += "|cmd|{C}|ff| pour |ent|créer|ff| un nouveau " \
+                "personnage\n".format(C = cmd_creer.upper())
+        if len(self.poss.emetteur.joueurs) > 0:
+            # on propose de supprimer un des joueurs créé
+            ret += "|cmd|{S}|ff| pour |ent|supprimer|ff| un personnage de ce " \
+                    "compte\n".format(S = cmd_supprimer.upper())
+        
+        ret += "|cmd|{Q}|ff| pour |ent|quitter|ff| le jeu".format( \
+                Q = cmd_quitter.upper())
+        return ret
     
+    def interpreter(self, msg):
+        """Méthode d'interprétation"""
+        msg = msg.lower()
+        if msg.isdecimal():
+            # On le convertit
+            choix = int(msg) - 1
+            # On vérifie qu'il est bien dans la liste des comptes
+            if choix < 0 or choix >= len(self.poss.emetteur.joueurs):
+                self.poss.envoyer("|err|Aucun numéro ne correspond à ce " \
+                        "joueur.|ff|")
+            else:
+                # on se connecte sur le joueur
+                pass
+        elif msg == cmd_creer:
+            # on redirige vers la création de compte
+            pass
+        elif msg == cmd_supprimer:
+            # On redirige vers la supperssion de comptes
+            pass
+        elif msg == cmd_quitter:
+            # On déconnecte le joueur
+            self.poss.envoyer("|rg|A bientôt !|ff|")
+            self.poss.deconnecter("Déconnexion demandée par le client")
+        else:
+            self.poss.envoyer("|att|Commande invalide.|ff|")

@@ -28,26 +28,28 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Personnage, détaillée plus bas."""
+"""Fichier contenant la classe Joueur, détaillée plus bas."""
 
 from abstraits.id import ObjetID
+from primaire.personnage.personnage import Personnage
 
 dic_attributs = { # dictionnaire des attributs d'un personnage
-    "nom":"",
+    "instance_connexion": None,
 }
 
-class Personnage(ObjetID):
-    """Classe représentant un personnage.
-    C'est une classe abstraite. Elle doit être héritée pour faire des joueurs
-    et NPCs. Ces autres classes peuvent être également héritées, à leur tour.
-    
-    Note: on précise bel et bien un nom de groupe, mais on ne l'ajoute pas à
-    ObjetID puisqu'il s'agit d'une classe abstraite.
+class Joueur(Personnage):
+    """Classe représentant un joueur, c'es-tà-dire un personnage connecté
+    grâce à un client, à différencier des NPCs qui sont des personnages
+    virtuels, animés par l'univers.
     
     """
-    groupe = "personnages"
-    sous_rep = "personnages"
+    groupe = "joueurs"
+    sous_rep = "joueurs"
     attributs = dic_attributs
     
     def __init__(self):
         ObjetID.__init__(self)
+        print(self.__dict__)
+
+# On ajoute le groupe à ObjetID
+ObjetID.ajouter_groupe(Joueur)

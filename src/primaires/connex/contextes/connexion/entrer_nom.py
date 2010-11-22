@@ -77,7 +77,6 @@ class EntrerNom(Contexte):
         if RE_NOUVEAU.search(msg): # le client demande un nouveau compte
             self.migrer_contexte("connex:creation:entrer_nom")
         elif type(self).importeur.connex.compte_est_cree(msg):
-            print(type(self).importeur.connex.get_compte(msg))
             self.poss.emetteur = type(self).importeur.connex.get_compte(msg)
             self.migrer_contexte("connex:connexion:entrer_pass")
         else:

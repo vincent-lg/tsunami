@@ -28,26 +28,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Personnage, détaillée plus bas."""
+"""Fichier contenant le module primaire joueur."""
 
-from abstraits.id import ObjetID
+from abstraits.module import *
 
-dic_attributs = { # dictionnaire des attributs d'un personnage
-    "nom":"",
-}
-
-class Personnage(ObjetID):
-    """Classe représentant un personnage.
-    C'est une classe abstraite. Elle doit être héritée pour faire des joueurs
-    et NPCs. Ces autres classes peuvent être également héritées, à leur tour.
+class Module(BaseModule):
+    """Classe utilisée pour gérer des joueurs, c'est-à-dire des personnages
+    connecté par client, à distinguer des NPCs.
     
-    Note: on précise bel et bien un nom de groupe, mais on ne l'ajoute pas à
-    ObjetID puisqu'il s'agit d'une classe abstraite.
+    Les mécanismes de jeu propres aux personnages, c'est-à-dire communs aux
+    joueurs et NPCs, ne sont pas défini dans ce module mais dans le module
+    primaire 'perso'.
     
     """
-    groupe = "personnages"
-    sous_rep = "personnages"
-    attributs = dic_attributs
-    
-    def __init__(self):
-        ObjetID.__init__(self)
+    def __init__(self, importeur):
+        """Constructeur du module"""
+        BaseModule.__init__(self, importeur, "joueur", "primaire")

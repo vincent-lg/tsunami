@@ -28,26 +28,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Personnage, détaillée plus bas."""
+"""Package des différents contextes utiles à la création, suppression
+et connexion de joueurs.
 
-from abstraits.id import ObjetID
+"""
 
-dic_attributs = { # dictionnaire des attributs d'un personnage
-    "nom":"",
-}
-
-class Personnage(ObjetID):
-    """Classe représentant un personnage.
-    C'est une classe abstraite. Elle doit être héritée pour faire des joueurs
-    et NPCs. Ces autres classes peuvent être également héritées, à leur tour.
-    
-    Note: on précise bel et bien un nom de groupe, mais on ne l'ajoute pas à
-    ObjetID puisqu'il s'agit d'une classe abstraite.
-    
-    """
-    groupe = "personnages"
-    sous_rep = "personnages"
-    attributs = dic_attributs
-    
-    def __init__(self):
-        ObjetID.__init__(self)
