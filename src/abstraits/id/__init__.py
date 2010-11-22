@@ -205,6 +205,10 @@ class ObjetID(BaseObj):
         if not nom_attr.startswith("_"):
             self.enregistrer()
     
+    def est_initialise(self):
+        """Return True si le statut de l'objet est initialisé"""
+        return self._statut == StatutObjet.INITIALISE
+    
     def enregistrer(self):
         """Enregistre l'objet dans un fichier.
         Le superviseur (attribut de classe _supenr) doit être défini car on

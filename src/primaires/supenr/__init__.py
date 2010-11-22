@@ -168,7 +168,8 @@ class Module(BaseModule):
         
         """
         for objet in self.file_attente:
-            self.enregistrer(objet)
+            if objet.est_initialise():
+                self.enregistrer(objet)
         self.file_attente.clear()
     
     def charger(self, sous_rep, nom_fichier):
