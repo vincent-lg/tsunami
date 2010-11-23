@@ -28,36 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Joueur, détaillée plus bas."""
+"""Fichier contenant le contexte 'personnage:connexion:mode_connecte"""
 
-from abstraits.id import ObjetID
-from primaires.perso.personnage import Personnage
+from primaires.interpreteur.contexte import Contexte
 
-dic_attributs = { # dictionnaire des attributs d'un personnage
-    "compte": None,
-    "instance_connexion": None,
-}
-
-class Joueur(Personnage):
-    """Classe représentant un joueur, c'es-tà-dire un personnage connecté
-    grâce à un client, à différencier des NPCs qui sont des personnages
-    virtuels, animés par l'univers.
+class ModeConnecte(Contexte):
+    """Le contexte de mode connecté.
+    C'est une petite instution à lui tout seul.
+    A partir du moment où un joueur se connecte, il est connecté à ce contexte.
+    Les commandes se trouvent définies dans ce contexte. En revanche, d'autres
+    contextes peuvent venir se greffer par-dessus celui-ci. Mais il reste
+    toujours un contexte présent dans la pile des contextes du joueur dès
+    lors qu'il est connecté.
     
     """
-    groupe = "joueurs"
-    sous_rep = "joueurs"
-    attributs = dic_attributs
+    nom = "personnage:connexion:mode_connecte"
     
-    def __init__(self):
-        ObjetID.__init__(self)
-        print(self.__dict__)
+    def __init__(self, poss):
+        """Constructeur du contexte"""
+        Contexte.__init__(self, poss)
     
-    def _get_encodage(self):
-        """Retourne l'encodage du compte"""
-        return self.compte.encodage
+    def accueil(self):
+        """Message d'accueil du contexte"""
+        return "Vous êtes connecté"""
     
-    encodage = property(_get_encodage)
+    def get_prompt(self):
+        """Méthode du prompt du contexte"""
+        return "[0000000]"
     
-
-# On ajoute le groupe à ObjetID
-ObjetID.ajouter_groupe(Joueur)
+    def interpreter(self, msg):
+        """Méthode d'interprétation"""
+        pass

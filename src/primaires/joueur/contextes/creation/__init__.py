@@ -28,36 +28,4 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Joueur, détaillée plus bas."""
-
-from abstraits.id import ObjetID
-from primaires.perso.personnage import Personnage
-
-dic_attributs = { # dictionnaire des attributs d'un personnage
-    "compte": None,
-    "instance_connexion": None,
-}
-
-class Joueur(Personnage):
-    """Classe représentant un joueur, c'es-tà-dire un personnage connecté
-    grâce à un client, à différencier des NPCs qui sont des personnages
-    virtuels, animés par l'univers.
-    
-    """
-    groupe = "joueurs"
-    sous_rep = "joueurs"
-    attributs = dic_attributs
-    
-    def __init__(self):
-        ObjetID.__init__(self)
-        print(self.__dict__)
-    
-    def _get_encodage(self):
-        """Retourne l'encodage du compte"""
-        return self.compte.encodage
-    
-    encodage = property(_get_encodage)
-    
-
-# On ajoute le groupe à ObjetID
-ObjetID.ajouter_groupe(Joueur)
+"""Package des différents contextes de création de joueur."""

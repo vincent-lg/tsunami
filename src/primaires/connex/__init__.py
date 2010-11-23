@@ -211,6 +211,20 @@ class Module(BaseModule):
     
     nom_comptes = property(_get_nom_comptes)
     
+    def _get_nom_joueurs(self):
+        """Retourne sous la forme d'un tuple la liste des noms de joueurs
+        créés ou en cours de création.
+        
+        """
+        noms = []
+        for compte in self.comptes.values():
+            for joueur in compte.joueurs.values():
+                noms.append(joueur.nom)
+        
+        return tuple(noms)
+    
+    nom_joueurs = property(_get_nom_joueurs)
+
     def compte_est_cree(self, nom_compte):
         """Return True si le compte est créé, False sinon.
         

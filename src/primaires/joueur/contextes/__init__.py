@@ -33,3 +33,9 @@ et connexion de joueurs.
 
 """
 
+from primaires.joueur.contextes.creation.nouveau_nom import NouveauNom
+
+# Liste des contextes
+liste_contextes = [
+    NouveauNom,
+]

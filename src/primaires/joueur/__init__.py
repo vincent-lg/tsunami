@@ -31,6 +31,7 @@
 """Fichier contenant le module primaire joueur."""
 
 from abstraits.module import *
+from primaires.joueur.contextes import liste_contextes
 
 class Module(BaseModule):
     """Classe utilisée pour gérer des joueurs, c'est-à-dire des personnages
@@ -44,3 +45,9 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "joueur", "primaire")
+    
+    def init(self):
+        """Méthode d'initialisation du module"""
+        # On ajoute les contextes chargés dans l'interpréteur
+        for contexte in liste_contextes:
+            self.importeur.interpreteur.contextes[contexte.nom] = contexte

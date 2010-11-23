@@ -59,11 +59,12 @@ class ChoisirPersonnage(Contexte):
         # On va calculer la marge gauche
         m_g = 1
         
-        for i, joueur in enumerate(self.poss.emetteur.joueurs):
-            no = "|cmd" + str(i + 1) + "|ff|"
+        for i, joueur in enumerate(self.poss.emetteur.joueurs.values()):
+            no = "|cmd|" + str(i + 1) + "|ff|"
             ret += "\n"
             ret += str(no).rjust(len(no) + m_g)
-            ret += " pour se connecter avec le joueur {0}".format(joueur.nom)
+            ret += " pour se connecter avec le joueur |ent|{0}|ff|".format( \
+                    joueur.nom)
         
         if len(self.poss.emetteur.joueurs) > 0:
             # on saute deux lignes
@@ -95,9 +96,9 @@ class ChoisirPersonnage(Contexte):
                 pass
         elif msg == cmd_creer:
             # on redirige vers la création de compte
-            pass
+            self.migrer_contexte("personnage:creation:nouveau_nom")
         elif msg == cmd_supprimer:
-            # On redirige vers la supperssion de comptes
+            # On redirige vers la suppression de comptes
             pass
         elif msg == cmd_quitter:
             # On déconnecte le joueur

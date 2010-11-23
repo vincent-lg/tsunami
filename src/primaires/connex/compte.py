@@ -73,5 +73,15 @@ class Compte(ObjetID):
         h.update(mot_de_passe)
         
         return h.digest()
+    
+    def ajouter_joueur(self, joueur):
+        """Ajoute le joueur passé en paramètre à la liste des joueurs"""
+        self.joueurs[joueur.id.id] = joueur
+        self.enregistrer()
+    
+    def supprimer_joueur(self, joueur):
+        """Supprime le joueur passé en paramètre de la liste des joueurs"""
+        del self.joueurs[joueur.id.id]
+        self.enregistrer()
 
 ObjetID.ajouter_groupe(Compte)
