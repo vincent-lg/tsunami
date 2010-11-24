@@ -28,66 +28,75 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import smtp
-import client
 import kassie
+import tests
 
 import os.path
-import shutil
-import time
-import traceback
-import sys
-
-import tests
 
 #TODO Faire des dépendances de test et un tri automatique
 #TODO Mieux gérer l'effacement du dossier kassie
-#TODO Mieux gérer les exceptions dans les tests(affichage et tout)
-#TODO vérifier les conventions de nommage des variables et classes
+#TODO Mettre les logs de côté quand un test échoue
+#TODO Vérifier les conventions de nommage des variables et classes
+#TODO Remplacer le sed dans Kassie par un regex
 
+#Répertoire qui contiendra les logs, la configuration et la sauvegarde
 rep_kassie="./kassie"
 
+#Vérifie que le répertoire n'existe pas pour pas effacer
+#des logs peut être important
 if os.path.exists(rep_kassie):
     print("Effacer " + rep_kassie)
     exit()
 
-serveur = kassie.kassie(rep_kassie)
+#Nombre de caractère pour l'alignement des résultats des tests
+align = 35
+
+#Contient la liste des tests qui seront effectué, groupé par module
+liste_tests = {}
+
+#Création du server Smtp
+sm = smtp.Smtp()
+
+#Création de Kassie et configuration
+serveur = kassie.Kassie(rep_kassie)
+
+#Configuration de Kassie
 serveur.change("email","nom_hote","localhost")
 
-liste_tests = {}
+#Récupère tous les tests
 for testeur in tests.testeurs:
     __import__("tests." + testeur)
     testeur = getattr(tests,testeur)
     liste_tests[testeur] = []
+    #Parcourt les objets de chaque module pour extraire
+    #les classes dérivants de tests.test
     for obj in dir(testeur):
         obj = getattr(testeur,obj)
         if (type(obj)==type) and issubclass(obj, tests.test):
             liste_tests[testeur].append(obj)
 
-align = 50
-
+#Effectue tous les tests
 for testeur in liste_tests.keys():
     print(testeur.nom + " : ")
     echec = 0
     for test in liste_tests[testeur]:
+        #Lance Kassie
         serveur.start()
-        sm = smtp.smtp()
         instance = test(sm)
-        msg = "\t- {0} :".format(instance.nom)
+        msg = "    - {0} :".format(instance.nom)
         msg += " " * (align-len(msg))
         print(msg, end="")
         try:
+            #Lance le test
             instance.test()
             print("\033[32mRéussi\033[0m")
-        except Exception as inst:
+        except tests.EchecTest as detail:
             print("\033[31mEchoué\033[0m")
-            _, _, trace = sys.exc_info()
-            traceback.print_tb(trace)
-            print(inst)
+            print("        \033[34m"+str(detail)+"\033[0m")
             echec += 1
+        #Arrète le serveur
         serveur.stop()
-        sm.close()
     if (echec==0):
         print("\033[32mTous les tests ont été réussis\033[0m")
     else:
         print("\033[31m{0} tests ont échoué\033[0m".format(echec))
-

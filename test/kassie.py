@@ -28,46 +28,58 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import threading
 import time
 import signal
 import shutil
-import sys
-from subprocess import *
 
-cmd_kassie = "python3"
-arg_kassie = ["kassie.py", "-p","14000", "-c","../test/{0}/config", \
-              "-e","../test/{0}/enregistrement", "-l","../test/{0}/log"]
+#Liste permettant le lancement de Kassie avec les bons arguments
+arg_kassie = ["python3","kassie.py", \
+    "-p","14000", \
+    "-c","../test/{0}/config", \
+    "-e","../test/{0}/enregistrement", \
+    "-l","../test/{0}/log"]
 
+#Effectue la correspondance entre l'alias configurations et leur fichier
 correspondance = { \
     "email" : "email/serveur.cfg", \
     "globale" : "kassie.cfg", \
     }
 
 
-class kassie():
+class Kassie():
+    """Classe représentant un serveur Kassie.
+    Elle lance Kassie et permet sa configuration
+    
+    """
     
     def __init__(self,rep_kassie):
+        """Construction des arguments pour la commande
+        et création du dossier de kassie en le lançant"""
+        self.pid = None
         self.rep_kassie = rep_kassie
-        self.arg_kassie = [cmd_kassie]
+        self.arg_kassie = []
         for arg in arg_kassie:
             self.arg_kassie.append(arg.format(rep_kassie))
-        self.pid = None
         self.start()
         time.sleep(0.1)
         self.stop()
     
-    def __deinit__(self):
+    def __del__(self):
+        """Arrète le serveur"""
         self.stop()
     
     def change(self,config,var,val):
+        """Changer une option dans un fichier de configuration"""
+        # Si on a une chaine de chractère on rajoute des "
         if isinstance(val,str):
             val = "\\\"" + val + "\\\""
+        #Effectue un sed pour changer la valeur(pas beau)
         cmd = "sed -i \"s/^{0} *=.*$/{0} = {1}/\" {2}".format(var,val,
             self.rep_kassie + "/config/" + correspondance[config])
         os.system(cmd)
     
     def start(self):
+        """Démarre le serveur"""
         if self.pid == None:
             if os.path.exists(self.rep_kassie + "/enregistrement"):
                 shutil.rmtree(self.rep_kassie+ "/enregistrement")
@@ -84,7 +96,7 @@ class kassie():
                 time.sleep(1)
     
     def stop(self):
+        """Arrète le serveur"""
         if self.pid != None:
             os.kill(self.pid,signal.SIGKILL)
             self.pid = None
-    

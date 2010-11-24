@@ -27,21 +27,43 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from smtpd import *
+import smtpd
 import asyncore
 import email
+import time
 
-class smtp(SMTPServer):
+class Smtp(smtpd.SMTPServer):
+    """Classe représentant un serveur SMTP. C'est un
+    serveur ultra-basique qui se contente de reçevoir
+    les mails et de les mettres dans une listes
     
+    """
+    
+    #Listes des messages reçu
     msgs = []
     
     def __init__(self):
-        SMTPServer.__init__(self,('',25), None)
+        """Lance le serveur"""
+        smtpd.SMTPServer.__init__(self,('',25), None)
+    
+    def __del__(self):
+        """Stop le serveur"""
+        self.close()
     
     def process_message(self, peer, mailfrom, rcpttos, data):
+        """Callback appelé quand un message est reçu"""
         self.msgs.append(data.encode() + \
             email.message_from_string(data).get_payload(decode=True))
     
-    def loop(self):
-        asyncore.loop(timeout=1, count=10)
+    def attendre_message_de(self,timeout,mail):
+        """Attend un message provenant d'un email donné"""
+        self.msgs = []
+        debut = time.clock()
+        while debut + timeout > time.clock():
+            asyncore.loop(timeout=0.5,count=1)
+            while len(self.msgs)>0:
+                message = self.msgs.pop()
+                if message.find(mail.encode()) != -1:
+                    return message
+        return None
 

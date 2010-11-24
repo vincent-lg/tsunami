@@ -31,6 +31,7 @@ import client
 
 import tests
 
+#Nom du test qui sera afficher en console
 nom = "Test des créations de compte et des connexions"
 
 """
@@ -49,8 +50,8 @@ class AfficherMOTD(tests.test):
     nom = "AfficherMOTD"
     
     def test(self):
-        cl = client.client(self.smtp)
-        message = cl.connect()
+        cl = client.Client(self.smtp)
+        message = cl.connecter()
         message.index(b"Bienvenue sur")
 
 
@@ -59,14 +60,14 @@ class EntrerNom(tests.test):
     nom = "EntrerNom"
     
     def test(self):
-        cl = client.client(self.smtp)
-        message = cl.connect()
+        cl = client.Client(self.smtp)
+        message = cl.connecter()
         message.index(b"Votre compte")
         message = cl.envoyer(b"nouveau")
         message.index(b"Creation d'un compte")
         
-        cl = client.client(self.smtp)
-        cl.connect()
+        cl = client.Client(self.smtp)
+        cl.connecter()
         message = cl.envoyer(b"test")
         message.index(b"Ce compte n'existe pas.")
 
@@ -77,12 +78,12 @@ class EntrerPass(tests.test):
     
     def test(self):
         
-        cl = client.client(self.smtp)
-        cl.connect()
+        cl = client.Client(self.smtp)
+        cl.connecter()
         cl.creer_compte("nicolas", "123456", "nicolas@orange.fr")
         
-        cl = client.client(self.smtp)
-        cl.connect()
+        cl = client.Client(self.smtp)
+        cl.connecter()
         message = cl.envoyer(b"nicolas")
         message.index(b"")
 
@@ -93,14 +94,14 @@ class nouveau_nom(tests.test):
     nom_invalide = ["nouveau","Al","Léa"]
     
     def mettre_nom(self,nom):
-        cl = client.client(self.smtp)
-        cl.connect()
+        cl = client.Client(self.smtp)
+        cl.connecter()
         cl.envoyer(b"nouveau")
         return cl.envoyer(nom.encode())
         
     def test(self):
-        cl = client.client(self.smtp)
-        cl.connect()
+        cl = client.Client(self.smtp)
+        cl.connecter()
         message = cl.envoyer(b"nouveau")
         message.index(b"Creation d'un compte")
         
@@ -125,17 +126,17 @@ class nouveau_compte(tests.test):
     nom = "Créer un nouveau compte"
     
     def test(self):
-        cl = client.client(self.smtp)
-        cl.connect()
+        cl = client.Client(self.smtp)
+        cl.connecter()
         return cl.creer_compte("arthur", "123456", "arthur@free.fr")
 
 class connexion(tests.test):
     nom = "Connexion"
     
     def test(self):
-        cl = client.client(self.smtp)
-        cl.connect()
+        cl = client.Client(self.smtp)
+        cl.connecter()
         cl.creer_compte("jean", "azerty", "jean@alice.fr")
-        cl = client.client(self.smtp)
-        cl.connect()
+        cl = client.Client(self.smtp)
+        cl.connecter()
         return cl.connexion("jean", "azerty")

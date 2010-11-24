@@ -28,26 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import socket
-import time
 
+from tests import EchecTest
+
+#Hote sur lequel se trouvé kassie
 HOTE = 'localhost'
+#Port sur lequel écoute kassie
 PORT = 14000
 
-class client():
+class Client():
+    """Classe représentant un client à Kassie.
+    Elle permet de se connecté à kassie mais
+    aussi de faire quelque combinaison de commande
+    souvent utilisé comme celle pour créé un compte
+    ou se connecté
+    
+    """
     
     def __init__(self,smtp):
+        """Construction de la socket"""
         self.smtp = smtp
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.settimeout(0.1)
     
-    def __deinit__(self,sm):
+    def __del__(self):
+        """Destructeur du module"""
         self.socket.close()
     
-    def connect(self):
+    def connecter(self):
+        """Connecter le client"""
         self.socket.connect((HOTE, PORT))
         return self.attendre_reponse()
     
     def attendre_reponse(self):
+        """Récupère ce qui attend sur la socket"""
         donnee = b""
         try:
             while 1:
@@ -57,35 +71,59 @@ class client():
             return donnee
     
     def envoyer(self,message):
+        """Envoie un message"""
         self.socket.send(message + b'\n')
         return self.attendre_reponse()
     
-    def extraire_code(self,message):
+    def extraire_code(self,msg):
+        """Extrait le code de validation d'un email"""
         avant = b"Code de validation : "
         apres = b"Note : si vous avez"
-        return int(message[message.index(avant) + \
-            len(avant):message.index(apres)])
+        return int(msg[(msg.index(avant) + len(avant)):msg.index(apres)])
     
     def creer_compte(self,nom,mdp,mail):
-        self.envoyer(b'nouveau')
-        self.envoyer(nom.encode())
-        self.envoyer(b'1')
-        self.envoyer(mdp.encode())
-        self.envoyer(mdp.encode())
-        self.envoyer(mail.encode())
-        time.sleep(0.3)
-        self.smtp.loop()
-        code=""
-        for message in self.smtp.msgs:
-            if message.find(mail.encode()) != -1:
-                code = self.extraire_code(message)
-                self.smtp.msgs.remove(message)
-        message = self.envoyer(str(code).encode())
-        message.index(b"Choix du personnage")
+        """Creer un compte sur Kassie"""
+        
+        try:
+            self.envoyer(b'nouveau')
+            self.envoyer(nom.encode())
+            self.envoyer(b'1')
+            self.envoyer(mdp.encode())
+            self.envoyer(mdp.encode())
+            self.envoyer(mail.encode())
+        except socket.error as detail:
+            raise EchecTest("Erreur de connexion avec Kassie")
+        
+        try:
+            message = self.smtp.attendre_message_de(1,mail);
+        except socket.error as detail:
+            raise EchecTest("Erreur de connexion avec le smtp")
+            
+        if message == None:
+            raise EchecTest("Mail de validation non reçue")
+        
+        try:
+            code = self.extraire_code(message)
+        except ValueError as detail:
+            raise EchecTest("Code introuvable dans le mail")
+        
+        try:
+            message = self.envoyer(str(code).encode())
+            message.index(b"Choix du personnage")
+        except socket.error as detail:
+            raise EchecTest("Erreur de connexion avec Kassie")
+        except ValueError as detail:
+            raise EchecTest("Réponse attendu de la part de Kassie " \
+                "invalide, compte non crée")
     
     def connexion(self,nom,mdp):
-        self.envoyer(nom.encode())
-        message = self.envoyer(mdp.encode())
-        message.index(b"Choix du personnage")
-    
-    
+        """Se connecter sur Kassie"""
+        try:
+            self.envoyer(nom.encode())
+            message = self.envoyer(mdp.encode())
+            message.index(b"Choix du personnage")
+        except socket.error as detail:
+            raise EchecTest("Erreur de connexion avec Kassie")
+        except ValueError as detail:
+            raise EchecTest("Réponse attendu de la part de Kassie " \
+                    "invalide, connection impossible")

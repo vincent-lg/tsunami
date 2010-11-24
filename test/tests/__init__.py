@@ -27,13 +27,37 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+#Liste des modules contenant des test
 testeurs = ["connex"]
 
+class EchecTest(Exception):
+    """Classe qui gère les exceptions
+    levé quand un test échoue
+    
+    """
+    
+    def __init__(self, value):
+        self.value = value
+    
+    def __str__(self):
+        return repr(self.value)
+
+
 class test:
+    """Classe représentant un test, contient
+    des fonctions de base, elle sert surtout
+    via la dérivation à savoir si une classe
+    est un test
+    
+    """
+    
+    #Nom du test qui sera affiché dans la console
     nom = "Test abstrait"
     
     def __init__(self,smtp):
+        """Retient le smtp"""
         self.smtp = smtp
     
     def test(self):
+        """Effectue le test, pour échoué il faut lever une exception"""
         pass
