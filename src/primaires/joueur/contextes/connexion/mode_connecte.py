@@ -28,37 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire format."""
+"""Fichier contenant le contexte 'personnage:connexion:mode_connecte"""
 
-from abstraits.module import *
-from primaires.format.message import Message
-from primaires.format.config import cfg_charte
+from primaires.interpreteur.contexte import Contexte
 
-class Module(BaseModule):
-    """Cette classe décrit le module primaire Format, chargé du formatage,
-    notamment des messages à envoyer aux clients.
+class ModeConnecte(Contexte):
+    """Le contexte de mode connecté.
+    C'est une petite instution à lui tout seul.
+    A partir du moment où un joueur se connecte, il est connecté à ce contexte.
+    Les commandes se trouvent définies dans ce contexte. En revanche, d'autres
+    contextes peuvent venir se greffer par-dessus celui-ci. Mais il reste
+    toujours un contexte présent dans la pile des contextes du joueur dès
+    lors qu'il est connecté.
     
     """
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "format", "primaire")
+    nom = "personnage:connexion:mode_connecte"
     
-    def config(self):
-        """Configuration du module.
-        On crée le fichier de configuration afin de l'utiliser plus tard
-        pour la mise en forme.
-        
-        """
-        type(self.importeur).anaconf.get_config("charte_graph", \
-            "format/charte.cfg", "modele charte graphique", cfg_charte)
-        
-        BaseModule.config(self)
+    def __init__(self, poss):
+        """Constructeur du contexte"""
+        Contexte.__init__(self, poss)
     
-    def formater(self, message):
-        """Retourne le message formaté.
-        Voir : primaires.format.message
-        
-        """
-        nv_message = Message(message, \
-                        type(self.importeur).anaconf.get_config("charte_graph"))
-        return nv_message
+    def accueil(self):
+        """Message d'accueil du contexte"""
+        return "Vous êtes connecté"""
+    
+    def get_prompt(self):
+        """Méthode du prompt du contexte"""
+        return "[0000000]"
+    
+    def interpreter(self, msg):
+        """Méthode d'interprétation"""
+        pass

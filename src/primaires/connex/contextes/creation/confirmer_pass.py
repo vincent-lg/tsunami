@@ -1,4 +1,4 @@
-# -*-coding:Utf-8 -*
+﻿# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -27,50 +27,51 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-
 from primaires.interpreteur.contexte import Contexte
 
-import re
-
-## Constantes
-# Regex
-RE_NOUVEAU = re.compile(r"^nouveau$", re.I)
-RE_NOM_VALIDE = re.compile(r"^[A-Za-z0-9]{3,15}$", re.I)
-
-class EntrerNom(Contexte):
-    """Contexte demandant au client d'entrer le nom de son compte.
-    Plusieurs sorties possibles :
-    *   Le client entre une demande de nouveau compte (voir RE_NOUVEAU) :
-        Dans ce cas, on redirige sur le contexte 'creer_compte_nom'
-    *   Le client entre un nom valide (voir RE_NOM_VALIDE) :
-        *   Le nom de compte existe
-            Dans ce cas, on le redirige sur le contexte 'entrer_mdp'
-        *   Le nom de compte n'existe pas
-            On affiche l'erreur correspondante et on boucle
-    *   Le nom de compte est invalide :
-        Dans ce cas, on affiche une erreur correspondante et on boucle
+class ConfirmerPass(Contexte):
+    """Contexte de confirmation de mot de passe.
+    Le client doit entrer une nouvelle fois le mot de passe qu'il a choisi au
+    contexte précédent.
     
     """
-    def __init__(self):
+    nom = "connex:creation:confirmer_pass"
+    
+    def __init__(self, poss):
         """Constructeur du contexte"""
-        Contexte.__init__(self, "entrer_nom")
-        self.opts.emt_ncod = False
+        Contexte.__init__(self, poss)
+        self.opts.rci_ctx_prec = "connex:creation:choisir_pass"
     
-    def get_prompt(self, emt):
+    def get_prompt(self):
         """Message de prompt"""
-        return "Compte: "
+        return "Confirmez le mot de passe : "
     
-    def accueil(self, emt):
+    def accueil(self):
         """Message d'accueil"""
-        return "    Entrez le nom de votre compte\n" \
-                "    ou nouveau pour en créer un nouveau\n" \
-                "    Un seul compte est autorisé par personne."
+        return \
+            "\n|tit|----------= Confirmation =----------|ff|\n" \
+            "Entrez une nouvelle fois votre |ent|mot de passe|ff| pour " \
+            "le confirmer."
     
-    def interpreter(self, emt, msg):
+    def deconnecter(self):
+        """En cas de décnonexion du joueur, on supprime son compte"""
+        type(self).importeur.connex.supprimer_compte(self.poss.emetteur)
+    
+    def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
-        if RE_NOUVEAU.search(msg): # le client demande un nouveau compte
-            self.envoyer(emt, "nouveau joueur")
-        elif RE_NOM_VALIDE.search(msg):
-            self.envoyer(emt, "nom valide")
+        cfg_connex = type(self).importeur.anaconf.get_config("connex")
+        type_chiffrement = cfg_connex.type_chiffrement
+        clef_salage = cfg_connex.clef_salage
+        
+        if self.poss.emetteur.mot_de_passe == \
+            self.poss.emetteur.hash_mot_de_pass(clef_salage, \
+                type_chiffrement, msg):
+            self.migrer_contexte("connex:creation:entrer_email")
         else:
-            self.envoyer(emt, "nom invalide")
+            self.poss.envoyer("|err|Le mot de passe de confirmation ne" \
+                    "correspond pas à celui entré à l'étape\n" \
+                    "précédente. Si cette erreur persiste, vous vous " \
+                    "êtes peut-être trompé\n" \
+                    "en indiquant votre mot de passe la première fois.\n" \
+                    "Dans ce cas, entrez |ff||cmd|/|ff||err| pour " \
+                    "retourner à l'étape précédente.|ff|")

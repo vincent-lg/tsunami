@@ -30,6 +30,8 @@
 
 """Ce fichier définit la classe Compte."""
 
+import hashlib
+
 from abstraits.id import ObjetID
 
 # Attributs d'un compte
@@ -38,6 +40,11 @@ dic_attributs = {
     "mot_de_passe":"",
     "adresse_email":"",
     "encodage":"",
+    "valide":False,
+    "code_validation":"",
+    "msg_validation":False, # à True si le message de validation a été envoyé
+    "tentatives_validation":0, # tentatives de validation
+    "nb_essais":0, # tentatives d'intrusion (mot de passe erroné)
     "joueurs":{}, # {id_joueur:joueur}
 }
 
@@ -59,5 +66,22 @@ class Compte(ObjetID):
         """Constructeur d'un compte."""
         ObjetID.__init__(self)
         self.nom = nom_compte
+    
+    def hash_mot_de_pass(self, clef_salage, type_chiffrement, mot_de_passe):
+        mot_de_passe = str(clef_salage + mot_de_passe).encode()
+        h = hashlib.new(type_chiffrement)
+        h.update(mot_de_passe)
+        
+        return h.digest()
+    
+    def ajouter_joueur(self, joueur):
+        """Ajoute le joueur passé en paramètre à la liste des joueurs"""
+        self.joueurs[joueur.id.id] = joueur
+        self.enregistrer()
+    
+    def supprimer_joueur(self, joueur):
+        """Supprime le joueur passé en paramètre de la liste des joueurs"""
+        del self.joueurs[joueur.id.id]
+        self.enregistrer()
 
 ObjetID.ajouter_groupe(Compte)

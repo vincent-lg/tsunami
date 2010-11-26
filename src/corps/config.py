@@ -51,6 +51,11 @@ pere = r"""
 # l'exécution du projet, pour les prendre en compte il faudra demander au corps
 # de recharger ces informations.
 
+## Configuration générale
+
+# Nom de votre MUD
+nom = "Kassie"
+
 ## Configuration de la connexion
 
 # Numéro de port
@@ -94,7 +99,7 @@ chemin_enregistrement =
 
 ## Configuration des modules
 
-# Cette rubrique permet de spécifier un ordre d'isntanciation,
+# Cette rubrique permet de spécifier un ordre d'instanciation,
 # de configuration, d'initialisation et de destruction des modules.
 # Cette configuration mélange les modules primaires et secondaires sans
 # distinction.

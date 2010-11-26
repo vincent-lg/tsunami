@@ -93,7 +93,6 @@ class Parid:
     
     def __contains__(self, nom_groupe):
         """nom_groupe se trouve ou non dans self.groupes"""
-        print(nom_groupe)
         return nom_groupe in self.groupes
     
     def __getitem__(self, nom_groupe):

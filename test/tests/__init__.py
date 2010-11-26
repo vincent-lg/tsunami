@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010 DAVY Guillaume
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -27,38 +27,37 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+#Liste des modules contenant des test
+testeurs = ["connex"]
 
-"""Fichier contenant le module primaire format."""
-
-from abstraits.module import *
-from primaires.format.message import Message
-from primaires.format.config import cfg_charte
-
-class Module(BaseModule):
-    """Cette classe décrit le module primaire Format, chargé du formatage,
-    notamment des messages à envoyer aux clients.
+class EchecTest(Exception):
+    """Classe qui gère les exceptions
+    levé quand un test échoue
     
     """
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "format", "primaire")
     
-    def config(self):
-        """Configuration du module.
-        On crée le fichier de configuration afin de l'utiliser plus tard
-        pour la mise en forme.
-        
-        """
-        type(self.importeur).anaconf.get_config("charte_graph", \
-            "format/charte.cfg", "modele charte graphique", cfg_charte)
-        
-        BaseModule.config(self)
+    def __init__(self, value):
+        self.value = value
     
-    def formater(self, message):
-        """Retourne le message formaté.
-        Voir : primaires.format.message
-        
-        """
-        nv_message = Message(message, \
-                        type(self.importeur).anaconf.get_config("charte_graph"))
-        return nv_message
+    def __str__(self):
+        return repr(self.value)
+
+
+class test:
+    """Classe représentant un test, contient
+    des fonctions de base, elle sert surtout
+    via la dérivation à savoir si une classe
+    est un test
+    
+    """
+    
+    #Nom du test qui sera affiché dans la console
+    nom = "Test abstrait"
+    
+    def __init__(self,smtp):
+        """Retient le smtp"""
+        self.smtp = smtp
+    
+    def test(self):
+        """Effectue le test, pour échoué il faut lever une exception"""
+        pass

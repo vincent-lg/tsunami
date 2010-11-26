@@ -35,6 +35,7 @@ from primaires.connex.instance_connexion import InstanceConnexion
 from reseau.connexions.client_connecte import ClientConnecte
 from primaires.connex.compte import Compte
 from primaires.connex.contextes import liste_contextes
+from primaires.connex.config import cfg_connex
 
 # Nom du groupe fictif
 NOM_GROUPE = "connexions"
@@ -55,6 +56,17 @@ class Module(BaseModule):
         self.comptes = {}
         self.cpt_logger = type(self.importeur).man_logs.creer_logger( \
                 "connex", "comptes")
+    
+    def config(self):
+        """Configuration du module.
+        On crée le fichier de configuration afin de l'utiliser plus tard
+        dans les contextes.
+        
+        """
+        type(self.importeur).anaconf.get_config("connex", \
+            "connex/connex.cfg", "modele connexion", cfg_connex)
+        
+        BaseModule.config(self)
     
     def init(self):
         """Initialisation du module.
@@ -80,17 +92,31 @@ class Module(BaseModule):
         comptes = self.importeur.supenr.charger_groupe(Compte)
         for compte in comptes:
             self.comptes[compte.id.id] = compte
+            if not compte.valide:
+                self.supprimer_compte(compte)
         
-        self.cpt_logger.info("{0} compte(s) récupéré(s)".format( \
-                len(self.comptes)))
+        # On affiche proprement le nombre de comptes (un peu verbeux mais-)
+        nombre_comptes = len(self.comptes)
+        if nombre_comptes == 0:
+            self.cpt_logger.info("Aucun compte récupéré")
+        elif nombre_comptes == 1:
+            self.cpt_logger.info("1 compte récupéré")
+        else:
+            self.cpt_logger.info("{0} comptes récupérés".format(len(self.comptes)))
         
-        # On instancie les contextes chargés
-        # Leur instanciation a pour effet leur ajout dans les contextes de
-        # l'interpréteur
+        # On ajoute les contextes chargés dans l'interpréteur
         for contexte in liste_contextes:
-            contexte()
+            self.importeur.interpreteur.contextes[contexte.nom] = contexte
         
         BaseModule.init(self)
+    
+    def boucle(self):
+        """A chaque tour de boucle synchro, on envoie la file d'attente des
+        instances de connexion.
+        
+        """
+        for inst in self.instances.values():
+            inst.envoyer_file_attente()
     
     def __getitem__(self, item):
         """Méthode appelée quand on fait connex[item].
@@ -125,23 +151,82 @@ class Module(BaseModule):
         if isinstance(client, ClientConnecte):
             client = client.n_id
         if client not in self.instances:
-            raise KeyError("l'ID {0} ne se trouve pas dans les instances " \
+            raise KeyError("L'ID {0} ne se trouve pas dans les instances " \
                     "connectées".format(repr(client)))
         instance = self.instances[client]
+        if instance.contexte_actuel:
+            instance.contexte_actuel.deconnecter()
+        
         del self.instances[client]
     
     def ajouter_compte(self, nom_compte):
         """Méthode appelée pour ajouter un compte identifié par son nom"""
         nouv_compte = Compte(nom_compte)
-        self.logger.cpt.info("Création du compte {0}: {1}".format( \
-                nom_compte, compte))
-        self.comptes[compte.id.id] = nouv_compte
+        self.cpt_logger.info("Création du compte {0}: {1}".format( \
+                nom_compte, nouv_compte))
+        self.comptes[nouv_compte.id.id] = nouv_compte
+        return nouv_compte
     
     def supprimer_compte(self, compte):
         """Supprime le compte 'compte'"""
         if compte.id.id in self.comptes.keys():
+            self.cpt_logger.info("Suppression du compte {0}: {1}".format( \
+                    compte.nom, compte))
             del self.comptes[compte.id.id]
             compte.detruire()
         else:
-            raise KeyError("le compte {0} n'est pas dans la liste " \
+            raise KeyError("Le compte {0} n'est pas dans la liste " \
                     "des comptes existants".format(compte))
+    
+    def get_compte(self, nom):
+        """Récupère le compte 'compte'"""
+        for compte in self.comptes.values():
+            if compte.nom==nom:
+                return compte
+        return None
+    
+    def _get_email_comptes(self):
+        """Retourne sous la forme d'un tuple la liste des emails de comptes
+        créés ou en cours de création.
+        
+        """
+        emails = []
+        for compte in self.comptes.values():
+            emails.append(compte.adresse_email)
+        
+        return tuple(emails)
+    
+    email_comptes = property(_get_email_comptes)
+    
+    def _get_nom_comptes(self):
+        """Retourne sous la forme d'un tuple la liste des noms de comptes
+        créés ou en cours de création.
+        
+        """
+        noms = []
+        for compte in self.comptes.values():
+            noms.append(compte.nom)
+        
+        return tuple(noms)
+    
+    nom_comptes = property(_get_nom_comptes)
+    
+    def _get_nom_joueurs(self):
+        """Retourne sous la forme d'un tuple la liste des noms de joueurs
+        créés ou en cours de création.
+        
+        """
+        noms = []
+        for compte in self.comptes.values():
+            for joueur in compte.joueurs.values():
+                noms.append(joueur.nom)
+        
+        return tuple(noms)
+    
+    nom_joueurs = property(_get_nom_joueurs)
+
+    def compte_est_cree(self, nom_compte):
+        """Return True si le compte est créé, False sinon.
+        
+        """
+        return nom_compte in self.nom_comptes

@@ -36,6 +36,7 @@ développés dans ce package.
 
 """
 
+from abstraits.obase import BaseObj
 from primaires.format.fonctions import *
 
 class OptionsContexte:
@@ -51,46 +52,45 @@ class OptionsContexte:
         de ligne, couleurs...).
     
     Options d'envoie :
-    *   ncod - encoder les messages à envoyer :
-        Si cette option est à True, on encode le message avant de l'envoyer
-        en fonction de l'encodage précisé (voir l'option emt_ncod)
-        Si cette option est à False, on n'encode rien avant d'envoyer
-        (on part donc du principe qu'on reçoit un type 'bytes')
-    *   emt_ncod - encoder les messages à envoyer grâce à l'encodage de
-        l'émetteur :
-        Pour que cette option soit prise en compte, l'option 'ncod' doit être
-        à True.
-        Si l'option 'emt_ncod' est à True, on encodera les messages à envoyer
-        en fonction de l'encodage précisé danss l'émetteur (attribut
-        'encodage' de l'objet 'emt')
-        Si cette option est à False, on encode grâce à l'encodage par défaut
-        (Utf-8).
     *   sup_accents - on supprime les accents du message avant de l'envoyer
-        Attention : cette option n'est efficace que si 'ncod' est à True.
+    *   prompt_clr - colorisation du prompt :
+        Si un code couleur est précisé dans cette option, on l'applique au
+        prompt pour le faire ressortir sur le texte
+    *   prompt_prf - préfixage du prompt :
+        Contient une chaîne de caractères (str) qui est utilisée en tant que
+        préfixe du prompt, pour le faire ressortir par rapport aux instructions.
+    Ces dernières options dépendent de l'activation ou non de l'option ncod.
     
     Options de navigation :
     *   rci_ctx_prec - raccourci vers le contexte précédent :
         Si un contexte précédent est entré dans cette option, le client pourra
         l'atteindre automatiquement en entrant le raccourci de retour
-        (voir la constante 'RCI_PREC')
+        (voir la constante 'RCI_PREC').
     
-    """
+    """    
     def __init__(self):
         """Constructeur par défaut des options"""
         # Options de réception
         self.echp_sp_cars = True
         
-        # Options d'envoie
+        # Options d'envoi
         self.emt_ncod = True
         self.sup_accents = False
         self.ncod = True
+        self.prompt_clr = ""
+        self.prompt_prf = ""
         
         # Options de navigation
         self.rci_ctx_prec = ""
 
 RCI_PREC = "/"
 
-class Contexte:
+dic_attributs = { # dictionnaire des attributs de Contexte
+    "opts":None,
+    "poss":None, # possesseur du contexte
+}
+
+class Contexte(BaseObj):
     """Classe abstraite définissant un contexte.
     Si vous voulez utiliser un contexte :
     *   Choisissez-le dans les classes-filles de Contexte
@@ -125,83 +125,147 @@ class Contexte:
 
     """
     importeur = None
+    attributs = dic_attributs
+    nom = None
     
-    def __init__(self, nom):
+    def __init__(self, poss):
         """Constructeur d'un contexte."""
-        self.nom = nom
-        type(self).importeur.interpreteur.ajouter_contexte(self)
+        BaseObj.__init__(self)
+        self.poss = poss
         self.opts = OptionsContexte()
+        # Récupération du fichier de configuration de la charte graphique
+        cfg_charte = type(self.importeur).anaconf.get_config("charte_graph")
+        self.opts.prompt_clr = cfg_charte.couleur_prompt
+        self.opts.prompt_prf = cfg_charte.prefixe_prompt
     
-    def get_prompt(self, emt):
+    def entrer(self):
+        """Méthode appelée quand le possesseur entre dans le contexte"""
+        pass
+    
+    def sortir(self):
+        """Méthode appelée quand le possesseur sort du contexte"""
+        pass
+    
+    def get_prompt(self):
         """Retourne le prompt qui sera affiché à chaque message envoyé"""
         return ""
     
-    def accueil(self, emt):
-        """Retourne un message d'accueil à l'émetteur.
-        Ce message est envoyé à chaque fois que le joueur arrive dans ce
-        contexte.
+    def accueil(self):
+        """Retourne un message d'accueil au possesseur.
+        Ce message est envoyé à chaque fois que le client reçoit un message et
+        qu'il est dans ce contexte.
         
         """
         return ""
     
-    def deconnecter(self, emt):
-        """Méthode appelée quand l'émetteur se déconnecte du contexte
+    def deconnecter(self):
+        """Méthode appelée quand le possesseur se déconnecte du contexte
         (déconnexion non demandée, on ne sort pas du contexte naturellement)
         
         """
         pass
     
-    def get_contexte(self, nom_contexte):
+    def _get_contexte(self, nom_contexte):
         """Récupère depuis l'interpréteur l'instance du contexte
         dont le nom est fourni.
         
         """
         return type(self).importeur.interpreteur.contextes[nom_contexte]
 
-    def migrer_contexte(self, emt, nom_contexte):
-        """Cas de transfert de contexte.
+    def actualiser(self):
+        """Méthode appelée pour boucler sur le contexte courant.
+        Cela veut dire qu'on ne change pas de contexte, on migre vers 'self'.
+        L'émetteur reçoit ainsi le message d'accueil du contexte.
         
         """
-        nouveau_contexte = self.get_contexte(nom_contexte)
-        emt.migrer_contexte(nouveau_contexte)
-        self.envoyer(emt, emt.contexte_actuel.accueil(emt))
+        self.migrer_contexte(type(self).nom)
     
-    def interpreter(self, emt, msg):
+    def migrer_contexte(self, contexte):
+        """Cas de transfert de contexte.
+        Le contexte doit être donné sous la forme d'un nom (type 'str').
+        
+        """
+        nouveau_contexte = self._get_contexte(contexte)(self.poss)
+        
+        self.poss.contexte_actuel.sortir()
+        self.poss.migrer_contexte(nouveau_contexte)
+        self.poss.contexte_actuel.poss = self.poss
+        self.poss.contexte_actuel.entrer()
+        self.poss.envoyer(self.poss.contexte_actuel.accueil())
+    
+    def interpreter(self, msg):
         """Méthode appelée quand le contexte reçoit un message à interpréter.
-            emt - l'émetteur du message
             msg - le message sous la forme d'une chaîne
+        
+        On déduit l'émetteur, c'est le possesseur du contexte (self.poss).
         
         """
         pass
     
-    def receptionner(self, emt, msg):
+    def receptionner(self, msg):
         """Méthode appelée quand le contexte reçoit un message.
         On le redirige vers 'interpreter' après avoir appliqué les options
         de réception.
         
         CETTE METHODE NE DOIT PAS ETRE REDEFINIE.
         
+        On déduit l'émetteur, c'est le possesseur du contexte (self.poss).
+        
         """
+        emt = self.poss
         if self.opts.echp_sp_cars:
             msg = echapper_sp_cars(msg)
         
         # Si un contexte précédent est défini et que le client a entré
         # RCI_PREC, on retourne au contexte précédent
         if self.opts.rci_ctx_prec and msg == RCI_PREC:
-            self.migrer_contexte(emt, self.opts.rci_ctx_prec)
+            self.migrer_contexte(self.opts.rci_ctx_prec)
         else:
-            self.interpreter(emt, msg)
+            self.interpreter(msg)
     
-    def envoyer(self, emt, msg):
+    '''def envoyer(self, emt, msg):
         """Méthode appelée quand on souhaite envoyer un message à
         l'émetteur.
         
         """
-        msg = remplacer_sp_cars(msg)
-        if self.opts.ncod:
+        # Création du dico des raccourcis de mise en forme
+        cfg_charte = type(self.importeur).anaconf.get_config("charte_graph")
+        FORMAT = {
+            "|cmd|": cfg_charte.couleur_cmd,
+            "|tit|": cfg_charte.couleur_titre,
+            "|att|": cfg_charte.couleur_attention,
+            "|err|": cfg_charte.couleur_erreur
+        }
+        # On ajoute le prompt à msg
+        prompt = self.get_prompt(emt)
+        if prompt and self.opts.prompt_prf and self.opts.ncod:
+            prompt = self.opts.prompt_prf + prompt
+        if prompt and self.opts.prompt_clr and self.opts.ncod:
+            prompt = self.opts.prompt_clr + prompt + "|ff|"
+        if prompt:
+            if type(msg) == bytes:
+                sep = b"\n\n"
+                if type(prompt) == str:
+                    prompt = prompt.encode()
+                msg += sep + prompt
+            else:
+                msg += "\n\n" + prompt
+        if type(msg) == str:
+            # Ajout de la couleur
+            msg = ajouter_couleurs(msg, FORMAT)
+            
+            # On échappe les caractères spéciaux
+            msg = remplacer_sp_cars(msg)
+        
+            # Suppression des accents si l'option est activée
+            if self.opts.sup_accents:
+                msg = supprimer_accents(msg)
             if self.opts.emt_ncod:
-                msg = msg.encode(emt.encodage)
+                msg = msg.encode(emt.emetteur.encodage)
             else:
                 msg = msg.encode()
-        emt.envoyer(msg)
-        emt.envoyer(b"\n\n" + self.get_prompt(emt).encode())
+        
+        # On remplace les sauts de ligne
+        msg = convertir_nl(msg)
+        
+        emt.envoyer(msg)'''

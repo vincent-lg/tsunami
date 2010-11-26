@@ -28,37 +28,26 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire format."""
+from primaires.interpreteur.contexte import Contexte
+from primaires.connex.motd import MOTD
 
-from abstraits.module import *
-from primaires.format.message import Message
-from primaires.format.config import cfg_charte
-
-class Module(BaseModule):
-    """Cette classe décrit le module primaire Format, chargé du formatage,
-    notamment des messages à envoyer aux clients.
+class AfficherMOTD(Contexte):
+    """Contexte affichant le MOTD.
+    On est censé être dirigé sur ce contexte à la création de compte et
+    immédiatement redirigé sur 'connex:connexion:entrer_nom'.
     
     """
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "format", "primaire")
+    nom = "connex:connexion:afficher_MOTD"
     
-    def config(self):
-        """Configuration du module.
-        On crée le fichier de configuration afin de l'utiliser plus tard
-        pour la mise en forme.
-        
-        """
-        type(self.importeur).anaconf.get_config("charte_graph", \
-            "format/charte.cfg", "modele charte graphique", cfg_charte)
-        
-        BaseModule.config(self)
+    def __init__(self, poss):
+        """Constructeur du contexte"""
+        Contexte.__init__(self, poss)
+        self.opts.sup_accents = True
     
-    def formater(self, message):
-        """Retourne le message formaté.
-        Voir : primaires.format.message
-        
-        """
-        nv_message = Message(message, \
-                        type(self.importeur).anaconf.get_config("charte_graph"))
-        return nv_message
+    def get_prompt(self):
+        """Message de prompt"""
+        return ""
+    
+    def accueil(self):
+        """Message d'accueil"""
+        return MOTD

@@ -28,37 +28,26 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire format."""
+"""Fichier contenant le module primaire joueur."""
 
 from abstraits.module import *
-from primaires.format.message import Message
-from primaires.format.config import cfg_charte
+from primaires.joueur.contextes import liste_contextes
 
 class Module(BaseModule):
-    """Cette classe décrit le module primaire Format, chargé du formatage,
-    notamment des messages à envoyer aux clients.
+    """Classe utilisée pour gérer des joueurs, c'est-à-dire des personnages
+    connecté par client, à distinguer des NPCs.
+    
+    Les mécanismes de jeu propres aux personnages, c'est-à-dire communs aux
+    joueurs et NPCs, ne sont pas défini dans ce module mais dans le module
+    primaire 'perso'.
     
     """
     def __init__(self, importeur):
         """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "format", "primaire")
+        BaseModule.__init__(self, importeur, "joueur", "primaire")
     
-    def config(self):
-        """Configuration du module.
-        On crée le fichier de configuration afin de l'utiliser plus tard
-        pour la mise en forme.
-        
-        """
-        type(self.importeur).anaconf.get_config("charte_graph", \
-            "format/charte.cfg", "modele charte graphique", cfg_charte)
-        
-        BaseModule.config(self)
-    
-    def formater(self, message):
-        """Retourne le message formaté.
-        Voir : primaires.format.message
-        
-        """
-        nv_message = Message(message, \
-                        type(self.importeur).anaconf.get_config("charte_graph"))
-        return nv_message
+    def init(self):
+        """Méthode d'initialisation du module"""
+        # On ajoute les contextes chargés dans l'interpréteur
+        for contexte in liste_contextes:
+            self.importeur.interpreteur.contextes[contexte.nom] = contexte

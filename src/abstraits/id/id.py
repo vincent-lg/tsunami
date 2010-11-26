@@ -50,3 +50,7 @@ class ID:
     def __repr__(self):
         """On affiche l'ID ainsi : groupe:id"""
         return "{grp}:{id}".format(grp=self.groupe, id=self.id)
+    
+    def __str__(self):
+        """On redirige sur repr"""
+        return repr(self)

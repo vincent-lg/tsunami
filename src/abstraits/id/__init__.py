@@ -174,6 +174,10 @@ class ObjetID(BaseObj):
         self._statut = StatutObjet.INITIALISE
         self.enregistrer()
     
+    def __str__(self):
+        """Affichage ou convertion en chaîne"""
+        return str(self.id)
+    
     def __setstate__(self, dico_attrs):
         """Méthode appelée lors de la désérialisation d'un objet hérité
         d'ObjetID.
@@ -201,6 +205,10 @@ class ObjetID(BaseObj):
         if not nom_attr.startswith("_"):
             self.enregistrer()
     
+    def est_initialise(self):
+        """Return True si le statut de l'objet est initialisé"""
+        return self._statut == StatutObjet.INITIALISE
+    
     def enregistrer(self):
         """Enregistre l'objet dans un fichier.
         Le superviseur (attribut de classe _supenr) doit être défini car on
@@ -211,7 +219,7 @@ class ObjetID(BaseObj):
         """
         if ObjetID._supenr:
             if self._statut == StatutObjet.INITIALISE:
-                ObjetID._supenr.fil_attente.add(self)
+                ObjetID._supenr.file_attente.add(self)
         else:
             raise RuntimeError("impossible d'enregistrer {0} : le " \
                     "superviseur 'supenr' n'a pas été trouvé".format(self))

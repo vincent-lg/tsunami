@@ -28,37 +28,26 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire format."""
+"""Fichier contenant la classe Personnage, détaillée plus bas."""
 
-from abstraits.module import *
-from primaires.format.message import Message
-from primaires.format.config import cfg_charte
+from abstraits.id import ObjetID
 
-class Module(BaseModule):
-    """Cette classe décrit le module primaire Format, chargé du formatage,
-    notamment des messages à envoyer aux clients.
+dic_attributs = { # dictionnaire des attributs d'un personnage
+    "nom":"",
+}
+
+class Personnage(ObjetID):
+    """Classe représentant un personnage.
+    C'est une classe abstraite. Elle doit être héritée pour faire des joueurs
+    et NPCs. Ces autres classes peuvent être également héritées, à leur tour.
+    
+    Note: on précise bel et bien un nom de groupe, mais on ne l'ajoute pas à
+    ObjetID puisqu'il s'agit d'une classe abstraite.
     
     """
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "format", "primaire")
+    groupe = "personnages"
+    sous_rep = "personnages"
+    attributs = dic_attributs
     
-    def config(self):
-        """Configuration du module.
-        On crée le fichier de configuration afin de l'utiliser plus tard
-        pour la mise en forme.
-        
-        """
-        type(self.importeur).anaconf.get_config("charte_graph", \
-            "format/charte.cfg", "modele charte graphique", cfg_charte)
-        
-        BaseModule.config(self)
-    
-    def formater(self, message):
-        """Retourne le message formaté.
-        Voir : primaires.format.message
-        
-        """
-        nv_message = Message(message, \
-                        type(self.importeur).anaconf.get_config("charte_graph"))
-        return nv_message
+    def __init__(self):
+        ObjetID.__init__(self)

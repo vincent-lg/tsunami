@@ -42,15 +42,15 @@ class Message:
     chaîne (on peut utiliser pour ce faire la fonction 'str()').
     
     """
-    def __init__(self, msg_chn):
+    def __init__(self, msg_chn, config):
         """On passe en paramètre du constructeur le message comme une
-        chaîne de caractère.
+        chaîne de caractère, et l'objet de configuration (voir config.py).
         
-        """
+        """        
         # Opérations sur la chaîne
         msg_chn = convertir_nl(msg_chn)
-        msg_chn = ajouter_couleurs(msg_chn)
-        msg_chn = replacer_sp_cars(msg_chn)
+        msg_chn = ajouter_couleurs(msg_chn, config)
+        msg_chn = remplacer_sp_cars(msg_chn)
         
         # On l'enregistre en tant qu'attribut
         self.chaine = msg_chn

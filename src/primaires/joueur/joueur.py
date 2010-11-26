@@ -28,37 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire format."""
+"""Fichier contenant la classe Joueur, détaillée plus bas."""
 
-from abstraits.module import *
-from primaires.format.message import Message
-from primaires.format.config import cfg_charte
+from abstraits.id import ObjetID
+from primaires.perso.personnage import Personnage
 
-class Module(BaseModule):
-    """Cette classe décrit le module primaire Format, chargé du formatage,
-    notamment des messages à envoyer aux clients.
+dic_attributs = { # dictionnaire des attributs d'un personnage
+    "compte": None,
+    "instance_connexion": None,
+}
+
+class Joueur(Personnage):
+    """Classe représentant un joueur, c'es-tà-dire un personnage connecté
+    grâce à un client, à différencier des NPCs qui sont des personnages
+    virtuels, animés par l'univers.
     
     """
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "format", "primaire")
+    groupe = "joueurs"
+    sous_rep = "joueurs"
+    attributs = dic_attributs
     
-    def config(self):
-        """Configuration du module.
-        On crée le fichier de configuration afin de l'utiliser plus tard
-        pour la mise en forme.
-        
-        """
-        type(self.importeur).anaconf.get_config("charte_graph", \
-            "format/charte.cfg", "modele charte graphique", cfg_charte)
-        
-        BaseModule.config(self)
+    def __init__(self):
+        ObjetID.__init__(self)
+        print(self.__dict__)
     
-    def formater(self, message):
-        """Retourne le message formaté.
-        Voir : primaires.format.message
-        
-        """
-        nv_message = Message(message, \
-                        type(self.importeur).anaconf.get_config("charte_graph"))
-        return nv_message
+    def _get_encodage(self):
+        """Retourne l'encodage du compte"""
+        return self.compte.encodage
+    
+    encodage = property(_get_encodage)
+    
+
+# On ajoute le groupe à ObjetID
+ObjetID.ajouter_groupe(Joueur)

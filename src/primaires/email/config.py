@@ -28,37 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire format."""
+"""Ce fichier contient la configuration par défaut du module 'email'."""
 
-from abstraits.module import *
-from primaires.format.message import Message
-from primaires.format.config import cfg_charte
+cfg_email = r"""
+# Ce fichier contient la configuration globale du serveur d'e-mail.
+# C'est ici que vous autorisez le module 'email' à envoyer des mails, que
+# vous précisez le nom d'hôte utilisé pour envoyer les messages
 
-class Module(BaseModule):
-    """Cette classe décrit le module primaire Format, chargé du formatage,
-    notamment des messages à envoyer aux clients.
-    
-    """
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "format", "primaire")
-    
-    def config(self):
-        """Configuration du module.
-        On crée le fichier de configuration afin de l'utiliser plus tard
-        pour la mise en forme.
-        
-        """
-        type(self.importeur).anaconf.get_config("charte_graph", \
-            "format/charte.cfg", "modele charte graphique", cfg_charte)
-        
-        BaseModule.config(self)
-    
-    def formater(self, message):
-        """Retourne le message formaté.
-        Voir : primaires.format.message
-        
-        """
-        nv_message = Message(message, \
-                        type(self.importeur).anaconf.get_config("charte_graph"))
-        return nv_message
+## Autorisation
+# Si vous mettez cette donnée à False, le serveur d'e-mail sera considéré
+# comme inactif. Le module primaire 'email' ne pourra donc pas envoyer
+# d'e-mails.
+# Notez tout de même qu'il est préférable d'avoir un serveur mail configuré
+# sur le serveur hébergeant le projet.
+serveur_mail = True
+
+## Nom d'hôte
+# Modifiez cette donnée pour spécifier le nom d'hôte de votre serveur
+# d'e-mail. Si vous précisez "exemple.com" en nom d'hôte, les messages envoyés
+# depuis l'alias "info" seront envoyés depuis l'adresse "info@exemple.com".
+# Si vous précisez une chaîne vide en nom d'hôte, aucun mail ne pourra être
+# envoyé. Si le serveur d'e-mail est considéré comme actif (voir plus haut)
+# et que le nom d'hôte est une chaîne vide, une erreur sera loggée.
+nom_hote = ""
+
+# Adresse mail de l'administrateur
+# Les e-mails destinés à l'administrateur seront envoyés à cette adresse.
+# Elle n'est pas nécessairement du même nom de domaine que le serveur, elle
+# peut très bien être une adresse hotmail, gmail, yahoo...
+admin_mail = "admin@kassie.fr"
+
+"""

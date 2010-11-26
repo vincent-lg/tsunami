@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010 DAVY Guillaume
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -27,38 +27,43 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import smtpd
+import asyncore
+import email
+import time
 
-"""Fichier contenant le module primaire format."""
-
-from abstraits.module import *
-from primaires.format.message import Message
-from primaires.format.config import cfg_charte
-
-class Module(BaseModule):
-    """Cette classe décrit le module primaire Format, chargé du formatage,
-    notamment des messages à envoyer aux clients.
+class Smtp(smtpd.SMTPServer):
+    """Classe représentant un serveur SMTP. C'est un
+    serveur ultra-basique qui se contente de reçevoir
+    les mails et de les mettres dans une listes
     
     """
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "format", "primaire")
     
-    def config(self):
-        """Configuration du module.
-        On crée le fichier de configuration afin de l'utiliser plus tard
-        pour la mise en forme.
-        
-        """
-        type(self.importeur).anaconf.get_config("charte_graph", \
-            "format/charte.cfg", "modele charte graphique", cfg_charte)
-        
-        BaseModule.config(self)
+    #Listes des messages reçu
+    msgs = []
     
-    def formater(self, message):
-        """Retourne le message formaté.
-        Voir : primaires.format.message
-        
-        """
-        nv_message = Message(message, \
-                        type(self.importeur).anaconf.get_config("charte_graph"))
-        return nv_message
+    def __init__(self):
+        """Lance le serveur"""
+        smtpd.SMTPServer.__init__(self,('',25), None)
+    
+    def __del__(self):
+        """Stop le serveur"""
+        self.close()
+    
+    def process_message(self, peer, mailfrom, rcpttos, data):
+        """Callback appelé quand un message est reçu"""
+        self.msgs.append(data.encode() + \
+            email.message_from_string(data).get_payload(decode=True))
+    
+    def attendre_message_de(self,timeout,mail):
+        """Attend un message provenant d'un email donné"""
+        self.msgs = []
+        debut = time.clock()
+        while debut + timeout > time.clock():
+            asyncore.loop(timeout=0.5,count=1)
+            while len(self.msgs)>0:
+                message = self.msgs.pop()
+                if message.find(mail.encode()) != -1:
+                    return message
+        return None
+

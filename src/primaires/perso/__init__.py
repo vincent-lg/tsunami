@@ -28,37 +28,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire format."""
+"""Fichier contenant le module primaire perso."""
 
 from abstraits.module import *
-from primaires.format.message import Message
-from primaires.format.config import cfg_charte
 
 class Module(BaseModule):
-    """Cette classe décrit le module primaire Format, chargé du formatage,
-    notamment des messages à envoyer aux clients.
+    """Module gérant la classe Personnage qui sera héritée pour construire
+    des joueurs et NPCs. Les mécanismes propres au personnage (c'est-à-dire
+    indépendant de la connexion et liées à l'univers) seront gérées ici.
+    
+    En revanche, les contextes de connexion ou de création d'un personnage
+    ne se trouve pas ici (il s'agit d'informations propres à un joueur, non
+    à un NPC.
     
     """
     def __init__(self, importeur):
         """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "format", "primaire")
-    
-    def config(self):
-        """Configuration du module.
-        On crée le fichier de configuration afin de l'utiliser plus tard
-        pour la mise en forme.
-        
-        """
-        type(self.importeur).anaconf.get_config("charte_graph", \
-            "format/charte.cfg", "modele charte graphique", cfg_charte)
-        
-        BaseModule.config(self)
-    
-    def formater(self, message):
-        """Retourne le message formaté.
-        Voir : primaires.format.message
-        
-        """
-        nv_message = Message(message, \
-                        type(self.importeur).anaconf.get_config("charte_graph"))
-        return nv_message
+        BaseModule.__init__(self, importeur, "perso", "primaire")
