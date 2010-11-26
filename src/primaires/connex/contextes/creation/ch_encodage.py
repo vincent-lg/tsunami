@@ -55,7 +55,7 @@ class ChangerEncodage(Contexte):
     
     def get_prompt(self):
         """Message de prompt"""
-        return b""
+        return b"Entrez le numero correspondant dans la liste ci-dessus :\n"
     
     def accueil(self):
         """Message d'accueil"""
@@ -64,10 +64,8 @@ class ChangerEncodage(Contexte):
             b"permettre une optimisation\n" \
             b"de l'affichage dans votre client, et ainsi un meilleur " \
             b"confort de jeu.\n" \
-            b"Choisissez donc un encodage qui s'affiche correctement a " \
-            b"votre ecran.\n" \
-            b"Pour ce faire, entrez le |ent|numero|ff| correspondant dans la " \
-            b"liste ci-dessous :\n"
+            b"Choisissez donc un |ent|encodage|ff| qui s'affiche " \
+            b"correctement a votre ecran.\n"
         test = "Caractères accentués en "
         for i, encodage in enumerate(ENCODAGES):
             ret += b"\n  " + str(i+1).encode() + b" - " + \
