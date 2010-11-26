@@ -65,7 +65,9 @@ class ChangerEncodage(Contexte):
             b"de l'affichage dans votre client, et ainsi un meilleur " \
             b"confort de jeu.\n" \
             b"Choisissez donc un |ent|encodage|ff| qui s'affiche " \
-            b"correctement a votre ecran.\n"
+            b"correctement a votre ecran.\n" \
+            b"|att|NB : si plusieurs encodages sont disponibles, choisissez " \
+            b"le premier d'entre eux.|ff|\n"
         test = "Caractères accentués en "
         for i, encodage in enumerate(ENCODAGES):
             ret += b"\n  " + str(i+1).encode() + b" - " + \
