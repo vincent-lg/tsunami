@@ -188,7 +188,11 @@ class Contexte(BaseObj):
         self.pere.contexte_actuel.sortir()
         self.pere.migrer_contexte(nouveau_contexte)
         self.pere.contexte_actuel.entrer()
-        self.pere.envoyer(self.pere.contexte_actuel.accueil())
+        if nouveau_contexte is self.pere.contexte_actuel:
+            # Cette condition est là pour éviter qu'en cas de migration de
+            # contexte dans la méthode 'entrer', le message d'accueil ne
+            # s'affiche en double
+            self.pere.envoyer(self.pere.contexte_actuel.accueil())
     
     def interpreter(self, msg):
         """Méthode appelée quand le contexte reçoit un message à interpréter.

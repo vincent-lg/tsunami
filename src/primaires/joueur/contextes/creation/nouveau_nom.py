@@ -54,12 +54,15 @@ class NouveauNom(Contexte):
     def __init__(self, pere):
         """Constructeur du contexte"""
         Contexte.__init__(self, pere)
+        self.opts.rci_ctx_prec = "connex:connexion:choix_personnages"
     
     def accueil(self):
         """Message d'accueil du contexte"""
         return \
             "\n|tit|------= Nom de votre personnage =-----|ff|\n" \
-            "Entrez un |ent|nom pour votre nouveau personnage|ff|."
+            "Entrez un |ent|nom pour votre nouveau personnage|ff|.\n" \
+            "Ce nom peut être identique à votre nom de compte.\n" \
+            "Entrez |cmd|/|ff| pour revenir au choix de personnage."
     
     def get_prompt(self):
         """Message de prompt"""
@@ -69,7 +72,6 @@ class NouveauNom(Contexte):
         """méthode d'interprétation"""
         t_min = 3
         t_max = 15
-        print(msg, RE_NOM_VALIDE.search(msg))
         if len(msg) < t_min or len(msg) > t_max:
             self.pere.envoyer("|err|Le nom de votre joueur doit faire entre " \
                     "{0} et {1} caractères|ff|.".format(t_min, t_max))
@@ -79,9 +81,9 @@ class NouveauNom(Contexte):
         elif RE_NOM_VALIDE.search(supprimer_accents(msg)):
             nouv_joueur = Joueur()
             nouv_joueur.nom = msg
-            print("Création du joueur {0}".format(nouv_joueur.nom))
             self.pere.compte.ajouter_joueur(nouv_joueur)
-            self.pere.envoyer(self.accueil())
+            self.pere.joueur = nouv_joueur
+            self.migrer_contexte("personnage:connexion:mode_connecte")
         else:
             self.pere.envoyer("|err|Ce nom est invalide. Veuillez " \
                     "réessayer|ff|.")

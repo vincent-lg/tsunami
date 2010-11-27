@@ -31,9 +31,11 @@
 """Fichier contenant la classe Personnage, détaillée plus bas."""
 
 from abstraits.id import ObjetID
+from primaires.interpreteur.file import FileContexte
 
 dic_attributs = { # dictionnaire des attributs d'un personnage
-    "nom":"",
+    "nom": "",
+    "contextes": FileContexte(), # file d'attente des contexte
 }
 
 class Personnage(ObjetID):
@@ -50,4 +52,25 @@ class Personnage(ObjetID):
     attributs = dic_attributs
     
     def __init__(self):
+        """Constructeur d'un personnage"""
         ObjetID.__init__(self)
+    
+    def _get_contexte_actuel(self):
+        """Retourne le contexte actuel, c'est-à-dire le premier de la file"""
+        if len(self.contextes) > 0:
+            contexte = self.contextes[0]
+        else:
+            contexte = None
+        
+        return contexte
+    
+    def _set_contexte_actuel(self, nouveau_contexte):
+        """Ajoute le nouveau contexte à la file des contextes.
+        Note : la file peut très bien être manipulée par un contexte qui
+        utilisera dans ce cas les méthodes 'ajouter' et 'retirer' de la file
+        des contextes.
+        
+        """
+        self.contextes.ajouter(nouveau_contexte)
+    
+    contexte_actuel = property(_get_contexte_actuel, _set_contexte_actuel)

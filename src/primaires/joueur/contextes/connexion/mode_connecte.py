@@ -47,6 +47,8 @@ class ModeConnecte(Contexte):
     def __init__(self, pere):
         """Constructeur du contexte"""
         Contexte.__init__(self, pere)
+        self.opts.prompt_clr = ""
+        self.opts.prompt_prf = ""
     
     def accueil(self):
         """Message d'accueil du contexte"""

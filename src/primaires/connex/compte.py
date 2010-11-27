@@ -77,12 +77,12 @@ class Compte(ObjetID):
     
     def ajouter_joueur(self, joueur):
         """Ajoute le joueur passé en paramètre à la liste des joueurs"""
-        self.joueurs[joueur.id.id] = joueur
+        self.joueurs[joueur.id] = joueur
         self.enregistrer()
     
     def supprimer_joueur(self, joueur):
         """Supprime le joueur passé en paramètre de la liste des joueurs"""
-        del self.joueurs[joueur.id.id]
+        del self.joueurs[joueur.id]
         self.enregistrer()
     
     def _get_contexte_actuel(self):

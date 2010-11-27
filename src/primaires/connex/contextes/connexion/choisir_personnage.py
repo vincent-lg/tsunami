@@ -46,6 +46,14 @@ class ChoisirPersonnage(Contexte):
         """Constructeur du contexte"""
         Contexte.__init__(self, pere)
     
+    def entrer(self):
+        """Si aucun personnage n'a été créé, on redirige vers la création d'un
+        premier personnage.
+        
+        """
+        if len(self.pere.compte.joueurs) == 0:
+            self.migrer_contexte("personnage:creation:nouveau_nom")
+    
     def get_prompt(self):
         """Message de prompt"""
         return "Votre choix : "
@@ -93,7 +101,10 @@ class ChoisirPersonnage(Contexte):
                         "joueur.|ff|")
             else:
                 # on se connecte sur le joueur
-                pass
+                IDs_joueurs = list(self.pere.compte.joueurs.keys())
+                joueur = self.pere.compte.joueurs[IDs_joueurs[choix]]
+                self.pere.joueur = joueur
+                self.migrer_contexte("personnage:connexion:mode_connecte")
         elif msg == cmd_creer:
             # on redirige vers la création de compte
             self.migrer_contexte("personnage:creation:nouveau_nom")
