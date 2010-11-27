@@ -25,7 +25,7 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 
 """Fichier contenant le contexte "personnage:creation:nouveau_nom"""
@@ -51,9 +51,9 @@ class NouveauNom(Contexte):
     """
     nom = "personnage:creation:nouveau_nom"
     
-    def __init__(self, poss):
+    def __init__(self, pere):
         """Constructeur du contexte"""
-        Contexte.__init__(self, poss)
+        Contexte.__init__(self, pere)
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -71,17 +71,17 @@ class NouveauNom(Contexte):
         t_max = 15
         print(msg, RE_NOM_VALIDE.search(msg))
         if len(msg) < t_min or len(msg) > t_max:
-            self.poss.envoyer("|err|Le nom de votre joueur doit faire entre " \
+            self.pere.envoyer("|err|Le nom de votre joueur doit faire entre " \
                     "{0} et {1} caractères|ff|.".format(t_min, t_max))
         elif msg in type(self).importeur.connex.nom_joueurs:
-            self.poss.envoyer("|err|Ce nom de joueur est déjà utilisé. " \
+            self.pere.envoyer("|err|Ce nom de joueur est déjà utilisé. " \
                     "Choisissez-en un autre|ff|.")
         elif RE_NOM_VALIDE.search(supprimer_accents(msg)):
             nouv_joueur = Joueur()
             nouv_joueur.nom = msg
             print("Création du joueur {0}".format(nouv_joueur.nom))
-            self.poss.emetteur.ajouter_joueur(nouv_joueur)
-            self.poss.envoyer(self.accueil())
+            self.pere.compte.ajouter_joueur(nouv_joueur)
+            self.pere.envoyer(self.accueil())
         else:
-            self.poss.envoyer("|err|Ce nom est invalide. Veuillez " \
+            self.pere.envoyer("|err|Ce nom est invalide. Veuillez " \
                     "réessayer|ff|.")

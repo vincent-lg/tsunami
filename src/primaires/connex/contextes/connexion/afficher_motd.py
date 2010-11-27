@@ -25,7 +25,7 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 
 from primaires.interpreteur.contexte import Contexte
@@ -39,9 +39,9 @@ class AfficherMOTD(Contexte):
     """
     nom = "connex:connexion:afficher_MOTD"
     
-    def __init__(self, poss):
+    def __init__(self, pere):
         """Constructeur du contexte"""
-        Contexte.__init__(self, poss)
+        Contexte.__init__(self, pere)
         self.opts.sup_accents = True
     
     def get_prompt(self):

@@ -46,6 +46,7 @@ dic_attributs = {
     "tentatives_validation":0, # tentatives de validation
     "nb_essais":0, # tentatives d'intrusion (mot de passe erroné)
     "joueurs":{}, # {id_joueur:joueur}
+    "contexte": None # le contexte du compte
 }
 
 class Compte(ObjetID):
@@ -83,5 +84,15 @@ class Compte(ObjetID):
         """Supprime le joueur passé en paramètre de la liste des joueurs"""
         del self.joueurs[joueur.id.id]
         self.enregistrer()
+    
+    def _get_contexte_actuel(self):
+        """Retourne le contexte du compte"""
+        return self.contexte
+    
+    def _set_contexte_actuel(self, nouveau_contexte):
+        """Modifie le contexte actuel du compte"""
+        self.contexte = nouveau_contexte
+    
+    contexte_actuel = property(_get_contexte_actuel, _set_contexte_actuel)
 
 ObjetID.ajouter_groupe(Compte)

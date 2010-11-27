@@ -25,7 +25,7 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 import re
 
@@ -42,9 +42,9 @@ class ChoisirPersonnage(Contexte):
     """
     nom = "connex:connexion:choix_personnages"
     
-    def __init__(self, poss):
+    def __init__(self, pere):
         """Constructeur du contexte"""
-        Contexte.__init__(self, poss)
+        Contexte.__init__(self, pere)
     
     def get_prompt(self):
         """Message de prompt"""
@@ -59,20 +59,20 @@ class ChoisirPersonnage(Contexte):
         # On va calculer la marge gauche
         m_g = 1
         
-        for i, joueur in enumerate(self.poss.emetteur.joueurs.values()):
+        for i, joueur in enumerate(self.pere.compte.joueurs.values()):
             no = "|cmd|" + str(i + 1) + "|ff|"
             ret += "\n"
             ret += str(no).rjust(len(no) + m_g)
             ret += " pour se connecter avec le joueur |ent|{0}|ff|".format( \
                     joueur.nom)
         
-        if len(self.poss.emetteur.joueurs) > 0:
+        if len(self.pere.compte.joueurs) > 0:
             # on saute deux lignes
             ret += "\n\n"
         
         ret += "|cmd|{C}|ff| pour |ent|créer|ff| un nouveau " \
                 "personnage\n".format(C = cmd_creer.upper())
-        if len(self.poss.emetteur.joueurs) > 0:
+        if len(self.pere.compte.joueurs) > 0:
             # on propose de supprimer un des joueurs créé
             ret += "|cmd|{S}|ff| pour |ent|supprimer|ff| un personnage de ce " \
                     "compte\n".format(S = cmd_supprimer.upper())
@@ -88,8 +88,8 @@ class ChoisirPersonnage(Contexte):
             # On le convertit
             choix = int(msg) - 1
             # On vérifie qu'il est bien dans la liste des comptes
-            if choix < 0 or choix >= len(self.poss.emetteur.joueurs):
-                self.poss.envoyer("|err|Aucun numéro ne correspond à ce " \
+            if choix < 0 or choix >= len(self.pere.compte.joueurs):
+                self.pere.envoyer("|err|Aucun numéro ne correspond à ce " \
                         "joueur.|ff|")
             else:
                 # on se connecte sur le joueur
@@ -102,7 +102,7 @@ class ChoisirPersonnage(Contexte):
             pass
         elif msg == cmd_quitter:
             # On déconnecte le joueur
-            self.poss.envoyer("|rg|A bientôt !|ff|")
-            self.poss.deconnecter("Déconnexion demandée par le client")
+            self.pere.envoyer("|rg|A bientôt !|ff|")
+            self.pere.deconnecter("Déconnexion demandée par le client")
         else:
-            self.poss.envoyer("|att|Commande invalide.|ff|")
+            self.pere.envoyer("|att|Commande invalide.|ff|")

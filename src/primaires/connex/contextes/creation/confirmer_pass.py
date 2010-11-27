@@ -25,7 +25,7 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 from primaires.interpreteur.contexte import Contexte
 
@@ -37,9 +37,9 @@ class ConfirmerPass(Contexte):
     """
     nom = "connex:creation:confirmer_pass"
     
-    def __init__(self, poss):
+    def __init__(self, pere):
         """Constructeur du contexte"""
-        Contexte.__init__(self, poss)
+        Contexte.__init__(self, pere)
         self.opts.rci_ctx_prec = "connex:creation:choisir_pass"
     
     def get_prompt(self):
@@ -55,7 +55,7 @@ class ConfirmerPass(Contexte):
     
     def deconnecter(self):
         """En cas de décnonexion du joueur, on supprime son compte"""
-        type(self).importeur.connex.supprimer_compte(self.poss.emetteur)
+        type(self).importeur.connex.supprimer_compte(self.pere.compte)
     
     def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
@@ -63,12 +63,12 @@ class ConfirmerPass(Contexte):
         type_chiffrement = cfg_connex.type_chiffrement
         clef_salage = cfg_connex.clef_salage
         
-        if self.poss.emetteur.mot_de_passe == \
-            self.poss.emetteur.hash_mot_de_pass(clef_salage, \
+        if self.pere.compte.mot_de_passe == \
+            self.pere.compte.hash_mot_de_pass(clef_salage, \
                 type_chiffrement, msg):
             self.migrer_contexte("connex:creation:entrer_email")
         else:
-            self.poss.envoyer("|err|Le mot de passe de confirmation ne" \
+            self.pere.envoyer("|err|Le mot de passe de confirmation ne" \
                     "correspond pas à celui entré à l'étape\n" \
                     "précédente. Si cette erreur persiste, vous vous " \
                     "êtes peut-être trompé\n" \

@@ -25,7 +25,7 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 import re
 import random
@@ -80,7 +80,7 @@ class EntrerPass(Contexte):
     """
     nom = "connex:connexion:entrer_pass"
     
-    def __init__(self, poss):
+    def __init__(self, pere):
         """Constructeur du contexte.
         L'attribut 'attente' est un booléen à True si le client n'a pas le
         droit d'entrer de mot de passe.
@@ -88,7 +88,7 @@ class EntrerPass(Contexte):
         client se trompe de mot de passe.
         
         """
-        Contexte.__init__(self, poss)
+        Contexte.__init__(self, pere)
         self.attente = False
         self.logger = type(self).importeur.connex.cpt_logger
     
@@ -107,7 +107,7 @@ class EntrerPass(Contexte):
         """Envoie un nouveau mot de passe à l'utilisateur."""
         cnx_cfg = type(self.importeur).anaconf.get_config("connex")
         mdp = "".join(random.sample(char_mdp ,10))
-        emt = self.poss.emetteur
+        emt = self.pere.compte
         mail = emt.adresse_email
         nom_MUD = type(self.importeur).anaconf.get_config("globale").nom
         emt.mot_de_passe = emt.hash_mot_de_pass(
@@ -127,9 +127,9 @@ class EntrerPass(Contexte):
         """
         oubli = type(self.importeur).anaconf.get_config("connex").chaine_oubli
         X = type(self.importeur).anaconf.get_config("connex").nb_avant_alerte
-        mail = self.poss.emetteur.adresse_email
-        nom = self.poss.emetteur.nom
-        ip = self.poss.client.adresse_ip
+        mail = self.pere.compte.adresse_email
+        nom = self.pere.compte.nom
+        ip = self.pere.client.adresse_ip
         nom_MUD = type(self.importeur).anaconf.get_config("globale").nom
         admin = type(self.importeur).anaconf.get_config("email").admin_mail
         objet = obj_alerte.format(nom=nom, MUD=nom_MUD, X=X)
@@ -151,8 +151,8 @@ class EntrerPass(Contexte):
         passe au détenteur du compte.
         
         """
-        nom = self.poss.emetteur.nom
-        ip=self.poss.client.adresse_ip
+        nom = self.pere.compte.nom
+        ip=self.pere.client.adresse_ip
         nom_MUD = type(self.importeur).anaconf.get_config("globale").nom
         admin = type(self.importeur).anaconf.get_config("email").admin_mail
         X = type(self.importeur).anaconf.get_config("connex").nb_avant_nouveau
@@ -173,22 +173,22 @@ class EntrerPass(Contexte):
         
         """
         self.attente = False
-        self.poss.envoyer("Mot de passe incorrect")
+        self.pere.envoyer("Mot de passe incorrect")
     
     def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
         if not self.attente:
-            emt = self.poss.emetteur
+            emt = self.pere.compte
             cnx_cfg = type(self.importeur).anaconf.get_config("connex")
             mot_de_passe = emt.hash_mot_de_pass(cnx_cfg.clef_salage, \
                                                 cnx_cfg.type_chiffrement, msg)
             
-            self.poss.nb_essais += 1
+            self.pere.nb_essais += 1
             emt.nb_essais += 1
             
             if msg == cnx_cfg.chaine_oubli:
                 self.envoie_nouveau_MDP()
-                self.poss.envoyer( \
+                self.pere.envoyer( \
                     "Un nouveau mot de passe vous a été envoyé par mail à " \
                     "l'adresse de votre compte {0}.\n" \
                     "|att|L'ancien mot de passe n'est naturellement plus " \
@@ -204,17 +204,17 @@ class EntrerPass(Contexte):
                 self.logger.debug("Mot de passe erroné pour {nom}, {X} " \
                     "essais depuis la dernière connexion réussie. Et {Y} " \
                     "depuis la connexion de {ip}.".format(nom=emt.nom, \
-                    X=emt.nb_essais, Y=self.poss.nb_essais, \
-                    ip=self.poss.client.adresse_ip))
+                    X=emt.nb_essais, Y=self.pere.nb_essais, \
+                    ip=self.pere.client.adresse_ip))
                 if emt.nb_essais == cnx_cfg.nb_avant_alerte:
                     self.alerte()
                 elif emt.nb_essais == cnx_cfg.nb_avant_nouveau:
                     self.action()
-                if self.poss.nb_essais != 0 and self.poss.nb_essais % \
+                if self.pere.nb_essais != 0 and self.pere.nb_essais % \
                    cnx_cfg.nb_avant_deconnexion == 0:
-                    self.poss.envoyer("|err|Mot de passe incorrect|ff|.")
-                    self.poss.envoyer("|att|Vous allez être déconnecté|ff|.")
-                    self.poss.deconnecter("Déconnexion trop d'essais.")
+                    self.pere.envoyer("|err|Mot de passe incorrect|ff|.")
+                    self.pere.envoyer("|att|Vous allez être déconnecté|ff|.")
+                    self.pere.deconnecter("Déconnexion trop d'essais.")
                 else:
                     self.attente = True
                     type(self).importeur.diffact.ajouter_action( \

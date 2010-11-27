@@ -25,7 +25,7 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 
 import re
@@ -40,7 +40,7 @@ RE_NOUVEAU = None # on ne connaît pas la chaîne
 class EntrerNom(Contexte):
     """Contexte demandant au client d'entrer le nom de son compte.
     Ce contexte est censément le premier appelé à la connexion d'un client.
-    Plusieurs sorties possibles :
+    Plusieurs sorties pereibles :
     *   Le client entre une demande de nouveau compte (voir RE_NOUVEAU) :
         Dans ce cas, on redirige sur le contexte 'connex:creation:entrer_nom'
     *   Le client entre un nom de compte existant (c'est-à-dire
@@ -50,10 +50,10 @@ class EntrerNom(Contexte):
     """
     nom = "connex:connexion:entrer_nom"
     
-    def __init__(self, poss):
+    def __init__(self, pere):
         """Constructeur du contexte"""
         global RE_NOUVEAU
-        Contexte.__init__(self, poss)
+        Contexte.__init__(self, pere)
         self.opts.sup_accents = True
         cfg_connex = type(self).importeur.anaconf.get_config("connex")
         RE_NOUVEAU = re.compile("^{0}$".format(cfg_connex.chaine_nouveau), re.I)
@@ -77,9 +77,9 @@ class EntrerNom(Contexte):
         if RE_NOUVEAU.search(msg): # le client demande un nouveau compte
             self.migrer_contexte("connex:creation:entrer_nom")
         elif type(self).importeur.connex.compte_est_cree(msg):
-            self.poss.emetteur = type(self).importeur.connex.get_compte(msg)
+            self.pere.compte = type(self).importeur.connex.get_compte(msg)
             self.migrer_contexte("connex:connexion:entrer_pass")
         else:
-            self.poss.envoyer("|err|Ce compte n'existe pas.|ff|\n" \
+            self.pere.envoyer("|err|Ce compte n'existe pas.|ff|\n" \
                     "Entrez |grf|{0}|ff| si vous souhaitez le créer.".format( \
                     cfg_connex.chaine_nouveau))
