@@ -25,7 +25,7 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 
 from primaires.interpreteur.contexte import Contexte
@@ -46,9 +46,9 @@ class EntrerEmail(Contexte):
     """
     nom = "connex:creation:entrer_email"
     
-    def __init__(self, poss):
+    def __init__(self, pere):
         """Constructeur du contexte"""
-        Contexte.__init__(self, poss)
+        Contexte.__init__(self, pere)
     
     def get_prompt(self):
         """Message de prompt"""
@@ -67,7 +67,7 @@ class EntrerEmail(Contexte):
     
     def deconnecter(self):
         """En cas de déconexion du joueur, on supprime son compte"""
-        type(self).importeur.connex.supprimer_compte(self.poss.emetteur)
+        type(self).importeur.connex.supprimer_compte(self.pere.compte)
     
     def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
@@ -76,15 +76,15 @@ class EntrerEmail(Contexte):
         # On passe le message en minuscules
         msg = msg.lower()
         if msg in type(self).importeur.connex.email_comptes:
-            self.poss.envoyer("|err|Cette adresse e-mail est déjà utilisée " \
-                    "par un autre compte. Choisissez-en une autre.|ff|")
+            self.pere.envoyer("|err|Cette adresse e-mail est déjà utilisée " \
+                    "par un autre compte.\nChoisissez-en une autre.|ff|")
         elif RE_MAIL_VALIDE.search(msg) is None:
-            self.poss.envoyer("|err|L'adresse spécifiée n'est pas valide.|ff|")
+            self.pere.envoyer("|err|L'adresse spécifiée n'est pas valide.|ff|")
         else:
-            self.poss.emetteur.adresse_email = msg
+            self.pere.compte.adresse_email = msg
             if cfg_email.serveur_mail:
                 self.migrer_contexte("connex:creation:validation")
             else:
-                self.poss.emetteur.valide = True
+                self.pere.compte.valide = True
                 self.migrer_contexte("connex:connexion:choix_personnages")
     

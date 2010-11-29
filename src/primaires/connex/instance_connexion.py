@@ -45,7 +45,8 @@ class InstanceConnexion:
         """Constructeur d'une instance de connexion.
         On peut y trouver trois informations :
         *   le client connecté
-        *   l'emetteur
+        *   le compte émetteur (une fois qu'il est déclaré)
+        *   le personnage connecté (une fois qu'il l'est)
         *   le contexte
         *   la file d'attente des messages à envoyer [1]
         
@@ -57,7 +58,8 @@ class InstanceConnexion:
         
         """
         self.client = client
-        self.emetteur = None
+        self.compte = None
+        self.joueur = None
         self.file_attente = [] # file d'attente des messages à envoyer
         self.contexte = type(self).importeur.interpreteur. \
             contextes["connex:connexion:afficher_MOTD"](self)
@@ -66,15 +68,44 @@ class InstanceConnexion:
         self.nb_essais = 0
     
     def _get_contexte_actuel(self):
-        return self.contexte
+        """Retourne le contexte actuel de l'instance.
+        Si aucun compte n'est défini, le contexte actuel est self.contexte.
+        Si un compte est défini mais qu'aucun joueur n'est défini, c'est le
+        contexte du compte qui est retournée.
+        Sinon, c'est le contexte du joueur qui est retourné.
+        
+        """
+        if self.compte is None or self.compte.contexte_actuel is None:
+            contexte = self.contexte
+        elif self.joueur is None or self.joueur.contexte_actuel is None:
+            contexte = self.compte.contexte_actuel
+        else:
+            contexte = self.joueur.contexte_actuel
+        
+        return contexte
     
-    contexte_actuel = property(_get_contexte_actuel)
+    def _set_contexte_actuel(self, nouveau_contexte):
+        """On change le nouveau contexte. Le contexte peut être de
+        différentes provenances (voir _get_contexte_actuel) et on s'assure
+        que le contexte modifié soit bien celui actuellement appelé (soit
+        celui de l'instance de connexion, soit celui du compte, soit celui du
+        joueur).
+        
+        """
+        if self.compte is None:
+            self.contexte = nouveau_contexte
+        elif self.joueur is None:
+            self.compte.contexte_actuel = nouveau_contexte
+        else:
+            self.joueur.contexte_actuel = nouveau_contexte
+    
+    contexte_actuel = property(_get_contexte_actuel, _set_contexte_actuel)
     
     def _get_encodage(self):
-        """Retourne l'encodage de l'émetteur ou 'Utf-8'."""
+        """Retourne l'encodage du compte ou 'Utf-8'."""
         encodage = "Utf-8"
-        if self.emetteur and self.emetteur.encodage:
-            encodage = self.emetteur.encodage
+        if self.compte and self.compte.encodage:
+            encodage = self.compte.encodage
         
         return encodage
     
@@ -109,7 +140,7 @@ class InstanceConnexion:
         # On remplace les caractères spéciaux
         msg = remplacer_sp_cars(msg)
         # Suppression des accents si l'option du contexte est activée
-        if self.contexte.opts.sup_accents:
+        if self.contexte_actuel.opts.sup_accents:
             msg = supprimer_accents(msg)
         # On remplace les sauts de ligne
         msg = convertir_nl(msg)
@@ -119,9 +150,8 @@ class InstanceConnexion:
     def envoyer(self, msg):
         """Envoie au client le message.
         On est capable d'envoyer deux types de message :
-        *   un type str : dans ce cas, on l'encode et on peut y appliquer
-            pas mal d'options du contexte
-        *   un type bytes : on l'envoie tel quel ou presque
+        *   un type str : dans ce cas, on l'encode
+        *   un type bytes : on n'a pas besoin de l'encoder
         
         Note importante : le message n'est pas envoyé directement au client.
         Il est stocké, sous la forme d'une chaîne bytes, dans la file
@@ -139,15 +169,16 @@ class InstanceConnexion:
         Le prompt retourné est encodé.
         
         """
-        prompt = self.formater_message(self.contexte.get_prompt())
+        prompt = self.formater_message(self.contexte_actuel.get_prompt())
         
         # Préfixe et suffixe du prompt
         if prompt:
-            pfx_prompt = self.contexte.opts.prompt_prf
+            pfx_prompt = self.contexte_actuel.opts.prompt_prf
             sfx_prompt = ""
             # Coloration du prompt
-            if self.contexte.opts.prompt_clr:
-                pfx_prompt = self.contexte.opts.prompt_clr + pfx_prompt
+            if self.contexte_actuel.opts.prompt_clr:
+                pfx_prompt = self.contexte_actuel.opts.prompt_clr + \
+                        pfx_prompt
                 sfx_prompt += "|ff|"
             pfx_prompt = self.formater_message(pfx_prompt)
             sfx_prompt = self.formater_message(sfx_prompt)
@@ -183,25 +214,17 @@ class InstanceConnexion:
     
     def receptionner(self, message):
         """Cette méthode est appelée quand l'instance de connexion
-        réceptionne un message. Deux cas sont possibles :
-        *   contexte n'est pas None
-            Dans ce cas, on demande au contexte de traiter le message.
-            On lui passe en paramètre l'instance (self).
-        *   contexte est à None
-            Dans ce cas, on envoie le message à l'émetteur qui se charge
-            de l'interpréter.
+        réceptionne un message.
+        On déduit le contexte actuel grâce à la propriété 'contexte_actuel'.
         
         Note : cela fait que les contextes peuvent accepter soit une instance
-        de connexion, soit un émetteur. Les contextes à attendre
+        de connexion, soit un joueur. Les contextes à attendre
         une instance ne seront pas nombreux : ce seront ceux appelés
         à la connexion / création de compte. Tous les autres auront un
         personnage défini.
         
         """
-        if self.contexte: # Le personnage ne semble pas encore connecté
-            self.contexte.receptionner(message)
-        else:
-            self.emetteur.receptionner(message)
+        self.contexte_actuel.receptionner(message)
     
     def migrer_contexte(self, nouveau_contexte):
         """Méthode de migration d'un contexte à un autre.
@@ -213,4 +236,4 @@ class InstanceConnexion:
             nouveau_contexte = type(self).importeur.interpreteur. \
                 contextes[nouveau_contexte]
             self.envoyer(nouveau_contexte.accueil())
-        self.contexte = nouveau_contexte
+        self.contexte_actuel = nouveau_contexte

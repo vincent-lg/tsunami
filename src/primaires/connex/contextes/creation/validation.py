@@ -25,7 +25,7 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 from primaires.interpreteur.contexte import Contexte
 
@@ -67,21 +67,21 @@ class Validation(Contexte):
     """
     nom = "connex:creation:validation"
     
-    def __init__(self, poss):
+    def __init__(self, pere):
         """Constructeur du contexte"""
-        Contexte.__init__(self, poss)
+        Contexte.__init__(self, pere)
         self.opts.rci_ctx_prec = "connex:creation:entrer_email"
     
     def entrer(self):
         """Méthode appelée quand emt entre dans le contexte"""
-        if not self.poss.emetteur.code_validation:
+        if not self.pere.compte.code_validation:
             # Le message de validation n'a pas été envoyé
             # Génération du code de validation
             code = generer_code()
-            self.poss.emetteur.code_validation = code
+            self.pere.compte.code_validation = code
             destinateur = "info"
-            destinataire = self.poss.emetteur.adresse_email
-            sujet = "Validation du compte {0}".format(self.poss.emetteur.nom)
+            destinataire = self.pere.compte.adresse_email
+            sujet = "Validation du compte {0}".format(self.pere.compte.nom)
             corps = msg_validation.format(code = code)
             type(self).importeur.email.envoyer(destinateur, destinataire, \
                     sujet, corps)
@@ -97,33 +97,33 @@ class Validation(Contexte):
             "Un message vient de vous être envoyé à votre adresse {0}.\n" \
             "Il contient un code de validation que vous devez recopier ici.\n" \
             "Ce code permet de valider votre compte, il est donc " \
-            "indispensable.".format(self.poss.emetteur.adresse_email)
+            "indispensable.".format(self.pere.compte.adresse_email)
     
     def interpreter(self, msg):
         """Interpréteur du contexte"""
-        if msg == self.poss.emetteur.code_validation:
-            self.poss.emetteur.valide = True
-            self.poss.emetteur.code_validation = ""
-            self.poss.emetteur.tentatives_validation = 0
+        if msg == self.pere.compte.code_validation:
+            self.pere.compte.valide = True
+            self.pere.compte.code_validation = ""
+            self.pere.compte.tentatives_validation = 0
             self.migrer_contexte("connex:connexion:choix_personnages")
         else:
-            self.poss.emetteur.tentatives_validation += 1
-            if self.poss.emetteur.tentatives_validation == 3:
+            self.pere.compte.tentatives_validation += 1
+            if self.pere.compte.tentatives_validation == 3:
                 # Génération d'un nouveau code de validation
                 code = generer_code()
-                self.poss.emetteur.code_validation = code
+                self.pere.compte.code_validation = code
                 destinateur = "info"
-                destinataire = self.poss.emetteur.adresse_email
+                destinataire = self.pere.compte.adresse_email
                 sujet = "Validation du compte {0}".format( \
-                        self.poss.emetteur.nom)
+                        self.pere.compte.nom)
                 corps = msg_validation.format(code = code)
                 type(self).importeur.email.envoyer(destinateur, destinataire, \
                     sujet, corps)
-                self.poss.emetteur.tentatives_validation = 0
-                self.poss.envoyer( \
+                self.pere.compte.tentatives_validation = 0
+                self.pere.envoyer( \
                     "Vous avez entré 3 codes de validation incorrects.\n" \
                     "Un nouveau code de validation vous a été envoyé à " \
-                    "l'adresse {0}.".format(self.poss.emetteur.adresse_email))
+                    "l'adresse {0}.".format(self.pere.compte.adresse_email))
             else:
-                self.poss.envoyer("Ce code de validation est incorrect. " \
+                self.pere.envoyer("Ce code de validation est incorrect. " \
                         "Veuillez l'entrer à nouveau.")

@@ -25,7 +25,7 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 
 """Ce fichier est à la racine du package 'contexte', définissant plusieurs
@@ -74,9 +74,7 @@ class OptionsContexte:
         self.echp_sp_cars = True
         
         # Options d'envoi
-        self.emt_ncod = True
         self.sup_accents = False
-        self.ncod = True
         self.prompt_clr = ""
         self.prompt_prf = ""
         
@@ -86,8 +84,8 @@ class OptionsContexte:
 RCI_PREC = "/"
 
 dic_attributs = { # dictionnaire des attributs de Contexte
-    "opts":None,
-    "poss":None, # possesseur du contexte
+    "opts":None, # options du contexte
+    "pere":None, # père du contexte -- InstanceConnexion
 }
 
 class Contexte(BaseObj):
@@ -106,7 +104,7 @@ class Contexte(BaseObj):
     une mission bien précise. Ces contextes sont souvent chaînés.
     
     Par exemple, le contexte chargé de demander son nom à l'utilisateur
-    va avoir plusieurs sorties possibles :
+    va avoir plusieurs sorties pereibles :
     *   Si le joueur entre un nom valide :
         *   Si le nom existe, on charge le personnage lié à ce nom
             et on redirige le joueur sur le contexte 'entrer le mot de passe'
@@ -128,10 +126,10 @@ class Contexte(BaseObj):
     attributs = dic_attributs
     nom = None
     
-    def __init__(self, poss):
+    def __init__(self, pere):
         """Constructeur d'un contexte."""
         BaseObj.__init__(self)
-        self.poss = poss
+        self.pere = pere
         self.opts = OptionsContexte()
         # Récupération du fichier de configuration de la charte graphique
         cfg_charte = type(self.importeur).anaconf.get_config("charte_graph")
@@ -139,11 +137,11 @@ class Contexte(BaseObj):
         self.opts.prompt_prf = cfg_charte.prefixe_prompt
     
     def entrer(self):
-        """Méthode appelée quand le possesseur entre dans le contexte"""
+        """Méthode appelée quand le pereesseur entre dans le contexte"""
         pass
     
     def sortir(self):
-        """Méthode appelée quand le possesseur sort du contexte"""
+        """Méthode appelée quand le pereesseur sort du contexte"""
         pass
     
     def get_prompt(self):
@@ -151,7 +149,7 @@ class Contexte(BaseObj):
         return ""
     
     def accueil(self):
-        """Retourne un message d'accueil au possesseur.
+        """Retourne un message d'accueil au père du contexte.
         Ce message est envoyé à chaque fois que le client reçoit un message et
         qu'il est dans ce contexte.
         
@@ -159,7 +157,7 @@ class Contexte(BaseObj):
         return ""
     
     def deconnecter(self):
-        """Méthode appelée quand le possesseur se déconnecte du contexte
+        """Méthode appelée quand le père se déconnecte du contexte
         (déconnexion non demandée, on ne sort pas du contexte naturellement)
         
         """
@@ -185,19 +183,22 @@ class Contexte(BaseObj):
         Le contexte doit être donné sous la forme d'un nom (type 'str').
         
         """
-        nouveau_contexte = self._get_contexte(contexte)(self.poss)
+        nouveau_contexte = self._get_contexte(contexte)(self.pere)
         
-        self.poss.contexte_actuel.sortir()
-        self.poss.migrer_contexte(nouveau_contexte)
-        self.poss.contexte_actuel.poss = self.poss
-        self.poss.contexte_actuel.entrer()
-        self.poss.envoyer(self.poss.contexte_actuel.accueil())
+        self.pere.contexte_actuel.sortir()
+        self.pere.migrer_contexte(nouveau_contexte)
+        self.pere.contexte_actuel.entrer()
+        if nouveau_contexte is self.pere.contexte_actuel:
+            # Cette condition est là pour éviter qu'en cas de migration de
+            # contexte dans la méthode 'entrer', le message d'accueil ne
+            # s'affiche en double
+            self.pere.envoyer(self.pere.contexte_actuel.accueil())
     
     def interpreter(self, msg):
         """Méthode appelée quand le contexte reçoit un message à interpréter.
             msg - le message sous la forme d'une chaîne
         
-        On déduit l'émetteur, c'est le possesseur du contexte (self.poss).
+        On déduit l'émetteur, c'est le père du contexte (self.pere).
         
         """
         pass
@@ -209,10 +210,10 @@ class Contexte(BaseObj):
         
         CETTE METHODE NE DOIT PAS ETRE REDEFINIE.
         
-        On déduit l'émetteur, c'est le possesseur du contexte (self.poss).
+        On déduit l'émetteur, c'est le père du contexte (self.pere).
         
         """
-        emt = self.poss
+        emt = self.pere
         if self.opts.echp_sp_cars:
             msg = echapper_sp_cars(msg)
         
@@ -223,49 +224,3 @@ class Contexte(BaseObj):
         else:
             self.interpreter(msg)
     
-    '''def envoyer(self, emt, msg):
-        """Méthode appelée quand on souhaite envoyer un message à
-        l'émetteur.
-        
-        """
-        # Création du dico des raccourcis de mise en forme
-        cfg_charte = type(self.importeur).anaconf.get_config("charte_graph")
-        FORMAT = {
-            "|cmd|": cfg_charte.couleur_cmd,
-            "|tit|": cfg_charte.couleur_titre,
-            "|att|": cfg_charte.couleur_attention,
-            "|err|": cfg_charte.couleur_erreur
-        }
-        # On ajoute le prompt à msg
-        prompt = self.get_prompt(emt)
-        if prompt and self.opts.prompt_prf and self.opts.ncod:
-            prompt = self.opts.prompt_prf + prompt
-        if prompt and self.opts.prompt_clr and self.opts.ncod:
-            prompt = self.opts.prompt_clr + prompt + "|ff|"
-        if prompt:
-            if type(msg) == bytes:
-                sep = b"\n\n"
-                if type(prompt) == str:
-                    prompt = prompt.encode()
-                msg += sep + prompt
-            else:
-                msg += "\n\n" + prompt
-        if type(msg) == str:
-            # Ajout de la couleur
-            msg = ajouter_couleurs(msg, FORMAT)
-            
-            # On échappe les caractères spéciaux
-            msg = remplacer_sp_cars(msg)
-        
-            # Suppression des accents si l'option est activée
-            if self.opts.sup_accents:
-                msg = supprimer_accents(msg)
-            if self.opts.emt_ncod:
-                msg = msg.encode(emt.emetteur.encodage)
-            else:
-                msg = msg.encode()
-        
-        # On remplace les sauts de ligne
-        msg = convertir_nl(msg)
-        
-        emt.envoyer(msg)'''

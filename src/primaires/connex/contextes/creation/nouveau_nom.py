@@ -25,7 +25,7 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 
 from primaires.interpreteur.contexte import Contexte
@@ -39,7 +39,7 @@ RE_NOM_VALIDE = re.compile(r"^[A-Za-z0-9]+$", re.I)
 class NouveauNom(Contexte):
     """Premier contexte appelé à la création d'un compte.
     On demande simplement au client d'entrer un nom de compte valide.
-    Plusieurs sorties possibles :
+    Plusieurs sorties pereibles :
     *   Le client entre un nom de compte existant (les noms de compte
         ne sont pas sensibles à la casse)
     *   Le client entre un nom de compte invalide
@@ -50,9 +50,9 @@ class NouveauNom(Contexte):
     """
     nom = "connex:creation:entrer_nom"
     
-    def __init__(self, poss):
+    def __init__(self, pere):
         """Constructeur du contexte"""
-        Contexte.__init__(self, poss)
+        Contexte.__init__(self, pere)
         self.opts.sup_accents = True
         self.opts.rci_ctx_prec = "connex:connexion:entrer_nom"
     
@@ -81,18 +81,18 @@ class NouveauNom(Contexte):
         # On passe le message en minuscules
         msg = msg.lower()
         if msg in noms_interdits:
-            self.poss.envoyer("|err|Ce nom de compte est interdit. " \
+            self.pere.envoyer("|err|Ce nom de compte est interdit. " \
                     "Choisissez-en un autre.|ff|")
         elif msg in type(self).importeur.connex.nom_comptes:
-            self.poss.envoyer("|err|Ce nom de compte est déjà réservé.|ff|")
+            self.pere.envoyer("|err|Ce nom de compte est déjà réservé.|ff|")
         elif len(msg) < min or len(msg) > max:
-            self.poss.envoyer("|err|Le nom doit faire entre {0} et {1} " \
+            self.pere.envoyer("|err|Le nom doit faire entre {0} et {1} " \
                             "caractères de longueur.|ff|".format(min, max))
         elif RE_NOM_VALIDE.search(msg) is None:
-            self.poss.envoyer("|err|Les caractères spéciaux ne sont pas " \
+            self.pere.envoyer("|err|Les caractères spéciaux ne sont pas " \
                             "autorisés.|ff|")
         else:
             # On crée le compte correspondant
             compte = type(self).importeur.connex.ajouter_compte(msg)
-            self.poss.emetteur = compte
+            self.pere.compte = compte
             self.migrer_contexte("connex:creation:changer_encodage")

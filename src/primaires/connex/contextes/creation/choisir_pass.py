@@ -25,7 +25,7 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 from primaires.interpreteur.contexte import Contexte
 
@@ -45,9 +45,9 @@ class ChoisirPass(Contexte):
     """
     nom = "connex:creation:choisir_pass"
     
-    def __init__(self, poss):
+    def __init__(self, pere):
         """Constructeur du contexte"""
-        Contexte.__init__(self, poss)
+        Contexte.__init__(self, pere)
         self.opts.rci_ctx_prec = "connex:creation:changer_encodage"
     
     def get_prompt(self):
@@ -67,7 +67,7 @@ class ChoisirPass(Contexte):
     
     def deconnecter(self):
         """En cas de décnonexion du joueur, on supprime son compte"""
-        type(self).importeur.connex.supprimer_compte(self.poss.emetteur)
+        type(self).importeur.connex.supprimer_compte(self.pere.compte)
     
     def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
@@ -77,11 +77,11 @@ class ChoisirPass(Contexte):
         min = cfg_connex.pass_min
         
         if len(msg) < min:
-            self.poss.envoyer("|err|Pour des raisons de sécurité, le mot de " \
+            self.pere.envoyer("|err|Pour des raisons de sécurité, le mot de " \
                             "passe doit faire au minimum\n" \
                             "{0} caractères.|ff|".format(min))
         elif RE_PASS_VALIDE.search(msg) is None:
-            self.poss.envoyer("|err|Le mot de passe entré contient des " \
+            self.pere.envoyer("|err|Le mot de passe entré contient des " \
                             "caractères non autorisés ; les caractères\n" \
                             "admis sont les lettres (majuscules et " \
                             "minuscules, sans accents), les\n" \
@@ -89,7 +89,7 @@ class ChoisirPass(Contexte):
                             "|ff||cmd|{}/\[\]()+=$_*@^\"'`£#-|ff||err|.|ff|")
         else:
             # Hash du mot de passe
-            self.poss.emetteur.mot_de_passe = \
-                self.poss.emetteur.hash_mot_de_pass(clef_salage, \
+            self.pere.compte.mot_de_passe = \
+                self.pere.compte.hash_mot_de_pass(clef_salage, \
                 type_chiffrement, msg)
             self.migrer_contexte("connex:creation:confirmer_pass")

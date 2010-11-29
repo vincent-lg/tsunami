@@ -25,7 +25,7 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 
 from primaires.interpreteur.contexte import Contexte
@@ -40,7 +40,7 @@ ENCODAGES = [
 
 class ChangerEncodage(Contexte):
     """Contexte de changement d'encodage.
-    On affiche au client plusieurs possibilités d'encodage.
+    On affiche au client plusieurs pereibilités d'encodage.
     Il est censé afficher celui qu'il voit correctement.
     On part du principe que l'encodage de sortie est le même que l'encodage
     d'entrée. Ainsi, une fois que le client a choisi son encodage, on le
@@ -49,9 +49,9 @@ class ChangerEncodage(Contexte):
     """
     nom = "connex:creation:changer_encodage"
     
-    def __init__(self, poss):
+    def __init__(self, pere):
         """Constructeur du contexte"""
-        Contexte.__init__(self, poss)
+        Contexte.__init__(self, pere)
     
     def get_prompt(self):
         """Message de prompt"""
@@ -76,7 +76,7 @@ class ChangerEncodage(Contexte):
     
     def deconnecter(self):
         """En cas de décnonexion du client, on supprime son compte"""
-        type(self).importeur.connex.supprimer_compte(self.poss.emetteur)
+        type(self).importeur.connex.supprimer_compte(self.pere.compte)
     
     def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
@@ -86,7 +86,7 @@ class ChangerEncodage(Contexte):
             if choix < 1 or choix > len(ENCODAGES):
                 raise ValueError
         except ValueError:
-            self.poss.envoyer(b"Le nombre entre n'est pas valide.")
+            self.pere.envoyer(b"Le nombre entre n'est pas valide.")
         else:
-            self.poss.emetteur.encodage = ENCODAGES[choix - 1]
+            self.pere.compte.encodage = ENCODAGES[choix - 1]
             self.migrer_contexte("connex:creation:choisir_pass")
