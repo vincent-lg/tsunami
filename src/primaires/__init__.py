@@ -34,8 +34,8 @@ Chaque module primaire possède son propre package.
 
 Les modules primaires ayant des relations d'interdépendance entre eux, un
 ordre d'instanciation est défini dans ce fichier. Tout ce qui n'est pas dans
-l'ordre d'instanciation sera instancié par la suite, après les modules défi-
-nis.
+l'ordre d'instanciation sera instancié par la suite, après les modules
+définis.
 
 Règles d'interdépendance :
 - un module primaire peut faire appel aux autres modules primaires
@@ -48,6 +48,23 @@ Pour obtenir une aide sur chaque module primaire, consulter le fichier
 __init__.py du package concerné.
 
 NOTE: les modules primaires et secondaires ne doivent pas porter de noms
-identiques.
+identiques, susceptibles d'entrer en conflit.
+
+Voici un résumé des modules primaires existants :
+-   connex          module proche des clients, chargé des connexions,
+                    créations de compte, interprétation des commandes
+-   diffact         module gérant les actions différées, c'est-à-dire des
+                    fonctions programmées pour s'exécuter après un temps
+                    d'attente défini
+-   email           module gérant l'envoie d'e-mails depuis le projet
+-   format          module gérant le formatage des messages reçus / à envoyer
+-   interpreteur    module chargé tout particulièrement d'interpréter les
+                    commandes envoyés par les clients
+-   joueur          module contenant les informations sur les joueurs
+                    (personnages connectés)
+-   perso           module gérant les personnages, connectés (joueurs) ou non
+                    (NPCs)
+-   supenr          superviseur de l'enregistrement des objets dans des
+                    fichiers sérialisés
 
 """

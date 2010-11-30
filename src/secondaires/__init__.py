@@ -39,11 +39,15 @@ ou même ne pas en charger certains.
 Règles d'interdépendance :
 -  les modules secondaires peuvent appeler des modules primaires
 -  les modules secondaires ne peuvent s'appeler entre eux
+-   le corps ne peut appeler des modules secondaires (sauf par méthodes
+    génériques)
 
 Pour obtenir de l'aide sur un module en particulier, consulter le fichier
 __init__.py du package concerné.
 
 NOTE: les modules primaires et secondaires ne doivent pas porter de noms
 identiques.
+
+Aucun module secondaire n'a été créé à ce jour.
 
 """
