@@ -28,9 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package masque, contenant :
--   la classe masque (classe-mère d'un masque)
--   la classe Arbremasque (une arborescence de masques)
--   la classe parsermasque (un parser des masques)
+"""Fichier contenant la classe ParserMasque détaillée plus bas."""
 
-"""
+from primaires.interpreteur.masque.arbre import ArbreMasque
+
+class ParserMasque:
+    
+    """Parser de masque.
+    Il se charge, grâce à une chaîne de caractère, de construire une
+    arborescence de masques. Cette arborescence pourra être étendue par la
+    suite. Cela permettrait de modifier le comportement d'une commande
+    existante en y ajoutant, par exemple, de nouveaux paramètres.
+    
+    """
+    
+    def __init__(self, schema="", arborescence=Arbremasque):
+        """Constructeur du parser.
+        Il peut prendre en paramètre :
+        schema -- le schéma sous la forme d'une chaîne 'str'
+        arborescence -- l'arborescence, un arbre de masques vide par défaut
+        
+        """
+        self.arborescence = arborescence
+        self.parser(schema)
+    
+    def parser(self, schema):
+        """Parse le schéma passé en paramètre et modifie l'arborescence des
+        masques.
+        
+        """
+pass

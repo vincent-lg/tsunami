@@ -28,9 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package masque, contenant :
--   la classe masque (classe-mère d'un masque)
--   la classe Arbremasque (une arborescence de masques)
--   la classe parsermasque (un parser des masques)
+"""Fichier définissant la classe ArbreMasque, détaillée plus bas."""
 
-"""
+class ArbreMasque:
+    pass
