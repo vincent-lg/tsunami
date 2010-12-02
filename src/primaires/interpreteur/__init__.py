@@ -35,6 +35,7 @@ from primaires.interpreteur.contexte import Contexte
 from primaires.interpreteur.masque.noeuds.fonctions import creer_noeud
 from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
+from primaires.interpreteur.masque.fonctions import *
 
 class Module(BaseModule):
     """Cette classe est la classe gérant tous les interpréteurs.
@@ -60,7 +61,8 @@ class Module(BaseModule):
     
     def ajouter_commande(self, schema):
         """Ajoute une commande à l'embranchement"""
-        creer_noeud(self.commandes, schema)
+        lst_schema = chaine_vers_liste(schema)
+        self.commandes = creer_noeud(lst_schema)
         print(self.commandes)
     
     def ajouter_masque(self, masque):

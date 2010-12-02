@@ -36,14 +36,15 @@ class NoeudOptionnel(BaseNoeud):
     
     """Cette classe contient un noeud optionnel.
     Le noeud masque considéré comme "optionnel" est contenu dans l'attribut
-    'optionnel'.
+    'interne'.
     
     """
     
-    def __init__(self):
+    def __init__(self, interne, suivant):
         """Constructeur du noeud optionnel"""
         BaseNoeud.__init__(self)
-        self.optionnel = None
+        self.interne = interne
+        self.suivant = suivant
     
     def _get_reste(self):
         """Retourne le reste.
@@ -63,8 +64,8 @@ class NoeudOptionnel(BaseNoeud):
     def __str__(self):
         """Méthode d'affichage"""
         msg = "opt("
-        if self.optionnel:
-            msg += str(self.optionnel)
+        if self.interne:
+            msg += str(self.interne)
         
         msg += ")"
         if self.suivant:

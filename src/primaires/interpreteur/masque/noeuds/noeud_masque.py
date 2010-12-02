@@ -31,6 +31,7 @@
 """Fichier définissant la classe NoeudMasque détaillée plus bas;"""
 
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
+from primaires.interpreteur.masque.fonctions import *
 
 class NoeudMasque(BaseNoeud):
     
@@ -43,7 +44,7 @@ class NoeudMasque(BaseNoeud):
     
     """
     
-    def __init__(self, schema):
+    def __init__(self, lst_schema):
         """Constructeur du noeud masque"""
         BaseNoeud.__init__(self)
         self.nom = ""
@@ -51,6 +52,8 @@ class NoeudMasque(BaseNoeud):
         self.defaut = None  # valeur par défaut
         
         ## Phase de construction des masques
+        # Schéma est sous la forme d'une liste de caractères, on la convertit
+        schema = liste_vers_chaine(lst_schema)
         # On cherche le supérieur fermant potentiellement le schéma
         # tout ce qui est au-delà est laissé pour interprétation ultérieure
         # Si il n'y a pas de supérieur, on s'arrête au premier délimiteur
@@ -115,14 +118,16 @@ class NoeudMasque(BaseNoeud):
         
         self.masques = liste_types_masques
         
-        self.reste = schema[pos_fin + 1:]
+        while lst_schema:
+            lst_schema.pop(0)
+        lst_schema += chaine_vers_liste(schema[pos_fin + 1:])
     
     def __str__(self):
         """Méthode d'affichage"""
         msg = "msq "
         msg += self.nom + "["
         msg += ", ".join([str(masque) for masque in self.masques])
-        msg += "])"
+        msg += "]"
         if self.suivant:
             msg += " : " + str(self.suivant)
         

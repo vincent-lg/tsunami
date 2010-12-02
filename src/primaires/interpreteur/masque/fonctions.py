@@ -28,27 +28,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire perso."""
+"""Fichier contenant des fonctions utiles à la manipulation de masques."""
 
-from abstraits.module import *
-from primaires.perso.masques.personne import MasquePersonne
+def chaine_vers_liste(chaine):
+    """Convertit une chaîne en sa liste de caractères"""
+    return list(chaine)
 
-class Module(BaseModule):
-    """Module gérant la classe Personnage qui sera héritée pour construire
-    des joueurs et NPCs. Les mécanismes propres au personnage (c'est-à-dire
-    indépendant de la connexion et liées à l'univers) seront gérées ici.
-    
-    En revanche, les contextes de connexion ou de création d'un personnage
-    ne se trouve pas ici (il s'agit d'informations propres à un joueur, non
-    à un NPC.
-    
-    """
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "perso", "primaire")
-    
-    def init(self):
-        """Initialisation du module"""
-        self.importeur.interpreteur.ajouter_masque(MasquePersonne())
-        schema = "(<personne>) <personne> (<personne> (<personne>))"
-        self.importeur.interpreteur.ajouter_commande(schema)
+def liste_vers_chaine(liste):
+    """Convertit une lsite de caractères en une chaîne"""
+    return "".join(liste)
