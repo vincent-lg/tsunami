@@ -34,33 +34,30 @@ from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
 from primaires.interpreteur.masque.noeuds.noeud_masque import NoeudMasque
 from primaires.interpreteur.masque.noeuds.noeud_optionnel import NoeudOptionnel
 
-def creer_noeud(noeud, schema, fils=True):
+def creer_noeud(schema):
     """Fonction appelée pour créer un noeud.
     Elle prend en paramètre :
-    noeud  -- le noeud racine dans lequel on ajoutera éventuellement un
-              noeud fils
     schema -- le schéma, sous la forme d'une chaîne de caractère, qui va
               nous indiquer quel noeud créer
-    fils   -- flag pour savoir si le noeud créé depuis le schéma est ajouté
-              comme fils du noeud racine
     
     """
     schema = schema.lstrip()
     if not schema:  # schema est vide
-        pass
-    
-    if schema.startswith("("): # un noeud optionnel
-        nv_noeud = NoeudOptionnel()
-        nv_noeud.optionnel = creer_noeud(nv_noeud, schema[1:], False)
+        return None
+    caractere = schema[0]
+    schema = schema[1:]
+    if caractere == '(': # un noeud optionnel
+        noeud_interne = creer_noeud(schema)
+        noeud_suivant = creer_noeud(schema)
+        nv_noeud = NoeudOptionnel(noeud_interne, noeud_suivant)
+    elif caractere == '<':
+        nv_noeud = NoeudMasque(schema)
+        nv_noeud.suivant = creer_noeud(schema)
+    elif caractere == ')':
+        nv_noeud = None
     else:
-        nv_noeud = NoeudMasque(schema[1:])
-    
-    schema = nv_noeud.reste
-    if fils:
-        ajouter_fils(noeud, nv_noeud)
-    
-    if not schema.startswith(")"):
-        creer_noeud(nv_noeud, schema)
+        #Faudra voir pour le cas des mots-clés...
+        pass
     
     return nv_noeud
 

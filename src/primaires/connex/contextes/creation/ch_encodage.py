@@ -73,7 +73,7 @@ class ChangerEncodage(Contexte):
             ret += b"\n  " + str(i+1).encode() + b" - " + \
                     test.encode(encodage) + encodage.encode()
         return ret
-    
+
     def deconnecter(self):
         """En cas de décnonexion du client, on supprime son compte"""
         type(self).importeur.connex.supprimer_compte(self.pere.compte)
