@@ -31,6 +31,7 @@
 """Fichier contenant le module primaire perso."""
 
 from abstraits.module import *
+from primaires.perso.masques.personne import MasquePersonne
 
 class Module(BaseModule):
     """Module gérant la classe Personnage qui sera héritée pour construire
@@ -45,3 +46,9 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "perso", "primaire")
+    
+    def init(self):
+        """Initialisation du module"""
+        self.importeur.interpreteur.ajouter_masque(MasquePersonne())
+        schema = "(<personne>) <personne>"
+        self.importeur.interpreteur.ajouter_commande(schema)

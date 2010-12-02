@@ -32,6 +32,9 @@
 
 from abstraits.module import *
 from primaires.interpreteur.contexte import Contexte
+from primaires.interpreteur.masque.noeuds.fonctions import creer_noeud
+from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
+from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
 
 class Module(BaseModule):
     """Cette classe est la classe gérant tous les interpréteurs.
@@ -42,8 +45,11 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "interpreteur", "primaire")
-        self.contextes = {} # Dictionnaire des contextes
         Contexte.importeur = importeur
+        BaseNoeud.importeur = importeur
+        self.contextes = {} # Dictionnaire des contextes
+        self.commandes = Embranchement()
+        self.masques = {}
     
     def ajouter_contexte(self, nouv_contexte):
         """Ajoute le contexte dans le dictionnaire self.contextes.
@@ -51,3 +57,16 @@ class Module(BaseModule):
         
         """
         self.contextes[nouv_contexte.nom] = nouv_contexte
+    
+    def ajouter_commande(self, schema):
+        """Ajoute une commande à l'embranchement"""
+        creer_noeud(self.commandes, schema)
+        print(self.commandes)
+    
+    def ajouter_masque(self, masque):
+        """Méthode d'ajout d'un masque"""
+        self.masques[masque.nom] = masque
+    
+    def get_masque(self, nom_masque):
+        """Retourne le masque portant le nom correspondant"""
+        return self.masques[nom_masque]

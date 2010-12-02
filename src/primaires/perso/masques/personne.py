@@ -28,27 +28,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe BaseNoeud détaillée plus bas;"""
+"""Fichier contenant la classe MasquePersonne, détaillée plus bas."""
 
-class BaseNoeud:
-    
-    """Classe reprsentant la base d'un noeud.
-    Cette classe est héritée par tous les autres types de noeuds.
-    
-    """
-    
-    importeur = None
-    
+from primaires.interpreteur.masque.masque import Masque
+
+class MasquePersonne(Masque):
     def __init__(self):
-        """Constructeur du noeud de base"""
-        self.suivant = None
-    
-    def valider(self, chaine):
-        """Validation du noeud."""
-        pass
-    
-    def _get_fils(self):
-        """Retourne les fils du noeud sous la forme d'une liste"""
-        return [self.suivant]
-    
-    fils = property(_get_fils)
+        Masque.__init__(self, "personne")

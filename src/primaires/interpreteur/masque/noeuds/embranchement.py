@@ -38,7 +38,7 @@ class Embranchement(BaseNoeud):
     
     """
     
-    def __init__(self, schema):
+    def __init__(self):
         """Constructeur de l'embranchement"""
         BaseNoeud.__init__(self)
         self.suivant = []
@@ -49,3 +49,10 @@ class Embranchement(BaseNoeud):
         
         """
         return self.suivant
+    
+    def __str__(self):
+        """Méthode d'affichage"""
+        msg = "emb("
+        msg += ", ".join([str(noeud) for noeud in self.suivant])
+        msg += ")"
+        return msg

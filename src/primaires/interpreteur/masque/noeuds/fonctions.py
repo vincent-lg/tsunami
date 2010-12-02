@@ -34,28 +34,35 @@ from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
 from primaires.interpreteur.masque.noeuds.noeud_masque import NoeudMasque
 from primaires.interpreteur.masque.noeuds.noeud_optionnel import NoeudOptionnel
 
-def creer_noeud(noeud, schema):
+def creer_noeud(noeud, schema, fils=True):
     """Fonction appelée pour créer un noeud.
     Elle prend en paramètre :
     noeud  -- le noeud racine dans lequel on ajoutera éventuellement un
               noeud fils
     schema -- le schéma, sous la forme d'une chaîne de caractère, qui va
               nous indiquer quel noeud créer
+    fils   -- flag pour savoir si le noeud créé depuis le schéma est ajouté
+              comme fils du noeud racine
     
     """
     schema = schema.lstrip()
-    if schema.startswith("("): # un noeud optionnel
-        schema = schema[0]
-        nv_noeud = ajouter_fils(noeud, NoeudOptionnel(schema))
-    elif schema.startswith("<"): # noeud masque
-        schema = schema[0]
-        nv_noeud = ajouter_fils(noeud, NoeudMasque(schema))
-    else:
-        raise ValueError("erreur d'interprétation du schéma {0}".format( \
-                schema))
+    if not schema:  # schema est vide
+        pass
     
-    # On appelle cette fonction récursivement
-    creer_noeud(nv_noeud, nv_noeud.reste)
+    if schema.startswith("("): # un noeud optionnel
+        nv_noeud = NoeudOptionnel()
+        nv_noeud.optionnel = creer_noeud(nv_noeud, schema[1:], False)
+    else:
+        nv_noeud = NoeudMasque(schema[1:])
+    
+    schema = nv_noeud.reste
+    if fils:
+        ajouter_fils(noeud, nv_noeud)
+    
+    if not schema.startswith(")"):
+        creer_noeud(nv_noeud, schema)
+    
+    return nv_noeud
 
 def ajouter_fils(noeud_racine, noeud_fils):
     """Ajoute un fils au noeud racine spécifié.
@@ -63,7 +70,7 @@ def ajouter_fils(noeud_racine, noeud_fils):
     Sinon, on modifie tout simplement le noeud suivant.
     
     """
-    if isinstance(noeud_racine, Embranchement)
+    if isinstance(noeud_racine, Embranchement):
         noeud_racine.suivant.append(noeud_fils)
     else:
         noeud_racine.suivant = noeud_fils

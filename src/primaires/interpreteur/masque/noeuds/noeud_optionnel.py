@@ -40,10 +40,34 @@ class NoeudOptionnel(BaseNoeud):
     
     """
     
-    def __init__(self, schema):
+    def __init__(self):
         """Constructeur du noeud optionnel"""
         BaseNoeud.__init__(self)
         self.optionnel = None
+    
+    def _get_reste(self):
+        """Retourne le reste.
+        On le demande récursivement au noeud optionnel jusqu'à tomber sur un
+        noeud masque.
         
-        ## Phase d'interprétation du schéma
-        # à faire
+        """
+        if self.optionnel:
+            reste = self.optionnel.reste
+        else:
+            reste = ""
+        
+        return reste
+    
+    reste = property(_get_reste)
+    
+    def __str__(self):
+        """Méthode d'affichage"""
+        msg = "opt("
+        if self.optionnel:
+            msg += str(self.optionnel)
+        
+        msg += ")"
+        if self.suivant:
+            msg += " : " + str(self.suivant)
+        
+        return msg

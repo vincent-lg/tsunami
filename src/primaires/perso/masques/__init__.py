@@ -28,41 +28,5 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe ParserMasque détaillée plus bas."""
+"""Package des différents masques du module 'perso'."""
 
-from primaires.interpreteur.masque.noeud import NoeudMasque
-
-class ParserMasque:
-    
-    """Parser de masque.
-    Il se charge, grâce à une chaîne de caractère, de construire une
-    arborescence de masques. Cette arborescence pourra être étendue par la
-    suite. Cela permettra de modifier le comportement d'une commande
-    existante en y ajoutant, par exemple, de nouveaux paramètres.
-    
-    Cette arborescence de masques servira de base à l'analyse de la commande.
-    
-    """
-    
-    def __init__(self, schema="", racine=NoeudMasque()):
-        """Constructeur du parser.
-        Il peut prendre en paramètre :
-        schema -- le schéma sous la forme d'une chaîne 'str'
-        racine -- la racine de l'arborescence, un noeud vide par défaut
-        
-        """
-        self.racine = racine
-        self.parser(self.racine, schema)
-    
-    def parser(self, noeud_courant, schema):
-        """Parse le schéma passé en paramètre.
-        Cette fonction est appelée récursivement. Elle doit partir de la
-        racine avec le schéma complet et au fur et à mesure que le schéma est
-        décodé, on ajoute de nouveaux fils à la racine, puis de nouveaux fils
-        à ces nouveaux fils, ainsi de suite jusqu'à obtenir l'arborescence
-        complète.
-        
-        """
-        
-    def extraire_partie(self, schema):
-        """On 

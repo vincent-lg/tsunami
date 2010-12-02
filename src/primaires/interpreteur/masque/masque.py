@@ -31,4 +31,21 @@
 """Fichier définissant la classe masque détaillée plus bas;"""
 
 class Masque:
-    pass
+    
+    """Classe représentant un masque.
+    
+    """
+    
+    def __init__(self, nom):
+        """Crée un nouveau masque"""
+        self.nom = nom
+        self.type = None
+        self.proprietes = []
+    
+    def valider(self):
+        """Méthode de validation"""
+        raise NotImplementedError
+    
+    def __str__(self):
+        """Affichage du masque"""
+        return self.nom

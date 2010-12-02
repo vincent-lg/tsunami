@@ -31,7 +31,6 @@
 """Fichier définissant la classe NoeudMasque détaillée plus bas;"""
 
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
-from primaires.interpreteur.masque.noeuds.fonctions import creer_noeud
 
 class NoeudMasque(BaseNoeud):
     
@@ -87,7 +86,7 @@ class NoeudMasque(BaseNoeud):
         if "|" in str_type_masque:
             liste_types_masques = str_type_masque.split("|")
         else:
-            liste_type_masque = [str_type_masque]
+            liste_types_masques = [str_type_masque]
         
         # On cherche le type de masque dans l'interpréteur
         # on remplace dans liste_types_masques chaque str par son instance
@@ -95,7 +94,8 @@ class NoeudMasque(BaseNoeud):
         # Si le masque n'existe pas dans l'interpréteur, une exception est
         # levée.
         for i, str_type_masque in enumerate(liste_types_masques):
-            liste_types_masques[i] = type(self).importeur.get_masque( \
+            liste_types_masques[i] = \
+                    type(self).importeur.interpreteur.get_masque( \
                     str_type_masque)
         
         # Si le nom du masque n'est pas défini, on le déduit du premier
@@ -116,3 +116,14 @@ class NoeudMasque(BaseNoeud):
         self.masques = liste_types_masques
         
         self.reste = schema[pos_fin + 1:]
+    
+    def __str__(self):
+        """Méthode d'affichage"""
+        msg = "msq "
+        msg += self.nom + "["
+        msg += ", ".join([str(masque) for masque in self.masques])
+        msg += "])"
+        if self.suivant:
+            msg += " : " + str(self.suivant)
+        
+        return msg
