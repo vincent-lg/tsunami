@@ -28,10 +28,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package masque, contenant :
--   le package noeuds contenant les différents types de noeuds possibles pour
-    l'arborescence des masques
--   la classe masque (classe-mère d'un masque)
--   la classe ParserMasque (un parser des masques)
+"""Fichier définissant la classe Embranchement détaillée plus bas."""
 
-"""
+from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
+
+class Embranchement(BaseNoeud):
+    """Un noeud embranchement, constitué non pas d'un seul suivant mais de
+    plusieurs, sous la forme d'une liste extensible.
+    
+    """
+    
+    def __init__(self, schema):
+        """Constructeur de l'embranchement"""
+        BaseNoeud.__init__(self)
+        self.suivant = []
+    
+    def _get_fils(self):
+        """Retourne les noeuds fils, c'est-à-dire suivant qui est déjà sous
+        la forme d'une liste.
+        
+        """
+        return self.suivant

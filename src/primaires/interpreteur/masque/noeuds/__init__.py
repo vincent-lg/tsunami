@@ -28,10 +28,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package masque, contenant :
--   le package noeuds contenant les différents types de noeuds possibles pour
-    l'arborescence des masques
--   la classe masque (classe-mère d'un masque)
--   la classe ParserMasque (un parser des masques)
+"""Package des noeuds de masque contenant les différents types de noeuds :
+-   base_noeud.BaseNoeud : un noeud dont sont hérités les autres
+-   noeud_masque.NoeudMasque : un noeud contenant UN masque
+    Ce type de noeud se retrouve toujours au niveau le plus bas des noeuds
+    conteneurs (noeud optionnel, embranchement...)
+-   noeud_optionnel.NoeudOptionnel : un noeud optionnel
+-   embranchement.Embranchement : un noeud embranchement avec plusieurs
+    noeuds fils possibles
+
+Consultez chaque fichier pour savoir l'utilité de chaque noeud plus
+précisément.
 
 """

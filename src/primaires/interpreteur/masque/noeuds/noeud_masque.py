@@ -28,10 +28,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package masque, contenant :
--   le package noeuds contenant les différents types de noeuds possibles pour
-    l'arborescence des masques
--   la classe masque (classe-mère d'un masque)
--   la classe ParserMasque (un parser des masques)
+"""Fichier définissant la classe NoeudMasque détaillée plus bas;"""
 
-"""
+from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
+
+class NoeudMasque(BaseNoeud):
+    
+    """Noeud masque, noeud contenant un masque.
+    Sa validation dépend de la validation de ses masques.
+    De part son statut, si il possède un noeud suivant, deux possibilités :
+    -   soit c'est un noeud optionnel et le noeud masque que contient ce
+        noeud fils est optionnel
+    -   soit c'est un noeud masque également et le masque contenu dans ce fils est obligatoire
+    
+    """
+    
+    def __init__(self, schema):
+        """Constructeur du noeud masque"""
+        BaseNoeud.__init__(self)
+        self.masques = []  # une liste vide de masques
+        self.defaut = None  # valeur par défaut
+    
