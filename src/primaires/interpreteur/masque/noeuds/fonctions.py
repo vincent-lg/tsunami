@@ -28,28 +28,44 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe BaseNoeud détaillée plus bas;"""
+"""Fichier contenant des fonctions utiles à la manipulation des noeuds"""
 
-class BaseNoeud:
-    
-    """Classe reprsentant la base d'un noeud.
-    Cette classe est héritée par tous les autres types de noeuds.
+from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
+from primaires.interpreteur.masque.noeuds.noeud_masque import NoeudMasque
+from primaires.interpreteur.masque.noeuds.noeud_optionnel import NoeudOptionnel
+
+def creer_noeud(noeud, schema):
+    """Fonction appelée pour créer un noeud.
+    Elle prend en paramètre :
+    noeud  -- le noeud racine dans lequel on ajoutera éventuellement un
+              noeud fils
+    schema -- le schéma, sous la forme d'une chaîne de caractère, qui va
+              nous indiquer quel noeud créer
     
     """
+    schema = schema.lstrip()
+    if schema.startswith("("): # un noeud optionnel
+        schema = schema[0]
+        nv_noeud = ajouter_fils(noeud, NoeudOptionnel(schema))
+    elif schema.startswith("<"): # noeud masque
+        schema = schema[0]
+        nv_noeud = ajouter_fils(noeud, NoeudMasque(schema))
+    else:
+        raise ValueError("erreur d'interprétation du schéma {0}".format( \
+                schema))
     
-    importeur = None
+    # On appelle cette fonction récursivement
+    creer_noeud(nv_noeud, nv_noeud.reste)
+
+def ajouter_fils(noeud_racine, noeud_fils):
+    """Ajoute un fils au noeud racine spécifié.
+    Si c'est un embranchement, on ajoute un fils.
+    Sinon, on modifie tout simplement le noeud suivant.
     
-    def __init__(self):
-        """Constructeur du noeud de base"""
-        self.suivant = None
-        self.reste = ""  # la chaîne restant après la construction du noeud
+    """
+    if isinstance(noeud_racine, Embranchement)
+        noeud_racine.suivant.append(noeud_fils)
+    else:
+        noeud_racine.suivant = noeud_fils
     
-    def valider(self, chaine):
-        """Validation du noeud."""
-        pass
-    
-    def _get_fils(self):
-        """Retourne les fils du noeud sous la forme d'une liste"""
-        return [self.suivant]
-    
-    fils = property(_get_fils)
+    return noeud_fils

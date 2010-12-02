@@ -31,6 +31,7 @@
 """Fichier définissant la classe NoeudMasque détaillée plus bas;"""
 
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
+from primaires.interpreteur.masque.noeuds.fonctions import creer_noeud
 
 class NoeudMasque(BaseNoeud):
     
@@ -46,6 +47,72 @@ class NoeudMasque(BaseNoeud):
     def __init__(self, schema):
         """Constructeur du noeud masque"""
         BaseNoeud.__init__(self)
+        self.nom = ""
         self.masques = []  # une liste vide de masques
         self.defaut = None  # valeur par défaut
-    
+        
+        ## Phase de construction des masques
+        # On cherche le supérieur fermant potentiellement le schéma
+        # tout ce qui est au-delà est laissé pour interprétation ultérieure
+        # Si il n'y a pas de supérieur, on s'arrête au premier délimiteur
+        # rencontré
+        delimiteurs = [' ', ',']
+        pos_fin = schema.find(">")
+        if pos_fin == -1: # le chevron fermant n'a pu être trouvé
+            pos_fin = len(schema) - 1
+            for delimiteur in delimiteurs:
+                pos = schema.find(delimiteur)
+                if pos >= 0 and pos < pos_fin:
+                    pos_fin = pos
+        
+        # On extrait la chaîne représentant notre masque
+        str_masque = schema[:pos_fin]
+        
+        # On cherche le type du masque
+        if ":" in str_masque:
+            split_masque = str_masque.split(":")
+            nom_masque = split_masque[0]
+            str_type_masque = split_masque[1]
+        else:
+            nom_masque = ""  # on déduira le nom quand on aura le type
+            str_type_masque = str_masque
+        
+        # On extrait la valeur par défaut
+        if "=" in str_type_masque:
+            split_type_masque = str_type_masque.split("=")
+            str_type_masque = split_type_masque[0]
+            self.defaut = split_type_masque[1]
+        
+        # On extrait les autres valeurs possibles du noeud masque
+        if "|" in str_type_masque:
+            liste_types_masques = str_type_masque.split("|")
+        else:
+            liste_type_masque = [str_type_masque]
+        
+        # On cherche le type de masque dans l'interpréteur
+        # on remplace dans liste_types_masques chaque str par son instance
+        # de masque.
+        # Si le masque n'existe pas dans l'interpréteur, une exception est
+        # levée.
+        for i, str_type_masque in enumerate(liste_types_masques):
+            liste_types_masques[i] = type(self).importeur.get_masque( \
+                    str_type_masque)
+        
+        # Si le nom du masque n'est pas défini, on le déduit du premier
+        # type de masque
+        if not nom_masque:
+            nom_masque = liste_types_masques[0].nom
+        
+        self.nom = nom_masque
+        
+        # On s'assure que la valeur par défaut fournie est une valeur valide
+        # pour le premier type de masque proposé
+        if self.defaut:
+            if not liste_types_masques[0].accepte_valeur(self.defaut):
+                raise ValueError("la valeur par défaut {0} n'est pas " \
+                        "acceptée par le masque {1}".format( \
+                        self.defaut, liste_types_masquse[0]))
+        
+        self.masques = liste_types_masques
+        
+        self.reste = schema[pos_fin + 1:]

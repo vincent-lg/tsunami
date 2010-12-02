@@ -44,3 +44,6 @@ class NoeudOptionnel(BaseNoeud):
         """Constructeur du noeud optionnel"""
         BaseNoeud.__init__(self)
         self.optionnel = None
+        
+        ## Phase d'interprétation du schéma
+        # à faire
