@@ -44,9 +44,19 @@ class BaseNoeud:
         self.nom = ""
         self.suivant = None
     
-    def valider(self, chaine):
-        """Validation du noeud."""
-        pass
+    def valider(self, personnage, commande):
+        """Validation du noeud.
+        Cette méthode est à redéfinir dans chacune des classes-filles créée.
+        Chaque type de noeud a sa propre méthode de validation.
+        Dans tous les cas, une booléen doit être retourné :
+        -   True si le noeud a pu être interprété
+        -   False sinon
+        
+        Note : pour la plupart des noeuds, la validation est aussi fonction
+            des fils.
+        
+        """
+        raise NotImplementedError
     
     def _get_fils(self):
         """Retourne les fils du noeud sous la forme d'une liste"""

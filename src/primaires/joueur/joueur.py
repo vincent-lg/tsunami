@@ -58,6 +58,9 @@ class Joueur(Personnage):
     
     encodage = property(_get_encodage)
     
+    def envoyer(self, msg):
+        """On redirige sur l'envoie de l'instance de connexion."""
+        self.instance_connexion.envoyer(msg)
 
 # On ajoute le groupe à ObjetID
 ObjetID.ajouter_groupe(Joueur)

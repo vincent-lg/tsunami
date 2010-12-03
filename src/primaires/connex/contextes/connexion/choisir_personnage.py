@@ -104,6 +104,8 @@ class ChoisirPersonnage(Contexte):
                 IDs_joueurs = list(self.pere.compte.joueurs.keys())
                 joueur = self.pere.compte.joueurs[IDs_joueurs[choix]]
                 self.pere.joueur = joueur
+                joueur.compte = self.pere.compte
+                joueur.instance_connexion = self.pere
                 self.migrer_contexte("personnage:connexion:mode_connecte")
         elif msg == cmd_creer:
             # on redirige vers la création de compte

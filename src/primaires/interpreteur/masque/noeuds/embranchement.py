@@ -64,3 +64,18 @@ class Embranchement(BaseNoeud):
             self.suivant.items()])
         msg += ")"
         return msg
+    
+    def valider(self, personnage, commande):
+        """Validation du noeud Embranchement.
+        La commande entrée par le personnage peut avoir déjà été réduite par
+        les noeuds précédents. Elle est sous la forme d'une liste de
+        caractères.
+        
+        """
+        valide = False
+        for fils in self.fils:
+            valide = fils.valider(personnage, commande)
+            if valide:
+                break
+        
+        return valide

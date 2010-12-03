@@ -110,3 +110,11 @@ class Commande:
         """Interprétation du schéma"""
         schema = chaine_vers_liste(schema)
         return creer_noeud(self, schema)
+    
+    def _get_noms_commandes(self):
+        """Retourne les différents noms possibles des commandes.
+        
+        """
+        return (self.nom_francais, self.nom_anglais)
+    
+    noms_commandes = property(_get_noms_commandes)

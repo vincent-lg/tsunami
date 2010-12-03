@@ -31,6 +31,8 @@
 """Fichier contenant le contexte 'personnage:connexion:mode_connecte"""
 
 from primaires.interpreteur.contexte import Contexte
+from primaires.interpreteur.masque.fonctions import *
+
 
 class ModeConnecte(Contexte):
     """Le contexte de mode connecté.
@@ -60,4 +62,7 @@ class ModeConnecte(Contexte):
     
     def interpreter(self, msg):
         """Méthode d'interprétation"""
-        pass
+        commandes = type(self).importeur.interpreteur.commandes
+        valide = commandes.valider(self.pere.joueur, chaine_vers_liste(msg))
+        if not valide:
+            self.pere.envoyer("Commande invalide {0}.".format(msg))

@@ -72,3 +72,12 @@ class NoeudOptionnel(BaseNoeud):
             msg += " : " + str(self.suivant)
         
         return msg
+    
+    def valider(self, personnage, commande):
+        """Valide un noeud optionnel.
+        Un noeud optionnel se valide automatiquement et passe le relais à ses
+        fils.
+        
+        """
+        self.interne.valider(personnage, commande)
+        return self.suivant.valider(personnage, commande)

@@ -42,9 +42,9 @@ class Masque:
         self.type = None
         self.proprietes = []
     
-    def valider(self):
+    def valider(self, personnage, commande):
         """Méthode de validation"""
-        raise NotImplementedError
+        return True
     
     def __str__(self):
         """Affichage du masque"""
