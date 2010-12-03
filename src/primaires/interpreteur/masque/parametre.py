@@ -28,39 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe Embranchement détaillée plus bas."""
+"""Fichier définissant la classe Parametre, détaillée plus bas."""
 
-from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
+from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.masque.masque import Masque
 
-class Embranchement(BaseNoeud):
-    """Un noeud embranchement, constitué non pas d'un seul suivant mais de
-    plusieurs, sous la forme d'une liste extensible.
+class Parametre(Masque, Commande):
+    
+    """Un paramètre est à la fois un masque et une commande.
+    Il possède en effet un nom français et anglais et une arborescence qui lui
+    est propre.
+    En somme, il s'agit d'une sous-commande.
     
     """
     
-    def __init__(self):
-        """Constructeur de l'embranchement"""
-        BaseNoeud.__init__(self)
-        self.suivant = {} # {noeud:commande}
-    
-    def _get_fils(self):
-        """Retourne les noeuds fils, c'est-à-dire suivant qui est à passer sous
-        la forme d'une liste.
-        
-        """
-        return self.suivant.keys()
-    
-    fils = property(_get_fils)
-    
-    def ajouter_fils(self, noeud_fils, commande=None):
-        """Ajoute un fils à l'embranchement"""
-        self.suivant[noeud_fils] = commande
+    def __init__(self, francais, anglais):
+        """Constructeur du paramètre"""
+        Commande.__init__(self, francais, anglais)
+        Masque.__init__(self, self.nom_francais)
+        self.nom = self.nom_francais
+        self.tronquer = False
     
     def __str__(self):
-        """Méthode d'affichage"""
-        msg = "emb("
-        msg += ", ".join( \
-            [str(cmd) + "=" + str(noeud) for noeud, cmd in \
-            self.suivant.items()])
-        msg += ")"
-        return msg
+        """Fonction d'affichage"""
+        return "p" + Commande.__str__(self)

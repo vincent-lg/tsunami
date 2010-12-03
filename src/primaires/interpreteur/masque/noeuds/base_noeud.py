@@ -41,6 +41,7 @@ class BaseNoeud:
     
     def __init__(self):
         """Constructeur du noeud de base"""
+        self.nom = ""
         self.suivant = None
     
     def valider(self, chaine):

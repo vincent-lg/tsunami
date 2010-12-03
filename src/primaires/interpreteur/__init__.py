@@ -32,9 +32,10 @@
 
 from abstraits.module import *
 from primaires.interpreteur.contexte import Contexte
-from primaires.interpreteur.masque.noeuds.fonctions import creer_noeud
+from primaires.interpreteur.masque.noeuds.fonctions import *
 from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
+from primaires.interpreteur.masque.noeuds.noeud_commande import NoeudCommande
 from primaires.interpreteur.masque.fonctions import *
 
 class Module(BaseModule):
@@ -59,10 +60,12 @@ class Module(BaseModule):
         """
         self.contextes[nouv_contexte.nom] = nouv_contexte
     
-    def ajouter_commande(self, schema):
+    def ajouter_commande(self, commande, schema):
         """Ajoute une commande à l'embranchement"""
-        lst_schema = chaine_vers_liste(schema)
-        self.commandes = creer_noeud(lst_schema)
+        noeud_cmd = NoeudCommande(commande)
+        noeud_cmd.construire_arborescence(schema)
+        etendre_arborescence(self.commandes, noeud_cmd, \
+                None, commande)
         print(self.commandes)
     
     def ajouter_masque(self, masque):

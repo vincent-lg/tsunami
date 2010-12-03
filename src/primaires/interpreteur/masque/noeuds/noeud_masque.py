@@ -44,7 +44,7 @@ class NoeudMasque(BaseNoeud):
     
     """
     
-    def __init__(self, lst_schema):
+    def __init__(self, commande, lst_schema):
         """Constructeur du noeud masque"""
         BaseNoeud.__init__(self)
         self.nom = ""
@@ -54,13 +54,18 @@ class NoeudMasque(BaseNoeud):
         ## Phase de construction des masques
         # Schéma est sous la forme d'une liste de caractères, on la convertit
         schema = liste_vers_chaine(lst_schema)
-        # On cherche le supérieur fermant potentiellement le schéma
-        # tout ce qui est au-delà est laissé pour interprétation ultérieure
-        # Si il n'y a pas de supérieur, on s'arrête au premier délimiteur
-        # rencontré
+        # Si le schéma débute par un chevron ouvrant, on cherche le fermant
         delimiteurs = [' ', ',']
-        pos_fin = schema.find(">")
-        if pos_fin == -1: # le chevron fermant n'a pu être trouvé
+        if schema.startswith("<"):
+            chevrons = True
+            schema = schema[1:]
+            pos_fin = schema.find(">")
+            if pos_fin == -1:
+                raise ValueError("le chevron fermant n'a pu être trouvé " \
+                        "dans le schéma {0}".format(schema))
+        
+        else:
+            chevrons = False
             pos_fin = len(schema) - 1
             for delimiteur in delimiteurs:
                 pos = schema.find(delimiteur)
@@ -94,12 +99,17 @@ class NoeudMasque(BaseNoeud):
         # On cherche le type de masque dans l'interpréteur
         # on remplace dans liste_types_masques chaque str par son instance
         # de masque.
-        # Si le masque n'existe pas dans l'interpréteur, une exception est
-        # levée.
+        # Note: si entree est à False, on ne cherche pas dans l'interpréteur
+        # mais dans la commande.
+        # Si le masque n'existe pas, une exception est levée.
         for i, str_type_masque in enumerate(liste_types_masques):
-            liste_types_masques[i] = \
-                    type(self).importeur.interpreteur.get_masque( \
-                    str_type_masque)
+            if chevrons:
+                type_masque = type(self).importeur.interpreteur.get_masque( \
+                        str_type_masque)
+            else:
+                type_masque = commande.get_delimiteur(str_type_masque)
+
+            liste_types_masques[i] = type_masque
         
         # Si le nom du masque n'est pas défini, on le déduit du premier
         # type de masque

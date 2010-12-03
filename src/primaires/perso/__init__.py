@@ -31,7 +31,9 @@
 """Fichier contenant le module primaire perso."""
 
 from abstraits.module import *
+from primaires.interpreteur.commande.commande import Commande
 from primaires.perso.masques.personne import MasquePersonne
+from primaires.interpreteur.masque.parametre import Parametre
 
 class Module(BaseModule):
     """Module gérant la classe Personnage qui sera héritée pour construire
@@ -50,5 +52,13 @@ class Module(BaseModule):
     def init(self):
         """Initialisation du module"""
         self.importeur.interpreteur.ajouter_masque(MasquePersonne())
-        schema = "(<personne>) <personne> (<personne> (<personne>))"
-        self.importeur.interpreteur.ajouter_commande(schema)
+        commande = Commande("regarder", "look")
+        parametre = Parametre("depuis", "from")
+        commande.ajouter_parametre(parametre)
+        schema = "<personne> depuis (<personne> (<personne>))"
+        self.importeur.interpreteur.ajouter_commande(commande, schema)
+        commande = Commande("regarder", "look")
+        parametre = Parametre("depuis", "from")
+        commande.ajouter_parametre(parametre)
+        schema = "depuis (<personne> (<personne>))"
+        self.importeur.interpreteur.ajouter_commande(commande, schema)

@@ -28,39 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe Embranchement détaillée plus bas."""
+"""Ce fichier contient la classe NoeudCommande, détaillée plus bas."""
 
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
+from primaires.interpreteur.commande.commande import Commande
 
-class Embranchement(BaseNoeud):
-    """Un noeud embranchement, constitué non pas d'un seul suivant mais de
-    plusieurs, sous la forme d'une liste extensible.
+class NoeudCommande(BaseNoeud):
+    
+    """Noeud encapsulant une commande.
     
     """
     
-    def __init__(self):
-        """Constructeur de l'embranchement"""
+    def __init__(self, commande):
+        """Constructeur du noeud et de la commande"""
         BaseNoeud.__init__(self)
-        self.suivant = {} # {noeud:commande}
+        self.commande = commande
+        self.nom = commande.nom_francais
     
-    def _get_fils(self):
-        """Retourne les noeuds fils, c'est-à-dire suivant qui est à passer sous
-        la forme d'une liste.
-        
-        """
-        return self.suivant.keys()
-    
-    fils = property(_get_fils)
-    
-    def ajouter_fils(self, noeud_fils, commande=None):
-        """Ajoute un fils à l'embranchement"""
-        self.suivant[noeud_fils] = commande
+    def construire_arborescence(self, schema):
+        """Redirection vers la construction de la commande"""
+        self.suivant = self.commande.construire_arborescence(schema)
     
     def __str__(self):
-        """Méthode d'affichage"""
-        msg = "emb("
-        msg += ", ".join( \
-            [str(cmd) + "=" + str(noeud) for noeud, cmd in \
-            self.suivant.items()])
-        msg += ")"
-        return msg
+        """Fonction d'affichage"""
+        res = str(self.commande)
+        if self.suivant:
+            res += " : " + str(self.suivant)
+        
+        return res

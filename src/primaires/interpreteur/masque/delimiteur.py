@@ -28,39 +28,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe Embranchement détaillée plus bas."""
+"""Fichier définissant la classe Delimiteur, détaillée plus bas."""
 
-from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
+from primaires.interpreteur.masque.masque import Masque
 
-class Embranchement(BaseNoeud):
-    """Un noeud embranchement, constitué non pas d'un seul suivant mais de
-    plusieurs, sous la forme d'une liste extensible.
+class Delimiteur(Masque):
+    
+    """Un délimiteur est un masque chargé de délimiter le masque précédent.
+    Ce peut être, par exemple, une virgule séparant deux masques qui
+    pourraient être constitués de plusieurs mots.
     
     """
     
-    def __init__(self):
-        """Constructeur de l'embranchement"""
-        BaseNoeud.__init__(self)
-        self.suivant = {} # {noeud:commande}
-    
-    def _get_fils(self):
-        """Retourne les noeuds fils, c'est-à-dire suivant qui est à passer sous
-        la forme d'une liste.
-        
-        """
-        return self.suivant.keys()
-    
-    fils = property(_get_fils)
-    
-    def ajouter_fils(self, noeud_fils, commande=None):
-        """Ajoute un fils à l'embranchement"""
-        self.suivant[noeud_fils] = commande
-    
-    def __str__(self):
-        """Méthode d'affichage"""
-        msg = "emb("
-        msg += ", ".join( \
-            [str(cmd) + "=" + str(noeud) for noeud, cmd in \
-            self.suivant.items()])
-        msg += ")"
-        return msg
+    def __init__(self, delimiteur):
+        """Constructeur du délimiteur"""
+        Masque.__init__(self)
+        self.nom = delimiteur
