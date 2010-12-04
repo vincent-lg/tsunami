@@ -45,19 +45,25 @@ class Client():
     
     """
     
+    com = ""
+    
     def __init__(self,smtp):
         """Construction de la socket"""
         self.smtp = smtp
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.settimeout(0.1)
-    
+        self.socket.settimeout(0.5)
+        
+        
     def __del__(self):
         """Destructeur du module"""
         self.socket.close()
     
     def connecter(self):
         """Connecter le client"""
-        self.socket.connect((HOTE, PORT))
+        try:
+            self.socket.connect((HOTE, PORT))
+        except socket.error as detail:
+            raise EchecTest("Erreur de connexion avec Kassie(connexion)")
         return self.attendre_reponse()
     
     def attendre_reponse(self):
@@ -68,53 +74,48 @@ class Client():
                 rec = self.socket.recv(100)
                 donnee += rec
         except socket.timeout:
+            self.com += str(donnee) + "\n-------\n"
             return donnee
+        except socket.error as detail:
+            raise EchecTest("Erreur de connexion avec Kassie(réception)")
     
     def envoyer(self,message):
         """Envoie un message"""
-        self.socket.send(message + b'\n')
+        self.com += "Envoie : " + str(message) + "\n-------\n"
+        try:
+            self.socket.send(message + b'\n')
+        except socket.error as detail:
+            raise EchecTest("Erreur de connexion avec Kassie(envoie)")
         return self.attendre_reponse()
     
     def extraire_code(self,msg):
         """Extrait le code de validation d'un email"""
         avant = b"Code de validation : "
         apres = b"Note : si vous avez"
-        return int(msg[(msg.index(avant) + len(avant)):msg.index(apres)])
+        try:
+            code = int(msg[(msg.index(avant) + len(avant)):msg.index(apres)])
+        except ValueError as detail:
+            raise EchecTest("Code introuvable dans le mail")
+        return code
     
     def creer_compte(self,nom,mdp,mail):
         """Creer un compte sur Kassie"""
-        
+        self.envoyer(b'nouveau')
+        self.envoyer(nom.encode())
+        self.envoyer(b'1')
+        self.envoyer(mdp.encode())
+        self.envoyer(mdp.encode())
+        self.envoyer(mail.encode())
+        mail = self.smtp.attendre_message_de(1,mail);
+        if mail == None:
+            raise EchecTest("Mail de validation non reçue",self.com)
+        code = self.extraire_code(mail)
+        message = self.envoyer(str(code).encode())
         try:
-            self.envoyer(b'nouveau')
-            self.envoyer(nom.encode())
-            self.envoyer(b'1')
-            self.envoyer(mdp.encode())
-            self.envoyer(mdp.encode())
-            self.envoyer(mail.encode())
-        except socket.error as detail:
-            raise EchecTest("Erreur de connexion avec Kassie")
-        
-        try:
-            message = self.smtp.attendre_message_de(1,mail);
-        except socket.error as detail:
-            raise EchecTest("Erreur de connexion avec le smtp")
-            
-        if message == None:
-            raise EchecTest("Mail de validation non reçue")
-        
-        try:
-            code = self.extraire_code(message)
-        except ValueError as detail:
-            raise EchecTest("Code introuvable dans le mail")
-        
-        try:
-            message = self.envoyer(str(code).encode())
             message.index(b"Choix du personnage")
-        except socket.error as detail:
-            raise EchecTest("Erreur de connexion avec Kassie")
         except ValueError as detail:
-            raise EchecTest("Réponse attendu de la part de Kassie " \
-                "invalide, compte non crée")
+            raise EchecTest("Réponse attendu de la part de Kassie invalide", \
+                self.com)
     
     def connexion(self,nom,mdp):
         """Se connecter sur Kassie"""
@@ -123,7 +124,8 @@ class Client():
             message = self.envoyer(mdp.encode())
             message.index(b"Choix du personnage")
         except socket.error as detail:
-            raise EchecTest("Erreur de connexion avec Kassie")
+            raise EchecTest("Erreur de connexion avec Kassie", \
+                self.com)
         except ValueError as detail:
-            raise EchecTest("Réponse attendu de la part de Kassie " \
-                    "invalide, connection impossible")
+            raise EchecTest("Réponse attendu de la part de Kassie invalide", \
+                self.com)

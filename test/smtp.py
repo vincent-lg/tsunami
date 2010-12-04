@@ -32,6 +32,8 @@ import asyncore
 import email
 import time
 
+from tests import EchecTest
+
 class Smtp(smtpd.SMTPServer):
     """Classe représentant un serveur SMTP. C'est un
     serveur ultra-basique qui se contente de reçevoir
@@ -39,8 +41,10 @@ class Smtp(smtpd.SMTPServer):
     
     """
     
-    #Listes des messages reçu
+    #Listes temporaires des messages reçu
     msgs = []
+    #Listes des messages reçu
+    msgs_all = []
     
     def __init__(self):
         """Lance le serveur"""
@@ -52,18 +56,24 @@ class Smtp(smtpd.SMTPServer):
     
     def process_message(self, peer, mailfrom, rcpttos, data):
         """Callback appelé quand un message est reçu"""
-        self.msgs.append(data.encode() + \
-            email.message_from_string(data).get_payload(decode=True))
+        mail = data.encode() + \
+            email.message_from_string(data).get_payload(decode=True)
+        self.msgs.append(mail)
+        self.msgs_all.append(mail)
     
     def attendre_message_de(self,timeout,mail):
         """Attend un message provenant d'un email donné"""
+        
         self.msgs = []
-        debut = time.clock()
-        while debut + timeout > time.clock():
+        
+        debut = time.time()
+        while debut + timeout > time.time():
             asyncore.loop(timeout=0.5,count=1)
             while len(self.msgs)>0:
                 message = self.msgs.pop()
-                if message.find(mail.encode()) != -1:
+                try:
+                    message.index(mail.encode())
                     return message
-        return None
+                except ValueError:
+                    pass
 

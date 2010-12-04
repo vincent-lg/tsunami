@@ -83,17 +83,28 @@ class Kassie():
         if self.pid == None:
             if os.path.exists(self.rep_kassie + "/enregistrement"):
                 shutil.rmtree(self.rep_kassie+ "/enregistrement")
+            if os.path.exists(self.rep_kassie + "/log"):
+                shutil.rmtree(self.rep_kassie+ "/log")
+            self.retour_lire, retour_ecrire = os.pipe()
+            self.debug_lire, debug_ecrire = os.pipe()
             pid = os.fork()
             if pid == 0:
-                c2pread, c2pwrite = os.pipe()
+                os.close(0)
+                os.dup(debug_ecrire)
                 os.close(1)
-                os.dup(c2pwrite)
+                os.dup(retour_ecrire)
                 os.chdir("../src")
                 os.execvp(self.arg_kassie[0],self.arg_kassie)
                 exit()
             else:
                 self.pid = pid
                 time.sleep(1)
+    
+    def get_retour(self):
+        return open(self.retour_lire,'r').read()
+    
+    def get_debug(self):
+        return open(self.debug_lire,'r').read()
     
     def stop(self):
         """Arrète le serveur"""

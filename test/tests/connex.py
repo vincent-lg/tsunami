@@ -29,114 +29,411 @@
 
 import client
 
-import tests
+from tests import EchecTest, test
 
 #Nom du test qui sera afficher en console
 nom = "Test des créations de compte et des connexions"
 
-"""
-EntrerPass
-ChoisirPersonnage
-
-ChangerEncodage
-ChoisirPass
-ConfirmerPass
-EntrerEmail
-Validation
-"""
-
-class AfficherMOTD(tests.test):
+class AfficherMOTD(test):
     
     nom = "AfficherMOTD"
     
     def test(self):
-        cl = client.Client(self.smtp)
-        message = cl.connecter()
-        message.index(b"Bienvenue sur")
+        self.cl = client.Client(self.smtp)
+        message = self.cl.connecter()
+        try:
+            message.index(b"Bienvenue sur")
+        except ValueError:
+            raise EchecTest("Réponse attendu de la part de Kassie " \
+                "invalide",self.cl.com)
+        try:
+            message.index(b"Votre compte")
+        except ValueError:
+            raise EchecTest("Réponse attendu de la part de Kassie " \
+                "invalide",self.cl.com)
 
-
-class EntrerNom(tests.test):
+class EntrerNom(test):
     
     nom = "EntrerNom"
     
+    def sendNom(self,nom):
+        self.cl = client.Client(self.smtp)
+        self.cl.connecter()
+        return self.cl.envoyer(nom.encode())
+    
     def test(self):
-        cl = client.Client(self.smtp)
-        message = cl.connecter()
-        message.index(b"Votre compte")
-        message = cl.envoyer(b"nouveau")
-        message.index(b"Creation d'un compte")
+        message = self.sendNom("nouveau")
+        try:
+            message.index(b"Votre nom de compte")
+        except ValueError:
+            raise EchecTest("Réponse attendu de la part de Kassie " \
+                "invalide",self.cl.com)
         
-        cl = client.Client(self.smtp)
-        cl.connecter()
-        message = cl.envoyer(b"test")
-        message.index(b"Ce compte n'existe pas.")
+        message = self.sendNom("test")
+        try:
+            message.index(b"Ce compte n'existe pas.")
+        except ValueError:
+            raise EchecTest("Réponse attendu de la part de Kassie " \
+                "invalide",self.cl.com)
 
-
-class EntrerPass(tests.test):
+class EntrerPass(test):
     
     nom = "EntrerPass"
     
     def test(self):
         
-        cl = client.Client(self.smtp)
-        cl.connecter()
-        cl.creer_compte("nicolas", "123456", "nicolas@orange.fr")
+        self.cl = client.Client(self.smtp)
+        self.cl.connecter()
+        try:
+            self.cl.creer_compte("nicolas", "123456", "nicolas@orange.fr")
+        except EchecTest as inst:
+            raise EchecTest("Impossible de crée le compte : " + str(inst), \
+                self.cl.com)
         
-        cl = client.Client(self.smtp)
-        cl.connecter()
-        message = cl.envoyer(b"nicolas")
-        message.index(b"")
+        self.cl = client.Client(self.smtp)
+        self.cl.connecter()
+        message = self.cl.envoyer(b"nicolas")
+        try:
+            message.index(b"")#TODO
+        except ValueError:
+            raise EchecTest("Réponse attendu de la part de Kassie " \
+                "invalide", self.cl.com)
 
-class nouveau_nom(tests.test):
+class NouveauNom(test):
     
-    nom = "nouveau_nom"
-    nom_valide = ["Lea","Bastien"]
-    nom_invalide = ["nouveau","Al","Léa"]
+    nom = "NouveauNom"
+    nom_valide = ["Lea","Bastien","JeanneFrancoise","tictac42","Nitrate"]
+    nom_invalide = ["nouveau","kassie","Kassie","Al","Léa", \
+        "MichelFrancois325","JeannineHuguette","Jean-Marc","François"]
     
     def mettre_nom(self,nom):
-        cl = client.Client(self.smtp)
-        cl.connecter()
-        cl.envoyer(b"nouveau")
-        return cl.envoyer(nom.encode())
+        self.cl = client.Client(self.smtp)
+        self.cl.connecter()
+        self.cl.envoyer(b"nouveau")
+        return self.cl.envoyer(nom.encode())
         
     def test(self):
-        cl = client.Client(self.smtp)
-        cl.connecter()
-        message = cl.envoyer(b"nouveau")
-        message.index(b"Creation d'un compte")
-        
         message = self.mettre_nom("/")
-        message.index(b"Votre compte")
+        try:
+            message.index(b"Votre compte")
+        except ValueError:
+            raise EchecTest("Réponse attendu de la part de Kassie " \
+                "invalide, pour revenir en arrière", self.cl.com)
         
         for nom in self.nom_valide:
+            message = self.mettre_nom(nom)
             try:
-                message = self.mettre_nom(nom)
                 message.index(b"Choix de l'encodage")
-            except Exception as inst:
-                raise(Exception("Erreur nom de compte : {0} : {1} ({2})".format(nom,inst,message)))
+            except ValueError:
+                raise EchecTest("Le nom {0} n'a pas été accepté".format(nom), \
+                    self.cl.com)
         
         for nom in self.nom_invalide:
+            message = self.mettre_nom(nom)
             try:
-                message = self.mettre_nom(nom)
                 message.index(b"Votre nom de compte :")
-            except Exception as inst:
-                raise(Exception("Erreur nom de compte : {0} : {1} ({2})".format(nom,inst,message)))
+            except ValueError:
+                raise EchecTest("Le nom {0} a été accepté".format(nom), \
+                    self.cl.com)
+        
+        self.cl = client.Client(self.smtp)
+        self.cl.connecter()
+        self.cl.envoyer(b"nouveau")
+        try:
+            self.cl.creer_compte("Marie", "Blabla", "marie@orange.fr")
+        except EchecTest as detail:
+            raise EchecTest("Impossible de crée le compte : " + str(detail), \
+                self.cl.com)
+        message = self.mettre_nom("Marie")
+        try:
+            message.index(b"Votre nom de compte :")
+        except ValueError:
+            raise EchecTest("Un nom de compte a été accepté deux fois", \
+                self.cl.com)
 
-class nouveau_compte(tests.test):
-    nom = "Créer un nouveau compte"
+class ChangeEncodage(test):
+    
+    nom = "ChangeEncodage"
+    
+    def mettre_encodage(self,encodage):
+        self.cl = client.Client(self.smtp)
+        self.cl.connecter()
+        self.cl.envoyer(b"nouveau")
+        self.cl.envoyer(b"Titus")
+        return self.cl.envoyer(encodage.encode())
     
     def test(self):
-        cl = client.Client(self.smtp)
-        cl.connecter()
-        return cl.creer_compte("arthur", "123456", "arthur@free.fr")
+        message = self.mettre_encodage("0")
+        try:
+            message.index(b"Entrez le numero correspondant")
+        except ValueError:
+            raise EchecTest("0 accepté comme encopage", self.cl.com)
+        
+        message = self.mettre_encodage("1")
+        try:
+            message.index("caractère".encode('Utf-8'))
+        except ValueError:
+            raise EchecTest("Erreur lors du choix de l'encodage 1", self.cl.com)
+        
+        message = self.mettre_encodage("2")
+        try:
+            message.index("caractère".encode('Latin-1'))
+        except ValueError:
+            raise EchecTest("Erreur lors du choix de l'encodage 2", self.cl.com)
+        
+        message = self.mettre_encodage("3")
+        try:
+            message.index("caractère".encode('cp850'))
+        except ValueError:
+            raise EchecTest("Erreur lors du choix de l'encodage 3", self.cl.com)
+        
+        message = self.mettre_encodage("4")
+        try:
+            message.index("caractère".encode('cp1252'))
+        except ValueError:
+            raise EchecTest("Erreur lors du choix de l'encodage 4", self.cl.com)
+        
+        message = self.mettre_encodage("5")
+        try:
+            message.index(b"Entrez le numero correspondant")
+        except ValueError:
+            raise EchecTest("5 accepté comme encodage", self.cl.com)
 
-class connexion(tests.test):
+class ChoisirPass(test):
+    
+    nom = "ChoisirPass"
+    mdp_valide = ["123456","Bastien","tictac42","{"*8,"}"*8,"/"*8, \
+        "["*8,"]"*8,"("*8,")"*8,"+"*8,"="*8,"$"*8,"_"*8,"*"*8,"@"*8,"^"*8, \
+        "\""*8,"'"*8,"`"*8,"£"*8,"#"*8,"-"*8]
+    mdp_invalide = ["totor","oubli","flané32","\\"*8]
+    
+    def mettre_mdp(self,mdp):
+        self.cl = client.Client(self.smtp)
+        self.cl.connecter()
+        self.cl.envoyer(b"nouveau")
+        self.cl.envoyer(b"potter")
+        self.cl.envoyer(b"1")
+        return self.cl.envoyer(mdp.encode())
+        
+    def test(self):
+        message = self.mettre_mdp("/")
+        try:
+            message.index(b"Choix de l'encodage")
+        except ValueError:
+            raise EchecTest("Réponse attendu de la part de Kassie " \
+                "invalide, pour revenir en arrière", self.cl.com)
+        
+        for mdp in self.mdp_valide:
+            message = self.mettre_mdp(mdp)
+            try:
+                message.index(b"Confirmez le mot de passe :")
+            except ValueError:
+                raise EchecTest("Le mot de passe : {0} n'a pas été " \
+                    "accepté".format(mdp), self.cl.com)
+        
+        for mdp in self.mdp_invalide:
+            message = self.mettre_mdp(mdp)
+            try:
+                message.index(b"Votre mot de passe :")
+            except ValueError:
+                raise EchecTest("Le mot de passe : {0} a " \
+                    "été accepté".format(mdp), self.cl.com)
+
+class ConfirmerPass(test):
+    
+    nom = "ConfirmerPass"
+    
+    def mettre_mdp(self,mdp):
+        self.cl = client.Client(self.smtp)
+        self.cl.connecter()
+        self.cl.envoyer(b"nouveau")
+        self.cl.envoyer(mdp.encode())
+        self.cl.envoyer(b"1")
+        return self.cl.envoyer(mdp.encode())
+        
+    def test(self):
+        self.mettre_mdp("test22")
+        message = self.cl.envoyer(b"/")
+        try:
+            message.index(b"Votre mot de passe :")
+        except ValueError:
+            raise EchecTest("Réponse attendu de la part de Kassie " \
+                "invalide, pour revenir en arrière", self.cl.com)
+        
+        self.mettre_mdp("test42")
+        message = self.cl.envoyer(b"test42")
+        try:
+            message.index(b"Votre adresse de courriel :")
+        except ValueError:
+            raise EchecTest("Un mot de passe n'a pas été confirmé", self.cl.com)
+        
+        self.mettre_mdp("test21")
+        message = self.cl.envoyer(b"test42")
+        try:
+            message.index(b"Confirmez le mot de passe :")
+        except ValueError:
+            raise EchecTest("Un mot de passe a été confirmé")
+
+class EntrerEmail(test):
+    
+    nom = "EntrerEmail"
+    nom_compte = 100000
+    mail_valide = ["test@test.com", "bruno@maitredumonde.fr", \
+        "blabla@un.grand.nom.de.domaine.fr","test@test.info"]
+    mail_invalide = ["essaye","essaye@encore","blabla@aa.a","test@fr", \
+        "test@test.francais","français@test.fr","test@français.fr"]
+    
+    def mettre_mail(self,email):
+        self.nom_compte += 1
+        self.cl = client.Client(self.smtp)
+        self.cl.connecter()
+        self.cl.envoyer(b"nouveau")
+        self.cl.envoyer(str(self.nom_compte).encode())
+        self.cl.envoyer(b"1")
+        self.cl.envoyer(str(self.nom_compte).encode())
+        self.cl.envoyer(str(self.nom_compte).encode())
+        return self.cl.envoyer(email.encode())
+        
+    def test(self):
+        message = self.mettre_mail("/")
+        try:
+            message.index(b"Votre adresse de courriel")
+        except ValueError:
+            raise EchecTest("Réponse attendu de la part de Kassie " \
+                "invalide, en essayent de revenir en arrière", self.cl.com)
+        
+        
+        self.cl = client.Client(self.smtp)
+        self.cl.connecter()
+        try:
+            self.cl.creer_compte("bruno", "maitredumonde", "bruno@mdm.com")
+        except EchecTest as detail:
+            raise EchecTest("Impossible de crée le compte : " + str(detail), \
+                self.cl.com)
+        
+        message = self.mettre_mail("bruno@mdm.com")
+        try:
+            message.index(b"Votre adresse de courriel")
+        except ValueError:
+            raise EchecTest("Réponse attendu de la part de Kassie " \
+                "invalide, en essayent de revenir en arrière", self.cl.com)
+        
+        for mail in self.mail_valide:
+            message = self.mettre_mail(mail)
+            try:
+                message.index(b"Code de validation :")
+            except ValueError:
+                raise EchecTest("Le mail : {0} n'a pas été " \
+                    "accepté".format(mail), self.cl.com)
+        
+        for mail in self.mailmail_invalide:
+            message = self.mettre_mail(mail)
+            try:
+                message.index(b"Votre mot de passe :")
+            except ValueError:
+                raise EchecTest("Le mail : {0} a été accepté".format(mail), \
+                    self.cl.com)
+
+class Validation(test):
+    
+    nom = "Validation"
+    nom_compte = 100000
+    
+    def ask_validation(self):
+        self.nom_compte += 1
+        self.cl = client.Client(self.smtp)
+        self.cl.connecter()
+        self.cl.envoyer(b"nouveau")
+        self.cl.envoyer(str(self.nom_compte).encode())
+        self.cl.envoyer(b"1")
+        self.cl.envoyer(str(self.nom_compte).encode())
+        self.cl.envoyer(str(self.nom_compte).encode())
+        
+        return self.cl.envoyer((str(self.nom_compte) + "@free.fr").encode())
+        
+    def test(self):
+        self.ask_validation()
+        message = self.cl.envoyer(b"/")
+        try:
+            message.index(b"Votre adresse de courriel :")
+        except ValueError:
+            raise EchecTest("Réponse attendu de la part de Kassie " \
+                "invalide, pour revenir en arrière", self.cl.com)
+        
+        self.ask_validation()
+        adresse = (str(self.nom_compte) + "@free.fr").encode()
+        mail = self.smtp.attendre_message_de(1,adresse)
+        if mail == None:
+            raise EchecTest("Mail de validation non reçue",self.cl.com)
+        code = self.cl.extraire_code(mail)
+        message = self.cl.envoyer(str(code).encode())
+        try:
+            message.index(b"Choix du personnage")
+        except ValueError:
+            raise EchecTest("Validation classique impossible", self.cl.com)
+        
+        self.ask_validation()
+        adresse = (str(self.nom_compte) + "@free.fr").encode()
+        mail = self.smtp.attendre_message_de(1,adresse)
+        if mail == None:
+            raise EchecTest("Mail de validation non reçue",self.cl.com)
+        self.cl = client.Client(self.smtp)
+        self.cl.connecter(str(self.nom_compte),str(self.nom_compte))
+        code = self.cl.extraire_code(mail)
+        message = self.cl.envoyer(str(code).encode())
+        try:
+            message.index(b"Choix du personnage")
+        except ValueError:
+            raise EchecTest("Validation après reconnexion impossible", \
+                self.cl.com)
+        
+        self.ask_validation()
+        adresse = (str(self.nom_compte) + "@free.fr").encode()
+        mail = self.smtp.attendre_message_de(1,adresse)
+        if mail == None:
+            raise EchecTest("Mail de validation non reçue",self.cl.com)
+        code = self.cl.extraire_code(mail)
+        message = self.cl.envoyer("")
+        message = self.cl.envoyer("")
+        message = self.cl.envoyer("")
+        mail = self.smtp.attendre_message_de(1,adresse)
+        if mail == None:
+            raise EchecTest("Mail de validation non reçue",self.cl.com)
+        code = self.cl.extraire_code(mail)
+        message = self.cl.envoyer(str(code).encode())
+        try:
+            message.index(b"Choix du personnage")
+        except ValueError:
+            raise EchecTest("Validation après 3 tentatives impossible", \
+                self.cl.com)
+        
+
+class Connexion(test):
+    
     nom = "Connexion"
     
+    nom_compte = ["Bastien","JeanneFrancoise","tictac42","Nitrate"]
+    mdp = ["123456","Bastien","tictac42"]
+    email = ["test@test.com"]
+    
+    rand_nom = 100000
+    
+    def testCompte(self, nom, mdp, mail):
+        self.cl = client.Client(self.smtp)
+        self.cl.connecter()
+        self.cl.creer_compte(nom,mdp,mail)
+        self.cl = client.Client(self.smtp)
+        self.cl.connecter()
+        self.cl.connexion(nom, mdp)
+    
     def test(self):
-        cl = client.Client(self.smtp)
-        cl.connecter()
-        cl.creer_compte("jean", "azerty", "jean@alice.fr")
-        cl = client.Client(self.smtp)
-        cl.connecter()
-        return cl.connexion("jean", "azerty")
+        for nom in self.nom_compte:
+            self.testCompte(nom, nom, nom + "@free.fr")
+        for mdp in self.mdp:
+            self.rand_nom += 1
+            self.testCompte(str(self.rand_nom), mdp, \
+                str(self.rand_nom) + "@free.fr")
+        for mail in self.email:
+            self.rand_nom += 1
+            self.testCompte(str(self.rand_nom), str(self.rand_nom), mail)
+            
