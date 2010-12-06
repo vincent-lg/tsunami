@@ -64,10 +64,14 @@ class Smtp(smtpd.SMTPServer):
     def attendre_message_de(self,timeout,mail):
         """Attend un message provenant d'un email donné"""
         
+        mail = mail.lower()
+        
+        time.sleep(0.1)
+        
         self.msgs = []
         
         debut = time.time()
-        while debut + timeout > time.time():
+        while (debut + timeout) > time.time():
             asyncore.loop(timeout=0.5,count=1)
             while len(self.msgs)>0:
                 message = self.msgs.pop()

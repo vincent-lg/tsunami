@@ -51,7 +51,7 @@ class Client():
         """Construction de la socket"""
         self.smtp = smtp
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.settimeout(0.5)
+        self.socket.settimeout(0.1)
         
         
     def __del__(self):
@@ -63,7 +63,7 @@ class Client():
         try:
             self.socket.connect((HOTE, PORT))
         except socket.error as detail:
-            raise EchecTest("Erreur de connexion avec Kassie(connexion)")
+            raise EchecTest("Erreur de connexion avec Kassie(connexion)",self.com)
         return self.attendre_reponse()
     
     def attendre_reponse(self):
@@ -77,7 +77,7 @@ class Client():
             self.com += str(donnee) + "\n-------\n"
             return donnee
         except socket.error as detail:
-            raise EchecTest("Erreur de connexion avec Kassie(réception)")
+            raise EchecTest("Erreur de connexion avec Kassie(réception)",self.com)
     
     def envoyer(self,message):
         """Envoie un message"""
@@ -85,7 +85,7 @@ class Client():
         try:
             self.socket.send(message + b'\n')
         except socket.error as detail:
-            raise EchecTest("Erreur de connexion avec Kassie(envoie)")
+            raise EchecTest("Erreur de connexion avec Kassie(envoie)",self.com)
         return self.attendre_reponse()
     
     def extraire_code(self,msg):
@@ -93,9 +93,9 @@ class Client():
         avant = b"Code de validation : "
         apres = b"Note : si vous avez"
         try:
-            code = int(msg[(msg.index(avant) + len(avant)):msg.index(apres)])
+            code = msg[(msg.index(avant) + len(avant)):msg.index(apres)]
         except ValueError as detail:
-            raise EchecTest("Code introuvable dans le mail")
+            raise EchecTest("Code introuvable dans le mail",self.com)
         return code
     
     def creer_compte(self,nom,mdp,mail):
@@ -110,9 +110,9 @@ class Client():
         if mail == None:
             raise EchecTest("Mail de validation non reçue",self.com)
         code = self.extraire_code(mail)
-        message = self.envoyer(str(code).encode())
+        message = self.envoyer(code)
         try:
-            message.index(b"Choix du personnage")
+            message.index(b"Nom de votre nouveau personnage")
         except ValueError as detail:
             raise EchecTest("Réponse attendu de la part de Kassie invalide", \
                 self.com)
