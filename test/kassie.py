@@ -31,6 +31,7 @@ import os
 import time
 import signal
 import shutil
+import subprocess
 
 #Liste permettant le lancement de Kassie avec les bons arguments
 arg_kassie = ["python3","kassie.py", \
@@ -55,13 +56,12 @@ class Kassie():
     def __init__(self,rep_kassie):
         """Construction des arguments pour la commande
         et création du dossier de kassie en le lançant"""
-        self.pid = None
+        self.process = None
         self.rep_kassie = rep_kassie
         self.arg_kassie = []
         for arg in arg_kassie:
             self.arg_kassie.append(arg.format(rep_kassie))
         self.start()
-        time.sleep(0.1)
         self.stop()
     
     def __del__(self):
@@ -80,34 +80,21 @@ class Kassie():
     
     def start(self):
         """Démarre le serveur"""
-        if self.pid == None:
-            if os.path.exists(self.rep_kassie + "/enregistrement"):
-                shutil.rmtree(self.rep_kassie+ "/enregistrement")
-            if os.path.exists(self.rep_kassie + "/log"):
-                shutil.rmtree(self.rep_kassie+ "/log")
-            self.retour_lire, retour_ecrire = os.pipe()
-            self.debug_lire, debug_ecrire = os.pipe()
-            pid = os.fork()
-            if pid == 0:
-                os.close(0)
-                os.dup(debug_ecrire)
-                os.close(1)
-                os.dup(retour_ecrire)
-                os.chdir("../src")
-                os.execvp(self.arg_kassie[0],self.arg_kassie)
-                exit()
-            else:
-                self.pid = pid
-                time.sleep(1)
+        if os.path.exists(self.rep_kassie + "/enregistrement"):
+            shutil.rmtree(self.rep_kassie+ "/enregistrement")
+        if os.path.exists(self.rep_kassie + "/log"):
+            shutil.rmtree(self.rep_kassie+ "/log")
+        self.process = subprocess.Popen(self.arg_kassie,
+            stdout=subprocess.PIPE, \
+            stderr=subprocess.PIPE, \
+            cwd="/home/davyg/Desktop/TODO/kassie/src")
+        time.sleep(0.2)
     
-    def get_retour(self):
-        return open(self.retour_lire,'r').read()
-    
-    def get_debug(self):
-        return open(self.debug_lire,'r').read()
+    def get_retours(self):
+        return self.process.communicate()
     
     def stop(self):
         """Arrète le serveur"""
-        if self.pid != None:
-            os.kill(self.pid,signal.SIGKILL)
-            self.pid = None
+        if self.process.poll() == None:
+            self.process.kill()
+            self.process.wait()

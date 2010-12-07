@@ -84,6 +84,8 @@ for testeur in liste_tests.keys():
     print(testeur.nom + " : ")
     echec = 0
     for test in liste_tests[testeur]:
+        if test.__name__ != "EntrerEmail":
+            continue
         #Lancement serveurs
         serveur.start()
         sm = smtp.Smtp()
@@ -96,6 +98,7 @@ for testeur in liste_tests.keys():
             instance.test()
             print("\033[32mRéussi\033[0m")
         except tests.EchecTest as detail:
+            serveur.stop()
             repertoire = rep_echec + testeur.nom + "/" + test.nom + "/"
             os.makedirs(repertoire)
             shutil.copytree(rep_kassie,repertoire + rep_kassie)
@@ -109,10 +112,11 @@ for testeur in liste_tests.keys():
             f.write(detail.com)
             f.close()
             f = open(repertoire + "serveur_retour.txt",'w')
-            f.write(serveur.get_retour())
+            out,debug = serveur.get_retours()
+            f.write(str(out))
             f.close()
             f = open(repertoire + "serveur_debug.txt",'w')
-            f.write(serveur.get_debug())
+            f.write(str(debug))
             f.close()
             print("\033[31mEchoué\033[0m")
             print("        \033[34m"+str(detail)+"\033[0m")
