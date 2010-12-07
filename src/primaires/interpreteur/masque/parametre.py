@@ -32,6 +32,7 @@
 
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
 
 class Parametre(Masque, Commande):
     
@@ -52,3 +53,20 @@ class Parametre(Masque, Commande):
     def __str__(self):
         """Fonction d'affichage"""
         return "p" + Commande.__str__(self)
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Fonction de validation du masque Parametre.
+        Un paramètre se valide si la commande qu'on lui passe débute par un
+        espace puis son nom de paramètre (en fonction de la langue du
+        personnage).
+        
+        """
+        str_commande = chaine_vers_liste(commande)
+        
+        if str_commande.startswith(" "):
+            commande.pop(0)
+            valide = Commande.valider(self, personnage, dic_masques, commande)
+        else:
+            valide = False
+        
+        return valide

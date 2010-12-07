@@ -63,6 +63,8 @@ class ModeConnecte(Contexte):
     def interpreter(self, msg):
         """Méthode d'interprétation"""
         commandes = type(self).importeur.interpreteur.commandes
-        valide = commandes.valider(self.pere.joueur, chaine_vers_liste(msg))
+        dic_masques = {}
+        valide = commandes.valider(self.pere.joueur, dic_masques, \
+                chaine_vers_liste(msg))
         if not valide:
-            self.pere.envoyer("Commande invalide {0}.".format(msg))
+            self.pere.envoyer("|err|Commande invalide {0}.|ff|".format(msg))

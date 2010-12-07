@@ -32,6 +32,7 @@
 
 from abstraits.module import *
 from primaires.joueur.contextes import liste_contextes
+from primaires.joueur import commandes
 
 class Module(BaseModule):
     """Classe utilisée pour gérer des joueurs, c'est-à-dire des personnages
@@ -45,9 +46,18 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "joueur", "primaire")
+        self.commandes = []
     
     def init(self):
         """Méthode d'initialisation du module"""
         # On ajoute les contextes chargés dans l'interpréteur
         for contexte in liste_contextes:
             self.importeur.interpreteur.contextes[contexte.nom] = contexte
+        
+        # On ajoute les commandes du module
+        self.commandes = [
+            commandes.module.CmdModule("module", "module"),
+        ]
+        
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd, "")

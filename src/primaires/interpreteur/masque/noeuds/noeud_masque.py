@@ -143,7 +143,7 @@ class NoeudMasque(BaseNoeud):
         
         return msg
     
-    def valider(self, personnage, commande):
+    def valider(self, personnage, dic_masques, commande):
         """Validation d'un noeud masque.
         On va essayer de valider successivement chaque masque possible. Si
         aucun masque ne marche, on s'arrête ici.
@@ -152,8 +152,12 @@ class NoeudMasque(BaseNoeud):
         """
         valide = False
         for masque in self.masques:
-            valide = masque.valider(personnage, commande)
+            valide = masque.valider(personnage, dic_masques, commande)
             if valide:
+                dic_masques[self.nom] = masque
                 break
+        
+        if valide and self.suivant:
+            valide = self.suivant.valider(personnage, dic_masques, commande)
         
         return valide

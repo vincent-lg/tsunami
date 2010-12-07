@@ -32,6 +32,7 @@
 
 from primaires.interpreteur.masque.noeuds.fonctions import *
 from primaires.interpreteur.masque.fonctions import *
+from primaires.format.fonctions import *
 
 NB_MAX_CAR_AIDE_COURTE = 40
 
@@ -40,7 +41,6 @@ class Commande:
     """Classe-mère de toutes les commandes.
     Elle contient :
     -   un nom, en français et en anglais
-    -   une méthode qui sera exécutée si un joueur l'appelle
     -   un flag pour savoir si l'on peut tronquer la commande
     -   une arborescence de noeuds symbolisant les possibilités au départ
         de la commande
@@ -118,3 +118,34 @@ class Commande:
         return (self.nom_francais, self.nom_anglais)
     
     noms_commandes = property(_get_noms_commandes)
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Fonctiond e validation.
+        Elle retourne True si la commande entrée par le joueur correspond à
+        son nom, False sinon.
+        
+        """
+        str_commande = liste_vers_chaine(commande)
+        str_commande = supprimer_accents(str_commande).lower()
+        
+        # On fait la césure au premier espace
+        fin_pos = str_commande.find(" ")
+        if fin_pos == -1:
+            fin_pos = len(str_commande)
+        
+        str_commande = str_commande[:fin_pos]
+        for nom_com in self.noms_commandes:
+            if nom_com.startswith(str_commande):
+                commande[:] = commande[fin_pos:]
+                valide = True
+                break
+            else:
+                valide = False
+        
+        return valide
+    
+    def interpreter(self, personnage, dic_masques):
+        """Fonction d'interprétation.
+        
+        """
+        raise NotImplementedError

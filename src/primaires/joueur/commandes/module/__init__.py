@@ -28,38 +28,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe BaseNoeud détaillée plus bas;"""
+"""Package contenant la commande 'module' et ses sous-commandes.
+Dans ce fichier se trouve la commande même.
 
-class BaseNoeud:
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdModule(Commande):
     
-    """Classe reprsentant la base d'un noeud.
-    Cette classe est héritée par tous les autres types de noeuds.
+    """Commande 'module'.
     
     """
     
-    importeur = None
-    
-    def __init__(self):
-        """Constructeur du noeud de base"""
-        self.nom = ""
-        self.suivant = None
-    
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du noeud.
-        Cette méthode est à redéfinir dans chacune des classes-filles créée.
-        Chaque type de noeud a sa propre méthode de validation.
-        Dans tous les cas, une booléen doit être retourné :
-        -   True si le noeud a pu être interprété
-        -   False sinon
-        
-        Note : pour la plupart des noeuds, la validation est aussi fonction
-            des fils.
-        
-        """
-        raise NotImplementedError
-    
-    def _get_fils(self):
-        """Retourne les fils du noeud sous la forme d'une liste"""
-        return [self.suivant]
-    
-    fils = property(_get_fils)
+    def interpreter(self, personnage, dic_masques):
+        """Fonction d'interprétation de la commande."""
+        personnage.envoyer("|rg|Bien joué !|ff|")

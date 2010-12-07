@@ -33,7 +33,6 @@
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.masque.fonctions import *
-from primaires.format.fonctions import *
 
 class NoeudCommande(BaseNoeud):
     
@@ -59,26 +58,14 @@ class NoeudCommande(BaseNoeud):
         
         return res
     
-    def valider(self, personnage, commande):
+    def valider(self, personnage, dic_masques, commande):
         """Validation d'un noeud commande.
         La commande est sous la forme d'une liste de caractères.
         
         """
-        str_commande = liste_vers_chaine(commande)
-        str_commande = supprimer_accents(str_commande).lower()
-        
-        # On fait la césure au premier espace
-        fin_pos = str_commande.find(" ")
-        if fin_pos == -1:
-            fin_pos = len(str_commande)
-        
-        str_commande = str_commande[:fin_pos]
-        for nom_com in self.commande.noms_commandes:
-            if nom_com.startswith(str_commande):
-                commande[:] = commande[fin_pos + 1:]
-                if self.suivant:
-                    valide = self.suivant.valider(personnage, commande)
-            else:
-                valide = False
+        valide = self.commande.valider(personnage, dic_masques, commande)
+        if valide and self.suivant:
+                valide = self.suivant.valider(personnage, dic_masques, \
+                            commande)
         
         return valide

@@ -42,7 +42,7 @@ class Masque:
         self.type = None
         self.proprietes = []
     
-    def valider(self, personnage, commande):
+    def valider(self, personnage, dic_masques, commande):
         """Méthode de validation"""
         return True
     
