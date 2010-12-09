@@ -36,13 +36,13 @@ import subprocess
 #Liste permettant le lancement de Kassie avec les bons arguments
 arg_kassie = ["python3","kassie.py", \
     "-p","14000", \
-    "-c","../test/{0}/config", \
-    "-e","../test/{0}/enregistrement", \
-    "-l","../test/{0}/log"]
+    "-c","{0}" + os.sep + "config", \
+    "-e","{0}" + os.sep + "enregistrement", \
+    "-l","{0}" + os.sep + "log"]
 
 #Effectue la correspondance entre l'alias configurations et leur fichier
 correspondance = { \
-    "email" : "email/serveur.cfg", \
+    "email" : "email" + os.sep + "serveur.cfg", \
     "globale" : "kassie.cfg", \
     }
 
@@ -80,11 +80,11 @@ class Kassie():
     
     def start(self):
         """Démarre le serveur"""
-        if os.path.exists(self.rep_kassie + "/enregistrement"):
-            shutil.rmtree(self.rep_kassie+ "/enregistrement")
-        if os.path.exists(self.rep_kassie + "/log"):
-            shutil.rmtree(self.rep_kassie+ "/log")
-        path,_,_ = os.getcwd().rpartition("/")
+        if os.path.exists(self.rep_kassie + os.sep + "enregistrement"):
+            shutil.rmtree(self.rep_kassie + os.sep + "enregistrement")
+        if os.path.exists(self.rep_kassie + os.sep + "log"):
+            shutil.rmtree(self.rep_kassie + os.sep + "log")
+        path,_,_ = os.getcwd().rpartition(os.sep)
         path += "/src"
         self.process = subprocess.Popen(self.arg_kassie,
             stdout=subprocess.PIPE, \

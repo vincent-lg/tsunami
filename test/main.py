@@ -38,10 +38,10 @@ import shutil
 #TODO Remplacer le sed dans Kassie par un regex
 
 #Répertoire qui contiendra les logs, la configuration et la sauvegarde
-rep_kassie="./kassie/"
+rep_kassie = os.getcwd() + os.sep + "kassie" + os.sep
 
 #Répertoire qui contiendra les répertoires contenant les erreurs
-rep_echec="./echec/"
+rep_echec = os.getcwd() + os.sep + "echec" + os.sep
 
 #Vérifie que le répertoire n'existe pas pour pas effacer
 #des logs peuvent être important
@@ -97,9 +97,9 @@ for testeur in liste_tests.keys():
             print("\033[32mRéussi\033[0m")
         except tests.EchecTest as detail:
             serveur.stop()
-            repertoire = rep_echec + testeur.nom + "/" + test.nom + "/"
+            repertoire = rep_echec + testeur.nom + os.sep + test.nom + os.sep
             os.makedirs(repertoire)
-            shutil.copytree(rep_kassie,repertoire + rep_kassie)
+            shutil.copytree(rep_kassie,repertoire + "kassie")
             os.mkdir(repertoire + "/mail")
             index = 0
             for mail in sm.msgs_all:
