@@ -84,10 +84,12 @@ class Kassie():
             shutil.rmtree(self.rep_kassie+ "/enregistrement")
         if os.path.exists(self.rep_kassie + "/log"):
             shutil.rmtree(self.rep_kassie+ "/log")
+        path,_,_ = os.getcwd().rpartition("/")
+        path += "/src"
         self.process = subprocess.Popen(self.arg_kassie,
             stdout=subprocess.PIPE, \
             stderr=subprocess.PIPE, \
-            cwd="/home/davyg/Desktop/TODO/kassie/src")
+            cwd=path)
         time.sleep(0.2)
     
     def get_retours(self):
