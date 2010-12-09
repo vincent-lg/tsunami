@@ -32,6 +32,7 @@ import time
 import signal
 import shutil
 import subprocess
+import re
 
 #Liste permettant le lancement de Kassie avec les bons arguments
 arg_kassie = ["python3","kassie.py", \
@@ -72,11 +73,12 @@ class Kassie():
         """Changer une option dans un fichier de configuration"""
         # Si on a une chaine de chractère on rajoute des "
         if isinstance(val,str):
-            val = "\\\"" + val + "\\\""
-        #Effectue un sed pour changer la valeur(pas beau)
-        cmd = "sed -i \"s/^{0} *=.*$/{0} = {1}/\" {2}".format(var,val,
-            self.rep_kassie + "/config/" + correspondance[config])
-        os.system(cmd)
+            val = "\"" + val + "\""
+        path = self.rep_kassie + os.sep + "config" + os.sep + \
+            correspondance[config]
+        text = open(path,'r').read()
+        text = re.sub("{0} *=.*".format(var, val),"{0} = {1}".format(var, val),text)
+        open(path,'w').write(text)
     
     def start(self):
         """Démarre le serveur"""
