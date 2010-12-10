@@ -67,4 +67,4 @@ class ModeConnecte(Contexte):
         valide = commandes.valider(self.pere.joueur, dic_masques, \
                 chaine_vers_liste(msg))
         if not valide:
-            self.pere.envoyer("|err|Commande invalide {0}.|ff|".format(msg))
+            self.pere.envoyer("|err|Commande invalide : {0}.|ff|".format(msg))

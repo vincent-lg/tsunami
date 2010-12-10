@@ -38,8 +38,6 @@ cfg_connex = r"""
 
 ### Connexion
 
-## Inforemation de mot de passe
-
 # Chaîne à entrer si on a oublié son mot de passe
 # Par défaut, c'est simplement 'oubli' mais vous pouvez lui donner un autre
 # nom. Le client devra entrer cette chaîne à la place de son mot de passe,
@@ -65,12 +63,12 @@ nb_avant_nouveau = 20
 # Le premier nombre paramètre le nombre de tentatives pour rentrer un mot de
 # passe avant d'être déconnecté. Le second paramètre le nombre de secondes
 # à attendre avant une nouvelle entrée (3 secondes suffisent virtuellement à
-# éviter le brut-forcing d'un compte).
+# éviter le brute-forcing d'un compte).
 nb_avant_deconnexion = 3
 secondes_a_attendre = 3
 
 
-### Création d'un personnage
+### Création d'un compte
 
 ## Choix du nom du compte
 

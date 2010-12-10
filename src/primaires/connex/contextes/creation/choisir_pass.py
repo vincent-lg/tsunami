@@ -60,7 +60,7 @@ class ChoisirPass(Contexte):
             "\n|tit|------= Choix du mot de passe =-----|ff|\n" \
             "Entrez un |ent|mot de passe|ff| de plus de 6 caractères ; il " \
             "correspond à votre\n" \
-            "compte uniquement, veillez à vous en souvenir et à ne" \
+            "compte uniquement, veillez à vous en souvenir et à ne " \
             "le divulguer\n" \
             "sous aucun prétexte.\n" \
             "Si vous voulez revenir au choix de l'encodage, entrez |cmd|/|ff|."

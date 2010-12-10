@@ -76,7 +76,7 @@ class NouveauNom(Contexte):
             self.pere.envoyer("|err|Le nom de votre joueur doit faire entre " \
                     "{0} et {1} caractères|ff|.".format(t_min, t_max))
         elif msg in type(self).importeur.connex.nom_joueurs:
-            self.pere.envoyer("|err|Ce nom de joueur est déjà utilisé. " \
+            self.pere.envoyer("|err|Ce nom de personnage est déjà utilisé. " \
                     "Choisissez-en un autre|ff|.")
         elif RE_NOM_VALIDE.search(supprimer_accents(msg)):
             nouv_joueur = Joueur()
