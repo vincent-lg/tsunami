@@ -107,4 +107,10 @@ clef_salage = "salee_"
 # Taille minimum du mot de passe
 pass_min = 6
 
+## Nombre maximum de personnages
+
+# Cette variable paramètre le nombre maximum de personnages pouvant être
+# liés à un compte. Pour enlever cette limite, mettez à -1.
+nb_perso_max = 5
+
 """

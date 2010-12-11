@@ -61,7 +61,7 @@ class ChoisirPersonnage(Contexte):
     def accueil(self):
         """Message d'accueil"""
         ret = \
-            "\n|tit|------= Choix du personnage =-----|ff|\n" \
+            "\n|tit|------= Choix du personnage =------|ff|\n" \
             "Faites votre |ent|choix|ff| parmi la liste ci-dessous :\n"
         
         for i, joueur in enumerate(self.pere.compte.joueurs.values()):
@@ -85,7 +85,8 @@ class ChoisirPersonnage(Contexte):
     
     def interpreter(self, msg):
         """Méthode d'interprétation"""
-        nb_perso_max = 5
+        cfg_connex = type(self).importeur.anaconf.get_config("connex")
+        nb_perso_max = cfg_connex.nb_perso_max
         
         msg = msg.lower()
         if msg.isdecimal():
@@ -93,7 +94,7 @@ class ChoisirPersonnage(Contexte):
             choix = int(msg) - 1
             # On vérifie qu'il est bien dans la liste des comptes
             if choix < 0 or choix >= len(self.pere.compte.joueurs):
-                self.pere.envoyer("|err|Aucun joueur ne correspond à ce " \
+                self.pere.envoyer("|err|Aucun personnage ne correspond à ce " \
                         "numéro.|ff|")
             else:
                 # on se connecte sur le joueur
@@ -104,7 +105,7 @@ class ChoisirPersonnage(Contexte):
                 joueur.instance_connexion = self.pere
                 self.migrer_contexte("personnage:connexion:mode_connecte")
         elif msg == cmd_creer:
-            if len(self.pere.compte.joueurs) >= nb_perso_max:
+            if len(self.pere.compte.joueurs) >= nb_perso_max and nb_perso_max != -1:
                 self.pere.envoyer("|err|Vous ne pouvez avoir plus de {0} " \
                         "personnages.|ff|".format(nb_perso_max))
             else:
@@ -118,4 +119,4 @@ class ChoisirPersonnage(Contexte):
             self.pere.envoyer("\nA bientôt !")
             self.pere.deconnecter("Déconnexion demandée par le client")
         else:
-            self.pere.envoyer("|err|Le choix invalide.|ff|")
+            self.pere.envoyer("|err|Votre choix est invalide.|ff|")
