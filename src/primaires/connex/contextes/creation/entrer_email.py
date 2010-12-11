@@ -52,7 +52,7 @@ class EntrerEmail(Contexte):
     
     def get_prompt(self):
         """Message de prompt"""
-        return "Votre adresse de courriel : "
+        return "Votre adresse mail : "
     
     def accueil(self):
         """Message d'accueil"""
@@ -76,8 +76,8 @@ class EntrerEmail(Contexte):
         # On passe le message en minuscules
         msg = msg.lower()
         if msg in type(self).importeur.connex.email_comptes:
-            self.pere.envoyer("|err|Cette adresse e-mail est déjà utilisée " \
-                    "par un autre compte.\nChoisissez-en une autre.|ff|")
+            self.pere.envoyer("|err|Cette adresse mail est déjà utilisée " \
+                    "par un autre compte.|ff|")
         elif RE_MAIL_VALIDE.search(msg) is None:
             self.pere.envoyer("|err|L'adresse spécifiée n'est pas valide.|ff|")
         else:

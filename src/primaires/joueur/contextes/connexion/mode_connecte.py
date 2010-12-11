@@ -36,7 +36,7 @@ from primaires.interpreteur.masque.fonctions import *
 
 class ModeConnecte(Contexte):
     """Le contexte de mode connecté.
-    C'est une petite instution à lui tout seul.
+    C'est une petite institution à lui tout seul.
     A partir du moment où un joueur se connecte, il est connecté à ce contexte.
     Les commandes se trouvent définies dans ce contexte. En revanche, d'autres
     contextes peuvent venir se greffer par-dessus celui-ci. Mais il reste

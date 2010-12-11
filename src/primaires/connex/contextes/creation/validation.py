@@ -32,11 +32,11 @@ from primaires.interpreteur.contexte import Contexte
 # Message de validation
 msg_validation = \
     "Votre demande de création de compte a bien été enregistrée.\n" \
-    "Pour valider ce compte, vous devez recopier le code ci-dessous dans " \
-    "votre client, puis valider.\n\n" \
-    "Code de validation : {code}\n\n" \
+    "Pour valider ce compte, vous devez entrer le code ci-dessous dans " \
+    "votre client.\n\n" \
+    "Votre code de validation : {code}\n\n" \
     "Note : si vous avez été déconnecté du jeu dans l'intervalle, " \
-    "reconnectez-vous. En entrant votre nom de compte nouvellement créé " \
+    "reconnectez-vous. En entrant le nom de votre compte nouvellement créé " \
     "puis votre mot de passe, vous serez automatiquement redirigé vers " \
     "l'étape de validation où le code vous sera demandé pour valider le " \
     "compte et pouvoir, enfin, commencer à jouer."
@@ -81,7 +81,8 @@ class Validation(Contexte):
             self.pere.compte.code_validation = code
             destinateur = "info"
             destinataire = self.pere.compte.adresse_email
-            sujet = "Validation du compte {0}".format(self.pere.compte.nom)
+            sujet = "Validation de votre compte - {0}".format( \
+                    self.pere.compte.nom.capitalize())
             corps = msg_validation.format(code = code)
             type(self).importeur.email.envoyer(destinateur, destinataire, \
                     sujet, corps)
@@ -94,10 +95,11 @@ class Validation(Contexte):
         """Message d'accueil"""
         return \
             "\n|tit|-----= Validation du compte =------|ff|\n" \
-            "Un message vient de vous être envoyé à votre adresse {0}.\n" \
+            "Un message automatique vient d'être envoyé à l'adresse :\n" \
+            "- {0} -\n" \
             "Il contient un code de validation que vous devez recopier ici.\n" \
-            "Ce code permet de valider votre compte, il est donc " \
-            "indispensable.".format(self.pere.compte.adresse_email)
+            "|att|Ce code permet de valider votre compte, il est donc " \
+            "indispensable.|ff|".format(self.pere.compte.adresse_email)
     
     def interpreter(self, msg):
         """Interpréteur du contexte"""
@@ -105,6 +107,9 @@ class Validation(Contexte):
             self.pere.compte.valide = True
             self.pere.compte.code_validation = ""
             self.pere.compte.tentatives_validation = 0
+            self.pere.envoyer( \
+                "\n|att|Félicitations, votre compte a bien été validé !|ff|\n" \
+                "Vous pouvez maintenant commencer à créer un personnage...")
             self.migrer_contexte("connex:connexion:choix_personnages")
         else:
             self.pere.compte.tentatives_validation += 1
@@ -114,16 +119,17 @@ class Validation(Contexte):
                 self.pere.compte.code_validation = code
                 destinateur = "info"
                 destinataire = self.pere.compte.adresse_email
-                sujet = "Validation du compte {0}".format( \
-                        self.pere.compte.nom)
+                sujet = "Validation de votre compte - {0}".format( \
+                        self.pere.compte.nom.capitalize())
                 corps = msg_validation.format(code = code)
                 type(self).importeur.email.envoyer(destinateur, destinataire, \
                     sujet, corps)
                 self.pere.compte.tentatives_validation = 0
                 self.pere.envoyer( \
-                    "Vous avez entré 3 codes de validation incorrects.\n" \
-                    "Un nouveau code de validation vous a été envoyé à " \
-                    "l'adresse {0}.".format(self.pere.compte.adresse_email))
+                    "Vous avez entré trois codes de validation incorrects " \
+                    "de suite ;\n" \
+                    "un nouveau code de validation vient d'être envoyé à " \
+                    "votre adresse.")
             else:
-                self.pere.envoyer("Ce code de validation est incorrect. " \
-                        "Veuillez l'entrer à nouveau.")
+                self.pere.envoyer("|err|Votre code de validation est " \
+                    "incorrect.|ff|")

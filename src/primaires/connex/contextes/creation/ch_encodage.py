@@ -70,7 +70,7 @@ class ChangerEncodage(Contexte):
             b"le premier d'entre eux.|ff|\n"
         test = "Caractères accentués en "
         for i, encodage in enumerate(ENCODAGES):
-            ret += b"\n  " + str(i+1).encode() + b" - " + \
+            ret += b"\n  |cmd|" + str(i+1).encode() + b"|ff| - " + \
                     test.encode(encodage) + encodage.encode()
         return ret
 
