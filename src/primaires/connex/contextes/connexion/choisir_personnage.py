@@ -66,7 +66,8 @@ class ChoisirPersonnage(Contexte):
         
         for i, joueur in enumerate(self.pere.compte.joueurs.values()):
             no = " |cmd|" + str(i + 1) + "|ff|"
-            ret += "\n" + no + " pour jouer |ent|{0}|ff|".format(joueur.nom)
+            ret += "\n" + no + " pour jouer |ent|{0}|ff|".format( \
+                joueur.nom.capitalize())
         
         if len(self.pere.compte.joueurs) > 0:
             # on saute deux lignes
@@ -76,8 +77,8 @@ class ChoisirPersonnage(Contexte):
                 "personnage\n".format(C = cmd_creer.upper())
         if len(self.pere.compte.joueurs) > 0:
             # on propose de supprimer un des joueurs créé
-            ret += " |cmd|{S}|ff| pour |ent|supprimer|ff| un personnage de ce " \
-                    "compte\n".format(S = cmd_supprimer.upper())
+            ret += " |cmd|{S}|ff| pour |ent|supprimer|ff| un personnage de " \
+                "ce compte\n".format(S = cmd_supprimer.upper())
         
         ret += " |cmd|{Q}|ff| pour |ent|quitter|ff| le jeu".format( \
                 Q = cmd_quitter.upper())

@@ -33,6 +33,7 @@
 from abstraits.module import *
 from primaires.joueur.contextes import liste_contextes
 from primaires.joueur import commandes
+from primaires.joueur.config import cfg_joueur
 
 class Module(BaseModule):
     """Classe utilisée pour gérer des joueurs, c'est-à-dire des personnages
@@ -47,6 +48,13 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "joueur", "primaire")
         self.commandes = []
+    
+    def config(self):
+        """Méthode de configuration du module"""
+        type(self.importeur).anaconf.get_config("joueur", \
+            "joueur/joueur.cfg", "config joueur", cfg_joueur)
+        
+        BaseModule.config(self)
     
     def init(self):
         """Méthode d'initialisation du module"""
