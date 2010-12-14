@@ -25,47 +25,35 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# pereIBILITY OF SUCH DAMAGE.
+# POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le contexte 'personnage:connexion:mode_connecte"""
+"""Fichier définissant la classe Embranchement détaillée plus bas."""
 
-from collections import OrderedDict
-
-from primaires.interpreteur.contexte import Contexte
+from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
 from primaires.interpreteur.masque.fonctions import *
 
-
-class ModeConnecte(Contexte):
-    """Le contexte de mode connecté.
-    C'est une petite institution à lui tout seul.
-    A partir du moment où un joueur se connecte, il est connecté à ce contexte.
-    Les commandes se trouvent définies dans ce contexte. En revanche, d'autres
-    contextes peuvent venir se greffer par-dessus celui-ci. Mais il reste
-    toujours un contexte présent dans la pile des contextes du joueur dès
-    lors qu'il est connecté.
+class EmbranchementCommandes(Embranchement):
+    """Un noeud embranchement, constitué non pas d'un seul suivant mais de
+    plusieurs, sous la forme d'une liste extensible.
+    A la différence des autres embranchements, il ne doit contenir que des
+    noeuds commandes.
     
     """
-    nom = "personnage:connexion:mode_connecte"
     
-    def __init__(self, pere):
-        """Constructeur du contexte"""
-        Contexte.__init__(self, pere)
-        self.opts.prompt_clr = ""
-        self.opts.prompt_prf = ""
+    def __str__(self):
+        """Méthode d'affichage"""
+        msg = "emb_cmd("
+        msg += ", ".join( \
+            [str(cmd) + "=" + str(noeud) for noeud, cmd in \
+            self.suivant.items()])
+        msg += ")"
+        return msg
     
-    def accueil(self):
-        """Message d'accueil du contexte"""
-        return "Vous êtes connecté"""
-    
-    def get_prompt(self):
-        """Méthode du prompt du contexte"""
-        return "[0000000]"
-    
-    def interpreter(self, msg):
-        """Méthode d'interprétation"""
-        commandes = type(self).importeur.interpreteur.commandes
-        dic_masques = OrderedDict()
-        lst_commande = chaine_vers_liste(msg)
-        valide = commandes.valider(self.pere.joueur, dic_masques, \
-                lst_commande)
+    def erreur_validation(self, personnage, dic_masques, lst_commande):
+        """Erreur retournée au joueur en cas de non validation"""
+        str_commande = liste_vers_chaine(lst_commande)
+        print(lst_commande)
+        personnage.envoyer(
+                "|err|Commande invalide (|ff||cmd|{0}|ff||err|).|ff|".format(
+                str_commande))

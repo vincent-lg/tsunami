@@ -73,14 +73,14 @@ class NoeudOptionnel(BaseNoeud):
         
         return msg
     
-    def valider(self, personnage, dic_masques, commande):
+    def valider(self, personnage, dic_masques, commande, tester_fils):
         """Valide un noeud optionnel.
         Un noeud optionnel se valide automatiquement et passe le relais à ses
         fils.
         
         """
         self.interne.valider(personnage, commande)
-        if self.suivant:
+        if self.suivant and tester_fils:
             valide = self.suivant.valider(personnage, dic_masques, commande)
         else:
             valide = True

@@ -44,7 +44,7 @@ class BaseNoeud:
         self.nom = ""
         self.suivant = None
     
-    def valider(self, personnage, dic_masques, commande):
+    def valider(self, personnage, dic_masques, commande, tester_fils=True):
         """Validation du noeud.
         Cette méthode est à redéfinir dans chacune des classes-filles créée.
         Chaque type de noeud a sa propre méthode de validation.

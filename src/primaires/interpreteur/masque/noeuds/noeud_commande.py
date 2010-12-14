@@ -58,13 +58,15 @@ class NoeudCommande(BaseNoeud):
         
         return res
     
-    def valider(self, personnage, dic_masques, commande):
+    def valider(self, personnage, dic_masques, commande, tester_fils=True):
         """Validation d'un noeud commande.
         La commande est sous la forme d'une liste de caractères.
         
         """
         valide = self.commande.valider(personnage, dic_masques, commande)
-        if valide and self.suivant:
+        if valide:
+            dic_masques["commande"] = self.commande
+            if self.suivant and tester_fils:
                 valide = self.suivant.valider(personnage, dic_masques, \
                             commande)
         

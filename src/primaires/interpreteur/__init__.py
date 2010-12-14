@@ -33,7 +33,8 @@
 from abstraits.module import *
 from primaires.interpreteur.contexte import Contexte
 from primaires.interpreteur.masque.noeuds.fonctions import *
-from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
+from primaires.interpreteur.masque.noeuds.embranchement_commandes import \
+        EmbranchementCommandes
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
 from primaires.interpreteur.masque.noeuds.noeud_commande import NoeudCommande
 from primaires.interpreteur.masque.fonctions import *
@@ -50,7 +51,7 @@ class Module(BaseModule):
         Contexte.importeur = importeur
         BaseNoeud.importeur = importeur
         self.contextes = {} # Dictionnaire des contextes
-        self.commandes = Embranchement()
+        self.commandes = EmbranchementCommandes()
         self.masques = {}
     
     def ajouter_contexte(self, nouv_contexte):
