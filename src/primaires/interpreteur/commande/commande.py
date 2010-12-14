@@ -32,11 +32,12 @@
 
 from primaires.interpreteur.masque.noeuds.fonctions import *
 from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.masque import Masque
 from primaires.format.fonctions import *
 
 NB_MAX_CAR_AIDE_COURTE = 40
 
-class Commande:
+class Commande(Masque):
     
     """Classe-mère de toutes les commandes.
     Elle contient :
@@ -55,6 +56,7 @@ class Commande:
     
     def __init__(self, francais, anglais):
         """Constructeur de la commande"""
+        Masque.__init__(self, francais)
         self.nom_francais = francais
         self.nom_anglais = anglais
         

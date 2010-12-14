@@ -1,4 +1,4 @@
-# -*-coding:Utf-8 -*
+﻿# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -28,33 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe masque détaillée plus bas;"""
+"""Ce fichier définit quelques constantes liées au formattage."""
 
-class Masque:
-    
-    """Classe représentant un masque.
-    
-    """
-    
-    def __init__(self, nom):
-        """Crée un nouveau masque"""
-        self.nom = nom
-        self.type = None
-        self.proprietes = []
-    
-    def valider(self, personnage, dic_masques, commande):
-        """Méthode de validation"""
-        return True
-    
-    def __str__(self):
-        """Affichage du masque"""
-        return self.nom
-    
-    def est_parametre(self):
-        """Return True si ce masque est un paramètre"""
-        return False
-    
-    def afficher(self, personnage):
-        """Retourne un affichage du masque pour le personnage."""
-        return self.nom
-    
+longueur_ligne = 79

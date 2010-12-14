@@ -28,50 +28,45 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe Parametre, détaillée plus bas."""
+"""Fichier contenant des fonctions utiles à l'affichage de l'aide de
+noeuds / masques.
 
-from primaires.interpreteur.commande.commande import Commande
-from primaires.interpreteur.masque.masque import Masque
-from primaires.interpreteur.masque.fonctions import *
+"""
 
-class Parametre(Commande):
-    
-    """Un paramètre est à la fois un masque et une commande.
-    Il possède en effet un nom français et anglais et une arborescence qui lui
-    est propre.
-    En somme, il s'agit d'une sous-commande.
+from textwrap import wrap
+
+from primaires.format.constantes import *
+
+def afficher_aide(personnage, masque_depart, embranchement_fils,
+    explorer=1, dic_masques={}, indentation=0):
+    """Fonction retournant l'aide de masque_depart.
+    Les fils sont déduits de l'embranchement.
+    Le nombre explorer permet de savoir combien de fois on explore
+    récursivement l'arborescence (1 revient à juste le départ et les fils
+    de l'embranchement).
+    dic_masques est le dictionnaire des masques parcourus. Ce paramètre est
+    utile quand l'aide doit être déduite d'une commande partiellement validée.
+    Enfin, indentation est utile pour l'appel récursif, doit être laissé à 0
+    par défaut.
     
     """
+    if not dic_masques: # le dictionnaire des masques n'a pas été précisé
+        dic_masques[masque_depart.nom] = masque_depart
     
-    def __init__(self, francais, anglais):
-        """Constructeur du paramètre"""
-        Commande.__init__(self, francais, anglais)
-        Masque.__init__(self, self.nom_francais)
-        self.nom = self.nom_francais
-        self.tronquer = False
-        self.schema = self.nom_francais
+    # On regroupe les masques dans une chaîne
+    masques = " ".join([masque.nom for masque in dic_masques.values()])
     
-    def __str__(self):
-        """Fonction d'affichage"""
-        return "p" + Commande.__str__(self)
+    if indentation == 0: # c'est la première fois qu'on appelle la fonction
+        chn_aide = "Synopsis : {0}".format(masques)
+    else:
+        chn_aide = masques
     
-    def valider(self, personnage, dic_masques, commande):
-        """Fonction de validation du masque Parametre.
-        Un paramètre se valide si la commande qu'on lui passe débute par un
-        espace puis son nom de paramètre (en fonction de la langue du
-        personnage).
-        
-        """
-        str_commande = liste_vers_chaine(commande)
-        
-        if str_commande.startswith(" "):
-            commande.pop(0)
-            valide = Commande.valider(self, personnage, dic_masques, commande)
-        else:
-            valide = False
-        
-        return valide
+    indentation = len(chn_aide) + 3
     
-    def est_parametre(self):
-        """Return True puisque c'est un paramètre"""
-        return True
+    chn_aide += " - " + ("\n" + indentation * " ").join(wrap(
+            masque_depart.aide_courte, longueur_ligne - indentation))
+    
+    if indentation == 0:
+        chn_aide += "\n"
+    
+    return chn_aide
