@@ -53,3 +53,7 @@ class Masque:
     def est_parametre(self):
         """Return True si ce masque est un paramètre"""
         return False
+    
+    def afficher(self, personnage):
+        """Retourne un affichage du masque pour le personnage."""
+        return self.nom

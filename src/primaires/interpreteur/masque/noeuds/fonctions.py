@@ -59,8 +59,12 @@ def creer_noeud(commande, schema):
             nv_noeud = NoeudMasque(commande, schema)
             if nv_noeud.est_parametre():
                 commande = nv_noeud.masque
-            
-            nv_noeud.suivant = creer_noeud(commande, schema)
+                nv_embranchement = Embranchement()
+                nv_embranchement.ajouter_fils(nv_noeud, commande)
+                nv_noeud.suivant = creer_noeud(commande, schema)
+                nv_noeud = nv_embranchement
+            else:
+                nv_noeud.suivant = creer_noeud(commande, schema)
     
     return nv_noeud
 

@@ -154,3 +154,10 @@ class Commande:
         
         """
         raise NotImplementedError
+    
+    def afficher(self, personnage):
+        """Retourne un affichage de la commande pour le personnage passé en
+        paramètre
+        
+        """
+        return self.nom_francais

@@ -30,6 +30,7 @@
 
 """Fichier contenant le contexte 'personnage:connexion:mode_connecte"""
 
+import traceback
 from collections import OrderedDict
 
 from primaires.interpreteur.contexte import Contexte
@@ -72,11 +73,28 @@ class ModeConnecte(Contexte):
         try:
             valide = commandes.valider(self.pere.joueur, dic_masques, \
                     lst_commande)
-            if not valide:
-                raise ErreurInterpretation("Syntaxe invalide.")
         except ErreurInterpretation as err_int:
             self.pere.joueur.envoyer(str(err_int))
+        except Exception:
+            logger = type(self).importeur.man_logs.get_logger("sup")
+            logger.fatal(
+                    "Exception levée lors de la validation d'une commande.")
+            logger.fatal(traceback.format_exc())
+            self.pere.joueur.envoyer(
+                "|err|Une erreur s'est produite lors du traitement de votre " \
+                "commande.\nLes administrateurs en ont été averti.|ff|")
         else:
-            cle = list(dic_masques.keys())[-1]
-            commande = dic_masques[cle]
-            commande.interpreter(self.pere.joueur, dic_masques)
+            try:
+                cle = list(dic_masques.keys())[-1]
+                commande = dic_masques[cle]
+                commande.interpreter(self.pere.joueur, dic_masques)
+            except Exception:
+                logger = type(self).importeur.man_logs.get_logger("sup")
+                logger.fatal(
+                    "Exception levée lors de l'interprétation d'une commande.")
+                logger.fatal(traceback.format_exc())
+                self.pere.joueur.envoyer(
+                    "|err|Une erreur s'est produite lors du traitement de " \
+                    "votre commande.\nLes administrateurs en ont été " \
+                    "averti.|ff|")
+

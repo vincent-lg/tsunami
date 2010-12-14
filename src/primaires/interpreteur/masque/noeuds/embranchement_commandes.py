@@ -69,6 +69,7 @@ class EmbranchementCommandes(Embranchement):
                 break
         
         if commande:
+            print("On cherche à valider", commande)
             valide = commande.valider(personnage, dic_masques, lst_commande)
         else:
             self.erreur_validation(personnage, dic_masques, lst_commande)
