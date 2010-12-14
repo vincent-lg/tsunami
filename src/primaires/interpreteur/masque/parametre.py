@@ -61,7 +61,7 @@ class Parametre(Masque, Commande):
         personnage).
         
         """
-        str_commande = chaine_vers_liste(commande)
+        str_commande = liste_vers_chaine(commande)
         
         if str_commande.startswith(" "):
             commande.pop(0)
