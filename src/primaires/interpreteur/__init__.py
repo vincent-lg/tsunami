@@ -61,10 +61,11 @@ class Module(BaseModule):
         """
         self.contextes[nouv_contexte.nom] = nouv_contexte
     
-    def ajouter_commande(self, commande, schema):
+    def ajouter_commande(self, commande):
         """Ajoute une commande à l'embranchement"""
         noeud_cmd = NoeudCommande(commande)
-        noeud_cmd.construire_arborescence(schema)
+        for schema in commande.schemas:
+            noeud_cmd.construire_arborescence(schema)
         etendre_arborescence(self.commandes, noeud_cmd, \
                 None, commande)
         print(self.commandes)

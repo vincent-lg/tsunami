@@ -49,3 +49,7 @@ class Masque:
     def __str__(self):
         """Affichage du masque"""
         return self.nom
+    
+    def est_parametre(self):
+        """Return True si ce masque est un paramètre"""
+        return False

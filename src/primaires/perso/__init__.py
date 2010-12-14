@@ -49,16 +49,3 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "perso", "primaire")
     
-    def init(self):
-        """Initialisation du module"""
-        self.importeur.interpreteur.ajouter_masque(MasquePersonne())
-        commande = Commande("regarder", "look")
-        parametre = Parametre("depuis", "from")
-        commande.ajouter_parametre(parametre)
-        schema = "<personne> depuis (<personne> (<personne>))"
-        self.importeur.interpreteur.ajouter_commande(commande, schema)
-        commande = Commande("regarder", "look")
-        parametre = Parametre("depuis", "from")
-        commande.ajouter_parametre(parametre)
-        schema = "depuis (<personne> (<personne>))"
-        self.importeur.interpreteur.ajouter_commande(commande, schema)

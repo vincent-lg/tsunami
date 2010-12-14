@@ -59,6 +59,7 @@ class Commande:
         self.nom_anglais = anglais
         
         self.racine = None
+        self.schemas = []
         self.tronquer = True
         self.parametres = []
         self.delimiteurs = []
@@ -87,6 +88,7 @@ class Commande:
     def ajouter_parametre(self, parametre):
         """Ajoute un paramètre à la commande"""
         self.parametres.append(parametre)
+        self.schemas.append(parametre.schema)
     
     def ajouter_delimiteur(self, delimiteur):
         """Ajoute un délimiteur à la commande"""

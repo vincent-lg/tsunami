@@ -49,6 +49,7 @@ class Parametre(Masque, Commande):
         Masque.__init__(self, self.nom_francais)
         self.nom = self.nom_francais
         self.tronquer = False
+        self.schema = self.nom_francais
     
     def __str__(self):
         """Fonction d'affichage"""
@@ -70,3 +71,7 @@ class Parametre(Masque, Commande):
             valide = False
         
         return valide
+    
+    def est_parametre(self):
+        """Return True puisque c'est un paramètre"""
+        return True

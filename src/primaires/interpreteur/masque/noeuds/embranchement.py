@@ -31,6 +31,8 @@
 """Fichier définissant la classe Embranchement détaillée plus bas."""
 
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
+from primaires.interpreteur.masque.noeuds.exceptions.erreur_interpretation \
+        import ErreurInterpretation
 
 class Embranchement(BaseNoeud):
     """Un noeud embranchement, constitué non pas d'un seul suivant mais de
@@ -76,9 +78,11 @@ class Embranchement(BaseNoeud):
         for fils in self.fils:
             valide = fils.valider(personnage, dic_masques, commande)
             print("On a testé", fils, valide)
-            if valide:
-                fils.commande.interpreter(personnage, dic_masques)
-                break
+            #if valide:
+            #    print("inter", fils, fils.commande)
+            #    c=input()
+            #    fils.commande.interpreter(personnage, dic_masques)
+            break
         
         if not valide:
             self.erreur_validation(personnage, dic_masques, commande)
@@ -87,4 +91,4 @@ class Embranchement(BaseNoeud):
     
     def erreur_validation(self, personnage, dic_masques, lst_commande):
         """Que faire quand l'embranchement n'a pas été validé"""
-        personnage.envoyer("|err|Erreur validation.|ff|")
+        raise ErreurInterpretation("|err|Erreur validation.|ff|")

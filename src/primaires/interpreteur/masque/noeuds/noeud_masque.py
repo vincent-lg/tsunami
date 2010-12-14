@@ -66,7 +66,7 @@ class NoeudMasque(BaseNoeud):
         
         else:
             chevrons = False
-            pos_fin = len(schema) - 1
+            pos_fin = len(schema)
             for delimiteur in delimiteurs:
                 pos = schema.find(delimiteur)
                 if pos >= 0 and pos < pos_fin:
@@ -131,6 +131,15 @@ class NoeudMasque(BaseNoeud):
         while lst_schema:
             lst_schema.pop(0)
         lst_schema += chaine_vers_liste(schema[pos_fin + 1:])
+    
+    @property
+    def masque(self):
+        """Retourne le premier masque"""
+        return self.masques[0]
+    
+    def est_parametre(self):
+        """Retourne True si le premier masque est un paramètre"""
+        return self.masque.est_parametre()
     
     def __str__(self):
         """Méthode d'affichage"""

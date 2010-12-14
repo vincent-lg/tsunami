@@ -34,6 +34,7 @@ Dans ce fichier se trouve la commande même.
 """
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.joueur.commandes.module.liste import PrmListe
 
 class CmdModule(Commande):
     
@@ -41,6 +42,19 @@ class CmdModule(Commande):
     
     """
     
-    def interpreter(self, personnage, dic_masques):
-        """Fonction d'interprétation de la commande."""
-        personnage.envoyer("|rg|Bien joué !|ff|")
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "module", "module")
+        self.aide_courte = "manipulation des modules"
+        self.aide_longue = \
+            "Cette commande permet de manipuler les modules, connaître la " \
+            "liste des modules chargés, en redémarrer certains ou les " \
+            "reconfigurer pendant l'exécution. Cette commande doit être " \
+            "réservée aux administrateurs, ceux ayant un accès aux fichiers " \
+            "de configuration ou au code."
+        
+        # On prépare les différents paramètres de la commande
+        prm_liste = PrmListe()
+        
+        self.ajouter_parametre(prm_liste)
+        print("Commande module:", self)

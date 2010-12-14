@@ -34,6 +34,8 @@ from collections import OrderedDict
 
 from primaires.interpreteur.contexte import Contexte
 from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.noeuds.exceptions.erreur_interpretation \
+        import ErreurInterpretation
 
 
 class ModeConnecte(Contexte):
@@ -67,5 +69,15 @@ class ModeConnecte(Contexte):
         commandes = type(self).importeur.interpreteur.commandes
         dic_masques = OrderedDict()
         lst_commande = chaine_vers_liste(msg)
-        valide = commandes.valider(self.pere.joueur, dic_masques, \
-                lst_commande)
+        try:
+            valide = commandes.valider(self.pere.joueur, dic_masques, \
+                    lst_commande)
+            if not valide:
+                raise ErreurInterpretation("Syntaxe invalide.")
+        except ErreurInterpretation as err_int:
+            self.pere.joueur.envoyer(str(err_int))
+        else:
+            cle = list(dic_masques.keys())[-1]
+            commande = dic_masques[cle]
+            print("On trouve", commande)
+            commande.interpreter(self.pere.joueur, dic_masques)
