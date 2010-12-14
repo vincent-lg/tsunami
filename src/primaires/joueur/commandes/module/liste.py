@@ -49,4 +49,17 @@ class PrmListe(Parametre):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        personnage.envoyer("Ok ! on peut s'entendre.")
+        # On récupère les modules chargés
+        modules = type(self).importeur.modules
+        # On prépare le tableau d'exécution
+        lignes = []
+        for module in modules:
+            lignes.append(
+                "  |rg|{nom}|ff| |bar| {statut}".format(
+                nom=module.nom.ljust(20), statut=module.str_statut.ljust(10)))
+        
+        if lignes:
+            personnage.envoyer("\n".join(sorted(lignes)))
+        else:
+            personnage.envoyer("|att|Aucun module n'est chargé. Ce semble " \
+                "très improbable.|ff|")

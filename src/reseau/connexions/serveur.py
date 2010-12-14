@@ -108,6 +108,8 @@ class ConnexionServeur:
             la fonction s'interrompt et on peut reprendre la main.
         
         """
+        # Booléen qui doit passer à False quand on veut arrêter le serveur
+        self.lance = True
         self.port = port # port sur lequel on va écouter
         self.nb_clients_attente = nb_clients_attente
         self.nb_max_connectes = nb_max_connectes

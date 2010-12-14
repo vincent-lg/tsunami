@@ -58,3 +58,21 @@ class EmbranchementCommandes(Embranchement):
         raise ErreurInterpretation(
                 "|err|Commande invalide (|ff||cmd|{0}|ff||err|).|ff|".format(
                 str_commande))
+    
+    def valider(self, personnage, dic_masques, lst_commande):
+        """Redéfinition de la méthode de validation"""
+        # Dans un premier temps, on s'assure que la commande existe
+        commande = None
+        for fils in self.fils:
+            if fils.commande.valider(personnage, dic_masques, lst_commande):
+                commande = fils
+                break
+        
+        if commande:
+            valide = commande.valider(personnage, dic_masques, lst_commande)
+        else:
+            self.erreur_validation(personnage, dic_masques, lst_commande)
+            valide = False
+        
+        return valide
+

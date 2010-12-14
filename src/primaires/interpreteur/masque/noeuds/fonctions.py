@@ -59,7 +59,6 @@ def creer_noeud(commande, schema):
             nv_noeud = NoeudMasque(commande, schema)
             if nv_noeud.est_parametre():
                 commande = nv_noeud.masque
-                print("noucmd", commande)
             
             nv_noeud.suivant = creer_noeud(commande, schema)
     

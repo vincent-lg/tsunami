@@ -28,32 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'module' et ses sous-commandes.
+"""Package contenant la commande 'quitter' et ses sous-commandes.
 Dans ce fichier se trouve la commande même.
 
 """
 
 from primaires.interpreteur.commande.commande import Commande
-from primaires.joueur.commandes.module.liste import PrmListe
 
-class CmdModule(Commande):
+class CmdQuitter(Commande):
     
-    """Commande 'module'.
+    """Commande 'quitter'.
     
     """
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "module", "module")
-        self.aide_courte = "manipulation des modules"
+        Commande.__init__(self, "quitter", "quit")
+        self.aide_courte = "se déconnecte du MUD"
         self.aide_longue = \
-            "Cette commande permet de manipuler les modules, connaître la " \
-            "liste des modules chargés, en redémarrer certains ou les " \
-            "reconfigurer pendant l'exécution. Cette commande doit être " \
-            "réservée aux administrateurs, ceux ayant un accès aux fichiers " \
-            "de configuration ou au code."
-        
-        # On prépare les différents paramètres de la commande
-        prm_liste = PrmListe()
-        
-        self.ajouter_parametre(prm_liste)
+            "Cette commande permet de se déconnecter du jeu. Le personnage " \
+            "que vous manipulez disparaîtra de l'univers et n'évoluera pas " \
+            "pendant votre absence."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        personnage.envoyer("A bientôt !")
+        # On déconnecte le joueur
+        personnage.instance_connexion.deconnecter(
+                "Déconnexion demandée par le client.")

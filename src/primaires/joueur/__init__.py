@@ -65,8 +65,11 @@ class Module(BaseModule):
         # On ajoute les commandes du module
         self.commandes = [
             commandes.module.CmdModule(),
+            commandes.shutdown.CmdShutdown(),
+            commandes.quitter.CmdQuitter(),
         ]
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
-
+        
+        BaseModule.init(self)

@@ -38,6 +38,7 @@ from primaires.interpreteur.masque.noeuds.embranchement_commandes import \
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
 from primaires.interpreteur.masque.noeuds.noeud_commande import NoeudCommande
 from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.commande.commande import Commande
 
 class Module(BaseModule):
     """Cette classe est la classe gérant tous les interpréteurs.
@@ -49,6 +50,7 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "interpreteur", "primaire")
         Contexte.importeur = importeur
+        Commande.importeur = importeur
         BaseNoeud.importeur = importeur
         self.contextes = {} # Dictionnaire des contextes
         self.commandes = EmbranchementCommandes()
@@ -68,7 +70,6 @@ class Module(BaseModule):
             noeud_cmd.construire_arborescence(schema)
         etendre_arborescence(self.commandes, noeud_cmd, \
                 None, commande)
-        print(self.commandes)
     
     def ajouter_masque(self, masque):
         """Méthode d'ajout d'un masque"""

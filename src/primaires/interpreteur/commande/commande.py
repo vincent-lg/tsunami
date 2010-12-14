@@ -137,8 +137,11 @@ class Commande:
         
         str_commande = str_commande[:fin_pos]
         for nom_com in self.noms_commandes:
-            if nom_com.startswith(str_commande):
+            if self.tronquer and nom_com.startswith(str_commande):
                 commande[:] = commande[fin_pos:]
+                valide = True
+                break
+            elif nom_com == str_commande:
                 valide = True
                 break
             else:

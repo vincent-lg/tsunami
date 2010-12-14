@@ -28,32 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'module' et ses sous-commandes.
+"""Package contenant la commande 'shutdown' et ses sous-commandes.
 Dans ce fichier se trouve la commande même.
 
 """
 
 from primaires.interpreteur.commande.commande import Commande
-from primaires.joueur.commandes.module.liste import PrmListe
 
-class CmdModule(Commande):
+class CmdShutdown(Commande):
     
-    """Commande 'module'.
+    """Commande 'shutdown'.
     
     """
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "module", "module")
-        self.aide_courte = "manipulation des modules"
+        Commande.__init__(self, "shutdown", "shutdown")
+        self.tronquer = False
+        self.aide_courte = "arrête instantanément le serveur"
         self.aide_longue = \
-            "Cette commande permet de manipuler les modules, connaître la " \
-            "liste des modules chargés, en redémarrer certains ou les " \
-            "reconfigurer pendant l'exécution. Cette commande doit être " \
-            "réservée aux administrateurs, ceux ayant un accès aux fichiers " \
-            "de configuration ou au code."
+            "Cette commande arrête instantanément le serveur. Si aucune " \
+            "procédure extérieure n'est là pour relancer le MUD, il restera " \
+            "arrêté. N'utiliser cette commande qu'en cas de bug répété, " \
+            "corruption de données ou modification du corps. En temps " \
+            "normal, redémarrer les modules suffit à intégrer de nouvelles " \
+            "modifications et évite de déconnecter tous les joueurs."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        # On récupère le serveur
+        serveur = type(self).importeur.serveur
+        # On déconnecte tous les joueurs
+        for instance in type(self).importeur.connex.instances.values():
+            instance.envoyer("|att|Arrêt du MUD en cours, vous allez être " \
+                    "déconnecté...|ff|")
+            instance.deconnecter("Arrêt du MUD")
         
-        # On prépare les différents paramètres de la commande
-        prm_liste = PrmListe()
-        
-        self.ajouter_parametre(prm_liste)
+        serveur.lance = False

@@ -76,13 +76,10 @@ class Embranchement(BaseNoeud):
         """
         valide = False
         for fils in self.fils:
-            valide = fils.valider(personnage, dic_masques, commande)
-            print("On a testé", fils, valide)
-            #if valide:
-            #    print("inter", fils, fils.commande)
-            #    c=input()
-            #    fils.commande.interpreter(personnage, dic_masques)
-            break
+            valide = fils.valider(personnage, dic_masques, commande,
+                    tester_fils)
+            if valide:
+                break
         
         if not valide:
             self.erreur_validation(personnage, dic_masques, commande)

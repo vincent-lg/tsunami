@@ -79,5 +79,4 @@ class ModeConnecte(Contexte):
         else:
             cle = list(dic_masques.keys())[-1]
             commande = dic_masques[cle]
-            print("On trouve", commande)
             commande.interpreter(self.pere.joueur, dic_masques)

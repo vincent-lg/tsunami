@@ -82,9 +82,9 @@ from bases.logs import man_logs
 from bases.parid import parid
 from corps.config import pere
 
-# Définition de la fonction appelée quand on arrête le MUD avec CTRL + C
+# Définition des fonctions appelées pour arrêter le MUD
 # Le lancement du MUD se trouve sous la fonction
-def arreter_mud(signal, frame):
+def arreter_MUD():
     """Fonction appelée pour arrêter le MUD proprement"""
     global importeur, log
     importeur.tout_detruire()
@@ -92,9 +92,13 @@ def arreter_mud(signal, frame):
     log.info("Fin de la session\n\n\n")
     sys.exit(0)
 
+def signal_arreter(signal, frame):
+    """Redirige vers arreter_MUD"""
+    arreter_MUD()
+
 # On relie cette fonction avec la levée de signal SIGINT et SIGTERM
-signal.signal(signal.SIGINT, arreter_mud)
-signal.signal(signal.SIGTERM, arreter_mud)
+signal.signal(signal.SIGINT, signal_arreter)
+signal.signal(signal.SIGTERM, signal_arreter)
 
 ## Configuration du projet et lancement du MUD
 # On crée un analyseur de la ligne de commande
@@ -167,7 +171,9 @@ serveur.callbacks["reception"].args = (serveur, importeur, log)
 # jusqu'à l'arrêt du MUD. De cette manière, on garde le contrôle total
 # sur le flux d'instructions.
 
-while True:
+while serveur.lance:
     importeur.boucle()
     serveur.verifier_connexions()
     serveur.verifier_receptions()
+
+arreter_MUD()
