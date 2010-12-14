@@ -30,11 +30,18 @@
 
 """Fichier contenant le contexte 'personnage:connexion:mode_connecte"""
 
+import traceback
+from collections import OrderedDict
+
 from primaires.interpreteur.contexte import Contexte
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.noeuds.exceptions.erreur_interpretation \
+        import ErreurInterpretation
+
 
 class ModeConnecte(Contexte):
     """Le contexte de mode connecté.
-    C'est une petite instution à lui tout seul.
+    C'est une petite institution à lui tout seul.
     A partir du moment où un joueur se connecte, il est connecté à ce contexte.
     Les commandes se trouvent définies dans ce contexte. En revanche, d'autres
     contextes peuvent venir se greffer par-dessus celui-ci. Mais il reste
@@ -60,4 +67,34 @@ class ModeConnecte(Contexte):
     
     def interpreter(self, msg):
         """Méthode d'interprétation"""
-        pass
+        commandes = type(self).importeur.interpreteur.commandes
+        dic_masques = OrderedDict()
+        lst_commande = chaine_vers_liste(msg)
+        try:
+            valide = commandes.valider(self.pere.joueur, dic_masques, \
+                    lst_commande)
+        except ErreurInterpretation as err_int:
+            self.pere.joueur.envoyer(str(err_int))
+        except Exception:
+            logger = type(self).importeur.man_logs.get_logger("sup")
+            logger.fatal(
+                    "Exception levée lors de la validation d'une commande.")
+            logger.fatal(traceback.format_exc())
+            self.pere.joueur.envoyer(
+                "|err|Une erreur s'est produite lors du traitement de votre " \
+                "commande.\nLes administrateurs en ont été averti.|ff|")
+        else:
+            try:
+                cle = list(dic_masques.keys())[-1]
+                commande = dic_masques[cle]
+                commande.interpreter(self.pere.joueur, dic_masques)
+            except Exception:
+                logger = type(self).importeur.man_logs.get_logger("sup")
+                logger.fatal(
+                    "Exception levée lors de l'interprétation d'une commande.")
+                logger.fatal(traceback.format_exc())
+                self.pere.joueur.envoyer(
+                    "|err|Une erreur s'est produite lors du traitement de " \
+                    "votre commande.\nLes administrateurs en ont été " \
+                    "averti.|ff|")
+

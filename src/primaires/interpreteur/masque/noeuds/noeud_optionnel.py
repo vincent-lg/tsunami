@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -27,57 +27,63 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import smtpd
-import asyncore
-import email
-import time
 
-from tests import EchecTest
+"""Fichier définissant la classe NoeudOptionnel détaillée plus bas;"""
 
-class Smtp(smtpd.SMTPServer):
-    """Classe représentant un serveur SMTP. C'est un
-    serveur ultra-basique qui se contente de reçevoir
-    les mails et de les mettres dans une listes
+from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
+
+class NoeudOptionnel(BaseNoeud):
+    
+    """Cette classe contient un noeud optionnel.
+    Le noeud masque considéré comme "optionnel" est contenu dans l'attribut
+    'interne'.
     
     """
     
-    #Listes temporaires des messages reçu
-    msgs = []
-    #Listes des messages reçu
-    msgs_all = []
+    def __init__(self, interne, suivant):
+        """Constructeur du noeud optionnel"""
+        BaseNoeud.__init__(self)
+        self.interne = interne
+        self.suivant = suivant
     
-    def __init__(self):
-        """Lance le serveur"""
-        smtpd.SMTPServer.__init__(self,('',25), None)
+    def _get_reste(self):
+        """Retourne le reste.
+        On le demande récursivement au noeud optionnel jusqu'à tomber sur un
+        noeud masque.
+        
+        """
+        if self.optionnel:
+            reste = self.optionnel.reste
+        else:
+            reste = ""
+        
+        return reste
     
-    def __del__(self):
-        """Stop le serveur"""
-        self.close()
+    reste = property(_get_reste)
     
-    def process_message(self, peer, mailfrom, rcpttos, data):
-        """Callback appelé quand un message est reçu"""
-        mail = data.encode() + \
-            email.message_from_string(data).get_payload(decode=True)
-        self.msgs.append(mail)
-        self.msgs_all.append(mail)
+    def __str__(self):
+        """Méthode d'affichage"""
+        msg = "opt("
+        if self.interne:
+            msg += str(self.interne)
+        
+        msg += ")"
+        if self.suivant:
+            msg += " : " + str(self.suivant)
+        
+        return msg
     
-    def attendre_message_de(self,timeout,mail):
-        """Attend un message provenant d'un email donné"""
+    def valider(self, personnage, dic_masques, commande, tester_fils):
+        """Valide un noeud optionnel.
+        Un noeud optionnel se valide automatiquement et passe le relais à ses
+        fils.
         
-        mail = mail.lower()
+        """
+        self.interne.valider(personnage, commande)
+        if self.suivant and tester_fils:
+            valide = self.suivant.valider(personnage, dic_masques, commande)
+        else:
+            valide = True
         
-        time.sleep(0.1)
-        
-        self.msgs = []
-        
-        debut = time.time()
-        while (debut + timeout) > time.time():
-            asyncore.loop(timeout=0.5,count=1)
-            while len(self.msgs)>0:
-                message = self.msgs.pop()
-                try:
-                    message.index(mail.encode())
-                    return message
-                except ValueError:
-                    pass
+        return valide
 

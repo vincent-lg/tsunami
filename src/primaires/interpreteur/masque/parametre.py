@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -27,57 +27,51 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import smtpd
-import asyncore
-import email
-import time
 
-from tests import EchecTest
+"""Fichier définissant la classe Parametre, détaillée plus bas."""
 
-class Smtp(smtpd.SMTPServer):
-    """Classe représentant un serveur SMTP. C'est un
-    serveur ultra-basique qui se contente de reçevoir
-    les mails et de les mettres dans une listes
+from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+
+class Parametre(Commande):
+    
+    """Un paramètre est à la fois un masque et une commande.
+    Il possède en effet un nom français et anglais et une arborescence qui lui
+    est propre.
+    En somme, il s'agit d'une sous-commande.
     
     """
     
-    #Listes temporaires des messages reçu
-    msgs = []
-    #Listes des messages reçu
-    msgs_all = []
+    def __init__(self, francais, anglais):
+        """Constructeur du paramètre"""
+        Commande.__init__(self, francais, anglais)
+        Masque.__init__(self, self.nom_francais)
+        self.nom = self.nom_francais
+        self.tronquer = False
+        self.schema = self.nom_francais
     
-    def __init__(self):
-        """Lance le serveur"""
-        smtpd.SMTPServer.__init__(self,('',25), None)
+    def __str__(self):
+        """Fonction d'affichage"""
+        return "p" + Commande.__str__(self)
     
-    def __del__(self):
-        """Stop le serveur"""
-        self.close()
+    def valider(self, personnage, dic_masques, commande):
+        """Fonction de validation du masque Parametre.
+        Un paramètre se valide si la commande qu'on lui passe débute par un
+        espace puis son nom de paramètre (en fonction de la langue du
+        personnage).
+        
+        """
+        str_commande = liste_vers_chaine(commande)
+        
+        if str_commande.startswith(" "):
+            commande.pop(0)
+            valide = Commande.valider(self, personnage, dic_masques, commande)
+        else:
+            valide = False
+        
+        return valide
     
-    def process_message(self, peer, mailfrom, rcpttos, data):
-        """Callback appelé quand un message est reçu"""
-        mail = data.encode() + \
-            email.message_from_string(data).get_payload(decode=True)
-        self.msgs.append(mail)
-        self.msgs_all.append(mail)
-    
-    def attendre_message_de(self,timeout,mail):
-        """Attend un message provenant d'un email donné"""
-        
-        mail = mail.lower()
-        
-        time.sleep(0.1)
-        
-        self.msgs = []
-        
-        debut = time.time()
-        while (debut + timeout) > time.time():
-            asyncore.loop(timeout=0.5,count=1)
-            while len(self.msgs)>0:
-                message = self.msgs.pop()
-                try:
-                    message.index(mail.encode())
-                    return message
-                except ValueError:
-                    pass
-
+    def est_parametre(self):
+        """Return True puisque c'est un paramètre"""
+        return True

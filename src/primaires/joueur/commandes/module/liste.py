@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -27,57 +27,39 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import smtpd
-import asyncore
-import email
-import time
 
-from tests import EchecTest
+"""Fichier contenant le paramètre 'liste' de la commande 'module'."""
 
-class Smtp(smtpd.SMTPServer):
-    """Classe représentant un serveur SMTP. C'est un
-    serveur ultra-basique qui se contente de reçevoir
-    les mails et de les mettres dans une listes
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmListe(Parametre):
+    
+    """Commande 'module liste'.
     
     """
     
-    #Listes temporaires des messages reçu
-    msgs = []
-    #Listes des messages reçu
-    msgs_all = []
-    
     def __init__(self):
-        """Lance le serveur"""
-        smtpd.SMTPServer.__init__(self,('',25), None)
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "liste", "list")
+        self.aide_courte = "affiche la liste des modules chargés"
+        self.aide_longue = \
+            "Affiche la liste des modules actuellement chargés et un petit " \
+            "descriptif sur chacun. Si vous déchargez un module, il " \
+            "n'apparaîtra plus dans cette liste."
     
-    def __del__(self):
-        """Stop le serveur"""
-        self.close()
-    
-    def process_message(self, peer, mailfrom, rcpttos, data):
-        """Callback appelé quand un message est reçu"""
-        mail = data.encode() + \
-            email.message_from_string(data).get_payload(decode=True)
-        self.msgs.append(mail)
-        self.msgs_all.append(mail)
-    
-    def attendre_message_de(self,timeout,mail):
-        """Attend un message provenant d'un email donné"""
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        # On récupère les modules chargés
+        modules = type(self).importeur.modules
+        # On prépare le tableau d'exécution
+        lignes = []
+        for module in modules:
+            lignes.append(
+                "  |rg|{nom}|ff| |bar| {statut}".format(
+                nom=module.nom.ljust(20), statut=module.str_statut.ljust(10)))
         
-        mail = mail.lower()
-        
-        time.sleep(0.1)
-        
-        self.msgs = []
-        
-        debut = time.time()
-        while (debut + timeout) > time.time():
-            asyncore.loop(timeout=0.5,count=1)
-            while len(self.msgs)>0:
-                message = self.msgs.pop()
-                try:
-                    message.index(mail.encode())
-                    return message
-                except ValueError:
-                    pass
-
+        if lignes:
+            personnage.envoyer("\n".join(sorted(lignes)))
+        else:
+            personnage.envoyer("|att|Aucun module n'est chargé. Ce semble " \
+                "très improbable.|ff|")

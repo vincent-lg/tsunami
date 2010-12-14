@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -27,57 +27,20 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import smtpd
-import asyncore
-import email
-import time
 
-from tests import EchecTest
+"""Fichier définissant la classe Delimiteur, détaillée plus bas."""
 
-class Smtp(smtpd.SMTPServer):
-    """Classe représentant un serveur SMTP. C'est un
-    serveur ultra-basique qui se contente de reçevoir
-    les mails et de les mettres dans une listes
+from primaires.interpreteur.masque.masque import Masque
+
+class Delimiteur(Masque):
+    
+    """Un délimiteur est un masque chargé de délimiter le masque précédent.
+    Ce peut être, par exemple, une virgule séparant deux masques qui
+    pourraient être constitués de plusieurs mots.
     
     """
     
-    #Listes temporaires des messages reçu
-    msgs = []
-    #Listes des messages reçu
-    msgs_all = []
-    
-    def __init__(self):
-        """Lance le serveur"""
-        smtpd.SMTPServer.__init__(self,('',25), None)
-    
-    def __del__(self):
-        """Stop le serveur"""
-        self.close()
-    
-    def process_message(self, peer, mailfrom, rcpttos, data):
-        """Callback appelé quand un message est reçu"""
-        mail = data.encode() + \
-            email.message_from_string(data).get_payload(decode=True)
-        self.msgs.append(mail)
-        self.msgs_all.append(mail)
-    
-    def attendre_message_de(self,timeout,mail):
-        """Attend un message provenant d'un email donné"""
-        
-        mail = mail.lower()
-        
-        time.sleep(0.1)
-        
-        self.msgs = []
-        
-        debut = time.time()
-        while (debut + timeout) > time.time():
-            asyncore.loop(timeout=0.5,count=1)
-            while len(self.msgs)>0:
-                message = self.msgs.pop()
-                try:
-                    message.index(mail.encode())
-                    return message
-                except ValueError:
-                    pass
-
+    def __init__(self, delimiteur):
+        """Constructeur du délimiteur"""
+        Masque.__init__(self)
+        self.nom = delimiteur

@@ -384,4 +384,12 @@ class Importeur:
             getattr(self, nom).init()
         else:
             print("{0} n'existe pas ou n'est pas configuré.".format(nom))
-
+    
+    @property
+    def modules(self):
+        """Retourne un tuple contenant les modules chargés"""
+        modules = []
+        for module in self.__dict__.values():
+            modules.append(module)
+        
+        return tuple(modules)

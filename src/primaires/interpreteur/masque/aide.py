@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -27,57 +27,46 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import smtpd
-import asyncore
-import email
-import time
 
-from tests import EchecTest
+"""Fichier contenant des fonctions utiles à l'affichage de l'aide de
+noeuds / masques.
 
-class Smtp(smtpd.SMTPServer):
-    """Classe représentant un serveur SMTP. C'est un
-    serveur ultra-basique qui se contente de reçevoir
-    les mails et de les mettres dans une listes
+"""
+
+from textwrap import wrap
+
+from primaires.format.constantes import *
+
+def afficher_aide(personnage, masque_depart, embranchement_fils,
+    explorer=1, dic_masques={}, indentation=0):
+    """Fonction retournant l'aide de masque_depart.
+    Les fils sont déduits de l'embranchement.
+    Le nombre explorer permet de savoir combien de fois on explore
+    récursivement l'arborescence (1 revient à juste le départ et les fils
+    de l'embranchement).
+    dic_masques est le dictionnaire des masques parcourus. Ce paramètre est
+    utile quand l'aide doit être déduite d'une commande partiellement validée.
+    Enfin, indentation est utile pour l'appel récursif, doit être laissé à 0
+    par défaut.
     
     """
+    if not dic_masques: # le dictionnaire des masques n'a pas été précisé
+        dic_masques[masque_depart.nom] = masque_depart
     
-    #Listes temporaires des messages reçu
-    msgs = []
-    #Listes des messages reçu
-    msgs_all = []
+    # On regroupe les masques dans une chaîne
+    masques = " ".join([masque.nom for masque in dic_masques.values()])
     
-    def __init__(self):
-        """Lance le serveur"""
-        smtpd.SMTPServer.__init__(self,('',25), None)
+    if indentation == 0: # c'est la première fois qu'on appelle la fonction
+        chn_aide = "Synopsis : {0}".format(masques)
+    else:
+        chn_aide = masques
     
-    def __del__(self):
-        """Stop le serveur"""
-        self.close()
+    indentation = len(chn_aide) + 3
     
-    def process_message(self, peer, mailfrom, rcpttos, data):
-        """Callback appelé quand un message est reçu"""
-        mail = data.encode() + \
-            email.message_from_string(data).get_payload(decode=True)
-        self.msgs.append(mail)
-        self.msgs_all.append(mail)
+    chn_aide += " - " + ("\n" + indentation * " ").join(wrap(
+            masque_depart.aide_courte, longueur_ligne - indentation))
     
-    def attendre_message_de(self,timeout,mail):
-        """Attend un message provenant d'un email donné"""
-        
-        mail = mail.lower()
-        
-        time.sleep(0.1)
-        
-        self.msgs = []
-        
-        debut = time.time()
-        while (debut + timeout) > time.time():
-            asyncore.loop(timeout=0.5,count=1)
-            while len(self.msgs)>0:
-                message = self.msgs.pop()
-                try:
-                    message.index(mail.encode())
-                    return message
-                except ValueError:
-                    pass
-
+    if indentation == 0:
+        chn_aide += "\n"
+    
+    return chn_aide

@@ -141,6 +141,10 @@ class ManLogs:
         logger.verif_rep()
         self.loggers[nom_logger] = logger
         return logger
+    
+    def get_logger(self, nom_logger):
+        """Retourne le logger dont le nom est précisé"""
+        return self.loggers[nom_logger]
 
 # On crée le 'man_logs' (gestionnaire des loggers)
 # Cet objet sera celui directement manipulé par le corps ou les modules

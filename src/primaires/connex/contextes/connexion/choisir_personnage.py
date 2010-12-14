@@ -61,59 +61,63 @@ class ChoisirPersonnage(Contexte):
     def accueil(self):
         """Message d'accueil"""
         ret = \
-            "\n|tit|------= Choix du personnage =-----|ff|\n" \
-            "Entrez un des |ent|nombres|ff| ou |ent|lettres|ff| ci-dessous :\n"
-        
-        # On va calculer la marge gauche
-        m_g = 1
+            "\n|tit|------= Choix du personnage =------|ff|\n" \
+            "Faites votre |ent|choix|ff| parmi la liste ci-dessous :\n"
         
         for i, joueur in enumerate(self.pere.compte.joueurs.values()):
-            no = "|cmd|" + str(i + 1) + "|ff|"
-            ret += "\n"
-            ret += str(no).rjust(len(no) + m_g)
-            ret += " pour se connecter avec le joueur |ent|{0}|ff|".format( \
-                    joueur.nom)
+            no = " |cmd|" + str(i + 1) + "|ff|"
+            ret += "\n" + no + " pour jouer |ent|{0}|ff|".format( \
+                joueur.nom.capitalize())
         
         if len(self.pere.compte.joueurs) > 0:
             # on saute deux lignes
             ret += "\n\n"
         
-        ret += "|cmd|{C}|ff| pour |ent|créer|ff| un nouveau " \
+        ret += " |cmd|{C}|ff| pour |ent|créer|ff| un nouveau " \
                 "personnage\n".format(C = cmd_creer.upper())
         if len(self.pere.compte.joueurs) > 0:
             # on propose de supprimer un des joueurs créé
-            ret += "|cmd|{S}|ff| pour |ent|supprimer|ff| un personnage de ce " \
-                    "compte\n".format(S = cmd_supprimer.upper())
+            ret += " |cmd|{S}|ff| pour |ent|supprimer|ff| un personnage de " \
+                "ce compte\n".format(S = cmd_supprimer.upper())
         
-        ret += "|cmd|{Q}|ff| pour |ent|quitter|ff| le jeu".format( \
+        ret += " |cmd|{Q}|ff| pour |ent|quitter|ff| le jeu".format( \
                 Q = cmd_quitter.upper())
         return ret
     
     def interpreter(self, msg):
         """Méthode d'interprétation"""
+        cfg_connex = type(self).importeur.anaconf.get_config("connex")
+        nb_perso_max = cfg_connex.nb_perso_max
+        
         msg = msg.lower()
         if msg.isdecimal():
             # On le convertit
             choix = int(msg) - 1
             # On vérifie qu'il est bien dans la liste des comptes
             if choix < 0 or choix >= len(self.pere.compte.joueurs):
-                self.pere.envoyer("|err|Aucun numéro ne correspond à ce " \
-                        "joueur.|ff|")
+                self.pere.envoyer("|err|Aucun personnage ne correspond à ce " \
+                        "numéro.|ff|")
             else:
                 # on se connecte sur le joueur
                 IDs_joueurs = list(self.pere.compte.joueurs.keys())
                 joueur = self.pere.compte.joueurs[IDs_joueurs[choix]]
                 self.pere.joueur = joueur
+                joueur.compte = self.pere.compte
+                joueur.instance_connexion = self.pere
                 self.migrer_contexte("personnage:connexion:mode_connecte")
         elif msg == cmd_creer:
-            # on redirige vers la création de compte
-            self.migrer_contexte("personnage:creation:nouveau_nom")
+            if len(self.pere.compte.joueurs) >= nb_perso_max and nb_perso_max != -1:
+                self.pere.envoyer("|err|Vous ne pouvez avoir plus de {0} " \
+                        "personnages.|ff|".format(nb_perso_max))
+            else:
+                # On redirige vers la création de compte
+                self.migrer_contexte("personnage:creation:nouveau_nom")
         elif msg == cmd_supprimer:
             # On redirige vers la suppression de comptes
             pass
         elif msg == cmd_quitter:
             # On déconnecte le joueur
-            self.pere.envoyer("|rg|A bientôt !|ff|")
+            self.pere.envoyer("\nA bientôt !")
             self.pere.deconnecter("Déconnexion demandée par le client")
         else:
-            self.pere.envoyer("|att|Commande invalide.|ff|")
+            self.pere.envoyer("|err|Votre choix est invalide.|ff|")

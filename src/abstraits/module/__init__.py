@@ -140,4 +140,8 @@ class BaseModule:
     def boucle(self):
         """Méthode appelée à chaque tour de boucle synchro."""
         pass
-
+    
+    @property
+    def str_statut(self):
+        """Retourne le statut sous la forme d'une chaîne"""
+        return STATUTS[self.statut]

@@ -32,6 +32,13 @@
 
 from abstraits.module import *
 from primaires.interpreteur.contexte import Contexte
+from primaires.interpreteur.masque.noeuds.fonctions import *
+from primaires.interpreteur.masque.noeuds.embranchement_commandes import \
+        EmbranchementCommandes
+from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
+from primaires.interpreteur.masque.noeuds.noeud_commande import NoeudCommande
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.commande.commande import Commande
 
 class Module(BaseModule):
     """Cette classe est la classe gérant tous les interpréteurs.
@@ -42,8 +49,12 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "interpreteur", "primaire")
-        self.contextes = {} # Dictionnaire des contextes
         Contexte.importeur = importeur
+        Commande.importeur = importeur
+        BaseNoeud.importeur = importeur
+        self.contextes = {} # Dictionnaire des contextes
+        self.commandes = EmbranchementCommandes()
+        self.masques = {}
     
     def ajouter_contexte(self, nouv_contexte):
         """Ajoute le contexte dans le dictionnaire self.contextes.
@@ -51,3 +62,19 @@ class Module(BaseModule):
         
         """
         self.contextes[nouv_contexte.nom] = nouv_contexte
+    
+    def ajouter_commande(self, commande):
+        """Ajoute une commande à l'embranchement"""
+        noeud_cmd = NoeudCommande(commande)
+        for schema in commande.schemas:
+            noeud_cmd.construire_arborescence(schema)
+        etendre_arborescence(self.commandes, noeud_cmd, \
+                None, commande)
+    
+    def ajouter_masque(self, masque):
+        """Méthode d'ajout d'un masque"""
+        self.masques[masque.nom] = masque
+    
+    def get_masque(self, nom_masque):
+        """Retourne le masque portant le nom correspondant"""
+        return self.masques[nom_masque]

@@ -32,12 +32,21 @@
 une hiérarchie des packages présents.
 
 Packages :
-- abstraits : des classes abstraites, héritées dans le corps et les modules
-- bases : des classes de base, utiles au corps
-- primaires : package contenant les modules primaires sous la forme eux-mêmes de
-              packages
-- reseau : package consacré au réseau, architecture de haut niveau pour
-           interagir avec les sockets et récupérer les messages en attente
-- secondaires : les modules secondaires, sous la forme de packages
+-   abstraits : des classes abstraites, héritées dans le corps et les modules
+-   bases : des classes de base, utiles au corps et prêtes à l'emplois
+-   corps : contient des informations sur le corps, comme la configuration par
+    défaut
+-   primaires : package des modules primaires eux-mêmes étant des
+    sous-paquets
+-   reseau : package consacré au réseau, architecture de haut niveau pour
+    interagir avec les sockets et récupérer les messages en attente
+-   secondaires : les modules secondaires, sous la forme de sous-paquets
+
+Consultez le fichier 'kassie.py' si vous découvrez le projet.
+Ce fichier est "le maître" du projet, c'est lui qu'il faut lancer si vous
+voulez lancer le serveur et c'est lui qui peut donner une vision globale de
+l'ensemble du projet.
+
+Référez-vous au site officiel www.kassie.fr pour plus d'informations.
 
 """

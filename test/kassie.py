@@ -31,17 +31,19 @@ import os
 import time
 import signal
 import shutil
+import subprocess
+import re
 
 #Liste permettant le lancement de Kassie avec les bons arguments
 arg_kassie = ["python3","kassie.py", \
     "-p","14000", \
-    "-c","../test/{0}/config", \
-    "-e","../test/{0}/enregistrement", \
-    "-l","../test/{0}/log"]
+    "-c","{0}" + os.sep + "config", \
+    "-e","{0}" + os.sep + "enregistrement", \
+    "-l","{0}" + os.sep + "log"]
 
 #Effectue la correspondance entre l'alias configurations et leur fichier
 correspondance = { \
-    "email" : "email/serveur.cfg", \
+    "email" : "email" + os.sep + "serveur.cfg", \
     "globale" : "kassie.cfg", \
     }
 
@@ -55,13 +57,12 @@ class Kassie():
     def __init__(self,rep_kassie):
         """Construction des arguments pour la commande
         et création du dossier de kassie en le lançant"""
-        self.pid = None
+        self.process = None
         self.rep_kassie = rep_kassie
         self.arg_kassie = []
         for arg in arg_kassie:
             self.arg_kassie.append(arg.format(rep_kassie))
         self.start()
-        time.sleep(0.1)
         self.stop()
     
     def __del__(self):
@@ -72,31 +73,32 @@ class Kassie():
         """Changer une option dans un fichier de configuration"""
         # Si on a une chaine de chractère on rajoute des "
         if isinstance(val,str):
-            val = "\\\"" + val + "\\\""
-        #Effectue un sed pour changer la valeur(pas beau)
-        cmd = "sed -i \"s/^{0} *=.*$/{0} = {1}/\" {2}".format(var,val,
-            self.rep_kassie + "/config/" + correspondance[config])
-        os.system(cmd)
+            val = "\"" + val + "\""
+        path = self.rep_kassie + os.sep + "config" + os.sep + \
+            correspondance[config]
+        text = open(path,'r').read()
+        text = re.sub("{0} *=.*".format(var, val),"{0} = {1}".format(var, val),text)
+        open(path,'w').write(text)
     
     def start(self):
         """Démarre le serveur"""
-        if self.pid == None:
-            if os.path.exists(self.rep_kassie + "/enregistrement"):
-                shutil.rmtree(self.rep_kassie+ "/enregistrement")
-            pid = os.fork()
-            if pid == 0:
-                c2pread, c2pwrite = os.pipe()
-                os.close(1)
-                os.dup(c2pwrite)
-                os.chdir("../src")
-                os.execvp(self.arg_kassie[0],self.arg_kassie)
-                exit()
-            else:
-                self.pid = pid
-                time.sleep(1)
+        if os.path.exists(self.rep_kassie + os.sep + "enregistrement"):
+            shutil.rmtree(self.rep_kassie + os.sep + "enregistrement")
+        if os.path.exists(self.rep_kassie + os.sep + "log"):
+            shutil.rmtree(self.rep_kassie + os.sep + "log")
+        path,_,_ = os.getcwd().rpartition(os.sep)
+        path += "/src"
+        self.process = subprocess.Popen(self.arg_kassie,
+            stdout=subprocess.PIPE, \
+            stderr=subprocess.PIPE, \
+            cwd=path)
+        time.sleep(0.2)
+    
+    def get_retours(self):
+        return self.process.communicate()
     
     def stop(self):
         """Arrète le serveur"""
-        if self.pid != None:
-            os.kill(self.pid,signal.SIGKILL)
-            self.pid = None
+        if self.process.poll() == None:
+            self.process.kill()
+            self.process.wait()

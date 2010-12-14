@@ -32,6 +32,42 @@
 
 Vous pouvez le renommer en fonction du nom choisi de votre projet.
 
+Ce fichier contient la configuration, l'initialisation, le lancement et
+l'arrêt de Kassie. Survolez-le pour vous faire une idée des différentes
+étapes :
+1)  Fonction appelée lors de l'arrêt du MUD
+    Elle doit être défini en tête du fichier mais bien entendu, c'est à la
+    toute fin de l'exécution qu'elle est appelée.
+    Elle se charge d'arrêter proprement le MUD en déchargeant ses modules.
+2)  Configuration du projet
+    a)  On crée un parser de la ligne de commande qui va analyser les
+        paramètres passés au lancement du projet
+    b)  On configure 'anaconf', l'analyseur des fichiers de configuration et
+        on en profite pour charger la configuration globale du projet
+    c)  On configure 'man_logs', le gestionnaire des logs et on crée un
+        logger qui sera utilisé pour remonter les informations générales sur
+        le MUD pendant son exécution
+3)  On crée le serveur. C'est cet objet qui va gérer les clients voulant
+    se connecter au MUD
+4)  On importe, configure et initialise les modules
+5)  On initialise le serveur. A partir de ce point, il se met en écoute
+    sur le port configuré et attend les connexions
+6)  On configure les fonctions de callback. Ce sont des fonctions qui sont
+    appelées dans certains cas précis (quand un client se connecte, se
+    déconnecte ou envoie un message)
+7)  On lance la boucle synchro. Cette boucle va tourner tant que le MUD est
+    lancé. Elle contrôle les connexions, déconnexions et messages
+    réceptionnés des clients. Elle se charge aussi de faire boucler les
+    modules.
+
+Note : ce mécanisme de boucle synchro dispense d'utiliser des threads. Il est
+de ce fait facile de contrôler le flux d'instruction, de remonter aux erreurs
+et de faire des statistiques sur les performances du serveur. Un tour de
+boucle synchro se fait par défaut en un peu plus de 100 ms. Ce nombre peut
+varier en fonction de votre configuration mais également de votre système.
+
+Référez-vous au site officiel www.kassie.fr pour plus d'informations.
+
 """
 
 import signal
@@ -46,9 +82,9 @@ from bases.logs import man_logs
 from bases.parid import parid
 from corps.config import pere
 
-# Définition de la fonction appelée quand on arrête le MUD avec CTRL + C
+# Définition des fonctions appelées pour arrêter le MUD
 # Le lancement du MUD se trouve sous la fonction
-def arreter_mud(signal, frame):
+def arreter_MUD():
     """Fonction appelée pour arrêter le MUD proprement"""
     global importeur, log
     importeur.tout_detruire()
@@ -56,9 +92,13 @@ def arreter_mud(signal, frame):
     log.info("Fin de la session\n\n\n")
     sys.exit(0)
 
+def signal_arreter(signal, frame):
+    """Redirige vers arreter_MUD"""
+    arreter_MUD()
+
 # On relie cette fonction avec la levée de signal SIGINT et SIGTERM
-signal.signal(signal.SIGINT, arreter_mud)
-signal.signal(signal.SIGTERM, arreter_mud)
+signal.signal(signal.SIGINT, signal_arreter)
+signal.signal(signal.SIGTERM, signal_arreter)
 
 ## Configuration du projet et lancement du MUD
 # On crée un analyseur de la ligne de commande
@@ -131,7 +171,9 @@ serveur.callbacks["reception"].args = (serveur, importeur, log)
 # jusqu'à l'arrêt du MUD. De cette manière, on garde le contrôle total
 # sur le flux d'instructions.
 
-while True:
+while serveur.lance:
     importeur.boucle()
     serveur.verifier_connexions()
     serveur.verifier_receptions()
+
+arreter_MUD()

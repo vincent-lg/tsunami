@@ -36,8 +36,9 @@ class EchecTest(Exception):
     
     """
     
-    def __init__(self, value):
+    def __init__(self, value, com):
         self.value = value
+        self.com = com
     
     def __str__(self):
         return repr(self.value)

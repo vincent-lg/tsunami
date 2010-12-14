@@ -59,25 +59,28 @@ class NouveauNom(Contexte):
     def accueil(self):
         """Message d'accueil du contexte"""
         return \
-            "\n|tit|------= Nom de votre personnage =-----|ff|\n" \
-            "Entrez un |ent|nom pour votre nouveau personnage|ff|.\n" \
-            "Ce nom peut être identique à votre nom de compte.\n" \
-            "Entrez |cmd|/|ff| pour revenir au choix de personnage."
+            "\n|tit|----= Création d'un personnage =----|ff|\n" \
+            "Entrez un |ent|nom|ff| pour votre nouveau personnage|ff|.\n" \
+            "Ce nom peut être identique à votre nom de compte ; " \
+            "il vous identifiera\n" \
+            "auprès des autres joueurs, une fois entré dans notre monde.\n" \
+            "Choisissez-le avec soin."
     
     def get_prompt(self):
         """Message de prompt"""
-        return "Nom de votre nouveau personnage : "
+        return "Votre nom : "
     
     def interpreter(self, msg):
         """méthode d'interprétation"""
-        t_min = 3
-        t_max = 15
+        cfg_joueur = type(self).importeur.anaconf.get_config("joueur")
+        t_min = cfg_joueur.taille_min
+        t_max = cfg_joueur.taille_max
         if len(msg) < t_min or len(msg) > t_max:
             self.pere.envoyer("|err|Le nom de votre joueur doit faire entre " \
-                    "{0} et {1} caractères|ff|.".format(t_min, t_max))
+                    "{0} et {1} caractères.|ff|".format(t_min, t_max))
         elif msg in type(self).importeur.connex.nom_joueurs:
-            self.pere.envoyer("|err|Ce nom de joueur est déjà utilisé. " \
-                    "Choisissez-en un autre|ff|.")
+            self.pere.envoyer("|err|Ce nom de personnage est déjà utilisé. " \
+                    "Choisissez-en un autre.|ff|")
         elif RE_NOM_VALIDE.search(supprimer_accents(msg)):
             nouv_joueur = Joueur()
             nouv_joueur.nom = msg
@@ -86,4 +89,4 @@ class NouveauNom(Contexte):
             self.migrer_contexte("personnage:connexion:mode_connecte")
         else:
             self.pere.envoyer("|err|Ce nom est invalide. Veuillez " \
-                    "réessayer|ff|.")
+                    "réessayer.|ff|")

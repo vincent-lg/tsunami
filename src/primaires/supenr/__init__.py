@@ -119,7 +119,7 @@ class Module(BaseModule):
         """
         global REP_ENRS
         if not est_objet_id(objet):
-            raise TuntimeError("L'objet {0} n'est pas un objet ID. On ne " \
+            raise RuntimeError("L'objet {0} n'est pas un objet ID. On ne " \
                     "peut l'enregistrer".format(objet))
         chemin_dest = REP_ENRS + os.sep + type(objet).sous_rep
         nom_fichier = str(objet.id.id) + ".sav"

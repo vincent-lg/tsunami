@@ -1,4 +1,4 @@
-# -*-coding:Utf-8 -*
+﻿# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -28,24 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire perso."""
+"""Ce fichier définit quelques constantes liées au formattage."""
 
-from abstraits.module import *
-from primaires.interpreteur.commande.commande import Commande
-from primaires.perso.masques.personne import MasquePersonne
-from primaires.interpreteur.masque.parametre import Parametre
-
-class Module(BaseModule):
-    """Module gérant la classe Personnage qui sera héritée pour construire
-    des joueurs et NPCs. Les mécanismes propres au personnage (c'est-à-dire
-    indépendant de la connexion et liées à l'univers) seront gérées ici.
-    
-    En revanche, les contextes de connexion ou de création d'un personnage
-    ne se trouve pas ici (il s'agit d'informations propres à un joueur, non
-    à un NPC.
-    
-    """
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "perso", "primaire")
-    
+longueur_ligne = 79

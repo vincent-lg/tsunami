@@ -28,5 +28,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ficher contenant la classe-mère de tous les masques (voir plus bas)."""
+"""Package masque, contenant :
+-   le package noeuds contenant les différents types de noeuds possibles pour
+    l'arborescence des masques
+-   la classe masque (classe-mère d'un masque)
+-   la classe ParserMasque (un parser des masques)
 
+"""

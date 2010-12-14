@@ -55,7 +55,7 @@ class ChangerEncodage(Contexte):
     
     def get_prompt(self):
         """Message de prompt"""
-        return b"Entrez le numero correspondant dans la liste ci-dessus :\n"
+        return b"Entrez le numero correspondant dans la liste ci-dessus : "
     
     def accueil(self):
         """Message d'accueil"""
@@ -70,10 +70,10 @@ class ChangerEncodage(Contexte):
             b"le premier d'entre eux.|ff|\n"
         test = "Caractères accentués en "
         for i, encodage in enumerate(ENCODAGES):
-            ret += b"\n  " + str(i+1).encode() + b" - " + \
+            ret += b"\n  |cmd|" + str(i+1).encode() + b"|ff| - " + \
                     test.encode(encodage) + encodage.encode()
         return ret
-    
+
     def deconnecter(self):
         """En cas de décnonexion du client, on supprime son compte"""
         type(self).importeur.connex.supprimer_compte(self.pere.compte)

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -27,57 +27,41 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import smtpd
-import asyncore
-import email
-import time
 
-from tests import EchecTest
+"""Package contenant la commande 'shutdown' et ses sous-commandes.
+Dans ce fichier se trouve la commande même.
 
-class Smtp(smtpd.SMTPServer):
-    """Classe représentant un serveur SMTP. C'est un
-    serveur ultra-basique qui se contente de reçevoir
-    les mails et de les mettres dans une listes
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdShutdown(Commande):
+    
+    """Commande 'shutdown'.
     
     """
     
-    #Listes temporaires des messages reçu
-    msgs = []
-    #Listes des messages reçu
-    msgs_all = []
-    
     def __init__(self):
-        """Lance le serveur"""
-        smtpd.SMTPServer.__init__(self,('',25), None)
+        """Constructeur de la commande"""
+        Commande.__init__(self, "shutdown", "shutdown")
+        self.tronquer = False
+        self.aide_courte = "arrête instantanément le serveur"
+        self.aide_longue = \
+            "Cette commande arrête instantanément le serveur. Si aucune " \
+            "procédure extérieure n'est là pour relancer le MUD, il restera " \
+            "arrêté. N'utiliser cette commande qu'en cas de bug répété, " \
+            "corruption de données ou modification du corps. En temps " \
+            "normal, redémarrer les modules suffit à intégrer de nouvelles " \
+            "modifications et évite de déconnecter tous les joueurs."
     
-    def __del__(self):
-        """Stop le serveur"""
-        self.close()
-    
-    def process_message(self, peer, mailfrom, rcpttos, data):
-        """Callback appelé quand un message est reçu"""
-        mail = data.encode() + \
-            email.message_from_string(data).get_payload(decode=True)
-        self.msgs.append(mail)
-        self.msgs_all.append(mail)
-    
-    def attendre_message_de(self,timeout,mail):
-        """Attend un message provenant d'un email donné"""
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        # On récupère le serveur
+        serveur = type(self).importeur.serveur
+        # On déconnecte tous les joueurs
+        for instance in type(self).importeur.connex.instances.values():
+            instance.envoyer("|att|Arrêt du MUD en cours, vous allez être " \
+                    "déconnecté...|ff|")
+            instance.deconnecter("Arrêt du MUD")
         
-        mail = mail.lower()
-        
-        time.sleep(0.1)
-        
-        self.msgs = []
-        
-        debut = time.time()
-        while (debut + timeout) > time.time():
-            asyncore.loop(timeout=0.5,count=1)
-            while len(self.msgs)>0:
-                message = self.msgs.pop()
-                try:
-                    message.index(mail.encode())
-                    return message
-                except ValueError:
-                    pass
-
+        serveur.lance = False
