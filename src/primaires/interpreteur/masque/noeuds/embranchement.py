@@ -76,11 +76,11 @@ class Embranchement(BaseNoeud):
         
         """
         valide = False
-        print(" On test", self)
+        print(" On teste", self)
         for fils in self.fils:
             valide = fils.valider(personnage, dic_masques, commande,
                     tester_fils)
-            print("  On test", fils, valide)
+            print("  On teste", fils, valide)
             if valide:
                 break
         

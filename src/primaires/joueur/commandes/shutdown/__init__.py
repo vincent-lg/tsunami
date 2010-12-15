@@ -43,7 +43,7 @@ class CmdShutdown(Commande):
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "shutdown", "shutdown")
+        Commande.__init__(self, "eteindre", "shutdown")
         self.tronquer = False
         self.aide_courte = "arrête instantanément le serveur"
         self.aide_longue = \
@@ -60,7 +60,7 @@ class CmdShutdown(Commande):
         serveur = type(self).importeur.serveur
         # On déconnecte tous les joueurs
         for instance in type(self).importeur.connex.instances.values():
-            instance.envoyer("|att|Arrêt du MUD en cours, vous allez être " \
+            instance.envoyer("\n|att|Arrêt du MUD en cours, vous allez être " \
                     "déconnecté...|ff|")
             instance.deconnecter("Arrêt du MUD")
         

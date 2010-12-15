@@ -69,7 +69,7 @@ class NoeudCommande(BaseNoeud):
             dic_masques["commande"] = self.commande
             print("**valide")
             if self.suivant and tester_fils:
-                print("***on test suivant", self.suivant)
+                print("***On teste le suivant :", self.suivant)
                 valide = self.suivant.valider(personnage, dic_masques, \
                             commande)
         

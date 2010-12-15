@@ -42,7 +42,7 @@ def afficher_aide(personnage, masque_depart, embranchement_fils,
     """Fonction retournant l'aide de masque_depart.
     Les fils sont déduits de l'embranchement.
     Le nombre explorer permet de savoir combien de fois on explore
-    récursivement l'arborescence (1 revient à juste le départ et les fils
+    récursivement l'arborescence (1 revient au départ seulement et aux fils
     de l'embranchement).
     dic_masques est le dictionnaire des masques parcourus. Ce paramètre est
     utile quand l'aide doit être déduite d'une commande partiellement validée.

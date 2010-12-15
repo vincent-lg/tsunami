@@ -143,7 +143,7 @@ class NoeudMasque(BaseNoeud):
     
     def __str__(self):
         """Méthode d'affichage"""
-        msg = "msq "
+        msg = "msg "
         msg += self.nom + "["
         msg += ", ".join([str(masque) for masque in self.masques])
         msg += "]"
