@@ -32,7 +32,7 @@
 
 class BaseNoeud:
     
-    """Classe reprsentant la base d'un noeud.
+    """Classe représentant la base d'un noeud.
     Cette classe est héritée par tous les autres types de noeuds.
     
     """

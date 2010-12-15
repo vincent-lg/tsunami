@@ -37,15 +37,15 @@ from primaires.interpreteur.masque.noeuds.noeud_optionnel import NoeudOptionnel
 def creer_noeud(commande, schema):
     """Fonction appelée pour créer un noeud.
     Elle prend en paramètre :
-            commande -- la commande
-        schema -- le schéma, sous la forme d'une liste de caractères, qui va
-              nous indiquer quel noeud créer
+    commande - la commande
+    schema   - le schéma, sous la forme d'une liste de caractères, qui va
+               nous indiquer quel noeud créer
     
     """
     nv_noeud = None
     while schema and schema[0] == " ":
         schema.pop(0)
-    if schema:  # schema est non vide
+    if schema:  # schema n'est pas vide
         caractere = schema[0]
         if caractere == '(': # un noeud optionnel
             schema.pop(0)

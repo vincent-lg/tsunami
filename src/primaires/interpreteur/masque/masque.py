@@ -28,13 +28,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe masque détaillée plus bas;"""
+"""Fichier définissant la classe Masque détaillée plus bas"""
 
 class Masque:
     
-    """Classe représentant un masque.
-    
-    """
+    """Classe représentant un masque."""
     
     importeur = None
     def __init__(self, nom):
@@ -56,6 +54,6 @@ class Masque:
         return False
     
     def afficher(self, personnage):
-        """Retourne un affichage du masque pour le personnage."""
+        """Retourne un affichage du masque pour le personnage"""
         return self.nom
     

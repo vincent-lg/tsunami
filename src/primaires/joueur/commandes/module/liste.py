@@ -55,7 +55,7 @@ class PrmListe(Parametre):
         lignes = []
         for module in modules:
             lignes.append(
-                "  |rg|{nom}|ff| |bar| {statut}".format(
+                "  |cy|{nom}|ff| |bar| {statut}".format(
                 nom=module.nom.ljust(20), statut=module.str_statut.ljust(10)))
         
         if lignes:
