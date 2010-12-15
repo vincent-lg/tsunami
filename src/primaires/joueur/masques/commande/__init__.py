@@ -28,34 +28,22 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe masque détaillée plus bas;"""
+"""Fichier contenant le masque <commande>."""
 
-class Masque:
+from primaires.interpreteur.masque.masque import Masque
+
+class Commande(Masque):
     
-    """Classe représentant un masque.
+    """Masque <commande>.
+    On attend un nom de commande en paramètre.
     
     """
     
-    importeur = None
-    def __init__(self, nom):
-        """Crée un nouveau masque"""
-        self.nom = nom
-        self.type = None
-        self.proprietes = []
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self, "nom_commande")
     
     def valider(self, personnage, dic_masques, commande):
-        """Méthode de validation"""
+        """Validation du masque"""
+        print(commande)
         return True
-    
-    def __str__(self):
-        """Affichage du masque"""
-        return self.nom
-    
-    def est_parametre(self):
-        """Return True si ce masque est un paramètre"""
-        return False
-    
-    def afficher(self, personnage):
-        """Retourne un affichage du masque pour le personnage."""
-        return self.nom
-    

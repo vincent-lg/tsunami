@@ -28,34 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe masque détaillée plus bas;"""
+"""Package des masques du module joueur."""
 
-class Masque:
-    
-    """Classe représentant un masque.
-    
-    """
-    
-    importeur = None
-    def __init__(self, nom):
-        """Crée un nouveau masque"""
-        self.nom = nom
-        self.type = None
-        self.proprietes = []
-    
-    def valider(self, personnage, dic_masques, commande):
-        """Méthode de validation"""
-        return True
-    
-    def __str__(self):
-        """Affichage du masque"""
-        return self.nom
-    
-    def est_parametre(self):
-        """Return True si ce masque est un paramètre"""
-        return False
-    
-    def afficher(self, personnage):
-        """Retourne un affichage du masque pour le personnage."""
-        return self.nom
-    
+import primaires.joueur.masques.commande

@@ -28,34 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe masque détaillée plus bas;"""
+"""Package contenant la commande 'module' et ses sous-commandes.
+Dans ce fichier se trouve la commande même.
 
-class Masque:
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+from primaires.joueur.commandes.module.liste import PrmListe
+
+class CmdCommande(Commande):
     
-    """Classe représentant un masque.
+    """Commande 'commande'.
     
     """
     
-    importeur = None
-    def __init__(self, nom):
-        """Crée un nouveau masque"""
-        self.nom = nom
-        self.type = None
-        self.proprietes = []
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "commande", "command")
+        self.ajouter_schema("(<nom_commande>)")
+        self.aide_courte = "affiche les commandes chargées"
+        self.aide_longue = \
+            "Cette commande permet de visualiser les commandes chargées." \
+            "On peut lui donner en paramètre le nom d'une commande. Dans " \
+            "ce cas, le système affiche l'aide de la commande passée en " \
+            "paramètre."
     
-    def valider(self, personnage, dic_masques, commande):
-        """Méthode de validation"""
-        return True
-    
-    def __str__(self):
-        """Affichage du masque"""
-        return self.nom
-    
-    def est_parametre(self):
-        """Return True si ce masque est un paramètre"""
-        return False
-    
-    def afficher(self, personnage):
-        """Retourne un affichage du masque pour le personnage."""
-        return self.nom
-    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation de la commande"""
+        print(dic_masques.keys())
+        personnage.envoyer("OK")

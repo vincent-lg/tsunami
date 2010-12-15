@@ -30,6 +30,7 @@
 
 """Package contenant les commandes du module joueur."""
 
+import primaires.joueur.commandes.commande
 import primaires.joueur.commandes.module
 import primaires.joueur.commandes.shutdown
 import primaires.joueur.commandes.quitter

@@ -85,8 +85,15 @@ class ModeConnecte(Contexte):
                 "commande.\nLes administrateurs en ont été averti.|ff|")
         else:
             try:
-                cle = list(dic_masques.keys())[-1]
-                commande = dic_masques[cle]
+                # On cherche le dernier paramètre
+                print(list(dic_masques.keys()))
+                c=input()
+                for masque in reversed(list(dic_masques.values())):
+                    print(masque, masque.est_parametre())
+                    if masque.est_parametre():
+                        commande = masque
+                        break
+                
                 commande.interpreter(self.pere.joueur, dic_masques)
             except Exception:
                 logger = type(self).importeur.man_logs.get_logger("sup")

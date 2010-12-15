@@ -123,6 +123,10 @@ class Commande(Masque):
     
     noms_commandes = property(_get_noms_commandes)
     
+    def ajouter_schema(self, schema):
+        """Ajoute le schéma à la commande"""
+        self.schemas.append(schema)
+    
     def valider(self, personnage, dic_masques, commande):
         """Fonctiond e validation.
         Elle retourne True si la commande entrée par le joueur correspond à
@@ -156,6 +160,10 @@ class Commande(Masque):
         
         """
         raise NotImplementedError
+    
+    def est_parametre(self):
+        """La commande est une forme de paramètre"""
+        return True
     
     def afficher(self, personnage):
         """Retourne un affichage de la commande pour le personnage passé en

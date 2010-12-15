@@ -39,6 +39,7 @@ from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
 from primaires.interpreteur.masque.noeuds.noeud_commande import NoeudCommande
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.masque.masque import Masque
 
 class Module(BaseModule):
     """Cette classe est la classe gérant tous les interpréteurs.
@@ -52,6 +53,7 @@ class Module(BaseModule):
         Contexte.importeur = importeur
         Commande.importeur = importeur
         BaseNoeud.importeur = importeur
+        Masque.importeur = importeur
         self.contextes = {} # Dictionnaire des contextes
         self.commandes = EmbranchementCommandes()
         self.masques = {}
@@ -73,6 +75,7 @@ class Module(BaseModule):
     
     def ajouter_masque(self, masque):
         """Méthode d'ajout d'un masque"""
+        print("On ajoute", masque, type(masque), masque.nom)
         self.masques[masque.nom] = masque
     
     def get_masque(self, nom_masque):
