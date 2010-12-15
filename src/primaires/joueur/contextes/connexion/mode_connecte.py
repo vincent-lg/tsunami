@@ -31,12 +31,14 @@
 """Fichier contenant le contexte 'personnage:connexion:mode_connecte"""
 
 import traceback
-from collections import OrderedDict
 
 from primaires.interpreteur.contexte import Contexte
+from primaires.interpreteur.masque.dic_masques import DicMasques
 from primaires.interpreteur.masque.fonctions import *
-from primaires.interpreteur.masque.noeuds.exceptions.erreur_interpretation \
+from primaires.interpreteur.masque.exceptions.erreur_interpretation \
         import ErreurInterpretation
+from primaires.interpreteur.masque.noeuds.exceptions.erreur_validation \
+        import ErreurValidation
 
 
 class ModeConnecte(Contexte):
@@ -68,15 +70,17 @@ class ModeConnecte(Contexte):
     def interpreter(self, msg):
         """Méthode d'interprétation"""
         commandes = type(self).importeur.interpreteur.commandes
-        dic_masques = OrderedDict()
+        dic_masques = DicMasques()
         lst_commande = chaine_vers_liste(msg)
+        logger = type(self).importeur.man_logs.get_logger("sup")
         try:
             valide = commandes.valider(self.pere.joueur, dic_masques, \
                     lst_commande)
+        except ErreurValidation as err_val:
+            self.pere.joueur.envoyer(str(err_val))
         except ErreurInterpretation as err_int:
             self.pere.joueur.envoyer(str(err_int))
         except Exception:
-            logger = type(self).importeur.man_logs.get_logger("sup")
             logger.fatal(
                     "Exception levée lors de la validation d'une commande.")
             logger.fatal(traceback.format_exc())
@@ -93,7 +97,6 @@ class ModeConnecte(Contexte):
                 
                 commande.interpreter(self.pere.joueur, dic_masques)
             except Exception:
-                logger = type(self).importeur.man_logs.get_logger("sup")
                 logger.fatal(
                     "Exception levée lors de l'interprétation d'une commande.")
                 logger.fatal(traceback.format_exc())

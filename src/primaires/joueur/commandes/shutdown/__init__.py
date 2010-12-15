@@ -43,7 +43,7 @@ class CmdShutdown(Commande):
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "eteindre", "shutdown")
+        Commande.__init__(self, "shutdown", "shutdown")
         self.tronquer = False
         self.aide_courte = "arrête instantanément le serveur"
         self.aide_longue = \

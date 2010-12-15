@@ -55,5 +55,20 @@ class CmdCommande(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
-        print(dic_masques.keys())
-        personnage.envoyer("OK")
+        # Si aucune commande n'a été entré, on affiche la liste des commandes
+        if dic_masques["nom_commande"] is None:
+            commandes = []
+            for cmd in \
+                type(self).importeur.interpreteur.commandes.suivant.values():
+                commandes.append(cmd.nom)
+            
+            if not commandes:
+                personnage.envoyer("Aucune commande ne semble être définie." \
+                        "Difficile à croire non ?")
+            else:
+                personnage.envoyer("Liste des commandes :\n  " + \
+                    "\n  ".join(sorted(commandes)))
+        
+        else: # la commande existe
+            commande = dic_masques["nom_commande"].commande
+            personnage.envoyer(commande.aide_longue)

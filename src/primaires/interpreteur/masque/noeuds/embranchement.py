@@ -31,8 +31,8 @@
 """Fichier définissant la classe Embranchement détaillée plus bas."""
 
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
-from primaires.interpreteur.masque.noeuds.exceptions.erreur_interpretation \
-        import ErreurInterpretation
+from primaires.interpreteur.masque.noeuds.exceptions.erreur_validation \
+        import ErreurValidation
 from primaires.interpreteur.masque.aide import afficher_aide
 
 class Embranchement(BaseNoeud):
@@ -92,5 +92,5 @@ class Embranchement(BaseNoeud):
     def erreur_validation(self, personnage, dic_masques, lst_commande):
         """Que faire quand l'embranchement n'a pas été validé"""
         dernier_masque = list(dic_masques.values())[-1]
-        raise ErreurInterpretation(
+        raise ErreurValidation(
             afficher_aide(personnage, dernier_masque, self, 1, dic_masques))

@@ -32,8 +32,8 @@
 
 from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
 from primaires.interpreteur.masque.fonctions import *
-from primaires.interpreteur.masque.noeuds.exceptions.erreur_interpretation \
-        import ErreurInterpretation
+from primaires.interpreteur.masque.noeuds.exceptions.erreur_validation \
+        import ErreurValidation
 
 class EmbranchementCommandes(Embranchement):
     """Un noeud embranchement, constitué non pas d'un seul suivant mais de
@@ -55,7 +55,7 @@ class EmbranchementCommandes(Embranchement):
     def erreur_validation(self, personnage, dic_masques, lst_commande):
         """Erreur retournée au joueur en cas de non validation"""
         str_commande = liste_vers_chaine(lst_commande)
-        raise ErreurInterpretation(
+        raise ErreurValidation(
                 "|err|Commande invalide (|ff||cmd|{0}|ff||err|).|ff|".format(
                 str_commande))
     

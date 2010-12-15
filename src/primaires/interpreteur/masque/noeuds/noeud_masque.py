@@ -160,11 +160,12 @@ class NoeudMasque(BaseNoeud):
         
         """
         valide = False
-        for masque in self.masques:
-            valide = masque.valider(personnage, dic_masques, commande)
-            if valide:
-                dic_masques[self.nom] = masque
-                break
+        if commande:
+            for masque in self.masques:
+                valide = masque.valider(personnage, dic_masques, commande)
+                if valide:
+                    dic_masques[self.nom] = masque
+                    break
         
         if valide and self.suivant and tester_fils:
             valide = self.suivant.valider(personnage, dic_masques, commande)

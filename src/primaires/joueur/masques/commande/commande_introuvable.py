@@ -28,41 +28,15 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le masque <commande>."""
+"""Fichier contenant l'exception CommandeIntrouvable."""
 
-from primaires.interpreteur.masque.masque import Masque
-from primaires.interpreteur.masque.fonctions import *
-from primaires.joueur.masques.commande.commande_introuvable \
-        import CommandeIntrouvable
-class Commande(Masque):
+from primaires.interpreteur.masque.exceptions.erreur_interpretation \
+        import ErreurInterpretation
+
+class CommandeIntrouvable(ErreurInterpretation):
     
-    """Masque <commande>.
-    On attend un nom de commande en paramètre.
+    """Cette erreur est levée quand la commande entrée pour le masque
+    <nom_commande> n'a pas été trouvée.
     
     """
-    
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self, "nom_commande")
-        self.commande = None
-    
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        nom_commande = liste_vers_chaine(commande).lstrip()
-        
-        # On cherche dans les commandes du module interpreteur
-        commande = None
-        for cmd in \
-            type(self).importeur.interpreteur.commandes.suivant.values():
-            print(cmd.nom, nom_commande)
-            if cmd.nom.startswith(nom_commande):
-                commande = cmd
-                break
-        
-        if not commande:
-            raise CommandeIntrouvable(
-                "|att|Cette commande est introuvable.|ff|")
-        
-        self.commande = commande
-        
-        return True
+    pass
