@@ -31,6 +31,7 @@
 """Ce fichier contient la classe NoeudCommande, détaillée plus bas."""
 
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
+from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.masque.fonctions import *
 
@@ -58,6 +59,19 @@ class NoeudCommande(BaseNoeud):
         
         return res
     
+    @property
+    def fils(self):
+        """Retourne les fils, c'est-à-dire :
+        -   le noeud éventuel du schéma de la commande
+        -   les différents paramètres de la commande
+        
+        """
+        fils = Embranchement()
+        for noeud_param in self.commande.parametres.values():
+            fils.ajouter_fils(noeud_param)
+        
+        return fils
+    
     def valider(self, personnage, dic_masques, commande, tester_fils=True):
         """Validation d'un noeud commande.
         La commande est sous la forme d'une liste de caractères.
@@ -71,3 +85,9 @@ class NoeudCommande(BaseNoeud):
                             commande)
         
         return valide
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation"""
+        self.commande.interpreter(personnage, dic_masques)
+        for fils in self.fils:
+            fils.interpreter(personnage, dic_masques)

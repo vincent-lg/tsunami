@@ -45,7 +45,7 @@ class CmdCommande(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "commande", "command")
-        self.ajouter_schema("(<nom_commande>)")
+        self.schema = "(<nom_commande>)"
         self.aide_courte = "affiche les commandes chargées"
         self.aide_longue = \
             "Cette commande permet de visualiser les commandes chargées." \
@@ -59,7 +59,7 @@ class CmdCommande(Commande):
         if dic_masques["nom_commande"] is None:
             commandes = []
             for cmd in \
-                type(self).importeur.interpreteur.commandes.suivant.values():
+                type(self).importeur.interpreteur.commandes:
                 commandes.append(cmd.nom)
             
             if not commandes:

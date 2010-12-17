@@ -49,7 +49,7 @@ class Parametre(Commande):
         Masque.__init__(self, self.nom_francais)
         self.nom = self.nom_francais
         self.tronquer = False
-        self.schema = self.nom_francais
+        self.schema = ""
     
     def __str__(self):
         """Fonction d'affichage"""

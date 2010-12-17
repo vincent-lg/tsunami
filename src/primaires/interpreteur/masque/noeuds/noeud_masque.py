@@ -31,6 +31,7 @@
 """Fichier définissant la classe NoeudMasque détaillée plus bas;"""
 
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
+from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
 from primaires.interpreteur.masque.fonctions import *
 
 class NoeudMasque(BaseNoeud):
@@ -51,7 +52,11 @@ class NoeudMasque(BaseNoeud):
         self.masques = []  # une liste vide de masques
         self.defaut = None  # valeur par défaut
         
-        ## Phase de construction des masques
+        if lst_schema:
+            self.construire_depuis_schema(lst_schema)
+    
+    def construire_depuis_schema(self, lst_schema):
+        """Construit le masque depuis le schéma"""
         # Schéma est sous la forme d'une liste de caractères, on la convertit
         schema = liste_vers_chaine(lst_schema)
         # Si le schéma débute par un chevron ouvrant, on cherche le fermant
@@ -107,7 +112,7 @@ class NoeudMasque(BaseNoeud):
                 type_masque = type(self).importeur.interpreteur.get_masque( \
                         str_type_masque)
             else:
-                type_masque = commande.get_delimiteur(str_type_masque)
+                type_masque = commande.parametres[str_type_masque]
 
             liste_types_masques[i] = type_masque
         
@@ -152,6 +157,19 @@ class NoeudMasque(BaseNoeud):
         
         return msg
     
+    @property
+    def fils(self):
+        """Retourne les fils, c'est-à-dire :
+        -   le noeud éventuel du schéma de la commande
+        -   les différents paramètres de la commande
+        
+        """
+        fils = Embranchement()
+        for noeud_param in self.commande.parametres.values():
+            fils.ajouter_fils(noeud_param)
+        
+        return fils
+    
     def valider(self, personnage, dic_masques, commande, tester_fils=True):
         """Validation d'un noeud masque.
         On va essayer de valider successivement chaque masque possible. Si
@@ -171,3 +189,4 @@ class NoeudMasque(BaseNoeud):
             valide = self.suivant.valider(personnage, dic_masques, commande)
         
         return valide
+    

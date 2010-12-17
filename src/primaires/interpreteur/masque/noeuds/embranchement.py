@@ -44,27 +44,26 @@ class Embranchement(BaseNoeud):
     def __init__(self):
         """Constructeur de l'embranchement"""
         BaseNoeud.__init__(self)
-        self.suivant = {} # {noeud:commande}
+        self.suivant = []
     
     def _get_fils(self):
         """Retourne les noeuds fils, c'est-à-dire suivant qui est à passer sous
-        la forme d'une liste.
+        la forme d'un tuple.
         
         """
-        return self.suivant.keys()
+        return tuple(self.suivant)
     
     fils = property(_get_fils)
     
-    def ajouter_fils(self, noeud_fils, commande=None):
+    def ajouter_fils(self, noeud_fils):
         """Ajoute un fils à l'embranchement"""
-        self.suivant[noeud_fils] = commande
+        self.suivant.append(noeud_fils)
     
     def __str__(self):
         """Méthode d'affichage"""
         msg = "emb("
         msg += ", ".join( \
-            [str(cmd) + "=" + str(noeud) for noeud, cmd in \
-            self.suivant.items()])
+            [str(noeud) for noeud in self.suivant])
         msg += ")"
         return msg
     
@@ -88,6 +87,11 @@ class Embranchement(BaseNoeud):
             self.erreur_validation(personnage, dic_masques, commande)
         
         return valide
+    
+    def interpreter(self, personnage, dic_masques):
+        """Redirection vers la méthode interpreter des fils"""
+        for fils in self.fils:
+            fils.interpreter(personnage, dic_masques)
     
     def erreur_validation(self, personnage, dic_masques, lst_commande):
         """Que faire quand l'embranchement n'a pas été validé"""
