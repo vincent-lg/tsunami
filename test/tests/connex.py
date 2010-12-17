@@ -171,25 +171,25 @@ class ChangeEncodage(test):
         
         message = self.mettre_encodage("1")
         try:
-            message.index("caractère".encode('Utf-8'))
+            message.index("prétexte".encode('Utf-8'))
         except ValueError:
             raise EchecTest("Erreur lors du choix de l'encodage 1", self.cl.com)
         
         message = self.mettre_encodage("2")
         try:
-            message.index("caractère".encode('Latin-1'))
+            message.index("prétexte".encode('Latin-1'))
         except ValueError:
             raise EchecTest("Erreur lors du choix de l'encodage 2", self.cl.com)
         
         message = self.mettre_encodage("3")
         try:
-            message.index("caractère".encode('cp850'))
+            message.index("prétexte".encode('cp850'))
         except ValueError:
             raise EchecTest("Erreur lors du choix de l'encodage 3", self.cl.com)
         
         message = self.mettre_encodage("4")
         try:
-            message.index("caractère".encode('cp1252'))
+            message.index("prétexte".encode('cp1252'))
         except ValueError:
             raise EchecTest("Erreur lors du choix de l'encodage 4", self.cl.com)
         
@@ -263,7 +263,7 @@ class ConfirmerPass(test):
         self.mettre_mdp("test42")
         message = self.cl.envoyer(b"test42")
         try:
-            message.index(b"Votre adresse de courriel :")
+            message.index(b"Votre adresse mail :")
         except ValueError:
             raise EchecTest("Un mot de passe n'a pas été confirmé", self.cl.com)
         
@@ -297,7 +297,7 @@ class EntrerEmail(test):
     def test(self):
         message = self.mettre_mail("/")
         try:
-            message.index(b"Votre adresse de courriel")
+            message.index(b"Votre adresse mail")
         except ValueError:
             raise EchecTest("Réponse attendu de la part de Kassie " \
                 "invalide, en essayent de revenir en arrière", self.cl.com)
@@ -313,7 +313,7 @@ class EntrerEmail(test):
         
         message = self.mettre_mail("bruno@mdm.com")
         try:
-            message.index(b"Votre adresse de courriel")
+            message.index(b"Votre adresse mail")
         except ValueError:
             raise EchecTest("Réponse attendu de la part de Kassie " \
                 "invalide, en essayent de revenir en arrière", self.cl.com)
@@ -355,7 +355,7 @@ class Validation(test):
         self.ask_validation()
         message = self.cl.envoyer(b"/")
         try:
-            message.index(b"Votre adresse de courriel :")
+            message.index(b"Votre adresse mail :")
         except ValueError:
             raise EchecTest("Réponse attendu de la part de Kassie " \
                 "invalide, pour revenir en arrière", self.cl.com)
