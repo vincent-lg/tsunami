@@ -49,7 +49,7 @@ class Parametre(Commande):
         Masque.__init__(self, self.nom_francais)
         self.nom = self.nom_francais
         self.tronquer = False
-        self.schema = ""
+        self.schema = self.nom
     
     def __str__(self):
         """Fonction d'affichage"""
@@ -65,8 +65,7 @@ class Parametre(Commande):
         str_commande = liste_vers_chaine(commande)
         
         if str_commande.startswith(" "):
-            commande.pop(0)
-            valide = Commande.valider(self, personnage, dic_masques, commande)
+            valide = Commande.valider(self, personnage, dic_masques, commande[1:])
         else:
             valide = False
         

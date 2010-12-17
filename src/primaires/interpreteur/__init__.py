@@ -38,7 +38,8 @@ from primaires.interpreteur.masque.noeuds.noeud_commande import NoeudCommande
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.masque.masque import Masque
-
+from primaires.interpreteur.masque.noeuds.exceptions.erreur_validation \
+        import ErreurValidation
 class Module(BaseModule):
     """Cette classe est la classe gérant tous les interpréteurs.
     Elle recense les différents contextes, en crée certains et permet
@@ -87,4 +88,4 @@ class Module(BaseModule):
                 break
         
         if not trouve:
-            print("J'ai rien trouvé")
+            raise ErreurValidation("|err|Commande inconnue.|ff|")

@@ -55,6 +55,10 @@ class Embranchement(BaseNoeud):
     
     fils = property(_get_fils)
     
+    def __iter__(self):
+        """Méthode intégrant un itérateur sur l'embranchement"""
+        return iter(self.suivant)
+    
     def ajouter_fils(self, noeud_fils):
         """Ajoute un fils à l'embranchement"""
         self.suivant.append(noeud_fils)
@@ -77,9 +81,11 @@ class Embranchement(BaseNoeud):
         valide = False
         print(" On teste", self)
         for fils in self.fils:
+            print("  Avant", commande)
             valide = fils.valider(personnage, dic_masques, commande,
                     tester_fils)
-            print("  On teste", fils, valide)
+            print("   On teste", fils, type(fils), valide)
+            print("  Après", commande)
             if valide:
                 break
         

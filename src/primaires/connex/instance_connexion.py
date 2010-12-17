@@ -32,14 +32,25 @@
 
 from primaires.connex.motd import MOTD
 from primaires.format.fonctions import *
+from abstraits.obase import BaseObj
 
-class InstanceConnexion:
+dic_attributs = {
+    "client": None,
+    "compte": None,
+    "joueur": None,
+    "file_attente": [], # file d'attente des messages à envoyer
+    "contexte": None,
+    "nb_essais": 0,
+}
+
+class InstanceConnexion(BaseObj):
     """Classe représentant une instance de connexion.
     Elle est là pour faire la jonction entre un client connecté et un
     personnage.
     
     """
     importeur = None
+    attributs = dic_attributs
     
     def __init__(self, client):
         """Constructeur d'une instance de connexion.
@@ -57,15 +68,12 @@ class InstanceConnexion:
             toute la file d'attente d'un coup.
         
         """
+        BaseObj.__init__(self)
         self.client = client
-        self.compte = None
-        self.joueur = None
-        self.file_attente = [] # file d'attente des messages à envoyer
         self.contexte = type(self).importeur.interpreteur. \
             contextes["connex:connexion:afficher_MOTD"](self)
         self.contexte.actualiser()
         self.contexte.migrer_contexte("connex:connexion:entrer_nom")
-        self.nb_essais = 0
     
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel de l'instance.

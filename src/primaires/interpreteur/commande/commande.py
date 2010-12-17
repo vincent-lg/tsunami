@@ -90,8 +90,12 @@ class Commande(Masque):
     
     def ajouter_parametre(self, parametre):
         """Ajoute un paramètre à la commande"""
-        self.parametres[parametre.nom] = \
-                NoeudMasque(parametre, parametre.schema)
+        noeud_masque = NoeudMasque(self, parametre)
+        self.parametres[parametre.nom] = noeud_masque
+        if parametre.schema:
+            lst_schema = chaine_vers_liste(parametre.schema)
+            noeud_masque.construire_depuis_schema(lst_schema)
+
     
     def construire_arborescence(self, schema):
         """Interprétation du schéma"""
@@ -127,6 +131,7 @@ class Commande(Masque):
                 valide = True
                 break
             elif nom_com == str_commande:
+                commande[:] = commande[fin_pos:]
                 valide = True
                 break
             else:

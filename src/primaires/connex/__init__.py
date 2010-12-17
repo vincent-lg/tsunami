@@ -180,10 +180,12 @@ class Module(BaseModule):
     
     def get_compte(self, nom):
         """Récupère le compte 'compte'"""
+        res = None
         for compte in self.comptes.values():
             if compte.nom==nom:
-                return compte
-        return None
+                res = compte
+        
+        return res
     
     def _get_email_comptes(self):
         """Retourne sous la forme d'un tuple la liste des emails de comptes

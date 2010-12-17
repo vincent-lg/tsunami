@@ -80,9 +80,9 @@ class NoeudCommande(BaseNoeud):
         valide = self.commande.valider(personnage, dic_masques, commande)
         if valide:
             dic_masques["commande"] = self.commande
-            if self.suivant and tester_fils:
-                valide = self.suivant.valider(personnage, dic_masques, \
-                            commande)
+            if commande:
+                valide = self.fils.valider(personnage, dic_masques, \
+                        commande)
         
         return valide
     

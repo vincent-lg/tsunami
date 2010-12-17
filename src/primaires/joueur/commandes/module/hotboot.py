@@ -28,35 +28,30 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'module' et ses sous-commandes.
-Dans ce fichier se trouve la commande même.
+"""Fichier contenant le paramètre 'hotboot' de la commande 'module'."""
 
-"""
+from primaires.interpreteur.masque.parametre import Parametre
 
-from primaires.interpreteur.commande.commande import Commande
-from primaires.joueur.commandes.module.liste import PrmListe
-from primaires.joueur.commandes.module.hotboot import PrmHotboot
-
-class CmdModule(Commande):
+class PrmHotboot(Parametre):
     
-    """Commande 'module'.
+    """Commande 'module hotboot'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "module", "module")
-        self.aide_courte = "manipulation des modules"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "hotboot", "hotboot")
+        self.aide_courte = "permet de redémarrer les modules du MUD"
         self.aide_longue = \
-            "Cette commande permet de manipuler les modules, connaître la " \
-            "liste des modules chargés, en redémarrer certains ou les " \
-            "reconfigurer pendant l'exécution. Cette commande doit être " \
-            "réservée aux administrateurs, ceux ayant un accès aux fichiers " \
-            "de configuration ou au code."
-        
-        # On prépare les différents paramètres de la commande
-        prm_liste = PrmListe()
-        prm_hotboot = PrmHotboot()
-        
-        self.ajouter_parametre(prm_liste)
-        self.ajouter_parametre(prm_hotboot)
+            "Cette commande permet de redémarrer un ou plusieurs modules " \
+            "pendant l'exécution du MUD. Cela permet de corriger des bugs, " \
+            "intégrer des modifications, ajouter ou retirer des commandes " \
+            "sans avoir à déconnecter un seul joueur. Si les modifications " \
+            "touchent au corps, il est nécessaire de redémarrer complètement " \
+            "le MUD (voir la commande |cmd|shutdown|ff|)."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        for module in type(self).importeur.modules:
+            type(self).importeur.recharger_module(module.type, module.nom)
+        personnage.envoyer("Les modules ont bien été redémarré O_o !")
