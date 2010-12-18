@@ -53,4 +53,6 @@ class PrmHotboot(Parametre):
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         type(self).importeur.tout_recharger()
+        personnage = type(self).importeur.connex.get_compte( \
+                personnage.compte.nom).get_joueur(personnage)
         personnage.envoyer("Les modules ont bien été redémarré O_o !")

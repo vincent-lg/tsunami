@@ -52,7 +52,7 @@ class InstanceConnexion(BaseObj):
     importeur = None
     attributs = dic_attributs
     
-    def __init__(self, client):
+    def __init__(self, client, creer_contexte=True):
         """Constructeur d'une instance de connexion.
         On peut y trouver trois informations :
         *   le client connecté
@@ -70,10 +70,11 @@ class InstanceConnexion(BaseObj):
         """
         BaseObj.__init__(self)
         self.client = client
-        self.contexte = type(self).importeur.interpreteur. \
-            contextes["connex:connexion:afficher_MOTD"](self)
-        self.contexte.actualiser()
-        self.contexte.migrer_contexte("connex:connexion:entrer_nom")
+        if creer_contexte:
+            self.contexte = type(self).importeur.interpreteur. \
+                contextes["connex:connexion:afficher_MOTD"](self)
+            self.contexte.actualiser()
+            self.contexte.migrer_contexte("connex:connexion:entrer_nom")
     
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel de l'instance.
@@ -120,6 +121,7 @@ class InstanceConnexion(BaseObj):
         if autre.joueur:
             self.joueur = self.compte.get_joueur(autre.joueur)
             self.joueur.instance_connexion = self
+            autre.joueur = self.joueur
         if autre.contexte:
             self.contexte = \
                 type(self).importeur.interpreteur.contextes[ \

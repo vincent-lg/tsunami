@@ -93,7 +93,7 @@ class Module(BaseModule):
         
         for inst in objets:
             if inst.client.n_id in type(self.importeur).serveur.clients.keys():
-                nouv_instance = InstanceConnexion(inst.client)
+                nouv_instance = InstanceConnexion(inst.client, False)
                 nouv_instance.creer_depuis(inst)
                 self.instances[inst.client.n_id] = nouv_instance
         
