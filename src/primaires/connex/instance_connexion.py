@@ -122,7 +122,6 @@ class InstanceConnexion(BaseObj):
             self.joueur = self.compte.get_joueur(autre.joueur)
             self.joueur.instance_connexion = self
             self.joueur.compte = self.compte
-            autre.joueur = self.joueur
         if autre.contexte:
             self.contexte = \
                 type(self).importeur.interpreteur.contextes[ \
