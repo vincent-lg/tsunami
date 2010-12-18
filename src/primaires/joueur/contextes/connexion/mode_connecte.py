@@ -68,7 +68,22 @@ class ModeConnecte(Contexte):
         return "[0000000]"
     
     def interpreter(self, msg):
-        """Méthode d'interprétation"""
+        """Méthode d'interprétation.
+        Ce contexte est destiné à l'interprétation de commande en mode
+        connecté.
+        On commence donc par valider la commande entrée par le joueur
+        (autrement dit savoir quelle commande le joueur souhaite exécuter,
+        quel paramètre il lui a fourni, quelles informations on peut retirer
+        de cette commande...).
+        La seconde partie est l'interprétation de la commande : que fait-on
+        avec les paramètres que le joueur a entré ?
+        
+        Note: ne rajoutez pas d'instructions impliquant l'instance de
+        connexion 'pere' après l'interprétation de la commande. Si
+        la commande entraîne un 'hotboot' (redémarrage à chaud des modules),
+        l'instance pourrait ne pas être à jour.
+        
+        """
         interpreteur = type(self).importeur.interpreteur
         dic_masques = DicMasques()
         lst_commande = chaine_vers_liste(msg)
