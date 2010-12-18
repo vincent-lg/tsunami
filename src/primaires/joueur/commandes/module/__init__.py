@@ -35,6 +35,7 @@ Dans ce fichier se trouve la commande même.
 
 from primaires.interpreteur.commande.commande import Commande
 from primaires.joueur.commandes.module.liste import PrmListe
+from primaires.joueur.commandes.module.hotboot import PrmHotboot
 
 class CmdModule(Commande):
     
@@ -55,5 +56,7 @@ class CmdModule(Commande):
         
         # On prépare les différents paramètres de la commande
         prm_liste = PrmListe()
+        prm_hotboot = PrmHotboot()
         
         self.ajouter_parametre(prm_liste)
+        self.ajouter_parametre(prm_hotboot)

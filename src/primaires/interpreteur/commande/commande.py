@@ -30,10 +30,12 @@
 
 """Fichier contenant la classe Commande, détaillée plus bas."""
 
+from primaires.interpreteur.masque.noeuds.noeud_masque import NoeudMasque
 from primaires.interpreteur.masque.noeuds.fonctions import *
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.masque import Masque
 from primaires.format.fonctions import *
+from primaires.interpreteur.masque.aide import afficher_aide
 
 NB_MAX_CAR_AIDE_COURTE = 40
 
@@ -61,10 +63,9 @@ class Commande(Masque):
         self.nom_anglais = anglais
         
         self.racine = None
-        self.schemas = []
+        self.schema = ""
         self.tronquer = True
-        self.parametres = []
-        self.delimiteurs = []
+        self.parametres = {}
         self.aide_courte = ""
         self.aide_longue = ""
     
@@ -89,27 +90,13 @@ class Commande(Masque):
     
     def ajouter_parametre(self, parametre):
         """Ajoute un paramètre à la commande"""
-        self.parametres.append(parametre)
-        self.schemas.append(parametre.schema)
-    
-    def ajouter_delimiteur(self, delimiteur):
-        """Ajoute un délimiteur à la commande"""
-        self.delimiteurs.append(delimiteur)
-    
-    def get_delimiteur(self, nom_delimiteur):
-        """Retourne le délimiteur ou le paramètre correspondant"""
-        res = None
-        for delimiteur in list(self.parametres + self.delimiteurs):
-            if delimiteur.nom == nom_delimiteur:
-                res = delimiteur
-                break
-        
-        if not res:
-            raise ValueError("le délimiteur {0} n'a pas été trouvé dans la " \
-                "commande {1}".format(nom_delimiteur, self))
-        
-        return res
+        noeud_masque = NoeudMasque(self, parametre)
+        self.parametres[parametre.nom] = noeud_masque
+        if parametre.schema:
+            lst_schema = chaine_vers_liste(parametre.schema)
+            noeud_masque.construire_depuis_schema(lst_schema)
 
+    
     def construire_arborescence(self, schema):
         """Interprétation du schéma"""
         schema = chaine_vers_liste(schema)
@@ -122,10 +109,6 @@ class Commande(Masque):
         return (self.nom_francais, self.nom_anglais)
     
     noms_commandes = property(_get_noms_commandes)
-    
-    def ajouter_schema(self, schema):
-        """Ajoute le schéma à la commande"""
-        self.schemas.append(schema)
     
     def valider(self, personnage, dic_masques, commande):
         """Fonctiond e validation.
@@ -148,6 +131,7 @@ class Commande(Masque):
                 valide = True
                 break
             elif nom_com == str_commande:
+                commande[:] = commande[fin_pos:]
                 valide = True
                 break
             else:
@@ -159,7 +143,9 @@ class Commande(Masque):
         """Fonction d'interprétation.
         
         """
-        raise NotImplementedError
+        dernier_masque = list(dic_masques.values())[-1]
+        personnage.envoyer(
+            afficher_aide(personnage, dernier_masque, self, 1, dic_masques))
     
     def est_parametre(self):
         """La commande est une forme de paramètre"""

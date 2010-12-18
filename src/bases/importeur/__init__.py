@@ -321,14 +321,14 @@ class Importeur:
         else:
             raise ValueError("le type {0} n'est ni primaire ni secondaire" \
                     .format(type))
-
+        
         if self.module_est_charge(nom):
             print("Le module {0} est déjà chargé.".format(nom))
         else:
             package = __import__(rep + "." + nom)
             module = getattr(getattr(package, nom), "Module")
             setattr(self, nom, module(self))
-
+    
     def decharger_module(self, m_type, nom):
         """Méthode permettant de décharger un module.
         
@@ -348,7 +348,7 @@ class Importeur:
 
         nom_complet = rep + "." + nom
         for cle in list(sys.modules.keys()):
-            if cle.startswith(nom_complet + "."):
+            if cle.startswith(nom_complet):
                 del sys.modules[cle]
 
         if self.module_est_charge(nom):
@@ -376,7 +376,7 @@ class Importeur:
             getattr(self, nom).config()
         else:
             print("{0} n'existe pas ou n'est pas chargé.".format(nom))
-
+    
     def init_module(self, nom):
         """Méthode chargée d'initialiser un module."""
         if self.module_est_charge(nom) and getattr(self, nom).statut == \

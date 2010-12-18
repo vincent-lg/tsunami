@@ -86,6 +86,7 @@ class NouveauNom(Contexte):
             nouv_joueur.nom = msg
             self.pere.compte.ajouter_joueur(nouv_joueur)
             self.pere.joueur = nouv_joueur
+            nouv_joueur.instance_connexion = self.pere
             self.migrer_contexte("personnage:connexion:mode_connecte")
         else:
             self.pere.envoyer("|err|Ce nom est invalide. Veuillez " \

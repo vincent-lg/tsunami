@@ -32,14 +32,25 @@
 
 from primaires.connex.motd import MOTD
 from primaires.format.fonctions import *
+from abstraits.obase import BaseObj
 
-class InstanceConnexion:
+dic_attributs = {
+    "client": None,
+    "compte": None,
+    "joueur": None,
+    "file_attente": [], # file d'attente des messages à envoyer
+    "contexte": None,
+    "nb_essais": 0,
+}
+
+class InstanceConnexion(BaseObj):
     """Classe représentant une instance de connexion.
     Elle est là pour faire la jonction entre un client connecté et un
     personnage.
     
     """
     importeur = None
+    attributs = dic_attributs
     
     def __init__(self, client):
         """Constructeur d'une instance de connexion.
@@ -57,15 +68,12 @@ class InstanceConnexion:
             toute la file d'attente d'un coup.
         
         """
+        BaseObj.__init__(self)
         self.client = client
-        self.compte = None
-        self.joueur = None
-        self.file_attente = [] # file d'attente des messages à envoyer
         self.contexte = type(self).importeur.interpreteur. \
             contextes["connex:connexion:afficher_MOTD"](self)
         self.contexte.actualiser()
         self.contexte.migrer_contexte("connex:connexion:entrer_nom")
-        self.nb_essais = 0
     
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel de l'instance.
@@ -100,6 +108,28 @@ class InstanceConnexion:
             self.joueur.contexte_actuel = nouveau_contexte
     
     contexte_actuel = property(_get_contexte_actuel, _set_contexte_actuel)
+    
+    def raffraichir_contexte(self):
+        """Cette méthode se charge de "raffraîchir le contexte".
+        Elle est généralement appelée après un reboot à chaud ('hotboot').
+        Elle vérifie que le contexte actuel utilisé est celui enregistré dans
+        le module interpréteur et pas une sauvegarde de celui-ci.
+        
+        """
+        if self.contexte:
+            self.contexte = \
+                type(self).importeur.interpreteur.contextes[ \
+                self.contexte.nom](self)
+        if self.compte and self.compte.contexte:
+            self.compte.contexte = \
+                type(self).importeur.interpreteur.contextes[ \
+                self.compte.contexte.nom](self)
+        if self.joueur:
+            for i, contexte in enumerate(self.joueur.contextes):
+                nouv_contexte = type(self).importeur.interpreteur.contextes[ \
+                        contexte.nom](self)
+                print("j", contexte.nom, contexte is nouv_contexte)
+                self.joueur.contextes[i] = nouv_contexte
     
     def _get_encodage(self):
         """Retourne l'encodage du compte ou 'Utf-8'."""

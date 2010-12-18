@@ -28,19 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe Delimiteur, détaillée plus bas."""
+"""Fichier contenant le paramètre 'hotboot' de la commande 'module'."""
 
-from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.parametre import Parametre
 
-class Delimiteur(Masque):
+class PrmHotboot(Parametre):
     
-    """Un délimiteur est un masque chargé de délimiter le masque précédent.
-    Ce peut être, par exemple, une virgule séparant deux masques qui
-    pourraient être constitués de plusieurs mots.
+    """Commande 'module hotboot'.
     
     """
     
-    def __init__(self, delimiteur):
-        """Constructeur du délimiteur"""
-        Masque.__init__(self)
-        self.nom = delimiteur
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "hotboot", "hotboot")
+        self.aide_courte = "permet de redémarrer les modules du MUD"
+        self.aide_longue = \
+            "Cette commande permet de redémarrer un ou plusieurs modules " \
+            "pendant l'exécution du MUD. Cela permet de corriger des bugs, " \
+            "intégrer des modifications, ajouter ou retirer des commandes " \
+            "sans avoir à déconnecter un seul joueur. Si les modifications " \
+            "touchent au corps, il est nécessaire de redémarrer complètement " \
+            "le MUD (voir la commande |cmd|shutdown|ff|)."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        for module in type(self).importeur.modules:
+            type(self).importeur.recharger_module(module.type, module.nom)
+        type(self).importeur.supenr.vider_file_attente()
+        personnage.envoyer("Les modules ont bien été redémarré O_o !")

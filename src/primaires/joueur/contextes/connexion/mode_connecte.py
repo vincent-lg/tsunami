@@ -69,12 +69,12 @@ class ModeConnecte(Contexte):
     
     def interpreter(self, msg):
         """Méthode d'interprétation"""
-        commandes = type(self).importeur.interpreteur.commandes
+        interpreteur = type(self).importeur.interpreteur
         dic_masques = DicMasques()
         lst_commande = chaine_vers_liste(msg)
         logger = type(self).importeur.man_logs.get_logger("sup")
         try:
-            valide = commandes.valider(self.pere.joueur, dic_masques, \
+            interpreteur.valider(self.pere.joueur, dic_masques, \
                     lst_commande)
         except ErreurValidation as err_val:
             self.pere.joueur.envoyer(str(err_val))

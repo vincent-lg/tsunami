@@ -62,6 +62,10 @@ class FileContexte(BaseObj):
         """Retourne l'objet se trouvant à l'index 'index'"""
         return self._file.__getitem__(index)
     
+    def __setitem__(self, index, contexte):
+        """Change le contexte se trouvant à l'index 'index'"""
+        self._file.__setitem__(index, contexte)
+
     def __len__(self):
         """Retourne la taille de la file"""
         return len(self._file)

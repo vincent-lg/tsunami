@@ -74,6 +74,18 @@ class Module(BaseModule):
         'self.instances' si elles sont encore connectées.
         
         """
+        # On récupère les comptes
+        comptes = self.importeur.supenr.charger_groupe(Compte)
+        for compte in comptes:
+            self.comptes[compte.id.id] = compte
+            if not compte.valide:
+                self.supprimer_compte(compte)
+        
+        # On ajoute les contextes chargés dans l'interpréteur
+        for contexte in liste_contextes:
+            self.importeur.interpreteur.contextes[contexte.nom] = contexte
+        
+        # On récupère les instances de connexion
         if NOM_GROUPE in type(self.importeur).parid:
             objets = type(self.importeur).parid[NOM_GROUPE].values()
         else:
@@ -83,17 +95,16 @@ class Module(BaseModule):
             if inst.client.n_id in type(self.importeur).serveur.clients.keys():
                 inst.client = type(self.importeur).serveur.clients[ \
                         inst.client.n_id]
+                cpt = inst.compte
+                inst.compte = self.get_compte(inst.compte.nom)
+                inst.joueur = inst.compte.get_joueur(inst.joueur)
+                inst.joueur.instance_connexion = inst
+                inst.raffraichir_contexte()
+
                 self.instances[inst.client.n_id] = inst
         
         # On ajoute le dictionnaire 'instances' comme groupe fictif de 'parid'
         type(self.importeur).parid[NOM_GROUPE] = self.instances
-        
-        # On récupère les comptes
-        comptes = self.importeur.supenr.charger_groupe(Compte)
-        for compte in comptes:
-            self.comptes[compte.id.id] = compte
-            if not compte.valide:
-                self.supprimer_compte(compte)
         
         # On affiche proprement le nombre de comptes (un peu verbeux mais-)
         nombre_comptes = len(self.comptes)
@@ -103,10 +114,6 @@ class Module(BaseModule):
             self.cpt_logger.info("1 compte récupéré")
         else:
             self.cpt_logger.info("{0} comptes récupérés".format(len(self.comptes)))
-        
-        # On ajoute les contextes chargés dans l'interpréteur
-        for contexte in liste_contextes:
-            self.importeur.interpreteur.contextes[contexte.nom] = contexte
         
         BaseModule.init(self)
     
@@ -180,10 +187,12 @@ class Module(BaseModule):
     
     def get_compte(self, nom):
         """Récupère le compte 'compte'"""
+        res = None
         for compte in self.comptes.values():
-            if compte.nom==nom:
-                return compte
-        return None
+            if compte.nom == nom:
+                res = compte
+        
+        return res
     
     def _get_email_comptes(self):
         """Retourne sous la forme d'un tuple la liste des emails de comptes

@@ -49,8 +49,8 @@ class Joueur(Personnage):
     attributs = dic_attributs
     
     def __init__(self):
+        """Constructeur du joueur"""
         ObjetID.__init__(self)
-        print(self.__dict__)
     
     def _get_encodage(self):
         """Retourne l'encodage du compte"""
