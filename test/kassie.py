@@ -92,13 +92,13 @@ class Kassie():
             stdout=subprocess.PIPE, \
             stderr=subprocess.PIPE, \
             cwd=path)
-        time.sleep(0.2)
+        time.sleep(1)
     
     def get_retours(self):
-        return self.process.communicate()
+        return self.retour
     
     def stop(self):
         """Arrète le serveur"""
         if self.process.poll() == None:
             self.process.kill()
-            self.process.wait()
+            self.retour = self.process.communicate()

@@ -274,6 +274,9 @@ class ConfirmerPass(test):
         except ValueError:
             raise EchecTest("Un mot de passe a été confirmé")
 
+import asyncore
+import time
+
 class EntrerEmail(test):
     
     nom = "EntrerEmail"

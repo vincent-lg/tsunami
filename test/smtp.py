@@ -66,8 +66,6 @@ class Smtp(smtpd.SMTPServer):
         
         mail = mail.lower()
         
-        time.sleep(0.1)
-        
         self.msgs = []
         
         debut = time.time()
@@ -80,4 +78,5 @@ class Smtp(smtpd.SMTPServer):
                     return message
                 except ValueError:
                     pass
+        asyncore.loop(timeout=0.5,count=3)
 

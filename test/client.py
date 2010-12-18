@@ -123,7 +123,7 @@ class Client():
         try:
             self.envoyer(nom.encode())
             message = self.envoyer(mdp.encode())
-            message.index(b"Votre choix :")
+            message.index(b"* Votre")
         except socket.error as detail:
             raise EchecTest("Erreur de connexion avec Kassie", \
                 self.com)
