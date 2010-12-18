@@ -284,6 +284,20 @@ class Importeur:
             Importeur.logger.debug("  Le module {0} a été " \
                         "arrêté".format(module.nom))
     
+    def tout_decharger(self):
+        """Méthode déchargeant tous les modules"""
+        for module in self.modules:
+            self.decharger_module(module.type, module.nom)
+    
+    def tout_recharger(self):
+        """Méthode appelée pour recharger TOUS les modules"""
+        self.tout_detruire()
+        self.tout_decharger()
+        self.tout_charger()
+        self.tout_instancier()
+        self.tout_configurer()
+        self.tout_initialiser()
+    
     def boucle(self):
         """Méthode appelée à chaque tour de boucle synchro.
         Elle doit faire appel à la méthode boucle de chaque module primaire
@@ -344,7 +358,7 @@ class Importeur:
             rep = REP_SECONDAIRES
         else:
             raise ValueError("le type {0} n'est ni primaire ni secondaire" \
-                    .format(type))
+                    .format(m_type))
 
         nom_complet = rep + "." + nom
         for cle in list(sys.modules.keys()):

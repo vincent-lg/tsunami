@@ -52,7 +52,5 @@ class PrmHotboot(Parametre):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        for module in type(self).importeur.modules:
-            type(self).importeur.recharger_module(module.type, module.nom)
-        type(self).importeur.supenr.vider_file_attente()
+        type(self).importeur.tout_recharger()
         personnage.envoyer("Les modules ont bien été redémarré O_o !")

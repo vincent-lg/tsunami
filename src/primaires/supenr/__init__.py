@@ -104,6 +104,10 @@ class Module(BaseModule):
         
         BaseModule.init(self)
     
+    def detruire(self):
+        """Destruction du module"""
+        self.file_attente.clear()
+    
     def construire_rep(self, sous_rep):
         """Construit le chemin REP_ENRS / sous_rep s'il n'existe pas"""
         global REP_ENRS
