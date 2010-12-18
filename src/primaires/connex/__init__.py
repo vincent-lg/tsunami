@@ -93,15 +93,9 @@ class Module(BaseModule):
         
         for inst in objets:
             if inst.client.n_id in type(self.importeur).serveur.clients.keys():
-                inst.client = type(self.importeur).serveur.clients[ \
-                        inst.client.n_id]
-                cpt = inst.compte
-                inst.compte = self.get_compte(inst.compte.nom)
-                inst.joueur = inst.compte.get_joueur(inst.joueur)
-                inst.joueur.instance_connexion = inst
-                inst.raffraichir_contexte()
-
-                self.instances[inst.client.n_id] = inst
+                nouv_instance = InstanceConnexion(inst.client)
+                nouv_instance.creer_depuis(inst)
+                self.instances[inst.client.n_id] = nouv_instance
         
         # On ajoute le dictionnaire 'instances' comme groupe fictif de 'parid'
         type(self.importeur).parid[NOM_GROUPE] = self.instances

@@ -36,17 +36,17 @@ from abstraits.id import ObjetID
 
 # Attributs d'un compte
 dic_attributs = {
-    "nom":"",
-    "mot_de_passe":"",
-    "adresse_email":"",
-    "encodage":"",
-    "valide":False,
-    "code_validation":"",
-    "msg_validation":False, # à True si le message de validation a été envoyé
-    "tentatives_validation":0, # tentatives de validation
-    "nb_essais":0, # tentatives d'intrusion (mot de passe erroné)
-    "joueurs":{}, # {id_joueur:joueur}
-    "contexte": None # le contexte du compte
+    "nom": "",
+    "mot_de_passe": "",
+    "adresse_email": "",
+    "encodage": "",
+    "valide": False,
+    "code_validation": "",
+    "msg_validation": False, # à True si le message de validation a été envoyé
+    "tentatives_validation": 0, # tentatives de validation
+    "nb_essais": 0, # tentatives d'intrusion (mot de passe erroné)
+    "joueurs": {}, # {id_joueur:joueur}
+    "contexte": None, # le contexte du compte
 }
 
 class Compte(ObjetID):

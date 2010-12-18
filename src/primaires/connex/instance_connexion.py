@@ -109,21 +109,25 @@ class InstanceConnexion(BaseObj):
     
     contexte_actuel = property(_get_contexte_actuel, _set_contexte_actuel)
     
-    def raffraichir_contexte(self):
-        """Cette méthode se charge de "raffraîchir le contexte".
-        Elle est généralement appelée après un reboot à chaud ('hotboot').
-        Elle vérifie que le contexte actuel utilisé est celui enregistré dans
-        le module interpréteur et pas une sauvegarde de celui-ci.
+    def creer_depuis(self, autre):
+        """Cette méthode se charge de construire self sur le modèle de autre
+        (une autre instance de connexion).
         
         """
-        if self.contexte:
+        if autre.compte:
+            self.compte = type(self).importeur.connex.get_compte( \
+                    autre.compte.nom)
+        if autre.joueur:
+            self.joueur = self.compte.get_joueur(autre.joueur)
+            self.joueur.instance_connexion = self
+        if autre.contexte:
             self.contexte = \
                 type(self).importeur.interpreteur.contextes[ \
-                self.contexte.nom](self)
-        if self.compte and self.compte.contexte:
+                autre.contexte.nom](self)
+        if autre.compte and autre.compte.contexte:
             self.compte.contexte = \
                 type(self).importeur.interpreteur.contextes[ \
-                self.compte.contexte.nom](self)
+                autre.compte.contexte.nom](self)
         if self.joueur:
             for i, contexte in enumerate(self.joueur.contextes):
                 nouv_contexte = type(self).importeur.interpreteur.contextes[ \
