@@ -85,6 +85,17 @@ class Compte(ObjetID):
         del self.joueurs[joueur.id]
         self.enregistrer()
     
+    def get_joueur(self, joueur):
+        """Retourne le joueur en parcourant les ID"""
+        id_j = str(joueur.id)
+        for id in self.joueurs.keys():
+            if str(id) == id_j:
+                return self.joueurs[id]
+        
+        raise KeyError( \
+            "le joueur {0} n'a pu être trouvé dans el compte {1}".format( \
+            self, joueur))
+    
     def _get_contexte_actuel(self):
         """Retourne le contexte du compte"""
         return self.contexte

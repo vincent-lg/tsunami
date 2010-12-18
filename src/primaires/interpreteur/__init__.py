@@ -67,8 +67,6 @@ class Module(BaseModule):
     def ajouter_commande(self, commande):
         """Ajoute une commande à l'embranchement"""
         noeud_cmd = NoeudCommande(commande)
-        #etendre_arborescence(self.commandes, noeud_cmd, \
-        #        None, commande)
         self.commandes.append(noeud_cmd)
     
     def ajouter_masque(self, masque):
