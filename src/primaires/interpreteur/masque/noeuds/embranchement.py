@@ -79,13 +79,9 @@ class Embranchement(BaseNoeud):
         
         """
         valide = False
-        print(" On teste", self)
         for fils in self.fils:
-            print("  Avant", commande)
             valide = fils.valider(personnage, dic_masques, commande,
                     tester_fils)
-            print("   On teste", fils, type(fils), valide)
-            print("  Après", commande)
             if valide:
                 break
         

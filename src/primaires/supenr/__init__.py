@@ -157,6 +157,13 @@ class Module(BaseModule):
                     "n'a pas pu être supprimé : {2}".format(chemin_dest, \
                     objet, os_err))
     
+    def vider_file_attente(self):
+        """Méthode appelée pour vider la file d'attente des objets
+        à enregistrer.
+        
+        """
+        self.file_attente.clear()
+    
     def boucle(self):
         """Méthode appelée à chaque tour de boucle synchro"""
         # On enregistre les objets en attente
