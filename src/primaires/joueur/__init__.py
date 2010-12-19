@@ -72,6 +72,7 @@ class Module(BaseModule):
             commandes.module.CmdModule(),
             commandes.shutdown.CmdShutdown(),
             commandes.quitter.CmdQuitter(),
+            commandes.who.CmdWho(),
         ]
         
         for cmd in self.commandes:

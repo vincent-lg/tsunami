@@ -35,39 +35,33 @@ Dans ce fichier se trouve la commande même.
 
 from primaires.interpreteur.commande.commande import Commande
 
-class CmdCommande(Commande):
+NOM_GROUPE = "connexions"
+
+class CmdWho(Commande):
     
-    """Commande 'commande'.
+    """Commande 'who'.
     
     """
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "commande", "command")
-        self.schema = "(<nom_commande>)"
-        self.aide_courte = "affiche les commandes chargées"
+        Commande.__init__(self, "qui", "who")
+        self.schema = ""
+        self.aide_courte = "Affiche les joueurs connectés"
         self.aide_longue = \
-            "Cette commande permet de visualiser les commandes chargées." \
-            "On peut lui donner en paramètre le nom d'une commande. Dans " \
-            "ce cas, le système affiche l'aide de la commande passée en " \
-            "paramètre."
+            "Cette commande permet d'afficher la liste des joueurs " \
+            "connectés au MUD" \
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
-        # Si aucune commande n'a été entré, on affiche la liste des commandes
-        if dic_masques["nom_commande"] is None:
-            commandes = []
-            for cmd in \
-                type(self).importeur.interpreteur.commandes:
-                commandes.append(cmd.nom)
-            
-            if not commandes:
-                personnage.envoyer("Aucune commande ne semble être définie." \
-                        "Difficile à croire non ?")
-            else:
-                personnage.envoyer("Liste des commandes :\n  " + \
-                    "\n  ".join(sorted(commandes)))
-        
-        else: # la commande existe
-            commande = dic_masques["nom_commande"].commande
-            personnage.envoyer(commande.aide_longue)
+        joueurs = []
+        if NOM_GROUPE in type(self.importeur).parid:
+            for instance in type(self.importeur).parid[NOM_GROUPE].values():
+                if instance.joueur:
+                    joueurs.append(instance.joueur.nom)
+        if not joueurs:
+            personnage.envoyer("Aucun joueurs ne semble être" \
+                    "présent, mais qui est tu alors ?")
+        else:
+            personnage.envoyer("Liste des joueurs :\n  " + \
+                    "\n  ".join(sorted(joueurs)))
