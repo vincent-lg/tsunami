@@ -54,6 +54,7 @@ inconnue pour l'importeur.
 
 import os
 import sys
+import traceback
 
 from abstraits.module import *
 
@@ -291,12 +292,24 @@ class Importeur:
     
     def tout_recharger(self):
         """Méthode appelée pour recharger TOUS les modules"""
-        self.tout_detruire()
-        self.tout_decharger()
-        self.tout_charger()
-        self.tout_instancier()
-        self.tout_configurer()
-        self.tout_initialiser()
+        anciens_attrs = dict(self.__dict__)
+        logger = type(self).man_logs.get_logger("sup")
+        res = False
+        try:
+            self.tout_detruire()
+            self.tout_decharger()
+            self.tout_charger()
+            self.tout_instancier()
+            res = True
+        except Exception:
+            self.__dict__ = anciens_attrs
+            logger.fatal(
+                "Une erreur s'est produit lors de l'hotboot.")
+            logger.fatal(traceback.format_exc())
+        finally:
+            self.tout_configurer()
+            self.tout_initialiser()
+            return res
     
     def boucle(self):
         """Méthode appelée à chaque tour de boucle synchro.

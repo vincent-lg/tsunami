@@ -54,7 +54,11 @@ class PrmHotboot(Parametre):
         """Interprétation du paramètre"""
         personnage.envoyer("Redémarrage à chaud des modules en cours...")
         nom = personnage.compte.nom
-        type(self).importeur.tout_recharger()
+        res = type(self).importeur.tout_recharger()
         personnage = type(self).importeur.connex.get_compte( \
                 nom).get_joueur(personnage)
-        personnage.envoyer("Les modules ont bien été redémarré.")
+        if res:
+            personnage.envoyer("Les modules ont bien été redémarré.")
+        else:
+            personnage.envoyer(
+            "|err|Les modules n'ont pu être redémarré. Consulter les logs.|ff|")
