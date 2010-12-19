@@ -134,7 +134,6 @@ class InstanceConnexion(BaseObj):
             for i, contexte in enumerate(self.joueur.contextes):
                 nouv_contexte = type(self).importeur.interpreteur.contextes[ \
                         contexte.nom](self)
-                print("j", contexte.nom, contexte is nouv_contexte)
                 self.joueur.contextes[i] = nouv_contexte
     
     def _get_encodage(self):

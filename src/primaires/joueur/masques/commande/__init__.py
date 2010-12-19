@@ -53,7 +53,7 @@ class Commande(Masque):
         # On cherche dans les commandes du module interpreteur
         commande = None
         for cmd in \
-            type(self).importeur.interpreteur.commandes.suivant.values():
+                type(self).importeur.interpreteur.commandes:
             print(cmd.nom, nom_commande)
             if cmd.nom.startswith(nom_commande):
                 commande = cmd
@@ -63,6 +63,6 @@ class Commande(Masque):
             raise CommandeIntrouvable(
                 "|att|Cette commande est introuvable.|ff|")
         
-        self.commande = commande
+        self.commande = commande.commande
         
         return True

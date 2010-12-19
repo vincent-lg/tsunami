@@ -132,9 +132,7 @@ class NoeudMasque(BaseNoeud):
         
         self.masques = liste_types_masques
         
-        while lst_schema:
-            lst_schema.pop(0)
-        lst_schema += chaine_vers_liste(schema[pos_fin + 1:])
+        lst_schema[:] = chaine_vers_liste(schema[pos_fin + 1:])
     
     @property
     def masque(self):

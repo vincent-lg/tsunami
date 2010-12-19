@@ -46,6 +46,9 @@ class NoeudCommande(BaseNoeud):
         BaseNoeud.__init__(self)
         self.commande = commande
         self.nom = commande.nom_francais
+        if self.commande.schema:
+            schema = self.commande.schema
+            self.construire_arborescence(schema)
     
     def construire_arborescence(self, schema):
         """Redirection vers la construction de la commande"""
@@ -67,6 +70,8 @@ class NoeudCommande(BaseNoeud):
         
         """
         fils = Embranchement()
+        if self.suivant:
+            fils.ajouter_fils(self.suivant)
         for noeud_param in self.commande.parametres.values():
             fils.ajouter_fils(noeud_param)
         

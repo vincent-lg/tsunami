@@ -57,6 +57,7 @@ def creer_noeud(commande, schema):
             nv_noeud = None
         else:
             nv_noeud = NoeudMasque(commande, schema)
+            nv_noeud.construire_depuis_schema(schema)
             nv_noeud.suivant = creer_noeud(commande, schema)
     
     return nv_noeud
