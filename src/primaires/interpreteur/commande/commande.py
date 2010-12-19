@@ -30,7 +30,7 @@
 
 """Fichier contenant la classe Commande, détaillée plus bas."""
 
-from primaires.interpreteur.masque.noeuds.noeud_masque import NoeudMasque
+from primaires.interpreteur.masque.noeuds.noeud_commande import NoeudCommande
 from primaires.interpreteur.masque.noeuds.fonctions import *
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.masque import Masque
@@ -90,12 +90,8 @@ class Commande(Masque):
     
     def ajouter_parametre(self, parametre):
         """Ajoute un paramètre à la commande"""
-        noeud_masque = NoeudMasque(self, parametre)
-        self.parametres[parametre.nom] = noeud_masque
-        if parametre.schema:
-            lst_schema = chaine_vers_liste(parametre.schema)
-            noeud_masque.construire_depuis_schema(lst_schema)
-
+        noeud_cmd = NoeudCommande(parametre)
+        self.parametres[parametre.nom] = noeud_cmd
     
     def construire_arborescence(self, schema):
         """Interprétation du schéma"""

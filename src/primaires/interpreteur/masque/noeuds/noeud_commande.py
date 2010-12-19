@@ -32,7 +32,6 @@
 
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
 from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
-from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.masque.fonctions import *
 
 class NoeudCommande(BaseNoeud):
@@ -84,7 +83,7 @@ class NoeudCommande(BaseNoeud):
         """
         valide = self.commande.valider(personnage, dic_masques, commande)
         if valide:
-            dic_masques["commande"] = self.commande
+            dic_masques[self.commande.nom] = self.commande
             if commande:
                 valide = self.fils.valider(personnage, dic_masques, \
                         commande)
