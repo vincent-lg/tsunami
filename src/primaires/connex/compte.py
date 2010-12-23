@@ -34,21 +34,6 @@ import hashlib
 
 from abstraits.id import ObjetID
 
-# Attributs d'un compte
-dic_attributs = {
-    "nom": "",
-    "mot_de_passe": "",
-    "adresse_email": "",
-    "encodage": "",
-    "valide": False,
-    "code_validation": "",
-    "msg_validation": False, # à True si le message de validation a été envoyé
-    "tentatives_validation": 0, # tentatives de validation
-    "nb_essais": 0, # tentatives d'intrusion (mot de passe erroné)
-    "joueurs": {}, # {id_joueur:joueur}
-    "contexte": None, # le contexte du compte
-}
-
 class Compte(ObjetID):
     """Classe représentant un compte.
     On peut y trouver différentes informations :
@@ -61,12 +46,25 @@ class Compte(ObjetID):
     """
     groupe = "comptes"
     sous_rep = "comptes"
-    attributs = dic_attributs
     
     def __init__(self, nom_compte):
         """Constructeur d'un compte."""
         ObjetID.__init__(self)
         self.nom = nom_compte
+        self.mot_de_passe = ""
+        self.adresse_email = ""
+        self.encodage = ""
+        self.valide = False
+        self.code_validation = ""
+        self.msg_validation = False # à True si le message de validation a été envoyé
+        self.tentatives_validation = 0 # tentatives de validation
+        self.nb_essais = 0 # tentatives d'intrusion (mot de passe erroné)
+        self.joueurs = {} # {id_joueur:joueur}
+        self.contexte = None # le contexte du compte
+    
+    def __getinitargs__(self):
+        """Méthode retournant les valeurs par défaut du constructeur"""
+        return ("", )
     
     def hash_mot_de_pass(self, clef_salage, type_chiffrement, mot_de_passe):
         mot_de_passe = str(clef_salage + mot_de_passe).encode()

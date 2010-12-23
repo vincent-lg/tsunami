@@ -30,6 +30,7 @@
 
 """Ce fichier définit la classe BaseObj définie plus bas."""
 
+import sys
 import time
 
 class BaseObj:
@@ -45,48 +46,19 @@ class BaseObj:
         Ces objets sont ceux destinés à être enregistrés dans des fichiers
         sous la forme d'attributs d'autres objets par exemple.
     
-    On se base sur un dictionnaire représentant les attributs, lui-même étant
-    un attribut de classe :
-    -   les clés sont constituées des noms des attributs
-    -   les valeurs sont les valeurs par défaut des attributs correspondants
-    
-    Exemple d'utilisation :
-    >>> from abstraits.obase import BaseObj
-    >>> dic_attributs = {
-    ...     "nom": "inconnu",
-    ...     "race": RACE_INCONNU,
-    ...     "talents": [],
-    ... }
-    >>> class Joueur(BaseObj):
-    ...     attributs = dic_attributs
-    
-    Ce dictionnaire est utilisé :
-    *   A la création du personnage : on va tout simplement copier
-        chaque attribut et valeur par défaut dans l'objet à créer
-    *   A la récupération de l'objet (méthode '__setstate__') :
-        On écrit dans ce cas les valeurs par défaut des attributs
-        sans écraser ceux déjà présents dans l'objet
-        Ainsi, on peut rajouter des attributs dans des objets d'une session du
-        module à l'autre.
+    La récupération d'objets hérités de 'BaseObj' se fait assez simplement :
+    *   on cherche la classe d'origine de l'objet dans sys.modules
+    *   on appelle son constructeur en lui passant 'self'
+    *   on met à jour cet objet créé grâce au dictionnaire des attributs
+        sauvegardé
     
     """
-    attributs = {} # dictionnaire des attributs
     
     # Dictionnaires à NE PAS redéfinir dans les sous-classes :
     trace_p_ids = {}
     
     def __init__(self):
         """Constructeur. On copie tous les attributs dans self"""
-        attributs = dict(type(self).attributs)
-        # On parcourt les descendants éventuels de la classe
-        # Ainsi, on ajoute au dictionnaire des attributs les attributs des
-        # objets-parents
-        for classe in type(self).__bases__:
-            if hasattr(classe, "attributs"):
-                n_attributs = dict(classe.attributs)
-                n_attributs.update(attributs)
-                attributs = n_attributs
-        self.__dict__.update(attributs)
         self.p_id = id(self)
     
     def __getstate__(self):
@@ -96,9 +68,12 @@ class BaseObj:
     
     def __setstate__(self, dico_attrs):
         """Méthode appelée lors de la désérialisation de l'objet"""
-        attributs = dict(type(self).attributs)
-        attributs.update(dico_attrs)
-        self.__dict__.update(attributs)
+        # On recherche la classe
+        classe = type(self)
+        # A passer au constructeur
+        args = classe.__getinitargs__(self)
+        classe.__init__(self, *args)
+        self.__dict__.update(dico_attrs)
         # Si l'objet est déjà tracé dans trace_p_ids, on réc upère son __dict__
         # Sinon, on ajoute son __dict__ dans trace_p_ids
         # Note importante: à chaque fois qu'un objet est sauvegardé, il

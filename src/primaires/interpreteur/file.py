@@ -36,11 +36,6 @@
 
 from abstraits.obase import BaseObj
 
-dic_attributs = {
-    "_file": [], # la liste représentant la file d'attente
-    "_taille_min": 1 # la taille minimum de la file d'attente
-}
-
 class FileContexte(BaseObj):
     """Cette classe définie une file d'attente des contextes.
     C'est une classe envelope de liste. On interragit avec cette
@@ -52,11 +47,16 @@ class FileContexte(BaseObj):
     sont indexées (file[0] retourne le premier élément).
     
     """
-    attributs = dic_attributs
     
     def __init__(self):
         """Constructeur de la file, initialement vide."""
         BaseObj.__init__(self)
+        self._file = [] # la liste représentant la file d'attente
+        self._taille_min = 1 # la taille minimum de la file d'attente
+   
+    def __getinitargs__(self):
+        """Méthode retournant les arguments à passer au constructeur"""
+        return ()
     
     def __getitem__(self, index):
         """Retourne l'objet se trouvant à l'index 'index'"""

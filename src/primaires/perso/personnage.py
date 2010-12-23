@@ -33,11 +33,6 @@
 from abstraits.id import ObjetID
 from primaires.interpreteur.file import FileContexte
 
-dic_attributs = { # dictionnaire des attributs d'un personnage
-    "nom": "",
-    "contextes": FileContexte(), # file d'attente des contexte
-}
-
 class Personnage(ObjetID):
     """Classe représentant un personnage.
     C'est une classe abstraite. Elle doit être héritée pour faire des joueurs
@@ -49,11 +44,17 @@ class Personnage(ObjetID):
     """
     groupe = "personnages"
     sous_rep = "personnages"
-    attributs = dic_attributs
     
     def __init__(self):
         """Constructeur d'un personnage"""
         ObjetID.__init__(self)
+        self.nom = ""
+        self.contextes = FileContexte() # file d'attente des contexte
+        self.langue_cmd = "francais"
+    
+    def __getinitargs__(self):
+        """Retourne les arguments à passer au constructeur"""
+        return ()
     
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel, c'est-à-dire le premier de la file"""

@@ -121,17 +121,22 @@ class Commande(Masque):
             fin_pos = len(str_commande)
         
         str_commande = str_commande[:fin_pos]
-        for nom_com in self.noms_commandes:
-            if self.tronquer and nom_com.startswith(str_commande):
-                commande[:] = commande[fin_pos:]
-                valide = True
-                break
-            elif nom_com == str_commande:
-                commande[:] = commande[fin_pos:]
-                valide = True
-                break
-            else:
-                valide = False
+        if personnage.langue_cmd == "francais":
+            nom_com = self.nom_francais
+        elif personnage.langue_cmd == "anglais":
+            nom_com = self.nom_anglais
+        else:
+            raise ValueError("la langue {0} est inconnue".format( \
+                    personnage.langue_cmd))
+        
+        if self.tronquer and nom_com.startswith(str_commande):
+            commande[:] = commande[fin_pos:]
+            valide = True
+        elif nom_com == str_commande:
+            commande[:] = commande[fin_pos:]
+            valide = True
+        else:
+            valide = False
         
         return valide
     

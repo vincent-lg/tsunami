@@ -34,12 +34,14 @@ et connexion de joueurs.
 """
 
 from primaires.joueur.contextes.creation.nouveau_nom import NouveauNom
+from primaires.joueur.contextes.creation.langue_cmd import LangueCMD
 from primaires.joueur.contextes.connexion.mode_connecte import ModeConnecte
 
 # Liste des contextes
 liste_contextes = [
     # Création
     NouveauNom,
+    LangueCMD,
     
     # Connexion
     ModeConnecte,
