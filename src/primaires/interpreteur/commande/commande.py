@@ -88,6 +88,18 @@ class Commande(Masque):
         res = "(" + self.nom_francais + "/" + self.nom_anglais + ")"
         return res
     
+    def get_nom_pour(self, personnage):
+        """Retourne le nom de la commande en fonction de la langue du
+        personnage
+        
+        """
+        if personnage.langue_cmd == "francais":
+            nom = self.nom_francais
+        elif personnage.langue_cmd == "anglais":
+            nom = self.nom_anglais
+        
+        return nom
+    
     def ajouter_parametre(self, parametre):
         """Ajoute un paramètre à la commande"""
         noeud_cmd = NoeudCommande(parametre)

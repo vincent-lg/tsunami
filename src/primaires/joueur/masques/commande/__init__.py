@@ -54,8 +54,8 @@ class Commande(Masque):
         commande = None
         for cmd in \
                 type(self).importeur.interpreteur.commandes:
-            print(cmd.nom, nom_commande)
-            if cmd.nom.startswith(nom_commande):
+            nom = cmd.commande.get_nom_pour(personnage)
+            if nom.startswith(nom_commande):
                 commande = cmd
                 break
         

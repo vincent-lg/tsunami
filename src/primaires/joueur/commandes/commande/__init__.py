@@ -59,7 +59,7 @@ class CmdCommande(Commande):
             commandes = []
             for cmd in \
                 type(self).importeur.interpreteur.commandes:
-                commandes.append(cmd.nom)
+                commandes.append(cmd.commande.get_nom_pour(personnage))
             
             if not commandes:
                 personnage.envoyer("Aucune commande ne semble être définie." \
