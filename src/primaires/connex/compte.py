@@ -31,6 +31,7 @@
 """Ce fichier définit la classe Compte."""
 
 import hashlib
+from collections import OrderedDict
 
 from abstraits.id import ObjetID
 
@@ -59,7 +60,7 @@ class Compte(ObjetID):
         self.msg_validation = False # à True si le message de validation a été envoyé
         self.tentatives_validation = 0 # tentatives de validation
         self.nb_essais = 0 # tentatives d'intrusion (mot de passe erroné)
-        self.joueurs = {} # {id_joueur:joueur}
+        self.joueurs = OrderedDict # {id_joueur:joueur}
         self.contexte = None # le contexte du compte
     
     def __getinitargs__(self):
