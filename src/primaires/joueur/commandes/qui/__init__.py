@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'module' et ses sous-commandes.
+"""Package contenant la commande 'qui'.
 Dans ce fichier se trouve la commande même.
 
 """
@@ -37,9 +37,9 @@ from primaires.interpreteur.commande.commande import Commande
 
 NOM_GROUPE = "connexions"
 
-class CmdWho(Commande):
+class CmdQui(Commande):
     
-    """Commande 'who'.
+    """Commande 'qui'.
     
     """
     
