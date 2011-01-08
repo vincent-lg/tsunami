@@ -83,12 +83,6 @@ class ObjetID(BaseObj):
     il n'est pas nécessaire que chaque attribut enregistré dans l'objet soit
     identifié (voir selon les besoins, au cas par cas);
         
-    Note: un mécanisme est mis en place pour que, si un objet possède en
-    attribut une référence vers un autre objet, la référence soit conservée.
-    Cela signifie que si deux objets possèdent un attribut pointant
-    vers le même objet, ce sera toujours vrai après la récupération
-    des objets enregistrés. Voir 'enregistrer' pour plus d'informations.
-    
     Mode d'emploi :
     -   Si vous souhaitez définir un nouveau groupe identifiant,
         vous devez hériter de cette classe et redéfinir, dans la sous-classe,
@@ -128,12 +122,10 @@ class ObjetID(BaseObj):
     groupe = "" # la chaîne contenant le nom du groupe préfixant l'ID
     id_actuel = 1 # on compte à partir de 1
     sous_rep = "" # sous-répertoire menant de _chemin_enr aux données du groupe
-    attributs = {} # Dictionnaire des attributs et de leur valeur par défaut
     
     # Attributs à ne pas redéfinir
     _supenr = None # superviseur d'enregistrement
     groupes = {} # dictionnaire des groupes créés ({nom_groupe:classe})
-    parid = None # gestionnaire des ID
     
     # Méthodes de classe
     def ajouter_groupe(groupe):
@@ -146,7 +138,7 @@ class ObjetID(BaseObj):
         """
         ObjetID.groupes[groupe.groupe] = groupe
         groupe.id_actuel = 1
-        ObjetID.parid[groupe.groupe] = {}
+        BaseObj.importeur.parid[groupe.groupe] = {}
     
     # Méthodes d'instance
     def __init__(self):
@@ -169,7 +161,7 @@ class ObjetID(BaseObj):
         # Appel du constructeur de BaseObj
         BaseObj.__init__(self)
         # On l'ajoute dans le parid
-        ObjetID.parid[self.id.groupe][self.id.id] = self
+        BaseObj.importeur.parid[self.id.groupe][self.id.id] = self
         # On change le statut et enregistre l'objet
         self._statut = StatutObjet.INITIALISE
         self.enregistrer()
@@ -190,7 +182,7 @@ class ObjetID(BaseObj):
             type(self).id_actuel = self.id.id + 1
         
         # On l'ajoute dans parid
-        ObjetID.parid[self.id.groupe][self.id.id] = self
+        BaseObj.importeur.parid[self.id.groupe][self.id.id] = self
     
     def __setattr__(self, nom_attr, val_attr):
         """Méthode appelée lorsqu'on cherche à modifier un attribut
@@ -201,7 +193,7 @@ class ObjetID(BaseObj):
         de données.
         
         """
-        object.__setattr__(self, nom_attr, val_attr)
+        BaseObj.__setattr__(self, nom_attr, val_attr)
         if not nom_attr.startswith("_"):
             self.enregistrer()
     
@@ -211,18 +203,13 @@ class ObjetID(BaseObj):
     
     def enregistrer(self):
         """Enregistre l'objet dans un fichier.
-        Le superviseur (attribut de classe _supenr) doit être défini car on
-        redirige vers sa méthode 'enregistrer'.
         
         Note: l'objet doit être initialisé.
         
         """
-        if ObjetID._supenr:
-            if self._statut == StatutObjet.INITIALISE:
-                ObjetID._supenr.file_attente.add(self)
-        else:
-            raise RuntimeError("impossible d'enregistrer {0} : le " \
-                    "superviseur 'supenr' n'a pas été trouvé".format(self))
+        supenr = BaseObj.importeur.supenr
+        if self._statut == StatutObjet.INITIALISE:
+            supenr.file_attente.add(self)
     
     def detruire(self):
         """Méthode appelée pour détruire l'objet.
@@ -232,12 +219,8 @@ class ObjetID(BaseObj):
         
         """
         self._statut = StatutObjet.DETRUIT
-        if ObjetID._supenr:
-            supenr = ObjetID._supenr
-            supenr.detruire_fichier(self)
-        else:
-            raise RuntimeError("impossible de supprimer {0} : le " \
-                    "superviseur 'supenr' n'a pas été trouvé".format(self))
+        supenr = BaseObj.importeur.supenr
+        supenr.detruire_fichier(self)
 
 
 # Fonctions liées à la manipulation de ces objets
@@ -257,3 +240,4 @@ def existe(objet):
     """
     return objet is None or (est_objet_id(objet) and objet._statut != \
             StatutObjet.DETRUIT)
+

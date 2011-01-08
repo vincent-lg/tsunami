@@ -40,7 +40,6 @@ class InstanceConnexion(BaseObj):
     personnage.
     
     """
-    importeur = None
     
     def __init__(self, client, creer_contexte=True):
         """Constructeur d'une instance de connexion.
@@ -119,7 +118,7 @@ class InstanceConnexion(BaseObj):
             self.compte = type(self).importeur.connex.get_compte( \
                     autre.compte.nom)
         if autre.joueur:
-            self.joueur = self.compte.get_joueur(autre.joueur)
+            self.joueur = autre.joueur
             self.joueur.instance_connexion = self
             self.joueur.compte = self.compte
         if autre.contexte:

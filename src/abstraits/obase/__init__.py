@@ -47,19 +47,18 @@ class BaseObj:
         sous la forme d'attributs d'autres objets par exemple.
     
     La récupération d'objets hérités de 'BaseObj' se fait assez simplement :
-    *   on cherche la classe d'origine de l'objet dans sys.modules
+    *   on récupère la classe de l'objet (objet.__class__)
     *   on appelle son constructeur en lui passant 'self'
     *   on met à jour cet objet créé grâce au dictionnaire des attributs
         sauvegardé
     
+    Cela signifie que vous pouvez ajouter, d'une session à l'autre, de
+    nouveaux attributs dans vos objets. A leur récupération, les objets seront
+    recréé et auront bien les valeurs par défaut des nouveaux attributs.
+    
     """
     
-    # Dictionnaires à NE PAS redéfinir dans les sous-classes :
-    trace_p_ids = {}
-    
-    def __init__(self):
-        """Constructeur. On copie tous les attributs dans self"""
-        self.p_id = id(self)
+    importeur = None
     
     def __getstate__(self):
         """Au moment de l'enregistrement, on met à jour le timestamp"""
@@ -74,21 +73,35 @@ class BaseObj:
         args = classe.__getinitargs__(self)
         classe.__init__(self, *args)
         self.__dict__.update(dico_attrs)
-        # Si l'objet est déjà tracé dans trace_p_ids, on réc upère son __dict__
-        # Sinon, on ajoute son __dict__ dans trace_p_ids
-        # Note importante: à chaque fois qu'un objet est sauvegardé, il
-        # enregistre le timestamp de cette sauvegarde.
-        # Si on trouve une référence vers le même objet mais dont le timestamp
-        # de son enregistrement est supérieur à celui enregistré dans
-        # trace_p_ids, c'est le plus récent qui est conservé.
-        # Pour résumer, on considère que c'est le dernier objet enregistré le
-        # plus à jour.
-        if self.p_id in type(self).trace_p_ids.keys():
-            if self._ts > type(self).trace_p_ids[self.p_id]._ts:
-                # self est plus récent que celui de trace_p_ids
-                type(self).trace_p_ids[self.p_id].__dict__.update( \
-                        self.__dict__)
-            self.__dict__ = type(self).trace_p_ids[self.p_id].__dict__
-        else:
-            type(self).trace_p_ids[self.p_id] = self
-            self.p_id = id(self)
+    
+    def __getattribute__(self, nom_attr):
+        """Méthode appelé quand on cherche à récupérer l'attribut nom_attr
+        Si l'attribut qu'on cherche à récupérer est un type ID, on retourne
+        l'objet correspondant à l'ID.
+        Pour ce faire, on demande à parid l'objet correspondant à notre ID.
+        
+        """
+        objet = object.__getattribute__(self, nom_attr)
+        if nom_attr != "id" and est_id(objet):
+            # On cherche l'objet correspondant à cet ID
+            objet = objet.get_objet()
+        
+        return objet
+    
+    def __setattr__(self, nom_attr, val_attr):
+        """Méthode appelée quand on cherche à écrire l'objet val_attr dans
+        l'attribut nom_attr.
+        
+        Si val_attr est un ObjetID (il possède l'attribut id), on écrit
+        dans l'attribut nom_attr non pas val_attr mais l'ID de val_attr.
+        
+        """
+        if nom_attr != "id" and hasattr(val_attr, "id"):
+            # val_attr est un ObjetID
+            val_attr = val_attr.id
+        
+        object.__setattr__(self, nom_attr, val_attr)
+
+def est_id(objet):
+    """Retourne True si objet est un ID"""
+    return hasattr(objet, "groupe") and hasattr(objet, "id")

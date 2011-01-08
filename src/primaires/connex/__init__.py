@@ -48,7 +48,6 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "connex", "primaire")
-        InstanceConnexion.importeur = self.importeur
         self.instances = {}
         self.cnx_logger = type(self.importeur).man_logs.creer_logger( \
                 "connex", "connexions")
@@ -221,7 +220,7 @@ class Module(BaseModule):
         """
         noms = []
         for compte in self.comptes.values():
-            for joueur in compte.joueurs.values():
+            for joueur in compte.joueurs:
                 noms.append(joueur.nom)
         
         return tuple(noms)

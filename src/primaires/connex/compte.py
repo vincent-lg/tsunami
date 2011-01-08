@@ -31,7 +31,7 @@
 """Ce fichier définit la classe Compte."""
 
 import hashlib
-from collections import OrderedDict
+from bases.collections.liste_id import ListeID
 
 from abstraits.id import ObjetID
 
@@ -60,7 +60,7 @@ class Compte(ObjetID):
         self.msg_validation = False # à True si le message de validation a été envoyé
         self.tentatives_validation = 0 # tentatives de validation
         self.nb_essais = 0 # tentatives d'intrusion (mot de passe erroné)
-        self.joueurs = OrderedDict # {id_joueur:joueur}
+        self.joueurs = []
         self.contexte = None # le contexte du compte
     
     def __getinitargs__(self):
@@ -68,6 +68,7 @@ class Compte(ObjetID):
         return ("", )
     
     def hash_mot_de_pass(self, clef_salage, type_chiffrement, mot_de_passe):
+        """Méthode appelé pour hasher le mot de passe"""
         mot_de_passe = str(clef_salage + mot_de_passe).encode()
         h = hashlib.new(type_chiffrement)
         h.update(mot_de_passe)
@@ -76,24 +77,13 @@ class Compte(ObjetID):
     
     def ajouter_joueur(self, joueur):
         """Ajoute le joueur passé en paramètre à la liste des joueurs"""
-        self.joueurs[joueur.id] = joueur
+        self.joueurs.append(joueur)
         self.enregistrer()
     
     def supprimer_joueur(self, joueur):
         """Supprime le joueur passé en paramètre de la liste des joueurs"""
-        del self.joueurs[joueur.id]
+        self.joueurs.remove(joueur)
         self.enregistrer()
-    
-    def get_joueur(self, joueur):
-        """Retourne le joueur en parcourant les ID"""
-        id_j = str(joueur.id)
-        for id in self.joueurs.keys():
-            if str(id) == id_j:
-                return self.joueurs[id]
-        
-        raise KeyError( \
-            "le joueur {0} n'a pu être trouvé dans el compte {1}".format( \
-            self, joueur))
     
     def _get_contexte_actuel(self):
         """Retourne le contexte du compte"""

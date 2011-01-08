@@ -57,6 +57,8 @@ import sys
 import traceback
 
 from abstraits.module import *
+from abstraits.obase import BaseObj
+from abstraits.id.id import ID
 
 REP_PRIMAIRES = "primaires"
 REP_SECONDAIRES = "secondaires"
@@ -103,6 +105,8 @@ class Importeur:
         Importeur.parid = parid
         Importeur.serveur = serveur
         Importeur.logger = man_logs.creer_logger("", "importeur", "")
+        BaseObj.importeur = self
+        ID.importeur = self
     
     def __str__(self):
         """Retourne sous une forme un peu plus lisible les modules importés."""
