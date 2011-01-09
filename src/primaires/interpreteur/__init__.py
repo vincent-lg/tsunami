@@ -55,6 +55,8 @@ class Module(BaseModule):
         Masque.importeur = importeur
         self.contextes = {} # Dictionnaire des contextes
         self.commandes = []
+        self.commandes_francais = []
+        self.commandes_anglais = []
         self.masques = {}
     
     def ajouter_contexte(self, nouv_contexte):
@@ -68,6 +70,12 @@ class Module(BaseModule):
         """Ajoute une commande à l'embranchement"""
         noeud_cmd = NoeudCommande(commande)
         self.commandes.append(noeud_cmd)
+        # Trie la liste des commandes, une première fois par ordre alphabétique
+        # français la seconde par ordre alphabétique anglais
+        self.commandes_francais = sorted(self.commandes, \
+            key=lambda noeud: noeud.commande.nom_francais)
+        self.commandes_anglais = sorted(self.commandes, \
+            key=lambda noeud: noeud.commande.nom_anglais)
     
     def ajouter_masque(self, masque):
         """Méthode d'ajout d'un masque"""
@@ -80,7 +88,11 @@ class Module(BaseModule):
     def valider(self, personnage, dic_masques, lst_commande):
         """Commande de validation"""
         trouve = False
-        for cmd in self.commandes:
+        if personnage.langue_cmd == "francais":
+            commandes = self.commandes_francais
+        elif personnage.langue_cmd == "anglais":
+            commandes = self.commandes_anglais
+        for cmd in commandes:
             if cmd.valider(personnage, dic_masques, lst_commande):
                 trouve = True
                 break
