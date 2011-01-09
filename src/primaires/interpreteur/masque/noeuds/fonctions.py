@@ -30,7 +30,6 @@
 
 """Fichier contenant des fonctions utiles à la manipulation des noeuds"""
 
-from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
 from primaires.interpreteur.masque.noeuds.noeud_masque import NoeudMasque
 from primaires.interpreteur.masque.noeuds.noeud_optionnel import NoeudOptionnel
 
