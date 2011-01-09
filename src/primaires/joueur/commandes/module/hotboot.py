@@ -56,7 +56,7 @@ class PrmHotboot(Parametre):
         nom = personnage.compte.nom
         res = type(self).importeur.tout_recharger()
         personnage = type(self).importeur.connex.get_compte( \
-                nom).get_joueur(personnage)
+                nom).get_joueur(personnage.nom)
         if res:
             personnage.envoyer("Les modules ont bien été redémarré.")
         else:

@@ -31,8 +31,8 @@
 """Ce fichier définit la classe Compte."""
 
 import hashlib
-from bases.collections.liste_id import ListeID
 
+from bases.collections.liste_id import ListeID
 from abstraits.id import ObjetID
 
 class Compte(ObjetID):
@@ -60,7 +60,7 @@ class Compte(ObjetID):
         self.msg_validation = False # à True si le message de validation a été envoyé
         self.tentatives_validation = 0 # tentatives de validation
         self.nb_essais = 0 # tentatives d'intrusion (mot de passe erroné)
-        self.joueurs = []
+        self.joueurs = ListeID()
         self.contexte = None # le contexte du compte
     
     def __getinitargs__(self):
@@ -74,6 +74,16 @@ class Compte(ObjetID):
         h.update(mot_de_passe)
         
         return h.digest()
+    
+    def get_joueur(self, nom_perso):
+        """Retourne le joueur correspondant au nom"""
+        joueur = None
+        for perso in self.joueurs:
+            if perso.nom == nom_perso:
+                joueur = perso
+                break
+        
+        return joueur
     
     def ajouter_joueur(self, joueur):
         """Ajoute le joueur passé en paramètre à la liste des joueurs"""

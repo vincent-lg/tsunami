@@ -50,6 +50,22 @@ class ListeID(list):
         """Parcourt (on veille à parcourir les objets, pas les IDs)"""
         return IterateurListeID(self)
     
+    def __getstate__(self):
+        """Retourne la liste des IDs (à enregistrer)"""
+        liste = []
+        for objet in self:
+            liste.append(objet.id)
+        
+        return liste
+    
+    def __setstate__(self, liste):
+        """On recopie la liste dans self"""
+        while len(self) > 0:
+            del self[0]
+        
+        for id in liste:
+            list.append(self, id)
+    
     def append(self, objet):
         """Ajoute objet à la fin de la liste"""
         list.append(self, objet.id)
