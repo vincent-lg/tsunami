@@ -56,6 +56,11 @@ class Personnage(ObjetID):
         """Retourne les arguments à passer au constructeur"""
         return ()
     
+    def __lshift__(self, msg):
+        """Redirige vers 'envoyer'"""
+        self.envoyer(msg)
+        return self
+    
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel, c'est-à-dire le premier de la file"""
         if len(self.contextes) > 0:
@@ -75,3 +80,7 @@ class Personnage(ObjetID):
         self.contextes.ajouter(nouveau_contexte)
     
     contexte_actuel = property(_get_contexte_actuel, _set_contexte_actuel)
+    
+    def envoyer(self, msg):
+        """Méthode envoyer"""
+        raise NotImplementedError

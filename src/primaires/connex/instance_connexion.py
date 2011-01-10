@@ -75,6 +75,11 @@ class InstanceConnexion(BaseObj):
         """Méthode retournant les valeurs par défaut du constructeur"""
         return (None, False)
     
+    def __lshift__(self, msg):
+        """Redirige vers 'envoyer'"""
+        self.envoyer(msg)
+        return self
+    
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel de l'instance.
         Si aucun compte n'est défini, le contexte actuel est self.contexte.

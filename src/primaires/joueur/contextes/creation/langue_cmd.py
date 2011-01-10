@@ -71,7 +71,7 @@ class LangueCMD(Contexte):
         """Méthode d'interprétation"""
         msg = supprimer_accents(msg).lower()
         if msg not in LANGUES_DISPONIBLES:
-            self.pere.envoyer("|err|Langue incorrecte. Veuillez réessayer.|ff|")
+            self.pere << "|err|Langue incorrecte. Veuillez réessayer.|ff|"
         else:
             self.pere.joueur.langue_cmd = msg
             self.pere.compte.ajouter_joueur(self.pere.joueur)
