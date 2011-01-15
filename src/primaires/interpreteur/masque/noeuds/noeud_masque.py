@@ -154,19 +154,6 @@ class NoeudMasque(BaseNoeud):
         
         return msg
     
-    @property
-    def fils(self):
-        """Retourne les fils, c'est-à-dire :
-        -   le noeud éventuel du schéma de la commande
-        -   les différents paramètres de la commande
-        
-        """
-        fils = Embranchement()
-        for noeud_param in self.commande.parametres.values():
-            fils.ajouter_fils(noeud_param)
-        
-        return fils
-    
     def valider(self, personnage, dic_masques, commande, tester_fils=True):
         """Validation d'un noeud masque.
         On va essayer de valider successivement chaque masque possible. Si

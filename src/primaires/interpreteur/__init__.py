@@ -88,6 +88,7 @@ class Module(BaseModule):
     def valider(self, personnage, dic_masques, lst_commande):
         """Commande de validation"""
         trouve = False
+        commandes = []
         if personnage.langue_cmd == "francais":
             commandes = self.commandes_francais
         elif personnage.langue_cmd == "anglais":

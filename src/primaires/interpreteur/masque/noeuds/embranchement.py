@@ -78,8 +78,31 @@ class Embranchement(BaseNoeud):
         caractères.
         
         """
+        
+        liste_fils = []
+        
+        # Mets à part le suivant si il y en a un
+        if self.fils[-1].__class__.__name__ == "NoeudCommande":
+            liste_fils = self.fils
+        else:
+            liste_fils = self.fils[:-1]
+        
+        # Trie la liste des fils soit par ordrre alphabétique français
+        # ou anglais
+        if personnage.langue_cmd == "francais":
+            liste_fils = sorted(liste_fils, \
+                key=lambda noeud: noeud.commande.nom_francais)
+        elif personnage.langue_cmd == "anglais":
+            liste_fils = sorted(liste_fils, \
+                key=lambda noeud: noeud.commande.nom_anglais)
+        
+        # Remets le noeud suivant si il y a besoin
+        if self.fils[-1].__class__.__name__ == "NoeudCommande":
+            liste_fils.append(self.fils[-1])
+        
         valide = False
-        for fils in self.fils:
+        
+        for fils in liste_fils:
             valide = fils.valider(personnage, dic_masques, commande,
                     tester_fils)
             if valide:

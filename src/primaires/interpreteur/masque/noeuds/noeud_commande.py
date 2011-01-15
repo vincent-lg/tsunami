@@ -69,10 +69,10 @@ class NoeudCommande(BaseNoeud):
         
         """
         fils = Embranchement()
-        if self.suivant:
-            fils.ajouter_fils(self.suivant)
         for noeud_param in self.commande.parametres.values():
             fils.ajouter_fils(noeud_param)
+        if self.suivant:
+            fils.ajouter_fils(self.suivant)
         
         return fils
     
