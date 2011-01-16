@@ -112,8 +112,12 @@ class ChoisirPersonnage(Contexte):
                 # On redirige vers la création de compte
                 self.migrer_contexte("personnage:creation:nouveau_nom")
         elif msg == cmd_supprimer:
-            # On redirige vers la suppression de comptes
-            pass
+            if len(self.pere.compte.joueurs) == 0:
+                self.pere.envoyer("|err|Vous ne pouvez pas supprimer de "\
+                        "personnage si vous n'en avez pas.|ff|")
+            else:
+                # On redirige vers la suppression de comptes
+                self.migrer_contexte("personnage:suppression:suppression")
         elif msg == cmd_quitter:
             # On déconnecte le joueur
             self.pere.envoyer("\nA bientôt !")

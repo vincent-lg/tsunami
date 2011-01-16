@@ -28,25 +28,4 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des différents contextes utiles à la création, suppression
-et connexion de joueurs.
-
-"""
-
-from primaires.joueur.contextes.creation.nouveau_nom import NouveauNom
-from primaires.joueur.contextes.creation.langue_cmd import LangueCMD
-from primaires.joueur.contextes.connexion.mode_connecte import ModeConnecte
-from primaires.joueur.contextes.suppression.suppression import Suppression
-
-# Liste des contextes
-liste_contextes = [
-    # Création
-    NouveauNom,
-    LangueCMD,
-    
-    #Suppression
-    Suppression,
-    
-    # Connexion
-    ModeConnecte,
-]
+"""Package du contextes de suppression d'un joueur."""
