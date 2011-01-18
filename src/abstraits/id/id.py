@@ -42,6 +42,9 @@ class ID:
     -   d'un identifiant (int)
     
     """
+    
+    importeur = None
+    
     def __init__(self, groupe, n_id):
         """Constructeur de la classe ID."""
         self.groupe = groupe
@@ -54,3 +57,11 @@ class ID:
     def __str__(self):
         """On redirige sur repr"""
         return repr(self)
+    
+    def get_objet(self):
+        """Grâce à l'ID, on récupère l'objet correspondant.
+        Pour savoir quel objet correspond à l'ID self, on demande à parid.
+        Si l'objet n'existe pas, on retourne None.
+        
+        """
+        return type(self).importeur.parid.get_objet(self)

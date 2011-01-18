@@ -30,10 +30,12 @@
 
 """Fichier contenant la classe Commande, détaillée plus bas."""
 
+from primaires.interpreteur.masque.noeuds.noeud_commande import NoeudCommande
 from primaires.interpreteur.masque.noeuds.fonctions import *
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.masque import Masque
 from primaires.format.fonctions import *
+from primaires.interpreteur.masque.aide import afficher_aide
 
 NB_MAX_CAR_AIDE_COURTE = 40
 
@@ -61,10 +63,9 @@ class Commande(Masque):
         self.nom_anglais = anglais
         
         self.racine = None
-        self.schemas = []
+        self.schema = ""
         self.tronquer = True
-        self.parametres = []
-        self.delimiteurs = []
+        self.parametres = {}
         self.aide_courte = ""
         self.aide_longue = ""
     
@@ -87,29 +88,23 @@ class Commande(Masque):
         res = "(" + self.nom_francais + "/" + self.nom_anglais + ")"
         return res
     
+    def get_nom_pour(self, personnage):
+        """Retourne le nom de la commande en fonction de la langue du
+        personnage
+        
+        """
+        if personnage.langue_cmd == "francais":
+            nom = self.nom_francais
+        elif personnage.langue_cmd == "anglais":
+            nom = self.nom_anglais
+        
+        return nom
+    
     def ajouter_parametre(self, parametre):
         """Ajoute un paramètre à la commande"""
-        self.parametres.append(parametre)
-        self.schemas.append(parametre.schema)
+        noeud_cmd = NoeudCommande(parametre)
+        self.parametres[parametre.nom] = noeud_cmd
     
-    def ajouter_delimiteur(self, delimiteur):
-        """Ajoute un délimiteur à la commande"""
-        self.delimiteurs.append(delimiteur)
-    
-    def get_delimiteur(self, nom_delimiteur):
-        """Retourne le délimiteur ou le paramètre correspondant"""
-        res = None
-        for delimiteur in list(self.parametres + self.delimiteurs):
-            if delimiteur.nom == nom_delimiteur:
-                res = delimiteur
-                break
-        
-        if not res:
-            raise ValueError("le délimiteur {0} n'a pas été trouvé dans la " \
-                "commande {1}".format(nom_delimiteur, self))
-        
-        return res
-
     def construire_arborescence(self, schema):
         """Interprétation du schéma"""
         schema = chaine_vers_liste(schema)
@@ -138,16 +133,22 @@ class Commande(Masque):
             fin_pos = len(str_commande)
         
         str_commande = str_commande[:fin_pos]
-        for nom_com in self.noms_commandes:
-            if self.tronquer and nom_com.startswith(str_commande):
-                commande[:] = commande[fin_pos:]
-                valide = True
-                break
-            elif nom_com == str_commande:
-                valide = True
-                break
-            else:
-                valide = False
+        if personnage.langue_cmd == "francais":
+            nom_com = self.nom_francais
+        elif personnage.langue_cmd == "anglais":
+            nom_com = self.nom_anglais
+        else:
+            raise ValueError("la langue {0} est inconnue".format( \
+                    personnage.langue_cmd))
+        
+        if self.tronquer and nom_com.startswith(str_commande):
+            commande[:] = commande[fin_pos:]
+            valide = True
+        elif nom_com == str_commande:
+            commande[:] = commande[fin_pos:]
+            valide = True
+        else:
+            valide = False
         
         return valide
     
@@ -155,7 +156,13 @@ class Commande(Masque):
         """Fonction d'interprétation.
         
         """
-        raise NotImplementedError
+        dernier_masque = list(dic_masques.values())[-1]
+        personnage.envoyer(
+            afficher_aide(personnage, dernier_masque, self, 1, dic_masques))
+    
+    def est_parametre(self):
+        """La commande est une forme de paramètre"""
+        return True
     
     def afficher(self, personnage):
         """Retourne un affichage de la commande pour le personnage passé en

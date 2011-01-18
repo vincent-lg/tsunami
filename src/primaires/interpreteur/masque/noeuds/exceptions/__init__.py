@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les exceptions liées à l'interprétation de noeuds /
+"""Package contenant les exceptions liées à l'interprétation des noeuds /
 masques.
 
 """

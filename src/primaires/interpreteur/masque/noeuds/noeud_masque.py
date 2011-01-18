@@ -31,6 +31,7 @@
 """Fichier définissant la classe NoeudMasque détaillée plus bas;"""
 
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
+from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
 from primaires.interpreteur.masque.fonctions import *
 
 class NoeudMasque(BaseNoeud):
@@ -44,15 +45,18 @@ class NoeudMasque(BaseNoeud):
     
     """
     
-    def __init__(self, commande, lst_schema):
+    def __init__(self, parente, commande):
         """Constructeur du noeud masque"""
         BaseNoeud.__init__(self)
         self.nom = ""
+        self.parente = parente # commande parente
+        self.commande = commande
         self.masques = []  # une liste vide de masques
         self.defaut = None  # valeur par défaut
-        
-        ## Phase de construction des masques
-        # Schéma est sous la forme d'une liste de caractères, on la convertit
+    
+    def construire_depuis_schema(self, lst_schema):
+        """Construit le masque depuis le schéma"""
+        # On convertit la liste en chaîne
         schema = liste_vers_chaine(lst_schema)
         # Si le schéma débute par un chevron ouvrant, on cherche le fermant
         delimiteurs = [' ', ',']
@@ -107,7 +111,7 @@ class NoeudMasque(BaseNoeud):
                 type_masque = type(self).importeur.interpreteur.get_masque( \
                         str_type_masque)
             else:
-                type_masque = commande.get_delimiteur(str_type_masque)
+                type_masque = self.parente.parametres[str_type_masque].commande
 
             liste_types_masques[i] = type_masque
         
@@ -128,9 +132,7 @@ class NoeudMasque(BaseNoeud):
         
         self.masques = liste_types_masques
         
-        while lst_schema:
-            lst_schema.pop(0)
-        lst_schema += chaine_vers_liste(schema[pos_fin + 1:])
+        lst_schema[:] = chaine_vers_liste(schema[pos_fin + 1:])
     
     @property
     def masque(self):
@@ -143,7 +145,7 @@ class NoeudMasque(BaseNoeud):
     
     def __str__(self):
         """Méthode d'affichage"""
-        msg = "msq "
+        msg = "msg "
         msg += self.nom + "["
         msg += ", ".join([str(masque) for masque in self.masques])
         msg += "]"
@@ -160,13 +162,15 @@ class NoeudMasque(BaseNoeud):
         
         """
         valide = False
-        for masque in self.masques:
-            valide = masque.valider(personnage, dic_masques, commande)
-            if valide:
-                dic_masques[self.nom] = masque
-                break
+        if commande:
+            for masque in self.masques:
+                valide = masque.valider(personnage, dic_masques, commande)
+                if valide:
+                    dic_masques[self.nom] = masque
+                    break
         
         if valide and self.suivant and tester_fils:
             valide = self.suivant.valider(personnage, dic_masques, commande)
         
         return valide
+    

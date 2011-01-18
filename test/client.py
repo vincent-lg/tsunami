@@ -51,7 +51,7 @@ class Client():
         """Construction de la socket"""
         self.smtp = smtp
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.settimeout(0.1)
+        self.socket.settimeout(0.2)
         
         
     def __del__(self):
@@ -75,6 +75,7 @@ class Client():
                 donnee += rec
         except socket.timeout:
             self.com += str(donnee) + "\n-------\n"
+            #print("timeout",donnee)
             return donnee
         except socket.error as detail:
             raise EchecTest("Erreur de connexion avec Kassie(réception)",self.com)
@@ -90,7 +91,7 @@ class Client():
     
     def extraire_code(self,msg):
         """Extrait le code de validation d'un email"""
-        avant = b"Code de validation : "
+        avant = b"code de validation : "
         apres = b"Note : si vous avez"
         try:
             code = msg[(msg.index(avant) + len(avant)):msg.index(apres)]
@@ -112,7 +113,7 @@ class Client():
         code = self.extraire_code(mail)
         message = self.envoyer(code)
         try:
-            message.index(b"Nom de votre nouveau personnage")
+            message.index(b"Votre nom")
         except ValueError as detail:
             raise EchecTest("Réponse attendu de la part de Kassie invalide", \
                 self.com)
@@ -122,7 +123,7 @@ class Client():
         try:
             self.envoyer(nom.encode())
             message = self.envoyer(mdp.encode())
-            message.index(b"Choix du personnage")
+            message.index(b"* Votre")
         except socket.error as detail:
             raise EchecTest("Erreur de connexion avec Kassie", \
                 self.com)

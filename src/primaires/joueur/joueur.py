@@ -33,11 +33,6 @@
 from abstraits.id import ObjetID
 from primaires.perso.personnage import Personnage
 
-dic_attributs = { # dictionnaire des attributs d'un personnage
-    "compte": None,
-    "instance_connexion": None,
-}
-
 class Joueur(Personnage):
     """Classe représentant un joueur, c'es-tà-dire un personnage connecté
     grâce à un client, à différencier des NPCs qui sont des personnages
@@ -46,11 +41,12 @@ class Joueur(Personnage):
     """
     groupe = "joueurs"
     sous_rep = "joueurs"
-    attributs = dic_attributs
     
     def __init__(self):
-        ObjetID.__init__(self)
-        print(self.__dict__)
+        """Constructeur du joueur"""
+        Personnage.__init__(self)
+        self.compte = None
+        self.instance_connexion = None
     
     def _get_encodage(self):
         """Retourne l'encodage du compte"""

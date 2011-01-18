@@ -71,7 +71,6 @@ Exemple :
 import os
 
 from bases.logs import man_logs
-from abstraits.id import ObjetID
 
 class Parid:
     """Cette classe est un gestionnaire des objets ID avant tout.
@@ -104,11 +103,27 @@ class Parid:
             nom_groupe - nom du groupe (str)
             objets - groupe sous la forme d'un dictionnaire
         
-        Le dictionnaire des objets doit e^tre sous la forme {id:objet}.
+        Le dictionnaire des objets doit être sous la forme {id:objet}.
         
         """
         self.groupes[nom_groupe] = objets
+    
+    def get_objet(self, id):
+        """Retourne l'objet correspondant à l'ID ou None."""
+        nom = id.groupe
+        objet = None
+        try:
+            groupe = self[nom]
+        except KeyError:
+            groupe = None
+        
+        if groupe:
+            try:
+                objet = groupe[id.id]
+            except KeyError:
+                pass
+        
+        return objet
 
 # Création de l'instance
 parid = Parid()
-ObjetID.parid = parid

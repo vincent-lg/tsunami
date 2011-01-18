@@ -55,11 +55,12 @@ class PrmListe(Parametre):
         lignes = []
         for module in modules:
             lignes.append(
-                "  |rg|{nom}|ff| |bar| {statut}".format(
+                "  |cy|{nom}|ff| |bar| {statut}".format(
                 nom=module.nom.ljust(20), statut=module.str_statut.ljust(10)))
         
         if lignes:
-            personnage.envoyer("\n".join(sorted(lignes)))
+            personnage.envoyer("Liste des modules chargés :\n\n" + \
+                    "\n".join(sorted(lignes)))
         else:
             personnage.envoyer("|att|Aucun module n'est chargé. Ce semble " \
                 "très improbable.|ff|")

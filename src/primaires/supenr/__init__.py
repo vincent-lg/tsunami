@@ -104,6 +104,10 @@ class Module(BaseModule):
         
         BaseModule.init(self)
     
+    def detruire(self):
+        """Destruction du module"""
+        self.file_attente.clear()
+    
     def construire_rep(self, sous_rep):
         """Construit le chemin REP_ENRS / sous_rep s'il n'existe pas"""
         global REP_ENRS
@@ -156,6 +160,13 @@ class Module(BaseModule):
             self.logger.warning("Le fichier {0} censé enregistrer {1} " \
                     "n'a pas pu être supprimé : {2}".format(chemin_dest, \
                     objet, os_err))
+    
+    def vider_file_attente(self):
+        """Méthode appelée pour vider la file d'attente des objets
+        à enregistrer.
+        
+        """
+        self.file_attente.clear()
     
     def boucle(self):
         """Méthode appelée à chaque tour de boucle synchro"""

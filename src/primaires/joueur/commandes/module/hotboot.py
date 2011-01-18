@@ -28,45 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant des fonctions utiles à l'affichage de l'aide de
-noeuds / masques.
+"""Fichier contenant le paramètre 'hotboot' de la commande 'module'."""
 
-"""
+from primaires.interpreteur.masque.parametre import Parametre
 
-from textwrap import wrap
-
-from primaires.format.constantes import *
-
-def afficher_aide(personnage, masque_depart, embranchement_fils,
-    explorer=1, dic_masques={}, indentation=0):
-    """Fonction retournant l'aide de masque_depart.
-    Les fils sont déduits de l'embranchement.
-    Le nombre explorer permet de savoir combien de fois on explore
-    récursivement l'arborescence (1 revient au départ seulement et aux fils
-    de l'embranchement).
-    dic_masques est le dictionnaire des masques parcourus. Ce paramètre est
-    utile quand l'aide doit être déduite d'une commande partiellement validée.
-    Enfin, indentation est utile pour l'appel récursif, doit être laissé à 0
-    par défaut.
+class PrmHotboot(Parametre):
+    
+    """Commande 'module hotboot'.
     
     """
-    if not dic_masques: # le dictionnaire des masques n'a pas été précisé
-        dic_masques[masque_depart.nom] = masque_depart
     
-    # On regroupe les masques dans une chaîne
-    masques = " ".join([masque.nom for masque in dic_masques.values()])
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "hotboot", "hotboot")
+        self.aide_courte = "permet de redémarrer les modules du MUD"
+        self.aide_longue = \
+            "Cette commande permet de redémarrer un ou plusieurs modules " \
+            "pendant l'exécution du MUD. Cela permet de corriger des bugs, " \
+            "intégrer des modifications, ajouter ou retirer des commandes " \
+            "sans avoir à déconnecter un seul joueur. Si les modifications " \
+            "touchent au corps, il est nécessaire de redémarrer complètement " \
+            "le MUD (voir la commande |cmd|shutdown|ff|)."
     
-    if indentation == 0: # c'est la première fois qu'on appelle la fonction
-        chn_aide = "Synopsis : {0}".format(masques)
-    else:
-        chn_aide = masques
-    
-    indentation = len(chn_aide) + 3
-    
-    chn_aide += " - " + ("\n" + indentation * " ").join(wrap(
-            masque_depart.aide_courte, longueur_ligne - indentation))
-    
-    if indentation == 0:
-        chn_aide += "\n"
-    
-    return chn_aide
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        personnage.envoyer("Redémarrage à chaud des modules en cours...")
+        nom = personnage.compte.nom
+        res = type(self).importeur.tout_recharger()
+        personnage = type(self).importeur.connex.get_compte( \
+                nom).get_joueur(personnage.nom)
+        if res:
+            personnage.envoyer("Les modules ont bien été redémarré.")
+        else:
+            personnage.envoyer(
+            "|err|Les modules n'ont pu être redémarré. Consulter les logs.|ff|")

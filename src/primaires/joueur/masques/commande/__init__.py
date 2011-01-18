@@ -28,19 +28,41 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe Delimiteur, détaillée plus bas."""
+"""Fichier contenant le masque <commande>."""
 
 from primaires.interpreteur.masque.masque import Masque
-
-class Delimiteur(Masque):
+from primaires.interpreteur.masque.fonctions import *
+from primaires.joueur.masques.commande.commande_introuvable \
+        import CommandeIntrouvable
+class Commande(Masque):
     
-    """Un délimiteur est un masque chargé de délimiter le masque précédent.
-    Ce peut être, par exemple, une virgule séparant deux masques qui
-    pourraient être constitués de plusieurs mots.
+    """Masque <commande>.
+    On attend un nom de commande en paramètre.
     
     """
     
-    def __init__(self, delimiteur):
-        """Constructeur du délimiteur"""
-        Masque.__init__(self)
-        self.nom = delimiteur
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self, "nom_commande")
+        self.commande = None
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        nom_commande = liste_vers_chaine(commande).lstrip()
+        
+        # On cherche dans les commandes du module interpreteur
+        commande = None
+        for cmd in \
+                type(self).importeur.interpreteur.commandes:
+            nom = cmd.commande.get_nom_pour(personnage)
+            if nom.startswith(nom_commande):
+                commande = cmd
+                break
+        
+        if not commande:
+            raise CommandeIntrouvable(
+                "|att|Cette commande est introuvable.|ff|")
+        
+        self.commande = commande.commande
+        
+        return True

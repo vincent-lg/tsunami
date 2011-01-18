@@ -136,6 +136,10 @@ class Contexte(BaseObj):
         self.opts.prompt_clr = cfg_charte.couleur_prompt
         self.opts.prompt_prf = cfg_charte.prefixe_prompt
     
+    def __getinitargs__(self):
+        """Méthode retournant les valeurs par défaut du constructeur"""
+        return (None, )
+    
     def entrer(self):
         """Méthode appelée quand le pereesseur entre dans le contexte"""
         pass

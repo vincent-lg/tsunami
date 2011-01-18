@@ -52,7 +52,7 @@ class CmdQuitter(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        personnage.envoyer("A bientôt !")
+        personnage.envoyer("\nA bientôt !")
         # On déconnecte le joueur
         personnage.instance_connexion.deconnecter(
                 "Déconnexion demandée par le client.")

@@ -28,45 +28,21 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant des fonctions utiles à l'affichage de l'aide de
-noeuds / masques.
+"""Fichier contenant la classe DicMasques."""
 
-"""
+from collections import OrderedDict
 
-from textwrap import wrap
-
-from primaires.format.constantes import *
-
-def afficher_aide(personnage, masque_depart, embranchement_fils,
-    explorer=1, dic_masques={}, indentation=0):
-    """Fonction retournant l'aide de masque_depart.
-    Les fils sont déduits de l'embranchement.
-    Le nombre explorer permet de savoir combien de fois on explore
-    récursivement l'arborescence (1 revient au départ seulement et aux fils
-    de l'embranchement).
-    dic_masques est le dictionnaire des masques parcourus. Ce paramètre est
-    utile quand l'aide doit être déduite d'une commande partiellement validée.
-    Enfin, indentation est utile pour l'appel récursif, doit être laissé à 0
-    par défaut.
+class DicMasques(OrderedDict):
+    
+    """Dictionnaire ordonné contenant les masques.
     
     """
-    if not dic_masques: # le dictionnaire des masques n'a pas été précisé
-        dic_masques[masque_depart.nom] = masque_depart
     
-    # On regroupe les masques dans une chaîne
-    masques = " ".join([masque.nom for masque in dic_masques.values()])
-    
-    if indentation == 0: # c'est la première fois qu'on appelle la fonction
-        chn_aide = "Synopsis : {0}".format(masques)
-    else:
-        chn_aide = masques
-    
-    indentation = len(chn_aide) + 3
-    
-    chn_aide += " - " + ("\n" + indentation * " ").join(wrap(
-            masque_depart.aide_courte, longueur_ligne - indentation))
-    
-    if indentation == 0:
-        chn_aide += "\n"
-    
-    return chn_aide
+    def __getitem__(self, item):
+        """Retourne l'item si présent ou None sinon"""
+        if item not in self:
+            res = None
+        else:
+            res = OrderedDict.__getitem__(self, item)
+        
+        return res

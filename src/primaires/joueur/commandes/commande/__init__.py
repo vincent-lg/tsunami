@@ -34,29 +34,40 @@ Dans ce fichier se trouve la commande même.
 """
 
 from primaires.interpreteur.commande.commande import Commande
-from primaires.joueur.commandes.module.liste import PrmListe
-from primaires.joueur.commandes.module.hotboot import PrmHotboot
 
-class CmdModule(Commande):
+class CmdCommande(Commande):
     
-    """Commande 'module'.
+    """Commande 'commande'.
     
     """
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "module", "module")
-        self.aide_courte = "manipulation des modules"
+        Commande.__init__(self, "commande", "command")
+        self.schema = "(<nom_commande>)"
+        self.aide_courte = "affiche les commandes chargées"
         self.aide_longue = \
-            "Cette commande permet de manipuler les modules, connaître la " \
-            "liste des modules chargés, en redémarrer certains ou les " \
-            "reconfigurer pendant l'exécution. Cette commande doit être " \
-            "réservée aux administrateurs, ceux ayant un accès aux fichiers " \
-            "de configuration ou au code."
+            "Cette commande permet de visualiser les commandes chargées." \
+            "On peut lui donner en paramètre le nom d'une commande. Dans " \
+            "ce cas, le système affiche l'aide de la commande passée en " \
+            "paramètre."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation de la commande"""
+        # Si aucune commande n'a été entré, on affiche la liste des commandes
+        if dic_masques["nom_commande"] is None:
+            commandes = []
+            for cmd in \
+                type(self).importeur.interpreteur.commandes:
+                commandes.append(cmd.commande.get_nom_pour(personnage))
+            
+            if not commandes:
+                personnage.envoyer("Aucune commande ne semble être définie." \
+                        "Difficile à croire non ?")
+            else:
+                personnage.envoyer("Liste des commandes :\n  " + \
+                    "\n  ".join(sorted(commandes)))
         
-        # On prépare les différents paramètres de la commande
-        prm_liste = PrmListe()
-        prm_hotboot = PrmHotboot()
-        
-        self.ajouter_parametre(prm_liste)
-        self.ajouter_parametre(prm_hotboot)
+        else: # la commande existe
+            commande = dic_masques["nom_commande"].commande
+            personnage.envoyer(commande.aide_longue)

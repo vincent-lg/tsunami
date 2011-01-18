@@ -28,12 +28,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'exception ErreurInterpretation, détaillée plus bas."""
+"""Fichier contenant l'exception ErreurValidation, détaillée plus bas."""
 
-class ErreurInterpretation(RuntimeError):
+class ErreurValidation(RuntimeError):
     
-    """Exception: ErreurInterpretation
-    Cette exception est levée quand un noeud n'a pu être interprété
+    """Exception générale lors d'une erreur de validation
+    Cette exception est levée quand un noeud n'a pu être validé
     correctement.
     
     """

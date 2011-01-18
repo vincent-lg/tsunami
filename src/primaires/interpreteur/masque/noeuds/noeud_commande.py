@@ -31,7 +31,7 @@
 """Ce fichier contient la classe NoeudCommande, détaillée plus bas."""
 
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
-from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
 from primaires.interpreteur.masque.fonctions import *
 
 class NoeudCommande(BaseNoeud):
@@ -45,6 +45,9 @@ class NoeudCommande(BaseNoeud):
         BaseNoeud.__init__(self)
         self.commande = commande
         self.nom = commande.nom_francais
+        if self.commande.schema:
+            schema = self.commande.schema
+            self.construire_arborescence(schema)
     
     def construire_arborescence(self, schema):
         """Redirection vers la construction de la commande"""
@@ -58,19 +61,37 @@ class NoeudCommande(BaseNoeud):
         
         return res
     
+    @property
+    def fils(self):
+        """Retourne les fils, c'est-à-dire :
+        -   le noeud éventuel du schéma de la commande
+        -   les différents paramètres de la commande
+        
+        """
+        fils = Embranchement()
+        for noeud_param in self.commande.parametres.values():
+            fils.ajouter_fils(noeud_param)
+        if self.suivant:
+            fils.ajouter_fils(self.suivant)
+        
+        return fils
+    
     def valider(self, personnage, dic_masques, commande, tester_fils=True):
         """Validation d'un noeud commande.
         La commande est sous la forme d'une liste de caractères.
         
         """
         valide = self.commande.valider(personnage, dic_masques, commande)
-        print("*valide ?")
         if valide:
-            dic_masques["commande"] = self.commande
-            print("**valide")
-            if self.suivant and tester_fils:
-                print("***on test suivant", self.suivant)
-                valide = self.suivant.valider(personnage, dic_masques, \
-                            commande)
+            dic_masques[self.commande.nom] = self.commande
+            if commande:
+                valide = self.fils.valider(personnage, dic_masques, \
+                        commande)
         
         return valide
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation"""
+        self.commande.interpreter(personnage, dic_masques)
+        for fils in self.fils:
+            fils.interpreter(personnage, dic_masques)

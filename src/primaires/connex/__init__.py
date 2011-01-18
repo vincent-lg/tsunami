@@ -48,7 +48,6 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "connex", "primaire")
-        InstanceConnexion.importeur = self.importeur
         self.instances = {}
         self.cnx_logger = type(self.importeur).man_logs.creer_logger( \
                 "connex", "connexions")
@@ -74,6 +73,18 @@ class Module(BaseModule):
         'self.instances' si elles sont encore connectées.
         
         """
+        # On récupère les comptes
+        comptes = self.importeur.supenr.charger_groupe(Compte)
+        for compte in comptes:
+            self.comptes[compte.id.id] = compte
+            if not compte.valide:
+                self.supprimer_compte(compte)
+        
+        # On ajoute les contextes chargés dans l'interpréteur
+        for contexte in liste_contextes:
+            self.importeur.interpreteur.contextes[contexte.nom] = contexte
+        
+        # On récupère les instances de connexion
         if NOM_GROUPE in type(self.importeur).parid:
             objets = type(self.importeur).parid[NOM_GROUPE].values()
         else:
@@ -81,19 +92,12 @@ class Module(BaseModule):
         
         for inst in objets:
             if inst.client.n_id in type(self.importeur).serveur.clients.keys():
-                inst.client = type(self.importeur).serveur.clients[ \
-                        inst.client.n_id]
-                self.instances[inst.client.n_id] = inst
+                nouv_instance = InstanceConnexion(inst.client, False)
+                nouv_instance.creer_depuis(inst)
+                self.instances[inst.client.n_id] = nouv_instance
         
         # On ajoute le dictionnaire 'instances' comme groupe fictif de 'parid'
         type(self.importeur).parid[NOM_GROUPE] = self.instances
-        
-        # On récupère les comptes
-        comptes = self.importeur.supenr.charger_groupe(Compte)
-        for compte in comptes:
-            self.comptes[compte.id.id] = compte
-            if not compte.valide:
-                self.supprimer_compte(compte)
         
         # On affiche proprement le nombre de comptes (un peu verbeux mais-)
         nombre_comptes = len(self.comptes)
@@ -103,10 +107,6 @@ class Module(BaseModule):
             self.cpt_logger.info("1 compte récupéré")
         else:
             self.cpt_logger.info("{0} comptes récupérés".format(len(self.comptes)))
-        
-        # On ajoute les contextes chargés dans l'interpréteur
-        for contexte in liste_contextes:
-            self.importeur.interpreteur.contextes[contexte.nom] = contexte
         
         BaseModule.init(self)
     
@@ -180,10 +180,12 @@ class Module(BaseModule):
     
     def get_compte(self, nom):
         """Récupère le compte 'compte'"""
+        res = None
         for compte in self.comptes.values():
-            if compte.nom==nom:
-                return compte
-        return None
+            if compte.nom == nom:
+                res = compte
+        
+        return res
     
     def _get_email_comptes(self):
         """Retourne sous la forme d'un tuple la liste des emails de comptes
@@ -218,7 +220,7 @@ class Module(BaseModule):
         """
         noms = []
         for compte in self.comptes.values():
-            for joueur in compte.joueurs.values():
+            for joueur in compte.joueurs:
                 noms.append(joueur.nom)
         
         return tuple(noms)

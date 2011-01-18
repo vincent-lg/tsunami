@@ -32,16 +32,16 @@
 
 from primaires.connex.motd import MOTD
 from primaires.format.fonctions import *
+from abstraits.obase import BaseObj
 
-class InstanceConnexion:
+class InstanceConnexion(BaseObj):
     """Classe représentant une instance de connexion.
     Elle est là pour faire la jonction entre un client connecté et un
     personnage.
     
     """
-    importeur = None
     
-    def __init__(self, client):
+    def __init__(self, client, creer_contexte=True):
         """Constructeur d'une instance de connexion.
         On peut y trouver trois informations :
         *   le client connecté
@@ -57,15 +57,28 @@ class InstanceConnexion:
             toute la file d'attente d'un coup.
         
         """
+        BaseObj.__init__(self)
         self.client = client
         self.compte = None
         self.joueur = None
         self.file_attente = [] # file d'attente des messages à envoyer
-        self.contexte = type(self).importeur.interpreteur. \
-            contextes["connex:connexion:afficher_MOTD"](self)
-        self.contexte.actualiser()
-        self.contexte.migrer_contexte("connex:connexion:entrer_nom")
+        self.contexte = None
         self.nb_essais = 0
+        
+        if creer_contexte:
+            self.contexte = type(self).importeur.interpreteur. \
+                contextes["connex:connexion:afficher_MOTD"](self)
+            self.contexte.actualiser()
+            self.contexte.migrer_contexte("connex:connexion:entrer_nom")
+    
+    def __getinitargs__(self):
+        """Méthode retournant les valeurs par défaut du constructeur"""
+        return (None, False)
+    
+    def __lshift__(self, msg):
+        """Redirige vers 'envoyer'"""
+        self.envoyer(msg)
+        return self
     
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel de l'instance.
@@ -100,6 +113,32 @@ class InstanceConnexion:
             self.joueur.contexte_actuel = nouveau_contexte
     
     contexte_actuel = property(_get_contexte_actuel, _set_contexte_actuel)
+    
+    def creer_depuis(self, autre):
+        """Cette méthode se charge de construire self sur le modèle de autre
+        (une autre instance de connexion).
+        
+        """
+        if autre.compte:
+            self.compte = type(self).importeur.connex.get_compte( \
+                    autre.compte.nom)
+        if autre.joueur:
+            self.joueur = autre.joueur
+            self.joueur.instance_connexion = self
+            self.joueur.compte = self.compte
+        if autre.contexte:
+            self.contexte = \
+                type(self).importeur.interpreteur.contextes[ \
+                autre.contexte.nom](self)
+        if autre.compte and autre.compte.contexte:
+            self.compte.contexte = \
+                type(self).importeur.interpreteur.contextes[ \
+                autre.compte.contexte.nom](self)
+        if self.joueur:
+            for i, contexte in enumerate(self.joueur.contextes):
+                nouv_contexte = type(self).importeur.interpreteur.contextes[ \
+                        contexte.nom](self)
+                self.joueur.contextes[i] = nouv_contexte
     
     def _get_encodage(self):
         """Retourne l'encodage du compte ou 'Utf-8'."""

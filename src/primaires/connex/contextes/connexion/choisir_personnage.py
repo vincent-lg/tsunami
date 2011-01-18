@@ -64,7 +64,7 @@ class ChoisirPersonnage(Contexte):
             "\n|tit|------= Choix du personnage =------|ff|\n" \
             "Faites votre |ent|choix|ff| parmi la liste ci-dessous :\n"
         
-        for i, joueur in enumerate(self.pere.compte.joueurs.values()):
+        for i, joueur in enumerate(self.pere.compte.joueurs):
             no = " |cmd|" + str(i + 1) + "|ff|"
             ret += "\n" + no + " pour jouer |ent|{0}|ff|".format( \
                 joueur.nom.capitalize())
@@ -99,8 +99,7 @@ class ChoisirPersonnage(Contexte):
                         "numéro.|ff|")
             else:
                 # on se connecte sur le joueur
-                IDs_joueurs = list(self.pere.compte.joueurs.keys())
-                joueur = self.pere.compte.joueurs[IDs_joueurs[choix]]
+                joueur = self.pere.compte.joueurs[choix]
                 self.pere.joueur = joueur
                 joueur.compte = self.pere.compte
                 joueur.instance_connexion = self.pere
@@ -113,8 +112,12 @@ class ChoisirPersonnage(Contexte):
                 # On redirige vers la création de compte
                 self.migrer_contexte("personnage:creation:nouveau_nom")
         elif msg == cmd_supprimer:
-            # On redirige vers la suppression de comptes
-            pass
+            if len(self.pere.compte.joueurs) == 0:
+                self.pere.envoyer("|err|Vous ne pouvez pas supprimer de "\
+                        "personnage si vous n'en avez pas.|ff|")
+            else:
+                # On redirige vers la suppression de comptes
+                self.migrer_contexte("personnage:suppression:suppression")
         elif msg == cmd_quitter:
             # On déconnecte le joueur
             self.pere.envoyer("\nA bientôt !")

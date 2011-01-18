@@ -32,22 +32,8 @@
 
 import hashlib
 
+from bases.collections.liste_id import ListeID
 from abstraits.id import ObjetID
-
-# Attributs d'un compte
-dic_attributs = {
-    "nom":"",
-    "mot_de_passe":"",
-    "adresse_email":"",
-    "encodage":"",
-    "valide":False,
-    "code_validation":"",
-    "msg_validation":False, # à True si le message de validation a été envoyé
-    "tentatives_validation":0, # tentatives de validation
-    "nb_essais":0, # tentatives d'intrusion (mot de passe erroné)
-    "joueurs":{}, # {id_joueur:joueur}
-    "contexte": None # le contexte du compte
-}
 
 class Compte(ObjetID):
     """Classe représentant un compte.
@@ -61,28 +47,52 @@ class Compte(ObjetID):
     """
     groupe = "comptes"
     sous_rep = "comptes"
-    attributs = dic_attributs
     
     def __init__(self, nom_compte):
         """Constructeur d'un compte."""
         ObjetID.__init__(self)
         self.nom = nom_compte
+        self.mot_de_passe = ""
+        self.adresse_email = ""
+        self.encodage = ""
+        self.valide = False
+        self.code_validation = ""
+        self.msg_validation = False # à True si le message de validation a été envoyé
+        self.tentatives_validation = 0 # tentatives de validation
+        self.nb_essais = 0 # tentatives d'intrusion (mot de passe erroné)
+        self.joueurs = ListeID()
+        self.contexte = None # le contexte du compte
+    
+    def __getinitargs__(self):
+        """Méthode retournant les valeurs par défaut du constructeur"""
+        return ("", )
     
     def hash_mot_de_pass(self, clef_salage, type_chiffrement, mot_de_passe):
+        """Méthode appelé pour hasher le mot de passe"""
         mot_de_passe = str(clef_salage + mot_de_passe).encode()
         h = hashlib.new(type_chiffrement)
         h.update(mot_de_passe)
         
         return h.digest()
     
+    def get_joueur(self, nom_perso):
+        """Retourne le joueur correspondant au nom"""
+        joueur = None
+        for perso in self.joueurs:
+            if perso.nom == nom_perso:
+                joueur = perso
+                break
+        
+        return joueur
+    
     def ajouter_joueur(self, joueur):
         """Ajoute le joueur passé en paramètre à la liste des joueurs"""
-        self.joueurs[joueur.id] = joueur
+        self.joueurs.append(joueur)
         self.enregistrer()
     
     def supprimer_joueur(self, joueur):
         """Supprime le joueur passé en paramètre de la liste des joueurs"""
-        del self.joueurs[joueur.id]
+        self.joueurs.remove(joueur)
         self.enregistrer()
     
     def _get_contexte_actuel(self):

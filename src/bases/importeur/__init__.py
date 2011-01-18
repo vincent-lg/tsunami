@@ -54,8 +54,11 @@ inconnue pour l'importeur.
 
 import os
 import sys
+import traceback
 
 from abstraits.module import *
+from abstraits.obase import BaseObj
+from abstraits.id.id import ID
 
 REP_PRIMAIRES = "primaires"
 REP_SECONDAIRES = "secondaires"
@@ -102,6 +105,8 @@ class Importeur:
         Importeur.parid = parid
         Importeur.serveur = serveur
         Importeur.logger = man_logs.creer_logger("", "importeur", "")
+        BaseObj.importeur = self
+        ID.importeur = self
     
     def __str__(self):
         """Retourne sous une forme un peu plus lisible les modules importés."""
@@ -284,6 +289,32 @@ class Importeur:
             Importeur.logger.debug("  Le module {0} a été " \
                         "arrêté".format(module.nom))
     
+    def tout_decharger(self):
+        """Méthode déchargeant tous les modules"""
+        for module in self.modules:
+            self.decharger_module(module.type, module.nom)
+    
+    def tout_recharger(self):
+        """Méthode appelée pour recharger TOUS les modules"""
+        anciens_attrs = dict(self.__dict__)
+        logger = type(self).man_logs.get_logger("sup")
+        res = False
+        try:
+            self.tout_detruire()
+            self.tout_decharger()
+            self.tout_charger()
+            self.tout_instancier()
+            res = True
+        except Exception:
+            self.__dict__ = anciens_attrs
+            logger.fatal(
+                "Une erreur s'est produit lors de l'hotboot.")
+            logger.fatal(traceback.format_exc())
+        finally:
+            self.tout_configurer()
+            self.tout_initialiser()
+            return res
+    
     def boucle(self):
         """Méthode appelée à chaque tour de boucle synchro.
         Elle doit faire appel à la méthode boucle de chaque module primaire
@@ -321,14 +352,14 @@ class Importeur:
         else:
             raise ValueError("le type {0} n'est ni primaire ni secondaire" \
                     .format(type))
-
+        
         if self.module_est_charge(nom):
             print("Le module {0} est déjà chargé.".format(nom))
         else:
             package = __import__(rep + "." + nom)
             module = getattr(getattr(package, nom), "Module")
             setattr(self, nom, module(self))
-
+    
     def decharger_module(self, m_type, nom):
         """Méthode permettant de décharger un module.
         
@@ -344,11 +375,11 @@ class Importeur:
             rep = REP_SECONDAIRES
         else:
             raise ValueError("le type {0} n'est ni primaire ni secondaire" \
-                    .format(type))
+                    .format(m_type))
 
         nom_complet = rep + "." + nom
         for cle in list(sys.modules.keys()):
-            if cle.startswith(nom_complet + "."):
+            if cle.startswith(nom_complet):
                 del sys.modules[cle]
 
         if self.module_est_charge(nom):
@@ -376,7 +407,7 @@ class Importeur:
             getattr(self, nom).config()
         else:
             print("{0} n'existe pas ou n'est pas chargé.".format(nom))
-
+    
     def init_module(self, nom):
         """Méthode chargée d'initialiser un module."""
         if self.module_est_charge(nom) and getattr(self, nom).statut == \

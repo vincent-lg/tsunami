@@ -84,6 +84,8 @@ for testeur in liste_tests.keys():
     print(testeur.nom + " : ")
     echec = 0
     for test in liste_tests[testeur]:
+        if test.__name__ != "Validation":
+            continue
         #Lancement serveurs
         serveur.start()
         sm = smtp.Smtp()

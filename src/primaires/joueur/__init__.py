@@ -33,7 +33,8 @@
 from abstraits.module import *
 from primaires.joueur.contextes import liste_contextes
 from primaires.joueur import commandes
-#from primaires.joueur.config import cfg_joueur
+from primaires.joueur import masques
+from primaires.joueur.config import cfg_joueur
 
 class Module(BaseModule):
     """Classe utilisée pour gérer des joueurs, c'est-à-dire des personnages
@@ -51,8 +52,8 @@ class Module(BaseModule):
     
     def config(self):
         """Méthode de configuration du module"""
-        #type(self.importeur).anaconf.get_config("joueur", \
-        #    "joueur/joueur.cfg", "config joueur", cfg_joueur)
+        type(self.importeur).anaconf.get_config("joueur", \
+            "joueur/joueur.cfg", "config joueur", cfg_joueur)
         
         BaseModule.config(self)
     
@@ -62,11 +63,16 @@ class Module(BaseModule):
         for contexte in liste_contextes:
             self.importeur.interpreteur.contextes[contexte.nom] = contexte
         
+        # Ajout des masques dans l'interpréteur
+        self.importeur.interpreteur.ajouter_masque(masques.commande.Commande())
+        
         # On ajoute les commandes du module
         self.commandes = [
+            commandes.commande.CmdCommande(),
             commandes.module.CmdModule(),
             commandes.shutdown.CmdShutdown(),
             commandes.quitter.CmdQuitter(),
+            commandes.qui.CmdQui(),
         ]
         
         for cmd in self.commandes:

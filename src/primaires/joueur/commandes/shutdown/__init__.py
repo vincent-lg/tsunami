@@ -60,7 +60,7 @@ class CmdShutdown(Commande):
         serveur = type(self).importeur.serveur
         # On déconnecte tous les joueurs
         for instance in type(self).importeur.connex.instances.values():
-            instance.envoyer("|att|Arrêt du MUD en cours, vous allez être " \
+            instance.envoyer("\n|att|Arrêt du MUD en cours, vous allez être " \
                     "déconnecté...|ff|")
             instance.deconnecter("Arrêt du MUD")
         

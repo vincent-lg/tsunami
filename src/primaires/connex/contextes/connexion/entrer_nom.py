@@ -74,6 +74,7 @@ class EntrerNom(Contexte):
     def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
         cfg_connex = type(self).importeur.anaconf.get_config("connex")
+        msg = msg.lower()
         if RE_NOUVEAU.search(msg): # le client demande un nouveau compte
             self.migrer_contexte("connex:creation:entrer_nom")
         elif type(self).importeur.connex.compte_est_cree(msg):

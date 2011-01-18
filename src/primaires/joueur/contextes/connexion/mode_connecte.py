@@ -31,12 +31,14 @@
 """Fichier contenant le contexte 'personnage:connexion:mode_connecte"""
 
 import traceback
-from collections import OrderedDict
 
 from primaires.interpreteur.contexte import Contexte
+from primaires.interpreteur.masque.dic_masques import DicMasques
 from primaires.interpreteur.masque.fonctions import *
-from primaires.interpreteur.masque.noeuds.exceptions.erreur_interpretation \
+from primaires.interpreteur.masque.exceptions.erreur_interpretation \
         import ErreurInterpretation
+from primaires.interpreteur.masque.noeuds.exceptions.erreur_validation \
+        import ErreurValidation
 
 
 class ModeConnecte(Contexte):
@@ -66,17 +68,34 @@ class ModeConnecte(Contexte):
         return "[0000000]"
     
     def interpreter(self, msg):
-        """Méthode d'interprétation"""
-        commandes = type(self).importeur.interpreteur.commandes
-        dic_masques = OrderedDict()
+        """Méthode d'interprétation.
+        Ce contexte est destiné à l'interprétation de commande en mode
+        connecté.
+        On commence donc par valider la commande entrée par le joueur
+        (autrement dit savoir quelle commande le joueur souhaite exécuter,
+        quel paramètre il lui a fourni, quelles informations on peut retirer
+        de cette commande...).
+        La seconde partie est l'interprétation de la commande : que fait-on
+        avec les paramètres que le joueur a entré ?
+        
+        Note: ne rajoutez pas d'instructions impliquant l'instance de
+        connexion 'pere' après l'interprétation de la commande. Si
+        la commande entraîne un 'hotboot' (redémarrage à chaud des modules),
+        l'instance pourrait ne pas être à jour.
+        
+        """
+        interpreteur = type(self).importeur.interpreteur
+        dic_masques = DicMasques()
         lst_commande = chaine_vers_liste(msg)
+        logger = type(self).importeur.man_logs.get_logger("sup")
         try:
-            valide = commandes.valider(self.pere.joueur, dic_masques, \
+            interpreteur.valider(self.pere.joueur, dic_masques, \
                     lst_commande)
+        except ErreurValidation as err_val:
+            self.pere.joueur.envoyer(str(err_val))
         except ErreurInterpretation as err_int:
             self.pere.joueur.envoyer(str(err_int))
         except Exception:
-            logger = type(self).importeur.man_logs.get_logger("sup")
             logger.fatal(
                     "Exception levée lors de la validation d'une commande.")
             logger.fatal(traceback.format_exc())
@@ -85,11 +104,14 @@ class ModeConnecte(Contexte):
                 "commande.\nLes administrateurs en ont été averti.|ff|")
         else:
             try:
-                cle = list(dic_masques.keys())[-1]
-                commande = dic_masques[cle]
+                # On cherche le dernier paramètre
+                for masque in reversed(list(dic_masques.values())):
+                    if masque.est_parametre():
+                        commande = masque
+                        break
+                
                 commande.interpreter(self.pere.joueur, dic_masques)
             except Exception:
-                logger = type(self).importeur.man_logs.get_logger("sup")
                 logger.fatal(
                     "Exception levée lors de l'interprétation d'une commande.")
                 logger.fatal(traceback.format_exc())

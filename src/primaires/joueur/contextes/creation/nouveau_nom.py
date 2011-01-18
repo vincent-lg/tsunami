@@ -33,8 +33,8 @@
 import re
 
 from primaires.interpreteur.contexte import Contexte
-from primaires.joueur.joueur import Joueur
 from primaires.format.fonctions import supprimer_accents
+from primaires.joueur.joueur import Joueur
 
 ## Constantes
 # Regex
@@ -84,9 +84,9 @@ class NouveauNom(Contexte):
         elif RE_NOM_VALIDE.search(supprimer_accents(msg)):
             nouv_joueur = Joueur()
             nouv_joueur.nom = msg
-            self.pere.compte.ajouter_joueur(nouv_joueur)
             self.pere.joueur = nouv_joueur
-            self.migrer_contexte("personnage:connexion:mode_connecte")
+            nouv_joueur.instance_connexion = self.pere
+            self.migrer_contexte("personnage:creation:langue_cmd")
         else:
             self.pere.envoyer("|err|Ce nom est invalide. Veuillez " \
                     "réessayer.|ff|")
