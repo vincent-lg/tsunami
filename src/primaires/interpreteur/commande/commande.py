@@ -38,7 +38,6 @@ from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.masque import Masque
 from primaires.format.constantes import *
 from primaires.format.fonctions import *
-from primaires.interpreteur.masque.aide import afficher_aide
 
 NB_MAX_CAR_AIDE_COURTE = 40
 
@@ -160,9 +159,8 @@ class Commande(Masque):
         """Fonction d'interprétation.
         
         """
-        dernier_masque = list(dic_masques.values())[-1]
         personnage.envoyer(
-            afficher_aide(personnage, dernier_masque, self, 1, dic_masques))
+            self.erreur_validation(personnage, dic_masques))
     
     def est_parametre(self):
         """La commande est une forme de paramètre"""
@@ -226,4 +224,43 @@ class Commande(Masque):
                 aide_longue = textwrap.wrap(parametre.aide_longue, aligner)
                 aide += ("\n" + (taille + 5) * " ").join(aide_longue)
 
+        return aide
+    
+    def erreur_validation(self, personnage, dic_masques):
+        """Que faire lors d'une erreur de validation ?
+        Par défaut, on affiche l'aide courte de la commande.
+        
+        """
+        premier_masque = list(dic_masques.keys())[0]
+        dernier_masque = list(dic_masques.keys())[-1]
+        syntaxe = self.afficher(personnage)
+        
+        aide = "|ent|" + syntaxe + "|ff| : "
+        synopsis = textwrap.wrap(self.aide_courte, longueur_ligne - len(syntaxe) - 2)
+        aide += ("\n" + " " * (longueur_ligne - len(syntaxe) - 2)).join(
+                synopsis)
+        
+        # Paramètres
+        parametres = [noeud.commande for noeud in self.parametres.values()]
+        # Tri en fonction de la langue
+        parametres = sorted(parametres,
+                key=lambda parametre: parametre.get_nom_pour(personnage))
+        
+        # On calcule la taille max du nom des paramètres
+        taille = 0
+        for parametre in parametres:
+            nom = parametre.get_nom_pour(personnage)
+            if len(nom) > taille:
+                taille = len(nom)
+        
+        if len(parametres) > 0:
+            aligner = longueur_ligne - taille - 5
+            aide += "\n"
+            for parametre in parametres:
+                nom = parametre.get_nom_pour(personnage)
+                aide += "\n  |ent|" + nom.ljust(taille) + "|ff|"
+                aide += " - "
+                aide_courte = textwrap.wrap(parametre.aide_courte, aligner)
+                aide += ("\n" + (taille + 5) * " ").join(aide_courte)
+        
         return aide

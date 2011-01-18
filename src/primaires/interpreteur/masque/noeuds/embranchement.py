@@ -33,7 +33,6 @@
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
 from primaires.interpreteur.masque.noeuds.exceptions.erreur_validation \
         import ErreurValidation
-from primaires.interpreteur.masque.aide import afficher_aide
 
 class Embranchement(BaseNoeud):
     """Un noeud embranchement, constitué non pas d'un seul suivant mais de
@@ -101,7 +100,7 @@ class Embranchement(BaseNoeud):
                 break
         
         if not valide:
-            self.erreur_validation(personnage, dic_masques, commande)
+            raise ErreurValidation
         
         return valide
     
@@ -110,8 +109,3 @@ class Embranchement(BaseNoeud):
         for fils in self.fils:
             fils.interpreter(personnage, dic_masques)
     
-    def erreur_validation(self, personnage, dic_masques, lst_commande):
-        """Que faire quand l'embranchement n'a pas été validé"""
-        dernier_masque = list(dic_masques.values())[-1]
-        raise ErreurValidation(
-            afficher_aide(personnage, dernier_masque, self, 1, dic_masques))

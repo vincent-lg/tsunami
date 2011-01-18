@@ -33,6 +33,8 @@
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
 from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
 from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.noeuds.exceptions.erreur_validation \
+        import ErreurValidation
 
 class NoeudCommande(BaseNoeud):
     
@@ -86,8 +88,11 @@ class NoeudCommande(BaseNoeud):
         if valide:
             dic_masques[self.commande.nom] = self.commande
             if commande:
-                valide = self.fils.valider(personnage, dic_masques, \
+                try:
+                    valide = self.fils.valider(personnage, dic_masques, \
                         commande)
+                except ErreurValidation:
+                    pass
         
         return valide
     
