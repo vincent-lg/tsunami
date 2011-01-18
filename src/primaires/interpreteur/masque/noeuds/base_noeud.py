@@ -63,3 +63,7 @@ class BaseNoeud:
         return [self.suivant]
     
     fils = property(_get_fils)
+    
+    def afficher(self, personnage):
+        """Retourne un affichage du masque pour les joueurs"""
+        return ""

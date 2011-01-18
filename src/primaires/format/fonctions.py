@@ -198,3 +198,18 @@ def supprimer_accents(msg):
         msg = msg.replace(acc, non_acc)
     
     return msg
+
+def souligner_sauts_de_ligne(msg):
+    """Cette fonciton souligne les sauts de ligne pour les utilisateurs de
+    lecteurs d'écran.
+    
+    Quand on utilise Jaws avec par exemple MushClient, les lignes complètement
+    vides sont ignorées. C'est pratique la plupart du temps, mais il peut
+    être bien de voir les lignes vides également. Pour cela, on se contente
+    de rendre la ligne non vide, en y insérant un simple espace.
+    
+    """
+    while "\n\n" in msg:
+        msg = msg.replace("\n\n", "\n \n")
+    
+    return msg

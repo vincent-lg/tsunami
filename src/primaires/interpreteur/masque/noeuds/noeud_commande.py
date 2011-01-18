@@ -45,6 +45,7 @@ class NoeudCommande(BaseNoeud):
         BaseNoeud.__init__(self)
         self.commande = commande
         self.nom = commande.nom_francais
+        self.commande.noeud = self
         if self.commande.schema:
             schema = self.commande.schema
             self.construire_arborescence(schema)
@@ -72,7 +73,7 @@ class NoeudCommande(BaseNoeud):
         for noeud_param in self.commande.parametres.values():
             fils.ajouter_fils(noeud_param)
         if self.suivant:
-            fils.ajouter_fils(self.suivant)
+            fils.schema = self.suivant
         
         return fils
     
@@ -95,3 +96,11 @@ class NoeudCommande(BaseNoeud):
         self.commande.interpreter(personnage, dic_masques)
         for fils in self.fils:
             fils.interpreter(personnage, dic_masques)
+    
+    def afficher(self, personnage):
+        """Retourne un affichage du masque pour les joueurs"""
+        msg = self.commande.get_nom_pour(personnage)
+        if self.suivant:
+            msg += " " + self.suivant.afficher(personnage)
+        
+        return msg

@@ -38,6 +38,7 @@ class Masque:
     def __init__(self, nom):
         """Crée un nouveau masque"""
         self.nom = nom
+        self.nom_complet = nom
         self.type = None
         self.proprietes = []
     

@@ -34,6 +34,7 @@ Dans ce fichier se trouve la commande même.
 """
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.format.fonctions import *
 
 class CmdCommande(Commande):
     
@@ -70,4 +71,5 @@ class CmdCommande(Commande):
         
         else: # la commande existe
             commande = dic_masques["nom_commande"].commande
-            personnage.envoyer(commande.aide_longue)
+            personnage << souligner_sauts_de_ligne( \
+                    commande.aide_longue_pour(personnage))

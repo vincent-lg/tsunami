@@ -30,10 +30,13 @@
 
 """Fichier contenant la classe Commande, détaillée plus bas."""
 
+import textwrap
+
 from primaires.interpreteur.masque.noeuds.noeud_commande import NoeudCommande
 from primaires.interpreteur.masque.noeuds.fonctions import *
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.masque import Masque
+from primaires.format.constantes import *
 from primaires.format.fonctions import *
 from primaires.interpreteur.masque.aide import afficher_aide
 
@@ -63,6 +66,7 @@ class Commande(Masque):
         self.nom_anglais = anglais
         
         self.racine = None
+        self.noeud = None # le noeud commande lié
         self.schema = ""
         self.tronquer = True
         self.parametres = {}
@@ -169,4 +173,28 @@ class Commande(Masque):
         paramètre
         
         """
-        return self.nom_francais
+        return self.noeud.afficher(personnage)
+    
+    def aide_longue_pour(self, personnage):
+        """Retourne l'aide longue de la commande.
+        Elle se compose :
+        -   du nom de la commande
+        -   de son masque (optionnel)
+        -   de son synopsis (aide courte)
+        -   de son aide longue
+        -   des aides courtes et longues de ses sous-commandes
+    
+        """
+        # On constitue notre chaîne d'aide
+        aide = "|bl|Commande "
+        aide += self.afficher(personnage)
+        aide += "|ff|\n\n"
+        synop = "Synopsis : "
+        aide += synop + textwrap.fill(self.aide_courte, 
+                longueur_ligne - len(synop))
+        
+        aide += "\n\n"
+        
+        aide += textwrap.fill(self.aide_longue, longueur_ligne)
+        
+        return aide

@@ -44,6 +44,7 @@ class Embranchement(BaseNoeud):
     def __init__(self):
         """Constructeur de l'embranchement"""
         BaseNoeud.__init__(self)
+        self.schema = None
         self.suivant = []
     
     def _get_fils(self):
@@ -78,16 +79,8 @@ class Embranchement(BaseNoeud):
         caractères.
         
         """
-        
-        liste_fils = []
-        
-        # Mets à part le suivant si il y en a un
-        if self.fils[-1].__class__.__name__ == "NoeudCommande":
-            liste_fils = self.fils
-        else:
-            liste_fils = self.fils[:-1]
-        
-        # Trie la liste des fils soit par ordrre alphabétique français
+        liste_fils = self.fils
+        # Tri la liste des fils soit par ordrre alphabétique français
         # ou anglais
         if personnage.langue_cmd == "francais":
             liste_fils = sorted(liste_fils, \
@@ -96,12 +89,11 @@ class Embranchement(BaseNoeud):
             liste_fils = sorted(liste_fils, \
                 key=lambda noeud: noeud.commande.nom_anglais)
         
-        # Remets le noeud suivant si il y a besoin
-        if self.fils[-1].__class__.__name__ == "NoeudCommande":
-            liste_fils.append(self.fils[-1])
+        # Si un schéma est défini dans cet embranchement, on l'ajoute à la fin
+        if self.schema:
+            liste_fils.append(self.schema)
         
         valide = False
-        
         for fils in liste_fils:
             valide = fils.valider(personnage, dic_masques, commande,
                     tester_fils)

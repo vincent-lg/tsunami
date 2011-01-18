@@ -44,6 +44,7 @@ class Commande(Masque):
     def __init__(self):
         """Constructeur du masque"""
         Masque.__init__(self, "nom_commande")
+        self.nom_complet = "nom d'une commande"
         self.commande = None
     
     def valider(self, personnage, dic_masques, commande):

@@ -174,3 +174,10 @@ class NoeudMasque(BaseNoeud):
         
         return valide
     
+    def afficher(self, personnage):
+        """Retourne un affichage du masque pour les joueurs"""
+        msg = "<" + self.masque.nom_complet + ">"
+        if self.suivant:
+            msg += " " + self.suivant.afficher(personnage)
+        
+        return msg

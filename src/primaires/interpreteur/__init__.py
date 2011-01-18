@@ -70,7 +70,7 @@ class Module(BaseModule):
         """Ajoute une commande à l'embranchement"""
         noeud_cmd = NoeudCommande(commande)
         self.commandes.append(noeud_cmd)
-        # Trie la liste des commandes, une première fois par ordre alphabétique
+        # Tri la liste des commandes, une première fois par ordre alphabétique
         # français la seconde par ordre alphabétique anglais
         self.commandes_francais = sorted(self.commandes, \
             key=lambda noeud: noeud.commande.nom_francais)
