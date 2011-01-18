@@ -48,7 +48,7 @@ class PrmHotboot(Parametre):
             "intégrer des modifications, ajouter ou retirer des commandes " \
             "sans avoir à déconnecter un seul joueur. Si les modifications " \
             "touchent au corps, il est nécessaire de redémarrer complètement " \
-            "le MUD (voir la commande |cmd|shutdown|ff|)."
+            "le MUD (voir la commande %shutdown%)."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""

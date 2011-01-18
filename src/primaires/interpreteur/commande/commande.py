@@ -173,6 +173,35 @@ class Commande(Masque):
         """
         return self.noeud.afficher(personnage)
     
+    def remplacer_mots_cles(self, personnage, aide):
+        """Sert à remplacer les mots clés d'un fichier d'aide.
+        Dans un fichier d'aide, on trouve du texte standard et certains mots
+        entourés du symbole %.
+        Ces mots sont des noms de commande, des chemins menant éventuellement
+        à des paramètres.
+        
+        Voici un exemple de texte d'aide :
+        '''Ceci est l'aide de la commande %qui%.'''
+        
+        Le texte précédent doit être conservé tel quel. En revanche, %qui%
+        doit être remplacé par le nom de la commande (en français si
+        le personnage a choisi le français, en anglais si le personnage a
+        choisi l'anglais).
+        
+        """
+        # On commence par découper la chaîne en fonction du symbole %
+        decoupe = aide.split("%")
+        
+        # On sait que dans la liste obtenue, tous nos codes commande se
+        # trouvent en chaque index impair
+        for i, mot in enumerate(decoupe):
+            if i % 2 == 1: # index impair
+                decoupe[i] = "|ent|" + \
+                    type(self).importeur.interpreteur.trouver_commande( \
+                    mot).get_nom_pour(personnage) + "|ff|"
+        
+        return "".join(decoupe)
+    
     def aide_longue_pour(self, personnage):
         """Retourne l'aide longue de la commande.
         Elle se compose :
@@ -189,13 +218,15 @@ class Commande(Masque):
         aide += "|ff|\n\n"
         synop = "Synopsis : "
         aide += synop
-        synopsis = textwrap.wrap(self.aide_courte, 
+        synopsis = self.remplacer_mots_cles(personnage, self.aide_courte)
+        synopsis = textwrap.wrap(synopsis, 
                 longueur_ligne - len(synop))
         aide += ("\n" + " " * len(synop)).join(synopsis)
         
         aide += "\n\n"
         
-        aide += textwrap.fill(self.aide_longue, longueur_ligne)
+        aide_longue = self.remplacer_mots_cles(personnage, self.aide_longue)
+        aide += textwrap.fill(aide_longue, longueur_ligne)
         
         # Paramètres
         parametres = [noeud.commande for noeud in self.parametres.values()]
@@ -218,10 +249,14 @@ class Commande(Masque):
                 nom = parametre.get_nom_pour(personnage)
                 aide += "\n  |ent|" + nom.ljust(taille) + "|ff|"
                 aide += " - "
-                aide_courte = textwrap.wrap(parametre.aide_courte, aligner)
+                aide_courte = self.remplacer_mots_cles(personnage, 
+                        parametre.aide_courte)
+                aide_courte = textwrap.wrap(aide_courte, aligner)
                 aide += ("\n" + (taille + 5) * " ").join(aide_courte)
                 aide += "\n" + "     " + taille * " "
-                aide_longue = textwrap.wrap(parametre.aide_longue, aligner)
+                aide_longue = self.remplacer_mots_cles(personnage,
+                        parametre.aide_longue)
+                aide_longue = textwrap.wrap(aide_longue, aligner)
                 aide += ("\n" + (taille + 5) * " ").join(aide_longue)
 
         return aide
@@ -236,7 +271,8 @@ class Commande(Masque):
         syntaxe = self.afficher(personnage)
         
         aide = "|ent|" + syntaxe + "|ff| : "
-        synopsis = textwrap.wrap(self.aide_courte, longueur_ligne - len(syntaxe) - 2)
+        synopsis = self.remplacer_mots_cles(personnage, self.aide_courte)
+        synopsis = textwrap.wrap(synopsis, longueur_ligne - len(syntaxe) - 2)
         aide += ("\n" + " " * (longueur_ligne - len(syntaxe) - 2)).join(
                 synopsis)
         
@@ -260,7 +296,10 @@ class Commande(Masque):
                 nom = parametre.get_nom_pour(personnage)
                 aide += "\n  |ent|" + nom.ljust(taille) + "|ff|"
                 aide += " - "
-                aide_courte = textwrap.wrap(parametre.aide_courte, aligner)
+                aide_courte = self.remplacer_mots_cles(personnage, 
+                        parametre.aide_courte)
+                aide_courte = textwrap.wrap(aide_courte, aligner)
                 aide += ("\n" + (taille + 5) * " ").join(aide_courte)
         
+        aide = self.remplacer_mots_cles(personnage, aide)
         return aide

@@ -52,7 +52,9 @@ class CmdShutdown(Commande):
             "arrêté. N'utiliser cette commande qu'en cas de bug répété, " \
             "corruption de données ou modification du corps. En temps " \
             "normal, redémarrer les modules suffit à intégrer de nouvelles " \
-            "modifications et évite de déconnecter tous les joueurs."
+            "modifications et évite de déconnecter tous les joueurs. " \
+            "Référez-vous à %module% %module:hotboot% pour plus " \
+            "d'informations."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""

@@ -100,3 +100,36 @@ class Module(BaseModule):
         
         if not trouve:
             raise ErreurValidation("|err|Commande inconnue.|ff|")
+    
+    def trouver_commande(self, lst_commande, commandes=None):
+        """On cherche la commande correspondante.
+        Ce peut être une commande mais aussi une sous-commande, du premier
+        niveau ou plus.
+        
+        Pour indiquer la position de la commande, on a lst_commande contenant
+        une chaîne sous la forme : 'commande:sous_commande:sous_sous_commande'
+        
+        Ainsi, on appelle récursivement cette fonction.
+        
+        """
+        if commandes is None: # premier appel de la récursivité
+            commandes = self.commandes
+        
+        if type(lst_commande) is str:
+            lst_commande = chaine_vers_liste(lst_commande)
+        
+        str_commande = liste_vers_chaine(lst_commande)
+        
+        nom_commande = str_commande.split(":")[0]
+        # On parcourt la liste des commandes
+        for noeud in commandes:
+            if noeud.commande.nom_francais == nom_commande:
+                lst_commande[:] = lst_commande[len(nom_commande) + 1:]
+                if lst_commande:
+                    fils = noeud.fils
+                    return self.trouver_commande(lst_commande, fils)
+                else:
+                    return noeud.commande
+        
+        raise ValueError("la commande {} ne peut être trouvée, " \
+            "la recherche de {} a échoué".format(str_commande, nom_commande))
