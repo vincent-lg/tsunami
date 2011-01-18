@@ -53,8 +53,10 @@ class Commande(Masque):
         
         # On cherche dans les commandes du module interpreteur
         commande = None
-        for cmd in \
-                type(self).importeur.interpreteur.commandes:
+        commandes = type(self).importeur.interpreteur.commandes
+        commandes = sorted(commandes, key=lambda noeud: \
+                noeud.commande.get_nom_pour(personnage))
+        for cmd in commandes:
             nom = cmd.commande.get_nom_pour(personnage)
             if nom.startswith(nom_commande):
                 commande = cmd

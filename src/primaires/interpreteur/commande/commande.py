@@ -186,15 +186,44 @@ class Commande(Masque):
     
         """
         # On constitue notre chaîne d'aide
-        aide = "|bl|Commande "
+        aide = "Commande |ent|"
         aide += self.afficher(personnage)
         aide += "|ff|\n\n"
         synop = "Synopsis : "
-        aide += synop + textwrap.fill(self.aide_courte, 
+        aide += synop
+        synopsis = textwrap.wrap(self.aide_courte, 
                 longueur_ligne - len(synop))
+        aide += ("\n" + " " * len(synop)).join(synopsis)
         
         aide += "\n\n"
         
         aide += textwrap.fill(self.aide_longue, longueur_ligne)
         
+        # Paramètres
+        parametres = [noeud.commande for noeud in self.parametres.values()]
+        # Tri en fonction de la langue
+        parametres = sorted(parametres,
+                key=lambda parametre: parametre.get_nom_pour(personnage))
+        
+        # On calcule la taille max du nom des paramètres
+        taille = 0
+        for parametre in parametres:
+            nom = parametre.get_nom_pour(personnage)
+            if len(nom) > taille:
+                taille = len(nom)
+        
+        if len(parametres) > 0:
+            aligner = longueur_ligne - taille - 5
+            aide += "\n\n"
+            aide += "Sous-commandes disponibles :"
+            for parametre in parametres:
+                nom = parametre.get_nom_pour(personnage)
+                aide += "\n  |ent|" + nom.ljust(taille) + "|ff|"
+                aide += " - "
+                aide_courte = textwrap.wrap(parametre.aide_courte, aligner)
+                aide += ("\n" + (taille + 5) * " ").join(aide_courte)
+                aide += "\n" + "     " + taille * " "
+                aide_longue = textwrap.wrap(parametre.aide_longue, aligner)
+                aide += ("\n" + (taille + 5) * " ").join(aide_longue)
+
         return aide

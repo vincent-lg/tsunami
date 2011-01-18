@@ -48,7 +48,7 @@ class CmdCommande(Commande):
         self.schema = "(<nom_commande>)"
         self.aide_courte = "affiche les commandes chargées"
         self.aide_longue = \
-            "Cette commande permet de visualiser les commandes chargées." \
+            "Cette commande permet de visualiser les commandes chargées. " \
             "On peut lui donner en paramètre le nom d'une commande. Dans " \
             "ce cas, le système affiche l'aide de la commande passée en " \
             "paramètre."
