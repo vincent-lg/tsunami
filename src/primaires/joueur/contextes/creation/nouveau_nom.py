@@ -86,6 +86,7 @@ class NouveauNom(Contexte):
             nouv_joueur.nom = msg
             self.pere.joueur = nouv_joueur
             nouv_joueur.instance_connexion = self.pere
+            nouv_joueur.compte = self.pere.compte
             self.migrer_contexte("personnage:creation:langue_cmd")
         else:
             self.pere.envoyer("|err|Ce nom est invalide. Veuillez " \
