@@ -124,7 +124,6 @@ class ObjetID(BaseObj):
     sous_rep = "" # sous-répertoire menant de _chemin_enr aux données du groupe
     
     # Attributs à ne pas redéfinir
-    _supenr = None # superviseur d'enregistrement
     groupes = {} # dictionnaire des groupes créés ({nom_groupe:classe})
     
     # Méthodes de classe
