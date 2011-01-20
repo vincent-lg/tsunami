@@ -83,7 +83,7 @@ class Unique(BaseObj):
         
         """
         BaseObj.__setattr__(self, nom_attr, val_attr)
-        if self._enregistrer and not nom_attr.startswith("_"):
+        if not nom_attr.startswith("_"):
             self.enregistrer()
     
     def enregistrer(self):
@@ -91,7 +91,8 @@ class Unique(BaseObj):
         
         """
         supenr = BaseObj.importeur.supenr
-        supenr.file_attente.add(self)
+        if self._enregistrer:
+            supenr.file_attente.add(self)
     
     def detruire(self):
         """Méthode appelée pour détruire l'objet.

@@ -134,6 +134,7 @@ class Module(BaseModule):
             chemin_dest = REP_ENRS + os.sep + type(objet).sous_rep
             nom_fichier = str(objet.id.id) + ".sav"
         elif est_unique(objet):
+            self.construire_rep(objet._sous_rep)
             chemin_dest = REP_ENRS + os.sep + objet._sous_rep
             nom_fichier = objet._nom_fichier + ".sav"
         else:

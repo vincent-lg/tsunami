@@ -40,6 +40,8 @@ from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.noeuds.exceptions.erreur_validation \
         import ErreurValidation
+from primaires.interpreteur.groupe import ConteneurGroupes
+
 class Module(BaseModule):
     """Cette classe est la classe gérant tous les interpréteurs.
     Elle recense les différents contextes, en crée certains et permet
@@ -49,15 +51,50 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "interpreteur", "primaire")
+        self.logger = type(self.importeur).man_logs.creer_logger( \
+                "interpreteur", "interpreteur")
+        
+        # On passe l'interpréteur à certaines classes
         Contexte.importeur = importeur
         Commande.importeur = importeur
         BaseNoeud.importeur = importeur
         Masque.importeur = importeur
+        
+        # Attributs
         self.contextes = {} # Dictionnaire des contextes
         self.commandes = []
         self.commandes_francais = []
         self.commandes_anglais = []
         self.masques = {}
+        
+        # Groupes d'utilisateur
+        self.groupes = None
+    
+    def init(self):
+        """Initialisation du module"""
+        # On récupère ou crée puis configure les groupes d'utilisateur
+        groupes = self.importeur.supenr.charger("groupes", "groupes.sav")
+        if groupes is None:
+            groupes = ConteneurGroupes()
+            self.logger.info("Aucun groupe d'utilisateur récupéré.")
+        else:
+            nb_groupes = len(groupes)
+            self.logger.info("{} groupe(s) d'utilisateur récupéré(s)".format(
+                    nb_groupes))
+        
+        self.groupes = groupes
+        
+        # On vérifie que les groupes "essentiels" existent
+        essentiels = ("npc", "joueur", "administrateur")
+        
+        # On crée ceux qui n'existent pas
+        for nom_groupe in essentiels:
+            if nom_groupe not in self.groupes:
+                self.groupes.ajouter_groupe(nom_groupe)
+                self.logger.info("On ajoute le groupe d'utilisateur {}".format( 
+                        nom_groupe))
+        
+        BaseModule.init(self)
     
     def ajouter_contexte(self, nouv_contexte):
         """Ajoute le contexte dans le dictionnaire self.contextes.
