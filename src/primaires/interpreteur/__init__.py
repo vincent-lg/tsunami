@@ -107,6 +107,10 @@ class Module(BaseModule):
         """Ajoute une commande à l'embranchement"""
         noeud_cmd = NoeudCommande(commande)
         self.commandes.append(noeud_cmd)
+        
+        # On ajoute la commande dans son groupe
+        self.groupes.ajouter_commande(commande)
+        
         # Tri la liste des commandes, une première fois par ordre alphabétique
         # français la seconde par ordre alphabétique anglais
         self.commandes_francais = sorted(self.commandes, \
@@ -130,6 +134,7 @@ class Module(BaseModule):
             commandes = self.commandes_francais
         elif personnage.langue_cmd == "anglais":
             commandes = self.commandes_anglais
+        
         for cmd in commandes:
             if cmd.valider(personnage, dic_masques, lst_commande):
                 trouve = True

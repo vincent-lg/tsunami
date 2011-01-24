@@ -45,6 +45,7 @@ class Joueur(Personnage):
     def __init__(self):
         """Constructeur du joueur"""
         Personnage.__init__(self)
+        self.groupe = "joueur"
         self.compte = None
         self.instance_connexion = None
     

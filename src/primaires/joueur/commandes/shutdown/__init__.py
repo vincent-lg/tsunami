@@ -45,6 +45,7 @@ class CmdShutdown(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "shutdown", "shutdown")
         self.tronquer = False
+        self.groupe = "administrateur"
         self.aide_courte = "arrête instantanément le serveur"
         self.aide_longue = \
             "Cette commande arrête instantanément le serveur. Si aucune " \

@@ -39,7 +39,9 @@ from primaires.interpreteur.masque.masque import Masque
 from primaires.format.constantes import *
 from primaires.format.fonctions import *
 
+# Constantes
 NB_MAX_CAR_AIDE_COURTE = 40
+SEP = ":"
 
 class Commande(Masque):
     
@@ -58,11 +60,12 @@ class Commande(Masque):
     
     """
     
-    def __init__(self, francais, anglais):
+    def __init__(self, francais, anglais, groupe=""):
         """Constructeur de la commande"""
         Masque.__init__(self, francais)
         self.nom_francais = francais
         self.nom_anglais = anglais
+        self.adresse = francais
         
         self.racine = None
         self.noeud = None # le noeud commande lié
@@ -71,6 +74,12 @@ class Commande(Masque):
         self.parametres = {}
         self.aide_courte = ""
         self.aide_longue = ""
+        
+        # Groupes
+        if groupe:
+            self.groupe = groupe
+        else:
+            self.groupe = "npc"
     
     def _get_aide_courte(self):
         """Retourne l'aide courte"""
@@ -107,6 +116,11 @@ class Commande(Masque):
         """Ajoute un paramètre à la commande"""
         noeud_cmd = NoeudCommande(parametre)
         self.parametres[parametre.nom] = noeud_cmd
+        parametre.adresse = self.adresse + SEP + parametre.nom_francais
+        if not parametre.groupe:
+            parametre.groupe = self.groupe
+        
+        type(self).importeur.interpreteur.groupes.ajouter_commande(parametre)
     
     def construire_arborescence(self, schema):
         """Interprétation du schéma"""
@@ -122,11 +136,16 @@ class Commande(Masque):
     noms_commandes = property(_get_noms_commandes)
     
     def valider(self, personnage, dic_masques, commande):
-        """Fonctiond e validation.
+        """Fonctiond de validation.
         Elle retourne True si la commande entrée par le joueur correspond à
         son nom, False sinon.
         
         """
+        # Si le personnage n'a pas le droit d'appeler la commande, on s'arrête
+        if not type(self).importeur.interpreteur.groupes.personnage_a_le_droit(
+                personnage, self):
+            return False
+        
         str_commande = liste_vers_chaine(commande)
         str_commande = supprimer_accents(str_commande).lower()
         

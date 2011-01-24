@@ -49,6 +49,7 @@ class Personnage(ObjetID):
         """Constructeur d'un personnage"""
         ObjetID.__init__(self)
         self.nom = ""
+        self.groupe = "npc"
         self.contextes = FileContexte() # file d'attente des contexte
         self.langue_cmd = "francais"
     

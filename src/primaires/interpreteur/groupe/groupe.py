@@ -61,3 +61,35 @@ class Groupe(BaseObj):
     def __getinitargs__(self):
         """Retourne les arguments à passer au constructeur"""
         return ("", )
+    
+    def ajouter_commande(self, commande):
+        """La commande à ajouter est sous la forme d'une chaîne.
+        C'est une adresse menant vers la commande
+        'commande:sous_commande:...'.
+        
+        """
+        if commande not in self.commandes:
+            self.commandes.append(commande)
+    
+    def supprimer_commande(self, commande):
+        """La commande à supprimer est sous la forme d'une chaîne.
+        C'est une adresse menant vers la commande
+        'commande:sous_commande:...'.
+        
+        """
+        if commande in self.commandes:
+            self.commandes.remove(commande)
+    
+    def ajouter_groupe_inclus(self, groupe):
+        """Ajoute 'groupe' dans les groupes inclus.
+        Si le groupe A inclus le groupe B, alors les joueurs du groupe A
+        pourront utiliser les commandes du groupe B.
+        
+        """
+        if groupe not in self.groupes_inclus:
+            self.groupes_inclus.append(groupe)
+    
+    def supprimer_groupe_inclus(self, groupe):
+        """Supprime 'groupe' des groupes inclus"""
+        if groupe in self.groupes_inclus:
+            self.groupes_inclus.remove(groupe)

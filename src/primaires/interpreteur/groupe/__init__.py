@@ -49,6 +49,9 @@ class ConteneurGroupes(Unique):
         """Constructeur du conteneur."""
         Unique.__init__(self, "groupes", "groupes")
         self._groupes = {} # nom_groupe:groupe
+        
+        # Dictionnaire associant une adresse de commande à un groupe
+        self.commandes = {}
     
     def __getinitargs__(self):
         return ()
@@ -80,3 +83,41 @@ class ConteneurGroupes(Unique):
         """Supprime le groupe nom_groupe"""
         del self._groupes[nom_groupe]
         self.enregistrer()
+    
+    def ajouter_commande(self, commande):
+        """Ajout de 'commande' dans son groupe"""
+        groupe = self[commande.groupe]
+        self.commandes[commande.adresse] = groupe
+        print("Ajout de", commande.adresse, "dans", groupe.nom)
+        self.enregistrer()
+    
+    def supprimer_commande(self, commande):
+        """On supprime la commande 'commande'.
+        
+        """
+        del self.commandes[commande.adresse]
+        self.enregistrer()
+    
+    def changer_groupe_commande(self, commande):
+        """Change le groupe d'une commande.
+        
+        """
+        nouveau_groupe = self[commande.groupe]
+        self.commandes[commande.adresse] = nouveau_groupe
+        self.enregistrer()
+    
+    def personnage_a_le_droit(self, personnage, commande):
+        """Le personnage a-t-il le droit d'appeler 'commande' ?"""
+        try:
+            groupe = self[personnage.groupe]
+        except KeyError:
+            groupe = self["npc"] # droits minimums
+        
+        groupe_cmd = self.commandes[commande.adresse]
+        if groupe_cmd.nom == groupe.nom or \
+                (groupe.nom in groupe_cmd.groupes_inclus):
+            droit = True
+        else:
+            droit = False
+        
+        return droit
