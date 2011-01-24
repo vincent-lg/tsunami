@@ -38,7 +38,7 @@ cfg_connex = r"""
 
 ### Connexion
 
-# Chaîne à entrer si on a oublié son mot de passe
+## Chaîne à entrer si on a oublié son mot de passe
 # Par défaut, c'est simplement 'oubli' mais vous pouvez lui donner un autre
 # nom. Le client devra entrer cette chaîne à la place de son mot de passe,
 # un nouveau mot de passe lui sera envoyé.
@@ -47,7 +47,7 @@ cfg_connex = r"""
 # soit faible.
 chaine_oubli = "oubli"
 
-# Paramétrages des avertissements
+## Paramétrages des avertissements
 # Ces deux nombres configurent respectivement le nombre d'essais autorisés
 # avant d'envoyer un message d'avertissement et de déconnecter le client.
 # Au bout de 3 entrées erronées par défaut, le client est déconnecté et un
@@ -59,7 +59,7 @@ chaine_oubli = "oubli"
 nb_avant_alerte = 3
 nb_avant_nouveau = 20
 
-# Paramétrages des déconnexions et de l'attente
+## Paramétrages des déconnexions et de l'attente
 # Le premier nombre paramètre le nombre de tentatives pour rentrer un mot de
 # passe avant d'être déconnecté. Le second paramètre le nombre de secondes
 # à attendre avant une nouvelle entrée (3 secondes suffisent virtuellement à
@@ -70,9 +70,7 @@ secondes_a_attendre = 3
 
 ### Création d'un compte
 
-## Choix du nom du compte
-
-# Chaîne à entrer pour créer un nouveau compte
+## Chaîne à entrer pour créer un nouveau compte
 # Par défaut, c'est simplement 'nouveau' mais vous pouvez lui donner un autre
 # nom. Le client devra entrer cette chaîne pour créer un nouveau compte.
 # Il ne pourra naturellement pas créer un compte avec ce nom.
@@ -80,12 +78,12 @@ secondes_a_attendre = 3
 # Certains comptes pourraient devenir inaccessibles, avec un peu de malchance.
 chaine_nouveau = "nouveau"
 
-# Noms interdits
+## Noms interdits
 # Cette liste contient les noms de compte considérés comme interdits
 # Vous pouvez par exemple y ajouter le nom de votre projet
 noms_interdits = ["kassie"]
 
-# Tailles minimum et maximum du nom de compte
+## Tailles minimum et maximum du nom de compte
 taille_min = 3
 taille_max = 15
 
@@ -108,9 +106,19 @@ clef_salage = "salee_"
 pass_min = 6
 
 ## Nombre maximum de personnages
-
 # Cette variable paramètre le nombre maximum de personnages pouvant être
 # liés à un compte. Pour enlever cette limite, mettez à -1.
 nb_perso_max = 5
+
+## Compte administrateur
+# Sur Kassie, un nom de compte est retenu comme étant
+# "le compte administrateur". ous les joueurs créés dans ce compte seront dans
+# le groupe des administrateurs.
+# Cela vous permet de récupérer facilement le contrôle du MUD, au premier
+# lancement du serveur ou par la suite.
+# Pour des raisons de sécurité, évitez de choisir un nom comme "admin" ou
+# le nom de votre MUD.
+# Changez la valeur par défaut avant de lancer votre MUD.
+compte_admin = "admin"
 
 """

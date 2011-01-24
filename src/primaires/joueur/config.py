@@ -33,8 +33,6 @@
 cfg_joueur = r"""
 # Ce fichier contient la configuration du module primaire joueur.
 # Il contient diverses options en rapport avec la création d'un personnage.
-# Ce fichier de configuration, simpliste à la base, sera étoffé suivant
-# l'architecture de la création de personnage.
 
 ## Taille du nom
 

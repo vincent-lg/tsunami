@@ -86,7 +86,15 @@ class Compte(ObjetID):
         return joueur
     
     def ajouter_joueur(self, joueur):
-        """Ajoute le joueur passé en paramètre à la liste des joueurs"""
+        """Ajoute le joueur passé en paramètre à la liste des joueurs.
+        Si le compte est "le compte admin", le joueur sera passé
+        dans le groupe des administrateurs.
+        
+        """
+        config = type(self).importeur.anaconf.get_config("connex")
+        if self.nom == config.compte_admin: # compte administrateur
+            joueur.groupe = "administrateur"
+        
         self.joueurs.append(joueur)
         self.enregistrer()
     

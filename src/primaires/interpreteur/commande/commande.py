@@ -60,7 +60,7 @@ class Commande(Masque):
     
     """
     
-    def __init__(self, francais, anglais, groupe=""):
+    def __init__(self, francais, anglais):
         """Constructeur de la commande"""
         Masque.__init__(self, francais)
         self.nom_francais = francais
@@ -75,11 +75,8 @@ class Commande(Masque):
         self.aide_courte = ""
         self.aide_longue = ""
         
-        # Groupes
-        if groupe:
-            self.groupe = groupe
-        else:
-            self.groupe = "npc"
+        # Groupe
+        self.groupe = "npc"
     
     def _get_aide_courte(self):
         """Retourne l'aide courte"""

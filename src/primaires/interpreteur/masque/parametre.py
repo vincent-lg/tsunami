@@ -48,6 +48,7 @@ class Parametre(Commande):
         Commande.__init__(self, francais, anglais)
         Masque.__init__(self, self.nom_francais)
         self.nom = self.nom_francais
+        self.groupe = ""
         self.tronquer = False
         self.schema = ""
     
