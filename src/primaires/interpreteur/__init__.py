@@ -88,11 +88,15 @@ class Module(BaseModule):
         essentiels = ("npc", "joueur", "administrateur")
         
         # On crée ceux qui n'existent pas
+        groupe_precedent = ""
         for nom_groupe in essentiels:
             if nom_groupe not in self.groupes:
-                self.groupes.ajouter_groupe(nom_groupe)
+                groupe = self.groupes.ajouter_groupe(nom_groupe)
+                if groupe_precedent:
+                    groupe.ajouter_groupe_inclus(groupe_precedent)
                 self.logger.info("On ajoute le groupe d'utilisateur {}".format( 
                         nom_groupe))
+            groupe_precedent = nom_groupe
         
         BaseModule.init(self)
     

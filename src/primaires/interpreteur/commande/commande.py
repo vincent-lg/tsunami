@@ -265,18 +265,20 @@ class Commande(Masque):
             aide += "\n\n"
             aide += "Sous-commandes disponibles :"
             for parametre in parametres:
-                nom = parametre.get_nom_pour(personnage)
-                aide += "\n  |ent|" + nom.ljust(taille) + "|ff|"
-                aide += " - "
-                aide_courte = self.remplacer_mots_cles(personnage, 
-                        parametre.aide_courte)
-                aide_courte = textwrap.wrap(aide_courte, aligner)
-                aide += ("\n" + (taille + 5) * " ").join(aide_courte)
-                aide += "\n" + "     " + taille * " "
-                aide_longue = self.remplacer_mots_cles(personnage,
-                        parametre.aide_longue)
-                aide_longue = textwrap.wrap(aide_longue, aligner)
-                aide += ("\n" + (taille + 5) * " ").join(aide_longue)
+                if type(self).importeur.interpreteur.groupes. \
+                        personnage_a_le_droit(personnage, parametre):
+                    nom = parametre.get_nom_pour(personnage)
+                    aide += "\n  |ent|" + nom.ljust(taille) + "|ff|"
+                    aide += " - "
+                    aide_courte = self.remplacer_mots_cles(personnage, 
+                            parametre.aide_courte)
+                    aide_courte = textwrap.wrap(aide_courte, aligner)
+                    aide += ("\n" + (taille + 5) * " ").join(aide_courte)
+                    aide += "\n" + "     " + taille * " "
+                    aide_longue = self.remplacer_mots_cles(personnage,
+                            parametre.aide_longue)
+                    aide_longue = textwrap.wrap(aide_longue, aligner)
+                    aide += ("\n" + (taille + 5) * " ").join(aide_longue)
 
         return aide
     
@@ -312,13 +314,15 @@ class Commande(Masque):
             aligner = longueur_ligne - taille - 5
             aide += "\n"
             for parametre in parametres:
-                nom = parametre.get_nom_pour(personnage)
-                aide += "\n  |ent|" + nom.ljust(taille) + "|ff|"
-                aide += " - "
-                aide_courte = self.remplacer_mots_cles(personnage, 
-                        parametre.aide_courte)
-                aide_courte = textwrap.wrap(aide_courte, aligner)
-                aide += ("\n" + (taille + 5) * " ").join(aide_courte)
+                if type(self).importeur.interpreteur.groupes. \
+                        personnage_a_le_droit(personnage, parametre):
+                    nom = parametre.get_nom_pour(personnage)
+                    aide += "\n  |ent|" + nom.ljust(taille) + "|ff|"
+                    aide += " - "
+                    aide_courte = self.remplacer_mots_cles(personnage, 
+                            parametre.aide_courte)
+                    aide_courte = textwrap.wrap(aide_courte, aligner)
+                    aide += ("\n" + (taille + 5) * " ").join(aide_courte)
         
         aide = self.remplacer_mots_cles(personnage, aide)
         return aide

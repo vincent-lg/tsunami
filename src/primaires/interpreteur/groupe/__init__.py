@@ -108,16 +108,33 @@ class ConteneurGroupes(Unique):
     
     def personnage_a_le_droit(self, personnage, commande):
         """Le personnage a-t-il le droit d'appeler 'commande' ?"""
-        try:
-            groupe = self[personnage.groupe]
-        except KeyError:
-            groupe = self["npc"] # droits minimums
+        if personnage.groupe in self:
+            groupe_png = self[personnage.groupe]
+        else:
+            groupe_png = self["npc"] # droits minimums
         
         groupe_cmd = self.commandes[commande.adresse]
-        if groupe_cmd.nom == groupe.nom or \
-                (groupe.nom in groupe_cmd.groupes_inclus):
-            droit = True
-        else:
-            droit = False
         
-        return droit
+        return self.explorer_groupes_inclus(groupe_png, groupe_cmd.nom)
+    
+    def explorer_groupes_inclus(self, groupe_base, cherche):
+        """Explore les groupes inclus de 'groupe_base', récursivement.
+        Si le groupe groupe_base ou l'un des groupes inclus a pour nom
+        'cherche', retourne True, False sinon.
+        
+        """
+        trouve = False
+        if cherche == groupe_base.nom:
+            trouve = True
+        else:
+            for nom_groupe in groupe_base.groupes_inclus:
+                if nom_groupe == cherche:
+                    trouve = True
+                    break
+                
+                r_groupe = self[nom_groupe]
+                trouve = self.explorer_groupes_inclus(r_groupe, cherche)
+                if trouve:
+                    break
+        
+        return trouve

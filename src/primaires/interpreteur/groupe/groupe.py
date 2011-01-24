@@ -55,30 +55,11 @@ class Groupe(BaseObj):
         BaseObj.__init__(self)
         self.nom = nom
         self.flags = []
-        self.commandes = []
         self.groupes_inclus = []
     
     def __getinitargs__(self):
         """Retourne les arguments à passer au constructeur"""
         return ("", )
-    
-    def ajouter_commande(self, commande):
-        """La commande à ajouter est sous la forme d'une chaîne.
-        C'est une adresse menant vers la commande
-        'commande:sous_commande:...'.
-        
-        """
-        if commande not in self.commandes:
-            self.commandes.append(commande)
-    
-    def supprimer_commande(self, commande):
-        """La commande à supprimer est sous la forme d'une chaîne.
-        C'est une adresse menant vers la commande
-        'commande:sous_commande:...'.
-        
-        """
-        if commande in self.commandes:
-            self.commandes.remove(commande)
     
     def ajouter_groupe_inclus(self, groupe):
         """Ajoute 'groupe' dans les groupes inclus.

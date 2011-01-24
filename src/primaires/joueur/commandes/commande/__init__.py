@@ -60,14 +60,16 @@ class CmdCommande(Commande):
             commandes = []
             for cmd in \
                 type(self).importeur.interpreteur.commandes:
-                commandes.append(cmd.commande.get_nom_pour(personnage))
+                if type(self).importeur.interpreteur.groupes. \
+                        personnage_a_le_droit(personnage, cmd.commande):
+                    commandes.append(cmd.commande.get_nom_pour(personnage))
             
             if not commandes:
-                personnage.envoyer("Aucune commande ne semble être définie." \
-                        "Difficile à croire non ?")
+                personnage << "Aucune commande ne semble être définie." \
+                        "Difficile à croire non ?"
             else:
-                personnage.envoyer("Liste des commandes :\n  " + \
-                    "\n  ".join(sorted(commandes)))
+                personnage << "Liste des commandes :\n  " + \
+                    "\n  ".join(sorted(commandes))
         
         else: # la commande existe
             commande = dic_masques["nom_commande"].commande

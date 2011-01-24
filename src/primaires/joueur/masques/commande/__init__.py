@@ -57,10 +57,12 @@ class Commande(Masque):
         commandes = sorted(commandes, key=lambda noeud: \
                 noeud.commande.get_nom_pour(personnage))
         for cmd in commandes:
-            nom = cmd.commande.get_nom_pour(personnage)
-            if nom.startswith(nom_commande):
-                commande = cmd
-                break
+            if type(self).importeur.interpreteur.groupes. \
+                    personnage_a_le_droit(personnage, cmd.commande):
+                nom = cmd.commande.get_nom_pour(personnage)
+                if nom.startswith(nom_commande):
+                    commande = cmd
+                    break
         
         if not commande:
             raise CommandeIntrouvable(
