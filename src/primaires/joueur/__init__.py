@@ -33,6 +33,7 @@
 from abstraits.module import *
 from primaires.joueur.contextes import liste_contextes
 from primaires.joueur import commandes
+from primaires.joueur import masques
 from primaires.joueur.config import cfg_joueur
 
 class Module(BaseModule):
@@ -62,8 +63,13 @@ class Module(BaseModule):
         for contexte in liste_contextes:
             self.importeur.interpreteur.contextes[contexte.nom] = contexte
         
+        # Ajout des masques dans l'interpréteur
+        self.importeur.interpreteur.ajouter_masque(
+                masques.nv_groupe.NvGroupe())
+        
         # On ajoute les commandes du module
         self.commandes = [
+            commandes.groupe.CmdGroupe(),
             commandes.module.CmdModule(),
             commandes.quitter.CmdQuitter(),
             commandes.shutdown.CmdShutdown(),

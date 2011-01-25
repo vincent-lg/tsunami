@@ -28,9 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Fichier contenant le paramètre 'liste' de la commande 'groupe'."""
 
-import primaires.joueur.commandes.groupe
-import primaires.joueur.commandes.module
-import primaires.joueur.commandes.quitter
-import primaires.joueur.commandes.shutdown
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmListe(Parametre):
+    
+    """Commande 'groupe liste'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "liste", "list")
+        self.aide_courte = "affiche la liste des groupes existants"
+        self.aide_longue = \
+                "Affiche la liste des groupes existants. Pour avoir " \
+            "plus d'informations sur un groupe, référez-vous à la commande " \
+            "%groupe%."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        # On récupère les groupes chargés
+        groupes = type(self).importeur.interpreteur.groupes._groupes.values()
+        cmds = type(self).importeur.interpreteur.groupes.commandes.values()
+        groupes = sorted(groupes, key=lambda groupe:groupe.nom)
+        if groupes:
+            msg = "Liste des groupes existants :\n"
+            for groupe in groupes:
+                nb_cmds = len([grp_cmd.nom for grp_cmd in \
+                        cmds if grp_cmd is groupe])
+                msg += "\n  {} ({} commandes)".format(groupe.nom.ljust(15),
+                        nb_cmds)
+            personnage << msg
+        else:
+            personnage.envoyer("|att|Aucun groupe n'est chargé. Ce semble " \
+                "très improbable.|ff|")

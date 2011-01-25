@@ -28,9 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Fichier contenant le masque <groupe>."""
 
-import primaires.joueur.commandes.groupe
-import primaires.joueur.commandes.module
-import primaires.joueur.commandes.quitter
-import primaires.joueur.commandes.shutdown
+import re
+
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.joueur.masques.nv_groupe.groupe_invalide \
+        import GroupeInvalide
+
+NOM_VALIDE = r"^[A-Za-z]{4,}$"
+
+class NvGroupe(Masque):
+    
+    """Masque <groupe>.
+    On attend un nom de groupe en paramètre.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self, "nv_groupe")
+        self.nom_complet = "nom du nouveau groupe"
+        self.nom_groupe = ""
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        nom_groupe = liste_vers_chaine(commande).lstrip()
+        
+        if not re.match(NOM_VALIDE, nom_groupe):
+            raise GroupeInvalide(
+                "|att|Ce nom de groupe est invalide.|ff|")
+        
+        self.nom_groupe = nom_groupe.lower()
+        
+        return True

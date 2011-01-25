@@ -28,9 +28,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Fichier contenant l'exception GroupeInvalide"""
 
-import primaires.joueur.commandes.groupe
-import primaires.joueur.commandes.module
-import primaires.joueur.commandes.quitter
-import primaires.joueur.commandes.shutdown
+from primaires.interpreteur.masque.exceptions.erreur_interpretation \
+        import ErreurInterpretation
+
+class GroupeInvalide(ErreurInterpretation):
+    
+    pass

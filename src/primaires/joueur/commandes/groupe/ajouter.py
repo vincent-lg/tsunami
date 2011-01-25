@@ -28,9 +28,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Fichier contenant le paramètre 'ajouter' de la commande 'groupe'."""
 
-import primaires.joueur.commandes.groupe
-import primaires.joueur.commandes.module
-import primaires.joueur.commandes.quitter
-import primaires.joueur.commandes.shutdown
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmAjouter(Parametre):
+    
+    """Commande 'groupe ajouter'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "ajouter", "add")
+        self.schema = "<nv_groupe>"
+        self.aide_courte = "permet d'ajouter un groupe d'utilisateur"
+        self.aide_longue = \
+            "Cette commande permet d'ajouter un nouveau groupe " \
+            "d'utilisateur. Par défaut, il n'aura aucune commande définie."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
