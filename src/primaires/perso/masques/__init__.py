@@ -28,5 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des différents masques du module 'perso'."""
+"""Package des masques du module perso."""
 
+import primaires.perso.masques.commande

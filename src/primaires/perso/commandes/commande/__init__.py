@@ -28,8 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'module' et ses sous-commandes.
-Dans ce fichier se trouve la commande même.
+"""Package contenant la commande 'commande'.
 
 """
 

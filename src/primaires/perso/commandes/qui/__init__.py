@@ -29,7 +29,6 @@
 
 
 """Package contenant la commande 'qui'.
-Dans ce fichier se trouve la commande même.
 
 """
 
@@ -47,10 +46,10 @@ class CmdQui(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "qui", "who")
         self.schema = ""
-        self.aide_courte = "Affiche les joueurs connectés"
+        self.aide_courte = "affiche les joueurs connectés"
         self.aide_longue = \
             "Cette commande permet d'afficher la liste des joueurs " \
-            "connectés au MUD" \
+            "actuellement connectés au MUD."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""

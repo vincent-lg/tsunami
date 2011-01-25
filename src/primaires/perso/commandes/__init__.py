@@ -28,6 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module joueur."""
+"""Package contenant les commandes du module perso."""
 
-import primaires.joueur.masques.commande
+import primaires.perso.commandes.commande
+import primaires.perso.commandes.qui
