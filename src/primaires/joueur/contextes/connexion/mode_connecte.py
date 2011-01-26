@@ -37,7 +37,7 @@ from primaires.interpreteur.masque.dic_masques import DicMasques
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.exceptions.erreur_interpretation \
         import ErreurInterpretation
-from primaires.interpreteur.masque.noeuds.exceptions.erreur_validation \
+from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
 
 
@@ -92,9 +92,12 @@ class ModeConnecte(Contexte):
             interpreteur.valider(self.pere.joueur, dic_masques, \
                     lst_commande)
         except ErreurValidation as err_val:
+            err_val = str(err_val)
+            if not err_val:
+                masque = dic_masques.dernier_parametre
+                err_val = masque.erreur_validation(self.pere.joueur, \
+                        dic_masques)
             self.pere.joueur.envoyer(str(err_val))
-        except ErreurInterpretation as err_int:
-            self.pere.joueur.envoyer(str(err_int))
         except Exception:
             logger.fatal(
                     "Exception levée lors de la validation d'une commande.")
@@ -111,6 +114,8 @@ class ModeConnecte(Contexte):
                         break
                 
                 commande.interpreter(self.pere.joueur, dic_masques)
+            except ErreurInterpretation as err_int:
+                self.pere.joueur.envoyer(str(err_int))
             except Exception:
                 logger.fatal(
                     "Exception levée lors de l'interprétation d'une commande.")

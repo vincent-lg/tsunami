@@ -34,8 +34,10 @@ import re
 
 from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
+from primaires.perso.masques.exceptions.manquant import ParametreManquant
 from primaires.joueur.masques.nv_groupe.groupe_invalide \
         import GroupeInvalide
+
 
 NOM_VALIDE = r"^[A-Za-z]{4,}$"
 
@@ -54,12 +56,15 @@ class NvGroupe(Masque):
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
-        nom_groupe = liste_vers_chaine(commande).lstrip()
+        lstrip(commande)
+        nom_groupe = liste_vers_chaine(commande)
+        if not nom_groupe:
+            raise ParametreManquant( \
+                "Vous devez préciser un nom pour le nouveau groupe.")
         
         if not re.match(NOM_VALIDE, nom_groupe):
             raise GroupeInvalide(
                 "|att|Ce nom de groupe est invalide.|ff|")
         
         self.nom_groupe = nom_groupe.lower()
-        
         return True

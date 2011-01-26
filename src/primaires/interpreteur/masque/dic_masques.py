@@ -46,3 +46,22 @@ class DicMasques(OrderedDict):
             res = OrderedDict.__getitem__(self, item)
         
         return res
+    
+    @property
+    def premier(self):
+        """Retourne le premier élément du dictionnaire"""
+        return tuple(self.values())[0]
+    
+    @property
+    def dernier(self):
+        """Retourne le dernier élément du dictionnaire"""
+        return tuple(self.values())[-1]
+    
+    @property
+    def dernier_parametre(self):
+        """Retourne le dernier paramètre"""
+        for masque in reversed(list(self.values())):
+            if masque.est_parametre():
+                return masque
+        
+        raise ValueError("aucun paramètre dans ce dictionnaire")

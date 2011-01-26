@@ -49,3 +49,4 @@ class PrmAjouter(Parametre):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
+        personnage << "ok !"

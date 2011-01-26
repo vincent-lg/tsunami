@@ -38,7 +38,7 @@ from primaires.interpreteur.masque.noeuds.noeud_commande import NoeudCommande
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.masque.masque import Masque
-from primaires.interpreteur.masque.noeuds.exceptions.erreur_validation \
+from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
 from primaires.interpreteur.groupe import ConteneurGroupes
 

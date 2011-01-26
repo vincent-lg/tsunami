@@ -28,13 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'exception GroupeInvalide"""
+"""Package des exceptions liées aux erreurs de validation des commandes
+personnage.
 
-from primaires.interpreteur.masque.exceptions.erreur_validation \
-        import ErreurValidation
-
-class GroupeInvalide(ErreurValidation):
-    
-    """Erreur levée si le nom du groupe est invalide."""
-    
-    pass
+"""

@@ -28,7 +28,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les exceptions liées à l'interprétation des noeuds /
-masques.
+"""Fichier contenant l'exception ParametreManquant."""
 
-"""
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+    import ErreurValidation
+
+class ParametreManquant(ErreurValidation):
+    
+    """Exception levée quand un paramètre manque ou est incomplet."""
+    
+    pass

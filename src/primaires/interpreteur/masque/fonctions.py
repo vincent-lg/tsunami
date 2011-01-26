@@ -37,3 +37,10 @@ def chaine_vers_liste(chaine):
 def liste_vers_chaine(liste):
     """Convertit une lsite de caractères en une chaîne"""
     return "".join(liste)
+
+def lstrip(liste):
+    """Retire les espaces à gauche de la chaîne-liste"""
+    while liste and liste[0] == " ":
+        del liste[0]
+    
+    return liste

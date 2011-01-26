@@ -31,7 +31,7 @@
 """Fichier définissant la classe Embranchement détaillée plus bas."""
 
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
-from primaires.interpreteur.masque.noeuds.exceptions.erreur_validation \
+from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
 
 class Embranchement(BaseNoeud):
@@ -89,18 +89,23 @@ class Embranchement(BaseNoeud):
                 key=lambda noeud: noeud.commande.nom_anglais)
         
         # Si un schéma est défini dans cet embranchement, on l'ajoute à la fin
-        if self.schema:
-            liste_fils.append(self.schema)
-        
-        valide = False
+        valide = True
         for fils in liste_fils:
             valide = fils.valider(personnage, dic_masques, commande,
                     tester_fils)
             if valide:
+                print("Valide :", fils)
                 break
         
-        if not valide:
+        if not valide and not self.schema:
+            print("not valide 1")
             raise ErreurValidation
+        elif self.schema:
+            print("not valide 2")
+            valide = self.schema.valider(personnage, dic_masques, commande,
+                    tester_fils)
+            if not valide:
+                raise ErreurValidation
         
         return valide
     

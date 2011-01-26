@@ -32,6 +32,7 @@
 
 from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
+from primaires.perso.masques.exceptions.manquant import ParametreManquant
 from primaires.perso.masques.commande.commande_introuvable \
         import CommandeIntrouvable
 
@@ -51,6 +52,10 @@ class Commande(Masque):
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
         nom_commande = liste_vers_chaine(commande).lstrip()
+        
+        if not nom_commande:
+            raise ParametreManquant( \
+                "De quelle commande souhaitez-vous voir l'aide ?")
         
         # On cherche dans les commandes du module interpreteur
         commande = None

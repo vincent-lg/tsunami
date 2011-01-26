@@ -30,10 +30,10 @@
 
 """Fichier contenant l'exception CommandeIntrouvable."""
 
-from primaires.interpreteur.masque.exceptions.erreur_interpretation \
-        import ErreurInterpretation
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
 
-class CommandeIntrouvable(ErreurInterpretation):
+class CommandeIntrouvable(ErreurValidation):
     
     """Cette erreur est levée quand la commande entrée pour le masque
     <nom_commande> n'a pas été trouvée.

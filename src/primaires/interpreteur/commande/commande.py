@@ -284,9 +284,12 @@ class Commande(Masque):
         Par défaut, on affiche l'aide courte de la commande.
         
         """
-        premier_masque = list(dic_masques.keys())[0]
-        dernier_masque = list(dic_masques.keys())[-1]
-        syntaxe = self.afficher(personnage)
+        syntaxes = []
+        for masque in dic_masques.values():
+            if masque.est_parametre():
+                syntaxes.append(masque.afficher(personnage))
+
+        syntaxe = " ".join(syntaxes)
         
         aide = "|ent|" + syntaxe + "|ff| : "
         synopsis = self.remplacer_mots_cles(personnage, self.aide_courte)
