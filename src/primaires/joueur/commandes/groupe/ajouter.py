@@ -42,11 +42,13 @@ class PrmAjouter(Parametre):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "ajouter", "add")
         self.schema = "<nv_groupe>"
-        self.aide_courte = "permet d'ajouter un groupe d'utilisateur"
+        self.aide_courte = "ajoute un groupe d'utilisateur"
         self.aide_longue = \
             "Cette commande permet d'ajouter un nouveau groupe " \
             "d'utilisateur. Par défaut, il n'aura aucune commande définie."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        personnage << "ok !"
+        nom_groupe = dic_masques["nv_groupe"].nom_groupe
+        type(self).importeur.interpreteur.groupes.ajouter_groupe(nom_groupe)
+        personnage << "Le groupe {} a bien été ajouté.".format(nom_groupe)

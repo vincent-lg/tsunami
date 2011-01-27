@@ -66,6 +66,8 @@ class Module(BaseModule):
         # Ajout des masques dans l'interpréteur
         self.importeur.interpreteur.ajouter_masque(
                 masques.nv_groupe.NvGroupe())
+        self.importeur.interpreteur.ajouter_masque(
+                masques.groupe_existant.GroupeExistant())
         
         # On ajoute les commandes du module
         self.commandes = [

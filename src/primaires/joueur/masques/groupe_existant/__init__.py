@@ -28,7 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module joueur."""
+"""Fichier contenant le masque <groupe_existant>."""
 
-import primaires.joueur.masques.groupe_existant
-import primaires.joueur.masques.nv_groupe
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.perso.masques.exceptions.manquant import ParametreManquant
+from primaires.joueur.masques.groupe_existant.groupe_inconnu \
+        import GroupeInconnu
+
+
+class GroupeExistant(Masque):
+    
+    """Masque <groupe_existant>.
+    On attend un nom de groupe en paramètre.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self, "groupe_existant")
+        self.nom_complet = "nom d'un groupe existant"
+        self.nom_groupe = ""
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        lstrip(commande)
+        nom_groupe = liste_vers_chaine(commande)
+        if not nom_groupe:
+            raise ParametreManquant( \
+                "Vous devez préciser un nom de groupe existant.")
+        
+        noms_groupes = [groupe.nom for groupe in \
+            type(self).importeur.interpreteur.groupes._groupes.values()]
+        if nom_groupe not in noms_groupes:
+            raise GroupeInconnu(
+                "|att|Ce groupe est inconnu.|ff|")
+
+        self.nom_groupe = nom_groupe.lower()
+        
+        return True

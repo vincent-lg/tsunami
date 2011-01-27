@@ -28,7 +28,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module joueur."""
+"""Fichier contenant l'exception GroupeInconnu"""
 
-import primaires.joueur.masques.groupe_existant
-import primaires.joueur.masques.nv_groupe
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+
+class GroupeInconnu(ErreurValidation):
+    
+    """Erreur levée si le nom du groupe est inconnu."""
+    
+    pass

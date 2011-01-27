@@ -28,7 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module joueur."""
+"""Fichier contenant le paramètre 'supprimer' de la commande 'groupe'."""
 
-import primaires.joueur.masques.groupe_existant
-import primaires.joueur.masques.nv_groupe
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmSupprimer(Parametre):
+    
+    """Commande 'groupe supprimer'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "supprimer", "del")
+        self.schema = "<groupe_existant>"
+        self.aide_courte = "supprime un groupe d'utilisateur"
+        self.aide_longue = \
+            "Cette commande permet de supprimer un groupe d'utilisateur " \
+            "existant. Aucune confirmation ne vous sera demandée."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        nom_groupe = dic_masques["groupe_existant"].nom_groupe
+        type(self).importeur.interpreteur.groupes.supprimer_groupe(nom_groupe)
+        personnage << "Le groupe {} a bien été supprimé.".format(nom_groupe)

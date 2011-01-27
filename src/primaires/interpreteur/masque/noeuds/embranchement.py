@@ -94,14 +94,11 @@ class Embranchement(BaseNoeud):
             valide = fils.valider(personnage, dic_masques, commande,
                     tester_fils)
             if valide:
-                print("Valide :", fils)
                 break
         
         if not valide and not self.schema:
-            print("not valide 1")
             raise ErreurValidation
         elif self.schema:
-            print("not valide 2")
             valide = self.schema.valider(personnage, dic_masques, commande,
                     tester_fils)
             if not valide:

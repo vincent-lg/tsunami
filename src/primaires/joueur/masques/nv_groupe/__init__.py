@@ -37,6 +37,8 @@ from primaires.interpreteur.masque.fonctions import *
 from primaires.perso.masques.exceptions.manquant import ParametreManquant
 from primaires.joueur.masques.nv_groupe.groupe_invalide \
         import GroupeInvalide
+from primaires.joueur.masques.nv_groupe.groupe_existant \
+        import GroupeExistant
 
 
 NOM_VALIDE = r"^[A-Za-z]{4,}$"
@@ -66,5 +68,12 @@ class NvGroupe(Masque):
             raise GroupeInvalide(
                 "|att|Ce nom de groupe est invalide.|ff|")
         
+        noms_groupes = [groupe.nom for groupe in \
+            type(self).importeur.interpreteur.groupes._groupes.values()]
+        if nom_groupe in noms_groupes:
+            raise GroupeExistant(
+                "|att|Ce nom de groupe est déjà utilisé.|ff|")
+
         self.nom_groupe = nom_groupe.lower()
+        
         return True

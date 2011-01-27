@@ -28,7 +28,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module joueur."""
+"""Fichier contenant l'exception GroupeExistant"""
 
-import primaires.joueur.masques.groupe_existant
-import primaires.joueur.masques.nv_groupe
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+
+class GroupeExistant(ErreurValidation):
+    
+    """Erreur levée si le nom du groupe existe déjà."""
+    
+    pass
