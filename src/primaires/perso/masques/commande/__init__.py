@@ -32,9 +32,8 @@
 
 from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
-from primaires.perso.masques.exceptions.manquant import ParametreManquant
-from primaires.perso.masques.commande.commande_introuvable \
-        import CommandeIntrouvable
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
 
 class Commande(Masque):
     
@@ -54,7 +53,7 @@ class Commande(Masque):
         nom_commande = liste_vers_chaine(commande).lstrip()
         
         if not nom_commande:
-            raise ParametreManquant( \
+            raise ErreurValidation( \
                 "De quelle commande souhaitez-vous voir l'aide ?")
         
         # On cherche dans les commandes du module interpreteur
@@ -71,7 +70,7 @@ class Commande(Masque):
                     break
         
         if not commande:
-            raise CommandeIntrouvable(
+            raise ErreurValidation(
                 "|att|Cette commande est introuvable.|ff|")
         
         self.commande = commande.commande

@@ -34,11 +34,8 @@ import re
 
 from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
-from primaires.perso.masques.exceptions.manquant import ParametreManquant
-from primaires.joueur.masques.nv_groupe.groupe_invalide \
-        import GroupeInvalide
-from primaires.joueur.masques.nv_groupe.groupe_existant \
-        import GroupeExistant
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
 
 
 NOM_VALIDE = r"^[A-Za-z]{4,}$"
@@ -61,17 +58,17 @@ class NvGroupe(Masque):
         lstrip(commande)
         nom_groupe = liste_vers_chaine(commande)
         if not nom_groupe:
-            raise ParametreManquant( \
+            raise ErreurValidation( \
                 "Vous devez préciser un nom pour le nouveau groupe.")
         
         if not re.match(NOM_VALIDE, nom_groupe):
-            raise GroupeInvalide(
+            raise ErreurValidation(
                 "|att|Ce nom de groupe est invalide.|ff|")
         
         noms_groupes = [groupe.nom for groupe in \
             type(self).importeur.interpreteur.groupes._groupes.values()]
         if nom_groupe in noms_groupes:
-            raise GroupeExistant(
+            raise ErreurValidation(
                 "|att|Ce nom de groupe est déjà utilisé.|ff|")
 
         self.nom_groupe = nom_groupe.lower()

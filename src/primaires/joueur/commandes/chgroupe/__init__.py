@@ -28,13 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'exception GroupeExistant"""
+"""Package contenant la commande 'chgroupe' et ses sous-commandes.
+Dans ce fichier se trouve la commande même.
 
-from primaires.interpreteur.masque.exceptions.erreur_validation \
-        import ErreurValidation
+"""
 
-class GroupeExistant(ErreurValidation):
+from primaires.interpreteur.commande.commande import Commande
+from primaires.joueur.commandes.chgroupe.commande import PrmCommande
+from primaires.joueur.commandes.chgroupe.joueur import PrmJoueur
+
+class CmdChgroupe(Commande):
     
-    """Erreur levée si le nom du groupe existe déjà."""
+    """Commande 'chgroupe'.
     
-    pass
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "chgroupe", "chgroup")
+        self.groupe = "administrateur"
+        self.aide_courte = "déplacement d'un groupe à l'autre"
+        self.aide_longue = \
+            "Cette commande permet de déplacer une commande ou un joueur " \
+            "d'un groupe à un autre. Elle permet, par exemple, d'avancer un " \
+            "joueur au niveau des administrateurs ou réciproquement. Elle " \
+            "permet également de gérer les commandes accessibles aux " \
+            "différents groupes. Pour ajouter, supprimer et avoir plus de " \
+            "détails sur les groupes, référez-vous à l'aide de la commande " \
+            "%groupe%."
+        
+        # On prépare les différents paramètres de la commande
+        prm_commande = PrmCommande()
+        prm_joueur = PrmJoueur()
+        
+        self.ajouter_parametre(prm_commande)
+        self.ajouter_parametre(prm_joueur)

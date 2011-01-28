@@ -28,13 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'exception GroupeInvalide"""
+"""Fichier contenant le paramètre 'joueur' de la commande 'chgroupe'."""
 
-from primaires.interpreteur.masque.exceptions.erreur_validation \
-        import ErreurValidation
+from primaires.interpreteur.masque.parametre import Parametre
 
-class GroupeInvalide(ErreurValidation):
+class PrmJoueur(Parametre):
     
-    """Erreur levée si le nom du groupe est invalide."""
+    """Commande 'chgroupe joueur'.
     
-    pass
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "joueur", "player")
+        self.schema = "<nom_joueur> <groupe_existant>"
+        self.aide_courte = "change un joueur de groupe"
+        self.aide_longue = \
+            "Cette commande vous permet de changer un joueur de groupe. " \
+            "Utilisez cette commande si vous voulez promouvoir un nouvel " \
+            "administrateur par exemple."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        joueur = dic_masques["nom_joueur"].joueur
+        nom_groupe = dic_masques["groupe_existant"].nom_groupe
+        
+        joueur.groupe = nom_groupe
+        
+        personnage << "Le joueur {} est à présent dans le groupe {}.".format(
+                joueur.nom, nom_groupe)

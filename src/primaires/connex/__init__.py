@@ -56,6 +56,16 @@ class Module(BaseModule):
         self.cpt_logger = type(self.importeur).man_logs.creer_logger( \
                 "connex", "comptes")
     
+    @property
+    def joueurs(self):
+        """Retourne un tuple des joueurs existants"""
+        joueurs = []
+        for compte in self.comptes.values():
+            for joueur in compte.joueurs:
+                joueurs.append(joueur)
+        
+        return tuple(joueurs)
+    
     def config(self):
         """Configuration du module.
         On crée le fichier de configuration afin de l'utiliser plus tard

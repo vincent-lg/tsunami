@@ -65,12 +65,17 @@ class Module(BaseModule):
         
         # Ajout des masques dans l'interpréteur
         self.importeur.interpreteur.ajouter_masque(
-                masques.nv_groupe.NvGroupe())
+                masques.chemin_cmd.CheminCommande())
         self.importeur.interpreteur.ajouter_masque(
                 masques.groupe_existant.GroupeExistant())
+        self.importeur.interpreteur.ajouter_masque(
+                masques.joueur.Joueur())
+        self.importeur.interpreteur.ajouter_masque(
+                masques.nv_groupe.NvGroupe())
         
         # On ajoute les commandes du module
         self.commandes = [
+            commandes.chgroupe.CmdChgroupe(),
             commandes.groupe.CmdGroupe(),
             commandes.module.CmdModule(),
             commandes.quitter.CmdQuitter(),

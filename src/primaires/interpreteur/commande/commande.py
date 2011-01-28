@@ -291,10 +291,18 @@ class Commande(Masque):
 
         syntaxe = " ".join(syntaxes)
         
-        aide = "|ent|" + syntaxe + "|ff| : "
         synopsis = self.remplacer_mots_cles(personnage, self.aide_courte)
-        synopsis = textwrap.wrap(synopsis, longueur_ligne - len(syntaxe) - 2)
-        aide += ("\n" + " " * (longueur_ligne - len(syntaxe) - 2)).join(
+        aide = "|ent|" + syntaxe + "|ff|"
+        taille_aide = len(syntaxe)
+        if taille_aide > 40:
+            aligner = longueur_ligne
+            aide += "\n> "
+        else:
+            aligner = longueur_ligne - taille_aide - 2
+            aide += " : "
+        
+        synopsis = textwrap.wrap(synopsis, aligner)
+        aide += ("\n" + " " * (aligner + 2)).join(
                 synopsis)
         
         # Paramètres

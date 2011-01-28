@@ -86,10 +86,11 @@ class ConteneurGroupes(Unique):
     
     def ajouter_commande(self, commande):
         """Ajout de 'commande' dans son groupe"""
-        groupe = self[commande.groupe]
-        self.commandes[commande.adresse] = groupe
-        print("Ajout de", commande.adresse, "dans", groupe.nom)
-        self.enregistrer()
+        if not commande.adresse in self.commandes.keys():
+            groupe = self[commande.groupe]
+            self.commandes[commande.adresse] = groupe
+            print("Ajout de", commande.adresse, "dans", groupe.nom)
+            self.enregistrer()
     
     def supprimer_commande(self, commande):
         """On supprime la commande 'commande'.
@@ -98,12 +99,12 @@ class ConteneurGroupes(Unique):
         del self.commandes[commande.adresse]
         self.enregistrer()
     
-    def changer_groupe_commande(self, commande):
+    def changer_groupe_commande(self, chemin, nom_groupe):
         """Change le groupe d'une commande.
         
         """
-        nouveau_groupe = self[commande.groupe]
-        self.commandes[commande.adresse] = nouveau_groupe
+        nouveau_groupe = self[nom_groupe]
+        self.commandes[chemin] = nouveau_groupe
         self.enregistrer()
     
     def personnage_a_le_droit(self, personnage, commande):

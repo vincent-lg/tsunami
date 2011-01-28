@@ -28,41 +28,62 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le masque <groupe_existant>."""
+"""Fichier contenant le masque <chemin_commande>."""
 
 from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.commande.commande import SEP
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
 
-
-class GroupeExistant(Masque):
+class CheminCommande(Masque):
     
-    """Masque <groupe_existant>.
-    On attend un nom de groupe en paramètre.
+    """Masque <chemin_commande>.
+    On attend en paramètre un chemin vers une commande.
+    Exemple : commande:sous_commande:sou_sous_commande
+    Le masque peut finir par un "." pour symboliser "seulement la commande
+    indiquée et aucune de ses sous-commandes."
     
     """
     
     def __init__(self):
         """Constructeur du masque"""
-        Masque.__init__(self, "groupe_existant")
-        self.nom_complet = "nom d'un groupe existant"
-        self.nom_groupe = ""
+        Masque.__init__(self, "chemin_commande")
+        self.nom_complet = "chemin vers une commande"
+        self.joueur = None
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
         lstrip(commande)
-        nom_groupe = liste_vers_chaine(commande)
-        if not nom_groupe:
-            raise ErreurValidation( \
-                "Vous devez préciser un nom de groupe existant.")
+        chemin_commande = liste_vers_chaine(commande)
         
-        noms_groupes = [groupe.nom for groupe in \
-            type(self).importeur.interpreteur.groupes._groupes.values()]
-        if nom_groupe not in noms_groupes:
-            raise ErreurValidation(
-                "|att|Ce groupe est inconnu.|ff|")
+        if not chemin_commande:
+            raise ErreurValidation( \
+                "Précisez le chemin vers la commande.")
+        
+        chemin_commande = chemin_commande.split(" ")[0]
+        commande[:] = commande[len(chemin_commande):]
+        print("ch_cmd", commande)
 
-        self.nom_groupe = nom_groupe.lower()
+        trans_param = True # doit-on transmettre les sous-commandes ?
+        if chemin_commande.endswith("."):
+            chemin_commande = chemin_commande[:-1]
+            trans_param = False
+        
+        # On cherche dans les chemins des commandes, dans interpreteur.groupes
+        chemins = type(self).importeur.interpreteur.groupes.commandes.keys()
+        commandes = []
+        for chemin in chemins:
+            if chemin == chemin_commande:
+                commandes.append(chemin)
+            elif trans_param and chemin.startswith(chemin_commande + SEP):
+                commandes.append(chemin)
+        
+        if not commandes:
+            raise ErreurValidation(
+                "|att|Aucune commande correspondant au chemin n'a pu être " \
+                "trouvée.|ff")
+        
+        self.chemins = commandes
         
         return True
