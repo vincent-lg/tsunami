@@ -35,6 +35,7 @@ Dans ce fichier se trouve la commande même.
 
 from primaires.interpreteur.commande.commande import Commande
 from primaires.joueur.commandes.groupe.ajouter import PrmAjouter
+from primaires.joueur.commandes.groupe.info import PrmInfo
 from primaires.joueur.commandes.groupe.liste import PrmListe
 from primaires.joueur.commandes.groupe.supprimer import PrmSupprimer
 
@@ -63,9 +64,11 @@ class CmdGroupe(Commande):
         
         # On prépare les différents paramètres de la commande
         prm_ajouter = PrmAjouter()
+        prm_info = PrmInfo()
         prm_liste = PrmListe()
         prm_supprimer = PrmSupprimer()
         
         self.ajouter_parametre(prm_ajouter)
+        self.ajouter_parametre(prm_info)
         self.ajouter_parametre(prm_liste)
         self.ajouter_parametre(prm_supprimer)
