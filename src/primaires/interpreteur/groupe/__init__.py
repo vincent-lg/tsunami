@@ -89,7 +89,6 @@ class ConteneurGroupes(Unique):
         if not commande.adresse in self.commandes.keys():
             groupe = self[commande.groupe]
             self.commandes[commande.adresse] = groupe
-            print("Ajout de", commande.adresse, "dans", groupe.nom)
             self.enregistrer()
     
     def supprimer_commande(self, commande):

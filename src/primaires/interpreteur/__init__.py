@@ -134,7 +134,6 @@ class Module(BaseModule):
         On retourne une nouvelle instance du masque.
         
         """
-        print("On crée le masque", nom_masque)
         return self.masques[nom_masque]()
     
     def valider(self, personnage, dic_masques, lst_commande):

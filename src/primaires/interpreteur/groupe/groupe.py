@@ -59,7 +59,7 @@ class Groupe(BaseObj):
     
     def __getinitargs__(self):
         """Retourne les arguments à passer au constructeur"""
-        return ("", )
+        return (None, "")
     
     def ajouter_groupe_inclus(self, groupe):
         """Ajoute 'groupe' dans les groupes inclus.

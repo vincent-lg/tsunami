@@ -59,7 +59,6 @@ class PrmInclusAjouter(Parametre):
         groupe = type(self).importeur.interpreteur.groupes[nom_groupe]
         nom_a_inclure = dic_masques["groupe2"].nom_groupe
         
-        print(nom_groupe, nom_a_inclure)
         if nom_a_inclure in groupe.groupes_inclus:
             raise ErreurInterpretation(
                 "|err|Le groupe {} est déjà inclus dans {}.|ff|".format(
