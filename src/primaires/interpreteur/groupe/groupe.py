@@ -50,11 +50,11 @@ class Groupe(BaseObj):
     
     """
     
-    def __init__(self, nom):
+    def __init__(self, parent, nom):
         """Constructeur d'un groupe"""
         BaseObj.__init__(self)
         self.nom = nom
-        self.flags = []
+        self.parent = parent
         self.groupes_inclus = []
     
     def __getinitargs__(self):
@@ -69,8 +69,15 @@ class Groupe(BaseObj):
         """
         if groupe not in self.groupes_inclus:
             self.groupes_inclus.append(groupe)
+            self.parent.enregistrer()
     
     def supprimer_groupe_inclus(self, groupe):
         """Supprime 'groupe' des groupes inclus"""
         if groupe in self.groupes_inclus:
             self.groupes_inclus.remove(groupe)
+            self.parent.enregistrer()
+    
+    def vider_groupe_inclus(self):
+        """Vide les groupes inclus"""
+        self.groupes_inclus = []
+        self.parent.enregistrer()

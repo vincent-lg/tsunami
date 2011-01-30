@@ -43,9 +43,11 @@ class GroupeExistant(Masque):
     
     """
     
+    nom = "groupe_existant"
+    
     def __init__(self):
         """Constructeur du masque"""
-        Masque.__init__(self, "groupe_existant")
+        Masque.__init__(self)
         self.nom_complet = "nom d'un groupe existant"
         self.nom_groupe = ""
     
@@ -53,10 +55,12 @@ class GroupeExistant(Masque):
         """Validation du masque"""
         lstrip(commande)
         nom_groupe = liste_vers_chaine(commande)
+        print("<nom_groupe> valide", nom_groupe)
         if not nom_groupe:
             raise ErreurValidation( \
                 "Vous devez préciser un nom de groupe existant.")
         
+        nom_groupe = nom_groupe.split(" ")[0]
         noms_groupes = [groupe.nom for groupe in \
             type(self).importeur.interpreteur.groupes._groupes.values()]
         if nom_groupe not in noms_groupes:
@@ -64,5 +68,6 @@ class GroupeExistant(Masque):
                 "|att|Ce groupe est inconnu.|ff|")
 
         self.nom_groupe = nom_groupe.lower()
+        commande[:] = commande[len(nom_groupe):]
         
         return True

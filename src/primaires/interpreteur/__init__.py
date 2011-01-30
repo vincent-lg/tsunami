@@ -115,6 +115,9 @@ class Module(BaseModule):
         # On ajoute la commande dans son groupe
         self.groupes.ajouter_commande(commande)
         
+        # On construit ses paramètres
+        commande.ajouter_parametres()
+        
         # Tri la liste des commandes, une première fois par ordre alphabétique
         # français la seconde par ordre alphabétique anglais
         self.commandes_francais = sorted(self.commandes, \
@@ -127,8 +130,12 @@ class Module(BaseModule):
         self.masques[masque.nom] = masque
     
     def get_masque(self, nom_masque):
-        """Retourne le masque portant le nom correspondant"""
-        return self.masques[nom_masque]
+        """Retourne le masque portant le nom correspondant
+        On retourne une nouvelle instance du masque.
+        
+        """
+        print("On crée le masque", nom_masque)
+        return self.masques[nom_masque]()
     
     def valider(self, personnage, dic_masques, lst_commande):
         """Commande de validation"""

@@ -103,12 +103,12 @@ class NoeudMasque(BaseNoeud):
         # On cherche le type de masque dans l'interpréteur
         # on remplace dans liste_types_masques chaque str par son instance
         # de masque.
-        # Note: si entree est à False, on ne cherche pas dans l'interpréteur
+        # Note: si chevrons est à False, on ne cherche pas dans l'interpréteur
         # mais dans la commande.
         # Si le masque n'existe pas, une exception est levée.
         for i, str_type_masque in enumerate(liste_types_masques):
             if chevrons:
-                type_masque = type(self).importeur.interpreteur.get_masque( \
+                type_masque = type(self).importeur.interpreteur.get_masque(
                         str_type_masque)
             else:
                 type_masque = self.parente.parametres[str_type_masque].commande

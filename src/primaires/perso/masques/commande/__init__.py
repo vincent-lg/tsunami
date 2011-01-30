@@ -42,9 +42,11 @@ class Commande(Masque):
     
     """
     
+    nom = "nom_commande"
+    
     def __init__(self):
         """Constructeur du masque"""
-        Masque.__init__(self, "nom_commande")
+        Masque.__init__(self)
         self.nom_complet = "nom d'une commande"
         self.commande = None
     

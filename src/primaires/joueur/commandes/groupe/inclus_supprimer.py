@@ -28,37 +28,44 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'module' et ses sous-commandes.
-Dans ce fichier se trouve la commande même.
+"""Fichier contenant le paramètre 'supprimer' de la commande 'groupe inclus'.
 
 """
 
-from primaires.interpreteur.commande.commande import Commande
-from primaires.joueur.commandes.module.liste import PrmListe
-from primaires.joueur.commandes.module.hotboot import PrmHotboot
+from primaires.interpreteur.masque.parametre import Parametre
+from primaires.interpreteur.masque.exceptions.erreur_interpretation import \
+    ErreurInterpretation
 
-class CmdModule(Commande):
+class PrmInclusSupprimer(Parametre):
     
-    """Commande 'module'.
+    """Commande 'groupe inclus ajouter'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "module", "module")
-        self.groupe = "administrateur"
-        self.aide_courte = "manipulation des modules"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "supprimer", "del")
+        self.schema = "<groupe1:groupe_existant> <groupe2:groupe_existant>"
+        self.aide_courte = "supprime un groupe inclus"
         self.aide_longue = \
-            "Cette commande permet de manipuler les modules, connaître la " \
-            "liste des modules chargés, en redémarrer certains ou les " \
-            "reconfigurer pendant l'exécution. Cette commande doit être " \
-            "réservée aux administrateurs, ceux ayant un accès aux fichiers " \
-            "de configuration ou au code."
+            "Cette commande permet de supprimer un groupe inclus. Le " \
+            "premier groupe à entrer est celui dans lequel on doit " \
+            "supprimer le second groupe précisé. Exemple : %groupe% " \
+            "%groupe:inclus% %groupe:inclus:supprimer% |cmd|administrateur " \
+            "joueur|ff| supprimera le groupe |tit|joueur|ff| des groupes " \
+            "inclus de |tit|administrateur|ff|."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_liste = PrmListe()
-        prm_hotboot = PrmHotboot()
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        nom_groupe = dic_masques["groupe1"].nom_groupe
+        groupe = type(self).importeur.interpreteur.groupes[nom_groupe]
+        nom_a_supprimer = dic_masques["groupe2"].nom_groupe
         
-        self.ajouter_parametre(prm_liste)
-        self.ajouter_parametre(prm_hotboot)
+        if nom_a_supprimer not in groupe.groupes_inclus:
+            raise ErreurInterpretation(
+                "|err|Le groupe {} n'est pas inclus dans {}.|ff|".format(
+                nom_a_supprimer, nom_groupe))
+        
+        groupe.supprimer_groupe_inclus(nom_a_supprimer)
+        personnage << "Le groupe {} a bien été supprimé de {}.".format(
+                nom_a_supprimer, nom_groupe)

@@ -35,6 +35,7 @@ Dans ce fichier se trouve la commande même.
 
 from primaires.interpreteur.commande.commande import Commande
 from primaires.joueur.commandes.groupe.ajouter import PrmAjouter
+from primaires.joueur.commandes.groupe.inclus import PrmInclus
 from primaires.joueur.commandes.groupe.info import PrmInfo
 from primaires.joueur.commandes.groupe.liste import PrmListe
 from primaires.joueur.commandes.groupe.supprimer import PrmSupprimer
@@ -61,14 +62,17 @@ class CmdGroupe(Commande):
             "vous permet de créer simplement la hiérarchie des " \
             "administrateurs / joueurs que vous désirez. Regardez le détail " \
             "des sous-commandes pour plus d'informations."
-        
-        # On prépare les différents paramètres de la commande
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
         prm_ajouter = PrmAjouter()
+        prm_inclus = PrmInclus()
         prm_info = PrmInfo()
         prm_liste = PrmListe()
         prm_supprimer = PrmSupprimer()
         
         self.ajouter_parametre(prm_ajouter)
+        self.ajouter_parametre(prm_inclus)
         self.ajouter_parametre(prm_info)
         self.ajouter_parametre(prm_liste)
         self.ajouter_parametre(prm_supprimer)

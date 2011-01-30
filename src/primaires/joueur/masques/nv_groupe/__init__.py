@@ -47,9 +47,11 @@ class NvGroupe(Masque):
     
     """
     
+    nom = "nv_groupe"
+    
     def __init__(self):
         """Constructeur du masque"""
-        Masque.__init__(self, "nv_groupe")
+        Masque.__init__(self)
         self.nom_complet = "nom du nouveau groupe"
         self.nom_groupe = ""
     

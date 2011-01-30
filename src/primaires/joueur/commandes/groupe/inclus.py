@@ -28,54 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le masque <nom_joueur>."""
+"""Fichier contenant le paramètre 'inclus' de la commande 'groupe'."""
 
-from primaires.interpreteur.masque.masque import Masque
-from primaires.interpreteur.masque.fonctions import *
-from primaires.interpreteur.masque.exceptions.erreur_validation \
-        import ErreurValidation
+from primaires.interpreteur.masque.parametre import Parametre
+from primaires.joueur.commandes.groupe.inclus_ajouter import PrmInclusAjouter
+from primaires.joueur.commandes.groupe.inclus_supprimer import \
+    PrmInclusSupprimer
+from primaires.joueur.commandes.groupe.inclus_vider import PrmInclusVider
 
-class Joueur(Masque):
+class PrmInclus(Parametre):
     
-    """Masque <nom_joueur>.
-    On attend un nom de joueur en paramètre.
+    """Commande 'groupe inclus'.
     
     """
     
-    nom = "nom_joueur"
-    
     def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "nom d'un joueur"
-        self.joueur = None
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "inclus", "include")
+        self.aide_courte = "gère les groupes inclus"
+        self.aide_longue = \
+                "Cette commande permet de gérer les groupes inclus " \
+            "d'un groupe. Si un groupe |tit|a|ff| inclus d'un groupe " \
+            "|tit|b|ff|, alors |tit|a|ff| possédera les commandes de " \
+            "|tit|b|ff|. Par défaut, |tit|administrateur|ff| inclus " \
+            "|tit|joueur|ff| qui lui-même inclus |tit|npc|ff|. " \
+            "Référez-vous aux sous-commandes pour plus d'information."
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        lstrip(commande)
-        nom_joueur = liste_vers_chaine(commande)
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
+        prm_ajouter = PrmInclusAjouter()
+        prm_supprimer = PrmInclusSupprimer()
+        prm_vider = PrmInclusVider()
         
-        if not nom_joueur:
-            raise ErreurValidation( \
-                "Précisez un nom de joueur.")
-        
-        nom_joueur = nom_joueur.split(" ")[0]
-        commande[:] = commande[len(nom_joueur):]
-        print("nj", commande)
-
-        # On cherche dans les joueurs du module connex
-        joueur = None
-        joueurs = type(self).importeur.connex.joueurs
-        for t_joueur in joueurs:
-                nom = t_joueur.nom
-                if nom == nom_joueur:
-                    joueur = t_joueur
-                    break
-        
-        if not joueur:
-            raise ErreurValidation(
-                "|att|Le joueur passé en paramètre n'a pu être trouvé.|ff|")
-        
-        self.joueur = joueur
-        
-        return True
+        self.ajouter_parametre(prm_ajouter)
+        self.ajouter_parametre(prm_supprimer)
+        self.ajouter_parametre(prm_vider)

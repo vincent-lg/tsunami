@@ -56,8 +56,9 @@ class CmdChgroupe(Commande):
             "différents groupes. Pour ajouter, supprimer et avoir plus de " \
             "détails sur les groupes, référez-vous à l'aide de la commande " \
             "%groupe%."
-        
-        # On prépare les différents paramètres de la commande
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
         prm_commande = PrmCommande()
         prm_joueur = PrmJoueur()
         

@@ -74,7 +74,7 @@ class ConteneurGroupes(Unique):
         l'on désire le manipuler directement.
         
         """
-        groupe = Groupe(nom_groupe)
+        groupe = Groupe(self, nom_groupe)
         self._groupes[nom_groupe] = groupe
         self.enregistrer()
         return groupe

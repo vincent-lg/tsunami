@@ -62,10 +62,13 @@ class Commande(Masque):
     
     def __init__(self, francais, anglais):
         """Constructeur de la commande"""
-        Masque.__init__(self, francais)
+        Masque.__init__(self)
         self.nom_francais = francais
         self.nom_anglais = anglais
         self.adresse = francais
+        
+        # Commande parente
+        self.parente = None
         
         self.racine = None
         self.noeud = None # le noeud commande lié
@@ -114,10 +117,12 @@ class Commande(Masque):
         noeud_cmd = NoeudCommande(parametre)
         self.parametres[parametre.nom] = noeud_cmd
         parametre.adresse = self.adresse + SEP + parametre.nom_francais
-        if not parametre.groupe:
-            parametre.groupe = self.groupe
+        parametre.parente = self
+        parametre.deduire_groupe()
         
         type(self).importeur.interpreteur.groupes.ajouter_commande(parametre)
+        
+        parametre.ajouter_parametres()
     
     def construire_arborescence(self, schema):
         """Interprétation du schéma"""
@@ -334,3 +339,7 @@ class Commande(Masque):
         
         aide = self.remplacer_mots_cles(personnage, aide)
         return aide
+    
+    def ajouter_parametres(self):
+        """Ajoute les paramètres à la commande"""
+        pass

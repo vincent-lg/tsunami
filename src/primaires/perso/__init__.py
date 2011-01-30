@@ -54,7 +54,7 @@ class Module(BaseModule):
     def init(self):
         """Méthode d'initialisation du module"""
         # Ajout des masques dans l'interpréteur
-        self.importeur.interpreteur.ajouter_masque(masques.commande.Commande())
+        self.importeur.interpreteur.ajouter_masque(masques.commande.Commande)
         
         # On ajoute les commandes du module
         self.commandes = [

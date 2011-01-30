@@ -46,9 +46,11 @@ class CheminCommande(Masque):
     
     """
     
+    nom = "chemin_commande"
+    
     def __init__(self):
         """Constructeur du masque"""
-        Masque.__init__(self, "chemin_commande")
+        Masque.__init__(self)
         self.nom_complet = "chemin vers une commande"
         self.joueur = None
     
