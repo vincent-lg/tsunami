@@ -204,6 +204,12 @@ class Module(BaseModule):
         
         self.file_attente.clear()
     
+    def fichier_existe(self, sous_rep, nom_fichier):
+        """Retourne True si le fichier existe"""
+        global REP_ENRS
+        chemin_dest = REP_ENRS + os.sep + sous_rep + os.sep + nom_fichier
+        return os.path.exists(chemin_dest)
+    
     def charger(self, sous_rep, nom_fichier):
         """Charge le fichier indiqué et retourne l'objet dépicklé"""
         global REP_ENRS
