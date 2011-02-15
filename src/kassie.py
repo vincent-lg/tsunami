@@ -140,10 +140,6 @@ importeur = Importeur(parser_cmd, anaconf, man_logs, parid, serveur)
 importeur.tout_charger()
 importeur.tout_instancier()
 
-# On configure et initialise les modules
-importeur.tout_configurer()
-importeur.tout_initialiser()
-
 # Initialisation du serveur
 serveur.init() # le socket serveur se met en écoute
 log.info("Le serveur est à présent en écoute sur le port {0}".format(port))
@@ -165,6 +161,10 @@ serveur.callbacks["deconnexion"].args = (serveur, importeur, log)
 # Fonction de callback appelée lors de la réception d'un message d'un client
 serveur.callbacks["reception"].fonction = cb_reception
 serveur.callbacks["reception"].args = (serveur, importeur, log)
+
+# On configure et initialise les modules
+importeur.tout_configurer()
+importeur.tout_initialiser()
 
 # Lancement de la boucle synchro
 # Note: tout se déroule ici, dans une boucle temps réelle qui se répète

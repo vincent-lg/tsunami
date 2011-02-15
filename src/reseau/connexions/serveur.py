@@ -127,9 +127,9 @@ class ConnexionServeur:
         # Fonctions de callback
         self.callbacks = {
             # déclencheur : (fonction, parametres)
-            "connexion":Fonction(None),
-            "deconnexion":Fonction(None),
-            "reception":Fonction(None),
+            "connexion": Fonction(None),
+            "deconnexion": Fonction(None),
+            "reception": Fonction(None),
         }
 
     def init(self):

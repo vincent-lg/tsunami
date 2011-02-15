@@ -31,6 +31,7 @@
 """Fichier contenant le module secondaire stat."""
 
 from abstraits.module import *
+from bases.fonction import *
 
 class Module(BaseModule):
     
@@ -38,8 +39,33 @@ class Module(BaseModule):
     surveiller le Watch Dog, le temps d'interprétation des commandes et
     alerter en cas de problème.
     
+    Pour ce faire, il redéfinit certaines fonctions de callback. Il garde de
+    côté les anciennes et au moment de son déchargement, il les replace dans
+    le serveur.
+    
     """
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "stat", "secondaire")
-
+        self.callbacks = {}
+    
+    def init(self):
+        """Initialisation du module"""
+        # on récupère les fonctions de callback du serveur
+        serveur = self.importeur.serveur
+        
+        # On les sauvegarde dans le module
+        self.callbacks = dict(serveur.callbacks)
+        
+        # à présent, on remplace certaines callbacks par de nouvelles
+        reception = serveur.callbacks["reception"]
+        serveur.callbacks["reception"] = Fonction(
+                self.cb_reception, *reception.args, **reception.kwargs)
+    
+    def detruire(self):
+        """Destruction du module"""
+        type(self.importeur).serveur.callbacks = self.callbacks
+    
+    def cb_reception(self, serveur, importeur, logger, client):
+        """Callback appelée quand on réceptionne un message"""
+        self.callbacks["reception"].executer(client)
