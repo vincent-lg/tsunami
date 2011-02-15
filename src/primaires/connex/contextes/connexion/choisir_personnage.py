@@ -49,8 +49,10 @@ class ChoisirPersonnage(Contexte):
     def entrer(self):
         """Si aucun personnage n'a été créé, on redirige vers la création d'un
         premier personnage.
+        Dans tous les cas, on recopie l'encodage du compte dans le client.
         
         """
+        self.pere.client.encodage = self.pere.compte.encodage
         if len(self.pere.compte.joueurs) == 0:
             self.migrer_contexte("personnage:creation:nouveau_nom")
     

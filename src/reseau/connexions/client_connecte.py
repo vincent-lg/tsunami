@@ -78,6 +78,12 @@ class ClientConnecte:
         # est en train d'écrire, dans le cas d'un client qui envoie
         # au fur et à mesure les caractères entrés)
         self.message = b""
+        
+        # Information d'encodage
+        self.encodage = ""
+        
+        # Booléen indiquant si le prochain message devra être masqué
+        self.masque = False
 
         # retour : il contient le message retourné en cas de déconnexion
         self.retour = ""
@@ -119,23 +125,32 @@ class ClientConnecte:
         message = n_message
         return message
 
-    def decoder(self, message, decodage=0):
+    def decoder(self, message, decodage=0, encodages=[]):
         """Test de décodage.
         Fonction récursive : tant qu'on peut décoder, on essaye.
 
         Si le décodage échoue, une exception sera levée.
+        Par ailleurs, si l'attribut 'encodage' est renseigné, c'est lui
+        qu'on test en premier.
+        
         """
-        encodages = ['Utf-8', 'Latin-1']
+        if not encodages:
+            encodages = ['Utf-8', 'Latin-1']
+            if self.encodage:
+                print("L'encodage", self.encodage, "est précisé.")
+                encodages.insert(0, self.encodage)
+        
         try:
             actuel = encodages[decodage]
         except IndexError:
             raise UnicodeError("Aucun encodage n'a pu etre utilise " \
                     "sur cette chaine")
+        
         try:
             n_message = message.decode(actuel)
             return n_message
         except UnicodeError:
-            return self.decoder(message, decodage+1)
+            return self.decoder(message, decodage + 1, encodages)
 
     def envoyer(self, message):
         """Envoi d'un message au socket.
