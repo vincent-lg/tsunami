@@ -30,6 +30,8 @@
 
 """Fichier contenant le module secondaire stat."""
 
+import time
+
 from abstraits.module import *
 from bases.fonction import *
 
@@ -66,6 +68,12 @@ class Module(BaseModule):
         """Destruction du module"""
         type(self.importeur).serveur.callbacks = self.callbacks
     
-    def cb_reception(self, serveur, importeur, logger, client):
+    def cb_reception(self, serveur, importeur, logger, client, msg):
         """Callback appelée quand on réceptionne un message"""
-        self.callbacks["reception"].executer(client)
+        masquer = client.masquer
+        avant = time.time()
+        self.callbacks["reception"].executer(client, msg)
+        apres = time.time()
+        diff = apres - avant
+        if not masquer:
+            print("Exécution de", msg, "en", diff, "sec")

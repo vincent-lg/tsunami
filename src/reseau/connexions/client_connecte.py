@@ -83,7 +83,7 @@ class ClientConnecte:
         self.encodage = ""
         
         # Booléen indiquant si le prochain message devra être masqué
-        self.masque = False
+        self.masquer = False
 
         # retour : il contient le message retourné en cas de déconnexion
         self.retour = ""
@@ -137,7 +137,6 @@ class ClientConnecte:
         if not encodages:
             encodages = ['Utf-8', 'Latin-1']
             if self.encodage:
-                print("L'encodage", self.encodage, "est précisé.")
                 encodages.insert(0, self.encodage)
         
         try:

@@ -46,9 +46,7 @@ def cb_deconnexion(serveur, importeur, logger, client):
     logger.info("Déconnexion du client {0} : {1}".format(client, client.retour))
     importeur.connex.retirer_instance(client)
 
-def cb_reception(serveur, importeur, logger, client):
+def cb_reception(serveur, importeur, logger, client, msg):
     """Que se passe-t-il quand client envoie un message au serveur ?"""
-    msg = client.get_message_decode()
-    print(msg)
     instance = importeur.connex[client]
     instance.receptionner(msg)

@@ -298,8 +298,11 @@ class ConnexionServeur:
             # mesure dans les fonctions de callback. Sans quoi, cette
             # instruction provoque une boucle infinie
             while client.message_est_complet():
+                # On récupère le message décodé
+                msg = client.get_message_decode()
+                
                 # On appelle la fonction de callback "reception"
-                self.callbacks["reception"].executer(client)
+                self.callbacks["reception"].executer(client, msg)
 
         # On vérifie une dernière fois que tous les clients sont bien
         # connectés
