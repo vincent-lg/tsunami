@@ -54,6 +54,7 @@ Par défaut, ces fonctions de callback valent None.
 import sys
 import socket
 import select
+import time
 
 from reseau.connexions.client_connecte import ClientConnecte
 from bases.fonction import *
@@ -131,7 +132,10 @@ class ConnexionServeur:
             "deconnexion": Fonction(None),
             "reception": Fonction(None),
         }
-
+        
+        # Information d'uptime (timestamp du moment où l'on crée le serveur)
+        self.uptime = time.time()
+    
     def init(self):
         """Cette méthode doit être appelée après l'appel au constructeur.
         Elle se charge d'initialiser le socket serveur et, en somme,

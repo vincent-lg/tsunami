@@ -34,6 +34,7 @@ import time
 
 from abstraits.module import *
 from bases.fonction import *
+from .stats import Stats
 
 class Module(BaseModule):
     
@@ -50,6 +51,7 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "stat", "secondaire")
         self.callbacks = {}
+        self.stats = None
     
     def init(self):
         """Initialisation du module"""
@@ -63,6 +65,14 @@ class Module(BaseModule):
         reception = serveur.callbacks["reception"]
         serveur.callbacks["reception"] = Fonction(
                 self.cb_reception, *reception.args, **reception.kwargs)
+        
+        # On récupère les informations statistiques
+        sous_rep = "stats"
+        fichier = "stats.sav"
+        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
+            self.stats = self.importeur.supenr.charger(sous_rep, fichier)
+        if self.stats is None:
+            self.stats = Stats()
     
     def detruire(self):
         """Destruction du module"""
