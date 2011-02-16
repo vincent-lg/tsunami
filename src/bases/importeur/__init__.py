@@ -78,6 +78,7 @@ class Importeur:
     logger = None # le logger de l'importeur
     parid = None
     serveur = None
+    en_hotboot = 0
     
     def __init__(self, parser_cmd, anaconf, man_logs, parid, serveur):
         """Constructeur de l'importeur. Il vérifie surtout
@@ -299,6 +300,7 @@ class Importeur:
         anciens_attrs = dict(self.__dict__)
         logger = type(self).man_logs.get_logger("sup")
         res = False
+        Importeur.en_hotboot += 1
         try:
             self.tout_detruire()
             self.tout_decharger()

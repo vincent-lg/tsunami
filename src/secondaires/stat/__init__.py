@@ -35,6 +35,7 @@ import time
 from abstraits.module import *
 from bases.fonction import *
 from .stats import Stats
+import secondaires.stat.commandes
 
 class Module(BaseModule):
     
@@ -71,8 +72,18 @@ class Module(BaseModule):
         fichier = "stats.sav"
         if self.importeur.supenr.fichier_existe(sous_rep, fichier):
             self.stats = self.importeur.supenr.charger(sous_rep, fichier)
-        if self.stats is None:
-            self.stats = Stats()
+        if self.stats is None or self.stats.uptime != \
+                type(self.importeur).serveur.uptime:
+            self.stats = Stats(type(self.importeur).serveur.uptime)
+        
+        # On ajoute les commandes du module
+        # On ajoute les commandes du module
+        self.commandes = [
+            commandes.stat.CmdStat(),
+        ]
+        
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)
     
     def detruire(self):
         """Destruction du module"""
@@ -80,10 +91,20 @@ class Module(BaseModule):
     
     def cb_reception(self, serveur, importeur, logger, client, msg):
         """Callback appelée quand on réceptionne un message"""
+        en_hotboot = type(self.importeur).en_hotboot
         masquer = client.masquer
         avant = time.time()
         self.callbacks["reception"].executer(client, msg)
         apres = time.time()
         diff = apres - avant
+        if en_hotboot == type(self.importeur).en_hotboot:
+            if self.stats.nb_commandes == 0:
+                self.stats.tps_moy_commandes = diff
+            else:
+                self.stats.tps_moy_commandes = \
+                (self.stats.tps_moy_commandes * self.stats.nb_commandes + \
+                diff) / (self.stats.nb_commandes + 1)
+            self.stats.nb_commandes += 1
+        
         if not masquer:
             print("Exécution de", msg, "en", diff, "sec")

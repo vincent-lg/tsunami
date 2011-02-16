@@ -28,32 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la centralisation des statistiques dans un même objet."""
+"""Package contenant les commandes du module stat."""
 
-from abstraits.unique import Unique
-
-class Stats(Unique):
-    
-    """Classe contenant les différentes statistiques du MUD.
-    Ces stats sont enregistrées en fichier pour être rechargées en cas de
-    redémarrage du module 'statistique'.
-    On s'assure, avant de considérer les statistiques récupérées comme
-    les statistiques 'actuelles' que le temps d'uptime est bien égal à celui
-    de la session.
-    
-    Rappel : le temps d'uptime est conservé dans serveur.uptime. Cet attribut
-    est renseigné à la création de l'objet serveur et indique depuis quand le
-    MUD tourne. C'est ainsi un chiffre indépendant de tout chargement de
-    module.
-    
-    """
-    
-    def __init__(self, uptime):
-        """Constructeur de l'objet"""
-        Unique.__init__(self, "stats", "stats")
-        self.uptime = uptime
-        self.nb_commandes = 0
-        self.tps_moy_commandes = None
-    
-    def __getinitargs__(self):
-        return (None, )
+import secondaires.stat.commandes.stat
