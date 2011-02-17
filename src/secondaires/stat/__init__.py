@@ -91,20 +91,22 @@ class Module(BaseModule):
     
     def cb_reception(self, serveur, importeur, logger, client, msg):
         """Callback appelée quand on réceptionne un message"""
-        en_hotboot = type(self.importeur).en_hotboot
+        nb_hotboot = type(self.importeur).nb_hotboot
         masquer = client.masquer
         avant = time.time()
         self.callbacks["reception"].executer(client, msg)
         apres = time.time()
         diff = apres - avant
-        if en_hotboot == type(self.importeur).en_hotboot:
+        if nb_hotboot == type(self.importeur).nb_hotboot:
             if self.stats.nb_commandes == 0:
                 self.stats.tps_moy_commandes = diff
             else:
                 self.stats.tps_moy_commandes = \
-                (self.stats.tps_moy_commandes * self.stats.nb_commandes + \
-                diff) / (self.stats.nb_commandes + 1)
+                    (self.stats.tps_moy_commandes * \
+                    self.stats.nb_commandes + diff) / \
+                    (self.stats.nb_commandes + 1)
             self.stats.nb_commandes += 1
+            self.stats.max_commandes[diff] = msg
         
         if not masquer:
             print("Exécution de", msg, "en", diff, "sec")

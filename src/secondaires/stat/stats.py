@@ -31,6 +31,7 @@
 """Fichier contenant la centralisation des statistiques dans un même objet."""
 
 from abstraits.unique import Unique
+from .dic_max import DicMax
 
 class Stats(Unique):
     
@@ -54,6 +55,7 @@ class Stats(Unique):
         self.uptime = uptime
         self.nb_commandes = 0
         self.tps_moy_commandes = None
+        self.max_commandes = DicMax(3)
     
     def __getinitargs__(self):
         return (None, )

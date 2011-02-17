@@ -57,7 +57,7 @@ class CmdStat(Commande):
         stats = type(self).importeur.stat.stats
         
         ## Générales
-        msg = "Informations générales :\n"
+        msg = "Informations générales :"
         # Depuis quand le serveur est-il lancé ?
         uptime = stats.uptime
         struct = time.localtime(uptime)
@@ -68,19 +68,30 @@ class CmdStat(Commande):
         
         jour_semaine = semaine[struct.tm_wday]
         mois_courant = mois[struct.tm_mon - 1]
-        msg += "    Le MUD est démarré depuis le {} {} {} {}".format(
-                jour_semaine, struct.tm_mday, mois_courant, struct.tm_year)
-        msg += time.strftime(" à %H:%M:%S.\n", struct)
+        msg += "\n    Le MUD est démarré depuis le {} {} {} {} à {:02}:" \
+                "{:02}:{:02}.".format(jour_semaine, struct.tm_mday,
+                mois_courant, struct.tm_year, struct.tm_hour, struct.tm_min,
+                struct.tm_sec)
         
         msg += "\n"
         
         ## Commandes
-        msg += "Commandes :\n"
+        msg += "\nCommandes :"
         
         # Combien de commandes entrées ?
-        msg += "    {} commandes entrées\n".format(stats.nb_commandes)
+        msg += "\n    {} commandes entrées".format(stats.nb_commandes)
         # Temps moyen d'exécution
-        msg += "    Temps moyen d'exécution : {:.3f}".format( \
+        msg += "\n    Temps moyen d'exécution : {:.3f}".format( \
                 stats.tps_moy_commandes)
         
+        # Commandes les plus gourmandes
+        msg += "\n    Temps d'exécution maximum :"
+        for temps in sorted(tuple(stats.max_commandes), reverse=True):
+            commande = stats.max_commandes[temps]
+            # on affiche que les dix premiers caractères de la commande
+            if len(commande) > 10:
+                commande = commande[:10] + "..."
+            
+            msg += "\n        {} {:02.3f}s".format(commande.ljust(15), temps)
+
         personnage << msg
