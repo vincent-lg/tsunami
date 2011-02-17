@@ -56,6 +56,46 @@ class Stats(Unique):
         self.nb_commandes = 0
         self.tps_moy_commandes = None
         self.max_commandes = DicMax(3)
+        
+        # Watch Dog
+        self.moy_wd = None
+        self.nb_wd = 0
+        self.dernier_wd = None
+        self.max_wd = 0
     
     def __getinitargs__(self):
         return (None, )
+    
+    def surveiller_watch_dog(self, temps_actuel):
+        """Ajoute le temps actuel comme statistique du Watch Dog.
+        Le watch dog surveille le temps d'exécution moyen et maximum de
+        l'exécution de la boucle principale du programme. C'est dans cette
+        boucle que toutes les opérations sont faites (traitement des
+        connexions, traitement des messages réceptionnés, gestion des actions
+        différées...).
+        
+        Si tout va bien, le temps du WD ne doit pas être de beaucoup supérieur
+        aux temps d'attente précisés pour atendre une connexion ou un message
+        à réceptionner. Ces informations sont configurables dans le
+        paramétrage du serveur. Si elles n'ont pas été modifiées, elles sont
+        de 0.05s et 0.05s.
+        Cela signifie que le WD moyen doit tourner autour de
+        0.05 + 0.05 = 0.1s. Si il est bien plus élevé que 100 ms, il faudra
+        chercher à savoir pourquoi.
+        
+        D'autre part, un WD élevé mais très ponctuel n'est pas très
+        inquiétant. Peut-être qu'une commande met tout simplement un peu de
+        temps à s'exécuter.
+        
+        """
+        # d'abord, on cherche à savoir la différence avec le dernier temps
+        if self.moy_wd is not None:
+            diff = temps_actuel - self.dernier_wd
+            self.moy_wd = (self.moy_wd * self.nb_wd + diff) / \
+                    (self.nb_wd + 1)
+            if diff > self.max_wd:
+                self.max_wd = diff
+        else:
+            self.moy_wd = 0
+        self.nb_wd += 1
+        self.dernier_wd = temps_actuel

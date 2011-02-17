@@ -93,5 +93,14 @@ class CmdStat(Commande):
                 commande = commande[:10] + "..."
             
             msg += "\n        {} {:02.3f}s".format(commande.ljust(15), temps)
-
+        
+        msg += "\n"
+        
+        ## Watch dog
+        msg += "\nWatch dog :"
+        # Temps moyen du WD
+        msg += "\n    Temps moyen : {:.3f}".format(stats.moy_wd)
+        # WD maximum
+        msg += "\n    Temps maximum : {:.3f}".format(stats.max_wd)
+        
         personnage << msg

@@ -89,6 +89,10 @@ class Module(BaseModule):
         """Destruction du module"""
         type(self.importeur).serveur.callbacks = self.callbacks
     
+    def boucle(self):
+        """Fonction appelée à chaque boucle synchro"""
+        self.stats.surveiller_watch_dog(time.time())
+    
     def cb_reception(self, serveur, importeur, logger, client, msg):
         """Callback appelée quand on réceptionne un message"""
         nb_hotboot = type(self.importeur).nb_hotboot
@@ -98,6 +102,8 @@ class Module(BaseModule):
         apres = time.time()
         diff = apres - avant
         if nb_hotboot == type(self.importeur).nb_hotboot:
+            if masquer:
+                msg = "|rg|{{mot de passe}}|ff|"
             if self.stats.nb_commandes == 0:
                 self.stats.tps_moy_commandes = diff
             else:
