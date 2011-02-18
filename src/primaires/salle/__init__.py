@@ -48,6 +48,7 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "salle", "primaire")
+        self._salles = {} # ident:salle
         self.logger = type(self.importeur).man_logs.creer_logger( \
                 "salles", "salles")
     
@@ -60,6 +61,21 @@ class Module(BaseModule):
         if len(salles) > 1:
             s = "s"
         
+        ###DEBUG
+        if len(salles) == 0:
+            self.ajouter_salle("picte", "1")
+        
         self.logger.info("{} salle{s} récupérée{s}".format(len(salles), s=s))
         
         BaseModule.init(self)
+    
+    def ajouter_salle(self, zone, mnemo, x=0, y=0, z=0, valide=True):
+        """Permet d'ajouter une salle"""
+        salle = Salle(zone, mnemo)
+        salle.coords.x = x
+        salle.coords.y = y
+        salle.coords.z = z
+        salle.coords.valide = valide
+        self._salles[salle.ident] = salle
+        print(self._salles)
+        return salle

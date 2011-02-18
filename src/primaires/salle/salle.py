@@ -31,6 +31,7 @@
 """Fichier contenant la classe Salle, détaillée plus bas."""
 
 from abstraits.id import ObjetID
+from .coordonnees import Coordonnees
 
 class Salle(ObjetID):
     
@@ -65,12 +66,41 @@ class Salle(ObjetID):
     def __init__(self, zone, mnemonic):
         """Constructeur de la salle"""
         ObjetID.__init__(self)
-        self.zone = zone
-        self.mnemonic = mnemonic
-        self.coordonnees = None
+        self._zone = zone
+        self._mnemonic = mnemonic
+        self.coords = Coordonnees()
         self.titre = ""
         self.description = ""
         self.sorties = None
     
+    def __getinitargs__(self):
+        return ("", "")
+    
+    def _get_zone(self):
+        return self._zone
+    def _set_zone(self, zone):
+        ident = self.ident
+        self._zone = zone
+        type(self).importeur.salle.changer_ident(ident, self.ident)
+    
+    def _get_mnemonic(self):
+        return self._mnemonic
+    def _set_mnemonic(self, mnemonic):
+        ident = self.ident
+        self._mnemonic = mnemonic
+        type(self).importeur.salle.changer_ident(ident, self.ident)
+    
+    zone = property(_get_zone, _set_zone)
+    mnemonic = property(_get_mnemonic, _set_mnemonic)
+    
+    @property
+    def ident(self):
+        """Retourne l'identifiant, c'est-à-dire une chaîne 'zone:mnemonic'"""
+        return "{}:{}".format(self._zone, self._mnemonic)
+    
+    def __repr__(self):
+        """Affichage de la salle en mode debug"""
+        return "Salle ({}, {})".format(self.ident, self.coords)
+
 # On ajoute le groupe à ObjetID
 ObjetID.ajouter_groupe(Salle)
