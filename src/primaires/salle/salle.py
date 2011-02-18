@@ -1,0 +1,76 @@
+# -*-coding:Utf-8 -*
+
+# Copyright (c) 2010 LE GOFF Vincent
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+# * Neither the name of the copyright holder nor the names of its contributors
+#   may be used to endorse or promote products derived from this software
+#   without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+# OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+
+"""Fichier contenant la classe Salle, détaillée plus bas."""
+
+from abstraits.id import ObjetID
+
+class Salle(ObjetID):
+    
+    """Classe représentant une salle de l'univers.
+    Une salle est un élément détaillant la géographie locale d'une petite
+    portion de l'univers. Bien que cela dépende des MUDs, les salles décrivent
+    généralement un espace d'environ 5 M sur 5 M.
+    
+    Ces salles comportent une description détaillant les alentours proches.
+    Cette description est envoyée à chaque fois qu'un personnage se déplace
+    dans l'univers, pour lui donner une idée de son nouvel environnement.
+    
+    Note sur le positionnement des salles :
+        Les salles peuvent être caractérisées par des coordonnées. Ces
+        coordonnées sont en soit facultatives. Il est possible de créer un
+        univers sans aucune coordonnées. Les coordonnées sont une facilité
+        lors de la constitution de votre univers et permettent à certains
+        modules, comme 'vehicule', de fonctionner. Si votre salle n'a pas de
+        coordonnées, vous devrez créer chaque sortie "à la main".
+        Les salles ne sont donc pas identifiées par leurs coordonnées, sauf
+        dans certains cas, mais bien par leur zone et mnémonic. Ce couple
+        caractérise de façon unique une salle dans l'univers.
+        Exemple : une ssalle ayant pour zone 'picte' et pour mnémonic '1'
+        sera accessible depuis la clé 'picte:1'. Aucune autre salle de
+        l'univers ne pourra posséder cette clé 'picte:1'.
+    
+    """
+    
+    groupe = "salles"
+    sous_rep = "salles"
+    
+    def __init__(self, zone, mnemonic):
+        """Constructeur de la salle"""
+        ObjetID.__init__(self)
+        self.zone = zone
+        self.mnemonic = mnemonic
+        self.coordonnees = None
+        self.titre = ""
+        self.description = ""
+        self.sorties = None
+    
+# On ajoute le groupe à ObjetID
+ObjetID.ajouter_groupe(Salle)

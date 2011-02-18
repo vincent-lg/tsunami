@@ -28,36 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Joueur, détaillée plus bas."""
+"""Fichier contenant le module primaire salle."""
 
-from abstraits.id import ObjetID
-from primaires.perso.personnage import Personnage
+from abstraits.module import *
+from .salle import Salle
 
-class Joueur(Personnage):
-    """Classe représentant un joueur, c'est-à-dire un personnage connecté
-    grâce à un client, à différencier des NPCs qui sont des personnages
-    virtuels, animés par l'univers.
+class Module(BaseModule):
+    """Classe utilisée poru gérer des salles.
+    Dans la terminologie des MUDs, les salles sont des "cases" avec une
+    description et une liste de sorties possibles, que le joueur peut
+    emprunter. L'ensemble des salles consiste l'univers, auquel il faut
+    naturellement rajouté des NPCs et objets pour qu'il soit riche un minimum.
+    
+    Pour plus d'informations, consultez le fichier
+    src/primaires/salle/salle.py contenant la classe Salle.
     
     """
-    groupe = "joueurs"
-    sous_rep = "joueurs"
     
-    def __init__(self):
-        """Constructeur du joueur"""
-        Personnage.__init__(self)
-        self.groupe = "joueur"
-        self.compte = None
-        self.instance_connexion = None
+    def __init__(self, importeur):
+        """Constructeur du module"""
+        BaseModule.__init__(self, importeur, "salle", "primaire")
+        self.logger = type(self.importeur).man_logs.creer_logger( \
+                "salles", "salles")
     
-    def _get_encodage(self):
-        """Retourne l'encodage du compte"""
-        return self.compte.encodage
-    
-    encodage = property(_get_encodage)
-    
-    def envoyer(self, msg):
-        """On redirige sur l'envoie de l'instance de connexion."""
-        self.instance_connexion.envoyer(msg)
-
-# On ajoute le groupe à ObjetID
-ObjetID.ajouter_groupe(Joueur)
+    def init(self):
+        """Méthode d'initialisation du module"""
+        # On récupère les salles
+        salles = self.importeur.supenr.charger_groupe(Salle)
+        
+        s = ""
+        if len(salles) > 1:
+            s = "s"
+        
+        self.logger.info("{} salle{s} récupérée{s}".format(len(salles), s=s))
+        
+        BaseModule.init(self)
