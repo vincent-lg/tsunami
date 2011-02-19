@@ -56,6 +56,18 @@ class NouveauNom(Contexte):
         Contexte.__init__(self, pere)
         self.opts.rci_ctx_prec = "connex:connexion:choix_personnages"
     
+    def sortir(self):
+        """En sortant du contexte :
+        -   on vérifie que la salle du joueur est valide
+        
+        """
+        joueur = self.pere.joueur
+        if joueur.salle is None:
+            # On recherche la salle
+            cle = type(self).importeur.salle.salle_arrivee
+            salle = type(self).importeur.salle[cle]
+            joueur.salle = salle
+    
     def accueil(self):
         """Message d'accueil du contexte"""
         return \

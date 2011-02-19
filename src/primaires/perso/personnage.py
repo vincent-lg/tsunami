@@ -52,6 +52,7 @@ class Personnage(ObjetID):
         self.groupe = "npc"
         self.contextes = FileContexte() # file d'attente des contexte
         self.langue_cmd = "francais"
+        self.salle = None
     
     def __getinitargs__(self):
         """Retourne les arguments à passer au constructeur"""
@@ -85,3 +86,7 @@ class Personnage(ObjetID):
     def envoyer(self, msg):
         """Méthode envoyer"""
         raise NotImplementedError
+    
+    def regarder(self):
+        """Retourne ce qu'il y a autour du personnage"""
+        return self.salle.titre

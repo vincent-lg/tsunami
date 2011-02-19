@@ -28,18 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la configuration par défaut du module 'joueur'."""
+"""Ce fichier contient la configuration par défaut du module 'salle'."""
 
-cfg_joueur = r"""
-# Ce fichier contient la configuration du module primaire joueur.
-# Il contient diverses options en rapport avec la création d'un personnage.
+cfg_salle = r"""
+# Ce fichier contient la configuration globale du module primaire 'salle'.
+# Vous y trouverez plusieurs options de configuration liées aux salles,
+# documentées ci-dessous.
 
-## Taille du nom
+## Salle d'arrivée
+# Cette salle est celle dans laquelle tout joueur nouvellement créé sera
+# placé. Elle sera créée par défaut si elle n'existe pas ou n'a pas pu
+# être chargée.
+# Précisez l'identifiant de la salle sous la forme 'zone:mnémonic'.
+# Par exemple : "depart:1"
+salle_arrivee = "depart:1"
 
-# Cette variable correspond à la taille minimale d'un nom de personnage :
-taille_min = 3
-
-# Taille maximale d'un nom :
-taille_max = 15
+## Salle de retour
+# Cette salle est celle dans laquelle un joueur se retrouve si la salle
+# dans laquelle il était au moment de se déconnecter a été effacée ou est
+# introuvable.
+# Tout comme la salle d'arrivée, précisez l'identifiant de la salle sous la
+# forme 'zone:mnémonic'.
+salle_retour = "depart:1"
 
 """

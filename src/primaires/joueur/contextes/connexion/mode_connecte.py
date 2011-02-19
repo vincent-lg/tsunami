@@ -59,9 +59,21 @@ class ModeConnecte(Contexte):
         self.opts.prompt_clr = ""
         self.opts.prompt_prf = ""
     
+    def entrer(self):
+        """En entrant dans le contexte :
+        -   on vérifie que la salle du joueur est valide
+        
+        """
+        joueur = self.pere.joueur
+        if joueur.salle is None:
+            # On recherche la salle
+            cle = type(self).importeur.salle.salle_retour
+            salle = type(self).importeur.salle[cle]
+            joueur.salle = salle
+    
     def accueil(self):
         """Message d'accueil du contexte"""
-        return "Vous êtes connecté"""
+        return self.pere.joueur.regarder()
     
     def get_prompt(self):
         """Méthode du prompt du contexte"""

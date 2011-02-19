@@ -32,6 +32,7 @@
 
 from abstraits.module import *
 from .salle import Salle
+from .config import cfg_salle
 
 class Module(BaseModule):
     """Classe utilisée poru gérer des salles.
@@ -50,8 +51,18 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "salle", "primaire")
         self._salles = {} # ident:salle
         self._coords = {} # coordonnee:salle
+        self.salle_arrivee = ""
+        self.salle_retour = ""
+        
         self.logger = type(self.importeur).man_logs.creer_logger( \
                 "salles", "salles")
+    
+    def config(self):
+        """Méthode de configuration du module"""
+        type(self.importeur).anaconf.get_config("salle", \
+            "salle/salle.cfg", "config salle", cfg_salle)
+        
+        BaseModule.config(self)
     
     def init(self):
         """Méthode d'initialisation du module"""
@@ -60,20 +71,44 @@ class Module(BaseModule):
         for salle in salles:
             self.ajouter_salle(salle)
         
-        s = ""
-        if len(salles) > 1:
-            s = "s"
-        
         ###DEBUG
         if len(salles) == 0:
             s1 = self.creer_salle("picte", "1", 0, 0, 0)
+            s1.titre = "La salle picte 1"
             s2 = self.creer_salle("picte", "2", 0, 1, 0)
             s1.sorties.ajouter_sortie("est", "est", salle_dest=s2)
+            s2.titre = "La salle picte 2"
         print(self._salles, self._coords)
-        salle = self["picte:1"]
-        print(salle.coords, salle.coords.est, salle.coords.se, salle.coords.sudest)
         
-        self.logger.info("{} salle{s} récupérée{s}".format(len(salles), s=s))
+        # On récupère la configuration
+        conf_salle = type(self.importeur).anaconf.get_config("salle")
+        salle_arrivee = conf_salle.salle_arrivee
+        salle_retour = conf_salle.salle_retour
+        if salle_arrivee not in self:
+            # On crée la salle d'arrivée
+            zone, mnemonic = salle_arrivee.split(":")
+            salle_arrivee = self.creer_salle(zone, mnemonic, valide=False)
+            salle_arrivee.titre = "La salle d'arrivée"
+            print("On crée la salle d'arrivée:", salle_arrivee)
+            salle_arrivee = salle_arrivee.ident
+        
+        if salle_retour not in self:
+            # On crée la salle de retour
+            zone, mnemonic = salle_retour.split(":")
+            salle_retour = self.creer_salle(zone, mnemonic, valide=False)
+            salle_retour.titre = "La salle de retour"
+            print("On crée la salle de retour:", salle_retour)
+            salle_retour = salle_retour.ident
+        
+        self.salle_arrivee = salle_arrivee
+        self.salle_retour = salle_retour
+
+        s = ""
+        if len(self._salles) > 1:
+            s = "s"
+        
+        self.logger.info("{} salle{s} récupérée{s}".format(len(self._salles),
+                s=s))
         
         BaseModule.init(self)
     
