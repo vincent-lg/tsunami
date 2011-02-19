@@ -92,3 +92,96 @@ class Coordonnees(BaseObj):
             return self.tuple() + (self.valide, )
         else:
             return ()
+    
+    def get_copie(self):
+        """Retourne une copie de self, non liée à parent"""
+        return Coordonnees(self.x, self.y, self.z, self.valide)
+    
+    @property
+    def est(self):
+        """Retourne la coordonnée non-liée vers l'est"""
+        copie = self.get_copie()
+        if copie.valide:
+            copie.x += 1
+        return copie
+    
+    @property
+    def sudest(self):
+        """Retourne la coordonnée non-liée vers le sud-est"""
+        copie = self.get_copie()
+        if copie.valide:
+            copie.x += 1
+            copie.y -= 1
+        return copie
+    
+    @property
+    def sud(self):
+        """Retourne la coordonnée non-liée vers le sud"""
+        copie = self.get_copie()
+        if copie.valide:
+            copie.y -= 1
+        return copie
+    
+    @property
+    def sudouest(self):
+        """Retourne la coordonnée non-liée vers le sud-ouest"""
+        copie = self.get_copie()
+        if copie.valide:
+            copie.x -= 1
+            copie.y -= 1
+        return copie
+    
+    @property
+    def ouest(self):
+        """Retourne la coordonnée non-liée vers l'ouest"""
+        copie = self.get_copie()
+        if copie.valide:
+            copie.x -= 1
+        return copie
+    
+    @property
+    def nordouest(self):
+        """Retourne la coordonnée non-liée vers le nord-ouest"""
+        copie = self.get_copie()
+        if copie.valide:
+            copie.x -= 1
+            copie.y += 1
+        return copie
+    
+    @property
+    def nord(self):
+        """Retourne la coordonnée non-liée vers le nord"""
+        copie = self.get_copie()
+        if copie.valide:
+            copie.y += 1
+        return copie
+    
+    @property
+    def nordest(self):
+        """Retourne la coordonnée non-liée vers le nord-est"""
+        copie = self.get_copie()
+        if copie.valide:
+            copie.x += 1
+            copie.y += 1
+        return copie
+    
+    @property
+    def bas(self):
+        """Retourne la coordonnée non-liée vers le bas"""
+        copie = self.get_copie()
+        if copie.valide:
+            copie.z -= 1
+        return copie
+    
+    @property
+    def haut(self):
+        """Retourne la coordonnée non-liée vers le haut"""
+        copie = self.get_copie()
+        if copie.valide:
+            copie.z += 1
+        return copie
+    
+    se = sudest
+    so = sudouest
+    no = nordouest
+    ne = nordest

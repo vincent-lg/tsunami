@@ -57,6 +57,8 @@ class Module(BaseModule):
         """Méthode d'initialisation du module"""
         # On récupère les salles
         salles = self.importeur.supenr.charger_groupe(Salle)
+        for salle in salles:
+            self.ajouter_salle(salle)
         
         s = ""
         if len(salles) > 1:
@@ -64,8 +66,10 @@ class Module(BaseModule):
         
         ###DEBUG
         if len(salles) == 0:
-            self.ajouter_salle("picte", "1", 0, 0, 0)
-            self.ajouter_salle("picte", "2", 0, 1, 0)
+            self.creer_salle("picte", "1", 0, 0, 0)
+            self.creer_salle("picte", "2", 0, 1, 0)
+        salle = self["picte:1"]
+        print(salle.coords, salle.coords.est, salle.coords.se, salle.coords.sudest)
         
         self.logger.info("{} salle{s} récupérée{s}".format(len(salles), s=s))
         print(self._salles, self._coords)
@@ -105,15 +109,22 @@ class Module(BaseModule):
             raise TypeError("un type non traité sert d'identifiant " \
                     "({})".format(repr(cle)))
     
-    def ajouter_salle(self, zone, mnemonic, x=0, y=0, z=0, valide=True):
-        """Permet d'ajouter une salle"""
+    def ajouter_salle(self, salle):
+        """Ajoute la salle aux deux dictionnaires
+        self._salles et self._coords
+        
+        """
+        self._salles[salle.ident] = salle
+        if salle.coords.valide:
+            self._coords[salle.coords.tuple()] = salle
+    
+    def creer_salle(self, zone, mnemonic, x=0, y=0, z=0, valide=True):
+        """Permet de créer une salle"""
         ident = zone + ":" + mnemonic
         if ident in self._salles.keys():
             raise ValueError("la salle {} existe déjà".format(ident))
         
         salle = Salle(zone, mnemonic, x, y, z, valide)
-        self._salles[salle.ident] = salle
-        self._coords[salle.coords.tuple()] = salle
         return salle
     
     def supprimer_salle(self, cle):
