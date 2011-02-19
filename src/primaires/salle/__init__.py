@@ -49,6 +49,7 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "salle", "primaire")
         self._salles = {} # ident:salle
+        self._coords = {} # coordonnee:salle
         self.logger = type(self.importeur).man_logs.creer_logger( \
                 "salles", "salles")
     
@@ -63,19 +64,66 @@ class Module(BaseModule):
         
         ###DEBUG
         if len(salles) == 0:
-            self.ajouter_salle("picte", "1")
+            self.ajouter_salle("picte", "1", 0, 0, 0)
+            self.ajouter_salle("picte", "2", 0, 1, 0)
         
         self.logger.info("{} salle{s} récupérée{s}".format(len(salles), s=s))
+        print(self._salles, self._coords)
         
         BaseModule.init(self)
     
-    def ajouter_salle(self, zone, mnemo, x=0, y=0, z=0, valide=True):
+    def __getitem__(self, cle):
+        """Retourne la salle correspondante à la clé.
+        Celle-ci peut être de différents types :
+        *   une chaîne : c'est l'identifiant 'zone:mnemonic'
+        *   un objet Coordonnees
+        *   un tuple représentant les coordonnées
+        
+        """
+        if type(cle) is str:
+            return self._salles[cle]
+        elif type(cle) is Coordonnees:
+            return self._coords[cle.tuple()]
+        elif type(cle) is tuple:
+            return self._coords[cle]
+        else:
+            raise TypeError("un type non traité sert d'identifiant " \
+                    "({})".format(repr(cle)))
+    
+    def __contains__(self, cle):
+        """Retourne True si la clé se trouve dans l'un des dictionnaires de
+        salle. Voir la méthode __getitem__ pour connaître les types acceptés.
+        
+        """
+        if type(cle) is str:
+            return cle in self._salles.keys()
+        elif type(cle) is Coordonnees:
+            return cle.tuple() in self._coords.keys()
+        elif type(cle) is tuple:
+            return cle in self._coords.keys()
+        else:
+            raise TypeError("un type non traité sert d'identifiant " \
+                    "({})".format(repr(cle)))
+    
+    def ajouter_salle(self, zone, mnemonic, x=0, y=0, z=0, valide=True):
         """Permet d'ajouter une salle"""
-        salle = Salle(zone, mnemo)
-        salle.coords.x = x
-        salle.coords.y = y
-        salle.coords.z = z
-        salle.coords.valide = valide
+        ident = zone + ":" + mnemonic
+        if ident in self._salles.keys():
+            raise ValueError("la salle {} existe déjà".format(ident))
+        
+        salle = Salle(zone, mnemonic, x, y, z, valide)
         self._salles[salle.ident] = salle
-        print(self._salles)
+        self._coords[salle.coords.tuple()] = salle
         return salle
+    
+    def supprimer_salle(self, cle):
+        """Supprime la salle.
+        La clé est l'identifiant de la salle.
+        
+        """
+        salle = self._salles[cle]
+        coords = salle.coords
+        if coords.valide and coords.tuple() in self._coords.keys():
+            del self._coords[coords.tuple()]
+        del self._salles[cle]
+        salle.detruire()

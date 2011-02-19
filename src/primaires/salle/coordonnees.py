@@ -72,6 +72,23 @@ class Coordonnees(BaseObj):
     
     def __setattr__(self, attr, val):
         """Enregistre le parent si le parent est précisé"""
+        anc_tuple = self.tuple_complet()
         object.__setattr__(self, attr, val)
         if hasattr(self, "parent") and self.parent:
+            mod_salle = type(self.parent).importeur.salle
+            mod_salle.changer_coordonnees(anc_tuple, self)
             self.parent.enregistrer()
+    
+    def tuple(self):
+        """Retourne le tuple (x, y, z)"""
+        if hasattr(self, "x") and hasattr(self, "y") and hasattr(self, "z"):
+            return (self.x, self.y, self.z)
+        else:
+            return ()
+    
+    def tuple_complet(self):
+        """Retourne self.tuple + self.valide"""
+        if hasattr(self, "valide"):
+            return self.tuple() + (self.valide, )
+        else:
+            return ()

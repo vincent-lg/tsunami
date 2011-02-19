@@ -63,12 +63,12 @@ class Salle(ObjetID):
     groupe = "salles"
     sous_rep = "salles"
     
-    def __init__(self, zone, mnemonic):
+    def __init__(self, zone, mnemonic, x=0, y=0, z=0, valide=True):
         """Constructeur de la salle"""
         ObjetID.__init__(self)
         self._zone = zone
         self._mnemonic = mnemonic
-        self.coords = Coordonnees()
+        self.coords = Coordonnees(x, y, z, valide, self)
         self.titre = ""
         self.description = ""
         self.sorties = None
@@ -101,6 +101,7 @@ class Salle(ObjetID):
     def __repr__(self):
         """Affichage de la salle en mode debug"""
         return "Salle ({}, {})".format(self.ident, self.coords)
+    
 
 # On ajoute le groupe à ObjetID
 ObjetID.ajouter_groupe(Salle)
