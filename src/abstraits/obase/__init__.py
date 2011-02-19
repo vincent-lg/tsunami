@@ -33,7 +33,10 @@
 import sys
 import time
 
+INIT, CONSTRUIT = 0, 1
+
 class BaseObj:
+    
     """Cette classe définit la base d'un objet destiné à être enregistré,
     directement ou indirectement dans un fichier.
     
@@ -59,6 +62,14 @@ class BaseObj:
     """
     
     importeur = None
+    
+    def __init__(self):
+        """Instancie un simple statut"""
+        self._status = INIT
+    
+    @property
+    def construit(self):
+        return hasattr(self, "_statut") and self._statut is CONSTRUIT
     
     def __getstate__(self):
         """Au moment de l'enregistrement, on met à jour le timestamp"""

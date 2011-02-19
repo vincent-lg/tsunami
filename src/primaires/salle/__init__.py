@@ -66,13 +66,14 @@ class Module(BaseModule):
         
         ###DEBUG
         if len(salles) == 0:
-            self.creer_salle("picte", "1", 0, 0, 0)
-            self.creer_salle("picte", "2", 0, 1, 0)
+            s1 = self.creer_salle("picte", "1", 0, 0, 0)
+            s2 = self.creer_salle("picte", "2", 0, 1, 0)
+            s1.sorties.ajouter_sortie("est", "est", salle_dest=s2)
+        print(self._salles, self._coords)
         salle = self["picte:1"]
         print(salle.coords, salle.coords.est, salle.coords.se, salle.coords.sudest)
         
         self.logger.info("{} salle{s} récupérée{s}".format(len(salles), s=s))
-        print(self._salles, self._coords)
         
         BaseModule.init(self)
     
@@ -125,6 +126,7 @@ class Module(BaseModule):
             raise ValueError("la salle {} existe déjà".format(ident))
         
         salle = Salle(zone, mnemonic, x, y, z, valide)
+        self.ajouter_salle(salle)
         return salle
     
     def supprimer_salle(self, cle):

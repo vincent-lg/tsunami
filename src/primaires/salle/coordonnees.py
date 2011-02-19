@@ -30,7 +30,7 @@
 
 """Fichier contenant la classe Coordonnees, détaillée plus bas."""
 
-from abstraits.obase import BaseObj
+from abstraits.obase import *
 
 class Coordonnees(BaseObj):
     
@@ -47,6 +47,8 @@ class Coordonnees(BaseObj):
         self.z = z
         self.valide = valide
         self.parent = parent
+        # On passe le statut en CONSTRUIT
+        self._statut = CONSTRUIT
     
     def __getinitargs__(self):
         return ()
@@ -73,22 +75,23 @@ class Coordonnees(BaseObj):
     def __setattr__(self, attr, val):
         """Enregistre le parent si le parent est précisé"""
         anc_tuple = self.tuple_complet()
-        object.__setattr__(self, attr, val)
-        if hasattr(self, "parent") and self.parent:
+        construit = self.construit
+        BaseObj.__setattr__(self, attr, val)
+        if not attr.startswith("_") and construit and self.parent:
             mod_salle = type(self.parent).importeur.salle
             mod_salle.changer_coordonnees(anc_tuple, self)
             self.parent.enregistrer()
     
     def tuple(self):
         """Retourne le tuple (x, y, z)"""
-        if hasattr(self, "x") and hasattr(self, "y") and hasattr(self, "z"):
+        if self.construit:
             return (self.x, self.y, self.z)
         else:
             return ()
     
     def tuple_complet(self):
         """Retourne self.tuple + self.valide"""
-        if hasattr(self, "valide"):
+        if self.construit:
             return self.tuple() + (self.valide, )
         else:
             return ()

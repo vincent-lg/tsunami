@@ -32,6 +32,7 @@
 
 from abstraits.id import ObjetID
 from .coordonnees import Coordonnees
+from .sorties import Sorties
 
 class Salle(ObjetID):
     
@@ -71,7 +72,7 @@ class Salle(ObjetID):
         self.coords = Coordonnees(x, y, z, valide, self)
         self.titre = ""
         self.description = ""
-        self.sorties = None
+        self.sorties = Sorties()
     
     def __getinitargs__(self):
         return ("", "")
@@ -100,8 +101,14 @@ class Salle(ObjetID):
     
     def __repr__(self):
         """Affichage de la salle en mode debug"""
-        return "Salle ({}, {})".format(self.ident, self.coords)
-    
+        res = "Salle ({}, {})".format(self.ident, self.coords)
+        # sorties
+        for nom, sortie in self.sorties.iter_couple():
+            if sortie:
+                res += "\n  {}: {}".format(nom, sortie.salle_dest.ident)
+        
+        return res
+
 
 # On ajoute le groupe à ObjetID
 ObjetID.ajouter_groupe(Salle)
