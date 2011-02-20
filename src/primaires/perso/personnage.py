@@ -89,4 +89,4 @@ class Personnage(ObjetID):
     
     def regarder(self):
         """Retourne ce qu'il y a autour du personnage"""
-        return self.salle.titre
+        return self.salle.regarder(self)

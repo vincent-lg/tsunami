@@ -108,7 +108,28 @@ class Salle(ObjetID):
                 res += "\n  {}: {}".format(nom, sortie.salle_dest.ident)
         
         return res
-
+    
+    def regarder(self, personnage):
+        """Le personnage regarde la salle"""
+        res = ""
+        res += "|jn|" + self.titre + "|ff|\n"
+        res += self.description + "\n"
+        res += "Sorties : "
+        res += self.afficher_sorties(personnage)
+        return res
+    
+    def afficher_sorties(self, personnage):
+        """Affiche les sorties de la salle"""
+        res = ""
+        for nom, sortie in self.sorties.iter_couple():
+            nom_aff = self.sorties.get_nom_abrege(nom)
+            if self.sorties.sortie_existe(nom):
+                res += nom_aff
+            else:
+                res += " ".ljust(len(nom_aff))
+            res += ", "
+        res = res[:-2] + "."
+        return res
 
 # On ajoute le groupe à ObjetID
 ObjetID.ajouter_groupe(Salle)

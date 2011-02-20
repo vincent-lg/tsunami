@@ -47,6 +47,13 @@ NOMS_SORTIES["sud-est"] = None
 NOMS_SORTIES["bas"] = None
 NOMS_SORTIES["haut"] = None
 
+NOMS_ABREGES = { # équivalent des noms abrégés
+    "sud-ouest": "s-o",
+    "nord-ouest": "n-o",
+    "nord-est": "n-e",
+    "sud-est": "s-e",
+}
+
 class Sorties(BaseObj):
     
     """Conteneur des sorties.
@@ -106,3 +113,13 @@ class Sorties(BaseObj):
         """Retourne un générateur parcourant les couples nom:sortie"""
         for nom, sortie in self._sorties.items():
             yield (nom, sortie)
+    
+    def sortie_existe(self, nom):
+        """Retourne True si la sortie mène quelque part"""
+        return self[nom] is not None
+    
+    def get_nom_abrege(self, nom):
+        """Retourne le nom abrégé correspondant"""
+        if nom in NOMS_ABREGES.keys():
+            nom = NOMS_ABREGES[nom]
+        return nom

@@ -75,9 +75,11 @@ class Module(BaseModule):
         if len(salles) == 0:
             s1 = self.creer_salle("picte", "1", 0, 0, 0)
             s1.titre = "La salle picte 1"
+            s1.description = "une description"
             s2 = self.creer_salle("picte", "2", 0, 1, 0)
             s1.sorties.ajouter_sortie("est", "est", salle_dest=s2)
             s2.titre = "La salle picte 2"
+            s2.description = "une autre description"
         print(self._salles, self._coords)
         
         # On récupère la configuration
