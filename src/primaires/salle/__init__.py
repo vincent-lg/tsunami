@@ -33,6 +33,7 @@
 from abstraits.module import *
 from .salle import Salle
 from .config import cfg_salle
+import primaires.salle.commandes
 
 class Module(BaseModule):
     """Classe utilisée poru gérer des salles.
@@ -51,6 +52,7 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "salle", "primaire")
         self._salles = {} # ident:salle
         self._coords = {} # coordonnee:salle
+        self.commandes = []
         self.salle_arrivee = ""
         self.salle_retour = ""
         
@@ -111,6 +113,14 @@ class Module(BaseModule):
         
         self.logger.info("{} salle{s} récupérée{s}".format(len(self._salles),
                 s=s))
+        
+        # On ajoute les commandes du module
+        self.commandes = [
+            commandes.regarder.CmdRegarder(),
+        ]
+        
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)
         
         BaseModule.init(self)
     
