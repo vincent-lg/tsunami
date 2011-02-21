@@ -141,6 +141,19 @@ class BaseModule:
         """Méthode appelée à chaque tour de boucle synchro."""
         pass
     
+    def traiter_commande(self, personnage, commande):
+        """Méthode à redéfinir si on veut que le module traite des commandes
+        hors interprétation.
+        
+        Par exemple, pour que les sorties d'une salles soient des commandes
+        pour les joueurs, le module salle doit redéfinir cette méthode et
+        y ajouter un traitement des commandes.
+        
+        On retourne True si le module a traité la commande, False sinon.
+        
+        """
+        return False
+    
     @property
     def str_statut(self):
         """Retourne le statut sous la forme d'une chaîne"""

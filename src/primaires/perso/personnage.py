@@ -90,3 +90,14 @@ class Personnage(ObjetID):
     def regarder(self):
         """Retourne ce qu'il y a autour du personnage"""
         return self.salle.regarder(self)
+    
+    def deplacer_vers(self, sortie):
+        """Déplacement vers la sortie 'sortie'"""
+        salle = self.salle
+        salle_dest = salle.sorties[sortie].salle_dest
+        self.salle = salle_dest
+        self.envoyer(self.regarder())
+    
+    def __setstate__(self, state):
+        print("rec", state["salle"])
+        ObjetID.__setstate__(self, state)

@@ -66,6 +66,7 @@ class ModeConnecte(Contexte):
         """
         joueur = self.pere.joueur
         if joueur.salle is None:
+            print("La salle est introuvable")
             # On recherche la salle
             cle = type(self).importeur.salle.salle_retour
             salle = type(self).importeur.salle[cle]
@@ -96,44 +97,52 @@ class ModeConnecte(Contexte):
         l'instance pourrait ne pas être à jour.
         
         """
-        interpreteur = type(self).importeur.interpreteur
-        dic_masques = DicMasques()
-        lst_commande = chaine_vers_liste(msg)
-        logger = type(self).importeur.man_logs.get_logger("sup")
-        try:
-            interpreteur.valider(self.pere.joueur, dic_masques, \
-                    lst_commande)
-        except ErreurValidation as err_val:
-            err_val = str(err_val)
-            if not err_val:
-                masque = dic_masques.dernier_parametre
-                err_val = masque.erreur_validation(self.pere.joueur, \
-                        dic_masques)
-            self.pere.joueur.envoyer(str(err_val))
-        except Exception:
-            logger.fatal(
-                    "Exception levée lors de la validation d'une commande.")
-            logger.fatal(traceback.format_exc())
-            self.pere.joueur.envoyer(
-                "|err|Une erreur s'est produite lors du traitement de votre " \
-                "commande.\nLes administrateurs en ont été averti.|ff|")
-        else:
+        # On commence par parcourir tous les modules
+        for module in type(self).importeur.modules:
+            res = module.traiter_commande(self.pere.joueur, msg)
+            if res:
+                break
+        
+        if not res:
+            interpreteur = type(self).importeur.interpreteur
+            dic_masques = DicMasques()
+            lst_commande = chaine_vers_liste(msg)
+            logger = type(self).importeur.man_logs.get_logger("sup")
             try:
-                # On cherche le dernier paramètre
-                for masque in reversed(list(dic_masques.values())):
-                    if masque.est_parametre():
-                        commande = masque
-                        break
-                
-                commande.interpreter(self.pere.joueur, dic_masques)
-            except ErreurInterpretation as err_int:
-                self.pere.joueur.envoyer(str(err_int))
+                interpreteur.valider(self.pere.joueur, dic_masques, \
+                        lst_commande)
+            except ErreurValidation as err_val:
+                err_val = str(err_val)
+                if not err_val:
+                    masque = dic_masques.dernier_parametre
+                    err_val = masque.erreur_validation(self.pere.joueur, \
+                            dic_masques)
+                self.pere.joueur.envoyer(str(err_val))
             except Exception:
-                logger.fatal(
-                    "Exception levée lors de l'interprétation d'une commande.")
+                logger.fatal("Exception " \
+                        "levée lors de la validation d'une commande.")
                 logger.fatal(traceback.format_exc())
                 self.pere.joueur.envoyer(
                     "|err|Une erreur s'est produite lors du traitement de " \
                     "votre commande.\nLes administrateurs en ont été " \
                     "averti.|ff|")
+            else:
+                try:
+                    # On cherche le dernier paramètre
+                    for masque in reversed(list(dic_masques.values())):
+                        if masque.est_parametre():
+                            commande = masque
+                            break
+                    
+                    commande.interpreter(self.pere.joueur, dic_masques)
+                except ErreurInterpretation as err_int:
+                    self.pere.joueur.envoyer(str(err_int))
+                except Exception:
+                    logger.fatal("Exception levée " \
+                        "lors de l'interprétation d'une commande.")
+                    logger.fatal(traceback.format_exc())
+                    self.pere.joueur.envoyer(
+                        "|err|Une erreur s'est produite lors du traitement " \
+                        "de votre commande.\nLes administrateurs en ont été " \
+                        "averti.|ff|")
 

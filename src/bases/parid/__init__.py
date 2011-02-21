@@ -123,6 +123,8 @@ class Parid:
             except KeyError:
                 pass
         
+        if objet is None:
+            print("L'objet", id, "n'a pu être trouvé.")
         return objet
 
 # Création de l'instance

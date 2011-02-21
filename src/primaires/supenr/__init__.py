@@ -200,6 +200,8 @@ class Module(BaseModule):
         for objet in self.file_attente:
             if (est_objet_id(objet) and objet.est_initialise()) or \
                     est_unique(objet):
+                if hasattr(objet, "salle"):
+                    print("On enregistre", objet, objet.salle)
                 self.enregistrer(objet)
         
         self.file_attente.clear()

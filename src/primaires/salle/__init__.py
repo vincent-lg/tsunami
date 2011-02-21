@@ -32,6 +32,7 @@
 
 from abstraits.module import *
 from .salle import Salle
+from .sorties import NOMS_SORTIES
 from .config import cfg_salle
 import primaires.salle.commandes
 
@@ -82,6 +83,7 @@ class Module(BaseModule):
             s1.sorties.ajouter_sortie("est", "est", salle_dest=s2)
             s2.titre = "La salle picte 2"
             s2.description = "une autre description"
+            s2.sorties.ajouter_sortie("ouest", "ouest", salle_dest=s1)
         print(self._salles, self._coords)
         
         # On récupère la configuration
@@ -187,3 +189,19 @@ class Module(BaseModule):
             del self._coords[coords.tuple()]
         del self._salles[cle]
         salle.detruire()
+    
+    def traiter_commande(self, personnage, commande):
+        """Traite les déplacements"""
+        commande = commande.lower()
+        salle = personnage.salle
+        for nom, sortie in salle.sorties.iter_couple():
+            if salle.sorties.sortie_existe(nom) and sortie.nom.startswith(
+                    commande):
+                personnage.deplacer_vers(sortie.nom)
+                return True
+        
+        if commande in NOMS_SORTIES.keys():
+            personnage << "Vous ne pouvez aller par là..."
+            return True
+        
+        return False
