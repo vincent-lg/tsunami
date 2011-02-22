@@ -103,7 +103,7 @@ class Module(BaseModule):
         diff = apres - avant
         if nb_hotboot == type(self.importeur).nb_hotboot:
             if masquer:
-                msg = "|rg|{{mot de passe}}|ff|"
+                msg = "|rg|masque|ff|"
             if self.stats.nb_commandes == 0:
                 self.stats.tps_moy_commandes = diff
             else:

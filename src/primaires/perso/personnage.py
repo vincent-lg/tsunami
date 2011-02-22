@@ -97,7 +97,3 @@ class Personnage(ObjetID):
         salle_dest = salle.sorties[sortie].salle_dest
         self.salle = salle_dest
         self.envoyer(self.regarder())
-    
-    def __setstate__(self, state):
-        print("rec", state["salle"])
-        ObjetID.__setstate__(self, state)

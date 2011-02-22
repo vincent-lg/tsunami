@@ -88,9 +88,9 @@ class CmdStat(Commande):
         msg += "\n    Temps d'exécution maximum :"
         for temps in sorted(tuple(stats.max_commandes), reverse=True):
             commande = stats.max_commandes[temps]
-            # on affiche que les dix premiers caractères de la commande
-            if len(commande) > 10:
-                commande = commande[:10] + "..."
+            # on affiche que les 15 premiers caractères de la commande
+            if len(commande) > 15:
+                commande = commande[:15] + "..."
             
             msg += "\n        {} {:02.3f}s".format(commande.ljust(15), temps)
         

@@ -66,7 +66,6 @@ class ModeConnecte(Contexte):
         """
         joueur = self.pere.joueur
         if joueur.salle is None:
-            print("La salle est introuvable")
             # On recherche la salle
             cle = type(self).importeur.salle.salle_retour
             salle = type(self).importeur.salle[cle]
