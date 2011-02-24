@@ -83,11 +83,6 @@ class OptionsContexte:
 
 RCI_PREC = "/"
 
-dic_attributs = { # dictionnaire des attributs de Contexte
-    "opts":None, # options du contexte
-    "pere":None, # père du contexte -- InstanceConnexion
-}
-
 class Contexte(BaseObj):
     """Classe abstraite définissant un contexte.
     Si vous voulez utiliser un contexte :
@@ -123,7 +118,6 @@ class Contexte(BaseObj):
 
     """
     importeur = None
-    attributs = dic_attributs
     nom = None
     
     def __init__(self, pere):
