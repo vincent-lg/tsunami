@@ -31,7 +31,7 @@
 """Fichier contenant le module primaire interpreteur."""
 
 from abstraits.module import *
-from primaires.interpreteur.contexte import Contexte
+from primaires.interpreteur.contexte import Contexte, contextes
 from primaires.interpreteur.masque.noeuds.fonctions import *
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
 from primaires.interpreteur.masque.noeuds.noeud_commande import NoeudCommande
@@ -61,7 +61,7 @@ class Module(BaseModule):
         Masque.importeur = importeur
         
         # Attributs
-        self.contextes = {} # Dictionnaire des contextes
+        self.contextes = contextes # Dictionnaire des contextes
         self.commandes = []
         self.commandes_francais = []
         self.commandes_anglais = []
@@ -103,13 +103,6 @@ class Module(BaseModule):
             groupe_precedent = nom_groupe
         
         BaseModule.init(self)
-    
-    def ajouter_contexte(self, nouv_contexte):
-        """Ajoute le contexte dans le dictionnaire self.contextes.
-        On se sert du nom comme identifiant du contexte.
-        
-        """
-        self.contextes[nouv_contexte.nom] = nouv_contexte
     
     def ajouter_commande(self, commande):
         """Ajoute une commande à l'embranchement"""

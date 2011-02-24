@@ -34,8 +34,8 @@ from abstraits.module import *
 from primaires.connex.instance_connexion import InstanceConnexion
 from reseau.connexions.client_connecte import ClientConnecte
 from primaires.connex.compte import Compte
-from primaires.connex.contextes import liste_contextes
 from primaires.connex.config import cfg_connex
+from . import contextes
 
 # Nom du groupe fictif
 NOM_GROUPE = "connexions"
@@ -89,10 +89,6 @@ class Module(BaseModule):
             self.comptes[compte.id.id] = compte
             if not compte.valide:
                 self.supprimer_compte(compte)
-        
-        # On ajoute les contextes chargés dans l'interpréteur
-        for contexte in liste_contextes:
-            self.importeur.interpreteur.contextes[contexte.nom] = contexte
         
         # On récupère les instances de connexion
         if NOM_GROUPE in type(self.importeur).parid:

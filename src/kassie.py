@@ -87,6 +87,16 @@ from corps.config import pere
 def arreter_MUD():
     """Fonction appelée pour arrêter le MUD proprement"""
     global importeur, log
+    
+    # On attend que la phase d'enregistrement soit finie, pour éviter de
+    # corrompre des fichiers
+    premiere_fois = True
+    while importeur.supenr.enregistre_actuellement:
+        if premiere_fois:
+            print("On enregistre la file d'attente, patientez...")
+            premiere_fois = False
+        continue
+    
     importeur.tout_detruire()
     importeur.tout_arreter()
     log.info("Fin de la session\n\n\n")

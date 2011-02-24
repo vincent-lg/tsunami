@@ -31,11 +31,11 @@
 """Fichier contenant le module primaire joueur."""
 
 from abstraits.module import *
-from primaires.joueur.contextes import liste_contextes
 from primaires.joueur import commandes
 from primaires.joueur import masques
 from primaires.joueur.config import cfg_joueur
 from .joueur import Joueur
+from . import contextes
 
 class Module(BaseModule):
     """Classe utilisée pour gérer des joueurs, c'est-à-dire des personnages
@@ -61,9 +61,6 @@ class Module(BaseModule):
     def init(self):
         """Méthode d'initialisation du module"""
         joueurs = self.importeur.supenr.charger_groupe(Joueur)
-        # On ajoute les contextes chargés dans l'interpréteur
-        for contexte in liste_contextes:
-            self.importeur.interpreteur.contextes[contexte.nom] = contexte
         
         # Ajout des masques dans l'interpréteur
         self.importeur.interpreteur.ajouter_masque(

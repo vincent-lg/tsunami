@@ -39,6 +39,21 @@ développés dans ce package.
 from abstraits.obase import BaseObj
 from primaires.format.fonctions import *
 
+contextes = {} # dictionnaire des différents contextes
+
+class MetaContexte(type):
+    
+    """Métaclasse des contextes.
+    A chaque fois qu'on crée une classe héritée de Contexte avec un nom
+    valide, on l'ajoute dans le dictionnaire 'contextes'.
+    
+    """
+    
+    def __init__(cls, nom, bases, contenu):
+        """Constructeur de la métaclasse"""
+        if cls.nom:
+            contextes[cls.nom] = cls
+
 class OptionsContexte:
     """Options du contexte.
     
@@ -83,7 +98,7 @@ class OptionsContexte:
 
 RCI_PREC = "/"
 
-class Contexte(BaseObj):
+class Contexte(BaseObj, metaclass=MetaContexte):
     """Classe abstraite définissant un contexte.
     Si vous voulez utiliser un contexte :
     *   Choisissez-le dans les classes-filles de Contexte

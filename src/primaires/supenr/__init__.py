@@ -75,6 +75,7 @@ class Module(BaseModule):
         self.file_attente = set() # file d'attente des objets à enregistrer
         self.logger = type(self.importeur).man_logs.creer_logger("supenr", \
                 "supenr")
+        self.enregistre_actuellement = False
     
     def config(self):
         """Méthode de configuration. On se base sur
@@ -130,6 +131,7 @@ class Module(BaseModule):
         
         """
         global REP_ENRS
+        self.enregistre_actuellement = True
         if est_objet_id(objet):
             chemin_dest = REP_ENRS + os.sep + type(objet).sous_rep
             nom_fichier = str(objet.id.id) + ".sav"
@@ -155,6 +157,7 @@ class Module(BaseModule):
         finally:
             if "fichier_enr" in locals():
                 fichier_enr.close()
+            self.enregistre_actuellement = False
     
     def detruire_fichier(self, objet):
         """Méthode appelée pour détruire le fichier contenant l'objet
@@ -197,12 +200,14 @@ class Module(BaseModule):
         de chaque objet contenu dans le set 'self.file_attente'.
         
         """
+        self.enregistre_actuellement = True
         for objet in self.file_attente:
             if (est_objet_id(objet) and objet.est_initialise()) or \
                     est_unique(objet):
                 self.enregistrer(objet)
         
         self.file_attente.clear()
+        self.enregistre_actuellement = False
     
     def fichier_existe(self, sous_rep, nom_fichier):
         """Retourne True si le fichier existe"""
