@@ -191,7 +191,7 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         """
         self.migrer_contexte(type(self).nom)
     
-    def migrer_contexte(self, contexte):
+    def migrer_contexte(self, contexte, afficher_accueil=True):
         """Cas de transfert de contexte.
         Le contexte doit être donné sous la forme d'un nom (type 'str').
         
@@ -201,7 +201,7 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         self.pere.contexte_actuel.sortir()
         self.pere.migrer_contexte(nouveau_contexte)
         self.pere.contexte_actuel.entrer()
-        if nouveau_contexte is self.pere.contexte_actuel:
+        if nouveau_contexte is self.pere.contexte_actuel and afficher_accueil:
             # Cette condition est là pour éviter qu'en cas de migration de
             # contexte dans la méthode 'entrer', le message d'accueil ne
             # s'affiche en double

@@ -28,7 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'redit'."""
 
-import primaires.salle.commandes.redit
-import primaires.salle.commandes.regarder
+from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.editeur.presentation import Presentation
+
+class CmdRedit(Commande):
+    
+    """Commande 'redit'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "redit", "redit")
+        self.aide_courte = "ouvre l'éditeur de salle"
+        self.aide_longue = \
+            "Cette commande ouvre l'éditeur de salle qui permet d'éditer " \
+            "les éléments d'une salle (titre, description, sorties...). " \
+            "C'est la commande usuelle pour modifier une salle, corriger " \
+            "une faute, ajouter des objets au repop..."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        # On construit l'éditeur
+        salle = personnage.salle
+        presentation = Presentation(personnage.instance_connexion, salle)
+        personnage.contextes.ajouter(presentation)
+        presentation.actualiser()

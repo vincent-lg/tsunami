@@ -118,6 +118,7 @@ class Module(BaseModule):
         
         # On ajoute les commandes du module
         self.commandes = [
+            commandes.redit.CmdRedit(),
             commandes.regarder.CmdRegarder(),
         ]
         

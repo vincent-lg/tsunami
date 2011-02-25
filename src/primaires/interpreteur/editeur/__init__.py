@@ -25,10 +25,41 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Ce fichier est à la racine du package 'editeur'.
+Dans ce fichier est définie la classe Editeur, héritée de Contexte.
+Elle est détaillée plus bas.
 
-import primaires.salle.commandes.redit
-import primaires.salle.commandes.regarder
+"""
+
+from ..contexte import Contexte
+
+class Editeur(Contexte):
+    
+    """Classe de base pour former des objets Editeur.
+    Ces objets formeront l'architecture d'un éditeur.
+    
+    """
+    nom = None
+    
+    def __init__(self, pere, objet=None, attribut=None):
+        """Constructeur de l'éditeur"""
+        Contexte.__init__(self, pere)
+        self.opts.prompt_clr = ""
+        self.opts.prompt_prf = ""
+        self.objet = objet
+        self.attribut = attribut
+    
+    def get_prompt(self):
+        """Retourne le prompt"""
+        return "-> "
+
+    def executer(self):
+        """Méthode d'exécution de l'objet éditeur.
+        Quand un raccourci a été reconnu comme pointant vers le contexte
+        éditeur 'self', cette méthode est appelée.
+        
+        """
+        pass

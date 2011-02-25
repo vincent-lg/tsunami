@@ -32,6 +32,7 @@
 
 from abstraits.module import *
 from primaires.interpreteur.contexte import Contexte, contextes
+from .editeur import Editeur
 from primaires.interpreteur.masque.noeuds.fonctions import *
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
 from primaires.interpreteur.masque.noeuds.noeud_commande import NoeudCommande
