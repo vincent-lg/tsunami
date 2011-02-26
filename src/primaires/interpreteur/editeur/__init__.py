@@ -49,9 +49,16 @@ class Editeur(Contexte):
         Contexte.__init__(self, pere)
         self.opts.prompt_clr = ""
         self.opts.prompt_prf = ""
-        print("aff", objet)
         self.objet = objet
         self.attribut = attribut
+    
+    def actualiser(self):
+        """Redéfinition d'actualiser.
+        Au lieu de migrer sur 'self', on se contente d'envoyer le
+        message d'accueil à 'self.pere'.
+        
+        """
+        self.pere.envoyer(self.accueil())
     
     def get_prompt(self):
         """Retourne le prompt"""

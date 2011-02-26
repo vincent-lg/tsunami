@@ -77,6 +77,10 @@ class Salle(ObjetID):
     def __getinitargs__(self):
         return ("", "")
     
+    def __str__(self):
+        """Retourne l'identifiant 'zone:mnemonic'"""
+        return self._zone + ":" + self._mnemonic
+    
     def _get_zone(self):
         return self._zone
     def _set_zone(self, zone):

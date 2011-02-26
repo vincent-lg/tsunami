@@ -72,7 +72,6 @@ class Presentation(Editeur):
     
     def accueil(self):
         """Message d'accueil du contexte"""
-        print("edt", self.objet)
         msg = "Edition de {}".format(self.objet)
         # Parcourt des choix possibles
         for raccourci, nom in self.raccourcis.items():

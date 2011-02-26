@@ -50,7 +50,7 @@ class Personnage(ObjetID):
         ObjetID.__init__(self)
         self.nom = ""
         self.groupe = "npc"
-        self.contextes = FileContexte() # file d'attente des contexte
+        self.contextes = FileContexte(self) # file d'attente des contexte
         self.langue_cmd = "francais"
         self.salle = None
     
@@ -62,6 +62,12 @@ class Personnage(ObjetID):
         """Redirige vers 'envoyer'"""
         self.envoyer(msg)
         return self
+    
+    def __setstate__(self, dict_attr):
+        """Vide la file des contextes"""
+        ObjetID.__setstate__(self, dict_attr)
+        dict_attr["contextes"].vider()
+        self.__dict__.update(dict_attr)
     
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel, c'est-à-dire le premier de la file"""
