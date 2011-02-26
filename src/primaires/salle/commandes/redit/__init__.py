@@ -51,6 +51,7 @@ class CmdRedit(Commande):
         """Méthode d'interprétation de commande"""
         # On construit l'éditeur
         salle = personnage.salle
+        print(salle)
         presentation = Presentation(personnage.instance_connexion, salle)
         personnage.contextes.ajouter(presentation)
         presentation.actualiser()

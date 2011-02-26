@@ -49,6 +49,7 @@ class Editeur(Contexte):
         Contexte.__init__(self, pere)
         self.opts.prompt_clr = ""
         self.opts.prompt_prf = ""
+        print("aff", objet)
         self.objet = objet
         self.attribut = attribut
     

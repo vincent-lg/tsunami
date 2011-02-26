@@ -88,14 +88,11 @@ def arreter_MUD():
     """Fonction appelée pour arrêter le MUD proprement"""
     global importeur, log
     
-    # On attend que la phase d'enregistrement soit finie, pour éviter de
-    # corrompre des fichiers
-    premiere_fois = True
-    while importeur.supenr.enregistre_actuellement:
-        if premiere_fois:
-            print("On enregistre la file d'attente, patientez...")
-            premiere_fois = False
-        continue
+    # On s'assure que tous les fichiers sont bien enregistré pour éviter
+    # de corrompre des données
+    if importeur.supenr.enregistre_actuellement:
+        print("On enregistre la file d'attente, patientez...")
+        importeur.supenr.enregistrer_file_attente()
     
     importeur.tout_detruire()
     importeur.tout_arreter()

@@ -49,7 +49,7 @@ class Presentation(Editeur):
         Editeur.__init__(self, pere, objet, attribut)
         self.choix = OrderedDict()
         self.raccourcis = {}
-        self.ajouter_choix("quitter", "q", Quitter(self.pere))
+        self.ajouter_choix("quitter", "q", Quitter)
     
     def ajouter_choix(self, nom, raccourci, objet_editeur):
         """Ajoute un choix possible"""
@@ -72,6 +72,7 @@ class Presentation(Editeur):
     
     def accueil(self):
         """Message d'accueil du contexte"""
+        print("edt", self.objet)
         msg = "Edition de {}".format(self.objet)
         # Parcourt des choix possibles
         for raccourci, nom in self.raccourcis.items():
@@ -92,5 +93,5 @@ class Presentation(Editeur):
         except KeyError:
             self.pere << "Raccourci inconnu {}".format(msg)
         else:
-            objet = self.choix[nom]
+            objet = self.choix[nom](self.pere)
             objet.executer()
