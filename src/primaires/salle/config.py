@@ -47,8 +47,8 @@ salle_arrivee = "depart:1"
 # Cette salle est celle dans laquelle un joueur se retrouve si la salle
 # dans laquelle il était au moment de se déconnecter a été effacée ou est
 # introuvable.
-# Tout comme la salle d'arrivée, précisez l'identifiant de la salle sous la
-# forme 'zone:mnémonic'.
+# Tout comme la salle d'arrivée, précisez l'identifiant sous la forme
+# 'zone:mnémonic'.
 salle_retour = "depart:1"
 
 """

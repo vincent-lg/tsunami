@@ -35,9 +35,7 @@ from primaires.interpreteur.editeur.presentation import Presentation
 
 class CmdRedit(Commande):
     
-    """Commande 'redit'.
-    
-    """
+    """Commande 'redit'"""
     
     def __init__(self):
         """Constructeur de la commande"""

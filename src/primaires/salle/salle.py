@@ -39,7 +39,7 @@ class Salle(ObjetID):
     """Classe représentant une salle de l'univers.
     Une salle est un élément détaillant la géographie locale d'une petite
     portion de l'univers. Bien que cela dépende des MUDs, les salles décrivent
-    généralement un espace d'environ 5 M sur 5 M.
+    généralement un espace d'environ 5 mètres sur 5.
     
     Ces salles comportent une description détaillant les alentours proches.
     Cette description est envoyée à chaque fois qu'un personnage se déplace
@@ -47,16 +47,16 @@ class Salle(ObjetID):
     
     Note sur le positionnement des salles :
         Les salles peuvent être caractérisées par des coordonnées. Ces
-        coordonnées sont en soit facultatives. Il est possible de créer un
-        univers sans aucune coordonnées. Les coordonnées sont une facilité
-        lors de la constitution de votre univers et permettent à certains
+        coordonnées sont en soi facultatives. Il est possible de créer un
+        univers sans aucune coordonnée. Il s'agit d'une facilité
+        lors de la constitution de votre univers qui permet à certains
         modules, comme 'vehicule', de fonctionner. Si votre salle n'a pas de
         coordonnées, vous devrez créer chaque sortie "à la main".
         Les salles ne sont donc pas identifiées par leurs coordonnées, sauf
         dans certains cas, mais bien par leur zone et mnémonic. Ce couple
         caractérise de façon unique une salle dans l'univers.
         Exemple : une ssalle ayant pour zone 'picte' et pour mnémonic '1'
-        sera accessible depuis la clé 'picte:1'. Aucune autre salle de
+        sera accessible depuis la clé 'picte:1' ; aucune autre salle de
         l'univers ne pourra posséder cette clé 'picte:1'.
     
     """
@@ -102,17 +102,16 @@ class Salle(ObjetID):
     def __repr__(self):
         """Affichage de la salle en mode debug"""
         res = "Salle ({}, {})".format(self.ident, self.coords)
-        # sorties
+        # Sorties
         for nom, sortie in self.sorties.iter_couple():
             if sortie:
-                res += "\n  {}: {}".format(nom, sortie.salle_dest.ident)
-        
+                res += "\n  {} : {}".format(nom, sortie.salle_dest.ident)
         return res
     
     def regarder(self, personnage):
         """Le personnage regarde la salle"""
         res = ""
-        res += "|jn|" + self.titre + "|ff|\n"
+        res += "|mr|" + self.titre + "|ff|\n"
         res += self.description + "\n"
         res += "Sorties : "
         res += self.afficher_sorties(personnage)

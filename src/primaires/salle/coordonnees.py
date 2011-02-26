@@ -34,8 +34,9 @@ from abstraits.obase import *
 
 class Coordonnees(BaseObj):
     
-    """Cette classe représente les trois coordonnées utiles à la représentation dans l'espace (x, y et z).
-    Cette classe peut être utilisée pour générer des coordonnées invalides.
+    """Classe représentant les coordonnées
+    Ces coordonnées servent à la représentation dans l'espace (x, y et z). La
+    classe peut être utilisée pour générer des coordonnées invalides.
     
     """
     
@@ -64,7 +65,6 @@ class Coordonnees(BaseObj):
             res = "C({}, {}, {})".format(self.x, self.y, self.z)
         else:
             res = "C(INVALIDE)"
-        
         return res
     
     def __repr__(self):

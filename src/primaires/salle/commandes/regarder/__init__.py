@@ -34,9 +34,7 @@ from primaires.interpreteur.commande.commande import Commande
 
 class CmdRegarder(Commande):
     
-    """Commande 'regarder'.
-    
-    """
+    """Commande 'regarder'"""
     
     def __init__(self):
         """Constructeur de la commande"""

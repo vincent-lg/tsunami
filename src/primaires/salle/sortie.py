@@ -58,7 +58,6 @@ class Sortie(BaseObj):
     
     def __init__(self, nom, article="le", salle_dest=None, parent=None):
         """Constructeur du conteneur
-        
         Précision quant au parent :
         Ici, ce n'est pas le conteneur, mais la salle possédant la sortie
         qui doit être le parent.

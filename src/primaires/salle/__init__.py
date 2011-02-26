@@ -37,11 +37,12 @@ from .config import cfg_salle
 import primaires.salle.commandes
 
 class Module(BaseModule):
-    """Classe utilisée poru gérer des salles.
+    
+    """Classe utilisée pour gérer des salles.
     Dans la terminologie des MUDs, les salles sont des "cases" avec une
     description et une liste de sorties possibles, que le joueur peut
     emprunter. L'ensemble des salles consiste l'univers, auquel il faut
-    naturellement rajouté des NPCs et objets pour qu'il soit riche un minimum.
+    naturellement rajouter des NPCs et objets pour qu'il soit riche un minimum.
     
     Pour plus d'informations, consultez le fichier
     src/primaires/salle/salle.py contenant la classe Salle.
@@ -90,12 +91,14 @@ class Module(BaseModule):
         conf_salle = type(self.importeur).anaconf.get_config("salle")
         salle_arrivee = conf_salle.salle_arrivee
         salle_retour = conf_salle.salle_retour
+        
         if salle_arrivee not in self:
             # On crée la salle d'arrivée
             zone, mnemonic = salle_arrivee.split(":")
             salle_arrivee = self.creer_salle(zone, mnemonic, valide=False)
             salle_arrivee.titre = "La salle d'arrivée"
-            print("On crée la salle d'arrivée:", salle_arrivee)
+            salle_arrivee.description = "Vous êtes au milieu de nulle part."
+            print("On crée la salle d'arrivée :", salle_arrivee)
             salle_arrivee = salle_arrivee.ident
         
         if salle_retour not in self:
@@ -103,7 +106,8 @@ class Module(BaseModule):
             zone, mnemonic = salle_retour.split(":")
             salle_retour = self.creer_salle(zone, mnemonic, valide=False)
             salle_retour.titre = "La salle de retour"
-            print("On crée la salle de retour:", salle_retour)
+            salle_arrivee.description = "Vous êtes au milieu de nulle part."
+            print("On crée la salle de retour :", salle_retour)
             salle_retour = salle_retour.ident
         
         self.salle_arrivee = salle_arrivee
@@ -112,16 +116,14 @@ class Module(BaseModule):
         s = ""
         if len(self._salles) > 1:
             s = "s"
-        
         self.logger.info("{} salle{s} récupérée{s}".format(len(self._salles),
-                s=s))
+                    s=s))
         
         # On ajoute les commandes du module
         self.commandes = [
             commandes.redit.CmdRedit(),
             commandes.regarder.CmdRegarder(),
         ]
-        
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
         
@@ -147,7 +149,7 @@ class Module(BaseModule):
     
     def __contains__(self, cle):
         """Retourne True si la clé se trouve dans l'un des dictionnaires de
-        salle. Voir la méthode __getitem__ pour connaître les types acceptés.
+        salles. Voir la méthode __getitem__ pour connaître les types acceptés.
         
         """
         if type(cle) is str:
@@ -162,7 +164,7 @@ class Module(BaseModule):
     
     def ajouter_salle(self, salle):
         """Ajoute la salle aux deux dictionnaires
-        self._salles et self._coords
+        self._salles et self._coords.
         
         """
         self._salles[salle.ident] = salle
@@ -174,7 +176,6 @@ class Module(BaseModule):
         ident = zone + ":" + mnemonic
         if ident in self._salles.keys():
             raise ValueError("la salle {} existe déjà".format(ident))
-        
         salle = Salle(zone, mnemonic, x, y, z, valide)
         self.ajouter_salle(salle)
         return salle

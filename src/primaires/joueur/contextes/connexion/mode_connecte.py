@@ -124,7 +124,7 @@ class ModeConnecte(Contexte):
                 self.pere.joueur.envoyer(
                     "|err|Une erreur s'est produite lors du traitement de " \
                     "votre commande.\nLes administrateurs en ont été " \
-                    "averti.|ff|")
+                    "avertis.|ff|")
             else:
                 try:
                     # On cherche le dernier paramètre
@@ -143,5 +143,5 @@ class ModeConnecte(Contexte):
                     self.pere.joueur.envoyer(
                         "|err|Une erreur s'est produite lors du traitement " \
                         "de votre commande.\nLes administrateurs en ont été " \
-                        "averti.|ff|")
+                        "avertis.|ff|")
 
