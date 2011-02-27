@@ -66,7 +66,7 @@ class OptionsContexte:
         échappés ce qui permet au client d'entrer des caractères spéciaux (sauts
         de ligne, couleurs...).
     
-    Options d'envoie :
+    Options d'envoi :
     *   sup_accents - on supprime les accents du message avant de l'envoyer
     *   prompt_clr - colorisation du prompt :
         Si un code couleur est précisé dans cette option, on l'applique au

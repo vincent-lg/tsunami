@@ -42,6 +42,7 @@ class Editeur(Contexte):
     Ces objets formeront l'architecture d'un éditeur.
     
     """
+    
     nom = None
     
     def __init__(self, pere, objet=None, attribut=None):

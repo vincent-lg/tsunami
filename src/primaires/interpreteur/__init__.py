@@ -44,11 +44,13 @@ from primaires.interpreteur.masque.exceptions.erreur_validation \
 from primaires.interpreteur.groupe import ConteneurGroupes
 
 class Module(BaseModule):
+    
     """Cette classe est la classe gérant tous les interpréteurs.
     Elle recense les différents contextes, en crée certains et permet
     à chaque module de créer ses propres contextes, commandes, éditeurs...
     
     """
+    
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "interpreteur", "primaire")
@@ -81,11 +83,13 @@ class Module(BaseModule):
             groupes = self.importeur.supenr.charger(sous_rep, fichier)
         if groupes is None:
             groupes = ConteneurGroupes()
-            self.logger.info("Aucun groupe d'utilisateur récupéré.")
+            self.logger.info("Aucun groupe d'utilisateurs récupéré")
         else:
-            nb_groupes = len(groupes)
-            self.logger.info("{} groupe(s) d'utilisateur récupéré(s)".format(
-                    nb_groupes))
+            s = ""
+            if len(groupes) > 1:
+                s = "s"
+            self.logger.info("{} groupe{s} d'utilisateurs récupéré{s}".format(
+                        len(groupes), s = s))
         
         self.groupes = groupes
         
@@ -99,7 +103,7 @@ class Module(BaseModule):
                 groupe = self.groupes.ajouter_groupe(nom_groupe)
                 if groupe_precedent:
                     groupe.ajouter_groupe_inclus(groupe_precedent)
-                self.logger.info("On ajoute le groupe d'utilisateur {}".format( 
+                self.logger.info("Ajout du groupe d'utilisateurs '{}'".format( 
                         nom_groupe))
             groupe_precedent = nom_groupe
         
@@ -116,8 +120,8 @@ class Module(BaseModule):
         # On construit ses paramètres
         commande.ajouter_parametres()
         
-        # Tri la liste des commandes, une première fois par ordre alphabétique
-        # français la seconde par ordre alphabétique anglais
+        # Tri de la liste des commandes, une première fois par ordre
+        # alphabétique français la seconde par ordre alphabétique anglais
         self.commandes_francais = sorted(self.commandes, \
             key=lambda noeud: noeud.commande.nom_francais)
         self.commandes_anglais = sorted(self.commandes, \

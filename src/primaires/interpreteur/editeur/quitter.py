@@ -41,8 +41,9 @@ class Quitter(Editeur):
     """
     
     nom = "editeur:base:quitter"
+    
     def executer(self):
         """Méthode d'exécution"""
         self.pere.joueur.contextes.retirer()
         self.migrer_contexte("personnage:connexion:mode_connecte", False)
-        self.pere.envoyer("Fermeture de l'éditeur")
+        self.pere.envoyer("Fermeture de l'éditeur.")

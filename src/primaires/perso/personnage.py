@@ -34,6 +34,7 @@ from abstraits.id import ObjetID
 from primaires.interpreteur.file import FileContexte
 
 class Personnage(ObjetID):
+    
     """Classe représentant un personnage.
     C'est une classe abstraite. Elle doit être héritée pour faire des joueurs
     et NPCs. Ces autres classes peuvent être également héritées, à leur tour.
@@ -42,6 +43,7 @@ class Personnage(ObjetID):
     ObjetID puisqu'il s'agit d'une classe abstraite.
     
     """
+    
     groupe = "personnages"
     sous_rep = "personnages"
     

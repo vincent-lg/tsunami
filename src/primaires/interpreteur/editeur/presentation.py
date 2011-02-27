@@ -31,9 +31,9 @@
 """Ce fichier définit le contexte-éditeur 'présentation'."""
 
 from collections import OrderedDict
-
 from . import Editeur
 from .quitter import Quitter
+
 class Presentation(Editeur):
     
     """Contexte-éditeur présentation.
@@ -49,7 +49,7 @@ class Presentation(Editeur):
         Editeur.__init__(self, pere, objet, attribut)
         self.choix = OrderedDict()
         self.raccourcis = {}
-        self.ajouter_choix("quitter", "q", Quitter)
+        self.ajouter_choix("quitter la fenêtre", "q", Quitter)
     
     def ajouter_choix(self, nom, raccourci, objet_editeur):
         """Ajoute un choix possible"""
@@ -72,15 +72,15 @@ class Presentation(Editeur):
     
     def accueil(self):
         """Message d'accueil du contexte"""
-        msg = "Edition de {}".format(self.objet)
+        msg = "Edition de {}\n".format(self.objet)
         # Parcourt des choix possibles
         for raccourci, nom in self.raccourcis.items():
             # On constitue le nom final
             # Si le nom d'origine est 'description' et le raccourci est 'd',
-            # le nom final doit être '(D)escription'
+            # le nom final doit être '[D]escription'
             pos = nom.find(raccourci)
-            nom = nom[:pos] + "(|cmd|" + raccourci.upper() + \
-                    "|ff|)" + nom[pos + len(raccourci):]
+            nom = nom[:pos] + " [|cmd|" + raccourci.upper() + "|ff|]" + \
+                    nom[pos + len(raccourci):]
             msg += "\n" + nom
         
         return msg
@@ -90,7 +90,7 @@ class Presentation(Editeur):
         try:
             nom = self.raccourcis[msg.lower()]
         except KeyError:
-            self.pere << "Raccourci inconnu {}".format(msg)
+            self.pere << "|err|Raccourci inconnu ({}).|ff|".format(msg)
         else:
             objet = self.choix[nom](self.pere)
             objet.executer()

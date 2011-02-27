@@ -78,12 +78,12 @@ class Module(BaseModule):
         ###DEBUG
         if len(salles) == 0:
             s1 = self.creer_salle("picte", "1", 0, 0, 0)
-            s1.titre = "La salle picte 1"
-            s1.description = "une description"
+            s1.titre = "La salle Picte 1"
+            s1.description = "Une description."
             s2 = self.creer_salle("picte", "2", 0, 1, 0)
             s1.sorties.ajouter_sortie("est", "est", salle_dest=s2)
-            s2.titre = "La salle picte 2"
-            s2.description = "une autre description"
+            s2.titre = "La salle Picte 2"
+            s2.description = "Une autre description."
             s2.sorties.ajouter_sortie("ouest", "ouest", salle_dest=s1)
         print(self._salles, self._coords)
         
@@ -98,7 +98,7 @@ class Module(BaseModule):
             salle_arrivee = self.creer_salle(zone, mnemonic, valide=False)
             salle_arrivee.titre = "La salle d'arrivée"
             salle_arrivee.description = "Vous êtes au milieu de nulle part."
-            print("On crée la salle d'arrivée :", salle_arrivee)
+            print("Création de la salle d'arrivée :", salle_arrivee)
             salle_arrivee = salle_arrivee.ident
         
         if salle_retour not in self:
@@ -107,17 +107,17 @@ class Module(BaseModule):
             salle_retour = self.creer_salle(zone, mnemonic, valide=False)
             salle_retour.titre = "La salle de retour"
             salle_arrivee.description = "Vous êtes au milieu de nulle part."
-            print("On crée la salle de retour :", salle_retour)
+            print("Création de la salle de retour :", salle_retour)
             salle_retour = salle_retour.ident
         
         self.salle_arrivee = salle_arrivee
         self.salle_retour = salle_retour
 
         s = ""
+        nb_salles = (len(self._salles) != 0) and len(self._salles) or "Aucune"
         if len(self._salles) > 1:
             s = "s"
-        self.logger.info("{} salle{s} récupérée{s}".format(len(self._salles),
-                    s=s))
+        self.logger.info("{} salle{s} récupérée{s}".format(nb_salles, s = s))
         
         # On ajoute les commandes du module
         self.commandes = [
