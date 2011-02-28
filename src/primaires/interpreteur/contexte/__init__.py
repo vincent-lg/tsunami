@@ -150,11 +150,11 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         return (None, )
     
     def entrer(self):
-        """Méthode appelée quand le pereesseur entre dans le contexte"""
+        """Méthode appelée quand le père entre dans le contexte"""
         pass
     
     def sortir(self):
-        """Méthode appelée quand le pereesseur sort du contexte"""
+        """Méthode appelée quand le père sort du contexte"""
         pass
     
     def get_prompt(self):
@@ -236,4 +236,3 @@ class Contexte(BaseObj, metaclass=MetaContexte):
             self.migrer_contexte(self.opts.rci_ctx_prec)
         else:
             self.interpreter(msg)
-    

@@ -54,9 +54,9 @@ class Suppression(Contexte):
     def accueil(self):
         """Message d'accueil du contexte"""
         ret = \
-            "\n|tit|----= Suppression d'un personnage =----|ff|\n" \
-            "|ent|Choisissez|ff| le personnage à supprimer parmi " \
-            "la liste ci-dessous :\n"
+            "\n|tit|--= Suppression d'un personnage =---|ff|\n" \
+            "Choisissez le |ent|personnage|ff| à supprimer parmi la liste" \
+            "ci-dessous :\n"
             
         for i, joueur in enumerate(self.pere.compte.joueurs):
             no = " |cmd|" + str(i + 1) + "|ff|"
