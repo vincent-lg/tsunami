@@ -33,6 +33,7 @@
 from collections import OrderedDict
 from . import Editeur
 from .quitter import Quitter
+from .env_objet import EnvelopeObjet
 
 class Presentation(Editeur):
     
@@ -51,15 +52,26 @@ class Presentation(Editeur):
         self.raccourcis = {}
         self.ajouter_choix("quitter la fenêtre", "q", Quitter)
     
-    def ajouter_choix(self, nom, raccourci, objet_editeur):
-        """Ajoute un choix possible"""
+    def ajouter_choix(self, nom, raccourci, objet_editeur,
+            objet_edite=None, attribut=None):
+        """Ajoute un choix possible :
+        -   nom : le nom affiché dans la présentation (exemple 'description')
+        -   raccourci : le raccourci pour entrer dans le sous éditeur ('d')
+        -   objet_editeur : l'objet contexte-édieur (ex. zone de texte)
+        -   objet édité : l'objet à éditer (par défaut self.objet)
+        -   l'attribut à éditer : par défaut aucun
+        
+        """
         if raccourci in self.raccourcis.keys():
             raise ValueError(
                 "Le raccourci {} est déjà utilisé dans cet éditeur".format(
                 raccourci))
         
-        self.choix[nom] = objet_editeur
+        envelope = EnvelopeObjet(objet_editeur, self.pere, objet_edite,
+                attribut)
+        self.choix[nom] = envelope
         self.raccourcis[raccourci] = nom
+        return envelope
     
     def supprimer_choix(self, nom):
         """Supprime le choix possible 'nom'"""
@@ -79,9 +91,13 @@ class Presentation(Editeur):
             # Si le nom d'origine est 'description' et le raccourci est 'd',
             # le nom final doit être '[D]escription'
             pos = nom.find(raccourci)
-            nom = nom[:pos] + " [|cmd|" + raccourci.upper() + "|ff|]" + \
+            nom_m = nom[:pos] + " [|cmd|" + raccourci.upper() + "|ff|]" + \
                     nom[pos + len(raccourci):]
-            msg += "\n" + nom
+            msg += "\n" + nom_m
+            envelope = self.choix[nom]
+            apercu = envelope.get_apercu()
+            if apercu:
+                msg += " : " + apercu
         
         return msg
     
@@ -92,5 +108,5 @@ class Presentation(Editeur):
         except KeyError:
             self.pere << "|err|Raccourci inconnu ({}).|ff|".format(msg)
         else:
-            objet = self.choix[nom](self.pere)
-            objet.executer()
+            contexte = self.choix[nom].construire()
+            self.migrer_contexte(contexte)

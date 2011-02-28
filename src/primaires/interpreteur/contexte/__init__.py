@@ -196,7 +196,10 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         Le contexte doit être donné sous la forme d'un nom (type 'str').
         
         """
-        nouveau_contexte = self._get_contexte(contexte)(self.pere)
+        if type(contexte) is str:
+            nouveau_contexte = self._get_contexte(contexte)(self.pere)
+        else:
+            nouveau_contexte = contexte
         
         self.pere.contexte_actuel.sortir()
         self.pere.migrer_contexte(nouveau_contexte)

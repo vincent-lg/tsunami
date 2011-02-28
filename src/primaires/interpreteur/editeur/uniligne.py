@@ -28,22 +28,26 @@
 # pereIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit le contexte-éditeur 'quitter'."""
+"""Ce fichier définit le contexte-éditeur 'Uniligne'."""
 
 from . import Editeur
 
-class Quitter(Editeur):
+class Uniligne(Editeur):
     
-    """Contexte-éditeur quitter.
-    Ce contexte est appelé quand on quitte l'éditeur (en entrant "q"
-    généralement).
+    """Contexte-éditeur uni_ligne.
+    Ce contexte sert à modifier des attributs de type 'str', conçu pour
+    être écrits sur une ligne (le titre d'une salle, sa zone, son mnémonic...
+    par exemple).
     
     """
     
-    nom = "editeur:base:quitter"
+    nom = "editeur:base:uniligne"
     
-    def entrer(self):
-        """Quand on entre dans le contexte"""
-        self.pere.joueur.contextes.retirer()
-        self.migrer_contexte("personnage:connexion:mode_connecte", False)
-        self.pere.envoyer("Fermeture de l'éditeur.")
+    def accueil(self):
+        """Retourne l'aide courte"""
+        return self.aide_courte.format(objet = self.objet)
+    
+    def interpreter(self, msg):
+        """Interprétation du contexte"""
+        setattr(self.objet, self.attribut, msg)
+        self.pere << self.accueil()

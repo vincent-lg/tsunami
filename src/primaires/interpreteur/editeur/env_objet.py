@@ -28,62 +28,47 @@
 # pereIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier est à la racine du package 'editeur'.
-Dans ce fichier est définie la classe Editeur, héritée de Contexte.
-Elle est détaillée plus bas.
+"""Ce fichier définit la classe 'envelope_objet' détaillée lus bas."""
 
-"""
-
-from ..contexte import Contexte
-from .env_objet import EnvelopeObjet
-
-class Editeur(Contexte):
+class EnvelopeObjet:
     
-    """Classe de base pour former des objets Editeur.
-    Ces objets formeront l'architecture d'un éditeur.
+    """Cette classe définit une envelope contenant :
+    -   l'éditeur (une zone de texte uniligne, multi-ligne, une lsite...)
+    -   l'édité : l'objet qui doit êre édité
+    -   l'attribut : l'attribut qui doit être modifié
+    
+    On peut trouver en plus quelques informations permettant de construire
+    l'éditeur :
+    -   l'aide courte : un message d'aide courte, affiché directement
+        dans l'accueil
+    -   aide longue : un message plus long affiché quand on demande de
+        l'aide sur l'éditeur
     
     """
     
-    nom = None
-    
-    def __init__(self, pere, objet=None, attribut=None):
-        """Constructeur de l'éditeur"""
-        Contexte.__init__(self, pere)
-        self.opts.prompt_clr = ""
-        self.opts.prompt_prf = ""
-        self.objet = objet
+    def __init__(self, editeur, pere, edite, attribut):
+        """Constructeur de l'envelope"""
+        self.editeur = editeur
+        self.pere = pere
+        self.objet = edite
         self.attribut = attribut
+        self.parent = None
         self.prompt = ""
         self.apercu = ""
         self.aide_courte = ""
         self.aide_longue = ""
     
-    def actualiser(self):
-        """Redéfinition d'actualiser.
-        Au lieu de migrer sur 'self', on se contente d'envoyer le
-        message d'accueil à 'self.pere'.
-        
-        """
-        self.pere.envoyer(self.accueil())
+    def construire(self):
+        """Retourne l'éditeur construit"""
+        editeur = self.editeur(self.pere, self.objet, self.attribut)
+        if self.parent:
+            editeur.opts.rci_ctx_prec = self.parent
+        editeur.prompt = self.prompt
+        editeur.aide_courte = self.aide_courte
+        editeur.aide_longue = self.aide_longue
+        return editeur
     
     def get_apercu(self):
         """Retourne l'aperçu"""
         return self.apercu.format(objet = self.objet)
     
-    def get_prompt(self):
-        """Retourne le prompt"""
-        prompt = self.prompt
-        if not prompt:
-            prompt = "-> "
-        return prompt
-
-    def apercu(self):
-        """Retourne un aperçu"""
-        return ""
-    def executer(self):
-        """Méthode d'exécution de l'objet éditeur.
-        Quand un raccourci a été reconnu comme pointant vers le contexte
-        éditeur 'self', cette méthode est appelée.
-        
-        """
-        pass

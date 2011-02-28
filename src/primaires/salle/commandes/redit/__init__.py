@@ -32,6 +32,7 @@
 
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.uniligne import Uniligne
 
 class CmdRedit(Commande):
     
@@ -52,5 +53,15 @@ class CmdRedit(Commande):
         # On construit l'éditeur
         salle = personnage.salle
         presentation = Presentation(personnage.instance_connexion, salle)
+        
+        # Editeur titre
+        titre = presentation.ajouter_choix("titre", "t", Uniligne, salle, "titre")
+        titre.parent = presentation
+        titre.prompt = "Titre de la salle : "
+        titre.apercu = "{objet.titre}"
+        titre.aide_courte = \
+            "Entrez le titre de la salle ou |cmd|/|ff| pour revenir à la " \
+            "fenêtre parente.\nTitre actuel : {objet.titre}"
+        
         personnage.contextes.ajouter(presentation)
         presentation.actualiser()
