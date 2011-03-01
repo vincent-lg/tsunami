@@ -70,7 +70,10 @@ class Module(BaseModule):
         self.commandes_anglais = []
         self.masques = {}
         
-        # Groupes d'utilisateur
+        # Editeurs
+        self.editeurs = {}
+        
+        # Groupes d'utilisateurs
         self.groupes = None
     
     def init(self):
@@ -187,3 +190,17 @@ class Module(BaseModule):
         
         raise ValueError("la commande {} ne peut être trouvée, " \
             "la recherche de {} a échoué".format(str_commande, nom_commande))
+    
+    def ajouter_editeur(self, editeur):
+        """Ajoute l'éditeur en fonction de son nom"""
+        self.editeurs[editeur.nom] = editeur
+    
+    def supprimer_editeur(self, nom):
+        """Supprime l'éditeur"""
+        del self.editeurs[nom]
+    
+    def construire_editeur(self, nom, personnage, objet):
+        """Retourne l'éditeur construit"""
+        cls_editeur = self.editeurs[nom]
+        editeur = cls_editeur(personnage, objet)
+        return editeur

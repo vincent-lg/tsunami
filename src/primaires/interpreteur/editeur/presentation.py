@@ -50,7 +50,17 @@ class Presentation(Editeur):
         Editeur.__init__(self, pere, objet, attribut)
         self.choix = OrderedDict()
         self.raccourcis = {}
-        self.ajouter_choix("quitter la fenêtre", "q", Quitter)
+        self.nom_quitter = "quitter la fenêtre"
+        self.ajouter_choix(self.nom_quitter, "q", Quitter)
+    
+    def get_raccourci_depuis_nom(self, recherche):
+        """Retourne le raccourci grâce au nom"""
+        for raccourci, nom in self.raccourcis.items():
+            if nom == recherche:
+                return raccourci
+        
+        raise KeyError("le raccourci du nom {} est introuvable".format(
+                recherche))
     
     def ajouter_choix(self, nom, raccourci, objet_editeur,
             objet_edite=None, attribut=None):
@@ -62,6 +72,15 @@ class Presentation(Editeur):
         -   l'attribut à éditer : par défaut aucun
         
         """
+        return self.ajouter_choix_avant(self.nom_quitter, nom, raccourci,
+                objet_editeur, objet_edite, attribut)
+        
+    def ajouter_choix_apres(self, apres, nom, raccourci, objet_editeur,
+            objet_edite=None, attribut=None):
+        """Ajout le choix après 'apres'.
+        Pour les autres arguments, voir la méthode 'ajouter_choix'.
+        
+        """
         if raccourci in self.raccourcis.keys():
             raise ValueError(
                 "Le raccourci {} est déjà utilisé dans cet éditeur".format(
@@ -70,9 +89,40 @@ class Presentation(Editeur):
         envelope = EnvelopeObjet(objet_editeur, self.pere, objet_edite,
                 attribut)
         self.choix[nom] = envelope
+        passage_apres = False
+        for cle in tuple(self.choix.keys()):
+            if passage_apres and cle != nom:
+                self.choix.move_to_end(cle)
+            if cle == apres:
+                passage_apres = True
+        
         self.raccourcis[raccourci] = nom
         return envelope
-    
+
+    def ajouter_choix_avant(self, avant, nom, raccourci, objet_editeur,
+            objet_edite=None, attribut=None):
+        """Ajoute le choix avant 'avant''.
+        Pour les autres arguments, voir la méthode 'ajouter_choix'.
+        
+        """
+        if raccourci in self.raccourcis.keys():
+            raise ValueError(
+                "Le raccourci {} est déjà utilisé dans cet éditeur".format(
+                raccourci))
+        
+        envelope = EnvelopeObjet(objet_editeur, self.pere, objet_edite,
+                attribut)
+        self.choix[nom] = envelope
+        passage_apres = False
+        for cle in tuple(self.choix.keys()):
+            if cle == avant:
+                passage_apres = True
+            if passage_apres and cle != nom:
+                self.choix.move_to_end(cle)
+        
+        self.raccourcis[raccourci] = nom
+        return envelope
+
     def supprimer_choix(self, nom):
         """Supprime le choix possible 'nom'"""
         # On recherche le raccourci pour le supprimer
@@ -86,7 +136,8 @@ class Presentation(Editeur):
         """Message d'accueil du contexte"""
         msg = "Edition de {}\n".format(self.objet)
         # Parcourt des choix possibles
-        for raccourci, nom in self.raccourcis.items():
+        for nom, objet in self.choix.items():
+            raccourci = self.get_raccourci_depuis_nom(nom)
             # On constitue le nom final
             # Si le nom d'origine est 'description' et le raccourci est 'd',
             # le nom final doit être '[D]escription'

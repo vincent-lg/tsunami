@@ -35,6 +35,7 @@ from .salle import Salle
 from .sorties import NOMS_SORTIES
 from .config import cfg_salle
 import primaires.salle.commandes
+from .editeurs.redit import EdtRedit
 
 class Module(BaseModule):
     
@@ -124,8 +125,12 @@ class Module(BaseModule):
             commandes.redit.CmdRedit(),
             commandes.regarder.CmdRegarder(),
         ]
+        
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
+        
+        # Ajout de l'éditeur 'redit'
+        self.importeur.interpreteur.ajouter_editeur(EdtRedit)
         
         BaseModule.init(self)
     

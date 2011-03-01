@@ -28,30 +28,5 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'redit'."""
+"""Package contenant les différents éditeurs"""
 
-from primaires.interpreteur.commande.commande import Commande
-from primaires.interpreteur.editeur.presentation import Presentation
-from primaires.interpreteur.editeur.uniligne import Uniligne
-
-class CmdRedit(Commande):
-    
-    """Commande 'redit'"""
-    
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "redit", "redit")
-        self.aide_courte = "ouvre l'éditeur de salle"
-        self.aide_longue = \
-            "Cette commande ouvre l'éditeur de salle qui permet d'éditer " \
-            "les éléments d'une salle (titre, description, sorties...). " \
-            "C'est la commande usuelle pour modifier une salle, corriger " \
-            "une faute, ajouter des objets au repop..."
-    
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        salle = personnage.salle
-        editeur = type(self).importeur.interpreteur.construire_editeur(
-                "redit", personnage, salle)
-        personnage.contextes.ajouter(editeur)
-        editeur.actualiser()

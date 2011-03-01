@@ -28,30 +28,48 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'redit'."""
+"""Package contenant l'éditeur 'redit'.
+Si des redéfinitions de contexte-éditeur standard doivent être faites, elles
+seront placées dans ce package
 
-from primaires.interpreteur.commande.commande import Commande
+Note importante : ce package contient la définition d'un éditeur, mais
+celui-ci peut très bien être étendu par d'autres modules. Au quel cas,
+les extensions n'apparaîtront pas ici.
+
+"""
+
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
 
-class CmdRedit(Commande):
+class EdtRedit(Presentation):
     
-    """Commande 'redit'"""
+    """Classe définissant l'éditeur de salle 'redit'.
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "redit", "redit")
-        self.aide_courte = "ouvre l'éditeur de salle"
-        self.aide_longue = \
-            "Cette commande ouvre l'éditeur de salle qui permet d'éditer " \
-            "les éléments d'une salle (titre, description, sorties...). " \
-            "C'est la commande usuelle pour modifier une salle, corriger " \
-            "une faute, ajouter des objets au repop..."
+    """
     
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        salle = personnage.salle
-        editeur = type(self).importeur.interpreteur.construire_editeur(
-                "redit", personnage, salle)
-        personnage.contextes.ajouter(editeur)
-        editeur.actualiser()
+    nom = "redit"
+    
+    def __init__(self, personnage, salle):
+        """Constructeur de l'éditeur"""
+        if personnage:
+            instance_connexion = personnage.instance_connexion
+        else:
+            instance_connexion = None
+        
+        Presentation.__init__(self, instance_connexion, salle)
+        if personnage and salle:
+            self.construire(salle)
+    
+    def __getinitargs__(self):
+        return (None, None)
+    
+    def construire(self, salle):
+        """Construction de l'éditeur"""
+        # Titre
+        titre = self.ajouter_choix("titre", "t", Uniligne, salle, "titre")
+        titre.parent = self
+        titre.prompt = "Titre de la salle : "
+        titre.apercu = "{objet.titre}"
+        titre.aide_courte = \
+            "Entrez le titre de la salle ou |cmd|/|ff| pour revenir à la " \
+            "fenêtre parente.\nTitre actuel : {objet.titre}"
