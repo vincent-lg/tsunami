@@ -40,6 +40,9 @@ les extensions n'apparaîtront pas ici.
 
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from .edt_coords import EdtCoords
+from .edt_zone import EdtZone
+from .edt_mnemonic import EdtMnemonic
 
 class EdtRedit(Presentation):
     
@@ -65,6 +68,60 @@ class EdtRedit(Presentation):
     
     def construire(self, salle):
         """Construction de l'éditeur"""
+        # Coordonnées
+        coords = self.ajouter_choix("coordonnées", "c", EdtCoords, salle)
+        coords.parent = self
+        coords.prompt = "Nouvelles coordonnées : "
+        coords.apercu = "{objet.coords}"
+        coords.aide_courte = \
+            "Entrez les coordonnées de la salle ou |tit|/|ff| pour revenir " \
+            "à la fenêtre mère.\n\n" \
+            "Vous avez deux possibilités pour entrer les coordonnées " \
+            "d'une salle :\n" \
+            "|cmd|INV|ff| : passe les coordonnées en invalide. Cela " \
+            "veut dire que\n" \
+            "       la salle n'a plus aucun lien géographique " \
+            "avec les autres (elle peut\n" \
+            "       naturellement avoir des sorties pointant vers " \
+            "d'autres salles)\n" \
+            "|cmd|<x>.<y>.<z>|ff| : les trois coordonnées, " \
+            "négatives ou positives,\n" \
+            "               séparées par un point.\n\n" \
+            "Exemple : |cmd|0.0.0|ff|\n\n" \
+            "Coordonnées actuelle : {objet.coords}"
+
+        # Zone
+        zone = self.ajouter_choix("zone", "z", EdtZone, salle)
+        zone.parent = self
+        zone.prompt = "Nom de la zone : "
+        zone.apercu = "{objet.zone}"
+        zone.aide_courte = \
+            "Entrez la zone de la salle ou |tit|/|ff| pour revenir à la " \
+            "fenêtre mère.\n" \
+            "Le nom de zone ne doit comporter que des lettres non " \
+            "accentuées et des chiffres,\n" \
+            "ainsi que le signe |tit|_|ff|.\n\n" \
+            "|att|Le couple 'zone:mnémonic' ne doit pas être déjà " \
+            "utilisé par une autre\n" \
+            "salle existante.|ff|\n\n" \
+            "Zone actuelle : {objet.zone}"
+
+        # Mnémonic
+        mnemonic = self.ajouter_choix("mnemonic", "m", EdtMnemonic, salle)
+        mnemonic.parent = self
+        mnemonic.prompt = "Nom du mnémonic : "
+        mnemonic.apercu = "{objet.mnemonic}"
+        mnemonic.aide_courte = \
+            "Entrez le mnémonic de la salle ou |tit|/|ff| pour revenir à la " \
+            "fenêtre mère.\n" \
+            "Le mnémonic ne doit comporter que des lettres non " \
+            "accentuées et des chiffres,\n" \
+            "ainsi que le signe |tit|_|ff|.\n\n" \
+            "|att|Le couple 'zone:mnémonic' ne doit pas être déjà " \
+            "utilisé par une autre\n" \
+            "salle existante.|ff|\n\n" \
+            "Mnémonic actuel : {objet.mnemonic}"
+        
         # Titre
         titre = self.ajouter_choix("titre", "t", Uniligne, salle, "titre")
         titre.parent = self

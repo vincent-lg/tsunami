@@ -86,6 +86,7 @@ class Salle(ObjetID):
     def _set_zone(self, zone):
         ident = self.ident
         self._zone = zone
+        self.enregistrer()
         type(self).importeur.salle.changer_ident(ident, self.ident)
     
     def _get_mnemonic(self):
@@ -93,6 +94,7 @@ class Salle(ObjetID):
     def _set_mnemonic(self, mnemonic):
         ident = self.ident
         self._mnemonic = mnemonic
+        self.enregistrer()
         type(self).importeur.salle.changer_ident(ident, self.ident)
     
     zone = property(_get_zone, _set_zone)

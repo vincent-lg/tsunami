@@ -36,6 +36,7 @@ from .sorties import NOMS_SORTIES
 from .config import cfg_salle
 import primaires.salle.commandes
 from .editeurs.redit import EdtRedit
+from .coordonnees import Coordonnees
 
 class Module(BaseModule):
     
@@ -107,7 +108,7 @@ class Module(BaseModule):
             zone, mnemonic = salle_retour.split(":")
             salle_retour = self.creer_salle(zone, mnemonic, valide=False)
             salle_retour.titre = "La salle de retour"
-            salle_arrivee.description = "Vous êtes au milieu de nulle part."
+            salle_retour.description = "Vous êtes au milieu de nulle part."
             print("Création de la salle de retour :", salle_retour)
             salle_retour = salle_retour.ident
         
@@ -172,6 +173,7 @@ class Module(BaseModule):
         self._salles et self._coords.
         
         """
+        print("On ajoute", salle.ident)
         self._salles[salle.ident] = salle
         if salle.coords.valide:
             self._coords[salle.coords.tuple()] = salle
@@ -212,3 +214,23 @@ class Module(BaseModule):
             return True
         
         return False
+    
+    def changer_ident(self, ancien_ident, nouveau_ident):
+        """Change l'identifiant d'une salle"""
+        salle = self._salles[ancien_ident]
+        del self._salles[ancien_ident]
+        self._salles[nouveau_ident] = salle
+    
+    def changer_coordonnees(self, ancien_tuple, nouvelles_coords):
+        """Change les coordonnées d'une salle.
+        Les anciennes coordonnées sont données sous la forme d'un tuple
+            (x, y, z, valide)
+        Les nouvelles sont un objet Coordonnees.
+        
+        """
+        a_x, a_y, a_z, a_valide = ancien_tuple
+        salle = nouvelles_coords.parent
+        if a_valide: # on va supprimer les anciennes coordonnées
+            del self._coords[a_x, a_y, a_z]
+        if salle and nouvelles_coords.valide:
+            self._coords[nouvelles_coords.tuple()] = salle
