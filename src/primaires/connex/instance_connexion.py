@@ -174,10 +174,12 @@ class InstanceConnexion(BaseObj):
         encodage = self.encodage
         msg = get_bytes(msg, encodage)
         
+        if not self.contexte_actuel.opts.aff_sp_cars:
+            # On remplace les caractères spéciaux
+            msg = remplacer_sp_cars(msg)
+        
         # Ajout de la couleur
         msg = ajouter_couleurs(msg, cfg_charte)
-        # On remplace les caractères spéciaux
-        msg = remplacer_sp_cars(msg)
         # Suppression des accents si l'option du contexte est activée
         if self.contexte_actuel.opts.sup_accents:
             msg = supprimer_accents(msg)

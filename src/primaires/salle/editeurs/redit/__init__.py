@@ -39,6 +39,7 @@ les extensions n'apparaîtront pas ici.
 """
 
 from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_coords import EdtCoords
 from .edt_zone import EdtZone
@@ -130,3 +131,12 @@ class EdtRedit(Presentation):
         titre.aide_courte = \
             "Entrez le titre de la salle ou |cmd|/|ff| pour revenir à la " \
             "fenêtre parente.\nTitre actuel : {objet.titre}"
+        
+        # Description
+        # Titre
+        description = self.ajouter_choix("description", "d", Description, \
+                salle.description)
+        description.parent = self
+        description.apercu = "{objet.paragraphes_indentes}"
+        description.aide_courte = \
+            "Description de la salle {}".format(salle)

@@ -81,11 +81,9 @@ class Module(BaseModule):
         if len(salles) == 0:
             s1 = self.creer_salle("picte", "1", 0, 0, 0)
             s1.titre = "La salle Picte 1"
-            s1.description = "Une description."
             s2 = self.creer_salle("picte", "2", 0, 1, 0)
             s1.sorties.ajouter_sortie("est", "est", salle_dest=s2)
             s2.titre = "La salle Picte 2"
-            s2.description = "Une autre description."
             s2.sorties.ajouter_sortie("ouest", "ouest", salle_dest=s1)
         print(self._salles, self._coords)
         
@@ -99,7 +97,6 @@ class Module(BaseModule):
             zone, mnemonic = salle_arrivee.split(":")
             salle_arrivee = self.creer_salle(zone, mnemonic, valide=False)
             salle_arrivee.titre = "La salle d'arrivée"
-            salle_arrivee.description = "Vous êtes au milieu de nulle part."
             print("Création de la salle d'arrivée :", salle_arrivee)
             salle_arrivee = salle_arrivee.ident
         
@@ -108,7 +105,6 @@ class Module(BaseModule):
             zone, mnemonic = salle_retour.split(":")
             salle_retour = self.creer_salle(zone, mnemonic, valide=False)
             salle_retour.titre = "La salle de retour"
-            salle_retour.description = "Vous êtes au milieu de nulle part."
             print("Création de la salle de retour :", salle_retour)
             salle_retour = salle_retour.ident
         

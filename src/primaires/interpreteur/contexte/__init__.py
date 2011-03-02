@@ -67,6 +67,9 @@ class OptionsContexte:
         de ligne, couleurs...).
     
     Options d'envoi :
+    *   aff_sp_cars : affiche les caractères spéciaux
+        Utile dans un contexte qui a également l'option 'echp_sp_cars' à
+        False. Elle échape les caractères spéciaux envoyé au client.
     *   sup_accents - on supprime les accents du message avant de l'envoyer
     *   prompt_clr - colorisation du prompt :
         Si un code couleur est précisé dans cette option, on l'applique au
@@ -89,6 +92,7 @@ class OptionsContexte:
         self.echp_sp_cars = True
         
         # Options d'envoi
+        self.aff_sp_cars = False
         self.sup_accents = False
         self.prompt_clr = ""
         self.prompt_prf = ""

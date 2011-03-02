@@ -31,6 +31,7 @@
 """Fichier contenant la classe Salle, détaillée plus bas."""
 
 from abstraits.id import ObjetID
+from primaires.format.description import Description
 from .coordonnees import Coordonnees
 from .sorties import Sorties
 
@@ -71,7 +72,8 @@ class Salle(ObjetID):
         self._mnemonic = mnemonic
         self.coords = Coordonnees(x, y, z, valide, self)
         self.titre = ""
-        self.description = ""
+        self.description = Description("Vous êtes au milieu de nulle part.",
+                self)
         self.sorties = Sorties()
     
     def __getinitargs__(self):
@@ -118,7 +120,7 @@ class Salle(ObjetID):
         """Le personnage regarde la salle"""
         res = ""
         res += "|mr|" + self.titre + "|ff|\n"
-        res += self.description + "\n"
+        res += str(self.description) + "\n"
         res += "Sorties : "
         res += self.afficher_sorties(personnage)
         return res
