@@ -56,29 +56,22 @@ class Description:
     
     def __str__(self):
         """Retourne la description sous la forme d'un texte 'str'"""
-        res = ""
+        res = []
         for paragraphe in self.paragraphes:
             paragraphe = self.wrap_paragraphe(paragraphe)
-            if res.endswith("|nl|") or res == "":
-                res += paragraphe
-            else:
-                res += " " + paragraphe
+            paragraphe = paragraphe.replace("|nl", "\n")
+            res.append(paragraphe)
         
-        res = res.replace("|nl|", "\n")
-        return res
+        if not res:
+            res.append("Aucune description")
+        
+        return "\n".join(res)
     
     def ajouter_paragraphe(self, paragraphe):
         """Ajoute un paragraphe.
-        Si le paragraphe contient des sauts de lignes |nl|, on le découpe
-        en plusieurs paragraphes.
         
         """
-        for ligne in paragraphe.split("|nl|"):
-            if ligne:
-                if self.paragraphes and not self.paragraphes[-1].endswith(
-                        "|nl"):
-                    self.paragraphes[-1] += "|nl|"
-                self.paragraphes.append(ligne)
+        self.paragraphes.append(paragraphe)
         
         if self.parent:
             self.parent.enregistrer()
@@ -117,9 +110,11 @@ class Description:
         if self.parent:
             self.parent.enregistrer()
     
-    def wrap_paragraphe(self, paragraphe, lien="\n", cvt_tab=True):
+    def wrap_paragraphe(self, paragraphe, lien="\n", aff_sp_cars=False):
         """Wrap un paragraphe et le retourne"""
-        if cvt_tab:
+        if aff_sp_cars:
+            paragraphe = echapper_sp_cars(paragraphe)
+        else:
             paragraphe = paragraphe.replace("|tab|", "   ")
         return lien.join(wrap(paragraphe, TAILLE_LIGNE))
     
@@ -127,13 +122,13 @@ class Description:
     def paragraphes_indentes(self):
         """Retourne les paragraphes avec une indentation du niveau spécifié"""
         indentation = "\n   "
-        res = ""
+        res = []
         for paragraphe in self.paragraphes:
             paragraphe = self.wrap_paragraphe(paragraphe, lien=indentation)
-            if res.endswith("|nl|") or res == "":
-                res += paragraphe
-            else:
-                res += " " + paragraphe
+            paragraphe = paragraphe.replace("|nl", "\n")
+            res.append(paragraphe)
         
-        res = res.replace("|nl|", indentation)
-        return indentation + res
+        if not res:
+            res.append("Aucune description")
+        
+        return indentation + indentation.join(res)

@@ -50,16 +50,18 @@ class Description(Editeur):
         """Retourne l'aide"""
         description = self.objet
         msg = self.aide_courte.format(objet = self.objet) + "\n"
-        msg += "Entrez une |tit|phrase|ff| à ajouter à la description " \
+        msg += "Entrez une |tit|phrase|ff| à ajouter à la description\n" \
                 "ou |cmd|/|ff| pour revenir à la fenêtre mère.\n\n" \
                 "Symboles :\n" \
-                "  |cmd||bar|tab|bar||ff| : symbolise une tabulation\n" \
-                "  |cmd||bar|nl|bar||ff| : symbolise un saut de ligne\n"
+                "  |cmd||tab||ff| : symbolise une tabulation\n" \
+                "  |cmd||nl||ff| : symbolise un saut de ligne\n"
         
         if len(description.paragraphes) > 0:
             no_ligne = 1
             for paragraphe in description.paragraphes:
-                paragraphe = description.wrap_paragraphe(paragraphe)
+                paragraphe = description.wrap_paragraphe(paragraphe,
+                        aff_sp_cars=True)
+                paragraphe = paragraphe.replace("\n", "\n   ")
                 msg += "\n{: 2} {}".format(no_ligne, paragraphe)
                 no_ligne += 1
         else:

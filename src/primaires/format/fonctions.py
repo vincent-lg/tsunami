@@ -46,7 +46,7 @@ Fonctions à appliquer à l'émission d'un message :
 
 # Constantes de formatage
 sp_cars_a_echapper = { # Caractères à échapper
-    "|": "|bar|",
+    "|": "_b_",
 }
 
 sp_cars_a_remplacer = {} # Dictionnaire miroir de sp_cars_a_echapper
