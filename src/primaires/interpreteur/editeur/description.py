@@ -31,6 +31,7 @@
 """Ce fichier définit le contexte-éditeur 'Description'."""
 
 from . import Editeur
+from primaires.format.fonctions import *
 
 class Description(Editeur):
     
@@ -45,6 +46,8 @@ class Description(Editeur):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
         self.opts.echp_sp_cars = False
+        self.ajouter_option("d", self.opt_supprimer)
+        self.ajouter_option("r", self.opt_remplacer)
     
     def accueil(self):
         """Retourne l'aide"""
@@ -69,29 +72,49 @@ class Description(Editeur):
         
         return msg
     
+    def opt_supprimer(self, arguments):
+        """Fonction appelé quand on souhaite supprimer un morceau de la
+        description
+        Les arguments peuvent être :
+        *   le signe '*' pour supprimer toute la description        
+        *   un nombre pour supprimer le paragraphe n°<nombre>
+        
+        """
+        description = self.objet
+        if arguments == "*": # on supprime toute la description
+            description.vider()
+            self.actualiser()
+        else:
+            # Ce doit être un nombre
+            try:
+                no = int(arguments) - 1
+                assert no >= 0 and no < len(description.paragraphes)
+            except ValueError:
+                self.pere << "|err|Numéro de ligne invalide.|ff|"
+            except AssertionError:
+                self.pere << "|err|Numéro de ligne inexistant.|ff|"
+            else:
+                description.supprimer_paragraphe(no)
+                self.actualiser()
+    
+    def opt_remplacer(self, arguments):
+        """Fonction appelé pour remplacer du texte dans la description.
+        La syntaxe de remplacement est :
+        <texte 1> / <texte à remplacer>
+        
+        """
+        description = self.objet
+        # On commence par split au niveau du pipe
+        try:
+            recherche, remplacer_par = arguments.split(" / ")
+        except ValueError:
+            self.pere << "|err|Syntaxe invalide.|ff|"
+        else:
+            description.remplacer(recherche, remplacer_par)
+            self.actualiser()
+    
     def interpreter(self, msg):
         """Interprétation du contexte"""
         description = self.objet
-        msg = msg.strip()
-        if msg.startswith("/"):
-            msg, reste = msg[1].lower(), msg[3:]
-            if msg == "d":
-                if reste == "*": # on supprime toute la description
-                    description.vider()
-                    self.actualiser()
-                else:
-                    try:
-                        no = int(reste) - 1
-                        assert no >= 0 and no < len(description.paragraphes)
-                    except ValueError:
-                        self.pere << "|err|Numéro de ligne invalide.|ff|"
-                    except AssertionError:
-                        self.pere << "|err|Numéro de ligne inexistant.|ff|"
-                    else:
-                        description.supprimer_paragraphe(no)
-                        self.actualiser()
-            else:
-                self.pere << "|err|Option invalide.|ff|"
-        else:
-            description.ajouter_paragraphe(msg)
-            self.actualiser()
+        description.ajouter_paragraphe(msg)
+        self.actualiser()

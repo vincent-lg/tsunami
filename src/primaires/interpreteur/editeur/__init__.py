@@ -34,7 +34,8 @@ Elle est détaillée plus bas.
 
 """
 
-from ..contexte import Contexte
+from primaires.format.fonctions import *
+from ..contexte import Contexte, RCI_PREC
 from .env_objet import EnvelopeObjet
 
 class Editeur(Contexte):
@@ -57,6 +58,25 @@ class Editeur(Contexte):
         self.apercu = ""
         self.aide_courte = ""
         self.aide_longue = ""
+        self.options = {}
+    
+    def __getstate__(self):
+        """On nettoie les options"""
+        dico_attr = dict(self.__dict__)
+        dico_attr["options"] = {}
+        return dico_attr
+    
+    def ajouter_option(self, option, fonction):
+        """Ajoute une option.
+        Les options sont appelables grâce au raccourci
+        '/<option> <arguments>' dans l'éditeur.
+        
+        Si l'option est appelée, la fonction correspondante dans l'éditeur
+        sera appelée. On lui passe en paramètre :
+        *   les arguments réceptionnés sous la forme d'une chaîne
+        
+        """
+        self.options[option] = fonction
     
     def actualiser(self):
         """Redéfinition d'actualiser.
@@ -80,10 +100,33 @@ class Editeur(Contexte):
     def apercu(self):
         """Retourne un aperçu"""
         return ""
-    def executer(self):
-        """Méthode d'exécution de l'objet éditeur.
-        Quand un raccourci a été reconnu comme pointant vers le contexte
-        éditeur 'self', cette méthode est appelée.
+    
+    def receptionner(self, msg):
+        """Méthode appelée quand l'éditeur reçoit un message.
+        On le redirige vers 'interpreter' après avoir appliqué les options
+        de réception.
+        
+        On déduit l'émetteur, c'est le père du contexte (self.pere).
         
         """
-        pass
+        emt = self.pere
+        if self.opts.echp_sp_cars:
+            msg = echapper_sp_cars(msg)
+        
+        # Si un contexte précédent est défini et que le client a entré
+        # RCI_PREC, on retourne au contexte précédent
+        if self.opts.rci_ctx_prec and msg == RCI_PREC:
+            self.migrer_contexte(self.opts.rci_ctx_prec)
+        elif msg.startswith(RCI_PREC):
+            # C'est une option
+            # On extrait le nom de l'option
+            mots = msg.split(" ")
+            option = mots[0][1:]
+            arguments = " ".join(mots[1:])
+            if option not in self.options.keys():
+                emt << "|err|Option invalide {}.|ff|".format(option)
+            else: # On appelle la fonction correspondante à l'option
+                fonction = self.options[option]
+                fonction(arguments)
+        else:
+            self.interpreter(msg)

@@ -96,7 +96,7 @@ class Description:
         """
         diff = len(origine) - len(par)
         for i, paragraphe in enumerate(self.paragraphes):
-            paragraphe = sup_accents(paragraphe).lower()
+            paragraphe = supprimer_accents(paragraphe).lower()
             # On cherche 'origine'
             no_car = paragraphe.find(origine)
             nb_passage = 0
