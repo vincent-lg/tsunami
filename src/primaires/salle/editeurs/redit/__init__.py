@@ -89,6 +89,14 @@ class EdtRedit(Presentation):
             "négatives ou positives,\n" \
             "               séparées par un point.\n\n" \
             "Exemple : |cmd|0.0.0|ff|\n\n" \
+            "Vous pouvez également utiliser des options pour déplacer " \
+            "une salle. Par\n" \
+            "exemple, |cmd|/h|ff| déplacera la salle vers le haut si aucune " \
+            "salle n'a déjà ces\n" \
+            "coordonnées dans l'univers.\n" \
+            "Les aliases sont |cmd|s|ff|, |cmd|se|ff|, |cmd|o|ff|, " \
+            "|cmd|no|ff|, |cmd|n|ff|, |cmd|ne|ff|, |cmd|e|ff|, " \
+            "|cmd|se|ff|, |cmd|b|ff| et |cmd|h|ff|.\n\n" \
             "Coordonnées actuelle : {objet.coords}"
 
         # Zone
