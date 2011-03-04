@@ -94,18 +94,17 @@ class Description:
         Le remplacement ne tient compte ni des majuscules, ni des accents.
         
         """
+        origine = supprimer_accents(origine)
         diff = len(origine) - len(par)
         for i, paragraphe in enumerate(self.paragraphes):
             paragraphe = supprimer_accents(paragraphe).lower()
             # On cherche 'origine'
             no_car = paragraphe.find(origine)
-            nb_passage = 0
             while no_car >= 0:
-                no_car_o = no_car + diff * nb_passage
                 self.paragraphes[i] = self.paragraphes[i][:no_car] + \
                         par + self.paragraphes[i][no_car + len(origine):]
-                no_car = paragraphe.find(origine, no_car + 1)
-                nb_passage += 1
+                paragraphe = supprimer_accents(self.paragraphes[i]).lower()
+                no_car = paragraphe.find(origine, no_car + len(par))
         
         if self.parent:
             self.parent.enregistrer()

@@ -52,12 +52,21 @@ class Description(Editeur):
     def accueil(self):
         """Retourne l'aide"""
         description = self.objet
+        
+        # Message d'aide
         msg = self.aide_courte.format(objet = self.objet) + "\n"
         msg += "Entrez une |tit|phrase|ff| à ajouter à la description\n" \
                 "ou |cmd|/|ff| pour revenir à la fenêtre mère.\n\n" \
                 "Symboles :\n" \
                 "  |cmd||tab||ff| : symbolise une tabulation\n" \
-                "  |cmd||nl||ff| : symbolise un saut de ligne\n"
+                "  |cmd||nl||ff| : symbolise un saut de ligne\n\n" \
+                "Options :\n" \
+                "  |cmd|/d <numéro>/*|ff| : supprime un paragraphe ou " \
+                "toute la description\n" \
+                "  |cmd|/r <texte 1> / <texte 2>|ff| : remplace " \
+                "|tit|texte 1|ff| par |tit|texte 2|ff|\n\n" \
+                "Pour ajouter un paragraphe, entrez-le tout simplement.\n\n" \
+                "Description existante :\n"
         
         if len(description.paragraphes) > 0:
             no_ligne = 1
