@@ -48,12 +48,17 @@ class Joueur(Personnage):
         self.groupe = "joueur"
         self.compte = None
         self.instance_connexion = None
+        self.connecte = False
     
     def _get_encodage(self):
         """Retourne l'encodage du compte"""
         return self.compte.encodage
     
     encodage = property(_get_encodage)
+    
+    def est_connecte(self):
+        """Retourne la valeur de self.connecte"""
+        return self.connecte
     
     def envoyer(self, msg):
         """On redirige sur l'envoie de l'instance de connexion."""

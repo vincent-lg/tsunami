@@ -28,43 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire perso."""
+"""Fichier contenant le masque <message>."""
 
-from abstraits.module import *
-from primaires.perso import commandes
-from primaires.perso import masques
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
 
-class Module(BaseModule):
+class Message(Masque):
     
-    """Module gérant la classe Personnage qui sera héritée pour construire
-    des joueurs et NPCs. Les mécanismes propres au personnage (c'est-à-dire
-    indépendant de la connexion et liées à l'univers) seront gérées ici.
-    
-    En revanche, les contextes de connexion ou de création d'un personnage
-    ne se trouve pas ici (il s'agit d'informations propres à un joueur, non
-    à un NPC.
+    """Masque <message>.
+    On attend un message en paramètre.
     
     """
     
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "perso", "primaire")
-        self.commandes = []
+    nom = "message"
     
-    def init(self):
-        """Méthode d'initialisation du module"""
-        # Ajout des masques dans l'interpréteur
-        self.importeur.interpreteur.ajouter_masque(masques.commande.Commande)
-        self.importeur.interpreteur.ajouter_masque(masques.message.Message)
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self)
+        self.nom_complet = "message"
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        message = liste_vers_chaine(commande).lstrip()
         
-        # On ajoute les commandes du module
-        self.commandes = [
-            commandes.commande.CmdCommande(),
-            commandes.dire.CmdDire(),
-            commandes.qui.CmdQui(),
-        ]
+        if not message:
+            raise ErreurValidation( \
+                "Que voulez-vous dire ?")
         
-        for cmd in self.commandes:
-            self.importeur.interpreteur.ajouter_commande(cmd)
+        commande[:] = []
+        self.message = message
         
-        BaseModule.init(self)
+        return True

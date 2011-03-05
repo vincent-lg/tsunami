@@ -66,6 +66,17 @@ class Module(BaseModule):
         
         return tuple(joueurs)
     
+    @property
+    def joueurs_connectes(self):
+        """Retourne un tuple des joueurs connectés"""
+        joueurs = []
+        for compte in self.comptes.values():
+            for joueur in compte.joueurs:
+                if joueur.est_connecte():
+                    joueurs.append(joueur)
+        
+        return tuple(joueurs)
+    
     def config(self):
         """Configuration du module.
         On crée le fichier de configuration afin de l'utiliser plus tard
@@ -160,6 +171,11 @@ class Module(BaseModule):
             raise KeyError("L'ID {0} ne se trouve pas dans les instances " \
                     "connectées".format(repr(client)))
         instance = self.instances[client]
+        print(instance, instance.joueur)
+        if instance.joueur:
+            print("  on te déconnecte")
+            instance.joueur.connecte = False
+            print(" ", instance.joueur.connecte)
         if instance.contexte_actuel:
             instance.contexte_actuel.deconnecter()
         

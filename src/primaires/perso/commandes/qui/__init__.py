@@ -34,8 +34,6 @@
 
 from primaires.interpreteur.commande.commande import Commande
 
-NOM_GROUPE = "connexions"
-
 class CmdQui(Commande):
     
     """Commande 'qui'.
@@ -53,14 +51,11 @@ class CmdQui(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
-        joueurs = []
-        if NOM_GROUPE in type(self.importeur).parid:
-            for instance in type(self.importeur).parid[NOM_GROUPE].values():
-                if instance.joueur:
-                    joueurs.append(instance.joueur.nom)
+        joueurs = type(self).importeur.connex.joueurs_connectes
         if not joueurs:
-            personnage.envoyer("Aucun joueurs ne semble être" \
+            personnage.envoyer("Aucun joueurs ne semble être " \
                     "présent, mais qui est tu alors ?")
         else:
+            noms_joueurs = sorted([joueur.nom for joueur in joueurs])
             personnage.envoyer("Liste des joueurs :\n  " + \
-                    "\n  ".join(sorted(joueurs)))
+                    "\n  ".join(noms_joueurs))

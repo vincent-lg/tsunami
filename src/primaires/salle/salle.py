@@ -116,6 +116,16 @@ class Salle(ObjetID):
                 res += "\n  {} : {}".format(nom, sortie.salle_dest.ident)
         return res
     
+    def envoyer(self, message, exceptions=()):
+        """Envoie le message aux personnages présents dans la salle.
+        Les personanges présents dans l'exception ne recevront pas le
+        message.
+        
+        """
+        for joueur in type(self).importeur.connex.joueurs_connectes:
+            if joueur.salle is self and joueur not in exceptions:
+                joueur.envoyer(message)
+    
     def regarder(self, personnage):
         """Le personnage regarde la salle"""
         res = ""

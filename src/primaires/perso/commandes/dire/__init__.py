@@ -28,43 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire perso."""
+"""Package contenant la commande 'dire'.
 
-from abstraits.module import *
-from primaires.perso import commandes
-from primaires.perso import masques
+"""
 
-class Module(BaseModule):
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdDire(Commande):
     
-    """Module gérant la classe Personnage qui sera héritée pour construire
-    des joueurs et NPCs. Les mécanismes propres au personnage (c'est-à-dire
-    indépendant de la connexion et liées à l'univers) seront gérées ici.
-    
-    En revanche, les contextes de connexion ou de création d'un personnage
-    ne se trouve pas ici (il s'agit d'informations propres à un joueur, non
-    à un NPC.
+    """Commande 'dire'.
     
     """
     
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "perso", "primaire")
-        self.commandes = []
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "dire", "say")
+        self.schema = "<message>"
+        self.aide_courte = "dit une phrase dans la votre salle"
+        self.aide_longue = \
+            "Cette commande permet de dire une phrase dans la salle " \
+            "où vous vous trouvez. Tous les personnages présents dans " \
+            "la salle l'entendront. C'est la commande standard pour " \
+            "discuter RP dans l'univers. Elle prend simplement en " \
+            "paramètre le message que vous souhaitez dire."
     
-    def init(self):
-        """Méthode d'initialisation du module"""
-        # Ajout des masques dans l'interpréteur
-        self.importeur.interpreteur.ajouter_masque(masques.commande.Commande)
-        self.importeur.interpreteur.ajouter_masque(masques.message.Message)
-        
-        # On ajoute les commandes du module
-        self.commandes = [
-            commandes.commande.CmdCommande(),
-            commandes.dire.CmdDire(),
-            commandes.qui.CmdQui(),
-        ]
-        
-        for cmd in self.commandes:
-            self.importeur.interpreteur.ajouter_commande(cmd)
-        
-        BaseModule.init(self)
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation de la commande"""
+        message = dic_masques["message"].message
+        salle = personnage.salle
+        moi = "Vous dites : " + message
+        autre = personnage.nom + " dit : " + message
+        personnage.envoyer(moi)
+        salle.envoyer(autre, (personnage, ))

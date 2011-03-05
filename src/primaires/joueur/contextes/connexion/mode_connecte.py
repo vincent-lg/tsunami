@@ -62,6 +62,7 @@ class ModeConnecte(Contexte):
     def entrer(self):
         """En entrant dans le contexte :
         -   on vérifie que la salle du joueur est valide
+        -   on déclare le joueur comme 'connecté'
         
         """
         joueur = self.pere.joueur
@@ -70,6 +71,8 @@ class ModeConnecte(Contexte):
             cle = type(self).importeur.salle.salle_retour
             salle = type(self).importeur.salle[cle]
             joueur.salle = salle
+        
+        joueur.connecte = True
     
     def accueil(self):
         """Message d'accueil du contexte"""

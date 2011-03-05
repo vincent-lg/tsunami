@@ -99,9 +99,9 @@ class Module(BaseModule):
         masquer = client.masquer
         avant = time.time()
         self.callbacks["reception"].executer(client, msg)
-        apres = time.time()
-        diff = apres - avant
         if nb_hotboot == type(self.importeur).nb_hotboot:
+            apres = time.time()
+            diff = apres - avant
             if masquer:
                 msg = "|rg|masque|ff|"
             if self.stats.nb_commandes == 0:
@@ -114,5 +114,5 @@ class Module(BaseModule):
             self.stats.nb_commandes += 1
             self.stats.max_commandes[diff] = msg
         
-        if not masquer:
-            print("Exécution de", msg, "en", diff, "sec")
+            if not masquer:
+                print("Exécution de", msg, "en", diff, "sec")
