@@ -61,13 +61,12 @@ class NouveauNom(Contexte):
         """En sortant du contexte :
         -   on vérifie que la salle du joueur est valide
         
-        
+        """
         if self.pere.joueur.salle is None:
             # On recherche la salle
             cle = type(self).importeur.salle.salle_arrivee
             salle = type(self).importeur.salle[cle]
-            self.pere.joueur.salle = salle"""
-        pass
+            self.pere.joueur.salle = salle
     
     def accueil(self):
         """Message d'accueil du contexte"""

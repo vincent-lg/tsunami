@@ -67,6 +67,14 @@ class Compte(ObjetID):
         """Méthode retournant les valeurs par défaut du constructeur"""
         return ("", )
     
+    def __setstate__(self, dico_attr):
+        """On s'assure :
+        -   que le contexte est bien remis à None
+        
+        """
+        dico_attr["contexte"] = None
+        ObjetID.__setstate__(self, dico_attr)
+    
     def hash_mot_de_pass(self, clef_salage, type_chiffrement, mot_de_passe):
         """Méthode appelé pour hasher le mot de passe"""
         mot_de_passe = str(clef_salage + mot_de_passe).encode()
