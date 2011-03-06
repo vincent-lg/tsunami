@@ -75,26 +75,25 @@ class EdtRedit(Presentation):
         coords.prompt = "Nouvelles coordonnées : "
         coords.apercu = "{objet.coords}"
         coords.aide_courte = \
-            "Entrez les coordonnées de la salle ou |tit|/|ff| pour revenir " \
-            "à la fenêtre mère.\n\n" \
+            "Entrez les |ent|coordonnées|ff| de la salle ou |cmd|/|ff| pour " \
+            "revenir à la fenêtre mère.\n\n" \
             "Vous avez deux possibilités pour entrer les coordonnées " \
             "d'une salle :\n" \
-            "|cmd|INV|ff| : passe les coordonnées en invalide. Cela " \
-            "veut dire que\n" \
-            "       la salle n'a plus aucun lien géographique " \
-            "avec les autres (elle peut\n" \
+            " |cmd|INV|ff| : passe les coordonnées en invalide. Cela " \
+            "signifie que la salle\n" \
+            "       n'a plus aucun lien géographique avec les autres " \
+            "les autres (elle peut\n" \
             "       naturellement avoir des sorties pointant vers " \
-            "d'autres salles)\n" \
-            "|cmd|<x>.<y>.<z>|ff| : les trois coordonnées, " \
-            "négatives ou positives,\n" \
-            "               séparées par un point.\n\n" \
+            "d'autres salles) ;\n" \
+            " |cmd|<x>.<y>.<z>|ff| : les trois coordonnées, négatives " \
+            "ou positives, séparées\n               par des points.\n\n" \
             "Exemple : |cmd|0.0.0|ff|\n\n" \
             "Vous pouvez également utiliser des options pour déplacer " \
             "une salle. Par\n" \
             "exemple, |cmd|/h|ff| déplacera la salle vers le haut si aucune " \
             "salle n'a déjà ces\n" \
             "coordonnées dans l'univers.\n" \
-            "Les aliases sont |cmd|s|ff|, |cmd|se|ff|, |cmd|o|ff|, " \
+            "Les alias sont |cmd|s|ff|, |cmd|se|ff|, |cmd|o|ff|, " \
             "|cmd|no|ff|, |cmd|n|ff|, |cmd|ne|ff|, |cmd|e|ff|, " \
             "|cmd|se|ff|, |cmd|b|ff| et |cmd|h|ff|.\n\n" \
             "Coordonnées actuelle : {objet.coords}"
@@ -121,7 +120,7 @@ class EdtRedit(Presentation):
         mnemonic.prompt = "Nom du mnémonic : "
         mnemonic.apercu = "{objet.mnemonic}"
         mnemonic.aide_courte = \
-            "Entrez le mnémonic de la salle ou |tit|/|ff| pour revenir à la " \
+            "Entrez le mnémonic de la salle ou |cmd|/|ff| pour revenir à la " \
             "fenêtre mère.\n" \
             "Le mnémonic ne doit comporter que des lettres non " \
             "accentuées et des chiffres,\n" \

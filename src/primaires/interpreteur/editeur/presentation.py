@@ -142,9 +142,11 @@ class Presentation(Editeur):
             # Si le nom d'origine est 'description' et le raccourci est 'd',
             # le nom final doit être '[D]escription'
             pos = nom.find(raccourci)
-            nom_m = nom[:pos] + " [|cmd|" + raccourci.upper() + "|ff|]" + \
-                    nom[pos + len(raccourci):]
-            msg += "\n" + nom_m
+            raccourci = (pos != 1) and raccourci.upper() or raccourci
+            nom_maj = nom.capitalize()
+            nom_m = nom_maj[:pos] + "[|cmd|" + raccourci + "|ff|]" + \
+                    nom_maj[pos + len(raccourci):]
+            msg += "\n " + nom_m
             envelope = self.choix[nom]
             apercu = envelope.get_apercu()
             if apercu:

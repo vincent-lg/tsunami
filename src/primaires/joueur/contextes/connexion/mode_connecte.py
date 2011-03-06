@@ -80,7 +80,7 @@ class ModeConnecte(Contexte):
     
     def get_prompt(self):
         """Méthode du prompt du contexte"""
-        return "[0000000]"
+        return "- - - - -\n"
     
     def interpreter(self, msg):
         """Méthode d'interprétation.
