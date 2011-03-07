@@ -76,6 +76,30 @@ class EdtRedit(Presentation):
         coords.apercu = "{objet.coords}"
         coords.aide_courte = \
             "Entrez les |ent|coordonnées|ff| de la salle ou |cmd|/|ff| pour " \
+            "revenir à la fenêtre mère.\n" \
+            "Les coordonnées permettent de repérer géographiquement une " \
+            "salle dans\n" \
+            "l'espace, selon les axes usuels |rgc|x|ff|, |vrc|y|ff| et " \
+            "|blc|z|ff|.\n\n" \
+            "Vous avez plusieurs possibilités d'édition :\n" \
+            "- |cmd|INV|ff| : passe les coordonnées en invalide. Cela " \
+            "signifie que la salle n'a\n" \
+            "        plus aucun lien géographique avec les autres les " \
+            "autres (elle peut\n" \
+            "        naturellement avoir des sorties pointant vers d'autres " \
+            "salles) ;\n" \
+            "- |cmd|<x>.<y>.<z>|ff| : les trois coordonnées, négatives ou " \
+            "positives, séparées\n" \
+            "                par des points (par exemple, -1.2.0).\n" \
+            "- |cmd|/h|ff| : déplace la salle vers le haut. De même, " \
+            "|cmd|/s|ff|, |cmd|/so|ff|, |cmd|/o|ff|, |cmd|/no|ff|, " \
+            "|cmd|/n|ff|, |cmd|/ne|ff|, |cmd|\n|ff|" \
+            "       |cmd|/e|ff|, |cmd|/se|ff| et |cmd|/b|ff| déplacent la " \
+            "salle dans n'importe quelle direction,\n" \
+            "       si les coordonnées d'arrivée ne sont pas déjà " \
+            "utilisées.\n\n" \
+            "Coordonnées actuelles : |bc|{objet.coords}|ff|"
+        """Entrez les |ent|coordonnées|ff| de la salle ou |cmd|/|ff| pour " \
             "revenir à la fenêtre mère.\n\n" \
             "Vous avez deux possibilités pour entrer les coordonnées " \
             "d'une salle :\n" \
@@ -96,7 +120,7 @@ class EdtRedit(Presentation):
             "Les alias sont |cmd|s|ff|, |cmd|se|ff|, |cmd|o|ff|, " \
             "|cmd|no|ff|, |cmd|n|ff|, |cmd|ne|ff|, |cmd|e|ff|, " \
             "|cmd|se|ff|, |cmd|b|ff| et |cmd|h|ff|.\n\n" \
-            "Coordonnées actuelle : {objet.coords}"
+            "Coordonnées actuelle : {objet.coords}"""
 
         # Zone
         zone = self.ajouter_choix("zone", "z", EdtZone, salle)
@@ -104,15 +128,14 @@ class EdtRedit(Presentation):
         zone.prompt = "Nom de la zone : "
         zone.apercu = "{objet.zone}"
         zone.aide_courte = \
-            "Entrez la zone de la salle ou |tit|/|ff| pour revenir à la " \
-            "fenêtre mère.\n" \
-            "Le nom de zone ne doit comporter que des lettres non " \
-            "accentuées et des chiffres,\n" \
-            "ainsi que le signe |tit|_|ff|.\n\n" \
-            "|att|Le couple 'zone:mnémonic' ne doit pas être déjà " \
-            "utilisé par une autre\n" \
-            "salle existante.|ff|\n\n" \
-            "Zone actuelle : {objet.zone}"
+            "Entrez la |ent|zone|ff| de la salle ou |cmd|/|ff| pour revenir " \
+            "à la fenêtre mère.\n" \
+            "La nom de la zone peut comporter lettres non accentuées, " \
+            "chiffres et\n" \
+            "undescores (le signe |ent|_|ff|).\n" \
+            "|att|Le couple 'zone:mnémonic' doit être unique et différent " \
+            "pour chaque salle !|ff|\n\n" \
+            "Zone actuelle : |bc|{objet.zone}|ff|"
 
         # Mnémonic
         mnemonic = self.ajouter_choix("mnemonic", "m", EdtMnemonic, salle)
@@ -120,15 +143,13 @@ class EdtRedit(Presentation):
         mnemonic.prompt = "Nom du mnémonic : "
         mnemonic.apercu = "{objet.mnemonic}"
         mnemonic.aide_courte = \
-            "Entrez le mnémonic de la salle ou |cmd|/|ff| pour revenir à la " \
-            "fenêtre mère.\n" \
-            "Le mnémonic ne doit comporter que des lettres non " \
-            "accentuées et des chiffres,\n" \
-            "ainsi que le signe |tit|_|ff|.\n\n" \
-            "|att|Le couple 'zone:mnémonic' ne doit pas être déjà " \
-            "utilisé par une autre\n" \
-            "salle existante.|ff|\n\n" \
-            "Mnémonic actuel : {objet.mnemonic}"
+            "Entrez le |ent|mnémonic|ff| de la salle ou |cmd|/|ff| pour " \
+            "revenir à la fenêtre mère.\n" \
+            "Le mnémonic peut comporter lettres non accentuées, chiffres et\n" \
+            "undescores (le signe |ent|_|ff|).\n" \
+            "|att|Le couple 'zone:mnémonic' doit être unique et différent " \
+            "pour chaque salle !|ff|\n\n" \
+            "Mnémonic actuel : |bc|{objet.mnemonic}|ff|"
         
         # Titre
         titre = self.ajouter_choix("titre", "t", Uniligne, salle, "titre")
@@ -136,8 +157,8 @@ class EdtRedit(Presentation):
         titre.prompt = "Titre de la salle : "
         titre.apercu = "{objet.titre}"
         titre.aide_courte = \
-            "Entrez le titre de la salle ou |cmd|/|ff| pour revenir à la " \
-            "fenêtre parente.\nTitre actuel : {objet.titre}"
+            "Entrez le |ent|titre|ff| de la salle ou |cmd|/|ff| pour revenir " \
+            "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
         
         # Description
         # Titre

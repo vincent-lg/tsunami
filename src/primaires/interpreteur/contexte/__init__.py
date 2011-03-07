@@ -71,6 +71,8 @@ class OptionsContexte:
         Utile dans un contexte qui a également l'option 'echp_sp_cars' à
         False. Elle échape les caractères spéciaux envoyé au client.
     *   sup_accents - on supprime les accents du message avant de l'envoyer
+    *   separateur - permet d'afficher une ligne de séparation avant l'accueil
+        d'un contexte, par souci de clareté (cas des éditeurs)
     *   prompt_clr - colorisation du prompt :
         Si un code couleur est précisé dans cette option, on l'applique au
         prompt pour le faire ressortir sur le texte
@@ -94,6 +96,7 @@ class OptionsContexte:
         # Options d'envoi
         self.aff_sp_cars = False
         self.sup_accents = False
+        self.separateur = None
         self.prompt_clr = ""
         self.prompt_prf = ""
         
@@ -208,6 +211,8 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         self.pere.contexte_actuel.sortir()
         self.pere.migrer_contexte(nouveau_contexte)
         self.pere.contexte_actuel.entrer()
+        if self.pere.contexte_actuel.opts.separateur is not None:
+            self.pere.envoyer(self.pere.contexte_actuel.opts.separateur)
         if nouveau_contexte is self.pere.contexte_actuel and afficher_accueil:
             # Cette condition est là pour éviter qu'en cas de migration de
             # contexte dans la méthode 'entrer', le message d'accueil ne

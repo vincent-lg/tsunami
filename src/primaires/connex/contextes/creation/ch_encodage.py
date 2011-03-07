@@ -40,8 +40,8 @@ ENCODAGES = [
 
 class ChangerEncodage(Contexte):
     """Contexte de changement d'encodage.
-    On affiche au client plusieurs pereibilités d'encodage.
-    Il est censé afficher celui qu'il voit correctement.
+    On affiche au client plusieurs possibilités d'encodage.
+    Il est censé choisir celui qu'il voit correctement.
     On part du principe que l'encodage de sortie est le même que l'encodage
     d'entrée. Ainsi, une fois que le client a choisi son encodage, on le
     répercute sur l'encodage du client.
