@@ -63,14 +63,33 @@ class ModeConnecte(Contexte):
         """En entrant dans le contexte :
         -   on vérifie que la salle du joueur est valide
         -   on déclare le joueur comme 'connecté'
+        -   si un autre joueur est connecté sous le même nom, on déconnecte
+            l'ancien
         
         """
+        serveur = type(self).importeur.serveur
         joueur = self.pere.joueur
         if joueur.salle is None:
             # On recherche la salle
             cle = type(self).importeur.salle.salle_retour
             salle = type(self).importeur.salle[cle]
             joueur.salle = salle
+        
+        # On verrouille la déconnexion
+        # Autrement dit, on déconnecte simplement les instances
+        # conflictuelles, pas les joueurs derrière
+        joueur.garder_connecte = True
+        for connecte in type(self).importeur.connex.instances.values():
+            joueur_connecte = connecte.joueur
+            if joueur_connecte and connecte is not self.pere and \
+                    joueur_connecte is joueur:
+                connecte.envoyer("|att|Un autre client demande à utiliser " \
+                    "ce personnage.\nVous allez être déconnecté.|ff|")
+                connecte.deconnecter("un autre client se connecte sur " \
+                        "ce personnage")
+        
+        serveur.verifier_deconnexions()
+        joueur.garder_connecte = False
         
         joueur.connecte = True
     

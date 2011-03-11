@@ -69,7 +69,14 @@ class ChoisirPersonnage(Contexte):
         for i, joueur in enumerate(self.pere.compte.joueurs):
             no = " |cmd|" + str(i + 1) + "|ff|"
             ret += "\n" + no + " pour jouer |ent|{0}|ff|".format( \
-                joueur.nom.capitalize())
+                joueur.nom)
+            if joueur.est_connecte():
+                ret += " (connecté sur "
+                adresse_ip = joueur.instance_connexion.adresse_ip
+                if self.pere.adresse_ip == adresse_ip:
+                    ret += "la même adresse)"
+                else:
+                    ret += "l'adresse {})".format(adresse_ip)
         
         if len(self.pere.compte.joueurs) > 0:
             # on saute deux lignes

@@ -56,27 +56,6 @@ class Module(BaseModule):
         self.cpt_logger = type(self.importeur).man_logs.creer_logger( \
                 "connex", "comptes")
     
-    @property
-    def joueurs(self):
-        """Retourne un tuple des joueurs existants"""
-        joueurs = []
-        for compte in self.comptes.values():
-            for joueur in compte.joueurs:
-                joueurs.append(joueur)
-        
-        return tuple(joueurs)
-    
-    @property
-    def joueurs_connectes(self):
-        """Retourne un tuple des joueurs connectés"""
-        joueurs = []
-        for compte in self.comptes.values():
-            for joueur in compte.joueurs:
-                if joueur.est_connecte():
-                    joueurs.append(joueur)
-        
-        return tuple(joueurs)
-    
     def config(self):
         """Configuration du module.
         On crée le fichier de configuration afin de l'utiliser plus tard
@@ -149,6 +128,27 @@ class Module(BaseModule):
                     "connectées".format(repr(item)))
         return self.instances[item]
     
+    @property
+    def joueurs(self):
+        """Retourne un tuple des joueurs existants"""
+        joueurs = []
+        for compte in self.comptes.values():
+            for joueur in compte.joueurs:
+                joueurs.append(joueur)
+        
+        return tuple(joueurs)
+    
+    @property
+    def joueurs_connectes(self):
+        """Retourne un tuple des joueurs connectés"""
+        joueurs = []
+        for compte in self.comptes.values():
+            for joueur in compte.joueurs:
+                if joueur.est_connecte():
+                    joueurs.append(joueur)
+        
+        return tuple(joueurs)
+    
     def ajouter_instance(self, client):
         """Cette méthode permet d'ajouter une instance de connexion.
         Elle est appelée quand la connexion est établie avec le serveur.
@@ -170,13 +170,13 @@ class Module(BaseModule):
         if client not in self.instances:
             raise KeyError("L'ID {0} ne se trouve pas dans les instances " \
                     "connectées".format(repr(client)))
+        
         instance = self.instances[client]
-        print(instance, instance.joueur)
-        if instance.joueur:
-            print("  on te déconnecte")
-            instance.joueur.connecte = False
-            print(" ", instance.joueur.connecte)
-        if instance.contexte_actuel:
+        joueur = instance.joueur
+        if joueur:
+            joueur.connecte = False
+            
+        if instance.contexte_actuel and not joueur.garder_connecte:
             instance.contexte_actuel.deconnecter()
         
         del self.instances[client]
