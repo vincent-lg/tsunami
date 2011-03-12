@@ -49,6 +49,7 @@ class Joueur(Personnage):
         self.compte = None
         self.instance_connexion = None
         self.connecte = False
+        self.garder_connecte = False
     
     def _get_encodage(self):
         """Retourne l'encodage du compte"""

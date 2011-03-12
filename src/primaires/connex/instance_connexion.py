@@ -114,6 +114,16 @@ class InstanceConnexion(BaseObj):
     
     contexte_actuel = property(_get_contexte_actuel, _set_contexte_actuel)
     
+    @property
+    def adresse_ip(self):
+        """Retourne l'adresse IP de l'instance ou 'inconnue'"""
+        if self.client:
+            adresse = self.client.adresse_ip
+        else:
+            adresse = "inconnue"
+        
+        return adresse
+    
     def creer_depuis(self, autre):
         """Cette méthode se charge de construire self sur le modèle de autre
         (une autre instance de connexion).
