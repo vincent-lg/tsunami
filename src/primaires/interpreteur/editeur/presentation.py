@@ -134,7 +134,7 @@ class Presentation(Editeur):
     
     def accueil(self):
         """Message d'accueil du contexte"""
-        msg = "|vr|<|ff| Edition de {}\n".format(self.objet)
+        msg = "|vr|||ff| Edition de {}\n".format(self.objet)
         msg += self.opts.separateur + "\n"
         # Parcourt des choix possibles
         for nom, objet in self.choix.items():

@@ -50,7 +50,7 @@ class Editeur(Contexte):
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Contexte.__init__(self, pere)
-        self.opts.separateur = "|vr|>=======---------------------------------" \
+        self.opts.separateur = "|vr|+----------------------------------------" \
                                 "-------------------------------------|ff|"
         self.opts.prompt_clr = ""
         self.opts.prompt_prf = ""
