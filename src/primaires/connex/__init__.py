@@ -176,7 +176,7 @@ class Module(BaseModule):
         if joueur:
             joueur.connecte = False
             
-        if instance.contexte_actuel and not joueur.garder_connecte:
+        if joueur and instance.contexte_actuel and not joueur.garder_connecte:
             instance.contexte_actuel.deconnecter()
         
         del self.instances[client]
