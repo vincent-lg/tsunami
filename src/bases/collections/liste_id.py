@@ -34,9 +34,9 @@ class ListeID:
     
     """Une version de liste destinée à contenir des objets IDs."""
     
-    def __init__(self, liste=[]):
+    def __init__(self):
         """Constructeur"""
-        self.__liste = liste
+        self.__liste = []
     
     def __getitem__(self, item):
         """Retourne l'objet correspondant à l'ID."""
@@ -66,6 +66,10 @@ class ListeID:
     def __len__(self):
         """Retourne la taille de la liste"""
         return len(self.__liste)
+    
+    def __str__(self):
+        """Retourne l'affichage de la liste"""
+        return "id" + str(self.__liste)
     
     def append(self, objet):
         """Ajoute objet à la fin de la liste"""
