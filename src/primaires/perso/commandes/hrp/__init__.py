@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'ooc'.
+"""Package contenant la commande 'hrp'.
 
 """
 
@@ -36,7 +36,7 @@ from primaires.interpreteur.commande.commande import Commande
 
 class CmdHrp(Commande):
     
-    """Commande 'ooc'.
+    """Commande 'hrp'.
     
     """
     
@@ -54,9 +54,9 @@ class CmdHrp(Commande):
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         message = dic_masques["message"].message
-        moi = "|cyb|+ Vous gueulez au monde : " + message + "|ff|"
+        moi = "|cyc|[HRP] Vous dites : " + message + "|ff|"
         personnage.envoyer(moi)
-        autre = "|cyb|+ " + personnage.nom + " gueule au monde : " + message + "|ff|"
+        autre = "|cyc|[HRP] " + personnage.nom + " dit : " + message + "|ff|"
         for joueur in type(self).importeur.connex.joueurs_connectes:
-            if not joueur == personnage:
+            if joueur is not personnage:
                 joueur.envoyer(autre)

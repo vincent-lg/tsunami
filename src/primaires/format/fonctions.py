@@ -105,7 +105,7 @@ COULEURS = {
     b"|jn|": b"\x1b[1;33m",  # jaune
     b"|blc|": b"\x1b[1;34m", # bleu clair
     b"|mgc|": b"\x1b[1;35m", # magenta clair
-    b"|cyb|": b"\x1b[1;36m", # cyan clair
+    b"|cyc|": b"\x1b[1;36m", # cyan clair
     b"|bc|": b"\x1b[1;37m",  # blanc
     
     b"|ff|": b"\x1b[0m",  # fin de formattage
