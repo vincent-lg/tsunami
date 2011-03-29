@@ -34,7 +34,7 @@
 
 from primaires.interpreteur.commande.commande import Commande
 
-class CmdOoc(Commande):
+class CmdHrp(Commande):
     
     """Commande 'ooc'.
     
@@ -42,7 +42,7 @@ class CmdOoc(Commande):
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "ooc", "ooc")
+        Commande.__init__(self, "hrp", "ooc")
         self.schema = "<message>"
         self.aide_courte = "dit une phrase dans le canal HRP"
         self.aide_longue = \
@@ -54,9 +54,9 @@ class CmdOoc(Commande):
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         message = dic_masques["message"].message
-        moi = "|mgc|[HRP] Vous dites : " + message + "|ff|"
+        moi = "|cyb|+ Vous gueulez au monde : " + message + "|ff|"
         personnage.envoyer(moi)
-        autre = "|mgc|[HRP] " + personnage.nom + " dit : " + message + "|ff|"
+        autre = "|cyb|+ " + personnage.nom + " gueule au monde : " + message + "|ff|"
         for joueur in type(self).importeur.connex.joueurs_connectes:
             if not joueur == personnage:
                 joueur.envoyer(autre)
