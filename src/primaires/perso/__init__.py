@@ -62,6 +62,7 @@ class Module(BaseModule):
             commandes.commande.CmdCommande(),
             commandes.dire.CmdDire(),
             commandes.qui.CmdQui(),
+            commandes.ooc.CmdOoc(),
         ]
         
         for cmd in self.commandes:
