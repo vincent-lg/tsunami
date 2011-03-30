@@ -36,6 +36,7 @@ from primaires.interpreteur.masque.noeuds.noeud_commande import NoeudCommande
 from primaires.interpreteur.masque.noeuds.fonctions import *
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.commande.categorie import Categorie
 from primaires.format.constantes import *
 from primaires.format.fonctions import *
 
@@ -66,6 +67,7 @@ class Commande(Masque):
         self.nom_francais = francais
         self.nom_anglais = anglais
         self.adresse = francais
+        self.nom_categorie = "divers" # catégorie par défaut
         
         # Commande parente
         self.parente = None

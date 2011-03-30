@@ -50,6 +50,7 @@ class CmdGroupe(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "groupe", "group")
         self.groupe = "administrateur"
+        self.nom_categorie = "groupes"
         self.aide_courte = "manipulation des groupes d'utilisateur"
         self.aide_longue = \
             "Cette commande permet de manipuler les groupes " \

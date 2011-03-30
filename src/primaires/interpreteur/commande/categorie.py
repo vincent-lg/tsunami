@@ -28,36 +28,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'hrp'.
+"""Fichier contenant la classe Categorie, détailléplus bas."""
 
-"""
-
-from primaires.interpreteur.commande.commande import Commande
-
-class CmdHrp(Commande):
+class Categorie():
     
-    """Commande 'hrp'.
+    """Classe des catégories de commandes.
+    Trés simple, elle définit un identifiant (par exemple 'objets') et
+    un nom long (par exemple 'Manipulation des objets') pour la catégorie.
     
     """
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "hrp", "ooc")
-        self.nom_categorie = "parler"
-        self.schema = "<message>"
-        self.aide_courte = "dit une phrase dans le canal HRP"
-        self.aide_longue = \
-            "Cette commande permet de dire une phrase dans le canal HRP. " \
-            "Tous les joueurs connectés entendront votre message ; " \
-            "il s'agit d'un moyen de communiquer à travers l'univers, " \
-            "en-dehors du cadre role-play."
-    
-    def interpreter(self, personnage, dic_masques):
-        """Interprétation de la commande"""
-        message = dic_masques["message"].message
-        moi = "|cyc|[HRP] Vous dites : " + message + "|ff|"
-        personnage.envoyer(moi)
-        autre = "|cyc|[HRP] " + personnage.nom + " dit : " + message + "|ff|"
-        for joueur in type(self).importeur.connex.joueurs_connectes:
-            if joueur is not personnage:
-                joueur.envoyer(autre)
+    def __init__(self, identifiant, nom):
+        self.identifiant = identifiant
+        self.nom = nom

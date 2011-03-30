@@ -47,6 +47,7 @@ class CmdChgroupe(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "chgroupe", "chgroup")
         self.groupe = "administrateur"
+        self.nom_categorie = "groupes"
         self.aide_courte = "déplacement d'un groupe à l'autre"
         self.aide_longue = \
             "Cette commande permet de déplacer une commande ou un joueur " \

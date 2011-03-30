@@ -39,6 +39,7 @@ class CmdRegarder(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "regarder", "look")
+        self.nom_categorie = "bouger"
         self.aide_courte = "regarder autour de soi"
         self.aide_longue = \
             "Cette commande permet de regarder autour de vous, voir la salle " \

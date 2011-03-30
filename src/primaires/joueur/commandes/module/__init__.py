@@ -47,6 +47,7 @@ class CmdModule(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "module", "module")
         self.groupe = "administrateur"
+        self.nom_categorie = "groupes"
         self.aide_courte = "manipulation des modules"
         self.aide_longue = \
             "Cette commande permet de manipuler les modules, connaître la " \

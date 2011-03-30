@@ -68,6 +68,7 @@ class Module(BaseModule):
         self.commandes = []
         self.commandes_francais = []
         self.commandes_anglais = []
+        self.categories = {}
         self.masques = {}
         
         # Editeurs
@@ -109,6 +110,15 @@ class Module(BaseModule):
                 self.logger.info("Ajout du groupe d'utilisateurs '{}'".format( 
                         nom_groupe))
             groupe_precedent = nom_groupe
+        
+        # On crée les catégories de commandes
+        self.categories = {
+            "divers" : "Commandes générales",
+            "parler" : "Communication",
+            "bouger" : "Mobilité et aide au déplacement",
+            "groupes" : "Manipulation des groupes et modules",
+            "batisseur" : "Commandes de création",
+        }
         
         BaseModule.init(self)
     

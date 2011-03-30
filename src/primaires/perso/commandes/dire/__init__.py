@@ -43,6 +43,7 @@ class CmdDire(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "dire", "say")
+        self.nom_categorie = "parler"
         self.schema = "<message>"
         self.aide_courte = "dit une phrase dans la votre salle"
         self.aide_longue = \
