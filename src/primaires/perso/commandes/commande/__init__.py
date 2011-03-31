@@ -67,16 +67,19 @@ class CmdCommande(Commande):
                 personnage << "Aucune commande ne semble être définie." \
                         "Difficile à croire, non ?"
             else:
-                final = "Liste des commandes :\n\n"
+                final =  "+---------- ---- -- - - -  -  -   -   -\n"
+                final += "| Liste des commandes :\n"
+                final += "+---------- ---- -- - - -  -  -   -   -\n"
                 for id_categ, nom_categ in categories.items():
                     liste_commandes = []
                     for nom_commande, commande in commandes.items():
                         if commande.categorie.identifiant == id_categ:
                             liste_commandes.append(nom_commande)
                     if liste_commandes:
-                        final += nom_categ + "\n "
-                        final += "\n ".join(sorted(liste_commandes))
-                        final += "\n\n"
+                        final += "| " + nom_categ + "\n|  "
+                        final += "\n|  ".join(sorted(liste_commandes))
+                        final += "\n|\n"
+                final += "+---------- ---- -- - - -  -  -   -   -"
                 personnage << final
         
         else: # la commande existe
