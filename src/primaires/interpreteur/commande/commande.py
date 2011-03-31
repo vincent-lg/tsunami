@@ -97,6 +97,22 @@ class Commande(Masque):
     
     aide_courte = property(_get_aide_courte, _set_aide_courte)
     
+    def _get_categorie(self):
+        """Retourne la catégorie sous la forme d'un objet Categorie"""
+        try:
+            categorie = type(self).importeur.interpreteur.categories[ \
+                        self.nom_categorie]
+        except KeyError:
+            type(self).importeur.interpreteur.logger.info("La catégorie de " \
+                        "commandes '{}' n'est pas disponible, la commande a " \
+                        "été déplacée dans 'divers'".format(self.nom_categorie))
+            
+            return Categorie("divers", "Commandes générales")
+        
+        return Categorie(self.nom_categorie, categorie)
+    
+    categorie = property(_get_categorie)
+    
     def __str__(self):
         """Fonction d'affichage"""
         res = "(" + self.nom_francais + "/" + self.nom_anglais + ")"
@@ -239,6 +255,7 @@ class Commande(Masque):
         aide = "Commande |ent|"
         aide += self.afficher(personnage)
         aide += "|ff|\n\n"
+        aide += "Catégorie : " + self.categorie.nom + "\n\n"
         synop = "Synopsis : "
         aide += synop
         synopsis = self.remplacer_mots_cles(personnage, self.aide_courte)

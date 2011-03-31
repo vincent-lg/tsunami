@@ -56,19 +56,28 @@ class CmdCommande(Commande):
         """Interprétation de la commande"""
         # Si aucune commande n'a été entré, on affiche la liste des commandes
         if dic_masques["nom_commande"] is None:
-            commandes = []
-            for cmd in \
-                type(self).importeur.interpreteur.commandes:
+            categories = type(self).importeur.interpreteur.categories
+            commandes = {}
+            for cmd in type(self).importeur.interpreteur.commandes:
                 if type(self).importeur.interpreteur.groupes. \
                         personnage_a_le_droit(personnage, cmd.commande):
-                    commandes.append(cmd.commande.get_nom_pour(personnage))
+                    commandes[cmd.commande.get_nom_pour(personnage)] = cmd.commande
             
             if not commandes:
                 personnage << "Aucune commande ne semble être définie." \
-                        "Difficile à croire non ?"
+                        "Difficile à croire, non ?"
             else:
-                personnage << "Liste des commandes :\n  " + \
-                    "\n  ".join(sorted(commandes))
+                final = "Liste des commandes :\n\n"
+                for id_categ, nom_categ in categories.items():
+                    liste_commandes = []
+                    for nom_commande, commande in commandes.items():
+                        if commande.categorie.identifiant == id_categ:
+                            liste_commandes.append(nom_commande)
+                    if liste_commandes:
+                        final += nom_categ + "\n "
+                        final += "\n ".join(sorted(liste_commandes))
+                        final += "\n\n"
+                personnage << final
         
         else: # la commande existe
             commande = dic_masques["nom_commande"].commande
