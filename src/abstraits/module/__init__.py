@@ -47,6 +47,7 @@ STATUTS = {
 }
 
 class BaseModule:
+    
     """Cette classe est une classe abstraite définissant un module, primaire
     ou secondaire.
     
@@ -54,6 +55,7 @@ class BaseModule:
     Elle reprend les méthodes d'un module, appelées dans l'ordre :
     -   config : configuration du module
     -   init : initialisation du module (ne pas confondre avec le constructeur)
+    -   preparer : préparation du module avant lancement
     -   detruire : destruction du module, appelée lors du déchargement
     -   arreter : arrêt COMPLET d'un module (n'est appelé qu'en cas
         d'arrêt contrôlé du programme)
@@ -63,6 +65,11 @@ class BaseModule:
     de "lancer" un module. Si des actions différées doivent être mises en
     place pendant l'appel au module, elles doivent être créées dans cette
     méthode.
+    
+    La méthode 'preparer' est appelée juste après. Elle permet d'effectuer
+    des actions d'initialisation mais en étant sûr que les objets des
+    autres modules aient bien été chargées (voir la documentation de
+    la méthode pour un exemple).
 
     La méthode detruire doit éviter de se charger de l'enregistrement des
     données. Il est préférable que cette opération se fasse en temps réel,
@@ -80,6 +87,7 @@ class BaseModule:
     de la construction du module (méthode __init__).
     
     """
+    
     def __init__(self, importeur, nom, m_type="inconnu"):
         """Constructeur d'un module.
         Par défaut, on lui attribue surtout un nom IDENTIFIANT, sans accents
@@ -121,6 +129,26 @@ class BaseModule:
         """
         self.statut = INITIALISE
 
+    def preparer(self):
+        """Cette méthode est appelée après l'initialisation,a vant
+        le lancement de la boucle synchro.
+        Elle peut permettre à un module de faire une vérification sur ses objets.
+        
+        Par exemple :
+            Le module salle récupère des salles avec des listes de joueurs
+            et NPCs présents dans chaque salle. Il serai préférable
+            que chaque salle vérifie que tous les joueurs et NPCs présents
+            soient toujours dans cette salle. Cette vérification ne pourrait
+            se faire dans la méthode 'init' car c'est ici que les objets
+            sont récupérés. Or, comment être sûr que les joueurs ont
+            bien été récupérés au moment de la vérification ? Dans ce
+            cas, il est donc préférable de redéfinir cette méthode
+            qui prépare le module et ses objets avant le lancement
+            de la boucle synchro.
+        
+        """
+        pass
+    
     def detruire(self):
         """Méthode de déchargement du module.
         On l'appelle avant l'arrêt du MUD (en cas de reboot total) ou

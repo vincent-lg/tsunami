@@ -248,7 +248,18 @@ class Importeur:
                 module.init()
                 Importeur.logger.debug("  Le module {0} a été " \
                         "initialisé".format(module.nom))
-
+    
+    def tout_preparer(self):
+        """Méthode permettant de préparer tous les modules.
+        
+        """
+        Importeur.logger.debug("Préparation des modules :")
+        for module in self.__dict__.values():
+            if module.statut == INITIALISE:
+                module.preparer()
+                Importeur.logger.debug("  Le module {0} a été " \
+                        "préparé".format(module.nom))
+    
     def tout_detruire(self):
         """Méthode permettant de détruire tous les modules qui en ont besoin.
         Les modules à détruire sont ceux initialisés.

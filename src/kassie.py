@@ -169,9 +169,10 @@ serveur.callbacks["deconnexion"].args = (serveur, importeur, log)
 serveur.callbacks["reception"].fonction = cb_reception
 serveur.callbacks["reception"].args = (serveur, importeur, log)
 
-# On configure et initialise les modules
+# On configure, initialise et prépare les modules
 importeur.tout_configurer()
 importeur.tout_initialiser()
+importeur.tout_preparer()
 
 # Lancement de la boucle synchro
 # Note: tout se déroule ici, dans une boucle temps réelle qui se répète
