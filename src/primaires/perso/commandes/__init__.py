@@ -34,3 +34,4 @@ import primaires.perso.commandes.commande
 import primaires.perso.commandes.dire
 import primaires.perso.commandes.qui
 import primaires.perso.commandes.hrp
+import primaires.perso.commandes.emote

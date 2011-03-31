@@ -63,6 +63,7 @@ class Module(BaseModule):
             commandes.dire.CmdDire(),
             commandes.qui.CmdQui(),
             commandes.hrp.CmdHrp(),
+            commandes.emote.CmdEmote(),
         ]
         
         for cmd in self.commandes:
