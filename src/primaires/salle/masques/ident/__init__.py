@@ -28,8 +28,49 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant le masque <ident_salle>."""
 
-import primaires.salle.commandes.goto
-import primaires.salle.commandes.redit
-import primaires.salle.commandes.regarder
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+
+class Ident(Masque):
+    
+    """Masque <ident_salle>.
+    On attend un identifiant de salle en paramètre, sous la forme 'picte:1'.
+    
+    """
+    
+    nom = "ident_salle"
+    
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self)
+        self.nom_complet = "identifiant d'une salle"
+        self.identifiant = ""
+        self.salle = None
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        lstrip(commande)
+        ident = liste_vers_chaine(commande)
+        
+        if not ident:
+            raise ErreurValidation( \
+                "Précisez un identifiant de salle.")
+        
+        ident = ident.split(" ")[0]
+        commande[:] = commande[len(ident):]
+        
+        try:
+            salle = type(self).importeur.salle[ident]
+        except KeyError:
+            raise ErreurValidation(
+                "L'identifiant {} n'est pas un identifiant valide.".format(
+                ident))
+        
+        self.salle = salle
+        self.ident = salle.ident
+        
+        return True

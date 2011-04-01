@@ -28,8 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'goto'."""
 
-import primaires.salle.commandes.goto
-import primaires.salle.commandes.redit
-import primaires.salle.commandes.regarder
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdGoto(Commande):
+    
+    """Commande 'goto'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "goto", "goto")
+        self.schema = "<ident_salle>"
+        self.nom_categorie = "bouger"
+        self.aide_courte = "se déplacer dans l'univers"
+        self.aide_longue = \
+            "Cette commande vous permet de vous déplacer rapidement dans " \
+            "l'univers. Vous devez lui passer en paramètre l'identifiant " \
+            "de la salle sous la forme |ent|zone:mnémonic|ff| comme " \
+            "par exemple |ent|picte:1|ff|."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        salle = dic_masques["ident_salle"].salle
+        salle_courante = personnage.salle
+        salle_courante.envoyer("{} disparaît dans un éclair de lumière " \
+               "bleue.".format(personnage.nom), (personnage, ))
+        personnage.salle = salle
+        personnage << personnage.regarder()
+        salle.envoyer("{} apparaît dans un éclair de lumière bleue.".format(
+                personnage.nom), (personnage, ))

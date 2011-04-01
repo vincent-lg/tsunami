@@ -28,8 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package des masques du module joueur."""
 
-import primaires.salle.commandes.goto
-import primaires.salle.commandes.redit
-import primaires.salle.commandes.regarder
+import primaires.salle.masques.ident

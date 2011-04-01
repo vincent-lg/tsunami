@@ -37,6 +37,7 @@ from .config import cfg_salle
 import primaires.salle.commandes
 from .editeurs.redit import EdtRedit
 from .coordonnees import Coordonnees
+from . import masques
 
 class Module(BaseModule):
     
@@ -117,8 +118,13 @@ class Module(BaseModule):
             s = "s"
         self.logger.info("{} salle{s} récupérée{s}".format(nb_salles, s = s))
         
+        # Ajout des masques dans l'interpréteur
+        self.importeur.interpreteur.ajouter_masque(
+                masques.ident.Ident)
+        
         # On ajoute les commandes du module
         self.commandes = [
+            commandes.goto.CmdGoto(),
             commandes.redit.CmdRedit(),
             commandes.regarder.CmdRegarder(),
         ]
