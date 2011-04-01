@@ -83,9 +83,13 @@ class Module(BaseModule):
             s1 = self.creer_salle("picte", "1", 0, 0, 0)
             s1.titre = "La salle Picte 1"
             s2 = self.creer_salle("picte", "2", 0, 1, 0)
-            s1.sorties.ajouter_sortie("est", "est", salle_dest=s2)
+            s1.sorties.ajouter_sortie("est", "est", salle_dest=s2,
+                    corresp="ouest")
             s2.titre = "La salle Picte 2"
-            s2.sorties.ajouter_sortie("ouest", "ouest", salle_dest=s1)
+            s2.sorties.ajouter_sortie("ouest", "ouest", salle_dest=s1,
+                    corresp="est")
+            s_e = s2.sorties["ouest"].sortie_opposee
+            print(s_e.parent, s_e.nom)
         print(self._salles, self._coords)
         
         # On récupère la configuration

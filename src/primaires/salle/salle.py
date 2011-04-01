@@ -75,8 +75,8 @@ class Salle(ObjetID):
         self.titre = ""
         self.description = Description("Vous êtes au milieu de nulle part.",
                 self)
+        self.sorties = Sorties(parent=self)
         self._personnages = ListeID() # personnages présents
-        self.sorties = Sorties()
     
     def __getinitargs__(self):
         return ("", "")

@@ -56,7 +56,8 @@ class Sortie(BaseObj):
     
     """
     
-    def __init__(self, nom, article="le", salle_dest=None, parent=None):
+    def __init__(self, nom, article="le", salle_dest=None, corresp="",
+            parent=None):
         """Constructeur du conteneur
         Précision quant au parent :
         Ici, ce n'est pas le conteneur, mais la salle possédant la sortie
@@ -68,6 +69,7 @@ class Sortie(BaseObj):
         self.nom = nom
         self.article = article
         self.salle_dest = salle_dest
+        self.correspondante = corresp # le nom de la sortie correspondante
         self.deduire_article()
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
@@ -97,3 +99,14 @@ class Sortie(BaseObj):
             sep = ""
         
         return self.article + sep + self.nom
+    
+    @property
+    def sortie_opposee(self):
+        """Retourne la sortie opposée"""
+        salle = self.salle_dest
+        if salle and self.correspondante:
+            corresp = salle.sorties[self.correspondante]
+        else:
+            corresp = None
+        
+        return corresp
