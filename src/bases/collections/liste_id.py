@@ -82,4 +82,16 @@ class ListeID:
     def remove(self, objet):
         """Retire l'objet passé en paramètre"""
         self.__liste.remove(objet.id)
-
+    
+    # Méthodes extérieures aux listes
+    def supprimer_doublons(self):
+        """Supprime les doublons de la liste.
+        On conserve la première occurence de l'élément mais pas les autres.
+        
+        """
+        n_liste = []
+        for elt in self.__liste:
+            if elt not in n_liste:
+                n_liste.append(elt)
+        
+        self.__liste = n_liste

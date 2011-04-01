@@ -31,6 +31,7 @@
 """Fichier contenant la classe Salle, détaillée plus bas."""
 
 from abstraits.id import ObjetID
+from bases.collections.liste_id import ListeID
 from primaires.format.description import Description
 from .coordonnees import Coordonnees
 from .sorties import Sorties
@@ -74,6 +75,7 @@ class Salle(ObjetID):
         self.titre = ""
         self.description = Description("Vous êtes au milieu de nulle part.",
                 self)
+        self._personnages = ListeID() # personnages présents
         self.sorties = Sorties()
     
     def __getinitargs__(self):
@@ -107,6 +109,11 @@ class Salle(ObjetID):
         """Retourne l'identifiant, c'est-à-dire une chaîne 'zone:mnemonic'"""
         return "{}:{}".format(self._zone, self._mnemonic)
     
+    @property
+    def personnages(self):
+        """Retourne une liste déférencée des personnages"""
+        return list(self._personnages)
+    
     def __repr__(self):
         """Affichage de la salle en mode debug"""
         res = "Salle ({}, {})".format(self.ident, self.coords)
@@ -116,15 +123,38 @@ class Salle(ObjetID):
                 res += "\n  {} : {}".format(nom, sortie.salle_dest.ident)
         return res
     
+    def personnage_est_present(self, personnage):
+        """Si le personnage est présent, retourne True, False sinon."""
+        return personnage in self._personnages
+    
+    def ajouter_personnage(self, personnage):
+        """Ajoute le personnage dans la salle"""
+        print("On ajoute", personnage, "dans", self.ident)
+        if personnage not in self._personnages:
+            self._personnages.append(personnage)
+            self.enregistrer()
+            print("  done")
+        print(self._personnages)
+    
+    def retirer_personnage(self, personnage):
+        """Retire le personnage de la salle"""
+        print("On retire", personnage, "de", self.ident)
+        if personnage in self._personnages:
+            self._personnages.remove(personnage)
+            self.enregistrer()
+            print("  done")
+    
     def envoyer(self, message, exceptions=()):
         """Envoie le message aux personnages présents dans la salle.
-        Les personanges présents dans l'exception ne recevront pas le
+        Les personnages présents dans l'exception ne recevront pas le
         message.
         
         """
-        for joueur in type(self).importeur.connex.joueurs_connectes:
-            if joueur.salle is self and joueur not in exceptions:
-                joueur.envoyer(message)
+        print(self.personnages)
+        for personnage in self.personnages:
+            print(", ", personnage)
+            if personnage not in exceptions:
+                personnage.envoyer(message)
     
     def regarder(self, personnage):
         """Le personnage regarde la salle"""

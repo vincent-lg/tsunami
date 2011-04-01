@@ -30,7 +30,7 @@
 
 """Fichier contenant la classe Personnage, détaillée plus bas."""
 
-from abstraits.id import ObjetID
+from abstraits.id import ObjetID, propriete_id
 from primaires.interpreteur.file import FileContexte
 
 class Personnage(ObjetID):
@@ -54,7 +54,7 @@ class Personnage(ObjetID):
         self.groupe = "npc"
         self.contextes = FileContexte(self) # file d'attente des contexte
         self.langue_cmd = "francais"
-        self.salle = None
+        self._salle = None
     
     def __getinitargs__(self):
         """Retourne les arguments à passer au constructeur"""
@@ -90,6 +90,28 @@ class Personnage(ObjetID):
         self.contextes.ajouter(nouveau_contexte)
     
     contexte_actuel = property(_get_contexte_actuel, _set_contexte_actuel)
+    
+    def _get_salle(self):
+        return self._salle
+    
+    @propriete_id
+    def _set_salle(self, salle):
+        """Redéfini la salle du joueur.
+        On en profite pour :
+        -   s'assurer que le joueur a bien été retiré de son ancienne
+            salle, si existante
+        -   ajouter le joueur dans la nouvelle salle
+        
+        """
+        anc_salle = self._salle
+        if anc_salle:
+            anc_salle.retirer_personnage(self)
+        
+        self._salle = salle
+        if salle:
+            salle.ajouter_personnage(self)
+    
+    salle = property(_get_salle, _set_salle)
     
     def envoyer(self, msg):
         """Méthode envoyer"""

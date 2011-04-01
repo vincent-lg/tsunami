@@ -33,6 +33,7 @@
 import sys
 import time
 
+
 INIT, CONSTRUIT = 0, 1
 
 class BaseObj:
@@ -115,4 +116,4 @@ class BaseObj:
 
 def est_id(objet):
     """Retourne True si objet est un ID"""
-    return hasattr(objet, "groupe") and hasattr(objet, "id")
+    return hasattr(type(objet), "_objetid_")

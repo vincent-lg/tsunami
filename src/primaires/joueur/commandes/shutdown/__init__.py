@@ -61,10 +61,4 @@ class CmdShutdown(Commande):
         """Méthode d'interprétation de commande"""
         # On récupère le serveur
         serveur = type(self).importeur.serveur
-        # On déconnecte tous les joueurs
-        for instance in type(self).importeur.connex.instances.values():
-            instance.envoyer("\n|att|Arrêt du MUD en cours, vous allez être " \
-                    "déconnecté...|ff|")
-            instance.deconnecter("Arrêt du MUD")
-        
         serveur.lance = False

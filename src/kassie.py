@@ -87,12 +87,11 @@ from corps.config import pere
 def arreter_MUD():
     """Fonction appelée pour arrêter le MUD proprement"""
     global importeur, log
+    importeur.deconnecter_joueurs()
     
     # On s'assure que tous les fichiers sont bien enregistré pour éviter
     # de corrompre des données
-    if importeur.supenr.enregistre_actuellement:
-        print("On enregistre la file d'attente, patientez...")
-        importeur.supenr.enregistrer_file_attente()
+    importeur.supenr.enregistrer_file_attente()
     
     importeur.tout_detruire()
     importeur.tout_arreter()

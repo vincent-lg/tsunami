@@ -131,6 +131,19 @@ class Module(BaseModule):
         
         BaseModule.init(self)
     
+    def preparer(self):
+        """Préparation du module.
+        On vérifie que :
+        -   les personnages présents dans self._personnages soient
+            toujours là
+        
+        """
+        for salle in self._salles.values():
+            salle._personnages.supprimer_doublons()
+            for personnage in salle.personnages:
+                if personnage.salle is not salle:
+                    salle.retirer_personnage(personnage)
+    
     def __getitem__(self, cle):
         """Retourne la salle correspondante à la clé.
         Celle-ci peut être de différents types :

@@ -47,7 +47,7 @@ import os
 import pickle
 
 from abstraits.obase import BaseObj
-from abstraits.id.id import ID
+from abstraits.id.id import ID, est_id
 
 class StatutObjet:
     """Classe définissant, sous la forme d'attributs de classe, les différents
@@ -240,3 +240,17 @@ def existe(objet):
     return objet is None or (est_objet_id(objet) and objet._statut != \
             StatutObjet.DETRUIT)
 
+# Décorateurs
+
+def propriete_id(methode):
+    """Ce décorateur doit e^re appelé devant els propriétés utilisant dans
+    leur paramètre est IDs.
+    
+    """
+    def red_methode(*parametres):
+        parametres = list(parametres)
+        for i, parametre in enumerate(parametres):
+            if est_id(parametre):
+                parametres[i] = parametre.get_objet()
+        return methode(*parametres)
+    return red_methode

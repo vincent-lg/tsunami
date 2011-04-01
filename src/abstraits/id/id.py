@@ -31,6 +31,7 @@
 """Ce fichier définit la classe ID détaillée plus bas;"""
 
 class ID:
+    
     """Cette classe représente un identifiant unique d'un objet quelconque.
     Elle est utilisée par abstraits.id.ObjetID et ne doit pas être
     instanciée ailleurs.
@@ -58,6 +59,9 @@ class ID:
         """On redirige sur repr"""
         return repr(self)
     
+    def _objetid_(self):
+        return True
+    
     def get_objet(self):
         """Grâce à l'ID, on récupère l'objet correspondant.
         Pour savoir quel objet correspond à l'ID self, on demande à parid.
@@ -65,3 +69,9 @@ class ID:
         
         """
         return type(self).importeur.parid.get_objet(self)
+
+# Fonctions
+
+def est_id(objet):
+    """Retourne True si l'objet est une id."""
+    return isinstance(objet, ID)

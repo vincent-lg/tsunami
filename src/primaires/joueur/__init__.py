@@ -85,3 +85,13 @@ class Module(BaseModule):
             self.importeur.interpreteur.ajouter_commande(cmd)
         
         BaseModule.init(self)
+    
+    def preparer(self):
+        """Préparation du module.
+        On s'assure que :
+        -   les joueurs dits connectés le soient toujours
+        
+        """
+        for joueur in self.importeur.connex.joueurs:
+            if joueur.est_connecte and joueur.instance_connexion is None:
+                joueur.pre_deconnecter()

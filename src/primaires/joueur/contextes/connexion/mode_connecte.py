@@ -91,7 +91,7 @@ class ModeConnecte(Contexte):
         serveur.verifier_deconnexions()
         joueur.garder_connecte = False
         
-        joueur.connecte = True
+        joueur.pre_connecter()
     
     def accueil(self):
         """Message d'accueil du contexte"""

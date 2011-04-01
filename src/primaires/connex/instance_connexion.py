@@ -161,11 +161,18 @@ class InstanceConnexion(BaseObj):
     encodage = property(_get_encodage)
     
     def deconnecter(self, msg):
-        """Méthode pour déconnecter le client"""
+        """Méthode pour déconnecter le client.
+        Si un joueur est lié à l'instance, on demande la pré-déconnexion
+        du joueur.
+        
+        """
         self.envoyer_file_attente(ajt_prompt = False)
         if self.client:
             self.client.deconnecter(msg)
             self.client = None
+        
+        if self.joueur:
+            self.joueur.pre_deconnecter()
     
     # Fonctions de préparation avant l'envoi
     def formater_message(self, msg):

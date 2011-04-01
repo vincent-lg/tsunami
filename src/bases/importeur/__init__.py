@@ -301,6 +301,13 @@ class Importeur:
             Importeur.logger.debug("  Le module {0} a été " \
                         "arrêté".format(module.nom))
     
+    def deconnecter_joueurs(self):
+        """Déconnecte tous les joueurs connectés"""
+        for instance in self.connex.instances.values():
+            instance.envoyer("\n|att|Arrêt du MUD en cours, vous allez être " \
+                    "déconnecté...|ff|")
+            instance.deconnecter("Arrêt du MUD")
+        
     def tout_decharger(self):
         """Méthode déchargeant tous les modules"""
         for module in self.modules:
