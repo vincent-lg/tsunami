@@ -61,7 +61,6 @@ class Joueur(Masque):
         
         nom_joueur = nom_joueur.split(" ")[0]
         commande[:] = commande[len(nom_joueur):]
-        print("nj", commande)
 
         # On cherche dans les joueurs du module connex
         joueur = None

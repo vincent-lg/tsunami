@@ -93,11 +93,9 @@ class ListeID:
         """
         n_liste = []
         s_liste = [] # liste contenant les code des IDs
-        print("Avant", self.__liste)
         for elt in self.__liste:
             if str(elt) not in s_liste:
                 n_liste.append(elt)
                 s_liste.append(str(elt))
         
         self.__liste = n_liste
-        print("Après", self.__liste)

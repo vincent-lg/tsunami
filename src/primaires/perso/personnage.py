@@ -104,7 +104,6 @@ class Personnage(ObjetID):
         
         """
         anc_salle = self._salle
-        print("On bouge", self, "de", anc_salle, "à", salle)
         if anc_salle:
             anc_salle.retirer_personnage(self)
         

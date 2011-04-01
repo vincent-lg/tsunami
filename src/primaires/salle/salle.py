@@ -129,19 +129,15 @@ class Salle(ObjetID):
     
     def ajouter_personnage(self, personnage):
         """Ajoute le personnage dans la salle"""
-        print("On tente d'ajouter", personnage, "dans", self.ident)
         if personnage not in self.personnages:
             self._personnages.append(personnage)
             self.enregistrer()
-            print("done")
     
     def retirer_personnage(self, personnage):
-        """Retire le personnage de la salle"""
-        print("On tente de retirer", personnage, "de", self.ident)
+        """Retire le personnage des personnages présents"""
         if personnage in self.personnages:
             self._personnages.remove(personnage)
             self.enregistrer()
-            print("  done")
     
     def envoyer(self, message, exceptions=()):
         """Envoie le message aux personnages présents dans la salle.
@@ -149,9 +145,7 @@ class Salle(ObjetID):
         message.
         
         """
-        print(self.personnages)
         for personnage in self.personnages:
-            print(", ", personnage)
             if personnage not in exceptions:
                 personnage.envoyer(message)
     

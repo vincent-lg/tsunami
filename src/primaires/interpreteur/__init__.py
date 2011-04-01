@@ -142,7 +142,6 @@ class Module(BaseModule):
     
     def ajouter_masque(self, masque):
         """Méthode d'ajout d'un masque"""
-        print("Ajout de", masque.nom)
         self.masques[masque.nom] = masque
     
     def get_masque(self, nom_masque):
