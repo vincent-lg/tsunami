@@ -162,6 +162,18 @@ class Salle(ObjetID):
         res += str(self.description) + "\n"
         res += "Sorties : "
         res += self.afficher_sorties(personnage)
+        
+        # Personnages
+        personnages = []
+        for personne in self.personnages:
+            if personne is not personnage:
+                personnages.append(personne)
+        
+        if len(personnages):
+            res += "\n"
+            for personne in personnages:
+                res += "\n- {} est là".format(personne.nom)
+        
         return res
     
     def afficher_sorties(self, personnage):

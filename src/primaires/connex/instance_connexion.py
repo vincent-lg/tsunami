@@ -124,6 +124,16 @@ class InstanceConnexion(BaseObj):
         
         return adresse
     
+    def est_connecte(self):
+        client = self.client
+        if not client:
+            return False
+        if not client.socket:
+            return False
+        if client.socket.fileno() < 0:
+            return False
+        return True
+    
     def creer_depuis(self, autre):
         """Cette méthode se charge de construire self sur le modèle de autre
         (une autre instance de connexion).

@@ -96,4 +96,4 @@ class Sortie(BaseObj):
         if self.article.endswith("'"):
             sep = ""
         
-        return self.nom + sep + self.article
+        return self.article + sep + self.nom

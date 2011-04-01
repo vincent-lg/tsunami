@@ -128,5 +128,9 @@ class Personnage(ObjetID):
         """Déplacement vers la sortie 'sortie'"""
         salle = self.salle
         salle_dest = salle.sorties[sortie].salle_dest
+        sortie = salle.sorties[sortie]
+        salle.envoyer("{} s'en va vers {}.".format(self.nom,
+                sortie.nom_complet), (self, ))
         self.salle = salle_dest
         self.envoyer(self.regarder())
+        salle_dest.envoyer("{} arrive.".format(self.nom), (self, ))

@@ -93,5 +93,6 @@ class Module(BaseModule):
         
         """
         for joueur in self.importeur.connex.joueurs:
-            if joueur.est_connecte and joueur.instance_connexion is None:
+            i_c = joueur.instance_connexion
+            if joueur.est_connecte() and i_c is None or not i_c.est_connecte():
                 joueur.pre_deconnecter()
