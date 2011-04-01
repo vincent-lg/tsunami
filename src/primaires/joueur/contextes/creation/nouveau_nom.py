@@ -62,7 +62,7 @@ class NouveauNom(Contexte):
         -   on vérifie que la salle du joueur est valide
         
         """
-        if self.pere.joueur.salle is None:
+        if self.pere.joueur and self.pere.joueur.salle is None:
             # On recherche la salle
             cle = type(self).importeur.salle.salle_arrivee
             salle = type(self).importeur.salle[cle]
