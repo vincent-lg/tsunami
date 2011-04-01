@@ -152,6 +152,7 @@ class Salle(ObjetID):
     def regarder(self, personnage):
         """Le personnage regarde la salle"""
         res = ""
+        res += "# " + self.ident
         res += "\n|tit|" + self.titre + "|ff|\n"
         res += str(self.description) + "\n"
         res += "Sorties : "

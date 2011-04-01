@@ -54,6 +54,19 @@ NOMS_ABREGES = { # équivalent des noms abrégés
     "sud-est": "s-e",
 }
 
+NOMS_OPPOSES = {
+    "est": "ouest",
+    "sud-est": "nord-ouest",
+    "sud": "nord",
+    "sud-ouest": "nord-est",
+    "ouest": "est",
+    "nord-ouest": "sud-est",
+    "nord": "sud",
+    "nord-est": "sud-ouest",
+    "bas": "haut",
+    "haut": "bas",
+}
+
 class Sorties(BaseObj):
     
     """Conteneur des sorties.
@@ -123,3 +136,22 @@ class Sorties(BaseObj):
         if nom in NOMS_ABREGES.keys():
             nom = NOMS_ABREGES[nom]
         return nom
+    
+    def get_nom_long(self, nom):
+        """Retourne le nom long correspondant au nom court éventuellement
+        entré.
+        
+        """
+        for long, abr in NOMS_ABREGES.items():
+            if abr == nom:
+                return long
+        
+        if nom not in NOMS_SORTIES.keys():
+            raise KeyError("La sortie {} n'existe pas".format(
+                    nom))
+        
+        return nom
+    
+    def get_nom_oppose(self, nom):
+        """Retourne le nom de la sortie opposée à 'nom'"""
+        return NOMS_OPPOSES[nom]

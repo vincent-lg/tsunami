@@ -124,10 +124,15 @@ class Module(BaseModule):
         
         # Ajout des masques dans l'interpréteur
         self.importeur.interpreteur.ajouter_masque(
+                masques.direction.Direction)
+        self.importeur.interpreteur.ajouter_masque(
+                masques.nv_ident.NvIdent)
+        self.importeur.interpreteur.ajouter_masque(
                 masques.ident.Ident)
         
         # On ajoute les commandes du module
         self.commandes = [
+            commandes.addroom.CmdAddroom(),
             commandes.goto.CmdGoto(),
             commandes.redit.CmdRedit(),
             commandes.regarder.CmdRegarder(),

@@ -201,7 +201,7 @@ class Module(BaseModule):
         
         """
         self.enregistre_actuellement = True
-        for objet in self.file_attente:
+        for objet in list(self.file_attente):
             if (est_objet_id(objet) and objet.est_initialise()) or \
                     est_unique(objet):
                 self.enregistrer(objet)
