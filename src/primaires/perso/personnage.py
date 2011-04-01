@@ -104,10 +104,13 @@ class Personnage(ObjetID):
         
         """
         anc_salle = self._salle
+        print("On bouge", self, "de", anc_salle, "à", salle)
         if anc_salle:
             anc_salle.retirer_personnage(self)
         
         self._salle = salle
+        self.enregistrer()
+        
         if salle:
             salle.ajouter_personnage(self)
     

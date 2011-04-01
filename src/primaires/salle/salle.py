@@ -129,17 +129,16 @@ class Salle(ObjetID):
     
     def ajouter_personnage(self, personnage):
         """Ajoute le personnage dans la salle"""
-        print("On ajoute", personnage, "dans", self.ident)
-        if personnage not in self._personnages:
+        print("On tente d'ajouter", personnage, "dans", self.ident)
+        if personnage not in self.personnages:
             self._personnages.append(personnage)
             self.enregistrer()
-            print("  done")
-        print(self._personnages)
+            print("done")
     
     def retirer_personnage(self, personnage):
         """Retire le personnage de la salle"""
-        print("On retire", personnage, "de", self.ident)
-        if personnage in self._personnages:
+        print("On tente de retirer", personnage, "de", self.ident)
+        if personnage in self.personnages:
             self._personnages.remove(personnage)
             self.enregistrer()
             print("  done")

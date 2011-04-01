@@ -62,4 +62,4 @@ class CmdModule(Commande):
         prm_hotboot = PrmHotboot()
         
         self.ajouter_parametre(prm_liste)
-        self.ajouter_parametre(prm_hotboot)
+        #self.ajouter_parametre(prm_hotboot)

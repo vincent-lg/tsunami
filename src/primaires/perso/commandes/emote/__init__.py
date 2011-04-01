@@ -47,8 +47,8 @@ class CmdEmote(Commande):
         self.schema = "<message>"
         self.aide_courte = "joue une emote dans la salle"
         self.aide_longue = \
-            "Cette commande permet jouer une action RP dans la salle oé vous " \
-            "vous trouvez. Tous les personnages présents dans " \
+            "Cette commande permet de jouer une action RP dans la salle oé " \
+            "vous vous trouvez. Tous les personnages présents dans " \
             "la salle vous verront. Par exemple, vous pouvez faire " \
             "|ent|emote sifflote un air mélodieux|ent| ou |ent|emote " \
             "sourit|ent|."

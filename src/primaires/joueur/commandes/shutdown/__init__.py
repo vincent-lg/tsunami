@@ -54,7 +54,7 @@ class CmdShutdown(Commande):
             "corruption de données ou modification du corps. En temps " \
             "normal, redémarrer les modules suffit à intégrer de nouvelles " \
             "modifications et évite de déconnecter tous les joueurs. " \
-            "Référez-vous à %module% %module:hotboot% pour plus " \
+            "Référez-vous à module hotboot pour plus " \
             "d'informations."
     
     def interpreter(self, personnage, dic_masques):

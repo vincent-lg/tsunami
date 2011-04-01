@@ -81,7 +81,9 @@ class ListeID:
     
     def remove(self, objet):
         """Retire l'objet passé en paramètre"""
-        self.__liste.remove(objet.id)
+        for elt_id in list(self.__liste):
+            if str(elt_id) == str(objet.id):
+                self.__liste.remove(elt_id)
     
     # Méthodes extérieures aux listes
     def supprimer_doublons(self):
@@ -90,8 +92,12 @@ class ListeID:
         
         """
         n_liste = []
+        s_liste = [] # liste contenant les code des IDs
+        print("Avant", self.__liste)
         for elt in self.__liste:
-            if elt not in n_liste:
+            if str(elt) not in s_liste:
                 n_liste.append(elt)
+                s_liste.append(str(elt))
         
         self.__liste = n_liste
+        print("Après", self.__liste)

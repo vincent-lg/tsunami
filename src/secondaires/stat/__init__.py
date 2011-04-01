@@ -84,10 +84,13 @@ class Module(BaseModule):
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
+        
+        BaseModule.init(self)
     
     def detruire(self):
         """Destruction du module"""
         type(self.importeur).serveur.callbacks = self.callbacks
+        BaseModule.detruire(self)
     
     def boucle(self):
         """Fonction appelée à chaque boucle synchro"""

@@ -70,7 +70,6 @@ class Joueur(Personnage):
         lien avec l'univers, non pas dans le sens réseau.
         
         """
-        print("On prépare", self, "à la connexion")
         self.connecte = True
         salle = self.salle
         if salle:
@@ -84,7 +83,6 @@ class Joueur(Personnage):
         retiré de l'univers) mais son client peut être maintenu.
         
         """
-        print("On prépare", self, "à la déconnexion")
         self.connecte = False
         salle = self.salle
         if salle:
