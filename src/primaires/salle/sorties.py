@@ -67,6 +67,19 @@ NOMS_OPPOSES = {
     "haut": "bas",
 }
 
+NOMS_SORTIES_ALPHA = (
+    "sud",
+    "ouest",
+    "nord",
+    "est",
+    "sud-ouest",
+    "nord-ouest",
+    "nord-est",
+    "sud-est",
+    "bas",
+    "haut",
+)
+
 class Sorties(BaseObj):
     
     """Conteneur des sorties.
@@ -123,9 +136,19 @@ class Sorties(BaseObj):
         self[nom] = None
     
     def iter_couple(self):
-        """Retourne un générateur parcourant les couples nom:sortie"""
-        for nom, sortie in self._sorties.items():
-            yield (nom, sortie)
+        """Retourne un dictionnaire ordonné contenant les sorties
+        Les sorties sont classées dans l'ordre d'auto-complétion.
+        est, sud, ouest, nord
+        sud-ouest, nord-ouest...
+        
+        """
+        sorties = OrderedDict()
+        for nom in NOMS_SORTIES_ALPHA:
+            sortie = self[nom]
+            if sortie:
+                sorties[sortie.nom] = sortie
+        
+        return sorties.items()
     
     def sortie_existe(self, nom):
         """Retourne True si la sortie mène quelque part"""

@@ -34,7 +34,7 @@ from abstraits.id import ObjetID
 from bases.collections.liste_id import ListeID
 from primaires.format.description import Description
 from .coordonnees import Coordonnees
-from .sorties import Sorties
+from .sorties import Sorties, NOMS_SORTIES
 
 class Salle(ObjetID):
     
@@ -174,7 +174,7 @@ class Salle(ObjetID):
     def afficher_sorties(self, personnage):
         """Affiche les sorties de la salle"""
         res = ""
-        for nom, sortie in self.sorties.iter_couple():
+        for nom in NOMS_SORTIES.keys():
             nom_aff = self.sorties.get_nom_abrege(nom)
             if self.sorties.sortie_existe(nom):
                 res += nom_aff

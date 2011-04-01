@@ -60,6 +60,22 @@ class Module(BaseModule):
         self.commandes = []
         self.salle_arrivee = ""
         self.salle_retour = ""
+        self.aliases = {
+            "e": "est",
+            "se": "sud-est",
+            "s": "sud",
+            "so": "sud-ouest",
+            "o": "ouest",
+            "no": "nord-ouest",
+            "n": "nord",
+            "ne": "nord-est",
+            "b": "bas",
+            "h": "haut",
+            "s-e": "sud-est",
+            "s-o": "sud-ouest",
+            "n-o": "nord-ouest",
+            "n-e": "nord-est",
+        }
         
         self.logger = type(self.importeur).man_logs.creer_logger( \
                 "salles", "salles")
@@ -226,6 +242,9 @@ class Module(BaseModule):
     def traiter_commande(self, personnage, commande):
         """Traite les déplacements"""
         commande = commande.lower()
+        if commande in self.aliases.keys():
+            commande = self.aliases[commande]
+        
         salle = personnage.salle
         for nom, sortie in salle.sorties.iter_couple():
             if salle.sorties.sortie_existe(nom) and sortie.nom.startswith(
