@@ -62,7 +62,7 @@ class NvIdent(Masque):
             raise ErreurValidation( \
                 "Précisez un identifiant de salle.")
         
-        ident = ident.split(" ")[0]
+        ident = ident.split(" ")[0].lower()
         commande[:] = commande[len(ident):]
         
         try:

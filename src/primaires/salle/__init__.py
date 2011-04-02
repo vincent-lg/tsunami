@@ -30,8 +30,10 @@
 
 """Fichier contenant le module primaire salle."""
 
+import re
+
 from abstraits.module import *
-from .salle import Salle
+from .salle import Salle, ZONE_VALIDE, MNEMONIC_VALIDE
 from .sorties import NOMS_SORTIES
 from .config import cfg_salle
 import primaires.salle.commandes
@@ -223,6 +225,11 @@ class Module(BaseModule):
         ident = zone + ":" + mnemonic
         if ident in self._salles.keys():
             raise ValueError("la salle {} existe déjà".format(ident))
+        if not re.search(ZONE_VALIDE, zone):
+            raise ValueError("Zone {} invalide".format(zone))
+        if not re.search(MNEMONIC_VALIDE, mnemonic):
+            raise ValueError("Mnémonic {} invalide".format(mnemonic))
+        
         salle = Salle(zone, mnemonic, x, y, z, valide)
         self.ajouter_salle(salle)
         return salle

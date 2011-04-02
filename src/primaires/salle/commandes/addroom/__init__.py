@@ -72,12 +72,16 @@ class CmdAddroom(Commande):
         
         x, y, z, valide = nv_coords.tuple_complet()
         
-        nv_salle = type(self).importeur.salle.creer_salle(zone, mnemonic,
-                x, y, z, valide)
-        salle.sorties.ajouter_sortie(direction, direction,
-                salle_dest=nv_salle, corresp=dir_opposee)
-        nv_salle.sorties.ajouter_sortie(dir_opposee, dir_opposee,
-                salle_dest=salle, corresp=direction)
-        
-        personnage << "La salle {} a bien été ajouté vers {}.".format(
-                nv_salle.ident, salle.sorties[direction].nom_complet)
+        try:
+            nv_salle = type(self).importeur.salle.creer_salle(zone, mnemonic,
+                    x, y, z, valide)
+        except ValueError as err_val:
+            personnage << str(err_val) + "."
+        else:
+            salle.sorties.ajouter_sortie(direction, direction,
+                    salle_dest=nv_salle, corresp=dir_opposee)
+            nv_salle.sorties.ajouter_sortie(dir_opposee, dir_opposee,
+                    salle_dest=salle, corresp=direction)
+            
+            personnage << "La salle {} a bien été ajouté vers {}.".format(
+                    nv_salle.ident, salle.sorties[direction].nom_complet)

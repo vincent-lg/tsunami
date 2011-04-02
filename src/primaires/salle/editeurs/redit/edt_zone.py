@@ -33,9 +33,7 @@
 import re
 
 from primaires.interpreteur.editeur.uniligne import Uniligne
-
-# Constantes
-ZONE_VALIDE = r"^[a-z0-9_]{3,15}$"
+from primaires.salle.salle import ZONE_VALIDE
 
 class EdtZone(Uniligne):
     
@@ -49,7 +47,6 @@ class EdtZone(Uniligne):
         msg = msg.lower()
         ancien_ident = self.objet.ident
         ident = msg + ":" + self.objet.mnemonic
-        print(ancien_ident, ident)
         if not re.search(ZONE_VALIDE, msg):
             self.pere.envoyer("|err|Ce nom de zone est invalide. Veuillez " \
                     "réessayer.|ff|")
