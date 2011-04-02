@@ -68,7 +68,7 @@ class Direction(Masque):
             nom = salle.sorties.get_nom_long(nom)
         except KeyError:
             raise ErreurValidation(
-                "La direction {} n'existe pas.".format(nom))
+                "|err|La direction {} n'existe pas.|ff|".format(nom))
         
         self.direction = nom
         

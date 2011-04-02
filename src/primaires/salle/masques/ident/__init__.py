@@ -67,8 +67,7 @@ class Ident(Masque):
             salle = type(self).importeur.salle[ident]
         except KeyError:
             raise ErreurValidation(
-                "L'identifiant {} n'est pas un identifiant valide.".format(
-                ident))
+                "|err|L'identifiant '{}' n'est pas valide.|ff|".format(ident))
         
         self.salle = salle
         self.ident = salle.ident

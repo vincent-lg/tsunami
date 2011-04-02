@@ -60,8 +60,8 @@ class Langue(Masque):
         
         if not langue:
             raise ErreurValidation( \
-                "Précisez une langue disponible (|ent|anglais|ff| ou " \
-                "|ent|français|ff|).")
+                "|err|Précisez une langue disponible (|ff||ent|anglais|ff| " \
+                "|err| ou |ff||ent|français|ff||err|).")
         
         langue = langue.split(" ")[0].lower()
         commande[:] = commande[len(langue):]
@@ -69,7 +69,7 @@ class Langue(Masque):
 
         if not langue in LANGUES:
             raise ErreurValidation(
-                "|att|LLa langue précisée n'est pas disponible.|ff|")
+                "|err|La langue précisée n'est pas disponible.|ff|")
         
         self.langue = langue
         

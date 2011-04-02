@@ -73,7 +73,7 @@ class Commande(Masque):
         
         if not commande:
             raise ErreurValidation(
-                "|att|Cette commande est introuvable.|ff|")
+                "|err|Cette commande est introuvable.|ff|")
         
         self.commande = commande.commande
         

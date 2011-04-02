@@ -59,7 +59,7 @@ class NvIdent(Masque):
         ident = liste_vers_chaine(commande)
         
         if not ident:
-            raise ErreurValidation( \
+            raise ErreurValidation(
                 "Précisez un identifiant de salle.")
         
         ident = ident.split(" ")[0].lower()
@@ -69,12 +69,11 @@ class NvIdent(Masque):
             zone, mnemonic = ident.split(":")
         except ValueError:
             raise ErreurValidation(
-                "L'identifiant {} n'est pas un identifiant valide.".format(
-                ident))
+                "|err|L'identifiant '{}' n'est pas valide.|ff|".format(ident))
         
         if ident in type(self).importeur.salle:
             raise ErreurValidation(
-                    "Cet identifiant est déjà utilisé.")
+                "|err|Cet identifiant est déjà utilisé.|ff|")
         
         self.identifiant = ident
         self.zone = zone

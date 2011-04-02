@@ -60,18 +60,18 @@ class NvGroupe(Masque):
         lstrip(commande)
         nom_groupe = liste_vers_chaine(commande)
         if not nom_groupe:
-            raise ErreurValidation( \
-                "Vous devez préciser un nom pour le nouveau groupe.")
+            raise ErreurValidation( 
+                "Précisez un nom pour le nouveau groupe.")
         
         if not re.match(NOM_VALIDE, nom_groupe):
             raise ErreurValidation(
-                "|att|Ce nom de groupe est invalide.|ff|")
+                "|err|Ce nom de groupe est invalide.|ff|")
         
         noms_groupes = [groupe.nom for groupe in \
             type(self).importeur.interpreteur.groupes._groupes.values()]
         if nom_groupe in noms_groupes:
             raise ErreurValidation(
-                "|att|Ce nom de groupe est déjà utilisé.|ff|")
+                "|err|Ce nom de groupe est déjà utilisé.|ff|")
 
         self.nom_groupe = nom_groupe.lower()
         

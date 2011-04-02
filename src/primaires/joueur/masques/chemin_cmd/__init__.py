@@ -83,8 +83,8 @@ class CheminCommande(Masque):
         
         if not commandes:
             raise ErreurValidation(
-                "|att|Aucune commande correspondant au chemin n'a pu être " \
-                "trouvée.|ff")
+                "|err|Aucune commande correspondant au chemin n'a pu être " \
+                "trouvée.|ff|")
         
         self.chemins = commandes
         

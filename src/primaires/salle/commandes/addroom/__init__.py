@@ -50,8 +50,8 @@ class CmdAddroom(Commande):
             "prend en paramètre la direction constante dans laquelle " \
             "vous voulez créer la salle (ce ne peut pas être " \
             "|ent|escalier|ff| par exemple car ce n'est pas un nom " \
-            "constant) puis l'identifiant de la salle à créer. Exemple " \
-            "de syntaxe : %addroom% |ent|est picte:5|ff|."
+            "constant) puis l'identifiant de la salle à créer. Par exemple : " \
+            "%addroom% |ent|est picte:5|ff|."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -63,12 +63,12 @@ class CmdAddroom(Commande):
         
         if salle.sorties.sortie_existe(direction):
             raise ErreurInterpretation(
-                "Cette direction a déjà été définie dans cette salle.")
+                "|err|Cette direction a déjà été définie dans la salle.|ff|")
         
         nv_coords = getattr(salle.coords, direction.replace("-", ""))
         if nv_coords.valide and nv_coords in type(self).importeur.salle:
             raise ErreurInterpretation(
-                "Ces coordonnées sont déjà utilisées.")
+                "|err|Ces coordonnées sont déjà utilisées.|ff|")
         
         x, y, z, valide = nv_coords.tuple_complet()
         
@@ -83,5 +83,5 @@ class CmdAddroom(Commande):
             nv_salle.sorties.ajouter_sortie(dir_opposee, dir_opposee,
                     salle_dest=salle, corresp=direction)
             
-            personnage << "La salle {} a bien été ajouté vers {}.".format(
-                    nv_salle.ident, salle.sorties[direction].nom_complet)
+            personnage << "|att|La salle {} a bien été ajouté vers {}.|ff|". \
+                    format(nv_salle.ident, salle.sorties[direction].nom_complet)

@@ -43,12 +43,12 @@ class PrmEncodage(Parametre):
         Parametre.__init__(self, "encoding", "encoding")
         self.schema = "<encodage>"
         self.aide_courte = "change l'encodage du compte"
-        #self.aide_longue = \
-        #    "Cette commande permet de changer l'encodage de votre " \
-        #    "compte. Cette commande influencera les autres joueurs de " \
-        #    "votre compte puisqu'il est présupposé qu'ils sont connecté " \
-        #    "du même point. Vous devez lui préciser en paramètre un nom " \
-        #    "d'encodage comme |ent|utf-8|ff| par exemple."
+        self.aide_longue = \
+            "Cette commande permet de changer l'encodage de votre " \
+            "compte. Cette commande influencera les autres joueurs de " \
+            "votre compte puisqu'il est présupposé qu'ils sont connecté " \
+            "du même point. Vous devez lui préciser en paramètre un nom " \
+            "d'encodage comme |ent|utf-8|ff| par exemple."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""

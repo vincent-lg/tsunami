@@ -57,15 +57,15 @@ class GroupeExistant(Masque):
         nom_groupe = liste_vers_chaine(commande)
         print("<nom_groupe> valide", nom_groupe)
         if not nom_groupe:
-            raise ErreurValidation( \
-                "Vous devez préciser un nom de groupe existant.")
+            raise ErreurValidation(
+                "Précisez un nom de groupe existant.")
         
         nom_groupe = nom_groupe.split(" ")[0]
         noms_groupes = [groupe.nom for groupe in \
             type(self).importeur.interpreteur.groupes._groupes.values()]
         if nom_groupe not in noms_groupes:
             raise ErreurValidation(
-                "|att|Ce groupe est inconnu.|ff|")
+                "|err|Ce groupe est inconnu.|ff|")
 
         self.nom_groupe = nom_groupe.lower()
         commande[:] = commande[len(nom_groupe):]

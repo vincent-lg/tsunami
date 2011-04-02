@@ -56,7 +56,7 @@ class Joueur(Masque):
         nom_joueur = liste_vers_chaine(commande)
         
         if not nom_joueur:
-            raise ErreurValidation( \
+            raise ErreurValidation(
                 "Précisez un nom de joueur.")
         
         nom_joueur = nom_joueur.split(" ")[0]
@@ -73,7 +73,7 @@ class Joueur(Masque):
         
         if not joueur:
             raise ErreurValidation(
-                "|att|Le joueur passé en paramètre n'a pu être trouvé.|ff|")
+                "|err|Le joueur passé en paramètre n'a pu être trouvé.|ff|")
         
         self.joueur = joueur
         

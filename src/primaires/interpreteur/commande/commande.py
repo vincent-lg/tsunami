@@ -156,7 +156,7 @@ class Commande(Masque):
     noms_commandes = property(_get_noms_commandes)
     
     def valider(self, personnage, dic_masques, commande):
-        """Fonctiond de validation.
+        """Fonction de validation.
         Elle retourne True si la commande entrée par le joueur correspond à
         son nom, False sinon.
         
@@ -246,6 +246,7 @@ class Commande(Masque):
         Elle se compose :
         -   du nom de la commande
         -   de son masque (optionnel)
+        -   de sa catégorie
         -   de son synopsis (aide courte)
         -   de son aide longue
         -   des aides courtes et longues de ses sous-commandes
@@ -255,7 +256,7 @@ class Commande(Masque):
         aide = "Commande |ent|"
         aide += self.afficher(personnage)
         aide += "|ff|\n\n"
-        aide += "Catégorie : " + self.categorie.nom + "\n\n"
+        aide += "Catégorie : " + self.categorie.nom.lower() + "\n\n"
         synop = "Synopsis : "
         aide += synop
         synopsis = self.remplacer_mots_cles(personnage, self.aide_courte)
@@ -284,7 +285,7 @@ class Commande(Masque):
         if len(parametres) > 0:
             aligner = longueur_ligne - taille - 5
             aide += "\n\n"
-            aide += "Sous-commandes disponibles :"
+            aide += "Sous-commandes disponibles :\n"
             for parametre in parametres:
                 if type(self).importeur.interpreteur.groupes. \
                         personnage_a_le_droit(personnage, parametre):
