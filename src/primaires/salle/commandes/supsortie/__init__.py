@@ -28,56 +28,41 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le masque <nv_ident_salle>."""
+"""Package contenant la commande 'supsortie'."""
 
-from primaires.interpreteur.masque.masque import Masque
-from primaires.interpreteur.masque.fonctions import *
-from primaires.interpreteur.masque.exceptions.erreur_validation \
-        import ErreurValidation
+from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.masque.exceptions.erreur_interpretation import \
+    ErreurInterpretation
 
-class NvIdent(Masque):
+class CmdSupsortie(Commande):
     
-    """Masque <nv_ident_salle>.
-    On attend un identifiant de salle en paramètre, sous la forme 'picte:1'.
-    Cet identifiant doit être nouveau (non utilisé).
-    
-    """
-    
-    nom = "nv_ident_salle"
+    """Commande 'supsortie'"""
     
     def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "nouvel identifiant de salle"
-        self.identifiant = ""
-        self.zone = ""
-        self.mnemonic = ""
+        """Constructeur de la commande"""
+        Commande.__init__(self, "supsortie", "delexit")
+        self.schema = "<direction>"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "supprime une sortie de la salle courante"
+        self.aide_longue = \
+            "Supprime une sortie de la salle courante. Vous devez " \
+            "lui préciser le nom d'une sortie constante. La sortie " \
+            "réciproque dans la salle de destination sera également " \
+            "supprimée si elle existe."
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        lstrip(commande)
-        ident = liste_vers_chaine(commande)
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        direction = dic_masques["direction"].direction
+        salle = personnage.salle
+        d_salle = salle.sorties[direction].salle_dest
+        dir_opposee = salle.sorties.get_nom_oppose(direction)
         
-        if not ident:
-            raise ErreurValidation( \
-                "Précisez un identifiant de salle.")
+        if not salle.sorties.sortie_existe(direction):
+            raise ErreurInterpretation(
+                "Cette direction n'a pas été définie dans cette salle.")
         
-        ident = ident.split(" ")[0].lower()
-        commande[:] = commande[len(ident):]
-        
-        try:
-            zone, mnemonic = ident.split(":")
-        except ValueError:
-            raise ErreurValidation(
-                "L'identifiant {} n'est pas un identifiant valide.".format(
-                ident))
-        
-        if ident in type(self).importeur.salle:
-            raise ErreurValidation(
-                    "Cet identifiant est déjà utilisé.")
-        
-        self.identifiant = ident
-        self.zone = zone
-        self.mnemonic = mnemonic
-        
-        return True
+        d_salle.sorties.supprimer_sortie(dir_opposee)
+        salle.sorties.supprimer_sortie(direction)
+        personnage << "La sortie {} a bien été supprimée de la salle " \
+                "courante.\nLa réciproque a également été supprimée.".format(
+                direction)

@@ -36,6 +36,10 @@ from primaires.format.description import Description
 from .coordonnees import Coordonnees
 from .sorties import Sorties, NOMS_SORTIES
 
+# Constantes
+ZONE_VALIDE = r"^[a-z0-9_]{3,15}$"
+MNEMONIC_VALIDE = r"^[a-z0-9_]{1,10}$"
+
 class Salle(ObjetID):
     
     """Classe représentant une salle de l'univers.
@@ -89,7 +93,7 @@ class Salle(ObjetID):
         return self._zone
     def _set_zone(self, zone):
         ident = self.ident
-        self._zone = zone
+        self._zone = zone.lower()
         self.enregistrer()
         type(self).importeur.salle.changer_ident(ident, self.ident)
     
@@ -97,7 +101,7 @@ class Salle(ObjetID):
         return self._mnemonic
     def _set_mnemonic(self, mnemonic):
         ident = self.ident
-        self._mnemonic = mnemonic
+        self._mnemonic = mnemonic.lower()
         self.enregistrer()
         type(self).importeur.salle.changer_ident(ident, self.ident)
     

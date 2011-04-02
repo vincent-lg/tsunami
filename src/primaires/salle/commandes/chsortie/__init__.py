@@ -28,60 +28,59 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'addroom'."""
+"""Package contenant la commande 'chsortie'."""
 
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.masque.exceptions.erreur_interpretation import \
     ErreurInterpretation
 
-
-class CmdAddroom(Commande):
+class CmdChsortie(Commande):
     
-    """Commande 'addroom'"""
+    """Commande 'chsortie'"""
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "addroom", "addroom")
-        self.schema = "<direction> <nv_ident_salle>"
+        Commande.__init__(self, "chsortie", "setexit")
+        self.schema = "<direction> <ident_salle>"
         self.nom_categorie = "batisseur"
-        self.aide_courte = "ajoute une salle à l'univers"
+        self.aide_courte = "change une sortie de la salle courante"
         self.aide_longue = \
-            "Cette commande permet d'ajouter une salle à l'univers. Elle " \
-            "prend en paramètre la direction constante dans laquelle " \
-            "vous voulez créer la salle (ce ne peut pas être " \
-            "|ent|escalier|ff| par exemple car ce n'est pas un nom " \
-            "constant) puis l'identifiant de la salle à créer. Exemple " \
-            "de syntaxe : %addroom% |ent|est picte:5|ff|."
+            "Cette commande permet de configurer une sortie de la salle  " \
+            "où vous vous trouvez. Vous devez lui préciser le nom de " \
+            "la direction constante dans laquelle vous voulez créer " \
+            "votre sortie, puis l'identifiant de la salle à lier. " \
+            "Si vous vous trouvez dans la salle |ent|picte:1|ff| et " \
+            "que vous entrez %chsortie% |ent|est picte:2|ff|, une " \
+            "sortie |ent|est|ff| sera créée menant de la salle " \
+            "|ent|picte:1|ff| à |ent|picte:2|ff|. Sa réciproque sera " \
+            "également créée, c'est-à-dire la sortie |ent|ouest|ff| " \
+            "menant de |ent|picte:2|ff| vers |ent|picte:1|ff|."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         direction = dic_masques["direction"].direction
-        zone = dic_masques["nv_ident_salle"].zone
-        mnemonic = dic_masques["nv_ident_salle"].mnemonic
         salle = personnage.salle
+        d_salle = dic_masques["ident_salle"].salle
         dir_opposee = salle.sorties.get_nom_oppose(direction)
         
         if salle.sorties.sortie_existe(direction):
             raise ErreurInterpretation(
                 "Cette direction a déjà été définie dans cette salle.")
         
-        nv_coords = getattr(salle.coords, direction.replace("-", ""))
-        if nv_coords.valide and nv_coords in type(self).importeur.salle:
+        if d_salle.sorties.sortie_existe(dir_opposee):
             raise ErreurInterpretation(
-                "Ces coordonnées sont déjà utilisées.")
+                "La direction opposée a déjà été définie en {}.".format(
+                d_salle.ident))
         
-        x, y, z, valide = nv_coords.tuple_complet()
+        if salle is d_salle:
+            raise ErreurInterpretation(
+                "La salle de destination est la salle d'origine.")
         
-        try:
-            nv_salle = type(self).importeur.salle.creer_salle(zone, mnemonic,
-                    x, y, z, valide)
-        except ValueError as err_val:
-            personnage << str(err_val) + "."
-        else:
-            salle.sorties.ajouter_sortie(direction, direction,
-                    salle_dest=nv_salle, corresp=dir_opposee)
-            nv_salle.sorties.ajouter_sortie(dir_opposee, dir_opposee,
-                    salle_dest=salle, corresp=direction)
-            
-            personnage << "La salle {} a bien été ajouté vers {}.".format(
-                    nv_salle.ident, salle.sorties[direction].nom_complet)
+        salle.sorties.ajouter_sortie(direction, direction,
+                salle_dest=d_salle, corresp=dir_opposee)
+        d_salle.sorties.ajouter_sortie(dir_opposee, dir_opposee,
+                salle_dest=salle, corresp=direction)
+        
+        personnage << "La sortie {} reliant {} à {} a été créée.\n" \
+                "La réciproque a été créée également.".format(direction,
+                salle.ident, d_salle.ident)

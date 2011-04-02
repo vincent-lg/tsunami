@@ -33,9 +33,7 @@
 import re
 
 from primaires.interpreteur.editeur.uniligne import Uniligne
-
-# Constantes
-MNEMONIC_VALIDE = r"^[a-z0-9_]{1,10}$"
+from primaires.salle.salle import MNEMONIC_VALIDE
 
 class EdtMnemonic(Uniligne):
     
