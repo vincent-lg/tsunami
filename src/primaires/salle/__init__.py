@@ -151,9 +151,11 @@ class Module(BaseModule):
         # On ajoute les commandes du module
         self.commandes = [
             commandes.addroom.CmdAddroom(),
+            commandes.chsortie.CmdChsortie(),
             commandes.goto.CmdGoto(),
             commandes.redit.CmdRedit(),
             commandes.regarder.CmdRegarder(),
+            commandes.supsortie.CmdSupsortie(),
         ]
         
         for cmd in self.commandes:
