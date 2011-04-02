@@ -36,3 +36,5 @@ import primaires.joueur.commandes.module
 import primaires.joueur.commandes.options
 import primaires.joueur.commandes.quitter
 import primaires.joueur.commandes.shutdown
+# import primaires.joueur.commandes.parler BUG A FIXER
+import primaires.joueur.commandes.ou

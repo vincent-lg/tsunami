@@ -41,20 +41,20 @@ class CmdGoto(Commande):
         Commande.__init__(self, "goto", "goto")
         self.schema = "<ident_salle>"
         self.nom_categorie = "bouger"
-        self.aide_courte = "se déplacer dans l'univers"
+        self.aide_courte = "permet de se déplacer dans l'univers"
         self.aide_longue = \
             "Cette commande vous permet de vous déplacer rapidement dans " \
             "l'univers. Vous devez lui passer en paramètre l'identifiant " \
-            "de la salle sous la forme |ent|zone:mnémonic|ff| comme " \
+            "de la salle sous la forme |cmd|zone:mnémonic|ff|, " \
             "par exemple |ent|picte:1|ff|."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         salle = dic_masques["ident_salle"].salle
         salle_courante = personnage.salle
-        salle_courante.envoyer("{} disparaît dans un éclair de lumière " \
-               "bleue.".format(personnage.nom), (personnage, ))
+        salle_courante.envoyer("|cyc|{} disparaît dans un éclair de lumière " \
+                "bleue.|ff|".format(personnage.nom), (personnage, ))
         personnage.salle = salle
         personnage << personnage.regarder()
-        salle.envoyer("{} apparaît dans un éclair de lumière bleue.".format(
-                personnage.nom), (personnage, ))
+        salle.envoyer("|cyc|{} apparaît dans un éclair de lumière bleue.|ff|" \
+                .format(personnage.nom), (personnage, ))

@@ -44,7 +44,7 @@ class CmdRedit(Commande):
         self.nom_categorie = "batisseur"
         self.aide_courte = "ouvre l'éditeur de salle"
         self.aide_longue = \
-            "Cette commande ouvre l'éditeur de salle qui permet d'éditer " \
+            "Cette commande ouvre l'éditeur de salle qui permet de modifier " \
             "les éléments d'une salle (titre, description, sorties...). " \
             "C'est la commande usuelle pour modifier une salle, corriger " \
             "une faute, ajouter des objets au repop..."

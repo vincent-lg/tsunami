@@ -40,13 +40,13 @@ class CmdRegarder(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "regarder", "look")
         self.nom_categorie = "bouger"
-        self.aide_courte = "regarder autour de soi"
+        self.aide_courte = "permet regarder autour de soi"
         self.aide_longue = \
-            "Cette commande permet de regarder autour de vous, voir la salle " \
-            "où vous vous trouvez, les différents personnages et objets " \
-            "présents. Vous pouvez également trouver, en bas de la description, " \
-            "une liste de sorties que vous pouvez emprunter pour changer " \
-            "de salle."
+            "Cette commande permet de regarder autour de vous, de voir la " \
+            "salle où vous vous trouvez, les différents personnages et " \
+            "objets présents. Vous pouvez également trouver, en bas de la " \
+            "description, une liste des sorties que vous pouvez emprunter " \
+            "pour changer de salle et vous déplacer dans l'univers."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
