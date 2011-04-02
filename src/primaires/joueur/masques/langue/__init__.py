@@ -28,11 +28,49 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module joueur."""
+"""Fichier contenant le masque <langue>."""
 
-import primaires.joueur.masques.chemin_cmd
-import primaires.joueur.masques.encodage
-import primaires.joueur.masques.groupe_existant
-import primaires.joueur.masques.joueur
-import primaires.joueur.masques.langue
-import primaires.joueur.masques.nv_groupe
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+from primaires.format.fonctions import *
+
+LANGUES = ("anglais", "francais")
+
+class Langue(Masque):
+    
+    """Masque <langue>.
+    On attend un nom de langue en paramètre.
+    
+    """
+    
+    nom = "langue"
+    
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self)
+        self.nom_complet = "langue disponible"
+        self.langue = ""
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        lstrip(commande)
+        langue = liste_vers_chaine(commande)
+        
+        if not langue:
+            raise ErreurValidation( \
+                "Précisez une langue disponible (|ent|anglais|ff| ou " \
+                "|ent|français|ff|).")
+        
+        langue = langue.split(" ")[0].lower()
+        commande[:] = commande[len(langue):]
+        langue = supprimer_accents(langue)
+
+        if not langue in LANGUES:
+            raise ErreurValidation(
+                "|att|LLa langue précisée n'est pas disponible.|ff|")
+        
+        self.langue = langue
+        
+        return True

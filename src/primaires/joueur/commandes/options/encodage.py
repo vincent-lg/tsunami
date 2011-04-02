@@ -28,11 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module joueur."""
+"""Fichier contenant le paramètre 'ajouter' de la commande 'groupe'."""
 
-import primaires.joueur.masques.chemin_cmd
-import primaires.joueur.masques.encodage
-import primaires.joueur.masques.groupe_existant
-import primaires.joueur.masques.joueur
-import primaires.joueur.masques.langue
-import primaires.joueur.masques.nv_groupe
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmEncodage(Parametre):
+    
+    """Commande 'groupe ajouter'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "encoding", "encoding")
+        self.schema = "<encodage>"
+        self.aide_courte = "change l'encodage du compte"
+        #self.aide_longue = \
+        #    "Cette commande permet de changer l'encodage de votre " \
+        #    "compte. Cette commande influencera les autres joueurs de " \
+        #    "votre compte puisqu'il est présupposé qu'ils sont connecté " \
+        #    "du même point. Vous devez lui préciser en paramètre un nom " \
+        #    "d'encodage comme |ent|utf-8|ff| par exemple."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        encodage = dic_masques["encodage"].encodage
+        anc_encodage = personnage.compte.encodage
+        personnage.compte.encodage = encodage
+        personnage << "Vous changez l'encodage du compte de {} à {}.".format(
+                anc_encodage, encodage)

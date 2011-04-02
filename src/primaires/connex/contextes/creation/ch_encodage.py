@@ -29,14 +29,7 @@
 
 
 from primaires.interpreteur.contexte import Contexte
-
-## Constantes
-ENCODAGES = [
-    'Utf-8',
-    'Latin-1',
-    'cp850',
-    'cp1252',
-]
+from reseau.connexions.client_connecte import ENCODAGES
 
 class ChangerEncodage(Contexte):
     """Contexte de changement d'encodage.

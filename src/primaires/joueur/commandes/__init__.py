@@ -33,5 +33,6 @@
 import primaires.joueur.commandes.chgroupe
 import primaires.joueur.commandes.groupe
 import primaires.joueur.commandes.module
+import primaires.joueur.commandes.options
 import primaires.joueur.commandes.quitter
 import primaires.joueur.commandes.shutdown

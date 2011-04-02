@@ -31,10 +31,10 @@
 """Fichier contenant le paramètre 'inclus' de la commande 'groupe'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
-from primaires.joueur.commandes.groupe.inclus_ajouter import PrmInclusAjouter
-from primaires.joueur.commandes.groupe.inclus_supprimer import \
+from .inclus_ajouter import PrmInclusAjouter
+from .inclus_supprimer import \
     PrmInclusSupprimer
-from primaires.joueur.commandes.groupe.inclus_vider import PrmInclusVider
+from .inclus_vider import PrmInclusVider
 
 class PrmInclus(Parametre):
     

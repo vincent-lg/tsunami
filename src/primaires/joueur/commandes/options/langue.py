@@ -28,11 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module joueur."""
+"""Fichier contenant le paramètre 'langue' de la commande 'options'."""
 
-import primaires.joueur.masques.chemin_cmd
-import primaires.joueur.masques.encodage
-import primaires.joueur.masques.groupe_existant
-import primaires.joueur.masques.joueur
-import primaires.joueur.masques.langue
-import primaires.joueur.masques.nv_groupe
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmLangue(Parametre):
+    
+    """Commande 'options langue'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "lang", "lang")
+        self.schema = "<langue>"
+        self.aide_courte = "change la langue du joueur"
+        self.aide_longue = \
+            "Cette commande permet de changer la langue d'affichage des " \
+            "commandes de votre joueur. Vous pouvez choisir des commandes " \
+            "en |ent|anglais|ff| ou en |ent|français|ff| selon votre " \
+            "choix. Précisez en paramètre le nom de la langue."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        langue = dic_masques["langue"].langue
+        anc_langue = personnage.langue_cmd
+        personnage.langue_cmd = langue
+        personnage << "Vous changez la langue du joueur de {} à {}.".format(
+                anc_langue, langue)

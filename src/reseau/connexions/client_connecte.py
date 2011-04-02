@@ -32,6 +32,13 @@
 
 import socket
 
+ENCODAGES = [
+    'utf-8',
+    'latin-1',
+    'cp850',
+    'cp1252',
+]
+
 class ClientConnecte:
     """Cette classe est une classe enveloppe d'un socket.
     Elle reprend les méthodes utiles à la manipulation des sockets et possède

@@ -34,11 +34,11 @@ Dans ce fichier se trouve la commande même.
 """
 
 from primaires.interpreteur.commande.commande import Commande
-from primaires.joueur.commandes.groupe.ajouter import PrmAjouter
-from primaires.joueur.commandes.groupe.inclus import PrmInclus
-from primaires.joueur.commandes.groupe.info import PrmInfo
-from primaires.joueur.commandes.groupe.liste import PrmListe
-from primaires.joueur.commandes.groupe.supprimer import PrmSupprimer
+from .ajouter import PrmAjouter
+from .inclus import PrmInclus
+from .info import PrmInfo
+from .liste import PrmListe
+from .supprimer import PrmSupprimer
 
 class CmdGroupe(Commande):
     

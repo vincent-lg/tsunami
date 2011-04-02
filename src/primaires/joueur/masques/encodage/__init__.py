@@ -28,11 +28,46 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module joueur."""
+"""Fichier contenant le masque <encodage>."""
 
-import primaires.joueur.masques.chemin_cmd
-import primaires.joueur.masques.encodage
-import primaires.joueur.masques.groupe_existant
-import primaires.joueur.masques.joueur
-import primaires.joueur.masques.langue
-import primaires.joueur.masques.nv_groupe
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+from reseau.connexions.client_connecte import ENCODAGES
+
+class Encodage(Masque):
+    
+    """Masque <encodage>.
+    On attend un nom d'encodage en paramètre.
+    
+    """
+    
+    nom = "encodage"
+    
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self)
+        self.nom_complet = "encodage disponible"
+        self.encodage = ""
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        lstrip(commande)
+        encodage = liste_vers_chaine(commande)
+        
+        if not encodage:
+            raise ErreurValidation( \
+                "Précisez un encodage disponible.")
+        
+        encodage = encodage.split(" ")[0].lower()
+        commande[:] = commande[len(encodage):]
+
+        msg_enc = "\n\nEncodages disponibles : " + ", ".join(ENCODAGES)
+        if not encodage in ENCODAGES:
+            raise ErreurValidation(
+                "|att|LL'encodage précisé n'est pas disponible.|ff|" + msg_enc)
+        
+        self.encodage = encodage
+        
+        return True

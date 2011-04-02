@@ -28,11 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module joueur."""
+"""Package contenant la commande 'options' et ses sous-commandes.
+Dans ce fichier se trouve la commande même.
 
-import primaires.joueur.masques.chemin_cmd
-import primaires.joueur.masques.encodage
-import primaires.joueur.masques.groupe_existant
-import primaires.joueur.masques.joueur
-import primaires.joueur.masques.langue
-import primaires.joueur.masques.nv_groupe
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+from .encodage import PrmEncodage
+from .langue import PrmLangue
+
+class CmdOptions(Commande):
+    
+    """Commande 'options'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "options", "options")
+        self.groupe = "joueur"
+        self.aide_courte = "change vos options de compte et joueur"
+        self.aide_longue = \
+            "Cette commande permet de manipuler les options de votre " \
+            "joueur et de votre compte. Tapez %options% sans paramètrse " \
+            "pour voir les options disponibles, ou lisez l'aide des " \
+            "sous-commandes ci-dessous."
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
+        prm_encodage = PrmEncodage()
+        prm_langue = PrmLangue()
+        
+        self.ajouter_parametre(prm_encodage)
+        self.ajouter_parametre(prm_langue)

@@ -66,9 +66,13 @@ class Module(BaseModule):
         self.importeur.interpreteur.ajouter_masque(
                 masques.chemin_cmd.CheminCommande)
         self.importeur.interpreteur.ajouter_masque(
+                masques.encodage.Encodage)
+        self.importeur.interpreteur.ajouter_masque(
                 masques.groupe_existant.GroupeExistant)
         self.importeur.interpreteur.ajouter_masque(
                 masques.joueur.Joueur)
+        self.importeur.interpreteur.ajouter_masque(
+                masques.langue.Langue)
         self.importeur.interpreteur.ajouter_masque(
                 masques.nv_groupe.NvGroupe)
         
@@ -77,6 +81,7 @@ class Module(BaseModule):
             commandes.chgroupe.CmdChgroupe(),
             commandes.groupe.CmdGroupe(),
             commandes.module.CmdModule(),
+            commandes.options.CmdOptions(),
             commandes.quitter.CmdQuitter(),
             commandes.shutdown.CmdShutdown(),
         ]
