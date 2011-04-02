@@ -50,10 +50,10 @@ class CmdChsortie(Commande):
             "la direction constante dans laquelle vous voulez créer " \
             "votre sortie, puis l'identifiant de la salle à lier. " \
             "Si vous vous trouvez dans la salle |ent|picte:1|ff| et " \
-            "que vous entrez %chsortie% |ent|est picte:2|ff|, une " \
-            "sortie |ent|est|ff| sera créée menant de la salle " \
+            "que vous entrez %chsortie% |ent|nord picte:2|ff|, une " \
+            "sortie |ent|nord|ff| sera créée menant de la salle " \
             "|ent|picte:1|ff| à |ent|picte:2|ff|. Sa réciproque sera " \
-            "également créée, c'est-à-dire la sortie |ent|ouest|ff| " \
+            "également créée, c'est-à-dire la sortie |ent|sud|ff| " \
             "menant de |ent|picte:2|ff| vers |ent|picte:1|ff|."
     
     def interpreter(self, personnage, dic_masques):
