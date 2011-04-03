@@ -156,9 +156,9 @@ class Salle(ObjetID):
     def regarder(self, personnage):
         """Le personnage regarde la salle"""
         res = ""
-        res += "# " + self.ident
-        res += "\n|tit|" + self.titre + "|ff|\n"
-        res += str(self.description) + "\n"
+        res += "# |rgc|" + self.ident + "|ff|\n\n"
+        res += "|tit|" + self.titre + "|ff|\n\n"
+        res += str(self.description) + "\n\n"
         res += "Sorties : "
         res += self.afficher_sorties(personnage)
         
@@ -181,7 +181,7 @@ class Salle(ObjetID):
         for nom in NOMS_SORTIES.keys():
             nom_aff = self.sorties.get_nom_abrege(nom)
             if self.sorties.sortie_existe(nom):
-                res += nom_aff
+                res += "|vr|" + nom_aff + "|ff|"
             else:
                 res += " ".ljust(len(nom_aff))
             res += ", "

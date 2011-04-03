@@ -28,39 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'options' et ses sous-commandes.
-Dans ce fichier se trouve la commande même.
+"""Fichier contenant le paramètre 'voir' de la commande 'options'."""
 
-"""
+from primaires.interpreteur.masque.parametre import Parametre
+from reseau.connexions.client_connecte import ENCODAGES
 
-from primaires.interpreteur.commande.commande import Commande
-from .encodage import PrmEncodage
-from .langue import PrmLangue
-from .voir import PrmVoir
-
-class CmdOptions(Commande):
+class PrmVoir(Parametre):
     
-    """Commande 'options'.
+    """Commande 'options voir'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "options", "options")
-        self.groupe = "joueur"
-        self.aide_courte = "change vos options de compte et joueur"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "view", "view")
+        self.schema = ""
+        self.aide_courte = "visualise les options du joueur"
         self.aide_longue = \
-            "Cette commande permet de manipuler les options de votre " \
-            "joueur et de votre compte. Tapez %options% sans paramètrse " \
-            "pour voir les options disponibles, ou lisez l'aide des " \
-            "sous-commandes ci-dessous."
+            "Cette commande permet de voir l'état actuel des options que " \
+            "vous pouvez éditer avec la commande %options%. Elle donne aussi " \
+            "un aperçu des valeurs disponibles."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_encodage = PrmEncodage()
-        prm_langue = PrmLangue()
-        prm_voir = PrmVoir()
-        
-        self.ajouter_parametre(prm_encodage)
-        self.ajouter_parametre(prm_langue)
-        self.ajouter_parametre(prm_voir)
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        langue = personnage.langue_cmd
+        encodage = personnage.compte.encodage
+        res = "Options actuelles :\n\n"
+        res += "  Votre encodage : |ent|" + encodage + "|ff|.\n"
+        res += "  Encodages disponibles : |ent|" + "|ff|, |ent|". \
+            join(ENCODAGES) + "|ff|.\n\n"
+        res += "  Votre langue : |ent|" + langue + "|ff|.\n"
+        res += "  Langues disponibles : |ent|français|ff|, " \
+            "|ent|anglais|ff|."
+        personnage << res

@@ -63,7 +63,7 @@ class Description:
             res.append(paragraphe)
         
         if not res:
-            res.append("Aucune description")
+            res.append("Aucune description.")
         
         return "\n".join(res)
     
@@ -128,6 +128,6 @@ class Description:
             res.append(paragraphe)
         
         if not res:
-            res.append("Aucune description")
+            res.append("Aucune description.")
         
         return indentation + indentation.join(res)

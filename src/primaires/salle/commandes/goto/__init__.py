@@ -52,9 +52,9 @@ class CmdGoto(Commande):
         """Méthode d'interprétation de commande"""
         salle = dic_masques["ident_salle"].salle
         salle_courante = personnage.salle
-        salle_courante.envoyer("|cyc|{} disparaît dans un éclair de lumière " \
-                "bleue.|ff|".format(personnage.nom), (personnage, ))
+        salle_courante.envoyer("{} disparaît avec un éclair de |cyc|lumière " \
+                "bleue|ff|.".format(personnage.nom), (personnage, ))
         personnage.salle = salle
         personnage << personnage.regarder()
-        salle.envoyer("|cyc|{} apparaît dans un éclair de lumière bleue.|ff|" \
+        salle.envoyer("{} apparaît avec un éclair de |cyc|lumière bleue|ff|." \
                 .format(personnage.nom), (personnage, ))
