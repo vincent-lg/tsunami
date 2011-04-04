@@ -55,5 +55,7 @@ class CmdEmote(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
-        message = dic_masques["message"].message
+        message = dic_masques["message"].message.rstrip(".")
+        message = message.rstrip("!")
+        message = message.rstrip()
         personnage.salle.envoyer(personnage.nom + " " + message + ".")

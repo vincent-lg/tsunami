@@ -45,9 +45,9 @@ class CmdSupsortie(Commande):
         self.nom_categorie = "batisseur"
         self.aide_courte = "supprime une sortie de la salle courante"
         self.aide_longue = \
-            "Supprime une sortie de la salle courante. Vous devez " \
-            "lui préciser le nom d'une sortie constante. La sortie " \
-            "réciproque dans la salle de destination sera également " \
+            "Cette commande supprime une sortie de la salle courante. " \
+            "Vous devez lui préciser le nom d'une sortie constante. La " \
+            "sortie réciproque dans la salle de destination sera également " \
             "supprimée si elle existe."
     
     def interpreter(self, personnage, dic_masques):
@@ -57,13 +57,13 @@ class CmdSupsortie(Commande):
         
         if not salle.sorties.sortie_existe(direction):
             raise ErreurInterpretation(
-                "Cette direction n'a pas été définie dans cette salle.")
+                "|err|ette direction n'a pas été définie dans cette salle.|ff|")
         
         d_salle = salle.sorties[direction].salle_dest
         dir_opposee = salle.sorties.get_nom_oppose(direction)
         
         d_salle.sorties.supprimer_sortie(dir_opposee)
         salle.sorties.supprimer_sortie(direction)
-        personnage << "La sortie {} a bien été supprimée de la salle " \
-                "courante.\nLa réciproque a également été supprimée.".format(
-                direction)
+        personnage << "|att|La sortie {} a bien été supprimée de la salle " \
+                "courante.\nLa réciproque a également été supprimée (sortie " \
+                "{} dans {}).|ff|".format(direction, dir_opposee, d_salle)

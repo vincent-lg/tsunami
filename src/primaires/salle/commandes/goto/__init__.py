@@ -45,7 +45,7 @@ class CmdGoto(Commande):
         self.aide_longue = \
             "Cette commande vous permet de vous déplacer rapidement dans " \
             "l'univers. Vous devez lui passer en paramètre l'identifiant " \
-            "de la salle sous la forme |cmd|zone:mnémonic|ff|, " \
+            "d'une salle sous la forme |cmd|zone:mnémonic|ff|, " \
             "par exemple |ent|picte:1|ff|."
     
     def interpreter(self, personnage, dic_masques):

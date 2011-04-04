@@ -43,9 +43,9 @@ class CmdChsortie(Commande):
         Commande.__init__(self, "chsortie", "setexit")
         self.schema = "<direction> <ident_salle>"
         self.nom_categorie = "batisseur"
-        self.aide_courte = "change une sortie de la salle courante"
+        self.aide_courte = "modifie une sortie de la salle courante"
         self.aide_longue = \
-            "Cette commande permet de configurer une sortie de la salle  " \
+            "Cette commande permet de configurer une sortie de la salle " \
             "où vous vous trouvez. Vous devez lui préciser le nom de " \
             "la direction constante dans laquelle vous voulez créer " \
             "votre sortie, puis l'identifiant de la salle à lier. " \
@@ -65,22 +65,25 @@ class CmdChsortie(Commande):
         
         if salle.sorties.sortie_existe(direction):
             raise ErreurInterpretation(
-                "Cette direction a déjà été définie dans cette salle.")
+                "|err|Cette direction a déjà été définie dans la salle " \
+                "courante.|ff|")
         
         if d_salle.sorties.sortie_existe(dir_opposee):
             raise ErreurInterpretation(
-                "La direction opposée a déjà été définie en {}.".format(
-                d_salle.ident))
+                "|err|La direction opposée a déjà été définie dans {}.|ff|". \
+                format(d_salle.ident))
         
         if salle is d_salle:
             raise ErreurInterpretation(
-                "La salle de destination est la salle d'origine.")
+                "|err|La salle de destination est la même que la salle " \
+                "d'origine.|ff|")
         
         salle.sorties.ajouter_sortie(direction, direction,
                 salle_dest=d_salle, corresp=dir_opposee)
         d_salle.sorties.ajouter_sortie(dir_opposee, dir_opposee,
                 salle_dest=salle, corresp=direction)
         
-        personnage << "La sortie {} reliant {} à {} a été créée.\n" \
-                "La réciproque a été créée également.".format(direction,
-                salle.ident, d_salle.ident)
+        personnage << "|att|La sortie {} reliant {} à {} a été créée.\n" \
+                "La réciproque a été créée également (sortie {} dans {}).|ff|" \
+                .format(direction, salle.ident, d_salle.ident, dir_opposee,
+                    d_salle.ident)
