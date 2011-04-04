@@ -54,12 +54,13 @@ class CmdSupsortie(Commande):
         """Méthode d'interprétation de commande"""
         direction = dic_masques["direction"].direction
         salle = personnage.salle
-        d_salle = salle.sorties[direction].salle_dest
-        dir_opposee = salle.sorties.get_nom_oppose(direction)
         
         if not salle.sorties.sortie_existe(direction):
             raise ErreurInterpretation(
                 "Cette direction n'a pas été définie dans cette salle.")
+        
+        d_salle = salle.sorties[direction].salle_dest
+        dir_opposee = salle.sorties.get_nom_oppose(direction)
         
         d_salle.sorties.supprimer_sortie(dir_opposee)
         salle.sorties.supprimer_sortie(direction)
