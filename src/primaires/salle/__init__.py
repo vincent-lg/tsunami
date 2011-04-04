@@ -96,20 +96,6 @@ class Module(BaseModule):
         for salle in salles:
             self.ajouter_salle(salle)
         
-        ###DEBUG
-        if len(salles) == 0:
-            s1 = self.creer_salle("picte", "1", 0, 0, 0)
-            s1.titre = "La salle Picte 1"
-            s2 = self.creer_salle("picte", "2", 0, 1, 0)
-            s1.sorties.ajouter_sortie("est", "est", salle_dest=s2,
-                    corresp="ouest")
-            s2.titre = "La salle Picte 2"
-            s2.sorties.ajouter_sortie("ouest", "ouest", salle_dest=s1,
-                    corresp="est")
-            s_e = s2.sorties["ouest"].sortie_opposee
-            print(s_e.parent, s_e.nom)
-        print(self._salles, self._coords)
-        
         # On récupère la configuration
         conf_salle = type(self.importeur).anaconf.get_config("salle")
         salle_arrivee = conf_salle.salle_arrivee
@@ -120,7 +106,6 @@ class Module(BaseModule):
             zone, mnemonic = salle_arrivee.split(":")
             salle_arrivee = self.creer_salle(zone, mnemonic, valide=False)
             salle_arrivee.titre = "La salle d'arrivée"
-            print("Création de la salle d'arrivée :", salle_arrivee)
             salle_arrivee = salle_arrivee.ident
         
         if salle_retour not in self:
@@ -128,7 +113,6 @@ class Module(BaseModule):
             zone, mnemonic = salle_retour.split(":")
             salle_retour = self.creer_salle(zone, mnemonic, valide=False)
             salle_retour.titre = "La salle de retour"
-            print("Création de la salle de retour :", salle_retour)
             salle_retour = salle_retour.ident
         
         self.salle_arrivee = salle_arrivee
@@ -217,7 +201,6 @@ class Module(BaseModule):
         self._salles et self._coords.
         
         """
-        print("On ajoute", salle.ident)
         self._salles[salle.ident] = salle
         if salle.coords.valide:
             self._coords[salle.coords.tuple()] = salle

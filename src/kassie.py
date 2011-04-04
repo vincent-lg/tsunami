@@ -81,7 +81,7 @@ from bases.anaconf import anaconf
 from bases.logs import man_logs
 from bases.parid import parid
 from corps.config import pere
-
+from primaires.format.date import *
 # Définition des fonctions appelées pour arrêter le MUD
 # Le lancement du MUD se trouve sous la fonction
 def arreter_MUD():
@@ -123,6 +123,7 @@ man_logs.config(anaconf, parser_cmd)
 
 # On se crée un logger
 log = man_logs.creer_logger("", "sup", "kassie.log")
+log.info("Session démarrée {}".format(get_date()))
 
 # On prend comme base le port présent dans le fichier de configuration
 port = config_globale.port

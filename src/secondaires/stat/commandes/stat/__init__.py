@@ -32,9 +32,8 @@
 
 """
 
-import time
-
 from primaires.interpreteur.commande.commande import Commande
+from primaires.format.date import *
 
 class CmdStat(Commande):
     
@@ -60,18 +59,7 @@ class CmdStat(Commande):
         msg = "Informations générales :"
         # Depuis quand le serveur est-il lancé ?
         uptime = stats.uptime
-        struct = time.localtime(uptime)
-        semaine = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', \
-                'samedi', 'dimanche']
-        mois = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', \
-            'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
-        
-        jour_semaine = semaine[struct.tm_wday]
-        mois_courant = mois[struct.tm_mon - 1]
-        msg += "\n    Le MUD est démarré depuis le {} {} {} {} à {:02}:" \
-                "{:02}:{:02}.".format(jour_semaine, struct.tm_mday,
-                mois_courant, struct.tm_year, struct.tm_hour, struct.tm_min,
-                struct.tm_sec)
+        msg += "\n    Le MUD est démarré depuis {}.".format(get_date(uptime))
         
         msg += "\n"
         
