@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le masque <langue>."""
+"""Fichier contenant le masque <nom_langue>."""
 
 from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
@@ -40,12 +40,12 @@ LANGUES = ("anglais", "francais")
 
 class Langue(Masque):
     
-    """Masque <langue>.
+    """Masque <nom_langue>.
     On attend un nom de langue en paramètre.
     
     """
     
-    nom = "langue"
+    nom = "nom_langue"
     
     def __init__(self):
         """Constructeur du masque"""

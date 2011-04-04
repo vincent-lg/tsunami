@@ -40,8 +40,8 @@ class PrmLangue(Parametre):
     
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "lang", "lang")
-        self.schema = "<langue>"
+        Parametre.__init__(self, "langue", "lang")
+        self.schema = "<nom_langue>"
         self.aide_courte = "change la langue du joueur"
         self.aide_longue = \
             "Cette commande permet de changer la langue d'affichage des " \
@@ -51,7 +51,7 @@ class PrmLangue(Parametre):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        langue = dic_masques["langue"].langue
+        langue = dic_masques["nom_langue"].langue
         anc_langue = personnage.langue_cmd
         personnage.langue_cmd = langue
         personnage << "Vous changez la langue du joueur de {} à {}.".format(

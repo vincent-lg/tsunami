@@ -40,8 +40,8 @@ class PrmEncodage(Parametre):
     
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "encoding", "encoding")
-        self.schema = "<encodage>"
+        Parametre.__init__(self, "encodage", "encoding")
+        self.schema = "<nom_encodage>"
         self.aide_courte = "change l'encodage du compte"
         self.aide_longue = \
             "Cette commande permet de changer l'encodage de votre " \
@@ -52,7 +52,7 @@ class PrmEncodage(Parametre):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        encodage = dic_masques["encodage"].encodage
+        encodage = dic_masques["nom_encodage"].encodage
         anc_encodage = personnage.compte.encodage
         personnage.compte.encodage = encodage
         personnage << "Vous changez l'encodage du compte de {} à {}.".format(

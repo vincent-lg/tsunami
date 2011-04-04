@@ -41,7 +41,7 @@ class PrmVoir(Parametre):
     
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "view", "view")
+        Parametre.__init__(self, "voir", "view")
         self.schema = ""
         self.aide_courte = "visualise les options du joueur"
         self.aide_longue = \

@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le masque <encodage>."""
+"""Fichier contenant le masque <nom_encodage>."""
 
 from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
@@ -38,12 +38,12 @@ from reseau.connexions.client_connecte import ENCODAGES
 
 class Encodage(Masque):
     
-    """Masque <encodage>.
+    """Masque <nom_encodage>.
     On attend un nom d'encodage en paramètre.
     
     """
     
-    nom = "encodage"
+    nom = "nom_encodage"
     
     def __init__(self):
         """Constructeur du masque"""
