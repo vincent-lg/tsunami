@@ -51,13 +51,13 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "perso", "primaire")
         self.commandes = []
     
-    def init(self):
-        """Méthode d'initialisation du module"""
-        # Ajout des masques dans l'interpréteur
+    def ajouter_masques(self):
+        """Ajout des masques dans l'interpréteur"""
         self.importeur.interpreteur.ajouter_masque(masques.commande.Commande)
         self.importeur.interpreteur.ajouter_masque(masques.message.Message)
-        
-        # On ajoute les commandes du module
+    
+    def ajouter_commandes(self):
+        """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.commande.CmdCommande(),
             commandes.dire.CmdDire(),
@@ -68,5 +68,3 @@ class Module(BaseModule):
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
-        
-        BaseModule.init(self)

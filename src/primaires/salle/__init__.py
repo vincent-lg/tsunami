@@ -124,15 +124,19 @@ class Module(BaseModule):
             s = "s"
         self.logger.info("{} salle{s} récupérée{s}".format(nb_salles, s = s))
         
-        # Ajout des masques dans l'interpréteur
+        BaseModule.init(self)
+    
+    def ajouter_masques(self):
+        """Ajout des masques dans l'interpréteur"""
         self.importeur.interpreteur.ajouter_masque(
                 masques.direction.Direction)
         self.importeur.interpreteur.ajouter_masque(
                 masques.nv_ident.NvIdent)
         self.importeur.interpreteur.ajouter_masque(
                 masques.ident.Ident)
-        
-        # On ajoute les commandes du module
+    
+    def ajouter_commandes(self):
+        """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.addroom.CmdAddroom(),
             commandes.chsortie.CmdChsortie(),
@@ -147,8 +151,6 @@ class Module(BaseModule):
         
         # Ajout de l'éditeur 'redit'
         self.importeur.interpreteur.ajouter_editeur(EdtRedit)
-        
-        BaseModule.init(self)
     
     def preparer(self):
         """Préparation du module.

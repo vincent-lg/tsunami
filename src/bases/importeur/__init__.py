@@ -248,6 +248,15 @@ class Importeur:
                 module.init()
                 Importeur.logger.debug("  Le module {0} a été " \
                         "initialisé".format(module.nom))
+        
+        # Ajout des masques et commandes
+        for module in self.__dict__.values():
+            if module.statut == INITIALISE:
+                module.ajouter_masques()
+        
+        for module in self.__dict__.values():
+            if module.statut == INITIALISE:
+                module.ajouter_commandes()
     
     def tout_preparer(self):
         """Méthode permettant de préparer tous les modules.
