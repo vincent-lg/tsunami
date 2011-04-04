@@ -177,6 +177,7 @@ class Module(BaseModule):
         if joueur and instance.contexte_actuel and not joueur.garder_connecte:
             instance.contexte_actuel.deconnecter()
         
+        instance.deconnecter("déconnexion fortuite")
         del self.instances[client]
     
     def ajouter_compte(self, nom_compte):

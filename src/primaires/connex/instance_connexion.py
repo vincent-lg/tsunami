@@ -177,7 +177,7 @@ class InstanceConnexion(BaseObj):
         
         """
         self.envoyer_file_attente(ajt_prompt = False)
-        if self.client:
+        if self.client and self.client.est_connecte():
             self.client.deconnecter(msg)
             self.client = None
         

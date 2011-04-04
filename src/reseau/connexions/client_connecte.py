@@ -100,6 +100,13 @@ class ClientConnecte:
         return "{0} ({1}:{2}, {3})".format( \
             self.n_id, self.adresse_ip, self.port, self.socket.fileno())
 
+    def est_connecte(self):
+        """Retourne True si connecté, False sinon.
+        On se base sur le fileno du socket.
+        
+        """
+        return self.socket and self.socket.fileno() > 0
+    
     def nettoyer(self, message):
         """Cette méthode se charge de nettoyer le message passé en paramètre.
         Elle retourne le message nettoyé.
