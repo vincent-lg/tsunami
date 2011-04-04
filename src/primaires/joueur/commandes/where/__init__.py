@@ -28,21 +28,21 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'ou'.
+"""Package contenant la commande 'where'.
 
 """
 
 from primaires.interpreteur.commande.commande import Commande
 
-class CmdOu(Commande):
+class CmdWhere(Commande):
     
-    """Commande 'ou'.
+    """Commande 'where'.
     
     """
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "ou", "where")
+        Commande.__init__(self, "where", "where")
         self.schema = ""
         self.aide_courte = "affiche la position des joueurs"
         self.aide_longue = \

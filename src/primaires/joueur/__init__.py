@@ -88,8 +88,8 @@ class Module(BaseModule):
             commandes.options.CmdOptions(),
             commandes.quitter.CmdQuitter(),
             commandes.shutdown.CmdShutdown(),
-            # commandes.parler.CmdParler(), BUG A FIXER
-            commandes.ou.CmdOu(),
+            commandes.parler.CmdParler(),
+            commandes.where.CmdWhere(),
         ]
         
         for cmd in self.commandes:
