@@ -62,7 +62,10 @@ class Module(BaseModule):
         """Méthode d'initialisation du module"""
         joueurs = self.importeur.supenr.charger_groupe(Joueur)
         
-        # Ajout des masques dans l'interpréteur
+        BaseModule.init(self)
+    
+    def ajouter_masques(self):
+        """Ajout des masques dans l'interpréteur"""
         self.importeur.interpreteur.ajouter_masque(
                 masques.chemin_cmd.CheminCommande)
         self.importeur.interpreteur.ajouter_masque(
@@ -75,8 +78,9 @@ class Module(BaseModule):
                 masques.langue.Langue)
         self.importeur.interpreteur.ajouter_masque(
                 masques.nv_groupe.NvGroupe)
-        
-        # On ajoute les commandes du module
+    
+    def ajouter_commandes(self):
+        """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.chgroupe.CmdChgroupe(),
             commandes.groupe.CmdGroupe(),
@@ -90,8 +94,6 @@ class Module(BaseModule):
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
-        
-        BaseModule.init(self)
     
     def preparer(self):
         """Préparation du module.
