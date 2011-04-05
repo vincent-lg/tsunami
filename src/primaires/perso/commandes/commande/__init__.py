@@ -67,20 +67,23 @@ class CmdCommande(Commande):
                 personnage << "Aucune commande ne semble être définie." \
                         "Difficile à croire, non ?"
             else:
-                final =  "+---------- ---- -- - - -  -  -   -   -\n"
-                final += "| Liste des commandes :\n"
-                final += "+---------- ---- -- - - -  -  -   -   -\n"
+                res =  "+" + "-" * 77 + "+\n"
+                res += "|" + " |tit|Liste des commandes|ff|".ljust(86) + "|\n"
+                res += "+" + "-" * 77 + "+\n"
                 for id_categ, nom_categ in categories.items():
                     liste_commandes = []
                     for nom_commande, commande in commandes.items():
                         if commande.categorie.identifiant == id_categ:
-                            liste_commandes.append(nom_commande)
+                            liste_commandes.append(nom_commande.ljust(74) + "|")
                     if liste_commandes:
-                        final += "| " + nom_categ + "\n|  "
-                        final += "\n|  ".join(sorted(liste_commandes))
-                        final += "\n|\n"
-                final += "+---------- ---- -- - - -  -  -   -   -"
-                personnage << final
+                        res += "| |vr|" + nom_categ.ljust(76) + "|ff||\n|   "
+                        res += "\n|   ".join(sorted(liste_commandes))
+                        res += "\n+".ljust(79, "-") + "+\n"
+                res = res.rstrip("\n")
+                res = res.rstrip("|")
+                res = res.rstrip()
+                res = res.rstrip("|")
+                personnage << res
         
         else: # la commande existe
             commande = dic_masques["nom_commande"].commande

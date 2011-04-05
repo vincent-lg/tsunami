@@ -39,7 +39,7 @@ class CmdGoto(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "goto", "goto")
-        self.schema = "<ident_salle>"
+        self.schema = "<ident_salle|nom_joueur>"
         self.nom_categorie = "bouger"
         self.aide_courte = "permet de se déplacer dans l'univers"
         self.aide_longue = \
@@ -50,11 +50,14 @@ class CmdGoto(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        salle = dic_masques["ident_salle"].salle
+        if dic_masques["ident_salle"] is None:
+            salle = dic_masques["nom_joueur"].joueur.salle
+        if dic_masques["nom_joueur"] is None:
+            salle = dic_masques["ident_salle"].salle
         salle_courante = personnage.salle
-        salle_courante.envoyer("{} disparaît avec un éclair de |cyc|lumière " \
-                "bleue|ff|.".format(personnage.nom), (personnage, ))
+        salle_courante.envoyer("{} disparaît avec un éclair de " \
+                "|cyc|lumière bleue|ff|.".format(personnage.nom), (personnage,))
         personnage.salle = salle
         personnage << personnage.regarder()
-        salle.envoyer("{} apparaît avec un éclair de |cyc|lumière bleue|ff|." \
-                .format(personnage.nom), (personnage, ))
+        salle.envoyer("{} apparaît avec un éclair de |cyc|lumière " \
+                "bleue|ff|.".format(personnage.nom), (personnage,))

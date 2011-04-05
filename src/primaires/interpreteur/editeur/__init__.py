@@ -50,8 +50,7 @@ class Editeur(Contexte):
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Contexte.__init__(self, pere)
-        self.opts.separateur = "|vr|+----------------------------------------" \
-                                "-------------------------------------|ff|"
+        self.opts.separateur = "+" + "-" * 77 + "+"
         self.opts.prompt_clr = ""
         self.opts.prompt_prf = ""
         self.objet = objet
@@ -97,7 +96,7 @@ class Editeur(Contexte):
         """Retourne le prompt"""
         prompt = self.prompt
         if not prompt:
-            prompt = "|vr|->|ff|"
+            prompt = "->"
         return prompt
 
     def apercu(self):

@@ -56,6 +56,12 @@ class CmdQui(Commande):
             personnage.envoyer("Aucun joueurs ne semble être présent, mais " \
                     "qui es-tu alors ?")
         else:
-            noms_joueurs = sorted([joueur.nom for joueur in joueurs])
-            personnage.envoyer("Liste des joueurs :\n\n  " + \
-                    "\n  ".join(noms_joueurs))
+            noms_joueurs = sorted([joueur.nom.ljust(39) + "|" for joueur \
+                    in joueurs])
+            res = "+" + "-" * 40 + "+\n"
+            res += "| |tit|Joueurs présents|ff|".ljust(50) + "|\n"
+            res += "+" + "-" * 40 + "+\n| "
+            res += "\n| ".join(noms_joueurs)
+            res += "\n+" + "-" * 40 + "+\n"
+            res = res.rstrip("\n")
+            personnage << res

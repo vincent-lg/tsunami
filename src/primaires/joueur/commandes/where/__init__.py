@@ -57,8 +57,15 @@ class CmdWhere(Commande):
             personnage.envoyer("Aucun joueurs ne semble être présent, mais " \
                     "qui es-tu alors ?")
         else:
+            res = "+" + "-" * 22 + "+" + "-" * 17 + "+\n"
+            res += "|" + "|tit|Joueurs|ff| ".rjust(31) + "|"
+            res += " |tit|Positions|ff|".ljust(26) + "|\n"
+            res += "+" + "-" * 22 + "+" + "-" * 17 + "+\n"
             for joueur in joueurs:
-                message = joueur.nom + " se trouve en " + joueur.salle.ident
-                liste_affichee.append(message)
-            personnage.envoyer("Liste des joueurs et de leurs positions :" \
-                    "\n\n  " + "\n  ".join(sorted(liste_affichee)))
+                ident = "|rgc|" + joueur.salle.zone + "|ff|:|vrc|" 
+                ident += joueur.salle.mnemonic + "|ff|"
+                ident = ident.ljust(33)
+                nom = joueur.nom.rjust(20)
+                res += "| " + nom + " | " + ident + " |\n"
+            res += "+" + "-" * 22 + "+" + "-" * 17 + "+"
+            personnage << res

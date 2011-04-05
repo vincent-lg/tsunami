@@ -134,7 +134,7 @@ class Presentation(Editeur):
     
     def accueil(self):
         """Message d'accueil du contexte"""
-        msg = "|vr|||ff| Edition de {}\n".format(self.objet)
+        msg = "| |tit|Edition de {}|ff|".format(self.objet).ljust(87) + "|\n"
         msg += self.opts.separateur + "\n"
         # Parcourt des choix possibles
         for nom, objet in self.choix.items():
@@ -148,8 +148,8 @@ class Presentation(Editeur):
             nom_m = nom_maj[:pos] + "[|cmd|" + raccourci + "|ff|]" + \
                     nom_maj[pos + len(raccourci):]
             msg += "\n " + nom_m
-            envelope = self.choix[nom]
-            apercu = envelope.get_apercu()
+            enveloppe = self.choix[nom]
+            apercu = enveloppe.get_apercu()
             if apercu:
                 msg += " : " + apercu
         
