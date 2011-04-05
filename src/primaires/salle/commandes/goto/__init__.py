@@ -39,21 +39,28 @@ class CmdGoto(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "goto", "goto")
-        self.schema = "<ident_salle|nom_joueur>"
+        self.schema = "<identifiant:ident_salle|nom_joueur>"
         self.nom_categorie = "bouger"
         self.aide_courte = "permet de se déplacer dans l'univers"
         self.aide_longue = \
             "Cette commande vous permet de vous déplacer rapidement dans " \
-            "l'univers. Vous devez lui passer en paramètre l'identifiant " \
+            "l'univers. Vous pouvez lui passer en paramètre l'identifiant " \
             "d'une salle sous la forme |cmd|zone:mnémonic|ff|, " \
-            "par exemple |ent|picte:1|ff|."
+            "par exemple |ent|picte:1|ff|, ou alors un nom de joueur. " \
+            "Exemple : %goto% |ent|nom_du_joueur|ff|."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        if dic_masques["ident_salle"] is None:
-            salle = dic_masques["nom_joueur"].joueur.salle
-        if dic_masques["nom_joueur"] is None:
-            salle = dic_masques["ident_salle"].salle
+        masque = dic_masques["identifiant"]
+        if hasattr(masque, "salle"):
+            salle = masque.salle
+        elif hasattr(masque, "joueur"):
+            salle = masque.joueur.salle
+        else:
+            raise ValueError(
+                    "le masque {} est invalide pour cette commande".format(
+                    masque))
+        
         salle_courante = personnage.salle
         salle_courante.envoyer("{} disparaît avec un éclair de " \
                 "|cyc|lumière bleue|ff|.".format(personnage.nom), (personnage,))

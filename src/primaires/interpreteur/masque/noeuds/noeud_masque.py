@@ -33,6 +33,8 @@
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
 from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
 from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
 
 class NoeudMasque(BaseNoeud):
     
@@ -162,21 +164,40 @@ class NoeudMasque(BaseNoeud):
         
         """
         valide = False
+        premiere_erreur = None
+        copie_commande = list(commande)
         if commande:
             for masque in self.masques:
-                valide = masque.valider(personnage, dic_masques, commande)
+                try:
+                    valide = masque.valider(personnage, dic_masques, commande)
+                except ErreurValidation as err:
+                    if not premiere_erreur:
+                        premiere_erreur = err
+                    valide = False
+                    commande[:] = list(copie_commande)
+                print("On tente de valider", masque, valide)
                 if valide:
                     dic_masques[self.nom] = masque
                     break
         
-        if valide and self.suivant and tester_fils:
+        if not valide:
+            if premiere_erreur:
+                raise premiere_erreur
+        elif self.suivant and tester_fils:
             valide = self.suivant.valider(personnage, dic_masques, commande)
         
         return valide
     
     def afficher(self, personnage):
         """Retourne un affichage du masque pour les joueurs"""
-        msg = "<" + self.masque.nom_complet + ">"
+        msg = "<"
+        noms_masques = []
+        for masque in self.masques:
+            noms_masques.append(masque.nom_complet)
+        
+        msg += " / ".join(noms_masques)
+        msg += ">"
+        
         if self.suivant:
             msg += " " + self.suivant.afficher(personnage)
         
