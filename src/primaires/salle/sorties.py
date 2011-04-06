@@ -119,14 +119,6 @@ class Sorties(BaseObj):
         if self.construit and self.parent:
             self.parent.enregistrer()
     
-    # DEBUG A RETIRER DES L'UPDATE DE LA REVNO 273
-    def __setstate__(self, dico_attr):
-        BaseObj.__setstate__(self, dico_attr)
-        print("On parcourt")
-        for nom, sortie in self._sorties.items():
-            if sortie:
-                sortie.direction = nom
-    
     def ajouter_sortie(self, direction, *args, **kwargs):
         """Ajoute une sortie.
         Le nom doit être un des noms sorties prévu et caractérise une direction.
