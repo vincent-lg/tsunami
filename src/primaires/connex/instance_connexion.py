@@ -63,6 +63,7 @@ class InstanceConnexion(BaseObj):
         self.joueur = None
         self.file_attente = [] # file d'attente des messages à envoyer
         self.contexte = None
+        self.contexte_compte = None
         self.nb_essais = 0
         
         if creer_contexte:
@@ -88,10 +89,10 @@ class InstanceConnexion(BaseObj):
         Sinon, c'est le contexte du joueur qui est retourné.
         
         """
-        if self.compte is None or self.compte.contexte_actuel is None:
+        if self.compte is None or self.contexte_compte is None:
             contexte = self.contexte
         elif self.joueur is None or self.joueur.contexte_actuel is None:
-            contexte = self.compte.contexte_actuel
+            contexte = self.contexte_compte
         else:
             contexte = self.joueur.contexte_actuel
         
@@ -108,7 +109,7 @@ class InstanceConnexion(BaseObj):
         if self.compte is None:
             self.contexte = nouveau_contexte
         elif self.joueur is None:
-            self.compte.contexte_actuel = nouveau_contexte
+            self.contexte_compte = nouveau_contexte
         else:
             self.joueur.contexte_actuel = nouveau_contexte
     
@@ -140,25 +141,21 @@ class InstanceConnexion(BaseObj):
         
         """
         if autre.compte:
-            self.compte = type(self).importeur.connex.get_compte( \
-                    autre.compte.nom)
+            self.compte = autre.compte
         if autre.joueur:
             self.joueur = autre.joueur
             self.joueur.instance_connexion = self
-            self.joueur.compte = self.compte
         if autre.contexte:
             self.contexte = \
                 type(self).importeur.interpreteur.contextes[ \
                 autre.contexte.nom](self)
-        if autre.compte and autre.compte.contexte:
-            self.compte.contexte = \
+        if autre.contexte_compte:
+            self.contexte_compte = \
                 type(self).importeur.interpreteur.contextes[ \
-                autre.compte.contexte.nom](self)
+                autre.contexte_compte.nom](self)
         if self.joueur:
             for i, contexte in enumerate(self.joueur.contextes):
-                nouv_contexte = type(self).importeur.interpreteur.contextes[ \
-                        contexte.nom](self)
-                self.joueur.contextes[i] = nouv_contexte
+                contexte.pere = self
     
     def _get_encodage(self):
         """Retourne l'encodage du compte ou 'Utf-8'."""
