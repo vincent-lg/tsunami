@@ -100,28 +100,6 @@ class EdtRedit(Presentation):
             "       si les coordonnées d'arrivée ne sont pas déjà " \
             "utilisées.\n\n" \
             "Coordonnées actuelles : |bc|{objet.coords}|ff|"
-        """Entrez les |ent|coordonnées|ff| de la salle ou |cmd|/|ff| pour " \
-            "revenir à la fenêtre mère.\n\n" \
-            "Vous avez deux possibilités pour entrer les coordonnées " \
-            "d'une salle :\n" \
-            " |cmd|INV|ff| : passe les coordonnées en invalide. Cela " \
-            "signifie que la salle\n" \
-            "       n'a plus aucun lien géographique avec les autres " \
-            "les autres (elle peut\n" \
-            "       naturellement avoir des sorties pointant vers " \
-            "d'autres salles) ;\n" \
-            " |cmd|<x>.<y>.<z>|ff| : les trois coordonnées, négatives " \
-            "ou positives, séparées\n               par des points.\n\n" \
-            "Exemple : |cmd|0.0.0|ff|\n\n" \
-            "Vous pouvez également utiliser des options pour déplacer " \
-            "une salle. Par\n" \
-            "exemple, |cmd|/h|ff| déplacera la salle vers le haut si aucune " \
-            "salle n'a déjà ces\n" \
-            "coordonnées dans l'univers.\n" \
-            "Les alias sont |cmd|s|ff|, |cmd|se|ff|, |cmd|o|ff|, " \
-            "|cmd|no|ff|, |cmd|n|ff|, |cmd|ne|ff|, |cmd|e|ff|, " \
-            "|cmd|se|ff|, |cmd|b|ff| et |cmd|h|ff|.\n\n" \
-            "Coordonnées actuelle : {objet.coords}"""
 
         # Zone
         zone = self.ajouter_choix("zone", "z", EdtZone, salle)
@@ -168,7 +146,8 @@ class EdtRedit(Presentation):
         description.parent = self
         description.apercu = "{objet.paragraphes_indentes}"
         description.aide_courte = \
-            "Description de la salle {}".format(salle)
+            "| |tit|" + "Description de la salle {}".format(salle).ljust(76) + \
+            "|ff||\n" + self.opts.separateur
         
         # Sorties
         sorties = self.ajouter_choix("sorties", "s", EdtSorties, salle,

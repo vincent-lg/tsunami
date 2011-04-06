@@ -55,16 +55,16 @@ class Description(Editeur):
         
         # Message d'aide
         msg = self.aide_courte.format(objet = self.objet) + "\n"
-        msg += "Entrez une |tit|phrase|ff| à ajouter à la description\n" \
-                "ou |cmd|/|ff| pour revenir à la fenêtre mère.\n\n" \
-                "Symboles :\n" \
-                "  |cmd||tab||ff| : symbolise une tabulation\n" \
-                "  |cmd||nl||ff| : symbolise un saut de ligne\n\n" \
-                "Options :\n" \
-                "  |cmd|/d <numéro>/*|ff| : supprime un paragraphe ou " \
+        msg += "Entrez une |cmd|phrase|ff| à ajouter à la description " \
+                "ou |ent|/|ff| pour revenir à la\nfenêtre mère.\n" \
+                " - Symboles :\n" \
+                "    |ent||tab||ff| : symbolise une tabulation\n" \
+                "    |ent||nl||ff| : symbolise un saut de ligne\n" \
+                " - Options :\n" \
+                "    |ent|/d <numéro>/*|ff| : supprime un paragraphe ou " \
                 "toute la description\n" \
-                "  |cmd|/r <texte 1> / <texte 2>|ff| : remplace " \
-                "|tit|texte 1|ff| par |tit|texte 2|ff|\n\n" \
+                "    |ent|/r <texte 1> / <texte 2>|ff| : remplace " \
+                "|cmd|texte 1|ff| par |cmd|texte 2|ff|\n" \
                 "Pour ajouter un paragraphe, entrez-le tout simplement.\n\n" \
                 "Description existante :\n"
         
@@ -77,7 +77,7 @@ class Description(Editeur):
                 msg += "\n{: 2} {}".format(no_ligne, paragraphe)
                 no_ligne += 1
         else:
-            msg += "  Aucune description"
+            msg += "  Aucune description."
         
         return msg
     

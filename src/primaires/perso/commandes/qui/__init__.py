@@ -53,7 +53,7 @@ class CmdQui(Commande):
         """Interprétation de la commande"""
         joueurs = type(self).importeur.connex.joueurs_connectes
         if not joueurs:
-            personnage.envoyer("Aucun joueurs ne semble être présent, mais " \
+            personnage.envoyer("Aucun joueur ne semble être présent, mais " \
                     "qui es-tu alors ?")
         else:
             noms_joueurs = sorted([joueur.nom.ljust(39) + "|" for joueur \
