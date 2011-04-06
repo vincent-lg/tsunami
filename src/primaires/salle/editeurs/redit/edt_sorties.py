@@ -94,7 +94,7 @@ class EdtSorties(Editeur):
         
         try:
             ancien_nom = sorties.get_nom_long(ancien_nom)
-        except ValueError:
+        except KeyError:
             self.pere << "Sortie inconnue {}.".format(ancien_nom)
         else:
             nouveau_nom = nouveau_nom.lower()
@@ -108,7 +108,7 @@ class EdtSorties(Editeur):
                 if t_val.direction != ancien_nom:
                     self.pere << "|err|Ce nom de sortie est déjà utilisé.|ff|"
                     return
-            except ValueError:
+            except KeyError:
                 pass
             
             sortie.nom = nouveau_nom

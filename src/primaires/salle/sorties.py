@@ -163,7 +163,7 @@ class Sorties(BaseObj):
             if sortie and sortie.nom == nom:
                 return sortie
         
-        raise ValueError("le nom de sortie {} est inconnu".format(nom))
+        raise KeyError("le nom de sortie {} est inconnu".format(nom))
     
     def get_sortie_par_nom_ou_direction(self, nom):
         """Récupère la sortie par son nom ou sa direction indifféremment.
@@ -173,7 +173,7 @@ class Sorties(BaseObj):
             if nom_sortie == nom or (sortie and sortie.nom == nom):
                 return sortie
         
-        raise ValueError("le nom de sortie {} est inconnu".format(nom))
+        raise KeyError("le nom de sortie {} est inconnu".format(nom))
     
     def sortie_existe(self, nom):
         """Retourne True si la sortie mène quelque part"""
