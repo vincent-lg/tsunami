@@ -344,7 +344,7 @@ class Importeur:
             self.tout_configurer()
             self.tout_initialiser()
             res = True
-    return res
+        return res
     
     def boucle(self):
         """Méthode appelée à chaque tour de boucle synchro.
