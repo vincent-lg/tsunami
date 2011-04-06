@@ -105,7 +105,7 @@ class EdtSorties(Editeur):
             
             try:
                 t_val = sorties.get_sortie_par_nom_ou_direction(nouveau_nom)
-                if t_val.direction != ancien_nom:
+                if t_val is None or t_val.direction != ancien_nom:
                     self.pere << "|err|Ce nom de sortie est déjà utilisé.|ff|"
                     return
             except KeyError:

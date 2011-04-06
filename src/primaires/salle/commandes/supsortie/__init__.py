@@ -57,7 +57,7 @@ class CmdSupsortie(Commande):
         
         if not salle.sorties.sortie_existe(direction):
             raise ErreurInterpretation(
-                "|err|ette direction n'a pas été définie dans cette salle.|ff|")
+                "|err|Cette direction n'a pas été définie dans cette salle.|ff|")
         
         d_salle = salle.sorties[direction].salle_dest
         dir_opposee = salle.sorties.get_nom_oppose(direction)
