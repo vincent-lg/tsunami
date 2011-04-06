@@ -55,6 +55,7 @@ inconnue pour l'importeur.
 import os
 import sys
 import traceback
+import py_compile
 
 from abstraits.module import *
 from abstraits.obase import BaseObj
@@ -324,24 +325,26 @@ class Importeur:
     
     def tout_recharger(self):
         """Méthode appelée pour recharger TOUS les modules"""
-        anciens_attrs = dict(self.__dict__)
         logger = type(self).man_logs.get_logger("sup")
         res = False
         Importeur.nb_hotboot += 1
         try:
+             for nom_package in os.listdir(os.getcwd() + "/" + REP_PRIMAIRES):
+                 if not nom_package.startswith("__"):
+                     py_compile.compile(os.getcwd() + "/" + REP_PRIMAIRES + "/" + nom_package + "/__init__.py",doraise=True)
+        except py_compile.PyCompileError:
+            logger.fatal(
+                "Une erreur s'est produit lors de l'hotboot.")
+            logger.fatal(traceback.format_exc())
+        else:
             self.tout_detruire()
             self.tout_decharger()
             self.tout_charger()
             self.tout_instancier()
-            res = True
-        except Exception:
-            self.__dict__ = anciens_attrs
-            logger.fatal(
-                "Une erreur s'est produit lors de l'hotboot.")
-            logger.fatal(traceback.format_exc())
-        finally:
             self.tout_configurer()
             self.tout_initialiser()
+            res = True
+        finally:
             return res
     
     def boucle(self):
