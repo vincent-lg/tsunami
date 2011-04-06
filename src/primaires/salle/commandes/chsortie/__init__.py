@@ -84,6 +84,6 @@ class CmdChsortie(Commande):
                 salle_dest=salle, corresp=direction)
         
         personnage << "|att|La sortie {} reliant {} à {} a été créée.\n" \
-                "La réciproque a été créée également (sortie {} dans {}).|ff|" \
-                .format(direction, salle.ident, d_salle.ident, dir_opposee,
-                    d_salle.ident)
+                "La réciproque a été créée également (sortie {} dans " \
+                "{}).|ff|".format(direction, salle.ident, d_salle.ident,
+                dir_opposee, d_salle.ident)

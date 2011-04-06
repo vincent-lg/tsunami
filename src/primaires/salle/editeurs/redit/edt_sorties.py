@@ -99,6 +99,19 @@ class EdtSorties(Editeur):
         else:
             nouveau_nom = nouveau_nom.lower()
             sortie = sorties[ancien_nom]
+            if sortie is None:
+                self.pere << "|err|Cette sortie n'existe pas.|ff|"
+                return
+            
+            try:
+                t_val = sorties.get_sortie_par_nom_ou_direction(nouveau_nom)
+                print(t_val, t_val.direction, t_val.nom)
+                if t_val.direction != ancien_nom:
+                    self.pere << "|err|Ce nom de sortie est déjà utilisé.|ff|"
+                    return
+            except ValueError:
+                pass
+            
             sortie.nom = nouveau_nom
             sortie.deduire_article()
             if article:

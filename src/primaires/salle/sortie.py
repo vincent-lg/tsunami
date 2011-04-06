@@ -56,8 +56,8 @@ class Sortie(BaseObj):
     
     """
     
-    def __init__(self, nom, article="le", salle_dest=None, corresp="",
-            parent=None):
+    def __init__(self, direction, nom, article="le", salle_dest=None,
+            corresp="", parent=None):
         """Constructeur du conteneur
         Précision quant au parent :
         Ici, ce n'est pas le conteneur, mais la salle possédant la sortie
@@ -66,6 +66,7 @@ class Sortie(BaseObj):
         """
         BaseObj.__init__(self)
         self.parent = parent
+        self.direction = direction
         self.nom = nom
         self.article = article
         self.salle_dest = salle_dest
@@ -75,7 +76,7 @@ class Sortie(BaseObj):
         self._statut = CONSTRUIT
     
     def __getinitargs__(self):
-        return ("", )
+        return ("", "")
     
     def __setattr__(self, nom_attr, valeur):
         """Enregisre le parent si il est précisé"""

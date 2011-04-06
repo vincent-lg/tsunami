@@ -119,7 +119,15 @@ class Sorties(BaseObj):
         if self.construit and self.parent:
             self.parent.enregistrer()
     
-    def ajouter_sortie(self, nom, *args, **kwargs):
+    # DEBUG A RETIRER DES L'UPDATE DE LA REVNO 273
+    def __setstate__(self, dico_attr):
+        BaseObj.__setstate__(self, dico_attr)
+        print("On parcourt")
+        for nom, sortie in self._sorties.items():
+            if sortie:
+                sortie.direction = nom
+    
+    def ajouter_sortie(self, direction, *args, **kwargs):
         """Ajoute une sortie.
         Le nom doit être un des noms sorties prévu et caractérise une direction.
         Les paramètres *args seront transmis au constructeur de Sortie
@@ -128,12 +136,12 @@ class Sorties(BaseObj):
         elle sera écrasée par la nouvelle.
         
         """
-        sortie = Sortie(*args, parent=self.parent, **kwargs)
-        self[nom] = sortie
+        sortie = Sortie(direction, *args, parent=self.parent, **kwargs)
+        self[direction] = sortie
     
-    def supprimer_sortie(self, nom):
+    def supprimer_sortie(self, direction):
         """Supprime la sortie"""
-        self[nom] = None
+        self[direction] = None
     
     def iter_couple(self):
         """Retourne un dictionnaire ordonné contenant les sorties
@@ -165,10 +173,20 @@ class Sorties(BaseObj):
         
         raise ValueError("le nom de sortie {} est inconnu".format(nom))
     
+    def get_sortie_par_nom_ou_direction(self, nom):
+        """Récupère la sortie par son nom ou sa direction indifféremment.
+        
+        """
+        for nom_sortie, sortie in self._sorties.items():
+            if nom_sortie == nom or (sortie and sortie.nom == nom):
+                return sortie
+        
+        raise ValueError("le nom de sortie {} est inconnu".format(nom))
+    
     def sortie_existe(self, nom):
         """Retourne True si la sortie mène quelque part"""
         try:
-            return self.get_sortie_par_nom(nom) is not None
+            return self.get_sortie_par_nom_ou_direction(nom) is not None
         except ValueError:
             return False
     
