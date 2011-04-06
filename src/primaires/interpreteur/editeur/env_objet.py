@@ -46,10 +46,9 @@ class EnvelopeObjet:
     
     """
     
-    def __init__(self, editeur, pere, edite, attribut):
+    def __init__(self, editeur, edite, attribut):
         """Constructeur de l'envelope"""
         self.editeur = editeur
-        self.pere = pere
         self.objet = edite
         self.attribut = attribut
         self.parent = None
@@ -58,9 +57,9 @@ class EnvelopeObjet:
         self.aide_courte = ""
         self.aide_longue = ""
     
-    def construire(self):
+    def construire(self,pere):
         """Retourne l'éditeur construit"""
-        editeur = self.editeur(self.pere, self.objet, self.attribut)
+        editeur = self.editeur(pere, self.objet, self.attribut)
         if self.parent:
             editeur.opts.rci_ctx_prec = self.parent
         editeur.prompt = self.prompt

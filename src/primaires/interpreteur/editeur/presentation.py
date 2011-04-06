@@ -86,7 +86,7 @@ class Presentation(Editeur):
                 "Le raccourci {} est déjà utilisé dans cet éditeur".format(
                 raccourci))
         
-        envelope = EnvelopeObjet(objet_editeur, self.pere, objet_edite,
+        envelope = EnvelopeObjet(objet_editeur, objet_edite,
                 attribut)
         self.choix[nom] = envelope
         passage_apres = False
@@ -110,7 +110,7 @@ class Presentation(Editeur):
                 "Le raccourci {} est déjà utilisé dans cet éditeur".format(
                 raccourci))
         
-        envelope = EnvelopeObjet(objet_editeur, self.pere, objet_edite,
+        envelope = EnvelopeObjet(objet_editeur, objet_edite,
                 attribut)
         self.choix[nom] = envelope
         passage_apres = False
@@ -162,5 +162,5 @@ class Presentation(Editeur):
         except KeyError:
             self.pere << "|err|Raccourci inconnu ({}).|ff|".format(msg)
         else:
-            contexte = self.choix[nom].construire()
+            contexte = self.choix[nom].construire(self.pere)
             self.migrer_contexte(contexte)

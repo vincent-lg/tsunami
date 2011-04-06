@@ -203,7 +203,7 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         """
         self.migrer_contexte(type(self).nom)
     
-    def migrer_contexte(self, contexte, afficher_accueil=True):
+    def migrer_contexte(self, contexte, afficher_accueil=True, recuperation=False):
         """Cas de transfert de contexte.
         Le contexte doit être donné sous la forme d'un nom (type 'str').
         
@@ -212,9 +212,9 @@ class Contexte(BaseObj, metaclass=MetaContexte):
             nouveau_contexte = self._get_contexte(contexte)(self.pere)
         else:
             nouveau_contexte = contexte
-        
         self.pere.contexte_actuel.sortir()
-        self.pere.migrer_contexte(nouveau_contexte)
+        if not recuperation:
+            self.pere.migrer_contexte(nouveau_contexte)
         self.pere.contexte_actuel.entrer()
         if self.pere.contexte_actuel.opts.separateur is not None:
             self.pere.envoyer(self.pere.contexte_actuel.opts.separateur)

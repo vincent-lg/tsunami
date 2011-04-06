@@ -71,7 +71,6 @@ class Personnage(ObjetID):
             contexte = self.contextes[0]
         else:
             contexte = None
-        print(self.contextes)
         return contexte
     
     def _set_contexte_actuel(self, nouveau_contexte):
