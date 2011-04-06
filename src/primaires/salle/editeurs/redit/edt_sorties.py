@@ -90,7 +90,7 @@ class EdtSorties(Editeur):
                 article = ""
             except ValueError:
                 self.pere << "Syntaxe invalide pour cette option."
-                pass
+                return
         
         try:
             ancien_nom = sorties.get_nom_long(ancien_nom)
