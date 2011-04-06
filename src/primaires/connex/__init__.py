@@ -73,12 +73,13 @@ class Module(BaseModule):
         'self.instances' si elles sont encore connectées.
         
         """
+        
+        comptes_a_pas_effacer = []
+        
         # On récupère les comptes
         comptes = self.importeur.supenr.charger_groupe(Compte)
         for compte in comptes:
             self.comptes[compte.id.id] = compte
-            if not compte.valide:
-                self.supprimer_compte(compte)
         
         # On récupère les instances de connexion
         if NOM_GROUPE in type(self.importeur).parid:
@@ -86,11 +87,19 @@ class Module(BaseModule):
         else:
             objets = []
         
+        comptes_a_pas_effacer = []
+        
         for inst in objets:
             if inst.client.n_id in type(self.importeur).serveur.clients.keys():
                 nouv_instance = InstanceConnexion(inst.client, False)
                 nouv_instance.creer_depuis(inst)
                 self.instances[inst.client.n_id] = nouv_instance
+                if (nouv_instance.compte):
+                    comptes_a_pas_effacer.append(nouv_instance.compte.nom)
+        
+        for compte in comptes:
+            if (not compte.valide) and (not compte.nom in comptes_a_pas_effacer):
+                self.supprimer_compte(compte)
         
         # On ajoute le dictionnaire 'instances' comme groupe fictif de 'parid'
         type(self.importeur).parid[NOM_GROUPE] = self.instances
