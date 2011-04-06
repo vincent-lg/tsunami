@@ -156,6 +156,11 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         """Méthode retournant les valeurs par défaut du constructeur"""
         return (None, )
     
+    def __getstate__(self):
+        retour = self.__dict__.copy()
+        retour["pere"] = None
+        return retour
+    
     def entrer(self):
         """Méthode appelée quand le père entre dans le contexte"""
         pass
