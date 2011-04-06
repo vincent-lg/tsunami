@@ -179,6 +179,10 @@ class Salle(ObjetID):
         """Affiche les sorties de la salle"""
         res = ""
         for nom in NOMS_SORTIES.keys():
+            sortie = self.sorties[nom]
+            if sortie:
+                nom = sortie.nom
+            
             nom_aff = self.sorties.get_nom_abrege(nom)
             if self.sorties.sortie_existe(nom):
                 res += "|vr|" + nom_aff + "|ff|"

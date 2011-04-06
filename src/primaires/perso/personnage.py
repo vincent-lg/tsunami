@@ -126,8 +126,8 @@ class Personnage(ObjetID):
     def deplacer_vers(self, sortie):
         """Déplacement vers la sortie 'sortie'"""
         salle = self.salle
-        salle_dest = salle.sorties[sortie].salle_dest
-        sortie = salle.sorties[sortie]
+        salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
+        sortie = salle.sorties.get_sortie_par_nom(sortie)
         salle.envoyer("{} s'en va vers {}.".format(self.nom,
                 sortie.nom_complet), (self, ))
         self.salle = salle_dest

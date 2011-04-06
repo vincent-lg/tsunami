@@ -150,9 +150,27 @@ class Sorties(BaseObj):
         
         return sorties.items()
     
+    def get_sortie_par_nom(self, nom):
+        """Récupère la sortie par son nom.
+        ATTENTION : la méthode __getitem__ semble faire la même chose.
+        En fait, __getitem__ accepte des noms de direction immuables
+        (comme 'est', 'sud-est', 'sud', 'sud-ouest'...) alors que la
+        méthode courante accepte des noms de sortie (comme 'porte'
+        par exemple).
+        
+        """
+        for sortie in self._sorties.values():
+            if sortie and sortie.nom == nom:
+                return sortie
+        
+        raise ValueError("le nom de sortie {} est inconnu".format(nom))
+    
     def sortie_existe(self, nom):
         """Retourne True si la sortie mène quelque part"""
-        return self[nom] is not None
+        try:
+            return self.get_sortie_par_nom(nom) is not None
+        except ValueError:
+            return False
     
     def get_nom_abrege(self, nom):
         """Retourne le nom abrégé correspondant"""

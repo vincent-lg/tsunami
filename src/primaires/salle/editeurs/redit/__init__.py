@@ -44,6 +44,7 @@ from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_coords import EdtCoords
 from .edt_zone import EdtZone
 from .edt_mnemonic import EdtMnemonic
+from .edt_sorties import EdtSorties
 
 class EdtRedit(Presentation):
     
@@ -168,3 +169,11 @@ class EdtRedit(Presentation):
         description.apercu = "{objet.paragraphes_indentes}"
         description.aide_courte = \
             "Description de la salle {}".format(salle)
+        
+        # Sorties
+        sorties = self.ajouter_choix("sorties", "s", EdtSorties, salle,
+                "sorties")
+        sorties.parent = self
+        sorties.aide_courte = \
+            "Entrez le |ent|nom d'une sortie|ff| pour l'éditer ou " \
+            "|cmd|/|ff| pour revenir à la fenêtre parente."

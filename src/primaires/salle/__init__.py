@@ -241,8 +241,7 @@ class Module(BaseModule):
         
         salle = personnage.salle
         for nom, sortie in salle.sorties.iter_couple():
-            if salle.sorties.sortie_existe(nom) and sortie.nom.startswith(
-                    commande):
+            if sortie and sortie.nom.startswith(commande):
                 personnage.deplacer_vers(sortie.nom)
                 return True
         
