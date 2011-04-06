@@ -51,6 +51,11 @@ class Joueur(Personnage):
         self.connecte = False
         self.garder_connecte = False
     
+    def __getstate__(self):
+        retour = self.__dict__.copy()
+        retour["instance_connexion"] = None
+        return retour
+    
     def _get_encodage(self):
         """Retourne l'encodage du compte"""
         return self.compte.encodage
