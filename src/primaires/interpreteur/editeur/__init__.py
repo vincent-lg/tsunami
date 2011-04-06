@@ -63,7 +63,7 @@ class Editeur(Contexte):
     
     def __getstate__(self):
         """On nettoie les options"""
-        dico_attr = dict(self.__dict__)
+        dico_attr = Contexte.__getstate__(self)
         dico_attr["options"] = {}
         return dico_attr
     
