@@ -71,6 +71,7 @@ class Joueur(Personnage):
                 "personnage:connexion:mode_connecte"](self.instance_connexion)
         self.contextes.vider()
         self.contexte_actuel = contexte
+        self.enregistrer()
     
     def pre_connecter(self):
         """Méthode appelée pour préparer la connexion.
