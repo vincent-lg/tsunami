@@ -28,12 +28,47 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+""" Fichier contenant le module primaire communication. """
 
-import primaires.joueur.commandes.chgroupe
-import primaires.joueur.commandes.groupe
-import primaires.joueur.commandes.module
-import primaires.joueur.commandes.options
-import primaires.joueur.commandes.quitter
-import primaires.joueur.commandes.shutdown
-import primaires.joueur.commandes.where
+from abstraits.module import *
+from primaires.communication import commandes
+from primaires.communication.config import cfg_com
+
+class Module(BaseModule):
+    """Cette classe représente le module qui gère toutes les communications
+    entre clients (donc entre joueurs la plupart du temps)
+    
+    """
+    
+    def __init__(self, importeur):
+        BaseModule.__init__(self, importeur, "communication", "primaire")
+        self.commandes = []
+        self.correspondants = []
+    
+    def config(self):
+        """Configuration du module.
+        On crée le fichier de configuration afin de l'utiliser plus tard
+        pour la mise en forme.
+        
+        """
+        type(self.importeur).anaconf.get_config("config_com", \
+            "communication/config.cfg", "config communication", cfg_com)
+        
+        BaseModule.config(self)
+    
+    def ajouter_masques(self):
+        """Ajout des masques"""
+        # self.importeur.interpreteur.ajouter_masque(
+        #        masques.direction.Direction)
+    
+    def ajouter_commandes(self):
+        """Ajout des commandes"""
+        self.commandes = [
+            commandes.dire.CmdDire(),
+            commandes.hrp.CmdHrp(),
+            commandes.emote.CmdEmote(),
+            commandes.parler.CmdParler(),
+        ]
+        
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)

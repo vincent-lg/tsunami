@@ -41,17 +41,24 @@ class CmdRedit(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "redit", "redit")
+        self.schema = "(<ident_salle>)"
         self.nom_categorie = "batisseur"
         self.aide_courte = "ouvre l'éditeur de salle"
         self.aide_longue = \
             "Cette commande ouvre l'éditeur de salle qui permet de modifier " \
             "les éléments d'une salle (titre, description, sorties...). " \
             "C'est la commande usuelle pour modifier une salle, corriger " \
-            "une faute, ajouter des objets au repop..."
+            "une faute, ajouter des objets au repop... Sans paramètre, elle " \
+            "ouvre une fenêtre d'édition de la salle courante. Elle peut " \
+            "prendre en paramètre facultatif l'identifiant d'une salle sous " \
+            "la forme |ent|zone:mnemonic|ff|."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        salle = personnage.salle
+        if dic_masques["ident_salle"] is not None:
+            salle = dic_masques["ident_salle"].salle
+        else:
+            salle = personnage.salle
         editeur = type(self).importeur.interpreteur.construire_editeur(
                 "redit", personnage, salle)
         personnage.contextes.ajouter(editeur)

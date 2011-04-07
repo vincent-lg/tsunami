@@ -54,7 +54,7 @@ class CmdWhere(Commande):
         joueurs = type(self).importeur.connex.joueurs_connectes
         liste_affichee = []
         if not joueurs:
-            personnage.envoyer("Aucun joueurs ne semble être présent, mais " \
+            personnage.envoyer("Aucun joueur ne semble être présent, mais " \
                     "qui es-tu alors ?")
         else:
             res = "+" + "-" * 22 + "+" + "-" * 17 + "+\n"

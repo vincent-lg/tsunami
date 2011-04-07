@@ -28,12 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Ce fichier contient la configuration du module communication."""
 
-import primaires.joueur.commandes.chgroupe
-import primaires.joueur.commandes.groupe
-import primaires.joueur.commandes.module
-import primaires.joueur.commandes.options
-import primaires.joueur.commandes.quitter
-import primaires.joueur.commandes.shutdown
-import primaires.joueur.commandes.where
+cfg_com = r"""
+# Ce fichier contient la configuration du module primaire communication.
+# Il définit les couleurs de quelques commandes telles say / dire, ooc / hrp,
+# tell / parler etc.
+# Les couleurs disponibles :
+#   |nr|  - noir
+#   |rg|  - rouge
+#   |vr|  - vert
+#   |mr|  - marron
+#   |bl|  - bleu
+#   |mg|  - magenta
+#   |cy|  - cyan
+#   |gr|  - gris
+#   |grf| - gris foncé
+#   |rgc| - rouge clair
+#   |vrc| - vert clair
+#   |jn|  - jaune
+#   |blc| - bleu clair
+#   |mgc| - magenta clair
+#   |cyb| - cyan clair
+#   |bc|  - blanc
+
+
+## Coloration des commandes
+
+# Commande say / dire
+couleur_dire = "|gr|"
+
+# Commande ooc / hrp
+couleur_hrp = "|cyc|"
+"""

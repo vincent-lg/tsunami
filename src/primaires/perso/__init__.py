@@ -60,10 +60,7 @@ class Module(BaseModule):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.commande.CmdCommande(),
-            commandes.dire.CmdDire(),
             commandes.qui.CmdQui(),
-            commandes.hrp.CmdHrp(),
-            commandes.emote.CmdEmote(),
         ]
         
         for cmd in self.commandes:

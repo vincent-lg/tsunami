@@ -47,9 +47,8 @@ class EdtSorties(Editeur):
     def accueil(self):
         """Message d'accueil du contexte"""
         salle = self.objet
-        msg = "| |tit|Edition des sorties de {}|ff|".format(
-                salle).ljust(87) + "|\n"
-        msg += self.opts.separateur + "\n"
+        msg = "| |tit|" + "Edition des sorties de {}".format(salle).ljust(76)
+        msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += "| " + "Direction".ljust(12) + " | "
         msg += "Vers".ljust(12) + " | " + "Destination".ljust(12) + " | "
         msg += "Réciproque".ljust(12) + " |"
@@ -89,13 +88,15 @@ class EdtSorties(Editeur):
                 ancien_nom, nouveau_nom = arguments.split(" / ")
                 article = ""
             except ValueError:
-                self.pere << "Syntaxe invalide pour cette option."
+                self.pere << "|err|La syntaxe est invalide pour cette " \
+                        "option.|ff|"
                 return
         
         try:
             ancien_nom = sorties.get_nom_long(ancien_nom)
         except KeyError:
-            self.pere << "Sortie inconnue {}.".format(ancien_nom)
+            self.pere << "|err|La direction '{}' est " \
+                    "inconnue.|ff|".format(ancien_nom)
         else:
             nouveau_nom = nouveau_nom.lower()
             sortie = sorties[ancien_nom]

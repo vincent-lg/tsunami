@@ -52,6 +52,7 @@ NOTE: les modules primaires et secondaires ne doivent pas porter de noms
 identiques, susceptibles d'entrer en conflit.
 
 Voici un résumé des modules primaires existants :
+-   communication   Module gérant la communication dans l'univers
 -   connex          module proche des clients, chargé des connexions,
                     créations de compte, interprétation des commandes
 -   diffact         module gérant les actions différées, c'est-à-dire des

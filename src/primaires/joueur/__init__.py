@@ -88,7 +88,6 @@ class Module(BaseModule):
             commandes.options.CmdOptions(),
             commandes.quitter.CmdQuitter(),
             commandes.shutdown.CmdShutdown(),
-            commandes.parler.CmdParler(),
             commandes.where.CmdWhere(),
         ]
         
