@@ -92,6 +92,29 @@ class Joueur(Personnage):
                     self.instance_connexion)
             self.contexte_actuel = contexte
         
+        serveur = type(self).importeur.serveur
+        if self.salle is None:
+            # On recherche la salle
+            cle = type(self).importeur.salle.salle_retour
+            salle = type(self).importeur.salle[cle]
+            self.salle = salle
+        
+        # On verrouille la déconnexion
+        # Autrement dit, on déconnecte simplement les instances
+        # conflictuelles, pas les joueurs derrière
+        self.garder_connecte = True
+        for connecte in type(self).importeur.connex.instances.values():
+            joueur_connecte = connecte.joueur
+            if joueur_connecte and \
+                    connecte is not self.instance_connexion and \
+                    joueur_connecte is self:
+                connecte.envoyer("|att|Un autre client demande à utiliser " \
+                    "ce personnage.\nVous allez être déconnecté.|ff|")
+                connecte.deconnecter("un autre client se connecte sur " \
+                        "ce personnage")
+        
+        serveur.verifier_deconnexions()
+        self.garder_connecte = False
         self.connecte = True
         salle = self.salle
         if salle:
