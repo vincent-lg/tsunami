@@ -82,18 +82,15 @@ class InstanceConnexion(BaseObj):
     
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel de l'instance.
-        Si aucun compte n'est défini, le contexte actuel est self.contexte.
-        Si un compte est défini mais qu'aucun joueur n'est défini, c'est le
-        contexte du compte qui est retournée.
-        Sinon, c'est le contexte du joueur qui est retourné.
+        -   si le joueur est défini et connecté, alors on retourne
+            le contexte actuel du joueur.
+        -   sinon, on retourne le contexte de l'isntance
         
         """
-        if self.compte is None or self.compte.contexte_actuel is None:
-            contexte = self.contexte
-        elif self.joueur is None or self.joueur.contexte_actuel is None:
-            contexte = self.compte.contexte_actuel
-        else:
+        if self.joueur and self.joueur.est_connecte():
             contexte = self.joueur.contexte_actuel
+        else:
+            contexte = self.contexte
         
         return contexte
     
@@ -101,16 +98,13 @@ class InstanceConnexion(BaseObj):
         """On change le nouveau contexte. Le contexte peut être de
         différentes provenances (voir _get_contexte_actuel) et on s'assure
         que le contexte modifié soit bien celui actuellement appelé (soit
-        celui de l'instance de connexion, soit celui du compte, soit celui du
-        joueur).
+        celui de l'instance de connexion, soit celui du joueur).
         
         """
-        if self.compte is None:
-            self.contexte = nouveau_contexte
-        elif self.joueur is None:
-            self.compte.contexte_actuel = nouveau_contexte
-        else:
+        if self.joueur and self.joueur.est_connecte():
             self.joueur.contexte_actuel = nouveau_contexte
+        else:
+            self.contexte = nouveau_contexte
     
     contexte_actuel = property(_get_contexte_actuel, _set_contexte_actuel)
     
@@ -140,25 +134,17 @@ class InstanceConnexion(BaseObj):
         
         """
         if autre.compte:
-            self.compte = type(self).importeur.connex.get_compte( \
-                    autre.compte.nom)
+            self.compte = autre.compte
         if autre.joueur:
             self.joueur = autre.joueur
             self.joueur.instance_connexion = self
-            self.joueur.compte = self.compte
         if autre.contexte:
             self.contexte = \
                 type(self).importeur.interpreteur.contextes[ \
                 autre.contexte.nom](self)
-        if autre.compte and autre.compte.contexte:
-            self.compte.contexte = \
-                type(self).importeur.interpreteur.contextes[ \
-                autre.compte.contexte.nom](self)
         if self.joueur:
             for i, contexte in enumerate(self.joueur.contextes):
-                nouv_contexte = type(self).importeur.interpreteur.contextes[ \
-                        contexte.nom](self)
-                self.joueur.contextes[i] = nouv_contexte
+                contexte.pere = self
     
     def _get_encodage(self):
         """Retourne l'encodage du compte ou 'Utf-8'."""

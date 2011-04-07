@@ -99,3 +99,12 @@ class ListeID:
                 s_liste.append(str(elt))
         
         self.__liste = n_liste
+    
+    def supprimer_none(self):
+        """Supprime les objets None de la liste."""
+        n_liste = []
+        for elt in self.__liste:
+            if elt.get_objet() is not None:
+                n_liste.append(elt)
+        
+        self.__liste = n_liste

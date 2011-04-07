@@ -156,6 +156,19 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         """Méthode retournant les valeurs par défaut du constructeur"""
         return (None, )
     
+    def __getstate__(self):
+        retour = self.__dict__.copy()
+        retour["pere"] = None
+        return retour
+    
+    def __repr__(self):
+        """Affichage du nom de l'objet"""
+        nom = self.nom
+        if not nom:
+            nom = "inconnu"
+        
+        return nom
+    
     def entrer(self):
         """Méthode appelée quand le père entre dans le contexte"""
         pass
@@ -207,7 +220,6 @@ class Contexte(BaseObj, metaclass=MetaContexte):
             nouveau_contexte = self._get_contexte(contexte)(self.pere)
         else:
             nouveau_contexte = contexte
-        
         self.pere.contexte_actuel.sortir()
         self.pere.migrer_contexte(nouveau_contexte)
         self.pere.contexte_actuel.entrer()

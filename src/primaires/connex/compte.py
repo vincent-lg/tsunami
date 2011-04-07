@@ -61,19 +61,10 @@ class Compte(ObjetID):
         self.tentatives_validation = 0 # tentatives de validation
         self.nb_essais = 0 # tentatives d'intrusion (mot de passe erroné)
         self.joueurs = ListeID()
-        self.contexte = None # le contexte du compte
     
     def __getinitargs__(self):
         """Méthode retournant les valeurs par défaut du constructeur"""
         return ("", )
-    
-    def __setstate__(self, dico_attr):
-        """On s'assure :
-        -   que le contexte est bien remis à None
-        
-        """
-        dico_attr["contexte"] = None
-        ObjetID.__setstate__(self, dico_attr)
     
     def hash_mot_de_pass(self, clef_salage, type_chiffrement, mot_de_passe):
         """Méthode appelé pour hasher le mot de passe"""
@@ -110,15 +101,5 @@ class Compte(ObjetID):
         """Supprime le joueur passé en paramètre de la liste des joueurs"""
         self.joueurs.remove(joueur)
         self.enregistrer()
-    
-    def _get_contexte_actuel(self):
-        """Retourne le contexte du compte"""
-        return self.contexte
-    
-    def _set_contexte_actuel(self, nouveau_contexte):
-        """Modifie le contexte actuel du compte"""
-        self.contexte = nouveau_contexte
-    
-    contexte_actuel = property(_get_contexte_actuel, _set_contexte_actuel)
 
 ObjetID.ajouter_groupe(Compte)

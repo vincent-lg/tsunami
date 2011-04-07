@@ -45,5 +45,4 @@ class Quitter(Editeur):
     def entrer(self):
         """Quand on entre dans le contexte"""
         self.pere.joueur.contextes.retirer()
-        self.migrer_contexte("personnage:connexion:mode_connecte", False)
         self.pere.envoyer("Fermeture de l'éditeur.")

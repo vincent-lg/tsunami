@@ -30,8 +30,6 @@
 
 """Fichier contenant le contexte 'personnage:connexion:mode_connecte"""
 
-import traceback
-
 from primaires.interpreteur.contexte import Contexte
 from primaires.interpreteur.masque.dic_masques import DicMasques
 from primaires.interpreteur.masque.fonctions import *
@@ -42,6 +40,7 @@ from primaires.interpreteur.masque.exceptions.erreur_validation \
 
 
 class ModeConnecte(Contexte):
+    
     """Le contexte de mode connecté.
     C'est une petite institution à lui tout seul.
     A partir du moment où un joueur se connecte, il est connecté à ce contexte.
@@ -90,8 +89,6 @@ class ModeConnecte(Contexte):
         
         serveur.verifier_deconnexions()
         joueur.garder_connecte = False
-        
-        joueur.pre_connecter()
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -129,6 +126,7 @@ class ModeConnecte(Contexte):
             dic_masques = DicMasques()
             lst_commande = chaine_vers_liste(msg)
             logger = type(self).importeur.man_logs.get_logger("sup")
+            traceback = __import__("traceback")
             try:
                 interpreteur.valider(self.pere.joueur, dic_masques, \
                         lst_commande)
@@ -148,6 +146,7 @@ class ModeConnecte(Contexte):
                     "votre commande.\nLes administrateurs en ont été " \
                     "avertis.|ff|")
             else:
+                exception = ErreurInterpretation
                 try:
                     # On cherche le dernier paramètre
                     for masque in reversed(list(dic_masques.values())):
@@ -156,7 +155,7 @@ class ModeConnecte(Contexte):
                             break
                     
                     commande.interpreter(self.pere.joueur, dic_masques)
-                except ErreurInterpretation as err_int:
+                except exception as err_int:
                     self.pere.joueur.envoyer(str(err_int))
                 except Exception:
                     logger.fatal("Exception levée " \

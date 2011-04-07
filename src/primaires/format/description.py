@@ -32,12 +32,13 @@
 
 from textwrap import wrap
 
+from abstraits.obase import BaseObj
 from .fonctions import *
 
 # Constantes
 TAILLE_LIGNE = 75
 
-class Description:
+class Description(BaseObj):
     
     """Cette classe définit une description générique.
     Ce peut être une description de salle, d'objet, de balise, de
@@ -48,11 +49,16 @@ class Description:
     
     """
     
-    def __init__(self, description, parent=None):
+    def __init__(self, description="", parent=None):
         """Constructeur"""
+        BaseObj.__init__(self)
         self.paragraphes = [] # une liste des différents paragraphes
         self.parent = parent
-        self.ajouter_paragraphe(description)
+        if description:
+            self.ajouter_paragraphe(description)
+    
+    def __getinitargs__(self):
+        return ("", )
     
     def __str__(self):
         """Retourne la description sous la forme d'un texte 'str'"""
@@ -63,7 +69,7 @@ class Description:
             res.append(paragraphe)
         
         if not res:
-            res.append("Aucune description.")
+            res.append("Vous êtes au milieu de nulle part.")
         
         return "\n".join(res)
     

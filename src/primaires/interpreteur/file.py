@@ -77,6 +77,10 @@ class FileContexte(BaseObj):
         """Retourne l'itérateur de la file"""
         return iter(self._file)
     
+    def __str__(self):
+        """Retourne la file"""
+        return "f" + str(self._file)
+    
     def ajouter(self, objet):
         """Ajoute l'objet à ajouter en tête de la file."""
         self._file.insert(0, objet)

@@ -161,6 +161,7 @@ class Module(BaseModule):
         """
         for salle in self._salles.values():
             salle._personnages.supprimer_doublons()
+            salle._personnages.supprimer_none()
             for personnage in salle.personnages:
                 if personnage.salle is not salle:
                     salle.retirer_personnage(personnage)

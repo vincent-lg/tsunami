@@ -65,19 +65,12 @@ class Personnage(ObjetID):
         self.envoyer(msg)
         return self
     
-    def __setstate__(self, dict_attr):
-        """Vide la file des contextes"""
-        ObjetID.__setstate__(self, dict_attr)
-        dict_attr["contextes"].vider()
-        self.__dict__.update(dict_attr)
-    
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel, c'est-à-dire le premier de la file"""
         if len(self.contextes) > 0:
             contexte = self.contextes[0]
         else:
             contexte = None
-        
         return contexte
     
     def _set_contexte_actuel(self, nouveau_contexte):
