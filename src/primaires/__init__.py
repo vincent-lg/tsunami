@@ -33,7 +33,8 @@
 Chaque module primaire possède son propre package.
 
 Les modules primaires ayant des relations d'interdépendance entre eux, un
-ordre d'instanciation est défini dans ce fichier. Tout ce qui n'est pas dans
+ordre d'instanciation est défini dans la configuration du corps
+(voir src/corps/config.py). Tout ce qui n'est pas dans
 l'ordre d'instanciation sera instancié par la suite, après les modules
 définis.
 
@@ -64,6 +65,7 @@ Voici un résumé des modules primaires existants :
                     (personnages connectés)
 -   perso           module gérant les personnages, connectés (joueurs) ou non
                     (NPCs)
+-   salle           Module gérant les salles du MUD
 -   supenr          superviseur de l'enregistrement des objets dans des
                     fichiers sérialisés
 
