@@ -175,7 +175,6 @@ class NoeudMasque(BaseNoeud):
                         premiere_erreur = err
                     valide = False
                     commande[:] = list(copie_commande)
-                print("On tente de valider", masque, valide)
                 if valide:
                     dic_masques[self.nom] = masque
                     break
