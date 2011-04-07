@@ -31,10 +31,36 @@
 """Ce fichier contient la classe Canaldétaillée plus bas."""
 
 from abstraits.obase import BaseObj
+from bases.collections.liste_id import ListeID
 
 class Canal(BaseObj):
     
     """Classe définissant un canal.
     
     """
-    pass
+    
+    def __init__(self, nom, auteur):
+        """Constructeur du canal"""
+        self.nom_francais = nom
+        self.nom_anglais = ""
+        self.auteur = auteur
+        self.administrateurs = ListeID()
+        self.immerges = ListeID()
+        self.connectes = ListeID()
+    
+    def envoyer(self, auteur, message):
+        """Envoie le message au canal"""
+        ex_moi = "|cyc|[" + self.nom + "] Vous dites : " + message + "|ff|"
+        ex_autre = "|cyc|[" + self.nom + "] " + personnage.nom + " dit : " + message + "|ff|"
+        im_moi = ex_autre = "<" + self.personnage.nom + "> " + message
+        if personnage in self.immerges:
+            personnage << im_moi
+        else:
+            personnage << ex_moi
+        
+        for connecte in self.connectes:
+            if connecte is not personnage:
+                if connecte in self.immerges:
+                    connecte << im_autre
+                else:
+                    connecte << ex_autre

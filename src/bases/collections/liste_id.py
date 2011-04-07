@@ -48,7 +48,8 @@ class ListeID:
     
     def __contains__(self, objet):
         """Retourne True si objet.id est dans la liste"""
-        return objet.id in self.__liste
+        s_liste = [str(elt) for elt in self.__liste]
+        return str(objet.id) in s_liste
     
     def __getstate__(self):
         """On enregistre juste les IDs dans le fichier"""

@@ -33,6 +33,7 @@
 from abstraits.module import *
 from primaires.communication import commandes
 from primaires.communication.config import cfg_com
+from primaires.format.fonctions import *
 from .canal import Canal
 from .canaux import Canaux
 
@@ -95,3 +96,14 @@ class Module(BaseModule):
     def supprimer_canal(self, nom):
         """Supprime le canal de la liste des canaux"""
         del self._canaux[nom]
+    
+    def traiter_commande(self, personnage, commande):
+        """Traite les commandes au premire niveau"""
+        pass
+        
+        if commande.startswith("+"):
+            self.rejoindre_ou_creer(personnage, commande[1:])
+        elif commande.startswith("-"):
+            self.quitter_ou_detruire(personnage, commande[1:])
+        elif commande.startswith(":"):
+            self.immerger(personnage, commande[1:])
