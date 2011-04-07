@@ -46,12 +46,22 @@ class Description(Editeur):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
         self.opts.echp_sp_cars = False
+        self.nom_attribut = "description"
         self.ajouter_option("d", self.opt_supprimer)
         self.ajouter_option("r", self.opt_remplacer)
     
+    @property
+    def description(self):
+        """Retourne la description, attribut de self.objet"""
+        return getattr(self.objet, self.nom_attribut)
+    
+    def get_apercu(self):
+        """Aperçu de la description"""
+        return self.apercu.format(objet = self.objet.description)
+    
     def accueil(self):
         """Retourne l'aide"""
-        description = self.objet
+        description = self.description
         
         # Message d'aide
         msg = self.aide_courte.format(objet = self.objet) + "\n"
@@ -89,7 +99,7 @@ class Description(Editeur):
         *   un nombre pour supprimer le paragraphe n°<nombre>
         
         """
-        description = self.objet
+        description = self.description
         if arguments == "*": # on supprime toute la description
             description.vider()
             self.actualiser()
@@ -112,7 +122,7 @@ class Description(Editeur):
         <texte 1> / <texte à remplacer>
         
         """
-        description = self.objet
+        description = self.description
         # On commence par split au niveau du pipe
         try:
             recherche, remplacer_par = arguments.split(" / ")
@@ -124,6 +134,6 @@ class Description(Editeur):
     
     def interpreter(self, msg):
         """Interprétation du contexte"""
-        description = self.objet
+        description = self.description
         description.ajouter_paragraphe(msg)
         self.actualiser()

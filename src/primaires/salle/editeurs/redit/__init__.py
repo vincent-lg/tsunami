@@ -162,11 +162,10 @@ class EdtRedit(Presentation):
             "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
         
         # Description
-        # Titre
         description = self.ajouter_choix("description", "d", Description, \
-                salle.description)
+                salle)
         description.parent = self
-        description.apercu = "{objet.paragraphes_indentes}"
+        description.apercu = "{objet.description.paragraphes_indentes}"
         description.aide_courte = \
             "Description de la salle {}".format(salle)
         

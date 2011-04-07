@@ -73,4 +73,5 @@ class LangueCMD(Contexte):
         else:
             self.pere.joueur.langue_cmd = msg
             self.pere.compte.ajouter_joueur(self.pere.joueur)
-            self.migrer_contexte("personnage:connexion:mode_connecte")
+        
+        self.pere.joueur.pre_connecter()

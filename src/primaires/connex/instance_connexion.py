@@ -63,7 +63,6 @@ class InstanceConnexion(BaseObj):
         self.joueur = None
         self.file_attente = [] # file d'attente des messages à envoyer
         self.contexte = None
-        self.contexte_compte = None
         self.nb_essais = 0
         
         if creer_contexte:
@@ -83,18 +82,15 @@ class InstanceConnexion(BaseObj):
     
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel de l'instance.
-        Si aucun compte n'est défini, le contexte actuel est self.contexte.
-        Si un compte est défini mais qu'aucun joueur n'est défini, c'est le
-        contexte du compte qui est retournée.
-        Sinon, c'est le contexte du joueur qui est retourné.
+        -   si le joueur est défini et connecté, alors on retourne
+            le contexte actuel du joueur.
+        -   sinon, on retourne le contexte de l'isntance
         
         """
-        if self.compte is None or self.contexte_compte is None:
-            contexte = self.contexte
-        elif self.joueur is None or self.joueur.contexte_actuel is None:
-            contexte = self.contexte_compte
-        else:
+        if self.joueur and self.joueur.est_connecte():
             contexte = self.joueur.contexte_actuel
+        else:
+            contexte = self.contexte
         
         return contexte
     
@@ -102,16 +98,13 @@ class InstanceConnexion(BaseObj):
         """On change le nouveau contexte. Le contexte peut être de
         différentes provenances (voir _get_contexte_actuel) et on s'assure
         que le contexte modifié soit bien celui actuellement appelé (soit
-        celui de l'instance de connexion, soit celui du compte, soit celui du
-        joueur).
+        celui de l'instance de connexion, soit celui du joueur).
         
         """
-        if self.compte is None:
-            self.contexte = nouveau_contexte
-        elif self.joueur is None:
-            self.contexte_compte = nouveau_contexte
-        else:
+        if self.joueur and self.joueur.est_connecte():
             self.joueur.contexte_actuel = nouveau_contexte
+        else:
+            self.contexte = nouveau_contexte
     
     contexte_actuel = property(_get_contexte_actuel, _set_contexte_actuel)
     
@@ -149,10 +142,6 @@ class InstanceConnexion(BaseObj):
             self.contexte = \
                 type(self).importeur.interpreteur.contextes[ \
                 autre.contexte.nom](self)
-        if autre.contexte_compte:
-            self.contexte_compte = \
-                type(self).importeur.interpreteur.contextes[ \
-                autre.contexte_compte.nom](self)
         if self.joueur:
             for i, contexte in enumerate(self.joueur.contextes):
                 contexte.pere = self

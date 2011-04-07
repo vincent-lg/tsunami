@@ -161,6 +161,14 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         retour["pere"] = None
         return retour
     
+    def __repr__(self):
+        """Affichage du nom de l'objet"""
+        nom = self.nom
+        if not nom:
+            nom = "inconnu"
+        
+        return nom
+    
     def entrer(self):
         """Méthode appelée quand le père entre dans le contexte"""
         pass
@@ -203,7 +211,7 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         """
         self.migrer_contexte(type(self).nom)
     
-    def migrer_contexte(self, contexte, afficher_accueil=True, recuperation=False):
+    def migrer_contexte(self, contexte, afficher_accueil=True):
         """Cas de transfert de contexte.
         Le contexte doit être donné sous la forme d'un nom (type 'str').
         
@@ -213,8 +221,7 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         else:
             nouveau_contexte = contexte
         self.pere.contexte_actuel.sortir()
-        if not recuperation:
-            self.pere.migrer_contexte(nouveau_contexte)
+        self.pere.migrer_contexte(nouveau_contexte)
         self.pere.contexte_actuel.entrer()
         if self.pere.contexte_actuel.opts.separateur is not None:
             self.pere.envoyer(self.pere.contexte_actuel.opts.separateur)

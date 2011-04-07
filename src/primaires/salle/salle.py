@@ -77,8 +77,7 @@ class Salle(ObjetID):
         self._mnemonic = mnemonic
         self.coords = Coordonnees(x, y, z, valide, self)
         self.titre = ""
-        self.description = Description("Vous êtes au milieu de nulle part.",
-                self)
+        self.description = Description(parent=self)
         self.sorties = Sorties(parent=self)
         self._personnages = ListeID() # personnages présents
     

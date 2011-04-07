@@ -73,7 +73,6 @@ class Module(BaseModule):
         'self.instances' si elles sont encore connectées.
         
         """
-        
         comptes_a_pas_effacer = []
         
         # On récupère les comptes
@@ -100,6 +99,10 @@ class Module(BaseModule):
         for compte in comptes:
             if (not compte.valide) and (not compte.nom in comptes_a_pas_effacer):
                 self.supprimer_compte(compte)
+        
+        # On supprime les joueurs dont le fichier a été effacé manuellement
+        for compte in self.comptes.values():
+            compte.joueurs.supprimer_none()
         
         # On ajoute le dictionnaire 'instances' comme groupe fictif de 'parid'
         type(self.importeur).parid[NOM_GROUPE] = self.instances

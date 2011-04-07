@@ -66,6 +66,12 @@ class Joueur(Personnage):
         """Retourne la valeur de self.connecte"""
         return self.connecte
     
+    def retablir_contextes(self):
+        contexte = type(self).importeur.interpreteur.contextes[
+                "personnage:connexion:mode_connecte"](self.instance_connexion)
+        self.contextes.vider()
+        self.contexte_actuel = contexte
+    
     def pre_connecter(self):
         """Méthode appelée pour préparer la connexion.
         ATTENTION : on parle ici de la connexion du joueur. Elle
@@ -75,10 +81,22 @@ class Joueur(Personnage):
         lien avec l'univers, non pas dans le sens réseau.
         
         """
+        print(self, "contextes", self.contextes)
+        for contexte in self.contextes:
+            contexte.pere = self.instance_connexion
+        
+        if len(self.contextes) == 0:
+            contexte = type(self).importeur.interpreteur.contextes[
+                    "personnage:connexion:mode_connecte"](
+                    self.instance_connexion)
+            self.contexte_actuel = contexte
+        
         self.connecte = True
         salle = self.salle
         if salle:
             salle.ajouter_personnage(self)
+        
+        self << self.contexte_actuel.accueil()
     
     def pre_deconnecter(self):
         """Cette méthode prépare la déconnexion du joueur.

@@ -64,8 +64,17 @@ class Editeur(Contexte):
     def __getstate__(self):
         """On nettoie les options"""
         dico_attr = Contexte.__getstate__(self)
-        dico_attr["options"] = {}
+        dico_attr["options"] = dico_attr["options"].copy()
+        for rac, fonction in dico_attr["options"].items():
+            dico_attr["options"][rac] = fonction.__name__
         return dico_attr
+    
+    def __setstate__(self, dico_attr):
+        """Récupération de l'éditeur"""
+        Contexte.__setstate__(self, dico_attr)
+        for rac, nom in self.options.items():
+            fonction = getattr(self, nom)
+            self.options[rac] = fonction
     
     def ajouter_option(self, option, fonction):
         """Ajoute une option.
@@ -99,10 +108,6 @@ class Editeur(Contexte):
             prompt = "->"
         return prompt
 
-    def apercu(self):
-        """Retourne un aperçu"""
-        return ""
-    
     def receptionner(self, msg):
         """Méthode appelée quand l'éditeur reçoit un message.
         On le redirige vers 'interpreter' après avoir appliqué les options
@@ -132,3 +137,13 @@ class Editeur(Contexte):
                 fonction(arguments)
         else:
             self.interpreter(msg)
+    
+    def migrer_contexte(self, contexte, afficher_accueil=True):
+        """Redéfinition de la méthode 'migrer_contexte' de Contexte.
+        Quand on migre un éditeur à l'autre, l'ancien éditeur doit être
+        retiré de la pile.
+        
+        """
+        self.pere.joueur.contextes.retirer()
+        Contexte.migrer_contexte(self, contexte, afficher_accueil)
+        self.pere.contexte_actuel.pere = self.pere

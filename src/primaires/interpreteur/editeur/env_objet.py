@@ -30,7 +30,9 @@
 
 """Ce fichier définit la classe 'envelope_objet' détaillée lus bas."""
 
-class EnvelopeObjet:
+from abstraits.obase import BaseObj
+
+class EnvelopeObjet(BaseObj):
     
     """Cette classe définit une envelope contenant :
     -   l'éditeur (une zone de texte uniligne, multi-ligne, une lsite...)
@@ -48,6 +50,7 @@ class EnvelopeObjet:
     
     def __init__(self, editeur, edite, attribut):
         """Constructeur de l'envelope"""
+        BaseObj.__init__(self)
         self.editeur = editeur
         self.objet = edite
         self.attribut = attribut
@@ -56,6 +59,9 @@ class EnvelopeObjet:
         self.apercu = ""
         self.aide_courte = ""
         self.aide_longue = ""
+    
+    def __getinitargs__(self):
+        return (None, None, None)
     
     def construire(self,pere):
         """Retourne l'éditeur construit"""
