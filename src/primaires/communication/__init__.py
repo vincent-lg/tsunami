@@ -28,15 +28,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-""" Fichier contenant le module primaire communication. """
+"""Fichier contenant le module primaire communication."""
 
 from abstraits.module import *
 from primaires.communication import commandes
 from primaires.communication.config import cfg_com
+from .canal import Canal
+from .canaux import Canaux
 
 class Module(BaseModule):
+    
     """Cette classe représente le module qui gère toutes les communications
     entre clients (donc entre joueurs la plupart du temps)
+    Elle gère également les canaux de communication.
     
     """
     
@@ -44,6 +48,7 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "communication", "primaire")
         self.commandes = []
         self.correspondants = []
+        self._canaux = canaux
     
     def config(self):
         """Configuration du module.
@@ -72,3 +77,21 @@ class Module(BaseModule):
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
+    
+    @property
+    def canaux(self):
+        """Retourne les canaux existants"""
+        return dict(self._canaux)
+    
+    def ajouter_canal(self, nom):
+        """Ajoute un canal à la lsite des canaux existants
+        Retourne le canal créé.
+        
+        """
+        canal = Canal(nom)
+        self._canaux[nom] = canal
+        return canal
+    
+    def supprimer_canal(self, nom):
+        """Supprime le canal de la liste des canaux"""
+        del self._canaux[nom]
