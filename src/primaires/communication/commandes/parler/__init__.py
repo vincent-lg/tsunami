@@ -56,7 +56,8 @@ class CmdParler(Commande):
         """Interprétation de la commande"""
         cible = dic_masques["nom_joueur"].joueur
         message = dic_masques["message"].message
-        personnage.envoyer("|vrc|Vous dites à {} : {}|ff|". \
-                    format(cible.nom, message))
-        cible.envoyer("|vrc|{} vous dit : {}|ff|". \
-                    format(personnage.nom, message))
+        clr = type(self).importeur.anaconf.get_config("config_com").couleur_tell
+        type(self).importeur.communication. \
+                correspondants[cible.id.id] = personnage.id.id
+        personnage << clr + "Vous dites à {} : {}|ff|".format(cible.nom, message)
+        cible << clr + "{} vous dit : {}|ff|".format(personnage.nom, message)

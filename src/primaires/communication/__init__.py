@@ -31,6 +31,7 @@
 """Fichier contenant le module primaire communication."""
 
 from abstraits.module import *
+from primaires.communication import masques
 from primaires.communication import commandes
 from primaires.communication.config import cfg_com
 from primaires.format.fonctions import *
@@ -47,8 +48,9 @@ class Module(BaseModule):
     
     def __init__(self, importeur):
         BaseModule.__init__(self, importeur, "communication", "primaire")
+        self.masques = []
         self.commandes = []
-        self.correspondants = []
+        self.correspondants = {}
         self._canaux = canaux
     
     def config(self):
@@ -64,8 +66,7 @@ class Module(BaseModule):
     
     def ajouter_masques(self):
         """Ajout des masques"""
-        # self.importeur.interpreteur.ajouter_masque(
-        #        masques.direction.Direction)
+        self.importeur.interpreteur.ajouter_masque(masques.message.Message)
     
     def ajouter_commandes(self):
         """Ajout des commandes"""
@@ -74,6 +75,7 @@ class Module(BaseModule):
             commandes.hrp.CmdHrp(),
             commandes.emote.CmdEmote(),
             commandes.parler.CmdParler(),
+            commandes.repondre.CmdRepondre(),
         ]
         
         for cmd in self.commandes:
@@ -98,7 +100,7 @@ class Module(BaseModule):
         del self._canaux[nom]
     
     def traiter_commande(self, personnage, commande):
-        """Traite les commandes au premire niveau"""
+        """Traite les commandes au premier niveau"""
         pass
         
         if commande.startswith("+"):

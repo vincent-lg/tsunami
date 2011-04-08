@@ -55,9 +55,10 @@ class CmdHrp(Commande):
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         message = dic_masques["message"].message
-        moi = "|cyc|[HRP] Vous dites : " + message + "|ff|"
+        clr = type(self).importeur.anaconf.get_config("config_com").couleur_hrp
+        moi = clr + "[HRP] Vous dites : " + message + "|ff|"
         personnage.envoyer(moi)
-        autre = "|cyc|[HRP] " + personnage.nom + " dit : " + message + "|ff|"
+        autre = clr + "[HRP] " + personnage.nom + " dit : " + message + "|ff|"
         for joueur in type(self).importeur.connex.joueurs_connectes:
             if joueur is not personnage:
                 joueur.envoyer(autre)

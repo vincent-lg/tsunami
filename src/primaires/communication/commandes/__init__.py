@@ -34,3 +34,4 @@ import primaires.communication.commandes.dire
 import primaires.communication.commandes.hrp
 import primaires.communication.commandes.emote
 import primaires.communication.commandes.parler
+import primaires.communication.commandes.repondre

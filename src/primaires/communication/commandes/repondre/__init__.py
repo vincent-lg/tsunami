@@ -28,6 +28,41 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module communication."""
+"""Package contenant la commande 'repondre'.
 
-import primaires.communication.masques.message
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdRepondre(Commande):
+    
+    """Commande 'repondre'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "repondre", "reply")
+        self.nom_categorie = "parler"
+        self.schema = "<message>"
+        self.aide_courte = "répond à un joueur"
+        self.aide_longue = \
+            "<Aide>"
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation de la commande"""
+        message = dic_masques["message"].message
+        corresp = type(self).importeur.communication.correspondants
+        clr = type(self).importeur.anaconf.get_config("config_com").couleur_tell
+        try:
+            id_cible = corresp[personnage.id.id]
+        except KeyError:
+            personnage << "|err|Personne ne vous a parlé pour le moment.|ff|"
+        else:
+            cible = type(self).importeur.parid["joueurs"][id_cible]
+            type(self).importeur.communication. \
+                    correspondants[cible.id.id] = personnage.id.id
+            personnage << clr + "Vous répondez à {} : {}|ff|" \
+                    .format(cible.nom, message)
+            cible << clr + "{} vous répond : {}|ff|" \
+                    .format(personnage.nom, message)

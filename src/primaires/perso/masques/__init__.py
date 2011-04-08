@@ -31,4 +31,3 @@
 """Package des masques du module perso."""
 
 import primaires.perso.masques.commande
-import primaires.perso.masques.message

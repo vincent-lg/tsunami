@@ -52,7 +52,7 @@ class Canal(BaseObj):
         """Envoie le message au canal"""
         ex_moi = "|cyc|[" + self.nom + "] Vous dites : " + message + "|ff|"
         ex_autre = "|cyc|[" + self.nom + "] " + personnage.nom + " dit : " + message + "|ff|"
-        im_moi = ex_autre = "<" + self.personnage.nom + "> " + message
+        im_moi = im_autre = "<" + self.personnage.nom + "> " + message
         if personnage in self.immerges:
             personnage << im_moi
         else:

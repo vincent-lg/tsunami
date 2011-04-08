@@ -55,9 +55,9 @@ cfg_com = r"""
 
 ## Coloration des commandes
 
-# Commande say / dire
-couleur_dire = "|gr|"
-
 # Commande ooc / hrp
 couleur_hrp = "|cyc|"
+
+# Commande tell / parler, reply / repondre
+couleur_tell = "|vrc|"
 """
