@@ -44,25 +44,51 @@ class CmdRepondre(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "repondre", "reply")
         self.nom_categorie = "parler"
-        self.schema = "<message>"
+        self.schema = "(<message>)"
         self.aide_courte = "répond à un joueur"
         self.aide_longue = \
-            "<Aide>"
+            "Cette commande permet de répondre au dernier joueur qui vous a  " \
+            "parlé avec à la commande %tell%. Sans argument, %reply% " \
+            "retourne une liste numérotée des personnes qui vous ont parlé " \
+            "au cours de cette session. Vous pouvez répondre à l'une d'entre " \
+            "elles en particulier avec %reply% |ent|<numéro de la liste> " \
+            "<message>|ff|. Vous pouvez aussi bloquer la réponse automatique " \
+            "sur un personnage de la liste en entrant %reply% |ent|<numéro " \
+            "du personnage>|ff|."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
-        message = dic_masques["message"].message
         corresp = type(self).importeur.communication.correspondants
-        clr = type(self).importeur.anaconf.get_config("config_com").couleur_tell
-        try:
-            id_cible = corresp[personnage.id.id]
-        except KeyError:
-            personnage << "|err|Personne ne vous a parlé pour le moment.|ff|"
+        if dic_masques["message"] is None:
+            liste_aff = []
+            i = 1
+            for id_cible, id_perso in corresp.items():
+                if personnage.id.id == id_cible:
+                    liste_aff.append(str(i) + ". " + type(self).importeur. \
+                            parid["joueurs"][id_perso].nom)
+                    i += 1
+            if not liste_aff:
+                personnage << "|err|Personne ne vous a parlé pour le moment.|ff|"
+            else:
+                personnage << "\n ".join(liste_aff)
         else:
-            cible = type(self).importeur.parid["joueurs"][id_cible]
-            type(self).importeur.communication. \
-                    correspondants[cible.id.id] = personnage.id.id
-            personnage << clr + "Vous répondez à {} : {}|ff|" \
-                    .format(cible.nom, message)
-            cible << clr + "{} vous répond : {}|ff|" \
-                    .format(personnage.nom, message)
+            message = dic_masques["message"].message
+            clr = type(self).importeur.anaconf. \
+                    get_config("config_com").couleur_tell
+            try:
+                id_cible = corresp[personnage.id.id]
+            except KeyError:
+                personnage << "|err|Personne ne vous a parlé pour le " \
+                        "moment.|ff|"
+            else:
+                cible = type(self).importeur.parid["joueurs"][id_cible]
+                if cible not in type(self).importeur.connex.joueurs_connectes:
+                    personnage << "|err|Le joueur passé en paramètre n'a pu " \
+                            "être trouvé.|ff|"
+                else:
+                    type(self).importeur.communication. \
+                            correspondants[cible.id.id] = personnage.id.id
+                    personnage << clr + "Vous répondez à {} : {}|ff|" \
+                            .format(cible.nom, message)
+                    cible << clr + "{} vous répond : {}|ff|" \
+                            .format(personnage.nom, message)
