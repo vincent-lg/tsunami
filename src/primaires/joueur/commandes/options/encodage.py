@@ -54,6 +54,10 @@ class PrmEncodage(Parametre):
         """Interprétation du paramètre"""
         encodage = dic_masques["nom_encodage"].encodage
         anc_encodage = personnage.compte.encodage
-        personnage.compte.encodage = encodage
-        personnage << "Vous changez l'encodage du compte de {} à {}.".format(
-                anc_encodage, encodage)
+        if encodage == anc_encodage:
+            personnage << "|err|Votre encodage est déjà réglé sur {}.|ff|" \
+                    .format(encodage)
+        else:
+            personnage.compte.encodage = encodage
+            personnage << "Vous changez l'encodage du compte de {} à {}." \
+                    .format(anc_encodage, encodage)

@@ -53,6 +53,9 @@ class PrmLangue(Parametre):
         """Interprétation du paramètre"""
         langue = dic_masques["nom_langue"].langue
         anc_langue = personnage.langue_cmd
-        personnage.langue_cmd = langue
-        personnage << "Vous changez la langue du joueur de {} à {}.".format(
-                anc_langue, langue)
+        if langue == anc_langue:
+            personnage << "|err|Votre langue est déjà '{}'.|ff|".format(langue)
+        else:
+            personnage.langue_cmd = langue
+            personnage << "Vous changez la langue du joueur de {} à {}.".format(
+                    anc_langue, langue)
