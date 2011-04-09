@@ -32,20 +32,26 @@
 
 from primaires.interpreteur.editeur.presentation import Quitter
 
-class Valider(Quitter):
+class Enregistrer(Quitter):
     
-    """Contexte-éditeur Valider.
+    """Contexte-éditeur Enregistrer.
     Ce contexte est appelé quand on a finit de de remplire un bug
     
     """
     
-    nom = "valider"
+    nom = "enregistrer"
     
     def entrer(self):
         """Quand on entre dans le contexte"""
         bugs = type(self).importeur.bugtracker.bugs
         ident = bugs.newIdent
-        bugs.ajouter_nouveau_bug(self.objet)
         Quitter.entrer(self)
-        self.pere << "Votre bug a été rajouté sous l'id numéro " + str(ident)
+        if self.objet.ident == -1:
+            bugs.ajouter_nouveau_bug(self.objet)
+            self.pere << "Votre rapport a été rajouté sous l'id numéro " \
+                + str(ident)
+        else:
+             self.pere << "Le rapport {} a bien été modifié".format( \
+                self.objet.ident)
+        bugs.enregistrer()
     

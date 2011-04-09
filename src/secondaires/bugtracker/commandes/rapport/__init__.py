@@ -34,6 +34,8 @@ from primaires.interpreteur.commande.commande import Commande
 from secondaires.bugtracker.commandes.rapport.nouveau import PrmNouveau
 from secondaires.bugtracker.commandes.rapport.list import PrmList
 from secondaires.bugtracker.commandes.rapport.voir import PrmVoir
+from secondaires.bugtracker.commandes.rapport.effacer import PrmEffacer
+from secondaires.bugtracker.commandes.rapport.editer import PrmEditer
 
 class CmdRapport(Commande):
     
@@ -44,7 +46,8 @@ class CmdRapport(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "rapport", "report")
-        self.nom_categorie = "joueur"
+        self.groupe = "joueur"
+        self.nom_categorie = "bugs"
         self.aide_courte = "Manipulation des bugs"
         self.aide_longue = \
             "Cette commande permet de manipuler les bugs " \
@@ -54,8 +57,12 @@ class CmdRapport(Commande):
         prm_nouveau = PrmNouveau()
         prm_list = PrmList()
         prm_voir = PrmVoir()
+        prm_effacer = PrmEffacer()
+        prm_editer = PrmEditer()
         
         self.ajouter_parametre(prm_nouveau)
         self.ajouter_parametre(prm_list)
         self.ajouter_parametre(prm_voir)
+        self.ajouter_parametre(prm_effacer)
+        self.ajouter_parametre(prm_editer)
         

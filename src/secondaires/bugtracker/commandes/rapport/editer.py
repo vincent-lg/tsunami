@@ -27,49 +27,29 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from abstraits.unique import Unique
-from primaires.interpreteur.groupe.groupe import Groupe
 
-class ConteneurBugs(Unique):
+"""Fichier contenant le paramètre 'hotboot' de la commande 'module'."""
+
+from primaires.interpreteur.masque.parametre import Parametre
+
+from secondaires.bugtracker.bug import Bug
+
+class PrmEditer(Parametre):
     
-    """Classe conteneur des bugs.
-    
-    """
+    """Commande 'rapport editer'"""
     
     def __init__(self):
-        """Constructeur du conteneur."""
-        Unique.__init__(self, "bugs", "bugs")
-        self.newIdent = 0
-        self._bugs = {} # ident:bug
+        """Constructeur de la commande"""
+        Parametre.__init__(self, "editer", "edit")
+        self.groupe = "administrateur"
+        self.schema = "<ident_bug>"
+        self.aide_courte = "modifier un rapport de bug"
+        self.aide_longue = "Ouvre un éditeur pour modifier un rapport de bug"
     
-    def ajouter_nouveau_bug(self,bug):
-        """Permet de créer un bug"""
-        
-        bug.ident = self.newIdent
-        
-        self._bugs[bug.ident] = bug
-        self.newIdent += 1
-        
-        return bug
-    
-    def __delitem__(self,ident):
-        del self._bugs[ident]
-    
-    def __iter__(self):
-        return iter(self._bugs.values())
-    
-    def __getinitargs__(self):
-        return ()
-    
-    def __contains__(self, nom_bugs):
-        """Retourne True si le groupe est dans le dictionnaire, False sinon"""
-        return nom_bugs in self._groupes.keys()
-    
-    def __getitem__(self, nom_bugs):
-        """Retourne le groupe avec le nom spécifié"""
-        return self._bugs[nom_bugs]
-    
-    def __len__(self):
-        """Retourne le nombre de groupes"""
-        return len(self._bugs)
-    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        bug = dic_masques["ident_bug"].bug
+        editeur = type(self).importeur.interpreteur.construire_editeur(
+                "rapporteur", personnage, bug)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()
