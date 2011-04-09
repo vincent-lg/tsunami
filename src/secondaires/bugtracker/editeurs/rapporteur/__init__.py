@@ -35,7 +35,7 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 
-from.valider import Valider
+from .enregistrer import Enregistrer
 
 class EdtRapporteur(Presentation):
     
@@ -78,9 +78,10 @@ class EdtRapporteur(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description du bug"
         
-        # Valider
-        valider = self.ajouter_choix("valider le bug", "v", Valider, bug)
-        valider.parent = self
-        valider.aide_courte = "| |tit|" + "Valider le bug."
+        # Enregistrer
+        enregistrer = self.ajouter_choix("enregistrer le bug", "e", \
+            Enregistrer, bug)
+        enregistrer.parent = self
+        enregistrer.aide_courte = "| |tit|" + "Enregistrer le bug."
             
             

@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'hotboot' de la commande 'module'."""
+"""Fichier contenant le paramètre 'nouveau' de la commande 'rapport'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
@@ -41,7 +41,7 @@ class PrmNouveau(Parametre):
     def __init__(self):
         """Constructeur de la commande"""
         Parametre.__init__(self, "nouveau", "new")
-        self.nom_categorie = "joueur"
+        self.groupe = "joueur"
         self.aide_courte = "ouvre un éditeur pour rapporter un bug"
         self.aide_longue = "TODO"
     

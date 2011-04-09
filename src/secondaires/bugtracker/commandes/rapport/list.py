@@ -39,7 +39,7 @@ class PrmList(Parametre):
     def __init__(self):
         """Constructeur de la commande"""
         Parametre.__init__(self, "lister", "list")
-        self.nom_categorie = "joueur"
+        self.groupe = "joueur"
         self.aide_courte = "affiche les bugs en cours"
         self.aide_longue = "TODO"
     

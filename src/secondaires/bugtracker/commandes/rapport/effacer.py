@@ -27,49 +27,29 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from abstraits.unique import Unique
-from primaires.interpreteur.groupe.groupe import Groupe
 
-class ConteneurBugs(Unique):
+"""Fichier contenant le paramètre 'effacer' de la commande 'report'."""
+
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmEffacer(Parametre):
     
-    """Classe conteneur des bugs.
-    
-    """
+    """Commande 'rapport effacer'"""
     
     def __init__(self):
-        """Constructeur du conteneur."""
-        Unique.__init__(self, "bugs", "bugs")
-        self.newIdent = 0
-        self._bugs = {} # ident:bug
+        """Constructeur de la commande"""
+        Parametre.__init__(self, "effacer", "delete")
+        self.groupe = "administrateur"
+        self.schema = "<ident_bug>"
+        self.aide_courte = "Efface un bug"
+        self.aide_longue = "Enlève de manière définitive du gestionnaire " \
+            "un bug"
     
-    def ajouter_nouveau_bug(self,bug):
-        """Permet de créer un bug"""
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        bugs = type(self).importeur.bugtracker.bugs
+        ident = dic_masques["ident_bug"].ident
+        del bugs[ident]
+        bugs.enregistrer()
+        personnage << "Bug numéro {} effacer".format(ident)
         
-        bug.ident = self.newIdent
-        
-        self._bugs[bug.ident] = bug
-        self.newIdent += 1
-        
-        return bug
-    
-    def __delitem__(self,ident):
-        del self._bugs[ident]
-    
-    def __iter__(self):
-        return iter(self._bugs.values())
-    
-    def __getinitargs__(self):
-        return ()
-    
-    def __contains__(self, nom_bugs):
-        """Retourne True si le groupe est dans le dictionnaire, False sinon"""
-        return nom_bugs in self._groupes.keys()
-    
-    def __getitem__(self, nom_bugs):
-        """Retourne le groupe avec le nom spécifié"""
-        return self._bugs[nom_bugs]
-    
-    def __len__(self):
-        """Retourne le nombre de groupes"""
-        return len(self._bugs)
-    

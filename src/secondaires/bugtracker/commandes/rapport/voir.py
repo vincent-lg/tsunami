@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'hotboot' de la commande 'module'."""
+"""Fichier contenant le paramètre 'voir' de la commande 'report'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
@@ -39,7 +39,7 @@ class PrmVoir(Parametre):
     def __init__(self):
         """Constructeur de la commande"""
         Parametre.__init__(self, "voir", "see")
-        self.nom_categorie = "joueur"
+        self.groupe = "joueur"
         self.schema = "<ident_bug>"
         self.aide_courte = "affiche un bug"
         self.aide_longue = "TODO"
