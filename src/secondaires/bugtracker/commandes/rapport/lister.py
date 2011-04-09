@@ -28,41 +28,41 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'rapport'."""
+"""Fichier contenant le paramètre 'lister' de la commande 'rapport'."""
 
-from primaires.interpreteur.commande.commande import Commande
-from secondaires.bugtracker.commandes.rapport.nouveau import PrmNouveau
-from secondaires.bugtracker.commandes.rapport.lister import PrmLister
-from secondaires.bugtracker.commandes.rapport.voir import PrmVoir
-from secondaires.bugtracker.commandes.rapport.effacer import PrmEffacer
-from secondaires.bugtracker.commandes.rapport.editer import PrmEditer
+from primaires.interpreteur.masque.parametre import Parametre
 
-class CmdRapport(Commande):
+class PrmLister(Parametre):
     
-    """Commande 'rapport'.
-    
-    """
+    """Commande 'rapport lister'"""
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "rapport", "report")
+        Parametre.__init__(self, "lister", "list")
         self.groupe = "joueur"
-        self.nom_categorie = "bugs"
-        self.aide_courte = "Manipulation des bugs"
-        self.aide_longue = \
-            "Cette commande permet de manipuler les bugs " \
+        self.aide_courte = "affiche les bugs en cours"
+        self.aide_longue = "TODO"
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_nouveau = PrmNouveau()
-        prm_list = PrmList()
-        prm_voir = PrmVoir()
-        prm_effacer = PrmEffacer()
-        prm_editer = PrmEditer()
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        bugs = type(self).importeur.bugtracker.bugs
         
-        self.ajouter_parametre(prm_nouveau)
-        self.ajouter_parametre(prm_list)
-        self.ajouter_parametre(prm_voir)
-        self.ajouter_parametre(prm_effacer)
-        self.ajouter_parametre(prm_editer)
+        lignes = []
         
+        lignes = [ \
+                str(bug.ident).ljust(10) + " | " + bug.resume.ljust(46) + "|"
+                for bug in bugs
+            ]
+        
+        if lignes :
+            res = "+" + "-" * 60 + "+\n"
+            res += "| |tit|Bugs ouverts|ff|".ljust(70) + "|\n"
+            res += "+" + "-" * 60 + "+\n| "
+            res += "\n| ".join(lignes)
+            res += "\n+" + "-" * 60 + "+\n"
+            res = res.rstrip("\n")
+            personnage << res
+        else:
+            personnage.envoyer("|att|Aucun bug ouvert.|ff|")
+        
+    

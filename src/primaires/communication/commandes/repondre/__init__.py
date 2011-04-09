@@ -68,7 +68,8 @@ class CmdRepondre(Commande):
                             parid["joueurs"][id_perso].nom)
                     i += 1
             if not liste_aff:
-                personnage << "|err|Personne ne vous a parlé pour le moment.|ff|"
+                personnage << "|err|Personne ne vous a parlé pour le " \
+                        "moment.|ff|"
             else:
                 personnage << "\n ".join(liste_aff)
         else:

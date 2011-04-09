@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,41 +28,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'list' de la commande 'rapport'."""
+"""Ce fichier contient la classe Correspondants détaillée plus bas."""
 
-from primaires.interpreteur.masque.parametre import Parametre
-
-class PrmList(Parametre):
+class Correspondants:
     
-    """Commande 'rapport lister'"""
+    """Classe définissant une paire de joueurs correspondants.
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Parametre.__init__(self, "lister", "list")
-        self.groupe = "joueur"
-        self.aide_courte = "affiche les bugs en cours"
-        self.aide_longue = "TODO"
+    """
     
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        bugs = type(self).importeur.bugtracker.bugs
-        
-        lignes = []
-        
-        lignes = [ \
-                str(bug.ident).ljust(10) + " | " + bug.resume.ljust(46) + "|"
-                for bug in bugs
-            ]
-        
-        if lignes :
-            res = "+" + "-" * 60 + "+\n"
-            res += "| |tit|Bugs ouverts|ff|".ljust(70) + "|\n"
-            res += "+" + "-" * 60 + "+\n| "
-            res += "\n| ".join(lignes)
-            res += "\n+" + "-" * 60 + "+\n"
-            res = res.rstrip("\n")
-            personnage << res
-        else:
-            personnage.envoyer("|att|Aucun bug ouvert.|ff|")
-        
-    
+    def __init__(self, id, emetteur, cible):
+        """Constructeur du canal"""
+        self.id = id
+        self.emetteur = emetteur
+        self.cible = cible

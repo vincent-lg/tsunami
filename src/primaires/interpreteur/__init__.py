@@ -118,6 +118,7 @@ class Module(BaseModule):
             "bouger" : "Mobilité et aide au déplacement",
             "groupes" : "Manipulation des groupes et modules",
             "batisseur" : "Commandes de création",
+            "bugs" : "Manipulation et rapport de bug"
         }
         
         BaseModule.init(self)
