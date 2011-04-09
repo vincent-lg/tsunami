@@ -227,5 +227,5 @@ class EntrerPass(Contexte):
                 else:
                     self.attente = True
                     type(self).importeur.diffact.ajouter_action( \
-                        "mot de passe erroné", cnx_cfg.secondes_a_attendre, \
+                        "faux_mdp_"+emt.nom, cnx_cfg.secondes_a_attendre, \
                         self.arreter_attente)

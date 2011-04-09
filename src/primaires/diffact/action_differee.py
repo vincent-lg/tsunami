@@ -31,6 +31,7 @@
 """Ce fichier définit la classe ActionDifferee, détaillée plus bas."""
 
 import time
+import functools
 
 from bases.fonction import Fonction
 
@@ -61,3 +62,11 @@ class ActionDifferee:
         
         """
         self.fonction.executer()
+        
+    def __le__(self, other):
+        """Les actions différées sont ordonnées par leur échéance."""
+        return self.echeance <= other.echeance 
+        
+    def __gt__(self, other):
+        """Les actions différées sont ordonnées par leur échéance."""
+        return self.echeance > other.echeance
