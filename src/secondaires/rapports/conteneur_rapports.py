@@ -36,7 +36,7 @@ class ConteneurRapports(Unique):
     
     """
     
-    def __init__(self,typeRapport=""):
+    def __init__(self,typeRapport):
         """Constructeur du conteneur."""
         Unique.__init__(self, "rapports", typeRapport)
         self.newIdent = 0
@@ -61,9 +61,6 @@ class ConteneurRapports(Unique):
     def __iter__(self):
         return iter(self._rapports.values())
     
-    def __getinitargs__(self):
-        return ()
-    
     def __contains__(self, nom_rapport):
         """Retourne True si le groupe est dans le dictionnaire, False sinon"""
         return nom_rapport in self._groupes.keys()
@@ -75,4 +72,5 @@ class ConteneurRapports(Unique):
     def __len__(self):
         """Retourne le nombre de groupes"""
         return len(self._rapports)
-    
+
+
