@@ -31,10 +31,10 @@
 """Fichier contenant le module primaire perso."""
 
 from abstraits.module import *
-from secondaires.bugtracker import commandes
-from secondaires.bugtracker.editeurs.rapporteur import EdtRapporteur
+from secondaires.rapports import commandes
+from secondaires.rapports.editeurs.rapporteur import EdtRapporteur
 from . import masques
-from .conteneur_bugs import ConteneurBugs
+from .conteneur_rapports import ConteneurRapports
 
 class Module(BaseModule):
     
@@ -45,43 +45,84 @@ class Module(BaseModule):
     
     def __init__(self, importeur):
         """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "bugtracker", "secondaire")
+        BaseModule.__init__(self, importeur, "rapports", "secondaire")
         
         self.logger = type(self.importeur).man_logs.creer_logger( \
-                "bugs", "bugs")
+                "rapports", "rapports")
         
         self.bugs = None
+        self.suggestions = None
     
     def init(self):
         
-        sous_rep = "bugs"
-        fichier = "bugs.sav"
+        sous_rep = "rapports"
+        fichier = "bugs"
         
         bugs = None
         
-        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
-            bugs = self.importeur.supenr.charger(sous_rep, fichier)
+        if self.importeur.supenr.fichier_existe(sous_rep, fichier + ".sav"):
+            bugs = self.importeur.supenr.charger(sous_rep, fichier + ".sav")
         if bugs is None:
-            bugs = ConteneurBugs()
+            bugs = ConteneurRapports(fichier)
             self.logger.info("Aucun bug récupéré")
         else:
             s = ""
             if len(bugs) > 1:
                 s = "s"
-            self.logger.info("{} groupe{s} d'utilisateurs récupéré{s}".format(
+            self.logger.info("{} bug{s} récupéré{s}".format(
                         len(bugs), s = s))
         
         self.bugs = bugs
         
+        fichier = "suggestions"
+        
+        suggestions = None
+        
+        if self.importeur.supenr.fichier_existe(sous_rep, fichier + ".sav"):
+            bugs = self.importeur.supenr.charger(sous_rep, fichier + ".sav")
+        if suggestions is None:
+            suggestions = ConteneurRapports(fichier)
+            self.logger.info("Aucune suggestion récupéré")
+        else:
+            s = ""
+            if len(bugs) > 1:
+                s = "s"
+            self.logger.info("{} suggestion{s} récupéré{s}".format(
+                        len(bugs), s = s))
+        
+        self.suggestions = suggestions
+        
+        
         self.importeur.interpreteur.ajouter_masque(
-                masques.ident.Ident)
+                masques.ident.IdentBug)
+        self.importeur.interpreteur.ajouter_masque(
+                masques.ident.IdentSuggestion)
                 
         self.commandes = [
             commandes.rapport.CmdRapport(),
+            commandes.suggestion.CmdSuggestion(),
         ]
         
         self.importeur.interpreteur.ajouter_editeur(EdtRapporteur)
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
+    
+    def __getitem__(self,typeRapport):
+        if (typeRapport=='bug'):
+            return self.bugs
+        else:
+            return self.suggestions
+    
+    def nomType(self,typeRapport):
+        if (typeRapport=='bug'):
+            return "rapport de bug"
+        else:
+            return "suggestion"
+    
+    def determinant_nom(self,typeRapport):
+        if (typeRapport=='bug'):
+            return "un rapport de bug"
+        else:
+            return "une suggestion"
     

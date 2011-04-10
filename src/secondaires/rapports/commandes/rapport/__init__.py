@@ -28,28 +28,41 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'hotboot' de la commande 'module'."""
+"""Package contenant la commande 'rapport'."""
 
-from primaires.interpreteur.masque.parametre import Parametre
+from primaires.interpreteur.commande.commande import Commande
+from secondaires.rapports.commandes.parametres.nouveau import PrmNouveau
+from secondaires.rapports.commandes.parametres.lister import PrmLister
+from secondaires.rapports.commandes.parametres.voir import PrmVoir
+from secondaires.rapports.commandes.parametres.effacer import PrmEffacer
+from secondaires.rapports.commandes.parametres.editer import PrmEditer
 
-from secondaires.bugtracker.bug import Bug
-
-class PrmEditer(Parametre):
+class CmdRapport(Commande):
     
-    """Commande 'rapport editer'"""
+    """Commande 'rapport'.
+    
+    """
     
     def __init__(self):
         """Constructeur de la commande"""
-        Parametre.__init__(self, "editer", "edit")
-        self.groupe = "administrateur"
-        self.schema = "<ident_bug>"
-        self.aide_courte = "modifier un rapport de bug"
-        self.aide_longue = "Ouvre un éditeur pour modifier un rapport de bug"
+        Commande.__init__(self, "rapport", "report")
+        self.groupe = "joueur"
+        self.nom_categorie = "bugs"
+        self.aide_courte = "Manipulation des bugs"
+        self.aide_longue = \
+            "Cette commande permet de manipuler les bugs " \
     
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        bug = dic_masques["ident_bug"].bug
-        editeur = type(self).importeur.interpreteur.construire_editeur(
-                "rapporteur", personnage, bug)
-        personnage.contextes.ajouter(editeur)
-        editeur.actualiser()
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
+        prm_nouveau = PrmNouveau("bug")
+        prm_lister = PrmLister("bug")
+        prm_voir = PrmVoir("bug")
+        prm_effacer = PrmEffacer("bug")
+        prm_editer = PrmEditer("bug")
+        
+        self.ajouter_parametre(prm_nouveau)
+        self.ajouter_parametre(prm_lister)
+        self.ajouter_parametre(prm_voir)
+        self.ajouter_parametre(prm_effacer)
+        self.ajouter_parametre(prm_editer)
+        

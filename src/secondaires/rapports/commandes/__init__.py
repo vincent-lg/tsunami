@@ -28,41 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'lister' de la commande 'rapport'."""
+"""Package contenant les commandes du module perso."""
 
-from primaires.interpreteur.masque.parametre import Parametre
-
-class PrmLister(Parametre):
-    
-    """Commande 'rapport lister'"""
-    
-    def __init__(self):
-        """Constructeur de la commande"""
-        Parametre.__init__(self, "lister", "list")
-        self.groupe = "joueur"
-        self.aide_courte = "affiche les bugs en cours"
-        self.aide_longue = "TODO"
-    
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        bugs = type(self).importeur.bugtracker.bugs
-        
-        lignes = []
-        
-        lignes = [ \
-                str(bug.ident).ljust(10) + " | " + bug.resume.ljust(46) + "|"
-                for bug in bugs
-            ]
-        
-        if lignes :
-            res = "+" + "-" * 60 + "+\n"
-            res += "| |tit|Bugs ouverts|ff|".ljust(70) + "|\n"
-            res += "+" + "-" * 60 + "+\n| "
-            res += "\n| ".join(lignes)
-            res += "\n+" + "-" * 60 + "+\n"
-            res = res.rstrip("\n")
-            personnage << res
-        else:
-            personnage.envoyer("|att|Aucun bug ouvert.|ff|")
-        
-    
+import secondaires.rapports.commandes.rapport
+import secondaires.rapports.commandes.suggestion

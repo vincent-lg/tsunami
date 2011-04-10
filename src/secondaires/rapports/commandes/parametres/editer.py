@@ -28,28 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'effacer' de la commande 'report'."""
+"""Fichier contenant le paramètre 'editer' de la commande ''."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmEffacer(Parametre):
+class PrmEditer(Parametre):
     
-    """Commande 'rapport effacer'"""
+    """Commande 'rapport editer'"""
     
-    def __init__(self):
+    def __init__(self,typeRapport):
         """Constructeur de la commande"""
-        Parametre.__init__(self, "effacer", "delete")
+        Parametre.__init__(self, "editer", "edit")
+        
+        rapports = type(self).importeur.rapports
+        self.typeRapport = typeRapport
+        self.nomType = rapports.nomType(typeRapport)
+        self.determinant_nom = rapports.determinant_nom(typeRapport)
+        
         self.groupe = "administrateur"
-        self.schema = "<ident_bug>"
-        self.aide_courte = "Efface un bug"
-        self.aide_longue = "Enlève de manière définitive du gestionnaire " \
-            "un bug"
+        self.schema = "<ident_{}>".format(self.typeRapport)
+        self.aide_courte = "modifier {}".format(self.determinant_nom)
+        self.aide_longue = "Ouvre un éditeur pour modifier {}".format( \
+            self.determinant_nom)
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        bugs = type(self).importeur.bugtracker.bugs
-        ident = dic_masques["ident_bug"].ident
-        del bugs[ident]
-        bugs.enregistrer()
-        personnage << "Bug numéro {} effacer".format(ident)
-        
+        objet = dic_masques["ident_{}".format(self.typeRapport)].objet
+        editeur = type(self).importeur.interpreteur.construire_editeur(
+                "rapporteur", personnage, objet)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()

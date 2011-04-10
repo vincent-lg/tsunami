@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -27,49 +27,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from abstraits.unique import Unique
-from primaires.interpreteur.groupe.groupe import Groupe
 
-class ConteneurBugs(Unique):
-    
-    """Classe conteneur des bugs.
-    
-    """
-    
-    def __init__(self):
-        """Constructeur du conteneur."""
-        Unique.__init__(self, "bugs", "bugs")
-        self.newIdent = 0
-        self._bugs = {} # ident:bug
-    
-    def ajouter_nouveau_bug(self,bug):
-        """Permet de créer un bug"""
-        
-        bug.ident = self.newIdent
-        
-        self._bugs[bug.ident] = bug
-        self.newIdent += 1
-        
-        return bug
-    
-    def __delitem__(self,ident):
-        del self._bugs[ident]
-    
-    def __iter__(self):
-        return iter(self._bugs.values())
-    
-    def __getinitargs__(self):
-        return ()
-    
-    def __contains__(self, nom_bugs):
-        """Retourne True si le groupe est dans le dictionnaire, False sinon"""
-        return nom_bugs in self._groupes.keys()
-    
-    def __getitem__(self, nom_bugs):
-        """Retourne le groupe avec le nom spécifié"""
-        return self._bugs[nom_bugs]
-    
-    def __len__(self):
-        """Retourne le nombre de groupes"""
-        return len(self._bugs)
-    
+"""Package des masques du module bugtracker."""
+
+import secondaires.rapports.masques.ident

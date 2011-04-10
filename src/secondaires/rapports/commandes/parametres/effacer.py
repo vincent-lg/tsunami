@@ -28,41 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'rapport'."""
+"""Fichier contenant le paramètre 'effacer' de la commande 'report'."""
 
-from primaires.interpreteur.commande.commande import Commande
-from secondaires.bugtracker.commandes.rapport.nouveau import PrmNouveau
-from secondaires.bugtracker.commandes.rapport.lister import PrmLister
-from secondaires.bugtracker.commandes.rapport.voir import PrmVoir
-from secondaires.bugtracker.commandes.rapport.effacer import PrmEffacer
-from secondaires.bugtracker.commandes.rapport.editer import PrmEditer
+from primaires.interpreteur.masque.parametre import Parametre
 
-class CmdRapport(Commande):
+class PrmEffacer(Parametre):
     
-    """Commande 'rapport'.
+    """Commande 'rapport effacer'"""
     
-    """
-    
-    def __init__(self):
+    def __init__(self,typeRapport):
         """Constructeur de la commande"""
-        Commande.__init__(self, "rapport", "report")
-        self.groupe = "joueur"
-        self.nom_categorie = "bugs"
-        self.aide_courte = "Manipulation des bugs"
-        self.aide_longue = \
-            "Cette commande permet de manipuler les bugs " \
-    
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_nouveau = PrmNouveau()
-        prm_list = PrmList()
-        prm_voir = PrmVoir()
-        prm_effacer = PrmEffacer()
-        prm_editer = PrmEditer()
+        Parametre.__init__(self, "effacer", "delete")
         
-        self.ajouter_parametre(prm_nouveau)
-        self.ajouter_parametre(prm_list)
-        self.ajouter_parametre(prm_voir)
-        self.ajouter_parametre(prm_effacer)
-        self.ajouter_parametre(prm_editer)
+        rapports = type(self).importeur.rapports
+        self.typeRapport = typeRapport
+        self.nomType = rapports.nomType(typeRapport)
+        self.determinant_nom = rapports.determinant_nom(typeRapport)
+        
+        self.groupe = "administrateur"
+        self.schema = "<ident_{}>".format(self.typeRapport)
+        self.aide_courte = "Efface {}".format(self.determinant_nom)
+        self.aide_longue = "Enlève de manière définitive du gestionnaire " \
+            "{}".format(self.determinant_nom)
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        rapports = type(self).importeur.rapports[self.typeRapport]
+        ident = dic_masques["ident_{}".format(self.typeRapport)].ident
+        del rapports[ident]
+        rapports.enregistrer()
+        personnage << "{} numéro {ident} effacer".format(self.nomType,ident=ident)
         

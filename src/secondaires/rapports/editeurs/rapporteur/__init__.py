@@ -45,43 +45,48 @@ class EdtRapporteur(Presentation):
     
     nom = "rapporteur"
     
-    def __init__(self, personnage, bug):
+    def __init__(self, personnage, rapport):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
         
-        Presentation.__init__(self, instance_connexion, bug)
-        if personnage and bug:
-            self.construire(bug)
+        Presentation.__init__(self, instance_connexion, rapport)
+        if personnage and rapport:
+            self.construire(rapport)
     
     def __getinitargs__(self):
         return (None, None)
     
-    def construire(self, bug):
+    def construire(self, rapport):
         """Construction de l'éditeur"""
         
+        rapports = type(self).importeur.rapports
+        nomType = rapports.nomType(rapport.typeRapport)
+        determinant_nom = rapports.determinant_nom(rapport.typeRapport)
+        
         # Titre
-        resume = self.ajouter_choix("résumé", "r", Uniligne, bug,"resume")
+        resume = self.ajouter_choix("résumé", "r", Uniligne, rapport,"resume")
         resume.parent = self
-        resume.prompt = "Resumé du bug : "
+        resume.prompt = "Résumé du {} : ".format(nomType)
         resume.apercu = "{objet.resume}"
         resume.aide_courte = \
-            "Entrez le |ent|résumé|ff| du bug |cmd|/|ff| pour revenir " \
-            "à la fenêtre parente.\n\nRésumé actuel : |bc|{objet.resume}|ff|"
+            "Entrez le |ent|résumé|ff| du " + nomType + " |cmd|/|ff| " \
+            "pour revenir à la fenêtre parente.\n\nRésumé actuel : " \
+            "|bc|{objet.resume} |ff|"
         
         # Description
-        description = self.ajouter_choix("description", "d", Description, bug)
+        description = self.ajouter_choix("description", "d", Description, rapport)
         description.parent = self
         description.apercu = "{objet.description.paragraphes_indentes}"
         description.aide_courte = \
-            "| |tit|" + "Description du bug"
+            "| |tit|" + "Description du {}".format(nomType)
         
         # Enregistrer
-        enregistrer = self.ajouter_choix("enregistrer le bug", "e", \
-            Enregistrer, bug)
+        enregistrer = self.ajouter_choix("enregistrer le {}".format(nomType), \
+                "e", Enregistrer, rapport)
         enregistrer.parent = self
-        enregistrer.aide_courte = "| |tit|" + "Enregistrer le bug."
+        enregistrer.aide_courte = "| |tit|" + "Enregistrer le {}.".format(nomType)
             
             

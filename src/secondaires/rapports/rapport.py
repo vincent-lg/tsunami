@@ -27,7 +27,38 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+"""Fichier contenant la classe Bug, détaillée plus bas;"""
 
-"""Package contenant les commandes du module perso."""
+from abstraits.obase import *
+from primaires.format.description import Description
 
-import secondaires.bugtracker.commandes.rapport
+class Rapport(BaseObj):
+    
+    """Cette classe définit un rapport.
+    Un rapport possède un résumé et une description
+    et un numéro d'identification
+    
+    """
+    
+    def __init__(self,typeRapport):
+        """Constructeur du bug
+        """
+        BaseObj.__init__(self)
+        self.resume = ""
+        self.description = Description(parent=self)
+        self.ident = -1
+        self.typeRapport = typeRapport
+    
+    def __getinitargs__(self):
+        return ("",)
+    
+    def enregistrer(self):
+        pass
+    
+    def __str__(self):
+        """Retourne l'identifiant du bug, son ident'"""
+        if self.ident == -1:
+            return "Nouveau bug"
+        else:
+            return str(self.ident)
+    

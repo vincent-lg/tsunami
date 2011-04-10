@@ -28,33 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'voir' de la commande 'report'."""
+"""Fichier contenant le paramètre 'nouveau' de la commande 'rapport'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmVoir(Parametre):
+from secondaires.rapports.rapport import Rapport
+
+class PrmNouveau(Parametre):
     
-    """Commande 'rapport voir'"""
+    """Commande 'rapport nouveau'"""
     
-    def __init__(self):
+    def __init__(self,typeRapport):
         """Constructeur de la commande"""
-        Parametre.__init__(self, "voir", "see")
+        Parametre.__init__(self, "nouveau", "new")
+        
+        rapports = type(self).importeur.rapports
+        self.typeRapport = typeRapport
+        self.nomType = rapports.nomType(typeRapport)
+        
+        self.determinant_nom = rapports.determinant_nom(typeRapport)
         self.groupe = "joueur"
-        self.schema = "<ident_bug>"
-        self.aide_courte = "affiche un bug"
+        self.aide_courte = "Permet de créer un {}".format(self.nomType)
         self.aide_longue = "TODO"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        bug = dic_masques["ident_bug"].bug
-        
-        res = "+" + "-" * 60 + "+\n"
-        res += "| |tit|Bug {}|ff|".format(bug.ident).ljust(70) + "|\n"
-        res += "+" + "-" * 60 + "+\n"
-        res += "| " + bug.resume.ljust(59) + "|\n"
-        res += "+" + "-" * 60 + "+\n"
-        res += "".join([ "| " + l.ljust(59) + "|\n" for l in str(bug.description).split("\n") ])
-        res += "+" + "-" * 60 + "+\n"
-        res = res.rstrip("\n")
-        personnage << res
-        
+        objet = Rapport(self.typeRapport)
+        editeur = type(self).importeur.interpreteur.construire_editeur(
+                "rapporteur", personnage, objet)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()

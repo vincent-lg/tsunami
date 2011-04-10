@@ -28,48 +28,47 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le masque <ident_salle>."""
+"""Fichier contenant le paramètre 'list' de la commande 'rapport'."""
 
-from primaires.interpreteur.masque.masque import Masque
-from primaires.interpreteur.masque.fonctions import *
-from primaires.interpreteur.masque.exceptions.erreur_validation \
-        import ErreurValidation
+from primaires.interpreteur.masque.parametre import Parametre
 
-class Ident(Masque):
+class PrmLister(Parametre):
     
-    """Masque <ident_bug>.
-    On attend un identifiant de bug.
+    """Commande 'rapport lister'"""
     
-    """
-    
-    nom = "ident_bug"
-    
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "identifiant de bug"
-        self.identifiant = -1
-        self.bug = None
-    
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        lstrip(commande)
-        ident = liste_vers_chaine(commande)
+    def __init__(self,typeRapport):
+        """Constructeur de la commande"""
+        Parametre.__init__(self, "lister", "list")
         
-        if not ident:
-            raise ErreurValidation( \
-                "Précisez un identifiant de bug.")
+        rapports = type(self).importeur.rapports
+        self.typeRapport = typeRapport
+        self.nomType = rapports.nomType(typeRapport)
+        self.determinant_nom = rapports.determinant_nom(typeRapport)
         
-        ident = ident.split(" ")[0]
-        commande[:] = commande[len(ident):]
-        ident=int(ident)
-        try:
-        	bug = type(self).importeur.bugtracker.bugs[ident]
-        except KeyError:
-            raise ErreurValidation(
-                "|err|L'identifiant '{}' n'est pas valide.|ff|".format(ident))
+        self.groupe = "joueur"
+        self.aide_courte = "affiche les {} en cours".format(self.nomType)
+        self.aide_longue = "TODO"
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        objets = type(self).importeur.rapports[self.typeRapport]
         
-        self.bug = bug
-        self.ident = bug.ident
+        lignes = []
         
-        return True
+        lignes = [ \
+                str(objet.ident).ljust(10) + " | " + objet.resume.ljust(46) + "|"
+                for objet in objets
+            ]
+        
+        if lignes :
+            res = "+" + "-" * 60 + "+\n"
+            res += "| |tit|{}s ouverts|ff|".format(self.nomType).ljust(70) + "|\n"
+            res += "+" + "-" * 60 + "+\n| "
+            res += "\n| ".join(lignes)
+            res += "\n+" + "-" * 60 + "+\n"
+            res = res.rstrip("\n")
+            personnage << res
+        else:
+            personnage.envoyer("|att|Aucun {} ouvert.|ff|".format(self.nomType))
+        
+    

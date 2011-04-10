@@ -28,26 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'nouveau' de la commande 'rapport'."""
+"""Package contenant la commande 'rapport'."""
 
-from primaires.interpreteur.masque.parametre import Parametre
+from primaires.interpreteur.commande.commande import Commande
+from secondaires.rapports.commandes.parametres.nouveau import PrmNouveau
+from secondaires.rapports.commandes.parametres.lister import PrmLister
+from secondaires.rapports.commandes.parametres.voir import PrmVoir
+from secondaires.rapports.commandes.parametres.effacer import PrmEffacer
+from secondaires.rapports.commandes.parametres.editer import PrmEditer
 
-from secondaires.bugtracker.bug import Bug
-
-class PrmNouveau(Parametre):
+class CmdSuggestion(Commande):
     
-    """Commande 'rapport nouveau'"""
+    """Commande 'rapport'.
+    
+    """
     
     def __init__(self):
         """Constructeur de la commande"""
-        Parametre.__init__(self, "nouveau", "new")
+        Commande.__init__(self, "suggestion", "suggest")
         self.groupe = "joueur"
-        self.aide_courte = "ouvre un éditeur pour rapporter un bug"
-        self.aide_longue = "TODO"
+        self.aide_courte = "Manipulation des suggestions"
+        self.aide_longue = \
+            "Cette commande permet de manipuler les suggestions " \
     
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        editeur = type(self).importeur.interpreteur.construire_editeur(
-                "rapporteur", personnage, Bug())
-        personnage.contextes.ajouter(editeur)
-        editeur.actualiser()
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
+        prm_nouveau = PrmNouveau("suggestion")
+        prm_lister = PrmLister("suggestion")
+        prm_voir = PrmVoir("suggestion")
+        prm_effacer = PrmEffacer("suggestion")
+        prm_editer = PrmEditer("suggestion")
+        
+        self.ajouter_parametre(prm_nouveau)
+        self.ajouter_parametre(prm_lister)
+        self.ajouter_parametre(prm_voir)
+        self.ajouter_parametre(prm_effacer)
+        self.ajouter_parametre(prm_editer)
+        

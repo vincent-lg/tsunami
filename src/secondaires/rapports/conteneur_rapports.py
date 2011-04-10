@@ -27,36 +27,52 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""Fichier contenant la classe Bug, détaillée plus bas;"""
+from abstraits.unique import Unique
+from primaires.interpreteur.groupe.groupe import Groupe
 
-from abstraits.obase import *
-from primaires.format.description import Description
-
-class Bug(BaseObj):
+class ConteneurRapports(Unique):
     
-    """Cette classe définit un bug.
-    Un bug possède un résumé et une description
+    """Classe conteneur des rapports.
     
     """
     
-    def __init__(self):
-        """Constructeur du bug
-        """
-        BaseObj.__init__(self)
-        self.resume = ""
-        self.description = Description(parent=self)
-        self.ident = -1
+    def __init__(self,typeRapport=""):
+        """Constructeur du conteneur."""
+        Unique.__init__(self, "rapports", typeRapport)
+        self.newIdent = 0
+        self._rapports = {} # ident:rapport
+    
+    def __getinitargs__(self):
+        return ("",)
+    
+    def ajouter_nouveau_rapport(self,rapport):
+        """Permet de créer un rapport"""
+        
+        rapport.ident = self.newIdent
+        
+        self._rapports[rapport.ident] = rapport
+        self.newIdent += 1
+        
+        return rapport
+    
+    def __delitem__(self,ident):
+        del self._rapports[ident]
+    
+    def __iter__(self):
+        return iter(self._rapports.values())
     
     def __getinitargs__(self):
         return ()
     
-    def enregistrer(self):
-        pass
+    def __contains__(self, nom_rapport):
+        """Retourne True si le groupe est dans le dictionnaire, False sinon"""
+        return nom_rapport in self._groupes.keys()
     
-    def __str__(self):
-        """Retourne l'identifiant du bug, son ident'"""
-        if self.ident == -1:
-            return "Nouveau bug"
-        else:
-            return str(self.ident)
+    def __getitem__(self, nom_rapport):
+        """Retourne le groupe avec le nom spécifié"""
+        return self._rapports[nom_rapport]
+    
+    def __len__(self):
+        """Retourne le nombre de groupes"""
+        return len(self._rapports)
     

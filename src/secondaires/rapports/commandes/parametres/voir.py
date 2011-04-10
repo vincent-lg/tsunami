@@ -25,33 +25,44 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# pereIBILITY OF SUCH DAMAGE.
+# POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit le contexte-éditeur 'valider'."""
+"""Fichier contenant le paramètre 'voir' de la commande 'report'."""
 
-from primaires.interpreteur.editeur.presentation import Quitter
+from primaires.interpreteur.masque.parametre import Parametre
 
-class Enregistrer(Quitter):
+class PrmVoir(Parametre):
     
-    """Contexte-éditeur Enregistrer.
-    Ce contexte est appelé quand on a finit de de remplire un bug
+    """Commande 'rapport voir'"""
     
-    """
+    def __init__(self,typeRapport):
+        """Constructeur de la commande"""
+        Parametre.__init__(self, "voir", "see")
+        
+        rapports = type(self).importeur.rapports
+        self.typeRapport = typeRapport
+        self.nomType = rapports.nomType(typeRapport)
+        self.determinant_nom = rapports.determinant_nom(typeRapport)
+        
+        self.groupe = "joueur"
+        self.schema = "<ident_{}>".format(self.typeRapport)
+        self.aide_courte = "affiche {}".format(self.determinant_nom)
+        self.aide_longue = "TODO"
     
-    nom = "enregistrer"
-    
-    def entrer(self):
-        """Quand on entre dans le contexte"""
-        bugs = type(self).importeur.bugtracker.bugs
-        ident = bugs.newIdent
-        Quitter.entrer(self)
-        if self.objet.ident == -1:
-            bugs.ajouter_nouveau_bug(self.objet)
-            self.pere << "Votre rapport a été rajouté sous l'id numéro " \
-                + str(ident)
-        else:
-             self.pere << "Le rapport {} a bien été modifié".format( \
-                self.objet.ident)
-        bugs.enregistrer()
-    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        rapport = dic_masques["ident_{}".format(self.typeRapport)].objet
+        
+        res = "+" + "-" * 60 + "+\n"
+        res += "| |tit|{} {ident}|ff|".format(self.nomType, \
+                ident=rapport.ident).ljust(70) + "|\n"
+        res += "+" + "-" * 60 + "+\n"
+        res += "| " + rapport.resume.ljust(59) + "|\n"
+        res += "+" + "-" * 60 + "+\n"
+        res += "".join([ "| " + l.ljust(59) + "|\n" for l in \
+                str(rapport.description).split("\n") ])
+        res += "+" + "-" * 60 + "+\n"
+        res = res.rstrip("\n")
+        personnage << res
+        
