@@ -130,7 +130,7 @@ class Description(BaseObj):
         res = []
         for paragraphe in self.paragraphes:
             paragraphe = self.wrap_paragraphe(paragraphe, lien=indentation)
-            paragraphe = paragraphe.replace("|nl", "\n")
+            paragraphe = paragraphe.replace("|nl|", "\n")
             res.append(paragraphe)
         
         if not res:

@@ -59,7 +59,7 @@ class Joueur(Masque):
             raise ErreurValidation(
                 "Précisez un nom de joueur.")
         
-        nom_joueur = nom_joueur.split(" ")[0]
+        nom_joueur = nom_joueur.split(" ")[0].lower()
         commande[:] = commande[len(nom_joueur):]
 
         # On cherche dans les joueurs du module connex
