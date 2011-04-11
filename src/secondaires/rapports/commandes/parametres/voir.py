@@ -54,15 +54,38 @@ class PrmVoir(Parametre):
         """Méthode d'interprétation de commande"""
         rapport = dic_masques["ident_{}".format(self.typeRapport)].objet
         
+        rap_cfg = type(self.importeur).anaconf.get_config("rapports")
+        
         res = "+" + "-" * 60 + "+\n"
         res += "| |tit|{} {ident}|ff|".format(self.nomType, \
                 ident=rapport.ident).ljust(70) + "|\n"
         res += "+" + "-" * 60 + "+\n"
         res += "| " + rapport.resume.ljust(59) + "|\n"
         res += "+" + "-" * 60 + "+\n"
-        res += "".join([ "| " + l.ljust(59) + "|\n" for l in \
+        
+        if not rap_cfg.cache:
+            res += "| Statut : " + rapport.statut.ljust(50) + "|\n"
+            res += "+" + "-" * 60 + "+\n"
+            res += "| Catégorie : " + rapport.categorie.ljust(47) + "|\n"
+            res += "+" + "-" * 60 + "+\n"
+        
+        res += "| Description : ".ljust(61) + "|\n"
+        res += "".join([ "|  " + l.ljust(58) + "|\n" for l in \
                 str(rapport.description).split("\n") ])
         res += "+" + "-" * 60 + "+\n"
+        
+        if not rap_cfg.cache:
+            if rapport.commentaires != []:
+                res += "| Commentaires : " + rapport.categorie.ljust(59) + "|\n"
+                for (nom, text) in rapport.commentaires:
+                    res += "+" + "-" * 20 + "\n"
+                    res += "| " (nom + " :").ljust(47) + "|\n"
+                    res += "".join([ "|  " + l.ljust(58) + "|\n" for l in \
+                        str(text).split("\n") ])
+            else:
+                res += "| Pas de commentaire".ljust(61) + "|\n"
+            res += "+" + "-" * 60 + "+\n"
+        
         res = res.rstrip("\n")
         personnage << res
         

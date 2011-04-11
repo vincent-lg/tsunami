@@ -33,6 +33,7 @@
 
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
+from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.uniligne import Uniligne
 
 from .enregistrer import Enregistrer
@@ -63,6 +64,7 @@ class EdtRapporteur(Presentation):
         """Construction de l'éditeur"""
         
         rapports = type(self).importeur.rapports
+        statuts = rapports.statuts
         nomType = rapports.nomType(rapport.typeRapport)
         determinant_nom = rapports.determinant_nom(rapport.typeRapport)
         
@@ -75,6 +77,18 @@ class EdtRapporteur(Presentation):
             "Entrez le |ent|résumé|ff| du " + nomType + " |cmd|/|ff| " \
             "pour revenir à la fenêtre parente.\n\nRésumé actuel : " \
             "|bc|{objet.resume} |ff|"
+        
+        # Statut
+        statut = self.ajouter_choix("statut", "s", Choix, rapport,"statut")
+        statut.parent = self
+        statut.prompt = "Statut du {} : ".format(nomType)
+        statut.apercu = "{objet.statut}"
+        statut.aide_courte = \
+            "Entrez le numéro du |ent|statut|ff| du " + nomType + "\n" \
+            "Statut possible :\n" + \
+            "".join([ str(i) + " " + statuts[i] + "\n" for i in range(0,len(statuts))]) + \
+            "|cmd|/|ff| pour revenir à la fenêtre parente.\n\nStatut actuel : " + \
+            "|bc|{objet.statut} |ff|"
         
         # Description
         description = self.ajouter_choix("description", "d", Description, rapport)

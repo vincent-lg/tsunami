@@ -35,6 +35,7 @@ from secondaires.rapports import commandes
 from secondaires.rapports.editeurs.rapporteur import EdtRapporteur
 from . import masques
 from .conteneur_rapports import ConteneurRapports
+from secondaires.rapports.config import cfg_rapports
 
 class Module(BaseModule):
     
@@ -52,6 +53,20 @@ class Module(BaseModule):
         
         self.bugs = None
         self.suggestions = None
+        
+        self.statuts = []
+        self.categories = []
+    
+    def config(self):
+        """Configuration du module.
+        On crée le fichier de configuration afin de l'utiliser plus tard
+        dans les contextes.
+        
+        """
+        type(self.importeur).anaconf.get_config("rapports", \
+            "rapports/rapports.cfg", "modele rapports", cfg_rapports)
+        
+        BaseModule.config(self)
     
     def init(self):
         
@@ -107,6 +122,14 @@ class Module(BaseModule):
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
+        
+        rap_cfg = type(self.importeur).anaconf.get_config("rapports")
+        
+        for statut in rap_cfg.ouvert:
+            self.statuts.append(statut)
+        
+        for statut in rap_cfg.ferme:
+            self.statuts.append(statut)
     
     def __getitem__(self,typeRapport):
         if (typeRapport=='bug'):

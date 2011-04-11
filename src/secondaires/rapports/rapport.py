@@ -48,6 +48,29 @@ class Rapport(BaseObj):
         self.description = Description(parent=self)
         self.ident = -1
         self.typeRapport = typeRapport
+        self._statut = "nouveau"
+        self._categorie = "aucune"
+        self.responsable = None
+        self.commentaires = []
+        
+    def _get_statut(self):
+        return self._statut
+    
+    def _set_statut(self, statut):
+        statuts = type(self).importeur.rapports.statuts
+        if ( (statut >= len(statuts)) or statut < 0 ):
+            raise(ValueError)
+        self._statut = statuts[statut]
+    
+    statut = property(_get_statut, _set_statut)
+    
+    def _get_categorie(self):
+        return self._categorie
+    
+    def _set_categorie(self, categorie):
+        self._categorie = type(self).importeur.rapports.categories[categorie]
+    
+    categorie = property(_get_categorie, _set_categorie)
     
     def __getinitargs__(self):
         return ("",)

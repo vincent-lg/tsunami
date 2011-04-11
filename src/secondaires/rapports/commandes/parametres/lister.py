@@ -53,11 +53,13 @@ class PrmLister(Parametre):
         """Méthode d'interprétation de commande"""
         objets = type(self).importeur.rapports[self.typeRapport]
         
+        rap_cfg = type(self.importeur).anaconf.get_config("rapports")
+        
         lignes = []
         
         lignes = [ \
                 str(objet.ident).ljust(10) + " | " + objet.resume.ljust(46) + "|"
-                for objet in objets
+                for objet in objets if objet.statut in rap_cfg.ouvert
             ]
         
         if lignes :
