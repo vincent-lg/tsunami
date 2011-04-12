@@ -45,6 +45,11 @@ class ListeID:
     def __setitem__(self, item, objet):
         """Ecrit l'ID de l'objet au lieu de l'objet lui-même"""
         self.__liste[item] = objet.id
+        
+    def __delitem__(self, item):
+        """Supprime l'objet correspondant à l'ID."""
+        self.__liste[item].get_objet().detruire()
+        del self.__liste[item]
     
     def __contains__(self, objet):
         """Retourne True si objet.id est dans la liste"""
