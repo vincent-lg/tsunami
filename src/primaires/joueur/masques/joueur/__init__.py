@@ -53,7 +53,7 @@ class Joueur(Masque):
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
         lstrip(commande)
-        nom_joueur = liste_vers_chaine(commande)
+        nom_joueur = liste_vers_chaine(commande).lower()
         
         if not nom_joueur:
             raise ErreurValidation(
@@ -61,10 +61,10 @@ class Joueur(Masque):
         
         nom_joueur = nom_joueur.split(" ")[0].lower()
         commande[:] = commande[len(nom_joueur):]
-
+        
         # On cherche dans les joueurs du module connex
         joueur = None
-        joueurs = type(self).importeur.connex.joueurs
+        joueurs = type(self).importeur.connex.joueurs_connectes
         for t_joueur in joueurs:
                 nom = t_joueur.nom.lower()
                 if nom == nom_joueur:

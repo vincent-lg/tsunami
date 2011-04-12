@@ -30,14 +30,49 @@
 
 """Ce fichier contient la classe Correspondants détaillée plus bas."""
 
-class Correspondants:
+from abstraits.obase import BaseObj
+
+class Correspondants(BaseObj):
     
     """Classe définissant une paire de joueurs correspondants.
     
     """
     
-    def __init__(self, id, emetteur, cible):
+    def __init__(self, emetteur, cible):
         """Constructeur du canal"""
-        self.id = id
-        self.emetteur = emetteur
-        self.cible = cible
+        self._emetteur = emetteur.id.id
+        self._cible = cible.id.id
+        self.focus = 0
+        # On déduit l'id
+        corresp = type(self).importeur.communication.correspondants
+        p_corresp = []
+        for couple in corresp:
+            if emetteur == couple.emetteur:
+                p_corresp.append(couple)
+        self.id = len(p_corresp) + 1
+    
+    def __str__(self):
+        return self.emetteur.nom + " pour " + self.cible.nom
+    
+    def _get_emetteur(self):
+        return type(self).importeur.parid["joueurs"][self._emetteur]
+    
+    emetteur = property(_get_emetteur)
+    
+    def _get_cible(self):
+        return type(self).importeur.parid["joueurs"][self._cible]
+    
+    cible = property(_get_cible)
+    
+    def ch_focus(self):
+        if self.focus:
+            self.focus = 0
+        else:
+            # On parcourt tous les correspondants pour redéfinir leur focus
+            corresp = type(self).importeur.communication.correspondants
+            p_corresp = []
+            for couple in corresp:
+                if self.emetteur == couple.emetteur:
+                    if couple.focus:
+                        couple.ch_focus()
+            self.focus = 1
