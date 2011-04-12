@@ -30,4 +30,9 @@
 
 """Package des masques du module joueur."""
 
-import primaires.joueur.masques.commande
+import primaires.joueur.masques.chemin_cmd
+import primaires.joueur.masques.encodage
+import primaires.joueur.masques.groupe_existant
+import primaires.joueur.masques.joueur
+import primaires.joueur.masques.langue
+import primaires.joueur.masques.nv_groupe

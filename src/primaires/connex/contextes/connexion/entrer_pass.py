@@ -95,6 +95,14 @@ class EntrerPass(Contexte):
         """Message de prompt"""
         return "Mot de passe : "
     
+    def entrer(self):
+        """En arrivant dans le contexte"""
+        self.pere.client.masquer = True
+        
+    def sortir(self):
+        """En sortant du contexte"""
+        self.pere.client.masquer = False
+        
     def accueil(self):
         """Message d'accueil"""
         cnx_cfg = type(self.importeur).anaconf.get_config("connex")
@@ -219,5 +227,5 @@ class EntrerPass(Contexte):
                 else:
                     self.attente = True
                     type(self).importeur.diffact.ajouter_action( \
-                        "mot de passe erroné", cnx_cfg.secondes_a_attendre, \
+                        "faux_mdp_"+str(self.pere.client.n_id), cnx_cfg.secondes_a_attendre, \
                         self.arreter_attente)

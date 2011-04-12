@@ -30,10 +30,11 @@
 
 """Fichier contenant la classe Personnage, détaillée plus bas."""
 
-from abstraits.id import ObjetID
+from abstraits.id import ObjetID, propriete_id
 from primaires.interpreteur.file import FileContexte
 
 class Personnage(ObjetID):
+    
     """Classe représentant un personnage.
     C'est une classe abstraite. Elle doit être héritée pour faire des joueurs
     et NPCs. Ces autres classes peuvent être également héritées, à leur tour.
@@ -42,15 +43,20 @@ class Personnage(ObjetID):
     ObjetID puisqu'il s'agit d'une classe abstraite.
     
     """
+    
     groupe = "personnages"
     sous_rep = "personnages"
+    _nom = "personnage"
+    _version = 1
     
     def __init__(self):
         """Constructeur d'un personnage"""
         ObjetID.__init__(self)
         self.nom = ""
-        self.contextes = FileContexte() # file d'attente des contexte
+        self.groupe = "npc"
+        self.contextes = FileContexte(self) # file d'attente des contexte
         self.langue_cmd = "francais"
+        self._salle = None
     
     def __getinitargs__(self):
         """Retourne les arguments à passer au constructeur"""
@@ -67,7 +73,6 @@ class Personnage(ObjetID):
             contexte = self.contextes[0]
         else:
             contexte = None
-        
         return contexte
     
     def _set_contexte_actuel(self, nouveau_contexte):
@@ -81,6 +86,45 @@ class Personnage(ObjetID):
     
     contexte_actuel = property(_get_contexte_actuel, _set_contexte_actuel)
     
+    def _get_salle(self):
+        return self._salle
+    
+    @propriete_id
+    def _set_salle(self, salle):
+        """Redéfini la salle du joueur.
+        On en profite pour :
+        -   s'assurer que le joueur a bien été retiré de son ancienne
+            salle, si existante
+        -   ajouter le joueur dans la nouvelle salle
+        
+        """
+        anc_salle = self._salle
+        if anc_salle:
+            anc_salle.retirer_personnage(self)
+        
+        self._salle = salle
+        self.enregistrer()
+        
+        if salle:
+            salle.ajouter_personnage(self)
+    
+    salle = property(_get_salle, _set_salle)
+    
     def envoyer(self, msg):
         """Méthode envoyer"""
         raise NotImplementedError
+    
+    def regarder(self):
+        """Retourne ce qu'il y a autour du personnage"""
+        return self.salle.regarder(self)
+    
+    def deplacer_vers(self, sortie):
+        """Déplacement vers la sortie 'sortie'"""
+        salle = self.salle
+        salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
+        sortie = salle.sorties.get_sortie_par_nom(sortie)
+        salle.envoyer("{} s'en va vers {}.".format(self.nom,
+                sortie.nom_complet), (self, ))
+        self.salle = salle_dest
+        self.envoyer(self.regarder())
+        salle_dest.envoyer("{} arrive.".format(self.nom), (self, ))

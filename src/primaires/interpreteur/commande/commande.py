@@ -30,14 +30,19 @@
 
 """Fichier contenant la classe Commande, détaillée plus bas."""
 
+import textwrap
+
 from primaires.interpreteur.masque.noeuds.noeud_commande import NoeudCommande
 from primaires.interpreteur.masque.noeuds.fonctions import *
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.commande.categorie import Categorie
+from primaires.format.constantes import *
 from primaires.format.fonctions import *
-from primaires.interpreteur.masque.aide import afficher_aide
 
+# Constantes
 NB_MAX_CAR_AIDE_COURTE = 40
+SEP = ":"
 
 class Commande(Masque):
     
@@ -58,16 +63,25 @@ class Commande(Masque):
     
     def __init__(self, francais, anglais):
         """Constructeur de la commande"""
-        Masque.__init__(self, francais)
+        Masque.__init__(self)
         self.nom_francais = francais
         self.nom_anglais = anglais
+        self.adresse = francais
+        self.nom_categorie = "divers" # catégorie par défaut
+        
+        # Commande parente
+        self.parente = None
         
         self.racine = None
+        self.noeud = None # le noeud commande lié
         self.schema = ""
         self.tronquer = True
         self.parametres = {}
         self.aide_courte = ""
         self.aide_longue = ""
+        
+        # Groupe
+        self.groupe = "npc"
     
     def _get_aide_courte(self):
         """Retourne l'aide courte"""
@@ -82,6 +96,22 @@ class Commande(Masque):
         self._aide_courte = aide
     
     aide_courte = property(_get_aide_courte, _set_aide_courte)
+    
+    def _get_categorie(self):
+        """Retourne la catégorie sous la forme d'un objet Categorie"""
+        try:
+            categorie = type(self).importeur.interpreteur.categories[ \
+                        self.nom_categorie]
+        except KeyError:
+            type(self).importeur.interpreteur.logger.info("La catégorie de " \
+                        "commandes '{}' n'est pas disponible, la commande a " \
+                        "été déplacée dans 'divers'".format(self.nom_categorie))
+            
+            return Categorie("divers", "Commandes générales")
+        
+        return Categorie(self.nom_categorie, categorie)
+    
+    categorie = property(_get_categorie)
     
     def __str__(self):
         """Fonction d'affichage"""
@@ -104,6 +134,13 @@ class Commande(Masque):
         """Ajoute un paramètre à la commande"""
         noeud_cmd = NoeudCommande(parametre)
         self.parametres[parametre.nom] = noeud_cmd
+        parametre.adresse = self.adresse + SEP + parametre.nom_francais
+        parametre.parente = self
+        parametre.deduire_groupe()
+        
+        type(self).importeur.interpreteur.groupes.ajouter_commande(parametre)
+        
+        parametre.ajouter_parametres()
     
     def construire_arborescence(self, schema):
         """Interprétation du schéma"""
@@ -119,11 +156,16 @@ class Commande(Masque):
     noms_commandes = property(_get_noms_commandes)
     
     def valider(self, personnage, dic_masques, commande):
-        """Fonctiond e validation.
+        """Fonction de validation.
         Elle retourne True si la commande entrée par le joueur correspond à
         son nom, False sinon.
         
         """
+        # Si le personnage n'a pas le droit d'appeler la commande, on s'arrête
+        if not type(self).importeur.interpreteur.groupes.personnage_a_le_droit(
+                personnage, self):
+            return False
+        
         str_commande = liste_vers_chaine(commande)
         str_commande = supprimer_accents(str_commande).lower()
         
@@ -156,9 +198,8 @@ class Commande(Masque):
         """Fonction d'interprétation.
         
         """
-        dernier_masque = list(dic_masques.values())[-1]
         personnage.envoyer(
-            afficher_aide(personnage, dernier_masque, self, 1, dic_masques))
+            self.erreur_validation(personnage, dic_masques))
     
     def est_parametre(self):
         """La commande est une forme de paramètre"""
@@ -169,4 +210,156 @@ class Commande(Masque):
         paramètre
         
         """
-        return self.nom_francais
+        return self.noeud.afficher(personnage)
+    
+    def remplacer_mots_cles(self, personnage, aide):
+        """Sert à remplacer les mots clés d'un fichier d'aide.
+        Dans un fichier d'aide, on trouve du texte standard et certains mots
+        entourés du symbole %.
+        Ces mots sont des noms de commande, des chemins menant éventuellement
+        à des paramètres.
+        
+        Voici un exemple de texte d'aide :
+        '''Ceci est l'aide de la commande %qui%.'''
+        
+        Le texte précédent doit être conservé tel quel. En revanche, %qui%
+        doit être remplacé par le nom de la commande (en français si
+        le personnage a choisi le français, en anglais si le personnage a
+        choisi l'anglais).
+        
+        """
+        # On commence par découper la chaîne en fonction du symbole %
+        decoupe = aide.split("%")
+        
+        # On sait que dans la liste obtenue, tous nos codes commande se
+        # trouvent en chaque index impair
+        for i, mot in enumerate(decoupe):
+            if i % 2 == 1: # index impair
+                decoupe[i] = "|ent|" + \
+                    type(self).importeur.interpreteur.trouver_commande( \
+                    mot).get_nom_pour(personnage) + "|ff|"
+        
+        return "".join(decoupe)
+    
+    def aide_longue_pour(self, personnage):
+        """Retourne l'aide longue de la commande.
+        Elle se compose :
+        -   du nom de la commande
+        -   de son masque (optionnel)
+        -   de sa catégorie
+        -   de son synopsis (aide courte)
+        -   de son aide longue
+        -   des aides courtes et longues de ses sous-commandes
+    
+        """
+        # On constitue notre chaîne d'aide
+        aide = "Commande |ent|"
+        aide += self.afficher(personnage)
+        aide += "|ff|\n\n"
+        aide += "Catégorie : " + self.categorie.nom.lower() + "\n\n"
+        synop = "Synopsis : "
+        aide += synop
+        synopsis = self.remplacer_mots_cles(personnage, self.aide_courte)
+        synopsis = textwrap.wrap(synopsis, 
+                longueur_ligne - len(synop))
+        aide += ("\n" + " " * len(synop)).join(synopsis)
+        
+        aide += "\n\n"
+        
+        aide_longue = self.remplacer_mots_cles(personnage, self.aide_longue)
+        aide += textwrap.fill(aide_longue, longueur_ligne)
+        
+        # Paramètres
+        parametres = [noeud.commande for noeud in self.parametres.values()]
+        # Tri en fonction de la langue
+        parametres = sorted(parametres,
+                key=lambda parametre: parametre.get_nom_pour(personnage))
+        
+        # On calcule la taille max du nom des paramètres
+        taille = 0
+        for parametre in parametres:
+            nom = parametre.get_nom_pour(personnage)
+            if len(nom) > taille:
+                taille = len(nom)
+        
+        if len(parametres) > 0:
+            aligner = longueur_ligne - taille - 5
+            aide += "\n\n"
+            aide += "Sous-commandes disponibles :\n"
+            for parametre in parametres:
+                if type(self).importeur.interpreteur.groupes. \
+                        personnage_a_le_droit(personnage, parametre):
+                    nom = parametre.get_nom_pour(personnage)
+                    aide += "\n  |ent|" + nom.ljust(taille) + "|ff|"
+                    aide += " - "
+                    aide_courte = self.remplacer_mots_cles(personnage, 
+                            parametre.aide_courte)
+                    aide_courte = textwrap.wrap(aide_courte, aligner)
+                    aide += ("\n" + (taille + 5) * " ").join(aide_courte)
+                    aide += "\n" + "     " + taille * " "
+                    aide_longue = self.remplacer_mots_cles(personnage,
+                            parametre.aide_longue)
+                    aide_longue = textwrap.wrap(aide_longue, aligner)
+                    aide += ("\n" + (taille + 5) * " ").join(aide_longue)
+
+        return aide
+    
+    def erreur_validation(self, personnage, dic_masques):
+        """Que faire lors d'une erreur de validation ?
+        Par défaut, on affiche l'aide courte de la commande.
+        
+        """
+        syntaxes = []
+        for masque in dic_masques.values():
+            if masque.est_parametre():
+                syntaxes.append(masque.afficher(personnage))
+
+        syntaxe = " ".join(syntaxes)
+        
+        synopsis = self.remplacer_mots_cles(personnage, self.aide_courte)
+        aide = "|ent|" + syntaxe + "|ff|"
+        taille_aide = len(syntaxe)
+        if taille_aide > 40:
+            aligner = longueur_ligne
+            aide += "\n> "
+        else:
+            aligner = longueur_ligne - taille_aide - 2
+            aide += " : "
+        
+        synopsis = textwrap.wrap(synopsis, aligner)
+        aide += ("\n" + " " * (aligner + 2)).join(
+                synopsis)
+        
+        # Paramètres
+        parametres = [noeud.commande for noeud in self.parametres.values()]
+        # Tri en fonction de la langue
+        parametres = sorted(parametres,
+                key=lambda parametre: parametre.get_nom_pour(personnage))
+        
+        # On calcule la taille max du nom des paramètres
+        taille = 0
+        for parametre in parametres:
+            nom = parametre.get_nom_pour(personnage)
+            if len(nom) > taille:
+                taille = len(nom)
+        
+        if len(parametres) > 0:
+            aligner = longueur_ligne - taille - 5
+            aide += "\n"
+            for parametre in parametres:
+                if type(self).importeur.interpreteur.groupes. \
+                        personnage_a_le_droit(personnage, parametre):
+                    nom = parametre.get_nom_pour(personnage)
+                    aide += "\n  |ent|" + nom.ljust(taille) + "|ff|"
+                    aide += " - "
+                    aide_courte = self.remplacer_mots_cles(personnage, 
+                            parametre.aide_courte)
+                    aide_courte = textwrap.wrap(aide_courte, aligner)
+                    aide += ("\n" + (taille + 5) * " ").join(aide_courte)
+        
+        aide = self.remplacer_mots_cles(personnage, aide)
+        return aide
+    
+    def ajouter_parametres(self):
+        """Ajoute les paramètres à la commande"""
+        pass

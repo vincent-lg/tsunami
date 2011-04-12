@@ -56,6 +56,18 @@ class NouveauNom(Contexte):
         Contexte.__init__(self, pere)
         self.opts.rci_ctx_prec = "connex:connexion:choix_personnages"
     
+    ## Bug a fixer ci-dessous, la fonction a été désactivée en attendant
+    def sortir(self):
+        """En sortant du contexte :
+        -   on vérifie que la salle du joueur est valide
+        
+        """
+        if self.pere.joueur and self.pere.joueur.salle is None:
+            # On recherche la salle
+            cle = type(self).importeur.salle.salle_arrivee
+            salle = type(self).importeur.salle[cle]
+            self.pere.joueur.salle = salle
+    
     def accueil(self):
         """Message d'accueil du contexte"""
         return \
@@ -86,6 +98,7 @@ class NouveauNom(Contexte):
             nouv_joueur.nom = msg
             self.pere.joueur = nouv_joueur
             nouv_joueur.instance_connexion = self.pere
+            nouv_joueur.compte = self.pere.compte
             self.migrer_contexte("personnage:creation:langue_cmd")
         else:
             self.pere.envoyer("|err|Ce nom est invalide. Veuillez " \

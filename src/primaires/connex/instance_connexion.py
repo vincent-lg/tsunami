@@ -82,18 +82,15 @@ class InstanceConnexion(BaseObj):
     
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel de l'instance.
-        Si aucun compte n'est défini, le contexte actuel est self.contexte.
-        Si un compte est défini mais qu'aucun joueur n'est défini, c'est le
-        contexte du compte qui est retournée.
-        Sinon, c'est le contexte du joueur qui est retourné.
+        -   si le joueur est défini et connecté, alors on retourne
+            le contexte actuel du joueur.
+        -   sinon, on retourne le contexte de l'isntance
         
         """
-        if self.compte is None or self.compte.contexte_actuel is None:
-            contexte = self.contexte
-        elif self.joueur is None or self.joueur.contexte_actuel is None:
-            contexte = self.compte.contexte_actuel
-        else:
+        if self.joueur and self.joueur.est_connecte():
             contexte = self.joueur.contexte_actuel
+        else:
+            contexte = self.contexte
         
         return contexte
     
@@ -101,18 +98,35 @@ class InstanceConnexion(BaseObj):
         """On change le nouveau contexte. Le contexte peut être de
         différentes provenances (voir _get_contexte_actuel) et on s'assure
         que le contexte modifié soit bien celui actuellement appelé (soit
-        celui de l'instance de connexion, soit celui du compte, soit celui du
-        joueur).
+        celui de l'instance de connexion, soit celui du joueur).
         
         """
-        if self.compte is None:
-            self.contexte = nouveau_contexte
-        elif self.joueur is None:
-            self.compte.contexte_actuel = nouveau_contexte
-        else:
+        if self.joueur and self.joueur.est_connecte():
             self.joueur.contexte_actuel = nouveau_contexte
+        else:
+            self.contexte = nouveau_contexte
     
     contexte_actuel = property(_get_contexte_actuel, _set_contexte_actuel)
+    
+    @property
+    def adresse_ip(self):
+        """Retourne l'adresse IP de l'instance ou 'inconnue'"""
+        if self.client:
+            adresse = self.client.adresse_ip
+        else:
+            adresse = "inconnue"
+        
+        return adresse
+    
+    def est_connecte(self):
+        client = self.client
+        if not client:
+            return False
+        if not client.socket:
+            return False
+        if client.socket.fileno() < 0:
+            return False
+        return True
     
     def creer_depuis(self, autre):
         """Cette méthode se charge de construire self sur le modèle de autre
@@ -120,25 +134,17 @@ class InstanceConnexion(BaseObj):
         
         """
         if autre.compte:
-            self.compte = type(self).importeur.connex.get_compte( \
-                    autre.compte.nom)
+            self.compte = autre.compte
         if autre.joueur:
             self.joueur = autre.joueur
             self.joueur.instance_connexion = self
-            self.joueur.compte = self.compte
         if autre.contexte:
             self.contexte = \
                 type(self).importeur.interpreteur.contextes[ \
                 autre.contexte.nom](self)
-        if autre.compte and autre.compte.contexte:
-            self.compte.contexte = \
-                type(self).importeur.interpreteur.contextes[ \
-                autre.compte.contexte.nom](self)
         if self.joueur:
             for i, contexte in enumerate(self.joueur.contextes):
-                nouv_contexte = type(self).importeur.interpreteur.contextes[ \
-                        contexte.nom](self)
-                self.joueur.contextes[i] = nouv_contexte
+                contexte.pere = self
     
     def _get_encodage(self):
         """Retourne l'encodage du compte ou 'Utf-8'."""
@@ -151,11 +157,18 @@ class InstanceConnexion(BaseObj):
     encodage = property(_get_encodage)
     
     def deconnecter(self, msg):
-        """Méthode pour déconnecter le client"""
+        """Méthode pour déconnecter le client.
+        Si un joueur est lié à l'instance, on demande la pré-déconnexion
+        du joueur.
+        
+        """
         self.envoyer_file_attente(ajt_prompt = False)
-        if self.client:
+        if self.client and self.client.est_connecte():
             self.client.deconnecter(msg)
             self.client = None
+        
+        if self.joueur:
+            self.joueur.pre_deconnecter()
     
     # Fonctions de préparation avant l'envoi
     def formater_message(self, msg):
@@ -176,8 +189,11 @@ class InstanceConnexion(BaseObj):
         
         # Ajout de la couleur
         msg = ajouter_couleurs(msg, cfg_charte)
-        # On remplace les caractères spéciaux
-        msg = remplacer_sp_cars(msg)
+        
+        if not self.contexte_actuel.opts.aff_sp_cars:
+            # On remplace les caractères spéciaux
+            msg = remplacer_sp_cars(msg)
+        
         # Suppression des accents si l'option du contexte est activée
         if self.contexte_actuel.opts.sup_accents:
             msg = supprimer_accents(msg)

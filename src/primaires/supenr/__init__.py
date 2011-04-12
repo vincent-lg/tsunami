@@ -35,6 +35,7 @@ import pickle
 
 from abstraits.module import *
 from abstraits.id import ObjetID, est_objet_id
+from abstraits.unique import Unique, est_unique
 
 # Dossier d'enregistrement des fichiers-données
 # Vous pouvez changer cette variable, ou bien spécifier l'option en
@@ -42,29 +43,39 @@ from abstraits.id import ObjetID, est_objet_id
 REP_ENRS = os.path.expanduser("~") + os.sep + "kassie" + os.sep + "enregistrements"
 
 class Module(BaseModule):
+    
     """Classe du module 'supenr'.
     
     Ce module gère l'enregistrement des données et leur récupération.
     Les objets enregistrés doivent dériver indirectement de
     'abstraits.id.ObjetID' (voir 'abstraits/id/__init__.py' pour plus
-    d'informations).
+    d'informations) ou bien 'abstraits.unique.Unique' (voir
+    'abstraits/unique/__init__.py' pour plus d'informations).
     
     Habituellement, il n'est pas nécessaire de manipuler directement
-    ce module. Il suffit de créer un nouveau groupe d'identification
-    et de créer ses objets dérivés de ce groupe, sans se préoccuper
-    de leur enregistrement (celui-ci sera automatique).
-    Lors de la configuration de 'supenr', il récupérera les différents
-    fichiers-données enregistrés lors de la dernière session et les stockera
-    dans l'attribut de classe 'objets' du groupe, sous la forme d'une liste
-    d'objets.
+    ce module.
+    Deux cas sont à distinguer :
+    *   quand on manipule des ObjetID, on a juste à créer des nouveaux groupes
+        d'identification.
+        Lors de la configuration de 'supenr', il récupérera les différents
+        fichiers-données enregistrés lors de la dernière session et les
+        stockera dans l'attribut de classe 'objets' du groupe, sous la forme
+        d'une liste d'objets.
+    *   quand on manipule des objets Unique, le chargement des fichiers
+        est à la charge des modules qui en ont besoin. Il faut pour ce faire
+        utiliser la méthode 'charger' du module.
+        Il est préférable d'utiliser cette méthode dans l'initialisation du
+        module qui en a besoin, pas pendant la configuration.
     
     """
+    
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "supenr", "primaire")
         self.file_attente = set() # file d'attente des objets à enregistrer
         self.logger = type(self.importeur).man_logs.creer_logger("supenr", \
                 "supenr")
+        self.enregistre_actuellement = False
     
     def config(self):
         """Méthode de configuration. On se base sur
@@ -86,8 +97,6 @@ class Module(BaseModule):
         # On construit le répertoire s'il n'existe pas
         if not os.path.exists(REP_ENRS):
             os.makedirs(REP_ENRS)
-        
-        ObjetID._supenr = self
         
         BaseModule.config(self)
     
@@ -122,11 +131,18 @@ class Module(BaseModule):
         
         """
         global REP_ENRS
-        if not est_objet_id(objet):
-            raise RuntimeError("L'objet {0} n'est pas un objet ID. On ne " \
-                    "peut l'enregistrer".format(objet))
-        chemin_dest = REP_ENRS + os.sep + type(objet).sous_rep
-        nom_fichier = str(objet.id.id) + ".sav"
+        self.enregistre_actuellement = True
+        if est_objet_id(objet):
+            chemin_dest = REP_ENRS + os.sep + type(objet).sous_rep
+            nom_fichier = str(objet.id.id) + ".sav"
+        elif est_unique(objet):
+            self.construire_rep(objet._sous_rep)
+            chemin_dest = REP_ENRS + os.sep + objet._sous_rep
+            nom_fichier = objet._nom_fichier + ".sav"
+        else:
+            raise RuntimeError("L'objet {0} n'est pas un objet ID ou " \
+                    "Unique. On ne peut l'enregistrer".format(objet))
+        
         chemin_dest += os.sep + nom_fichier
         # On essaye d'ouvrir le fichier
         try:
@@ -141,6 +157,7 @@ class Module(BaseModule):
         finally:
             if "fichier_enr" in locals():
                 fichier_enr.close()
+            self.enregistre_actuellement = False
     
     def detruire_fichier(self, objet):
         """Méthode appelée pour détruire le fichier contenant l'objet
@@ -148,11 +165,16 @@ class Module(BaseModule):
         
         """
         global REP_ENRS
-        if not est_objet_id(objet):
-            raise RuntimeError("L'objet {0} n'est pas un objet ID. On ne " \
-                    "peut le supprimer".format(objet))
-        chemin_dest = REP_ENRS + os.sep + type(objet).sous_rep
-        nom_fichier = str(objet.id.id) + ".sav"
+        if est_objet_id(objet):
+            chemin_dest = REP_ENRS + os.sep + type(objet).sous_rep
+            nom_fichier = str(objet.id.id) + ".sav"
+        elif est_unique(objet):
+            chemin_dest = REP_ENRS + os.sep + objet._sous_rep
+            nom_fichier = objet._nom_fichier + ".sav"
+        else:
+            raise RuntimeError("L'objet {0} n'est pas un objet ID ou " \
+                    "Unique. On ne peut l'enregistrer".format(objet))
+        
         chemin_dest += os.sep + nom_fichier
         try:
             os.remove(chemin_dest)
@@ -178,10 +200,20 @@ class Module(BaseModule):
         de chaque objet contenu dans le set 'self.file_attente'.
         
         """
-        for objet in self.file_attente:
-            if objet.est_initialise():
+        self.enregistre_actuellement = True
+        for objet in list(self.file_attente):
+            if (est_objet_id(objet) and objet.est_initialise()) or \
+                    est_unique(objet):
                 self.enregistrer(objet)
+        
         self.file_attente.clear()
+        self.enregistre_actuellement = False
+    
+    def fichier_existe(self, sous_rep, nom_fichier):
+        """Retourne True si le fichier existe"""
+        global REP_ENRS
+        chemin_dest = REP_ENRS + os.sep + sous_rep + os.sep + nom_fichier
+        return os.path.exists(chemin_dest)
     
     def charger(self, sous_rep, nom_fichier):
         """Charge le fichier indiqué et retourne l'objet dépicklé"""

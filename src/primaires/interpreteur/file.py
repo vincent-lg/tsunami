@@ -48,11 +48,12 @@ class FileContexte(BaseObj):
     
     """
     
-    def __init__(self):
+    def __init__(self, parent=None):
         """Constructeur de la file, initialement vide."""
         BaseObj.__init__(self)
         self._file = [] # la liste représentant la file d'attente
         self._taille_min = 1 # la taille minimum de la file d'attente
+        self.parent = parent
    
     def __getinitargs__(self):
         """Méthode retournant les arguments à passer au constructeur"""
@@ -65,7 +66,9 @@ class FileContexte(BaseObj):
     def __setitem__(self, index, contexte):
         """Change le contexte se trouvant à l'index 'index'"""
         self._file.__setitem__(index, contexte)
-
+        if self.parent:
+            self.parent.enregistrer()
+    
     def __len__(self):
         """Retourne la taille de la file"""
         return len(self._file)
@@ -74,9 +77,15 @@ class FileContexte(BaseObj):
         """Retourne l'itérateur de la file"""
         return iter(self._file)
     
+    def __str__(self):
+        """Retourne la file"""
+        return "f" + str(self._file)
+    
     def ajouter(self, objet):
         """Ajoute l'objet à ajouter en tête de la file."""
         self._file.insert(0, objet)
+        if self.parent:
+            self.parent.enregistrer()
     
     def retirer(self):
         """Retire l'objet en tête de file et le retourne.
@@ -89,7 +98,13 @@ class FileContexte(BaseObj):
         
         objet = self._file[0]
         del self._file[0]
+        if self.parent:
+            self.parent.enregistrer()
         return objet
+    
+    def vider(self):
+        """Vide la file des contextes"""
+        self._file[:] = []
 
 class FileVide(RuntimeError):
     """Exception appelée quand la file est vide ou d'une taille insuffisante.

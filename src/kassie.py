@@ -81,12 +81,18 @@ from bases.anaconf import anaconf
 from bases.logs import man_logs
 from bases.parid import parid
 from corps.config import pere
-
+from primaires.format.date import *
 # Définition des fonctions appelées pour arrêter le MUD
 # Le lancement du MUD se trouve sous la fonction
 def arreter_MUD():
     """Fonction appelée pour arrêter le MUD proprement"""
     global importeur, log
+    importeur.deconnecter_joueurs()
+    
+    # On s'assure que tous les fichiers sont bien enregistré pour éviter
+    # de corrompre des données
+    importeur.supenr.enregistrer_file_attente()
+    
     importeur.tout_detruire()
     importeur.tout_arreter()
     log.info("Fin de la session\n\n\n")
@@ -117,6 +123,7 @@ man_logs.config(anaconf, parser_cmd)
 
 # On se crée un logger
 log = man_logs.creer_logger("", "sup", "kassie.log")
+log.info("Session démarrée {}".format(get_date()))
 
 # On prend comme base le port présent dans le fichier de configuration
 port = config_globale.port
@@ -140,10 +147,6 @@ importeur = Importeur(parser_cmd, anaconf, man_logs, parid, serveur)
 importeur.tout_charger()
 importeur.tout_instancier()
 
-# On configure et initialise les modules
-importeur.tout_configurer()
-importeur.tout_initialiser()
-
 # Initialisation du serveur
 serveur.init() # le socket serveur se met en écoute
 log.info("Le serveur est à présent en écoute sur le port {0}".format(port))
@@ -165,6 +168,11 @@ serveur.callbacks["deconnexion"].args = (serveur, importeur, log)
 # Fonction de callback appelée lors de la réception d'un message d'un client
 serveur.callbacks["reception"].fonction = cb_reception
 serveur.callbacks["reception"].args = (serveur, importeur, log)
+
+# On configure, initialise et prépare les modules
+importeur.tout_configurer()
+importeur.tout_initialiser()
+importeur.tout_preparer()
 
 # Lancement de la boucle synchro
 # Note: tout se déroule ici, dans une boucle temps réelle qui se répète

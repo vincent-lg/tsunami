@@ -36,8 +36,24 @@ développés dans ce package.
 
 """
 
-from abstraits.obase import BaseObj
+from abstraits.obase import MetaBaseObj, BaseObj
 from primaires.format.fonctions import *
+
+contextes = {} # dictionnaire des différents contextes
+
+class MetaContexte(MetaBaseObj):
+    
+    """Métaclasse des contextes.
+    A chaque fois qu'on crée une classe héritée de Contexte avec un nom
+    valide, on l'ajoute dans le dictionnaire 'contextes'.
+    
+    """
+    
+    def __init__(cls, nom, bases, contenu):
+        """Constructeur de la métaclasse"""
+        MetaBaseObj.__init__(cls, nom, bases, contenu)
+        if cls.nom:
+            contextes[cls.nom] = cls
 
 class OptionsContexte:
     """Options du contexte.
@@ -51,8 +67,13 @@ class OptionsContexte:
         échappés ce qui permet au client d'entrer des caractères spéciaux (sauts
         de ligne, couleurs...).
     
-    Options d'envoie :
+    Options d'envoi :
+    *   aff_sp_cars : affiche les caractères spéciaux
+        Utile dans un contexte qui a également l'option 'echp_sp_cars' à
+        False. Elle échape les caractères spéciaux envoyé au client.
     *   sup_accents - on supprime les accents du message avant de l'envoyer
+    *   separateur - permet d'afficher une ligne de séparation avant l'accueil
+        d'un contexte, par souci de clareté (cas des éditeurs)
     *   prompt_clr - colorisation du prompt :
         Si un code couleur est précisé dans cette option, on l'applique au
         prompt pour le faire ressortir sur le texte
@@ -74,7 +95,9 @@ class OptionsContexte:
         self.echp_sp_cars = True
         
         # Options d'envoi
+        self.aff_sp_cars = False
         self.sup_accents = False
+        self.separateur = None
         self.prompt_clr = ""
         self.prompt_prf = ""
         
@@ -83,12 +106,7 @@ class OptionsContexte:
 
 RCI_PREC = "/"
 
-dic_attributs = { # dictionnaire des attributs de Contexte
-    "opts":None, # options du contexte
-    "pere":None, # père du contexte -- InstanceConnexion
-}
-
-class Contexte(BaseObj):
+class Contexte(BaseObj, metaclass=MetaContexte):
     """Classe abstraite définissant un contexte.
     Si vous voulez utiliser un contexte :
     *   Choisissez-le dans les classes-filles de Contexte
@@ -123,7 +141,6 @@ class Contexte(BaseObj):
 
     """
     importeur = None
-    attributs = dic_attributs
     nom = None
     
     def __init__(self, pere):
@@ -140,12 +157,25 @@ class Contexte(BaseObj):
         """Méthode retournant les valeurs par défaut du constructeur"""
         return (None, )
     
+    def __getstate__(self):
+        retour = self.__dict__.copy()
+        retour["pere"] = None
+        return retour
+    
+    def __repr__(self):
+        """Affichage du nom de l'objet"""
+        nom = self.nom
+        if not nom:
+            nom = "inconnu"
+        
+        return nom
+    
     def entrer(self):
-        """Méthode appelée quand le pereesseur entre dans le contexte"""
+        """Méthode appelée quand le père entre dans le contexte"""
         pass
     
     def sortir(self):
-        """Méthode appelée quand le pereesseur sort du contexte"""
+        """Méthode appelée quand le père sort du contexte"""
         pass
     
     def get_prompt(self):
@@ -182,17 +212,21 @@ class Contexte(BaseObj):
         """
         self.migrer_contexte(type(self).nom)
     
-    def migrer_contexte(self, contexte):
+    def migrer_contexte(self, contexte, afficher_accueil=True):
         """Cas de transfert de contexte.
         Le contexte doit être donné sous la forme d'un nom (type 'str').
         
         """
-        nouveau_contexte = self._get_contexte(contexte)(self.pere)
-        
+        if type(contexte) is str:
+            nouveau_contexte = self._get_contexte(contexte)(self.pere)
+        else:
+            nouveau_contexte = contexte
         self.pere.contexte_actuel.sortir()
         self.pere.migrer_contexte(nouveau_contexte)
         self.pere.contexte_actuel.entrer()
-        if nouveau_contexte is self.pere.contexte_actuel:
+        if self.pere.contexte_actuel.opts.separateur is not None:
+            self.pere.envoyer(self.pere.contexte_actuel.opts.separateur)
+        if nouveau_contexte is self.pere.contexte_actuel and afficher_accueil:
             # Cette condition est là pour éviter qu'en cas de migration de
             # contexte dans la méthode 'entrer', le message d'accueil ne
             # s'affiche en double
@@ -227,4 +261,3 @@ class Contexte(BaseObj):
             self.migrer_contexte(self.opts.rci_ctx_prec)
         else:
             self.interpreter(msg)
-    

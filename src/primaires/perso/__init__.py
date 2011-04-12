@@ -31,11 +31,11 @@
 """Fichier contenant le module primaire perso."""
 
 from abstraits.module import *
-from primaires.interpreteur.commande.commande import Commande
-from primaires.perso.masques.personne import MasquePersonne
-from primaires.interpreteur.masque.parametre import Parametre
+from primaires.perso import commandes
+from primaires.perso import masques
 
 class Module(BaseModule):
+    
     """Module gérant la classe Personnage qui sera héritée pour construire
     des joueurs et NPCs. Les mécanismes propres au personnage (c'est-à-dire
     indépendant de la connexion et liées à l'univers) seront gérées ici.
@@ -45,7 +45,22 @@ class Module(BaseModule):
     à un NPC.
     
     """
+    
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "perso", "primaire")
+        self.commandes = []
     
+    def ajouter_masques(self):
+        """Ajout des masques dans l'interpréteur"""
+        self.importeur.interpreteur.ajouter_masque(masques.commande.Commande)
+    
+    def ajouter_commandes(self):
+        """Ajout des commandes dans l'interpréteur"""
+        self.commandes = [
+            commandes.commande.CmdCommande(),
+            commandes.qui.CmdQui(),
+        ]
+        
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)

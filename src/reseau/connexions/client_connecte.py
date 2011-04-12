@@ -32,6 +32,13 @@
 
 import socket
 
+ENCODAGES = [
+    'utf-8',
+    'latin-1',
+    'cp850',
+    'cp1252',
+]
+
 class ClientConnecte:
     """Cette classe est une classe enveloppe d'un socket.
     Elle reprend les méthodes utiles à la manipulation des sockets et possède
@@ -78,6 +85,12 @@ class ClientConnecte:
         # est en train d'écrire, dans le cas d'un client qui envoie
         # au fur et à mesure les caractères entrés)
         self.message = b""
+        
+        # Information d'encodage
+        self.encodage = ""
+        
+        # Booléen indiquant si le prochain message devra être masqué
+        self.masquer = False
 
         # retour : il contient le message retourné en cas de déconnexion
         self.retour = ""
@@ -87,6 +100,13 @@ class ClientConnecte:
         return "{0} ({1}:{2}, {3})".format( \
             self.n_id, self.adresse_ip, self.port, self.socket.fileno())
 
+    def est_connecte(self):
+        """Retourne True si connecté, False sinon.
+        On se base sur le fileno du socket.
+        
+        """
+        return self.socket and self.socket.fileno() > 0
+    
     def nettoyer(self, message):
         """Cette méthode se charge de nettoyer le message passé en paramètre.
         Elle retourne le message nettoyé.
@@ -119,23 +139,31 @@ class ClientConnecte:
         message = n_message
         return message
 
-    def decoder(self, message, decodage=0):
+    def decoder(self, message, decodage=0, encodages=[]):
         """Test de décodage.
         Fonction récursive : tant qu'on peut décoder, on essaye.
 
         Si le décodage échoue, une exception sera levée.
+        Par ailleurs, si l'attribut 'encodage' est renseigné, c'est lui
+        qu'on test en premier.
+        
         """
-        encodages = ['Utf-8', 'Latin-1']
+        if not encodages:
+            encodages = ['Utf-8', 'Latin-1']
+            if self.encodage:
+                encodages.insert(0, self.encodage)
+        
         try:
             actuel = encodages[decodage]
         except IndexError:
             raise UnicodeError("Aucun encodage n'a pu etre utilise " \
                     "sur cette chaine")
+        
         try:
             n_message = message.decode(actuel)
             return n_message
         except UnicodeError:
-            return self.decoder(message, decodage+1)
+            return self.decoder(message, decodage + 1, encodages)
 
     def envoyer(self, message):
         """Envoi d'un message au socket.

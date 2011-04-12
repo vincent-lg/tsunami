@@ -46,6 +46,8 @@ class CmdModule(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "module", "module")
+        self.groupe = "administrateur"
+        self.nom_categorie = "groupes"
         self.aide_courte = "manipulation des modules"
         self.aide_longue = \
             "Cette commande permet de manipuler les modules, connaître la " \
@@ -53,8 +55,9 @@ class CmdModule(Commande):
             "reconfigurer pendant l'exécution. Cette commande doit être " \
             "réservée aux administrateurs, ceux ayant un accès aux fichiers " \
             "de configuration ou au code."
-        
-        # On prépare les différents paramètres de la commande
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
         prm_liste = PrmListe()
         prm_hotboot = PrmHotboot()
         

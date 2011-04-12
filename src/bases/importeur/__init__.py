@@ -55,6 +55,7 @@ inconnue pour l'importeur.
 import os
 import sys
 import traceback
+import py_compile
 
 from abstraits.module import *
 from abstraits.obase import BaseObj
@@ -78,6 +79,7 @@ class Importeur:
     logger = None # le logger de l'importeur
     parid = None
     serveur = None
+    nb_hotboot = 0
     
     def __init__(self, parser_cmd, anaconf, man_logs, parid, serveur):
         """Constructeur de l'importeur. Il vérifie surtout
@@ -247,7 +249,27 @@ class Importeur:
                 module.init()
                 Importeur.logger.debug("  Le module {0} a été " \
                         "initialisé".format(module.nom))
-
+        
+        # Ajout des masques et commandes
+        for module in self.__dict__.values():
+            if module.statut == INITIALISE:
+                module.ajouter_masques()
+        
+        for module in self.__dict__.values():
+            if module.statut == INITIALISE:
+                module.ajouter_commandes()
+    
+    def tout_preparer(self):
+        """Méthode permettant de préparer tous les modules.
+        
+        """
+        Importeur.logger.debug("Préparation des modules :")
+        for module in self.__dict__.values():
+            if module.statut == INITIALISE:
+                module.preparer()
+                Importeur.logger.debug("  Le module {0} a été " \
+                        "préparé".format(module.nom))
+    
     def tout_detruire(self):
         """Méthode permettant de détruire tous les modules qui en ont besoin.
         Les modules à détruire sont ceux initialisés.
@@ -289,6 +311,13 @@ class Importeur:
             Importeur.logger.debug("  Le module {0} a été " \
                         "arrêté".format(module.nom))
     
+    def deconnecter_joueurs(self):
+        """Déconnecte tous les joueurs connectés"""
+        for instance in self.connex.instances.values():
+            instance.envoyer("\n|att|Arrêt du MUD en cours, vous allez être " \
+                    "déconnecté...|ff|")
+            instance.deconnecter("Arrêt du MUD")
+        
     def tout_decharger(self):
         """Méthode déchargeant tous les modules"""
         for module in self.modules:
@@ -296,24 +325,26 @@ class Importeur:
     
     def tout_recharger(self):
         """Méthode appelée pour recharger TOUS les modules"""
-        anciens_attrs = dict(self.__dict__)
         logger = type(self).man_logs.get_logger("sup")
         res = False
+        Importeur.nb_hotboot += 1
         try:
+             for nom_package in os.listdir(os.getcwd() + "/" + REP_PRIMAIRES):
+                 if not nom_package.startswith("__"):
+                     py_compile.compile(os.getcwd() + "/" + REP_PRIMAIRES + "/" + nom_package + "/__init__.py",doraise=True)
+        except py_compile.PyCompileError:
+            logger.fatal(
+                "Une erreur s'est produit lors de l'hotboot.")
+            logger.fatal(traceback.format_exc())
+        else:
             self.tout_detruire()
             self.tout_decharger()
             self.tout_charger()
             self.tout_instancier()
-            res = True
-        except Exception:
-            self.__dict__ = anciens_attrs
-            logger.fatal(
-                "Une erreur s'est produit lors de l'hotboot.")
-            logger.fatal(traceback.format_exc())
-        finally:
             self.tout_configurer()
             self.tout_initialiser()
-            return res
+            res = True
+        return res
     
     def boucle(self):
         """Méthode appelée à chaque tour de boucle synchro.

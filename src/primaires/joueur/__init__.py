@@ -31,10 +31,11 @@
 """Fichier contenant le module primaire joueur."""
 
 from abstraits.module import *
-from primaires.joueur.contextes import liste_contextes
 from primaires.joueur import commandes
 from primaires.joueur import masques
 from primaires.joueur.config import cfg_joueur
+from .joueur import Joueur
+from . import contextes
 
 class Module(BaseModule):
     """Classe utilisée pour gérer des joueurs, c'est-à-dire des personnages
@@ -59,23 +60,48 @@ class Module(BaseModule):
     
     def init(self):
         """Méthode d'initialisation du module"""
-        # On ajoute les contextes chargés dans l'interpréteur
-        for contexte in liste_contextes:
-            self.importeur.interpreteur.contextes[contexte.nom] = contexte
+        joueurs = self.importeur.supenr.charger_groupe(Joueur)
         
-        # Ajout des masques dans l'interpréteur
-        self.importeur.interpreteur.ajouter_masque(masques.commande.Commande())
-        
-        # On ajoute les commandes du module
+        BaseModule.init(self)
+    
+    def ajouter_masques(self):
+        """Ajout des masques dans l'interpréteur"""
+        self.importeur.interpreteur.ajouter_masque(
+                masques.chemin_cmd.CheminCommande)
+        self.importeur.interpreteur.ajouter_masque(
+                masques.encodage.Encodage)
+        self.importeur.interpreteur.ajouter_masque(
+                masques.groupe_existant.GroupeExistant)
+        self.importeur.interpreteur.ajouter_masque(
+                masques.joueur.Joueur)
+        self.importeur.interpreteur.ajouter_masque(
+                masques.langue.Langue)
+        self.importeur.interpreteur.ajouter_masque(
+                masques.nv_groupe.NvGroupe)
+    
+    def ajouter_commandes(self):
+        """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
-            commandes.commande.CmdCommande(),
+            commandes.chgroupe.CmdChgroupe(),
+            commandes.groupe.CmdGroupe(),
             commandes.module.CmdModule(),
-            commandes.shutdown.CmdShutdown(),
+            commandes.options.CmdOptions(),
             commandes.quitter.CmdQuitter(),
-            commandes.qui.CmdQui(),
+            commandes.shutdown.CmdShutdown(),
+            commandes.where.CmdWhere(),
         ]
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
+    
+    def preparer(self):
+        """Préparation du module.
+        On s'assure que :
+        -   les joueurs dits connectés le soient toujours
         
-        BaseModule.init(self)
+        """
+        for joueur in self.importeur.connex.joueurs:
+            i_c = joueur.instance_connexion
+            if joueur.est_connecte() and (i_c is None or not i_c.est_connecte()):
+                joueur.pre_deconnecter()
+

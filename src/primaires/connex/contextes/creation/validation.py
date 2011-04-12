@@ -94,7 +94,7 @@ class Validation(Contexte):
     def accueil(self):
         """Message d'accueil"""
         return \
-            "\n|tit|-----= Validation du compte =------|ff|\n" \
+            "\n|tit|------= Validation du compte =------|ff|\n" \
             "Un message automatique vient d'être envoyé à l'adresse :\n" \
             "- {0} -\n" \
             "Il contient un code de validation que vous devez recopier ici.\n" \
@@ -108,7 +108,7 @@ class Validation(Contexte):
             self.pere.compte.code_validation = ""
             self.pere.compte.tentatives_validation = 0
             self.pere.envoyer( \
-                "\n|att|Félicitations, votre compte a bien été validé !|ff|\n" \
+                "\n|att|Félicitations, votre compte a bien été validé !|ff|\n\n" \
                 "Vous pouvez maintenant commencer à créer un personnage...")
             self.migrer_contexte("connex:connexion:choix_personnages")
         else:
@@ -126,10 +126,10 @@ class Validation(Contexte):
                     sujet, corps)
                 self.pere.compte.tentatives_validation = 0
                 self.pere.envoyer( \
-                    "Vous avez entré trois codes de validation incorrects " \
+                    "|err|Vous avez entré trois codes de validation erronés " \
                     "de suite ;\n" \
-                    "un nouveau code de validation vient d'être envoyé à " \
-                    "votre adresse.")
+                    "un nouveau code de validation vient de vous être " \
+                    "envoyé.|ff|")
             else:
                 self.pere.envoyer("|err|Votre code de validation est " \
                     "incorrect.|ff|")

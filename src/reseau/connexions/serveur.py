@@ -54,6 +54,7 @@ Par défaut, ces fonctions de callback valent None.
 import sys
 import socket
 import select
+import time
 
 from reseau.connexions.client_connecte import ClientConnecte
 from bases.fonction import *
@@ -127,11 +128,14 @@ class ConnexionServeur:
         # Fonctions de callback
         self.callbacks = {
             # déclencheur : (fonction, parametres)
-            "connexion":Fonction(None),
-            "deconnexion":Fonction(None),
-            "reception":Fonction(None),
+            "connexion": Fonction(None),
+            "deconnexion": Fonction(None),
+            "reception": Fonction(None),
         }
-
+        
+        # Information d'uptime (timestamp du moment où l'on crée le serveur)
+        self.uptime = time.time()
+    
     def init(self):
         """Cette méthode doit être appelée après l'appel au constructeur.
         Elle se charge d'initialiser le socket serveur et, en somme,
@@ -298,8 +302,11 @@ class ConnexionServeur:
             # mesure dans les fonctions de callback. Sans quoi, cette
             # instruction provoque une boucle infinie
             while client.message_est_complet():
+                # On récupère le message décodé
+                msg = client.get_message_decode()
+                
                 # On appelle la fonction de callback "reception"
-                self.callbacks["reception"].executer(client)
+                self.callbacks["reception"].executer(client, msg)
 
         # On vérifie une dernière fois que tous les clients sont bien
         # connectés

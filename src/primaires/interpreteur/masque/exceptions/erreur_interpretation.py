@@ -35,4 +35,11 @@ class ErreurInterpretation(RuntimeError):
     """Exception générale des erreurs d'interprétation des masques.
     
     """
-    pass
+    
+    def __init__(self, message=""):
+        """Constructeur de l'exception"""
+        self.message = message
+    
+    def __str__(self):
+        """Affichage de l'exception"""
+        return self.message

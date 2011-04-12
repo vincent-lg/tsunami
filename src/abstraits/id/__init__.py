@@ -47,7 +47,7 @@ import os
 import pickle
 
 from abstraits.obase import BaseObj
-from abstraits.id.id import ID
+from abstraits.id.id import ID, est_id
 
 class StatutObjet:
     """Classe définissant, sous la forme d'attributs de classe, les différents
@@ -124,7 +124,6 @@ class ObjetID(BaseObj):
     sous_rep = "" # sous-répertoire menant de _chemin_enr aux données du groupe
     
     # Attributs à ne pas redéfinir
-    _supenr = None # superviseur d'enregistrement
     groupes = {} # dictionnaire des groupes créés ({nom_groupe:classe})
     
     # Méthodes de classe
@@ -176,6 +175,7 @@ class ObjetID(BaseObj):
         
         """
         self._statut = StatutObjet.EN_CONSTRUCTION
+        self.__dict__.update(dico_attrs)
         BaseObj.__setstate__(self, dico_attrs)
         self._statut = StatutObjet.INITIALISE
         if self.id.id >= type(self).id_actuel:
@@ -241,3 +241,17 @@ def existe(objet):
     return objet is None or (est_objet_id(objet) and objet._statut != \
             StatutObjet.DETRUIT)
 
+# Décorateurs
+
+def propriete_id(methode):
+    """Ce décorateur doit être appelé devant les propriétés utilisant dans
+    leur paramètre est IDs.
+    
+    """
+    def red_methode(*parametres):
+        parametres = list(parametres)
+        for i, parametre in enumerate(parametres):
+            if est_id(parametre):
+                parametres[i] = parametre.get_objet()
+        return methode(*parametres)
+    return red_methode

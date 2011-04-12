@@ -37,8 +37,8 @@ aucun ordre d'instanciation n'est défini. On peut les charger dans le désordre
 ou même ne pas en charger certains.
 
 Règles d'interdépendance :
--  les modules secondaires peuvent appeler des modules primaires
--  les modules secondaires ne peuvent s'appeler entre eux
+-   les modules secondaires peuvent appeler des modules primaires
+-   les modules secondaires ne peuvent s'appeler entre eux
 -   le corps ne peut appeler des modules secondaires (sauf par méthodes
     génériques)
 
@@ -48,6 +48,7 @@ __init__.py du package concerné.
 NOTE: les modules primaires et secondaires ne doivent pas porter de noms
 identiques.
 
-Aucun module secondaire n'a été créé à ce jour.
+Voici un résumé des modules primaires existants :
+-   stat        Module chargé d'effectuer des statistiques sur le serveur
 
 """

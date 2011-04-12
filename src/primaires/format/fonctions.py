@@ -46,7 +46,7 @@ Fonctions à appliquer à l'émission d'un message :
 
 # Constantes de formatage
 sp_cars_a_echapper = { # Caractères à échapper
-    "|": "|bar|",
+    "|": "_b_",
 }
 
 sp_cars_a_remplacer = {} # Dictionnaire miroir de sp_cars_a_echapper
@@ -105,7 +105,7 @@ COULEURS = {
     b"|jn|": b"\x1b[1;33m",  # jaune
     b"|blc|": b"\x1b[1;34m", # bleu clair
     b"|mgc|": b"\x1b[1;35m", # magenta clair
-    b"|cyb|": b"\x1b[1;36m", # cyan clair
+    b"|cyc|": b"\x1b[1;36m", # cyan clair
     b"|bc|": b"\x1b[1;37m",  # blanc
     
     b"|ff|": b"\x1b[0m",  # fin de formattage
@@ -196,5 +196,20 @@ def supprimer_accents(msg):
         if type(msg) == bytes:
             acc, non_acc = acc.encode(), non_acc.encode()
         msg = msg.replace(acc, non_acc)
+    
+    return msg
+
+def souligner_sauts_de_ligne(msg):
+    """Cette fonciton souligne les sauts de ligne pour les utilisateurs de
+    lecteurs d'écran.
+    
+    Quand on utilise Jaws avec par exemple MushClient, les lignes complètement
+    vides sont ignorées. C'est pratique la plupart du temps, mais il peut
+    être bien de voir les lignes vides également. Pour cela, on se contente
+    de rendre la ligne non vide, en y insérant un simple espace.
+    
+    """
+    while "\n\n" in msg:
+        msg = msg.replace("\n\n", "\n \n")
     
     return msg

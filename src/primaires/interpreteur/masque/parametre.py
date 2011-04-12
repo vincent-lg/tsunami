@@ -46,8 +46,8 @@ class Parametre(Commande):
     def __init__(self, francais, anglais):
         """Constructeur du paramètre"""
         Commande.__init__(self, francais, anglais)
-        Masque.__init__(self, self.nom_francais)
         self.nom = self.nom_francais
+        self.groupe = ""
         self.tronquer = False
         self.schema = ""
     
@@ -78,3 +78,13 @@ class Parametre(Commande):
     def est_parametre(self):
         """Return True puisque c'est un paramètre"""
         return True
+    
+    def deduire_groupe(self):
+        """Déduit le groupe du paramètre"""
+        parente = self.parente
+        while not self.groupe and parente:
+            if parente.groupe:
+                self.groupe = parente.groupe
+            parente = parente.parente
+        
+

@@ -34,8 +34,8 @@ from abstraits.module import *
 from primaires.connex.instance_connexion import InstanceConnexion
 from reseau.connexions.client_connecte import ClientConnecte
 from primaires.connex.compte import Compte
-from primaires.connex.contextes import liste_contextes
 from primaires.connex.config import cfg_connex
+from . import contextes
 
 # Nom du groupe fictif
 NOM_GROUPE = "connexions"
@@ -73,16 +73,12 @@ class Module(BaseModule):
         'self.instances' si elles sont encore connectées.
         
         """
+        comptes_a_pas_effacer = []
+        
         # On récupère les comptes
         comptes = self.importeur.supenr.charger_groupe(Compte)
         for compte in comptes:
             self.comptes[compte.id.id] = compte
-            if not compte.valide:
-                self.supprimer_compte(compte)
-        
-        # On ajoute les contextes chargés dans l'interpréteur
-        for contexte in liste_contextes:
-            self.importeur.interpreteur.contextes[contexte.nom] = contexte
         
         # On récupère les instances de connexion
         if NOM_GROUPE in type(self.importeur).parid:
@@ -90,11 +86,23 @@ class Module(BaseModule):
         else:
             objets = []
         
+        comptes_a_pas_effacer = []
+        
         for inst in objets:
             if inst.client.n_id in type(self.importeur).serveur.clients.keys():
                 nouv_instance = InstanceConnexion(inst.client, False)
                 nouv_instance.creer_depuis(inst)
                 self.instances[inst.client.n_id] = nouv_instance
+                if (nouv_instance.compte):
+                    comptes_a_pas_effacer.append(nouv_instance.compte.nom)
+        
+        for compte in comptes:
+            if (not compte.valide) and (not compte.nom in comptes_a_pas_effacer):
+                self.supprimer_compte(compte)
+        
+        # On supprime les joueurs dont le fichier a été effacé manuellement
+        for compte in self.comptes.values():
+            compte.joueurs.supprimer_none()
         
         # On ajoute le dictionnaire 'instances' comme groupe fictif de 'parid'
         type(self.importeur).parid[NOM_GROUPE] = self.instances
@@ -132,6 +140,27 @@ class Module(BaseModule):
                     "connectées".format(repr(item)))
         return self.instances[item]
     
+    @property
+    def joueurs(self):
+        """Retourne un tuple des joueurs existants"""
+        joueurs = []
+        for compte in self.comptes.values():
+            for joueur in compte.joueurs:
+                joueurs.append(joueur)
+        
+        return tuple(joueurs)
+    
+    @property
+    def joueurs_connectes(self):
+        """Retourne un tuple des joueurs connectés"""
+        joueurs = []
+        for compte in self.comptes.values():
+            for joueur in compte.joueurs:
+                if joueur.est_connecte():
+                    joueurs.append(joueur)
+        
+        return tuple(joueurs)
+    
     def ajouter_instance(self, client):
         """Cette méthode permet d'ajouter une instance de connexion.
         Elle est appelée quand la connexion est établie avec le serveur.
@@ -153,10 +182,14 @@ class Module(BaseModule):
         if client not in self.instances:
             raise KeyError("L'ID {0} ne se trouve pas dans les instances " \
                     "connectées".format(repr(client)))
+        
         instance = self.instances[client]
-        if instance.contexte_actuel:
+        joueur = instance.joueur
+        
+        if joueur and instance.contexte_actuel and not joueur.garder_connecte:
             instance.contexte_actuel.deconnecter()
         
+        instance.deconnecter("déconnexion fortuite")
         del self.instances[client]
     
     def ajouter_compte(self, nom_compte):

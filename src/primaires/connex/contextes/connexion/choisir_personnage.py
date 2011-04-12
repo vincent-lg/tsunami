@@ -49,8 +49,10 @@ class ChoisirPersonnage(Contexte):
     def entrer(self):
         """Si aucun personnage n'a été créé, on redirige vers la création d'un
         premier personnage.
+        Dans tous les cas, on recopie l'encodage du compte dans le client.
         
         """
+        self.pere.client.encodage = self.pere.compte.encodage
         if len(self.pere.compte.joueurs) == 0:
             self.migrer_contexte("personnage:creation:nouveau_nom")
     
@@ -67,7 +69,14 @@ class ChoisirPersonnage(Contexte):
         for i, joueur in enumerate(self.pere.compte.joueurs):
             no = " |cmd|" + str(i + 1) + "|ff|"
             ret += "\n" + no + " pour jouer |ent|{0}|ff|".format( \
-                joueur.nom.capitalize())
+                joueur.nom)
+            if joueur.est_connecte():
+                ret += " (connecté sur "
+                adresse_ip = joueur.instance_connexion.adresse_ip
+                if self.pere.adresse_ip == adresse_ip:
+                    ret += "la même adresse)"
+                else:
+                    ret += "l'adresse {})".format(adresse_ip)
         
         if len(self.pere.compte.joueurs) > 0:
             # on saute deux lignes
@@ -103,7 +112,8 @@ class ChoisirPersonnage(Contexte):
                 self.pere.joueur = joueur
                 joueur.compte = self.pere.compte
                 joueur.instance_connexion = self.pere
-                self.migrer_contexte("personnage:connexion:mode_connecte")
+                joueur.pre_connecter()
+                print(self.pere.contexte_actuel)
         elif msg == cmd_creer:
             if len(self.pere.compte.joueurs) >= nb_perso_max and nb_perso_max != -1:
                 self.pere.envoyer("|err|Vous ne pouvez avoir plus de {0} " \

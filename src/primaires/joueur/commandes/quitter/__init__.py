@@ -44,6 +44,7 @@ class CmdQuitter(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "quitter", "quit")
+        self.groupe = "joueur"
         self.aide_courte = "se déconnecte du MUD"
         self.aide_longue = \
             "Cette commande permet de se déconnecter du jeu. Le personnage " \

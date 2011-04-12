@@ -53,15 +53,13 @@ class LangueCMD(Contexte):
     def accueil(self):
         """Message d'accueil du contexte"""
         return \
-            "\n|tit|----= Langue des commandes =----|ff|\n\n" \
-            "Entrez |ent|l'un des choix|ff| suivant proposé.\n" \
-            "La |ent|langue|ff| que vous choisirez sera celle des commandes " \
-            "que vous entrerez.\n" \
-            "Si vous n'êtes pas familiarisé avec les MUDs, nous vous " \
-            "conseillons de choisir\n|cmd|français|ff|.\n" \
-            "Une fois en jeu, vous pourrez toujours changer cette langue " \
-            "grâce à la commande\n|cmd|lang|ff|.\n\n" \
-            "Langues disponibles : |cmd|français|ff| ou |cmd|anglais|ff|"
+            "\n|tit|-------= Choix de la langue =-------|ff|\n\n" \
+            "Entrez l'un des |ent|choix|ff| proposés ci-après.\nLa langue " \
+            "choisie sera celle des commandes en jeu ; si vous n'êtes pas\n" \
+            "familiarisé avec les MUDs, nous vous conseillons le français. " \
+            "Une fois\nen jeu, vous pourrez toujours changer grâce à la " \
+            "commande |cmd|langue|ff| | |cmd|lang|ff|.\n\n" \
+            "Langues disponibles : |cmd|français|ff|, |cmd|anglais|ff|"
     
     def get_prompt(self):
         """Message de prompt"""
@@ -71,8 +69,9 @@ class LangueCMD(Contexte):
         """Méthode d'interprétation"""
         msg = supprimer_accents(msg).lower()
         if msg not in LANGUES_DISPONIBLES:
-            self.pere << "|err|Langue incorrecte. Veuillez réessayer.|ff|"
+            self.pere << "|err|Cette langue n'est pas disponible.|ff|"
         else:
             self.pere.joueur.langue_cmd = msg
             self.pere.compte.ajouter_joueur(self.pere.joueur)
-            self.migrer_contexte("personnage:connexion:mode_connecte")
+        
+        self.pere.joueur.pre_connecter()

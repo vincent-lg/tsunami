@@ -35,9 +35,12 @@ class Masque:
     """Classe représentant un masque."""
     
     importeur = None
-    def __init__(self, nom):
+    nom = "inconnu"
+    
+    def __init__(self):
         """Crée un nouveau masque"""
-        self.nom = nom
+        self.nom = type(self).nom
+        self.nom_complet = self.nom
         self.type = None
         self.proprietes = []
     

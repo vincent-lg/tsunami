@@ -61,7 +61,6 @@ class Compte(ObjetID):
         self.tentatives_validation = 0 # tentatives de validation
         self.nb_essais = 0 # tentatives d'intrusion (mot de passe erroné)
         self.joueurs = ListeID()
-        self.contexte = None # le contexte du compte
     
     def __getinitargs__(self):
         """Méthode retournant les valeurs par défaut du constructeur"""
@@ -86,7 +85,15 @@ class Compte(ObjetID):
         return joueur
     
     def ajouter_joueur(self, joueur):
-        """Ajoute le joueur passé en paramètre à la liste des joueurs"""
+        """Ajoute le joueur passé en paramètre à la liste des joueurs.
+        Si le compte est "le compte admin", le joueur sera passé
+        dans le groupe des administrateurs.
+        
+        """
+        config = type(self).importeur.anaconf.get_config("connex")
+        if self.nom == config.compte_admin: # compte administrateur
+            joueur.groupe = "administrateur"
+        
         self.joueurs.append(joueur)
         self.enregistrer()
     
@@ -94,15 +101,5 @@ class Compte(ObjetID):
         """Supprime le joueur passé en paramètre de la liste des joueurs"""
         self.joueurs.remove(joueur)
         self.enregistrer()
-    
-    def _get_contexte_actuel(self):
-        """Retourne le contexte du compte"""
-        return self.contexte
-    
-    def _set_contexte_actuel(self, nouveau_contexte):
-        """Modifie le contexte actuel du compte"""
-        self.contexte = nouveau_contexte
-    
-    contexte_actuel = property(_get_contexte_actuel, _set_contexte_actuel)
 
 ObjetID.ajouter_groupe(Compte)

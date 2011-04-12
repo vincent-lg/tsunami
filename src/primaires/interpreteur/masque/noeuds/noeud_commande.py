@@ -33,6 +33,8 @@
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
 from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
 from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
 
 class NoeudCommande(BaseNoeud):
     
@@ -45,6 +47,7 @@ class NoeudCommande(BaseNoeud):
         BaseNoeud.__init__(self)
         self.commande = commande
         self.nom = commande.nom_francais
+        self.commande.noeud = self
         if self.commande.schema:
             schema = self.commande.schema
             self.construire_arborescence(schema)
@@ -72,7 +75,7 @@ class NoeudCommande(BaseNoeud):
         for noeud_param in self.commande.parametres.values():
             fils.ajouter_fils(noeud_param)
         if self.suivant:
-            fils.ajouter_fils(self.suivant)
+            fils.schema = self.suivant
         
         return fils
     
@@ -84,9 +87,8 @@ class NoeudCommande(BaseNoeud):
         valide = self.commande.valider(personnage, dic_masques, commande)
         if valide:
             dic_masques[self.commande.nom] = self.commande
-            if commande:
-                valide = self.fils.valider(personnage, dic_masques, \
-                        commande)
+            valide = self.fils.valider(personnage, dic_masques, \
+                commande)
         
         return valide
     
@@ -95,3 +97,11 @@ class NoeudCommande(BaseNoeud):
         self.commande.interpreter(personnage, dic_masques)
         for fils in self.fils:
             fils.interpreter(personnage, dic_masques)
+    
+    def afficher(self, personnage):
+        """Retourne un affichage du masque pour les joueurs"""
+        msg = self.commande.get_nom_pour(personnage)
+        if self.suivant:
+            msg += " " + self.suivant.afficher(personnage)
+        
+        return msg

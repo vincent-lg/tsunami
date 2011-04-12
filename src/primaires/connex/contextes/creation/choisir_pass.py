@@ -54,6 +54,14 @@ class ChoisirPass(Contexte):
         """Message de prompt"""
         return "Votre mot de passe : "
     
+    def entrer(self):
+        """En arrivant dans le contexte"""
+        self.pere.client.masquer = True
+        
+    def sortir(self):
+        """En sortant du contexte"""
+        self.pere.client.masquer = False
+        
     def accueil(self):
         """Message d'accueil"""
         return \

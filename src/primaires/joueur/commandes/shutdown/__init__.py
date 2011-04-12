@@ -45,6 +45,7 @@ class CmdShutdown(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "shutdown", "shutdown")
         self.tronquer = False
+        self.groupe = "administrateur"
         self.aide_courte = "arrête instantanément le serveur"
         self.aide_longue = \
             "Cette commande arrête instantanément le serveur. Si aucune " \
@@ -52,16 +53,12 @@ class CmdShutdown(Commande):
             "arrêté. N'utiliser cette commande qu'en cas de bug répété, " \
             "corruption de données ou modification du corps. En temps " \
             "normal, redémarrer les modules suffit à intégrer de nouvelles " \
-            "modifications et évite de déconnecter tous les joueurs."
+            "modifications et évite de déconnecter tous les joueurs. " \
+            "Référez-vous à module hotboot pour plus " \
+            "d'informations."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         # On récupère le serveur
         serveur = type(self).importeur.serveur
-        # On déconnecte tous les joueurs
-        for instance in type(self).importeur.connex.instances.values():
-            instance.envoyer("\n|att|Arrêt du MUD en cours, vous allez être " \
-                    "déconnecté...|ff|")
-            instance.deconnecter("Arrêt du MUD")
-        
         serveur.lance = False

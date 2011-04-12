@@ -71,6 +71,7 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "diffact", "primaire")
         self.actions = {} # {nom_action:action_differee}
+        self.ordre_actions = [] # [nom_action]
         self.logger = type(self.importeur).man_logs.creer_logger("diffact", \
                 "diffact")
     
@@ -92,11 +93,19 @@ class Module(BaseModule):
         -   les paramètres nommés organisés dans un dictionnaire
         
         """
-        if nom_action in self.actions.keys():
+        if nom_action in self.ordre_actions:
             self.logger.warning("L'action différée {0} existe déjà. " \
                     "L'ancienne sera écrasée.".format(nom_action))
+            self.retirer_action(nom_action)
+            
         action = ActionDifferee(nom_action, tps, ref_fonc, *args, **kwargs)
         self.actions[nom_action] = action
+        #On ordonne les actions correctement
+        self.ordre_actions = [nom for nom in self.ordre_actions \
+            if self.actions[nom] <= action] + [nom_action] + \
+            [nom for nom in self.ordre_actions if self.actions[nom] > action]
+        
+        
         self.logger.debug("Ajout de l'action {0} exécutée dans {1}s".format( \
                 nom_action, tps))
     
@@ -105,11 +114,12 @@ class Module(BaseModule):
        celles en attente.
         
         """
-        if not nom in self.actions.keys():
+        if not nom in self.ordre_actions:
             self.logger.warning("L'action différée {0} devant être " \
                     "supprimée n'existe pas".format(nom))
         else:
             del self.actions[nom]
+            del self.ordre_actions[self.ordre_actions.index(nom)]
             self.logger.debug("L'action {0} a bien été supprimée".format(nom))
 
     def mettre_a_jour_actions(self):
@@ -119,9 +129,12 @@ class Module(BaseModule):
         de la liste.
         
         """
-        for nom,action in tuple(self.actions.items()):
+        for nom in self.ordre_actions:
+            action = self.actions[nom]
             if action.doit_exec():
                 # On la supprime avant toute chose
                 self.retirer_action(nom)
                 # On l'exécute ensuite
                 action.executer()
+            else:
+                break

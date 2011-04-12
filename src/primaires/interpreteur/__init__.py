@@ -31,47 +31,111 @@
 """Fichier contenant le module primaire interpreteur."""
 
 from abstraits.module import *
-from primaires.interpreteur.contexte import Contexte
+from primaires.interpreteur.contexte import Contexte, contextes
+from .editeur import Editeur
 from primaires.interpreteur.masque.noeuds.fonctions import *
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
 from primaires.interpreteur.masque.noeuds.noeud_commande import NoeudCommande
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.masque.masque import Masque
-from primaires.interpreteur.masque.noeuds.exceptions.erreur_validation \
+from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
+from primaires.interpreteur.groupe import ConteneurGroupes
+
 class Module(BaseModule):
+    
     """Cette classe est la classe gérant tous les interpréteurs.
     Elle recense les différents contextes, en crée certains et permet
     à chaque module de créer ses propres contextes, commandes, éditeurs...
     
     """
+    
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "interpreteur", "primaire")
+        self.logger = type(self.importeur).man_logs.creer_logger( \
+                "interpreteur", "interpreteur")
+        
+        # On passe l'interpréteur à certaines classes
         Contexte.importeur = importeur
         Commande.importeur = importeur
         BaseNoeud.importeur = importeur
         Masque.importeur = importeur
-        self.contextes = {} # Dictionnaire des contextes
+        
+        # Attributs
+        self.contextes = contextes # Dictionnaire des contextes
         self.commandes = []
         self.commandes_francais = []
         self.commandes_anglais = []
+        self.categories = {}
         self.masques = {}
-    
-    def ajouter_contexte(self, nouv_contexte):
-        """Ajoute le contexte dans le dictionnaire self.contextes.
-        On se sert du nom comme identifiant du contexte.
         
-        """
-        self.contextes[nouv_contexte.nom] = nouv_contexte
+        # Editeurs
+        self.editeurs = {}
+        
+        # Groupes d'utilisateurs
+        self.groupes = None
+    
+    def init(self):
+        """Initialisation du module"""
+        # On récupère ou crée puis configure les groupes d'utilisateur
+        groupes = None
+        sous_rep = "groupes"
+        fichier = "groupes.sav"
+        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
+            groupes = self.importeur.supenr.charger(sous_rep, fichier)
+        if groupes is None:
+            groupes = ConteneurGroupes()
+            self.logger.info("Aucun groupe d'utilisateurs récupéré")
+        else:
+            s = ""
+            if len(groupes) > 1:
+                s = "s"
+            self.logger.info("{} groupe{s} d'utilisateurs récupéré{s}".format(
+                        len(groupes), s = s))
+        
+        self.groupes = groupes
+        
+        # On vérifie que les groupes "essentiels" existent
+        essentiels = ("npc", "joueur", "administrateur")
+        
+        # On crée ceux qui n'existent pas
+        groupe_precedent = ""
+        for nom_groupe in essentiels:
+            if nom_groupe not in self.groupes:
+                groupe = self.groupes.ajouter_groupe(nom_groupe)
+                if groupe_precedent:
+                    groupe.ajouter_groupe_inclus(groupe_precedent)
+                self.logger.info("Ajout du groupe d'utilisateurs '{}'".format( 
+                        nom_groupe))
+            groupe_precedent = nom_groupe
+        
+        # On crée les catégories de commandes
+        self.categories = {
+            "divers" : "Commandes générales",
+            "parler" : "Communication",
+            "bouger" : "Mobilité et aide au déplacement",
+            "groupes" : "Manipulation des groupes et modules",
+            "batisseur" : "Commandes de création",
+            "bugs" : "Manipulation et rapport de bug"
+        }
+        
+        BaseModule.init(self)
     
     def ajouter_commande(self, commande):
         """Ajoute une commande à l'embranchement"""
         noeud_cmd = NoeudCommande(commande)
         self.commandes.append(noeud_cmd)
-        # Trie la liste des commandes, une première fois par ordre alphabétique
-        # français la seconde par ordre alphabétique anglais
+        
+        # On ajoute la commande dans son groupe
+        self.groupes.ajouter_commande(commande)
+        
+        # On construit ses paramètres
+        commande.ajouter_parametres()
+        
+        # Tri de la liste des commandes, une première fois par ordre
+        # alphabétique français la seconde par ordre alphabétique anglais
         self.commandes_francais = sorted(self.commandes, \
             key=lambda noeud: noeud.commande.nom_francais)
         self.commandes_anglais = sorted(self.commandes, \
@@ -82,8 +146,11 @@ class Module(BaseModule):
         self.masques[masque.nom] = masque
     
     def get_masque(self, nom_masque):
-        """Retourne le masque portant le nom correspondant"""
-        return self.masques[nom_masque]
+        """Retourne le masque portant le nom correspondant
+        On retourne une nouvelle instance du masque.
+        
+        """
+        return self.masques[nom_masque]()
     
     def valider(self, personnage, dic_masques, lst_commande):
         """Commande de validation"""
@@ -93,6 +160,7 @@ class Module(BaseModule):
             commandes = self.commandes_francais
         elif personnage.langue_cmd == "anglais":
             commandes = self.commandes_anglais
+        
         for cmd in commandes:
             if cmd.valider(personnage, dic_masques, lst_commande):
                 trouve = True
@@ -100,3 +168,50 @@ class Module(BaseModule):
         
         if not trouve:
             raise ErreurValidation("|err|Commande inconnue.|ff|")
+    
+    def trouver_commande(self, lst_commande, commandes=None):
+        """On cherche la commande correspondante.
+        Ce peut être une commande mais aussi une sous-commande, du premier
+        niveau ou plus.
+        
+        Pour indiquer la position de la commande, on a lst_commande contenant
+        une chaîne sous la forme : 'commande:sous_commande:sous_sous_commande'
+        
+        Ainsi, on appelle récursivement cette fonction.
+        
+        """
+        if commandes is None: # premier appel de la récursivité
+            commandes = self.commandes
+        
+        if type(lst_commande) is str:
+            lst_commande = chaine_vers_liste(lst_commande)
+        
+        str_commande = liste_vers_chaine(lst_commande)
+        
+        nom_commande = str_commande.split(":")[0]
+        # On parcourt la liste des commandes
+        for noeud in commandes:
+            if noeud.commande.nom_francais == nom_commande:
+                lst_commande[:] = lst_commande[len(nom_commande) + 1:]
+                if lst_commande:
+                    fils = noeud.fils
+                    return self.trouver_commande(lst_commande, fils)
+                else:
+                    return noeud.commande
+        
+        raise ValueError("la commande {} ne peut être trouvée, " \
+            "la recherche de {} a échoué".format(str_commande, nom_commande))
+    
+    def ajouter_editeur(self, editeur):
+        """Ajoute l'éditeur en fonction de son nom"""
+        self.editeurs[editeur.nom] = editeur
+    
+    def supprimer_editeur(self, nom):
+        """Supprime l'éditeur"""
+        del self.editeurs[nom]
+    
+    def construire_editeur(self, nom, personnage, objet):
+        """Retourne l'éditeur construit"""
+        cls_editeur = self.editeurs[nom]
+        editeur = cls_editeur(personnage, objet)
+        return editeur
