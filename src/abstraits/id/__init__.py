@@ -175,6 +175,7 @@ class ObjetID(BaseObj):
         
         """
         self._statut = StatutObjet.EN_CONSTRUCTION
+        self.__dict__.update(dico_attrs)
         BaseObj.__setstate__(self, dico_attrs)
         self._statut = StatutObjet.INITIALISE
         if self.id.id >= type(self).id_actuel:
@@ -243,7 +244,7 @@ def existe(objet):
 # Décorateurs
 
 def propriete_id(methode):
-    """Ce décorateur doit e^re appelé devant els propriétés utilisant dans
+    """Ce décorateur doit être appelé devant les propriétés utilisant dans
     leur paramètre est IDs.
     
     """

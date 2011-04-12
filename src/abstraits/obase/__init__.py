@@ -33,10 +33,45 @@
 import sys
 import time
 
+objets_base = {} # dictionnaire des différents BaseObj {nom_cls:cls}
+
+class MetaBaseObj(type):
+    
+    """Métaclasse des contextes.
+    A chaque fois qu'on crée une classe héritée de Contexte avec un nom
+    valide, on l'ajoute dans le dictionnaire 'contextes'.
+    
+    """
+    
+    def __init__(cls, nom, bases, contenu):
+        """Constructeur de la métaclasse"""
+        type.__init__(cls, nom, bases, contenu)
+        # Si on trouve les attributs _nom et _version,
+        # c'est que la classe est versionnée
+        if "_nom" in contenu and "_version" in contenu:
+            
+            cls._version = contenu["_version"]
+            cls._nom = contenu["_nom"]
+            # Pas de doublons !
+            if cls._nom in objets_base:
+                raise RuntimeError("La classe {0} héritée de BaseObj " \
+                        "possède le même nom que la classe {1}".format( \
+                        str(cls), str(objets_base[cls._nom])))
+            objets_base[cls._nom] = cls
+            
+            # On décore la méthode __init__ de la classe
+            ancien_init = cls.__init__
+            def new_init(self, *args, **kwargs):
+                ancien_init(self, *args, **kwargs)
+                self.set_version(cls, cls._version)
+            cls.__init__ = new_init
+        else:
+            cls._version = None
+            cls._nom = None
 
 INIT, CONSTRUIT = 0, 1
 
-class BaseObj:
+class BaseObj(metaclass=MetaBaseObj):
     
     """Cette classe définit la base d'un objet destiné à être enregistré,
     directement ou indirectement dans un fichier.
@@ -66,7 +101,18 @@ class BaseObj:
     
     def __init__(self):
         """Instancie un simple statut"""
-        self._status = INIT
+        self._statut = INIT
+        # On initialise le dictionnaire des versions de l'objet
+        self._dict_version = {}
+        
+    def version_actuelle(self, classe):
+        if classe._nom in self._dict_version:
+            return self._dict_version[classe._nom]
+        else:
+            return 0
+    
+    def set_version(self, classe, version):
+        self._dict_version[classe._nom] = version
     
     @property
     def construit(self):
@@ -85,6 +131,50 @@ class BaseObj:
         args = classe.__getinitargs__(self)
         classe.__init__(self, *args)
         self.__dict__.update(dico_attrs)
+        # L'objet est construit et mis à jour de façon plus ou moins bancale
+        # On vérifie maintenant s'il a besoin d'une vraie mis à jour
+        self._update(classe)
+    
+    def _update(self, classe):
+        """Méthode appelée pendant la désérialisation de l'objet,
+        destinée à vérifier si l'objet doit être mis à jour et, le cas
+        échéant, le mettre à jour.
+            
+        """
+        # Mise à jour récursive par rapport aux classes-mères
+        for base in classe.__bases__:
+            # Faut bien s'arrêter un jour...
+            if base != object:
+                base._update(self, base)
+        if classe._nom in objets_base:
+            # On importe le convertisseur dédié à la classe en cours
+            try:
+                convertisseur = getattr(__import__( \
+                        "primaires.supenr.convertisseurs." + classe._nom, \
+                        globals(), locals(), ["Convertisseur"]), \
+                        "Convertisseur")
+            except ImportError as error:
+                print("La classe {0} suivie en version ne possède pas de " \
+                        "fichier de convertisseurs dans primaires.supenr." \
+                        "convertisseurs".format(classe._nom))
+                exit()
+            except AttributeError as error:
+                print("Le fichier {0}.py dans primaires.supenr." \
+                        "convertisseurs ne possède pas de classe " \
+                        "Convertisseur".format(classe._nom))
+                exit()
+            # On vérifie la version de la classe et celle de l'objet
+            while self.version_actuelle(classe) < classe._version:
+                try:
+                    getattr(convertisseur, "depuis_version_" + \
+                            str(self.version_actuelle(classe)))(self, classe)
+                except AttributeError as error:
+                    print("Le fichier {0}.py dans primaires.supenr." \
+                            "convertisseurs ne comporte pas de méthode " \
+                            "depuis_version_".format(classe._nom) + str( \
+                            self.version_actuelle(classe)))
+                    exit()
+
     
     def __getattribute__(self, nom_attr):
         """Méthode appelé quand on cherche à récupérer l'attribut nom_attr

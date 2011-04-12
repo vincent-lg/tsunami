@@ -36,12 +36,12 @@ développés dans ce package.
 
 """
 
-from abstraits.obase import BaseObj
+from abstraits.obase import MetaBaseObj, BaseObj
 from primaires.format.fonctions import *
 
 contextes = {} # dictionnaire des différents contextes
 
-class MetaContexte(type):
+class MetaContexte(MetaBaseObj):
     
     """Métaclasse des contextes.
     A chaque fois qu'on crée une classe héritée de Contexte avec un nom
@@ -51,6 +51,7 @@ class MetaContexte(type):
     
     def __init__(cls, nom, bases, contenu):
         """Constructeur de la métaclasse"""
+        MetaBaseObj.__init__(cls, nom, bases, contenu)
         if cls.nom:
             contextes[cls.nom] = cls
 
