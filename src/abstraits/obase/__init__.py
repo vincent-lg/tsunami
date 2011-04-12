@@ -37,9 +37,18 @@ objets_base = {} # dictionnaire des différents BaseObj {nom_cls:cls}
 
 class MetaBaseObj(type):
     
-    """Métaclasse des contextes.
-    A chaque fois qu'on crée une classe héritée de Contexte avec un nom
-    valide, on l'ajoute dans le dictionnaire 'contextes'.
+    """Métaclasse des objets de base.
+    Cette métaclasse est là pour gérer les versions des différents objets
+    BaseObj :
+        Si un objet BaseObj change de structure, pour X raison (par exemple
+        un attribut change de nom ou de type), à la récupération l'objet sera
+        mis à jour grâce à une fonction définie dans le convertisseur
+        (voir BaseObj.update).
+        La fonction se trouvera dans un fichier identifiant le nom de la
+        classe. On s'assure grâce à cette métaclasse que deux classes
+        héritées de BaseObj n'ont pas un nom identique et on attribut
+        un numéro de version (0) par défaut aux objets issus de ces
+        classes hérités.
     
     """
     
@@ -106,12 +115,21 @@ class BaseObj(metaclass=MetaBaseObj):
         self._dict_version = {}
         
     def version_actuelle(self, classe):
+        """Retourne la version actuelle de l'objet.
+        Cette version est celle enregistrée dans l'objet. Elle peut
+        donc être différence de la classe (c'est le cas au chargement d'un
+        objet à mettre à jour).
+        
+        """
         if classe._nom in self._dict_version:
             return self._dict_version[classe._nom]
         else:
             return 0
     
     def set_version(self, classe, version):
+        """Met le numéro de version dans le dictionnaire de version de l'objet.
+        
+        """
         self._dict_version[classe._nom] = version
     
     @property
@@ -131,7 +149,7 @@ class BaseObj(metaclass=MetaBaseObj):
         args = classe.__getinitargs__(self)
         classe.__init__(self, *args)
         self.__dict__.update(dico_attrs)
-        # L'objet est construit et mis à jour de façon plus ou moins bancale
+        # L'objet est reconstruit pour ajouter des attributs par défaut
         # On vérifie maintenant s'il a besoin d'une vraie mis à jour
         self._update(classe)
     
@@ -143,8 +161,8 @@ class BaseObj(metaclass=MetaBaseObj):
         """
         # Mise à jour récursive par rapport aux classes-mères
         for base in classe.__bases__:
-            # Faut bien s'arrêter un jour...
-            if base != object:
+            # Inutile d'essayer de mettre à jour 'object'
+            if base is not object:
                 base._update(self, base)
         if classe._nom in objets_base:
             # On importe le convertisseur dédié à la classe en cours
@@ -163,9 +181,14 @@ class BaseObj(metaclass=MetaBaseObj):
                         "convertisseurs ne possède pas de classe " \
                         "Convertisseur".format(classe._nom))
                 exit()
+            
             # On vérifie la version de la classe et celle de l'objet
+            # Rappel :
+            #   self.version_actuelle() retourne la version enregistrée
+            #   classe._version retourne la version de la classe
             while self.version_actuelle(classe) < classe._version:
                 try:
+                    # On appelle la version de conversion
                     getattr(convertisseur, "depuis_version_" + \
                             str(self.version_actuelle(classe)))(self, classe)
                 except AttributeError as error:
