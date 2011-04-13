@@ -52,6 +52,7 @@ class EdtSorties(Editeur):
         msg = "| |tit|" + "Edition des sorties de {}".format(salle).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += self.aide_courte
+        msg += "Sorties courantes :\n"
         
         # Parcours des sorties
         sorties = salle.sorties

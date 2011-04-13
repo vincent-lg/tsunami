@@ -55,7 +55,7 @@ class CmdRepondre(Commande):
             "elles en particulier avec %repondre% |ent|<numéro de la liste> " \
             "<message>|ff|. Vous pouvez aussi bloquer la réponse automatique " \
             "sur un personnage de la liste en entrant %repondre% " \
-            "ent|<numéro du personnage>|ff|."
+            "|ent|<numéro du personnage>|ff|."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""

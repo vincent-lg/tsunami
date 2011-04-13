@@ -91,7 +91,7 @@ class EdtRedit(Presentation):
             "salles) ;\n" \
             "- |cmd|<x>.<y>.<z>|ff| : les trois coordonnées, négatives ou " \
             "positives, séparées\n" \
-            "                par des points (par exemple, -1.2.0).\n" \
+            "                par des points (par exemple, -1.2.0) ;\n" \
             "- |cmd|/h|ff| : déplace la salle vers le haut. De même, " \
             "|cmd|/s|ff|, |cmd|/so|ff|, |cmd|/o|ff|, |cmd|/no|ff|, " \
             "|cmd|/n|ff|, |cmd|/ne|ff|, |cmd|\n|ff|" \
@@ -154,4 +154,23 @@ class EdtRedit(Presentation):
         sorties.parent = self
         sorties.aide_courte = \
             "Entrez le |ent|nom d'une sortie|ff| pour l'éditer ou " \
-            "|cmd|/|ff| pour revenir à\nla fenêtre parente.\n"
+            "|cmd|/|ff| pour revenir à\n" \
+            "la fenêtre parente.\n" \
+            "Options :\n" \
+            " - |ent|/r <sortie> / <nouveau nom> (/ <préfixe>)|ff| : " \
+            "renomme une sortie. Si le\n" \
+            "   préfixe n'est pas précisé, il sera " \
+            "défini comme 'le'. Par exemple,\n" \
+            "   |ent|/r ouest / porte / la|ff| renomme la sortie " \
+            "|ent|ouest|ff| en |ent|la porte|ff|.\n" \
+            " - |ent|/s <sortie / <identifiant d'une salle>|ff| : permet de " \
+            "configurer une sortie.\n" \
+            "   En précisant l'identifiant (|cmd|zone:mnemo|ff|) d'une " \
+            "salle, la sortie spécifiée\n" \
+            "   mènera vers la salle correspondant à cet identifiant. Par " \
+            "exemple,\n" \
+            "   |ent|/s nord / picte:2|ff|, si vous êtes dans la salle " \
+            "picte:1, créera une sortie\n" \
+            "   nord vers picte:2 et dans picte:2, une sortie sud vers " \
+            "picte:1.\n" \
+            " - |ent|/d <sortie>|ff| : supprime la sortie indiquée\n\n"
