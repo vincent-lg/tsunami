@@ -58,6 +58,14 @@ nom = "Kassie"
 
 ## Configuration de la connexion
 
+# Serveur en ligne :
+# Cette option permet de paramétrer le serveur comme étant lancé ou non.
+# Si le serveur n'est pas lancé, le MUD se contente de créer ses fichiers
+# de configuration, charger ses modules, les initialiser mais ne charge pas
+# la partie réseau et s'arrête aussitôt après. Sauf cas particulier, laissez
+# cette option à True.
+serveur = True
+
 # Numéro de port
 # Cette option est ignorée si un port est précisé en ligne de commande
 port = 4000

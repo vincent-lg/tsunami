@@ -39,6 +39,7 @@ import sys
 import getopt
 
 class ParserCMD(dict):
+    
     """Notre parser de la ligne de commande. Il est hérité de la classe
     dict, puisque se présentant sous la forme d'un dictionnaire contenant :
     { nom_option: valeur_convertie }
@@ -47,6 +48,7 @@ class ParserCMD(dict):
     sys.argv et le module getopt.
     
     """
+    
     def interpreter(self):
         """Méthode d'interprétation des options de la ligne de commande.
         Si des options doivent être rajoutées, c'est ici qu'il faut le faire.
@@ -62,8 +64,8 @@ class ParserCMD(dict):
         # - une chaîne de caractères contenant les flags courts des options.
         #   Si le flag attend un argument, préciser : après la lettre du flag.
         # - une liste, contenant les chaînes des options longues.
-        #   Les options doivent être entrées dans le même ordre que les flags
-        #   courts correspondants. Pour préciser qu'une option longue
+        #   Les options doivent être entrées dans le même ordre que les
+        #   optionss courts correspondants. Pour préciser qu'une option longue
         #   attend un argument, il faut préciser un signe = après le nom.
         
         # Liste des options
@@ -74,13 +76,15 @@ class ParserCMD(dict):
         # - h (help) : l'aide bien entendu
         # - l (chemin-logs) : chemin d'enregistrement des logs
         # - p (port) : port d'écoute du serveur
-        flags_courts = "c:e:hl:p:"
-        flags_longs = ["chemin-configuration=", "chemin-enregistrement=", \
-                "help", "chemin-logs=", "port="]
+        # - s 'serveur) : lancer le serveur (on ou off)
+        flags_courts = "c:e:hl:p:s:"
+        flags_longs = ["chemin-configuration=", "chemin-enregistrement=",
+                "help", "chemin-logs=", "port=", "serveur="]
         
         # Création de l'objet analysant la ligne de commande
         try:
-            opts, args = getopt.getopt(sys.argv[1:], flags_courts, flags_longs)
+            opts, args = getopt.getopt(sys.argv[1:], flags_courts,
+                    flags_longs)
         except getopt.GetoptError as err:
             print(err)
             sys.exit(1)
@@ -107,8 +111,19 @@ class ParserCMD(dict):
                     sys.exit(1)
                 else:
                     self["port"] = port
-
-
+            elif nom in ["-s", "--serveur"]:
+                # Les deux valeurs attendus sont :
+                # - on  : on lance le serveur
+                # - off : on ne lance pas le serveur
+                val = val.lower()
+                if val == "on":
+                    self["serveur"] = True
+                elif val == "off":
+                    self["serveur"] = False;
+                else:
+                    print("Précisez 'on' ou 'of' pour paramétrer le serveur.")
+                    sys.exit(1)
+    
     def help(self):
         """Méthode retournant l'aide. Si des options sont ajoutées dans
         l'interpréteur, les rajouter ici également.
@@ -121,4 +136,5 @@ class ParserCMD(dict):
             "-e, chemin-enregistrement\n" \
             "-h, help : affiche ce message d'aide\n" \
             "-l, chemin-logs\n" \
-            "-p, port : paramètre le port d'écoute du serveur")
+            "-p, port : paramètre le port d'écoute du serveur\n" \
+            "-s, serveur (on ou off) : lance ou arrête le serveur")

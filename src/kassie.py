@@ -134,6 +134,12 @@ port = config_globale.port
 if "port" in parser_cmd.keys():
     port = parser_cmd["port"]
 
+lancer_serveur = config_globale.serveur
+
+# Si le serveur est défini en ligne de commande
+if "serveur" in parser_cmd.keys():
+    lancer_serveur = parser_cmd["serveur"]
+
 # Vous pouvez changer les paramètres du serveur, tels que spécifiés dans
 # le constructeur de ServeurConnexion (voir reseau/connexions/serveur.py)
 # La plupart des informations se trouve dans la configuration globale
@@ -169,6 +175,10 @@ serveur.callbacks["deconnexion"].args = (serveur, importeur, log)
 serveur.callbacks["reception"].fonction = cb_reception
 serveur.callbacks["reception"].args = (serveur, importeur, log)
 
+# On précise au serveur qu'il doit s'arrêter si il est configuré pour
+if not lancer_serveur:
+    serveur.lance = False
+
 # On configure, initialise et prépare les modules
 importeur.tout_configurer()
 importeur.tout_initialiser()
@@ -184,4 +194,5 @@ while serveur.lance:
     serveur.verifier_connexions()
     serveur.verifier_receptions()
 
-arreter_MUD()
+if lancer_serveur:
+    arreter_MUD()
