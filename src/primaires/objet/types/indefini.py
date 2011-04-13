@@ -28,19 +28,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire objet."""
+"""Fichier contenant le type Indefini."""
 
-from abstraits.module import *
-import primaires.objet.types
+from .base import BaseType
 
-class Module(BaseModule):
+class Indefini(BaseType):
     
-    """Cette classe contient les informations du module primaire objet.
-    Ce module gère les objets de l'univers.
+    """Type d'objet: indéfini.
     
     """
     
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "diffact", "primaire")
-        self.objets = {}
+    nom_type = "indéfini"

@@ -28,19 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire objet."""
+"""Ce package contient les différents types d'objet, sous la forme
+d'une classe par fichier, héritée de BaseType (voir base.py).
 
-from abstraits.module import *
-import primaires.objet.types
+"""
 
-class Module(BaseModule):
+from abstraits.obase import MetaBaseObj
+
+types = {} # types d'objet {nom:classe}
+
+class MetaType(MetaBaseObj):
     
-    """Cette classe contient les informations du module primaire objet.
-    Ce module gère les objets de l'univers.
+    """Métaclasse des types d'objet.
+    Elle ajoute le type de l'objet dans le dictionnaire 'types' si il possède
+    un nom.
     
     """
     
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "diffact", "primaire")
-        self.objets = {}
+    def __init__(cls, nom, bases, contenu):
+        """Constructeur de la métaclasse"""
+        MetaBaseObj.__init__(cls, nom, bases, contenu)
+        if cls.nom_type:
+            types[cls.nom_type] = cls
+
+from .indefini import *

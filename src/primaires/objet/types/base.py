@@ -28,19 +28,28 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire objet."""
+"""Ce fichier contient la classe BaseType, détaillée plus bas."""
 
-from abstraits.module import *
-import primaires.objet.types
+from abstraits.id import ObjetID
+from primaires.format.description import Description
+from . import MetaType
 
-class Module(BaseModule):
+class BaseType(ObjetID, metaclass=MetaType):
     
-    """Cette classe contient les informations du module primaire objet.
-    Ce module gère les objets de l'univers.
+    """Classe abstraite représentant le type de base d'un objet.
+    Si des données doivent être communes à tous les types d'objet
+    (un objet a un nom, une description, quelque soit son type) c'est dans
+    cette classe qu'elles apparaissent.
     
     """
     
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "diffact", "primaire")
-        self.objets = {}
+    groupe = "objets"
+    sous_rep = "objets"
+    nom_type = "" # à redéfinir
+    def __init__(self, nom):
+        """Constructeur d'un type"""
+        ObjetID.__init__(self)
+        self.nom = nom
+        self.description = Description()
+
+ObjetID.ajouter_groupe(BaseType)
