@@ -43,6 +43,8 @@ class EdtSorties(Editeur):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
         self.ajouter_option("r", self.opt_renommer_sortie)
+        self.ajouter_option("s", self.opt_changer_sortie)
+        self.ajouter_option("d", self.opt_suppr_sortie)
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -113,6 +115,80 @@ class EdtSorties(Editeur):
             sortie.deduire_article()
             if article:
                 sortie.article = article
+            self.actualiser()
+    
+    def opt_changer_sortie(self, arguments):
+        """Modifie une sortie comme setexit
+        Le fonctionnement est le même, cette option permet de lier un sortie
+        à une salle.
+        Syntaxe :
+            /option nom / id_salle
+            
+        """
+        pass
+        
+        salle = self.objet
+        sorties = salle.sorties
+        try:
+            nom, id_salle = arguments.split(" / ")
+        except ValueError:
+            self.pere << "|err|La syntaxe est invalide pour cette " \
+                    "option.|ff|"
+            return
+        try:
+            nom = sorties.get_nom_long(nom)
+        except KeyError:
+            self.pere << "|err|La direction '{}' n'existe pas.|ff|".format(nom)
+            return
+        try:
+            d_salle = type(self).importeur.salle[id_salle]
+        except KeyError:
+            self.pere << \
+                "|err|L'identifiant '{}' n'est pas valide.|ff|".format(id_salle)
+            return
+        
+        dir_opposee = sorties.get_nom_oppose(nom)
+        if sorties.sortie_existe(nom):
+            self.pere << \
+                "|err|Cette direction a déjà été définie dans la salle " \
+                "courante.|ff|"
+            return
+        if d_salle.sorties.sortie_existe(dir_opposee):
+            self.pere << \
+                "|err|La direction opposée a déjà été définie dans {}.|ff|". \
+                format(d_salle.ident)
+            return
+        if salle is d_salle:
+            self.pere << \
+                "|err|La salle de destination est la même que la salle " \
+                "d'origine.|ff|"
+            return
+        
+        sorties.ajouter_sortie(nom, nom,
+                salle_dest=d_salle, corresp=dir_opposee)
+        d_salle.sorties.ajouter_sortie(dir_opposee, dir_opposee,
+                salle_dest=salle, corresp=nom)
+        self.actualiser()
+    
+    def opt_suppr_sortie(self, arguments):
+        """Supprime une sortie
+        Syntaxe :
+            /option nom
+        
+        """
+        salle = self.objet
+        sorties = salle.sorties
+        nom = arguments
+        
+        try:
+            d_salle = sorties[nom].salle_dest
+        except (KeyError, AttributeError):
+            self.pere << "|err|La sortie spécifiée n'existe pas.|ff|"
+        else:
+            dir_opposee = salle.sorties.get_nom_oppose(nom)
+            
+            d_salle.sorties.supprimer_sortie(dir_opposee)
+            salle.sorties.supprimer_sortie(nom)
             self.actualiser()
     
     def interpreter(self, msg):

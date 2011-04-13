@@ -72,6 +72,8 @@ class CmdRepondre(Commande):
                 res = ""
                 for couple in p_corresp:
                     res += "\n " + str(couple.id) + ". " + couple.cible.nom
+                    if couple.cible not in type(self).importeur.connex.joueurs_connectes:
+                        res += "(déconnecté)"
                 if not res:
                     personnage << "|err|Personne ne vous a parlé pour le " \
                             "moment.|ff|"
