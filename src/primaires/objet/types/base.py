@@ -46,11 +46,16 @@ class BaseType(ObjetID, metaclass=MetaType):
     groupe = "prototypes_objets"
     sous_rep = "objets/prototypes"
     nom_type = "" # à redéfinir
+    _nom = "base_type_objet"
+    _version = 1
     def __init__(self, identifiant=""):
         """Constructeur d'un type"""
         ObjetID.__init__(self)
         self.identifiant = identifiant
-        self.nom = ""
+        self.nom_singulier = ""
+        self.etat_singulier = ""
+        self.nom_pluriel = ""
+        self.etat_pluriel = ""
         self.description = Description(parent=self)
     
     def __getinitargs__(self):
