@@ -46,6 +46,7 @@ NOMS_VERS_ARTICLES = {
     
     # noms non usuels
     "porte": "la",
+    "escalier": "l'",
 }
 
 class Sortie(BaseObj):

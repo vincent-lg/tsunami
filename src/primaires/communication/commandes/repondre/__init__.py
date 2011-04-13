@@ -88,7 +88,8 @@ class CmdRepondre(Commande):
                             personnage << "|att|La réponse automatique a bien été " \
                                     "bloquée sur {}.|ff|".format(cible.nom)
                         else:
-                            personnage << "|err|Le focus est déjà sur {}.|ff|".format(cible.nom)
+                            personnage << "|err|Le focus est déjà sur {}.|ff|" \
+                                    .format(cible.nom)
         # Sinon
         else:
             message = dic_masques["message"].message
@@ -110,8 +111,8 @@ class CmdRepondre(Commande):
                         "moment.|ff|"
             else:
                 if cible not in type(self).importeur.connex.joueurs_connectes:
-                    personnage << "|err|Le joueur {} passé en paramètre n'a pu " \
-                            "être trouvé.|ff|".format(cible.nom)
+                    personnage << "|err|Le joueur {} passé en paramètre n'a " \
+                            "pu être trouvé.|ff|".format(cible.nom)
                 else:
                     couple = Correspondants(cible, personnage)
                     type(self).importeur.communication.correspondants \

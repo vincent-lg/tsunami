@@ -49,27 +49,24 @@ class EdtSorties(Editeur):
         salle = self.objet
         msg = "| |tit|" + "Edition des sorties de {}".format(salle).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
-        msg += "| " + "Direction".ljust(12) + " | "
-        msg += "Vers".ljust(12) + " | " + "Destination".ljust(12) + " | "
-        msg += "Réciproque".ljust(12) + " |"
+        msg += self.aide_courte
         
-        # Parcourt des sorties
+        # Parcours des sorties
         sorties = salle.sorties
-        for nom in NOMS_SORTIES:
+        for nom in NOMS_SORTIES.keys():
+            direction = "\n |ent|" + nom.ljust(10) + "|ff| :"
             sortie = sorties[nom]
-            msg += "\n| |ent|" + nom.ljust(12) + "|ff|"
-            nom_sortie = ""
-            destination = ""
-            reciproque = ""
             if sortie:
+                destination = ""
                 if sortie.nom != nom:
-                    nom_sortie = sortie.nom_complet
-                destination = str(sortie.salle_dest)
-                reciproque = sortie.correspondante
-            
-            msg += " | |ent|" + nom_sortie.ljust(12) + "|ff|"
-            msg += " | " + destination.ljust(12)
-            msg += " | " + reciproque.ljust(12) + " |"
+                    destination = " vers " + sortie.nom_complet + ""
+                    destination += " (|vr|" + str(sortie.salle_dest) + "|ff|)"
+                else:
+                    destination = " vers |vr|" + str(sortie.salle_dest) + "|ff|"
+                reciproque = ", réciproque : |cy|" + sortie.correspondante + "|ff|"
+                msg += direction
+                msg += destination
+                msg += reciproque
         
         return msg
     
