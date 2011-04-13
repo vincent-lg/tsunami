@@ -41,6 +41,7 @@ les extensions n'apparaîtront pas ici.
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from .edt_noms import EdtNoms
 
 class EdtOedit(Presentation):
     
@@ -66,6 +67,11 @@ class EdtOedit(Presentation):
     
     def construire(self, prototype):
         """Construction de l'éditeur"""
+        # Noms
+        noms = self.ajouter_choix("noms", "n", EdtNoms, prototype)
+        noms.parent = self
+        noms.apercu = "{objet.nom_singulier}"
+        
         # Description
         description = self.ajouter_choix("description", "d", Description, \
                 prototype)
