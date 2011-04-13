@@ -154,4 +154,4 @@ class EdtRedit(Presentation):
         sorties.parent = self
         sorties.aide_courte = \
             "Entrez le |ent|nom d'une sortie|ff| pour l'éditer ou " \
-            "|cmd|/|ff| pour revenir à la fenêtre parente."
+            "|cmd|/|ff| pour revenir à\nla fenêtre parente.\n"
