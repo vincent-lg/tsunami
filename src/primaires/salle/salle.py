@@ -37,8 +37,8 @@ from .coordonnees import Coordonnees
 from .sorties import Sorties, NOMS_SORTIES
 
 # Constantes
-ZONE_VALIDE = r"^[a-z0-9_]{3,15}$"
-MNEMONIC_VALIDE = r"^[a-z0-9_]{1,10}$"
+ZONE_VALIDE = r"^[a-z0-9_]{3,20}$"
+MNEMONIC_VALIDE = r"^[a-z0-9_]{1,15}$"
 
 class Salle(ObjetID):
     
