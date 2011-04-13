@@ -50,27 +50,27 @@ class EdtOedit(Presentation):
     
     nom = "oedit"
     
-    def __init__(self, personnage, pro_objet):
+    def __init__(self, personnage, prototype):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
         
-        Presentation.__init__(self, instance_connexion, objet)
-        if personnage and objet:
-            self.construire(objet)
+        Presentation.__init__(self, instance_connexion, prototype)
+        if personnage and prototype:
+            self.construire(prototype)
     
     def __getinitargs__(self):
         return (None, None)
     
-    def construire(self, objet):
+    def construire(self, prototype):
         """Construction de l'éditeur"""
         # Description
         description = self.ajouter_choix("description", "d", Description, \
-                objet)
+                prototype)
         description.parent = self
         description.apercu = "{objet.description.paragraphes_indentes}"
         description.aide_courte = \
-            "| |tit|" + "Description de l'objet {}".format(objet).ljust(76) + \
-            "|ff||\n" + self.opts.separateur
+            "| |tit|" + "Description de l'objet {}".format(prototype).ljust(
+            76) + "|ff||\n" + self.opts.separateur

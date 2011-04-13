@@ -46,7 +46,7 @@ class Ident(Masque):
     
     """
     
-    nom = "ident "
+    nom = "ident"
     
     def __init__(self):
         """Constructeur du masque"""

@@ -53,11 +53,13 @@ class CmdOedit(Commande):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         ident_objet = dic_masques["ident"].ident
-        if ident in type(self).importeur.objet.prototypes:
-            pro_objet = type(self).importeur.objet.prototypes[ident]
+        if ident_objet in type(self).importeur.objet.prototypes:
+            prototype = type(self).importeur.objet.prototypes[ident_objet]
+            print("écupération")
         else:
-            pro_objet = type(self).importeur.objet.creer_prototype(ident)
+            prototype = type(self).importeur.objet.creer_prototype(ident_objet)
+            print("Création")
         editeur = type(self).importeur.interpreteur.construire_editeur(
-                "oedit", personnage, objet)
+                "oedit", personnage, prototype)
         personnage.contextes.ajouter(editeur)
         editeur.actualiser()

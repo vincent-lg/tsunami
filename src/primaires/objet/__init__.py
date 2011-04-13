@@ -34,6 +34,7 @@ from abstraits.module import *
 import primaires.objet.types
 import primaires.objet.commandes
 import primaires.objet.editeurs
+from .editeurs.oedit import EdtOedit
 from .types import types as o_types
 from .types.base import BaseType
 
@@ -58,6 +59,18 @@ class Module(BaseModule):
         
         print(self.prototypes)
         BaseModule.init(self)
+    
+    def ajouter_commandes(self):
+        """Ajout des commandes dans l'interpréteur"""
+        self.commandes = [
+            commandes.oedit.CmdOedit(),
+        ]
+        
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)
+        
+        # Ajout de l'éditeur 'redit'
+        self.importeur.interpreteur.ajouter_editeur(EdtOedit)
     
     @property
     def prototypes(self):

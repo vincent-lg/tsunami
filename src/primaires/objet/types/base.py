@@ -51,7 +51,7 @@ class BaseType(ObjetID, metaclass=MetaType):
         ObjetID.__init__(self)
         self.identifiant = identifiant
         self.nom = ""
-        self.description = Description()
+        self.description = Description(parent=self)
     
     def __getinitargs__(self):
         return ()
