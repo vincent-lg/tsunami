@@ -154,8 +154,9 @@ importeur.tout_charger()
 importeur.tout_instancier()
 
 # Initialisation du serveur
-serveur.init() # le socket serveur se met en écoute
-log.info("Le serveur est à présent en écoute sur le port {0}".format(port))
+if lancer_serveur:
+    serveur.init() # le socket serveur se met en écoute
+    log.info("Le serveur est à présent en écoute sur le port {0}".format(port))
 
 # Configuration des fonctions de callback
 # Note: si vous souhaitez modifier le comportement en cas de connexion
