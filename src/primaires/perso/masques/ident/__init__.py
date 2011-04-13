@@ -28,7 +28,45 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module perso."""
+"""Fichier contenant le masque <ident>."""
 
-import primaires.perso.masques.commande
-import primaires.perso.masques.ident
+import re
+
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+
+RE_IDENT_VALIDE = r"^[a-z0-9_]{3,15}$"
+
+class Ident(Masque):
+    
+    """Masque <ident>.
+    On attend un identifiant en paramètre (voir RE_IDENT_VALIDE).
+    
+    """
+    
+    nom = "ident "
+    
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self)
+        self.nom_complet = "clé identifiante"
+        self.ident = ""
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        ident = liste_vers_chaine(commande).lstrip()
+        
+        if not ident:
+            raise ErreurValidation( \
+                "Précisez une clé identifiante.")
+        
+        ident = ident.lower()
+        if not re.search(RE_IDENT_VALIDE, ident):
+            raise ErreurValidation(
+                "|err|Cette clé identifiante est invalide.|ff|")
+        
+        self.ident = ident
+        
+        return True

@@ -28,32 +28,49 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe BaseType, détaillée plus bas."""
+"""Package contenant l'éditeur 'oedit'.
+Si des redéfinitions de contexte-éditeur standard doivent être faites, elles
+seront placées dans ce package
 
-from abstraits.id import ObjetID
-from primaires.format.description import Description
-from . import MetaType
+Note importante : ce package contient la définition d'un éditeur, mais
+celui-ci peut très bien être étendu par d'autres modules. Au quel cas,
+les extensions n'apparaîtront pas ici.
 
-class BaseType(ObjetID, metaclass=MetaType):
+"""
+
+from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.description import Description
+from primaires.interpreteur.editeur.uniligne import Uniligne
+
+class EdtOedit(Presentation):
     
-    """Classe abstraite représentant le type de base d'un objet.
-    Si des données doivent être communes à tous les types d'objet
-    (un objet a un nom, une description, quelque soit son type) c'est dans
-    cette classe qu'elles apparaissent.
+    """Classe définissant l'éditeur d'objet 'oedit'.
     
     """
     
-    groupe = "prototypes_objets"
-    sous_rep = "objets/prototypes"
-    nom_type = "" # à redéfinir
-    def __init__(self, identifiant=""):
-        """Constructeur d'un type"""
-        ObjetID.__init__(self)
-        self.identifiant = identifiant
-        self.nom = ""
-        self.description = Description()
+    nom = "oedit"
+    
+    def __init__(self, personnage, pro_objet):
+        """Constructeur de l'éditeur"""
+        if personnage:
+            instance_connexion = personnage.instance_connexion
+        else:
+            instance_connexion = None
+        
+        Presentation.__init__(self, instance_connexion, objet)
+        if personnage and objet:
+            self.construire(objet)
     
     def __getinitargs__(self):
-        return ()
-
-ObjetID.ajouter_groupe(BaseType)
+        return (None, None)
+    
+    def construire(self, objet):
+        """Construction de l'éditeur"""
+        # Description
+        description = self.ajouter_choix("description", "d", Description, \
+                objet)
+        description.parent = self
+        description.apercu = "{objet.description.paragraphes_indentes}"
+        description.aide_courte = \
+            "| |tit|" + "Description de l'objet {}".format(objet).ljust(76) + \
+            "|ff||\n" + self.opts.separateur

@@ -28,7 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module perso."""
+"""Package contenant les différents éditeurs"""
 
-import primaires.perso.masques.commande
-import primaires.perso.masques.ident
+from . import oedit

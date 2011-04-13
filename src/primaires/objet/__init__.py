@@ -32,6 +32,10 @@
 
 from abstraits.module import *
 import primaires.objet.types
+import primaires.objet.commandes
+import primaires.objet.editeurs
+from .types import types as o_types
+from .types.base import BaseType
 
 class Module(BaseModule):
     
@@ -43,4 +47,47 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "diffact", "primaire")
-        self.objets = {}
+        self._prototypes = {}
+        self._objets = {}
+    
+    def init(self):
+        """Initialisation du module"""
+        prototypes = self.importeur.supenr.charger_groupe(BaseType)
+        for prototype in prototypes:
+            self._prototypes[prototype.identifiant] = prototype
+        
+        print(self.prototypes)
+        BaseModule.init(self)
+    
+    @property
+    def prototypes(self):
+        return dict(self._prototypes)
+    
+    @property
+    def objets(self):
+        return dict(self._objets)
+    
+    def creer_prototype(self, identifiant, nom_type="indéfini"):
+        """Crée un prototype et l'ajoute aux prototypes existants"""
+        if identifiant in self._prototypes:
+            raise ValueError("l'identifiant {} est déjà utilisé comme " \
+                    "prototype".format(identifiant))
+        
+        cls_type = o_types[nom_type]
+        prototype = cls_type(identifiant)
+        self.ajouter_prototype(prototype)
+        return prototype
+    
+    def ajouter_prototype(self, prototype):
+        """Ajoute un prototype au dictionnaire des prototypes"""
+        if prototype.identifiant in self._prototypes:
+            raise ValueError("l'identifiant {} est déjà utilisé comme " \
+                    "prototype".format(identifiant))
+        
+        self._prototypes[prototype.identifiant] = prototype
+    
+    def supprimer_prototypes(self, identifiant):
+        """Supprime le prototype identifiant"""
+        prototype = self._prototypes[identifiant]
+        del self._prototypes[identifiant]
+        prototype.detruire()
