@@ -30,6 +30,8 @@
 
 """Fichier contenant le module primaire interpreteur."""
 
+from collections import OrderedDict
+
 from abstraits.module import *
 from primaires.interpreteur.contexte import Contexte, contextes
 from .editeur import Editeur
@@ -112,14 +114,13 @@ class Module(BaseModule):
             groupe_precedent = nom_groupe
         
         # On crée les catégories de commandes
-        self.categories = {
-            "divers" : "Commandes générales",
-            "parler" : "Communication",
-            "bouger" : "Mobilité et aide au déplacement",
-            "groupes" : "Manipulation des groupes et modules",
-            "batisseur" : "Commandes de création",
-            "bugs" : "Manipulation et rapport de bug"
-        }
+        self.categories = OrderedDict()
+        self.categories["divers"] = "Commandes générales"
+        self.categories["parler"] = "Communication"
+        self.categories["bouger"] = "Mobilité et aide au déplacement"
+        self.categories["groupes"] = "Manipulation des groupes et modules"
+        self.categories["bugs"] = "Manipulation et rapport de bug"
+        self.categories["batisseur"] = "Commandes de création"
         
         BaseModule.init(self)
     
