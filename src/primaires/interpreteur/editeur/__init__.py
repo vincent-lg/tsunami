@@ -36,7 +36,7 @@ Elle est détaillée plus bas.
 
 from primaires.format.fonctions import *
 from ..contexte import Contexte, RCI_PREC
-from .env_objet import EnvelopeObjet
+from .env_objet import EnveloppeObjet
 
 class Editeur(Contexte):
     
@@ -131,7 +131,7 @@ class Editeur(Contexte):
             option = mots[0][1:]
             arguments = " ".join(mots[1:])
             if option not in self.options.keys():
-                emt << "|err|Option invalide {}.|ff|".format(option)
+                emt << "|err|Option invalide ({}).|ff|".format(option)
             else: # On appelle la fonction correspondante à l'option
                 fonction = self.options[option]
                 fonction(arguments)

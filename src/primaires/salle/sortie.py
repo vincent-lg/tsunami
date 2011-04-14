@@ -76,6 +76,9 @@ class Sortie(BaseObj):
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
     
+    def __str__(self):
+        return self.nom
+    
     def __getinitargs__(self):
         return ("", "")
     

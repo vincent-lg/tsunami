@@ -28,14 +28,14 @@
 # pereIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit la classe 'envelope_objet' détaillée lus bas."""
+"""Ce fichier définit la classe 'enveloppe_objet' détaillée lus bas."""
 
 from abstraits.obase import BaseObj
 
-class EnvelopeObjet(BaseObj):
+class EnveloppeObjet(BaseObj):
     
-    """Cette classe définit une envelope contenant :
-    -   l'éditeur (une zone de texte uniligne, multi-ligne, une lsite...)
+    """Cette classe définit une enveloppe contenant :
+    -   l'éditeur (une zone de texte uniligne, multi-ligne, une liste...)
     -   l'édité : l'objet qui doit êre édité
     -   l'attribut : l'attribut qui doit être modifié
     
@@ -43,13 +43,13 @@ class EnvelopeObjet(BaseObj):
     l'éditeur :
     -   l'aide courte : un message d'aide courte, affiché directement
         dans l'accueil
-    -   aide longue : un message plus long affiché quand on demande de
+    -   l'aide longue : un message plus long affiché quand on demande de
         l'aide sur l'éditeur
     
     """
     
     def __init__(self, editeur, edite, attribut):
-        """Constructeur de l'envelope"""
+        """Constructeur de l'enveloppe"""
         BaseObj.__init__(self)
         self.editeur = editeur
         self.objet = edite
@@ -63,7 +63,7 @@ class EnvelopeObjet(BaseObj):
     def __getinitargs__(self):
         return (None, None, None)
     
-    def construire(self,pere):
+    def construire(self, pere):
         """Retourne l'éditeur construit"""
         editeur = self.editeur(pere, self.objet, self.attribut)
         if self.parent:

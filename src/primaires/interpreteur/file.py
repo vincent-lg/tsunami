@@ -38,7 +38,7 @@ from abstraits.obase import BaseObj
 
 class FileContexte(BaseObj):
     """Cette classe définie une file d'attente des contextes.
-    C'est une classe envelope de liste. On interragit avec cette
+    C'est une classe enveloppe de liste. On interragit avec cette
     classe qu'avec plusieurs méthodes :
         ajouter(self, objet) -- ajoute l'objet en tête de file
         retirer(self)        -- retire l'objet en tête de file et le retourne

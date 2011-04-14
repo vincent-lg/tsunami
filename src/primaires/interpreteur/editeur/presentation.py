@@ -33,7 +33,7 @@
 from collections import OrderedDict
 from . import Editeur
 from .quitter import Quitter
-from .env_objet import EnvelopeObjet
+from .env_objet import EnveloppeObjet
 
 class Presentation(Editeur):
     
@@ -86,9 +86,8 @@ class Presentation(Editeur):
                 "Le raccourci {} est déjà utilisé dans cet éditeur".format(
                 raccourci))
         
-        envelope = EnvelopeObjet(objet_editeur, objet_edite,
-                attribut)
-        self.choix[nom] = envelope
+        enveloppe = EnveloppeObjet(objet_editeur, objet_edite, attribut)
+        self.choix[nom] = enveloppe
         passage_apres = False
         for cle in tuple(self.choix.keys()):
             if passage_apres and cle != nom:
@@ -97,7 +96,7 @@ class Presentation(Editeur):
                 passage_apres = True
         
         self.raccourcis[raccourci] = nom
-        return envelope
+        return enveloppe
 
     def ajouter_choix_avant(self, avant, nom, raccourci, objet_editeur,
             objet_edite=None, attribut=None):
@@ -110,9 +109,8 @@ class Presentation(Editeur):
                 "Le raccourci {} est déjà utilisé dans cet éditeur".format(
                 raccourci))
         
-        envelope = EnvelopeObjet(objet_editeur, objet_edite,
-                attribut)
-        self.choix[nom] = envelope
+        enveloppe = EnveloppeObjet(objet_editeur, objet_edite, attribut)
+        self.choix[nom] = enveloppe
         passage_apres = False
         for cle in tuple(self.choix.keys()):
             if cle == avant:
@@ -121,7 +119,7 @@ class Presentation(Editeur):
                 self.choix.move_to_end(cle)
         
         self.raccourcis[raccourci] = nom
-        return envelope
+        return enveloppe
 
     def supprimer_choix(self, nom):
         """Supprime le choix possible 'nom'"""
@@ -158,9 +156,10 @@ class Presentation(Editeur):
     def interpreter(self, msg):
         """Interprétation de la présentation"""
         try:
-            nom = self.raccourcis[msg.lower()]
+            nom = self.raccourcis[msg.rstrip().lower()]
         except KeyError:
-            self.pere << "|err|Raccourci inconnu ({}).|ff|".format(msg)
+            if msg:
+                self.pere << "|err|Raccourci inconnu ({}).|ff|".format(msg)
         else:
             contexte = self.choix[nom].construire(self.pere)
             self.migrer_contexte(contexte)

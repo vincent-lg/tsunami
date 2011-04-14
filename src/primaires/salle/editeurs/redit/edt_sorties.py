@@ -28,10 +28,12 @@
 # pereIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit le contexte-éditeur 'edt_sortie'."""
+"""Ce fichier définit le contexte-éditeur 'edt_sorties'."""
 
 from primaires.interpreteur.editeur import Editeur
+from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
 from primaires.salle.sorties import NOMS_SORTIES
+from .edt_sortie import EdtSortie
 
 class EdtSorties(Editeur):
     
@@ -76,7 +78,7 @@ class EdtSorties(Editeur):
     def opt_renommer_sortie(self, arguments):
         """Renomme une sortie en un autre nom
         La syntaxe pour renommer une sortie est :
-            /option ancien_nom / nouveau nom (/ article)
+            /r ancien_nom / nouveau nom (/ article)
         
         """
         salle = self.objet
@@ -122,8 +124,7 @@ class EdtSorties(Editeur):
         """Modifie une sortie comme setexit
         Le fonctionnement est le même, cette option permet de lier un sortie
         à une salle.
-        Syntaxe :
-            /option nom / id_salle
+        Syntaxe : /s nom / id_salle
             
         """
         pass
@@ -173,8 +174,7 @@ class EdtSorties(Editeur):
     
     def opt_suppr_sortie(self, arguments):
         """Supprime une sortie
-        Syntaxe :
-            /option nom
+        Syntaxe : /d nom
         
         """
         salle = self.objet
@@ -194,4 +194,15 @@ class EdtSorties(Editeur):
     
     def interpreter(self, msg):
         """Interprétation de la présentation"""
-        pass
+        salle = self.objet
+        sorties = salle.sorties
+        
+        try:
+            sortie = sorties[msg]
+        except (KeyError, AttributeError):
+            self.pere << "|err|La sortie spécifiée n'existe pas.|ff|"
+        else:
+            enveloppe = EnveloppeObjet(EdtSortie, sortie, None)
+            enveloppe.parent = self
+            contexte = enveloppe.construire(self.pere)
+            self.migrer_contexte(contexte)
