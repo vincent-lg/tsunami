@@ -103,7 +103,7 @@ class Module(BaseModule):
     
     def traiter_commande(self, personnage, commande):
         """Traite les commandes au premier niveau"""
-        pass
+        return False # à retirer pour ouvrir, une fois stable
         
         if commande.startswith("+"):
             self.rejoindre_ou_creer(personnage, commande[1:])
