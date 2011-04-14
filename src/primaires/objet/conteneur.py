@@ -28,40 +28,51 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe BaseType, détaillée plus bas."""
+"""Ce fichier contient la classe ConteneurObjet, détaillée plus bas."""
 
-from abstraits.id import ObjetID
+from abstraits.obase import BaseObj
 from bases.collections.liste_id import ListeID
-from primaires.format.description import Description
-from . import MetaType
 
-class BaseType(ObjetID, metaclass=MetaType):
+class ConteneurObjet(BaseObj):
     
-    """Classe abstraite représentant le type de base d'un objet.
-    Si des données doivent être communes à tous les types d'objet
-    (un objet a un nom, une description, quelque soit son type) c'est dans
-    cette classe qu'elles apparaissent.
+    """Conteneur standard d'objet.
+    Cette classe peut être héritée (le sol d'une salle par exemple est un conteneur d'objet hérité) ou utilisée telle qu'elle.
     
     """
     
-    groupe = "prototypes_objets"
-    sous_rep = "objets/prototypes"
-    nom_type = "" # à redéfinir
-    _nom = "base_type_objet"
-    _version = 1
-    def __init__(self, identifiant=""):
-        """Constructeur d'un type"""
-        ObjetID.__init__(self)
-        self.identifiant = identifiant
-        self.no = 0 # nombre d'objets créés sur ce prototype
-        self.nom_singulier = ""
-        self.etat_singulier = ""
-        self.nom_pluriel = ""
-        self.etat_pluriel = ""
-        self.description = Description(parent=self)
-        self.objets = ListeID()
+    def __init__(self, parent=None):
+        """Constructeur du conteneur"""
+        BaseObj.__init__(self)
+        self._objets = []
+        self.parent = parent
     
     def __getinitargs__(self):
         return ()
-
-ObjetID.ajouter_groupe(BaseType)
+    
+    def __iter__(self):
+        """Itérateur"""
+        return iter(self._objets)
+    
+    def ajouter_objet(self, objet):
+        """On ajoute l'objet dans le conteneur"""
+        if objet not in self._objets:
+            self._objets.append(objet)
+        else:
+            raise ValueError("le conteneur {} contient déjà l'objet " \
+                    "{}".format(self, objet))
+        
+        if self.parent:
+            print("On enregistre la salle")
+            self.parent.enregistrer()
+    
+    def retirer_objet(self, objet):
+        """On retire l'objet du conteneur"""
+        if objet in self._objets:
+            self._objets.remove(objet)
+        else:
+            raise ValueError("le conteneur {} ne contient pas l'objet " \
+                    "{}".format(self, objet))
+        
+        if self.parent:
+            print("On enregistre la salle")
+            self.parent.enregistrer()

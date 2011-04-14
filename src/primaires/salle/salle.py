@@ -35,6 +35,7 @@ from bases.collections.liste_id import ListeID
 from primaires.format.description import Description
 from .coordonnees import Coordonnees
 from .sorties import Sorties, NOMS_SORTIES
+from .objets_sol import ObjetsSol
 
 # Constantes
 ZONE_VALIDE = r"^[a-z0-9_]{3,20}$"
@@ -80,6 +81,7 @@ class Salle(ObjetID):
         self.description = Description(parent=self)
         self.sorties = Sorties(parent=self)
         self._personnages = ListeID() # personnages présents
+        self.objets_sol = ObjetsSol(parent=self)
     
     def __getinitargs__(self):
         return ("", "")

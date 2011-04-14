@@ -28,40 +28,17 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe BaseType, détaillée plus bas."""
+"""Fichier contenant la classe Sol détaillée plus bas."""
 
-from abstraits.id import ObjetID
-from bases.collections.liste_id import ListeID
-from primaires.format.description import Description
-from . import MetaType
+from primaires.objet.conteneur import ConteneurObjet
 
-class BaseType(ObjetID, metaclass=MetaType):
+class ObjetsSol(ConteneurObjet):
     
-    """Classe abstraite représentant le type de base d'un objet.
-    Si des données doivent être communes à tous les types d'objet
-    (un objet a un nom, une description, quelque soit son type) c'est dans
-    cette classe qu'elles apparaissent.
+    """Classe faisant référence au sol d'une salle, sur lequel se trouve des
+    objets.
+    
+    Elle hérite donc de ConteneurObjet.
     
     """
     
-    groupe = "prototypes_objets"
-    sous_rep = "objets/prototypes"
-    nom_type = "" # à redéfinir
-    _nom = "base_type_objet"
-    _version = 1
-    def __init__(self, identifiant=""):
-        """Constructeur d'un type"""
-        ObjetID.__init__(self)
-        self.identifiant = identifiant
-        self.no = 0 # nombre d'objets créés sur ce prototype
-        self.nom_singulier = ""
-        self.etat_singulier = ""
-        self.nom_pluriel = ""
-        self.etat_pluriel = ""
-        self.description = Description(parent=self)
-        self.objets = ListeID()
-    
-    def __getinitargs__(self):
-        return ()
-
-ObjetID.ajouter_groupe(BaseType)
+    pass

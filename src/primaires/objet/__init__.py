@@ -37,6 +37,7 @@ import primaires.objet.editeurs
 from .editeurs.oedit import EdtOedit
 from .types import types as o_types
 from .types.base import BaseType
+from .objet import Objet
 
 class Module(BaseModule):
     
@@ -95,7 +96,7 @@ class Module(BaseModule):
         """Ajoute un prototype au dictionnaire des prototypes"""
         if prototype.identifiant in self._prototypes:
             raise ValueError("l'identifiant {} est déjà utilisé comme " \
-                    "prototype".format(identifiant))
+                    "prototype".format(prototype.identifiant))
         
         self._prototypes[prototype.identifiant] = prototype
     
@@ -104,3 +105,25 @@ class Module(BaseModule):
         prototype = self._prototypes[identifiant]
         del self._prototypes[identifiant]
         prototype.detruire()
+    
+    def creer_objet(self, prototype):
+        """Crée un objet depuis le prototype prototype.
+        L'objet est ensuite ajouté à la liste des objets existants.
+        
+        """
+        objet = Objet(prototype)
+        self.ajouter_objet(objet)
+    
+    def ajouter_objet(self, objet):
+        """Ajoute l'objet à la liste des objets"""
+        if objet.identifiant in self._objets:
+            raise ValueError("l'identifiant {} est déjà utilisé comme " \
+                    "objet".format(objet.identifiant))
+        
+        self._objets[objet.identifiant] = objet
+    
+    def supprimer_objet(self, identifiant):
+        """Supprime l'objet de la liste des objets"""
+        objet = self._objets[identifiant]
+        del self._objets[identifiant]
+        objet.detruire()
