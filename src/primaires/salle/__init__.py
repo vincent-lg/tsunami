@@ -157,11 +157,13 @@ class Module(BaseModule):
         On vérifie que :
         -   les personnages présents dans self._personnages soient
             toujours là
+        -   les objets du sol existent toujours
         
         """
         for salle in self._salles.values():
             salle._personnages.supprimer_doublons()
             salle._personnages.supprimer_none()
+            salle.objets_sol.nettoyer()
             for personnage in salle.personnages:
                 if personnage.salle is not salle:
                     salle.retirer_personnage(personnage)

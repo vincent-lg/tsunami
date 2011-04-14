@@ -63,5 +63,28 @@ class BaseType(ObjetID, metaclass=MetaType):
     
     def __getinitargs__(self):
         return ()
+    
+    def get_nom(self, nombre):
+        """Retourne le nom complet en fonction du nombre.
+        Par exemple :
+        Si nombre == 1 : retourne le nom singulier
+        Sinon : retourne le nombre et le nom pluriel
+        
+        """
+        if nombre <= 0:
+            raise valueError("la focntion get_nom_pluriel a été appelée " \
+                    "avec un  nombre négatif ou nul.")
+        elif nombre == 1:
+            return self.nom_singulier
+        else:
+            return str(nombre) + " " + self.nom_pluriel
+    
+    def get_nom_etat(self, nombre):
+        """Retourne le nom et l'état en fonction du nombre."""
+        nom = self.get_nom(nombre)
+        if nombre == 1:
+            return nom + " " + self.etat_singulier
+        else:
+            return nom + " " + self.etat_pluriel
 
 ObjetID.ajouter_groupe(BaseType)

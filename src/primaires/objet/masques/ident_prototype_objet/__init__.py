@@ -28,39 +28,43 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'oedit'."""
+"""Fichier contenant le masque <ident_objet>."""
 
-from primaires.interpreteur.commande.commande import Commande
-from primaires.interpreteur.editeur.presentation import Presentation
-from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
 
-class CmdOedit(Commande):
+class IdentPrototypeObjet(Masque):
     
-    """Commande 'oedit'"""
+    """Masque <ident_prototype_objet>.
+    On attend un identifiant de prototype en paramètre.
+    
+    """
+    
+    nom = "ident_prototype_objet"
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "oedit", "oedit")
-        self.groupe = "administrateur"
-        self.schema = "<ident>"
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "ouvre l'éditeur d'objet"
-        self.aide_longue = \
-            "Cette commande permet d'accéder à l'éditeur d'objet. Elle " \
-            "prend en paramètre l'identifiant de l'objet (que des " \
-            "minuscules, des chiffres et le signe |ent|_|ff|). Si l'objet " \
-            "n'existe pas, il est créé."
+        """Constructeur du masque"""
+        Masque.__init__(self)
+        self.nom_complet = "prototype d'objet"
+        self.ident = ""
+        self.prototype = None
     
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        ident_objet = dic_masques["ident"].ident
-        if ident_objet in type(self).importeur.objet.prototypes:
-            prototype = type(self).importeur.objet.prototypes[ident_objet]
-            print("écupération")
-        else:
-            prototype = type(self).importeur.objet.creer_prototype(ident_objet)
-            print("Création")
-        editeur = type(self).importeur.interpreteur.construire_editeur(
-                "oedit", personnage, prototype)
-        personnage.contextes.ajouter(editeur)
-        editeur.actualiser()
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        ident = liste_vers_chaine(commande).lstrip()
+        
+        if not ident:
+            raise ErreurValidation( \
+                "Précisez un prototype d'objet.")
+        
+        ident = ident.lower()
+        if not ident in type(self).importeur.objet.prototypes:
+            raise ErreurValidation(
+                "|err|Ce prototype est introuvable.|ff|")
+        
+        self.prototype = type(self).importeur.objet.prototypes[ident]
+        self.ident = ident
+        
+        return True

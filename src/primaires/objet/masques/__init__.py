@@ -28,39 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'oedit'."""
+"""Package des masques du module perso."""
 
-from primaires.interpreteur.commande.commande import Commande
-from primaires.interpreteur.editeur.presentation import Presentation
-from primaires.interpreteur.editeur.uniligne import Uniligne
-
-class CmdOedit(Commande):
-    
-    """Commande 'oedit'"""
-    
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "oedit", "oedit")
-        self.groupe = "administrateur"
-        self.schema = "<ident>"
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "ouvre l'éditeur d'objet"
-        self.aide_longue = \
-            "Cette commande permet d'accéder à l'éditeur d'objet. Elle " \
-            "prend en paramètre l'identifiant de l'objet (que des " \
-            "minuscules, des chiffres et le signe |ent|_|ff|). Si l'objet " \
-            "n'existe pas, il est créé."
-    
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        ident_objet = dic_masques["ident"].ident
-        if ident_objet in type(self).importeur.objet.prototypes:
-            prototype = type(self).importeur.objet.prototypes[ident_objet]
-            print("écupération")
-        else:
-            prototype = type(self).importeur.objet.creer_prototype(ident_objet)
-            print("Création")
-        editeur = type(self).importeur.interpreteur.construire_editeur(
-                "oedit", personnage, prototype)
-        personnage.contextes.ajouter(editeur)
-        editeur.actualiser()
+from . import ident_prototype_objet

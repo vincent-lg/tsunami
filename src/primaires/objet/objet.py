@@ -72,10 +72,14 @@ class Objet(ObjetID):
         """Constructeur de l'objet"""
         ObjetID.__init__(self)
         self.prototype = prototype
-        self.identifiant = prototype.identifiant + "_" + str(
-                prototype.no)
-        prototype.no += 1
-        prototype.objets.append(objet)
+        if prototype:
+            self.identifiant = prototype.identifiant + "_" + str(
+                    prototype.no)
+            prototype.no += 1
+            prototype.objets.append(self)
+    
+    def __getinitargs__(self):
+        return (None, )
     
     def __getattr__(self, nom_attr):
         """Si le nom d'attribut n'est pas trouvé, le chercher
@@ -90,3 +94,5 @@ class Objet(ObjetID):
         if self in self.prototypes.objets:
             self.prototypes.objets.remove(self)
         ObjetID.detruire(self)
+
+ObjetID.ajouter_groupe(Objet)

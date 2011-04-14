@@ -31,9 +31,10 @@
 """Fichier contenant le module primaire objet."""
 
 from abstraits.module import *
-import primaires.objet.types
-import primaires.objet.commandes
-import primaires.objet.editeurs
+from . import types
+from . import commandes
+from . import editeurs
+from . import masques
 from .editeurs.oedit import EdtOedit
 from .types import types as o_types
 from .types.base import BaseType
@@ -58,13 +59,22 @@ class Module(BaseModule):
         for prototype in prototypes:
             self._prototypes[prototype.identifiant] = prototype
         
-        print(self.prototypes)
+        objets = self.importeur.supenr.charger_groupe(Objet)
+        for objet in objets:
+            self._objets[objet.identifiant] = objet
+        
         BaseModule.init(self)
+    
+    def ajouter_masques(self):
+        """Ajout des masques dans l'interpréteur"""
+        self.importeur.interpreteur.ajouter_masque(
+                masques.ident_prototype_objet.IdentPrototypeObjet)
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.oedit.CmdOedit(),
+            commandes.ospawn.CmdOspawn(),
         ]
         
         for cmd in self.commandes:
@@ -72,6 +82,11 @@ class Module(BaseModule):
         
         # Ajout de l'éditeur 'redit'
         self.importeur.interpreteur.ajouter_editeur(EdtOedit)
+    
+    def preparer(self):
+        """Préparation du module"""
+        for prototype in self.prototypes.values():
+            prototype.objets.supprimer_none()
     
     @property
     def prototypes(self):
@@ -113,6 +128,7 @@ class Module(BaseModule):
         """
         objet = Objet(prototype)
         self.ajouter_objet(objet)
+        return objet
     
     def ajouter_objet(self, objet):
         """Ajoute l'objet à la liste des objets"""

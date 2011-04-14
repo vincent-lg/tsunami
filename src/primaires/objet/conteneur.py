@@ -40,10 +40,12 @@ class ConteneurObjet(BaseObj):
     
     """
     
+    _nom = "objet_conteneur"
+    _version = 1
     def __init__(self, parent=None):
         """Constructeur du conteneur"""
         BaseObj.__init__(self)
-        self._objets = []
+        self._objets = ListeID()
         self.parent = parent
     
     def __getinitargs__(self):
@@ -53,7 +55,7 @@ class ConteneurObjet(BaseObj):
         """Itérateur"""
         return iter(self._objets)
     
-    def ajouter_objet(self, objet):
+    def ajouter(self, objet):
         """On ajoute l'objet dans le conteneur"""
         if objet not in self._objets:
             self._objets.append(objet)
@@ -65,7 +67,7 @@ class ConteneurObjet(BaseObj):
             print("On enregistre la salle")
             self.parent.enregistrer()
     
-    def retirer_objet(self, objet):
+    def retirer(self, objet):
         """On retire l'objet du conteneur"""
         if objet in self._objets:
             self._objets.remove(objet)
@@ -76,3 +78,8 @@ class ConteneurObjet(BaseObj):
         if self.parent:
             print("On enregistre la salle")
             self.parent.enregistrer()
+    
+    def nettoyer(self):
+        """Nettoie la liste des doublons et None"""
+        self._objets.supprimer_none()
+        self._objets.supprimer_doublons()

@@ -31,3 +31,4 @@
 """Package contenant les commandes du module salle."""
 
 import primaires.objet.commandes.oedit
+import primaires.objet.commandes.ospawn
