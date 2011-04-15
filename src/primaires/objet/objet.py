@@ -91,8 +91,8 @@ class Objet(ObjetID):
     
     def detruire(self):
         """Destruction de l'objet"""
-        if self in self.prototypes.objets:
-            self.prototypes.objets.remove(self)
+        if self in self.prototype.objets:
+            self.prototype.objets.remove(self)
         ObjetID.detruire(self)
 
 ObjetID.ajouter_groupe(Objet)

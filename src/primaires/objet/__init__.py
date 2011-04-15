@@ -74,6 +74,7 @@ class Module(BaseModule):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.oedit.CmdOedit(),
+            commandes.opurge.CmdOpurge(),
             commandes.ospawn.CmdOspawn(),
         ]
         
