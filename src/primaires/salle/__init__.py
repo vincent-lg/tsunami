@@ -36,7 +36,7 @@ from abstraits.module import *
 from .salle import Salle, ZONE_VALIDE, MNEMONIC_VALIDE
 from .sorties import NOMS_SORTIES
 from .config import cfg_salle
-import primaires.salle.commandes
+from . import commandes
 from .editeurs.redit import EdtRedit
 from .coordonnees import Coordonnees
 from . import masques
@@ -134,6 +134,8 @@ class Module(BaseModule):
                 masques.nv_ident.NvIdent)
         self.importeur.interpreteur.ajouter_masque(
                 masques.ident.Ident)
+        self.importeur.interpreteur.ajouter_masque(
+                masques.observable.Observable)
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""

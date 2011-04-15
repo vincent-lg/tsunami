@@ -54,10 +54,10 @@ class BaseType(ObjetID, metaclass=MetaType):
         ObjetID.__init__(self)
         self.identifiant = identifiant
         self.no = 0 # nombre d'objets créés sur ce prototype
-        self.nom_singulier = ""
-        self.etat_singulier = ""
-        self.nom_pluriel = ""
-        self.etat_pluriel = ""
+        self.nom_singulier = "un objet indéfini"
+        self.etat_singulier = "objets indéfinis"
+        self.nom_pluriel = "est posé là"
+        self.etat_pluriel = "sont posés là"
         self.description = Description(parent=self)
         self.objets = ListeID()
     
@@ -86,5 +86,19 @@ class BaseType(ObjetID, metaclass=MetaType):
             return nom + " " + self.etat_singulier
         else:
             return nom + " " + self.etat_pluriel
+    
+    # Actions sur les objets
+    def regarder(self, personnage):
+        """Le personnage regarde l'objet"""
+        salle = personnage.salle
+        moi = "Vous regardez {} :".format(self.nom_singulier)
+        autre = "{} regarde {}.".format(personnage.nom, self.nom_singulier)
+        description = str(self.description)
+        if not description:
+            description = "Il n'y a rien de bien intéressant à voir."
+        
+        moi += "\n\n" + description
+        salle.envoyer(autre, (personnage, ))
+        return moi
 
 ObjetID.ajouter_groupe(BaseType)

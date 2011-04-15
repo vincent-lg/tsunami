@@ -68,9 +68,6 @@ class Description(BaseObj):
             paragraphe = paragraphe.replace("|nl|", "\n")
             res.append(paragraphe)
         
-        if not res:
-            res.append("Vous êtes au milieu de nulle part.")
-        
         return "\n".join(res)
     
     def ajouter_paragraphe(self, paragraphe):

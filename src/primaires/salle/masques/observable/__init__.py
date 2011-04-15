@@ -28,9 +28,54 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module joueur."""
+"""Fichier contenant le masque <observable>."""
 
-from . import direction
-from . import ident
-from . import nv_ident
-from . import observable
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+from primaires.format.fonctions import contient
+
+class Observable(Masque):
+    
+    """Masque <observable>.
+    On attend le fragment d'un nom observable, un joueur, un objet, une
+    balise...
+    
+    """
+    
+    nom = "element_observable"
+    
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self)
+        self.nom_complet = "élément observable"
+        self.element = ""
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        lstrip(commande)
+        nom = liste_vers_chaine(commande)
+        
+        if not nom:
+            raise ErreurValidation( \
+                "Précisez un élément observable.")
+        
+        nom = nom.split(" ")[0]
+        commande[:] = commande[len(nom):]
+        
+        salle = personnage.salle
+        elt = None
+        
+        # On cherche dans les objets
+        for objet in salle.objets_sol:
+            nom_objet = objet.nom_singulier
+            if contient(nom_objet, nom):
+                elt = objet 
+        
+        if elt is None:
+            raise ErreurValidation(
+                "|err|Cet élément n'a pu être trouvé.|ff|".format(nom))
+        
+        self.element = elt
+        return True
