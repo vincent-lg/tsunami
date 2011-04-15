@@ -58,7 +58,7 @@ class Sortie(BaseObj):
     """
     
     def __init__(self, direction, nom, article="le", salle_dest=None,
-            corresp="", parent=None):
+            corresp="", parent=None, modele=None):
         """Constructeur du conteneur
         Précision quant au parent :
         Ici, ce n'est pas le conteneur, mais la salle possédant la sortie
@@ -66,13 +66,21 @@ class Sortie(BaseObj):
         
         """
         BaseObj.__init__(self)
+        if modele is not None:
+            self.parent = modele.parent
+            self.article = modele.article
+            if not salle_dest:
+                self.salle_dest = modele.salle_dest
+            if not corresp:
+                self.correspondante = modele.correspondante
         self.parent = parent
         self.direction = direction
         self.nom = nom
         self.article = article
         self.salle_dest = salle_dest
         self.correspondante = corresp # le nom de la sortie correspondante
-        self.deduire_article()
+        if article == "le":
+            self.deduire_article()
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
     
@@ -94,7 +102,12 @@ class Sortie(BaseObj):
         if self.nom in NOMS_VERS_ARTICLES.keys():
             self.article = NOMS_VERS_ARTICLES[self.nom]
         else:
-            self.article = "le"
+            try:
+                self.nom[0] in ["a", "e", "i", "o", "u"]
+            except IndexError:
+                self.article = "le"
+            else:
+                self.article = "l'"
     
     @property
     def nom_complet(self):

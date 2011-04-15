@@ -32,13 +32,6 @@
 
 from primaires.interpreteur.editeur import Editeur
 
-AIDE_COURTE = \
-    "Entrez |ent|/|ff| pour revenir à la fenêtre parente.\n" \
-    "Options :\n" \
-    " - |cmd|/r <nouveau nom> (/ <préfixe>)|ff| : renomme la sortie\n" \
-    " - |cmd|/s <identifiant d'une salle>|ff| : fait pointer la sortie vers " \
-    "la salle\n   spécifiée\n"
-
 class EdtSortie(Editeur):
 
     """Contexte d'édition des sorties une par une. Ce contexte est fils
@@ -62,7 +55,7 @@ class EdtSortie(Editeur):
         msg += "Edition de la sortie {} de {}" \
                 .format(sortie.direction, salle).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
-        msg += AIDE_COURTE
+        msg += self.aide_courte
         
         msg += "\n Nom de la sortie : |ent|" + sortie.nom_complet + "|ff|"
         msg += "\n Direction : " + sortie.direction
@@ -115,7 +108,7 @@ class EdtSortie(Editeur):
                 "|err|L'identifiant '{}' n'est pas valide.|ff|".format(id_salle)
             return
         
-        dir_opposee = salle.sorties.get_nom_oppose(sortie.nom)
+        dir_opposee = salle.sorties.get_nom_oppose(sortie.direction)
         if d_salle.sorties.sortie_existe(dir_opposee):
             self.pere << \
                 "|err|La direction opposée a déjà été définie dans {}.|ff|". \
@@ -130,7 +123,7 @@ class EdtSortie(Editeur):
         sortie.salle_dest.sorties.supprimer_sortie(sortie.correspondante)
         salle.sorties.supprimer_sortie(sortie.direction)
         salle.sorties.ajouter_sortie(sortie.direction, sortie.nom,
-                salle_dest=d_salle, corresp=dir_opposee)
+                modele=sortie, salle_dest=d_salle, corresp=dir_opposee)
         d_salle.sorties.ajouter_sortie(dir_opposee, dir_opposee,
                 salle_dest=salle, corresp=sortie.nom)
         self.objet = salle.sorties[sortie.direction]

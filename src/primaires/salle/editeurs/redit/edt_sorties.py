@@ -202,5 +202,13 @@ class EdtSorties(Editeur):
         else:
             enveloppe = EnveloppeObjet(EdtSortie, sortie, None)
             enveloppe.parent = self
+            enveloppe.aide_courte = \
+                "Entrez |ent|/|ff| pour revenir à la fenêtre parente.\n" \
+                "Options :\n" \
+                " - |cmd|/r <nouveau nom> (/ <préfixe>)|ff| : renomme la " \
+                "sortie\n" \
+                " - |cmd|/s <identifiant d'une salle>|ff| : fait pointer la " \
+                "sortie vers la salle\n" \
+                "   spécifiée\n"
             contexte = enveloppe.construire(self.pere)
             self.migrer_contexte(contexte)
