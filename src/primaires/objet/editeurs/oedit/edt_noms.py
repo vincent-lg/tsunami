@@ -80,4 +80,4 @@ class EdtNoms(Editeur):
     
     def interpreter(self, msg):
         """Interprétation du message"""
-        self.pere << "|at|Option invalide.|ff|"
+        self.pere << "|err|Option invalide.|ff|"

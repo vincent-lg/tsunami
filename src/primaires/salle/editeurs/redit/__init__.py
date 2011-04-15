@@ -163,7 +163,7 @@ class EdtRedit(Presentation):
             "défini comme 'le'. Par exemple,\n" \
             "   |ent|/r ouest / porte / la|ff| renomme la sortie " \
             "|ent|ouest|ff| en |ent|la porte|ff|.\n" \
-            " - |ent|/s <sortie / <identifiant d'une salle>|ff| : permet de " \
+            " - |ent|/s <sortie> / <identifiant d'une salle>|ff| : permet de " \
             "configurer une sortie.\n" \
             "   En précisant l'identifiant (|cmd|zone:mnemo|ff|) d'une " \
             "salle, la sortie spécifiée\n" \

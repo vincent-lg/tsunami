@@ -127,8 +127,6 @@ class EdtSorties(Editeur):
         Syntaxe : /s nom / id_salle
             
         """
-        pass
-        
         salle = self.objet
         sorties = salle.sorties
         try:

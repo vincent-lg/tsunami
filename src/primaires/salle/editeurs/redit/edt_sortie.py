@@ -32,6 +32,13 @@
 
 from primaires.interpreteur.editeur import Editeur
 
+AIDE_COURTE = \
+    "Entrez |ent|/|ff| pour revenir à la fenêtre parente.\n" \
+    "Options :\n" \
+    " - |cmd|/r <nouveau nom> (/ <préfixe>)|ff| : renomme la sortie\n" \
+    " - |cmd|/s <identifiant d'une salle>|ff| : fait pointer la sortie vers " \
+    "la salle\n   spécifiée\n"
+
 class EdtSortie(Editeur):
 
     """Contexte d'édition des sorties une par une. Ce contexte est fils
@@ -52,8 +59,15 @@ class EdtSortie(Editeur):
         sortie = self.objet
         salle = sortie.parent
         msg = "| |tit|"
-        msg += "Edition de la sortie {} de {}".format(sortie, salle).ljust(76)
+        msg += "Edition de la sortie {} de {}" \
+                .format(sortie.direction, salle).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
+        msg += AIDE_COURTE
+        
+        msg += "\n Nom de la sortie : |ent|" + sortie.nom_complet + "|ff|"
+        msg += "\n Direction : " + sortie.direction
+        msg += " (vers |vr|" + str(sortie.salle_dest) + "|ff|)"
+        msg += "\n Réciproque : |cy|" + sortie.correspondante + "|ff|"
         
         return msg
     
@@ -67,19 +81,14 @@ class EdtSortie(Editeur):
         try:
             nouveau_nom, article = arguments.split(" / ")
         except ValueError:
-            try:
-                nouveau_nom = arguments
-                article = ""
-            except ValueError:
-                self.pere << "|err|La syntaxe est invalide pour cette " \
-                        "option.|ff|"
-                return
+            nouveau_nom = arguments
+            article = ""
         
         nouveau_nom = nouveau_nom.lower()
         
         try:
             t_val = salle.sorties.get_sortie_par_nom_ou_direction(nouveau_nom)
-            if t_val is None or t_val.direction != sortie.nom:
+            if t_val is None or t_val.direction != sortie.direction:
                 self.pere << "|err|Ce nom de sortie est déjà utilisé.|ff|"
                 return
         except KeyError:
@@ -96,4 +105,33 @@ class EdtSortie(Editeur):
         Syntaxe : /s id_salle
         
         """
-        pass
+        sortie = self.objet
+        salle = sortie.parent
+        id_salle = arguments
+        try:
+            d_salle = type(self).importeur.salle[id_salle]
+        except KeyError:
+            self.pere << \
+                "|err|L'identifiant '{}' n'est pas valide.|ff|".format(id_salle)
+            return
+        
+        dir_opposee = salle.sorties.get_nom_oppose(sortie.nom)
+        if d_salle.sorties.sortie_existe(dir_opposee):
+            self.pere << \
+                "|err|La direction opposée a déjà été définie dans {}.|ff|". \
+                format(d_salle.ident)
+            return
+        if salle is d_salle:
+            self.pere << \
+                "|err|La salle de destination est la même que la salle " \
+                "d'origine.|ff|"
+            return
+        
+        sortie.salle_dest.sorties.supprimer_sortie(sortie.correspondante)
+        salle.sorties.supprimer_sortie(sortie.direction)
+        salle.sorties.ajouter_sortie(sortie.direction, sortie.nom,
+                salle_dest=d_salle, corresp=dir_opposee)
+        d_salle.sorties.ajouter_sortie(dir_opposee, dir_opposee,
+                salle_dest=salle, corresp=sortie.nom)
+        self.objet = salle.sorties[sortie.direction]
+        self.actualiser()
