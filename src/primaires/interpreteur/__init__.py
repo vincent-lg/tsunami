@@ -58,6 +58,8 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "interpreteur", "primaire")
         self.logger = type(self.importeur).man_logs.creer_logger( \
                 "interpreteur", "interpreteur")
+        self.logger_cmd = type(self.importeur).man_logs.creer_logger( \
+                "interpreteur", "commandes")
         
         # On passe l'interpréteur à certaines classes
         Contexte.importeur = importeur
@@ -155,6 +157,7 @@ class Module(BaseModule):
     
     def valider(self, personnage, dic_masques, lst_commande):
         """Commande de validation"""
+        str_commande = liste_vers_chaine(lst_commande)
         trouve = False
         commandes = []
         if personnage.langue_cmd == "francais":
@@ -164,6 +167,8 @@ class Module(BaseModule):
         
         for cmd in commandes:
             if cmd.valider(personnage, dic_masques, lst_commande):
+                self.logger_cmd.info("{} envoie {}".format(personnage.nom,
+                        str_commande))
                 trouve = True
                 break
         
