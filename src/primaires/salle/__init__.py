@@ -168,6 +168,10 @@ class Module(BaseModule):
                 if personnage.salle is not salle:
                     salle.retirer_personnage(personnage)
     
+    def __len__(self):
+        """Retourne le nombre de salles"""
+        return len(self._salles)
+    
     def __getitem__(self, cle):
         """Retourne la salle correspondante à la clé.
         Celle-ci peut être de différents types :
