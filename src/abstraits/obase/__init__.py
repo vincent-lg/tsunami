@@ -63,6 +63,8 @@ class MetaBaseObj(type):
             cls._nom = contenu["_nom"]
             # Pas de doublons !
             if cls._nom in objets_base:
+                if objets_base[cls._nom] == cls:
+                    return
                 raise RuntimeError("La classe {0} héritée de BaseObj " \
                         "possède le même nom que la classe {1}".format( \
                         str(cls), str(objets_base[cls._nom])))
