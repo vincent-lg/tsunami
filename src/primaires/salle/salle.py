@@ -37,6 +37,7 @@ from bases.collections.liste_id import ListeID
 from primaires.format.description import Description
 from .coordonnees import Coordonnees
 from .sorties import Sorties, NOMS_SORTIES
+from .balises import Balises
 from .objets_sol import ObjetsSol
 
 # Constantes
@@ -82,6 +83,7 @@ class Salle(ObjetID):
         self.titre = ""
         self.description = Description(parent=self)
         self.sorties = Sorties(parent=self)
+        self.balises = Balises(parent=self)
         self._personnages = ListeID() # personnages présents
         self.objets_sol = ObjetsSol(parent=self)
     
