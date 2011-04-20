@@ -113,7 +113,6 @@ class ChoisirPersonnage(Contexte):
                 joueur.compte = self.pere.compte
                 joueur.instance_connexion = self.pere
                 joueur.pre_connecter()
-                print(self.pere.contexte_actuel)
         elif msg == cmd_creer:
             if len(self.pere.compte.joueurs) >= nb_perso_max and nb_perso_max != -1:
                 self.pere.envoyer("|err|Vous ne pouvez avoir plus de {0} " \

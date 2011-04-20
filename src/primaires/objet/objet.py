@@ -86,7 +86,6 @@ class Objet(ObjetID):
         dans le prototype
         
         """
-        print("On cherche", nom_attr, "dans", self)
         return getattr(self.prototype, nom_attr)
     
     def detruire(self):

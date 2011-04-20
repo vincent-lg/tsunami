@@ -82,7 +82,6 @@ class Joueur(Personnage):
         lien avec l'univers, non pas dans le sens réseau.
         
         """
-        print(self, "contextes", self.contextes)
         for contexte in self.contextes:
             contexte.pere = self.instance_connexion
         

@@ -116,6 +116,3 @@ class Module(BaseModule):
                     (self.stats.nb_commandes + 1)
             self.stats.nb_commandes += 1
             self.stats.max_commandes[diff] = msg
-        
-            if not masquer:
-                print("Exécution de", msg, "en", diff, "sec")

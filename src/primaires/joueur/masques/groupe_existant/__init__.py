@@ -55,7 +55,6 @@ class GroupeExistant(Masque):
         """Validation du masque"""
         lstrip(commande)
         nom_groupe = liste_vers_chaine(commande)
-        print("<nom_groupe> valide", nom_groupe)
         if not nom_groupe:
             raise ErreurValidation(
                 "Précisez un nom de groupe existant.")

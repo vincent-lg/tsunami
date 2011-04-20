@@ -64,7 +64,6 @@ class ConteneurObjet(BaseObj):
                     "{}".format(self, objet))
         
         if self.parent:
-            print("On enregistre la salle")
             self.parent.enregistrer()
     
     def retirer(self, objet):
@@ -76,7 +75,6 @@ class ConteneurObjet(BaseObj):
                     "{}".format(self, objet))
         
         if self.parent:
-            print("On enregistre la salle")
             self.parent.enregistrer()
     
     def nettoyer(self):

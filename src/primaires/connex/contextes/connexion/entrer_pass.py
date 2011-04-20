@@ -114,7 +114,6 @@ class EntrerPass(Contexte):
         """Envoie un nouveau mot de passe à l'utilisateur."""
         cnx_cfg = type(self.importeur).anaconf.get_config("connex")
         mdp = "".join(random.sample(char_mdp ,10))
-        print("Nouveau mot de passe:", mdp)
         emt = self.pere.compte
         mail = emt.adresse_email
         nom_MUD = type(self.importeur).anaconf.get_config("globale").nom

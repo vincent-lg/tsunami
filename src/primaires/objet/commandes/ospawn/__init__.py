@@ -56,8 +56,6 @@ class CmdOspawn(Commande):
         """Interprétation de la commande"""
         prototype = dic_masques["ident_prototype_objet"].prototype
         objet = type(self).importeur.objet.creer_objet(prototype)
-        print("On crée", objet, "depuis", prototype)
-        print(objet.identifiant)
         salle = personnage.salle
         salle.objets_sol.ajouter(objet)
         personnage << "Vous faites apparaître {} du néant.".format(
