@@ -33,6 +33,7 @@
 from abstraits.module import *
 from primaires.perso import commandes
 from primaires.perso import masques
+from .cfg_stats import cfg_stats
 
 class Module(BaseModule):
     
@@ -50,6 +51,16 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "perso", "primaire")
         self.commandes = []
+    
+    def config(self):
+        """Méthode de configuration.
+        On récupère le fichier de configuration correspondant au module.
+        
+        """
+        conf_stats = type(self.importeur).anaconf.get_config("stats", \
+                "perso/stats.cfg", "modele stats", cfg_stats)
+        
+        BaseModule.config(self)
     
     def ajouter_masques(self):
         """Ajout des masques dans l'interpréteur"""

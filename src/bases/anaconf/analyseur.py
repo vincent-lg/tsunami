@@ -115,7 +115,10 @@ class Analyseur:
         données ne sont pas trouvées, ou pour effacer des données périmées.
         
         """
-        self._globales = {}
+        self._globales = {
+            'oui': True,
+            'non': False,
+        }
         self._logger = logger
         self._logger.filtrer_niveau("warning")
         # On cherche le fichier pour commencer
@@ -170,7 +173,7 @@ class Analyseur:
             return object.__getattribute__(self, nom)
         elif nom in self.__dict__.keys():
             attribut = object.__getattribute__(self, nom)
-            return eval(attribut)
+            return eval(attribut, self._globales)
         else:
             raise ValueError("La donnée '{0}' n'a pu être trouvée dans " \
                     "cette configuration".format(nom))
@@ -188,4 +191,4 @@ class Analyseur:
         6
         
         """
-        self._globales = globales
+        self._globales.update(globales)
