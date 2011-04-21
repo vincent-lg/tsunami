@@ -39,9 +39,7 @@ class EdtSortie(Editeur):
     
     """
     
-    nom = "sortie"
-    
-    def __init__(self, pere, objet = None, attribut = None):
+    def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
         self.ajouter_option("r", self.opt_renommer_sortie)

@@ -45,7 +45,8 @@ class Balise(BaseObj):
         """Constructeur de la classe"""
         self.nom = nom
         self.synonymes = synonymes
-        self.description = Description(parent = self)
+        self.parent = parent
+        self.description = Description()
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
     
@@ -61,3 +62,19 @@ class Balise(BaseObj):
         BaseObj.__setattr__(self, nom_attr, valeur)
         if construit and self.parent:
             self.parent.enregistrer()
+    
+    def enregistrer(self):
+        """Enregistre la balise dans son parent"""
+        construit = self.construit
+        if construit and self.parent:
+            self.parent.enregistrer()
+    
+    def regarder(self, personnage):
+        """Le personnage regarde l'objet"""
+        moi = "Vous examinez '{}' :".format(self.nom)
+        description = str(self.description)
+        if not description:
+            description = "Il n'y a rien de bien intéressant à voir."
+        
+        moi += "\n\n" + description
+        return moi

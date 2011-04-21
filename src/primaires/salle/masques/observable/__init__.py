@@ -71,11 +71,15 @@ class Observable(Masque):
         for objet in salle.objets_sol:
             nom_objet = objet.nom_singulier
             if contient(nom_objet, nom):
-                elt = objet 
+                elt = objet
+        
+        if salle.balises.balise_existe(nom):
+            balise = salle.balises.get_balise(nom)
+            elt = balise
         
         if elt is None:
             raise ErreurValidation(
-                "|err|Cet élément n'a pu être trouvé.|ff|".format(nom))
+                "Il n'y a rien qui ressemble à cela par ici...")
         
         self.element = elt
         return True

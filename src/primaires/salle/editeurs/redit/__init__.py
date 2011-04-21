@@ -45,6 +45,7 @@ from .edt_coords import EdtCoords
 from .edt_zone import EdtZone
 from .edt_mnemonic import EdtMnemonic
 from .edt_sorties import EdtSorties
+from .edt_balises import EdtBalises
 
 class EdtRedit(Presentation):
     
@@ -138,6 +139,13 @@ class EdtRedit(Presentation):
         titre.aide_courte = \
             "Entrez le |ent|titre|ff| de la salle ou |cmd|/|ff| pour revenir " \
             "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
+        
+        # Balises
+        balises = self.ajouter_choix("balises", "a", EdtBalises, salle,
+                "balises")
+        balises.parent = self
+        balises.aide_courte = \
+            "Entrez une balise ou / pour revenir à la fenêtre parente.\n"
         
         # Description
         description = self.ajouter_choix("description", "d", Description, \

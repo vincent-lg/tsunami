@@ -54,10 +54,6 @@ class Balises(BaseObj):
     def __getinitargs__(self):
         return ()
     
-    def __iter__(self):
-        """Permet de boucler sur Balises"""
-        return iter(self._balises)
-    
     def __getitem__(self, nom):
         """Retourne la balise 'nom'"""
         return self._balises[nom]
@@ -69,6 +65,19 @@ class Balises(BaseObj):
         if self.construit and self.parent:
             self.parent.enregistrer()
     
+    def __delitem__(self, nom):
+        """Détruit la balise passée en paramètre"""
+        del self._balises[nom]
+    
+    def iter(self):
+        """Retourne un dictionnaire contenant les balises"""
+        balises = {}
+        for b_nom in self._balises.keys():
+            balise = self[b_nom]
+            balises[balise.nom] = balise
+        
+        return balises.items()
+    
     def ajouter_balise(self, nom, *args):
         """Ajoute une balise à la liste.
         Les arguments spécifiés sont transmis au constructeur de Balise. Le nom
@@ -78,10 +87,8 @@ class Balises(BaseObj):
         """
         balise = Balise(nom, *args, parent=self.parent)
         self[nom] = balise
-    
-    def supprimer_balise(self, nom):
-        """Supprime la balise 'nom'"""
-        del self[nom]
+        
+        return balise
     
     def get_balise(self, nom):
         """Renvoie la balise 'nom', si elle existe.
@@ -89,13 +96,11 @@ class Balises(BaseObj):
         un des synonymes de la balise recherchée.
         
         """
-        for b_nom, balise in self.items():
-            if nom == b_nom:
-                return balise
-            elif nom in balise.synonymes:
-                return balise
-            else:
-                return None
+        res = None
+        for b_nom, balise in self._balises.items():
+            if nom == b_nom or nom in balise.synonymes:
+                res = balise
+        return res
     
     def balise_existe(self, nom):
         """Renvoie True si la balise 'nom' existe"""

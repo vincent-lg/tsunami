@@ -58,6 +58,7 @@ class EdtSorties(Editeur):
         
         # Parcours des sorties
         sorties = salle.sorties
+        liste_sorties = ""
         for nom in NOMS_SORTIES.keys():
             direction = "\n |ent|" + nom.ljust(10) + "|ff| :"
             sortie = sorties[nom]
@@ -68,10 +69,14 @@ class EdtSorties(Editeur):
                     destination += " (|vr|" + str(sortie.salle_dest) + "|ff|)"
                 else:
                     destination = " vers |vr|" + str(sortie.salle_dest) + "|ff|"
-                reciproque = ", réciproque : |cy|" + sortie.correspondante + "|ff|"
-                msg += direction
-                msg += destination
-                msg += reciproque
+                reciproque = ", réciproque : |cy|" + sortie.correspondante 
+                reciproque += "|ff|"
+                liste_sorties += direction
+                liste_sorties += destination
+                liste_sorties += reciproque
+        if not liste_sorties:
+            liste_sorties += "\n Aucune sortie pour l'instant."
+        msg += liste_sorties
         
         return msg
     
