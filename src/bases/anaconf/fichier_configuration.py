@@ -58,8 +58,14 @@ class FichierConfiguration:
             t_contenu.append(ligne.strip())
         contenu = "\n".join(t_contenu)
         # On imbrique les lignes découpées
-        # Elles finissent par un signe \
-        contenu = contenu.replace("\\\n", " ")
+        # Elles finissent par un délimiteur
+        delimiteurs_a_sup = ('\\')
+        delimiteurs_a_garder = (',', '[', '{', '(')
+        for delimiteur in delimiteurs_a_sup:
+            contenu = contenu.replace("{}\n".format(delimiteur), " ")
+        for delimiteur in delimiteurs_a_garder:
+            contenu = contenu.replace("{}\n".format(delimiteur), delimiteur)
+        
         # A présent, on lit les données
         for i, ligne in enumerate(contenu.split("\n")):
             if ligne == "":

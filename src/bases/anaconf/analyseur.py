@@ -57,6 +57,10 @@ class Analyseur:
         Une ligne peut être découpée en plusieurs morceaux. Un signe \ doit
         être placé à la fin de la ligne qui doit se prolonger. Ce signe
         n'a aucun effet sur la dernière ligne du fichier.
+        Notez que d'autres délimiteurs sont possibles pour coller au
+        maximum à la syntaxe Python. Une ligne se terminant par exemple par
+        une virgule ou un crochet ouvrant sera considérée comme se
+        poursuivant plus bas.
         Une ligne peut également être un commentaire, elle commencera alors par
         '#' et sera ignorée.
         Note: si dans le fichier de configuration, une référence est faite
