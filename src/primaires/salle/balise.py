@@ -43,6 +43,7 @@ class Balise(BaseObj):
     
     def __init__(self, nom, synonymes=[], parent=None):
         """Constructeur de la classe"""
+        BaseObj.__init__(self)
         self.nom = nom
         self.synonymes = synonymes
         self.parent = parent

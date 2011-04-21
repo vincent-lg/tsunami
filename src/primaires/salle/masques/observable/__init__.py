@@ -34,7 +34,7 @@ from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
-from primaires.format.fonctions import contient
+from primaires.format.fonctions import contient, supprimer_accents
 
 class Observable(Masque):
     
@@ -73,6 +73,7 @@ class Observable(Masque):
             if contient(nom_objet, nom):
                 elt = objet
         
+        nom = supprimer_accents(nom)
         if salle.balises.balise_existe(nom):
             balise = salle.balises.get_balise(nom)
             elt = balise

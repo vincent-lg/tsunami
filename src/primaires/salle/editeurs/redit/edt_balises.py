@@ -33,6 +33,7 @@
 from primaires.interpreteur.editeur import Editeur
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
 from .edt_balise import EdtBalise
+from primaires.format.fonctions import supprimer_accents
 
 class EdtBalises(Editeur):
     
@@ -79,7 +80,7 @@ class EdtBalises(Editeur):
         """
         salle = self.objet
         balises = salle.balises
-        nom = arguments
+        nom = supprimer_accents(arguments)
         
         if not balises.balise_existe(nom):
             self.pere << "|err|La balise spécifiée n'existe pas.|ff|"
@@ -115,13 +116,14 @@ class EdtBalises(Editeur):
                 self.pere << \
                     "|err|Le synonyme '{}' est déjà utilisé.|ff|".format(synonyme)
                 return
-            balise.synonymes.append(synonyme)
+            balise.synonymes.append(supprimer_accents(synonyme))
         self.actualiser()
     
     def interpreter(self, msg):
         """Interprétation de l'éditeur"""
         salle = self.objet
         balises = salle.balises
+        msg = supprimer_accents(msg)
         
         balise = balises.get_balise(msg)
         if balise is None:
