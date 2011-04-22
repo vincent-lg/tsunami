@@ -145,7 +145,19 @@ class EdtRedit(Presentation):
                 "balises")
         balises.parent = self
         balises.aide_courte = \
-            "Entrez une balise ou / pour revenir à la fenêtre parente.\n"
+            "Entrez le nom d'une |cmd|balise existante|ff| pour l'éditer ou " \
+            "une |cmd|nouvelle balise|ff|\n" \
+            "pour la créer ; |ent|/|ff| pour revenir à la fenêtre parente.\n" \
+            "Options :\n" \
+            " - |ent|/s <balise existante> / <synonyme 1> (/ <synonyme 2> / " \
+            "...)|ff| : permet\n" \
+            "   de modifier les synonymes de la balise passée en paramètre. " \
+            "Pour chaque\n" \
+            "   synonyme donné à l'option, s'il existe, il sera supprimé ; " \
+            "sinon, il sera\n" \
+            "   ajouté à la liste.\n" \
+            " - |ent|/d <balise existante>|ff| : supprime la balise " \
+            "indiquée\n\n"
         
         # Description
         description = self.ajouter_choix("description", "d", Description, \

@@ -47,7 +47,7 @@ class EdtBalises(Editeur):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
         self.ajouter_option("d", self.opt_supprimer_balise)
-        self.ajouter_option("a", self.opt_ajouter_synonymes)
+        self.ajouter_option("s", self.opt_synonymes)
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -61,12 +61,12 @@ class EdtBalises(Editeur):
         balises = salle.balises
         liste_balises = ""
         for nom, balise in balises.iter():
-            b_nom = "\n |ent|" + nom.ljust(10) + "|ff| : "
-            synonymes = "(" + ", ".join(balise.synonymes) + ")"
-            description = ""
-            liste_balises += b_nom
-            liste_balises += synonymes
-            liste_balises += description
+            liste_balises += "\n |ent|" + nom + "|ff| "
+            if balise.synonymes:
+                liste_balises += "(synonymes : |ent|"
+                liste_balises += "|ff|, |ent|".join(balise.synonymes)
+                liste_balises += "|ff|)"
+            liste_balises += balise.description.paragraphes_indentes
         if not liste_balises:
             liste_balises += "\n Aucune balise pour l'instant."
         msg += liste_balises
@@ -88,8 +88,10 @@ class EdtBalises(Editeur):
             del balises[nom]
             self.actualiser()
     
-    def opt_ajouter_synonymes(self, arguments):
-        """Ajoute un ou plusieurs synonymes à la balise passée en paramètre.
+    def opt_synonymes(self, arguments):
+        """Edite les synonymes de la balise donnée en premier paramètre :
+            - si un synonyme existe, il est détruit
+            - sinon, il est créé
         Syntaxe :
             /a <balise existante> / <synonyme 1> (/ <synonyme 2> / ...)
         
@@ -107,17 +109,23 @@ class EdtBalises(Editeur):
             return
         if not a_synonymes:
             self.pere << \
-                "|err|Vous devez préciser au moins un synonyme à ajouter.|ff|"
+                "|err|Vous devez préciser au moins un synonyme.|ff|"
             return
         
         balise = balises.get_balise(nom_balise)
         for synonyme in a_synonymes:
-            if synonyme in balise.synonymes or balises.balise_existe(synonyme):
+            if balises.balise_existe(synonyme) \
+            and (balises.get_balise(synonyme) != balise \
+            or balise.nom == synonyme):
                 self.pere << \
-                    "|err|Le synonyme '{}' est déjà utilisé.|ff|".format(synonyme)
-                return
-            balise.synonymes.append(supprimer_accents(synonyme))
-        self.actualiser()
+                    "|err|Le synonyme '{}' est déjà utilisé.|ff|" \
+                            .format(synonyme)
+            elif synonyme in balise.synonymes:
+                balise.synonymes.remove(synonyme)
+                self.actualiser()
+            else:
+                balise.synonymes.append(supprimer_accents(synonyme))
+                self.actualiser()
     
     def interpreter(self, msg):
         """Interprétation de l'éditeur"""
