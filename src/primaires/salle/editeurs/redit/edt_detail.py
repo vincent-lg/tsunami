@@ -44,6 +44,7 @@ class EdtDetail(Description):
         Description.__init__(self, pere, objet, attribut)
         self.ajouter_option("n", self.opt_renommer_detail)
         self.ajouter_option("s", self.opt_synonymes)
+        self.ajouter_option("t", self.opt_changer_titre)
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -57,6 +58,7 @@ class EdtDetail(Description):
         msg += "Nom : " + detail.nom + "\n"
         if detail.synonymes:
             msg += "Synonymes : " + ", ".join(detail.synonymes) + "\n"
+        msg += "Titre : " + detail.titre + "\n"
         msg += "Description existante :\n"
         
         # Aperçu de la description existante
@@ -137,3 +139,17 @@ class EdtDetail(Description):
             else:
                 detail.synonymes.append(synonyme)
                 self.actualiser()
+    
+    def opt_changer_titre(self, arguments):
+        """Change le titre du détail.
+        Syntaxe : /t <nouveau titre>
+        
+        """
+        detail = self.objet
+        salle = detail.parent
+        titre = arguments
+        if not titre:
+            self.pere << "|err|Précisez un titre.|ff|"
+        else:
+            detail.titre = titre
+            self.actualiser()

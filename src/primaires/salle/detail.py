@@ -47,9 +47,11 @@ class Detail(BaseObj):
         self.nom = nom
         self.synonymes = synonymes
         self.description = Description()
+        self.titre = "un certain détail"
         self.parent = parent
         if modele is not None:
             self.synonymes = modele.synonymes
+            self.titre = modele.titre
             self.description = modele.description
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
@@ -75,7 +77,7 @@ class Detail(BaseObj):
     
     def regarder(self, personnage):
         """Le personnage regarde le détail"""
-        moi = "Vous examinez '{}' :".format(self.nom)
+        moi = "Vous examinez {} :".format(self.titre)
         description = str(self.description)
         if not description:
             description = "Il n'y a rien de bien intéressant à voir."

@@ -153,8 +153,9 @@ class EdtDetails(Editeur):
             "description\n" \
             " - |ent|/r <texte 1> / <texte 2>|ff| : remplace " \
             "|cmd|texte 1|ff| par |cmd|texte 2|ff|\n" \
-            " - |ent|/n <nouveau nom>|ff| : renomme la detail en " \
+            " - |ent|/n <nouveau nom>|ff| : renomme le détail en " \
             "|ent|nouveau nom|ff|\n" \
+            " - |ent|/t <nouveau titre>|ff| : change le titre du détail\n" \
             " - |ent|/s <synonyme 1> (/ <synonyme 2> / ...)|ff| : permet de " \
             "modifier les synonymes" \
             "\n   du détail passé en paramètre. Pour chaque synonyme " \
