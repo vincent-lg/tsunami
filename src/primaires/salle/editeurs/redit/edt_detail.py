@@ -28,35 +28,35 @@
 # pereIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient l'éditeur EdtBalise, détaillé plus bas."""
+"""Ce fichier contient l'éditeur EdtDetail, détaillé plus bas."""
 
 from primaires.interpreteur.editeur.description import Description
 from primaires.format.fonctions import supprimer_accents
 
-class EdtBalise(Description):
+class EdtDetail(Description):
     
-    """Ce contexte permet d'éditer une balise observable d'une salle.
+    """Ce contexte permet d'éditer un detail observable d'une salle.
     
     """
     
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Description.__init__(self, pere, objet, attribut)
-        self.ajouter_option("n", self.opt_renommer_balise)
+        self.ajouter_option("n", self.opt_renommer_detail)
         self.ajouter_option("s", self.opt_synonymes)
     
     def accueil(self):
         """Message d'accueil du contexte"""
-        balise = self.objet
+        detail = self.objet
         description = self.description
-        salle = balise.parent
+        salle = detail.parent
         msg = "| |tit|"
-        msg += "Edition de la balise {} de {}".format(balise, salle).ljust(76)
+        msg += "Edition du détail {} de {}".format(detail, salle).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += self.aide_courte
-        msg += "Nom : " + balise.nom + "\n"
-        if balise.synonymes:
-            msg += "Synonymes : " + ", ".join(balise.synonymes) + "\n"
+        msg += "Nom : " + detail.nom + "\n"
+        if detail.synonymes:
+            msg += "Synonymes : " + ", ".join(detail.synonymes) + "\n"
         msg += "Description existante :\n"
         
         # Aperçu de la description existante
@@ -73,37 +73,37 @@ class EdtBalise(Description):
         
         return msg
     
-    def opt_renommer_balise(self, arguments):
-        """Renomme la balise courante.
-        Syntaxe : /r <nouveau nom>
+    def opt_renommer_detail(self, arguments):
+        """Renomme le détail courant.
+        Syntaxe : /n <nouveau nom>
         
         """
-        balise = self.objet
-        salle = balise.parent
-        nouveau_nom = arguments
+        detail = self.objet
+        salle = detail.parent
+        nouveau_nom = supprimer_accents(arguments)
         
         if not nouveau_nom:
             self.pere << \
                 "|err|Vous devez indiquer un nouveau nom.|ff|"
             return
-        if nouveau_nom == balise.nom:
+        if nouveau_nom == detail.nom:
             self.pere << \
-                "|err|'{}' est déjà le nom de la balise courante.|ff|" \
-                        .format(nouveau_nom)
+                "|err|'{}' est déjà le nom du détail courante.|ff|".format(
+                        nouveau_nom)
             return
-        if nouveau_nom in balise.synonymes:
+        if nouveau_nom in detail.synonymes:
             self.pere << \
-                "|err|'{}' est déjà un synonyme de cette balise.|ff|" \
-                        .format(nouveau_nom)
+                "|err|'{}' est déjà un synonyme de ce détail.|ff|".format(
+                        nouveau_nom)
             return
-        if salle.balises.balise_existe(nouveau_nom):
+        if salle.details.detail_existe(nouveau_nom):
             self.pere << \
                 "|err|Ce nom est déjà utilisé.|ff|"
             return
         
-        salle.balises.ajouter_balise(nouveau_nom, modele=balise)
-        del salle.balises[balise.nom]
-        self.objet = salle.balises[nouveau_nom]
+        salle.details.ajouter_detail(nouveau_nom, modele=detail)
+        del salle.details[detail.nom]
+        self.objet = salle.details[nouveau_nom]
         self.actualiser()
     
     def opt_synonymes(self, arguments):
@@ -111,10 +111,10 @@ class EdtBalise(Description):
         syntaxe : /s <synonyme 1> (/ <synonyme 2> / ...)
         
         """
-        balise = self.objet
-        salle = balise.parent
-        a_synonymes = []
-        a_synonymes = arguments.split(" / ")
+        detail = self.objet
+        salle = detail.parent
+        a_synonymes = [supprimer_accents(argument) for argument in \
+                arguments.split(" / ")]
         
         if not a_synonymes:
             self.pere << \
@@ -122,18 +122,18 @@ class EdtBalise(Description):
             return
         
         for synonyme in a_synonymes:
-            if balise.nom == synonyme \
-            or (salle.balises.balise_existe(synonyme) \
-            and salle.balises.get_balise(synonyme) != balise):
+            if detail.nom == synonyme \
+                    or (salle.details.detail_existe(synonyme) \
+                    and salle.details.get_detail(synonyme) != detail):
                 self.pere << \
                     "|err|Le synonyme '{}' est déjà utilisé.|ff|" \
                             .format(synonyme)
             elif not synonyme:
                 self.pere << \
                     "|err|C'est vide...|ff|"
-            elif synonyme in balise.synonymes:
-                balise.synonymes.remove(synonyme)
+            elif synonyme in detail.synonymes:
+                detail.synonymes.remove(synonyme)
                 self.actualiser()
             else:
-                balise.synonymes.append(supprimer_accents(synonyme))
+                detail.synonymes.append(synonyme)
                 self.actualiser()

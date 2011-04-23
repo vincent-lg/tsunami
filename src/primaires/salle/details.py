@@ -28,18 +28,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Balises, détaillée plus bas."""
+"""Ce fichier contient la classe Details, détaillée plus bas."""
 
 from abstraits.obase import *
-from .balise import Balise
+from .detail import Detail
 
-class Balises(BaseObj):
+class Details(BaseObj):
 
-    """Cette classe est une classe-enveloppe de Balise. Elle contient toutes
-    les balises observables d'une salle, que l'on peut voir avec la commande
-    look.
+    """Cette classe est un conteneur de détails.
+    Elle contient les détails observables d'une salle, que l'on peut voir
+    avec la commande look.
     
-    Voir : ./balise.py
+    Voir : ./detail.py
     
     """
     
@@ -47,7 +47,7 @@ class Balises(BaseObj):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
         self.parent = parent
-        self._balises = {}
+        self._details = {}
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
     
@@ -55,56 +55,52 @@ class Balises(BaseObj):
         return ()
     
     def __getitem__(self, nom):
-        """Retourne la balise 'nom'"""
-        return self._balises[nom]
+        """Retourne le détail 'nom'"""
+        return self._details[nom]
     
-    def __setitem__(self, nom, balise):
-        """Modifie la balise 'nom'"""
-        self._balises[nom] = balise
+    def __setitem__(self, nom, detail):
+        """Modifie le détail 'nom'"""
+        self._details[nom] = detail
         
         if self.construit and self.parent:
             self.parent.enregistrer()
     
     def __delitem__(self, nom):
-        """Détruit la balise passée en paramètre"""
-        del self._balises[nom]
+        """Détruit le détail passée en paramètre"""
+        del self._details[nom]
+        
+        if self.construit and self.parent:
+            self.parent.enregistrer()
     
     def iter(self):
-        """Retourne un dictionnaire contenant les balises"""
-        balises = {}
-        for b_nom in self._balises.keys():
-            balise = self[b_nom]
-            balises[balise.nom] = balise
-        
-        return balises.items()
+        """Retourne un dictionnaire contenant les details"""
+        return dict(self._details).items()
     
-    def ajouter_balise(self, nom, *args, **kwargs):
-        """Ajoute une balise à la liste.
-        Les arguments spécifiés sont transmis au constructeur de Balise. Le nom
-        correspondra au self.nom de la balise. Si une balise sous ce nom-là
-        existe déjà, elle sera écrasée.
+    def ajouter_detail(self, nom, *args, **kwargs):
+        """Ajoute un détail à la liste.
+        Les arguments spécifiés sont transmis au constructeur de Detail.
+        Le nom correspondra au self.nom du détail.
+        Si un détail sous ce nom-là existe déjà, il sera écrasé.
         
         """
-        balise = Balise(nom, *args, parent=self.parent, **kwargs)
-        self[nom] = balise
+        detail = Detail(nom, *args, parent=self.parent, **kwargs)
+        self[nom] = detail
         
-        return balise
+        return detail
     
-    def get_balise(self, nom):
-        """Renvoie la balise 'nom', si elle existe.
+    def get_detail(self, nom):
+        """Renvoie le détail 'nom', si elle existe.
         A la différence de __getitem__(), cette fonction accepte en paramètre
-        un des synonymes de la balise recherchée.
+        un des synonymes du détail recherchée.
         
         """
         res = None
-        for b_nom, balise in self._balises.items():
-            if nom == b_nom or nom in balise.synonymes:
-                res = balise
+        for d_nom, detail in self._details.items():
+            if nom == d_nom or nom in detail.synonymes:
+                res = detail
+        
         return res
     
-    def balise_existe(self, nom):
-        """Renvoie True si la balise 'nom' existe"""
-        try:
-            return self.get_balise(nom) is not None
-        except ValueError:
-            return False
+    def detail_existe(self, nom):
+        """Renvoie True si le détail 'nom' existe"""
+        return self.get_detail(nom) is not None

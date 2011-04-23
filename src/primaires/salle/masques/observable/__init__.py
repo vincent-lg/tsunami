@@ -39,8 +39,8 @@ from primaires.format.fonctions import contient, supprimer_accents
 class Observable(Masque):
     
     """Masque <observable>.
-    On attend le fragment d'un nom observable, un joueur, un objet, une
-    balise...
+    On attend le fragment d'un nom observable, un joueur, un objet, un
+    détail...
     
     """
     
@@ -74,9 +74,9 @@ class Observable(Masque):
                 elt = objet
         
         nom = supprimer_accents(nom)
-        if salle.balises.balise_existe(nom):
-            balise = salle.balises.get_balise(nom)
-            elt = balise
+        if salle.details.detail_existe(nom):
+            detail = salle.details.get_detail(nom)
+            elt = detail
         
         if elt is None:
             raise ErreurValidation(

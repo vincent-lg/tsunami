@@ -45,7 +45,7 @@ from .edt_coords import EdtCoords
 from .edt_zone import EdtZone
 from .edt_mnemonic import EdtMnemonic
 from .edt_sorties import EdtSorties
-from .edt_balises import EdtBalises
+from .edt_details import EdtDetails
 
 class EdtRedit(Presentation):
     
@@ -140,24 +140,24 @@ class EdtRedit(Presentation):
             "Entrez le |ent|titre|ff| de la salle ou |cmd|/|ff| pour revenir " \
             "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
         
-        # Balises
-        balises = self.ajouter_choix("balises", "a", EdtBalises, salle,
-                "balises")
-        balises.parent = self
-        balises.aide_courte = \
-            "Entrez le nom d'une |cmd|balise existante|ff| pour l'éditer ou " \
-            "une |cmd|nouvelle balise|ff|\n" \
-            "pour la créer ; |ent|/|ff| pour revenir à la fenêtre parente.\n" \
+        # Détails
+        details = self.ajouter_choix("détails", "a", EdtDetails, salle,
+                "details")
+        details.parent = self
+        details.aide_courte = \
+            "Entrez le nom d'un |cmd|détail existant|ff| pour l'éditer ou " \
+            "un |cmd|nouveau détail|ff|\n" \
+            "pour le créer ; |ent|/|ff| pour revenir à la fenêtre parente.\n" \
             "Options :\n" \
-            " - |ent|/s <balise existante> / <synonyme 1> (/ <synonyme 2> / " \
+            " - |ent|/s <détail existant> / <synonyme 1> (/ <synonyme 2> / " \
             "...)|ff| : permet\n" \
-            "   de modifier les synonymes de la balise passée en paramètre. " \
+            "   de modifier les synonymes du détail passée en paramètre. " \
             "Pour chaque\n" \
             "   synonyme donné à l'option, s'il existe, il sera supprimé ; " \
             "sinon, il sera\n" \
             "   ajouté à la liste.\n" \
-            " - |ent|/d <balise existante>|ff| : supprime la balise " \
-            "indiquée\n\n"
+            " - |ent|/d <détail existant>|ff| : supprime le détail " \
+            "indiqué\n\n"
         
         # Description
         description = self.ajouter_choix("description", "d", Description, \

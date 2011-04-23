@@ -28,14 +28,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Balise, détaillée plus bas."""
+"""Ce fichier contient la classe Detail, détaillée plus bas."""
 
 from abstraits.obase import *
 from primaires.format.description import Description
 
-class Balise(BaseObj):
+class Detail(BaseObj):
     
-    """Cette classe représente une balise observable dans une salle.
+    """Cette classe représente un détail observable dans une salle.
     Elle permet d'ajouter à la description d'une salle des détails invisibles
     au premier abord, mais discernable avec la commande look.
     
@@ -68,13 +68,13 @@ class Balise(BaseObj):
             self.parent.enregistrer()
     
     def enregistrer(self):
-        """Enregistre la balise dans son parent"""
+        """Enregistre le détail dans son parent"""
         construit = self.construit
         if construit and self.parent:
             self.parent.enregistrer()
     
     def regarder(self, personnage):
-        """Le personnage regarde l'objet"""
+        """Le personnage regarde le détail"""
         moi = "Vous examinez '{}' :".format(self.nom)
         description = str(self.description)
         if not description:
