@@ -78,14 +78,14 @@ class Balises(BaseObj):
         
         return balises.items()
     
-    def ajouter_balise(self, nom, *args):
+    def ajouter_balise(self, nom, *args, **kwargs):
         """Ajoute une balise à la liste.
         Les arguments spécifiés sont transmis au constructeur de Balise. Le nom
         correspondra au self.nom de la balise. Si une balise sous ce nom-là
         existe déjà, elle sera écrasée.
         
         """
-        balise = Balise(nom, *args, parent=self.parent)
+        balise = Balise(nom, *args, parent=self.parent, **kwargs)
         self[nom] = balise
         
         return balise

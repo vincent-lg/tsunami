@@ -63,7 +63,10 @@ class EdtBalises(Editeur):
         for nom, balise in balises.iter():
             liste_balises += "\n |ent|" + nom + "|ff| "
             if balise.synonymes:
-                liste_balises += "(synonymes : |ent|"
+                if len(balise.synonymes) == 1:
+                    liste_balises += "(synonyme : |ent|"
+                else:
+                    liste_balises += "(synonymes : |ent|"
                 liste_balises += "|ff|, |ent|".join(balise.synonymes)
                 liste_balises += "|ff|)"
             liste_balises += balise.description.paragraphes_indentes
@@ -82,10 +85,11 @@ class EdtBalises(Editeur):
         balises = salle.balises
         nom = supprimer_accents(arguments)
         
-        if not balises.balise_existe(nom):
+        try:
+            del balises[nom]
+        except KeyError:
             self.pere << "|err|La balise spécifiée n'existe pas.|ff|"
         else:
-            del balises[nom]
             self.actualiser()
     
     def opt_synonymes(self, arguments):
@@ -139,7 +143,24 @@ class EdtBalises(Editeur):
         enveloppe = EnveloppeObjet(EdtBalise, balise, "description")
         enveloppe.parent = self
         enveloppe.aide_courte = \
-            "Entrez |ent|/|ff| pour revenir à la fenêtre parente.\n"
+            "Entrez une |cmd|phrase|ff| à ajouter à la balise ou |ent|/|ff| " \
+            "pour revenir à la\nfenêtre mère.\n" \
+            "Symboles :\n" \
+            " - |ent||tab||ff| : symbolise une tabulation\n" \
+            " - |ent||nl||ff| : symbolise un saut de ligne\n" \
+            "Options :\n" \
+            " - |ent|/d <numéro>/*|ff| : supprime un paragraphe ou toute la " \
+            "description\n" \
+            " - |ent|/r <texte 1> / <texte 2>|ff| : remplace " \
+            "|cmd|texte 1|ff| par |cmd|texte 2|ff|\n" \
+            " - |ent|/n <nouveau nom>|ff| : renomme la balise en " \
+            "|ent|nouveau nom|ff|\n" \
+            " - |ent|/s <synonyme 1> (/ <synonyme 2> / ...)|ff| : permet de " \
+            "modifier les synonymes" \
+            "\n   de la balise passée en paramètre. Pour chaque synonyme " \
+            "donné à l'option,\n" \
+            "   s'il existe, il sera supprimé ; sinon, il sera ajouté à la " \
+            "liste.\n\n"
         contexte = enveloppe.construire(self.pere)
         
         self.migrer_contexte(contexte)

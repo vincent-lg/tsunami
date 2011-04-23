@@ -31,6 +31,7 @@
 """Ce fichier contient l'éditeur EdtBalise, détaillé plus bas."""
 
 from primaires.interpreteur.editeur.description import Description
+from primaires.format.fonctions import supprimer_accents
 
 class EdtBalise(Description):
     
@@ -41,6 +42,8 @@ class EdtBalise(Description):
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Description.__init__(self, pere, objet, attribut)
+        self.ajouter_option("n", self.opt_renommer_balise)
+        self.ajouter_option("s", self.opt_synonymes)
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -68,4 +71,69 @@ class EdtBalise(Description):
         else:
             msg += "\n Aucune description."
         
-        return msg        
+        return msg
+    
+    def opt_renommer_balise(self, arguments):
+        """Renomme la balise courante.
+        Syntaxe : /r <nouveau nom>
+        
+        """
+        balise = self.objet
+        salle = balise.parent
+        nouveau_nom = arguments
+        
+        if not nouveau_nom:
+            self.pere << \
+                "|err|Vous devez indiquer un nouveau nom.|ff|"
+            return
+        if nouveau_nom == balise.nom:
+            self.pere << \
+                "|err|'{}' est déjà le nom de la balise courante.|ff|" \
+                        .format(nouveau_nom)
+            return
+        if nouveau_nom in balise.synonymes:
+            self.pere << \
+                "|err|'{}' est déjà un synonyme de cette balise.|ff|" \
+                        .format(nouveau_nom)
+            return
+        if salle.balises.balise_existe(nouveau_nom):
+            self.pere << \
+                "|err|Ce nom est déjà utilisé.|ff|"
+            return
+        
+        salle.balises.ajouter_balise(nouveau_nom, modele=balise)
+        del salle.balises[balise.nom]
+        self.objet = salle.balises[nouveau_nom]
+        self.actualiser()
+    
+    def opt_synonymes(self, arguments):
+        """Ajoute ou supprime les synonymes passés en paramètres.
+        syntaxe : /s <synonyme 1> (/ <synonyme 2> / ...)
+        
+        """
+        balise = self.objet
+        salle = balise.parent
+        a_synonymes = []
+        a_synonymes = arguments.split(" / ")
+        
+        if not a_synonymes:
+            self.pere << \
+                "|err|Vous devez préciser au moins un synonyme.|ff|"
+            return
+        
+        for synonyme in a_synonymes:
+            if balise.nom == synonyme \
+            or (salle.balises.balise_existe(synonyme) \
+            and salle.balises.get_balise(synonyme) != balise):
+                self.pere << \
+                    "|err|Le synonyme '{}' est déjà utilisé.|ff|" \
+                            .format(synonyme)
+            elif not synonyme:
+                self.pere << \
+                    "|err|C'est vide...|ff|"
+            elif synonyme in balise.synonymes:
+                balise.synonymes.remove(synonyme)
+                self.actualiser()
+            else:
+                balise.synonymes.append(supprimer_accents(synonyme))
+                self.actualiser()

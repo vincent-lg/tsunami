@@ -41,13 +41,16 @@ class Balise(BaseObj):
     
     """
     
-    def __init__(self, nom, synonymes=[], parent=None):
+    def __init__(self, nom, synonymes=[], parent=None, modele=None):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
         self.nom = nom
         self.synonymes = synonymes
-        self.parent = parent
         self.description = Description()
+        self.parent = parent
+        if modele is not None:
+            self.synonymes = modele.synonymes
+            self.description = modele.description
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
     
