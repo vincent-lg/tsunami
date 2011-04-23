@@ -141,7 +141,7 @@ class EdtRedit(Presentation):
             "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
         
         # Détails
-        details = self.ajouter_choix("détails", "a", EdtDetails, salle,
+        details = self.ajouter_choix("details", "e", EdtDetails, salle,
                 "details")
         details.parent = self
         details.aide_courte = \

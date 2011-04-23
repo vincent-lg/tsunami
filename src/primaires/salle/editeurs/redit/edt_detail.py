@@ -55,10 +55,14 @@ class EdtDetail(Description):
         msg += "Edition du détail {} de {}".format(detail, salle).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += self.aide_courte
-        msg += "Nom : " + detail.nom + "\n"
+        msg += "Nom : |ent|" + detail.nom + "|ff|\n"
         if detail.synonymes:
-            msg += "Synonymes : " + ", ".join(detail.synonymes) + "\n"
-        msg += "Titre : " + detail.titre + "\n"
+            if len(detail.synonymes) == 1:
+                msg += "Synonyme : |ent|"
+            else:
+                msg += "Synonymes : |ent|"
+            msg += "|ff|, |ent|".join(detail.synonymes) + "|ff|\n"
+        msg += "Titre : |tit|" + detail.titre + "|ff|\n\n"
         msg += "Description existante :\n"
         
         # Aperçu de la description existante

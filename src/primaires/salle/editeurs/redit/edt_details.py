@@ -158,9 +158,9 @@ class EdtDetails(Editeur):
             " - |ent|/t <nouveau titre>|ff| : change le titre du détail\n" \
             " - |ent|/s <synonyme 1> (/ <synonyme 2> / ...)|ff| : permet de " \
             "modifier les synonymes" \
-            "\n   du détail passé en paramètre. Pour chaque synonyme " \
-            "donné à l'option,\n" \
-            "   s'il existe, il sera supprimé ; sinon, il sera ajouté à la " \
+            "\n   du détail. Pour chaque synonyme " \
+            "donné à l'option, s'il existe,\n" \
+            "   il sera supprimé ; sinon, il sera ajouté à la " \
             "liste.\n\n"
         contexte = enveloppe.construire(self.pere)
         

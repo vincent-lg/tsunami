@@ -46,8 +46,8 @@ class Detail(BaseObj):
         BaseObj.__init__(self)
         self.nom = nom
         self.synonymes = synonymes
+        self.titre = "un détail aux alentours"
         self.description = Description()
-        self.titre = "un certain détail"
         self.parent = parent
         if modele is not None:
             self.synonymes = modele.synonymes
