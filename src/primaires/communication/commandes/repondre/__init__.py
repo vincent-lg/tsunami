@@ -33,7 +33,7 @@
 """
 
 from primaires.interpreteur.commande.commande import Commande
-from primaires.communication.correspondants import Correspondants
+from primaires.communication.conversation import Conversation
 
 class CmdRepondre(Commande):
     
@@ -116,7 +116,7 @@ class CmdRepondre(Commande):
                     personnage << "|err|Le joueur {} passé en paramètre n'a " \
                             "pu être trouvé.|ff|".format(cible.nom)
                 else:
-                    couple = Correspondants(cible, personnage)
+                    couple = Conversation(cible, personnage)
                     type(self).importeur.communication.correspondants \
                             .append(couple)
                     personnage << clr + "Vous répondez à {} : {}|ff|" \

@@ -33,7 +33,7 @@
 """
 
 from primaires.interpreteur.commande.commande import Commande
-from primaires.communication.correspondants import Correspondants
+from primaires.communication.conversation import Conversation
 
 class CmdParler(Commande):
     
@@ -66,5 +66,5 @@ class CmdParler(Commande):
                     .format(cible.nom, message)
             cible << clr + "{} vous dit : {}|ff|" \
                     .format(personnage.nom, message)
-            couple = Correspondants(cible, personnage)
+            couple = Conversation(cible, personnage)
             type(self).importeur.communication.correspondants.append(couple)
