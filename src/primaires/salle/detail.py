@@ -41,11 +41,11 @@ class Detail(BaseObj):
     
     """
     
-    def __init__(self, nom, synonymes=[], parent=None, modele=None):
+    def __init__(self, nom, parent=None, modele=None):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
         self.nom = nom
-        self.synonymes = synonymes
+        self.synonymes = []
         self.titre = "un détail aux alentours"
         self.description = Description()
         self.parent = parent

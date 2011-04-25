@@ -33,7 +33,6 @@
 """
 
 from primaires.interpreteur.commande.commande import Commande
-from primaires.communication.conversation import Conversation
 
 class CmdParler(Commande):
     
@@ -62,9 +61,9 @@ class CmdParler(Commande):
         else:
             clr = type(self).importeur.anaconf. \
                     get_config("config_com").couleur_tell
-            personnage << clr + "Vous dites à {} : {}|ff|" \
-                    .format(cible.nom, message)
-            cible << clr + "{} vous dit : {}|ff|" \
-                    .format(personnage.nom, message)
-            couple = Conversation(cible, personnage)
-            type(self).importeur.communication.correspondants.append(couple)
+            personnage << clr + "Vous dites à {} : {}|ff|".format(cible.nom,
+                    message)
+            cible << clr + "{} vous dit : {}|ff|".format(personnage.nom,
+                    message)
+            type(self).importeur.communication.conversations. \
+                    ajouter_ou_remplacer(cible, personnage, message)

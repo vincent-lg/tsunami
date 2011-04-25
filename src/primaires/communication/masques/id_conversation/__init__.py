@@ -35,57 +35,54 @@ from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
 
-class Correspondant(Masque):
+class IdConversation(Masque):
     
-    """Masque <id_corresp>.
-    On attend le numéro d'un correspondant (voir commande reply) en paramètre.
+    """Masque <id_conversation>.
+    On attend le numéro d'une conversation (voir commande reply) en paramètre.
     
     """
     
-    nom = "id_corresp"
+    nom = "id_conversation"
     
     def __init__(self):
         """Constructeur du masque"""
         Masque.__init__(self)
-        self.nom_complet = "id d'un correspondant"
+        self.nom_complet = "id d'une conversation"
         self.cible = None
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
         lstrip(commande)
-        id_corresp = liste_vers_chaine(commande).lstrip()
-        corresp = type(self).importeur.communication.correspondants
-        p_corresp = []
+        id_conversation = liste_vers_chaine(commande).lstrip()
+        conversations = type(self).importeur.communication.conversations
+        p_conversations = conversations.get_conversations_pour(personnage)
         cible = None
-        for couple in corresp:
-            if personnage == couple.emetteur:
-                p_corresp.append(couple)
         
-        if not id_corresp:
+        if not id_conversation:
             raise ErreurValidation( \
                 "Vous devez préciser le numéro d'un correspondant.")
         
-        id_corresp = id_corresp.split(" ")[0]
-        taille = len(id_corresp)
+        id_conversation = id_conversation.split(" ")[0]
+        taille = len(id_conversation)
         try:
-            id_corresp = int(id_corresp)
+            id_conversation = int(id_conversation)
         except ValueError:
-            self.id_corresp = None
-            self.correspondant = None
+            self.id_conversation = None
+            self.cible = None
             return True
         else:
             commande[:] = commande[taille:]
         
-        if id_corresp < 1 or id_corresp > len(p_corresp):
+        if id_conversation < 1 or id_conversation > len(p_conversations):
             raise ErreurValidation( \
                 "|err|Le numéro spécifié ne correspond à aucun personnage.|ff|")
         
         try:
-            cible = p_corresp[id_corresp - 1].cible
+            cible = p_conversations[id_conversation - 1].cible
         except IndexError:
             raise ErreurValidation( \
                 "|err|Le numéro spécifié ne correspond à aucun personnage.|ff|")
         else:
-            self.id_corresp = id_corresp
-            self.correspondant = cible
+            self.id_conversation = id_conversation
+            self.cible = cible
             return True

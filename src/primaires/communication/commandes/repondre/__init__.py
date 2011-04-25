@@ -45,7 +45,7 @@ class CmdRepondre(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "repondre", "reply")
         self.nom_categorie = "parler"
-        self.schema = "(<id_corresp>) (<message>)"
+        self.schema = "(<id_conversation>) (<message>)"
         self.aide_courte = "répond à un joueur"
         self.aide_longue = \
             "Cette commande permet de répondre au dernier joueur qui vous a " \
@@ -59,53 +59,55 @@ class CmdRepondre(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
-        corresp = type(self).importeur.communication.correspondants
-        p_corresp = []
-        for couple in corresp:
-            if personnage == couple.emetteur:
-                p_corresp.append(couple)
+        conversations = type(self).importeur.communication.conversations
+        p_conversations = conversations.get_conversations_pour(personnage)
+        clr = type(self).importeur.anaconf.get_config("config_com").couleur_tell
                 
         # Si on n'a pas envoyé de message
         if dic_masques["message"] is None:
-            if dic_masques["id_corresp"] is None:
+            if dic_masques["id_conversation"] is None:
                 # On liste les correspondants
                 res = ""
-                for couple in p_corresp:
-                    res += "\n " + str(couple.id) + ". " + couple.cible.nom
-                    if couple.cible not in type(self).importeur.connex.joueurs_connectes:
-                        res += "(déconnecté)"
+                for conversation in p_conversations:
+                    res += "\n " + str(conversation.id) + ". Avec "
+                    res += "|gr|" + conversation.cible.nom + "|ff|"
+                    if conversation.cible not in \
+                            type(self).importeur.connex.joueurs_connectes:
+                        res += " (|rgc|déconnecté|ff|)"
+                    res += " : '" + clr + conversation.phrase + "|ff|'"
                 if not res:
                     personnage << "|err|Personne ne vous a parlé pour le " \
                             "moment.|ff|"
                 else:
-                    personnage << res
+                    personnage << "Vos conversations en cours :\n" + res
             else:
                 # On place le focus sur le correspondant indiqué
-                id = dic_masques["id_corresp"].id_corresp
-                cible = dic_masques["id_corresp"].correspondant
-                for couple in type(self).importeur.communication.correspondants:
-                    if couple.id == id and couple.emetteur == personnage and couple.cible == cible:
-                        if not couple.focus:
-                            couple.ch_focus()
-                            personnage << "|att|La réponse automatique a bien été " \
-                                    "bloquée sur {}.|ff|".format(cible.nom)
+                id = dic_masques["id_conversation"].id_conversation
+                cible = dic_masques["id_conversation"].cible
+                for conversation in type(self).importeur.communication. \
+                        conversations.iter():
+                    if conversation.id == id \
+                    and conversation.emetteur == personnage \
+                    and conversation.cible == cible:
+                        if not conversation.focus:
+                            conversation.ch_focus()
+                            personnage << "|att|La réponse automatique a bien " \
+                                    "été bloquée sur {}.|ff|".format(cible.nom)
                         else:
                             personnage << "|err|Le focus est déjà sur {}.|ff|" \
                                     .format(cible.nom)
         # Sinon
         else:
             message = dic_masques["message"].message
-            clr = type(self).importeur.anaconf. \
-                    get_config("config_com").couleur_tell
             cible = None
             # On récupère la cible du reply
-            if dic_masques["id_corresp"] is not None:
-                cible = dic_masques["id_corresp"].correspondant
+            if dic_masques["id_conversation"] is not None:
+                cible = dic_masques["id_conversation"].cible
             # Si le masque id n'a rien donné
             if cible is None:
-                for couple in p_corresp:
-                    cible = couple.cible
-                    if couple.focus:
+                for conversation in p_conversations:
+                    cible = conversation.cible
+                    if conversation.focus:
                         break
             # On envoie le message
             if cible is None:
@@ -116,9 +118,8 @@ class CmdRepondre(Commande):
                     personnage << "|err|Le joueur {} passé en paramètre n'a " \
                             "pu être trouvé.|ff|".format(cible.nom)
                 else:
-                    couple = Conversation(cible, personnage)
-                    type(self).importeur.communication.correspondants \
-                            .append(couple)
+                    type(self).importeur.communication.conversations \
+                            .ajouter_ou_remplacer(cible, personnage, message)
                     personnage << clr + "Vous répondez à {} : {}|ff|" \
                             .format(cible.nom, message)
                     cible << clr + "{} vous répond : {}|ff|" \

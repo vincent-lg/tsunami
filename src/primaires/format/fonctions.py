@@ -241,3 +241,19 @@ def contient(nom_complet, fragment):
             return True
     
     return False
+
+def couper_phrase(phrase, couper):
+    """Coupe la phrase 'phrase' au mot précédant le caractère numéro 'couper'
+    et ajoute (...) si nécessaire"""
+    i = len(phrase)
+    if i <= couper:
+        return phrase
+    else:
+        phrase = phrase[:couper]
+        if phrase.endswith(" "):
+            return phrase + "(...)"
+        else:
+            phrase = phrase.split(" ")
+            del phrase[-1]
+            phrase = " ".join(phrase)
+            return phrase + " (...)"

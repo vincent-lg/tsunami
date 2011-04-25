@@ -35,6 +35,7 @@ from primaires.communication import masques
 from primaires.communication import commandes
 from primaires.communication.config import cfg_com
 from primaires.format.fonctions import *
+from .conversations import Conversations
 from .canal import Canal
 from .canaux import Canaux
 
@@ -50,7 +51,7 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "communication", "primaire")
         self.masques = []
         self.commandes = []
-        self.correspondants = []
+        self.conversations = Conversations()
         self._canaux = canaux
     
     def config(self):
@@ -68,7 +69,7 @@ class Module(BaseModule):
         """Ajout des masques"""
         self.importeur.interpreteur.ajouter_masque(masques.message.Message)
         self.importeur.interpreteur \
-                .ajouter_masque(masques.correspondant.Correspondant)
+                .ajouter_masque(masques.id_conversation.IdConversation)
     
     def ajouter_commandes(self):
         """Ajout des commandes"""
