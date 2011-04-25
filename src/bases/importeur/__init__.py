@@ -58,7 +58,7 @@ import traceback
 import py_compile
 
 from abstraits.module import *
-from abstraits.obase import BaseObj
+from abstraits.obase import BaseObj, objets_base
 from abstraits.id.id import ID
 
 REP_PRIMAIRES = "primaires"
@@ -333,6 +333,7 @@ class Importeur:
         logger = type(self).man_logs.get_logger("sup")
         res = False
         Importeur.nb_hotboot += 1
+        objets_base.clear()
         try:
              for nom_package in os.listdir(os.getcwd() + "/" + REP_PRIMAIRES):
                  if not nom_package.startswith("__"):
