@@ -65,6 +65,7 @@ REP_PRIMAIRES = "primaires"
 REP_SECONDAIRES = "secondaires"
 
 class Importeur:
+    
     """Classe chargée de créer un objet Importeur. Il contient sous la forme
     d'attributs les modules primaires et secondaires chargés. Les modules
     primaires et secondaires ne sont pas distingués.
@@ -72,6 +73,7 @@ class Importeur:
     On ne doit créer qu'un seul objet Importeur.
 
     """
+    
     nb_importeurs = 0
     parser_cmd = None # parser de la ligne de commande
     anaconf = None # analyseur des fichiers de configuration
@@ -230,6 +232,7 @@ class Importeur:
         Les modules à initialiser sont ceux configurés.
         
         """
+        type(self).parid.se_charge()
         conf_glb = Importeur.anaconf.get_config("globale")
         Importeur.logger.debug("Initialisation des modules :")
         # On initialise d'abord les modules à initialiser en priorité
@@ -249,6 +252,8 @@ class Importeur:
                 module.init()
                 Importeur.logger.debug("  Le module {0} a été " \
                         "initialisé".format(module.nom))
+        
+        type(self).parid.se_construit()
         
         # Ajout des masques et commandes
         for module in self.__dict__.values():

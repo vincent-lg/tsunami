@@ -155,12 +155,14 @@ class ObjetID(BaseObj):
         
         """
         self._statut = StatutObjet.EN_CONSTRUCTION
-        self.id = ID(type(self).groupe, type(self).id_actuel)
-        type(self).id_actuel += 1
+        if BaseObj.importeur.parid.construit:
+            self.id = ID(type(self).groupe, type(self).id_actuel)
+            type(self).id_actuel += 1
         # Appel du constructeur de BaseObj
         BaseObj.__init__(self)
         # On l'ajoute dans le parid
-        BaseObj.importeur.parid[self.id.groupe][self.id.id] = self
+        if BaseObj.importeur.parid.construit:
+            BaseObj.importeur.parid[self.id.groupe][self.id.id] = self
         # On change le statut et enregistre l'objet
         self._statut = StatutObjet.INITIALISE
         self.enregistrer()

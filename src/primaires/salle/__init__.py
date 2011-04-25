@@ -96,28 +96,6 @@ class Module(BaseModule):
         for salle in salles:
             self.ajouter_salle(salle)
         
-        # On récupère la configuration
-        conf_salle = type(self.importeur).anaconf.get_config("salle")
-        salle_arrivee = conf_salle.salle_arrivee
-        salle_retour = conf_salle.salle_retour
-        
-        if salle_arrivee not in self:
-            # On crée la salle d'arrivée
-            zone, mnemonic = salle_arrivee.split(":")
-            salle_arrivee = self.creer_salle(zone, mnemonic, valide=False)
-            salle_arrivee.titre = "La salle d'arrivée"
-            salle_arrivee = salle_arrivee.ident
-        
-        if salle_retour not in self:
-            # On crée la salle de retour
-            zone, mnemonic = salle_retour.split(":")
-            salle_retour = self.creer_salle(zone, mnemonic, valide=False)
-            salle_retour.titre = "La salle de retour"
-            salle_retour = salle_retour.ident
-        
-        self.salle_arrivee = salle_arrivee
-        self.salle_retour = salle_retour
-
         s = ""
         nb_salles = (len(self._salles) != 0) and len(self._salles) or "Aucune"
         if len(self._salles) > 1:
@@ -157,11 +135,35 @@ class Module(BaseModule):
     def preparer(self):
         """Préparation du module.
         On vérifie que :
+        -   les salles de retour et d'arrivée sont bien créés (sinon,
+            on les recrée)
         -   les personnages présents dans self._personnages soient
             toujours là
         -   les objets du sol existent toujours
         
         """
+        # On récupère la configuration
+        conf_salle = type(self.importeur).anaconf.get_config("salle")
+        salle_arrivee = conf_salle.salle_arrivee
+        salle_retour = conf_salle.salle_retour
+        
+        if salle_arrivee not in self:
+            # On crée la salle d'arrivée
+            zone, mnemonic = salle_arrivee.split(":")
+            salle_arrivee = self.creer_salle(zone, mnemonic, valide=False)
+            salle_arrivee.titre = "La salle d'arrivée"
+            salle_arrivee = salle_arrivee.ident
+        
+        if salle_retour not in self:
+            # On crée la salle de retour
+            zone, mnemonic = salle_retour.split(":")
+            salle_retour = self.creer_salle(zone, mnemonic, valide=False)
+            salle_retour.titre = "La salle de retour"
+            salle_retour = salle_retour.ident
+        
+        self.salle_arrivee = salle_arrivee
+        self.salle_retour = salle_retour
+        
         for salle in self._salles.values():
             salle._personnages.supprimer_doublons()
             salle._personnages.supprimer_none()

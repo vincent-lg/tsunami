@@ -190,10 +190,10 @@ importeur.tout_preparer()
 # jusqu'à l'arrêt du MUD. De cette manière, on garde le contrôle total
 # sur le flux d'instructions.
 
-while serveur.lance:
-    importeur.boucle()
-    serveur.verifier_connexions()
-    serveur.verifier_receptions()
-
-if lancer_serveur:
+if __name__ == "__main__":
+    while serveur.lance:
+        importeur.boucle()
+        serveur.verifier_connexions()
+        serveur.verifier_receptions()
+    
     arreter_MUD()
