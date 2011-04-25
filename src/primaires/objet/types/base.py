@@ -55,14 +55,17 @@ class BaseType(ObjetID, metaclass=MetaType):
         self.identifiant = identifiant
         self.no = 0 # nombre d'objets créés sur ce prototype
         self.nom_singulier = "un objet indéfini"
-        self.etat_singulier = "objets indéfinis"
-        self.nom_pluriel = "est posé là"
+        self.etat_singulier = "est posé là"
+        self.nom_pluriel = "objets indéfinis"
         self.etat_pluriel = "sont posés là"
         self.description = Description(parent=self)
         self.objets = ListeID()
     
     def __getinitargs__(self):
         return ()
+    
+    def __str__(self):
+        return self.identifiant
     
     def get_nom(self, nombre):
         """Retourne le nom complet en fonction du nombre.

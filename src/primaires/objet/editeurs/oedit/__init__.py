@@ -38,12 +38,13 @@ les extensions n'apparaîtront pas ici.
 
 """
 
-from primaires.interpreteur.editeur.presentation import Presentation
-from primaires.interpreteur.editeur.description import Description
-from primaires.interpreteur.editeur.uniligne import Uniligne
-from .edt_noms import EdtNoms
+from primaires.interpreteur.editeur import Editeur
+from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
+from .presentation import EdtPresentation
+from primaires.objet.types import types
+from primaires.format.fonctions import supprimer_accents, contient
 
-class EdtOedit(Presentation):
+class EdtOedit(Editeur):
     
     """Classe définissant l'éditeur d'objet 'oedit'.
     
@@ -58,25 +59,50 @@ class EdtOedit(Presentation):
         else:
             instance_connexion = None
         
-        Presentation.__init__(self, instance_connexion, prototype)
-        if personnage and prototype:
-            self.construire(prototype)
+        Editeur.__init__(self, instance_connexion, prototype)
+        self.personnage = personnage
+        self.identifiant = ""
     
     def __getinitargs__(self):
         return (None, None)
     
-    def construire(self, prototype):
-        """Construction de l'éditeur"""
-        # Noms
-        noms = self.ajouter_choix("noms", "n", EdtNoms, prototype)
-        noms.parent = self
-        noms.apercu = "{objet.nom_singulier}"
+    def accueil(self):
+        """Message d'accueil de l'éditeur.
+        On affiche les types disponibles.
         
-        # Description
-        description = self.ajouter_choix("description", "d", Description, \
-                prototype)
-        description.parent = self
-        description.apercu = "{objet.description.paragraphes_indentes}"
-        description.aide_courte = \
-            "| |tit|" + "Description de l'objet {}".format(prototype).ljust(
-            76) + "|ff||\n" + self.opts.separateur
+        """
+        identifiant = self.identifiant
+        noms_types = tuple(types.keys())
+        return "|tit|Création du prototype {}|ff|\n\n".format(identifiant) + \
+                "Entrez |cmd|le type d'objet|ff| que vous souhaitez créer " \
+                "ou |cmd|a|ff| pour annuler.\n" \
+                "Le type choisi ne pourra pas être modifié par la suite, " \
+                "soyez prudent.\n\n" \
+                "Liste des types existants : |cmd|" + "|ff|, |cmd|".join(
+                noms_types) + "|ff|"
+    
+    def get_prompt(self):
+        return "Entrez |cmd|le type d'objet|ff| à créer ou |cmd|a|ff| " \
+                "pour annuler."
+    
+    def interpreter(self, msg):
+        """Interprétation du message"""
+        msg = msg.lower()
+        if msg == "a":
+            self.pere.joueur.contextes.retirer()
+            self.pere.envoyer("Opération annulée.")
+        else:
+            type_choisi = ""
+            for nom in types.keys():
+                if contient(nom, msg):
+                    type_choisi = nom
+            
+            if not type_choisi:
+                self.pere << "|err|Ce type est inconnu.|ff|"
+            else:
+                self.objet = type(self).importeur.objet.creer_prototype(
+                        self.identifiant, type_choisi)
+                enveloppe = EnveloppeObjet(EdtPresentation, self.objet, "")
+                contexte = enveloppe.construire(self.personnage)
+                
+                self.migrer_contexte(contexte)

@@ -28,44 +28,47 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'oedit'."""
+"""Fichier contenant la classe EdtPresentation, détaillée plus bas.
 
-from primaires.interpreteur.commande.commande import Commande
+"""
+
 from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
-from primaires.objet.editeurs.oedit.presentation import EdtPresentation
-from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
+from .edt_noms import EdtNoms
 
-class CmdOedit(Commande):
+class EdtPresentation(Presentation):
     
-    """Commande 'oedit'"""
+    """Classe définissant l'éditeur d'objet 'oedit'.
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "oedit", "oedit")
-        self.groupe = "administrateur"
-        self.schema = "<ident>"
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "ouvre l'éditeur d'objet"
-        self.aide_longue = \
-            "Cette commande permet d'accéder à l'éditeur d'objet. Elle " \
-            "prend en paramètre l'identifiant de l'objet (que des " \
-            "minuscules, des chiffres et le signe |ent|_|ff|). Si l'objet " \
-            "n'existe pas, il est créé."
+    """
     
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        ident_objet = dic_masques["ident"].ident
-        if ident_objet in type(self).importeur.objet.prototypes:
-            prototype = type(self).importeur.objet.prototypes[ident_objet]
-            enveloppe = EnveloppeObjet(EdtPresentation, prototype, "")
-            contexte = enveloppe.construire(personnage)
-            
-            personnage.contextes.ajouter(contexte)
-            contexte.actualiser()
+    def __init__(self, personnage, prototype, attribut=""):
+        """Constructeur de l'éditeur"""
+        if personnage:
+            instance_connexion = personnage.instance_connexion
         else:
-            editeur = type(self).importeur.interpreteur.construire_editeur(
-                    "oedit", personnage, None)
-            editeur.identifiant = ident_objet
-            personnage.contextes.ajouter(editeur)
-            editeur.actualiser()
+            instance_connexion = None
+        
+        Presentation.__init__(self, instance_connexion, prototype)
+        if personnage and prototype:
+            self.construire(prototype)
+    
+    def __getinitargs__(self):
+        return (None, None)
+    
+    def construire(self, prototype):
+        """Construction de l'éditeur"""
+        # Noms
+        noms = self.ajouter_choix("noms", "n", EdtNoms, prototype)
+        noms.parent = self
+        noms.apercu = "{objet.nom_singulier}"
+        
+        # Description
+        description = self.ajouter_choix("description", "d", Description, \
+                prototype)
+        description.parent = self
+        description.apercu = "{objet.description.paragraphes_indentes}"
+        description.aide_courte = \
+            "| |tit|" + "Description de l'objet {}".format(prototype).ljust(
+            76) + "|ff||\n" + self.opts.separateur
