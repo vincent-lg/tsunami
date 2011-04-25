@@ -45,7 +45,7 @@ class Detail(BaseObj):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
         self.nom = nom
-        self.synonymes = synonymes
+        self.synonymes = list(synonymes)
         self.description = Description()
         self.titre = "un certain détail"
         self.parent = parent
