@@ -43,22 +43,22 @@ class Stats(BaseObj):
     
     """
     
-    def __init__(self, config, parent=None):
+    def __init__(self, parent=None):
         """Constructeur du conteneur.
         On s'inspire de la configuration pour créer la base des Stats.
         
         """
         BaseObj.__init__(self)
+        config = type(self).importeur.perso.cfg_stats
         self.__stats = []
         for ligne in config.stats:
             nom = ligne[0]
-            stat = Stat(*ligne)
+            stat = Stat(*ligne, parent=self)
             setattr(self, "_{}".format(nom), stat)
             self.__stats.append(stat)
-        print("La base crée est :", str(self))
     
     def __getinitargs__(self):
-        return (None, )
+        return ()
     
     def __str__(self):
         ret = "  "
@@ -73,8 +73,18 @@ class Stats(BaseObj):
         va chercher dans 'stats.;_force.courante'.
         
         """
-        stat = getattr(self, "_{}".format(nom_attr))
+        stat = object.__getattribute__(self, "_{}".format(nom_attr))
         return stat.courante
+    
+    def __setattr__(self, nom_attr, val_attr):
+        nom_stat = "_{}".format(nom_attr)
+        if hasattr(self, nom_stat):
+            objet = getattr(self, nom_stat)
+            if isinstance(objet, Stat):
+                objet.courante = val_attr
+                pass
+        else:
+            BaseObj.__setattr__(self, nom_attr, val_attr)
     
     def enregistrer(self):
         """Enregistre le parent"""

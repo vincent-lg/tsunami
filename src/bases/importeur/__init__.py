@@ -337,10 +337,12 @@ class Importeur:
         try:
              for nom_package in os.listdir(os.getcwd() + "/" + REP_PRIMAIRES):
                  if not nom_package.startswith("__"):
-                     py_compile.compile(os.getcwd() + "/" + REP_PRIMAIRES + "/" + nom_package + "/__init__.py",doraise=True)
+                     py_compile.compile(os.getcwd() + "/" + \
+                            REP_PRIMAIRES + "/" + nom_package + \
+                            "/__init__.py", doraise=True)
         except py_compile.PyCompileError:
             logger.fatal(
-                "Une erreur s'est produit lors de l'hotboot.")
+                "Une erreur s'est produite lors de l'hotboot.")
             logger.fatal(traceback.format_exc())
         else:
             self.tout_detruire()

@@ -35,7 +35,7 @@ from bases.anaconf.fichier_configuration import FichierConfiguration
 Note : l'analyse se fait par évaluation de chaînes contenant du code Python.
 Si ces chaînes font référence à des objets, fonctions, méthodes, elles doivent
 être définies dans les globales de l'interpréteur grâce à la méthode
-'set_globales'. Voir l'aide pour plus d'informations.
+'_set_globales'. Voir l'aide pour plus d'informations.
 
 """
 
@@ -66,7 +66,7 @@ class Analyseur:
         Note: si dans le fichier de configuration, une référence est faite
         à une fonction ou une classe, il est nécessaire que la fonction ou
         classe soit déclarée comme globales de l'interpréteur (voir
-        'set_globales').
+        '_set_globales').
     -   Lors de la lecture, chaque nom de donnée est stocké à même l'objet,
         en tant qu'attribut propre. Ainsi les noms des donénes devront
         respecter une syntaxe propre, sans espaces ni accents ni caractères
@@ -178,7 +178,7 @@ class Analyseur:
             raise ValueError("La donnée '{0}' n'a pu être trouvée dans " \
                     "cette configuration".format(nom))
     
-    def set_globales(self, globales):
+    def _set_globales(self, globales):
         """Paramètre les globales, données sous la forme d'un dictionnaires.
         Ces globales sont utilisées dans l'évaluation de données de
         configuration.
@@ -186,7 +186,7 @@ class Analyseur:
         fonction 'randrange', il faut l'ajouter dans les globales.
         >>> import random
         >>> analyseur = Analyseur("....cfg")
-        >>> analyseur.set_globales({"randrange":random.randrange})
+        >>> analyseur._set_globales({"randrange":random.randrange})
         >>> analyseur.hasard # contient randrange(8)
         6
         

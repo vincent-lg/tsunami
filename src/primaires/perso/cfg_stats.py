@@ -90,12 +90,12 @@ cfg_stats = r"""
 #   * SEM : la stat lève une exception si elle est supérieure ou égale au MAX
 stats = (
     # Nom             # Défaut # Marge # Max              # Flags
-    ( "vitalite"      ,     50 , 10000 , "vitalite_max"   , IE0),
-    ( "mana"          ,     50 , 10000 , "mana_max"       , ),
-    ( "endurance"     ,     50 , 10000 , "endurance_max"  , ),
     ( "vitalite_max"  ,     50 , 10000 , ""               , ),
     ( "mana_max"      ,     50 , 10000 , ""               , ),
     ( "endurance_max" ,     50 , 10000 , ""               , ),
+    ( "vitalite"      ,     50 , 10000 , "vitalite_max"   , IE0),
+    ( "mana"          ,     50 , 10000 , "mana_max"       , ),
+    ( "endurance"     ,     50 , 10000 , "endurance_max"  , ),
     ( "force"         ,      5 ,   100 , ""               , ),
     ( "agilite"       ,      5 ,   100 , ""               , ),
     ( "robustesse"    ,      5 ,   100 , ""               , ),

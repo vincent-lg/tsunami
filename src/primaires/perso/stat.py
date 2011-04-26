@@ -70,7 +70,7 @@ class Stat(BaseObj):
             self.__max = getattr(self.parent, "_{}".format(max))
     
     def __str__(self):
-        return "{}={} (base={}, variable={}, max={}).format(
+        return "{}={} (base={}, variable={}, max={})".format(
                 self.nom, self.courante, self.base, self.variable, self.max)
     
     @property
@@ -83,14 +83,14 @@ class Stat(BaseObj):
     
     @property
     def max(self):
-        max = self._max
+        max = self.__max
         if max:
             max = max.courante
         
         return max
     
     def _get_courante(self):
-        return self.__courante
+        return self.__base + self.__variable
     def _set_courante(self, courante):
         """C'est dans cette propriété qu'on change la valeur courante
         de la stat.
@@ -98,6 +98,8 @@ class Stat(BaseObj):
         
         """
         self.set(courante, self.flags)
+    
+    courante = property(_get_courante, _set_courante)
     
     def set(self, courante, flags):
         """Modifie la stat couarnte.
@@ -117,17 +119,16 @@ class Stat(BaseObj):
         # Levée d'exceptions
         if base < 0 and flags & I0:
             raise ValueError
-       if base <= 0 and flags & IE0:
+        if base <= 0 and flags & IE0:
             raise ValueError
         if self.max and flags & SM and base > self.max:
             raise ValueError
         if self.max and flags & SEM and base >= self.max:
             raise ValueError
-
         
         if base > self.marge_max:
             base = self.marge_max
-        if base > self.marge_min:
+        if base < self.marge_min:
             base = self.marge_min
         
         if self.max and base > self.max:

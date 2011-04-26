@@ -34,6 +34,7 @@ from abstraits.module import *
 from primaires.perso import commandes
 from primaires.perso import masques
 from .cfg_stats import cfg_stats
+from .stats import *
 
 class Module(BaseModule):
     
@@ -50,6 +51,7 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "perso", "primaire")
+        self.cfg_stats = None
         self.commandes = []
     
     def config(self):
@@ -57,8 +59,14 @@ class Module(BaseModule):
         On récupère le fichier de configuration correspondant au module.
         
         """
-        conf_stats = type(self.importeur).anaconf.get_config("stats", \
-                "perso/stats.cfg", "modele stats", cfg_stats)
+        self.cfg_stats = conf_stats = type(self.importeur).anaconf.get_config(
+                "stats", "perso/stats.cfg", "modele stats", cfg_stats)
+        conf_stats._set_globales({
+            "I0":I0,
+            "IE0":IE0,
+            "SM":SM,
+            "SEM":SEM,
+        })
         
         BaseModule.config(self)
     
