@@ -130,7 +130,6 @@ class Joueur(Personnage):
         
         """
         self.connecte = False
-        self.instance_connexion = None
         salle = self.salle
         if salle:
             salle.retirer_personnage(self)
