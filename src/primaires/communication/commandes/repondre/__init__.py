@@ -51,12 +51,15 @@ class CmdRepondre(Commande):
             "Cette commande permet de répondre au dernier joueur qui vous a " \
             "parlé avec à la commande %parler%. Sans argument, %repondre% " \
             "retourne une liste numérotée des personnes qui vous ont parlé " \
-            "au cours de cette session. Vous pouvez répondre à l'une d'entre " \
+            "au cours de cette session.\n" \
+            "Vous pouvez répondre à l'une d'entre " \
             "elles en particulier avec %repondre% |ent|<numéro de la liste> " \
-            "<message>|ff|. Vous pouvez aussi bloquer la réponse automatique " \
+            "<message>|ff|.\n" \
+            "Vous pouvez aussi bloquer la réponse automatique " \
             "sur un personnage de la liste en entrant %repondre% " \
             "|ent|<numéro du personnage>|ff| (le personnage ainsi " \
-            "sélectionné apparaîtra grisé dans la liste numérotée)."
+            "sélectionné apparaîtra grisé dans la liste numérotée) ou " \
+            "%repondre% |ent|-|ff| pour réinitialiser."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
@@ -91,6 +94,8 @@ class CmdRepondre(Commande):
                         if conversation in p_conversations:
                             if conversation.focus:
                                 conversation.ch_focus()
+                    personnage << "|att|La réponse automatique a bien été " \
+                            "remise à zéro.|ff|"
                 else:
                     # On place le focus sur le correspondant indiqué
                     id = dic_masques["id_conversation"].id_conversation
