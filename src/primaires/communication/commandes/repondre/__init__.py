@@ -103,15 +103,15 @@ class CmdRepondre(Commande):
                     for conversation in type(self).importeur.communication. \
                             conversations.iter():
                         if conversation.id == id and \
-                                conversation.emetteur == personnage and \
-                                conversation.cible == cible:
+                                conversation.emetteur is personnage and \
+                                conversation.cible is cible:
                             if not conversation.focus:
                                 conversation.ch_focus()
                                 personnage << "|att|La réponse automatique a " \
-                                        "bien été bloquée sur {}.|ff|" \
-                                        .format(cible.nom)
+                                        "bien été bloquée sur {}.|ff|".format(
+                                        cible.nom)
                             else:
-                                personnage << "|err|Le focus est déjà sur " \
+                                  personnage << "|err|Le focus est déjà sur " \
                                         "{}.|ff|".format(cible.nom)
         # Sinon
         else:
@@ -135,9 +135,9 @@ class CmdRepondre(Commande):
                     personnage << "|err|Le joueur {} passé en paramètre n'a " \
                             "pu être trouvé.|ff|".format(cible.nom)
                 else:
-                    type(self).importeur.communication.conversations \
-                            .ajouter_ou_remplacer(cible, personnage, message)
-                    personnage << clr + "Vous répondez à {} : {}|ff|" \
-                            .format(cible.nom, message)
-                    cible << clr + "{} vous répond : {}|ff|" \
-                            .format(personnage.nom, message)
+                    type(self).importeur.communication.conversations. \
+                            ajouter_ou_remplacer(cible, personnage, message)
+                    personnage << clr + "Vous répondez à {} : {}|ff|".format(
+                            cible.nom, message)
+                    cible << clr + "{} vous répond : {}|ff|".format(
+                            personnage.nom, message)

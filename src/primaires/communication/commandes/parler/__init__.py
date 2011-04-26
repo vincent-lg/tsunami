@@ -56,7 +56,7 @@ class CmdParler(Commande):
         """Interprétation de la commande"""
         cible = dic_masques["nom_joueur"].joueur
         message = dic_masques["message"].message
-        if cible == personnage:
+        if cible is personnage:
             personnage << "Vous parlez tout seul... Hum."
         else:
             clr = type(self).importeur.anaconf. \

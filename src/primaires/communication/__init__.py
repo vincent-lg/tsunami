@@ -68,8 +68,8 @@ class Module(BaseModule):
     def ajouter_masques(self):
         """Ajout des masques"""
         self.importeur.interpreteur.ajouter_masque(masques.message.Message)
-        self.importeur.interpreteur \
-                .ajouter_masque(masques.id_conversation.IdConversation)
+        self.importeur.interpreteur.ajouter_masque(
+                masques.id_conversation.IdConversation)
     
     def ajouter_commandes(self):
         """Ajout des commandes"""
