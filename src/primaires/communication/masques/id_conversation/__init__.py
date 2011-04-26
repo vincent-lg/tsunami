@@ -67,6 +67,7 @@ class IdConversation(Masque):
         id_conversation = id_conversation.split(" ")[0]
         if id_conversation == "-":
             self.perte_focus = True
+            commande[:] = commande[len(id_conversation):]
             return True
         
         taille = len(id_conversation)
