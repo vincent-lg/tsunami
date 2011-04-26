@@ -55,7 +55,8 @@ class CmdRepondre(Commande):
             "elles en particulier avec %repondre% |ent|<numéro de la liste> " \
             "<message>|ff|. Vous pouvez aussi bloquer la réponse automatique " \
             "sur un personnage de la liste en entrant %repondre% " \
-            "|ent|<numéro du personnage>|ff|."
+            "|ent|<numéro du personnage>|ff| (le personnage ainsi " \
+            "sélectionné apparaîtra grisé dans la liste numérotée)."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
@@ -70,7 +71,10 @@ class CmdRepondre(Commande):
                 res = ""
                 for conversation in p_conversations:
                     res += "\n " + str(conversation.id) + ". Avec "
-                    res += "|gr|" + conversation.cible.nom + "|ff|"
+                    if conversation.focus:
+                        res += "|grf|" + conversation.cible.nom + "|ff|"
+                    else:
+                        res += conversation.cible.nom
                     if conversation.cible not in \
                             type(self).importeur.connex.joueurs_connectes:
                         res += " (|rgc|déconnecté|ff|)"

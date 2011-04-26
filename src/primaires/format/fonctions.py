@@ -251,9 +251,10 @@ def couper_phrase(phrase, couper):
     else:
         phrase = phrase[:couper]
         if phrase.endswith(" "):
-            return phrase + "(...)"
+            return phrase.rstrip() + "..."
         else:
             phrase = phrase.split(" ")
-            del phrase[-1]
+            if len(phrase) > 1:
+                del phrase[-1]
             phrase = " ".join(phrase)
-            return phrase + " (...)"
+            return phrase + "..."

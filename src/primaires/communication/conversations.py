@@ -56,7 +56,7 @@ class Conversations(BaseObj):
         return list(self._conversations)
     
     def ajouter_ou_remplacer(self, emetteur, cible, phrase):
-        """Ajoute ou actualise une conversation à la liste et la retourne"""
+        """Ajoute ou actualise une conversation à la liste"""
         if self.conversation_existe(emetteur, cible):
             cle = self.get_cle_conversation(emetteur, cible)
             self._conversations[cle].phrase = phrase
@@ -64,12 +64,20 @@ class Conversations(BaseObj):
         else:
             conversation = Conversation(emetteur, cible, phrase)
             self._conversations.append(conversation)
-        
-        return conversation
     
-    def supprimer_conversation(self, conversation):
-        """Supprime la conversation passée en argument"""
-        self._conversations.remove(conversation)
+    def conversation_existe(self, emetteur, cible):
+        """Renvoie True si la conversation existe, False sinon"""
+        return self.get_cle_conversation(emetteur, cible) != -1
+    
+    def get_cle_conversation(self, emetteur, cible):
+        """Renvoie la cle d'une conversation"""
+        i = 0
+        for conversation in self._conversations:
+            if conversation.emetteur == emetteur and conversation.cible == cible:
+                return i
+            i += 1
+        
+        return -1
     
     def get_conversations_pour(self, personnage):
         """Récupère toutes les coonversations impliquant 'personnage'"""
@@ -83,18 +91,6 @@ class Conversations(BaseObj):
     def vider_conversations_pour(self, personnage):
         """Vide les conversations impliquant 'personnage'"""
         for conversation in self._conversations:
-            if personnage == conversation.emetteur or personnage == conversation.cible:
-                sel.supprimer_conversation(conversation)
-    
-    def get_cle_conversation(self, emetteur, cible):
-        """Renvoie la cle d'une conversation"""
-        i = 0
-        for conversation in self._conversations:
-            if conversation.emetteur == emetteur and conversation.cible == cible:
-                return i
-            i += 1
-        return -1
-    
-    def conversation_existe(self, emetteur, cible):
-        """Renvoie True si la conversation existe, False sinon"""
-        return self.get_cle_conversation(emetteur, cible) != -1
+            if personnage == conversation.emetteur \
+            or personnage == conversation.cible:
+                self._conversations.remove(conversation)

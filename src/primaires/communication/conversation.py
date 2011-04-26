@@ -30,6 +30,8 @@
 
 """Ce fichier contient la classe Conversation détaillée plus bas."""
 
+import datetime
+
 from abstraits.obase import BaseObj
 from primaires.format.fonctions import couper_phrase
 
@@ -50,9 +52,6 @@ class Conversation(BaseObj):
         conversations = type(self).importeur.communication.conversations
         p_conversations = conversations.get_conversations_pour(emetteur)
         self.id = len(p_conversations) + 1
-    
-    def __str__(self):
-        return self.emetteur.nom + " pour " + self.cible.nom
     
     @property
     def emetteur(self):

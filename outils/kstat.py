@@ -80,7 +80,7 @@ else:
     fichiers, lignes, lignes_code, lignes_commentaire = scan_dossier(chemin)
 
 print("\n\n\n" + "-" * 80)
-print("{0} fichier(s) scané(s)".format(fichiers))
+print("{0} fichier(s) scanné(s)".format(fichiers))
 print("{0} lignes dans le projet, dont {1} lignes de code et {2} de commentaires".format(lignes, lignes_code, lignes_commentaire))
 print("Moyenne des lignes par fichier: {0}".format(lignes // fichiers))
 print("Taux d'apparition des commentaires: {0}%".format(lignes_commentaire / lignes * 100))
