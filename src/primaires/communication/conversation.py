@@ -48,6 +48,7 @@ class Conversation(BaseObj):
         self._cible = cible.id.id
         self._phrase = phrase
         self.focus = False
+        self.date = datetime.datetime.now()
         # On déduit l'id
         conversations = type(self).importeur.communication.conversations
         p_conversations = conversations.get_conversations_pour(emetteur)

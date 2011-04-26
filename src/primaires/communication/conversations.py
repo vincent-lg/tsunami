@@ -30,6 +30,8 @@
 
 """Ce fichier contient la classe Conversations détaillée plus bas."""
 
+import datetime
+
 from abstraits.obase import BaseObj
 from .conversation import Conversation
 
@@ -73,7 +75,8 @@ class Conversations(BaseObj):
         """Renvoie la cle d'une conversation"""
         i = 0
         for conversation in self._conversations:
-            if conversation.emetteur == emetteur and conversation.cible == cible:
+            if conversation.emetteur == emetteur \
+            and conversation.cible == cible:
                 return i
             i += 1
         
@@ -93,4 +96,6 @@ class Conversations(BaseObj):
         for conversation in self._conversations:
             if personnage == conversation.emetteur \
             or personnage == conversation.cible:
-                self._conversations.remove(conversation)
+                auj = datetime.datetime.now()
+                if (auj - conversation.date).seconds < 60 * 60 * 12:
+                    self._conversations.remove(conversation)
