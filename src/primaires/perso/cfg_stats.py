@@ -74,11 +74,34 @@ cfg_stats = r"""
 #   Ceci est indépendant de la marge. La vitalité (ou vie) est par
 #   exemple limitée par la vitalité max (ou vie max). Dans le tableau
 #   représentant cette stat, le nom de la stat maximum doit être donnée
-# * exception : doit-on lever une exception quand la stat arrive à 0 ?
-#   oui ou non
+# * flags : la liste des flags de la stat, séparés par le pipe ('|')
+#   Quand une stat atteint un certain nombre, une exception peut être levée.
+#   Cette exception peut être interceptée au niveau de la modification pour
+#   permettre des messages plus personnalisés, en cas de la mort du
+#   personnage par exemple.
+#   Chaque stat peut lever une exception quand elle dépasse un certain seuil.
+#   Si vous laissez la colonne stat vide, l'exception I0 sera appliquée
+#   par défaut.
+#   Les flags existants sont :
+#   * NX  : la stat ne lève aucune exception lors de sa modification
+#   * I0  : la stat lève une exception si elle est strinctement inférieure à 0
+#   * IE0 : la stat lève une exception si elle est inférieure ou égale à 0
+#   * SM  : la stat lève une exception si elle est supérieure au MAX
+#   * SEM : la stat lève une exception si elle est supérieure ou égale au MAX
 stats = (
-    # Nom        # Défaut # Marge # Max # Exception
-    ( "vitalite" ,     50 , 10000 , ""  , oui),
+    # Nom             # Défaut # Marge # Max              # Flags
+    ( "vitalite"      ,     50 , 10000 , "vitalite_max"   , IE0),
+    ( "mana"          ,     50 , 10000 , "mana_max"       , ),
+    ( "endurance"     ,     50 , 10000 , "endurance_max"  , ),
+    ( "vitalite_max"  ,     50 , 10000 , ""               , ),
+    ( "mana_max"      ,     50 , 10000 , ""               , ),
+    ( "endurance_max" ,     50 , 10000 , ""               , ),
+    ( "force"         ,      5 ,   100 , ""               , ),
+    ( "agilite"       ,      5 ,   100 , ""               , ),
+    ( "robustesse"    ,      5 ,   100 , ""               , ),
+    ( "intelligence"  ,      5 ,   100 , ""               , ),
+    ( "charisme"      ,      5 ,   100 , ""               , ),
+    ( "sensibilite"   ,      5 ,   100 , ""               , ),
 )
 
 """

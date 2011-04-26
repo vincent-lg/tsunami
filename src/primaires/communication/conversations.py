@@ -31,6 +31,7 @@
 """Ce fichier contient la classe Conversations détaillée plus bas."""
 
 import datetime
+from datetime import timedelta
 
 from abstraits.obase import BaseObj
 from .conversation import Conversation
@@ -93,9 +94,9 @@ class Conversations(BaseObj):
     
     def vider_conversations_pour(self, personnage):
         """Vide les conversations impliquant 'personnage'"""
-        for conversation in self._conversations:
-            if personnage == conversation.emetteur \
-            or personnage == conversation.cible:
+        for conversation in tuple(self._conversations):
+            if personnage is conversation.emetteur or \
+                    personnage is conversation.cible:
                 auj = datetime.datetime.now()
-                if (auj - conversation.date).seconds < 60 * 60 * 12:
+                if auj - conversation.date > timedelta(hours=12):
                     self._conversations.remove(conversation)
