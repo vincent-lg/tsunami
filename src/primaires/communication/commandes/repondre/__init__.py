@@ -72,7 +72,7 @@ class CmdRepondre(Commande):
                 for conversation in p_conversations:
                     res += "\n " + str(conversation.id) + ". Avec "
                     if conversation.focus:
-                        res += "|grf|" + conversation.cible.nom + "|ff|"
+                        res += "|grf|[c] " + conversation.cible.nom + "|ff|"
                     else:
                         res += conversation.cible.nom
                     if conversation.cible not in \
@@ -85,21 +85,29 @@ class CmdRepondre(Commande):
                 else:
                     personnage << "Vos conversations en cours :\n" + res
             else:
-                # On place le focus sur le correspondant indiqué
-                id = dic_masques["id_conversation"].id_conversation
-                cible = dic_masques["id_conversation"].cible
-                for conversation in type(self).importeur.communication. \
-                        conversations.iter():
-                    if conversation.id == id \
-                    and conversation.emetteur == personnage \
-                    and conversation.cible == cible:
-                        if not conversation.focus:
-                            conversation.ch_focus()
-                            personnage << "|att|La réponse automatique a bien " \
-                                    "été bloquée sur {}.|ff|".format(cible.nom)
-                        else:
-                            personnage << "|err|Le focus est déjà sur {}.|ff|" \
-                                    .format(cible.nom)
+                if dic_masques["id_conversation"].perte_focus:
+                    for conversation in type(self).importeur.communication. \
+                            conversations.iter():
+                        if conversation in p_conversations:
+                            if conversation.focus:
+                                conversation.ch_focus()
+                else:
+                    # On place le focus sur le correspondant indiqué
+                    id = dic_masques["id_conversation"].id_conversation
+                    cible = dic_masques["id_conversation"].cible
+                    for conversation in type(self).importeur.communication. \
+                            conversations.iter():
+                        if conversation.id == id and \
+                                conversation.emetteur == personnage and \
+                                conversation.cible == cible:
+                            if not conversation.focus:
+                                conversation.ch_focus()
+                                personnage << "|att|La réponse automatique a " \
+                                        "bien été bloquée sur {}.|ff|" \
+                                        .format(cible.nom)
+                            else:
+                                personnage << "|err|Le focus est déjà sur " \
+                                        "{}.|ff|".format(cible.nom)
         # Sinon
         else:
             message = dic_masques["message"].message

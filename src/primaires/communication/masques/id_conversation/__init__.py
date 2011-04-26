@@ -48,7 +48,9 @@ class IdConversation(Masque):
         """Constructeur du masque"""
         Masque.__init__(self)
         self.nom_complet = "id d'une conversation"
+        self.id_conversation = None
         self.cible = None
+        self.perte_focus = False
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
@@ -63,12 +65,14 @@ class IdConversation(Masque):
                 "Vous devez préciser le numéro d'un correspondant.")
         
         id_conversation = id_conversation.split(" ")[0]
+        if id_conversation == "-":
+            self.perte_focus = True
+            return True
+        
         taille = len(id_conversation)
         try:
             id_conversation = int(id_conversation)
         except ValueError:
-            self.id_conversation = None
-            self.cible = None
             return True
         else:
             commande[:] = commande[taille:]

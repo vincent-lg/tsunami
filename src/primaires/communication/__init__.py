@@ -102,10 +102,22 @@ class Module(BaseModule):
         """Supprime le canal de la liste des canaux"""
         del self._canaux[nom]
     
+    def rejoindre_ou_creer(self, personnage, arguments):
+        """Connecte le joueur au canal passé en argument, ou le crée s'il
+        n'existe pas.
+        
+        """
+        pass
+    
+    def quitter_ou_detruire(self, personnage, arguments):
+        """Déconnecte le joueur et détruit le canal si y'a plus personne"""
+        pass
+    
+    def immerger(self, personnage, arguments):
+        pass
+        
     def traiter_commande(self, personnage, commande):
         """Traite les commandes au premier niveau"""
-        return False # à retirer pour ouvrir, une fois stable
-        
         if commande.startswith("+"):
             self.rejoindre_ou_creer(personnage, commande[1:])
         elif commande.startswith("-"):
