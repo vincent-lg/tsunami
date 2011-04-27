@@ -60,6 +60,7 @@ class Personnage(ObjetID):
         self.langue_cmd = "francais"
         self._salle = None
         self.stats = Stats()
+        self._prompt = "Vit   {v}     Man   {m}     End   {e}"
     
     def __getinitargs__(self):
         """Retourne les arguments à passer au constructeur"""
@@ -130,6 +131,15 @@ class Personnage(ObjetID):
             salle.ajouter_personnage(self)
     
     salle = property(_get_salle, _set_salle)
+    
+    @property
+    def prompt(self):
+        """Retourne le prompt formatté"""
+        return self._prompt.format(
+            v=self.vitalite,
+            m=self.mana,
+            e=self.endurance,
+        )
     
     def envoyer(self, msg):
         """Méthode envoyer"""
