@@ -1,4 +1,5 @@
 # -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -32,6 +33,7 @@
 
 from abstraits.id import ObjetID, propriete_id
 from primaires.interpreteur.file import FileContexte
+from .stats import Stats
 
 class Personnage(ObjetID):
     
@@ -57,6 +59,7 @@ class Personnage(ObjetID):
         self.contextes = FileContexte(self) # file d'attente des contexte
         self.langue_cmd = "francais"
         self._salle = None
+        self.stats = Stats()
     
     def __getinitargs__(self):
         """Retourne les arguments à passer au constructeur"""
@@ -66,6 +69,24 @@ class Personnage(ObjetID):
         """Redirige vers 'envoyer'"""
         self.envoyer(msg)
         return self
+    
+    def __getattr__(self, nom_attr):
+        """Cherche l'attribut dans 'self.stats."""
+        if nom_attr.startswith("_") or nom_attr == "stats":
+            pass
+        elif hasattr(self, "stats") and hasattr(self.stats, nom_attr):
+            return getattr(self.stats, nom_attr)
+        
+        raise AttributeError("le type {} n'a pas d'attribut {}".format(
+                type(self), nom_attr))
+    
+    def __setattr__(self, nom_attr, val_attr):
+        """Si nom_attr est dans 'self.stats', modifie 'self.stats'"""
+        if not nom_attr.startswith("_") and hasattr(self, "stats") and \
+                hasattr(self.stats,nom_attr):
+            setattr(self.stats, nom_attr, val_attr)
+        else:
+            ObjetID.__setattr__(self, nom_attr, val_attr)
     
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel, c'est-à-dire le premier de la file"""

@@ -30,8 +30,8 @@
 
 """Fichier contenant la classe Stats, détaillée plus bas."""
 
-from .stat import *
 from abstraits.obase import BaseObj 
+from .stat import *
 
 class Stats(BaseObj):
     
