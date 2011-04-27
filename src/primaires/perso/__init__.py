@@ -80,6 +80,7 @@ class Module(BaseModule):
         self.commandes = [
             commandes.commande.CmdCommande(),
             commandes.qui.CmdQui(),
+            commandes.score.CmdScore(),
         ]
         
         for cmd in self.commandes:

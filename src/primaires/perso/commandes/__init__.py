@@ -32,3 +32,4 @@
 
 import primaires.perso.commandes.commande
 import primaires.perso.commandes.qui
+import primaires.perso.commandes.score
