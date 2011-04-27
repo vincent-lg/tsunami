@@ -60,6 +60,10 @@ class Conversations(BaseObj):
     
     def ajouter_ou_remplacer(self, emetteur, cible, phrase):
         """Ajoute ou actualise une conversation à la liste"""
+        if emetteur is cible:
+            raise ValueError("l'émetteur {} est identique à la " \
+                    "cible".format(emetteur))
+        
         if self.conversation_existe(emetteur, cible):
             cle = self.get_cle_conversation(emetteur, cible)
             self._conversations[cle].phrase = phrase
@@ -76,18 +80,18 @@ class Conversations(BaseObj):
         """Renvoie la cle d'une conversation"""
         i = 0
         for conversation in self._conversations:
-            if conversation.emetteur == emetteur \
-            and conversation.cible == cible:
+            if conversation.emetteur == emetteur and \
+                    conversation.cible is cible:
                 return i
             i += 1
         
         return -1
     
     def get_conversations_pour(self, personnage):
-        """Récupère toutes les coonversations impliquant 'personnage'"""
+        """Récupère toutes les conversations impliquant 'personnage'"""
         conversations_pour = []
         for conversation in self._conversations:
-            if personnage == conversation.emetteur:
+            if personnage is conversation.emetteur:
                 conversations_pour.append(conversation)
         
         return conversations_pour

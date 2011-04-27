@@ -74,6 +74,10 @@ class Conversation(BaseObj):
     
     phrase = property(_get_phrase, _set_phrase)
     
+    def __str__(self):
+        return "Conversation entre {} et {} : {}".format(self.emetteur.nom,
+                self.cible.nom, self.phrase)
+    
     def ch_focus(self):
         """Place le focus sur la conversation courante"""
         if self.focus:
@@ -82,7 +86,7 @@ class Conversation(BaseObj):
             # On parcourt tous les correspondants pour redéfinir leur focus
             conversations = type(self).importeur.communication.conversations
             for conversation in conversations.iter():
-                if self.emetteur == conversation.emetteur:
+                if self.emetteur is conversation.emetteur:
                     if conversation.focus:
                         conversation.focus = False
             self.focus = True
