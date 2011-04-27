@@ -32,6 +32,8 @@
 
 """
 
+from primaires.format.constantes import ponctuations_finales
+
 from primaires.interpreteur.commande.commande import Commande
 
 class CmdEmote(Commande):
@@ -55,7 +57,9 @@ class CmdEmote(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
-        message = dic_masques["message"].message.rstrip(".")
-        message = message.rstrip("!")
-        message = message.rstrip()
-        personnage.salle.envoyer(personnage.nom + " " + message + ".")
+        message = dic_masques["message"].message
+        message = message.rstrip(" \n")
+        if not message[-1] in ponctuations_finales:
+            message += "."
+        personnage.salle.envoyer(personnage.nom + " " + message)
+    

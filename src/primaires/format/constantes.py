@@ -31,3 +31,4 @@
 """Ce fichier définit quelques constantes liées au formattage."""
 
 longueur_ligne = 79
+ponctuations_finales = ('.', '!', '?')
