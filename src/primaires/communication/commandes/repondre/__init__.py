@@ -73,7 +73,9 @@ class CmdRepondre(Commande):
                 # On liste les correspondants
                 res = ""
                 for conversation in p_conversations:
-                    res += "\n " + str(conversation.id) + ". Avec "
+                    res += "\n "
+                    res += str(len(p_conversations) + 1 - conversation.id)
+                    res += ". Avec "
                     if conversation.focus:
                         res += "|grf|[c] " + conversation.cible.nom + "|ff|"
                     else:

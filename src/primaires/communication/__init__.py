@@ -52,7 +52,7 @@ class Module(BaseModule):
         self.masques = []
         self.commandes = []
         self.conversations = Conversations()
-        self._canaux = canaux
+        self._canaux = Canaux
     
     def config(self):
         """Configuration du module.
@@ -87,7 +87,7 @@ class Module(BaseModule):
     @property
     def canaux(self):
         """Retourne les canaux existants"""
-        return dict(self._canaux)
+        return self._canaux
     
     def ajouter_canal(self, nom):
         """Ajoute un canal à la lsite des canaux existants
@@ -107,7 +107,17 @@ class Module(BaseModule):
         n'existe pas.
         
         """
-        pass
+        nom_canal = arguments.split(" ")[0]
+        if nom_canal in self.canaux.keys():
+            self.canaux[nom_canal].connectes.append(personnage)
+            personnage << "Vous êtes à présent connecté au canal '{}'.".format(
+                    nom_canal)
+        else:
+            canal = self.ajouter_canal(nom_canal)
+            canal.auteur = auteur
+            canal.connectes.append(personnage)
+            personnage << "Le canal '{}' a été créé. Vous y êtes à présent " \
+                    "connecté.".format(nom_canal)
     
     def quitter_ou_detruire(self, personnage, arguments):
         """Déconnecte le joueur et détruit le canal si y'a plus personne"""

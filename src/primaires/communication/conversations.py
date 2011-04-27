@@ -67,10 +67,11 @@ class Conversations(BaseObj):
         if self.conversation_existe(emetteur, cible):
             cle = self.get_cle_conversation(emetteur, cible)
             self._conversations[cle].phrase = phrase
+            self._conversations[cle].date = datetime.datetime.now()
             conversation = self._conversations[cle]
         else:
             conversation = Conversation(emetteur, cible, phrase)
-            self._conversations.append(conversation)
+            self._conversations.insert(0, conversation)
     
     def conversation_existe(self, emetteur, cible):
         """Renvoie True si la conversation existe, False sinon"""
@@ -102,5 +103,5 @@ class Conversations(BaseObj):
             if personnage is conversation.emetteur or \
                     personnage is conversation.cible:
                 auj = datetime.datetime.now()
-                if auj - conversation.date > timedelta(hours=12):
+                if auj - conversation.date > timedelta(hours=1):
                     self._conversations.remove(conversation)

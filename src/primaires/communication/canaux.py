@@ -68,6 +68,13 @@ class Canaux(Unique):
         del self._canaux[nom_canal]
         self.enregistrer()
     
+    def __iter__(self):
+        """Retourne le conteneur sous forme de dictionnaire"""
+        return dict(self._canaux)
+    
     def __len__(self):
         """Retourne la taille du conteneur"""
         return len(self._canaux)
+    
+    def keys(self):
+        return self._canaux.keys()
