@@ -44,7 +44,7 @@ class Canaux(Unique):
     
     def __init__(self):
         """Constructeur du conteneur"""
-        Unique.__init__(self)
+        Unique.__init__(self, "canaux", "canaux")
         self._canaux = {}
     
     def __getinitargs__(self):
@@ -52,7 +52,7 @@ class Canaux(Unique):
     
     def __contains__(self, nom_canal):
         """Retourne True si le nom de canal est dans le conteneur"""
-        return nom_canal in self._canaux
+        return nom_canal in dict(self._canaux)
     
     def __getitem__(self, nom_canal):
         """Retourne le canal si existe dans le conteneur"""
@@ -72,9 +72,5 @@ class Canaux(Unique):
         """Retourne le conteneur sous forme de dictionnaire"""
         return dict(self._canaux)
     
-    def __len__(self):
-        """Retourne la taille du conteneur"""
-        return len(self._canaux)
-    
-    def keys(self):
-        return self._canaux.keys()
+    def canal_existe(self, nom_canal):
+        return nom_canal in dict(self._canaux)

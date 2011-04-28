@@ -48,11 +48,42 @@ class Canal(BaseObj):
         self.immerges = ListeID()
         self.connectes = ListeID()
     
-    def envoyer(self, auteur, message):
+    @property
+    def nom(self):
+        return self.nom_francais
+    
+    def connecter(self, personnage):
+        """Connecte ou déconnecte personnage et le signale aux immergés"""
+        if not personnage in self.connectes:
+            self.connectes.append(personnage)
+            for immerge in self.immerges:
+                immerge << "<" + personnage.nom + " rejoint le canal.>"
+        else:
+            self.connectes.remove(personnage)
+            for immerge in self.immerges:
+                immerge << "<" + personnage.nom + " quitte le canal.>"
+    
+    def immerger(self, personnage):
+        """Immerge un personnage et le signale aux immergés"""
+        if not personnage in self.immerges:
+            self.immerges.append(personnage)
+            for immerge in self.immerges:
+                if immerge is not personnage:
+                    immerge << "<" + personnage.nom + " s'immerge.>"
+        else:
+            self.immerges.remove(personnage)
+            for immerge in self.immerges:
+                if immerge is not personnage:
+                    immerge << "<" + personnage.nom + " sort d'immersion.>"
+    
+    def envoyer(self, personnage, message):
         """Envoie le message au canal"""
+        type(self).importeur.communication. \
+                dernier_canaux[personnage.nom] = self.nom
         ex_moi = "|cyc|[" + self.nom + "] Vous dites : " + message + "|ff|"
-        ex_autre = "|cyc|[" + self.nom + "] " + personnage.nom + " dit : " + message + "|ff|"
-        im_moi = im_autre = "<" + self.personnage.nom + "> " + message
+        ex_autre = "|cyc|[" + self.nom + "] " + personnage.nom + " dit : "
+        ex_autre += message + "|ff|"
+        im_moi = im_autre = "<" + personnage.nom + "> " + message
         if personnage in self.immerges:
             personnage << im_moi
         else:
