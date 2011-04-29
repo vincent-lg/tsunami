@@ -252,9 +252,13 @@ class Module(BaseModule):
         
         salle = personnage.salle
         for nom, sortie in salle.sorties.iter_couple():
-            if sortie and sortie.nom.startswith(commande):
-                personnage.deplacer_vers(sortie.nom)
-                return True
+            if sortie:
+                if sortie.cache and sortie.nom == commande:
+                    personnage.deplacer_vers(sortie.nom)
+                    return True
+                if not sortie.cache and sortie.nom.startswith(commande):
+                    personnage.deplacer_vers(sortie.nom)
+                    return True
         
         if commande in NOMS_SORTIES.keys():
             personnage << "Vous ne pouvez aller par là..."
