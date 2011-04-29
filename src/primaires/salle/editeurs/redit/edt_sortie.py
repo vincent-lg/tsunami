@@ -46,6 +46,7 @@ class EdtSortie(Editeur):
         self.ajouter_option("r", self.opt_renommer_sortie)
         self.ajouter_option("s", self.opt_changer_sortie)
         self.ajouter_option("c", self.opt_cache)
+        self.ajouter_option("dq", self.opt_detruire_reciproque)
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -137,4 +138,24 @@ class EdtSortie(Editeur):
         """
         sortie = self.objet
         sortie.cache = not sortie.cache
+        self.actualiser()
+    
+    def opt_detruire_reciproque(self, argument):
+        """Permet de détruire la réciproque.
+        Supprime du même coup le lien entre les deux sorties.
+        
+        """
+        sortie = self.objet
+        reciproque = sortie.sortie_opposee
+        if not sortie.sortie_opposee:
+            self.pere << "|err|Cette sortie n'a pas de réciproque.|ff|"
+            return
+        
+        # On casse le lien
+        sortie.correspondante = ""
+        reciproque.correspondante = ""
+        
+        # On détruit à présent la sortie opposée
+        sortie.salle_dest.sorties.supprimer_sortie(reciproque.direction)
+        
         self.actualiser()
