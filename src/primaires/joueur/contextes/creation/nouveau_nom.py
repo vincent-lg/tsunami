@@ -95,7 +95,7 @@ class NouveauNom(Contexte):
                     "Choisissez-en un autre.|ff|")
         elif RE_NOM_VALIDE.search(supprimer_accents(msg)):
             nouv_joueur = Joueur()
-            nouv_joueur.nom = msg
+            nouv_joueur.nom = msg.capitalize()
             self.pere.joueur = nouv_joueur
             nouv_joueur.instance_connexion = self.pere
             nouv_joueur.compte = self.pere.compte

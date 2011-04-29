@@ -34,7 +34,4 @@ class Convertisseur:
     """Classe pour envelopper les convertisseurs."""
     def depuis_version_0(objet, classe):
         objet.set_version(classe, 1)
-    
-    def depuis_version_1(objet, classe):
-        objet.set_version(classe, 2)
-        objet.nom = objet.nom.capitalize()
+        objet._zone = objet._zone.lower()

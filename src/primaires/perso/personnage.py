@@ -49,7 +49,7 @@ class Personnage(ObjetID):
     groupe = "personnages"
     sous_rep = "personnages"
     _nom = "personnage"
-    _version = 1
+    _version = 2
     
     def __init__(self):
         """Constructeur d'un personnage"""

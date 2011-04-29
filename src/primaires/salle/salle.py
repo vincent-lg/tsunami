@@ -73,6 +73,8 @@ class Salle(ObjetID):
     
     groupe = "salles"
     sous_rep = "salles"
+    _nom = "salle"
+    _version = 1
     
     def __init__(self, zone, mnemonic, x=0, y=0, z=0, valide=True):
         """Constructeur de la salle"""
