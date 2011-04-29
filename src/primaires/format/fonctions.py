@@ -258,3 +258,8 @@ def couper_phrase(phrase, couper):
                 del phrase[-1]
             phrase = " ".join(phrase)
             return phrase + "..."
+
+def oui_ou_non(flag):
+    """Retourne 'oui' si le flag est True, 'non' sinon."""
+    mots = {True:"oui", False:"non"}
+    return mots[flag]

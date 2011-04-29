@@ -31,6 +31,7 @@
 """Contexte-éditeur 'edt_sortie', voir plus bas."""
 
 from primaires.interpreteur.editeur import Editeur
+from primaires.format.fonctions import oui_ou_non
 
 class EdtSortie(Editeur):
 
@@ -44,14 +45,15 @@ class EdtSortie(Editeur):
         Editeur.__init__(self, pere, objet, attribut)
         self.ajouter_option("r", self.opt_renommer_sortie)
         self.ajouter_option("s", self.opt_changer_sortie)
+        self.ajouter_option("c", self.opt_cache)
     
     def accueil(self):
         """Message d'accueil du contexte"""
         sortie = self.objet
         salle = sortie.parent
         msg = "| |tit|"
-        msg += "Edition de la sortie {} de {}" \
-                .format(sortie.direction, salle).ljust(76)
+        msg += "Edition de la sortie {} de {}".format(
+                sortie.direction, salle).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += self.aide_courte
         
@@ -59,6 +61,7 @@ class EdtSortie(Editeur):
         msg += "\n Direction : " + sortie.direction
         msg += " (vers |vr|" + str(sortie.salle_dest) + "|ff|)"
         msg += "\n Réciproque : |cy|" + sortie.correspondante + "|ff|"
+        msg += "\n Sortie cachée : |cy|" + oui_ou_non(sortie.cache) + "|ff|"
         
         return msg
     
@@ -125,4 +128,13 @@ class EdtSortie(Editeur):
         d_salle.sorties.ajouter_sortie(dir_opposee, dir_opposee,
                 salle_dest=salle, corresp=sortie.nom)
         self.objet = salle.sorties[sortie.direction]
+        self.actualiser()
+    
+    def opt_cache(self, argument):
+        """Fait passer de cache en non caché la sortie et réciproquement.
+        Aucun argument n'est nécessaire.
+        
+        """
+        sortie = self.objet
+        sortie.cache = not sortie.cache
         self.actualiser()

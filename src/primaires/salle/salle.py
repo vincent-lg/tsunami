@@ -214,7 +214,11 @@ class Salle(ObjetID):
             
             nom_aff = self.sorties.get_nom_abrege(nom)
             if self.sorties.sortie_existe(nom):
-                res += "|vr|" + nom_aff + "|ff|"
+                if sortie.cache:
+                    res += " ".ljust(len(self.sorties.get_nom_abrege(
+                            sortie.direction)))
+                else:
+                    res += "|vr|" + nom_aff + "|ff|"
             else:
                 res += " ".ljust(len(nom_aff))
             res += ", "

@@ -214,6 +214,7 @@ class EdtSorties(Editeur):
                 "sortie\n" \
                 " - |cmd|/s <identifiant d'une salle>|ff| : fait pointer la " \
                 "sortie vers la salle\n" \
-                "   spécifiée\n"
+                "   spécifiée\n" \
+                " - |cmd|/c|ff| : bascule l'état caché de la sortie"
             contexte = enveloppe.construire(self.pere)
             self.migrer_contexte(contexte)

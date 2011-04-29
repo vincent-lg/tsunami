@@ -81,6 +81,10 @@ class Sortie(BaseObj):
         self.correspondante = corresp # le nom de la sortie correspondante
         if article == "le":
             self.deduire_article()
+        
+        # Autres informations
+        self.cache = False
+        
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
     
