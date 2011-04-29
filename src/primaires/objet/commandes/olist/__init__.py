@@ -1,5 +1,5 @@
-# -*-coding:Utf-8 -*
 
+# -*-coding:Utf-8 -*
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -28,9 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'olist'.
 
-from . import oedit
-from . import olist
-from . import opurge
-from . import ospawn
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdOlist(Commande):
+    
+    """Commande 'olist'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "olist", "olist")
+        self.groupe = "administrateur"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "affiche la liste des prototypes d'objets"
+        self.aide_longue = \
+            "Cette commande affiche une liste ordonnée des prototypes " \
+            "d'objets existant."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation de la commande"""
+        prototypes = type(self).importeur.objet.prototypes
+        prototypes = [(identifiant, prototype.nom_singulier) \
+                for identifiant, prototype in sorted(prototypes.items())]
+        
+        res = []
+        for identifiant, nom in prototypes:
+            res.append("{: <20} : {}".format(identifiant, nom))
+        
+        if not res:
+            personnage << "|att|Aucun prototype n'a pu être trouvé.|ff|"
+        else:
+            personnage << "Liste des prototypes d'objets existants :\n\n" + \
+                    "\n".join(res)
