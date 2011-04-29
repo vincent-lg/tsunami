@@ -191,10 +191,15 @@ class Module(BaseModule):
     
     def traiter_commande(self, personnage, commande):
         """Traite les commandes au premier niveau"""
+        res = False
         if commande.startswith("+"):
+            res = True
             self.rejoindre_ou_creer(personnage, commande[1:])
         elif commande.startswith("-"):
+            res = True
             self.quitter_ou_detruire(personnage, commande[1:])
         elif commande.startswith(":"):
+            res = True
             self.immerger(personnage, commande[1:])
-        return True
+        
+        return res
