@@ -42,6 +42,7 @@ class EdtNoms(Editeur):
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
+        self.opts.echp_sp_cars = False
         self.ajouter_option("n", self.opt_nom_singulier)
         self.ajouter_option("e", self.opt_etat_singulier)
         self.ajouter_option("s", self.opt_nom_pluriel)

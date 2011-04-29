@@ -110,7 +110,7 @@ class Module(BaseModule):
         """
         if not arguments:
             personnage << "Vous devez préciser un canal."
-            return True
+            return
         nom_canal = arguments.split(" ")[0]
         if nom_canal in self.canaux:
             if personnage in self.canaux[nom_canal].connectes:
@@ -129,7 +129,7 @@ class Module(BaseModule):
         """Déconnecte le joueur et détruit le canal si y'a plus personne"""
         if not arguments:
             personnage << "Vous devez préciser un canal."
-            return True
+            return
         nom_canal = arguments.split(" ")[0]
         if nom_canal in self.canaux:
             if personnage in self.canaux[nom_canal].connectes:
@@ -139,25 +139,24 @@ class Module(BaseModule):
                     del self.canaux[nom_canal]
                     res += " Vide, il a été détruit."
                 personnage << res
-                return True
+                return
         personnage << "Vous n'êtes pas connecté à ce canal."
     
     def immerger(self, personnage, arguments):
         """Interprète un message envoyé au moyen de l'opérateur :.
         Syntaxe :
-            - :<canal> <message> : envoie message au canal
-            - :<canal> : immerge le joueur
             - : <message> : envoie message au dernier canal utilisé
+            - :<canal> : immerge le joueur
         
         """
         if not arguments:
             personnage << "Vous devez préciser des arguments."
-            return True
+            return
         if arguments.startswith(" "):
             arguments = arguments.lstrip()
             if not arguments:
                 personnage << "Que voulez-vous dire ?"
-                return True
+                return
             try:
                 dernier_canal = self.dernier_canaux[personnage.nom]
             except KeyError:
@@ -170,24 +169,39 @@ class Module(BaseModule):
                             dernier_canal)
                     del self.dernier_canaux[personnage.nom]
                 else:
+                    if not personnage in canal.connectes:
+                        personnage << "Vous n'êtes pas connecté à ce canal."
                     canal.envoyer(personnage, arguments)
         else:
             arguments = arguments.split(" ")
             nom_canal = arguments[0]
             if nom_canal not in self.canaux:
                 personnage << "Le canal '{}' n'existe pas.".format(nom_canal)
-                return True
-            del arguments[0]
+                return
             canal = self.canaux[nom_canal]
             if personnage not in canal.connectes:
                 personnage << "Vous n'êtes pas connecté à ce canal."
-            else:
-                if arguments:
-                    message = " ".join(arguments)
-                    canal.envoyer(personnage, message)
-                else:
-                    canal.immerger(personnage)
-                    personnage << "Immersion."
+                return
+            canal.immerger(personnage)
+            personnage << "Immersion."
+    
+    def dire_canal(self, personnage, arguments):
+        """Envoie un message à un canal, de la part de personnage"""
+        arguments = arguments.split(" ")
+        nom_canal = arguments[0]
+        if nom_canal not in self.canaux:
+            personnage << "Le canal '{}' n'existe pas.".format(nom_canal)
+            return
+        canal = self.canaux[nom_canal]
+        if personnage not in canal.connectes:
+            personnage << "Vous n'êtes pas connecté à ce canal."
+            return
+        del arguments[0]
+        if not arguments:
+            personnage << "Que voulez-vous dire ?"
+            return
+        message = " ".join(arguments)
+        canal.envoyer(personnage, message)
     
     def traiter_commande(self, personnage, commande):
         """Traite les commandes au premier niveau"""
@@ -201,5 +215,8 @@ class Module(BaseModule):
         elif commande.startswith(":"):
             res = True
             self.immerger(personnage, commande[1:])
+        elif commande.split(" ")[0] in self.canaux:
+            res = True
+            self.dire_canal(personnage, commande)
         
         return res

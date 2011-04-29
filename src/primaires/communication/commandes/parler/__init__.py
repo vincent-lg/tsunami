@@ -58,6 +58,9 @@ class CmdParler(Commande):
         message = dic_masques["message"].message
         if cible is personnage:
             personnage << "Vous parlez tout seul... Hum."
+        elif cible not in type(self).importeur.connex.joueurs_connectes:
+            personnage << "|err|Le joueur passé en paramètre n'a pu être " \
+                    "trouvé.|ff|"
         else:
             clr = type(self).importeur.anaconf. \
                     get_config("config_com").couleur_tell

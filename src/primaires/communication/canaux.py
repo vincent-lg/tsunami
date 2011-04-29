@@ -71,6 +71,3 @@ class Canaux(Unique):
     def __iter__(self):
         """Retourne le conteneur sous forme de dictionnaire"""
         return dict(self._canaux)
-    
-    def canal_existe(self, nom_canal):
-        return nom_canal in dict(self._canaux)

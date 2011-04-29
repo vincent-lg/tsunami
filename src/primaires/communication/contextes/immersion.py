@@ -28,53 +28,30 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le masque <nom_joueur>."""
+"""Fichier contenant le contexte 'communication:immersion'"""
 
-from primaires.interpreteur.masque.masque import Masque
-from primaires.interpreteur.masque.fonctions import *
-from primaires.interpreteur.masque.exceptions.erreur_validation \
-        import ErreurValidation
+from primaires.interpreteur.contexte import Contexte
 
-class Joueur(Masque):
+class Immersion(Contexte):
     
-    """Masque <nom_joueur>.
-    On attend un nom de joueur en paramètre.
+    """Contexte d'immersion dans un canal de communication.
     
     """
     
-    nom = "nom_joueur"
+    nom = "communication:immersion"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "nom d'un joueur"
-        self.joueur = None
+    def __init__(self, pere, canal):
+        """Constructeur du contexte"""
+        Contexte.__init__(self, pere)
+        self.canal = canal
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        lstrip(commande)
-        nom_joueur = liste_vers_chaine(commande).lower()
-        
-        if not nom_joueur:
-            raise ErreurValidation(
-                "Précisez un nom de joueur.")
-        
-        nom_joueur = nom_joueur.split(" ")[0].lower()
-        commande[:] = commande[len(nom_joueur):]
-        
-        # On cherche dans les joueurs du module connex
-        joueur = None
-        joueurs = type(self).importeur.connex.joueurs
-        for t_joueur in joueurs:
-                nom = t_joueur.nom.lower()
-                if nom == nom_joueur:
-                    joueur = t_joueur
-                    break
-        
-        if not joueur:
-            raise ErreurValidation(
-                "|err|Le joueur passé en paramètre n'a pu être trouvé.|ff|")
-        
-        self.joueur = joueur
-        
-        return True
+    def accueil(self):
+        """Message d'accueil du contexte"""
+        canal = self.canal
+        res = "+" + "-" * 78 + "+"
+        res += "| |tit|Immersion dans le canal " + canal.nom.ljut(53) + "|ff||"
+        res += "+" + "-" * 78 + "+"
+    
+    def get_prompt(self):
+        """Prompt du contexte"""
+        return "->"

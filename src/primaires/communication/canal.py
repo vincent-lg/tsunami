@@ -32,6 +32,8 @@
 
 from abstraits.obase import BaseObj
 from bases.collections.liste_id import ListeID
+from primaires.format.description import Description
+from primaires.communication.contextes import Immersion
 
 class Canal(BaseObj):
     
@@ -41,16 +43,25 @@ class Canal(BaseObj):
     
     def __init__(self, nom, auteur):
         """Constructeur du canal"""
-        self.nom_francais = nom
-        self.nom_anglais = ""
+        self.nom = nom
         self.auteur = auteur
-        self.administrateurs = ListeID()
+        self.couleur = "|cyc|"
+        self.resume = "canal de communication"
+        self.description = Description()
+        self.moderateurs = ListeID()
         self.immerges = ListeID()
         self.connectes = ListeID()
     
-    @property
-    def nom(self):
-        return self.nom_francais
+    def __str__(self):
+        """Renvoie le canal sous la forme 'canal : résumé - X connectés'"""
+        res = self.nom + " : " + self.resume
+        nb_connectes = len(self.connectes)
+        if nb_connectes == 1:
+            connectes = "1 joueur connecté"
+        else:
+            connectes = str(nb_connectes) + " joueurs connectés"
+        res += " - " + connectes
+        return res
     
     def connecter(self, personnage):
         """Connecte ou déconnecte personnage et le signale aux immergés"""
@@ -67,6 +78,7 @@ class Canal(BaseObj):
         """Immerge un personnage et le signale aux immergés"""
         if not personnage in self.immerges:
             self.immerges.append(personnage)
+            contexte = Immersion(personnage, self)
             for immerge in self.immerges:
                 if immerge is not personnage:
                     immerge << "<" + personnage.nom + " s'immerge.>"
@@ -80,9 +92,10 @@ class Canal(BaseObj):
         """Envoie le message au canal"""
         type(self).importeur.communication. \
                 dernier_canaux[personnage.nom] = self.nom
-        ex_moi = "|cyc|[" + self.nom + "] Vous dites : " + message + "|ff|"
-        ex_autre = "|cyc|[" + self.nom + "] " + personnage.nom + " dit : "
-        ex_autre += message + "|ff|"
+        ex_moi = self.couleur + "[" + self.nom + "] Vous dites : "
+        ex_moi += message + "|ff|"
+        ex_autre = self.couleur + "[" + self.nom + "] " + personnage.nom
+        ex_autre += " dit : " + message + "|ff|"
         im_moi = im_autre = "<" + personnage.nom + "> " + message
         if personnage in self.immerges:
             personnage << im_moi
