@@ -28,12 +28,41 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module joueur."""
+"""Fichier contenant le masque <message_afk>."""
 
-import primaires.joueur.masques.chemin_cmd
-import primaires.joueur.masques.encodage
-import primaires.joueur.masques.groupe_existant
-import primaires.joueur.masques.joueur
-import primaires.joueur.masques.langue
-import primaires.joueur.masques.nv_groupe
-import primaires.joueur.masques.message_afk
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+
+class MessageAfk(Masque):
+    
+    """Masque <message_afk>.
+    On attend un message en paramètre.
+    
+    """
+    
+    nom = "message_afk"
+    
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self)
+        self.nom_complet = "message d'afk"
+        self.message_afk = ""
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        message_afk = liste_vers_chaine(commande).lstrip()
+        
+        if not message_afk:
+            raise ErreurValidation( \
+                "Vous devez spécifier un message.")
+        
+        if len(message_afk.split(" ")) > 1:
+            raise ErreurValidation( \
+                "Votre message d'afk ne doit pas excéder un mot.")
+        
+        commande[:] = []
+        self.message_afk = message_afk
+        
+        return True

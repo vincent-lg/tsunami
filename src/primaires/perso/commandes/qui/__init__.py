@@ -56,12 +56,21 @@ class CmdQui(Commande):
             personnage.envoyer("Aucun joueur ne semble être présent, mais " \
                     "qui es-tu alors ?")
         else:
-            noms_joueurs = sorted([joueur.nom.ljust(39) + "|" for joueur \
-                    in joueurs])
+            noms_joueurs = []
+            for joueur in joueurs:
+                nom = joueur.nom
+                if joueur.afk:
+                    raison = ""
+                    if joueur.afk is not "afk":
+                        raison = " '" + joueur.afk + "'"
+                    nom += " (|rgc|AFK" + raison + "|ff|)"
+                    noms_joueurs.append(nom.ljust(48) + "|")
+                else:
+                    noms_joueurs.append(nom.ljust(39) + "|")
             res = "+" + "-" * 40 + "+\n"
             res += "| |tit|Joueurs présents|ff|".ljust(50) + "|\n"
             res += "+" + "-" * 40 + "+\n| "
-            res += "\n| ".join(noms_joueurs)
+            res += "\n| ".join(sorted(noms_joueurs))
             res += "\n+" + "-" * 40 + "+\n"
             res = res.rstrip("\n")
             personnage << res

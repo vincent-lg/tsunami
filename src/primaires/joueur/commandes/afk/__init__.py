@@ -28,12 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module joueur."""
+"""Package contenant la commande 'afk'"""
 
-import primaires.joueur.masques.chemin_cmd
-import primaires.joueur.masques.encodage
-import primaires.joueur.masques.groupe_existant
-import primaires.joueur.masques.joueur
-import primaires.joueur.masques.langue
-import primaires.joueur.masques.nv_groupe
-import primaires.joueur.masques.message_afk
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdAfk(Commande):
+    
+    """Commande 'afk'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "afk", "afk")
+        self.groupe = "joueur"
+        self.schema = "(<message_afk>)"
+        self.aide_courte = "passe AFK"
+        self.aide_longue = \
+            "Cette commande permet de passer AFK (Away From Keyboard). " \
+            "Vous signalez ainsi aux autres joueurs que vous êtes absent " \
+            "pour le moment ; la raison de cette absence, si spécifiée en " \
+            "argument, sera affichée dans la liste de la commande %qui%. " \
+            "Lorsque vous revenez, utilisez à nouveau la commande sans " \
+            "argument pour revenir à l'état normal."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        if dic_masques["message_afk"] is not None:
+            message_afk = dic_masques["message_afk"].message_afk
+            personnage << "Vous passez AFK ({}).".format(message_afk)
+            personnage.afk = message_afk
+        else:
+            if not personnage.afk:
+                personnage << "Vous passez AFK."
+                personnage.afk = "afk"
+            else:
+                personnage << "Vous n'êtes plus AFK."
+                personnage.afk = ""

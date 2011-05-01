@@ -78,6 +78,8 @@ class Module(BaseModule):
                 masques.langue.Langue)
         self.importeur.interpreteur.ajouter_masque(
                 masques.nv_groupe.NvGroupe)
+        self.importeur.interpreteur.ajouter_masque(
+                masques.message_afk.MessageAfk)
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
@@ -89,6 +91,7 @@ class Module(BaseModule):
             commandes.quitter.CmdQuitter(),
             commandes.shutdown.CmdShutdown(),
             commandes.where.CmdWhere(),
+            commandes.afk.CmdAfk(),
         ]
         
         for cmd in self.commandes:

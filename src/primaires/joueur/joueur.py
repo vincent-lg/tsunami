@@ -50,6 +50,7 @@ class Joueur(Personnage):
         self.instance_connexion = None
         self.connecte = False
         self.garder_connecte = False
+        self.afk = ""
     
     def __getstate__(self):
         retour = self.__dict__.copy()
