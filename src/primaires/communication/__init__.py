@@ -49,11 +49,35 @@ class Module(BaseModule):
     
     def __init__(self, importeur):
         BaseModule.__init__(self, importeur, "communication", "primaire")
+        self.logger = type(self.importeur).man_logs.creer_logger( \
+                "communication", "communication")
         self.masques = []
         self.commandes = []
         self.conversations = Conversations()
         self.dernier_canaux = {}
-        self._canaux = Canaux()
+        self._canaux = None
+    
+    def init(self):
+        """Initialisation du module"""
+        # On récupère les canaux
+        canaux = None
+        sous_rep = "canaux"
+        fichier = "canaux.sav"
+        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
+            canaux = self.importeur.supenr.charger(sous_rep, fichier)
+        if canaux is None:
+            canaux = Canaux()
+            self.logger.info("Aucun canal de communication récupéré")
+        else:
+            if len(canaux) > 1:
+                self.logger.info("{} canaux de communication récupérés".format(
+                        len(canaux)))
+            else:
+                self.logger.info("1 canal de communication récupéré")
+        
+        self._canaux = canaux
+        
+        BaseModule.init(self)
     
     def config(self):
         """Configuration du module.

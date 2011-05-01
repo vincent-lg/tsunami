@@ -40,18 +40,57 @@ class Immersion(Contexte):
     
     nom = "communication:immersion"
     
-    def __init__(self, pere, canal):
+    def __init__(self, pere, canal=None):
         """Constructeur du contexte"""
         Contexte.__init__(self, pere)
+        self.opts.prompt_prf = ""
+        self.opts.prompt_clr = ""
         self.canal = canal
+        self.options = {
+            "q" : self.opt_quitter,
+            }
+    
+    def __getstate__(self):
+        """On nettoie les options"""
+        dico_attr = Contexte.__getstate__(self)
+        dico_attr["options"] = dico_attr["options"].copy()
+        for rac, fonction in dico_attr["options"].items():
+            dico_attr["options"][rac] = fonction.__name__
+        return dico_attr
+    
+    def __setstate__(self, dico_attr):
+        """Récupération de l'éditeur"""
+        Contexte.__setstate__(self, dico_attr)
+        for rac, nom in self.options.items():
+            fonction = getattr(self, nom)
+            self.options[rac] = fonction
     
     def accueil(self):
         """Message d'accueil du contexte"""
         canal = self.canal
         res = "+" + "-" * 78 + "+"
-        res += "| |tit|Immersion dans le canal " + canal.nom.ljut(53) + "|ff||"
+        res += "| |tit|Immersion dans le canal " + canal.nom.ljust(53) + "|ff||"
         res += "+" + "-" * 78 + "+"
+        
+        return res
     
-    def get_prompt(self):
-        """Prompt du contexte"""
-        return "->"
+    def opt_quitter(self, arguments):
+        self.pere.joueur.contextes.retirer()
+        self.canal.immerger(self.pere.joueur)
+        self.pere << "Fermeture de l'immersion."
+    
+    def interpreter(self, msg):
+        """Méthode d'interprétation du contexte"""
+        if msg.startswith("/"):
+            # C'est une option
+            # On extrait le nom de l'option
+            mots = msg.split(" ")
+            option = mots[0][1:]
+            arguments = " ".join(mots[1:])
+            if option not in self.options.keys():
+                self.pere << "|err|Option invalide ({}).|ff|".format(option)
+            else: # On appelle la fonction correspondante à l'option
+                fonction = self.options[option]
+                fonction(arguments)            
+        else:
+            self.canal.envoyer(self.pere.joueur, msg)

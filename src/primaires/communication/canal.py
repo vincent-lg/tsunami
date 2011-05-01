@@ -52,6 +52,9 @@ class Canal(BaseObj):
         self.immerges = ListeID()
         self.connectes = ListeID()
     
+    def __getinitargs__(self):
+        return ("", None)
+    
     def __str__(self):
         """Renvoie le canal sous la forme 'canal : résumé - X connectés'"""
         res = self.nom + " : " + self.resume
@@ -78,7 +81,9 @@ class Canal(BaseObj):
         """Immerge un personnage et le signale aux immergés"""
         if not personnage in self.immerges:
             self.immerges.append(personnage)
-            contexte = Immersion(personnage, self)
+            contexte = Immersion(personnage.instance_connexion)
+            contexte.canal = self
+            personnage.contexte_actuel.migrer_contexte(contexte)
             for immerge in self.immerges:
                 if immerge is not personnage:
                     immerge << "<" + personnage.nom + " s'immerge.>"
