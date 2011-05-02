@@ -31,6 +31,7 @@
 """Package contenant la commande 'afk'"""
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.format.fonctions import couper_phrase
 
 class CmdAfk(Commande):
     
@@ -42,7 +43,7 @@ class CmdAfk(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "afk", "afk")
         self.groupe = "joueur"
-        self.schema = "(<message_afk>)"
+        self.schema = "(<message>)"
         self.aide_courte = "passe AFK"
         self.aide_longue = \
             "Cette commande permet de passer AFK (Away From Keyboard). " \
@@ -54,10 +55,12 @@ class CmdAfk(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        if dic_masques["message_afk"] is not None:
-            message_afk = dic_masques["message_afk"].message_afk
-            personnage << "Vous passez AFK ({}).".format(message_afk)
-            personnage.afk = message_afk
+        if dic_masques["message"] is not None:
+            message = dic_masques["message"].message
+            if len(message) > 20:
+                message = couper_phrase(message, 20)
+            personnage << "Vous passez AFK ({}).".format(message)
+            personnage.afk = message
         else:
             if not personnage.afk:
                 personnage << "Vous passez AFK."
