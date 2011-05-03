@@ -136,6 +136,8 @@ class Joueur(Personnage):
             salle.retirer_personnage(self)
         type(self).importeur.communication. \
                 conversations.vider_conversations_pour(self)
+        if self.afk:
+            self.afk = ""
     
     def envoyer(self, msg):
         """On redirige sur l'envoie de l'instance de connexion."""

@@ -109,7 +109,8 @@ class Canal(BaseObj):
         
         for connecte in self.connectes:
             if connecte is not personnage:
-                if connecte in self.immerges:
-                    connecte << im_autre
-                else:
-                    connecte << ex_autre
+                if connecte in type(self).importeur.connex.joueurs_connectes:
+                    if connecte in self.immerges:
+                        connecte << im_autre
+                    else:
+                        connecte << ex_autre

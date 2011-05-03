@@ -119,9 +119,8 @@ class Module(BaseModule):
         Retourne le canal créé.
         
         """
-        canal = Canal(nom, auteur)
-        self._canaux[nom] = canal
-        return canal
+        self._canaux[nom] = Canal(nom, auteur)
+        return self._canaux[nom]
     
     def supprimer_canal(self, nom):
         """Supprime le canal de la liste des canaux"""
@@ -132,39 +131,42 @@ class Module(BaseModule):
         n'existe pas.
         
         """
-        if not arguments:
-            personnage << "Vous devez préciser un canal."
+        if not arguments or arguments.isspace():
+            personnage << "|err|Vous devez préciser un canal.|ff|"
             return
         nom_canal = arguments.split(" ")[0]
         if nom_canal in self.canaux:
             if personnage in self.canaux[nom_canal].connectes:
-                personnage << "Vous êtes déjà connecté à ce canal."
-            else:
-                self.canaux[nom_canal].connecter(personnage)
-                personnage << "Vous êtes à présent connecté au canal " \
-                        "'{}'.".format(nom_canal)
+                personnage << "|err|Vous êtes déjà connecté à ce canal.|ff|"
+                return
+            self.canaux[nom_canal].connecter(personnage)
+            personnage << "|att|Vous êtes à présent connecté au canal " \
+                    "{}.|ff|".format(nom_canal)
         else:
             canal = self.ajouter_canal(nom_canal, personnage)
             canal.connecter(personnage)
-            personnage << "Le canal '{}' a été créé. Vous y êtes à présent " \
-                    "connecté.".format(nom_canal)
+            personnage << "|att|Le canal {} a été créé. Vous y êtes à " \
+                    "présent connecté.|ff|".format(nom_canal)
     
     def quitter_ou_detruire(self, personnage, arguments):
         """Déconnecte le joueur et détruit le canal si y'a plus personne"""
-        if not arguments:
-            personnage << "Vous devez préciser un canal."
+        if not arguments or arguments.isspace():
+            personnage << "|err|Vous devez préciser un canal.|ff|"
             return
         nom_canal = arguments.split(" ")[0]
-        if nom_canal in self.canaux:
-            if personnage in self.canaux[nom_canal].connectes:
-                self.canaux[nom_canal].connecter(personnage)
-                res = "Vous avez bien quitté le canal '{}'.".format(nom_canal)
-                if not self.canaux[nom_canal].connectes:
-                    del self.canaux[nom_canal]
-                    res += " Vide, il a été détruit."
-                personnage << res
-                return
-        personnage << "Vous n'êtes pas connecté à ce canal."
+        if nom_canal not in self.canaux:
+            personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
+            return
+        canal = self.canaux[nom_canal]
+        if personnage not in canal.connectes:
+            personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
+            return
+        self.canaux[nom_canal].connecter(personnage)
+        res = "Vous avez bien quitté le canal {}.".format(nom_canal)
+        if not self.canaux[nom_canal].connectes:
+            del self.canaux[nom_canal]
+            res += " Vide, il a été détruit."
+        personnage << "|att|" + res + "|ff|"
     
     def immerger(self, personnage, arguments):
         """Interprète un message envoyé au moyen de l'opérateur :.
@@ -173,58 +175,51 @@ class Module(BaseModule):
             - :<canal> : immerge le joueur
         
         """
-        if not arguments:
-            personnage << "Vous devez préciser des arguments."
+        if not arguments or arguments.isspace():
+            personnage << "|err|Vous devez préciser un canal.|ff|"
             return
-        if arguments.startswith(" "):
-            arguments = arguments.lstrip()
-            if not arguments:
-                personnage << "Que voulez-vous dire ?"
-                return
-            try:
-                dernier_canal = self.dernier_canaux[personnage.nom]
-            except KeyError:
-                personnage << "Vous n'avez utilisé aucun canal."
-            else:
-                try:
-                    canal = self.canaux[dernier_canal]
-                except KeyError:
-                    personnage << "Le canal '{}' n'existe pas.".format(
-                            dernier_canal)
-                    del self.dernier_canaux[personnage.nom]
-                else:
-                    if not personnage in canal.connectes:
-                        personnage << "Vous n'êtes pas connecté à ce canal."
-                    canal.envoyer(personnage, arguments)
-        else:
-            arguments = arguments.split(" ")
-            nom_canal = arguments[0]
-            if nom_canal not in self.canaux:
-                personnage << "Le canal '{}' n'existe pas.".format(nom_canal)
-                return
-            canal = self.canaux[nom_canal]
-            if personnage not in canal.connectes:
-                personnage << "Vous n'êtes pas connecté à ce canal."
-                return
-            canal.immerger(personnage)
-            personnage << "Immersion."
-    
-    def dire_canal(self, personnage, arguments):
-        """Envoie un message à un canal, de la part de personnage"""
-        arguments = arguments.split(" ")
-        nom_canal = arguments[0]
+        nom_canal = arguments.split(" ")[0]
         if nom_canal not in self.canaux:
-            personnage << "Le canal '{}' n'existe pas.".format(nom_canal)
+            personnage << "|err|Le canal {} n'existe pas.|ff|".format(nom_canal)
             return
         canal = self.canaux[nom_canal]
         if personnage not in canal.connectes:
-            personnage << "Vous n'êtes pas connecté à ce canal."
+            personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
             return
-        del arguments[0]
-        if not arguments:
+        canal.immerger(personnage)
+    
+    def dire_dernier_canal(self, personnage, arguments):
+        """Envoie un message au dernier canal"""
+        if not arguments or arguments.isspace():
             personnage << "Que voulez-vous dire ?"
             return
-        message = " ".join(arguments)
+        if not personnage.nom in self.dernier_canaux:
+            personnage << "|err|Vous n'avez utilisé aucun canal.|ff|"
+            return
+        dernier_canal = self.dernier_canaux[personnage.nom]
+        if dernier_canal not in self.canaux:
+            personnage << "|err|Le canal {} n'existe pas.|ff|".format(
+                    dernier_canal)
+            del self.dernier_canaux[personnage.nom]
+            return
+        canal = self.canaux[dernier_canal]
+        if not personnage in canal.connectes:
+            personnage << "|err|Vous n'êtes pas connecté au canal " \
+                    "{}.|ff|".format(dernier_canal)
+            return
+        canal.envoyer(personnage, arguments)
+    
+    def dire_canal(self, personnage, arguments):
+        """Envoie un message à un canal, de la part de personnage"""
+        nom_canal = arguments.split(" ")[0]
+        message = " ".join(arguments.split(" ")[1:])
+        canal = self.canaux[nom_canal]
+        if personnage not in canal.connectes:
+            personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
+            return
+        if not message or message.isspace():
+            personnage << "Que voulez-vous dire ?"
+            return
         canal.envoyer(personnage, message)
     
     def traiter_commande(self, personnage, commande):
@@ -239,6 +234,9 @@ class Module(BaseModule):
         elif commande.startswith(":"):
             res = True
             self.immerger(personnage, commande[1:])
+        elif commande.startswith(". "):
+            res = True
+            self.dire_dernier_canal(personnage, commande[2:])
         elif commande.split(" ")[0] in self.canaux:
             res = True
             self.dire_canal(personnage, commande)
