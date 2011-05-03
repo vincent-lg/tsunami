@@ -202,6 +202,8 @@ class EdtSorties(Editeur):
         
         try:
             sortie = sorties[msg]
+            if not sortie:
+                raise AttributeError
         except (KeyError, AttributeError):
             self.pere << "|err|La sortie spécifiée n'existe pas.|ff|"
         else:
