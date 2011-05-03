@@ -47,10 +47,10 @@ class Immersion(Contexte):
         self.opts.prompt_clr = ""
         self.canal = canal
         self.options = {
-            "q" : self.opt_quitter,
+            "q" : self.opt_quit,
             "w" : self.opt_who,
-            "h" : self.opt_aide,
-            "e" : self.opt_ejecter,
+            "h" : self.opt_help,
+            "e" : self.opt_eject,
             }
     
     def __getstate__(self):
@@ -77,16 +77,14 @@ class Immersion(Contexte):
         
         return res
     
-    def opt_quitter(self, arguments):
+    def opt_quit(self, arguments):
         """Option quitter : /q"""
         personnage = self.pere.joueur
-        self.canal.immerger(personnage)
-        personnage.contextes.retirer()
-        
+        self.canal.immerger(personnage)        
         personnage << "Fermeture de l'immersion."
     
     def opt_who(self, arguments):
-        """Option who : /w"""
+        """Option qui : /w"""
         personnage = self.pere.joueur
         res = "- Joueurs connectés :"
         for connecte in self.canal.connectes:
@@ -100,21 +98,26 @@ class Immersion(Contexte):
                 res += "\n  " + statut + connecte.nom + "|ff|"
                 if connecte in self.canal.immerges:
                     res += " (immergé)"
-        
         personnage << res
     
-    def opt_aide(self, arguments):
+    def opt_help(self, arguments):
         """Options d'affichage de l'aide : /h"""
         personnage = self.pere.joueur
         canal = self.canal
         res = "- Aide du canal {} ({}) :".format(canal.nom, canal.resume)
         res += str(canal.description)
-        res += "\n  Modérateurs : " + ", ".join(sorted([modo.nom for modo in canal.moderateurs]))
+        modos = ""
+        if len(canal.moderateurs) == 1:
+            modos = "\n  Modérateurs : " + canal.moderateurs[0].nom
+        elif len(canal.moderateurs) > 1:
+            modos = "\n  Modérateurs : " + ", ".join(
+                    sorted([modo.nom for modo in canal.moderateurs]))
+        res += modos
         res += "\n  Commandes disponibles : /h, /q, /w"
-        
         personnage << res
     
-    def opt_ejecter(self, arguments):
+    def opt_eject(self, arguments):
+        return # a effacer pour mise en service
         """Option permettant d'éjecter un joueur connecté : /e <joueur>"""
         canal = self.canal
         nom_joueur = arguments.split(" ")[0]
@@ -134,6 +137,25 @@ class Immersion(Contexte):
                     joueur.contextes.retirer()
                 canal.connecter(joueur)
                 joueur << "Vous avez été éjecté du canal {}.".format(canal.nom)
+    
+    def opt_promod(self, arguments):
+        return # a effacer pour mise en service
+        canal = self.canal
+        nom_joueur = arguments.split(" ")[0]
+        joueur = None
+        for connecte in canal.connectes:
+            nom = connecte.nom.lower()
+            if nom == nom_joueur:
+                joueur = connecte
+        if joueur is None:
+            self.pere.joueur << "Ce joueur n'est pas connecté au canal."
+        else:
+            if joueur is self.pere.joueur:
+                self.pere.joueur << "Vous ne pouvez vous promouvoir vous-même."
+            else:
+                canal.moderateurs.append(joueur)
+                joueur << "Vous avez été promu modérateur sur le canal " \
+                        "{}.".format(canal.nom)
     
     def interpreter(self, msg):
         """Méthode d'interprétation du contexte"""

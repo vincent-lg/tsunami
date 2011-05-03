@@ -89,6 +89,7 @@ class Canal(BaseObj):
                     immerge << "<" + personnage.nom + " s'immerge.>"
         else:
             self.immerges.remove(personnage)
+            personnage.contextes.retirer()
             for immerge in self.immerges:
                 if immerge is not personnage:
                     immerge << "<" + personnage.nom + " sort d'immersion.>"
