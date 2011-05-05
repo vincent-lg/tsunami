@@ -71,9 +71,9 @@ class Immersion(Contexte):
     def accueil(self):
         """Message d'accueil du contexte"""
         canal = self.canal
-        res = "+" + "-" * 78 + "+"
-        res += "| |tit|Immersion dans le canal " + canal.nom.ljust(53) + "|ff||"
-        res += "+" + "-" * 78 + "+"
+        res = "+" + "-" * 77 + "+" + "\n"
+        res += "| |tit|Immersion dans le canal " + canal.nom.ljust(52) + "|ff||" + "\n"
+        res += "+" + "-" * 77 + "+"
         
         return res
     
