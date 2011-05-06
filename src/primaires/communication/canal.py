@@ -51,12 +51,13 @@ class Canal(BaseObj):
         self.moderateurs = ListeID()
         self.immerges = ListeID()
         self.connectes = ListeID()
+        self.liste_noire = ListeID()
     
     def __getinitargs__(self):
         return ("", None)
     
     def __str__(self):
-        """Renvoie le canal sous la forme 'canal : résumé - X connectés'"""
+        """Renvoie le canal sous la forme 'canal : résumé - X connecté(s)'"""
         res = self.nom + " : " + self.resume
         nb_connectes = len(self.connectes)
         if nb_connectes == 1:
@@ -66,50 +67,114 @@ class Canal(BaseObj):
         res += " - " + connectes
         return res
     
-    def connecter(self, personnage):
-        """Connecte ou déconnecte personnage et le signale aux immergés"""
-        if not personnage in self.connectes:
-            self.connectes.append(personnage)
-            for immerge in self.immerges:
-                immerge << "<" + personnage.nom + " rejoint le canal.>"
-        else:
-            self.connectes.remove(personnage)
-            for immerge in self.immerges:
-                immerge << "<" + personnage.nom + " quitte le canal.>"
+    @property
+    def aide(self):
+        """Renvoie l'aide du canal"""
+        res = str(self)
     
-    def immerger(self, personnage):
-        """Immerge un personnage et le signale aux immergés"""
-        if not personnage in self.immerges:
-            self.immerges.append(personnage)
-            contexte = Immersion(personnage.instance_connexion)
+    def rejoindre_ou_quitter(self, joueur, aff=True):
+        """Connecte ou déconnecte un joueur et le signale aux connectés"""
+        if not joueur in self.connectes:
+            self.connectes.append(joueur)
+            for connecte in self.connectes:
+                if connecte is not joueur:
+                    if connecte in self.immerges:
+                        connecte << "<" + joueur.nom + " rejoint le canal.>"
+                    else:
+                        res = self.couleur + "[" + self.nom + "] " + joueur.nom
+                        res += " rejoint le canal.|ff|"
+                        connecte << res
+        else:
+            self.connectes.remove(joueur)
+            if aff is True:
+                for connecte in self.connectes:
+                    if connecte in self.immerges:
+                        connecte << "<" + joueur.nom + " quitte le canal.>"
+                    else:
+                        res = self.couleur + "[" + self.nom + "] " + joueur.nom
+                        res += " quitte le canal.|ff|"
+                        connecte << res
+    
+    def immerger_ou_sortir(self, joueur, aff=True):
+        """Immerge un joueur et le signale aux immergés"""
+        if not joueur in self.immerges:
+            self.immerges.append(joueur)
+            contexte = Immersion(joueur.instance_connexion)
             contexte.canal = self
-            personnage.contexte_actuel.migrer_contexte(contexte)
-            for immerge in self.immerges:
-                if immerge is not personnage:
-                    immerge << "<" + personnage.nom + " s'immerge.>"
+            joueur.contexte_actuel.migrer_contexte(contexte)
+            if aff is True:
+                for immerge in self.immerges:
+                    if immerge is not joueur:
+                        immerge << "<" + joueur.nom + " s'immerge.>"
         else:
-            self.immerges.remove(personnage)
-            personnage.contextes.retirer()
-            for immerge in self.immerges:
-                if immerge is not personnage:
-                    immerge << "<" + personnage.nom + " sort d'immersion.>"
+            self.immerges.remove(joueur)
+            joueur.contextes.retirer()
+            if aff is True:
+                for immerge in self.immerges:
+                    immerge << "<" + joueur.nom + " sort d'immersion.>"
     
-    def envoyer(self, personnage, message):
-        """Envoie le message au canal"""
+    def ejecter(self, joueur):
+        """Ejecte un joueur du canal (méthode de modération)"""
+        if joueur in self.immerges:
+            self.immerger_ou_sortir(joueur, False)
+        self.rejoindre_ou_quitter(joueur, False)
+        for connecte in self.connectes:
+            if connecte in self.immerges:
+                connecte << "<" + joueur.nom + " a été éjecté.>"
+            else:
+                res = self.couleur + "[" + self.nom + "] " + joueur.nom
+                res += " a été éjecté.|ff|"
+                connecte << res
+        joueur << "|rgc|Vous avez été éjecté du canal {}.|ff|".format(self.nom)
+    
+    def bannir(self, joueur):
+        """Bannit un joueur du canal (méthode de modération)"""
+        if joueur in self.immerges:
+            self.immerger_ou_sortir(joueur, False)
+        self.rejoindre_ou_quitter(joueur, False)
+        self.liste_noire.append(joueur)
+        for connecte in self.connectes:
+            if connecte in self.immerges:
+                connecte << "<" + joueur.nom + " a été banni.>"
+            else:
+                res = self.couleur + "[" + self.nom + "] " + joueur.nom
+                res += " a été banni.|ff|"
+                connecte << res
+        joueur << "|rgc|Vous avez été banni du canal {}.|ff|".format(self.nom)
+    
+    def promouvoir_ou_dechoir(self, joueur):
+        """Promeut ou déchoit un joueur du statut de modérateur"""
+        if not joueur in self.moderateurs:
+            self.moderateurs.append(joueur)
+            if joueur in self.immerges:
+                joueur << "<Vous avez été promu modérateur.>"
+            else:
+                joueur << self.couleur + "[" + self.nom + "] Vous avez été " \
+                        "promu modérateur.|ff|"
+        else:
+            self.moderateurs.remove(joueur)
+            if joueur in self.immerges:
+                joueur << "<Vous avez été déchu du rang de modérateur.>"
+            else:
+                joueur << self.couleur + "[" + self.nom + "] Vous avez été " \
+                        "déchu du rang de modérateur.|ff|"
+    
+    def envoyer(self, joueur, message):
+        """Envoie un message au canal"""
         type(self).importeur.communication. \
-                dernier_canaux[personnage.nom] = self.nom
+                dernier_canaux[joueur.nom] = self.nom
         ex_moi = self.couleur + "[" + self.nom + "] Vous dites : "
         ex_moi += message + "|ff|"
-        ex_autre = self.couleur + "[" + self.nom + "] " + personnage.nom
+        ex_autre = self.couleur + "[" + self.nom + "] " + joueur.nom
         ex_autre += " dit : " + message + "|ff|"
-        im_moi = im_autre = "<" + personnage.nom + "> " + message
-        if personnage in self.immerges:
-            personnage << im_moi
+        im_moi = im_autre = "<" + joueur.nom + "> " + message
+        if joueur in self.immerges:
+            joueur << im_moi
         else:
-            personnage << ex_moi
+            joueur << ex_moi
         
         for connecte in self.connectes:
-            if connecte is not personnage:
+            if connecte is not joueur:
                 if connecte in type(self).importeur.connex.joueurs_connectes:
                     if connecte in self.immerges:
                         connecte << im_autre

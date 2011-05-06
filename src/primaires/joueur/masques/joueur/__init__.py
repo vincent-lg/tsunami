@@ -66,10 +66,10 @@ class Joueur(Masque):
         joueur = None
         joueurs = type(self).importeur.connex.joueurs
         for t_joueur in joueurs:
-                nom = t_joueur.nom.lower()
-                if nom == nom_joueur:
-                    joueur = t_joueur
-                    break
+            nom = t_joueur.nom.lower()
+            if nom == nom_joueur:
+                joueur = t_joueur
+                break
         
         if not joueur:
             raise ErreurValidation(

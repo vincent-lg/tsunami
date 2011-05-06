@@ -40,17 +40,20 @@ class Immersion(Contexte):
     
     nom = "communication:immersion"
     
-    def __init__(self, pere, canal=None):
+    def __init__(self, pere):
         """Constructeur du contexte"""
         Contexte.__init__(self, pere)
         self.opts.prompt_prf = ""
         self.opts.prompt_clr = ""
-        self.canal = canal
+        self.canal = None
         self.options = {
             "q" : self.opt_quit,
             "w" : self.opt_who,
             "h" : self.opt_help,
+            "i" : self.opt_invite,
             "e" : self.opt_eject,
+            "b" : self.opt_ban,
+            "p" : self.opt_promod,
             }
     
     def __getstate__(self):
@@ -71,22 +74,21 @@ class Immersion(Contexte):
     def accueil(self):
         """Message d'accueil du contexte"""
         canal = self.canal
-        res = "+" + "-" * 77 + "+" + "\n"
-        res += "| |tit|Immersion dans le canal " + canal.nom.ljust(52) + "|ff||" + "\n"
-        res += "+" + "-" * 77 + "+"
+        res = "> Immersion dans le canal " + canal.nom.ljust(53)
         
         return res
     
     def opt_quit(self, arguments):
         """Option quitter : /q"""
         personnage = self.pere.joueur
-        self.canal.immerger(personnage)        
-        personnage << "Fermeture de l'immersion."
+        self.canal.immerger_ou_sortir(personnage)
+        
+        personnage << "> Retour au jeu."
     
     def opt_who(self, arguments):
         """Option qui : /w"""
         personnage = self.pere.joueur
-        res = "- Joueurs connectés :"
+        res = "> Joueurs connectés :"
         for connecte in self.canal.connectes:
             if connecte in type(self).importeur.connex.joueurs_connectes:
                 if connecte is self.canal.auteur:
@@ -98,64 +100,124 @@ class Immersion(Contexte):
                 res += "\n  " + statut + connecte.nom + "|ff|"
                 if connecte in self.canal.immerges:
                     res += " (immergé)"
+        
         personnage << res
     
     def opt_help(self, arguments):
         """Options d'affichage de l'aide : /h"""
         personnage = self.pere.joueur
         canal = self.canal
-        res = "- Aide du canal {} ({}) :".format(canal.nom, canal.resume)
+        res = "> Aide du canal {} ({}) :".format(canal.nom, canal.resume)
         res += str(canal.description)
         modos = ""
         if len(canal.moderateurs) == 1:
-            modos = "\n  Modérateurs : " + canal.moderateurs[0].nom
+            modos = "\n  Modérateur : " + canal.moderateurs[0].nom
         elif len(canal.moderateurs) > 1:
             modos = "\n  Modérateurs : " + ", ".join(
                     sorted([modo.nom for modo in canal.moderateurs]))
         res += modos
-        res += "\n  Commandes disponibles : /h, /q, /w"
+        res += "\n\n  Commandes disponibles :"
+        res += "\n   - |cmd|/h|ff| : affiche ce message d'aide"
+        res += "\n   - |cmd|/w|ff| : liste les joueurs connectés au canal"
+        res += "\n   - |cmd|/i <joueur>|ff| : invite un joueur à rejoindre "
+        res += "le canal"
+        res += "\n   - |cmd|/q|ff| : permet de sortir du mode immersif"
+        
         personnage << res
     
+    def opt_invite(self, arguments):
+        """Option pour inviter un ami à rejoindre le cana : /i <joueur>"""
+        canal = self.canal
+        if not arguments or arguments.isspace():
+            self.pere.joueur << "|err|Vous devez spécifier un joueur.|ff|"
+            return
+        nom_joueur = arguments.split(" ")[0]
+        joueur = None
+        for t_joueur in type(self).importeur.connex.joueurs_connectes:
+            if nom_joueur == t_joueur.nom.lower():
+                joueur = t_joueur
+                break
+        if joueur is None:
+            self.pere.joueur << "|err|Le joueur passé en paramètre n'a pu " \
+                    "être trouvé.|ff|"
+            return
+        if joueur in canal.connectes:
+            self.pere.joueur << "|err|Ce joueur est déjà connecté au canal.|ff|"
+            return
+        res = "|vrc|" + self.pere.joueur.nom + " vous invite à rejoindre "
+        res += "le canal" + canal.nom + ". Pour ce faire, entrez |ff||ent|+"
+        res += canal.nom + "|ff||vrc|.|ff|"
+        
+        joueur << res
+        self.pere.joueur << "|att|Vous venez d'inviter {} à rejoindre le " \
+                "canal {}.|ff|".format(joueur.nom, canal.nom)
+        
+    
     def opt_eject(self, arguments):
-        return # a effacer pour mise en service
         """Option permettant d'éjecter un joueur connecté : /e <joueur>"""
         canal = self.canal
+        if not arguments or arguments.isspace():
+            self.pere.joueur << "|err|Vous devez spécifier un joueur.|ff|"
+            return
         nom_joueur = arguments.split(" ")[0]
         joueur = None
         for connecte in canal.connectes:
-            nom = connecte.nom.lower()
-            if nom == nom_joueur:
+            if nom_joueur == connecte.nom.lower():
                 joueur = connecte
+                break
         if joueur is None:
-            self.pere.joueur << "Ce joueur n'est pas connecté au canal."
-        else:
-            if joueur is self.pere.joueur:
-                self.pere.joueur << "Vous ne pouvez vous éjecter vous-même."
-            else:
-                if joueur in canal.immerges:
-                    canal.immerger(joueur)
-                    joueur.contextes.retirer()
-                canal.connecter(joueur)
-                joueur << "Vous avez été éjecté du canal {}.".format(canal.nom)
+            self.pere.joueur << "|err|Ce joueur n'est pas connecté au " \
+                    "canal.|ff|"
+            return
+        if joueur is self.pere.joueur:
+            self.pere.joueur << "|err|Vous ne pouvez vous éjecter " \
+                    "vous-même.|ff|"
+            return
+        canal.ejecter(joueur)
+    
+    def opt_ban(self, arguments):
+        return # a supprimer pour autoriser l'option
+        """Option permettant de bannir un joueur connecté : /b <joueur>"""
+        canal = self.canal
+        nom_joueur = arguments.split(" ")[0]
+        joueur = None
+        for t_joueur in type(self).importeur.connex.joueurs_connectes:
+            if nom_joueur == t_joueur.nom.lower():
+                joueur = t_joueur
+                break
+        if joueur is None:
+            self.pere.joueur << "|err|Le joueur passé en paramètre n'a pu " \
+                    "être trouvé.|ff|"
+            return
+        if joueur is self.pere.joueur:
+            self.pere.joueur << "|err|Vous ne pouvez vous bannir vous-même.|ff|"
+            return
+        canal.bannir(joueur)
     
     def opt_promod(self, arguments):
-        return # a effacer pour mise en service
+        """Option permettant de promouvoir un joueur connecté : /p <joueur>"""
         canal = self.canal
         nom_joueur = arguments.split(" ")[0]
         joueur = None
         for connecte in canal.connectes:
-            nom = connecte.nom.lower()
-            if nom == nom_joueur:
+            if nom_joueur == connecte.nom.lower():
                 joueur = connecte
+                break
         if joueur is None:
-            self.pere.joueur << "Ce joueur n'est pas connecté au canal."
+            self.pere.joueur << "|err|Ce joueur n'est pas connecté au " \
+                    "canal.|ff|"
+            return
+        if joueur is self.pere.joueur:
+            self.pere.joueur << "|err|Vous ne pouvez vous promouvoir " \
+                    "vous-même.|ff|"
+            return
+        canal.promouvoir_ou_dechoir(joueur)
+        if joueur in canal.moderateurs:
+            self.pere.joueur << "|att|{} a été promu modérateur.|ff|".format(
+                    joueur.nom)
         else:
-            if joueur is self.pere.joueur:
-                self.pere.joueur << "Vous ne pouvez vous promouvoir vous-même."
-            else:
-                canal.moderateurs.append(joueur)
-                joueur << "Vous avez été promu modérateur sur le canal " \
-                        "{}.".format(canal.nom)
+            self.pere.joueur << "|att|{} a été déchu du statut de " \
+                    "modérateur.|ff|".format(joueur.nom)
     
     def interpreter(self, msg):
         """Méthode d'interprétation du contexte"""

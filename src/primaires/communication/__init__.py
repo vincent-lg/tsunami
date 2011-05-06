@@ -85,6 +85,7 @@ class Module(BaseModule):
         pour la mise en forme.
         
         """
+        
         type(self.importeur).anaconf.get_config("config_com", \
             "communication/config.cfg", "config communication", cfg_com)
         
@@ -119,6 +120,7 @@ class Module(BaseModule):
         Retourne le canal créé.
         
         """
+        
         self._canaux[nom] = Canal(nom, auteur)
         return self._canaux[nom]
     
@@ -131,6 +133,7 @@ class Module(BaseModule):
         n'existe pas.
         
         """
+        
         if not arguments or arguments.isspace():
             personnage << "|err|Vous devez préciser un canal.|ff|"
             return
@@ -139,17 +142,17 @@ class Module(BaseModule):
             if personnage in self.canaux[nom_canal].connectes:
                 personnage << "|err|Vous êtes déjà connecté à ce canal.|ff|"
                 return
-            self.canaux[nom_canal].connecter(personnage)
+            self.canaux[nom_canal].rejoindre_ou_quitter(personnage)
             personnage << "|att|Vous êtes à présent connecté au canal " \
                     "{}.|ff|".format(nom_canal)
         else:
             canal = self.ajouter_canal(nom_canal, personnage)
-            canal.connecter(personnage)
+            canal.rejoindre_ou_quitter(personnage)
             personnage << "|att|Le canal {} a été créé. Vous y êtes à " \
                     "présent connecté.|ff|".format(nom_canal)
     
     def quitter_ou_detruire(self, personnage, arguments):
-        """Déconnecte le joueur et détruit le canal si y'a plus personne"""
+        """Déconnecte le joueur et détruit le canal s'il est vide"""
         if not arguments or arguments.isspace():
             personnage << "|err|Vous devez préciser un canal.|ff|"
             return
@@ -161,7 +164,7 @@ class Module(BaseModule):
         if personnage not in canal.connectes:
             personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
             return
-        self.canaux[nom_canal].connecter(personnage)
+        self.canaux[nom_canal].rejoindre_ou_quitter(personnage)
         res = "Vous avez bien quitté le canal {}.".format(nom_canal)
         if not self.canaux[nom_canal].connectes:
             del self.canaux[nom_canal]
@@ -169,12 +172,7 @@ class Module(BaseModule):
         personnage << "|att|" + res + "|ff|"
     
     def immerger(self, personnage, arguments):
-        """Interprète un message envoyé au moyen de l'opérateur :.
-        Syntaxe :
-            - : <message> : envoie message au dernier canal utilisé
-            - :<canal> : immerge le joueur
-        
-        """
+        """Immerge le personnage dans le canal choisi"""        
         if not arguments or arguments.isspace():
             personnage << "|err|Vous devez préciser un canal.|ff|"
             return
@@ -186,10 +184,10 @@ class Module(BaseModule):
         if personnage not in canal.connectes:
             personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
             return
-        canal.immerger(personnage)
+        canal.immerger_ou_sortir(personnage)
     
     def dire_dernier_canal(self, personnage, arguments):
-        """Envoie un message au dernier canal"""
+        """Envoie un message au dernier canal utilisé par personnage"""
         if not arguments or arguments.isspace():
             personnage << "Que voulez-vous dire ?"
             return
