@@ -28,26 +28,26 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'hrp'.
+"""Package contenant la commande 'crier'.
 
 """
 
 from primaires.interpreteur.commande.commande import Commande
 
-class CmdHrp(Commande):
+class CmdCrier(Commande):
     
-    """Commande 'hrp'.
+    """Commande 'crier'.
     
     """
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "hrp", "ooc")
+        Commande.__init__(self, "crier", "shout")
         self.nom_categorie = "parler"
         self.schema = "<message>"
-        self.aide_courte = "dit une phrase dans le canal HRP"
+        self.aide_courte = "crie une phrase"
         self.aide_longue = \
-            "Cette commande permet de dire une phrase dans le canal HRP. " \
+            "Cette commande permet de crier une phrase dans l'univers. " \
             "Tous les joueurs connectés entendront votre message ; " \
             "il s'agit d'un moyen de communiquer à travers l'univers, " \
             "en-dehors du cadre role-play."
@@ -55,10 +55,10 @@ class CmdHrp(Commande):
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         message = dic_masques["message"].message
-        clr = type(self).importeur.anaconf.get_config("config_com").couleur_hrp
-        moi = clr + "[HRP] Vous dites : " + message + "|ff|"
+        clr = type(self).importeur.anaconf.get_config("config_com").couleur_cri
+        moi = clr + "Vous criez : " + message + "|ff|"
         personnage.envoyer(moi)
-        autre = clr + "[HRP] " + personnage.nom + " dit : " + message + "|ff|"
+        autre = clr + personnage.nom + " crie : " + message + "|ff|"
         for joueur in type(self).importeur.connex.joueurs_connectes:
             if joueur is not personnage:
                 joueur.envoyer(autre)

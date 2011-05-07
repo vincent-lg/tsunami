@@ -58,13 +58,13 @@ class Canal(BaseObj):
     
     def __str__(self):
         """Renvoie le canal sous la forme 'canal : résumé - X connecté(s)'"""
-        res = self.nom + " : " + self.resume
+        res = "|cmd|" + self.nom + "|ff| : " + self.resume
         nb_connectes = len(self.connectes)
         if nb_connectes == 1:
-            connectes = "1 joueur connecté"
+            connectes = "(1 joueur connecté)"
         else:
-            connectes = str(nb_connectes) + " joueurs connectés"
-        res += " - " + connectes
+            connectes = "(" + str(nb_connectes) + " joueurs connectés)"
+        res += connectes
         return res
     
     @property

@@ -1,5 +1,3 @@
-# -*-coding:Utf-8 -*
-
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -28,36 +26,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'encodage' de la commande 'options'."""
+"""Fichier contenant le paramètre 'lister' de la commande 'canaux'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmEncodage(Parametre):
+class PrmLister(Parametre):
     
-    """Commande 'options encodage'.
+    """Commande 'canaux lister'.
     
     """
     
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "encodage", "encoding")
-        self.schema = "<nom_encodage>"
-        self.aide_courte = "change l'encodage du compte"
+        Parametre.__init__(self, "lister", "list")
+        self.schema = ""
+        self.aide_courte = "liste les canaux existants"
         self.aide_longue = \
-            "Cette commande permet de changer l'encodage de votre " \
-            "compte. Cette commande influencera les autres joueurs de " \
-            "votre compte puisqu'il est présupposé qu'ils sont connecté " \
-            "du même point. Vous devez lui préciser en paramètre un nom " \
-            "d'encodage comme |ent|utf-8|ff| par exemple."
+            "Cette sous-commande offre une liste des canaux existants, " \
+            "accompagnée d'une courte aide pour chacun d'eux."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        encodage = dic_masques["nom_encodage"].encodage
-        anc_encodage = personnage.compte.encodage
-        if encodage == anc_encodage:
-            personnage << "|err|Votre encodage est déjà réglé sur {}.|ff|" \
-                    .format(encodage)
+        canaux = type(self).importeur.communication.canaux
+        if not canaux:
+            res = "|err|Il n'y a aucun canal de communication.|ff|"
         else:
-            personnage.compte.encodage = encodage
-            personnage << "Vous changez l'encodage du compte de {} à {}." \
-                    .format(anc_encodage, encodage)
+            res = "Canaux existants :\n"
+            for canal in canaux.iter().values():
+                res += "\n " + str(canal)
+        
+        personnage << res

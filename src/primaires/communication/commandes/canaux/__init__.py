@@ -28,36 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'encodage' de la commande 'options'."""
+"""Package contenant la commande 'canaux'.
 
-from primaires.interpreteur.masque.parametre import Parametre
+"""
 
-class PrmEncodage(Parametre):
+from primaires.interpreteur.commande.commande import Commande
+from .lister import PrmLister
+
+class CmdCanaux(Commande):
     
-    """Commande 'options encodage'.
+    """Commande 'canaux'.
     
     """
     
     def __init__(self):
-        """Constructeur du paramètre"""
-        Parametre.__init__(self, "encodage", "encoding")
-        self.schema = "<nom_encodage>"
-        self.aide_courte = "change l'encodage du compte"
+        """Constructeur de la commande"""
+        Commande.__init__(self, "canaux", "channels")
+        self.nom_categorie = "parler"
+        self.aide_courte = "gestion des canaux de communication"
         self.aide_longue = \
-            "Cette commande permet de changer l'encodage de votre " \
-            "compte. Cette commande influencera les autres joueurs de " \
-            "votre compte puisqu'il est présupposé qu'ils sont connecté " \
-            "du même point. Vous devez lui préciser en paramètre un nom " \
-            "d'encodage comme |ent|utf-8|ff| par exemple."
+                "Cette commande permet de gérer les canaux de communication " \
+                "de l'univers. Diverses options sont disponibles : entrez " \
+                "%canaux% sans arguments pour en voir un aperçu, ou lisez " \
+                "l'aide plus bas."
     
-    def interpreter(self, personnage, dic_masques):
-        """Interprétation du paramètre"""
-        encodage = dic_masques["nom_encodage"].encodage
-        anc_encodage = personnage.compte.encodage
-        if encodage == anc_encodage:
-            personnage << "|err|Votre encodage est déjà réglé sur {}.|ff|" \
-                    .format(encodage)
-        else:
-            personnage.compte.encodage = encodage
-            personnage << "Vous changez l'encodage du compte de {} à {}." \
-                    .format(anc_encodage, encodage)
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
+        prm_lister = PrmLister()
+        
+        self.ajouter_parametre(prm_lister)

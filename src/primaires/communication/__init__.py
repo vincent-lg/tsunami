@@ -101,10 +101,11 @@ class Module(BaseModule):
         """Ajout des commandes"""
         self.commandes = [
             commandes.dire.CmdDire(),
-            commandes.hrp.CmdHrp(),
+            commandes.crier.CmdCrier(),
             commandes.emote.CmdEmote(),
             commandes.parler.CmdParler(),
             commandes.repondre.CmdRepondre(),
+            commandes.canaux.CmdCanaux(),
         ]
         
         for cmd in self.commandes:
