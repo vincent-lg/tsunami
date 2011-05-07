@@ -100,7 +100,7 @@ class Canal(BaseObj):
         if not joueur in self.immerges:
             self.immerges.append(joueur)
             contexte = Immersion(joueur.instance_connexion)
-            contexte.canal = self
+            contexte.canal = type(self).importeur.communication.canaux[self.nom]
             joueur.contexte_actuel.migrer_contexte(contexte)
             if aff is True:
                 for immerge in self.immerges:
@@ -112,6 +112,15 @@ class Canal(BaseObj):
             if aff is True:
                 for immerge in self.immerges:
                     immerge << "<" + joueur.nom + " sort d'immersion.>"
+    
+    def dissoudre(self):
+        """Détruis le canal et déconnecte tous les joueurs"""
+        for joueur in self.connectes:
+            if joueur in self.immerges:
+                self.immerger_ou_sortir(joueur, False)
+            self.rejoindre_ou_quitter(joueur, False)
+            joueur << "|err|Le canal {} a été dissous.|ff|".format(self.nom)
+        del type(self).importeur.communication.canaux[self.nom]
     
     def ejecter(self, joueur):
         """Ejecte un joueur du canal (méthode de modération)"""
@@ -146,18 +155,20 @@ class Canal(BaseObj):
         """Promeut ou déchoit un joueur du statut de modérateur"""
         if not joueur in self.moderateurs:
             self.moderateurs.append(joueur)
-            if joueur in self.immerges:
-                joueur << "<Vous avez été promu modérateur.>"
-            else:
-                joueur << self.couleur + "[" + self.nom + "] Vous avez été " \
-                        "promu modérateur.|ff|"
+            if joueur in type(self).importeur.connex.joueurs_connectes:
+                if joueur in self.immerges:
+                    joueur << "<Vous avez été promu modérateur.>"
+                else:
+                    joueur << self.couleur + "[" + self.nom + "] Vous avez " \
+                            "été promu modérateur.|ff|"
         else:
             self.moderateurs.remove(joueur)
-            if joueur in self.immerges:
-                joueur << "<Vous avez été déchu du rang de modérateur.>"
-            else:
-                joueur << self.couleur + "[" + self.nom + "] Vous avez été " \
-                        "déchu du rang de modérateur.|ff|"
+            if joueur in type(self).importeur.connex.joueurs_connectes:
+                if joueur in self.immerges:
+                    joueur << "<Vous avez été déchu du rang de modérateur.>"
+                else:
+                    joueur << self.couleur + "[" + self.nom + "] Vous avez " \
+                            "été déchu du rang de modérateur.|ff|"
     
     def envoyer(self, joueur, message):
         """Envoie un message au canal"""

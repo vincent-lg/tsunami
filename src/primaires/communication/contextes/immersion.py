@@ -47,13 +47,17 @@ class Immersion(Contexte):
         self.opts.prompt_clr = ""
         self.canal = None
         self.options = {
+            # Options d'user
             "q" : self.opt_quit,
             "w" : self.opt_who,
             "h" : self.opt_help,
             "i" : self.opt_invite,
+            # Options de modo
             "e" : self.opt_eject,
             "b" : self.opt_ban,
-            "p" : self.opt_promod,
+            # Options d'admin
+            "p" : self.opt_promote,
+            "d" : self.opt_dissolve,
             }
     
     def __getstate__(self):
@@ -94,7 +98,7 @@ class Immersion(Contexte):
                 if connecte is self.canal.auteur:
                     statut = "|rgc|@"
                 elif connecte in self.canal.moderateurs:
-                    statut = "|jnc|*"
+                    statut = "|jn|*"
                 else:
                     statut = "|bc|"
                 res += "\n  " + statut + connecte.nom + "|ff|"
@@ -109,12 +113,13 @@ class Immersion(Contexte):
         canal = self.canal
         res = "> Aide du canal {} ({}) :".format(canal.nom, canal.resume)
         res += str(canal.description)
+        res += "\n  Administrateur : |rgc|" + canal.auteur.nom + "|ff|"
         modos = ""
         if len(canal.moderateurs) == 1:
-            modos = "\n  Modérateur : " + canal.moderateurs[0].nom
+            modos = "\n  Modérateur : |jn|" + canal.moderateurs[0].nom + "|ff|"
         elif len(canal.moderateurs) > 1:
-            modos = "\n  Modérateurs : " + ", ".join(
-                    sorted([modo.nom for modo in canal.moderateurs]))
+            modos = "\n  Modérateurs : |jn|" + "|ff|, |jn|".join(
+                    sorted([modo.nom for modo in canal.moderateurs])) + "|ff|"
         res += modos
         res += "\n\n  Commandes disponibles :"
         res += "\n   - |cmd|/h|ff| : affiche ce message d'aide"
@@ -156,6 +161,10 @@ class Immersion(Contexte):
     def opt_eject(self, arguments):
         """Option permettant d'éjecter un joueur connecté : /e <joueur>"""
         canal = self.canal
+        if not self.pere.joueur in canal.moderateurs and \
+                self.pere.joueur is not canal.auteur:
+            self.pere.joueur << "|err|Vous n'avez pas accès à cette option.|ff|"
+            return
         if not arguments or arguments.isspace():
             self.pere.joueur << "|err|Vous devez spécifier un joueur.|ff|"
             return
@@ -176,9 +185,12 @@ class Immersion(Contexte):
         canal.ejecter(joueur)
     
     def opt_ban(self, arguments):
-        return # a supprimer pour autoriser l'option
         """Option permettant de bannir un joueur connecté : /b <joueur>"""
         canal = self.canal
+        if not self.pere.joueur in canal.moderateurs and \
+                self.pere.joueur is not canal.auteur:
+            self.pere.joueur << "|err|Vous n'avez pas accès à cette option.|ff|"
+            return
         nom_joueur = arguments.split(" ")[0]
         joueur = None
         for t_joueur in type(self).importeur.connex.joueurs_connectes:
@@ -194,9 +206,12 @@ class Immersion(Contexte):
             return
         canal.bannir(joueur)
     
-    def opt_promod(self, arguments):
+    def opt_promote(self, arguments):
         """Option permettant de promouvoir un joueur connecté : /p <joueur>"""
         canal = self.canal
+        if self.pere.joueur is not canal.auteur:
+            self.pere.joueur << "|err|Vous n'avez pas accès à cette option.|ff|"
+            return
         nom_joueur = arguments.split(" ")[0]
         joueur = None
         for connecte in canal.connectes:
@@ -211,6 +226,9 @@ class Immersion(Contexte):
             self.pere.joueur << "|err|Vous ne pouvez vous promouvoir " \
                     "vous-même.|ff|"
             return
+        if joueur is canal.auteur:
+            self.pere.joueur << "|err|Ce joueur est déjà administrateur.|ff|"
+            return
         canal.promouvoir_ou_dechoir(joueur)
         if joueur in canal.moderateurs:
             self.pere.joueur << "|att|{} a été promu modérateur.|ff|".format(
@@ -218,6 +236,18 @@ class Immersion(Contexte):
         else:
             self.pere.joueur << "|att|{} a été déchu du statut de " \
                     "modérateur.|ff|".format(joueur.nom)
+    
+    def opt_dissolve(self, arguments):
+        """Option permettant de dissoudre le canal"""
+        canal = self.canal
+        if self.pere.joueur is not canal.auteur:
+            self.pere.joueur << "|err|Vous n'avez pas accès à cette option.|ff|"
+            return
+        joueur = self.pere.joueur
+        canal.rejoindre_ou_quitter(joueur, False)
+        canal.immerger_ou_sortir(joueur, False)
+        joueur << "|err|Le canal {} a été dissous.|ff|".format(canal.nom)
+        canal.dissoudre()
     
     def interpreter(self, msg):
         """Méthode d'interprétation du contexte"""
