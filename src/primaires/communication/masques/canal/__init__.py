@@ -28,44 +28,46 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'canaux'.
+"""Fichier contenant le masque <canal>."""
 
-"""
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
 
-from primaires.interpreteur.commande.commande import Commande
-from .lister import PrmLister
-from .infos import PrmInfos
-from .rejoindre import PrmRejoindre
-from .quitter import PrmQuitter
-from .immerger import PrmImmerger
-
-class CmdCanaux(Commande):
+class Canal(Masque):
     
-    """Commande 'canaux'.
+    """Masque <canal>.
+    On attend un canal en paramètre.
     
     """
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "canaux", "channels")
-        self.nom_categorie = "parler"
-        self.aide_courte = "gestion des canaux de communication"
-        self.aide_longue = \
-                "Cette commande permet de gérer les canaux de communication " \
-                "de l'univers. Diverses options sont disponibles : entrez " \
-                "%canaux% sans arguments pour en voir un aperçu, ou lisez " \
-                "l'aide plus bas."
+    nom = "canal"
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_lister = PrmLister()
-        prm_infos = PrmInfos()
-        prm_rejoindre = PrmRejoindre()
-        prm_quitter = PrmQuitter()
-        prm_immerger = PrmImmerger()
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self)
+        self.nom_complet = "canal"
+        self.nom_canal = ""
+        self.canal = None
+        self.canal_existe = True
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        lstrip(commande)
+        nom_canal = liste_vers_chaine(commande)
         
-        self.ajouter_parametre(prm_lister)
-        self.ajouter_parametre(prm_infos)
-        self.ajouter_parametre(prm_rejoindre)
-        self.ajouter_parametre(prm_quitter)
-        self.ajouter_parametre(prm_immerger)
+        if not nom_canal:
+            raise ErreurValidation( \
+                "Précisez le nom d'un canal.")
+        
+        self.nom_canal = nom_canal.split(" ")[0]
+        commande[:] = commande[len(self.nom_canal):]
+        
+        canaux = type(self).importeur.communication.canaux
+        if not self.nom_canal in canaux:
+            self.canal_existe = False
+            return True
+        
+        self.canal = canaux[nom_canal]
+        return True

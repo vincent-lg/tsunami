@@ -32,3 +32,4 @@
 
 import primaires.communication.masques.message
 import primaires.communication.masques.id_conversation
+import primaires.communication.masques.canal

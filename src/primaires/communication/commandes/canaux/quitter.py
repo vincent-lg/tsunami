@@ -1,5 +1,3 @@
-# -*-coding:Utf-8 -*
-
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -28,44 +26,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'canaux'.
+"""Fichier contenant le paramètre 'quitter' de la commande 'canaux'."""
 
-"""
+from primaires.interpreteur.masque.parametre import Parametre
 
-from primaires.interpreteur.commande.commande import Commande
-from .lister import PrmLister
-from .infos import PrmInfos
-from .rejoindre import PrmRejoindre
-from .quitter import PrmQuitter
-from .immerger import PrmImmerger
-
-class CmdCanaux(Commande):
+class PrmQuitter(Parametre):
     
-    """Commande 'canaux'.
+    """Commande 'canaux quitter <canal>'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "canaux", "channels")
-        self.nom_categorie = "parler"
-        self.aide_courte = "gestion des canaux de communication"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "quitter", "quit")
+        self.schema = "<canal>"
+        self.aide_courte = "quitte le canal spécifié"
         self.aide_longue = \
-                "Cette commande permet de gérer les canaux de communication " \
-                "de l'univers. Diverses options sont disponibles : entrez " \
-                "%canaux% sans arguments pour en voir un aperçu, ou lisez " \
-                "l'aide plus bas."
+            "Cette sous-commande vous déconnecte d'un canal."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_lister = PrmLister()
-        prm_infos = PrmInfos()
-        prm_rejoindre = PrmRejoindre()
-        prm_quitter = PrmQuitter()
-        prm_immerger = PrmImmerger()
-        
-        self.ajouter_parametre(prm_lister)
-        self.ajouter_parametre(prm_infos)
-        self.ajouter_parametre(prm_rejoindre)
-        self.ajouter_parametre(prm_quitter)
-        self.ajouter_parametre(prm_immerger)
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        if not dic_masques["canal"].canal_existe:
+            personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
+        else:
+            canal = dic_masques["canal"].canal
+            if not personnage in canal.connectes:
+                personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
+            else:
+                canal.rejoindre_ou_quitter(personnage)
+                res = "Vous avez bien quitté le canal {}.".format(canal.nom)
+                if not canal.connectes:
+                    del type(self).importeur.communication.canaux[canal.nom]
+                    res += " Vide, il a été détruit."
+                personnage << "|att|" + res + "|ff|"

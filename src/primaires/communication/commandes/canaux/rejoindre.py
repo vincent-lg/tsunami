@@ -1,5 +1,3 @@
-# -*-coding:Utf-8 -*
-
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -28,44 +26,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'canaux'.
+"""Fichier contenant le paramètre 'rejoindre' de la commande 'canaux'."""
 
-"""
+from primaires.interpreteur.masque.parametre import Parametre
 
-from primaires.interpreteur.commande.commande import Commande
-from .lister import PrmLister
-from .infos import PrmInfos
-from .rejoindre import PrmRejoindre
-from .quitter import PrmQuitter
-from .immerger import PrmImmerger
-
-class CmdCanaux(Commande):
+class PrmRejoindre(Parametre):
     
-    """Commande 'canaux'.
+    """Commande 'canaux rejoindre <canal>'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "canaux", "channels")
-        self.nom_categorie = "parler"
-        self.aide_courte = "gestion des canaux de communication"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "rejoindre", "join")
+        self.schema = "<canal>"
+        self.aide_courte = "rejoint le canal spécifié"
         self.aide_longue = \
-                "Cette commande permet de gérer les canaux de communication " \
-                "de l'univers. Diverses options sont disponibles : entrez " \
-                "%canaux% sans arguments pour en voir un aperçu, ou lisez " \
-                "l'aide plus bas."
+            "Si le canal existe, cette sous-commande vous permet de vous y " \
+            "connecter afin de communiquer avec les autres joueurs " \
+            "connectés. Sinon, le canal est créé pourvu que vous en ayez " \
+            "le droit."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_lister = PrmLister()
-        prm_infos = PrmInfos()
-        prm_rejoindre = PrmRejoindre()
-        prm_quitter = PrmQuitter()
-        prm_immerger = PrmImmerger()
-        
-        self.ajouter_parametre(prm_lister)
-        self.ajouter_parametre(prm_infos)
-        self.ajouter_parametre(prm_rejoindre)
-        self.ajouter_parametre(prm_quitter)
-        self.ajouter_parametre(prm_immerger)
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        if dic_masques["canal"].canal_existe:
+            canal = dic_masques["canal"].canal
+            if personnage in canal.connectes:
+                personnage << "|err|Vous êtes déjà connecté à ce canal.|ff|"
+            else:
+                canal.rejoindre_ou_quitter(personnage)
+        else:
+            nom_canal = dic_masques["canal"].nom_canal
+            canal = type(self).importeur.communication.ajouter_canal(nom_canal)
+            canal.rejoindre_ou_quitter(personnage)
+            personnage << "|att|Le canal {} a été créé. Vous y êtes à " \
+                    "présent connecté.|ff|".format(nom_canal)
