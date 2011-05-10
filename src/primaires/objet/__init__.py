@@ -82,7 +82,7 @@ class Module(BaseModule):
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
         
-        # Ajout de l'éditeur 'redit'
+        # Ajout de l'éditeur 'oedit'
         self.importeur.interpreteur.ajouter_editeur(EdtOedit)
     
     def preparer(self):

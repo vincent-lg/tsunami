@@ -33,8 +33,10 @@
 from abstraits.module import *
 from primaires.perso import commandes
 from primaires.perso import masques
+from .editeurs.skedit import EdtSkedit
 from .cfg_stats import cfg_stats
 from .stats import *
+from .squelette import Squelette
 
 class Module(BaseModule):
     
@@ -53,6 +55,7 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "perso", "primaire")
         self.cfg_stats = None
         self.commandes = []
+        self.squelettes = {}
     
     def config(self):
         """Méthode de configuration.
@@ -70,6 +73,14 @@ class Module(BaseModule):
         
         BaseModule.config(self)
     
+    def init(self):
+        """Initialisation du module"""
+        # On récupère les squelettes
+        squelettes = self.importeur.supenr.charger_groupe(Squelette)
+        for squelette in squelettes:
+            self.ajouter_squelette(squelette)
+        
+        BaseModule.init(self)
     def ajouter_masques(self):
         """Ajout des masques dans l'interpréteur"""
         self.importeur.interpreteur.ajouter_masque(masques.commande.Commande)
@@ -81,7 +92,27 @@ class Module(BaseModule):
             commandes.commande.CmdCommande(),
             commandes.qui.CmdQui(),
             commandes.score.CmdScore(),
+            commandes.skedit.CmdSkedit(),
         ]
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
+        
+        # Ajout de l'éditeur 'skedit'
+        self.importeur.interpreteur.ajouter_editeur(EdtSkedit)
+    
+    def creer_squelette(self, cle):
+        """Création d'un squelette"""
+        squelette = Squelette(cle)
+        self.ajouter_squelette(squelette)
+        return squelette
+    
+    def ajouter_squelette(self, squelette):
+        """Ajoute le squelette aux squelettes existants"""
+        self.squelettes[squelette.cle] = squelette
+    
+    def supprimer_squelette(cle):
+        """Supprime le squelette existant"""
+        squelette = self.squelettes[cle]
+        del self.squelettes[cle]
+        squelette.detruire()

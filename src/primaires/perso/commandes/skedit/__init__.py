@@ -28,9 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module perso."""
+"""Package contenant la commande 'skedit'."""
 
-from . import commande
-from . import qui
-from . import score
-from . import skedit
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdSkedit(Commande):
+    
+    """Commande 'skedit'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "skedit", "skedit")
+        self.schema = "<ident>"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "ouvre l'éditeur de squelette"
+        self.aide_longue = \
+            "Cette commande ouvre l'éditeur de squelette. Elle permet " \
+            "donc d'ajouter et éditer des squelettes. Ceux-ci peuvent " \
+            "ensuite être utilisés comme base pour des races ou " \
+            "des NPCs. Dans chaque squelette se trouve, notamment, une " \
+            "liste des membres du personnage qui sera créé sur ce " \
+            "modèle."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        cle = dic_masques["ident"].ident
+        if cle in type(self).importeur.perso.squelettes.keys():
+            squelette = type(self).importeur.perso.squelettes[cle]
+        else:
+            squelette = type(self).importeur.perso.creer_squelette(cle)
+        
+        editeur = type(self).importeur.interpreteur.construire_editeur(
+                "skedit", personnage, squelette)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()

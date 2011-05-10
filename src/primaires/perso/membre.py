@@ -79,6 +79,9 @@ class Membre(BaseObj):
                 self.parent:
             self.parent.enregistrer()
     
+    def __str__(self):
+        return "{} ({})".format(self.nom, self.statut)
+    
     def _get_statut(self):
         return self._statut_m
     def _set_statut(self, statut):

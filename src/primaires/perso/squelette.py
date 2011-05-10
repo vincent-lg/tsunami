@@ -32,9 +32,11 @@
 
 from collections import OrderedDict
 
-from abstraits.obase import BaseObj
+from abstraits.id import ObjetID
+from primaires.format.description import Description
+from .membre import Membre
 
-class Squelette(BaseObj):
+class Squelette(ObjetID):
     
     """Classe représentant un squelette.
     Un squelette est un ensemble de membres.
@@ -52,11 +54,18 @@ class Squelette(BaseObj):
     
     """
     
-    def __init__(self, cle, parent=None):
+    groupe = "squelettes"
+    sous_rep = "squelettes"
+    def __init__(self, cle):
         """Constructeur du squelette"""
+        ObjetID.__init__(self)
         self.cle = cle
-        self.parent = parent
+        self.nom = "un squelette"
+        self.description = Description(parent=self)
         self.__membres = OrderedDict()
+    
+    def __getinitargs__(self):
+        return ("", )
     
     def __getitem__(self, item):
         return self.__membres[item]
@@ -66,17 +75,18 @@ class Squelette(BaseObj):
                 "{}. Utilisez la méthode ajouter_membre".format(item,
                 self.cle))
     
+    def __str__(self):
+        return self.cle
+    
     def ajouter_membre(self, nom, *args, **kwargs):
         """Construit le membre via son nom et l'ajoute au dictionnaire.
         Les paramètres *args et **kwargs sont transmis au constructeur de
         Membre.
         
         """
-        membre = Membre(nom, *args, **kwargs)
+        membre = Membre(nom, *args, parent=self, **kwargs)
         self.__membres[nom] = membre
-        
-        if self.parent:
-            self.parent.enregistrer()
+        self.enregistrer()
     
     def supprimer_membre(self, nom):
         """Supprime le membre du dictionnaire."""
@@ -85,6 +95,6 @@ class Squelette(BaseObj):
                     "squelette".format(nom))
         
         del self.__membres[nom]
-        
-        if self.parent:
-            self.parent.enregistrer()
+        self.enregistrer()
+
+ObjetID.ajouter_groupe(Squelette)

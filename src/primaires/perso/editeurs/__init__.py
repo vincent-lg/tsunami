@@ -28,9 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module perso."""
+"""Package contenant les différents éditeurs"""
 
-from . import commande
-from . import qui
-from . import score
 from . import skedit
