@@ -57,7 +57,7 @@ class Module(BaseModule):
         """Initialisation du module"""
         prototypes = self.importeur.supenr.charger_groupe(BaseType)
         for prototype in prototypes:
-            self._prototypes[prototype.identifiant] = prototype
+            self._prototypes[prototype.cle] = prototype
         
         objets = self.importeur.supenr.charger_groupe(Objet)
         for objet in objets:
@@ -98,29 +98,29 @@ class Module(BaseModule):
     def objets(self):
         return dict(self._objets)
     
-    def creer_prototype(self, identifiant, nom_type="indéfini"):
+    def creer_prototype(self, cle, nom_type="indéfini"):
         """Crée un prototype et l'ajoute aux prototypes existants"""
-        if identifiant in self._prototypes:
-            raise ValueError("l'identifiant {} est déjà utilisé comme " \
-                    "prototype".format(identifiant))
+        if cle in self._prototypes:
+            raise ValueError("la clé {} est déjà utilisée comme " \
+                    "prototype".format(cle))
         
         cls_type = o_types[nom_type]
-        prototype = cls_type(identifiant)
+        prototype = cls_type(cle)
         self.ajouter_prototype(prototype)
         return prototype
     
     def ajouter_prototype(self, prototype):
         """Ajoute un prototype au dictionnaire des prototypes"""
-        if prototype.identifiant in self._prototypes:
-            raise ValueError("l'identifiant {} est déjà utilisé comme " \
-                    "prototype".format(prototype.identifiant))
+        if prototype.cle in self._prototypes:
+            raise ValueError("la clé {} est déjà utilisée comme " \
+                    "prototype".format(prototype.cle))
         
-        self._prototypes[prototype.identifiant] = prototype
+        self._prototypes[prototype.cle] = prototype
     
-    def supprimer_prototypes(self, identifiant):
-        """Supprime le prototype identifiant"""
-        prototype = self._prototypes[identifiant]
-        del self._prototypes[identifiant]
+    def supprimer_prototype(self, cle):
+        """Supprime le prototype cle"""
+        prototype = self._prototypes[cle]
+        del self._prototypes[cle]
         prototype.detruire()
     
     def creer_objet(self, prototype):

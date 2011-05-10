@@ -48,11 +48,11 @@ class BaseType(ObjetID, metaclass=MetaType):
     sous_rep = "objets/prototypes"
     nom_type = "" # à redéfinir
     _nom = "base_type_objet"
-    _version = 1
-    def __init__(self, identifiant=""):
+    _version = 2
+    def __init__(self, cle=""):
         """Constructeur d'un type"""
         ObjetID.__init__(self)
-        self.identifiant = identifiant
+        self.cle = cle
         self.no = 0 # nombre d'objets créés sur ce prototype
         self.nom_singulier = "un objet indéfini"
         self.etat_singulier = "est posé là"
@@ -65,7 +65,7 @@ class BaseType(ObjetID, metaclass=MetaType):
         return ()
     
     def __str__(self):
-        return self.identifiant
+        return self.cle
     
     def get_nom(self, nombre):
         """Retourne le nom complet en fonction du nombre.

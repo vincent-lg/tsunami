@@ -111,7 +111,7 @@ class Module(BaseModule):
         """Ajoute le squelette aux squelettes existants"""
         self.squelettes[squelette.cle] = squelette
     
-    def supprimer_squelette(cle):
+    def supprimer_squelette(self, cle):
         """Supprime le squelette existant"""
         squelette = self.squelettes[cle]
         del self.squelettes[cle]

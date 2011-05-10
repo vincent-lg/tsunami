@@ -59,6 +59,8 @@ class EnveloppeObjet(BaseObj):
         self.apercu = ""
         self.aide_courte = ""
         self.aide_longue = ""
+        self.action = ""
+        self.confirme = ""
     
     def __getinitargs__(self):
         return (None, None, None)
@@ -71,6 +73,11 @@ class EnveloppeObjet(BaseObj):
         editeur.prompt = self.prompt
         editeur.aide_courte = self.aide_courte
         editeur.aide_longue = self.aide_longue
+        if self.action:
+            editeur.action = self.action
+        if self.confirme:
+            editeur.confirme = self.confirme
+        
         return editeur
     
     def get_apercu(self):

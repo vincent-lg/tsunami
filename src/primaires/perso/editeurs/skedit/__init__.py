@@ -41,6 +41,7 @@ les extensions n'apparaîtront pas ici.
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.supprimer import Supprimer
 
 class EdtSkedit(Presentation):
     
@@ -84,6 +85,16 @@ class EdtSkedit(Presentation):
             "| |tit|" + "Description du squelette {}".format(
             squelette.cle).ljust(75) + \
             "|ff||\n" + self.opts.separateur
+        
+        # Suppression
+        suppression = self.ajouter_choix("supprimer", "sup", Supprimer, \
+                squelette)
+        suppression.parent = self
+        suppression.aide_courte = "Souhaitez-vous réellement supprimer " \
+                "le squelette {} ?".format(squelette.cle)
+        suppression.action = "perso.supprimer_squelette"
+        suppression.confirme = "Le squelette {} a bien été supprimé.".format(
+                squelette.cle)
         
         # Membres
         #membres = self.ajouter_choix("membres", "m", EdtMembres, squelette)

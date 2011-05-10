@@ -73,7 +73,7 @@ class Objet(ObjetID):
         ObjetID.__init__(self)
         self.prototype = prototype
         if prototype:
-            self.identifiant = prototype.identifiant + "_" + str(
+            self.identifiant = prototype.cle + "_" + str(
                     prototype.no)
             prototype.no += 1
             prototype.objets.append(self)

@@ -36,6 +36,7 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_noms import EdtNoms
+from .supprimer import NSupprimer
 
 class EdtPresentation(Presentation):
     
@@ -72,3 +73,13 @@ class EdtPresentation(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description de l'objet {}".format(prototype).ljust(
             76) + "|ff||\n" + self.opts.separateur
+        
+        # Suppression
+        suppression = self.ajouter_choix("supprimer", "sup", NSupprimer, \
+                prototype)
+        suppression.parent = self
+        suppression.aide_courte = "Souhaitez-vous réellement supprimer " \
+                "le prototype d'objet {} ?".format(prototype.cle)
+        suppression.action = "objet.supprimer_prototype"
+        suppression.confirme = "Le prototype d'objet {} a bien été " \
+                "supprimé.".format(prototype.cle)
