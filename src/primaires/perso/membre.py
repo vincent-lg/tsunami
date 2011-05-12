@@ -63,18 +63,18 @@ class Membre(BaseObj):
         self.nom = nom
         self.flags = AUCUN_FLAG
         self.statut = "entier"
+        self.parent = parent
         
         # Copie du modèle si existe
         if modele:
             self.nom = modele.nom
             self.flag = modele.flag
-        
-        self.parent = parent
     
     def __getinitargs__(self):
         return ("", )
     
     def __setattr__(self, nom_attr, val_attr):
+        BaseObj.__setattr__(self, nom_attr, val_attr)
         if not nom_attr.startswith("_") and hasattr(self, "parent") and \
                 self.parent:
             self.parent.enregistrer()

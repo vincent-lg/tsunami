@@ -34,6 +34,7 @@ from collections import OrderedDict
 
 from abstraits.id import ObjetID
 from primaires.format.description import Description
+from primaires.format.fonctions import supprimer_accents
 from .membre import Membre
 
 class Squelette(ObjetID):
@@ -68,6 +69,7 @@ class Squelette(ObjetID):
         return ("", )
     
     def __getitem__(self, item):
+        item = supprimer_accents(item).lower()
         return self.__membres[item]
     
     def __setitem__(self, item, valeur):
@@ -78,6 +80,20 @@ class Squelette(ObjetID):
     def __str__(self):
         return self.cle
     
+    @property
+    def membres(self):
+        """Retourne une copie du dicitonnaire des membres"""
+        return OrderedDict(self.__membres)
+    
+    @property
+    def presentation_indentee(self):
+        """Retourne une présentation indentée des membres"""
+        membres = [membre.nom for membre in self.__membres.values()]
+        if not membres:
+            membres = ["Aucun"]
+        
+        return "\n  " + "\n  ".join(membres)
+    
     def ajouter_membre(self, nom, *args, **kwargs):
         """Construit le membre via son nom et l'ajoute au dictionnaire.
         Les paramètres *args et **kwargs sont transmis au constructeur de
@@ -85,11 +101,14 @@ class Squelette(ObjetID):
         
         """
         membre = Membre(nom, *args, parent=self, **kwargs)
+        nom = supprimer_accents(nom).lower()
         self.__membres[nom] = membre
         self.enregistrer()
+        return membre
     
     def supprimer_membre(self, nom):
         """Supprime le membre du dictionnaire."""
+        nom = supprimer_accents(nom).lower()
         if nom not in self.__membres.keys():
             raise KeyError("Le membre {} n'existe pas dans ce " \
                     "squelette".format(nom))

@@ -42,6 +42,7 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.supprimer import Supprimer
+from .edt_membres import EdtMembres
 
 class EdtSkedit(Presentation):
     
@@ -86,6 +87,17 @@ class EdtSkedit(Presentation):
             squelette.cle).ljust(75) + \
             "|ff||\n" + self.opts.separateur
         
+        # Membres
+        membres = self.ajouter_choix("membres", "m", EdtMembres, squelette)
+        membres.parent = self
+        membres.apercu = "{objet.presentation_indentee}"
+        membres.aide_courte = \
+            "Entrez le |ent|nom d'un membre|ff| pour le créer / l'éditer ou " \
+            "|cmd|/|ff| pour revenir à\n" \
+            "la fenêtre parente.\n" \
+            "Options :\n" \
+            " - |ent|/d <membre>|ff| : supprime le membre indiqué\n\n"
+        
         # Suppression
         suppression = self.ajouter_choix("supprimer", "sup", Supprimer, \
                 squelette)
@@ -95,13 +107,3 @@ class EdtSkedit(Presentation):
         suppression.action = "perso.supprimer_squelette"
         suppression.confirme = "Le squelette {} a bien été supprimé.".format(
                 squelette.cle)
-        
-        # Membres
-        #membres = self.ajouter_choix("membres", "m", EdtMembres, squelette)
-        #membres.parent = self
-        #membres.aide_courte = \
-        #    "Entrez le |ent|nom d'un membre|ff| pour le créer / l'éditer ou " \
-        #    "|cmd|/|ff| pour revenir à\n" \
-        #    "la fenêtre parente.\n" \
-        #    "Options :\n" \
-        #    " - |ent|/d <membre>|ff| : supprime le membre indiqué\n\n"
