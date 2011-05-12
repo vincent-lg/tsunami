@@ -48,6 +48,8 @@ class PrmInfos(Parametre):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        canal = dic_masques["canal"].canal
-        
-        personnage << canal.aide
+        if not dic_masques["canal"].canal_existe:
+            personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
+        else:
+            canal = dic_masques["canal"].canal
+            personnage << canal.infos

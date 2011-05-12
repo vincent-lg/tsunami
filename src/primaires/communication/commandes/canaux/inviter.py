@@ -26,24 +26,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'quitter' de la commande 'canaux'."""
+"""Fichier contenant le paramètre 'inviter' de la commande 'canaux'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmQuitter(Parametre):
+class PrmInviter(Parametre):
     
-    """Commande 'canaux quitter <canal>'.
+    """Commande 'canaux inviter <canal> <joueur>'.
     
     """
     
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "quitter", "quit")
-        self.schema = "<canal>"
-        self.aide_courte = "quitte le canal spécifié"
+        Parametre.__init__(self, "inviter", "invite")
+        self.schema = "<canal> <nom_joueur>"
+        self.aide_courte = "invite un joueur dans un canal"
         self.aide_longue = \
-            "Cette sous-commande vous déconnecte d'un canal ; vous pouvez " \
-            "aussi entrer |ent|-<canal>|ff|."
+            "En précisant un canal et un joueur, vous pouvez envoyer à ce " \
+            "joueur une invitation à rejoindre ce canal."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
@@ -51,12 +51,16 @@ class PrmQuitter(Parametre):
             personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
         else:
             canal = dic_masques["canal"].canal
+            joueur = dic_masques["nom_joueur"].joueur
             if not personnage in canal.connectes:
                 personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
+            elif joueur in canal.connectes:
+                personnage << "|err|Ce joueur est déjà connecté au canal " \
+                        "{}.|ff|".format(canal.nom)
             else:
-                canal.rejoindre_ou_quitter(personnage)
-                res = "Vous avez bien quitté le canal {}.".format(canal.nom)
-                if not canal.connectes:
-                    del type(self).importeur.communication.canaux[canal.nom]
-                    res += " Vide, il a été détruit."
-                personnage << "|att|" + res + "|ff|"
+                res = "|vrc|" + personnage.nom + " vous invite à rejoindre le "
+                res += "canal" + canal.nom + ". Pour ce faire, entrez "
+                res += "|ff||ent|+" + canal.nom + "|ff||vrc|.|ff|"
+                joueur << res
+                personnage << "|att|Vous venez d'inviter {} à rejoindre le " \
+                        "canal {}.|ff|".format(joueur.nom, canal.nom)

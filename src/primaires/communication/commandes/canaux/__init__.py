@@ -32,12 +32,20 @@
 
 """
 
+import textwrap
+
 from primaires.interpreteur.commande.commande import Commande
+from primaires.format.constantes import *
 from .lister import PrmLister
 from .infos import PrmInfos
 from .rejoindre import PrmRejoindre
 from .quitter import PrmQuitter
 from .immerger import PrmImmerger
+from .inviter import PrmInviter
+from .ejecter import PrmEjecter
+from .bannir import PrmBannir
+from .promouvoir import PrmPromouvoir
+from .dissoudre import PrmDissoudre
 
 class CmdCanaux(Commande):
     
@@ -63,9 +71,116 @@ class CmdCanaux(Commande):
         prm_rejoindre = PrmRejoindre()
         prm_quitter = PrmQuitter()
         prm_immerger = PrmImmerger()
+        prm_inviter = PrmInviter()
+        prm_ejecter = PrmEjecter()
+        prm_bannir = PrmBannir()
+        prm_promouvoir = PrmPromouvoir()
+        prm_dissoudre = PrmDissoudre()
         
         self.ajouter_parametre(prm_lister)
         self.ajouter_parametre(prm_infos)
         self.ajouter_parametre(prm_rejoindre)
         self.ajouter_parametre(prm_quitter)
         self.ajouter_parametre(prm_immerger)
+        self.ajouter_parametre(prm_inviter)
+        self.ajouter_parametre(prm_ejecter)
+        self.ajouter_parametre(prm_bannir)
+        self.ajouter_parametre(prm_promouvoir)
+        self.ajouter_parametre(prm_dissoudre)
+    
+    def aide_longue_pour(self, personnage):
+        """Retourne l'aide longue de la commande.
+        Elle se compose :
+        -   du nom de la commande
+        -   de sa catégorie
+        -   de son synopsis (aide courte)
+        -   de son aide longue
+        -   des aides courtes et longues de ses sous-commandes
+    
+        """
+        # On constitue notre chaîne d'aide
+        aide = "Commande |ent|"
+        aide += self.afficher(personnage)
+        aide += "|ff|\n\n"
+        aide += "Catégorie : " + self.categorie.nom.lower() + "\n\n"
+        synop = "Synopsis : "
+        aide += synop
+        synopsis = self.remplacer_mots_cles(personnage, self.aide_courte)
+        synopsis = textwrap.wrap(synopsis, 
+                longueur_ligne - len(synop))
+        aide += ("\n" + " " * len(synop)).join(synopsis)
+        
+        aide += "\n\n"
+        
+        aide_longue = self.remplacer_mots_cles(personnage, self.aide_longue)
+        aide += textwrap.fill(aide_longue, longueur_ligne)
+        
+        # On récupère les paramètres
+        parametres = [noeud.commande for noeud in self.parametres.values()]
+        dic_parametres = {}
+        taille = 0
+        for parametre in parametres:
+            dic_parametres[parametre.nom_anglais] = parametre
+            if len(parametre.get_nom_pour(personnage)) > taille:
+                taille = len(parametre.get_nom_pour(personnage))
+        
+        aligner = longueur_ligne - taille - 5
+        aide += "\n\n"
+        aide += "Sous-commandes disponibles :\n"
+        for parametre in parametres:
+            if type(self).importeur.interpreteur.groupes. \
+                    personnage_a_le_droit(personnage, parametre):
+                nom = parametre.get_nom_pour(personnage)
+                aide += "\n  |ent|" + nom.ljust(taille) + "|ff|"
+                aide += " - "
+                aide_courte = self.remplacer_mots_cles(personnage, 
+                        parametre.aide_courte)
+                aide_courte = textwrap.wrap(aide_courte, aligner)
+                aide += ("\n" + (taille + 5) * " ").join(aide_courte)
+                aide += "\n" + "     " + taille * " "
+                aide_longue = self.remplacer_mots_cles(personnage,
+                        parametre.aide_longue)
+                aide_longue = textwrap.wrap(aide_longue, aligner)
+                aide += ("\n" + (taille + 5) * " ").join(aide_longue)
+
+        return aide
+    
+    def erreur_validation(self, personnage, dic_masques):
+        """Définit la réaction de la commande lors d'une erreur"""        
+        aide = "|ent|" + self.get_nom_pour(personnage) + "|ff| : "
+        synopsis = self.remplacer_mots_cles(personnage, self.aide_courte)
+        aide += synopsis
+        
+        # On récupère les paramètres
+        parametres = [noeud.commande for noeud in self.parametres.values()]
+        dic_parametres = {}
+        taille = 0
+        for parametre in parametres:
+            dic_parametres[parametre.nom_anglais] = parametre
+            if len(parametre.get_nom_pour(personnage)) > taille:
+                taille = len(parametre.get_nom_pour(personnage))
+        
+        # Fonction d'affichage d'un paramètre
+        def afficher_param(parametre):
+            nom = parametre.get_nom_pour(personnage)
+            aide_courte = self.remplacer_mots_cles(personnage, 
+                parametre.aide_courte)
+            return "\n  |ent|" + nom.ljust(taille) + "|ff| - " + aide_courte
+        
+        # Affichage
+        aide += "\n\n  Paramètres de base :"
+        aide += afficher_param(dic_parametres["list"])
+        aide += afficher_param(dic_parametres["infos"])
+        aide += afficher_param(dic_parametres["join"])
+        aide += afficher_param(dic_parametres["immerge"])
+        aide += afficher_param(dic_parametres["quit"])
+        aide += afficher_param(dic_parametres["invite"])
+        aide += "\n\n  Paramètres de modération :"
+        aide += afficher_param(dic_parametres["eject"])
+        aide += afficher_param(dic_parametres["ban"])
+        aide += "\n\n  Paramètres d'administration :"
+        aide += afficher_param(dic_parametres["promote"])
+        aide += afficher_param(dic_parametres["dissolve"])
+        
+        aide = self.remplacer_mots_cles(personnage, aide)
+        return aide

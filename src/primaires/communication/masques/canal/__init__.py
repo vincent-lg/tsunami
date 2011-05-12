@@ -61,11 +61,11 @@ class Canal(Masque):
             raise ErreurValidation( \
                 "Précisez le nom d'un canal.")
         
-        self.nom_canal = nom_canal.split(" ")[0]
-        commande[:] = commande[len(self.nom_canal):]
+        self.nom_canal = nom_canal = nom_canal.split(" ")[0]
+        commande[:] = commande[len(nom_canal):]
         
         canaux = type(self).importeur.communication.canaux
-        if not self.nom_canal in canaux:
+        if not nom_canal in canaux:
             self.canal_existe = False
             return True
         

@@ -26,24 +26,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'quitter' de la commande 'canaux'."""
+"""Fichier contenant le paramètre 'dissoudre' de la commande 'canaux'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmQuitter(Parametre):
+class PrmDissoudre(Parametre):
     
-    """Commande 'canaux quitter <canal>'.
+    """Commande 'canaux dissoudre <canal>'.
     
     """
     
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "quitter", "quit")
+        Parametre.__init__(self, "dissoudre", "dissolve")
         self.schema = "<canal>"
-        self.aide_courte = "quitte le canal spécifié"
+        self.aide_courte = "dissout un canal"
         self.aide_longue = \
-            "Cette sous-commande vous déconnecte d'un canal ; vous pouvez " \
-            "aussi entrer |ent|-<canal>|ff|."
+            "Cette sous-commande détruit un canal en déconnectant tous les " \
+            "joueurs."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
@@ -54,9 +54,9 @@ class PrmQuitter(Parametre):
             if not personnage in canal.connectes:
                 personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
             else:
-                canal.rejoindre_ou_quitter(personnage)
-                res = "Vous avez bien quitté le canal {}.".format(canal.nom)
-                if not canal.connectes:
-                    del type(self).importeur.communication.canaux[canal.nom]
-                    res += " Vide, il a été détruit."
-                personnage << "|att|" + res + "|ff|"
+                if personnage in canal.immerges:
+                    canal.immerger_ou_sortir(personnage, False)
+                canal.rejoindre_ou_quitter(personnage, False)
+                personnage << "|err|Le canal {} a été dissous.|ff|".format(
+                        canal.nom)
+                canal.dissoudre()

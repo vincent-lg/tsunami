@@ -26,24 +26,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'quitter' de la commande 'canaux'."""
+"""Fichier contenant le paramètre 'bannir' de la commande 'canaux'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmQuitter(Parametre):
+class PrmBannir(Parametre):
     
-    """Commande 'canaux quitter <canal>'.
+    """Commande 'canaux bannir <canal> <joueur>'.
     
     """
     
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "quitter", "quit")
-        self.schema = "<canal>"
-        self.aide_courte = "quitte le canal spécifié"
+        Parametre.__init__(self, "bannir", "ban")
+        self.schema = "<canal> <nom_joueur>"
+        self.aide_courte = "bannit un joueur"
         self.aide_longue = \
-            "Cette sous-commande vous déconnecte d'un canal ; vous pouvez " \
-            "aussi entrer |ent|-<canal>|ff|."
+            "Cette sous-commande permet de bannir un joueur, ou de le " \
+            "réintégrer à un canal. Il s'agit d'une commande de modération " \
+            "à utiliser pour punir une faute grave."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
@@ -51,12 +52,14 @@ class PrmQuitter(Parametre):
             personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
         else:
             canal = dic_masques["canal"].canal
+            joueur = dic_masques["nom_joueur"].joueur
             if not personnage in canal.connectes:
                 personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
+            elif not joueur in type(self).importeur.connex.joueurs:
+                personnage << "|err|Ce joueur n'est pas connecté au " \
+                        "canal.|ff|"
+            elif joueur is personnage:
+                personnage << "|err|Vous ne pouvez vous bannir " \
+                        "vous-même.|ff|"
             else:
-                canal.rejoindre_ou_quitter(personnage)
-                res = "Vous avez bien quitté le canal {}.".format(canal.nom)
-                if not canal.connectes:
-                    del type(self).importeur.communication.canaux[canal.nom]
-                    res += " Vide, il a été détruit."
-                personnage << "|att|" + res + "|ff|"
+                canal.bannir(joueur)

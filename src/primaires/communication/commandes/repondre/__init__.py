@@ -134,8 +134,8 @@ class CmdRepondre(Commande):
                         "moment.|ff|"
             else:
                 if cible not in type(self).importeur.connex.joueurs_connectes:
-                    personnage << "|err|Le joueur {} passé en paramètre n'a " \
-                            "pu être trouvé.|ff|".format(cible.nom)
+                    personnage << "|err|Le joueur {} n'a pu être " \
+                            "trouvé.|ff|".format(cible.nom)
                 else:
                     type(self).importeur.communication.conversations. \
                             ajouter_ou_remplacer(cible, personnage, message)

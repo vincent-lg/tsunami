@@ -97,7 +97,8 @@ class Commande(Masque):
     
     aide_courte = property(_get_aide_courte, _set_aide_courte)
     
-    def _get_categorie(self):
+    @property
+    def categorie(self):
         """Retourne la catégorie sous la forme d'un objet Categorie"""
         try:
             categorie = type(self).importeur.interpreteur.categories[ \
@@ -110,8 +111,6 @@ class Commande(Masque):
             return Categorie("divers", "Commandes générales")
         
         return Categorie(self.nom_categorie, categorie)
-    
-    categorie = property(_get_categorie)
     
     def __str__(self):
         """Fonction d'affichage"""
@@ -147,13 +146,10 @@ class Commande(Masque):
         schema = chaine_vers_liste(schema)
         return creer_noeud(self, schema)
     
-    def _get_noms_commandes(self):
-        """Retourne les différents noms possibles des commandes.
-        
-        """
+    @property
+    def noms_commandes(self):
+        """Retourne les différents noms possibles des commandes."""
         return (self.nom_francais, self.nom_anglais)
-    
-    noms_commandes = property(_get_noms_commandes)
     
     def valider(self, personnage, dic_masques, commande):
         """Fonction de validation.
@@ -313,7 +309,7 @@ class Commande(Masque):
         for masque in dic_masques.values():
             if masque.est_parametre():
                 syntaxes.append(masque.afficher(personnage))
-
+        
         syntaxe = " ".join(syntaxes)
         
         synopsis = self.remplacer_mots_cles(personnage, self.aide_courte)

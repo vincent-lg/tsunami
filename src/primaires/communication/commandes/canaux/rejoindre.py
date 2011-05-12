@@ -42,10 +42,8 @@ class PrmRejoindre(Parametre):
         self.schema = "<canal>"
         self.aide_courte = "rejoint le canal spécifié"
         self.aide_longue = \
-            "Si le canal existe, cette sous-commande vous permet de vous y " \
-            "connecter afin de communiquer avec les autres joueurs " \
-            "connectés. Sinon, le canal est créé pourvu que vous en ayez " \
-            "le droit."
+            "Cette sous-commande vous connecte à un canal ; cela équivaut à " \
+            "entrer directement |ent|+<canal>|ff|."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
@@ -57,7 +55,8 @@ class PrmRejoindre(Parametre):
                 canal.rejoindre_ou_quitter(personnage)
         else:
             nom_canal = dic_masques["canal"].nom_canal
-            canal = type(self).importeur.communication.ajouter_canal(nom_canal)
+            canal = type(self).importeur.communication.ajouter_canal(nom_canal,
+                    personnage)
             canal.rejoindre_ou_quitter(personnage)
             personnage << "|att|Le canal {} a été créé. Vous y êtes à " \
                     "présent connecté.|ff|".format(nom_canal)

@@ -193,7 +193,7 @@ class Immersion(Contexte):
             return
         nom_joueur = arguments.split(" ")[0]
         joueur = None
-        for t_joueur in type(self).importeur.connex.joueurs_connectes:
+        for t_joueur in type(self).importeur.connex.joueurs:
             if nom_joueur == t_joueur.nom.lower():
                 joueur = t_joueur
                 break
@@ -230,12 +230,6 @@ class Immersion(Contexte):
             self.pere.joueur << "|err|Ce joueur est déjà administrateur.|ff|"
             return
         canal.promouvoir_ou_dechoir(joueur)
-        if joueur in canal.moderateurs:
-            self.pere.joueur << "|att|{} a été promu modérateur.|ff|".format(
-                    joueur.nom)
-        else:
-            self.pere.joueur << "|att|{} a été déchu du statut de " \
-                    "modérateur.|ff|".format(joueur.nom)
     
     def opt_dissolve(self, arguments):
         """Option permettant de dissoudre le canal"""
@@ -244,8 +238,8 @@ class Immersion(Contexte):
             self.pere.joueur << "|err|Vous n'avez pas accès à cette option.|ff|"
             return
         joueur = self.pere.joueur
-        canal.rejoindre_ou_quitter(joueur, False)
         canal.immerger_ou_sortir(joueur, False)
+        canal.rejoindre_ou_quitter(joueur, False)
         joueur << "|err|Le canal {} a été dissous.|ff|".format(canal.nom)
         canal.dissoudre()
     

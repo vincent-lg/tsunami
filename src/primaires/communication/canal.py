@@ -68,7 +68,7 @@ class Canal(BaseObj):
         return res
     
     @property
-    def aide(self):
+    def infos(self):
         """Renvoie l'aide du canal"""
         return str(self)
     
@@ -178,6 +178,12 @@ class Canal(BaseObj):
                 else:
                     joueur << self.clr + "[" + self.nom + "] Vous avez " \
                             "été promu modérateur.|ff|"
+            for modo in self.moderateurs:
+                if modo in type(self).importeur.connex.joueurs_connectes:
+                    if modo in self.immerges:
+                        modo << self.clr + "<{} a été promu modérateur.>|ff|".format(joueur.nom)
+                    else:
+                        modo << self.clr + "[" + self.nom + "] {} a été promu modérateur.|ff|".format(joueur.nom)
         else:
             self.moderateurs.remove(joueur)
             if joueur in type(self).importeur.connex.joueurs_connectes:
@@ -187,6 +193,12 @@ class Canal(BaseObj):
                 else:
                     joueur << self.clr + "[" + self.nom + "] Vous avez " \
                             "été déchu du rang de modérateur.|ff|"
+            for modo in self.moderateurs:
+                if modo in type(self).importeur.connex.joueurs_connectes:
+                    if modo in self.immerges:
+                        modo << self.clr + "<{} a été déchu du statut de modérateur.>|ff|".format(joueur.nom)
+                    else:
+                        modo << self.clr + "[" + self.nom + "] {} a été déchu du statut de modérateur.|ff|".format(joueur.nom)
     
     def envoyer(self, joueur, message):
         """Envoie un message au canal"""
