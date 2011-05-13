@@ -51,7 +51,9 @@ class PrmDissoudre(Parametre):
             personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
         else:
             canal = dic_masques["canal"].canal
-            if not personnage in canal.connectes:
+            if personnage is not canal.auteur:
+                personnage << "|err|Vous n'avez pas accès à cette option.|ff|"
+            elif not personnage in canal.connectes:
                 personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
             else:
                 if personnage in canal.immerges:

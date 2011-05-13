@@ -42,8 +42,7 @@ class PrmImmerger(Parametre):
         self.schema = "<canal>"
         self.aide_courte = "immerge dans le canal spécifié"
         self.aide_longue = \
-            "Cette sous-commande permet de vous immerger dans un canal ; " \
-            "cela équivaut à entrer |ent|:<canal>|ff|."
+            "Cette sous-commande permet de vous immerger dans un canal."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""

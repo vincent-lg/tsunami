@@ -52,7 +52,10 @@ class PrmEjecter(Parametre):
         else:
             canal = dic_masques["canal"].canal
             joueur = dic_masques["nom_joueur"].joueur
-            if not personnage in canal.connectes:
+            if not personnage in canal.moderateurs or \
+                    personnage is not canal.auteur:
+                personnage << "|err|Vous n'avez pas accès à cette option.|ff|"
+            elif not personnage in canal.connectes:
                 personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
             elif not joueur in canal.connectes:
                 personnage << "|err|Ce joueur n'est pas connecté au " \

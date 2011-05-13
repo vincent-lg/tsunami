@@ -52,7 +52,9 @@ class PrmPromouvoir(Parametre):
         else:
             canal = dic_masques["canal"].canal
             joueur = dic_masques["nom_joueur"].joueur
-            if not personnage in canal.connectes:
+            if personnage is not canal.auteur:
+                personnage << "|err|Vous n'avez pas accès à cette option.|ff|"
+            elif not personnage in canal.connectes:
                 personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
             elif not joueur in type(self).importeur.connex.joueurs:
                 personnage << "|err|Ce joueur n'est pas connecté au " \

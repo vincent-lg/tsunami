@@ -51,8 +51,11 @@ class PrmLister(Parametre):
         if not canaux:
             res = "|err|Il n'y a aucun canal de communication.|ff|"
         else:
-            res = "Canaux existants :\n"
+            res = "+" + "-" * 40 + "+\n"
+            res += "| |tit|" + "Canaux existants".ljust(39) + "|ff||\n"
+            res += "+" + "-" * 40 + "+\n"
             for canal in canaux.iter().values():
-                res += "\n " + str(canal)
+                res += "| " + str(canal).ljust(40) + "|\n"
+            res += "+" + "-" * 40 + "+"
         
         personnage << res

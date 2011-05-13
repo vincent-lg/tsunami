@@ -42,8 +42,7 @@ class PrmRejoindre(Parametre):
         self.schema = "<canal>"
         self.aide_courte = "rejoint le canal spécifié"
         self.aide_longue = \
-            "Cette sous-commande vous connecte à un canal ; cela équivaut à " \
-            "entrer directement |ent|+<canal>|ff|."
+            "Cette sous-commande vous connecte à un canal."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""

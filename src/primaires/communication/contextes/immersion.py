@@ -30,6 +30,8 @@
 
 """Fichier contenant le contexte 'communication:immersion'"""
 
+from primaires.format.constantes import ponctuations_finales
+
 from primaires.interpreteur.contexte import Contexte
 
 class Immersion(Contexte):
@@ -52,6 +54,7 @@ class Immersion(Contexte):
             "w" : self.opt_who,
             "h" : self.opt_help,
             "i" : self.opt_invite,
+            "m" : self.opt_emote,
             # Options de modo
             "e" : self.opt_eject,
             "b" : self.opt_ban,
@@ -78,21 +81,23 @@ class Immersion(Contexte):
     def accueil(self):
         """Message d'accueil du contexte"""
         canal = self.canal
-        res = "> Immersion dans le canal " + canal.nom.ljust(53)
+        res = canal.clr + ">|ff| Immersion dans le canal " + canal.nom
+        res += "\n  Entrez |ent|/h|ff| pour afficher l'aide."
         
         return res
     
     def opt_quit(self, arguments):
         """Option quitter : /q"""
+        canal = self.canal
         personnage = self.pere.joueur
-        self.canal.immerger_ou_sortir(personnage)
+        canal.immerger_ou_sortir(personnage)
         
-        personnage << "> Retour au jeu."
+        personnage << canal.clr + ">|ff| Retour au jeu."
     
     def opt_who(self, arguments):
         """Option qui : /w"""
         personnage = self.pere.joueur
-        res = "> Joueurs connectés :"
+        res = self.canal.clr + ">|ff| Joueurs connectés :"
         for connecte in self.canal.connectes:
             if connecte in type(self).importeur.connex.joueurs_connectes:
                 if connecte is self.canal.auteur:
@@ -111,7 +116,8 @@ class Immersion(Contexte):
         """Options d'affichage de l'aide : /h"""
         personnage = self.pere.joueur
         canal = self.canal
-        res = "> Aide du canal {} ({}) :".format(canal.nom, canal.resume)
+        res = canal.clr + ">|ff| Aide du canal |ent|{}|ff| ({}) :".format(
+                canal.nom, canal.resume)
         res += str(canal.description)
         res += "\n  Administrateur : |rgc|" + canal.auteur.nom + "|ff|"
         modos = ""
@@ -121,11 +127,12 @@ class Immersion(Contexte):
             modos = "\n  Modérateurs : |jn|" + "|ff|, |jn|".join(
                     sorted([modo.nom for modo in canal.moderateurs])) + "|ff|"
         res += modos
-        res += "\n\n  Commandes disponibles :"
+        res += "\n  Commandes disponibles :"
         res += "\n   - |cmd|/h|ff| : affiche ce message d'aide"
         res += "\n   - |cmd|/w|ff| : liste les joueurs connectés au canal"
         res += "\n   - |cmd|/i <joueur>|ff| : invite un joueur à rejoindre "
         res += "le canal"
+        res += "\n   - |cmd|/m <message>|ff| : joue une emote dans le canal"
         res += "\n   - |cmd|/q|ff| : permet de sortir du mode immersif"
         
         personnage << res
@@ -156,7 +163,19 @@ class Immersion(Contexte):
         joueur << res
         self.pere.joueur << "|att|Vous venez d'inviter {} à rejoindre le " \
                 "canal {}.|ff|".format(joueur.nom, canal.nom)
-        
+    
+    def opt_emote(self, arguments):
+        """Option d'emote dans le contexte immersif"""
+        canal = self.canal
+        joueur = self.pere.joueur
+        if not arguments or arguments.isspace():
+            joueur << "|err|Vous devez préciser une action.|ff|"
+            return
+        message = arguments.rstrip(" \n")
+        if not message[-1] in ponctuations_finales:
+            message += "."
+        for immerge in canal.immerges:
+            immerge << canal.clr + "<" + joueur.nom + " " + message + ">|ff|"
     
     def opt_eject(self, arguments):
         """Option permettant d'éjecter un joueur connecté : /e <joueur>"""

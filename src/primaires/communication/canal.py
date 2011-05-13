@@ -178,33 +178,41 @@ class Canal(BaseObj):
                 else:
                     joueur << self.clr + "[" + self.nom + "] Vous avez " \
                             "été promu modérateur.|ff|"
-            for modo in self.moderateurs:
-                if modo in type(self).importeur.connex.joueurs_connectes:
-                    if modo in self.immerges:
-                        modo << self.clr + "<{} a été promu modérateur.>|ff|".format(joueur.nom)
+            for connecte in self.connectes:
+                if (connecte in self.moderateurs or connecte is self.auteur) and \
+                        connecte in type(self).importeur.connex.joueurs_connectes:
+                    if connecte in self.immerges:
+                        connecte << self.clr + "<{} a été promu " \
+                                "modérateur.>|ff|".format(joueur.nom)
                     else:
-                        modo << self.clr + "[" + self.nom + "] {} a été promu modérateur.|ff|".format(joueur.nom)
+                        connecte << self.clr + "[" + self.nom + "] {} a été " \
+                                "promu modérateur.|ff|".format(joueur.nom)
         else:
             self.moderateurs.remove(joueur)
             if joueur in type(self).importeur.connex.joueurs_connectes:
                 if joueur in self.immerges:
-                    res = self.clr + "<" + joueur.nom + " a été banni.>|ff|"
+                    res = self.clr + "<Vous avez été déchu du rang de " \
+                            "modérateur.>|ff|"
                     joueur << res
                 else:
                     joueur << self.clr + "[" + self.nom + "] Vous avez " \
                             "été déchu du rang de modérateur.|ff|"
-            for modo in self.moderateurs:
-                if modo in type(self).importeur.connex.joueurs_connectes:
-                    if modo in self.immerges:
-                        modo << self.clr + "<{} a été déchu du statut de modérateur.>|ff|".format(joueur.nom)
+            for connecte in self.connectes:
+                if (connecte in self.moderateurs or connecte is self.auteur) and \
+                        connecte in type(self).importeur.connex.joueurs_connectes:
+                    if connecte in self.immerges:
+                        connecte << self.clr + "<{} a été déchu du statut de " \
+                                "modérateur.>|ff|".format(joueur.nom)
                     else:
-                        modo << self.clr + "[" + self.nom + "] {} a été déchu du statut de modérateur.|ff|".format(joueur.nom)
+                        connecte << self.clr + "[" + self.nom + "] {} a été " \
+                                "déchu du statut de modérateur.|ff|".format(
+                                joueur.nom)
     
     def envoyer(self, joueur, message):
         """Envoie un message au canal"""
         type(self).importeur.communication. \
                 dernier_canaux[joueur.nom] = self.nom
-        ex_moi = self.couleur + "[" + self.nom + "] Vous dites : "
+        ex_moi = self.clr + "[" + self.nom + "] Vous dites : "
         ex_moi += message + "|ff|"
         ex_autre = self.clr + "[" + self.nom + "] " + joueur.nom
         ex_autre += " dit : " + message + "|ff|"

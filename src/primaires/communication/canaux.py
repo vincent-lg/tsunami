@@ -80,11 +80,11 @@ class Canaux(Unique):
         """Retourne le statut de personnage dans les canaux du jeu"""
         statut = "user"
         for canal in self._canaux.values():
-            if personnage is canal.auteur:
-                statut_perso = "admin"
+            if canal.auteur is personnage:
+                statut = "admin"
                 break
             if personnage in canal.moderateurs:
-                statut_perso = "modo"
+                statut = "modo"
                 break
         
         return statut

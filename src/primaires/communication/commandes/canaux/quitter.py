@@ -42,8 +42,7 @@ class PrmQuitter(Parametre):
         self.schema = "<canal>"
         self.aide_courte = "quitte le canal spécifié"
         self.aide_longue = \
-            "Cette sous-commande vous déconnecte d'un canal ; vous pouvez " \
-            "aussi entrer |ent|-<canal>|ff|."
+            "Cette sous-commande vous déconnecte d'un canal."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""

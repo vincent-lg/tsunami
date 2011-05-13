@@ -153,7 +153,7 @@ class CmdCanaux(Commande):
         aide += afficher_param(dic_parametres["immerge"])
         aide += afficher_param(dic_parametres["quit"])
         aide += afficher_param(dic_parametres["invite"])
-        if statut_perso is "modo":
+        if statut_perso is "modo" or statut_perso is "admin":
             aide += "\n\n  Paramètres de modération :"
             aide += afficher_param(dic_parametres["eject"])
             aide += afficher_param(dic_parametres["ban"])
@@ -161,6 +161,17 @@ class CmdCanaux(Commande):
             aide += "\n\n  Paramètres d'administration :"
             aide += afficher_param(dic_parametres["promote"])
             aide += afficher_param(dic_parametres["dissolve"])
+        
+        aide += \
+            "\n\nNote : une fois connecte, entrez |cmd|<canal> <message>|ff| " \
+            "pour utiliser un canal (par\nexemple : |ent|hrp Bonjour|ff|). La " \
+            "syntaxe |cmd|. <message>|ff| permet de parler dans le\ndernier " \
+            "canal que vous avez utilisé. En immersion, il suffit d'envoyer " \
+            "ce que\nvous souhaitez dire.\n" \
+            "En outre, des alias sont disponibles pour plusieurs commandes. " \
+            "Pour rejoindre\nun canal, le quitter ou vous y immerger, les " \
+            "raccourcis sont |cmd|+<canal>|ff|, |cmd|-<canal>|ff|\net " \
+            "|cmd|:<canal>|ff|."
 
         return aide
     
@@ -198,7 +209,7 @@ class CmdCanaux(Commande):
         aide += afficher_param(dic_parametres["immerge"])
         aide += afficher_param(dic_parametres["quit"])
         aide += afficher_param(dic_parametres["invite"])
-        if statut_perso is "modo":
+        if statut_perso is "modo" or statut_perso is "admin":
             aide += "\n\n  Paramètres de modération :"
             aide += afficher_param(dic_parametres["eject"])
             aide += afficher_param(dic_parametres["ban"])

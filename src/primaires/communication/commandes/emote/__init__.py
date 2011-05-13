@@ -52,8 +52,8 @@ class CmdEmote(Commande):
             "Cette commande permet de jouer une action RP dans la salle oé " \
             "vous vous trouvez. Tous les personnages présents dans " \
             "la salle vous verront. Par exemple, vous pouvez faire " \
-            "|ent|emote sifflote un air mélodieux|ent| ou |ent|emote " \
-            "sourit|ent|."
+            "|ent|emote sifflote un air mélodieux|ff| ou |ent|emote " \
+            "sourit|ff|."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
