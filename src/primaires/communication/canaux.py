@@ -75,3 +75,16 @@ class Canaux(Unique):
     def iter(self):
         """Retourne le conteneur sous forme de dictionnaire"""
         return dict(self._canaux)
+    
+    def get_statut(self, personnage):
+        """Retourne le statut de personnage dans les canaux du jeu"""
+        statut = "user"
+        for canal in self._canaux.values():
+            if personnage is canal.auteur:
+                statut_perso = "admin"
+                break
+            if personnage in canal.moderateurs:
+                statut_perso = "modo"
+                break
+        
+        return statut

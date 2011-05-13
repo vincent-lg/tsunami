@@ -115,6 +115,10 @@ class CmdCanaux(Commande):
         aide_longue = self.remplacer_mots_cles(personnage, self.aide_longue)
         aide += textwrap.fill(aide_longue, longueur_ligne)
         
+        # On récupère le statut de personnage
+        statut_perso = type(self).importeur.communication.canaux.get_statut(
+                personnage)
+        
         # On récupère les paramètres
         parametres = [noeud.commande for noeud in self.parametres.values()]
         dic_parametres = {}
@@ -126,22 +130,37 @@ class CmdCanaux(Commande):
         
         aligner = longueur_ligne - taille - 5
         aide += "\n\n"
-        aide += "Sous-commandes disponibles :\n"
-        for parametre in parametres:
-            if type(self).importeur.interpreteur.groupes. \
-                    personnage_a_le_droit(personnage, parametre):
-                nom = parametre.get_nom_pour(personnage)
-                aide += "\n  |ent|" + nom.ljust(taille) + "|ff|"
-                aide += " - "
-                aide_courte = self.remplacer_mots_cles(personnage, 
-                        parametre.aide_courte)
-                aide_courte = textwrap.wrap(aide_courte, aligner)
-                aide += ("\n" + (taille + 5) * " ").join(aide_courte)
-                aide += "\n" + "     " + taille * " "
-                aide_longue = self.remplacer_mots_cles(personnage,
-                        parametre.aide_longue)
-                aide_longue = textwrap.wrap(aide_longue, aligner)
-                aide += ("\n" + (taille + 5) * " ").join(aide_longue)
+        aide += "Sous-commandes disponibles :"
+        
+        # Fonction d'affichage
+        def afficher_param(parametre):
+            nom = parametre.get_nom_pour(personnage)
+            aide_courte = self.remplacer_mots_cles(personnage,
+                    parametre.aide_courte)
+            aide_longue = self.remplacer_mots_cles(personnage,
+                    parametre.aide_longue)
+            aide_longue = textwrap.wrap(aide_longue, aligner)
+            ret = "\n  |ent|" + nom.ljust(taille) + "|ff| - " + aide_courte
+            ret += "\n" + "     " + taille * " "
+            ret += ("\n" + (taille + 5) * " ").join(aide_longue)
+            return ret
+        
+        # Affichage
+        aide += "\n\n  Paramètres de base :"
+        aide += afficher_param(dic_parametres["list"])
+        aide += afficher_param(dic_parametres["infos"])
+        aide += afficher_param(dic_parametres["join"])
+        aide += afficher_param(dic_parametres["immerge"])
+        aide += afficher_param(dic_parametres["quit"])
+        aide += afficher_param(dic_parametres["invite"])
+        if statut_perso is "modo":
+            aide += "\n\n  Paramètres de modération :"
+            aide += afficher_param(dic_parametres["eject"])
+            aide += afficher_param(dic_parametres["ban"])
+        if statut_perso is "admin":
+            aide += "\n\n  Paramètres d'administration :"
+            aide += afficher_param(dic_parametres["promote"])
+            aide += afficher_param(dic_parametres["dissolve"])
 
         return aide
     
@@ -150,6 +169,10 @@ class CmdCanaux(Commande):
         aide = "|ent|" + self.get_nom_pour(personnage) + "|ff| : "
         synopsis = self.remplacer_mots_cles(personnage, self.aide_courte)
         aide += synopsis
+        
+        # On récupère le statut de personnage
+        statut_perso = type(self).importeur.communication.canaux.get_statut(
+                personnage)
         
         # On récupère les paramètres
         parametres = [noeud.commande for noeud in self.parametres.values()]
@@ -175,12 +198,14 @@ class CmdCanaux(Commande):
         aide += afficher_param(dic_parametres["immerge"])
         aide += afficher_param(dic_parametres["quit"])
         aide += afficher_param(dic_parametres["invite"])
-        aide += "\n\n  Paramètres de modération :"
-        aide += afficher_param(dic_parametres["eject"])
-        aide += afficher_param(dic_parametres["ban"])
-        aide += "\n\n  Paramètres d'administration :"
-        aide += afficher_param(dic_parametres["promote"])
-        aide += afficher_param(dic_parametres["dissolve"])
+        if statut_perso is "modo":
+            aide += "\n\n  Paramètres de modération :"
+            aide += afficher_param(dic_parametres["eject"])
+            aide += afficher_param(dic_parametres["ban"])
+        if statut_perso is "admin":
+            aide += "\n\n  Paramètres d'administration :"
+            aide += afficher_param(dic_parametres["promote"])
+            aide += afficher_param(dic_parametres["dissolve"])
         
         aide = self.remplacer_mots_cles(personnage, aide)
         return aide
