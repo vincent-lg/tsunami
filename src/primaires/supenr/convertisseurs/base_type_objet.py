@@ -39,4 +39,3 @@ class Convertisseur:
         objet.set_version(classe, 2)
         objet.cle = objet.identifiant
         del objet.identifiant
-        print("convertion")

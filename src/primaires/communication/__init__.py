@@ -225,6 +225,8 @@ class Module(BaseModule):
     def traiter_commande(self, personnage, commande):
         """Traite les commandes au premier niveau"""
         res = False
+        canaux_connectes = self.canaux.canaux_connectes(personnage)
+        noms_canaux_connectes = [canal.nom for canal in canaux_connectes]
         if commande.startswith("+"):
             res = True
             self.rejoindre_ou_creer(personnage, commande[1:])
@@ -237,7 +239,7 @@ class Module(BaseModule):
         elif commande.startswith(". "):
             res = True
             self.dire_dernier_canal(personnage, commande[2:])
-        elif commande.split(" ")[0] in self.canaux:
+        elif commande.split(" ")[0] in noms_canaux_connectes:
             res = True
             self.dire_canal(personnage, commande)
         

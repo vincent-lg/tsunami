@@ -88,3 +88,15 @@ class Canaux(Unique):
                 break
         
         return statut
+    
+    def canaux_connectes(self, personnage):
+        """Retourne un tuple contenant les canaux auxquels
+        le personnage est connecté.
+        
+        """
+        canaux = []
+        for canal in self._canaux.values():
+            if personnage in canal.connectes:
+                canaux.append(canal)
+        
+        return tuple(canaux)
