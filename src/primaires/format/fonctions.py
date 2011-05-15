@@ -222,7 +222,16 @@ def souligner_sauts_de_ligne(msg):
 
 def supprimer_couleurs(texte):
     """Supprime les couleurs de 'texte'"""
-    for couleur in COULEURS_STR.keys():
+    couleurs = list(COULEURS_STR.keys())
+    couleurs.extend([
+        "|tit|",
+        "|cmd|",
+        "|ent|",
+        "|att|",
+        "|err|",
+    ])
+    
+    for couleur in couleurs:
         texte = texte.replace(couleur, "")
     
     return texte

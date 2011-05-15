@@ -30,9 +30,9 @@
 
 """Ce fichier définit la classe InstanceConnexion, détaillée plus bas."""
 
-from primaires.connex.motd import MOTD
-from primaires.format.fonctions import *
 from abstraits.obase import BaseObj
+from primaires.format.fonctions import *
+from .motd import MOTD
 
 class InstanceConnexion(BaseObj):
     """Classe représentant une instance de connexion.
@@ -181,6 +181,10 @@ class InstanceConnexion(BaseObj):
         """
         # On récupère les informations de formattage (charte graphique)
         cfg_charte = type(self.importeur).anaconf.get_config("charte_graph")
+        
+        # Si le compte le spécifie, on supprime les codes couleurs
+        if self.compte and not self.compte.couleur:
+            msg = supprimer_couleurs(msg)
         
         # On convertit tout en bytes, c'est plus simple ainsi
         # On doit déduire l'encodage qui sera éventuellement utilisé

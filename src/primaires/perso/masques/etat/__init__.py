@@ -28,39 +28,49 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'voir' de la commande 'options'."""
+"""Fichier contenant le masque <etat>."""
 
-from primaires.interpreteur.masque.parametre import Parametre
-from reseau.connexions.client_connecte import ENCODAGES
-from primaires.format.fonctions import oui_ou_non
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
 
-class PrmVoir(Parametre):
+class Etat(Masque):
     
-    """Commande 'options voir'.
+    """Masque <etat>.
+    On attend un état en paramètre, c'est-à-dire soit :
+        *   on
+        *   off
     
     """
     
-    def __init__(self):
-        """Constructeur du paramètre"""
-        Parametre.__init__(self, "voir", "view")
-        self.schema = ""
-        self.aide_courte = "visualise les options du joueur"
-        self.aide_longue = \
-            "Cette commande permet de voir l'état actuel des options que " \
-            "vous pouvez éditer avec la commande %options%. Elle donne aussi " \
-            "un aperçu des valeurs disponibles."
+    nom = "etat"
     
-    def interpreter(self, personnage, dic_masques):
-        """Interprétation du paramètre"""
-        langue = personnage.langue_cmd
-        encodage = personnage.compte.encodage
-        res = "Options actuelles :\n\n"
-        res += "  Couleurs : {}\n".format(oui_ou_non(
-                personnage.compte.couleur))
-        res += "  Votre encodage : |ent|" + encodage + "|ff|.\n"
-        res += "  Encodages disponibles : |ent|" + "|ff|, |ent|". \
-            join(ENCODAGES) + "|ff|.\n\n"
-        res += "  Votre langue : |ent|" + langue + "|ff|.\n"
-        res += "  Langues disponibles : |ent|français|ff|, " \
-            "|ent|anglais|ff|."
-        personnage << res
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self)
+        self.etat = ""
+        self.flag = None
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        etat = liste_vers_chaine(commande).lstrip()
+        
+        if not etat:
+            raise ErreurValidation( \
+                "Précisez |cmd|on|ff| ou |cmd|off|ff|.")
+        
+        etat = etat.lower()
+        
+        if etat not in ('on', 'off'):
+            raise ErreurValidation( \
+                "Précisez |cmd|on|ff| ou |cmd|off|ff|.")
+        
+        if etat == 'on':
+            self.flag = True
+        elif etat == 'off':
+            self.flag = False
+        
+        self.etat = etat
+        
+        return True

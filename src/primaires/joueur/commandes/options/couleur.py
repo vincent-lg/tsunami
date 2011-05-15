@@ -28,39 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'voir' de la commande 'options'."""
+"""Fichier contenant le paramètre 'couleur' de la commande 'options'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
-from reseau.connexions.client_connecte import ENCODAGES
-from primaires.format.fonctions import oui_ou_non
 
-class PrmVoir(Parametre):
+class PrmCouleur(Parametre):
     
-    """Commande 'options voir'.
+    """Commande 'options couleur'.
     
     """
     
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "voir", "view")
-        self.schema = ""
-        self.aide_courte = "visualise les options du joueur"
+        Parametre.__init__(self, "couleur", "color")
+        self.schema = "<etat>"
+        self.aide_courte = "active / désactive la couleur"
         self.aide_longue = \
-            "Cette commande permet de voir l'état actuel des options que " \
-            "vous pouvez éditer avec la commande %options%. Elle donne aussi " \
-            "un aperçu des valeurs disponibles."
+            "Cette commande permet d'activer ou désactiver la " \
+            "couleur. Si la couleur vous gène ou vous est inutile, " \
+            "vous pouvez donc la désactiver en entrant %options% " \
+            "%options:couleur% |cmd|off|ff|. Remplacez |cmd|off|ff| " \
+            "par |cmd|on|ff| pour voir de nouveau les couleurs."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        langue = personnage.langue_cmd
-        encodage = personnage.compte.encodage
-        res = "Options actuelles :\n\n"
-        res += "  Couleurs : {}\n".format(oui_ou_non(
-                personnage.compte.couleur))
-        res += "  Votre encodage : |ent|" + encodage + "|ff|.\n"
-        res += "  Encodages disponibles : |ent|" + "|ff|, |ent|". \
-            join(ENCODAGES) + "|ff|.\n\n"
-        res += "  Votre langue : |ent|" + langue + "|ff|.\n"
-        res += "  Langues disponibles : |ent|français|ff|, " \
-            "|ent|anglais|ff|."
-        personnage << res
+        etat = dic_masques["etat"].flag
+        if personnage.compte.couleur == etat:
+            personnage << "|att|C'est déjà le cas.|ff|"
+        else:
+            personnage.compte.couleur = etat
+            if etat:
+                personnage << "Couleurs activées."
+            else:
+                personnage << "Couleurs désactivées."
