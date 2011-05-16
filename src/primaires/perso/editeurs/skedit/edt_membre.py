@@ -32,6 +32,8 @@
 
 from primaires.interpreteur.editeur import Editeur
 from primaires.format.fonctions import oui_ou_non
+from primaires.format.fonctions import supprimer_accents
+from primaires.perso.membre import FLAGS
 
 class EdtMembre(Editeur):
 
@@ -42,7 +44,38 @@ class EdtMembre(Editeur):
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
-        #self.ajouter_option("s", self.opt_changer_membre)
+        self.ajouter_option("f", self.opt_changer_flag)
+        self.ajouter_option("n", self.opt_changer_nom)
+    
+    def opt_changer_flag(self, arguments):
+        """Change l'état d'un flag
+        Syntaxe : /f flag
+        
+        """
+        membre = self.objet
+        flag = arguments.rstrip().lstrip()
+        if flag in FLAGS:
+            membre.flags = membre.flags ^ FLAGS[flag]
+            self.actualiser()
+        else:
+            self.pere << "|err|Ce flag n'est pas disponible.|ff|"
+    
+    def opt_changer_nom(self, arguments):
+        """Change le nom
+        Syntaxe : /n nom
+        
+        """
+        membre = self.objet
+        squelette = membre.parent
+        nom = supprimer_accents(arguments).lower()
+        flag = arguments.rstrip().lstrip()
+        if nom in squelette.membres:
+            self.pere << "|err|Ce nom est déjà utilisé.|ff|"
+        else:
+            squelette.supprimer_membre(membre.nom)
+            membre.nom = nom
+            squelette.ajouter_membre(nom,modele=membre)
+            self.actualiser()
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -55,6 +88,11 @@ class EdtMembre(Editeur):
         msg += self.aide_courte
         
         msg += "\n Nom du membre : |ent|" + membre.nom + "|ff|"
-        #msg += "\n Membre cachée : |cy|" + oui_ou_non(membre.cache) + "|ff|"
-        
+        msg += "\n Flags :"
+        for flag in FLAGS:
+            msg += "\n     " + flag + " : "
+            if FLAGS[flag] & membre.flags:
+                msg += "oui"
+            else:
+                msg += "non"
         return msg

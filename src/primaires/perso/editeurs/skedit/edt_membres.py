@@ -100,6 +100,9 @@ class EdtMembres(Editeur):
         enveloppe = EnveloppeObjet(EdtMembre, membre, None)
         enveloppe.parent = self
         enveloppe.aide_courte = \
-            "Entrez |ent|/|ff| pour revenir à la fenêtre parente.\n"
+            "Entrez |ent|/|ff| pour revenir à la fenêtre parente.\n\n" \
+            "Options :\n" \
+            " - |ent|/f flag|ff| : change l'état d'un flag\n" \
+            " - |ent|/n nom|ff| : change le nom du membre\n\n"
         contexte = enveloppe.construire(self.pere)
         self.migrer_contexte(contexte)

@@ -68,7 +68,7 @@ class Membre(BaseObj):
         # Copie du modèle si existe
         if modele:
             self.nom = modele.nom
-            self.flag = modele.flag
+            self.flags = modele.flags
     
     def __getinitargs__(self):
         return ("", )
