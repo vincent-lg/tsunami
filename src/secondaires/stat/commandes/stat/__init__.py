@@ -32,6 +32,8 @@
 
 """
 
+import threading
+
 from primaires.interpreteur.commande.commande import Commande
 from primaires.format.date import *
 
@@ -99,5 +101,9 @@ class CmdStat(Commande):
         msg += "\n    {} salles".format(len(imp.salle))
         msg += "\n    {} objets issus de {} prototypes".format(len(imp.objet.objets),
                 len(imp.objet.prototypes))
+        
+        ## Threads
+        msg += "\nThread lancé :"
+        msg += "\n    {} thread(s) actif".format(threading.activeCount())
         
         personnage << msg
