@@ -67,6 +67,8 @@ class Module(BaseModule):
         self.serveur_mail = False # un serveur mail est configuré
         self.nom_hote = "" # aucun nom d'hôte configuré par défaut
         
+        self.emails = []
+        
         # Le nom d'hôte se configure dans le fichier de configuration. Mais on
         # peut lister plusieurs adresses dans le dictionnaire ci-dessous.
         # Si par exemple vous définissez une clé "info":"webmaster",
@@ -115,5 +117,19 @@ class Module(BaseModule):
                 email = Email("{0}@{1}".format(destinateur, self.nom_hote), \
                     destinataires, supprimer_accents(sujet), corps)
                 
-                email.envoyer()
+                self.emails.append(email)
                 
+                email.envoyer()
+    
+    def boucle(self):
+        """Méthode appelée à chaque tour de boucle synchro.
+            Vérifie que les mails ont bien été envoyé."""
+        
+        for email in self.emails:
+            if not email.isAlive() and email.erreur:
+                    self.logger.warning("Impossible d'envoyer le mail à {0} " \
+                            "(sujet : {1}) : {2}".format(email.destinataires, \
+                            email.sujet, email.erreur))
+        
+        self.emails = [ email for email in self.emails if email.isAlive() ]
+        

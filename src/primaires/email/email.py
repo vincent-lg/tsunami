@@ -52,6 +52,7 @@ class Email(threading.Thread):
         threading.Thread.__init__(self)
         
         self.destinateur = destinateur
+        self.sujet = sujet
         
         # Si le destinataire est une chaîne, on la met en liste
         if type(destinataires) is not list:
@@ -63,6 +64,8 @@ class Email(threading.Thread):
         self.mail["From"] = destinateur
         self.mail["Subject"] = sujet
         self.mail["To"] = destinataires
+        
+        self.erreur = None
     
     def envoyer(self):
         self.start()
@@ -76,8 +79,6 @@ class Email(threading.Thread):
                 self.mail.as_string())
             smtp.close()
         except SocketError as err:
-            self.logger.warning("Impossible d'envoyer le mail à {0} " \
-                            "(sujet : {1}) : {2}".format(destinataires, \
-                            sujet, err))
+            self.erreur = err
     
     
