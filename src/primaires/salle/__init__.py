@@ -247,10 +247,16 @@ class Module(BaseModule):
     def traiter_commande(self, personnage, commande):
         """Traite les déplacements"""
         commande = commande.lower()
+        salle = personnage.salle
         if commande in self.aliases.keys():
             commande = self.aliases[commande]
+            sortie = salle.sorties[commande]
+            if sortie:
+                personnage.deplacer_vers(sortie.nom)
+            else:
+                personnage << "Vous ne pouvez aller par là..."
+            return True
         
-        salle = personnage.salle
         for nom, sortie in salle.sorties.iter_couple():
             if sortie:
                 if sortie.cache and sortie.nom == commande:
