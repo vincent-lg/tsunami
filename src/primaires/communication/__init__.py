@@ -57,6 +57,18 @@ class Module(BaseModule):
         self.dernier_canaux = {}
         self._canaux = None
     
+    def config(self):
+        """Configuration du module.
+        On crée le fichier de configuration afin de l'utiliser plus tard
+        pour la mise en forme.
+        
+        """
+        
+        type(self.importeur).anaconf.get_config("config_com", \
+            "communication/config.cfg", "config communication", cfg_com)
+        
+        BaseModule.config(self)
+    
     def init(self):
         """Initialisation du module"""
         # On récupère les canaux
@@ -79,18 +91,6 @@ class Module(BaseModule):
         
         BaseModule.init(self)
     
-    def config(self):
-        """Configuration du module.
-        On crée le fichier de configuration afin de l'utiliser plus tard
-        pour la mise en forme.
-        
-        """
-        
-        type(self.importeur).anaconf.get_config("config_com", \
-            "communication/config.cfg", "config communication", cfg_com)
-        
-        BaseModule.config(self)
-    
     def ajouter_masques(self):
         """Ajout des masques"""
         self.importeur.interpreteur.ajouter_masque(masques.message.Message)
@@ -111,6 +111,15 @@ class Module(BaseModule):
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
+    
+    def preparer(self):
+        """Préparation du module.
+        On nettoie tous les canaux.
+        
+        """
+        for canal in self._canaux.iter().values():
+            canal.nettoyer()
+            print("Nettoyage")
     
     @property
     def canaux(self):

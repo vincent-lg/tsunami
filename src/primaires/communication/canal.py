@@ -229,3 +229,10 @@ class Canal(BaseObj):
                         connecte << im
                     else:
                         connecte << ex_autre
+    
+    def nettoyer(self):
+        """Nettoie le canal en supprimant les None des ListeID."""
+        self.moderateurs.supprimer_none()
+        self.immerges.supprimer_none()
+        self.connectes.supprimer_none()
+        self.liste_noire.supprimer_none()
