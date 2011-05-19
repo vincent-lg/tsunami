@@ -236,3 +236,4 @@ class Canal(BaseObj):
         self.immerges.supprimer_none()
         self.connectes.supprimer_none()
         self.liste_noire.supprimer_none()
+

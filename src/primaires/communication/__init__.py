@@ -119,7 +119,6 @@ class Module(BaseModule):
         """
         for canal in self._canaux.iter().values():
             canal.nettoyer()
-            print("Nettoyage")
     
     @property
     def canaux(self):
