@@ -54,12 +54,13 @@ class Immersion(Contexte):
             "w" : self.opt_who,
             "h" : self.opt_help,
             "i" : self.opt_invite,
-            "m" : self.opt_emote,
+            "me" : self.opt_emote,
             # Options de modo
             "e" : self.opt_eject,
             "b" : self.opt_ban,
             # Options d'admin
             "p" : self.opt_promote,
+            "e" : self.opt_edit,
             "d" : self.opt_dissolve,
             }
     
@@ -132,8 +133,18 @@ class Immersion(Contexte):
         res += "\n   - |cmd|/w|ff| : liste les joueurs connectés au canal"
         res += "\n   - |cmd|/i <joueur>|ff| : invite un joueur à rejoindre "
         res += "le canal"
-        res += "\n   - |cmd|/m <message>|ff| : joue une emote dans le canal"
+        res += "\n   - |cmd|/me <message>|ff| : joue une emote dans le canal"
         res += "\n   - |cmd|/q|ff| : permet de sortir du mode immersif"
+        if personnage in canal.moderateurs or personnage is canal.auteur:
+            res += "\n   Commandes de modération :"
+            res += "\n   - |cmd|/e <joueur>|ff| : éjecte un joueur"
+            res += "\n   - |cmd|/b <joueur>|ff| : bannit ou rappelle un joueur"
+        if personnage is canal.auteur:
+            res += "\n   Commandes d'administration :"
+            res += "\n   - |cmd|/p <joueur>|ff| : promeut ou déchoit un joueur "
+            res += "modérateur"
+            res += "\n   - |cmd|/e|ff| : ouvre l'éditeur du canal"
+            res += "\n   - |cmd|/d|ff| : dissout le canal"
         
         personnage << res
     
@@ -201,6 +212,9 @@ class Immersion(Contexte):
             self.pere.joueur << "|err|Vous ne pouvez vous éjecter " \
                     "vous-même.|ff|"
             return
+        if joueur in canal.moderateurs or joueur is canal.auteur:
+            self.pere.joueur << "|err|Vous ne pouvez éjecter ce joueur.|ff|"
+            return
         canal.ejecter(joueur)
     
     def opt_ban(self, arguments):
@@ -222,6 +236,9 @@ class Immersion(Contexte):
             return
         if joueur is self.pere.joueur:
             self.pere.joueur << "|err|Vous ne pouvez vous bannir vous-même.|ff|"
+            return
+        if joueur in canal.moderateurs or joueur is canal.auteur:
+            self.pere.joueur << "|err|Vous ne pouvez éjecter ce joueur.|ff|"
             return
         canal.bannir(joueur)
     
@@ -249,6 +266,17 @@ class Immersion(Contexte):
             self.pere.joueur << "|err|Ce joueur est déjà administrateur.|ff|"
             return
         canal.promouvoir_ou_dechoir(joueur)
+    
+    def opt_edit(self, arguments):
+        """Option ouvrant un éditeur du canal"""
+        canal = self.canal
+        if self.pere.joueur is not canal.auteur:
+            self.pere.joueur << "|err|Vous n'avez pas accès à cette option.|ff|"
+            return
+        editeur = type(self).importeur.interpreteur.construire_editeur(
+                "chedit", self.pere.joueur, canal)
+        self.pere.joueur.contextes.ajouter(editeur)
+        editeur.actualiser()
     
     def opt_dissolve(self, arguments):
         """Option permettant de dissoudre le canal"""

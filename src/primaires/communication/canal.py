@@ -58,13 +58,12 @@ class Canal(BaseObj):
     
     def __str__(self):
         """Renvoie le canal sous la forme 'canal : résumé - X connecté(s)'"""
-        res = "|cmd|" + self.nom + "|ff| : " + self.resume
-        nb_connectes = len(self.connectes)
-        if nb_connectes == 1:
-            connectes = " (1 joueur connecté)"
-        else:
-            connectes = " (" + str(nb_connectes) + " joueurs connectés)"
-        res += connectes
+        res = self.nom + "|ff| : " + self.resume
+        nb_connectes = 0
+        for connecte in self.connectes:
+            if connecte in type(self).importeur.connex.joueurs_connectes:
+                nb_connectes += 1
+        res += " (|rgc|" + str(nb_connectes) + "|ff|)"
         return res
     
     @property
@@ -80,27 +79,29 @@ class Canal(BaseObj):
             else:
                 self.connectes.append(joueur)
                 for connecte in self.connectes:
-                    if connecte is not joueur:
-                        if connecte in self.immerges:
-                            res = self.clr + "<" + joueur.nom
-                            res += " rejoint le canal.>|ff|"
-                            connecte << res
-                        else:
-                            res = self.clr + "[" + self.nom + "] "
-                            res += joueur.nom + " rejoint le canal.|ff|"
-                            connecte << res
+                    if connecte in type(self).importeur.connex.joueurs_connectes:
+                        if connecte is not joueur:
+                            if connecte in self.immerges:
+                                res = self.clr + "<" + joueur.nom
+                                res += " rejoint le canal.>|ff|"
+                                connecte << res
+                            else:
+                                res = self.clr + "[" + self.nom + "] "
+                                res += joueur.nom + " rejoint le canal.|ff|"
+                                connecte << res
         else:
             self.connectes.remove(joueur)
             if aff is True:
                 for connecte in self.connectes:
-                    if connecte in self.immerges:
-                        res = self.clr + "<" + joueur.nom
-                        res += " quitte le canal.>|ff|"
-                        connecte << res
-                    else:
-                        res = self.clr + "[" + self.nom + "] " + joueur.nom
-                        res += " quitte le canal.|ff|"
-                        connecte << res
+                    if connecte in type(self).importeur.connex.joueurs_connectes:
+                        if connecte in self.immerges:
+                            res = self.clr + "<" + joueur.nom
+                            res += " quitte le canal.>|ff|"
+                            connecte << res
+                        else:
+                            res = self.clr + "[" + self.nom + "] " + joueur.nom
+                            res += " quitte le canal.|ff|"
+                            connecte << res
     
     def immerger_ou_sortir(self, joueur, aff=True):
         """Immerge un joueur et le signale aux immergés"""
@@ -109,8 +110,8 @@ class Canal(BaseObj):
             contexte = Immersion(joueur.instance_connexion)
             contexte.canal = type(self).importeur.communication.canaux[self.nom]
             joueur.contexte_actuel.migrer_contexte(contexte)
-            if aff is True:
-                for immerge in self.immerges:
+            for immerge in self.immerges:
+                if connecte in type(self).importeur.connex.joueurs_connectes:
                     if immerge is not joueur:
                         res = self.clr + "<" + joueur.nom + " s'immerge.>|ff|"
                         immerge << res
@@ -119,9 +120,10 @@ class Canal(BaseObj):
             joueur.contextes.retirer()
             if aff is True:
                 for immerge in self.immerges:
-                    res = self.clr + "<" + joueur.nom
-                    res += " sort d'immersion.>|ff|"
-                    immerge << res
+                    if connecte in type(self).importeur.connex.joueurs_connectes:
+                        res = self.clr + "<" + joueur.nom
+                        res += " sort d'immersion.>|ff|"
+                        immerge << res
     
     def dissoudre(self):
         """Détruis le canal et déconnecte tous les joueurs"""
@@ -138,12 +140,13 @@ class Canal(BaseObj):
             self.immerger_ou_sortir(joueur, False)
         self.rejoindre_ou_quitter(joueur, False)
         for connecte in self.connectes:
-            if connecte in self.immerges:
-                connecte << self.clr + "<" + joueur.nom + " a été éjecté.>|ff|"
-            else:
-                res = self.clr + "[" + self.nom + "] " + joueur.nom
-                res += " a été éjecté.|ff|"
-                connecte << res
+            if connecte in type(self).importeur.connex.joueurs_connectes:
+                if connecte in self.immerges:
+                    connecte << self.clr + "<" + joueur.nom + " a été éjecté.>|ff|"
+                else:
+                    res = self.clr + "[" + self.nom + "] " + joueur.nom
+                    res += " a été éjecté.|ff|"
+                    connecte << res
         joueur << "|rgc|Vous avez été éjecté du canal {}.|ff|".format(self.nom)
     
     def bannir(self, joueur):
@@ -154,13 +157,14 @@ class Canal(BaseObj):
             self.rejoindre_ou_quitter(joueur, False)
             self.liste_noire.append(joueur)
             for connecte in self.connectes:
-                if connecte in self.immerges:
-                    res = self.clr + "<" + joueur.nom + " a été banni.>|ff|"
-                    connecte << res
-                else:
-                    res = self.clr + "[" + self.nom + "] " + joueur.nom
-                    res += " a été banni.|ff|"
-                    connecte << res
+                if connecte in type(self).importeur.connex.joueurs_connectes:
+                    if connecte in self.immerges:
+                        res = self.clr + "<" + joueur.nom + " a été banni.>|ff|"
+                        connecte << res
+                    else:
+                        res = self.clr + "[" + self.nom + "] " + joueur.nom
+                        res += " a été banni.|ff|"
+                        connecte << res
             joueur << "|rgc|Vous avez été banni du canal {}.|ff|".format(
                     self.nom)
         else:
@@ -171,13 +175,6 @@ class Canal(BaseObj):
     def promouvoir_ou_dechoir(self, joueur):
         """Promeut ou déchoit un joueur du statut de modérateur"""
         if not joueur in self.moderateurs:
-            self.moderateurs.append(joueur)
-            if joueur in type(self).importeur.connex.joueurs_connectes:
-                if joueur in self.immerges:
-                    joueur << self.clr + "<Vous avez été promu modérateur.>|ff|"
-                else:
-                    joueur << self.clr + "[" + self.nom + "] Vous avez " \
-                            "été promu modérateur.|ff|"
             for connecte in self.connectes:
                 if (connecte in self.moderateurs or connecte is self.auteur) and \
                         connecte in type(self).importeur.connex.joueurs_connectes:
@@ -187,6 +184,13 @@ class Canal(BaseObj):
                     else:
                         connecte << self.clr + "[" + self.nom + "] {} a été " \
                                 "promu modérateur.|ff|".format(joueur.nom)
+            self.moderateurs.append(joueur)
+            if joueur in type(self).importeur.connex.joueurs_connectes:
+                if joueur in self.immerges:
+                    joueur << self.clr + "<Vous avez été promu modérateur.>|ff|"
+                else:
+                    joueur << self.clr + "[" + self.nom + "] Vous avez " \
+                            "été promu modérateur.|ff|"
         else:
             self.moderateurs.remove(joueur)
             if joueur in type(self).importeur.connex.joueurs_connectes:

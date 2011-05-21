@@ -64,5 +64,7 @@ class PrmBannir(Parametre):
             elif joueur is personnage:
                 personnage << "|err|Vous ne pouvez vous bannir " \
                         "vous-même.|ff|"
+            elif joueur in canal.moderateurs or joueur is canal.auteur:
+                personnage << "|err|Vous ne pouvez éjecter ce joueur.|ff|"
             else:
                 canal.bannir(joueur)

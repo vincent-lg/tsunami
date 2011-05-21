@@ -51,11 +51,24 @@ class PrmLister(Parametre):
         if not canaux:
             res = "|err|Il n'y a aucun canal de communication.|ff|"
         else:
-            res = "+" + "-" * 40 + "+\n"
-            res += "| |tit|" + "Canaux existants".ljust(39) + "|ff||\n"
-            res += "+" + "-" * 40 + "+\n"
+            # On détermine la taille du tableau
+            taille = 0
             for canal in canaux.iter().values():
-                res += "| " + str(canal).ljust(40) + "|\n"
-            res += "+" + "-" * 40 + "+"
+                if len(str(canal)) > taille:
+                    taille = len(str(canal))
+            res = "+" + "-" * (taille - 9) + "+\n"
+            res += "| |tit|" + "Canaux existants".ljust(taille - 11) + "|ff| |\n"
+            res += "+" + "-" * (taille - 9) + "+\n"
+            for canal in canaux.iter().values():
+                if personnage in canal.connectes:
+                    res += "| |bc|* " + str(canal).ljust(taille) + " |\n"
+                else:
+                    res += "| |cmd|" + str(canal).ljust(taille + 2) + " |\n"
+            res += "+" + "-" * (taille - 9) + "+"
+            res += \
+                "\n|cmd|canal|ff| : courte description " \
+                "(|rgc|nombre de connectés|ff|)\n" \
+                "Les canaux auxquels vous êtes connecté apparaissent en " \
+                "|bc|blanc|ff| et\nprécédés du signe |bc|*|ff|."
         
         personnage << res
