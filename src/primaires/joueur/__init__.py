@@ -84,14 +84,15 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.afk.CmdAfk(),
             commandes.chgroupe.CmdChgroupe(),
             commandes.groupe.CmdGroupe(),
             commandes.module.CmdModule(),
             commandes.options.CmdOptions(),
             commandes.quitter.CmdQuitter(),
             commandes.shutdown.CmdShutdown(),
+            commandes.systeme.CmdSysteme(),
             commandes.where.CmdWhere(),
-            commandes.afk.CmdAfk(),
         ]
         
         for cmd in self.commandes:

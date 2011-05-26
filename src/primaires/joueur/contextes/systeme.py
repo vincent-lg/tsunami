@@ -28,15 +28,50 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Fichier contenant le contexte 'systeme'"""
 
-from . import afk
-from . import chgroupe
-from . import groupe
-from . import module
-from . import options
-from . import quitter
-from . import shutdown
-from . import systeme
-from . import where
+import traceback
+
+from primaires.format.constantes import ponctuations_finales
+
+from primaires.interpreteur.contexte import Contexte
+
+class Systeme(Contexte):
+    
+    """Contexte permettant d'entrer du code Python.
+    
+    """
+    
+    nom = "systeme"
+    
+    def __init__(self, pere):
+        """Constructeur du contexte"""
+        Contexte.__init__(self, pere)
+        self.opts.prompt_prf = ""
+        self.opts.prompt_clr = ""
+    
+    def accueil(self):
+        """Message d'accueil du contexte"""
+        res = "|tit|Console Python|ff|\n\n"
+        res += "Vous pouvez entrer ici du code Python et voir le résultat "
+        res += "des instructions que vous entrez.\n"
+        res += "Tapez |cmd|/q|ff| pour quitter."
+        
+        return res
+    
+    def interpreter(self, msg):
+        """Méthode d'interprétation du contexte"""
+        if msg.startswith("/"):
+            msg = msg[1:]
+            if msg == "q":
+                self.pere.joueur.contextes.retirer()
+                self.pere << "Fermeture de la console Python."
+            else:
+                self.pere << "|err|Option inconnue.|ff|"
+        else:
+            # Exécution du code
+            try:
+                exec(msg)
+            except Exception:
+                self.pere << traceback.format_exc()
 
