@@ -296,3 +296,11 @@ class InstanceConnexion(BaseObj):
                 contextes[nouveau_contexte]
             self.envoyer(nouveau_contexte.accueil())
         self.contexte_actuel = nouveau_contexte
+    
+    def write(self, message):
+        """Surcharge de la méthode write.
+        Cela permet d'utiliser l'instance de connexion comme un descripteur
+        de fichier en écriture.
+        
+        """
+        self.envoyer(message)

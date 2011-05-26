@@ -30,6 +30,7 @@
 
 """Fichier contenant le contexte 'systeme'"""
 
+import sys
 import traceback
 
 from primaires.format.constantes import ponctuations_finales
@@ -49,6 +50,16 @@ class Systeme(Contexte):
         Contexte.__init__(self, pere)
         self.opts.prompt_prf = ""
         self.opts.prompt_clr = ""
+        self.espace = {}
+    
+    def __getstate__(self):
+        attrs = Contexte.__getstate__(self)
+        attrs["espace"] = {}
+        return attrs
+    
+    def get_prompt(self):
+        """Retourne le prompt"""
+        return ">>> "
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -61,6 +72,7 @@ class Systeme(Contexte):
     
     def interpreter(self, msg):
         """Méthode d'interprétation du contexte"""
+        self.espace["importeur"] = type(self).importeur
         if msg.startswith("/"):
             msg = msg[1:]
             if msg == "q":
@@ -70,8 +82,12 @@ class Systeme(Contexte):
                 self.pere << "|err|Option inconnue.|ff|"
         else:
             # Exécution du code
+            sys.stdin = None
+            sys.stdout = self.pere
             try:
-                exec(msg)
+                exec(msg, self.espace)
             except Exception:
                 self.pere << traceback.format_exc()
-
+            finally:
+                sys.stdin = sys.__stdin__
+                sys.stdout = sys.__stdout__
