@@ -64,6 +64,7 @@ class InstanceConnexion(BaseObj):
         self.file_attente = [] # file d'attente des messages à envoyer
         self.contexte = None
         self.nb_essais = 0
+        self.nb_msg = 0 # nombre de messages envoyés
         
         if creer_contexte:
             self.contexte = type(self).importeur.interpreteur. \
@@ -220,6 +221,7 @@ class InstanceConnexion(BaseObj):
         *   à chaque tour de la boucle synchro
         
         """
+        self.nb_msg += 1
         msg = self.formater_message(msg)
         self.file_attente.append(msg)
     

@@ -82,12 +82,16 @@ class Systeme(Contexte):
                 self.pere << "|err|Option inconnue.|ff|"
         else:
             # Exécution du code
-            sys.stdin = None
+            sys.stdin = self.pere
             sys.stdout = self.pere
+            nb_msg = self.pere.nb_msg
             try:
                 exec(msg, self.espace)
             except Exception:
                 self.pere << traceback.format_exc()
+            else:
+                if self.pere.nb_msg == nb_msg:
+                    self.pere.envoyer("")
             finally:
                 sys.stdin = sys.__stdin__
                 sys.stdout = sys.__stdout__
