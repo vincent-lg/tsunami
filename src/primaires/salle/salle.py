@@ -80,7 +80,6 @@ class Salle(ObjetID):
         """Constructeur de la salle"""
         ObjetID.__init__(self)
         self._zone = zone
-        print(self._zone)
         self._mnemonic = mnemonic
         self.coords = Coordonnees(x, y, z, valide, self)
         self.titre = ""
@@ -93,6 +92,11 @@ class Salle(ObjetID):
     def __getnewargs__(self):
         return ("", "")
     
+    def __getattribute__(self, nom_attr):
+        obj = ObjetID.__getattribute__(self, nom_attr)
+        return obj
+    def __setattr__(self, nom_attr, val_attr):
+        ObjetID.__setattr__(self, nom_attr, val_attr)
     def __str__(self):
         """Retourne l'identifiant 'zone:mnemonic'"""
         return self._zone + ":" + self._mnemonic
