@@ -80,6 +80,7 @@ class Salle(ObjetID):
         """Constructeur de la salle"""
         ObjetID.__init__(self)
         self._zone = zone
+        print(self._zone)
         self._mnemonic = mnemonic
         self.coords = Coordonnees(x, y, z, valide, self)
         self.titre = ""
@@ -89,7 +90,7 @@ class Salle(ObjetID):
         self._personnages = ListeID() # personnages présents
         self.objets_sol = ObjetsSol(parent=self)
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ("", "")
     
     def __str__(self):

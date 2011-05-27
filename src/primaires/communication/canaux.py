@@ -47,7 +47,7 @@ class Canaux(Unique):
         Unique.__init__(self, "canaux", "canaux")
         self._canaux = {}
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ()
     
     def __contains__(self, nom_canal):

@@ -62,7 +62,7 @@ class EnveloppeObjet(BaseObj):
         self.action = ""
         self.confirme = ""
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return (None, None, None)
     
     def construire(self, pere):

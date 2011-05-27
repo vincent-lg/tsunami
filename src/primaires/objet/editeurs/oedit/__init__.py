@@ -63,7 +63,7 @@ class EdtOedit(Editeur):
         self.personnage = personnage
         self.identifiant = ""
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return (None, None)
     
     def accueil(self):

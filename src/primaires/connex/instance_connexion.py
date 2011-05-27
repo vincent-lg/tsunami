@@ -72,7 +72,7 @@ class InstanceConnexion(BaseObj):
             self.contexte.actualiser()
             self.contexte.migrer_contexte("connex:connexion:entrer_nom")
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         """Méthode retournant les valeurs par défaut du constructeur"""
         return (None, False)
     

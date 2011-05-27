@@ -51,7 +51,7 @@ class Conversations(BaseObj):
         BaseObj.__init__(self)
         self._conversations = []
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ()
     
     def iter(self):

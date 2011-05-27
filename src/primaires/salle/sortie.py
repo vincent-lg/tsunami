@@ -91,7 +91,7 @@ class Sortie(BaseObj):
     def __str__(self):
         return self.nom
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ("", "")
     
     def __setattr__(self, nom_attr, valeur):

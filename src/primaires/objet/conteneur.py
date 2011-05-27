@@ -48,7 +48,7 @@ class ConteneurObjet(BaseObj):
         self._objets = ListeID()
         self.parent = parent
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ()
     
     def __iter__(self):

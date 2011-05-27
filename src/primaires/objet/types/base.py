@@ -61,7 +61,7 @@ class BaseType(ObjetID, metaclass=MetaType):
         self.description = Description(parent=self)
         self.objets = ListeID()
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ()
     
     def __str__(self):

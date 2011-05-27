@@ -57,7 +57,7 @@ class EdtRapporteur(Presentation):
         if personnage and rapport:
             self.construire(rapport)
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return (None, None)
     
     def construire(self, rapport):

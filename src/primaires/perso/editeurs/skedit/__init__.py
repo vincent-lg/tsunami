@@ -63,7 +63,7 @@ class EdtSkedit(Presentation):
         if personnage and squelette:
             self.construire(squelette)
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return (None, None)
     
     def construire(self, squelette):

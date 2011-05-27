@@ -55,7 +55,7 @@ class FileContexte(BaseObj):
         self._taille_min = 1 # la taille minimum de la file d'attente
         self.parent = parent
    
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         """Méthode retournant les arguments à passer au constructeur"""
         return ()
     

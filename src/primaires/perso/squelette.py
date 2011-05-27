@@ -65,7 +65,7 @@ class Squelette(ObjetID):
         self.description = Description(parent=self)
         self.__membres = OrderedDict()
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ("", )
     
     def __getitem__(self, item):

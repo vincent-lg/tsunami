@@ -69,7 +69,7 @@ class Stat(BaseObj):
         if self.parent and max:
             self.__max = getattr(self.parent, "_{}".format(max))
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ("", "", 0, "")
     
     def __str__(self):

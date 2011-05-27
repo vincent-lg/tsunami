@@ -55,7 +55,7 @@ class EdtPresentation(Presentation):
         if personnage and prototype:
             self.construire(prototype)
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return (None, None)
     
     def construire(self, prototype):

@@ -70,7 +70,7 @@ class Membre(BaseObj):
             self.nom = modele.nom
             self.flags = modele.flags
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ("", )
     
     def __setattr__(self, nom_attr, val_attr):

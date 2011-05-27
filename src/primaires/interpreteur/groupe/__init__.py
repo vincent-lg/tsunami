@@ -53,7 +53,7 @@ class ConteneurGroupes(Unique):
         # Dictionnaire associant une adresse de commande à un groupe
         self.commandes = {}
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ()
     
     def __contains__(self, nom_groupe):

@@ -66,7 +66,7 @@ class EdtChedit(Presentation):
         if personnage and canal:
             self.construire(canal)
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return (None, None)
     
     def construire(self, canal):

@@ -78,7 +78,7 @@ class Objet(ObjetID):
             prototype.no += 1
             prototype.objets.append(self)
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return (None, )
     
     def __getattr__(self, nom_attr):

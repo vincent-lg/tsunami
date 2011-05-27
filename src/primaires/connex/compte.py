@@ -65,7 +65,7 @@ class Compte(ObjetID):
         # Options
         self.couleur = True # couleurs activées par défaut
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         """Méthode retournant les valeurs par défaut du constructeur"""
         return ("", )
     

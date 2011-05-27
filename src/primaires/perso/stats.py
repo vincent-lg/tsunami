@@ -57,7 +57,7 @@ class Stats(BaseObj):
             setattr(self, "_{}".format(nom), stat)
             self.__stats.append(stat)
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ()
     
     def __str__(self):

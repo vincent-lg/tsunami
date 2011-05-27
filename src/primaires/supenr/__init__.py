@@ -36,6 +36,7 @@ import pickle
 from abstraits.module import *
 from abstraits.id import ObjetID, est_objet_id
 from abstraits.unique import Unique, est_unique
+from abstraits.obase import *
 
 # Dossier d'enregistrement des fichiers-données
 # Vous pouvez changer cette variable, ou bien spécifier l'option en
@@ -76,6 +77,7 @@ class Module(BaseModule):
         self.logger = type(self.importeur).man_logs.creer_logger("supenr", \
                 "supenr")
         self.enregistre_actuellement = False
+        self.objets_a_nettoyer = []
     
     def config(self):
         """Méthode de configuration. On se base sur
@@ -112,6 +114,17 @@ class Module(BaseModule):
                 os.makedirs(chemin)
         
         BaseModule.init(self)
+    
+    def preparer(self):
+        """Préparation du module.
+        On fait un peu de nettoyage dans les objets.
+        
+        """
+        for objet in self.objets_a_nettoyer:
+            # On parcourt les attributs de l'objet
+            for nom_attr, val_attr in tuple(objet.__dict__.items()):
+                if isinstance(val_attr, BaseObj):
+                    setattr(objet, nom_attr, dict_base_obj[objet._id_base])
     
     def detruire(self):
         """Destruction du module"""

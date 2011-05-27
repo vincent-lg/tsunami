@@ -66,7 +66,7 @@ class EdtRedit(Presentation):
         if personnage and salle:
             self.construire(salle)
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return (None, None)
     
     def construire(self, salle):

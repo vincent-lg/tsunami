@@ -63,7 +63,7 @@ class Stats(Unique):
         self.dernier_wd = None
         self.max_wd = 0
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return (None, )
     
     def surveiller_watch_dog(self, temps_actuel):

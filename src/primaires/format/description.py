@@ -57,7 +57,7 @@ class Description(BaseObj):
         if description:
             self.ajouter_paragraphe(description)
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ("", )
     
     def __str__(self):

@@ -62,7 +62,7 @@ class Personnage(ObjetID):
         self.stats = Stats()
         self._prompt = "Vit   {v}     Man   {m}     End   {e}"
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         """Retourne les arguments à passer au constructeur"""
         return ()
     

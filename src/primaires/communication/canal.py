@@ -53,7 +53,7 @@ class Canal(BaseObj):
         self.connectes = ListeID()
         self.liste_noire = ListeID()
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ("", None)
     
     def __str__(self):

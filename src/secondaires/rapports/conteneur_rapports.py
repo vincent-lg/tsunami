@@ -42,7 +42,7 @@ class ConteneurRapports(Unique):
         self.newIdent = 0
         self._rapports = {} # ident:rapport
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ("",)
     
     def ajouter_nouveau_rapport(self,rapport):
