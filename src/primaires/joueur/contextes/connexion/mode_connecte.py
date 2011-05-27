@@ -64,7 +64,8 @@ class ModeConnecte(Contexte):
     
     def get_prompt(self):
         """Méthode du prompt du contexte"""
-        return "- - - - -\n"
+        joueur = self.pere.joueur
+        return joueur.prompt + "\n"
     
     def interpreter(self, msg):
         """Méthode d'interprétation.

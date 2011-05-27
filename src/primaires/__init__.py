@@ -64,6 +64,7 @@ Voici un résumé des modules primaires existants :
                     commandes envoyés par les clients
 -   joueur          module contenant les informations sur les joueurs
                     (personnages connectés)
+-   objet           Module chargé des objets et des prototypes d'objets
 -   perso           module gérant les personnages, connectés (joueurs) ou non
                     (NPCs)
 -   salle           Module gérant les salles du MUD

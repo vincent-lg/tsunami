@@ -30,5 +30,7 @@
 
 """Package contenant les commandes du module perso."""
 
-import primaires.perso.commandes.commande
-import primaires.perso.commandes.qui
+from . import commande
+from . import qui
+from . import score
+from . import skedit

@@ -61,8 +61,11 @@ class Compte(ObjetID):
         self.tentatives_validation = 0 # tentatives de validation
         self.nb_essais = 0 # tentatives d'intrusion (mot de passe erroné)
         self.joueurs = ListeID()
+        
+        # Options
+        self.couleur = True # couleurs activées par défaut
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         """Méthode retournant les valeurs par défaut du constructeur"""
         return ("", )
     

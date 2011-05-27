@@ -36,7 +36,7 @@ from abstraits.module import *
 from .salle import Salle, ZONE_VALIDE, MNEMONIC_VALIDE
 from .sorties import NOMS_SORTIES
 from .config import cfg_salle
-import primaires.salle.commandes
+from . import commandes
 from .editeurs.redit import EdtRedit
 from .coordonnees import Coordonnees
 from . import masques
@@ -96,28 +96,6 @@ class Module(BaseModule):
         for salle in salles:
             self.ajouter_salle(salle)
         
-        # On récupère la configuration
-        conf_salle = type(self.importeur).anaconf.get_config("salle")
-        salle_arrivee = conf_salle.salle_arrivee
-        salle_retour = conf_salle.salle_retour
-        
-        if salle_arrivee not in self:
-            # On crée la salle d'arrivée
-            zone, mnemonic = salle_arrivee.split(":")
-            salle_arrivee = self.creer_salle(zone, mnemonic, valide=False)
-            salle_arrivee.titre = "La salle d'arrivée"
-            salle_arrivee = salle_arrivee.ident
-        
-        if salle_retour not in self:
-            # On crée la salle de retour
-            zone, mnemonic = salle_retour.split(":")
-            salle_retour = self.creer_salle(zone, mnemonic, valide=False)
-            salle_retour.titre = "La salle de retour"
-            salle_retour = salle_retour.ident
-        
-        self.salle_arrivee = salle_arrivee
-        self.salle_retour = salle_retour
-
         s = ""
         nb_salles = (len(self._salles) != 0) and len(self._salles) or "Aucune"
         if len(self._salles) > 1:
@@ -134,6 +112,8 @@ class Module(BaseModule):
                 masques.nv_ident.NvIdent)
         self.importeur.interpreteur.ajouter_masque(
                 masques.ident.Ident)
+        self.importeur.interpreteur.ajouter_masque(
+                masques.observable.Observable)
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
@@ -155,16 +135,46 @@ class Module(BaseModule):
     def preparer(self):
         """Préparation du module.
         On vérifie que :
+        -   les salles de retour et d'arrivée sont bien créés (sinon,
+            on les recrée)
         -   les personnages présents dans self._personnages soient
             toujours là
+        -   les objets du sol existent toujours
         
         """
+        # On récupère la configuration
+        conf_salle = type(self.importeur).anaconf.get_config("salle")
+        salle_arrivee = conf_salle.salle_arrivee
+        salle_retour = conf_salle.salle_retour
+        
+        if salle_arrivee not in self:
+            # On crée la salle d'arrivée
+            zone, mnemonic = salle_arrivee.split(":")
+            salle_arrivee = self.creer_salle(zone, mnemonic, valide=False)
+            salle_arrivee.titre = "La salle d'arrivée"
+            salle_arrivee = salle_arrivee.ident
+        
+        if salle_retour not in self:
+            # On crée la salle de retour
+            zone, mnemonic = salle_retour.split(":")
+            salle_retour = self.creer_salle(zone, mnemonic, valide=False)
+            salle_retour.titre = "La salle de retour"
+            salle_retour = salle_retour.ident
+        
+        self.salle_arrivee = salle_arrivee
+        self.salle_retour = salle_retour
+        
         for salle in self._salles.values():
             salle._personnages.supprimer_doublons()
             salle._personnages.supprimer_none()
+            salle.objets_sol.nettoyer()
             for personnage in salle.personnages:
                 if personnage.salle is not salle:
                     salle.retirer_personnage(personnage)
+    
+    def __len__(self):
+        """Retourne le nombre de salles"""
+        return len(self._salles)
     
     def __getitem__(self, cle):
         """Retourne la salle correspondante à la clé.
@@ -216,7 +226,7 @@ class Module(BaseModule):
         if not re.search(ZONE_VALIDE, zone):
             raise ValueError("Zone {} invalide".format(zone))
         if not re.search(MNEMONIC_VALIDE, mnemonic):
-            raise ValueError("Mnémonic {} invalide".format(mnemonic))
+            raise ValueError("Mnémonic {} invalide ({})".format(mnemonic, MNEMONIC_VALIDE))
         
         salle = Salle(zone, mnemonic, x, y, z, valide)
         self.ajouter_salle(salle)
@@ -237,14 +247,24 @@ class Module(BaseModule):
     def traiter_commande(self, personnage, commande):
         """Traite les déplacements"""
         commande = commande.lower()
+        salle = personnage.salle
         if commande in self.aliases.keys():
             commande = self.aliases[commande]
-        
-        salle = personnage.salle
-        for nom, sortie in salle.sorties.iter_couple():
-            if sortie and sortie.nom.startswith(commande):
+            sortie = salle.sorties[commande]
+            if sortie:
                 personnage.deplacer_vers(sortie.nom)
-                return True
+            else:
+                personnage << "Vous ne pouvez aller par là..."
+            return True
+        
+        for nom, sortie in salle.sorties.iter_couple():
+            if sortie:
+                if sortie.cache and sortie.nom == commande:
+                    personnage.deplacer_vers(sortie.nom)
+                    return True
+                if not sortie.cache and sortie.nom.startswith(commande):
+                    personnage.deplacer_vers(sortie.nom)
+                    return True
         
         if commande in NOMS_SORTIES.keys():
             personnage << "Vous ne pouvez aller par là..."

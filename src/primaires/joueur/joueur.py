@@ -50,6 +50,7 @@ class Joueur(Personnage):
         self.instance_connexion = None
         self.connecte = False
         self.garder_connecte = False
+        self.afk = ""
     
     def __getstate__(self):
         retour = self.__dict__.copy()
@@ -82,7 +83,6 @@ class Joueur(Personnage):
         lien avec l'univers, non pas dans le sens réseau.
         
         """
-        print(self, "contextes", self.contextes)
         for contexte in self.contextes:
             contexte.pere = self.instance_connexion
         
@@ -134,10 +134,15 @@ class Joueur(Personnage):
         salle = self.salle
         if salle:
             salle.retirer_personnage(self)
+        type(self).importeur.communication. \
+                conversations.vider_conversations_pour(self)
+        if self.afk:
+            self.afk = ""
     
     def envoyer(self, msg):
         """On redirige sur l'envoie de l'instance de connexion."""
-        self.instance_connexion.envoyer(msg)
+        if self.instance_connexion:
+            self.instance_connexion.envoyer(msg)
 
 # On ajoute le groupe à ObjetID
 ObjetID.ajouter_groupe(Joueur)

@@ -65,8 +65,7 @@ class CheminCommande(Masque):
         
         chemin_commande = chemin_commande.split(" ")[0]
         commande[:] = commande[len(chemin_commande):]
-        print("ch_cmd", commande)
-
+        
         trans_param = True # doit-on transmettre les sous-commandes ?
         if chemin_commande.endswith("."):
             chemin_commande = chemin_commande[:-1]

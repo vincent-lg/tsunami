@@ -57,7 +57,7 @@ class Description(BaseObj):
         if description:
             self.ajouter_paragraphe(description)
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ("", )
     
     def __str__(self):
@@ -67,9 +67,6 @@ class Description(BaseObj):
             paragraphe = self.wrap_paragraphe(paragraphe)
             paragraphe = paragraphe.replace("|nl|", "\n")
             res.append(paragraphe)
-        
-        if not res:
-            res.append("Vous êtes au milieu de nulle part.")
         
         return "\n".join(res)
     

@@ -33,6 +33,10 @@
 from abstraits.module import *
 from primaires.perso import commandes
 from primaires.perso import masques
+from .editeurs.skedit import EdtSkedit
+from .cfg_stats import cfg_stats
+from .stats import *
+from .squelette import Squelette
 
 class Module(BaseModule):
     
@@ -49,18 +53,67 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "perso", "primaire")
+        self.cfg_stats = None
         self.commandes = []
+        self.squelettes = {}
     
+    def config(self):
+        """Méthode de configuration.
+        On récupère le fichier de configuration correspondant au module.
+        
+        """
+        self.cfg_stats = conf_stats = type(self.importeur).anaconf.get_config(
+                "stats", "perso/stats.cfg", "modele stats", cfg_stats)
+        conf_stats._set_globales({
+            "I0":I0,
+            "IE0":IE0,
+            "SM":SM,
+            "SEM":SEM,
+        })
+        
+        BaseModule.config(self)
+    
+    def init(self):
+        """Initialisation du module"""
+        # On récupère les squelettes
+        squelettes = self.importeur.supenr.charger_groupe(Squelette)
+        for squelette in squelettes:
+            self.ajouter_squelette(squelette)
+        
+        BaseModule.init(self)
     def ajouter_masques(self):
         """Ajout des masques dans l'interpréteur"""
         self.importeur.interpreteur.ajouter_masque(masques.commande.Commande)
+        self.importeur.interpreteur.ajouter_masque(masques.etat.Etat)
+        self.importeur.interpreteur.ajouter_masque(masques.ident.Ident)
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.commande.CmdCommande(),
             commandes.qui.CmdQui(),
+            commandes.score.CmdScore(),
+            commandes.skedit.CmdSkedit(),
         ]
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
+        
+        # Ajout de l'éditeur 'skedit'
+        self.importeur.interpreteur.ajouter_editeur(EdtSkedit)
+    
+    def creer_squelette(self, cle):
+        """Création d'un squelette"""
+        squelette = Squelette(cle)
+        self.ajouter_squelette(squelette)
+        return squelette
+    
+    def ajouter_squelette(self, squelette):
+        """Ajoute le squelette aux squelettes existants"""
+        self.squelettes[squelette.cle] = squelette
+    
+    def supprimer_squelette(self, cle):
+        """Supprime le squelette existant"""
+        squelette = self.squelettes[cle]
+        del self.squelettes[cle]
+        squelette.detruire()

@@ -58,13 +58,14 @@ import traceback
 import py_compile
 
 from abstraits.module import *
-from abstraits.obase import BaseObj
+from abstraits.obase import BaseObj, objets_base
 from abstraits.id.id import ID
 
 REP_PRIMAIRES = "primaires"
 REP_SECONDAIRES = "secondaires"
 
 class Importeur:
+    
     """Classe chargée de créer un objet Importeur. Il contient sous la forme
     d'attributs les modules primaires et secondaires chargés. Les modules
     primaires et secondaires ne sont pas distingués.
@@ -72,6 +73,7 @@ class Importeur:
     On ne doit créer qu'un seul objet Importeur.
 
     """
+    
     nb_importeurs = 0
     parser_cmd = None # parser de la ligne de commande
     anaconf = None # analyseur des fichiers de configuration
@@ -230,6 +232,7 @@ class Importeur:
         Les modules à initialiser sont ceux configurés.
         
         """
+        type(self).parid.se_charge()
         conf_glb = Importeur.anaconf.get_config("globale")
         Importeur.logger.debug("Initialisation des modules :")
         # On initialise d'abord les modules à initialiser en priorité
@@ -249,6 +252,8 @@ class Importeur:
                 module.init()
                 Importeur.logger.debug("  Le module {0} a été " \
                         "initialisé".format(module.nom))
+        
+        type(self).parid.se_construit()
         
         # Ajout des masques et commandes
         for module in self.__dict__.values():
@@ -328,13 +333,16 @@ class Importeur:
         logger = type(self).man_logs.get_logger("sup")
         res = False
         Importeur.nb_hotboot += 1
+        objets_base.clear()
         try:
              for nom_package in os.listdir(os.getcwd() + "/" + REP_PRIMAIRES):
                  if not nom_package.startswith("__"):
-                     py_compile.compile(os.getcwd() + "/" + REP_PRIMAIRES + "/" + nom_package + "/__init__.py",doraise=True)
+                     py_compile.compile(os.getcwd() + "/" + \
+                            REP_PRIMAIRES + "/" + nom_package + \
+                            "/__init__.py", doraise=True)
         except py_compile.PyCompileError:
             logger.fatal(
-                "Une erreur s'est produit lors de l'hotboot.")
+                "Une erreur s'est produite lors de l'hotboot.")
             logger.fatal(traceback.format_exc())
         else:
             self.tout_detruire()

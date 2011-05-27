@@ -30,4 +30,6 @@
 
 """Package des masques du module perso."""
 
-import primaires.perso.masques.commande
+from . import commande
+from . import etat
+from . import ident

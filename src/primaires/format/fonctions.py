@@ -111,6 +111,12 @@ COULEURS = {
     b"|ff|": b"\x1b[0m",  # fin de formattage
 }
 
+# Couleurs en format str
+COULEURS_STR = {}
+for couleur, valeur in COULEURS.items():
+    COULEURS_STR[couleur.decode()] = valeur.decode()
+
+
 def get_bytes(msg, ncod_optionnel):
     """Retourne un type bytes.
     Peut prendre en paramètre :
@@ -213,3 +219,56 @@ def souligner_sauts_de_ligne(msg):
         msg = msg.replace("\n\n", "\n \n")
     
     return msg
+
+def supprimer_couleurs(texte):
+    """Supprime les couleurs de 'texte'"""
+    couleurs = list(COULEURS_STR.keys())
+    couleurs.extend([
+        "|tit|",
+        "|cmd|",
+        "|ent|",
+        "|att|",
+        "|err|",
+    ])
+    
+    for couleur in couleurs:
+        texte = texte.replace(couleur, "")
+    
+    return texte
+
+def contient(nom_complet, fragment):
+    """Retourne True si nom contient fragment, False sinon."""
+    fragment = supprimer_couleurs(supprimer_accents(fragment).lower())
+    nom_complet = supprimer_couleurs(supprimer_accents(nom_complet).lower())
+    
+    fragment = fragment.replace("'", " ")
+    nom_complet = nom_complet.replace("'", " ")
+    nom_fragmente = nom_complet.split(" ")
+    for i, nom in enumerate(nom_fragmente):
+        nom_partiel = " ".join(nom_fragmente[i:])
+        if nom_partiel.startswith(fragment):
+            return True
+    
+    return False
+
+def couper_phrase(phrase, couper):
+    """Coupe la phrase 'phrase' au mot précédant le caractère numéro 'couper'
+    et ajoute (...) si nécessaire"""
+    i = len(phrase)
+    if i <= couper:
+        return phrase
+    else:
+        phrase = phrase[:couper]
+        if phrase.endswith(" "):
+            return phrase.rstrip() + "..."
+        else:
+            phrase = phrase.split(" ")
+            if len(phrase) > 1:
+                del phrase[-1]
+            phrase = " ".join(phrase)
+            return phrase + "..."
+
+def oui_ou_non(flag):
+    """Retourne 'oui' si le flag est True, 'non' sinon."""
+    mots = {True:"oui", False:"non"}
+    return mots[flag]

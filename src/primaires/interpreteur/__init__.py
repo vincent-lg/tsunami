@@ -30,6 +30,8 @@
 
 """Fichier contenant le module primaire interpreteur."""
 
+from collections import OrderedDict
+
 from abstraits.module import *
 from primaires.interpreteur.contexte import Contexte, contextes
 from .editeur import Editeur
@@ -56,6 +58,8 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "interpreteur", "primaire")
         self.logger = type(self.importeur).man_logs.creer_logger( \
                 "interpreteur", "interpreteur")
+        self.logger_cmd = type(self.importeur).man_logs.creer_logger( \
+                "interpreteur", "commandes")
         
         # On passe l'interpréteur à certaines classes
         Contexte.importeur = importeur
@@ -112,14 +116,13 @@ class Module(BaseModule):
             groupe_precedent = nom_groupe
         
         # On crée les catégories de commandes
-        self.categories = {
-            "divers" : "Commandes générales",
-            "parler" : "Communication",
-            "bouger" : "Mobilité et aide au déplacement",
-            "groupes" : "Manipulation des groupes et modules",
-            "batisseur" : "Commandes de création",
-            "bugs" : "Manipulation et rapport de bug"
-        }
+        self.categories = OrderedDict()
+        self.categories["divers"] = "Commandes générales"
+        self.categories["parler"] = "Communication"
+        self.categories["bouger"] = "Mobilité et aide au déplacement"
+        self.categories["groupes"] = "Manipulation des groupes et modules"
+        self.categories["bugs"] = "Manipulation et rapport de bug"
+        self.categories["batisseur"] = "Commandes de création"
         
         BaseModule.init(self)
     
@@ -154,6 +157,7 @@ class Module(BaseModule):
     
     def valider(self, personnage, dic_masques, lst_commande):
         """Commande de validation"""
+        str_commande = liste_vers_chaine(lst_commande)
         trouve = False
         commandes = []
         if personnage.langue_cmd == "francais":
@@ -163,6 +167,8 @@ class Module(BaseModule):
         
         for cmd in commandes:
             if cmd.valider(personnage, dic_masques, lst_commande):
+                self.logger_cmd.info("{} envoie {}".format(personnage.nom,
+                        str_commande))
                 trouve = True
                 break
         

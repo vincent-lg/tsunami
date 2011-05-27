@@ -25,40 +25,47 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'hrp'.
+"""Ce fichier définit le contexte-éditeur 'quitter'."""
 
-"""
+from . import Editeur
 
-from primaires.interpreteur.commande.commande import Commande
-
-class CmdHrp(Commande):
+class Supprimer(Editeur):
     
-    """Commande 'hrp'.
+    """Contexte-éditeur supprimer.
+    Ce contexte est appelé quand on souhaite supprimer l'objet manipulé.
     
     """
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "hrp", "ooc")
-        self.nom_categorie = "parler"
-        self.schema = "<message>"
-        self.aide_courte = "dit une phrase dans le canal HRP"
-        self.aide_longue = \
-            "Cette commande permet de dire une phrase dans le canal HRP. " \
-            "Tous les joueurs connectés entendront votre message ; " \
-            "il s'agit d'un moyen de communiquer à travers l'univers, " \
-            "en-dehors du cadre role-play."
+    nom = "editeur:base:supprimer"
     
-    def interpreter(self, personnage, dic_masques):
-        """Interprétation de la commande"""
-        message = dic_masques["message"].message
-        clr = type(self).importeur.anaconf.get_config("config_com").couleur_hrp
-        moi = clr + "[HRP] Vous dites : " + message + "|ff|"
-        personnage.envoyer(moi)
-        autre = clr + "[HRP] " + personnage.nom + " dit : " + message + "|ff|"
-        for joueur in type(self).importeur.connex.joueurs_connectes:
-            if joueur is not personnage:
-                joueur.envoyer(autre)
+    def __init__(self, pere, objet=None, attribut=None):
+        """Constructeur de l'éditeur"""
+        Editeur.__init__(self, pere, objet, attribut)
+        self.action = ""
+        self.confirme = ""
+    
+    def accueil(self):
+        """Message d'accueil"""
+        return self.aide_courte.format(objet=self.objet)
+   
+    def get_prompt(self):
+        """Message de prompt"""
+        return "Entrez votre choix (|cmd|oui|ff|/|cmd|non|ff|) : "
+    
+    def interpreter(self, msg):
+        """Interprétation du contexte"""
+        msg = msg.lower()
+        if msg == "oui":
+            objet = type(self).importeur
+            for nom in self.action.split("."):
+                objet = getattr(objet, nom)
+            objet(self.objet.cle)
+            self.pere.joueur.contextes.retirer()
+            self.pere << self.confirme
+        elif msg == "non":
+            self.migrer_contexte(self.opts.rci_ctx_prec)
+        else:
+            self.pere << "|att|Choix invalide.|ff|"

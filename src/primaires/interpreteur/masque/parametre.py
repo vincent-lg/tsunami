@@ -86,5 +86,3 @@ class Parametre(Commande):
             if parente.groupe:
                 self.groupe = parente.groupe
             parente = parente.parente
-        
-

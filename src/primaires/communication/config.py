@@ -55,8 +55,8 @@ cfg_com = r"""
 
 ## Coloration des commandes
 
-# Commande ooc / hrp
-couleur_hrp = "|cyc|"
+# Commande shout / crier
+couleur_cri = "|blc|"
 
 # Commande tell / parler, reply / repondre
 couleur_tell = "|vrc|"

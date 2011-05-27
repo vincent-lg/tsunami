@@ -28,10 +28,12 @@
 # pereIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit le contexte-éditeur 'edt_sortie'."""
+"""Ce fichier définit le contexte-éditeur 'edt_sorties'."""
 
 from primaires.interpreteur.editeur import Editeur
+from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
 from primaires.salle.sorties import NOMS_SORTIES
+from .edt_sortie import EdtSortie
 
 class EdtSorties(Editeur):
     
@@ -43,40 +45,45 @@ class EdtSorties(Editeur):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
         self.ajouter_option("r", self.opt_renommer_sortie)
+        self.ajouter_option("s", self.opt_changer_sortie)
+        self.ajouter_option("d", self.opt_suppr_sortie)
     
     def accueil(self):
         """Message d'accueil du contexte"""
         salle = self.objet
         msg = "| |tit|" + "Edition des sorties de {}".format(salle).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
-        msg += "| " + "Direction".ljust(12) + " | "
-        msg += "Vers".ljust(12) + " | " + "Destination".ljust(12) + " | "
-        msg += "Réciproque".ljust(12) + " |"
+        msg += self.aide_courte
+        msg += "Sorties courantes :\n"
         
-        # Parcourt des sorties
+        # Parcours des sorties
         sorties = salle.sorties
-        for nom in NOMS_SORTIES:
+        liste_sorties = ""
+        for nom in NOMS_SORTIES.keys():
+            direction = "\n |ent|" + nom.ljust(10) + "|ff| :"
             sortie = sorties[nom]
-            msg += "\n| |ent|" + nom.ljust(12) + "|ff|"
-            nom_sortie = ""
-            destination = ""
-            reciproque = ""
             if sortie:
+                destination = ""
                 if sortie.nom != nom:
-                    nom_sortie = sortie.nom_complet
-                destination = str(sortie.salle_dest)
-                reciproque = sortie.correspondante
-            
-            msg += " | |ent|" + nom_sortie.ljust(12) + "|ff|"
-            msg += " | " + destination.ljust(12)
-            msg += " | " + reciproque.ljust(12) + " |"
+                    destination = " vers " + sortie.nom_complet + ""
+                    destination += " (|vr|" + str(sortie.salle_dest) + "|ff|)"
+                else:
+                    destination = " vers |vr|" + str(sortie.salle_dest) + "|ff|"
+                reciproque = ", réciproque : |cy|" + sortie.correspondante 
+                reciproque += "|ff|"
+                liste_sorties += direction
+                liste_sorties += destination
+                liste_sorties += reciproque
+        if not liste_sorties:
+            liste_sorties += "\n Aucune sortie pour l'instant."
+        msg += liste_sorties
         
         return msg
     
     def opt_renommer_sortie(self, arguments):
         """Renomme une sortie en un autre nom
         La syntaxe pour renommer une sortie est :
-            /option ancien_nom / nouveau nom (/ article)
+            /r ancien_nom / nouveau nom (/ article)
         
         """
         salle = self.objet
@@ -118,6 +125,98 @@ class EdtSorties(Editeur):
                 sortie.article = article
             self.actualiser()
     
+    def opt_changer_sortie(self, arguments):
+        """Modifie une sortie comme setexit
+        Le fonctionnement est le même, cette option permet de lier un sortie
+        à une salle.
+        Syntaxe : /s nom / id_salle
+            
+        """
+        salle = self.objet
+        sorties = salle.sorties
+        try:
+            nom, id_salle = arguments.split(" / ")
+        except ValueError:
+            self.pere << "|err|La syntaxe est invalide pour cette " \
+                    "option.|ff|"
+            return
+        try:
+            nom = sorties.get_nom_long(nom)
+        except KeyError:
+            self.pere << "|err|La direction '{}' n'existe pas.|ff|".format(nom)
+            return
+        try:
+            d_salle = type(self).importeur.salle[id_salle]
+        except KeyError:
+            self.pere << \
+                "|err|L'identifiant '{}' n'est pas valide.|ff|".format(id_salle)
+            return
+        
+        dir_opposee = sorties.get_nom_oppose(nom)
+        if sorties.sortie_existe(nom):
+            self.pere << \
+                "|err|Cette direction a déjà été définie dans la salle " \
+                "courante.|ff|"
+            return
+        if d_salle.sorties.sortie_existe(dir_opposee):
+            self.pere << \
+                "|err|La direction opposée a déjà été définie dans {}.|ff|". \
+                format(d_salle.ident)
+            return
+        if salle is d_salle:
+            self.pere << \
+                "|err|La salle de destination est la même que la salle " \
+                "d'origine.|ff|"
+            return
+        
+        sorties.ajouter_sortie(nom, nom,
+                salle_dest=d_salle, corresp=dir_opposee)
+        d_salle.sorties.ajouter_sortie(dir_opposee, dir_opposee,
+                salle_dest=salle, corresp=nom)
+        self.actualiser()
+    
+    def opt_suppr_sortie(self, arguments):
+        """Supprime une sortie
+        Syntaxe : /d nom
+        
+        """
+        salle = self.objet
+        sorties = salle.sorties
+        nom = arguments
+        
+        try:
+            d_salle = sorties[nom].salle_dest
+        except (KeyError, AttributeError):
+            self.pere << "|err|La sortie spécifiée n'existe pas.|ff|"
+        else:
+            dir_opposee = salle.sorties.get_nom_oppose(nom)
+            
+            d_salle.sorties.supprimer_sortie(dir_opposee)
+            salle.sorties.supprimer_sortie(nom)
+            self.actualiser()
+    
     def interpreter(self, msg):
         """Interprétation de la présentation"""
-        pass
+        salle = self.objet
+        sorties = salle.sorties
+        
+        try:
+            sortie = sorties[msg]
+            if not sortie:
+                raise AttributeError
+        except (KeyError, AttributeError):
+            self.pere << "|err|La sortie spécifiée n'existe pas.|ff|"
+        else:
+            enveloppe = EnveloppeObjet(EdtSortie, sortie, None)
+            enveloppe.parent = self
+            enveloppe.aide_courte = \
+                "Entrez |ent|/|ff| pour revenir à la fenêtre parente.\n" \
+                "Options :\n" \
+                " - |cmd|/r <nouveau nom> (/ <préfixe>)|ff| : renomme la " \
+                "sortie\n" \
+                " - |cmd|/s <identifiant d'une salle>|ff| : fait pointer la " \
+                "sortie vers la salle\n" \
+                "   spécifiée\n" \
+                " - |cmd|/c|ff| : bascule l'état caché de la sortie"
+            contexte = enveloppe.construire(self.pere)
+            self.migrer_contexte(contexte)

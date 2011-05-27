@@ -44,15 +44,15 @@ class Canaux(Unique):
     
     def __init__(self):
         """Constructeur du conteneur"""
-        Unique.__init__(self)
+        Unique.__init__(self, "canaux", "canaux")
         self._canaux = {}
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ()
     
     def __contains__(self, nom_canal):
         """Retourne True si le nom de canal est dans le conteneur"""
-        return nom_canal in self._canaux
+        return nom_canal in dict(self._canaux)
     
     def __getitem__(self, nom_canal):
         """Retourne le canal si existe dans le conteneur"""
@@ -69,5 +69,34 @@ class Canaux(Unique):
         self.enregistrer()
     
     def __len__(self):
-        """Retourne la taille du conteneur"""
+        """Retourne le nombre de canaux"""
         return len(self._canaux)
+    
+    def iter(self):
+        """Retourne le conteneur sous forme de dictionnaire"""
+        return dict(self._canaux)
+    
+    def get_statut(self, personnage):
+        """Retourne le statut de personnage dans les canaux du jeu"""
+        statut = "user"
+        for canal in self._canaux.values():
+            if canal.auteur is personnage:
+                statut = "admin"
+                break
+            if personnage in canal.moderateurs:
+                statut = "modo"
+                break
+        
+        return statut
+    
+    def canaux_connectes(self, personnage):
+        """Retourne un tuple contenant les canaux auxquels
+        le personnage est connecté.
+        
+        """
+        canaux = []
+        for canal in self._canaux.values():
+            if personnage in canal.connectes:
+                canaux.append(canal)
+        
+        return tuple(canaux)

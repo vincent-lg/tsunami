@@ -72,7 +72,10 @@ import os
 
 from bases.logs import man_logs
 
+CONSTRUIT, CHARGE = 0, 1
+
 class Parid:
+    
     """Cette classe est un gestionnaire des objets ID avant tout.
     Elle garde une trace de tous les objets dérivés de 'ObjetID' créés ou
     récupérés depuis des fichiers.
@@ -86,9 +89,11 @@ class Parid:
     groupes d'identification.
     
     """
+    
     def __init__(self):
         """Constructeur du gestionnaire"""
         self.groupes = {} # {nom_groupe:dico_objets}
+        self.statut = CONSTRUIT
     
     def __contains__(self, nom_groupe):
         """nom_groupe se trouve ou non dans self.groupes"""
@@ -124,6 +129,19 @@ class Parid:
                 pass
         
         return objet
+    
+    @property
+    def construit(self):
+        """Retourne True si le statut du parid est construit"""
+        return self.statut is CONSTRUIT
+    
+    def se_construit(self):
+        """Change son statut en construit"""
+        self.statut = CONSTRUIT
+    
+    def se_charge(self):
+        """Change son statut en charge"""
+        self.statut = CHARGE
 
 # Création de l'instance
 parid = Parid()

@@ -78,10 +78,13 @@ class Module(BaseModule):
                 masques.langue.Langue)
         self.importeur.interpreteur.ajouter_masque(
                 masques.nv_groupe.NvGroupe)
+        self.importeur.interpreteur.ajouter_masque(
+                masques.message_afk.MessageAfk)
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.afk.CmdAfk(),
             commandes.chgroupe.CmdChgroupe(),
             commandes.groupe.CmdGroupe(),
             commandes.module.CmdModule(),
@@ -104,4 +107,3 @@ class Module(BaseModule):
             i_c = joueur.instance_connexion
             if joueur.est_connecte() and (i_c is None or not i_c.est_connecte()):
                 joueur.pre_deconnecter()
-

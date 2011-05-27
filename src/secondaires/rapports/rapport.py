@@ -72,7 +72,7 @@ class Rapport(BaseObj):
     
     categorie = property(_get_categorie, _set_categorie)
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ("",)
     
     def enregistrer(self):

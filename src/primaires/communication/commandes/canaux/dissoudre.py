@@ -1,5 +1,3 @@
-# -*-coding:Utf-8 -*
-
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -28,51 +26,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Correspondants détaillée plus bas."""
+"""Fichier contenant le paramètre 'dissoudre' de la commande 'canaux'."""
 
-from abstraits.obase import BaseObj
+from primaires.interpreteur.masque.parametre import Parametre
 
-class Correspondants(BaseObj):
+class PrmDissoudre(Parametre):
     
-    """Classe définissant une paire de joueurs correspondants.
+    """Commande 'canaux dissoudre <canal>'.
     
     """
     
-    def __init__(self, emetteur, cible):
-        """Constructeur du canal"""
-        self._emetteur = emetteur.id.id
-        self._cible = cible.id.id
-        self.focus = 0
-        # On déduit l'id
-        corresp = type(self).importeur.communication.correspondants
-        p_corresp = []
-        for couple in corresp:
-            if emetteur == couple.emetteur:
-                p_corresp.append(couple)
-        self.id = len(p_corresp) + 1
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "dissoudre", "dissolve")
+        self.schema = "<canal>"
+        self.aide_courte = "dissout un canal"
+        self.aide_longue = \
+            "Cette sous-commande détruit un canal en déconnectant tous les " \
+            "joueurs."
     
-    def __str__(self):
-        return self.emetteur.nom + " pour " + self.cible.nom
-    
-    def _get_emetteur(self):
-        return type(self).importeur.parid["joueurs"][self._emetteur]
-    
-    emetteur = property(_get_emetteur)
-    
-    def _get_cible(self):
-        return type(self).importeur.parid["joueurs"][self._cible]
-    
-    cible = property(_get_cible)
-    
-    def ch_focus(self):
-        if self.focus:
-            self.focus = 0
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        if not dic_masques["canal"].canal_existe:
+            personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
         else:
-            # On parcourt tous les correspondants pour redéfinir leur focus
-            corresp = type(self).importeur.communication.correspondants
-            p_corresp = []
-            for couple in corresp:
-                if self.emetteur == couple.emetteur:
-                    if couple.focus:
-                        couple.ch_focus()
-            self.focus = 1
+            canal = dic_masques["canal"].canal
+            if personnage is not canal.auteur:
+                personnage << "|err|Vous n'avez pas accès à cette option.|ff|"
+            elif not personnage in canal.connectes:
+                personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
+            else:
+                if personnage in canal.immerges:
+                    canal.immerger_ou_sortir(personnage, False)
+                canal.rejoindre_ou_quitter(personnage, False)
+                personnage << "|err|Le canal {} a été dissous.|ff|".format(
+                        canal.nom)
+                canal.dissoudre()

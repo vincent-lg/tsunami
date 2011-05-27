@@ -28,13 +28,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'ajouter' de la commande 'groupe'."""
+"""Fichier contenant le paramètre 'encodage' de la commande 'options'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
 class PrmEncodage(Parametre):
     
-    """Commande 'groupe ajouter'.
+    """Commande 'options encodage'.
     
     """
     

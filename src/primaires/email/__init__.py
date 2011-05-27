@@ -40,6 +40,8 @@ from abstraits.id import ObjetID, est_objet_id
 from primaires.email.config import cfg_email
 from primaires.format.fonctions import supprimer_accents
 
+from .email import Email
+
 class Module(BaseModule):
     """Classe du module 'email'.
     Ce module permet, comme son nom l'indique, d'envoyer des e-mails aux
@@ -64,6 +66,8 @@ class Module(BaseModule):
                 "emails", "envoyes.log")
         self.serveur_mail = False # un serveur mail est configuré
         self.nom_hote = "" # aucun nom d'hôte configuré par défaut
+        
+        self.emails = []
         
         # Le nom d'hôte se configure dans le fichier de configuration. Mais on
         # peut lister plusieurs adresses dans le dictionnaire ci-dessous.
@@ -110,23 +114,22 @@ class Module(BaseModule):
                 if destinateur in self.aliases:
                     destinateur = self.aliases[destinateur]
                 
-                mail = MIMEText(corps.encode("Utf-8"), "plain", "Utf-8")
-                mail["From"] = "{0}@{1}".format(destinateur, self.nom_hote)
-                mail["Subject"] = supprimer_accents(sujet)
-                mail["To"] = destinataires
+                email = Email("{0}@{1}".format(destinateur, self.nom_hote), \
+                    destinataires, supprimer_accents(sujet), corps)
                 
-                # Si le destinataire est une chaîne, on la met en liste
-                if type(destinataires) is not list:
-                    destinataires = [destinataires]
+                self.emails.append(email)
                 
-                # On essaye de se connecter au serveur mail
-                try:
-                    smtp = smtplib.SMTP()
-                    smtp.connect()
-                    smtp.sendmail(destinateur, destinataires, \
-                            mail.as_string())
-                    smtp.close()
-                except SocketError as err:
+                email.envoyer()
+    
+    def boucle(self):
+        """Méthode appelée à chaque tour de boucle synchro.
+            Vérifie que les mails ont bien été envoyé."""
+        
+        for email in self.emails:
+            if not email.isAlive() and email.erreur:
                     self.logger.warning("Impossible d'envoyer le mail à {0} " \
-                            "(sujet : {1}) : {2}".format(destinataires, \
-                            sujet, err))
+                            "(sujet : {1}) : {2}".format(email.destinataires, \
+                            email.sujet, email.erreur))
+        
+        self.emails = [ email for email in self.emails if email.isAlive() ]
+        

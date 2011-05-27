@@ -153,7 +153,7 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         self.opts.prompt_clr = cfg_charte.couleur_prompt
         self.opts.prompt_prf = cfg_charte.prefixe_prompt
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         """Méthode retournant les valeurs par défaut du constructeur"""
         return (None, )
     

@@ -1,4 +1,5 @@
 # -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -34,12 +35,22 @@ import sys
 import time
 
 objets_base = {} # dictionnaire des différents BaseObj {nom_cls:cls}
+dict_base_obj = {}
 
 class MetaBaseObj(type):
     
-    """Métaclasse des contextes.
-    A chaque fois qu'on crée une classe héritée de Contexte avec un nom
-    valide, on l'ajoute dans le dictionnaire 'contextes'.
+    """Métaclasse des objets de base.
+    Cette métaclasse est là pour gérer les versions des différents objets
+    BaseObj :
+        Si un objet BaseObj change de structure, pour X raison (par exemple
+        un attribut change de nom ou de type), à la récupération l'objet sera
+        mis à jour grâce à une fonction définie dans le convertisseur
+        (voir BaseObj.update).
+        La fonction se trouvera dans un fichier identifiant le nom de la
+        classe. On s'assure grâce à cette métaclasse que deux classes
+        héritées de BaseObj n'ont pas un nom identique et on attribut
+        un numéro de version (0) par défaut aux objets issus de ces
+        classes hérités.
     
     """
     
@@ -54,6 +65,8 @@ class MetaBaseObj(type):
             cls._nom = contenu["_nom"]
             # Pas de doublons !
             if cls._nom in objets_base:
+                if objets_base[cls._nom] == cls:
+                    return
                 raise RuntimeError("La classe {0} héritée de BaseObj " \
                         "possède le même nom que la classe {1}".format( \
                         str(cls), str(objets_base[cls._nom])))
@@ -78,60 +91,111 @@ class BaseObj(metaclass=MetaBaseObj):
     
     Rappelons que :
     *   Les objets destinés à être DIRECTEMENT enregistrés dans des fichiers
-        doivent être hérités de 'ObjetID' (voir abstraits/id/__init__.py)
-        La classe ObjetID hérite elle-même de BaseObj.
+        doivent être hérités soit de :
+        -   ObjetID (voir abstraits/id/__init__.py)
+        -   Unique (voir abstraits/unique/__init__.py)
+        
+        Ces deux classes héritent de BaseObj et en reprennent donc les
+        mécanismes.
     *   Les objets destinés à être INDIRECTEMENT enregistrés dans des fichiers
         doivent être hérités de BaseObj.
         Ces objets sont ceux destinés à être enregistrés dans des fichiers
         sous la forme d'attributs d'autres objets par exemple.
     
-    La récupération d'objets hérités de 'BaseObj' se fait assez simplement :
-    *   on récupère la classe de l'objet (objet.__class__)
-    *   on appelle son constructeur en lui passant 'self'
-    *   on met à jour cet objet créé grâce au dictionnaire des attributs
-        sauvegardé
+    Si vous héritez la classe BaseObj, vous devrez redéfinir une
+    méthode __getnewargs__. Cette méthode est appelée
+    à la récupération de l'objet depuis un fichier et doit retourner un tuple
+    des informations à retourner pour construire l'objet.
+    L'intérêt est qu'ainsi, à chaque récupération de votre objet, il est
+    reconstruit. Si d'une session à l'autre vous redéfinissez de nouveaux
+    attributs, ils seront donc bien présents quand vous aurez récupéré votre
+    objet.
     
-    Cela signifie que vous pouvez ajouter, d'une session à l'autre, de
-    nouveaux attributs dans vos objets. A leur récupération, les objets seront
-    recréé et auront bien les valeurs par défaut des nouveaux attributs.
+    Chaque BaseObj possède :
+    -   un numéro d'identification > 0
+        Celui-ci est créé lors de la construction de BaseObj.
+        Vous n'avez pas à vous en soucier, simplement veiller que
+        le constructeur de votre objet hérité de BaseObj appelle bien
+        le constructeur de BaseObj:
+        >>> class HeriteDeBaseObj(BaseObj):
+        ...     def __init__(self, ...):
+        ...         BaseObj.__init__(self)
+        ..          ...
+    -   un timestamp mis à jour lors de l'enregistrement de l'objet.
+        Voir la méthode __getstate__ de BaseObj.
     
     """
     
     importeur = None
+    _id_base_actuel = 1
     
     def __init__(self):
         """Instancie un simple statut"""
         self._statut = INIT
         # On initialise le dictionnaire des versions de l'objet
         self._dict_version = {}
-        
+        self._ts = time.time() # le timestamp actuel
+        self._id_base = BaseObj._id_base_actuel
+        BaseObj._id_base_actuel += 1
+    
+    def __getnewargs__(self):
+        raise NotImplementedError
+    
     def version_actuelle(self, classe):
+        """Retourne la version actuelle de l'objet.
+        Cette version est celle enregistrée dans l'objet. Elle peut
+        donc être différence de la classe (c'est le cas au chargement d'un
+        objet à mettre à jour).
+        
+        """
         if classe._nom in self._dict_version:
             return self._dict_version[classe._nom]
         else:
             return 0
     
     def set_version(self, classe, version):
+        """Met le numéro de version dans le dictionnaire de version de l'objet.
+        
+        """
         self._dict_version[classe._nom] = version
     
     @property
     def construit(self):
-        return hasattr(self, "_statut") and self._statut is CONSTRUIT
+        return hasattr(self, "_statut") and self._statut == CONSTRUIT
     
     def __getstate__(self):
-        """Au moment de l'enregistrement, on met à jour le timestamp"""
+        """Méthode appelée au moment de sérialiser l'objet.
+        On met à jour le timestamp contenu dans self._ts.
+        Ainsi, au moment de la récupération de plusieurs BaseObj de même
+        _base_id, on saura quel a été le dernier enregistré.
+        
+        """
         self._ts = time.time()
         return self.__dict__
     
     def __setstate__(self, dico_attrs):
         """Méthode appelée lors de la désérialisation de l'objet"""
-        # On recherche la classe
+        # On récupère la classe
         classe = type(self)
-        # A passer au constructeur
-        args = classe.__getinitargs__(self)
-        classe.__init__(self, *args)
+        # On appel son constructeur
+        classe.__init__(self, *self.__getnewargs__())
+        # On met à jour les attributs
         self.__dict__.update(dico_attrs)
-        # L'objet est construit et mis à jour de façon plus ou moins bancale
+        # Si l'objet existe dans le dictionnaire des BaseObj
+        if self._id_base in dict_base_obj.keys():
+            # Si le temps d'enregistrement de self est supérieur à celui de
+            # l'objet dans le dictionnaire, on le remplace
+            if self._ts > dict_base_obj[self._id_base]._ts:
+                dict_base_obj[self._id_base] = self
+        else:
+            dict_base_obj[self._id_base] = self
+        
+        # On ajoute l'objet dans supenr, pour un futur nettoyage
+        type(self).importeur.supenr.objets_a_nettoyer.append(self)
+        
+        if self._id_base > BaseObj._id_base_actuel:
+            BaseObj._id_actuel = self._id_base + 1
+        
         # On vérifie maintenant s'il a besoin d'une vraie mis à jour
         self._update(classe)
     
@@ -143,8 +207,8 @@ class BaseObj(metaclass=MetaBaseObj):
         """
         # Mise à jour récursive par rapport aux classes-mères
         for base in classe.__bases__:
-            # Faut bien s'arrêter un jour...
-            if base != object:
+            # Inutile d'essayer de mettre à jour 'object'
+            if base is not object:
                 base._update(self, base)
         if classe._nom in objets_base:
             # On importe le convertisseur dédié à la classe en cours
@@ -163,9 +227,14 @@ class BaseObj(metaclass=MetaBaseObj):
                         "convertisseurs ne possède pas de classe " \
                         "Convertisseur".format(classe._nom))
                 exit()
+            
             # On vérifie la version de la classe et celle de l'objet
+            # Rappel :
+            #   self.version_actuelle() retourne la version enregistrée
+            #   classe._version retourne la version de la classe
             while self.version_actuelle(classe) < classe._version:
                 try:
+                    # On appelle la version de conversion
                     getattr(convertisseur, "depuis_version_" + \
                             str(self.version_actuelle(classe)))(self, classe)
                 except AttributeError as error:

@@ -94,7 +94,9 @@ class Suppression(Contexte):
                 self.pere.envoyer("|err|Le nom entré est incorrect|ff|")
                 self.migrer_contexte(self.nom)
             else:
+                joueur = self.pere.compte.joueurs[self.confirmation]
                 del self.pere.compte.joueurs[self.confirmation]
+                joueur.detruire()
                 self.pere.envoyer("|att|Personnage supprimé !|ff|")
                 self.migrer_contexte(self.opts.rci_ctx_prec)
                     

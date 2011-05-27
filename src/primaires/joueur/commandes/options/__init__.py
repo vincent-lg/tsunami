@@ -34,6 +34,7 @@ Dans ce fichier se trouve la commande même.
 """
 
 from primaires.interpreteur.commande.commande import Commande
+from .couleur import PrmCouleur
 from .encodage import PrmEncodage
 from .langue import PrmLangue
 from .voir import PrmVoir
@@ -57,10 +58,12 @@ class CmdOptions(Commande):
     
     def ajouter_parametres(self):
         """Ajout des paramètres"""
+        prm_couleur = PrmCouleur()
         prm_encodage = PrmEncodage()
         prm_langue = PrmLangue()
         prm_voir = PrmVoir()
         
+        self.ajouter_parametre(prm_couleur)
         self.ajouter_parametre(prm_encodage)
         self.ajouter_parametre(prm_langue)
         self.ajouter_parametre(prm_voir)

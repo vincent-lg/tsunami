@@ -57,7 +57,7 @@ class Groupe(BaseObj):
         self.parent = parent
         self.groupes_inclus = []
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         """Retourne les arguments à passer au constructeur"""
         return (None, "")
     

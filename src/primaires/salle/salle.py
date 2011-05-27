@@ -30,15 +30,19 @@
 
 """Fichier contenant la classe Salle, détaillée plus bas."""
 
+from collections import OrderedDict
+
 from abstraits.id import ObjetID
 from bases.collections.liste_id import ListeID
 from primaires.format.description import Description
 from .coordonnees import Coordonnees
 from .sorties import Sorties, NOMS_SORTIES
+from .details import Details
+from .objets_sol import ObjetsSol
 
 # Constantes
-ZONE_VALIDE = r"^[a-z0-9_]{3,15}$"
-MNEMONIC_VALIDE = r"^[a-z0-9_]{1,10}$"
+ZONE_VALIDE = r"^[a-z0-9_]{3,20}$"
+MNEMONIC_VALIDE = r"^[a-z0-9_]{1,15}$"
 
 class Salle(ObjetID):
     
@@ -69,6 +73,8 @@ class Salle(ObjetID):
     
     groupe = "salles"
     sous_rep = "salles"
+    _nom = "salle"
+    _version = 1
     
     def __init__(self, zone, mnemonic, x=0, y=0, z=0, valide=True):
         """Constructeur de la salle"""
@@ -79,9 +85,11 @@ class Salle(ObjetID):
         self.titre = ""
         self.description = Description(parent=self)
         self.sorties = Sorties(parent=self)
+        self.details = Details(parent=self)
         self._personnages = ListeID() # personnages présents
+        self.objets_sol = ObjetsSol(parent=self)
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ("", "")
     
     def __str__(self):
@@ -152,12 +160,29 @@ class Salle(ObjetID):
             if personnage not in exceptions:
                 personnage.envoyer(message)
     
+    def get_objets_nombres(self):
+        """Retourne un tuple contenant des couples prototype, nombre"""
+        prototypes = OrderedDict()   # {prototype: nombre}
+        # On parcourt les objets de la salle
+        for objet in self.objets_sol:
+            prototype = objet.prototype
+            if prototype not in prototypes:
+                prototypes[prototype] = 1
+            else:
+                prototypes[prototype] += 1
+        
+        return tuple(prototypes.items())
+    
     def regarder(self, personnage):
         """Le personnage regarde la salle"""
         res = ""
         res += "# |rgc|" + self.zone + "|ff|:|vrc|" + self.mnemonic + "|ff|\n\n"
         res += "|tit|" + self.titre + "|ff|\n\n"
-        res += str(self.description) + "\n\n"
+        description = str(self.description)
+        if not description:
+            description = "Vous êtes au milieu de nulle part."
+        
+        res += description + "\n\n"
         res += "Sorties : "
         res += self.afficher_sorties(personnage)
         
@@ -172,6 +197,13 @@ class Salle(ObjetID):
             for personne in personnages:
                 res += "\n- {} est là".format(personne.nom)
         
+        # Objets
+        noms_objets = self.afficher_noms_objets()
+        if len(noms_objets):
+            res += "\n"
+            for nom_objet in noms_objets:
+                res += "\n+ {}".format(nom_objet)
+        
         return res
     
     def afficher_sorties(self, personnage):
@@ -184,12 +216,29 @@ class Salle(ObjetID):
             
             nom_aff = self.sorties.get_nom_abrege(nom)
             if self.sorties.sortie_existe(nom):
-                res += "|vr|" + nom_aff + "|ff|"
+                if sortie.cache:
+                    res += " ".ljust(len(self.sorties.get_nom_abrege(
+                            sortie.direction)))
+                else:
+                    res += "|vr|" + nom_aff + "|ff|"
             else:
                 res += " ".ljust(len(nom_aff))
             res += ", "
+        
         res = res[:-2] + "."
         return res
+    
+    def afficher_noms_objets(self):
+        """Retourne les noms et états des objets sur le sol de la salle"""
+        # On récupère les couples prototype, nombre
+        prototypes = self.get_objets_nombres()
+        
+        # On parcourt à présent les prototypes pour récupérer leur nom et état
+        noms_etats = []
+        for prototype, nombre in prototypes:
+            noms_etats.append(prototype.get_nom_etat(nombre))
+        
+        return noms_etats
 
 # On ajoute le groupe à ObjetID
 ObjetID.ajouter_groupe(Salle)

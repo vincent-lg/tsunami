@@ -32,6 +32,7 @@
 
 from primaires.interpreteur.masque.parametre import Parametre
 from reseau.connexions.client_connecte import ENCODAGES
+from primaires.format.fonctions import oui_ou_non
 
 class PrmVoir(Parametre):
     
@@ -54,6 +55,8 @@ class PrmVoir(Parametre):
         langue = personnage.langue_cmd
         encodage = personnage.compte.encodage
         res = "Options actuelles :\n\n"
+        res += "  Couleurs : {}\n".format(oui_ou_non(
+                personnage.compte.couleur))
         res += "  Votre encodage : |ent|" + encodage + "|ff|.\n"
         res += "  Encodages disponibles : |ent|" + "|ff|, |ent|". \
             join(ENCODAGES) + "|ff|.\n\n"

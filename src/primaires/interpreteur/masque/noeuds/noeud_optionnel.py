@@ -89,7 +89,6 @@ class NoeudOptionnel(BaseNoeud):
     
     def afficher(self, personnage):
         """Retourne un affichage du masque pour les joueurs"""
-        print(self.interne, type(self.interne), self.interne.afficher(personnage))
         msg = "(" + self.interne.afficher(personnage) + ")"
         if self.suivant:
             msg += " " + self.suivant.afficher(personnage)

@@ -30,10 +30,12 @@
 
 """Package contenant les commandes du module joueur."""
 
-import primaires.joueur.commandes.chgroupe
-import primaires.joueur.commandes.groupe
-import primaires.joueur.commandes.module
-import primaires.joueur.commandes.options
-import primaires.joueur.commandes.quitter
-import primaires.joueur.commandes.shutdown
-import primaires.joueur.commandes.where
+from . import afk
+from . import chgroupe
+from . import groupe
+from . import module
+from . import options
+from . import quitter
+from . import shutdown
+from . import where
+

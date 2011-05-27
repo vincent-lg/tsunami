@@ -30,6 +30,7 @@
 
 """Package des masques du module joueur."""
 
-import primaires.salle.masques.direction
-import primaires.salle.masques.ident
-import primaires.salle.masques.nv_ident
+from . import direction
+from . import ident
+from . import nv_ident
+from . import observable

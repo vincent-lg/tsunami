@@ -45,6 +45,7 @@ from .edt_coords import EdtCoords
 from .edt_zone import EdtZone
 from .edt_mnemonic import EdtMnemonic
 from .edt_sorties import EdtSorties
+from .edt_details import EdtDetails
 
 class EdtRedit(Presentation):
     
@@ -65,7 +66,7 @@ class EdtRedit(Presentation):
         if personnage and salle:
             self.construire(salle)
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return (None, None)
     
     def construire(self, salle):
@@ -91,7 +92,7 @@ class EdtRedit(Presentation):
             "salles) ;\n" \
             "- |cmd|<x>.<y>.<z>|ff| : les trois coordonnées, négatives ou " \
             "positives, séparées\n" \
-            "                par des points (par exemple, -1.2.0).\n" \
+            "                par des points (par exemple, -1.2.0) ;\n" \
             "- |cmd|/h|ff| : déplace la salle vers le haut. De même, " \
             "|cmd|/s|ff|, |cmd|/so|ff|, |cmd|/o|ff|, |cmd|/no|ff|, " \
             "|cmd|/n|ff|, |cmd|/ne|ff|, |cmd|\n|ff|" \
@@ -139,6 +140,25 @@ class EdtRedit(Presentation):
             "Entrez le |ent|titre|ff| de la salle ou |cmd|/|ff| pour revenir " \
             "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
         
+        # Détails
+        details = self.ajouter_choix("details", "e", EdtDetails, salle,
+                "details")
+        details.parent = self
+        details.aide_courte = \
+            "Entrez le nom d'un |cmd|détail existant|ff| pour l'éditer ou " \
+            "un |cmd|nouveau détail|ff|\n" \
+            "pour le créer ; |ent|/|ff| pour revenir à la fenêtre parente.\n" \
+            "Options :\n" \
+            " - |ent|/s <détail existant> / <synonyme 1> (/ <synonyme 2> / " \
+            "...)|ff| : permet\n" \
+            "   de modifier les synonymes du détail passée en paramètre. " \
+            "Pour chaque\n" \
+            "   synonyme donné à l'option, s'il existe, il sera supprimé ; " \
+            "sinon, il sera\n" \
+            "   ajouté à la liste.\n" \
+            " - |ent|/d <détail existant>|ff| : supprime le détail " \
+            "indiqué\n\n"
+        
         # Description
         description = self.ajouter_choix("description", "d", Description, \
                 salle)
@@ -154,4 +174,23 @@ class EdtRedit(Presentation):
         sorties.parent = self
         sorties.aide_courte = \
             "Entrez le |ent|nom d'une sortie|ff| pour l'éditer ou " \
-            "|cmd|/|ff| pour revenir à la fenêtre parente."
+            "|cmd|/|ff| pour revenir à\n" \
+            "la fenêtre parente.\n" \
+            "Options :\n" \
+            " - |ent|/r <sortie> / <nouveau nom> (/ <préfixe>)|ff| : " \
+            "renomme une sortie. Si le\n" \
+            "   préfixe n'est pas précisé, il sera " \
+            "défini comme 'le'. Par exemple,\n" \
+            "   |ent|/r ouest / porte / la|ff| renomme la sortie " \
+            "|ent|ouest|ff| en |ent|la porte|ff|.\n" \
+            " - |ent|/s <sortie> / <identifiant d'une salle>|ff| : permet de " \
+            "configurer une sortie.\n" \
+            "   En précisant l'identifiant (|cmd|zone:mnemo|ff|) d'une " \
+            "salle, la sortie spécifiée\n" \
+            "   mènera vers la salle correspondant à cet identifiant. Par " \
+            "exemple,\n" \
+            "   |ent|/s nord / picte:2|ff|, si vous êtes dans la salle " \
+            "picte:1, créera une sortie\n" \
+            "   nord vers picte:2 et dans picte:2, une sortie sud vers " \
+            "picte:1.\n" \
+            " - |ent|/d <sortie>|ff| : supprime la sortie indiquée\n\n"

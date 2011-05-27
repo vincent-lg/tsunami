@@ -31,4 +31,5 @@
 """Package des masques du module communication."""
 
 import primaires.communication.masques.message
-import primaires.communication.masques.correspondant
+import primaires.communication.masques.id_conversation
+import primaires.communication.masques.canal

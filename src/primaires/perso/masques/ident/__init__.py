@@ -28,64 +28,45 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le masque <id_corresp>."""
+"""Fichier contenant le masque <ident>."""
+
+import re
 
 from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
 
-class Correspondant(Masque):
+RE_IDENT_VALIDE = r"^[a-z0-9_]{3,15}$"
+
+class Ident(Masque):
     
-    """Masque <id_corresp>.
-    On attend le numéro d'un correspondant (voir commande reply) en paramètre.
+    """Masque <ident>.
+    On attend un identifiant en paramètre (voir RE_IDENT_VALIDE).
     
     """
     
-    nom = "id_corresp"
+    nom = "ident"
     
     def __init__(self):
         """Constructeur du masque"""
         Masque.__init__(self)
-        self.nom_complet = "id d'un correspondant"
-        self.cible = None
+        self.nom_complet = "clé identifiante"
+        self.ident = ""
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
-        lstrip(commande)
-        id_corresp = liste_vers_chaine(commande).lstrip()
-        corresp = type(self).importeur.communication.correspondants
-        p_corresp = []
-        cible = None
-        for couple in corresp:
-            if personnage == couple.emetteur:
-                p_corresp.append(couple)
+        ident = liste_vers_chaine(commande).lstrip()
         
-        if not id_corresp:
+        if not ident:
             raise ErreurValidation( \
-                "Vous devez préciser le numéro d'un correspondant.")
+                "Précisez une clé identifiante.")
         
-        id_corresp = id_corresp.split(" ")[0]
-        taille = len(id_corresp)
-        try:
-            id_corresp = int(id_corresp)
-        except ValueError:
-            self.id_corresp = None
-            self.correspondant = None
-            return True
-        else:
-            commande[:] = commande[taille:]
+        ident = ident.lower()
+        if not re.search(RE_IDENT_VALIDE, ident):
+            raise ErreurValidation(
+                "|err|Cette clé identifiante est invalide.|ff|")
         
-        if id_corresp < 1 or id_corresp > len(p_corresp):
-            raise ErreurValidation( \
-                "|err|Le numéro spécifié ne correspond à aucun personnage.|ff|")
+        self.ident = ident
         
-        try:
-            cible = p_corresp[id_corresp - 1].cible
-        except IndexError:
-            raise ErreurValidation( \
-                "|err|Le numéro spécifié ne correspond à aucun personnage.|ff|")
-        else:
-            self.id_corresp = id_corresp
-            self.correspondant = cible
-            return True
+        return True

@@ -32,6 +32,8 @@
 
 """
 
+import threading
+
 from primaires.interpreteur.commande.commande import Commande
 from primaires.format.date import *
 
@@ -54,6 +56,7 @@ class CmdStat(Commande):
         """Méthode d'interprétation de commande"""
         # On récupère les statistiques
         stats = type(self).importeur.stat.stats
+        imp = type(self).importeur
         
         ## Générales
         msg = "Informations générales :"
@@ -90,5 +93,17 @@ class CmdStat(Commande):
         msg += "\n    Temps moyen : {:.3f}".format(stats.moy_wd)
         # WD maximum
         msg += "\n    Temps maximum : {:.3f}".format(stats.max_wd)
+        
+        ## Mémoire
+        msg += "\nEn mémoire :"
+        msg += "\n    {} joueurs issus de {} comptes".format(len(imp.connex.joueurs),
+                len(imp.connex.comptes))
+        msg += "\n    {} salles".format(len(imp.salle))
+        msg += "\n    {} objets issus de {} prototypes".format(len(imp.objet.objets),
+                len(imp.objet.prototypes))
+        
+        ## Threads
+        msg += "\nThread lancé :"
+        msg += "\n    {} thread(s) actif".format(threading.activeCount())
         
         personnage << msg

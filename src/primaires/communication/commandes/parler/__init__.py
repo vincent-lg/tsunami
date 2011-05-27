@@ -33,7 +33,6 @@
 """
 
 from primaires.interpreteur.commande.commande import Commande
-from primaires.communication.correspondants import Correspondants
 
 class CmdParler(Commande):
     
@@ -57,14 +56,17 @@ class CmdParler(Commande):
         """Interprétation de la commande"""
         cible = dic_masques["nom_joueur"].joueur
         message = dic_masques["message"].message
-        if cible == personnage:
+        if cible is personnage:
             personnage << "Vous parlez tout seul... Hum."
+        elif cible not in type(self).importeur.connex.joueurs_connectes:
+            personnage << "|err|Le joueur passé en paramètre n'a pu être " \
+                    "trouvé.|ff|"
         else:
             clr = type(self).importeur.anaconf. \
                     get_config("config_com").couleur_tell
-            personnage << clr + "Vous dites à {} : {}|ff|" \
-                    .format(cible.nom, message)
-            cible << clr + "{} vous dit : {}|ff|" \
-                    .format(personnage.nom, message)
-            couple = Correspondants(cible, personnage)
-            type(self).importeur.communication.correspondants.append(couple)
+            personnage << clr + "Vous dites à {} : {}|ff|".format(cible.nom,
+                    message)
+            cible << clr + "{} vous dit : {}|ff|".format(personnage.nom,
+                    message)
+            type(self).importeur.communication.conversations. \
+                    ajouter_ou_remplacer(cible, personnage, message)

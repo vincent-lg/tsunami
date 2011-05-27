@@ -98,7 +98,7 @@ class Sorties(BaseObj):
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
     
-    def __getinitargs__(self):
+    def __getnewargs__(self):
         return ()
     
     def __getitem__(self, nom):
