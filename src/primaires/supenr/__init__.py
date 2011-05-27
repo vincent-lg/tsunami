@@ -124,7 +124,7 @@ class Module(BaseModule):
             # On parcourt les attributs de l'objet
             for nom_attr, val_attr in tuple(objet.__dict__.items()):
                 if isinstance(val_attr, BaseObj):
-                    setattr(objet, nom_attr, dict_base_obj[objet._id_base])
+                    setattr(objet, nom_attr, dict_base_obj[val_attr._id_base])
     
     def detruire(self):
         """Destruction du module"""

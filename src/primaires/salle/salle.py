@@ -92,11 +92,6 @@ class Salle(ObjetID):
     def __getnewargs__(self):
         return ("", "")
     
-    def __getattribute__(self, nom_attr):
-        obj = ObjetID.__getattribute__(self, nom_attr)
-        return obj
-    def __setattr__(self, nom_attr, val_attr):
-        ObjetID.__setattr__(self, nom_attr, val_attr)
     def __str__(self):
         """Retourne l'identifiant 'zone:mnemonic'"""
         return self._zone + ":" + self._mnemonic

@@ -43,6 +43,7 @@ class Canal(BaseObj):
     
     def __init__(self, nom, auteur):
         """Constructeur du canal"""
+        BaseObj.__init__(self)
         self.nom = nom
         self.auteur = auteur
         self.clr = "|cyc|"

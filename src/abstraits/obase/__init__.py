@@ -1,4 +1,5 @@
 # -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -184,7 +185,7 @@ class BaseObj(metaclass=MetaBaseObj):
         if self._id_base in dict_base_obj.keys():
             # Si le temps d'enregistrement de self est supérieur à celui de
             # l'objet dans le dictionnaire, on le remplace
-            if self._ts > dict_base_obj[self._id_base]:
+            if self._ts > dict_base_obj[self._id_base]._ts:
                 dict_base_obj[self._id_base] = self
         else:
             dict_base_obj[self._id_base] = self
