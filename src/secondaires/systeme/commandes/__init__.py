@@ -28,14 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Ce paquet contient les commandes du module systeme."""
 
-from . import afk
-from . import chgroupe
-from . import groupe
-from . import module
-from . import options
-from . import quitter
-from . import shutdown
-from . import where
-
+from . import systeme

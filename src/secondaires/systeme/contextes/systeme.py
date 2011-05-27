@@ -43,7 +43,7 @@ class Systeme(Contexte):
     
     """
     
-    nom = "systeme"
+    nom = "systeme:python_console"
     
     def __init__(self, pere):
         """Constructeur du contexte"""
@@ -63,10 +63,14 @@ class Systeme(Contexte):
     
     def accueil(self):
         """Message d'accueil du contexte"""
-        res = "|tit|Console Python|ff|\n\n"
-        res += "Vous pouvez entrer ici du code Python et voir le résultat "
-        res += "des instructions que vous entrez.\n"
-        res += "Tapez |cmd|/q|ff| pour quitter."
+        res = "|tit|Console Python|ff|\n\n" \
+            "Vous pouvez entrer ici du code Python et voir le résultat " \
+            "des instructions\nque vous entrez.\n" \
+            "Vous pouvez utilisez la variable |cmd|importeur|ff| " \
+            "qui contient, comme\nson nom l'indique, l'importeur et par " \
+            "extension, une bonne partie de Kassie.\n" \
+            "|att|Tapez |ff||cmd|/q|ff||att| pour quitter.|ff|\n\n" \
+            "|tit|Python {}|ff|\n\n".format(sys.version)
         
         return res
     

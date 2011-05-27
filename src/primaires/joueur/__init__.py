@@ -91,7 +91,6 @@ class Module(BaseModule):
             commandes.options.CmdOptions(),
             commandes.quitter.CmdQuitter(),
             commandes.shutdown.CmdShutdown(),
-            commandes.systeme.CmdSysteme(),
             commandes.where.CmdWhere(),
         ]
         

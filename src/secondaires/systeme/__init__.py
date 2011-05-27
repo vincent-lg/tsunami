@@ -28,14 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Fichier contenant le module secondaire systeme."""
 
-from . import afk
-from . import chgroupe
-from . import groupe
-from . import module
-from . import options
-from . import quitter
-from . import shutdown
-from . import where
+from abstraits.module import *
+from . import commandes
 
+class Module(BaseModule):
+    
+    """Module proposant des commandes système, entrer du code, surveiller
+    les logs...
+    
+    """
+    
+    def __init__(self, importeur):
+        """Constructeur du module"""
+        BaseModule.__init__(self, importeur, "systeme", "secondaire")
+    
+    def ajouter_commandes(self):
+        """On ajoute les commandes du module"""
+        self.commandes = [
+            commandes.systeme.CmdSysteme(),
+        ]
+        
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)
