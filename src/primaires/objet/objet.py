@@ -77,6 +77,10 @@ class Objet(ObjetID):
                     prototype.no)
             prototype.no += 1
             prototype.objets.append(self)
+            
+            # On copie les attributs spéciaux du prototype
+            for nom, val in prototype._attributs.items():
+                setattr(self, nom, val)
     
     def __getnewargs__(self):
         return (None, )

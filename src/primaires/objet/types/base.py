@@ -53,6 +53,7 @@ class BaseType(ObjetID, metaclass=MetaType):
         """Constructeur d'un type"""
         ObjetID.__init__(self)
         self.cle = cle
+        self._attributs = {}
         self.no = 0 # nombre d'objets créés sur ce prototype
         self.nom_singulier = "un objet indéfini"
         self.etat_singulier = "est posé là"

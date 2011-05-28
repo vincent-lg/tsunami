@@ -44,6 +44,9 @@ class Indefini(BaseType):
     def __init__(self, cle=""):
         """Constructeur du type indéfini"""
         BaseType.__init__(self, cle)
+        self._attributs = {
+            "variable": 0,
+        }
         self.test = "un test"
         self.etendre_editeur("t", "test", Uniligne, self, "test")
     
