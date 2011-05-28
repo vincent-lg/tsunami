@@ -30,6 +30,7 @@
 
 """Fichier contenant le type Indefini."""
 
+from primaires.interpreteur.editeur.uniligne import Uniligne
 from .base import BaseType
 
 class Indefini(BaseType):
@@ -39,3 +40,24 @@ class Indefini(BaseType):
     """
     
     nom_type = "indéfini"
+    
+    def __init__(self, cle=""):
+        """Constructeur du type indéfini"""
+        BaseType.__init__(self, cle)
+        self.test = "un test"
+        self.etendre_editeur("t", "test", Uniligne, self, "test")
+    
+    def travailler_enveloppes(self, enveloppes):
+        """Travail sur les enveloppes.
+        On récupère un dictionnaire représentant la présentation avec en
+        clé les raccourcis et en valeur les enveloppes.
+        
+        Cela peut permettre de travailler sur les enveloppes ajoutées par
+        'etendre_editeur'.
+        
+        """
+        env = enveloppes["t"] # on récupère 'test'
+        env.prompt = "Entrez une chaîne : "
+        env.apercu = "{objet.test}"
+        env.aide_courte = \
+            "Entrez |tit|une chaîne|ff| ou |cmd|/|ff| pour revenir."

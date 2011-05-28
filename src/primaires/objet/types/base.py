@@ -60,12 +60,41 @@ class BaseType(ObjetID, metaclass=MetaType):
         self.etat_pluriel = "sont posés là"
         self.description = Description(parent=self)
         self.objets = ListeID()
+        
+        # Editeur
+        self._extensions_editeur = []
     
     def __getnewargs__(self):
         return ()
     
     def __str__(self):
         return self.cle
+    
+    def etendre_editeur(self, raccourci, ligne, editeur, objet, attribut):
+        """Permet d'étendre l'éditeur d'objet en fonction du type.
+        -   raccourci   le raccourci permettant d'accéder à la ligne
+        -   ligne       la ligne de l'éditeur (exemple 'Description')
+        -   editeur     le contexte-éditeur (exemple Uniligne)
+        -   objet       l'objet à éditer
+        -   attribut    l'attribut à éditer    
+        
+        Cette méthode est appelée lors de la création de l'éditeur de
+        prototype.
+        
+        """
+        self._extensions_editeur.append(
+            (raccourci, ligne, editeur, objet, attribut))
+    
+    def travailler_enveloppes(self, enveloppes):
+        """Travail sur les enveloppes.
+        On récupère un dictionnaire représentant la présentation avec en
+        clé les raccourcis et en valeur les enveloppes.
+        
+        Cela peut permettre de travailler sur les enveloppes ajoutées par
+        'etendre_editeur'.
+        
+        """
+        pass
     
     def get_nom(self, nombre):
         """Retourne le nom complet en fonction du nombre.
