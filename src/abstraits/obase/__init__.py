@@ -193,7 +193,7 @@ class BaseObj(metaclass=MetaBaseObj):
         # On ajoute l'objet dans supenr, pour un futur nettoyage
         type(self).importeur.supenr.objets_a_nettoyer.append(self)
         
-        if self._id_base > BaseObj._id_base_actuel:
+        if self._id_base >= BaseObj._id_base_actuel:
             BaseObj._id_actuel = self._id_base + 1
         
         # On vérifie maintenant s'il a besoin d'une vraie mis à jour
