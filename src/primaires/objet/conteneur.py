@@ -45,7 +45,7 @@ class ConteneurObjet(BaseObj):
     def __init__(self, parent=None):
         """Constructeur du conteneur"""
         BaseObj.__init__(self)
-        self._objets = ListeID()
+        self._objets = ListeID(parent)
         self.parent = parent
     
     def __getnewargs__(self):

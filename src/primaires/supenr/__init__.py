@@ -30,6 +30,7 @@
 
 """Ce fichier contient le module primaire supenr."""
 
+import sys
 import os
 import pickle
 
@@ -37,6 +38,7 @@ from abstraits.module import *
 from abstraits.id import ObjetID, est_objet_id
 from abstraits.unique import Unique, est_unique
 from abstraits.obase import *
+from bases.collections.liste_id import ListeID
 
 # Dossier d'enregistrement des fichiers-données
 # Vous pouvez changer cette variable, ou bien spécifier l'option en
@@ -121,10 +123,16 @@ class Module(BaseModule):
         
         """
         for objet in self.objets_a_nettoyer:
+            if objet._id_base < 0:
+                BaseObj.__init__(objet)
+                dict_base_obj[objet._id_base] = objet
+            
             # On parcourt les attributs de l'objet
             for nom_attr, val_attr in tuple(objet.__dict__.items()):
                 if isinstance(val_attr, BaseObj):
                     setattr(objet, nom_attr, dict_base_obj[val_attr._id_base])
+                if isinstance(val_attr, ListeID):
+                    val_attr.supprimer_none()
     
     def detruire(self):
         """Destruction du module"""

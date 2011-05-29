@@ -71,7 +71,13 @@ class ListeID(BaseObj):
     
     def __setstate__(self, liste):
         """On place la liste dans self.__liste"""
-        id_base, parent, liste = liste
+        # Après la migration de la bêta, on pourra supprimer cette condition
+        if isinstance(liste, tuple):
+            id_base, parent, liste = liste
+        else:
+            id_base = -1
+            parent = None
+        
         BaseObj.__setstate__(self, {
             '_id_base': id_base,
             'parent': parent,
