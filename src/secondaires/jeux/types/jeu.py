@@ -30,10 +30,11 @@
 
 """Fichier contenant le type Indefini."""
 
+from bases.collections.liste_id import ListeID
+from bases.objet.attribut import Attribut
+
 from primaires.interpreteur.editeur.choix import Choix
 from primaires.objet.types.base import BaseType
-
-from bases.objet.attribut import Attribut
 
 class ObjetJeu(BaseType):
     
@@ -48,9 +49,9 @@ class ObjetJeu(BaseType):
         BaseType.__init__(self, cle)
         
         self._attributs = {
-            "joueurs": Attribut([]),
-            "jeu": Attribut(None),
-            "partie": Attribut(None)
+            "joueurs": Attribut(ListeID, internes=("", )),
+            "jeu": Attribut(),
+            "partie": Attribut(),
         }
         
         self._jeu = "null"

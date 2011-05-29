@@ -30,13 +30,20 @@
 
 """Ce fichier contient la classe ListeID, détaillée plus bas."""
 
-class ListeID:
+from abstraits.obase import *
+
+class ListeID(BaseObj):
     
     """Une version de liste destinée à contenir des objets IDs."""
     
-    def __init__(self):
+    def __init__(self, parent=None):
         """Constructeur"""
+        BaseObj.__init__(self)
         self.__liste = []
+        self.parent = parent
+    
+    def __getnewargs__(self):
+        return ()
     
     def __getitem__(self, item):
         """Retourne l'objet correspondant à l'ID."""
@@ -45,9 +52,13 @@ class ListeID:
     def __setitem__(self, item, objet):
         """Ecrit l'ID de l'objet au lieu de l'objet lui-même"""
         self.__liste[item] = objet.id
+        if self.parent:
+            self.parent.enregistrer()
         
     def __delitem__(self, item):
         del self.__liste[item]
+        if self.parent:
+            self.parent.enregistrer()
     
     def __contains__(self, objet):
         """Retourne True si objet.id est dans la liste"""
@@ -56,10 +67,15 @@ class ListeID:
     
     def __getstate__(self):
         """On enregistre juste les IDs dans le fichier"""
-        return list(self.__liste)
+        return (self._id_base, self.parent, list(self.__liste))
     
     def __setstate__(self, liste):
         """On place la liste dans self.__liste"""
+        id_base, parent, liste = liste
+        BaseObj.__setstate__(self, {
+            '_id_base': id_base,
+            'parent': parent,
+        })
         self.__liste = liste
     
     def __iter__(self):
@@ -78,16 +94,22 @@ class ListeID:
     def append(self, objet):
         """Ajoute objet à la fin de la liste"""
         self.__liste.append(objet.id)
+        if self.parent:
+            self.parent.enregistrer()
     
     def insert(self, indice, objet):
         """Ajoute objet.id à la position demandée"""
         self.__liste.inser(indice, objet.id)
+        if self.parent:
+            self.parent.enregistrer()
     
     def remove(self, objet):
         """Retire l'objet passé en paramètre"""
         for elt_id in list(self.__liste):
             if str(elt_id) == str(objet.id):
                 self.__liste.remove(elt_id)
+        if self.parent:
+            self.parent.enregistrer()
     
     # Méthodes extérieures aux listes
     def supprimer_doublons(self):

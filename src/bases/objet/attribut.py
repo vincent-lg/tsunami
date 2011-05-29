@@ -42,7 +42,7 @@ class Attribut:
     
     """
     
-    def __init__(self, constructeur, internes=(), l_externes=(),
+    def __init__(self, constructeur=None, internes=(), l_externes=(),
             d_externes={}):
         """Constructeur d'un attribut"""
         self.constructeur = constructeur
@@ -67,4 +67,10 @@ class Attribut:
         
         l_attributs.extend(self.l_externes)
         
-        return self.constructeur(*l_attributs, **self.d_externes)
+        if self.constructeur:
+            print(self.constructeur, l_attributs)
+            objet = self.constructeur(*l_attributs, **self.d_externes)
+        else:
+            objet = None
+        
+        return objet

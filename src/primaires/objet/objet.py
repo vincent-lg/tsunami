@@ -84,7 +84,7 @@ class Objet(ObjetID):
             # C'est un dictionnaire contenant en clé le nom de l'attribut
             # et en valeur le constructeur de l'objet
             for nom, val in prototype._attributs.items():
-                setattr(self, nom, val.construire())
+                setattr(self, nom, val.construire(self))
     
     def __getnewargs__(self):
         return (None, )
