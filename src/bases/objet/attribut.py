@@ -28,14 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le type Indefini."""
+"""Fichier contenant la classe Attribut, définie plus bas."""
 
-from .base import BaseType
-
-class Indefini(BaseType):
+class Attribut:
     
-    """Type d'objet: indéfini.
+    """Définition d'une classe attribut.
+    Elle prend en paramètre :
+    -   un constructeur
+    -   une liste de taille inconnue de paramètres à passer au
+        constructeur de l'attribut
+    
+    Elle possède une méthode 'construire' qui retourne l'attribut construit.
     
     """
     
-    nom_type = "indéfini"
+    def __init__(self, constructeur, internes, l_externes, d_externes):
+        """Constructeur d'un attribut"""
+        self.constructeur = constructeur
+        self.internes = inernes
+        self.l_externes = l_externes
+        self.d_externes = d_externes
+    
+    def construire(self, objet=None):
+        """On construit et retourne l'attribut.
+        Les paramètres internes sont rattachés à 'objet' passé en paramètre.
+        Par exemple, si dans 'internes' se trouve le paramètre
+        'description', on récupérera l'attribut 'description' de
+        l'objet passé en paramètre.
+        
+        """
+        l_attributs = []
+        for attr in self.internes:
+            if attr:
+                l_attributs.append(getattr(objet, attr))
+            else:
+                l_attributs.append(objet)
+        
+        l_attributs.extend(self.l_externes)
+        
+        return self.constructeur(*l_attributs, **self.d_externes)

@@ -28,14 +28,46 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le type Indefini."""
+"""Fichier contenant le type Nourriture."""
 
+from primaires.interpreteur.editeur.uniligne import Uniligne
+from bases.objet.attribut import Attribut
 from .base import BaseType
 
-class Indefini(BaseType):
+class Nourriture(BaseType):
     
-    """Type d'objet: indéfini.
+    """Type d'objet: nourriture.
     
     """
     
-    nom_type = "indéfini"
+    nom_type = "nourriture"
+    
+    def __init__(self, cle=""):
+        """Constructeur de l'objet"""
+        BaseType.__init__(self, cle)
+        self.qualite = 1
+        self.nourrissant = 1
+        self.etendre_editeur("u", "qualité", Uniligne, self, "qualite")
+        self.etendre_editeur("o", "nourrissant", Uniligne, self, "nourrissant")
+    
+    def travailler_enveloppes(self, enveloppes):
+        """Travail sur les enveloppes"""
+        qualite = enveloppes["u"]
+        qualite.apercu = "{objet.qualite}"
+        qualite.prompt = "Qualité de la nourriture : "
+        qualite.aide_courte = \
+            "Entrez la |ent|qualité|ff| de la nourriture, entre |cmd|1|ff| " \
+            "et |cmd|10|ff|\nou |cmd|/|ff| pour revenir à la fenêtre " \
+            "parente.\n\n" \
+            "Qualité actuelle : {objet.qualite}"
+        qualite.type = int
+        
+        nourrissant = enveloppes["o"]
+        nourrissant.apercu = "{objet.nourrissant}"
+        nourrissant.prompt = "Valeur nourrissante : "
+        nourrissant.aide_courte = \
+            "Entrez la |tit|valeur nourrissante|ff| de la nourriture, entre " \
+            "|cmdt1|ff| et |cmd|10|ff|\nou |cmd|/|ff| pour revenir à la " \
+            "fenêtre parente.\n\n" \
+            "Valeur nourrissante actuelle : {objet.nourrissant}"
+        nourrissant.type = int

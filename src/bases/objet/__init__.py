@@ -28,14 +28,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le type Indefini."""
+"""Fichier contenant le package objet, définissant des classes
+utiles à la manipulation ou construction d'objet de façon générique.
 
-from .base import BaseType
+"""
 
-class Indefini(BaseType):
-    
-    """Type d'objet: indéfini.
-    
-    """
-    
-    nom_type = "indéfini"
+from . import attribut

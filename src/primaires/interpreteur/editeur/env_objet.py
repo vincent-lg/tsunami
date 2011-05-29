@@ -61,6 +61,7 @@ class EnveloppeObjet(BaseObj):
         self.aide_longue = ""
         self.action = ""
         self.confirme = ""
+        self.type = None
     
     def __getnewargs__(self):
         return (None, None, None)
@@ -77,6 +78,8 @@ class EnveloppeObjet(BaseObj):
             editeur.action = self.action
         if self.confirme:
             editeur.confirme = self.confirme
+        if self.type:
+            editeur.type = self.type
         
         return editeur
     

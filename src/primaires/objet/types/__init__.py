@@ -52,3 +52,4 @@ class MetaType(MetaBaseObj):
             types[cls.nom_type] = cls
 
 from .indefini import *
+from .nourriture import Nourriture
