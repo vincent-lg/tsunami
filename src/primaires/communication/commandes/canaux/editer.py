@@ -26,24 +26,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'ejecter' de la commande 'canaux'."""
+"""Fichier contenant le paramètre 'editer' de la commande 'canaux'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
 class PrmEjecter(Parametre):
     
-    """Commande 'canaux ejecter <canal> <joueur>'.
+    """Commande 'canaux editer <canal>'.
     
     """
     
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "ejecter", "eject")
-        self.schema = "<canal> <nom_joueur>"
-        self.aide_courte = "éjecte un joueur"
+        Parametre.__init__(self, "editer", "edit")
+        self.schema = "<canal>"
+        self.aide_courte = "éditer un canal"
         self.aide_longue = \
-            "Cette sous-commande permet d'éjecter un joueur. Il peut " \
-            "néanmoins se reconnecter par la suite."
+            "Cette sous-commande permet d'éditer un canal, description, " \
+            "couleur, ...
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
