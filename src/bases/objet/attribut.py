@@ -46,7 +46,7 @@ class Attribut:
             d_externes={}):
         """Constructeur d'un attribut"""
         self.constructeur = constructeur
-        self.internes = inernes
+        self.internes = internes
         self.l_externes = l_externes
         self.d_externes = d_externes
     
