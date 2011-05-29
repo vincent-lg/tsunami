@@ -42,7 +42,8 @@ class Attribut:
     
     """
     
-    def __init__(self, constructeur, internes, l_externes, d_externes):
+    def __init__(self, constructeur, internes=(), l_externes=(),
+            d_externes={}):
         """Constructeur d'un attribut"""
         self.constructeur = constructeur
         self.internes = inernes
