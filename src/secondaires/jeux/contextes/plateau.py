@@ -51,7 +51,7 @@ class Plateau(Contexte):
         
         jeux = type(self).importeur.jeux
         if not objet is None:
-            self.jeu = jeux.get_jeu(objet._jeu)
+            self.partie = jeux.get_partie(objet)
         
         self.options = {
             # Options d'user
@@ -78,11 +78,16 @@ class Plateau(Contexte):
     
     def accueil(self):
         """Message d'accueil du contexte"""
-        res = "Vous rejoignez la partie"
+        res = "Vous rejoignez la partie\n"
+        res += self.partie.plateau()
         return res
     
     def opt_quit(self, arguments):
         """Option quitter : /q"""
+        try:
+            self.partie.joueurs.remove(self.pere.joueur)
+        except ValueError:
+            pass
         self.pere.joueur.contextes.retirer()
         self.pere << "Vous quittez le plateau."
     
@@ -101,4 +106,11 @@ class Plateau(Contexte):
                 fonction(arguments)
         else:
             # On envoit au gestionnaire de jeu
-            self.jeu.jouer(self.identifiant, msg)
+            (perso, tous) = self.partie.jouer(self.identifiant, msg)
+            if perso != "":
+                self.pere << perso
+            if tous != "":
+                for joueur in self.partie.joueurs:
+                    joueur << tous
+                
+            

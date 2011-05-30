@@ -48,12 +48,6 @@ class ObjetJeu(BaseType):
         """Constructeur du type jeu"""
         BaseType.__init__(self, cle)
         
-        self._attributs = {
-            "joueurs": Attribut(ListeID, internes=("", )),
-            "jeu": Attribut(),
-            "partie": Attribut(),
-        }
-        
         self._jeu = "null"
         self.etendre_editeur("j", "Nom du jeu", Choix, self, "jeu")
     

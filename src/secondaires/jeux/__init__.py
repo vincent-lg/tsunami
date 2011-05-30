@@ -51,6 +51,8 @@ class Module(BaseModule):
                 "jeux", "jeux")
         
         self.jeux = []
+        
+        self.parties = {}
     
     def config(self):
         """Configuration du module.
@@ -71,14 +73,19 @@ class Module(BaseModule):
         
         for nom_jeu in jeux_cfg.jeux:
             package = __import__("secondaires.jeux.backend." + nom_jeu)
-            jeu = getattr(getattr(getattr(getattr(package, "jeux"),"backend"),nom_jeu),nom_jeu)()
+            jeu = getattr(getattr(getattr(getattr(package, "jeux"),"backend"),nom_jeu),nom_jeu)
             self.jeux.append(jeu)
     
-    def get_jeu(self,nom):
+    def get_jeu(self, nom):
         for jeu in self.jeux:
             if jeu.nom == nom:
                 return jeu
         return None
+    
+    def get_partie(self, objet):
+        if not objet.id.id in self.parties:
+            self.parties[objet.id.id] = self.get_jeu(objet.jeu)()
+        return self.parties[objet.id.id]
     
     def ajouter_masques(self):
         self.importeur.interpreteur.ajouter_masque(

@@ -9,6 +9,7 @@ __program__ = 'chesswm'
 __author__ = 'Will McGugan <will@willmcgugan.com>'
 __copyright__ = 'Copyright (C) 2005 - 2006 Will McGugan'
 
+from bases.collections.liste_id import ListeID
 
 # Seems to make a difference..
 #import psyco
@@ -1351,7 +1352,8 @@ class Board( object ):
 
                 for move in self.potential_moves(self.get_turn()):
 
-                    if move.position == from_pos and move.destination == from_pos:
+
+                    if move.position == from_pos and move.destination == dest_pos:
 
                         if promote is not None and move.promote is not promote:
                             continue
@@ -2043,13 +2045,47 @@ def Adjudicate():
             print("Stalemate")
             ongoing = False
 
-class echec():
-    
+couleur = ["blanc", "noir"]
+
+class echec(Game):
+
     nom = "echec"
     max_joueur = 2
     
+    def __init__(self):
+        Game.__init__(self)
+        self.setup()
+        self.joueurs = ListeID()
+    
+    def plateau(self):
+        return str(self.board)
+    
     def jouer(self, joueur, msg):
-        print(joueur, msg)
+        
+        joueur = (BLACK, WHITE)[joueur]
+        if self.board.get_turn() != joueur:
+            return ("Ce n'est pas à vous de jouer", "")
+        
+        move = None
+        
+        try:
+            move = self.board.parse(msg)
+        except ParseError as error:
+            return (str(error), "")
+        self.move(move)
+        
+        msg = str(self.board)
+        
+        result = self.board.check_result()
+        
+        if result == MATE:
+            msg += "\nMat !"
+        elif result == STALEMATE:
+            msg += "\nPat !"
+        
+        msg += "\nLes {} ont joués".format(couleur[joueur])
+        
+        return ("",msg)
     
 """
 if __name__ == "__main__":

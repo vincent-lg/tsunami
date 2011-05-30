@@ -53,13 +53,15 @@ class CmdJouer(Commande):
         """Méthode d'interprétation de commande"""
         objet = dic_masques["objet_jeu"].element
         jeux = type(self).importeur.jeux
-        jeu = jeux.get_jeu(objet._jeu)
-        if jeu is None:
+        
+        if jeux.get_jeu(objet.jeu) is None:
             raise(ValueError("Le jeu n'existe pas"))
-        elif jeu.max_joueur < len(objet.joueurs) + 1:
-            personnage << "La partie n'acceuil plus de nouveaux joueur"
         else:
-            objet.joueurs.append(personnage)
-            contexte = Plateau(personnage.instance_connexion, len(objet.joueurs) - 1, objet)
-            personnage.contexte_actuel.migrer_contexte(contexte)
+            partie = jeux.get_partie(objet)
+            if partie.max_joueur < len(partie.joueurs) + 1:
+                personnage << "La partie n'acceuil plus de nouveaux joueur"
+            else:
+                partie.joueurs.append(personnage)
+                contexte = Plateau(personnage.instance_connexion, len(partie.joueurs) - 1, objet)
+                personnage.contexte_actuel.migrer_contexte(contexte)
         
