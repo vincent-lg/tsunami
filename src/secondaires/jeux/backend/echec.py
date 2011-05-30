@@ -2060,7 +2060,7 @@ class echec(Game):
     def plateau(self):
         return str(self.board)
     
-    def jouer(self, joueur, msg):
+    def jouer(self, joueur, cmd):
         
         joueur = (BLACK, WHITE)[joueur]
         if self.board.get_turn() != joueur:
@@ -2069,7 +2069,7 @@ class echec(Game):
         move = None
         
         try:
-            move = self.board.parse(msg)
+            move = self.board.parse(cmd)
         except ParseError as error:
             return (str(error), "")
         self.move(move)
@@ -2083,7 +2083,7 @@ class echec(Game):
         elif result == STALEMATE:
             msg += "\nPat !"
         
-        msg += "\nLes {} ont joués".format(couleur[joueur])
+        msg += "\nLes {couleur} ont joués {coup}".format(couleur=couleur[joueur],coup=cmd)
         
         return ("",msg)
     
