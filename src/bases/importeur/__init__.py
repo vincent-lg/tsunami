@@ -82,6 +82,10 @@ class Importeur:
     parid = None
     serveur = None
     nb_hotboot = 0
+    chemins_modules = {
+        "primaire": REP_PRIMAIRES,
+        "secondaire": REP_SECONDAIRES,
+    }
     
     def __init__(self, parser_cmd, anaconf, man_logs, parid, serveur):
         """Constructeur de l'importeur. Il vérifie surtout

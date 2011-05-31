@@ -30,6 +30,8 @@
 
 """Ce package définit la classe Module, détaillée plus bas."""
 
+import os
+
 # Statuts
 INSTANCIE = 0
 CONFIGURE = 1
@@ -196,3 +198,9 @@ class BaseModule:
     def str_statut(self):
         """Retourne le statut sous la forme d'une chaîne"""
         return STATUTS[self.statut]
+    
+    @property
+    def chemin(self):
+        """Retourne le chemin du module"""
+        return self.importeur.chemins_modules[self.type] + os.sep + self.nom
+
