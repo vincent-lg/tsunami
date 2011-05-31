@@ -42,24 +42,22 @@ class Plateau(Contexte):
     
     nom = "jeux:plateau"
     
-    def __init__(self, pere, identifiant, objet):
+    def __init__(self, pere, objet):
         """Constructeur du contexte"""
         Contexte.__init__(self, pere)
         
-        self.identifiant = identifiant
         self.objet = objet
-        
-        jeux = type(self).importeur.jeux
-        if not objet is None:
-            self.partie = jeux.get_partie(objet)
         
         self.options = {
             # Options d'user
-            "q" : self.opt_quit
+            "q" : self.opt_quit,
+            "p" : self.opt_pause,
+            "d" : self.opt_demarrer,
+            "s" : self.opt_dire
             }
     
     def __getnewargs__(self):
-        return (None, 0, None)
+        return (None, None)
     
     def __getstate__(self):
         """Nettoyage des options"""
@@ -78,14 +76,35 @@ class Plateau(Contexte):
     
     def accueil(self):
         """Message d'accueil du contexte"""
-        res = "Vous rejoignez la partie\n"
-        res += self.partie.plateau()
+        res = "Vous rejoignez la partie\n\n"
+        res += "/q pour quitter\n"
+        res += "/p pour mettre/enlever la pause\n"
+        res += "/d pour pour démarrer\n"
+        res += "/s pour dire quelque chose à votre adversaire\n"
         return res
+    
+    def opt_demarrer(self, arguments):
+        """Option pause : /d"""
+        partie = type(self).importeur.jeux.get_partie(self.objet)
+        if not partie.demarrer():
+            self.pere << "Impossible de démarrer la partie."
+    
+    def opt_pause(self, arguments):
+        """Option pause : /p"""
+        partie = type(self).importeur.jeux.get_partie(self.objet)
+        if not partie.pause():
+            self.pere << "Impossible de mettre en pause."
+    
+    def opt_dire(self, arguments):
+        """Option pause : /s"""
+        jeux = type(self).importeur.jeux
+        jeux.get_partie(self.objet).dire(self.pere.joueur, arguments)
     
     def opt_quit(self, arguments):
         """Option quitter : /q"""
+        partie = type(self).importeur.jeux.get_partie(self.objet)
         try:
-            self.partie.joueurs.remove(self.pere.joueur)
+            partie.quitter(self.pere.joueur)
         except ValueError:
             pass
         self.pere.joueur.contextes.retirer()
@@ -105,12 +124,6 @@ class Plateau(Contexte):
                 fonction = self.options[option]
                 fonction(arguments)
         else:
-            # On envoit au gestionnaire de jeu
-            (perso, tous) = self.partie.jouer(self.identifiant, msg)
-            if perso != "":
-                self.pere << perso
-            if tous != "":
-                for joueur in self.partie.joueurs:
-                    joueur << tous
+            type(self).importeur.jeux.get_partie(self.objet).jouer(self.pere.joueur, msg)
                 
             

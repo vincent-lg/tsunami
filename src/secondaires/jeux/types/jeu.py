@@ -62,6 +62,12 @@ class ObjetJeu(BaseType):
     
     jeu = property(_get_jeu, _set_jeu)
     
+    # Actions sur les objets
+    def regarder(self, personnage):
+        moi = BaseType.regarder(self, personnage) + "\n\n"
+        moi += type(self).importeur.jeux.get_partie(self).plateau()
+        return moi
+    
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes.
         On récupère un dictionnaire représentant la présentation avec en
