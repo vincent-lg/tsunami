@@ -63,6 +63,7 @@ class Membre(BaseObj):
         self.nom = nom
         self.flags = AUCUN_FLAG
         self.statut = "entier"
+        self.objet = None # l'objet équipé à cet emplacement
         self.parent = parent
         
         # Copie du modèle si existe
@@ -95,3 +96,14 @@ class Membre(BaseObj):
             self.parent.enregistrer()
     
     statut = property(_get_statut, _set_statut)
+    
+    @property
+    def peut_tenir(self):
+        """Retourne True si le membre peut tenir"""
+        return self.flags & PEUT_TENIR != 0
+    
+    @property
+    def affichable(self):
+        """Retourne True si le membre est affichable"""
+        return self.flags & AFFICHABLE != 0
+
