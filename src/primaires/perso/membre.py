@@ -63,7 +63,8 @@ class Membre(BaseObj):
         self.nom = nom
         self.flags = AUCUN_FLAG
         self.statut = "entier"
-        self.objet = None # l'objet équipé à cet emplacement
+        self.equipe = None # l'objet équipé à cet emplacement
+        self.tenu = None # l'objet tenu
         self.parent = parent
         
         # Copie du modèle si existe
@@ -97,13 +98,30 @@ class Membre(BaseObj):
     
     statut = property(_get_statut, _set_statut)
     
-    @property
     def peut_tenir(self):
         """Retourne True si le membre peut tenir"""
-        return self.flags & PEUT_TENIR != 0
+        return self.flags & PEUT_TENIR != 0 and self.equipe is None
     
-    @property
     def affichable(self):
         """Retourne True si le membre est affichable"""
         return self.flags & AFFICHABLE != 0
+    
+    def peut_equiper(self, objet=None):
+        """Si l'objet est précisé :
+            retourne True si l'objet peut être équipé par ce membre
+        sinon
+            retourne True si l'emplacement est libre
+        
+        """
+        # On cherche à savoir si l'emplacement est libre
+        # Un emplacement est considéré comme libre si aucun objet n'est tenu
+        # ni équipé
+        equipable = False
+        if self.tenu is None and self.equipe is None:
+            equipable = True
+        
+        if objet is None:
+            return equipable
+        else:
+            return equipable # and ...
 

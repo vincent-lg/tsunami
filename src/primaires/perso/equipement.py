@@ -64,4 +64,71 @@ class Equipement(BaseObj):
     def membres(self):
         """Retourne un dictionnaire déréférencé des membres"""
         return OrderedDict(self._membres)
+    
+    def get_membre(self, nom_membre):
+        """Récupère le membre dont le nom est nom_membre.
+        On peut très bien passer par self.membres[nom_membre], la méthode
+        courante a simplement l'avantage d'afficher une erreur explicite
+        en cas de problème.
+        
+        """
+        try:
+            membre = self._membres[nom_membre]
+        except KeyError:
+            raise KeyError("le membre {} est introuvable dans " \
+                    "l'équipement de {}".format(nom_membre, self.personnage))
+        
+        return membre
+    
+    def membre_est_equipe(self, nom_membre):
+        """Retourne True si le membre est équipé, False sinon.
+        Un membre est équipé si son attribut objet n'est pas None.
+        Si le membre ne peut être trouvé dans l'équipement, une exception est
+        levée.
+        
+        """
+        membre = self.get_membre(nom_membre)
+        return membre.equipe is not None
+    
+    def equiper_objet(self, nom_membre, objet):
+        """Equipe le membre nom_membre avec l'objet.
+        Si le membre possède un objet, une exception est levée.
+        
+        """
+        membre = self.get_membre(nom_membre)
+        if membre.equipe:
+            raise ValueError("le membre {} possède déjà l'objet {} " \
+                    "équipé".format(nom_membre, membre.equipe))
+        
+        if objet is None:
+            raise ValueError("l'objet passé en paramètre est None. Pour " \
+                    "retirer un objet équipé, utilisez la méthode " \
+                    "desequiper_objet")
+        
+        membre.equipe = objet
+    
+    def desequiper_objet(self, nom_membre):
+        """Retire un objet de l'équipement.
+        
+        """
+        membre = self.get_membre(nom_membre)
+        membre.objet = None
+    
+    def tenir_objet(self, nom_membre, objet):
+        """Fait tenir l'objet objet au membre nom_membre. """
+        membre = self.get_membre(nom_membre)
+        if membre.tenu:
+            raise ValueError("le membre {} tient déjà l'objet {} ".format(
+                    nom_membre, membre.tenu))
+        
+        if objet is None:
+            raise ValueError("l'objet passé en paramètre est None. Pour " \
+                   "retirer un objet tenu, utilisez la méthode retirer_objet")
+        
+        membre.tenu = objet
+    
+    def retirer_objet(self, nom_membre):
+        """Retire l'objet tenu sur nom_membre."""
+        membre = self.get_membre(nom_membre)
+        membre.tenu = None
 

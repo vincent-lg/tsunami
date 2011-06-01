@@ -33,6 +33,8 @@
 
 from abstraits.id import ObjetID, propriete_id
 from primaires.interpreteur.file import FileContexte
+
+from .equipement import Equipement
 from .stats import Stats
 
 class Personnage(ObjetID):
@@ -61,6 +63,7 @@ class Personnage(ObjetID):
         self._salle = None
         self.stats = Stats()
         self._prompt = "Vit   {v}     Man   {m}     End   {e}"
+        self.equipement = None
     
     def __getnewargs__(self):
         """Retourne les arguments à passer au constructeur"""
@@ -140,6 +143,13 @@ class Personnage(ObjetID):
             m=self.mana,
             e=self.endurance,
         )
+    
+    def lier_equipement(self, squelette):
+        """Crée un nouvel équipement pour le personnage en fonction
+        du squelette.
+        
+        """
+        self.equipement = Equipement(self, squelette)
     
     def envoyer(self, msg):
         """Méthode envoyer"""
