@@ -31,10 +31,12 @@
 """Fichier contenant le module primaire perso."""
 
 from abstraits.module import *
-from primaires.perso import commandes
-from primaires.perso import masques
+
+from . import commandes
+from . import masques
 from .editeurs.skedit import EdtSkedit
 from .cfg_stats import cfg_stats
+from .race import Race
 from .stats import *
 from .squelette import Squelette
 
@@ -56,6 +58,7 @@ class Module(BaseModule):
         self.cfg_stats = None
         self.commandes = []
         self.squelettes = {}
+        self.races = {}
     
     def config(self):
         """Méthode de configuration.
@@ -80,7 +83,13 @@ class Module(BaseModule):
         for squelette in squelettes:
             self.ajouter_squelette(squelette)
         
+        # On récupère les races
+        races = self.importeur.supenr.charger_groupe(Race)
+        for race in races:
+            self.ajouter_race(race)
+        
         BaseModule.init(self)
+    
     def ajouter_masques(self):
         """Ajout des masques dans l'interpréteur"""
         self.importeur.interpreteur.ajouter_masque(masques.commande.Commande)
@@ -117,3 +126,20 @@ class Module(BaseModule):
         squelette = self.squelettes[cle]
         del self.squelettes[cle]
         squelette.detruire()
+    
+    def creer_race(self, nom):
+        """Crée la race du nom indiqué"""
+        race = Race(nom)
+        self.ajouter_race(race)
+        return race
+    
+    def ajouter_race(self, race):
+        """Ajout de la race au dictionnaire des races existantes"""
+        self.races[race.nom] = race
+    
+    def supprimer_race(self, nom):
+        """Suppression de la race 'nom'"""
+        race = self.races[nom]
+        del self.races[nom]
+        race.detruire()
+
