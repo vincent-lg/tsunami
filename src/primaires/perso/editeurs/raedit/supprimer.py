@@ -28,10 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module perso."""
+"""Fichier contenant le contexte éditeur Supprimer"""
 
-from . import commande
-from . import qui
-from . import raedit
-from . import score
-from . import skedit
+from primaires.interpreteur.editeur.supprimer import Supprimer
+
+class NSupprimer(Supprimer):
+    
+    """Classe définissant le contexte éditeur 'supprimer'.
+    Ce contexte permet spécifiquement de supprimer un prototype d'objet.
+    
+    """
+    
+    def interpreter(self, msg):
+        """Interprétation du contexte"""
+        msg = msg.lower()
+        prototype = self.objet
+        if msg == "oui":
+            objet = type(self).importeur
+            for nom in self.action.split("."):
+                objet = getattr(objet, nom)
+            
+            nb_objets = len(prototype.objets)
+            if nb_objets > 0:
+                s = ""
+                if nb_objets > 1:
+                    s = "s"
+                
+                self.pere << "|err|{} objet(s) existe(nt) modelé(s) sur ce " \
+                        "prototype. Opération annulée.|ff|".format(nb_objets)
+                self.migrer_contexte(self.opts.rci_ctx_prec)
+            else:
+                objet(self.objet.cle)
+                self.pere.joueur.contextes.retirer()
+                self.pere << self.confirme
+        elif msg == "non":
+            self.migrer_contexte(self.opts.rci_ctx_prec)
+        else:
+            self.pere << "|att|Choix invalide.|ff|"

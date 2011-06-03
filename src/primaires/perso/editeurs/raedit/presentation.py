@@ -28,10 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module perso."""
+"""Fichier contenant la classe EdtPresentation, détaillée plus bas.
 
-from . import commande
-from . import qui
-from . import raedit
-from . import score
-from . import skedit
+"""
+
+from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.description import Description
+from primaires.interpreteur.editeur.uniligne import Uniligne
+
+class EdtPresentation(Presentation):
+    
+    """Classe définissant l'éditeur d'objet 'raedit'.
+    
+    """
+    
+    def __init__(self, personnage, race, attribut=""):
+        """Constructeur de l'éditeur"""
+        if personnage:
+            instance_connexion = personnage.instance_connexion
+        else:
+            instance_connexion = None
+        
+        Presentation.__init__(self, instance_connexion, race)
+        if personnage and race:
+            self.construire(race)
+    
+    def __getnewargs__(self):
+        return (None, None)
+    
+    def construire(self, race):
+        """Construction de l'éditeur"""
+        # Description
+        description = self.ajouter_choix("description", "d", Description, \
+                race)
+        description.parent = self
+        description.apercu = "{objet.description.paragraphes_indentes}"
+        description.aide_courte = \
+            "| |tit|" + "Description de la race {}".format(race).ljust(
+            76) + "|ff||\n" + self.opts.separateur
+

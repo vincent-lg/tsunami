@@ -28,10 +28,28 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module perso."""
+"""Package contenant la commande 'raedit'."""
 
-from . import commande
-from . import qui
-from . import raedit
-from . import score
-from . import skedit
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdRaedit(Commande):
+    
+    """Commande 'raedit'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "raedit", "raedit")
+        self.schema = ""
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "ouvre l'éditeur des races"
+        self.aide_longue = \
+            "Cette commande ouvre l'éditeur des races. Elle vous permet de " \
+            "créer et éditer les races existantes."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        editeur = type(self).importeur.interpreteur.construire_editeur(
+                "raedit", personnage, None)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()
+

@@ -35,6 +35,7 @@ from abstraits.module import *
 from . import commandes
 from . import masques
 from .editeurs.skedit import EdtSkedit
+from .editeurs.raedit import EdtRaedit
 from .cfg_stats import cfg_stats
 from .race import Race
 from .stats import *
@@ -101,6 +102,7 @@ class Module(BaseModule):
         self.commandes = [
             commandes.commande.CmdCommande(),
             commandes.qui.CmdQui(),
+            commandes.raedit.CmdRaedit(),
             commandes.score.CmdScore(),
             commandes.skedit.CmdSkedit(),
         ]
@@ -109,6 +111,7 @@ class Module(BaseModule):
             self.importeur.interpreteur.ajouter_commande(cmd)
         
         # Ajout de l'éditeur 'skedit'
+        self.importeur.interpreteur.ajouter_editeur(EdtRaedit)
         self.importeur.interpreteur.ajouter_editeur(EdtSkedit)
     
     def creer_squelette(self, cle):

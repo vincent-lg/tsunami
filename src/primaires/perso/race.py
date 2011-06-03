@@ -46,12 +46,15 @@ class Race(ObjetID):
         """Constructeur d'une race."""
         ObjetID.__init__(self)
         self.nom = nom
-        self.aide = Description(parent=self)
+        self.description = Description(parent=self)
         self.stats = Stats()
         self.squelette = None
     
     def __getnewargs__(self):
         return ("", )
+    
+    def __str__(self):
+        return self.nom
 
 ObjetID.ajouter_groupe(Race)
 

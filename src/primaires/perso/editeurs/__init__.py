@@ -30,4 +30,5 @@
 
 """Package contenant les différents éditeurs"""
 
+from . import raedit
 from . import skedit
