@@ -22,37 +22,37 @@ def Opponent(colour):
 
     return not colour
 
-PIECE_ABBREVIATIONS = "prnbqk."
+PIECE_ABBREVIATIONS = "ptcfrk."
 PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING, BLANK = PIECE_ABBREVIATIONS
 
 ONGOING, MATE, STALEMATE = list(range(3))
 
-PIECE_NAMES = { 'p':'Pawn', 'r':'Rook', 'n':'Knight', 'b':'Bishop', 'q':'Queen', 'k':'King', '.':'Blank' }
+PIECE_NAMES = { 'p':'Pion', 'r':'Tour', 'n':'Roi', 'b':'Fou', 'q':'Reine', 'k':'Roi', '.':'Blanc' }
 
-INITIAL_BOARD = 'rnbqkbnr\n' \
+INITIAL_BOARD = 'tcfrkfct\n' \
                 'pppppppp\n' \
                 '........\n' \
                 '........\n' \
                 '........\n' \
                 '........\n' \
                 'PPPPPPPP\n' \
-                'RNBQKBNR'
+                'TCFRKFCT'
 
 FILES = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' ]
 RANKS = [ '1', '2', '3', '4', '5', '6', '7', '8' ]
 
 PIECES = {  'P':(WHITE, PAWN),
-            'R':(WHITE, ROOK),
-            'N':(WHITE, KNIGHT),
-            'B':(WHITE, BISHOP),
-            'Q':(WHITE, QUEEN),
+            'T':(WHITE, ROOK),
+            'C':(WHITE, KNIGHT),
+            'F':(WHITE, BISHOP),
+            'R':(WHITE, QUEEN),
             'K':(WHITE, KING),
             '.':(UNDEFINED, BLANK),
             'p':(BLACK, PAWN),
-            'r':(BLACK, ROOK),
-            'n':(BLACK, KNIGHT),
-            'b':(BLACK, BISHOP),
-            'q':(BLACK, QUEEN),
+            't':(BLACK, ROOK),
+            'c':(BLACK, KNIGHT),
+            'f':(BLACK, BISHOP),
+            'r':(BLACK, QUEEN),
             'k':(BLACK, KING) }
 
 class Coord(object):
@@ -738,7 +738,7 @@ class Board( object ):
 
     "A chess board."
 
-    PIECES = "PRNBQK"
+    PIECES = "PTCFRK"
     RANKS = "abcdefgh"
     FILES = "12345678"
 

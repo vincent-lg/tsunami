@@ -47,14 +47,16 @@ class echec(Game):
         n = self.numero(joueur)
         self.joueurs[n] = None
         if self.joueurs[not n]:
-            self.joueurs[not n] << "Votre adversaire est parti, partie en pause"
-        self.etat = PAUSE
+            self.joueurs[not n] << "Votre adversaire est parti"
+        self.pause()
     
     def demarrer(self):
         if None in self.joueurs:
             return False
-        if self.etat != AVANT:
+        if not self.etat in [AVANT, FINIE]:
             return False
+        if self.etat == FINIE:
+            self.setup()
         self.etat = ENCOURS
         self.envoyer(self.plateau())
         self.envoyer("\nLa partie commence\n")
@@ -89,9 +91,6 @@ class echec(Game):
     def plateau(self):
         return str(self.board)
     
-    def redemarrer(self):
-        self.setup()
-    
     def jouer(self, joueur, cmd):
         
         if self.etat == AVANT:
@@ -124,13 +123,18 @@ class echec(Game):
         
         result = self.board.check_result()
         
-        if result == MATE:
-           self.envoyer("\nMat !")
-        elif result == STALEMATE:
-            self.envoyer("\nPat !")
-        
-        self.envoyer("\nLes {couleur} ont joués {coup}" \
+        self.envoyer("\nLes {couleur}s ont joué {coup}" \
             .format(couleur=STR_COULEURS[n] , coup=cmd))
         
-        self.joueurs[not n] << "\nC'est à vous de jouer"
+        if result == MATE:
+            joueur << "\nEchec et mat !\nVous avez gagné"
+            self.joueurs[not n] << "\nEchec et mat !\nVous avez perdu"
+            self.etat = FINIE
+        elif result == STALEMATE:
+            self.envoyer("\nLa partie est nulle")
+            self.etat = FINIE
+        else:
+            if self.board.is_check(COULEURS[not n]):
+                self.joueurs[not n] << "\nVous êtes en échec !"
+            self.joueurs[not n] << "\nC'est à vous de jouer"
 

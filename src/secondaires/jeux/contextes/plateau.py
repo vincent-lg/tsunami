@@ -51,9 +51,11 @@ class Plateau(Contexte):
         self.options = {
             # Options d'user
             "q" : self.opt_quit,
+            "h" : self.opt_aide,
             "p" : self.opt_pause,
             "d" : self.opt_demarrer,
-            "s" : self.opt_dire
+            "s" : self.opt_dire,
+            "r" : self.opt_regarder
             }
     
     def __getnewargs__(self):
@@ -78,13 +80,11 @@ class Plateau(Contexte):
         """Message d'accueil du contexte"""
         res = "Vous rejoignez la partie\n\n"
         res += "/q pour quitter\n"
-        res += "/p pour mettre/enlever la pause\n"
-        res += "/d pour pour démarrer\n"
-        res += "/s pour dire quelque chose à votre adversaire\n"
+        res += "/h pour obtenir de l'aide\n"
         return res
     
     def opt_demarrer(self, arguments):
-        """Option pause : /d"""
+        """Option demarrer : /d"""
         partie = type(self).importeur.jeux.get_partie(self.objet)
         if not partie.demarrer():
             self.pere << "Impossible de démarrer la partie."
@@ -96,9 +96,22 @@ class Plateau(Contexte):
             self.pere << "Impossible de mettre en pause."
     
     def opt_dire(self, arguments):
-        """Option pause : /s"""
+        """Option dire : /s"""
         jeux = type(self).importeur.jeux
         jeux.get_partie(self.objet).dire(self.pere.joueur, arguments)
+    
+    def opt_aide(self, arguments):
+        """Option aide : /h"""
+        res = "/p pour mettre/enlever la pause\n"
+        res += "/d pour pour démarrer\n"
+        res += "/r pour regarder le plateau\n"
+        res += "/s pour dire quelque chose à votre adversaire\n"
+        self.pere << res
+    
+    def opt_regarder(self, arguments):
+        """Option regarder : /r"""
+        jeux = type(self).importeur.jeux
+        self.pere << jeux.get_partie(self.objet).plateau()
     
     def opt_quit(self, arguments):
         """Option quitter : /q"""
