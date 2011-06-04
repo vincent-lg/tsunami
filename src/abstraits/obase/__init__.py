@@ -34,8 +34,30 @@
 import sys
 import time
 
+class ObjetsCharges:
+    
+    """Cette classe possède le comportement d'un dictionnaire.
+    Elle permet de stocker les BaseObj récupérés depuis des fichiers.
+    
+    """
+    
+    def __init__(self):
+        self.__objets = {}
+    
+    def __contains__(self, item):
+        return item in self.__objets
+    
+    def __getitem__(self, item):
+        return self.__objets[item]
+    
+    def __setitem__(self, item, val):
+        self.__objets[item] = val
+    
+    def keys(self):
+        return self.__objets.keys()
+
 objets_base = {} # dictionnaire des différents BaseObj {nom_cls:cls}
-dict_base_obj = {}
+dict_base_obj = ObjetsCharges()
 
 class MetaBaseObj(type):
     
@@ -137,6 +159,7 @@ class BaseObj(metaclass=MetaBaseObj):
         self._ts = time.time() # le timestamp actuel
         self._id_base = BaseObj._id_base_actuel
         BaseObj._id_base_actuel += 1
+        type(self).importeur.supenr.enregistrer_id_base()
     
     def __getnewargs__(self):
         raise NotImplementedError
@@ -158,6 +181,10 @@ class BaseObj(metaclass=MetaBaseObj):
         
         """
         self._dict_version[classe._nom] = version
+    
+    def _construire(self):
+        """Construit l'objet"""
+        self._statut = CONSTRUIT
     
     @property
     def construit(self):
@@ -192,9 +219,6 @@ class BaseObj(metaclass=MetaBaseObj):
         
         # On ajoute l'objet dans supenr, pour un futur nettoyage
         type(self).importeur.supenr.objets_a_nettoyer.append(self)
-        
-        if self._id_base >= BaseObj._id_base_actuel:
-            BaseObj._id_actuel = self._id_base + 1
         
         # On vérifie maintenant s'il a besoin d'une vraie mis à jour
         self._update(classe)

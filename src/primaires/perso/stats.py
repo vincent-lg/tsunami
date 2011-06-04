@@ -50,12 +50,15 @@ class Stats(BaseObj):
         """
         BaseObj.__init__(self)
         config = type(self).importeur.perso.cfg_stats
+        self.parent = parent
         self.__stats = []
         for ligne in config.stats:
             nom = ligne[0]
             stat = Stat(*ligne, parent=self)
             setattr(self, "_{}".format(nom), stat)
             self.__stats.append(stat)
+        
+        self._construire()
     
     def __getnewargs__(self):
         return ()
@@ -66,6 +69,9 @@ class Stats(BaseObj):
             ret += str(stat) + "\n  "
         
         return ret.rstrip(" \n")
+    
+    def __iter__(self):
+        return iter(tuple(self.__stats))
     
     def __getattr__(self, nom_attr):
         """Si le 'nom_attr' n'est pas trouvé, on redigive vers la valeur
@@ -88,5 +94,5 @@ class Stats(BaseObj):
     
     def enregistrer(self):
         """Enregistre le parent"""
-        if self.parent:
-            self.parent = parent
+        if self.construit and self.parent:
+            self.parent.enregistrer()

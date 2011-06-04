@@ -47,7 +47,7 @@ class Race(ObjetID):
         ObjetID.__init__(self)
         self.nom = nom
         self.description = Description(parent=self)
-        self.stats = Stats()
+        self.stats = Stats(parent=self)
         self.squelette = None
     
     def __getnewargs__(self):

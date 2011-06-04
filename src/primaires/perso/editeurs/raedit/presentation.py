@@ -35,6 +35,7 @@
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from .edt_stats import EdtStats
 
 class EdtPresentation(Presentation):
     
@@ -66,4 +67,8 @@ class EdtPresentation(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description de la race {}".format(race).ljust(
             76) + "|ff||\n" + self.opts.separateur
-
+        
+        # Stats
+        stats = self.ajouter_choix("stats", "s", EdtStats, \
+                self.objet.stats)
+        stats.parent = self

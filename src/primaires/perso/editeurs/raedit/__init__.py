@@ -91,6 +91,9 @@ class EdtRaedit(Editeur):
     def interpreter(self, msg):
         """Interprétation du message"""
         msg = msg.lower()
+        if msg == "q":
+            return self.opt_quitter("")
+        
         race = None
         races = sorted(type(self).importeur.perso.races.values(), key=str)
         for t_race in races:

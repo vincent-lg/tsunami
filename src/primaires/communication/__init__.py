@@ -53,7 +53,7 @@ class Module(BaseModule):
                 "communication", "communication")
         self.masques = []
         self.commandes = []
-        self.conversations = Conversations()
+        self.conversations = None
         self.dernier_canaux = {}
         self._canaux = None
     
@@ -71,6 +71,7 @@ class Module(BaseModule):
     
     def init(self):
         """Initialisation du module"""
+        self.conversations = Conversations()
         # On récupère les canaux
         canaux = None
         sous_rep = "canaux"

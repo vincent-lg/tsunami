@@ -80,6 +80,7 @@ class Module(BaseModule):
                 "supenr")
         self.enregistre_actuellement = False
         self.objets_a_nettoyer = []
+        self.pret = False
     
     def config(self):
         """Méthode de configuration. On se base sur
@@ -101,6 +102,9 @@ class Module(BaseModule):
         # On construit le répertoire s'il n'existe pas
         if not os.path.exists(REP_ENRS):
             os.makedirs(REP_ENRS)
+        
+        # Chargement de la dernière ID de BaseObj
+        self.charger_id_base()
         
         BaseModule.config(self)
     
@@ -151,6 +155,9 @@ class Module(BaseModule):
         appel à la méthode 'enregistrer' de l'objet lui-même.
         
         """
+        if not self.pret:
+            raise RuntimeError("le supenr n'est pas prêt à enregistrer")
+        
         global REP_ENRS
         self.enregistre_actuellement = True
         if est_objet_id(objet):
@@ -263,6 +270,9 @@ class Module(BaseModule):
         Elle retourne la liste des objets chargés.
         
         """
+        if not self.pret:
+            raise RuntimeError("le supenr n'est pas prêt à charger un groupe")
+        
         global REP_ENRS
         chemin_dest = REP_ENRS + os.sep + groupe.sous_rep
         objets = [] # liste des objets récupérés
@@ -277,3 +287,46 @@ class Module(BaseModule):
                     objets.append(objet)
         
         return objets
+    
+    def charger_id_base(self):
+        """Chartge l'ID base de BaseObj.
+        Elle se trouve dans le sous-rep "base" et le fichier "id.sav".
+        Si ce fichier n'existe pas, l'ID est 1 par défaut.
+        
+        Cette étape est considérée comme INDISPENSABLe à la création et
+        récupération d'objet BaseObj. Elle doit impérativement se faire
+        avant le moindre enregistrement ou récupération.
+        
+        """
+        if self.fichier_existe("base", "id.sav"):
+            id = self.charger("base", "id.sav")
+        else:
+            id = 1
+        
+        BaseObj._id_base_actuel = id
+        self.construire_rep("base")
+        self.pret = True
+    
+    def enregistrer_id_base(self):
+        """On enregistre l'ID de BaseObj"""
+        global REP_ENRS
+        if not self.pret:
+            raise RuntimeError("Un objet BaseObj s'est créé trop tôt")
+        
+        id = BaseObj._id_base_actuel
+        self.enregistre_actuellement = True
+        chemin_dest = REP_ENRS + os.sep + "base" + os.sep + "id.sav"
+        # On essaye d'ouvrir le fichier
+        try:
+            fichier_enr = open(chemin_dest, 'wb')
+        except IOError as io_err:
+            self.logger.warning("Le fichier {0} destiné à enregistrer {1} " \
+                    "n'a pas pu être ouvert : {2}".format(chemin_dest, \
+                    id, io_err))
+        else:
+            pickler = pickle.Pickler(fichier_enr)
+            pickler.dump(id)
+        finally:
+            if "fichier_enr" in locals():
+                fichier_enr.close()
+            self.enregistre_actuellement = False
