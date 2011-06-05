@@ -34,6 +34,7 @@
 from abstraits.id import ObjetID, propriete_id
 from primaires.interpreteur.file import FileContexte
 
+from .race import Race
 from .equipement import Equipement
 from .stats import Stats
 
@@ -64,6 +65,7 @@ class Personnage(ObjetID):
         self.stats = Stats()
         self._prompt = "Vit   {v}     Man   {m}     End   {e}"
         self.equipement = None
+        self._race = None
     
     def __getnewargs__(self):
         """Retourne les arguments à passer au constructeur"""
@@ -134,6 +136,20 @@ class Personnage(ObjetID):
             salle.ajouter_personnage(self)
     
     salle = property(_get_salle, _set_salle)
+    
+    def _get_race(self):
+        return self._race
+    def _set_race(self, race):
+        race = race.get_objet()
+        self._race = race
+        
+        for stat in race.stats:
+            t_stat = getattr(self.stats, "_{}".format(stat.nom))
+            t_stat.defaut = stat.defaut
+            t_stat.courante = stat.defaut
+        
+        self.lier_equipement(race.squelette)
+    race = property(_get_race, _set_race)
     
     @property
     def prompt(self):

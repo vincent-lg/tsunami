@@ -71,7 +71,9 @@ class Stats(BaseObj):
         return ret.rstrip(" \n")
     
     def __iter__(self):
-        return iter(tuple(self.__stats))
+        stats = [getattr(self, "_{}".format(stat.nom)) for stat in \
+                self.__stats]
+        return iter(tuple(stats))
     
     def __getattr__(self, nom_attr):
         """Si le 'nom_attr' n'est pas trouvé, on redigive vers la valeur
@@ -96,3 +98,12 @@ class Stats(BaseObj):
         """Enregistre le parent"""
         if self.construit and self.parent:
             self.parent.enregistrer()
+    
+    def restaurer(self):
+        """Restaure les stats.
+        Toutes les stats ayant un maximum sont remis à ce maximum.
+        
+        """
+        for stat in self:
+            if stat.max:
+                stat.courante = stat.max

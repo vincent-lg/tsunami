@@ -36,6 +36,7 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_stats import EdtStats
+from .edt_squelette import EdtSquelette
 
 class EdtPresentation(Presentation):
     
@@ -59,6 +60,8 @@ class EdtPresentation(Presentation):
     
     def construire(self, race):
         """Construction de l'éditeur"""
+        race = self.objet
+        
         # Description
         description = self.ajouter_choix("description", "d", Description, \
                 race)
@@ -70,5 +73,16 @@ class EdtPresentation(Presentation):
         
         # Stats
         stats = self.ajouter_choix("stats", "s", EdtStats, \
-                self.objet.stats)
+                race.stats)
         stats.parent = self
+        
+        # Squelette
+        squelette = self.ajouter_choix("squelette", "sq", EdtSquelette,
+                race)
+        squelette.parent = self
+        squelette.prompt = "Clé du squelette : "
+        squelette.apercu = "{objet.nom_squelette}"
+        squelette.aide_courte = \
+            "Entrez la |ent|clé identifiante|ff| du squelette ou |cmd|/|ff| " \
+            "pour revenir à la fenêtre parente.\n\nSquelette actuel : " \
+            "|bc|{objet.cle_squelette}|ff|"
