@@ -30,9 +30,8 @@
 
 """Fichier contenant la classe Squelette, détaillée plus bas."""
 
-from collections import OrderedDict
-
 from abstraits.id import ObjetID
+from bases.collections.liste_id import ListeID
 from primaires.format.description import Description
 from primaires.format.fonctions import supprimer_accents
 from .membre import Membre
@@ -63,7 +62,10 @@ class Squelette(ObjetID):
         self.cle = cle
         self.nom = "un squelette"
         self.description = Description(parent=self)
-        self.__membres = OrderedDict()
+        self.__membres = []
+        
+        # Liste des personnages dont l'équipement dérive de ce squelette
+        self.personnages = ListeID(parent=self)
     
     def __getnewargs__(self):
         return ("", )
@@ -83,12 +85,12 @@ class Squelette(ObjetID):
     @property
     def membres(self):
         """Retourne une copie du dicitonnaire des membres"""
-        return OrderedDict(self.__membres)
+        return list(self.__membres)
     
     @property
     def presentation_indentee(self):
         """Retourne une présentation indentée des membres"""
-        membres = [membre.nom for membre in self.__membres.values()]
+        membres = [membre.nom for membre in self.__membres]
         if not membres:
             membres = ["Aucun"]
         
@@ -101,19 +103,78 @@ class Squelette(ObjetID):
         
         """
         membre = Membre(nom, *args, parent=self, **kwargs)
-        nom = supprimer_accents(nom).lower()
-        self.__membres[nom] = membre
+        self.__membres.append(membre)
+        
+        for personnage in self.personnages:
+            personnage.equipement.ajouter_membre(membre)
+        
         self.enregistrer()
         return membre
     
     def supprimer_membre(self, nom):
         """Supprime le membre du dictionnaire."""
         nom = supprimer_accents(nom).lower()
-        if nom not in self.__membres.keys():
-            raise KeyError("Le membre {} n'existe pas dans ce " \
+        noms = [(supprimer_accents(membre.nom), i) for i, membre in \
+                enumerate(self.__membres)]
+        noms = dict(noms)
+        
+        if nom not in noms.keys():
+            raise KeyError("le membre {} n'existe pas dans ce " \
                     "squelette".format(nom))
         
-        del self.__membres[nom]
+        del self.__membres[noms[nom]]
+        
+        for personnage in self.personnages:
+            personnage.equipement.supprimer_membre(nom)
+        
         self.enregistrer()
+    
+    def get_membre(self, nom):
+        """Retourne le membre si il le trouve grâce à son nom."""
+        nom = supprimer_accents(nom).lower()
+        noms = [(supprimer_accents(membre.nom), i) for i, membre in \
+                enumerate(self.__membres)]
+        noms = dict(noms)
+        
+        if nom not in noms.keys():
+            raise KeyError("le membre {} n'existe pas dans ce " \
+                    "squelette".format(nom))
+        
+        return self.__membres[noms[nom]]
+    
+    def a_membre(self, nom):
+        """Retourne True si le squelette possède le membre nom, False sinon"""
+        try:
+            membre = self.get_membre(nom)
+            res = True
+        except KeyError:
+            res = False
+        
+        return res
+    
+    def changer_flag_membre(self, nom, flags):
+        """Change les flags du membre nom.
+        Répercute ces modifications dans les autres membres dérivés.
+        
+        """
+        membre = self.get_membre(nom)
+        membre.flags = flags
+        
+        for personnage in self.personnages:
+            equipement = personnage.equipement
+            a_membre = equipement.get_membre(nom)
+            a_membre.flags = flags
+    def renommer_membre(self, nom, nouveau_nom):
+        """Renomme le membre nom.
+        Répercute ces modifications dans les autres membres dérivés.
+        
+        """
+        membre = self.get_membre(nom)
+        membre.nom = nouveau_nom
+        
+        for personnage in self.personnages:
+            equipement = personnage.equipement
+            a_membre = equipement.get_membre(nom)
+            a_membre.nom = nouveau_nom
 
 ObjetID.ajouter_groupe(Squelette)

@@ -53,9 +53,11 @@ class EdtMembre(Editeur):
         
         """
         membre = self.objet
+        squelette = membre.parens
         flag = arguments.rstrip().lstrip()
         if flag in FLAGS:
-            membre.flags = membre.flags ^ FLAGS[flag]
+            squelette.changer_flag_membre(membre.nom,
+                    membre.flags ^ FLAGS[flag])
             self.actualiser()
         else:
             self.pere << "|err|Ce flag n'est pas disponible.|ff|"
@@ -68,13 +70,10 @@ class EdtMembre(Editeur):
         membre = self.objet
         squelette = membre.parent
         nom = supprimer_accents(arguments).lower()
-        flag = arguments.rstrip().lstrip()
-        if nom in squelette.membres:
+        if squelette.a_membre(nom):
             self.pere << "|err|Ce nom est déjà utilisé.|ff|"
         else:
-            squelette.supprimer_membre(membre.nom)
-            membre.nom = nom
-            squelette.ajouter_membre(nom,modele=membre)
+            squelette.renommer_membre(membre.nom, arguments)
             self.actualiser()
     
     def accueil(self):
@@ -96,3 +95,4 @@ class EdtMembre(Editeur):
             else:
                 msg += "non"
         return msg
+

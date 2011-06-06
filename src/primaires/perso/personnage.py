@@ -167,6 +167,14 @@ class Personnage(ObjetID):
         """
         self.equipement = Equipement(self, squelette)
     
+    def detruire(self):
+        """Méthode appelée lors de la destruction du personage.
+        -   On supprime le personnage de la liste des personnages du squelette
+        
+        """
+        if self.equipement:
+            self.equipement.squelette.personnages.remove(self)
+    
     def envoyer(self, msg):
         """Méthode envoyer"""
         raise NotImplementedError

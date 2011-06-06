@@ -29,11 +29,9 @@
 
 """Ce fichier contient la classe Equipement, détaillée plus bas."""
 
-from collections import OrderedDict
-
-from .membre import Membre
-
 from abstraits.obase import *
+from primaires.format.fonctions import supprimer_accents
+from .membre import Membre
 
 class Equipement(BaseObj):
     
@@ -49,13 +47,15 @@ class Equipement(BaseObj):
         """
         BaseObj.__init__(self)
         self.personnage = personnage
-        self._membres = OrderedDict()
+        self.squelette = squelette
+        self.__membres = []
         
         if squelette:
+            squelette.personnages.append(personnage)
             # Construction des membres copiés depuis le squelette
-            for nom, membre in squelette.membres.items():
-                self._membres[nom] = Membre(nom, modele=membre,
-                        parent=personnage)
+            for membre in squelette.membres:
+                self.__membres.append(Membre(membre.nom, modele=membre,
+                        parent=personnage))
     
     def __getnewargs__(self):
         return (None, None)
@@ -63,7 +63,7 @@ class Equipement(BaseObj):
     @property
     def membres(self):
         """Retourne un dictionnaire déréférencé des membres"""
-        return OrderedDict(self._membres)
+        return list(self.__membres)
     
     def get_membre(self, nom_membre):
         """Récupère le membre dont le nom est nom_membre.
@@ -72,13 +72,37 @@ class Equipement(BaseObj):
         en cas de problème.
         
         """
+        nom = supprimer_accents(nom_membre)
+        noms = [(supprimer_accents(membre.nom), i) for i, membre in \
+                enumerate(self.__membres)]
+        noms = dict(noms)
+        
         try:
-            membre = self._membres[nom_membre]
+            membre = self.__membres[noms[nom]]
         except KeyError:
             raise KeyError("le membre {} est introuvable dans " \
                     "l'équipement de {}".format(nom_membre, self.personnage))
         
         return membre
+    
+    def ajouter_membre(self, membre):
+        """Ajoute un nouveau membre en se servant de "membre" comme modèle"""
+        membre = Membre(membre.nom, modele=membre, parent=self.personnage)
+        self.__membres.append(membre)
+    
+    def supprimer_membre(self, nom):
+        """Supprime le membre de nom nom"""
+        nom = supprimer_accents(nom_membre)
+        noms = [(supprimer_accents(membre.nom), i) for i, membre in \
+                enumerate(self.__membres)]
+        noms = dict(noms)
+        
+        try:
+            membre = self.__membres[noms[nom]]
+        except KeyError:
+            raise KeyError("le membre {} est introuvable dans " \
+                    "l'équipement de {}".format(nom_membre, self.personnage))
+        del self.__membres[noms[nom]]
     
     def membre_est_equipe(self, nom_membre):
         """Retourne True si le membre est équipé, False sinon.

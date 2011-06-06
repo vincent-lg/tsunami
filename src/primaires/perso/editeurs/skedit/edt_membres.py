@@ -46,10 +46,6 @@ class EdtMembres(Editeur):
         Editeur.__init__(self, pere, objet, attribut)
         self.ajouter_option("d", self.opt_suppr_membre)
     
-    def get_apercu(self):
-        """Retourne l'aperçu"""
-        return "aperçu"
-    
     def accueil(self):
         """Message d'accueil du contexte"""
         squelette = self.objet
@@ -62,8 +58,8 @@ class EdtMembres(Editeur):
         # Parcours des membres
         membres = squelette.membres
         liste_membres = ""
-        for nom, membre in membres.items():
-            ligne = "\n |ent|" + nom.ljust(10) + "|ff| :"
+        for membre in membres:
+            ligne = "\n |ent|" + membre.nom.ljust(10) + "|ff| :"
             liste_membres += ligne
         
         if not liste_membres:
@@ -80,7 +76,9 @@ class EdtMembres(Editeur):
         squelette = self.objet
         membres = squelette.membres
         nom = supprimer_accents(arguments).lower()
-        if nom not in membres.keys():
+        try:
+            membre = squelette.get_membre(nom)
+        except KeyError:
             self.pere << "|err|Ce membre est introuvable.|ff|"
         else:
             squelette.supprimer_membre(nom)
@@ -91,10 +89,10 @@ class EdtMembres(Editeur):
         squelette = self.objet
         membres = squelette.membres
         nom = supprimer_accents(msg).lower()
-        
-        if nom in membres.keys():
-            membre = membres[nom]
-        else:
+       
+        try: 
+            membre = squelette.get_membre(nom)
+        except KeyError:
             membre = squelette.ajouter_membre(msg)
         
         enveloppe = EnveloppeObjet(EdtMembre, membre, None)
@@ -106,3 +104,4 @@ class EdtMembres(Editeur):
             " - |ent|/n nom|ff| : change le nom du membre\n\n"
         contexte = enveloppe.construire(self.pere)
         self.migrer_contexte(contexte)
+
