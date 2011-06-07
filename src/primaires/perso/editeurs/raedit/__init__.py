@@ -74,7 +74,7 @@ class EdtRaedit(Editeur):
             "Pour créer ou e race, entrez |ent|son nom|ff|.\n\n" \
             "Races existantes :\n"
         
-        races = sorted(type(self).importeur.perso.races.values(), key=str)
+        races = sorted(type(self).importeur.perso.races, key=str)
         for race in races:
             msg += "\n  |ent|" + race.nom + "|ff|"
         
@@ -95,7 +95,7 @@ class EdtRaedit(Editeur):
             return self.opt_quitter("")
         
         race = None
-        races = sorted(type(self).importeur.perso.races.values(), key=str)
+        races = sorted(type(self).importeur.perso.races, key=str)
         for t_race in races:
             if contient(t_race.nom, msg):
                 race = t_race

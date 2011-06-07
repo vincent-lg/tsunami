@@ -28,23 +28,16 @@
 # pereIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le contexte "personnage:creation:langue_cmd"""
-
-import re
+"""Fichier contenant le contexte "personnage:creation:choix_race"""
 
 from primaires.interpreteur.contexte import Contexte
-from primaires.format.fonctions import supprimer_accents
+from primaires.format.fonctions import *
 
-# Constantes
-LANGUES_DISPONIBLES = ['francais', 'anglais']
-
-class LangueCMD(Contexte):
-    """Contexte demandant au client de choisir la langue de ses commandes.
-    Les commandes qu'il entrera par la suite seront fonction de cette
-    option.
+class ChoixRace(Contexte):
+    """Contexte demandant au client de choisir la race de son personnage.
     
     """
-    nom = "personnage:creation:langue_cmd"
+    nom = "personnage:creation:choix_race"
     
     def __init__(self, pere):
         """Constructeur du contexte"""
@@ -52,25 +45,37 @@ class LangueCMD(Contexte):
     
     def accueil(self):
         """Message d'accueil du contexte"""
+        races = type(self).importeur.perso.races
+        noms_races = [race.nom for race in races]
         return \
-            "\n|tit|-------= Choix de la langue =-------|ff|\n\n" \
-            "Entrez l'un des |ent|choix|ff| proposés ci-après.\nLa langue " \
-            "choisie sera celle des commandes en jeu ; si vous n'êtes pas\n" \
-            "familiarisé avec les MUDs, nous vous conseillons le français. " \
-            "Une fois\nen jeu, vous pourrez toujours changer grâce à la " \
-            "commande |cmd|langue|ff| | |cmd|lang|ff|.\n\n" \
-            "Langues disponibles : |cmd|français|ff|, |cmd|anglais|ff|"
+            "\n|tit|-------= Choix de la race =-------|ff|\n\n" \
+            "Entrez l'une des |ent|races|ff| proposées ci-après\n" \
+            "ou |cmd|info <nom de la race>|ff| pour obtenir plus " \
+            "des informations sur la race.\nExemple : |cmd|info " \
+            "humain|ff|\n\nRaces disponibles :\n\n" \
+            "  " + "\n  ".join(noms_races)
     
     def get_prompt(self):
         """Message de prompt"""
-        return "Entrez le nom de la langue : "
+        return "Entrez le nom de la race : "
     
     def interpreter(self, msg):
         """Méthode d'interprétation"""
         msg = supprimer_accents(msg).lower()
-        if msg not in LANGUES_DISPONIBLES:
-            self.pere << "|err|Cette langue n'est pas disponible.|ff|"
+        race = None
+        for t_race in type(self).importeur.perso.races:
+            if contient(t_race.nom, msg):
+                race = t_race
+                break
+
+        if not race:
+            self.pere << "|err|Cette race n'est pas disponible.|ff|"
         else:
-            self.pere.joueur.langue_cmd = msg
-            self.migrer_contexte("personnage:creation:choix_race")
+            self.pere.joueur.race = race
+            
+            if self.pere.joueur not in self.pere.compte.joueurs:
+                print("On ajoute")
+                self.pere.compte.ajouter_joueur(self.pere.joueur)
+            
+            self.pere.joueur.pre_connecter()
 

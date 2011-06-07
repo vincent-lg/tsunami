@@ -59,7 +59,7 @@ class Module(BaseModule):
         self.cfg_stats = None
         self.commandes = []
         self.squelettes = {}
-        self.races = {}
+        self.races = []
     
     def config(self):
         """Méthode de configuration.
@@ -138,11 +138,17 @@ class Module(BaseModule):
     
     def ajouter_race(self, race):
         """Ajout de la race au dictionnaire des races existantes"""
-        self.races[race.nom] = race
+        self.races.append(race)
     
     def supprimer_race(self, nom):
         """Suppression de la race 'nom'"""
-        race = self.races[nom]
-        del self.races[nom]
+        race = None
+        indice = None
+        for i, t_race in enumerate(self.races):
+            if race.nom.lower() == nom.lower():
+                race = t_race
+                indice = i
+        
+        del self.races[indice]
         race.detruire()
 

@@ -53,7 +53,7 @@ class EdtMembre(Editeur):
         
         """
         membre = self.objet
-        squelette = membre.parens
+        squelette = membre.parent
         flag = arguments.rstrip().lstrip()
         if flag in FLAGS:
             squelette.changer_flag_membre(membre.nom,
