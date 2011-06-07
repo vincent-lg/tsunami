@@ -112,7 +112,7 @@ class Canal(BaseObj):
             contexte.canal = type(self).importeur.communication.canaux[self.nom]
             joueur.contexte_actuel.migrer_contexte(contexte)
             for immerge in self.immerges:
-                if connecte in type(self).importeur.connex.joueurs_connectes:
+                if immerge in type(self).importeur.connex.joueurs_connectes:
                     if immerge is not joueur:
                         res = self.clr + "<" + joueur.nom + " s'immerge.>|ff|"
                         immerge << res
@@ -121,7 +121,7 @@ class Canal(BaseObj):
             joueur.contextes.retirer()
             if aff is True:
                 for immerge in self.immerges:
-                    if connecte in type(self).importeur.connex.joueurs_connectes:
+                    if immerge in type(self).importeur.connex.joueurs_connectes:
                         res = self.clr + "<" + joueur.nom
                         res += " sort d'immersion.>|ff|"
                         immerge << res

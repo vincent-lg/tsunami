@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire perso."""
+"""Fichier contenant le module secondaire jeux."""
 
 from abstraits.module import *
 from . import commandes
@@ -39,7 +39,7 @@ from .config import cfg_jeux
 class Module(BaseModule):
     
     """
-    Module gérant les bugs, leur ajouts, leur modification ...
+    Module gérant les jeux dans le jeu
     
     """
     

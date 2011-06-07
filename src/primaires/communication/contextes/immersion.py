@@ -56,11 +56,11 @@ class Immersion(Contexte):
             "i" : self.opt_invite,
             "me" : self.opt_emote,
             # Options de modo
-            "e" : self.opt_eject,
+            "ej" : self.opt_eject,
             "b" : self.opt_ban,
             # Options d'admin
             "p" : self.opt_promote,
-            "e" : self.opt_edit,
+            "ed" : self.opt_edit,
             "d" : self.opt_dissolve,
             }
     

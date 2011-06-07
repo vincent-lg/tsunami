@@ -28,16 +28,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la configuration par défaut du module 'connex'."""
+"""Ce fichier contient la configuration par défaut du module 'jeux'."""
 
 cfg_jeux = r"""
 # Ce fichier contient la configuration du module secondaire jeux.
-# Elle donne la liste des jeux disponibles
+# Elle donne la liste des jeux disponibles.
 
-
-### Rapport
-
-# Liste des jeux disponibles. Un fichier dans le répertoire
+# Liste des jeux disponibles. Pour chaque jeu, un fichier dans le répertoire
 # secondaires/jeux/backend/ possédant le même nom avec l'extension .py doit
 # exister.
 
