@@ -51,7 +51,7 @@ class ChoixRace(Contexte):
             "\n|tit|-------= Choix de la race =-------|ff|\n\n" \
             "Entrez l'une des |ent|races|ff| proposées ci-après\n" \
             "ou |cmd|info <nom de la race>|ff| pour obtenir plus " \
-            "des informations sur la race.\nExemple : |cmd|info " \
+            "d'informations sur la race.\nExemple : |cmd|info " \
             "humain|ff|\n\nRaces disponibles :\n\n" \
             "  " + "\n  ".join(noms_races)
     
@@ -62,6 +62,11 @@ class ChoixRace(Contexte):
     def interpreter(self, msg):
         """Méthode d'interprétation"""
         msg = supprimer_accents(msg).lower()
+        info = None
+        if msg.startswith("info "):
+            msg = msg[5:]
+            info = True
+        
         race = None
         for t_race in type(self).importeur.perso.races:
             if contient(t_race.nom, msg):
@@ -71,11 +76,14 @@ class ChoixRace(Contexte):
         if not race:
             self.pere << "|err|Cette race n'est pas disponible.|ff|"
         else:
-            self.pere.joueur.race = race
-            
-            if self.pere.joueur not in self.pere.compte.joueurs:
-                print("On ajoute")
-                self.pere.compte.ajouter_joueur(self.pere.joueur)
-            
-            self.pere.joueur.pre_connecter()
+            if not info:
+                self.pere.joueur.race = race
+                
+                if self.pere.joueur not in self.pere.compte.joueurs:
+                    self.pere.compte.ajouter_joueur(self.pere.joueur)
+                
+                self.pere.joueur.pre_connecter()
+            else:
+                self.pere << "  |tit|Aide sur la race {} :|ff|\n\n{}".format(
+                        race.nom, race.description)
 
