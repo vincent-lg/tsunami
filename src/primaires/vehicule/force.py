@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Coordonnees, détaillée plus bas."""
+"""Fichier contenant la classe Force, détaillée plus bas."""
 
 from abstraits.obase import *
 from math import sqrt
@@ -36,7 +36,8 @@ from .vecteur import Vecteur
 
 class Force(BaseObj):
     
-    """Classe représentant un vecteur
+    """Classe représentant une force.
+    
     """
     
     def __init__(self, subissant=None):
@@ -60,6 +61,7 @@ class Force(BaseObj):
 class Propulsion(Force):
     
     """Classe représentant une force de propulsion
+    
     """
     
     def __init__(self, valeur = None):
@@ -77,6 +79,7 @@ class Propulsion(Force):
 class Frottement(Force):
     
     """Classe représentant une force de frottement
+    
     """
     
     def __init__(self, subissant, coef):
@@ -87,5 +90,3 @@ class Frottement(Force):
     
     def calcul(self):
         return - self.coef * self.subissant.vitesse
-
-

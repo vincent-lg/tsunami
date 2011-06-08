@@ -36,11 +36,10 @@ from .vecteur import Vecteur
 from .force import Propulsion, Frottement
 
 class Vehicule(ObjetID):
+    
     """Classe représentant un véhicule
     
     """
-    groupe = "vehicules"
-    sous_rep = "vehicules"
     
     def __init__(self):
         """Constructeur du véhicule
@@ -65,29 +64,28 @@ class Vehicule(ObjetID):
         return ()
     
     def avancer(self):
-        """Fait avancer le vehicule"""
-        
-        #Calcul la nouvelle position
+        """Fait avancer le véhicule"""
+        # Calcul la nouvelle position
         self.position += self.vitesse
         
-        #Si on a une masse nulle c'est la bazar
+        # Si on a une masse nulle, on ne peut pas continuer
         if self.masse == 0:
-            raise(Exception("Vehicule de masse nulle, au secours !"))
+            raise ValueError("ce véhicule à une masse nulle")
         
-        #On calcul l'accélération à partir des forces
-        acceleration = Vecteur(0,0,0)
+        # On calcul l'accélération à partir des forces
+        acceleration = Vecteur(0, 0, 0)
         for force in self.forces:
             acceleration += (1 / self.masse) * force.valeur
         
-        #On calcul la nouvelle vitesse à partir de l'accélération
+        # On calcul la nouvelle vitesse à partir de l'accélération
         self.vitesse += acceleration
         
-        #On renvoit la nouvelle position
+        # On renvoit la nouvelle position
         return self.position
     
     def get_prochaine_coordonnees(self):
-        return self.position + self.vitesse
+        """Retourne les prochaines coordonnées
+        après avoir avancé de la vitesse courante
         
-    
-# On ajoute le groupe à ObjetID
-ObjetID.ajouter_groupe(Vehicule)
+        """
+        return self.position + self.vitesse

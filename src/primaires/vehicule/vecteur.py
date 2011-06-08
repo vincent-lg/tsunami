@@ -30,8 +30,9 @@
 
 """Fichier contenant la classe Coordonnees, détaillée plus bas."""
 
-from abstraits.obase import *
 from math import sqrt, cos, sin, radians
+
+from abstraits.obase import *
 from primaires.salle.coordonnees import Coordonnees
 
 class Vecteur(BaseObj):
@@ -47,9 +48,6 @@ class Vecteur(BaseObj):
         self.y = y
         self.z = z
     
-    def coordonnees(self):
-        return Coordonnees(self.x, self.y, self.z)
-    
     def __getnewargs__(self):
         return ()
     
@@ -61,34 +59,39 @@ class Vecteur(BaseObj):
         """Affichage des coordonnées dans un cas de debug"""
         return "Vecteur(x={}, y={}, z={}})".format(self.x, self.y, self.z)
     
+    @property
+    def coordonnees(self):
+        return Coordonnees(int(self.x), int(self.y), int(self.z))
+    
+    @property
     def tuple(self):
         """Retourne le tuple (x, y, z)"""
         return (self.x, self.y, self.z)
     
     def get_copie(self):
-        """Retourne une copie de self, non liée à parent"""
+        """Retourne une copie de self"""
         return Vecteur(self.x, self.y, self.z)
     
-    def tourner_autours_x(self, angle):
+    def tourner_autour_x(self, angle):
         r = radians(angle)
         x, y, z = self.x, self.y, self.z
-        self.x =   x * 1      + y * 0      + z * 0
-        self.y =   x * 0      + y * cos(r) + z * sin(r)
-        self.z = - x * 0      + y * sin(r) + z * cos(r)
+        self.x =   x * 1 + y * 0      + z * 0
+        self.y =   x * 0 + y * cos(r) + z * sin(r)
+        self.z = - x * 0 + y * sin(r) + z * cos(r)
     
-    def tourner_autours_y(self, angle):
+    def tourner_autour_y(self, angle):
         r = radians(angle)
         x, y, z = self.x, self.y, self.z
-        self.x =   x * cos(r) + y * 0      + z * sin(r)
-        self.y =   x * 0      + y * 1      + z * 0
-        self.z = - x * sin(r) + y * 0      + z * cos(r)
+        self.x = x * cos(r) + y * 0 + z * sin(r)
+        self.y = x * 0 + y * 1 + z * 0
+        self.z = -x * sin(r) + y * 0 + z * cos(r)
     
-    def tourner_autours_z(self, angle):
+    def tourner_autour_z(self, angle):
         r = radians(angle)
         x, y, z = self.x, self.y, self.z
-        self.x =   x * cos(r) + y * sin(r) + z * 0
-        self.y = - x * sin(r) + y * cos(r) + z * 0
-        self.z =   x * 0      + y * 0      + z * 1
+        self.x = x * cos(r) + y * sin(r) + z * 0
+        self.y = -x * sin(r) + y * cos(r) + z * 0
+        self.z = x * 0 + y * 0 + z * 1
     
     def norme(self):
         return sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
@@ -97,22 +100,20 @@ class Vecteur(BaseObj):
         norme = self.norme()
         return Vecteur(self.x / norme, self.y / norme, self.z / norme)
     
-    #Opérateur mathématique
     
+    # Méthodes spéciales mathématiques
     def __neg__(self):
+        """Retourne le vecteur négatif"""
+        return Vecteur(-self.x, -self.y, -self.z)
+    
+    def __add__(self, autre):
         """Additionne deux vecteur"""
-        return Vecteur(- self.x, - self.y, - self.z)
+        return Vecteur(self.x + autre.x, self.y + autre.y, self.z + autre.z)
     
-    def __add__(self, other):
-        """Additionne deux vecteur"""
-        return Vecteur(self.x + other.x, self.y + other.y, self.z + other.z)
+    def __sub__(self, autre):
+        """Soustrait autre à self"""
+        return Vecteur(self.x - autre.x, self.y - autre.y, self.z - autre.z)
     
-    def __sub__(self, other):
-        """Additionne deux vecteur"""
-        return Vecteur(self.x - other.x, self.y - other.y, self.z - other.z)
-    
-    def __rmul__(self, other):
-        """Additionne deux vecteur"""
-        return Vecteur(self.x * other, self.y * other, self.z * other)
-    
-    
+    def __rmul__(self, valeur):
+        """Multiplie le vecteur par valeur"""
+        return Vecteur(self.x * valeur, self.y * valeur, self.z * valeur)
