@@ -72,5 +72,10 @@ class LangueCMD(Contexte):
             self.pere << "|err|Cette langue n'est pas disponible.|ff|"
         else:
             self.pere.joueur.langue_cmd = msg
-            self.migrer_contexte("personnage:creation:choix_race")
-
+            races = type(self).importeur.perso.races
+            if races:
+                self.migrer_contexte("personnage:creation:choix_race")
+            else:
+                self.pere.compte.ajouter_joueur(self.pere.joueur)
+                
+                self.pere.joueur.pre_connecter()

@@ -94,6 +94,10 @@ class EdtRaedit(Editeur):
         if msg == "q":
             return self.opt_quitter("")
         
+        if len(msg) < 3:
+            self.pere << "|err|Ce nom de race est trop court.|ff|"
+            return
+        
         race = None
         races = sorted(type(self).importeur.perso.races, key=str)
         for t_race in races:
