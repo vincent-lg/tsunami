@@ -1,5 +1,5 @@
-# -*-coding:Utf-8 -*
 
+# -*-coding:Utf-8 -*
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -28,11 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module perso."""
+"""Package contenant la commande 'equipement'.
 
-from . import commande
-from . import equipement
-from . import qui
-from . import raedit
-from . import score
-from . import skedit
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdEquipement(Commande):
+    
+    """Commande 'equipement'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "equipement", "equipement")
+        self.aide_courte = "affiche votre équipement"
+        self.aide_longue = \
+                "Cette commande affiche votre équipement actuel, les " \
+            "objets que vous portez ou ceux que vous équipez."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation de la commande"""
+        equipement = personnage.equipement
+        msg = ""
+        objets = []
+        for membre in equipement.membres:
+            objet = membre.equipe or membre.tenu
+            if objet:
+                objets.append("{} [{}]".format(membre.nom,
+                        objet.nom_singulier))
+        
+        if not objets:
+            msg = "Vous ne portez rien actuellement."
+        else:
+            msg = "Votre équipement :\n\n  " + "\n  ".join(objets)
+        
+        personnage << msg

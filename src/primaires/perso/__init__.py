@@ -101,6 +101,7 @@ class Module(BaseModule):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.commande.CmdCommande(),
+            commandes.equipement.CmdEquipement(),
             commandes.qui.CmdQui(),
             commandes.raedit.CmdRaedit(),
             commandes.score.CmdScore(),
