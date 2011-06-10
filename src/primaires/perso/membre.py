@@ -100,6 +100,7 @@ class Membre(BaseObj):
     
     def peut_tenir(self):
         """Retourne True si le membre peut tenir"""
+        print(self.nom, self.flags & PEUT_TENIR != 0, self.equipe is None)
         return self.flags & PEUT_TENIR != 0 and self.equipe is None
     
     def affichable(self):

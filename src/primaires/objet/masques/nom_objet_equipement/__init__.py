@@ -28,8 +28,51 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module perso."""
+"""Fichier contenant le masque <nom_objet_equipement>."""
 
-from . import ident_prototype_objet
-from . import nom_objet
-from . import nom_objet_equipement
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+from primaires.format.fonctions import *
+
+class NomObjetEquipement(Masque):
+    
+    """Masque <nom_objet>.
+    On attend un nom d'objet en paramètre.
+    
+    """
+    
+    nom = "nom_objet_equipement"
+    
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self)
+        self.nom_complet = "nom d'un objet"
+        self.objet = None
+        self.membre = None
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        nom = liste_vers_chaine(commande).lstrip()
+        
+        if not nom:
+            raise ErreurValidation( \
+                "Précisez un nom d'objet.")
+        
+        nom = nom.lower()
+        objet = None
+        for membre in personnage.equipement.membres:
+            o = membre.tenu
+            if o and contient(o.nom_singulier, nom):
+                objet = o
+                self.membre = membre
+                break
+        
+        if not o:
+            raise ErreurValidation(
+                "|err|Ce nom d'objet est introuvable.|ff|")
+        
+        self.objet = objet
+        
+        return True

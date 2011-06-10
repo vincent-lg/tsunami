@@ -28,8 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module perso."""
+"""Package contenant la commande 'prendre'."""
 
-from . import ident_prototype_objet
-from . import nom_objet
-from . import nom_objet_equipement
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdPrendre(Commande):
+    
+    """Commande 'prendre'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "prendre", "get")
+        self.schema = "<nom_objet>"
+        self.aide_courte = "ramasse un objet"
+        self.aide_longue = \
+                "Cette commande permet de ramasser un ou plusieurs objets."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        objet = dic_masques["nom_objet"].objet
+        
+        # On cherche un emplacement libre chez le personnage
+        membre_libre = None
+        for membre in personnage.equipement.membres:
+            if membre.peut_tenir() and membre.tenu is None:
+                membre_libre = membre
+                break
+        
+        if not membre_libre:
+            personnage << "Vous n'avez aucune main libre."
+        else:
+            personnage.salle.objets_sol.retirer(objet)
+            membre_libre.tenu = objet
+            personnage << "Vous ramassez {}.".format(objet.nom_singulier)
+            personnage.salle.envoyer("{} ramasse {}.".format(personnage.nom,
+                    objet.nom_singulier), (personnage, ))

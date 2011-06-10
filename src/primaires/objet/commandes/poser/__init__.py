@@ -28,8 +28,28 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module perso."""
+"""Package contenant la commande 'poser'."""
 
-from . import ident_prototype_objet
-from . import nom_objet
-from . import nom_objet_equipement
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdPoser(Commande):
+    
+    """Commande 'poser'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "poser", "drop")
+        self.schema = "<nom_objet_equipement>"
+        self.aide_courte = "pose un objet"
+        self.aide_longue = \
+                "Cette commande permet de poser un ou plusieurs objets."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        objet = dic_masques["nom_objet_equipement"].objet
+        membre = dic_masques["nom_objet_equipement"].membre
+        membre.tenu = None
+        personnage.salle.objets_sol.ajouter(objet)
+        personnage << "Vous posez {}.".format(objet.nom_singulier)
+        personnage.salle.envoyer("{} pose {}.".format(personnage.nom,
+                    objet.nom_singulier), (personnage, ))
