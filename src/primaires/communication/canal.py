@@ -41,21 +41,22 @@ class Canal(BaseObj):
     
     """
     
-    def __init__(self, nom, auteur):
+    def __init__(self, nom, auteur, parent):
         """Constructeur du canal"""
         BaseObj.__init__(self)
         self.nom = nom
         self.auteur = auteur
         self.clr = "|cyc|"
         self.resume = "canal de communication"
-        self.description = Description()
-        self.moderateurs = ListeID()
-        self.immerges = ListeID()
-        self.connectes = ListeID()
-        self.liste_noire = ListeID()
+        self.description = Description(parent)
+        self.moderateurs = ListeID(parent)
+        self.immerges = ListeID(parent)
+        self.connectes = ListeID(parent)
+        self.liste_noire = ListeID(parent)
+        self.parent = parent
     
     def __getnewargs__(self):
-        return ("", None)
+        return ("", None, None)
     
     def __str__(self):
         """Renvoie le canal sous la forme 'canal : résumé - X connecté(s)'"""

@@ -63,7 +63,8 @@ class ListeID(BaseObj):
     def __contains__(self, objet):
         """Retourne True si objet.id est dans la liste"""
         s_liste = [str(elt) for elt in self.__liste]
-        return str(objet.id) in s_liste
+        res = str(objet.id) in s_liste
+        return res
     
     def __getstate__(self):
         """On enregistre juste les IDs dans le fichier"""

@@ -132,7 +132,7 @@ class Module(BaseModule):
         
         """
         
-        self._canaux[nom] = Canal(nom, auteur)
+        self._canaux[nom] = Canal(nom, auteur, self._canaux)
         return self._canaux[nom]
     
     def supprimer_canal(self, nom):
