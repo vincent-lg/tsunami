@@ -43,11 +43,10 @@ class Joueur(Masque):
     """
     
     nom = "nom_joueur"
+    nom_complet = "nom d'un joueur"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "nom d'un joueur"
+    def init(self):
+        """Initialisation des attributs"""
         self.joueur = None
     
     def valider(self, personnage, dic_masques, commande):

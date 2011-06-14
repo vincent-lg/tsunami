@@ -44,11 +44,10 @@ class NomObjetEquipement(Masque):
     """
     
     nom = "nom_objet_equipement"
+    nom_complet = "nom d'un objet"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "nom d'un objet"
+    def init(self):
+        """Initialisation des attributs"""
         self.objet = None
         self.membre = None
     

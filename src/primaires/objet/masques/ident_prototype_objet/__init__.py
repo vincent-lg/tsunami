@@ -43,11 +43,10 @@ class IdentPrototypeObjet(Masque):
     """
     
     nom = "ident_prototype_objet"
+    nom_complet = "prototype d'objet"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "prototype d'objet"
+    def init(self):
+        """Initialisation des attributs"""
         self.ident = ""
         self.prototype = None
     

@@ -47,11 +47,10 @@ class Ident(Masque):
     """
     
     nom = "ident"
+    nom_complet = "clé identifiante"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "clé identifiante"
+    def init(self):
+        """Initialisation des attributs"""
         self.ident = ""
     
     def valider(self, personnage, dic_masques, commande):

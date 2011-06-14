@@ -259,11 +259,6 @@ class Importeur:
         
         type(self).parid.se_construit()
         
-        # Ajout des masques et commandes
-        for module in self.__dict__.values():
-            if module.statut == INITIALISE:
-                module.ajouter_masques()
-        
         for module in self.__dict__.values():
             if module.statut == INITIALISE:
                 module.ajouter_commandes()

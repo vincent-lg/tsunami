@@ -43,11 +43,10 @@ class IdConversation(Masque):
     """
     
     nom = "id_conversation"
+    nom_complet = "ID d'une conversation"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "id d'une conversation"
+    def init(self):
+        """Initialisation des attributs du masque"""
         self.id_conversation = None
         self.cible = None
         self.perte_focus = False

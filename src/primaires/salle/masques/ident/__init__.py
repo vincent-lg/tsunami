@@ -43,11 +43,10 @@ class Ident(Masque):
     """
     
     nom = "ident_salle"
+    nom_complet = "identifiant d'une salle"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "identifiant d'une salle"
+    def init(self):
+        """Initialisation des attributs"""
         self.identifiant = ""
         self.salle = None
     

@@ -44,11 +44,10 @@ class Direction(Masque):
     """
     
     nom = "direction"
+    nom_complet = "direction"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "direction"
+    def init(self):
+        """Initialisation des attributs"""
         self.direction = ""
     
     def valider(self, personnage, dic_masques, commande):

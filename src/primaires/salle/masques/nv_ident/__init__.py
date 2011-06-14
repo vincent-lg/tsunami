@@ -44,11 +44,10 @@ class NvIdent(Masque):
     """
     
     nom = "nv_ident_salle"
+    nom_complet = "nouvel identifiant de salle"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "nouvel identifiant de salle"
+    def init(self):
+        """Initialisation des attributs"""
         self.identifiant = ""
         self.zone = ""
         self.mnemonic = ""

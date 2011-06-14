@@ -45,10 +45,10 @@ class Etat(Masque):
     """
     
     nom = "etat"
+    nom_complet = "etat"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
+    def init(self):
+        """Initialisation des attributs"""
         self.etat = ""
         self.flag = None
     

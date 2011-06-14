@@ -48,11 +48,10 @@ class NvGroupe(Masque):
     """
     
     nom = "nv_groupe"
-    
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "nom du nouveau groupe"
+    nom_complet = "nom du nouveau groupe"
+
+    def init(self):
+        """Initialisation des attributs"""
         self.nom_groupe = ""
     
     def valider(self, personnage, dic_masques, commande):

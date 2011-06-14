@@ -168,7 +168,7 @@ class NoeudMasque(BaseNoeud):
         copie_commande = list(commande)
         if commande:
             for masque in self.masques:
-                masque.__init__()
+                masque.init()
                 try:
                     valide = masque.valider(personnage, dic_masques, commande)
                 except ErreurValidation as err:

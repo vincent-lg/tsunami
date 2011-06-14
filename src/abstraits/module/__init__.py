@@ -57,7 +57,6 @@ class BaseModule:
     Elle reprend les méthodes d'un module, appelées dans l'ordre :
     -   config : configuration du module
     -   init : initialisation du module (ne pas confondre avec le constructeur)
-    -   ajouter_masque : ajout des masques propres au module
     -   ajouter_commandes : ajout des commandes propres au module
     -   preparer : préparation du module avant lancement
     -   detruire : destruction du module, appelée lors du déchargement
@@ -133,10 +132,6 @@ class BaseModule:
         """
         self.statut = INITIALISE
 
-    def ajouter_masques(self):
-        """Ajoute les masques propres au module"""
-        pass
-    
     def ajouter_commandes(self):
         """Ajoute les commandes propres au module"""
         pass

@@ -43,11 +43,10 @@ class MessageAfk(Masque):
     """
     
     nom = "message_afk"
+    nom_complet = "message d'AFK"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "message d'afk"
+    def init(self):
+        """Initialisation des attributs"""
         self.message_afk = ""
     
     def valider(self, personnage, dic_masques, commande):

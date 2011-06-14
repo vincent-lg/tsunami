@@ -64,23 +64,6 @@ class Module(BaseModule):
         
         BaseModule.init(self)
     
-    def ajouter_masques(self):
-        """Ajout des masques dans l'interpréteur"""
-        self.importeur.interpreteur.ajouter_masque(
-                masques.chemin_cmd.CheminCommande)
-        self.importeur.interpreteur.ajouter_masque(
-                masques.encodage.Encodage)
-        self.importeur.interpreteur.ajouter_masque(
-                masques.groupe_existant.GroupeExistant)
-        self.importeur.interpreteur.ajouter_masque(
-                masques.joueur.Joueur)
-        self.importeur.interpreteur.ajouter_masque(
-                masques.langue.Langue)
-        self.importeur.interpreteur.ajouter_masque(
-                masques.nv_groupe.NvGroupe)
-        self.importeur.interpreteur.ajouter_masque(
-                masques.message_afk.MessageAfk)
-    
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [

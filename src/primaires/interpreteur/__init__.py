@@ -44,6 +44,7 @@ from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
 from primaires.interpreteur.groupe import ConteneurGroupes
+from .masque.masque import masques_def
 
 class Module(BaseModule):
     
@@ -73,7 +74,7 @@ class Module(BaseModule):
         self.commandes_francais = []
         self.commandes_anglais = []
         self.categories = {}
-        self.masques = {}
+        self.masques = masques_def
         
         # Editeurs
         self.editeurs = {}
@@ -144,16 +145,12 @@ class Module(BaseModule):
         self.commandes_anglais = sorted(self.commandes, \
             key=lambda noeud: noeud.commande.nom_anglais)
     
-    def ajouter_masque(self, masque):
-        """Méthode d'ajout d'un masque"""
-        self.masques[masque.nom] = masque
-    
     def get_masque(self, nom_masque):
         """Retourne le masque portant le nom correspondant
         On retourne une nouvelle instance du masque.
         
         """
-        return self.masques[nom_masque]()
+        return self.masques[nom_masque]
     
     def valider(self, personnage, dic_masques, lst_commande):
         """Commande de validation"""

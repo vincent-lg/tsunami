@@ -44,11 +44,10 @@ class NomObjet(Masque):
     """
     
     nom = "nom_objet"
+    nom_complet = "nom d'un objet"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "nom d'un objet"
+    def init(self):
+        """Initialisation des attributs"""
         self.objet = None
     
     def valider(self, personnage, dic_masques, commande):

@@ -91,12 +91,6 @@ class Module(BaseModule):
         
         BaseModule.init(self)
     
-    def ajouter_masques(self):
-        """Ajout des masques dans l'interpréteur"""
-        self.importeur.interpreteur.ajouter_masque(masques.commande.Commande)
-        self.importeur.interpreteur.ajouter_masque(masques.etat.Etat)
-        self.importeur.interpreteur.ajouter_masque(masques.ident.Ident)
-    
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
