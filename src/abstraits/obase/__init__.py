@@ -47,7 +47,7 @@ class ObjetsCharges:
         return item in self.__objets
     
     def __getitem__(self, item):
-        return self.__objets[item]
+        return self.__objets.get(item)
     
     def __setitem__(self, item, val):
         self.__objets[item] = val
