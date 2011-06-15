@@ -122,7 +122,7 @@ class Module(BaseModule):
         """Préparation du module"""
         for joueur in self.joueurs:
             if joueur.race and (not joueur.equipement or \
-                    (not joueur.equipement.squelette is None and \
+                    (not joueur.equipement.squelette and \
                     joueur.race.squelette)):
                 joueur.lier_equipement(joueur.race.squelette)
     
