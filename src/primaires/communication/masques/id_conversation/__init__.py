@@ -53,6 +53,7 @@ class IdConversation(Masque):
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
         lstrip(commande)
         id_conversation = liste_vers_chaine(commande).lstrip()
         conversations = type(self).importeur.communication.conversations

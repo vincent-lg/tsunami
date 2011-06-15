@@ -30,7 +30,14 @@
 
 """Fichier définissant la classe Masque détaillée plus bas"""
 
+import re
+
 masques_def = {}
+
+
+# Constantes
+RE_MOT_CLE = re.compile(r"^([a-z]*)/([a-z]*)$")
+RE_PROPRIETES = re.compile(r"([a-z:]*)(\{(.*)\})?$")
 
 class MetaMasque(type):
     
@@ -43,14 +50,14 @@ class MetaMasque(type):
         """Constructeur de la métaclasse"""
         type.__init__(cls, nom, bases, contenu)
         if cls.nom:
-            masque = cls()
-            masques_def[cls.nom] = masque
-            module = masque.__module__
-            masque.module = module.split(".")[1]
+            masques_def[cls.nom] = cls
+            module = cls.__module__
+            cls.module = module.split(".")[1]
 
 class Masque(metaclass=MetaMasque):
     
     """Classe représentant un masque.
+    
     Un masque est un élément interprétable d'une commande.
     Par exemple, un masque peut représenter, dans le nom d'une commande,
     le nom d'un personnage. La commande 'regarder' par exemple précise
@@ -66,13 +73,13 @@ class Masque(metaclass=MetaMasque):
     Vu que la plupart des masques sont réutilisés, ce procédé permet de
     gagner du temps sur le développement de commandes.
     
-    D'un point de vue plus technique, les masques sont des objets singleton.
-    Il n'en existe qu'un par masque. La méthode 'init' est appelée
-    à chaque fois que le masque doit être validé et c'est dans cette méthode
-    que vous devez définir vos attributs éventuels à votre masque,
-    pas dans le constructeur (celui-ci ne devrait jamais être redéfini par
-    une sous-classe).
-    
+    D'un point de vue plus technique, à chaque fois que, dans son schéma,
+    une commande fait appel à un masque, une instance du masque est créée.
+    Pour définir un masque, il faut faire une sous-classe de Masque en
+    lui donnant un nom bien précis.
+    Les attributs spécifiques que vous voulez ajouter à votre masque
+    ne doivent pas être définis dans le constructeur mais dans la méthode
+    'init'.
     Exemple :
     >>> class MasquePersonnage(Masque):
     ...     '''Masque attendant un nom de personnage.'''
@@ -80,8 +87,8 @@ class Masque(metaclass=MetaMasque):
     ...     def init(self):
     ...         self.personnage = None
     
-    Pour comprendre comment un masque est interprétez, référez-vous à la
-    méthode 'interpreter'.
+    Pour comprendre comment un masque est validé, référez-vous à la
+    méthode 'valider'.
     
     """
     
@@ -92,14 +99,40 @@ class Masque(metaclass=MetaMasque):
         """Crée un nouveau masque"""
         self.nom = type(self).nom
         self.type = None
-        self.proprietes = []
+        self.proprietes = "{}"
+        self.mot_cle = False
+        self.mots_cles = {
+            "francais": "",
+            "anglais": "",
+        }
     
     def init(self):
         """Méthode à redéfinir pour initialiser des attributs"""
         raise NotImplementedError
     
+    def construire(self, schema):
+        """Construction du masque depuis un schéma.
+        
+        Cette méthode est appelée au moment de la construction d'un masque
+        depuis un NoeudMasque.
+        
+        Elle se charge :
+        -   De savoir si le masque est un mot-clé ou non
+        -   De savoir si le masque possède des propriétés
+        
+        """
+        mot_cle = RE_MOT_CLE.search(schema)
+        proprietes = RE_PROPRIETES.search(schema)
+        if proprietes:
+            groupes = proprietes.groups()
+            nom, none, proprietes = groupes
+            if proprietes:
+                proprietes = proprietes.replace("=", ":")
+                self.proprietes = "{" + proprietes + "}"
+    
     def valider(self, personnage, dic_masques, commande):
         """Méthode de validation.
+        
         Elle prend en paramètres :
         -   le personnage qui a entré la commande
         -   le dic_masques : un dictionnaire ordonné contenant les masques
@@ -115,7 +148,15 @@ class Masque(metaclass=MetaMasque):
         une exception ErreurValidation en lui passant en paramètre
         le message à envoyer au joueur.
         
+        Cette commande permet également d'interpréter les propriétés.
+        Il est donc conseillé, quand vous développez une sous-classe de
+        Masque, d'appeler dans la méthode 'valider' la méthode parente.
+        
         """
+        # Interprétation des propriétés
+        globales = {"personnage": personnage, "dic_masques": dic_masques}
+        proprietes = eval(self.proprietes, globales)
+        self.__dict__.update(proprietes)
         return True
     
     def __str__(self):

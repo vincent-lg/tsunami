@@ -52,6 +52,7 @@ class IdentPrototypeObjet(Masque):
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
         ident = liste_vers_chaine(commande).lstrip()
         
         if not ident:

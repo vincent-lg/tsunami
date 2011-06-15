@@ -49,6 +49,8 @@ class Equipement(BaseObj):
         self.personnage = personnage
         self.squelette = squelette
         self.__membres = []
+        self.equipes = Equipes(self)
+        self.tenus = Tenus(self)
         
         if squelette:
             squelette.personnages.append(personnage)
@@ -156,3 +158,60 @@ class Equipement(BaseObj):
         membre = self.get_membre(nom_membre)
         membre.tenu = None
 
+class Equipes(BaseObj):
+    
+    """Classe se comportement comme un objet conteneur, contenant
+    les objets équipés.
+    
+    """
+    
+    def __init__(self, equipement):
+        """Constructeur du conteneur"""
+        BaseObj.__init__(self)
+        self.equipement = equipement
+    
+    def __getnewargs__(self):
+        return (None, )
+
+    def __iter__(self):
+        return iter([membre.equipe for membre in self.equipement.membres \
+                if membre.equipe])
+    
+    def ajouter(self, objet):
+        """Ajoute un objet à l'équipoement"""
+        raise NotImplementedError
+    
+    def retirer(self, objet):
+        """Retire l'objet passé en paramètre"""
+        for membre in self.equipement.membres:
+            if membre.equipe is objet:
+                self.equipement.desequiper_objet(membre.nom)
+
+class Tenus(BaseObj):
+    
+    """Classe se comportant comme un objet conteneur, contenant
+    les objets tenus.
+    
+    """
+    
+    def __init__(self, equipement):
+        """Constructeur du conteneur"""
+        BaseObj.__init__(self)
+        self.equipement = equipement
+    
+    def __getnewargs__(self):
+        return (None, )
+
+    def __iter__(self):
+        return iter([membre.tenu for membre in self.equipement.membres \
+                if membre.tenu])
+    
+    def ajouter(self, objet):
+        """Ajoute un objet à l'équipoement"""
+        raise NotImplementedError
+    
+    def retirer(self, objet):
+        """Retire l'objet passé en paramètre"""
+        for membre in self.equipement.membres:
+            if membre.tenu is objet:
+                self.equipement.retirer_objet(membre.nom)

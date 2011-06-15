@@ -53,6 +53,7 @@ class Observable(Masque):
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
         lstrip(commande)
         nom = liste_vers_chaine(commande)
         

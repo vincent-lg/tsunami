@@ -51,6 +51,7 @@ class Commande(Masque):
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
         nom_commande = liste_vers_chaine(commande).lstrip()
         
         if not nom_commande:

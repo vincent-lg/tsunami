@@ -46,30 +46,42 @@ class NomObjet(Masque):
     nom = "nom_objet"
     nom_complet = "nom d'un objet"
     
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self)
+        self.proprietes = "{'conteneurs':(personnage.salle.objets_sol, )}"
+    
     def init(self):
         """Initialisation des attributs"""
         self.objet = None
+        self.conteneur = None
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
         nom = liste_vers_chaine(commande).lstrip()
         
         if not nom:
             raise ErreurValidation( \
                 "Précisez un nom d'objet.")
         
-        nom = nom.lower()
-        conteneur = personnage.salle.objets_sol
+        conteneur = None
+        conteneurs = self.conteneurs
         objet = None
-        for o in conteneur:
-            if contient(o.nom_singulier, nom):
-                objet = o
+        for c in conteneurs:
+            for o in c:
+                if contient(o.nom_singulier, nom):
+                    objet = o
+                    conteneur = c
+                    break
+            if conteneur:
                 break
         
-        if not o:
+        if not objet:
             raise ErreurValidation(
                 "|err|Ce nom d'objet est introuvable.|ff|")
         
         self.objet = objet
+        self.conteneur = conteneur
         
         return True

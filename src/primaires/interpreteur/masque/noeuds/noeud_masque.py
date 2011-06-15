@@ -30,11 +30,16 @@
 
 """Fichier définissant la classe NoeudMasque détaillée plus bas;"""
 
+import re
+
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
 from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
+
+# Constantes
+RE_MASQUE = re.compile(r"^(<?)((.*):)?([^ >]*)(>?)$")
 
 class NoeudMasque(BaseNoeud):
     
@@ -60,47 +65,28 @@ class NoeudMasque(BaseNoeud):
         """Construit le masque depuis le schéma"""
         # On convertit la liste en chaîne
         schema = liste_vers_chaine(lst_schema)
-        # Si le schéma débute par un chevron ouvrant, on cherche le fermant
-        delimiteurs = [' ', ',']
-        if schema.startswith("<"):
-            chevrons = True
-            schema = schema[1:]
-            pos_fin = schema.find(">")
-            if pos_fin == -1:
-                raise ValueError("le chevron fermant n'a pu être trouvé " \
-                        "dans le schéma {0}".format(schema))
+        pos_fin = schema.find(">")
+        schema = schema[:pos_fin]
         
-        else:
-            chevrons = False
-            pos_fin = len(schema)
-            for delimiteur in delimiteurs:
-                pos = schema.find(delimiteur)
-                if pos >= 0 and pos < pos_fin:
-                    pos_fin = pos
+        # On extrait le type du schéma
+        res = RE_MASQUE.search(schema)
+        if not res:
+            raise ValueError("le schéma {} n'a pas pu être interprété".format(
+                    schema))
         
-        # On extrait la chaîne représentant notre masque
-        str_masque = schema[:pos_fin]
+        groupes = res.groups()
+        # Nos groupes sont un tuple constitué de :
+        # 1.  le signe < si présent (sinon None)
+        # 2.  le nom avec le signe ':' (on ne l'utilise pas)
+        # 3.  le nom sans le signe ':' si présent, sinon None
+        # 4.  le type du masque
+        # 5.  le signe > si présent (sinon None)
+        inf, none, nom, liste_types_masques, sup = groupes
+        liste_types_masques = liste_types_masques.split("|")
         
-        # On cherche le type du masque
-        if ":" in str_masque:
-            split_masque = str_masque.split(":")
-            nom_masque = split_masque[0]
-            str_type_masque = split_masque[1]
-        else:
-            nom_masque = ""  # on déduira le nom quand on aura le type
-            str_type_masque = str_masque
-        
-        # On extrait la valeur par défaut
-        if "=" in str_type_masque:
-            split_type_masque = str_type_masque.split("=")
-            str_type_masque = split_type_masque[0]
-            self.defaut = split_type_masque[1]
-        
-        # On extrait les autres valeurs possibles du noeud masque
-        if "|" in str_type_masque:
-            liste_types_masques = str_type_masque.split("|")
-        else:
-            liste_types_masques = [str_type_masque]
+        # Nettoyage des inf et sup
+        if not inf: inf = ""
+        if not sup: sup = ""
         
         # On cherche le type de masque dans l'interpréteur
         # on remplace dans liste_types_masques chaque str par son instance
@@ -109,28 +95,23 @@ class NoeudMasque(BaseNoeud):
         # mais dans la commande.
         # Si le masque n'existe pas, une exception est levée.
         for i, str_type_masque in enumerate(liste_types_masques):
-            if chevrons:
-                type_masque = type(self).importeur.interpreteur.get_masque(
-                        str_type_masque)
-            else:
-                type_masque = self.parente.parametres[str_type_masque].commande
-
+            proprietes = ""
+            if str_type_masque.count("{"):
+                proprietes = "{" + "{".join(str_type_masque.split("{")[1:])
+                str_type_masque = str_type_masque.split("{")[0]
+            
+            type_masque = type(self).importeur.interpreteur.get_masque(
+                    str_type_masque)
+            type_masque.construire(str_type_masque + proprietes)
+            
             liste_types_masques[i] = type_masque
         
         # Si le nom du masque n'est pas défini, on le déduit du premier
         # type de masque
-        if not nom_masque:
-            nom_masque = liste_types_masques[0].nom
+        if not nom:
+            nom = liste_types_masques[0].nom
         
-        self.nom = nom_masque
-        
-        # On s'assure que la valeur par défaut fournie est une valeur valide
-        # pour le premier type de masque proposé
-        if self.defaut:
-            if not liste_types_masques[0].accepte_valeur(self.defaut):
-                raise ValueError("la valeur par défaut {0} n'est pas " \
-                        "acceptée par le masque {1}".format( \
-                        self.defaut, liste_types_masquse[0]))
+        self.nom = nom
         
         self.masques = liste_types_masques
         
@@ -138,7 +119,7 @@ class NoeudMasque(BaseNoeud):
     
     @property
     def masque(self):
-        """Retourne le premier masque"""
+        """Retourne le premier masque."""
         return self.masques[0]
     
     def est_parametre(self):

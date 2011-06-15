@@ -39,16 +39,17 @@ class CmdPoser(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "poser", "drop")
-        self.schema = "<nom_objet_equipement>"
+        self.schema = "<nom_objet" \
+                "{'conteneurs'=[personnage.equipement.tenus]}>"
         self.aide_courte = "pose un objet"
         self.aide_longue = \
                 "Cette commande permet de poser un ou plusieurs objets."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        objet = dic_masques["nom_objet_equipement"].objet
-        membre = dic_masques["nom_objet_equipement"].membre
-        membre.tenu = None
+        objet = dic_masques["nom_objet"].objet
+        conteneur = dic_masques["nom_objet"].conteneur
+        conteneur.retirer(objet)
         personnage.salle.objets_sol.ajouter(objet)
         personnage << "Vous posez {}.".format(objet.nom_singulier)
         personnage.salle.envoyer("{} pose {}.".format(personnage.nom,

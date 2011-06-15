@@ -32,4 +32,3 @@
 
 from . import ident_prototype_objet
 from . import nom_objet
-from . import nom_objet_equipement

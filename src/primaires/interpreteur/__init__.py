@@ -150,7 +150,7 @@ class Module(BaseModule):
         On retourne une nouvelle instance du masque.
         
         """
-        return self.masques[nom_masque]
+        return self.masques[nom_masque]()
     
     def valider(self, personnage, dic_masques, lst_commande):
         """Commande de validation"""

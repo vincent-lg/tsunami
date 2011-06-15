@@ -55,6 +55,7 @@ class CheminCommande(Masque):
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
         lstrip(commande)
         chemin_commande = liste_vers_chaine(commande)
         
