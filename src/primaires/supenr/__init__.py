@@ -255,7 +255,11 @@ class Module(BaseModule):
                     ": {1}".format(chemin_dest, io_err))
         else:
             unpickler = pickle.Unpickler(fichier_enr)
-            objet = unpickler.load()
+            try:
+                objet = unpickler.load()
+            except (EOFError, pickle.UnpicklingError):
+                self.logger.warning("Le fichier {0} n'a pas pu être chargé ". \
+                    format(chemin_dest))
         finally:
             if "fichier_enr" in locals():
                 fichier_enr.close()

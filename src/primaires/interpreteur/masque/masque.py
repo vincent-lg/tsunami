@@ -121,7 +121,6 @@ class Masque(metaclass=MetaMasque):
         -   De savoir si le masque possède des propriétés
         
         """
-        print("pro", repr(self.proprietes))
         mot_cle = RE_MOT_CLE.search(schema)
         proprietes = RE_PROPRIETES.search(schema)
         if proprietes:
