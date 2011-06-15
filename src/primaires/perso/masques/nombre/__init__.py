@@ -48,6 +48,8 @@ class Nombre(Masque):
     def init(self):
         """Initialisation des attributs"""
         self.nombre = None
+        self.limite_inf = 1
+        self.limite_sup = None
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
@@ -61,7 +63,11 @@ class Nombre(Masque):
         
         try:
             nombre = int(str_nombre)
-        except ValueError:
+            if self.limite_inf is not None:
+                assert nombre >= self.limite_inf
+            if self.limite_sup is not None:
+                assert nombre <= self.limite_sup
+        except (ValueError, AssertionError):
             raise ErreurValidation( \
                 "Ce nombre est invalide.")
         
