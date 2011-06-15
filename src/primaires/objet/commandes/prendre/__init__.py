@@ -39,27 +39,37 @@ class CmdPrendre(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "prendre", "get")
-        self.schema = "<nom_objet>"
+        self.schema = "(<nombre>) <nom_objet>"
         self.aide_courte = "ramasse un objet"
         self.aide_longue = \
                 "Cette commande permet de ramasser un ou plusieurs objets."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        objet = dic_masques["nom_objet"].objet
+        nombre = 1
+        if dic_masques["nombre"]:
+            nombre = dic_masques["nombre"].nombre
+        objets = dic_masques["nom_objet"].objets[:nombre]
         
-        # On cherche un emplacement libre chez le personnage
-        membre_libre = None
+        # On cherche les emplacements libres chez le personnage
+        membres_libres = []
         for membre in personnage.equipement.membres:
             if membre.peut_tenir() and membre.tenu is None:
-                membre_libre = membre
-                break
+                membres_libres.append(membre)
         
-        if not membre_libre:
+        if not membres_libres:
             personnage << "Vous n'avez aucune main libre."
         else:
-            personnage.salle.objets_sol.retirer(objet)
-            membre_libre.tenu = objet
-            personnage << "Vous ramassez {}.".format(objet.nom_singulier)
+            pris = 0
+            for objet, conteneur in objets:
+                membre = membres_libres[0]
+                membres_libres.pop(0)
+                personnage.salle.objets_sol.retirer(objet)
+                membre.tenu = objet
+                pris += 1
+                if not membres_libres:
+                    break
+            
+            personnage << "Vous ramassez {}.".format(objet.get_nom(pris))
             personnage.salle.envoyer("{} ramasse {}.".format(personnage.nom,
-                    objet.nom_singulier), (personnage, ))
+                    objet.get_nom(pris)), (personnage, ))

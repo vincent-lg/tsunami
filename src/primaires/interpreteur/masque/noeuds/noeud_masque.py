@@ -66,7 +66,7 @@ class NoeudMasque(BaseNoeud):
         # On convertit la liste en chaîne
         schema = liste_vers_chaine(lst_schema)
         pos_fin = schema.find(">")
-        schema = schema[:pos_fin]
+        schema = schema[:pos_fin + 1]
         
         # On extrait le type du schéma
         res = RE_MASQUE.search(schema)
@@ -115,7 +115,7 @@ class NoeudMasque(BaseNoeud):
         
         self.masques = liste_types_masques
         
-        lst_schema[:] = chaine_vers_liste(schema[pos_fin + 1:])
+        lst_schema[:] = lst_schema[pos_fin + 1:]
     
     @property
     def masque(self):
@@ -137,6 +137,14 @@ class NoeudMasque(BaseNoeud):
         
         return msg
     
+    def get_masque(self, nom_masque):
+        """Retourne le masque du nom 'nom_masque'"""
+        if self.nom == nom_masque:
+            return self.masque
+        elif self.suivant:
+            return self.suivant.get_masque(nom_masque)
+        else:
+            return None
     def valider(self, personnage, dic_masques, commande, tester_fils=True):
         """Validation d'un noeud masque.
         On va essayer de valider successivement chaque masque possible. Si

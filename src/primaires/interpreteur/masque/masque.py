@@ -99,7 +99,7 @@ class Masque(metaclass=MetaMasque):
         """Crée un nouveau masque"""
         self.nom = type(self).nom
         self.type = None
-        self.proprietes = "{}"
+        self.proprietes = {}
         self.mot_cle = False
         self.mots_cles = {
             "francais": "",
@@ -121,6 +121,7 @@ class Masque(metaclass=MetaMasque):
         -   De savoir si le masque possède des propriétés
         
         """
+        print("pro", repr(self.proprietes))
         mot_cle = RE_MOT_CLE.search(schema)
         proprietes = RE_PROPRIETES.search(schema)
         if proprietes:
@@ -128,7 +129,7 @@ class Masque(metaclass=MetaMasque):
             nom, none, proprietes = groupes
             if proprietes:
                 proprietes = proprietes.replace("=", ":")
-                self.proprietes = "{" + proprietes + "}"
+                #self.proprietes = "{" + proprietes + "}"
     
     def valider(self, personnage, dic_masques, commande):
         """Méthode de validation.
@@ -155,8 +156,10 @@ class Masque(metaclass=MetaMasque):
         """
         # Interprétation des propriétés
         globales = {"personnage": personnage, "dic_masques": dic_masques}
-        proprietes = eval(self.proprietes, globales)
-        self.__dict__.update(proprietes)
+        for cle, valeur in self.proprietes.items():
+            propriete = eval(valeur, globales)
+            setattr(self, cle, propriete)
+        
         return True
     
     def __str__(self):

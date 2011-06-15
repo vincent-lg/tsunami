@@ -151,6 +151,10 @@ class Commande(Masque):
         """Retourne les différents noms possibles des commandes."""
         return (self.nom_francais, self.nom_anglais)
     
+    def ajouter(self):
+        """Méthode appelée quand on ajoute la commande à l'interpréteur"""
+        pass
+    
     def valider(self, personnage, dic_masques, commande):
         """Fonction de validation.
         Elle retourne True si la commande entrée par le joueur correspond à

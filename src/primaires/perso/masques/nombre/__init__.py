@@ -28,40 +28,45 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'poser'."""
+"""Fichier contenant le masque <nombre>."""
 
-from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
 
-class CmdPoser(Commande):
+class Nombre(Masque):
     
-    """Commande 'poser'"""
+    """Masque <nombre>.
+    On attend un nombre en paramètre.
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "poser", "drop")
-        self.schema = "(<nombre>) <nom_objet>"
-        self.aide_courte = "pose un objet"
-        self.aide_longue = \
-                "Cette commande permet de poser un ou plusieurs objets."
+    """
     
-    def ajouter(self):
-        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
-        nom_objet = self.noeud.get_masque("nom_objet")
-        nom_objet.proprietes["conteneurs"] = "(personnage.equipement.tenus, )"
+    nom = "nombre"
+    nom_complet = "nombre"
     
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        nombre = 1
-        if dic_masques["nombre"]:
-            nombre = dic_masques["nombre"].nombre
-        objets = dic_masques["nom_objet"].objets[:nombre]
+    def init(self):
+        """Initialisation des attributs"""
+        self.nombre = None
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
+        str_nombre = liste_vers_chaine(commande).lstrip()
+        str_nombre = str_nombre.split(" ")[0]
         
-        pose = 0
-        for objet, conteneur in objets:
-            conteneur.retirer(objet)
-            personnage.salle.objets_sol.ajouter(objet)
-            pose += 1
+        if not str_nombre:
+            raise ErreurValidation( \
+                "Précisez un nombre.")
         
-        personnage << "Vous posez {}.".format(objet.get_nom(pose))
-        personnage.salle.envoyer("{} pose {}.".format(personnage.nom,
-                    objet.get_nom(pose)), (personnage, ))
+        try:
+            nombre = int(str_nombre)
+        except ValueError:
+            raise ErreurValidation( \
+                "Ce nombre est invalide.")
+        
+        print(str_nombre, nombre)
+        self.nombre = nombre
+        
+        commande[:] = commande[len(str_nombre) + 1:]
+        return True

@@ -79,6 +79,17 @@ class NoeudCommande(BaseNoeud):
         
         return fils
     
+    def get_masque(self, nom_masque):
+        """Récupère le masque nom_masque dans l'arborescence"""
+        if self.suivant:
+            return self.suivant.get_masque(nom_masque)
+        
+        for fils in self.fils:
+            if fils.nom == nom_masque:
+                return fils
+            else:
+                return fils.get_masque(nom_masque)
+    
     def valider(self, personnage, dic_masques, commande, tester_fils=True):
         """Validation d'un noeud commande.
         La commande est sous la forme d'une liste de caractères.

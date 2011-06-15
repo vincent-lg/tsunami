@@ -144,6 +144,9 @@ class Module(BaseModule):
             key=lambda noeud: noeud.commande.nom_francais)
         self.commandes_anglais = sorted(self.commandes, \
             key=lambda noeud: noeud.commande.nom_anglais)
+        
+        # On appelle la méthode 'ajouter'
+        commande.ajouter()
     
     def get_masque(self, nom_masque):
         """Retourne le masque portant le nom correspondant
