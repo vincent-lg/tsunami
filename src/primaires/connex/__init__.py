@@ -124,7 +124,7 @@ class Module(BaseModule):
             if joueur.race and (not joueur.equipement or \
                     (not joueur.equipement.squelette is None and \
                     joueur.race.squelette)):
-                joueur.lier_equipement(joueur.race.equipement)
+                joueur.lier_equipement(joueur.race.squelette)
     
     def boucle(self):
         """A chaque tour de boucle synchro, on envoie la file d'attente des
