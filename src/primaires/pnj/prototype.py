@@ -28,74 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe BaseType, détaillée plus bas."""
+"""Ce fichier contient la classe Prototype, détaillée plus bas."""
 
 from abstraits.id import ObjetID
 from bases.collections.liste_id import ListeID
 from primaires.format.description import Description
-from . import MetaType
 
-class BaseType(ObjetID, metaclass=MetaType):
+class Prototype(ObjetID):
     
-    """Classe abstraite représentant le type de base d'un objet.
-    Si des données doivent être communes à tous les types d'objet
-    (un objet a un nom, une description, quelque soit son type) c'est dans
-    cette classe qu'elles apparaissent.
+    """Classe représentant un prototype de PNJ.
     
     """
     
-    groupe = "prototypes_objets"
-    sous_rep = "objets/prototypes"
-    nom_type = "" # à redéfinir
-    _nom = "base_type_objet"
-    _version = 2
+    groupe = "prototypes_pnj"
+    sous_rep = "pnj/prototypes"
     def __init__(self, cle=""):
         """Constructeur d'un type"""
         ObjetID.__init__(self)
         self.cle = cle
         self._attributs = {}
-        self.no = 0 # nombre d'objets créés sur ce prototype
-        self.nom_singulier = "un objet indéfini"
-        self.etat_singulier = "est posé là"
-        self.nom_pluriel = "objets indéfinis"
-        self.etat_pluriel = "sont posés là"
+        self.no = 0 # nombre de PNJ créés sur ce prototype
+        self.nom_singulier = "quelqu'un"
+        self.etat_singulier = "se tient ici"
+        self.nom_pluriel = "quelques-uns"
+        self.etat_pluriel = "se tiennent ici"
         self.description = Description(parent=self)
-        self.objets = ListeID(self)
-        
-        # Editeur
-        self._extensions_editeur = []
+        self.pnj = ListeID(self)
     
     def __getnewargs__(self):
         return ()
     
     def __str__(self):
         return self.cle
-    
-    def etendre_editeur(self, raccourci, ligne, editeur, objet, attribut):
-        """Permet d'étendre l'éditeur d'objet en fonction du type.
-        -   raccourci   le raccourci permettant d'accéder à la ligne
-        -   ligne       la ligne de l'éditeur (exemple 'Description')
-        -   editeur     le contexte-éditeur (exemple Uniligne)
-        -   objet       l'objet à éditer
-        -   attribut    l'attribut à éditer    
-        
-        Cette méthode est appelée lors de la création de l'éditeur de
-        prototype.
-        
-        """
-        self._extensions_editeur.append(
-            (raccourci, ligne, editeur, objet, attribut))
-    
-    def travailler_enveloppes(self, enveloppes):
-        """Travail sur les enveloppes.
-        On récupère un dictionnaire représentant la présentation avec en
-        clé les raccourcis et en valeur les enveloppes.
-        
-        Cela peut permettre de travailler sur les enveloppes ajoutées par
-        'etendre_editeur'.
-        
-        """
-        pass
     
     def get_nom(self, nombre):
         """Retourne le nom complet en fonction du nombre.
@@ -119,19 +83,5 @@ class BaseType(ObjetID, metaclass=MetaType):
             return nom + " " + self.etat_singulier
         else:
             return nom + " " + self.etat_pluriel
-    
-    # Actions sur les objets
-    def regarder(self, personnage):
-        """Le personnage regarde l'objet"""
-        salle = personnage.salle
-        moi = "Vous regardez {} :".format(self.nom_singulier)
-        autre = "{} regarde {}.".format(personnage.nom, self.nom_singulier)
-        description = str(self.description)
-        if not description:
-            description = "Il n'y a rien de bien intéressant à voir."
-        
-        moi += "\n\n" + description
-        salle.envoyer(autre, (personnage, ))
-        return moi
 
-ObjetID.ajouter_groupe(BaseType)
+ObjetID.ajouter_groupe(Prototype)
