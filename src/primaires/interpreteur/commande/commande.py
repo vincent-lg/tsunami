@@ -81,7 +81,7 @@ class Commande(Masque):
         self.aide_longue = ""
         
         # Groupe
-        self.groupe = "npc"
+        self.groupe = "pnj"
     
     def _get_aide_courte(self):
         """Retourne l'aide courte"""

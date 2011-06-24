@@ -39,10 +39,10 @@ from . import contextes
 
 class Module(BaseModule):
     """Classe utilisée pour gérer des joueurs, c'est-à-dire des personnages
-    connecté par client, à distinguer des NPCs.
+    connecté par client, à distinguer des PNJ.
     
     Les mécanismes de jeu propres aux personnages, c'est-à-dire communs aux
-    joueurs et NPCs, ne sont pas défini dans ce module mais dans le module
+    joueurs et PNJ, ne sont pas défini dans ce module mais dans le module
     primaire 'perso'.
     
     """

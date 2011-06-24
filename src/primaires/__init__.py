@@ -66,7 +66,7 @@ Voici un résumé des modules primaires existants :
                     (personnages connectés)
 -   objet           Module chargé des objets et des prototypes d'objets
 -   perso           module gérant les personnages, connectés (joueurs) ou non
-                    (NPCs)
+                    (PNJ)
 -   salle           Module gérant les salles du MUD
 -   supenr          superviseur de l'enregistrement des objets dans des
                     fichiers sérialisés

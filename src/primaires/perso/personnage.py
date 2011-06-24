@@ -42,7 +42,7 @@ class Personnage(ObjetID):
     
     """Classe représentant un personnage.
     C'est une classe abstraite. Elle doit être héritée pour faire des joueurs
-    et NPCs. Ces autres classes peuvent être également héritées, à leur tour.
+    et PNJ. Ces autres classes peuvent être également héritées, à leur tour.
     
     Note: on précise bel et bien un nom de groupe, mais on ne l'ajoute pas à
     ObjetID puisqu'il s'agit d'une classe abstraite.
@@ -58,7 +58,7 @@ class Personnage(ObjetID):
         """Constructeur d'un personnage"""
         ObjetID.__init__(self)
         self.nom = ""
-        self.groupe = "npc"
+        self.groupe = "pnj"
         self.contextes = FileContexte(self) # file d'attente des contexte
         self.langue_cmd = "francais"
         self._salle = None

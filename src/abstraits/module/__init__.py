@@ -143,8 +143,8 @@ class BaseModule:
         
         Par exemple :
             Le module salle récupère des salles avec des listes de joueurs
-            et NPCs présents dans chaque salle. Il serai préférable
-            que chaque salle vérifie que tous les joueurs et NPCs présents
+            et PNJ présents dans chaque salle. Il serai préférable
+            que chaque salle vérifie que tous les joueurs et PNJ présents
             soient toujours dans cette salle. Cette vérification ne pourrait
             se faire dans la méthode 'init' car c'est ici que les objets
             sont récupérés. Or, comment être sûr que les joueurs ont

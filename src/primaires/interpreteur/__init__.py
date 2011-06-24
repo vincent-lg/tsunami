@@ -103,7 +103,7 @@ class Module(BaseModule):
         self.groupes = groupes
         
         # On vérifie que les groupes "essentiels" existent
-        essentiels = ("npc", "joueur", "administrateur")
+        essentiels = ("pnj", "joueur", "administrateur")
         
         # On crée ceux qui n'existent pas
         groupe_precedent = ""

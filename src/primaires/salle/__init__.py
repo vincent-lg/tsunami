@@ -47,7 +47,7 @@ class Module(BaseModule):
     Dans la terminologie des MUDs, les salles sont des "cases" avec une
     description et une liste de sorties possibles, que le joueur peut
     emprunter. L'ensemble des salles consiste l'univers, auquel il faut
-    naturellement rajouter des NPCs et objets pour qu'il soit riche un minimum.
+    naturellement rajouter des PNJ et objets pour qu'il soit riche un minimum.
     
     Pour plus d'informations, consultez le fichier
     src/primaires/salle/salle.py contenant la classe Salle.

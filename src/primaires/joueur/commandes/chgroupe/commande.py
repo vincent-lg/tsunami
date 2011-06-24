@@ -51,7 +51,7 @@ class PrmCommande(Parametre):
             "commande : %chgroupe% %chgroupe:commande% |cmd|mail joueur|ff|. " \
             "Il est préférable, quand vous ajoutez une nouvelle commande " \
             "au MUD, de la placer d'office dans un groupe essentiel " \
-            "(|tit|npc|ff|, |tit|joueur|ff| ou |tit|administrateur|ff|). " \
+            "(|tit|pnj|ff|, |tit|joueur|ff| ou |tit|administrateur|ff|). " \
             "Une fois que la commande a bien été ajoutée, vous pourrez " \
             "la déplacer dans le groupe final de destination. " \
             "Enfin, sachez qu'en déplaçant une commande, toutes ses " \

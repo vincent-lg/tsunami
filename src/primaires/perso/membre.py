@@ -52,7 +52,7 @@ class Membre(BaseObj):
     
     """Classe définissant un membre, une partie du corps d'un personnage.
     Chaque personnage possède un squelette, qui peut être propre à sa race
-    ou à une personnalisation propre. Certains NPCs, par exemple, auront
+    ou à une personnalisation propre. Certains PNJ, par exemple, auront
     des squelettes hors de la définition de toute race;
     
     """

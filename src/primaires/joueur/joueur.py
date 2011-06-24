@@ -35,7 +35,7 @@ from primaires.perso.personnage import Personnage
 
 class Joueur(Personnage):
     """Classe représentant un joueur, c'est-à-dire un personnage connecté
-    grâce à un client, à différencier des NPCs qui sont des personnages
+    grâce à un client, à différencier des PNJ qui sont des personnages
     virtuels, animés par l'univers.
     
     """

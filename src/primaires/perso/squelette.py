@@ -41,7 +41,7 @@ class Squelette(ObjetID):
     """Classe représentant un squelette.
     Un squelette est un ensemble de membres.
     Plusieurs personnages peuvent posséder un même squelette. Par exemple,
-    deux NPCs humains auront tous deux le squelette d'un humain.
+    deux PNJ humains auront tous deux le squelette d'un humain.
     Les membres, cependant, seront bel et bien distincts d'un personnage
     à un autre. Cela inclut donc que, si vous modifiez un squelette déjà
     utilisé, vous pouvez ajouter des membres ou en retirer, mais que vous

@@ -57,7 +57,7 @@ class CmdGroupe(Commande):
             "d'utilisateur. Ces groupes caractérisent un certain nombre " \
             "de flags communs à des catégories de joueurs mais surtout " \
             "définit les commandes utilisables par chacun. En plus des " \
-            "groupes |tit|npc|ff|, |tit|joueur|ff| (par défaut) et " \
+            "groupes |tit|pnj|ff|, |tit|joueur|ff| (par défaut) et " \
             "|tit|administrateur|ff|, vous pouvez créer l'architecture " \
             "des groupes que vous voulez grâce à cette commande. Cela " \
             "vous permet de créer simplement la hiérarchie des " \

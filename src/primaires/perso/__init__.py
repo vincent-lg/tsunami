@@ -44,12 +44,12 @@ from .squelette import Squelette
 class Module(BaseModule):
     
     """Module gérant la classe Personnage qui sera héritée pour construire
-    des joueurs et NPCs. Les mécanismes propres au personnage (c'est-à-dire
+    des joueurs et PNJ. Les mécanismes propres au personnage (c'est-à-dire
     indépendant de la connexion et liées à l'univers) seront gérées ici.
     
     En revanche, les contextes de connexion ou de création d'un personnage
     ne se trouve pas ici (il s'agit d'informations propres à un joueur, non
-    à un NPC.
+    à un PNJ.
     
     """
     
