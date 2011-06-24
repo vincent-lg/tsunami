@@ -66,6 +66,7 @@ class Personnage(ObjetID):
         self._prompt = "Vit   {v}     Man   {m}     End   {e}"
         self.equipement = None
         self._race = None
+        self._construire()
     
     def __getnewargs__(self):
         """Retourne les arguments à passer au constructeur"""
@@ -80,7 +81,8 @@ class Personnage(ObjetID):
         """Cherche l'attribut dans 'self.stats."""
         if nom_attr.startswith("_") or nom_attr == "stats":
             pass
-        elif hasattr(self, "stats") and hasattr(self.stats, nom_attr):
+        elif hasattr(self, "stats") and hasattr(self.stats,
+                    nom_attr):
             return getattr(self.stats, nom_attr)
         
         raise AttributeError("le type {} n'a pas d'attribut {}".format(

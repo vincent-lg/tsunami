@@ -30,6 +30,8 @@
 
 """Fichier contenant la classe PNJ, détaillée plus bas."""
 
+import sys
+
 from abstraits.id import ObjetID
 from primaires.perso.personnage import Personnage
 
@@ -70,10 +72,13 @@ class PNJ(Personnage):
         dans le prototype
         
         """
-        try:
-            Personnage.__getattr__(self, nom_attr)
-        except AttributeError:
-            return getattr(self.prototype, nom_attr)
+        if nom_attr == "prototype":
+            return object.__getattr__(self, nom_attr)
+        else:
+            try:
+                return Personnage.__getattr__(self, nom_attr)
+            except AttributeError:
+                return getattr(self.prototype, nom_attr)
     
     def detruire(self):
         """Destruction du PNJ."""
