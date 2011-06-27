@@ -154,7 +154,6 @@ class Module(BaseModule):
         
         for salle in self._salles.values():
             for personnage in salle.personnages:
-                print(personnage.salle)
                 if personnage.salle is not salle:
                     salle.retirer_personnage(personnage)
     

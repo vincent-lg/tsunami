@@ -71,7 +71,6 @@ class Nombre(Masque):
             raise ErreurValidation( \
                 "Ce nombre est invalide.")
         
-        print(str_nombre, nombre)
         self.nombre = nombre
         
         commande[:] = commande[len(str_nombre) + 1:]

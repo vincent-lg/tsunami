@@ -129,7 +129,7 @@ class ParserCMD(dict):
         l'interpréteur, les rajouter ici également.
         
         """
-        print( \
+        print(
             "Options disponibles :\n" \
             "\n" \
             "-c, chemin-configuration\n" \

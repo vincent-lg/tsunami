@@ -68,7 +68,6 @@ class Attribut:
         l_attributs.extend(self.l_externes)
         
         if self.constructeur:
-            print(self.constructeur, l_attributs)
             objet = self.constructeur(*l_attributs, **self.d_externes)
         else:
             objet = None

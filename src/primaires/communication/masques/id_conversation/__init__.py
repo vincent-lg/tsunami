@@ -88,7 +88,6 @@ class IdConversation(Masque):
             raise ErreurValidation( \
                 "|err|Le numéro spécifié ne correspond à aucun personnage.|ff|")
         else:
-            print("On trouve la cible", cible.nom)
             self.id_conversation = len(p_conversations) + 1 - id_conversation
             self.cible = cible
             return True
