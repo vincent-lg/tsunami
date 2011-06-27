@@ -169,6 +169,14 @@ class Personnage(ObjetID):
         """
         self.equipement = Equipement(self, squelette)
     
+    def get_nom(self, nombre):
+        """Retourne le nom du personnage"""
+        return self.nom
+    
+    def get_nom_etat(self, nombre):
+        """Retourne le nom et un état par défaut."""
+        return self.nom + " est là"
+    
     def detruire(self):
         """Méthode appelée lors de la destruction du personage.
         -   On supprime le personnage de la liste des personnages du squelette

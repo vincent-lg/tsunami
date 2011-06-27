@@ -28,13 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les convertisseurs de la classe Personnage."""
+"""Package contenant la commande 'pspawn'.
 
-class Convertisseur:
-    """Classe pour envelopper les convertisseurs."""
-    def depuis_version_0(objet, classe):
-        objet.set_version(classe, 1)
-        objet._zone = objet._zone.lower()
-    def depuis_version_1(objet, classe):
-        objet.set_version(classe, 2)
-        objet._personnages.parent = objet
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdPspawn(Commande):
+    
+    """Commande 'pspawn'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "pspawn", "pspawn")
+        self.groupe = "administrateur"
+        self.nom_categorie = "batisseur"
+        self.schema = "<ident_prototype_pnj>"
+        self.aide_courte = "fait apparaître un PNJ dans la salle"
+        self.aide_longue = \
+            "Cette commande permet de faire apparaître un PNJ dans " \
+            "la salle où vous vous trouvez. Elle prend en paramètre " \
+            "obligatoire le prototype depuis lequel créer le PNJ."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation de la commande"""
+        prototype = dic_masques["ident_prototype_pnj"].prototype
+        pnj = type(self).importeur.pnj.creer_PNJ(prototype)
+        salle = personnage.salle
+        pnj.salle = salle
+        salle.envoyer("{} apparaît du néant.".format(
+                pnj.nom_singulier))

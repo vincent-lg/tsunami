@@ -42,7 +42,7 @@ class Prototype(ObjetID):
     
     groupe = "prototypes_pnj"
     sous_rep = "pnj/prototypes"
-    def __init__(self, cle=""):
+    def __init__(self, cle):
         """Constructeur d'un type"""
         ObjetID.__init__(self)
         self.cle = cle
@@ -56,7 +56,7 @@ class Prototype(ObjetID):
         self.pnj = ListeID(self)
     
     def __getnewargs__(self):
-        return ()
+        return ("", )
     
     def __str__(self):
         return self.cle

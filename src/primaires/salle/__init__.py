@@ -128,7 +128,6 @@ class Module(BaseModule):
             on les recrée)
         -   les personnages présents dans self._personnages soient
             toujours là
-        -   les objets du sol existent toujours
         
         """
         # On récupère la configuration
@@ -154,10 +153,8 @@ class Module(BaseModule):
         self.salle_retour = salle_retour
         
         for salle in self._salles.values():
-            salle._personnages.supprimer_doublons()
-            salle._personnages.supprimer_none()
-            salle.objets_sol.nettoyer()
             for personnage in salle.personnages:
+                print(personnage.salle)
                 if personnage.salle is not salle:
                     salle.retirer_personnage(personnage)
     

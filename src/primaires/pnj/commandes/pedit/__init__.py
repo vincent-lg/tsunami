@@ -28,13 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les convertisseurs de la classe Personnage."""
+"""Package contenant la commande 'pedit'."""
 
-class Convertisseur:
-    """Classe pour envelopper les convertisseurs."""
-    def depuis_version_0(objet, classe):
-        objet.set_version(classe, 1)
-        objet._zone = objet._zone.lower()
-    def depuis_version_1(objet, classe):
-        objet.set_version(classe, 2)
-        objet._personnages.parent = objet
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdPedit(Commande):
+    
+    """Commande 'pedit'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "pedit", "pedit")
+        self.groupe = "administrateur"
+        self.schema = "<ident>"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "ouvre l'éditeur de PNJ"
+        self.aide_longue = \
+                "Cette commande ouvre l'éditeur de PNJ permettant de créer " \
+            "et éditer des prototypes de PNJ. Notez bien que vous n'éditez " \
+            "pas directement le PNJ mais bien son prototype."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        ident_pnj = dic_masques["ident"].ident
+        if ident_pnj in type(self).importeur.pnj.prototypes:
+            prototype = type(self).importeur.pnj.prototypes[ident_pnj]
+        else:
+            prototype = type(self).importeur.pnj.creer_prototype(ident_pnj)
+        
+        editeur = type(self).importeur.interpreteur.construire_editeur(
+                "pedit", personnage, prototype)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()

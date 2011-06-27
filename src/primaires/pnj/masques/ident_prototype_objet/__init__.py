@@ -28,13 +28,43 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les convertisseurs de la classe Personnage."""
+"""Fichier contenant le masque <ident_prototype_pnj>."""
 
-class Convertisseur:
-    """Classe pour envelopper les convertisseurs."""
-    def depuis_version_0(objet, classe):
-        objet.set_version(classe, 1)
-        objet._zone = objet._zone.lower()
-    def depuis_version_1(objet, classe):
-        objet.set_version(classe, 2)
-        objet._personnages.parent = objet
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+
+class IdentPrototypePNJ(Masque):
+    
+    """Masque <ident_prototype_pnj>.
+    On attend un identifiant de prototype en paramètre.
+    
+    """
+    
+    nom = "ident_prototype_pnj"
+    nom_complet = "prototype de PNJ"
+    
+    def init(self):
+        """Initialisation des attributs"""
+        self.ident = ""
+        self.prototype = None
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
+        ident = liste_vers_chaine(commande).lstrip()
+        
+        if not ident:
+            raise ErreurValidation( \
+                "Précisez un prototype d'objet.")
+        
+        ident = ident.lower()
+        if not ident in type(self).importeur.pnj.prototypes:
+            raise ErreurValidation(
+                "|err|Ce prototype est introuvable.|ff|")
+        
+        self.prototype = type(self).importeur.pnj.prototypes[ident]
+        self.ident = ident
+        
+        return True

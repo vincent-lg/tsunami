@@ -1,5 +1,5 @@
-# -*-coding:Utf-8 -*
 
+# -*-coding:Utf-8 -*
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -28,13 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les convertisseurs de la classe Personnage."""
+"""Package contenant la commande 'plist'.
 
-class Convertisseur:
-    """Classe pour envelopper les convertisseurs."""
-    def depuis_version_0(objet, classe):
-        objet.set_version(classe, 1)
-        objet._zone = objet._zone.lower()
-    def depuis_version_1(objet, classe):
-        objet.set_version(classe, 2)
-        objet._personnages.parent = objet
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdPlist(Commande):
+    
+    """Commande 'plist'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "plist", "plist")
+        self.groupe = "administrateur"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "affiche la liste des prototypes de PNJ"
+        self.aide_longue = \
+            "Cette commande affiche une liste ordonnée des prototypes " \
+            "de PNJ existant."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation de la commande"""
+        prototypes = type(self).importeur.pnj.prototypes
+        prototypes = [(identifiant, prototype.nom_singulier) \
+                for identifiant, prototype in sorted(prototypes.items())]
+        
+        res = []
+        for identifiant, nom in prototypes:
+            res.append("{: <20} : {}".format(identifiant, nom))
+        
+        if not res:
+            personnage << "|att|Aucun prototype n'a pu être trouvé.|ff|"
+        else:
+            personnage << "Liste des prototypes de PNJ existants :\n\n" + \
+                    "\n".join(res)

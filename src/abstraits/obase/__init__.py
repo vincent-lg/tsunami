@@ -31,6 +31,7 @@
 """Ce fichier définit la classe BaseObj définie plus bas."""
 
 import sys
+import traceback
 import time
 
 class ObjetsCharges:
@@ -265,6 +266,7 @@ class BaseObj(metaclass=MetaBaseObj):
                             "convertisseurs ne comporte pas de méthode " \
                             "depuis_version_".format(classe._nom) + str( \
                             self.version_actuelle(classe)))
+                    print(traceback.format_exc())
                     exit()
 
     

@@ -28,13 +28,48 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les convertisseurs de la classe Personnage."""
+"""Fichier contenant la classe Pedit, détaillée plus bas.
 
-class Convertisseur:
-    """Classe pour envelopper les convertisseurs."""
-    def depuis_version_0(objet, classe):
-        objet.set_version(classe, 1)
-        objet._zone = objet._zone.lower()
-    def depuis_version_1(objet, classe):
-        objet.set_version(classe, 2)
-        objet._personnages.parent = objet
+"""
+
+from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.description import Description
+from primaires.interpreteur.editeur.uniligne import Uniligne
+from .edt_noms import EdtNoms
+
+class EdtPedit(Presentation):
+    
+    """Classe définissant l'éditeur de prototype de pnj 'pedit'.
+    
+    """
+    
+    nom = "pedit"
+    def __init__(self, personnage, prototype, attribut=""):
+        """Constructeur de l'éditeur"""
+        if personnage:
+            instance_connexion = personnage.instance_connexion
+        else:
+            instance_connexion = None
+        
+        Presentation.__init__(self, instance_connexion, prototype)
+        if personnage and prototype:
+            self.construire(prototype)
+    
+    def __getnewargs__(self):
+        return (None, None)
+    
+    def construire(self, prototype):
+        """Construction de l'éditeur"""
+        # Noms
+        noms = self.ajouter_choix("noms", "n", EdtNoms, prototype)
+        noms.parent = self
+        noms.apercu = "{objet.nom_singulier}"
+        
+        # Description
+        description = self.ajouter_choix("description", "d", Description, \
+                prototype)
+        description.parent = self
+        description.apercu = "{objet.description.paragraphes_indentes}"
+        description.aide_courte = \
+            "| |tit|" + "Description de l'objet {}".format(prototype).ljust(
+            76) + "|ff||\n" + self.opts.separateur

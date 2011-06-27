@@ -80,6 +80,10 @@ class PNJ(Personnage):
             except AttributeError:
                 return getattr(self.prototype, nom_attr)
     
+    def envoyer(self, msg):
+        """Envoie un message"""
+        pass
+    
     def detruire(self):
         """Destruction du PNJ."""
         if self in self.prototype.pnj:

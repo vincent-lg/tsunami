@@ -33,6 +33,9 @@
 from abstraits.module import *
 from .prototype import Prototype
 from .pnj import PNJ
+from . import commandes
+from . import masques
+from .editeurs.pedit import EdtPedit
 
 class Module(BaseModule):
     
@@ -65,6 +68,21 @@ class Module(BaseModule):
             self._PNJ[pnj.identifiant] = pnj
         
         BaseModule.init(self)
+    
+    def ajouter_commandes(self):
+        """Ajout des commandes dans l'interpréteur"""
+        self.commandes = [
+            commandes.pedit.CmdPedit(),
+            commandes.plist.CmdPlist(),
+            commandes.ppurge.CmdPpurge(),
+            commandes.pspawn.CmdPspawn(),
+        ]
+        
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)
+        
+        # Ajout de l'éditeur 'redit'
+        self.importeur.interpreteur.ajouter_editeur(EdtPedit)
     
     @property
     def PNJ(self):

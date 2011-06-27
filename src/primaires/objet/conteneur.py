@@ -55,6 +55,9 @@ class ConteneurObjet(BaseObj):
         """Itérateur"""
         return iter(self._objets)
     
+    def __str__(self):
+        return str(self._objets)
+    
     def ajouter(self, objet):
         """On ajoute l'objet dans le conteneur"""
         if objet not in self._objets:
