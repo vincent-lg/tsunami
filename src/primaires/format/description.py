@@ -49,7 +49,7 @@ class Description(BaseObj):
     
     """
     
-    def __init__(self, description="", parent=None):
+    def __init__(self, description=None, parent=None):
         """Constructeur"""
         BaseObj.__init__(self)
         self.paragraphes = [] # une liste des différents paragraphes

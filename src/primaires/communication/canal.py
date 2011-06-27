@@ -48,7 +48,7 @@ class Canal(BaseObj):
         self.auteur = auteur
         self.clr = "|cyc|"
         self.resume = "canal de communication"
-        self.description = Description(parent)
+        self.description = Description(parent=parent)
         self.moderateurs = ListeID(parent)
         self.immerges = ListeID(parent)
         self.connectes = ListeID(parent)
