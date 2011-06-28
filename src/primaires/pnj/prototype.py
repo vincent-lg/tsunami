@@ -33,6 +33,7 @@
 from abstraits.id import ObjetID
 from bases.collections.liste_id import ListeID
 from primaires.format.description import Description
+from primaires.perso.stats import Stats
 
 class Prototype(ObjetID):
     
@@ -48,12 +49,15 @@ class Prototype(ObjetID):
         self.cle = cle
         self._attributs = {}
         self.no = 0 # nombre de PNJ créés sur ce prototype
+        self.pnj = ListeID(self)
+        
+        # Prototypes
         self.nom_singulier = "quelqu'un"
         self.etat_singulier = "se tient ici"
         self.nom_pluriel = "quelques-uns"
         self.etat_pluriel = "se tiennent ici"
         self.description = Description(parent=self)
-        self.pnj = ListeID(self)
+        self.stats = Stats(self)
     
     def __getnewargs__(self):
         return ("", )

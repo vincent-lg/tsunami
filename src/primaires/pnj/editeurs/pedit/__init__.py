@@ -36,6 +36,7 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_noms import EdtNoms
+from .edt_stats import EdtStats
 
 class EdtPedit(Presentation):
     
@@ -60,6 +61,8 @@ class EdtPedit(Presentation):
     
     def construire(self, prototype):
         """Construction de l'éditeur"""
+        prototype = self.objet
+        
         # Noms
         noms = self.ajouter_choix("noms", "n", EdtNoms, prototype)
         noms.parent = self
@@ -73,3 +76,8 @@ class EdtPedit(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description de l'objet {}".format(prototype).ljust(
             76) + "|ff||\n" + self.opts.separateur
+        
+        # Stats
+        stats = self.ajouter_choix("stats", "s", EdtStats, \
+                prototype.stats)
+        stats.parent = self
