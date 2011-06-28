@@ -57,6 +57,7 @@ class Prototype(ObjetID):
         self.nom_pluriel = "quelques-uns"
         self.etat_pluriel = "se tiennent ici"
         self.description = Description(parent=self)
+        self.race = None
         self.stats = Stats(self)
     
     def __getnewargs__(self):
@@ -64,6 +65,11 @@ class Prototype(ObjetID):
     
     def __str__(self):
         return self.cle
+    
+    @property
+    def nom_race(self):
+        """Retourne le nom de la race si existant ou une chaîne vide."""
+        return (self.race and self.race.nom) or ""
     
     def get_nom(self, nombre):
         """Retourne le nom complet en fonction du nombre.

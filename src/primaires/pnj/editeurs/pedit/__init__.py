@@ -37,6 +37,7 @@ from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_noms import EdtNoms
 from .edt_stats import EdtStats
+from .edt_race import EdtRace
 
 class EdtPedit(Presentation):
     
@@ -81,3 +82,14 @@ class EdtPedit(Presentation):
         stats = self.ajouter_choix("stats", "s", EdtStats, \
                 prototype.stats)
         stats.parent = self
+        
+        # Race
+        race = self.ajouter_choix("race", "r", EdtRace,
+                prototype)
+        race.parent = self
+        race.prompt = "Nom de la race : "
+        race.apercu = "{objet.nom_race}"
+        race.aide_courte = \
+            "Entrez le |ent|nom|ff| de la race ou |cmd|/|ff| " \
+            "pour revenir à la fenêtre parente.\n\nRace actuel : " \
+            "|bc|{objet.nom_race}|ff|"
