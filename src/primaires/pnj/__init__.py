@@ -53,7 +53,7 @@ class Module(BaseModule):
     
     def __init__(self, importeur):
         """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "diffact", "primaire")
+        BaseModule.__init__(self, importeur, "pnj", "primaire")
         self._PNJ = {}
         self._prototypes = {}
     
