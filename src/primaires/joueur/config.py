@@ -42,4 +42,12 @@ taille_min = 3
 # Taille maximale d'un nom :
 taille_max = 15
 
+## Groupe par défaut
+# Quand un joueur se crée, dans quel groupe doit-il être placé ?
+# Rappel : les groupes déterminent les droits des joueurs à utiliser
+# certaines commandes, ainsi que certains flags.
+# Par défaut, trois groupes existent : "pnj", "joueur" et "administrateur"
+# Les joueurs sont placés par défaut dans le groupe "joueur".
+groupe_par_defaut = "joueur"
+
 """

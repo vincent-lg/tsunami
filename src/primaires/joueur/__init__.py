@@ -50,11 +50,13 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "joueur", "primaire")
         self.commandes = []
+        self.groupe_par_defaut = "joueur"
     
     def config(self):
         """Méthode de configuration du module"""
-        type(self.importeur).anaconf.get_config("joueur", \
+        config = type(self.importeur).anaconf.get_config("joueur",
             "joueur/joueur.cfg", "config joueur", cfg_joueur)
+        self.groupe_par_defaut = config.groupe_par_defaut
         
         BaseModule.config(self)
     
@@ -90,3 +92,13 @@ class Module(BaseModule):
             i_c = joueur.instance_connexion
             if joueur.est_connecte() and (i_c is None or not i_c.est_connecte()):
                 joueur.pre_deconnecter()
+        
+        # On vérifie que le groupe par défaut existe dans les groupes existants
+        gen_logger = type(self.importeur).man_logs.get_logger("sup")
+        groupe_par_defaut = "joueur"
+        if self.groupe_par_defaut not in \
+                self.importeur.interpreteur.groupes:
+            gen_logger.warning("le groupe par défaut {} n'existe pas. " \
+                    "Le groupe {} le remplace".format(self.groupe_par_defaut,
+                    groupe_par_defaut))
+            self.groupe_par_defaut = groupe_par_defaut
