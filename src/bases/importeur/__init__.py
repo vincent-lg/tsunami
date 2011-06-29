@@ -268,8 +268,9 @@ class Importeur:
         
         """
         Importeur.logger.debug("Préparation des modules :")
+        self.supenr.preparer()
         for module in self.__dict__.values():
-            if module.statut == INITIALISE:
+            if module.nom != "supenr" and module.statut == INITIALISE:
                 module.preparer()
                 Importeur.logger.debug("  Le module {0} a été " \
                         "préparé".format(module.nom))
