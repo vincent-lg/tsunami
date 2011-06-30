@@ -1,0 +1,6 @@
+In this folder are external libraries. Each license is in the sub-folder
+containing the library, in the LICENSE file.
+
+^ Library    ^ Folder     ^
+| pyyaml     | yaml       |
+

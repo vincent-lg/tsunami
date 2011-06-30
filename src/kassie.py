@@ -73,6 +73,8 @@ Référez-vous au site officiel www.kassie.fr pour plus d'informations.
 import signal
 import sys
 
+from lib import *
+
 from reseau.connexions.serveur import *
 from reseau.fonctions.callbacks import *
 from bases.importeur import Importeur

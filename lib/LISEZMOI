@@ -1,0 +1,7 @@
+Ce répertoire contient les bibliothèques externes au projet.
+Chaque licence se trouve dans le sous-répertoire contenant la bibliothèque,
+dans le fichier LICENSE.
+
+^ Bibliothèque ^ Répertoire   ^
+| pyyaml       | yaml         |
+
