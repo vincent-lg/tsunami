@@ -1,0 +1,12 @@
+# Ce fichier définit des informations générales propres au MUD
+# Ce fichier est au format YML. En respectant sa syntaxe très simple,
+# vous pouvez le modifier sans difficulté.
+# En tant qu'administrateur du MUD, mettez ces informations à jour.
+Nom: Kassie
+Version: 0.5
+Description: >
+  Kassie est un moteur de MUD, permettant de créer un MUD générique
+  et flexible.
+Responsable: L'équipe Kassie
+Adresse e-mail: equipe@kassie.fr
+
