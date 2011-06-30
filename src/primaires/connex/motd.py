@@ -53,6 +53,6 @@ Yb, `88      d8'
      88        Y8P"Y8888P"`Y8P' "YY8P"PP' "YY8P"88P""Y8888P"Y888
 
 
-                                        Version de developpement
+                                        Version {Version}
 
 """
