@@ -58,6 +58,24 @@ class Module(BaseModule):
     
     def init(self):
         """Initialisation du module"""
-        self.temps = Temps(self.cfg)
+        # On récupère ou crée le temps
+        temps = None
+        sous_rep = "temps"
+        fichier = "temps.sav"
+        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
+            temps = self.importeur.supenr.charger(sous_rep, fichier)
+        if temps is None:
+            temps = Temps(self.cfg)
         
+        self.temps = temps
         BaseModule.init(self)
+    
+    def preparer(self):
+        """Préparation du module."""
+        self.inc()
+    
+    def inc(self):
+        """Incrémentation du temps."""
+        self.importeur.diffact.ajouter_action("inc_temps",
+                1, self.inc)
+        self.temps.inc()

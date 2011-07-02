@@ -53,10 +53,11 @@ class Temps(Unique):
         
         reglage_init = config.reglage_initial
         self.annee = reglage_init[0]
-        self.mois = reglage_init[1]
-        self.jour = reglage_init[2]
+        self.mois = reglage_init[1] - 1
+        self.jour = reglage_init[2] - 1
         self.heure = reglage_init[3]
         self.minute = reglage_init[4]
+        self.seconde = Fraction()
         
         # Différents noms
         self.saisons = config.saisons
@@ -65,7 +66,8 @@ class Temps(Unique):
         if config.noms_jours:
             self.noms_jours = config.noms_jours
         else:
-            self.noms_jours = [str(i) for i in range(config.nombre_jours)]
+            self.noms_jours = [str(i) for i in range(1, \
+                    config.nombre_jours + 1)]
         
         # On vérifie que le réglage initial est conforme aux noms
         try:
@@ -130,3 +132,23 @@ class Temps(Unique):
     def heure_formatee(self):
         """Retourne l'heure formatée"""
         return self.formatage_heure.format(no_h=self.no_h, no_m=self.no_m)
+    
+    def inc(self):
+        """Incrémente de 1 seconde réelle"""
+        self.seconde += 1 / self.vitesse_ecoulement
+        
+        if self.seconde >= 60:
+            self.seconde = Fraction()
+            self.minute += 1
+        if self.minute >= 60:
+            self.minute -= 60
+            self.heure += 1
+        if self.heure >= 24:
+            self.heure -= 24
+            self.jour += 1
+        if self.jour >= len(self.noms_jours):
+            self.jour -= len(self.noms_jours)
+            self.mois += 1
+        if self.mois > len(self.noms_mois):
+            self.mois -= len(self.noms_mois)
+            self.annee += 1
