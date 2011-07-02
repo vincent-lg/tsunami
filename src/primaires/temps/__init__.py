@@ -31,6 +31,7 @@
 """Fichier contenant le module primaire temps."""
 
 from abstraits.module import *
+from .config import cfg_temps
 
 class Module(BaseModule):
     
@@ -45,3 +46,11 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "temps", "primaire")
+        self.cfg = None
+    
+    def config(self):
+        """Méthode de configuration du module"""
+        self.cfg = type(self.importeur).anaconf.get_config("temps",
+            "temps/temps.cfg", "config temps", cfg_temps)
+        
+        BaseModule.config(self)
