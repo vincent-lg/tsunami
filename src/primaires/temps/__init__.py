@@ -32,6 +32,7 @@
 
 from abstraits.module import *
 from .config import cfg_temps
+from .temps import Temps
 
 class Module(BaseModule):
     
@@ -54,3 +55,9 @@ class Module(BaseModule):
             "temps/temps.cfg", "config temps", cfg_temps)
         
         BaseModule.config(self)
+    
+    def init(self):
+        """Initialisation du module"""
+        self.temps = Temps(self.cfg)
+        
+        BaseModule.init(self)
