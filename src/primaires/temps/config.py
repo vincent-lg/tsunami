@@ -49,22 +49,22 @@ saisons = [
 ]
 
 # Mois
-# Les mois sont donnés dans un dictionnaire sous la forme :
-#     nom_du_mois: nom_de_la_saison
-mois = {
-    "janvier": "hiver",
-    "février": "hiver",
-    "mars": "hiver",
-    "avril": "printemps",
-    "mai": "printemps",
-    "juin": "printemps",
-    "juillet": "été",
-    "août": "été",
-    "septembre": "été",
-    "octobre": "automne",
-    "novembre": "automne",
-    "décembre": "automne",
-}
+# Les mois sont donnés dans une liste de paires sous la forme :
+#     (nom_du_mois: nom_de_la_saison),
+mois = [
+    ("janvier", "hiver"),
+    ("février", "hiver"),
+    ("mars", "hiver"),
+    ("avril", "printemps"),
+    ("mai", "printemps"),
+    ("juin", "printemps"),
+    ("juillet", "été"),
+    ("août", "été"),
+    ("septembre", "été"),
+    ("octobre", "automne"),
+    ("novembre", "automne"),
+    ("décembre", "automne"),
+]
 
 # Nombre de jours par mois
 # Si tous vos jours ont un nom, le nombre de jours est indifférent.

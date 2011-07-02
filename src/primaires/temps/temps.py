@@ -61,14 +61,15 @@ class Temps(Unique):
         
         # Différents noms
         self.saisons = config.saisons
-        self.mois_saisons = config.mois
-        self.noms_mois = [nom for nom in config.mois.keys()]
+        self.mois_saisons = dict(config.mois)
+        self.noms_mois = [nom for nom, saison in config.mois]
         if config.noms_jours:
             self.noms_jours = config.noms_jours
         else:
             self.noms_jours = [str(i) for i in range(1, \
                     config.nombre_jours + 1)]
         
+        print("jours", self.noms_jours)
         # On vérifie que le réglage initial est conforme aux noms
         try:
             nom_mois = self.noms_mois[self.mois]
@@ -91,7 +92,7 @@ class Temps(Unique):
     
     @property
     def no_j(self):
-        return "{:02}".format(self.jour)
+        return "{:02}".format(self.jour + 1)
     
     @property
     def nm_j(self):
@@ -99,7 +100,7 @@ class Temps(Unique):
     
     @property
     def no_m(self):
-        return "{:02}".format(self.mois)
+        return "{:02}".format(self.mois + 1)
     
     @property
     def nm_m(self):
@@ -146,9 +147,9 @@ class Temps(Unique):
         if self.heure >= 24:
             self.heure -= 24
             self.jour += 1
-        if self.jour >= len(self.noms_jours):
+        if self.jour + 1 >= len(self.noms_jours):
             self.jour -= len(self.noms_jours)
             self.mois += 1
-        if self.mois > len(self.noms_mois):
+        if self.mois + 1 >= len(self.noms_mois):
             self.mois -= len(self.noms_mois)
             self.annee += 1
