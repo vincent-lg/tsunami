@@ -98,7 +98,7 @@ reglage_initial = (1785, 5, 12, 10, 0)
 # Par exemple, si vous définissez l'écoulement ainsi :
 #vitesse_ecoulement = "1/5"
 # 5 heures de l'univers s'écoulent pendant une heure réelle
-vitesse_ecoulement = "1/1"
+vitesse_ecoulement = "1/4"
 
 ## Formattage de la date et l'heure
 # Formatage de la date

@@ -33,6 +33,7 @@
 from abstraits.module import *
 from .config import cfg_temps
 from .temps import Temps
+from . import commandes
 
 class Module(BaseModule):
     
@@ -69,6 +70,15 @@ class Module(BaseModule):
         
         self.temps = temps
         BaseModule.init(self)
+    
+    def ajouter_commandes(self):
+        """Ajout des commandes dans l'interpréteur"""
+        self.commandes = [
+            commandes.temps.CmdTemps(),
+        ]
+        
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)
     
     def preparer(self):
         """Préparation du module."""
