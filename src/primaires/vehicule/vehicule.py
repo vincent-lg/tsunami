@@ -63,6 +63,12 @@ class Vehicule(ObjetID):
     def __getnewargs__(self):
         return ()
     
+    def tourner(self, angle):
+        self.propulsion._valeur.tourner_autour_z(angle)
+    
+    def incliner(self, angle):
+        self.propulsion._valeur.incliner(angle)
+    
     def avancer(self):
         """Fait avancer le véhicule"""
         # Calcul la nouvelle position

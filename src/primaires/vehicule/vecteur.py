@@ -75,23 +75,33 @@ class Vecteur(BaseObj):
     def tourner_autour_x(self, angle):
         r = radians(angle)
         x, y, z = self.x, self.y, self.z
-        self.x =   x * 1 + y * 0      + z * 0
-        self.y =   x * 0 + y * cos(r) + z * sin(r)
-        self.z = - x * 0 + y * sin(r) + z * cos(r)
+        self.x = x * 1 + y * 0 + z * 0
+        self.y = x * 0 + y * cos(r) - z * sin(r)
+        self.z = x * 0 + y * sin(r) + z * cos(r)
     
     def tourner_autour_y(self, angle):
         r = radians(angle)
         x, y, z = self.x, self.y, self.z
-        self.x = x * cos(r) + y * 0 + z * sin(r)
+        self.x = x * cos(r) - y * 0 + z * sin(r)
         self.y = x * 0 + y * 1 + z * 0
-        self.z = -x * sin(r) + y * 0 + z * cos(r)
+        self.z = x * sin(r) + y * 0 + z * cos(r)
     
     def tourner_autour_z(self, angle):
         r = radians(angle)
         x, y, z = self.x, self.y, self.z
-        self.x = x * cos(r) + y * sin(r) + z * 0
-        self.y = -x * sin(r) + y * cos(r) + z * 0
+        self.x = x * cos(r) - y * sin(r) + z * 0
+        self.y = x * sin(r) + y * cos(r) + z * 0
         self.z = x * 0 + y * 0 + z * 1
+    
+    def incliner(self, angle):
+        r = radians(angle)
+        x, y, z = self.x, self.y, self.z
+        n = sqrt(x*x+y*y)
+        if n==0:
+            raise(ValueError("impossible d'incliner un vecteur vertical"))
+        self.x = x * cos(r) - z * x * sin(r) / n
+        self.y = y * cos(r) - z * y * sin(r) / n
+        self.z = z * cos(r) + sin(r) * n
     
     def norme(self):
         return sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
