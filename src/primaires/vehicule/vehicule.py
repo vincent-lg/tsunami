@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Joueur, détaillée plus bas."""
+"""Fichier contenant la classe Vehicule, détaillée plus bas."""
 
 from abstraits.id import ObjetID
 

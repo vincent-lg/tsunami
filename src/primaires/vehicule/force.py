@@ -64,7 +64,7 @@ class Propulsion(Force):
     
     """
     
-    def __init__(self, valeur = None):
+    def __init__(self, valeur=None):
         """Constructeur de la force"""
         Force.__init__(self)
         

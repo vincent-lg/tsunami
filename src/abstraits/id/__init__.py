@@ -156,13 +156,13 @@ class ObjetID(BaseObj):
         
         """
         self._statut = StatutObjet.EN_CONSTRUCTION
-        if BaseObj.importeur.parid.construit:
+        if BaseObj.importeur.parid.construit and type(self).groupe:
             self.id = ID(type(self).groupe, self.id_actuel)
             self.id_actuel = self.id_actuel + 1
         # Appel du constructeur de BaseObj
         BaseObj.__init__(self)
         # On l'ajoute dans le parid
-        if BaseObj.importeur.parid.construit:
+        if BaseObj.importeur.parid.construit and type(self).groupe:
             BaseObj.importeur.parid[self.id.groupe][self.id.id] = self
         # On change le statut et enregistre l'objet
         self._statut = StatutObjet.INITIALISE
@@ -234,7 +234,7 @@ class ObjetID(BaseObj):
         
         """
         supenr = BaseObj.importeur.supenr
-        if self._statut == StatutObjet.INITIALISE:
+        if self._statut == StatutObjet.INITIALISE and type(self).groupe:
             supenr.file_attente.add(self)
     
     def detruire(self):
