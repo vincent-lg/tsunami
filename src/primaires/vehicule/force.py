@@ -74,7 +74,7 @@ class Propulsion(Force):
             self._valeur = Vecteur(0, 0, 0)
     
     def calcul(self):
-        return Vecteur(self._valeur)
+        return self._valeur
 
 class Frottement(Force):
     
