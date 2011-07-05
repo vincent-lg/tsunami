@@ -81,6 +81,7 @@ class Vehicule(ObjetID):
         # On calcul l'accélération à partir des forces
         acceleration = Vecteur(0, 0, 0)
         for force in self.forces:
+            print(force.valeur)
             acceleration += (1 / self.masse) * force.valeur
         
         # On calcul la nouvelle vitesse à partir de l'accélération

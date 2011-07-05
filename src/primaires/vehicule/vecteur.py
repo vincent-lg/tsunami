@@ -30,7 +30,7 @@
 
 """Fichier contenant la classe Coordonnees, détaillée plus bas."""
 
-from math import sqrt, cos, sin, radians
+from math import sqrt, cos, sin, radians, atan, degrees
 
 from abstraits.obase import *
 from primaires.salle.coordonnees import Coordonnees
@@ -103,13 +103,28 @@ class Vecteur(BaseObj):
         self.y = y * cos(r) - z * y * sin(r) / n
         self.z = z * cos(r) + sin(r) * n
     
+    def direction(self):
+        return - self.argument()
+    
+    def argument(self):
+        x, y = self.x, self.y
+        if x > 0:
+            return degrees(atan(y/x))
+        elif x < 0:
+            return 180 - ( degrees(atan(y/x)) % 360 )
+        elif y > 0:
+            return 90
+        elif y < 0:
+            return -90
+        else:
+            return 0
+    
     def norme(self):
         return sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
     
     def normalise(self):
         norme = self.norme()
         return Vecteur(self.x / norme, self.y / norme, self.z / norme)
-    
     
     # Méthodes spéciales mathématiques
     def __neg__(self):
