@@ -58,7 +58,8 @@ class Module(BaseModule):
     
     def init(self):
         """Initialisation"""
-        self.test_instruction("test(-1.4, \"chiwa,fok \")")
+        #self.test_instruction("test(-1.4, \"chiwa,fok \")")
+        BaseModule.init(self)
     
     def test_instruction(self, chaine):
         """Test d'instruction.
