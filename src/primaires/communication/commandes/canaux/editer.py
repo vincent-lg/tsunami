@@ -30,7 +30,7 @@
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmEjecter(Parametre):
+class PrmEditer(Parametre):
     
     """Commande 'canaux editer <canal>'.
     
@@ -42,8 +42,8 @@ class PrmEjecter(Parametre):
         self.schema = "<canal>"
         self.aide_courte = "éditer un canal"
         self.aide_longue = \
-            "Cette sous-commande permet d'éditer un canal, description, " \
-            "couleur, ...
+            "Cette sous-commande permet d'éditer un canal : description, " \
+            "couleur..."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
@@ -51,22 +51,13 @@ class PrmEjecter(Parametre):
             personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
         else:
             canal = dic_masques["canal"].canal
-            joueur = dic_masques["nom_joueur"].joueur
-            if not personnage in canal.moderateurs or \
+            if not personnage in canal.moderateurs and \
                     personnage is not canal.auteur:
                 personnage << "|err|Vous n'avez pas accès à cette option.|ff|"
             elif not personnage in canal.connectes:
                 personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
-            elif not joueur in canal.connectes:
-                personnage << "|err|Ce joueur n'est pas connecté au " \
-                        "canal.|ff|"
-            elif joueur is personnage:
-                personnage << "|err|Vous ne pouvez vous éjecter " \
-                        "vous-même.|ff|"
-            elif joueur in canal.moderateurs or joueur is canal.auteur:
-                personnage << "|err|Vous ne pouvez éjecter ce joueur.|ff|"
             else:
                 editeur = type(self).importeur.interpreteur.construire_editeur(
-                    "chedit", joueur, canal)
-                joueur.contextes.ajouter(editeur)
+                    "chedit", personnage, canal)
+                personnage.contextes.ajouter(editeur)
                 editeur.actualiser()

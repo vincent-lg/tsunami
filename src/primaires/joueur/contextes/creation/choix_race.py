@@ -48,11 +48,11 @@ class ChoixRace(Contexte):
         races = type(self).importeur.perso.races
         noms_races = [race.nom for race in races]
         return \
-            "\n|tit|-------= Choix de la race =-------|ff|\n\n" \
+            "\n|tit|--------= Choix de la race =--------|ff|\n" \
             "Entrez l'une des |ent|races|ff| proposées ci-après\n" \
             "ou |cmd|info <nom de la race>|ff| pour obtenir plus " \
-            "d'informations sur la race.\nExemple : |cmd|info " \
-            "humain|ff|\n\nRaces disponibles :\n\n" \
+            "d'informations sur la race (par exemple, |cmd|info " \
+            "humain|ff|).\n\nRaces disponibles :\n\n" \
             "  " + "\n  ".join(noms_races)
     
     def get_prompt(self):
@@ -86,4 +86,3 @@ class ChoixRace(Contexte):
             else:
                 self.pere << "  |tit|Aide sur la race {} :|ff|\n\n{}".format(
                         race.nom, race.description)
-

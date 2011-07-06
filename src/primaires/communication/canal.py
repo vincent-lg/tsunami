@@ -32,6 +32,7 @@
 
 from abstraits.obase import BaseObj
 from bases.collections.liste_id import ListeID
+from primaires.format.constantes import COULEURS_INV
 from primaires.format.description import Description
 from primaires.communication.contextes import Immersion
 
@@ -59,7 +60,12 @@ class Canal(BaseObj):
         return ("", None, None)
     
     def __str__(self):
-        """Renvoie le canal sous la forme 'canal : résumé - X connecté(s)'"""
+        """Renvoie le nom du canal"""
+        return self.nom
+    
+    @property
+    def infos(self):
+        """Renvoie l'aide du canal"""
         res = self.nom + "|ff| : " + self.resume
         nb_connectes = 0
         for connecte in self.connectes:
@@ -69,9 +75,22 @@ class Canal(BaseObj):
         return res
     
     @property
-    def infos(self):
-        """Renvoie l'aide du canal"""
-        return str(self)
+    def aide(self):
+        res = self.infos + "\n" + str(self.description)
+        res += "\n  Administrateur : |rgc|" + self.auteur.nom + "|ff|"
+        modos = ""
+        if len(self.moderateurs) == 1:
+            modos = "\n  Modérateur : |jn|" + self.moderateurs[0].nom + "|ff|"
+        elif len(self.moderateurs) > 1:
+            modos = "\n  Modérateurs : |jn|" + "|ff|, |jn|".join(
+                    sorted([modo.nom for modo in self.moderateurs])) + "|ff|"
+        res += modos
+        return res
+    
+    @property
+    def clr_nom(self):
+        """Renvoie le nom de la couleur du canal"""
+        return COULEURS_INV[self.clr]
     
     def rejoindre_ou_quitter(self, joueur, aff=True):
         """Connecte ou déconnecte un joueur et le signale aux connectés"""

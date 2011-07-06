@@ -50,7 +50,7 @@ cfg_charte = r"""
 #   |jn|  - jaune
 #   |blc| - bleu clair
 #   |mgc| - magenta clair
-#   |cyb| - cyan clair
+#   |cyc| - cyan clair
 #   |bc|  - blanc
 
 

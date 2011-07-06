@@ -1,4 +1,4 @@
-﻿# -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -28,29 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit quelques constantes liées au formattage."""
+"""Fichier contenant le contexte éditeur EdtCouleur"""
 
-longueur_ligne = 79
-ponctuations_finales = ('.', '!', '?')
+from primaires.format.constantes import COULEURS
+from primaires.interpreteur.editeur.uniligne import Uniligne
 
-COULEURS = {
-    "rouge" : "|rg|",
-    "vert" : "|vr|",
-    "marron" : "|mr|",
-    "bleu" : "|bl|",
-    "magenta" : "|mg|",
-    "cyan" : "|cy|",
-    "gris" : "|gr|",
-    "grisf" : "|grf|",
-    "rougec" : "|rgc|",
-    "vertc" : "|vrc|",
-    "jaune" : "|jn|",
-    "bleuc" : "|blc|",
-    "magentac" : "|mgc|",
-    "cyanc" : "|cyc|",
-    "blanc" : "|bc|",
-}
-
-COULEURS_INV = {}
-for nom, clr in COULEURS.items():
-    COULEURS_INV[clr] = nom
+class EdtCouleur(Uniligne):
+    
+    """Classe définissant le contexte éditeur 'couleur'.
+    Ce contexte permet d'éditer la couleur d'un canal.
+    
+    """
+    
+    def __init__(self, pere, objet=None, attribut=None):
+        """Constructeur de l'éditeur"""
+        Uniligne.__init__(self, pere, objet, attribut)
+    
+    def interpreter(self, msg):
+        """Interprétation du message"""
+        msg = msg.lower()
+        if not msg in COULEURS:
+            self.pere.envoyer("|err|Cette couleur n'existe pas.|ff|")
+        else:
+            self.objet.clr = COULEURS[msg]
+            self.actualiser()

@@ -36,6 +36,7 @@ from primaires.communication import commandes
 from primaires.communication.config import cfg_com
 from primaires.format.fonctions import *
 from .conversations import Conversations
+from .editeurs.chedit import EdtChedit
 from .canal import Canal
 from .canaux import Canaux
 
@@ -105,6 +106,9 @@ class Module(BaseModule):
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
+        
+        # Ajout de l'éditeur 'chedit'
+        self.importeur.interpreteur.ajouter_editeur(EdtChedit)
     
     def preparer(self):
         """Préparation du module.

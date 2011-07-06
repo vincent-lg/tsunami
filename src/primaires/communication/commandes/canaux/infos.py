@@ -52,4 +52,7 @@ class PrmInfos(Parametre):
             personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
         else:
             canal = dic_masques["canal"].canal
-            personnage << canal.infos
+            if personnage in canal.connectes:
+                personnage << "|bc|* " + canal.aide
+            else:
+                personnage << "|cmd|" + canal.aide

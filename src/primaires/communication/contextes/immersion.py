@@ -117,7 +117,7 @@ class Immersion(Contexte):
         """Options d'affichage de l'aide : /h"""
         personnage = self.pere.joueur
         canal = self.canal
-        res = canal.clr + ">|ff| Aide du canal |ent|{}|ff| ({}) :".format(
+        res = canal.clr + ">|ff| Aide du canal |ent|{}|ff| ({}) :\n".format(
                 canal.nom, canal.resume)
         res += str(canal.description)
         res += "\n  Administrateur : |rgc|" + canal.auteur.nom + "|ff|"
@@ -143,7 +143,7 @@ class Immersion(Contexte):
             res += "\n   Commandes d'administration :"
             res += "\n   - |cmd|/p <joueur>|ff| : promeut ou déchoit un joueur "
             res += "modérateur"
-            res += "\n   - |cmd|/e|ff| : ouvre l'éditeur du canal"
+            res += "\n   - |cmd|/ed|ff| : ouvre l'éditeur du canal"
             res += "\n   - |cmd|/d|ff| : dissout le canal"
         
         personnage << res

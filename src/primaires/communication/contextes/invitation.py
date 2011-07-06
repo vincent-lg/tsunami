@@ -1,4 +1,4 @@
-﻿# -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -28,29 +28,45 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit quelques constantes liées au formattage."""
+"""Fichier contenant le contexte 'communication:invitation'"""
 
-longueur_ligne = 79
-ponctuations_finales = ('.', '!', '?')
+from primaires.interpreteur.contexte import Contexte
 
-COULEURS = {
-    "rouge" : "|rg|",
-    "vert" : "|vr|",
-    "marron" : "|mr|",
-    "bleu" : "|bl|",
-    "magenta" : "|mg|",
-    "cyan" : "|cy|",
-    "gris" : "|gr|",
-    "grisf" : "|grf|",
-    "rougec" : "|rgc|",
-    "vertc" : "|vrc|",
-    "jaune" : "|jn|",
-    "bleuc" : "|blc|",
-    "magentac" : "|mgc|",
-    "cyanc" : "|cyc|",
-    "blanc" : "|bc|",
-}
-
-COULEURS_INV = {}
-for nom, clr in COULEURS.items():
-    COULEURS_INV[clr] = nom
+class Invitation(Contexte):
+    
+    """Contexte d'invitation.
+    
+    """
+    
+    nom = "communication:invitation"
+    
+    def __init__(self, pere):
+        """Constructeur du contexte"""
+        Contexte.__init__(self, pere)
+        self.opts.prompt_prf = ""
+        self.opts.prompt_clr = ""
+        self.emetteur = None
+        self.canal = None
+    
+    def get_prompt(self):
+        return ">"
+    
+    def accueil(self):
+        """Message d'accueil du contexte"""
+        res = "|vrc|" + self.emetteur.nom + " vous invite à rejoindre le " \
+            "canal " + str(self.canal) + ".\nEntrez |ff||ent|o|ff||vrc| si " \
+            "vous acceptez, |ff||ent|n|ff||vrc| dans le cas contraire.|ff|"
+        return res
+    
+    def interpreter(self, msg):
+        """Méthode d'interprétation du contexte"""
+        personnage = self.pere.joueur
+        msg = msg.lower()
+        if msg == "o":
+            personnage << "Vous acceptez."
+            personnage.contextes.retirer()
+        elif msg == "n":
+            personnage << "Vous refusez."
+            personnage.contextes.retirer()
+        else:
+            personnage << "|err|Vous devez accepter ou refuser.|ff|"

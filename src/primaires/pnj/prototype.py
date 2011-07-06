@@ -79,8 +79,8 @@ class Prototype(ObjetID):
         
         """
         if nombre <= 0:
-            raise ValueError("la focntion get_nom_pluriel a été appelée " \
-                    "avec un nombre négatif ou nul.")
+            raise ValueError("la fonction get_nom a été appelée avec un " \
+                    "nombre négatif ou nul")
         elif nombre == 1:
             return self.nom_singulier
         else:

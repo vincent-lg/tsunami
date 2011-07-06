@@ -45,6 +45,7 @@ from .inviter import PrmInviter
 from .ejecter import PrmEjecter
 from .bannir import PrmBannir
 from .promouvoir import PrmPromouvoir
+from .editer import PrmEditer
 from .dissoudre import PrmDissoudre
 
 class CmdCanaux(Commande):
@@ -75,6 +76,7 @@ class CmdCanaux(Commande):
         prm_ejecter = PrmEjecter()
         prm_bannir = PrmBannir()
         prm_promouvoir = PrmPromouvoir()
+        prm_editer = PrmEditer()
         prm_dissoudre = PrmDissoudre()
         
         self.ajouter_parametre(prm_lister)
@@ -86,6 +88,7 @@ class CmdCanaux(Commande):
         self.ajouter_parametre(prm_ejecter)
         self.ajouter_parametre(prm_bannir)
         self.ajouter_parametre(prm_promouvoir)
+        self.ajouter_parametre(prm_editer)
         self.ajouter_parametre(prm_dissoudre)
     
     def aide_longue_pour(self, personnage):
@@ -160,6 +163,7 @@ class CmdCanaux(Commande):
         if statut_perso is "admin":
             aide += "\n\n  Paramètres d'administration :"
             aide += afficher_param(dic_parametres["promote"])
+            aide += afficher_param(dic_parametres["edit"])
             aide += afficher_param(dic_parametres["dissolve"])
         
         aide += \
@@ -216,6 +220,7 @@ class CmdCanaux(Commande):
         if statut_perso is "admin":
             aide += "\n\n  Paramètres d'administration :"
             aide += afficher_param(dic_parametres["promote"])
+            aide += afficher_param(dic_parametres["edit"])
             aide += afficher_param(dic_parametres["dissolve"])
         
         aide = self.remplacer_mots_cles(personnage, aide)
