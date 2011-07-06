@@ -75,7 +75,7 @@ class EdtPedit(Presentation):
         description.parent = self
         description.apercu = "{objet.description.paragraphes_indentes}"
         description.aide_courte = \
-            "| |tit|" + "Description de l'objet {}".format(prototype).ljust(
+            "| |tit|" + "Description du PNJ {}".format(prototype).ljust(
             76) + "|ff||\n" + self.opts.separateur
         
         # Stats
@@ -91,5 +91,5 @@ class EdtPedit(Presentation):
         race.apercu = "{objet.nom_race}"
         race.aide_courte = \
             "Entrez le |ent|nom|ff| de la race ou |cmd|/|ff| " \
-            "pour revenir à la fenêtre parente.\n\nRace actuel : " \
+            "pour revenir à la fenêtre parente.\n\nRace actuelle : " \
             "|bc|{objet.nom_race}|ff|"

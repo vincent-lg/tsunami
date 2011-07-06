@@ -49,7 +49,7 @@ class CmdPpurge(Commande):
         self.aide_courte = "retire un PNJ de la salle"
         self.aide_longue = \
             "Cette commande permet de faire disparaître un PNJ " \
-            "de la salle. vous devez préciser en paramètre l'identifiant " \
+            "de la salle. Vous devez préciser en paramètre l'identifiant " \
             "du prototype et tous les PNJ de ce prototype présents " \
             "dans la salle seront effacés. Cette suppression est " \
             "définitive. Le prototype ne sera, en revanche, pas supprimé."
@@ -66,8 +66,11 @@ class CmdPpurge(Commande):
                 personnage.salle = None
                 nb_det += 1
         
-        if nb_det:
-            personnage << "{} PNJ ont été retirés de cette salle.".format(
+        if nb_det == 1:
+            personnage << "{} PNJ a été retiré de cette salle.".format(
+                    nb_det)
+        elif nb_det > 1:
+            personnage << "{} PNJs ont été retirés de cette salle.".format(
                     nb_det)
         else:
             personnage << "|att|Aucun PNJ modelé sur ce prototype n'est " \

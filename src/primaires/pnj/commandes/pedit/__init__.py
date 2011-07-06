@@ -44,8 +44,8 @@ class CmdPedit(Commande):
         self.nom_categorie = "batisseur"
         self.aide_courte = "ouvre l'éditeur de PNJ"
         self.aide_longue = \
-                "Cette commande ouvre l'éditeur de PNJ permettant de créer " \
-            "et éditer des prototypes de PNJ. Notez bien que vous n'éditez " \
+            "Cette commande ouvre l'éditeur de PNJ permettant de créer et " \
+            "éditer des prototypes de PNJ. Notez bien que vous n'éditez " \
             "pas directement le PNJ mais bien son prototype."
     
     def interpreter(self, personnage, dic_masques):

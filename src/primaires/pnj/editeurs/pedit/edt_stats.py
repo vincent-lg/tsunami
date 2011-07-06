@@ -47,9 +47,9 @@ class EdtStats(Editeur):
     def accueil(self):
         """Message d'accueil"""
         msg = \
-            "Entrez |ent|le nom de la stat|ff|, un signe |cmd|/|ff| " \
+            "Entrez le |ent|nom|ff| de la stat, un signe |ent|/|ff| " \
             "et la valeur pour modifier une stat.\nExemple : |cmd|force / " \
-            "45|ff|\n\nEntrez |cmd|/|ff| pour revenir à la fenêtre parente\n\n"
+            "45|ff|\n\nEntrez |ent|/|ff| pour revenir à la fenêtre parente\n\n"
         stats = self.objet
         msg += "+-" + "-" * 20 + "-+-" + "-" * 6 + "-+\n"
         msg += "| " + "Nom".ljust(20) + " | " + "Valeur".ljust(6) + " |\n"
