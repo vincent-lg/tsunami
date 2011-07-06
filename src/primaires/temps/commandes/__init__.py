@@ -28,6 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Package contenant les commandes du module 'temps'."""
 
 from . import temps

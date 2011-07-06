@@ -74,12 +74,12 @@ class Temps(Unique):
         try:
             nom_mois = self.noms_mois[self.mois]
         except IndexError:
-            raise ValueError("erreur lors du réglage de l'heure initial : " \
+            raise ValueError("erreur lors du réglage de l'heure initiale : " \
                     "le mois {} est invalide".format(self.mois))
         try:
             nom_jour = self.noms_jours[self.jour]
         except IndexError:
-            raise ValueError("erreur lors du réglage de l'heure initial : " \
+            raise ValueError("erreur lors du réglage de l'heure initiale : " \
                     "le jour {} est invalide".format(self.jour))
         
         self.vitesse_ecoulement = Fraction(config.vitesse_ecoulement)

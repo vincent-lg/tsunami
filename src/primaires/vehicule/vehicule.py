@@ -42,12 +42,11 @@ class Vehicule(ObjetID):
     """
     
     def __init__(self):
-        """Constructeur du véhicule
-            
-            Initialise les valeurs et crée deux forces toujours présente
-            la propulsion qui serre à faire avance le véhicule ainsi
-            que les forttements qui servent à garantir que la vitesse
-            ne pourra pas augmenter indéfiniment
+        """Constructeur du véhicule.    
+        Initialise les valeurs et crée deux forces toujours présentes,
+        la propulsion qui sert à faire avancer le véhicule ainsi
+        que les frottements qui servent à garantir que la vitesse
+        ne pourra pas augmenter indéfiniment.
             
         """
         ObjetID.__init__(self)
@@ -71,27 +70,27 @@ class Vehicule(ObjetID):
     
     def avancer(self):
         """Fait avancer le véhicule"""
-        # Calcul la nouvelle position
+        # Calcul de la nouvelle position
         self.position += self.vitesse
         
         # Si on a une masse nulle, on ne peut pas continuer
         if self.masse == 0:
-            raise ValueError("ce véhicule à une masse nulle")
+            raise ValueError("ce véhicule a une masse nulle")
         
-        # On calcul l'accélération à partir des forces
+        # On calcule l'accélération à partir des forces
         acceleration = Vecteur(0, 0, 0)
         for force in self.forces:
             acceleration += (1 / self.masse) * force.valeur
         
-        # On calcul la nouvelle vitesse à partir de l'accélération
+        # On calcule la nouvelle vitesse à partir de l'accélération
         self.vitesse += acceleration
         
-        # On renvoit la nouvelle position
+        # On renvoie la nouvelle position
         return self.position
     
     def get_prochaine_coordonnees(self):
         """Retourne les prochaines coordonnées
-        après avoir avancé de la vitesse courante
+        après avoir avancé à la vitesse courante.
         
         """
         return self.position + self.vitesse

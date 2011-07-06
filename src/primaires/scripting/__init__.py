@@ -39,14 +39,14 @@ class Module(BaseModule):
     
     """Cette classe contient les informations du module primaire scripting.
     Ce module gère le langage de script utilisé pour écrire des quêtes et
-    personnaliser certains objets de l'univers. Il gère également les
+    personnaliser certains objets de l'univers. Il regroupe également les
     éditeurs et les objets gérant les quêtes.
     
     """
     
     def __init__(self, importeur):
         """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "scriptçing", "primaire")
+        BaseModule.__init__(self, importeur, "scripting", "primaire")
         self.cfg = None
     
     def config(self):

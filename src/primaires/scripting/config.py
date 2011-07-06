@@ -34,14 +34,14 @@ cfg_scripting = r"""
 # Ce fichier contient la syntaxe du scripting.
 # Vous pouvez configurer ici tous les éléments de la syntaxe et ainsi,
 # configurer votre propre langage de script en fonction de vos préférences.
-# NOTE IMPORTANTE: les informations de cette configuration sont données
+# NOTE IMPORTANTE : les informations de cette configuration sont données
 # sous la forme d'expressions régulières. Si vous ne connaissez pas ce
-# langage, évitez de le modifier.
+# langage, évitez de les modifier.
 
 ## Identifiant
 # Un identifiant est une variable contenant une certaine valeur.
 # Cette variable peut être prédéfinie par l'évènement (l'objet qu'on ramasse,
-# le PNJ auquel on parle...) ou bien définit au cours du script
+# le PNJ auquel on parle...) ou bien définie au cours du script
 # par affectation.
 identifiant = r"{A-Za-z}{A-Za-z0-9_}*"
 

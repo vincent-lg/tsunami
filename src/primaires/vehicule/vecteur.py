@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Coordonnees, détaillée plus bas."""
+"""Fichier contenant la classe Vecteur, détaillée plus bas."""
 
 from math import sqrt, cos, sin, radians, atan, degrees
 
@@ -38,7 +38,8 @@ from primaires.salle.coordonnees import Coordonnees
 class Vecteur(BaseObj):
     
     """Classe représentant un vecteur, gère les opérations usuelles dessus,
-        ainsi que leur rotation autours d'un axe du repère
+    ainsi que leur rotation autour d'un axe du repère.
+    
     """
     
     def __init__(self, x=0, y=0, z=0):

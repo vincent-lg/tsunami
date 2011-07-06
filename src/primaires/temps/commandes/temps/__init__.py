@@ -45,10 +45,10 @@ class CmdTemps(Commande):
         Commande.__init__(self, "temps", "time")
         self.aide_courte = "affiche la date et l'heure de l'univers"
         self.aide_longue = \
-            "Cette commande affiche la date et l'heure actuelle de l'univers."
+            "Cette commande affiche la date et l'heure actuelles de l'univers."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         temps = type(self).importeur.temps.temps
-        personnage << "C'est le {}.\nIl est {}.".format(temps.date_formatee,
+        personnage << "Nous sommes le {}.\nIl est {}.".format(temps.date_formatee,
                 temps.heure_formatee)

@@ -78,16 +78,16 @@ nombre_jours = 30
 # Dans ce cas, c'est le nombre de jours par mois qui intervient.
 noms_jours = []
 
-## Date et heure initiale
+## Date et heure initiales
 # Si aucune date n'est définie, on règle la date sous la forme d'un tuple
 # ne contenant que des nombres :
 # (année, mois, jour, heure, minute)
-# Exemple : (2011, 7, 2, 12, 7)
-# pour samedi 2 juillet 2011, 12:07
+# Exemple : (2012, 12, 21, 0, 0)
+# pour vendredi 21 décembre 2012, 00:00
 reglage_initial = (1785, 5, 12, 10, 0)
 
 ## Ecoulement du temps
-# Le temps s'écoule à quelle vitesse dans l'univers ?
+# A quelle vitesse s'écoule le temps dans l'univers ?
 # La réponse doit être donnée sous la forme d'une chaîne de caractère contenant
 # - le numérateur
 # - un slash /
@@ -96,11 +96,11 @@ reglage_initial = (1785, 5, 12, 10, 0)
 # Le numérateur est le nombre d'heures réelles qui s'écoulent
 # Le numérateur est le nombre d'heures de l'univers qui s'écoulent en parallèle
 # Par exemple, si vous définissez l'écoulement ainsi :
-#vitesse_ecoulement = "1/5"
+# vitesse_ecoulement = "1/5"
 # 5 heures de l'univers s'écoulent pendant une heure réelle
 vitesse_ecoulement = "1/4"
 
-## Formattage de la date et l'heure
+## Formatage de la date et l'heure
 # Formatage de la date
 # Le formatage doit être donné sous la forme d'une chaîne de caractère
 # contenant plusieurs symboles :
@@ -108,7 +108,7 @@ vitesse_ecoulement = "1/4"
 # {nm_j} : le nom du jour
 # {no_m} : le numéro du mois
 # {nm_m} : le nom du mois
-# {nm_s} : # le nom de la saison
+# {nm_s} : le nom de la saison
 # {no_a} : le numéro de l'année
 formatage_date = "{no_j} {nm_m} {no_a}"
 

@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire joueur."""
+"""Fichier contenant le module primaire vehicule"""
 
 from abstraits.module import *
 from .vehicule import Vehicule
@@ -47,4 +47,3 @@ class Module(BaseModule):
         veh = Vehicule()
         veh.propulsion._valeur = Vecteur(2,0,0)
         return veh
-    

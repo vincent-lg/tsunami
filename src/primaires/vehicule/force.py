@@ -60,7 +60,7 @@ class Force(BaseObj):
 
 class Propulsion(Force):
     
-    """Classe représentant une force de propulsion
+    """Classe représentant une force de propulsion.
     
     """
     
@@ -78,7 +78,7 @@ class Propulsion(Force):
 
 class Frottement(Force):
     
-    """Classe représentant une force de frottement
+    """Classe représentant une force de frottement.
     
     """
     
