@@ -61,6 +61,7 @@ class EdtRaedit(Editeur):
         Editeur.__init__(self, instance_connexion, None)
         self.personnage = personnage
         self.ajouter_option("q", self.opt_quitter)
+        self.ajouter_option("d", self.opt_suppr_race)
     
     def __getnewargs__(self):
         return (None, )
@@ -71,7 +72,8 @@ class EdtRaedit(Editeur):
         
         """
         msg = "|tit|Editeur de race|ff|\n\n" \
-            "Pour créer ou e race, entrez |ent|son nom|ff|.\n\n" \
+            "Pour créer ou éditer une race, entrez |ent|son nom|ff|.\n" \
+            "Pour supprimer une race, entrez |cmd|/d <son nom>|ff|.\n\n" \
             "Races existantes :\n"
         
         races = sorted(type(self).importeur.perso.races, key=str)
@@ -81,12 +83,37 @@ class EdtRaedit(Editeur):
         if len(races) == 0:
             msg += "\n  |att|Aucune|ff|"
         
+        msg += "\n\n(|cmd|Q|ff|)uitter l'éditeur"
+         
         return msg
     
     def opt_quitter(self, argument):
         """Option quitter."""
         self.pere.joueur.contextes.retirer()
         self.pere.envoyer("Fermeture de l'éditeur.")
+    
+    def opt_suppr_race(self, arguments):
+        """Option suppr"ession.
+        Supprime une race.
+        Syntaxe : /d <nom de la race>
+        
+        """
+        nom = supprimer_accents(arguments).lower()
+        noms = [(supprimer_accents(race.nom).lower(), race) for race in \
+                type(self).importeur.perso.races]
+        noms = dict(noms)
+        
+        try:
+            race = noms[nom]
+        except KeyError:
+            self.pere << "|err|Cette race est introuvable.|ff|"
+        else:
+            if type(self).importeur.perso.race_est_utilisee(race):
+                self.pere << "|err|Cette race est utilisée. Vous ne pouvez " \
+                        "la supprimer.|ff|"
+            else:
+                type(self).importeur.perso.supprimer_race(race.nom)
+                self.actualiser()
     
     def interpreter(self, msg):
         """Interprétation du message"""

@@ -140,10 +140,29 @@ class Module(BaseModule):
         race = None
         indice = None
         for i, t_race in enumerate(self.races):
-            if race.nom.lower() == nom.lower():
+            if t_race.nom.lower() == nom.lower():
                 race = t_race
                 indice = i
         
+        if indice is None:
+            raise KeyError("ce nom de race est introuvable")
+        
         del self.races[indice]
         race.detruire()
-
+    
+    def race_est_utilisee(self, race):
+        """Contrôle si la race est déjà utilisée ou non.
+        
+        La race peut être utilisée :
+        -   par un joueur
+        -   par un prototype de PNJ
+        
+        """
+        a_tester = list(self.importeur.connex.joueurs)
+        a_tester += list(self.importeur.pnj.prototypes)
+        
+        for test in a_tester:
+            if test.race is race:
+                return True
+        
+        return False
