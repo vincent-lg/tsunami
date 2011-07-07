@@ -28,45 +28,22 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le contexte 'communication:invitation'"""
+"""Fichier contenant le contexte éditeur EdtDroits"""
 
-from primaires.interpreteur.contexte import Contexte
+from primaires.interpreteur.editeur import Editeur
 
-class Invitation(Contexte):
+class EdtDroits(Editeur):
     
-    """Contexte d'invitation.
+    """Classe définissant le contexte éditeur 'droits'.
+    Ce contexte permet d'éditer les droits (public ou privé) d'un canal.
     
     """
     
-    def __init__(self, pere):
-        """Constructeur du contexte"""
-        Contexte.__init__(self, pere)
-        self.opts.prompt_prf = ""
-        self.opts.prompt_clr = ""
-        self.emetteur = None
-        self.canal = None
+    def __init__(self, pere, objet=None, attribut=None):
+        """Constructeur de l'éditeur"""
+        Editeur.__init__(self, pere, objet, attribut)
     
-    def get_prompt(self):
-        return ">"
-    
-    def accueil(self):
-        """Message d'accueil du contexte"""
-        res = "|vrc|" + self.emetteur.nom + " vous invite à rejoindre le " \
-            "canal " + str(self.canal) + ".\nEntrez |ff||ent|o|ff||vrc| si " \
-            "vous acceptez, |ff||ent|n|ff||vrc| dans le cas contraire.|ff|"
-        return res
-    
-    def interpreter(self, msg):
-        """Méthode d'interprétation du contexte"""
-        joueur = self.pere.joueur
-        msg = msg.lower()
-        if msg == "o":
-            joueur << "Vous acceptez."
-            # On tente de connecter joueur
-            self.canal.rejoindre_ou_quitter(joueur, forcer=True)
-            joueur.contextes.retirer()
-        elif msg == "n":
-            joueur << "Vous refusez."
-            joueur.contextes.retirer()
-        else:
-            personnage << "|err|Vous devez accepter ou refuser.|ff|"
+    def entrer(self):
+        canal = self.objet
+        canal.prive = not canal.prive
+        self.migrer_contexte(self.opts.rci_ctx_prec)

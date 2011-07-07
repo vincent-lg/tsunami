@@ -40,8 +40,6 @@ class Immersion(Contexte):
     
     """
     
-    nom = "communication:immersion"
-    
     def __init__(self, pere):
         """Constructeur du contexte"""
         Contexte.__init__(self, pere)
