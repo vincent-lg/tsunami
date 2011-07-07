@@ -94,8 +94,8 @@ class Equipement(BaseObj):
     
     def supprimer_membre(self, nom):
         """Supprime le membre de nom nom"""
-        nom = supprimer_accents(nom_membre)
-        noms = [(supprimer_accents(membre.nom), i) for i, membre in \
+        nom = supprimer_accents(nom).lower()
+        noms = [(supprimer_accents(membre.nom).lower(), i) for i, membre in \
                 enumerate(self.__membres)]
         noms = dict(noms)
         
