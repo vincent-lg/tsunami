@@ -103,7 +103,7 @@ class Equipement(BaseObj):
             membre = self.__membres[noms[nom]]
         except KeyError:
             raise KeyError("le membre {} est introuvable dans " \
-                    "l'équipement de {}".format(nom_membre, self.personnage))
+                    "l'équipement de {}".format(nom, self.personnage))
         del self.__membres[noms[nom]]
     
     def membre_est_equipe(self, nom_membre):
