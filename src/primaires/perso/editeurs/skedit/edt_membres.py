@@ -74,14 +74,12 @@ class EdtMembres(Editeur):
         
         """
         squelette = self.objet
-        membres = squelette.membres
-        nom = supprimer_accents(arguments).lower()
         try:
-            membre = squelette.get_membre(nom)
+            membre = squelette.get_membre(arguments)
         except KeyError:
             self.pere << "|err|Ce membre est introuvable.|ff|"
         else:
-            squelette.supprimer_membre(nom)
+            squelette.supprimer_membre(membre.nom)
             self.actualiser()
     
     def interpreter(self, msg):
@@ -93,7 +91,11 @@ class EdtMembres(Editeur):
         try: 
             membre = squelette.get_membre(nom)
         except KeyError:
-            membre = squelette.ajouter_membre(msg)
+            try:
+                membre = squelette.ajouter_membre(msg)
+            except ValueError:
+                self.pere << "|err|Ce nom de membre est invalide.|ff|"
+                return
         
         enveloppe = EnveloppeObjet(EdtMembre, membre, None)
         enveloppe.parent = self
@@ -104,4 +106,3 @@ class EdtMembres(Editeur):
             " - |ent|/n nom|ff| : change le nom du membre\n\n"
         contexte = enveloppe.construire(self.pere)
         self.migrer_contexte(contexte)
-

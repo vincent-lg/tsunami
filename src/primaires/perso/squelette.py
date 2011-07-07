@@ -102,6 +102,9 @@ class Squelette(ObjetID):
         Membre.
         
         """
+        if len(nom) < 4:
+            raise ValueError("ce nom de membre est invalide.")
+        
         membre = Membre(nom, *args, parent=self, **kwargs)
         self.__membres.append(membre)
         
@@ -114,7 +117,7 @@ class Squelette(ObjetID):
     def supprimer_membre(self, nom):
         """Supprime le membre du dictionnaire."""
         nom = supprimer_accents(nom).lower()
-        noms = [(supprimer_accents(membre.nom), i) for i, membre in \
+        noms = [(supprimer_accents(membre.nom).lower(), i) for i, membre in \
                 enumerate(self.__membres)]
         noms = dict(noms)
         
@@ -132,7 +135,7 @@ class Squelette(ObjetID):
     def get_membre(self, nom):
         """Retourne le membre si il le trouve grâce à son nom."""
         nom = supprimer_accents(nom).lower()
-        noms = [(supprimer_accents(membre.nom), i) for i, membre in \
+        noms = [(supprimer_accents(membre.nom).lower(), i) for i, membre in \
                 enumerate(self.__membres)]
         noms = dict(noms)
         

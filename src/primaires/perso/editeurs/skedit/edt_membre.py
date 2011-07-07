@@ -95,4 +95,3 @@ class EdtMembre(Editeur):
             else:
                 msg += "non"
         return msg
-

@@ -77,7 +77,6 @@ class Module(BaseModule):
         
         # Regex
         print("fonction", fonction)
-        c=input()
         reg = re.compile("^" + fonction + "$", re.DEBUG)
         res = reg.search(chaine)
         if res is None:
