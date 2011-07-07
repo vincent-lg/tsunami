@@ -38,8 +38,6 @@ class Invitation(Contexte):
     
     """
     
-    nom = "communication:invitation"
-    
     def __init__(self, pere):
         """Constructeur du contexte"""
         Contexte.__init__(self, pere)

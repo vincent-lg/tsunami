@@ -210,11 +210,16 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         L'émetteur reçoit ainsi le message d'accueil du contexte.
         
         """
-        self.migrer_contexte(type(self).nom)
+        if type(self).nom:
+            self.migrer_contexte(type(self).nom)
+        else:
+            self.migrer_contexte(self)
     
     def migrer_contexte(self, contexte, afficher_accueil=True):
         """Cas de transfert de contexte.
-        Le contexte doit être donné sous la forme d'un nom (type 'str').
+        
+        Le contexte peut être sous la forme d'un nom (str)
+        ou d'un contexte.
         
         """
         if type(contexte) is str:
