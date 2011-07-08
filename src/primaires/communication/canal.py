@@ -107,6 +107,8 @@ class Canal(BaseObj):
                         "que sur invitation.|ff|"
             else:
                 self.connectes.append(joueur)
+                joueur << "|att|Vous êtes à présent connecté au canal " \
+                        "{}.|ff|".format(self.nom)
                 for connecte in self.connectes:
                     if connecte in type(self).importeur.connex.joueurs_connectes:
                         if connecte is not joueur:
@@ -244,7 +246,7 @@ class Canal(BaseObj):
     def envoyer(self, joueur, message):
         """Envoie un message au canal"""
         type(self).importeur.communication. \
-                dernier_canaux[joueur.nom] = self.nom
+                derniers_canaux[joueur.nom] = self.nom
         ex_moi = self.clr + "[" + self.nom + "] Vous dites : "
         ex_moi += message + "|ff|"
         ex_autre = self.clr + "[" + self.nom + "] " + joueur.nom
@@ -269,4 +271,3 @@ class Canal(BaseObj):
         self.immerges.supprimer_none()
         self.connectes.supprimer_none()
         self.liste_noire.supprimer_none()
-

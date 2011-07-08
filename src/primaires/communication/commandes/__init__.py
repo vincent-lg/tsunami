@@ -36,3 +36,4 @@ import primaires.communication.commandes.emote
 import primaires.communication.commandes.parler
 import primaires.communication.commandes.repondre
 import primaires.communication.commandes.canaux
+import primaires.communication.commandes.socedit
