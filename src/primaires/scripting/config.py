@@ -43,7 +43,7 @@ cfg_scripting = r"""
 # Cette variable peut être prédéfinie par l'évènement (l'objet qu'on ramasse,
 # le PNJ auquel on parle...) ou bien définie au cours du script
 # par affectation.
-identifiant = r"{A-Za-z}{A-Za-z0-9_}*"
+identifiant = r"[A-Za-z][A-Za-z0-9_]*"
 
 ## Types de données
 # Les différents types admis
@@ -51,7 +51,7 @@ identifiant = r"{A-Za-z}{A-Za-z0-9_}*"
 chaine = r"\".+\""
 
 # Nombre :
-nombre = r"-?[0-9]+\.[0-9]+"
+nombre = r"-?[0-9]+(\.[0-9]+)?"
 
 ## Affectation
 # L'affectation est l'instruction qui permet d'affecter une valeur à un
@@ -76,7 +76,10 @@ sep = r", ?"
 # Nom d'une fonction
 nom_fonction = r"[a-z]{3,}"
 
-# Ligne d'une fonction
-fonction = r"({nom_fonction})\({type_de_donnee}?({sep}{type_de_donnee})*\)"
+# Délimiteur gauce de la liste des paramètres (parenthèse gauche en Python)
+delimiteur_gauche = r"\("
+
+# Délimiteur droit de la liste des paramètres (parenthèse droite en Python)
+delimiteur_droit = r"\)"
 
 """

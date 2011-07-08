@@ -58,7 +58,7 @@ class Module(BaseModule):
     
     def init(self):
         """Initialisation"""
-        #self.test_instruction("test(-1.4, \"chiwa,fok \")")
+        #self.test_instruction("test(33, ab, -4.5, 1.48, \"ok,d\",oa123)")
         BaseModule.init(self)
     
     def test_instruction(self, chaine):
@@ -72,11 +72,11 @@ class Module(BaseModule):
         affectation = cfg.affectation.format(identifiant=identifiant,
                 type_de_donnee=type_de_donnee)
         sep = cfg.sep
-        fonction = cfg.fonction.format(nom_fonction=cfg.nom_fonction,
-                sep=sep, type_de_donnee=type_de_donnee)
+        fonction = r"({nom_fonction}){dg}({type_de_donnee})?({sep}({type_de_donnee}))*{dd}"
+        fonction = fonction.format(nom_fonction=cfg.nom_fonction,
+                sep=sep, type_de_donnee=type_de_donnee,
+                dg=cfg.delimiteur_gauche, dd=cfg.delimiteur_droit)
         
-        # Regex
-        print("fonction", fonction)
         reg = re.compile("^" + fonction + "$", re.DEBUG)
         res = reg.search(chaine)
         if res is None:
@@ -84,14 +84,14 @@ class Module(BaseModule):
             return
         
         nom_fonction = res.groups()[0]
-        arg = res.groups()[1]
-        arg = arg or ""
+        arg = res.groups()[1] or ""
         args = []
         if arg:
             args.append(arg)
         
-        chaine = chaine.strip(")")
-        chaine = chaine[len(nom_fonction) + 1 + len(arg):]
+        delimiteur_droit = cfg.delimiteur_droit.replace("\\", "")
+        pos_del = -len(delimiteur_droit) or None
+        chaine = chaine[len(nom_fonction) + 1 + len(arg):pos_del]
         ARGUMENT = r"({sep}({a}))({sep}({a}))*".format(a=type_de_donnee, sep=sep)
         RE_ARGUMENT = re.compile("^" + ARGUMENT + "$")
         while chaine:
