@@ -59,7 +59,7 @@ nombre = r"-?[0-9]+(\.[0-9]+)?"
 # variable = 5 (on affecte la valeur 5 à la variable 'variable')
 # Vous pouvez utiliser :
 # {identifiant} : un identifiant
-# {type de donnée} : un type de donnée
+# {type_de_donnee} : un type de donnée
 #                    (entier, flottant, chaîne ou un autre identifiant)
 affectation = r"{identifiant} ?= ?{type_de_donnee}"
 
@@ -81,5 +81,34 @@ delimiteur_gauche = r"\("
 
 # Délimiteur droit de la liste des paramètres (parenthèse droite en Python)
 delimiteur_droit = r"\)"
+
+## Conditions
+# Une condition permet de faire une suite d'action dans certains cas
+# Elle possède quatre mot-clés :
+# if : si test
+# sinon si : elif test
+# sinon : else
+# finsi : ce mot-clé n'a pas d'équivalent en Python qui réagit à l'indentation
+si = "si {condition}:"
+sinonsi = "sinon si {condition}:"
+sinon = "sinon:"
+finsi = "finsi"
+
+# Opérateurs booléens
+# Les opérateurs booléens sont "et", "ou"
+# Ils permettent de relier des tests
+# Comme si test1 et test2...
+et = "et"
+ou = "ou"
+
+# Opérateurs de comparaison
+# Ce sont les opérateurs utilisés pour tester une comparaison entre deux
+# valeurs. Exemple : si a = b...
+egal = "="
+inferieur_ou_egal = "<="
+inferieur = "<"
+superieurou_egal = ">="
+superieur = ">"
+different = "!="
 
 """

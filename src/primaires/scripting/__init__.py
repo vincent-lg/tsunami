@@ -34,6 +34,7 @@ import re
 
 from abstraits.module import *
 from .config import cfg_scripting
+from .action import Action
 
 class Module(BaseModule):
     
@@ -58,7 +59,7 @@ class Module(BaseModule):
     
     def init(self):
         """Initialisation"""
-        #self.test_instruction("test(33, ab, -4.5, 1.48, \"ok,d\",oa123)")
+        #self.test_instruction("test(a14)")
         BaseModule.init(self)
     
     def test_instruction(self, chaine):
@@ -77,29 +78,15 @@ class Module(BaseModule):
                 sep=sep, type_de_donnee=type_de_donnee,
                 dg=cfg.delimiteur_gauche, dd=cfg.delimiteur_droit)
         
-        reg = re.compile("^" + fonction + "$", re.DEBUG)
-        res = reg.search(chaine)
-        if res is None:
+        Action.changer_schema("^" + fonction + "$")
+        Action.schema_argument = r"({sep}({a}))({sep}({a}))*".format(a=type_de_donnee, sep=sep)
+        Action.type_de_donnee = type_de_donnee
+        action = Action(cfg)
+        regex = action.correspond_schema(chaine)
+        if not regex:
             print("Non !")
             return
         
-        nom_fonction = res.groups()[0]
-        arg = res.groups()[1] or ""
-        args = []
-        if arg:
-            args.append(arg)
-        
-        delimiteur_droit = cfg.delimiteur_droit.replace("\\", "")
-        pos_del = -len(delimiteur_droit) or None
-        chaine = chaine[len(nom_fonction) + 1 + len(arg):pos_del]
-        ARGUMENT = r"({sep}({a}))({sep}({a}))*".format(a=type_de_donnee, sep=sep)
-        RE_ARGUMENT = re.compile("^" + ARGUMENT + "$")
-        while chaine:
-            res = RE_ARGUMENT.search(chaine)
-            groupes = res.groups()
-            arg_c = groupes[0]
-            arg_n = groupes[1]
-            chaine = chaine[len(arg_c):]
-            args.append(arg_n)
-        
+        action.parser(regex, chaine)
+        nom_fonction, args = action.groupes["nom"], action.groupes["parametres"]
         print(nom_fonction, args)
