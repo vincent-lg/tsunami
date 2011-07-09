@@ -105,7 +105,7 @@ class Editeur(Contexte):
         """Retourne le prompt"""
         prompt = self.prompt
         if not prompt:
-            prompt = "->"
+            prompt = "-> "
         return prompt
 
     def receptionner(self, msg):

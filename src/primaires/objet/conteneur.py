@@ -45,7 +45,7 @@ class ConteneurObjet(BaseObj):
     def __init__(self, parent=None):
         """Constructeur du conteneur"""
         BaseObj.__init__(self)
-        self._objets = ListeID()
+        self._objets = ListeID(parent)
         self.parent = parent
     
     def __getnewargs__(self):
@@ -54,6 +54,9 @@ class ConteneurObjet(BaseObj):
     def __iter__(self):
         """Itérateur"""
         return iter(self._objets)
+    
+    def __str__(self):
+        return str(self._objets)
     
     def ajouter(self, objet):
         """On ajoute l'objet dans le conteneur"""

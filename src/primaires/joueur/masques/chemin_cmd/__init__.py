@@ -47,15 +47,15 @@ class CheminCommande(Masque):
     """
     
     nom = "chemin_commande"
+    nom_complet = "chemin d'une commande"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "chemin vers une commande"
+    def init(self):
+        """Initialisation des attributs"""
         self.joueur = None
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
         lstrip(commande)
         chemin_commande = liste_vers_chaine(commande)
         

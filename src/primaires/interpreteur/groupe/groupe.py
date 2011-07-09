@@ -37,7 +37,7 @@ pas, et auront accès à des commandes auxquelles les joueurs ne peuvent
 accéder.
 
 Ce système permet à chaque créateur de MUD de faire sa propre hiérarchie
-d'utilisateurs (un niveau pour les NPCs, un niveau pour les joueurs, un niveau
+d'utilisateurs (un niveau pour les PNJ, un niveau pour les joueurs, un niveau
 pour les modérateurs, plusieurs niveaux d'immortels...).
 
 """

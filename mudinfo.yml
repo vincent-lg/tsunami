@@ -1,0 +1,12 @@
+# Ce fichier définit des informations générales propres au MUD
+# Ce fichier est au format YML. En respectant sa syntaxe très simple,
+# vous pouvez le modifier sans difficulté.
+# En tant qu'administrateur du MUD, mettez ces informations à jour.
+Nom: Kassie-Tsunami
+Version: 1.0.0
+Description: >
+  Kassie-Tsunami est la base du code, branche de Kassie, supportant
+  VanciaMUD.
+Responsable: Kredh
+Adresse e-mail: vanciamud@gmail.com
+

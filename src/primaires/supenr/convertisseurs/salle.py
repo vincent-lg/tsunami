@@ -35,3 +35,6 @@ class Convertisseur:
     def depuis_version_0(objet, classe):
         objet.set_version(classe, 1)
         objet._zone = objet._zone.lower()
+    def depuis_version_1(objet, classe):
+        objet.set_version(classe, 2)
+        objet._personnages.parent = objet

@@ -74,7 +74,7 @@ class Salle(ObjetID):
     groupe = "salles"
     sous_rep = "salles"
     _nom = "salle"
-    _version = 1
+    _version = 2
     
     def __init__(self, zone, mnemonic, x=0, y=0, z=0, valide=True):
         """Constructeur de la salle"""
@@ -86,7 +86,7 @@ class Salle(ObjetID):
         self.description = Description(parent=self)
         self.sorties = Sorties(parent=self)
         self.details = Details(parent=self)
-        self._personnages = ListeID() # personnages présents
+        self._personnages = ListeID(self) # personnages présents
         self.objets_sol = ObjetsSol(parent=self)
     
     def __getnewargs__(self):
@@ -187,15 +187,23 @@ class Salle(ObjetID):
         res += self.afficher_sorties(personnage)
         
         # Personnages
-        personnages = []
+        personnages = OrderedDict()
+        # Si le personnage est un joueur, il se retrouve avec un nomre de 1
+        # Si le personnage est un PNJ, on conserve son prototype avec
+        # le nombre d'occurences de prototypes apparaissant
         for personne in self.personnages:
             if personne is not personnage:
-                personnages.append(personne)
+                if not hasattr(personne, "prototype"):
+                    personnages[personne] = 1
+                else:
+                    personnages[personne.prototype] = personnages.get(
+                            personne.prototype, 0) + 1
         
         if len(personnages):
             res += "\n"
-            for personne in personnages:
-                res += "\n- {} est là".format(personne.nom)
+            
+            for personne, nombre in personnages.items():
+                res += "\n- {}".format(personne.get_nom_etat(nombre))
         
         # Objets
         noms_objets = self.afficher_noms_objets()

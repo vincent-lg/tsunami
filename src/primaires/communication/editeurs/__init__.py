@@ -30,3 +30,5 @@
 
 """Package contenant les différents éditeurs du module de communication"""
 
+from . import chedit
+from . import socedit

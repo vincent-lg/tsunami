@@ -74,6 +74,12 @@ class EdtPresentation(Presentation):
             "| |tit|" + "Description de l'objet {}".format(prototype).ljust(
             76) + "|ff||\n" + self.opts.separateur
         
+        # Extensions
+        for extension in prototype._extensions_editeur:
+            rac, ligne, editeur, objet, attr = extension
+            env = self.ajouter_choix(ligne, rac, editeur, objet, attr)
+            env.parent = self
+        
         # Suppression
         suppression = self.ajouter_choix("supprimer", "sup", NSupprimer, \
                 prototype)
@@ -83,3 +89,14 @@ class EdtPresentation(Presentation):
         suppression.action = "objet.supprimer_prototype"
         suppression.confirme = "Le prototype d'objet {} a bien été " \
                 "supprimé.".format(prototype.cle)
+        
+        # Travail sur les enveloppes
+        # On appelle la méthode 'travailler_enveloppes' du prototype
+        # Cette méthode peut travailler sur les enveloppes de la rpésentation
+        # (écrire une aide courte, un aperçu...)
+        enveloppes = {}
+        for rac, nom in self.raccourcis.items():
+            enveloppe = self.choix[nom]
+            enveloppes[rac] = enveloppe
+        
+        prototype.travailler_enveloppes(enveloppes)

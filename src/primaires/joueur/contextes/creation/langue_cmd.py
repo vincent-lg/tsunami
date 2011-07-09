@@ -53,12 +53,12 @@ class LangueCMD(Contexte):
     def accueil(self):
         """Message d'accueil du contexte"""
         return \
-            "\n|tit|-------= Choix de la langue =-------|ff|\n\n" \
+            "\n|tit|-------= Choix de la langue =-------|ff|\n" \
             "Entrez l'un des |ent|choix|ff| proposés ci-après.\nLa langue " \
             "choisie sera celle des commandes en jeu ; si vous n'êtes pas\n" \
             "familiarisé avec les MUDs, nous vous conseillons le français. " \
             "Une fois\nen jeu, vous pourrez toujours changer grâce à la " \
-            "commande |cmd|langue|ff| | |cmd|lang|ff|.\n\n" \
+            "commande |cmd|options|ff|.\n\n" \
             "Langues disponibles : |cmd|français|ff|, |cmd|anglais|ff|"
     
     def get_prompt(self):
@@ -72,6 +72,10 @@ class LangueCMD(Contexte):
             self.pere << "|err|Cette langue n'est pas disponible.|ff|"
         else:
             self.pere.joueur.langue_cmd = msg
-            self.pere.compte.ajouter_joueur(self.pere.joueur)
-        
-        self.pere.joueur.pre_connecter()
+            races = type(self).importeur.perso.races
+            if races:
+                self.migrer_contexte("personnage:creation:choix_race")
+            else:
+                self.pere.compte.ajouter_joueur(self.pere.joueur)
+                
+                self.pere.joueur.pre_connecter()

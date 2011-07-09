@@ -43,9 +43,10 @@ class Ident(Masque):
     """
     
     nom = "ident_rapport"
+    nom_complet = "identifiant d'un rapport"
     
-    def __init__(self):
-        """Constructeur du masque"""
+    def init(self):
+        """Initialisation des attributs"""
         Masque.__init__(self)
         self.identifiant = -1
         self.objet = None

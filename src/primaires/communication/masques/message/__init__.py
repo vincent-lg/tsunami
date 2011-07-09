@@ -43,14 +43,15 @@ class Message(Masque):
     """
     
     nom = "message"
+    nom_complet = "message"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "message"
+    def init(self):
+        """Initialisation des attributs"""
+        self.message = ""
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
         message = liste_vers_chaine(commande).lstrip()
         
         if not message:

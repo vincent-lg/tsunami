@@ -36,6 +36,9 @@ from primaires.communication import commandes
 from primaires.communication.config import cfg_com
 from primaires.format.fonctions import *
 from .conversations import Conversations
+from .attitudes import Attitudes
+from .editeurs.chedit import EdtChedit
+from .editeurs.socedit import EdtSocedit
 from .canal import Canal
 from .canaux import Canaux
 
@@ -53,8 +56,9 @@ class Module(BaseModule):
                 "communication", "communication")
         self.masques = []
         self.commandes = []
-        self.conversations = Conversations()
-        self.dernier_canaux = {}
+        self.conversations = None
+        self.attitudes = None
+        self.derniers_canaux = {}
         self._canaux = None
     
     def config(self):
@@ -71,6 +75,8 @@ class Module(BaseModule):
     
     def init(self):
         """Initialisation du module"""
+        self.conversations = Conversations()
+        self.attitudes = Attitudes()
         # On récupère les canaux
         canaux = None
         sous_rep = "canaux"
@@ -91,13 +97,6 @@ class Module(BaseModule):
         
         BaseModule.init(self)
     
-    def ajouter_masques(self):
-        """Ajout des masques"""
-        self.importeur.interpreteur.ajouter_masque(masques.message.Message)
-        self.importeur.interpreteur.ajouter_masque(
-                masques.id_conversation.IdConversation)
-        self.importeur.interpreteur.ajouter_masque(masques.canal.Canal)
-    
     def ajouter_commandes(self):
         """Ajout des commandes"""
         self.commandes = [
@@ -107,10 +106,15 @@ class Module(BaseModule):
             commandes.parler.CmdParler(),
             commandes.repondre.CmdRepondre(),
             commandes.canaux.CmdCanaux(),
+            commandes.socedit.CmdSocedit(),
         ]
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
+        
+        # Ajout des éditeurs 'chedit' et 'socedit'
+        self.importeur.interpreteur.ajouter_editeur(EdtChedit)
+        self.importeur.interpreteur.ajouter_editeur(EdtSocedit)
     
     def preparer(self):
         """Préparation du module.
@@ -131,7 +135,7 @@ class Module(BaseModule):
         
         """
         
-        self._canaux[nom] = Canal(nom, auteur)
+        self._canaux[nom] = Canal(nom, auteur, self._canaux)
         return self._canaux[nom]
     
     def supprimer_canal(self, nom):
@@ -153,8 +157,6 @@ class Module(BaseModule):
                 personnage << "|err|Vous êtes déjà connecté à ce canal.|ff|"
                 return
             self.canaux[nom_canal].rejoindre_ou_quitter(personnage)
-            personnage << "|att|Vous êtes à présent connecté au canal " \
-                    "{}.|ff|".format(nom_canal)
         else:
             canal = self.ajouter_canal(nom_canal, personnage)
             canal.rejoindre_ou_quitter(personnage)
@@ -201,14 +203,14 @@ class Module(BaseModule):
         if not arguments or arguments.isspace():
             personnage << "Que voulez-vous dire ?"
             return
-        if not personnage.nom in self.dernier_canaux:
+        if not personnage.nom in self.derniers_canaux:
             personnage << "|err|Vous n'avez utilisé aucun canal.|ff|"
             return
-        dernier_canal = self.dernier_canaux[personnage.nom]
+        dernier_canal = self.derniers_canaux[personnage.nom]
         if dernier_canal not in self.canaux:
             personnage << "|err|Le canal {} n'existe pas.|ff|".format(
                     dernier_canal)
-            del self.dernier_canaux[personnage.nom]
+            del self.derniers_canaux[personnage.nom]
             return
         canal = self.canaux[dernier_canal]
         if not personnage in canal.connectes:
@@ -250,5 +252,8 @@ class Module(BaseModule):
         elif commande.split(" ")[0] in noms_canaux_connectes:
             res = True
             self.dire_canal(personnage, commande)
+        elif commande.split(" ")[0] in self.attitudes:
+            res = True
+            self.attitudes.jouer(personnage, commande)
         
         return res

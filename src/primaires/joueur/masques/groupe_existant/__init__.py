@@ -44,15 +44,15 @@ class GroupeExistant(Masque):
     """
     
     nom = "groupe_existant"
+    nom_complet = "nom d'un groupe existant"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "nom d'un groupe existant"
+    def init(self):
+        """Initialisation des attributs"""
         self.nom_groupe = ""
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
         lstrip(commande)
         nom_groupe = liste_vers_chaine(commande)
         if not nom_groupe:

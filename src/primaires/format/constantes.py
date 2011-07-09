@@ -32,3 +32,25 @@
 
 longueur_ligne = 79
 ponctuations_finales = ('.', '!', '?')
+
+COULEURS = {
+    "rouge" : "|rg|",
+    "vert" : "|vr|",
+    "marron" : "|mr|",
+    "bleu" : "|bl|",
+    "magenta" : "|mg|",
+    "cyan" : "|cy|",
+    "gris" : "|gr|",
+    "grisf" : "|grf|",
+    "rougec" : "|rgc|",
+    "vertc" : "|vrc|",
+    "jaune" : "|jn|",
+    "bleuc" : "|blc|",
+    "magentac" : "|mgc|",
+    "cyanc" : "|cyc|",
+    "blanc" : "|bc|",
+}
+
+COULEURS_INV = {}
+for nom, clr in COULEURS.items():
+    COULEURS_INV[clr] = nom

@@ -51,7 +51,7 @@ class PrmInclus(Parametre):
             "d'un groupe. Si un groupe |tit|a|ff| inclus d'un groupe " \
             "|tit|b|ff|, alors |tit|a|ff| possédera les commandes de " \
             "|tit|b|ff|. Par défaut, |tit|administrateur|ff| inclus " \
-            "|tit|joueur|ff| qui lui-même inclus |tit|npc|ff|. " \
+            "|tit|joueur|ff| qui lui-même inclus |tit|pnj|ff|. " \
             "Référez-vous aux sous-commandes pour plus d'information."
     
     def ajouter_parametres(self):

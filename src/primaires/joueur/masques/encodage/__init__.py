@@ -44,15 +44,15 @@ class Encodage(Masque):
     """
     
     nom = "nom_encodage"
+    nom_complet = "encodage disponible"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "encodage disponible"
+    def init(self):
+        """Initialisation des attributs"""
         self.encodage = ""
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
         lstrip(commande)
         encodage = liste_vers_chaine(commande)
         

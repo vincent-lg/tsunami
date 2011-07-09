@@ -28,6 +28,8 @@
 # pereIBILITY OF SUCH DAMAGE.
 
 
+from yaml import load
+
 from primaires.interpreteur.contexte import Contexte
 from primaires.connex.motd import MOTD
 
@@ -50,4 +52,9 @@ class AfficherMOTD(Contexte):
     
     def accueil(self):
         """Message d'accueil"""
-        return MOTD
+        mudinfo = open("../mudinfo.yml", "r")
+        infos = mudinfo.read()
+        mudinfo.close()
+        infos = load(infos)
+        return MOTD.format(**infos)
+

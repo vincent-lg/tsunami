@@ -43,11 +43,21 @@ class Uniligne(Editeur):
     
     nom = "editeur:base:uniligne"
     
+    def __init__(self, pere, objet=None, attribut=None):
+        """Constructeur de l'éditeur"""
+        Editeur.__init__(self, pere, objet, attribut)
+        self.type = str
+    
     def accueil(self):
         """Retourne l'aide courte"""
         return self.aide_courte.format(objet = self.objet)
     
     def interpreter(self, msg):
         """Interprétation du contexte"""
-        setattr(self.objet, self.attribut, msg)
-        self.pere << self.accueil()
+        try:
+            msg = self.type(msg)
+        except ValueError:
+            self.pere << "|err|Cette valeur est invalide.|ff|"
+        else:
+            setattr(self.objet, self.attribut, msg)
+            self.pere << self.accueil()

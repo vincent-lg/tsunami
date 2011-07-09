@@ -108,11 +108,6 @@ class Module(BaseModule):
         self.suggestions = suggestions
         
         
-        self.importeur.interpreteur.ajouter_masque(
-                masques.ident.IdentBug)
-        self.importeur.interpreteur.ajouter_masque(
-                masques.ident.IdentSuggestion)
-                
         self.commandes = [
             commandes.rapport.CmdRapport(),
             commandes.suggestion.CmdSuggestion(),

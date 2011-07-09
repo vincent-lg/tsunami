@@ -43,17 +43,17 @@ class IdConversation(Masque):
     """
     
     nom = "id_conversation"
+    nom_complet = "ID d'une conversation"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "id d'une conversation"
+    def init(self):
+        """Initialisation des attributs du masque"""
         self.id_conversation = None
         self.cible = None
         self.perte_focus = False
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
         lstrip(commande)
         id_conversation = liste_vers_chaine(commande).lstrip()
         conversations = type(self).importeur.communication.conversations
@@ -88,7 +88,6 @@ class IdConversation(Masque):
             raise ErreurValidation( \
                 "|err|Le numéro spécifié ne correspond à aucun personnage.|ff|")
         else:
-            print("On trouve la cible", cible.nom)
             self.id_conversation = len(p_conversations) + 1 - id_conversation
             self.cible = cible
             return True

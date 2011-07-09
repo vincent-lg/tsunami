@@ -31,22 +31,25 @@
 """Fichier contenant le module primaire perso."""
 
 from abstraits.module import *
-from primaires.perso import commandes
-from primaires.perso import masques
+
+from . import commandes
+from . import masques
 from .editeurs.skedit import EdtSkedit
+from .editeurs.raedit import EdtRaedit
 from .cfg_stats import cfg_stats
+from .race import Race
 from .stats import *
 from .squelette import Squelette
 
 class Module(BaseModule):
     
     """Module gérant la classe Personnage qui sera héritée pour construire
-    des joueurs et NPCs. Les mécanismes propres au personnage (c'est-à-dire
+    des joueurs et PNJ. Les mécanismes propres au personnage (c'est-à-dire
     indépendant de la connexion et liées à l'univers) seront gérées ici.
     
     En revanche, les contextes de connexion ou de création d'un personnage
     ne se trouve pas ici (il s'agit d'informations propres à un joueur, non
-    à un NPC.
+    à un PNJ.
     
     """
     
@@ -56,6 +59,7 @@ class Module(BaseModule):
         self.cfg_stats = None
         self.commandes = []
         self.squelettes = {}
+        self.races = []
     
     def config(self):
         """Méthode de configuration.
@@ -80,18 +84,20 @@ class Module(BaseModule):
         for squelette in squelettes:
             self.ajouter_squelette(squelette)
         
+        # On récupère les races
+        races = self.importeur.supenr.charger_groupe(Race)
+        for race in races:
+            self.ajouter_race(race)
+        
         BaseModule.init(self)
-    def ajouter_masques(self):
-        """Ajout des masques dans l'interpréteur"""
-        self.importeur.interpreteur.ajouter_masque(masques.commande.Commande)
-        self.importeur.interpreteur.ajouter_masque(masques.etat.Etat)
-        self.importeur.interpreteur.ajouter_masque(masques.ident.Ident)
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.commande.CmdCommande(),
+            commandes.equipement.CmdEquipement(),
             commandes.qui.CmdQui(),
+            commandes.raedit.CmdRaedit(),
             commandes.score.CmdScore(),
             commandes.skedit.CmdSkedit(),
         ]
@@ -100,6 +106,7 @@ class Module(BaseModule):
             self.importeur.interpreteur.ajouter_commande(cmd)
         
         # Ajout de l'éditeur 'skedit'
+        self.importeur.interpreteur.ajouter_editeur(EdtRaedit)
         self.importeur.interpreteur.ajouter_editeur(EdtSkedit)
     
     def creer_squelette(self, cle):
@@ -117,3 +124,45 @@ class Module(BaseModule):
         squelette = self.squelettes[cle]
         del self.squelettes[cle]
         squelette.detruire()
+    
+    def creer_race(self, nom):
+        """Crée la race du nom indiqué"""
+        race = Race(nom)
+        self.ajouter_race(race)
+        return race
+    
+    def ajouter_race(self, race):
+        """Ajout de la race au dictionnaire des races existantes"""
+        self.races.append(race)
+    
+    def supprimer_race(self, nom):
+        """Suppression de la race 'nom'"""
+        race = None
+        indice = None
+        for i, t_race in enumerate(self.races):
+            if t_race.nom.lower() == nom.lower():
+                race = t_race
+                indice = i
+        
+        if indice is None:
+            raise KeyError("ce nom de race est introuvable")
+        
+        del self.races[indice]
+        race.detruire()
+    
+    def race_est_utilisee(self, race):
+        """Contrôle si la race est déjà utilisée ou non.
+        
+        La race peut être utilisée :
+        -   par un joueur
+        -   par un prototype de PNJ
+        
+        """
+        a_tester = list(self.importeur.connex.joueurs)
+        a_tester += list(self.importeur.pnj.prototypes)
+        
+        for test in a_tester:
+            if test.race is race:
+                return True
+        
+        return False

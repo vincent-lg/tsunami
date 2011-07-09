@@ -45,7 +45,7 @@ Bienvenue sur
     \ V / (_| | | | | (__| | (_| | |  | | |_| | |_| | 
      \_/ \__,_|_| |_|\___|_|\__,_|_|  |_|\___/|____/  
      
-                                        Version de developpement
+                                        Version {Version}
                                         Basé sur le moteur Kassie
 
 """

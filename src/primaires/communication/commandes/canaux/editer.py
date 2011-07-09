@@ -26,24 +26,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'ejecter' de la commande 'canaux'."""
+"""Fichier contenant le paramètre 'editer' de la commande 'canaux'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmEjecter(Parametre):
+class PrmEditer(Parametre):
     
-    """Commande 'canaux ejecter <canal> <joueur>'.
+    """Commande 'canaux editer <canal>'.
     
     """
     
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "ejecter", "eject")
-        self.schema = "<canal> <nom_joueur>"
-        self.aide_courte = "éjecte un joueur"
+        Parametre.__init__(self, "editer", "edit")
+        self.schema = "<canal>"
+        self.aide_courte = "éditer un canal"
         self.aide_longue = \
-            "Cette sous-commande permet d'éjecter un joueur. Il peut " \
-            "néanmoins se reconnecter par la suite."
+            "Cette sous-commande permet d'éditer un canal : description, " \
+            "couleur..."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
@@ -51,19 +51,13 @@ class PrmEjecter(Parametre):
             personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
         else:
             canal = dic_masques["canal"].canal
-            joueur = dic_masques["nom_joueur"].joueur
-            if not personnage in canal.moderateurs or \
+            if not personnage in canal.moderateurs and \
                     personnage is not canal.auteur:
                 personnage << "|err|Vous n'avez pas accès à cette option.|ff|"
             elif not personnage in canal.connectes:
                 personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
-            elif not joueur in canal.connectes:
-                personnage << "|err|Ce joueur n'est pas connecté au " \
-                        "canal.|ff|"
-            elif joueur is personnage:
-                personnage << "|err|Vous ne pouvez vous éjecter " \
-                        "vous-même.|ff|"
-            elif joueur in canal.moderateurs or joueur is canal.auteur:
-                personnage << "|err|Vous ne pouvez éjecter ce joueur.|ff|"
             else:
-                canal.ejecter(joueur)
+                editeur = type(self).importeur.interpreteur.construire_editeur(
+                    "chedit", personnage, canal)
+                personnage.contextes.ajouter(editeur)
+                editeur.actualiser()

@@ -43,15 +43,15 @@ class Joueur(Masque):
     """
     
     nom = "nom_joueur"
+    nom_complet = "nom d'un joueur"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "nom d'un joueur"
+    def init(self):
+        """Initialisation des attributs"""
         self.joueur = None
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
         lstrip(commande)
         nom_joueur = liste_vers_chaine(commande).lower()
         

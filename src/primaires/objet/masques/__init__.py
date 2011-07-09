@@ -31,3 +31,4 @@
 """Package des masques du module perso."""
 
 from . import ident_prototype_objet
+from . import nom_objet

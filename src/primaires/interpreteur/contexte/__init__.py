@@ -210,11 +210,16 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         L'émetteur reçoit ainsi le message d'accueil du contexte.
         
         """
-        self.migrer_contexte(type(self).nom)
+        if type(self).nom:
+            self.migrer_contexte(type(self).nom)
+        else:
+            self.migrer_contexte(self)
     
     def migrer_contexte(self, contexte, afficher_accueil=True):
         """Cas de transfert de contexte.
-        Le contexte doit être donné sous la forme d'un nom (type 'str').
+        
+        Le contexte peut être sous la forme d'un nom (str)
+        ou d'un contexte.
         
         """
         if type(contexte) is str:
@@ -224,12 +229,12 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         self.pere.contexte_actuel.sortir()
         self.pere.migrer_contexte(nouveau_contexte)
         self.pere.contexte_actuel.entrer()
-        if self.pere.contexte_actuel.opts.separateur is not None:
-            self.pere.envoyer(self.pere.contexte_actuel.opts.separateur)
         if nouveau_contexte is self.pere.contexte_actuel and afficher_accueil:
             # Cette condition est là pour éviter qu'en cas de migration de
             # contexte dans la méthode 'entrer', le message d'accueil ne
             # s'affiche en double
+            if self.pere.contexte_actuel.opts.separateur is not None:
+                self.pere.envoyer(self.pere.contexte_actuel.opts.separateur)
             self.pere.envoyer(self.pere.contexte_actuel.accueil())
     
     def interpreter(self, msg):

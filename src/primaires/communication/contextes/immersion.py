@@ -33,14 +33,13 @@
 from primaires.format.constantes import ponctuations_finales
 
 from primaires.interpreteur.contexte import Contexte
+from primaires.communication.contextes.invitation import Invitation
 
 class Immersion(Contexte):
     
     """Contexte d'immersion dans un canal de communication.
     
     """
-    
-    nom = "communication:immersion"
     
     def __init__(self, pere):
         """Constructeur du contexte"""
@@ -56,11 +55,11 @@ class Immersion(Contexte):
             "i" : self.opt_invite,
             "me" : self.opt_emote,
             # Options de modo
-            "e" : self.opt_eject,
+            "ej" : self.opt_eject,
             "b" : self.opt_ban,
             # Options d'admin
             "p" : self.opt_promote,
-            "e" : self.opt_edit,
+            "ed" : self.opt_edit,
             "d" : self.opt_dissolve,
             }
     
@@ -117,7 +116,7 @@ class Immersion(Contexte):
         """Options d'affichage de l'aide : /h"""
         personnage = self.pere.joueur
         canal = self.canal
-        res = canal.clr + ">|ff| Aide du canal |ent|{}|ff| ({}) :".format(
+        res = canal.clr + ">|ff| Aide du canal |ent|{}|ff| ({}) :\n".format(
                 canal.nom, canal.resume)
         res += str(canal.description)
         res += "\n  Administrateur : |rgc|" + canal.auteur.nom + "|ff|"
@@ -143,7 +142,7 @@ class Immersion(Contexte):
             res += "\n   Commandes d'administration :"
             res += "\n   - |cmd|/p <joueur>|ff| : promeut ou déchoit un joueur "
             res += "modérateur"
-            res += "\n   - |cmd|/e|ff| : ouvre l'éditeur du canal"
+            res += "\n   - |cmd|/ed|ff| : ouvre l'éditeur du canal"
             res += "\n   - |cmd|/d|ff| : dissout le canal"
         
         personnage << res
@@ -167,11 +166,10 @@ class Immersion(Contexte):
         if joueur in canal.connectes:
             self.pere.joueur << "|err|Ce joueur est déjà connecté au canal.|ff|"
             return
-        res = "|vrc|" + self.pere.joueur.nom + " vous invite à rejoindre "
-        res += "le canal" + canal.nom + ". Pour ce faire, entrez |ff||ent|+"
-        res += canal.nom + "|ff||vrc|.|ff|"
-        
-        joueur << res
+        contexte = Invitation(joueur.instance_connexion)
+        contexte.emetteur = self.pere.joueur
+        contexte.canal = canal
+        contexte.actualiser()
         self.pere.joueur << "|att|Vous venez d'inviter {} à rejoindre le " \
                 "canal {}.|ff|".format(joueur.nom, canal.nom)
     

@@ -33,13 +33,16 @@
 
 from abstraits.id import ObjetID, propriete_id
 from primaires.interpreteur.file import FileContexte
+
+from .race import Race
+from .equipement import Equipement
 from .stats import Stats
 
 class Personnage(ObjetID):
     
     """Classe représentant un personnage.
     C'est une classe abstraite. Elle doit être héritée pour faire des joueurs
-    et NPCs. Ces autres classes peuvent être également héritées, à leur tour.
+    et PNJ. Ces autres classes peuvent être également héritées, à leur tour.
     
     Note: on précise bel et bien un nom de groupe, mais on ne l'ajoute pas à
     ObjetID puisqu'il s'agit d'une classe abstraite.
@@ -55,12 +58,15 @@ class Personnage(ObjetID):
         """Constructeur d'un personnage"""
         ObjetID.__init__(self)
         self.nom = ""
-        self.groupe = "npc"
+        self.groupe = "pnj"
         self.contextes = FileContexte(self) # file d'attente des contexte
         self.langue_cmd = "francais"
         self._salle = None
         self.stats = Stats()
         self._prompt = "Vit   {v}     Man   {m}     End   {e}"
+        self.equipement = None
+        self._race = None
+        self._construire()
     
     def __getnewargs__(self):
         """Retourne les arguments à passer au constructeur"""
@@ -75,7 +81,8 @@ class Personnage(ObjetID):
         """Cherche l'attribut dans 'self.stats."""
         if nom_attr.startswith("_") or nom_attr == "stats":
             pass
-        elif hasattr(self, "stats") and hasattr(self.stats, nom_attr):
+        elif hasattr(self, "stats") and hasattr(self.stats,
+                    nom_attr):
             return getattr(self.stats, nom_attr)
         
         raise AttributeError("le type {} n'a pas d'attribut {}".format(
@@ -132,6 +139,20 @@ class Personnage(ObjetID):
     
     salle = property(_get_salle, _set_salle)
     
+    def _get_race(self):
+        return self._race
+    def _set_race(self, race):
+        race = race.get_objet()
+        self._race = race
+        
+        for stat in race.stats:
+            t_stat = getattr(self.stats, "_{}".format(stat.nom))
+            t_stat.defaut = stat.defaut
+            t_stat.courante = stat.defaut
+        
+        self.lier_equipement(race.squelette)
+    race = property(_get_race, _set_race)
+    
     @property
     def prompt(self):
         """Retourne le prompt formatté"""
@@ -140,6 +161,29 @@ class Personnage(ObjetID):
             m=self.mana,
             e=self.endurance,
         )
+    
+    def lier_equipement(self, squelette):
+        """Crée un nouvel équipement pour le personnage en fonction
+        du squelette.
+        
+        """
+        self.equipement = Equipement(self, squelette)
+    
+    def get_nom(self, nombre):
+        """Retourne le nom du personnage"""
+        return self.nom
+    
+    def get_nom_etat(self, nombre):
+        """Retourne le nom et un état par défaut."""
+        return self.nom + " est là"
+    
+    def detruire(self):
+        """Méthode appelée lors de la destruction du personage.
+        -   On supprime le personnage de la liste des personnages du squelette
+        
+        """
+        if self.equipement:
+            self.equipement.squelette.personnages.remove(self)
     
     def envoyer(self, msg):
         """Méthode envoyer"""

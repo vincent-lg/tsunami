@@ -118,6 +118,14 @@ class Module(BaseModule):
         
         BaseModule.init(self)
     
+    def preparer(self):
+        """Préparation du module"""
+        for joueur in self.joueurs:
+            if joueur.race and (not joueur.equipement or \
+                    (not joueur.equipement.squelette and \
+                    joueur.race.squelette)):
+                joueur.lier_equipement(joueur.race.squelette)
+    
     def boucle(self):
         """A chaque tour de boucle synchro, on envoie la file d'attente des
         instances de connexion.

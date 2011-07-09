@@ -29,6 +29,7 @@
 """Fichier contenant le paramètre 'inviter' de la commande 'canaux'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
+from primaires.communication.contextes.invitation import Invitation
 
 class PrmInviter(Parametre):
     
@@ -57,10 +58,12 @@ class PrmInviter(Parametre):
             elif joueur in canal.connectes:
                 personnage << "|err|Ce joueur est déjà connecté au canal " \
                         "{}.|ff|".format(canal.nom)
+            elif joueur not in type(self).importeur.connex.joueurs_connectes:
+                personnage << "|err|Ce joueur n'est pas connecté.|ff|"
             else:
-                res = "|vrc|" + personnage.nom + " vous invite à rejoindre le "
-                res += "canal" + canal.nom + ". Pour ce faire, entrez "
-                res += "|ff||ent|+" + canal.nom + "|ff||vrc|.|ff|"
-                joueur << res
+                contexte = Invitation(joueur.instance_connexion)
+                contexte.emetteur = personnage
+                contexte.canal = canal
+                contexte.actualiser()
                 personnage << "|att|Vous venez d'inviter {} à rejoindre le " \
                         "canal {}.|ff|".format(joueur.nom, canal.nom)

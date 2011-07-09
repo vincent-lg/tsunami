@@ -38,14 +38,12 @@ les extensions n'apparaîtront pas ici.
 
 """
 
+from primaires.format.constantes import COULEURS, COULEURS_INV
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
-from .edt_coords import EdtCoords
-from .edt_zone import EdtZone
-from .edt_mnemonic import EdtMnemonic
-from .edt_sorties import EdtSorties
-from .edt_details import EdtDetails
+from .edt_couleur import EdtCouleur
+from .edt_droits import EdtDroits
 
 class EdtChedit(Presentation):
     
@@ -71,126 +69,44 @@ class EdtChedit(Presentation):
     
     def construire(self, canal):
         """Construction de l'éditeur"""
-        # Coordonnées
-        coords = self.ajouter_choix("coordonnées", "c", EdtCoords, salle)
-        coords.parent = self
-        coords.prompt = "Nouvelles coordonnées : "
-        coords.apercu = "{objet.coords}"
-        coords.aide_courte = \
-            "Entrez les |ent|coordonnées|ff| de la salle ou |cmd|/|ff| pour " \
-            "revenir à la fenêtre mère.\n" \
-            "Les coordonnées permettent de repérer géographiquement une " \
-            "salle dans\n" \
-            "l'espace, selon les axes usuels |rgc|x|ff|, |vrc|y|ff| et " \
-            "|blc|z|ff|.\n\n" \
-            "Vous avez plusieurs possibilités d'édition :\n" \
-            "- |cmd|INV|ff| : passe les coordonnées en invalide. Cela " \
-            "signifie que la salle n'a\n" \
-            "        plus aucun lien géographique avec les autres les " \
-            "autres (elle peut\n" \
-            "        naturellement avoir des sorties pointant vers d'autres " \
-            "salles) ;\n" \
-            "- |cmd|<x>.<y>.<z>|ff| : les trois coordonnées, négatives ou " \
-            "positives, séparées\n" \
-            "                par des points (par exemple, -1.2.0) ;\n" \
-            "- |cmd|/h|ff| : déplace la salle vers le haut. De même, " \
-            "|cmd|/s|ff|, |cmd|/so|ff|, |cmd|/o|ff|, |cmd|/no|ff|, " \
-            "|cmd|/n|ff|, |cmd|/ne|ff|, |cmd|\n|ff|" \
-            "       |cmd|/e|ff|, |cmd|/se|ff| et |cmd|/b|ff| déplacent la " \
-            "salle dans n'importe quelle direction,\n" \
-            "       si les coordonnées d'arrivée ne sont pas déjà " \
-            "utilisées.\n\n" \
-            "Coordonnées actuelles : |bc|{objet.coords}|ff|"
-
-        # Zone
-        zone = self.ajouter_choix("zone", "z", EdtZone, salle)
-        zone.parent = self
-        zone.prompt = "Nom de la zone : "
-        zone.apercu = "{objet.zone}"
-        zone.aide_courte = \
-            "Entrez la |ent|zone|ff| de la salle ou |cmd|/|ff| pour revenir " \
-            "à la fenêtre mère.\n" \
-            "La nom de la zone peut comporter lettres non accentuées, " \
-            "chiffres et\n" \
-            "undescores (le signe |ent|_|ff|).\n" \
-            "|att|Le couple 'zone:mnémonic' doit être unique et différent " \
-            "pour chaque salle !|ff|\n\n" \
-            "Zone actuelle : |bc|{objet.zone}|ff|"
-
-        # Mnémonic
-        mnemonic = self.ajouter_choix("mnemonic", "m", EdtMnemonic, salle)
-        mnemonic.parent = self
-        mnemonic.prompt = "Nom du mnémonic : "
-        mnemonic.apercu = "{objet.mnemonic}"
-        mnemonic.aide_courte = \
-            "Entrez le |ent|mnémonic|ff| de la salle ou |cmd|/|ff| pour " \
-            "revenir à la fenêtre mère.\n" \
-            "Le mnémonic peut comporter lettres non accentuées, chiffres et\n" \
-            "undescores (le signe |ent|_|ff|).\n" \
-            "|att|Le couple 'zone:mnémonic' doit être unique et différent " \
-            "pour chaque salle !|ff|\n\n" \
-            "Mnémonic actuel : |bc|{objet.mnemonic}|ff|"
+        # Résumé
+        resume = self.ajouter_choix("resume", "r", Uniligne, canal, "resume")
+        resume.parent = self
+        resume.prompt = "Nouveau résumé : "
+        resume.apercu = "{objet.resume}"
+        resume.aide_courte = \
+            "Entrez un |ent|résumé|ff| du canal ou |cmd|/|ff| pour revenir " \
+            "à la fenêtre parente.\n" \
+            "Le |ent|résumé|ff| est une courte aide à propos du canal, " \
+            "affichée par exemple dans la\nliste des canaux.\n" \
+            "Résumé actuel : |bc|{objet.resume}|ff|"
         
-        # Titre
-        titre = self.ajouter_choix("titre", "t", Uniligne, salle, "titre")
-        titre.parent = self
-        titre.prompt = "Titre de la salle : "
-        titre.apercu = "{objet.titre}"
-        titre.aide_courte = \
-            "Entrez le |ent|titre|ff| de la salle ou |cmd|/|ff| pour revenir " \
-            "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
-        
-        # Détails
-        details = self.ajouter_choix("details", "e", EdtDetails, salle,
-                "details")
-        details.parent = self
-        details.aide_courte = \
-            "Entrez le nom d'un |cmd|détail existant|ff| pour l'éditer ou " \
-            "un |cmd|nouveau détail|ff|\n" \
-            "pour le créer ; |ent|/|ff| pour revenir à la fenêtre parente.\n" \
-            "Options :\n" \
-            " - |ent|/s <détail existant> / <synonyme 1> (/ <synonyme 2> / " \
-            "...)|ff| : permet\n" \
-            "   de modifier les synonymes du détail passée en paramètre. " \
-            "Pour chaque\n" \
-            "   synonyme donné à l'option, s'il existe, il sera supprimé ; " \
-            "sinon, il sera\n" \
-            "   ajouté à la liste.\n" \
-            " - |ent|/d <détail existant>|ff| : supprime le détail " \
-            "indiqué\n\n"
+        # Couleur
+        couleur = self.ajouter_choix("couleur", "c", EdtCouleur, canal)
+        couleur.parent = self
+        couleur.prompt = "Couleur du canal : "
+        couleur.apercu = "{objet.clr}{objet.clr_nom}|ff|"
+        couleur.aide_courte = \
+            "Entrez la |ent|couleur|ff| du canal ou |cmd|/|ff| pour revenir " \
+            "à la fenêtre parente.\n" \
+            "Couleurs disponibles : "
+        for nom, clr in COULEURS.items():
+            couleur.aide_courte += clr + nom + "|ff|, "
+            if nom == "blanc": # on insère un saut de ligne à l'arrache
+                couleur.aide_courte += "\n"
+        couleur.aide_courte = couleur.aide_courte[0:-2] + "."
+        couleur.aide_courte += \
+            "\nCouleur actuelle : {objet.clr}{objet.clr_nom}|ff|"
         
         # Description
-        description = self.ajouter_choix("description", "d", Description, \
-                salle)
+        description = self.ajouter_choix("description", "d", Description, canal)
         description.parent = self
         description.apercu = "{objet.description.paragraphes_indentes}"
         description.aide_courte = \
-            "| |tit|" + "Description de la salle {}".format(salle).ljust(76) + \
+            "| |tit|" + "Description du canal {}".format(canal).ljust(76) + \
             "|ff||\n" + self.opts.separateur
         
-        # Sorties
-        sorties = self.ajouter_choix("sorties", "s", EdtSorties, salle,
-                "sorties")
-        sorties.parent = self
-        sorties.aide_courte = \
-            "Entrez le |ent|nom d'une sortie|ff| pour l'éditer ou " \
-            "|cmd|/|ff| pour revenir à\n" \
-            "la fenêtre parente.\n" \
-            "Options :\n" \
-            " - |ent|/r <sortie> / <nouveau nom> (/ <préfixe>)|ff| : " \
-            "renomme une sortie. Si le\n" \
-            "   préfixe n'est pas précisé, il sera " \
-            "défini comme 'le'. Par exemple,\n" \
-            "   |ent|/r ouest / porte / la|ff| renomme la sortie " \
-            "|ent|ouest|ff| en |ent|la porte|ff|.\n" \
-            " - |ent|/s <sortie> / <identifiant d'une salle>|ff| : permet de " \
-            "configurer une sortie.\n" \
-            "   En précisant l'identifiant (|cmd|zone:mnemo|ff|) d'une " \
-            "salle, la sortie spécifiée\n" \
-            "   mènera vers la salle correspondant à cet identifiant. Par " \
-            "exemple,\n" \
-            "   |ent|/s nord / picte:2|ff|, si vous êtes dans la salle " \
-            "picte:1, créera une sortie\n" \
-            "   nord vers picte:2 et dans picte:2, une sortie sud vers " \
-            "picte:1.\n" \
-            " - |ent|/d <sortie>|ff| : supprime la sortie indiquée\n\n"
+        # Droits
+        droits = self.ajouter_choix("droits", "o", EdtDroits, canal)
+        droits.parent = self
+        droits.apercu = "{objet.droits}"

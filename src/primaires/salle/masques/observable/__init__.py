@@ -45,15 +45,15 @@ class Observable(Masque):
     """
     
     nom = "element_observable"
+    nom_complet = "élément observable"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "élément observable"
+    def init(self):
+        """Initialisation des attributs"""
         self.element = ""
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
         lstrip(commande)
         nom = liste_vers_chaine(commande)
         

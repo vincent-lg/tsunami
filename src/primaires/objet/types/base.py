@@ -53,19 +53,49 @@ class BaseType(ObjetID, metaclass=MetaType):
         """Constructeur d'un type"""
         ObjetID.__init__(self)
         self.cle = cle
+        self._attributs = {}
         self.no = 0 # nombre d'objets créés sur ce prototype
         self.nom_singulier = "un objet indéfini"
         self.etat_singulier = "est posé là"
         self.nom_pluriel = "objets indéfinis"
         self.etat_pluriel = "sont posés là"
         self.description = Description(parent=self)
-        self.objets = ListeID()
+        self.objets = ListeID(self)
+        
+        # Editeur
+        self._extensions_editeur = []
     
     def __getnewargs__(self):
         return ()
     
     def __str__(self):
         return self.cle
+    
+    def etendre_editeur(self, raccourci, ligne, editeur, objet, attribut):
+        """Permet d'étendre l'éditeur d'objet en fonction du type.
+        -   raccourci   le raccourci permettant d'accéder à la ligne
+        -   ligne       la ligne de l'éditeur (exemple 'Description')
+        -   editeur     le contexte-éditeur (exemple Uniligne)
+        -   objet       l'objet à éditer
+        -   attribut    l'attribut à éditer    
+        
+        Cette méthode est appelée lors de la création de l'éditeur de
+        prototype.
+        
+        """
+        self._extensions_editeur.append(
+            (raccourci, ligne, editeur, objet, attribut))
+    
+    def travailler_enveloppes(self, enveloppes):
+        """Travail sur les enveloppes.
+        On récupère un dictionnaire représentant la présentation avec en
+        clé les raccourcis et en valeur les enveloppes.
+        
+        Cela peut permettre de travailler sur les enveloppes ajoutées par
+        'etendre_editeur'.
+        
+        """
+        pass
     
     def get_nom(self, nombre):
         """Retourne le nom complet en fonction du nombre.
@@ -75,8 +105,8 @@ class BaseType(ObjetID, metaclass=MetaType):
         
         """
         if nombre <= 0:
-            raise valueError("la focntion get_nom_pluriel a été appelée " \
-                    "avec un  nombre négatif ou nul.")
+            raise ValueError("la focntion get_nom_pluriel a été appelée " \
+                    "avec un nombre négatif ou nul.")
         elif nombre == 1:
             return self.nom_singulier
         else:

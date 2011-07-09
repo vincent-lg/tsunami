@@ -31,6 +31,8 @@
 """Package contenant les commandes du module perso."""
 
 from . import commande
+from . import equipement
 from . import qui
+from . import raedit
 from . import score
 from . import skedit

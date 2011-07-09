@@ -56,7 +56,6 @@ class NouveauNom(Contexte):
         Contexte.__init__(self, pere)
         self.opts.rci_ctx_prec = "connex:connexion:choix_personnages"
     
-    ## Bug a fixer ci-dessous, la fonction a été désactivée en attendant
     def sortir(self):
         """En sortant du contexte :
         -   on vérifie que la salle du joueur est valide
@@ -87,15 +86,16 @@ class NouveauNom(Contexte):
         cfg_joueur = type(self).importeur.anaconf.get_config("joueur")
         t_min = cfg_joueur.taille_min
         t_max = cfg_joueur.taille_max
+        msg = msg.capitalize()
         if len(msg) < t_min or len(msg) > t_max:
             self.pere.envoyer("|err|Le nom de votre joueur doit faire entre " \
                     "{0} et {1} caractères.|ff|".format(t_min, t_max))
         elif msg in type(self).importeur.connex.nom_joueurs:
             self.pere.envoyer("|err|Ce nom de personnage est déjà utilisé. " \
                     "Choisissez-en un autre.|ff|")
-        elif RE_NOM_VALIDE.search(supprimer_accents(msg)):
+        elif RE_NOM_VALIDE.search(supprimer_accents(msg).lower()):
             nouv_joueur = Joueur()
-            nouv_joueur.nom = msg.capitalize()
+            nouv_joueur.nom = msg
             self.pere.joueur = nouv_joueur
             nouv_joueur.instance_connexion = self.pere
             nouv_joueur.compte = self.pere.compte

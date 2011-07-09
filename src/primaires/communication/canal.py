@@ -28,10 +28,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Canaldétaillée plus bas."""
+"""Ce fichier contient la classe Canal détaillée plus bas."""
 
 from abstraits.obase import BaseObj
 from bases.collections.liste_id import ListeID
+from primaires.format.constantes import COULEURS_INV
 from primaires.format.description import Description
 from primaires.communication.contextes import Immersion
 
@@ -41,24 +42,35 @@ class Canal(BaseObj):
     
     """
     
-    def __init__(self, nom, auteur):
+    def __init__(self, nom, auteur, parent):
         """Constructeur du canal"""
         BaseObj.__init__(self)
         self.nom = nom
         self.auteur = auteur
+        self.prive = False
         self.clr = "|cyc|"
         self.resume = "canal de communication"
-        self.description = Description()
-        self.moderateurs = ListeID()
-        self.immerges = ListeID()
-        self.connectes = ListeID()
-        self.liste_noire = ListeID()
+        self.description = Description(parent=parent)
+        self.moderateurs = ListeID(parent)
+        self.immerges = ListeID(parent)
+        self.connectes = ListeID(parent)
+        self.liste_noire = ListeID(parent)
+        self.parent = parent
     
     def __getnewargs__(self):
-        return ("", None)
+        return ("", None, None)
     
     def __str__(self):
-        """Renvoie le canal sous la forme 'canal : résumé - X connecté(s)'"""
+        """Renvoie le nom du canal"""
+        return self.nom
+    
+    @property
+    def droits(self):
+        return (self.prive and "privé") or "public"
+    
+    @property
+    def infos(self):
+        """Renvoie l'aide du canal"""
         res = self.nom + "|ff| : " + self.resume
         nb_connectes = 0
         for connecte in self.connectes:
@@ -68,17 +80,35 @@ class Canal(BaseObj):
         return res
     
     @property
-    def infos(self):
-        """Renvoie l'aide du canal"""
-        return str(self)
+    def aide(self):
+        res = self.infos + "\n" + str(self.description)
+        res += "\nAdministrateur : |rgc|" + self.auteur.nom + "|ff|"
+        modos = ""
+        if len(self.moderateurs) == 1:
+            modos = "\nModérateur : |jn|" + self.moderateurs[0].nom + "|ff|"
+        elif len(self.moderateurs) > 1:
+            modos = "\nModérateurs : |jn|" + "|ff|, |jn|".join(
+                    sorted([modo.nom for modo in self.moderateurs])) + "|ff|"
+        res += modos
+        return res
     
-    def rejoindre_ou_quitter(self, joueur, aff=True):
+    @property
+    def clr_nom(self):
+        """Renvoie le nom de la couleur du canal"""
+        return COULEURS_INV[self.clr]
+    
+    def rejoindre_ou_quitter(self, joueur, aff=True, forcer=False):
         """Connecte ou déconnecte un joueur et le signale aux connectés"""
         if not joueur in self.connectes:
             if joueur in self.liste_noire:
                 joueur << "|err|Vous êtes sur la liste noire de ce canal.|ff|"
+            elif self.prive and not forcer:
+                joueur << "|err|Ce canal est privé, vous ne pouvez y accéder " \
+                        "que sur invitation.|ff|"
             else:
                 self.connectes.append(joueur)
+                joueur << "|att|Vous êtes à présent connecté au canal " \
+                        "{}.|ff|".format(self.nom)
                 for connecte in self.connectes:
                     if connecte in type(self).importeur.connex.joueurs_connectes:
                         if connecte is not joueur:
@@ -112,7 +142,7 @@ class Canal(BaseObj):
             contexte.canal = type(self).importeur.communication.canaux[self.nom]
             joueur.contexte_actuel.migrer_contexte(contexte)
             for immerge in self.immerges:
-                if connecte in type(self).importeur.connex.joueurs_connectes:
+                if immerge in type(self).importeur.connex.joueurs_connectes:
                     if immerge is not joueur:
                         res = self.clr + "<" + joueur.nom + " s'immerge.>|ff|"
                         immerge << res
@@ -121,7 +151,7 @@ class Canal(BaseObj):
             joueur.contextes.retirer()
             if aff is True:
                 for immerge in self.immerges:
-                    if connecte in type(self).importeur.connex.joueurs_connectes:
+                    if immerge in type(self).importeur.connex.joueurs_connectes:
                         res = self.clr + "<" + joueur.nom
                         res += " sort d'immersion.>|ff|"
                         immerge << res
@@ -216,7 +246,7 @@ class Canal(BaseObj):
     def envoyer(self, joueur, message):
         """Envoie un message au canal"""
         type(self).importeur.communication. \
-                dernier_canaux[joueur.nom] = self.nom
+                derniers_canaux[joueur.nom] = self.nom
         ex_moi = self.clr + "[" + self.nom + "] Vous dites : "
         ex_moi += message + "|ff|"
         ex_autre = self.clr + "[" + self.nom + "] " + joueur.nom
@@ -241,4 +271,3 @@ class Canal(BaseObj):
         self.immerges.supprimer_none()
         self.connectes.supprimer_none()
         self.liste_noire.supprimer_none()
-

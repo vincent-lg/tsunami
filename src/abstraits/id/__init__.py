@@ -59,6 +59,7 @@ class StatutObjet:
     DETRUIT = 2
 
 class ObjetID(BaseObj):
+    
     """Cette classe abstraite peut être héritée des objets qui souhaitent
     obtenir un identifiant unique, propre à chaque objet créé.
 
@@ -120,7 +121,7 @@ class ObjetID(BaseObj):
     """
     # Attributs à redéfinir en sous-classe
     groupe = "" # la chaîne contenant le nom du groupe préfixant l'ID
-    id_actuel = 1 # on compte à partir de 1
+    _id_actuel = 1 # on compte à partir de 1
     sous_rep = "" # sous-répertoire menant de _chemin_enr aux données du groupe
     
     # Attributs à ne pas redéfinir
@@ -136,7 +137,7 @@ class ObjetID(BaseObj):
         
         """
         ObjetID.groupes[groupe.groupe] = groupe
-        groupe.id_actuel = 1
+        groupe._id_actuel = 1
         BaseObj.importeur.parid[groupe.groupe] = {}
     
     # Méthodes d'instance
@@ -155,13 +156,13 @@ class ObjetID(BaseObj):
         
         """
         self._statut = StatutObjet.EN_CONSTRUCTION
-        if BaseObj.importeur.parid.construit:
-            self.id = ID(type(self).groupe, type(self).id_actuel)
-            type(self).id_actuel += 1
+        if BaseObj.importeur.parid.construit and type(self).groupe:
+            self.id = ID(type(self).groupe, self.id_actuel)
+            self.id_actuel = self.id_actuel + 1
         # Appel du constructeur de BaseObj
         BaseObj.__init__(self)
         # On l'ajoute dans le parid
-        if BaseObj.importeur.parid.construit:
+        if BaseObj.importeur.parid.construit and type(self).groupe:
             BaseObj.importeur.parid[self.id.groupe][self.id.id] = self
         # On change le statut et enregistre l'objet
         self._statut = StatutObjet.INITIALISE
@@ -180,8 +181,8 @@ class ObjetID(BaseObj):
         self.__dict__.update(dico_attrs)
         BaseObj.__setstate__(self, dico_attrs)
         self._statut = StatutObjet.INITIALISE
-        if self.id.id >= type(self).id_actuel:
-            type(self).id_actuel = self.id.id + 1
+        if self.id.id >= self.id_actuel:
+            self.id_actuel = self.id.id + 1
         
         # On l'ajoute dans parid
         BaseObj.importeur.parid[self.id.groupe][self.id.id] = self
@@ -199,6 +200,29 @@ class ObjetID(BaseObj):
         if not nom_attr.startswith("_"):
             self.enregistrer()
     
+    def _get_id_actuel(self):
+        """Retourne l'ID actuel.
+        Pour le déduire, on parcourt type(self) puis ses parents.
+        
+        """
+        classe = type(self)
+        classe = classe._get_classe_ou_parente_contenant_id(classe)
+        return classe._id_actuel
+    
+    def _get_classe_ou_parente_contenant_id(classe):
+        attrs = classe.__dict__
+        if "_id_actuel" in attrs.keys():
+            return classe
+        else:
+            classe = classe.__base__
+            return classe._get_classe_ou_parente_contenant_id(classe)
+    
+    def _set_id_actuel(self, id_actuel):
+        classe = type(self)._get_classe_ou_parente_contenant_id(type(self))
+        classe._id_actuel = id_actuel
+    
+    id_actuel = property(_get_id_actuel, _set_id_actuel)
+    
     def est_initialise(self):
         """Return True si le statut de l'objet est initialisé"""
         return self._statut == StatutObjet.INITIALISE
@@ -210,7 +234,7 @@ class ObjetID(BaseObj):
         
         """
         supenr = BaseObj.importeur.supenr
-        if self._statut == StatutObjet.INITIALISE:
+        if self._statut == StatutObjet.INITIALISE and type(self).groupe:
             supenr.file_attente.add(self)
     
     def detruire(self):

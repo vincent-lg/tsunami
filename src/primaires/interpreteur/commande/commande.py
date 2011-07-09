@@ -81,7 +81,7 @@ class Commande(Masque):
         self.aide_longue = ""
         
         # Groupe
-        self.groupe = "npc"
+        self.groupe = "pnj"
     
     def _get_aide_courte(self):
         """Retourne l'aide courte"""
@@ -150,6 +150,10 @@ class Commande(Masque):
     def noms_commandes(self):
         """Retourne les différents noms possibles des commandes."""
         return (self.nom_francais, self.nom_anglais)
+    
+    def ajouter(self):
+        """Méthode appelée quand on ajoute la commande à l'interpréteur"""
+        pass
     
     def valider(self, personnage, dic_masques, commande):
         """Fonction de validation.

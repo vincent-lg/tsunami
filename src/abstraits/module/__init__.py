@@ -30,6 +30,8 @@
 
 """Ce package définit la classe Module, détaillée plus bas."""
 
+import os
+
 # Statuts
 INSTANCIE = 0
 CONFIGURE = 1
@@ -55,7 +57,6 @@ class BaseModule:
     Elle reprend les méthodes d'un module, appelées dans l'ordre :
     -   config : configuration du module
     -   init : initialisation du module (ne pas confondre avec le constructeur)
-    -   ajouter_masque : ajout des masques propres au module
     -   ajouter_commandes : ajout des commandes propres au module
     -   preparer : préparation du module avant lancement
     -   detruire : destruction du module, appelée lors du déchargement
@@ -131,10 +132,6 @@ class BaseModule:
         """
         self.statut = INITIALISE
 
-    def ajouter_masques(self):
-        """Ajoute les masques propres au module"""
-        pass
-    
     def ajouter_commandes(self):
         """Ajoute les commandes propres au module"""
         pass
@@ -146,8 +143,8 @@ class BaseModule:
         
         Par exemple :
             Le module salle récupère des salles avec des listes de joueurs
-            et NPCs présents dans chaque salle. Il serai préférable
-            que chaque salle vérifie que tous les joueurs et NPCs présents
+            et PNJ présents dans chaque salle. Il serai préférable
+            que chaque salle vérifie que tous les joueurs et PNJ présents
             soient toujours dans cette salle. Cette vérification ne pourrait
             se faire dans la méthode 'init' car c'est ici que les objets
             sont récupérés. Or, comment être sûr que les joueurs ont
@@ -196,3 +193,9 @@ class BaseModule:
     def str_statut(self):
         """Retourne le statut sous la forme d'une chaîne"""
         return STATUTS[self.statut]
+    
+    @property
+    def chemin(self):
+        """Retourne le chemin du module"""
+        return self.importeur.chemins_modules[self.type] + os.sep + self.nom
+

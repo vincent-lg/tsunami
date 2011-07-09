@@ -30,6 +30,7 @@
 
 """Ce fichier contient le module primaire supenr."""
 
+import sys
 import os
 import pickle
 
@@ -37,6 +38,7 @@ from abstraits.module import *
 from abstraits.id import ObjetID, est_objet_id
 from abstraits.unique import Unique, est_unique
 from abstraits.obase import *
+from bases.collections.liste_id import ListeID
 
 # Dossier d'enregistrement des fichiers-données
 # Vous pouvez changer cette variable, ou bien spécifier l'option en
@@ -78,6 +80,7 @@ class Module(BaseModule):
                 "supenr")
         self.enregistre_actuellement = False
         self.objets_a_nettoyer = []
+        self.pret = False
     
     def config(self):
         """Méthode de configuration. On se base sur
@@ -100,6 +103,9 @@ class Module(BaseModule):
         if not os.path.exists(REP_ENRS):
             os.makedirs(REP_ENRS)
         
+        # Chargement de la dernière ID de BaseObj
+        self.charger_id_base()
+        
         BaseModule.config(self)
     
     def init(self):
@@ -121,10 +127,17 @@ class Module(BaseModule):
         
         """
         for objet in self.objets_a_nettoyer:
+            if objet._id_base < 0:
+                BaseObj.__init__(objet)
+                dict_base_obj[objet._id_base] = objet
+            
             # On parcourt les attributs de l'objet
             for nom_attr, val_attr in tuple(objet.__dict__.items()):
                 if isinstance(val_attr, BaseObj):
-                    setattr(objet, nom_attr, dict_base_obj[val_attr._id_base])
+                    val_attr = dict_base_obj[val_attr._id_base]
+                    setattr(objet, nom_attr, val_attr)
+                if isinstance(val_attr, ListeID):
+                    val_attr.supprimer_none()
     
     def detruire(self):
         """Destruction du module"""
@@ -143,6 +156,9 @@ class Module(BaseModule):
         appel à la méthode 'enregistrer' de l'objet lui-même.
         
         """
+        if not self.pret:
+            raise RuntimeError("le supenr n'est pas prêt à enregistrer")
+        
         global REP_ENRS
         self.enregistre_actuellement = True
         if est_objet_id(objet):
@@ -240,7 +256,11 @@ class Module(BaseModule):
                     ": {1}".format(chemin_dest, io_err))
         else:
             unpickler = pickle.Unpickler(fichier_enr)
-            objet = unpickler.load()
+            try:
+                objet = unpickler.load()
+            except (EOFError, pickle.UnpicklingError):
+                self.logger.warning("Le fichier {0} n'a pas pu être chargé ". \
+                    format(chemin_dest))
         finally:
             if "fichier_enr" in locals():
                 fichier_enr.close()
@@ -255,6 +275,9 @@ class Module(BaseModule):
         Elle retourne la liste des objets chargés.
         
         """
+        if not self.pret:
+            raise RuntimeError("le supenr n'est pas prêt à charger un groupe")
+        
         global REP_ENRS
         chemin_dest = REP_ENRS + os.sep + groupe.sous_rep
         objets = [] # liste des objets récupérés
@@ -269,3 +292,46 @@ class Module(BaseModule):
                     objets.append(objet)
         
         return objets
+    
+    def charger_id_base(self):
+        """Chartge l'ID base de BaseObj.
+        Elle se trouve dans le sous-rep "base" et le fichier "id.sav".
+        Si ce fichier n'existe pas, l'ID est 1 par défaut.
+        
+        Cette étape est considérée comme INDISPENSABLe à la création et
+        récupération d'objet BaseObj. Elle doit impérativement se faire
+        avant le moindre enregistrement ou récupération.
+        
+        """
+        if self.fichier_existe("base", "id.sav"):
+            id = self.charger("base", "id.sav")
+        else:
+            id = 1
+        
+        BaseObj._id_base_actuel = id
+        self.construire_rep("base")
+        self.pret = True
+    
+    def enregistrer_id_base(self):
+        """On enregistre l'ID de BaseObj"""
+        global REP_ENRS
+        if not self.pret:
+            raise RuntimeError("Un objet BaseObj s'est créé trop tôt")
+        
+        id = BaseObj._id_base_actuel
+        self.enregistre_actuellement = True
+        chemin_dest = REP_ENRS + os.sep + "base" + os.sep + "id.sav"
+        # On essaye d'ouvrir le fichier
+        try:
+            fichier_enr = open(chemin_dest, 'wb')
+        except IOError as io_err:
+            self.logger.warning("Le fichier {0} destiné à enregistrer {1} " \
+                    "n'a pas pu être ouvert : {2}".format(chemin_dest, \
+                    id, io_err))
+        else:
+            pickler = pickle.Pickler(fichier_enr)
+            pickler.dump(id)
+        finally:
+            if "fichier_enr" in locals():
+                fichier_enr.close()
+            self.enregistre_actuellement = False

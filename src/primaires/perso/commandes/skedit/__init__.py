@@ -46,7 +46,7 @@ class CmdSkedit(Commande):
             "Cette commande ouvre l'éditeur de squelette. Elle permet " \
             "donc d'ajouter et éditer des squelettes. Ceux-ci peuvent " \
             "ensuite être utilisés comme base pour des races ou " \
-            "des NPCs. Dans chaque squelette se trouve, notamment, une " \
+            "des PNJ. Dans chaque squelette se trouve, notamment, une " \
             "liste des membres du personnage qui sera créé sur ce " \
             "modèle."
     

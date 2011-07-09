@@ -43,17 +43,17 @@ class Canal(Masque):
     """
     
     nom = "canal"
+    nom_complet = "canal"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "canal"
+    def init(self):
+        """Initialisation des attributs"""
         self.nom_canal = ""
         self.canal = None
         self.canal_existe = True
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
         lstrip(commande)
         nom_canal = liste_vers_chaine(commande)
         

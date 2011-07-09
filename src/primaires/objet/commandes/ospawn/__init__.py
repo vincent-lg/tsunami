@@ -45,7 +45,7 @@ class CmdOspawn(Commande):
         Commande.__init__(self, "ospawn", "ospawn")
         self.groupe = "administrateur"
         self.nom_categorie = "batisseur"
-        self.schema = "<ident_prototype_objet>"
+        self.schema = "(<nombre>) <ident_prototype_objet>"
         self.aide_courte = "fait apparaître des objets dans la salle"
         self.aide_longue = \
             "Cette commande permet de faire apparaître des objets dans " \
@@ -55,10 +55,19 @@ class CmdOspawn(Commande):
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         prototype = dic_masques["ident_prototype_objet"].prototype
-        objet = type(self).importeur.objet.creer_objet(prototype)
         salle = personnage.salle
-        salle.objets_sol.ajouter(objet)
+        nb_obj = 1
+        if dic_masques["nombre"] is not None:
+            nb_obj = dic_masques["nombre"].nombre
+            i = 0
+            while i < nb_obj:
+                objet = type(self).importeur.objet.creer_objet(prototype)
+                salle.objets_sol.ajouter(objet)
+                i += 1
+        else:
+            objet = type(self).importeur.objet.creer_objet(prototype)
+            salle.objets_sol.ajouter(objet)
         personnage << "Vous faites apparaître {} du néant.".format(
-                objet.nom_singulier)
-        salle.envoyer("{} fait apparaître {} du néant.".format(
-                personnage.nom, objet.nom_singulier), (personnage, ))
+                objet.get_nom(nb_obj))
+        salle.envoyer("{} fait apparaître {} du néant.".format(personnage.nom,
+                objet.get_nom(nb_obj)), (personnage, ))

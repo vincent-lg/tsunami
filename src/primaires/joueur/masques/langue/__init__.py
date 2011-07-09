@@ -46,15 +46,15 @@ class Langue(Masque):
     """
     
     nom = "nom_langue"
+    nom_complet = "langue disponible"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "langue disponible"
+    def init(self):
+        """Initialisation des attributs"""
         self.langue = ""
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
         lstrip(commande)
         langue = liste_vers_chaine(commande)
         

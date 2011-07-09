@@ -31,7 +31,8 @@
 """Fichier définissant la classe NoeudOptionnel détaillée plus bas;"""
 
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
-
+from primaires.interpreteur.masque.exceptions.erreur_validation import \
+        ErreurValidation
 class NoeudOptionnel(BaseNoeud):
     
     """Cette classe contient un noeud optionnel.
@@ -73,13 +74,26 @@ class NoeudOptionnel(BaseNoeud):
         
         return msg
     
+    def get_masque(self, nom_masque):
+        """Retourne le masque du nom 'nom_masque'"""
+        if self.interne.nom == nom_masque:
+            return self.interne.get_masque(nom_masque)
+        elif self.suivant:
+            return self.suivant.get_masque(nom_masque)
+        else:
+            return None
+    
     def valider(self, personnage, dic_masques, commande, tester_fils=True):
         """Valide un noeud optionnel.
         Un noeud optionnel se valide automatiquement et passe le relais à ses
         fils.
         
         """
-        self.interne.valider(personnage, dic_masques, commande)
+        try:
+            self.interne.valider(personnage, dic_masques, commande)
+        except ErreurValidation:
+            pass
+        
         if self.suivant and tester_fils:
             valide = self.suivant.valider(personnage, dic_masques, commande)
         else:

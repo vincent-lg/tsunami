@@ -45,6 +45,8 @@ class ConteneurGroupes(Unique):
     
     """
     
+    _nom = "groupes_commandes"
+    _version = 1
     def __init__(self):
         """Constructeur du conteneur."""
         Unique.__init__(self, "groupes", "groupes")
@@ -111,7 +113,7 @@ class ConteneurGroupes(Unique):
         if personnage.groupe in self:
             groupe_png = self[personnage.groupe]
         else:
-            groupe_png = self["npc"] # droits minimums
+            groupe_png = self["pnj"] # droits minimums
         
         groupe_cmd = self.commandes[commande.adresse]
         

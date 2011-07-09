@@ -33,3 +33,4 @@
 from . import commande
 from . import etat
 from . import ident
+from . import nombre

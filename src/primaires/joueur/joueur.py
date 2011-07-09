@@ -35,7 +35,7 @@ from primaires.perso.personnage import Personnage
 
 class Joueur(Personnage):
     """Classe représentant un joueur, c'est-à-dire un personnage connecté
-    grâce à un client, à différencier des NPCs qui sont des personnages
+    grâce à un client, à différencier des PNJ qui sont des personnages
     virtuels, animés par l'univers.
     
     """
@@ -45,7 +45,7 @@ class Joueur(Personnage):
     def __init__(self):
         """Constructeur du joueur"""
         Personnage.__init__(self)
-        self.groupe = "administrateur"
+        self.groupe = type(self).importeur.joueur.groupe_par_defaut
         self.compte = None
         self.instance_connexion = None
         self.connecte = False
@@ -57,11 +57,10 @@ class Joueur(Personnage):
         retour["instance_connexion"] = None
         return retour
     
-    def _get_encodage(self):
+    @property
+    def encodage(self):
         """Retourne l'encodage du compte"""
         return self.compte.encodage
-    
-    encodage = property(_get_encodage)
     
     def est_connecte(self):
         """Retourne la valeur de self.connecte"""

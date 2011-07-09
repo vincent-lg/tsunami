@@ -65,11 +65,6 @@ class Module(BaseModule):
         
         BaseModule.init(self)
     
-    def ajouter_masques(self):
-        """Ajout des masques dans l'interpréteur"""
-        self.importeur.interpreteur.ajouter_masque(
-                masques.ident_prototype_objet.IdentPrototypeObjet)
-    
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
@@ -77,6 +72,8 @@ class Module(BaseModule):
             commandes.olist.CmdOlist(),
             commandes.opurge.CmdOpurge(),
             commandes.ospawn.CmdOspawn(),
+            commandes.poser.CmdPoser(),
+            commandes.prendre.CmdPrendre(),
         ]
         
         for cmd in self.commandes:

@@ -44,15 +44,15 @@ class Direction(Masque):
     """
     
     nom = "direction"
+    nom_complet = "direction"
     
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
-        self.nom_complet = "direction"
+    def init(self):
+        """Initialisation des attributs"""
         self.direction = ""
     
     def valider(self, personnage, dic_masques, commande):
         """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
         lstrip(commande)
         nom = liste_vers_chaine(commande)
         

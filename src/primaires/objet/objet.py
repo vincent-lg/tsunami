@@ -77,6 +77,14 @@ class Objet(ObjetID):
                     prototype.no)
             prototype.no += 1
             prototype.objets.append(self)
+            
+            # On copie les attributs propres à l'objet
+            # Ils sont disponibles dans le prototype, dans la variable
+            # _attributs
+            # C'est un dictionnaire contenant en clé le nom de l'attribut
+            # et en valeur le constructeur de l'objet
+            for nom, val in prototype._attributs.items():
+                setattr(self, nom, val.construire(self))
     
     def __getnewargs__(self):
         return (None, )

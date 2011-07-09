@@ -68,6 +68,8 @@ class Stat(BaseObj):
         self.__max = None
         if self.parent and max:
             self.__max = getattr(self.parent, "_{}".format(max))
+        
+        self._construire()
     
     def __getnewargs__(self):
         return ("", "", 0, "")
@@ -138,3 +140,9 @@ class Stat(BaseObj):
             base = self.max
         
         self.__base = base
+    
+    def __setattr__(self, nom, val):
+        BaseObj.__setattr__(self, nom, val)
+        
+        if self.construit and self.parent and not nom.startswith("_"):
+            self.parent.enregistrer()

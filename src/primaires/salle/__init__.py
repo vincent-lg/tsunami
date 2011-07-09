@@ -47,7 +47,7 @@ class Module(BaseModule):
     Dans la terminologie des MUDs, les salles sont des "cases" avec une
     description et une liste de sorties possibles, que le joueur peut
     emprunter. L'ensemble des salles consiste l'univers, auquel il faut
-    naturellement rajouter des NPCs et objets pour qu'il soit riche un minimum.
+    naturellement rajouter des PNJ et objets pour qu'il soit riche un minimum.
     
     Pour plus d'informations, consultez le fichier
     src/primaires/salle/salle.py contenant la classe Salle.
@@ -104,17 +104,6 @@ class Module(BaseModule):
         
         BaseModule.init(self)
     
-    def ajouter_masques(self):
-        """Ajout des masques dans l'interpréteur"""
-        self.importeur.interpreteur.ajouter_masque(
-                masques.direction.Direction)
-        self.importeur.interpreteur.ajouter_masque(
-                masques.nv_ident.NvIdent)
-        self.importeur.interpreteur.ajouter_masque(
-                masques.ident.Ident)
-        self.importeur.interpreteur.ajouter_masque(
-                masques.observable.Observable)
-    
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
@@ -139,7 +128,6 @@ class Module(BaseModule):
             on les recrée)
         -   les personnages présents dans self._personnages soient
             toujours là
-        -   les objets du sol existent toujours
         
         """
         # On récupère la configuration
@@ -165,9 +153,6 @@ class Module(BaseModule):
         self.salle_retour = salle_retour
         
         for salle in self._salles.values():
-            salle._personnages.supprimer_doublons()
-            salle._personnages.supprimer_none()
-            salle.objets_sol.nettoyer()
             for personnage in salle.personnages:
                 if personnage.salle is not salle:
                     salle.retirer_personnage(personnage)

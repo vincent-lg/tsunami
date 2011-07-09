@@ -39,10 +39,10 @@ from . import contextes
 
 class Module(BaseModule):
     """Classe utilisée pour gérer des joueurs, c'est-à-dire des personnages
-    connecté par client, à distinguer des NPCs.
+    connecté par client, à distinguer des PNJ.
     
     Les mécanismes de jeu propres aux personnages, c'est-à-dire communs aux
-    joueurs et NPCs, ne sont pas défini dans ce module mais dans le module
+    joueurs et PNJ, ne sont pas défini dans ce module mais dans le module
     primaire 'perso'.
     
     """
@@ -50,11 +50,13 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "joueur", "primaire")
         self.commandes = []
+        self.groupe_par_defaut = "joueur"
     
     def config(self):
         """Méthode de configuration du module"""
-        type(self.importeur).anaconf.get_config("joueur", \
+        config = type(self.importeur).anaconf.get_config("joueur",
             "joueur/joueur.cfg", "config joueur", cfg_joueur)
+        self.groupe_par_defaut = config.groupe_par_defaut
         
         BaseModule.config(self)
     
@@ -63,23 +65,6 @@ class Module(BaseModule):
         joueurs = self.importeur.supenr.charger_groupe(Joueur)
         
         BaseModule.init(self)
-    
-    def ajouter_masques(self):
-        """Ajout des masques dans l'interpréteur"""
-        self.importeur.interpreteur.ajouter_masque(
-                masques.chemin_cmd.CheminCommande)
-        self.importeur.interpreteur.ajouter_masque(
-                masques.encodage.Encodage)
-        self.importeur.interpreteur.ajouter_masque(
-                masques.groupe_existant.GroupeExistant)
-        self.importeur.interpreteur.ajouter_masque(
-                masques.joueur.Joueur)
-        self.importeur.interpreteur.ajouter_masque(
-                masques.langue.Langue)
-        self.importeur.interpreteur.ajouter_masque(
-                masques.nv_groupe.NvGroupe)
-        self.importeur.interpreteur.ajouter_masque(
-                masques.message_afk.MessageAfk)
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
@@ -107,3 +92,13 @@ class Module(BaseModule):
             i_c = joueur.instance_connexion
             if joueur.est_connecte() and (i_c is None or not i_c.est_connecte()):
                 joueur.pre_deconnecter()
+        
+        # On vérifie que le groupe par défaut existe dans les groupes existants
+        gen_logger = type(self.importeur).man_logs.get_logger("sup")
+        groupe_par_defaut = "joueur"
+        if self.groupe_par_defaut not in \
+                self.importeur.interpreteur.groupes:
+            gen_logger.warning("le groupe par défaut {} n'existe pas. " \
+                    "Le groupe {} le remplace".format(self.groupe_par_defaut,
+                    groupe_par_defaut))
+            self.groupe_par_defaut = groupe_par_defaut
