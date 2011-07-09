@@ -56,7 +56,6 @@ class NouveauNom(Contexte):
         Contexte.__init__(self, pere)
         self.opts.rci_ctx_prec = "connex:connexion:choix_personnages"
     
-    ## Bug a fixer ci-dessous, la fonction a été désactivée en attendant
     def sortir(self):
         """En sortant du contexte :
         -   on vérifie que la salle du joueur est valide

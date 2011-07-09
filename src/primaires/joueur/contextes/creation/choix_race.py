@@ -42,6 +42,7 @@ class ChoixRace(Contexte):
     def __init__(self, pere):
         """Constructeur du contexte"""
         Contexte.__init__(self, pere)
+        self.opts.rci_ctx_prec = "personnage:creation:langue_cmd"
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -49,10 +50,11 @@ class ChoixRace(Contexte):
         noms_races = [race.nom for race in races]
         return \
             "\n|tit|--------= Choix de la race =--------|ff|\n" \
-            "Entrez l'une des |ent|races|ff| proposées ci-après\n" \
-            "ou |cmd|info <nom de la race>|ff| pour obtenir plus " \
-            "d'informations sur la race (par exemple, |cmd|info " \
-            "humain|ff|).\n\nRaces disponibles :\n\n" \
+            "Entrez l'une des |ent|races|ff| proposées ci-après ou " \
+            "|cmd|info <nom de la race>|ff| pour\n" \
+            "obtenir plus d'informations sur la race (par exemple, " \
+            "|cmd|info humain|ff|).\n\n" \
+            "Races disponibles :\n\n" \
             "  " + "\n  ".join(noms_races)
     
     def get_prompt(self):
@@ -62,7 +64,7 @@ class ChoixRace(Contexte):
     def interpreter(self, msg):
         """Méthode d'interprétation"""
         msg = supprimer_accents(msg).lower()
-        info = None
+        info = False
         if msg.startswith("info "):
             msg = msg[5:]
             info = True
@@ -84,5 +86,12 @@ class ChoixRace(Contexte):
                 
                 self.pere.joueur.pre_connecter()
             else:
-                self.pere << "  |tit|Aide sur la race {} :|ff|\n\n{}".format(
-                        race.nom, race.description)
+                # On crée une barre de titre ajustée
+                nb_tirets = int((36 - (len(race.nom) + 10)) / 2) - 1
+                titre = "-" * (nb_tirets) + "=" + \
+                        " Etre un {} ".format(race.nom) + \
+                        "=" + "-" * (nb_tirets)
+                if len(race.nom) % 2 != 0:
+                    titre += "-"
+                self.pere << "|tit|{}|ff|\n{}".format(
+                        titre, race.description)

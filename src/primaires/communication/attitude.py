@@ -79,7 +79,7 @@ class Attitude(BaseObj):
         elif not indep_complet and not dep_complet:
             ret = "inachevée"
         return ret
-                
+    
     def jouer(self, acteur, arguments):
         """Joue le social pour acteur"""
         arguments = arguments.split(" ")

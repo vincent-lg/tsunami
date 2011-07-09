@@ -40,7 +40,7 @@ from .edt_squelette import EdtSquelette
 
 class EdtPresentation(Presentation):
     
-    """Classe définissant l'éditeur d'objet 'raedit'.
+    """Classe définissant l'éditeur de race 'raedit'.
     
     """
     
@@ -77,7 +77,7 @@ class EdtPresentation(Presentation):
         stats.parent = self
         
         # Squelette
-        squelette = self.ajouter_choix("squelette", "sq", EdtSquelette,
+        squelette = self.ajouter_choix("squelette", "q", EdtSquelette,
                 race)
         squelette.parent = self
         squelette.prompt = "Clé du squelette : "

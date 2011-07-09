@@ -33,6 +33,7 @@
 from primaires.format.constantes import ponctuations_finales
 
 from primaires.interpreteur.contexte import Contexte
+from primaires.communication.contextes.invitation import Invitation
 
 class Immersion(Contexte):
     
@@ -165,11 +166,10 @@ class Immersion(Contexte):
         if joueur in canal.connectes:
             self.pere.joueur << "|err|Ce joueur est déjà connecté au canal.|ff|"
             return
-        res = "|vrc|" + self.pere.joueur.nom + " vous invite à rejoindre "
-        res += "le canal" + canal.nom + ". Pour ce faire, entrez |ff||ent|+"
-        res += canal.nom + "|ff||vrc|.|ff|"
-        
-        joueur << res
+        contexte = Invitation(joueur.instance_connexion)
+        contexte.emetteur = self.pere.joueur
+        contexte.canal = canal
+        contexte.actualiser()
         self.pere.joueur << "|att|Vous venez d'inviter {} à rejoindre le " \
                 "canal {}.|ff|".format(joueur.nom, canal.nom)
     

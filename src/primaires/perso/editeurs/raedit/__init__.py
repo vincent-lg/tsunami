@@ -71,19 +71,22 @@ class EdtRaedit(Editeur):
         On affiche les races déjà existantes.
         
         """
-        msg = "|tit|Editeur de race|ff|\n\n" \
-            "Pour créer ou éditer une race, entrez |ent|son nom|ff|.\n" \
-            "Pour supprimer une race, entrez |cmd|/d <son nom>|ff|.\n\n" \
-            "Races existantes :\n"
+        msg = "| |tit|Editeur de race|ff|".ljust(87) + "|\n"
+        msg += self.opts.separateur + "\n\n"
+        msg += \
+            " Pour créer ou éditer une race, entrez |ent|son nom|ff| ; " \
+            "pour en supprimer une,\n" \
+            " entrez |cmd|/d <nom de la race>|ff|.\n\n" \
+            " Races existantes :"
         
         races = sorted(type(self).importeur.perso.races, key=str)
         for race in races:
-            msg += "\n  |ent|" + race.nom + "|ff|"
+            msg += "\n   |ent|" + race.nom + "|ff|"
         
         if len(races) == 0:
-            msg += "\n  |att|Aucune|ff|"
+            msg += "\n |att|Aucune race pour le moment.|ff|"
         
-        msg += "\n\n(|cmd|Q|ff|)uitter l'éditeur"
+        msg += "\n\n [|cmd|Q|ff|]uitter la fenêtre"
          
         return msg
     
@@ -93,7 +96,7 @@ class EdtRaedit(Editeur):
         self.pere.envoyer("Fermeture de l'éditeur.")
     
     def opt_suppr_race(self, arguments):
-        """Option suppr"ession.
+        """Option suppression.
         Supprime une race.
         Syntaxe : /d <nom de la race>
         
