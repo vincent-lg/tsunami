@@ -229,12 +229,12 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         self.pere.contexte_actuel.sortir()
         self.pere.migrer_contexte(nouveau_contexte)
         self.pere.contexte_actuel.entrer()
-        if self.pere.contexte_actuel.opts.separateur is not None:
-            self.pere.envoyer(self.pere.contexte_actuel.opts.separateur)
         if nouveau_contexte is self.pere.contexte_actuel and afficher_accueil:
             # Cette condition est là pour éviter qu'en cas de migration de
             # contexte dans la méthode 'entrer', le message d'accueil ne
             # s'affiche en double
+            if self.pere.contexte_actuel.opts.separateur is not None:
+                self.pere.envoyer(self.pere.contexte_actuel.opts.separateur)
             self.pere.envoyer(self.pere.contexte_actuel.accueil())
     
     def interpreter(self, msg):

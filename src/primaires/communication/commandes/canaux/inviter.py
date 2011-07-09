@@ -58,11 +58,12 @@ class PrmInviter(Parametre):
             elif joueur in canal.connectes:
                 personnage << "|err|Ce joueur est déjà connecté au canal " \
                         "{}.|ff|".format(canal.nom)
+            elif joueur not in type(self).importeur.connex.joueurs_connectes:
+                personnage << "|err|Ce joueur n'est pas connecté.|ff|"
             else:
                 contexte = Invitation(joueur.instance_connexion)
                 contexte.emetteur = personnage
                 contexte.canal = canal
-                joueur.contextes.ajouter(contexte)
                 contexte.actualiser()
                 personnage << "|att|Vous venez d'inviter {} à rejoindre le " \
                         "canal {}.|ff|".format(joueur.nom, canal.nom)

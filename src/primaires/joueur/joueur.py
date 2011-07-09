@@ -57,11 +57,10 @@ class Joueur(Personnage):
         retour["instance_connexion"] = None
         return retour
     
-    def _get_encodage(self):
+    @property
+    def encodage(self):
         """Retourne l'encodage du compte"""
         return self.compte.encodage
-    
-    encodage = property(_get_encodage)
     
     def est_connecte(self):
         """Retourne la valeur de self.connecte"""

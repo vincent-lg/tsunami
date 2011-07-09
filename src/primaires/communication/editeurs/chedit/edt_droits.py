@@ -28,7 +28,22 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents éditeurs du module de communication"""
+"""Fichier contenant le contexte éditeur EdtDroits"""
 
-from . import chedit
-from . import socedit
+from primaires.interpreteur.editeur import Editeur
+
+class EdtDroits(Editeur):
+    
+    """Classe définissant le contexte éditeur 'droits'.
+    Ce contexte permet d'éditer les droits (public ou privé) d'un canal.
+    
+    """
+    
+    def __init__(self, pere, objet=None, attribut=None):
+        """Constructeur de l'éditeur"""
+        Editeur.__init__(self, pere, objet, attribut)
+    
+    def entrer(self):
+        canal = self.objet
+        canal.prive = not canal.prive
+        self.migrer_contexte(self.opts.rci_ctx_prec)

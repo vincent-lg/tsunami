@@ -51,20 +51,21 @@ class Invitation(Contexte):
     
     def accueil(self):
         """Message d'accueil du contexte"""
-        res = "|vrc|" + self.emetteur.nom + " vous invite à rejoindre le " \
+        res = "\n|vrc|" + self.emetteur.nom + " vous invite à rejoindre le " \
             "canal " + str(self.canal) + ".\nEntrez |ff||ent|o|ff||vrc| si " \
             "vous acceptez, |ff||ent|n|ff||vrc| dans le cas contraire.|ff|"
         return res
     
     def interpreter(self, msg):
         """Méthode d'interprétation du contexte"""
-        personnage = self.pere.joueur
+        joueur = self.pere.joueur
         msg = msg.lower()
         if msg == "o":
-            personnage << "Vous acceptez."
-            personnage.contextes.retirer()
+            # On tente de connecter joueur
+            self.canal.rejoindre_ou_quitter(joueur, forcer=True)
+            joueur.contextes.retirer()
         elif msg == "n":
-            personnage << "Vous refusez."
-            personnage.contextes.retirer()
+            joueur << "|att|Vous avez refusé l'invitation.|ff|"
+            joueur.contextes.retirer()
         else:
-            personnage << "|err|Vous devez accepter ou refuser.|ff|"
+            joueur << "|err|Vous devez accepter ou refuser.|ff|"

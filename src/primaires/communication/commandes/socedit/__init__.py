@@ -28,7 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents éditeurs du module de communication"""
+"""Package contenant la commande 'socedit'."""
 
-from . import chedit
-from . import socedit
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdSocedit(Commande):
+    
+    """Commande 'socedit'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "socedit", "socedit")
+        self.groupe = "administrateur"
+        self.schema = "<ident>"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "ouvre l'éditeur d'attitude"
+        self.aide_longue = \
+            "Cette commande permet d'accéder à l'éditeur d'attitude. Elle " \
+            "prend en paramètre l'identifiant de l'attitude (que des " \
+            "minuscules, des chiffres et le signe |ent|_|ff|). Si l'attitude " \
+            "n'existe pas, elle est créée."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        cle = dic_masques["ident"].ident
+        if cle in type(self).importeur.communication.attitudes:
+            attitude = type(self).importeur.communication.get_attitude[cle]
+        else:
+            attitude = type(self).importeur.communication.attitudes.ajouter(cle)
+        editeur = type(self).importeur.interpreteur.construire_editeur(
+                "socedit", personnage, attitude)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()

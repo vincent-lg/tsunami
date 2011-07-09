@@ -28,7 +28,53 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents éditeurs du module de communication"""
+"""Ce fichier contient la classe Attitudes détaillée plus bas."""
 
-from . import chedit
-from . import socedit
+
+from abstraits.obase import BaseObj
+from .attitude import Attitude
+
+class Attitudes(BaseObj):
+
+    """Classe conteneur des attitudes sociales.
+    Cette classe liste tous les items Attitude utilisables dans l'univers
+    à un instant donné.
+    
+    Voir : ./attitude.py
+    
+    """
+    
+    def __init__(self, parent=None):
+        """Constructeur du conteneur"""
+        BaseObj.__init__(self)
+        self._attitudes = []
+    
+    def __getnewargs__(self):
+        return ()
+    
+    def __contains__(self, cle):
+        """Renvoie True si l'attitude existe, False sinon"""
+        return self.get_attitude(cle) != -1
+    
+    def iter(self):
+        """Boucle sur les attitudes contenues"""
+        return list(self._attitudes)
+    
+    def ajouter(self, cle):
+        """Ajoute une attitude à la liste"""
+        attitude = Attitude(cle)
+        self._attitudes.append(attitude)
+        return attitude
+    
+    def get_attitude(self, cle):
+        """Renvoie une attitude à partir de sa clé"""
+        for attitude in self._attitudes:
+            if attitude.cle == cle:
+                return attitude        
+        return -1
+    
+    def jouer(self, acteur, arguments):
+        """Fait jouer une attitude à acteur"""
+        cle = arguments.split(" ")[0]
+        attitude = self.get_attitude(cle)
+        attitude.jouer(acteur, arguments)

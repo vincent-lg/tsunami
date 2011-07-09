@@ -43,6 +43,7 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_couleur import EdtCouleur
+from .edt_droits import EdtDroits
 
 class EdtChedit(Presentation):
     
@@ -104,3 +105,8 @@ class EdtChedit(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description du canal {}".format(canal).ljust(76) + \
             "|ff||\n" + self.opts.separateur
+        
+        # Droits
+        droits = self.ajouter_choix("droits", "o", EdtDroits, canal)
+        droits.parent = self
+        droits.apercu = "{objet.droits}"
