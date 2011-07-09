@@ -54,6 +54,9 @@ class Conversation(BaseObj):
         p_conversations = conversations.get_conversations_pour(emetteur)
         self.id = len(p_conversations) + 1
     
+    def __getnewarges__(self):
+        return (None, None, "")
+    
     @property
     def emetteur(self):
         """Retourne l'émetteur de la conversation"""

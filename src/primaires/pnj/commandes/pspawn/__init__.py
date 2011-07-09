@@ -45,7 +45,7 @@ class CmdPspawn(Commande):
         Commande.__init__(self, "pspawn", "pspawn")
         self.groupe = "administrateur"
         self.nom_categorie = "batisseur"
-        self.schema = "<ident_prototype_pnj>"
+        self.schema = "(<nombre>) <ident_prototype_pnj>"
         self.aide_courte = "fait apparaître un PNJ dans la salle"
         self.aide_longue = \
             "Cette commande permet de faire apparaître un PNJ dans " \
@@ -55,8 +55,19 @@ class CmdPspawn(Commande):
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         prototype = dic_masques["ident_prototype_pnj"].prototype
-        pnj = type(self).importeur.pnj.creer_PNJ(prototype)
         salle = personnage.salle
-        pnj.salle = salle
-        salle.envoyer("{} apparaît du néant.".format(
-                pnj.nom_singulier))
+        nb_pnj = 1
+        if dic_masques["nombre"] is not None:
+            nb_pnj = dic_masques["nombre"].nombre
+            i = 0
+            while i < nb_pnj:
+                pnj = type(self).importeur.pnj.creer_PNJ(prototype)
+                pnj.salle = salle
+                i += 1
+            salle.envoyer("{} apparaissent du néant.".format(
+                    prototype.get_nom(nb_pnj)))
+        else:
+            pnj = type(self).importeur.pnj.creer_PNJ(prototype)
+            pnj.salle = salle
+            salle.envoyer("{} apparaît du néant.".format(
+                    pnj.nom_singulier))

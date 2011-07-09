@@ -40,6 +40,7 @@ class Attitude(BaseObj):
     
     def __init__(self, cle):
         """Constructeur de la classe"""
+        BaseObj.__init__(self)
         self.cle = cle
         self.independant = {
             "aim" : "",
@@ -55,6 +56,9 @@ class Attitude(BaseObj):
             "odm" : "",
             "odf" : "",
         }
+    
+    def __getnewargs__(self):
+        return ("", )
     
     @property
     def statut(self):
