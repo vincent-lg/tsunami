@@ -57,11 +57,6 @@ class Module(BaseModule):
         self.cfg = type(self.importeur).anaconf.get_config("scripting",
             "scripting/syntaxe.cfg", "config scripting", cfg_scripting)
         
-        BaseModule.config(self)
-    
-    def init(self):
-        """Initialisation"""
-        #self.test_instruction("test(a14)")
         # Application de la configuration
         cfg = self.cfg
         identifiant = cfg.identifiant
@@ -79,6 +74,10 @@ class Module(BaseModule):
         Action.schema = re.compile("^" + fonction + "$")
         Action.schema_argument = r"({sep}({a}))({sep}({a}))*".format(a=type_de_donnee, sep=sep)
         
+        BaseModule.config(self)
+    
+    def init(self):
+        """Initialisation"""
         # Chargement des actions
         # Elles se trouvent dans le sous-répertoire actions
         chemin = self.chemin + os.sep + "actions"
@@ -86,8 +85,13 @@ class Module(BaseModule):
             if not nom_fichier.startswith("_") and nom_fichier.endswith(".py"):
                 fichier = nom_fichier[:-3]
                 chemin_f = "primaires.scripting.actions." + fichier
-                lst_actions[fichier] = __import__(chemin_f)
-        
+                module = __import__(chemin_f)
+                action = getattr(getattr(getattr(module, "scripting"), 
+                        "actions"), fichier)
+                classe_action = action.ClasseAction
+                lst_actions[fichier] = classe_action
+                
+        #self.test_instruction("afficher(elt, 5, 31.4, -2, \"ok, didelai\")")
         BaseModule.init(self)
     
     def test_instruction(self, chaine):
@@ -95,26 +99,9 @@ class Module(BaseModule):
         Méthode de debug.
         
         """
-        cfg = self.cfg
-        identifiant = cfg.identifiant
-        type_de_donnee = "(" + ")|(".join([cfg.chaine, cfg.nombre, cfg.identifiant]) + ")"
-        affectation = cfg.affectation.format(identifiant=identifiant,
-                type_de_donnee=type_de_donnee)
-        sep = cfg.sep
-        fonction = r"({nom_fonction}){dg}({type_de_donnee})?({sep}({type_de_donnee}))*{dd}"
-        fonction = fonction.format(nom_fonction=cfg.nom_fonction,
-                sep=sep, type_de_donnee=type_de_donnee,
-                dg=cfg.delimiteur_gauche, dd=cfg.delimiteur_droit)
-        
-        Action.changer_schema("^" + fonction + "$")
-        Action.schema_argument = r"({sep}({a}))({sep}({a}))*".format(a=type_de_donnee, sep=sep)
-        Action.type_de_donnee = type_de_donnee
-        action = Action(cfg)
-        regex = action.correspond_schema(chaine)
-        if not regex:
-            print("Non !")
-            return
-        
-        action.parser(regex, chaine)
-        nom_fonction, args = action.groupes["nom"], action.groupes["parametres"]
-        print(nom_fonction, args)
+        regex = Action.schema.search(chaine)
+        if regex:
+            action = Action.parser(regex, chaine)
+            action()
+        else:
+            print("Erreur de parsage")

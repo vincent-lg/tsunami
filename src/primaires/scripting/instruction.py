@@ -1,4 +1,5 @@
 # -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -50,7 +51,7 @@ class Instruction(BaseObj):
     
     schema = None
     cfg = None
-    def __init__(self, cfg):
+    def __init__(self):
         """Construction d'une instruction.
         
         Note : on ne doit pas construire une instruction mais une de ses

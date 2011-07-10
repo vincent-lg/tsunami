@@ -52,8 +52,11 @@ class Action(Instruction):
         
         """
         Instruction.__init__(self)
-        self.groupes["nom"] = ""
-        self.groupes["parametres"] = ()
+        self.parametres = None
+    
+    def __call__(self):
+        """Exécute l'action"""
+        return self.interpreter(*self.parametres)
     
     def parser(regex, chaine):
         """Parse la regex de recherche.
@@ -68,12 +71,12 @@ class Action(Instruction):
         if arg:
             args.append(arg)
         
-        delimiteur_droit = self.cfg.delimiteur_droit.replace("\\", "")
+        delimiteur_droit = Instruction.cfg.delimiteur_droit.replace("\\", "")
         pos_del = -len(delimiteur_droit) or None
         chaine = chaine[len(nom_fonction) + 1 + len(arg):pos_del]
         regex_argument = r"({sep}({a}))({sep}({a}))*".format(
-                a=type(self).type_de_donnee, sep=self.cfg.sep)
-        argument_compile = re.compile("^" + type(self).schema_argument + "$")
+                a=Action.type_de_donnee, sep=Instruction.cfg.sep)
+        argument_compile = re.compile("^" + Action.schema_argument + "$")
         while chaine:
             res = argument_compile.search(chaine)
             groupes = res.groups()
@@ -82,5 +85,7 @@ class Action(Instruction):
             chaine = chaine[len(arg_c):]
             args.append(arg_n)
         
-        self.groupes["nom"] = nom_fonction
-        self.groupes["parametres"] = tuple(args)
+        action = actions[nom_fonction]()
+        action.parametres = args
+        
+        return action
