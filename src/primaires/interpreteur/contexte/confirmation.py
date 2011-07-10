@@ -73,7 +73,7 @@ class Confirmation(Contexte):
     
     def accueil(self):
         """Accueil du contexte"""
-        return \ 
+        return \
             "|att|Etes-vous sûr ? Entrez |ff||ent|oui|ff||att| pour " \
             "confirmer.|ff|"
     
