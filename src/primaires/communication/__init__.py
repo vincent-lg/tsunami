@@ -31,17 +31,18 @@
 """Fichier contenant le module primaire communication."""
 
 from abstraits.module import *
+from primaires.format.fonctions import *
+from primaires.communication.config import cfg_com
 from primaires.communication import masques
 from primaires.communication import commandes
-from primaires.communication.config import cfg_com
-from primaires.format.fonctions import *
+from .editeurs.chedit import EdtChedit
+from .editeurs.socedit import EdtSocedit
 from .conversations import Conversations
 from .attitudes import Attitudes
 from .attitude import INACHEVEE
-from .editeurs.chedit import EdtChedit
-from .editeurs.socedit import EdtSocedit
 from .canal import Canal
 from .canaux import Canaux
+from .boite_mail import BoiteMail
 
 class Module(BaseModule):
     
@@ -61,6 +62,7 @@ class Module(BaseModule):
         self.attitudes = None
         self._canaux = None
         self.derniers_canaux = {}
+        self._mails = None
     
     def config(self):
         """Configuration du module.
@@ -104,6 +106,23 @@ class Module(BaseModule):
             else:
                 self.logger.info("1 canal de communication récupéré")
         self._canaux = canaux
+        
+        # On récupère les mails
+        mails = None
+        sous_rep = "communication"
+        fichier = "mails.sav"
+        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
+            mails = self.importeur.supenr.charger(sous_rep, fichier)
+        if mails is None:
+            mails = BoiteMail()
+            self.logger.info("Aucun mudmail récupéré")
+        else:
+            if len(mails) > 1:
+                self.logger.info("{} mudmails récupérés".format(
+                        len(mails)))
+            else:
+                self.logger.info("1 mudmail récupéré")
+        self._mails = mails
         
         BaseModule.init(self)
     
