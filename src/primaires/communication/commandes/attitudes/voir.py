@@ -29,6 +29,7 @@
 """Fichier contenant le paramètre 'voir' de la commande 'attitudes'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
+from primaires.communication.attitude import *
 
 class PrmVoir(Parametre):
     
@@ -39,7 +40,7 @@ class PrmVoir(Parametre):
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "voir", "view")
-        self.schema = ""
+        self.schema = "<attitude>"
         self.aide_courte = "offre un aperçu d'une attitude"
         self.aide_longue = \
             "Cette sous-commande donne un aperçu d'une attitude, visible par " \
@@ -47,4 +48,12 @@ class PrmVoir(Parametre):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        pass
+        attitude = dic_masques["attitude"].attitude
+        res = "Statut de l'attitude : " + STATUTS[attitude.statut] + "\n"
+        if attitude.statut == FONCTIONNELLE or attitude.statut == SANS_CIBLE:
+            res += attitude.independant["aim"]
+        elif attitude.statut == CIBLE_OBLIGATOIRE:
+            res += attitude.dependant["adm"].replace("_b_cible_b_", "quelqu'un")
+        else:
+            res += "|err|Cette attitude n'est pas disponible.|ff|"
+        personnage << res

@@ -81,43 +81,44 @@ class EdtSocedit(Editeur):
         msg += self.opts.separateur + "\n"
         msg += \
             "Utilisez une des options pour paramétrer l'attitude.\n" \
-            "Statut actuel de l'attitude : " + STATUTS[attitude.statut] + "\n" \
+            "Statut actuel de l'attitude : |rg|" + \
+            STATUTS[attitude.statut] + "|ff|\n" \
             "Clé (commande entrée par le joueur) : |cmd|" + \
             attitude.cle + "|ff|\n\n" \
             "Options :" \
             "\n - |cmd|/aim|ff|, |cmd|/aif|ff|, |cmd|/oim|ff|... : édite un " \
             "paramètre de l'attitude" \
             "\n - |cmd|/q|ff| : permet de quitter l'éditeur\n\n"
-        msg += "AIM (Acteur Indépendant Masculin) :\n |ent|"
+        msg += "AIM (Acteur Indépendant Masculin) :\n |vr|"
         msg += attitude.independant["aim"] or \
-                "Vous vous faites tout petit."
-        msg += "|ff|\nAIF (Acteur Indépendant Féminin) :\n |ent|"
+                "|grf|Vous vous faites tout petit."
+        msg += "|ff|\nAIF (Acteur Indépendant Féminin) :\n |vr|"
         msg += attitude.independant["aif"] or \
-                "Vous vous faites toute petite."
-        msg += "|ff|\nOIM (Observateur Indépendant Masculin) :\n |ent|"
+                "|grf|Vous vous faites toute petite."
+        msg += "|ff|\nOIM (Observateur Indépendant Masculin) :\n |vr|"
         msg += attitude.independant["oim"] or \
-                "|acteur| se fait tout petit."
-        msg += "|ff|\nOIF (Observateur Indépendant Féminin) :\n |ent|"
+                "|grf||acteur| se fait tout petit."
+        msg += "|ff|\nOIF (Observateur Indépendant Féminin) :\n |vr|"
         msg += attitude.independant["oif"] or \
-                "|acteur| se fait toute petite."
-        msg += "|ff|\nADM (Acteur Dépendant Masculin) :\n |ent|"
+                "|grf||acteur| se fait toute petite."
+        msg += "|ff|\nADM (Acteur Dépendant Masculin) :\n |vr|"
         msg += attitude.dependant["adm"] or \
-                "Vous vous faites tout petit devant |cible|."
-        msg += "|ff|\nADF (Acteur Dépendant Féminin) :\n |ent|"
+                "|grf|Vous vous faites tout petit devant |cible|."
+        msg += "|ff|\nADF (Acteur Dépendant Féminin) :\n |vr|"
         msg += attitude.dependant["adf"] or \
-                "Vous vous faites toute petite devant |cible|."
-        msg += "|ff|\nIDM (Interlocuteur Dépendant Masculin) :\n |ent|"
+                "|grf|Vous vous faites toute petite devant |cible|."
+        msg += "|ff|\nIDM (Interlocuteur Dépendant Masculin) :\n |vr|"
         msg += attitude.dependant["idm"] or \
-                "|acteur| se fait tout petit devant vous."
-        msg += "|ff|\nIDF (Interlocuteur Dépendant Féminin) :\n |ent|"
+                "|grf||acteur| se fait tout petit devant vous."
+        msg += "|ff|\nIDF (Interlocuteur Dépendant Féminin) :\n |vr|"
         msg += attitude.dependant["idf"] or \
-                "|acteur| se fait toute petite devant vous."
-        msg += "|ff|\nODM (Observateur Dépendant Masculin) :\n |ent|"
+                "|grf||acteur| se fait toute petite devant vous."
+        msg += "|ff|\nODM (Observateur Dépendant Masculin) :\n |vr|"
         msg += attitude.dependant["odm"] or \
-                "|acteur| se fait tout petit devant |cible|."
-        msg += "|ff|\nODF (Observateur Dépendant Féminin) :\n |ent|"
+                "|grf||acteur| se fait tout petit devant |cible|."
+        msg += "|ff|\nODF (Observateur Dépendant Féminin) :\n |vr|"
         msg += attitude.dependant["odf"] or \
-                "|acteur| se fait toute petite devant |cible|."
+                "|grf||acteur| se fait toute petite devant |cible|."
         
         return msg + "|ff|"
     
@@ -147,31 +148,31 @@ class EdtSocedit(Editeur):
         self.actualiser()
     
     def opt_adm(self, arguments):
-        self.objet.independant["adm"] = arguments
+        self.objet.dependant["adm"] = arguments
         self.objet.enregistrer()
         self.actualiser()
    
     def opt_adf(self, arguments):
-        self.objet.independant["adf"] = arguments
+        self.objet.dependant["adf"] = arguments
         self.objet.enregistrer()
         self.actualiser()
     
     def opt_idm(self, arguments):
-        self.objet.independant["idm"] = arguments
+        self.objet.dependant["idm"] = arguments
         self.objet.enregistrer()
         self.actualiser()
    
     def opt_idf(self, arguments):
-        self.objet.independant["idf"] = arguments
+        self.objet.dependant["idf"] = arguments
         self.objet.enregistrer()
         self.actualiser()
     
     def opt_odm(self, arguments):
-        self.objet.independant["odm"] = arguments
+        self.objet.dependant["odm"] = arguments
         self.objet.enregistrer()
         self.actualiser()
     
     def opt_odf(self, arguments):
-        self.objet.independant["odf"] = arguments
+        self.objet.dependant["odf"] = arguments
         self.objet.enregistrer()
         self.actualiser()

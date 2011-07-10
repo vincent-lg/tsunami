@@ -277,7 +277,6 @@ class Module(BaseModule):
         for att in self.attitudes_jouables:
             if contient(att.cle, commande.split(" ")[0]):
                 res = True
-                self.attitudes[att.cle].jouer(
-                        personnage, " ".join(commande.split(" ")[1:]))
+                self.attitudes[att.cle].jouer(personnage, commande)
         
         return res

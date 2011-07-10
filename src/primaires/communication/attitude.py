@@ -31,6 +31,7 @@
 """Ce fichier contient la classe Attitude détaillée plus bas."""
 
 from abstraits.obase import *
+from primaires.format.fonctions import *
 
 # Statuts de l'attitude
 FONCTIONNELLE = 1
@@ -40,10 +41,10 @@ INACHEVEE = 4
 
 # Ce dictionnaire lie un statut à une chaîne
 STATUTS = {
-    FONCTIONNELLE : "fonctionnelle",
-    SANS_CIBLE : "sans cible",
-    CIBLE_OBLIGATOIRE : "cible obligatoire",
-    INACHEVEE : "inachevée"
+    FONCTIONNELLE : "|vr|fonctionnelle|ff|",
+    SANS_CIBLE : "|jn|sans cible|ff|",
+    CIBLE_OBLIGATOIRE : "|jn|cible obligatoire|ff|",
+    INACHEVEE : "|rg|inachevée|ff|"
 }
 
 class Attitude(BaseObj):
@@ -114,13 +115,18 @@ class Attitude(BaseObj):
     
     def jouer(self, acteur, arguments):
         """Joue le social pour acteur"""
-        arguments = arguments.split(" ")
         statut = self.statut
         if statut == INACHEVEE:
             acteur << "|err|Cette attitude n'est pas achevée.|ff|"
             return
+        
+        def formater(str, acteur="", cible=""):
+            str = str.replace("_b_acteur_b_", acteur)
+            str = str.replace("_b_cible_b_", cible)
+            return str
+        
         try:
-            cible = arguments[1]
+            nom_cible = arguments.split(" ")[1]
         except IndexError:
             # Le joueur n'a pas donné de cible
             if statut == CIBLE_OBLIGATOIRE:
@@ -130,22 +136,28 @@ class Attitude(BaseObj):
                 if personnage is acteur:
                     personnage << self.independant["aim"]
                 else:
-                    personnage << self.independant["oim"].replace("|acteur|", acteur.nom)
+                    personnage << formater(self.independant["oim"],
+                            acteur=acteur.nom)
         else:
             # Le joueur a précisé une cible
             if statut == SANS_CIBLE:
                 acteur << "|err|Cette attitude n'accepte pas de cible.|ff|"
                 return
+            cible = None
             for personnage in acteur.salle.personnages:
-                if personnage.nom == cible:
+                nom_perso = personnage.nom.lower()
+                if contient(nom_perso, nom_cible):
                     cible = personnage
-            if type(cible) == str:
+            if cible is None:
                 acteur << "|err|Vous ne voyez pas cette personne ici.|ff|"
                 return
             for personnage in acteur.salle.personnages:
                 if personnage is acteur:
-                    personnage << self.dependant["adm"]
+                    personnage << formater(self.dependant["adm"],
+                            cible=cible.nom)
                 elif personnage is cible:
-                    personnage << self.dependant["idm"]
+                    personnage << formater(self.dependant["idm"],
+                            acteur=acteur.nom)
                 else:
-                    personnage << self.dependant["odm"]
+                    personnage << formater(self.dependant["odm"],
+                            acteur=acteur.nom, cible=cible.nom)

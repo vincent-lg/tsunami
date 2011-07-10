@@ -73,7 +73,9 @@ class Confirmation(Contexte):
     
     def accueil(self):
         """Accueil du contexte"""
-        return "|att|Etes-vous sûr ? Entrez |ent|oui|ff| pour confirmer.|ff|"
+        return \ 
+            "|att|Etes-vous sûr ? Entrez |ff||ent|oui|ff||att| pour " \
+            "confirmer.|ff|"
     
     def interpreter(self, msg):
         """Interprétation du contexte"""
