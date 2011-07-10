@@ -44,7 +44,7 @@ class Canaux(Unique):
     
     def __init__(self):
         """Constructeur du conteneur"""
-        Unique.__init__(self, "canaux", "canaux")
+        Unique.__init__(self, "communication", "canaux")
         self._canaux = {}
     
     def __getnewargs__(self):

@@ -37,6 +37,7 @@ from primaires.communication.config import cfg_com
 from primaires.format.fonctions import *
 from .conversations import Conversations
 from .attitudes import Attitudes
+from .attitude import INACHEVEE
 from .editeurs.chedit import EdtChedit
 from .editeurs.socedit import EdtSocedit
 from .canal import Canal
@@ -58,8 +59,8 @@ class Module(BaseModule):
         self.commandes = []
         self.conversations = None
         self.attitudes = None
-        self.derniers_canaux = {}
         self._canaux = None
+        self.derniers_canaux = {}
     
     def config(self):
         """Configuration du module.
@@ -76,10 +77,16 @@ class Module(BaseModule):
     def init(self):
         """Initialisation du module"""
         self.conversations = Conversations()
-        self.attitudes = Attitudes()
+        # On récupère les attitudes
+        attitudes = None
+        sous_rep = "communication"
+        fichier = "attitudes.sav"
+        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
+            attitudes = self.importeur.supenr.charger(sous_rep, fichier)
+        self.attitudes = attitudes or Attitudes()
         # On récupère les canaux
         canaux = None
-        sous_rep = "canaux"
+        sous_rep = "communication"
         fichier = "canaux.sav"
         if self.importeur.supenr.fichier_existe(sous_rep, fichier):
             canaux = self.importeur.supenr.charger(sous_rep, fichier)
@@ -92,7 +99,6 @@ class Module(BaseModule):
                         len(canaux)))
             else:
                 self.logger.info("1 canal de communication récupéré")
-        
         self._canaux = canaux
         
         BaseModule.init(self)
@@ -128,6 +134,16 @@ class Module(BaseModule):
     def canaux(self):
         """Retourne les canaux existants"""
         return self._canaux
+    
+    @property
+    def attitudes_jouables(self):
+        """Retourne une liste les attitudes jouables"""
+        try:
+            ret = [att for att in self.attitudes.values() \
+                    if att.statut != INACHEVEE]
+        except KeyError:
+            ret = []
+        return ret
     
     def ajouter_canal(self, nom, auteur):
         """Ajoute un canal à la lsite des canaux existants
@@ -252,8 +268,11 @@ class Module(BaseModule):
         elif commande.split(" ")[0] in noms_canaux_connectes:
             res = True
             self.dire_canal(personnage, commande)
-        elif commande.split(" ")[0] in self.attitudes:
-            res = True
-            self.attitudes.jouer(personnage, commande)
+        
+        for att in self.attitudes_jouables:
+            if contient(att.cle, commande.split(" ")[0]):
+                res = True
+                self.attitudes[att.cle].jouer(
+                        personnage, " ".join(commande.split(" ")[1:]))
         
         return res

@@ -39,6 +39,7 @@ les extensions n'apparaîtront pas ici.
 """
 
 from primaires.interpreteur.editeur import Editeur
+from primaires.communication.attitude import STATUTS
 
 class EdtSocedit(Editeur):
     
@@ -48,13 +49,16 @@ class EdtSocedit(Editeur):
     
     nom = "socedit"
     
-    def __init__(self, personnage, attitude):
+    def __init__(self, personnage, objet):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
-        Editeur.__init__(self, instance_connexion, attitude)
+        
+        Editeur.__init__(self, instance_connexion, objet)
+        self.ajouter_option("q", self.opt_quitter)
+        self.ajouter_option("c", self.opt_changer_cle)        
         self.ajouter_option("aim", self.opt_aim)
         self.ajouter_option("aif", self.opt_aif)
         self.ajouter_option("oim", self.opt_oim)
@@ -65,35 +69,105 @@ class EdtSocedit(Editeur):
         self.ajouter_option("idf", self.opt_idf)
         self.ajouter_option("odm", self.opt_odm)
         self.ajouter_option("odf", self.opt_odf)
-        self.aide_courte = \
-            "Editeur de social\n"
+    
+    def __getnewargs__(self):
+        return (None, None)
+    
+    def accueil(self):
+        """Méthode d'accueil de l'éditeur"""
+        attitude = self.objet
+        msg = "| |tit|Edition de l'attitude {}|ff|".format(
+                attitude.cle).ljust(87) + "|\n"
+        msg += self.opts.separateur + "\n"
+        msg += \
+            "Utilisez une des options pour paramétrer l'attitude.\n" \
+            "Statut actuel de l'attitude : " + STATUTS[attitude.statut] + "\n" \
+            "Clé (commande entrée par le joueur) : |cmd|" + \
+            attitude.cle + "|ff|\n\n" \
+            "Options :" \
+            "\n - |cmd|/aim|ff|, |cmd|/aif|ff|, |cmd|/oim|ff|... : édite un " \
+            "paramètre de l'attitude" \
+            "\n - |cmd|/c|ff| : change la clé" \
+            "\n - |cmd|/q|ff| : permet de quitter l'éditeur\n\n"
+        msg += "AIM (Acteur Indépendant Masculin) :\n |ent|"
+        msg += attitude.independant["aim"] or \
+                "Vous vous faites tout petit."
+        msg += "|ff|\nAIF (Acteur Indépendant Féminin) :\n |ent|"
+        msg += attitude.independant["aif"] or \
+                "Vous vous faites toute petite."
+        msg += "|ff|\nOIM (Observateur Indépendant Masculin) :\n |ent|"
+        msg += attitude.independant["oim"] or \
+                "|acteur| se fait tout petit."
+        msg += "|ff|\nOIF (Observateur Indépendant Féminin) :\n |ent|"
+        msg += attitude.independant["oif"] or \
+                "|acteur| se fait toute petite."
+        msg += "|ff|\nADM (Acteur Dépendant Masculin) :\n |ent|"
+        msg += attitude.dependant["adm"] or \
+                "Vous vous faites tout petit devant |cible|."
+        msg += "|ff|\nADF (Acteur Dépendant Féminin) :\n |ent|"
+        msg += attitude.dependant["adf"] or \
+                "Vous vous faites toute petite devant |cible|."
+        msg += "|ff|\nIDM (Interlocuteur Dépendant Masculin) :\n |ent|"
+        msg += attitude.dependant["idm"] or \
+                "|acteur| se fait tout petit devant vous."
+        msg += "|ff|\nIDF (Interlocuteur Dépendant Féminin) :\n |ent|"
+        msg += attitude.dependant["idf"] or \
+                "|acteur| se fait toute petite devant vous."
+        msg += "|ff|\nODM (Observateur Dépendant Masculin) :\n |ent|"
+        msg += attitude.dependant["odm"] or \
+                "|acteur| se fait tout petit devant |cible|."
+        msg += "|ff|\nODF (Observateur Dépendant Féminin) :\n |ent|"
+        msg += attitude.dependant["odf"] or \
+                "|acteur| se fait toute petite devant |cible|."
+        
+        return msg + "|ff|"
+    
+    def opt_quitter(self, argument):
+        """Option quitter"""
+        self.pere.joueur.contextes.retirer()
+        self.pere.envoyer("Fermeture de l'éditeur.")
+    
+    def opt_changer_cle(self, arguments):
+        """Option permettant de changer la clé de l'attitude"""
+        self.objet.cle = arguments
+        self.actualiser()
     
     def opt_aim(self, arguments):
         self.objet.independant["aim"] = arguments
+        self.actualiser()
    
     def opt_aif(self, arguments):
         self.objet.independant["aif"] = arguments
+        self.actualiser()
     
     def opt_oim(self, arguments):
         self.objet.independant["oim"] = arguments
+        self.actualiser()
     
     def opt_oif(self, arguments):
         self.objet.independant["oif"] = arguments
+        self.actualiser()
     
     def opt_adm(self, arguments):
         self.objet.independant["adm"] = arguments
+        self.actualiser()
    
     def opt_adf(self, arguments):
         self.objet.independant["adf"] = arguments
+        self.actualiser()
     
     def opt_idm(self, arguments):
         self.objet.independant["idm"] = arguments
+        self.actualiser()
    
     def opt_idf(self, arguments):
         self.objet.independant["idf"] = arguments
+        self.actualiser()
     
     def opt_odm(self, arguments):
         self.objet.independant["odm"] = arguments
+        self.actualiser()
     
     def opt_odf(self, arguments):
         self.objet.independant["odf"] = arguments
+        self.actualiser()

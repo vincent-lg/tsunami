@@ -30,11 +30,10 @@
 
 """Ce fichier contient la classe Attitudes détaillée plus bas."""
 
-
-from abstraits.obase import BaseObj
+from abstraits.unique import Unique
 from .attitude import Attitude
 
-class Attitudes(BaseObj):
+class Attitudes(Unique):
 
     """Classe conteneur des attitudes sociales.
     Cette classe liste tous les items Attitude utilisables dans l'univers
@@ -44,37 +43,46 @@ class Attitudes(BaseObj):
     
     """
     
-    def __init__(self, parent=None):
+    def __init__(self):
         """Constructeur du conteneur"""
-        BaseObj.__init__(self)
-        self._attitudes = []
+        Unique.__init__(self, "communication", "attitudes")
+        self._attitudes = {}
     
     def __getnewargs__(self):
         return ()
     
     def __contains__(self, cle):
         """Renvoie True si l'attitude existe, False sinon"""
-        return self.get_attitude(cle) != -1
+        return cle in self._attitudes
     
-    def iter(self):
-        """Boucle sur les attitudes contenues"""
-        return list(self._attitudes)
-    
-    def ajouter(self, cle):
-        """Ajoute une attitude à la liste"""
-        attitude = Attitude(cle)
-        self._attitudes.append(attitude)
-        return attitude
-    
-    def get_attitude(self, cle):
+    def __getitem__(self, cle):
         """Renvoie une attitude à partir de sa clé"""
-        for attitude in self._attitudes:
-            if attitude.cle == cle:
-                return attitude        
-        return -1
+        return self._attitudes[cle]
     
-    def jouer(self, acteur, arguments):
-        """Fait jouer une attitude à acteur"""
-        cle = arguments.split(" ")[0]
-        attitude = self.get_attitude(cle)
-        attitude.jouer(acteur, arguments)
+    def __setitem__(self, cle, valeur):
+        """Ajoute une attitude à la liste"""
+        self._attitudes[cle] = valeur
+        self.enregistrer()
+    
+    def __delitem__(self, cle):
+        """Détruit l'attitude spécifiée"""
+        del self._attitudes[cle]
+        self.enregistrer()
+    
+    def keys(self):
+        """Renvoie une liste des attitudes par clés"""
+        return list(self._attitudes.keys())
+    
+    def values(self):
+        """Renvoie une liste des objets Attitude"""
+        return list(self._attitudes.values())
+    
+    def ajouter_ou_modifier(self, cle):
+        """Ajoute une attitude ou la renvoie si existante"""
+        if cle in self._attitudes:
+            return self._attitudes[cle]
+        else:
+            attitude = Attitude(cle, self)
+            self._attitudes[cle] = attitude
+            return attitude
+    

@@ -30,7 +30,21 @@
 
 """Ce fichier contient la classe Attitude détaillée plus bas."""
 
-from abstraits.obase import BaseObj
+from abstraits.obase import *
+
+# Statuts de l'attitude
+FONCTIONNELLE = 1
+SANS_CIBLE = 2
+CIBLE_OBLIGATOIRE = 3
+INACHEVEE = 4
+
+# Ce dictionnaire lie un statut à une chaîne
+STATUTS = {
+    FONCTIONNELLE : "fonctionnelle",
+    SANS_CIBLE : "sans cible",
+    CIBLE_OBLIGATOIRE : "cible obligatoire",
+    INACHEVEE : "inachevée"
+}
 
 class Attitude(BaseObj):
 
@@ -38,9 +52,10 @@ class Attitude(BaseObj):
     
     """
     
-    def __init__(self, cle):
+    def __init__(self, cle, parent):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
+        self.parent = parent
         self.cle = cle
         self.independant = {
             "aim" : "",
@@ -56,9 +71,18 @@ class Attitude(BaseObj):
             "odm" : "",
             "odf" : "",
         }
+        # On passe le statut en CONSTRUIT
+        self._statut = CONSTRUIT
     
     def __getnewargs__(self):
-        return ("", )
+        return ("", None)
+    
+    def __setattr__(self, nom_attr, valeur):
+        """Enregisre le parent si il est précisé"""
+        construit = self.construit
+        BaseObj.__setattr__(self, nom_attr, valeur)
+        if construit and self.parent:
+            self.parent.enregistrer()
     
     @property
     def statut(self):
@@ -75,27 +99,27 @@ class Attitude(BaseObj):
                 dep_complet = False
                 break
         if indep_complet and dep_complet:
-            ret = "fonctionnelle"
+            ret = FONCTIONNELLE
         elif indep_complet and not dep_complet:
-            ret = "sans cible"
+            ret = SANS_CIBLE
         elif not indep_complet and dep_complet:
-            ret = "cible"
+            ret = CIBLE_OBLIGATOIRE
         elif not indep_complet and not dep_complet:
-            ret = "inachevée"
+            ret = INACHEVEE
         return ret
     
     def jouer(self, acteur, arguments):
         """Joue le social pour acteur"""
         arguments = arguments.split(" ")
         statut = self.statut
-        if statut == "inachevée":
+        if statut == INACHEVEE:
             acteur << "|err|Cette attitude n'est pas achevée.|ff|"
             return
         try:
             cible = arguments[1]
         except IndexError:
             # Le joueur n'a pas donné de cible
-            if statut == "cible":
+            if statut == CIBLE_OBLIGATOIRE:
                 acteur << "|err|Vous devez préciser une cible.|ff|"
                 return
             for personnage in acteur.salle.personnages:
@@ -105,7 +129,7 @@ class Attitude(BaseObj):
                     personnage << self.independant["oim"].replace("|acteur|", acteur.nom)
         else:
             # Le joueur a précisé une cible
-            if statut == "sans cible":
+            if statut == SANS_CIBLE:
                 acteur << "|err|Cette attitude n'accepte pas de cible.|ff|"
                 return
             for personnage in acteur.salle.personnages:
