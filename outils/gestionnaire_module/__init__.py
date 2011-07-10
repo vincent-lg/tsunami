@@ -40,7 +40,9 @@ import gestionnaire_module.editeur
 REPSRC = "src/"
 
 if len(sys.argv) < 5:
-    print("pas assez d'argument : manager module p/s NOM Prénom")
+    print("Pas assez d'argument, la syntaxe est :\n")
+    print("gestionnaire_module module type NOM Prénom\n")
+    print("(type = p ou s, p pour primaire, s pour secondaire)")
     sys.exit(1)
 
 module = sys.argv[1].lower()
@@ -61,7 +63,8 @@ rep = REPSRC + typeMod + "s/" + module + "/"
 base.init(rep, entete, typeMod, module)
 
 while True:
-    cmd = input("Veuillez entrer une commande(help pour de l'aide) : ")
+    cmd = input("Veuillez entrer une commande (help pour de l'aide, quit " \
+        "pour quitter) :\n-> ")
     
     cmd = cmd.split()
     if len(cmd) < 1:
@@ -69,10 +72,13 @@ while True:
     
     if cmd[0] == "help":
         print("Les différentes commandes possibles sont :")
-        print("quitter : pour quitter")
-        print("classe nom [oui] : crée une classe et éventuellement " \
+        print("\t- quit : pour quitter")
+        print("\t- classe nom [oui] : crée une classe et éventuellement " \
             "un conteneur associé si oui est précisé")
-        print("commande nom_fr nom_en categorie schema : crée une commande ")
+        print("\t- commande nom_fr nom_en categorie schema : crée une commande")
+        print("\t- masque nom [nom_complet] : créé un masque")
+        print("\t- editeur nom : créé un éditeur")
+        print("\t- contexte nom : créé un contexte")
     elif cmd[0] == "quitter":
         sys.exit(0)
     elif cmd[0] == "classe":
@@ -85,5 +91,8 @@ while True:
         contexte.ajouter(rep, module, typeMod, entete, cmd)
     elif cmd[0] == "editeur":
         editeur.ajouter(rep, module, typeMod, entete, cmd)
+    else:
+        print("Commande inconnue")
+    
         
 
