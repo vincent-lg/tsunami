@@ -29,6 +29,7 @@
 """Fichier contenant le paramètre 'supprimer' de la commande 'attitudes'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
+from primaires.interpreteur.contexte.confirmation import Confirmation
 
 class PrmSupprimer(Parametre):
     
@@ -39,11 +40,17 @@ class PrmSupprimer(Parametre):
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "supprimer", "delete")
-        self.schema = ""
-        self.aide_courte = "liste les attitudes existantes"
+        self.schema = "<attitude>"
+        self.aide_courte = "supprime une attitude"
         self.aide_longue = \
-            "Cette sous-commande offre une liste des attitudes existantes."
+            "Cette sous-commande permet de supprimer définitivement une " \
+            "attitude."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        pass
+        attitude = dic_masques["attitude"].attitude
+        confirmation = Confirmation(personnage.instance_connexion,
+                type(self).importeur.communication.attitudes,
+                type(self).importeur.communication.attitudes.__delitem__,
+                [attitude.cle, ])
+        confirmation.actualiser()

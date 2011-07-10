@@ -52,7 +52,7 @@ class Attitude(BaseObj):
     
     """
     
-    def __init__(self, cle, parent):
+    def __init__(self, cle, parent=None):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
         self.parent = parent
@@ -82,6 +82,10 @@ class Attitude(BaseObj):
         construit = self.construit
         BaseObj.__setattr__(self, nom_attr, valeur)
         if construit and self.parent:
+            self.parent.enregistrer()
+    
+    def enregistrer(self):
+        if self.parent:
             self.parent.enregistrer()
     
     @property

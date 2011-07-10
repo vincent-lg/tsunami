@@ -59,7 +59,6 @@ class EdtSocedit(Editeur):
         Editeur.__init__(self, instance_connexion, objet, attribut)
         self.personnage = personnage
         self.ajouter_option("q", self.opt_quitter)
-        self.ajouter_option("c", self.opt_changer_cle)
         self.ajouter_option("aim", self.opt_aim)
         self.ajouter_option("aif", self.opt_aif)
         self.ajouter_option("oim", self.opt_oim)
@@ -88,9 +87,7 @@ class EdtSocedit(Editeur):
             "Options :" \
             "\n - |cmd|/aim|ff|, |cmd|/aif|ff|, |cmd|/oim|ff|... : édite un " \
             "paramètre de l'attitude" \
-            "\n - |cmd|/c|ff| : change la clé" \
-            "\n - |cmd|/q|ff| : permet de quitter l'éditeur" \
-            "\n - |cmd|/d|ff| : supprimer l'attitude\n\n"
+            "\n - |cmd|/q|ff| : permet de quitter l'éditeur\n\n"
         msg += "AIM (Acteur Indépendant Masculin) :\n |ent|"
         msg += attitude.independant["aim"] or \
                 "Vous vous faites tout petit."
@@ -129,47 +126,52 @@ class EdtSocedit(Editeur):
         self.pere.joueur.contextes.retirer()
         self.pere.envoyer("Fermeture de l'éditeur.")
     
-    def opt_changer_cle(self, arguments):
-        """Option permettant de changer la clé de l'attitude"""
-        self.objet.cle = arguments
-        self.actualiser()
-    
     def opt_aim(self, arguments):
         self.objet.independant["aim"] = arguments
+        self.objet.enregistrer()
         self.actualiser()
    
     def opt_aif(self, arguments):
         self.objet.independant["aif"] = arguments
+        self.objet.enregistrer()
         self.actualiser()
     
     def opt_oim(self, arguments):
         self.objet.independant["oim"] = arguments
+        self.objet.enregistrer()
         self.actualiser()
     
     def opt_oif(self, arguments):
         self.objet.independant["oif"] = arguments
+        self.objet.enregistrer()
         self.actualiser()
     
     def opt_adm(self, arguments):
         self.objet.independant["adm"] = arguments
+        self.objet.enregistrer()
         self.actualiser()
    
     def opt_adf(self, arguments):
         self.objet.independant["adf"] = arguments
+        self.objet.enregistrer()
         self.actualiser()
     
     def opt_idm(self, arguments):
         self.objet.independant["idm"] = arguments
+        self.objet.enregistrer()
         self.actualiser()
    
     def opt_idf(self, arguments):
         self.objet.independant["idf"] = arguments
+        self.objet.enregistrer()
         self.actualiser()
     
     def opt_odm(self, arguments):
         self.objet.independant["odm"] = arguments
+        self.objet.enregistrer()
         self.actualiser()
     
     def opt_odf(self, arguments):
         self.objet.independant["odf"] = arguments
+        self.objet.enregistrer()
         self.actualiser()

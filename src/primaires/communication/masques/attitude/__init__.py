@@ -1,3 +1,5 @@
+# -*-coding:Utf-8 -*
+
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -26,25 +28,44 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'voir' de la commande 'attitudes'."""
+"""Fichier contenant le masque <attitude>."""
 
-from primaires.interpreteur.masque.parametre import Parametre
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
 
-class PrmVoir(Parametre):
+class Attitude(Masque):
     
-    """Commande 'attitudes voir'.
+    """Masque <attitude>.
+    On attend une attitude en paramètre.
     
     """
     
-    def __init__(self):
-        """Constructeur du paramètre"""
-        Parametre.__init__(self, "voir", "view")
-        self.schema = ""
-        self.aide_courte = "offre un aperçu d'une attitude"
-        self.aide_longue = \
-            "Cette sous-commande donne un aperçu d'une attitude, visible par " \
-            "vous uniquement."
+    nom = "attitude"
+    nom_complet = "attitude"
     
-    def interpreter(self, personnage, dic_masques):
-        """Interprétation du paramètre"""
-        pass
+    def init(self):
+        """Initialisation des attributs"""
+        self.attitude = None
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
+        lstrip(commande)
+        cle = liste_vers_chaine(commande)
+        
+        if not cle:
+            raise ErreurValidation( \
+                "Précisez la clé d'une attitude.")
+        
+        cle = cle.split(" ")[0]
+        commande[:] = commande[len(cle):]
+        
+        attitudes = type(self).importeur.communication.attitudes
+        if cle not in attitudes:
+            raise ErreurValidation( \
+                "|err|Cette attitude n'existe pas.|ff|")
+        
+        self.attitude = attitudes[cle]
+        return True

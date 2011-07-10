@@ -77,6 +77,7 @@ class Module(BaseModule):
     def init(self):
         """Initialisation du module"""
         self.conversations = Conversations()
+        
         # On récupère les attitudes
         attitudes = None
         sous_rep = "communication"
@@ -86,7 +87,6 @@ class Module(BaseModule):
         else:
             attitudes = Attitudes()
         self.attitudes = attitudes
-        self.logger.info("{} attitude(s) récupérée(s)".format(len(attitudes)))
         
         # On récupère les canaux
         canaux = None
