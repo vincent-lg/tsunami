@@ -83,10 +83,11 @@ class Module(BaseModule):
         fichier = "attitudes.sav"
         if self.importeur.supenr.fichier_existe(sous_rep, fichier):
             attitudes = self.importeur.supenr.charger(sous_rep, fichier)
-        if attitudes is None:
+        else:
             attitudes = Attitudes()
         self.attitudes = attitudes
         self.logger.info("{} attitude(s) récupérée(s)".format(len(attitudes)))
+        
         # On récupère les canaux
         canaux = None
         sous_rep = "communication"

@@ -28,50 +28,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-import re
+"""Fichier contenant l'action afficher."""
 
-from abstraits.obase import BaseObj
+from primaires.scripting.action import Action
 
-"""Fichier contenant la classe Instruction, détaillée plus bas."""
-
-class Instruction(BaseObj):
+class ClasseAction(Action):
     
-    """Classe abstraite définissant une instruction.
-    Les différents types d'instructions doivent en hériter.
-    Par exemple, l'instruction conditionnelle, la fonction, les boucles si
-    existent.
+    """Action afficher."""
     
-    Cette classe propose plusieurs mécanismes génériques de manipulation
-    d'instruction.
-    Elle est notamment capable de dire si une chaîne de caractère
-    correspond à son schéma de validation.
-    
-    """
-    
-    schema = None
-    cfg = None
-    def __init__(self, cfg):
-        """Construction d'une instruction.
-        
-        Note : on ne doit pas construire une instruction mais une de ses
-        classes filles.
-        
-        """
-        BaseObj.__init__(self)
-    
-    def correspond_schema(chaine):
-        """Retourne True si la chaîne correspond au schéma, False sinon.
-        
-        Le schéma est donné sous la forme d'une regex.
-        
-        """
-        return type(self).schema.search(chaine)
-    
-    def parser(regex, chaine):
-        """Parse la regex de recherche.
-        
-        Ce parsage peut s'appuyer sur regex.groups().
-        Redéfinir cette méthode dans la classe fille.
-        
-        """
-        raise NotImplementedError
+    def interpreter(self, *messages):
+        """Affiche les messages à l'écran."""
+        print(*messages)

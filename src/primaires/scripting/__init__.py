@@ -30,11 +30,13 @@
 
 """Fichier contenant le module primaire scripting."""
 
+import os
 import re
 
 from abstraits.module import *
 from .config import cfg_scripting
-from .action import Action
+from .instruction import Instruction
+from .action import Action, actions as lst_actions
 
 class Module(BaseModule):
     
@@ -60,6 +62,32 @@ class Module(BaseModule):
     def init(self):
         """Initialisation"""
         #self.test_instruction("test(a14)")
+        # Application de la configuration
+        cfg = self.cfg
+        identifiant = cfg.identifiant
+        type_de_donnee = "(" + ")|(".join([cfg.chaine, cfg.nombre, cfg.identifiant]) + ")"
+        sep = cfg.sep
+        fonction = r"({nom_fonction}){dg}({type_de_donnee})?({sep}({type_de_donnee}))*{dd}"
+        fonction = fonction.format(nom_fonction=cfg.nom_fonction,
+                sep=sep, type_de_donnee=type_de_donnee,
+                dg=cfg.delimiteur_gauche, dd=cfg.delimiteur_droit)
+        
+        # Configuration des instructions
+        Instruction.cfg = cfg
+        
+        # Configuration des actions
+        Action.schema = re.compile("^" + fonction + "$")
+        Action.schema_argument = r"({sep}({a}))({sep}({a}))*".format(a=type_de_donnee, sep=sep)
+        
+        # Chargement des actions
+        # Elles se trouvent dans le sous-répertoire actions
+        chemin = self.chemin + os.sep + "actions"
+        for nom_fichier in os.listdir(chemin):
+            if not nom_fichier.startswith("_") and nom_fichier.endswith(".py"):
+                fichier = nom_fichier[:-3]
+                chemin_f = "primaires.scripting.actions." + fichier
+                lst_actions[fichier] = __import__(chemin_f)
+        
         BaseModule.init(self)
     
     def test_instruction(self, chaine):

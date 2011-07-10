@@ -34,6 +34,8 @@ from .instruction import Instruction
 
 """Fichier contenant la classe Action, détaillée plus bas."""
 
+actions = {} # dictionnaire des actions répertoriées
+
 class Action(Instruction):
     
     """Classe définissant une action.
@@ -45,15 +47,15 @@ class Action(Instruction):
     
     schema_arguments = None
     type_de_donnee = ""
-    def __init__(self, cfg):
+    def __init__(self):
         """Construction d'une action.
         
         """
-        Instruction.__init__(self, cfg)
+        Instruction.__init__(self)
         self.groupes["nom"] = ""
         self.groupes["parametres"] = ()
     
-    def parser(self, regex, chaine):
+    def parser(regex, chaine):
         """Parse la regex de recherche.
         
         La chaîne va être utile ici car les arguments de l'action ne sont pas

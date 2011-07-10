@@ -87,5 +87,6 @@ class Attitudes(Unique):
         else:
             attitude = Attitude(cle, self)
             self._attitudes[cle] = attitude
+            self.enregistrer()
             return attitude
     
