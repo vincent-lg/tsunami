@@ -55,6 +55,9 @@ class Attitudes(Unique):
         """Renvoie True si l'attitude existe, False sinon"""
         return cle in self._attitudes
     
+    def __len__(self):
+        return len(self._attitudes)
+    
     def __getitem__(self, cle):
         """Renvoie une attitude à partir de sa clé"""
         return self._attitudes[cle]

@@ -83,7 +83,10 @@ class Module(BaseModule):
         fichier = "attitudes.sav"
         if self.importeur.supenr.fichier_existe(sous_rep, fichier):
             attitudes = self.importeur.supenr.charger(sous_rep, fichier)
-        self.attitudes = attitudes or Attitudes()
+        if attitudes is None:
+            attitudes = Attitudes()
+        self.attitudes = attitudes
+        self.logger.info("{} attitude(s) récupérée(s)".format(len(attitudes)))
         # On récupère les canaux
         canaux = None
         sous_rep = "communication"
@@ -113,6 +116,7 @@ class Module(BaseModule):
             commandes.repondre.CmdRepondre(),
             commandes.canaux.CmdCanaux(),
             commandes.socedit.CmdSocedit(),
+            commandes.attitudes.CmdAttitudes(),
         ]
         
         for cmd in self.commandes:

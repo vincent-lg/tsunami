@@ -1,5 +1,3 @@
-# -*-coding:Utf-8 -*
-
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -28,13 +26,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module communication."""
+"""Fichier contenant le paramètre 'supprimer' de la commande 'attitudes'."""
 
-import primaires.communication.commandes.dire
-import primaires.communication.commandes.crier
-import primaires.communication.commandes.emote
-import primaires.communication.commandes.parler
-import primaires.communication.commandes.repondre
-import primaires.communication.commandes.canaux
-import primaires.communication.commandes.socedit
-import primaires.communication.commandes.attitudes
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmSupprimer(Parametre):
+    
+    """Commande 'attitudes supprimer'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "supprimer", "delete")
+        self.schema = ""
+        self.aide_courte = "liste les attitudes existantes"
+        self.aide_longue = \
+            "Cette sous-commande offre une liste des attitudes existantes."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        pass

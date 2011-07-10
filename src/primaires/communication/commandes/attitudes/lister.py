@@ -1,5 +1,3 @@
-# -*-coding:Utf-8 -*
-
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -28,13 +26,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module communication."""
+"""Fichier contenant le paramètre 'lister' de la commande 'attitudes'."""
 
-import primaires.communication.commandes.dire
-import primaires.communication.commandes.crier
-import primaires.communication.commandes.emote
-import primaires.communication.commandes.parler
-import primaires.communication.commandes.repondre
-import primaires.communication.commandes.canaux
-import primaires.communication.commandes.socedit
-import primaires.communication.commandes.attitudes
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmLister(Parametre):
+    
+    """Commande 'attitudes lister'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "lister", "list")
+        self.schema = ""
+        self.aide_courte = "liste les attitudes existantes"
+        self.aide_longue = \
+            "Cette sous-commande offre une liste des attitudes existantes."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        attitudes = type(self).importeur.communication.attitudes
+        if not attitudes:
+            res = "|err|Il n'y a aucune attitude pour l'instant.|ff|"
+        else:
+            # On détermine la taille du tableau
+            taille = 0
+            res = "Attitudes en jeu :"
+            for attitude in attitudes.keys():
+                res += "\n" + attitude
+        personnage << res

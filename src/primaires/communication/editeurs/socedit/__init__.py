@@ -49,16 +49,17 @@ class EdtSocedit(Editeur):
     
     nom = "socedit"
     
-    def __init__(self, personnage, objet):
+    def __init__(self, personnage, objet, attribut=None):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
         
-        Editeur.__init__(self, instance_connexion, objet)
+        Editeur.__init__(self, instance_connexion, objet, attribut)
+        self.personnage = personnage
         self.ajouter_option("q", self.opt_quitter)
-        self.ajouter_option("c", self.opt_changer_cle)        
+        self.ajouter_option("c", self.opt_changer_cle)
         self.ajouter_option("aim", self.opt_aim)
         self.ajouter_option("aif", self.opt_aif)
         self.ajouter_option("oim", self.opt_oim)
@@ -88,7 +89,8 @@ class EdtSocedit(Editeur):
             "\n - |cmd|/aim|ff|, |cmd|/aif|ff|, |cmd|/oim|ff|... : édite un " \
             "paramètre de l'attitude" \
             "\n - |cmd|/c|ff| : change la clé" \
-            "\n - |cmd|/q|ff| : permet de quitter l'éditeur\n\n"
+            "\n - |cmd|/q|ff| : permet de quitter l'éditeur" \
+            "\n - |cmd|/d|ff| : supprimer l'attitude\n\n"
         msg += "AIM (Acteur Indépendant Masculin) :\n |ent|"
         msg += attitude.independant["aim"] or \
                 "Vous vous faites tout petit."
@@ -122,7 +124,7 @@ class EdtSocedit(Editeur):
         
         return msg + "|ff|"
     
-    def opt_quitter(self, argument):
+    def opt_quitter(self, arguments):
         """Option quitter"""
         self.pere.joueur.contextes.retirer()
         self.pere.envoyer("Fermeture de l'éditeur.")
