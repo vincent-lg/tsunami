@@ -82,13 +82,15 @@ class Module(BaseModule):
         # Elles se trouvent dans le sous-répertoire actions
         chemin = self.chemin + os.sep + "actions"
         for nom_fichier in os.listdir(chemin):
+            globales = {"Action": Action}
             if not nom_fichier.startswith("_") and nom_fichier.endswith(".py"):
                 fichier = nom_fichier[:-3]
-                chemin_f = "primaires.scripting.actions." + fichier
-                module = __import__(chemin_f)
-                action = getattr(getattr(getattr(module, "scripting"), 
-                        "actions"), fichier)
-                classe_action = action.ClasseAction
+                chemin_f = chemin + os.sep + nom_fichier
+                f_mod = open(chemin_f, 'r')
+                f_code = f_mod.read()
+                f_mod.close()
+                exec(f_code, globales)
+                classe_action = globales["ClasseAction"]
                 lst_actions[fichier] = classe_action
                 
         #self.test_instruction("afficher(elt, 5, 31.4, -2, \"ok, didelai\")")

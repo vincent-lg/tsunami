@@ -30,8 +30,6 @@
 
 """Fichier contenant l'action afficher."""
 
-from primaires.scripting.action import Action
-
 class ClasseAction(Action):
     
     """Action afficher."""
