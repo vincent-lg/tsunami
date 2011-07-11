@@ -57,9 +57,9 @@ import datetime
 from datetime import timedelta
 
 from abstraits.obase import BaseObj
-from .conversation import Conversation
+from .{lclasse} import {classe}
 
-class Conversations(BaseObj):
+class {classe}s(BaseObj):
 
     \"""Classe conteneur des {lclasse}s
     
