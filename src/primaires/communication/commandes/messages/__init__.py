@@ -28,59 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Attitude détaillée plus bas."""
+"""Package contenant la commande 'messages'.
 
-import datetime
+"""
 
-from abstraits.obase import *
-from primaires.format.description import Description
+from primaires.interpreteur.commande.commande import Commande
+from .lister import PrmLister
+from .ecrire import PrmEcrire
 
-# Etats possible d'un mail
-EN_COURS = 0
-ENVOYE = 1
-BROUILLON = 2
-
-class MUDmail(BaseObj):
-
-    """Cette classe contient un mudmail
+class CmdMessages(Commande):
+    
+    """Commande 'messages'.
     
     """
     
-    def __init__(self, parent=None, expediteur=None):
-        """Constructeur de la classe"""
-        BaseObj.__init__(self)
-        self.parent = parent
-        mails = type(self).importeur.communication.mails or ""
-        self.id = len(mails) + 1
-        self.etat = EN_COURS
-        self.date = None
-        self.sujet = "Aucun sujet"
-        self.expediteur = expediteur
-        self.destinataire = None
-        self.contenu = Description()
-        # On passe le statut en CONSTRUIT
-        self._statut = CONSTRUIT
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "messages", "mails")
+        self.nom_categorie = "parler"
+        self.aide_courte = "permet de gérer les messages privés"
+        self.aide_longue = \
+                "Cette commande offre une gestion complète des messages " \
+                "privés ou mudmails. Diverses options sont disponibles : " \
+                "entrez %messages% sans arguments pour en voir un aperçu, " \
+                "ou lisez l'aide plus bas."
     
-    def __getnewargs__(self):
-        return ()
-    
-    def __setattr__(self, nom_attr, valeur):
-        """Enregisre le parent si il est précisé"""
-        construit = self.construit
-        BaseObj.__setattr__(self, nom_attr, valeur)
-        if construit and self.parent:
-            self.parent.enregistrer()
-    
-    @property
-    def nom_dest(self):
-        """Renvoir le nom du destinataire si existant"""
-        return (self.destinataire is not None and self.destinataire.nom) or \
-                "Aucun destinataire"
-    
-    def enregistrer(self):
-        if self.parent:
-            self.parent.enregistrer()
-    
-    def envoyer(self):
-        self.etat = ENVOYE
-        self.date = datetime.datetime.now()
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
+        prm_lister = PrmLister()
+        prm_ecrire = PrmEcrire()
+        
+        self.ajouter_parametre(prm_lister)
+        self.ajouter_parametre(prm_ecrire)

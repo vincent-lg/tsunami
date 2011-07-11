@@ -1,5 +1,3 @@
-# -*-coding:Utf-8 -*
-
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -28,40 +26,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'attitudes'.
+"""Fichier contenant le paramètre 'ecrire' de la commande 'messages'."""
 
-"""
+from primaires.interpreteur.masque.parametre import Parametre
 
-from primaires.interpreteur.commande.commande import Commande
-from .lister import PrmLister
-from .voir import PrmVoir
-from .supprimer import PrmSupprimer
-
-class CmdAttitudes(Commande):
+class PrmEcrire(Parametre):
     
-    """Commande 'attitudes'.
+    """Commande 'messages ecrire'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "attitudes", "socials")
-        self.nom_categorie = "parler"
-        self.aide_courte = "permet d'utiliser les attitudes"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "ecrire", "write")
+        self.schema = ""
+        self.aide_courte = "ouvre l'éditeur de mudmail"
         self.aide_longue = \
-                "Cette commande permet d'utiliser les attitudes existantes. " \
-                "Les attitudes sont des commandes spéciales qui vous font " \
-                "jouer une action spécifique dans la salle où vous vous " \
-                "trouvez. Diverses options sont disponibles : entrez " \
-                "%attitudes% sans arguments pour en voir un aperçu, ou " \
-                "lisez l'aide plus bas."
+            "Cette sous-commande ouvre un éditeur dans lequel vous pouvez " \
+            "créer un message et l'envoyer."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_lister = PrmLister()
-        prm_voir = PrmVoir()
-        prm_supprimer = PrmSupprimer()
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        id = type(self).importeur.communication.mails.creer_mail(personnage)
+        mail = type(self).importeur.communication.mails[id]
         
-        self.ajouter_parametre(prm_lister)
-        self.ajouter_parametre(prm_voir)
-        self.ajouter_parametre(prm_supprimer)
+        editeur = type(self).importeur.interpreteur.construire_editeur(
+                "medit", personnage, mail)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()

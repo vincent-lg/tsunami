@@ -37,6 +37,7 @@ from primaires.communication import masques
 from primaires.communication import commandes
 from .editeurs.chedit import EdtChedit
 from .editeurs.socedit import EdtSocedit
+from .editeurs.medit import EdtMedit
 from .conversations import Conversations
 from .attitudes import Attitudes
 from .attitude import INACHEVEE
@@ -62,7 +63,7 @@ class Module(BaseModule):
         self.attitudes = None
         self._canaux = None
         self.derniers_canaux = {}
-        self._mails = None
+        self.mails = None
     
     def config(self):
         """Configuration du module.
@@ -98,13 +99,14 @@ class Module(BaseModule):
             canaux = self.importeur.supenr.charger(sous_rep, fichier)
         if canaux is None:
             canaux = Canaux()
-            self.logger.info("Aucun canal de communication récupéré")
         else:
             if len(canaux) > 1:
                 self.logger.info("{} canaux de communication récupérés".format(
                         len(canaux)))
-            else:
+            elif len(canaux) == 1:
                 self.logger.info("1 canal de communication récupéré")
+            else:
+                self.logger.info("Aucun canal de communication récupéré")
         self._canaux = canaux
         
         # On récupère les mails
@@ -115,14 +117,15 @@ class Module(BaseModule):
             mails = self.importeur.supenr.charger(sous_rep, fichier)
         if mails is None:
             mails = BoiteMail()
-            self.logger.info("Aucun mudmail récupéré")
         else:
             if len(mails) > 1:
                 self.logger.info("{} mudmails récupérés".format(
                         len(mails)))
-            else:
+            elif len(mails) == 1:
                 self.logger.info("1 mudmail récupéré")
-        self._mails = mails
+            else:
+                self.logger.info("Aucun mudmail récupéré")
+        self.mails = mails
         
         BaseModule.init(self)
     
@@ -137,14 +140,16 @@ class Module(BaseModule):
             commandes.canaux.CmdCanaux(),
             commandes.socedit.CmdSocedit(),
             commandes.attitudes.CmdAttitudes(),
+            commandes.messages.CmdMessages(),
         ]
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
         
-        # Ajout des éditeurs 'chedit' et 'socedit'
+        # Ajout des éditeurs
         self.importeur.interpreteur.ajouter_editeur(EdtChedit)
         self.importeur.interpreteur.ajouter_editeur(EdtSocedit)
+        self.importeur.interpreteur.ajouter_editeur(EdtMedit)
     
     def preparer(self):
         """Préparation du module.

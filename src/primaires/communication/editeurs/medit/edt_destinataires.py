@@ -28,59 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Attitude détaillée plus bas."""
+"""Fichier contenant le contexte éditeur EdtDestinataires"""
 
-import datetime
+from primaires.interpreteur.editeur import Editeur
 
-from abstraits.obase import *
-from primaires.format.description import Description
-
-# Etats possible d'un mail
-EN_COURS = 0
-ENVOYE = 1
-BROUILLON = 2
-
-class MUDmail(BaseObj):
-
-    """Cette classe contient un mudmail
+class EdtDestinataires(Editeur):
+    
+    """Classe définissant le contexte éditeur 'destinataires'.
+    Ce contexte permet d'éditer les destinataires d'un message.
     
     """
     
-    def __init__(self, parent=None, expediteur=None):
-        """Constructeur de la classe"""
-        BaseObj.__init__(self)
-        self.parent = parent
-        mails = type(self).importeur.communication.mails or ""
-        self.id = len(mails) + 1
-        self.etat = EN_COURS
-        self.date = None
-        self.sujet = "Aucun sujet"
-        self.expediteur = expediteur
-        self.destinataire = None
-        self.contenu = Description()
-        # On passe le statut en CONSTRUIT
-        self._statut = CONSTRUIT
+    def __init__(self, pere, objet=None, attribut=None):
+        """Constructeur de l'éditeur"""
+        Editeur.__init__(self, pere, objet, attribut)
     
-    def __getnewargs__(self):
-        return ()
-    
-    def __setattr__(self, nom_attr, valeur):
-        """Enregisre le parent si il est précisé"""
-        construit = self.construit
-        BaseObj.__setattr__(self, nom_attr, valeur)
-        if construit and self.parent:
-            self.parent.enregistrer()
-    
-    @property
-    def nom_dest(self):
-        """Renvoir le nom du destinataire si existant"""
-        return (self.destinataire is not None and self.destinataire.nom) or \
-                "Aucun destinataire"
-    
-    def enregistrer(self):
-        if self.parent:
-            self.parent.enregistrer()
-    
-    def envoyer(self):
-        self.etat = ENVOYE
-        self.date = datetime.datetime.now()
+    def interpreter(self, msg):
+        """Interprétation du message"""
+        nom_joueur = msg.split(" ")[0].lower()
+        joueur = None
+        joueurs = type(self).importeur.connex.joueurs
+        for t_joueur in joueurs:
+            nom = t_joueur.nom.lower()
+            if nom == nom_joueur:
+                joueur = t_joueur
+                break
+        if joueur is None:
+            self.pere << "|err|Ce joueur n'a pu être trouvé.|ff|"
+        else:
+            self.objet.destinataire = joueur
+            self.actualiser()

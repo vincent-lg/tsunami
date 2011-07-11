@@ -1,5 +1,3 @@
-# -*-coding:Utf-8 -*
-
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -28,40 +26,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'attitudes'.
+"""Fichier contenant le paramètre 'lister' de la commande 'messages'."""
 
-"""
+from primaires.interpreteur.masque.parametre import Parametre
+from primaires.communication.mudmail import ENVOYE
 
-from primaires.interpreteur.commande.commande import Commande
-from .lister import PrmLister
-from .voir import PrmVoir
-from .supprimer import PrmSupprimer
-
-class CmdAttitudes(Commande):
+class PrmLister(Parametre):
     
-    """Commande 'attitudes'.
+    """Commande 'messages lister'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "attitudes", "socials")
-        self.nom_categorie = "parler"
-        self.aide_courte = "permet d'utiliser les attitudes"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "lister", "list")
+        self.schema = ""
+        self.aide_courte = "liste vos mudmails"
         self.aide_longue = \
-                "Cette commande permet d'utiliser les attitudes existantes. " \
-                "Les attitudes sont des commandes spéciales qui vous font " \
-                "jouer une action spécifique dans la salle où vous vous " \
-                "trouvez. Diverses options sont disponibles : entrez " \
-                "%attitudes% sans arguments pour en voir un aperçu, ou " \
-                "lisez l'aide plus bas."
+            "Cette sous-commande ouvre votre boîte mail, listant vos " \
+            "messages reçus et permettant de les gérer."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_lister = PrmLister()
-        prm_voir = PrmVoir()
-        prm_supprimer = PrmSupprimer()
-        
-        self.ajouter_parametre(prm_lister)
-        self.ajouter_parametre(prm_voir)
-        self.ajouter_parametre(prm_supprimer)
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        mails = type(self).importeur.communication.mails
+        mails = mails.get_mails_pour(personnage, ENVOYE, False)
+        if not mails:
+            res = "|err|Vous n'avez reçu aucun message.|ff|"
+        else:
+            res = "Vos mails reçus :"
+            for mail in mails:
+                res += "\n" + mail.id + " " + mail.sujet
+        personnage << res

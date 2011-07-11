@@ -31,7 +31,7 @@
 """Ce fichier contient la classe BoiteMail détaillée plus bas."""
 
 from abstraits.unique import Unique
-from .mudmail import MUDmail
+from .mudmail import *
 
 class BoiteMail(Unique):
 
@@ -51,19 +51,38 @@ class BoiteMail(Unique):
         return ()
     
     def __len__(self):
-        """TODO"""
+        """Retourne le nombre de mails"""
         return len(self._mails)
     
     def __getitem__(self, id):
-        """TODO"""
+        """Récupère un mail à partir de son id"""
         return self._mails[id]
     
     def __setitem__(self, id, mail):
-        """TODO"""
+        """Modifie un mail"""
         self._mails[id] = mail
         self.enregistrer()
     
     def __delitem__(self, id):
-        """TODO"""
+        """Supprime un mail"""
         del self._mails[id]
         self.enregistrer()
+    
+    def creer_mail(self, expediteur):
+        """Cree un message vide et le retourne"""
+        mail = MUDmail(self, expediteur)
+        self._mails[mail.id] = mail
+        self.enregistrer()
+        return mail.id
+    
+    def get_mails_pour(self, personnage, etat, exp=True):
+        """Renvoie la liste des mails de personnage"""
+        ret = []
+        for mail in self._mails.values():
+            if exp: # on récupère les mails dont perso est expediteur
+                if mail.expediteur == personnage and mail.etat == etat:
+                    ret.append(mail)
+            else: # ou ceux dont il est destinataire
+                if mail.destinataire == personnage and mail.etat == etat:
+                    ret.append(mail)
+        return ret
