@@ -1,5 +1,3 @@
-# -*-coding:Utf-8 -*
-
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -28,27 +26,28 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'raedit'."""
+"""Fichier contenant le paramètre 'ouvrir' de la commande 'messages'."""
 
-from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.masque.parametre import Parametre
 
-class CmdRaedit(Commande):
+class PrmOuvrir(Parametre):
     
-    """Commande 'raedit'"""
+    """Commande 'messages ouvrir'.
+    
+    """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "raedit", "raedit")
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "ouvrir", "open")
         self.schema = ""
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "ouvre l'éditeur des races"
+        self.aide_courte = "ouvre votre boîte de messagerie"
         self.aide_longue = \
-            "Cette commande ouvre l'éditeur des races. Elle vous permet de " \
-            "créer et éditer les races existantes."
+            "Cette sous-commande ouvre votre boîte mail et permet de gérer " \
+            "vos messages."
     
     def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
+        """Interprétation du paramètre"""
         editeur = type(self).importeur.interpreteur.construire_editeur(
-                "raedit", personnage, None)
+                "messagerie", personnage, None)
         personnage.contextes.ajouter(editeur)
         editeur.actualiser()

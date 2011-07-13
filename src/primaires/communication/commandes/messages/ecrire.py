@@ -47,8 +47,7 @@ class PrmEcrire(Parametre):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        id = type(self).importeur.communication.mails.creer_mail(personnage)
-        mail = type(self).importeur.communication.mails[id]
+        mail = type(self).importeur.communication.mails.creer_mail(personnage)
         
         editeur = type(self).importeur.interpreteur.construire_editeur(
                 "medit", personnage, mail)

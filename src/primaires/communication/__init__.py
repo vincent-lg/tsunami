@@ -38,6 +38,7 @@ from primaires.communication import commandes
 from .editeurs.chedit import EdtChedit
 from .editeurs.socedit import EdtSocedit
 from .editeurs.medit import EdtMedit
+from .editeurs.messagerie import EdtMessagerie
 from .conversations import Conversations
 from .attitudes import Attitudes
 from .attitude import INACHEVEE
@@ -150,6 +151,7 @@ class Module(BaseModule):
         self.importeur.interpreteur.ajouter_editeur(EdtChedit)
         self.importeur.interpreteur.ajouter_editeur(EdtSocedit)
         self.importeur.interpreteur.ajouter_editeur(EdtMedit)
+        self.importeur.interpreteur.ajouter_editeur(EdtMessagerie)
     
     def preparer(self):
         """Préparation du module.

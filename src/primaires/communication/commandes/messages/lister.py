@@ -55,5 +55,5 @@ class PrmLister(Parametre):
         else:
             res = "Vos mails reçus :"
             for mail in mails:
-                res += "\n" + mail.id + " " + mail.sujet
+                res += "\n" + str(mail.id) + " " + mail.sujet
         personnage << res
