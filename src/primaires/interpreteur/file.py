@@ -37,6 +37,7 @@
 from abstraits.obase import BaseObj
 
 class FileContexte(BaseObj):
+    
     """Cette classe définie une file d'attente des contextes.
     C'est une classe enveloppe de liste. On interragit avec cette
     classe qu'avec plusieurs méthodes :
@@ -53,6 +54,8 @@ class FileContexte(BaseObj):
         BaseObj.__init__(self)
         self._file = [] # la liste représentant la file d'attente
         self._taille_min = 1 # la taille minimum de la file d'attente
+        self._position = 0 # position dans la file
+        self.exploration = 0
         self.parent = parent
    
     def __getnewargs__(self):
@@ -81,6 +84,24 @@ class FileContexte(BaseObj):
         """Retourne la file"""
         return "f" + str(self._file)
     
+    def get(self, index):
+        """Essaye de récupérer le contexte à l'index indiqué.
+        
+        Si échoue, retourne None.
+        
+        Note : index doit être positif.
+        
+        """
+        if index < 0:
+            raise IndexError
+        
+        try:
+            contexte = self[index]
+        except IndexError:
+            contexte = None
+        
+        return contexte
+    
     def ajouter(self, objet):
         """Ajoute l'objet à ajouter en tête de la file."""
         self._file.insert(0, objet)
@@ -105,6 +126,44 @@ class FileContexte(BaseObj):
     def vider(self):
         """Vide la file des contextes"""
         self._file[:] = []
+    
+    @property
+    def actuel(self):
+        """Retourne le contexte actuel.
+        
+        On se base sur la position pour savoir quel est le contexte actuel.
+        Si le contexte n'est pas trouvé, lève une exception IndexError.
+        
+        """
+        return self[self._position]
+    
+    def avancer_position(self):
+        """Avance la position (déplacement positif).
+        
+        Si aucun contexte n'est trouvé à la position ciblée, lève une
+        exception IndexError.
+        
+        """
+        nouveau_contexte = self[self._position + 1]
+        self._position += 1
+        if self.parent:
+            self.parent.enregistrer()
+    
+    def reculer_position(self):
+        """Recule la position (déplacement négatif).
+        
+        Si aucun contexte n'est trouvé à la position ciblée, lève une
+        exception IndexError.
+        
+        """
+        if self._position <= 0:
+            raise IndexError
+        
+        nouveau_contexte = self[self._position - 1]
+        self._position -= 1
+        if self.parent:
+            self.parent.enregistrer()
+
 
 class FileVide(RuntimeError):
     """Exception appelée quand la file est vide ou d'une taille insuffisante.

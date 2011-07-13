@@ -98,11 +98,7 @@ class Personnage(ObjetID):
     
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel, c'est-à-dire le premier de la file"""
-        if len(self.contextes) > 0:
-            contexte = self.contextes[0]
-        else:
-            contexte = None
-        return contexte
+        return self.contextes.actuel
     
     def _set_contexte_actuel(self, nouveau_contexte):
         """Ajoute le nouveau contexte à la file des contextes.

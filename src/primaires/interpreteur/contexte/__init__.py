@@ -251,12 +251,15 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         On le redirige vers 'interpreter' après avoir appliqué les options
         de réception.
         
-        CETTE METHODE NE DOIT PAS ETRE REDEFINIE.
-        
         On déduit l'émetteur, c'est le père du contexte (self.pere).
         
         """
         emt = self.pere
+        # Test des aliases
+        res = self.traiter_alias_contextes(msg)
+        if res:
+            return
+        
         if self.opts.echp_sp_cars:
             msg = echapper_sp_cars(msg)
         
@@ -266,3 +269,88 @@ class Contexte(BaseObj, metaclass=MetaContexte):
             self.migrer_contexte(self.opts.rci_ctx_prec)
         else:
             self.interpreter(msg)
+    
+    def traiter_alias_contextes(self, msg):
+        """Traite les alias des contextes.
+        
+        Aliases :
+            ><commande> : envoie la commande dans le contexte suivant
+            <<commande> : envoie la commande dans le contexte précédent
+            ?>          : affiche la liste des contextes
+            >           : se déplace vers le contexte suivant
+            <           : se déplace vers le contexte précédent
+        
+        """
+        emt = self.pere
+        joueur = emt.joueur
+        if joueur:
+            contextes = joueur.contextes
+            position = contextes._position
+        else:
+            return
+        
+        if msg == "<":
+            try:
+                contextes.reculer_position()
+            except IndexError:
+                emt << "|err|Vous êtes déjà en haut de la liste de vos " \
+                        "contextes.|ff|"
+            else:
+                emt << emt.contexte_actuel.accueil()
+        elif msg == ">":
+            try:
+                contextes.avancer_position()
+            except IndexError:
+                emt << "|err|Vous êtes déjà en bas de la liste de vos " \
+                        "contextes.|ff|"
+            else:
+                emt << emt.contexte_actuel.accueil()
+        elif msg == "?>":
+            noms_contextes = []
+            for i, contexte in enumerate(contextes):
+                nom = str(contexte)
+                if i == position:
+                    nom = "|rg|*" + nom + "|ff|"
+                
+                noms_contextes.append(nom)
+            
+            emt << "Contextes : " + ", ".join(noms_contextes)
+        elif msg == "/>":
+            # Supprime tous les contextes sauf le premier
+            contextes._position = 0
+            while len(contextes) > 1:
+                contextes.retirer()
+            
+            emt << contextes.actuel.accueil()
+        
+        elif msg.startswith(">"):
+            exploration = contextes.exploration
+            try:
+                contexte = contextes.get(exploration + 1)
+                assert contexte is not None
+            except (IndexError, AssertionError):
+                emt << "|err|Aucun contexte ne peut être trouvé après " \
+                        "celui-ci.|ff|"
+            else:
+                contextes.exploration += 1
+                contexte.receptionner(msg[1:])
+            finally:
+                contextes.exploration = position
+        elif msg.startswith("<"):
+            exploration = contextes.exploration
+            try:
+                contexte = contextes.get(exploration - 1)
+                assert contexte is not None
+            except (IndexError, AssertionError):
+                emt << "|err|Aucun contexte ne peut être trouvé avant " \
+                        "celui-ci.|ff|"
+            else:
+                contextes.exploration -= 1
+                contexte.receptionner(msg[1:])
+            finally:
+                contextes.exploration = position
+        else:
+            return
+        
+        return True
+
