@@ -28,9 +28,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant l'éditeur 'medit'.
+"""Package contenant l'éditeur 'messagerie'.
 Si des redéfinitions de contexte-éditeur standard doivent être faites, elles
-seront placées dans ce package.
+seront placées dans ce package
 
 Note importante : ce package contient la définition d'un éditeur, mais
 celui-ci peut très bien être étendu par d'autres modules. Au quel cas,
@@ -38,42 +38,40 @@ les extensions n'apparaîtront pas ici.
 
 """
 
+from primaires.format.fonctions import supprimer_accents
 from primaires.interpreteur.editeur.presentation import Presentation
-from primaires.interpreteur.editeur.uniligne import Uniligne
-from .edt_destinataires import EdtDestinataires
-from .edt_contenu import EdtContenu
-from .edt_envoyer import EdtEnvoyer
-from .edt_brouillon import EdtBrouillon
-from .edt_annuler import EdtAnnuler
 
-class EdtMedit(Presentation):
+class EdtMessagerie(Presentation):
     
-    """Classe définissant l'éditeur de mail 'medit'.
+    """Classe définissant l'éditeur 'messagerie'.
     
     """
     
-    nom = "medit"
+    nom = "messagerie"
     
-    def __init__(self, personnage, mail):
+    def __init__(self, personnage, objet=None):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
         
-        Presentation.__init__(self, instance_connexion, mail)
-        if personnage and mail:
-            self.construire(mail)
-        self.supprimer_choix("quitter la fenêtre")
+        Presentation.__init__(self, instance_connexion, None)
+        if personnage:
+            self.construire()
+        self.ajouter_option("h", self.opt_help)
     
     def __getnewargs__(self):
-        return (None, None)
+        return (None, )
     
     def accueil(self):
         """Message d'accueil du contexte"""
-        msg = "| |tit|Rédaction : {}|ff|".format(self.objet.sujet).ljust(87) + \
-                "|\n"
-        msg += self.opts.separateur + "\n"
+        msg = "| |tit|Messagerie|ff|".ljust(87) + "|\n"
+        msg += self.opts.separateur + "\n\n"
+        msg += \
+            " Bienvenue dans votre messagerie.\n" \
+            " Nouveau ? Entrez |cmd|/h <sujet>|ff| pour de l'aide (par " \
+            "exemple : |ent|/h brouillons|ff|).\n"
         # Parcours des choix possibles
         for nom, objet in self.choix.items():
             raccourci = self.get_raccourci_depuis_nom(nom)
@@ -93,48 +91,15 @@ class EdtMedit(Presentation):
         
         return msg
     
-    def construire(self, mail):
+    def opt_help(self, arguments):
+        """Options /h <sujet>"""
+        sujet = supprimer_accents(arguments.lower())
+        if sujet == "messages recus":
+            self.pere.joueur << "Aide sur les messages reçus."
+        else:
+            self.pere.joueur << "|err|Aucune aide sur ce sujet.\n" \
+                    "Sujets disponibles : messages reçus.|ff|"
+    
+    def construire(self):
         """Construction de l'éditeur"""
-        # Sujet
-        sujet = self.ajouter_choix("sujet", "s", Uniligne, mail, "sujet")
-        sujet.parent = self
-        sujet.prompt = "Nouveau sujet : "
-        sujet.apercu = "{objet.sujet}"
-        sujet.aide_courte = \
-            "Entrez le |ent|sujet|ff| du message ou |cmd|/|ff| pour revenir " \
-            "à la fenêtre parente.\n" \
-            "Sujet actuel : {objet.sujet}"
-        
-        # Destinataire
-        destinataire = self.ajouter_choix("destinataire(s)", "d", \
-                EdtDestinataires, mail)
-        destinataire.parent = self
-        destinataire.prompt = "Entrez un destinataire : "
-        destinataire.apercu = "{objet.nom_dest}"
-        destinataire.aide_courte = \
-            "Choisissez un |ent|destinataire|ff| pour votre message ; " \
-            "|cmd|/|ff| pour revenir à la\nfenêtre parente.\n" \
-            "Destinataire actuel : {objet.nom_dest}"
-        
-        # Contenu
-        contenu = self.ajouter_choix("contenu", "c", EdtContenu, \
-                mail, "contenu")
-        contenu.parent = self
-        contenu.apercu = "{objet.apercu_contenu}"
-        contenu.aide_courte = \
-            "| |tit|" + "Contenu du message".ljust(76) + "|ff||\n" + \
-            self.opts.separateur
-        
-        # Envoyer
-        envoyer = self.ajouter_choix("envoyer", "e", EdtEnvoyer, mail)
-        envoyer.parent = self
-        
-        # Brouillon
-        brouillon = self.ajouter_choix("enregistrer comme brouillon", "b", \
-                EdtBrouillon, mail)
-        brouillon.parent = self
-        
-        # Annuler
-        annuler = self.ajouter_choix("annuler et quitter la fenêtre", "a", \
-                EdtAnnuler, mail)
-        annuler.parent = self
+        pass
