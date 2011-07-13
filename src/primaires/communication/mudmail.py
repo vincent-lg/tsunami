@@ -39,6 +39,7 @@ from primaires.format.description import Description
 EN_COURS = 0
 ENVOYE = 1
 BROUILLON = 2
+ARCHIVE = 3
 
 class MUDmail(BaseObj):
 
@@ -58,6 +59,7 @@ class MUDmail(BaseObj):
         self.expediteur = expediteur
         self.destinataire = None
         self.contenu = Description()
+        self.lu = False
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
     

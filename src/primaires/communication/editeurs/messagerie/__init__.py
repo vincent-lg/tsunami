@@ -40,6 +40,7 @@ les extensions n'apparaîtront pas ici.
 
 from primaires.format.fonctions import supprimer_accents
 from primaires.interpreteur.editeur.presentation import Presentation
+from .edt_messages_recus import EdtMessagesRecus
 
 class EdtMessagerie(Presentation):
     
@@ -94,7 +95,9 @@ class EdtMessagerie(Presentation):
     def opt_help(self, arguments):
         """Options /h <sujet>"""
         sujet = supprimer_accents(arguments.lower())
-        if sujet == "messages recus":
+        if not sujet or sujet.isspace():
+            self.pere.joueur << "|err|Vous devez préciser un sujet d'aide.|ff|"
+        elif sujet == "messages recus":
             self.pere.joueur << "Aide sur les messages reçus."
         else:
             self.pere.joueur << "|err|Aucune aide sur ce sujet.\n" \
@@ -102,4 +105,14 @@ class EdtMessagerie(Presentation):
     
     def construire(self):
         """Construction de l'éditeur"""
-        pass
+        # Messages reçus
+        recus = self.ajouter_choix("messages reçus", "m", EdtMessagesRecus)
+        recus.parent = self
+        recus.aide_courte = \
+            "Entrez |ent|/|ff| pour revenir à la fenêtre précédente.\n" \
+            "Options disponibles :\n" \
+            " - |ent|/l <numéro>|ff| : permet de lire un message\n" \
+            " - |ent|/a <numéro>|ff| : archive un message. Le message est " \
+            "déplacé dans le dossier\n" \
+            "   des messages archivés (fenêtre précédente). Cette " \
+            "opération est réversible." \
