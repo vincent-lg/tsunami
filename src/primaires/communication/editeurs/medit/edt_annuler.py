@@ -28,33 +28,23 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le contexte éditeur EdtDestinataires"""
+"""Fichier contenant le contexte éditeur EdtAnnuler"""
 
-from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur import Editeur
 
-class EdtDestinataires(Uniligne):
+class EdtAnnuler(Editeur):
     
-    """Classe définissant le contexte éditeur 'destinataires'.
-    Ce contexte permet d'éditer les destinataires d'un message.
+    """Classe définissant le contexte éditeur 'droits'.
+    Ce contexte permet d'éditer les droits (public ou privé) d'un canal.
     
     """
     
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
-        Uniligne.__init__(self, pere, objet, attribut)
+        Editeur.__init__(self, pere, objet, attribut)
     
-    def interpreter(self, msg):
-        """Interprétation du message"""
-        nom_joueur = msg.split(" ")[0].lower()
-        joueur = None
-        joueurs = type(self).importeur.connex.joueurs
-        for t_joueur in joueurs:
-            nom = t_joueur.nom.lower()
-            if nom == nom_joueur:
-                joueur = t_joueur
-                break
-        if joueur is None:
-            self.pere << "|err|Ce joueur n'a pu être trouvé.|ff|"
-        else:
-            self.objet.destinataire = joueur
-            self.actualiser()
+    def entrer(self):
+        mail = self.objet
+        del type(self).importeur.communication.mails[mail.id]
+        self.pere.joueur.contextes.retirer()
+        self.pere.joueur << "|rg|Votre mudmail a été annulé.|ff|"

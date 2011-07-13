@@ -124,7 +124,7 @@ class Presentation(Editeur):
     def supprimer_choix(self, nom):
         """Supprime le choix possible 'nom'"""
         # On recherche le raccourci pour le supprimer
-        for cle, valeur in tuple(self.racourcis.items()):
+        for cle, valeur in tuple(self.raccourcis.items()):
             if valeur == nom:
                 del self.raccourcis[cle]
         

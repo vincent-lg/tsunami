@@ -52,9 +52,9 @@ class MUDmail(BaseObj):
         self.parent = parent
         mails = type(self).importeur.communication.mails or ""
         self.id = len(mails) + 1
-        self.etat = EN_COURS
+        self._etat = EN_COURS
         self.date = None
-        self.sujet = "Aucun sujet"
+        self.sujet = "aucun sujet"
         self.expediteur = expediteur
         self.destinataire = None
         self.contenu = Description()
@@ -72,15 +72,37 @@ class MUDmail(BaseObj):
             self.parent.enregistrer()
     
     @property
+    def etat(self):
+        """Renvoie l'état du mail"""
+        return self._etat
+    
+    @property
     def nom_dest(self):
-        """Renvoir le nom du destinataire si existant"""
+        """Renvoie le nom du destinataire si existant"""
         return (self.destinataire is not None and self.destinataire.nom) or \
-                "Aucun destinataire"
+                "aucun destinataire"
+    
+    @property
+    def apercu_contenu(self):
+        """Renvoie un aperçu du corps du message"""
+        apercu = self.contenu.paragraphes_indentes
+        if apercu == "\n   Aucune description.":
+            apercu = "\n   Aucun contenu."
+        return apercu
     
     def enregistrer(self):
-        if self.parent:
+        """Enregistrer le mail dans son parent"""
+        construit = self.construit
+        if construit and self.parent:
             self.parent.enregistrer()
     
     def envoyer(self):
-        self.etat = ENVOYE
+        """Envoie le mail"""
+        self._etat = ENVOYE
         self.date = datetime.datetime.now()
+        self.enregistrer()
+    
+    def enregistrer_brouillon(self):
+        """Enregistre le mail comme brouillon"""
+        self._etat = BROUILLON
+        self.enregistrer()

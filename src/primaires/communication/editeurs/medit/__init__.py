@@ -42,6 +42,10 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_destinataires import EdtDestinataires
+from .edt_contenu import EdtContenu
+from .edt_envoyer import EdtEnvoyer
+from .edt_brouillon import EdtBrouillon
+from .edt_annuler import EdtAnnuler
 
 class EdtMedit(Presentation):
     
@@ -61,18 +65,42 @@ class EdtMedit(Presentation):
         Presentation.__init__(self, instance_connexion, mail)
         if personnage and mail:
             self.construire(mail)
+        self.supprimer_choix("quitter la fenêtre")
     
     def __getnewargs__(self):
         return (None, None)
     
+    def accueil(self):
+        """Message d'accueil du contexte"""
+        msg = "| |tit|Rédaction : {}|ff|".format(self.objet.sujet).ljust(87) + \
+                "|\n"
+        msg += self.opts.separateur + "\n"
+        # Parcourt des choix possibles
+        for nom, objet in self.choix.items():
+            raccourci = self.get_raccourci_depuis_nom(nom)
+            # On constitue le nom final
+            # Si le nom d'origine est 'description' et le raccourci est 'd',
+            # le nom final doit être '[D]escription'
+            pos = nom.find(raccourci)
+            raccourci = ((pos == 0) and raccourci.capitalize()) or raccourci
+            nom_maj = nom.capitalize()
+            nom_m = nom_maj[:pos] + "[|cmd|" + raccourci + "|ff|]" + \
+                    nom_maj[pos + len(raccourci):]
+            msg += "\n " + nom_m
+            enveloppe = self.choix[nom]
+            apercu = enveloppe.get_apercu()
+            if apercu:
+                msg += " : " + apercu
+        
+        return msg
+    
     def construire(self, mail):
         """Construction de l'éditeur"""
-        print(mail)
         # Sujet
         sujet = self.ajouter_choix("sujet", "s", Uniligne, mail, "sujet")
         sujet.parent = self
         sujet.prompt = "Nouveau sujet : "
-        #sujet.apercu = "{objet.sujet}"
+        sujet.apercu = "{objet.sujet}"
         sujet.aide_courte = \
             "Entrez le |ent|sujet|ff| du message ou |cmd|/|ff| pour revenir " \
             "à la fenêtre parente.\n" \
@@ -83,17 +111,31 @@ class EdtMedit(Presentation):
                 EdtDestinataires, mail)
         destinataire.parent = self
         destinataire.prompt = "Entrez un destinataire : "
-        #destinataire.apercu = "{objet.nom_dest}"
+        destinataire.apercu = "{objet.nom_dest}"
         destinataire.aide_courte = \
             "Choisissez un |ent|destinataire|ff| pour votre message ; " \
-            "|cmd|/|ff| pour revenir à la fenêtre parente.\n" \
+            "|cmd|/|ff| pour revenir à la\nfenêtre parente.\n" \
             "Destinataire actuel : {objet.nom_dest}"
         
         # Contenu
-        contenu = self.ajouter_choix("contenu", "c", Description, \
+        contenu = self.ajouter_choix("contenu", "c", EdtContenu, \
                 mail, "contenu")
         contenu.parent = self
-        #contenu.apercu = "{objet.contenu.paragraphes_indentes}"
+        contenu.apercu = "{objet.apercu_contenu}"
         contenu.aide_courte = \
             "| |tit|" + "Contenu du message".ljust(76) + "|ff||\n" + \
             self.opts.separateur
+        
+        # Envoyer
+        envoyer = self.ajouter_choix("envoyer", "e", EdtEnvoyer, mail)
+        envoyer.parent = self
+        
+        # Brouillon
+        brouillon = self.ajouter_choix("enregistrer comme brouillon", "b", \
+                EdtBrouillon, mail)
+        brouillon.parent = self
+        
+        # Annuler
+        annuler = self.ajouter_choix("annuler et quitter la fenêtre", "a", \
+                EdtAnnuler, mail)
+        annuler.parent = self
