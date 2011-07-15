@@ -115,4 +115,6 @@ class EdtMessagerie(Presentation):
             " - |ent|/a <numéro>|ff| : archive un message. Le message est " \
             "déplacé dans le dossier\n" \
             "   des messages archivés (fenêtre précédente). Cette " \
-            "opération est réversible." \
+            "opération est réversible.\n" \
+            " - |ent|/r <numéro>|ff| : permet de répondre à un message\n" \
+            " - |ent|/b|ff| : rafraîchit la liste des messages"

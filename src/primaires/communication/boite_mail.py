@@ -73,7 +73,7 @@ class BoiteMail(Unique):
         mail = MUDmail(self, expediteur)
         self._mails[mail.id] = mail
         self.enregistrer()
-        return mail.id
+        return mail
     
     def get_mails_pour(self, personnage, etat, exp=True):
         """Renvoie la liste des mails de personnage"""

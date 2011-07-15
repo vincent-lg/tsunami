@@ -92,6 +92,13 @@ class MUDmail(BaseObj):
             apercu = "\n   Aucun contenu."
         return apercu
     
+    def afficher(self):
+        """Affiche le mail"""
+        ret = "2012-12-21 00:00\n"
+        ret += "Sujet : " + self.sujet + "\n"
+        ret += str(self.contenu)
+        return ret
+    
     def enregistrer(self):
         """Enregistrer le mail dans son parent"""
         construit = self.construit
@@ -107,4 +114,9 @@ class MUDmail(BaseObj):
     def enregistrer_brouillon(self):
         """Enregistre le mail comme brouillon"""
         self._etat = BROUILLON
+        self.enregistrer()
+    
+    def archiver(self):
+        """Archive le mail"""
+        self._etat = ARCHIVE
         self.enregistrer()

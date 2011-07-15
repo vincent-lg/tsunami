@@ -44,6 +44,10 @@ class EdtMessagesRecus(Editeur):
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
+        self.ajouter_option("l", self.opt_lire)
+        self.ajouter_option("a", self.opt_archiver)
+        self.ajouter_option("r", self.opt_repondre)
+        self.ajouter_option("b", self.opt_boite_refresh)
     
     def accueil(self):
         """Méthode d'accueil"""
@@ -72,6 +76,7 @@ class EdtMessagesRecus(Editeur):
                 t_sujet = len(couper_phrase(mail.sujet, 44))
                 if t_sujet > taille:
                     taille = t_sujet
+            taille = (taille < 5 and 5) or taille
             msg += "+" + "-".ljust(taille + 45, "-") + "+\n"
             msg += "| |tit|N°|ff| | |tit|Lu|ff|  | |tit|" + "Sujet".ljust(taille)
             msg += "|ff| | |tit|Expéditeur|ff| | |tit|" + "Date".ljust(16)
@@ -87,3 +92,126 @@ class EdtMessagesRecus(Editeur):
             msg += "+" + "-".ljust(taille + 45, "-") + "+"
         
         return msg
+    
+    def opt_lire(self, arguments):
+        """Option lire"""
+        if not arguments or arguments.isspace():
+            self.pere.joueur << "|err|Vous devez préciser le numéro d'un " \
+                    "message.|ff|"
+            return
+        mails = type(self).importeur.communication.mails.get_mails_pour(
+                self.pere.joueur, ENVOYE, False)
+        try:
+            num = int(arguments.split(" ")[0])
+        except ValueError:
+            self.pere.joueur << "|err|Vous devez spécifier un nombre entier " \
+                    "valide.|ff|"
+        else:
+            i = 1
+            l_mail = None
+            for mail in mails:
+                if num == i:
+                    l_mail = mail
+                    break
+                i += 1
+            if l_mail is None:
+                self.pere.joueur << "|err|Le numéro spécifié ne correspond à " \
+                        "aucun message.|ff|"
+                return
+            self.pere.joueur << l_mail.afficher()
+            l_mail.lu = True
+    
+    def opt_archiver(self, arguments):
+        """Option archiver"""
+        if not arguments or arguments.isspace():
+            self.pere.joueur << "|err|Vous devez préciser le numéro d'un " \
+                    "message.|ff|"
+            return
+        mails = type(self).importeur.communication.mails.get_mails_pour(
+                self.pere.joueur, ENVOYE, False)
+        try:
+            num = int(arguments.split(" ")[0])
+        except ValueError:
+            self.pere.joueur << "|err|Vous devez spécifier un nombre entier " \
+                    "valide.|ff|"
+        else:
+            i = 1
+            a_mail = None
+            for mail in mails:
+                if num == i:
+                    a_mail = mail
+                    break
+                i += 1
+            if a_mail is None:
+                self.pere.joueur << "|err|Le numéro spécifié ne correspond à " \
+                        "aucun message.|ff|"
+                return
+            a_mail.archiver()
+    
+    def opt_repondre(self, arguments):
+        """Option répondre"""
+        if not arguments or arguments.isspace():
+            self.pere.joueur << "|err|Vous devez préciser le numéro d'un " \
+                    "message.|ff|"
+            return
+        mails = type(self).importeur.communication.mails.get_mails_pour(
+                self.pere.joueur, ENVOYE, False)
+        try:
+            num = int(arguments.split(" ")[0])
+        except ValueError:
+            self.pere.joueur << "|err|Vous devez spécifier un nombre entier " \
+                    "valide.|ff|"
+        else:
+            i = 1
+            r_mail = None
+            for mail in mails:
+                if num == i:
+                    r_mail = mail
+                    break
+                i += 1
+            if r_mail is None:
+                self.pere.joueur << "|err|Le numéro spécifié ne correspond à " \
+                        "aucun message.|ff|"
+                return
+    
+    def opt_boite_refresh(self, arguments):
+        """Option de réactualisation"""
+        joueur = self.pere.joueur
+        mails = type(self).importeur.communication.mails.get_mails_pour(
+                joueur, ENVOYE, False)
+        nb_mails = len(mails)
+        prf_mails = (nb_mails > 1 and "s") or ""
+        nb_non_lus = len([mail for mail in mails if not mail.lu])
+        prf_non_lus = (nb_non_lus > 1 and "s") or ""
+        nb_non_lus = (nb_non_lus != 0 and "|rgc|" + str(nb_non_lus) + "|ff|") \
+                or "aucun"
+        msg = ""
+        if nb_mails != 0:
+            msg += "|blc|" + str(nb_mails) + "|ff| message" + prf_mails
+            msg += " dont " + nb_non_lus + " non lu" + prf_non_lus
+            msg += "\n"
+        
+        if not mails:
+            msg += "|att|Vous n'avez reçu aucun message.|ff|"
+        else:
+            taille = 0
+            for mail in mails:
+                t_sujet = len(couper_phrase(mail.sujet, 44))
+                if t_sujet > taille:
+                    taille = t_sujet
+            taille = (taille < 5 and 5) or taille
+            msg += "+" + "-".ljust(taille + 45, "-") + "+\n"
+            msg += "| |tit|N°|ff| | |tit|Lu|ff|  | |tit|" + "Sujet".ljust(taille)
+            msg += "|ff| | |tit|Expéditeur|ff| | |tit|" + "Date".ljust(16)
+            msg += "|ff| |\n"
+            i = 1
+            for mail in mails:
+                msg += "| |rg|" + str(i).ljust(2) + "|ff| | "
+                msg += (mail.lu and "|vrc|oui|ff|" or "|rgc|non|ff|")
+                msg += " | |vr|" + mail.sujet.ljust(taille) + "|ff| | |blc|"
+                msg += mail.expediteur.nom.ljust(10) + "|ff| | |jn|"
+                msg += "2012-12-21 00:00|ff| |\n"
+                i += 1
+            msg += "+" + "-".ljust(taille + 45, "-") + "+"
+        
+        joueur << msg
