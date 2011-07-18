@@ -31,8 +31,10 @@
 """Fichier contenant le contexte éditeur EdtMessagesRecus"""
 
 from primaires.format.fonctions import couper_phrase
-from primaires.interpreteur.editeur import Editeur
+from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
 from primaires.communication.mudmail import ENVOYE
+from primaires.communication.editeurs.medit import EdtMedit
+from primaires.interpreteur.editeur import Editeur
 
 class EdtMessagesRecus(Editeur):
     
@@ -173,6 +175,18 @@ class EdtMessagesRecus(Editeur):
                 self.pere.joueur << "|err|Le numéro spécifié ne correspond à " \
                         "aucun message.|ff|"
                 return
+            mail = type(self).importeur.communication.mails.creer_mail(
+                    self.pere.joueur)
+            mail.sujet = "RE:" + r_mail.sujet
+            mail.destinataire = r_mail.expediteur
+            mail.contenu.ajouter_paragraphe(
+                    r_mail.expediteur.nom + " a écrit :\n")
+            mail.contenu.ajouter_paragraphe(str(r_mail.contenu))
+            enveloppe = EnveloppeObjet(EdtMedit, mail, None)
+            enveloppe.parent = self
+            contexte = enveloppe.construire(self.pere.joueur)
+            self.pere.joueur.contextes.ajouter(contexte)
+            contexte.actualiser()
     
     def opt_boite_refresh(self, arguments):
         """Option de réactualisation"""

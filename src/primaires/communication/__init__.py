@@ -206,9 +206,8 @@ class Module(BaseModule):
             self.canaux[nom_canal].rejoindre_ou_quitter(personnage)
         else:
             canal = self.ajouter_canal(nom_canal, personnage)
+            personnage << "|att|Le canal {} a été créé.|ff|".format(nom_canal)
             canal.rejoindre_ou_quitter(personnage)
-            personnage << "|att|Le canal {} a été créé. Vous y êtes à " \
-                    "présent connecté.|ff|".format(nom_canal)
     
     def quitter_ou_detruire(self, personnage, arguments):
         """Déconnecte le joueur et détruit le canal s'il est vide"""

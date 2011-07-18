@@ -60,4 +60,4 @@ class Uniligne(Editeur):
             self.pere << "|err|Cette valeur est invalide.|ff|"
         else:
             setattr(self.objet, self.attribut, msg)
-            self.pere << self.accueil()
+            self.actualiser()

@@ -41,6 +41,7 @@ les extensions n'apparaîtront pas ici.
 from primaires.format.fonctions import supprimer_accents
 from primaires.interpreteur.editeur.presentation import Presentation
 from .edt_messages_recus import EdtMessagesRecus
+from .edt_brouillons import EdtBrouillons
 
 class EdtMessagerie(Presentation):
     
@@ -118,3 +119,14 @@ class EdtMessagerie(Presentation):
             "opération est réversible.\n" \
             " - |ent|/r <numéro>|ff| : permet de répondre à un message\n" \
             " - |ent|/b|ff| : rafraîchit la liste des messages"
+        
+        # Brouillons
+        brouillons = self.ajouter_choix("brouillons", "b", EdtBrouillons)
+        brouillons.parent = self
+        brouillons.aide_courte = \
+            "Entrez |ent|/|ff| pour revenir à la fenêtre précédente.\n" \
+            "Options disponibles :\n" \
+            " - |ent|/e <numéro>|ff| : ouvre un message enregistré afin " \
+            "de l'éditer\n" \
+            " - |ent|/s <numéro>|ff| : permet de supprimer définitivement " \
+            "un message"

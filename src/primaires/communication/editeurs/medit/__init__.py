@@ -54,14 +54,14 @@ class EdtMedit(Presentation):
     
     nom = "medit"
     
-    def __init__(self, personnage, mail):
+    def __init__(self, personnage, mail, attribut=None):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
         
-        Presentation.__init__(self, instance_connexion, mail)
+        Presentation.__init__(self, instance_connexion, mail, attribut)
         if personnage and mail:
             self.construire(mail)
         self.supprimer_choix("quitter la fenêtre")

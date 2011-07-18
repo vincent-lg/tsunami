@@ -182,7 +182,7 @@ class Canal(BaseObj):
     
     def bannir(self, joueur):
         """Bannit un joueur du canal (méthode de modération)"""
-        if joueur in self.liste_noire:
+        if not joueur in self.liste_noire:
             if joueur in self.immerges:
                 self.immerger_ou_sortir(joueur, False)
             self.rejoindre_ou_quitter(joueur, False)
@@ -199,7 +199,7 @@ class Canal(BaseObj):
             joueur << "|rgc|Vous avez été banni du canal {}.|ff|".format(
                     self.nom)
         else:
-            self.liste_noir.remove(joueur)
+            self.liste_noire.remove(joueur)
             joueur << "|rgc|Vous n'êtes plus sur la liste noire du canal " \
                     "{}.|ff|".format(self.nom)
     

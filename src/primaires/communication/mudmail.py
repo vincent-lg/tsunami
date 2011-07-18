@@ -82,7 +82,7 @@ class MUDmail(BaseObj):
     def nom_dest(self):
         """Renvoie le nom du destinataire si existant"""
         return (self.destinataire is not None and self.destinataire.nom) or \
-                "aucun destinataire"
+                "aucun"
     
     @property
     def apercu_contenu(self):
@@ -114,6 +114,7 @@ class MUDmail(BaseObj):
     def enregistrer_brouillon(self):
         """Enregistre le mail comme brouillon"""
         self._etat = BROUILLON
+        self.date = datetime.datetime.now()
         self.enregistrer()
     
     def archiver(self):
