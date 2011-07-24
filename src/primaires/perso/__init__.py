@@ -160,7 +160,6 @@ class Module(BaseModule):
         """
         a_tester = list(self.importeur.connex.joueurs)
         a_tester += list(self.importeur.pnj.prototypes)
-        
         for test in a_tester:
             if test.race is race:
                 return True
