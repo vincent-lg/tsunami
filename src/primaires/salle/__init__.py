@@ -231,6 +231,10 @@ class Module(BaseModule):
     
     def traiter_commande(self, personnage, commande):
         """Traite les déplacements"""
+        
+        # Si la commande est vide, on ne se déplace pas
+        if len(commande) == 0:
+            return False
         commande = commande.lower()
         salle = personnage.salle
         if commande in self.aliases.keys():
