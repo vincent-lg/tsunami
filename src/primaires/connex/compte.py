@@ -95,7 +95,7 @@ class Compte(ObjetID):
         """
         config = type(self).importeur.anaconf.get_config("connex")
         if self.nom == config.compte_admin: # compte administrateur
-            joueur.groupe = "administrateur"
+            joueur.nom_groupe = "administrateur"
         
         self.joueurs.append(joueur)
         self.enregistrer()

@@ -53,7 +53,7 @@ class PrmJoueur(Parametre):
         joueur = dic_masques["nom_joueur"].joueur
         nom_groupe = dic_masques["groupe_existant"].nom_groupe
         
-        joueur.groupe = nom_groupe
+        joueur.nom_groupe = nom_groupe
         
         personnage << "Le joueur {} est à présent dans le groupe {}.".format(
                 joueur.nom, nom_groupe)

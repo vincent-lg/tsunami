@@ -52,13 +52,13 @@ class Personnage(ObjetID):
     groupe = "personnages"
     sous_rep = "personnages"
     _nom = "personnage"
-    _version = 2
+    _version = 3
     
     def __init__(self):
         """Constructeur d'un personnage"""
         ObjetID.__init__(self)
         self.nom = ""
-        self.groupe = "pnj"
+        self.nom_groupe = "pnj"
         self.contextes = FileContexte(self) # file d'attente des contexte
         self.langue_cmd = "francais"
         self._salle = None
@@ -157,6 +157,12 @@ class Personnage(ObjetID):
             m=self.mana,
             e=self.endurance,
         )
+    
+    @property
+    def groupe(self):
+        """Retourne le groupe en fonction de son nom dans self.nom_groupe."""
+        groupes = type(self).importeur.intterpreteur.groupes
+        return groupes[self.nom_groupe]
     
     def lier_equipement(self, squelette):
         """Crée un nouvel équipement pour le personnage en fonction

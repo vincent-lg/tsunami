@@ -38,3 +38,7 @@ class Convertisseur:
     def depuis_version_1(objet, classe):
         objet.set_version(classe, 2)
         objet.nom = objet.nom.capitalize()
+    def depuis_version_2(objet, classe):
+        objet.set_version(classe, 3)
+        objet.nom_groupe = objet.__dict__["groupe"]
+        del objet.__dict__["groupe"]
