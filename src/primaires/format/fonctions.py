@@ -240,6 +240,8 @@ def contient(nom_complet, fragment):
     """Retourne True si nom contient fragment, False sinon."""
     fragment = supprimer_couleurs(supprimer_accents(fragment).lower())
     nom_complet = supprimer_couleurs(supprimer_accents(nom_complet).lower())
+    if not fragment:
+        return False
     
     fragment = fragment.replace("'", " ")
     nom_complet = nom_complet.replace("'", " ")
