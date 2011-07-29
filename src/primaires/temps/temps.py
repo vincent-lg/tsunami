@@ -69,7 +69,6 @@ class Temps(Unique):
             self.noms_jours = [str(i) for i in range(1, \
                     config.nombre_jours + 1)]
         
-        print("jours", self.noms_jours)
         # On vérifie que le réglage initial est conforme aux noms
         try:
             nom_mois = self.noms_mois[self.mois]

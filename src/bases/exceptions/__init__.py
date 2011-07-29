@@ -28,22 +28,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'exception ErreurValidation, détaillée plus bas."""
+"""Ce package définit certaines exceptions levées par Kassie.
 
-from bases.exceptions.base import ExceptionMUD
+Ces exceptions héritent toutes de ExceptionMUD (voir ./base).
 
-class ErreurValidation(ExceptionMUD):
-    
-    """Exception générale lors d'une erreur de validation
-    Cette exception est levée quand un noeud n'a pu être validé
-    correctement.
-    
-    """
-    
-    def __init__(self, message=""):
-        """Constructeur de l'exception"""
-        self.message = message
-    
-    def __str__(self):
-        """Affichage de l'exception"""
-        return self.message
+Note : d'autres exceptions propres à Kassie peuvent être définies ailleurs,
+notamment dans un module si elles sont utilisées principalement par lui.
+
+"""
+

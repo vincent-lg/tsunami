@@ -30,7 +30,9 @@
 
 """Fichier contenant l'exception ErreurInterpretation"""
 
-class ErreurInterpretation(RuntimeError):
+from bases.exceptions.base import ExceptionMUD
+
+class ErreurInterpretation(ExceptionMUD):
     
     """Exception générale des erreurs d'interprétation des masques.
     

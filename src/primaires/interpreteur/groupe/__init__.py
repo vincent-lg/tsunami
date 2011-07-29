@@ -110,7 +110,6 @@ class ConteneurGroupes(Unique):
     
     def personnage_a_le_droit(self, personnage, commande):
         """Le personnage a-t-il le droit d'appeler 'commande' ?"""
-        print(personnage, personnage.nom_groupe, personnage.nom_groupe in self)
         if personnage.nom_groupe in self:
             groupe_png = self[personnage.nom_groupe]
         else:

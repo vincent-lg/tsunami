@@ -28,22 +28,23 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'exception ErreurValidation, détaillée plus bas."""
+"""Ce fichier contient les exceptions propres à anaconf.
+
+    ErreurInterpretation -- le fichier de configuration contient une erreur
+
+"""
 
 from bases.exceptions.base import ExceptionMUD
 
-class ErreurValidation(ExceptionMUD):
+class ErreurInterpretation(ExceptionMUD):
     
-    """Exception générale lors d'une erreur de validation
-    Cette exception est levée quand un noeud n'a pu être validé
-    correctement.
+    """Cette classe définit l'exception ErreurInterpretation.
+    
+    Elle est appelée lors de la lecture d'un fichier de configuration, si
+    une erreur survient lors de son analyse.
+    
+    Son constructeur prend en paramètre :
+    message -- le message d'erreur
     
     """
-    
-    def __init__(self, message=""):
-        """Constructeur de l'exception"""
-        self.message = message
-    
-    def __str__(self):
-        """Affichage de l'exception"""
-        return self.message
+    pass
