@@ -91,7 +91,7 @@ class Module(BaseModule):
                         "actions"), nom_module), "ClasseAction")
                 lst_actions[nom_module] = action
         
-        self.test_instruction("afficher(elt, 5, 31.4, -2, \"ok, didelai\")")
+        #self.test_instruction("afficher(elt, 5, 31.4, -2, \"ok, didelai\")")
         BaseModule.init(self)
     
     def test_instruction(self, chaine):
