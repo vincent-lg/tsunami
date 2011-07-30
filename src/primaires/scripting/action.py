@@ -52,13 +52,14 @@ class Action(Instruction):
         
         """
         Instruction.__init__(self)
-        self.parametres = None
+        self.parametres = ()
     
     def __call__(self):
         """Exécute l'action"""
         return self.interpreter(*self.parametres)
     
-    def parser(regex, chaine):
+    @classmethod
+    def parser(cls, regex, chaine):
         """Parse la regex de recherche.
         
         La chaîne va être utile ici car les arguments de l'action ne sont pas

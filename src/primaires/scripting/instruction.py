@@ -38,6 +38,7 @@ from abstraits.obase import BaseObj
 class Instruction(BaseObj):
     
     """Classe abstraite définissant une instruction.
+    
     Les différents types d'instructions doivent en hériter.
     Par exemple, l'instruction conditionnelle, la fonction, les boucles si
     existent.
@@ -60,15 +61,17 @@ class Instruction(BaseObj):
         """
         BaseObj.__init__(self)
     
-    def correspond_schema(chaine):
+    @classmethod
+    def correspond_schema(cls, chaine):
         """Retourne True si la chaîne correspond au schéma, False sinon.
         
         Le schéma est donné sous la forme d'une regex.
         
         """
-        return type(self).schema.search(chaine)
+        return cls.schema.search(chaine)
     
-    def parser(regex, chaine):
+    @classmethod
+    def parser(cls, regex, chaine):
         """Parse la regex de recherche.
         
         Ce parsage peut s'appuyer sur regex.groups().
