@@ -33,4 +33,5 @@
 from . import commande
 from . import etat
 from . import ident
+from . import nom_stat
 from . import nombre

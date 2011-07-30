@@ -28,14 +28,50 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Fichier contenant le masque <nom_stat>."""
 
-from . import afk
-from . import chgroupe
-from . import groupe
-from . import module
-from . import options
-from . import pset
-from . import quitter
-from . import shutdown
-from . import where
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+
+class NomStat(Masque):
+    
+    """Masque <nom_stat>.
+    On attend un nom de stat en paramètre.
+    
+    """
+    
+    nom = "nom_stat"
+    nom_complet = "nom d'une stat"
+    
+    def init(self):
+        """Initialisation des attributs"""
+        self.nom_stat = None
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
+        nom_stat = liste_vers_chaine(commande).lstrip()
+        nom_stat = nom_stat.split(" ")[0]
+        
+        if not nom_stat:
+            raise ErreurValidation( \
+                "De quelle stat parlez-vous ?")
+        
+        # nom_stat ne peut commencer par un signe souligné
+        if nom_stat.startswith("_"):
+            raise ErreurValidation( \
+                "Cette stat n'existe pas.")
+        
+        # On se base sur les stats du personnage appelant
+        try:
+            stat = getattr(personnage.stats, "_{}".format(nom_stat))
+        except AttributeError:
+            raise ErreurValidation( \
+                "Cette stat n'existe pas.")
+        else:
+            self.nom_stat = stat.nom
+        
+        commande[:] = commande[len(nom_stat) + 1:]
+        return True

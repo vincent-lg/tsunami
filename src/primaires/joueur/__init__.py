@@ -74,6 +74,7 @@ class Module(BaseModule):
             commandes.groupe.CmdGroupe(),
             commandes.module.CmdModule(),
             commandes.options.CmdOptions(),
+            commandes.pset.CmdPset(),
             commandes.quitter.CmdQuitter(),
             commandes.shutdown.CmdShutdown(),
             commandes.where.CmdWhere(),
