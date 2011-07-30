@@ -101,6 +101,7 @@ class Stats(BaseObj):
     
     def restaurer(self):
         """Restaure les stats.
+        
         Toutes les stats ayant un maximum sont remis à ce maximum.
         
         """

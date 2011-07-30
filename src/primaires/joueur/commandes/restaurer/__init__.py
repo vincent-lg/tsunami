@@ -28,15 +28,29 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Package contenant la commande 'restaurer'"""
 
-from . import afk
-from . import chgroupe
-from . import groupe
-from . import module
-from . import options
-from . import pset
-from . import quitter
-from . import restaurer
-from . import shutdown
-from . import where
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdRestaurer(Commande):
+    
+    """Commande 'restaurer'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "restaurer", "restore")
+        self.groupe = "administrateur"
+        self.schema = "<nom_joueur>"
+        self.aide_courte = "restaure les stats du personnage"
+        self.aide_longue = \
+                "Cette commande permet de restaurer, c'est-à-dire remettre " \
+            "à leur valeur maximum, toutes les stats du personnage."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        personnage_mod = dic_masques["nom_joueur"].joueur
+        personnage_mod.stats.restaurer()
+        personnage << "Le personnage {} a vu ses stats restaurées.".format(
+                personnage_mod.nom)
