@@ -31,6 +31,7 @@
 """Ce fichier contient la classe Stat, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
+from primaires.perso.exceptions.stat import *
 
 # Flags :
 NX = 0 # aucune exception ne sera levée
@@ -123,13 +124,13 @@ class Stat(BaseObj):
         base = courante + self.__variable
         # Levée d'exceptions
         if base < 0 and flags & I0:
-            raise ValueError
+            raise StatI0
         if base <= 0 and flags & IE0:
-            raise ValueError
+            raise StatIE0
         if self.max and flags & SM and base > self.max:
-            raise ValueError
+            raise StatSM
         if self.max and flags & SEM and base >= self.max:
-            raise ValueError
+            raise StatSEM
         
         if base > self.marge_max:
             base = self.marge_max
