@@ -76,7 +76,7 @@ class EdtArchives(Editeur):
                 msg += (mail.lu and "|vrc|oui|ff|" or "|rgc|non|ff|")
                 msg += " | |vr|" + mail.sujet.ljust(taille) + "|ff| | |blc|"
                 msg += mail.expediteur.nom.ljust(10) + "|ff| | |jn|"
-                msg += "2012-12-21 00:00|ff| |\n"
+                msg += mail.date.isoformat(" ")[:16] + "|ff| |\n"
                 i += 1
             msg += "+" + "-".ljust(taille + 45, "-") + "+"
         

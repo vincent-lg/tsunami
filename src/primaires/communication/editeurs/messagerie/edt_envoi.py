@@ -77,7 +77,7 @@ class EdtBoiteEnvoi(Editeur):
                 msg += "| |rg|" + str(i).ljust(2) + "|ff| | "
                 msg += "|vr|" + mail.sujet.ljust(taille) + "|ff| | |blc|"
                 msg += mail.destinataire.nom.ljust(12) + "|ff| | |jn|"
-                msg += "2012-12-21 00:00|ff| |\n"
+                msg += mail.date.isoformat(" ")[:16] + "|ff| |\n"
                 i += 1
             msg += "+" + "-".ljust(taille + 41, "-") + "+"
         

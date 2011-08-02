@@ -101,10 +101,25 @@ class EdtMessagerie(Presentation):
         if not sujet or sujet.isspace():
             self.pere.joueur << "|err|Vous devez préciser un sujet d'aide.|ff|"
         elif sujet == "messages recus":
-            self.pere.joueur << "Aide sur les messages reçus."
+            self.pere.joueur << "Cette boîte liste tous les messages " \
+                    "que vous avez reçu, et propose diverses\n" \
+                    "options basiques."
+        elif sujet == "brouillons":
+            self.pere.joueur << "Lorsque vous enregistrez un message sans " \
+                    "l'envoyer, il se retrouve dans ce\n" \
+                    "dossier. Par la suite, vous pouvez l'éditer ou " \
+                    "le supprimer à votre guise."
+        elif sujet == "archives":
+            self.pere.joueur << "Ce dossier contient tous les messages " \
+                    "que vous avez archivés à partir de\n" \
+                    "votre boîte de réception."
+        elif sujet == "envoi":
+            self.pere.joueur << "Vous pouvez retrouver ici tous les " \
+                    "messages que vous avez envoyés."
         else:
             self.pere.joueur << "|err|Aucune aide sur ce sujet.\n" \
-                    "Sujets disponibles : messages reçus.|ff|"
+                    "Sujets disponibles : messages reçus, brouillons, " \
+                    "archives, envoi.|ff|"
     
     def construire(self):
         """Construction de l'éditeur"""
