@@ -54,7 +54,7 @@ class Tests(BaseObj):
         self.__evenement = evenement
         self.__tests = []
         self.__liaisons = []
-        self.construire()
+        self._construire()
     
     @property
     def evenement(self):
@@ -77,7 +77,8 @@ class Tests(BaseObj):
         
         test = Test(variable, operateur, valeur)
         self.__test.append(test)
-        self.__liaisons.append(liaison)
+        if len(self.__tests) > 0:
+            self.__liaisons.append(liaison)
         self.evenement.parent.enregistrer()
     
     def __bool__(self):
@@ -85,9 +86,9 @@ class Tests(BaseObj):
         tests = [str(bool(test)) for test in self.__tests]
         py_test = tests[0]
         # On intercale un test, un connecteur
-        for i, valeur in enumerate(tests[1:]):
-            py_connecteur = connecteurs[self.__liaisons[i]]
+        for test, connecteur in zip(tests[1:], self.liaisons):
+            py_connecteur = connecteurs[connecteur]
             py_test += " {} ".format(py_connecteur)
-            py_test += valeur
+            py_test += test
         
         return eval(py_test)

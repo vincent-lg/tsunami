@@ -54,6 +54,7 @@ class Test(BaseObj):
         self.variable = variable
         self.operateur = operateur
         self.valeur = valeur
+        self._construire()
         
         # On fait maintenant quelques vérifications
         if tests:
@@ -76,4 +77,8 @@ class Test(BaseObj):
     
     def __bool__(self):
         """Retourne True si le test est vrai, False sinon"""
-        raise NotImplemented # yet
+        # On convertit le test en code Python
+        variable = self.tests.evenement.espaces.variables[self.variable]
+        test_py = variable + " " + self.operateur + " " + self.valeur
+        print("On test {}".format(test_py))
+        return eval(test_py)

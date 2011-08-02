@@ -46,6 +46,7 @@ from .edt_zone import EdtZone
 from .edt_mnemonic import EdtMnemonic
 from .edt_sorties import EdtSorties
 from .edt_details import EdtDetails
+from primaires.scripting.editeurs.edt_evenements import EdtEvenements
 
 class EdtRedit(Presentation):
     
@@ -194,3 +195,8 @@ class EdtRedit(Presentation):
             "   nord vers picte:2 et dans picte:2, une sortie sud vers " \
             "picte:1.\n" \
             " - |ent|/d <sortie>|ff| : supprime la sortie indiquée\n\n"
+        
+        # Script
+        scripts = self.ajouter_choix("scripts", "sc", EdtEvenements,
+                salle.script)
+        scripts.parent = self

@@ -31,6 +31,7 @@
 """Fichier contenant la classe Evenement détaillée plus bas."""
 
 from abstraits.obase import *
+from .espaces import Espaces
 
 class Evenement(BaseObj):
     
@@ -47,6 +48,7 @@ class Evenement(BaseObj):
         TOUTES RENSEIGNEES quand on l'appelle
     *   un dictionnaire pouvant contenir des sous-évènements
     *   une suite de conditions (voir plus bas)
+    *   plusieurs espaces de nom
     
     En outre, l'évènement garde en mémoire le script dont il est issu,
     qu'il soit sous-évènement ou non.
@@ -63,6 +65,10 @@ class Evenement(BaseObj):
     distinction en condition pour le bâtisseur. Du point de vue
     du code, ils ont une seule condition appelée automatiquement.
     
+    Les espaces de nom sont présents dans l'attribut 'espaces'.
+    Chaque attribut de cet objet 'Espaces' est un espace de nom différent.
+    Chaque espace se manipule comme un dictionnaire.
+    
     Le constructeur d'un évènement prend en paramètre :
         script -- le script qui possède l'évènement
         nom -- le nom de l'évènement
@@ -75,11 +81,14 @@ class Evenement(BaseObj):
         BaseObj.__init__(self)
         self.script = script
         self.nom = nom
+        self.aide_courte = "non précisée"
+        self.aide_longue = "non précisée"
         self.parent = parent
         self.variables = {}
         self.__evenements = {}
         self.__conditions = []
-        self.construire()
+        self.espaces = Espaces(self)
+        self._construire()
     
     def __getnewargs__(self):
         return (None, "")

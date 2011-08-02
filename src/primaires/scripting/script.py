@@ -63,7 +63,7 @@ class Script(BaseObj):
         BaseObj.__init__(self)
         self.parent = parent
         self.__evenements = {}
-        self.construire()
+        self._construire()
     
     def __getnewargs__(self):
         return (None, )
@@ -76,6 +76,10 @@ class Script(BaseObj):
         """
         evenement = supprimer_accents(evenement).lower()
         return self.__evenements[evenement]
+    
+    @property
+    def evenements(self):
+        return list(self.__evenements)
     
     def creer_evenement(self, evenement):
         """Crée et ajoute l'évènement dont le nom est précisé en paramètre.

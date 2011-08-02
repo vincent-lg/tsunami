@@ -39,6 +39,7 @@ from .coordonnees import Coordonnees
 from .sorties import Sorties, NOMS_SORTIES
 from .details import Details
 from .objets_sol import ObjetsSol
+from .script import SalleScript
 
 # Constantes
 ZONE_VALIDE = r"^[a-z0-9_]{3,20}$"
@@ -47,6 +48,7 @@ MNEMONIC_VALIDE = r"^[a-z0-9_]{1,15}$"
 class Salle(ObjetID):
     
     """Classe représentant une salle de l'univers.
+    
     Une salle est un élément détaillant la géographie locale d'une petite
     portion de l'univers. Bien que cela dépende des MUDs, les salles décrivent
     généralement un espace d'environ 5 mètres sur 5.
@@ -88,6 +90,7 @@ class Salle(ObjetID):
         self.details = Details(parent=self)
         self._personnages = ListeID(self) # personnages présents
         self.objets_sol = ObjetsSol(parent=self)
+        self.script = SalleScript(self)
     
     def __getnewargs__(self):
         return ("", "")
