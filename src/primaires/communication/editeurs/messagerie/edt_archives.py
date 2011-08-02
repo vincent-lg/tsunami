@@ -28,67 +28,68 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le contexte éditeur EdtBrouillons"""
+"""Fichier contenant le contexte éditeur EdtArchives"""
 
 from primaires.format.fonctions import couper_phrase
-from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
-from primaires.communication.mudmail import BROUILLON
-from primaires.communication.editeurs.medit import EdtMedit
+from primaires.communication.mudmail import ARCHIVE
 from primaires.interpreteur.editeur import Editeur
 
-class EdtBrouillons(Editeur):
+class EdtArchives(Editeur):
     
-    """Classe définissant le contexte-éditeur 'brouillons'.
-    Ce contexte liste les brouillons et propose des options d'édition.
+    """Classe définissant le contexte-éditeur 'archives'.
+    Ce contexte liste les messages archivés et propose des options d'édition.
     
     """
     
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
-        self.ajouter_option("e", self.opt_editer)
+        self.ajouter_option("l", self.opt_lire)
+        self.ajouter_option("r", self.opt_restaurer)
         self.ajouter_option("s", self.opt_supprimer)
     
     def accueil(self):
         """Méthode d'accueil"""
         joueur = self.pere.joueur
         mails = type(self).importeur.communication.mails.get_mails_pour(
-                joueur, BROUILLON)
-        msg = "||tit| " + "Brouillons".ljust(76) + "|ff||\n"
+                joueur, ARCHIVE, False)
+        msg = "||tit| " + "Archives".ljust(76) + "|ff||\n"
         msg += self.opts.separateur + "\n"
         msg += self.aide_courte + "\n\n"
         
         if not mails:
-            msg += "|att|Aucun message enregistré dans ce dossier.|ff|"
+            msg += "|att|Vous n'avez aucun message archivé.|ff|"
         else:
             taille = 0
             for mail in mails:
-                t_sujet = len(couper_phrase(mail.sujet, 40))
+                t_sujet = len(couper_phrase(mail.sujet, 44))
                 if t_sujet > taille:
                     taille = t_sujet
             taille = (taille < 5 and 5) or taille
-            msg += "+" + "-".ljust(taille + 41, "-") + "+\n"
-            msg += "| |tit|N°|ff| | |tit|" + "Sujet".ljust(taille)
-            msg += "|ff| | |tit|Destinataire|ff| | |tit|Enregistré le   |ff| |\n"
+            msg += "+" + "-".ljust(taille + 45, "-") + "+\n"
+            msg += "| |tit|N°|ff| | |tit|Lu|ff|  | |tit|" + "Sujet".ljust(taille)
+            msg += "|ff| | |tit|Expéditeur|ff| | |tit|" + "Date".ljust(16)
+            msg += "|ff| |\n"
             i = 1
             for mail in mails:
-                msg += "| |rg|" + str(i).ljust(2) + "|ff| "
-                msg += "| |vr|" + mail.sujet.ljust(taille) + "|ff| | |blc|"
-                msg += mail.nom_dest.ljust(12) + "|ff| | |jn|"
+                msg += "| |rg|" + str(i).ljust(2) + "|ff| | "
+                msg += (mail.lu and "|vrc|oui|ff|" or "|rgc|non|ff|")
+                msg += " | |vr|" + mail.sujet.ljust(taille) + "|ff| | |blc|"
+                msg += mail.expediteur.nom.ljust(10) + "|ff| | |jn|"
                 msg += "2012-12-21 00:00|ff| |\n"
                 i += 1
-            msg += "+" + "-".ljust(taille + 41, "-") + "+"
+            msg += "+" + "-".ljust(taille + 45, "-") + "+"
         
         return msg
     
-    def opt_editer(self, arguments):
-        """Option éditer"""
+    def opt_lire(self, arguments):
+        """Option lire"""
         if not arguments or arguments.isspace():
             self.pere.joueur << "|err|Vous devez préciser le numéro d'un " \
                     "message.|ff|"
             return
         mails = type(self).importeur.communication.mails.get_mails_pour(
-                self.pere.joueur, BROUILLON)
+                self.pere.joueur, ARCHIVE, False)
         try:
             num = int(arguments.split(" ")[0])
         except ValueError:
@@ -96,21 +97,46 @@ class EdtBrouillons(Editeur):
                     "valide.|ff|"
         else:
             i = 1
-            e_mail = None
+            l_mail = None
             for mail in mails:
                 if num == i:
-                    e_mail = mail
+                    l_mail = mail
                     break
                 i += 1
-            if e_mail is None:
+            if l_mail is None:
                 self.pere.joueur << "|err|Le numéro spécifié ne correspond à " \
                         "aucun message.|ff|"
                 return
-            enveloppe = EnveloppeObjet(EdtMedit, e_mail, None)
-            enveloppe.parent = self
-            contexte = enveloppe.construire(self.pere.joueur)
-            self.pere.joueur.contextes.ajouter(contexte)
-            contexte.actualiser()
+            self.pere.joueur << l_mail.afficher()
+            l_mail.lu = True
+    
+    def opt_restaurer(self, arguments):
+        """Option restaurer"""
+        if not arguments or arguments.isspace():
+            self.pere.joueur << "|err|Vous devez préciser le numéro d'un " \
+                    "message.|ff|"
+            return
+        mails = type(self).importeur.communication.mails.get_mails_pour(
+                self.pere.joueur, ARCHIVE, False)
+        try:
+            num = int(arguments.split(" ")[0])
+        except ValueError:
+            self.pere.joueur << "|err|Vous devez spécifier un nombre entier " \
+                    "valide.|ff|"
+        else:
+            i = 1
+            a_mail = None
+            for mail in mails:
+                if num == i:
+                    a_mail = mail
+                    break
+                i += 1
+            if a_mail is None:
+                self.pere.joueur << "|err|Le numéro spécifié ne correspond à " \
+                        "aucun message.|ff|"
+                return
+            a_mail.restaurer()
+            self.pere.joueur << "|att|Le message a bien été restauré.|ff|"
     
     def opt_supprimer(self, arguments):
         """Option supprimer"""
@@ -119,7 +145,7 @@ class EdtBrouillons(Editeur):
                     "message.|ff|"
             return
         mails = type(self).importeur.communication.mails.get_mails_pour(
-                self.pere.joueur, BROUILLON)
+                self.pere.joueur, ARCHIVE, False)
         try:
             num = int(arguments.split(" ")[0])
         except ValueError:
@@ -137,5 +163,5 @@ class EdtBrouillons(Editeur):
                 self.pere.joueur << "|err|Le numéro spécifié ne correspond à " \
                         "aucun message.|ff|"
                 return
-            s_mail.suppr_pour_exp()
-            self.pere.joueur << "|att|Ce message a bien été supprimé.|ff|"
+            s_mail.suppr_pour_dest()
+            self.pere.joueur << "|att|Le message a bien été supprimé.|ff|"

@@ -42,6 +42,8 @@ from primaires.format.fonctions import supprimer_accents
 from primaires.interpreteur.editeur.presentation import Presentation
 from .edt_messages_recus import EdtMessagesRecus
 from .edt_brouillons import EdtBrouillons
+from .edt_archives import EdtArchives
+from .edt_envoi import EdtBoiteEnvoi
 
 class EdtMessagerie(Presentation):
     
@@ -128,5 +130,29 @@ class EdtMessagerie(Presentation):
             "Options disponibles :\n" \
             " - |ent|/e <numéro>|ff| : ouvre un message enregistré afin " \
             "de l'éditer\n" \
+            " - |ent|/s <numéro>|ff| : permet de supprimer définitivement " \
+            "un brouillon"
+        
+        # Archives
+        archives = self.ajouter_choix("archives", "a", EdtArchives)
+        archives.parent = self
+        archives.aide_courte = \
+            "Entrez |ent|/|ff| pour revenir à la fenêtre précédente.\n" \
+            "Options disponibles :\n" \
+            " - |ent|/l <numéro>|ff| : permet de lire un message\n" \
+            " - |ent|/r <numéro>|ff| : restaure un message dans la boîte " \
+            "de réception\n" \
+            " - |ent|/s <numéro>|ff| : permet de supprimer définitivement " \
+            "un message"
+        
+        # Boîte d'envoi
+        envoi = self.ajouter_choix("boîte d'envoi", "o", EdtBoiteEnvoi)
+        envoi.parent = self
+        envoi.aide_courte = \
+            "Entrez |ent|/|ff| pour revenir à la fenêtre précédente.\n" \
+            " - |ent|/l <numéro>|ff| : permet de lire un message\n" \
+            " - |ent|/c <numéro>|ff| : crée une copie d'un message (pour " \
+            "l'envoyer à d'autres\n" \
+            "   destinataires par exemple)\n" \
             " - |ent|/s <numéro>|ff| : permet de supprimer définitivement " \
             "un message"

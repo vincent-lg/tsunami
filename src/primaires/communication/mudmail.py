@@ -41,6 +41,11 @@ ENVOYE = 1
 BROUILLON = 2
 ARCHIVE = 3
 
+SUPPR_AUCUN = 0
+SUPPR_DEST = 1
+SUPPR_EXP = 2
+SUPPR_TOUS = 3
+
 class MUDmail(BaseObj):
 
     """Cette classe contient un mudmail
@@ -60,6 +65,7 @@ class MUDmail(BaseObj):
         self.destinataire = None
         self.contenu = Description()
         self.lu = False
+        self.suppr_pour = SUPPR_AUCUN
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
     
@@ -121,3 +127,16 @@ class MUDmail(BaseObj):
         """Archive le mail"""
         self._etat = ARCHIVE
         self.enregistrer()
+    
+    def restaurer(self):
+        """Restaure le mail"""
+        self._etat = ENVOYE
+        self.enregistrer()
+    
+    def suppr_pour_exp():
+        """Supprime le mail pour son expéditeur"""
+        self.suppr_pour = (SUPPR_DEST and SUPPR_TOUS) or SUPPR_EXP
+    
+    def suppr_pour_dest():
+        """Supprime le mail pour son destinataire"""
+        self.suppr_pour = (SUPPR_EXP and SUPPR_TOUS) or SUPPR_DEST

@@ -31,10 +31,10 @@
 """Fichier contenant le contexte éditeur EdtMessagesRecus"""
 
 from primaires.format.fonctions import couper_phrase
-from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
 from primaires.communication.mudmail import ENVOYE
-from primaires.communication.editeurs.medit import EdtMedit
 from primaires.interpreteur.editeur import Editeur
+from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
+from primaires.communication.editeurs.medit import EdtMedit
 
 class EdtMessagesRecus(Editeur):
     
@@ -149,6 +149,7 @@ class EdtMessagesRecus(Editeur):
                         "aucun message.|ff|"
                 return
             a_mail.archiver()
+            self.pere.joueur << "|att|Le message a bien été archivé.|ff|"
     
     def opt_repondre(self, arguments):
         """Option répondre"""
@@ -189,43 +190,5 @@ class EdtMessagesRecus(Editeur):
             contexte.actualiser()
     
     def opt_boite_refresh(self, arguments):
-        """Option de réactualisation"""
-        joueur = self.pere.joueur
-        mails = type(self).importeur.communication.mails.get_mails_pour(
-                joueur, ENVOYE, False)
-        nb_mails = len(mails)
-        prf_mails = (nb_mails > 1 and "s") or ""
-        nb_non_lus = len([mail for mail in mails if not mail.lu])
-        prf_non_lus = (nb_non_lus > 1 and "s") or ""
-        nb_non_lus = (nb_non_lus != 0 and "|rgc|" + str(nb_non_lus) + "|ff|") \
-                or "aucun"
-        msg = ""
-        if nb_mails != 0:
-            msg += "|blc|" + str(nb_mails) + "|ff| message" + prf_mails
-            msg += " dont " + nb_non_lus + " non lu" + prf_non_lus
-            msg += "\n"
-        
-        if not mails:
-            msg += "|att|Vous n'avez reçu aucun message.|ff|"
-        else:
-            taille = 0
-            for mail in mails:
-                t_sujet = len(couper_phrase(mail.sujet, 44))
-                if t_sujet > taille:
-                    taille = t_sujet
-            taille = (taille < 5 and 5) or taille
-            msg += "+" + "-".ljust(taille + 45, "-") + "+\n"
-            msg += "| |tit|N°|ff| | |tit|Lu|ff|  | |tit|" + "Sujet".ljust(taille)
-            msg += "|ff| | |tit|Expéditeur|ff| | |tit|" + "Date".ljust(16)
-            msg += "|ff| |\n"
-            i = 1
-            for mail in mails:
-                msg += "| |rg|" + str(i).ljust(2) + "|ff| | "
-                msg += (mail.lu and "|vrc|oui|ff|" or "|rgc|non|ff|")
-                msg += " | |vr|" + mail.sujet.ljust(taille) + "|ff| | |blc|"
-                msg += mail.expediteur.nom.ljust(10) + "|ff| | |jn|"
-                msg += "2012-12-21 00:00|ff| |\n"
-                i += 1
-            msg += "+" + "-".ljust(taille + 45, "-") + "+"
-        
-        joueur << msg
+        """Option de réactualisation"""        
+        self.pere.joueur << self.opts.separateur + "\n" + self.accueil()
