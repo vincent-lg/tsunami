@@ -91,6 +91,9 @@ class Script(BaseObj):
         evts = tmp_script.evenements
         evts.update(self.__evenements)
         self.__evenements.update(evts)
+        # On s'asure que tous les évènements pointent sur le bon script
+        for evenement in self.__evenements.values():
+            evenement.script = self
     
     @property
     def evenements(self):

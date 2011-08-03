@@ -28,20 +28,21 @@
 # pereIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient l'éditeur EdtEvenements, détaillé plus bas."""
+"""Ce fichier contient l'éditeur EdtScript, détaillé plus bas."""
 
 from primaires.interpreteur.editeur import Editeur
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
 from primaires.format.fonctions import *
+from .edt_evenement import EdtEvenement
 
-class EdtEvenements(Editeur):
+class EdtScript(Editeur):
     
-    """Contexte-éditeur des évènements d'uns cript.
+    """Contexte-éditeur des évènements d'uns script.
     
     L'objet appelant est le script.
     Ses évènements se trouvent dans l'attribut evenements
-    
     (en lecture uniquement).
+    
     """
     
     def __init__(self, pere, objet=None, attribut=None):
@@ -57,7 +58,8 @@ class EdtEvenements(Editeur):
         msg += "Voici les différents évènements que vous pouvez éditer pour cet objet.\n"
         msg += "Entrez simplement |ent|son nom|ff| pour l'éditer ou " \
                 "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n"
-        evenements = script.evenements.values()
+        evenements = sorted(script.evenements.values(),
+                key=lambda evt: evt.nom)
         if evenements:
             msg += "\n".join(
                 ["  {} : {}".format(evenement.nom.ljust(15),
@@ -72,6 +74,11 @@ class EdtEvenements(Editeur):
         script = self.objet
         nom_evt = supprimer_accents(msg).lower()
         if nom_evt in script.evenements:
-            self.pere << "Edition de l'évènement {}.".format(nom_evt)
+            evenement = script.evenements[nom_evt]
+            enveloppe = EnveloppeObjet(EdtEvenement, evenement)
+            enveloppe.parent = self
+            contexte = enveloppe.construire(self.pere)
+            
+            self.migrer_contexte(contexte)
         else:
             self.pere << "|err|Cet évènement n'existe pas.|ff|"

@@ -77,7 +77,7 @@ class Evenement(BaseObj):
     """
     
     def __init__(self, script, nom, parent=None):
-        """Constructeur d'èn évènement"""
+        """Constructeur d'un évènement"""
         BaseObj.__init__(self)
         self.script = script
         self.nom = nom
