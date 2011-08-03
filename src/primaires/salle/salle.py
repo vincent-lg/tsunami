@@ -39,7 +39,7 @@ from .coordonnees import Coordonnees
 from .sorties import Sorties, NOMS_SORTIES
 from .details import Details
 from .objets_sol import ObjetsSol
-from .script import SalleScript
+from .script import ScriptSalle
 
 # Constantes
 ZONE_VALIDE = r"^[a-z0-9_]{3,20}$"
@@ -90,7 +90,7 @@ class Salle(ObjetID):
         self.details = Details(parent=self)
         self._personnages = ListeID(self) # personnages présents
         self.objets_sol = ObjetsSol(parent=self)
-        self.script = SalleScript(self)
+        self.script = ScriptSalle(self)
     
     def __getnewargs__(self):
         return ("", "")

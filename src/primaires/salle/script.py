@@ -28,11 +28,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe SalleScript détaillée plus bas."""
+"""Fichier contenant la classe ScriptSalle détaillée plus bas."""
 
 from primaires.scripting.script import Script
 
-class SalleScript(Script):
+class ScriptSalle(Script):
     
     """Script et évènements propre aux salles.
     
@@ -45,3 +45,5 @@ class SalleScript(Script):
     def __init__(self, salle):
         """Constructeur du script"""
         Script.__init__(self, salle)
+        evt_arriver = self.creer_evenement("arrive")
+        evt_arriver.aide_courte = "un personnage arrive dans la salle"

@@ -55,9 +55,9 @@ class EdtEvenements(Editeur):
         msg += "Edition des scripts de {}".format(script.parent).ljust(75)
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += "Voici les différents évènements que vous pouvez éditer pour cet objet.\n"
-        msg += "Entrez simplement |ent|son nom|ff| pour l'éditeur ou " \
+        msg += "Entrez simplement |ent|son nom|ff| pour l'éditer ou " \
                 "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n"
-        evenements = script.evenements
+        evenements = script.evenements.values()
         if evenements:
             msg += "\n".join(
                 ["  {} : {}".format(evenement.nom.ljust(15),
@@ -69,4 +69,9 @@ class EdtEvenements(Editeur):
     
     def interpreter(self, msg):
         """Interprétation de l'éditeur"""
-        pass
+        script = self.objet
+        nom_evt = supprimer_accents(msg).lower()
+        if nom_evt in script.evenements:
+            self.pere << "Edition de l'évènement {}.".format(nom_evt)
+        else:
+            self.pere << "|err|Cet évènement n'existe pas.|ff|"
