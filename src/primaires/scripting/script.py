@@ -89,11 +89,16 @@ class Script(BaseObj):
         # On crée un nouveau script pour récupérer les évènements standards
         tmp_script = type(self)(self.parent)
         evts = tmp_script.evenements
-        evts.update(self.__evenements)
-        self.__evenements.update(evts)
+        nv_evts = evts.copy()
+        nv_evts.update(self.__evenements)
+        self.__evenements.update(nv_evts)
         # On s'asure que tous les évènements pointent sur le bon script
         for evenement in self.__evenements.values():
             evenement.script = self
+            evt = evts.get(evenement.nom)
+            if evt:
+                evenement.aide_courte = evt.aide_courte
+                evenement.aide_longue = evt.aide_longue
     
     @property
     def evenements(self):

@@ -30,6 +30,8 @@
 
 """Ce fichier contient l'éditeur EdtEvenement, détaillé plus bas."""
 
+from textwrap import wrap
+
 from primaires.interpreteur.editeur import Editeur
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
 from primaires.format.fonctions import *
@@ -53,6 +55,8 @@ class EdtEvenement(Editeur):
         msg += "Edition de l'évènement {} de {}".format(evenement.nom,
                 evenement.script.parent).ljust(71)
         msg += "|ff||\n" + self.opts.separateur + "\n"
+        msg += "Description :\n    "
+        msg += "\n    ".join(wrap(evenement.aide_longue))
         return msg
     
     def interpreter(self, msg):
