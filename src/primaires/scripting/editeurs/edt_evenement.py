@@ -57,6 +57,15 @@ class EdtEvenement(Editeur):
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += "Description :\n    "
         msg += "\n    ".join(wrap(evenement.aide_longue))
+        msg += "\n\nVariables définies :\n"
+        msg += "  "
+        variables = evenement.variables
+        if variables:
+            msg += "\n  ".join(["{:<15} : {}".format(var.nom, var.aide) \
+                    for var in variables.values()])
+        else:
+            msg += "Aucune variable n'a été définie pour ce script."
+        
         return msg
     
     def interpreter(self, msg):

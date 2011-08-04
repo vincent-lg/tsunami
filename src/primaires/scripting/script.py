@@ -99,6 +99,7 @@ class Script(BaseObj):
             if evt:
                 evenement.aide_courte = evt.aide_courte
                 evenement.aide_longue = evt.aide_longue
+                evenement.variables = evt.variables
     
     @property
     def evenements(self):

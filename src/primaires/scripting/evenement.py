@@ -32,6 +32,7 @@
 
 from abstraits.obase import *
 from .espaces import Espaces
+from .variable import Variable
 
 class Evenement(BaseObj):
     
@@ -93,6 +94,11 @@ class Evenement(BaseObj):
     def __getnewargs__(self):
         return (None, "")
     
+    def __getstate__(self):
+        """Ne sauvegarde pas les variables en fichier."""
+        dico_attr = BaseObj.__getstate__(self).copy()
+        del dico_attr["variables"]
+        return dico_attr
     @property
     def appelant(self):
         """Retourne l'appelant, c'est-à-dire le parent du script."""
@@ -152,3 +158,20 @@ class Evenement(BaseObj):
         """
         # TODO
         raise NotImplemented
+    
+    def ajouter_variable(self, nom, type):
+        """Ajoute une variable au dictionnaire des variables.
+        
+        On précise :
+        nom -- le nom (ne doit pas être déjà utilisé)
+        type -- le nom du type sous la forme d'une chaîne de caractère
+        
+        """
+        if nom in self.variables:
+            raise ValueError("la variable {} existe déjà dans cet " \
+                    "évènement".format(nom))
+        
+        variable = Variable(self, nom, type)
+        self.variables[nom] = variable
+        
+        return variable

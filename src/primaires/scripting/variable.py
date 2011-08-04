@@ -28,30 +28,41 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe ScriptSalle détaillée plus bas."""
+"""Fichier contenant la classe Variable détaillée plus bas."""
 
-from primaires.scripting.script import Script
+from abstraits.obase import *
 
-class ScriptSalle(Script):
+class Variable(BaseObj):
     
-    """Script et évènements propre aux salles.
+    """Classe contenant une variable d'évènement.
     
-    C'est dans cette classe que sont construits les évènements du scripting
-    des salles. Il est ainsi plus facile à modifier si vous souhaitez
-    rajouter un évènement.
+    Une variable d'évènement contient un nom, un certain type bien entendu,
+    ainsi qu'une aide.
     
     """
     
-    def __init__(self, salle):
-        """Constructeur du script"""
-        Script.__init__(self, salle)
-        evt_arriver = self.creer_evenement("arrive")
-        evt_arriver.aide_courte = "un personnage arrive dans la salle"
-        evt_arriver.aide_longue = \
-            "Cet évènement est appelé quand un personnage, joueur ou PNJ, " \
-            "arrive dans la salle, quelque soit sa salle de provenance et " \
-            "son moyen de déplacement. Il faut cependant retirer le " \
-            "déplacement par |cmd|goto|ff| qui ne déclenche pas cet évènement."
-        # Configuration des variables de l'évènement arrive
-        var_depuis = evt_arriver.ajouter_variable("depuis", "int")
-        var_depuis.aide = "la direction d'où vient le personnage"
+    def __init__(self, evenement, nom, str_type=None):
+        """Constructeur d'une variable."""
+        BaseObj.__init__(self)
+        self.evenement = evenement
+        self.nom = nom
+        self.type = type(None)
+        self.aide = "non précisée"
+        if type:
+            # On cherche le type dans les builtins ou dans le module types
+            self.changer_type(str_type)
+        
+        self._construire()
+    
+    def __getnewargs__(self):
+        return (None, "")
+    
+    def changer_type(self, type):
+        """On change le type de la variable."""
+        # On récupère les types
+        types = __import__("types")
+        builtins = __builtins__.copy()
+        try:
+            self.type = builtins[type]
+        except KeyError:
+            self.type = getattr(types, type)
