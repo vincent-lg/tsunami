@@ -31,6 +31,8 @@
 """Fichier contenant la classe Evenement détaillée plus bas."""
 
 from abstraits.obase import *
+from .espaces import Espaces
+from .variable import Variable
 
 class Evenement(BaseObj):
     
@@ -45,33 +47,131 @@ class Evenement(BaseObj):
     Au niveau de la structure, un évènement contient :
     *   un dictionnaire de variables qui doivent IMPERATIVEMENT être
         TOUTES RENSEIGNEES quand on l'appelle
-    *   une suite d'instructions de différents types
     *   un dictionnaire pouvant contenir des sous-évènements
-    *   l'appelant de l'évènement (le parent du script)
+    *   une suite de conditions (voir plus bas)
+    *   plusieurs espaces de nom
     
     En outre, l'évènement garde en mémoire le script dont il est issu,
     qu'il soit sous-évènement ou non.
     
-    Le constructeur d'èn évènement prend en paramètre :
+    Un évènement est constitué de plusieurs conditions. Ces conditions
+    sont propres aux variables qui les définissent. Un exemple simple :
+        Evènement donner du PNJ tavernier_picte
+            1   objet = pot_biere et nombre > 1
+        La condition ci-dessus est appelée si le joueur donne plus d'un
+        pot de bière au tavernier. Cela permet de ranger plus facilement
+        nos lignes de script en fonction de plusieurs variables.
+    
+    Les évènements n'ayant aucune variable définie n'ont pas cette
+    distinction en condition pour le bâtisseur. Du point de vue
+    du code, ils ont une seule condition appelée automatiquement.
+    
+    Les espaces de nom sont présents dans l'attribut 'espaces'.
+    Chaque attribut de cet objet 'Espaces' est un espace de nom différent.
+    Chaque espace se manipule comme un dictionnaire.
+    
+    Le constructeur d'un évènement prend en paramètre :
         script -- le script qui possède l'évènement
         nom -- le nom de l'évènement
         parent -- si c'est un sous-évènement, l'évènement parent (optionnel)
     
     """
     
-    def __init__(self, sscript, nom, parent=None):
-        """Constructeur d'èn évènement"""
+    def __init__(self, script, nom, parent=None):
+        """Constructeur d'un évènement"""
         BaseObj.__init__(self)
         self.script = script
-        self.appelant = None
-        if self.script:
-            self.appelant = self.script.parent
         self.nom = nom
+        self.aide_courte = "non précisée"
+        self.aide_longue = "non précisée"
         self.parent = parent
         self.variables = {}
-        self.__instructions = []
         self.__evenements = {}
-        self.construire()
+        self.__conditions = []
+        self.espaces = Espaces(self)
+        self._construire()
     
     def __getnewargs__(self):
         return (None, "")
+    
+    def __getstate__(self):
+        """Ne sauvegarde pas les variables en fichier."""
+        dico_attr = BaseObj.__getstate__(self).copy()
+        del dico_attr["variables"]
+        return dico_attr
+    @property
+    def appelant(self):
+        """Retourne l'appelant, c'est-à-dire le parent du script."""
+        return self.script.parent
+    
+    def ajouter_condition(self, chaine_tests):
+        """Ajoute une condition à l'évènement.
+        
+        La chaîne de test est une liste de tuples de trois éléments.
+        *   la variable testée (objet par exemple)
+        *   l'opérateur (=, <=, ...)
+        *   la valeur
+        
+        Ces trois informations doivent être des chaînes de caractères.
+        
+        L'opérateur est identifié en fonction de la syntaxe du script
+        définie dans la configuration.
+        
+        Quant à la valeur, elle est propre au type de la variable.
+        Plusieurs chaînes en fonction du type peuvent signifier différentes choses.
+        Par exemple, pour n'importe quel type, un signe * signifie
+        "n'importe quelle valeur".
+        
+        """
+        # On construit une condition
+        condition = Condition(self.script, self, chaine_tests)
+        if self.a_condition(condition.tests):
+            raise ValueError("cette condition est déjà présente dans cet " \
+                    "évènement")
+        
+        self.__conditions.append(condition)
+        self.appelant.enregistrer()
+        return len(self.__conditions) - 1
+    
+    def supprimer_condition(self, indice):
+        """Retire la condition à l'indice spécifiée."""
+        del self.__conditions[indice]
+        self.appelant.enregistrer()
+    
+    def a_condition(self, tests):
+        """Retourne True si la condition existe déjà.
+        
+        Les tests sont donnés sous la forme d'une liste telle que retournée
+        par condition.tests.
+        
+        """
+        conditions = [condition for condition in self.__conditions if \
+                condition.tests == tests]
+        return bool(conditions)
+    
+    def get_instructions(self, variables):
+        """Retourne les instructions correspondant aux valeurs des variables.
+        
+        On test chaque condition, l'une après l'autre, pour savoir si elle
+        correspond à la valeur des variables.
+        
+        """
+        # TODO
+        raise NotImplemented
+    
+    def ajouter_variable(self, nom, type):
+        """Ajoute une variable au dictionnaire des variables.
+        
+        On précise :
+        nom -- le nom (ne doit pas être déjà utilisé)
+        type -- le nom du type sous la forme d'une chaîne de caractère
+        
+        """
+        if nom in self.variables:
+            raise ValueError("la variable {} existe déjà dans cet " \
+                    "évènement".format(nom))
+        
+        variable = Variable(self, nom, type)
+        self.variables[nom] = variable
+        
+        return variable

@@ -32,6 +32,7 @@
 
 from abstraits.obase import *
 from primaires.format.fonctions import *
+from .evenement import Evenement
 
 class Script(BaseObj):
     
@@ -63,7 +64,7 @@ class Script(BaseObj):
         BaseObj.__init__(self)
         self.parent = parent
         self.__evenements = {}
-        self.construire()
+        self._construire()
     
     def __getnewargs__(self):
         return (None, )
@@ -76,6 +77,33 @@ class Script(BaseObj):
         """
         evenement = supprimer_accents(evenement).lower()
         return self.__evenements[evenement]
+    
+    def __setstate__(self, dico_attr):
+        """Quand on récupère l'objet depuis un fichier.
+        
+        On s'assure que, si des évènements vides ont été ajoutés dans
+        le constructeur, ils soient toujours présents.
+        
+        """
+        BaseObj.__setstate__(self, dico_attr)
+        # On crée un nouveau script pour récupérer les évènements standards
+        tmp_script = type(self)(self.parent)
+        evts = tmp_script.evenements
+        nv_evts = evts.copy()
+        nv_evts.update(self.__evenements)
+        self.__evenements.update(nv_evts)
+        # On s'asure que tous les évènements pointent sur le bon script
+        for evenement in self.__evenements.values():
+            evenement.script = self
+            evt = evts.get(evenement.nom)
+            if evt:
+                evenement.aide_courte = evt.aide_courte
+                evenement.aide_longue = evt.aide_longue
+                evenement.variables = evt.variables
+    
+    @property
+    def evenements(self):
+        return dict(self.__evenements)
     
     def creer_evenement(self, evenement):
         """Crée et ajoute l'évènement dont le nom est précisé en paramètre.

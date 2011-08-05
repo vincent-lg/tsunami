@@ -48,7 +48,7 @@ class EnveloppeObjet(BaseObj):
     
     """
     
-    def __init__(self, editeur, edite, attribut):
+    def __init__(self, editeur, edite, attribut=""):
         """Constructeur de l'enveloppe"""
         BaseObj.__init__(self)
         self.editeur = editeur
