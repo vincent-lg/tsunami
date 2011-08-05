@@ -36,6 +36,7 @@ from .mudmail import *
 class BoiteMail(Unique):
 
     """Boîte mail du moteur.
+    
     Cette classe contient tous les mudmails et permet d'interagir avec.
     
     Voir : ./mudmail.py

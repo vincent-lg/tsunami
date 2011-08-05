@@ -93,6 +93,3 @@ while True:
         editeur.ajouter(rep, module, typeMod, entete, cmd)
     else:
         print("Commande inconnue")
-    
-        
-

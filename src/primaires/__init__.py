@@ -60,6 +60,7 @@ Voici un résumé des modules primaires existants :
                     d'attente défini
 -   email           module gérant l'envoie d'e-mails depuis le projet
 -   format          module gérant le formatage des messages reçus / à envoyer
+-   hook            Module gérant les hooks et évènements
 -   interpreteur    module chargé tout particulièrement d'interpréter les
                     commandes envoyés par les clients
 -   joueur          module contenant les informations sur les joueurs
@@ -69,6 +70,7 @@ Voici un résumé des modules primaires existants :
                     (PNJ)
 -   pnj             module gérant les personnages non joueurs
 -   salle           Module gérant les salles du MUD
+-   scripting       Module gérant le scripting
 -   supenr          superviseur de l'enregistrement des objets dans des
                     fichiers sérialisés
 -   temps           module gérant le temps, non pas la météo, mais le temporel

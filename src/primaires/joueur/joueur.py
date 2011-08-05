@@ -120,6 +120,9 @@ class Joueur(Personnage):
             salle.ajouter_personnage(self)
         
         self << self.contexte_actuel.accueil()
+        
+        # On appelle l'hook à la connexion
+        type(self).importeur.hook["joueur:connecte"].executer(self)
     
     def pre_deconnecter(self):
         """Cette méthode prépare la déconnexion du joueur.

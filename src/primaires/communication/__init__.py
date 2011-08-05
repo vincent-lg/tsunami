@@ -45,6 +45,7 @@ from .attitude import INACHEVEE
 from .canal import Canal
 from .canaux import Canaux
 from .boite_mail import BoiteMail
+from .mudmail import *
 
 class Module(BaseModule):
     
@@ -127,6 +128,12 @@ class Module(BaseModule):
             else:
                 self.logger.info("Aucun mudmail récupéré")
         self.mails = mails
+        
+        # On lie la méthode joueur_connecte avec l'hook joueur_connecte
+        # La méthode joueur_connecte sera ainsi appelé quand un joueur
+        # se connecte
+        self.importeur.hook["joueur:connecte"].ajouter_evenement(
+                self.joueur_connecte)
         
         BaseModule.init(self)
     
@@ -305,3 +312,13 @@ class Module(BaseModule):
                 self.attitudes[att.cle].jouer(personnage, commande)
         
         return res
+    
+    def joueur_connecte(self, joueur):
+        """On avertit le joueur si il a des messages non lus."""
+        mails = self.mails.get_mails_pour(joueur, ENVOYE)
+        mails = [mail for mail in mails if not mail.lu]
+        if len(mails) == 1:
+            joueur << "|att|Vous avez un mudmail non lu.|ff|"
+        elif len(mails) > 1:
+            joueur << "|att|Vous avez {} mudmails non lus.|ff|".format(
+                    len(mails))

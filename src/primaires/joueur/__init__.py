@@ -63,6 +63,10 @@ class Module(BaseModule):
     def init(self):
         """Méthode d'initialisation du module"""
         joueurs = self.importeur.supenr.charger_groupe(Joueur)
+                
+        # On crée les hooks du module
+        self.importeur.hook.ajouter_hook("joueur:connecte",
+                "Hook appelé après qu'un joueur se soit connecté.")
         
         BaseModule.init(self)
     
