@@ -32,6 +32,7 @@
 
 from abstraits.obase import *
 from .espaces import Espaces
+from .tests import Tests
 from .variable import Variable
 
 class Evenement(BaseObj):
@@ -48,14 +49,15 @@ class Evenement(BaseObj):
     *   un dictionnaire de variables qui doivent IMPERATIVEMENT être
         TOUTES RENSEIGNEES quand on l'appelle
     *   un dictionnaire pouvant contenir des sous-évènements
-    *   une suite de conditions (voir plus bas)
+    *   une suite de tests
     *   plusieurs espaces de nom
     
     En outre, l'évènement garde en mémoire le script dont il est issu,
     qu'il soit sous-évènement ou non.
     
-    Un évènement est constitué de plusieurs conditions. Ces conditions
-    sont propres aux variables qui les définissent. Un exemple simple :
+    Un évènement est constitué de plusieurs conditions (ou tests). Ces
+    conditions sont propres aux variables qui les définissent. Un exemple
+    simple :
         Evènement donner du PNJ tavernier_picte
             1   objet = pot_biere et nombre > 1
         La condition ci-dessus est appelée si le joueur donne plus d'un
@@ -87,7 +89,7 @@ class Evenement(BaseObj):
         self.parent = parent
         self.variables = {}
         self.__evenements = {}
-        self.__conditions = []
+        self.__tests = []
         self.espaces = Espaces(self)
         self._construire()
     
@@ -99,13 +101,19 @@ class Evenement(BaseObj):
         dico_attr = BaseObj.__getstate__(self).copy()
         del dico_attr["variables"]
         return dico_attr
+    
     @property
     def appelant(self):
         """Retourne l'appelant, c'est-à-dire le parent du script."""
         return self.script.parent
     
-    def ajouter_condition(self, chaine_tests):
-        """Ajoute une condition à l'évènement.
+    @property
+    def tests(self):
+        """Retourne une liste déréférencée des tests."""
+        return list(self.__tests)
+    
+    def ajouter_test(self, chaine_tests):
+        """Ajoute un test à l'évènement.
         
         La chaîne de test est une liste de tuples de trois éléments.
         *   la variable testée (objet par exemple)
@@ -117,47 +125,18 @@ class Evenement(BaseObj):
         L'opérateur est identifié en fonction de la syntaxe du script
         définie dans la configuration.
         
-        Quant à la valeur, elle est propre au type de la variable.
-        Plusieurs chaînes en fonction du type peuvent signifier différentes choses.
-        Par exemple, pour n'importe quel type, un signe * signifie
-        "n'importe quelle valeur".
-        
         """
-        # On construit une condition
-        condition = Condition(self.script, self, chaine_tests)
-        if self.a_condition(condition.tests):
-            raise ValueError("cette condition est déjà présente dans cet " \
-                    "évènement")
-        
-        self.__conditions.append(condition)
+        # On construit un test
+        tests = Tests(self)
+        tests.construire(chaine_tests)
+        self.__tests.append(tests)
         self.appelant.enregistrer()
-        return len(self.__conditions) - 1
+        return len(self.__tests) - 1
     
-    def supprimer_condition(self, indice):
-        """Retire la condition à l'indice spécifiée."""
-        del self.__conditions[indice]
+    def supprimer_testst(self, indice):
+        """Retire le test à l'indice spécifiée."""
+        del self.__tests[indice]
         self.appelant.enregistrer()
-    
-    def a_condition(self, tests):
-        """Retourne True si la condition existe déjà.
-        
-        Les tests sont donnés sous la forme d'une liste telle que retournée
-        par condition.tests.
-        
-        """
-        conditions = [condition for condition in self.__conditions if \
-                condition.tests == tests]
-        return bool(conditions)
-    
-    def get_instructions(self, variables):
-        """Retourne les instructions correspondant aux valeurs des variables.
-        
-        On test chaque condition, l'une après l'autre, pour savoir si elle
-        correspond à la valeur des variables.
-        
-        """
-        # TODO
-        raise NotImplemented
     
     def ajouter_variable(self, nom, type):
         """Ajoute une variable au dictionnaire des variables.

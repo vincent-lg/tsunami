@@ -50,6 +50,7 @@ class Test(BaseObj):
     
     def __init__(self, tests, variable, operateur, valeur):
         """Constructeur du test."""
+        BaseObj.__init__(self)
         self.tests = tests
         self.variable = variable
         self.operateur = operateur
@@ -57,9 +58,9 @@ class Test(BaseObj):
         self._construire()
         
         # On fait maintenant quelques vérifications
-        if tests:
+        if tests is not None:
             evenement = tests.evenement
-            if variable not in evenement.variable.keys():
+            if variable not in evenement.variables.keys():
                 raise ValueError("la variable {} n'existe pas dans " \
                         "l'évènement {}".format(variable, evenement))
             
@@ -68,9 +69,6 @@ class Test(BaseObj):
                         operateur))
             
             v_type = evenement.variables[variable].type
-            if not v_type.accepte(valeur):
-                raise ValueError"le type de variable {} n'accepte pas " \
-                        "la valeur {}".format(v_type, repr(valeur)))
     
     def __getnewargs__(self):
         return (None, "", "", "")
@@ -82,3 +80,6 @@ class Test(BaseObj):
         test_py = variable + " " + self.operateur + " " + self.valeur
         print("On test {}".format(test_py))
         return eval(test_py)
+    
+    def __str__(self):
+        return "{} {} {}".format(self.variable, self.operateur, self.valeur)

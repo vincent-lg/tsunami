@@ -66,8 +66,23 @@ class EdtEvenement(Editeur):
         else:
             msg += "Aucune variable n'a été définie pour ce script."
         
+        msg += "\n\nConditions :\n  "
+        tests = evenement.tests
+        if tests:
+            msg += "\n  ".join(["{:>3}. si {}".format(i + 1, test) \
+                    for i, test in enumerate(tests)])
+        else:
+            msg += "Aucune condition n'a été définie."
+        
         return msg
     
     def interpreter(self, msg):
         """Interprétation de l'éditeur"""
-        pass
+        evenement = self.objet
+        try:
+            evenement.ajouter_test(msg)
+        except ValueError as err:
+            print(err)
+            personnage << "|err|Erreur lors du parsage du test.|ff|"
+        else:
+            self.actualiser()
