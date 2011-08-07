@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-import re
+import shlex
 
 from .instruction import Instruction
 
@@ -45,8 +45,7 @@ class Action(Instruction):
     
     """
     
-    schema_arguments = None
-    type_de_donnee = ""
+    _parametres_possibles = None
     def __init__(self):
         """Construction d'une action.
         
@@ -54,39 +53,55 @@ class Action(Instruction):
         Instruction.__init__(self)
         self.parametres = ()
     
+    def __str__(self):
+        return self.nom + " " + " ".join(self.parametres)
+    
     def __call__(self):
         """Exécute l'action"""
         return self.interpreter(*self.parametres)
     
-    @classmethod
-    def parser(cls, regex, chaine):
-        """Parse la regex de recherche.
+    def verifier_type_parametres(self):
+        """Cette méthode vérifie le type des paramètres passés.
         
-        La chaîne va être utile ici car les arguments de l'action ne sont pas
-        extraits par la première regex.        
+        Elle se base sur le dictionnaire des paramètres possibles.
+        
+        Si une erreur survient, elle lève l'exception ValueError.
+        Le message levé par cet exception est censé être transmis
+        à l'immortel éditant le script.
         
         """
-        nom_fonction = regex.groups()[0]
-        arg = regex.groups()[1] or ""
-        args = []
-        if arg:
-            args.append(arg)
+        params = self.parametres
+        if not any(len(args) == len(params) for args in \
+                self._parametres_possibles.keys()):
+            raise ValueError("l'action {} ne peut s'exécuter avec {} " \
+                    "paramètres".format(self.nom,
+                    len(self._parametres_possibles), len(params)))
+    
+    @classmethod
+    def construire(cls, chaine):
+        """Construit l'instruction.
         
-        delimiteur_droit = Instruction.cfg.delimiteur_droit.replace("\\", "")
-        pos_del = -len(delimiteur_droit) or None
-        chaine = chaine[len(nom_fonction) + 1 + len(arg):pos_del]
-        regex_argument = r"({sep}({a}))({sep}({a}))*".format(
-                a=Action.type_de_donnee, sep=Instruction.cfg.sep)
-        argument_compile = re.compile("^" + Action.schema_argument + "$")
-        while chaine:
-            res = argument_compile.search(chaine)
-            groupes = res.groups()
-            arg_c = groupes[0]
-            arg_n = groupes[1]
-            chaine = chaine[len(arg_c):]
-            args.append(arg_n)
+        L'instruction est sous la forme :
+            action parametre1 parametre2 parametre3 ...
         
-        action = actions[nom_fonction]()
-        action.parametres = args
+        Le premier mot est donc le nom de l'action.  Ceux suivant
+        sont ses paramètres.
+        
+        """
+        parametres = shlex.split(chaine, posix=False)
+        if not parametres:
+            raise ValueError("Entrez au moins un nom d'action")
+        
+        nom_action = parametres[0]
+        parametres = tuple(parametres[1:])
+        
+        # On cherche l'action
+        try:
+            action = actions[nom_action]()
+        except KeyError:
+            raise ValueError("l'action {} n'existe pas".format(nom_action))
+        
+        action.parametres = parametres
+        action.verifier_type_parametres()
         
         return action

@@ -36,6 +36,10 @@ class ClasseAction(Action):
     
     """Action afficher."""
     
-    def interpreter(self, *messages):
+    def interpreter(self, message):
         """Affiche les messages à l'écran."""
-        print(*messages)
+        print(message)
+    
+    _parametres_possibles = {
+        ("str", ): interpreter,
+    }

@@ -35,6 +35,7 @@ import shlex
 from abstraits.obase import *
 from primaires.scripting.constantes.connecteurs import connecteurs
 from .test import Test
+from .action import Action
 
 class Tests(BaseObj):
     
@@ -57,6 +58,7 @@ class Tests(BaseObj):
         self.__evenement = evenement
         self.__tests = []
         self.__connecteurs = []
+        self.__instructions = []
         self._construire()
     
     def __getnewargs__(self):
@@ -81,6 +83,11 @@ class Tests(BaseObj):
     @property
     def evenement(self):
         return self.__evenement
+    
+    @property
+    def instructions(self):
+        """Retourne une liste déréférencée des instructions."""
+        return list(self.__instructions)
     
     def ajouter_test(self, test, connecteur="et"):
         """Ajoute un test à la suite.
@@ -186,3 +193,14 @@ class Tests(BaseObj):
             liste[:] = []
         
         return test
+    
+    def ajouter_instruction(self, message):
+        """Construit et ajoute l'instruction."""
+        instruction = Action.construire(message)
+        self.__instructions.append(instruction)
+        self.evenement.appelant.enregistrer()
+    
+    def executer_instructions(self):
+        """On exécute chaque instructions dans l'ordre."""
+        for instruction in self.__instructions:
+            instruction()

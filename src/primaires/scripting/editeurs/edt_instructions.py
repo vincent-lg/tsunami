@@ -28,20 +28,21 @@
 # pereIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient l'éditeur EdtEvenement, détaillé plus bas."""
+"""Ce fichier contient l'éditeur EdtInstructions, détaillé plus bas."""
 
 from textwrap import wrap
 
 from primaires.interpreteur.editeur import Editeur
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
 from primaires.format.fonctions import *
-from .edt_instructions import EdtInstructions
 
-class EdtEvenement(Editeur):
+class EdtInstructions(Editeur):
     
-    """Contexte-éditeur d'un évènement.
+    """Contexte-éditeur d'une suite d'instructions.
     
-    L'objet appelant est l'évènement.
+    L'objet appelant est la suite de tests contenant le code.
+    Par code, il faut entendre ici la liste des instructions constituant
+    un script.
     
     """
     
@@ -51,51 +52,37 @@ class EdtEvenement(Editeur):
     
     def accueil(self):
         """Message d'accueil du contexte"""
-        evenement = self.objet
+        tests = self.objet
+        instructions = tests.instructions
+        evenement = tests.evenement
+        appelant = evenement.script.parent
         msg = "| |tit|"
-        msg += "Edition de l'évènement {} de {}".format(evenement.nom,
-                evenement.script.parent).ljust(71)
+        msg += "Edition d'un script de {}[{}]".format(appelant,
+                evenement.nom).ljust(61)
         msg += "|ff||\n" + self.opts.separateur + "\n"
-        msg += "Description :\n    "
-        msg += "\n    ".join(wrap(evenement.aide_longue))
-        msg += "\n\nVariables définies :\n"
-        msg += "  "
         variables = evenement.variables
+        msg += "Variables :\n  "
         if variables:
             msg += "\n  ".join(["{:<15} : {}".format(var.nom, var.aide) \
                     for var in variables.values()])
         else:
             msg += "Aucune variable n'a été définie pour ce script."
         
-        msg += "\n\nConditions :\n  "
-        tests = evenement.tests
-        if tests:
-            msg += "\n  ".join(["{:>3}. si {}".format(i + 1, test) \
-                    for i, test in enumerate(tests)])
+        msg += "\n\nInstructions :\n  "
+        if instructions:
+            msg += "\n  ".join(["{:>3} {}".format(i + 1, instruction) \
+                    for i, instruction in enumerate(instructions)])
         else:
-            msg += "Aucune condition n'a été définie."
+            msg += "Aucune instruction n'est définie dans ce script."
         
         return msg
     
     def interpreter(self, msg):
         """Interprétation de l'éditeur"""
-        evenement = self.objet
-        if msg.isdigit():
-            no_tests = int(msg) - 1
-            try:
-                tests = evenement.tests[no_tests]
-            except IndexError:
-                self.pere << "|err|Ce test n'existe pas.|ff|"
-            else:
-                enveloppe = EnveloppeObjet(EdtInstructions, tests)
-                enveloppe.parent = self
-                contexte = enveloppe.construire(self.pere)
-                
-                self.migrer_contexte(contexte)
+        tests = self.objet
+        try:
+            tests.ajouter_instruction(msg)
+        except ValueError as err:
+            self.pere << "|err| + err + |ff|"
         else:
-            try:
-                evenement.ajouter_test(msg)
-            except ValueError as err:
-                self.pere << "|err|Erreur lors du parsage du test.|ff|"
-            else:
-                self.actualiser()
+            self.actualiser()

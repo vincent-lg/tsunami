@@ -89,19 +89,7 @@ class Module(BaseModule):
                 action = __import__(chemin_py_mod)
                 action = getattr(getattr(getattr(getattr(action, "scripting"),
                         "actions"), nom_module), "ClasseAction")
+                action.nom = nom_module
                 lst_actions[nom_module] = action
         
-        #self.test_instruction("afficher(elt, 5, 31.4, -2, \"ok, didelai\")")
         BaseModule.init(self)
-    
-    def test_instruction(self, chaine):
-        """Test d'instruction.
-        Méthode de debug.
-        
-        """
-        regex = Action.schema.search(chaine)
-        if regex:
-            action = Action.parser(regex, chaine)
-            action()
-        else:
-            print("Erreur de parsage")

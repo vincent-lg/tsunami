@@ -29,8 +29,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-import re
-
 from abstraits.obase import BaseObj
 
 """Fichier contenant la classe Instruction, détaillée plus bas."""
@@ -45,12 +43,9 @@ class Instruction(BaseObj):
     
     Cette classe propose plusieurs mécanismes génériques de manipulation
     d'instruction.
-    Elle est notamment capable de dire si une chaîne de caractère
-    correspond à son schéma de validation.
     
     """
     
-    schema = None
     cfg = None
     def __init__(self):
         """Construction d'une instruction.
@@ -61,21 +56,12 @@ class Instruction(BaseObj):
         """
         BaseObj.__init__(self)
     
-    @classmethod
-    def correspond_schema(cls, chaine):
-        """Retourne True si la chaîne correspond au schéma, False sinon.
-        
-        Le schéma est donné sous la forme d'une regex.
-        
-        """
-        return cls.schema.search(chaine)
+    def __getnewargs__(self):
+        return ()
     
     @classmethod
-    def parser(cls, regex, chaine):
-        """Parse la regex de recherche.
-        
-        Ce parsage peut s'appuyer sur regex.groups().
-        Redéfinir cette méthode dans la classe fille.
+    def construire(cls, chaine):
+        """Construit une instruction.
         
         """
         raise NotImplementedError
