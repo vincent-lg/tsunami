@@ -35,7 +35,7 @@ import shlex
 from abstraits.obase import *
 from primaires.scripting.constantes.connecteurs import connecteurs
 from .test import Test
-from .action import Action
+from .instruction import Instruction
 
 class Tests(BaseObj):
     
@@ -196,7 +196,8 @@ class Tests(BaseObj):
     
     def ajouter_instruction(self, message):
         """Construit et ajoute l'instruction."""
-        instruction = Action.construire(message)
+        type_instruction = Instruction.test_interpreter(message)
+        instruction = type_instruction.construire(message)
         self.__instructions.append(instruction)
         self.evenement.appelant.enregistrer()
     

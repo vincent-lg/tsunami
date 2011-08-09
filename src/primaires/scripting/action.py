@@ -78,6 +78,11 @@ class Action(Instruction):
                     len(self._parametres_possibles), len(params)))
     
     @classmethod
+    def peut_interpreter(cls, chaine):
+        """La chaîne peut-elle être interprétée par la classe Action ?"""
+        return True
+    
+    @classmethod
     def construire(cls, chaine):
         """Construit l'instruction.
         

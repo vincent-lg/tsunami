@@ -29,11 +29,43 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-from abstraits.obase import BaseObj
-
 """Fichier contenant la classe Instruction, détaillée plus bas."""
 
-class Instruction(BaseObj):
+from abstraits.obase import BaseObj, MetaBaseObj
+
+# Dictionnaire des instructions {nom: classe}
+instructions = {}
+
+class MetaInstruction(MetaBaseObj):
+    
+    """Métaclasse des instrucitons.
+    
+    Pour chaque classe héritée d'Instruction, elle l'ajoute dans
+    le dictionnaire instructions.
+    
+    Ce dictionnaire est ensuite utilisé par la classe Instruction pour
+    des comportements génériques.
+    
+    Note : seules les instructions de premier niveau, c'est-à-dire
+    directement héritée de la classe Instruction, sont ajoutées dans le
+    dictionnaire.
+    Les classes héritant de ces classes de premier niveau ne sont pas
+    ajoutées.
+    
+    """
+    
+    def __init__(cls, nom, bases, dict):
+        MetaBaseObj.__init__(cls, nom, bases, dict)
+        # On ajoute la classe dans le dictionnaire
+        if "Instruction" in [classe.__name__ for classe in bases]:
+            if nom in instructions:
+                raise ValueError("une classe portant le nom {} existe déjà " \
+                        "dans le dictionnaire des instructions".format(nom))
+            
+            instructions[nom] = cls
+            print(instructions)
+
+class Instruction(BaseObj, metaclass=MetaInstruction):
     
     """Classe abstraite définissant une instruction.
     
@@ -60,8 +92,40 @@ class Instruction(BaseObj):
         return ()
     
     @classmethod
+    def peut_interpreter(cls, chaine):
+        """Cette classe doit retourner True si elle peut interpréter la chaîne.
+        
+        La chaîne passée en paramètre doit donc correspondre à
+        un certain schéma attendu par ce type d'instruction.
+        
+        Par exemple, la chaîne :
+            'si depuis = "ouest":'
+        peut être compris par une instruction de type Condition, mais pas
+        par une Action.
+        
+        Cette méthode est appelée quand on insert une ligne dans l'éditeur
+        de script.
+        
+        """
+        raise NotImplementedError
+    
+    @classmethod
     def construire(cls, chaine):
         """Construit une instruction.
         
         """
         raise NotImplementedError
+    
+    @classmethod
+    def test_interpreter(cls, chaine):
+        """Cherche le type d'instruction pouvant interpréter la chaîne.
+        
+        Elle appelle pour cela la méthode peut_interpreter de chaque type
+        d'instruction contenu dans le dictionnaire instructions.
+        
+        """
+        for classe in instructions.values():
+            if classe.peut_interpreter(chaine):
+                return classe
+        
+        raise ValueError("Cette instruction ne peut être interprétée.")

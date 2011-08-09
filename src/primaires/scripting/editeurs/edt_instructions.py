@@ -83,6 +83,6 @@ class EdtInstructions(Editeur):
         try:
             tests.ajouter_instruction(msg)
         except ValueError as err:
-            self.pere << "|err| + err + |ff|"
+            self.pere << "|err|" + str(err) + "|ff|"
         else:
             self.actualiser()
