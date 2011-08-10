@@ -33,6 +33,7 @@
 
 from abstraits.id import ObjetID, propriete_id
 from primaires.interpreteur.file import FileContexte
+from primaires.interpreteur.groupe.groupe import *
 
 from .race import Race
 from .equipement import Equipement
@@ -159,9 +160,9 @@ class Personnage(ObjetID):
         )
     
     @property
-    def groupe(self):
-        """Retourne le groupe en fonction de son nom dans self.nom_groupe."""
-        groupes = type(self).importeur.intterpreteur.groupes
+    def grp(self):
+        """Retourne le groupe du joueur."""
+        groupes = type(self).importeur.interpreteur.groupes
         return groupes[self.nom_groupe]
     
     def lier_equipement(self, squelette):
@@ -178,6 +179,14 @@ class Personnage(ObjetID):
     def get_nom_etat(self, nombre):
         """Retourne le nom et un état par défaut."""
         return self.nom + " est là"
+    
+    def est_immortel(self):
+        """Retourne True si le personnage est immortel.
+        
+        Note : cette information se trouve dans le groupe du personnage.
+        
+        """
+        return IMMORTELS & self.grp.flags != 0
     
     def detruire(self):
         """Méthode appelée lors de la destruction du personage.
