@@ -74,4 +74,7 @@ class PrmInfo(Parametre):
         else:
             msg += "aucun"
         
+        # Flags
+        msg += "\n  Flags : " + groupe.str_flags + "."
+        
         personnage << msg

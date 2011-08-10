@@ -54,7 +54,7 @@ class EdtMembre(Editeur):
         """
         membre = self.objet
         squelette = membre.parent
-        flag = arguments.rstrip().lstrip()
+        flag = arguments.strip()
         if flag in FLAGS:
             squelette.changer_flag_membre(membre.nom,
                     membre.flags ^ FLAGS[flag])
