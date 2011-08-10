@@ -60,7 +60,10 @@ from reseau.connexions.client_connecte import ClientConnecte
 from bases.fonction import *
 
 class ConnexionServeur:
-    """Cette classe représente le socket en écoute sur le port choisi
+    
+    """Classe représentant le serveur en écoute.
+    
+    Cette classe représente le socket en écoute sur le port choisi
     dont le rôle est d'ajouter de nouveaux clients et de gérer leurs messages.
     
     Sur une architecture réseau simple, elle n'a besoin d'être instanciée
@@ -140,6 +143,7 @@ class ConnexionServeur:
         """Cette méthode doit être appelée après l'appel au constructeur.
         Elle se charge d'initialiser le socket serveur et, en somme,
         de le mettre en écoute sur le port spécifié.
+        
         """
         # Initialisation du socket serveur
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -291,7 +295,7 @@ class ConnexionServeur:
             receptions, none, none = select.select(
                 self.get_clients_sockets(), [], [], self.attente_reception)
         except select.error:
-            pass
+            self.test_select()
 
         # On parcourt la boucle des clients possédant un message à réceptionner
         for socket in receptions:
@@ -311,3 +315,18 @@ class ConnexionServeur:
         # On vérifie une dernière fois que tous les clients sont bien
         # connectés
         self.verifier_deconnexions()
+    
+    def test_select(self):
+        """Test grâce à select que tous les clients sont bien en écoute.
+        
+        Note : dans certaines circonstances, une exception select.error
+        est levée. On ne sait pas de quel client vient l'erreur et il faut tester
+        chaque client avec un timeout de 0 (pas très élégant, mais ce
+        semble être le seul moyen).
+        
+        """
+        for client in self.clients.values():
+            try:
+                r, none, none = select.select([client.socket], [], [], 0)
+            except select.error:
+                client.deconnecter()
