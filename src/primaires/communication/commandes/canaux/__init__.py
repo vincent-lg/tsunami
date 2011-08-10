@@ -57,6 +57,7 @@ class CmdCanaux(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "canaux", "channels")
+        self.groupe = "joueur"
         self.nom_categorie = "parler"
         self.aide_courte = "gestion des canaux de communication"
         self.aide_longue = \

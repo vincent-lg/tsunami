@@ -44,6 +44,7 @@ from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
 from primaires.interpreteur.groupe import ConteneurGroupes
+from primaires.interpreteur.groupe.groupe import *
 from .masque.masque import masques_def
 
 class Module(BaseModule):
@@ -103,13 +104,17 @@ class Module(BaseModule):
         self.groupes = groupes
         
         # On vérifie que les groupes "essentiels" existent
-        essentiels = ("pnj", "joueur", "administrateur")
+        essentiels = OrderedDict((
+            ("pnj", AUCUN),
+            ("joueur", AUCUN),
+            ("administrateur", IMMORTELS),
+        ))
         
         # On crée ceux qui n'existent pas
         groupe_precedent = ""
-        for nom_groupe in essentiels:
+        for nom_groupe, flags in essentiels.items():
             if nom_groupe not in self.groupes:
-                groupe = self.groupes.ajouter_groupe(nom_groupe)
+                groupe = self.groupes.ajouter_groupe(nom_groupe, flags)
                 if groupe_precedent:
                     groupe.ajouter_groupe_inclus(groupe_precedent)
                 self.logger.info("Ajout du groupe d'utilisateurs '{}'".format( 

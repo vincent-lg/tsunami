@@ -40,6 +40,7 @@ class PrmSupprimer(Parametre):
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "supprimer", "delete")
+        self.groupe = "administrateur"
         self.schema = "<attitude>"
         self.aide_courte = "supprime une attitude"
         self.aide_longue = \

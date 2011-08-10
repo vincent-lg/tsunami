@@ -35,7 +35,7 @@ dérivée de Unique.
 """
 
 from abstraits.unique import Unique
-from primaires.interpreteur.groupe.groupe import Groupe
+from primaires.interpreteur.groupe.groupe import *
 
 class ConteneurGroupes(Unique):
     
@@ -70,13 +70,13 @@ class ConteneurGroupes(Unique):
         """Retourne le nombre de groupes"""
         return len(self._groupes)
     
-    def ajouter_groupe(self, nom_groupe):
+    def ajouter_groupe(self, nom_groupe, flags=AUCUN):
         """Méthode appelée pour ajouter un groupe.
         L'objet Groupe est créé "à la volée" et est retourné par la méthode si
         l'on désire le manipuler directement.
         
         """
-        groupe = Groupe(self, nom_groupe)
+        groupe = Groupe(self, nom_groupe, flags)
         self._groupes[nom_groupe] = groupe
         self.enregistrer()
         return groupe

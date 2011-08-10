@@ -39,6 +39,7 @@ class CmdRaedit(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "raedit", "raedit")
+        self.groupe = "administrateur"
         self.schema = ""
         self.nom_categorie = "batisseur"
         self.aide_courte = "ouvre l'éditeur des races"

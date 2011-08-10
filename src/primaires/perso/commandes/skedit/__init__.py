@@ -39,6 +39,7 @@ class CmdSkedit(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "skedit", "skedit")
+        self.groupe = "administrateur"
         self.schema = "<ident>"
         self.nom_categorie = "batisseur"
         self.aide_courte = "ouvre l'éditeur de squelette"

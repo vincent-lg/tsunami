@@ -43,6 +43,7 @@ class CmdWhere(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "where", "where")
+        self.groupe = "administrateur"
         self.schema = ""
         self.aide_courte = "affiche la position des joueurs"
         self.aide_longue = \

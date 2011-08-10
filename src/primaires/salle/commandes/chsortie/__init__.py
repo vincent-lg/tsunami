@@ -41,6 +41,7 @@ class CmdChsortie(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "chsortie", "setexit")
+        self.groupe = "administrateur"
         self.schema = "<direction> <ident_salle>"
         self.nom_categorie = "batisseur"
         self.aide_courte = "modifie une sortie de la salle courante"

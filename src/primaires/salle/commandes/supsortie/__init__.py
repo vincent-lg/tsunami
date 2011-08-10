@@ -41,6 +41,7 @@ class CmdSupsortie(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "supsortie", "delexit")
+        self.groupe = "administrateur"
         self.schema = "<direction>"
         self.nom_categorie = "batisseur"
         self.aide_courte = "supprime une sortie de la salle courante"

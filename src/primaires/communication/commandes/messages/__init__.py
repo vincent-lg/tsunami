@@ -45,6 +45,7 @@ class CmdMessages(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "messages", "mails")
+        self.groupe = "joueur"
         self.nom_categorie = "parler"
         self.aide_courte = "permet de gérer les messages privés"
         self.aide_longue = \

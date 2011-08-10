@@ -59,17 +59,17 @@ class Groupe(BaseObj):
     
     """
     
-    def __init__(self, parent, nom):
+    def __init__(self, parent, nom, flags):
         """Constructeur d'un groupe"""
         BaseObj.__init__(self)
         self.nom = nom
         self.parent = parent
         self.groupes_inclus = []
-        self.flags = AUCUN
+        self.flags = flags
     
     def __getnewargs__(self):
         """Retourne les arguments à passer au constructeur"""
-        return (None, "")
+        return (None, "", AUCUN)
     
     def ajouter_groupe_inclus(self, groupe):
         """Ajoute 'groupe' dans les groupes inclus.
@@ -102,6 +102,6 @@ class Groupe(BaseObj):
         str_flags = []
         for nom, flag in FLAGS.items():
             if flag & self.flags:
-                str_flags.appedn(nom)
+                str_flags.append(nom)
         
         return ", ".join(str_flags) if str_flags else "aucun"

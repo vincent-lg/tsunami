@@ -39,6 +39,7 @@ class CmdGoto(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "goto", "goto")
+        self.groupe = "administrateur"
         self.schema = "<identifiant:ident_salle|nom_joueur>"
         self.nom_categorie = "bouger"
         self.aide_courte = "permet de se déplacer dans l'univers"
