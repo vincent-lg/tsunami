@@ -78,6 +78,10 @@ class Immersion(Contexte):
             fonction = getattr(self, nom)
             self.options[rac] = fonction
     
+    @property
+    def u_nom(self):
+        return "immersion:" + self.canal.nom
+    
     def accueil(self):
         """Message d'accueil du contexte"""
         canal = self.canal

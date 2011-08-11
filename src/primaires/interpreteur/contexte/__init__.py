@@ -147,6 +147,7 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         """Constructeur d'un contexte."""
         BaseObj.__init__(self)
         self.pere = pere
+        self.unom = ""
         self.opts = OptionsContexte()
         # Récupération du fichier de configuration de la charte graphique
         cfg_charte = type(self.importeur).anaconf.get_config("charte_graph")
@@ -169,6 +170,11 @@ class Contexte(BaseObj, metaclass=MetaContexte):
             nom = "inconnu"
         
         return nom
+    
+    @property
+    def u_nom(self):
+        """Retourne le nom pour l'utilisateur"""
+        return self.unom if self.unom else type(self).nom
     
     def entrer(self):
         """Méthode appelée quand le père entre dans le contexte"""
@@ -308,7 +314,7 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         elif msg == "?>":
             noms_contextes = []
             for i, contexte in enumerate(contextes):
-                nom = str(contexte)
+                nom = contexte.u_nom
                 if i == position:
                     nom = "|rg|*" + nom + "|ff|"
                 
@@ -323,32 +329,28 @@ class Contexte(BaseObj, metaclass=MetaContexte):
             
             emt << contextes.actuel.accueil()
         
-        elif msg.startswith(">"):
-            exploration = contextes.exploration
-            try:
-                contexte = contextes.get(exploration + 1)
-                assert contexte is not None
-            except (IndexError, AssertionError):
-                emt << "|err|Aucun contexte ne peut être trouvé après " \
-                        "celui-ci.|ff|"
-            else:
-                contextes.exploration += 1
-                contexte.receptionner(msg[1:])
-            finally:
-                contextes.exploration = position
         elif msg.startswith("<"):
-            exploration = contextes.exploration
+            actuel = contextes.actuel
             try:
-                contexte = contextes.get(exploration - 1)
-                assert contexte is not None
-            except (IndexError, AssertionError):
+                contexte = contextes.reculer_position()
+            except IndexError:
                 emt << "|err|Aucun contexte ne peut être trouvé avant " \
                         "celui-ci.|ff|"
             else:
-                contextes.exploration -= 1
                 contexte.receptionner(msg[1:])
             finally:
-                contextes.exploration = position
+                contextes.position = contextes.get_position(actuel)
+        elif msg.startswith(">"):
+            actuel = contextes.actuel
+            try:
+                contexte = contextes.avancer_position()
+            except IndexError:
+                emt << "|err|Aucun contexte ne peut être trouvé après " \
+                        "celui-ci.|ff|"
+            else:
+                contexte.receptionner(msg[1:])
+            finally:
+                contextes.position = contextes.get_position(actuel)
         else:
             return
         
