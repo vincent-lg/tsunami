@@ -159,7 +159,7 @@ class Module(BaseModule):
         
         """
         a_tester = list(self.importeur.connex.joueurs)
-        a_tester += list(self.importeur.pnj.prototypes)
+        a_tester += list(self.importeur.pnj.prototypes.keys())
         for test in a_tester:
             if test.race is race:
                 return True
