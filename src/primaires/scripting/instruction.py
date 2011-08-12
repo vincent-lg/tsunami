@@ -63,7 +63,6 @@ class MetaInstruction(MetaBaseObj):
                         "dans le dictionnaire des instructions".format(nom))
             
             instructions[nom] = cls
-            print(instructions)
 
 class Instruction(BaseObj, metaclass=MetaInstruction):
     

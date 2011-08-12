@@ -50,5 +50,17 @@ class PrmDefaut(Parametre):
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         prompt = dic_masques["prompt"] or None
-        nm_stats = type(self).importeur.perso.stats_symboles()
-        personnage << personnage._prompt.format(stats=nm_stats)
+        nt_stats = type(self).importeur.perso.stats_symboles()
+        if prompt:
+            prompt = prompt.prompt
+            prompt = prompt.replace("{", "{{")
+            prompt = prompt.replace("}", "}}")
+            for stat in type(self).importeur.perso.modele_stats:
+                prompt = prompt.replace("%{}".format(stat.symbole),
+                        "{stats." + stat.nom + "}")
+            personnage._prompt = prompt
+            personnage << \
+                "Votre prompt par défaut a bien été mis à jour :\n" + \
+                personnage._prompt.format(stats=nt_stats)
+        else:
+            personnage << personnage._prompt.format(stats=nt_stats)

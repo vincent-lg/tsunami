@@ -47,10 +47,10 @@ class CmdPrompt(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "prompt", "prompt")
-        self.schema = "(<prompt>)"
+        self.schema = ""
         self.aide_courte = "affiche ou configure votre prompt"
         self.aide_longue = \
-            "Cette commande permet d'afficher on configurer vos " \
+            "Cette commande permet d'afficher ou configurer vos " \
             "différents prompts. les prompts sont des messages qui " \
             "apparaissent régulièrement pour vous signaler, par défaut, " \
             "les principales stats de votre personnage (sa vitalité, " \
