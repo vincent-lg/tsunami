@@ -28,11 +28,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module perso."""
+"""Fichier contenant les convertisseurs de la classe Stat."""
 
-from . import commande
-from . import etat
-from . import ident
-from . import nom_stat
-from . import nombre
-from . import prompt
+import sys
+
+class Convertisseur:
+    """Classe pour envelopper les convertisseurs."""
+    def depuis_version_0(objet, classe):
+        objet.set_version(classe, 1)
+        objet.symbole = getattr(type(objet).importeur.perso.modele_stats,
+                "_{}".format(objet.nom)).symbole

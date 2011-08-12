@@ -28,11 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module perso."""
+"""Package contenant la commande 'prompt'.
+Dans ce fichier ne se trouve que la commande.
+Les sous-commandes peuvent être trouvées dans le package.
 
-from . import commande
-from . import etat
-from . import ident
-from . import nom_stat
-from . import nombre
-from . import prompt
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+
+from .defaut import PrmDefaut
+
+class CmdPrompt(Commande):
+    
+    """Commande 'prompt'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "prompt", "prompt")
+        self.schema = "(<prompt>)"
+        self.aide_courte = "affiche ou configure votre prompt"
+        self.aide_longue = \
+            "Cette commande permet d'afficher on configurer vos " \
+            "différents prompts. les prompts sont des messages qui " \
+            "apparaissent régulièrement pour vous signaler, par défaut, " \
+            "les principales stats de votre personnage (sa vitalité, " \
+            "sa mana, son endurance). Chaque prompt se voit attribuer " \
+            "une sous-commande de %prompt%. Si vous entrez cette " \
+            "sous-commande, vous verrez le prompt actuel. Si vous " \
+            "entrez un prompt à la suite, vous modifierez le prompt actuel."
+    
+    def ajouter_parametres(self):
+        """Ajoute les paramètres à la commande."""
+        prm_defaut = PrmDefaut()
+        
+        self.ajouter_parametre(prm_defaut)

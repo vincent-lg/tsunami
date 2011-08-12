@@ -28,11 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module perso."""
+"""Fichier contenant le paramètre 'defaut' de la commande 'prompt'."""
 
-from . import commande
-from . import etat
-from . import ident
-from . import nom_stat
-from . import nombre
-from . import prompt
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmDefaut(Parametre):
+    
+    """Commande 'prompt defaut'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "défaut", "default")
+        self.schema = "(<prompt>)"
+        self.aide_courte = "prompt par défaut"
+        self.aide_longue = \
+            "Sans paramètre, affiche votre prompt par défaut. Si " \
+            "un prompt est précisé en paramètre, remplace le prompt actuel."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        prompt = dic_masques["prompt"] or None
+        nm_stats = type(self).importeur.perso.stats_symboles()
+        personnage << personnage._prompt.format(stats=nm_stats)

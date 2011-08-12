@@ -28,11 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module perso."""
+"""Fichier contenant le masque <prompt>."""
 
-from . import commande
-from . import etat
-from . import ident
-from . import nom_stat
-from . import nombre
-from . import prompt
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+
+class Prompt(Masque):
+    
+    """Masque <prompt>.
+    On attend un prompt en paramètre.
+    
+    """
+    
+    nom = "prompt"
+    nom_complet = "prompt"
+    
+    def init(self):
+        """Initialisation des attributs"""
+        self.prompt = ""
+    
+    def valider(self, personnage, dic_masques, commande):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques, commande)
+        prompt = liste_vers_chaine(commande).lstrip()
+        
+        if not prompt:
+            raise ErreurValidation( \
+                "Entrez un prompt")
+        
+        commande[:] = []
+        self.prompt = prompt
+        
+        return True

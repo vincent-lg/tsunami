@@ -30,6 +30,8 @@
 
 """Fichier contenant le module primaire perso."""
 
+from collections import namedtuple
+
 from abstraits.module import *
 
 from . import commandes
@@ -57,6 +59,7 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "perso", "primaire")
         self.cfg_stats = None
+        self.modele_stats = None
         self.commandes = []
         self.squelettes = {}
         self.races = []
@@ -74,6 +77,8 @@ class Module(BaseModule):
             "SM":SM,
             "SEM":SEM,
         })
+        
+        self.modele_stats = Stats()
         
         BaseModule.config(self)
     
@@ -96,6 +101,7 @@ class Module(BaseModule):
         self.commandes = [
             commandes.commande.CmdCommande(),
             commandes.equipement.CmdEquipement(),
+            commandes.prompt.CmdPrompt(),
             commandes.qui.CmdQui(),
             commandes.raedit.CmdRaedit(),
             commandes.score.CmdScore(),
@@ -165,3 +171,19 @@ class Module(BaseModule):
                 return True
         
         return False
+    
+    def stats_symboles(self):
+        """Retourne un tuple nommé contenant les stats et leur symbole.
+        
+        Par exemple :
+        >>> nt = importeur.perso.stats_symboles()
+        >>> nt.force
+        'f'
+        
+        """
+        NTStats = namedtuple("NTStats",
+                [stat.nom for stat in self.modele_stats])
+        stats_symboles = dict(((stat.nom, "%{}".format(stat.symbole)) \
+                for stat in self.modele_stats))
+        ntstats = NTStats(**stats_symboles)
+        return ntstats
