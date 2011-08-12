@@ -63,6 +63,8 @@ cfg_stats = r"""
 #   C'est ce nom que vous allez utiliser dans le personnage. Vous pourrez
 #   appeler sa valeur courante par 'personnage.nom_stat' (par exemple
 #   'personnage.force')
+# * symbol : le symbol donné à la stat. C'est ce symbol, précédé du signe
+#   '%', que le joueur utilisera dans sa configuration de prompt
 # * défaut : la valeur par défaut de la stat pour n'importe quel personnage
 #   lambda
 # * marge : la marge maximum. Cette marge ne peut pas être dépassée par la
@@ -89,19 +91,19 @@ cfg_stats = r"""
 #   * SM  : la stat lève une exception si elle est supérieure au MAX
 #   * SEM : la stat lève une exception si elle est supérieure ou égale au MAX
 stats = (
-    # Nom             # Défaut # Marge # Max              # Flags
-    ( "vitalite_max"  ,     50 , 10000 , ""               , ),
-    ( "mana_max"      ,     50 , 10000 , ""               , ),
-    ( "endurance_max" ,     50 , 10000 , ""               , ),
-    ( "vitalite"      ,     50 , 10000 , "vitalite_max"   , IE0),
-    ( "mana"          ,     50 , 10000 , "mana_max"       , ),
-    ( "endurance"     ,     50 , 10000 , "endurance_max"  , ),
-    ( "force"         ,      5 ,   100 , ""               , ),
-    ( "agilite"       ,      5 ,   100 , ""               , ),
-    ( "robustesse"    ,      5 ,   100 , ""               , ),
-    ( "intelligence"  ,      5 ,   100 , ""               , ),
-    ( "charisme"      ,      5 ,   100 , ""               , ),
-    ( "sensibilite"   ,      5 ,   100 , ""               , ),
+    # Nom             # Symbol | # Défaut # Marge # Max              # Flags
+    ( "vitalite_max"  , 'vx'     ,     50 , 10000 , ""               , ),
+    ( "mana_max"      , 'mx'     ,     50 , 10000 , ""               , ),
+    ( "endurance_max" , 'ex'     ,     50 , 10000 , ""               , ),
+    ( "vitalite"      , 'v'      ,     50 , 10000 , "vitalite_max"   , IE0),
+    ( "mana"          , 'm'      ,     50 , 10000 , "mana_max"       , ),
+    ( "endurance"     , 'e'      ,     50 , 10000 , "endurance_max"  , ),
+    ( "force"         , 'f'      ,      5 ,   100 , ""               , ),
+    ( "agilite"       , 'a'      ,      5 ,   100 , ""               , ),
+    ( "robustesse"    , 'r'      ,      5 ,   100 , ""               , ),
+    ( "intelligence"  , 'i'      ,      5 ,   100 , ""               , ),
+    ( "charisme"      , 'c'      ,      5 ,   100 , ""               , ),
+    ( "sensibilite"   , 's'      ,      5 ,   100 , ""               , ),
 )
 
 """

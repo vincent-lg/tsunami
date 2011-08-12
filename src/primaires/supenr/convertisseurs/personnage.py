@@ -42,3 +42,7 @@ class Convertisseur:
         objet.set_version(classe, 3)
         objet.nom_groupe = objet.__dict__["groupe"]
         del objet.__dict__["groupe"]
+    def depuis_version_3(objet, classe):
+        objet.set_version(classe, 4)
+        objet._prompt = "Vit   {stats.vitalite}     Man   {stats.mana}     " \
+                "End   {stats.endurance}"

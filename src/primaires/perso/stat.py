@@ -44,9 +44,18 @@ class Stat(BaseObj):
     
     """Cette classe définit une stat (ou caractéristique).
     
+    Les attributs d'une stat sont :
+    nom -- son nom
+    symbol -- son symbol (utile pour le prompt)
+    defaut -- sa valeur par défaut, celle donnée à un joueur à sa création
+    marge -- la marge maximale
+    max -- une chaîne de caractère représentant une autre stat
+    flags -- les flags indiquant quand une exception doit être levée
+    parent -- le parent hébergeant les stats
+    
     """
     
-    def __init__(self, nom, defaut, marge, max, flags=I0, parent=None):
+    def __init__(self, nom, symbol, defaut, marge, max, flags=I0, parent=None):
         """Constructeur d'une stat.
         Elle prend les mêmes paramètres que ceux passés dans l'ordre, dans
         la configuration.
@@ -56,6 +65,7 @@ class Stat(BaseObj):
         """
         BaseObj.__init__(self)
         self.nom = nom
+        self.symbol = symbol
         self.defaut = defaut
         self.marge_min = 0
         self.marge_max = marge
@@ -73,7 +83,7 @@ class Stat(BaseObj):
         self._construire()
     
     def __getnewargs__(self):
-        return ("", "", 0, "")
+        return ("", "", "", 0, "")
     
     def __str__(self):
         return "{}={} (base={}, variable={}, max={})".format(

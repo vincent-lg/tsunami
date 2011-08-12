@@ -53,7 +53,7 @@ class Personnage(ObjetID):
     groupe = "personnages"
     sous_rep = "personnages"
     _nom = "personnage"
-    _version = 3
+    _version = 4
     
     def __init__(self):
         """Constructeur d'un personnage"""
@@ -64,7 +64,8 @@ class Personnage(ObjetID):
         self.langue_cmd = "francais"
         self._salle = None
         self.stats = Stats()
-        self._prompt = "Vit   {v}     Man   {m}     End   {e}"
+        self._prompt = "Vit   {stats.vitalite}     Man   {stats.mana}     " \
+                "End   {stats.endurance}"
         self.equipement = None
         self._race = None
         self._construire()
@@ -153,11 +154,7 @@ class Personnage(ObjetID):
     @property
     def prompt(self):
         """Retourne le prompt formatté"""
-        return self._prompt.format(
-            v=self.vitalite,
-            m=self.mana,
-            e=self.endurance,
-        )
+        return self._prompt.format(stats=self.stats)
     
     @property
     def grp(self):
