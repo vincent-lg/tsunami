@@ -63,9 +63,10 @@ class Encodage(Masque):
         encodage = encodage.split(" ")[0].lower()
         commande[:] = commande[len(encodage):]
 
-        msg_enc = "\n\nEncodages disponibles : |ent|" + "|ff|, |ent|". \
-            join(ENCODAGES) + "."
-        if not encodage in ENCODAGES:
+        encodages = ["aucun"] + ENCODAGES
+        msg_enc = "\n\nEncodages disponibles : |ent|" + "|ff|, |ent|".join(
+            encodages) + "."
+        if not encodage in encodages:
             raise ErreurValidation(
                 "|err|L'encodage précisé n'est pas disponible.|ff|" + msg_enc)
         

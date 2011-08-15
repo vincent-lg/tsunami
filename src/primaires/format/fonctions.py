@@ -119,13 +119,18 @@ for couleur, valeur in COULEURS.items():
 
 def get_bytes(msg, ncod_optionnel):
     """Retourne un type bytes.
+    
     Peut prendre en paramètre :
     -   un type bytes (on le retourne sans rien changer)
     -   un type str (on l'encode avec l'encodage optionnel)
     
     """
-    if type(msg) is str:
-        msg = msg.encode(ncod_optionnel)
+    if isinstance(msg, str):
+        if ncod_optionnel:
+            msg = msg.encode(ncod_optionnel)
+        else:
+            msg = supprimer_accents(msg).encode()
+    
     return msg
 
 # Fonctions à appliquer à la réception de messages

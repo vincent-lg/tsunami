@@ -150,7 +150,7 @@ class InstanceConnexion(BaseObj):
     def _get_encodage(self):
         """Retourne l'encodage du compte ou 'Utf-8'."""
         encodage = "Utf-8"
-        if self.compte and self.compte.encodage:
+        if self.compte:
             encodage = self.compte.encodage
         
         return encodage

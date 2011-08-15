@@ -53,13 +53,14 @@ class PrmVoir(Parametre):
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         langue = personnage.langue_cmd
-        encodage = personnage.compte.encodage
+        encodage = personnage.compte.encodage or "aucun"
+        encodages = ["aucun"] + ENCODAGES
         res = "Options actuelles :\n\n"
         res += "  Couleurs : {}\n".format(oui_ou_non(
                 personnage.compte.couleur))
         res += "  Votre encodage : |ent|" + encodage + "|ff|.\n"
-        res += "  Encodages disponibles : |ent|" + "|ff|, |ent|". \
-            join(ENCODAGES) + "|ff|.\n\n"
+        res += "  Encodages disponibles : |ent|" + "|ff|, |ent|".join(
+                encodages) + "|ff|.\n\n"
         res += "  Votre langue : |ent|" + langue + "|ff|.\n"
         res += "  Langues disponibles : |ent|français|ff|, " \
             "|ent|anglais|ff|."

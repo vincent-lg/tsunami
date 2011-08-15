@@ -63,8 +63,11 @@ class ChangerEncodage(Contexte):
             b"le premier d'entre eux.|ff|\n"
         test = "Caractères accentués en "
         for i, encodage in enumerate(ENCODAGES):
-            ret += b"\n  |cmd|" + str(i+1).encode() + b"|ff| - " + \
+            ret += b"\n  |cmd|" + str(i + 1).encode() + b"|ff| - " + \
                     test.encode(encodage) + encodage.encode()
+        
+        ret += b"\n  |cmd|" + str(i + 2).encode() + b"|ff| - affichage " \
+                b"sans accent"
         return ret
 
     def deconnecter(self):
@@ -76,10 +79,10 @@ class ChangerEncodage(Contexte):
         # On essaye d'abord de convertir le choix de l'utilisateur
         try:
             choix = int(msg)
-            if choix < 1 or choix > len(ENCODAGES):
-                raise ValueError
-        except ValueError:
+            assert choix >= 1 and choix <= len(ENCODAGES) + 1
+        except (ValueError, AssertionError):
             self.pere.envoyer(b"Le nombre entre n'est pas valide.")
         else:
-            self.pere.compte.encodage = ENCODAGES[choix - 1]
+            if choix != len(ENCODAGES) + 1: # affichage sans accents
+                self.pere.compte.encodage = ENCODAGES[choix - 1]
             self.migrer_contexte("connex:creation:choisir_pass")
