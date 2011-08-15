@@ -168,14 +168,14 @@ class Action(Instruction):
                 val = Fraction(p)
             except ValueError:
                 pass
-        
-        if val is None:
-            if p.startswith("\"") and p.endswith("\""):
-                val = eval(p)
-            elif p in espace:
-                val = espace[p]
-            else:
-                raise ValueError("impossible d'interpréter {}".format(repr(p)))
+            
+            if val is None:
+                if p.startswith("\"") and p.endswith("\""):
+                    val = eval(p)
+                elif p in espace:
+                    val = espace[p]
+                else:
+                    raise ValueError("impossible d'interpréter {}".format(repr(p)))
             
             parametres[i] = val
         

@@ -292,7 +292,7 @@ class BaseObj(metaclass=MetaBaseObj):
         dans l'attribut nom_attr non pas val_attr mais l'ID de val_attr.
         
         """
-        if nom_attr != "id" and hasattr(val_attr, "est_objet_id"):
+        if nom_attr != "id" and hasattr(type(val_attr), "est_objet_id"):
             # val_attr est un ObjetID
             val_attr = val_attr.id
         

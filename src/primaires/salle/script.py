@@ -52,6 +52,9 @@ class ScriptSalle(Script):
             "arrive dans la salle, quelque soit sa salle de provenance et " \
             "son moyen de déplacement. Il faut cependant retirer le " \
             "déplacement par |cmd|goto|ff| qui ne déclenche pas cet évènement."
+        
         # Configuration des variables de l'évènement arrive
-        var_depuis = evt_arriver.ajouter_variable("depuis", "int")
+        var_depuis = evt_arriver.ajouter_variable("depuis", "str")
         var_depuis.aide = "la direction d'où vient le personnage"
+        var_salle = evt_arriver.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle actuelle"

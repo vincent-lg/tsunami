@@ -28,17 +28,17 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'action afficher."""
+"""Fichier contenant l'action dire."""
 
 from primaires.scripting.action import Action
 
 class ClasseAction(Action):
     
-    """Action afficher."""
+    """Action dire."""
     
     def __init__(self):
         Action.__init__(self)
-        self.ajouter_types(self.afficher, "str")
+        self.ajouter_types(self.dire_salle, "Salle", "str")
     
-    def afficher(self, message):
-        print("On affiche " + message)
+    def dire_salle(self, salle, message):
+        salle.envoyer(message)

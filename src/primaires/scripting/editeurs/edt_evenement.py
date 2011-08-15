@@ -67,14 +67,12 @@ class EdtEvenement(Editeur):
         else:
             msg += "Aucune variable n'a été définie pour ce script."
         
-        msg += "\n\nConditions :\n  "
+        msg += "\n\nConditions :"
         tests = evenement.tests
         if tests:
-            msg += "\n  ".join(["{:>3}. si {}".format(i + 1, test) \
+            msg += "\n  " +"\n  ".join(["{:>3}. si {}".format(i + 1, test) \
                     for i, test in enumerate(tests)])
-        else:
-            msg += "Aucune condition n'a été définie."
-        
+        msg += "\n    |cmd|*|ff|  Sinon"
         return msg
     
     def interpreter(self, msg):

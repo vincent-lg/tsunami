@@ -60,7 +60,7 @@ class Variable(BaseObj):
     def changer_type(self, type):
         """On change le type de la variable."""
         # On récupère les types
-        types = __import__("types")
+        types = __import__("primaires.scripting.types").scripting.types
         builtins = __builtins__.copy()
         try:
             self.type = builtins[type]

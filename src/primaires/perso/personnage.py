@@ -213,4 +213,5 @@ class Personnage(ObjetID):
         salle_dest.envoyer("{} arrive.".format(self.nom), (self, ))
         
         # On appelle l'évènement arrive
-        salle_dest.script.evenements["arrive"].executer(depuis=sortie.nom)
+        salle_dest.script.evenements["arrive"].executer(depuis=sortie.nom,
+                salle=salle_dest)

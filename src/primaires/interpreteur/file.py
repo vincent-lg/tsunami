@@ -122,7 +122,6 @@ class FileContexte(BaseObj):
     
     def ajouter(self, objet):
         """Ajoute l'objet à ajouter en index self._position."""
-        print("On insère l'objet en", self._position)
         self._file.insert(self._position, objet)
         if self.parent:
             self.parent.enregistrer()
@@ -138,7 +137,6 @@ class FileContexte(BaseObj):
             raise FileVide
         
         objet = self.actuel
-        print("On retire", self._position, self._file[self._position])
         del self._file[self._position]
         if self.parent:
             self.parent.enregistrer()
