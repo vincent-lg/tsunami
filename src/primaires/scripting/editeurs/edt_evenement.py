@@ -80,7 +80,13 @@ class EdtEvenement(Editeur):
     def interpreter(self, msg):
         """Interprétation de l'éditeur"""
         evenement = self.objet
-        if msg.isdigit():
+        if msg == "*":
+            enveloppe = EnveloppeObjet(EdtInstructions, evenement.sinon)
+            enveloppe.parent = self
+            contexte = enveloppe.construire(self.pere)
+            
+            self.migrer_contexte(contexte)
+        elif msg.isdigit():
             no_tests = int(msg) - 1
             try:
                 tests = evenement.tests[no_tests]

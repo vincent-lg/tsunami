@@ -90,6 +90,7 @@ class Evenement(BaseObj):
         self.variables = {}
         self.__evenements = {}
         self.__tests = []
+        self.sinon = Tests(self)
         self.espaces = Espaces(self)
         self._construire()
     
@@ -154,3 +155,11 @@ class Evenement(BaseObj):
         self.variables[nom] = variable
         
         return variable
+    
+    def executer(self, **variables):
+        """Exécution de l'évènement."""
+        self.espaces.variables.update(variables)
+        if tuple(v for v in self.espaces.variables if v not in self.variables):
+            raise ValueError("des variables manquent à l'appel")
+        
+        self.sinon.executer_instructions(self.espaces.variables)

@@ -29,6 +29,7 @@
 
 
 import shlex
+from fractions import Fraction
 
 from .instruction import Instruction
 
@@ -57,10 +58,16 @@ class Action(Instruction):
     def __str__(self):
         return self.nom + " " + " ".join(self.parametres)
     
-    def __call__(self):
-        """Exécute l'action"""
-        action = self.quelle_action()
-        return action(*self.parametres)
+    def __call__(self, espace):
+        """Exécute l'action.
+        
+        L'espace est une forme de dictionnaire contenant les variables
+        définies dans le script.
+        
+        """
+        parametres = self.convertir_parametres(espace, self.parametres)
+        action = self.quelle_action(parametres)
+        return action(*parametres)
     
     def ajouter_types(self, methode, *parametres):
         """Ajoute une interprétation possible de l'action.
@@ -87,10 +94,10 @@ class Action(Instruction):
         
         self._parametres_possibles[parametres] = methode
     
-    def quelle_action(self):
+    def quelle_action(self, parametres):
         """Retourne l'action correspondant aux paramètres.
         
-        Les paramètres se trouvent dans self.parametres.
+        Les paramètres se trouvent dans parametres.
         En fonction de leur type on doit savoir quelle action appeler.
         
         Si aucune interprétation des types n'est possible, on lève
@@ -98,12 +105,12 @@ class Action(Instruction):
         
         """
         # On forme un tuple des types des paramètres
-        types = tuple(type(p).__name__ for p in self.parametres)
+        types = tuple(type(p).__name__ for p in parametres)
         
         if not types in self._parametres_possibles:
             raise ValueError("aucune interprétation de l'action {} " \
-                    "avec les paramètres {} n'est possible".format(self.nom,
-                    self.parametres))
+                    "avec les paramètres {} n'est possible (types {})".format(
+                    self.nom, self.parametres, types))
         
         return self._parametres_possibles[types]
     
@@ -139,3 +146,37 @@ class Action(Instruction):
         action.parametres = parametres
         
         return action
+    
+    @classmethod
+    def convertir_parametres(self, espace, parametres):
+        """Convertit les paramètres passés, sous la forme de chaînes.
+        
+        Par exemple, on peut recevoir les paramètres :
+            "5"         5
+            "3.5        Fraction(7, 2)
+            '"test"'    "test"
+        
+        Les paramètres peuvent faire également référence à des variables
+        dans l'espace.
+        
+        """
+        parametres = list(parametres)
+        for i, p in enumerate(parametres):
+            # On tente de convertir en fraction
+            val = None
+            try:
+                val = Fraction(p)
+            except ValueError:
+                pass
+        
+        if val is None:
+            if p.startswith("\"") and p.endswith("\""):
+                val = eval(p)
+            elif p in espace:
+                val = espace[p]
+            else:
+                raise ValueError("impossible d'interpréter {}".format(repr(p)))
+            
+            parametres[i] = val
+        
+        return parametres
