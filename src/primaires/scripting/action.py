@@ -51,6 +51,7 @@ class Action(Instruction):
         
         """
         Instruction.__init__(self)
+        type(self)._parametres_possibles = {}
         self.parametres = ()
     
     def __str__(self):
@@ -58,24 +59,53 @@ class Action(Instruction):
     
     def __call__(self):
         """Exécute l'action"""
-        return self.interpreter(*self.parametres)
+        action = self.quelle_action()
+        return action(*self.parametres)
     
-    def verifier_type_parametres(self):
-        """Cette méthode vérifie le type des paramètres passés.
+    def ajouter_types(self, methode, *parametres):
+        """Ajoute une interprétation possible de l'action.
         
-        Elle se base sur le dictionnaire des paramètres possibles.
+        Les actions peuvent avoir plusieurs interprétations possibles
+        en fonction du type de leur paramètre.
         
-        Si une erreur survient, elle lève l'exception ValueError.
-        Le message levé par cet exception est censé être transmis
-        à l'immortel éditant le script.
+        Par exemple :
+            dire peut prendre un simple message en paramètre
+            dire peut aussi prendre un joueur et un message
+            dire peut prendre une salle et un message
+            ...
+        
+        Les paramètres suplémentaires sont les types.
+        Ce doivent tous être des chaînes de caractères.
         
         """
-        params = self.parametres
-        if not any(len(args) == len(params) for args in \
-                self._parametres_possibles.keys()):
-            raise ValueError("l'action {} ne peut s'exécuter avec {} " \
-                    "paramètres".format(self.nom,
-                    len(self._parametres_possibles), len(params)))
+        if tuple((p for p in parametres if not isinstance(p, str))):
+            raise TypeError("les types doivent être des type 'str'")
+        
+        if parametres in self._parametres_possibles:
+            raise ValueError("les paramètres {} existent déjà pour " \
+                    "cette action".format(parametres))
+        
+        self._parametres_possibles[parametres] = methode
+    
+    def quelle_action(self):
+        """Retourne l'action correspondant aux paramètres.
+        
+        Les paramètres se trouvent dans self.parametres.
+        En fonction de leur type on doit savoir quelle action appeler.
+        
+        Si aucune interprétation des types n'est possible, on lève
+        une exception ValueError.
+        
+        """
+        # On forme un tuple des types des paramètres
+        types = tuple(type(p).__name__ for p in self.parametres)
+        
+        if not types in self._parametres_possibles:
+            raise ValueError("aucune interprétation de l'action {} " \
+                    "avec les paramètres {} n'est possible".format(self.nom,
+                    self.parametres))
+        
+        return self._parametres_possibles[types]
     
     @classmethod
     def peut_interpreter(cls, chaine):
@@ -107,6 +137,5 @@ class Action(Instruction):
             raise ValueError("l'action {} n'existe pas".format(nom_action))
         
         action.parametres = parametres
-        action.verifier_type_parametres()
         
         return action

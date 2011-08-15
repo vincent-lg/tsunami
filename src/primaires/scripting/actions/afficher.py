@@ -36,10 +36,9 @@ class ClasseAction(Action):
     
     """Action afficher."""
     
-    def interpreter(self, message):
-        """Affiche les messages à l'écran."""
-        print(message)
+    def __init__(self):
+        Action.__init__(self)
+        self.ajouter_types(self.afficher, "str")
     
-    _parametres_possibles = {
-        ("str", ): interpreter,
-    }
+    def afficher(self, message):
+        print("On affiche " + message)
