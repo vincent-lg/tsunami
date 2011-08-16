@@ -34,3 +34,5 @@ import primaires.communication.masques.message
 import primaires.communication.masques.id_conversation
 import primaires.communication.masques.canal
 import primaires.communication.masques.attitude
+import primaires.communication.masques.flag_mail
+import primaires.communication.masques.id_mail

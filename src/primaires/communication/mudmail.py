@@ -116,6 +116,7 @@ class MUDmail(BaseObj):
         self._etat = ENVOYE
         self.date = datetime.datetime.now()
         self.enregistrer()
+        self.destinataire << "\n|jn|Vous avez reçu un nouveau message.|ff|"
     
     def enregistrer_brouillon(self):
         """Enregistre le mail comme brouillon"""

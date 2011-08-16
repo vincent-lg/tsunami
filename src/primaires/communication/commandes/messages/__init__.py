@@ -35,6 +35,8 @@
 from primaires.interpreteur.commande.commande import Commande
 from .ecrire import PrmEcrire
 from .ouvrir import PrmOuvrir
+from .lister import PrmLister
+from .lire import PrmLire
 
 class CmdMessages(Commande):
     
@@ -58,6 +60,10 @@ class CmdMessages(Commande):
         """Ajout des paramètres"""
         prm_ecrire = PrmEcrire()
         prm_ouvrir = PrmOuvrir()
+        prm_lister = PrmLister()
+        prm_lire = PrmLire()
         
         self.ajouter_parametre(prm_ecrire)
         self.ajouter_parametre(prm_ouvrir)
+        self.ajouter_parametre(prm_lister)
+        self.ajouter_parametre(prm_lire)
