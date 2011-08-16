@@ -101,7 +101,7 @@ class Tests(BaseObj):
         try:
             variable, operateur, valeur = test
         except ValueError:
-            raise RuntimeError("erreur de syntaxe pour la construction " \
+            raise ValueError("erreur de syntaxe pour la construction " \
                     "d'un test")
         
         test = Test(self, variable, operateur, valeur)
@@ -145,6 +145,9 @@ class Tests(BaseObj):
             raise ValueError("aucun test n'a été interprété")
         
         test = tests[0]
+        if not test:
+            raise ValueError("aucun test n'a été interprété")
+        
         self.ajouter_test(test)
         for test, connecteur in zip(tests[1:], connecteurs):
             self.ajouter_test(test, connecteur)
