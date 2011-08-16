@@ -36,7 +36,17 @@ from bases.collections.liste_id import ListeID
 class ConteneurObjet(BaseObj):
     
     """Conteneur standard d'objet.
+    
     Cette classe peut être héritée (le sol d'une salle par exemple est un conteneur d'objet hérité) ou utilisée telle qu'elle.
+    
+    Un objet conteneur contient lui-même d'autres objets.
+    Note : le conteneur d'objet utilise deux listes en fonction de si
+    l'objet est unique ou non.
+    
+    Les objets uniques, la majorité, sont représentés par une isntance
+    pour chaque objet.
+    Les objets non uniques, comme la monnaie, sont des objets représentés
+    par leur ptototype et leur nombre d'objet.
     
     """
     
@@ -46,6 +56,7 @@ class ConteneurObjet(BaseObj):
         """Constructeur du conteneur"""
         BaseObj.__init__(self)
         self._objets = ListeID(parent)
+        #self._non_uniques = []
         self.parent = parent
     
     def __getnewargs__(self):
