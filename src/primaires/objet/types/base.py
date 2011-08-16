@@ -61,6 +61,7 @@ class BaseType(ObjetID, metaclass=MetaType):
         self.etat_pluriel = "sont posés là"
         self.description = Description(parent=self)
         self.objets = ListeID(self)
+        self.unique = True # par défaut tout objet est unique
         
         # Editeur
         self._extensions_editeur = []

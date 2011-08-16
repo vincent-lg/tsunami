@@ -169,10 +169,13 @@ class Salle(ObjetID):
         # On parcourt les objets de la salle
         for objet in self.objets_sol:
             prototype = objet.prototype
+            nombre = 1
+            if not prototype.unique:
+                nombre = objet.nombre
             if prototype not in prototypes:
-                prototypes[prototype] = 1
+                prototypes[prototype] = nombre
             else:
-                prototypes[prototype] += 1
+                prototypes[prototype] += nombre
         
         return tuple(prototypes.items())
     

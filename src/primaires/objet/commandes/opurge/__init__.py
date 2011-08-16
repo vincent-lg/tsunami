@@ -62,7 +62,9 @@ class CmdOpurge(Commande):
         for objet in list(salle.objets_sol):
             if objet.prototype is prototype:
                 salle.objets_sol.retirer(objet)
-                type(self).importeur.objet.supprimer_objet(objet.identifiant)
+                if objet.identifiant:
+                    type(self).importeur.objet.supprimer_objet(
+                            objet.identifiant)
                 nb_det += 1
         
         if nb_det == 0:
