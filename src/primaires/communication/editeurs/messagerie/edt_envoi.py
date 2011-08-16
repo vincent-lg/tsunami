@@ -30,11 +30,11 @@
 
 """Fichier contenant le contexte éditeur EdtBoiteEnvoi"""
 
-from primaires.format.fonctions import couper_phrase
-from primaires.communication.mudmail import ENVOYE
 from primaires.interpreteur.editeur import Editeur
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
 from primaires.communication.editeurs.medit import EdtMedit
+from primaires.communication.mudmail import ENVOYE
+from primaires.format.fonctions import couper_phrase
 
 class EdtBoiteEnvoi(Editeur):
     
@@ -64,7 +64,7 @@ class EdtBoiteEnvoi(Editeur):
         else:
             taille = 0
             for mail in mails:
-                t_sujet = len(couper_phrase(mail.sujet, 44))
+                t_sujet = len(couper_phrase(mail.sujet, 33))
                 if t_sujet > taille:
                     taille = t_sujet
             taille = (taille < 5 and 5) or taille
@@ -75,9 +75,10 @@ class EdtBoiteEnvoi(Editeur):
             i = 1
             for mail in mails:
                 msg += "| |rg|" + str(i).ljust(2) + "|ff| | "
-                msg += "|vr|" + mail.sujet.ljust(taille) + "|ff| | |blc|"
-                msg += mail.destinataire.nom.ljust(12) + "|ff| | |jn|"
-                msg += mail.date.isoformat(" ")[:16] + "|ff| |\n"
+                msg += "|vr|" + couper_phrase(mail.sujet, taille-3).ljust( \
+                        taille) + "|ff| | |blc|"
+                msg += couper_phrase(mail.aff_dest,12).ljust(12) + "|ff| | "
+                msg += "|jn|" + mail.date.isoformat(" ")[:16] + "|ff| |\n"
                 i += 1
             msg += "+" + "-".ljust(taille + 41, "-") + "+"
         
@@ -138,7 +139,7 @@ class EdtBoiteEnvoi(Editeur):
             mail = type(self).importeur.communication.mails.creer_mail(
                     self.pere.joueur)
             mail.sujet = "CC:" + c_mail.sujet
-            mail.destinataire = c_mail.destinataire
+            mail.liste_dest = c_mail.liste_dest
             mail.contenu.ajouter_paragraphe(str(c_mail.contenu))
             enveloppe = EnveloppeObjet(EdtMedit, mail, None)
             enveloppe.parent = self
@@ -171,5 +172,5 @@ class EdtBoiteEnvoi(Editeur):
                 self.pere.joueur << "|err|Le numéro spécifié ne correspond à " \
                         "aucun message.|ff|"
                 return
-            s_mail.suppr_pour_exp()
+            del type(self).importeur.communication.mails[s_mail.id]
             self.pere.joueur << "|att|Ce message a bien été supprimé.|ff|"

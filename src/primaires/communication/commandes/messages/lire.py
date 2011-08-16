@@ -29,7 +29,7 @@
 """Fichier contenant le paramètre 'lire' de la commande 'messages'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
-from primaires.communication.mudmail import ENVOYE, BROUILLON, ARCHIVE
+from primaires.communication.mudmail import RECU, ENVOYE, BROUILLON, ARCHIVE
 
 class PrmLire(Parametre):
     
@@ -53,7 +53,7 @@ class PrmLire(Parametre):
         if dic_masques["flag_mail"] is not None:
             flag = dic_masques["flag_mail"].flag
             if flag == "recus":
-                mails = mails.get_mails_pour(personnage, ENVOYE, exp=False)
+                mails = mails.get_mails_pour(personnage, RECU)
             elif flag == "brouillons":
                 mails = mails.get_mails_pour(personnage, BROUILLON)
             elif flag == "archives":
@@ -61,7 +61,7 @@ class PrmLire(Parametre):
             elif flag == "envoyes":
                 mails = mails.get_mails_pour(personnage, ENVOYE)
         else:
-            mails = mails.get_mails_pour(personnage, ENVOYE, exp=False)
+            mails = mails.get_mails_pour(personnage, RECU)
             mails = [mail for mail in mails if mail.lu == False]
         
         num = dic_masques["id_mail"].id_mail
@@ -79,3 +79,4 @@ class PrmLire(Parametre):
                 personnage << "|err|Aucun message ne correspond à ce numéro.|ff|"
             else:
                 personnage << r_mail.afficher()
+                r_mail.lu = True

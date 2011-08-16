@@ -30,11 +30,11 @@
 
 """Fichier contenant le contexte éditeur EdtMessagesRecus"""
 
-from primaires.format.fonctions import couper_phrase
-from primaires.communication.mudmail import ENVOYE
 from primaires.interpreteur.editeur import Editeur
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
 from primaires.communication.editeurs.medit import EdtMedit
+from primaires.communication.mudmail import RECU
+from primaires.format.fonctions import couper_phrase
 
 class EdtMessagesRecus(Editeur):
     
@@ -55,7 +55,7 @@ class EdtMessagesRecus(Editeur):
         """Méthode d'accueil"""
         joueur = self.pere.joueur
         mails = type(self).importeur.communication.mails.get_mails_pour(
-                joueur, ENVOYE, False)
+                joueur, RECU)
         nb_mails = len(mails)
         prf_mails = (nb_mails > 1 and "s") or ""
         nb_non_lus = len([mail for mail in mails if not mail.lu])
@@ -75,7 +75,7 @@ class EdtMessagesRecus(Editeur):
         else:
             taille = 0
             for mail in mails:
-                t_sujet = len(couper_phrase(mail.sujet, 44))
+                t_sujet = len(couper_phrase(mail.sujet, 29))
                 if t_sujet > taille:
                     taille = t_sujet
             taille = (taille < 5 and 5) or taille
@@ -87,7 +87,8 @@ class EdtMessagesRecus(Editeur):
             for mail in mails:
                 msg += "| |rg|" + str(i).ljust(2) + "|ff| | "
                 msg += (mail.lu and "|vrc|oui|ff|" or "|rgc|non|ff|")
-                msg += " | |vr|" + mail.sujet.ljust(taille) + "|ff| | |blc|"
+                msg += " | |vr|" + couper_phrase(mail.sujet, \
+                        taille-3).ljust(taille) + "|ff| | |blc|"
                 msg += mail.expediteur.nom.ljust(10) + "|ff| | |jn|"
                 msg += mail.date.isoformat(" ")[:16] + "|ff| |\n"
                 i += 1
@@ -102,7 +103,7 @@ class EdtMessagesRecus(Editeur):
                     "message.|ff|"
             return
         mails = type(self).importeur.communication.mails.get_mails_pour(
-                self.pere.joueur, ENVOYE, False)
+                self.pere.joueur, RECU)
         try:
             num = int(arguments.split(" ")[0])
         except ValueError:
@@ -130,7 +131,7 @@ class EdtMessagesRecus(Editeur):
                     "message.|ff|"
             return
         mails = type(self).importeur.communication.mails.get_mails_pour(
-                self.pere.joueur, ENVOYE, False)
+                self.pere.joueur, RECU)
         try:
             num = int(arguments.split(" ")[0])
         except ValueError:
@@ -158,7 +159,7 @@ class EdtMessagesRecus(Editeur):
                     "message.|ff|"
             return
         mails = type(self).importeur.communication.mails.get_mails_pour(
-                self.pere.joueur, ENVOYE, False)
+                self.pere.joueur, RECU)
         try:
             num = int(arguments.split(" ")[0])
         except ValueError:
@@ -179,7 +180,7 @@ class EdtMessagesRecus(Editeur):
             mail = type(self).importeur.communication.mails.creer_mail(
                     self.pere.joueur)
             mail.sujet = "RE:" + r_mail.sujet
-            mail.destinataire = r_mail.expediteur
+            mail.liste_dest.append(r_mail.expediteur)
             mail.contenu.ajouter_paragraphe(
                     r_mail.expediteur.nom + " a écrit :\n")
             mail.contenu.ajouter_paragraphe(str(r_mail.contenu))

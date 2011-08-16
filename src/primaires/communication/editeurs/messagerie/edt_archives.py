@@ -30,9 +30,9 @@
 
 """Fichier contenant le contexte éditeur EdtArchives"""
 
-from primaires.format.fonctions import couper_phrase
-from primaires.communication.mudmail import ARCHIVE
 from primaires.interpreteur.editeur import Editeur
+from primaires.communication.mudmail import ARCHIVE
+from primaires.format.fonctions import couper_phrase
 
 class EdtArchives(Editeur):
     
@@ -52,7 +52,7 @@ class EdtArchives(Editeur):
         """Méthode d'accueil"""
         joueur = self.pere.joueur
         mails = type(self).importeur.communication.mails.get_mails_pour(
-                joueur, ARCHIVE, False)
+                joueur, ARCHIVE)
         msg = "||tit| " + "Archives".ljust(76) + "|ff||\n"
         msg += self.opts.separateur + "\n"
         msg += self.aide_courte + "\n\n"
@@ -62,7 +62,7 @@ class EdtArchives(Editeur):
         else:
             taille = 0
             for mail in mails:
-                t_sujet = len(couper_phrase(mail.sujet, 44))
+                t_sujet = len(couper_phrase(mail.sujet, 29))
                 if t_sujet > taille:
                     taille = t_sujet
             taille = (taille < 5 and 5) or taille
@@ -74,7 +74,8 @@ class EdtArchives(Editeur):
             for mail in mails:
                 msg += "| |rg|" + str(i).ljust(2) + "|ff| | "
                 msg += (mail.lu and "|vrc|oui|ff|" or "|rgc|non|ff|")
-                msg += " | |vr|" + mail.sujet.ljust(taille) + "|ff| | |blc|"
+                msg += " | |vr|" + couper_phrase(mail.sujet, \
+                        taille-3).ljust(taille) + "|ff| | |blc|"
                 msg += mail.expediteur.nom.ljust(10) + "|ff| | |jn|"
                 msg += mail.date.isoformat(" ")[:16] + "|ff| |\n"
                 i += 1
@@ -89,7 +90,7 @@ class EdtArchives(Editeur):
                     "message.|ff|"
             return
         mails = type(self).importeur.communication.mails.get_mails_pour(
-                self.pere.joueur, ARCHIVE, False)
+                self.pere.joueur, ARCHIVE)
         try:
             num = int(arguments.split(" ")[0])
         except ValueError:
@@ -117,7 +118,7 @@ class EdtArchives(Editeur):
                     "message.|ff|"
             return
         mails = type(self).importeur.communication.mails.get_mails_pour(
-                self.pere.joueur, ARCHIVE, False)
+                self.pere.joueur, ARCHIVE)
         try:
             num = int(arguments.split(" ")[0])
         except ValueError:
@@ -145,7 +146,7 @@ class EdtArchives(Editeur):
                     "message.|ff|"
             return
         mails = type(self).importeur.communication.mails.get_mails_pour(
-                self.pere.joueur, ARCHIVE, False)
+                self.pere.joueur, ARCHIVE)
         try:
             num = int(arguments.split(" ")[0])
         except ValueError:
@@ -163,5 +164,5 @@ class EdtArchives(Editeur):
                 self.pere.joueur << "|err|Le numéro spécifié ne correspond à " \
                         "aucun message.|ff|"
                 return
-            s_mail.suppr_pour_dest()
+            del type(self).importeur.communication.mails[s_mail.id]
             self.pere.joueur << "|att|Le message a bien été supprimé.|ff|"

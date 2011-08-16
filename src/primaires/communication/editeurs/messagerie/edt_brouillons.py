@@ -30,11 +30,11 @@
 
 """Fichier contenant le contexte éditeur EdtBrouillons"""
 
-from primaires.format.fonctions import couper_phrase
-from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
-from primaires.communication.mudmail import BROUILLON
-from primaires.communication.editeurs.medit import EdtMedit
 from primaires.interpreteur.editeur import Editeur
+from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
+from primaires.communication.editeurs.medit import EdtMedit
+from primaires.communication.mudmail import BROUILLON
+from primaires.format.fonctions import couper_phrase
 
 class EdtBrouillons(Editeur):
     
@@ -63,19 +63,21 @@ class EdtBrouillons(Editeur):
         else:
             taille = 0
             for mail in mails:
-                t_sujet = len(couper_phrase(mail.sujet, 40))
+                t_sujet = len(couper_phrase(mail.sujet, 33))
                 if t_sujet > taille:
                     taille = t_sujet
             taille = (taille < 5 and 5) or taille
             msg += "+" + "-".ljust(taille + 41, "-") + "+\n"
             msg += "| |tit|N°|ff| | |tit|" + "Sujet".ljust(taille)
-            msg += "|ff| | |tit|Destinataire|ff| | |tit|Enregistré le   |ff| |\n"
+            msg += "|ff| | |tit|Destinataire|ff| | |tit|" + "Date".ljust(16)
+            msg += "|ff| |\n"
             i = 1
             for mail in mails:
-                msg += "| |rg|" + str(i).ljust(2) + "|ff| "
-                msg += "| |vr|" + mail.sujet.ljust(taille) + "|ff| | |blc|"
-                msg += mail.nom_dest.ljust(12) + "|ff| | |jn|"
-                msg += mail.date.isoformat(" ")[:16] + "|ff| |\n"
+                msg += "| |rg|" + str(i).ljust(2) + "|ff| | "
+                msg += "|vr|" + couper_phrase(mail.sujet, taille-3).ljust( \
+                        taille) + "|ff| | |blc|"
+                msg += couper_phrase(mail.aff_dest,12).ljust(12) + "|ff| | "
+                msg += "|jn|" + mail.date.isoformat(" ")[:16] + "|ff| |\n"
                 i += 1
             msg += "+" + "-".ljust(taille + 41, "-") + "+"
         
@@ -137,5 +139,5 @@ class EdtBrouillons(Editeur):
                 self.pere.joueur << "|err|Le numéro spécifié ne correspond à " \
                         "aucun message.|ff|"
                 return
-            s_mail.suppr_pour_exp()
+            del type(self).importeur.communication.mails[s_mail.id]
             self.pere.joueur << "|att|Ce message a bien été supprimé.|ff|"

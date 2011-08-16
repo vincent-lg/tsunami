@@ -29,7 +29,7 @@
 """Fichier contenant le paramètre 'lister' de la commande 'messages'."""
 
 from primaires.format.fonctions import couper_phrase
-from primaires.communication.mudmail import ENVOYE, BROUILLON, ARCHIVE
+from primaires.communication.mudmail import RECU, ENVOYE, BROUILLON, ARCHIVE
 from primaires.interpreteur.masque.parametre import Parametre
 
 class PrmLister(Parametre):
@@ -51,11 +51,12 @@ class PrmLister(Parametre):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
+        flag = ""
         mails = type(self).importeur.communication.mails
         if dic_masques["flag_mail"] is not None:
             flag = dic_masques["flag_mail"].flag
             if flag == "recus":
-                mails = mails.get_mails_pour(personnage, ENVOYE, exp=False)
+                mails = mails.get_mails_pour(personnage, RECU)
             elif flag == "brouillons":
                 mails = mails.get_mails_pour(personnage, BROUILLON)
             elif flag == "archives":
@@ -63,30 +64,52 @@ class PrmLister(Parametre):
             elif flag == "envoyes":
                 mails = mails.get_mails_pour(personnage, ENVOYE)
         else:
-            mails = mails.get_mails_pour(personnage, ENVOYE, exp=False)
+            mails = mails.get_mails_pour(personnage, RECU)
             mails = [mail for mail in mails if mail.lu == False]
         
         if not mails:
             personnage << "|att|Vous n'avez aucun message dans cette " \
                     "catégorie.|ff|"
         else:
-            taille = 0
-            for mail in mails:
-                t_sujet = len(couper_phrase(mail.sujet, 44))
-                if t_sujet > taille:
-                    taille = t_sujet
-            taille = (taille < 5 and 5) or taille
-            msg = "+" + "-".ljust(taille + 45, "-") + "+\n"
-            msg += "| |tit|N°|ff| | |tit|Lu|ff|  | |tit|" + "Sujet".ljust(taille)
-            msg += "|ff| | |tit|Expéditeur|ff| | |tit|" + "Date".ljust(16)
-            msg += "|ff| |\n"
-            i = 1
-            for mail in mails:
-                msg += "| |rg|" + str(i).ljust(2) + "|ff| | "
-                msg += (mail.lu and "|vrc|oui|ff|" or "|rgc|non|ff|")
-                msg += " | |vr|" + mail.sujet.ljust(taille) + "|ff| | |blc|"
-                msg += mail.expediteur.nom.ljust(10) + "|ff| | |jn|"
-                msg += mail.date.isoformat(" ")[:16] + "|ff| |\n"
-                i += 1
-            msg += "+" + "-".ljust(taille + 45, "-") + "+"
+            if flag == "brouillons" or flag == "envoyes":
+                taille = 0
+                for mail in mails:
+                    t_sujet = len(couper_phrase(mail.sujet, 33))
+                    if t_sujet > taille:
+                        taille = t_sujet
+                taille = (taille < 5 and 5) or taille
+                msg = "+" + "-".ljust(taille + 41, "-") + "+\n"
+                msg += "| |tit|N°|ff| | |tit|" + "Sujet".ljust(taille)
+                msg += "|ff| | |tit|Destinataire|ff| | |tit|" + "Date".ljust(16)
+                msg += "|ff| |\n"
+                i = 1
+                for mail in mails:
+                    msg += "| |rg|" + str(i).ljust(2) + "|ff| | "
+                    msg += "|vr|" + couper_phrase(mail.sujet, taille-3).ljust( \
+                            taille) + "|ff| | |blc|"
+                    msg += couper_phrase(mail.aff_dest,12).ljust(12) + "|ff| | "
+                    msg += "|jn|" + mail.date.isoformat(" ")[:16] + "|ff| |\n"
+                    i += 1
+                msg += "+" + "-".ljust(taille + 41, "-") + "+"
+            else:
+                taille = 0
+                for mail in mails:
+                    t_sujet = len(couper_phrase(mail.sujet, 29))
+                    if t_sujet > taille:
+                        taille = t_sujet
+                taille = (taille < 5 and 5) or taille
+                msg = "+" + "-".ljust(taille + 45, "-") + "+\n"
+                msg += "| |tit|N°|ff| | |tit|Lu|ff|  | |tit|" + "Sujet".ljust(taille)
+                msg += "|ff| | |tit|Expéditeur|ff| | |tit|" + "Date".ljust(16)
+                msg += "|ff| |\n"
+                i = 1
+                for mail in mails:
+                    msg += "| |rg|" + str(i).ljust(2) + "|ff| | "
+                    msg += (mail.lu and "|vrc|oui|ff|" or "|rgc|non|ff|")
+                    msg += " | |vr|" + couper_phrase(mail.sujet, \
+                            taille-3).ljust(taille) + "|ff| | |blc|"
+                    msg += mail.expediteur.nom.ljust(10) + "|ff| | |jn|"
+                    msg += mail.date.isoformat(" ")[:16] + "|ff| |\n"
+                    i += 1
+                msg += "+" + "-".ljust(taille + 45, "-") + "+"
             personnage << msg

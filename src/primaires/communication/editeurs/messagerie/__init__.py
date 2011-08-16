@@ -154,7 +154,7 @@ class EdtMessagerie(Presentation):
         archives.aide_courte = \
             "Entrez |ent|/|ff| pour revenir à la fenêtre précédente.\n" \
             "Options disponibles :\n" \
-            " - |ent|/l <numéro>|ff| : permet de lire un message\n" \
+            " - |ent|/l <numéro>|ff| : affiche un message afin de le lire\n" \
             " - |ent|/r <numéro>|ff| : restaure un message dans la boîte " \
             "de réception\n" \
             " - |ent|/s <numéro>|ff| : permet de supprimer définitivement " \
@@ -165,7 +165,7 @@ class EdtMessagerie(Presentation):
         envoi.parent = self
         envoi.aide_courte = \
             "Entrez |ent|/|ff| pour revenir à la fenêtre précédente.\n" \
-            " - |ent|/l <numéro>|ff| : permet de lire un message\n" \
+            " - |ent|/l <numéro>|ff| : affiche un message afin de le lire\n" \
             " - |ent|/c <numéro>|ff| : crée une copie d'un message (pour " \
             "l'envoyer à d'autres\n" \
             "   destinataires par exemple)\n" \

@@ -56,5 +56,8 @@ class EdtDestinataires(Uniligne):
         if joueur is None:
             self.pere << "|err|Ce joueur n'a pu être trouvé.|ff|"
         else:
-            self.objet.destinataire = joueur
+            if joueur in self.objet.liste_dest:
+                self.objet.liste_dest.remove(joueur)
+            else:
+                self.objet.liste_dest.append(joueur)
             self.actualiser()

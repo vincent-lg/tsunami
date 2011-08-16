@@ -45,6 +45,10 @@ class EdtEnvoyer(Editeur):
     
     def entrer(self):
         mail = self.objet
-        mail.envoyer()
-        self.pere.joueur.contextes.retirer()
-        self.pere.joueur << "|att|Votre mudmail a bien été envoyé.|ff|"
+        if not mail.liste_dest and mail.destinataire is None:
+            self.pere.joueur << "|err|Vous devez préciser au moins un " \
+                    "destinataire.|ff|"
+        else:
+            mail.envoyer()
+            self.pere.joueur.contextes.retirer()
+            self.pere.joueur << "|att|Votre mudmail a bien été envoyé.|ff|"

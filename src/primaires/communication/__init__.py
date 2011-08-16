@@ -315,7 +315,7 @@ class Module(BaseModule):
     
     def joueur_connecte(self, joueur):
         """On avertit le joueur si il a des messages non lus."""
-        mails = self.mails.get_mails_pour(joueur, ENVOYE, exp=False)
+        mails = self.mails.get_mails_pour(joueur, RECU)
         mails = [mail for mail in mails if not mail.lu]
         if len(mails) == 1:
             joueur << "\n|jn|Vous avez un message non lu.|ff|"

@@ -76,14 +76,14 @@ class BoiteMail(Unique):
         self.enregistrer()
         return mail
     
-    def get_mails_pour(self, personnage, etat, exp=True):
+    def get_mails_pour(self, personnage, etat):
         """Renvoie la liste des mails de personnage"""
         ret = []
         for mail in self._mails.values():
-            if exp: # on récupère les mails dont perso est expediteur
-                if mail.expediteur == personnage and mail.etat == etat:
-                    ret.append(mail)
-            else: # ou ceux dont il est destinataire
+            if etat == RECU or etat == ARCHIVE:
                 if mail.destinataire == personnage and mail.etat == etat:
+                    ret.append(mail)
+            else:
+                if mail.expediteur == personnage and mail.etat == etat:
                     ret.append(mail)
         return ret

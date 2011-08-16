@@ -40,11 +40,7 @@ EN_COURS = 0
 ENVOYE = 1
 BROUILLON = 2
 ARCHIVE = 3
-
-SUPPR_AUCUN = 0
-SUPPR_DEST = 1
-SUPPR_EXP = 2
-SUPPR_TOUS = 3
+RECU = 4
 
 class MUDmail(BaseObj):
 
@@ -62,10 +58,10 @@ class MUDmail(BaseObj):
         self.date = None
         self.sujet = "aucun sujet"
         self.expediteur = expediteur
+        self.liste_dest = []
         self.destinataire = None
         self.contenu = Description()
         self.lu = False
-        self.suppr_pour = SUPPR_AUCUN
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
     
@@ -85,10 +81,16 @@ class MUDmail(BaseObj):
         return self._etat
     
     @property
-    def nom_dest(self):
-        """Renvoie le nom du destinataire si existant"""
-        return (self.destinataire is not None and self.destinataire.nom) or \
-                "aucun"
+    def aff_dest(self):
+        """Renvoie les destinataires si existants"""
+        res = ""
+        if self.destinataire is not None:
+            res = self.destinataire.nom
+        else:
+            res = ", ".join([dest.nom for dest in self.liste_dest])
+            if not res:
+                res = "aucun"
+        return res
     
     @property
     def apercu_contenu(self):
@@ -100,7 +102,7 @@ class MUDmail(BaseObj):
     
     def afficher(self):
         """Affiche le mail"""
-        ret = "2012-12-21 00:00\n"
+        ret = self.date.isoformat(" ")[:16] + "\n"
         ret += "Sujet : " + self.sujet + "\n"
         ret += str(self.contenu)
         return ret
@@ -113,10 +115,19 @@ class MUDmail(BaseObj):
     
     def envoyer(self):
         """Envoie le mail"""
-        self._etat = ENVOYE
         self.date = datetime.datetime.now()
+        self._etat = ENVOYE
         self.enregistrer()
-        self.destinataire << "\n|jn|Vous avez reçu un nouveau message.|ff|"
+        for dest in self.liste_dest:
+            mail = type(self).importeur.communication.mails.creer_mail( \
+                    self.expediteur)
+            mail.date = datetime.datetime.now()
+            mail.sujet = self.sujet
+            mail.destinataire = dest
+            mail.contenu = self.contenu
+            mail._etat = RECU
+            mail.enregistrer()
+            dest << "\n|jn|Vous avez reçu un nouveau message.|ff|"
     
     def enregistrer_brouillon(self):
         """Enregistre le mail comme brouillon"""
@@ -131,13 +142,5 @@ class MUDmail(BaseObj):
     
     def restaurer(self):
         """Restaure le mail"""
-        self._etat = ENVOYE
+        self._etat = RECU
         self.enregistrer()
-    
-    def suppr_pour_exp():
-        """Supprime le mail pour son expéditeur"""
-        self.suppr_pour = (SUPPR_DEST and SUPPR_TOUS) or SUPPR_EXP
-    
-    def suppr_pour_dest():
-        """Supprime le mail pour son destinataire"""
-        self.suppr_pour = (SUPPR_EXP and SUPPR_TOUS) or SUPPR_DEST

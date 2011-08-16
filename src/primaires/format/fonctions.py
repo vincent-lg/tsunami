@@ -261,19 +261,19 @@ def contient(nom_complet, fragment):
 def couper_phrase(phrase, couper):
     """Coupe la phrase 'phrase' au mot précédant le caractère numéro 'couper'
     et ajoute (...) si nécessaire"""
-    i = len(phrase)
-    if i <= couper:
+    if len(phrase) <= couper:
         return phrase
     else:
         phrase = phrase[:couper]
-        if phrase.endswith(" "):
-            return phrase.rstrip() + "..."
-        else:
-            phrase = phrase.split(" ")
-            if len(phrase) > 1:
+        phrase = phrase.split(" ")
+        if len(phrase) > 1:
+            del phrase[-1]
+            if len(" ".join(phrase)) > couper-3:
                 del phrase[-1]
-            phrase = " ".join(phrase)
-            return phrase + "..."
+        else:
+            phrase[0][:-3]
+        phrase = " ".join(phrase)
+        return phrase + "..."
 
 def oui_ou_non(flag):
     """Retourne 'oui' si le flag est True, 'non' sinon."""

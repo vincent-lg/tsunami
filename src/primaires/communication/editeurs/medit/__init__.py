@@ -110,11 +110,12 @@ class EdtMedit(Presentation):
                 EdtDestinataires, mail)
         destinataire.parent = self
         destinataire.prompt = "Entrez un destinataire : "
-        destinataire.apercu = "{objet.nom_dest}"
+        destinataire.apercu = "{objet.aff_dest}"
         destinataire.aide_courte = \
-            "Choisissez un |ent|destinataire|ff| pour votre message ; " \
+            "Entrez un nouveau |ent|destinataire|ff| à ajouter à votre " \
+            "message, ou un déjà existant pour le supprimer ; " \
             "|cmd|/|ff| pour revenir à la\nfenêtre parente.\n" \
-            "Destinataire actuel : {objet.nom_dest}"
+            "Destinataire(s) actuel : {objet.aff_dest}"
         
         # Contenu
         contenu = self.ajouter_choix("contenu", "c", EdtContenu, \
