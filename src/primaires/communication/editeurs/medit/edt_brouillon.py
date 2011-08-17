@@ -31,6 +31,7 @@
 """Fichier contenant le contexte éditeur EdtBrouillon"""
 
 from primaires.interpreteur.editeur import Editeur
+from primaires.communication.mudmail import BROUILLON
 
 class EdtBrouillon(Editeur):
     
@@ -45,6 +46,18 @@ class EdtBrouillon(Editeur):
     
     def entrer(self):
         mail = self.objet
-        mail.enregistrer_brouillon()
-        self.pere.joueur.contextes.retirer()
-        self.pere.joueur << "|att|Votre mudmail a bien été enregistré dans les brouillons.|ff|"
+        if mail.etat == BROUILLON:
+            source = type(self).importeur.communication.mails[mail.id_source]
+            source.sujet = mail.sujet
+            source.liste_dest = mail.liste_dest
+            source.contenu = mail.contenu
+            source.enregistrer_brouillon
+            del type(self).importeur.communication.mails[mail.id]
+            self.pere.joueur.contextes.retirer()
+            self.pere.joueur << "|att|Vos modifications ont bien été " \
+                    "enregistrées.|ff|"
+        else:
+            mail.enregistrer_brouillon()
+            self.pere.joueur.contextes.retirer()
+            self.pere.joueur << "|att|Votre mudmail a bien été enregistré " \
+                    "dans les brouillons.|ff|"

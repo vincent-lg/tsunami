@@ -75,7 +75,7 @@ class EdtBoiteEnvoi(Editeur):
             i = 1
             for mail in mails:
                 msg += "| |rg|" + str(i).ljust(2) + "|ff| | "
-                msg += "|vr|" + couper_phrase(mail.sujet, taille-3).ljust( \
+                msg += "|vr|" + couper_phrase(mail.sujet, 33).ljust( \
                         taille) + "|ff| | |blc|"
                 msg += couper_phrase(mail.aff_dest,12).ljust(12) + "|ff| | "
                 msg += "|jn|" + mail.date.isoformat(" ")[:16] + "|ff| |\n"

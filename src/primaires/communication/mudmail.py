@@ -62,6 +62,7 @@ class MUDmail(BaseObj):
         self.destinataire = None
         self.contenu = Description()
         self.lu = False
+        self.id_source = 0 # dans le cas d'un brouillon édité
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
     
@@ -102,22 +103,21 @@ class MUDmail(BaseObj):
     
     def afficher(self):
         """Affiche le mail"""
-        ret = self.date.isoformat(" ")[:16] + "\n"
-        ret += "Sujet : " + self.sujet + "\n"
+        ret = "Expéditeur      : " + self.expediteur.nom + "\n"
+        ret += "Destinataire(s) : " + self.aff_dest + "\n"
+        ret += "Sujet           : " + self.sujet + "\n"
         ret += str(self.contenu)
+        ret += "\nLe " + self.date.isoformat(" à ")[:18] + ".\n"
         return ret
     
     def enregistrer(self):
-        """Enregistrer le mail dans son parent"""
+        """Enregistre le mail dans son parent"""
         construit = self.construit
         if construit and self.parent:
             self.parent.enregistrer()
     
     def envoyer(self):
         """Envoie le mail"""
-        self.date = datetime.datetime.now()
-        self._etat = ENVOYE
-        self.enregistrer()
         for dest in self.liste_dest:
             mail = type(self).importeur.communication.mails.creer_mail( \
                     self.expediteur)
@@ -128,6 +128,9 @@ class MUDmail(BaseObj):
             mail._etat = RECU
             mail.enregistrer()
             dest << "\n|jn|Vous avez reçu un nouveau message.|ff|"
+        self.date = datetime.datetime.now()
+        self._etat = ENVOYE
+        self.enregistrer()
     
     def enregistrer_brouillon(self):
         """Enregistre le mail comme brouillon"""

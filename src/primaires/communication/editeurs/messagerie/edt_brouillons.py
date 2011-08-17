@@ -74,7 +74,7 @@ class EdtBrouillons(Editeur):
             i = 1
             for mail in mails:
                 msg += "| |rg|" + str(i).ljust(2) + "|ff| | "
-                msg += "|vr|" + couper_phrase(mail.sujet, taille-3).ljust( \
+                msg += "|vr|" + couper_phrase(mail.sujet, 33).ljust( \
                         taille) + "|ff| | |blc|"
                 msg += couper_phrase(mail.aff_dest,12).ljust(12) + "|ff| | "
                 msg += "|jn|" + mail.date.isoformat(" ")[:16] + "|ff| |\n"
@@ -108,7 +108,14 @@ class EdtBrouillons(Editeur):
                 self.pere.joueur << "|err|Le numéro spécifié ne correspond à " \
                         "aucun message.|ff|"
                 return
-            enveloppe = EnveloppeObjet(EdtMedit, e_mail, None)
+            brouillon = type(self).importeur.communication.mails.creer_mail( \
+                e_mail.expediteur)
+            brouillon.id_source = e_mail.id
+            brouillon.sujet = e_mail.sujet
+            brouillon.liste_dest = e_mail.liste_dest
+            brouillon.contenu.ajouter_paragraphe(str(e_mail.contenu))
+            brouillon.enregistrer_brouillon
+            enveloppe = EnveloppeObjet(EdtMedit, brouillon, None)
             enveloppe.parent = self
             contexte = enveloppe.construire(self.pere.joueur)
             self.pere.joueur.contextes.ajouter(contexte)

@@ -49,6 +49,8 @@ class EdtEnvoyer(Editeur):
             self.pere.joueur << "|err|Vous devez préciser au moins un " \
                     "destinataire.|ff|"
         else:
+            if mail.id_source != 0:
+                del type(self).importeur.communication.mails[mail.id_source]
             mail.envoyer()
             self.pere.joueur.contextes.retirer()
             self.pere.joueur << "|att|Votre mudmail a bien été envoyé.|ff|"

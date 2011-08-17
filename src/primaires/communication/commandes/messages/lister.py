@@ -85,7 +85,7 @@ class PrmLister(Parametre):
                 i = 1
                 for mail in mails:
                     msg += "| |rg|" + str(i).ljust(2) + "|ff| | "
-                    msg += "|vr|" + couper_phrase(mail.sujet, taille-3).ljust( \
+                    msg += "|vr|" + couper_phrase(mail.sujet, 33).ljust( \
                             taille) + "|ff| | |blc|"
                     msg += couper_phrase(mail.aff_dest,12).ljust(12) + "|ff| | "
                     msg += "|jn|" + mail.date.isoformat(" ")[:16] + "|ff| |\n"
@@ -106,8 +106,8 @@ class PrmLister(Parametre):
                 for mail in mails:
                     msg += "| |rg|" + str(i).ljust(2) + "|ff| | "
                     msg += (mail.lu and "|vrc|oui|ff|" or "|rgc|non|ff|")
-                    msg += " | |vr|" + couper_phrase(mail.sujet, \
-                            taille-3).ljust(taille) + "|ff| | |blc|"
+                    msg += " | |vr|" + couper_phrase(mail.sujet, 29).ljust( \
+                            taille) + "|ff| | |blc|"
                     msg += mail.expediteur.nom.ljust(10) + "|ff| | |jn|"
                     msg += mail.date.isoformat(" ")[:16] + "|ff| |\n"
                     i += 1

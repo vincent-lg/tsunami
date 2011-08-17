@@ -130,7 +130,7 @@ class Module(BaseModule):
         self.mails = mails
         
         # On lie la méthode joueur_connecte avec l'hook joueur_connecte
-        # La méthode joueur_connecte sera ainsi appelé quand un joueur
+        # La méthode joueur_connecte sera ainsi appelée quand un joueur
         # se connecte
         self.importeur.hook["joueur:connecte"].ajouter_evenement(
                 self.joueur_connecte)
@@ -184,7 +184,7 @@ class Module(BaseModule):
         return ret
     
     def ajouter_canal(self, nom, auteur):
-        """Ajoute un canal à la lsite des canaux existants
+        """Ajoute un canal à la liste des canaux existants
         Retourne le canal créé.
         
         """
@@ -314,7 +314,7 @@ class Module(BaseModule):
         return res
     
     def joueur_connecte(self, joueur):
-        """On avertit le joueur si il a des messages non lus."""
+        """On avertit le joueur s'il a des messages non lus."""
         mails = self.mails.get_mails_pour(joueur, RECU)
         mails = [mail for mail in mails if not mail.lu]
         if len(mails) == 1:

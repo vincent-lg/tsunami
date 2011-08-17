@@ -100,7 +100,7 @@ class EdtMessagerie(Presentation):
         sujet = supprimer_accents(arguments.lower())
         if not sujet or sujet.isspace():
             self.pere.joueur << "|err|Vous devez préciser un sujet d'aide.|ff|"
-        elif sujet == "messages recus":
+        elif sujet == "recus":
             self.pere.joueur << "Cette boîte liste tous les messages " \
                     "que vous avez reçu, et propose diverses\n" \
                     "options basiques."
@@ -118,7 +118,7 @@ class EdtMessagerie(Presentation):
                     "messages que vous avez envoyés."
         else:
             self.pere.joueur << "|err|Aucune aide sur ce sujet.\n" \
-                    "Sujets disponibles : messages reçus, brouillons, " \
+                    "Sujets disponibles : reçus, brouillons, " \
                     "archives, envoi.|ff|"
     
     def construire(self):

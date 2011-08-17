@@ -30,9 +30,7 @@
 
 """Fichier contenant le contexte éditeur EdtAnnuler"""
 
-from primaires.interpreteur.contexte.confirmation import Confirmation
 from primaires.interpreteur.editeur import Editeur
-from primaires.communication.mudmail import BROUILLON
 
 class EdtAnnuler(Editeur):
     
@@ -47,13 +45,6 @@ class EdtAnnuler(Editeur):
     
     def entrer(self):
         mail = self.objet
-        if mail.etat == BROUILLON:
-            contexte = Confirmation(self.pere,
-                    type(self).importeur.communication.mails,
-                    type(self).importeur.communication.mails.__delitem__,
-                    [mail.id, ])
-            self.pere.joueur.contextes.ajouter(contexte)
-        else:
-            del type(self).importeur.communication.mails[mail.id]
-            self.pere.joueur.contextes.retirer()
-            self.pere.joueur << "|rg|Votre mudmail a été annulé.|ff|"
+        del type(self).importeur.communication.mails[mail.id]
+        self.pere.joueur.contextes.retirer()
+        self.pere.joueur << "|rg|Vos modifications ont été annulées.|ff|"
