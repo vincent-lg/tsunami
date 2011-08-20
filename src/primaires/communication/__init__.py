@@ -165,7 +165,6 @@ class Module(BaseModule):
         """Ajout des commandes"""
         self.commandes = [
             commandes.dire.CmdDire(),
-            commandes.crier.CmdCrier(),
             commandes.emote.CmdEmote(),
             commandes.parler.CmdParler(),
             commandes.repondre.CmdRepondre(),
