@@ -43,7 +43,7 @@ class Hook:
     Pour ajouter un évènement (callback) à l'hook, utilisez la méthode
     ajouter_evenement.
     
-    Pour exéfcuter un évènement, utilisez sa méthode exécuter.
+    Pour exécuter un évènement, utilisez sa méthode executer.
     
     Regardez l'aide de ces deux méthodes pour plus d'information.
     

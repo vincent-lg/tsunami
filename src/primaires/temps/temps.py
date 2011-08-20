@@ -66,7 +66,7 @@ class Temps(Unique):
         if config.noms_jours:
             self.noms_jours = config.noms_jours
         else:
-            self.noms_jours = [str(i) for i in range(1, \
+            self.noms_jours = [str(i) for i in range(1,
                     config.nombre_jours + 1)]
         
         # On vérifie que le réglage initial est conforme aux noms

@@ -38,6 +38,7 @@ cfg_temps = r"""
 # date et de l'heure...
 
 ## Périodes temporelles
+
 # Saisons
 # Ici sont listées les saisons.
 # Leur ordre d'apparition est déduit de l'écoulement des mois (voir plus bas).
@@ -50,7 +51,7 @@ saisons = [
 
 # Mois
 # Les mois sont donnés dans une liste de paires sous la forme :
-#     (nom_du_mois: nom_de_la_saison),
+#   ("nom du mois", "nom de la saison"),
 mois = [
     ("janvier", "hiver"),
     ("février", "hiver"),
@@ -74,11 +75,12 @@ mois = [
 nombre_jours = 30
 
 # Noms des jours
-# Laissez une liste vide si vos jours portent simplement un numéro.
+# Laissez la liste vide si vos jours portent simplement un numéro.
 # Dans ce cas, c'est le nombre de jours par mois qui intervient.
 noms_jours = []
 
 ## Date et heure initiales
+
 # Si aucune date n'est définie, on règle la date sous la forme d'un tuple
 # ne contenant que des nombres :
 # (année, mois, jour, heure, minute)
@@ -87,6 +89,7 @@ noms_jours = []
 reglage_initial = (1785, 5, 12, 10, 0)
 
 ## Ecoulement du temps
+
 # A quelle vitesse s'écoule le temps dans l'univers ?
 # La réponse doit être donnée sous la forme d'une chaîne de caractère contenant
 # - le numérateur
@@ -101,6 +104,7 @@ reglage_initial = (1785, 5, 12, 10, 0)
 vitesse_ecoulement = "1/4"
 
 ## Formatage de la date et l'heure
+
 # Formatage de la date
 # Le formatage doit être donné sous la forme d'une chaîne de caractère
 # contenant plusieurs symboles :
@@ -118,9 +122,9 @@ formatage_date = "{no_j} {nm_m} {no_a}"
 # {no_h} : le nombre d'heures
 # {nm_h} : le nom de l'heure (comme huit heures)
 # {no_m} : le nombre de minutes
-# {nm_m} : le nom de minutes (cinquante-quatre)
+# {nm_m} : le nom des minutes (cinquante-quatre)
 # {no_q} : l'heure sous la forme de quart d'heure (00:45)
-# {nm_q} : l'heure sous la forme de nom de quart d'heure (minuit moins le quart)
+# {nm_q} : l'heure sous la forme de nom de quart d'heure (minuit et quart)
 formatage_heure = "{no_h}:{no_m}"
 
 """

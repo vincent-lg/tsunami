@@ -47,17 +47,18 @@ class Module(BaseModule):
     se connecte, par exemple). Les actions différées permettent
     d'appeler des fonctions après un certain temps.
     
-    Un exemple pratique d'hook serai d'avertir le joueur si des messages
-    (mudmails) sont non lus dans sa boîte de réception.
+    Un exemple pratique d'hook serait d'avertir le joueur si des messages
+    (mudmails) non lus se trouvent dans sa boîte de réception.
     
     Pour ajouter un nouvel hook, utilisez la méthode ajouter_hook du module.
     Pour lier un hook existant avec un certain évènement, récupérez le
-    hook (importeur.hook[nom_du_hook) et utilisez sa méthode
+    hook (importeur.hooks[nom_du_hook) et utilisez sa méthode
     ajouter_evenement.
     
     Pour plus d'informations, regardez l'aide de ces deux méthodes.
     
     """
+    
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "hook", "primaire")
@@ -78,25 +79,24 @@ class Module(BaseModule):
         
         Par défaut, l'hook ajouté ne possède aucun évènement.
         Pour ajouter un évènement à cet hook, il faut appeler
-        (sur l'objet hook) la méthode
-        ajouter_evenement.
+        (sur l'objet hook) la méthode ajouter_evenement.
         
         Par exemple, le module joueur veut ajouter un hook appelé quand
         un joueur se connecte. Dans la méthode init du module joueur,
         on trouvera :
-            self.importeur.hook.ajouter_hook("joueur:connecte",
-                    "Hook appelé quand un joueur se connecte")
+        |   self.importeur.hook.ajouter_hook("joueur:connecte",
+        |           "Hook appelé quand un joueur se connecte")
         
         Le paramètre aide est utile surtout pour l'introspection.
         
         Dans le module communication qui veut avertir un joueur qui
         se connecte si il a un message, on trouvera :
-            hook = self.importeur.hook["joueur:connecte"]
-            hook.ajouter_evenement(methode)
+        |   hook = self.importeur.hook["joueur:connecte"]
+        |   hook.ajouter_evenement(methode)
         
         Notez que les hook doivent être appelés au moment opportun, ce
-        module ne le gère pas.
-        Regardez du côté de la méthode executer de l'objet Hook.
+        module ne le gère pas. Regardez du côté de la méthode executer
+        de l'objet Hook.
         
         NOTE : on ne peut supprimer d'hook dynamiquement.
         

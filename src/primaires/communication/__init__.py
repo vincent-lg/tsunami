@@ -35,10 +35,12 @@ from primaires.format.fonctions import *
 from primaires.communication.config import cfg_com
 from primaires.communication import masques
 from primaires.communication import commandes
+
 from .editeurs.chedit import EdtChedit
 from .editeurs.socedit import EdtSocedit
 from .editeurs.medit import EdtMedit
 from .editeurs.messagerie import EdtMessagerie
+
 from .conversations import Conversations
 from .attitudes import Attitudes
 from .attitude import INACHEVEE
@@ -49,13 +51,16 @@ from .mudmail import *
 
 class Module(BaseModule):
     
-    """Cette classe représente le module qui gère toutes les communications
-    entre clients (donc entre joueurs la plupart du temps)
-    Elle gère également les canaux de communication.
+    """Classe représentant le module primaire 'communication'.
+    
+    Ce module gère toutes les communications entre clients (entre joueurs
+    la plupart du temps). Il s'occupe également des canaux de communication,
+    du mudmail et d'autres systèmes anodins.
     
     """
     
     def __init__(self, importeur):
+        """Constructeur du module"""
         BaseModule.__init__(self, importeur, "communication", "primaire")
         self.logger = type(self.importeur).man_logs.creer_logger( \
                 "communication", "communication")
@@ -68,11 +73,7 @@ class Module(BaseModule):
         self.mails = None
     
     def config(self):
-        """Configuration du module.
-        On crée le fichier de configuration afin de l'utiliser plus tard
-        pour la mise en forme.
-        
-        """
+        """Configuration du module"""
         self.cfg_com = type(self.importeur).anaconf.get_config("config_com", \
             "communication/config.cfg", "config communication", cfg_com)
         self.cfg_com._set_globales({
@@ -127,10 +128,12 @@ class Module(BaseModule):
                 self.canaux[nom_c].clr = ligne[1]
                 self.canaux[nom_c].flags = ligne[2]
         # Ajout du canal 'info'
-        chan_info = self.ajouter_canal("info", None)
-        chan_info.clr = cfg_com.couleur_info
-        chan_info.flags = MUET | PERSO_AUTOCONNECT
-        chan_info.resume = cfg_com.resume_info
+        if not "info" in self.canaux:
+            chan_info = self.ajouter_canal("info", None)
+            self.logger.info("Création du canal 'info'")
+            chan_info.clr = cfg_com.couleur_info
+            chan_info.flags = MUET | PERSO_AUTOCONNECT
+            chan_info.resume = cfg_com.resume_info
         
         # On récupère les mails
         mails = None

@@ -50,5 +50,5 @@ class CmdTemps(Commande):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         temps = type(self).importeur.temps.temps
-        personnage << "Nous sommes le {}.\nIl est {}.".format(temps.date_formatee,
-                temps.heure_formatee)
+        personnage << "Nous sommes le {}.\nIl est {}.".format(
+                temps.date_formatee, temps.heure_formatee)
