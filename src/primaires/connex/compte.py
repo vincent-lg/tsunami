@@ -34,6 +34,7 @@ import hashlib
 
 from bases.collections.liste_id import ListeID
 from abstraits.id import ObjetID
+from primaires.communication.canal import IMM_AUTOCONNECT, PERSO_AUTOCONNECT
 
 class Compte(ObjetID):
     """Classe représentant un compte.
@@ -96,7 +97,17 @@ class Compte(ObjetID):
         config = type(self).importeur.anaconf.get_config("connex")
         if self.nom == config.compte_admin: # compte administrateur
             joueur.nom_groupe = "administrateur"
-        
+            for canal in type(self).importeur.communication. \
+                    canaux.iter().values():
+                if canal.flags & IMM_AUTOCONNECT and \
+                        joueur not in canal.connectes:
+                    canal.rejoindre_ou_quitter(joueur, aff=False, forcer=True)
+        # On connecte le joueur aux canaux automatiques
+        for canal in type(self).importeur.communication. \
+                canaux.iter().values():
+            if canal.flags & PERSO_AUTOCONNECT and \
+                    joueur not in canal.connectes:
+                canal.rejoindre_ou_quitter(joueur, aff=False, forcer=True)        
         self.joueurs.append(joueur)
         self.enregistrer()
     

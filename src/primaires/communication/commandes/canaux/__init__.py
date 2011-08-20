@@ -44,6 +44,7 @@ from .immerger import PrmImmerger
 from .inviter import PrmInviter
 from .ejecter import PrmEjecter
 from .bannir import PrmBannir
+from .annoncer import PrmAnnoncer
 from .promouvoir import PrmPromouvoir
 from .editer import PrmEditer
 from .dissoudre import PrmDissoudre
@@ -76,6 +77,7 @@ class CmdCanaux(Commande):
         prm_inviter = PrmInviter()
         prm_ejecter = PrmEjecter()
         prm_bannir = PrmBannir()
+        prm_annoncer = PrmAnnoncer()
         prm_promouvoir = PrmPromouvoir()
         prm_editer = PrmEditer()
         prm_dissoudre = PrmDissoudre()
@@ -88,6 +90,7 @@ class CmdCanaux(Commande):
         self.ajouter_parametre(prm_inviter)
         self.ajouter_parametre(prm_ejecter)
         self.ajouter_parametre(prm_bannir)
+        self.ajouter_parametre(prm_annoncer)
         self.ajouter_parametre(prm_promouvoir)
         self.ajouter_parametre(prm_editer)
         self.ajouter_parametre(prm_dissoudre)
@@ -161,6 +164,7 @@ class CmdCanaux(Commande):
             aide += "\n\n  Paramètres de modération :"
             aide += afficher_param(dic_parametres["eject"])
             aide += afficher_param(dic_parametres["ban"])
+            aide += afficher_param(dic_parametres["announce"])
         if statut_perso is "admin":
             aide += "\n\n  Paramètres d'administration :"
             aide += afficher_param(dic_parametres["promote"])
@@ -218,6 +222,7 @@ class CmdCanaux(Commande):
             aide += "\n\n  Paramètres de modération :"
             aide += afficher_param(dic_parametres["eject"])
             aide += afficher_param(dic_parametres["ban"])
+            aide += afficher_param(dic_parametres["announce"])
         if statut_perso is "admin":
             aide += "\n\n  Paramètres d'administration :"
             aide += afficher_param(dic_parametres["promote"])

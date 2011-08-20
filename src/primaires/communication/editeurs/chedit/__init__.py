@@ -38,12 +38,11 @@ les extensions n'apparaîtront pas ici.
 
 """
 
-from primaires.format.constantes import COULEURS, COULEURS_INV
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_couleur import EdtCouleur
-from .edt_droits import EdtDroits
+from .edt_flags import EdtFlags
 
 class EdtChedit(Presentation):
     
@@ -88,15 +87,7 @@ class EdtChedit(Presentation):
         couleur.apercu = "{objet.clr}{objet.clr_nom}|ff|"
         couleur.aide_courte = \
             "Entrez la |ent|couleur|ff| du canal ou |cmd|/|ff| pour revenir " \
-            "à la fenêtre parente.\n" \
-            "Couleurs disponibles : "
-        for nom, clr in COULEURS.items():
-            couleur.aide_courte += clr + nom + "|ff|, "
-            if nom == "blanc": # on insère un saut de ligne à l'arrache
-                couleur.aide_courte += "\n"
-        couleur.aide_courte = couleur.aide_courte[0:-2] + "."
-        couleur.aide_courte += \
-            "\nCouleur actuelle : {objet.clr}{objet.clr_nom}|ff|"
+            "à la fenêtre parente.\n"
         
         # Description
         description = self.ajouter_choix("description", "d", Description, canal)
@@ -106,7 +97,10 @@ class EdtChedit(Presentation):
             "| |tit|" + "Description du canal {}".format(canal).ljust(76) + \
             "|ff||\n" + self.opts.separateur
         
-        # Droits
-        droits = self.ajouter_choix("droits", "o", EdtDroits, canal)
-        droits.parent = self
-        droits.apercu = "{objet.droits}"
+        # Flags
+        flags = self.ajouter_choix("flags", "f", EdtFlags, canal)
+        flags.parent = self
+        flags.prompt = "Entrez un flag : "
+        flags.aide_courte = \
+            "Entrez un |ent|flag|ff| pour changer sa valeur ou |cmd|/|ff| " \
+            "pour revenir à la fenêtre parente.\n"

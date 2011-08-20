@@ -57,6 +57,7 @@ class Immersion(Contexte):
             # Options de modo
             "e" : self.opt_eject,
             "b" : self.opt_ban,
+            "a" : self.opt_announce,
             # Options d'admin
             "p" : self.opt_promote,
             "ed" : self.opt_edit,
@@ -243,6 +244,16 @@ class Immersion(Contexte):
             self.pere.joueur << "|err|Vous ne pouvez éjecter ce joueur.|ff|"
             return
         canal.bannir(joueur)
+    
+    def opt_announce(self, arguments):
+        """Option permettant d'envoyer une annonce : /a <message>"""
+        canal = self.canal
+        if not self.pere.joueur in canal.moderateurs and \
+                self.pere.joueur is not canal.auteur:
+            self.pere.joueur << "|err|Vous n'avez pas accès à cette option.|ff|"
+            return
+        message = arguments.rstrip(" \n")
+        canal.envoyer_imp(message)
     
     def opt_promote(self, arguments):
         """Option permettant de promouvoir un joueur connecté : /p <joueur>"""

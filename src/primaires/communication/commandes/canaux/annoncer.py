@@ -1,6 +1,4 @@
-# -*-coding:Utf-8 -*
-
-# Copyright (c) 2010 LE GOFF Vincent
+﻿# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,37 +26,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'crier'.
+"""Fichier contenant le paramètre 'annoncer' de la commande 'canaux'."""
 
-"""
+from primaires.interpreteur.masque.parametre import Parametre
 
-from primaires.interpreteur.commande.commande import Commande
-
-class CmdCrier(Commande):
+class PrmAnnoncer(Parametre):
     
-    """Commande 'crier'.
+    """Commande 'canaux annoncer <canal> <message>'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "crier", "shout")
-        self.nom_categorie = "parler"
-        self.schema = "<message>"
-        self.aide_courte = "crie une phrase"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "annonce", "announce")
+        self.schema = "<canal> <message>"
+        self.aide_courte = "envoie une annonce impersonnelle"
         self.aide_longue = \
-            "Cette commande permet de crier une phrase dans l'univers. " \
-            "Tous les joueurs connectés entendront votre message ; " \
-            "il s'agit d'un moyen de communiquer à travers l'univers, " \
-            "en-dehors du cadre role-play."
+            "Cette sous-commande envoie un message impersonnel, permettant " \
+            "de faire une annonce officielle par exemple (utile pour les " \
+            "canaux muets)."
     
     def interpreter(self, personnage, dic_masques):
-        """Interprétation de la commande"""
-        message = dic_masques["message"].message
-        clr = type(self).importeur.anaconf.get_config("config_com").couleur_cri
-        moi = clr + "Vous criez : " + message + "|ff|"
-        personnage.envoyer(moi)
-        autre = clr + personnage.nom + " crie : " + message + "|ff|"
-        for joueur in type(self).importeur.connex.joueurs_connectes:
-            if joueur is not personnage:
-                joueur.envoyer(autre)
+        """Interprétation du paramètre"""
+        if not dic_masques["canal"].canal_existe:
+            personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
+        else:
+            canal = dic_masques["canal"].canal
+            message = dic_masques["message"].message
+            if not personnage in canal.moderateurs and \
+                    personnage is not canal.auteur:
+                personnage << "|err|Vous n'avez pas accès à cette option.|ff|"
+            elif not personnage in canal.connectes:
+                personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
+            else:
+                canal.envoyer_imp(message)

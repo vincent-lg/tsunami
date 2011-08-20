@@ -29,6 +29,7 @@
 """Fichier contenant le paramètre 'lister' de la commande 'canaux'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
+from primaires.communication.canal import INVISIBLE
 
 class PrmLister(Parametre):
     
@@ -48,18 +49,19 @@ class PrmLister(Parametre):
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         canaux = type(self).importeur.communication.canaux
+        canaux = [canal for canal in canaux.iter().values() if not canal.flags & INVISIBLE]
         if not canaux:
             res = "|err|Il n'y a aucun canal de communication.|ff|"
         else:
             # On détermine la taille du tableau
             taille = 0
-            for canal in canaux.iter().values():
+            for canal in canaux:
                 if len(canal.infos) > taille:
                     taille = len(canal.infos)
             res = "+" + "-" * (taille - 9) + "+\n"
             res += "| |tit|" + "Canaux existants".ljust(taille - 11) + "|ff| |\n"
             res += "+" + "-" * (taille - 9) + "+\n"
-            for canal in canaux.iter().values():
+            for canal in canaux:
                 if personnage in canal.connectes:
                     res += "| |bc|* " + canal.infos.ljust(taille) + "|ff| |\n"
                 else:

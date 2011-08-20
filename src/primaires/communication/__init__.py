@@ -42,8 +42,8 @@ from .editeurs.messagerie import EdtMessagerie
 from .conversations import Conversations
 from .attitudes import Attitudes
 from .attitude import INACHEVEE
-from .canal import Canal
 from .canaux import Canaux
+from .canal import *
 from .boite_mail import BoiteMail
 from .mudmail import *
 
@@ -73,9 +73,15 @@ class Module(BaseModule):
         pour la mise en forme.
         
         """
-        
-        type(self.importeur).anaconf.get_config("config_com", \
+        self.cfg_com = type(self.importeur).anaconf.get_config("config_com", \
             "communication/config.cfg", "config communication", cfg_com)
+        self.cfg_com._set_globales({
+            "PRIVE": PRIVE,
+            "MUET": MUET,
+            "INVISIBLE": INVISIBLE,
+            "IMM_AUTOCONNECT": IMM_AUTOCONNECT,
+            "PERSO_AUTOCONNECT": PERSO_AUTOCONNECT,
+        })
         
         BaseModule.config(self)
     
@@ -110,6 +116,21 @@ class Module(BaseModule):
             else:
                 self.logger.info("Aucun canal de communication récupéré")
         self._canaux = canaux
+        
+        # On crée les canaux par défaut
+        cfg_com = self.cfg_com
+        for ligne in cfg_com.liste_canaux:
+            nom_c = ligne[0]
+            if not nom_c in self.canaux:
+                self.ajouter_canal(nom_c, None)
+                self.logger.info("Création du canal '{}'".format(nom_c))
+                self.canaux[nom_c].clr = ligne[1]
+                self.canaux[nom_c].flags = ligne[2]
+        # Ajout du canal 'info'
+        chan_info = self.ajouter_canal("info", None)
+        chan_info.clr = cfg_com.couleur_info
+        chan_info.flags = MUET | PERSO_AUTOCONNECT
+        chan_info.resume = cfg_com.resume_info
         
         # On récupère les mails
         mails = None
@@ -188,7 +209,6 @@ class Module(BaseModule):
         Retourne le canal créé.
         
         """
-        
         self._canaux[nom] = Canal(nom, auteur, self._canaux)
         return self._canaux[nom]
     

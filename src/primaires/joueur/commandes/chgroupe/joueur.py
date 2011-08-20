@@ -31,6 +31,8 @@
 """Fichier contenant le paramètre 'joueur' de la commande 'chgroupe'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
+from primaires.interpreteur.groupe.groupe import IMMORTELS
+from primaires.communication.canal import IMM_AUTOCONNECT
 
 class PrmJoueur(Parametre):
     
@@ -54,6 +56,12 @@ class PrmJoueur(Parametre):
         nom_groupe = dic_masques["groupe_existant"].nom_groupe
         
         joueur.nom_groupe = nom_groupe
+        if joueur.est_immortel():
+            for canal in type(self).importeur.communication. \
+                    canaux.iter().values():
+                if canal.flags & IMM_AUTOCONNECT \
+                        and joueur not in canal.connectes:
+                    canal.rejoindre_ou_quitter(joueur, aff=False, forcer=True)
         
         personnage << "Le joueur {} est à présent dans le groupe {}.".format(
                 joueur.nom, nom_groupe)
