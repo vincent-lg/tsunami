@@ -30,9 +30,28 @@
 
 """Fichier contenant la classe Expression, détaillée plus bas."""
 
-from abstraits.obase import BaseObj
+from abstraits.obase import *
 
-class Expression(BaseObj):
+expressions = {}
+
+class MetaExpressions(MetaBaseObj):
+    
+    """Métaclasse représentant une expression.
+    
+    Elle se contente d'ajouter chaque classe avec un nom valide dans
+    le dictionnaire des expressions.
+    
+    """
+    
+    def __init__(cls, nom, bases, attrs):
+        """Constructeur de la classe."""
+        MetaBaseObj.__init__(cls, nom, bases, attrs)
+        if cls.nom:
+            print("On ajoute", cls.nom)
+            expressions[cls.nom] = cls
+
+
+class Expression(BaseObj, metaclass=MetaExpression):
     
     """Classe abstraite définissant une expression.
 
@@ -61,6 +80,7 @@ class Expression(BaseObj):
     
     """
     
+    nom = ""
     def __init__(self):
         """Constructeur d'une expression."""
         pass

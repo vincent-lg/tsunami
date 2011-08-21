@@ -41,10 +41,13 @@ class BasePertu(ObjetID, metaclass=MetaPertu):
     
     """
     
+    groupe = "perturbations"
+    sous_rep = "meteo/perturbations"
     nom_pertu = ""
     
     def __init__(self):
         """Constructeur d'un type"""
+        ObjetId.__init__(self)
         pass
     
     def __getnewargs__(self):

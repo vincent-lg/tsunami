@@ -62,6 +62,8 @@ class Module(BaseModule):
         """Initialisation du module"""        
         self.importeur.hook["salle:meteo"].ajouter_evenement(
                 self.donner_meteo)
+                
+        perturbations = self.importeur.supenr.charger_groupe(BasePertu)
         
         BaseModule.init(self)
     
