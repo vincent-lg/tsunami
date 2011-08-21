@@ -52,6 +52,7 @@ NOTE: les modules primaires et secondaires ne doivent pas porter de noms
 identiques, susceptibles d'entrer en conflit.
 
 Voici un résumé des modules primaires existants :
+-   commerce        Module gérant les magasins et transactions    
 -   communication   Module gérant la communication dans l'univers
 -   connex          module proche des clients, chargé des connexions,
                     créations de compte, interprétation des commandes
@@ -66,6 +67,7 @@ Voici un résumé des modules primaires existants :
 -   joueur          module contenant les informations sur les joueurs
                     (personnages connectés)
 -   objet           Module chargé des objets et des prototypes d'objets
+-   meteo           Module gérant la météorologie
 -   perso           module gérant les personnages, connectés (joueurs) ou non
                     (PNJ)
 -   pnj             module gérant les personnages non joueurs

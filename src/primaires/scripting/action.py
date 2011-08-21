@@ -151,32 +151,9 @@ class Action(Instruction):
     def convertir_parametres(self, espace, parametres):
         """Convertit les paramètres passés, sous la forme de chaînes.
         
-        Par exemple, on peut recevoir les paramètres :
-            "5"         5
-            "3.5        Fraction(7, 2)
-            '"test"'    "test"
-        
-        Les paramètres peuvent faire également référence à des variables
-        dans l'espace.
-        
         """
         parametres = list(parametres)
         for i, p in enumerate(parametres):
-            # On tente de convertir en fraction
-            val = None
-            try:
-                val = Fraction(p)
-            except ValueError:
-                pass
-            
-            if val is None:
-                if p.startswith("\"") and p.endswith("\""):
-                    val = eval(p)
-                elif p in espace:
-                    val = espace[p]
-                else:
-                    raise ValueError("impossible d'interpréter {}".format(repr(p)))
-            
-            parametres[i] = val
+            parametres[i] = parametres[i].valeur
         
         return parametres
