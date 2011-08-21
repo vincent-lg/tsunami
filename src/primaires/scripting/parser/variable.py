@@ -28,43 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Nombre, détaillée plus bas."""
+"""Fichier contenant la classe Variable, détaillée plus bas."""
 
-from fractions import Fraction
+import re
 
 from .expression import Expression
 from .delimiteurs import DELIMITEURS
 
-class Nombre(Expression):
+# Constantes
+RE_VARIABLE = re.compile(r"^[A-Za-z][A-Za-z0-9_]*$")
+
+class Variable(Expression):
     
-    """Expression Nombre.
+    """Expression variable."""
     
-    Notez qu'un nombre peut être :
-        un entier
-        un flottant
-        une fraction
-    
-    Tous ces nombres sont de toute façon convertis en fraction.
-    
-    """
-    
+    nom = "variable"
     def __init__(self):
         """Constructeur de l'expression."""
-        self.nombre = None
+        self.nom = None
     
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
-
-        fins = [chaine.index(delimiteur) for delimiteur in DELIMITEURS]
-        fins = [fin for fin in fins if fin >= 0]
+        fins = [chaine.index(delimiteur) for delimiteur in DELIMITEURS \
+                if delimiteur in chaine]
+        fin = fins and min(fins) or 0
         chaine = chaine[:fin]
-        try:
-            nombre = Fraction(chaine)
-        except ValueError:
-            nombre = None
-        
-        return nombre is not None
+        return RE_VARIABLE.search(chaine)
     
     @classmethod
     def parser(cls, chaine):
@@ -73,9 +63,13 @@ class Nombre(Expression):
         Retourne l'objet créé et la partie non interprétée de la chaîne.
         
         """
-        objet = Nombre()
-        fins = [chaine.index(delimiteur) for delimiteur in DELIMITEURS]
-        fins = [fin for fin in fins if fin >= 0]
+        objet = cls()
+        fins = [chaine.index(delimiteur) for delimiteur in DELIMITEURS \
+                if delimiteur in chaine]
+        fin = min(fins)
         chaine_interpreter = chaine[:fin]
-        objet.nombre = Fraction(chaine_interpreter)
+        objet.nom = chaine_interpreter
         return objet, chaine[fin + 1:]
+    
+    def __repr__(self):
+        return "Variable({})".format(self.nom)

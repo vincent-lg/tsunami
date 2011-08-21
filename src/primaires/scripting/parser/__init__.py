@@ -37,5 +37,31 @@ caractères, ainsi que des fonctions.
 Pour voir la classe de base des expressions, rendez-vous dans le fichier
 Expression.py.
 
+Dans ce fichier est également conservé la métaclasse des expressions.
+
 """
 
+from abstraits.obase import MetaBaseObj
+
+expressions = {}
+
+class MetaExpression(MetaBaseObj):
+    
+    """Métaclasse représentant une expression.
+    
+    Elle se contente d'ajouter chaque classe avec un nom valide dans
+    le dictionnaire des expressions.
+    
+    """
+    
+    def __init__(cls, nom, bases, attrs):
+        """Constructeur de la classe."""
+        MetaBaseObj.__init__(cls, nom, bases, attrs)
+        if cls.nom:
+            print("On ajoute", cls.nom)
+            expressions[cls.nom] = cls
+
+from .chaine import *
+from .nombre import *
+from .variable import *
+from .fonction import *

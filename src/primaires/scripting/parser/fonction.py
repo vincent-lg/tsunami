@@ -28,35 +28,75 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe ChaineDeCaracteres, détaillée plus bas."""
+"""Fichier contenant la classe Fonction, détaillée plus bas."""
 
 from .expression import Expression
+from . import expressions
+from .variable import RE_VARIABLE
 
-class ChaineDeCaracteres(Expression):
+class Fonction(Expression):
     
-    """Expression chaîne de caractères."""
+    """Expression fonction."""
     
-    nom = "chaine"
+    nom = "fonction"
     def __init__(self):
         """Constructeur de l'expression."""
-        self.chaine = None
+        self.nom = None
+        self.arguments = ()
     
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
-        return chaine.startswith("\"") and chaine.count("\"") >= 2
+        fin_nom = chaine.find("(")
+        nom = chaine[:fin_nom]
+        chaine = chaine[:fin_nom + 1]
+        return fin_nom >= 0  and RE_VARIABLE.search(nom)
     
     @classmethod
-    def parser(cls, chaine):
+    def parser(cls, fonction):
         """Parse la chaîne.
         
         Retourne l'objet créé et la partie non interprétée de la chaîne.
         
         """
-        objet = ChaineDeCaracteres()
-        fin = chaine.index("\"", 1)
-        objet.chaine = chaine[1:fin]
-        return objet, chaine[fin + 1:]
+        objet = cls()
+        fin_nom = fonction.find("(")
+        nom = fonction[:fin_nom]
+        chaine = fonction[fin_nom + 1:]
+        objet.nom = nom
+        
+        # Parsage des arguments
+        types = ("variable", "nombre", "chaine")
+        types = tuple([expressions[nom] for nom in types])
+        arguments = []
+        while True:
+            chaine = chaine.lstrip(" ")
+            if chaine.startswith(")"):
+                chaine = chaine[1:]
+                break
+            
+            types_app = [type for type in types if type.parsable(chaine)]
+            if not types_app:
+                raise ValueError("impossible de parser {}".format(fonction))
+            elif len(types_app) > 1:
+                raise ValueError("la fonction {] peut être différemment interprétée".format(fonction))
+            
+            type = types_app[0]
+            arg, chaine = type.parser(chaine)
+            
+            chaine.lstrip(" ")
+            if chaine.startswith(", "):
+                chaine = chaine[1]
+            elif chaine.startswith(")"):
+                chaine = chaine[1:]
+                break
+            else:
+                raise ValueError("erreur de syntaxe dans la fonction " \
+                        "{}".format(fonction))
+        
+        objet.arguments = tuple(arguments)
+        
+        return objet, chaine
     
     def __repr__(self):
-        return "chaine({})".format(self.chaine)
+        return self.nom + str(self.arguments)

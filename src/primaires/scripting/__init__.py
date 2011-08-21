@@ -37,6 +37,7 @@ from abstraits.module import *
 from .config import cfg_scripting
 from .instruction import Instruction
 from .action import Action, actions as lst_actions
+from . import parser
 
 class Module(BaseModule):
     
