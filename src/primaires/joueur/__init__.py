@@ -57,16 +57,15 @@ class Module(BaseModule):
         config = type(self.importeur).anaconf.get_config("joueur",
             "joueur/joueur.cfg", "config joueur", cfg_joueur)
         self.groupe_par_defaut = config.groupe_par_defaut
+        # On crée les hooks du module
+        self.importeur.hook.ajouter_hook("joueur:connecte",
+                "Hook appelé après qu'un joueur se soit connecté.")
         
         BaseModule.config(self)
     
     def init(self):
         """Méthode d'initialisation du module"""
         joueurs = self.importeur.supenr.charger_groupe(Joueur)
-                
-        # On crée les hooks du module
-        self.importeur.hook.ajouter_hook("joueur:connecte",
-                "Hook appelé après qu'un joueur se soit connecté.")
         
         BaseModule.init(self)
     

@@ -120,8 +120,9 @@ class Canal(BaseObj):
                         "que sur invitation.|ff|"
             else:
                 self.connectes.append(joueur)
-                joueur << "|att|Vous êtes à présent connecté au canal " \
-                        "{}.|ff|".format(self.nom)
+                if aff:
+                    joueur << "|att|Vous êtes à présent connecté au canal " \
+                            "{}.|ff|".format(self.nom)
                 for connecte in self.connectes:
                     if connecte in type(self).importeur.connex.joueurs_connectes:
                         if connecte is not joueur:

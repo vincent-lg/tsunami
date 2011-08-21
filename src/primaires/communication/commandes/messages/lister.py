@@ -65,7 +65,7 @@ class PrmLister(Parametre):
                 mails = mails.get_mails_pour(personnage, ENVOYE)
         else:
             mails = mails.get_mails_pour(personnage, RECU)
-            mails = [mail for mail in mails if mail.lu == False]
+            mails = [mail for mail in mails if not mail.lu]
         
         if not mails:
             personnage << "|att|Vous n'avez aucun message dans cette " \

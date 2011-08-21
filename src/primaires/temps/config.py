@@ -79,6 +79,15 @@ nombre_jours = 30
 # Dans ce cas, c'est le nombre de jours par mois qui intervient.
 noms_jours = []
 
+# Alternance jour / nuit
+# Pour chaque saison, précisez l'heure du lever et du coucher de soleil.
+alternance_jn = [
+    ("hiver", 8, 20),
+    ("printemps", 7, 21),
+    ("été", 6, 22),
+    ("automne", 7, 21),
+]
+
 ## Date et heure initiales
 
 # Si aucune date n'est définie, on règle la date sous la forme d'un tuple
@@ -126,5 +135,29 @@ formatage_date = "{no_j} {nm_m} {no_a}"
 # {no_q} : l'heure sous la forme de quart d'heure (00:45)
 # {nm_q} : l'heure sous la forme de nom de quart d'heure (minuit et quart)
 formatage_heure = "{no_h}:{no_m}"
+
+## Affichage physique de l'heure
+
+# Il s'agit de la manifestation concrète du temps qui passe : la plus
+# évidente de ces manifestations est bien sûr le soleil qui se déplace dans
+# le ciel, mais dans un univers plus fantaisiste on pourrait imaginer d'autres
+# marques d'écoulement du temps.
+
+# Une heure avant le lever du soleil
+pre_lever = "Une ligne pâle borde l'horizon est, trahissant l'éminence de l'aube."
+# L'heure qui suit le lever du soleil
+post_lever = "Le soleil se hisse au-dessus de l'horizon est, perçant le ciel matinal."
+# Jusqu'à midi
+matinee = "Le soleil matinal poursuit sa lente ascension vers le zénith."
+# Midi
+midi = "Plus brillant que jamais, le soleil luit au plus haut de sa trajectoire."
+# Jusqu'une heure avant le coucher du soleil
+apres_midi = "Lentement mais sûrement, le soleil descend vers l'horizon ouest."
+# Une heure avant le coucher du soleil
+pre_coucher = "Les derniers rayons du soleil déclinant embrasent l'atmosphère."
+# L'heure qui suit le coucher du soleil
+post_coucher = "Les premières étoiles s'allument dans la nuit encore claire."
+# Jusqu'une heure avant le lever du soleil le lendemain
+nuit = "Quelques étoiles lointaines brillent doucement."
 
 """

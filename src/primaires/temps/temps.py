@@ -133,6 +133,55 @@ class Temps(Unique):
         """Retourne l'heure formatée"""
         return self.formatage_heure.format(no_h=self.no_h, no_m=self.no_m)
     
+    @property
+    def h_lever(self):
+        """Retourne l'heure du lever de soleil"""
+        for ligne in type(self).importeur.temps.cfg.alternance_jn:
+            if ligne[0] == self.nm_s:
+                return ligne[1]
+    
+    @property
+    def h_coucher(self):
+        """Retourne l'heure du coucher de soleil"""
+        for ligne in type(self).importeur.temps.cfg.alternance_jn:
+            if ligne[0] == self.nm_s:
+                return ligne[2]
+        
+    @property
+    def jour(self):
+        """Retourne True s'il fait jour, False sinon"""
+        if self.heure >= self.h_lever and self.heure < self.h_coucher:
+            return True
+        else:
+            return False
+    
+    @property
+    def nuit(self):
+        """Retourne True s'il fait nuit, False sinon"""
+        return not self.jour
+    
+    @property
+    def ciel_actuel(self):
+        """Retourne le message correspondant au ciel actuel selon l'heure"""
+        config = type(self).importeur.temps.cfg
+        h_now = self.heure
+        if h_now == self.h_lever -  1:
+            return config.pre_lever
+        elif h_now == self.h_lever:
+            return config.post_lever
+        elif h_now > self.h_lever and h_now < 12:
+            return config.matinee
+        elif h_now == 12:
+            return config.midi
+        elif h_now > 12 and h_now < self.h_coucher - 1:
+            return config.apres_midi
+        elif h_now == self.h_coucher - 1:
+            return config.pre_coucher
+        elif h_now == self.h_coucher:
+            return config.post_coucher
+        elif h_now > self.h_coucher or h_now < self.h_lever - 1:
+            return config.nuit        
+    
     def inc(self):
         """Incrémente de 1 seconde réelle"""
         self.seconde += 1 / self.vitesse_ecoulement

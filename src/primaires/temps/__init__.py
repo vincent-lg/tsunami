@@ -67,6 +67,8 @@ class Module(BaseModule):
             temps = self.importeur.supenr.charger(sous_rep, fichier)
         if temps is None:
             temps = Temps(self.cfg)
+        self.importeur.hook["salle:meteo"].ajouter_evenement(
+                self.voir_ciel)
         
         self.temps = temps
         BaseModule.init(self)
@@ -89,3 +91,6 @@ class Module(BaseModule):
         self.importeur.diffact.ajouter_action("inc_temps",
                 1, self.inc)
         self.temps.inc()
+    
+    def voir_ciel(self, salle, liste_messages):
+        liste_messages.append(self.temps.ciel_actuel)

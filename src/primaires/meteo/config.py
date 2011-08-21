@@ -31,5 +31,7 @@
 """Ce fichier contient la configuration du module météorologique."""
 
 cfg_meteo = r"""
-Ce fichier décrit le comportement de la météorologie dans l'univers.
+# Ce fichier décrit le comportement de la météorologie dans l'univers.
+beau_temps = "L'atmosphère est claire, le ciel pur, libre de tout nuage."
+
 """

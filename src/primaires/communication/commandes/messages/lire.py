@@ -62,7 +62,7 @@ class PrmLire(Parametre):
                 mails = mails.get_mails_pour(personnage, ENVOYE)
         else:
             mails = mails.get_mails_pour(personnage, RECU)
-            mails = [mail for mail in mails if mail.lu == False]
+            mails = [mail for mail in mails if not mail.lu]
         
         num = dic_masques["id_mail"].id_mail
         if not mails:
@@ -76,7 +76,8 @@ class PrmLire(Parametre):
                     break
                 i += 1
             if r_mail is None:
-                personnage << "|err|Aucun message ne correspond à ce numéro.|ff|"
+                personnage << "|err|Aucun message ne correspond à ce " \
+                        "numéro.|ff|"
             else:
                 personnage << r_mail.afficher()
                 r_mail.lu = True

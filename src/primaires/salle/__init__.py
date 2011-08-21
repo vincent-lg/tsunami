@@ -86,6 +86,8 @@ class Module(BaseModule):
         """Méthode de configuration du module"""
         type(self.importeur).anaconf.get_config("salle", \
             "salle/salle.cfg", "config salle", cfg_salle)
+        self.importeur.hook.ajouter_hook("salle:meteo",
+                "Hook appelé dès qu'on regarde une salle.")
         
         BaseModule.config(self)
     

@@ -188,13 +188,16 @@ class Salle(ObjetID):
         if not description:
             description = "Vous êtes au milieu de nulle part."
         
-        res += description + "\n\n"
+        res += description + "\n"
+        liste_messages = []
+        type(self).importeur.hook["salle:meteo"].executer(self, liste_messages)
+        res += "\n".join(liste_messages)
         res += "Sorties : "
         res += self.afficher_sorties(personnage)
         
         # Personnages
         personnages = OrderedDict()
-        # Si le personnage est un joueur, il se retrouve avec un nomre de 1
+        # Si le personnage est un joueur, il se retrouve avec un nombre de 1
         # Si le personnage est un PNJ, on conserve son prototype avec
         # le nombre d'occurences de prototypes apparaissant
         for personne in self.personnages:

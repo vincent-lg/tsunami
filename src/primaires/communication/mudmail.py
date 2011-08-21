@@ -44,7 +44,7 @@ RECU = 4
 
 class MUDmail(BaseObj):
 
-    """Cette classe contient un mudmail
+    """Cette classe contient un mudmail.
     
     """
     
@@ -83,14 +83,14 @@ class MUDmail(BaseObj):
     
     @property
     def aff_dest(self):
-        """Renvoie les destinataires si existants"""
+        """Renvoie le(s) destinataire(s) si existant(s)"""
         res = ""
-        if self.destinataire is not None:
-            res = self.destinataire.nom
+        if self.destinataire:
+            res += self.destinataire.nom
         else:
-            res = ", ".join([dest.nom for dest in self.liste_dest])
+            res += ", ".join([dest.nom for dest in self.liste_dest])
             if not res:
-                res = "aucun"
+                res += "aucun"
         return res
     
     @property
@@ -119,7 +119,7 @@ class MUDmail(BaseObj):
     def envoyer(self):
         """Envoie le mail"""
         for dest in self.liste_dest:
-            mail = type(self).importeur.communication.mails.creer_mail( \
+            mail = type(self).importeur.communication.mails.creer_mail(
                     self.expediteur)
             mail.date = datetime.datetime.now()
             mail.sujet = self.sujet
@@ -127,15 +127,16 @@ class MUDmail(BaseObj):
             mail.contenu = self.contenu
             mail._etat = RECU
             mail.enregistrer()
-            dest << "\n|jn|Vous avez reçu un nouveau message.|ff|"
+            if dest in type(self).importeur.connex.joueurs_connectes:
+                dest << "\n|jn|Vous avez reçu un nouveau message.|ff|"
         self.date = datetime.datetime.now()
         self._etat = ENVOYE
         self.enregistrer()
     
     def enregistrer_brouillon(self):
         """Enregistre le mail comme brouillon"""
-        self._etat = BROUILLON
         self.date = datetime.datetime.now()
+        self._etat = BROUILLON
         self.enregistrer()
     
     def archiver(self):

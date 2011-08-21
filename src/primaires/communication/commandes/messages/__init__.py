@@ -28,9 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'messages'.
-
-"""
+"""Package contenant la commande 'messages'."""
 
 from primaires.interpreteur.commande.commande import Commande
 from .ecrire import PrmEcrire
@@ -51,10 +49,10 @@ class CmdMessages(Commande):
         self.nom_categorie = "parler"
         self.aide_courte = "permet de gérer les messages privés"
         self.aide_longue = \
-                "Cette commande offre une gestion complète des messages " \
-                "privés ou mudmails. Diverses options sont disponibles : " \
-                "entrez %messages% sans arguments pour en voir un aperçu, " \
-                "ou lisez l'aide plus bas."
+            "Cette commande offre une gestion complète des messages " \
+            "privés ou mudmails. Diverses options sont disponibles : " \
+            "entrez %messages% sans arguments pour en voir un aperçu, " \
+            "ou lisez l'aide plus bas."
     
     def ajouter_parametres(self):
         """Ajout des paramètres"""

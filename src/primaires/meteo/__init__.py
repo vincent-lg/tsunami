@@ -32,6 +32,7 @@
 
 from abstraits.module import *
 from .config import cfg_meteo
+from .perturbations.base import BasePertu
 
 class Module(BaseModule):
     
@@ -48,6 +49,7 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "meteo", "primaire")
+        self._perturbations = {}
     
     def config(self):
         """Configuration du module"""
@@ -58,4 +60,14 @@ class Module(BaseModule):
     
     def init(self):
         """Initialisation du module"""
+        perturbations = self.importeur.supenr.charger_groupe(BasePertu)
+        for pertu in perturbations:
+            self._perturbations[pertu.nom_pertu] = pertu
+        self.importeur.hook["salle:meteo"].ajouter_evenement(
+                self.donner_meteo)
+        
+        BaseModule.init(self)
+    
+    def donner_meteo(self, salle, liste_messages):
+        """Affichage de la météo d'une salle"""
         pass

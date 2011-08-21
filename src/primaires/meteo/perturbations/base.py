@@ -28,25 +28,26 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce package contient toutes les perturbations météorologiques existantes,
-héritées de la perturbation basique (voir base.py).
+"""Ce fichier contient la classe BasePertu, détaillée plus bas."""
 
-"""
+from abstraits.id import ObjetID
+from primaires.meteo.perturbations import MetaPertu
 
-from abstraits.obase import MetaBaseObj
-
-perturbations = {}
-
-class MetaPertu(MetaBaseObj):
+class BasePertu(ObjetID, metaclass=MetaPertu):
     
-    """Métaclasse des perturbations météorologiques.
-    Elle ajoute la perturbation dans le dictionnaire si elle possède
-    un nom.
+    """Classe abstraite représentant la base d'une perturbation météo.
+    Cette classe contient tout ce qui est commun à toutes les perturbations
+    météorologiques.
     
     """
     
-    def __init__(cls, nom, bases, contenu):
-        """Constructeur de la métaclasse"""
-        MetaBaseObj.__init__(cls, nom, bases, contenu)
-        if cls.nom_pertu:
-            perturbations[cls.nom_pertu] = cls
+    nom_pertu = ""
+    
+    def __init__(self):
+        """Constructeur d'un type"""
+        pass
+    
+    def __getnewargs__(self):
+        return ()
+
+ObjetID.ajouter_groupe(BasePertu)
