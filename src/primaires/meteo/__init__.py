@@ -60,9 +60,6 @@ class Module(BaseModule):
     
     def init(self):
         """Initialisation du module"""
-        perturbations = self.importeur.supenr.charger_groupe(BasePertu)
-        for pertu in perturbations:
-            self._perturbations[pertu.nom_pertu] = pertu
         self.importeur.hook["salle:meteo"].ajouter_evenement(
                 self.donner_meteo)
         
