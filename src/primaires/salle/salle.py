@@ -191,7 +191,7 @@ class Salle(ObjetID):
         res += description + "\n"
         liste_messages = []
         type(self).importeur.hook["salle:meteo"].executer(self, liste_messages)
-        res += "\n".join(liste_messages)
+        res += "|cy|" + "\n".join(liste_messages) + "|ff|\n\n"
         res += "Sorties : "
         res += self.afficher_sorties(personnage)
         

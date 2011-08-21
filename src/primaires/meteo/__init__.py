@@ -53,13 +53,13 @@ class Module(BaseModule):
     
     def config(self):
         """Configuration du module"""
-        type(self.importeur).anaconf.get_config("config_meteo",
+        self.cfg = type(self.importeur).anaconf.get_config("config_meteo",
             "meteo/config.cfg", "config meteo", cfg_meteo)
         
         BaseModule.config(self)
     
     def init(self):
-        """Initialisation du module"""
+        """Initialisation du module"""        
         self.importeur.hook["salle:meteo"].ajouter_evenement(
                 self.donner_meteo)
         
@@ -67,4 +67,4 @@ class Module(BaseModule):
     
     def donner_meteo(self, salle, liste_messages):
         """Affichage de la météo d'une salle"""
-        pass
+        liste_messages.append(self.cfg.beau_temps)

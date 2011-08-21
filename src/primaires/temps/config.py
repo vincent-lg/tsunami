@@ -144,13 +144,16 @@ formatage_heure = "{no_h}:{no_m}"
 # marques d'écoulement du temps.
 
 # Une heure avant le lever du soleil
-pre_lever = "Une ligne pâle borde l'horizon est, trahissant l'éminence de l'aube."
+pre_lever = "Une ligne pâle borde l'horizon est, trahissant l'éminence de " \
+    "l'aube."
 # L'heure qui suit le lever du soleil
-post_lever = "Le soleil se hisse au-dessus de l'horizon est, perçant le ciel matinal."
+post_lever = "Le soleil se hisse au-dessus de l'horizon est, perçant " \
+    "l'atmosphère matinale."
 # Jusqu'à midi
 matinee = "Le soleil matinal poursuit sa lente ascension vers le zénith."
 # Midi
-midi = "Plus brillant que jamais, le soleil luit au plus haut de sa trajectoire."
+midi = "Plus brillant que jamais, le soleil luit au plus haut de sa " \
+    "trajectoire."
 # Jusqu'une heure avant le coucher du soleil
 apres_midi = "Lentement mais sûrement, le soleil descend vers l'horizon ouest."
 # Une heure avant le coucher du soleil
@@ -158,6 +161,7 @@ pre_coucher = "Les derniers rayons du soleil déclinant embrasent l'atmosphère.
 # L'heure qui suit le coucher du soleil
 post_coucher = "Les premières étoiles s'allument dans la nuit encore claire."
 # Jusqu'une heure avant le lever du soleil le lendemain
-nuit = "Quelques étoiles lointaines brillent doucement."
+nuit = "La voûte céleste vous surplombant est sombre, piquetée d'étoiles " \
+    "lointaines."
 
 """

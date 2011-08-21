@@ -32,3 +32,21 @@
 héritées de la perturbation basique (voir base.py).
 
 """
+
+from abstraits.obase import MetaBaseObj
+
+perturbations = {}
+
+class MetaPertu(MetaBaseObj):
+    
+    """Métaclasse des perturbations météorologiques.
+    Elle ajoute la perturbations dans le dictionnaire ci-dessus.
+    
+    """
+    
+    def __init__(cls, nom, bases, contenu):
+        """Constructeur de la métaclasse"""
+        MetaBaseObj.__init__(cls, nom, bases, contenu)
+        if cls.nom_pertu:
+            perturbations[cls.nom_pertu] = cls
+        

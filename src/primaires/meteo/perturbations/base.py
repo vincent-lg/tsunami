@@ -31,8 +31,9 @@
 """Ce fichier contient la classe BasePertu, détaillée plus bas."""
 
 from abstraits.id import ObjetID
+from . import MetaPertu
 
-class BasePertu(ObjetID):
+class BasePertu(ObjetID, metaclass=MetaPertu):
     
     """Classe abstraite représentant la base d'une perturbation météo.
     Cette classe contient tout ce qui est commun à toutes les perturbations
@@ -48,3 +49,5 @@ class BasePertu(ObjetID):
     
     def __getnewargs__(self):
         return ()
+
+ObjetID.ajouter_groupe(BasePertu)
