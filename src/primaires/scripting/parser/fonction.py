@@ -83,10 +83,11 @@ class Fonction(Expression):
             
             type = types_app[0]
             arg, chaine = type.parser(chaine)
+            arguments.append(arg)
             
             chaine.lstrip(" ")
-            if chaine.startswith(", "):
-                chaine = chaine[1]
+            if chaine.startswith(","):
+                chaine = chaine[1:]
             elif chaine.startswith(")"):
                 chaine = chaine[1:]
                 break

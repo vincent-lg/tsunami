@@ -80,7 +80,7 @@ class Nombre(Expression):
         fin = min(fins)
         chaine_interpreter = chaine[:fin]
         objet.nombre = Fraction(chaine_interpreter)
-        return objet, chaine[fin + 1:]
+        return objet, chaine[fin:]
     
     def __repr__(self):
         return "nombre({})".format(self.nombre)
