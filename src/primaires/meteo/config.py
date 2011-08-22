@@ -32,6 +32,29 @@
 
 cfg_meteo = r"""
 # Ce fichier décrit le comportement de la météorologie dans l'univers.
+
+# Message affiché lorsqu'il fait beau
 beau_temps = "L'atmosphère est claire, le ciel pur, libre de tout nuage."
+
+# Nombre maximum de perturbations météorologiques simultanées
+# Choisissez-le en fonction de la taille de votre univers ; la taille
+# moyenne d'une perturbation est d'environ 15 cases.
+nb_pertu_max = 3
+
+# Sens du vent chaque mois
+vents = [
+    ("janvier", "nord"),
+    ("février", "nord-est"),
+    ("mars", "est"),
+    ("avril", "sud-est"),
+    ("mai", "sud"),
+    ("juin", "sud-ouest"),
+    ("juillet", "ouest"),
+    ("août", "nord-ouest"),
+    ("septembre", "nord"),
+    ("octobre", "nord-est"),
+    ("novembre", "est"),
+    ("décembre", "sud-est"),
+]
 
 """
