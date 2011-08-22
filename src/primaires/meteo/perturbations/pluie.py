@@ -41,9 +41,9 @@ class Pluie(BasePertu):
     nom_pertu = "pluie"
     rayon_max = 16
     
-    def __init__(self):
+    def __init__(self, pos):
         """Constructeur de la perturbation"""
-        BasePertu.__init__(self)
+        BasePertu.__init__(self, pos)
         self.duree = 10
         self.direction = "est"
         self.message = "Une fine pluie martèle le sol dans un doux " \

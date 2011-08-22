@@ -34,8 +34,8 @@ from random import choice
 
 from abstraits.module import *
 from .config import cfg_meteo
+from .perturbations import perturbations
 from .perturbations.base import BasePertu
-from .perturbations import perturbations as liste_perturbations
 
 class Module(BaseModule):
     
@@ -52,13 +52,12 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "meteo", "primaire")
-        self._perturbations = []
-        self.perturbations_actuelles = {}
+        self.perturbations_actuelles = []
     
     def config(self):
         """Configuration du module"""
         self.cfg = type(self.importeur).anaconf.get_config("config_meteo",
-            "meteo/config.cfg", "config meteo", cfg_meteo)
+                "meteo/config.cfg", "config meteo", cfg_meteo)
         
         BaseModule.config(self)
     
@@ -66,10 +65,7 @@ class Module(BaseModule):
         """Initialisation du module"""        
         self.importeur.hook["salle:meteo"].ajouter_evenement(
                 self.donner_meteo)
-                
-        perturbations = self.importeur.supenr.charger_groupe(BasePertu)
-        for pertu in perturbations:
-            self._perturbations.append(pertu)
+        self.importeur.supenr.charger_groupe(BasePertu)
         
         BaseModule.init(self)
     
@@ -80,11 +76,28 @@ class Module(BaseModule):
     def cycle_meteo(self):
         self.importeur.diffact.ajouter_action("cycle_meteo", 60,
                 self.cycle_meteo)
-        print("Nouveau cycle.")
         # On tente de créer une perturbation
-        if liste_perturbations:
-            pertu = choice(liste_perturbations)
+        if len(self.perturbations_actuelles) < self.cfg.nb_pertu_max:
+            salles = list(self.importeur.salle._salles.values())
+            try:
+                salle_dep = choice(salles)
+                cls_pertu = choice(perturbations)
+            except IndexError:
+                pass
+            else:
+                pertu = cls_pertu(salle_dep.coords)
+                self.perturbations_actuelles.append(pertu)
+        # On fait bouger les perturbations existantes
+        for pertu in self.perturbations_actuelles:
+            pertu.bouger()
     
     def donner_meteo(self, salle, liste_messages):
         """Affichage de la météo d'une salle"""
-        liste_messages.append(self.cfg.beau_temps)
+        res = ""
+        for pertu in self.perturbations_actuelles:
+            if pertu.est_sur(salle):
+                res += pertu.message
+                break
+        if not res:
+            res += self.cfg.beau_temps
+        liste_messages.append(res)
