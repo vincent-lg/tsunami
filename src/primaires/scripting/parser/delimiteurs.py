@@ -30,4 +30,4 @@
 
 """Fichier contenant les délimiteurs."""
 
-DELIMITEURS = (",", ")")
+DELIMITEURS = (",", ")", " ")

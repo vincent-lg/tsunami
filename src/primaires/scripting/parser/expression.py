@@ -56,7 +56,7 @@ class Expression(BaseObj, metaclass=MetaExpression):
                     parsable par l'expression
         parser -- retourne l'objet créé par le parsage et la chaîne
                   non interprétée
-        valeur -- une propriété retournant l'objet Python parsé
+        get_valeur -- retourne l'objet Python parsé
     
     Pour plus de détails sur chacune des méthodes, consultez leur
     documentation.
@@ -66,7 +66,10 @@ class Expression(BaseObj, metaclass=MetaExpression):
     nom = ""
     def __init__(self):
         """Constructeur d'une expression."""
-        pass
+        BaseObj.__init__(self)
+    
+    def __getnewargs__(self):
+        return ()
     
     @classmethod
     def parsable(cls, chaine):
@@ -94,11 +97,6 @@ class Expression(BaseObj, metaclass=MetaExpression):
         """
         raise NotImplementedError
     
-    @property
-    def valeur(self):
-        """Retourne la valeur d'une expression, c'est-à-dire un objet Python.
-        
-        Par exemple, l'expression ChaineDeCaracteres retourne un type str.
-        
-        """
+    def get_valeur(self, evt):
+        """Retourne l'objet Python parsé."""
         raise NotImplementedError

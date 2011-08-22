@@ -39,6 +39,7 @@ class ChaineDeCaracteres(Expression):
     nom = "chaine"
     def __init__(self):
         """Constructeur de l'expression."""
+        Expression.__init__(self)
         self.chaine = None
     
     @classmethod
@@ -58,5 +59,11 @@ class ChaineDeCaracteres(Expression):
         objet.chaine = chaine[1:fin]
         return objet, chaine[fin + 1:]
     
+    def get_valeur(self, evt):
+        """Retourne la chaîne au format str."""
+        return self.chaine
+    
     def __repr__(self):
         return "chaine({})".format(self.chaine)
+    def __str__(self):
+        return "\"" + self.chaine + "\""

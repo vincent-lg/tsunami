@@ -51,6 +51,7 @@ class Nombre(Expression):
     nom = "nombre"
     def __init__(self):
         """Constructeur de l'expression."""
+        Expression.__init__(self)
         self.nombre = None
     
     @classmethod
@@ -82,5 +83,12 @@ class Nombre(Expression):
         objet.nombre = Fraction(chaine_interpreter)
         return objet, chaine[fin:]
     
+    def get_valeur(self, evt):
+        """Retourne le nombre sous la forme d'un objet Fraction."""
+        return self.nombre
+    
     def __repr__(self):
         return "nombre({})".format(self.nombre)
+    
+    def __str__(self):
+        return str(self.nombre)

@@ -41,6 +41,7 @@ class Fonction(Expression):
     nom = "fonction"
     def __init__(self):
         """Constructeur de l'expression."""
+        Expression.__init__(self)
         self.nom = None
         self.arguments = ()
     
@@ -98,6 +99,22 @@ class Fonction(Expression):
         objet.arguments = tuple(arguments)
         
         return objet, chaine
+    
+    def get_valeur(self, evt):
+        """Retourne la valeur de retour de la fonction."""
+        fonctions = type(self).importeur.scripting.fonctions
+        if self.nom not in fonctions:
+            raise ValueError("la fonction {} est introuvable".format(self.nom))
+        
+        fonction = fonctions[self.nom]
+        
+        # Mise en forme des arguments
+        arguments = []
+        for arg in self.arguments:
+            arg = arg.get_valeur(evt)
+            arguments.append(arg)
+        
+        return fonction(*arguments)
     
     def __repr__(self):
         return self.nom + str(self.arguments)

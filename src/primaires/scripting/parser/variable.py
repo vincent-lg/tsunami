@@ -45,6 +45,7 @@ class Variable(Expression):
     nom = "variable"
     def __init__(self):
         """Constructeur de l'expression."""
+        Expression.__init__(self)
         self.nom = None
     
     @classmethod
@@ -71,5 +72,16 @@ class Variable(Expression):
         objet.nom = chaine_interpreter
         return objet, chaine[fin + 1:]
     
+    def get_valeur(self, evt):
+        """Retourne la variable ou lève une exception si non présente."""
+        espace = evt.espaces.variables
+        if self.nom in espace:
+            return espace[self.nom]
+        else:
+            raise ValueError("la variable {} est introuvable".format(self.nom))
+    
     def __repr__(self):
         return "Variable({})".format(self.nom)
+    
+    def __str__(self):
+        return self.nom

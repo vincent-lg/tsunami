@@ -52,6 +52,7 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "scripting", "primaire")
         self.cfg = None
+        self.fonctions = {}
     
     def config(self):
         """Méthode de configuration du module"""

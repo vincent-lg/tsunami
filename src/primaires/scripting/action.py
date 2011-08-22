@@ -28,10 +28,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-import shlex
 from fractions import Fraction
 
 from .instruction import Instruction
+from .parser import expressions
 
 """Fichier contenant la classe Action, détaillée plus bas."""
 
@@ -56,18 +56,22 @@ class Action(Instruction):
         self.parametres = ()
     
     def __str__(self):
-        return self.nom + " " + " ".join(self.parametres)
+        return self.nom + " " + " ".join(self.str_parametres)
     
-    def __call__(self, espace):
-        """Exécute l'action.
-        
-        L'espace est une forme de dictionnaire contenant les variables
-        définies dans le script.
-        
-        """
-        parametres = self.convertir_parametres(espace, self.parametres)
+    def __call__(self, evenement):
+        """Exécute l'action selon l'évènement."""
+        parametres = self.convertir_parametres(evenement, self.parametres)
         action = self.quelle_action(parametres)
         return action(*parametres)
+    
+    @property
+    def str_parametres(self):
+        """Retourne les paramètres sous la forme d'une liste de chaînes."""
+        parametres = []
+        for p in self.parametres:
+            parametres.append(str(p))
+        
+        return tuple(parametres)
     
     def ajouter_types(self, methode, *parametres):
         """Ajoute une interprétation possible de l'action.
@@ -130,12 +134,35 @@ class Action(Instruction):
         sont ses paramètres.
         
         """
-        parametres = shlex.split(chaine, posix=False)
-        if not parametres:
+        action = chaine
+        if not chaine.strip():
             raise ValueError("Entrez au moins un nom d'action")
         
-        nom_action = parametres[0]
-        parametres = tuple(parametres[1:])
+        chaine = chaine.split(" ")
+        nom_action = chaine[0]
+        chaine = " ".join(chaine[1:])
+        parametres = []
+        types = ("variable", "nombre", "chaine", "fonction")
+        types = tuple([expressions[nom] for nom in types])
+        while True:
+            chaine = chaine.lstrip(" ")
+            if not chaine:
+                break
+            
+            types_app = [type for type in types if type.parsable(chaine)]
+            if not types_app:
+                raise ValueError("impossible de parser {}".format(action))
+            elif len(types_app) > 1:
+                raise ValueError("l'action {} peut être différemment " \
+                        "interprétée".format(action))
+            
+            type = types_app[0]
+            arg, chaine = type.parser(chaine)
+            parametres.append(arg)
+            
+            chaine.lstrip(" ")
+            if not chaine:
+                break
         
         # On cherche l'action
         try:
@@ -148,12 +175,12 @@ class Action(Instruction):
         return action
     
     @classmethod
-    def convertir_parametres(self, espace, parametres):
+    def convertir_parametres(self, evt, parametres):
         """Convertit les paramètres passés, sous la forme de chaînes.
         
         """
         parametres = list(parametres)
         for i, p in enumerate(parametres):
-            parametres[i] = parametres[i].valeur
+            parametres[i] = parametres[i].get_valeur(evt)
         
         return parametres

@@ -148,17 +148,14 @@ class Temps(Unique):
                 return ligne[2]
         
     @property
-    def jour(self):
+    def il_fait_jour(self):
         """Retourne True s'il fait jour, False sinon"""
-        if self.heure >= self.h_lever and self.heure < self.h_coucher:
-            return True
-        else:
-            return False
+        return self.heure >= self.h_lever and self.heure < self.h_coucher
     
     @property
-    def nuit(self):
+    def il_fait_nuit(self):
         """Retourne True s'il fait nuit, False sinon"""
-        return not self.jour
+        return not self.il_fait_jour
     
     @property
     def ciel_actuel(self):

@@ -162,4 +162,4 @@ class Evenement(BaseObj):
         if tuple(v for v in self.espaces.variables if v not in self.variables):
             raise ValueError("des variables manquent à l'appel")
         
-        self.sinon.executer_instructions(self.espaces.variables)
+        self.sinon.executer_instructions(self)
