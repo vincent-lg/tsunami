@@ -70,7 +70,7 @@ class Variable(Expression):
         fin = min(fins)
         chaine_interpreter = chaine[:fin]
         objet.nom = chaine_interpreter
-        return objet, chaine[fin + 1:]
+        return objet, chaine[fin:]
     
     def get_valeur(self, evt):
         """Retourne la variable ou lève une exception si non présente."""

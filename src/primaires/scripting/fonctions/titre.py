@@ -28,43 +28,17 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe ChaineDeCaracteres, détaillée plus bas."""
+"""Fichier contenant la fonction titre."""
 
-from .expression import Expression
+from primaires.scripting.fonction import Fonction
 
-class ChaineDeCaracteres(Expression):
+class ClasseFonction(Fonction):
     
-    """Expression chaîne de caractères."""
+    """Fonction titre."""
     
-    nom = "chaine"
-    def __init__(self):
-        """Constructeur de l'expression."""
-        Expression.__init__(self)
-        self.chaine = None
+    def __init__(self, fonction):
+        Fonction.__init__(self, fonction)
+        self.ajouter_types(self.titre_salle, "Salle")
     
-    @classmethod
-    def parsable(cls, chaine):
-        """Retourne True si la chaîne est parsable, False sinon."""
-        return chaine.startswith("\"") and chaine.count("\"") >= 2
-    
-    @classmethod
-    def parser(cls, chaine):
-        """Parse la chaîne.
-        
-        Retourne l'objet créé et la partie non interprétée de la chaîne.
-        
-        """
-        objet = ChaineDeCaracteres()
-        fin = chaine.index("\"", 1)
-        objet.chaine = chaine[1:fin]
-        return objet, chaine[fin + 1:]
-    
-    def get_valeur(self, evt):
-        """Retourne la chaîne au format str."""
-        return self.chaine
-    
-    def __repr__(self):
-        return "chaine({})".format(self.chaine)
-        
-    def __str__(self):
-        return "\"" + self.chaine + "\""
+    def titre_salle(self, salle):
+        return salle.titre

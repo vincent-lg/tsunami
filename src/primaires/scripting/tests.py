@@ -204,7 +204,7 @@ class Tests(BaseObj):
         self.__instructions.append(instruction)
         self.evenement.appelant.enregistrer()
     
-    def executer_instructions(self, espace):
+    def executer_instructions(self, evenement):
         """On exécute chaque instructions dans l'ordre."""
         for instruction in self.__instructions:
-            instruction(espace)
+            instruction(evenement)

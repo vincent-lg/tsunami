@@ -43,7 +43,7 @@ class Fonction(Expression):
         """Constructeur de l'expression."""
         Expression.__init__(self)
         self.nom = None
-        self.arguments = ()
+        self.parametres = ()
     
     @classmethod
     def parsable(cls, chaine):
@@ -66,10 +66,10 @@ class Fonction(Expression):
         chaine = fonction[fin_nom + 1:]
         objet.nom = nom
         
-        # Parsage des arguments
+        # Parsage des paramètres
         types = ("variable", "nombre", "chaine")
         types = tuple([expressions[nom] for nom in types])
-        arguments = []
+        parametres = []
         while True:
             chaine = chaine.lstrip(" ")
             if chaine.startswith(")"):
@@ -84,7 +84,8 @@ class Fonction(Expression):
             
             type = types_app[0]
             arg, chaine = type.parser(chaine)
-            arguments.append(arg)
+            parametres.append(arg)
+            print("reste", chaine)
             
             chaine.lstrip(" ")
             if chaine.startswith(","):
@@ -96,7 +97,7 @@ class Fonction(Expression):
                 raise ValueError("erreur de syntaxe dans la fonction " \
                         "{}".format(fonction))
         
-        objet.arguments = tuple(arguments)
+        objet.parametres = tuple(parametres)
         
         return objet, chaine
     
@@ -106,15 +107,9 @@ class Fonction(Expression):
         if self.nom not in fonctions:
             raise ValueError("la fonction {} est introuvable".format(self.nom))
         
-        fonction = fonctions[self.nom]
+        fonction = fonctions[self.nom](self)
         
-        # Mise en forme des arguments
-        arguments = []
-        for arg in self.arguments:
-            arg = arg.get_valeur(evt)
-            arguments.append(arg)
-        
-        return fonction(*arguments)
+        return fonction(evt)
     
     def __repr__(self):
-        return self.nom + str(self.arguments)
+        return self.nom + str(self.parametres)

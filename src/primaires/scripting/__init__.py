@@ -81,6 +81,13 @@ class Module(BaseModule):
     def init(self):
         """Initialisation"""
         # Chargement des actions
+        self.charger_actions()
+        self.charger_fonctions()
+        
+        BaseModule.init(self)
+    
+    def charger_actions(self):
+        """Chargement automatique des actions."""
         # Elles se trouvent dans le sous-répertoire actions
         chemin = self.chemin + os.sep + "actions"
         chemin_py = "primaires.scripting.actions"
@@ -93,5 +100,21 @@ class Module(BaseModule):
                         "actions"), nom_module), "ClasseAction")
                 action.nom = nom_module
                 lst_actions[nom_module] = action
-        
-        BaseModule.init(self)
+            
+    def charger_fonctions(self):
+        """Chargement automatique des fonctions."""
+        # Elles se trouvent dans le sous-répertoire fonctions
+        chemin = self.chemin + os.sep + "fonctions"
+        chemin_py = "primaires.scripting.fonctions"
+        for nom_fichier in os.listdir(chemin):
+            if not nom_fichier.startswith("_") and nom_fichier.endswith(".py"):
+                nom_module = nom_fichier[:-3]
+                chemin_py_mod = chemin_py + ".{}".format(nom_module)
+                fonction = __import__(chemin_py_mod)
+                fonction = getattr(getattr(getattr(getattr(fonction,
+                        "scripting"), "fonctions"), nom_module),
+                        "ClasseFonction")
+                fonction.nom = nom_module
+                self.fonctions[nom_module] = fonction
+                print("Chargement de", nom_module)
+
