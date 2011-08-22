@@ -28,35 +28,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe ScriptSalle détaillée plus bas."""
+"""Fichier contenant la fonction salle."""
 
-from primaires.scripting.script import Script
+from primaires.scripting.fonction import Fonction
 
-class ScriptSalle(Script):
+class ClasseFonction(Fonction):
     
-    """Script et évènements propre aux salles.
+    """Fonction salle."""
     
-    C'est dans cette classe que sont construits les évènements du scripting
-    des salles. Il est ainsi plus facile à modifier si vous souhaitez
-    rajouter un évènement.
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.salle_personnage, "Personnage")
     
-    """
-    
-    def __init__(self, salle):
-        """Constructeur du script"""
-        Script.__init__(self, salle)
-        evt_arriver = self.creer_evenement("arrive")
-        evt_arriver.aide_courte = "un personnage arrive dans la salle"
-        evt_arriver.aide_longue = \
-            "Cet évènement est appelé quand un personnage, joueur ou PNJ, " \
-            "arrive dans la salle, quelque soit sa salle de provenance et " \
-            "son moyen de déplacement. Il faut cependant retirer le " \
-            "déplacement par |cmd|goto|ff| qui ne déclenche pas cet évènement."
-        
-        # Configuration des variables de l'évènement arrive
-        var_depuis = evt_arriver.ajouter_variable("depuis", "str")
-        var_depuis.aide = "la direction d'où vient le personnage"
-        var_salle = evt_arriver.ajouter_variable("salle", "Salle")
-        var_salle.aide = "la salle actuelle"
-        var_perso = evt_arriver.ajouter_variable("personnage", "Personnage")
-        var_perso.aide = "le personnage se déplaçant"
+    @staticmethod
+    def salle_personnage(personnage):
+        return personnage.salle

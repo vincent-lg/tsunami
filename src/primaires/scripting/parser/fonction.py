@@ -67,7 +67,7 @@ class Fonction(Expression):
         objet.nom = nom
         
         # Parsage des paramètres
-        types = ("variable", "nombre", "chaine")
+        types = ("variable", "nombre", "chaine", "fonction")
         types = tuple([expressions[nom] for nom in types])
         parametres = []
         while True:

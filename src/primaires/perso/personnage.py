@@ -214,4 +214,4 @@ class Personnage(ObjetID):
         
         # On appelle l'évènement arrive
         salle_dest.script.evenements["arrive"].executer(depuis=sortie.nom,
-                salle=salle_dest)
+                salle=salle_dest, personnage=self)

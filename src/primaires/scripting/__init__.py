@@ -115,6 +115,9 @@ class Module(BaseModule):
                         "scripting"), "fonctions"), nom_module),
                         "ClasseFonction")
                 fonction.nom = nom_module
+                fonction._parametres_possibles = {}
+                fonction.init_types()
+                fonction.convertir_types()
                 self.fonctions[nom_module] = fonction
                 print("Chargement de", nom_module)
 

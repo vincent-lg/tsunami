@@ -36,9 +36,10 @@ class ClasseFonction(Fonction):
     
     """Fonction titre."""
     
-    def __init__(self, fonction):
-        Fonction.__init__(self, fonction)
-        self.ajouter_types(self.titre_salle, "Salle")
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.titre_salle, "Salle")
     
-    def titre_salle(self, salle):
+    @staticmethod
+    def titre_salle(salle):
         return salle.titre

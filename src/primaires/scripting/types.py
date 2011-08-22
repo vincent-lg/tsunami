@@ -35,3 +35,14 @@ scripting.
 
 from primaires.perso.personnage import Personnage
 from primaires.salle.salle import Salle
+
+def get(nom):
+    """Retourne le type portant le nom."""
+    builtins = __builtins__.copy()
+    types = __import__("primaires.scripting.types").scripting.types
+    try:
+        t = builtins[nom]
+    except KeyError:
+        t = getattr(types, nom)
+    
+    return t

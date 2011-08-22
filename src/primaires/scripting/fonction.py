@@ -53,7 +53,6 @@ class Fonction(BaseObj):
     def __init__(self, fonction):
         """Construction d'une fonction."""
         BaseObj.__init__(self)
-        type(self)._parametres_possibles = {}
         self.fonction = fonction
     
     def __getnewargs__(self):
@@ -69,10 +68,11 @@ class Fonction(BaseObj):
         fonction = self.quelle_fonction(parametres)
         return fonction(*parametres)
     
-    def ajouter_types(self, methode, *parametres):
+    @classmethod
+    def ajouter_types(cls, methode, *parametres):
         """Ajoute une interprétation possible de la fonction.
         
-        Les focntions peuvent avoir plusieurs interprétations possibles
+        Les fonctions peuvent avoir plusieurs interprétations possibles
         en fonction du type de leur paramètre.
         
         Les paramètres suplémentaires sont les types.
@@ -82,11 +82,11 @@ class Fonction(BaseObj):
         if tuple((p for p in parametres if not isinstance(p, str))):
             raise TypeError("les types doivent être des type 'str'")
         
-        if parametres in self._parametres_possibles:
+        if parametres in cls._parametres_possibles:
             raise ValueError("les paramètres {} existent déjà pour " \
                     "cette fonction".format(parametres))
         
-        self._parametres_possibles[parametres] = methode
+        cls._parametres_possibles[parametres] = methode
     
     def quelle_fonction(self, parametres):
         """Retourne la fonction correspondant aux paramètres.
@@ -98,15 +98,17 @@ class Fonction(BaseObj):
         une exception ValueError.
         
         """
-        # On forme un tuple des types des paramètres
-        types = tuple(type(p).__name__ for p in parametres)
+        ty_p = [type(p) for p in parametres]
+        print(ty_p)
+        for types, methode in self._parametres_possibles.items():
+            print(types)
+            if all(issubclass(p, t) for p, t in zip(ty_p, types)):
+                return methode
         
-        if not types in self._parametres_possibles:
-            raise ValueError("aucune interprétation de la fonction {} " \
-                    "avec les paramètres {} n'est possible (types {})".format(
-                    self.fonction.nom, self.fonction.parametres, types))
-        
-        return self._parametres_possibles[types]
+        c=input()
+        raise ValueError("aucune interprétation de la fonction {} " \
+                "avec les paramètres {} n'est possible (types {})".format(
+                self.fonction.nom, self.fonction.parametres, ty_p))
     
     @classmethod
     def convertir_parametres(self, evt, parametres):
@@ -116,3 +118,18 @@ class Fonction(BaseObj):
             parametres[i] = parametres[i].get_valeur(evt)
         
         return parametres
+    
+    @classmethod
+    def convertir_types(cls):
+        """Convertit les types de _parametres_possibles.
+        
+        Ils sont à l'origine au format str, on va chercher à quel type
+        ils correspondent.
+        
+        """
+        for str_types, methode in tuple(cls._parametres_possibles.items()):
+            types = __import__("primaires.scripting.types").scripting.types
+            s_types = [types.get(t) for t in str_types]
+            del cls._parametres_possibles[str_types]
+            cls._parametres_possibles[tuple(s_types)] = methode
+        print(cls._parametres_possibles)
