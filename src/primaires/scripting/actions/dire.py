@@ -36,9 +36,15 @@ class ClasseAction(Action):
     
     """Action dire."""
     
-    def __init__(self):
-        Action.__init__(self)
-        self.ajouter_types(self.dire_salle, "Salle", "str")
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.dire_personnage, "Personnage", "str")
+        cls.ajouter_types(cls.dire_salle, "Salle", "str")
     
-    def dire_salle(self, salle, message):
+    @staticmethod
+    def dire_personnage(personnage, message):
+        personnage.envoyer(message)
+    
+    @staticmethod
+    def dire_salle(salle, message):
         salle.envoyer(message)

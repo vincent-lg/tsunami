@@ -47,12 +47,21 @@ class Action(Instruction):
     """
     
     _parametres_possibles = None
+    
+    @classmethod
+    def init_types(cls):
+        """Initialise les types à passer à l'action.
+        
+        Cette méthode est à redéfinir dans chaque sous-classe.
+        
+        """
+        raise NotImplementedError
+    
     def __init__(self):
         """Construction d'une action.
         
         """
         Instruction.__init__(self)
-        type(self)._parametres_possibles = {}
         self.parametres = ()
     
     def __str__(self):
@@ -73,7 +82,8 @@ class Action(Instruction):
         
         return tuple(parametres)
     
-    def ajouter_types(self, methode, *parametres):
+    @classmethod
+    def ajouter_types(cls, methode, *parametres):
         """Ajoute une interprétation possible de l'action.
         
         Les actions peuvent avoir plusieurs interprétations possibles
@@ -92,11 +102,11 @@ class Action(Instruction):
         if tuple((p for p in parametres if not isinstance(p, str))):
             raise TypeError("les types doivent être des type 'str'")
         
-        if parametres in self._parametres_possibles:
+        if parametres in cls._parametres_possibles:
             raise ValueError("les paramètres {} existent déjà pour " \
                     "cette action".format(parametres))
         
-        self._parametres_possibles[parametres] = methode
+        cls._parametres_possibles[parametres] = methode
     
     def quelle_action(self, parametres):
         """Retourne l'action correspondant aux paramètres.
@@ -108,15 +118,14 @@ class Action(Instruction):
         une exception ValueError.
         
         """
-        # On forme un tuple des types des paramètres
-        types = tuple(type(p).__name__ for p in parametres)
+        ty_p = [type(p) for p in parametres]
+        for types, methode in self._parametres_possibles.items():
+            if all(issubclass(p, t) for p, t in zip(ty_p, types)):
+                return methode
         
-        if not types in self._parametres_possibles:
-            raise ValueError("aucune interprétation de l'action {} " \
-                    "avec les paramètres {} n'est possible (types {})".format(
-                    self.nom, self.parametres, types))
-        
-        return self._parametres_possibles[types]
+        raise ValueError("aucune interprétation de la fonction {} " \
+                "avec les paramètres {} n'est possible (types {})".format(
+                self.fonction.nom, self.fonction.parametres, ty_p))
     
     @classmethod
     def peut_interpreter(cls, chaine):
@@ -184,3 +193,18 @@ class Action(Instruction):
             parametres[i] = parametres[i].get_valeur(evt)
         
         return parametres
+    
+    @classmethod
+    def convertir_types(cls):
+        """Convertit les types de _parametres_possibles.
+        
+        Ils sont à l'origine au format str, on va chercher à quel type
+        ils correspondent.
+        
+        """
+        for str_types, methode in tuple(cls._parametres_possibles.items()):
+            types = __import__("primaires.scripting.types").scripting.types
+            s_types = [types.get(t) for t in str_types]
+            del cls._parametres_possibles[str_types]
+            cls._parametres_possibles[tuple(s_types)] = methode
+        print(cls._parametres_possibles)

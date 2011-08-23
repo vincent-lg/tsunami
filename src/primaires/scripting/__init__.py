@@ -99,6 +99,9 @@ class Module(BaseModule):
                 action = getattr(getattr(getattr(getattr(action, "scripting"),
                         "actions"), nom_module), "ClasseAction")
                 action.nom = nom_module
+                action._parametres_possibles = {}
+                action.init_types()
+                action.convertir_types()
                 lst_actions[nom_module] = action
             
     def charger_fonctions(self):

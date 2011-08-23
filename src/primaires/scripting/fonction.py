@@ -99,13 +99,10 @@ class Fonction(BaseObj):
         
         """
         ty_p = [type(p) for p in parametres]
-        print(ty_p)
         for types, methode in self._parametres_possibles.items():
-            print(types)
             if all(issubclass(p, t) for p, t in zip(ty_p, types)):
                 return methode
         
-        c=input()
         raise ValueError("aucune interprétation de la fonction {} " \
                 "avec les paramètres {} n'est possible (types {})".format(
                 self.fonction.nom, self.fonction.parametres, ty_p))
