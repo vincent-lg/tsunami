@@ -31,22 +31,21 @@
 """Ce fichier contient la classe BasePertu, détaillée plus bas."""
 
 from math import sqrt, pow, ceil
-from random import randint
+from random import randint, choice
+from collections import OrderedDict
 
 from abstraits.id import ObjetID
 from . import MetaPertu
 from primaires.salle.coordonnees import Coordonnees
 
-dir_vents = {
-    "nord": (0, 1),
-    "nord-est": (1, 1),
-    "est": (1, 0),
-    "sud-est": (1, -1),
-    "sud": (0, -1),
-    "sud-ouest": (-1, -1),
-    "ouest": (-1, 0),
-    "nord-ouest": (-1, 1)
-}
+vent_x = [0, 1, 1, 1, 0, -1, -1, -1]
+vent_y = [1, 1, 0, -1, -1, -1, 0, 1]
+vents = ["le nord", "le nord-est", "l'est", "le sud-est",
+    "le sud", "le sud-ouest", "l'ouest", "le nord-ouest"]
+
+AUCUN_FLAG = 0
+STATIQUE = 1
+OPAQUE = 2
 
 class BasePertu(ObjetID, metaclass=MetaPertu):
     
@@ -60,19 +59,79 @@ class BasePertu(ObjetID, metaclass=MetaPertu):
     sous_rep = "meteo/perturbations"
     nom_pertu = ""
     rayon_max = 0 # à redéfinir selon la perturbation
+    duree_max = 15
     
     def __init__(self, pos):
-        """Constructeur d'un type"""
+        """Constructeur d'une perturbation météo"""
         ObjetID.__init__(self)
         self.centre = pos
         self.rayon = randint(ceil(self.rayon_max / 2), self.rayon_max)
+        self.duree = randint(ceil(self.duree_max / 1.5), self.duree_max)
         self.age = 0
-        self.duree = 10
-        self.alea = 1
-        self.message = "Une perturbation roule au-dessus de votre tête."
+        self.flags = AUCUN_FLAG
+        self.dir = randint(0, 7)
+        # 0 pour une perturbation en ligne droite, 1 pour aucun changement
+        # majeur de direction, jusqu'à 10 pour un comportement aléatoire
+        self.alea_dir = 1
+        # (X, état renvoyé) avec X par rapport à 10 la fraction du rayon
+        # concernée, en partant du centre
+        self.etat = [
+            (7, "Une perturbation roule au-dessus de votre tête."),
+            (10, "Une perturbation gronde non loin."),
+        ]
+        # Messages renvoyés aux salles sous la perturbation
+        self.message_debut = "Une perturbation se forme dans le ciel."
+        self.message_fin = "La perturbation se dissipe peu à peu."
+        # Message à une salle qui sort de la perturbation
+        self.message_sortir = "La perturbation s'éloigne et disparaît au loin."
     
     def __getnewargs__(self):
         return (None, )
+    
+    @property
+    def liste_salles_sous(self):
+        """Renvoie la liste des salles sous la perturbation"""
+        ret = []
+        for salle in type(self).importeur.salle._salles.values():
+            if self.est_sur(salle):
+                ret.append(salle)
+        return ret
+    
+    def cycle(self):
+        """Entame un nouveau cycle de la perturbation.
+        Par défaut, elle se contente de bouger.
+        
+        """
+        salles = self.liste_salles_sous
+        # Détection des collisions
+        for pertu in type(self).importeur.meteo.perturbations_actuelles:
+            if pertu is not self:
+                if sqrt(pow(pertu.centre.x - self.centre.x, 2) + \
+                        pow(pertu.centre.y - self.centre.y, 2)) <= \
+                        self.rayon + pertu.rayon:
+                    self.flags = self.flags ^ STATIQUE
+        if not self.flags & STATIQUE:
+            self.bouger(salles)
+        self.age += 1
+    
+    def bouger(self, salles):
+        """Bouge une perturbation"""
+        x = 0
+        if randint(1, 10) <= self.alea_dir:
+            x = choice([-1, 1])
+        if self.dir + x > 7 or self.dir + x < 0:
+            x = (x == -1 and 7) or -7
+        self.centre.x += vent_x[self.dir + x]
+        self.centre.y += vent_y[self.dir + x]
+        print("{} bouge vers {} (nouveau centre : {})".format(
+                self, vents[self.dir + x], self.centre))
+        if randint(1, 10) <= self.alea_dir / 2:
+            self.dir = randint(0, 7)
+            print("{} change de direction pour {}".format(self,
+                    vents[self.dir]))
+        for salle in salles:
+            if not self.est_sur(salle):
+                salle.envoyer(self.message_sortir.format(dir=vents[self.dir]))
     
     def distance_au_centre(self, salle):
         """Retourne la distance de salle au centre de la perturbation"""
@@ -86,14 +145,13 @@ class BasePertu(ObjetID, metaclass=MetaPertu):
         """Retourne True si salle est au-dessous de la perturbation"""
         return self.distance_au_centre(salle) <= self.rayon
     
-    def bouger(self):
-        """Bouge une perturbation"""
-        self.age += 1
-        vents = dict(type(self).importeur.meteo.cfg.vents)
-        vent = vents[type(self).importeur.temps.temps.nm_m]
-        self.centre.x += dir_vents[vent][0]
-        self.centre.y += dir_vents[vent][1]
-        print("{} bouge vers {} (nouveau centre : {}".format(
-                self, vent, self.centre))
+    def message_pour(self, salle):
+        """Retourne le message correspondant à la salle"""
+        msg = ""
+        for etat in self.etat:
+            if self.distance_au_centre(salle) / self.rayon <= etat[0] / 10:
+                msg = etat[1]
+                break
+        return msg
 
 ObjetID.ajouter_groupe(BasePertu)

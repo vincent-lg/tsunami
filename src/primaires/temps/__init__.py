@@ -31,6 +31,7 @@
 """Fichier contenant le module primaire temps."""
 
 from abstraits.module import *
+from primaires.meteo.perturbations.base import OPAQUE
 from .config import cfg_temps
 from .temps import Temps
 from . import commandes
@@ -83,14 +84,16 @@ class Module(BaseModule):
             self.importeur.interpreteur.ajouter_commande(cmd)
     
     def preparer(self):
-        """Préparation du module."""
+        """Préparation du module"""
         self.inc()
     
     def inc(self):
-        """Incrémentation du temps."""
+        """Incrémentation du temps"""
         self.importeur.diffact.ajouter_action("inc_temps",
                 1, self.inc)
         self.temps.inc()
     
-    def voir_ciel(self, salle, liste_messages):
-        liste_messages.append(self.temps.ciel_actuel)
+    def voir_ciel(self, salle, liste_messages, flags):
+        """Renvoie l'apparence du ciel"""
+        if flags & OPAQUE != 0:
+            liste_messages.append(self.temps.ciel_actuel)

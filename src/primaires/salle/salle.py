@@ -35,6 +35,7 @@ from collections import OrderedDict
 from abstraits.id import ObjetID
 from bases.collections.liste_id import ListeID
 from primaires.format.description import Description
+from primaires.meteo.perturbations.base import AUCUN_FLAG
 from .coordonnees import Coordonnees
 from .sorties import Sorties, NOMS_SORTIES
 from .details import Details
@@ -182,15 +183,17 @@ class Salle(ObjetID):
     def regarder(self, personnage):
         """Le personnage regarde la salle"""
         res = ""
-        res += "# |rgc|" + self.zone + "|ff|:|vrc|" + self.mnemonic + "|ff|\n\n"
-        res += "|tit|" + self.titre + "|ff|\n\n"
+        res += "# |rgc|" + self.zone + "|ff|:|vrc|" + self.mnemonic
+        res += "|ff|\n\n|tit|" + self.titre + "|ff|\n\n"
         description = str(self.description)
         if not description:
             description = "Vous êtes au milieu de nulle part."
         
         res += description + "\n"
         liste_messages = []
-        type(self).importeur.hook["salle:meteo"].executer(self, liste_messages)
+        flags = AUCUN_FLAG
+        type(self).importeur.hook["salle:meteo"].executer(self, liste_messages,
+                flags)
         res += "|cy|" + "\n".join(liste_messages) + "|ff|\n\n"
         res += "Sorties : "
         res += self.afficher_sorties(personnage)

@@ -30,12 +30,13 @@
 
 """Fichier contenant le module primaire meteo."""
 
-from random import choice
+from random import choice, randint
+from math import ceil
 
 from abstraits.module import *
 from .config import cfg_meteo
 from .perturbations import perturbations
-from .perturbations.base import BasePertu
+from .perturbations.base import BasePertu, AUCUN_FLAG
 
 class Module(BaseModule):
     
@@ -76,6 +77,12 @@ class Module(BaseModule):
     def cycle_meteo(self):
         self.importeur.diffact.ajouter_action("cycle_meteo", 60,
                 self.cycle_meteo)
+        # On tue les perturbations trop vieilles
+        for pertu in self.perturbations_actuelles:
+            if pertu.age == pertu.duree:
+                self.perturbations_actuelles.remove(pertu)
+                for salle in pertu.liste_salles_sous:
+                    salle.envoyer(pertu.message_fin)
         # On tente de créer une perturbation
         if len(self.perturbations_actuelles) < self.cfg.nb_pertu_max:
             salles = list(self.importeur.salle._salles.values())
@@ -85,19 +92,24 @@ class Module(BaseModule):
             except IndexError:
                 pass
             else:
-                pertu = cls_pertu(salle_dep.coords)
-                self.perturbations_actuelles.append(pertu)
+                if salle_dep.coords.valide:
+                    pertu = cls_pertu(salle_dep.coords.get_copie())
+                    self.perturbations_actuelles.append(pertu)
+                    for salle in pertu.liste_salles_sous:
+                        salle.envoyer(pertu.message_debut)
         # On fait bouger les perturbations existantes
         for pertu in self.perturbations_actuelles:
-            pertu.bouger()
+            pertu.cycle()
     
-    def donner_meteo(self, salle, liste_messages):
+    def donner_meteo(self, salle, liste_messages, flags):
         """Affichage de la météo d'une salle"""
         res = ""
         for pertu in self.perturbations_actuelles:
             if pertu.est_sur(salle):
-                res += pertu.message
+                res += pertu.message_pour(salle)
+                flags = pertu.flags
                 break
         if not res:
             res += self.cfg.beau_temps
+            flags = AUCUN_FLAG
         liste_messages.append(res)

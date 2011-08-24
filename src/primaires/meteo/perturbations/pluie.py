@@ -30,7 +30,7 @@
 
 """Ce fichier contient la classe Pluie, détaillée plus bas."""
 
-from .base import BasePertu
+from .base import *
 
 class Pluie(BasePertu):
     
@@ -40,11 +40,21 @@ class Pluie(BasePertu):
     
     nom_pertu = "pluie"
     rayon_max = 16
+    duree_max = 10
     
     def __init__(self, pos):
         """Constructeur de la perturbation"""
         BasePertu.__init__(self, pos)
-        self.duree = 10
-        self.direction = "est"
-        self.message = "Une fine pluie martèle le sol dans un doux " \
-                "crépitement."
+        self.flags = OPAQUE
+        self.alea_dir = 4
+        self.etat = [
+            (3, "Il pleut des cordes."),
+            (7, "Une pluie incessante et violente tombe du ciel en colère."),
+            (10, "Une fine pluie martèle le sol dans un doux crépitement."),
+        ]
+        self.message_debut = "Quelques nuages s'amoncellent, grossisent " \
+                "puis donnent naissance à une averse."
+        self.message_fin = "Les nuées se dispersent rapidement et la pluie " \
+                "cesse."
+        self.message_sortir = "Les nuages s'éloignent peu à peu vers {dir}, " \
+                "la pluie s'arrêtant soudain."
