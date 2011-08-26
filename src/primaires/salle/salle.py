@@ -35,7 +35,6 @@ from collections import OrderedDict
 from abstraits.id import ObjetID
 from bases.collections.liste_id import ListeID
 from primaires.format.description import Description
-from primaires.meteo.perturbations.base import AUCUN_FLAG
 from .coordonnees import Coordonnees
 from .sorties import Sorties, NOMS_SORTIES
 from .details import Details
@@ -191,7 +190,7 @@ class Salle(ObjetID):
         
         res += description + "\n"
         liste_messages = []
-        flags = AUCUN_FLAG
+        flags = 0
         type(self).importeur.hook["salle:meteo"].executer(self, liste_messages,
                 flags)
         res += "|cy|" + "\n".join(liste_messages) + "|ff|\n\n"
