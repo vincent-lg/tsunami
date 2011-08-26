@@ -28,17 +28,17 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Fonction, détaillée plus bas."""
+"""Fichier contenant la classe Tests, détaillée plus bas."""
 
 from .expression import Expression
 from . import expressions
 from .variable import RE_VARIABLE
 
-class Fonction(Expression):
+class Tests(Expression):
     
-    """Expression fonction."""
+    """Expression tests."""
     
-    nom = "fonction"
+    nom = "tests"
     def __init__(self):
         """Constructeur de l'expression."""
         Expression.__init__(self)
@@ -48,28 +48,26 @@ class Fonction(Expression):
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
-        chaine = chaine.lstrip()
         fin_nom = chaine.find("(")
         nom = chaine[:fin_nom]
         chaine = chaine[:fin_nom + 1]
         return fin_nom >= 0  and RE_VARIABLE.search(nom)
     
     @classmethod
-    def parser(cls, fonction):
+    def parser(cls, tests):
         """Parse la chaîne.
         
         Retourne l'objet créé et la partie non interprétée de la chaîne.
         
         """
         objet = cls()
-        chaine = chaine.lstrip()
-        fin_nom = fonction.find("(")
-        nom = fonction[:fin_nom]
-        chaine = fonction[fin_nom + 1:]
+        fin_nom = tests.find("(")
+        nom = tests[:fin_nom]
+        chaine = tests[fin_nom + 1:]
         objet.nom = nom
         
         # Parsage des paramètres
-        types = ("variable", "nombre", "chaine", "fonction")
+        types = ("variable", "nombre", "chaine", "tests")
         types = tuple([expressions[nom] for nom in types])
         parametres = []
         while True:
@@ -80,9 +78,9 @@ class Fonction(Expression):
             
             types_app = [type for type in types if type.parsable(chaine)]
             if not types_app:
-                raise ValueError("impossible de parser {}".format(fonction))
+                raise ValueError("impossible de parser {}".format(tests))
             elif len(types_app) > 1:
-                raise ValueError("la fonction {] peut être différemment interprétée".format(fonction))
+                raise ValueError("la tests {] peut être différemment interprétée".format(tests))
             
             type = types_app[0]
             arg, chaine = type.parser(chaine)
@@ -96,22 +94,22 @@ class Fonction(Expression):
                 chaine = chaine[1:]
                 break
             else:
-                raise ValueError("erreur de syntaxe dans la fonction " \
-                        "{}".format(fonction))
+                raise ValueError("erreur de syntaxe dans la tests " \
+                        "{}".format(tests))
         
         objet.parametres = tuple(parametres)
         
         return objet, chaine
     
     def get_valeur(self, evt):
-        """Retourne la valeur de retour de la fonction."""
-        fonctions = type(self).importeur.scripting.fonctions
-        if self.nom not in fonctions:
-            raise ValueError("la fonction {} est introuvable".format(self.nom))
+        """Retourne la valeur de retour de la tests."""
+        testss = type(self).importeur.scripting.testss
+        if self.nom not in testss:
+            raise ValueError("la tests {} est introuvable".format(self.nom))
         
-        fonction = fonctions[self.nom](self)
+        tests = testss[self.nom](self)
         
-        return fonction(evt)
+        return tests(evt)
     
     def __repr__(self):
         return self.nom + str(self.parametres)

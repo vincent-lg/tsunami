@@ -57,6 +57,7 @@ class Nombre(Expression):
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
+        chaine = chaine.lstrip()
         fins = [chaine.index(delimiteur) for delimiteur in DELIMITEURS \
                 if delimiteur in chaine]
         fin = fins and min(fins) or 0
@@ -76,6 +77,7 @@ class Nombre(Expression):
         
         """
         objet = Nombre()
+        chaine = chaine.lstrip()
         fins = [chaine.index(delimiteur) for delimiteur in DELIMITEURS \
                 if delimiteur in chaine]
         fin = min(fins)

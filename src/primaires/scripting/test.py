@@ -31,8 +31,8 @@
 """Fichier contenant la classe Test détaillée plus bas."""
 
 from abstraits.obase import *
-from primaires.scripting.constantes.operateurs import operateurs
-from primaires.scripting.constantes.connecteurs import connecteurs
+from primaires.scripting.constantes.operateurs import OPERATEURS
+from primaires.scripting.constantes.connecteurs import CONNECTEURS
 
 class Test(BaseObj):
     
@@ -64,7 +64,7 @@ class Test(BaseObj):
                 raise ValueError("la variable {} n'existe pas dans " \
                         "l'évènement {}".format(variable, evenement))
             
-            if operateur not in operateurs.values():
+            if operateur not in OPERATEURS.keys():
                 raise ValueError("l'opérateur {} n'existe pas".format(
                         operateur))
             

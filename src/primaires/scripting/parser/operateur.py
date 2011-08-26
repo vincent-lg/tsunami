@@ -28,35 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Variable, détaillée plus bas."""
-
-import re
+"""Fichier contenant la classe Operateur, détaillée plus bas."""
 
 from .expression import Expression
-from .delimiteurs import DELIMITEURS
+from primaires.scripting.constantes.operateurs import OPERATEURS
 
-# Constantes
-RE_VARIABLE = re.compile(r"^[A-Za-z][A-Za-z0-9_]*$")
-
-class Variable(Expression):
+class Operateur(Expression):
     
-    """Expression variable."""
+    """Expression opérateur.
     
-    nom = "variable"
+    Les opérateurs sont définis dans le module
+    primaires.scripting.constantes.operateurs.
+   
+    """
+    
+    nom = "operateur"
     def __init__(self):
         """Constructeur de l'expression."""
         Expression.__init__(self)
-        self.nom = None
+        self.operateur = None
     
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
         chaine = chaine.lstrip()
-        fins = [chaine.index(delimiteur) for delimiteur in DELIMITEURS \
-                if delimiteur in chaine]
-        fin = fins and min(fins) or 0
+        if " " in chaine:
+            fin = chaine.find(" ")
+        else:
+            fin = None
         chaine = chaine[:fin]
-        return RE_VARIABLE.search(chaine)
+
+        return chaine in OPERATEURS.keys()
     
     @classmethod
     def parser(cls, chaine):
@@ -67,23 +69,20 @@ class Variable(Expression):
         """
         objet = cls()
         chaine = chaine.lstrip()
-        fins = [chaine.index(delimiteur) for delimiteur in DELIMITEURS \
-                if delimiteur in chaine]
-        fin = min(fins)
-        chaine_interpreter = chaine[:fin]
-        objet.nom = chaine_interpreter
-        return objet, chaine[fin:]
+        if " " in chaine:
+            fin = chaine.find(" ")
+        else:
+            fin = None
+        self.operateur = chaine[:fin]
+        chaine = chaine[fin:]
+        return objet, chaine
     
     def get_valeur(self, evt):
-        """Retourne la variable ou lève une exception si non présente."""
-        espace = evt.espaces.variables
-        if self.nom in espace:
-            return espace[self.nom]
-        else:
-            raise ValueError("la variable {} est introuvable".format(self.nom))
+        """Retourne l'opérateur Python correspondant."""
+        return OPERATEURS[self.operateur]
     
     def __repr__(self):
-        return "Variable({})".format(self.nom)
+        return " op({}) ".format(self.operateur)
     
     def __str__(self):
-        return self.nom
+        return str(self.operateur)

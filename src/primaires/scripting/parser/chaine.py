@@ -45,6 +45,7 @@ class ChaineDeCaracteres(Expression):
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
+        chaine = chaine.lstrip()
         return chaine.startswith("\"") and chaine.count("\"") >= 2
     
     @classmethod
@@ -55,6 +56,7 @@ class ChaineDeCaracteres(Expression):
         
         """
         objet = ChaineDeCaracteres()
+        chaine = chaine.lstrip()
         fin = chaine.index("\"", 1)
         objet.chaine = chaine[1:fin]
         return objet, chaine[fin + 1:]

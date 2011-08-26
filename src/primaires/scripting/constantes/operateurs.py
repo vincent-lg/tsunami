@@ -30,11 +30,11 @@
 
 """Fichier contenant les constantes operateurs."""
 
-operateurs = {
-    "egal": "=",
-    "different": "!=",
-    "superieur_ou_egal": ">=",
-    "superieur": ">",
-    "inferieur_ou_egal": "<=",
-    "inferieur": "<",
+OPERATEURS = {
+    "=": "==",
+    "!=": "!=",
+    ">=": ">=",
+    ">": ">",
+    "<=": "<=",
+    "<": "<",
 }

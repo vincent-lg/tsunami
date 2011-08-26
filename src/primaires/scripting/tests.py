@@ -33,7 +33,7 @@
 import shlex
 
 from abstraits.obase import *
-from primaires.scripting.constantes.connecteurs import connecteurs
+from primaires.scripting.constantes.connecteurs import CONNECTEURS
 from .test import Test
 from .instruction import Instruction
 
@@ -117,7 +117,7 @@ class Tests(BaseObj):
         py_test = tests[0]
         # On intercale un test, un connecteur
         for test, connecteur in zip(tests[1:], self.__connecteurs):
-            py_connecteur = connecteurs[connecteur]
+            py_connecteur = CONNECTEURS[connecteur]
             py_test += " {} ".format(py_connecteur)
             py_test += test
         
@@ -149,7 +149,7 @@ class Tests(BaseObj):
             raise ValueError("aucun test n'a été interprété")
         
         self.ajouter_test(test)
-        for test, connecteur in zip(tests[1:], connecteurs):
+        for test, connecteur in zip(tests[1:], CONNECTEURS):
             self.ajouter_test(test, connecteur)
     
     def __extraire_tests(self, liste, debut=False, tests=None,
@@ -177,7 +177,7 @@ class Tests(BaseObj):
         
         connecteur = liste[0]
         liste[:] = liste[1:]
-        return connecteur if connecteur in connecteurs.keys() else None
+        return connecteur if connecteur in CONNECTEURS.keys() else None
     
     def __extraire_test(self, liste):
         """Extrait le test et le retourne."""
@@ -185,7 +185,7 @@ class Tests(BaseObj):
             return None
         
         # On cherche le premier connecteur
-        pos_conns = [liste.index(conn) for conn in connecteurs.keys() \
+        pos_conns = [liste.index(conn) for conn in coNECTEURS.keys() \
                 if conn in liste]
         if pos_conns:
             pos = min(pos_conns)

@@ -30,7 +30,7 @@
 
 """Fichier contenant les constantes connecteurs."""
 
-connecteurs = {
+CONNECTEURS = {
     "et": "and",
     "ou": "or",
 }

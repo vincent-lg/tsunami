@@ -65,3 +65,5 @@ from .chaine import *
 from .nombre import *
 from .variable import *
 from .fonction import *
+from .operateur import *
+from .connecteur import *
