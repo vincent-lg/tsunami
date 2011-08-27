@@ -91,7 +91,10 @@ class Condition(Instruction):
                 condition.type = mot
                 break
         
-        condition.tests = expressions["test"].parser(
+        if chaine.endswith(":"):
+            chaine = chaine[:-1]
+        
+        condition.tests = expressions["tests"].parser(
                 chaine[len(condition.type) + 1:])
         
         return condition

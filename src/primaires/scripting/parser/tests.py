@@ -50,13 +50,14 @@ class Tests(Expression):
         return True
      
     @classmethod
-    def parser(cls, expressions):
+    def parser(cls, chaine):
         """Parse la chaîne.
         
         Retourne l'objet créé et la partie non interprétée de la chaîne.
         
         """
         objet = cls()
+        expressions = cls.expressions_def
         
         # Parsage des expressions
         types = ("variable", "nombre", "chaine", "fonction", "operateur", "connecteur")
@@ -65,13 +66,14 @@ class Tests(Expression):
         while chaine.strip():
             types_app = [type for type in types if type.parsable(chaine)]
             if not types_app:
-                raise ValueError("impossible de parser {}".format(expressions))
+                raise ValueError("impossible de parser {}".format(chaine))
             elif len(types_app) > 1:
-                raise ValueError("les tests {} peuvent être différemment interprétée".format(expression))
+                raise ValueError("les tests {} peuvent être différemment interprétée".format(chaine))
             
             type = types_app[0]
             arg, chaine = type.parser(chaine)
             print("reste", chaine)
+            expressions.append(arg)
         
         objet.expressions = tuple(expressions)
         
@@ -90,4 +92,5 @@ class Tests(Expression):
         return eval(code)
     
     def __repr__(self):
-        return str(self.expresions)
+        expressions = [str(e) for e in self.expressions]
+        return " ".join(expressions)

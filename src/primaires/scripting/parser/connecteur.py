@@ -76,7 +76,7 @@ class Connecteur(Expression):
             fin = chaine.find(" ")
         else:
             fin = None
-        self.connecteur = chaine[:fin]
+        objet.connecteur = chaine[:fin]
         chaine = chaine[fin:]
         return objet, chaine
     

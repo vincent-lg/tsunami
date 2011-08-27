@@ -64,6 +64,7 @@ class Expression(BaseObj, metaclass=MetaExpression):
     """
     
     nom = ""
+    expressions_def = None
     def __init__(self):
         """Constructeur d'une expression."""
         BaseObj.__init__(self)

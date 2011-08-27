@@ -60,6 +60,7 @@ class MetaExpression(MetaBaseObj):
         if cls.nom:
             print("On ajoute", cls.nom)
             expressions[cls.nom] = cls
+            cls.expressions_def = expressions
 
 from .chaine import *
 from .nombre import *

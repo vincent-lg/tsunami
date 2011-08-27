@@ -73,7 +73,7 @@ class Operateur(Expression):
             fin = chaine.find(" ")
         else:
             fin = None
-        self.operateur = chaine[:fin]
+        objet.operateur = chaine[:fin]
         chaine = chaine[fin:]
         return objet, chaine
     
