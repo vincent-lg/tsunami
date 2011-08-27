@@ -32,7 +32,6 @@
 
 from .expression import Expression
 from . import expressions
-from .variable import RE_VARIABLE
 
 class Tests(Expression):
     
@@ -43,73 +42,52 @@ class Tests(Expression):
         """Constructeur de l'expression."""
         Expression.__init__(self)
         self.nom = None
-        self.parametres = ()
+        self.expressions = ()
     
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
-        fin_nom = chaine.find("(")
-        nom = chaine[:fin_nom]
-        chaine = chaine[:fin_nom + 1]
-        return fin_nom >= 0  and RE_VARIABLE.search(nom)
-    
+        return True
+     
     @classmethod
-    def parser(cls, tests):
+    def parser(cls, expressions):
         """Parse la chaîne.
         
         Retourne l'objet créé et la partie non interprétée de la chaîne.
         
         """
         objet = cls()
-        fin_nom = tests.find("(")
-        nom = tests[:fin_nom]
-        chaine = tests[fin_nom + 1:]
-        objet.nom = nom
         
-        # Parsage des paramètres
-        types = ("variable", "nombre", "chaine", "tests")
+        # Parsage des expressions
+        types = ("variable", "nombre", "chaine", "fonction", "operateur", "connecteur")
         types = tuple([expressions[nom] for nom in types])
-        parametres = []
-        while True:
-            chaine = chaine.lstrip(" ")
-            if chaine.startswith(")"):
-                chaine = chaine[1:]
-                break
-            
+        expressions = []
+        while chaine.strip():
             types_app = [type for type in types if type.parsable(chaine)]
             if not types_app:
-                raise ValueError("impossible de parser {}".format(tests))
+                raise ValueError("impossible de parser {}".format(expressions))
             elif len(types_app) > 1:
-                raise ValueError("la tests {] peut être différemment interprétée".format(tests))
+                raise ValueError("les tests {} peuvent être différemment interprétée".format(expression))
             
             type = types_app[0]
             arg, chaine = type.parser(chaine)
-            parametres.append(arg)
             print("reste", chaine)
-            
-            chaine.lstrip(" ")
-            if chaine.startswith(","):
-                chaine = chaine[1:]
-            elif chaine.startswith(")"):
-                chaine = chaine[1:]
-                break
-            else:
-                raise ValueError("erreur de syntaxe dans la tests " \
-                        "{}".format(tests))
         
-        objet.parametres = tuple(parametres)
+        objet.expressions = tuple(expressions)
         
         return objet, chaine
     
     def get_valeur(self, evt):
-        """Retourne la valeur de retour de la tests."""
-        testss = type(self).importeur.scripting.testss
-        if self.nom not in testss:
-            raise ValueError("la tests {} est introuvable".format(self.nom))
+        """Retourne la valeur du test (True ou False).
         
-        tests = testss[self.nom](self)
+        Pour évaluer un test, on va laisser Python se débrouiller.
+        On convertit chaque expression du test en son équivalent en code
+        Python et on l'évalue ensuite.
         
-        return tests(evt)
+        """
+        py_tests = [t.code_python for t in self.arguments]
+        code = " ".join(tests)
+        return eval(code)
     
     def __repr__(self):
-        return self.nom + str(self.parametres)
+        return str(self.expresions)

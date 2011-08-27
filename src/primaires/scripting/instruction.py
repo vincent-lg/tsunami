@@ -31,14 +31,16 @@
 
 """Fichier contenant la classe Instruction, détaillée plus bas."""
 
+from collections import OrderedDict
+
 from abstraits.obase import BaseObj, MetaBaseObj
 
 # Dictionnaire des instructions {nom: classe}
-instructions = {}
+instructions = OrderedDict()
 
 class MetaInstruction(MetaBaseObj):
     
-    """Métaclasse des instrucitons.
+    """Métaclasse des instructions.
     
     Pour chaque classe héritée d'Instruction, elle l'ajoute dans
     le dictionnaire instructions.
@@ -62,6 +64,7 @@ class MetaInstruction(MetaBaseObj):
                 raise ValueError("une classe portant le nom {} existe déjà " \
                         "dans le dictionnaire des instructions".format(nom))
             
+            print("On ajoute", nom)
             instructions[nom] = cls
 
 class Instruction(BaseObj, metaclass=MetaInstruction):

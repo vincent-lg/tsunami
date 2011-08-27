@@ -70,3 +70,8 @@ class ChaineDeCaracteres(Expression):
         
     def __str__(self):
         return "\"" + self.chaine + "\""
+    
+    @property
+    def code_python(self):
+        """Retourne le code Python associé."""
+        return repr(self.chaine)

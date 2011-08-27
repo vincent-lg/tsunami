@@ -67,3 +67,4 @@ from .variable import *
 from .fonction import *
 from .operateur import *
 from .connecteur import *
+from .tests import *

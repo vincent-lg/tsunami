@@ -86,3 +86,8 @@ class Operateur(Expression):
     
     def __str__(self):
         return str(self.operateur)
+    
+    @property
+    def code_python(self):
+        """Retourne le code Python associé."""
+        return OPERATEURS[self.operateur]

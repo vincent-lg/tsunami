@@ -87,3 +87,8 @@ class Variable(Expression):
     
     def __str__(self):
         return self.nom
+    
+    @property
+    def code_python(self):
+        """Retourne le code Python associé."""
+        return "variables." + self.nom

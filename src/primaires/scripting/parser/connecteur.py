@@ -89,3 +89,8 @@ class Connecteur(Expression):
     
     def __str__(self):
         return str(self.connecteur)
+    
+    @property
+    def code_python(self):
+        """Retourne le code Python associé."""
+        return CONNECTEURS[self.connecteur]

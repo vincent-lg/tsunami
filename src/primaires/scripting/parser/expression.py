@@ -100,3 +100,12 @@ class Expression(BaseObj, metaclass=MetaExpression):
     def get_valeur(self, evt):
         """Retourne l'objet Python parsé."""
         raise NotImplementedError
+    
+    @property
+    def code_python(self):
+        """Retourne le code Python associé.
+        
+        Ce code doit être sous la forme d'une chaîne de caractères.
+        
+        """
+        raise NotImplementedError
