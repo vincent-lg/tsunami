@@ -94,7 +94,7 @@ class Condition(Instruction):
         if chaine.endswith(":"):
             chaine = chaine[:-1]
         
-        condition.tests = expressions["tests"].parser(
+        condition.tests, chaine = expressions["tests"].parser(
                 chaine[len(condition.type) + 1:])
         
         return condition
