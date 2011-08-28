@@ -213,5 +213,7 @@ class Personnage(ObjetID):
         salle_dest.envoyer("{} arrive.".format(self.nom), (self, ))
         
         # On appelle l'évènement arrive
-        salle_dest.script.evenements["arrive"].executer(depuis=sortie.nom,
+        sortie_opp = sortie.sortie_opposee
+        nom_opp = sortie_opp and sortie_opp.nom or None
+        salle_dest.script.evenements["arrive"].executer(depuis=nom_opp,
                 salle=salle_dest, personnage=self)

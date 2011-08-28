@@ -91,4 +91,4 @@ class Variable(Expression):
     @property
     def code_python(self):
         """Retourne le code Python associé."""
-        return "variables." + self.nom
+        return "variables['" + self.nom + "']"

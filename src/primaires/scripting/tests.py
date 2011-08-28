@@ -36,6 +36,7 @@ from abstraits.obase import *
 from primaires.scripting.constantes.connecteurs import CONNECTEURS
 from .test import Test
 from .instruction import Instruction
+from .curseur import Curseur
 
 class Tests(BaseObj):
     
@@ -59,6 +60,7 @@ class Tests(BaseObj):
         self.__tests = []
         self.__connecteurs = []
         self.__instructions = []
+        self.dernier_niveau = 0
         self._construire()
     
     def __getnewargs__(self):
@@ -201,10 +203,21 @@ class Tests(BaseObj):
         """Construit et ajoute l'instruction."""
         type_instruction = Instruction.test_interpreter(message)
         instruction = type_instruction.construire(message)
+        instruction.deduire_niveau(self.dernier_niveau)
+        self.dernier_niveau = instruction.get_niveau_suivant()
+        print("On passe au niveau", self.dernier_niveau)
         self.__instructions.append(instruction)
         self.evenement.appelant.enregistrer()
     
     def executer_instructions(self, evenement):
-        """On exécute chaque instructions dans l'ordre."""
-        for instruction in self.__instructions:
-            instruction(evenement)
+        """On exécute chaque instruction dans l'ordre.
+        
+        Certaines instructions (condition par exemple) demandent
+        de faire un traitement particulier qui peut modifier le curseur de parcours.
+        
+        """
+        curseur = Curseur()
+        
+        variables = evenement.espaces.variables
+        global variables
+        curseur.executer_instructions(evenement, self.instructions)

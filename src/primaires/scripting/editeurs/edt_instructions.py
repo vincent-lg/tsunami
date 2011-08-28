@@ -70,7 +70,8 @@ class EdtInstructions(Editeur):
         
         msg += "\n\nInstructions :\n  "
         if instructions:
-            msg += "\n  ".join(["{:>3} {}".format(i + 1, instruction) \
+            msg += "\n  ".join(["{:>3} {}{}".format(i + 1,
+                    "  " * instruction.niveau, instruction) \
                     for i, instruction in enumerate(instructions)])
         else:
             msg += "Aucune instruction n'est définie dans ce script."

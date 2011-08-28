@@ -87,9 +87,11 @@ class Tests(Expression):
         Python et on l'évalue ensuite.
         
         """
-        py_tests = [t.code_python for t in self.arguments]
-        code = " ".join(tests)
-        return eval(code)
+        py_tests = [t.code_python for t in self.expressions]
+        code = " ".join(py_tests)
+        globales = {"variables": evt.espaces.variables}
+        print(code)
+        return eval(code, globales)
     
     def __repr__(self):
         expressions = [str(e) for e in self.expressions]

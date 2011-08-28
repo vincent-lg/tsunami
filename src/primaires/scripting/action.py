@@ -67,10 +67,11 @@ class Action(Instruction):
     def __str__(self):
         return self.nom + " " + " ".join(self.str_parametres)
     
-    def __call__(self, evenement):
+    def __call__(self, curseur, evenement):
         """Exécute l'action selon l'évènement."""
         parametres = self.convertir_parametres(evenement, self.parametres)
         action = self.quelle_action(parametres)
+        curseur.ligne += 1
         return action(*parametres)
     
     @property

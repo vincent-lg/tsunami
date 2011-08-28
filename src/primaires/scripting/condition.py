@@ -59,21 +59,44 @@ class Condition(Instruction):
     def __str__(self):
         ret = self.type
         if self.type in ("si", "sinon si"):
-            ret += str(self.tests) + ":"
+            ret += " " + str(self.tests) + ":"
         elif self.type == "sinon":
             ret += ":"
         
         return ret
     
-    def __call__(self, evenement):
-        """Exécute l'condition selon l'évènement."""
-        raise NotImplementedError
+    def __call__(self, curseur, evenement):
+        """Exécute la condition selon l'évènement."""
+        curseur.ligne += 1
+        val = curseur.valide.get(self.niveau, False)
+        if self.type == "si":
+            curseur.valide[self.niveau] = False
+            val = False
+        
+        # Si une condition de même jniveau a été validée auparavant
+        # on arrête là
+        if self.type != "finsi" and val:
+            print("On arrête.")
+            curseur.niveau -= 1
+            return
+        
+        # On exécute le test
+        if self.tests.expressions:
+            ret = self.tests.get_valeur(evenement)
+            curseur.valide[self.niveau] = ret
+        else:
+            ret = True
+        
+        if ret and self.type != "finsi":
+            curseur.niveau += 1
+        if self.type == "finsi" and not val:
+            curseur.niveau -= 1
     
     @classmethod
     def peut_interpreter(cls, chaine):
         """La chaîne peut-elle être interprétée par la classe Condition ?"""
-        mot_cles = ("si", "sinon si", "sinon", "finsi")
-        return any(chaine.startswith(m + " ") for m in mot_cles)
+        mot_cles = ("si ", "sinon si ", "sinon", "finsi")
+        return any(chaine.startswith(m) for m in mot_cles)
     
     @classmethod
     def construire(cls, chaine):
@@ -85,10 +108,10 @@ class Condition(Instruction):
         """
         chn_condition = chaine
         condition = Condition()
-        mot_cles = ("si", "sinon si", "sinon", "finsi")
+        mot_cles = ("si ", "sinon si ", "sinon", "finsi")
         for mot in mot_cles:
-            if chaine.startswith(mot + " "):
-                condition.type = mot
+            if chaine.startswith(mot):
+                condition.type = mot.lstrip()
                 break
         
         if chaine.endswith(":"):
@@ -98,3 +121,17 @@ class Condition(Instruction):
                 chaine[len(condition.type) + 1:])
         
         return condition
+    
+    def deduire_niveau(self, dernier_niveau):
+        """Déduit le niveau de l'instruction."""
+        self.niveau = dernier_niveau
+        if self.type != "si":
+            self.niveau -= 1
+    
+    def get_niveau_suivant(self):
+        """Retourne le niveau de la prochaine instruction."""
+        niveau = self.niveau
+        if self.type != "finsi":
+            niveau += 1
+        
+        return niveau

@@ -127,7 +127,7 @@ class Fonction(Expression):
         demande à chaque argument son code Python.
         
         """
-        nom = "fonctions." + self.nom
+        nom = "fonctions[" + self.nom + "]"
         parametres = []
         for arg in self.parametres:
             parametres.apend(arg.code_python)

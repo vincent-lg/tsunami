@@ -89,6 +89,7 @@ class Instruction(BaseObj, metaclass=MetaInstruction):
         
         """
         BaseObj.__init__(self)
+        self.niveau = 0
     
     def __getnewargs__(self):
         return ()
@@ -131,3 +132,15 @@ class Instruction(BaseObj, metaclass=MetaInstruction):
                 return classe
         
         raise ValueError("Cette instruction ne peut être interprétée.")
+    
+    def deduire_niveau(self, dernier_niveau):
+        """Change la valeur du niveau d'indentation de l'instruction.
+        
+        Par défaut c'est le même niveau.
+        
+        """
+        self.niveau = dernier_niveau
+    
+    def get_niveau_suivant(self):
+        """Retourne le niveau présumé de l'instruction suivante."""
+        return self.niveau
