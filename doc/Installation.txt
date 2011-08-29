@@ -1,0 +1,112 @@
+h1. Installation de project:kassie
+
+Installer project:kassie est simple, sans contraintes particulières liées à votre système. Là où la version de "Python":http://www.python.org utilisée peut être installée, project:kassie doit pouvoir tourner.
+
+L'opération se décompose en deux étapes :
+
+* [[InstallationPython|L'installation de Python]]
+* [[TelechargerKassie|Le téléchargement de Kassie]].
+
+Ensuite, il ne vous reste plus qu'à lancer project:kassie comme cela est expliqué sur cette page.
+
+h2. Installer Python
+
+Les étapes nécessaires peuvent être différentes en fonction de votre système d'exploitation.
+
+Il faut en tous cas commencer par télécharger "Python":http://www.python.org sur le site officiel : www.python.org.
+
+Cliquez sur le lien "Download":http://python.org/download/ pour accéder aux différentes versions de "Python":http://www.python.org.
+
++*ATTENTION : pour s'exécuter, project:kassie a besoin de la version 3.2 ou supérieure de "Python":http://www.python.org. Si vous installez une autre version, principalement une issue de la branche 2.X, project:kassie ne fonctionnera pas.*+
+
+Choisissez le fichier à télécharger en fonction de votre système. Sous "Windows":http://fr.wikipedia.org/wiki/Microsoft_Windows, l'installation est assez simple et il en va de même sous "Mac OS":http://fr.wikipedia.org/wiki/Mac_OS.
+
+Sous "Linux":http://fr.wikipedia.org/wiki/Linux, cependant, la version 3.2 est rarement la version de "Python":http://www.python.org installée sur le système et il est préférable d'installer en compilant depuis les sources.
+
+Pour une procédure plus détaillée de l'installation de "Python":http://www.python.org, consultez la rubrique consacrée à [[InstallerPython|l'installation de Python]].
+
+h2. Télécharger project:kassie
+
+Une fois "Python":http://www.python.org installé sur votre système, il ne vous reste plus qu'à télécharger le code de project:kassie.
+
+Pour cela, vous pouvez vous rendre sur "la page de téléchargement":http://www.kassie.fr/doku.php?id=telechargement. Choisissez de préférence une version stable, sauf si une version bêta est plus récente et que vous ne voulez que tester project:kassie.
+
+Téléchargez le fichier compressé qui vous convient. Sur la plupart des systèmes, vous n'aurez aucune difficulté à extraire le code de tel ou tel fichier compressé, ce qui fait porter le choix plus sur votre connexion qu'autre chose. Notez que les fichiers compressés d'une même version contiennent exactement la même chose.
+
+A présent, vous pouvez extraire le code de project:kassie dans le répertoire de votre choix.
+
+Après la décompression, vous devriez avoir, dans votre arborescence, un nouveau dossier *kassie*. Dedans, vous trouverez :
+
+* Un répertoire *lib* contenant les bibliothèques utiles à project:kassie. Elles n'ont pas été développées par l'équipe de project:kassie mais sont utilisées dans le code
+* Un répertoire *outils* contenant des outils utiles à project:kassie, dont le projet même n'a pas besoin pour s'exécuter
+* Un répertoire *src* contenant le code source de project:kassie
+* Un répertoire *test* contenant plusieurs tests pour project:kassie
+* Un fichier *changes* contenant les derniers changements de la version que vous avez téléchargée
+* Un fichier *LICENCE* contenant la licence de project:kassie
+* Un fichier *mudinfo.yml* contenant des informations sur votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon au format "YAML":http://fr.wikipedia.org/wiki/YAML.
+
+Ce dernier fichier est à personnaliser en fonction du "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon que vous voulez créée. Vous trouverez plus d'explications dans la rubrique [[Configuration|configuration]].
+
+h2. Lancer project:kassie
+
+Rendez-vous dans le dossier *kassie*, sous-dossier *src*. Ne vous occupez pas de la structure du code, ce n'est pas le sujet pour l'heure.
+
+Pour lancer project:kassie, il suffit d'exécuter, avec "Python":http://www.python.org, le fichier *kassie.py*.
+
++Veillez à exécuter *kassie.py* avec la bonne version de Python.+
+
+Quand project:kassie se lance, une console devrait s'ouvrir donnant les informations suivantes :
+
+* Un message confirmant que la session de project:kassie s'est démarrée (et quand)
+* Un message informant de l'initialisation du serveur (notamment sur quel port celui-ci écoute, *4000* par défaut)
+* Plusieurs messages informant des données chargées
+
+h3. En cas d'erreur
+
+Si aucune console ne s'ouvre, ou bien que la console se referme trop rapidement, essayez d'exécuter project:kassie en passant par "idle":http://docs.python.org/library/idle.html :
+
+# Faites un clic droit sur le fichier *kassie.py*
+# Choisissez *open with idle*
+# Dans la fenêtre qui s'affiche, cliquez sur le bouton *run* ou pressez *F5*.
+
+Vous devriez alors obtenir une erreur plus explicite. Vous pourrez également vérifier que la bonne version de "Python":http://www.python.org est utilisée pour exécuter project:kassie.
+
+Pour signaler l'erreur, passez par le "forum":http://redmine.kassie.fr/projects/kassie/boards de project:kassie ou envoyez un message à equipe@kassie.fr en précisant le [[GlossaireTraceback|traceback]] de l'erreur obtenue.
+
+h3. Tester project:kassie
+
+Si la fenêtre de project:kassie s'est bien ouverte et qu'aucune erreur ne s'est produite, vous pouvez vous connecter à votre nouveau "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon en vous connectant sur l'adresse "localhost":http://fr.wikipedia.org/wiki/Localhost et le port *4000*.
+
+Si vous n'avez pas modifiée la configuration de project:kassie, vous devriez obtenir, dans votre client, quelque chose comme :
+
+<pre>
+Bienvenue sur
+
+
+ ,ggg,        gg
+dP""Y8b       dP
+Yb, `88      d8'
+ `"  88    ,dP'                                    gg
+     88aaad8"                                      ""
+     88''''Yb,      ,gggg,gg    ,g,       ,g,      gg    ,ggg,
+     88     "8b    dP"  "Y8I   ,8'8,     ,8'8,     88   i8" "8i
+     88      `8i  i8'    ,8I  ,8'  Yb   ,8'  Yb    88   I8, ,8I
+     88       Yb,,d8,   ,d8b,,8'_   8) ,8'_   8) _,88,_ `YbadP'
+     88        Y8P"Y8888P"`Y8P' "YY8P"PP' "YY8P"88P""Y8888P"Y888
+
+
+                                        Version XXX
+
+
+
+Entrez votre nom de compte ou nouveau pour en creer un.
+Un seul compte par personne est autorise.
+
+* Votre compte :
+</pre>
+
+Avec la configuration par défaut, vous devez pouvoir vous créer un compte et accéder aux commandes joueur. Pour accéder aux commandes administrateur, il faut vous créer un [[CompteAdministrateur|compte administrateur]].
+
+Pour personnaliser votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon, rendez-vous sur la rubrique [[Configuration|configuration]].
+
+[[Index|Revenir à l'index]]

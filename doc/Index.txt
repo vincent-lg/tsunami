@@ -1,0 +1,25 @@
+h1. Documentation
+
+Bienvenue sur la documentation de project:kassie. Notez que cette documentation connaît un développement en parallèle à project:kassie même.
+
+Si vous utilisez une ancienne version de project:kassie, les données que vous trouverez sur cette documentation ne seront pas nécessairement à jour.
+
+h2. Table des matières
+
+# [[Introduction]]
+# [[Installation]]
+# [[Configuration]]
+# [[Déploiement]]
+# [[Développement]]
+
+h2. Dans quelle rubrique se trouve la réponse à ma question ?
+
+La documentation est séparée en cinq points :
+
+* L'[[Introduction|introduction]] explique plus en détail ce qu'est project:kassie, quels en sont les points forts et les points faibles. Si vous cherchez à comparer différents moteurs de MUD ou voulez simplement savoir à quoi cela sert plus précisément, jetez un œil à [[Introduction|cette rubrique]]
+* L'[[Installation|installation]] explique plus en détail comment installer project:kassie sur votre machine, quelque soit votre système d'exploitation. Elle donne quelques conseils pratiques sur le déploiement, mais ne rentre pas dans trop de détails techniques ou contraintes de sécurité
+* La [[Configuration]] est une étape importante dans le paramétrage de votre MUD. En effet, project:kassie est un moteur hautement configurable et l'une de ses forces réside en ce qu'il n'est pas besoin d'aller fouiller dans le code pour le configurer. [[Configuration|Cette rubrique]] vous donne des indications clairs quant à la configuration de project:kassie
+* La rubrique [[Déploiement|déploiement]] est une parenthèse consacrée à ceux qui souhaitent déployer project:kassie dans un environnement de production, avec une plus grande sécurité qu'une simple installation. Si vous souhaitez passer à l'étape supérieur et réellement créer un MUD, il vous est conseillée de lire [[Déploiement|cette rubrique]]
+* La rubrique [[Développement|développement]] se veut une documentation exhaustive des étapes à suivre pour faire évoluer votre MUD, créer des commandes, des éditeurs, des modules...
+
+Si vous avez des questions, n'hésitez pas à contacter "L'équipe Kassie":mailto:equipe@kassie.fr à l'adresse equipe@kassie.fr.
