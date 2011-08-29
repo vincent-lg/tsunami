@@ -67,11 +67,9 @@ class Action(Instruction):
     def __str__(self):
         return self.nom + " " + " ".join(self.str_parametres)
     
-    def __call__(self, curseur, evenement):
+    def __call__(self, evenement, *parametres):
         """Exécute l'action selon l'évènement."""
-        parametres = self.convertir_parametres(evenement, self.parametres)
         action = self.quelle_action(parametres)
-        curseur.ligne += 1
         return action(*parametres)
     
     @property
@@ -109,7 +107,8 @@ class Action(Instruction):
         
         cls._parametres_possibles[parametres] = methode
     
-    def quelle_action(self, parametres):
+    @classmethod
+    def quelle_action(cls, parametres):
         """Retourne l'action correspondant aux paramètres.
         
         Les paramètres se trouvent dans parametres.
@@ -120,13 +119,13 @@ class Action(Instruction):
         
         """
         ty_p = [type(p) for p in parametres]
-        for types, methode in self._parametres_possibles.items():
+        for types, methode in cls._parametres_possibles.items():
             if all(issubclass(p, t) for p, t in zip(ty_p, types)):
                 return methode
         
         raise ValueError("aucune interprétation de la fonction {} " \
                 "avec les paramètres {} n'est possible (types {})".format(
-                self.fonction.nom, self.fonction.parametres, ty_p))
+                cls.nom, parametres, ty_p))
     
     @classmethod
     def peut_interpreter(cls, chaine):
@@ -209,3 +208,11 @@ class Action(Instruction):
             del cls._parametres_possibles[str_types]
             cls._parametres_possibles[tuple(s_types)] = methode
         print(cls._parametres_possibles)
+    
+    @property
+    def code_python(self):
+        """Retourne le code Pytho associé à l'action."""
+        py_code = "actions['" + self.nom + "']()"
+        py_args = ["evt"] + [a.code_python for a in self.parametres]
+        py_code += "(" + ", ".join(py_args) + ")"
+        return py_code

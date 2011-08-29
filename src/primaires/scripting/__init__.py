@@ -54,6 +54,7 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "scripting", "primaire")
         self.cfg = None
         self.fonctions = {}
+        self.actions = {}
     
     def config(self):
         """Méthode de configuration du module"""
@@ -104,6 +105,7 @@ class Module(BaseModule):
                 action.init_types()
                 action.convertir_types()
                 lst_actions[nom_module] = action
+                self.actions[nom_module] = action
             
     def charger_fonctions(self):
         """Chargement automatique des fonctions."""

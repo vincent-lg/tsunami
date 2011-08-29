@@ -134,3 +134,22 @@ class Condition(Instruction):
             niveau += 1
         
         return niveau
+    
+    @property
+    def code_python(self):
+        """Retourne le code Python de l'instruction."""
+        py_types = {
+            "si": "if",
+            "sinon si": "elif",
+            "sinon": "else",
+            "finsi": "",
+        }
+        
+        py_code = py_types[self.type]
+        if self.type in ("si", "sinon si"):
+            py_code += " " + self.tests.code_python
+        
+        if self.type != "finsi":
+            py_code += ":"
+        
+        return py_code

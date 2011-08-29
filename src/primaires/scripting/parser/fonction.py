@@ -117,18 +117,8 @@ class Fonction(Expression):
     
     @property
     def code_python(self):
-        """Retourne le code Python associé.
-        
-        Pour retrouver le nom de la fonction, on cherche dans l'espace
-        fonctions.
-        
-        Pour se simplifier la vie et respecter la récursivité, on
-        demande à chaque argument son code Python.
-        
-        """
-        nom = "fonctions[" + self.nom + "]"
-        parametres = []
-        for arg in self.parametres:
-            parametres.append(arg.code_python)
-        
-        return nom + "(" + ", ".join(parametres) + ")"
+        """Retourne le code Python associé à la fonction."""
+        py_code = "fonctions['" + self.nom + "']()"
+        py_args = ["evt"] + [a.code_python for a in self.parametres]
+        py_code += "(" + ", ".join(py_args) + ")"
+        return py_code

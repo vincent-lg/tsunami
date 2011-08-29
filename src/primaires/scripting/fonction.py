@@ -50,21 +50,19 @@ class Fonction(BaseObj):
     """
     
     _parametres_possibles = None
-    def __init__(self, fonction):
+    def __init__(self, fonction=None):
         """Construction d'une fonction."""
         BaseObj.__init__(self)
         self.fonction = fonction
     
     def __getnewargs__(self):
-        return (None, )
+        return ()
     
     def __str__(self):
         return str(self.fonction)
     
-    def __call__(self, evenement):
-        """Exécute l'action selon l'évènement."""
-        parametres = self.convertir_parametres(evenement,
-                self.fonction.parametres)
+    def __call__(self, evenement, *parametres):
+        """Exécute la fonction selon l'évènement."""
         fonction = self.quelle_fonction(parametres)
         return fonction(*parametres)
     
@@ -88,7 +86,8 @@ class Fonction(BaseObj):
         
         cls._parametres_possibles[parametres] = methode
     
-    def quelle_fonction(self, parametres):
+    @classmethod
+    def quelle_fonction(cls, parametres):
         """Retourne la fonction correspondant aux paramètres.
         
         Les paramètres se trouvent dans parametres.
@@ -99,13 +98,13 @@ class Fonction(BaseObj):
         
         """
         ty_p = [type(p) for p in parametres]
-        for types, methode in self._parametres_possibles.items():
+        for types, methode in cls._parametres_possibles.items():
             if all(issubclass(p, t) for p, t in zip(ty_p, types)):
                 return methode
         
         raise ValueError("aucune interprétation de la fonction {} " \
                 "avec les paramètres {} n'est possible (types {})".format(
-                self.fonction.nom, self.fonction.parametres, ty_p))
+                cls.nom, parametres, ty_p))
     
     @classmethod
     def convertir_parametres(self, evt, parametres):

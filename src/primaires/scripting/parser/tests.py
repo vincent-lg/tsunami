@@ -79,19 +79,12 @@ class Tests(Expression):
         
         return objet, chaine
     
-    def get_valeur(self, evt):
-        """Retourne la valeur du test (True ou False).
-        
-        Pour évaluer un test, on va laisser Python se débrouiller.
-        On convertit chaque expression du test en son équivalent en code
-        Python et on l'évalue ensuite.
-        
-        """
+    @property
+    def code_python(self):
+        """Retourne le code Python du test."""
         py_tests = [t.code_python for t in self.expressions]
         code = " ".join(py_tests)
-        globales = {"variables": evt.espaces.variables}
-        print(code)
-        return eval(code, globales)
+        return code
     
     def __repr__(self):
         expressions = [str(e) for e in self.expressions]

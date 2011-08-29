@@ -31,12 +31,12 @@
 """Fichier contenant la classe Tests détaillée plus bas."""
 
 import shlex
+import traceback
 
 from abstraits.obase import *
 from primaires.scripting.constantes.connecteurs import CONNECTEURS
 from .test import Test
 from .instruction import Instruction
-from .curseur import Curseur
 
 class Tests(BaseObj):
     
@@ -210,14 +210,31 @@ class Tests(BaseObj):
         self.evenement.appelant.enregistrer()
     
     def executer_instructions(self, evenement):
-        """On exécute chaque instruction dans l'ordre.
+        """Convertit et exécute la suite d'instructions.
         
-        Certaines instructions (condition par exemple) demandent
-        de faire un traitement particulier qui peut modifier le curseur de parcours.
+        Pour plus de facilité, on convertit le script en Python pour l'heure 
+        avant l'exécution.
         
         """
-        curseur = Curseur()
+        lignes = []
+        instructions = self.instructions
+        for instruction in instructions:
+            lignes.append((" " * 4 * instruction.niveau) + instruction.code_python)
         
-        variables = evenement.espaces.variables
-        global variables
-        curseur.executer_instructions(evenement, self.instructions)
+        code = "\n".join(lignes)
+        print("Code :\n", code)
+        
+        # Constitution des globales
+        globales = {
+            "actions": type(self).importeur.scripting.actions,
+            "fonctions": type(self).importeur.scripting.fonctions,
+            "variables": evenement.espaces.variables,
+            "evt": evenement,
+        }
+        
+        # Exécution
+        try:
+            exec(code, globales)
+        except Exception:
+            print(traceback.format_exc())
+            
