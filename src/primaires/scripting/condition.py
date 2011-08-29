@@ -76,7 +76,6 @@ class Condition(Instruction):
         # Si une condition de même jniveau a été validée auparavant
         # on arrête là
         if self.type != "finsi" and val:
-            print("On arrête.")
             curseur.niveau -= 1
             return
         
@@ -111,7 +110,7 @@ class Condition(Instruction):
         mot_cles = ("si ", "sinon si ", "sinon", "finsi")
         for mot in mot_cles:
             if chaine.startswith(mot):
-                condition.type = mot.lstrip()
+                condition.type = mot.rstrip(" ")
                 break
         
         if chaine.endswith(":"):

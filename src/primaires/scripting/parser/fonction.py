@@ -62,10 +62,9 @@ class Fonction(Expression):
         
         """
         objet = cls()
-        chaine = chaine.lstrip()
         fin_nom = fonction.find("(")
         nom = fonction[:fin_nom]
-        chaine = fonction[fin_nom + 1:]
+        chaine = fonction[fin_nom + 1:].lstrip(" ")
         objet.nom = nom
         
         # Parsage des paramètres
@@ -130,6 +129,6 @@ class Fonction(Expression):
         nom = "fonctions[" + self.nom + "]"
         parametres = []
         for arg in self.parametres:
-            parametres.apend(arg.code_python)
+            parametres.append(arg.code_python)
         
         return nom + "(" + ", ".join(parametres) + ")"
