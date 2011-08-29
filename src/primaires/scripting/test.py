@@ -78,7 +78,6 @@ class Test(BaseObj):
         # On convertit le test en code Python
         variable = self.tests.evenement.espaces.variables[self.variable]
         test_py = variable + " " + self.operateur + " " + self.valeur
-        print("On test {}".format(test_py))
         return eval(test_py)
     
     def __str__(self):

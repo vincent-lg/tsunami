@@ -118,7 +118,7 @@ class Fonction(Expression):
     @property
     def code_python(self):
         """Retourne le code Python associé à la fonction."""
-        py_code = "fonctions['" + self.nom + "']()"
+        py_code = "fonctions['" + self.nom + "']"
         py_args = ["evt"] + [a.code_python for a in self.parametres]
-        py_code += "(" + ", ".join(py_args) + ")"
+        py_code += ".executer(" + ", ".join(py_args) + ")"
         return py_code

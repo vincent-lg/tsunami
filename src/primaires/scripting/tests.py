@@ -205,7 +205,6 @@ class Tests(BaseObj):
         instruction = type_instruction.construire(message)
         instruction.deduire_niveau(self.dernier_niveau)
         self.dernier_niveau = instruction.get_niveau_suivant()
-        print("On passe au niveau", self.dernier_niveau)
         self.__instructions.append(instruction)
         self.evenement.appelant.enregistrer()
     
@@ -222,7 +221,7 @@ class Tests(BaseObj):
             lignes.append((" " * 4 * instruction.niveau) + instruction.code_python)
         
         code = "\n".join(lignes)
-        print("Code :\n", code)
+        print("Code :", code, sep="\n")
         
         # Constitution des globales
         globales = {

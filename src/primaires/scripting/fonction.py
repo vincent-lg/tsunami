@@ -50,20 +50,21 @@ class Fonction(BaseObj):
     """
     
     _parametres_possibles = None
-    def __init__(self, fonction=None):
+    def __init__(self, fonction):
         """Construction d'une fonction."""
         BaseObj.__init__(self)
         self.fonction = fonction
     
     def __getnewargs__(self):
-        return ()
+        return (None, )
     
     def __str__(self):
         return str(self.fonction)
     
-    def __call__(self, evenement, *parametres):
+    @classmethod
+    def executer(cls, evenement, *parametres):
         """Exécute la fonction selon l'évènement."""
-        fonction = self.quelle_fonction(parametres)
+        fonction = cls.quelle_fonction(parametres)
         return fonction(*parametres)
     
     @classmethod
@@ -128,4 +129,3 @@ class Fonction(BaseObj):
             s_types = [types.get(t) for t in str_types]
             del cls._parametres_possibles[str_types]
             cls._parametres_possibles[tuple(s_types)] = methode
-        print(cls._parametres_possibles)

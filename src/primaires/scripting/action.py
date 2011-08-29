@@ -67,9 +67,10 @@ class Action(Instruction):
     def __str__(self):
         return self.nom + " " + " ".join(self.str_parametres)
     
-    def __call__(self, evenement, *parametres):
+    @classmethod
+    def executer(cls, evenement, *parametres):
         """Exécute l'action selon l'évènement."""
-        action = self.quelle_action(parametres)
+        action = cls.quelle_action(parametres)
         return action(*parametres)
     
     @property
@@ -207,12 +208,11 @@ class Action(Instruction):
             s_types = [types.get(t) for t in str_types]
             del cls._parametres_possibles[str_types]
             cls._parametres_possibles[tuple(s_types)] = methode
-        print(cls._parametres_possibles)
     
     @property
     def code_python(self):
         """Retourne le code Pytho associé à l'action."""
-        py_code = "actions['" + self.nom + "']()"
+        py_code = "actions['" + self.nom + "']"
         py_args = ["evt"] + [a.code_python for a in self.parametres]
-        py_code += "(" + ", ".join(py_args) + ")"
+        py_code += ".executer(" + ", ".join(py_args) + ")"
         return py_code

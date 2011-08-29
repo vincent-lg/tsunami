@@ -125,5 +125,4 @@ class Module(BaseModule):
                 fonction.init_types()
                 fonction.convertir_types()
                 self.fonctions[nom_module] = fonction
-                print("Chargement de", nom_module)
 

@@ -64,7 +64,6 @@ class MetaInstruction(MetaBaseObj):
                 raise ValueError("une classe portant le nom {} existe déjà " \
                         "dans le dictionnaire des instructions".format(nom))
             
-            print("On ajoute", nom)
             instructions[nom] = cls
 
 class Instruction(BaseObj, metaclass=MetaInstruction):
