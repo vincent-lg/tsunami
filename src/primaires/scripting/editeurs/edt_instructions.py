@@ -30,6 +30,7 @@
 
 """Ce fichier contient l'éditeur EdtInstructions, détaillé plus bas."""
 
+import traceback
 from textwrap import wrap
 
 from primaires.interpreteur.editeur import Editeur
@@ -84,6 +85,7 @@ class EdtInstructions(Editeur):
         try:
             tests.ajouter_instruction(msg)
         except ValueError as err:
+            print(traceback.format_exc())
             self.pere << "|err|" + str(err) + "|ff|"
         else:
             self.actualiser()

@@ -203,6 +203,8 @@ class Tests(BaseObj):
         """Construit et ajoute l'instruction."""
         type_instruction = Instruction.test_interpreter(message)
         instruction = type_instruction.construire(message)
+        print(instruction, type_instruction)
+        c = input()
         instruction.deduire_niveau(self.dernier_niveau)
         self.dernier_niveau = instruction.get_niveau_suivant()
         self.__instructions.append(instruction)

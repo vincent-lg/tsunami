@@ -36,6 +36,7 @@ import re
 from abstraits.module import *
 from .instruction import Instruction
 from .condition import Condition
+from .affectation import Affectation
 from .action import Action, actions as lst_actions
 from . import parser
 
