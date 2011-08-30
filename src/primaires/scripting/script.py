@@ -57,6 +57,7 @@ class Script(BaseObj):
     
     Pour se construire, un script prend en paramètre :
         parent -- l'objet qui appellera le script
+    
     """
     
     def __init__(self, parent):

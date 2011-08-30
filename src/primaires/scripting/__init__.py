@@ -34,7 +34,6 @@ import os
 import re
 
 from abstraits.module import *
-from .config import cfg_scripting
 from .instruction import Instruction
 from .condition import Condition
 from .action import Action, actions as lst_actions
@@ -55,30 +54,6 @@ class Module(BaseModule):
         self.cfg = None
         self.fonctions = {}
         self.actions = {}
-    
-    def config(self):
-        """Méthode de configuration du module"""
-        self.cfg = type(self.importeur).anaconf.get_config("scripting",
-            "scripting/syntaxe.cfg", "config scripting", cfg_scripting)
-        
-        # Application de la configuration
-        cfg = self.cfg
-        identifiant = cfg.identifiant
-        type_de_donnee = "(" + ")|(".join([cfg.chaine, cfg.nombre, cfg.identifiant]) + ")"
-        sep = cfg.sep
-        fonction = r"({nom_fonction}){dg}({type_de_donnee})?({sep}({type_de_donnee}))*{dd}"
-        fonction = fonction.format(nom_fonction=cfg.nom_fonction,
-                sep=sep, type_de_donnee=type_de_donnee,
-                dg=cfg.delimiteur_gauche, dd=cfg.delimiteur_droit)
-        
-        # Configuration des instructions
-        Instruction.cfg = cfg
-        
-        # Configuration des actions
-        Action.schema = re.compile("^" + fonction + "$")
-        Action.schema_argument = r"({sep}({a}))({sep}({a}))*".format(a=type_de_donnee, sep=sep)
-        
-        BaseModule.config(self)
     
     def init(self):
         """Initialisation"""

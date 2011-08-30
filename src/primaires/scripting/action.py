@@ -44,6 +44,37 @@ class Action(Instruction):
     Une action est une instruction effectuant une action précise (dire
     à un joueur, faire apparaître un objet, créer une tempête...).
     
+    Chaque action peut avoir un comportement différent en fonction du type
+    des paramètres qu'on lui transmet.
+    
+    Chaque action doit hériter de cette classe et être définie dans 
+    le sous-padckage actions. Un module portajnt le nom de l'action doit
+    y être créé. Ce module doit contenir une classe appelée ClasseAction.
+    Si ces règles sont suivis, l'action sera automatiquement chargée
+    au lancement du module scripting.
+    
+    Chaque ClasseAction doit redéfinir :
+        La méthode init_types -- généralement, dans cette méthode,
+                on fait appel à ajouter_types (voir plus bas)
+        Plusieurs méthodes statiques représentant les différentes actions
+        en fonction des types
+    
+    Exemple du code de la classe dire.
+    Il se trouve dans le sous-package actions, fichier dire.py :
+    >>> from primaires.scripting.action import Action
+    ... class ClasseAction(Action):
+    ...     @classmethod
+    ...     def init_types(cls):
+    ...         cls.ajouter_types(cls.dire_personnage, "Personnage", "str")
+    ...         cls.ajouter_types(cls.dire_salle, "Salle", "str")
+    ... @staticmethod
+    ... def dire_personnage(personnage, message):
+    ...         personnage.envoyer(message)
+    ... @staticmethod
+    ... def dire_salle(salle, message):
+    ...         salle.envoyer(message)
+    ...
+    
     """
     
     _parametres_possibles = None
@@ -183,17 +214,6 @@ class Action(Instruction):
         action.parametres = parametres
         
         return action
-    
-    @classmethod
-    def convertir_parametres(self, evt, parametres):
-        """Convertit les paramètres passés, sous la forme de chaînes.
-        
-        """
-        parametres = list(parametres)
-        for i, p in enumerate(parametres):
-            parametres[i] = parametres[i].get_valeur(evt)
-        
-        return parametres
     
     @classmethod
     def convertir_types(cls):

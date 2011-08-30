@@ -47,6 +47,14 @@ class Fonction(BaseObj):
     *   une fonction retourne quelque chose, une action non
     *   une action modifie, une fonction consulte (principalement)
     
+    NOTE IMPORTANTE : dans le package parser est défijnji un module fonction
+    contenant une classe Fonction. Il ne faut pas confondre ces deux classes
+    ayant un but très différent :
+    *   La classe définit dans parser est utile pour parser une fonction,
+        isoler son nom, ses paramètres. L'objet généré sera stocké dans l'instruction
+    *   La classe définit ici existe comme classe-mère de toutes
+        les fonctions définies dans le sous-package fonctions.
+    
     """
     
     _parametres_possibles = None
@@ -106,15 +114,6 @@ class Fonction(BaseObj):
         raise ValueError("aucune interprétation de la fonction {} " \
                 "avec les paramètres {} n'est possible (types {})".format(
                 cls.nom, parametres, ty_p))
-    
-    @classmethod
-    def convertir_parametres(self, evt, parametres):
-        """Convertit les paramètres passés, sous la forme de chaînes."""
-        parametres = list(parametres)
-        for i, p in enumerate(parametres):
-            parametres[i] = parametres[i].get_valeur(evt)
-        
-        return parametres
     
     @classmethod
     def convertir_types(cls):

@@ -49,9 +49,7 @@ class Condition(Instruction):
     """
     
     def __init__(self):
-        """Construction d'une condition.
-        
-        """
+        """Construction d'une condition."""
         Instruction.__init__(self)
         self.type = None
         self.tests = None
@@ -64,32 +62,6 @@ class Condition(Instruction):
             ret += ":"
         
         return ret
-    
-    def __call__(self, curseur, evenement):
-        """Exécute la condition selon l'évènement."""
-        curseur.ligne += 1
-        val = curseur.valide.get(self.niveau, False)
-        if self.type == "si":
-            curseur.valide[self.niveau] = False
-            val = False
-        
-        # Si une condition de même jniveau a été validée auparavant
-        # on arrête là
-        if self.type != "finsi" and val:
-            curseur.niveau -= 1
-            return
-        
-        # On exécute le test
-        if self.tests.expressions:
-            ret = self.tests.get_valeur(evenement)
-            curseur.valide[self.niveau] = ret
-        else:
-            ret = True
-        
-        if ret and self.type != "finsi":
-            curseur.niveau += 1
-        if self.type == "finsi" and not val:
-            curseur.niveau -= 1
     
     @classmethod
     def peut_interpreter(cls, chaine):
