@@ -58,7 +58,6 @@ class MetaExpression(MetaBaseObj):
         """Constructeur de la classe."""
         MetaBaseObj.__init__(cls, nom, bases, attrs)
         if cls.nom:
-            print("On ajoute", cls.nom)
             expressions[cls.nom] = cls
             cls.expressions_def = expressions
 

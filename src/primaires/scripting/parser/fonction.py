@@ -88,7 +88,7 @@ class Fonction(Expression):
             parametres.append(arg)
             print("reste", chaine)
             
-            chaine.lstrip(" ")
+            chaine = chaine.lstrip(" ")
             if chaine.startswith(","):
                 chaine = chaine[1:]
             elif chaine.startswith(")"):
@@ -113,7 +113,8 @@ class Fonction(Expression):
         return fonction(evt)
     
     def __repr__(self):
-        return self.nom + str(self.parametres)
+        params = [str(p) for p in self.parametres]
+        return self.nom + "(" + ", ".join(params) + ")"
     
     @property
     def code_python(self):

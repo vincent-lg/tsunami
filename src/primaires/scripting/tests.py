@@ -32,6 +32,7 @@
 
 import shlex
 import traceback
+from fractions import Fraction
 
 from abstraits.obase import *
 from primaires.scripting.constantes.connecteurs import CONNECTEURS
@@ -203,8 +204,6 @@ class Tests(BaseObj):
         """Construit et ajoute l'instruction."""
         type_instruction = Instruction.test_interpreter(message)
         instruction = type_instruction.construire(message)
-        print(instruction, type_instruction)
-        c = input()
         instruction.deduire_niveau(self.dernier_niveau)
         self.dernier_niveau = instruction.get_niveau_suivant()
         self.__instructions.append(instruction)
@@ -231,6 +230,7 @@ class Tests(BaseObj):
             "fonctions": type(self).importeur.scripting.fonctions,
             "variables": evenement.espaces.variables,
             "evt": evenement,
+            "Fraction": Fraction,
         }
         
         # Exécution

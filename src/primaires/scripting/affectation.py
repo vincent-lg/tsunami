@@ -95,7 +95,6 @@ class Affectation(Instruction):
         exp, chaine = type.parser(chaine)
         affectation.expression = exp
         
-        print(affectation, "retournée")
         return affectation
     
     @property

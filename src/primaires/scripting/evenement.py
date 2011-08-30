@@ -159,7 +159,7 @@ class Evenement(BaseObj):
     def executer(self, **variables):
         """Exécution de l'évènement."""
         self.espaces.variables.update(variables)
-        if tuple(v for v in self.espaces.variables if v not in self.variables):
+        if tuple(v for v in self.variables if v not in self.espaces.variables):
             raise ValueError("des variables manquent à l'appel")
         
         self.sinon.executer_instructions(self)

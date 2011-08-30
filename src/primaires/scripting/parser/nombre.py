@@ -60,8 +60,9 @@ class Nombre(Expression):
         chaine = chaine.lstrip()
         fins = [chaine.index(delimiteur) for delimiteur in DELIMITEURS \
                 if delimiteur in chaine]
-        fin = fins and min(fins) or 0
+        fin = fins and min(fins) or None
         chaine = chaine[:fin]
+        print("On interprète", chaine)
         try:
             nombre = Fraction(chaine)
         except ValueError:
@@ -80,10 +81,13 @@ class Nombre(Expression):
         chaine = chaine.lstrip()
         fins = [chaine.index(delimiteur) for delimiteur in DELIMITEURS \
                 if delimiteur in chaine]
-        fin = min(fins)
+        if fins:
+            fin = min(fins)
+        else:
+            fin = None
         chaine_interpreter = chaine[:fin]
         objet.nombre = Fraction(chaine_interpreter)
-        return objet, chaine[fin:]
+        return objet, chaine[len(chaine_interpreter):]
     
     def get_valeur(self, evt):
         """Retourne le nombre sous la forme d'un objet Fraction."""
@@ -94,3 +98,8 @@ class Nombre(Expression):
     
     def __str__(self):
         return str(self.nombre)
+    
+    @property
+    def code_python(self):
+        """Retourne le code Python associé."""
+        return repr(self.nombre)

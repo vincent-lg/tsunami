@@ -54,7 +54,7 @@ class Variable(Expression):
         chaine = chaine.lstrip()
         fins = [chaine.index(delimiteur) for delimiteur in DELIMITEURS \
                 if delimiteur in chaine]
-        fin = fins and min(fins) or 0
+        fin = fins and min(fins) or None
         chaine = chaine[:fin]
         return RE_VARIABLE.search(chaine)
     
@@ -75,7 +75,7 @@ class Variable(Expression):
             fin = None
         chaine_interpreter = chaine[:fin]
         objet.nom = chaine_interpreter
-        return objet, chaine[len(chaine_interpreter) - 1:]
+        return objet, chaine[len(chaine_interpreter):]
     
     def get_valeur(self, evt):
         """Retourne la variable ou lève une exception si non présente."""
