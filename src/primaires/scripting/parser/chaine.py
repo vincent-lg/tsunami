@@ -75,13 +75,5 @@ class ChaineDeCaracteres(Expression):
     def code_python(self):
         """Retourne le code Python associé."""
         chaine = repr(self.chaine)
-        pos = chaine.find(" $")
-        while pos >= 0:
-            fin_pos = chaine.find(" ", pos + 1)
-            variable = chaine[pos + 2:fin_pos]
-            print(variable)
-            chaine = chaine[:pos + 1] + "{" + variable + "}" + chaine[fin_pos:]
-            pos = chaine.find(" $")
-        
         print(chaine)
         return chaine + ".format(**variables)"

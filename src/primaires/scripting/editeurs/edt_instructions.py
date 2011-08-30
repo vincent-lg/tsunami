@@ -50,6 +50,39 @@ class EdtInstructions(Editeur):
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
+        self.ajouter_option("r", self.opt_remplacer_instruction)
+    
+    def opt_remplacer_instruction(self, arguments):
+        """Remplace une ligne par une nouvelle instruction."""
+        test = self.objet
+        instructions = test.instructions
+        if not arguments.strip():
+            self.pere << "|err|Entrez un numéro de ligne.|ff|"
+            return
+        
+        arguments = arguments.split(" ")
+        no = arguments[0]
+        ligne = " ".join(arguments[1:])
+        
+        try:
+            no = int(no) - 1
+            assert no >= 0
+            assert no < len(instructions)
+        except (ValueError, AssertionError):
+            self.pere << "|err|Entrez un numéro de ligne valide.|ff|"
+            return
+        
+        if not ligne.strip():
+            self.pere << "|err|Entrez une nouvelle instruction " \
+                    "pour remplacer celle en ligne {}.|ff|".format(no + 1)
+            return
+        
+        try:
+            test.remplacer_instruction(no, ligne)
+        except ValueError as err:
+            self.pere << "|err|" + str(err) + ".|ff|"
+        else:
+            self.actualiser()
     
     def accueil(self):
         """Message d'accueil du contexte"""

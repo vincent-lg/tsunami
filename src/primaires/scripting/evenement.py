@@ -32,7 +32,7 @@
 
 from abstraits.obase import *
 from .espaces import Espaces
-from .tests import Tests
+from .test import Test
 from .variable import Variable
 
 class Evenement(BaseObj):
@@ -90,7 +90,7 @@ class Evenement(BaseObj):
         self.variables = {}
         self.__evenements = {}
         self.__tests = []
-        self.sinon = Tests(self)
+        self.sinon = Test(self)
         self.espaces = Espaces(self)
         self._construire()
     
@@ -113,24 +113,13 @@ class Evenement(BaseObj):
         """Retourne une liste déréférencée des tests."""
         return list(self.__tests)
     
-    def ajouter_test(self, chaine_tests):
+    def ajouter_test(self, chaine_test):
         """Ajoute un test à l'évènement.
-        
-        La chaîne de test est une liste de tuples de trois éléments.
-        *   la variable testée (objet par exemple)
-        *   l'opérateur (=, <=, ...)
-        *   la valeur
-        
-        Ces trois informations doivent être des chaînes de caractères.
-        
-        L'opérateur est identifié en fonction de la syntaxe du script
-        définie dans la configuration.
         
         """
         # On construit un test
-        tests = Tests(self)
-        tests.construire(chaine_tests)
-        self.__tests.append(tests)
+        test = Test(self, chaine_test)
+        self.__tests.append(test)
         self.appelant.enregistrer()
         return len(self.__tests) - 1
     
@@ -161,5 +150,11 @@ class Evenement(BaseObj):
         self.espaces.variables.update(variables)
         if tuple(v for v in self.variables if v not in self.espaces.variables):
             raise ValueError("des variables manquent à l'appel")
+        
+        # On cherche le bon test
+        for test in self.__tests:
+            if test.tester(self):
+                test.executer_instructions(self)
+                return
         
         self.sinon.executer_instructions(self)
