@@ -28,16 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Package contenant la commande 'distinction'"""
 
-from . import afk
-from . import chgroupe
-from . import distinction
-from . import groupe
-from . import module
-from . import options
-from . import pset
-from . import quitter
-from . import restaurer
-from . import shutdown
-from . import where
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdDistinction(Commande):
+    
+    """Commande 'distinction'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "distinction", "distinction")
+        self.groupe = "joueur"
+        self.schema = "(<message>)"
+        self.aide_courte = "manipule votre distinction anonyme"
+        self.aide_longue = \
+            "Cette commande permet d'afficher ou de modifier votre " \
+            "distinction anonyme. Il s'agit de la description que verront " \
+            "les autres personnages quand vous ferez une action. " \
+            "En effet, les personnages ne vous connaissant pas ne voient " \
+            "pas votre nom mais la distinction anonyme que vous spécifiez. " \
+            "Votre destinction pourrait être, par exemple : |ent|un jeune nain|ff|. " \
+            "Entrez la commande %distinction% sans argument pour voir votre " \
+            "distinction anonyme actuelle. Si vous précisez un argument à la commande " \
+            "%distinction%, votre distinction anonyme sera modifiée."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        if dic_masques["message"] is not None:
+            message = dic_masques["message"].message
+        print("A compléter...")
