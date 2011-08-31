@@ -28,29 +28,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce package contient les différents types d'objet, sous la forme
-d'une classe par fichier, héritée de BaseType (voir base.py).
+"""Fichier contenant le type vêtement."""
 
-"""
+from .base import BaseType
 
-from abstraits.obase import MetaBaseObj
-
-types = {} # types d'objet {nom:classe}
-
-class MetaType(MetaBaseObj):
+class Vetement(BaseType):
     
-    """Métaclasse des types d'objet.
-    Elle ajoute le type de l'objet dans le dictionnaire 'types' si il possède
-    un nom.
+    """Type d'objet: vêtement.
     
     """
     
-    def __init__(cls, nom, bases, contenu):
-        """Constructeur de la métaclasse"""
-        MetaBaseObj.__init__(cls, nom, bases, contenu)
-        if cls.nom_type:
-            types[cls.nom_type] = cls
-
-from .indefini import *
-from .nourriture import Nourriture
-from .vetement import Vetement
+    nom_type = "vêtement"
