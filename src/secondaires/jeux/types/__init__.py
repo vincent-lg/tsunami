@@ -28,9 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce package contient les différents types d'objet, sous la forme
-d'une classe par fichier, héritée de BaseType (voir base.py).
-
-"""
+"""Package des types d'objets propres au module secondaire jeux."""
 
 from .jeu import *

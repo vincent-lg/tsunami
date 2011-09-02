@@ -33,6 +33,7 @@
 class Attribut:
     
     """Définition d'une classe attribut.
+    
     Elle prend en paramètre :
     -   un constructeur
     -   une liste de taille inconnue de paramètres à passer au
@@ -52,6 +53,7 @@ class Attribut:
     
     def construire(self, objet=None):
         """On construit et retourne l'attribut.
+        
         Les paramètres internes sont rattachés à 'objet' passé en paramètre.
         Par exemple, si dans 'internes' se trouve le paramètre
         'description', on récupérera l'attribut 'description' de

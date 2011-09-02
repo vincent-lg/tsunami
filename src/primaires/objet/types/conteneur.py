@@ -1,0 +1,92 @@
+# -*-coding:Utf-8 -*
+
+# Copyright (c) 2010 LE GOFF Vincent
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+# * Neither the name of the copyright holder nor the names of its contributors
+#   may be used to endorse or promote products derived from this software
+#   without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+# OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+
+"""Fichier contenant le type Conteneur."""
+
+from primaires.interpreteur.editeur.selection import Selection
+from bases.objet.attribut import Attribut
+from .base import BaseType
+from primaires.objet.conteneur import ConteneurObjet
+
+class Conteneur(BaseType):
+    
+    """Type d'objet: conteneur.
+    
+    Les conteneurs sont des objets pouvant en contenir d'autres.
+    
+    """
+    
+    nom_type = "conteneur"
+    
+    def __init__(self, cle=""):
+        """Constructeur de l'objet"""
+        BaseType.__init__(self, cle)
+        self.types_admis = ["*"]
+        self.etendre_editeur("y", "Types admis", Selection, self,
+                "types_admis", self.str_types)
+        
+        # Attributs propres à l'objet (non au prototype)
+        self._attributs = {
+            "conteneur", Attribut(
+                lambda obj: setattr(obj, "conteneur", ConteneurObjet(obj)),
+                ("")),
+        }
+    
+    @property
+    def str_types_admis(self):
+        """Retourne une chaîne représentant les types admis actuels.
+        
+        Si la liste contient la chaîne *, tous les types sont possibles.
+        Si la liste est vide, la chaîne l'est également.
+        
+        """
+        if "*" in self.types_admis:
+            return "tous"
+        else:
+            return ", ".join(sorted(self.types_admis))
+    
+    @property
+    def str_types(self):
+        """Retourne une chaîne représentant les types actuels."""
+        return ", ".join(type(self).importeur.objet.nom_types)
+    
+    def travailler_enveloppes(self, enveloppes):
+        """Travail sur les enveloppes"""
+        types_admis = enveloppes["y"]
+        types_admis.aide_courte = \
+            "Entrez les différents |ent|types admis|ff| de ce conteneur\n" \
+            "ou |cmd|/|ff| pour revenir à la fenêtre " \
+            "parente.\n\n" \
+            "Pour ajouter un |ent|type admis|ff|, entrez son nom. " \
+            "Si il est déjà dans la liste,\n" \
+            "il sera ajouté. Sinon, il sera retiré.\n" \
+            "Entrez |cmd|*|ff| si vous voulez indiquer tous les types possibles.\n\n" \
+            "Types possibles : {objet.str_types}\n\n" \
+            "Types admis actuels : {objet.str_types_admis}"

@@ -95,6 +95,11 @@ class Module(BaseModule):
     def objets(self):
         return dict(self._objets)
     
+    @property
+    def nom_types(self):
+        """Retourne le nom des types d'objets actuels."""
+        return [t.nom_type for t in o_types.values()]
+    
     def creer_prototype(self, cle, nom_type="indéfini"):
         """Crée un prototype et l'ajoute aux prototypes existants"""
         if cle in self._prototypes:

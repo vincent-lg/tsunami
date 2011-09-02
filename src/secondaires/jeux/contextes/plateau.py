@@ -138,5 +138,3 @@ class Plateau(Contexte):
                 fonction(arguments)
         else:
             type(self).importeur.jeux.get_partie(self.objet).jouer(self.pere.joueur, msg)
-                
-            

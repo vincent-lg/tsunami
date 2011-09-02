@@ -43,8 +43,7 @@ class CmdJouer(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "jouer", "play")
-        self.schema = "<objet_jeu>"
-        self.nom_categorie = "bouger"
+        self.schema = "<nom_objet>"
         self.aide_courte = "Permet de jouer à un jeu"
         self.aide_longue = \
             "Cette commande permet de jouer à un jeu "
@@ -62,4 +61,3 @@ class CmdJouer(Commande):
             contexte = Plateau(personnage.instance_connexion, objet)
             personnage.contexte_actuel.migrer_contexte(contexte)
             partie.arriverPif(personnage)
-        

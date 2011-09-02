@@ -1,4 +1,4 @@
-﻿# -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 DAVY Guillaume
 # All rights reserved.
@@ -28,16 +28,3 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la configuration par défaut du module 'jeux'."""
-
-cfg_jeux = r"""
-# Ce fichier contient la configuration du module secondaire jeux.
-# Elle donne la liste des jeux disponibles.
-
-# Liste des jeux disponibles. Pour chaque jeu, un fichier dans le répertoire
-# secondaires/jeux/backend/ possédant le même nom avec l'extension .py doit
-# exister.
-
-jeux = ["echec"]
-
-"""

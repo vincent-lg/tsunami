@@ -49,10 +49,11 @@ class CmdChuchotter(Commande):
         self.schema = "<nom_joueur> <message>"
         self.aide_courte = "chuchotte une phrase à un autre joueur"
         self.aide_longue = \
-            "Cette commande permet de parler à un autre joueur ou à un bot présent dans " \
-            "la même salle. Ce que vous dites par ce moyen est soumis aux " \
-            "règles du RP. La commande prend en paramètres la cible de votre chuchottement (bot ou joueur), " \
-                "et ce que vous souhaitez lui chuchotter."
+            "Cette commande permet de parler à un autre joueur ou à un bot " \
+            "présent dans la même salle. Ce que vous dites par ce moyen " \
+            "est soumis aux règles du RP. La commande prend en paramètres la cible " \
+            "de votre chuchottement (NPC ou joueur), et ce que vous souhaitez lui " \
+            "chuchotter."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
@@ -62,30 +63,29 @@ class CmdChuchotter(Commande):
             personnage << "|err|Cette personne n'est pas avec vous.|ff|"
         else:
             # FIXME ajouter une couleur spécifique pour le whisper ?
-            personnage << "Vous chuchottez à {} : {}".format(cible.nom, message)
+            personnage << "Vous chuchottez à {} : {}".format(
+                    cible.nom, message)
             cible << "{} vous chuchotte : {}".format(personnage.nom, message)
-            moyenne_sens = ceil((personnage.sensibilite + cible.sensibilite) / 2)
+            moyenne_sens = ceil((personnage.sensibilite + \
+                    cible.sensibilite) / 2)
             for perso in personnage.salle.personnages:
-                if perso != personnage and perso != cible:
-                    # FIXME il faut faire quelque chose pour les pnj, pour l'instant on ne chuchotte qu'aux joueurs à cause du masque
-                    # On vérifie si la personne a plus de sens que la moyenne des deux autres. Si c'est le cas, un random détermine pour chaque mot si elle l'entend. Sinon, un random beaucoup plus petit joue le même rôle. Ma phrase est mal construite, et je vous zute. =)
+                if perso is not personnage and perso is not cible:
+                    # On vérifie si la personne a plus de sens que la moyenne
+                    # des deux autres. Si c'est le cas, un random détermine pour chaque mot
+                    # si elle l'entend. Sinon, un random beaucoup moins probable joue le même rôle
                     if perso.sensibilite > moyenne_sens:
                         random_entendre = 5 # une chance sur deux
                     else:
                         random_entendre = 2 # une sur cinq
-                    phrase = ""
-                    i = 0 # désolé j'ai encore du mal à trouver une autre syntaxe, Python est nouveau pour moi :S
-                    message_split = message.split()
-                    longueur_message = len(message_split) - 1
-                    for mot in message_split:
+                    phrase = []
+                    for mot in message.split():
                         if not mot in "?!;:":
                             if randint(1, 10) <= random_entendre:
-                                phrase += mot
+                                phrase.append(mot)
                             else:
-                                phrase += "..."
+                                phrase.append("...")
                         else:
-                            phrase += mot
-                        if i > 0 and i < longueur_message:
-                            phrase += " "
-                        i += 1
+                            phrase.append(mot)
+                    
+                    phrase = " ".join(phrase)
                     perso << "{} chuchotte quelque chose à {}. Vous parvenez à entendre : {}".format(personnage.nom, cible.nom, phrase)

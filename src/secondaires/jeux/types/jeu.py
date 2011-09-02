@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le type Indefini."""
+"""Fichier contenant le type jeu."""
 
 from bases.collections.liste_id import ListeID
 from bases.objet.attribut import Attribut
@@ -48,28 +48,12 @@ class ObjetJeu(BaseType):
         """Constructeur du type jeu"""
         BaseType.__init__(self, cle)
         
-        self._jeu = "null"
-        self.etendre_editeur("j", "Nom du jeu", Choix, self, "jeu")
-    
-    def _get_jeu(self):
-        return self._jeu
-    
-    def _set_jeu(self, jeu):
-        jeux = type(self).importeur.jeux.jeux
-        if ( (jeu >= len(jeux)) or jeu < 0 ):
-            raise(ValueError)
-        self._jeu = jeux[jeu].nom
-    
-    jeu = property(_get_jeu, _set_jeu)
-    
-    # Actions sur les objets
-    def regarder(self, personnage):
-        moi = BaseType.regarder(self, personnage) + "\n\n"
-        moi += type(self).importeur.jeux.get_partie(self).plateau()
-        return moi
+        self.jeu = None
+        self.etendre_editeur("j", "Type de jeu", Choix, self, "jeu")
     
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes.
+        
         On récupère un dictionnaire représentant la présentation avec en
         clé les raccourcis et en valeur les enveloppes.
         
@@ -77,15 +61,21 @@ class ObjetJeu(BaseType):
         'etendre_editeur'.
         
         """
-        
         jeux = type(self).importeur.jeux.jeux
         
         env = enveloppes["j"] # on récupère 'jeu'
-        env.prompt = "Entrez un numéro : "
-        env.apercu = "{objet.jeu}"
+        env.prompt = "Entrez un nom de jeu : "
+        env.apercu = self.jeu and "{objet.jeu}" or ""
         env.aide_courte = \
-            "Entrez le numéro du jeu\n" \
+            "Entrez le nom du jeu ou |cmd|/|ff| pour revenir à " \
+            "la fenêtre mère.\n\n" \
             "Jeu possible :\n" + \
-            "".join([ str(i) + " " + jeux[i].nom + "\n" for i in range(0,len(jeux))]) + \
-            "|cmd|/|ff| pour revenir à la fenêtre parente.\n\nJeu actuel : " + \
-            "|bc|{objet.jeu} |ff|"
+            ", ".join(sorted(jeux.keys())) + "\n\n" \
+            "Jeu actuel : " + \
+            "|bc|{objet.nom_jeu} |ff|"
+        
+    # Actions sur les objets
+    def regarder(self, personnage):
+        moi = BaseType.regarder(self, personnage) + "\n\n"
+        moi += self.jeu.regarder(moi)
+        return moi

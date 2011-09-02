@@ -51,6 +51,7 @@ class MetaType(MetaBaseObj):
         if cls.nom_type:
             types[cls.nom_type] = cls
 
+from .conteneur import Conteneur
 from .indefini import *
 from .nourriture import Nourriture
 from .vetement import Vetement

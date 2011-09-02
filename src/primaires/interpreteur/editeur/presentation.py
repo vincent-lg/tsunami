@@ -63,7 +63,7 @@ class Presentation(Editeur):
                 recherche))
     
     def ajouter_choix(self, nom, raccourci, objet_editeur,
-            objet_edite=None, attribut=None):
+            objet_edite=None, attribut=None, *sup):
         """Ajoute un choix possible :
         -   nom : le nom affiché dans la présentation (exemple 'description')
         -   raccourci : le raccourci pour entrer dans le sous éditeur ('d')
@@ -73,10 +73,10 @@ class Presentation(Editeur):
         
         """
         return self.ajouter_choix_avant(self.nom_quitter, nom, raccourci,
-                objet_editeur, objet_edite, attribut)
+                objet_editeur, objet_edite, attribut, *sup)
         
     def ajouter_choix_apres(self, apres, nom, raccourci, objet_editeur,
-            objet_edite=None, attribut=None):
+            objet_edite=None, attribut=None, *sup):
         """Ajout le choix après 'apres'.
         Pour les autres arguments, voir la méthode 'ajouter_choix'.
         
@@ -86,7 +86,7 @@ class Presentation(Editeur):
                 "Le raccourci {} est déjà utilisé dans cet éditeur".format(
                 raccourci))
         
-        enveloppe = EnveloppeObjet(objet_editeur, objet_edite, attribut)
+        enveloppe = EnveloppeObjet(objet_editeur, objet_edite, attribut, *sup)
         self.choix[nom] = enveloppe
         passage_apres = False
         for cle in tuple(self.choix.keys()):
@@ -99,7 +99,7 @@ class Presentation(Editeur):
         return enveloppe
 
     def ajouter_choix_avant(self, avant, nom, raccourci, objet_editeur,
-            objet_edite=None, attribut=None):
+            objet_edite=None, attribut=None, *sup):
         """Ajoute le choix avant 'avant''.
         Pour les autres arguments, voir la méthode 'ajouter_choix'.
         
@@ -109,7 +109,7 @@ class Presentation(Editeur):
                 "Le raccourci {} est déjà utilisé dans cet éditeur".format(
                 raccourci))
         
-        enveloppe = EnveloppeObjet(objet_editeur, objet_edite, attribut)
+        enveloppe = EnveloppeObjet(objet_editeur, objet_edite, attribut, *sup)
         self.choix[nom] = enveloppe
         passage_apres = False
         for cle in tuple(self.choix.keys()):

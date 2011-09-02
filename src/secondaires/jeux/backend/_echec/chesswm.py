@@ -1,59 +1,90 @@
-"""
-A chess module that does a lot of chess related things.
-Will McGugan <will@willmcgugan.com>
-http://www.willmcgugan.com
-"""
+# -*-coding:Utf-8 -*
 
-__version__ = '0.0.3'
-__program__ = 'chesswm'
-__author__ = 'Will McGugan <will@willmcgugan.com>'
-__copyright__ = 'Copyright (C) 2005 - 2006 Will McGugan'
+# Copyright (c) 2011 Will McGugan <will@willmcgugan.com> (http://www.willmcgugan.com)
+# Copyright (c) 2011 LE GOFF Vincent
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+# * Neither the name of the copyright holder nor the names of its contributors
+#   may be used to endorse or promote products derived from this software
+#   without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+# OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
 
-# Seems to make a difference..
-#import psyco
-#psyco.full()
+# This program, originaly writen by Will McGugan <will@willmcgugan.com> is
+# used by Kassie's development team with Will McGugan's permission.
+# Kassie's development team has kept much of the original code
+# but has translated it in French and modified some of the implementation.
+
 
 import re
 import copy
 
-WHITE, BLACK, UNDEFINED = list(range( 3))
+BLANC, NOIR, UNDEFINI = 0, 1, 2
 
 def Opponent(colour):
 
     return not colour
 
-PIECE_ABBREVIATIONS = "ptcfrk."
-PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING, BLANK = PIECE_ABBREVIATIONS
+ABREVIATIONS_PIECES = "ptcfrk." # Pion tour cavalier fou roi reine case vide
+PION, TOUR, CAVALIER, FOU, REINE, ROI, VIDE = ABREVIATIONS_PIECE
 
-ONGOING, MATE, STALEMATE = list(range(3))
+EN_COURS, MAT, PAT = 0, 1, 2
 
-PIECE_NAMES = { 'p':'Pion', 'r':'Tour', 'n':'Roi', 'b':'Fou', 'q':'Reine', 'k':'Roi', '.':'Blanc' }
+NOMS_PIECES = {
+    'p': 'Pion',
+    't': 'Tour',
+    'r': 'Roi',
+    'f': 'Fou',
+    'k': 'Reine',
+    '.': 'Vide',
+}
 
-INITIAL_BOARD = 'tcfrkfct\n' \
-                'pppppppp\n' \
-                '........\n' \
-                '........\n' \
-                '........\n' \
-                '........\n' \
-                'PPPPPPPP\n' \
-                'TCFRKFCT'
+PLATEAU_INITIAL = \
+    'tcfrkfct\n' \
+    'pppppppp\n' \
+    '........\n' \
+    '........\n' \
+    '........\n' \
+    '........\n' \
+    'PPPPPPPP\n' \
+    'TCFRKFCT'
 
-FILES = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' ]
-RANKS = [ '1', '2', '3', '4', '5', '6', '7', '8' ]
+COLONNES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+LIGNES = ['1', '2', '3', '4', '5', '6', '7', '8']
 
-PIECES = {  'P':(WHITE, PAWN),
-            'T':(WHITE, ROOK),
-            'C':(WHITE, KNIGHT),
-            'F':(WHITE, BISHOP),
-            'R':(WHITE, QUEEN),
-            'K':(WHITE, KING),
-            '.':(UNDEFINED, BLANK),
-            'p':(BLACK, PAWN),
-            't':(BLACK, ROOK),
-            'c':(BLACK, KNIGHT),
-            'f':(BLACK, BISHOP),
-            'r':(BLACK, QUEEN),
-            'k':(BLACK, KING) }
+PIECES = {
+    'P': (NOIR, PION),
+    'T': (NOIR, TOUR),
+    'C': (NOIR, CAVALIER),
+    'F': (NOIR, FOU),
+    'R': (NOIR, ROI),
+    'K': (NOIR, REINE),
+    '.': UNDEFINI, VIDE),
+    'p': (BLANC, PION),
+    't': (BLANC, TOUR),
+    'c': (BLANC, CAVALIER),
+    'f': (BLANC, FOU),
+    'r': (BLANC, REINE),
+    'k': (BLANC, ROI),
+}
 
 class Coord(object):
 
@@ -102,9 +133,6 @@ class Coord(object):
             rows = board.rows
 
         return (0 <= self.col < cols) and (0 <= self.row < rows)
-
-        #return  ( self.col >= 0 and self.col < cols and
-        #          self.row >= 0 and self.row < rows )
 
     def __eq__(self, rhs):
 
