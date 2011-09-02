@@ -35,6 +35,7 @@ import hashlib
 from bases.collections.liste_id import ListeID
 from abstraits.id import ObjetID
 from primaires.communication.canal import IMM_AUTOCONNECT, PERSO_AUTOCONNECT
+from primaires.joueur.joueur import Joueur
 
 class Compte(ObjetID):
     """Classe représentant un compte.
@@ -88,13 +89,23 @@ class Compte(ObjetID):
         
         return joueur
     
+    def creer_joueur(self, nom_joueur):
+        """Crée le joueur et l'ajoute dans le compte."""
+        joueur = Joueur()
+        joueur.nom = nom_joueur
+        joueur.compte = self
+        self.ajouter_joueur(joueur)
+        return joueur
+    
     def ajouter_joueur(self, joueur):
         """Ajoute le joueur passé en paramètre à la liste des joueurs.
+        
         Si le compte est "le compte admin", le joueur sera passé
         dans le groupe des administrateurs.
         
         """
         config = type(self).importeur.anaconf.get_config("connex")
+        type(self).importeur.joueur.joueurs[joueur.nom] = joueur
         if self.nom == config.compte_admin: # compte administrateur
             joueur.nom_groupe = "administrateur"
             for canal in type(self).importeur.communication. \

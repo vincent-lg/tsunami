@@ -30,55 +30,126 @@
 
 """Fichier contenant la classe Test détaillée plus bas."""
 
+import traceback
+from fractions import Fraction
+
 from abstraits.obase import *
-from primaires.scripting.constantes.operateurs import OPERATEURS
+from .parser import expressions
 from primaires.scripting.constantes.connecteurs import CONNECTEURS
+from .instruction import Instruction
 
 class Test(BaseObj):
     
-    """Classe contenant un test.
-    
-    Un test est constitué :
-        variable -- d'une variable
-        operateur -- d'un opérateur
-        valeur -- d'une valeur que l'on compare à la variable
-    
-    Note : ces tests ne sont pas utilisables directement en condition où ils
-    sont plus complexes.
+    """Classe contenant un ensemble de tests.
     
     """
     
-    def __init__(self, tests, variable, operateur, valeur):
-        """Constructeur du test."""
+    def __init__(self, evenement, chaine_test=""):
+        """Constructeur d'une suite de tests.
+        
+        Elle prend en paramètre :
+            evenement -- l'évènement qui possède le test
+            chaine_test -- la suite de test sous la forme d'une chaîne
+        
+        """
         BaseObj.__init__(self)
-        self.tests = tests
-        self.variable = variable
-        self.operateur = operateur
-        self.valeur = valeur
+        self.__evenement = evenement
+        self.__tests = None
+        self.__instructions = []
+        self.dernier_niveau = 0
         self._construire()
         
-        # On fait maintenant quelques vérifications
-        if tests is not None:
-            evenement = tests.evenement
-            if variable not in evenement.variables.keys():
-                raise ValueError("la variable {} n'existe pas dans " \
-                        "l'évènement {}".format(variable, evenement))
-            
-            if operateur not in OPERATEURS.keys():
-                raise ValueError("l'opérateur {} n'existe pas".format(
-                        operateur))
-            
-            v_type = evenement.variables[variable].type
+        if chaine_test:
+            self.construire(chaine_test)
     
     def __getnewargs__(self):
-        return (None, "", "", "")
-    
-    def __bool__(self):
-        """Retourne True si le test est vrai, False sinon"""
-        # On convertit le test en code Python
-        variable = self.tests.evenement.espaces.variables[self.variable]
-        test_py = variable + " " + self.operateur + " " + self.valeur
-        return eval(test_py)
+        return (None, )
     
     def __str__(self):
-        return "{} {} {}".format(self.variable, self.operateur, self.valeur)
+        return str(self.__tests)
+    
+    @property
+    def evenement(self):
+        return self.__evenement
+    
+    @property
+    def instructions(self):
+        """Retourne une liste déréférencée des instructions."""
+        return list(self.__instructions)
+    
+    @property
+    def appelant(self):
+        """Retourne l'appelant, c'est-à-dire le parent du script."""
+        return self.evenement.script.parent
+    
+    def construire(self, chaine_test):
+        """Construit la suite de chaînes en fonction de la chaîne.
+        
+        """
+        # On essaye d'interpréter la suite de tests
+        self.__tests = expressions["tests"].parser(chaine_test)[0]
+        self.appelant.enregistrer()
+    
+    def ajouter_instruction(self, message):
+        """Construit et ajoute l'instruction."""
+        type_instruction = Instruction.test_interpreter(message)
+        instruction = type_instruction.construire(message)
+        instruction.deduire_niveau(self.dernier_niveau)
+        self.dernier_niveau = instruction.get_niveau_suivant()
+        self.__instructions.append(instruction)
+        self.evenement.appelant.enregistrer()
+    
+    def remplacer_instruction(self, ligne, message):
+        """Remplace une instruction."""
+        if ligne not in range(len(self.__instructions)):
+            raise IndexError("la ligne {} n'existe pas".format(ligne))
+        
+        ancienne_instruction = self.__instructions[ligne]
+        type_instruction = Instruction.test_interpreter(message)
+        instruction = type_instruction.construire(message)
+        instruction.niveau = ancienne_instruction.niveau
+        self.__instructions[ligne] = instruction
+        self.evenement.appelant.enregistrer()
+    
+    def tester(self, evenement):
+        """Test le tests."""
+        py_code = self.__tests.code_python
+        print("Evaluation de", py_code)
+        globales = self.get_globales(evenement)
+        return bool(eval(py_code, globales))
+    
+    def get_globales(self, evenement):
+        """Retourne le dictionnaire des globales d'exécution."""
+        # Constitution des globales
+        return {
+            "actions": type(self).importeur.scripting.actions,
+            "fonctions": type(self).importeur.scripting.fonctions,
+            "variables": evenement.espaces.variables,
+            "evt": evenement,
+            "Fraction": Fraction,
+        }
+    
+    def executer_instructions(self, evenement):
+        """Convertit et exécute la suite d'instructions.
+        
+        Pour plus de facilité, on convertit le script en Python pour l'heure 
+        avant l'exécution.
+        
+        """
+        lignes = []
+        instructions = self.instructions
+        for instruction in instructions:
+            lignes.append((" " * 4 * instruction.niveau) + instruction.code_python)
+        
+        code = "\n".join(lignes)
+        print("Code :", code, sep="\n")
+        
+        # Constitution des globales
+        globales = self.get_globales(evenement)
+        
+        # Exécution
+        try:
+            exec(code, globales)
+        except Exception:
+            print(traceback.format_exc())
+            

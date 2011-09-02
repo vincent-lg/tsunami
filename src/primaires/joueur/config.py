@@ -50,4 +50,16 @@ taille_max = 15
 # Les joueurs sont placés par défaut dans le groupe "joueur".
 groupe_par_defaut = "joueur"
 
+## Configuration du joueur système
+# Le joueur système est un joueur créé par le système qui peut être amené
+# à effectuer des tâches d'administration automatisées.
+# On ne doit pas pouvoir se logger sur ce joueur, mais il peut servir
+# à envoyer de façon automatisée des messages.
+# Par exemple, quand une erreur survient lors de l'interprétation du scripting,
+# c'est le joueur système qui envoie le message au bâtisseur pour l'en avertir.
+# La variable ci-dessous configure le nom du compte système :
+compte_systeme = "systeme"
+# Nom du joueur système :
+joueur_systeme = "système"
+
 """

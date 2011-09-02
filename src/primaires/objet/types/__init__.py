@@ -53,3 +53,4 @@ class MetaType(MetaBaseObj):
 
 from .indefini import *
 from .nourriture import Nourriture
+from .vetement import Vetement

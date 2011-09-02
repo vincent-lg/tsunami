@@ -32,6 +32,7 @@
 
 from . import afk
 from . import chgroupe
+from . import distinction
 from . import groupe
 from . import module
 from . import options
