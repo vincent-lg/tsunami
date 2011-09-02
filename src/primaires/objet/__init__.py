@@ -96,7 +96,7 @@ class Module(BaseModule):
         return dict(self._objets)
     
     @property
-    def nom_types(self):
+    def noms_types(self):
         """Retourne le nom des types d'objets actuels."""
         return [t.nom_type for t in o_types.values()]
     

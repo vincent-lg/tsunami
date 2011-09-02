@@ -31,6 +31,8 @@
 """Ce fichier définit le contexte-éditeur 'Selection'."""
 
 from . import Editeur
+from primaires.format.dictionnaires import DictSansAccent
+from primaires.format.fonctions import supprimer_accents
 
 class Selection(Editeur):
     
@@ -54,21 +56,29 @@ class Selection(Editeur):
     
     def interpreter(self, msg):
         """Interprétation du contexte"""
+        msg = supprimer_accents(msg).lower()
         if msg == "*":
             setattr(self.objet, self.attribut, ["*"])
         else:
             # On constitue un dictionnaire des données sélectionnées
             # En clé, c'est le nom de la donnée
             # En valeur, True si la clé a été sélectionné, False sinon
-            selectionne = dict([(nom, False) for nom in self.liste])
+            selectionne = DictSansAccent((nom, False) for nom in self.liste)
+            print(selectionne)
             for nom in getattr(self.objet, self.attribut):
                 if nom in selectionne.keys():
                     selectionne[nom] = True
             
-            if msg in selectionne.keys():
-                selectionne[cle] = not selectionne[cle]
+            print(selectionne)
+            if msg in selectionne.cles_sa():
+                selectionne[msg] = not selectionne[msg]
+            else:
+                self.pere << "|err|L'option {} est invalide.|ff|".format(msg)
+                return
             
+            print(selectionne)
             selectionne = [nom for nom, val in selectionne.items() if val]
+            print(selectionne)
             setattr(self.objet, self.attribut, selectionne)
         
         self.actualiser()

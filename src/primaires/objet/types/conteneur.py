@@ -49,8 +49,8 @@ class Conteneur(BaseType):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
         self.types_admis = ["*"]
-        self.etendre_editeur("y", "Types admis", Selection, self,
-                "types_admis", self.str_types)
+        self.etendre_editeur("t", "types admis", Selection, self,
+                "types_admis", type(self).importeur.objet.noms_types)
         
         # Attributs propres à l'objet (non au prototype)
         self._attributs = {
@@ -67,7 +67,9 @@ class Conteneur(BaseType):
         Si la liste est vide, la chaîne l'est également.
         
         """
-        if "*" in self.types_admis:
+        if not self.types_admis:
+            return "aucun"
+        elif "*" in self.types_admis:
             return "tous"
         else:
             return ", ".join(sorted(self.types_admis))
@@ -75,11 +77,12 @@ class Conteneur(BaseType):
     @property
     def str_types(self):
         """Retourne une chaîne représentant les types actuels."""
-        return ", ".join(type(self).importeur.objet.nom_types)
+        return ", ".join(type(self).importeur.objet.noms_types)
     
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""
-        types_admis = enveloppes["y"]
+        types_admis = enveloppes["t"]
+        types_admis.apercu = "{objet.str_types_admis}"
         types_admis.aide_courte = \
             "Entrez les différents |ent|types admis|ff| de ce conteneur\n" \
             "ou |cmd|/|ff| pour revenir à la fenêtre " \
