@@ -64,13 +64,12 @@ class CmdChuchotter(Commande):
             # FIXME ajouter une couleur spécifique pour le whisper ?
             personnage << "Vous chuchottez à {} : {}".format(cible.nom, message)
             cible << "{} vous chuchotte : {}".format(personnage.nom, message)
-            moyenne_sens = ceil((getattr(personnage.stats, "_sens") + getattr(cible.stats, "_sens")) / 2)
+            moyenne_sens = ceil((personnage.sensibilite + cible.sensibilite) / 2)
             for perso in personnage.salle.personnages:
                 if perso != personnage and perso != cible:
                     # FIXME il faut faire quelque chose pour les pnj, pour l'instant on ne chuchotte qu'aux joueurs à cause du masque
-                    sens = getattr(perso.stats, "_sens")
                     # On vérifie si la personne a plus de sens que la moyenne des deux autres. Si c'est le cas, un random détermine pour chaque mot si elle l'entend. Sinon, un random beaucoup plus petit joue le même rôle. Ma phrase est mal construite, et je vous zute. =)
-                    if sens > moyenne_sens:
+                    if perso.sensibilite > moyenne_sens:
                         random_entendre = 5 # une chance sur deux
                     else:
                         random_entendre = 2 # une sur cinq

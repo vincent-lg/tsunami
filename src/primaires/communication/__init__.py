@@ -172,6 +172,7 @@ class Module(BaseModule):
             commandes.socedit.CmdSocedit(),
             commandes.attitudes.CmdAttitudes(),
             commandes.messages.CmdMessages(),
+            commandes.chuchotter.CmdChuchotter(),
         ]
         
         for cmd in self.commandes:
