@@ -76,10 +76,10 @@ class CmdChuchotter(Commande):
                     phrase = ""
                     i = 0 # désolé j'ai encore du mal à trouver une autre syntaxe, Python est nouveau pour moi :S
                     message_split = message.split()
-                    longueur_message = len(message_split)
+                    longueur_message = len(message_split) - 1
                     for mot in message_split:
                         if not mot in "?!;:":
-                            if randint(1, random_entendre) <= random_entendre:
+                            if randint(1, 10) <= random_entendre:
                                 phrase += mot
                             else:
                                 phrase += "..."
