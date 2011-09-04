@@ -39,10 +39,14 @@ from .condition import Condition
 from .affectation import Affectation
 from .action import Action, actions as lst_actions
 from . import parser
+from . import commandes
+from .quete.quete import Quete
+from .editeurs.qedit import EdtQedit
 
 class Module(BaseModule):
     
     """Cette classe contient les informations du module primaire scripting.
+    
     Ce module gère le langage de script utilisé pour écrire des quêtes et
     personnaliser certains objets de l'univers. Il regroupe également les
     éditeurs et les objets gérant les quêtes.
@@ -55,6 +59,8 @@ class Module(BaseModule):
         self.cfg = None
         self.fonctions = {}
         self.actions = {}
+        self.commandes = {}
+        self.quetes = {}
     
     def init(self):
         """Initialisation"""
@@ -62,7 +68,24 @@ class Module(BaseModule):
         self.charger_actions()
         self.charger_fonctions()
         
+        # Chargement des quêtes
+        quetes = self.importeur.supenr.charger_groupe(Quete)
+        for quete in quetes:
+            self.quetes[quete.cle] = quete
+
         BaseModule.init(self)
+    
+    def ajouter_commandes(self):
+        """Ajout des commandes dans l'interpréteur"""
+        self.commandes = [
+            commandes.qedit.CmdQedit(),
+        ]
+        
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)
+        
+        # Ajout de l'éditeur 'qedit'
+        self.importeur.interpreteur.ajouter_editeur(EdtQedit)
     
     def charger_actions(self):
         """Chargement automatique des actions."""
