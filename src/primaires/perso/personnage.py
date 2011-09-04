@@ -37,6 +37,7 @@ from primaires.interpreteur.groupe.groupe import *
 
 from .race import Race
 from .equipement import Equipement
+from .quetes import Quetes
 from .stats import Stats
 
 class Personnage(ObjetID):
@@ -68,6 +69,9 @@ class Personnage(ObjetID):
                 "End   {stats.endurance}"
         self.equipement = None
         self._race = None
+        
+        # Quêtes
+        self.quetes = Quetes(self)
         self._construire()
     
     def __getnewargs__(self):
