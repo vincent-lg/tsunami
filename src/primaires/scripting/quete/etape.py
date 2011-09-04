@@ -28,64 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Quete détailéle plus bas."""
+"""Fichier contenant la classe Etape détaillée plus bas."""
 
-import re
-from datetime import datetime
-
-from abstraits.id import ObjetID
+from abstraits.obase import BaseObj
 from primaires.format.description import Description
-from .etape import Etape
 
-# Constantes
-RE_QUETE_VALIDE = re.compile(r"^[a-z][a-z0-9_]*$")
-
-class Quete(ObjetID):
+class Etape(BaseObj):
     
-    """Classe définissant une quête dans le sscripting.
+    """Classe définissant une étape simple dans la quête.
     
-    Une quête est constituée d'une suite d'étapes.
-    
-    Chaque étape peut être :
-        une étape simple de scripting (Etape)
-        une autre quête (Quete)
-        un embranchement (Embranchement)
-    
-    L'étape simple est une étape menant à une suite d'instructions.
-    Une sous-quête possède les mêmes propriétés que ceux définis ici.
-    Un embranchement permet de matérialiser un choix dans la quête.
+    Une étape simple est liée à une suite d'instructions. Une suite d'étapes
+    simple peut constituer une quête mais il est tout à fait possible d'y
+    intégrer des étapes plus complexes, comme des embranchements ou des
+    sous-quêtes. Ces deux autres étapes plus complexes ne sont pas traitées ici.
     
     """
     
-    groupe = "quete"
-    sous_rep = "scripting/quetes"
-    def __init__(self, cle, auteur, parent=None):
-        """Constructeur de la quête."""
-        ObjetID.__init__(self)
-        self.cle = cle
-        self.auteur = auteur
-        self.parent = parent
-        self.date_creation = datetime.now()
-        self.titre = "une quête anonyme"
-        self.description = Description(parent=self)
-        self.options = {
-            "ordonnee": True,
-        }
-        
-        self.__etapes = []
+    def __init__(self, quete):
+        """Constructeur de l'étape."""
+        BaseObj.__init__(self)
+        self.quete = quete
+        self.titre = "non renseigné"
+        self.description = Description(self)
+        self.objet = None
+        self.evenement = ""
+        self.no_test = -1
     
     def __getnewargs__(self):
-        return ("", None)
+        return (None, )
     
-    def __str__(self):
-        return self.cle + " par " + \
-                (self.auteur and self.auteur.nom or "inconnu")
+    @property
+    def reliee(self):
+        """Retourne True si l'étape est reliée."""
+        return self.objet is not None and self.evenement and self.no_test >= 0
     
-    def ajouter_etapes(self, titre):
-        """Ajoute l'étape à la quête."""
-        etape = Etape(nom)
-        self.__etapes.append[etape]
-        self.enregistrer()
-
-
-ObjetID.ajouter_groupe(Quete)
+    @property
+    def test(self):
+        """Retourne le test connecté."""
+        return getattr(self.objet, "script").evenements[self.evenement].tests[
+                self.no_test]

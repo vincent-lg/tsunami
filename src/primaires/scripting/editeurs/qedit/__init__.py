@@ -36,8 +36,9 @@ Ce fichier en particulier contient l'éditeur racine de qedit.
 
 from primaires.interpreteur.editeur import Editeur
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
-#from .presentation import EdtPresentation
+from .presentation import EdtPresentation
 from primaires.format.fonctions import supprimer_accents, contient
+from primaires.scripting.quete.quete import Quete, RE_QUETE_VALIDE
 
 class EdtQedit(Editeur):
     
@@ -55,6 +56,7 @@ class EdtQedit(Editeur):
             instance_connexion = None
         
         Editeur.__init__(self, instance_connexion, objet)
+        self.personnage = personnage
     
     def __getnewargs__(self):
         return (None, None)
@@ -83,8 +85,20 @@ class EdtQedit(Editeur):
     def interpreter(self, msg):
         """Interprétation du message"""
         msg = msg.lower()
+        print(msg, RE_QUETE_VALIDE.search(msg))
         if msg == "q":
             self.pere.joueur.contextes.retirer()
             self.pere.envoyer("Fermeture de l'éditeur de quêtes.")
+        elif RE_QUETE_VALIDE.search(msg) is None:
+            self.pere << "|err|Cette clé de quête est invalide.|ff|"
         else:
-            self.pere << "Autre..."
+            if msg in type(self).importeur.scripting.quetes.keys():
+                quete = type(self).importeur.scripting.quetes[msg]
+            else:
+                quete = Quete(msg, self.personnage)
+                type(self).importeur.scripting.quetes[msg] = quete
+            
+            enveloppe = EnveloppeObjet(EdtPresentation, quete, "")
+            contexte = enveloppe.construire(self.personnage)
+            
+            self.migrer_contexte(contexte)
