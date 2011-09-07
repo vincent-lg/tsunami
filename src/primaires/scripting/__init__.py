@@ -34,6 +34,7 @@ import os
 import re
 
 from abstraits.module import *
+from .script import scripts
 from .instruction import Instruction
 from .condition import Condition
 from .affectation import Affectation
@@ -41,6 +42,8 @@ from .action import Action, actions as lst_actions
 from . import parser
 from . import commandes
 from .quete.quete import Quete
+from .quete.etape import Etape
+from .test import Test
 from .editeurs.qedit import EdtQedit
 
 class Module(BaseModule):
@@ -72,7 +75,10 @@ class Module(BaseModule):
         quetes = self.importeur.supenr.charger_groupe(Quete)
         for quete in quetes:
             self.quetes[quete.cle] = quete
-
+        
+        # Chargement des étapes et tests
+        etapes = self.importeur.supenr.charger_groupe(Etape)
+        tests = self.importeur.supenr.charger_groupe(Test)
         BaseModule.init(self)
     
     def ajouter_commandes(self):
@@ -86,6 +92,17 @@ class Module(BaseModule):
         
         # Ajout de l'éditeur 'qedit'
         self.importeur.interpreteur.ajouter_editeur(EdtQedit)
+    
+    def preparer(self):
+        """Préparation du module.
+        
+        On nettoie les scripts.
+        
+        """
+        for script in scripts:
+            script.init()
+            for evt in script.evenements.values():
+                evt.creer_sinon()
     
     def charger_actions(self):
         """Chargement automatique des actions."""
@@ -124,4 +141,12 @@ class Module(BaseModule):
                 fonction.init_types()
                 fonction.convertir_types()
                 self.fonctions[nom_module] = fonction
-
+    
+    def get_objet(self, identifiant):
+        """Récupère l'objet depuis son identifiant.
+        
+        Sont successivement testées :
+        -   les salles
+        
+        """
+        return self.importeur.salle[identifiant]

@@ -31,6 +31,7 @@
 """Fichier contenant la classe Evenement détaillée plus bas."""
 
 from abstraits.obase import *
+from bases.collections.liste_id import ListeID
 from .espaces import Espaces
 from .test import Test
 from .variable import Variable
@@ -89,10 +90,13 @@ class Evenement(BaseObj):
         self.parent = parent
         self.variables = {}
         self.__evenements = {}
-        self.__tests = []
-        self.sinon = Test(self)
+        self.__tests = ListeID(self)
+        self.__sinon = None
         self.espaces = Espaces(self)
         self._construire()
+        
+        if type(self).importeur.parid.construit:
+            self.creer_sinon()
     
     def __getnewargs__(self):
         return (None, "")
@@ -112,6 +116,14 @@ class Evenement(BaseObj):
     def tests(self):
         """Retourne une liste déréférencée des tests."""
         return list(self.__tests)
+    
+    def creer_sinon(self):
+        """Création du test sinon si il n'existe pas."""
+        if not self.__sinon:
+            self.sinon = Test(self)
+    
+    def enregistrer(self):
+        self.appelant.enregistrer()
     
     def ajouter_test(self, chaine_test):
         """Ajoute un test à l'évènement.
@@ -137,8 +149,9 @@ class Evenement(BaseObj):
         
         """
         if nom in self.variables:
-            raise ValueError("la variable {} existe déjà dans cet " \
-                    "évènement".format(nom))
+            variable = self.variables[nom]
+            variable.changer_type(type)
+            return variable
         
         variable = Variable(self, nom, type)
         self.variables[nom] = variable

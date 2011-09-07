@@ -30,9 +30,12 @@
 
 """Fichier contenant la classe Script détaillée plus bas."""
 
+from abstraits.id import StatutObjet
 from abstraits.obase import *
 from primaires.format.fonctions import *
 from .evenement import Evenement
+
+scripts = []
 
 class Script(BaseObj):
     
@@ -66,6 +69,7 @@ class Script(BaseObj):
         self.parent = parent
         self.__evenements = {}
         self._construire()
+        self.init()
     
     def __getnewargs__(self):
         return (None, )
@@ -80,27 +84,18 @@ class Script(BaseObj):
         return self.__evenements[evenement]
     
     def __setstate__(self, dico_attr):
-        """Quand on récupère l'objet depuis un fichier.
+        """Quand on récupère un script."""
+        BaseObj.__setstate__(self, dico_attr)
+        scripts.append(self)
+    
+    def init(self):
+        """Initialisation du script.
         
-        On s'assure que, si des évènements vides ont été ajoutés dans
-        le constructeur, ils soient toujours présents.
+        Cette méthode est à redéfinir dans les classes-filles pour, par
+        exemple, ajouter de nouveaux évènements.
         
         """
-        BaseObj.__setstate__(self, dico_attr)
-        # On crée un nouveau script pour récupérer les évènements standards
-        tmp_script = type(self)(self.parent)
-        evts = tmp_script.evenements
-        nv_evts = evts.copy()
-        nv_evts.update(self.__evenements)
-        self.__evenements.update(nv_evts)
-        # On s'asure que tous les évènements pointent sur le bon script
-        for evenement in self.__evenements.values():
-            evenement.script = self
-            evt = evts.get(evenement.nom)
-            if evt:
-                evenement.aide_courte = evt.aide_courte
-                evenement.aide_longue = evt.aide_longue
-                evenement.variables = evt.variables
+        pass
     
     @property
     def evenements(self):
@@ -110,8 +105,8 @@ class Script(BaseObj):
         """Crée et ajoute l'évènement dont le nom est précisé en paramètre.
         
         L'évènement doit être une chaîne de caractères non vide.
-        L'évènement ne doit pas déjà exister dans ce script.
-        Cette méthode retourne l'évènement créé.
+        Si l'év ènement existe, le retourne.
+        Sinon, etourne le créé.
         
         """
         if not evenement:
@@ -121,8 +116,7 @@ class Script(BaseObj):
         evenement = supprimer_accents(evenement).lower()
         
         if evenement in self.__evenements.keys():
-            raise ValueError("ce nom d'évènement est déjà présent dans ce " \
-                    "script")
+            return self.evenements[evenement]
         
         nouv_evenement = Evenement(self, evenement)
         self.__evenements[evenement] = nouv_evenement

@@ -1,4 +1,5 @@
 # -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -28,103 +29,65 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe EdtPresentation, détaillée plus bas.
+"""Fichier contenant la classe EdtEtape, détaillée plus bas.
 
 """
 
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
-from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
-from .etape import EdtEtape
+from primaires.format.fonctions import oui_ou_non
 
-class EdtPresentation(Presentation):
+class EdtEtape(Presentation):
     
-    """Classe définissant l'éditeur d'une quête.
+    """Classe définissant l'éditeur d'une étape simple.
     
     """
     
-    def __init__(self, personnage, quete, attribut=""):
+    def __init__(self, personnage, etape, attribut=""):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
         
-        Presentation.__init__(self, instance_connexion, quete)
-        self.personnage = personnage
-        
-        # Options
-        self.ajouter_option("e", self.ajouter_etape)
-        
-        if personnage and quete:
-            self.construire(quete)
+        Presentation.__init__(self, instance_connexion, etape)
+        if personnage and etape:
+            self.construire(etape)
     
     def __getnewargs__(self):
         return (None, None)
     
-    def ajouter_etape(self, argument):
-        """Ajoute une étape.
-        
-        L'argument doit t contenir le titre de l'étape.
-        
-        """
-        if not argument.strip():
-            self.pere << "|err|Précisez un titre pour cette étape.|ff|"
-        else:
-            self.objet.ajouter_etape(argument.strip())
-            self.actualiser()
-    
     def accueil(self):
         """Message d'accueil de l'éditeur."""
-        quete = self.objet
+        etape = self.objet
         msg = Presentation.accueil(self)
         quitter = msg.split("\n")[-1]
         msg = "\n".join(msg.split("\n")[:-1]) + "\n\n"
-        msg += "Auteur : " + (quete.auteur and quete.auteur.nom or "inconnu")
+        msg += "Niveau : " + etape.niveau
         msg += "\n"
-        msg += "Etapes de la quête :\n\n  "
-        etapes = [str(e) for e in quete.etapes]
-        if not etapes:
-            etapes = ["Aucune"]
+        if etape.test:
+            msg += "Test : " + str(etape.test) + "\n"
         
-        msg += "\n  ".join(etapes)
-        
-        msg += "\n\n" + quitter
+        msg += "\n" + quitter
         return msg
     
-    def construire(self, quete):
+    def construire(self, etape):
         """Construction de l'éditeur"""
         # Titre
-        titre = self.ajouter_choix("titre", "t", Uniligne, quete, "titre")
+        titre = self.ajouter_choix("titre", "t", Uniligne, etape, "titre")
         titre.parent = self
-        titre.prompt = "Titre de la quête : "
+        titre.prompt = "Titre de l'étape : "
         titre.apercu = "{objet.titre}"
         titre.aide_courte = \
-            "Entrez le |ent|titre|ff| de la quête ou |cmd|/|ff| pour revenir " \
+            "Entrez le |ent|titre|ff| de l'étape ou |cmd|/|ff| pour revenir " \
             "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
         
         # Description
         description = self.ajouter_choix("description", "d", Description, \
-                quete)
+                etape)
         description.parent = self
         description.apercu = "{objet.description.paragraphes_indentes}"
         description.aide_courte = \
-            "| |tit|" + "Description de la quête {}".format(quete.cle).ljust(
+            "| |tit|" + "Description de l'étape {}".format(etape.titre).ljust(
             76) + "|ff||\n" + self.opts.separateur
-    
-    def autre_interpretation(self, msg):
-        """On peut aussi interpréter des numéros d'étapes."""
-        try:
-            no_etape = int(msg) - 1
-            assert no_etape >= 0
-            assert no_etape < len(self.objet.etapes)
-            etape = self.objet.etapes[no_etape]
-        except (ValueError, AssertionError, IndexError):
-            self.pere << "|err|L'étape {} n'existe pas.|ff|".format(msg)
-        else:
-            enveloppe = EnveloppeObjet(EdtEtape, etape)
-            enveloppe.parent = self
-            contexte = enveloppe.construire(self.personnage)
-            
-            self.migrer_contexte(contexte)

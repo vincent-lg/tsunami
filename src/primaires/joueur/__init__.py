@@ -121,8 +121,10 @@ class Module(BaseModule):
         if not self.importeur.connex.get_compte(self.compte_systeme):
             systeme = self.importeur.connex.ajouter_compte(self.compte_systeme)
             systeme.valide = True
-            if self.joueur_systeme not in self.joueurs.keys():
-                systeme.creer_joueur(self.joueur_systeme)
         
-        self.compte_systeme = self.importeur.connex
+        self.compte_systeme = self.importeur.connex.get_compte(
+                self.compte_systeme)
+        if self.joueur_systeme not in self.joueurs.keys():
+            self.compte_systeme.creer_joueur(self.joueur_systeme)
+        
         self.joueur_systeme = self.joueurs[self.joueur_systeme]

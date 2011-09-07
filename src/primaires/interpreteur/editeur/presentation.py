@@ -159,7 +159,17 @@ class Presentation(Editeur):
             nom = self.raccourcis[msg.rstrip().lower()]
         except KeyError:
             if msg:
-                self.pere << "|err|Raccourci inconnu ({}).|ff|".format(msg)
+                self.autre_interpretation(msg)
         else:
             contexte = self.choix[nom].construire(self.pere)
             self.migrer_contexte(contexte)
+    
+    def autre_interpretation(self, msg):
+        """Cette méthode peut être redéfini par les filles de presentation.
+        
+        Elle permet de rendre l'éditeur capable d'interpréter d'autres
+        choses que des options et des raccourcis.
+        Par défaut, envoie un message d'erreur à l'utilisateur.
+        
+        """
+        self.pere << "|err|Raccourci inconnu ({}).|ff|".format(msg)

@@ -99,6 +99,7 @@ class EdtQedit(Editeur):
                 type(self).importeur.scripting.quetes[msg] = quete
             
             enveloppe = EnveloppeObjet(EdtPresentation, quete, "")
+            enveloppe.parent = self
             contexte = enveloppe.construire(self.personnage)
             
             self.migrer_contexte(contexte)

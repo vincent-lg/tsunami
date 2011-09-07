@@ -70,6 +70,7 @@ class Quete(BaseObj):
         BaseObj.__init__(self)
         self.cle_quete = cle_quete
         self.parent = parent
+        self.__verrou = False
         
         # Pour le niveau
         if isinstance(niveau, Quete):
@@ -151,6 +152,12 @@ class Quete(BaseObj):
         
         return False
     
+    def __add__(self, entier):
+        """Ajoute un entier au niveau de la quête."""
+        n_v = list(self.niveau)
+        n_v[-1] += entier
+        return Quete(self.cle_quete, tuple(n_v))
+    
     @staticmethod
     def convertir_niveau(niveau):
         """Retourne le niveau convertit en tuple.
@@ -165,6 +172,8 @@ class Quete(BaseObj):
             pass
         elif isinstance(niveau, Quete):
             niveau = niveau.niveau
+        elif isinstance(niveau, int):
+            niveau = tuple(nigveau)
         elif isinstance(niveau, str):
             try:
                 niveau = tuple(int(v) for v in niveau.split("."))
@@ -189,6 +198,23 @@ class Quete(BaseObj):
             n1 = n1 + (0, ) * (len(n2) - len(n1))
         
         return n1, n2
+    
+    @property
+    def verrouille(self):
+        """Retourne True si la quête est verrouillé."""
+        return self.__verrou
+    
+    def verrouiller(self):
+        """Verrouille la quête."""
+        self.__verrou = True
+        if self.parent:
+            self.parent.enregistrer()
+    
+    def deverouiller(self):
+        """Déverouille la quête."""
+        self.__verrou = False
+        if self.parent:
+            self.parent.enregistrer()
     
     def mettre_a_jour(self, niveau):
         """Met à jour le niveau de la quête.

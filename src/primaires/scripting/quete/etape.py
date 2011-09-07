@@ -30,10 +30,11 @@
 
 """Fichier contenant la classe Etape détaillée plus bas."""
 
-from abstraits.obase import BaseObj
+from abstraits.id import ObjetID
 from primaires.format.description import Description
+from primaires.perso.quete import Quete
 
-class Etape(BaseObj):
+class Etape(ObjetID):
     
     """Classe définissant une étape simple dans la quête.
     
@@ -44,26 +45,32 @@ class Etape(BaseObj):
     
     """
     
+    groupe = "etape"
+    sous_rep = "scripting/etapes"
     def __init__(self, quete):
         """Constructeur de l'étape."""
-        BaseObj.__init__(self)
+        ObjetID.__init__(self)
         self.quete = quete
+        self.niveau = ""
         self.titre = "non renseigné"
-        self.description = Description(self)
-        self.objet = None
-        self.evenement = ""
-        self.no_test = -1
+        self.description = Description("", self)
+        self.test = None
     
     def __getnewargs__(self):
         return (None, )
     
-    @property
-    def reliee(self):
-        """Retourne True si l'étape est reliée."""
-        return self.objet is not None and self.evenement and self.no_test >= 0
+    def __str__(self):
+        return self.niveau.ljust(8) + self.titre
     
     @property
-    def test(self):
-        """Retourne le test connecté."""
-        return getattr(self.objet, "script").evenements[self.evenement].tests[
-                self.no_test]
+    def niveau_suivant(self):
+        """Retourne le niveau suivant."""
+        return self.quete.get_niveau_suivant(self.objet_quete)
+    
+    @property
+    def objet_quete(self):
+        """Retourne le niveau actuel sous la forme d'un objet Quete."""
+        return Quete(None, self.niveau)
+
+
+ObjetID.ajouter_groupe(Etape)

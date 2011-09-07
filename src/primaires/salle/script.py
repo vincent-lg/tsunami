@@ -42,9 +42,8 @@ class ScriptSalle(Script):
     
     """
     
-    def __init__(self, salle):
-        """Constructeur du script"""
-        Script.__init__(self, salle)
+    def init(self):
+        """Initialisation du script"""
         evt_arriver = self.creer_evenement("arrive")
         evt_arriver.aide_courte = "un personnage arrive dans la salle"
         evt_arriver.aide_longue = \

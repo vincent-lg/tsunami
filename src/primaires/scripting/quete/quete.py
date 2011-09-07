@@ -34,6 +34,7 @@ import re
 from datetime import datetime
 
 from abstraits.id import ObjetID
+from bases.collections.liste_id import ListeID
 from primaires.format.description import Description
 from .etape import Etape
 
@@ -72,7 +73,7 @@ class Quete(ObjetID):
             "ordonnee": True,
         }
         
-        self.__etapes = []
+        self.__etapes = ListeID(self)
     
     def __getnewargs__(self):
         return ("", None)
@@ -81,10 +82,40 @@ class Quete(ObjetID):
         return self.cle + " par " + \
                 (self.auteur and self.auteur.nom or "inconnu")
     
-    def ajouter_etapes(self, titre):
+    def __getitem__(self, niveau):
+        """Retourne l'étape."""
+        for etape in self.__etapes:
+            if etape.niveau == niveau:
+                return etape
+        
+        raise KeyError(niveau)
+    
+    @property
+    def etapes(self):
+        return list(self.__etapes)
+    
+    @property
+    def niveau(self):
+        """Retourne le prochain niveau disponible."""
+        msg = self.parent and self.parent.niveau or ""
+        if msg:
+            msg += "."
+        
+        msg += str(len(self.__etapes) + 1)
+        return msg
+    
+    def get_prochain_niveau(self, niveau):
+        """Retourne le prochain niveau."""
+        niveau = list(niveau.niveau)
+        niveau[-1] += 1
+        return ".".join([str(n) for n in niveau])
+    
+    def ajouter_etape(self, titre):
         """Ajoute l'étape à la quête."""
-        etape = Etape(nom)
-        self.__etapes.append[etape]
+        etape = Etape(self)
+        etape.titre = titre
+        etape.niveau = self.niveau
+        self.__etapes.append(etape)
         self.enregistrer()
 
 

@@ -33,17 +33,19 @@
 import traceback
 from fractions import Fraction
 
-from abstraits.obase import *
+from abstraits.id import ObjetID
 from .parser import expressions
 from primaires.scripting.constantes.connecteurs import CONNECTEURS
 from .instruction import Instruction
 
-class Test(BaseObj):
+class Test(ObjetID):
     
     """Classe contenant un ensemble de tests.
     
     """
     
+    groupe = "test"
+    sous_rep = "scripting/tests"
     def __init__(self, evenement, chaine_test=""):
         """Constructeur d'une suite de tests.
         
@@ -52,11 +54,12 @@ class Test(BaseObj):
             chaine_test -- la suite de test sous la forme d'une chaîne
         
         """
-        BaseObj.__init__(self)
+        ObjetID.__init__(self)
         self.__evenement = evenement
         self.__tests = None
         self.__instructions = []
         self.dernier_niveau = 0
+        self.etape = None
         self._construire()
         
         if chaine_test:
@@ -81,6 +84,15 @@ class Test(BaseObj):
     def appelant(self):
         """Retourne l'appelant, c'est-à-dire le parent du script."""
         return self.evenement.script.parent
+    
+    @property
+    def acteur(self):
+        """Retourne l'acteur de la quête.
+        
+        C'est la variable personnage. Elle doit donc exister.
+        
+        """
+        return self.evenement.espaces.variables["personnage"]
     
     def construire(self, chaine_test):
         """Construit la suite de chaînes en fonction de la chaîne.
@@ -113,6 +125,12 @@ class Test(BaseObj):
     
     def tester(self, evenement):
         """Test le tests."""
+        # Si le test est relié à une quête, on test le niveau dans la quête
+        etape = self.etape
+        if etape:
+            if self.acteur.quetes[etape.quete.cle] + 1 != etape.niveau:
+                return False
+        
         py_code = self.__tests.code_python
         print("Evaluation de", py_code)
         globales = self.get_globales(evenement)
@@ -136,6 +154,10 @@ class Test(BaseObj):
         avant l'exécution.
         
         """
+        etape = self.etape
+        if etape:
+            self.acteur.quetes[etape.quete.cle].deverouiller()
+        
         lignes = []
         instructions = self.instructions
         for instruction in instructions:
@@ -152,4 +174,11 @@ class Test(BaseObj):
             exec(code, globales)
         except Exception:
             print(traceback.format_exc())
-            
+        
+        # Si le test est relié à une quête
+        if etape:
+            # Si aucun verrou n'a été posé
+            if not self.acteur.quetes[etape.quete.cle].verrouille:
+                self.acteur.quetes[etape.quete.cle] = etape.niveau
+
+ObjetID.ajouter_groupe(Test)

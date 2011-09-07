@@ -51,6 +51,7 @@ class EdtInstructions(Editeur):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
         self.ajouter_option("r", self.opt_remplacer_instruction)
+        self.ajouter_option("q", self.opt_relier_quete)
     
     def opt_remplacer_instruction(self, arguments):
         """Remplace une ligne par une nouvelle instruction."""
@@ -84,6 +85,40 @@ class EdtInstructions(Editeur):
         else:
             self.actualiser()
     
+    def opt_relier_quete(self, argument):
+        """Relie à une quête.
+        
+        La quête doit être au format :
+            nom_quete:niveau
+        
+        """
+        test = self.objet
+        if not argument.strip():
+            self.pere << "|err|Précisez <quete:niveau>.|ff|"
+            return
+        
+        try:
+            quete, niveau = argument.split(":")
+        except ValueError:
+            self.pere << "|err|Formattage de quête invalide.|ff|"
+        else:
+            # On cherche la quête
+            if not quete in type(self).importeur.scripting.quetes:
+                self.pere << "|err|Quête {} inconnue.|ff|".format(quete)
+                return
+            
+            quete = type(self).importeur.scripting.quetes[quete]
+            try:
+                etape = quete[niveau]
+            except KeyError:
+                self.pere << "|err|Le niveau {} est inconnue pour la " \
+                        "quête {}.|ff|".format(niveau, quete)
+                return
+            
+            etape.test = test
+            test.etape = etape
+            self.actualiser()
+    
     def accueil(self):
         """Message d'accueil du contexte"""
         tests = self.objet
@@ -102,7 +137,13 @@ class EdtInstructions(Editeur):
         else:
             msg += "Aucune variable n'a été définie pour ce script."
         
-        msg += "\n\nInstructions :\n  "
+        msg += "\n\n"
+        if tests.etape:
+            msg += "|att|ATTENTION : ce script est relié à la quête " \
+                    "{}:{}.\n\n|ff|".format(tests.etape.quete.cle,
+                    tests.etape.niveau)
+        
+        msg += "Instructions :\n  "
         if instructions:
             msg += "\n  ".join(["{:>3} {}{}".format(i + 1,
                     "  " * instruction.niveau, instruction) \

@@ -77,7 +77,8 @@ class Coordonnees(BaseObj):
         anc_tuple = self.tuple_complet()
         construit = self.construit
         BaseObj.__setattr__(self, attr, val)
-        if not attr.startswith("_") and construit and self.parent:
+        if not attr.startswith("_") and attr not in ["parent"] and \
+                construit and self.parent:
             mod_salle = type(self.parent).importeur.salle
             mod_salle.changer_coordonnees(anc_tuple, self)
             self.parent.enregistrer()

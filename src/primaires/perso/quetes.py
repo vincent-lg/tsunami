@@ -86,6 +86,7 @@ class Quetes(BaseObj):
         """Constructeur du conteneur."""
         BaseObj.__init__(self)
         self.__quetes = {}
+        self.parent = parent
     
     def __getnewargs__(self):
         return (None, )
@@ -98,7 +99,7 @@ class Quetes(BaseObj):
         
         """
         if cle_quete in self.__quetes.keys():
-            return Quete(self.__quetes[cle_quete])
+            return Quete(cle_quete, self.__quetes[cle_quete])
         else:
             return Quete(cle_quete, (0, ))
     
@@ -130,8 +131,8 @@ class Quetes(BaseObj):
                     "niveau de quête".format(type(valeur)))
         
         if cle_quete in self.__quetes.keys():
-            self.__quetes["cle_quete"].mettre_a_jour(valeur)
+            self.__quetes[cle_quete].mettre_a_jour(valeur)
         else:   
-            self.__quetes["cle_quete"] = Quete(cle_quete, valeur, self.parent)
+            self.__quetes[cle_quete] = Quete(cle_quete, valeur, self.parent)
         
         self.parent.enregistrer()
