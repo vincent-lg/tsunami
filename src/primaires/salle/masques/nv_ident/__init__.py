@@ -52,10 +52,8 @@ class NvIdent(Masque):
         self.zone = ""
         self.mnemonic = ""
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
-        lstrip(commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         ident = liste_vers_chaine(commande)
         
         if not ident:
@@ -63,8 +61,15 @@ class NvIdent(Masque):
                 "Précisez un identifiant de salle.")
         
         ident = ident.split(" ")[0].lower()
+        self.a_interpreter = ident
         commande[:] = commande[len(ident):]
-        
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        ident = self.a_interpreter
         try:
             zone, mnemonic = ident.split(":")
         except ValueError:

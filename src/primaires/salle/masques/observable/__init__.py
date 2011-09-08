@@ -51,18 +51,24 @@ class Observable(Masque):
         """Initialisation des attributs"""
         self.element = ""
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         lstrip(commande)
         nom = liste_vers_chaine(commande)
         
         if not nom:
             raise ErreurValidation( \
-                "Précisez un élément observable.")
+                "Précisez un élément observable.", False)
         
-        nom = nom.split(" ")[0]
-        commande[:] = commande[len(nom):]
+        commande[:] = []
+        self.a_interpreter = nom
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        nom = self.a_interpreter
         
         salle = personnage.salle
         elt = None

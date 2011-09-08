@@ -101,6 +101,7 @@ class Masque(metaclass=MetaMasque):
         self.type = None
         self.proprietes = {}
         self.mot_cle = False
+        self.a_interpreter = None
         self.mots_cles = {
             "francais": "",
             "anglais": "",
@@ -128,9 +129,12 @@ class Masque(metaclass=MetaMasque):
             nom, none, proprietes = groupes
             if proprietes:
                 proprietes = proprietes.replace("=", ":")
-                #self.proprietes = "{" + proprietes + "}"
     
-    def valider(self, personnage, dic_masques, commande):
+    def repartir(self, personnage, masques, commande):
+        """Méthode de répartition."""
+        raise NotImplementedError
+    
+    def valider(self, personnage, dic_masques):
         """Méthode de validation.
         
         Elle prend en paramètres :

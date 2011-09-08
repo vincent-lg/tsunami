@@ -49,10 +49,8 @@ class Attitude(Masque):
         """Initialisation des attributs"""
         self.attitude = None
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
-        lstrip(commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         cle = liste_vers_chaine(commande)
         
         if not cle:
@@ -60,8 +58,15 @@ class Attitude(Masque):
                 "Précisez la clé d'une attitude.")
         
         cle = cle.split(" ")[0]
+        self.a_interpreter = cle
         commande[:] = commande[len(cle):]
-        
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        cle = self.a_interpreter
         attitudes = type(self).importeur.communication.attitudes
         if cle not in attitudes:
             raise ErreurValidation( \

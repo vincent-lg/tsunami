@@ -40,9 +40,16 @@ class ErreurValidation(ExceptionMUD):
     
     """
     
-    def __init__(self, message=""):
-        """Constructeur de l'exception"""
+    def __init__(self, message="", bloquant=True):
+        """Constructeur de l'exception.
+        
+        Le message donne des informations sur l'erreur.
+        Il sera probablement envoyé à un joueur.
+        Le flag bloquant indique si l'erreur doit interrompre le traitement.
+        
+        """
         self.message = message
+        self.bloquant = bloquant
     
     def __str__(self):
         """Affichage de l'exception"""

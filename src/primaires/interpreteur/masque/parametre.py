@@ -55,24 +55,28 @@ class Parametre(Commande):
         """Fonction d'affichage"""
         return "p" + Commande.__str__(self)
     
-    def valider(self, personnage, dic_masques, commande):
+    def repartir(self, personnage, masques, commande):
+        """Répartition du paramètre."""
+        str_commande = liste_vers_chaine(commande)
+        
+        if str_commande.startswith(" "):
+            commande.pop(0)
+            valide = Commande.repartir(self, personnage, masques, commande)
+            if not valide:
+                commande.insert(0, " ")
+        else:
+            valide = False
+        
+        return valide
+    
+    def valider(self, personnage, dic_masques):
         """Fonction de validation du masque Parametre.
         Un paramètre se valide si la commande qu'on lui passe débute par un
         espace puis son nom de paramètre (en fonction de la langue du
         personnage).
         
         """
-        str_commande = liste_vers_chaine(commande)
-        
-        if str_commande.startswith(" "):
-            commande.pop(0)
-            valide = Commande.valider(self, personnage, dic_masques, \
-                    commande)
-            if not valide:
-                commande.insert(0, " ")
-        else:
-            valide = False
-        
+        valide = Commande.valider(self, personnage, dic_masques)
         return valide
     
     def est_parametre(self):

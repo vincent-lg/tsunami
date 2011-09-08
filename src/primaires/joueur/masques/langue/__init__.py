@@ -52,10 +52,8 @@ class Langue(Masque):
         """Initialisation des attributs"""
         self.langue = ""
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
-        lstrip(commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         langue = liste_vers_chaine(commande)
         
         if not langue:
@@ -64,8 +62,16 @@ class Langue(Masque):
                 "|err| ou |ff||ent|français|ff||err|).")
         
         langue = langue.split(" ")[0].lower()
-        commande[:] = commande[len(langue):]
         langue = supprimer_accents(langue)
+        self.a_interpreter = langue
+        commande[:] = commande[len(langue):]
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        langue = self.a_interpreter
 
         if not langue in LANGUES:
             raise ErreurValidation(

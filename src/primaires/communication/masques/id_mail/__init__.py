@@ -49,9 +49,8 @@ class IdMail(Masque):
         """Initialisation des attributs"""
         self.id_mail = None
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         str_nombre = liste_vers_chaine(commande).lstrip()
         str_nombre = str_nombre.split(" ")[0]
         
@@ -59,6 +58,15 @@ class IdMail(Masque):
             raise ErreurValidation( \
                 "Précisez un nombre.")
         
+        self.a_interpreter = str_nombre
+        commande[:] = commande[len(str_nombre):]
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        str_nombre = self.a_interpreter
         try:
             nombre = int(str_nombre)
             assert nombre >= 1
@@ -68,5 +76,4 @@ class IdMail(Masque):
         
         self.id_mail = nombre
         
-        commande[:] = commande[len(str_nombre) + 1:]
         return True

@@ -51,15 +51,28 @@ class Nombre(Masque):
         self.limite_inf = 1
         self.limite_sup = None
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         str_nombre = liste_vers_chaine(commande).lstrip()
         str_nombre = str_nombre.split(" ")[0]
         
         if not str_nombre:
-            raise ErreurValidation( \
-                "Précisez un nombre.")
+            raise ErreurValidation(
+                "Précisez un nombre.", False)
+        
+        if not str_nombre.isdigit():
+            raise ErreurValidation(
+                "Ceci n'est pas un nombre.", False)
+        
+        self.a_interpreter = str_nombre
+        commande[:] = commande[len(str_nombre):]
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        str_nombre = self.a_interpreter
         
         try:
             nombre = int(str_nombre)
@@ -73,5 +86,4 @@ class Nombre(Masque):
         
         self.nombre = nombre
         
-        commande[:] = commande[len(str_nombre) + 1:]
         return True

@@ -160,7 +160,7 @@ class Module(BaseModule):
         """
         return self.masques[nom_masque]()
     
-    def valider(self, personnage, dic_masques, lst_commande):
+    def repartir(self, personnage, masques, lst_commande):
         """Commande de validation"""
         str_commande = liste_vers_chaine(lst_commande)
         trouve = False
@@ -171,7 +171,7 @@ class Module(BaseModule):
             commandes = self.commandes_anglais
         
         for cmd in commandes:
-            if cmd.valider(personnage, dic_masques, lst_commande):
+            if cmd.repartir(personnage, masques, lst_commande):
                 self.logger_cmd.info("{} envoie {}".format(personnage.nom,
                         str_commande))
                 trouve = True
@@ -179,6 +179,11 @@ class Module(BaseModule):
         
         if not trouve:
             raise ErreurValidation("|err|Commande inconnue.|ff|")
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du dic_masques."""
+        for masque in dic_masques.values():
+            masque.valider(personnage, dic_masques)
     
     def trouver_commande(self, lst_commande, commandes=None):
         """On cherche la commande correspondante.

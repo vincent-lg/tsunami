@@ -44,8 +44,8 @@ class PrmLire(Parametre):
         self.aide_courte = "lit un mudmail"
         self.aide_longue = \
             "Cette sous-commande affiche le contenu d'un message. L'id " \
-            "correspond à celui affiché dans la commande %mails list% pour " \
-            "le même flag de filtre."
+            "correspond à celui affiché dans la commande %messages:lister% " \
+            "pour le même flag de filtre."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""

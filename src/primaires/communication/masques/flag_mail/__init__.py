@@ -50,24 +50,29 @@ class FlagMail(Masque):
         """Initialisation des attributs"""
         self.flag = ""
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
-        lstrip(commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         nom_flag = liste_vers_chaine(commande)
         
         if not nom_flag:
-            raise ErreurValidation( \
-                "Précisez un flag de filtre.")
+            raise ErreurValidation(
+                "Précisez un flag de filtre.", False)
         
         liste_flags = ["recus", "brouillons", "archives", "envoyes"]
         
-        nom_flag = nom_flag.split(" ")[0]
-        commande[:] = commande[len(nom_flag):]
-        
         if not supprimer_accents(nom_flag.lower()) in liste_flags:
-            raise ErreurValidation( \
-                "|err|Le flag précisé n'existe pas.|ff|")
+            raise ErreurValidation(
+                "|err|Le flag précisé n'existe pas.|ff|", False)
         
+        nom_flag = nom_flag.split(" ")[0]
+        self.a_interpreter = nom_flag
+        commande[:] = commande[len(nom_flag):]
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        nom_flag = self.a_interpreter
         self.flag = nom_flag
         return True

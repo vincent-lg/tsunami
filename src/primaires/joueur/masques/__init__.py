@@ -36,4 +36,3 @@ import primaires.joueur.masques.groupe_existant
 import primaires.joueur.masques.joueur
 import primaires.joueur.masques.langue
 import primaires.joueur.masques.nv_groupe
-import primaires.joueur.masques.message_afk

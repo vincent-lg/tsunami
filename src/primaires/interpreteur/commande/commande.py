@@ -155,10 +155,8 @@ class Commande(Masque):
         """Méthode appelée quand on ajoute la commande à l'interpréteur"""
         pass
     
-    def valider(self, personnage, dic_masques, commande):
+    def repartir(self, personnage, masques, commande):
         """Fonction de validation.
-        Elle retourne True si la commande entrée par le joueur correspond à
-        son nom, False sinon.
         
         """
         # Si le personnage n'a pas le droit d'appeler la commande, on s'arrête
@@ -196,7 +194,14 @@ class Commande(Masque):
         else:
             valide = False
         
+        if valide:
+            masques.append(self)
+        
         return valide
+    
+    def valider(self, personnage, dic_masques):
+        """Validation de la commande."""
+        return True
     
     def interpreter(self, personnage, dic_masques):
         """Fonction d'interprétation.

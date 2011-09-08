@@ -50,10 +50,8 @@ class Encodage(Masque):
         """Initialisation des attributs"""
         self.encodage = ""
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
-        lstrip(commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         encodage = liste_vers_chaine(commande)
         
         if not encodage:
@@ -61,7 +59,15 @@ class Encodage(Masque):
                 "Précisez un encodage disponible.")
         
         encodage = encodage.split(" ")[0].lower()
+        self.a_interpreter = encodage
         commande[:] = commande[len(encodage):]
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        encodage = self.a_interpreter
 
         encodages = ["aucun"] + ENCODAGES
         msg_enc = "\n\nEncodages disponibles : |ent|" + "|ff|, |ent|".join(

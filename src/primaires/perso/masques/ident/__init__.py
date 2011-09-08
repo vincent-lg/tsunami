@@ -53,9 +53,8 @@ class Ident(Masque):
         """Initialisation des attributs"""
         self.ident = ""
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         ident = liste_vers_chaine(commande).lstrip()
         
         if not ident:
@@ -63,6 +62,16 @@ class Ident(Masque):
                 "Précisez une clé identifiante.")
         
         ident = ident.lower()
+        ident = ident.split(" ")[0]
+        commande[:] = commande[len(ident):]
+        self.a_interpreter = ident
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        ident = self.a_interpreter
         if not re.search(RE_IDENT_VALIDE, ident):
             raise ErreurValidation(
                 "|err|Cette clé identifiante est invalide.|ff|")

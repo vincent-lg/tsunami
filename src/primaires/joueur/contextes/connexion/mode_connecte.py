@@ -93,15 +93,21 @@ class ModeConnecte(Contexte):
         
         if not res:
             interpreteur = type(self).importeur.interpreteur
+            masques = []
             dic_masques = DicMasques()
             lst_commande = chaine_vers_liste(msg)
             logger = type(self).importeur.man_logs.get_logger("sup")
             traceback = __import__("traceback")
             try:
-                interpreteur.valider(self.pere.joueur, dic_masques, \
-                        lst_commande)
+                interpreteur.repartir(self.pere.joueur, masques, lst_commande)
+                for masque in masques:
+                    dic_masques[masque.nom] = masque
+                
+                interpreteur.valider(self.pere.joueur, dic_masques)
             except ErreurValidation as err_val:
                 err_val = str(err_val)
+                for masque in masques:
+                    dic_masques[masque.nom] = masque
                 if not err_val:
                     masque = dic_masques.dernier_parametre
                     err_val = masque.erreur_validation(self.pere.joueur, \

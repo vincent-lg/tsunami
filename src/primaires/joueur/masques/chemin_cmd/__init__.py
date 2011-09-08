@@ -53,18 +53,24 @@ class CheminCommande(Masque):
         """Initialisation des attributs"""
         self.joueur = None
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
-        lstrip(commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         chemin_commande = liste_vers_chaine(commande)
         
         if not chemin_commande:
-            raise ErreurValidation( \
+            raise ErreurValidation(
                 "Précisez le chemin vers la commande.")
         
         chemin_commande = chemin_commande.split(" ")[0]
+        self.a_interpreter = chemin_commande
         commande[:] = commande[len(chemin_commande):]
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        chemin_commande = self.a_transmettre
         
         trans_param = True # doit-on transmettre les sous-commandes ?
         if chemin_commande.endswith("."):

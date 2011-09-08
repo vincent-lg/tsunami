@@ -49,18 +49,25 @@ class Joueur(Masque):
         """Initialisation des attributs"""
         self.joueur = None
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         lstrip(commande)
         nom_joueur = liste_vers_chaine(commande).lower()
-        
         if not nom_joueur:
             raise ErreurValidation(
                 "Précisez un nom de joueur.")
         
         nom_joueur = nom_joueur.split(" ")[0].lower()
         commande[:] = commande[len(nom_joueur):]
+        print("reste", commande)
+        masques.append(self)
+        self.a_interpreter = nom_joueur
+        return True
+
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        nom_joueur = self.a_interpreter
         
         # On cherche dans les joueurs du module connex
         joueur = None

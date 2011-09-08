@@ -51,41 +51,44 @@ class IdConversation(Masque):
         self.cible = None
         self.perte_focus = False
     
-    def valider(self, personnage, dic_masques, commande):
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
+        id_conversation = liste_vers_chaine(commande)
+        if not id_conversation:
+            raise ErreurValidation( \
+                "Vous devez préciser le numéro d'un correspondant.", False)
+        
+        id_conversation = id_conversation.split(" ")[0]
+        self.a_interpreter = id_conversation
+        commande[:] = commande[len(id_conversation):]
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
         """Validation du masque"""
         Masque.valider(self, personnage, dic_masques, commande)
-        lstrip(commande)
-        id_conversation = liste_vers_chaine(commande).lstrip()
+        id_conversation = self.a_interpreter
         conversations = type(self).importeur.communication.conversations
         p_conversations = conversations.get_conversations_pour(personnage)
         cible = None
         
-        if not id_conversation:
-            raise ErreurValidation( \
-                "Vous devez préciser le numéro d'un correspondant.")
-        
-        id_conversation = id_conversation.split(" ")[0]
         if id_conversation == "-":
             self.perte_focus = True
-            commande[:] = commande[len(id_conversation):]
             return True
         
-        taille = len(id_conversation)
         try:
             id_conversation = int(id_conversation)
         except ValueError:
             return True
-        else:
-            commande[:] = commande[taille:]
         
         if id_conversation < 1 or id_conversation > len(p_conversations):
-            raise ErreurValidation( \
+            raise ErreurValidation(
                 "|err|Le numéro spécifié ne correspond à aucun personnage.|ff|")
         
         try:
             cible = p_conversations[id_conversation - 1].cible
         except IndexError:
-            raise ErreurValidation( \
+            raise ErreurValidation(
                 "|err|Le numéro spécifié ne correspond à aucun personnage.|ff|")
         else:
             self.id_conversation = len(p_conversations) + 1 - id_conversation

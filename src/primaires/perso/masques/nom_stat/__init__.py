@@ -49,9 +49,8 @@ class NomStat(Masque):
         """Initialisation des attributs"""
         self.nom_stat = None
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         nom_stat = liste_vers_chaine(commande).lstrip()
         nom_stat = nom_stat.split(" ")[0]
         
@@ -59,6 +58,15 @@ class NomStat(Masque):
             raise ErreurValidation( \
                 "De quelle stat parlez-vous ?")
         
+        self.a_interpreter = nom_stat
+        masques.append(self)
+        commande[:] = commande[len(nom_stat):]
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        nom_stat = self.a_interpreter
         # nom_stat ne peut commencer par un signe souligné
         if nom_stat.startswith("_"):
             raise ErreurValidation( \
@@ -73,5 +81,4 @@ class NomStat(Masque):
         else:
             self.nom_stat = stat.nom
         
-        commande[:] = commande[len(nom_stat) + 1:]
         return True

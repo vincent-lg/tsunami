@@ -49,14 +49,25 @@ class Commande(Masque):
         """Initialisation des attributs"""
         self.commande = None
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
-        nom_commande = liste_vers_chaine(commande).lstrip()
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
+        nom_commande = liste_vers_chaine(commande)
         
         if not nom_commande:
-            raise ErreurValidation( \
-                "De quelle commande souhaitez-vous voir l'aide ?")
+            raise ErreurValidation(
+                "De quelle commande souhaitez-vous voir l'aide ?", False)
+        
+        # La commande tient en un seul mot
+        nom_commande = nom_commande.split(" ")[0]
+        self.a_interpreter = nom_commande
+        commande[:] = commande[len(nom_commande):]
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        nom_commande = self.a_interpreter
         
         # On cherche dans les commandes du module interpreteur
         commande = None

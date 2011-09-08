@@ -34,6 +34,7 @@ import datetime
 
 from abstraits.obase import *
 from primaires.format.description import Description
+from primaires.format.date import get_date
 
 # Etats possible d'un mail
 EN_COURS = 0
@@ -107,7 +108,7 @@ class MUDmail(BaseObj):
         ret += "Destinataire(s) : " + self.aff_dest + "\n"
         ret += "Sujet           : " + self.sujet + "\n"
         ret += str(self.contenu)
-        ret += "\nLe " + self.date.isoformat(" à ")[:18] + ".\n"
+        ret += "\n" + get_date(self.date.timetuple()).capitalize() + ".\n"
         return ret
     
     def enregistrer(self):

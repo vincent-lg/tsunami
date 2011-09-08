@@ -145,35 +145,41 @@ class NoeudMasque(BaseNoeud):
             return self.suivant.get_masque(nom_masque)
         else:
             return None
-    def valider(self, personnage, dic_masques, commande, tester_fils=True):
+    
+    def repartir(self, personnage, masques, commande, tester_fils=True):
+        """Réparti dans le masque si possible."""
+        lstrip(commande)
+        for masque in self.masques:
+            masque.init()
+            valide = masque.repartir(personnage, masques, commande)
+        
+        if valide and self.suivant:
+            valide = self.suivant.repartir(personnage, masques, commande)
+        
+        return valide
+    
+    def valider(self, personnage, dic_masques, tester_fils=True):
         """Validation d'un noeud masque.
+        
         On va essayer de valider successivement chaque masque possible. Si
         aucun masque ne marche, on s'arrête ici.
-        La commande est donnée sous la forme d'une liste de caractères.
         
         """
         valide = False
         premiere_erreur = None
-        copie_commande = list(commande)
-        if commande:
-            for masque in self.masques:
-                masque.init()
-                try:
-                    valide = masque.valider(personnage, dic_masques, commande)
-                except ErreurValidation as err:
-                    if not premiere_erreur:
-                        premiere_erreur = err
-                    valide = False
-                    commande[:] = list(copie_commande)
-                if valide:
-                    dic_masques[self.nom] = masque
-                    break
+        for masque in self.masques:
+            try:
+                valide = masque.valider(personnage, dic_masques)
+            except ErreurValidation as err:
+                if not premiere_erreur:
+                    premiere_erreur = err
+                valide = False
         
         if not valide:
             if premiere_erreur:
                 raise premiere_erreur
         elif self.suivant and tester_fils:
-            valide = self.suivant.valider(personnage, dic_masques, commande)
+            valide = self.suivant.valider(personnage, dic_masques)
         
         return valide
     

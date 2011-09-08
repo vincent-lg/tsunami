@@ -50,16 +50,24 @@ class IdentPrototypePNJ(Masque):
         self.ident = ""
         self.prototype = None
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
-        ident = liste_vers_chaine(commande).lstrip()
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
+        ident = liste_vers_chaine(commande).split(" ")[0]
         
         if not ident:
             raise ErreurValidation( \
                 "Précisez un prototype d'objet.")
         
         ident = ident.lower()
+        self.a_interpreter = ident
+        commande[:] = commande[len(ident):]
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        ident = self.a_interpreter
         if not ident in type(self).importeur.pnj.prototypes:
             raise ErreurValidation(
                 "|err|Ce prototype est introuvable.|ff|")

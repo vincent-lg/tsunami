@@ -52,17 +52,25 @@ class Etat(Masque):
         self.etat = ""
         self.flag = None
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         etat = liste_vers_chaine(commande).lstrip()
         
         if not etat:
             raise ErreurValidation( \
                 "Précisez |cmd|on|ff| ou |cmd|off|ff|.")
         
+        etat = etat.split(" ")[0]
         etat = etat.lower()
+        self.a_interpreter = etat
+        commande[:] = commande[len(etat):]
+        masques.append(self)
+        return True
         
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        etat = self.a_interpreter
         if etat not in ('on', 'off'):
             raise ErreurValidation( \
                 "Précisez |cmd|on|ff| ou |cmd|off|ff|.")

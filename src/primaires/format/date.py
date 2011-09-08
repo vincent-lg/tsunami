@@ -38,12 +38,22 @@ def get_date(temps=None):
     
     Si le paramètre n'est pas précisé, retourne la date et l'heure
     actuelle.
+    Sinon, le temps peut être :
+        -   un timestamp
+        -   une structime
     
     """
     if temps is None:
         temps = time.time()
+        struct = time.localtime(temps)
+    elif isinstance(temps, float):
+        struct = time.localtime(temps)
+    elif isinstance(temps, time.struct_time):
+        struct = temps
+    else:
+        raise TypeError("le type {} n'est pas un temps valide".format(
+                type(temps)))
     
-    struct = time.localtime(temps)
     semaine = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', \
             'samedi', 'dimanche']
     mois = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', \

@@ -117,6 +117,11 @@ class Evenement(BaseObj):
         """Retourne une liste déréférencée des tests."""
         return list(self.__tests)
     
+    @property
+    def sinon(self):
+        """Retourne le test sinon."""
+        return self.__sinon
+    
     def creer_sinon(self):
         """Création du test sinon si il n'existe pas."""
         if self.__sinon is None:
