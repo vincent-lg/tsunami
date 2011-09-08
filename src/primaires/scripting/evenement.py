@@ -119,8 +119,8 @@ class Evenement(BaseObj):
     
     def creer_sinon(self):
         """Création du test sinon si il n'existe pas."""
-        if not self.__sinon:
-            self.sinon = Test(self)
+        if self.__sinon is None:
+            self.__sinon = Test(self)
     
     def enregistrer(self):
         self.appelant.enregistrer()
