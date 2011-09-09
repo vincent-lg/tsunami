@@ -40,7 +40,7 @@ class ErreurValidation(ExceptionMUD):
     
     """
     
-    def __init__(self, message="", bloquant=True):
+    def __init__(self, message="", bloquant=False):
         """Constructeur de l'exception.
         
         Le message donne des informations sur l'erreur.

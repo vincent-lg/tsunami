@@ -76,6 +76,7 @@ class Plateau(Contexte):
                 if msg == "q":
                     self.personnage.contextes.retirer()
                     self.objet.partie.detruire()
+                    self.objet.partie = None
             else:
                 self.pere << "|err|Option invalide.|ff|"
         else:

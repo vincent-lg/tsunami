@@ -86,7 +86,7 @@ class Observable(Masque):
         
         if elt is None:
             raise ErreurValidation(
-                "Il n'y a rien qui ressemble à cela par ici...")
+                "Il n'y a rien qui ressemble à cela par ici...", True)
         
         self.element = elt
         return True

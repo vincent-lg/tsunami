@@ -128,12 +128,13 @@ class BaseType(ObjetID, metaclass=MetaType):
             return nom + " " + self.etat_pluriel
     
     # Actions sur les objets
-    def regarder(self, personnage):
+    @staticmethod
+    def regarder(objet, personnage):
         """Le personnage regarde l'objet"""
         salle = personnage.salle
-        moi = "Vous regardez {} :".format(self.nom_singulier)
-        autre = "{} regarde {}.".format(personnage.nom, self.nom_singulier)
-        description = str(self.description)
+        moi = "Vous regardez {} :".format(objet.nom_singulier)
+        autre = "{} regarde {}.".format(personnage.nom, objet.nom_singulier)
+        description = str(objet.description)
         if not description:
             description = "Il n'y a rien de bien intéressant à voir."
         

@@ -33,6 +33,7 @@
 from abstraits.module import *
 from . import commandes
 from . import types
+from .partie import Partie
 
 class Module(BaseModule):
     
@@ -55,6 +56,11 @@ class Module(BaseModule):
         # On charge automatiquement les jeux définis dans jeux
         self.charger_jeux()
         self.charger_plateaux()
+        
+        # On charge les parties
+        parties = self.importeur.supenr.charger_groupe(Partie)
+        print(len(parties), "récupérées")
+
         BaseModule.init(self)
     
     def charger_jeux(self):
