@@ -97,9 +97,7 @@ class NoeudCommande(BaseNoeud):
         
         """
         valide = self.commande.repartir(personnage, masques, commande)
-        print("Reparti", self, valide)
         if valide:
-            print("On test", self.fils)
             valide = self.fils.repartir(personnage, masques, commande)
         
         return valide

@@ -40,6 +40,7 @@ from primaires.interpreteur.masque.exceptions.erreur_validation \
 
 # Constantes
 RE_MASQUE = re.compile(r"^(<?)((.*):)?([^ >]*)(>?)$")
+RE_MOT_CLE = re.compile(r"^[A-Za-z]*/[A-Za-z]*$")
 
 class NoeudMasque(BaseNoeud):
     
@@ -65,10 +66,23 @@ class NoeudMasque(BaseNoeud):
         """Construit le masque depuis le schéma"""
         # On convertit la liste en chaîne
         schema = liste_vers_chaine(lst_schema)
-        pos_fin = schema.find(">")
-        schema = schema[:pos_fin + 1]
+        delimiteurs = ('>', ' ', ')')
+        fins = [schema.index(dl) for dl in delimiteurs if dl in schema]
+        pos_fin = min(fins)
+        fin = schema[pos_fin]
+        schema = schema[:pos_fin]
+        lst_schema[:] = lst_schema[pos_fin + 1:]
         
         # On extrait le type du schéma
+        # Si c'est un mot-clé d'abord
+        res = RE_MOT_CLE.search(schema)
+        if res:
+            self.construire_mot_cle(schema)
+            return
+        
+        if fin in ('>', ):
+            schema += fin
+        
         res = RE_MASQUE.search(schema)
         if not res:
             raise ValueError("le schéma {} n'a pas pu être interprété".format(
@@ -114,8 +128,19 @@ class NoeudMasque(BaseNoeud):
         self.nom = nom
         
         self.masques = liste_types_masques
+    
+    def construire_mot_cle(self, schema):
+        """Construit le mot-clé depuis le schéma.
         
-        lst_schema[:] = lst_schema[pos_fin + 1:]
+        Un mot-clé a une forme assez simple :
+            francais/anglais
+        
+        Exemple : depuis/from
+        
+        """
+        francais, anglais = schema.split("/")
+        self.masques = [type(self).importeur.interpreteur.creer_mot_cle(
+                francais, anglais)]
     
     @property
     def masque(self):
@@ -188,7 +213,7 @@ class NoeudMasque(BaseNoeud):
         msg = "<"
         noms_masques = []
         for masque in self.masques:
-            noms_masques.append(masque.nom_complet)
+            noms_masques.append(masque.nom_complet_pour(personnage))
         
         msg += " / ".join(noms_masques)
         msg += ">"

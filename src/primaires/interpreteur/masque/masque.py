@@ -177,3 +177,6 @@ class Masque(metaclass=MetaMasque):
         """Retourne un affichage du masque pour le personnage"""
         return self.nom
     
+    def nom_complet_pour(self, personnage):
+        """Retourne le nom complet."""
+        return self.nom_complet

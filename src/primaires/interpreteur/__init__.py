@@ -41,6 +41,7 @@ from primaires.interpreteur.masque.noeuds.noeud_commande import NoeudCommande
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.mot_cle import MotCle
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
 from primaires.interpreteur.groupe import ConteneurGroupes
@@ -231,3 +232,7 @@ class Module(BaseModule):
         cls_editeur = self.editeurs[nom]
         editeur = cls_editeur(personnage, objet)
         return editeur
+    
+    def creer_mot_cle(self, francais, anglais):
+        """Crée et retourne un mot-clé."""
+        return MotCle(francais, anglais)
