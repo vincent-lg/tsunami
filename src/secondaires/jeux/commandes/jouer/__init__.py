@@ -49,6 +49,11 @@ class CmdJouer(Commande):
         self.aide_longue = \
             "Cette commande permet de jouer à un jeu "
     
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nom_objet = self.noeud.get_masque("nom_objet")
+        nom_objet.proprietes["type"] = "'plateau de jeu'"
+    
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         objet = dic_masques["nom_objet"].objet

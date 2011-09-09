@@ -65,6 +65,9 @@ class BaseType(ObjetID, metaclass=MetaType):
         
         # Editeur
         self._extensions_editeur = []
+        
+        # Erreur de validation du type
+        self.err_type = "Le type de {} est invalide."
     
     def __getnewargs__(self):
         return ()
