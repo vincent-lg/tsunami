@@ -28,47 +28,53 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'jouer'."""
+"""Fichier contenant la classe Partie, détaillée plus bas."""
 
-from primaires.interpreteur.commande.commande import Commande
+from abstraits.id import ObjetID
+from bases.collections.liste_id import ListeID
 
-from secondaires.jeux.contextes.plateau import Plateau as ContextePlateau
-from secondaires.jeux.partie import Partie
-
-class CmdJouer(Commande):
+class Partie(ObjetID):
     
-    """Commande 'jouer'.
+    """Classe représentant une partie.
+    
+    Une partie est un état figé d'un jeu.
     
     """
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "jouer", "play")
-        self.schema = "<nom_objet>"
-        self.aide_courte = "Permet de jouer à un jeu"
-        self.aide_longue = \
-            "Cette commande permet de jouer à un jeu "
+    groupe = "partie"
+    sous_rep = "jeux/parties"
+    def __init__(self, jeu, plateau):
+        """Constructeur de la partie."""
+        ObjetID.__init__(self)
+        self.jeu = jeu
+        self.plateau = plateau
+        self.__joueurs = ListeID(self)
     
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        objet = dic_masques["nom_objet"].objet
-        jeux = type(self).importeur.jeux.jeux
-        plateaux = type(self).importeur.jeux.plateaux
-        plateau = plateaux[objet.plateau]
-        jeu = plateau.jeux[0]
-        jeu = jeux[jeu]
+    def __getnewargs__(self):
+        return (None, None)
+    
+    @property
+    def personnage(self):
+        """Retourne le premier joueur."""
+        return self.__joueurs[0]
+    
+    def ajouter_joueur(self, personnage):
+        """Ajoute le personnage comme joueur."""
+        if self.plateau.nb_joueurs_max > len(self.__joueurs):
+            print("On ajoute")
+            self.__joueurs.append(personnage)
+            return True
         
-        if objet.partie:
-            self.pere << "|err|Vous ne pouvez rejoindre cette partie.|ff|"
-        else:
-            plateau = plateau()
-            jeu = jeu()
-            partie = Partie(jeu, plateau)
-            jeu.plateau = plateau
-            jeu.partie = partie
-            partie.ajouter_joueur(personnage)
-            objet.partie = partie
-            contexte = ContextePlateau(personnage.instance_connexion, objet,
-                    partie)
-            personnage.contextes.ajouter(contexte)
-            personnage << contexte.accueil()
+        print("On ajoute pas")
+        return False
+    
+    def afficher(self, personnage):
+        return self.plateau.afficher(personnage)
+    
+    def afficher_tous(self):
+        """Affiche la partie à tous les participants."""
+        print("Affiche à", self.__joueurs)
+        for p in self.__joueurs:
+            p << self.afficher(p)
+
+ObjetID.ajouter_groupe(Partie)

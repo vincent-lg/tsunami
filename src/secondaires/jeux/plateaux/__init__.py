@@ -28,3 +28,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+"""Package contenant les plateaux.
+
+Chaque sous-package est un plateau.
+
+Il possède un fichier __init__.py dans lequel se trouve la classe Plateau.
+
+"""

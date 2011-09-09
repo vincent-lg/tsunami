@@ -28,13 +28,15 @@
 # pereIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit le contexte-éditeur 'Uniligne'."""
+"""Ce fichier définit le contexte-éditeur 'Choix'."""
 
 from . import Editeur
+from primaires.format.fonctions import *
 
 class Choix(Editeur):
     
     """Contexte-éditeur choix.
+    
     Ce contexte permet de faire choisir l'utilisateur une option
     parmis une liste prédéfinie à l'avance
     
@@ -42,15 +44,33 @@ class Choix(Editeur):
     
     nom = "editeur:base:choix"
     
+    def __init__(self, pere, objet=None, attribut=None, liste=None):
+        """Constructeur de l'éditeur."""
+        Editeur.__init__(self, pere, objet, attribut)
+        self.liste = liste or []
+    
+    @property
+    def str_liste(self):
+        """Retourne une chaîne représentant la liste."""
+        liste = self.liste
+        if not liste:
+            return ""
+        
+        liste = [str(e) for e in liste]
+        return ", ".join(liste)
+    
     def accueil(self):
         """Retourne l'aide courte"""
-        return self.aide_courte.format(objet = self.objet)
+        return self.aide_courte.format(objet=self.objet, liste=self.str_liste)
     
     def interpreter(self, msg):
         """Interprétation du contexte"""
-        try:
-            numero = int(msg)
-            setattr(self.objet, self.attribut, numero)
-        except ValueError:
-            self.pere << "Le numéro que vous avez entré n'est pas valide"
-        self.pere << self.accueil()
+        liste = self.liste
+        liste = [supprimer_accents(e).lower() for e in self.liste]
+        msg = supprimer_accents(msg).lower()
+        if msg in liste:
+            indice = liste.index(msg)
+            setattr(self.objet, self.attribut, self.liste[indice])
+            self.actualiser()
+        else:
+            self.pere << "|err|Ce choix n'est pas valide.|ff|"

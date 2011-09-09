@@ -40,101 +40,43 @@ class Plateau(Contexte):
     
     """
     
-    nom = "jeux:plateau"
-    
-    def __init__(self, pere, objet):
+    def __init__(self, pere, objet, partie):
         """Constructeur du contexte"""
         Contexte.__init__(self, pere)
-        
         self.objet = objet
+        self.partie = partie
+        self.personnage = None
+        self.opts.prompt_prf = ""
         
-        self.options = {
-            # Options d'user
-            "q" : self.opt_quit,
-            "h" : self.opt_aide,
-            "p" : self.opt_pause,
-            "d" : self.opt_demarrer,
-            "s" : self.opt_dire,
-            "r" : self.opt_regarder
-            }
+        if self.pere:
+            self.personnage = self.pere.joueur
     
     def __getnewargs__(self):
-        return (None, None)
+        return (None, None, None)
     
-    def __getstate__(self):
-        """Nettoyage des options"""
-        dico_attr = Contexte.__getstate__(self)
-        dico_attr["options"] = dico_attr["options"].copy()
-        for rac, fonction in dico_attr["options"].items():
-            dico_attr["options"][rac] = fonction.__name__
-        return dico_attr
-    
-    def __setstate__(self, dico_attr):
-        """Récupération du contexte"""
-        Contexte.__setstate__(self, dico_attr)
-        for rac, nom in self.options.items():
-            fonction = getattr(self, nom)
-            self.options[rac] = fonction
+    def get_prompt(self):
+        """Message de prompt."""
+        return "-> "
     
     def accueil(self):
-        """Message d'accueil du contexte"""
-        res = "Vous rejoignez la partie\n\n"
-        res += "/q pour quitter\n"
-        res += "/h pour obtenir de l'aide\n"
-        return res
-    
-    def opt_demarrer(self, arguments):
-        """Option demarrer : /d"""
-        partie = type(self).importeur.jeux.get_partie(self.objet)
-        if not partie.demarrer():
-            self.pere << "Impossible de démarrer la partie."
-    
-    def opt_pause(self, arguments):
-        """Option pause : /p"""
-        partie = type(self).importeur.jeux.get_partie(self.objet)
-        if not partie.pause():
-            self.pere << "Impossible de mettre en pause."
-    
-    def opt_dire(self, arguments):
-        """Option dire : /s"""
-        jeux = type(self).importeur.jeux
-        jeux.get_partie(self.objet).dire(self.pere.joueur, arguments)
-    
-    def opt_aide(self, arguments):
-        """Option aide : /h"""
-        res = "/p pour mettre/enlever la pause\n"
-        res += "/d pour pour démarrer\n"
-        res += "/r pour regarder le plateau\n"
-        res += "/s pour dire quelque chose à votre adversaire\n"
-        self.pere << res
-    
-    def opt_regarder(self, arguments):
-        """Option regarder : /r"""
-        jeux = type(self).importeur.jeux
-        self.pere << jeux.get_partie(self.objet).plateau()
-    
-    def opt_quit(self, arguments):
-        """Option quitter : /q"""
-        partie = type(self).importeur.jeux.get_partie(self.objet)
-        try:
-            partie.quitter(self.pere.joueur)
-        except ValueError:
-            pass
-        self.pere.joueur.contextes.retirer()
-        self.pere << "Vous quittez le plateau."
+        """Message d'accueil du contexte."""
+        msg = "Vous êtes en train de jouer à {} :\n".format(
+                self.objet.nom_singulier)
+        msg += "Tapez |cmd|/q|ff| pour quitter la partie.\n"
+        msg += self.partie.afficher(self.personnage)
+        return msg
     
     def interpreter(self, msg):
-        """Méthode d'interprétation du contexte"""
+        """Interprétation du message."""
         if msg.startswith("/"):
             # C'est une option
-            # On extrait le nom de l'option
-            mots = msg.split(" ")
-            option = mots[0][1:]
-            arguments = " ".join(mots[1:])
-            if option not in self.options.keys():
-                self.pere << "|err|Option invalide ({}).|ff|".format(option)
-            else: # On appelle la fonction correspondante à l'option
-                fonction = self.options[option]
-                fonction(arguments)
+            msg = msg[1:].lower()
+            if hasattr(self.partie.jeu, "opt_" + msg):
+                getattr(self.partie.jeu, "opt_" + msg)(self.personnage)
+                if msg == "q":
+                    self.personnage.contextes.retirer()
+                    self.objet.partie.detruire()
+            else:
+                self.pere << "|err|Option invalide.|ff|"
         else:
-            type(self).importeur.jeux.get_partie(self.objet).jouer(self.pere.joueur, msg)
+            self.partie.jeu.jouer(self.personnage, msg)

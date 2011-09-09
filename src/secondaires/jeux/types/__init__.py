@@ -30,4 +30,4 @@
 
 """Package des types d'objets propres au module secondaire jeux."""
 
-from .jeu import *
+from .plateau import *

@@ -47,16 +47,27 @@ class Module(BaseModule):
         self.logger = type(self.importeur).man_logs.creer_logger( \
                 "jeux", "jeux")
         self.jeux = {}
+        self.plateaux = {}
         self.parties = []
     
     def init(self):
         """Initialisation du module."""
-        # On charge automatiquement les jeux définis dans backend
+        # On charge automatiquement les jeux définis dans jeux
+        self.charger_jeux()
+        self.charger_plateaux()
+        BaseModule.init(self)
+    
+    def charger_jeux(self):
+        """Chargement des jeux.
+        
+        Notez qu'un plateau peut être utilisé pour jouer à plusieurs jeux.
+        
+        """
         # On peut préciser en dur des exceptions qui ne seront pas chargées
-        # En outre, tous les répertoires commençant par un _ ne sont aps chargés
+        # En outre, tous les répertoires commençant par un _ ne sont pas chargés
         exceptions = []
-        chemin = self.chemin + os.sep + "backend"
-        chemin_py = "secondaires.jeux.backend"
+        chemin = self.chemin + os.sep + "jeux"
+        chemin_py = "secondaires.jeux.jeux"
         for nom_fichier in os.listdir(chemin):
             if not nom_fichier.startswith("_") and nom_fichier not in \
                     exceptions:
@@ -64,12 +75,27 @@ class Module(BaseModule):
                 chemin_py_mod = chemin_py + ".{}".format(nom_module)
                 jeu = __import__(chemin_py_mod)
                 jeu = getattr(getattr(getattr(getattr(jeu, "jeux"),
-                        "backend"), nom_module), "Jeu")
-                jeu.nom = nom_module
-                self.jeux[nom_module] = jeu
+                        "jeux"), nom_module), "Jeu")
+                self.jeux[jeu.nom] = jeu
                 print("On charge le jeu", nom_module)
-
-        BaseModule.init(self)
+    
+    def charger_plateaux(self):
+        """Chargement des plateaux."""
+        # On peut préciser en dur des exceptions qui ne seront pas chargées
+        # En outre, tous les répertoires commençant par un _ ne sont pas chargés
+        exceptions = []
+        chemin = self.chemin + os.sep + "plateaux"
+        chemin_py = "secondaires.jeux.plateaux"
+        for nom_fichier in os.listdir(chemin):
+            if not nom_fichier.startswith("_") and nom_fichier not in \
+                    exceptions:
+                nom_module = nom_fichier
+                chemin_py_mod = chemin_py + ".{}".format(nom_module)
+                plateau = __import__(chemin_py_mod)
+                plateau = getattr(getattr(getattr(getattr(plateau, "jeux"),
+                        "plateaux"), nom_module), "Plateau")
+                self.plateaux[plateau.nom] = plateau
+                print("On charge le plateau", nom_module)
     
     def get_jeu(self, nom):
         """Retourne le jeu portant le nom nom.

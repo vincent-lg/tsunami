@@ -28,47 +28,21 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'jouer'."""
+"""Case contenant une bille."""
 
-from primaires.interpreteur.commande.commande import Commande
+from abstraits.obase import BaseObj
 
-from secondaires.jeux.contextes.plateau import Plateau as ContextePlateau
-from secondaires.jeux.partie import Partie
-
-class CmdJouer(Commande):
-    
-    """Commande 'jouer'.
-    
-    """
+class Bille(BaseObj):
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "jouer", "play")
-        self.schema = "<nom_objet>"
-        self.aide_courte = "Permet de jouer à un jeu"
-        self.aide_longue = \
-            "Cette commande permet de jouer à un jeu "
+        BaseObj.__init__(self)
+        self._construire()
     
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        objet = dic_masques["nom_objet"].objet
-        jeux = type(self).importeur.jeux.jeux
-        plateaux = type(self).importeur.jeux.plateaux
-        plateau = plateaux[objet.plateau]
-        jeu = plateau.jeux[0]
-        jeu = jeux[jeu]
-        
-        if objet.partie:
-            self.pere << "|err|Vous ne pouvez rejoindre cette partie.|ff|"
-        else:
-            plateau = plateau()
-            jeu = jeu()
-            partie = Partie(jeu, plateau)
-            jeu.plateau = plateau
-            jeu.partie = partie
-            partie.ajouter_joueur(personnage)
-            objet.partie = partie
-            contexte = ContextePlateau(personnage.instance_connexion, objet,
-                    partie)
-            personnage.contextes.ajouter(contexte)
-            personnage << contexte.accueil()
+    def __getnewargs__(self):
+        return ()
+    
+    def __str__(self):
+        return "O"
+    
+    def __bool__(self):
+        return True

@@ -51,6 +51,11 @@ class NomObjet(Masque):
         Masque.__init__(self)
         self.proprietes["conteneurs"] = "(personnage.salle.objets_sol, )"
     
+    @property
+    def objet(self):
+        """Retourne le premier objet."""
+        return self.objets[0][0]
+    
     def init(self):
         """Initialisation des attributs"""
         self.objets = []

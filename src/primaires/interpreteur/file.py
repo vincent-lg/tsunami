@@ -135,7 +135,6 @@ class FileContexte(BaseObj):
         """
         if len(self._file) <= self._taille_min:
             raise FileVide
-        
         objet = self.actuel
         del self._file[self._position]
         if self.parent:

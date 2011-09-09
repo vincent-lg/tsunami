@@ -33,23 +33,28 @@
 from bases.collections.liste_id import ListeID
 from bases.objet.attribut import Attribut
 
+from bases.objet.attribut import Attribut
 from primaires.interpreteur.editeur.choix import Choix
 from primaires.objet.types.base import BaseType
 
-class ObjetJeu(BaseType):
+class Plateau(BaseType):
     
-    """Type d'objet: jeu.
+    """Type d'objet: plateau de jeu.
     
     """
     
-    nom_type = "jeu"
+    nom_type = "plateau de jeu"
     
     def __init__(self, cle=""):
         """Constructeur du type jeu"""
         BaseType.__init__(self, cle)
-        
-        self.jeu = None
-        self.etendre_editeur("j", "Type de jeu", Choix, self, "jeu")
+        plateaux = list(sorted(type(self).importeur.jeux.plateaux.keys()))
+        self.plateau = ""
+        self.etendre_editeur("p", "plateau", Choix, self, "plateau", plateaux)
+        # Attributs propres à l'objet (non au prototype)
+        self._attributs = {
+            "partie": Attribut(),
+        }
     
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes.
@@ -61,21 +66,24 @@ class ObjetJeu(BaseType):
         'etendre_editeur'.
         
         """
-        jeux = type(self).importeur.jeux.jeux
-        
-        env = enveloppes["j"] # on récupère 'jeu'
-        env.prompt = "Entrez un nom de jeu : "
-        env.apercu = self.jeu and "{objet.jeu}" or ""
+        env = enveloppes["p"] # on récupère 'jeu'
+        env.prompt = "Entrez un nom de plateau : "
+        env.apercu = "{objet.plateau}"
         env.aide_courte = \
-            "Entrez le nom du jeu ou |cmd|/|ff| pour revenir à " \
+            "Entrez le |ent|nom du plateau|ff| ou |cmd|/|ff| pour revenir à " \
             "la fenêtre mère.\n\n" \
-            "Jeu possible :\n" + \
-            ", ".join(sorted(jeux.keys())) + "\n\n" \
-            "Jeu actuel : " + \
-            "|bc|{objet.nom_jeu} |ff|"
+            "Plateaux existants : {liste}\n\n" + \
+            "Plateau actuel : " + \
+            "|bc|{objet.plateau} |ff|"
         
     # Actions sur les objets
     def regarder(self, personnage):
+        """Quand on regarde le plateau."""
+        partie = self.partie
         moi = BaseType.regarder(self, personnage) + "\n\n"
-        moi += self.jeu.regarder(moi)
+        if partie:
+            moi += partie.regarder()
+        else:
+            moi = moi.strip("\n")
+        
         return moi
