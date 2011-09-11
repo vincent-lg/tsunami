@@ -90,9 +90,7 @@ class Embranchement(BaseNoeud):
         
         valide = True
         for fils in liste_fils:
-            print("On tente de valider", fils, commande, end=" ")
             valide = fils.repartir(personnage, masques, commande)
-            print(valide)
             if valide:
                 break
         

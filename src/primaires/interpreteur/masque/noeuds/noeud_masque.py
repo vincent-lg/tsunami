@@ -179,6 +179,8 @@ class NoeudMasque(BaseNoeud):
         for masque in self.masques:
             masque.init()
             valide = masque.repartir(personnage, masques, commande)
+            if valide:
+                break
         
         if valide and self.suivant:
             valide = self.suivant.repartir(personnage, masques, commande)
