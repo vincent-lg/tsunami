@@ -128,6 +128,8 @@ class NoeudMasque(BaseNoeud):
         self.nom = nom
         
         self.masques = liste_types_masques
+        for masque in self.masques:
+            masque.nom = self.nom
     
     def construire_mot_cle(self, schema):
         """Construit le mot-clé depuis le schéma.
