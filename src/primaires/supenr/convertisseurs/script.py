@@ -35,4 +35,3 @@ class Convertisseur:
     def depuis_version_0(objet, classe):
         objet.set_version(classe, 1)
         objet._Script__evenements = {}
-        print("Conversion")
