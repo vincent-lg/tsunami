@@ -262,6 +262,11 @@ class Module(BaseModule):
             except (EOFError, pickle.UnpicklingError):
                 self.logger.warning("Le fichier {0} n'a pas pu être chargé ". \
                     format(chemin_dest))
+            except ImportError as imp_err:
+                self.logger.warning("L'objet en fichier {} n'a pas pu être " \
+                        "chargé: {}".format(chemin_dest, imp_err))
+                fichier_enr.close()
+                os.remove(chemin_dest)
         finally:
             if "fichier_enr" in locals():
                 fichier_enr.close()

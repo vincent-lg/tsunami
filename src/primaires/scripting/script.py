@@ -63,6 +63,8 @@ class Script(BaseObj):
     
     """
     
+    _nom = "script"
+    _version = 1
     def __init__(self, parent):
         """Constructeur d'un script"""
         BaseObj.__init__(self)

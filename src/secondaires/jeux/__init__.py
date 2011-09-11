@@ -59,7 +59,6 @@ class Module(BaseModule):
         
         # On charge les parties
         parties = self.importeur.supenr.charger_groupe(Partie)
-        print(len(parties), "récupérées")
 
         BaseModule.init(self)
     
