@@ -45,7 +45,7 @@ class CmdChuchotter(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "chuchotter", "whisper")
-        self.nom_categorie = "chuchotter"
+        self.nom_categorie = "parler"
         self.schema = "<nom_joueur> <message>"
         self.aide_courte = "chuchotte une phrase à un autre joueur"
         self.aide_longue = \
