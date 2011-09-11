@@ -70,7 +70,7 @@ class CheminCommande(Masque):
     def valider(self, personnage, dic_masques):
         """Validation du masque"""
         Masque.valider(self, personnage, dic_masques)
-        chemin_commande = self.a_transmettre
+        chemin_commande = self.a_interpreter
         
         trans_param = True # doit-on transmettre les sous-commandes ?
         if chemin_commande.endswith("."):
