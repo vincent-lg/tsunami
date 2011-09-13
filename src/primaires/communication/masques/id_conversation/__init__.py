@@ -59,6 +59,10 @@ class IdConversation(Masque):
                 "Vous devez préciser le numéro d'un correspondant.", False)
         
         id_conversation = id_conversation.split(" ")[0]
+        if not id_conversation.isdigit() and not id_conversation == "-":
+            raise ErreurValidation( \
+                "L'ID {} n'est pas valide.".format(id_conversation), False)
+        
         self.a_interpreter = id_conversation
         commande[:] = commande[len(id_conversation):]
         masques.append(self)
@@ -66,7 +70,7 @@ class IdConversation(Masque):
     
     def valider(self, personnage, dic_masques):
         """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
+        Masque.valider(self, personnage, dic_masques)
         id_conversation = self.a_interpreter
         conversations = type(self).importeur.communication.conversations
         p_conversations = conversations.get_conversations_pour(personnage)
@@ -79,7 +83,7 @@ class IdConversation(Masque):
         try:
             id_conversation = int(id_conversation)
         except ValueError:
-            return True
+            return False
         
         if id_conversation < 1 or id_conversation > len(p_conversations):
             raise ErreurValidation(
