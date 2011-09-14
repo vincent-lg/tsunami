@@ -48,8 +48,7 @@ class Pluie(BasePertu):
         self.flags = OPAQUE
         self.alea_dir = 4
         self.etat = [
-            (3, "Il pleut des cordes."),
-            (7, "Une pluie incessante et violente tombe du ciel en colère."),
+            (5, "Une pluie incessante et violente tombe du ciel en colère."),
             (10, "Une fine pluie martèle le sol dans un doux crépitement."),
         ]
         self.message_debut = "Quelques nuages s'amoncellent, grossisent " \
