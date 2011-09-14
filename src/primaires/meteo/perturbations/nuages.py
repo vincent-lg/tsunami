@@ -28,14 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module communication."""
+"""Ce fichier contient la classe Nuages, détaillée plus bas."""
 
-import primaires.communication.commandes.dire
-import primaires.communication.commandes.emote
-import primaires.communication.commandes.parler
-import primaires.communication.commandes.repondre
-import primaires.communication.commandes.canaux
-import primaires.communication.commandes.socedit
-import primaires.communication.commandes.attitudes
-import primaires.communication.commandes.messages
-import primaires.communication.commandes.chuchoter
+from .base import *
+
+class Nuages(BasePertu):
+    
+    """Classe abstraite représentant la perturbation 'nuages'.
+    
+    """
+    
+    nom_pertu = "nuages"
+    rayon_max = 10
+    duree_max = 6
+    
+    def __init__(self, pos):
+        """Constructeur de la perturbation"""
+        BasePertu.__init__(self, pos)
+        self.flags = OPAQUE
+        self.alea_dir = 1
+        self.etat = [
+            (5, "De lourds nuages sont amoncellés au-dessus de vous."),
+            (10, "Quelques nuages gris, s'épaississant non loin, flottent" \
+                    "dans le ciel au gré des vents."),
+        ]
+        self.message_debut = "Quelques voiles de brume s'agrègent peu à peu" \
+                "pour former un plafond nuageux menaçant."
+        self.message_fin = "Les nuées se dispersent rapidement."
+        self.message_sortir = "Les nuages s'éloignent peu à peu vers {dir}."

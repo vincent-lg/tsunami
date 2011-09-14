@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'chuchotter'.
+"""Package contenant la commande 'chuchoter'.
 
 """
 
@@ -36,43 +36,45 @@ from primaires.interpreteur.commande.commande import Commande
 from random import randint
 from math import ceil
 
-class CmdChuchotter(Commande):
+class CmdChuchoter(Commande):
     
-    """Commande 'chuchotter'.
+    """Commande 'chuchoter'.
     
     """
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "chuchotter", "whisper")
+        Commande.__init__(self, "chuchoter", "whisper")
         self.nom_categorie = "parler"
         self.schema = "<nom_joueur> <message>"
-        self.aide_courte = "chuchotte une phrase à un autre joueur"
+        self.aide_courte = "chuchote une phrase à un autre joueur"
         self.aide_longue = \
             "Cette commande permet de parler à un autre joueur ou à un bot " \
             "présent dans la même salle. Ce que vous dites par ce moyen " \
-            "est soumis aux règles du RP. La commande prend en paramètres la cible " \
-            "de votre chuchottement (NPC ou joueur), et ce que vous souhaitez lui " \
-            "chuchotter."
+            "est soumis aux règles du RP. La commande prend en paramètres " \
+            "de votre chuchotement (NPC ou joueur), et ce que vous " \
+            "souhaitez lui dire."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         cible = dic_masques["nom_joueur"].joueur
         message = dic_masques["message"].message
-        if not personnage.salle is cible.salle:
+        if personnage is cible:
+            personnage << "Hem. Vous parlez tout seul."
+        elif not personnage.salle is cible.salle:
             personnage << "|err|Cette personne n'est pas avec vous.|ff|"
         else:
-            # FIXME ajouter une couleur spécifique pour le whisper ?
-            personnage << "Vous chuchottez à {} : {}".format(
+            personnage << "Vous chuchotez à {} : {}".format(
                     cible.nom, message)
-            cible << "{} vous chuchotte : {}".format(personnage.nom, message)
+            cible << "{} vous chuchote : {}".format(personnage.nom, message)
             moyenne_sens = ceil((personnage.sensibilite + \
                     cible.sensibilite) / 2)
             for perso in personnage.salle.personnages:
                 if perso is not personnage and perso is not cible:
                     # On vérifie si la personne a plus de sens que la moyenne
-                    # des deux autres. Si c'est le cas, un random détermine pour chaque mot
-                    # si elle l'entend. Sinon, un random beaucoup moins probable joue le même rôle
+                    # des deux autres. Si c'est le cas, un random détermine
+                    # pour chaque mot si elle l'entend. Sinon, un random 
+                    # beaucoup moins probable joue le même rôle.
                     if perso.sensibilite > moyenne_sens:
                         random_entendre = 5 # une chance sur deux
                     else:
@@ -88,4 +90,6 @@ class CmdChuchotter(Commande):
                             phrase.append(mot)
                     
                     phrase = " ".join(phrase)
-                    perso << "{} chuchotte quelque chose à {}. Vous parvenez à entendre : {}".format(personnage.nom, cible.nom, phrase)
+                    perso << "{} chuchote quelque chose à {}. Vous parvenez " \
+                            "à entendre : {}".format(personnage.nom,
+                            cible.nom, phrase)
