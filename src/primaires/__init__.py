@@ -52,30 +52,32 @@ NOTE: les modules primaires et secondaires ne doivent pas porter de noms
 identiques, susceptibles d'entrer en conflit.
 
 Voici un résumé des modules primaires existants :
+-   aide            Module gérant les sujets d'aide in-game
 -   commerce        Module gérant les magasins et transactions    
 -   communication   Module gérant la communication dans l'univers
--   connex          module proche des clients, chargé des connexions,
+-   connex          Module proche des clients, chargé des connexions,
                     créations de compte, interprétation des commandes
--   diffact         module gérant les actions différées, c'est-à-dire des
+-   diffact         Module gérant les actions différées, c'est-à-dire des
                     fonctions programmées pour s'exécuter après un temps
                     d'attente défini
--   email           module gérant l'envoie d'e-mails depuis le projet
--   format          module gérant le formatage des messages reçus / à envoyer
+-   email           Module gérant l'envoie d'e-mails depuis le projet
+-   format          Module gérant le formatage des messages reçus / à envoyer
 -   hook            Module gérant les hooks et évènements
--   interpreteur    module chargé tout particulièrement d'interpréter les
+-   interpreteur    Module chargé tout particulièrement d'interpréter les
                     commandes envoyés par les clients
--   joueur          module contenant les informations sur les joueurs
+-   joueur          Module contenant les informations sur les joueurs
                     (personnages connectés)
 -   objet           Module chargé des objets et des prototypes d'objets
 -   meteo           Module gérant la météorologie
--   perso           module gérant les personnages, connectés (joueurs) ou non
+-   perso           Module gérant les personnages, connectés (joueurs) ou non
                     (PNJ)
--   pnj             module gérant les personnages non joueurs
+-   pnj             Module gérant les personnages non joueurs
 -   salle           Module gérant les salles du MUD
 -   scripting       Module gérant le scripting
--   supenr          superviseur de l'enregistrement des objets dans des
+-   supenr          Superviseur de l'enregistrement des objets dans des
                     fichiers sérialisés
--   temps           module gérant le temps, non pas la météo, mais le temporel
+-   temps           Module gérant le temps, non pas la météo, mais le temporel
+                    (
                     (années, saisons, mois, jours, heures...)
 
 """
