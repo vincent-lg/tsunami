@@ -66,6 +66,7 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.aide.CmdAide(),
             commandes.hedit.CmdHedit(),
         ]
         

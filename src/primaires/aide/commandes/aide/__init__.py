@@ -28,7 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'aide'."""
 
-from . import aide
-from . import hedit
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdAide(Commande):
+    
+    """Commande 'aide'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "aide", "help")
+        self.schema = "(<message>)"
+        self.aide_courte = "affiche de l'aide"
+        self.aide_longue = \
+            "Cette commande permet d'obtenir de l'aide en jeu. Sans " \
+            "argument, elle affiche une liste des sujets d'aides " \
+            "disponibles. Vous pouvez entrer %aide% |cmd|<nom du sujet>|ff| " \
+            "pour obtenir de l'aide sur ce sujet en particulier."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        if dic_masques["message"]:
+            titre = dic_masques["message"].message
+        else:
+            # On affiche la liste des sujets d'aides
+            sujets = type(self).importeur.aide.sujets
+            peut_lire = []
+            for sujet in sujets:
+                if type(self).importeur.interpreteur.groupes. \
+                        explorer_groupes_inclus(personnage.grp, sujet.str_groupe):
+                    peut_lire.append(sujet)
+            
+            peut_lire = [s.titre for s in peut_lire]
+            if not peut_lire:
+                peut_lire.append("|att|Aucun|ff|")
+            
+            msg = "Sujets d'aides disponibles :\n\n  "
+            msg += "\n  ".join(sorted(peut_lire))
+            personnage << msg

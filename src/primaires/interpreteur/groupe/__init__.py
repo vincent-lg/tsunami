@@ -70,6 +70,11 @@ class ConteneurGroupes(Unique):
         """Retourne le nombre de groupes"""
         return len(self._groupes)
     
+    @property
+    def nom_groupes(self):
+        """Retourne une liste des noms des groupes existants."""
+        return [g.nom for g in self._groupes.values()]
+    
     def ajouter_groupe(self, nom_groupe, flags=AUCUN):
         """Méthode appelée pour ajouter un groupe.
         L'objet Groupe est créé "à la volée" et est retourné par la méthode si

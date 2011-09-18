@@ -55,6 +55,7 @@ class SujetAide(ObjetID):
         ObjetID.__init__(self)
         self.titre = titre
         self.contenu = Description(parent=self)
+        self._str_groupe = ""
         self.__sujets_lies = ListeID(parent=self)
     
     def __getnewargs__(self):
@@ -64,5 +65,18 @@ class SujetAide(ObjetID):
     def sujets_lies(self):
         """Retourne une liste déréférencée des sujets liés."""
         return [s for s in self.__sujets_lies if s is not None]
+    
+    def _get_str_groupe(self):
+        return self._str_groupe or "aucun"
+    def _set_str_groupe(self, nom_groupe):
+        self._str_groupe = nom_groupe
+    
+    str_groupe = property(_get_str_groupe, _set_str_groupe)
+    
+    @property
+    def grp(self):
+        groupe = type(self).importeur.interpreteur.groupes[self._str_groue]
+        return groupe
+
 
 ObjetID.ajouter_groupe(SujetAide)

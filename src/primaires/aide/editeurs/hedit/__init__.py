@@ -85,3 +85,17 @@ class EdtHedit(Presentation):
         contenu.aide_courte = \
             "| |tit|" + "Description du sujet d'aide {}".format(sujet).ljust(72) + \
             "|ff||\n" + self.opts.separateur
+        
+        # Groupe
+        str_groupes = sorted(
+                type(self).importeur.interpreteur.groupes.nom_groupes)
+        groupe = self.ajouter_choix("groupe d'utilisateurs", "u", Choix,
+                sujet, "str_groupe", str_groupes)
+        groupe.parent = self
+        groupe.prompt = "Groupe d'utilisateur du sujet : "
+        groupe.apercu = "{objet.str_groupe}"
+        groupe.aide_courte = \
+            "Entrez le |ent|groupe|ff| pouvant accéder au sujet d'aide ou " \
+            "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
+            "Groupes existants : " + ", ".join(str_groupes) + "\n\n" \
+            "Groupe actuel : |bc|{objet.str_groupe}|ff|"
