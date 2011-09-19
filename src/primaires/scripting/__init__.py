@@ -45,6 +45,7 @@ from .quete.quete import Quete
 from .quete.etape import Etape
 from .test import Test
 from .editeurs.qedit import EdtQedit
+from .constantes.aide import *
 
 class Module(BaseModule):
     
@@ -64,6 +65,9 @@ class Module(BaseModule):
         self.actions = {}
         self.commandes = {}
         self.quetes = {}
+        self.sujets_aides = {
+            "syntaxe": syntaxe,
+        }
     
     def init(self):
         """Initialisation"""

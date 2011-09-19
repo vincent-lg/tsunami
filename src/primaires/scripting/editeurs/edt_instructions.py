@@ -50,6 +50,11 @@ class EdtInstructions(Editeur):
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
+        self.ajouter_option("?", self.opt_aide_generale)
+        self.ajouter_option("?s", self.opt_aide_syntaxe)
+        #self.ajouter_option("?o", self.opt_aide_options)
+        #self.ajouter_option("?f", self.opt_aide_fonctions)
+        #self.ajouter_option("?a", self.opt_aide_actions)
         self.ajouter_option("r", self.opt_remplacer_instruction)
         self.ajouter_option("q", self.opt_relier_quete)
     
@@ -118,6 +123,49 @@ class EdtInstructions(Editeur):
             etape.test = test
             test.etape = etape
             self.actualiser()
+    
+    def opt_aide_generale(self, argument):
+        """Option aide générale.
+        
+        Aucun argument n'est attendue.
+        
+        """
+        self.pere << \
+            "|rg|Bienvenue dans l'éditeur d'instruction.|ff|\n\n" \
+            "Vous pouvez ici entrer des instructions en respectant " \
+            "une certaine syntaxe\net modifier les instructions déjà " \
+            "existantes. Vous pouvez obtenir plus d'aide\ngrâce " \
+            "aux sujets suivants :\n" \
+            "  |cmd|/?s|ff| affiche de l'aide sur la |syntaxe|ff| du " \
+            "scripting\n" \
+            "  |cmd|/?o|ff| affiche la liste des |ent|options|ff| de " \
+            "l'éditeur disponibles\n" \
+            "  |cmd|/?a|ff| affiche la liste des |ent|actions|ff| " \
+            "disponibles\n" \
+            "  |cmd|/?f|ff| affiche la liste des |ent|fonctions|ff| " \
+            "disponibles.\n\n" \
+            "Si donc la syntaxe du scripting ne vous est pas familière, " \
+            "il vous est\nconseillé de lire l'aide consacrée en tapant " \
+            "|cmd|/?s|ff|.\nSi vous connaissez la syntaxe mais " \
+            "que vous voulez connaître les\npossibilités actuelles " \
+            "du scripting, tapez |cmd|/?a|ff| pour connaître " \
+            "la liste des\nactions et |cmd|/?f|ff| pour connaître " \
+            "la liste des fonctions."
+    
+    def opt_aide_syntaxe(self, argument):
+        """Option aide syntaxe.
+        
+        L'argument peut préciser l'aide spécifique.
+        -   action      Syntaxe d'une action
+        -   condition   Syntaxe d'une condition
+        -   affectation Syntaxe d'une affectation
+        
+        """
+        sujets = type(self).importeur.scripting.sujets_aides
+        if not argument:
+            self.pere << sujets["syntaxe"]
+        else:
+            self.pere << "A faire..."
     
     def accueil(self):
         """Message d'accueil du contexte"""
