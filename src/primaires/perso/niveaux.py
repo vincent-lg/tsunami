@@ -68,7 +68,8 @@ class Niveaux:
         ]
         marge = sqrt(cls.xp_max - cls.xp_min)
         for etape in range(2, cls.nb_niveaux):
-            xp = ((etape / cls.nb_niveaux) ** 2 * marge) ** 2
+            coef = 2 - (1 - etape / cls.nb_niveaux) * 0.4
+            xp = ((etape / cls.nb_niveaux) ** coef * marge) ** 2
             xp += cls.xp_min * (1 - etape / cls.nb_niveaux)
             grille.append((etape, xp))
         
