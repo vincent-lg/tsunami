@@ -44,6 +44,7 @@ from .race import Race
 from .stats import *
 from .squelette import Squelette
 from .niveaux import Niveaux
+from .templates.niveau import Niveau
 
 class Module(BaseModule):
     
@@ -66,7 +67,8 @@ class Module(BaseModule):
         self.commandes = []
         self.squelettes = {}
         self.races = []
-        self.niveaux = None
+        self.gen_niveaux = None
+        self.niveaux = {}
     
     def config(self):
         """Méthode de configuration.
@@ -98,7 +100,7 @@ class Module(BaseModule):
         niveaux.xp_min = self.cfg_niveaux.xp_min
         niveaux.xp_max = self.cfg_niveaux.xp_max
         niveaux.calculer_grille()
-        self.niveaux = niveaux
+        gen_veaux = niveaux
         print(niveaux.grille_xp)
         
         # On récupère les squelettes
@@ -204,3 +206,12 @@ class Module(BaseModule):
                 for stat in self.modele_stats))
         ntstats = NTStats(**stats_symboles)
         return ntstats
+    
+    def ajouter_niveau(self, cle, nom):
+        """Ajoute un niveau au dictionnaire des niveaux."""
+        if cle in self.niveaux:
+            raise ValueError("la clé {} est déjà utilisée comme clé " \
+                    "de niveau".format(repr(cle)))
+        
+        niveau = Niveau(cle, nom)
+        self.niveaux[cle] = niveau
