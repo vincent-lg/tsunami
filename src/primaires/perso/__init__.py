@@ -39,9 +39,11 @@ from . import masques
 from .editeurs.skedit import EdtSkedit
 from .editeurs.raedit import EdtRaedit
 from .cfg_stats import cfg_stats
+from .cfg_niveaux import cfg_niveaux
 from .race import Race
 from .stats import *
 from .squelette import Squelette
+from .niveaux import Niveaux
 
 class Module(BaseModule):
     
@@ -59,14 +61,17 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "perso", "primaire")
         self.cfg_stats = None
+        self.cfg_niveaux = None
         self.modele_stats = None
         self.commandes = []
         self.squelettes = {}
         self.races = []
+        self.niveaux = None
     
     def config(self):
         """Méthode de configuration.
-        On récupère le fichier de configuration correspondant au module.
+        
+        On récupère les fichiers de configuration correspondant au module.
         
         """
         self.cfg_stats = conf_stats = type(self.importeur).anaconf.get_config(
@@ -80,10 +85,22 @@ class Module(BaseModule):
         
         self.modele_stats = Stats()
         
+        self.cfg_niveaux = type(self.importeur).anaconf.get_config(
+                "niveaux", "perso/niveaux.cfg", "modele niveaux", cfg_niveaux)
+        
         BaseModule.config(self)
     
     def init(self):
         """Initialisation du module"""
+        # On construit le niveau
+        niveaux = Niveaux
+        niveaux.nb_niveaux = self.cfg_niveaux.nb_niveaux
+        niveaux.xp_min = self.cfg_niveaux.xp_min
+        niveaux.xp_max = self.cfg_niveaux.xp_max
+        niveaux.calculer_grille()
+        self.niveaux = niveaux
+        print(niveaux.grille_xp)
+        
         # On récupère les squelettes
         squelettes = self.importeur.supenr.charger_groupe(Squelette)
         for squelette in squelettes:
