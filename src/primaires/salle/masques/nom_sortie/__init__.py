@@ -28,13 +28,56 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant le masque <nom_sortie>."""
 
-from . import addroom
-from . import chsortie
-from . import fermer
-from . import goto
-from . import ouvrir
-from . import redit
-from . import regarder
-from . import supsortie
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+
+class NomSortie(Masque):
+    
+    """Masque <nom_sortie>.
+    
+    On attend un nom de sortie en paramètre.
+    
+    """
+    
+    nom = "nom_sortie"
+    nom_complet = "sortie"
+    
+    def init(self):
+        """Initialisation des attributs"""
+        self.nom_sortie = ""
+        self.sortie = None
+    
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
+        lstrip(commande)
+        nom = liste_vers_chaine(commande)
+        
+        if not nom:
+            raise ErreurValidation( \
+                "Précisez une nom_sortie.")
+        
+        nom = nom.split(" ")[0].lower()
+        self.a_interpreter = nom
+        commande[:] = commande[len(nom):]
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        nom = self.a_interpreter
+        salle = personnage.salle
+        try:
+            sortie = salle.sorties[salle.sorties.get_nom_long(nom)]
+        except KeyError:
+            raise ErreurValidation(
+                "|err|Le nom de sortie '{}' n'existe pas.|ff|".format(nom))
+        
+        self.nom_sortie = nom
+        self.sortie = sortie
+        
+        return True

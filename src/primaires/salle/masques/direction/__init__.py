@@ -37,7 +37,8 @@ from primaires.interpreteur.masque.exceptions.erreur_validation \
 
 class Direction(Masque):
     
-    """Masque <ident_salle>.
+    """Masque <direction>.
+    
     On attend une direction constante en paramètre, c'est-à-dire est,
     nord-est...
     

@@ -32,5 +32,6 @@
 
 from . import direction
 from . import ident
+from . import nom_sortie
 from . import nv_ident
 from . import observable

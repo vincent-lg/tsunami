@@ -28,13 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'fermer'."""
 
-from . import addroom
-from . import chsortie
-from . import fermer
-from . import goto
-from . import ouvrir
-from . import redit
-from . import regarder
-from . import supsortie
+from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.masque.exceptions.erreur_interpretation import \
+    ErreurInterpretation
+
+
+class CmdFermer(Commande):
+    
+    """Commande 'fermer'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "fermer", "close")
+        self.nom_categorie = "bouger"
+        self.schema = "<nom_sortie>"
+        self.aide_courte = "ferme une porte"
+        self.aide_longue = \
+            "Cette commande permet de fermer une sortie de la salle où " \
+            "vous vous trouvez."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        sortie = dic_masques["nom_sortie"].sortie
+        salle = personnage.salle
+        nom_complet = sortie.nom_complet.capitalize()
+        
+        if not sortie.porte:
+            raise ErreurInterpretation(
+                "|err|Cette sortie n'est pas une porte.|ff|")
+        
+        if not sortie.porte.ouverte:
+            raise ErreurInterpretation(
+                "|err|{} n'est pas ouverte.|ff|".format(nom_complet))
+        
+        sortie.porte.fermer()
+        personnage << "Vous fermez {}.".format(sortie.nom_complet)
+        salle.envoyer("{} ferme {}.".format(personnage, sortie.nom_complet),
+                (personnage, ))

@@ -227,7 +227,7 @@ class Salle(ObjetID):
     
     def afficher_sorties(self, personnage):
         """Affiche les sorties de la salle"""
-        res = ""
+        noms = []
         for nom in NOMS_SORTIES.keys():
             sortie = self.sorties[nom]
             if sortie:
@@ -236,16 +236,19 @@ class Salle(ObjetID):
             nom_aff = self.sorties.get_nom_abrege(nom)
             if self.sorties.sortie_existe(nom):
                 if sortie.cache:
-                    res += " ".ljust(len(self.sorties.get_nom_abrege(
+                    res = " ".ljust(len(self.sorties.get_nom_abrege(
                             sortie.direction)))
                 else:
-                    res += "|vr|" + nom_aff + "|ff|"
+                    res = "|vr|" + nom_aff + "|ff|"
+                
+                if sortie.porte and sortie.porte.fermee:
+                    res = "[" + res + "]"
             else:
-                res += " ".ljust(len(nom_aff))
-            res += ", "
+                res = " ".ljust(len(nom_aff))
+            
+            noms.append(res)
         
-        res = res[:-2] + "."
-        return res
+        return ", ".join(noms) + "."
     
     def afficher_noms_objets(self):
         """Retourne les noms et états des objets sur le sol de la salle"""

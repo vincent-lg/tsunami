@@ -40,6 +40,7 @@ from . import commandes
 from .editeurs.redit import EdtRedit
 from .coordonnees import Coordonnees
 from . import masques
+from .porte import Porte
 
 class Module(BaseModule):
     
@@ -93,6 +94,8 @@ class Module(BaseModule):
     
     def init(self):
         """Méthode d'initialisation du module"""
+        # On récupère les portes
+        portes = self.importeur.supenr.charger_groupe(Porte)
         # On récupère les salles
         salles = self.importeur.supenr.charger_groupe(Salle)
         for salle in salles:
@@ -111,7 +114,9 @@ class Module(BaseModule):
         self.commandes = [
             commandes.addroom.CmdAddroom(),
             commandes.chsortie.CmdChsortie(),
+            commandes.fermer.CmdFermer(),
             commandes.goto.CmdGoto(),
+            commandes.ouvrir.CmdOuvrir(),
             commandes.redit.CmdRedit(),
             commandes.regarder.CmdRegarder(),
             commandes.supsortie.CmdSupsortie(),

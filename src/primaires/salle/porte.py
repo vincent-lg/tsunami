@@ -28,13 +28,56 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant la classe Porte, détaillée plus bas;"""
 
-from . import addroom
-from . import chsortie
-from . import fermer
-from . import goto
-from . import ouvrir
-from . import redit
-from . import regarder
-from . import supsortie
+from abstraits.id import ObjetID
+
+class Porte(ObjetID):
+    
+    """Cette classe définit une porte dans une sortie.
+    
+    Une porte est un objet naturellement commun à deux sorties :
+        La sortie d'origine
+        La sortie de destination
+    
+    La sortie de destination est la sortie opposée de la sortie d'origine.
+    
+    La classe porte définit :
+        serrure -- la présence d'une serrure
+        ouverte -- Le flag d'ouverture de la porte
+            Notez aue la propriété fermee existe également.
+    
+    """
+    
+    groupe = "porte"
+    sous_rep = "sorties/portes"
+    def __init__(self):
+        """Constructeur de la porte."""
+        ObjetID.__init__(self)
+        self.ouverte = False
+        self.serrure = False
+        # On passe le statut en CONSTRUIT
+        self._construire()
+    
+    def __getnewargs__(self):
+        return ()
+    
+    @property
+    def fermee(self):
+        return not self.ouverte
+    
+    def ouvrir(self):
+        """Ouvre la porte."""
+        if self.ouverte:
+            raise ValueError("la porte est déjà ouverte")
+        
+        self.ouverte = True
+    
+    def fermer(self):
+        """Ferme la porte."""
+        if not self.ouverte:
+            raise ValueError("la porte est déjà fermée")
+        
+        self.ouverte = False
+
+ObjetID.ajouter_groupe(Porte)

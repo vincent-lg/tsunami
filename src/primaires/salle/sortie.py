@@ -31,7 +31,9 @@
 """Fichier contenant la classe Sortie, détaillée plus bas;"""
 
 from abstraits.obase import *
+from .porte import Porte
 
+# Constantes
 NOMS_VERS_ARTICLES = {
     "sud": "le",
     "sud-ouest": "le",
@@ -52,6 +54,7 @@ NOMS_VERS_ARTICLES = {
 class Sortie(BaseObj):
     
     """Cette classe définit une sortie.
+    
     Une sortie possède au minimum un nom, un article et une salle de
     destination.
     
@@ -59,7 +62,8 @@ class Sortie(BaseObj):
     
     def __init__(self, direction, nom, article="le", salle_dest=None,
             corresp="", parent=None, modele=None):
-        """Constructeur du conteneur
+        """Constructeur de la sortie.
+        
         Précision quant au parent :
         Ici, ce n'est pas le conteneur, mais la salle possédant la sortie
         qui doit être le parent.
@@ -84,6 +88,7 @@ class Sortie(BaseObj):
         
         # Autres informations
         self.cache = False
+        self.porte = None
         
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
@@ -132,3 +137,28 @@ class Sortie(BaseObj):
             corresp = None
         
         return corresp
+    
+    def ajouter_porte(self):
+        """Ajoute une porte sur la sortie et sa sortie opposée.
+        
+        Si une porte est déjà définie sur la sortie, lève une exception.
+        
+        """
+        if self.porte:
+            raise AttributeError("la sortie {} possède déjà une porte".format(
+                    self))
+        
+        porte = Porte()
+        self.porte = porte
+        if self.sortie_opposee:
+            self.sortie_opposee.porte = porte
+    
+    def supprimer_porte(self):
+        """Supprime la porte de self et sa sortie opposée."""
+        if not self.porte:
+            raise AttributeError("la sortie {} ne possède pas de porte".format(
+                    self))
+        
+        self.porte = None
+        if self.sortie_opposee:
+            self.sortie_opposee.porte = None
