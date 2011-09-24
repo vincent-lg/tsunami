@@ -119,13 +119,18 @@ for couleur, valeur in COULEURS.items():
 
 def get_bytes(msg, ncod_optionnel):
     """Retourne un type bytes.
+    
     Peut prendre en paramètre :
     -   un type bytes (on le retourne sans rien changer)
     -   un type str (on l'encode avec l'encodage optionnel)
     
     """
-    if type(msg) is str:
-        msg = msg.encode(ncod_optionnel)
+    if isinstance(msg, str):
+        if ncod_optionnel:
+            msg = msg.encode(ncod_optionnel)
+        else:
+            msg = supprimer_accents(msg).encode()
+    
     return msg
 
 # Fonctions à appliquer à la réception de messages
@@ -240,6 +245,8 @@ def contient(nom_complet, fragment):
     """Retourne True si nom contient fragment, False sinon."""
     fragment = supprimer_couleurs(supprimer_accents(fragment).lower())
     nom_complet = supprimer_couleurs(supprimer_accents(nom_complet).lower())
+    if not fragment:
+        return False
     
     fragment = fragment.replace("'", " ")
     nom_complet = nom_complet.replace("'", " ")
@@ -254,19 +261,19 @@ def contient(nom_complet, fragment):
 def couper_phrase(phrase, couper):
     """Coupe la phrase 'phrase' au mot précédant le caractère numéro 'couper'
     et ajoute (...) si nécessaire"""
-    i = len(phrase)
-    if i <= couper:
+    if len(phrase) <= couper:
         return phrase
     else:
         phrase = phrase[:couper]
-        if phrase.endswith(" "):
-            return phrase.rstrip() + "..."
-        else:
-            phrase = phrase.split(" ")
-            if len(phrase) > 1:
+        phrase = phrase.split(" ")
+        if len(phrase) > 1:
+            del phrase[-1]
+            if len(" ".join(phrase)) > couper-3:
                 del phrase[-1]
-            phrase = " ".join(phrase)
-            return phrase + "..."
+        else:
+            phrase[0][:-3]
+        phrase = " ".join(phrase)
+        return phrase + "..."
 
 def oui_ou_non(flag):
     """Retourne 'oui' si le flag est True, 'non' sinon."""

@@ -59,6 +59,12 @@ class ID:
         """On redirige sur repr"""
         return repr(self)
     
+    def __hash__(self):
+        return hash(str(self))
+    
+    def __eq__(self, autre):
+        return hash(self) == hash(autre)
+    
     def _objetid_(self):
         return True
     

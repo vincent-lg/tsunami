@@ -30,7 +30,22 @@
 
 """Ce fichier contient la classe Attitude détaillée plus bas."""
 
-from abstraits.obase import BaseObj
+from abstraits.obase import *
+from primaires.format.fonctions import *
+
+# Statuts de l'attitude
+FONCTIONNELLE = 1
+SANS_CIBLE = 2
+CIBLE_OBLIGATOIRE = 3
+INACHEVEE = 4
+
+# Ce dictionnaire lie un statut à une chaîne
+STATUTS = {
+    FONCTIONNELLE : "|vr|fonctionnelle|ff|",
+    SANS_CIBLE : "|jn|sans cible|ff|",
+    CIBLE_OBLIGATOIRE : "|jn|cible obligatoire|ff|",
+    INACHEVEE : "|rg|inachevée|ff|"
+}
 
 class Attitude(BaseObj):
 
@@ -38,9 +53,10 @@ class Attitude(BaseObj):
     
     """
     
-    def __init__(self, cle):
+    def __init__(self, cle, parent=None):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
+        self.parent = parent
         self.cle = cle
         self.independant = {
             "aim" : "",
@@ -56,9 +72,22 @@ class Attitude(BaseObj):
             "odm" : "",
             "odf" : "",
         }
+        # On passe le statut en CONSTRUIT
+        self._statut = CONSTRUIT
     
     def __getnewargs__(self):
-        return ("", )
+        return ("", None)
+    
+    def __setattr__(self, nom_attr, valeur):
+        """Enregisre le parent si il est précisé"""
+        construit = self.construit
+        BaseObj.__setattr__(self, nom_attr, valeur)
+        if construit and self.parent:
+            self.parent.enregistrer()
+    
+    def enregistrer(self):
+        if self.parent:
+            self.parent.enregistrer()
     
     @property
     def statut(self):
@@ -75,49 +104,60 @@ class Attitude(BaseObj):
                 dep_complet = False
                 break
         if indep_complet and dep_complet:
-            ret = "fonctionnelle"
+            ret = FONCTIONNELLE
         elif indep_complet and not dep_complet:
-            ret = "sans cible"
+            ret = SANS_CIBLE
         elif not indep_complet and dep_complet:
-            ret = "cible"
+            ret = CIBLE_OBLIGATOIRE
         elif not indep_complet and not dep_complet:
-            ret = "inachevée"
+            ret = INACHEVEE
         return ret
     
     def jouer(self, acteur, arguments):
         """Joue le social pour acteur"""
-        arguments = arguments.split(" ")
         statut = self.statut
-        if statut == "inachevée":
+        if statut == INACHEVEE:
             acteur << "|err|Cette attitude n'est pas achevée.|ff|"
             return
+        
+        def formater(str, acteur="", cible=""):
+            str = str.replace("_b_acteur_b_", acteur)
+            str = str.replace("_b_cible_b_", cible)
+            return str
+        
         try:
-            cible = arguments[1]
+            nom_cible = arguments.split(" ")[1]
         except IndexError:
             # Le joueur n'a pas donné de cible
-            if statut == "cible":
+            if statut == CIBLE_OBLIGATOIRE:
                 acteur << "|err|Vous devez préciser une cible.|ff|"
                 return
             for personnage in acteur.salle.personnages:
                 if personnage is acteur:
                     personnage << self.independant["aim"]
                 else:
-                    personnage << self.independant["oim"].replace("|acteur|", acteur.nom)
+                    personnage << formater(self.independant["oim"],
+                            acteur=acteur.nom)
         else:
             # Le joueur a précisé une cible
-            if statut == "sans cible":
+            if statut == SANS_CIBLE:
                 acteur << "|err|Cette attitude n'accepte pas de cible.|ff|"
                 return
+            cible = None
             for personnage in acteur.salle.personnages:
-                if personnage.nom == cible:
+                nom_perso = personnage.nom.lower()
+                if contient(nom_perso, nom_cible):
                     cible = personnage
-            if type(cible) == str:
+            if cible is None:
                 acteur << "|err|Vous ne voyez pas cette personne ici.|ff|"
                 return
             for personnage in acteur.salle.personnages:
                 if personnage is acteur:
-                    personnage << self.dependant["adm"]
+                    personnage << formater(self.dependant["adm"],
+                            cible=cible.nom)
                 elif personnage is cible:
-                    personnage << self.dependant["idm"]
+                    personnage << formater(self.dependant["idm"],
+                            acteur=acteur.nom)
                 else:
-                    personnage << self.dependant["odm"]
+                    personnage << formater(self.dependant["odm"],
+                            acteur=acteur.nom, cible=cible.nom)

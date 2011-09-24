@@ -134,8 +134,9 @@ class Module(BaseModule):
             # On parcourt les attributs de l'objet
             for nom_attr, val_attr in tuple(objet.__dict__.items()):
                 if isinstance(val_attr, BaseObj):
-                    val_attr = dict_base_obj[val_attr._id_base]
-                    setattr(objet, nom_attr, val_attr)
+                    if val_attr._id_base in dict_base_obj:
+                        val_attr = dict_base_obj[val_attr._id_base]
+                        setattr(objet, nom_attr, val_attr)
                 if isinstance(val_attr, ListeID):
                     val_attr.supprimer_none()
     
@@ -261,6 +262,11 @@ class Module(BaseModule):
             except (EOFError, pickle.UnpicklingError):
                 self.logger.warning("Le fichier {0} n'a pas pu être chargé ". \
                     format(chemin_dest))
+            except ImportError as imp_err:
+                self.logger.warning("L'objet en fichier {} n'a pas pu être " \
+                        "chargé: {}".format(chemin_dest, imp_err))
+                fichier_enr.close()
+                os.remove(chemin_dest)
         finally:
             if "fichier_enr" in locals():
                 fichier_enr.close()

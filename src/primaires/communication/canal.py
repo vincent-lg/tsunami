@@ -36,6 +36,22 @@ from primaires.format.constantes import COULEURS_INV
 from primaires.format.description import Description
 from primaires.communication.contextes import Immersion
 
+# Flags
+AUCUN_FLAG = 0
+PRIVE = 1
+MUET = 2
+INVISIBLE = 4
+IMM_AUTOCONNECT = 8
+PERSO_AUTOCONNECT = 16
+
+FLAGS = {
+    "privé": PRIVE,
+    "muet": MUET,
+    "invisible": INVISIBLE,
+    "autoconnecter imm": IMM_AUTOCONNECT,
+    "autoconnecter joueur": PERSO_AUTOCONNECT,
+}
+
 class Canal(BaseObj):
     
     """Classe définissant un canal.
@@ -47,7 +63,7 @@ class Canal(BaseObj):
         BaseObj.__init__(self)
         self.nom = nom
         self.auteur = auteur
-        self.prive = False
+        self.flags = AUCUN_FLAG
         self.clr = "|cyc|"
         self.resume = "canal de communication"
         self.description = Description(parent=parent)
@@ -65,10 +81,6 @@ class Canal(BaseObj):
         return self.nom
     
     @property
-    def droits(self):
-        return (self.prive and "privé") or "public"
-    
-    @property
     def infos(self):
         """Renvoie l'aide du canal"""
         res = self.nom + "|ff| : " + self.resume
@@ -81,8 +93,9 @@ class Canal(BaseObj):
     
     @property
     def aide(self):
-        res = self.infos + "\n" + str(self.description)
-        res += "\nAdministrateur : |rgc|" + self.auteur.nom + "|ff|"
+        res = self.infos + "\n" + (str(self.description) or "Aucune description.")
+        auteur = (self.auteur is not None and self.auteur.nom) or "aucun"
+        res += "\nAdministrateur : |rgc|" + auteur + "|ff|"
         modos = ""
         if len(self.moderateurs) == 1:
             modos = "\nModérateur : |jn|" + self.moderateurs[0].nom + "|ff|"
@@ -102,13 +115,14 @@ class Canal(BaseObj):
         if not joueur in self.connectes:
             if joueur in self.liste_noire:
                 joueur << "|err|Vous êtes sur la liste noire de ce canal.|ff|"
-            elif self.prive and not forcer:
+            elif self.flags & PRIVE and not forcer and self.connectes:
                 joueur << "|err|Ce canal est privé, vous ne pouvez y accéder " \
                         "que sur invitation.|ff|"
             else:
                 self.connectes.append(joueur)
-                joueur << "|att|Vous êtes à présent connecté au canal " \
-                        "{}.|ff|".format(self.nom)
+                if aff:
+                    joueur << "|att|Vous êtes à présent connecté au canal " \
+                            "{}.|ff|".format(self.nom)
                 for connecte in self.connectes:
                     if connecte in type(self).importeur.connex.joueurs_connectes:
                         if connecte is not joueur:
@@ -182,7 +196,7 @@ class Canal(BaseObj):
     
     def bannir(self, joueur):
         """Bannit un joueur du canal (méthode de modération)"""
-        if joueur in self.liste_noire:
+        if not joueur in self.liste_noire:
             if joueur in self.immerges:
                 self.immerger_ou_sortir(joueur, False)
             self.rejoindre_ou_quitter(joueur, False)
@@ -199,7 +213,7 @@ class Canal(BaseObj):
             joueur << "|rgc|Vous avez été banni du canal {}.|ff|".format(
                     self.nom)
         else:
-            self.liste_noir.remove(joueur)
+            self.liste_noire.remove(joueur)
             joueur << "|rgc|Vous n'êtes plus sur la liste noire du canal " \
                     "{}.|ff|".format(self.nom)
     
@@ -243,8 +257,24 @@ class Canal(BaseObj):
                                 "déchu du statut de modérateur.|ff|".format(
                                 joueur.nom)
     
+    def envoyer_imp(self, message):
+        """Envoie un message impersonnel (annonce)"""
+        ex = self.clr + "[" + self.nom + "] " + message + "|ff|"
+        im = self.clr + "<" + message + ">"
+        
+        for connecte in self.connectes:
+            if connecte in type(self).importeur.connex.joueurs_connectes:
+                if connecte in self.immerges:
+                    connecte << im
+                else:
+                    connecte << ex
+    
     def envoyer(self, joueur, message):
         """Envoie un message au canal"""
+        if self.flags & MUET:
+            joueur << "|err|Vous ne pouvez parler dans ce canal.|ff|"
+            return
+        
         type(self).importeur.communication. \
                 derniers_canaux[joueur.nom] = self.nom
         ex_moi = self.clr + "[" + self.nom + "] Vous dites : "

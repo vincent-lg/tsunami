@@ -41,9 +41,11 @@ from primaires.interpreteur.masque.noeuds.noeud_commande import NoeudCommande
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.mot_cle import MotCle
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
 from primaires.interpreteur.groupe import ConteneurGroupes
+from primaires.interpreteur.groupe.groupe import *
 from .masque.masque import masques_def
 
 class Module(BaseModule):
@@ -103,13 +105,17 @@ class Module(BaseModule):
         self.groupes = groupes
         
         # On vérifie que les groupes "essentiels" existent
-        essentiels = ("pnj", "joueur", "administrateur")
+        essentiels = OrderedDict((
+            ("pnj", AUCUN),
+            ("joueur", AUCUN),
+            ("administrateur", IMMORTELS),
+        ))
         
         # On crée ceux qui n'existent pas
         groupe_precedent = ""
-        for nom_groupe in essentiels:
+        for nom_groupe, flags in essentiels.items():
             if nom_groupe not in self.groupes:
-                groupe = self.groupes.ajouter_groupe(nom_groupe)
+                groupe = self.groupes.ajouter_groupe(nom_groupe, flags)
                 if groupe_precedent:
                     groupe.ajouter_groupe_inclus(groupe_precedent)
                 self.logger.info("Ajout du groupe d'utilisateurs '{}'".format( 
@@ -155,7 +161,7 @@ class Module(BaseModule):
         """
         return self.masques[nom_masque]()
     
-    def valider(self, personnage, dic_masques, lst_commande):
+    def repartir(self, personnage, masques, lst_commande):
         """Commande de validation"""
         str_commande = liste_vers_chaine(lst_commande)
         trouve = False
@@ -166,7 +172,7 @@ class Module(BaseModule):
             commandes = self.commandes_anglais
         
         for cmd in commandes:
-            if cmd.valider(personnage, dic_masques, lst_commande):
+            if cmd.repartir(personnage, masques, lst_commande):
                 self.logger_cmd.info("{} envoie {}".format(personnage.nom,
                         str_commande))
                 trouve = True
@@ -174,6 +180,11 @@ class Module(BaseModule):
         
         if not trouve:
             raise ErreurValidation("|err|Commande inconnue.|ff|")
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du dic_masques."""
+        for masque in dic_masques.values():
+            masque.valider(personnage, dic_masques)
     
     def trouver_commande(self, lst_commande, commandes=None):
         """On cherche la commande correspondante.
@@ -221,3 +232,7 @@ class Module(BaseModule):
         cls_editeur = self.editeurs[nom]
         editeur = cls_editeur(personnage, objet)
         return editeur
+    
+    def creer_mot_cle(self, francais, anglais):
+        """Crée et retourne un mot-clé."""
+        return MotCle(francais, anglais)

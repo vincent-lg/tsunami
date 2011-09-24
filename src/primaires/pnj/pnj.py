@@ -49,11 +49,12 @@ class PNJ(Personnage):
     def __init__(self, prototype):
         """Constructeur du PNJ"""
         Personnage.__init__(self)
+        self._nom = ""
         self.prototype = prototype
         if prototype:
+            prototype.no += 1
             self.identifiant = prototype.cle + "_" + str(
                     prototype.no)
-            prototype.no += 1
             prototype.pnj.append(self)
             
             # On copie les attributs propres à l'objet
@@ -79,6 +80,29 @@ class PNJ(Personnage):
                 return Personnage.__getattr__(self, nom_attr)
             except AttributeError:
                 return getattr(self.prototype, nom_attr)
+    
+    def _get_nom(self):
+        """Retourne le nom singulier définit dans le prototype.
+        
+        Toutefois, si le nom est définit dans le PNJ lui-même
+        (l'attribut _nom n'est pas vide), retourne celui-ci.
+        
+        """
+        nom = self._nom
+        if not nom:
+            nom = self.prototype.nom_singulier
+        
+        return nom
+    def _set_nom(self, nouveau_nom):
+        """Ecrit le nom dans self._nom.
+        
+        Note contextuelle : si le nouveau nom est vide, le nom redeviendra
+        le nom singulier du prototype.
+        
+        """
+        self._nom = nouveau_nom
+    
+    nom = property(_get_nom, _set_nom)
     
     def envoyer(self, msg):
         """Envoie un message"""

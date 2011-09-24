@@ -77,7 +77,7 @@ class EdtPresentation(Presentation):
         stats.parent = self
         
         # Squelette
-        squelette = self.ajouter_choix("squelette", "q", EdtSquelette,
+        squelette = self.ajouter_choix("squelette", "sq", EdtSquelette,
                 race)
         squelette.parent = self
         squelette.prompt = "Clé du squelette : "

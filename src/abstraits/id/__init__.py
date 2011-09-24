@@ -127,6 +127,9 @@ class ObjetID(BaseObj):
     # Attributs à ne pas redéfinir
     groupes = {} # dictionnaire des groupes créés ({nom_groupe:classe})
     
+    # Marque d'appartenance d'un ObjetID
+    est_objet_id = True
+    
     # Méthodes de classe
     def ajouter_groupe(groupe):
         """Méthode appelée lors de la construction de groupes d'ID.

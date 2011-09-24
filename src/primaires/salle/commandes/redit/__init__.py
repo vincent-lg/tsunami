@@ -41,6 +41,7 @@ class CmdRedit(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "redit", "redit")
+        self.groupe = "administrateur"
         self.schema = "(<ident_salle>)"
         self.nom_categorie = "batisseur"
         self.aide_courte = "ouvre l'éditeur de salle"

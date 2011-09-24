@@ -30,8 +30,8 @@
 
 """Fichier contenant le contexte éditeur EdtCouleur"""
 
-from primaires.format.constantes import COULEURS
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.format.constantes import COULEURS
 
 class EdtCouleur(Uniligne):
     
@@ -43,6 +43,19 @@ class EdtCouleur(Uniligne):
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Uniligne.__init__(self, pere, objet, attribut)
+    
+    def accueil(self):
+        """Message d'accueil du contexte"""
+        canal = self.objet
+        msg = self.aide_courte
+        msg += "Couleurs disponibles : "
+        for nom, clr in COULEURS.items():
+            msg += clr + nom + "|ff|, "
+            if nom == "blanc": # on insère un saut de ligne à l'arrache
+                msg += "\n"
+        msg = msg[0:-2] + "."
+        msg += "\nCouleur actuelle : " + canal.clr + canal.clr_nom + "|ff|"
+        return msg
     
     def interpreter(self, msg):
         """Interprétation du message"""

@@ -32,14 +32,12 @@
 
 from abstraits.module import *
 from . import commandes
-from . import masques
 from . import types
-from .config import cfg_jeux
+from .partie import Partie
 
 class Module(BaseModule):
     
-    """
-    Module gérant les jeux dans le jeu
+    """Module gérant les jeux dans le jeu
     
     """
     
@@ -49,48 +47,73 @@ class Module(BaseModule):
         
         self.logger = type(self.importeur).man_logs.creer_logger( \
                 "jeux", "jeux")
-        
-        self.jeux = []
-        
-        self.parties = {}
-    
-    def config(self):
-        """Configuration du module.
-        On crée le fichier de configuration afin de l'utiliser plus tard
-        dans les contextes.
-        
-        """
-        type(self.importeur).anaconf.get_config("jeux", \
-            "jeux/jeux.cfg", "modele jeux", cfg_jeux)
-        
-        BaseModule.config(self)
+        self.jeux = {}
+        self.plateaux = {}
+        self.parties = []
     
     def init(self):
+        """Initialisation du module."""
+        # On charge automatiquement les jeux définis dans jeux
+        self.charger_jeux()
+        self.charger_plateaux()
         
+        # On charge les parties
+        parties = self.importeur.supenr.charger_groupe(Partie)
+
         BaseModule.init(self)
+    
+    def charger_jeux(self):
+        """Chargement des jeux.
         
-        jeux_cfg = type(self.importeur).anaconf.get_config("jeux")
+        Notez qu'un plateau peut être utilisé pour jouer à plusieurs jeux.
         
-        for nom_jeu in jeux_cfg.jeux:
-            package = __import__("secondaires.jeux.backend." + nom_jeu)
-            jeu = getattr(getattr(getattr(getattr(package, "jeux"),"backend"),nom_jeu),nom_jeu)
-            self.jeux.append(jeu)
+        """
+        # On peut préciser en dur des exceptions qui ne seront pas chargées
+        # En outre, tous les répertoires commençant par un _ ne sont pas chargés
+        exceptions = []
+        chemin = self.chemin + os.sep + "jeux"
+        chemin_py = "secondaires.jeux.jeux"
+        for nom_fichier in os.listdir(chemin):
+            if not nom_fichier.startswith("_") and nom_fichier not in \
+                    exceptions:
+                nom_module = nom_fichier
+                chemin_py_mod = chemin_py + ".{}".format(nom_module)
+                jeu = __import__(chemin_py_mod)
+                jeu = getattr(getattr(getattr(getattr(jeu, "jeux"),
+                        "jeux"), nom_module), "Jeu")
+                self.jeux[jeu.nom] = jeu
+                print("On charge le jeu", nom_module)
+    
+    def charger_plateaux(self):
+        """Chargement des plateaux."""
+        # On peut préciser en dur des exceptions qui ne seront pas chargées
+        # En outre, tous les répertoires commençant par un _ ne sont pas chargés
+        exceptions = []
+        chemin = self.chemin + os.sep + "plateaux"
+        chemin_py = "secondaires.jeux.plateaux"
+        for nom_fichier in os.listdir(chemin):
+            if not nom_fichier.startswith("_") and nom_fichier not in \
+                    exceptions:
+                nom_module = nom_fichier
+                chemin_py_mod = chemin_py + ".{}".format(nom_module)
+                plateau = __import__(chemin_py_mod)
+                plateau = getattr(getattr(getattr(getattr(plateau, "jeux"),
+                        "plateaux"), nom_module), "Plateau")
+                self.plateaux[plateau.nom] = plateau
+                print("On charge le plateau", nom_module)
     
     def get_jeu(self, nom):
-        for jeu in self.jeux:
+        """Retourne le jeu portant le nom nom.
+        
+        Si aucun jeu n'est trouvé, retourne None.
+        
+        """
+        for jeu in self.jeux.values():
             if jeu.nom == nom:
                 return jeu
+        
         return None
     
-    def get_partie(self, objet):
-        if not objet.id.id in self.parties:
-            self.parties[objet.id.id] = self.get_jeu(objet.jeu)()
-        return self.parties[objet.id.id]
-    
-    def ajouter_masques(self):
-        self.importeur.interpreteur.ajouter_masque(
-                masques.objet.ObjetJeu)
-                
     def ajouter_commandes(self):
         self.commandes = [
             commandes.jouer.CmdJouer()
@@ -98,4 +121,3 @@ class Module(BaseModule):
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
-    

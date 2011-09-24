@@ -31,6 +31,7 @@
 """Fichier contenant le contexte éditeur EdtDroits"""
 
 from primaires.interpreteur.editeur import Editeur
+from primaires.communication.canal import PRIVE
 
 class EdtDroits(Editeur):
     
@@ -45,5 +46,5 @@ class EdtDroits(Editeur):
     
     def entrer(self):
         canal = self.objet
-        canal.prive = not canal.prive
+        canal.flags = canal.flags ^ PRIVE
         self.migrer_contexte(self.opts.rci_ctx_prec)

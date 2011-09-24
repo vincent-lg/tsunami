@@ -28,13 +28,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+"""Ce fichier décrit la classe FichierConfiguration, détaillée plus bas."""
+
 # On aura besoin des regex pour analyser le fichier
 import re
 
 # On utilise le module textwrap pour tout aligner
 import textwrap
 
-"""Ce fichier décrit la classe FichierConfiguration, détaillée plus bas."""
+# On importe les exceptions d'anaconf
+from .exceptions import *
 
 class FichierConfiguration:
     """Cette classe définit un fichier de configuration.
@@ -99,8 +102,9 @@ class FichierConfiguration:
                 t_match = re.search(r"^" + nom_don + r" *=", self.fichier, re.M)
                 if t_match is None:
                     # La donnée n'a pas été trouvée
-                    raise RuntimeError("La donnée {0} n'a pas été trouvée " \
-                            "dans le fichier à mettre à jour".format(nom_don))
+                    raise ErreurInterpretation("La donnée {} n'a pas " \
+                            "été trouvée dans le fichier à mettre à " \
+                            "jour".format(nom_don))
                 debut = t_match.start()
                 egal = t_match.end()
                 # 2- maintenant on cherche la fin

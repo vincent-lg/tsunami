@@ -83,19 +83,36 @@ class NoeudOptionnel(BaseNoeud):
         else:
             return None
     
-    def valider(self, personnage, dic_masques, commande, tester_fils=True):
+    def repartir(self, personnage, masques, commande):
+        """Réparti dans le masque si possible."""
+        try:
+            valide = self.interne.repartir(personnage, masques, commande)
+        except ErreurValidation as err:
+            if err.bloquant:
+                raise err
+            else:
+                pass
+        
+        valide = True
+        if self.suivant:
+            valide = self.suivant.repartir(personnage, masques, commande)
+        
+        return valide
+    
+    def valider(self, personnage, dic_masques, tester_fils=True):
         """Valide un noeud optionnel.
+        
         Un noeud optionnel se valide automatiquement et passe le relais à ses
         fils.
         
         """
         try:
-            self.interne.valider(personnage, dic_masques, commande)
+            self.interne.valider(personnage, dic_masques)
         except ErreurValidation:
             pass
         
         if self.suivant and tester_fils:
-            valide = self.suivant.valider(personnage, dic_masques, commande)
+            valide = self.suivant.valider(personnage, dic_masques)
         else:
             valide = True
         

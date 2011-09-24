@@ -39,6 +39,7 @@ from .coordonnees import Coordonnees
 from .sorties import Sorties, NOMS_SORTIES
 from .details import Details
 from .objets_sol import ObjetsSol
+from .script import ScriptSalle
 
 # Constantes
 ZONE_VALIDE = r"^[a-z0-9_]{3,20}$"
@@ -47,6 +48,7 @@ MNEMONIC_VALIDE = r"^[a-z0-9_]{1,15}$"
 class Salle(ObjetID):
     
     """Classe représentant une salle de l'univers.
+    
     Une salle est un élément détaillant la géographie locale d'une petite
     portion de l'univers. Bien que cela dépende des MUDs, les salles décrivent
     généralement un espace d'environ 5 mètres sur 5.
@@ -88,6 +90,7 @@ class Salle(ObjetID):
         self.details = Details(parent=self)
         self._personnages = ListeID(self) # personnages présents
         self.objets_sol = ObjetsSol(parent=self)
+        self.script = ScriptSalle(self)
     
     def __getnewargs__(self):
         return ("", "")
@@ -166,29 +169,37 @@ class Salle(ObjetID):
         # On parcourt les objets de la salle
         for objet in self.objets_sol:
             prototype = objet.prototype
+            nombre = 1
+            if not prototype.unique:
+                nombre = objet.nombre
             if prototype not in prototypes:
-                prototypes[prototype] = 1
+                prototypes[prototype] = nombre
             else:
-                prototypes[prototype] += 1
+                prototypes[prototype] += nombre
         
         return tuple(prototypes.items())
     
     def regarder(self, personnage):
         """Le personnage regarde la salle"""
         res = ""
-        res += "# |rgc|" + self.zone + "|ff|:|vrc|" + self.mnemonic + "|ff|\n\n"
-        res += "|tit|" + self.titre + "|ff|\n\n"
+        res += "# |rgc|" + self.zone + "|ff|:|vrc|" + self.mnemonic
+        res += "|ff|\n\n|tit|" + self.titre + "|ff|\n\n"
         description = str(self.description)
         if not description:
             description = "Vous êtes au milieu de nulle part."
         
-        res += description + "\n\n"
+        res += description + "\n"
+        liste_messages = []
+        flags = 0
+        type(self).importeur.hook["salle:meteo"].executer(self, liste_messages,
+                flags)
+        res += "|cy|" + "\n".join(liste_messages) + "|ff|\n\n"
         res += "Sorties : "
         res += self.afficher_sorties(personnage)
         
         # Personnages
         personnages = OrderedDict()
-        # Si le personnage est un joueur, il se retrouve avec un nomre de 1
+        # Si le personnage est un joueur, il se retrouve avec un nombre de 1
         # Si le personnage est un PNJ, on conserve son prototype avec
         # le nombre d'occurences de prototypes apparaissant
         for personne in self.personnages:
@@ -216,7 +227,7 @@ class Salle(ObjetID):
     
     def afficher_sorties(self, personnage):
         """Affiche les sorties de la salle"""
-        res = ""
+        noms = []
         for nom in NOMS_SORTIES.keys():
             sortie = self.sorties[nom]
             if sortie:
@@ -225,16 +236,19 @@ class Salle(ObjetID):
             nom_aff = self.sorties.get_nom_abrege(nom)
             if self.sorties.sortie_existe(nom):
                 if sortie.cache:
-                    res += " ".ljust(len(self.sorties.get_nom_abrege(
+                    res = " ".ljust(len(self.sorties.get_nom_abrege(
                             sortie.direction)))
                 else:
-                    res += "|vr|" + nom_aff + "|ff|"
+                    res = "|vr|" + nom_aff + "|ff|"
+                
+                if sortie.porte and sortie.porte.fermee:
+                    res = "[" + res + "]"
             else:
-                res += " ".ljust(len(nom_aff))
-            res += ", "
+                res = " ".ljust(len(nom_aff))
+            
+            noms.append(res)
         
-        res = res[:-2] + "."
-        return res
+        return ", ".join(noms) + "."
     
     def afficher_noms_objets(self):
         """Retourne les noms et états des objets sur le sol de la salle"""

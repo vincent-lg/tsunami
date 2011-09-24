@@ -100,10 +100,6 @@ class Module(BaseModule):
             if (not compte.valide) and (not compte.nom in comptes_a_pas_effacer):
                 self.supprimer_compte(compte)
         
-        # On supprime les joueurs dont le fichier a été effacé manuellement
-        for compte in self.comptes.values():
-            compte.joueurs.supprimer_none()
-        
         # On ajoute le dictionnaire 'instances' comme groupe fictif de 'parid'
         type(self.importeur).parid[NOM_GROUPE] = self.instances
         
@@ -203,7 +199,7 @@ class Module(BaseModule):
     def ajouter_compte(self, nom_compte):
         """Méthode appelée pour ajouter un compte identifié par son nom"""
         nouv_compte = Compte(nom_compte)
-        self.cpt_logger.info("Création du compte {0}: {1}".format( \
+        self.cpt_logger.info("Création du compte {}: {}".format(
                 nom_compte, nouv_compte))
         self.comptes[nouv_compte.id.id] = nouv_compte
         return nouv_compte

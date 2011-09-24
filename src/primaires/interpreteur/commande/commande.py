@@ -155,10 +155,8 @@ class Commande(Masque):
         """Méthode appelée quand on ajoute la commande à l'interpréteur"""
         pass
     
-    def valider(self, personnage, dic_masques, commande):
+    def repartir(self, personnage, masques, commande):
         """Fonction de validation.
-        Elle retourne True si la commande entrée par le joueur correspond à
-        son nom, False sinon.
         
         """
         # Si le personnage n'a pas le droit d'appeler la commande, on s'arrête
@@ -175,6 +173,10 @@ class Commande(Masque):
             fin_pos = len(str_commande)
         
         str_commande = str_commande[:fin_pos]
+        # Si la commande est gvide, elle n'est pas validée
+        if not str_commande:
+            return False
+        
         if personnage.langue_cmd == "francais":
             nom_com = self.nom_francais
         elif personnage.langue_cmd == "anglais":
@@ -192,7 +194,14 @@ class Commande(Masque):
         else:
             valide = False
         
+        if valide:
+            masques.append(self)
+        
         return valide
+    
+    def valider(self, personnage, dic_masques):
+        """Validation de la commande."""
+        return True
     
     def interpreter(self, personnage, dic_masques):
         """Fonction d'interprétation.

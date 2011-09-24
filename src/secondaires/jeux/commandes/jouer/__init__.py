@@ -32,7 +32,8 @@
 
 from primaires.interpreteur.commande.commande import Commande
 
-from secondaires.jeux.contextes.plateau import Plateau
+from secondaires.jeux.contextes.plateau import Plateau as ContextePlateau
+from secondaires.jeux.partie import Partie
 
 class CmdJouer(Commande):
     
@@ -43,23 +44,36 @@ class CmdJouer(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "jouer", "play")
-        self.schema = "<objet_jeu>"
-        self.nom_categorie = "bouger"
+        self.schema = "<nom_objet>"
         self.aide_courte = "Permet de jouer à un jeu"
         self.aide_longue = \
             "Cette commande permet de jouer à un jeu "
     
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nom_objet = self.noeud.get_masque("nom_objet")
+        nom_objet.proprietes["type"] = "'plateau de jeu'"
+    
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        objet = dic_masques["objet_jeu"].element
+        objet = dic_masques["nom_objet"].objet
+        jeux = type(self).importeur.jeux.jeux
+        plateaux = type(self).importeur.jeux.plateaux
+        plateau = plateaux[objet.plateau]
+        jeu = plateau.jeux[0]
+        jeu = jeux[jeu]
         
-        jeux = type(self).importeur.jeux
-        
-        if jeux.get_jeu(objet.jeu) is None:
-            raise(ValueError("Le jeu n'existe pas"))
+        if objet.partie:
+            self.pere << "|err|Vous ne pouvez rejoindre cette partie.|ff|"
         else:
-            partie = jeux.get_partie(objet)
-            contexte = Plateau(personnage.instance_connexion, objet)
-            personnage.contexte_actuel.migrer_contexte(contexte)
-            partie.arriverPif(personnage)
-        
+            plateau = plateau()
+            jeu = jeu()
+            partie = Partie(jeu, plateau)
+            jeu.plateau = plateau
+            jeu.partie = partie
+            partie.ajouter_joueur(personnage)
+            objet.partie = partie
+            contexte = ContextePlateau(personnage.instance_connexion, objet,
+                    partie)
+            personnage.contextes.ajouter(contexte)
+            personnage << contexte.accueil()

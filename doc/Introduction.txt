@@ -1,0 +1,71 @@
+h1. Introduction
+
+Cette page présente une introduction à project:kassie, un moteur de "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon développé en "Python":http://www.python.org.
+
+Table des matières :
+
+{{toc}}
+
+h2. Un moteur de MUD
+
+project:kassie est un moteur de "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon, c'est-à-dire qu'il propose une base de code, aussi complète et flexible que possible, à l'intention des futurs créateurs de "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon.
+
+Créer un "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon demande beaucoup de travail : il faut mettre en place une architecture réseau stable, modéliser des joueurs, des salles, faciliter la création de commandes et ouvrir la voie à certaines améliorations plus avancées.
+
+Le moteur de "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon n'est pas un "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon : il s'agit d'une base sur laquelle plusieurs "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon différents peuvent être mis en place. project:kassie se veut facile à prendre en main et à étendre, ce qui veut dire que vous pouvez, sans trop de peines, créer un "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon entièrement personnalisé à partir de la base que vous offre project:kassie.
+
+h2. project:kassie à l'installation
+
+Quand vous [[Installation|installez]] project:kassie sur votre système, vous disposez d'ores et déjà d'un "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon prêt à l'emplois. L'univers est, naturellement, encore vide à cet instant mais vous disposez de plusieurs moyens pour le créer, qui seront détaillées plus tard :
+
+h3. A l'aide de commandes en jeu
+
+En vous connectant à votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon nouvellement créé, vous pouvez construire votre univers avec un choix de [[CommandesConstruction|commandes de construction]] mises à disposition.
+
+Une partie de votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon est également paramétrable grâce à certaines [[CommandesConfiguration|commandes de configuration]].
+
+Vous retrouverez plus d'information dans la rubrique [[Configuration|configuration]] et plus précisément dans les pages consacrées aux [[CommandesConfiguration|commandes de configuration]] et aux [[FichiersConfiguration|fichiers de configuration]].
+
+*Note : sachez que pour accéder à ces commandes de configuration et de construction, vous devez disposer d'un [[CompteAdministrateur|compte administrateur]]. Pour des informations sur la création d'un tel compte, référez-vous à
+[[CompteAdministrateur|cette rubrique]].*
+
+h3. A l'aide de fichiers de configuration
+
+project:kassie vous permet de personnaliser votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon de façon simple, en éditant des fichiers de configuration.
+
+Ces fichiers respectent une syntaxe claire et sont très faciles à modifier. Il en existe plusieurs, triés en fonction de leur domaine d'influence. Par exemple, un fichier de configuration permet de paramétrer votre serveur mail.
+
+Pour plus d'informations, référez-vous à la rubrique consacrée aux [[FichiersConfiguration|fichiers de configuration]].
+
+h3. En développant des améliorations
+
+La personnalisation du projet grâce aux [[CommandesConfiguration|commandes]] et aux [[FichiersConfiguration|fichiers]] de configuration a ses limites. Si vous souhaitez personnaliser votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon en ajoutant de nouvelles commandes, de nouvelles fonctionnalités, peut-être des pans de jeu tout entier, vous devrez alors remonter vos manches et plonger dans le code.
+
+Rassurez-vous, toutefois : le code de project:kassie a été écrit pour être facile à étendre, de par le fait facile à lire et à comprendre. En outre, la rubrique [[Développement|développement]] de cette documentation est précisément ici pour vous aider dans votre développement. Elle explique en détail la création de commandes, d'éditeurs, de modules et s'attarde sur certains des points les plus obscurs du fonctionnement de project:kassie.
+
+h2. Points forts et poins faibles de project:kassie
+
+h3. Points forts
+
+* *Facile à installer* : [[InstallationPython|Installez Python]], [[TelechargerKassie|téléchargez le code]] sont les deux seules étapes nécessaires à l'installation de project:kassie
+* *Portable* : l'un des avantages d'un projet développé en "Python":http://www.python.org/ est sa portabilité. project:kassie tourne sans problème sous "Windows":http://fr.wikipedia.org/wiki/Microsoft_Windows, "Linux":http://fr.wikipedia.org/wiki/Linux ou "Mac":http://fr.wikipedia.org/wiki/Mac_OS. Les contributeurs veillent à ce que la portabilité entre ces systèmes soit respectée au possible
+* *Configurable* : project:kassie possède de nombreuses [[CommandesConfiguration|commandes]] et [[FichiersConfiguration|fichiers]] de configuration qui permettent de construire et personnaliser votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon sans toucher au code
+* *Modulaire* : project:kassie est divisé en plusieurs [[GlosssaireModule|modules]] qui favorisent la compréhension et l'extension du moteur
+* *Libre* : avantage non négligeable, le code de project:kassie est entièrement libre. Il est, de plus, distribué sous licence "BSD":http://fr.wikipedia.org/wiki/Licence_BSD ce qui signifie que, si vous ne voulez pas diffuser le code de votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon basé sur project:kassie, rien ne vous oblige à le faire
+* *Flexible* : son choix de langage de programmation ("Python":http://www.python.org/), son [[ArchitectureModules|architecture modulaires]], en font un projet simple et aisément extensible.
+
+J'ajoute que project:kassie est entièrement francophone. La [[Index|documentation], la [[Configuration|configuration]], le code-même sont en français. Cela augmente d'autant la facilité de sa prise en main.
+
+h3. Ses points faibles
+
+* *Performances* : étant codé en "Python":http://www.python.org, il reste moins rapide qu'un moteur codé en "C":http://fr.wikipedia.org/wiki/Langage_C ou même en "C++":http://fr.wikipedia.org/wiki/C%2B%2B. L'expérience a cependant montré que project:kassie pouvait supporter un "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon d'une taille importante sans perte significative de performances
+* *Internationalisation* : project:kassie a été pensé pour les développeurs francophones et est, de ce fait, entièrement en français. Il perd, par conséquent, tout intérêt pour des développeurs non-francophones.
+
+h2. Besoin d'aide ?
+
+Si la documentation ne répond pas à vos questions, vous avez différents moyens pour les poser et obtenir des réponses des développeurs de project:kassie :
+
+* Le "forum":http://redmine.kassie.fr/projects/kassie/boards de project:kassie
+* L'adresse equipe@kassie.fr pour contacter directement l'équipe des développeurs
+
+[[Index|Retour à l'index]]

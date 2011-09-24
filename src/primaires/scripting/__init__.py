@@ -30,15 +30,27 @@
 
 """Fichier contenant le module primaire scripting."""
 
+import os
 import re
 
 from abstraits.module import *
-from .config import cfg_scripting
-from .action import Action
+from .script import scripts
+from .instruction import Instruction
+from .condition import Condition
+from .affectation import Affectation
+from .action import Action, actions as lst_actions
+from . import parser
+from . import commandes
+from .quete.quete import Quete
+from .quete.etape import Etape
+from .test import Test
+from .editeurs.qedit import EdtQedit
+from .constantes.aide import *
 
 class Module(BaseModule):
     
     """Cette classe contient les informations du module primaire scripting.
+    
     Ce module gère le langage de script utilisé pour écrire des quêtes et
     personnaliser certains objets de l'univers. Il regroupe également les
     éditeurs et les objets gérant les quêtes.
@@ -49,44 +61,96 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "scripting", "primaire")
         self.cfg = None
-    
-    def config(self):
-        """Méthode de configuration du module"""
-        self.cfg = type(self.importeur).anaconf.get_config("scripting",
-            "scripting/syntaxe.cfg", "config scripting", cfg_scripting)
-        
-        BaseModule.config(self)
+        self.fonctions = {}
+        self.actions = {}
+        self.commandes = {}
+        self.quetes = {}
+        self.sujets_aides = {
+            "syntaxe": syntaxe,
+        }
     
     def init(self):
         """Initialisation"""
-        #self.test_instruction("test(a14)")
+        # Chargement des actions
+        self.charger_actions()
+        self.charger_fonctions()
+        
+        # Chargement des quêtes
+        quetes = self.importeur.supenr.charger_groupe(Quete)
+        for quete in quetes:
+            self.quetes[quete.cle] = quete
+        
+        # Chargement des étapes et tests
+        etapes = self.importeur.supenr.charger_groupe(Etape)
+        tests = self.importeur.supenr.charger_groupe(Test)
         BaseModule.init(self)
     
-    def test_instruction(self, chaine):
-        """Test d'instruction.
-        Méthode de debug.
+    def ajouter_commandes(self):
+        """Ajout des commandes dans l'interpréteur"""
+        self.commandes = [
+            commandes.qedit.CmdQedit(),
+        ]
+        
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)
+        
+        # Ajout de l'éditeur 'qedit'
+        self.importeur.interpreteur.ajouter_editeur(EdtQedit)
+    
+    def preparer(self):
+        """Préparation du module.
+        
+        On nettoie les scripts.
         
         """
-        cfg = self.cfg
-        identifiant = cfg.identifiant
-        type_de_donnee = "(" + ")|(".join([cfg.chaine, cfg.nombre, cfg.identifiant]) + ")"
-        affectation = cfg.affectation.format(identifiant=identifiant,
-                type_de_donnee=type_de_donnee)
-        sep = cfg.sep
-        fonction = r"({nom_fonction}){dg}({type_de_donnee})?({sep}({type_de_donnee}))*{dd}"
-        fonction = fonction.format(nom_fonction=cfg.nom_fonction,
-                sep=sep, type_de_donnee=type_de_donnee,
-                dg=cfg.delimiteur_gauche, dd=cfg.delimiteur_droit)
+        for script in scripts:
+            script.init()
+            for evt in script.evenements.values():
+                evt.creer_sinon()
+    
+    def charger_actions(self):
+        """Chargement automatique des actions."""
+        # Elles se trouvent dans le sous-répertoire actions
+        chemin = self.chemin + os.sep + "actions"
+        chemin_py = "primaires.scripting.actions"
+        for nom_fichier in os.listdir(chemin):
+            if not nom_fichier.startswith("_") and nom_fichier.endswith(".py"):
+                nom_module = nom_fichier[:-3]
+                chemin_py_mod = chemin_py + ".{}".format(nom_module)
+                action = __import__(chemin_py_mod)
+                action = getattr(getattr(getattr(getattr(action, "scripting"),
+                        "actions"), nom_module), "ClasseAction")
+                action.nom = nom_module
+                action._parametres_possibles = {}
+                action.init_types()
+                action.convertir_types()
+                lst_actions[nom_module] = action
+                self.actions[nom_module] = action
+            
+    def charger_fonctions(self):
+        """Chargement automatique des fonctions."""
+        # Elles se trouvent dans le sous-répertoire fonctions
+        chemin = self.chemin + os.sep + "fonctions"
+        chemin_py = "primaires.scripting.fonctions"
+        for nom_fichier in os.listdir(chemin):
+            if not nom_fichier.startswith("_") and nom_fichier.endswith(".py"):
+                nom_module = nom_fichier[:-3]
+                chemin_py_mod = chemin_py + ".{}".format(nom_module)
+                fonction = __import__(chemin_py_mod)
+                fonction = getattr(getattr(getattr(getattr(fonction,
+                        "scripting"), "fonctions"), nom_module),
+                        "ClasseFonction")
+                fonction.nom = nom_module
+                fonction._parametres_possibles = {}
+                fonction.init_types()
+                fonction.convertir_types()
+                self.fonctions[nom_module] = fonction
+    
+    def get_objet(self, identifiant):
+        """Récupère l'objet depuis son identifiant.
         
-        Action.changer_schema("^" + fonction + "$")
-        Action.schema_argument = r"({sep}({a}))({sep}({a}))*".format(a=type_de_donnee, sep=sep)
-        Action.type_de_donnee = type_de_donnee
-        action = Action(cfg)
-        regex = action.correspond_schema(chaine)
-        if not regex:
-            print("Non !")
-            return
+        Sont successivement testées :
+        -   les salles
         
-        action.parser(regex, chaine)
-        nom_fonction, args = action.groupes["nom"], action.groupes["parametres"]
-        print(nom_fonction, args)
+        """
+        return self.importeur.salle[identifiant]

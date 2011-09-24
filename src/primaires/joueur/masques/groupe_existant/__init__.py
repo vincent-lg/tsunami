@@ -50,16 +50,23 @@ class GroupeExistant(Masque):
         """Initialisation des attributs"""
         self.nom_groupe = ""
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
-        lstrip(commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         nom_groupe = liste_vers_chaine(commande)
         if not nom_groupe:
             raise ErreurValidation(
                 "Précisez un nom de groupe existant.")
         
         nom_groupe = nom_groupe.split(" ")[0]
+        self.a_interpreter = nom_groupe
+        commande[:] = commande[len(nom_groupe):]
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        nom_groupe = self.a_interpreter
         noms_groupes = [groupe.nom for groupe in \
             type(self).importeur.interpreteur.groupes._groupes.values()]
         if nom_groupe not in noms_groupes:
@@ -67,6 +74,4 @@ class GroupeExistant(Masque):
                 "|err|Ce groupe est inconnu.|ff|")
 
         self.nom_groupe = nom_groupe.lower()
-        commande[:] = commande[len(nom_groupe):]
-        
         return True

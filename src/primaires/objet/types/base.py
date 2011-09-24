@@ -61,9 +61,13 @@ class BaseType(ObjetID, metaclass=MetaType):
         self.etat_pluriel = "sont posés là"
         self.description = Description(parent=self)
         self.objets = ListeID(self)
+        self.unique = True # par défaut tout objet est unique
         
         # Editeur
         self._extensions_editeur = []
+        
+        # Erreur de validation du type
+        self.err_type = "Le type de {} est invalide."
     
     def __getnewargs__(self):
         return ()
@@ -71,7 +75,13 @@ class BaseType(ObjetID, metaclass=MetaType):
     def __str__(self):
         return self.cle
     
-    def etendre_editeur(self, raccourci, ligne, editeur, objet, attribut):
+    def __getstate__(self):
+        """Retourne le dictionnaire à enregistrer."""
+        attrs = dict(ObjetID.__getstate__(self))
+        del attrs["_attributs"]
+        return attrs
+    
+    def etendre_editeur(self, raccourci, ligne, editeur, objet, attribut, *sup):
         """Permet d'étendre l'éditeur d'objet en fonction du type.
         -   raccourci   le raccourci permettant d'accéder à la ligne
         -   ligne       la ligne de l'éditeur (exemple 'Description')
@@ -84,7 +94,7 @@ class BaseType(ObjetID, metaclass=MetaType):
         
         """
         self._extensions_editeur.append(
-            (raccourci, ligne, editeur, objet, attribut))
+            (raccourci, ligne, editeur, objet, attribut, sup))
     
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes.
@@ -121,12 +131,13 @@ class BaseType(ObjetID, metaclass=MetaType):
             return nom + " " + self.etat_pluriel
     
     # Actions sur les objets
-    def regarder(self, personnage):
+    @staticmethod
+    def regarder(objet, personnage):
         """Le personnage regarde l'objet"""
         salle = personnage.salle
-        moi = "Vous regardez {} :".format(self.nom_singulier)
-        autre = "{} regarde {}.".format(personnage.nom, self.nom_singulier)
-        description = str(self.description)
+        moi = "Vous regardez {} :".format(objet.nom_singulier)
+        autre = "{} regarde {}.".format(personnage.nom, objet.nom_singulier)
+        description = str(objet.description)
         if not description:
             description = "Il n'y a rien de bien intéressant à voir."
         

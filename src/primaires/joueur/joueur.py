@@ -45,7 +45,7 @@ class Joueur(Personnage):
     def __init__(self):
         """Constructeur du joueur"""
         Personnage.__init__(self)
-        self.groupe = type(self).importeur.joueur.groupe_par_defaut
+        self.nom_groupe = type(self).importeur.joueur.groupe_par_defaut
         self.compte = None
         self.instance_connexion = None
         self.connecte = False
@@ -120,6 +120,9 @@ class Joueur(Personnage):
             salle.ajouter_personnage(self)
         
         self << self.contexte_actuel.accueil()
+        
+        # On appelle l'hook à la connexion
+        type(self).importeur.hook["joueur:connecte"].executer(self)
     
     def pre_deconnecter(self):
         """Cette méthode prépare la déconnexion du joueur.

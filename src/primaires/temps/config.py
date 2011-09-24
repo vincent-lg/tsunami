@@ -38,6 +38,7 @@ cfg_temps = r"""
 # date et de l'heure...
 
 ## Périodes temporelles
+
 # Saisons
 # Ici sont listées les saisons.
 # Leur ordre d'apparition est déduit de l'écoulement des mois (voir plus bas).
@@ -50,7 +51,7 @@ saisons = [
 
 # Mois
 # Les mois sont donnés dans une liste de paires sous la forme :
-#     (nom_du_mois: nom_de_la_saison),
+#   ("nom du mois", "nom de la saison"),
 mois = [
     ("janvier", "hiver"),
     ("février", "hiver"),
@@ -74,11 +75,21 @@ mois = [
 nombre_jours = 30
 
 # Noms des jours
-# Laissez une liste vide si vos jours portent simplement un numéro.
+# Laissez la liste vide si vos jours portent simplement un numéro.
 # Dans ce cas, c'est le nombre de jours par mois qui intervient.
 noms_jours = []
 
+# Alternance jour / nuit
+# Pour chaque saison, précisez l'heure du lever et du coucher de soleil.
+alternance_jn = [
+    ("hiver", 8, 20),
+    ("printemps", 7, 21),
+    ("été", 6, 22),
+    ("automne", 7, 21),
+]
+
 ## Date et heure initiales
+
 # Si aucune date n'est définie, on règle la date sous la forme d'un tuple
 # ne contenant que des nombres :
 # (année, mois, jour, heure, minute)
@@ -87,6 +98,7 @@ noms_jours = []
 reglage_initial = (1785, 5, 12, 10, 0)
 
 ## Ecoulement du temps
+
 # A quelle vitesse s'écoule le temps dans l'univers ?
 # La réponse doit être donnée sous la forme d'une chaîne de caractère contenant
 # - le numérateur
@@ -101,6 +113,7 @@ reglage_initial = (1785, 5, 12, 10, 0)
 vitesse_ecoulement = "1/4"
 
 ## Formatage de la date et l'heure
+
 # Formatage de la date
 # Le formatage doit être donné sous la forme d'une chaîne de caractère
 # contenant plusieurs symboles :
@@ -118,9 +131,37 @@ formatage_date = "{no_j} {nm_m} {no_a}"
 # {no_h} : le nombre d'heures
 # {nm_h} : le nom de l'heure (comme huit heures)
 # {no_m} : le nombre de minutes
-# {nm_m} : le nom de minutes (cinquante-quatre)
+# {nm_m} : le nom des minutes (cinquante-quatre)
 # {no_q} : l'heure sous la forme de quart d'heure (00:45)
-# {nm_q} : l'heure sous la forme de nom de quart d'heure (minuit moins le quart)
+# {nm_q} : l'heure sous la forme de nom de quart d'heure (minuit et quart)
 formatage_heure = "{no_h}:{no_m}"
+
+## Affichage physique de l'heure
+
+# Il s'agit de la manifestation concrète du temps qui passe : la plus
+# évidente de ces manifestations est bien sûr le soleil qui se déplace dans
+# le ciel, mais dans un univers plus fantaisiste on pourrait imaginer d'autres
+# marques d'écoulement du temps.
+
+# Une heure avant le lever du soleil
+pre_lever = "Une ligne pâle borde l'horizon est, trahissant l'éminence de " \
+    "l'aube."
+# L'heure qui suit le lever du soleil
+post_lever = "Le soleil se hisse au-dessus de l'horizon est, perçant " \
+    "l'atmosphère matinale."
+# Jusqu'à midi
+matinee = "Le soleil matinal poursuit sa lente ascension vers le zénith."
+# Midi
+midi = "Plus brillant que jamais, le soleil luit au plus haut de sa " \
+    "trajectoire."
+# Jusqu'une heure avant le coucher du soleil
+apres_midi = "Lentement mais sûrement, le soleil descend vers l'horizon ouest."
+# Une heure avant le coucher du soleil
+pre_coucher = "Les derniers rayons du soleil déclinant embrasent l'atmosphère."
+# L'heure qui suit le coucher du soleil
+post_coucher = "Les premières étoiles s'allument dans la nuit encore claire."
+# Jusqu'une heure avant le lever du soleil le lendemain
+nuit = "La voûte céleste vous surplombant est sombre, piquetée d'étoiles " \
+    "lointaines."
 
 """

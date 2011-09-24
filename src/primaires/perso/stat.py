@@ -31,6 +31,7 @@
 """Ce fichier contient la classe Stat, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
+from primaires.perso.exceptions.stat import *
 
 # Flags :
 NX = 0 # aucune exception ne sera levée
@@ -43,9 +44,20 @@ class Stat(BaseObj):
     
     """Cette classe définit une stat (ou caractéristique).
     
+    Les attributs d'une stat sont :
+    nom -- son nom
+    symbole -- son symbole (utile pour le prompt)
+    defaut -- sa valeur par défaut, celle donnée à un joueur à sa création
+    marge -- la marge maximale
+    max -- une chaîne de caractère représentant une autre stat
+    flags -- les flags indiquant quand une exception doit être levée
+    parent -- le parent hébergeant les stats
+    
     """
     
-    def __init__(self, nom, defaut, marge, max, flags=I0, parent=None):
+    _nom = "stat"
+    _version = 1
+    def __init__(self, nom, symbole, defaut, marge, max, flags=I0, parent=None):
         """Constructeur d'une stat.
         Elle prend les mêmes paramètres que ceux passés dans l'ordre, dans
         la configuration.
@@ -55,6 +67,7 @@ class Stat(BaseObj):
         """
         BaseObj.__init__(self)
         self.nom = nom
+        self.symbole = symbole
         self.defaut = defaut
         self.marge_min = 0
         self.marge_max = marge
@@ -72,7 +85,7 @@ class Stat(BaseObj):
         self._construire()
     
     def __getnewargs__(self):
-        return ("", "", 0, "")
+        return ("", "", "", 0, "")
     
     def __str__(self):
         return "{}={} (base={}, variable={}, max={})".format(
@@ -123,13 +136,13 @@ class Stat(BaseObj):
         base = courante + self.__variable
         # Levée d'exceptions
         if base < 0 and flags & I0:
-            raise ValueError
+            raise StatI0
         if base <= 0 and flags & IE0:
-            raise ValueError
+            raise StatIE0
         if self.max and flags & SM and base > self.max:
-            raise ValueError
+            raise StatSM
         if self.max and flags & SEM and base >= self.max:
-            raise ValueError
+            raise StatSEM
         
         if base > self.marge_max:
             base = self.marge_max

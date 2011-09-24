@@ -63,7 +63,7 @@ class Presentation(Editeur):
                 recherche))
     
     def ajouter_choix(self, nom, raccourci, objet_editeur,
-            objet_edite=None, attribut=None):
+            objet_edite=None, attribut=None, *sup):
         """Ajoute un choix possible :
         -   nom : le nom affiché dans la présentation (exemple 'description')
         -   raccourci : le raccourci pour entrer dans le sous éditeur ('d')
@@ -73,10 +73,10 @@ class Presentation(Editeur):
         
         """
         return self.ajouter_choix_avant(self.nom_quitter, nom, raccourci,
-                objet_editeur, objet_edite, attribut)
+                objet_editeur, objet_edite, attribut, *sup)
         
     def ajouter_choix_apres(self, apres, nom, raccourci, objet_editeur,
-            objet_edite=None, attribut=None):
+            objet_edite=None, attribut=None, *sup):
         """Ajout le choix après 'apres'.
         Pour les autres arguments, voir la méthode 'ajouter_choix'.
         
@@ -86,7 +86,7 @@ class Presentation(Editeur):
                 "Le raccourci {} est déjà utilisé dans cet éditeur".format(
                 raccourci))
         
-        enveloppe = EnveloppeObjet(objet_editeur, objet_edite, attribut)
+        enveloppe = EnveloppeObjet(objet_editeur, objet_edite, attribut, *sup)
         self.choix[nom] = enveloppe
         passage_apres = False
         for cle in tuple(self.choix.keys()):
@@ -99,7 +99,7 @@ class Presentation(Editeur):
         return enveloppe
 
     def ajouter_choix_avant(self, avant, nom, raccourci, objet_editeur,
-            objet_edite=None, attribut=None):
+            objet_edite=None, attribut=None, *sup):
         """Ajoute le choix avant 'avant''.
         Pour les autres arguments, voir la méthode 'ajouter_choix'.
         
@@ -109,7 +109,7 @@ class Presentation(Editeur):
                 "Le raccourci {} est déjà utilisé dans cet éditeur".format(
                 raccourci))
         
-        enveloppe = EnveloppeObjet(objet_editeur, objet_edite, attribut)
+        enveloppe = EnveloppeObjet(objet_editeur, objet_edite, attribut, *sup)
         self.choix[nom] = enveloppe
         passage_apres = False
         for cle in tuple(self.choix.keys()):
@@ -124,7 +124,7 @@ class Presentation(Editeur):
     def supprimer_choix(self, nom):
         """Supprime le choix possible 'nom'"""
         # On recherche le raccourci pour le supprimer
-        for cle, valeur in tuple(self.racourcis.items()):
+        for cle, valeur in tuple(self.raccourcis.items()):
             if valeur == nom:
                 del self.raccourcis[cle]
         
@@ -159,7 +159,17 @@ class Presentation(Editeur):
             nom = self.raccourcis[msg.rstrip().lower()]
         except KeyError:
             if msg:
-                self.pere << "|err|Raccourci inconnu ({}).|ff|".format(msg)
+                self.autre_interpretation(msg)
         else:
             contexte = self.choix[nom].construire(self.pere)
             self.migrer_contexte(contexte)
+    
+    def autre_interpretation(self, msg):
+        """Cette méthode peut être redéfini par les filles de presentation.
+        
+        Elle permet de rendre l'éditeur capable d'interpréter d'autres
+        choses que des options et des raccourcis.
+        Par défaut, envoie un message d'erreur à l'utilisateur.
+        
+        """
+        self.pere << "|err|Raccourci inconnu ({}).|ff|".format(msg)

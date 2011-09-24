@@ -28,6 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module perso."""
+"""Package contenant les commandes du module jeux."""
 
 from . import jouer

@@ -66,10 +66,9 @@ class Temps(Unique):
         if config.noms_jours:
             self.noms_jours = config.noms_jours
         else:
-            self.noms_jours = [str(i) for i in range(1, \
+            self.noms_jours = [str(i) for i in range(1,
                     config.nombre_jours + 1)]
         
-        print("jours", self.noms_jours)
         # On vérifie que le réglage initial est conforme aux noms
         try:
             nom_mois = self.noms_mois[self.mois]
@@ -133,6 +132,52 @@ class Temps(Unique):
     def heure_formatee(self):
         """Retourne l'heure formatée"""
         return self.formatage_heure.format(no_h=self.no_h, no_m=self.no_m)
+    
+    @property
+    def h_lever(self):
+        """Retourne l'heure du lever de soleil"""
+        for ligne in type(self).importeur.temps.cfg.alternance_jn:
+            if ligne[0] == self.nm_s:
+                return ligne[1]
+    
+    @property
+    def h_coucher(self):
+        """Retourne l'heure du coucher de soleil"""
+        for ligne in type(self).importeur.temps.cfg.alternance_jn:
+            if ligne[0] == self.nm_s:
+                return ligne[2]
+        
+    @property
+    def il_fait_jour(self):
+        """Retourne True s'il fait jour, False sinon"""
+        return self.heure >= self.h_lever and self.heure < self.h_coucher
+    
+    @property
+    def il_fait_nuit(self):
+        """Retourne True s'il fait nuit, False sinon"""
+        return not self.il_fait_jour
+    
+    @property
+    def ciel_actuel(self):
+        """Retourne le message correspondant au ciel actuel selon l'heure"""
+        config = type(self).importeur.temps.cfg
+        h_now = self.heure
+        if h_now == self.h_lever -  1:
+            return config.pre_lever
+        elif h_now == self.h_lever:
+            return config.post_lever
+        elif h_now > self.h_lever and h_now < 12:
+            return config.matinee
+        elif h_now == 12:
+            return config.midi
+        elif h_now > 12 and h_now < self.h_coucher - 1:
+            return config.apres_midi
+        elif h_now == self.h_coucher - 1:
+            return config.pre_coucher
+        elif h_now == self.h_coucher:
+            return config.post_coucher
+        elif h_now > self.h_coucher or h_now < self.h_lever - 1:
+            return config.nuit        
     
     def inc(self):
         """Incrémente de 1 seconde réelle"""

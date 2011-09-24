@@ -50,26 +50,52 @@ class NomObjet(Masque):
         """Constructeur du masque"""
         Masque.__init__(self)
         self.proprietes["conteneurs"] = "(personnage.salle.objets_sol, )"
+        self.proprietes["type"] = "None"
+    
+    @property
+    def objet(self):
+        """Retourne le premier objet."""
+        return self.objets[0][0]
     
     def init(self):
         """Initialisation des attributs"""
         self.objets = []
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
-        nom = liste_vers_chaine(commande).lstrip()
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
+        nom = liste_vers_chaine(commande)
         
         if not nom:
             raise ErreurValidation( \
                 "Précisez un nom d'objet.")
         
+        # Attention : sauf avis contraire, le masque interprète la commande
+        # entière. Les "avis contraires" en question sont un masque, comme
+        # un mot-clé, cherchant dans les masques précédents
+        # Exemple : get <nom_objet> from ...
+        # nom_objet se valide. Le mot-clé from n'a plus rien à valider
+        # mais il sait qu'il doit chercher dans le masque précédemment validé
+        # (ici nom_objet) pour trouver l'objet
+        commande[:] = []
+        self.a_interpreter = nom
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        nom = self.a_interpreter
         conteneurs = self.conteneurs
+        o_type = self.type
         objets = []
         
         for c in conteneurs:
             for o in c:
                 if contient(o.nom_singulier, nom):
+                    if o_type and o.nom_type != o_type:
+                        raise ErreurValidation(
+                                o.err_type.format(o.nom_singulier))
+                    
                     objets.append((o, c))
         
         if not objets:

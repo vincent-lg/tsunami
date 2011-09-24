@@ -30,7 +30,9 @@
 
 """Fichier contenant l'exception ErreurValidation, détaillée plus bas."""
 
-class ErreurValidation(RuntimeError):
+from bases.exceptions.base import ExceptionMUD
+
+class ErreurValidation(ExceptionMUD):
     
     """Exception générale lors d'une erreur de validation
     Cette exception est levée quand un noeud n'a pu être validé
@@ -38,9 +40,16 @@ class ErreurValidation(RuntimeError):
     
     """
     
-    def __init__(self, message=""):
-        """Constructeur de l'exception"""
+    def __init__(self, message="", bloquant=False):
+        """Constructeur de l'exception.
+        
+        Le message donne des informations sur l'erreur.
+        Il sera probablement envoyé à un joueur.
+        Le flag bloquant indique si l'erreur doit interrompre le traitement.
+        
+        """
         self.message = message
+        self.bloquant = bloquant
     
     def __str__(self):
         """Affichage de l'exception"""

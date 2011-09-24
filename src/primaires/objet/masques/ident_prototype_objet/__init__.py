@@ -50,9 +50,8 @@ class IdentPrototypeObjet(Masque):
         self.ident = ""
         self.prototype = None
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         ident = liste_vers_chaine(commande).lstrip()
         
         if not ident:
@@ -60,6 +59,15 @@ class IdentPrototypeObjet(Masque):
                 "Précisez un prototype d'objet.")
         
         ident = ident.lower()
+        commande[:] = commande[len(ident):]
+        masques.append(self)
+        self.a_interpreter = ident
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        ident = self.a_interpreter
         if not ident in type(self).importeur.objet.prototypes:
             raise ErreurValidation(
                 "|err|Ce prototype est introuvable.|ff|")

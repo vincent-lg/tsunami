@@ -32,8 +32,7 @@
 
 cfg_com = r"""
 # Ce fichier contient la configuration du module primaire communication.
-# Il définit les couleurs de quelques commandes telles say / dire, ooc / hrp,
-# tell / parler etc.
+# Il définit les couleurs de quelques commandes et des options pour les canaux.
 # Les couleurs disponibles :
 #   |nr|  - noir
 #   |rg|  - rouge
@@ -49,15 +48,38 @@ cfg_com = r"""
 #   |jn|  - jaune
 #   |blc| - bleu clair
 #   |mgc| - magenta clair
-#   |cyb| - cyan clair
+#   |cyc| - cyan clair
 #   |bc|  - blanc
-
 
 ## Coloration des commandes
 
-# Commande shout / crier
-couleur_cri = "|blc|"
-
 # Commande tell / parler, reply / repondre
 couleur_tell = "|vrc|"
+
+## Canaux automatiquement créés
+
+# Ces canaux sont créés au lancement du moteur s'ils n'existent pas.
+# Vous pouvez en ajouter ou en supprimer à votre guise. Les flags
+# utilisables sont : PRIVE, MUET, INVISIBLE, IMM_AUTOCONNECT et
+# PERSO_AUTOCONNECT. Ces deux derniers permettent de connecter automatiquement
+# un Immortel lors de sa promotion ou tout joueur lors de sa création.
+
+liste_canaux = (
+    # Nom  | Couleur | Flags
+    ("hrp" , "|cyc|" , PERSO_AUTOCONNECT),
+    ("aide", "|rgc|" , PERSO_AUTOCONNECT),
+    ("imm" , "|jn|"  , PRIVE | INVISIBLE | IMM_AUTOCONNECT),
+)
+
+## Canal info
+
+# Ce canal automatiquement créé relaie dans l'univers les informations
+# générales. Vous pouvez paramétrer quelques-uns de ses attributs.
+
+# Couleur
+couleur_info = "|gr|"
+
+# Résumé
+resume_info = "canal d'information"
+
 """

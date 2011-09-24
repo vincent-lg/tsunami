@@ -117,6 +117,11 @@ class Editeur(Contexte):
         
         """
         emt = self.pere
+        # Alias contextes
+        res = self.traiter_alias_contextes(msg)
+        if res:
+            return
+        
         if self.opts.echp_sp_cars:
             msg = echapper_sp_cars(msg)
         

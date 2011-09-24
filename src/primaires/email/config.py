@@ -36,6 +36,7 @@ cfg_email = r"""
 # vous précisez le nom d'hôte utilisé pour envoyer les messages
 
 ## Autorisation
+
 # Si vous mettez cette donnée à False, le serveur d'e-mail sera considéré
 # comme inactif. Le module primaire 'email' ne pourra donc pas envoyer
 # d'e-mails.
@@ -44,6 +45,7 @@ cfg_email = r"""
 serveur_mail = True
 
 ## Nom d'hôte
+
 # Modifiez cette donnée pour spécifier le nom d'hôte de votre serveur
 # d'e-mail. Si vous précisez "exemple.com" en nom d'hôte, les messages envoyés
 # depuis l'alias "info" seront envoyés depuis l'adresse "info@exemple.com".
@@ -52,7 +54,8 @@ serveur_mail = True
 # et que le nom d'hôte est une chaîne vide, une erreur sera loggée.
 nom_hote = ""
 
-# Adresse mail de l'administrateur
+## Adresse mail de l'administrateur
+
 # Les e-mails destinés à l'administrateur seront envoyés à cette adresse.
 # Elle n'est pas nécessairement du même nom de domaine que le serveur, elle
 # peut très bien être une adresse hotmail, gmail, yahoo...

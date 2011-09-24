@@ -49,16 +49,26 @@ class Message(Masque):
         """Initialisation des attributs"""
         self.message = ""
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
-        message = liste_vers_chaine(commande).lstrip()
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque.
         
+        Le masque <message> prend tout le message.
+        
+        """
+        message = liste_vers_chaine(commande).lstrip()
+        self.a_interpreter = message
+        commande[:] = []
         if not message:
-            raise ErreurValidation( \
+            raise ErreurValidation(
                 "Que voulez-vous dire ?")
         
-        commande[:] = []
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        message = self.a_interpreter
         self.message = message
         
         return True

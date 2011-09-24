@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Email."""
+"""Ce fichier contient la classe Email, détaillée plus bas."""
 
 import smtplib
 import threading
@@ -42,12 +42,15 @@ from primaires.email.config import cfg_email
 from primaires.format.fonctions import supprimer_accents
 
 class Email(threading.Thread):
-    """Classe Email
-    Elle permet l'envoie d'un mail de manière asynchrone via l'utilisation
-    des threads. Lors de l'envoie d'un mail un thread est crée pour s'occuper
+    
+    """Classe Email.
+    
+    Elle permet l'envoi d'un mail de manière asynchrone via l'utilisation
+    des threads. Lors de l'envoi d'un mail un thread est créé pour s'occuper
     de cette tâche et se terminera quand le mail sera fini d'être envoyé.
     
     """
+    
     def __init__(self, destinateur, destinataires, sujet, corps):
         threading.Thread.__init__(self)
         
@@ -75,10 +78,8 @@ class Email(threading.Thread):
         try:
             smtp = smtplib.SMTP()
             smtp.connect()
-            smtp.sendmail(self.destinateur, self.destinataires, \
-                self.mail.as_string())
+            smtp.sendmail(self.destinateur, self.destinataires,
+                    self.mail.as_string())
             smtp.close()
         except SocketError as err:
             self.erreur = err
-    
-    

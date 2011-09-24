@@ -57,6 +57,6 @@ class CmdRegarder(Commande):
         masque = dic_masques["element_observable"]
         if masque:
             elt = masque.element
-            personnage << elt.regarder(personnage)
+            personnage << elt.regarder(elt, personnage)
         else:
             personnage << personnage.regarder()

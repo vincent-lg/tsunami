@@ -40,6 +40,7 @@ from . import commandes
 from .editeurs.redit import EdtRedit
 from .coordonnees import Coordonnees
 from . import masques
+from .porte import Porte
 
 class Module(BaseModule):
     
@@ -86,11 +87,15 @@ class Module(BaseModule):
         """Méthode de configuration du module"""
         type(self.importeur).anaconf.get_config("salle", \
             "salle/salle.cfg", "config salle", cfg_salle)
+        self.importeur.hook.ajouter_hook("salle:meteo",
+                "Hook appelé dès qu'on regarde une salle.")
         
         BaseModule.config(self)
     
     def init(self):
         """Méthode d'initialisation du module"""
+        # On récupère les portes
+        portes = self.importeur.supenr.charger_groupe(Porte)
         # On récupère les salles
         salles = self.importeur.supenr.charger_groupe(Salle)
         for salle in salles:
@@ -109,7 +114,9 @@ class Module(BaseModule):
         self.commandes = [
             commandes.addroom.CmdAddroom(),
             commandes.chsortie.CmdChsortie(),
+            commandes.fermer.CmdFermer(),
             commandes.goto.CmdGoto(),
+            commandes.ouvrir.CmdOuvrir(),
             commandes.redit.CmdRedit(),
             commandes.regarder.CmdRegarder(),
             commandes.supsortie.CmdSupsortie(),
@@ -231,6 +238,10 @@ class Module(BaseModule):
     
     def traiter_commande(self, personnage, commande):
         """Traite les déplacements"""
+        
+        # Si la commande est vide, on ne se déplace pas
+        if len(commande) == 0:
+            return False
         commande = commande.lower()
         salle = personnage.salle
         if commande in self.aliases.keys():

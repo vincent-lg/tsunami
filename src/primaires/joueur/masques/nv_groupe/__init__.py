@@ -54,15 +54,22 @@ class NvGroupe(Masque):
         """Initialisation des attributs"""
         self.nom_groupe = ""
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
-        lstrip(commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         nom_groupe = liste_vers_chaine(commande)
         if not nom_groupe:
             raise ErreurValidation( 
                 "Précisez un nom pour le nouveau groupe.")
         
+        self.a_interpreter = nom_groupe
+        commande[:] = []
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        nom_groupe = self.a_interpreter
         if not re.match(NOM_VALIDE, nom_groupe):
             raise ErreurValidation(
                 "|err|Ce nom de groupe est invalide.|ff|")

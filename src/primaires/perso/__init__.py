@@ -30,6 +30,8 @@
 
 """Fichier contenant le module primaire perso."""
 
+from collections import namedtuple
+
 from abstraits.module import *
 
 from . import commandes
@@ -37,9 +39,12 @@ from . import masques
 from .editeurs.skedit import EdtSkedit
 from .editeurs.raedit import EdtRaedit
 from .cfg_stats import cfg_stats
+from .cfg_niveaux import cfg_niveaux
 from .race import Race
 from .stats import *
 from .squelette import Squelette
+from .niveaux import Niveaux
+from .templates.niveau import Niveau
 
 class Module(BaseModule):
     
@@ -57,13 +62,18 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "perso", "primaire")
         self.cfg_stats = None
+        self.cfg_niveaux = None
+        self.modele_stats = None
         self.commandes = []
         self.squelettes = {}
         self.races = []
+        self.gen_niveaux = None
+        self.niveaux = {}
     
     def config(self):
         """Méthode de configuration.
-        On récupère le fichier de configuration correspondant au module.
+        
+        On récupère les fichiers de configuration correspondant au module.
         
         """
         self.cfg_stats = conf_stats = type(self.importeur).anaconf.get_config(
@@ -75,10 +85,24 @@ class Module(BaseModule):
             "SEM":SEM,
         })
         
+        self.modele_stats = Stats()
+        
+        self.cfg_niveaux = type(self.importeur).anaconf.get_config(
+                "niveaux", "perso/niveaux.cfg", "modele niveaux", cfg_niveaux)
+        
         BaseModule.config(self)
     
     def init(self):
         """Initialisation du module"""
+        # On construit le niveau
+        niveaux = Niveaux
+        niveaux.nb_niveaux = self.cfg_niveaux.nb_niveaux
+        niveaux.xp_min = self.cfg_niveaux.xp_min
+        niveaux.xp_max = self.cfg_niveaux.xp_max
+        niveaux.calculer_grille()
+        gen_veaux = niveaux
+        print(niveaux.grille_xp)
+        
         # On récupère les squelettes
         squelettes = self.importeur.supenr.charger_groupe(Squelette)
         for squelette in squelettes:
@@ -96,6 +120,7 @@ class Module(BaseModule):
         self.commandes = [
             commandes.commande.CmdCommande(),
             commandes.equipement.CmdEquipement(),
+            commandes.prompt.CmdPrompt(),
             commandes.qui.CmdQui(),
             commandes.raedit.CmdRaedit(),
             commandes.score.CmdScore(),
@@ -159,10 +184,34 @@ class Module(BaseModule):
         
         """
         a_tester = list(self.importeur.connex.joueurs)
-        a_tester += list(self.importeur.pnj.prototypes)
-        
+        a_tester += list(self.importeur.pnj.prototypes.values())
         for test in a_tester:
             if test.race is race:
                 return True
         
         return False
+    
+    def stats_symboles(self):
+        """Retourne un tuple nommé contenant les stats et leur symbole.
+        
+        Par exemple :
+        >>> nt = importeur.perso.stats_symboles()
+        >>> nt.force
+        'f'
+        
+        """
+        NTStats = namedtuple("NTStats",
+                [stat.nom for stat in self.modele_stats])
+        stats_symboles = dict(((stat.nom, "%{}".format(stat.symbole)) \
+                for stat in self.modele_stats))
+        ntstats = NTStats(**stats_symboles)
+        return ntstats
+    
+    def ajouter_niveau(self, cle, nom):
+        """Ajoute un niveau au dictionnaire des niveaux."""
+        if cle in self.niveaux:
+            raise ValueError("la clé {} est déjà utilisée comme clé " \
+                    "de niveau".format(repr(cle)))
+        
+        niveau = Niveau(cle, nom)
+        self.niveaux[cle] = niveau

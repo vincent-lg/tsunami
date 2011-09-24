@@ -37,6 +37,7 @@
 from abstraits.obase import BaseObj
 
 class FileContexte(BaseObj):
+    
     """Cette classe définie une file d'attente des contextes.
     C'est une classe enveloppe de liste. On interragit avec cette
     classe qu'avec plusieurs méthodes :
@@ -53,6 +54,7 @@ class FileContexte(BaseObj):
         BaseObj.__init__(self)
         self._file = [] # la liste représentant la file d'attente
         self._taille_min = 1 # la taille minimum de la file d'attente
+        self._position = 0 # position dans la file
         self.parent = parent
    
     def __getnewargs__(self):
@@ -81,30 +83,114 @@ class FileContexte(BaseObj):
         """Retourne la file"""
         return "f" + str(self._file)
     
+    def _get_position(self):
+        return self._position
+    def _set_position(self, position):
+        self._position = position
+        if self.parent:
+            self.parent.enregistrer()
+    position = property(_get_position, _set_position)
+    
+    def get(self, index):
+        """Essaye de récupérer le contexte à l'index indiqué.
+        
+        Si échoue, retourne None.
+        
+        Note : index doit être positif.
+        
+        """
+        if index < 0:
+            raise IndexError
+        
+        try:
+            contexte = self[index]
+        except IndexError:
+            contexte = None
+        
+        return contexte
+    
+    def get_position(self, contexte):
+        """Retourne la position du contexte passé en paramètre.
+        
+        Si le contexte ne peut être trouvé, retourne la position actuelle.
+        
+        """
+        try:
+            return self._file.index(contexte)
+        except ValueError:
+            return self._position
+    
     def ajouter(self, objet):
-        """Ajoute l'objet à ajouter en tête de la file."""
-        self._file.insert(0, objet)
+        """Ajoute l'objet à ajouter en index self._position."""
+        self._file.insert(self._position, objet)
         if self.parent:
             self.parent.enregistrer()
     
     def retirer(self):
-        """Retire l'objet en tête de file et le retourne.
+        """Retire le contexte actuel et le retourne.
+        
         Si la taille de la liste est trop faible (self._taille_min), une
         exception est levée.
         
         """
         if len(self._file) <= self._taille_min:
             raise FileVide
-        
-        objet = self._file[0]
-        del self._file[0]
+        objet = self.actuel
+        del self._file[self._position]
         if self.parent:
             self.parent.enregistrer()
+        
         return objet
     
     def vider(self):
         """Vide la file des contextes"""
         self._file[:] = []
+    
+    @property
+    def actuel(self):
+        """Retourne le contexte actuel.
+        
+        On se base sur la position pour savoir quel est le contexte actuel.
+        Si le contexte n'est pas trouvé, lève une exception IndexError.
+        
+        """
+        return self[self._position]
+    
+    def avancer_position(self):
+        """Avance la position (déplacement positif).
+        
+        Si aucun contexte n'est trouvé à la position ciblée, lève une
+        exception IndexError.
+        
+        Retourne le nouveau contexte actuel.
+        
+        """
+        nouveau_contexte = self[self._position + 1]
+        self._position += 1
+        if self.parent:
+            self.parent.enregistrer()
+        
+        return nouveau_contexte
+    
+    def reculer_position(self):
+        """Recule la position (déplacement négatif).
+        
+        Si aucun contexte n'est trouvé à la position ciblée, lève une
+        exception IndexError.
+        
+        Retourne le nouveau contexte actuel.
+        
+        """
+        if self._position <= 0:
+            raise IndexError
+        
+        nouveau_contexte = self[self._position - 1]
+        self._position -= 1
+        if self.parent:
+            self.parent.enregistrer()
+        
+        return nouveau_contexte
+
 
 class FileVide(RuntimeError):
     """Exception appelée quand la file est vide ou d'une taille insuffisante.

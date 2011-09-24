@@ -61,6 +61,7 @@ class DicMasques(OrderedDict):
     def dernier_parametre(self):
         """Retourne le dernier paramètre"""
         for masque in reversed(list(self.values())):
+            print("Test", masque, masque.est_parametre())
             if masque.est_parametre():
                 return masque
         

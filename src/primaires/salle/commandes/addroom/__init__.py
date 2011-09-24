@@ -42,6 +42,7 @@ class CmdAddroom(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "addroom", "addroom")
+        self.groupe = "administrateur"
         self.schema = "<direction> <nv_ident_salle>"
         self.nom_categorie = "batisseur"
         self.aide_courte = "ajoute une salle à l'univers"

@@ -46,7 +46,7 @@ class Description(Editeur):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
         self.opts.echp_sp_cars = False
-        self.nom_attribut = "description"
+        self.nom_attribut = attribut or "description"
         self.ajouter_option("d", self.opt_supprimer)
         self.ajouter_option("r", self.opt_remplacer)
     

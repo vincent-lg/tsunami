@@ -75,10 +75,11 @@ class Detail(BaseObj):
         if construit and self.parent:
             self.parent.enregistrer()
     
-    def regarder(self, personnage):
+    @staticmethod
+    def regarder(detail, personnage):
         """Le personnage regarde le détail"""
-        moi = "Vous examinez {} :".format(self.titre)
-        description = str(self.description)
+        moi = "Vous examinez {} :".format(detail.titre)
+        description = str(detail.description)
         if not description:
             description = "Il n'y a rien de bien intéressant à voir."
         

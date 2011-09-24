@@ -51,23 +51,29 @@ class Canal(Masque):
         self.canal = None
         self.canal_existe = True
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
-        lstrip(commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         nom_canal = liste_vers_chaine(commande)
         
         if not nom_canal:
             raise ErreurValidation( \
                 "Précisez le nom d'un canal.")
         
-        self.nom_canal = nom_canal = nom_canal.split(" ")[0]
+        nom_canal = nom_canal.split(" ")[0]
+        self.a_interpreter = nom_canal
         commande[:] = commande[len(nom_canal):]
-        
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        nom_canal = self.a_interpreter
         canaux = type(self).importeur.communication.canaux
         if not nom_canal in canaux:
             self.canal_existe = False
             return True
         
+        self.nom_canal = nom_canal
         self.canal = canaux[nom_canal]
         return True

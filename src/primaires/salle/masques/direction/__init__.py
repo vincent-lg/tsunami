@@ -37,7 +37,8 @@ from primaires.interpreteur.masque.exceptions.erreur_validation \
 
 class Direction(Masque):
     
-    """Masque <ident_salle>.
+    """Masque <direction>.
+    
     On attend une direction constante en paramètre, c'est-à-dire est,
     nord-est...
     
@@ -50,9 +51,8 @@ class Direction(Masque):
         """Initialisation des attributs"""
         self.direction = ""
     
-    def valider(self, personnage, dic_masques, commande):
-        """Validation du masque"""
-        Masque.valider(self, personnage, dic_masques, commande)
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
         lstrip(commande)
         nom = liste_vers_chaine(commande)
         
@@ -61,8 +61,15 @@ class Direction(Masque):
                 "Précisez une direction.")
         
         nom = nom.split(" ")[0].lower()
+        self.a_interpreter = nom
         commande[:] = commande[len(nom):]
-        
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        nom = self.a_interpreter
         salle = personnage.salle
         try:
             nom = salle.sorties.get_nom_long(nom)

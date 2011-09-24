@@ -51,18 +51,28 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "joueur", "primaire")
         self.commandes = []
         self.groupe_par_defaut = "joueur"
+        self.joueurs = {}
+        self.compte_systeme = ""
+        self.joueur_systeme = ""
     
     def config(self):
         """Méthode de configuration du module"""
         config = type(self.importeur).anaconf.get_config("joueur",
             "joueur/joueur.cfg", "config joueur", cfg_joueur)
         self.groupe_par_defaut = config.groupe_par_defaut
+        self.compte_systeme = config.compte_systeme
+        self.joueur_systeme = config.joueur_systeme
+        # On crée les hooks du module
+        self.importeur.hook.ajouter_hook("joueur:connecte",
+                "Hook appelé après qu'un joueur se soit connecté.")
         
         BaseModule.config(self)
     
     def init(self):
         """Méthode d'initialisation du module"""
         joueurs = self.importeur.supenr.charger_groupe(Joueur)
+        for joueur in joueurs:
+            self.joueurs[joueur.nom] = joueur
         
         BaseModule.init(self)
     
@@ -72,9 +82,13 @@ class Module(BaseModule):
             commandes.afk.CmdAfk(),
             commandes.chgroupe.CmdChgroupe(),
             commandes.groupe.CmdGroupe(),
+            commandes.distinction.CmdDistinction(),
             commandes.module.CmdModule(),
             commandes.options.CmdOptions(),
+            commandes.pset.CmdPset(),
             commandes.quitter.CmdQuitter(),
+            commandes.quitter.CmdQuitter(),
+            commandes.restaurer.CmdRestaurer(),
             commandes.shutdown.CmdShutdown(),
             commandes.where.CmdWhere(),
         ]
@@ -102,3 +116,15 @@ class Module(BaseModule):
                     "Le groupe {} le remplace".format(self.groupe_par_defaut,
                     groupe_par_defaut))
             self.groupe_par_defaut = groupe_par_defaut
+        
+        # On charge ou crée le compte et joueur système
+        if not self.importeur.connex.get_compte(self.compte_systeme):
+            systeme = self.importeur.connex.ajouter_compte(self.compte_systeme)
+            systeme.valide = True
+        
+        self.compte_systeme = self.importeur.connex.get_compte(
+                self.compte_systeme)
+        if self.joueur_systeme not in self.joueurs.keys():
+            self.compte_systeme.creer_joueur(self.joueur_systeme)
+        
+        self.joueur_systeme = self.joueurs[self.joueur_systeme]

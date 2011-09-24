@@ -39,7 +39,7 @@ class CmdPrendre(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "prendre", "get")
-        self.schema = "(<nombre>) <nom_objet>"
+        self.schema = "(<nombre>) <nom_objet> (depuis/from)"
         self.aide_courte = "ramasse un objet"
         self.aide_longue = \
                 "Cette commande permet de ramasser un ou plusieurs objets."

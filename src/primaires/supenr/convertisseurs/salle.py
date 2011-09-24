@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les convertisseurs de la classe Personnage."""
+"""Fichier contenant les convertisseurs de la classe Salle."""
 
 class Convertisseur:
     """Classe pour envelopper les convertisseurs."""

@@ -47,6 +47,7 @@ class EdtSortie(Editeur):
         self.ajouter_option("s", self.opt_changer_sortie)
         self.ajouter_option("c", self.opt_cache)
         self.ajouter_option("dq", self.opt_detruire_reciproque)
+        self.ajouter_option("p", self.opt_changer_porte)
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -63,6 +64,7 @@ class EdtSortie(Editeur):
         msg += " (vers |vr|" + str(sortie.salle_dest) + "|ff|)"
         msg += "\n Réciproque : |cy|" + sortie.correspondante + "|ff|"
         msg += "\n Sortie cachée : |cy|" + oui_ou_non(sortie.cache) + "|ff|"
+        msg += "\n Porte : |cy|" + oui_ou_non(bool(sortie.porte)) + "|ff|"
         
         return msg
     
@@ -157,5 +159,19 @@ class EdtSortie(Editeur):
         
         # On détruit à présent la sortie opposée
         sortie.salle_dest.sorties.supprimer_sortie(reciproque.direction)
+        
+        self.actualiser()
+    
+    def opt_changer_porte(self, arguments):
+        """Change le flag de la porte.
+        
+        Soit place une porte sur la sortie, soit la retire.
+        
+        """
+        sortie = self.objet
+        if sortie.porte:
+            sortie.supprimer_porte()
+        else:
+            sortie.ajouter_porte()
         
         self.actualiser()

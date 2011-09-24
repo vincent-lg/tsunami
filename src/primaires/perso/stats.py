@@ -76,7 +76,7 @@ class Stats(BaseObj):
         return iter(tuple(stats))
     
     def __getattr__(self, nom_attr):
-        """Si le 'nom_attr' n'est pas trouvé, on redigive vers la valeur
+        """Si le 'nom_attr' n'est pas trouvé, on redirige vers la valeur
         courante de la stat. Par exemple, si on entre 'stats.force', on
         va chercher dans 'stats.;_force.courante'.
         
@@ -101,6 +101,7 @@ class Stats(BaseObj):
     
     def restaurer(self):
         """Restaure les stats.
+        
         Toutes les stats ayant un maximum sont remis à ce maximum.
         
         """

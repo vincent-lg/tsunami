@@ -32,10 +32,12 @@
 
 from . import afk
 from . import chgroupe
+from . import distinction
 from . import groupe
 from . import module
 from . import options
+from . import pset
 from . import quitter
+from . import restaurer
 from . import shutdown
 from . import where
-

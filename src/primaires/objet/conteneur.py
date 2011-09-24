@@ -32,11 +32,22 @@
 
 from abstraits.obase import BaseObj
 from bases.collections.liste_id import ListeID
+from .objet_non_unique import ObjetNonUnique
 
 class ConteneurObjet(BaseObj):
     
     """Conteneur standard d'objet.
+    
     Cette classe peut être héritée (le sol d'une salle par exemple est un conteneur d'objet hérité) ou utilisée telle qu'elle.
+    
+    Un objet conteneur contient lui-même d'autres objets.
+    Note : le conteneur d'objet utilise deux listes en fonction de si
+    l'objet est unique ou non.
+    
+    Les objets uniques, la majorité, sont représentés par une isntance
+    pour chaque objet.
+    Les objets non uniques, comme la monnaie, sont des objets représentés
+    par leur ptototype et leur nombre d'objet.
     
     """
     
@@ -46,6 +57,7 @@ class ConteneurObjet(BaseObj):
         """Constructeur du conteneur"""
         BaseObj.__init__(self)
         self._objets = ListeID(parent)
+        self._non_uniques = []
         self.parent = parent
     
     def __getnewargs__(self):
@@ -53,34 +65,70 @@ class ConteneurObjet(BaseObj):
     
     def __iter__(self):
         """Itérateur"""
-        return iter(self._objets)
+        liste = list(self._objets) + list(self._non_uniques)
+        return iter(liste)
     
     def __str__(self):
-        return str(self._objets)
+        return str(self._objets) + str(self._non_uniques)
     
-    def ajouter(self, objet):
-        """On ajoute l'objet dans le conteneur"""
-        if objet not in self._objets:
-            self._objets.append(objet)
+    def ajouter(self, objet, nombre=1):
+        """On ajoute l'objet dans le conteneur.
+        
+        On peut très bien ajouter un prototype si l'objet est dit non unique.
+        
+        """
+        prototype = hasattr(objet, "prototype") and objet.prototype or objet
+        if prototype.unique:
+            if objet not in self._objets:
+                self._objets.append(objet)
+            else:
+                raise ValueError("le conteneur {} contient déjà l'objet " \
+                        "{}".format(self, objet))
         else:
-            raise ValueError("le conteneur {} contient déjà l'objet " \
-                    "{}".format(self, objet))
+            # On cherche l'objet non unique correspondant au prototype
+            non_unique = None
+            for objet in self._non_uniques:
+                if objet.prototype == prototype:
+                    non_unique = objet
+                    break
+            
+            if non_unique:
+                non_unique.nombre += nombre
+            else:
+                non_unique = ObjetNonUnique(prototype, nombre)
+                self._non_uniques.append(non_unique)
         
         if self.parent:
             self.parent.enregistrer()
     
-    def retirer(self, objet):
+    def retirer(self, objet, nombre=1):
         """On retire l'objet du conteneur"""
-        if objet in self._objets:
-            self._objets.remove(objet)
+        prototype = hasattr(objet, "prototype") and objet.prototype or objet
+        if prototype.unique:
+            if objet in self._objets:
+                self._objets.remove(objet)
+            else:
+                raise ValueError("le conteneur {} ne contient pas l'objet " \
+                        "{}".format(self, objet))
         else:
-            raise ValueError("le conteneur {} ne contient pas l'objet " \
-                    "{}".format(self, objet))
+            non_unique = None
+            for objet in self._non_uniques:
+                if objet.prototype == prototype:
+                    non_unique = objet
+                    break
+            
+            if non_unique:
+                non_unique.nombre -= nombre
+                self.nettoyer_non_uniques()
+            else:
+                raise ValueError("le conteneur {} ne contient pas l'objet " \
+                        "{}".format(self, objet))
         
         if self.parent:
             self.parent.enregistrer()
     
-    def nettoyer(self):
-        """Nettoie la liste des doublons et None"""
-        self._objets.supprimer_none()
-        self._objets.supprimer_doublons()
+    def nettoyer_non_uniques(self):
+        """Nettoie les objets non uniques présents en quantité négative."""
+        self._non_uniques = [o for o in self._non_uniques if o.nombre > 0]
+        if self.parent:
+            self.parent.enregistrer()

@@ -33,9 +33,11 @@
 
 from abstraits.id import ObjetID, propriete_id
 from primaires.interpreteur.file import FileContexte
+from primaires.interpreteur.groupe.groupe import *
 
 from .race import Race
 from .equipement import Equipement
+from .quetes import Quetes
 from .stats import Stats
 
 class Personnage(ObjetID):
@@ -52,20 +54,24 @@ class Personnage(ObjetID):
     groupe = "personnages"
     sous_rep = "personnages"
     _nom = "personnage"
-    _version = 2
+    _version = 4
     
     def __init__(self):
         """Constructeur d'un personnage"""
         ObjetID.__init__(self)
         self.nom = ""
-        self.groupe = "pnj"
+        self.nom_groupe = "pnj"
         self.contextes = FileContexte(self) # file d'attente des contexte
         self.langue_cmd = "francais"
         self._salle = None
         self.stats = Stats()
-        self._prompt = "Vit   {v}     Man   {m}     End   {e}"
+        self._prompt = "Vit   {stats.vitalite}     Man   {stats.mana}     " \
+                "End   {stats.endurance}"
         self.equipement = None
         self._race = None
+        
+        # Quêtes
+        self.quetes = Quetes(self)
         self._construire()
     
     def __getnewargs__(self):
@@ -98,11 +104,7 @@ class Personnage(ObjetID):
     
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel, c'est-à-dire le premier de la file"""
-        if len(self.contextes) > 0:
-            contexte = self.contextes[0]
-        else:
-            contexte = None
-        return contexte
+        return self.contextes.actuel
     
     def _set_contexte_actuel(self, nouveau_contexte):
         """Ajoute le nouveau contexte à la file des contextes.
@@ -156,11 +158,13 @@ class Personnage(ObjetID):
     @property
     def prompt(self):
         """Retourne le prompt formatté"""
-        return self._prompt.format(
-            v=self.vitalite,
-            m=self.mana,
-            e=self.endurance,
-        )
+        return self._prompt.format(stats=self.stats)
+    
+    @property
+    def grp(self):
+        """Retourne le groupe du joueur."""
+        groupes = type(self).importeur.interpreteur.groupes
+        return groupes[self.nom_groupe]
     
     def lier_equipement(self, squelette):
         """Crée un nouvel équipement pour le personnage en fonction
@@ -176,6 +180,14 @@ class Personnage(ObjetID):
     def get_nom_etat(self, nombre):
         """Retourne le nom et un état par défaut."""
         return self.nom + " est là"
+    
+    def est_immortel(self):
+        """Retourne True si le personnage est immortel.
+        
+        Note : cette information se trouve dans le groupe du personnage.
+        
+        """
+        return IMMORTELS & self.grp.flags != 0
     
     def detruire(self):
         """Méthode appelée lors de la destruction du personage.
@@ -203,3 +215,9 @@ class Personnage(ObjetID):
         self.salle = salle_dest
         self.envoyer(self.regarder())
         salle_dest.envoyer("{} arrive.".format(self.nom), (self, ))
+        
+        # On appelle l'évènement arrive
+        sortie_opp = sortie.sortie_opposee
+        nom_opp = sortie_opp and sortie_opp.nom or None
+        salle_dest.script.evenements["arrive"].executer(depuis=nom_opp,
+                salle=salle_dest, personnage=self)

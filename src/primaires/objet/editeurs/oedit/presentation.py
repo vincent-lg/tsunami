@@ -76,8 +76,8 @@ class EdtPresentation(Presentation):
         
         # Extensions
         for extension in prototype._extensions_editeur:
-            rac, ligne, editeur, objet, attr = extension
-            env = self.ajouter_choix(ligne, rac, editeur, objet, attr)
+            rac, ligne, editeur, objet, attr, sup = extension
+            env = self.ajouter_choix(ligne, rac, editeur, objet, attr, *sup)
             env.parent = self
         
         # Suppression

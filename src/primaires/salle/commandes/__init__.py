@@ -30,9 +30,11 @@
 
 """Package contenant les commandes du module salle."""
 
-import primaires.salle.commandes.addroom
-import primaires.salle.commandes.chsortie
-import primaires.salle.commandes.goto
-import primaires.salle.commandes.redit
-import primaires.salle.commandes.regarder
-import primaires.salle.commandes.supsortie
+from . import addroom
+from . import chsortie
+from . import fermer
+from . import goto
+from . import ouvrir
+from . import redit
+from . import regarder
+from . import supsortie

@@ -35,7 +35,7 @@ dérivée de Unique.
 """
 
 from abstraits.unique import Unique
-from primaires.interpreteur.groupe.groupe import Groupe
+from primaires.interpreteur.groupe.groupe import *
 
 class ConteneurGroupes(Unique):
     
@@ -70,13 +70,18 @@ class ConteneurGroupes(Unique):
         """Retourne le nombre de groupes"""
         return len(self._groupes)
     
-    def ajouter_groupe(self, nom_groupe):
+    @property
+    def nom_groupes(self):
+        """Retourne une liste des noms des groupes existants."""
+        return [g.nom for g in self._groupes.values()]
+    
+    def ajouter_groupe(self, nom_groupe, flags=AUCUN):
         """Méthode appelée pour ajouter un groupe.
         L'objet Groupe est créé "à la volée" et est retourné par la méthode si
         l'on désire le manipuler directement.
         
         """
-        groupe = Groupe(self, nom_groupe)
+        groupe = Groupe(self, nom_groupe, flags)
         self._groupes[nom_groupe] = groupe
         self.enregistrer()
         return groupe
@@ -110,8 +115,8 @@ class ConteneurGroupes(Unique):
     
     def personnage_a_le_droit(self, personnage, commande):
         """Le personnage a-t-il le droit d'appeler 'commande' ?"""
-        if personnage.groupe in self:
-            groupe_png = self[personnage.groupe]
+        if personnage.nom_groupe in self:
+            groupe_png = self[personnage.nom_groupe]
         else:
             groupe_png = self["pnj"] # droits minimums
         

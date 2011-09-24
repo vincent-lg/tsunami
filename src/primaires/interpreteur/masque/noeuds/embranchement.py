@@ -71,6 +71,38 @@ class Embranchement(BaseNoeud):
         msg += ")"
         return msg
     
+    def repartir(self, personnage, masques, commande):
+        """Répartition de la commande.
+        
+        On test chaque embranchement en s'arrêtant dès qu'un embranchement
+        répartit.
+        
+        """
+        liste_fils = self.fils
+        # Tri la liste des fils soit par ordrre alphabétique français
+        # ou anglais
+        if personnage.langue_cmd == "francais":
+            liste_fils = sorted(liste_fils, \
+                key=lambda noeud: noeud.commande.nom_francais)
+        elif personnage.langue_cmd == "anglais":
+            liste_fils = sorted(liste_fils, \
+                key=lambda noeud: noeud.commande.nom_anglais)
+        
+        valide = True
+        for fils in liste_fils:
+            valide = fils.repartir(personnage, masques, commande)
+            if valide:
+                break
+        
+        if not valide and not self.schema:
+            raise ErreurValidation
+        elif self.schema:
+            valide = self.schema.repartir(personnage, masques, commande)
+            if not valide:
+                raise ErreurValidation
+        
+        return valide
+    
     def valider(self, personnage, dic_masques, commande, tester_fils=True):
         """Validation du noeud Embranchement.
         La commande entrée par le personnage peut avoir déjà été réduite par
@@ -88,19 +120,16 @@ class Embranchement(BaseNoeud):
             liste_fils = sorted(liste_fils, \
                 key=lambda noeud: noeud.commande.nom_anglais)
         
-        # Si un schéma est défini dans cet embranchement, on l'ajoute à la fin
         valide = True
         for fils in liste_fils:
-            valide = fils.valider(personnage, dic_masques, commande,
-                    tester_fils)
+            valide = fils.valider(personnage, dic_masques, tester_fils)
             if valide:
                 break
         
         if not valide and not self.schema:
             raise ErreurValidation
         elif self.schema:
-            valide = self.schema.valider(personnage, dic_masques, commande,
-                    tester_fils)
+            valide = self.schema.valider(personnage, dic_masques, tester_fils)
             if not valide:
                 raise ErreurValidation
         

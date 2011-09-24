@@ -90,18 +90,22 @@ class NoeudCommande(BaseNoeud):
             else:
                 return fils.get_masque(nom_masque)
     
-    def valider(self, personnage, dic_masques, commande, tester_fils=True):
-        """Validation d'un noeud commande.
+    def repartir(self, personnage, masques, commande):
+        """Répartition d'un noeud commande.
+        
         La commande est sous la forme d'une liste de caractères.
         
         """
-        valide = self.commande.valider(personnage, dic_masques, commande)
+        valide = self.commande.repartir(personnage, masques, commande)
         if valide:
-            dic_masques[self.commande.nom] = self.commande
-            valide = self.fils.valider(personnage, dic_masques, \
-                commande)
+            valide = self.fils.repartir(personnage, masques, commande)
         
         return valide
+    
+    def valider(self, personnage, dic_masques, tester_fils=True):
+        """Validation du noeud commande."""
+        return tester_fils and bool(self.fils) and  self.fils.valider(
+                personnage, dic_masques)
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation"""

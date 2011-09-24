@@ -39,11 +39,12 @@ from abstraits.module import *
 from abstraits.id import ObjetID, est_objet_id
 from primaires.email.config import cfg_email
 from primaires.format.fonctions import supprimer_accents
-
 from .email import Email
 
 class Module(BaseModule):
-    """Classe du module 'email'.
+    
+    """Classe représentant le module 'email'.
+    
     Ce module permet, comme son nom l'indique, d'envoyer des e-mails aux
     clients.
     
@@ -59,6 +60,7 @@ class Module(BaseModule):
     être indispensable.
     
     """
+    
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "email", "primaire")
@@ -108,23 +110,24 @@ class Module(BaseModule):
             if not self.nom_hote: # le nom d'hôte n'est pas précisé
                 self.logger.warning("Impossible d'envoyer le mail à {0} " \
                         "(sujet : {1}) car le nom d'hôte n'est pas précisé " \
-                        "dans les données de configuration".format( \
+                        "dans les données de configuration".format(
                         destinataires, sujet))
             else:
                 if destinateur in self.aliases:
                     destinateur = self.aliases[destinateur]
                 
-                email = Email("{0}@{1}".format(destinateur, self.nom_hote), \
-                    destinataires, supprimer_accents(sujet), corps)
+                email = Email("{0}@{1}".format(destinateur, self.nom_hote),
+                        destinataires, supprimer_accents(sujet), corps)
                 
                 self.emails.append(email)
                 
                 email.envoyer()
     
     def boucle(self):
-        """Méthode appelée à chaque tour de boucle synchro.
-            Vérifie que les mails ont bien été envoyé."""
+        """Méthode appelée à chaque tour de boucle synchro. Vérifie que
+        les mails ont bien été envoyés.
         
+        """
         for email in self.emails:
             if not email.isAlive() and email.erreur:
                     self.logger.warning("Impossible d'envoyer le mail à {0} " \
@@ -132,4 +135,3 @@ class Module(BaseModule):
                             email.sujet, email.erreur))
         
         self.emails = [ email for email in self.emails if email.isAlive() ]
-        

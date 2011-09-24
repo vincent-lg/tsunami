@@ -31,9 +31,11 @@
 """Package contenant les commandes du module communication."""
 
 import primaires.communication.commandes.dire
-import primaires.communication.commandes.crier
 import primaires.communication.commandes.emote
 import primaires.communication.commandes.parler
 import primaires.communication.commandes.repondre
 import primaires.communication.commandes.canaux
 import primaires.communication.commandes.socedit
+import primaires.communication.commandes.attitudes
+import primaires.communication.commandes.messages
+import primaires.communication.commandes.chuchoter

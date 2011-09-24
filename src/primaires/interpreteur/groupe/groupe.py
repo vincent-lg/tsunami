@@ -44,22 +44,32 @@ pour les modérateurs, plusieurs niveaux d'immortels...).
 
 from abstraits.obase import BaseObj
 
+## Constantes
+# Flags
+AUCUN = 0
+IMMORTELS = 1
+
+FLAGS = {
+    "immortels": IMMORTELS,
+}
+
 class Groupe(BaseObj):
     
     """Classe définissant un groupe.
     
     """
     
-    def __init__(self, parent, nom):
+    def __init__(self, parent, nom, flags):
         """Constructeur d'un groupe"""
         BaseObj.__init__(self)
         self.nom = nom
         self.parent = parent
         self.groupes_inclus = []
+        self.flags = flags
     
     def __getnewargs__(self):
         """Retourne les arguments à passer au constructeur"""
-        return (None, "")
+        return (None, "", AUCUN)
     
     def ajouter_groupe_inclus(self, groupe):
         """Ajoute 'groupe' dans les groupes inclus.
@@ -81,3 +91,17 @@ class Groupe(BaseObj):
         """Vide les groupes inclus"""
         self.groupes_inclus = []
         self.parent.enregistrer()
+    
+    @property
+    def str_flags(self):
+        """Retourne une chaîne affichant les flags actifs.
+        
+        Note : si aucun flag n'est actif, retourne "aucun".
+        
+        """
+        str_flags = []
+        for nom, flag in FLAGS.items():
+            if flag & self.flags:
+                str_flags.append(nom)
+        
+        return ", ".join(str_flags) if str_flags else "aucun"

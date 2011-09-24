@@ -31,10 +31,12 @@
 """Fichier contenant le module primaire diffact."""
 
 from abstraits.module import *
-from primaires.diffact.action_differee import ActionDifferee
+from .action_differee import ActionDifferee
 
 class Module(BaseModule):
+    
     """Cette classe contient les informations du module primaire diffact.
+    
     Ce module permet de gérer des actions différés.
     Typiquement, quand un module primaire ou secondaire doit se mettre en pause
     pendant un certain temps, il ne peut pas paralyser la boucle synchro
@@ -46,7 +48,7 @@ class Module(BaseModule):
         de la pause, la commande s'arrête et crée une action différée
         qui devra s'exécuter dans 3 secondes. Il sera nécessaire de dédier
         l'exécution de cette action à une fonction ou méthode, en lui précisant
-        un certain nombre de paramètres
+        un certain nombre de paramètres ;
     -   si un module primaire doit contrôler toutes les 60 secondes une
         information quelconque, il peut créer dès son initialisation
         une action différée. La méthode qui sera exécutée par l'action en
@@ -67,6 +69,7 @@ class Module(BaseModule):
     temps moyen du Watch Dog.
     
     """
+    
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "diffact", "primaire")
@@ -106,7 +109,7 @@ class Module(BaseModule):
             [nom for nom in self.ordre_actions if self.actions[nom] > action]
         
         
-        self.logger.debug("Ajout de l'action {0} exécutée dans {1}s".format( \
+        self.logger.debug("Ajout de l'action {0} exécutée dans {1}s".format(
                 nom_action, tps))
     
     def retirer_action(self, nom):

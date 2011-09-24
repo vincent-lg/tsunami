@@ -31,6 +31,7 @@
 """Package contenant la commande 'socedit'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.communication.attitude import Attitude
 
 class CmdSocedit(Commande):
     
@@ -52,10 +53,9 @@ class CmdSocedit(Commande):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         cle = dic_masques["ident"].ident
-        if cle in type(self).importeur.communication.attitudes:
-            attitude = type(self).importeur.communication.get_attitude[cle]
-        else:
-            attitude = type(self).importeur.communication.attitudes.ajouter(cle)
+        attitude = type(self).importeur.communication.attitudes. \
+                ajouter_ou_modifier(cle)
+        
         editeur = type(self).importeur.interpreteur.construire_editeur(
                 "socedit", personnage, attitude)
         personnage.contextes.ajouter(editeur)

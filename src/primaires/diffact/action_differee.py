@@ -36,7 +36,9 @@ import functools
 from bases.fonction import Fonction
 
 class ActionDifferee:
+    
     """Cette classe permet de déclarer des actions différées.
+    
     Ce sont des actions qui s'exécuteront plus tard. La méthode boucle du 
     module primaire diffact se charge d'exécuter ces actions différées au temps
     prévu. Une action différée contient :
@@ -46,6 +48,7 @@ class ActionDifferee:
         d'arguments
     
     """
+    
     def __init__(self, nom, tps, ref_fonc, *args, **kwargs):
         """Constructeur de l'action différée."""
         self.nom = nom
@@ -57,10 +60,7 @@ class ActionDifferee:
         return time.time() >= self.echeance
 
     def executer(self):
-        """Exécution de la fonction. On redirige simplement vers
-        self.fonction.exec().
-        
-        """
+        """Exécution de la fonction. On redirige vers self.fonction.exec()."""
         self.fonction.executer()
         
     def __le__(self, other):
