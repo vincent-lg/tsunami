@@ -44,7 +44,7 @@ class CmdSysteme(Commande):
         Commande.__init__(self, "système", "system")
         self.groupe = "administrateur"
         self.schema = ""
-        self.aide_courte = "intègre une console interractive Python"
+        self.aide_courte = "intègre une console interactive Python"
         self.aide_longue = \
             "Cette commande ouvre une console virtuelle Python. " \
             "Elle permet d'entrer du code directement, comme dans " \
@@ -52,7 +52,7 @@ class CmdSysteme(Commande):
             "quant aux manipulations effectuées et aux informations " \
             "que vous envoyez. Souvenez-vous qu'elles transitent " \
             "par un protocole non sécurisé.|ff| N'utilisez cette " \
-            "commande qu'en cas de debug."
+            "commande qu'à des fins de debug."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""

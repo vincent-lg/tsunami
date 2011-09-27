@@ -47,8 +47,9 @@ class CmdWhere(Commande):
         self.schema = ""
         self.aide_courte = "affiche la position des joueurs"
         self.aide_longue = \
-            "Cette commande permet d'afficher la liste des joueurs connectés " \
-            "avec leur position dans l'univers, sous la forme zone:mnemonic."
+            "Cette commande permet d'afficher la liste des joueurs " \
+            "connectés et leur position dans l'univers, sous la forme " \
+            "zone:mnemonic."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
@@ -59,8 +60,8 @@ class CmdWhere(Commande):
                     "qui es-tu alors ?")
         else:
             res = "+" + "-" * 22 + "+" + "-" * 17 + "+\n"
-            res += "|" + "|tit|Joueurs|ff| ".rjust(31) + "|"
-            res += " |tit|Positions|ff|".ljust(26) + "|\n"
+            res += "|" + "|tit|Joueur|ff| ".rjust(31) + "|"
+            res += " |tit|Position|ff|".ljust(26) + "|\n"
             res += "+" + "-" * 22 + "+" + "-" * 17 + "+\n"
             for joueur in joueurs:
                 ident = "|rgc|" + joueur.salle.zone + "|ff|:|vrc|" 

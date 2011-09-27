@@ -52,7 +52,7 @@ class Nourriture(BaseType):
     
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""
-        qualite = enveloppes["u"]
+        qualite = enveloppes["a"]
         qualite.apercu = "{objet.qualite}"
         qualite.prompt = "Qualité de la nourriture : "
         qualite.aide_courte = \
@@ -66,8 +66,8 @@ class Nourriture(BaseType):
         nourrissant.apercu = "{objet.nourrissant}"
         nourrissant.prompt = "Valeur nourrissante : "
         nourrissant.aide_courte = \
-            "Entrez la |tit|valeur nourrissante|ff| de la nourriture, entre " \
-            "|cmdt1|ff| et |cmd|10|ff|\nou |cmd|/|ff| pour revenir à la " \
+            "Entrez la |ent|valeur nourrissante|ff| de la nourriture, entre " \
+            "|cmd|1|ff| et |cmd|10|ff|\nou |cmd|/|ff| pour revenir à la " \
             "fenêtre parente.\n\n" \
             "Valeur nourrissante actuelle : {objet.nourrissant}"
         nourrissant.type = int

@@ -82,8 +82,7 @@ class EdtOedit(Editeur):
                 noms_types) + "|ff|"
     
     def get_prompt(self):
-        return "Entrez |cmd|le type d'objet|ff| à créer ou |cmd|a|ff| " \
-                "pour annuler."
+        return "->"
     
     def interpreter(self, msg):
         """Interprétation du message"""
