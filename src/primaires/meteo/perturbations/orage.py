@@ -28,35 +28,44 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Nuages, détaillée plus bas."""
+"""Ce fichier contient la classe Orage, détaillée plus bas."""
 
 from .base import *
 
-class Nuages(BasePertu):
+class Orage(BasePertu):
     
-    """Classe abstraite représentant la perturbation 'nuages'.
+    """Classe abstraite représentant la perturbation 'orage'.
     
     """
     
-    nom_pertu = "nuages"
-    rayon_max = 10
-    duree_max = 6
+    nom_pertu = "orage"
+    rayon_max = 13
+    duree_max = 7
     
     def __init__(self, pos):
         """Constructeur de la perturbation"""
         BasePertu.__init__(self, pos)
         self.flags = OPAQUE
-        self.alea_dir = 1
+        self.alea_dir = 7
         self.etat = [
-            (5, "De lourds nuages gris sont suspendus au-dessus de vous."),
-            (10, "Quelques nuages gris, s'épaississant non loin, flottent" \
-                    "dans le ciel au gré des vents."),
+            (5, "Le ciel est noir, zébré d'éclairs, et la pluie tombe dru."),
+            (10, "Une violente pluie tombe du ciel, devenant franchement " \
+                    "orageuse non loin."),
         ]
-        self.message_debut = "Quelques voiles de brume s'agrègent peu à peu " \
-                "pour former un plafond nuageux menaçant."
-        self.message_fin = "Les nuées se dispersent rapidement."
-        self.message_sortir = "Les nuages s'éloignent peu à peu vers {dir}."
-        self.fins_possibles = [
-            ("pluie", "Les nuages s'épaississent progressivement avant de " \
-                    "se déchirer pour libérer une averse.", 50),
+        self.message_debut = "Un violent orage éclate au-dessus de votre " \
+                "tête."
+        self.message_fin = "L'orage s'évanouit comme qu'il a commencé, " \
+                "laissant l'air moite et pesant."
+        self.message_sortir = "Les nuages d'orage s'éloignent enfin."
+    
+    def action_cycle(self, salles):
+        """Définit une ou plusieurs actions effectuées à chaque cycle."""
+        messages = [
+            "La foudre frappe le sol dans un vacarme infernal !",
+            "Un éclair aveuglant zèbre le ciel obscur.",
+            "Un roulement de tonnerre, puissant et impérieux, vous fait " \
+                    "sursauter.",
         ]
+        for salle in salles:
+            if randint(1, 10) < 4:
+                salle.envoyer(choice(messages))

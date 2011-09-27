@@ -59,7 +59,7 @@ class BasePertu(ObjetID, metaclass=MetaPertu):
     sous_rep = "meteo/perturbations"
     nom_pertu = ""
     rayon_max = 0 # à redéfinir selon la perturbation
-    duree_max = 15
+    duree_max = 15 # à peu près en minutes
     
     def __init__(self, pos):
         """Constructeur d'une perturbation météo"""

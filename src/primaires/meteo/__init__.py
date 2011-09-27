@@ -80,7 +80,7 @@ class Module(BaseModule):
         # On tue les perturbations trop vieilles
         for pertu in self.perturbations_actuelles:
             if pertu.age == pertu.duree:
-                i = randint(1, 100)
+                i = randint(0, 100)
                 nom_pertu_enchainer = ""
                 msg_enchainement = ""
                 for fin in pertu.fins_possibles:
@@ -90,22 +90,26 @@ class Module(BaseModule):
                         break
                 if not nom_pertu_enchainer:
                     for salle in pertu.liste_salles_sous:
-                        salle.envoyer(pertu.message_fin)
-                    self.perturbations_actuelles.remove(pertu)
+                        salle.envoyer("|cy|" + pertu.message_fin + "|ff|")
                 else:
-                    for salle in pertu_liste_salles_sous:
-                        salle.envoyer(msg_enchainement)
-                    # PAS FINI
-                    pertu_enchainer = None
+                    for salle in pertu.liste_salles_sous:
+                        salle.envoyer("|cy|" + msg_enchainement + "|ff|")
+                    cls_pertu_enchainer = None
                     for pertu_existante in perturbations:
-                        if pertu_existante.nom == nom_pertu_enchainer:
-                            pertu_enchainer = pertu_existante
+                        if pertu_existante.nom_pertu == nom_pertu_enchainer:
+                            cls_pertu_enchainer = pertu_existante
                             break
-                    pertu_enchainer.centre = pertu.centre
-                    pertu_enchainer.rayon = pertu.rayon
-                    pertu_enchainer.dir = pertu.dir
-                    self.perturbations_actuelles.remove(pertu)
-                    self.perturbations_actuelles.append(pertu_enchainer)
+                    if cls_pertu_enchainer is not None:
+                        pertu_enchainer = cls_pertu_enchainer(pertu.centre)
+                        pertu_enchainer.rayon = pertu.rayon
+                        pertu_enchainer.dir = pertu.dir
+                        self.perturbations_actuelles.append(pertu_enchainer)
+                    else:
+                        print("la perturbation {} n'existe pas". \
+                                format(nom_pertu_enchainer))
+                self.perturbations_actuelles.remove(pertu)
+            # On fait bouger les perturbations existantes
+            pertu.cycle()
         # On tente de créer une perturbation
         if len(self.perturbations_actuelles) < self.cfg.nb_pertu_max:
             salles = list(self.importeur.salle._salles.values())
@@ -115,14 +119,16 @@ class Module(BaseModule):
             except IndexError:
                 pass
             else:
-                if salle_dep.coords.valide:
+                deja_pertu = False
+                for pertu in self.perturbations_actuelles:
+                    if pertu.est_sur(salle_dep):
+                        deja_pertu = True
+                        break
+                if salle_dep.coords.valide and not deja_pertu:
                     pertu = cls_pertu(salle_dep.coords.get_copie())
                     self.perturbations_actuelles.append(pertu)
                     for salle in pertu.liste_salles_sous:
-                        salle.envoyer(pertu.message_debut)
-        # On fait bouger les perturbations existantes
-        for pertu in self.perturbations_actuelles:
-            pertu.cycle()
+                        salle.envoyer("|cy|" + pertu.message_debut + "|ff|")
     
     def donner_meteo(self, salle, liste_messages, flags):
         """Affichage de la météo d'une salle"""
