@@ -80,9 +80,32 @@ class Module(BaseModule):
         # On tue les perturbations trop vieilles
         for pertu in self.perturbations_actuelles:
             if pertu.age == pertu.duree:
-                self.perturbations_actuelles.remove(pertu)
-                for salle in pertu.liste_salles_sous:
-                    salle.envoyer(pertu.message_fin)
+                i = randint(1, 100)
+                nom_pertu_enchainer = ""
+                msg_enchainement = ""
+                for fin in pertu.fins_possibles:
+                    if i <= fin[2]:
+                        nom_pertu_enchainer = fin[0]
+                        msg_enchainement = fin[1]
+                        break
+                if not nom_pertu_enchainer:
+                    for salle in pertu.liste_salles_sous:
+                        salle.envoyer(pertu.message_fin)
+                    self.perturbations_actuelles.remove(pertu)
+                else:
+                    for salle in pertu_liste_salles_sous:
+                        salle.envoyer(msg_enchainement)
+                    # PAS FINI
+                    pertu_enchainer = None
+                    for pertu_existante in perturbations:
+                        if pertu_existante.nom == nom_pertu_enchainer:
+                            pertu_enchainer = pertu_existante
+                            break
+                    pertu_enchainer.centre = pertu.centre
+                    pertu_enchainer.rayon = pertu.rayon
+                    pertu_enchainer.dir = pertu.dir
+                    self.perturbations_actuelles.remove(pertu)
+                    self.perturbations_actuelles.append(pertu_enchainer)
         # On tente de créer une perturbation
         if len(self.perturbations_actuelles) < self.cfg.nb_pertu_max:
             salles = list(self.importeur.salle._salles.values())

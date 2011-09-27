@@ -52,7 +52,11 @@ class Nuages(BasePertu):
             (10, "Quelques nuages gris, s'épaississant non loin, flottent" \
                     "dans le ciel au gré des vents."),
         ]
-        self.message_debut = "Quelques voiles de brume s'agrègent peu à peu" \
+        self.message_debut = "Quelques voiles de brume s'agrègent peu à peu " \
                 "pour former un plafond nuageux menaçant."
         self.message_fin = "Les nuées se dispersent rapidement."
         self.message_sortir = "Les nuages s'éloignent peu à peu vers {dir}."
+        self.fins_possibles = [
+            ("pluie", "Les nuages s'épaississent progressivement avant de " \
+                    "se déchirer pour libérer une averse.", 50)
+        ]
