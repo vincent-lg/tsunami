@@ -38,16 +38,43 @@ class Talent:
     
     Cette classe possède les attributs et méthodes propres à un talent.
     
+    Attributs :
+        cle -- la clé du talent (ne doit pas changer)
+        nom -- le nom du talent (peut être modifié par la suite)
+        niveau -- le nom du niveau secondaire du talent
+        difficulte -- la difficulté d'apprentissage (entre 0 et 1)
+    
     """
     
-    def __init__(self, cle, nom, niveau):
+    def __init__(self, cle, nom, niveau, difficulte):
         """Constructeur du talent."""
         valider_cle(cle)
         self.cle = cle
         self.nom = nom
+        self.cle_niveau = niveau
+        self.niveau = type(self).importeur.perso.niveaux[niveau]
+        self.difficulte = difficulte
     
     def __repr__(self):
         return "niveau(" + self.cle + ")"
     
     def __str__(self):
         return self.nom
+    
+    def estimer_difficulte(self, configuration, avancement):
+        """Estime et retourne la difficulté entre 0 et 1.
+        
+        La configuration permet de connaître le coefficient d'apprentissage.
+        L'avancement représente la connaissance actuel dans le talent.
+        
+        Pour un personnage, il s'agit de son avancement dans le talent
+        (entre 1 et 100).
+        
+        """
+        if avancement >= 100:
+            return 0
+        
+        restant = 100 - avancement
+        restant = restant / 100
+        coef = configuration.coefficient_apprentissage
+        return self.difficulte ** coef * restant

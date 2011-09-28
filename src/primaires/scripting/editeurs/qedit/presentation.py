@@ -84,11 +84,11 @@ class EdtPresentation(Presentation):
         msg += "Auteur : " + (quete.auteur and quete.auteur.nom or "inconnu")
         msg += "\n"
         msg += "Etapes de la quête :\n\n  "
-        etapes = [str(e) for e in quete.etapes]
+        etapes = quete.afficher_etapes()
         if not etapes:
-            etapes = ["Aucune"]
+            etapes = "Aucune"
         
-        msg += "\n  ".join(etapes)
+        msg += etapes
         
         msg += "\n\n" + quitter
         return msg

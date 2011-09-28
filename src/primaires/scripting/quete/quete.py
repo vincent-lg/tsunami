@@ -60,20 +60,19 @@ class Quete(ObjetID):
     
     groupe = "quete"
     sous_rep = "scripting/quetes"
-    def __init__(self, cle, auteur, parent=None):
+    def __init__(self, cle, auteur, parent=None, niveau=(1, )):
         """Constructeur de la quête."""
         ObjetID.__init__(self)
         self.cle = cle
+        self.niveau = niveau
         self.auteur = auteur
         self.parent = parent
         self.date_creation = datetime.now()
         self.titre = "une quête anonyme"
         self.description = Description(parent=self)
-        self.options = {
-            "ordonnee": True,
-        }
-        
+        self.ordonnee = True
         self.__etapes = ListeID(self)
+        self._construire()
     
     def __getnewargs__(self):
         return ("", None)
@@ -85,7 +84,7 @@ class Quete(ObjetID):
     def __getitem__(self, niveau):
         """Retourne l'étape."""
         for etape in self.__etapes:
-            if etape.niveau == niveau:
+            if etape.str_niveau == niveau:
                 return etape
         
         raise KeyError(niveau)
@@ -95,28 +94,42 @@ class Quete(ObjetID):
         return list(self.__etapes)
     
     @property
-    def niveau(self):
-        """Retourne le prochain niveau disponible."""
-        msg = self.parent and self.parent.niveau or ""
-        if msg:
-            msg += "."
+    def str_niveau(self):
+        return ".".join([str(n) for n in self.niveau])
+    
+    @property
+    def sous_niveau(self):
+        if self.parent:
+            return self.niveau + (len(self.__etapes) + 1, )
+        else:
+            return (len(self.__etapes) + 1, )
         
-        msg += str(len(self.__etapes) + 1)
-        return msg
-    
-    def get_prochain_niveau(self, niveau):
-        """Retourne le prochain niveau."""
-        niveau = list(niveau.niveau)
-        niveau[-1] += 1
-        return ".".join([str(n) for n in niveau])
-    
     def ajouter_etape(self, titre):
         """Ajoute l'étape à la quête."""
         etape = Etape(self)
         etape.titre = titre
-        etape.niveau = self.niveau
+        etape.niveau = self.sous_niveau
         self.__etapes.append(etape)
         self.enregistrer()
+    
+    def ajouter_sous_quete(self, titre):
+        """Ajoute une sous-quête à la quête."""
+        etape = Quete(self.cle, self.auteur, self)
+        etape.titre = titre
+        etape.niveau = self.sous_niveau
+        self.__etapes.append(etape)
+        self.enregistrer()
+    
+    def afficher_etapes(self):
+        """Affiche les étapes qui peuvent être aussi des sous-quêtes."""
+        res = ""
+        if self.parent:
+            res += self.str_niveau.ljust(5) + " " + self.titre + "\n"
+        for etape in self.etapes:
+            res += etape.afficher_etapes()
+            res += "\n"
+        
+        return res.rstrip("\n")
 
 
 ObjetID.ajouter_groupe(Quete)

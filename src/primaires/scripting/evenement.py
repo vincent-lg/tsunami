@@ -175,4 +175,5 @@ class Evenement(BaseObj):
                 test.executer_instructions(self)
                 return
         
-        self.sinon.executer_instructions(self)
+        if self.sinon.tester(self):
+            self.sinon.executer_instructions(self)

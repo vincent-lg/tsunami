@@ -28,52 +28,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Etape détaillée plus bas."""
+"""Ce fichier contient la classe EnrDict, détaillée plus bas."""
 
-from abstraits.id import ObjetID
-from primaires.format.description import Description
-from primaires.perso.quete import Quete
+from abstraits.obase import *
 
-class Etape(ObjetID):
+class EnrDict(dict, BaseObj):
     
-    """Classe définissant une étape simple dans la quête.
-    
-    Une étape simple est liée à une suite d'instructions. Une suite d'étapes
-    simple peut constituer une quête mais il est tout à fait possible d'y
-    intégrer des étapes plus complexes, comme des embranchements ou des
-    sous-quêtes. Ces deux autres étapes plus complexes ne sont pas traitées ici.
+    """Dictionnaire conçu pour s'enregistrer automatiquement quand ses
+    valeurs sont modifiées.
     
     """
     
-    groupe = "etape"
-    sous_rep = "scripting/etapes"
-    def __init__(self, quete):
-        """Constructeur de l'étape."""
-        ObjetID.__init__(self)
-        self.quete = quete
-        self.niveau = ()
-        self.titre = "non renseigné"
-        self.description = Description("", self)
-        self.test = None
+    def __init__(self, parent):
+        """Construction du dictionnaire."""
+        dict.__init__(self)
+        BaseObj.__init__(self)
+        self.parent = parent
     
     def __getnewargs__(self):
-        return (None, )
+        return ()
     
-    def __str__(self):
-        return self.str_niveau.ljust(5) + " " + self.titre
-    
-    @property
-    def objet_quete(self):
-        """Retourne le niveau actuel sous la forme d'un objet Quete."""
-        return Quete(None, self.niveau)
-    
-    @property
-    def str_niveau(self):
-        return ".".join([str(n) for n in self.niveau])
-    
-    def afficher_etapes(self):
-        """Affiche les étapes (en l'occurence, elle-même seulement)."""
-        return self.str_niveau.ljust(5) + " " + self.titre
-
-
-ObjetID.ajouter_groupe(Etape)
+    def __setitem__(self, nom_attr, val_attr):
+        """Modifie la valeur d'un dictionnaire

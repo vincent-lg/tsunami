@@ -64,7 +64,7 @@ class EdtEtape(Presentation):
         msg = Presentation.accueil(self)
         quitter = msg.split("\n")[-1]
         msg = "\n".join(msg.split("\n")[:-1]) + "\n\n"
-        msg += "Niveau : " + etape.niveau
+        msg += "Niveau : " + etape.str_niveau
         msg += "\n"
         if etape.test:
             msg += "Test : " + str(etape.test) + "\n"

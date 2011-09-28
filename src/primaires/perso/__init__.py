@@ -101,7 +101,6 @@ class Module(BaseModule):
         niveaux.xp_max = self.cfg_niveaux.xp_max
         niveaux.calculer_grille()
         gen_veaux = niveaux
-        print(niveaux.grille_xp)
         
         # On récupère les squelettes
         squelettes = self.importeur.supenr.charger_groupe(Squelette)
