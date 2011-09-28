@@ -36,9 +36,9 @@ from .vide import CaseVide
 
 class Plateau(BaseObj):
     
-    """Plateau solitaire.
+    """Plateau de solitaire.
     
-    Il est utilisé pour jouer au solitaire.
+    Il est utilisé pour jouer au... solitaire.
     
     """
     
@@ -53,7 +53,7 @@ class Plateau(BaseObj):
             "C1": Bille(),
             "D1": Bille(),
             "E1": Bille(),
-            "F1": Bille(),
+            "B2": Bille(),
             "C2": Bille(),
             "D2": Bille(),
             "E2": Bille(),
@@ -65,15 +65,13 @@ class Plateau(BaseObj):
             "E3": Bille(),
             "F3": Bille(),
             "G3": Bille(),
-            "H3": Bille(),
             "A4": Bille(),
             "B4": Bille(),
             "C4": Bille(),
-            "D4": Bille(),
-            "E4": CaseVide(),
+            "D4": CaseVide(),
+            "E4": Bille(),
             "F4": Bille(),
             "G4": Bille(),
-            "H4": Bille(),
             "A5": Bille(),
             "B5": Bille(),
             "C5": Bille(),
@@ -81,23 +79,14 @@ class Plateau(BaseObj):
             "E5": Bille(),
             "F5": Bille(),
             "G5": Bille(),
-            "H5": Bille(),
-            "A6": Bille(),
             "B6": Bille(),
             "C6": Bille(),
             "D6": Bille(),
             "E6": Bille(),
             "F6": Bille(),
-            "G6": Bille(),
-            "H6": Bille(),
             "C7": Bille(),
             "D7": Bille(),
             "E7": Bille(),
-            "F7": Bille(),
-            "C8": Bille(),
-            "D8": Bille(),
-            "E8": Bille(),
-            "F8": Bille(),
         }
         self._construire()
     
@@ -107,14 +96,13 @@ class Plateau(BaseObj):
     def afficher(self, personnage):
         """Affiche la partie en cours au personnage."""
         plateau = \
-            "  ABCDEFGH\n" \
-            "1   {C1}{D1}{E1}{F1}  \n" \
-            "2   {C2}{D2}{E2}{F2}  \n" \
-            "3 {A3}{B3}{C3}{D3}{E3}{F3}{G3}{H3}\n" \
-            "4 {A4}{B4}{C4}{D4}{E4}{F4}{G4}{H4}\n" \
-            "5 {A5}{B5}{C5}{D5}{E5}{F5}{G5}{H5}\n" \
-            "6 {A6}{B6}{C6}{D6}{E6}{F6}{G6}{H6}\n" \
-            "7   {C7}{D7}{E7}{F7}  \n" \
-            "8   {C8}{D8}{E8}{F8}  "
+            "  A B C D E F G\n" \
+            "1     {C1} {D1} {E1}  \n" \
+            "2   {B2} {C2} {D2} {E2} {F2}  \n" \
+            "3 {A3} {B3} {C3} {D3} {E3} {F3} {G3}\n" \
+            "4 {A4} {B4} {C4} {D4} {E4} {F4} {G4}\n" \
+            "5 {A5} {B5} {C5} {D5} {E5} {F5} {G5}\n" \
+            "7   {B6} {C6} {D6} {E6} {F6}  \n" \
+            "8     {C7} {D7} {E7}  "
         
         return plateau.format(**self.cases)

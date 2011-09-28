@@ -30,19 +30,23 @@
 
 """Case contenant une bille."""
 
+from random import choice
+
 from abstraits.obase import BaseObj
+from primaires.format.constantes import COULEURS
 
 class Bille(BaseObj):
     
     def __init__(self):
         BaseObj.__init__(self)
         self._construire()
+        self.clr = choice(list(COULEURS.values()))
     
     def __getnewargs__(self):
         return ()
     
     def __str__(self):
-        return "O"
+        return self.clr + "o|ff|"
     
     def __bool__(self):
         return True

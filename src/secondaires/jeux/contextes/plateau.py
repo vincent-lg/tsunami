@@ -47,6 +47,7 @@ class Plateau(Contexte):
         self.partie = partie
         self.personnage = None
         self.opts.prompt_prf = ""
+        self.opts.prompt_clr = ""
         
         if self.pere:
             self.personnage = self.pere.joueur

@@ -45,9 +45,12 @@ class CmdJouer(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "jouer", "play")
         self.schema = "<nom_objet>"
-        self.aide_courte = "Permet de jouer à un jeu"
+        self.aide_courte = "permet de jouer à un jeu"
         self.aide_longue = \
-            "Cette commande permet de jouer à un jeu "
+            "Cette commande lance une partie sur un plateau de jeu. Bien " \
+            "entendu, si quelqu'un est déjà en train de jouer, vous ne " \
+            "pouvez commencer votre propre partie à moins qu'il ne vous " \
+            "cède la place."
     
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""

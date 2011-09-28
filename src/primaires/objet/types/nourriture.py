@@ -52,7 +52,7 @@ class Nourriture(BaseType):
     
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""
-        qualite = enveloppes["a"]
+        qualite = enveloppes["u"]
         qualite.apercu = "{objet.qualite}"
         qualite.prompt = "Qualité de la nourriture : "
         qualite.aide_courte = \

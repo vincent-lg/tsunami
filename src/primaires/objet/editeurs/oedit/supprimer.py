@@ -50,12 +50,11 @@ class NSupprimer(Supprimer):
             
             nb_objets = len(prototype.objets)
             if nb_objets > 0:
-                s = ""
-                if nb_objets > 1:
-                    s = "s"
-                
-                self.pere << "|err|{} objet(s) existe(nt) modelé(s) sur ce " \
-                        "prototype. Opération annulée.|ff|".format(nb_objets)
+                s = nb_objets > 1 and "s" or ""
+                nt = nb_objets > 1 and "nt" or ""
+                self.pere << "|err|{} objet{s} existe{nt} modelé{s} sur ce " \
+                        "prototype. Opération annulée.|ff|".format(nb_objets,
+                        s=s, nt=nt)
                 self.migrer_contexte(self.opts.rci_ctx_prec)
             else:
                 objet(self.objet.cle)
@@ -64,4 +63,4 @@ class NSupprimer(Supprimer):
         elif msg == "non":
             self.migrer_contexte(self.opts.rci_ctx_prec)
         else:
-            self.pere << "|att|Choix invalide.|ff|"
+            self.pere << "|err|Choix invalide.|ff|"

@@ -94,7 +94,8 @@ class NomObjet(Masque):
                 if contient(o.nom_singulier, nom):
                     if o_type and o.nom_type != o_type:
                         raise ErreurValidation(
-                                o.err_type.format(o.nom_singulier))
+                                "|err|" + o.err_type.format(o.nom_singulier) \
+                                + "|ff|")
                     
                     objets.append((o, c))
         

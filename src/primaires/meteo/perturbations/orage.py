@@ -65,6 +65,8 @@ class Orage(BasePertu):
             "Un éclair aveuglant zèbre le ciel obscur.",
             "Un roulement de tonnerre, puissant et impérieux, vous fait " \
                     "sursauter.",
+            "Soudain, le vent redouble de fureur, et les gouttes vous " \
+                    "fouettent violemment."
         ]
         for salle in salles:
             if randint(1, 10) < 4:

@@ -103,8 +103,7 @@ class Module(BaseModule):
                 print("On charge le plateau", nom_module)
     
     def get_jeu(self, nom):
-        """Retourne le jeu portant le nom nom.
-        
+        """Retourne le jeu portant le nom 'nom'.
         Si aucun jeu n'est trouvé, retourne None.
         
         """
