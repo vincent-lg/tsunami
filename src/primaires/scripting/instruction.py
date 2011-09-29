@@ -105,7 +105,7 @@ class Instruction(BaseObj, metaclass=MetaInstruction):
         peut être compris par une instruction de type Condition, mais pas
         par une Action.
         
-        Cette méthode est appelée quand on insert une ligne dans l'éditeur
+        Cette méthode est appelée quand on insère une ligne dans l'éditeur
         de script.
         
         """

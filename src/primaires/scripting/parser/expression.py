@@ -38,7 +38,7 @@ class Expression(BaseObj, metaclass=MetaExpression):
     
     """Classe abstraite définissant une expression.
 
-    Une expression est un élément exclusif d'une isntruction.
+    Une expression est un élément exclusif d'une instruction.
     Dans sa forme la plus simple, une expression peut être une
     chaîne de caractère, une variable, un entier, un flottant.
     Dans sa forme la plus complexe, une expression peut être une fonction.
@@ -47,7 +47,7 @@ class Expression(BaseObj, metaclass=MetaExpression):
     est constituée de plusieurs instructions. Il en va de même pour
     les conditions. Chaque instruction a pour rôle de parser
     la chaîne ajoutée en fonction de s expressions qu'elle attend.
-    Par exemple, une action est constitué d'un nom d'action et
+    Par exemple, une action est constituée d'un nom d'action et
     de plusieurs paramètres (soit des chaînes de caractères, soit
     des entiers, soit des variables... soit des fonctions).
     

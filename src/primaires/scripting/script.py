@@ -108,8 +108,8 @@ class Script(BaseObj):
         """Crée et ajoute l'évènement dont le nom est précisé en paramètre.
         
         L'évènement doit être une chaîne de caractères non vide.
-        Si l'év ènement existe, le retourne.
-        Sinon, etourne le créé.
+        Si l'évènement existe, le retourne.
+        Sinon, retourne le créé.
         
         """
         if not evenement:
