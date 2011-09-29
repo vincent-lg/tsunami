@@ -142,7 +142,7 @@ class Quete(ObjetID):
         res = ""
         if self.parent and quete is not self:
             res += self.str_niveau.ljust(5) + " " + self.titre + "\n"
-        for etape in self.etapes:
+        for etape in self.__etapes:
             res += etape.afficher_etapes(quete)
             res += "\n"
         

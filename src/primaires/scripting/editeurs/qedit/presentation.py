@@ -36,6 +36,7 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
+from primaires.format.fonctions import oui_ou_non
 from .etape import EdtEtape
 
 class EdtPresentation(Presentation):
@@ -57,6 +58,7 @@ class EdtPresentation(Presentation):
         # Options
         self.ajouter_option("e", self.ajouter_etape)
         self.ajouter_option("q", self.ajouter_sous_quete)
+        self.ajouter_option("o", self.changer_ordonnee)
         
         if personnage and quete:
             self.construire(quete)
@@ -88,6 +90,12 @@ class EdtPresentation(Presentation):
             self.objet.ajouter_sous_quete(argument.strip())
             self.actualiser()
     
+    def changer_ordonnee(self, argument):
+        """Change le statut de la quête d'ordonnée à non ordonnée."""
+        quete = self.objet
+        quete.ordonnee = not quete.ordonnee
+        self.actualiser()
+    
     def accueil(self):
         """Message d'accueil de l'éditeur."""
         quete = self.objet
@@ -96,6 +104,7 @@ class EdtPresentation(Presentation):
         msg = "\n".join(msg.split("\n")[:-1]) + "\n\n"
         msg += "Auteur : " + (quete.auteur and quete.auteur.nom or "inconnu")
         msg += "\n"
+        msg += "Ordonnée : " + oui_ou_non(quete.ordonnee) + "\n"
         msg += "Etapes de la quête :\n\n"
         etapes = quete.afficher_etapes(quete)
         if not etapes:
@@ -127,13 +136,10 @@ class EdtPresentation(Presentation):
             76) + "|ff||\n" + self.opts.separateur
     
     def autre_interpretation(self, msg):
-        """On peut aussi interpréter des numéros d'étapes."""
+        """On peut aussi interpréter des niveaux d'étapes."""
         try:
-            no_etape = int(msg) - 1
-            assert no_etape >= 0
-            assert no_etape < len(self.objet.etapes)
-            etape = self.objet.etapes[no_etape]
-        except (ValueError, AssertionError, IndexError):
+            etape = self.objet.etapes[msg]
+        except KeyError:
             self.pere << "|err|L'étape {} n'existe pas.|ff|".format(msg)
         else:
             if etape.type == "etape":

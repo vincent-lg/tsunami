@@ -130,7 +130,13 @@ class Quete(BaseObj):
         Par exemple, si le niveau le plus élevé est 1.2, retourne 1.3.
         
         """
+        if not len(self.__niveaux):
+            return (1, )
+        
         niveau = max(self.__niveaux)
+        if niveau == (0, ):
+            return (1, )
+        
         niveau = ".".join([str(n) for n in niveau])
         # On récupère la template
         quete = type(self).importeur.scripting.quetes[self.cle_quete]
@@ -165,7 +171,7 @@ class Quete(BaseObj):
             # Le niveau parent doit être validé
             # Note : le niveau parent de (2, 3) et (1, )
             # Celui de (1, 5, 2) est (1, 4)
-            t_niveau = niveau[:-2] + (niveau[:-2] - 1, )
+            t_niveau = niveau[:-2] + (niveau[-2] - 1, )
             
             # On retire les 0 en fin de niveau
             f_niveau = []
@@ -178,7 +184,7 @@ class Quete(BaseObj):
                     f_niveau.insert(0, n)
                     non_zero = True
             
-            return self.peut_faire(quete.parent, tuple(f_niveau))
+            return tuple(f_niveau) in self.__niveaux
     
     def valider(self, quete, niveau):
         """Valide la quête passée en paramètre.
@@ -192,8 +198,10 @@ class Quete(BaseObj):
         if niveau not in self.__niveaux:
             self.__niveaux.append(niveau)
         
+        print(quete, quete.parent, quete.niveau)
         if quete.parent and all(e.niveau in self.__niveaux for e in \
-                quete.etapes.values()):
+                quete.get_dictionnaire_etapes(True).values()):
+            print("Valide")
             self.__niveaux.append(quete.niveau)
         
         if self.parent:
