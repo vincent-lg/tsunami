@@ -114,7 +114,7 @@ class EdtInstructions(Editeur):
             
             quete = type(self).importeur.scripting.quetes[quete]
             try:
-                etape = quete[niveau]
+                etape = quete.etapes[niveau]
             except KeyError:
                 self.pere << "|err|Le niveau {} est inconnue pour la " \
                         "quête {}.|ff|".format(niveau, quete)

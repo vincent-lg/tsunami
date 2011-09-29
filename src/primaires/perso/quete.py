@@ -131,8 +131,17 @@ class Quete(BaseObj):
         
         """
         niveau = max(self.__niveaux)
-        niveau = niveau[:-1] + (niveau[-1] + 1, )
-        return niveau
+        niveau = ".".join([str(n) for n in niveau])
+        # On récupère la template
+        quete = type(self).importeur.scripting.quetes[self.cle_quete]
+        niveaux = quete.get_dictionnaire_etapes(True)
+        etapes = list(niveaux.keys())
+        pos = etapes.index(niveau)
+        if pos == len(niveaux) - 1:
+            return ()
+        
+        print("Retourne", niveaux[etapes[pos + 1]])
+        return niveaux[etapes[pos + 1]].niveau
     
     def peut_faire(self, quete, niveau):
         """Retourne True si la quête peut être faite, False sinon.
@@ -183,7 +192,8 @@ class Quete(BaseObj):
         if niveau not in self.__niveaux:
             self.__niveaux.append(niveau)
         
-        if quete.parent and all(e.niveau in self.__niveaux for e in quete.etapes):
+        if quete.parent and all(e.niveau in self.__niveaux for e in \
+                quete.etapes.values()):
             self.__niveaux.append(quete.niveau)
         
         if self.parent:

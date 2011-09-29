@@ -50,6 +50,7 @@ class Etape(ObjetID):
     def __init__(self, quete):
         """Constructeur de l'étape."""
         ObjetID.__init__(self)
+        self.type = "etape"
         self.quete = quete
         self.niveau = ()
         self.titre = "non renseigné"
@@ -71,7 +72,7 @@ class Etape(ObjetID):
     def str_niveau(self):
         return ".".join([str(n) for n in self.niveau])
     
-    def afficher_etapes(self):
+    def afficher_etapes(self, quete=None):
         """Affiche les étapes (en l'occurence, elle-même seulement)."""
         return self.str_niveau.ljust(5) + " " + self.titre
 

@@ -32,6 +32,7 @@
 
 import re
 from datetime import datetime
+from collections import OrderedDict
 
 from abstraits.id import ObjetID
 from bases.collections.liste_id import ListeID
@@ -63,6 +64,7 @@ class Quete(ObjetID):
     def __init__(self, cle, auteur, parent=None, niveau=(1, )):
         """Constructeur de la quête."""
         ObjetID.__init__(self)
+        self.type = "quete"
         self.cle = cle
         self.niveau = niveau
         self.auteur = auteur
@@ -91,7 +93,8 @@ class Quete(ObjetID):
     
     @property
     def etapes(self):
-        return list(self.__etapes)
+        """Constitue un dictionnaire des niveaux."""
+        return self.get_dictionnaire_etapes()
     
     @property
     def str_niveau(self):
@@ -104,6 +107,20 @@ class Quete(ObjetID):
         else:
             return (len(self.__etapes) + 1, )
         
+    def get_dictionnaire_etapes(self, etapes_seulement=False):
+        """Retourne un dictionnaire ordonné des étapes."""
+        niveaux = OrderedDict()
+        if not etapes_seulement:
+            niveaux[self.str_niveau] = self
+        
+        for etape in self.__etapes:
+            if etape.type == "quete":
+                niveaux.update(etape.get_dictionnaire_etapes(etapes_seulement))
+            else:
+                niveaux[etape.str_niveau] = etape
+        
+        return niveaux
+    
     def ajouter_etape(self, titre):
         """Ajoute l'étape à la quête."""
         etape = Etape(self)
@@ -120,13 +137,13 @@ class Quete(ObjetID):
         self.__etapes.append(etape)
         self.enregistrer()
     
-    def afficher_etapes(self):
+    def afficher_etapes(self, quete=None):
         """Affiche les étapes qui peuvent être aussi des sous-quêtes."""
         res = ""
-        if self.parent:
+        if self.parent and quete is not self:
             res += self.str_niveau.ljust(5) + " " + self.titre + "\n"
         for etape in self.etapes:
-            res += etape.afficher_etapes()
+            res += etape.afficher_etapes(quete)
             res += "\n"
         
         return res.rstrip("\n")
