@@ -143,7 +143,7 @@ class BasePertu(ObjetID, metaclass=MetaPertu):
         for salle in salles:
             if not self.est_sur(salle):
                 salle.envoyer("|cy|" + self.message_sortir.format(
-                        ²dir=vents[self.dir]) + "|ff|")
+                        dir=vents[self.dir]) + "|ff|")
     
     def distance_au_centre(self, salle):
         """Retourne la distance de salle au centre de la perturbation"""

@@ -54,9 +54,10 @@ class Script(BaseObj):
     Comme indiqué, chaque instance de script peut contenir un ou plusieurs
     évènements qu'il est nécessaire de définir précisément avant l'appel.
     Chaque évènement peut contenir plusieurs sous-évènements.
-    Pour plus d'informations, voir la classe Evènement définie dans ce package.
+    Pour plus d'informations, voir la classe Evenement définie dans ce package.
     
-    A noter que c'est l'évènement qui stock les instructions, pas le script lui-même.
+    A noter que c'est l'évènement qui stocke les instructions, pas le script
+    lui-même.
     
     Pour se construire, un script prend en paramètre :
         parent -- l'objet qui appellera le script
