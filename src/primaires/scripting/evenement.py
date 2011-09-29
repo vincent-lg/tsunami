@@ -105,6 +105,7 @@ class Evenement(BaseObj):
         """Ne sauvegarde pas les variables en fichier."""
         dico_attr = BaseObj.__getstate__(self).copy()
         del dico_attr["variables"]
+        del dico_attr["espaces"]
         return dico_attr
     
     @property
