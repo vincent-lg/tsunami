@@ -229,7 +229,7 @@ class Salle(ObjetID):
         """Affiche les sorties de la salle"""
         noms = []
         for nom in NOMS_SORTIES.keys():
-            sortie = self.sorties[nom]
+            sortie = self.sorties.get_sortie_par_nom_ou_direction(nom)
             if sortie:
                 nom = sortie.nom
             
