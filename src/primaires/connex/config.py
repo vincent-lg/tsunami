@@ -70,6 +70,17 @@ secondes_a_attendre = 3
 
 ### Création d'un compte
 
+## Création autorisée
+# En passant cette donnée de True à False, vous interdisez la création
+# de nouveaux comptes. Cela veut dire que les seuls comptes
+# auxquels on pourra se connecter seront ceux existants.
+# Cependant, une connexion locale (c'est-à-dire depuis le serveur
+# hébergeant le MUD) aura toujours le droit de créer des comptes.
+# Ainsi, si vous voulez restreindre la création de compteg, mettez
+# cette donnée à False, connectez-vous en local sur le MUD
+# et créez les comptes de cette façon.
+creation_autorisee = True
+
 ## Chaîne à entrer pour créer un nouveau compte
 # Par défaut, c'est simplement 'nouveau' mais vous pouvez lui donner un autre
 # nom. Le client devra entrer cette chaîne pour créer un nouveau compte.

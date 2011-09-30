@@ -35,6 +35,7 @@ from primaires.connex.motd import MOTD
 
 class AfficherMOTD(Contexte):
     """Contexte affichant le MOTD.
+    
     On est censé être dirigé sur ce contexte à la création de compte et
     immédiatement redirigé sur 'connex:connexion:entrer_nom'.
     

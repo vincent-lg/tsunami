@@ -39,10 +39,12 @@ RE_NOUVEAU = None # on ne connaît pas la chaîne
 
 class EntrerNom(Contexte):
     """Contexte demandant au client d'entrer le nom de son compte.
+    
     Ce contexte est censément le premier appelé à la connexion d'un client.
     Plusieurs sorties pereibles :
     *   Le client entre une demande de nouveau compte (voir RE_NOUVEAU) :
         Dans ce cas, on redirige sur le contexte 'connex:creation:entrer_nom'
+        La création de compte doit être autorisée.
     *   Le client entre un nom de compte existant (c'est-à-dire
         créé, au moins partiellement)
     *   Sinon, on affiche une erreur (le compte n'existe pas)
@@ -76,7 +78,11 @@ class EntrerNom(Contexte):
         cfg_connex = type(self).importeur.anaconf.get_config("connex")
         msg = msg.lower()
         if RE_NOUVEAU.search(msg): # le client demande un nouveau compte
-            self.migrer_contexte("connex:creation:entrer_nom")
+            if cfg_connex.creation_autorisee or self.pere.connexion_locale():
+                self.migrer_contexte("connex:creation:entrer_nom")
+            else:
+                self.pere << "|err|La création de compte sur ce MUD " \
+                        "est interdite.|ff|"
         elif type(self).importeur.connex.compte_est_cree(msg):
             self.pere.compte = type(self).importeur.connex.get_compte(msg)
             self.migrer_contexte("connex:connexion:entrer_pass")

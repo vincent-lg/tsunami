@@ -129,6 +129,10 @@ class InstanceConnexion(BaseObj):
             return False
         return True
     
+    def connexion_locale(self):
+        """Retourne True si l'adresse IP est locale, False sinon."""
+        return self.adresse_ip == "127.0.0.1"
+    
     def creer_depuis(self, autre):
         """Cette méthode se charge de construire self sur le modèle de autre
         (une autre instance de connexion).
