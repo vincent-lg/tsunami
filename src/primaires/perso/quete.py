@@ -33,9 +33,9 @@ from abstraits.obase import *
 
 class Quete(BaseObj):
     
-    """Niveau dans une quête d'un personnage.
+    """Niveaux dans une quête d'un personnage.
     
-    Cet objet est destiné à enregistrer le niveau dans une quête d'un
+    Cet objet est destiné à enregistrer les niveaux dans une quête d'un
     personnage.
     
     Le niveau est sous la forme d'un tuple de N éléments.
@@ -63,6 +63,10 @@ class Quete(BaseObj):
     Quant au parent, il ne sert qu'à symboliser le personnage qui possède
     la quête. Si l'objet est déréférencé, ce parent peut être None.
     
+    Ayez bien conscience que l'objet Quete stock plusieurs niveaux,
+    pas un seul. En fait, tous les niveaux validés par le joueur sont
+    enregistrés dans cet objet.
+    
     """
     
     def __init__(self, cle_quete, niveau, parent=None):
@@ -74,135 +78,27 @@ class Quete(BaseObj):
         
         # Pour le niveau
         if isinstance(niveau, Quete):
-            niveau = niveau.niveau
+            niveaux = niveau.niveaux
         elif isinstance(niveau, tuple):
-            pass
+            niveaux = [niveau]
         else:
             raise TypeError("le type {} ne peut servir pour caractériser " \
                     "un niveau de quête".format(type(niveau)))
         
-        self.niveau = niveau
+        self.__niveaux = niveaux
         self._construire()
     
     def __getnewargs__(self):
         return ("", (0, ))
     
-    def __repr__(self):
-        return tuple(self.niveau)
-    
-    def __str__(self):
-        return ".".join([str(n) for n in self.niveau])
-    
-    # Méthodes de comparaison
-    def __lt__(self, niveau):
-        o_niveau = self.convertir_niveau(niveau)
-        niveau, o_niveau = self.egaliser_niveaux(self.niveau, o_niveau)
-        for n, m in zip(niveau, o_niveau):
-            if n < m:
-                return True
-            elif n > m:
-                break
-        
-        return False
-    
-    def __le__(self, niveau):
-        o_niveau = self.convertir_niveau(niveau)
-        niveau, o_niveau = self.egaliser_niveaux(self.niveau, o_niveau)
-        for n, m in zip(niveau, o_niveau):
-            if n > m:
-                return False
-        
-        return True
-    
-    def __eq__(self, niveau):
-        o_niveau = self.convertir_niveau(niveau)
-        niveau, o_niveau = self.egaliser_niveaux(self.niveau, o_niveau)
-        for n, m in zip(niveau, o_niveau):
-            if n != m:
-                return False
-        
-        return True
-    
-    def __ne__(self, niveau):
-        o_niveau = self.convertir_niveau(niveau)
-        niveau, o_niveau = self.egaliser_niveaux(self.niveau, o_niveau)
-        for n, m in zip(niveau, o_niveau):
-            if n == m:
-                return False
-        
-        return True
-    
-    def __ge__(self, niveau):
-        o_niveau = self.convertir_niveau(niveau)
-        niveau, o_niveau = self.egaliser_niveaux(self.niveau, o_niveau)
-        for n, m in zip(niveau, o_niveau):
-            if n < m:
-                return False
-        
-        return True
-    
-    def __gt__(self, niveau):
-        o_niveau = self.convertir_niveau(niveau)
-        niveau, o_niveau = self.egaliser_niveaux(self.niveau, o_niveau)
-        for n, m in zip(niveau, o_niveau):
-            if n > m:
-                return True
-            elif n < m:
-                break
-        
-        return False
-    
-    def __add__(self, entier):
-        """Ajoute un entier au niveau de la quête."""
-        n_v = list(self.niveau)
-        n_v[-1] += entier
-        return Quete(self.cle_quete, tuple(n_v))
-    
-    @staticmethod
-    def convertir_niveau(niveau):
-        """Retourne le niveau convertit en tuple.
-        
-        Le niveau peut être :
-            un objet Quête
-            un tuple (on n'y touche pas)
-            une chaîne de caractères
-        
-        """
-        if isinstance(niveau, tuple):
-            pass
-        elif isinstance(niveau, Quete):
-            niveau = niveau.niveau
-        elif isinstance(niveau, int):
-            niveau = tuple(nigveau)
-        elif isinstance(niveau, str):
-            try:
-                niveau = tuple(int(v) for v in niveau.split("."))
-            except ValueError:
-                raise ValueError("impossible de convertir {} en niveau " \
-                        "de quête".format(niveau))
-        
-        return niveau
-    
-    @staticmethod
-    def egaliser_niveaux(n1, n2):
-        """Egalise les tuple n1 et n2.
-        
-        Si n1 est plus long que n2, allonge n2 avec des 0.
-        Même principe dans l'autre sens.
-        Au final, n1 et n2 (retournés) doivent avoir la même taille.
-        
-        """
-        if len(n1) > len(n2):
-            n2 = n2 + (0, ) * (len(n1) - len(n2))
-        elif len(n2) > len(n1):
-            n1 = n1 + (0, ) * (len(n2) - len(n1))
-        
-        return n1, n2
-    
     @property
     def verrouille(self):
         """Retourne True si la quête est verrouillé."""
         return self.__verrou
+    
+    @property
+    def niveaux(self):
+        return list(self.__niveaux)
     
     def verrouiller(self):
         """Verrouille la quête."""
@@ -222,4 +118,91 @@ class Quete(BaseObj):
         Le niveau doit être un tuple.
         
         """
-        self.niveau = niveau
+        if niveau not in self.__niveaux:
+            self.__niveaux.append(niveau)
+            if self.parent:
+                self.parent.enregistrer()
+    
+    @property
+    def niveau_suivant(self):
+        """Récupère le niveau le plus avancé et y ajoute 1.
+        
+        Par exemple, si le niveau le plus élevé est 1.2, retourne 1.3.
+        
+        """
+        if not len(self.__niveaux):
+            return (1, )
+        
+        niveau = max(self.__niveaux)
+        if niveau == (0, ):
+            return (1, )
+        
+        niveau = ".".join([str(n) for n in niveau])
+        # On récupère la template
+        quete = type(self).importeur.scripting.quetes[self.cle_quete]
+        niveaux = quete.get_dictionnaire_etapes(True)
+        etapes = list(niveaux.keys())
+        pos = etapes.index(niveau)
+        if pos == len(niveaux) - 1:
+            return ()
+        
+        print("Retourne", niveaux[etapes[pos + 1]])
+        return niveaux[etapes[pos + 1]].niveau
+    
+    def peut_faire(self, quete, niveau):
+        """Retourne True si la quête peut être faite, False sinon.
+        
+        La quête passée en paramètre est le template de la quête.
+        Le niveau est le niveau demandé.
+        
+        """
+        if niveau in self.__niveaux:
+            return False
+        
+        if quete is None:
+            return True
+        
+        if niveau == (0, ):
+            return True
+        
+        if quete.ordonnee:
+            return niveau == self.niveau_suivant
+        else:
+            # Le niveau parent doit être validé
+            # Note : le niveau parent de (2, 3) et (1, )
+            # Celui de (1, 5, 2) est (1, 4)
+            t_niveau = niveau[:-2] + (niveau[-2] - 1, )
+            
+            # On retire les 0 en fin de niveau
+            f_niveau = []
+            non_zero = False
+            for n in reversed(t_niveau):
+                if n <= 0:
+                    if non_zero:
+                        f_niveau.insert(0, n)
+                else:
+                    f_niveau.insert(0, n)
+                    non_zero = True
+            
+            return tuple(f_niveau) in self.__niveaux
+    
+    def valider(self, quete, niveau):
+        """Valide la quête passée en paramètre.
+        
+        Le niveau représente l'étape validée dans la quête.
+        
+        Si la quête est une sous-quête et que toutes ses étapes
+        sont validées, valide l'étape parent.
+        
+        """
+        if niveau not in self.__niveaux:
+            self.__niveaux.append(niveau)
+        
+        print(quete, quete.parent, quete.niveau)
+        if quete.parent and all(e.niveau in self.__niveaux for e in \
+                quete.get_dictionnaire_etapes(True).values()):
+            print("Valide")
+            self.__niveaux.append(quete.niveau)
+        
+        if self.parent:
+            self.parent.enregistrer()

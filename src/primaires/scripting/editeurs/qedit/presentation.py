@@ -36,7 +36,8 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
-from .etape import EdtEtape
+from .edt_etape import EdtEtape
+from .edt_ordonnee import EdtOrdonnee
 
 class EdtPresentation(Presentation):
     
@@ -56,6 +57,7 @@ class EdtPresentation(Presentation):
         
         # Options
         self.ajouter_option("e", self.ajouter_etape)
+        self.ajouter_option("q", self.ajouter_sous_quete)
         
         if personnage and quete:
             self.construire(quete)
@@ -66,7 +68,7 @@ class EdtPresentation(Presentation):
     def ajouter_etape(self, argument):
         """Ajoute une étape.
         
-        L'argument doit t contenir le titre de l'étape.
+        L'argument doit contenir le titre de l'étape.
         
         """
         if not argument.strip():
@@ -75,20 +77,42 @@ class EdtPresentation(Presentation):
             self.objet.ajouter_etape(argument.strip())
             self.actualiser()
     
+    def ajouter_sous_quete(self, argument):
+        """Ajoute une sous-quête.
+        
+        L'argument doit contenir le titre de la sous-quête.
+        
+        """
+        if not argument.strip():
+            self.pere << "|err|Précisez un titre pour cette sous-quête.|ff|"
+        else:
+            self.objet.ajouter_sous_quete(argument.strip())
+            self.actualiser()
+    
     def accueil(self):
         """Message d'accueil de l'éditeur."""
         quete = self.objet
         msg = Presentation.accueil(self)
         quitter = msg.split("\n")[-1]
-        msg = "\n".join(msg.split("\n")[:-1]) + "\n\n"
-        msg += "Auteur : " + (quete.auteur and quete.auteur.nom or "inconnu")
-        msg += "\n"
-        msg += "Etapes de la quête :\n\n  "
-        etapes = [str(e) for e in quete.etapes]
+        intro = "| |tit|"
+        intro += "Edition de la quête {}".format(str(quete)).ljust(76)
+        intro += "|ff||\n" + self.opts.separateur + "\n"
+        intro += "Entrez |cmd|/|ff| pour revenir à la fenêtre précédente.\n" \
+                "Options :\n" \
+                " - |cmd|/e <titre de l'étape>|ff| : ajoute une étape " \
+                "simple à la quête\n" \
+                " - |cmd|/q <titre de la sous-quête>|ff| : ajoute une " \
+                "sous-quête (qui pourra elle-même\n" \
+                "   contenir sous-quêtes et étapes simples)\n" \
+                "Pour éditer une étape ou une sous-quête, entrez simplement " \
+                "son niveau.\n"
+        msg = intro + "\n".join(msg.split("\n")[2:-1]) + "\n\n"
+        msg += " |tit|Etapes de la quête :|ff|\n"
+        etapes = quete.afficher_etapes(quete)
         if not etapes:
-            etapes = ["Aucune"]
+            etapes = "   |att|aucune pour le moment|ff|"
         
-        msg += "\n  ".join(etapes)
+        msg += etapes
         
         msg += "\n\n" + quitter
         return msg
@@ -112,18 +136,26 @@ class EdtPresentation(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description de la quête {}".format(quete.cle).ljust(
             76) + "|ff||\n" + self.opts.separateur
+        
+        # Ordonnee
+        ordonnee = self.ajouter_choix("ordonnée", "o", EdtOrdonnee, quete)
+        ordonnee.parent = self
+        ordonnee.apercu = "{objet.aff_ordonnee}"
     
     def autre_interpretation(self, msg):
-        """On peut aussi interpréter des numéros d'étapes."""
+        """On peut aussi interpréter des niveaux d'étapes."""
         try:
-            no_etape = int(msg) - 1
-            assert no_etape >= 0
-            assert no_etape < len(self.objet.etapes)
-            etape = self.objet.etapes[no_etape]
-        except (ValueError, AssertionError, IndexError):
+            etape = self.objet.etapes[msg]
+        except KeyError:
             self.pere << "|err|L'étape {} n'existe pas.|ff|".format(msg)
         else:
-            enveloppe = EnveloppeObjet(EdtEtape, etape)
+            if etape.type == "etape":
+                enveloppe = EnveloppeObjet(EdtEtape, etape)
+            elif etape.type == "quete":
+                enveloppe = EnveloppeObjet(EdtPresentation, etape)
+            else:
+                raise TypeError("type d'étape inconnu {}".format(type(etape)))
+            
             enveloppe.parent = self
             contexte = enveloppe.construire(self.personnage)
             

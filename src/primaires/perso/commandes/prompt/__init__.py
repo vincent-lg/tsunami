@@ -51,13 +51,14 @@ class CmdPrompt(Commande):
         self.aide_courte = "affiche ou configure votre prompt"
         self.aide_longue = \
             "Cette commande permet d'afficher ou configurer vos " \
-            "différents prompts. les prompts sont des messages qui " \
+            "différents prompts. Les prompts sont des messages qui " \
             "apparaissent régulièrement pour vous signaler, par défaut, " \
             "les principales stats de votre personnage (sa vitalité, " \
-            "sa mana, son endurance). Chaque prompt se voit attribuer " \
-            "une sous-commande de %prompt%. Si vous entrez cette " \
-            "sous-commande, vous verrez le prompt actuel. Si vous " \
-            "entrez un prompt à la suite, vous modifierez le prompt actuel."
+            "sa mana, son endurance). Chaque prompt est lié à une " \
+            "sous-commande à son nom. Si vous entrez cette " \
+            "sous-commande, vous verrez la valeur actuelle du prompt. Si " \
+            "vous entrez une valeur à la suite, vous modifierez celle " \
+            "existante."
     
     def ajouter_parametres(self):
         """Ajoute les paramètres à la commande."""

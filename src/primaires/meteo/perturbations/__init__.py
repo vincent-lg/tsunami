@@ -51,3 +51,5 @@ class MetaPertu(MetaBaseObj):
             perturbations.append(cls)
 
 from .pluie import Pluie
+from .nuages import Nuages
+from .orage import Orage

@@ -78,7 +78,7 @@ class Jeu(BaseObj):
             coord_de, coord_a = msg.split(" ")
         except ValueError:
             personnage << "|err|Précisez deux coordonnées séparées " \
-                    "par un espace\n(|cmd|A1 A3|err| par exemple).|ff|"
+                    "par un espace (|cmd|A1 A3|err| par exemple).|ff|"
         else:
             coord_de = self.get_coord(coord_de)
             coord_a = self.get_coord(coord_a)
@@ -93,7 +93,7 @@ class Jeu(BaseObj):
                 partie.afficher_tous()
                 partie.enregistrer()
             else:
-                personnage << "|err|Ce coup est invalide."
+                personnage << "|err|Ce coup est invalide.|ff|"
     
     def get_coord(self, coord):
         """Retourne la coordonnée."""
@@ -106,7 +106,8 @@ class Jeu(BaseObj):
             return
         
         if coord not in self.plateau.cases:
-            self.personnage << "|err|Case inconnue {}.|ff|".format(coord)
+            self.personnage << "|err|La case {} n'existe pas.|ff|".format(
+                    coord)
             return
         
         return coord
@@ -125,14 +126,13 @@ class Jeu(BaseObj):
         if c_de == c_a and l_de != l_a:
             if abs(l_de - l_a) != 2:
                 return False
-            
             entre = c_de + str(l_de - (l_de - l_a) // 2)
-        if l_de == l_a and c_de != c_a:
+        elif l_de == l_a and c_de != c_a:
             if abs(ord(c_de) - ord(c_a)) != 2:
                 return False
-            
             entre = chr(ord(c_de) - (ord(c_de) - ord(c_a)) // 2) + str(l_de)
-        
+        else:
+            return False
         if not self.plateau.cases[coord_de]: return False
         if not self.plateau.cases[entre]: return False
         if self.plateau.cases[coord_a]: return False
@@ -142,3 +142,6 @@ class Jeu(BaseObj):
     def opt_q(self, personnage):
         """Quitte le jeu."""
         personnage << "Vous quittez la partie."
+    
+    def opt_v(self, personnage):
+        self.partie.afficher_tous()

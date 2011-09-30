@@ -28,34 +28,46 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'système'"""
+"""Ce fichier contient la classe Orage, détaillée plus bas."""
 
-from primaires.interpreteur.commande.commande import Commande
-from secondaires.systeme.contextes.systeme import Systeme
+from .base import *
 
-class CmdSysteme(Commande):
+class Orage(BasePertu):
     
-    """Commande 'système'.
+    """Classe abstraite représentant la perturbation 'orage'.
     
     """
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "système", "system")
-        self.groupe = "administrateur"
-        self.schema = ""
-        self.aide_courte = "intègre une console interactive Python"
-        self.aide_longue = \
-            "Cette commande ouvre une console virtuelle Python. " \
-            "Elle permet d'entrer du code directement, comme dans " \
-            "un interpréteur Python. |att|Soyez excessivement prudent " \
-            "quant aux manipulations effectuées et aux informations " \
-            "que vous envoyez. Souvenez-vous qu'elles transitent " \
-            "par un protocole non sécurisé.|ff| N'utilisez cette " \
-            "commande qu'à des fins de debug."
+    nom_pertu = "orage"
+    rayon_max = 13
+    duree_max = 7
     
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        contexte = Systeme(personnage.instance_connexion)
-        personnage.contexte_actuel.migrer_contexte(contexte)
-
+    def __init__(self, pos):
+        """Constructeur de la perturbation"""
+        BasePertu.__init__(self, pos)
+        self.flags = OPAQUE
+        self.alea_dir = 7
+        self.etat = [
+            (5, "Le ciel est noir, zébré d'éclairs, et la pluie tombe dru."),
+            (10, "Une violente pluie tombe du ciel, devenant franchement " \
+                    "orageuse non loin."),
+        ]
+        self.message_debut = "Un violent orage éclate au-dessus de votre " \
+                "tête."
+        self.message_fin = "L'orage s'évanouit comme qu'il a commencé, " \
+                "laissant l'air moite et pesant."
+        self.message_sortir = "Les nuages d'orage s'éloignent enfin."
+    
+    def action_cycle(self, salles):
+        """Définit une ou plusieurs actions effectuées à chaque cycle."""
+        messages = [
+            "La foudre frappe le sol dans un vacarme infernal !",
+            "Un éclair aveuglant zèbre le ciel obscur.",
+            "Un roulement de tonnerre, puissant et impérieux, vous fait " \
+                    "sursauter.",
+            "Soudain, le vent redouble de fureur, et les gouttes vous " \
+                    "fouettent violemment."
+        ]
+        for salle in salles:
+            if randint(1, 10) < 4:
+                salle.envoyer(choice(messages))

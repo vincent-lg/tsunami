@@ -40,7 +40,7 @@ class Pluie(BasePertu):
     
     nom_pertu = "pluie"
     rayon_max = 16
-    duree_max = 10
+    duree_max = 12
     
     def __init__(self, pos):
         """Constructeur de la perturbation"""
@@ -57,3 +57,7 @@ class Pluie(BasePertu):
                 "cesse."
         self.message_sortir = "Les nuages s'éloignent peu à peu vers {dir}, " \
                 "la pluie s'arrêtant soudain."
+        self.fins_possibles = [
+            ("orage", "La pluie s'intensifie soudain et le tonnerre retentit.",
+                    30),
+        ]

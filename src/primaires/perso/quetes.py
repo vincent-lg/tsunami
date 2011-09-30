@@ -44,7 +44,9 @@ class Quetes(BaseObj):
     On doit utiliser les méthodes de manipulation de ce conteneur pour modifier
     ou consulter la valeur des quêtes d'un joueur. Ainsi, l'objet Quete
     lui-même, conçu pour conserver le niveau d'un personnage dans une quête, ne
-    doit pas être manipulable directement.
+    doit pas être manipulable directement sauf pour des opérations de lecture
+    ou de consultation. Par exemple, pour savoir si un joueur a le droit
+    de faire une quête.
     
     Méthodes disponibles :
         __getitem__ Retourne une Quete déréférencée
@@ -69,13 +71,6 @@ class Quetes(BaseObj):
     >>> quetes = personnage.quetes # conteneur
     >>> quetes["berger_picte"]
     "0"
-    >>> quetes["berger_picte"] = (1, )
-    >>> quetes["berger_picte"] == 1
-    True
-    >>> quetes["berger_picte"] < (1, 1)
-    True
-    >>> quetes["berger_picte"] >= "1.0"
-    True
     
     Pour plus d'informations, consultez l'aide des méthodes __getitem__ et
     __setitem__ ou, plus spécifiquement, l'aide de l'objet Quete.
@@ -136,3 +131,8 @@ class Quetes(BaseObj):
             self.__quetes[cle_quete] = Quete(cle_quete, valeur, self.parent)
         
         self.parent.enregistrer()
+    
+    def valider(self, quete, niveau):
+        """Valide la quête."""
+        self[quete.cle] = niveau
+        self.__quetes[quete.cle].valider(quete, niveau)

@@ -41,7 +41,7 @@ class Evenement(BaseObj):
     """Classe contenant un évènement de scripting.
     
     Un évènement est appelé dans une certaine situation. Un cas classique,
-    par exemple, est un script définit dans un PNJ. Un évènement pourrait
+    par exemple, est un script défini dans un PNJ. Un évènement pourrait
     être appelé quand le PNJ est attaqué.
     
     Les évènements peuvent contenir des sous-évènements.
@@ -105,6 +105,7 @@ class Evenement(BaseObj):
         """Ne sauvegarde pas les variables en fichier."""
         dico_attr = BaseObj.__getstate__(self).copy()
         del dico_attr["variables"]
+        del dico_attr["espaces"]
         return dico_attr
     
     @property
@@ -140,7 +141,7 @@ class Evenement(BaseObj):
         self.appelant.enregistrer()
         return len(self.__tests) - 1
     
-    def supprimer_testst(self, indice):
+    def supprimer_test(self, indice):
         """Retire le test à l'indice spécifiée."""
         del self.__tests[indice]
         self.appelant.enregistrer()
@@ -175,4 +176,5 @@ class Evenement(BaseObj):
                 test.executer_instructions(self)
                 return
         
-        self.sinon.executer_instructions(self)
+        if self.sinon.tester(self):
+            self.sinon.executer_instructions(self)

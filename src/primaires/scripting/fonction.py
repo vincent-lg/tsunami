@@ -39,20 +39,22 @@ class Fonction(BaseObj):
     
     """Classe définissant une fonction.
     
-    Une fonction est un composant d'une instruction prenant plusieurs paramètres et en retournant.
-    Une fonction n'a d'intérêt que si elle retourne quelque chose.
+    Une fonction est un composant d'une instruction prenant plusieurs
+    paramètres et en retournant. Une fonction n'a d'intérêt que si elle
+    retourne quelque chose.
     
     Ainsi, ce sont les grandes différences avec une action :
     *   une action est une instruction, une fonction n'en est qu'une composante
     *   une fonction retourne quelque chose, une action non
     *   une action modifie, une fonction consulte (principalement)
     
-    NOTE IMPORTANTE : dans le package parser est défijnji un module fonction
+    NOTE IMPORTANTE : dans le package parser est défini un module fonction
     contenant une classe Fonction. Il ne faut pas confondre ces deux classes
     ayant un but très différent :
-    *   La classe définit dans parser est utile pour parser une fonction,
-        isoler son nom, ses paramètres. L'objet généré sera stocké dans l'instruction
-    *   La classe définit ici existe comme classe-mère de toutes
+    *   la classe définie dans parser est utile pour parser une fonction,
+        isoler son nom, ses paramètres. L'objet généré sera stocké dans
+        l'instruction ;
+    *   la classe définie ici existe comme classe-mère de toutes
         les fonctions définies dans le sous-package fonctions.
     
     """

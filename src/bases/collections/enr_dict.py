@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,25 +28,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Case contenant une bille."""
+"""Ce fichier contient la classe EnrDict, détaillée plus bas."""
 
-from random import choice
+from abstraits.obase import *
 
-from abstraits.obase import BaseObj
-from primaires.format.constantes import COULEURS
-
-class Bille(BaseObj):
+class EnrDict(dict, BaseObj):
     
-    def __init__(self):
+    """Dictionnaire conçu pour s'enregistrer automatiquement quand ses
+    valeurs sont modifiées.
+    
+    """
+    
+    def __init__(self, parent):
+        """Construction du dictionnaire."""
+        dict.__init__(self)
         BaseObj.__init__(self)
-        self._construire()
-        self.clr = choice(list(COULEURS.values()))
+        self.parent = parent
     
     def __getnewargs__(self):
         return ()
     
-    def __str__(self):
-        return self.clr + "o|ff|"
-    
-    def __bool__(self):
-        return True
+    def __setitem__(self, nom_attr, val_attr):
+        """Modifie la valeur d'un dictionnaire

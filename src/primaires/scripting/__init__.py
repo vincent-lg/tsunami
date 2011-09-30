@@ -78,7 +78,8 @@ class Module(BaseModule):
         # Chargement des quêtes
         quetes = self.importeur.supenr.charger_groupe(Quete)
         for quete in quetes:
-            self.quetes[quete.cle] = quete
+            if quete.parent is None:
+                self.quetes[quete.cle] = quete
         
         # Chargement des étapes et tests
         etapes = self.importeur.supenr.charger_groupe(Etape)

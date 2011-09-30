@@ -128,8 +128,12 @@ class Test(ObjetID):
         # Si le test est relié à une quête, on test le niveau dans la quête
         etape = self.etape
         if etape:
-            if self.acteur.quetes[etape.quete.cle] + 1 != etape.niveau:
+            if not self.acteur.quetes[etape.quete.cle].peut_faire(
+                    etape.quete, etape.niveau):
                 return False
+        
+        if not self.__tests:
+            return True
         
         py_code = self.__tests.code_python
         print("Evaluation de", py_code)
@@ -177,8 +181,10 @@ class Test(ObjetID):
         
         # Si le test est relié à une quête
         if etape:
+            print("Relié")
             # Si aucun verrou n'a été posé
             if not self.acteur.quetes[etape.quete.cle].verrouille:
-                self.acteur.quetes[etape.quete.cle] = etape.niveau
+                print("On valide")
+                self.acteur.quetes.valider(etape.quete, etape.niveau)
 
 ObjetID.ajouter_groupe(Test)

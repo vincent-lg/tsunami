@@ -59,51 +59,57 @@ class CmdStat(Commande):
         imp = type(self).importeur
         
         ## Générales
-        msg = "Informations générales :"
+        msg = "|tit|Informations générales :|ff|"
         # Depuis quand le serveur est-il lancé ?
         uptime = stats.uptime
-        msg += "\n    Le MUD est démarré depuis {}.".format(get_date(uptime))
+        msg += "\n  Le MUD est démarré depuis {}.".format(get_date(uptime))
         
         msg += "\n"
         
         ## Commandes
-        msg += "\nCommandes :"
+        msg += "\n|tit|Commandes :|ff|"
         
         # Combien de commandes entrées ?
-        msg += "\n    {} commandes entrées".format(stats.nb_commandes)
+        msg += "\n  {} commandes entrées".format(stats.nb_commandes)
         # Temps moyen d'exécution
-        msg += "\n    Temps moyen d'exécution : {:.3f}".format( \
+        msg += "\n  Temps moyen d'exécution : {:.3f}".format( \
                 stats.tps_moy_commandes)
         
         # Commandes les plus gourmandes
-        msg += "\n    Temps d'exécution maximum :"
+        msg += "\n  Temps d'exécution maximum :"
         for temps in sorted(tuple(stats.max_commandes), reverse=True):
             commande = stats.max_commandes[temps]
-            # on affiche que les 15 premiers caractères de la commande
+            # on n'affiche que les 15 premiers caractères de la commande
             if len(commande) > 15:
-                commande = commande[:15] + "..."
+                commande = commande[:12] + "..."
             
-            msg += "\n        {} {:02.3f}s".format(commande.ljust(15), temps)
+            msg += "\n    {} {:02.3f}s".format(commande.ljust(15), temps)
         
         msg += "\n"
         
         ## Watch dog
-        msg += "\nWatch dog :"
+        msg += "\n|tit|Watch Dog :|ff|"
         # Temps moyen du WD
-        msg += "\n    Temps moyen : {:.3f}".format(stats.moy_wd)
+        msg += "\n  Temps moyen : {:.3f}".format(stats.moy_wd)
         # WD maximum
-        msg += "\n    Temps maximum : {:.3f}".format(stats.max_wd)
+        msg += "\n  Temps maximum : {:.3f}".format(stats.max_wd)
         
         ## Mémoire
-        msg += "\nEn mémoire :"
-        msg += "\n    {} joueurs issus de {} comptes".format(len(imp.connex.joueurs),
-                len(imp.connex.comptes))
-        msg += "\n    {} salles".format(len(imp.salle))
-        msg += "\n    {} objets issus de {} prototypes".format(len(imp.objet.objets),
-                len(imp.objet.prototypes))
+        nb_jo = len(imp.connex.joueurs)
+        nb_com = len(imp.connex.comptes)
+        nb_ob = len(imp.objet.objets)
+        nb_pro = len(imp.objet.prototypes)
+        nb_sa = len(imp.salle)
+        msg += "\n|tit|En mémoire :|ff|"
+        msg += "\n  {} joueur{} issus de {} compte{}".format(nb_jo,
+                nb_jo > 1 and "s" or "", nb_com, nb_com > 1 and "s" or "")
+        msg += "\n  {} salle{}".format(nb_sa, nb_sa > 1 and "s" or "")
+        msg += "\n  {} objet{} issus de {} prototype{}".format(nb_ob,
+                nb_ob > 1 and "s" or "", nb_pro, nb_pro > 1 and "s" or "")
         
         ## Threads
-        msg += "\nThread lancé :"
-        msg += "\n    {} thread(s) actif".format(threading.activeCount())
+        nb_thr = threading.activeCount()
+        msg += "\n|tit|Threads lancés :|ff|"
+        msg += "\n  {} thread{} actif".format(nb_thr, nb_thr > 1 and "s" or "")
         
         personnage << msg

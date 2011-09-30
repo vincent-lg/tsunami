@@ -38,16 +38,16 @@ class ConteneurObjet(BaseObj):
     
     """Conteneur standard d'objet.
     
-    Cette classe peut être héritée (le sol d'une salle par exemple est un conteneur d'objet hérité) ou utilisée telle qu'elle.
+    Cette classe peut être héritée (le sol d'une salle par exemple est un
+    conteneur d'objet hérité) ou utilisée telle qu'elle.
     
     Un objet conteneur contient lui-même d'autres objets.
-    Note : le conteneur d'objet utilise deux listes en fonction de si
-    l'objet est unique ou non.
+    Note : le conteneur d'objet utilise deux listes en fonction de
+    l'unicité ou nom des objets.
     
-    Les objets uniques, la majorité, sont représentés par une isntance
-    pour chaque objet.
-    Les objets non uniques, comme la monnaie, sont des objets représentés
-    par leur ptototype et leur nombre d'objet.
+    Les objets uniques, la majorité, sont représentés par une instance
+    pour chaque objet. Les objets non uniques, comme la monnaie, sont des
+    objets représentés par leur prototype et le nombre d'objets présents.
     
     """
     

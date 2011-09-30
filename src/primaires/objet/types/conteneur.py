@@ -68,11 +68,12 @@ class Conteneur(BaseType):
         
         """
         if not self.types_admis:
-            return "aucun"
+            return "|err|aucun|ff|"
         elif "*" in self.types_admis:
-            return "tous"
+            return "|rgc|tous|ff|"
         else:
-            return ", ".join(sorted(self.types_admis))
+            return "|cmd|" + "|ff|, |cmd|".join(sorted(
+                    self.types_admis)) + "|ff|"
     
     @property
     def str_types(self):
@@ -84,12 +85,12 @@ class Conteneur(BaseType):
         types_admis = enveloppes["t"]
         types_admis.apercu = "{objet.str_types_admis}"
         types_admis.aide_courte = \
-            "Entrez les différents |ent|types admis|ff| de ce conteneur\n" \
-            "ou |cmd|/|ff| pour revenir à la fenêtre " \
-            "parente.\n\n" \
-            "Pour ajouter un |ent|type admis|ff|, entrez son nom. " \
-            "Si il est déjà dans la liste,\n" \
-            "il sera ajouté. Sinon, il sera retiré.\n" \
-            "Entrez |cmd|*|ff| si vous voulez indiquer tous les types possibles.\n\n" \
+            "Entrez les différents |ent|types admis|ff| de ce conteneur " \
+            "ou |cmd|/|ff| pour revenir à la\n" \
+            "fenêtre parente. Pour ajouter un |ent|type admis|ff|, entrez " \
+            "son nom. Si il est déjà\n" \
+            "dans la liste, il sera ajouté. Sinon, il sera retiré.\n" \
+            "Entrez |cmd|*|ff| si vous voulez indiquer tous les types " \
+            "possibles.\n\n" \
             "Types possibles : {objet.str_types}\n\n" \
             "Types admis actuels : {objet.str_types_admis}"

@@ -42,7 +42,7 @@ class CmdEquipement(Commande):
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "equipement", "equipement")
+        Commande.__init__(self, "equipement", "equipment")
         self.aide_courte = "affiche votre équipement"
         self.aide_longue = \
                 "Cette commande affiche votre équipement actuel, les " \

@@ -106,7 +106,7 @@ class Module(BaseModule):
             apres = time.time()
             diff = apres - avant
             if masquer:
-                msg = "|rg|masque|ff|"
+                msg = "-masque-"
             if self.stats.nb_commandes == 0:
                 self.stats.tps_moy_commandes = diff
             else:

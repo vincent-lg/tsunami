@@ -45,7 +45,7 @@ IMM_AUTOCONNECT = 8
 PERSO_AUTOCONNECT = 16
 
 FLAGS = {
-    "privé": PRIVE,
+    "prive": PRIVE,
     "muet": MUET,
     "invisible": INVISIBLE,
     "autoconnecter imm": IMM_AUTOCONNECT,

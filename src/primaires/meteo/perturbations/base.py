@@ -59,7 +59,7 @@ class BasePertu(ObjetID, metaclass=MetaPertu):
     sous_rep = "meteo/perturbations"
     nom_pertu = ""
     rayon_max = 0 # à redéfinir selon la perturbation
-    duree_max = 15
+    duree_max = 15 # à peu près en minutes
     
     def __init__(self, pos):
         """Constructeur d'une perturbation météo"""
@@ -84,6 +84,12 @@ class BasePertu(ObjetID, metaclass=MetaPertu):
         self.message_fin = "La perturbation se dissipe peu à peu."
         # Message à une salle qui sort de la perturbation
         self.message_sortir = "La perturbation s'éloigne et disparaît au loin."
+        # Liste des fins possibles d'une pertu enchaînant sur une autre
+        # ("nom d'une pertu", "message d'enchaînement", proba)
+        # Le choix d'une pertu est fait aléatoirement en tirant un nombre
+        # entre 1 et 100 ; la première perturbation de la liste telle que
+        # nombre_tire < proba est choisie (voir nuages pour un exemple).
+        self.fins_possibles = []
     
     def __getnewargs__(self):
         return (None, )
@@ -103,6 +109,7 @@ class BasePertu(ObjetID, metaclass=MetaPertu):
         
         """
         salles = self.liste_salles_sous
+        self.action_cycle(salles)
         # Détection des collisions
         for pertu in type(self).importeur.meteo.perturbations_actuelles:
             if pertu is not self:
@@ -114,6 +121,14 @@ class BasePertu(ObjetID, metaclass=MetaPertu):
             self.bouger(salles)
         self.age += 1
     
+    def action_cycle(self, salles):
+        """Définit une ou plusieurs actions effectuées à chaque cycle.
+        Méthode à redéfinir pour des perturbations plus originales (l'orage
+        par exemple qui tonne à chaque cycle aléatoirement).
+        
+        """
+        pass
+    
     def bouger(self, salles):
         """Bouge une perturbation"""
         x = 0
@@ -123,15 +138,12 @@ class BasePertu(ObjetID, metaclass=MetaPertu):
             x = (x == -1 and 7) or -7
         self.centre.x += vent_x[self.dir + x]
         self.centre.y += vent_y[self.dir + x]
-        print("{} bouge vers {} (nouveau centre : {})".format(
-                self, vents[self.dir + x], self.centre))
         if randint(1, 10) <= self.alea_dir / 2:
             self.dir = randint(0, 7)
-            print("{} change de direction pour {}".format(self,
-                    vents[self.dir]))
         for salle in salles:
             if not self.est_sur(salle):
-                salle.envoyer(self.message_sortir.format(dir=vents[self.dir]))
+                salle.envoyer("|cy|" + self.message_sortir.format(
+                        dir=vents[self.dir]) + "|ff|")
     
     def distance_au_centre(self, salle):
         """Retourne la distance de salle au centre de la perturbation"""

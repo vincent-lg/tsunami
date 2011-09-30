@@ -40,7 +40,7 @@ class PrmDefaut(Parametre):
     
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "défaut", "default")
+        Parametre.__init__(self, "defaut", "default")
         self.schema = "(<prompt>)"
         self.aide_courte = "prompt par défaut"
         self.aide_longue = \

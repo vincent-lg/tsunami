@@ -66,8 +66,8 @@ class Nourriture(BaseType):
         nourrissant.apercu = "{objet.nourrissant}"
         nourrissant.prompt = "Valeur nourrissante : "
         nourrissant.aide_courte = \
-            "Entrez la |tit|valeur nourrissante|ff| de la nourriture, entre " \
-            "|cmdt1|ff| et |cmd|10|ff|\nou |cmd|/|ff| pour revenir à la " \
+            "Entrez la |ent|valeur nourrissante|ff| de la nourriture, entre " \
+            "|cmd|1|ff| et |cmd|10|ff|\nou |cmd|/|ff| pour revenir à la " \
             "fenêtre parente.\n\n" \
             "Valeur nourrissante actuelle : {objet.nourrissant}"
         nourrissant.type = int

@@ -67,7 +67,7 @@ class BaseType(ObjetID, metaclass=MetaType):
         self._extensions_editeur = []
         
         # Erreur de validation du type
-        self.err_type = "Le type de {} est invalide."
+        self.err_type = "Le type de '{}' est invalide."
     
     def __getnewargs__(self):
         return ()
@@ -115,7 +115,7 @@ class BaseType(ObjetID, metaclass=MetaType):
         
         """
         if nombre <= 0:
-            raise ValueError("la focntion get_nom_pluriel a été appelée " \
+            raise ValueError("la fonction get_nom_pluriel a été appelée " \
                     "avec un nombre négatif ou nul.")
         elif nombre == 1:
             return self.nom_singulier

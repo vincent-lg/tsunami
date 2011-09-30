@@ -50,8 +50,9 @@ class Etape(ObjetID):
     def __init__(self, quete):
         """Constructeur de l'étape."""
         ObjetID.__init__(self)
+        self.type = "etape"
         self.quete = quete
-        self.niveau = ""
+        self.niveau = ()
         self.titre = "non renseigné"
         self.description = Description("", self)
         self.test = None
@@ -60,17 +61,21 @@ class Etape(ObjetID):
         return (None, )
     
     def __str__(self):
-        return self.niveau.ljust(8) + self.titre
-    
-    @property
-    def niveau_suivant(self):
-        """Retourne le niveau suivant."""
-        return self.quete.get_niveau_suivant(self.objet_quete)
+        return self.str_niveau.ljust(5) + " " + self.titre
     
     @property
     def objet_quete(self):
         """Retourne le niveau actuel sous la forme d'un objet Quete."""
         return Quete(None, self.niveau)
+    
+    @property
+    def str_niveau(self):
+        return ".".join([str(n) for n in self.niveau])
+    
+    def afficher_etapes(self, quete=None):
+        """Affiche les étapes (en l'occurence, elle-même seulement)."""
+        return " " + "  " * len(self.niveau) + self.str_niveau + " - " + \
+                self.titre
 
 
 ObjetID.ajouter_groupe(Etape)

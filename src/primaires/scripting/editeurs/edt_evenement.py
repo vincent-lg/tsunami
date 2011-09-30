@@ -72,7 +72,7 @@ class EdtEvenement(Editeur):
         if tests:
             msg += "\n  " +"\n  ".join(["{:>3}. si {}".format(i + 1, test) \
                     for i, test in enumerate(tests)])
-        msg += "\n    |cmd|*|ff|  Sinon"
+        msg += "\n    |cmd|*|ff|  sinon"
         return msg
     
     def interpreter(self, msg):

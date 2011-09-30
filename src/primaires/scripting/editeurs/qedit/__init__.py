@@ -68,18 +68,19 @@ class EdtQedit(Editeur):
         
         """
         quetes = type(self).importeur.scripting.quetes.values()
-        msg = "Editeur de quête :\n\n" \
-            "Ci-dessous se trouve la liste des quêtes existantes.\n" \
-            "Entrez simplement |ent|sa clé|ff| pour l'éditer ou pour " \
-            "en créer une nouvelle.\n" \
-            "Tapez |cmd|q|ff| pour quitter cet éditeur.\n\n" \
-            "Quêtes disponibles :\n  "
-        str_quetes = [str(q) for q in quetes]
-        if not str_quetes:
-            str_quetes = ["Aucune quête n'existe encore."]
-        
-        str_quetes = "\n  ".join(str_quetes)
-        msg += str_quetes
+        liste_quetes = [str(q) for q in quetes]
+        msg = "| |tit|" + "Editeur de quêtes".ljust(76) + "|ff||\n" + \
+                self.opts.separateur + "\n"
+        msg += "Ci-dessous se trouve la liste des quêtes existantes. " \
+                "Entrez simplement\n" \
+                "la |ent|clé|ff| d'une quête pour l'éditer, ou une " \
+                "nouvelle pour la créer.\n" \
+                "Tapez |cmd|q|ff| pour quitter cet éditeur.\n\n"
+        if not liste_quetes:
+            msg += "|att|Aucune quête en jeu pour le moment.|ff|"
+        else:
+            str_quetes = "\n  ".join(liste_quetes)
+            msg += "Quêtes disponibles :\n  " + str_quetes
         return msg
     
     def interpreter(self, msg):

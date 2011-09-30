@@ -48,7 +48,7 @@ class Action(Instruction):
     des paramètres qu'on lui transmet.
     
     Chaque action doit hériter de cette classe et être définie dans 
-    le sous-padckage actions. Un module portajnt le nom de l'action doit
+    le sous-package actions. Un module portant le nom de l'action doit
     y être créé. Ce module doit contenir une classe appelée ClasseAction.
     Si ces règles sont suivis, l'action sera automatiquement chargée
     au lancement du module scripting.

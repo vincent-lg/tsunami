@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -25,28 +25,24 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 
-"""Case contenant une bille."""
+"""Contexte-éditeur 'edt_ordonnee', voir plus bas."""
 
-from random import choice
+from primaires.interpreteur.editeur import Editeur
 
-from abstraits.obase import BaseObj
-from primaires.format.constantes import COULEURS
+class EdtOrdonnee(Editeur):
 
-class Bille(BaseObj):
+    """Contexte d'édition du statut d'une quête (ordonnée ou non)
     
-    def __init__(self):
-        BaseObj.__init__(self)
-        self._construire()
-        self.clr = choice(list(COULEURS.values()))
+    """
     
-    def __getnewargs__(self):
-        return ()
+    def __init__(self, pere, objet=None, attribut=None):
+        """Constructeur de l'éditeur"""
+        Editeur.__init__(self, pere, objet, attribut)
     
-    def __str__(self):
-        return self.clr + "o|ff|"
-    
-    def __bool__(self):
-        return True
+    def entrer(self):
+        """Méthode appelée lorsque l'on entre dans l'éditeur"""
+        self.objet.ordonnee = not self.objet.ordonnee
+        self.migrer_contexte(self.opts.rci_ctx_prec)

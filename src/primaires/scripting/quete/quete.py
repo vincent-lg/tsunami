@@ -32,10 +32,12 @@
 
 import re
 from datetime import datetime
+from collections import OrderedDict
 
 from abstraits.id import ObjetID
 from bases.collections.liste_id import ListeID
 from primaires.format.description import Description
+from primaires.format.fonctions import oui_ou_non
 from .etape import Etape
 
 # Constantes
@@ -43,7 +45,7 @@ RE_QUETE_VALIDE = re.compile(r"^[a-z][a-z0-9_]*$")
 
 class Quete(ObjetID):
     
-    """Classe définissant une quête dans le sscripting.
+    """Classe définissant une quête dans le scripting.
     
     Une quête est constituée d'une suite d'étapes.
     
@@ -53,70 +55,103 @@ class Quete(ObjetID):
         un embranchement (Embranchement)
     
     L'étape simple est une étape menant à une suite d'instructions.
-    Une sous-quête possède les mêmes propriétés que ceux définis ici.
+    Une sous-quête possède les mêmes propriétés que celles définies ici.
     Un embranchement permet de matérialiser un choix dans la quête.
     
     """
     
     groupe = "quete"
     sous_rep = "scripting/quetes"
-    def __init__(self, cle, auteur, parent=None):
+    def __init__(self, cle, auteur, parent=None, niveau=(1, )):
         """Constructeur de la quête."""
         ObjetID.__init__(self)
+        self.type = "quete"
         self.cle = cle
+        self.niveau = niveau
         self.auteur = auteur
         self.parent = parent
         self.date_creation = datetime.now()
-        self.titre = "une quête anonyme"
+        self.titre = "une quelconque quête"
         self.description = Description(parent=self)
-        self.options = {
-            "ordonnee": True,
-        }
-        
+        self.ordonnee = True
         self.__etapes = ListeID(self)
+        self._construire()
     
     def __getnewargs__(self):
         return ("", None)
     
     def __str__(self):
-        return self.cle + " par " + \
-                (self.auteur and self.auteur.nom or "inconnu")
+        return self.cle + ", " + \
+                (self.auteur and "par " + self.auteur.nom or "auteur inconnu")
     
     def __getitem__(self, niveau):
         """Retourne l'étape."""
         for etape in self.__etapes:
-            if etape.niveau == niveau:
+            if etape.str_niveau == niveau:
                 return etape
         
         raise KeyError(niveau)
     
     @property
     def etapes(self):
-        return list(self.__etapes)
+        """Constitue un dictionnaire des niveaux."""
+        return self.get_dictionnaire_etapes()
     
     @property
-    def niveau(self):
-        """Retourne le prochain niveau disponible."""
-        msg = self.parent and self.parent.niveau or ""
-        if msg:
-            msg += "."
-        
-        msg += str(len(self.__etapes) + 1)
-        return msg
+    def str_niveau(self):
+        return ".".join([str(n) for n in self.niveau])
     
-    def get_prochain_niveau(self, niveau):
-        """Retourne le prochain niveau."""
-        niveau = list(niveau.niveau)
-        niveau[-1] += 1
-        return ".".join([str(n) for n in niveau])
+    @property
+    def sous_niveau(self):
+        if self.parent:
+            return self.niveau + (len(self.__etapes) + 1, )
+        else:
+            return (len(self.__etapes) + 1, )
+    
+    @property
+    def aff_ordonnee(self):
+        return oui_ou_non(self.ordonnee)
+    
+    def get_dictionnaire_etapes(self, etapes_seulement=False):
+        """Retourne un dictionnaire ordonné des étapes."""
+        niveaux = OrderedDict()
+        if not etapes_seulement:
+            niveaux[self.str_niveau] = self
+        
+        for etape in self.__etapes:
+            if etape.type == "quete":
+                niveaux.update(etape.get_dictionnaire_etapes(etapes_seulement))
+            else:
+                niveaux[etape.str_niveau] = etape
+        
+        return niveaux
     
     def ajouter_etape(self, titre):
         """Ajoute l'étape à la quête."""
         etape = Etape(self)
         etape.titre = titre
-        etape.niveau = self.niveau
+        etape.niveau = self.sous_niveau
         self.__etapes.append(etape)
         self.enregistrer()
-
+    
+    def ajouter_sous_quete(self, titre):
+        """Ajoute une sous-quête à la quête."""
+        etape = Quete(self.cle, self.auteur, self)
+        etape.titre = titre
+        etape.niveau = self.sous_niveau
+        self.__etapes.append(etape)
+        self.enregistrer()
+    
+    def afficher_etapes(self, quete=None):
+        """Affiche les étapes qui peuvent être aussi des sous-quêtes."""
+        res = ""
+        if self.parent and quete is not self:
+            res += " " + "  " * len(self.niveau) + self.str_niveau
+            res += " - " + self.titre + "\n"
+        for etape in self.__etapes:
+            res += etape.afficher_etapes(quete)
+            res += "\n"
+        
+        return res.rstrip("\n")
 
 ObjetID.ajouter_groupe(Quete)
