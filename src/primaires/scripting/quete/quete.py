@@ -37,6 +37,7 @@ from collections import OrderedDict
 from abstraits.id import ObjetID
 from bases.collections.liste_id import ListeID
 from primaires.format.description import Description
+from primaires.format.fonctions import oui_ou_non
 from .etape import Etape
 
 # Constantes
@@ -44,7 +45,7 @@ RE_QUETE_VALIDE = re.compile(r"^[a-z][a-z0-9_]*$")
 
 class Quete(ObjetID):
     
-    """Classe définissant une quête dans le sscripting.
+    """Classe définissant une quête dans le scripting.
     
     Une quête est constituée d'une suite d'étapes.
     
@@ -54,7 +55,7 @@ class Quete(ObjetID):
         un embranchement (Embranchement)
     
     L'étape simple est une étape menant à une suite d'instructions.
-    Une sous-quête possède les mêmes propriétés que ceux définis ici.
+    Une sous-quête possède les mêmes propriétés que celles définies ici.
     Un embranchement permet de matérialiser un choix dans la quête.
     
     """
@@ -70,7 +71,7 @@ class Quete(ObjetID):
         self.auteur = auteur
         self.parent = parent
         self.date_creation = datetime.now()
-        self.titre = "une quête anonyme"
+        self.titre = "une quelconque quête"
         self.description = Description(parent=self)
         self.ordonnee = True
         self.__etapes = ListeID(self)
@@ -80,8 +81,8 @@ class Quete(ObjetID):
         return ("", None)
     
     def __str__(self):
-        return self.cle + " par " + \
-                (self.auteur and self.auteur.nom or "inconnu")
+        return self.cle + ", " + \
+                (self.auteur and "par " + self.auteur.nom or "auteur inconnu")
     
     def __getitem__(self, niveau):
         """Retourne l'étape."""
@@ -106,7 +107,11 @@ class Quete(ObjetID):
             return self.niveau + (len(self.__etapes) + 1, )
         else:
             return (len(self.__etapes) + 1, )
-        
+    
+    @property
+    def aff_ordonnee(self):
+        return oui_ou_non(self.ordonnee)
+    
     def get_dictionnaire_etapes(self, etapes_seulement=False):
         """Retourne un dictionnaire ordonné des étapes."""
         niveaux = OrderedDict()
@@ -141,12 +146,12 @@ class Quete(ObjetID):
         """Affiche les étapes qui peuvent être aussi des sous-quêtes."""
         res = ""
         if self.parent and quete is not self:
-            res += self.str_niveau.ljust(5) + " " + self.titre + "\n"
+            res += " " + "  " * len(self.niveau) + self.str_niveau
+            res += " - " + self.titre + "\n"
         for etape in self.__etapes:
             res += etape.afficher_etapes(quete)
             res += "\n"
         
         return res.rstrip("\n")
-
 
 ObjetID.ajouter_groupe(Quete)

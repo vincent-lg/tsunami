@@ -277,5 +277,5 @@ def couper_phrase(phrase, couper):
 
 def oui_ou_non(flag):
     """Retourne 'oui' si le flag est True, 'non' sinon."""
-    mots = {True:"oui", False:"non"}
+    mots = {True:"|vrc|oui|ff|", False:"|rgc|non|ff|"}
     return mots[flag]

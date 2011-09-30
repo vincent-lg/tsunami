@@ -51,9 +51,9 @@ class EdtFlags(Editeur):
                 canal.nom).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += self.aide_courte
-        msg += "Flags actuels :"
+        msg += "Flags actuels :\n"
         for flag in FLAGS:
-            msg += "\n    |ent|" + flag + "|ff| : "
+            msg += "\n  |ent|" + flag + "|ff| : "
             msg += oui_ou_non(canal.flags & FLAGS[flag] != 0)
         return msg
     

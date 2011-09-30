@@ -74,7 +74,8 @@ class Etape(ObjetID):
     
     def afficher_etapes(self, quete=None):
         """Affiche les étapes (en l'occurence, elle-même seulement)."""
-        return self.str_niveau.ljust(5) + " " + self.titre
+        return " " + "  " * len(self.niveau) + self.str_niveau + " - " + \
+                self.titre
 
 
 ObjetID.ajouter_groupe(Etape)

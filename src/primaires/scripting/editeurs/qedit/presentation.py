@@ -36,8 +36,8 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
-from primaires.format.fonctions import oui_ou_non
-from .etape import EdtEtape
+from .edt_etape import EdtEtape
+from .edt_ordonnee import EdtOrdonnee
 
 class EdtPresentation(Presentation):
     
@@ -58,7 +58,6 @@ class EdtPresentation(Presentation):
         # Options
         self.ajouter_option("e", self.ajouter_etape)
         self.ajouter_option("q", self.ajouter_sous_quete)
-        self.ajouter_option("o", self.changer_ordonnee)
         
         if personnage and quete:
             self.construire(quete)
@@ -90,25 +89,28 @@ class EdtPresentation(Presentation):
             self.objet.ajouter_sous_quete(argument.strip())
             self.actualiser()
     
-    def changer_ordonnee(self, argument):
-        """Change le statut de la quête d'ordonnée à non ordonnée."""
-        quete = self.objet
-        quete.ordonnee = not quete.ordonnee
-        self.actualiser()
-    
     def accueil(self):
         """Message d'accueil de l'éditeur."""
         quete = self.objet
         msg = Presentation.accueil(self)
         quitter = msg.split("\n")[-1]
-        msg = "\n".join(msg.split("\n")[:-1]) + "\n\n"
-        msg += "Auteur : " + (quete.auteur and quete.auteur.nom or "inconnu")
-        msg += "\n"
-        msg += "Ordonnée : " + oui_ou_non(quete.ordonnee) + "\n"
-        msg += "Etapes de la quête :\n\n"
+        intro = "| |tit|"
+        intro += "Edition de la quête {}".format(str(quete)).ljust(76)
+        intro += "|ff||\n" + self.opts.separateur + "\n"
+        intro += "Entrez |cmd|/|ff| pour revenir à la fenêtre précédente.\n" \
+                "Options :\n" \
+                " - |cmd|/e <titre de l'étape>|ff| : ajoute une étape " \
+                "simple à la quête\n" \
+                " - |cmd|/q <titre de la sous-quête>|ff| : ajoute une " \
+                "sous-quête (qui pourra elle-même\n" \
+                "   contenir sous-quêtes et étapes simples)\n" \
+                "Pour éditer une étape ou une sous-quête, entrez simplement " \
+                "son niveau.\n"
+        msg = intro + "\n".join(msg.split("\n")[2:-1]) + "\n\n"
+        msg += " |tit|Etapes de la quête :|ff|\n"
         etapes = quete.afficher_etapes(quete)
         if not etapes:
-            etapes = "  Aucune"
+            etapes = "   |att|aucune pour le moment|ff|"
         
         msg += etapes
         
@@ -134,6 +136,11 @@ class EdtPresentation(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description de la quête {}".format(quete.cle).ljust(
             76) + "|ff||\n" + self.opts.separateur
+        
+        # Ordonnee
+        ordonnee = self.ajouter_choix("ordonnée", "o", EdtOrdonnee, quete)
+        ordonnee.parent = self
+        ordonnee.apercu = "{objet.aff_ordonnee}"
     
     def autre_interpretation(self, msg):
         """On peut aussi interpréter des niveaux d'étapes."""

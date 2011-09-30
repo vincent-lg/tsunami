@@ -53,11 +53,13 @@ class EdtScript(Editeur):
         """Message d'accueil du contexte"""
         script = self.objet
         msg = "| |tit|"
-        msg += "Edition des scripts de {}".format(script.parent).ljust(75)
+        msg += "Edition des scripts de {}".format(script.parent).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
-        msg += "Voici les différents évènements que vous pouvez éditer pour cet objet.\n"
-        msg += "Entrez simplement |ent|son nom|ff| pour l'éditer ou " \
-                "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n"
+        msg += "Voici les différents évènements que vous pouvez éditer pour " \
+                "cet objet.\n" \
+                "Entrez simplement son |ent|nom|ff| pour éditer un " \
+                "évènement ou |cmd|/|ff| pour revenir à\n" \
+                "la fenêtre parente.\n\n"
         evenements = sorted(script.evenements.values(),
                 key=lambda evt: evt.nom)
         if evenements:
