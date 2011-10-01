@@ -68,7 +68,7 @@ class Module(BaseModule):
             temps = self.importeur.supenr.charger(sous_rep, fichier)
         if temps is None:
             temps = Temps(self.cfg)
-        self.importeur.hook["salle:meteo"].ajouter_evenement(
+        self.importeur.hook["salle:regarder"].ajouter_evenement(
                 self.voir_ciel)
         
         self.temps = temps
@@ -95,5 +95,5 @@ class Module(BaseModule):
     
     def voir_ciel(self, salle, liste_messages, flags):
         """Renvoie l'apparence du ciel"""
-        if flags & OPAQUE != 0:
+        if salle.exterieur and flags & OPAQUE != 0:
             liste_messages.append(self.temps.ciel_actuel)

@@ -87,7 +87,7 @@ class Sortie(BaseObj):
             self.deduire_article()
         
         # Autres informations
-        self.cache = False
+        self.cachee = False
         self.porte = None
         
         # On passe le statut en CONSTRUIT

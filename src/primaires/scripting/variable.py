@@ -48,7 +48,7 @@ class Variable(BaseObj):
         self.nom = nom
         self.type = type(None)
         self.aide = "non précisée"
-        if type:
+        if str_type:
             # On cherche le type dans les builtins ou dans le module types
             self.changer_type(str_type)
         

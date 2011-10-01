@@ -94,9 +94,6 @@ class Evenement(BaseObj):
         self.__sinon = None
         self.espaces = Espaces(self)
         self._construire()
-        
-        if type(self).importeur.parid.construit:
-            self.creer_sinon()
     
     def __getnewargs__(self):
         return (None, "")
@@ -104,7 +101,6 @@ class Evenement(BaseObj):
     def __getstate__(self):
         """Ne sauvegarde pas les variables en fichier."""
         dico_attr = BaseObj.__getstate__(self).copy()
-        del dico_attr["variables"]
         del dico_attr["espaces"]
         return dico_attr
     
@@ -176,5 +172,5 @@ class Evenement(BaseObj):
                 test.executer_instructions(self)
                 return
         
-        if self.sinon.tester(self):
+        if self.sinon and self.sinon.tester(self):
             self.sinon.executer_instructions(self)

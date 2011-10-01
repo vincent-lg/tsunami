@@ -91,9 +91,19 @@ class Salle(ObjetID):
         self._personnages = ListeID(self) # personnages présents
         self.objets_sol = ObjetsSol(parent=self)
         self.script = ScriptSalle(self)
+        self.interieur = False
     
     def __getnewargs__(self):
         return ("", "")
+    
+    def __repr__(self):
+        """Affichage de la salle en mode debug"""
+        res = "Salle ({}, {})".format(self.ident, self.coords)
+        # Sorties
+        for nom, sortie in self.sorties.iter_couple():
+            if sortie:
+                res += "\n  {} : {}".format(nom, sortie.salle_dest.ident)
+        return res
     
     def __str__(self):
         """Retourne l'identifiant 'zone:mnemonic'"""
@@ -128,14 +138,10 @@ class Salle(ObjetID):
         """Retourne une liste déférencée des personnages"""
         return list(self._personnages)
     
-    def __repr__(self):
-        """Affichage de la salle en mode debug"""
-        res = "Salle ({}, {})".format(self.ident, self.coords)
-        # Sorties
-        for nom, sortie in self.sorties.iter_couple():
-            if sortie:
-                res += "\n  {} : {}".format(nom, sortie.salle_dest.ident)
-        return res
+    @property
+    def exterieur(self):
+        """Retourne True si la salle est extérieure, False sinon."""
+        return not self.interieur
     
     def personnage_est_present(self, personnage):
         """Si le personnage est présent, retourne True, False sinon."""
@@ -191,7 +197,7 @@ class Salle(ObjetID):
         res += description + "\n"
         liste_messages = []
         flags = 0
-        type(self).importeur.hook["salle:meteo"].executer(self, liste_messages,
+        type(self).importeur.hook["salle:regarder"].executer(self, liste_messages,
                 flags)
         res += "|cy|" + "\n".join(liste_messages) + "|ff|\n\n"
         res += "Sorties : "
@@ -229,13 +235,13 @@ class Salle(ObjetID):
         """Affiche les sorties de la salle"""
         noms = []
         for nom in NOMS_SORTIES.keys():
-            sortie = self.sorties.get_sortie_par_nom_ou_direction(nom)
+            sortie = self.sorties[nom]
             if sortie:
                 nom = sortie.nom
             
             nom_aff = self.sorties.get_nom_abrege(nom)
             if self.sorties.sortie_existe(nom):
-                if sortie.cache:
+                if sortie.cachee:
                     res = " ".ljust(len(self.sorties.get_nom_abrege(
                             sortie.direction)))
                 else:
