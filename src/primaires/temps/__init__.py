@@ -95,5 +95,10 @@ class Module(BaseModule):
     
     def voir_ciel(self, salle, liste_messages, flags):
         """Renvoie l'apparence du ciel"""
-        if salle.exterieur and flags & OPAQUE != 0:
+        opaque = False
+        for pertu in self.importeur.meteo.perturbations_actuelles:
+            if pertu.est_sur(salle):
+                opaque = True
+                break
+        if salle.exterieur and not opaque:
             liste_messages.append(self.temps.ciel_actuel)

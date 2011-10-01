@@ -139,9 +139,7 @@ class Module(BaseModule):
         for pertu in self.perturbations_actuelles:
             if pertu.est_sur(salle):
                 res += pertu.message_pour(salle)
-                flags = pertu.flags
                 break
         if not res:
             res += self.cfg.beau_temps
-            flags = AUCUN_FLAG
         liste_messages.append(res)

@@ -116,7 +116,8 @@ class Canal(BaseObj):
         if not joueur in self.connectes:
             if joueur in self.liste_noire:
                 joueur << "|err|Vous êtes sur la liste noire de ce canal.|ff|"
-            elif self.flags & PRIVE and not forcer and self.connectes:
+            elif self.flags & PRIVE and not forcer and self.connectes and not \
+                    joueur.est_immortel():
                 joueur << "|err|Ce canal est privé, vous ne pouvez y accéder " \
                         "que sur invitation.|ff|"
             else:
