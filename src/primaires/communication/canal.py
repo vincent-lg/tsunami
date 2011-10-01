@@ -93,9 +93,10 @@ class Canal(BaseObj):
     
     @property
     def aide(self):
-        res = self.infos + "\n" + (str(self.description) or "Aucune description.")
-        auteur = (self.auteur is not None and self.auteur.nom) or "aucun"
-        res += "\nAdministrateur : |rgc|" + auteur + "|ff|"
+        res = self.infos + "\n" 
+        res += (str(self.description) or "Aucune description.")
+        res += "\nAdministrateur : |rgc|"
+        res += (self.auteur and self.auteur.nom or "aucun") + "|ff|"
         modos = ""
         if len(self.moderateurs) == 1:
             modos = "\nModérateur : |jn|" + self.moderateurs[0].nom + "|ff|"
