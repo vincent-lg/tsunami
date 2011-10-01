@@ -224,7 +224,6 @@ class Module(BaseModule):
         n'existe pas.
         
         """
-        
         if not arguments or arguments.isspace():
             personnage << "|err|Vous devez préciser un canal.|ff|"
             return

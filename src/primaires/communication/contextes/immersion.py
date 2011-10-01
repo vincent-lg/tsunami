@@ -124,7 +124,8 @@ class Immersion(Contexte):
         res = canal.clr + ">|ff| Aide du canal |ent|{}|ff| ({}) :\n".format(
                 canal.nom, canal.resume)
         res += str(canal.description)
-        res += "\n  Administrateur : |rgc|" + canal.auteur.nom + "|ff|"
+        res += "\n  Administrateur : |rgc|"
+        res += (canal.auteur and canal.auteur.nom or "aucun") + "|ff|"
         modos = ""
         if len(canal.moderateurs) == 1:
             modos = "\n  Modérateur : |jn|" + canal.moderateurs[0].nom + "|ff|"
@@ -195,7 +196,8 @@ class Immersion(Contexte):
         """Option permettant d'éjecter un joueur connecté : /e <joueur>"""
         canal = self.canal
         if not self.pere.joueur in canal.moderateurs and \
-                self.pere.joueur is not canal.auteur:
+                self.pere.joueur is not canal.auteur and not \
+                self.pere.joueur.est_immortel():
             self.pere.joueur << "|err|Vous n'avez pas accès à cette option.|ff|"
             return
         if not arguments or arguments.isspace():
@@ -224,7 +226,8 @@ class Immersion(Contexte):
         """Option permettant de bannir un joueur connecté : /b <joueur>"""
         canal = self.canal
         if not self.pere.joueur in canal.moderateurs and \
-                self.pere.joueur is not canal.auteur:
+                self.pere.joueur is not canal.auteur and not \
+                self.pere.joueur.est_immortel():
             self.pere.joueur << "|err|Vous n'avez pas accès à cette option.|ff|"
             return
         nom_joueur = arguments.split(" ")[0]
@@ -249,7 +252,8 @@ class Immersion(Contexte):
         """Option permettant d'envoyer une annonce : /a <message>"""
         canal = self.canal
         if not self.pere.joueur in canal.moderateurs and \
-                self.pere.joueur is not canal.auteur:
+                self.pere.joueur is not canal.auteur and not \
+                self.pere.joueur.est_immortel():
             self.pere.joueur << "|err|Vous n'avez pas accès à cette option.|ff|"
             return
         message = arguments.rstrip(" \n")
@@ -258,7 +262,8 @@ class Immersion(Contexte):
     def opt_promote(self, arguments):
         """Option permettant de promouvoir un joueur connecté : /p <joueur>"""
         canal = self.canal
-        if self.pere.joueur is not canal.auteur:
+        if self.pere.joueur is not canal.auteur and not \
+                self.pere.joueur.est_immortel():
             self.pere.joueur << "|err|Vous n'avez pas accès à cette option.|ff|"
             return
         nom_joueur = arguments.split(" ")[0]
@@ -283,7 +288,8 @@ class Immersion(Contexte):
     def opt_edit(self, arguments):
         """Option ouvrant un éditeur du canal"""
         canal = self.canal
-        if self.pere.joueur is not canal.auteur:
+        if self.pere.joueur is not canal.auteur and not \
+                self.pere.joueur.est_immortel():
             self.pere.joueur << "|err|Vous n'avez pas accès à cette option.|ff|"
             return
         editeur = type(self).importeur.interpreteur.construire_editeur(
@@ -294,7 +300,8 @@ class Immersion(Contexte):
     def opt_dissolve(self, arguments):
         """Option permettant de dissoudre le canal"""
         canal = self.canal
-        if self.pere.joueur is not canal.auteur:
+        if self.pere.joueur is not canal.auteur and not \
+                self.pere.joueur.est_immortel():
             self.pere.joueur << "|err|Vous n'avez pas accès à cette option.|ff|"
             return
         joueur = self.pere.joueur
