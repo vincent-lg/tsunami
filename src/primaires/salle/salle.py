@@ -188,17 +188,19 @@ class Salle(ObjetID):
     def regarder(self, personnage):
         """Le personnage regarde la salle"""
         res = ""
-        res += "# |rgc|" + self.zone + "|ff|:|vrc|" + self.mnemonic
-        res += "|ff|\n\n|tit|" + self.titre + "|ff|\n\n"
+        if personnage.est_immortel():
+            res += "# |rgc|" + self.zone + "|ff|:|vrc|" + self.mnemonic
+            res += "|ff|\n\n"
+        res += "    |tit|" + self.titre + "|ff|\n\n"
         description = str(self.description)
         if not description:
             description = "Vous êtes au milieu de nulle part."
-        
-        res += description + "\n"
+        tab = description.startswith("    ") and "" or "    "
+        res += tab + description + "\n"
         liste_messages = []
         flags = 0
-        type(self).importeur.hook["salle:regarder"].executer(self, liste_messages,
-                flags)
+        type(self).importeur.hook["salle:regarder"].executer(self,
+                liste_messages, flags)
         res += "|cy|" + "\n".join(liste_messages) + "|ff|\n\n"
         res += "Sorties : "
         res += self.afficher_sorties(personnage)
