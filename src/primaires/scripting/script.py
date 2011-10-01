@@ -86,9 +86,9 @@ class Script(BaseObj):
         evenement = supprimer_accents(evenement).lower()
         return self.__evenements[evenement]
     
-    def __setstate__(self, dico_attr):
-        """Quand on récupère un script."""
-        BaseObj.__setstate__(self, dico_attr)
+    def __setstate__(self, dico_attrs):
+        """A la récupération du script, appelle init."""
+        BaseObj.__setstate__(self, dico_attrs)
         scripts.append(self)
     
     def init(self):

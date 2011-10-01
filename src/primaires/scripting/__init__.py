@@ -34,7 +34,6 @@ import os
 import re
 
 from abstraits.module import *
-from .script import scripts
 from .instruction import Instruction
 from .condition import Condition
 from .affectation import Affectation
@@ -46,6 +45,7 @@ from .quete.etape import Etape
 from .test import Test
 from .editeurs.qedit import EdtQedit
 from .constantes.aide import *
+from .script import scripts
 
 class Module(BaseModule):
     
@@ -101,13 +101,11 @@ class Module(BaseModule):
     def preparer(self):
         """Préparation du module.
         
-        On nettoie les scripts.
+        On initialise les scripts.
         
         """
         for script in scripts:
             script.init()
-            for evt in script.evenements.values():
-                evt.creer_sinon()
     
     def charger_actions(self):
         """Chargement automatique des actions."""

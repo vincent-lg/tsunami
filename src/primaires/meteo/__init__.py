@@ -64,7 +64,7 @@ class Module(BaseModule):
     
     def init(self):
         """Initialisation du module"""        
-        self.importeur.hook["salle:meteo"].ajouter_evenement(
+        self.importeur.hook["salle:regarder"].ajouter_evenement(
                 self.donner_meteo)
         self.importeur.supenr.charger_groupe(BasePertu)
         
@@ -132,6 +132,9 @@ class Module(BaseModule):
     
     def donner_meteo(self, salle, liste_messages, flags):
         """Affichage de la météo d'une salle"""
+        if salle.interieur:
+            return
+        
         res = ""
         for pertu in self.perturbations_actuelles:
             if pertu.est_sur(salle):

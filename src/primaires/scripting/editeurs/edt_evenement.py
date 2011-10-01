@@ -79,6 +79,9 @@ class EdtEvenement(Editeur):
         """Interprétation de l'éditeur"""
         evenement = self.objet
         if msg == "*":
+            if evenement.sinon is None:
+                evenement.creer_sinon()
+            
             enveloppe = EnveloppeObjet(EdtInstructions, evenement.sinon)
             enveloppe.parent = self
             contexte = enveloppe.construire(self.pere)

@@ -87,7 +87,7 @@ class Module(BaseModule):
         """Méthode de configuration du module"""
         type(self.importeur).anaconf.get_config("salle", \
             "salle/salle.cfg", "config salle", cfg_salle)
-        self.importeur.hook.ajouter_hook("salle:meteo",
+        self.importeur.hook.ajouter_hook("salle:regarder",
                 "Hook appelé dès qu'on regarde une salle.")
         
         BaseModule.config(self)
@@ -255,10 +255,10 @@ class Module(BaseModule):
         
         for nom, sortie in salle.sorties.iter_couple():
             if sortie:
-                if sortie.cache and sortie.nom == commande:
+                if sortie.cachee and sortie.nom == commande:
                     personnage.deplacer_vers(sortie.nom)
                     return True
-                if not sortie.cache and sortie.nom.startswith(commande):
+                if not sortie.cachee and sortie.nom.startswith(commande):
                     personnage.deplacer_vers(sortie.nom)
                     return True
         

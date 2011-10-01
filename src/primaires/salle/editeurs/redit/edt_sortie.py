@@ -45,7 +45,7 @@ class EdtSortie(Editeur):
         Editeur.__init__(self, pere, objet, attribut)
         self.ajouter_option("r", self.opt_renommer_sortie)
         self.ajouter_option("s", self.opt_changer_sortie)
-        self.ajouter_option("c", self.opt_cache)
+        self.ajouter_option("c", self.opt_cacher)
         self.ajouter_option("dq", self.opt_detruire_reciproque)
         self.ajouter_option("p", self.opt_changer_porte)
     
@@ -63,7 +63,7 @@ class EdtSortie(Editeur):
         msg += "\n Direction : " + sortie.direction
         msg += " (vers |vr|" + str(sortie.salle_dest) + "|ff|)"
         msg += "\n Réciproque : |cy|" + sortie.correspondante + "|ff|"
-        msg += "\n Sortie cachée : |cy|" + oui_ou_non(sortie.cache) + "|ff|"
+        msg += "\n Sortie cachée : |cy|" + oui_ou_non(sortie.cachee) + "|ff|"
         msg += "\n Porte : |cy|" + oui_ou_non(bool(sortie.porte)) + "|ff|"
         
         return msg
@@ -133,13 +133,13 @@ class EdtSortie(Editeur):
         self.objet = salle.sorties[sortie.direction]
         self.actualiser()
     
-    def opt_cache(self, argument):
-        """Fait passer de cache en non caché la sortie et réciproquement.
+    def opt_cacher(self, argument):
+        """Fait passer de cachée en non cachée la sortie et réciproquement.
         Aucun argument n'est nécessaire.
         
         """
         sortie = self.objet
-        sortie.cache = not sortie.cache
+        sortie.cachee = not sortie.cachee
         self.actualiser()
     
     def opt_detruire_reciproque(self, argument):
