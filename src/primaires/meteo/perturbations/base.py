@@ -141,7 +141,7 @@ class BasePertu(ObjetID, metaclass=MetaPertu):
         if randint(1, 10) <= self.alea_dir / 2:
             self.dir = randint(0, 7)
         for salle in salles:
-            if not self.est_sur(salle):
+            if not self.est_sur(salle) and salle.exterieur:
                 salle.envoyer("|cy|" + self.message_sortir.format(
                         dir=vents[self.dir]) + "|ff|")
     
