@@ -69,5 +69,5 @@ class Orage(BasePertu):
                     "fouettent violemment."
         ]
         for salle in salles:
-            if randint(1, 10) < 4:
+            if randint(1, 10) < 4 and salle.exterieur:
                 salle.envoyer(choice(messages))

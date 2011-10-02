@@ -90,10 +90,12 @@ class Module(BaseModule):
                         break
                 if not nom_pertu_enchainer:
                     for salle in pertu.liste_salles_sous:
-                        salle.envoyer("|cy|" + pertu.message_fin + "|ff|")
+                        if salle.exterieur:
+                            salle.envoyer("|cy|" + pertu.message_fin + "|ff|")
                 else:
                     for salle in pertu.liste_salles_sous:
-                        salle.envoyer("|cy|" + msg_enchainement + "|ff|")
+                        if salle.exterieur:
+                            salle.envoyer("|cy|" + msg_enchainement + "|ff|")
                     cls_pertu_enchainer = None
                     for pertu_existante in perturbations:
                         if pertu_existante.nom_pertu == nom_pertu_enchainer:
@@ -128,18 +130,17 @@ class Module(BaseModule):
                     pertu = cls_pertu(salle_dep.coords.get_copie())
                     self.perturbations_actuelles.append(pertu)
                     for salle in pertu.liste_salles_sous:
-                        salle.envoyer("|cy|" + pertu.message_debut + "|ff|")
+                        if salle.exterieur:
+                            salle.envoyer("|cy|" + pertu.message_debut + "|ff|")
     
     def donner_meteo(self, salle, liste_messages, flags):
         """Affichage de la météo d'une salle"""
-        if salle.interieur:
-            return
-        
-        res = ""
-        for pertu in self.perturbations_actuelles:
-            if pertu.est_sur(salle):
-                res += pertu.message_pour(salle)
-                break
-        if not res:
-            res += self.cfg.beau_temps
-        liste_messages.append(res)
+        if salle.exterieur:
+            res = ""
+            for pertu in self.perturbations_actuelles:
+                if pertu.est_sur(salle):
+                    res += pertu.message_pour(salle)
+                    break
+            if not res:
+                res += self.cfg.beau_temps
+            liste_messages.append(res)
