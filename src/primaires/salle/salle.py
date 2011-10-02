@@ -85,7 +85,7 @@ class Salle(ObjetID):
         self._mnemonic = mnemonic
         self.coords = Coordonnees(x, y, z, valide, self)
         self.titre = ""
-        self.description = Description(parent=self)
+        self.description = Description(parent=self, indente=True)
         self.sorties = Sorties(parent=self)
         self.details = Details(parent=self)
         self._personnages = ListeID(self) # personnages présents
@@ -191,12 +191,11 @@ class Salle(ObjetID):
         if personnage.est_immortel():
             res += "# |rgc|" + self.zone + "|ff|:|vrc|" + self.mnemonic
             res += "|ff|\n\n"
-        res += "    |tit|" + self.titre + "|ff|\n\n"
+        res += "   |tit|" + (self.titre or "Une salle sans titre") + "|ff|\n\n"
         description = str(self.description)
         if not description:
-            description = "Vous êtes au milieu de nulle part."
-        tab = description.startswith("    ") and "" or "    "
-        res += tab + description + "\n"
+            description = "   Vous êtes au milieu de nulle part."
+        res += description + "\n"
         liste_messages = []
         flags = 0
         type(self).importeur.hook["salle:regarder"].executer(self,
