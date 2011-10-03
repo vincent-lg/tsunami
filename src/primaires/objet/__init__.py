@@ -100,6 +100,11 @@ class Module(BaseModule):
         """Retourne le nom des types d'objets actuels."""
         return [t.nom_type for t in o_types.values()]
     
+    @property
+    def types_premier_niveau(self):
+        """Retourne un dictionnaire des types du premier niveau."""
+        return BaseType.types
+    
     def creer_prototype(self, cle, nom_type="indéfini"):
         """Crée un prototype et l'ajoute aux prototypes existants"""
         if cle in self._prototypes:

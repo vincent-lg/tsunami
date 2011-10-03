@@ -28,38 +28,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce package contient les différents types d'objet, sous la forme
-d'une classe par fichier, héritée de BaseType (voir base.py).
+"""Fichier contenant le type viande."""
 
-"""
+from .nourriture import Nourriture
 
-from abstraits.obase import MetaBaseObj
-
-types = {} # types d'objet {nom:classe}
-
-class MetaType(MetaBaseObj):
+class Viande(Nourriture):
     
-    """Métaclasse des types d'objet.
-    
-    Elle ajoute le type de l'objet dans le dictionnaire 'types' si il possède
-    un nom.
+    """Type d'objet: viande.
     
     """
     
-    def __init__(cls, nom, bases, contenu):
-        """Constructeur de la métaclasse"""
-        MetaBaseObj.__init__(cls, nom, bases, contenu)
-        cls.types = {}
-        if cls.nom_type:
-            types[cls.nom_type] = cls
-            
-            # On l'ajoute dans la classe-mère
-            base = bases and bases[0] or None
-            if base:
-                base.types[cls.nom_type] = cls
-
-from .conteneur import Conteneur
-from .indefini import *
-from .nourriture import Nourriture
-from .vetement import Vetement
-from .viande import Viande
+    nom_type = "viande"
+    def __init__(self, cle=""):
+        """Constructeur de l'objet"""
+        Nourriture.__init__(self, cle)
+        self.nourrissant = 3
