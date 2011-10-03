@@ -58,7 +58,9 @@ class Module(BaseModule):
         """
         sujets = self.importeur.supenr.charger_groupe(SujetAide)
         self.__sujets = sujets
-        print(len(sujets), "sujets d'aides récupérés.")
+        s = len(sujets) > 1 and "s" or ""
+        nb_sujets = len(sujets) or "Aucun"
+        print(nb_sujets, "sujet{s} d'aide récupéré{s}".format(s=s))
         
         BaseModule.init(self)
     
@@ -81,7 +83,7 @@ class Module(BaseModule):
         
         Si le titre n'est pas trouvé, lève l'exception KeyError.
         
-        La recherche du sujet se fait sans tenir compte des accents ou de
+        La recherche du sujet se fait sans tenir compte des accents ni de
         la casse.
         
         """

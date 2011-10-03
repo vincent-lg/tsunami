@@ -37,6 +37,7 @@ from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_stats import EdtStats
 from .edt_squelette import EdtSquelette
+from .edt_genres import EdtGenres
 
 class EdtPresentation(Presentation):
     
@@ -70,6 +71,20 @@ class EdtPresentation(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description de la race {}".format(race).ljust(
             76) + "|ff||\n" + self.opts.separateur
+        
+        # Genres
+        genres = self.ajouter_choix("genres", "g", EdtGenres, race.genres)
+        genres.parent = self
+        genres.prompt = "Entrez un genre : "
+        genres.apercu = "{objet.str_genres}"
+        genres.aide_courte = \
+            "Entrez un |ent|genre|ff| suivi de sa correspondance " \
+            "grammaticale (masculin ou féminin)\n" \
+            "pour l'ajouter ; simplement |cmd|masculin|ff| ou " \
+            "|cmd|féminin|ff| pour ajouter ceux-là. Si\n" \
+            "vous envoyez un genre déjà dans la liste, il sera supprimé.\n" \
+            "Entrez |cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
+            "Genre(s) actuel(s) : |bc|{objet.str_genres}|ff|"
         
         # Stats
         stats = self.ajouter_choix("stats", "s", EdtStats, \

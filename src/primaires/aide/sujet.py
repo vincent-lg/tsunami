@@ -39,12 +39,16 @@ class SujetAide(ObjetID):
     
     """Classe représentant un sujet d'aide.
     
-    Un sujet d'aide est une aide disponible in-game sur un sujet précis. Il peut être consultable par un certain groupe de personnes (seulement les administrateurs du jeu, par exemple) et peut être lié à d'autres sujets.
+    Un sujet d'aide est une aide disponible in-game sur un sujet précis.
+    Il peut être consultable par un certain groupe de personnes (seulement
+    les administrateurs du jeu, par exemple) et peut être lié à d'autres
+    sujets.
     
     Ses attributs sont :
         titre -- le titre du sujet
         contenu -- le contenu du sujet d'aide
-        sujets_lies -- les sujets liés (des objets SujetAide contenus dans une liste)
+        sujets_lies -- les sujets liés (des objets SujetAide contenus
+                       dans une liste)
     
     """
     
@@ -77,6 +81,5 @@ class SujetAide(ObjetID):
     def grp(self):
         groupe = type(self).importeur.interpreteur.groupes[self._str_groue]
         return groupe
-
 
 ObjetID.ajouter_groupe(SujetAide)

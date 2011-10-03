@@ -27,53 +27,40 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""Fichier décrivant la classe Race, détaillée plus bas."""
 
-from abstraits.id import ObjetID
-from primaires.format.description import Description
+"""Fichier contenant le contexte éditeur EdtGenres"""
 
-from .stats import Stats
-from .genres import Genres
+from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.format.fonctions import supprimer_accents
 
-class Race(ObjetID):
+class EdtGenres(Uniligne):
     
-    """Classe définissant les races des personnages.
+    """Classe définissant le contexte éditeur 'genres'.
+    Ce contexte permet d'éditer les genres d'une race.
     
     """
     
-    groupe = "races"
-    sous_rep = "races"
-    def __init__(self, nom):
-        """Constructeur d'une race."""
-        ObjetID.__init__(self)
-        self.nom = nom
-        self.description = Description(parent=self)
-        self.stats = Stats(parent=self)
-        self.genres = Genres(parent=self)
-        self.squelette = None
+    def __init__(self, pere, objet=None, attribut=None):
+        """Constructeur de l'éditeur"""
+        Uniligne.__init__(self, pere, objet, attribut)
     
-    def __getnewargs__(self):
-        return ("", )
-    
-    def __str__(self):
-        return self.nom
-    
-    @property
-    def nom_squelette(self):
-        """Retourne le nom du squelette si défini"""
-        res = ""
-        if self.squelette:
-            res = self.squelette.nom
-        
-        return res
-    
-    @property
-    def cle_squelette(self):
-        """Retourne la clé du squelette si défini"""
-        res = ""
-        if self.squelette:
-            res = self.squelette.cle
-        
-        return res
-
-ObjetID.ajouter_groupe(Race)
+    def interpreter(self, msg):
+        """Interprétation du message"""
+        msg = supprimer_accents(msg.lower())
+        genres = self.objet
+        genre_entre = msg.split(" ")[0]
+        corresp = ""
+        if genre_entre in genres:
+            del genres[genre_entre]
+        else:
+            if genre_entre != "masculin" and genre_entre != "feminin":
+                try:
+                    corresp = msg.split(" ")[1]
+                except IndexError:
+                    self.pere << "|err|Vous devez préciser une " \
+                            "correspondance grammaticale.|ff|"
+                    return
+            if corresp == "feminin":
+                corresp = "féminin"
+            genres.ajouter_genre(genre_entre, corresp)
+        self.actualiser()

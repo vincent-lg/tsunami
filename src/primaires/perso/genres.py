@@ -27,53 +27,57 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""Fichier décrivant la classe Race, détaillée plus bas."""
 
-from abstraits.id import ObjetID
-from primaires.format.description import Description
+"""Fichier contenant la classe Sorties, détaillée plus bas;"""
 
-from .stats import Stats
-from .genres import Genres
+from abstraits.obase import *
 
-class Race(ObjetID):
+class Genres(BaseObj):
     
-    """Classe définissant les races des personnages.
+    """Conteneur des genres.
+    Elle contient les genres disponibles pour un classe, ainsi que leur
+    correspondance grammaticale (masculin ou féminin).
     
     """
     
-    groupe = "races"
-    sous_rep = "races"
-    def __init__(self, nom):
-        """Constructeur d'une race."""
-        ObjetID.__init__(self)
-        self.nom = nom
-        self.description = Description(parent=self)
-        self.stats = Stats(parent=self)
-        self.genres = Genres(parent=self)
-        self.squelette = None
+    def __init__(self, parent=None):
+        """Constructeur du conteneur"""
+        BaseObj.__init__(self)
+        self.parent = parent
+        self._genres = { # par défaut
+            "masculin":"masculin",
+            "féminin":"féminin"
+        }
+        # On passe le statut en CONSTRUIT
+        self._statut = CONSTRUIT
     
     def __getnewargs__(self):
-        return ("", )
+        return ()
     
-    def __str__(self):
-        return self.nom
+    def __contains__(self, nom):
+        """Retourne True si 'nom' existe, False sinon"""
+        return nom in self._genres
+    
+    def __getitem__(self, nom):
+        """Retourne le genre correspondant"""
+        return self._genres[nom]
+    
+    def __delitem__(self, nom):
+        """Supprime le genre"""
+        del self._genres[nom]
+    
+    def ajouter_genre(self, nom, corresp=""):
+        """Ajoute un genre"""
+        self._genres[nom] = corresp or nom
+        if self._statut == CONSTRUIT:
+            self.parent.enregistrer()
     
     @property
-    def nom_squelette(self):
-        """Retourne le nom du squelette si défini"""
-        res = ""
-        if self.squelette:
-            res = self.squelette.nom
-        
-        return res
-    
-    @property
-    def cle_squelette(self):
-        """Retourne la clé du squelette si défini"""
-        res = ""
-        if self.squelette:
-            res = self.squelette.cle
-        
-        return res
-
-ObjetID.ajouter_groupe(Race)
+    def str_genres(self):
+        """Retourne une chaîne des genres"""
+        ret = []
+        for genre, corresp in self._genres.items():
+            ret.append(genre + \
+                    (corresp != genre and " (" + corresp + ") " or ""))
+        ret = ", ".join(ret)
+        return ret or "aucun"
