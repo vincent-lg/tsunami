@@ -134,10 +134,17 @@ class Attitude(BaseObj):
                 return
             for personnage in acteur.salle.personnages:
                 if personnage is acteur:
-                    personnage << self.independant["aim"]
+                    if personnage.est_masculin():
+                        personnage << self.independant["aim"]
+                    else:
+                        personnage << self.independant["aif"]
                 else:
-                    personnage << formater(self.independant["oim"],
-                            acteur=acteur.nom)
+                    if personnage.est_masculin():
+                        personnage << formater(self.independant["oim"],
+                                acteur=acteur.nom)
+                    else:
+                        personnage << formater(self.independant["oif"],
+                                acteur=acteur.nom)
         else:
             # Le joueur a précisé une cible
             if statut == SANS_CIBLE:
@@ -153,11 +160,23 @@ class Attitude(BaseObj):
                 return
             for personnage in acteur.salle.personnages:
                 if personnage is acteur:
-                    personnage << formater(self.dependant["adm"],
-                            cible=cible.nom)
+                    if personnage.est_masculin():
+                        personnage << formater(self.dependant["adm"],
+                                cible=cible.nom)
+                    else:
+                        personnage << formater(self.dependant["adf"],
+                                cible=cible.nom)
                 elif personnage is cible:
-                    personnage << formater(self.dependant["idm"],
-                            acteur=acteur.nom)
+                    if personnage.est_masculin():
+                        personnage << formater(self.dependant["idm"],
+                                acteur=acteur.nom)
+                    else:
+                        personnage << formater(self.dependant["idf"],
+                                cible=cible.nom)
                 else:
-                    personnage << formater(self.dependant["odm"],
-                            acteur=acteur.nom, cible=cible.nom)
+                    if personnage.est_masculin():
+                        personnage << formater(self.dependant["odm"],
+                                acteur=acteur.nom, cible=cible.nom)
+                    else:
+                        personnage << formater(self.dependant["odf"],
+                                cible=cible.nom)

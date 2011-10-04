@@ -28,19 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des différents contextes utiles à la création, suppression
-et connexion de joueurs.
+"""Fichier contenant le contexte-éditeur EdtGenre, détaillé plus bas."""
 
-"""
+from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.format.fonctions import supprimer_accents
 
-# Contexte de connexion
-from .connexion.mode_connecte import ModeConnecte
-
-# Contextes de création
-from .creation.choix_race import ChoixRace
-from .creation.choix_genre import ChoixGenre
-from .creation.langue_cmd import LangueCMD
-from .creation.nouveau_nom import NouveauNom
-
-# Contextes de suppression
-from .suppression.suppression import Suppression
+class EdtGenre(Uniligne):
+    
+    """Classe définissant le contexte-éditeur 'genre'.
+    
+    """
+    
+    def __init__(self, pere, objet=None, attribut=None):
+        """Constructeur de l'éditeur"""
+        Uniligne.__init__(self, pere, objet, attribut)
+    
+    def __getnewargs__(self):
+        return (None, )
+    
+    def interpreter(self, msg):
+        """Interprétation du message"""
+        msg = supprimer_accents(msg.lower())
+        proto = self.objet
+        if proto.race is None:
+            if msg == "masculin" or msg == "feminin":
+                proto.genre = msg
+                self.actualiser()
+            else:
+                self.pere << "|err|Ce genre n'est pas disponible.|ff|"
+        else:
+            genres = proto.race.genres
+            if msg in genres:
+                proto.genre = msg
+                self.actualiser()
+            else:
+                self.pere << "|err|Ce genre n'existe pas pour la race du " \
+                        "PNJ.|ff|"

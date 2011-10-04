@@ -58,6 +58,10 @@ class Genres(BaseObj):
         """Retourne True si 'nom' existe, False sinon"""
         return nom in self._genres
     
+    def __len__(self):
+        """Retourne le nombre de genres existants"""
+        return len(self._genres)
+    
     def __getitem__(self, nom):
         """Retourne le genre correspondant"""
         return self._genres[nom]
@@ -81,3 +85,8 @@ class Genres(BaseObj):
                     (corresp != genre and " (" + corresp + ") " or ""))
         ret = ", ".join(ret)
         return ret or "aucun"
+    
+    @property
+    def liste_genres(self):
+        """Retourne une liste des genres"""
+        return list(self._genres.keys())

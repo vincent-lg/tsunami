@@ -49,7 +49,7 @@ class ChoixRace(Contexte):
         races = type(self).importeur.perso.races
         noms_races = [race.nom for race in races]
         return \
-            "\n|tit|--------= Choix de la race =--------|ff|\n" \
+            "\n|tit|-------= Choix de la race =--------|ff|\n" \
             "Entrez l'une des |ent|races|ff| proposées ci-après ou " \
             "|cmd|info <nom de la race>|ff| pour\n" \
             "obtenir plus d'informations sur la race (par exemple, " \
@@ -80,11 +80,15 @@ class ChoixRace(Contexte):
         else:
             if not info:
                 self.pere.joueur.race = race
-                
-                if self.pere.joueur not in self.pere.compte.joueurs:
-                    self.pere.compte.ajouter_joueur(self.pere.joueur)
-                
-                self.pere.joueur.pre_connecter()
+                if race.genres and len(race.genres) > 1:
+                    self.migrer_contexte("personnage:creation:choix_genre")
+                else:
+                    if race.genres and len(race.genres) == 1:
+                        self.pere.joueur.genre = race.genres.liste_genres[0]
+                    if self.pere.joueur not in self.pere.compte.joueurs:
+                        self.pere.compte.ajouter_joueur(self.pere.joueur)
+                    
+                    self.pere.joueur.pre_connecter()
             else:
                 # On crée une barre de titre ajustée
                 nb_tirets = int((36 - (len(race.nom) + 10)) / 2) - 1

@@ -116,6 +116,8 @@ class ChoisirPersonnage(Contexte):
                 races = type(self).importeur.perso.races
                 if joueur.race is None and len(races) > 0:
                     self.migrer_contexte("personnage:creation:choix_race")
+                elif joueur.genre == "" and len(joueur.race.genres) > 0:
+                    self.migrer_contexte("personnage:creation:choix_genre")
                 else:
                     joueur.pre_connecter()
         elif msg == cmd_creer:
