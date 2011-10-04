@@ -69,6 +69,7 @@ class Personnage(ObjetID):
                 "End   {stats.endurance}"
         self.equipement = None
         self._race = None
+        self.genre = "aucun"
         
         # Quêtes
         self.quetes = Quetes(self)
@@ -105,7 +106,6 @@ class Personnage(ObjetID):
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel, c'est-à-dire le premier de la file"""
         return self.contextes.actuel
-    
     def _set_contexte_actuel(self, nouveau_contexte):
         """Ajoute le nouveau contexte à la file des contextes.
         Note : la file peut très bien être manipulée par un contexte qui
@@ -119,10 +119,9 @@ class Personnage(ObjetID):
     
     def _get_salle(self):
         return self._salle
-    
     @propriete_id
     def _set_salle(self, salle):
-        """Redéfini la salle du joueur.
+        """Redéfinit la salle du joueur.
         On en profite pour :
         -   s'assurer que le joueur a bien été retiré de son ancienne
             salle, si existante
@@ -154,6 +153,25 @@ class Personnage(ObjetID):
         
         self.lier_equipement(race.squelette)
     race = property(_get_race, _set_race)
+    
+    @property
+    def genres_possibles(self):
+        """Retourne les genres disponibles pour le personnage"""
+        if self.race is not None:
+            return self.race.genres.str_genres
+        else:
+            return "masculin, féminin"
+    
+    def est_masculin(self):
+        """Retourne True si le personnage est masculin, False sinon"""
+        if self.race is not None:
+            return self.race.genres[self.genre] == "masculin" or \
+                    self.genre == "aucun"
+        else:
+            return self.genre == "masculin" or self.genre == "aucun"
+    
+    def est_feminin(self):
+        return not self.est_masculin()
     
     @property
     def prompt(self):

@@ -38,6 +38,7 @@ from .connexion.mode_connecte import ModeConnecte
 
 # Contextes de création
 from .creation.choix_race import ChoixRace
+from .creation.choix_genre import ChoixGenre
 from .creation.langue_cmd import LangueCMD
 from .creation.nouveau_nom import NouveauNom
 

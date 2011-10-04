@@ -58,6 +58,7 @@ class Prototype(ObjetID):
         self.etat_pluriel = "se tiennent ici"
         self.description = Description(parent=self)
         self.race = None
+        self.genre = "aucun"
         self.stats = Stats(self)
     
     def __getnewargs__(self):
@@ -93,5 +94,24 @@ class Prototype(ObjetID):
             return nom + " " + self.etat_singulier
         else:
             return nom + " " + self.etat_pluriel
+    
+    @property
+    def genres_possibles(self):
+        """Retourne les genres disponibles pour le personnage"""
+        if self.race is not None:
+            return self.race.genres.str_genres
+        else:
+            return "masculin, féminin"
+    
+    def est_masculin(self):
+        """Retourne True si le personnage est masculin, False sinon"""
+        if self.race is not None:
+            return self.race.genres[self.genre] == "masculin" or \
+                    self.genre == "aucun"
+        else:
+            return self.genre == "masculin" or self.genre == "aucun"
+    
+    def est_feminin(self):
+        return not self.est_masculin()
 
 ObjetID.ajouter_groupe(Prototype)

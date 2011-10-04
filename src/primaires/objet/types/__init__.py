@@ -40,6 +40,7 @@ types = {} # types d'objet {nom:classe}
 class MetaType(MetaBaseObj):
     
     """Métaclasse des types d'objet.
+    
     Elle ajoute le type de l'objet dans le dictionnaire 'types' si il possède
     un nom.
     
@@ -48,10 +49,17 @@ class MetaType(MetaBaseObj):
     def __init__(cls, nom, bases, contenu):
         """Constructeur de la métaclasse"""
         MetaBaseObj.__init__(cls, nom, bases, contenu)
+        cls.types = {}
         if cls.nom_type:
             types[cls.nom_type] = cls
+            
+            # On l'ajoute dans la classe-mère
+            base = bases and bases[0] or None
+            if base:
+                base.types[cls.nom_type] = cls
 
 from .conteneur import Conteneur
 from .indefini import *
 from .nourriture import Nourriture
 from .vetement import Vetement
+from .viande import Viande

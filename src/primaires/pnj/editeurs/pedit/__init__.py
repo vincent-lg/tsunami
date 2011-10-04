@@ -38,6 +38,7 @@ from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_noms import EdtNoms
 from .edt_stats import EdtStats
 from .edt_race import EdtRace
+from .edt_genre import EdtGenre
 
 class EdtPedit(Presentation):
     
@@ -93,3 +94,14 @@ class EdtPedit(Presentation):
             "Entrez le |ent|nom|ff| de la race ou |cmd|/|ff| " \
             "pour revenir à la fenêtre parente.\n\nRace actuelle : " \
             "|bc|{objet.nom_race}|ff|"
+        
+        # Genre
+        genre = self.ajouter_choix("genre", "g", EdtGenre, prototype)
+        genre.parent = self
+        genre.prompt = "Entrez un genre : "
+        genre.apercu = "{objet.genre}"
+        genre.aide_courte = \
+            "Entrez le |ent|genre|ff| du PNJ ou |cmd|/|ff| " \
+            "pour revenir à la fenêtre parente.\n\nGenres disponibles : " \
+            "|bc|{objet.genres_possibles}|ff|\nGenre actuel : " \
+            "|bc|{objet.genre}|ff|"

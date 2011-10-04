@@ -38,6 +38,7 @@ from . import MetaType
 class BaseType(ObjetID, metaclass=MetaType):
     
     """Classe abstraite représentant le type de base d'un objet.
+    
     Si des données doivent être communes à tous les types d'objet
     (un objet a un nom, une description, quelque soit son type) c'est dans
     cette classe qu'elles apparaissent.
@@ -49,6 +50,9 @@ class BaseType(ObjetID, metaclass=MetaType):
     nom_type = "" # à redéfinir
     _nom = "base_type_objet"
     _version = 2
+    
+    # Types enfants
+    types = {}
     def __init__(self, cle=""):
         """Constructeur d'un type"""
         ObjetID.__init__(self)
@@ -83,6 +87,8 @@ class BaseType(ObjetID, metaclass=MetaType):
     
     def etendre_editeur(self, raccourci, ligne, editeur, objet, attribut, *sup):
         """Permet d'étendre l'éditeur d'objet en fonction du type.
+        
+        Paramètres à entrer :
         -   raccourci   le raccourci permettant d'accéder à la ligne
         -   ligne       la ligne de l'éditeur (exemple 'Description')
         -   editeur     le contexte-éditeur (exemple Uniligne)
@@ -98,6 +104,7 @@ class BaseType(ObjetID, metaclass=MetaType):
     
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes.
+        
         On récupère un dictionnaire représentant la présentation avec en
         clé les raccourcis et en valeur les enveloppes.
         
@@ -109,6 +116,7 @@ class BaseType(ObjetID, metaclass=MetaType):
     
     def get_nom(self, nombre):
         """Retourne le nom complet en fonction du nombre.
+        
         Par exemple :
         Si nombre == 1 : retourne le nom singulier
         Sinon : retourne le nombre et le nom pluriel

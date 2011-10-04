@@ -52,16 +52,17 @@ class EdtOedit(Editeur):
     
     nom = "oedit"
     
-    def __init__(self, personnage, prototype):
+    def __init__(self, personnage, identifiant="", attribut=None, choisi=""):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
         
-        Editeur.__init__(self, instance_connexion, prototype)
+        Editeur.__init__(self, instance_connexion, identifiant)
         self.personnage = personnage
-        self.identifiant = ""
+        self.identifiant = identifiant
+        self.choisi = choisi
     
     def __getnewargs__(self):
         return (None, None)
@@ -72,7 +73,13 @@ class EdtOedit(Editeur):
         
         """
         identifiant = self.identifiant
-        noms_types = tuple(types.keys())
+        if self.choisi:
+            noms_types = tuple(types[self.choisi].types.keys())
+        else:
+            noms_types = tuple(
+                    type(self).importeur.objet.types_premier_niveau.keys())
+        
+        noms_types = sorted(noms_types)
         return "|tit|Création du prototype {}|ff|\n\n".format(identifiant) + \
                 "Entrez |cmd|le type d'objet|ff| que vous souhaitez créer " \
                 "ou |cmd|a|ff| pour annuler.\n" \
@@ -92,16 +99,28 @@ class EdtOedit(Editeur):
             self.pere.envoyer("Opération annulée.")
         else:
             type_choisi = ""
-            for nom in types.keys():
+            if self.choisi:
+                p_types = types[self.choisi].types
+            else:
+                p_types = type(self).importeur.objet.types_premier_niveau
+            
+            for nom in p_types.keys():
                 if contient(nom, msg):
                     type_choisi = nom
             
             if not type_choisi:
                 self.pere << "|err|Ce type est inconnu.|ff|"
             else:
-                self.objet = type(self).importeur.objet.creer_prototype(
-                        self.identifiant, type_choisi)
-                enveloppe = EnveloppeObjet(EdtPresentation, self.objet, "")
+                choix = types[type_choisi]
+                # Si aucun type enfant n'existe
+                print(choix.types)
+                if not choix.types:
+                    self.objet = type(self).importeur.objet.creer_prototype(
+                            self.identifiant, type_choisi)
+                    enveloppe = EnveloppeObjet(EdtPresentation, self.objet, "")
+                else:
+                    enveloppe = EnveloppeObjet(EdtOedit, self.identifiant,
+                            "", type_choisi)
                 contexte = enveloppe.construire(self.personnage)
                 
                 self.migrer_contexte(contexte)

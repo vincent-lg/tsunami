@@ -157,6 +157,22 @@ class Equipement(BaseObj):
         """Retire l'objet tenu sur nom_membre."""
         membre = self.get_membre(nom_membre)
         membre.tenu = None
+    
+    def remonter_membre(self, nom_membre):
+        """Remonte un membre dans la liste des membres."""
+        membre = self.get_membre(nom_membre)
+        indice = self.__membres.index(membre)
+        if indice != 0: # ne fait rien si le membre est déjà tout en haut
+            membre = self.__membres.pop(indice)
+            self.__membres.insert(indice - 1, membre)
+    
+    def descendre_membre(self, nom_membre):
+        """Descend un membre dans la liste des membres."""
+        membre = self.get_membre(nom_membre)
+        indice = self.__membres.index(membre)
+        if indice != len(self.__membres) - 1: # si le membre n'est pas en bas
+            membre = self.__membres.pop(indice)
+            self.__membres.insert(indice + 1, membre)
 
 class Equipes(BaseObj):
     

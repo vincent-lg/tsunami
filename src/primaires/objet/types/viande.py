@@ -27,53 +27,19 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""Fichier décrivant la classe Race, détaillée plus bas."""
 
-from abstraits.id import ObjetID
-from primaires.format.description import Description
+"""Fichier contenant le type viande."""
 
-from .stats import Stats
-from .genres import Genres
+from .nourriture import Nourriture
 
-class Race(ObjetID):
+class Viande(Nourriture):
     
-    """Classe définissant les races des personnages.
+    """Type d'objet: viande.
     
     """
     
-    groupe = "races"
-    sous_rep = "races"
-    def __init__(self, nom):
-        """Constructeur d'une race."""
-        ObjetID.__init__(self)
-        self.nom = nom
-        self.description = Description(parent=self)
-        self.stats = Stats(parent=self)
-        self.genres = Genres(parent=self)
-        self.squelette = None
-    
-    def __getnewargs__(self):
-        return ("", )
-    
-    def __str__(self):
-        return self.nom
-    
-    @property
-    def nom_squelette(self):
-        """Retourne le nom du squelette si défini"""
-        res = ""
-        if self.squelette:
-            res = self.squelette.nom
-        
-        return res
-    
-    @property
-    def cle_squelette(self):
-        """Retourne la clé du squelette si défini"""
-        res = ""
-        if self.squelette:
-            res = self.squelette.cle
-        
-        return res
-
-ObjetID.ajouter_groupe(Race)
+    nom_type = "viande"
+    def __init__(self, cle=""):
+        """Constructeur de l'objet"""
+        Nourriture.__init__(self, cle)
+        self.nourrissant = 3

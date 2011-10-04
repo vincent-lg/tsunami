@@ -65,7 +65,6 @@ class CmdOedit(Commande):
             contexte.actualiser()
         else:
             editeur = type(self).importeur.interpreteur.construire_editeur(
-                    "oedit", personnage, None)
-            editeur.identifiant = ident_objet
+                    "oedit", personnage, ident_objet)
             personnage.contextes.ajouter(editeur)
             editeur.actualiser()
