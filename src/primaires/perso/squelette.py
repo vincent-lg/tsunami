@@ -179,5 +179,32 @@ class Squelette(ObjetID):
             equipement = personnage.equipement
             a_membre = equipement.get_membre(nom)
             a_membre.nom = nouveau_nom
+    
+    def remonter_membre(self, nom_membre):
+        """Remonte un membre dans la liste des membres."""
+        membre = self.get_membre(nom_membre)
+        indice = self.__membres.index(membre)
+        if indice != 0: # ne fait rien si le membre est déjà tout en haut
+            membre = self.__membres.pop(indice)
+            self.__membres.insert(indice - 1, membre)
+            
+            # On transmet aux équipement construits sur ce squelette
+            for personnage in self.personnages:
+                equipement = personnage.equipement
+                equipement.remonter_membre(nom_membre)
+    
+    def descendre_membre(self, nom_membre):
+        """Descend un membre dans la liste des membres."""
+        membre = self.get_membre(nom_membre)
+        indice = self.__membres.index(membre)
+        if indice != len(self.__membres) - 1: # si le membre n'est pas en bas
+            membre = self.__membres.pop(indice)
+            self.__membres.insert(indice + 1, membre)
+            
+            # On transmet aux équipement construits sur ce squelette
+            for personnage in self.personnages:
+                equipement = personnage.equipement
+                equipement.descendre_membre(nom_membre)
+
 
 ObjetID.ajouter_groupe(Squelette)

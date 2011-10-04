@@ -61,7 +61,7 @@ class Membre(BaseObj):
         """Constructeur d'un membre"""
         BaseObj.__init__(self)
         self.nom = nom
-        self.flags = AUCUN_FLAG
+        self.flags = AFFICHABLE
         self.statut = "entier"
         self.equipe = None # l'objet équipé à cet emplacement
         self.tenu = None # l'objet tenu
@@ -80,6 +80,9 @@ class Membre(BaseObj):
         if not nom_attr.startswith("_") and hasattr(self, "parent") and \
                 self.parent:
             self.parent.enregistrer()
+    
+    def __repr__(self):
+        return "membre({})".format(self.nom)
     
     def __str__(self):
         return "{} ({})".format(self.nom, self.statut)
