@@ -123,6 +123,8 @@ class Attitude(BaseObj):
         def formater(str, acteur="", cible=""):
             str = str.replace("_b_acteur_b_", acteur)
             str = str.replace("_b_cible_b_", cible)
+            de = (cible[0] in ["a", "e", "i", "o", "u", "y"] and "d'" or "de ")
+            str = str.replace("_b_de_b_", de)
             return str
         
         try:
@@ -133,15 +135,15 @@ class Attitude(BaseObj):
                 acteur << "|err|Vous devez préciser une cible.|ff|"
                 return
             for personnage in acteur.salle.personnages:
-                if personnage is acteur:
-                    if personnage.est_masculin():
+                if acteur.est_masculin():
+                    if personnage is acteur:
                         personnage << self.independant["aim"]
                     else:
-                        personnage << self.independant["aif"]
-                else:
-                    if personnage.est_masculin():
                         personnage << formater(self.independant["oim"],
                                 acteur=acteur.nom)
+                else:
+                    if personnage is acteur:
+                        personnage << self.independant["aif"]
                     else:
                         personnage << formater(self.independant["oif"],
                                 acteur=acteur.nom)
@@ -159,24 +161,23 @@ class Attitude(BaseObj):
                 acteur << "|err|Vous ne voyez pas cette personne ici.|ff|"
                 return
             for personnage in acteur.salle.personnages:
-                if personnage is acteur:
-                    if personnage.est_masculin():
+                if acteur.est_masculin():
+                    if personnage is acteur:
                         personnage << formater(self.dependant["adm"],
                                 cible=cible.nom)
-                    else:
-                        personnage << formater(self.dependant["adf"],
-                                cible=cible.nom)
-                elif personnage is cible:
-                    if personnage.est_masculin():
+                    elif personnage is cible:
                         personnage << formater(self.dependant["idm"],
                                 acteur=acteur.nom)
                     else:
-                        personnage << formater(self.dependant["idf"],
-                                cible=cible.nom)
-                else:
-                    if personnage.est_masculin():
                         personnage << formater(self.dependant["odm"],
                                 acteur=acteur.nom, cible=cible.nom)
+                else:
+                    if personnage is acteur:
+                        personnage << formater(self.dependant["adf"],
+                                cible=cible.nom)
+                    elif personnage is cible:
+                        personnage << formater(self.dependant["idf"],
+                                acteur=acteur.nom)
                     else:
                         personnage << formater(self.dependant["odf"],
-                                cible=cible.nom)
+                                acteur=acteur.nom, cible=cible.nom)

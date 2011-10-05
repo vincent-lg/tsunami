@@ -53,7 +53,8 @@ class PrmVoir(Parametre):
         if attitude.statut == FONCTIONNELLE or attitude.statut == SANS_CIBLE:
             res += attitude.independant["aim"]
         elif attitude.statut == CIBLE_OBLIGATOIRE:
-            res += attitude.dependant["adm"].replace("_b_cible_b_", "quelqu'un")
+            res += attitude.dependant["adm"].replace("_b_cible_b_",
+                    "quelqu'un").replace("_b_de_b_", "de ")
         else:
             res += "|err|Cette attitude n'est pas disponible.|ff|"
         personnage << res
