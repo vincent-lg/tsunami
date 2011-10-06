@@ -324,6 +324,9 @@ class Module(BaseModule):
         if not self.pret:
             raise RuntimeError("Un objet BaseObj s'est créé trop tôt")
         
+        if not self.importeur.parid.construit:
+            return
+        
         id = BaseObj._id_base_actuel
         self.enregistre_actuellement = True
         chemin_dest = REP_ENRS + os.sep + "base" + os.sep + "id.sav"
