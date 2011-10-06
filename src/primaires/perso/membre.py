@@ -35,6 +35,7 @@ jambe.
 """
 
 from abstraits.obase import BaseObj
+from bases.collections.liste_id import ListeID
 
 # Flags
 AUCUN_FLAG = 0
@@ -51,19 +52,24 @@ STATUTS = ("entier", "brisé")
 class Membre(BaseObj):
     
     """Classe définissant un membre, une partie du corps d'un personnage.
+    
     Chaque personnage possède un squelette, qui peut être propre à sa race
     ou à une personnalisation propre. Certains PNJ, par exemple, auront
     des squelettes hors de la définition de toute race;
     
     """
     
+    _nom = "membre"
+    _version = 1
     def __init__(self, nom, modele=None, parent=None):
         """Constructeur d'un membre"""
         BaseObj.__init__(self)
         self.nom = nom
         self.flags = AFFICHABLE
         self.statut = "entier"
-        self.equipe = None # l'objet équipé à cet emplacement
+        self.groupe = ""
+        self.supporte = 3
+        self.equipe = ListeID(parent) # les objets équipés à cet emplacement
         self.tenu = None # l'objet tenu
         self.parent = parent
         
@@ -71,6 +77,8 @@ class Membre(BaseObj):
         if modele:
             self.nom = modele.nom
             self.flags = modele.flags
+            self.groupe = modele.groupe
+            self.supporte = membre.supporte
     
     def __getnewargs__(self):
         return ("", )
@@ -103,7 +111,7 @@ class Membre(BaseObj):
     
     def peut_tenir(self):
         """Retourne True si le membre peut tenir"""
-        return self.flags & PEUT_TENIR != 0 and self.equipe is None
+        return self.flags & PEUT_TENIR != 0 and not self.equipe
     
     def affichable(self):
         """Retourne True si le membre est affichable"""
@@ -120,11 +128,36 @@ class Membre(BaseObj):
         # Un emplacement est considéré comme libre si aucun objet n'est tenu
         # ni équipé
         equipable = False
-        if self.tenu is None and self.equipe is None:
+        if self.tenu is None and not self.equipe:
             equipable = True
         
         if objet is None:
             return equipable
         else:
-            return equipable # and ...
+            epaisseurs = sum(o.epaisseur for o in self.equipe)
+            return equipable and epaisseurs + objet.epaisseur <= \
+                    self.supporte and epaisseurs + 1 in objet.positions
+
+class Groupe(BaseObj):
+    
+    """Classe définissant le groupe d'un membre.
+    
+    Un groupe permet de regrouper plusieurs membres et cela sert autant
+    pour l'emplacement de l'équipement (une botte se porte aux pieds
+    c'est-à-dire au pied gauche ou au pied droit dans un squelette classique)
+    que pour regrouper de façon indissociable des membres (on ne peut
+    équiper un objet sur la jambe gauche uniquement, on l'équipe
+    sur les deux jambes à la fois).
+    
+    Attributs :
+        nom -- le nom du groupe
+        dissociable -- spécifie si les membres du groupe sont dissociables
+            Par exemple, les membres du groupes 'jambes' ne le sont pas.
+    
+    """
+    
+    def __init__(self, nom):
+        """Constructeur du groupe."""
+        self.nom = nom
+        self.dissociable = True
 

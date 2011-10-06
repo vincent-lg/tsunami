@@ -46,6 +46,7 @@ class EdtMembre(Editeur):
         Editeur.__init__(self, pere, objet, attribut)
         self.ajouter_option("f", self.opt_changer_flag)
         self.ajouter_option("n", self.opt_changer_nom)
+        self.ajouter_option("g", self.opt_changer_groupe)
     
     def opt_changer_flag(self, arguments):
         """Change l'état d'un flag
@@ -61,6 +62,18 @@ class EdtMembre(Editeur):
             self.actualiser()
         else:
             self.pere << "|err|Ce flag n'est pas disponible.|ff|"
+    
+    def opt_changer_groupe(self, arguments):
+        """Change le groupe du membre.
+        
+        Syntaxe : /g <nouveau groupe>
+        
+        """
+        membre = self.objet
+        squelette = membre.parent
+        nom_groupe = arguments.strip()
+        squelette.changer_groupe_membre(membre.nom, groupe)
+        self.actualiser()
     
     def opt_changer_nom(self, arguments):
         """Change le nom
@@ -87,6 +100,7 @@ class EdtMembre(Editeur):
         msg += self.aide_courte
         
         msg += "\n Nom du membre : |ent|" + membre.nom + "|ff|"
+        msg += "\n Groupe :|ent|" + (membre.groupe or "aucun") + "|ff|"
         msg += "\n Flags :"
         for flag in FLAGS:
             msg += "\n     " + flag + " : "

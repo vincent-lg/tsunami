@@ -29,6 +29,8 @@
 
 """Ce fichier contient la classe Equipement, détaillée plus bas."""
 
+from itertools import chain
+
 from abstraits.obase import *
 from primaires.format.fonctions import supprimer_accents
 from .membre import Membre
@@ -190,8 +192,9 @@ class Equipes(BaseObj):
         return (None, )
 
     def __iter__(self):
-        return iter([membre.equipe for membre in self.equipement.membres \
-                if membre.equipe])
+        """Retourne une chaîne des objets équipés."""
+        equipes = tuple(tuple(e) for e in self.equipe)
+        return chain(equipes)
     
     def ajouter(self, objet):
         """Ajoute un objet à l'équipoement"""
@@ -200,8 +203,8 @@ class Equipes(BaseObj):
     def retirer(self, objet):
         """Retire l'objet passé en paramètre"""
         for membre in self.equipement.membres:
-            if membre.equipe is objet:
-                self.equipement.desequiper_objet(membre.nom)
+            if objet in membre.equipe:
+                self.equipement.desequiper_objet(membre.nom, objet)
 
 class Tenus(BaseObj):
     

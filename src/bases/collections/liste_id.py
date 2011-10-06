@@ -94,6 +94,9 @@ class ListeID(BaseObj):
         """Retourne la taille de la liste"""
         return len(self.__liste)
     
+    def __bool__(self):
+        return len(self) > 0
+    
     def __str__(self):
         """Retourne l'affichage de la liste"""
         return "id" + str(self.__liste)
