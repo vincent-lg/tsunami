@@ -157,9 +157,7 @@ class BaseObj(metaclass=MetaBaseObj):
         # On initialise le dictionnaire des versions de l'objet
         self._dict_version = {}
         self._ts = time.time() # le timestamp actuel
-        self._id_base = BaseObj._id_base_actuel
-        BaseObj._id_base_actuel += 1
-        type(self).importeur.supenr.enregistrer_id_base()
+        self._id_base = None
     
     def __getnewargs__(self):
         raise NotImplementedError
@@ -198,7 +196,11 @@ class BaseObj(metaclass=MetaBaseObj):
         
         """
         self._ts = time.time()
-        return self.__dict__
+        if self._id_base is None:
+            self._id_base = BaseObj._id_base_actuel
+            BaseObj._id_base_actuel += 1
+            type(self).importeur.supenr.enregistrer_id_base()
+        return self.__dict__.copy()
     
     def __setstate__(self, dico_attrs):
         """Méthode appelée lors de la désérialisation de l'objet"""

@@ -78,7 +78,7 @@ class Membre(BaseObj):
             self.nom = modele.nom
             self.flags = modele.flags
             self.groupe = modele.groupe
-            self.supporte = membre.supporte
+            self.supporte = modele.supporte
     
     def __getnewargs__(self):
         return ("", )

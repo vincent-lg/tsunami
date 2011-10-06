@@ -53,7 +53,7 @@ class Joueur(Personnage):
         self.afk = ""
     
     def __getstate__(self):
-        retour = self.__dict__.copy()
+        retour = Personnage.__getstate__(self)
         retour["instance_connexion"] = None
         return retour
     

@@ -159,7 +159,7 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         return (None, )
     
     def __getstate__(self):
-        retour = self.__dict__.copy()
+        retour = BaseObj.__getstate__(self)
         retour["pere"] = None
         return retour
     
