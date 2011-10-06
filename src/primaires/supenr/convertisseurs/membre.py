@@ -1,3 +1,5 @@
+# -*-coding:Utf-8 -*
+
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -26,35 +28,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'voir' de la commande 'attitudes'."""
+"""Fichier contenant les convertisseurs de la classe Membre."""
 
-from primaires.interpreteur.masque.parametre import Parametre
-from primaires.communication.attitude import *
+from bases.collections.liste_id import ListeID
 
-class PrmVoir(Parametre):
+class Convertisseur:
     
-    """Commande 'attitudes voir'.
-    
-    """
-    
-    def __init__(self):
-        """Constructeur du paramètre"""
-        Parametre.__init__(self, "voir", "view")
-        self.schema = "<attitude>"
-        self.aide_courte = "offre un aperçu d'une attitude"
-        self.aide_longue = \
-            "Cette sous-commande donne un aperçu d'une attitude, visible par " \
-            "vous uniquement."
-    
-    def interpreter(self, personnage, dic_masques):
-        """Interprétation du paramètre"""
-        attitude = dic_masques["attitude"].attitude
-        res = "Statut de l'attitude : " + STATUTS[attitude.statut] + "\n"
-        if attitude.statut == FONCTIONNELLE or attitude.statut == SANS_CIBLE:
-            res += attitude.independant["aim"]
-        elif attitude.statut == CIBLE_OBLIGATOIRE:
-            res += attitude.dependant["adm"].replace("_b_cible_b_",
-                    "quelqu'un").replace("_b_de_b_", "de ")
-        else:
-            res += "|err|Cette attitude n'est pas disponible.|ff|"
-        personnage << res
+    """Classe pour envelopper les convertisseurs."""
+    def depuis_version_0(objet, classe):
+        objet.set_version(classe, 1)
+        objet.equipe = ListeID(objet.parent)
+

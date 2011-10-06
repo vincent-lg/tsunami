@@ -46,13 +46,34 @@ class PrmLister(Parametre):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        attitudes = type(self).importeur.communication.attitudes
-        if not attitudes:
+        attitudes = None
+        if personnage.est_immortel():
+            attitudes = type(self).importeur.communication.attitudes
+        else:
+            attitudes = type(self).importeur.communication.attitudes_jouables
+        if attitudes is None:
             res = "|err|Il n'y a aucune attitude pour l'instant.|ff|"
         else:
+            res = "+" + "-" * 77 + "+\n"
+            res += "| |tit|" + "Attitudes en jeu".ljust(76) + "|ff||\n"
+            res += "+" + "-" * 77 + "+\n"
             # On détermine la taille du tableau
             taille = 0
-            res = "Attitudes en jeu :"
-            for attitude in attitudes.keys():
-                res += "\n" + attitude
+            liste_attitudes = []
+            i = 0
+            for att in sorted([att.cle for att in attitudes.values()]):
+                if i == 0:
+                    liste_attitudes.append(att.ljust(19))
+                    i += 1
+                elif i == 3:
+                    liste_attitudes[-1] += att.ljust(19) + "|"
+                    i = 0
+                else:
+                    liste_attitudes[-1] += att.ljust(18)
+                    i += 1
+            if liste_attitudes[-1][-1] != "|":
+                liste_attitudes[-1] = \
+                        liste_attitudes[-1].ljust(74)
+            res += "|   " + "\n|   ".join(liste_attitudes) + "|"
+            res += "\n+".ljust(79, "-") + "+"
         personnage << res

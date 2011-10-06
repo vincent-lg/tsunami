@@ -35,10 +35,12 @@ from bases.collections.liste_id import ListeID
 from primaires.format.description import Description
 from primaires.format.fonctions import supprimer_accents
 from .membre import Membre
+from .membre import Groupe
 
 class Squelette(ObjetID):
     
     """Classe représentant un squelette.
+    
     Un squelette est un ensemble de membres.
     Plusieurs personnages peuvent posséder un même squelette. Par exemple,
     deux PNJ humains auront tous deux le squelette d'un humain.
@@ -63,6 +65,7 @@ class Squelette(ObjetID):
         self.nom = "un squelette"
         self.description = Description(parent=self)
         self.__membres = []
+        self.__groupes = {}
         
         # Liste des personnages dont l'équipement dérive de ce squelette
         self.personnages = ListeID(parent=self)
@@ -88,6 +91,11 @@ class Squelette(ObjetID):
         return list(self.__membres)
     
     @property
+    def groupes(self):
+        """Retourne un dictionnaire déréférencé des groupes."""
+        return dict(self.__groupes)
+    
+    @property
     def presentation_indentee(self):
         """Retourne une présentation indentée des membres"""
         membres = [membre.nom for membre in self.__membres]
@@ -98,6 +106,7 @@ class Squelette(ObjetID):
     
     def ajouter_membre(self, nom, *args, **kwargs):
         """Construit le membre via son nom et l'ajoute au dictionnaire.
+        
         Les paramètres *args et **kwargs sont transmis au constructeur de
         Membre.
         
@@ -169,6 +178,7 @@ class Squelette(ObjetID):
             a_membre.flags = flags
     def renommer_membre(self, nom, nouveau_nom):
         """Renomme le membre nom.
+        
         Répercute ces modifications dans les autres membres dérivés.
         
         """
@@ -205,6 +215,35 @@ class Squelette(ObjetID):
             for personnage in self.personnages:
                 equipement = personnage.equipement
                 equipement.descendre_membre(nom_membre)
+    
+    def get_groupe_membre(self, membre):
+        """Retourne le groupe du membre si existe, sinon None.
+        
+        L'objet attendu est un membre, aps un nom de membre.
+        
+        """
+        try:
+            return self.groupes[membre.groupe]
+        except KeyError:
+            return None
+    
+    def changer_groupe_membre(self, nom_membre, nom_groupe):
+        """Change le groupe du membre."""
+        membre = self.get_membre(nom_membre)
+        membre.groupe = nom_groupe
+        if nom_groupe and self.get_groupe_membre(membre) is None:
+            self.groupes[nom_groupe] = Groupe()
+        
+        self.enregistrer()
+    
+    def alterne_groupe_dissociable(self, nom_groupe):
+        """Change le flag dissociable du groupe si existe."""
+        if nom_groupe not in self.groupes:
+            raise KeyError("le groupe {} n'existe pas.".format(nom_groupe))
+        
+        groupe = self.groupes[nom_groupe]
+        groupe.dissociable = not groupe.dissociable
+        self.enregistrer()
 
 
 ObjetID.ajouter_groupe(Squelette)

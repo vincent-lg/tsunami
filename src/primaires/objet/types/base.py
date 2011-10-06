@@ -67,6 +67,11 @@ class BaseType(ObjetID, metaclass=MetaType):
         self.objets = ListeID(self)
         self.unique = True # par défaut tout objet est unique
         
+        # Equipement
+        self.emplacement = ""
+        self.epaisseur = 1
+        self.positions = ()
+        
         # Editeur
         self._extensions_editeur = []
         

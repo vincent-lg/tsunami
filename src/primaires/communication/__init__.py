@@ -201,8 +201,11 @@ class Module(BaseModule):
     def attitudes_jouables(self):
         """Retourne une liste les attitudes jouables"""
         try:
-            ret = [att for att in self.attitudes.values() \
-                    if att.statut != INACHEVEE]
+            cles = sorted([att for att in self.attitudes.keys()])
+            ret = []
+            for cle in cles:
+                if self.attitudes[cle].statut != INACHEVEE:
+                    ret.append(self.attitudes[cle])
         except KeyError:
             ret = []
         return ret
@@ -332,6 +335,7 @@ class Module(BaseModule):
             if contient(att.cle, commande.split(" ")[0]):
                 res = True
                 self.attitudes[att.cle].jouer(personnage, commande)
+                break
         
         return res
     

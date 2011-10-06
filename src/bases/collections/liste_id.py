@@ -68,6 +68,7 @@ class ListeID(BaseObj):
     
     def __getstate__(self):
         """On enregistre juste les IDs dans le fichier"""
+        BaseObj.__getstate__(self)
         return (self._id_base, self.parent, list(self.__liste))
     
     def __setstate__(self, liste):
@@ -93,6 +94,9 @@ class ListeID(BaseObj):
     def __len__(self):
         """Retourne la taille de la liste"""
         return len(self.__liste)
+    
+    def __bool__(self):
+        return len(self) > 0
     
     def __str__(self):
         """Retourne l'affichage de la liste"""
