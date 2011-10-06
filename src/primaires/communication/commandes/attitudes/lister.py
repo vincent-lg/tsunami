@@ -46,11 +46,12 @@ class PrmLister(Parametre):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
+        attitudes = None
         if personnage.est_immortel():
             attitudes = type(self).importeur.communication.attitudes
         else:
-            attitures = type(self).importeur.communication.attitudes_jouables
-        if not attitudes:
+            attitudes = type(self).importeur.communication.attitudes_jouables
+        if attitudes is None:
             res = "|err|Il n'y a aucune attitude pour l'instant.|ff|"
         else:
             res = "+" + "-" * 77 + "+\n"
