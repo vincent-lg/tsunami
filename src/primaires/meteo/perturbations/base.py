@@ -42,6 +42,8 @@ vent_x = [0, 1, 1, 1, 0, -1, -1, -1]
 vent_y = [1, 1, 0, -1, -1, -1, 0, 1]
 vents = ["le nord", "le nord-est", "l'est", "le sud-est",
     "le sud", "le sud-ouest", "l'ouest", "le nord-ouest"]
+vents_opp = ["du sud", "du sud-ouest", "de l'ouest", "du nord-ouest",
+    "du nord", "du nord-est", "de l'est", "du sud-est"]
 
 AUCUN_FLAG = 0
 STATIQUE = 1
@@ -82,6 +84,8 @@ class BasePertu(ObjetID, metaclass=MetaPertu):
         # Messages renvoyés aux salles sous la perturbation
         self.message_debut = "Une perturbation se forme dans le ciel."
         self.message_fin = "La perturbation se dissipe peu à peu."
+        # Message à une salle sur laquelle arrive la perturbation
+        self.message_entrer = "Une perturbation arrive {dir}."
         # Message à une salle qui sort de la perturbation
         self.message_sortir = "La perturbation s'éloigne et disparaît au loin."
         # Liste des fins possibles d'une pertu enchaînant sur une autre
@@ -138,12 +142,16 @@ class BasePertu(ObjetID, metaclass=MetaPertu):
             x = (x == -1 and 7) or -7
         self.centre.x += vent_x[self.dir + x]
         self.centre.y += vent_y[self.dir + x]
-        if randint(1, 10) <= self.alea_dir / 2:
-            self.dir = randint(0, 7)
+        for salle in self.liste_salles_sous:
+            if not salle in salles and salle.exterieur:
+                salle.envoyer("|cy|" + self.message_entrer.format(
+                        dir=vents_opp[self.dir]) + "|ff|")
         for salle in salles:
             if not self.est_sur(salle) and salle.exterieur:
                 salle.envoyer("|cy|" + self.message_sortir.format(
                         dir=vents[self.dir]) + "|ff|")
+        if randint(1, 10) <= self.alea_dir / 2:
+            self.dir = randint(0, 7)
     
     def distance_au_centre(self, salle):
         """Retourne la distance de salle au centre de la perturbation"""

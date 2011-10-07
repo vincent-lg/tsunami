@@ -28,40 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Pluie, détaillée plus bas."""
+"""Ce fichier contient la classe NuagesFins, détaillée plus bas."""
 
 from .base import *
 
-class Pluie(BasePertu):
+class NuagesFins(BasePertu):
     
-    """Classe abstraite représentant la perturbation 'pluie'.
+    """Classe représentant la perturbation 'nuages_fins'.
     
     """
     
-    nom_pertu = "pluie"
-    rayon_max = 16
-    duree_max = 12
+    nom_pertu = "nuages_fins"
+    rayon_max = 23
+    duree_max = 18
     
     def __init__(self, pos):
         """Constructeur de la perturbation"""
         BasePertu.__init__(self, pos)
-        self.flags = OPAQUE
-        self.alea_dir = 4
+        self.flags = AUCUN_FLAG
+        self.alea_dir = 0
         self.etat = [
-            (5, "Une pluie incessante et violente tombe du ciel en colère."),
-            (10, "Une fine pluie martèle le sol dans un doux crépitement."),
+            (10, "De fins nuages cotonneux croisent dans le ciel en haute " \
+                    "altitude."),
         ]
-        self.message_debut = "Quelques nuages s'amoncellent, grossisent " \
-                "puis donnent naissance à une averse."
-        self.message_fin = "Les nuées se dispersent rapidement et la pluie " \
-                "cesse."
-        self.message_entrer = "Des nuages gonflés d'eau arrivent {dir} et " \
-                "apportent la pluie."
-        self.message_sortir = "Les nuages s'éloignent peu à peu vers {dir}, " \
-                "la pluie cessant soudain."
+        self.message_debut = "Des rubans de nuages laiteux se forment haut " \
+                "dans le ciel."
+        self.message_fin = "Les légers nuages s'effilochent et laissent " \
+                "place à un ciel d'azur pur."
+        self.message_entrer = "Quelques nuages venus {dir} projettent une " \
+                "ombre diaphane sur le sol."
+        self.message_sortir = "Le coton céleste continue sa course vers " \
+                "{dir}, porté par le vent."
         self.fins_possibles = [
-            ("nuages", "L'averse cesse sans un souffle mais les nuages " \
-                    "restent, encore menaçants.", 12),
-            ("orage", "La pluie s'intensifie soudain et le tonnerre retentit.",
-                    30),
+            ("nuages", "Les nuées s'épaississent, comme gonflées par un " \
+                    "souffle invisible.", 12),
         ]

@@ -54,9 +54,14 @@ class Nuages(BasePertu):
         ]
         self.message_debut = "Quelques voiles de brume s'agrègent " \
                 "pour former un plafond nuageux menaçant."
-        self.message_fin = "Les nuées se dispersent rapidement."
+        self.message_fin = "Le plafond nuageux se disperse rapidement, " \
+                "disloqué par les vents."
+        self.message_entrer = "D'épais nuages arrivent {dir} et " \
+                "s'immobilisent sur votre tête."
         self.message_sortir = "Les nuages s'éloignent peu à peu vers {dir}."
         self.fins_possibles = [
+            ("orage", "D'un seul coup, les nuages gonflent comme une " \
+                    "baudruche et un orage éclate.", 10),
             ("pluie", "Les nuages s'épaississent progressivement et une " \
                     "averse commence soudain.", 50),
         ]
