@@ -32,7 +32,7 @@
 
 from abstraits.module import *
 from .sujet import SujetAide
-from primaires.format.fonctions import supprimer_accents
+from primaires.format.fonctions import supprimer_accents, format_nb
 from . import commandes
 from .editeurs.hedit import EdtHedit
 
@@ -58,9 +58,8 @@ class Module(BaseModule):
         """
         sujets = self.importeur.supenr.charger_groupe(SujetAide)
         self.__sujets = sujets
-        s = len(sujets) > 1 and "s" or ""
-        nb_sujets = len(sujets) or "Aucun"
-        print(nb_sujets, "sujet{s} d'aide récupéré{s}".format(s=s))
+        nb_sujets = len(sujets)
+        print(format_nb(nb_sujets, "{nb} sujet{s} d'aide récupéré{s}"))
         
         BaseModule.init(self)
     
