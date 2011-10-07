@@ -105,6 +105,7 @@ class Module(BaseModule):
         
         # Chargement de la dernière ID de BaseObj
         self.charger_id_base()
+        self.logger.info("ID actuel : {}".format(BaseObj._id_base_actuel))
         
         BaseModule.config(self)
     
