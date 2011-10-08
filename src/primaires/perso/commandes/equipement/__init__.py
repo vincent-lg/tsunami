@@ -54,9 +54,9 @@ class CmdEquipement(Commande):
         msg = ""
         objets = []
         for membre in equipement.membres:
-            objet = membre.equipe or membre.tenu
+            objet = membre.equipe and membre.equipe[-1] or membre.tenu
             if objet:
-                objets.append("{} [{}]".format(membre.nom,
+                objets.append("{} [{}]".format(membre.nom.capitalize(),
                         objet.nom_singulier))
         
         if not objets:

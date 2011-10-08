@@ -110,7 +110,7 @@ class Membre(BaseObj):
     statut = property(_get_statut, _set_statut)
     
     def peut_tenir(self):
-        """Retourne True si le membre peut tenir"""
+        """Retourne True si le membre peut tenir."""
         return self.flags & PEUT_TENIR != 0 and not self.equipe
     
     def affichable(self):
@@ -128,15 +128,22 @@ class Membre(BaseObj):
         # Un emplacement est considéré comme libre si aucun objet n'est tenu
         # ni équipé
         equipable = False
-        if self.tenu is None and not self.equipe:
+        if self.tenu is None:
             equipable = True
         
         if objet is None:
             return equipable
         else:
             epaisseurs = sum(o.epaisseur for o in self.equipe)
-            return equipable and epaisseurs + objet.epaisseur <= \
-                    self.supporte and epaisseurs + 1 in objet.positions
+            emplacement = self.groupe or self.nom
+            print(equipable, objet.emplacement, objet.epaisseur, self.supporte, objet.positions)
+            return equipable and objet.emplacement == emplacement and \
+                    epaisseurs + objet.epaisseur <= self.supporte and \
+                    epaisseurs + 1 in objet.positions
+    
+    def equiper(self, objet):
+        """Equipe l'objet."""
+        self.equipe.append(objet)
 
 class Groupe(BaseObj):
     

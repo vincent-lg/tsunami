@@ -42,5 +42,5 @@ class Chemise(Vetement):
     def __init__(self, cle=""):
         Vetement.__init__(self, cle)
         self.emplacement = "corps"
-        self.position = (1, )
+        self.positions = (1, )
 

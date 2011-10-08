@@ -28,19 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le type chaussette."""
+"""Package contenant la commande 'porter'."""
 
-from .vetement import Vetement
+from primaires.interpreteur.commande.commande import Commande
 
-class Chaussette(Vetement):
+class CmdPorter(Commande):
     
-    """Type d'objet: chaussette.
+    """Commande 'porter'"""
     
-    """
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "porter", "wear")
+        self.schema = "<nom_objet>"
+        self.aide_courte = "équipe un objet"
+        self.aide_longue = \
+                "Cette commande permet d'équiper un ou plusieurs objets."
     
-    nom_type = "chaussette"
-    def __init__(self, cle=""):
-        Vetement.__init__(self, cle)
-        self.emplacement = "pieds"
-        self.positions = (1, )
-
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        objets = dic_masques["nom_objet"].objets[0]
+        objet, conteneur = objets
+        
+        for membre in personnage.equipement.membres:
+            if membre.peut_equiper(objet):
+                membre.equiper(objet)
+                personnage.salle.objets_sol.retirer(objet)
+                personnage << "Vous équipez {}.".format(objet.nom_singulier)
+                personnage.salle.envoyer(
+                    "{} équipe {}.".format(personnage.nom,
+                    objet.nom_singulier), (personnage, ))
+                return
+        
+        personnage << "|err|Vous ne pouvez équiper {}.|ff|".format(
+                objet.nom_singulier)

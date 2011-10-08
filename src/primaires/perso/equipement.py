@@ -29,8 +29,6 @@
 
 """Ce fichier contient la classe Equipement, détaillée plus bas."""
 
-from itertools import chain
-
 from abstraits.obase import *
 from primaires.format.fonctions import supprimer_accents
 from .membre import Membre
@@ -140,11 +138,24 @@ class Equipement(BaseObj):
         
         """
         membre = self.get_membre(nom_membre)
-        membre.objet = None
+        membre.equipe.pop(-1)
     
-    def tenir_objet(self, nom_membre, objet):
+    def tenir_objet(self, nom_membre=None, objet=None):
         """Fait tenir l'objet objet au membre nom_membre. """
-        membre = self.get_membre(nom_membre)
+        if nom_membre:
+            membre = self.get_membre(nom_membre)
+        else:
+            membre = None
+            for m in self.membres:
+                print(m.nom, m.tenu is None, m.peut_tenir())
+                c=input()
+                if m.tenu is None and m.peut_tenir(False):
+                    membre = m
+                    break
+            
+            if membre is None:
+                raise ValueError("aucun membre n'est disponible")
+        
         if membre.tenu:
             raise ValueError("le membre {} tient déjà l'objet {} ".format(
                     nom_membre, membre.tenu))
@@ -175,6 +186,15 @@ class Equipement(BaseObj):
         if indice != len(self.__membres) - 1: # si le membre n'est pas en bas
             membre = self.__membres.pop(indice)
             self.__membres.insert(indice + 1, membre)
+    
+    def cb_peut_tenir(self):
+        """Retourne le nombre de membres pouvant tenir quelque chose."""
+        nb = 0
+        for membre in self.membres:
+            if membre.tenu is None and membre.peut_tenir():
+                nb += 1
+        
+        return nb
 
 class Equipes(BaseObj):
     
@@ -193,8 +213,13 @@ class Equipes(BaseObj):
 
     def __iter__(self):
         """Retourne une chaîne des objets équipés."""
-        equipes = tuple(tuple(e) for e in self.equipe)
-        return chain(equipes)
+        objets = tuple(tuple(o.equipe) for o in self.equipement.membres)
+        ret = []
+        for l in objets:
+            for objet in l:
+                ret.append(objet)
+        
+        return iter(ret)
     
     def ajouter(self, objet):
         """Ajoute un objet à l'équipoement"""
@@ -203,8 +228,11 @@ class Equipes(BaseObj):
     def retirer(self, objet):
         """Retire l'objet passé en paramètre"""
         for membre in self.equipement.membres:
-            if objet in membre.equipe:
-                self.equipement.desequiper_objet(membre.nom, objet)
+            if membre.equipe and membre.equipe[-1] == objet:
+                self.equipement.desequiper_objet(membre.nom)
+                return
+        
+        raise ValueError
 
 class Tenus(BaseObj):
     

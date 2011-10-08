@@ -42,5 +42,5 @@ class Chaussure(Vetement):
     def __init__(self, cle=""):
         Vetement.__init__(self, cle)
         self.emplacement = "pieds"
-        self.position = (1, 2)
+        self.positions = (1, 2)
 

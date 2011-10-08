@@ -73,16 +73,24 @@ class Observable(Masque):
         salle = personnage.salle
         elt = None
         
-        # On cherche dans les objets
-        for objet in salle.objets_sol:
-            nom_objet = objet.nom_singulier
-            if contient(nom_objet, nom):
-                elt = objet
+        # On cherche dans les personnages
+        for personnage in salle.personnages:
+            if contient(personnage.nom, nom):
+                elt = personnage
+                break
         
-        nom = supprimer_accents(nom)
-        if salle.details.detail_existe(nom):
-            detail = salle.details.get_detail(nom)
-            elt = detail
+        if elt is None:
+            # On cherche dans les objets
+            for objet in salle.objets_sol:
+                nom_objet = objet.nom_singulier
+                if contient(nom_objet, nom):
+                    elt = objet
+        
+        if elt:
+            nom = supprimer_accents(nom)
+            if salle.details.detail_existe(nom):
+                detail = salle.details.get_detail(nom)
+                elt = detail
         
         if elt is None:
             raise ErreurValidation(

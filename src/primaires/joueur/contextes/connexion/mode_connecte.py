@@ -61,7 +61,7 @@ class ModeConnecte(Contexte):
     
     def accueil(self):
         """Message d'accueil du contexte"""
-        return self.pere.joueur.regarder()
+        return self.pere.joueur.salle.regarder(self.pere.joueur)
     
     def get_prompt(self):
         """Méthode du prompt du contexte"""
