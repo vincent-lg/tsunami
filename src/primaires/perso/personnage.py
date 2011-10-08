@@ -227,7 +227,7 @@ class Personnage(ObjetID):
         salle.envoyer("{} s'en va vers {}.".format(self.nom,
                 sortie.nom_complet), (self, ))
         self.salle = salle_dest
-        self.envoyer(self.regarder())
+        self.envoyer(self.salle.regarder(self))
         salle_dest.envoyer("{} arrive.".format(self.nom), (self, ))
         
         # On appelle l'évènement arrive
