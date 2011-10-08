@@ -150,7 +150,7 @@ class Sorties(BaseObj):
         
         return sorties.items()
     
-    def get_sortie_par_nom(self, nom):
+    def get_sortie_par_nom(self, nom, cachees=True):
         """Récupère la sortie par son nom.
         ATTENTION : la méthode __getitem__ semble faire la même chose.
         En fait, __getitem__ accepte des noms de direction immuables
@@ -161,7 +161,8 @@ class Sorties(BaseObj):
         """
         for sortie in self._sorties.values():
             if sortie and sortie.nom == nom:
-                return sortie
+                if not sortie.cachee  or cachees:
+                    return sortie
         
         raise KeyError("le nom de sortie {} est inconnu".format(nom))
     
