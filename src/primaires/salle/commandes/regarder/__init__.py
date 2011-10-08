@@ -59,4 +59,4 @@ class CmdRegarder(Commande):
             elt = masque.element
             personnage << elt.regarder(elt, personnage)
         else:
-            personnage << personnage.regarder()
+            personnage << personnage.salle.regarder(personnage)

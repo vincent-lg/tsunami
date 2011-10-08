@@ -59,10 +59,15 @@ class Ident(Masque):
                 "Précisez un identifiant de salle.")
         
         ident = ident.split(" ")[0].lower()
-        self.a_interpreter = ident
-        commande[:] = commande[len(ident):]
-        masques.append(self)
-        return True
+        if ident in type(self).importeur.salle:
+            self.a_interpreter = ident
+            commande[:] = commande[len(ident):]
+            masques.append(self)
+            ret = True
+        else:
+            ret = False
+        
+        return ret
     
     def valider(self, personnage, dic_masques):
         """Validation du masque"""
