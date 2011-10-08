@@ -72,7 +72,7 @@ class EdtMembre(Editeur):
         membre = self.objet
         squelette = membre.parent
         nom_groupe = arguments.strip()
-        squelette.changer_groupe_membre(membre.nom, groupe)
+        squelette.changer_groupe_membre(membre.nom, nom_groupe)
         self.actualiser()
     
     def opt_changer_nom(self, arguments):
@@ -100,6 +100,7 @@ class EdtMembre(Editeur):
         msg += self.aide_courte
         
         msg += "\n Nom du membre : |ent|" + membre.nom + "|ff|"
+        print(repr(membre.groupe))
         msg += "\n Groupe :|ent|" + (membre.groupe or "aucun") + "|ff|"
         msg += "\n Flags :"
         for flag in FLAGS:

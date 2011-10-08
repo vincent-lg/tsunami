@@ -36,6 +36,7 @@ from reseau.connexions.client_connecte import ClientConnecte
 from primaires.connex.compte import Compte
 from primaires.connex.config import cfg_connex
 from . import contextes
+from primaires.format.fonctions import format_nb
 
 # Nom du groupe fictif
 NOM_GROUPE = "connexions"
@@ -103,14 +104,9 @@ class Module(BaseModule):
         # On ajoute le dictionnaire 'instances' comme groupe fictif de 'parid'
         type(self.importeur).parid[NOM_GROUPE] = self.instances
         
-        # On affiche proprement le nombre de comptes (un peu verbeux mais-)
-        nombre_comptes = len(self.comptes)
-        if nombre_comptes == 0:
-            self.cpt_logger.info("Aucun compte récupéré")
-        elif nombre_comptes == 1:
-            self.cpt_logger.info("1 compte récupéré")
-        else:
-            self.cpt_logger.info("{0} comptes récupérés".format(len(self.comptes)))
+        nb_comptes = len(self.comptes)
+        self.cpt_logger.info(
+            format_nb(nb_comptes, "{nb} compte{s} récupéré{s}"))
         
         BaseModule.init(self)
     

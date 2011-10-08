@@ -87,6 +87,7 @@ class BaseType(ObjetID, metaclass=MetaType):
     def __getstate__(self):
         """Retourne le dictionnaire à enregistrer."""
         attrs = dict(ObjetID.__getstate__(self))
+        del attrs["_extensions_editeur"]
         del attrs["_attributs"]
         return attrs
     

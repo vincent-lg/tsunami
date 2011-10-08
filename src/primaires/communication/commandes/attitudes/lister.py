@@ -73,7 +73,7 @@ class PrmLister(Parametre):
                     i += 1
             if liste_attitudes[-1][-1] != "|":
                 liste_attitudes[-1] = \
-                        liste_attitudes[-1].ljust(74)
-            res += "|   " + "\n|   ".join(liste_attitudes) + "|"
+                        liste_attitudes[-1].ljust(74) + "|"
+            res += "|   " + "\n|   ".join(liste_attitudes)
             res += "\n+".ljust(79, "-") + "+"
         personnage << res

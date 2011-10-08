@@ -231,8 +231,9 @@ class Squelette(ObjetID):
         """Change le groupe du membre."""
         membre = self.get_membre(nom_membre)
         membre.groupe = nom_groupe
+        print(membre.nom, membre.groupe)
         if nom_groupe and self.get_groupe_membre(membre) is None:
-            self.groupes[nom_groupe] = Groupe()
+            self.groupes[nom_groupe] = Groupe(nom_groupe)
         
         self.enregistrer()
     

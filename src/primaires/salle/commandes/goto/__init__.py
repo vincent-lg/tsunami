@@ -66,6 +66,6 @@ class CmdGoto(Commande):
         salle_courante.envoyer("{} disparaît avec un éclair de " \
                 "|cyc|lumière bleue|ff|.".format(personnage.nom), (personnage,))
         personnage.salle = salle
-        personnage << personnage.regarder()
+        personnage << personnage.salle.regarder(personnage)
         salle.envoyer("{} apparaît avec un éclair de |cyc|lumière " \
                 "bleue|ff|.".format(personnage.nom), (personnage,))

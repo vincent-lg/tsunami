@@ -114,6 +114,10 @@ class ListeID(BaseObj):
         if self.parent:
             self.parent.enregistrer()
     
+    def pop(self, indice):
+        """Supprime l'élément de la liste en indice."""
+        del self[indice]
+    
     def remove(self, objet):
         """Retire l'objet passé en paramètre"""
         for elt_id in list(self.__liste):

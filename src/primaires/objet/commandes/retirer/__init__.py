@@ -28,35 +28,51 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'regarder'."""
+"""Package contenant la commande 'retirer'."""
 
 from primaires.interpreteur.commande.commande import Commande
 
-class CmdRegarder(Commande):
+class CmdRetirer(Commande):
     
-    """Commande 'regarder'"""
+    """Commande 'retirer'"""
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "regarder", "look")
-        self.schema = "(<element_observable>)"
-        self.nom_categorie = "bouger"
-        self.aide_courte = "permet de regarder autour de soi"
+        Commande.__init__(self, "retirer", "remove")
+        self.schema = "<nom_objet>"
+        self.aide_courte = "déséquipe un objet"
         self.aide_longue = \
-            "Cette commande permet de regarder autour de vous, de voir la " \
-            "salle où vous vous trouvez, les différents personnages et " \
-            "objets présents. Vous pouvez également trouver, en bas de la " \
-            "description, une liste des sorties que vous pouvez emprunter " \
-            "pour changer de salle et vous déplacer dans l'univers. " \
-            "Vous pouvez passer en paramètre de cette commande un élément " \
-            "observable autour de vous, un joueur, un objet ou un " \
-            "élément de la description."
+                "Cette commande permet de déséquiper un objet. Vous " \
+                "tiendrez l'objet retiré dans vos mains, sauf si vous ne pouvez le " \
+                "porter. Dans ce dernier cas, il se retrouvera sur le sol."
+    
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nom_objet = self.noeud.get_masque("nom_objet")
+        nom_objet.proprietes["conteneurs"] = \
+            "(personnage.equipement.equipes, )"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        masque = dic_masques["element_observable"]
-        if masque:
-            elt = masque.element
-            personnage << elt.regarder(elt, personnage)
+        objets = dic_masques["nom_objet"].objets[0]
+        objet, conteneur = objets
+        try:
+            conteneur.retirer(objet)
+        except ValueError:  
+            personnage << "Vous ne pouvez retirer {}.".format(
+                objet.nom_singulier)
         else:
-            personnage << personnage.salle.regarder(personnage)
+            personnage << "Vous retirez {}.".format(objet.nom_singulier)
+            personnage.salle.envoyer(
+                "{} retire {}.".format(personnage.nom, objet.nom_singulier),
+                        (personnage, ))
+            
+            if personnage.equipement.cb_peut_tenir() > 0:
+                personnage.equipement.tenir_objet(objet=objet)
+            else:
+                personnage.salle.objets_sol.ajouter(objet)
+                personnage << "Vous ne pouvez tenir {}.".format(objet.nom_singulier)
+                personnage << "Vous posez {}.".format(objet.nom_singulier)
+                personnage.salle.envoyer(
+                    "{} pose {}.".format(personnage.nom, objet.nom_singulier),
+                    (personnage, ))

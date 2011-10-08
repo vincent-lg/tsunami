@@ -53,3 +53,4 @@ class MetaPertu(MetaBaseObj):
 from .pluie import Pluie
 from .nuages import Nuages
 from .orage import Orage
+from .nuages_fins import NuagesFins

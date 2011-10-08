@@ -56,7 +56,14 @@ class Orage(BasePertu):
                 "tête."
         self.message_fin = "L'orage s'évanouit comme qu'il a commencé, " \
                 "laissant l'air moite et pesant."
-        self.message_sortir = "Les nuages d'orage s'éloignent enfin."
+        self.message_entrer = "Un orage puissant venant {dir} obscurcit le " \
+                "ciel et déverse sa colère."
+        self.message_sortir = "Les nuages d'orage s'éloignent vers {dir}, " \
+                "laissant le sol détrempé."
+        self.fins_possibles = [
+            ("pluie", "L'orage se calme peu à peu et laisse place à une " \
+                    "pluie agréable.", 23),
+        ]
     
     def action_cycle(self, salles):
         """Définit une ou plusieurs actions effectuées à chaque cycle."""
@@ -69,5 +76,5 @@ class Orage(BasePertu):
                     "fouettent violemment."
         ]
         for salle in salles:
-            if randint(1, 10) < 4 and salle.exterieur:
+            if randint(1, 10) < 3 and salle.exterieur:
                 salle.envoyer(choice(messages))

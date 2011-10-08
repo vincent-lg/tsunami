@@ -28,40 +28,29 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Pluie, détaillée plus bas."""
+"""Ce fichier contient la classe Brouillard, détaillée plus bas."""
 
 from .base import *
 
-class Pluie(BasePertu):
+class Brouillard(BasePertu):
     
-    """Classe abstraite représentant la perturbation 'pluie'.
+    """Classe représentant la perturbation 'brouillard'.
     
     """
     
-    nom_pertu = "pluie"
-    rayon_max = 16
-    duree_max = 12
+    nom_pertu = "brouillard"
+    rayon_max = 10
+    duree_max = 10
     
     def __init__(self, pos):
         """Constructeur de la perturbation"""
         BasePertu.__init__(self, pos)
-        self.flags = OPAQUE
-        self.alea_dir = 4
+        self.flags = OPAQUE | STATIQUE
+        self.alea_dir = 0
         self.etat = [
-            (5, "Une pluie incessante et violente tombe du ciel en colère."),
-            (10, "Une fine pluie martèle le sol dans un doux crépitement."),
+            (9, "Une chape de brouillard couvre les alentours."),
+            (10, "Une épaisse purée de pois flotte non loin de vous."),
         ]
-        self.message_debut = "Quelques nuages s'amoncellent, grossisent " \
-                "puis donnent naissance à une averse."
-        self.message_fin = "Les nuées se dispersent rapidement et la pluie " \
-                "cesse."
-        self.message_entrer = "Des nuages gonflés d'eau arrivent {dir} et " \
-                "apportent la pluie."
-        self.message_sortir = "Les nuages s'éloignent peu à peu vers {dir}, " \
-                "la pluie cessant soudain."
-        self.fins_possibles = [
-            ("nuages", "L'averse cesse sans un souffle mais les nuages " \
-                    "restent, encore menaçants.", 12),
-            ("orage", "La pluie s'intensifie soudain et le tonnerre retentit.",
-                    30),
-        ]
+        self.message_debut = "Venu de nulle part, un brouillard épais " \
+                "apparaît."
+        self.message_fin = "Le brouillard se lève et laisse place au soleil."

@@ -238,7 +238,7 @@ def supprimer_couleurs(texte):
     
     for couleur in couleurs:
         texte = texte.replace(couleur, "")
-    
+
     return texte
 
 def contient(nom_complet, fragment):
@@ -279,3 +279,22 @@ def oui_ou_non(flag):
     """Retourne 'oui' si le flag est True, 'non' sinon."""
     mots = {True:"|vrc|oui|ff|", False:"|rgc|non|ff|"}
     return mots[flag]
+
+def format_nb(nb, message, fem=False):
+    """Formatte une chaîne de caractère en fonction de nb.
+    
+    Le paramètre fem signifie féminin.
+    
+    """
+    mots = {
+        "nb": nb,
+        "s": "s" if nb > 1 else "",
+    }
+    
+    if nb == 0:
+        mots["nb"] = "Aucune" if fem else "Aucun"
+    elif nb == 1:
+        mots["nb"] = "Une" if fem else "Un"
+    
+    return message.format(**mots)
+

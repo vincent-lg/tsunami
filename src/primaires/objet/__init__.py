@@ -72,8 +72,10 @@ class Module(BaseModule):
             commandes.olist.CmdOlist(),
             commandes.opurge.CmdOpurge(),
             commandes.ospawn.CmdOspawn(),
+            commandes.porter.CmdPorter(),
             commandes.poser.CmdPoser(),
             commandes.prendre.CmdPrendre(),
+            commandes.retirer.CmdRetirer(),
         ]
         
         for cmd in self.commandes:

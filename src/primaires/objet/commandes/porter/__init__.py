@@ -1,5 +1,5 @@
-
 # -*-coding:Utf-8 -*
+
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -28,40 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'equipement'.
-
-"""
+"""Package contenant la commande 'porter'."""
 
 from primaires.interpreteur.commande.commande import Commande
 
-class CmdEquipement(Commande):
+class CmdPorter(Commande):
     
-    """Commande 'equipement'.
-    
-    """
+    """Commande 'porter'"""
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "equipement", "equipment")
-        self.aide_courte = "affiche votre équipement"
+        Commande.__init__(self, "porter", "wear")
+        self.schema = "<nom_objet>"
+        self.aide_courte = "équipe un objet"
         self.aide_longue = \
-                "Cette commande affiche votre équipement actuel, les " \
-            "objets que vous portez ou ceux que vous équipez."
+                "Cette commande permet d'équiper un ou plusieurs objets."
     
     def interpreter(self, personnage, dic_masques):
-        """Interprétation de la commande"""
-        equipement = personnage.equipement
-        msg = ""
-        objets = []
-        for membre in equipement.membres:
-            objet = membre.equipe and membre.equipe[-1] or membre.tenu
-            if objet:
-                objets.append("{} [{}]".format(membre.nom.capitalize(),
-                        objet.nom_singulier))
+        """Méthode d'interprétation de commande"""
+        objets = dic_masques["nom_objet"].objets[0]
+        objet, conteneur = objets
         
-        if not objets:
-            msg = "Vous ne portez rien actuellement."
-        else:
-            msg = "Votre équipement :\n\n  " + "\n  ".join(objets)
+        for membre in personnage.equipement.membres:
+            if membre.peut_equiper(objet):
+                membre.equiper(objet)
+                personnage.salle.objets_sol.retirer(objet)
+                personnage << "Vous équipez {}.".format(objet.nom_singulier)
+                personnage.salle.envoyer(
+                    "{} équipe {}.".format(personnage.nom,
+                    objet.nom_singulier), (personnage, ))
+                return
         
-        personnage << msg
+        personnage << "|err|Vous ne pouvez équiper {}.|ff|".format(
+                objet.nom_singulier)

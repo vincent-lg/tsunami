@@ -1,5 +1,5 @@
-
 # -*-coding:Utf-8 -*
+
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -28,40 +28,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'equipement'.
+"""Fichier contenant le type jupe."""
 
-"""
+from .vetement import Vetement
 
-from primaires.interpreteur.commande.commande import Commande
-
-class CmdEquipement(Commande):
+class Jupe(Vetement):
     
-    """Commande 'equipement'.
+    """Type d'objet: jupe.
     
     """
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "equipement", "equipment")
-        self.aide_courte = "affiche votre équipement"
-        self.aide_longue = \
-                "Cette commande affiche votre équipement actuel, les " \
-            "objets que vous portez ou ceux que vous équipez."
-    
-    def interpreter(self, personnage, dic_masques):
-        """Interprétation de la commande"""
-        equipement = personnage.equipement
-        msg = ""
-        objets = []
-        for membre in equipement.membres:
-            objet = membre.equipe and membre.equipe[-1] or membre.tenu
-            if objet:
-                objets.append("{} [{}]".format(membre.nom.capitalize(),
-                        objet.nom_singulier))
-        
-        if not objets:
-            msg = "Vous ne portez rien actuellement."
-        else:
-            msg = "Votre équipement :\n\n  " + "\n  ".join(objets)
-        
-        personnage << msg
+    nom_type = "jupe"
+    def __init__(self, cle=""):
+        Vetement.__init__(self, cle)
+        self.emplacement = "jambes"
+        self.positions = (1, )
+

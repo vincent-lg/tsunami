@@ -242,16 +242,19 @@ class Module(BaseModule):
         # Si la commande est vide, on ne se déplace pas
         if len(commande) == 0:
             return False
+        
         commande = commande.lower()
         salle = personnage.salle
         if commande in self.aliases.keys():
             commande = self.aliases[commande]
-            sortie = salle.sorties[commande]
-            if sortie:
-                personnage.deplacer_vers(sortie.nom)
+            try:
+                sortie = salle.sorties.get_sortie_par_nom(commande,
+                        cachees=False)
+            except KeyError:
+                pass
             else:
-                personnage << "Vous ne pouvez aller par là..."
-            return True
+                personnage.deplacer_vers(sortie.nom)
+                return True
         
         for nom, sortie in salle.sorties.iter_couple():
             if sortie:

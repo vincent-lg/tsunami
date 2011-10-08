@@ -219,10 +219,6 @@ class Personnage(ObjetID):
         """Méthode envoyer"""
         raise NotImplementedError
     
-    def regarder(self):
-        """Retourne ce qu'il y a autour du personnage"""
-        return self.salle.regarder(self)
-    
     def deplacer_vers(self, sortie):
         """Déplacement vers la sortie 'sortie'"""
         salle = self.salle
@@ -231,7 +227,7 @@ class Personnage(ObjetID):
         salle.envoyer("{} s'en va vers {}.".format(self.nom,
                 sortie.nom_complet), (self, ))
         self.salle = salle_dest
-        self.envoyer(self.regarder())
+        self.envoyer(self.salle.regarder(self))
         salle_dest.envoyer("{} arrive.".format(self.nom), (self, ))
         
         # On appelle l'évènement arrive
@@ -239,3 +235,25 @@ class Personnage(ObjetID):
         nom_opp = sortie_opp and sortie_opp.nom or None
         salle_dest.script.evenements["arrive"].executer(depuis=nom_opp,
                 salle=salle_dest, personnage=self)
+    
+    @staticmethod
+    def regarder(moi, personnage):
+        """personnage regarde moi."""
+        equipement = moi.equipement
+        msg = "Vous regardez {} :\n".format(personnage.nom)
+        objets = []
+        for membre in equipement.membres:
+            objet = membre.equipe and membre.equipe[-1] or membre.tenu
+            if objet:
+                objets.append("{} [{}]".format(membre.nom.capitalize(),
+                        objet.nom_singulier))
+        
+        if not objets:
+            msg += "Il ne porte rien sur lui."
+        else:
+            msg += "Il porte :\n\n  " + "\n  ".join(objets)
+        
+        moi << "{} vous regarde.".format(personnage.nom)
+        personnage.salle.envoyer("{} regarde {}.".format(personnage.nom,
+                moi.nom), (personnage, moi))
+        return msg
