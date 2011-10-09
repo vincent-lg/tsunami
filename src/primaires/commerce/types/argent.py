@@ -47,6 +47,7 @@ class Argent(BaseType):
         BaseType.__init__(self, cle)
         self.unique = False
         self.valeur = 1
+        self.sans_prix = True
         self.etendre_editeur("m", "valeur monétaire", Uniligne, self, "valeur")
     
     def travailler_enveloppes(self, enveloppes):

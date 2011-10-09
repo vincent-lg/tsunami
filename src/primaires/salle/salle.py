@@ -92,6 +92,7 @@ class Salle(ObjetID):
         self.objets_sol = ObjetsSol(parent=self)
         self.script = ScriptSalle(self)
         self.interieur = False
+        self.magasin = None
     
     def __getnewargs__(self):
         return ("", "")

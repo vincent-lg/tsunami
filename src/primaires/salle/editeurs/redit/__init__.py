@@ -44,6 +44,7 @@ from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_coords import EdtCoords
 from .edt_zone import EdtZone
 from .edt_mnemonic import EdtMnemonic
+from .edt_magasin import EdtMagasin
 from .edt_sorties import EdtSorties
 from .edt_details import EdtDetails
 from primaires.scripting.editeurs.edt_script import EdtScript
@@ -168,6 +169,27 @@ class EdtRedit(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description de la salle {}".format(salle).ljust(76) + \
             "|ff||\n" + self.opts.separateur
+        
+        # Magasin
+        magasin = self.ajouter_choix("magasin", "a", EdtMagasin, salle)
+        magasin.parent = self
+        magasin.aide_courte = \
+            "Entrez simplement le |ent|nom du magasin|ff| pour le créer " \
+            "(ou le modifier), ou bien\n|cmd|supprimer|ff| si vous voulez " \
+            "désactiver le magasin dans cette salle ; |cmd|/|ff| pour\n" \
+            "retourner à la fenêtre parente.\n" \
+            "Options :\n" \
+            " - |cmd|/v <prototype de PNJ>|ff| : change le vendeur\n" \
+            " - |cmd|/m <objet de type argent>|ff| : ajoute ou supprime une " \
+            "monnaie\n" \
+            " - |cmd|/c <nombre>|ff| : modifie la valeur de la caisse, " \
+            "c'est-à-dire l'argent dont\n" \
+            "   dispose le vendeur.\n" \
+            " - |cmd|/o <prototype d'objet> (<quantité>)|ff| : ajoute un " \
+            "objet à la vente, ou\n" \
+            "   modifie sa quantité si il est déjà en vente ; si vous " \
+            "précisez un objet\n" \
+            "   en vente et pas de quantité, le supprime."
         
         # Sorties
         sorties = self.ajouter_choix("sorties", "s", EdtSorties, salle,

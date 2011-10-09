@@ -31,7 +31,8 @@
 """Fichier contenant le module primaire commerce."""
 
 from abstraits.module import *
-from . import types
+from primaires.commerce import commandes
+from primaires.commerce import types
 
 class Module(BaseModule):
     
@@ -45,3 +46,12 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "commerce", "primaire")
+    
+    def ajouter_commandes(self):
+        """Ajout des commandes"""
+        self.commandes = [
+            commandes.acheter.CmdAcheter(),
+        ]
+        
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)
