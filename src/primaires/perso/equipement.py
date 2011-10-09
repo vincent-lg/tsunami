@@ -147,9 +147,7 @@ class Equipement(BaseObj):
         else:
             membre = None
             for m in self.membres:
-                print(m.nom, m.tenu is None, m.peut_tenir())
-                c=input()
-                if m.tenu is None and m.peut_tenir(False):
+                if m.tenu is None and m.peut_tenir():
                     membre = m
                     break
             

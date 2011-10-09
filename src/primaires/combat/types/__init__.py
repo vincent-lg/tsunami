@@ -28,21 +28,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module secondaire combat."""
+"""Fichier du package types, contenant les types d'objets du module combat."""
 
-from abstraits.module import *
-from . import types
-
-class Module(BaseModule):
-    
-    """Module gérant le combat rapproché.
-    
-    Ce module gère le combat rapproché et les extensions nécessaires aux
-    personnages et PNJ. Il gère également les talents et niveaux liés
-    ainsi, naturellement, que les commandes.
-    
-    """
-    
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "combat", "primaire")
+from .arme import Arme
+from .epee import Epee
+from .hache import Hache

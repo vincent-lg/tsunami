@@ -28,21 +28,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module secondaire combat."""
+"""Fichier contenant le type hache."""
 
-from abstraits.module import *
-from . import types
+from .arme import Arme
 
-class Module(BaseModule):
+class Hache(Arme):
     
-    """Module gérant le combat rapproché.
-    
-    Ce module gère le combat rapproché et les extensions nécessaires aux
-    personnages et PNJ. Il gère également les talents et niveaux liés
-    ainsi, naturellement, que les commandes.
+    """Type d'objet: hache.
     
     """
     
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "combat", "primaire")
+    nom_type = "hache"
