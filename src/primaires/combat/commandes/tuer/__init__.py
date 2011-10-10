@@ -1,5 +1,5 @@
-# -*-coding:Utf-8 -*
 
+# -*-coding:Utf-8 -*
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -28,48 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module secondaire combat."""
+"""Package contenant la commande 'tuer'.
 
-from abstraits.module import *
-from . import commandes
-from . import types
-from .combat import Combat
-class Module(BaseModule):
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdTuer(Commande):
     
-    """Module gérant le combat rapproché.
-    
-    Ce module gère le combat rapproché et les extensions nécessaires aux
-    personnages et PNJ. Il gère également les talents et niveaux liés
-    ainsi, naturellement, que les commandes.
+    """Commande 'tuer'.
     
     """
     
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "combat", "primaire")
-        self.combats = {}
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "tuer", "kill")
+        self.schema = "<nom_joueur>"
+        self.aide_courte = "attaque un personnage présent"
+        self.aide_longue = \
+            "Cette commande attaque un personnage présent dans la pièce, " \
+            "si vous pouvez le faire. Le combat se terminera plus vraissemblablement " \
+            "par la fuite ou la mort d'un des deux combattants."
     
-    def ajouter_commandes(self):
-        """Ajout des commandes dans l'interpréteur"""
-        self.commandes = [
-            commandes.tuer.CmdTuer(),
-        ]
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation de la commande"""
+        attaque = dic_masques["nom_joueur"].joueur
+        # A supprimer quand le masque sera créé
+        if attaque.salle is not personnage.salle:
+            return
         
-        for cmd in self.commandes:
-            self.importeur.interpreteur.ajouter_commande(cmd)
-    
-    def creer_combat(self, salle, attaquant, attaque):
-        """Crée un combat ou met à jour celui existant.
-        
-        Les paramètres à préciser sont :
-            salle -- la salle dans lequel va se dérouler l'action
-            attaquant -- celui qui attaque
-            attaque -- celui qui est attaqué
-        
-        """
-        combat = self.combats.get(salle.ident) or Combat(salle)
-        combat.ajouter_combattants(attaquant, attaque)
-        if salle.ident not in self.combats:
-            self.combats[salle.ident] = combat
-            self.importeur.diffact.ajouter_action(
-                "combat:{}".format(salle.ident), 3, combat.tour, self.importeur)
+        type(self).importeur.combat.creer_combat(personnage.salle,
+                personnage, attaque)
+        personnage << "Vous attaquez {}.".format(attaque.nom)
+        attaque << "{} vous attaque.".format(personnage.nom)
