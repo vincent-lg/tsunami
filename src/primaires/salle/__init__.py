@@ -33,6 +33,7 @@
 import re
 
 from abstraits.module import *
+from primaires.format.fonctions import format_nb
 from .salle import Salle, ZONE_VALIDE, MNEMONIC_VALIDE
 from .sorties import NOMS_SORTIES
 from .config import cfg_salle
@@ -101,11 +102,8 @@ class Module(BaseModule):
         for salle in salles:
             self.ajouter_salle(salle)
         
-        s = ""
-        nb_salles = (len(self._salles) != 0) and len(self._salles) or "Aucune"
-        if len(self._salles) > 1:
-            s = "s"
-        self.logger.info("{} salle{s} récupérée{s}".format(nb_salles, s = s))
+        nb_salles = len(self._salles)
+        self.logger.info(format_nb(nb_salles, "{nb} salle{s} récupérée{s}"))
         
         BaseModule.init(self)
     
