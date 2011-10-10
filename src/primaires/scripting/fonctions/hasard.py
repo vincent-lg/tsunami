@@ -28,23 +28,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Module contenant les différents types de données manipulées par le
-scripting.
+"""Fichier contenant la fonction hasard."""
 
-"""
+from random import random
 
-from fractions import Fraction
+from primaires.scripting.fonction import Fonction
 
-from primaires.perso.personnage import Personnage
-from primaires.salle.salle import Salle
-
-def get(nom):
-    """Retourne le type portant le nom."""
-    builtins = __builtins__.copy()
-    types = __import__("primaires.scripting.types").scripting.types
-    try:
-        t = builtins[nom]
-    except KeyError:
-        t = getattr(types, nom)
+class ClasseFonction(Fonction):
     
-    return t
+    """Fonction hasard."""
+    
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.hasard, "Fraction")
+    
+    @staticmethod
+    def hasard(probabilite):
+        """Fonction retournant vrai ou faux en fonction de la probabilité."""
+        probabilite /= 100
+        probabilite = float(probabilite)
+        chance = random()
+        return chance < probabilite
