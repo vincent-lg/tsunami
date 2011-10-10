@@ -62,10 +62,13 @@ class Combat:
     
     def ajouter_combattants(self, combattant, combattu):
         """Ajoute les combattants."""
-        self.__combattants.append(combattant)
-        self.__combattants.append(combattu)
-        self.__combattus[combattant] = combattu
-        self.__combattus[combattu] = combattant
+        if combattant not in self.__combattants:
+            self.__combattants.append(combattant)
+            self.__combattus[combattant] = combattu
+        
+        if combattu not in self.__combattants:
+            self.__combattants.append(combattu)
+            self.__combattus[combattu] = combattant
     
     def verifier_combattants(self):
         """VVérifie que tous les combattants sont bien dans la salle."""
@@ -97,5 +100,6 @@ class Combat:
         for combattant, combattu in self.combattus.items():
             print(combattant, "attaque", combattu)
         
+        self.verifier_combattants()
         importeur.diffact.ajouter_action(
             "combat:{}".format(self.salle.ident), 3, self.tour, importeur)

@@ -34,6 +34,7 @@ from abstraits.module import *
 from . import commandes
 from . import types
 from .combat import Combat
+
 class Module(BaseModule):
     
     """Module gérant le combat rapproché.
@@ -49,6 +50,16 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "combat", "primaire")
         self.combats = {}
     
+    def init(self):
+        """Initialisation du module."""
+        # Ajout du niveau combat
+        ajouter_niveau = self.importeur.perso.ajouter_niveau
+        ajouter_niveau("combat", "combat")
+        
+        # Ajout des talents
+        ajouter_talent = self.importeur.perso.ajouter_talent
+        ajouter_talent("maniement_epee", "maniement de l'épée", "combat", 0.20)
+        
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [

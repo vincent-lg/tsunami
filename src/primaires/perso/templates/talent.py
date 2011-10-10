@@ -46,13 +46,13 @@ class Talent:
     
     """
     
-    def __init__(self, cle, nom, niveau, difficulte):
+    def __init__(self, niveaux, cle, nom, niveau, difficulte):
         """Constructeur du talent."""
         valider_cle(cle)
         self.cle = cle
         self.nom = nom
         self.cle_niveau = niveau
-        self.niveau = type(self).importeur.perso.niveaux[niveau]
+        self.niveau = niveaux[niveau]
         self.difficulte = difficulte
     
     def __repr__(self):
