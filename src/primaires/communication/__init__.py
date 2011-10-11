@@ -109,13 +109,8 @@ class Module(BaseModule):
         if canaux is None:
             canaux = Canaux()
         else:
-            if len(canaux) > 1:
-                self.logger.info("{} canaux de communication récupérés".format(
-                        len(canaux)))
-            elif len(canaux) == 1:
-                self.logger.info("1 canal de communication récupéré")
-            else:
-                self.logger.info("Aucun canal de communication récupéré")
+            self.logger.info(format_nb(len(canaux),
+                    "{nb} cana{x} de communication récupéré{s}"))
         self._canaux = canaux
         
         # On crée les canaux par défaut
@@ -144,13 +139,8 @@ class Module(BaseModule):
         if mails is None:
             mails = BoiteMail()
         else:
-            if len(mails) > 1:
-                self.logger.info("{} mudmails récupérés".format(
-                        len(mails)))
-            elif len(mails) == 1:
-                self.logger.info("1 mudmail récupéré")
-            else:
-                self.logger.info("Aucun mudmail récupéré")
+            self.logger.info(format_nb(len(mails),
+                    "{nb} mudmail{s} récupéré{s}"))
         self.mails = mails
         
         # On lie la méthode joueur_connecte avec l'hook joueur_connecte

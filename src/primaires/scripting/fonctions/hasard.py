@@ -28,36 +28,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le type Argent."""
+"""Fichier contenant la fonction hasard."""
 
-from primaires.interpreteur.editeur.uniligne import Uniligne
-from bases.objet.attribut import Attribut
-from primaires.objet.types.base import BaseType
+from random import random
 
-class Argent(BaseType):
+from primaires.scripting.fonction import Fonction
+
+class ClasseFonction(Fonction):
     
-    """Type d'objet: argent.
+    """Fonction hasard."""
     
-    """
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.hasard, "Fraction")
     
-    nom_type = "argent"
-    
-    def __init__(self, cle=""):
-        """Constructeur de l'objet"""
-        BaseType.__init__(self, cle)
-        self.unique = False
-        self.valeur = 1
-        self.sans_prix = True
-        self.etendre_editeur("m", "valeur monétaire", Uniligne, self, "valeur")
-    
-    def travailler_enveloppes(self, enveloppes):
-        """Travail sur les enveloppes"""
-        valeur = enveloppes["m"]
-        valeur.apercu = "{objet.valeur}"
-        valeur.prompt = "Valeur monétaire : "
-        valeur.aide_courte = \
-            "Entrez la |ent|valeur monétaire|ff| de l'argent, supérieur " \
-            "ou égal à |cmd|1|ff|.\n" \
-            "Entrez |cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
-            "Valeur monétaire actuelle : {objet.valeur}"
-        valeur.type = int
+    @staticmethod
+    def hasard(probabilite):
+        """Fonction retournant vrai ou faux en fonction de la probabilité."""
+        probabilite /= 100
+        probabilite = float(probabilite)
+        chance = random()
+        return chance < probabilite

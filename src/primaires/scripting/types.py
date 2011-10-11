@@ -33,6 +33,8 @@ scripting.
 
 """
 
+from fractions import Fraction
+
 from primaires.perso.personnage import Personnage
 from primaires.salle.salle import Salle
 

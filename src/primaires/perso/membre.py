@@ -136,7 +136,7 @@ class Membre(BaseObj):
         else:
             epaisseurs = sum(o.epaisseur for o in self.equipe)
             emplacement = self.groupe or self.nom
-            print(equipable, objet.emplacement, objet.epaisseur, self.supporte, objet.positions)
+            print(equipable, emplacement == objet.emplacement, epaisseurs + objet.epaisseur <= self.supporte, epaisseurs + 1 in objet.positions)
             return equipable and objet.emplacement == emplacement and \
                     epaisseurs + objet.epaisseur <= self.supporte and \
                     epaisseurs + 1 in objet.positions

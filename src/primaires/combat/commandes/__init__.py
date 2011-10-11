@@ -28,36 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le type Argent."""
+"""Package contenant les commandes du module perso."""
 
-from primaires.interpreteur.editeur.uniligne import Uniligne
-from bases.objet.attribut import Attribut
-from primaires.objet.types.base import BaseType
-
-class Argent(BaseType):
-    
-    """Type d'objet: argent.
-    
-    """
-    
-    nom_type = "argent"
-    
-    def __init__(self, cle=""):
-        """Constructeur de l'objet"""
-        BaseType.__init__(self, cle)
-        self.unique = False
-        self.valeur = 1
-        self.sans_prix = True
-        self.etendre_editeur("m", "valeur monétaire", Uniligne, self, "valeur")
-    
-    def travailler_enveloppes(self, enveloppes):
-        """Travail sur les enveloppes"""
-        valeur = enveloppes["m"]
-        valeur.apercu = "{objet.valeur}"
-        valeur.prompt = "Valeur monétaire : "
-        valeur.aide_courte = \
-            "Entrez la |ent|valeur monétaire|ff| de l'argent, supérieur " \
-            "ou égal à |cmd|1|ff|.\n" \
-            "Entrez |cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
-            "Valeur monétaire actuelle : {objet.valeur}"
-        valeur.type = int
+from . import tuer

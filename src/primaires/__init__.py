@@ -53,6 +53,7 @@ identiques, susceptibles d'entrer en conflit.
 
 Voici un résumé des modules primaires existants :
 -   aide            Module gérant les sujets d'aide in-game
+-   combat          Module gérant le combat rapproché
 -   commerce        Module gérant les magasins et transactions    
 -   communication   Module gérant la communication dans l'univers
 -   connex          Module proche des clients, chargé des connexions,

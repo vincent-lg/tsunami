@@ -28,30 +28,59 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire commerce."""
+"""Fichier contenant le module secondaire combat."""
 
 from abstraits.module import *
-from primaires.commerce import commandes
-from primaires.commerce import types
+from . import commandes
+from . import types
+from .combat import Combat
 
 class Module(BaseModule):
     
-    """Cette classe contient les informations du module primaire commerce.
+    """Module gérant le combat rapproché.
     
-    Ce module gère le commerce, c'est-à-dire les transactions, les magasins,
-    les monnaies.
+    Ce module gère le combat rapproché et les extensions nécessaires aux
+    personnages et PNJ. Il gère également les talents et niveaux liés
+    ainsi, naturellement, que les commandes.
     
     """
     
     def __init__(self, importeur):
         """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "commerce", "primaire")
+        BaseModule.__init__(self, importeur, "combat", "primaire")
+        self.combats = {}
     
+    def init(self):
+        """Initialisation du module."""
+        # Ajout du niveau combat
+        ajouter_niveau = self.importeur.perso.ajouter_niveau
+        ajouter_niveau("combat", "combat")
+        
+        # Ajout des talents
+        ajouter_talent = self.importeur.perso.ajouter_talent
+        ajouter_talent("maniement_epee", "maniement de l'épée", "combat", 0.20)
+        
     def ajouter_commandes(self):
-        """Ajout des commandes"""
+        """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
-            commandes.acheter.CmdAcheter(),
+            #commandes.tuer.CmdTuer(),
         ]
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
+    
+    def creer_combat(self, salle, attaquant, attaque):
+        """Crée un combat ou met à jour celui existant.
+        
+        Les paramètres à préciser sont :
+            salle -- la salle dans lequel va se dérouler l'action
+            attaquant -- celui qui attaque
+            attaque -- celui qui est attaqué
+        
+        """
+        combat = self.combats.get(salle.ident) or Combat(salle)
+        combat.ajouter_combattants(attaquant, attaque)
+        if salle.ident not in self.combats:
+            self.combats[salle.ident] = combat
+            self.importeur.diffact.ajouter_action(
+                "combat:{}".format(salle.ident), 3, combat.tour, self.importeur)

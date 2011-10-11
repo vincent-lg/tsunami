@@ -28,36 +28,21 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le type Argent."""
+"""Fichier contenant la configuration de  base des talents."""
 
-from primaires.interpreteur.editeur.uniligne import Uniligne
-from bases.objet.attribut import Attribut
-from primaires.objet.types.base import BaseType
+cfg_talents = r"""
+# Ce fichier permet de configurer des données concernant l'apprentissage des talents.
+# Notez que les talents ne sont pas configurables ici mais en dur,
+# dans le code.
 
-class Argent(BaseType):
-    
-    """Type d'objet: argent.
-    
-    """
-    
-    nom_type = "argent"
-    
-    def __init__(self, cle=""):
-        """Constructeur de l'objet"""
-        BaseType.__init__(self, cle)
-        self.unique = False
-        self.valeur = 1
-        self.sans_prix = True
-        self.etendre_editeur("m", "valeur monétaire", Uniligne, self, "valeur")
-    
-    def travailler_enveloppes(self, enveloppes):
-        """Travail sur les enveloppes"""
-        valeur = enveloppes["m"]
-        valeur.apercu = "{objet.valeur}"
-        valeur.prompt = "Valeur monétaire : "
-        valeur.aide_courte = \
-            "Entrez la |ent|valeur monétaire|ff| de l'argent, supérieur " \
-            "ou égal à |cmd|1|ff|.\n" \
-            "Entrez |cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
-            "Valeur monétaire actuelle : {objet.valeur}"
-        valeur.type = int
+## Coefficient d'apprentissage des talents
+# Cette donnée permet d'influencer la difficulté d'apprentissage des talents.
+# Le calcul est : difficulte ** coef * 100
+# Où :
+# * difficulte est la difficulté d'apprentissage du talent (entre 0 et 1)
+# * coef est la valeur que vous configurée ici
+# Pour en savoir plus, consultez le code
+# (primaires/perso/templates/talents.py,, méthode estimer_difficulte)
+coefficient_apprentissage = 2
+
+"""

@@ -1,5 +1,5 @@
-# -*-coding:Utf-8 -*
 
+# -*-coding:Utf-8 -*
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -28,36 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le type Argent."""
+"""Package contenant la commande 'tuer'.
 
-from primaires.interpreteur.editeur.uniligne import Uniligne
-from bases.objet.attribut import Attribut
-from primaires.objet.types.base import BaseType
+"""
 
-class Argent(BaseType):
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdTuer(Commande):
     
-    """Type d'objet: argent.
+    """Commande 'tuer'.
     
     """
     
-    nom_type = "argent"
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "tuer", "kill")
+        self.schema = "<nom_joueur>"
+        self.aide_courte = "attaque un personnage présent"
+        self.aide_longue = \
+            "Cette commande attaque un personnage présent dans la pièce, " \
+            "si vous pouvez le faire. Le combat se terminera plus vraissemblablement " \
+            "par la fuite ou la mort d'un des deux combattants."
     
-    def __init__(self, cle=""):
-        """Constructeur de l'objet"""
-        BaseType.__init__(self, cle)
-        self.unique = False
-        self.valeur = 1
-        self.sans_prix = True
-        self.etendre_editeur("m", "valeur monétaire", Uniligne, self, "valeur")
-    
-    def travailler_enveloppes(self, enveloppes):
-        """Travail sur les enveloppes"""
-        valeur = enveloppes["m"]
-        valeur.apercu = "{objet.valeur}"
-        valeur.prompt = "Valeur monétaire : "
-        valeur.aide_courte = \
-            "Entrez la |ent|valeur monétaire|ff| de l'argent, supérieur " \
-            "ou égal à |cmd|1|ff|.\n" \
-            "Entrez |cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
-            "Valeur monétaire actuelle : {objet.valeur}"
-        valeur.type = int
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation de la commande"""
+        attaque = dic_masques["nom_joueur"].joueur
+        # A supprimer quand le masque sera créé
+        if attaque.salle is not personnage.salle:
+            return
+        
+        type(self).importeur.combat.creer_combat(personnage.salle,
+                personnage, attaque)
+        personnage << "Vous attaquez {}.".format(attaque.nom)
+        attaque << "{} vous attaque.".format(personnage.nom)

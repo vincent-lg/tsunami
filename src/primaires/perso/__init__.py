@@ -40,11 +40,13 @@ from .editeurs.skedit import EdtSkedit
 from .editeurs.raedit import EdtRaedit
 from .cfg_stats import cfg_stats
 from .cfg_niveaux import cfg_niveaux
+from .cfg_talents import cfg_talents
 from .race import Race
 from .stats import *
 from .squelette import Squelette
 from .niveaux import Niveaux
 from .templates.niveau import Niveau
+from .templates.talent import Talent
 
 class Module(BaseModule):
     
@@ -63,12 +65,14 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "perso", "primaire")
         self.cfg_stats = None
         self.cfg_niveaux = None
+        self.cfg_talents = None
         self.modele_stats = None
         self.commandes = []
         self.squelettes = {}
         self.races = []
         self.gen_niveaux = None
         self.niveaux = {}
+        self.talents = {}
     
     def config(self):
         """Méthode de configuration.
@@ -89,6 +93,9 @@ class Module(BaseModule):
         
         self.cfg_niveaux = type(self.importeur).anaconf.get_config(
                 "niveaux", "perso/niveaux.cfg", "modele niveaux", cfg_niveaux)
+        
+        self.cfg_talents = type(self.importeur).anaconf.get_config(
+                "talents", "perso/talents.cfg", "modele talents", cfg_talents)
         
         BaseModule.config(self)
     
@@ -214,3 +221,11 @@ class Module(BaseModule):
         
         niveau = Niveau(cle, nom)
         self.niveaux[cle] = niveau
+    
+    def ajouter_talent(self, cle, nom, niveau, difficulte):
+        """Ajoute un talent."""
+        if cle in self.talents:
+            raise ValueError("un talent de clé {} existe déjà".format(cle))
+        
+        talent = Talent(self.niveaux, cle, nom, niveau, difficulte)
+        self.talents[cle] = talent

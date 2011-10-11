@@ -92,6 +92,7 @@ class Salle(ObjetID):
         self.objets_sol = ObjetsSol(parent=self)
         self.script = ScriptSalle(self)
         self.interieur = False
+        self.magasin = None
     
     def __getnewargs__(self):
         return ("", "")
@@ -243,8 +244,11 @@ class Salle(ObjetID):
             nom_aff = self.sorties.get_nom_abrege(nom)
             if self.sorties.sortie_existe(nom):
                 if sortie.cachee:
-                    res = " ".ljust(len(self.sorties.get_nom_abrege(
-                            sortie.direction)))
+                    if personnage.est_immortel():
+                        res = "|vr|(i){}|ff|".format(nom_aff)
+                    else:
+                        res = " ".ljust(len(self.sorties.get_nom_abrege(
+                                sortie.direction)))
                 else:
                     res = "|vr|" + nom_aff + "|ff|"
                 

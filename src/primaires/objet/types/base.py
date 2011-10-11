@@ -66,6 +66,8 @@ class BaseType(ObjetID, metaclass=MetaType):
         self.description = Description(parent=self)
         self.objets = ListeID(self)
         self.unique = True # par défaut tout objet est unique
+        self.prix = 1 # valeur en magasin
+        self.sans_prix = False
         
         # Equipement
         self.emplacement = ""

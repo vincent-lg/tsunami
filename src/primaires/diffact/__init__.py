@@ -97,19 +97,19 @@ class Module(BaseModule):
         
         """
         if nom_action in self.ordre_actions:
-            self.logger.warning("L'action différée {0} existe déjà. " \
+            self.logger.warning("L'action différée {} existe déjà. " \
                     "L'ancienne sera écrasée.".format(nom_action))
             self.retirer_action(nom_action)
             
         action = ActionDifferee(nom_action, tps, ref_fonc, *args, **kwargs)
         self.actions[nom_action] = action
-        #On ordonne les actions correctement
+        # On ordonne les actions correctement
         self.ordre_actions = [nom for nom in self.ordre_actions \
             if self.actions[nom] <= action] + [nom_action] + \
             [nom for nom in self.ordre_actions if self.actions[nom] > action]
         
         
-        self.logger.debug("Ajout de l'action {0} exécutée dans {1}s".format(
+        self.logger.debug("Ajout de l'action {} exécutée dans {}s".format(
                 nom_action, tps))
     
     def retirer_action(self, nom):

@@ -32,6 +32,7 @@
 """Fichier contenant la classe Personnage, détaillée plus bas."""
 
 from abstraits.id import ObjetID, propriete_id
+from bases.collections.enr_dict import EnrDict
 from primaires.interpreteur.file import FileContexte
 from primaires.interpreteur.groupe.groupe import *
 
@@ -74,6 +75,9 @@ class Personnage(ObjetID):
         # Quêtes
         self.quetes = Quetes(self)
         self._construire()
+        
+        # Talents
+        self.talents = EnrDict(self)
     
     def __getnewargs__(self):
         """Retourne les arguments à passer au constructeur"""
@@ -235,6 +239,26 @@ class Personnage(ObjetID):
         nom_opp = sortie_opp and sortie_opp.nom or None
         salle_dest.script.evenements["arrive"].executer(depuis=nom_opp,
                 salle=salle_dest, personnage=self)
+    
+    def get_talent(self, cle_talent):
+        """Retourne la valeur du talent ou 0 si le talent n'est pas trouvé."""
+        return self.talents.get(cle_talent, 0)
+    
+    def pratiquer_talent(self, cle_talent):
+        """Pratique le talent et peut potentiellement l'apprendre.
+        
+        Retourne la connaissance actuelle du personnage dans le talent.
+        
+        """
+        talent = type(self).importeur.perso.talents[cle_talent]
+        avancement = self.get_talent(cle_talent)
+        configuration = type(self).importeur.perso.cfg_talents
+        apprendre = talent.estimer_difficulte(configuration, avancement)
+        if random < apprendre:
+            avancement += 1
+            self.talents[cle_talent] = avancement
+        
+        return avancement
     
     @staticmethod
     def regarder(moi, personnage):

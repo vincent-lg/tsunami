@@ -80,6 +80,14 @@ class EdtPresentation(Presentation):
             env = self.ajouter_choix(ligne, rac, editeur, objet, attr, *sup)
             env.parent = self
         
+        # Prix
+        prix = self.ajouter_choix("prix", "p", Uniligne, prototype, "prix")
+        prix.parent = self
+        prix.apercu = "{objet.prix}"
+        prix.prompt = "Entrez un prix supérieur à 1 :"
+        prix.aide_courte = \
+            "Entrez la valeur de l'objet.\n\nValeur actuelle : {objet.prix}"
+        
         # Suppression
         suppression = self.ajouter_choix("supprimer", "sup", NSupprimer, \
                 prototype)
@@ -92,7 +100,7 @@ class EdtPresentation(Presentation):
         
         # Travail sur les enveloppes
         # On appelle la méthode 'travailler_enveloppes' du prototype
-        # Cette méthode peut travailler sur les enveloppes de la rpésentation
+        # Cette méthode peut travailler sur les enveloppes de la présentation
         # (écrire une aide courte, un aperçu...)
         enveloppes = {}
         for rac, nom in self.raccourcis.items():
@@ -100,3 +108,6 @@ class EdtPresentation(Presentation):
             enveloppes[rac] = enveloppe
         
         prototype.travailler_enveloppes(enveloppes)
+        
+        if prototype.sans_prix:
+            self.supprimer_choix("prix")

@@ -28,36 +28,56 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le type Argent."""
+"""Fichier contenant le type arme."""
 
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from bases.objet.attribut import Attribut
 from primaires.objet.types.base import BaseType
 
-class Argent(BaseType):
+class Arme(BaseType):
     
-    """Type d'objet: argent.
+    """Type d'objet: arme.
     
     """
     
-    nom_type = "argent"
+    nom_type = "arme"
     
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
-        self.unique = False
-        self.valeur = 1
-        self.sans_prix = True
-        self.etendre_editeur("m", "valeur monétaire", Uniligne, self, "valeur")
+        self.degats_fixes = 5
+        self.degats_variables = 0
+        self.emplacement = "mains"
+        self.positions = (1, 2)
+        
+        # Editeurs
+        self.etendre_editeur("f", "dégâts fixes", Uniligne, self, "degats_fixes")
+        self.etendre_editeur("v", "dégâts variables", Uniligne, self,
+                "degats_variables")
     
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""
-        valeur = enveloppes["m"]
-        valeur.apercu = "{objet.valeur}"
-        valeur.prompt = "Valeur monétaire : "
-        valeur.aide_courte = \
-            "Entrez la |ent|valeur monétaire|ff| de l'argent, supérieur " \
-            "ou égal à |cmd|1|ff|.\n" \
-            "Entrez |cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
-            "Valeur monétaire actuelle : {objet.valeur}"
-        valeur.type = int
+        fixes = enveloppes["f"]
+        fixes.apercu = "{objet.degats_fixes}"
+        fixes.prompt = "Dégâts fixes de l'arme : "
+        fixes.aide_courte = \
+            "Entrez les |ent|dégâts fixes|ff| de l'arme. Ils représentent,\n" \
+            "ajoutés aux dégâts variables, les dégâts infligés par cette arme.\n" \
+            "Si une arme a |cmd|5|ff| de dégâts fixes et |cmd|2|ff| " \
+            "de dégâts variables,\nses dégâts réels se situeront entre 5 " \
+            "et 7.\n\n" \
+            "Dégâts fixes actuels : {objet.degats_fixes}"
+        fixes.type = int
+        
+        variables = enveloppes["v"]
+        variables.apercu = "{objet.degats_variables}"
+        variables.prompt = "Dégâts variables de l'arme : "
+        variables.aide_courte = \
+            "Entrez les |ent|dégâts variables|ff| de l'arme. Ils " \
+            "représentent, ajoutés aux dégâts fixes,\nles dégâts " \
+            "infligés par cette arme.\n" \
+            "Si une arme a |cmd|5|ff| de dégâts fixes et |cmd|2|ff| " \
+            "de dégâts variables,\nses dégâts réels se situeront entre 5 " \
+            "et 7.\n\n" \
+            "Dégâts variables actuels : {objet.degats_variables}"
+        variables.type = int

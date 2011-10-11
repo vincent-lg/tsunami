@@ -176,6 +176,7 @@ class Squelette(ObjetID):
             equipement = personnage.equipement
             a_membre = equipement.get_membre(nom)
             a_membre.flags = flags
+    
     def renommer_membre(self, nom, nouveau_nom):
         """Renomme le membre nom.
         
@@ -231,9 +232,13 @@ class Squelette(ObjetID):
         """Change le groupe du membre."""
         membre = self.get_membre(nom_membre)
         membre.groupe = nom_groupe
-        print(membre.nom, membre.groupe)
         if nom_groupe and self.get_groupe_membre(membre) is None:
             self.groupes[nom_groupe] = Groupe(nom_groupe)
+        
+        for personnage in self.personnages:
+            equipement = personnage.equipement
+            a_membre = equipement.get_membre(nom_membre)
+            a_membre.groupe = nom_groupe
         
         self.enregistrer()
     

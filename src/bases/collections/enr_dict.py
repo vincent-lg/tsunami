@@ -32,7 +32,7 @@
 
 from abstraits.obase import *
 
-class EnrDict(dict, BaseObj):
+class EnrDict(BaseObj):
     
     """Dictionnaire conçu pour s'enregistrer automatiquement quand ses
     valeurs sont modifiées.
@@ -41,12 +41,22 @@ class EnrDict(dict, BaseObj):
     
     def __init__(self, parent):
         """Construction du dictionnaire."""
-        dict.__init__(self)
         BaseObj.__init__(self)
+        self.__dict = {}
         self.parent = parent
     
     def __getnewargs__(self):
-        return ()
+        return (None, )
     
-    def __setitem__(self, nom_attr, val_attr):
-        """Modifie la valeur d'un dictionnaire
+    def __getitem__(self, nom_elt):
+        return self.__dict[nom_elt]
+    
+    def __setitem__(self, nom_elt, val_elt):
+        """Modifie la valeur d'un dictionnaire."""
+        self.__dict[nom_elt] = val_elt
+        self.parent.enregistrer()
+    
+    def __delitem__(self, nom_elt):
+        """Supprime l'élément."""
+        del self.__dict[nom_elt]
+        self.parent.enregistrer()
