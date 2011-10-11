@@ -78,6 +78,9 @@ class Personnage(ObjetID):
         
         # Talents
         self.talents = EnrDict(self)
+        
+        # Etat
+        self._cle_etat = ""
     
     def __getnewargs__(self):
         """Retourne les arguments à passer au constructeur"""
@@ -188,6 +191,26 @@ class Personnage(ObjetID):
         groupes = type(self).importeur.interpreteur.groupes
         return groupes[self.nom_groupe]
     
+    def _get_cle_etat(self):
+        return self._cle_etat
+    def _set_cle_etat(self, cle):
+        """On vérifie que l'état existe."""
+        try:
+            etat = type(self).importeur.perso.etats[cle]
+        except KeyError:
+            raise KeyError(cle)
+        else:
+            self._cle_etat = cle
+    cle_etat = property(_get_cle_etat, _set_cle_etat)
+    
+    @property
+    def etat(self):
+        """Retourne l'état correspondant à 'cle_etat'."""
+        if self._cle_etat:
+            return type(self).importeur.perso.etats[self._cle_etat]
+        else:
+            return None
+    
     def lier_equipement(self, squelette):
         """Crée un nouvel équipement pour le personnage en fonction
         du squelette.
@@ -259,6 +282,16 @@ class Personnage(ObjetID):
             self.talents[cle_talent] = avancement
         
         return avancement
+    
+    def agir(self, cle_action):
+        """Fait l'action cle_action.
+        
+        Si l'état interdit de faire cette action, une exception est levée.
+        
+        """
+        etat = self.etat
+        if etat:
+            etat.peut_faire(cle_action)
     
     @staticmethod
     def regarder(moi, personnage):
