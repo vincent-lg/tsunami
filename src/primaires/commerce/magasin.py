@@ -31,6 +31,8 @@
 """Fichier contenant la classe Magasin, détaillée plus bas."""
 
 from abstraits.obase import *
+from primaires.pnj.prototype import Prototype
+from primaires.objet.types.base import BaseType
 
 class Magasin(BaseObj):
     
@@ -41,6 +43,7 @@ class Magasin(BaseObj):
     def __init__(self, nom, parent=None):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
+        self.nom = nom
         self.vendeur = None
         self.monnaies = []
         self.caisse = 0
@@ -51,38 +54,94 @@ class Magasin(BaseObj):
         return ("", )
     
     def __str__(self):
-        """Affichage du magasin"""
+        """Affichage du magasin en éditeur"""
         liste_obj = []
-        for o, nb in self._o_prototypes.items():
-            liste_obj.append(o.nom_singulier + ", " + str(nb))
-        liste_obj = sorted(liste_obj)
         liste_pnj = []
+        taille_max = 0
+        for o in self._o_prototypes.keys():
+            if len(o.cle) > taille_max:
+                taille_max = len(o.cle) + 1
+        for p in self._p_prototypes.keys():
+            if len(p.cle) > taille_max:
+                taille_max = len(p.cle) + 1
+        taille_max = taille_max >= 6 and taille_max or 6
+        for o, nb in self._o_prototypes.items():
+            liste_obj.append(o.cle.ljust(taille_max) + "|" + \
+                    str(o.prix).rjust(7) + " |" + str(nb).rjust(9) + " |\n")
         for p, nb in self._p_prototypes.items():
-            liste_pnj.append(p.nom_singulier + ", " + str(nb))
+            liste_pnj.append(p.cle.ljust(taille_max) + "|" + \
+                    str(p.prix).rjust(7) + " |" + str(nb).rjust(9) + " |\n")
+        liste_obj = sorted(liste_obj)
         liste_pnj = sorted(liste_pnj)
-        ret = "Objets :\n  " if liste_obj else ""
-        ret += "\n  ".join(liste_obj)
-        ret += "PNJs :\\n  " if liste_pnj else ""
-        ret += "\n  ".join(liste_pnj)
-        if not ret:
+        if liste_obj or liste_pnj:
+            ret = "+" + "-" * (taille_max + 1) + "+--------+----------+\n"
+            ret += "| |tit|" + "Objet".ljust(taille_max) + "|ff|"
+            ret += "|   |tit|Prix|ff| | |tit|Quantité|ff| |\n"
+            if liste_obj:
+                ret += "+" + "-" * (taille_max + 1) + "+--------+----------+\n"
+                ret += "| " + "| ".join(liste_obj)
+            if liste_pnj:
+                ret += "+" + "-" * (taille_max + 1) + "+--------+----------+\n"
+                ret += "| " + "| ".join(liste_pnj)
+            ret += "+" + "-" * (taille_max + 1) + "+--------+----------+"
+        else:
             ret = "|att|Aucun objet en vente.|ff|"
         return ret
+    
+    def __contains__(self, objet):
+        """Retourne True si l'objet est en vente, False sinon"""
+        return objet in self._o_prototypes or objet in self._p_prototypes
+    
+    def __setitem__(self, item, quantite):
+        """Ajoute un objet ou modifie sa quantité"""
+        if isinstance(item, BaseType):
+            self._o_prototypes[item] = quantite
+        elif isinstance(item, Prototype):
+            self._p_prototypes[item] = quantite
+    
+    def __delitem__(self, item):
+        """Retire un objet du magasin"""
+        if item in self._o_prototypes:
+            del self._o_prototypes[item]
+        if item in self._p_prototypes:
+            del self._p_prototypes[item]
     
     @property
     def nom_vendeur(self):
         """Retourne le nom du vendeur"""
-        return self.vendeur.cle if self.vendeur else "aucun"
+        return ("|vrc|" + self.vendeur.cle + "|ff|") if self.vendeur else \
+                "|rgc|aucun|ff|"
     
     @property
     def liste_monnaies(self):
         """Retourne la liste des monnaies utilisables dans ce magasin"""
         ret = ", ".join([m.cle for m in self.monnaies])
-        if not ret:
-            ret = "aucune"
+        ret = "aucune" if not ret else ("|jn|" + ret + "|ff|")
+        return ret
+    
+    @property
+    def liste_objets(self):
+        """Retourne la liste des objets en vente, par ordre alphabétique"""
+        ret = []
+        liste_cles = sorted([o.cle for o in self._o_prototypes.keys()])
+        for cle in liste_cles:
+            ret.append(self.get_item_par_cle(cle))
+        return ret
+    
+    @property
+    def liste_pnjs(self):
+        """Retourne la liste des PNJs en vente, par ordre alphabétique"""
+        ret = []
+        liste_cles = sorted([p.cle for p in self._p_prototypes.keys()])
+        for cle in liste_cles:
+            ret.append(self.get_item_par_cle(cle))
         return ret
     
     def est_en_vente(self, objet):
-        """Retourne True si l'objet est en vente, false sinon"""
+        """Retourne True si la clé correspond à un objet en vente,
+        False sinon.
+        
+        """
         return objet in [o.cle for o in self._o_prototypes.keys()]
     
     def ajouter_ou_modifier(self, objet, quantite):
@@ -99,3 +158,9 @@ class Magasin(BaseObj):
             if o.cle == objet:
                 del self._o_prototypes[o]
                 break
+    
+    def afficher(self):
+        """Affichage du magasin en jeu"""
+        ret = self.nom + "\n"
+        ret += str(self)
+        return ret

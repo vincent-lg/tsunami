@@ -30,4 +30,5 @@
 
 """Package contenant les commandes du module commerce."""
 
-from . import acheter
+import primaires.commerce.commandes.acheter
+import primaires.commerce.commandes.lister

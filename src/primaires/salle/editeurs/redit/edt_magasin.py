@@ -54,10 +54,15 @@ class EdtMagasin(Editeur):
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += self.aide_courte + "\n"
         if salle.magasin is not None:
+            msg += "\nNom du magasin : " + salle.magasin.nom
             msg += "\nVendeur actuel : " + salle.magasin.nom_vendeur
-            msg += "\nMonnaies acceptées : " + salle.magasin.liste_monnaies
-            msg += "\nEtat de la caisse : " + str(salle.magasin.caisse)
-            msg += "\nEn vente :\n" + str(salle.magasin)
+            if len(salle.magasin.monnaies) != 1:
+                msg += "\nMonnaies acceptées : "
+            else:
+                msg += "\nMonnaie acceptée : "
+            msg += salle.magasin.liste_monnaies
+            msg += "\nEtat de la caisse : |bc|" + str(salle.magasin.caisse)
+            msg += "|ff|\n\n" + str(salle.magasin)
         
         return msg
     

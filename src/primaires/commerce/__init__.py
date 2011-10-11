@@ -51,6 +51,7 @@ class Module(BaseModule):
         """Ajout des commandes"""
         self.commandes = [
             commandes.acheter.CmdAcheter(),
+            commandes.lister.CmdLister(),
         ]
         
         for cmd in self.commandes:

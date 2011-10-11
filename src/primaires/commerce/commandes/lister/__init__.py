@@ -28,22 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'acheter'."""
+"""Package contenant la commande 'lister'."""
 
 from primaires.interpreteur.commande.commande import Commande
 
-class CmdAcheter(Commande):
+class CmdLister(Commande):
     
-    """Commande 'acheter'"""
+    """Commande 'lister'"""
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "acheter", "buy")
-        self.schema = "(<nombre>) <nom_objet>"
-        self.aide_courte = "achète un objet"
+        Commande.__init__(self, "lister", "list")
+        self.schema = ""
+        self.aide_courte = "liste les objets en vente"
         self.aide_longue = \
-            "Cette commande permet d'acheter des objets dans un magasin."
+            "Cette commande affiche le magasin de la salle dans laquelle " \
+            "vous vous trouvez, si ce magasin existe bien entendu."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        pass
+        salle = personnage.salle
+        if salle.magasin is None:
+            personnage << "|err|Il n'y a pas de magasin ici.|ff|"
+        else:
+            personnage << salle.magasin.afficher()
