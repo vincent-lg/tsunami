@@ -286,18 +286,25 @@ class Importeur:
         """
         conf_glb = Importeur.anaconf.get_config("globale")
         Importeur.logger.debug("Destruction des modules :")
+        a_detruire = conf_glb.modules_a_detruire
+        autres = ["supenr"]
+        for nom in autres:
+            if nom not in a_detruire:
+                a_detruire.append(nom)
+        
         # On détruit d'abord les modules qui ne sont pas à garder en priorité
-        for module in self.__dict__.values():
+        for nom, module in tuple(self.__dict__.items()):
             if module.statut == INITIALISE and \
-                    module.nom not in conf_glb.modules_a_detruire:
+                    module.nom not in a_detruire:
                 module.detruire()
                 Importeur.logger.debug("  Le module {0} a été " \
                         "détruit".format(module.nom))
+                delattr(self, nom)
         
         # On détruit enfin les modules à détruire en dernier
         Importeur.logger.debug("Destruction des modules à détruire en " \
                 "dernier :")
-        for nom_module in conf_glb.modules_a_initialiser:
+        for nom_module in a_detruire:
             if hasattr(self, nom_module): # le module est chargé
                 module = getattr(self, nom_module)
                 if module.statut == INITIALISE:

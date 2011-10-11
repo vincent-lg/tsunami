@@ -195,12 +195,13 @@ class Personnage(ObjetID):
         return self._cle_etat
     def _set_cle_etat(self, cle):
         """On vérifie que l'état existe."""
-        try:
-            etat = type(self).importeur.perso.etats[cle]
-        except KeyError:
-            raise KeyError(cle)
-        else:
-            self._cle_etat = cle
+        if cle:
+            try:
+                etat = type(self).importeur.perso.etats[cle]
+            except KeyError:
+                raise KeyError(cle)
+        
+        self._cle_etat = cle
     cle_etat = property(_get_cle_etat, _set_cle_etat)
     
     @property

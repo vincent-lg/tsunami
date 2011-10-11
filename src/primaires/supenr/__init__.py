@@ -143,7 +143,8 @@ class Module(BaseModule):
     
     def detruire(self):
         """Destruction du module"""
-        self.file_attente.clear()
+        self.enregistrer_file_attente()
+        BaseModule.detruire(self)
     
     def construire_rep(self, sous_rep):
         """Construit le chemin REP_ENRS / sous_rep s'il n'existe pas"""

@@ -60,6 +60,14 @@ class Module(BaseModule):
         ajouter_talent = self.importeur.perso.ajouter_talent
         ajouter_talent("maniement_epee", "maniement de l'épée", "combat", 0.20)
         
+        # Ajout de l'état
+        etat = self.importeur.perso.ajouter_etat("combat")
+        etat.msg_refus = "Vous êtes en train de combattre"
+        etat.msg_visible = "{personnage} combat ici"
+        etat.act_interdites = ["combat", "prendre", "poser"]
+        
+        BaseModule.init(self)
+        
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
@@ -84,3 +92,9 @@ class Module(BaseModule):
             self.combats[salle.ident] = combat
             self.importeur.diffact.ajouter_action(
                 "combat:{}".format(salle.ident), 3, combat.tour, self.importeur)
+    
+    def detruire(self):
+        """Destruction du module."""
+        for combat in self.combats.values():
+            for combattant in combat.combattants:
+                combattant.cle_etat = ""

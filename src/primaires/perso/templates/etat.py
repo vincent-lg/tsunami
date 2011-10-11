@@ -81,5 +81,4 @@ class Etat:
         """
         if cle_action in self.act_interdites or cle_action not in \
                 self.act_autorisees:
-            raise ExceptionAction(self.refus)
-
+            raise ExceptionAction(self.msg_refus)

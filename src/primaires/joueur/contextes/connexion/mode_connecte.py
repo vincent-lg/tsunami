@@ -37,7 +37,7 @@ from primaires.interpreteur.masque.exceptions.erreur_interpretation \
         import ErreurInterpretation
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
-
+from primaires.perso.exceptions.action import ExceptionAction
 
 class ModeConnecte(Contexte):
     
@@ -131,6 +131,8 @@ class ModeConnecte(Contexte):
                             break
                     
                     commande.interpreter(self.pere.joueur, dic_masques)
+                except ExceptionAction as err_act:
+                    self.pere.joueur << "|err|{}|ff|.".format(err_act)
                 except exception as err_int:
                     self.pere.joueur.envoyer(str(err_int))
                 except Exception:
