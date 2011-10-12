@@ -94,11 +94,24 @@ class Combat:
                     cible = choice(cibles)
                     self.__combattus[combattant] = cible
     
+    def attaquer(self, combattant, combattu):
+        """Retourne les dégâts infligés par combattant à combattus."""
+        return 0
+    
+    def defendre(self, combattant, combattu, degats):
+        """Retourne les dégâts réceptionnés."""
+        return 0
+    
     def tour(self, importeur):
         """Un tour de combat."""
         self.verifier_combattants()
         for combattant, combattu in self.combattus.items():
-            print(combattant, "attaque", combattu)
+            force_attaque = self.attaquer(combattant, combattu)
+            force_defense = self.defendre(combattu, combattant, force_attaque)
+            degats = force_attaque - force_defense
+            if degats > 0:
+                # On les inflige à combattu
+                pass
         
         self.verifier_combattants()
         importeur.diffact.ajouter_action(

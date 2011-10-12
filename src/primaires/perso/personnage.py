@@ -212,6 +212,21 @@ class Personnage(ObjetID):
         else:
             return None
     
+    
+    def get_armes(self):
+        """Retourne les armes portées par le personnage.
+        
+        Ces armes sont celles portées.
+        
+        """
+        armes = []
+        for membre in self.equipement.membres:
+            objet = membre.equipe and membre.equipe[-1] or None
+            if objet and objet.est_de_type("arme"):
+                armes.append(objet)
+        
+        return tuple(armes)
+    
     def lier_equipement(self, squelette):
         """Crée un nouvel équipement pour le personnage en fonction
         du squelette.

@@ -146,6 +146,16 @@ class BaseType(ObjetID, metaclass=MetaType):
         else:
             return nom + " " + self.etat_pluriel
     
+    def est_de_type(self, nom_type):
+        """Retourne True si le type d'objet est de celui entré ou dérivé.
+        
+        Par exemple, si on test si une épée est une arme, retournera True
+        car le type 'arme' a pour classes-filles 'épée' (notamment).
+        
+        """
+        classe = type(self).importeur.objet.types[nom_type]
+        return isinstance(self, classe)
+    
     # Actions sur les objets
     @staticmethod
     def regarder(objet, personnage):
