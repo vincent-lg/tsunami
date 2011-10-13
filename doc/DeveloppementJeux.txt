@@ -1,0 +1,128 @@
+h1. Les jeux dans project:kassie
+
+Ce document décrit les jeux et plateaux de jeux dans project:kassie.
+
+Sommaire :
+
+{{toc}}
+
+h2. Structure d'un jeu
+
+Dans n'importe quel jeu de project:kassie, on trouve trois principaux éléments :
+
+* Le plateau de jeu, contenant les informations comme les cases, les pièces
+* La partie, retenant les personnages participant au jeu, l'état du plateau
+* Le jeu lui-même, définissant la règle, les coups autorisés
+
+Si on prend un exemple concret : le jeu de "la dame de Pique". Inutile pour l'heure de savoir y jouer :
+
+* Le plateau est un jeu de cartes de 52 cartes. Il est dissocié du jeu lui-même car il peut être utilisé pour d'autres jeux (il existe de nombreux jeux de cartes, comme vous le savez)
+* La partie retient les quatre joueurs actuels, les cartes qu'ils possèdent, les points de chacun
+* Le jeu définit les coups autorisés, qui remporte le pli, quand la main se termine...
+
+h2. Les différentes classes
+
+Cette structure se retrouve en terme d'objets du module secondaire *jeux* :
+
+* Les parties sont définies dans la classe @Partie@ (fichier @secondaires/jeux/partie.py@). Cette classe n'est pas à redéfinir : la même classe servira pour tous les jeux
+* Le plateau de jeu est défini dans un sous-[[GlossairePackage|package]] du [[GlossairePackage|package]] @plateaux@
+* Le jeu est défini dans un sous-[[GlossairePackage|package]] du [[GlossairePackage|package]] @jeux@.
+
+h3. La classe Partie
+
+Cette classe définit une partie de jeu.
+
+Ses attributs sont :
+
+* @jeu@ : le jeu en cours
+* @plateau@ : le plateau en cours
+* @__joueurs@ : une liste des joueurs participant au jeu
+
+Ses méthodes sont :
+
+* @ajouter_joueur@ : ajoute un joueur (personnage) à la partie
+* @afficher@ : affiche le plateau actuel en fonction du personnage qui le demande
+* @afficher_tous@ : affiche le plateau actuel à tous les joueurs (utile quand un joueur joue).
+
+Cette classe +n'est pas+ à redéfinir. Elle sera automatiquement créée quand un personnage commencera une nouvelle partie (grâce à la commande *jouer/play*).
+
+h3. Le package plateaux
+
+Vous pouvez trouver tous les plateaux de jeux dans le [[GlossairePackage|package]] @plateaux@ (@secondaires/jeux/plateaux@).
+
+En ouvrant ce répertoire, vous trouvez d'autres sous-répertoires (des sous-[[GlossairePackage|package]]) contenant chacun un plateau de jeu.
+
+Si vous ouvrez par exemple le répertoire @solitaire@ contenant le plateau du jeu de solitaire, vous trouvez notamment un fichier @__init__.py@. C'est lui qui nous intéresse dans un premier temps.
+
+Dedans, vous trouvez la [[GlossaireClasse|classe]] @Plateau@ qui définit le plateau de solitaire, c'est-à-dire les cases et la position des billes au début du jeu.
+
+<pre><code class="python">
+class Plateau(BaseObj):
+ 
+ """Plateau de solitaire.
+ 
+ Il est utilisé pour jouer au... solitaire.
+ 
+ """
+ 
+ jeux = ["solitaire"]
+ nom = "solitaire"
+ 
+ def __init__(self):
+ """Initialisation du plateau."""
+ BaseObj.__init__(self)
+ self.nb_joueurs_max = 1
+ self.cases = {
+ "C1": Bille(),
+ "D1": Bille(),
+ ...,
+ }
+</code></pre>
+
+La classe @Plateau@ comporte deux attributs de classe :
+
+* @nom@ : le nom (tel qu'affiché) du plateau
+* @jeux@ : une liste contenant les noms des jeux auxquels on peut jouer avec ce plateau.
+
+Si vous voulez créer un nouveau plateau de jeux, créez un répertoire dans le [[GlossairePackage|package]] @plateaux@ (@secondaires/jeux/plateaux@) du nom de votre plateau.
+
+Dedans, créez un fichier @__init__.py@ contenant une classe nommée @Plateau@ et détaillant votre plateau de jeu.
+
+Notez bien que la classe créée porte le nom @Plateau@, pas le nom de votre plateau.
+
+Au prochain lancement du module *jeux*, votre plateau sera automatiquement ajouté à la liste des plateaux disponibles.
+
+Vous pouvez créer dans votre [[GlossairePackage|package]] d'autres [[GlossaireModule|modules]] ou [[GlossaireClasse|classes]] contenant, par exemple, les pièces de votre plateau.
+
+h3. Le package jeux
+
+Il fonctionne sur le même principe que le [[GlossairePackage|package]] @plateaux@.
+
+Dans ce [[GlossairePackage|package]] @jeux@ (@secondaires/jeux/jeux@), vous trouvez plusieurs sous-[[GlossairePackage|package]], un par jeu.
+
+Par exemple, dans le répertoire @solitaire@ définissant le jeu de solitaire, vous trouvez un fichier @__init__.py@.
+
+Dedans se trouve une classe @Jeu@ définissant le jeu de solitaire.
+
+<pre><code class="python">
+class Jeu(BaseObj):
+ 
+ """Ce jeu définit le solitaire.
+ 
+ Il est rattaché au plateau solitaire.
+ 
+ """
+ 
+ nom = "solitaire"
+ def __init__(self):
+ """Construction du jeu."""
+ BaseObj.__init__(self)
+ self.plateau = None
+ self.partie = None
+</code></pre>
+
+Elle possède une méthode @jouer@ qui prend en paramètre le personnage jouant au jeu et la commande entrée par ce personnage.
+
+Elle peut également définir des méthodes dont le nom commence par @opt_@. Ce sont des options que le joueur peut entrer dans le contexte de jeu.
+
+Si le joueur joue à un jeu et entre par exemple */d*, une méthode @opt_d@ sera cherchée dans le jeu auquel le joueur joue. Si cette méthode est trouvée, elle est exécutée.

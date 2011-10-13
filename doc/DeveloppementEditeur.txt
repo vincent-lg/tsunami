@@ -1,0 +1,332 @@
+h1. Les éditeurs dans project:kassie
+
+Cette rubrique décrit en détail ce que sont les *éditeurs*, comment les créer et les étendre. Ce sujet étant assez vaste, cette documentation est à prendre en complément des docstrings présents dans le code source de project:kassie.
+
+Table des matières :
+
+{{toc}}
+
+h2. Définition
+
+Un *éditeur* est un objet de project:kassie permettant à un utilisateur d'afficher ou éditer les informations d'une ou plusieurs données de l'univers.
+
+La classe @Editeur@ présente dans le fichier @primaires/interpreteur/editeur/__init__.py@ hérite de la classe @Contexte@. Un éditeur est en effet un [[DéveloppementContexte|contexte]] un peu plus évolué. Les [[DéveloppementContexte|contextes]] permettent de demander à l'utilisateur une information précise (son nom de compte, son mot de passe, son adresse e-mail).
+
+L'éditeur reprend donc le mécanisme d'un [[DéveloppementContexte|contexte]] bien que les informations qu'il attende de l'utilisateur puissent être bien plus variées.
+
+h2. Exemples existants
+
+Nous allons nous intéresser à l'éditeur *redit* permettant d'éditer une salle.
+
+h3. Côté utilisateur
+
+En vous connectant sur project:kassie avec un compte administrateur, vous pouvez accéder à l'éditeur *redit* en entrant tout simplement la commande *redit*.
+
+Dans votre client devrait apparaître :
+
+<pre>
++-----------------------------------------------------------------------------+
+| Edition de depart:1 |
++-----------------------------------------------------------------------------+
+ [C]oordonnées : INV
+ [Z]one : depart
+ [M]nemonic : 1
+ [T]itre : La salle d'arrivée
+ D[e]tails
+ [D]escription : 
+ Aucune description.
+ [S]orties
+ [Sc]ripts
+ [Q]uitter la fenêtre
+->
+</pre>
+
+Quand vous entrez *redit* sans paramètre, vous éditez la salle où votre joueur se trouve. Ceci est géré par la [[DéveloppementCommande|commande]] *redit* et ne nous intéresse pas pour l'heure.
+
+Les informations que vous voyez dans votre client sont :
+
+* Les coordonnées de la salle
+* La zone de la salle
+* Son mnémonic (son nom ou numéro dans la zone)
+* Son titre
+* Sa description
+* ...
+
+En entrant la (ou les) lettre(s) entre parenthèses, vous pouvez éditer l'information concernée.
+
+Par exemple, en entrant kdoc.tar vous éditez le titre de la salle, en entrant doc doc.sh kdoc.tar lisser_doc.py vous éditez sa description. Et en entrant *q* vous quittez l'éditeur.
+
+h3. Côté développeur
+
+Quand vous entrez la [[DéveloppementCommande|commande]] *redit* dans votre client, un éditeur *redit* est créé. Il travaille par défaut sur la salle où votre joueur se trouve.
+
+L'éditeur que vous avez sous les yeux en entrant *redit* est de type @Presentation@. C'est un éditeur générique pour afficher un objet possédant de nombreuses informations à éditer.
+
+Quand vous entrez un raccourci comme kdoc.tar pour éditer le titre de la salle, vous changez d'éditeur. Celui dans lequel vous vous trouvez à présent est expressément conçu pour éditer le titre de la salle et n'a pas d'autre but. Une fois le titre changé, vous pouvez revenir à l'éditeur parent grâce au raccourci /.
+
+h2. Attributs et méthodes d'un éditeur
+
+h3. Attributs
+
+Les attributs communs à tous les éditeurs sont :
+
+* @objet@ : l'objet manipulé, par exemple la salle éditée dans le cas de *redit*
+* @attribut@ : l'attribut de l'objet à modifier en particulier. Certains éditeurs ne travaillent que sur un attribut, en général des éditeurs génériques. Ce sujet est apporté plus bas
+* @prompt@ : le prompt de l'objet, c'est-à-dire le message qui est envoyé systématiquement au client pour lui rappeler son choix dans l'éditeur. Par défaut, il s'agit de -> mais cela peut être facilement modifié
+* @apercu@ : l'aperçu de l'objet manipulé. Cela est utile si l'éditeur est un descendant d'un éditeur @Presentation@. Ce sujet est traité plus loin
+* @aide_courte@ : l'aide courte, c'est-à-dire très souvent le message que recevra le joueur en entrant dans l'éditeur
+* @aide_longue@ : cette information n'est pas utilisée pour l'heure
+* @options@ : un dictionnaire représentant les options de l'éditeur (vide par défaut). Il est de la forme @{"option": fonction}@ où @option@ est le raccourci menant à l'option et @fonction@ est la fonction à appeler pour traiter l'option. Ce sujet est détaillé plus bas.
+
+Notez que la classe @Editeur@ étant héritée de [[DéveloppementContexte|Contexte]], elle en reprend les attributs et méthodes.
+
+h3. Constructeur
+
+Pour se construire, un éditeur prend en paramètre :
+
+* @pere@ : l'instance de connexion représentant le client éditant le contexte. Quand vous manipulez un joueur, son instance de connexion peut être trouvée dans son attribut @instance_connexion@
+* @objet@ : l'objet manipulé comme vu ci-dessus. Il peut être @None@, bien qu'il soit rare, pour un éditeur, de ne travailler sur aucun objet
+* @attribut@ : l'attribut de l'objet sous la forme d'une chaîne de caractères. Ce sujet est traité plus bas.
+
+h3. @__getstate__@ et @__setstate__@
+
+Ces méthodes sont appelées automatiquement par *pickle* quand le contexte doit être enregistré en fichier. Elles ne sont pas à redéfinir, sauf besoin précis. Dans ce dernier cas, n'oubliez pas d'appeler, dans les méthodes filles, les méthodes parentes définies dans la classe @Editeur@.
+
+h3. @ajouter_option@
+
+Cette méthode est appelée pour ajouter des options à l'éditeur. Les options sont des fonctionnalités propres à l'éditeur et consistent en "commandes secondaires".
+
+Par exemple, dans le contexte @Description@, l'option @/r@ permet de remplacer une information par une autre dans la description éditée.
+
+Les deux informations à préciser à la méthode @ajouter_option@ sont :
+
+* Le raccourci de l'option (@r@ pour l'option @/r@ par exemple). Il peut se composer de plusieurs lettres
+* La fonction ou méthode à appeler quand le joueur entre l'option.
+
+Par exemple, considérez ce code extrait du constructeur de la classe @Description@, décrivant l'éditeur @Description@ :
+
+<pre><code class="python">
+ self.ajouter_option("r", self.opt_remplacer)
+</code></pre>
+
+Et le code de la méthode @opt_remplacer@ :
+
+<pre><code class="python">
+ def opt_remplacer(self, arguments):
+ """Fonction appelé pour remplacer du texte dans la description.
+ La syntaxe de remplacement est :
+ <texte 1> / <texte à remplacer>
+ 
+ """
+ description = self.description
+ # On commence par split au niveau du pipe
+ try:
+ recherche, remplacer_par = arguments.split(" / ")
+ except ValueError:
+ self.pere << "|err|Syntaxe invalide.|ff|"
+ else:
+ description.remplacer(recherche, remplacer_par)
+ self.actualiser()
+</code></pre>
+
+Le paramètre @argument@ passé à la fonction (la méthode, ici) contient la chaîne non-interprétée par l'option. Si le joueur entre @/r parmis / parmi@, le paramètre @argument@ vaudra @"parmis / parmi"@.
+
+h3. @accueil@
+
+Cette méthode retourne le message d'accueil. C'est une présentation de l'éditeur et de l'objet édité ainsi que des options définies. Ce message sera automatiquement affiché au client. La plupart du temps, @accueil@ se contentera de retourner le message contenu dans l'attribut @aide_courte@ de l'éditeur.
+
+Notez que cette méthode est définie dans [[DéveloppementContexte|la classe Contexte]].
+
+h3. @actualiser@
+
+Cette méthode n'est pas à redéfinir, mais vous pourrez l'appeler assez souvent. Elle affiche au client le message d'accueil de l'éditeur. C'est un peu un raffraîchissement de l'écran. Si des données ont été modifiées dans l'éditeur (le joueur vient de changer le titre de la salle, par exemple) c'est probablement elle que vous appellerez.
+
+h3. @get_apercu@ et @get_prompt@
+
+Ces deux méthodes retournent une chaîne représentant respectivement l'aperçu de l'objet et le prompt de l'éditeur. Généralement, on préférera modifier directement l'attribut @apercu@ ou @prompt@ plutôt que redéfinir ces méthodes, bien que le cas puisse se produire.
+
+h3. @migrer_contexte@
+
+Cette méthode permet à l'éditeur de rediriger vers un autre éditeur ou contexte. Vous trouverez plusieurs exemples d'utilisation plus loin, dans cette documentation, ou directement dans le code source.
+
+Notez qu'il s'agit d'une méthode redéfinie de la classe [[DéveloppementContexte|contexte]].
+
+h3. @receptionner@
+
++*ATTENTION : cette méthode n'est en aucun cas à redéfinir dans les classes-filles de @Editeur@.*+
+
+Elle est appelée quand le joueur entre une commande dans l'éditeur mais elle n'est pas utilisée pour interpréter ce message. Pour interpréter le message, il faut redéfinir la méthode @interpreter@ (voir plus bas).
+
+h3. @interpreter@
+
+Cette méthode est sans doute la plus importante des éditeurs. Elle est appelée quand le joueur entre une commande dans l'éditeur.
+
+Elle ne prend qu'un seul paramètre : @msg@ contenant le message envoyé par le joueur.
+
+Elle doit réagir à ce message, différemment selon le type d'éditeur. De très nombreux exemples sont disponibles dans le code et certains se trouvent plus bas dans cette documentation.
+
+h2. Les éditeurs génériques
+
+Pour simplifier le travail du développeur, certains éditeurs génériques ont été mis à disposition. Ils peuvent être utilisés dans d'autres éditeurs, soit directement, soit comme classe-mère pour des éditeurs plus spécifiques.
+
+Par exemple, l'éditeur @edt_coords@ de @redit@ (@primaires/salle/editeurs/redit/edt_coords@) est hérité de l'éditeur @Uniligne@. Il en reprend globalement le fonctionnement et ajoute en plus certaines options propres à l'édition des coordonnées de la salle.
+
+Les éditeurs génériques sont détaillés ci-dessous. Vous pouvez les trouver dans le package @primaires/interpreteur/editeurs@.
+
+h3. L'éditeur Presentation
+
+C'est l'éditeur que vous voyez quand vous entrez la commande @redit@ pour éditer une salle.
+
+Il est constitué de plusieurs choix, chacun accessible grâce à un raccourci et menant à un autre éditeur.
+
+Par exemple, le choix *titre* permet d'éditer le titre de la salle. Son raccourci est kdoc.tar (le joueur n'a qu'à entrer kdoc.tar pour se déplacer dans l'éditeur d'édition du titre de la salle).
+
+Vous pouvez l'utiliser tel quel ou bien l'hériter pour le personnaliser. C'est souvent cette seconde solution qui est choisie. Référez-vous à la [[GlossaireClasse|classe]] @EdtRedit@ définie dans @primaires/salle/editeurs/redit/__init__.py@ pour un exemple complet.
+
+Les méthodes de l'éditeur @Presentation@ sont :
+
+* @get_raccourci_depuis_nom@ : retourne le raccourci correspondant au nom passé en paramètre
+* @ajouter_choix@ : sans doute la méthode que vous utiliserez le plus avec cet éditeur. Elle permet d'ajouter un choix possible dans l'édition de l'objet. Elle prend en paramètre :
+** @nom@ : le nom du choix (*titre de la salle* par exemple)
+** @raccourci@ : le raccourci éditant le choix (il doit être présent dans le nom), kdoc.tar par exemple. Il ne doit pas être déjà utilisé
+** @objet_editeur@ : la classe de l'éditeur permettant d'éditer le choix. Ce peut être n'importe quelle classe héritée d'@Editeur@
+** @objet_edite@ : l'objet édité. Ce peut être self.objet, un de ses attributs ou bien un objet complètement différent
+** @attribut@ : le nom de l'attribut à éditer (voir plus bas)
+** ... : d'autres paramètres supplémentaires qui seront passés au constructeur de l'éditeur @objet_editeur@.
+* @ajouter_choix_apres@ : ajoute un choix après le premier paramètre, le nom de l'élément (par exemple @"titre"@). Les paramètres suivants sont les mêmes que @ajouter_choix@
+* @ajouter_choix_avant@ : ajoute un choix avant celui spécifié. Là encore, on précise le nom du choix avant duquel on veut placer notre nouveaux choix. Notez que @ajouter_choix@ fait en fait appel à @ajouter_choix_avant@. Elle ajoute le choix avant celui permettant de quitter l'éditeur
+* @supprimer_choix@ : supprime le choix. Vous devez préciser son nom en paramètre. Cette méthode est rarement utilisée
+* @accueil@ : cette méthode retourne le message d'accueil de l'éditeur, c'est-à-dire la liste des choix possibles et les aperçus des objets à éditer. Par exemple, le choix *titre* dans l'éditeur *redit* affiche le titre actuel de la salle. Cette méthode est rarement à redéfinir, sauf si vous voulez faire un éditeur avec plus de possibilités qu'un type @Presentation@ usuelle
+* @interpreter@ : cette méthode interprète le message comme un raccourci de choix possible. Elle ne doit pas être redéfinie. Si votre éditeur doit réagir à autre chose que des options et des raccourcis, redéfinissez la méthode @autre_interpretation@
+* @autre_interpretation@ : elle est appelée si le message entré par le joueur n'est ni une option, ni un raccourci. Elle peut donc permettre d'étendre les possibilités usuelles d'un éditeur @Presentation@. Par défaut, elle retourne simplement un message d'erreur indiquant au client que le raccourci n'existe pas.
+
+Exemple extrait de la méthode @ajouter_choix@, extrait de @EdtRedit@ (l'éditeur @Presentation@ de salle) :
+
+<pre><code class="python">
+ # Titre
+ titre = self.ajouter_choix("titre", "t", Uniligne, salle, "titre")
+ titre.parent = self
+ titre.prompt = "Titre de la salle : "
+ titre.apercu = "{objet.titre}"
+ titre.aide_courte = \
+ "Entrez le |ent|titre|ff| de la salle ou |cmd|/|ff| pour revenir " \
+ "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
+</code></pre>
+
+La méthode @ajouter_choix@ ne retourne pas un éditeur mais une [[DeveloppementEnveloppeObjet|enveloppe d'éditeur]]. C'est dans cet enveloppe qu'on écrit les attributs @prompt@, @apercu@, @aide_courte@ et potentiellement d'autres. L'enveloppe se chargera de créer, quand le joueur entrera le raccourci du choix, l'éditeur du choix et de recopier les attributs @prompt@, @apercu@ et autre dans l'éditeur construit.
+
+h3. L'éditeur Uniligne
+
+Cet éditeur est conçu pour éditer l'attribut d'un objet. Par exemple, le titre d'une salle. L'exemple ci-dessus pourra servir à mieux expliquer son fonctionnement :
+
+Extrait du fichier @primaires/salle/editeurs/redit/__init__.py@, classe @EdtRedit@, méthode @construire@ :
+
+<pre><code class="python">
+ titre = self.ajouter_choix("titre", "t", Uniligne, salle, "titre")
+ titre.parent = self
+ titre.prompt = "Titre de la salle : "
+ titre.apercu = "{objet.titre}"
+ titre.aide_courte = \
+ "Entrez le |ent|titre|ff| de la salle ou |cmd|/|ff| pour revenir " \
+ "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
+</code></pre>
+
+Voici l'explication ligne à ligne :
+
+# On ajoute le choix @"titre"@ à l'éditeur de salle, ayant pour raccourci @"t"@. L'objet éditeur, justement,; est @Uniligne@. L'objet édité reste la salle et l'attribut édité est @"titre"@
+# On précise que le parent de notre éditeur @"titre"@ est @self@ (c'est-à-dire l'éditeur de présentation). Si le client entre / dans l'éditeur du titre de la salle, il reviendra donc à l'éditeur de présentation de la salle
+# Cette ligne paramètre le prompt de l'éditeur. Ainsi, à chaque fois que le joueur recevra un message, au-dessous sera affiché le message @"Entrez le titre de la salle : "@
+# On définit ici l'aperçu de l'éditeur comme @"{objet.titre}"@. L'objet, rappelons-le, est la salle éditée. Donc la chaîne @"{objet.titre}"@ sera remplacée par le titre de la salle
+# Enfin, on définit l'aide courte de l'éditeur, c'est-à-dire le message que recevra le joueur en entrant dans l'éditeur.
+
+Quand un client, se trouvant dans l'éditeur @redit@, entre @t@ :
+
+# Un éditeur @Uniligne@ est créé. Il sera construit automatiquement avec les paramètres suivants :
+#* L'instance' de connexion du client
+#* L'objet sur lequel il travaille (ici, la salle)
+#* L'attribut qu'il édite particulièrement (ici @"titre"@)
+# Le client sera déplacé dans cet éditeur nouvellement créé et l'aide courte de l'éditeur sera affichée.
+
+La méthode @interpreter@ de l'éditeur @Uniligne@ écrit le message entré par l'utilisateur dans l'attribut de l'objet spécifié. Ici, si le client entre un message, il sera écrit dans l'attribut @titre@ de l'objet @salle@ manipulé.
+
+Cet éditeur est donc très utile pour des éditions d'attributs simples. Il peut être aussi hérité en cas de besoin.
+
+h3. L'éditeur Description
+
+Cet éditeur permet d'éditer une description d'un objet. Notez que la description doit être un objet de la classe @Description@ définie dans @primaires/format/description.py@.
+
+Par exemple, dans le constructeur d'une salle (@primaires/salle/salle.py@) :
+
+<pre><code class="python">
+ self.description = Description(parent=self)
+</code></pre>
+
+La classe @Description@ propose plusieurs méthodes utiles pour, notamment, remplacer du texte (d'une casse différente ou comportant des accents). Il est donc préférable de l'utiliser quand votre objet possède une description visible et surtout, éditable.
+
+L'éditeur @Description@ est assez simple à utiliser quand on est habitué à la syntaxe de création. Cet exemple est encore une fois extrait de l'éditeur @EdtRedit@ défini dans @primaires/salle/editeurs/redit/__init__.py@, méthode @construire@.
+
+<pre><code class="python">
+ # Description
+ description = self.ajouter_choix("description", "d", Description, \
+ salle)
+ description.parent = self
+ description.apercu = "{objet.description.paragraphes_indentes}"
+ description.aide_courte = \
+ "| |tit|" + "Description de la salle {}".format(salle).ljust(76) + \
+ "|ff||\n" + self.opts.separateur
+</code></pre>
+
+Deux choses sont à noter :
+
+* La méthode @ajouter_choix@ est assez identique à l'appel vu précédemment pour ajouter un choix @Uniligne@. Les deux grandes différences étant l'objet éditeur (non pas @Uniligne@ ici mais @Description@) et l'attribut de l'objet édité. En effet, on ne précise aucun nom d'attribut en cinquième paramètre. Quand aucun attribut n'est fourni, l'éditeur @Description@ travaille par défaut sur l'attribut de nom @"description"@. Vous pouvez préciser un cinquième argument à @ajouter_choix@ pour modifier ce comportement
+* L'aperçu de la description fait appel à l'attribut @paragraphes_indentes@ de l'objet @Description@. C'est en vérité une propriété de la classe @primaires.format.description.Description@ qui retourne la description sous la forme d'une chaîne formatée.
+
+L'éditeur @Description@ propose déjà certaines options pour supprimer ou remplacer du texte dans la description.
+
+Pour plus d'informations sur cet éditeur, consultez :
+
+* L'éditeur @Description@ défini dans @primaires/interpreteur/editeur/description.py@
+* L'objet @Description@ sur lequel l'éditeur travaille, défini dans @primaires/format/description.py@.
+
+h3. L'éditeur Choix
+
+Cet éditeur demande à l'utilisateur de choisir +un élément+ dans une liste. Son comportement est assez simple :
+
+* Lors de sa construction, on lui précise en paramètre la liste des choix possibles. Cette liste doit être constituée de chaînes de caractères
+* Lors de l'interprétation, si le client entre un des choix possible (ou un fragment d'un choix possible), ce choix est écrit dans l'attribut de l'objet spécifié.
+
+Sa seule grande différence est donc qu'il prend un paramètre supplémentaire à la construction, contenant la liste des choix possibles.
+
+Exemple extrait de l'éditeur *hedit* (@primaires/aide/hedit/__init__.py@, classe @EdtHedit@, méthode @construire@) :
+
+<pre><code class="python">
+ # Groupe
+ str_groupes = sorted(
+ type(self).importeur.interpreteur.groupes.nom_groupes)
+ groupe = self.ajouter_choix("groupe d'utilisateurs", "u", Choix,
+ sujet, "str_groupe", str_groupes)
+ groupe.parent = self
+ groupe.prompt = "Groupe d'utilisateur du sujet : "
+ groupe.apercu = "{objet.str_groupe}"
+ groupe.aide_courte = \
+ "Entrez le |ent|groupe|ff| pouvant accéder au sujet d'aide ou " \
+ "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
+ "Groupes existants : " + ", ".join(str_groupes) + "\n\n" \
+ "Groupe actuel : |bc|{objet.str_groupe}|ff|"
+</code></pre>
+
+Notez qu'avant d'appeler @ajouter_choix@, on récupère une liste des choix possibles (liste contenant des chaînes de caractères). Cette liste est passée après le nom de l'attribut dans @ajouter_choix@.
+
+Pour plus d'informations, lisez la documentation de l'éditeur @Choix@ disponible dans le fichier @primaires/interpreteur/editeur/choix.py@.
+
+h3. L'éditeur Selection
+
+Cet éditeur demande à l'utilisateur de sélectionner un ou plusieurs éléments d'une liste.
+
+A l'instar de @Choix@, il prend en paramètre supplémentaire la liste des valeurs possible. Mais à la différence de @Choix@, quand le client entre une valeur, il la sélectionne. Si le client l'entre de nouveau, il la désélectionne. L'attribut de l'objet sélectionné est lu pour connaître les valeurs sélectionnées (une liste de chaînes) et écrit quand le client entre une nouvelle valeur.
+
+Il n'existe pas encore d'exemple simple disponible dans le projet. Pour plus d'informations, consultez l'éditeur @Selection@ présent dans @primaires/interpreteur/editeur/selection.py@.
+
+h2. Étendre un éditeur existant
+
+h2. Créer un nouvel éditeur

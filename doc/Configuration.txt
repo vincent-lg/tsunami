@@ -1,0 +1,67 @@
+h1. Configuration de project:kassie
+
+Configurer project:kassie se fait de différents moyens qui sont brièvement présentés ici. Des liens menant à des rubriques plus complètes sont proposées dans cette page : ce n'est qu'un index des différents moyens pour configurer project:kassie.
+
+Vous y apprendrez comment personnaliser votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon à partir de project:kassie.
+
+Sommaire :
+
+{{toc}}
+
+h2. Via des fichiers
+
+project:kassie vous permet de configurer votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon grâce à des [[FichiersConfiguration|fichiers de configuration]]. Ils sont externes au code, c'est-à-dire que :
+
+# Disposer du code ne permet pas de connaître votre configuration : cela peut permettre de cacher certaines informations sensibles tout en diffusant malgré tout le code de votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon
+# Vous pouvez modifier les informations de configuration sans avoir à toucher au code-même.
+
+Ces [[FichiersConfiguration|fichiers]] ont été conçus pour être simples à comprendre et à modifier. Il en existe un certain nombre, cependant, et bien qu'ils soient triés dans certains répertoires, vous pouvez (avec raison) vous demander lequel sert à quoi.
+
+Donc, pour obtenir plus d'informations sur ces [[FichiersConfiguration|fichiers de configuration]], consultez [[FichiersConfiguration|cette rubrique]].
+
+h2. Via des commandes
+
+De nombreuses [[CommandesConfiguration|commandes de configuration]] sont mises à votre disposition. Elles vous permettent de configurer et créer l'univers de votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon. En outre, ces commandes peuvent être, dans l'ensemble, réutilisables à n'importe quel moment si vous avez décider de changer la configuration.
+
+Bien entendu, votre univers sera probablement en constante évolution. Voici une liste non exhaustive des choses que vous pourrez faire grâce aux [[CommandesConfiguration|commandes de configuration]] :
+
+* Construire votre univers : créer des salles, PNJ, objets, races, quêtes...
+* Configurer les droits d'accès aux commandes : project:kassie met en place un système de groupe d'utilisateurs avancé permettant de gérer dynamiquement les droits des différents joueurs.
+
+Vous disposez également de nombreuses commandes d'information vous permettant :
+
+* D'obtenir des statistiques sur votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon
+* De connaître la liste des modules chargés et leur statut
+* D'obtenir des informations sur l'univers et les joueurs présents (leur position dans l'univers, leur avancement dans les quêtes...).
+
+Pour toutes ces manipulations cependant, vous devez disposer d'un [[CompteAdministrateur|compte administrateur]]. Les informations pour créer un tel compte sont disponibles dans [[CompteAdministrateur|cette rubrique]].
+
+Pour un guide pas à pas concernant les commandes de configuration, référez-vous à [[CommandesConfiguration|cette rubrique]].
+
+h2. Via la ligne de commande
+
+project:kassie peut être configuré ponctuellement depuis la ligne de commande. Vous pouvez, par exemple, changer temporairement le port d'écoute du serveur, spécifier un autre chemin pour l'enregistrement des logs, des données, de la configuration et quelques autres paramètres.
+
+Rappel : les options courtes doivent être précédées d'un tiret, les options longues de deux.
+
+| Option courte | Option longue | Description |
+| c | chemin-configuration | Chemin du dossier contenant les fichiers de configuration |
+| e | chemin-enregistrement | Chemin du dossier d'enregistrement des données sauvegardées |
+| h | help | L'aide bien entendu |
+| l | chemin-logs | Chemin d'enregistrement des logs |
+| p | port | Port d'écoute du serveur |
+| s | serveur | Lancer le serveur (on ou off) |
+
+Exemples :
+
+* @python3.2 kassie.py -h@ : affiche de l'aide sur project:kassie et les arguments disponibles
+* @python3.2 kassie.py -p 5566@ : change le port d'écoute du serveur à 5566
+* @python3.2 kassie.py --serveur off@ : ne lance pas le réseau
+* ...
+
+h2. Déploiement
+
++*ATTENTION*+ : configurer project:kassie vous permet de créer votre propre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon sur ce moteur. Les conseils listés sur cette page ne relèvent cependant pas du [[Deploiement|déploiement]]. Si donc vous voulez passer à l'étape supérieure et accueillir des joueurs sur votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon (d'autant si vous gérez votre propre serveur), il vous est conseillé de lire (ou survoler, au minimum) la [[Deploiement|rubrique consacrée au déploiement]].
+
+* [[Index|Retour à l'index]]
+* [[Developpement|Rubrique Développement]].
