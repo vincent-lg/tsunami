@@ -123,7 +123,7 @@ nb_perso_max = 5
 
 ## Compte administrateur
 # Sur Kassie, un nom de compte est retenu comme étant
-# "le compte administrateur". ous les joueurs créés dans ce compte seront dans
+# "le compte administrateur". Tous les joueurs créés dans ce compte seront dans
 # le groupe des administrateurs.
 # Cela vous permet de récupérer facilement le contrôle du MUD, au premier
 # lancement du serveur ou par la suite.

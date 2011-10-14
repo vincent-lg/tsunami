@@ -42,7 +42,7 @@ cfg_email = r"""
 # d'e-mails.
 # Notez tout de même qu'il est préférable d'avoir un serveur mail configuré
 # sur le serveur hébergeant le projet.
-serveur_mail = True
+serveur_mail = False
 
 ## Nom d'hôte
 
