@@ -160,15 +160,18 @@ class Salle(ObjetID):
             self._personnages.remove(personnage)
             self.enregistrer()
     
-    def envoyer(self, message, exceptions=()):
+    def envoyer(self, message, *personnages, **kw_personnages):
         """Envoie le message aux personnages présents dans la salle.
-        Les personnages présents dans l'exception ne recevront pas le
-        message.
+        
+        Les personnages dans les paramètres supplémentaires (nommés ou non)
+        sont utilisés pour formatter le message et font figure d'exceptions.
+        Ils ne recevront pas le message.
         
         """
+        exceptions = personnages + tuple(kw_personnages.values())
         for personnage in self.personnages:
             if personnage not in exceptions:
-                personnage.envoyer(message)
+                personnage.envoyer(message, *personnages, **kw_personnages)
     
     def get_objets_nombres(self):
         """Retourne un tuple contenant des couples prototype, nombre"""

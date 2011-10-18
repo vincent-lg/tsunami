@@ -149,7 +149,6 @@ class Joueur(Personnage):
     
     def get_nom_pour(self, personnage):
         """Retourne le nom pour le personnage passé en paramètre."""
-        print(personnage.retenus, self.id.id)
         if hasattr(personnage, "retenus") and self.id.id in personnage.retenus:
             return personnage.retenus[self.id.id]
         else:
@@ -164,7 +163,6 @@ class Joueur(Personnage):
         personnages = [p.get_nom_pour(self) for p in personnages]
         kw_personnages = dict((nom, p.get_nom_pour(self)) for nom, p in \
                 kw_personnages.items())
-        print(personnages, kw_personnages, msg)
         msg = msg.format(*personnages, **kw_personnages)
         if self.instance_connexion:
             self.instance_connexion.envoyer(msg)

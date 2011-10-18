@@ -65,5 +65,4 @@ class CmdFermer(Commande):
         
         sortie.porte.fermer()
         personnage << "Vous fermez {}.".format(sortie.nom_complet)
-        salle.envoyer("{} ferme {}.".format(personnage, sortie.nom_complet),
-                (personnage, ))
+        salle.envoyer("{{}} ferme {}.".format(sortie.nom_complet), personnage)

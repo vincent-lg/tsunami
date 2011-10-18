@@ -72,7 +72,8 @@ class NomSortie(Masque):
         nom = self.a_interpreter
         salle = personnage.salle
         try:
-            sortie = salle.sorties[salle.sorties.get_nom_long(nom)]
+            sortie = salle.sorties.get_sortie_par_nom(
+                    salle.sorties.get_nom_long(nom, alerter=False))
         except KeyError:
             raise ErreurValidation(
                 "|err|Le nom de sortie '{}' n'existe pas.|ff|".format(nom))
