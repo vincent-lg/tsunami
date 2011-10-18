@@ -184,7 +184,7 @@ class EdtMessagesRecus(Editeur):
             mail.contenu.ajouter_paragraphe(
                     r_mail.expediteur.nom + " a écrit :\n")
             mail.contenu.ajouter_paragraphe(str(r_mail.contenu))
-            mail.contenu.ajouter_paragrape("<------------->")
+            mail.contenu.ajouter_paragraphe("<------------->")
             enveloppe = EnveloppeObjet(EdtMedit, mail, None)
             enveloppe.parent = self
             contexte = enveloppe.construire(self.pere.joueur)
