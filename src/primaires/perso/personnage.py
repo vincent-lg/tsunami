@@ -238,7 +238,7 @@ class Personnage(ObjetID):
         """Retourne le nom du personnage"""
         return self.nom
     
-    def get_nom_etat(self, nombre):
+    def get_nom_etat(self, personnage, nombre):
         """Retourne le nom et un état par défaut."""
         return self.nom + " est là"
     
@@ -257,6 +257,10 @@ class Personnage(ObjetID):
         """
         if self.equipement:
             self.equipement.squelette.personnages.remove(self)
+    
+    def get_nom_pour(self, personnage):
+        """Retourne le nom pour le personnage passé en paramètre."""
+        raise NotImplementedError
     
     def envoyer(self, msg):
         """Méthode envoyer"""
@@ -313,7 +317,7 @@ class Personnage(ObjetID):
     def regarder(moi, personnage):
         """personnage regarde moi."""
         equipement = moi.equipement
-        msg = "Vous regardez {} :\n".format(personnage.nom)
+        msg = "Vous regardez {} :\n".format(moi.nom)
         objets = []
         for membre in equipement.membres:
             objet = membre.equipe and membre.equipe[-1] or membre.tenu

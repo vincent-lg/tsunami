@@ -71,7 +71,8 @@ class Personnage(Masque):
         Masque.valider(self, personnage, dic_masques)
         nom_personnage = self.a_interpreter
         for p in personnage.salle.personnages:
-            if p is not personnage and contient(p.nom, nom_personnage):
+            if p is not personnage and contient(p.get_nom_pour(personnage),
+                    nom_personnage):
                 self.personnage = p
                 break
         

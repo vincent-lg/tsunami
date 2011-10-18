@@ -108,6 +108,10 @@ class PNJ(Personnage):
         """Envoie un message"""
         pass
     
+    def get_nom_pour(self, personnage):
+        """Retourne le nom pour le personnage passé en paramètre."""
+        return self.nom_singulier
+    
     def detruire(self):
         """Destruction du PNJ."""
         if self in self.prototype.pnj:

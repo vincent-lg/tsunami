@@ -222,7 +222,8 @@ class Salle(ObjetID):
             res += "\n"
             
             for personne, nombre in personnages.items():
-                res += "\n- {}".format(personne.get_nom_etat(nombre))
+                res += "\n- {}".format(personne.get_nom_etat(personnage,
+                        nombre))
         
         # Objets
         noms_objets = self.afficher_noms_objets()

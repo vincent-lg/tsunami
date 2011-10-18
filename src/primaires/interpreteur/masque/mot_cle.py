@@ -77,13 +77,13 @@ class MotCle(Commande):
         if not commande:
             # Le paramètre peut se trouver dans le masque précédent
             masque = masques[-1]
-            commande = chaine_vers_liste(masque.a_interpreter)
+            commande[:] = chaine_vers_liste(masque.a_interpreter)
             str_commande = liste_vers_chaine(commande)
             mot_cle = " " + mot_cle
             if (mot_cle + " ") in str_commande or str_commande.endswith(
                     mot_cle):
                 fin = str_commande.index(mot_cle)
-                masque.a_interpreter = str_commande[:fin - 1]
+                masque.a_interpreter = str_commande[:fin]
                 fin += len(mot_cle)
                 commande[:] = commande[fin:]
                 valide = True
