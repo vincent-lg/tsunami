@@ -28,17 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Package contenant la commande 'distinctiosn'"""
 
-from . import afk
-from . import chgroupe
-from . import distinctions
-from . import groupe
-from . import module
-from . import options
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retenir_nom
-from . import shutdown
-from . import where
+from primaires.interpreteur.commande.commande import Commande
+from .audible import PrmAudible
+from .visible import PrmVisible
+
+class CmdDistinctions(Commande):
+    
+    """Commande 'distinctions'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "distinctions", "distinctions")
+        self.groupe = "joueur"
+        self.aide_courte = "manipule votre distinction anonyme"
+        self.aide_longue = \
+            "Cette commande permet de manipuler votre distinction " \
+            "anonyme. C'est une courte proposition qualifiant votre " \
+            "personnage |ent|un petit homme|ff|, |ent|une elfe noire " \
+            "aux traits tirés|ff|...) qui caractérise votre personnage " \
+            "aux yeux de ceux qui ne le connaissent pas. Il existe " \
+            "la commande %retenir_nom% qui permet d'identifier un " \
+            "personnage avec un nom (dans le cadre d'une présentation RP " \
+            "par exemple)."
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
+        prm_audible = PrmAudible()
+        prm_visible = PrmVisible()
+        
+        self.ajouter_parametre(prm_audible)
+        self.ajouter_parametre(prm_visible)

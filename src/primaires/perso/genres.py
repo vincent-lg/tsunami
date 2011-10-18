@@ -49,8 +49,8 @@ class Genres(BaseObj):
             "féminin": "féminin"
         }
         self._distinctions = {
-            "masculin": "Un jeune homme",
-            "féminin": "Une jeune femme",
+            "masculin": "un jeune homme",
+            "féminin": "une jeune femme",
         }
         
         # On passe le statut en CONSTRUIT

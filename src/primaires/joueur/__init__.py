@@ -82,7 +82,7 @@ class Module(BaseModule):
             commandes.afk.CmdAfk(),
             commandes.chgroupe.CmdChgroupe(),
             commandes.groupe.CmdGroupe(),
-            commandes.distinction.CmdDistinction(),
+            commandes.distinctions.CmdDistinctions(),
             commandes.module.CmdModule(),
             commandes.options.CmdOptions(),
             commandes.pset.CmdPset(),

@@ -28,17 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Fichier contenant le paramètre 'audible' de la commande 'distinctions'."""
 
-from . import afk
-from . import chgroupe
-from . import distinctions
-from . import groupe
-from . import module
-from . import options
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retenir_nom
-from . import shutdown
-from . import where
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmAudible(Parametre):
+    
+    """Commande 'distinctions audible'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "audible", "audible")
+        self.schema = "(<message>)"
+        self.aide_courte = "manipule la distinction audible"
+        self.aide_longue = \
+            "Cette commande permet, sans paramètre, d'afficher la " \
+            "distinction anonyme audible de votre personnage. Cette distinction est " \
+            "utilisée quand votre personnage est entendu (mais pas vu). " \
+            "Pour la modifier, entrez %distinctions% %distinctions:audible% " \
+            "|ent|votre nouvelle distinction|ff|."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        message = ""
+        if dic_masques["message"]:
+            message = dic_masques["message"].message
+        
+        if message:
+            # Change la distinction anonyme
+            message = message[0].lower() + message[1:]
+            personnage.distinction_audible = message
+            personnage << "Votre distinction audible est à présent {}.".format(
+                    message)
+        else:
+            personnage << "Votre distinction audible actuelle : {}.".format(
+                    personnage.get_distinction_audible())

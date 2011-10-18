@@ -147,16 +147,28 @@ class Joueur(Personnage):
     def get_nom_etat(self, personnage, nombre):
         return self.get_nom_pour(personnage) + " est là"
     
+    def get_distinction_visible(self):
+        """Retourne la distinction visible."""
+        ret = self.distinction_visible
+        if not ret:
+            ret = self.race.genres._distinctions[self.genre]
+        
+        return ret
+    
+    def get_distinction_audible(self):
+        """Retourne la distinction audible."""
+        ret = self.distinction_audible
+        if not ret:
+            ret = self.race.genres._distinctions[self.genre]
+        
+        return ret
+    
     def get_nom_pour(self, personnage):
         """Retourne le nom pour le personnage passé en paramètre."""
         if hasattr(personnage, "retenus") and self.id.id in personnage.retenus:
             return personnage.retenus[self.id.id]
         else:
-            ret = self.distinction_visible
-            if not ret:
-                ret = self.race.genres._distinctions[self.genre]
-            
-            return ret
+            return self.get_distinction_visible()
     
     def envoyer(self, msg, *personnages, **kw_personnages):
         """On redirige sur l'envoie de l'instance de connexion."""
