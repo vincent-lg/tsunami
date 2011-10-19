@@ -162,13 +162,13 @@ class BaseType(ObjetID, metaclass=MetaType):
         """Le personnage regarde l'objet"""
         salle = personnage.salle
         moi = "Vous regardez {} :".format(objet.nom_singulier)
-        autre = "{} regarde {}.".format(personnage.nom, objet.nom_singulier)
+        autre = "{{}} regarde {}.".format(objet.nom_singulier)
         description = str(objet.description)
         if not description:
             description = "Il n'y a rien de bien intéressant à voir."
         
         moi += "\n\n" + description
-        salle.envoyer(autre, (personnage, ))
+        salle.envoyer(autre, personnage)
         return moi
 
 ObjetID.ajouter_groupe(BaseType)

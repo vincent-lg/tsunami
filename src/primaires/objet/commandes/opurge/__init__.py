@@ -73,4 +73,4 @@ class CmdOpurge(Commande):
         else:
             personnage << "Vous effectuez d'étranges mouvements dans les airs."
             salle.envoyer("{} effectue quelques mouvements étranges dans " \
-                    "les airs.".format(personnage.nom), (personnage, ))
+                    "les airs.", personnage)

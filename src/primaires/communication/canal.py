@@ -34,6 +34,7 @@ from abstraits.obase import BaseObj
 from bases.collections.liste_id import ListeID
 from primaires.format.constantes import COULEURS_INV
 from primaires.format.description import Description
+from primaires.format.fonctions import echapper_accolades
 from primaires.communication.contextes import Immersion
 
 # Flags
@@ -261,6 +262,7 @@ class Canal(BaseObj):
     
     def envoyer_imp(self, message):
         """Envoie un message impersonnel (annonce)"""
+        message = echapper_accolades(message)
         ex = self.clr + "[" + self.nom + "] " + message + "|ff|"
         im = self.clr + "<" + message + ">"
         
@@ -273,6 +275,7 @@ class Canal(BaseObj):
     
     def envoyer(self, joueur, message):
         """Envoie un message au canal"""
+        message = echapper_accolades(message)
         if self.flags & MUET:
             joueur << "|err|Vous ne pouvez parler dans ce canal.|ff|"
             return

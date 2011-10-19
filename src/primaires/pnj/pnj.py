@@ -104,7 +104,7 @@ class PNJ(Personnage):
     
     nom = property(_get_nom, _set_nom)
     
-    def envoyer(self, msg):
+    def envoyer(self, msg, *personnages, **kw_personnages):
         """Envoie un message"""
         pass
     

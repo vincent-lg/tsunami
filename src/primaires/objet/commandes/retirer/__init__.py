@@ -64,8 +64,7 @@ class CmdRetirer(Commande):
         else:
             personnage << "Vous retirez {}.".format(objet.nom_singulier)
             personnage.salle.envoyer(
-                "{} retire {}.".format(personnage.nom, objet.nom_singulier),
-                        (personnage, ))
+                "{{}} retire {}.".format(objet.nom_singulier), personnage)
             
             if personnage.equipement.cb_peut_tenir() > 0:
                 personnage.equipement.tenir_objet(objet=objet)
@@ -74,5 +73,4 @@ class CmdRetirer(Commande):
                 personnage << "Vous ne pouvez tenir {}.".format(objet.nom_singulier)
                 personnage << "Vous posez {}.".format(objet.nom_singulier)
                 personnage.salle.envoyer(
-                    "{} pose {}.".format(personnage.nom, objet.nom_singulier),
-                    (personnage, ))
+                    "{{}} pose {}.".format(objet.nom_singulier), personnage)

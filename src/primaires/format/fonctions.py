@@ -159,6 +159,10 @@ def convertir_nl(msg):
     msg = msg.replace(b"\n", NL)
     return msg
 
+def echapper_accolades(message):
+    """Echappe les accolades."""
+    return message.replace("{", "{{").replace("}", "}}")
+
 def ajouter_couleurs(msg, config):
     """Cette fonction est appelée pour convertir les codes de formatage
     couleur en leur équivalent ANSI. Elle gère aussi le formatage des

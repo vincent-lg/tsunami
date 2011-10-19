@@ -262,7 +262,7 @@ class Personnage(ObjetID):
         """Retourne le nom pour le personnage passé en paramètre."""
         raise NotImplementedError
     
-    def envoyer(self, msg):
+    def envoyer(self, msg, *personnages, **kw_personnages):
         """Méthode envoyer"""
         raise NotImplementedError
     
@@ -271,11 +271,10 @@ class Personnage(ObjetID):
         salle = self.salle
         salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
         sortie = salle.sorties.get_sortie_par_nom(sortie)
-        salle.envoyer("{} s'en va vers {}.".format(self.nom,
-                sortie.nom_complet), (self, ))
+        salle.envoyer("{{}} s'en va vers {}.".format(sortie.nom_complet), self)
         self.salle = salle_dest
         self.envoyer(self.salle.regarder(self))
-        salle_dest.envoyer("{} arrive.".format(self.nom), (self, ))
+        salle_dest.envoyer("{} arrive.", self)
         
         # On appelle l'évènement arrive
         sortie_opp = sortie.sortie_opposee
@@ -330,7 +329,6 @@ class Personnage(ObjetID):
         else:
             msg += "Il porte :\n\n  " + "\n  ".join(objets)
         
-        moi << "{} vous regarde.".format(personnage.nom)
-        personnage.salle.envoyer("{} regarde {}.".format(personnage.nom,
-                moi.nom), (personnage, moi))
+        moi.envoyer("{} vous regarde.", personnage)
+        personnage.salle.envoyer("{} regarde {}.", personnage, moi)
         return msg
