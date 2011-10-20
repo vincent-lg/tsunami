@@ -276,6 +276,9 @@ class Personnage(ObjetID):
         self.envoyer(self.salle.regarder(self))
         salle_dest.envoyer("{} arrive.", self)
         
+        # On appelle l'événement sortir
+        salle.script.evenements["sortir"].executer(vers=sortie.nom,
+                salle=salle, personnage=self)
         # On appelle l'évènement arrive
         sortie_opp = sortie.sortie_opposee
         nom_opp = sortie_opp and sortie_opp.nom or None

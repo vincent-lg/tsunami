@@ -39,11 +39,20 @@ class CmdAcheter(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "acheter", "buy")
-        self.schema = "(<nombre>) <nom_objet>"
+        self.schema = "(<nombre>) <objet:nom_objet_magasin|id_objet_magasin>"
         self.aide_courte = "achète un objet"
         self.aide_longue = \
             "Cette commande permet d'acheter des objets dans un magasin."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        pass
+        print("début de l'interprétation")
+        salle = personnage.salle
+        if salle.magasin is None:
+            personnage << "|err|Il n'y a pas de magasin ici.|ff|"
+            return
+        
+        nb_obj = dic_masques["nombre"].nombre if \
+            dic_masques["nombre"] is not None else 1
+        objet = dic_masques["objet"].objet
+        personnage << "Vous achetez {}.".format(objet.get_nom_etat(nb_obj))

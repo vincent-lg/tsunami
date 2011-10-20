@@ -28,34 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire commerce."""
+"""Package des masques du module communication."""
 
-from abstraits.module import *
-from primaires.commerce import masques
-from primaires.commerce import commandes
-from primaires.commerce import types
-
-class Module(BaseModule):
-    
-    """Cette classe contient les informations du module primaire commerce.
-    
-    Ce module gère le commerce, c'est-à-dire les transactions, les magasins,
-    les monnaies.
-    
-    """
-    
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "commerce", "primaire")
-        self.commandes = []
-        self.masques = []
-    
-    def ajouter_commandes(self):
-        """Ajout des commandes"""
-        self.commandes = [
-            commandes.acheter.CmdAcheter(),
-            commandes.lister.CmdLister(),
-        ]
-        
-        for cmd in self.commandes:
-            self.importeur.interpreteur.ajouter_commande(cmd)
+import primaires.commerce.masques.id_objet_magasin
+import primaires.commerce.masques.nom_objet_magasin

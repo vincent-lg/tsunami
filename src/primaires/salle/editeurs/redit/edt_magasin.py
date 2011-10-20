@@ -52,15 +52,15 @@ class EdtMagasin(Editeur):
         salle = self.objet
         msg = "| |tit|" + "Edition du magasin de {}".format(salle).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
-        msg += self.aide_courte + "\n"
+        msg += self.aide_courte
         if salle.magasin is not None:
-            msg += "\nNom du magasin : " + salle.magasin.nom
-            msg += "\nVendeur actuel : " + salle.magasin.nom_vendeur
+            msg += "\n\nNom du magasin : " + salle.magasin.nom
+            msg += "\nVendeur actuel : " + salle.magasin.cle_vendeur
             if len(salle.magasin.monnaies) != 1:
                 msg += "\nMonnaies acceptées : "
             else:
                 msg += "\nMonnaie acceptée : "
-            msg += salle.magasin.liste_monnaies
+            msg += salle.magasin.str_monnaies
             msg += "\nEtat de la caisse : |bc|" + str(salle.magasin.caisse)
             msg += "|ff|\n\n" + str(salle.magasin)
         
@@ -151,7 +151,7 @@ class EdtMagasin(Editeur):
             if not salle.magasin.est_en_vente(objet):
                 self.pere << "|err|Précisez une quantité pour cet objet.|ff|"
                 return
-            salle.magasin.retirer(objet)
+            del salle.magasin[objet]
         else:
             try:
                 quantite = int(quantite)
@@ -164,7 +164,7 @@ class EdtMagasin(Editeur):
                 if not objet in type(self).importeur.objet.prototypes:
                     self.pere << "|err|Ce prototype est introuvable.|ff|"
                     return
-                salle.magasin.ajouter_ou_modifier(objet, quantite)
+                salle.magasin[type(self).importeur.objet.prototypes[objet]] = quantite
         self.actualiser()
     
     def interpreter(self, msg):
