@@ -34,8 +34,8 @@ from primaires.interpreteur.editeur import Editeur
 
 class EdtEnvoyer(Editeur):
     
-    """Classe définissant le contexte éditeur 'droits'.
-    Ce contexte permet d'éditer les droits (public ou privé) d'un canal.
+    """Classe définissant le contexte éditeur 'envoyer'.
+    Ce contexte permet d'envoyer un message.
     
     """
     
@@ -47,9 +47,10 @@ class EdtEnvoyer(Editeur):
         mail = self.objet
         if not mail.liste_dest and mail.destinataire is None:
             self.pere.joueur << "|err|Vous devez préciser au moins un " \
-                    "destinataire.|ff|"
+                    "destinataire.|ff|\n"
+            self.migrer_contexte(self.opts.rci_ctx_prec)
         else:
-            if mail.id_source != 0:
+            if mail.id_source:
                 del type(self).importeur.communication.mails[mail.id_source]
             mail.envoyer()
             self.pere.joueur.contextes.retirer()

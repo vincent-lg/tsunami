@@ -113,8 +113,8 @@ class EdtMedit(Presentation):
         destinataire.apercu = "{objet.aff_dest}"
         destinataire.aide_courte = \
             "Entrez un nouveau |ent|destinataire|ff| à ajouter à votre " \
-            "message, ou un déjà existant pour le supprimer ; " \
-            "|cmd|/|ff| pour revenir à la\nfenêtre parente.\n" \
+            "message, ou un déjà existant\npour le supprimer ; " \
+            "|cmd|/|ff| pour revenir à la fenêtre parente.\n" \
             "Destinataire(s) actuel : {objet.aff_dest}"
         
         # Contenu

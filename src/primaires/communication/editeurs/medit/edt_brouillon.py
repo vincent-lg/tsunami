@@ -31,12 +31,11 @@
 """Fichier contenant le contexte éditeur EdtBrouillon"""
 
 from primaires.interpreteur.editeur import Editeur
-from primaires.communication.mudmail import BROUILLON
 
 class EdtBrouillon(Editeur):
     
-    """Classe définissant le contexte éditeur 'droits'.
-    Ce contexte permet d'éditer les droits (public ou privé) d'un canal.
+    """Classe définissant le contexte éditeur 'brouillon'.
+    Ce contexte permet d'enregistrer un mail comme brouillon.
     
     """
     
@@ -46,13 +45,9 @@ class EdtBrouillon(Editeur):
     
     def entrer(self):
         mail = self.objet
-        if mail.etat == BROUILLON:
-            source = type(self).importeur.communication.mails[mail.id_source]
-            source.sujet = mail.sujet
-            source.liste_dest = mail.liste_dest
-            source.contenu = mail.contenu
-            source.enregistrer_brouillon
-            del type(self).importeur.communication.mails[mail.id]
+        if mail.id_source:
+            del type(self).importeur.communication.mails[mail.id_source]
+            mail.enregistrer_brouillon()
             self.pere.joueur.contextes.retirer()
             self.pere.joueur << "|att|Vos modifications ont bien été " \
                     "enregistrées.|ff|"

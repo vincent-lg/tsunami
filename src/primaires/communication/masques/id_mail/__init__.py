@@ -56,7 +56,7 @@ class IdMail(Masque):
         
         if not str_nombre:
             raise ErreurValidation( \
-                "Précisez un nombre.")
+                "Précisez un id de message.")
         
         self.a_interpreter = str_nombre
         commande[:] = commande[len(str_nombre):]
@@ -72,7 +72,7 @@ class IdMail(Masque):
             assert nombre >= 1
         except (ValueError, AssertionError):
             raise ErreurValidation( \
-                "|err|Ce nombre est invalide.|ff|")
+                "|err|Cet id est invalide.|ff|")
         
         self.id_mail = nombre
         

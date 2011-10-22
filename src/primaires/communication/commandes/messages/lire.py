@@ -50,8 +50,9 @@ class PrmLire(Parametre):
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         mails = type(self).importeur.communication.mails
-        if dic_masques["flag_mail"] is not None:
-            flag = dic_masques["flag_mail"].flag
+        masque_flag = dic_masques["flag_mail"]
+        if masque_flag:
+            flag = masque_flag.flag
             if flag == "recus":
                 mails = mails.get_mails_pour(personnage, RECU)
             elif flag == "brouillons":

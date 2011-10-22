@@ -49,21 +49,30 @@ class MUDmail(BaseObj):
     
     """
     
-    def __init__(self, parent=None, expediteur=None):
+    def __init__(self, parent=None, expediteur=None, source=None):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
         self.parent = parent
-        mails = type(self).importeur.communication.mails or ""
+        mails = type(self).importeur.communication.mails or {}
         self.id = len(mails) + 1
-        self._etat = EN_COURS
-        self.date = None
-        self.sujet = "aucun sujet"
-        self.expediteur = expediteur
-        self.liste_dest = []
+        if source is not None: # édition d'un brouillon
+            self._etat = BROUILLON
+            self.sujet = str(source.sujet)
+            self.expediteur = expediteur
+            self.liste_dest = list(source.liste_dest)
+            self.contenu = Description()
+            self.contenu.ajouter_paragraphe(str(source.contenu))
+            self.id_source = int(source.id)
+        else:
+            self._etat = EN_COURS
+            self.sujet = "aucun sujet"
+            self.expediteur = expediteur
+            self.liste_dest = []
+            self.contenu = Description()
+            self.id_source = 0
         self.destinataire = None
-        self.contenu = Description()
+        self.date = None
         self.lu = False
-        self.id_source = 0 # dans le cas d'un brouillon édité
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
     
@@ -108,7 +117,7 @@ class MUDmail(BaseObj):
         ret += "Destinataire(s) : " + self.aff_dest + "\n"
         ret += "Sujet           : " + self.sujet + "\n"
         ret += str(self.contenu)
-        ret += "\n" + get_date(self.date.timetuple()).capitalize() + ".\n"
+        ret += "\n" + get_date(self.date.timetuple()).capitalize() + "."
         return ret
     
     def enregistrer(self):

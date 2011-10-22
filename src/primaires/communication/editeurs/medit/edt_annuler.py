@@ -34,8 +34,8 @@ from primaires.interpreteur.editeur import Editeur
 
 class EdtAnnuler(Editeur):
     
-    """Classe définissant le contexte éditeur 'droits'.
-    Ce contexte permet d'éditer les droits (public ou privé) d'un canal.
+    """Classe définissant le contexte éditeur 'annuler'.
+    Ce contexte permet d'annuler la création ou la modification d'un message.
     
     """
     
@@ -45,6 +45,16 @@ class EdtAnnuler(Editeur):
     
     def entrer(self):
         mail = self.objet
+        if mail.id_source:
+            try:
+                print(type(self).importeur.communication.mails[mail.id_source])
+            except KeyError:
+                print("Le mail source n'existe plus.")
         del type(self).importeur.communication.mails[mail.id]
+        if mail.id_source:
+            try:
+                print(type(self).importeur.communication.mails[mail.id_source])
+            except KeyError:
+                print("Le mail source n'existe plus.")
         self.pere.joueur.contextes.retirer()
         self.pere.joueur << "|rg|Vos modifications ont été annulées.|ff|"
