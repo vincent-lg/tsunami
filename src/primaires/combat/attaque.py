@@ -63,6 +63,19 @@ class Attaque(BaseObj):
         """Envoie les messages en cas de tentative."""
         moi.envoyer_lisser(self.msg_tentative["moi"], moi=moi, contre=contre,
                 membre=membre)
+        contre.envoyer_lisser(self.msg_tentative["contre"],  moi=moi,
+                contre=contre, membre=membre)
+        moi.salle.envoyer_lisser(self.msg_tentative["autres"],  moi=moi,
+                contre=contre, membre=membre)
+    
+    def envoyer_msg_reussite(self, moi, contre, membre, degats):
+        """Envoie les messages en cas de réussite."""
+        moi.envoyer_lisser(self.msg_reussite["moi"], moi=moi, contre=contre,
+                membre=membre, degats=degats)
+        contre.envoyer_lisser(self.msg_reussite["contre"],  moi=moi,
+                contre=contre, membre=membre, degats=degats)
+        moi.salle.envoyer_lisser(self.msg_reussite["autres"],  moi=moi,
+                contre=contre, membre=membre, degats)
 
 class Coup(Attaque):
     
@@ -71,15 +84,9 @@ class Coup(Attaque):
     def __init__(self, personnage, cle):
         """Constructeur du coup."""
         Attaque.__init__(self, personnage, cle)
-        self.msg_tentative["moi"] = "Vous tentez d'atteindre {contre} à {membre}."
-        self.msg_tentative["contre"] = "{moi} tente de vous atteindre à {membre}."
-        self.msg_tentative["autres"] = "{moi} tente d'atteindre {contre} à {membre}."
-
-class CoupEpee(Attaque):
-    
-    """Classe représentant un coup d'épée."""
-    
-    def __init__(self, personnage):
-        """Constructeur du coup."""
-        Coup.__init__(self,  personnage, "coup_epee")
-        self.msg
+        self.msg_tentative["moi"] = \
+                "Vous tentez d'atteindre {contre} à {membre}."
+        self.msg_tentative["contre"] = \
+                "{moi} tente de vous atteindre à {membre}."
+        self.msg_tentative["autres"] = \
+                "{moi} tente d'atteindre {contre} à {membre}."
