@@ -102,7 +102,7 @@ class Action(Instruction):
     def executer(cls, evenement, *parametres):
         """Exécute l'action selon l'évènement."""
         action = cls.quelle_action(parametres)
-        return action(*parametres)
+        return action(type(evenement).importeur, *parametres)
     
     @property
     def str_parametres(self):

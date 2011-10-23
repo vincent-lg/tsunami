@@ -274,16 +274,18 @@ class Personnage(ObjetID):
         salle.envoyer("{{}} s'en va vers {}.".format(sortie.nom_complet), self)
         self.salle = salle_dest
         self.envoyer(self.salle.regarder(self))
+        # On appelle l'événement sortir
+        salle.script.evenements["sort"].executer(vers=sortie.nom,
+                salle=salle, personnage=self, destination=salle_dest)
+        
         salle_dest.envoyer("{} arrive.", self)
         
-        # On appelle l'événement sortir
-        salle.script.evenements["sortir"].executer(vers=sortie.nom,
-                salle=salle, personnage=self)
         # On appelle l'évènement arrive
-        sortie_opp = sortie.sortie_opposee
-        nom_opp = sortie_opp and sortie_opp.nom or None
-        salle_dest.script.evenements["arrive"].executer(depuis=nom_opp,
-                salle=salle_dest, personnage=self)
+        if self.salle is salle_dest:
+            sortie_opp = sortie.sortie_opposee
+            nom_opp = sortie_opp and sortie_opp.nom or None
+            salle_dest.script.evenements["arrive"].executer(depuis=nom_opp,
+                    salle=salle_dest, personnage=self)
     
     def get_talent(self, cle_talent):
         """Retourne la valeur du talent ou 0 si le talent n'est pas trouvé."""

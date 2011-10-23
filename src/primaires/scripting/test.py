@@ -149,6 +149,7 @@ class Test(ObjetID):
             "variables": evenement.espaces.variables,
             "evt": evenement,
             "Fraction": Fraction,
+            "importeur": type(self).importeur,
         }
     
     def executer_instructions(self, evenement):
@@ -181,10 +182,8 @@ class Test(ObjetID):
         
         # Si le test est relié à une quête
         if etape:
-            print("Relié")
             # Si aucun verrou n'a été posé
             if not self.acteur.quetes[etape.quete.cle].verrouille:
-                print("On valide")
                 self.acteur.quetes.valider(etape.quete, etape.niveau)
 
 ObjetID.ajouter_groupe(Test)

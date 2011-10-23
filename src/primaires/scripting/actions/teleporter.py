@@ -19,7 +19,7 @@
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 # ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# LIABLE FOR ANY teleporterCT, INteleporterCT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
 # OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
@@ -28,23 +28,29 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'action dire."""
+"""Fichier contenant l'action teleporter."""
 
 from primaires.scripting.action import Action
 
 class ClasseAction(Action):
     
-    """Action dire."""
+    """Action teleporter."""
     
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.dire_personnage, "Personnage", "str")
-        cls.ajouter_types(cls.dire_salle, "Salle", "str")
+        cls.ajouter_types(cls.teleporter_salle, "Personnage", "Salle")
+        cls.ajouter_types(cls.teleporter_dest, "Personnage", "str")
+    
     
     @staticmethod
-    def dire_personnage(importeur, personnage, message):
-        personnage.envoyer(message)
+    def teleporter_salle(importeur, personnage, salle):
+        personnage.salle = salle
     
     @staticmethod
-    def dire_salle(importeur, salle, message):
-        salle.envoyer(message)
+    def teleporter_dest(importeur, personnage, destination):
+        try:
+            salle = importeur.salle[destination]
+        except KeyError:
+            print("Salle inconnue")
+        else:
+            personnage.salle = salle

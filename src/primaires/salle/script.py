@@ -60,15 +60,21 @@ class ScriptSalle(Script):
         var_perso = evt_arriver.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage se déplaçant"
         
-        # Evénement sortir
+        # Evénement sort
         evt_sort = self.creer_evenement("sort")
         evt_sort.aide_courte = "un personnage sort de la salle"
         evt_sort.aide_longue = \
-            ""
+            "Cet évènement est appelée quand un personnage quitte une " \
+            "salle via un déplacement standard (en entrant un nom de " \
+            "sortie). Le déplacement par |cmd|goto|ff| n'appelle " \
+            "pas cet évènement."
+        
         # Configuration des variables de l'événement.
         var_vers = evt_sort.ajouter_variable("vers", "str")
         var_vers.aide = "la direction où va le personnage"
         var_salle = evt_sort.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle actuelle"
+        var_destination = evt_sort.ajouter_variable("destination", "Salle")
+        var_destination.aide = "la salle de destination"
         var_perso = evt_sort.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage se déplaçant"
