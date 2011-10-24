@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2011 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,7 @@ from abstraits.module import *
 from . import commandes
 from . import types
 from .combat import Combat
+from .types.arme import Arme
 
 class Module(BaseModule):
     
@@ -58,7 +59,14 @@ class Module(BaseModule):
         
         # Ajout des talents
         ajouter_talent = self.importeur.perso.ajouter_talent
-        ajouter_talent("maniement_epee", "maniement de l'épée", "combat", 0.20)
+        for type in Arme.types.values():
+            if not (type.cle_talent and type.nom_talent and \
+                    type.niveau_talent and type.difficulte_talent):
+                raise ValueError("la  définition du talent lié au type " \
+                        "d'arme {} est incomplète".format(type.nom_type))
+            
+            ajouter_talent(type.cle_talent, type.nom_talent,
+                    type.niveau_talent, type.difficulte_talent)
         
         # Ajout de l'état
         etat = self.importeur.perso.ajouter_etat("combat")

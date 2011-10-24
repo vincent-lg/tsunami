@@ -41,6 +41,10 @@ class Arme(BaseType):
     """
     
     nom_type = "arme"
+    cle_talent = ""
+    nom_talent = ""
+    niveau_talent = "combat"
+    difficulte_talent = 0
     
     def __init__(self, cle=""):
         """Constructeur de l'objet"""

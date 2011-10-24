@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2011 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,8 @@ Il contient également les autres classes héritées d'Attaque :
 
 """
 
+from random import randint
+
 from abstraits.obase import BaseObj
 
 class Attaque(BaseObj):
@@ -47,6 +49,9 @@ class Attaque(BaseObj):
         BaseObj.__init__(self)
         self.personnage = personnage
         self.cle = cle
+        self.probabilite = 100
+        self.degats_min = 10
+        self.degats_max = 20
         self.msg_tentative = {
             "moi": "",
             "contre": "",
@@ -59,23 +64,31 @@ class Attaque(BaseObj):
         }
         self._construire()
     
-    def envoyer_msg_tentative(self, moi, contre, membre):
+    def essayer(self, moi, contre, arme=None):
+        """Retourne True si l'attaque a réussit, False sinon."""
+        return True
+    
+    def calculer_degats(self, moi, contre, arme=None):
+        """Retourne les dégâts infligés."""
+        return randint(self.degats_min, self.degats_max)
+    
+    def envoyer_msg_tentative(self, moi, contre, membre, arme=None):
         """Envoie les messages en cas de tentative."""
         moi.envoyer_lisser(self.msg_tentative["moi"], moi=moi, contre=contre,
-                membre=membre)
+                membre=membre, arme=arme)
         contre.envoyer_lisser(self.msg_tentative["contre"],  moi=moi,
-                contre=contre, membre=membre)
+                contre=contre, membre=membre, arme=arme)
         moi.salle.envoyer_lisser(self.msg_tentative["autres"],  moi=moi,
-                contre=contre, membre=membre)
+                contre=contre, membre=membre, arme=arme)
     
-    def envoyer_msg_reussite(self, moi, contre, membre, degats):
+    def envoyer_msg_reussite(self, moi, contre, membre, degats, arme=None):
         """Envoie les messages en cas de réussite."""
         moi.envoyer_lisser(self.msg_reussite["moi"], moi=moi, contre=contre,
-                membre=membre, degats=degats)
+                membre=membre, degats=degats, arme=arme)
         contre.envoyer_lisser(self.msg_reussite["contre"],  moi=moi,
-                contre=contre, membre=membre, degats=degats)
+                contre=contre, membre=membre, degats=degats, arme=arme)
         moi.salle.envoyer_lisser(self.msg_reussite["autres"],  moi=moi,
-                contre=contre, membre=membre, degats)
+                contre=contre, membre=membre, degats, arme=arme)
 
 class Coup(Attaque):
     
@@ -90,3 +103,9 @@ class Coup(Attaque):
                 "{moi} tente de vous atteindre à {membre}."
         self.msg_tentative["autres"] = \
                 "{moi} tente d'atteindre {contre} à {membre}."
+    
+    def essayer(self, moi, contre, arme):
+        """Retourne True si l'attaque réussit, False sinon."""
+        talent = type(arme).cle_talent
+        connaissance = moi.pratiquer_talent(talent)
+        

@@ -39,3 +39,6 @@ class Hache(Arme):
     """
     
     nom_type = "hache"
+    cle_talent = "maniement_hache"
+    nom_talent = "maniement de la hache"
+    difficulte_talent = 0.25
