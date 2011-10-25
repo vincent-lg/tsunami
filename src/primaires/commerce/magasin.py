@@ -44,6 +44,7 @@ class Magasin(BaseObj):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
         self.nom = nom
+        self.parent = parent
         self.vendeur = None
         self.monnaies = []
         self.caisse = 0
@@ -98,6 +99,8 @@ class Magasin(BaseObj):
             self._o_prototypes[item] = quantite
         elif isinstance(item, Prototype):
             self._p_prototypes[item] = quantite
+        if parent:
+            self.parent.enregistrer()
     
     def __delitem__(self, item):
         """Retire un objet du magasin"""
@@ -115,6 +118,8 @@ class Magasin(BaseObj):
                 del self._o_prototypes[item]
             if item in self._p_prototypes:
                 del self._p_prototypes[item]
+        if parent:
+            self.parent.enregistrer()
     
     @property
     def cle_vendeur(self):
@@ -157,6 +162,8 @@ class Magasin(BaseObj):
     def encaisser(self, calcul):
         """Modifie la valeur de la caisse en fonction d'une chaîne de calcul"""
         self.caisse = eval(self.caisse + calcul)
+        if parent:
+            self.parent.enregistrer()
     
     def get_item_par_id(self, id):
         """Retourne un objet en fonction de son id (voir self.afficher)"""
@@ -170,7 +177,8 @@ class Magasin(BaseObj):
     
     def get_item_par_cle(self, cle):
         """Retourne un objet en fonction de sa clé"""
-        liste_items = self.liste_objets + self.liste_pnjs
+        liste_items = list(self._o_prototypes.values()) + \
+            list(self._p_prototypes.values())
         for it in liste_items:
             if it.cle == cle:
                 return it
