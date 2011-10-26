@@ -83,7 +83,7 @@ class EdtMagasin(Editeur):
             self.pere << "|err|Ce prototype est introuvable.|ff|"
             return
         proto = type(self).importeur.pnj.prototypes[proto]
-        salle.magasin.vendeur = proto
+        salle.magasin.vendeur = proto.cle
         self.actualiser()
     
     def opt_monnaie(self, arguments):
@@ -103,10 +103,10 @@ class EdtMagasin(Editeur):
             self.pere << "|err|Ce prototype est introuvable.|ff|"
             return
         monnaie = type(self).importeur.objet.prototypes[monnaie]
-        if monnaie in salle.magasin.monnaies:
-            salle.magasin.monnaies.remove(monnaie)
+        if not monnaie in salle.magasin.monnaies:
+            salle.magasin.ajouter_monnaie(monnaie.cle)
         else:
-            salle.magasin.monnaies.append(monnaie)
+            salle.magasin.supprimer_monnaie(monnaie.cle)
         self.actualiser()
     
     def opt_modifier_caisse(self, arguments):
@@ -128,7 +128,8 @@ class EdtMagasin(Editeur):
             self.pere << "|err|Entrez un nombre valide et positif.|ff|"
             return
         else:
-            salle.magasin.caisse = valeur
+            salle.magasin.encaisser("+" + str(valeur))
+            salle.enregistrer()
             self.actualiser()
     
     def opt_objet(self, arguments):
@@ -164,7 +165,7 @@ class EdtMagasin(Editeur):
                 if not objet in type(self).importeur.objet.prototypes:
                     self.pere << "|err|Ce prototype est introuvable.|ff|"
                     return
-                salle.magasin[type(self).importeur.objet.prototypes[objet]] = quantite
+                salle.magasin[objet] = quantite
         self.actualiser()
     
     def interpreter(self, msg):
@@ -172,11 +173,14 @@ class EdtMagasin(Editeur):
         salle = self.objet
         if msg == "supprimer" and salle.magasin is not None:
             salle.magasin = None
-            self.migrer_contexte(rci_ctx_prec)
+            salle.enregistrer()
+            self.migrer_contexte(self.opts.rci_ctx_prec)
         else:
             if salle.magasin is None:
                 salle.magasin = Magasin(msg, parent=salle)
+                salle.enregistrer()
                 self.actualiser()
             else:
                 salle.magasin.nom = msg
+                salle.enregistrer()
                 self.actualiser()

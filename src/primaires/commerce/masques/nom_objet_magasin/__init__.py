@@ -56,11 +56,11 @@ class NomObjetMagasin(Masque):
         if not nom_objet:
             raise ErreurValidation( \
                 "Vous devez préciser le nom d'un objet.", False)
-        
-        self.a_interpreter = nom_objet
-        commande[:] = []
-        masques.append(self)
-        return True
+        else:
+            self.a_interpreter = nom_objet
+            commande[:] = []
+            masques.append(self)
+            return True
     
     def valider(self, personnage, dic_masques):
         """Validation du masque"""

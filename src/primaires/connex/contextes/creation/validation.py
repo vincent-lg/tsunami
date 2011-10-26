@@ -108,8 +108,9 @@ class Validation(Contexte):
             self.pere.compte.code_validation = ""
             self.pere.compte.tentatives_validation = 0
             self.pere.envoyer( \
-                "\n|att|Félicitations, votre compte a bien été validé !|ff|\n\n" \
-                "Vous pouvez maintenant commencer à créer un personnage...")
+                "\n|att|Félicitations, votre compte a bien été validé !|ff|" \
+                "\n\nVous pouvez maintenant commencer à créer un " \
+                "personnage...")
             self.migrer_contexte("connex:connexion:choix_personnages")
         else:
             self.pere.compte.tentatives_validation += 1

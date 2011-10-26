@@ -62,6 +62,7 @@ class IdObjetMagasin(Masque):
         try:
             assert id_objet.startswith("#")
             id_objet = int(id_objet[1:])
+            print(id_objet)
         except (AssertionError, ValueError):
             raise ErreurValidation( \
                 "L'ID doit être sous la forme #<nombre>.", False)

@@ -103,7 +103,8 @@ class Module(BaseModule):
             self.ajouter_salle(salle)
         
         nb_salles = len(self._salles)
-        self.logger.info(format_nb(nb_salles, "{nb} salle{s} récupérée{s}"))
+        self.logger.info(format_nb(nb_salles, "{nb} salle{s} récupérée{s}", \
+                fem=True))
         
         BaseModule.init(self)
     
