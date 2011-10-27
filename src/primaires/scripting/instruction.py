@@ -29,11 +29,17 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Instruction, détaillée plus bas."""
+"""Fichier contenant la classe Instruction, détaillée plus bas.
+
+Ce module contient également l'exception ErreurExecution.
+
+"""
 
 from collections import OrderedDict
 
 from abstraits.obase import BaseObj, MetaBaseObj
+
+from .exceptions import ErreurScripting
 
 # Dictionnaire des instructions {nom: classe}
 instructions = OrderedDict()
@@ -143,3 +149,13 @@ class Instruction(BaseObj, metaclass=MetaInstruction):
     def get_niveau_suivant(self):
         """Retourne le niveau présumé de l'instruction suivante."""
         return self.niveau
+
+class ErreurExecution(ErreurScripting):
+    
+    """Classe représentant une erreur d'exécution du scripting.
+    
+    Cette exception est levée quand une erreur se produit lors de
+    l'exécution d'un script.
+    
+    """
+    pass

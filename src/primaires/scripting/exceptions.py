@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2011 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -19,7 +19,7 @@
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 # ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-# LIABLE FOR ANY teleporterCT, INteleporterCT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
 # OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
@@ -28,29 +28,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'action teleporter."""
+"""Module contenant les exceptions du scripting."""
 
-from primaires.scripting.action import Action
+from bases.exceptions.base import ExceptionMUD
 
-class ClasseAction(Action):
+class ErreurScripting(ExceptionMUD):
     
-    """Action teleporter."""
-    
-    @classmethod
-    def init_types(cls):
-        cls.ajouter_types(cls.teleporter_salle, "Personnage", "Salle")
-        cls.ajouter_types(cls.teleporter_dest, "Personnage", "str")
-    
-    
-    @staticmethod
-    def teleporter_salle(personnage, salle):
-        personnage.salle = salle
-    
-    @staticmethod
-    def teleporter_dest(personnage, destination):
-        try:
-            salle = importeur.salle[destination]
-        except KeyError:
-            raise ErreurExecution("salle inconnue : {}".format(destination))
-        else:
-            personnage.salle = salle
+    """Cette exception est la classe-mère des erreurs du scripting."""
+    pass

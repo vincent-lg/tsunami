@@ -42,9 +42,9 @@ class ClasseAction(Action):
         cls.ajouter_types(cls.dire_salle, "Salle", "str")
     
     @staticmethod
-    def dire_personnage(importeur, personnage, message):
+    def dire_personnage(personnage, message):
         personnage.envoyer(message)
     
     @staticmethod
-    def dire_salle(importeur, salle, message):
+    def dire_salle(salle, message):
         salle.envoyer(message)

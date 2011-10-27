@@ -36,7 +36,7 @@ from fractions import Fraction
 from abstraits.id import ObjetID
 from .parser import expressions
 from primaires.scripting.constantes.connecteurs import CONNECTEURS
-from .instruction import Instruction
+from .instruction import Instruction, ErreurExecution
 
 class Test(ObjetID):
     
@@ -175,10 +175,17 @@ class Test(ObjetID):
         globales = self.get_globales(evenement)
         
         # Exécution
+        __builtins__["importeur"] = type(self).importeur
+        __builtins__["ErreurExecution"] = ErreurExecution
         try:
             exec(code, globales)
+        except ErreurExecution as err:
+            print(str(err))
         except Exception:
             print(traceback.format_exc())
+        finally:
+            del __builtins__["importeur"]
+            del __builtins__["ErreurExecution"]
         
         # Si le test est relié à une quête
         if etape:
