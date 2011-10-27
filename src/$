@@ -35,7 +35,6 @@ import traceback
 from fractions import Fraction
 
 from abstraits.id import ObjetID
-from primaires.format.fonctions import echapper_accolades
 from .parser import expressions
 from primaires.scripting.constantes.connecteurs import CONNECTEURS
 from .instruction import Instruction, ErreurExecution
