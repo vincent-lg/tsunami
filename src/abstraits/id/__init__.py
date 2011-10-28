@@ -188,7 +188,7 @@ class ObjetID(BaseObj):
             self.id_actuel = self.id.id + 1
         
         # On l'ajoute dans parid
-        BaseObj.importeur.parid[self.id.groupe][self.id.id] = self
+        BaseObj.importeur.parid.ecrire(self)
     
     def __setattr__(self, nom_attr, val_attr):
         """Méthode appelée lorsqu'on cherche à modifier un attribut

@@ -33,6 +33,7 @@
 import datetime
 
 from abstraits.obase import *
+from bases.collections.liste_id import ListeID
 from primaires.format.description import Description
 from primaires.format.date import get_date
 
@@ -59,16 +60,19 @@ class MUDmail(BaseObj):
             self._etat = BROUILLON
             self.sujet = str(source.sujet)
             self.expediteur = expediteur
-            self.liste_dest = list(source.liste_dest)
-            self.contenu = Description()
+            self.liste_dest = ListeID(self)
+            for d in list(source.liste_dest):
+                self.liste_dest.append(d)
+            
+            self.contenu = Description(parent=self)
             self.contenu.ajouter_paragraphe(str(source.contenu))
             self.id_source = int(source.id)
         else:
             self._etat = EN_COURS
             self.sujet = "aucun sujet"
             self.expediteur = expediteur
-            self.liste_dest = []
-            self.contenu = Description()
+            self.liste_dest = ListeID(self)
+            self.contenu = Description(parent=self)
             self.id_source = 0
         self.destinataire = None
         self.date = None

@@ -102,7 +102,7 @@ class Test(ObjetID):
         """
         # On essaye d'interpréter la suite de tests
         self.__tests = expressions["tests"].parser(chaine_test)[0]
-        self.appelant.enregistrer()
+        self.enregistrer()
     
     def ajouter_instruction(self, message):
         """Construit et ajoute l'instruction."""
@@ -123,7 +123,7 @@ class Test(ObjetID):
         instruction = type_instruction.construire(message)
         instruction.niveau = ancienne_instruction.niveau
         self.__instructions[ligne] = instruction
-        self.evenement.appelant.enregistrer()
+        self.enregistrer()
     
     def tester(self, evenement):
         """Test le tests."""
@@ -151,7 +151,6 @@ class Test(ObjetID):
             "variables": evenement.espaces.variables,
             "evt": evenement,
             "Fraction": Fraction,
-            "importeur": type(self).importeur,
         }
     
     def erreur_execution(self, message):
@@ -218,7 +217,6 @@ class Test(ObjetID):
             if joueur.nom_groupe == "administrateur":
                 mail_complet.liste_dest.append(joueur)
         
-        print(str(mail_complet.contenu))
         if mail_complet.liste_dest:
             mail_complet.envoyer()
         
