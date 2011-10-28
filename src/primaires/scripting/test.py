@@ -169,15 +169,15 @@ class Test(ObjetID):
         """
         appelant = str(self.appelant)
         evt = str(self.evenement.nom)
-        tests = self and "si " + str(self) or "sinon"
-        titre = "{}:{} {}".format(appelant, evt, tests)
-        pile = echapper_accolades(traceback.format_exc())
+        tests = self.__tests and "si " + str(self) or "sinon"
+        titre = "{}[{}] {}".format(appelant, evt, tests)
+        pile = echapper_accolades(traceback.format_exc()).split("\n")
         
         # On récupère le joueur système, expéditeur des messages
         systeme = type(self).importeur.joueur.joueur_systeme
         
         # Extraction de la ligne d'erreur
-        reg = re.search("File \"\<string\>\", line ([0-9]+)", pile)
+        reg = re.search("File \"\<string\>\", line ([0-9]+)", "\n".join(pile))
         if reg:
             no_ligne = int(reg.groups()[-1])
             ligne = self.__instructions[no_ligne - 1]
@@ -194,7 +194,8 @@ class Test(ObjetID):
         ecrire("Une erreur s'est produite lors de l'exécution " \
                 "de ce script :")
         ecrire("|tab|{}, ligne {} :".format(titre, no_ligne))
-        ecrire("|tab||tab|{}\n".format(ligne))
+        ecrire("|tab||tab|{}".format(ligne))
+        ecrire("")
         ecrire("{}.".format(message))
         msgs = list(mail_simple.contenu.paragraphes)
         ecrire("Le créateur, les suiveurs et administrateurs ont été " \
@@ -208,8 +209,10 @@ class Test(ObjetID):
             mail_complet.contenu.ajouter_paragraphe(msg)
         
         ecrire = mail_complet.contenu.ajouter_paragraphe
-        ecrire("\nCi-dessous se trouve le traceback complet levé par Python :")
-        ecrire(pile)
+        ecrire("")
+        ecrire("Ci-dessous se trouve le traceback complet levé par Python :")
+        for msg in pile:
+            ecrire(msg)
         
         for joueur in type(self).importeur.joueur.joueurs.values():
             if joueur.nom_groupe == "administrateur":
