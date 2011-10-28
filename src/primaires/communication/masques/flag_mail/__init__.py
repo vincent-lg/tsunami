@@ -59,16 +59,16 @@ class FlagMail(Masque):
                 "Précisez un flag de filtre.", False)
         
         liste_flags = ["recus", "brouillons", "archives", "envoyes"]
+        nom_flag = nom_flag.split(" ")[0]
         
         if not supprimer_accents(nom_flag.lower()) in liste_flags:
             raise ErreurValidation(
                 "|err|Le flag précisé n'existe pas.|ff|", False)
-        
-        nom_flag = nom_flag.split(" ")[0]
-        self.a_interpreter = nom_flag
-        commande[:] = commande[len(nom_flag):]
-        masques.append(self)
-        return True
+        else:
+            self.a_interpreter = nom_flag
+            commande[:] = commande[len(nom_flag):]
+            masques.append(self)
+            return True
     
     def valider(self, personnage, dic_masques):
         """Validation du masque"""

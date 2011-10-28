@@ -69,6 +69,7 @@ Exemple :
 """
 
 import os
+import traceback
 
 from bases.logs import man_logs
 
@@ -77,6 +78,7 @@ CONSTRUIT, CHARGE = 0, 1
 class Parid:
     
     """Cette classe est un gestionnaire des objets ID avant tout.
+    
     Elle garde une trace de tous les objets dérivés de 'ObjetID' créés ou
     récupérés depuis des fichiers.
     
@@ -93,6 +95,7 @@ class Parid:
     def __init__(self):
         """Constructeur du gestionnaire"""
         self.groupes = {} # {nom_groupe:dico_objets}
+        self.traces = {}
         self.statut = CONSTRUIT
     
     def __contains__(self, nom_groupe):
@@ -142,6 +145,23 @@ class Parid:
     def se_charge(self):
         """Change son statut en charge"""
         self.statut = CHARGE
+    
+    def ecrire(self, objet_id):
+        """Ecrit l'objet_id dans le dictionnaire.
+        
+        Si l'objet_id est déjà chargé, lève une exception.
+        
+        """
+        groupe = objet_id.id.groupe
+        n_id = objet_id.id.id
+        ancien_trace = self.traces.get(objet_id.id)
+        if ancien_trace:
+            raise RuntimeError("L'objet_id {} a déjà été chargé :\n" \
+                    "{}\n{}".format(objet_id, ancien_trace,
+                    traceback.format_stack()))
+        
+        self.traces[objet_id.id] = traceback.format_stack()
+        self.groupes[groupe][n_id] = objet_id
 
 # Création de l'instance
 parid = Parid()

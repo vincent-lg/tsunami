@@ -1,0 +1,136 @@
+h1. BaseObj
+
+La [[GlossaireClasse|classe]] @BaseObj@ doit être la classe-mère des [[GlossaireClasse|classes]] dont les objets doivent être enregistrés en fichier. Elle met en place un certain nombre de mécanismes, autant que possible transparents pour le développeur.
+
+Table des matières :
+
+{{toc}}
+
+h2. Principe général
+
+La plupart des [[GlossaireClasse|classes]] de project:kassie doivent hériter de @BaseObj@. Si les objets qu'elles produisent doivent être enregistrés en fichier, c'est indispensable. Dès lors que votre objet doit être conservé d'une session de project:kassie à l'autre, il doit être enregistré et doit donc hériter, directement ou indirectement, de @BaseObj@.
+
+Note : [[ObjetID]] et [[Unique]] héritent elles aussi de @BaseObj@. Si les objets produits par votre [[GlossaireClasse|classe]] doivent être enregistrés directement dans un fichier (avoir un fichier pour eux tout seul), votre [[GlossaireClasse]] devra hériter de [[ObjetID]] ou [[Unique]]. Ces deux [[GlossaireClasse|classes]] héritant de @BaseObj@, elles en reprennent les attributs et méthodes, ainsi que les effets de bord.
+
+h2. Le constructeur
+
+Le constructeur de @BaseObj@ ne prend aucun paramètre. Il est impératif qu'il soit appelé par le constructeur de votre [[GlossaireClasse|classe]]-fille :
+
+<pre><code class="python">
+from abstraits.obase import BaseObj
+
+class NomClasse(BaseObj):
+ 
+ def __init__(self):
+ BaseObj.__init__(self)
+ # ...
+</code></pre>
+
+Cela ne veut pas dire que votre constructeur ne peut prendre aucun paramètre.
+
+Dans tous les cas, votre classe doit également redéfinir la méthode spéciale @__getnewargs__@.
+
+h2. La méthode spéciale @__getnewargs__@
+
+Il faut être conscient du fait que, quand un objet de type @BaseObj@ est récupéré depuis un fichier, son constructeur est appelé. Cela permet notamment d'ajouter de nouveaux attributs à l'objet sans difficulté.
+
+Pour un exemple concret, voir plus bas l'[[#Exemple de récupération d'un BaseObj|Exemple de récupération d'un BaseObj]].
+
+Cependant, si votre constructeur prend des paramètres, Python ne peut pas deviner de quoi il s'agit. Il faut donc redéfinir la méthode @__getnewargs__@ qui retourne un tuple contenant, dans l'ordre, les informations à transmettre au constructeur.
+
+Voici un exemple issu de la classe @Membre@ définie dans le module primaires @perso@ :
+
+<pre><code class="python">
+from abstraits.obase import BaseObj
+
+# (...)
+
+class Membre(BaseObj):
+ 
+ """Classe définissant un membre, une partie du corps d'un personnage.
+ Chaque personnage possède un squelette, qui peut être propre à sa race
+ ou à une personnalisation propre. Certains PNJ, par exemple, auront
+ des squelettes hors de la définition de toute race;
+ 
+ """
+ 
+ def __init__(self, nom, modele=None, parent=None):
+ """Constructeur d'un membre"""
+ BaseObj.__init__(self)
+ self.nom = nom
+ self.flags = AUCUN_FLAG
+ self.statut = "entier"
+ self.equipe = None # l'objet équipé à cet emplacement
+ self.tenu = None # l'objet tenu
+ self.parent = parent
+ 
+ # Copie du modèle si existe
+ if modele:
+ self.nom = modele.nom
+ self.flags = modele.flags
+ 
+ def __getnewargs__(self):
+ return ("", )
+</code></pre>
+
+Ici, la classe @Membre@ ne prend qu'un paramètre obligatoire : le nom du membre. La méthode @__getnewargs__@ retourne donc un tuple contenant une chaîne vide.
+
+Si, à la récupération d'un membre, un nom est défini dans l'objet enregistré (ce qui est sommes toute probable), il écrasera de toute façon la chaîne vide que le constructeur a écrit. Les valeurs définies par le constructeur sont des valeurs par défaut, souvent modifiées par le programme.
+
+Si votre constructeur ne prend aucun paramètre, vous devez quand même définir une méthode @__getnewargs__@ retournant un tuple vide. Sinon, au moment de créer ou d'enregistrer l'objet, Python lèvera une exception @NotImplementedError@.
+
+Exemple d'une classe héritée de @BaseObj@ ne prenant aucun paramètre :
+
+<pre><code class="python">
+from abstraits.obase import BaseObj
+
+class NomClasse(BaseObj):
+ 
+ """Documentation de la classe..."""
+ 
+ def __init__(self):
+ """Constructeur de la classe."""
+ BaseObj.__init__(self)
+ # Autres attributs...
+ 
+ def __getnewargs__(self):
+ return ()
+</code></pre>
+
+h2. Clôturer le constructeur
+
+La dernière ligne de votre constructeur doit indiquer au @BaseObj@ que votre objet a fini d'être construit. Ce n'est pas à proprement parlé un impératif, mais c'est préférable pour la cohérence des données. Utilisez pour se faire la méthode @_construire@ :
+
+<pre><code class="python">
+from abstraits.obase import BaseObj
+
+class NomClasse(BaseObj):
+ 
+ def __init__(self):
+ BaseObj.__init__(self)
+ # On écrit d'autres attributs
+ self.attribut = "quelque chose"
+ self.autre_attribut = "autre chose"
+ self._construire()
+ 
+ def __getnewargs__(self):
+ return ()
+</code></pre>
+
+h2. Attributs définis
+
+Les attributs suivants sont définis et ne doivent pas être touchés, surtout pas écrits, dans les classes héritant de @BaseObj@ :
+
+* @_statut@ : le statut de l'objet
+* @_dict_version@ : le dictionnaire des versions de l'objet
+* @_id_base@ : l'identifiant du @BaseObj@ manipulé. Il doit être différent pour chaque objet. Il s'agit d'une forme d'ID persistant à l'enregistrement
+* @_ts@ : la date et l'heure précise à laquelle l'objet a été enregistré en fichier. Cette information est nécessaire si le @BaseObj@ a été enregistré dans plusieurs fichiers distincts.
+
+Le dictionnaire des versions est utile pour la [[MiseAJourBaseObj|mise à jour automatique]] des @BaseObj@. Cette fonctionnalité permet de mettre à jour l'objet si sa structure change (par exemple, un attribut change de nom). Pour mettre automatiquement à jour un @BaseObj@, référez-vous à la [[MettreAJourBaseObj|rubrique consacrée]].
+
+h2. Méthodes définies
+
+* [[Développement|Revenir à la rubrique développement]]
+* [[Index|Revenir à l'index]]
+
+h1. BaseObj

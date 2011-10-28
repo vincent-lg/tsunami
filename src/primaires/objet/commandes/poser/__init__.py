@@ -63,5 +63,5 @@ class CmdPoser(Commande):
             pose += 1
         
         personnage << "Vous posez {}.".format(objet.get_nom(pose))
-        personnage.salle.envoyer("{} pose {}.".format(personnage.nom,
-                    objet.get_nom(pose)), (personnage, ))
+        personnage.salle.envoyer("{{}} pose {}.".format(
+                    objet.get_nom(pose)), personnage)

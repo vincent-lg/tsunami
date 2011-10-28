@@ -28,35 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'distinction'"""
+"""Fichier contenant le paramètre 'visible' de la commande 'distinctions'."""
 
-from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.masque.parametre import Parametre
 
-class CmdDistinction(Commande):
+class PrmVisible(Parametre):
     
-    """Commande 'distinction'.
+    """Commande 'distinctions visible'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "distinction", "distinction")
-        self.groupe = "joueur"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "visible", "visible")
         self.schema = "(<message>)"
-        self.aide_courte = "manipule votre distinction anonyme"
+        self.aide_courte = "manipule la distinction visible"
         self.aide_longue = \
-            "Cette commande permet d'afficher ou de modifier votre " \
-            "distinction anonyme. Il s'agit de la description que verront " \
-            "les autres personnages quand vous ferez une action. " \
-            "En effet, les personnages ne vous connaissant pas ne voient " \
-            "pas votre nom mais la distinction anonyme que vous spécifiez. " \
-            "Votre destinction pourrait être, par exemple : |ent|un jeune nain|ff|. " \
-            "Entrez la commande %distinction% sans argument pour voir votre " \
-            "distinction anonyme actuelle. Si vous précisez un argument à la commande " \
-            "%distinction%, votre distinction anonyme sera modifiée."
+            "Cette commande permet, sans paramètre, d'afficher la " \
+            "distinction anonyme visible de votre personnage. Cette distinction est " \
+            "utilisée quand votre personnage fait une action en étant " \
+            "visible. Pour la modifier, entrez %distinctions% " \
+            "%distinctions:visible% |ent|votre nouvelle distinction|ff|."
     
     def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        if dic_masques["message"] is not None:
+        """Interprétation du paramètre"""
+        message = ""
+        if dic_masques["message"]:
             message = dic_masques["message"].message
-        print("A compléter...")
+        
+        if message:
+            # Change la distinction anonyme
+            message = message[0].lower() + message[1:]
+            personnage.distinction_visible = message
+            personnage << "Votre distinction visible est à présent {}.".format(
+                    message)
+        else:
+            personnage << "Votre distinction visible actuelle : {}.".format(
+                    personnage.get_distinction_visible())

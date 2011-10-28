@@ -146,19 +146,29 @@ class BaseType(ObjetID, metaclass=MetaType):
         else:
             return nom + " " + self.etat_pluriel
     
+    def est_de_type(self, nom_type):
+        """Retourne True si le type d'objet est de celui entré ou dérivé.
+        
+        Par exemple, si on test si une épée est une arme, retournera True
+        car le type 'arme' a pour classes-filles 'épée' (notamment).
+        
+        """
+        classe = type(self).importeur.objet.types[nom_type]
+        return isinstance(self, classe)
+    
     # Actions sur les objets
     @staticmethod
     def regarder(objet, personnage):
         """Le personnage regarde l'objet"""
         salle = personnage.salle
         moi = "Vous regardez {} :".format(objet.nom_singulier)
-        autre = "{} regarde {}.".format(personnage.nom, objet.nom_singulier)
+        autre = "{{}} regarde {}.".format(objet.nom_singulier)
         description = str(objet.description)
         if not description:
             description = "Il n'y a rien de bien intéressant à voir."
         
         moi += "\n\n" + description
-        salle.envoyer(autre, (personnage, ))
+        salle.envoyer(autre, personnage)
         return moi
 
 ObjetID.ajouter_groupe(BaseType)

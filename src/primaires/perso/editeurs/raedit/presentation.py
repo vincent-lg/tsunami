@@ -84,7 +84,7 @@ class EdtPresentation(Presentation):
             "|cmd|féminin|ff| pour ajouter ceux-là. Si\n" \
             "vous envoyez un genre déjà dans la liste, il sera supprimé.\n" \
             "Entrez |cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
-            "Genre(s) actuel(s) : |bc|{objet.str_genres}|ff|"
+            "Genre(s) actuel(s) :\n      {objet.tableau_genres}"
         
         # Stats
         stats = self.ajouter_choix("stats", "s", EdtStats, \

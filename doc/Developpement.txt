@@ -1,0 +1,281 @@
+h1. Développement de project:kassie
+
+Cette rubrique est une documentation à l'adresse du développeur souhaitant étendre les fonctionnalités de project:kassie en modifiant son code source.
+
+Table des matières :
+
+{{toc}}
+
+h2. Environnement de développement
+
+Ici se trouve quelques rappels concernant les développeurs qui souhaitent travailler sur project:kassie. Notez que pour plus d'informations, la rubrique [[Installation|installation]] reste plus indiquée :
+
+* project:kassie est développé en "Python":http://www.python.org 3.2
+* La licence du projet est "Open BSD":http://www.openbsd.org/policy.html. Le texte de la licence doit être recopié en tête de chaque fichier créé
+* Les fichiers de code sont au format Unix pour les sauts de ligne
+* Les fichiers de code sont encodés en Utf-8
+
+Ces deux derniers points vous encouragent à utiliser un éditeur autre que le bloc-notes Windows. Je vous conseille, si vous êtes sous Windows, soit "notepad2":http://www.framasoft.net/article2917.html soit "notepad++":http://notepad-plus-plus.org/fr/.
+
+h2. Structure des répertoires de premier niveau
+
+Dans le répertoire @src@ contenant le code source, vous pouvez trouver plusieurs répertoires et fichiers. Voici dans l'ordre les fonctionnalités qu'ils regroupent :
+
+* @abstraits@ : c'est un [[GlossairePackage|package]] assez important de project:kassie. Il contient bon nombre de définitions de [[GlossaireClasse|classes]] qui doivent être héritées pour être utilisées. Vous y trouverez par exemple la [[GlossaireClasse|classe]] abstraite définissant un [[DéveloppementModule|module]] project:kassie, plusieurs autres [[GlossaireClasse|classes]] abstraites contenant les fonctions d'enregistrement en fichier de vos objets, etc. Selon toute probabilité, vous découvrirez les sous-[[GlossairePackage|packages]] contenus ici quand vous en aurez besoin
+* @bases@ : ce [[GlossairePackage|package]] contient la définition de nombreux autres [[GlossairePackage|packages]] et [[GlossaireClasse|classes]]. A la différence du [[GlossairePackage|package]] @abstraits@ ci-dessus, elles peuvent être utilisées telles qu'elles, sans être héritées au préalable. Dans ce [[GlossairePackage|package]], vous trouverez notamment l'analyseur de configuration [[DéveloppementAnaconf|anaconf]], l'[[DéveloppementImporteur|importeur]], la base de la hiérarchie d'[[GlossaireException|exceptions]] propres à project:kassie et de nombreuses autres choses. Là encore, vous en découvrirez plus par la suite
+* @corps@ : c'est un [[GlossairePackage|package]] encore assez petit et peu destiné à contenir beaucoup de choses. Il contient en effet les informations qui sont propres au corps de project:kassie. Vous trouverez plus bas une définition plus complète du corps et des modules project:kassie
+* @primaires@ : c'est sans doute le [[GlossairePackage|package]] le plus important à l'heure actuel. Il contient en effet les modules primaires de project:kassie (là encore, voir plus bas pour plus d'informations)
+* @reseau@ : ce [[GlossairePackage|package]], comme son nom l'indique, contient plusieurs [[GlossaireClasse|classes]] et fonctions utilisée dans le réseau. Selon toute vraisemblance, vous n'aurez besoin de descendre dans ce [[GlossairePackage|package]] que si vous voulez étendre les possibilités réseaux de project:kassie, c'est-à-dire assez rarement
+* @secondaires@ : ce [[GlossairePackage|package]] contient les modules secondaires de project:kassie (voir plus bas)
+* @__init__.py@ : ce fichier sert principalement à définir @src@ comme un [[GlossairePackage|package]] en "Python":http://www.python.org. Il contient quelques informations générales sur project:kassie, sous la forme de commentaires
+* @kassie.py@ : c'est le fichier qui lance project:kassie. Il est clairement documenté et bien qu'il soit assez important par la taille, si vous prenez le temps de lire les commentaires en-tête du fichier, chaque étape est expliquée clairement
+* @lib.py@ : enfin, ce fichier permet d'utiliser les bibliothèques définies dans le répertoire @kassie/lib@. Ces bibliothèques ne sont pas développées par l'équipe de project:kassie mais ont été intégrées, conformément aux licences de ces bibliothèques, dans le code de project:kassie pour être utilisées dans le corps du programme.
+
+h2. Architecture modulaire
+
+L'architecture de project:kassie est composée de trois structures :
+
+* Le corps
+* Les modules primaires
+* Les modules secondaires
+
+h3. Le corps
+
+Le corps (qu'on retrouve sous le terme de noyau dans d'autres applications) est au centre de project:kassie. Le projet ne peut fonctionner sans lui. Il gère le réseau, il charge les [[DéveloppementModule|modules]] de project:kassie, il fait tourner la [[DéveloppementBoucleSynchro|boucle synchro]] du programme et arrête les [[DéveloppementModule|modules]] à la fin de celui-ci.
+
+Tous les traitements effectués dans le fichier *kassie.py* sont des fonctions du corps.
+
+Le corps peut interragir de façon générique avec les [[DéveloppementModule|modules]] de project:kassie. Cela signifie concrètement qu'il a le droit d'appeler les méthodes définies dans la [[GlossaireClasse|classe]] abstraite @abstraits.module.BaseModule@ mais qu'il ne peut pas appeler des fonctionnalités précises d'un module.
+
+Concrètement, le corps peut appeler la méthode @boucle@ d'un [[DéveloppementModule|module]] car tous les modules la définissent. Elle est en effet définie dans la [[GlossaireClasse|classe]] abstraite @abstraits.module.BaseModule@.
+
+En revanche, le corps ne peut pas appeler une méthode définie par un seul module.
+
+h3. Les modules primaires
+
+project:kassie propose une architecture modulaire qui permet de séparer simplement les fonctionnalités du MUD.
+
+Il existe donc deux types de modules :
+
+* Les modules primaires
+* Les modules secondaires
+
+Les premiers définissent toutes les fonctionnalités indispensables au MUD, celles qu'on a toutes les chances de retrouver d'un jeu à l'autre. Bien entendu, ces [[DéveloppementModule|modules]] peuvent être modifiés et ajoutés, mais rarement supprimés.
+
+En effet, la règle est qu'un module primaire peut appeler d'autres modules primaires. Sans quoi, les relations d'inter-dépendances seraient plutôt complexes.
+
+Un exemple concret est la relation entre le module *perso* et *salle*. Le premier gère les personnages, c'est-à-dire des fonctionnalités communes aux joueurs et aux PNJ. Le second gère les salles de l'univers.
+
+Quand un personnage se déplace, il change de salle et appelle donc des fonctionnalités propres à une salle.
+
+Ceci est autorisé car les modules primaires peuvent s'appeler entre eux. De même, une [[GlossaireClasse|classe]] définie dans un [[DéveloppementModule|module]] peut hériter d'une classe présente dans un autre [[DéveloppementModule|module]] primaire.
+
+Pour plus d'informations, référez-vous à la rubrique décrivant les [[DéveloppementModule|modules de Kassie]].
+
+h3. Les modules secondaires
+
+Les [[DéveloppementModule|modules]] secondaires de project:kassie contiennent des éléments optionnels du MUD. En effet, un [[DéveloppementModule|module]] secondaire ne peut être utilisé, par le corps, les modules primaires et les autres modules secondaires, qu'au travers de ses méthodes génériques.
+
+L'idée est que l'on doit pouvoir à tout instant retirer un [[DéveloppementModule|module]] secondaire du projet sans empêcher l'exécution de project:kassie. Biensûr, certaines fonctionnalités n'existeront plus, mais le programme continuera à s'exécuter malgré tout.
+
+Il est donc permi d'appeler la méthode @boucle@ d'un [[DéveloppementModule|module]] secondaire puisque c'est une méthode générique, définie dans @abstraits.module.BaseModule@. En revanche, on ne peut pas appeler de méthode spécifique à ce [[DéveloppementModule|module]].
+
+Notez que le "on ne peut pas" est une convention. Aucun mécanisme ne vous interdira de le faire. Ce reste très déconseillé cependant, vous ne pourrez plus retirer de la liste des [[DéveloppementModule|modules]] votre [[DéveloppementModule|module]] secondaire si un autre en a besoin pour s'exécuter.
+
+h3. Module primaire ou secondaire
+
+Réfléchissez avant de créer un nouveau [[DéveloppementModule|module]] : si d'autres [[DéveloppementModule|modules]] seront amenés à l'utiliser, c'est un [[DéveloppementModule|module]] primaire. Sinon, c'est un [[DéveloppementModule|module]] secondaire.
+
++Exemples+
+
+* Les [[DéveloppementModule|Modules]] primaires
+** *perso* gérant les personnages
+** *salle* gérant les salles
+** *communication* gérant la communication dans le MUD
+** ... d'autres modules dont les autres ont besoin pour s'exécuter
+* Les [[DéveloppementModule|modules]] secondaires
+** *stat* gérant des statistiques sur le MUD. Ce module n'est que facultatif
+** *jeux* gérant des plateaux de jeux et types de jeux. Là encore, ce module peut être retiré à tout instant
+** ... d'autres modules dont les autres n'ont pas besoin pour s'exécuter
+
+h2. Structure d'un module
+
+Un [[DéveloppementModule|module]], primaire ou secondaire, possède des données génériques que l'on retrouve d'un module à l'autre.
+
+h3. Le dossier du module
+
+C'est naturellement le premier point, le plus évident. Pour créer un module, il faut créer un dossier portant le nom du module. Ce nouveau dossier doit se trouver :
+
+* Soit dans le répertoire *primaires* si c'est un [[DéveloppementModule|module]] primaire
+* Soit dans le répertoire *secondaires* si c'est un [[DéveloppementModule|module]] secondaire.
+
++*ATTENTION : une fois chargé dans l'importeur, les [[DéveloppementModule|modules]] ne sont pas hiérarchisées en fonction de leur type primaire ou secondaire. Cela signifie que si vous définissez dans le répertoire primaires et dans le répertoire secondaires deux modules portant le même nom, l'un d'entre eux sera écrasé.*+
+
+Après avoir créé ce dossier, il vous est conseillé (ce n'est pas une obligation) d'ajouter une ligne décrivant le module que vous avez ajouté dans le fichier @__init__.py@ du [[GlossairePackage|package]] dans lequel vous avez créé le module (*primaires* ou *secondaires*). Suivez pour ce faire la syntaxe présent dans ce fichier.
+
+h3. Le fichier @__init__.py@
+
+C'est le fichier qui contiendra le coeur de votre [[DéveloppementModule|module]]. Vous devez le créer dans le dossier ajouté à l'étape précédente.
+
+Il doit contenir une classe appelée @Module@, héritée de @BaseModule@. Ainsi, le code minimal que vous trouverez dans ce fichier sera :
+
+<pre><code class="python">
+from abstraits.module import BaseModule
+
+class Module(BaseModule):
+ 
+ """Description courte du module sur une ligne.
+ 
+ Description plus longue du module
+ sur plusieurs lignes
+ décrivant son rôle dans Kassie, éventuellement les commandes
+ qu'il ajoute, les éditeurs, les fonctionnalités.
+ 
+ """
+ 
+ def __init__(self):
+ """Constructeur du module <insérez le nom>"""
+ BaseModule.__init__(self, "<insérez le nom>", "<insérez le type>")
+</code></pre>
+
++*ATTENTION : la classe doit s'appeler @Module@ et pas le nom du module.*+
+
+Le nom du [[DéveloppementModule|module]]] peut être le même que celui du répertoire créé à l'étape précédente. Il s'agit d'un nom d'affichage, rien de plus.
+
+Le type est à choisir entre @"primaire"@ et @"secondaire"@.
+
+Il existe de nombreuses méthodes génériques définies dans la classe @BaseModule@ que vous pouvez redéfinir dans votre [[DéveloppementModule|module]]. Pour plus d'informations, je vous renvoie à la documentation contenue dans le fichier @abstraits/module/__init__.py@ ou,, si elle n'est pas assez claire, à la [[CreerModule|rubrique consacrée à la création d'un module]].
+
+Notez que les deux étapes précédentes (création du répertoire et création du fichier @__init__.py@) sont les deux seules nécessaires à l'ajout du module dans project:kassie. Quand vous lancerez Kassie, bien que vous ne le voyiez pas (vous pouvez toujours mettre une ligne de @print@ dans le constructeur de votre module pour le constater), votre [[DéveloppementModule|module]] est bien créé.
+
+Pour le vérifier, vous pouvez également vous connecter sur votre MUD et, depuis un compte administrateur, entrer la commande :
+
+<pre>
+module liste
+</pre>
+
+ou, si vos commandes sont en anglais :
+
+<pre>
+module list
+</pre>
+
+Vous devriez voir votre [[DéveloppementModule|module]] nouvellement créé dans la liste qui s'affiche alors.
+
+Les étapes qui vont suivre sont facultatives en fonction du [[DéveloppementModule|module]] que vous voulez créer.
+
+h3. Des contextes dans vos modules
+
+h3. Des commandes dans votre module
+
+h3. Des masques dans votre module
+
+h3. Des éditeurs dans votre module
+
+Les éditeurs dans project:kassie sont des objets permettant à un utilisateur (joueur ou administrateur indifféremment) d'éditer une ou plusieurs informations.
+
+Concrètement, la commande *redit* ouvre l'éditeur de salle. Celui-ci permet à un bâtisseur de modifier le titre de la salle, sa description, ses sorties et bien d'autres choses.
+
+L'éditeur se charge de l'affichage des informations à l'utilisateur et des commandes que l'utilisateur peut entrer. L'éditeur étant un [[DéveloppementContexte|contexte]] à part entière, il propose en effet des commandes différentes du mode connecté.
+
+Dans un [[DéveloppementModule|module]], il est d'usage de placer les [[DéveloppementÉditeur|éditeurs]] dans un [[GlossairePackage|package]] appelé *editeurs*. Ceci n'est encore qu'une convention mais il vous est encouragé de la respecter.
+
+Dans ce [[GlossairePackage|package]] *editeurs*, chaque commande d'édition dispose d'un [[GlossairePackage|package]] propre. Par exemple, dans le [[DéveloppementModule|module]] *perso*, vous trouvez le dossier *editeurs* et dedans le dossier *raedit* et *skedit*.
+
+Dans le [[GlossairePackage|package]] de la commande d'édition, vous trouvez plusieurs fichiers, un par [[DéveloppementÉditeur|éditeur]]. Un [[DéveloppementÉditeur|éditeur]] ne traite en effet qu'une étape dans l'édition.
+
+Par exemple, dans l'[[DéveloppementÉditeur|éditeur]] de salle, on trouve un fichier contenant l'[[DéveloppementÉditeur|éditeur]] appelé pour modifier la zone de la salle, un autre pour modifier le mnémonic, un autre pour les sorties...
+
+Pour plus de confort, des [[DéveloppementÉditeur|éditeurs]] génériques sont mises à disposition dans @primaires.interpreteur.editeurs@. Vous pouvez les utiliser directement ou les hériter.
+
+Cette partie n'est qu'une introduction aux [[DéveloppementÉditeur|éditeurs]]. Le sujet est assez vaste si bien qu'une rubrique entière y est consacrée.
+
+Pour plus d'informations, consultez donc la [[DéveloppementÉditeur|rubrique consacrée aux éditeurs]].
+
+h2. Les objets de project:kassie
+
+Cette rubrique ne documente pas les objets dans le sens où on l'entend dans l'univers d'un MUD. Il s'agit ici des objets dans le sens programmation du terme.
+
+Si vous créez des [[GlossaireClasse|classes]] dont les objets devront être enregistrés en fichier, vous devez l'hériter d'une des trois [[GlossaireClasse|classes]] suivantes :
+
+* [[BaseObj|BaseObj]]
+* [[ObjetID|ObjetID]]
+* [[Unique|Unique]]
+
+h3. [[BaseObj]], [[ObjetID]] ou [[Unique]]
+
+Avant de créer toute classe, posez-vous la question :
+
+bq. Est-ce que les objets construits sur ma classe doivent être enregistrés dans un fichier ?
+
+La plupart des données que traitent project:kassie sont destinées à être enregistrées, il est donc probable que la réponse à cette première question soit *oui*. Si ce n'est pas le cas cependant, vous n'avez pas besoin d'hériter votre [[GlossaireClasse|classe]] d'une des trois ci-dessus.
+
+Si vous n'êtes pas sûr de la réponse, demandez-vous simplement si, d'un redémarrage du MUD à l'autre, les objets que vous créez doivent être toujours là. Si c'est le cas, vous devrez hériter votre classe soit de [[BaseObj]], [[ObjetID]] ou [[Unique]].
+
+La seconde question à vous poser est la suivante :
+
+bq. Est-ce qu'un objet construit sur ma classe doit être enregistré dans un fichier à lui tout seul ?
+
+C'est par exemple le cas des joueurs, des salles, des objets, des prototypes d'objets, des PNJ et de bien d'autres : un fichier d'enregistrement contient un objet avec tous ses attributs.
+
+C'est également le cas des canaux, des groupes d'utilisateurs, des conversations et bien d'autres.
+
+En revanche, les membres ou les stats d'un personnage n'ont pas un fichier par objet : ils sont enregistrées en tant qu'attributs d'un personnage. Inutile de les enregistrer à part, ça ferai beaucoup de fichier pour rien.
+
+Si vous ne savez pas quelle réponse donner à cette question, demandez-vous si les objets créés sur votre classe seront tous des attributs d'un objet enregistré en fichier (par exemple, les attributs d'un joueur), vous pouvez répondre *non* : ils n'auront pas un fichier pour eux tout seul.
+
+Dans ce cas, votre [[GlossaireClasse|classe]] doit hériter de [[BaseObj]].
+
+Sinon, vous devrez choisir entre [[ObjetID]] et [[Unique]]. Ces deux classes sont conçues pour enregistrer les objets issus de vos [[GlossaireClasse|classes]] à s'enregistrer dans des fichiers propres.
+
+Choisir entre [[ObjetID]] et [[Unique]] se fait en répondant à une troisième question :
+
+bq. Est-ce que plusieurs objets seront créés sur cette [[GlossaireClasse|classe]] ?
+
+Si c'est *oui*, choisissez [[ObjetID]]. Sinon, choisissez [[Unique]].
+
+Par exemple, les mudmails, les canaux, les conversations, les groupes d'utilisateurs sont enregistrés dans un seul fichier : c'est en fait le conteneur de ces types qui est enregistré. On n'enregistre pas chaque mudmail dans un fichier, on enregistre l'objet contenant tous les mudmails dans un seul fichier.
+
+Les joueurs, salles, PNJ au contraire voient se créer un nouveau fichier à chaque fois qu'on crée un nouvel objet. Chaque objet est enregistré dans un fichier distinct.
+
+A présent que vous avez choisi entre [[BaseObj]], [[ObjetID]] et [[Unique]], rendez-vous dans la rubrique consacrée à la classe en question en cliquant sur [[BaseObj]], [[ObjetID]] ou [[Unique]].
+
+h2. Les contextes
+
+Les [[DéveloppementContexte|contextes]] dans project:kassie représentent les informations attendues par un joueur à un moment défini. L'exemple le plus évident est l'enchaînement des [[DéveloppementContexte|contextes]] menant à la connexion d'un joueur.
+
+* Le premier [[DéveloppementContexte|contexte]] est l'écran de connexion. Le [[GlossaireMOTD|MOTD]] du MUD s'affiche et on demande au joueur d'entrer le nom de son compte ou *nouveau* pour en créer un
+* Si le joueur entre un nom de compte existant, il est redirigé vers un second contexte lui demandant son mot de passe
+* ...
+* A la fin, le joueur est connecté. Il passe dans le [[DéveloppementContexte|contexte]] *mode connecté* et c'est dans ce [[DéveloppementContexte|contexte]] qu'il peut entrer les [[DéveloppementCommande|commandes]] définies.
+
+Si les [[DéveloppementContexte|contextes]] sont beaucoup utilisés à la connexion d'un joueur et pour modéliser les étapes de création d'un nouveau compte ou joueur, ils peuvent être aussi utilisés quand le joueur est connecté.
+
+Par exemple, quand le joueur se connecte à un canal puis s'immerge dedans. Les commandes à entrer pour s'immerger dans le canal *hrp* sont :
+
+* @+hrp@ pour se connecter au canal (si ce n'est déjà fait)
+* @:hrp@ pour s'immerger dans le canal.
+
+Dans le mode d'immersion, tout ce que vous entrez sera envoyé au canal (sans besoin de le précéder d'une commande) et vous recevrez les messages du canal dans un affichage proche des canaux "IRC":http://fr.wikipedia.org/wiki/Internet_Relay_Chat.
+
+Dans ce contexte, vous n'avez donc pas accès aux commandes du *mode connecté*. Le [[DéveloppementContexte|contexte]] *d'immersion* gère lui-même les commandes qu'envoie le joueur et les transmet au canal.
+
+Quand vous entrez en immersion, le [[DéveloppementContexte|contexte]] ne remplace pas le contexte *mode connecté* mais s'ajoute dans une forme de [[GlossaireFileContexte|file des contextes]]. Le joueur est toujours connecté au [[DéveloppementContexte|contexte]] *mode connecté*, mais ce n'est plus celui utilisé par défaut pour traiter les commandes.
+
+La [[GlossaireClasse|classe]]-mère des [[DéveloppementContexte|contextes]] se nomme @Contexte@ et est définie dans le fichier @primaires/interpreteur/contexte/__init__.py@. Dans un module, les [[DéveloppementContexte|contextes]] définis sont plus généralement dans un [[GlossairePackage|package]] *contextes*. Dans ce [[GlossairePackage|package]], chaque [[DéveloppementContexte|contexte]] se trouve dans un fichier distinct.
+
+Pour en savoir plus, consultez la [[DéveloppementContexte|rubrique consacrée aux contextes]] de project:kassie.
+
+h2. Les commandes, masques et éditeurs
+
+h2. Autres sujets
+
+Voici d'autres sujets plus spécifiques, parfois propres à un unique module, parfois à une fonctionnalité. Prenez-les comme des guides pour étendre de façon spécifique à project:kassie.
+
+* [[DéveloppementJeux|Créer un nouveau jeu dans Kassie]]
+* [[DéveloppementScripting|Étendre les fonctionnalités proposées par le scripting]]
+* [[DéveloppementTypesObjets|Obtenir de l'aide sur la création et manipulation des types d'objets]]
+
+h2. Remarques ou suggestions
+
+Si vous avez des remarques à faire sur cette documentation, des sujets que vous voudriez voir traiter, envoyez un e-mail à l'Équipe project:kassie à l'adresse equipe@kassie.fr.

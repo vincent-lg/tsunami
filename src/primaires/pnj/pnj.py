@@ -104,9 +104,13 @@ class PNJ(Personnage):
     
     nom = property(_get_nom, _set_nom)
     
-    def envoyer(self, msg):
+    def envoyer(self, msg, *personnages, **kw_personnages):
         """Envoie un message"""
         pass
+    
+    def get_nom_pour(self, personnage):
+        """Retourne le nom pour le personnage passé en paramètre."""
+        return self.nom_singulier
     
     def detruire(self):
         """Destruction du PNJ."""

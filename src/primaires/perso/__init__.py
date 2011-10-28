@@ -47,6 +47,7 @@ from .squelette import Squelette
 from .niveaux import Niveaux
 from .templates.niveau import Niveau
 from .templates.talent import Talent
+from .templates.etat import Etat
 
 class Module(BaseModule):
     
@@ -73,6 +74,7 @@ class Module(BaseModule):
         self.gen_niveaux = None
         self.niveaux = {}
         self.talents = {}
+        self.etats = {}
     
     def config(self):
         """Méthode de configuration.
@@ -229,3 +231,14 @@ class Module(BaseModule):
         
         talent = Talent(self.niveaux, cle, nom, niveau, difficulte)
         self.talents[cle] = talent
+    
+    def ajouter_etat(self, cle):
+        """Ajoute un état dans le dictionnaire."""
+        if cle in self.etats:
+            raise ValueError("l'état {} existe déjà".format(cle))
+        
+        etat = Etat(cle)
+        self.etats[cle] = etat
+        
+        return etat
+

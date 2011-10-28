@@ -55,8 +55,7 @@ class CmdPorter(Commande):
                 personnage.salle.objets_sol.retirer(objet)
                 personnage << "Vous équipez {}.".format(objet.nom_singulier)
                 personnage.salle.envoyer(
-                    "{} équipe {}.".format(personnage.nom,
-                    objet.nom_singulier), (personnage, ))
+                    "{{}} équipe {}.".format(objet.nom_singulier), personnage)
                 return
         
         personnage << "|err|Vous ne pouvez équiper {}.|ff|".format(

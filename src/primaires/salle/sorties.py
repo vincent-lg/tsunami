@@ -189,16 +189,18 @@ class Sorties(BaseObj):
             nom = NOMS_ABREGES[nom]
         return nom
     
-    def get_nom_long(self, nom):
-        """Retourne le nom long correspondant au nom court éventuellement
-        entré.
+    def get_nom_long(self, nom, alerter=True):
+        """Retourne le nom long correspondant au nom court entré.
+        
+        Si le nom n'est pas un nom de direction et que alerter est à True,
+        lève une exception KeyError.
         
         """
         for long, abr in NOMS_ABREGES.items():
             if abr == nom:
                 return long
         
-        if nom not in NOMS_SORTIES.keys():
+        if nom not in NOMS_SORTIES.keys() and alerter:
             raise KeyError("La sortie {} n'existe pas".format(
                     nom))
         

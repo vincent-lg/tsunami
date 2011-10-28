@@ -33,6 +33,7 @@
 """
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.format.fonctions import echapper_accolades
 
 class CmdDire(Commande):
     
@@ -56,8 +57,9 @@ class CmdDire(Commande):
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         message = dic_masques["message"].message
+        message = echapper_accolades(message)
         salle = personnage.salle
         moi = "Vous dites : " + message
-        autre = personnage.nom + " dit : " + message
+        autre = "{} dit : " + message
         personnage.envoyer(moi)
-        salle.envoyer(autre, (personnage, ))
+        salle.envoyer(autre, personnage)

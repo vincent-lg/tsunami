@@ -43,7 +43,7 @@ class CmdTuer(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "tuer", "kill")
-        self.schema = "<nom_joueur>"
+        self.schema = "<personnage_present>"
         self.aide_courte = "attaque un personnage présent"
         self.aide_longue = \
             "Cette commande attaque un personnage présent dans la pièce, " \
@@ -52,11 +52,14 @@ class CmdTuer(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
-        attaque = dic_masques["nom_joueur"].joueur
+        attaque = dic_masques["personnage_present"].personnage
         # A supprimer quand le masque sera créé
         if attaque.salle is not personnage.salle:
             return
         
+        personnage.agir("combat")
+        personnage.cle_etat = "combat"
+        attaque.cle_etat = "combat"
         type(self).importeur.combat.creer_combat(personnage.salle,
                 personnage, attaque)
         personnage << "Vous attaquez {}.".format(attaque.nom)

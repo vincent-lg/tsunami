@@ -103,6 +103,11 @@ class Module(BaseModule):
         return [t.nom_type for t in o_types.values()]
     
     @property
+    def types(self):
+        """Retourne un dictionnaire des types."""
+        return dict(o_types)
+    
+    @property
     def types_premier_niveau(self):
         """Retourne un dictionnaire des types du premier niveau."""
         return BaseType.types

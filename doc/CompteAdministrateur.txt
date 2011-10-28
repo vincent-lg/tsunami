@@ -1,0 +1,99 @@
+h1. Création d'un compte administrateur
+
+Retour à la rubrique [[Configuration|configuration]] ou aux [[FichiersConfiguration|fichiers de configuration]].
+
+Un compte administrateur donne accès aux [[CommandesConfiguration|commandes de configuration]] de project:kassie. Sans lui, vous ne pourrez compléter la [[Configuration|configuration]] de votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon.
+
+h2. Explications sur les groupes d'utilisateurs
+
+Les groupes d'utilisateurs sur project:kassie caractérisent les catégories de personnages sur votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon et les commandes qu'ils ont le droit d'utiliser.
+
+Par défaut, project:kassie crée trois groupes d'utilisateurs :
+
+* *pnj* : le groupe dans lequel se trouvent tous les PNJ
+* *joueur* : le groupe dans lequel se trouve les joueurs créés. Ils ont accès aux commandes disponibles par les PNJ plus quelques-unes dont les PNJ n'ont pas l'usage (notamment la commande *quitter/quit*)
+* *administrateur* : c'est le groupe qui a le plus de pouvoir sur project:kassie. Toutes les [[CommandesConfigurations|commandes de configuration]] sont disponibles dans ce groupe.
+
+Par défaut donc, quand vous créez un nouveau compte puis un nouveau joueur dans ce compte, il sera réparti dans le groupe *joueur* avec des droits limités. Il existe cependant un compte administrateur dans project:kassie. Tous les joueurs créés dans ce compte seront automatiquement répartis dans le groupe *administrateur* et auront donc accès aux [[CommandesConfiguration|commandes de configuration]].
+
+h2. Création rapide
+
+Sur project:kassie, le compte administrateur est identifié par son nom. Il n'est pas créé par le système (il vous appartient de le faire) et donc le choix du nom de votre compte est déterminant.
+
+Par défaut (cela peut être modifié, vous pouvez voir plus bas comment), le nom du compte administrateur est *admin*.
+
+Pour créer un compte administrateur rapidement (si vous n'avez pas encore modifié les [[FichiersConfiguration|fichiers de configuration]] de prroject:kassie) :
+
+# Lancez project:kassie
+# Connectez-vous sur votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon
+# Entrez *nouveau* pour créer un nouveau compte
+# Entrez *admin* comme nom de compte
+# Laissez-vous guider pour les étapes suivantes (choisissez un encodage, un mot de passe, une adresse e-mail)
+# Créez un joueur (du nom que vous voulez).
+
+Le joueur créé dans le groupe *admin* aura accès aux [[CommandesConfigurations|commandes de configuration]]. Pour le vérifier, entrez *commande* (en français) ou *command* (en anglais). Vous devriez voir de nombreuses autres commandes, inaccessibles aux joueurs.
+
++*ATTENTION*+ : pour un environnement en production (un "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon accueillant des joueurs), il ne vous est pas conseillé de garder le nom *admin* comme compte administrateur. Vous pouvez voir comment modifier cette information ci-dessous.
+
+h2. Pour plus de sécurité, changer le nom du compte administrateur
+
+*admin* comme nom de compte administrateur, c'est pratique (facile à retenir) mais pas très sécuritaire. Si un joueur se connecte à votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon et que le compte administrateur n'existe pas, il saura d'ores et déjà quel nom donner à son compte pour disposer de droits administrateur. Et si votre compte est créé, il aura un peu plus de marge pour essayer de trouver le mot de passe du compte *admin* bien que le "bruteforcing":http://fr.wikipedia.org/wiki/Attaque_par_force_brute soit considéré comme assez délicat à mettre en œuvre sur project:kassie.
+
+Vous renforcerez donc la sécurité de votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon :
+
+# En changeant le nom du compte administrateur
+# En choisissant un mot de passe le moins simple possible.
+
+Le nom du compte administrateur est configurable dans un [[FichiersConfiguration|fichier de configuration]].
+
+Vous devez donc, dans un premier temps, savoir où project:kassie stock vos [[FichiersConfiguration|fichiers de configuration]]. Par défaut, c'est dans votre répertoire personnel :
+
+* Sous Windows XP : *c:\Documents and Settings\nomutilisateur\kassie\config*
+* Sous Windows Vista et 7 : *C:\utilisateurs\nomutilisateur\kassie\config*
+* Sous Linux : */home/nomutilisateur/kassie/config*
+
+Dans ce dossier se trouve plusieurs dossiers et fichiers. Rendez-vous dans le répertoire *connex*, fichier *connex.cfg*.
+
+Ouvrez ce fichier avec un éditeur de texte. Vous devriez voir quelque chose comme ça :
+
+<pre>
+# Ce fichier contient la configuration du module primaire connex.
+# Sont paramétrables diverses options liées à la connexion
+# d'un client et la création de compte / personnage.
+
+
+### Connexion
+...
+</pre>
+
+Descendez plus bas dans le fichier. Une donnée correspond au groupe administrateur :
+
+<pre>
+## Compte administrateur
+# Sur Kassie, un nom de compte est retenu comme étant
+# "le compte administrateur". Tous les joueurs créés dans ce compte seront dans
+# le groupe des administrateurs.
+# Cela vous permet de récupérer facilement le contrôle du MUD, au premier
+# lancement du serveur ou par la suite.
+# Pour des raisons de sécurité, évitez de choisir un nom comme "admin" ou
+# le nom de votre MUD.
+# Changez la valeur par défaut avant de lancer votre MUD.
+compte_admin = "admin"
+</pre>
+
+ odifiez la dernière ligne @compte_admin = "admin"@. Remplacez @admin@ par le nom de groupe que vous voulez. Essayez de choisir quelque chose d'assez peu évident (le nom de votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon n'est pas un choix astucieux) :
+
+<pre>
+compte_admin = "autrenom"
+</pre>
+
+La modification sera effective la prochaine fois que vous relancerez project:kassie.
+
+Si vous avez déjà créé un compte administrateur avant cette modification, les joueurs créés dans ce compte auront toujours les droits d'administrateur. Les nouveaux créés dans ce compte seront cependant des joueurs standards.
+
+h2. Accès aux commandes de configuration
+
+ aintenant que vous avez accès aux [[CommandesConfiguration|commandes de configuration]], vous pouvez lire la [[CommandesConfiguration|rubrique consacrée]].
+
+* [[Index|Retour à l'index]]
+* [[Configuration|Retour à la configuration]]

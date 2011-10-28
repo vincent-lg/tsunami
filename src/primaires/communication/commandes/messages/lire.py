@@ -40,7 +40,7 @@ class PrmLire(Parametre):
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "lire", "read")
-        self.schema = "(<flag_mail>) <id_mail>"
+        self.schema = "(<flag_mail>) (<id_mail>)"
         self.aide_courte = "lit un mudmail"
         self.aide_longue = \
             "Cette sous-commande affiche le contenu d'un message. L'id " \
@@ -50,8 +50,9 @@ class PrmLire(Parametre):
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         mails = type(self).importeur.communication.mails
-        if dic_masques["flag_mail"] is not None:
-            flag = dic_masques["flag_mail"].flag
+        masque_flag = dic_masques["flag_mail"]
+        if masque_flag:
+            flag = masque_flag.flag
             if flag == "recus":
                 mails = mails.get_mails_pour(personnage, RECU)
             elif flag == "brouillons":
@@ -64,10 +65,14 @@ class PrmLire(Parametre):
             mails = mails.get_mails_pour(personnage, RECU)
             mails = [mail for mail in mails if not mail.lu]
         
-        num = dic_masques["id_mail"].id_mail
-        if not mails:
-            personnage << "|err|Aucun message ne correspond à ce numéro.|ff|"
+        if dic_masques["id_mail"] is None and mails == []:
+            personnage << "Pas de nouveau mail."
         else:
+            if dic_masques["id_mail"] is None:
+                num = min(mails,key=lambda mail : mail.date)
+            else:
+                num = dic_masques["id_mail"].id_mail
+            
             i = 1
             r_mail = None
             for mail in mails:

@@ -44,6 +44,7 @@ class ScriptSalle(Script):
     
     def init(self):
         """Initialisation du script"""
+        # Evénement arriver
         evt_arriver = self.creer_evenement("arrive")
         evt_arriver.aide_courte = "un personnage arrive dans la salle"
         evt_arriver.aide_longue = \
@@ -51,11 +52,29 @@ class ScriptSalle(Script):
             "arrive dans la salle, quelque soit sa salle de provenance et " \
             "son moyen de déplacement. Il faut cependant retirer le " \
             "déplacement par |cmd|goto|ff| qui ne déclenche pas cet évènement."
-        
         # Configuration des variables de l'évènement arrive
         var_depuis = evt_arriver.ajouter_variable("depuis", "str")
         var_depuis.aide = "la direction d'où vient le personnage"
         var_salle = evt_arriver.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle actuelle"
         var_perso = evt_arriver.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage se déplaçant"
+        
+        # Evénement sort
+        evt_sort = self.creer_evenement("sort")
+        evt_sort.aide_courte = "un personnage sort de la salle"
+        evt_sort.aide_longue = \
+            "Cet évènement est appelée quand un personnage quitte une " \
+            "salle via un déplacement standard (en entrant un nom de " \
+            "sortie). Le déplacement par |cmd|goto|ff| n'appelle " \
+            "pas cet évènement."
+        
+        # Configuration des variables de l'événement.
+        var_vers = evt_sort.ajouter_variable("vers", "str")
+        var_vers.aide = "la direction où va le personnage"
+        var_salle = evt_sort.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle actuelle"
+        var_destination = evt_sort.ajouter_variable("destination", "Salle")
+        var_destination.aide = "la salle de destination"
+        var_perso = evt_sort.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage se déplaçant"

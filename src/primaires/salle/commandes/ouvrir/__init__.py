@@ -65,5 +65,4 @@ class CmdOuvrir(Commande):
         
         sortie.porte.ouvrir()
         personnage << "Vous ouvrez {}.".format(sortie.nom_complet)
-        salle.envoyer("{} ouvre {}.".format(personnage, sortie.nom_complet),
-                (personnage, ))
+        salle.envoyer("{{}} ouvre {}.".format(sortie.nom_complet), personnage)

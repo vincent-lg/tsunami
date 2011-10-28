@@ -43,6 +43,27 @@ class EdtGenres(Uniligne):
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Uniligne.__init__(self, pere, objet, attribut)
+        self.ajouter_option("a", self.changer_distinction)
+    
+    def changer_distinction(self, arguments):
+        """Change la distinction anonyme.
+        
+        Syntaxe : /a <genre> <distinction>
+        
+        """
+        if len(arguments.split(" ")) < 2:
+            self.pere << "|err|Syntaxe : <genre> <distinction anonyme>|ff|"
+            return
+        
+        nom_genre = supprimer_accents(arguments.split(" ")[0]).lower()
+        distinction = " ".join(arguments.split(" ")[1:])
+        distinction = distinction[0].upper() + distinction[1:]
+        try:
+            self.objet.changer_distinction(nom_genre, distinction)
+        except KeyError:
+            self.pere << "|err|Ce genre est inconnu.|ff|"
+        else:
+            self.actualiser()
     
     def interpreter(self, msg):
         """Interprétation du message"""

@@ -86,5 +86,9 @@ class EntrerEmail(Contexte):
                 self.migrer_contexte("connex:creation:validation")
             else:
                 self.pere.compte.valide = True
+                self.pere.envoyer( \
+                    "\n|att|Félicitations, votre compte a bien été validé !" \
+                    "|ff|\n\nVous pouvez maintenant commencer à créer un " \
+                    "personnage...")
                 self.migrer_contexte("connex:connexion:choix_personnages")
     

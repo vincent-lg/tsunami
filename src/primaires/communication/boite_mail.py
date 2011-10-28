@@ -69,9 +69,9 @@ class BoiteMail(Unique):
         del self._mails[id]
         self.enregistrer()
     
-    def creer_mail(self, expediteur):
+    def creer_mail(self, expediteur, source=None):
         """Cree un message vide et le retourne"""
-        mail = MUDmail(self, expediteur)
+        mail = MUDmail(self, expediteur, source=source)
         self._mails[mail.id] = mail
         self.enregistrer()
         return mail

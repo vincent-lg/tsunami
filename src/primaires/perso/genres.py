@@ -45,9 +45,14 @@ class Genres(BaseObj):
         BaseObj.__init__(self)
         self.parent = parent
         self._genres = { # par défaut
-            "masculin":"masculin",
-            "féminin":"féminin"
+            "masculin": "masculin",
+            "féminin": "féminin"
         }
+        self._distinctions = {
+            "masculin": "un jeune homme",
+            "féminin": "une jeune femme",
+        }
+        
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
     
@@ -69,6 +74,8 @@ class Genres(BaseObj):
     def __delitem__(self, nom):
         """Supprime le genre"""
         del self._genres[nom]
+        if nom in self._distinctions:
+            del self._distinctions[nom]
     
     def ajouter_genre(self, nom, corresp=""):
         """Ajoute un genre"""
@@ -90,3 +97,25 @@ class Genres(BaseObj):
     def liste_genres(self):
         """Retourne une liste des genres"""
         return list(self._genres.keys())
+    
+    @property
+    def tableau_genres(self):
+        """Retourne une chaîne représentant un tableau des genres."""
+        lignes = []
+        for genre, corresp in self._genres.items():
+            tup = (genre, corresp, genre in self._distinctions and \
+                    self._distinctions[genre] or "|err|Inconnue|ff|")
+            lignes.append("      {:>10}    {:>10}    {}".format(*tup))
+        
+        if not lignes:
+            return "Aucun genre"
+        else:
+            return "\n".join(lignes)
+    
+    def changer_distinction(self, nom, distinction):
+        """Change la distinction par défaut du genre."""
+        if nom not in self._genres:
+            raise KeyError(nom)
+        
+        self._distinctions[nom] = distinction
+        self.parent.enregistrer()

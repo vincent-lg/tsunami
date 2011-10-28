@@ -69,5 +69,5 @@ class CmdOspawn(Commande):
             salle.objets_sol.ajouter(objet)
         personnage << "Vous faites apparaître {} du néant.".format(
                 objet.get_nom(nb_obj))
-        salle.envoyer("{} fait apparaître {} du néant.".format(personnage.nom,
-                objet.get_nom(nb_obj)), (personnage, ))
+        salle.envoyer("{{}} fait apparaître {} du néant.".format(
+                objet.get_nom(nb_obj)), personnage)

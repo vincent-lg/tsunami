@@ -30,13 +30,15 @@
 
 """Fichier contenant la classe Test détaillée plus bas."""
 
+import re
 import traceback
 from fractions import Fraction
 
 from abstraits.id import ObjetID
+from primaires.format.fonctions import echapper_accolades
 from .parser import expressions
 from primaires.scripting.constantes.connecteurs import CONNECTEURS
-from .instruction import Instruction
+from .instruction import Instruction, ErreurExecution
 
 class Test(ObjetID):
     
@@ -100,7 +102,7 @@ class Test(ObjetID):
         """
         # On essaye d'interpréter la suite de tests
         self.__tests = expressions["tests"].parser(chaine_test)[0]
-        self.appelant.enregistrer()
+        self.enregistrer()
     
     def ajouter_instruction(self, message):
         """Construit et ajoute l'instruction."""
@@ -121,7 +123,7 @@ class Test(ObjetID):
         instruction = type_instruction.construire(message)
         instruction.niveau = ancienne_instruction.niveau
         self.__instructions[ligne] = instruction
-        self.evenement.appelant.enregistrer()
+        self.enregistrer()
     
     def tester(self, evenement):
         """Test le tests."""
@@ -151,6 +153,76 @@ class Test(ObjetID):
             "Fraction": Fraction,
         }
     
+    def erreur_execution(self, message):
+        """Méthode remontant l'erreur aux immortels concernés.
+        
+        Deux types d'informations sont remontées :
+        *   Au créateur et aux suiveurs, , le message d'erreur
+            (explicite au possible) est envoyé
+        *   Aux administrateurs, le traceback entier est envoyé.
+        
+        Si il y a doute quant à savoir si un joueur doit recevoir
+        le message uniquement ou le traceback complet, le traceback
+        lui est envoyé (le message est de toute façon contenu dedans).
+        
+        """
+        appelant = str(self.appelant)
+        evt = str(self.evenement.nom)
+        tests = self.__tests and "si " + str(self) or "sinon"
+        titre = "{}[{}] {}".format(appelant, evt, tests)
+        pile = echapper_accolades(traceback.format_exc()).split("\n")
+        
+        # On récupère le joueur système, expéditeur des messages
+        systeme = type(self).importeur.joueur.joueur_systeme
+        
+        # Extraction de la ligne d'erreur
+        reg = re.search("File \"\<string\>\", line ([0-9]+)", "\n".join(pile))
+        if reg:
+            no_ligne = int(reg.groups()[-1])
+            ligne = self.__instructions[no_ligne - 1]
+        else:
+            no_ligne = "|err|inconnue|ff|"
+            ligne = "|err|inconnue|ff|"
+        
+        # Création du mudmail simple
+        mail_simple = type(self).importeur.communication.mails.creer_mail(
+                systeme)
+        mail_simple.sujet = "Erreur lors de l'exécution du script {}".format(
+                titre)
+        ecrire = mail_simple.contenu.ajouter_paragraphe
+        ecrire("Une erreur s'est produite lors de l'exécution " \
+                "de ce script :")
+        ecrire("|tab|{}, ligne {} :".format(titre, no_ligne))
+        ecrire("|tab||tab|{}".format(ligne))
+        ecrire("")
+        ecrire("{}.".format(message))
+        msgs = list(mail_simple.contenu.paragraphes)
+        ecrire("Le créateur, les suiveurs et administrateurs ont été " \
+                "notifiés de cette erreur.")
+        
+        # Création du mudmail complet
+        mail_complet = type(self).importeur.communication.mails.creer_mail(
+                systeme)
+        mail_complet.sujet = mail_simple.sujet
+        for msg in msgs:
+            mail_complet.contenu.ajouter_paragraphe(msg)
+        
+        ecrire = mail_complet.contenu.ajouter_paragraphe
+        ecrire("")
+        ecrire("Ci-dessous se trouve le traceback complet levé par Python :")
+        for msg in pile:
+            ecrire(msg)
+        
+        for joueur in type(self).importeur.joueur.joueurs.values():
+            if joueur.nom_groupe == "administrateur":
+                mail_complet.liste_dest.append(joueur)
+        
+        if mail_complet.liste_dest:
+            mail_complet.envoyer()
+        
+        if mail_simple.liste_dest:
+            mail_simple.envoyer()
+    
     def executer_instructions(self, evenement):
         """Convertit et exécute la suite d'instructions.
         
@@ -174,17 +246,22 @@ class Test(ObjetID):
         globales = self.get_globales(evenement)
         
         # Exécution
+        __builtins__["importeur"] = type(self).importeur
+        __builtins__["ErreurExecution"] = ErreurExecution
         try:
             exec(code, globales)
-        except Exception:
-            print(traceback.format_exc())
+        except ErreurExecution as err:
+            self.erreur_execution(str(err))
+        except Exception as err:
+            self.erreur_execution(str(err))
+        finally:
+            del __builtins__["importeur"]
+            del __builtins__["ErreurExecution"]
         
         # Si le test est relié à une quête
         if etape:
-            print("Relié")
             # Si aucun verrou n'a été posé
             if not self.acteur.quetes[etape.quete.cle].verrouille:
-                print("On valide")
                 self.acteur.quetes.valider(etape.quete, etape.niveau)
 
 ObjetID.ajouter_groupe(Test)

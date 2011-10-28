@@ -71,5 +71,5 @@ class CmdPrendre(Commande):
                     break
             
             personnage << "Vous ramassez {}.".format(objet.get_nom(pris))
-            personnage.salle.envoyer("{} ramasse {}.".format(personnage.nom,
-                    objet.get_nom(pris)), (personnage, ))
+            personnage.salle.envoyer("{{}} ramasse {}.".format(
+                    objet.get_nom(pris)), personnage)

@@ -85,7 +85,7 @@ class EdtMessagesRecus(Editeur):
             msg += "|ff| |\n"
             i = 1
             for mail in mails:
-                msg += "| |rg|" + str(i).ljust(2) + "|ff| | "
+                msg += "| |rg|" + str(i).rjust(2) + "|ff| | "
                 msg += (mail.lu and "|vrc|oui|ff|" or "|rgc|non|ff|")
                 msg += " | |vr|" + couper_phrase(mail.sujet, 29).ljust( \
                         taille) + "|ff| | |blc|"
@@ -184,10 +184,11 @@ class EdtMessagesRecus(Editeur):
             mail.contenu.ajouter_paragraphe(
                     r_mail.expediteur.nom + " a écrit :\n")
             mail.contenu.ajouter_paragraphe(str(r_mail.contenu))
-            mail.contenu.ajouter_paragrape("<------------->")
+            mail.contenu.ajouter_paragraphe("+------------------------------+")
             enveloppe = EnveloppeObjet(EdtMedit, mail, None)
             enveloppe.parent = self
             contexte = enveloppe.construire(self.pere.joueur)
+            contexte.opts.rci_ctx_prec = ""
             self.pere.joueur.contextes.ajouter(contexte)
             contexte.actualiser()
     
