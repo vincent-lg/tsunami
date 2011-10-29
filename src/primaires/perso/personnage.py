@@ -33,6 +33,7 @@
 
 from abstraits.id import ObjetID, propriete_id
 from bases.collections.enr_dict import EnrDict
+from corps.fonctions import lisser
 from primaires.interpreteur.file import FileContexte
 from primaires.interpreteur.groupe.groupe import *
 
@@ -266,6 +267,10 @@ class Personnage(ObjetID):
         """Méthode envoyer"""
         raise NotImplementedError
     
+    def envoyer_lisser(self, chaine, *personnages, **kw_personnages):
+        """Méthode redirigeant vers envoyer mais lissant la chaîne."""
+        self.envoyer(lisser(chaine), *personnages, **kw_personnages)
+    
     def deplacer_vers(self, sortie):
         """Déplacement vers la sortie 'sortie'"""
         salle = self.salle
@@ -304,6 +309,8 @@ class Personnage(ObjetID):
         if random < apprendre:
             avancement += 1
             self.talents[cle_talent] = avancement
+            self.envoyer("Vous progressez dans l'apprentissage du " \
+                    "talent {}.".format(talent.nom))
         
         return avancement
     

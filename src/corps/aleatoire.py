@@ -28,47 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Module contenant des fonctions utiles aux corps.
+"""Module contenant la base des fonctions aléatoires.
 
-Elles sont donc utilisables par les modules, primaires ou secondaires.
-
-Liste des fonctions :
-    valider_cle     Valide une chaîne comme une clé (un identifiant) valide
-    lisser          Lisse une chaîne ("de le" = "du")
+Fonctions définies :
+    varier(base, variable, min=1, max=None)
 
 """
 
-import re
+import random
 
-# Constantes
-RE_CLE_VALIDE = re.compile(r"^[a-z0-9_]+$")
-
-def valider_cle(chaine):
-    """Valide la chaîne passée en paramètre comme étant une clé.
+def varier(base, variable, min=1, max=None):
+    """Retourne un entier varié de base + ou - variable.
     
-    Une clé doit être une chaîne constituée de caractères minuscules,
-    de chiffres et du signe _ (souligné).
+    min et max permettent de définir la marge minimum et maximum dans
+    laquelle peut se trouver la valeur ede retour.
     
-    Si la chaîne passé en paramètre ne remplit pas ces conditions,
-    lève une exception ValueError.
+    Par exemple :
+        varier(15, 5) retourne un nombre entre 10 et 20
+        varier(25, 30, min=1) retourne un entier entre 1 et 55
+    
+    Note : si une des bornes min ou max est à None, la valeur de retour ne
+    sera pas limitée sur cette borne. La valeur de min étant de 1 par défaut,
+    cela signifie que l'appel à la fonction varier ne retournera que des
+    entiers par défaut. Pour modifier ce comportement, passez None à
+    l'argument min.
     
     """
-    if RE_CLE_VALIDE.search(chaine) is None:
-        raise ValueError("{} n'est pas une clé valide".format(repr(chaine)))
-
-def lisser(chaine):
-    """Retourne la chaîne lisser.
+    r_min = base - variable
+    r_max = base + variable
+    if min is not None:
+        r_min = min if min < r_min or r_min
+    if max is not None:
+        r_max = max if max > r_max or r_max
     
-    On lisse une chaîne en remplaçant certains schémas comme
-    " de le " par " du ".
-    
-    """
-    schemas = {
-        " de le ": " du ",
-        " de les ": " des ",
-        " à les ": " aux ",
-    }
-    for _val, r_val in schemas.items():
-        chaine = chaine.replace(o_val, r_val)
-    
-    return chaine
+    return random.randint(r_min, r_max)

@@ -30,6 +30,8 @@
 
 """Fichier contenant la classe Combat, détaillée plus bas."""
 
+from random import choice
+
 class Combat:
     
     """Classe représentant un combat dans une salle.
@@ -94,24 +96,30 @@ class Combat:
                     cible = choice(cibles)
                     self.__combattus[combattant] = cible
     
-    def attaquer(self, combattant, combattu):
-        """Retourne les dégâts infligés par combattant à combattus."""
-        return 0
-    
-    def defendre(self, combattant, combattu, degats):
-        """Retourne les dégâts réceptionnés."""
-        return 0
+    def get_attaques(self, personnage):
+        """Retourne les attaques du personnage."""
+        return (Coup(personnage), )
     
     def tour(self, importeur):
         """Un tour de combat."""
         self.verifier_combattants()
         for combattant, combattu in self.combattus.items():
-            force_attaque = self.attaquer(combattant, combattu)
-            force_defense = self.defendre(combattu, combattant, force_attaque)
-            degats = force_attaque - force_defense
-            if degats > 0:
-                # On les inflige à combattu
-                pass
+            armes = combattant.get_armes()
+            armes = armes if armes else [None]
+            for arme in armes:
+                attaques = self.get_attaques(combattant)
+                attaque = choice(attaques)
+                membre = attaque.get_membre(combattant, combattu, arme)
+                if attaque.essayer(combattant, combattu, arme):
+                    degats = attaque.calculer_degats(combattant, combattu,
+                            arme, membre)
+                    
+                    # Défense
+                    attaque.envoyer_msg_reussite(combattant, combattu,
+                            membre, degats, arme)
+                else:
+                    attaque.envoyer_msg_tentative(combattant, combattu,
+                            membre, arme)
         
         self.verifier_combattants()
         importeur.diffact.ajouter_action(
