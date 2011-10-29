@@ -57,8 +57,8 @@ def varier(base, variable, min=1, max=None):
     r_min = base - variable
     r_max = base + variable
     if min is not None:
-        r_min = min if min < r_min or r_min
+        r_min = min if min > r_min else r_min
     if max is not None:
-        r_max = max if max > r_max or r_max
+        r_max = max if max < r_max else r_max
     
     return random.randint(r_min, r_max)

@@ -68,7 +68,7 @@ def lisser(chaine):
         " de les ": " des ",
         " à les ": " aux ",
     }
-    for _val, r_val in schemas.items():
+    for o_val, r_val in schemas.items():
         chaine = chaine.replace(o_val, r_val)
     
     return chaine

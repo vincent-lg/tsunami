@@ -31,6 +31,8 @@
 
 """Fichier contenant la classe Personnage, détaillée plus bas."""
 
+import random
+
 from abstraits.id import ObjetID, propriete_id
 from bases.collections.enr_dict import EnrDict
 from corps.fonctions import lisser
@@ -306,7 +308,7 @@ class Personnage(ObjetID):
         avancement = self.get_talent(cle_talent)
         configuration = type(self).importeur.perso.cfg_talents
         apprendre = talent.estimer_difficulte(configuration, avancement)
-        if random < apprendre:
+        if random.random() < apprendre:
             avancement += 1
             self.talents[cle_talent] = avancement
             self.envoyer("Vous progressez dans l'apprentissage du " \

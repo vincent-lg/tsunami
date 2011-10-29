@@ -60,3 +60,6 @@ class EnrDict(BaseObj):
         """Supprime l'élément."""
         del self.__dict[nom_elt]
         self.parent.enregistrer()
+    
+    def get(self, item, ret=None):
+        return self.__dict.get(item, ret)

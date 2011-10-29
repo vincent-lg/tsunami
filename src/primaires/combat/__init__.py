@@ -33,7 +33,7 @@
 from abstraits.module import *
 from . import commandes
 from . import types
-from .combat import Combat
+from .combat import *
 from .types.arme import Arme
 
 class Module(BaseModule):
@@ -68,6 +68,10 @@ class Module(BaseModule):
             ajouter_talent(type.cle_talent, type.nom_talent,
                     type.niveau_talent, type.difficulte_talent)
         
+        ajouter_talent(CLE_TALENT_ESQUIVE, "esquive", "combat", 0.25)
+        ajouter_talent(CLE_TALENT_PARADE, "parade", "combat", 0.20)
+        ajouter_talent(CLE_TALENT_MAINS_NUES, "combat à mains nues", "combat",
+                0.20)
         # Ajout de l'état
         etat = self.importeur.perso.ajouter_etat("combat")
         etat.msg_refus = "Vous êtes en train de combattre"

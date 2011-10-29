@@ -34,6 +34,7 @@ from collections import OrderedDict
 
 from abstraits.id import ObjetID
 from bases.collections.liste_id import ListeID
+from corps.fonctions import lisser
 from primaires.format.description import Description
 from .coordonnees import Coordonnees
 from .sorties import Sorties, NOMS_SORTIES
@@ -172,6 +173,10 @@ class Salle(ObjetID):
         for personnage in self.personnages:
             if personnage not in exceptions:
                 personnage.envoyer(message, *personnages, **kw_personnages)
+    
+    def envoyer_lisser(self, chaine, *personnages, **kw_personnages):
+        """Méthode redirigeant vers envoyer mais lissant la chaîne."""
+        self.envoyer(lisser(chaine), *personnages, **kw_personnages)
     
     def get_objets_nombres(self):
         """Retourne un tuple contenant des couples prototype, nombre"""

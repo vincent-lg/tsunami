@@ -96,6 +96,9 @@ class Objet(ObjetID):
         """
         return getattr(self.prototype, nom_attr)
     
+    def __str__(self):
+        return self.nom_singulier
+    
     def detruire(self):
         """Destruction de l'objet"""
         if self in self.prototype.objets:

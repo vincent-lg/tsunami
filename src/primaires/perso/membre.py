@@ -93,7 +93,7 @@ class Membre(BaseObj):
         return "membre({})".format(self.nom)
     
     def __str__(self):
-        return "{} ({})".format(self.nom, self.statut)
+        return self.nom
     
     def _get_statut(self):
         return self._statut_m

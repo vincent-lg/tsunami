@@ -30,7 +30,14 @@
 
 """Fichier contenant la classe Combat, détaillée plus bas."""
 
-from random import choice
+from random import choice, randint
+
+from corps.aleatoire import varier
+from .attaque import Coup
+
+CLE_TALENT_ESQUIVE = "esquive"
+CLE_TALENT_PARADE = "parade"
+CLE_TALENT_MAINS_NUES = "combat_mains_nues"
 
 class Combat:
     
@@ -100,6 +107,31 @@ class Combat:
         """Retourne les attaques du personnage."""
         return (Coup(personnage), )
     
+    def defendre(self, combattant, combattu, attaque, membre, degats, arme):
+        """combattu tente de se défendre.
+        
+        Retourne les dégâts finalement infligés.
+        
+        Si la défense est totale, retourne 0.
+        
+        """
+        if varier(combattu.get_talent(CLE_TALENT_ESQUIVE), 15) >= \
+                randint(1, 80):
+            attaque.envoyer_msg_tentative(combattant, combattu, membre, arme)
+            combattant.envoyer("{} esquive votre coup.", combattu)
+            combattu.envoyer("Vous esquivez le coup porté par {}.",
+                    combattant)
+            combattant.salle.envoyer("{} esquive le coup porté par {}.",
+                    combattu, combattant)
+            degats = 0
+        elif membre:
+            objet = membre.equipe
+            if objet.est_de_type("armure"):
+                encaisse = objet.encaisser(arme, degats)
+                degats -= encaisse
+        
+        return degats
+    
     def tour(self, importeur):
         """Un tour de combat."""
         self.verifier_combattants()
@@ -115,8 +147,11 @@ class Combat:
                             arme, membre)
                     
                     # Défense
-                    attaque.envoyer_msg_reussite(combattant, combattu,
-                            membre, degats, arme)
+                    degats = self.defendre(combattant, combattu, attaque,
+                            membre, arme, degats)
+                    if degats:
+                        attaque.envoyer_msg_reussite(combattant, combattu,
+                                membre, degats, arme)
                 else:
                     attaque.envoyer_msg_tentative(combattant, combattu,
                             membre, arme)
