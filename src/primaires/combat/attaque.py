@@ -100,6 +100,7 @@ class Attaque(BaseObj):
     
     def envoyer_msg_reussite(self, moi, contre, membre, degats, arme=None):
         """Envoie les messages en cas de réussite."""
+        print(degats)
         salle = moi.salle
         moi.envoyer_lisser(self.msg_reussite["moi"].format(moi="{moi}",
                 contre="{contre}", membre=membre, arme=arme,
@@ -147,7 +148,7 @@ class Coup(Attaque):
         """Retourne les dégâts infligés par l'arme."""
         if arme:
             talent = arme.cle_talent
-            connaissance = moi.get_talen(talent)
+            connaissance = moi.get_talent(talent)
         else:
             connaissance = moi.get_talent("combat_mains_nues")
         

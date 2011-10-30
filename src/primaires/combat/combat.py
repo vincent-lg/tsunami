@@ -115,7 +115,7 @@ class Combat:
         Si la défense est totale, retourne 0.
         
         """
-        if varier(combattu.get_talent(CLE_TALENT_ESQUIVE), 15) >= \
+        if varier(combattu.pratiquer_talent(CLE_TALENT_ESQUIVE), 15) >= \
                 randint(1, 80):
             attaque.envoyer_msg_tentative(combattant, combattu, membre, arme)
             combattant.envoyer("{} esquive votre coup.", combattu)
@@ -144,11 +144,11 @@ class Combat:
                 membre = attaque.get_membre(combattant, combattu, arme)
                 if attaque.essayer(combattant, combattu, arme):
                     degats = attaque.calculer_degats(combattant, combattu,
-                            arme, membre)
+                            membre, arme)
                     
                     # Défense
                     degats = self.defendre(combattant, combattu, attaque,
-                            membre, arme, degats)
+                            membre, degats, arme)
                     if degats:
                         attaque.envoyer_msg_reussite(combattant, combattu,
                                 membre, degats, arme)

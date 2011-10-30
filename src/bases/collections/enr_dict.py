@@ -61,5 +61,11 @@ class EnrDict(BaseObj):
         del self.__dict[nom_elt]
         self.parent.enregistrer()
     
+    def __repr__(self):
+        return repr(self.__dict)
+    
+    def __str__(self):
+        return str(self.__dict)
+    
     def get(self, item, ret=None):
         return self.__dict.get(item, ret)
