@@ -28,18 +28,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Ce package définit les contextes à la connexion du client.
+Pour les contextes de création de compte, voir ../creation.
 
-from . import afk
-from . import chgroupe
-from . import distinctions
-from . import groupe
-from . import module
-from . import options
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retenir_nom
-from . import shutdown
-from . import where
-from . import chmdp
+"""
+

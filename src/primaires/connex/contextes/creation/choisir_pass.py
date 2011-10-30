@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2011 DAVY Guillaume
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -27,76 +27,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # pereIBILITY OF SUCH DAMAGE.
 
-from primaires.interpreteur.contexte import Contexte
+from primaires.connex.contextes.commun.choisir_pass import ChoisirPass
 
-import re
-
-## Constantes
-# Regex
-RE_PASS_VALIDE = re.compile(r"^[a-zA-Z0-9{}/\[\]()+=$_*@^\"'`£#-]+$", re.I)
-# Taille mini du mot de passe
-MIN = 6
-
-class ChoisirPass(Contexte):
-    """Contexte du choix de mot de passe.
-    Le client doit choisir un mot de passe sécurisant l'accès au compte
-    nouvellement créée.
-    
-    """
+class ChoisirPassCreat(ChoisirPass):
     nom = "connex:creation:choisir_pass"
     
     def __init__(self, pere):
         """Constructeur du contexte"""
-        Contexte.__init__(self, pere)
+        ChoisirPass.__init__(self, pere)
         self.opts.rci_ctx_prec = "connex:creation:changer_encodage"
-    
-    def get_prompt(self):
-        """Message de prompt"""
-        return "Votre mot de passe : "
-    
-    def entrer(self):
-        """En arrivant dans le contexte"""
-        self.pere.client.masquer = True
-        
-    def sortir(self):
-        """En sortant du contexte"""
-        self.pere.client.masquer = False
-        
-    def accueil(self):
-        """Message d'accueil"""
-        return \
-            "\n|tit|------= Choix du mot de passe =-----|ff|\n" \
-            "Entrez un |ent|mot de passe|ff| ; il correspond à votre " \
-            "compte uniquement,\n" \
-            "veillez à vous en souvenir et à ne le divulguer " \
-            "sous aucun prétexte.\n" \
-            "Si vous voulez revenir au choix de l'encodage, entrez |cmd|/|ff|."
-    
-    def deconnecter(self):
-        """En cas de décnonexion du joueur, on supprime son compte"""
-        type(self).importeur.connex.supprimer_compte(self.pere.compte)
-    
-    def interpreter(self, msg):
-        """Méthode appelée quand un message est réceptionné"""
-        cfg_connex = type(self).importeur.anaconf.get_config("connex")
-        type_chiffrement = cfg_connex.type_chiffrement
-        clef_salage = cfg_connex.clef_salage
-        min = cfg_connex.pass_min
-        
-        if len(msg) < min:
-            self.pere.envoyer("|err|Pour des raisons de sécurité, le mot de " \
-                            "passe doit faire au minimum\n" \
-                            "{0} caractères.|ff|".format(min))
-        elif RE_PASS_VALIDE.search(msg) is None:
-            self.pere.envoyer("|err|Le mot de passe entré contient des " \
-                            "caractères non autorisés ; les caractères\n" \
-                            "admis sont les lettres (majuscules et " \
-                            "minuscules, sans accents), les\n" \
-                            "chiffres et certains caractères spéciaux : " \
-                            "|ff||cmd|{}/\[\]()+=$_*@^\"'`£#-|ff||err|.|ff|")
-        else:
-            # Hash du mot de passe
-            self.pere.compte.mot_de_passe = \
-                self.pere.compte.hash_mot_de_pass(clef_salage, \
-                type_chiffrement, msg)
-            self.migrer_contexte("connex:creation:confirmer_pass")
+        self.suivant = "connex:creation:confirmer_pass"

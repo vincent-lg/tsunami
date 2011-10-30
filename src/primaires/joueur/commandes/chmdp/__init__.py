@@ -28,18 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Package contenant la commande 'chmdp'."""
 
-from . import afk
-from . import chgroupe
-from . import distinctions
-from . import groupe
-from . import module
-from . import options
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retenir_nom
-from . import shutdown
-from . import where
-from . import chmdp
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdChmdp(Commande):
+    
+    """Commande 'chmdp'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "chmdp", "chpasswd")
+        self.groupe = "joueur"
+        self.schema = ""
+        self.aide_courte = "permet de changer son mot de passe"
+        self.aide_longue = \
+            "Cette commande permet de changer son mot de passe."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        contexte = "joueur:creation:entrer_pass"
+        contexte = type(self).importeur.interpreteur.contextes[contexte]
+        contexte = contexte(personnage.instance_connexion)
+        personnage.contextes.ajouter(contexte)
+        contexte.actualiser()

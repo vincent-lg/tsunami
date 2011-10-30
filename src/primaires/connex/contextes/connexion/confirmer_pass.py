@@ -1,6 +1,6 @@
-# -*-coding:Utf-8 -*
+﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010 DAVY Guillaume
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -25,21 +25,15 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
+from primaires.connex.contextes.commun.confirmer_pass import ConfirmerPass
 
-"""Package contenant les commandes du module joueur."""
-
-from . import afk
-from . import chgroupe
-from . import distinctions
-from . import groupe
-from . import module
-from . import options
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retenir_nom
-from . import shutdown
-from . import where
-from . import chmdp
+class ConfirmerPassConnex(ConfirmerPass):
+    nom = "connex:connexion:confirmer_pass"
+    
+    def __init__(self, pere):
+        """Constructeur du contexte"""
+        ConfirmerPass.__init__(self, pere)
+        self.opts.rci_ctx_prec = "connex:connexion:choisir_pass"
+        self.suivant = "connex:connexion:choix_personnages"

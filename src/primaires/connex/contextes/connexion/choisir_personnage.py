@@ -35,6 +35,7 @@ from primaires.interpreteur.contexte import Contexte
 cmd_creer = "c"
 cmd_supprimer = "s"
 cmd_quitter = "q"
+cmd_chmdp = "m"
 
 class ChoisirPersonnage(Contexte):
     """Contexte du choix de personnage
@@ -89,6 +90,9 @@ class ChoisirPersonnage(Contexte):
             ret += " |cmd|{S}|ff| pour |ent|supprimer|ff| un personnage de " \
                 "ce compte\n".format(S = cmd_supprimer.upper())
         
+        ret += " |cmd|{M}|ff| pour changer votre |ent|mot de passe|ff|" \
+                "\n".format(M = cmd_chmdp.upper())
+        
         ret += " |cmd|{Q}|ff| pour |ent|quitter|ff| le jeu".format( \
                 Q = cmd_quitter.upper())
         return ret
@@ -139,5 +143,8 @@ class ChoisirPersonnage(Contexte):
             # On déconnecte le joueur
             self.pere.envoyer("\nA bientôt !")
             self.pere.deconnecter("Déconnexion demandée par le client")
+        elif msg == cmd_chmdp:
+            # On redirige vers la modification de mot de passe
+            self.migrer_contexte("connex:connexion:choisir_pass")
         else:
             self.pere.envoyer("|err|Votre choix est invalide.|ff|")

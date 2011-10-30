@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2011 DAVY Guillaume
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -25,21 +25,28 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
+import re
+import random
 
-"""Package contenant les commandes du module joueur."""
+from primaires.interpreteur.contexte import Contexte
+from primaires.connex.contextes.commun.entrer_pass import EntrerPass
 
-from . import afk
-from . import chgroupe
-from . import distinctions
-from . import groupe
-from . import module
-from . import options
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retenir_nom
-from . import shutdown
-from . import where
-from . import chmdp
+class EntrerPassJoueur(EntrerPass):
+    nom = "joueur:creation:entrer_pass"
+    
+    def __init__(self, pere):
+        """Constructeur du contexte."""
+        EntrerPass.__init__(self, pere)
+        self.suivant = "joueur:creation:choisir_pass"
+    
+    def migrer_contexte(self, contexte, afficher_accueil=True):
+        """Redéfinition de la méthode 'migrer_contexte' de Contexte.
+        Quand on migre un éditeur à l'autre, l'ancien éditeur doit être
+        retiré de la pile.
+        
+        """
+        self.pere.joueur.contextes.retirer()
+        Contexte.migrer_contexte(self, contexte, afficher_accueil)
+        self.pere.contexte_actuel.pere = self.pere
