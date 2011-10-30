@@ -52,12 +52,12 @@ from .templates.etat import Etat
 class Module(BaseModule):
     
     """Module gérant la classe Personnage qui sera héritée pour construire
-    des joueurs et PNJ. Les mécanismes propres au personnage (c'est-à-dire
-    indépendant de la connexion et liées à l'univers) seront gérées ici.
+    des joueurs et PNJs. Les mécanismes propres au personnage (c'est-à-dire
+    indépendants de la connexion et liés à l'univers) seront gérés ici.
     
     En revanche, les contextes de connexion ou de création d'un personnage
-    ne se trouve pas ici (il s'agit d'informations propres à un joueur, non
-    à un PNJ.
+    ne se trouvent pas ici (il s'agit d'informations propres à un joueur, non
+    à un PNJ).
     
     """
     
@@ -138,7 +138,7 @@ class Module(BaseModule):
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
         
-        # Ajout de l'éditeur 'skedit'
+        # Ajout des éditeurs
         self.importeur.interpreteur.ajouter_editeur(EdtRaedit)
         self.importeur.interpreteur.ajouter_editeur(EdtSkedit)
     
@@ -241,4 +241,3 @@ class Module(BaseModule):
         self.etats[cle] = etat
         
         return etat
-

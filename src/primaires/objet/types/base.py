@@ -66,7 +66,7 @@ class BaseType(ObjetID, metaclass=MetaType):
         self.description = Description(parent=self)
         self.objets = ListeID(self)
         self.unique = True # par défaut tout objet est unique
-        self.prix = 1 # valeur en magasin
+        self._prix = 1 # valeur en magasin
         self.sans_prix = False
         
         # Equipement
@@ -92,6 +92,15 @@ class BaseType(ObjetID, metaclass=MetaType):
         del attrs["_extensions_editeur"]
         del attrs["_attributs"]
         return attrs
+    
+    def _get_prix(self):
+        """Retourne le prix"""
+        return self._prix
+    def _set_prix(self, prix):
+        """Modifie le prix"""
+        self._prix = int(prix)
+        self.enregistrer()
+    prix = property(_get_prix, _set_prix)
     
     def etendre_editeur(self, raccourci, ligne, editeur, objet, attribut, *sup):
         """Permet d'étendre l'éditeur d'objet en fonction du type.

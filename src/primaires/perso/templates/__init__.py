@@ -31,7 +31,7 @@
 """Sous-package contenant les templates du module perso.
 
 Ces objets sont des modèles donnant des informations communes sur
-certains objets. Par exemple, on trouve ici défini la classe Talent.
+certains objets. Par exemple, on trouve ici définie la classe Talent.
 Cette classe n'est pas celle enregistrée en fichier car ce n'est pas
 celle contenue dans le joueur. C'est un modèle qui définit le nom
 du talent, son niveau secondaire et d'autres informations qui resteront

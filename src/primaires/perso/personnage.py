@@ -48,7 +48,7 @@ class Personnage(ObjetID):
     
     """Classe représentant un personnage.
     C'est une classe abstraite. Elle doit être héritée pour faire des joueurs
-    et PNJ. Ces autres classes peuvent être également héritées, à leur tour.
+    et PNJs. Ces autres classes peuvent être également héritées, à leur tour.
     
     Note: on précise bel et bien un nom de groupe, mais on ne l'ajoute pas à
     ObjetID puisqu'il s'agit d'une classe abstraite.
@@ -147,7 +147,6 @@ class Personnage(ObjetID):
         
         if salle:
             salle.ajouter_personnage(self)
-    
     salle = property(_get_salle, _set_salle)
     
     def _get_race(self):
@@ -215,10 +214,13 @@ class Personnage(ObjetID):
         else:
             return None
     
+    @property
+    def argent_possede(self):
+        """Retourne la quantité d'unités monétaires possédées par le perso."""
+        return {"valeur":10, "detail":None}
     
     def get_armes(self):
         """Retourne les armes portées par le personnage.
-        
         Ces armes sont celles portées.
         
         """

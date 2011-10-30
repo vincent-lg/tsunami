@@ -56,7 +56,7 @@ class Objet(ObjetID):
     l'objet changera donc et sera différent de celui du prototype, le
     temps de la durée de vie de l'objet. Pour que :
     >>> self.nom
-    face de nouveau référence au nom du prototype, il est conseillé de
+    fasse de nouveau référence au nom du prototype, il est conseillé de
     supprimer le nom de l'objet :
     >>> del self.nom
     Ce mécanisme permet une assez grande flexibilité. Si par exemple vous

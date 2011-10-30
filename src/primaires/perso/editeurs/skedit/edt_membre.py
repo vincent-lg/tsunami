@@ -101,7 +101,7 @@ class EdtMembre(Editeur):
         
         msg += "\n Nom du membre : |ent|" + membre.nom + "|ff|"
         print(repr(membre.groupe))
-        msg += "\n Groupe :|ent|" + (membre.groupe or "aucun") + "|ff|"
+        msg += "\n Groupe : |ent|" + (membre.groupe or "aucun") + "|ff|"
         msg += "\n Flags :"
         for flag in FLAGS:
             msg += "\n     " + flag + " : "
