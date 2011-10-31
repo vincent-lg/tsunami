@@ -28,57 +28,55 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe EnrDict, détaillée plus bas."""
+"""Ce fichier contient la classe DictValuersID, détaillée plus bas."""
 
-from abstraits.obase import *
+from .enr_dict import EnrDict
 
-class EnrDict(BaseObj):
+class DictValeursID(EnrDict):
     
-    """Dictionnaire conçu pour s'enregistrer automatiquement quand ses
-    valeurs sont modifiées.
+    """Dictionnaire contenant en valeur des ObjetID.
+    
+    Le système d'écriture, en particulier, est différent. A chaque fois
+    qu'on écrit une valeur dans le dictionnaire, c'est son ID qui est écrite.
+    Lors de la lecture, on récupère l'objet ID correspondant à l'ID.
     
     """
     
-    def __init__(self, parent):
-        """Construction du dictionnaire."""
-        BaseObj.__init__(self)
-        self.__dict = {}
-        self.parent = parent
-    
-    def __getnewargs__(self):
-        return (None, )
-    
-    def __contains__(self, item):
-        return item in self.__dict
-    
     def __getitem__(self, nom_elt):
-        return self.__dict[nom_elt]
+        return self.__dict[nom_elt].get_objet()
     
     def __setitem__(self, nom_elt, val_elt):
         """Modifie la valeur d'un dictionnaire."""
-        self.__dict[nom_elt] = val_elt
-        self.parent.enregistrer()
+        EnrDict.__setitem__(self, nom_elt, val_elt.id)
     
-    def __delitem__(self, nom_elt):
-        """Supprime l'élément."""
-        del self.__dict[nom_elt]
-        self.parent.enregistrer()
+    @property
+    def __dict(self):
+        return self._EnrDict__dict
     
-    def __repr__(self):
-        return repr(self.__dict)
-    
-    def __str__(self):
-        return str(self.__dict)
-    
-    def get(self, item, ret=None):
-        return self.__dict.get(item, ret)
+    @property
+    def to_dict(self):
+        """Retourne un dictionnaire dont les valeurs sont les objets.
+        
+        Les clés restent identiques. Les valeurs du dictionnaire sont
+        les objets correspondant à l'ID, pas l'ID elle-même.
+        
+        """
+        c_dict = {}
+        for cle, valeur in self.__dict.items():
+            c_dict[cle] = valeur.get_objet()
+        
+        return c_dict
     
     def items(self):
-        return self.__dict.items()
-    
-    def keys(self):
-        return self.__dict.keys()
+        """Retourne les paires clé, valeur du dictionnaire."""
+        return self.to_dict.items()
     
     def values(self):
-        return self.__dict.values()
-
+        """Retourne les valeurs du dictionnaire."""
+        return self.to_dict.values()
+    
+    def __repr__(self):
+        return repr(self.to_dict)
+    
+    def __str__(self):
+        return str(self.to_dict)
