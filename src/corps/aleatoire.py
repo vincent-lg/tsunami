@@ -59,7 +59,7 @@ def choix_probable(objets, attribut="probabilite"):
     """
     poids = [getattr(objet, attribut) for objet in objets]
     rnd = random.random() * sum(poids)
-    for i, w in enumerate(weights):
+    for i, w in enumerate(poids):
         rnd -= w
         if rnd < 0:
             return objets[i]

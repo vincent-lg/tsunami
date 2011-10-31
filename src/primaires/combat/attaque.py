@@ -74,8 +74,8 @@ class Attaque(BaseObj):
     def get_membre(self, moi, contre, arme=None):
         """Retourne un membre visé ou None."""
         if self.viser_membre:
-            # TODO: sélectionner le membre en fonction de probabilités
-            membre = None
+            membres = contre.equipement.membres
+            membre = choix_probable(membres, attribut="probabilite_atteint")
         else:
             membre = None
         
@@ -132,6 +132,7 @@ class Coup(Attaque):
                 "{moi} vous atteint à {membre} ({degats} points)."
         self.msg_reussite["autres"] = \
                 "{moi} atteint {contre} à {membre}."
+        self.viser_membre = True
     
     def essayer(self, moi, contre, arme=None):
         """Retourne True si l'attaque réussit, False sinon."""

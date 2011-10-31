@@ -125,8 +125,8 @@ class Combat:
                     combattu, combattant)
             degats = 0
         elif membre:
-            objet = membre.equipe
-            if objet.est_de_type("armure"):
+            objet = len(membre.equipe) and membre.equipe[-1] or None
+            if objet and objet.est_de_type("armure"):
                 encaisse = objet.encaisser(arme, degats)
                 degats -= encaisse
         
