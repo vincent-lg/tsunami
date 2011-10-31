@@ -104,6 +104,11 @@ class Squelette(ObjetID):
         
         return "\n  " + "\n  ".join(membres)
     
+    @property
+    def probabilite_atteint(self):
+        """Retourne la probabilité totale d'atteindre les membres du squelette."""
+        return sum(membre.probabilite_atteint for membre in self.__membres)
+    
     def ajouter_membre(self, nom, *args, **kwargs):
         """Construit le membre via son nom et l'ajoute au dictionnaire.
         
@@ -216,6 +221,20 @@ class Squelette(ObjetID):
             for personnage in self.personnages:
                 equipement = personnage.equipement
                 equipement.descendre_membre(nom_membre)
+    
+    def changer_probabilite_atteint_membre(self, nom, probabilite):
+        """Change la probabilité d'être atteint en combat du membre nom.
+        
+        Répercute ces modifications dans les autres membres dérivés.
+        
+        """
+        membre = self.get_membre(nom)
+        membre.probabilite_atteint = probabilite
+        
+        for personnage in self.personnages:
+            equipement = personnage.equipement
+            a_membre = equipement.get_membre(nom)
+            a_membre.probabilite_atteint = probabilite
     
     def get_groupe_membre(self, membre):
         """Retourne le groupe du membre si existe, sinon None.

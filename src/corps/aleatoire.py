@@ -31,11 +31,38 @@
 """Module contenant la base des fonctions aléatoires.
 
 Fonctions définies :
+    choix_probable(objets, attribut)
     varier(base, variable, min=1, max=None)
 
 """
 
 import random
+
+def choix_probable(objets, attribut="probabilite"):
+    """Retourne aléatoirement un choix en fonction de certaines probabilités.
+    
+    Chaque élément du paramètre objets est un objet avec
+    une certaine probabilité. La probabilité indiquée est un poids
+    en terme d'effectif, pas nécessairement un taux ou pourcentage.
+    La probabilité de l'objet se déduit grâce au nom d'attribut
+    passé en second paramètre (par défaut 'probabilite').
+    
+    Si vous passez à cette fonction une liste d'objets en premier
+    paramètre (sans second paramètre), la fonction va constituer
+    la liste des effectifs en cherchant, sur chaque objet,
+    la valeur de l'attribut 'probabilite'.
+    
+    Elle retournera ensuite un objet de la liste.
+    
+    Les objets d'effectif 0 n'ont aucune chance de sortir.
+    
+    """
+    poids = [getattr(objet, attribut) for objet in objets]
+    rnd = random.random() * sum(poids)
+    for i, w in enumerate(weights):
+        rnd -= w
+        if rnd < 0:
+            return objets[i]
 
 def varier(base, variable, min=1, max=None):
     """Retourne un entier varié de base + ou - variable.

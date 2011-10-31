@@ -47,6 +47,7 @@ class EdtMembre(Editeur):
         self.ajouter_option("f", self.opt_changer_flag)
         self.ajouter_option("n", self.opt_changer_nom)
         self.ajouter_option("g", self.opt_changer_groupe)
+        self.ajouter_option("p", self.opt_changer_probabilite_atteint_membre)
     
     def opt_changer_flag(self, arguments):
         """Change l'état d'un flag
@@ -75,6 +76,23 @@ class EdtMembre(Editeur):
         squelette.changer_groupe_membre(membre.nom, nom_groupe)
         self.actualiser()
     
+    def opt_changer_probabilite_atteint_membre(self, arguments):
+        """Change la probabilité d'atteindre ce membre en combat.
+        
+        Syntaxe : /p <probabilite>
+        
+        """
+        membre = self.objet
+        squelette = membre.parent
+        proba = arguments.strip()
+        try:
+            proba = int(proba)
+        except ValueError:
+            self.pere << "|err|Cette probabilité est invalide.|ff|"
+        else:
+            squelette.changer_probabilite_atteint_membre(membre.nom, proba)
+        self.actualiser()
+    
     def opt_changer_nom(self, arguments):
         """Change le nom
         Syntaxe : /n nom
@@ -100,8 +118,10 @@ class EdtMembre(Editeur):
         msg += self.aide_courte
         
         msg += "\n Nom du membre : |ent|" + membre.nom + "|ff|"
-        print(repr(membre.groupe))
         msg += "\n Groupe : |ent|" + (membre.groupe or "aucun") + "|ff|"
+        msg += "\n Probabilité d'atteindre ce membre en combat : "
+        msg += str(membre.probabilite_atteint) + "/" + str(
+                squelette.probabilite_atteint)
         msg += "\n Flags :"
         for flag in FLAGS:
             msg += "\n     " + flag + " : "
