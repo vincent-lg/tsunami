@@ -34,6 +34,7 @@ Elles sont donc utilisables par les modules, primaires ou secondaires.
 
 Liste des fonctions :
     valider_cle     Valide une chaîne comme une clé (un identifiant) valide
+    lisser          Lisse une chaîne ("de le" = "du")
 
 """
 
@@ -54,3 +55,20 @@ def valider_cle(chaine):
     """
     if RE_CLE_VALIDE.search(chaine) is None:
         raise ValueError("{} n'est pas une clé valide".format(repr(chaine)))
+
+def lisser(chaine):
+    """Retourne la chaîne lisser.
+    
+    On lisse une chaîne en remplaçant certains schémas comme
+    " de le " par " du ".
+    
+    """
+    schemas = {
+        " de le ": " du ",
+        " de les ": " des ",
+        " à les ": " aux ",
+    }
+    for o_val, r_val in schemas.items():
+        chaine = chaine.replace(o_val, r_val)
+    
+    return chaine

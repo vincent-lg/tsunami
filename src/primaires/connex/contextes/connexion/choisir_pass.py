@@ -1,6 +1,6 @@
-# -*-coding:Utf-8 -*
+﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2011 DAVY Guillaume
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -25,16 +25,15 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
+from primaires.connex.contextes.commun.choisir_pass import ChoisirPass
 
-"""Sous-package contenant les templates du module perso.
-
-Ces objets sont des modèles donnant des informations communes sur
-certains objets. Par exemple, on trouve ici définie la classe Talent.
-Cette classe n'est pas celle enregistrée en fichier car ce n'est pas
-celle contenue dans le joueur. C'est un modèle qui définit le nom
-du talent, son niveau secondaire et d'autres informations qui resteront
-vraies d'un joueur à l'autre.
-
-"""
+class ChoisirPassConnex(ChoisirPass):
+    nom = "connex:connexion:choisir_pass"
+    
+    def __init__(self, pere):
+        """Constructeur du contexte"""
+        ChoisirPass.__init__(self, pere)
+        self.opts.rci_ctx_prec = "connex:connexion:choix_personnages"
+        self.suivant = "connex:connexion:confirmer_pass"

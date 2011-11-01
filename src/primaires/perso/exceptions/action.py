@@ -41,4 +41,3 @@ class ExceptionAction(ExceptionMUD):
     
     def __str__(self):
         return self.message
-

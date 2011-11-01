@@ -151,7 +151,7 @@ class Joueur(Personnage):
         """Retourne la distinction visible."""
         ret = self.distinction_visible
         if not ret:
-            ret = self.race.genres._distinctions[self.genre]
+            ret = self.race.genres.get_distinction(self.genre)
         
         return ret
     

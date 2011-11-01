@@ -41,6 +41,9 @@ from .creation.choix_race import ChoixRace
 from .creation.choix_genre import ChoixGenre
 from .creation.langue_cmd import LangueCMD
 from .creation.nouveau_nom import NouveauNom
+from .creation.entrer_pass import EntrerPassJoueur
+from .creation.choisir_pass import ChoisirPassJoueur
+from .creation.confirmer_pass import ConfirmerPassJoueur
 
 # Contextes de suppression
 from .suppression.suppression import Suppression

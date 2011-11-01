@@ -30,6 +30,15 @@
 
 """Fichier contenant la classe Combat, détaillée plus bas."""
 
+from random import choice, randint
+
+from corps.aleatoire import varier
+from .attaque import Coup
+
+CLE_TALENT_ESQUIVE = "esquive"
+CLE_TALENT_PARADE = "parade"
+CLE_TALENT_MAINS_NUES = "combat_mains_nues"
+
 class Combat:
     
     """Classe représentant un combat dans une salle.
@@ -94,24 +103,58 @@ class Combat:
                     cible = choice(cibles)
                     self.__combattus[combattant] = cible
     
-    def attaquer(self, combattant, combattu):
-        """Retourne les dégâts infligés par combattant à combattus."""
-        return 0
+    def get_attaques(self, personnage):
+        """Retourne les attaques du personnage."""
+        return (Coup(personnage), )
     
-    def defendre(self, combattant, combattu, degats):
-        """Retourne les dégâts réceptionnés."""
-        return 0
+    def defendre(self, combattant, combattu, attaque, membre, degats, arme):
+        """combattu tente de se défendre.
+        
+        Retourne les dégâts finalement infligés.
+        
+        Si la défense est totale, retourne 0.
+        
+        """
+        if varier(combattu.pratiquer_talent(CLE_TALENT_ESQUIVE), 15) >= \
+                randint(1, 80):
+            attaque.envoyer_msg_tentative(combattant, combattu, membre, arme)
+            combattant.envoyer("{} esquive votre coup.", combattu)
+            combattu.envoyer("Vous esquivez le coup porté par {}.",
+                    combattant)
+            combattant.salle.envoyer("{} esquive le coup porté par {}.",
+                    combattu, combattant)
+            degats = 0
+        elif membre:
+            objet = len(membre.equipe) and membre.equipe[-1] or None
+            if objet and objet.est_de_type("armure"):
+                encaisse = objet.encaisser(arme, degats)
+                degats -= encaisse
+        
+        return degats
     
     def tour(self, importeur):
         """Un tour de combat."""
         self.verifier_combattants()
         for combattant, combattu in self.combattus.items():
-            force_attaque = self.attaquer(combattant, combattu)
-            force_defense = self.defendre(combattu, combattant, force_attaque)
-            degats = force_attaque - force_defense
-            if degats > 0:
-                # On les inflige à combattu
-                pass
+            armes = combattant.get_armes()
+            armes = armes if armes else [None]
+            for arme in armes:
+                attaques = self.get_attaques(combattant)
+                attaque = choice(attaques)
+                membre = attaque.get_membre(combattant, combattu, arme)
+                if attaque.essayer(combattant, combattu, arme):
+                    degats = attaque.calculer_degats(combattant, combattu,
+                            membre, arme)
+                    
+                    # Défense
+                    degats = self.defendre(combattant, combattu, attaque,
+                            membre, degats, arme)
+                    if degats:
+                        attaque.envoyer_msg_reussite(combattant, combattu,
+                                membre, degats, arme)
+                else:
+                    attaque.envoyer_msg_tentative(combattant, combattu,
+                            membre, arme)
         
         self.verifier_combattants()
         importeur.diffact.ajouter_action(

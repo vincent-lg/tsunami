@@ -1,6 +1,6 @@
-# -*-coding:Utf-8 -*
+﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2011 DAVY Guillaume
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -25,16 +25,24 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
+from primaires.interpreteur.contexte import Contexte
+from primaires.connex.contextes.commun.choisir_pass import ChoisirPass
 
-"""Sous-package contenant les templates du module perso.
-
-Ces objets sont des modèles donnant des informations communes sur
-certains objets. Par exemple, on trouve ici définie la classe Talent.
-Cette classe n'est pas celle enregistrée en fichier car ce n'est pas
-celle contenue dans le joueur. C'est un modèle qui définit le nom
-du talent, son niveau secondaire et d'autres informations qui resteront
-vraies d'un joueur à l'autre.
-
-"""
+class ChoisirPassJoueur(ChoisirPass):
+    nom = "joueur:creation:choisir_pass"
+    
+    def __init__(self, pere):
+        ChoisirPass.__init__(self, pere)
+        self.suivant = "joueur:creation:confirmer_pass"
+    
+    def migrer_contexte(self, contexte, afficher_accueil=True):
+        """Redéfinition de la méthode 'migrer_contexte' de Contexte.
+        Quand on migre un éditeur à l'autre, l'ancien éditeur doit être
+        retiré de la pile.
+        
+        """
+        self.pere.joueur.contextes.retirer()
+        Contexte.migrer_contexte(self, contexte, afficher_accueil)
+        self.pere.contexte_actuel.pere = self.pere

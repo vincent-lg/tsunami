@@ -28,13 +28,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Sous-package contenant les templates du module perso.
-
-Ces objets sont des modèles donnant des informations communes sur
-certains objets. Par exemple, on trouve ici définie la classe Talent.
-Cette classe n'est pas celle enregistrée en fichier car ce n'est pas
-celle contenue dans le joueur. C'est un modèle qui définit le nom
-du talent, son niveau secondaire et d'autres informations qui resteront
-vraies d'un joueur à l'autre.
+"""Ce package définit les contextes à la connexion du client.
+Pour les contextes de création de compte, voir ../creation.
 
 """
+

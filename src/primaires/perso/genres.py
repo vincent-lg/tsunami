@@ -31,6 +31,7 @@
 """Fichier contenant la classe Sorties, détaillée plus bas;"""
 
 from abstraits.obase import *
+from primaires.format.fonctions import supprimer_accents
 
 class Genres(BaseObj):
     
@@ -46,7 +47,7 @@ class Genres(BaseObj):
         self.parent = parent
         self._genres = { # par défaut
             "masculin": "masculin",
-            "féminin": "féminin"
+            "féminin": "féminin",
         }
         self._distinctions = {
             "masculin": "un jeune homme",
@@ -111,6 +112,14 @@ class Genres(BaseObj):
             return "Aucun genre"
         else:
             return "\n".join(lignes)
+    
+    def get_distinction(self, genre):
+        """Retourne la distinction correspondant au genre."""
+        distinctions = {}
+        for nom, val in self._distinctions.items():
+            distinctions[supprimer_accents(nom)] = val
+        
+        return distinctions[supprimer_accents(genre)]
     
     def changer_distinction(self, nom, distinction):
         """Change la distinction par défaut du genre."""

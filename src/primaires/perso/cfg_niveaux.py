@@ -49,8 +49,8 @@ xp_min = 1
 
 ## Expérience maximum
 # Cette variable détermine l'expérience entre l'avant-dernier et le
-# dernier niveau
-# Avec ces trois informations, le système calcul une progression.
+# dernier niveau.
+# Avec ces trois informations, le système calcule une progression.
 xp_max = 100
 
 """

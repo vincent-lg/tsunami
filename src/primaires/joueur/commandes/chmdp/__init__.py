@@ -28,13 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Sous-package contenant les templates du module perso.
+"""Package contenant la commande 'chmdp'."""
 
-Ces objets sont des modèles donnant des informations communes sur
-certains objets. Par exemple, on trouve ici définie la classe Talent.
-Cette classe n'est pas celle enregistrée en fichier car ce n'est pas
-celle contenue dans le joueur. C'est un modèle qui définit le nom
-du talent, son niveau secondaire et d'autres informations qui resteront
-vraies d'un joueur à l'autre.
+from primaires.interpreteur.commande.commande import Commande
 
-"""
+class CmdChmdp(Commande):
+    
+    """Commande 'chmdp'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "chmdp", "chpasswd")
+        self.groupe = "joueur"
+        self.schema = ""
+        self.aide_courte = "permet de changer son mot de passe"
+        self.aide_longue = \
+            "Cette commande permet de changer son mot de passe."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        contexte = "joueur:creation:entrer_pass"
+        contexte = type(self).importeur.interpreteur.contextes[contexte]
+        contexte = contexte(personnage.instance_connexion)
+        personnage.contextes.ajouter(contexte)
+        contexte.actualiser()

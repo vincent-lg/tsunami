@@ -92,6 +92,7 @@ class Module(BaseModule):
             commandes.retenir_nom.CmdRetenir_nom(),
             commandes.shutdown.CmdShutdown(),
             commandes.where.CmdWhere(),
+            commandes.chmdp.CmdChmdp(),
         ]
         
         for cmd in self.commandes:

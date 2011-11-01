@@ -28,13 +28,55 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Sous-package contenant les templates du module perso.
+"""Ce fichier contient la classe DictValuersID, détaillée plus bas."""
 
-Ces objets sont des modèles donnant des informations communes sur
-certains objets. Par exemple, on trouve ici définie la classe Talent.
-Cette classe n'est pas celle enregistrée en fichier car ce n'est pas
-celle contenue dans le joueur. C'est un modèle qui définit le nom
-du talent, son niveau secondaire et d'autres informations qui resteront
-vraies d'un joueur à l'autre.
+from .enr_dict import EnrDict
 
-"""
+class DictValeursID(EnrDict):
+    
+    """Dictionnaire contenant en valeur des ObjetID.
+    
+    Le système d'écriture, en particulier, est différent. A chaque fois
+    qu'on écrit une valeur dans le dictionnaire, c'est son ID qui est écrite.
+    Lors de la lecture, on récupère l'objet ID correspondant à l'ID.
+    
+    """
+    
+    def __getitem__(self, nom_elt):
+        return self.__dict[nom_elt].get_objet()
+    
+    def __setitem__(self, nom_elt, val_elt):
+        """Modifie la valeur d'un dictionnaire."""
+        EnrDict.__setitem__(self, nom_elt, val_elt.id)
+    
+    @property
+    def __dict(self):
+        return self._EnrDict__dict
+    
+    @property
+    def to_dict(self):
+        """Retourne un dictionnaire dont les valeurs sont les objets.
+        
+        Les clés restent identiques. Les valeurs du dictionnaire sont
+        les objets correspondant à l'ID, pas l'ID elle-même.
+        
+        """
+        c_dict = {}
+        for cle, valeur in self.__dict.items():
+            c_dict[cle] = valeur.get_objet()
+        
+        return c_dict
+    
+    def items(self):
+        """Retourne les paires clé, valeur du dictionnaire."""
+        return self.to_dict.items()
+    
+    def values(self):
+        """Retourne les valeurs du dictionnaire."""
+        return self.to_dict.values()
+    
+    def __repr__(self):
+        return repr(self.to_dict)
+    
+    def __str__(self):
+        return str(self.to_dict)

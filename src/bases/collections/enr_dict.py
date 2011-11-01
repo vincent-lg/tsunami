@@ -48,6 +48,9 @@ class EnrDict(BaseObj):
     def __getnewargs__(self):
         return (None, )
     
+    def __contains__(self, item):
+        return item in self.__dict
+    
     def __getitem__(self, nom_elt):
         return self.__dict[nom_elt]
     
@@ -60,3 +63,22 @@ class EnrDict(BaseObj):
         """Supprime l'élément."""
         del self.__dict[nom_elt]
         self.parent.enregistrer()
+    
+    def __repr__(self):
+        return repr(self.__dict)
+    
+    def __str__(self):
+        return str(self.__dict)
+    
+    def get(self, item, ret=None):
+        return self.__dict.get(item, ret)
+    
+    def items(self):
+        return self.__dict.items()
+    
+    def keys(self):
+        return self.__dict.keys()
+    
+    def values(self):
+        return self.__dict.values()
+

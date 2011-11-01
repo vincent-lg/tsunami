@@ -37,12 +37,14 @@ compte.
 from .connexion.afficher_motd import AfficherMOTD
 from .connexion.choisir_personnage import ChoisirPersonnage
 from .connexion.entrer_nom import EntrerNom
-from .connexion.entrer_pass import EntrerPass
+from .connexion.entrer_pass import EntrerPassConnex
+from .connexion.choisir_pass import ChoisirPassConnex
+from .connexion.confirmer_pass import ConfirmerPassConnex
 
 # Contextes de création
 from .creation.ch_encodage import ChangerEncodage
-from .creation.choisir_pass import ChoisirPass
-from .creation.confirmer_pass import ConfirmerPass
+from .creation.choisir_pass import ChoisirPassCreat
+from .creation.confirmer_pass import ConfirmerPassCreat
 from .creation.entrer_email import EntrerEmail
 from .creation.nouveau_nom import NouveauNom
 from .creation.validation import Validation

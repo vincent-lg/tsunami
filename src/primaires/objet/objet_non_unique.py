@@ -35,9 +35,9 @@ from .objet import Objet
 
 class ObjetNonUnique(BaseObj):
     
-    """Envelope d'un objet non unique.
+    """Enveloppe d'un objet non unique.
     
-    Un objet non unique est une envelope d'un prototype et d'un nombre.
+    Un objet non unique est une enveloppe d'un prototype et d'un nombre.
     Par exemple, l'objet non unique piece_or est construit d'après son
     prototype et un nombre variable, en fonction du nombre d'objets dans
     le conteneur. Si il y a 5 pièces d'or sur le sol, alors dans le

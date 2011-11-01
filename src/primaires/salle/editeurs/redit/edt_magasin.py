@@ -165,6 +165,9 @@ class EdtMagasin(Editeur):
                 if not objet in type(self).importeur.objet.prototypes:
                     self.pere << "|err|Ce prototype est introuvable.|ff|"
                     return
+                if type(self).importeur.objet.prototypes[objet].sans_prix:
+                    self.pere << "|err|Vous ne pouvez mettre cet objet en " \
+                            "vente.|ff|"
                 salle.magasin[objet] = quantite
         self.actualiser()
     

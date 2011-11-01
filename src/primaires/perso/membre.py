@@ -68,6 +68,7 @@ class Membre(BaseObj):
         self.flags = AFFICHABLE
         self.statut = "entier"
         self.groupe = ""
+        self.probabilite_atteint = 0
         self.supporte = 3
         self.equipe = ListeID(parent) # les objets équipés à cet emplacement
         self.tenu = None # l'objet tenu
@@ -78,6 +79,7 @@ class Membre(BaseObj):
             self.nom = modele.nom
             self.flags = modele.flags
             self.groupe = modele.groupe
+            self.probabilite_atteint = modele.probabilite_atteint
             self.supporte = modele.supporte
     
     def __getnewargs__(self):
@@ -93,7 +95,7 @@ class Membre(BaseObj):
         return "membre({})".format(self.nom)
     
     def __str__(self):
-        return "{} ({})".format(self.nom, self.statut)
+        return self.nom
     
     def _get_statut(self):
         return self._statut_m

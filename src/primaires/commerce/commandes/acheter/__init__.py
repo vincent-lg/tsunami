@@ -58,14 +58,20 @@ class CmdAcheter(Commande):
         if nb_obj > salle.magasin[prototype.cle]:
             personnage << "|err|Les stocks sont insuffisant.|ff|"
             return
+        argent_perso = personnage.argent_possede
+        if nb_obj * prototype.prix > argent_perso["valeur"]:
+            personnage << "|err|Vous n'avez pas assez d'argent.|ff|"
+            return
         
         salle.magasin[prototype.cle] -= nb_obj
-        i = 0
-        while i < nb_obj:
+        for i in range(nb_obj):
+            objet = type(self).importeur.objet.creer_objet(prototype)
+            objet_spawne = False
             for membre in personnage.equipement.membres:
                 if membre.peut_tenir() and membre.tenu is None:
-                    pass
-            objet = type(self).importeur.objet.creer_objet(prototype)
-            salle.objets_sol.ajouter(objet)
-            i += 1
+                    membre.tenu = objet
+                    objet_spawne = True
+                    break
+            if not objet_spawne:
+                salle.objets_sol.ajouter(objet)
         personnage << "Vous achetez {}.".format(prototype.get_nom(nb_obj))

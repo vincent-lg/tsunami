@@ -42,3 +42,4 @@ from . import restaurer
 from . import retenir_nom
 from . import shutdown
 from . import where
+from . import chmdp

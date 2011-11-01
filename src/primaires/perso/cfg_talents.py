@@ -31,8 +31,8 @@
 """Fichier contenant la configuration de  base des talents."""
 
 cfg_talents = r"""
-# Ce fichier permet de configurer des données concernant l'apprentissage des talents.
-# Notez que les talents ne sont pas configurables ici mais en dur,
+# Ce fichier permet de configurer des données concernant l'apprentissage des
+# talents. Notez que les talents ne sont pas configurables ici mais en dur,
 # dans le code.
 
 ## Coefficient d'apprentissage des talents
@@ -42,7 +42,7 @@ cfg_talents = r"""
 # * difficulte est la difficulté d'apprentissage du talent (entre 0 et 1)
 # * coef est la valeur que vous configurée ici
 # Pour en savoir plus, consultez le code
-# (primaires/perso/templates/talents.py,, méthode estimer_difficulte)
+# (primaires/perso/templates/talents.py - méthode estimer_difficulte)
 coefficient_apprentissage = 2
 
 """

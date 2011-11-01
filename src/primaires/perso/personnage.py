@@ -31,8 +31,11 @@
 
 """Fichier contenant la classe Personnage, détaillée plus bas."""
 
+import random
+
 from abstraits.id import ObjetID, propriete_id
 from bases.collections.enr_dict import EnrDict
+from corps.fonctions import lisser
 from primaires.interpreteur.file import FileContexte
 from primaires.interpreteur.groupe.groupe import *
 
@@ -45,7 +48,7 @@ class Personnage(ObjetID):
     
     """Classe représentant un personnage.
     C'est une classe abstraite. Elle doit être héritée pour faire des joueurs
-    et PNJ. Ces autres classes peuvent être également héritées, à leur tour.
+    et PNJs. Ces autres classes peuvent être également héritées, à leur tour.
     
     Note: on précise bel et bien un nom de groupe, mais on ne l'ajoute pas à
     ObjetID puisqu'il s'agit d'une classe abstraite.
@@ -144,7 +147,6 @@ class Personnage(ObjetID):
         
         if salle:
             salle.ajouter_personnage(self)
-    
     salle = property(_get_salle, _set_salle)
     
     def _get_race(self):
@@ -212,10 +214,13 @@ class Personnage(ObjetID):
         else:
             return None
     
+    @property
+    def argent_possede(self):
+        """Retourne la quantité d'unités monétaires possédées par le perso."""
+        return {"valeur":10, "detail":None}
     
     def get_armes(self):
         """Retourne les armes portées par le personnage.
-        
         Ces armes sont celles portées.
         
         """
@@ -266,6 +271,10 @@ class Personnage(ObjetID):
         """Méthode envoyer"""
         raise NotImplementedError
     
+    def envoyer_lisser(self, chaine, *personnages, **kw_personnages):
+        """Méthode redirigeant vers envoyer mais lissant la chaîne."""
+        self.envoyer(lisser(chaine), *personnages, **kw_personnages)
+    
     def deplacer_vers(self, sortie):
         """Déplacement vers la sortie 'sortie'"""
         salle = self.salle
@@ -301,9 +310,11 @@ class Personnage(ObjetID):
         avancement = self.get_talent(cle_talent)
         configuration = type(self).importeur.perso.cfg_talents
         apprendre = talent.estimer_difficulte(configuration, avancement)
-        if random < apprendre:
+        if random.random() < apprendre:
             avancement += 1
             self.talents[cle_talent] = avancement
+            self.envoyer("Vous progressez dans l'apprentissage du " \
+                    "talent {}.".format(talent.nom))
         
         return avancement
     
