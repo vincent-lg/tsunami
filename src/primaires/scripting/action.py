@@ -67,12 +67,12 @@ class Action(Instruction):
     ...     def init_types(cls):
     ...         cls.ajouter_types(cls.dire_personnage, "Personnage", "str")
     ...         cls.ajouter_types(cls.dire_salle, "Salle", "str")
-    ... @staticmethod
-    ... def dire_personnage(personnage, message):
+    ...     @staticmethod
+    ...     def dire_personnage(personnage, message):
     ...         personnage.envoyer(message)
-    ... @staticmethod
-    ... def dire_salle(salle, message):
-    ...         salle.envoyer(message)
+    ...     @staticmethod
+    ...     def dire_salle(salle, message):
+    ...         sal    le.envoyer(message)
     ...
     
     """
@@ -112,6 +112,11 @@ class Action(Instruction):
             parametres.append(str(p))
         
         return tuple(parametres)
+    
+    @classmethod
+    def get_methode(self, numero):
+        """Retourne la méthode correspondante au numéro d'ordre entré."""
+        return list(self._parametres_possibles.values())[numero]
     
     @classmethod
     def ajouter_types(cls, methode, *parametres):

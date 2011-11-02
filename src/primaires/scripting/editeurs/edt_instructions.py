@@ -30,6 +30,7 @@
 
 """Ce fichier contient l'éditeur EdtInstructions, détaillé plus bas."""
 
+import inspect
 import traceback
 from textwrap import wrap
 
@@ -54,7 +55,7 @@ class EdtInstructions(Editeur):
         self.ajouter_option("?s", self.opt_aide_syntaxe)
         #self.ajouter_option("?o", self.opt_aide_options)
         #self.ajouter_option("?f", self.opt_aide_fonctions)
-        #self.ajouter_option("?a", self.opt_aide_actions)
+        self.ajouter_option("?a", self.opt_aide_actions)
         self.ajouter_option("r", self.opt_remplacer_instruction)
         self.ajouter_option("q", self.opt_relier_quete)
     
@@ -167,6 +168,87 @@ class EdtInstructions(Editeur):
         else:
             self.pere << "A faire..."
     
+    def opt_aide_actions(self, arguments):
+        """Donne de l'aide sur les actions existantes.
+        
+        Syntaxes :
+            /a -- liste les actions
+            /a action -- affiche l'aide d'une action
+            /a action no -- affiche l'aide d'une méthode de l'action
+        
+        """
+        arguments = arguments.strip()
+        nom_action = action = no = methode = None
+        if arguments:
+            arguments = arguments.split(" ")
+            nom_action = arguments[0]
+            if len(arguments) >= 2:
+                no = arguments[1]
+                try:
+                    no = int(no)
+                    assert no >= 1
+                except (ValueError, AssertionError):
+                    self.pere << "|err|Ce numéro est invalide.|ff|"
+                    return
+        
+        if nom_action:
+            # On cherche l'action
+            try:
+                action = type(self).importeur.scripting.actions[nom_action]
+            except KeyError:
+                self.pere << "|err|L'action {} est inconnue.|ff|".format(
+                        nom_action)
+                return
+            
+            if no:
+                try:
+                    methode = action.get_methode(no - 1)
+                except IndexError:
+                    self.pere << "|err|Ce numéro est invalide.|ff|"
+                    return
+        
+        # AFfichage
+        if methode:
+            # On affiche l'aide de la méthode
+            nom = action.nom
+            t_args = inspect.getargspec(methode)
+            args = " ".join(t_args.args)
+            doc = inspect.getdoc(methode)
+            self.pere << "Action {} {}\n{}".format(nom, args, doc)
+        elif action:
+            # Une action est précisée mais pas de méthode
+            nom = action.nom
+            doc = inspect.getdoc(action).split("\n")
+            resume = doc[0]
+            description = "\n".join(doc[1:])
+            doc_methodes = []
+            for i, methode in enumerate(action._parametres_possibles.values()):
+                args = " ".join(inspect.getargspec(methode).args)
+                doc_methodes.append("{}. {}".format(i + 1, args))
+            
+            doc = "  " + "\n  ".join(doc_methodes)
+            self.pere << "Action {} : {}\n{}\nUsages :\n{}".format(
+                    nom, resume, description, doc)
+        else:
+            # Aucune action n'est précisée, on affiche la liste
+            actions = sorted(type(self).importeur.scripting.actions.values(),
+                    key=lambda a: a.nom)
+            lignes = []
+            for action in actions:
+                nom = action.nom
+                doc = inspect.getdoc(action).split("\n")
+                resume = doc[0]
+                lignes.append("{} : {}".format(nom, resume))
+            
+            lignes = "  " + "\n  ".join(lignes)
+            self.pere << \
+                "Ci-dessous se trouve la liste des actions existantes.\n" \
+                "Pour obtenir de l'aide sur une action, entrez " \
+                "|cmd|/?a action|ff|\n" \
+                "Pour obtenir de l'aide sur un des usages possible " \
+                "de l'action,\nentrez |cmd|/?a action numero|ff|\n\n" \
+                "{}".format(lignes)
+            
     def accueil(self):
         """Message d'accueil du contexte"""
         tests = self.objet

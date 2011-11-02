@@ -34,7 +34,7 @@ from primaires.scripting.action import Action
 
 class ClasseAction(Action):
     
-    """Action dire."""
+    """Dire quelque chose"""
     
     @classmethod
     def init_types(cls):
@@ -43,8 +43,10 @@ class ClasseAction(Action):
     
     @staticmethod
     def dire_personnage(personnage, message):
+        """Dit un message au personnage"""
         personnage.envoyer(message)
     
     @staticmethod
     def dire_salle(salle, message):
+        """Dit un message aux personnages présents dans la salle"""
         salle.envoyer(message)

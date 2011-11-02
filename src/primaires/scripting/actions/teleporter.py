@@ -34,20 +34,29 @@ from primaires.scripting.action import Action
 
 class ClasseAction(Action):
     
-    """Action teleporter."""
+    """Téléporte un personnage dans une salle distante"""
     
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.teleporter_salle, "Personnage", "Salle")
         cls.ajouter_types(cls.teleporter_dest, "Personnage", "str")
     
-    
     @staticmethod
     def teleporter_salle(personnage, salle):
+        """Téléporte le personnage dans une salle distante"""
         personnage.salle = salle
     
     @staticmethod
     def teleporter_dest(personnage, destination):
+        """Téléporte le personnage vers la destination
+        
+        La destination est précisée sous la forme d'une chaîne de caractères :
+        \"zone:mnémonic\".
+        
+        Une erreur est envoyée si la destination ne peut être trouvée
+        (la salle indiquée n'existe pas).
+        
+        """
         try:
             salle = importeur.salle[destination]
         except KeyError:
