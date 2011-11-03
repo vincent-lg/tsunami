@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2011 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,19 +28,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction salle."""
+"""Fichier contenant la classe-template Terrain, détaillée plus bas."""
 
-from primaires.scripting.fonction import Fonction
-
-class ClasseFonction(Fonction):
+class Terrain:
     
-    """Retourne la salle d'un personnage"""
+    """Classe définissant un terrain."""
     
-    @classmethod
-    def init_types(cls):
-        cls.ajouter_types(cls.salle_personnage, "Personnage")
-    
-    @staticmethod
-    def salle_personnage(personnage):
-        """Retourne la salle du personnage passé en paramètre"""
-        return personnage.salle
+    def __init__(self, nom):
+        """Constructeur du terrain."""
+        self.nom = nom

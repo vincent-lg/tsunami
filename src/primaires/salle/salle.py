@@ -85,6 +85,7 @@ class Salle(ObjetID):
         self._zone = zone
         self._mnemonic = mnemonic
         self.coords = Coordonnees(x, y, z, valide, self)
+        self.nom_terrain = "ville"
         self.titre = ""
         self.description = Description(parent=self, indente=True)
         self.sorties = Sorties(parent=self)
@@ -144,6 +145,11 @@ class Salle(ObjetID):
     def exterieur(self):
         """Retourne True si la salle est extérieure, False sinon."""
         return not self.interieur
+    
+    @property
+    def terrain(self):
+        """Retourne l'objet terrain."""
+        return type(self).importeur.salle.terrains[self.nom_terrain]
     
     def personnage_est_present(self, personnage):
         """Si le personnage est présent, retourne True, False sinon."""

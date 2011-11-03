@@ -36,7 +36,7 @@ from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
     
-    """Fonction hasard."""
+    """Retourne vrai ou faux aléatoirement"""
     
     @classmethod
     def init_types(cls):
@@ -44,7 +44,14 @@ class ClasseFonction(Fonction):
     
     @staticmethod
     def hasard(probabilite):
-        """Fonction retournant vrai ou faux en fonction de la probabilité."""
+        """Retourne vrai ou faux en fonction de la probabilité.
+        
+        La probabilité entrée doit être un entier entre 1 et 100.
+        Un test avec une probabilité de 100 sera toujours vrai.
+        Un test avec une probabilité de 50 aura 1/2 chances d'être vrai.
+        Un test avec une probabilité de 0 sera toujours faux.
+        
+        """
         probabilite /= 100
         probabilite = float(probabilite)
         chance = random()

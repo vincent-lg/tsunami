@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2011 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,19 +28,4 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction salle."""
-
-from primaires.scripting.fonction import Fonction
-
-class ClasseFonction(Fonction):
-    
-    """Retourne la salle d'un personnage"""
-    
-    @classmethod
-    def init_types(cls):
-        cls.ajouter_types(cls.salle_personnage, "Personnage")
-    
-    @staticmethod
-    def salle_personnage(personnage):
-        """Retourne la salle du personnage passé en paramètre"""
-        return personnage.salle
+"""Package contenant les templates du module salle."""

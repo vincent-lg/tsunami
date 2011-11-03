@@ -37,6 +37,7 @@ from primaires.format.fonctions import format_nb
 from .salle import Salle, ZONE_VALIDE, MNEMONIC_VALIDE
 from .sorties import NOMS_SORTIES
 from .config import cfg_salle
+from .templates.terrain import Terrain
 from . import commandes
 from .editeurs.redit import EdtRedit
 from .coordonnees import Coordonnees
@@ -83,6 +84,7 @@ class Module(BaseModule):
         
         self.logger = type(self.importeur).man_logs.creer_logger( \
                 "salles", "salles")
+        self.terrains = {}
     
     def config(self):
         """Méthode de configuration du module"""
@@ -90,6 +92,13 @@ class Module(BaseModule):
             "salle/salle.cfg", "config salle", cfg_salle)
         self.importeur.hook.ajouter_hook("salle:regarder",
                 "Hook appelé dès qu'on regarde une salle.")
+        
+        # Ajout des terrain
+        self.ajouter_terrain("ville")
+        self.ajouter_terrain("route")
+        self.ajouter_terrain("forêt")
+        self.ajouter_terrain("plaine")
+        self.ajouter_terrain("rive")
         
         BaseModule.config(self)
     
@@ -217,7 +226,8 @@ class Module(BaseModule):
         if not re.search(ZONE_VALIDE, zone):
             raise ValueError("Zone {} invalide".format(zone))
         if not re.search(MNEMONIC_VALIDE, mnemonic):
-            raise ValueError("Mnémonic {} invalide ({})".format(mnemonic, MNEMONIC_VALIDE))
+            raise ValueError("Mnémonic {} invalide ({})".format(mnemonic,
+                    MNEMONIC_VALIDE))
         
         salle = Salle(zone, mnemonic, x, y, z, valide)
         self.ajouter_salle(salle)
@@ -289,3 +299,11 @@ class Module(BaseModule):
             del self._coords[a_x, a_y, a_z]
         if salle and nouvelles_coords.valide:
             self._coords[nouvelles_coords.tuple()] = salle
+    
+    def ajouter_terrain(self, nom):
+        """Ajoute un terrain."""
+        if nom in self.terrains:
+            raise KeyError("le terrain {] existe déjà".format(repr(nom)))
+        
+        terrain = Terrain(nom)
+        self.terrains[nom] = terrain
