@@ -78,6 +78,11 @@ class Fonction(BaseObj):
         return fonction(*parametres)
     
     @classmethod
+    def get_methode(self, numero):
+        """Retourne la méthode correspondante au numéro d'ordre entré."""
+        return list(self._parametres_possibles.values())[numero]
+    
+    @classmethod
     def ajouter_types(cls, methode, *parametres):
         """Ajoute une interprétation possible de la fonction.
         

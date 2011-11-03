@@ -34,7 +34,7 @@ from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
     
-    """Fonction salle."""
+    """Retourne la salle d'un personnage"""
     
     @classmethod
     def init_types(cls):
@@ -42,4 +42,5 @@ class ClasseFonction(Fonction):
     
     @staticmethod
     def salle_personnage(personnage):
+        """Retourne la salle du personnage passé en paramètre"""
         return personnage.salle
