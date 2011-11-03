@@ -179,7 +179,7 @@ class Test(ObjetID):
         reg = re.search("File \"\<string\>\", line ([0-9]+)", "\n".join(pile))
         if reg:
             no_ligne = int(reg.groups()[-1])
-            ligne = self.__instructions[no_ligne - 1]
+            ligne = echapper_accolades(str(self.__instructions[no_ligne - 1]))
         else:
             no_ligne = "|err|inconnue|ff|"
             ligne = "|err|inconnue|ff|"
@@ -237,7 +237,8 @@ class Test(ObjetID):
         lignes = []
         instructions = self.instructions
         for instruction in instructions:
-            lignes.append((" " * 4 * instruction.niveau) + instruction.code_python)
+            lignes.append((" " * 4 * instruction.niveau) + \
+                    instruction.code_python)
         
         code = "\n".join(lignes)
         print("Code :", code, sep="\n")
@@ -248,6 +249,7 @@ class Test(ObjetID):
         # Exécution
         __builtins__["importeur"] = type(self).importeur
         __builtins__["ErreurExecution"] = ErreurExecution
+        __builtins__["variables"] = evenement.espaces.variables
         try:
             exec(code, globales)
         except ErreurExecution as err:
@@ -257,6 +259,7 @@ class Test(ObjetID):
         finally:
             del __builtins__["importeur"]
             del __builtins__["ErreurExecution"]
+            del __builtins__["variables"]
         
         # Si le test est relié à une quête
         if etape:

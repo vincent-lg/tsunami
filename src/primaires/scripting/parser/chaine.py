@@ -75,5 +75,4 @@ class ChaineDeCaracteres(Expression):
     def code_python(self):
         """Retourne le code Python associé."""
         chaine = repr(self.chaine)
-        print(chaine)
-        return chaine + ".format(**variables)"
+        return chaine

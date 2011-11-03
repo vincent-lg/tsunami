@@ -170,12 +170,23 @@ class Joueur(Personnage):
         else:
             return self.get_distinction_visible()
     
-    def envoyer(self, msg, *personnages, **kw_personnages):
+    def envoyer(self, msg, *l_formatter, **kw_formatter):
         """On redirige sur l'envoie de l'instance de connexion."""
-        personnages = [p.get_nom_pour(self) for p in personnages]
-        kw_personnages = dict((nom, p.get_nom_pour(self)) for nom, p in \
-                kw_personnages.items())
-        msg = msg.format(*personnages, **kw_personnages)
+        l_aff = []
+        for objet in l_formatter:
+            if isinstance(objet, Personnage):
+                l_aff.append(objet.get_nom_pour(self))
+            else:
+                l_aff.append(str(objet))
+        
+        d_aff = {}
+        for cle, objet in kw_formatter.items():
+            if isinstance(objet, Personnage):
+                d_aff[cle] = objet.get_nom_pour(self)
+            else:
+                d_aff[cle] = str(objet)
+        
+        msg = msg.format(*l_aff, **d_aff)
         if self.instance_connexion:
             self.instance_connexion.envoyer(msg)
 
