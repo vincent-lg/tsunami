@@ -41,6 +41,7 @@ les extensions n'apparaîtront pas ici.
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.choix import Choix
 from .edt_coords import EdtCoords
 from .edt_zone import EdtZone
 from .edt_mnemonic import EdtMnemonic
@@ -132,6 +133,19 @@ class EdtRedit(Presentation):
             "|att|Le couple 'zone:mnémonic' doit être unique et différent " \
             "pour chaque salle !|ff|\n\n" \
             "Mnémonic actuel : |bc|{objet.mnemonic}|ff|"
+        
+        # Terrain
+        terrains = sorted(type(self).importeur.salle.terrains.keys())
+        terrain = self.ajouter_choix("terrain", "r", Choix, salle,
+                "nom_terrain", terrains)
+        terrain.parent = self
+        terrain.prompt = "Terrain de la salle : "
+        terrain.apercu = "{objet.nom_terrain}"
+        terrain.aide_courte = \
+            "Entrez le |ent|terrain|ff| de la salle ou |cmd|/|ff| pour revenir " \
+            "à la fenêtre parente.\n\nTerrains disponibles : {}.\n\n" \
+            "Terrain actuel : |bc|{{objet.nom_terrain}}|ff|".format(
+            ", ".join(terrains))
         
         # Titre
         titre = self.ajouter_choix("titre", "t", Uniligne, salle, "titre")
