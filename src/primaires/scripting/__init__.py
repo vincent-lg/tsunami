@@ -38,6 +38,7 @@ from abstraits.module import *
 from .instruction import Instruction
 from .condition import Condition
 from .affectation import Affectation
+from .commentaire import Commentaire
 from .action import Action, actions as lst_actions
 from . import parser
 from . import commandes

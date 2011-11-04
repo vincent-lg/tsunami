@@ -28,25 +28,46 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'action dire."""
+from .instruction import Instruction
 
-from primaires.scripting.action import Action
+"""Fichier contenant la classe Commentaire, détaillée plus bas."""
 
-class ClasseAction(Action):
+class Commentaire(Instruction):
     
-    """Dire quelque chose"""
+    """Classe définissant un commentaire.
+    
+    Un commentaire est une instruction commençant par un #,
+    non interprétée par Python.
+    
+    """
+    
+    def __init__(self):
+        """Construction d'un commentaire."""
+        Instruction.__init__(self)
+        self.commentaire = ""
+    
+    def __str__(self):
+        return "#" + self.commentaire
     
     @classmethod
-    def init_types(cls):
-        cls.ajouter_types(cls.dire_personnage, "Personnage", "str")
-        cls.ajouter_types(cls.dire_salle, "Salle", "str")
+    def peut_interpreter(cls, chaine):
+        """La chaîne peut-elle être interprétée par la classe Commentaire ?"""
+        return chaine.startswith("#")
     
-    @staticmethod
-    def dire_personnage(personnage, message):
-        """Dit un message au personnage"""
-        personnage.envoyer(message, **variables)
+    @classmethod
+    def construire(cls, chaine):
+        """Construit l'instruction."""
+        commentaire = chaine[1:]
+        if commentaire and commentaire[0] != " ":
+            commentaire = " " + commentaire
+        
+        ins = Commentaire()
+        ins.commentaire = commentaire
+        
+        return ins
     
-    @staticmethod
-    def dire_salle(salle, message):
-        """Dit un message aux personnages présents dans la salle"""
-        salle.envoyer(message, **variables)
+    @property
+    def code_python(self):
+        """Retourne le code Python associé à l'instruction."""
+        py_code = "#" + self.commentaire
+        return py_code
