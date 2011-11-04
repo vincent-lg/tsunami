@@ -66,7 +66,7 @@ class PrmLire(Parametre):
             mails = [mail for mail in mails if not mail.lu]
         
         if dic_masques["id_mail"] is None and mails == []:
-            personnage << "Pas de nouveau mail."
+            personnage << "|att|Vous n'avez aucun nouveau message.|ff|"
         else:
             if dic_masques["id_mail"] is None:
                 num = min(mails,key=lambda mail : mail.date)

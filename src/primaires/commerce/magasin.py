@@ -30,6 +30,7 @@
 
 """Fichier contenant la classe Magasin, détaillée plus bas."""
 
+from bases.collections.liste_id import ListeID
 from abstraits.obase import *
 from primaires.pnj.prototype import Prototype
 from primaires.objet.types.base import BaseType
@@ -154,7 +155,7 @@ class Magasin(BaseObj):
     @property
     def monnaies(self):
         """Retourne la liste des prototypes de monnaie utilisables"""
-        ret = []
+        ret = ListeID()
         for m in self._monnaies:
             if m in type(self).importeur.objet.prototypes:
                 ret.append(type(self).importeur.objet.prototypes[m])
@@ -171,8 +172,8 @@ class Magasin(BaseObj):
     
     @property
     def liste_objets(self):
-        """Retourne les clés des objets en vente, par ordre alphabétique"""
-        ret = []
+        """Retourne les objets en vente, par ordre alphabétique"""
+        ret = ListeID()
         liste_cles = sorted(list(self._o_prototypes.keys()))
         for cle in liste_cles:
             ret.append(self.get_item_par_cle(cle))
@@ -181,7 +182,7 @@ class Magasin(BaseObj):
     @property
     def liste_pnjs(self):
         """Retourne la liste des PNJs en vente, par ordre alphabétique"""
-        ret = []
+        ret = ListeID()
         liste_cles = sorted(list(self._p_prototypes.keys()))
         for cle in liste_cles:
             ret.append(self.get_item_par_cle(cle))

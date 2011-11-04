@@ -214,11 +214,6 @@ class Personnage(ObjetID):
         else:
             return None
     
-    @property
-    def argent_possede(self):
-        """Retourne la quantité d'unités monétaires possédées par le perso."""
-        return {"valeur":10, "detail":None}
-    
     def get_armes(self):
         """Retourne les armes portées par le personnage.
         Ces armes sont celles portées.
