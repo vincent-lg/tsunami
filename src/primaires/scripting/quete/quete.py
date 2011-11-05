@@ -179,5 +179,13 @@ class Quete(ObjetID):
         for etape in self.__etapes:
             t_niveau = niveau + (etape.niveau[-1], )
             etape.mettre_a_jour_niveau(t_niveau)
+    
+    def detruire(self):
+        """Destruction de l'objet."""
+        for etape in self.__etapes:
+            etape.detruire()
+        
+        ObjetID.detruire(self)
+        
 
 ObjetID.ajouter_groupe(Quete)
