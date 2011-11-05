@@ -48,6 +48,12 @@ class Operateur(Expression):
         Expression.__init__(self)
         self.operateur = None
     
+    def __repr__(self):
+        return " op({}) ".format(self.operateur)
+    
+    def __str__(self):
+        return str(self.operateur)
+    
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
@@ -80,12 +86,6 @@ class Operateur(Expression):
     def get_valeur(self, evt):
         """Retourne l'opérateur Python correspondant."""
         return OPERATEURS[self.operateur]
-    
-    def __repr__(self):
-        return " op({}) ".format(self.operateur)
-    
-    def __str__(self):
-        return str(self.operateur)
     
     @property
     def code_python(self):

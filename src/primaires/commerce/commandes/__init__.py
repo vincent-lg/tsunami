@@ -32,3 +32,4 @@
 
 import primaires.commerce.commandes.acheter
 import primaires.commerce.commandes.lister
+import primaires.commerce.commandes.vendre

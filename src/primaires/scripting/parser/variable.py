@@ -48,6 +48,12 @@ class Variable(Expression):
         Expression.__init__(self)
         self.nom = None
     
+    def __repr__(self):
+        return "Variable({})".format(self.nom)
+    
+    def __str__(self):
+        return self.nom
+    
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
@@ -84,12 +90,6 @@ class Variable(Expression):
             return espace[self.nom]
         else:
             raise ValueError("la variable {} est introuvable".format(self.nom))
-    
-    def __repr__(self):
-        return "Variable({})".format(self.nom)
-    
-    def __str__(self):
-        return self.nom
     
     @property
     def code_python(self):

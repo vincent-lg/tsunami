@@ -48,6 +48,12 @@ class Connecteur(Expression):
         Expression.__init__(self)
         self.connecteur = None
     
+    def __repr__(self):
+        return " connecteur({}) ".format(self.connecteur)
+    
+    def __str__(self):
+        return str(self.connecteur)
+    
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
@@ -83,12 +89,6 @@ class Connecteur(Expression):
     def get_valeur(self, evt):
         """Retourne le connecteur."""
         return CONNECTEURS[self.connecteur]
-    
-    def __repr__(self):
-        return " connecteur({}) ".format(self.connecteur)
-    
-    def __str__(self):
-        return str(self.connecteur)
     
     @property
     def code_python(self):

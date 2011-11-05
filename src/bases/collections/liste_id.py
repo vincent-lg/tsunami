@@ -47,7 +47,12 @@ class ListeID(BaseObj):
     
     def __getitem__(self, item):
         """Retourne l'objet correspondant à l'ID."""
-        return self.__liste[item].get_objet()
+        if isinstance(item, slice):
+            liste = self.__liste[item]
+            liste = [e.get_objet() for e in liste]
+            return liste
+        else:
+            return self.__liste[item].get_objet()
     
     def __setitem__(self, item, objet):
         """Ecrit l'ID de l'objet au lieu de l'objet lui-même"""

@@ -58,6 +58,7 @@ class EdtPresentation(Presentation):
         # Options
         self.ajouter_option("e", self.ajouter_etape)
         self.ajouter_option("q", self.ajouter_sous_quete)
+        self.ajouter_option("d", self.opt_supprimer_etape)
         
         if personnage and quete:
             self.construire(quete)
@@ -89,6 +90,21 @@ class EdtPresentation(Presentation):
             self.objet.ajouter_sous_quete(argument.strip())
             self.actualiser()
     
+    def opt_supprimer_etape(self, arguments):
+        """Supprime une étape.
+        
+        Syntaxe : /d <niveau>
+        
+        """
+        try:
+            etape = self.objet.etapes[arguments]
+        except KeyError:
+            self.pere << "|err|Etape inconnue.|ff|"
+        else:
+            parent = etape.parent
+            parent.supprimer_etape(etape.str_niveau)
+            self.actualiser()
+    
     def accueil(self):
         """Message d'accueil de l'éditeur."""
         quete = self.objet
@@ -101,6 +117,7 @@ class EdtPresentation(Presentation):
                 "Options :\n" \
                 " - |cmd|/e <titre de l'étape>|ff| : ajoute une étape " \
                 "simple à la quête\n" \
+                " - |cmd|/d <niveau de l'étape>|ff| : supprime l'étape\n" \
                 " - |cmd|/q <titre de la sous-quête>|ff| : ajoute une " \
                 "sous-quête (qui pourra elle-même\n" \
                 "   contenir sous-quêtes et étapes simples)\n" \

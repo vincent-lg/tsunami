@@ -28,51 +28,47 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe ChaineDeCaracteres, détaillée plus bas."""
+"""Package contenant la commande 'vendre'."""
 
-from .expression import Expression
+from primaires.interpreteur.commande.commande import Commande
 
-class ChaineDeCaracteres(Expression):
+class CmdVendre(Commande):
     
-    """Expression chaîne de caractères."""
+    """Commande 'vendre'"""
     
-    nom = "chaine"
     def __init__(self):
-        """Constructeur de l'expression."""
-        Expression.__init__(self)
-        self.chaine = None
+        """Constructeur de la commande"""
+        Commande.__init__(self, "vendre", "sell")
+        self.schema = "(<nombre>) <nom_objet>"
+        self.aide_courte = "vend un objet"
+        self.aide_longue = \
+            "Cette commande permet de vendre des objets dans un magasin."
     
-    def __repr__(self):
-        return "chaine({})".format(self.chaine)
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nom_objet = self.noeud.get_masque("nom_objet")
+        nom_objet.proprietes["conteneurs"] = "(personnage.equipement.tenus, )"
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        salle = personnage.salle
+        if salle.magasin is None:
+            personnage << "|err|Il n'y a pas de magasin ici.|ff|"
+            return
+        nb_obj = dic_masques["nombre"].nombre if \
+            dic_masques["nombre"] is not None else 1
+        liste_obj = dic_masques["nom_objet"].objets[:nb_obj]
+        objet = dic_masques["nom_objet"].objet
         
-    def __str__(self):
-        return "\"" + self.chaine + "\""
-    
-    @classmethod
-    def parsable(cls, chaine):
-        """Retourne True si la chaîne est parsable, False sinon."""
-        chaine = chaine.lstrip()
-        return chaine.startswith("\"") and chaine.count("\"") >= 2
-    
-    @classmethod
-    def parser(cls, chaine):
-        """Parse la chaîne.
+        # Vérifications avant de valider la vente
+        if (objet.prix / 2) * nb_obj > salle.magasin.caisse:
+            personnage << "|err|Pas assez d'argent en caisse.|ff|"
+            return
         
-        Retourne l'objet créé et la partie non interprétée de la chaîne.
+        # Tout est bon, on donne l'argent
         
-        """
-        objet = ChaineDeCaracteres()
-        chaine = chaine.lstrip()
-        fin = chaine.index("\"", 1)
-        objet.chaine = chaine[1:fin]
-        return objet, chaine[fin + 1:]
-    
-    def get_valeur(self, evt):
-        """Retourne la chaîne au format str."""
-        return self.chaine
-    
-    @property
-    def code_python(self):
-        """Retourne le code Python associé."""
-        chaine = repr(self.chaine)
-        return chaine
+        # Vente de l'objet
+        for o in liste_obj:
+            o[0].detruire()
+        salle.magasin[objet.cle] += nb_obj
+        personnage << "Vous vendez {}.".format(objet.get_nom(nb_obj))

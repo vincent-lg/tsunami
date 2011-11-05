@@ -1,0 +1,329 @@
+h1. Le scripting dans project:kassie
+
+Le scripting donne la possibilité aux bâtisseurs d'étendre les fonctionnalités des personnages, salles ou de tout autre objet dit "scriptable".
+
+Le scripting utilise une forme de langage de script (un langage de programmation très léger), conçu pour être tout à la fois facile à lire / écrire et puissant. La syntaxe du scripting est détaillée ici, ainsi que la procédure pour "scripter" ses créations.
+
+Sommaire :
+
+{{toc}}
+
+h2. Hiérarchie du scripting
+
+Les objets dit "scriptables" possèdent une hiérarchie permettant leur extension via le scripting. Voici cette hiérarchie (chaque élément est expliqué plus en détail par la suite) :
+
+* Tout en haut de la hiérarchie, on trouve un script. Pour chaque objet "scriptable", il existe un script différent. On trouve dans ce script :
+** Plusieurs évènements. Un évènement représente grossièrement une suite d'instructions qui s'exécuteront dans un cas particulier. Par exemple, dans le script de chaque salle, il existe un évènement appelé quand un personnage entre dans la salle. Ces évènements contiennent :
+*** Une liste de variables propres à chaque évènement. Ces variables contiennent des informations spécifiques à l'évènement. Si on reprend l'exemple de l'évènement *arrive* (appelé quand un personnage entre dans la salle), on trouve plusieurs variables dans cet évènement, une variable contenant la salle, une autre contenant le personnage qui entre dans la salle...
+*** Une suite de tests. Quand un évènement s'exécute, il interroge chaque test et un seul d'entre eux sera exécuté. Les tests permettent de séparer différentes suites d'instructions en fonction des variables définies dans l'évènement. Ce point sera approfondi par la suite. Chaque test contient :
+**** Une suite d'instructions. La syntaxe des instructions sera détaillée plus bas, ainsi que le mécanisme se cachant derrière leur exécution.
+
+h3. Les scripts
+
+Comme dit au-dessus les scripts sont des conteneurs d'évènements. Chaque objet "scriptable" possède un script différent et, de par le fait, une suite d'évènements distincts.
+
+Cela est assez logique : une salle possède un évènement @arrive@, mais cet évènement n'aurai pas le même sens pour un PNJ par exemple.
+
+Pour voir un exemple concret, vous pouvez entrer la commande *redit* (depuis un joueur ayant le droit de l'exécuter). L'éditeur de salle s'affiche.
+
+En tapant *sc* puis ENTRER, vous vous retrouvez dans l'éditeur de script de la salle. Vous pouvez y voir une liste des évènements.
+
+h3. Les évènements
+
+Les évènements regroupent plusieurs instructions qui seront exécutées à un moment précis. Par exemple, il vous est dit que l'évènement *arrive* d'une salle est appelé quand un personnage entre dans la salle.
+
+Pour éditer un évènement, entrez simplement son nom (*arrive* pour éditer l'évènement *arrive* par exemple).
+
+Vous vous retrouvez à présent dans l'éditeur de tests.
+
+h3. Les tests
+
+Chaque évènement peut contenir plusieurs tests. Ces tests sont des groupes d'instructions appelés dans un cas précis.
+
+Si on garde l'exemple de l'évènement *arrive*, un test pourrait être :
+
+<pre>si depuis = "ouest"</pre>
+
+Les instructions contenues dans ce test ne seront exécutées que si le personnage entrant dans la salle vient de la sortie @"ouest"@. La syntaxe des test est identique à celle des prédicats (exposée plus bas).
+
+Vous pouvez aussi écrire vos instructions dans un test qui sera exécuté si aucun des précédents ne l'est. Ce test est appelé @sinon@. Si aucun test avant lui n'est exécuté, c'est lui qui le sera.
+
+Pour créer un nouveau test, entrez simplement le prédicat correspondant (par exemple @depuis = "ouest"@). La syntaxe des prédicats sera abordée plus bas dans la rubrique consacrée aux conditions.
+
+Pour éditer un test, entrez le numéro d'un test existant ou @*@ pour éditer le test @sinon@.
+
++*ATTENTION*+ : vous n'êtes pas du tout obligé de créer des tests. Tout votre script peut se trouver dans le test @sinon@. Les tests sont là pour séparer plus efficacement vos scripts mais vous n'êtes pas obligés d'en créer.
+
+En entrant un numéro de test (ou @*@ pour éditer @sinon@), vous vous retrouvez dans l'éditeur d'instructions proprement dit.
+
+h3. La suite d'instructions
+
+Dans l'éditeur d'instructions, vous pouvez entrer, comme son nom l'indique, des instructions. Le test correspondant sera exécuté lors de l'appel de l'évènement. Les instructions vous permettent :
+
+* D'effectuer certaines actions
+* D'affecter de nouvelles valeurs à vos variables
+* De créer des conditions.
+
+Ces trois types d'instructions sont détaillés plus bas ainsi que leur syntaxe.
+
+Toutefois, pour commencer, une présentation des types de données utilisés s'impose.
+
+h2. Les types de données
+
+Les instructions que vous entrerez peuvent réagir différemment en fonction des types de données que vous leur passerez. Pour prendre un exemple concret :
+
+L'action *dire* (qui permet de dire un message) peut prendre en paramètre :
+
+* Une salle suivie d'un message : dans ce cas, le message sera transmis à tous les personnages présents dans la salle
+* Un personnage suivi d'un message : dans ce cas, le message sera transmis uniquement au personnage concerné.
+
+Cette rubrique liste les différents types prédéfinis par le scripting.
+
+h3. Les nombres
+
+Les nombres forment le type de données le plus élémentaire. Leur syntaxe est très simple :
+
+* @3@ pour représenter l'entier 3
+* @3.5@ pour représenter le flottant 3,5 (la virgule est ici remplacée par le point)
+* @-4@ représente l'entier négatif -4
+* @-4.5@ représente le flottant négatif -4,5 (là encore, le point remplace la virgule).
+
+h3. Les chaînes de caractères
+
+Ce type de données représente une suite de lettres, de chiffres ou d'autres symboles. Il peut être requis pour des messages, des noms, des clés et autre.
+
+Pour représenter une chaîne de caractères (peu importe sa longueur), il faut l'entourer de guillemets :
+
+<pre>"ceci est une chaîne"</pre>
+
+Certaines actions (comme l'action *dire*) vous permettent d'inclure, dans votre chaîne, les valeurs des variables existantes. Voici un exemple simple :
+
+<pre>
+variable = 3
+dire salle "Le train sifflera {variable} fois."
+</pre>
+
+Cette instruction enverra à la salle :
+
+bq. Le train sifflera 3 fois.
+
+Si vous voulez, pour une raison ou une autre, écrire des accolades dans vos chaînes de caractères, doublez l'accolade que vous souhaitez écrire :
+
+<pre>
+"Une accolade ouvrante : {{ et une accolade fermante : }}."
+</pre>
+
++*ATTENTION*+ : toutes les actions n'utilisent pas cette fonctionnalité de remplacement des variables par leur valeur dans les chaînes. C'est à voir au cas par cas. En revanche, le fait d'échapper les accolades en les doublant est *toujours* nécessaire.
+
+h3. Les fonctions
+
+Les fonctions permettent de récupérer une certaine information (par exemple, récupérer le titre d'une salle). La syntaxe d'une fonction est assez semblable à la plupart des langages de programmation :
+
+<pre>nom_de_la_fonction(parametre1, parametre2, parametre3, parametreN)</pre>
+
+Les fonctions "retournent" une information. Vous pouvez donc la récupérer dans une variable.
+
+L'exemple ci-dessous implique que la variable @salle@ contienne une salle :
+
+<pre>
+titre = titre(salle)
+</pre>
+
+Ce code va demander le titre de la salle (contenue dans la variable @salle@) et l'écrire dans la variable @titre@.
+
++*ATTENTION*+ : ne pas confondre la variable @titre@ et la fonction @titre@. Le scripting fait bien la différence (ce qui est suivi d'informations entre parenthèses est une fonction, sinon c'est une variable) et il n'y a aucun risque de conflit entre le nom des variables et le nom des fonctions. Vous auriez naturellement pu choisir un autre nom de variable si vous craignez de faire la confusion :
+
+<pre>
+titre_salle = titre(salle)
+</pre>
+
+Ici, la fonction @titre@ ne prend qu'un paramètre : la salle de laquelle on veut récupérer le titre. Les fonctions peuvent ne prendre aucun paramètre. Dans ce cas, il faut quand même préciser, après le nom de la fonction, une parenthèse ouvrante et une parenthèse fermante :
+
+<pre>
+variable = fonction_sans_parametre()
+</pre>
+
+Si la fonction a besoin de plusieurs paramètres, il faut séparer chacun des paramètres par une virgule :
+
+<pre>
+variable = fonction_attendant_2_parametres(parametre1, parametre2)
+</pre>
+
+Les paramètres attendus peuvent être :
+
+* Des types de données (des nombres, des chaînes de caractères ou même d'autres fonctions)
+* Des variables. Dans ce dernier cas, c'est la valeur de la variable qui est utilisée (comme dans l'exemple ci-dessus avec @titre@).
+
+Notez que les fonctions, à l'instar des actions (voir plus bas), peuvent réagir différemment en fonction des types des paramètres qu'on leur passe.
+
+Pour connaître la liste des fonctions disponibles, entrez la commande @/?f@ dans un éditeur d'instructions.
+
+h3. D'autres types
+
+Comme nous l'avons vu, il n'existe pas seulement les nombres, chaînes de caractères et fonctions. Le scripting peut aussi utiliser d'autres types propres à l'univers (personnages, salles, objets...).
+
+De nouveaux types peuvent être aisément ajoutés, mais cette opération nécessite de modifier le code, bien qu'elle soit extrêmement simple.
+
+h2. Syntaxe des instructions
+
+Il existe plusieurs types d'instructions utilisables dans le scripting :
+
+* Les commentaires
+* Les actions
+* Les affectations
+* Les conditions.
+
+h3. Les commentaires
+
+C'est un type d'instructions ignoré lors de l'exécution du script. Ces instructions permettent surtout de laisser des indications sur certaines parties de vos scripts, quand cela s'impose.
+
+Un commentaire commence par un @#@. Tout ce qui se trouve entre le @#@ et la fin de la ligne est ignoré.
+
+<pre>
+# Une ligne de commentaire
+</pre>
+
+h3. Les actions
+
+C'est l'instruction la plus utilisée. Elle permet de faire une action précise (dire un message, donner un objet, matérialiser un PNJ, créer une perturbation météorologique, ouvrir une porte...).
+
+La syntaxe d'une action est la suivante :
+
+<pre>nom_action parametre1 parametre2 parametre3 parametreN</pre>
+
+A l'instar des fonctions, une action peut ne prendre aucun paramètre (dans ce cas, le nom de l'action suffira pour l'exécuter), un paramètre ou plusieurs. Comme vous le voyez, les paramètres sont séparés par un simple espace.
+
+Voici une syntaxe possible de l'action @dire@. On part du principe que dans la variable @personnage@ se trouve un personnage (joueur ou PNJ) :
+
+<pre>
+dire personnage "Bien joué !"
+</pre>
+
+L'instruction est lue de gauche à droite :
+
+* D'abord le nom de l'action, @dire@, qui spécifie bien entendu quelle action doit être exécutée
+* Ensuite le premier paramètre, ici la variable @personnage@ contenant un personnage
+* Enfin, le message à envoyer à ce personnage (c'est une chaîne de caractères, donc entourée de guillemets).
+
+Pour connaître la liste des actions disponibles, entrez la commande doc/BaseObj.txt dans un éditeur d'instructions. Le signe / symbolise une option, le point d'interrogation symbolise une aide et la lettre @a@ donne accès à l'aide des actions.
+
+h3. Les affectations
+
+L'instruction d'affectation permet de changer la valeur d'une variable, ou bien de créer une nouvelle variable. Sa syntaxe est extrêmement simple :
+
+<pre>
+nom_variable = type_de_donnees
+</pre>
+
+Le type de données peut être un nombre, une chaîne de caractères, une autre variable ou une fonction comme nous l'avons vu plus haut :
+
+<pre>
+titre_salle = titre(salle)
+</pre>
+
+Ces variables peuvent ensuite être utilisées dans les autres instructions.
+
+h3. Les conditions
+
+Les conditions sont une forme d'instruction permettant d'encadrer des blocs qui ne s'exécuteront que dans un certains cas.
+
+Voici un exemple simple :
+
+<pre>
+si hasard(30):
+ dire personnage "C'est gagné !"
+sinon:
+ dire personnage "C'est perdu..."
+finsi
+</pre>
+
+En fonction du prédicat (la partie après le *si* et avant les deux points), la ligne 2 ou la ligne 4 sera exécutées (soit l'une, soit l'autre).
+
+Dans cet exemple, on utilise la fonction @hasard@ qui prend en paramètre un nombre entre 1 et 100. Cette fonction retourne vrai ou faux aléatoirement, le nombre entre parenthèses étant une chance sur 100.
+
+Par exemple :
+
+* @hasard(50)@ a 50% de chance de retourner vrai
+* @hasard(30)@ a 30% de chance de retourner vrai
+* ...
+
+La condition ci-dessus a donc 30% de chance d'être vraie. Si elle est vraie, le bloc entre le *si* et le *sinon* sera exécuté (ici, on dit au personnage qu'il a gagné). Si elle est fausse, c'est le bloc entre *sinon* et *finsi* qui sera exécuté (ici, on dit au personnage qu'il a perdu).
+
+Il existe quatre mot-clés pour délimiter les blocs d'instructions :
+
+* @si prédicat:@ débute une condition (obligatoire)
+* @sinon si autre prédicat:@ permet d'exécuter un bloc alternatif si le bloc précédent est faux (facultatif)
+* @sinon:@ permet d'exécuter un bloc si aucun des prédicats précédents n'est vrai (facultatif)
+* @finsi@ ferme le bloc d'instructions (obligatoire).
+
+Un bloc conditionnel doit impérativement commencer par *si* et se terminer par *finsi*. L'usage des mot-clés *sinon si* et *sinon* est facultatif.
+
+Les prédicats peuvent contenir les types de données vues au-dessus (nombres, chaînes de caractères, variables, fonctions) et peuvent :
+
+* Comparer deux valeurs grâce aux opérateurs : = < <= > >= != (voir le tableau ci-dessous)
+* Chaîner des prédicats grâce aux mot-clés *et* / *ou*.
+
+Opérateurs de comparaison :
+
+| Opérateur | Exemple | Est vrai si |
+| = | @valeur1 = valeur2@ | @valeur1@ est égale à @valeur2@ |
+| < | @valeur1 < valeur2@ | @valeur1@ est strictement inférieure à @valeur2@ |
+| <= | @valeur1 <= valeur2@ | @valeur1@ est inférieure ou égale à @valeur2@ |
+| > | @valeur1 > valeur2@ | @valeur1@ est strictement supérieure à @valeur2@ |
+| >= | @valeur1 >= valeur2@ | @valeur1@ est supérieure ou égale à @valeur2@ |
+| != | @valeur1 != valeur2@ | @valeur1@ est différente de @valeur2@ |
+
+Voici quelques exemples :
+
+<pre>
+si titre(salle) = "Un champ de bataille":
+ ...
+finsi
+variable = 5
+si variable < 8.9:
+ ...
+finsi
+</pre>
+
+Vous pouvez utiliser les mot-clés @et@ / @ou@ pour chaîner des prédicats :
+
+<pre>
+si titre(salle) = "Une maison" ou terrain(salle) = "ville":
+ ...
+finsi
+</pre>
+
+h3. Conclusion
+
+Ces instructions peuvent être entrées dans l'éditeur d'instructions. Si le parser du scripting arrive à les analyser, il les ajoutera à la liste des instructions. Sinon, il vous affichera une erreur.
+
+h2. Erreurs lors de l'exécution d'un script
+
+Vous venez d'écrire votre script. L'interpréteur n'a rejeté aucune de vos instructions (ou vous avez fini par lui faire entendre raison). Cela ne veut pas dire que votre script fonctionne, cependant.
+
+Ce que l'interpréteur rejette automatiquement, ce sont les erreurs de syntaxe (vous entrez une chaîne en oubliant les guillemets, par exemple, ou bien vous ne fermez pas autant de parenthèses que vous en ouvrez).
+
+ ais la plupart des erreurs pourront se produire lors de l'exécution de votre script. C'est pourquoi il vous est conseillé de tester autant que possible vos scripts avant qu'ils ne soient accessibles et exécutables par tous.
+
+Si une erreur se produit lors de l'exécution d'un script, les différents acteurs suivants sont notifiés par mudmail :
+
+* Le créateur du script
+* Les administrateurs.
+
+Le créateur va recevoir un mudmail contenant :
+
+* Le script concerné (l'objet, l'évènement et le test)
+* Le numéro de la ligne où s'est produit l'erreur
+* La ligne de script posant apparemment problème
+* Le message d'erreur. Il peut être très explicite (*cette variable n'existe pas*, *la salle entré est introuvable*) ou bien moins explicite. Les messages en anglais impliquent que l'erreur fait partie de celles non prévues par les codeurs.
+
+Les mêmes informations sont envoyés aux administrateurs, ainsi que :
+
+* Le [[GlossaireTraceback|traceback]] complet retourné par "Python":http://www.python.org/ (il est possible que l'erreur vienne du codeur, non pas du bâtisseur).
+
+h2. Utiliser le scripting pour rédiger des quêtes
+
+Le scripting peut naturellement permettre de construire des quêtes. Il est à utiliser conjointement avec l'éditeur de quêtes. Pour savoir comment créer des quêtes, consultez la [[CreerQuete|rubrique consacrée]].
+
+* [[Index|Retour à l'index]]
+* [[Configuration|Retour à la configuration]]

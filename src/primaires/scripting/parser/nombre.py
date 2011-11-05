@@ -54,6 +54,12 @@ class Nombre(Expression):
         Expression.__init__(self)
         self.nombre = None
     
+    def __repr__(self):
+        return "nombre({})".format(self.nombre)
+    
+    def __str__(self):
+        return str(self.nombre)
+    
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
@@ -62,7 +68,6 @@ class Nombre(Expression):
                 if delimiteur in chaine]
         fin = fins and min(fins) or None
         chaine = chaine[:fin]
-        print("On interprète", chaine)
         try:
             nombre = Fraction(chaine)
         except ValueError:
@@ -92,12 +97,6 @@ class Nombre(Expression):
     def get_valeur(self, evt):
         """Retourne le nombre sous la forme d'un objet Fraction."""
         return self.nombre
-    
-    def __repr__(self):
-        return "nombre({})".format(self.nombre)
-    
-    def __str__(self):
-        return str(self.nombre)
     
     @property
     def code_python(self):

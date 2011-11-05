@@ -58,11 +58,11 @@ class CmdAcheter(Commande):
         if nb_obj > salle.magasin[prototype.cle]:
             personnage << "|err|Les stocks sont insuffisant.|ff|"
             return
-        argent_perso = personnage.argent_possede
-        if nb_obj * prototype.prix > argent_perso["valeur"]:
-            personnage << "|err|Vous n'avez pas assez d'argent.|ff|"
-            return
+        # Vérification de l'argent possédé par le perso
         
+        # Tout est bon, on extorque l'argent
+        
+        # Distribution des objets
         salle.magasin[prototype.cle] -= nb_obj
         for i in range(nb_obj):
             objet = type(self).importeur.objet.creer_objet(prototype)
