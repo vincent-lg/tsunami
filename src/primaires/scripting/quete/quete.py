@@ -153,5 +153,31 @@ class Quete(ObjetID):
             res += "\n"
         
         return res.rstrip("\n")
+    
+    def supprimer_etape(self, niveau):
+        """Supprime l'étape."""
+        numero = None
+        for i, etape in enumerate(self.__etapes):
+            if etape.str_niveau == niveau:
+                numero = i
+                break
+        
+        etape = self.__etapes[numero]
+        niveau = etape.niveau
+        etape.detruire()
+        del self.__etapes[numero]
+        for etape in self.__etapes[numero:]:
+            t_niveau = etape.niveau
+            etape.mettre_a_jour_niveau(niveau)
+            niveau = t_niveau
+    
+    def mettre_a_jour_niveau(self, niveau):
+        """Méthode mettant à jour le niveau de la quête."""
+        self.niveau = niveau
+        
+        # On calcul le niveau des sous-étapes
+        for etape in self.__etapes:
+            t_niveau = niveau + (etape.niveau[-1], )
+            etape.mettre_a_jour_niveau(t_niveau)
 
 ObjetID.ajouter_groupe(Quete)

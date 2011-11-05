@@ -72,10 +72,19 @@ class Etape(ObjetID):
     def str_niveau(self):
         return ".".join([str(n) for n in self.niveau])
     
+    @property
+    def parent(self):
+        """Retourne la quête."""
+        return self.quete
+    
     def afficher_etapes(self, quete=None):
         """Affiche les étapes (en l'occurence, elle-même seulement)."""
         return " " + "  " * len(self.niveau) + self.str_niveau + " - " + \
                 self.titre
+    
+    def mettre_a_jour_niveau(self, niveau):
+        """Méthode mettant à jour le niveau de la quête."""
+        self.niveau = niveau
 
 
 ObjetID.ajouter_groupe(Etape)
