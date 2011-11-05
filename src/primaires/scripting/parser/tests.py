@@ -44,6 +44,10 @@ class Tests(Expression):
         self.nom = None
         self.expressions = ()
     
+    def __repr__(self):
+        expressions = [str(e) for e in self.expressions]
+        return " ".join(expressions)
+    
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
@@ -60,7 +64,8 @@ class Tests(Expression):
         expressions = cls.expressions_def
         
         # Parsage des expressions
-        types = ("variable", "nombre", "chaine", "fonction", "operateur", "connecteur")
+        types = ("variable", "nombre", "chaine", "fonction",
+                        "operateur", "connecteur")
         types = tuple([expressions[nom] for nom in types])
         expressions = []
         while chaine.strip():
@@ -68,11 +73,11 @@ class Tests(Expression):
             if not types_app:
                 raise ValueError("impossible de parser {}".format(chaine))
             elif len(types_app) > 1:
-                raise ValueError("les tests {} peuvent être différemment interprétée".format(chaine))
+                raise ValueError("les tests {} peuvent être différemment " \
+                        "interprétée".format(chaine))
             
             type = types_app[0]
             arg, chaine = type.parser(chaine)
-            print("reste", chaine)
             expressions.append(arg)
         
         objet.expressions = tuple(expressions)
@@ -85,7 +90,3 @@ class Tests(Expression):
         py_tests = [t.code_python for t in self.expressions]
         code = " ".join(py_tests)
         return code
-    
-    def __repr__(self):
-        expressions = [str(e) for e in self.expressions]
-        return " ".join(expressions)

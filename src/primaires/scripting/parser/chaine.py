@@ -42,6 +42,12 @@ class ChaineDeCaracteres(Expression):
         Expression.__init__(self)
         self.chaine = None
     
+    def __repr__(self):
+        return "chaine({})".format(self.chaine)
+        
+    def __str__(self):
+        return "\"" + self.chaine + "\""
+    
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
@@ -64,12 +70,6 @@ class ChaineDeCaracteres(Expression):
     def get_valeur(self, evt):
         """Retourne la chaîne au format str."""
         return self.chaine
-    
-    def __repr__(self):
-        return "chaine({})".format(self.chaine)
-        
-    def __str__(self):
-        return "\"" + self.chaine + "\""
     
     @property
     def code_python(self):

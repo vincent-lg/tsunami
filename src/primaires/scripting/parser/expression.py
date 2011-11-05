@@ -52,12 +52,14 @@ class Expression(BaseObj, metaclass=MetaExpression):
     des entiers, soit des variables... soit des fonctions).
     
     Méthodes définies dans la classe abstraite :
+        __repr__ -- méthode retournant une chaîne de debug de l'expression
+        __str__ -- méthode retournant l'expression telle qu'affichée
         parsable -- retourne True si la chaîne passée en paramètre est
                     parsable par l'expression
         parser -- retourne l'objet créé par le parsage et la chaîne
                   non interprétée
-        get_valeur -- retourne l'objet Python parsé
-    
+        code_python -- propriété retournant le code Python lié
+        
     Pour plus de détails sur chacune des méthodes, consultez leur
     documentation.
     

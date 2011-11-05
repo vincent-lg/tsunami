@@ -45,6 +45,10 @@ class Fonction(Expression):
         self.nom = None
         self.parametres = ()
     
+    def __repr__(self):
+        params = [str(p) for p in self.parametres]
+        return self.nom + "(" + ", ".join(params) + ")"
+    
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
@@ -81,12 +85,12 @@ class Fonction(Expression):
             if not types_app:
                 raise ValueError("impossible de parser {}".format(fonction))
             elif len(types_app) > 1:
-                raise ValueError("la fonction {] peut être différemment interprétée".format(fonction))
+                raise ValueError("la fonction {] peut être différemment " \
+                        "interprétée".format(fonction))
             
             type = types_app[0]
             arg, chaine = type.parser(chaine)
             parametres.append(arg)
-            print("reste", chaine)
             
             chaine = chaine.lstrip(" ")
             if chaine.startswith(","):
@@ -111,10 +115,6 @@ class Fonction(Expression):
         fonction = fonctions[self.nom](self)
         
         return fonction(evt)
-    
-    def __repr__(self):
-        params = [str(p) for p in self.parametres]
-        return self.nom + "(" + ", ".join(params) + ")"
     
     @property
     def code_python(self):
