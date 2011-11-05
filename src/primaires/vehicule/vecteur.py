@@ -58,18 +58,18 @@ class Vecteur(BaseObj):
     
     def __repr__(self):
         """Affichage des coordonnées dans un cas de debug"""
-        return "Vecteur(x={}, y={}, z={}})".format(self.x, self.y, self.z)
+        return "Vecteur(x={}, y={}, z={})".format(self.x, self.y, self.z)
     
     @property
     def coordonnees(self):
-        return Coordonnees(int(self.x), int(self.y), int(self.z))
+        return Coordonnees(self.x, self.y, self.z)
     
     @property
     def tuple(self):
         """Retourne le tuple (x, y, z)"""
         return (self.x, self.y, self.z)
     
-    def get_copie(self):
+    def copie(self):
         """Retourne une copie de self"""
         return Vecteur(self.x, self.y, self.z)
     
@@ -79,6 +79,7 @@ class Vecteur(BaseObj):
         self.x = x * 1 + y * 0 + z * 0
         self.y = x * 0 + y * cos(r) - z * sin(r)
         self.z = x * 0 + y * sin(r) + z * cos(r)
+        return self
     
     def tourner_autour_y(self, angle):
         r = radians(angle)
@@ -86,6 +87,7 @@ class Vecteur(BaseObj):
         self.x = x * cos(r) - y * 0 + z * sin(r)
         self.y = x * 0 + y * 1 + z * 0
         self.z = x * sin(r) + y * 0 + z * cos(r)
+        return self
     
     def tourner_autour_z(self, angle):
         r = radians(angle)
@@ -93,19 +95,37 @@ class Vecteur(BaseObj):
         self.x = x * cos(r) - y * sin(r) + z * 0
         self.y = x * sin(r) + y * cos(r) + z * 0
         self.z = x * 0 + y * 0 + z * 1
+        return self
     
     def incliner(self, angle):
         r = radians(angle)
         x, y, z = self.x, self.y, self.z
         n = sqrt(x*x+y*y)
         if n==0:
-            raise(ValueError("impossible d'incliner un vecteur vertical"))
-        self.x = x * cos(r) - z * x * sin(r) / n
-        self.y = y * cos(r) - z * y * sin(r) / n
-        self.z = z * cos(r) + sin(r) * n
+            if z == 0 or sin(r) == 0 or (x == 0 and y == 0):
+                self.x = 0
+                self.y = 0
+                self.z = z * cos(r)
+            else:
+                raise(ValueError("Impossible d'incliner un vecteur vertical"))
+        else:
+            self.x = x * cos(r) - z * x * sin(r) / n
+            self.y = y * cos(r) - z * y * sin(r) / n
+            self.z = z * cos(r) + sin(r) * n
+        return self
     
     def direction(self):
         return - self.argument()
+    
+    def inclinaison(self):
+        x, y, z = self.x, self.y, self.z
+        n = sqrt(x*x+y*y)
+        if n==0:
+            if z == 0:
+                return 0
+            else:
+                return 90
+        return degrees(atan(z/n))
     
     def argument(self):
         x, y = self.x, self.y
@@ -125,6 +145,8 @@ class Vecteur(BaseObj):
     
     def normalise(self):
         norme = self.norme()
+        if norme == 0:
+            raise(ValueError("Impossible de normaliser nul"))
         return Vecteur(self.x / norme, self.y / norme, self.z / norme)
     
     # Méthodes spéciales mathématiques

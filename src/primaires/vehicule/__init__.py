@@ -34,6 +34,11 @@ from abstraits.module import *
 from .vehicule import Vehicule
 from .vecteur import Vecteur
 
+import time
+
+#Nombre de seconde virtuelle qui s'écoule en une seconde
+VIRTSEC = 1
+
 class Module(BaseModule):
     """Classe utilisée pour gérer des véhicules.
     
@@ -42,8 +47,31 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "vehicule", "primaire")
         self.commandes = []
+        
+        self.vehicules = []
+        
+        self.temps_precedant = time.time()
+        
+        self.map = {}
     
-    def creer_vehicule(self):
-        veh = Vehicule()
-        veh.propulsion._valeur = Vecteur(2,0,0)
-        return veh
+    def ajouter_vehicule(self,veh):
+        self.vehicules.append(veh)
+    
+    def boucle(self):
+        """A chaque tour de boucle synchro, on fait avancer les vehicules
+        
+        """
+        
+        seconde_virtuelle = (time.time() - self.temps_precedant) * VIRTSEC
+        
+        self.map = {}
+        
+        for veh in self.vehicules:
+            masque = veh.get_prochaine_coordonnees(seconde_virtuelle)
+            impact = [x for x in masque if x in self.map]
+            if len(impact):
+                veh.collision(impact)
+            veh.avancer(seconde_virtuelle)
+            for coords in masque:
+                self.map[coords] = veh
+        self.temps_precedant = time.time()
