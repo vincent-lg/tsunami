@@ -44,18 +44,19 @@ class Porte(ObjetID):
     
     La classe porte définit :
         serrure -- la présence d'une serrure
-        ouverte -- Le flag d'ouverture de la porte
-            Notez aue la propriété fermee existe également.
+        ouverte -- le flag d'ouverture de la porte
+    Notez que la propriété fermee existe également.
     
     """
     
     groupe = "porte"
     sous_rep = "sorties/portes"
-    def __init__(self):
+    def __init__(self, clef=None):
         """Constructeur de la porte."""
         ObjetID.__init__(self)
         self.ouverte = False
         self.serrure = False
+        self._clef = clef.cle if clef is not None else None
         # On passe le statut en CONSTRUIT
         self._construire()
     
@@ -65,6 +66,16 @@ class Porte(ObjetID):
     @property
     def fermee(self):
         return not self.ouverte
+    
+    def _get_clef(self):
+        if self._clef in type(self).importeur.objet.prototypes:
+            return type(self).importeur.objet.prototypes[self._clef]
+        else:
+            self._clef = None
+            return None
+    def _set_clef(self, clef):
+        self._clef = clef.cle
+    clef = property(_get_clef, _set_clef)
     
     def ouvrir(self):
         """Ouvre la porte."""

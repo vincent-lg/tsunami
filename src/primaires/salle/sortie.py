@@ -138,7 +138,7 @@ class Sortie(BaseObj):
         
         return corresp
     
-    def ajouter_porte(self):
+    def ajouter_porte(self, clef=None):
         """Ajoute une porte sur la sortie et sa sortie opposée.
         
         Si une porte est déjà définie sur la sortie, lève une exception.
@@ -148,7 +148,7 @@ class Sortie(BaseObj):
             raise AttributeError("la sortie {} possède déjà une porte".format(
                     self))
         
-        porte = Porte()
+        porte = Porte(clef)
         self.porte = porte
         if self.sortie_opposee:
             self.sortie_opposee.porte = porte
