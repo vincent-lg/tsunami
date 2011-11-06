@@ -47,17 +47,31 @@ class EdtNoms(Editeur):
         self.ajouter_option("e", self.opt_etat_singulier)
         self.ajouter_option("s", self.opt_nom_pluriel)
         self.ajouter_option("p", self.opt_etat_pluriel)
+        self.ajouter_option("a", self.opt_ajouter_nom_sup)
+        self.ajouter_option("d", self.opt_supprimer_nom_sup)
     
     def accueil(self):
         """Message d'accueil"""
         prototype = self.objet
-        return \
-            "/n <nom singulier avec déterminant> : {}\n" \
-            "/s <nom pluriel sans déterminant> : {}\n" \
-            "/e <état singulier> : {}\n" \
-            "/p <état pluriel> : {}".format(
-            prototype.nom_singulier, prototype.nom_pluriel,
-            prototype.etat_singulier, prototype.etat_pluriel)
+        ret = "Options :\n"
+        ret += " - |cmd|/n <nom singulier avec déterminant>|ff| : |bc|"
+        ret += prototype.nom_singulier + "|ff|\n"
+        ret += " - |cmd|/s <nom pluriel sans déterminant>|ff|   : |bc|"
+        ret += prototype.nom_pluriel + "|ff|\n"
+        ret += " - |cmd|/e <état singulier>|ff| : |bc|"
+        ret += prototype.etat_singulier + "|ff|\n"
+        ret += " - |cmd|/p <état pluriel>|ff|   : |bc|"
+        ret += prototype.etat_pluriel + "|ff|\n"
+        ret += " - |cmd|/a <nombre> / <nom pluriel> / "
+        ret += "<état pluriel>|ff| (ajoute un nom pluriel)\n"
+        ret += " - |cmd|/d <nombre>|ff| (supprime le nom correspondant au "
+        ret += "nombre)"
+        if prototype.noms_sup:
+            ret += "\n\nNoms pluriels supplémentaires :"
+            for nom in prototype.noms_sup:
+                ret += "\n  |bc|" + str(nom[0]) + "|ff| - " + nom[1] + " "
+                ret += nom[2]
+        return ret
     
     def opt_nom_singulier(self, arguments):
         """Change le nom singulier du prototype"""
@@ -78,6 +92,66 @@ class EdtNoms(Editeur):
         """Change l'état pluriel du prototype"""
         self.objet.etat_pluriel = arguments
         self.actualiser()
+    
+    def opt_ajouter_nom_sup(self, arguments):
+        """Ajoute un nom pluriel supplémentaire"""
+        prototype = self.objet
+        if not arguments:
+            self.pere << "|err|Vous devez préciser un nombre, un nom et un " \
+                    "état pluriel.|ff|"
+            return
+        try:
+            nombre = arguments.split(" / ")[0]
+            nom = arguments.split(" / ")[1]
+            etat = arguments.split(" / ")[2]
+        except IndexError:
+            self.pere << "|err|Vous devez préciser un nombre, un nom et un " \
+                    "état pluriel.|ff|"
+        else:
+            try:
+                nombre = int(nombre)
+                assert nombre > 1
+            except (ValueError, AssertionError):
+                self.pere << "|err|Vous devez préciser un nombre valide, " \
+                        "supérieur à 1.|ff|"
+            else:
+                if nombre in [nom[0] for nom in prototype.noms_sup]:
+                    for nom_sup in prototype.noms_sup:
+                        if nom_sup[0] == nombre:
+                            nom_sup[1] = nom
+                            nom_sup[2] = etat
+                            break
+                else:
+                    i = 0
+                    for nom_sup in prototype.noms_sup:
+                        if nom_sup[0] > nombre:
+                            break
+                        i += 1
+                    prototype.noms_sup.insert(i, [nombre, nom, etat])
+                prototype.enregistrer()
+                self.actualiser()
+    
+    def opt_supprimer_nom_sup(self, arguments):
+        """Supprime un nom pluriel supplémentaire"""
+        prototype = self.objet
+        if not arguments:
+            self.pere << "|err|Vous devez préciser un nombre.|ff|"
+            return
+        try:
+            nombre = int(arguments.split(" ")[0])
+            assert nombre in [nom[0] for nom in prototype.noms_sup]
+        except (ValueError, AssertionError):
+            self.pere << "|err|Vous devez préciser un nombre valide " \
+                    "correspondant à un nom pluriel déjà défini.|ff|"
+        else:
+            i = 0
+            for nom in prototype.noms_sup:
+                if nom[0] == nombre:
+                    break
+                i += 1
+            del prototype.noms_sup[i]
+            prototype.enregistrer()
+            self.actualiser()
     
     def interpreter(self, msg):
         """Interprétation du message"""

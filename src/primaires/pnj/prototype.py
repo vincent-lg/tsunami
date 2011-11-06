@@ -56,6 +56,7 @@ class Prototype(ObjetID):
         self.etat_singulier = "se tient ici"
         self.nom_pluriel = "quelques-uns"
         self.etat_pluriel = "se tiennent ici"
+        self.noms_sup = []
         self.description = Description(parent=self)
         self.race = None
         self.genre = "aucun"
@@ -85,6 +86,12 @@ class Prototype(ObjetID):
         elif nombre == 1:
             return self.nom_singulier
         else:
+            if self.noms_sup:
+                noms_sup = list(self.noms_sup)
+                noms_sup.reverse()
+                for nom in noms_sup:
+                    if nombre >= nom[0]:
+                        return nom[1]
             return str(nombre) + " " + self.nom_pluriel
     
     def get_nom_etat(self, nombre):
@@ -93,6 +100,12 @@ class Prototype(ObjetID):
         if nombre == 1:
             return nom + " " + self.etat_singulier
         else:
+            if self.noms_sup:
+                noms_sup = list(self.noms_sup)
+                noms_sup.reverse()
+                for nom_sup in noms_sup:
+                    if nombre >= nom_sup[0]:
+                        return nom + " " + nom_sup[2]
             return nom + " " + self.etat_pluriel
     
     @property
