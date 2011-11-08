@@ -185,6 +185,6 @@ class EdtSortie(Editeur):
                 if not clef.est_de_type("clef"):
                     self.pere << "|err|L'objet précisé n'est pas une clef.|ff|"
                     return
-            sortie.ajouter_porte(clef)
+            sortie.ajouter_porte(clef=clef)
         
         self.actualiser()

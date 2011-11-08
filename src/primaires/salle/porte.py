@@ -55,8 +55,8 @@ class Porte(ObjetID):
         """Constructeur de la porte."""
         ObjetID.__init__(self)
         self.ouverte = False
-        self.serrure = False
-        self._clef = clef.cle if clef is not None else None
+        self._clef = clef if clef is None else clef.cle
+        self.verrouillee = False if clef is None else True
         # On passe le statut en CONSTRUIT
         self._construire()
     
@@ -66,6 +66,10 @@ class Porte(ObjetID):
     @property
     def fermee(self):
         return not self.ouverte
+    
+    @property
+    def serrure(self):
+        return not self.clef is None
     
     def _get_clef(self):
         if self._clef in type(self).importeur.objet.prototypes:
@@ -81,14 +85,24 @@ class Porte(ObjetID):
         """Ouvre la porte."""
         if self.ouverte:
             raise ValueError("la porte est déjà ouverte")
-        
         self.ouverte = True
     
     def fermer(self):
         """Ferme la porte."""
         if not self.ouverte:
             raise ValueError("la porte est déjà fermée")
-        
         self.ouverte = False
+    
+    def verrouiller(self):
+        """Verrouille la porte."""
+        if self.verrouillee:
+            raise ValueError("la porte est déjà verrouillée")
+        self.verrouillee = True
+    
+    def deverrouiller(self):
+        """Déverrouille la porte."""
+        if not self.verrouillee:
+            raise ValueError("la porte est déjà déverrouillée")
+        self.verrouillee = False
 
 ObjetID.ajouter_groupe(Porte)

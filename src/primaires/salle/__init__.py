@@ -128,6 +128,8 @@ class Module(BaseModule):
             commandes.redit.CmdRedit(),
             commandes.regarder.CmdRegarder(),
             commandes.supsortie.CmdSupsortie(),
+            commandes.verrouiller.CmdVerrouiller(),
+            commandes.deverrouiller.CmdDeverrouiller(),
         ]
         
         for cmd in self.commandes:
@@ -262,15 +264,21 @@ class Module(BaseModule):
             except KeyError:
                 pass
             else:
+                if sortie.porte and sortie.porte.verrouillee:
+                    personnage << "Cette porte semble fermée à clef.".format(
+                            sortie.nom_complet)
+                    return True
                 personnage.deplacer_vers(sortie.nom)
                 return True
         
         for nom, sortie in salle.sorties.iter_couple():
             if sortie:
-                if sortie.cachee and sortie.nom == commande:
-                    personnage.deplacer_vers(sortie.nom)
-                    return True
-                if not sortie.cachee and sortie.nom.startswith(commande):
+                if (sortie.cachee and sortie.nom == commande) or ( \
+                        not sortie.cachee and sortie.nom.startswith(commande)):
+                    if sortie.porte and sortie.porte.verrouillee:
+                        personnage << "Cette porte semble fermée à clef.".format(
+                                sortie.nom_complet)
+                        return True
                     personnage.deplacer_vers(sortie.nom)
                     return True
         

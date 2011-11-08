@@ -275,14 +275,28 @@ class Personnage(ObjetID):
         salle = self.salle
         salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
         sortie = salle.sorties.get_sortie_par_nom(sortie)
-        salle.envoyer("{{}} s'en va vers {}.".format(sortie.nom_complet), self)
-        self.salle = salle_dest
-        self.envoyer(self.salle.regarder(self))
+        
         # On appelle l'événement sortir
         salle.script.evenements["sort"].executer(vers=sortie.nom,
                 salle=salle, personnage=self, destination=salle_dest)
         
-        salle_dest.envoyer("{} arrive.", self)
+        if sortie.cachee:
+            for perso in salle.personnages:
+                msg = "{perso} s'en va vers... Vous ne voyez pas très bien où."
+                if perso.est_immortel():
+                    msg = "{perso} s'en va vers {sortie}."
+                if perso is not self:
+                    perso << msg.format(perso=self.get_nom_pour(perso),
+                            sortie=sortie.nom_complet)
+                    if sortie.porte and sortie.porte.fermee:
+                        perso << "Vous entendez une porte se refermer."
+        else:
+            salle.envoyer("{{}} s'en va vers {}.".format(sortie.nom_complet),
+                    self)
+        if sortie.porte and sortie.porte.fermee:
+            self.envoyer("Vous passez la porte et la refermez derrière vous.")
+        self.salle = salle_dest
+        self.envoyer(self.salle.regarder(self))
         
         # On appelle l'évènement arrive
         if self.salle is salle_dest:
@@ -290,6 +304,8 @@ class Personnage(ObjetID):
             nom_opp = sortie_opp and sortie_opp.nom or None
             salle_dest.script.evenements["arrive"].executer(depuis=nom_opp,
                     salle=salle_dest, personnage=self)
+        
+        salle_dest.envoyer("{} arrive.", self)
     
     def get_talent(self, cle_talent):
         """Retourne la valeur du talent ou 0 si le talent n'est pas trouvé."""
