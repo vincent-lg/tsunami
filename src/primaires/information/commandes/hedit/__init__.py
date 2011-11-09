@@ -28,42 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'aide'."""
+"""Package contenant la commande 'hedit'."""
 
 from primaires.interpreteur.commande.commande import Commande
 
-class CmdAide(Commande):
+class CmdHedit(Commande):
     
-    """Commande 'aide'"""
+    """Commande 'hedit'"""
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "aide", "help")
-        self.schema = "(<message>)"
-        self.aide_courte = "affiche de l'aide"
+        Commande.__init__(self, "hedit", "hedit")
+        self.groupe = "administrateur"
+        self.schema = "<message>"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "ouvre l'éditeur de sujets d'aide"
         self.aide_longue = \
-            "Cette commande permet d'obtenir de l'aide en jeu. Sans " \
-            "argument, elle affiche une liste des sujets d'aides " \
-            "disponibles. Vous pouvez entrer %aide% |cmd|<nom du sujet>|ff| " \
-            "pour obtenir de l'aide sur ce sujet en particulier."
+            "Cette commande permet d'ouvrir l'éditeur  de sujets " \
+            "d'aide. Il permet à n'importe quel bâtisseur (ou administrateur) " \
+            "d'ajouter ou éditer les sujets d'aide. Il peut également paramétrer " \
+            "les joueurs ayant le droit de lire le message d'aide. Certains sujets " \
+            "peuvent en effet être réservés aux administrateurs uniquement."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        if dic_masques["message"]:
-            titre = dic_masques["message"].message
-        else:
-            # On affiche la liste des sujets d'aides
-            sujets = type(self).importeur.aide.sujets
-            peut_lire = []
-            for sujet in sujets:
-                if type(self).importeur.interpreteur.groupes. \
-                        explorer_groupes_inclus(personnage.grp, sujet.str_groupe):
-                    peut_lire.append(sujet)
-            
-            peut_lire = [s.titre for s in peut_lire]
-            if not peut_lire:
-                peut_lire.append("|att|Aucun|ff|")
-            
-            msg = "Sujets d'aides disponibles :\n\n  "
-            msg += "\n  ".join(sorted(peut_lire))
-            personnage << msg
+        titre = dic_masques["message"].message
+        try:
+            sujet = type(self).importeur.information[titre]
+        except KeyError:
+            sujet = type(self).importeur.information.ajouter_sujet(titre)
+        
+        editeur = type(self).importeur.interpreteur.construire_editeur(
+                "hedit", personnage, sujet)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()

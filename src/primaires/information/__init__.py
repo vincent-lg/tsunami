@@ -31,23 +31,25 @@
 """Fichier contenant le module primaire aide."""
 
 from abstraits.module import *
-from .sujet import SujetAide
-from primaires.format.fonctions import supprimer_accents, format_nb
-from . import commandes
+from primaires.format.fonctions import *
+from primaires.information import commandes
+
 from .editeurs.hedit import EdtHedit
+
+from .sujet import SujetAide
 
 class Module(BaseModule):
     
-    """Cette classe contient les informations du module primaire aide.
+    """Cette classe représente le module primaire information.
     
     Ce module gère l'aide in-game, c'est-à-dire les sujets d'aide
-    (fichier ./sujet.py), la commande aide/help et l'éditeur hedit.
+    (fichier ./sujet.py), ainsi que le système de versions.
     
     """
     
     def __init__(self, importeur):
         """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "aide", "primaire")
+        BaseModule.__init__(self, importeur, "information", "primaire")
         self.__sujets = []
     
     def init(self):
@@ -62,7 +64,6 @@ class Module(BaseModule):
         print(format_nb(nb_sujets, "{nb} sujet{s} d'aide récupéré{s}"))
         
         BaseModule.init(self)
-    
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
@@ -81,7 +82,6 @@ class Module(BaseModule):
         """Retourne le sujet portant ce titre.
         
         Si le titre n'est pas trouvé, lève l'exception KeyError.
-        
         La recherche du sujet se fait sans tenir compte des accents ni de
         la casse.
         
@@ -102,10 +102,8 @@ class Module(BaseModule):
         """Ajoute un sujet à la liste des sujets d'aide.
         
         Le titre du sujet doit être fourni en paramètre.
-        
-        Si le titre est déjà utilisé, lève une exception.
-        
-        Sinon, retourne le sujet nouvellement créé.
+        Si le titre est déjà utilisé, lève une exception. Sinon, retourne
+        le sujet nouvellement créé.
         
         """
         titres_sujets = [supprimer_accents(s.titre).lower() for s in \
