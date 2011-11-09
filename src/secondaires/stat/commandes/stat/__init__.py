@@ -46,6 +46,7 @@ class CmdStat(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "stat", "stat")
+        self.nom_categorie = "info"
         self.groupe = "administrateur"
         self.aide_courte = "donne des statistiques sur le MUD"
         self.aide_longue = \

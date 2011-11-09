@@ -48,7 +48,7 @@ class PrmAudible(Parametre):
             "distinction anonyme audible de votre personnage. Cette distinction est " \
             "utilisée quand votre personnage est entendu (mais pas vu). " \
             "Pour la modifier, entrez %distinctions% %distinctions:audible% " \
-            "|ent|votre nouvelle distinction|ff|."
+            "|ent|<votre nouvelle distinction>|ff|."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""

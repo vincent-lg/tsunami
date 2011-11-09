@@ -64,13 +64,16 @@ class ChoisirPass(Contexte):
         
     def accueil(self):
         """Message d'accueil"""
-        return \
+        ret = \
             "\n|tit|------= Choix du mot de passe =-----|ff|\n" \
             "Entrez un |ent|mot de passe|ff| ; il correspond à votre " \
             "compte uniquement,\n" \
             "veillez à vous en souvenir et à ne le divulguer " \
-            "sous aucun prétexte.\n" \
-            "Si vous voulez revenir au choix de l'encodage, entrez |cmd|/|ff|."
+            "sous aucun prétexte."
+        if self.opts.rci_ctx_prec:
+            ret += "\nSi vous voulez revenir au choix de l'encodage, " \
+                    "entrez |cmd|/|ff|."
+        return ret
     
     def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""

@@ -89,10 +89,9 @@ class Module(BaseModule):
             commandes.quitter.CmdQuitter(),
             commandes.quitter.CmdQuitter(),
             commandes.restaurer.CmdRestaurer(),
-            commandes.retenir_nom.CmdRetenir_nom(),
+            commandes.retnom.CmdRetnom(),
             commandes.shutdown.CmdShutdown(),
             commandes.where.CmdWhere(),
-            commandes.chmdp.CmdChmdp(),
         ]
         
         for cmd in self.commandes:

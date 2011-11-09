@@ -39,6 +39,7 @@ class CmdAcheter(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "acheter", "buy")
+        self.nom_categorie = "objets"
         self.schema = "(<nombre>) <objet:nom_objet_magasin|id_objet_magasin>"
         self.aide_courte = "achète un objet"
         self.aide_longue = \

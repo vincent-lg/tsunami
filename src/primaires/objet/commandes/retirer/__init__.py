@@ -39,6 +39,7 @@ class CmdRetirer(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "retirer", "remove")
+        self.nom_categorie = "objets"
         self.schema = "<nom_objet>"
         self.aide_courte = "déséquipe un objet"
         self.aide_longue = \

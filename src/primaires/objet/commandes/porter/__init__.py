@@ -39,6 +39,7 @@ class CmdPorter(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "porter", "wear")
+        self.nom_categorie = "objets"
         self.schema = "<nom_objet>"
         self.aide_courte = "équipe un objet"
         self.aide_longue = \

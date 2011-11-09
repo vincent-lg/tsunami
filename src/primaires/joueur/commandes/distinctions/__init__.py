@@ -48,10 +48,10 @@ class CmdDistinctions(Commande):
         self.aide_longue = \
             "Cette commande permet de manipuler votre distinction " \
             "anonyme. C'est une courte proposition qualifiant votre " \
-            "personnage |ent|un petit homme|ff|, |ent|une elfe noire " \
+            "personnage (|ent|un petit homme|ff|, |ent|une elfe noire " \
             "aux traits tirés|ff|...) qui caractérise votre personnage " \
-            "aux yeux de ceux qui ne le connaissent pas. Il existe " \
-            "la commande %retenir_nom% qui permet d'identifier un " \
+            "aux yeux de ceux qui ne le connaissent pas. A noter qu'il " \
+            "existe la commande %retenir_nom% qui permet d'identifier un " \
             "personnage avec un nom (dans le cadre d'une présentation RP " \
             "par exemple)."
     

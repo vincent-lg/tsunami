@@ -62,7 +62,7 @@ destinateur = "info"
 class EntrerPass(Contexte):
     """Contexte demandant au client son mot de passe.
     Si le mot de passe entré correspond à celui sauvegardé, on redirige :
-    -   soit vers 'connex:connexion:choix_personnages" si le compte est validé
+    -   soit vers 'connex:connexion:choix_personnages' si le compte est validé
     -   soit vers 'connex:creation:validation' sinon
     
     Si le mot de passe est incorrect, on met en place plusieurs systèmes de
@@ -74,7 +74,7 @@ class EntrerPass(Contexte):
         tentatives
     -   Avant de pouvoir entrer de nouveau son mot de passe, le client
         peut être amené à attendre un nombre de secondes paramétrables, ce qui
-        paralyse le brut-forcing
+        paralyse le brute-forcing
     
     """
     
@@ -113,6 +113,7 @@ class EntrerPass(Contexte):
         """Envoie un nouveau mot de passe à l'utilisateur."""
         cnx_cfg = type(self.importeur).anaconf.get_config("connex")
         mdp = "".join(random.sample(char_mdp ,10))
+        print("Mdp:", mdp)
         emt = self.pere.compte
         mail = emt.adresse_email
         nom_MUD = type(self.importeur).anaconf.get_config("globale").nom

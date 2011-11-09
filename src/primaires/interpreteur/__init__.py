@@ -125,10 +125,12 @@ class Module(BaseModule):
         # On crée les catégories de commandes
         self.categories = OrderedDict()
         self.categories["divers"] = "Commandes générales"
-        self.categories["parler"] = "Communication"
+        self.categories["info"] = "Information et aide en jeu"
         self.categories["bouger"] = "Mobilité et aide au déplacement"
+        self.categories["objets"] = "Gestion des objets et commerce"
+        self.categories["parler"] = "Communication"
+        self.categories["bugs"] = "Bugs et suggestions"
         self.categories["groupes"] = "Manipulation des groupes et modules"
-        self.categories["bugs"] = "Manipulation et rapport de bug"
         self.categories["batisseur"] = "Commandes de création"
         
         BaseModule.init(self)

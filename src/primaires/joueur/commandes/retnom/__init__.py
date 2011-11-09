@@ -28,21 +28,21 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'retenir_nom'"""
+"""Package contenant la commande 'retnom'"""
 
 from primaires.interpreteur.commande.commande import Commande
 from primaires.format.fonctions import couper_phrase
 from primaires.joueur.joueur import Joueur
 
-class CmdRetenir_nom(Commande):
+class CmdRetnom(Commande):
     
-    """Commande 'retenir_nom'.
+    """Commande 'retnom'.
     
     """
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "retenir_nom", "remchar")
+        Commande.__init__(self, "retnom", "remchar")
         self.groupe = "joueur"
         self.schema = "<personnage_present> comme/as <message>"
         self.aide_courte = "retient un nom d'un joueur"

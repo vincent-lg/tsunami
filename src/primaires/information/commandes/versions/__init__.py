@@ -44,6 +44,7 @@ class CmdVersions(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "versions", "versions")
+        self.nom_categorie = "info"
         self.schema = "(<nombre>)"
         self.aide_courte = "permet de suivre les modifications"
         self.aide_longue = \

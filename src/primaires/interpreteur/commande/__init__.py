@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les classes utiles aux commandes :
+"""Package contenant les classes utiles aux commandes.
 
 """
 

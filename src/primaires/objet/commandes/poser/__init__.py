@@ -39,6 +39,7 @@ class CmdPoser(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "poser", "drop")
+        self.nom_categorie = "objets"
         self.schema = "(<nombre>) <nom_objet>"
         self.aide_courte = "pose un objet"
         self.aide_longue = \

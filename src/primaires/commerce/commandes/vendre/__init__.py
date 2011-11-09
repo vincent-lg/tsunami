@@ -39,6 +39,7 @@ class CmdVendre(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "vendre", "sell")
+        self.nom_categorie = "objets"
         self.schema = "(<nombre>) <nom_objet>"
         self.aide_courte = "vend un objet"
         self.aide_longue = \

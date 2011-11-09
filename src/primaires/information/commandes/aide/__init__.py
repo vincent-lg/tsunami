@@ -39,6 +39,7 @@ class CmdAide(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "aide", "help")
+        self.nom_categorie = "info"
         self.schema = "(<message>)"
         self.aide_courte = "affiche de l'aide"
         self.aide_longue = \

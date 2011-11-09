@@ -28,28 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'lister'."""
+"""Package contenant le paramètre 'chmdp' de la commande 'options'."""
 
-from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.masque.parametre import Parametre
 
-class CmdLister(Commande):
+class PrmChmdp(Parametre):
     
-    """Commande 'lister'"""
+    """Commande 'options chmdp'"""
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "lister", "list")
-        self.nom_categorie = "objets"
+        Parametre.__init__(self, "chmdp", "chpasswd")
         self.schema = ""
-        self.aide_courte = "liste les objets en vente"
+        self.aide_courte = "change son mot de passe"
         self.aide_longue = \
-            "Cette commande affiche le magasin de la salle dans laquelle " \
-            "vous vous trouvez, si ce magasin existe bien entendu."
+            "Cette commande permet de changer son mot de passe de manière " \
+            "sécurisée."
     
     def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        salle = personnage.salle
-        if salle.magasin is None:
-            personnage << "|err|Il n'y a pas de magasin ici.|ff|"
-        else:
-            personnage << salle.magasin.afficher()
+        """Interprétation du paramètre"""
+        contexte = "joueur:creation:entrer_pass"
+        contexte = type(self).importeur.interpreteur.contextes[contexte]
+        contexte = contexte(personnage.instance_connexion)
+        personnage.contextes.ajouter(contexte)
+        contexte.actualiser()
