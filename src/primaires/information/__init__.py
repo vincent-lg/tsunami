@@ -37,6 +37,7 @@ from primaires.information import commandes
 from .editeurs.hedit import EdtHedit
 
 from .sujet import SujetAide
+from .versions import Versions
 
 class Module(BaseModule):
     
@@ -51,17 +52,27 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "information", "primaire")
         self.__sujets = []
+        self.versions = None
     
     def init(self):
         """Initialisation du module.
         
-        On récupère les sujets d'aide enregistrés.
+        On récupère les sujets d'aide enregistrés et les versions.
         
         """
         sujets = self.importeur.supenr.charger_groupe(SujetAide)
         self.__sujets = sujets
         nb_sujets = len(sujets)
         print(format_nb(nb_sujets, "{nb} sujet{s} d'aide récupéré{s}"))
+        
+        versions = None
+        sous_rep = "information"
+        fichier = "versions.sav"
+        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
+            versions = self.importeur.supenr.charger(sous_rep, fichier)
+        else:
+            versions = Versions()
+        self.versions = versions
         
         BaseModule.init(self)
     
@@ -70,6 +81,7 @@ class Module(BaseModule):
         self.commandes = [
             commandes.aide.CmdAide(),
             commandes.hedit.CmdHedit(),
+            commandes.versions.CmdVersions(),
         ]
         
         for cmd in self.commandes:
