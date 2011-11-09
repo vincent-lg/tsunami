@@ -52,7 +52,6 @@ NOTE: les modules primaires et secondaires ne doivent pas porter de noms
 identiques, susceptibles d'entrer en conflit.
 
 Voici un résumé des modules primaires existants :
--   aide            Module gérant les sujets d'aide in-game
 -   combat          Module gérant le combat rapproché
 -   commerce        Module gérant les magasins et transactions    
 -   communication   Module gérant la communication dans l'univers
@@ -64,6 +63,7 @@ Voici un résumé des modules primaires existants :
 -   email           Module gérant l'envoie d'e-mails depuis le projet
 -   format          Module gérant le formatage des messages reçus / à envoyer
 -   hook            Module gérant les hooks et évènements
+-   information     Module gérant les sujets d'aide in-game et versions
 -   interpreteur    Module chargé tout particulièrement d'interpréter les
                     commandes envoyés par les clients
 -   joueur          Module contenant les informations sur les joueurs
