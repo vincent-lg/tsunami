@@ -35,8 +35,8 @@ from primaires.format.fonctions import supprimer_accents
 
 class Genres(BaseObj):
     
-    """Conteneur des genres.
-    Elle contient les genres disponibles pour un classe, ainsi que leur
+    """Conteneur de genres.
+    Elle contient les genres disponibles pour une race, ainsi que leur
     correspondance grammaticale (masculin ou féminin).
     
     """
@@ -62,7 +62,10 @@ class Genres(BaseObj):
     
     def __contains__(self, nom):
         """Retourne True si 'nom' existe, False sinon"""
-        return nom in self._genres
+        for genre in self._genres.keys():
+            if nom == supprimer_accents(genre.lower()):
+                return True
+        return False
     
     def __len__(self):
         """Retourne le nombre de genres existants"""
@@ -70,19 +73,34 @@ class Genres(BaseObj):
     
     def __getitem__(self, nom):
         """Retourne le genre correspondant"""
-        return self._genres[nom]
+        for genre in self._genres.keys():
+            if nom == supprimer_accents(genre.lower()):
+                return self._genres[genre]
+        raise KeyError(nom)
     
     def __delitem__(self, nom):
         """Supprime le genre"""
+        for genre in self._genres.keys():
+            if nom == supprimer_accents(genre.lower()):
+                nom = genre
+                break
         del self._genres[nom]
-        if nom in self._distinctions:
-            del self._distinctions[nom]
+        for d in self._distinctions.keys():
+            if nom == supprimer_accents(d.lower()):
+                nom = d
+                break
+        del self._distinctions[nom]
+        self.parent.enregistrer()
     
     def ajouter_genre(self, nom, corresp=""):
         """Ajoute un genre"""
-        self._genres[nom] = corresp or nom
-        if self._statut == CONSTRUIT:
-            self.parent.enregistrer()
+        self._genres[nom] = corresp if corresp != "" else nom
+        # définition des distinctions par défaut
+        if self._genres[nom] == "masculin":
+            self._distinctions[nom] = "un jeune homme"
+        else:
+            self._distinctions[nom] = "une jeune femme"
+        self.parent.enregistrer()
     
     @property
     def str_genres(self):
@@ -103,28 +121,30 @@ class Genres(BaseObj):
     def tableau_genres(self):
         """Retourne une chaîne représentant un tableau des genres."""
         lignes = []
+        sep = ("+" + 16 * "-") * 2 + "+" + 26 * "-" + "+"
+        debut = sep + "\n| |tit|" + "Genre".ljust(15)
+        debut += "|ff|| |tit|Correspondance|ff| | |tit|"
+        debut += "Distinction par défaut".ljust(25) + "|ff||\n"
         for genre, corresp in self._genres.items():
-            tup = (genre, corresp, genre in self._distinctions and \
-                    self._distinctions[genre] or "|err|Inconnue|ff|")
-            lignes.append("      {:>10}    {:>10}    {}".format(*tup))
-        
-        if not lignes:
-            return "Aucun genre"
-        else:
-            return "\n".join(lignes)
+            ligne = "| |grf|" + genre.ljust(15) + "|ff|| " + corresp.ljust(15)
+            ligne += "| |vr|" + self._distinctions[genre].ljust(25) + "|ff||"
+            lignes.append(ligne)
+        ret = debut + sep + "\n" + "\n".join(lignes) + "\n" + sep
+        return ret if lignes else "|att|Aucun genre défini.|ff|"
     
     def get_distinction(self, genre):
         """Retourne la distinction correspondant au genre."""
         distinctions = {}
         for nom, val in self._distinctions.items():
-            distinctions[supprimer_accents(nom)] = val
-        
-        return distinctions[supprimer_accents(genre)]
+            distinctions[supprimer_accents(nom.lower())] = val
+        return distinctions[genre]
     
     def changer_distinction(self, nom, distinction):
         """Change la distinction par défaut du genre."""
-        if nom not in self._genres:
+        if nom not in [supprimer_accents(g.lower()) for g in self._genres.keys()]:
             raise KeyError(nom)
-        
-        self._distinctions[nom] = distinction
+        for d in self._distinctions.keys():
+            if nom == supprimer_accents(d.lower()):
+                self._distinctions[d] = distinction
+                break
         self.parent.enregistrer()

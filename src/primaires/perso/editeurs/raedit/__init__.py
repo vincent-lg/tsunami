@@ -72,20 +72,17 @@ class EdtRaedit(Editeur):
         
         """
         msg = "| |tit|Editeur de race|ff|".ljust(87) + "|\n"
-        msg += self.opts.separateur + "\n"
+        msg += self.opts.separateur + "\n\n"
         msg += \
             " Pour créer ou éditer une race, entrez |ent|son nom|ff| ; " \
             " pour en supprimer une,\n" \
             " entrez |cmd|/d <nom de la race>|ff|.\n\n" \
             " Races existantes :"
-        
         races = sorted(type(self).importeur.perso.races, key=str)
         for race in races:
             msg += "\n   |ent|" + race.nom + "|ff|"
-        
         if len(races) == 0:
             msg += "\n   |att|Aucune race pour le moment.|ff|"
-        
         msg += "\n\n [|cmd|Q|ff|]uitter la fenêtre"
          
         return msg

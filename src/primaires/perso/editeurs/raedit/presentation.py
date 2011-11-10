@@ -69,22 +69,24 @@ class EdtPresentation(Presentation):
         description.parent = self
         description.apercu = "{objet.description.paragraphes_indentes}"
         description.aide_courte = \
-            "| |tit|" + "Description de la race {}".format(race).ljust(
+            "| |tit|" + "Description de la race '{}'".format(race).ljust(
             76) + "|ff||\n" + self.opts.separateur
         
         # Genres
         genres = self.ajouter_choix("genres", "g", EdtGenres, race.genres)
         genres.parent = self
-        genres.prompt = "Entrez un genre : "
+        genres.prompt = "->"
         genres.apercu = "{objet.str_genres}"
         genres.aide_courte = \
             "Entrez un |ent|genre|ff| suivi de sa correspondance " \
             "grammaticale (masculin ou féminin)\n" \
             "pour l'ajouter ; simplement |cmd|masculin|ff| ou " \
             "|cmd|féminin|ff| pour ajouter ceux-là. Si\n" \
-            "vous envoyez un genre déjà dans la liste, il sera supprimé.\n" \
+            "vous envoyez un genre déjà dans la liste, il sera supprimé. Enfin, l'option\n" \
+            "|cmd|/c <genre> <nouvelle distinction>|ff| permet de changer la distinction anonyme par\n" \
+            "défaut d'un genre.\n" \
             "Entrez |cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
-            "Genre(s) actuel(s) :\n      {objet.tableau_genres}"
+            "{objet.tableau_genres}"
         
         # Stats
         stats = self.ajouter_choix("stats", "s", EdtStats, \
