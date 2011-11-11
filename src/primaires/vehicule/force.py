@@ -90,4 +90,4 @@ class Frottement(Force):
         self.coef = coef
     
     def calcul(self):
-        return - self.coef * self.subissant.vitesse
+        return -self.coef * self.subissant.vitesse
