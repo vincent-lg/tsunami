@@ -46,7 +46,10 @@ class SujetAide(ObjetID):
     
     Ses attributs sont :
         titre -- le titre du sujet
+        resume -- un résumé du sujet (50 caractères max)
         contenu -- le contenu du sujet d'aide
+        mots_cles -- des mots-clés pointant vers ce sujet
+        str_groupe -- une chaîne décrivant le groupe autorisé
         sujets_lies -- les sujets liés (des objets SujetAide contenus
                        dans une liste)
     
@@ -57,29 +60,54 @@ class SujetAide(ObjetID):
     def __init__(self, titre):
         """Constructeur du sujet d'aide."""
         ObjetID.__init__(self)
-        self.titre = titre
+        self._titre = titre.lower().split(" ")[0]
+        self.pere = ""
+        self.resume = "sujet d'aide"
         self.contenu = Description(parent=self)
+        self.mots_cles = []
         self._str_groupe = ""
         self.__sujets_lies = ListeID(parent=self)
+        self.__sujets_fils = ListeID(parent=self)
     
     def __getnewargs__(self):
         return ("", )
     
+    def __str__(self):
+        return "aide:" + self._titre
+    
+    def _get_titre(self):
+        return self._titre
+    def _set_titre(self, titre):
+        titre = titre.lower().split(" ")[0]
+        if titre in [supprimer_accents(s.titre) for s in \
+                type(self).importeur.information.sujets] or type(self). \
+                importeur.information.get_sujet_par_mot_cle(titre):
+            self._titre = titre
+    titre = property(_get_titre, _set_titre)
+    
     @property
-    def sujets_lies(self):
-        """Retourne une liste déréférencée des sujets liés."""
-        return [s for s in self.__sujets_lies if s is not None]
+    def str_mots_cles(self):
+        return ", ".join(self.mots_cles) or "aucun mot-clé"
     
     def _get_str_groupe(self):
         return self._str_groupe or "aucun"
     def _set_str_groupe(self, nom_groupe):
         self._str_groupe = nom_groupe
-    
     str_groupe = property(_get_str_groupe, _set_str_groupe)
     
     @property
     def grp(self):
         groupe = type(self).importeur.interpreteur.groupes[self._str_groue]
         return groupe
+    
+    @property
+    def sujets_lies(self):
+        """Retourne une liste déréférencée des sujets liés."""
+        return [s for s in self.__sujets_lies if s is not None]
+    
+    @property
+    def sujets_fils(self):
+        """Retourne une liste déréférencée des sujets fils."""
+        return [s for s in self.__sujets_fils if s is not None]
 
 ObjetID.ajouter_groupe(SujetAide)

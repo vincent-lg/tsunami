@@ -102,8 +102,24 @@ class Module(BaseModule):
         for sujet in self.__sujets:
             if supprimer_accents(sujet.titre).lower() == titre:
                 return sujet
-        
         raise KeyError("le titre {} n'a pas pu être trouvé".format(titre))
+    
+    def __delitem__(self, titre):
+        """Détruit un sujet d'aide de manière définitive."""
+        titre = supprimer_accents(titre).lower()
+        for sujet in self.__sujets:
+            if supprimer_accents(sujet.titre).lower() == titre:
+                titre = sujet
+                break
+        self.__sujets.remove(titre)
+    
+    def get_sujet_par_mot_cle(self, mot):
+        """Retourne le sujet correspondant à ce mot-clé."""
+        mot = supprimer_accents(mot.lower())
+        for sujet in self.__sujets:
+            if mot in [supprimer_accents(m) for m in sujet.mots_cles]:
+                return sujet
+        return None
     
     @property
     def sujets(self):
@@ -120,8 +136,8 @@ class Module(BaseModule):
         """
         titres_sujets = [supprimer_accents(s.titre).lower() for s in \
                 self.__sujets]
-        
-        if supprimer_accents(titre).lower() in titres_sujets:
+        if supprimer_accents(titre).lower() in titres_sujets or \
+                self.get_sujet_par_mot_cle(titre) is not None:
             raise ValueError("le titre {} est déjà utilisé".format(titre))
         sujet = SujetAide(titre)
         self.__sujets.append(sujet)

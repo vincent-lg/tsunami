@@ -28,5 +28,5 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents éditeurs du module aide."""
+"""Package contenant les différents éditeurs du module information."""
 

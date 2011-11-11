@@ -44,19 +44,26 @@ class CmdHedit(Commande):
         self.nom_categorie = "batisseur"
         self.aide_courte = "ouvre l'éditeur de sujets d'aide"
         self.aide_longue = \
-            "Cette commande permet d'ouvrir l'éditeur  de sujets " \
-            "d'aide. Il permet à n'importe quel bâtisseur (ou administrateur) " \
-            "d'ajouter ou éditer les sujets d'aide. Il peut également paramétrer " \
-            "les joueurs ayant le droit de lire le message d'aide. Certains sujets " \
-            "peuvent en effet être réservés aux administrateurs uniquement."
+            "Cette commande permet d'ouvrir l'éditeur de sujets d'aide. " \
+            "Il permet à n'importe quel bâtisseur (ou administrateur) " \
+            "d'ajouter ou éditer les sujets d'aide. Il peut également " \
+            "paramétrer les joueurs ayant le droit de lire le message " \
+            "d'aide. Certains sujets peuvent en effet être réservés aux " \
+            "administrateurs uniquement."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         titre = dic_masques["message"].message
+        titre = titre.split(" ")[0].lower()
         try:
             sujet = type(self).importeur.information[titre]
         except KeyError:
-            sujet = type(self).importeur.information.ajouter_sujet(titre)
+            if type(self).importeur. \
+                    information.get_sujet_par_mot_cle(titre) is None:
+                sujet = type(self).importeur.information.ajouter_sujet(titre)
+            else:
+                sujet = type(self).importeur. \
+                        information.get_sujet_par_mot_cle(titre)
         
         editeur = type(self).importeur.interpreteur.construire_editeur(
                 "hedit", personnage, sujet)
