@@ -44,10 +44,34 @@ class EdtMembre(Editeur):
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
-        self.ajouter_option("f", self.opt_changer_flag)
         self.ajouter_option("n", self.opt_changer_nom)
         self.ajouter_option("g", self.opt_changer_groupe)
         self.ajouter_option("p", self.opt_changer_probabilite_atteint_membre)
+        self.ajouter_option("f", self.opt_changer_flag)
+    
+    def accueil(self):
+        """Message d'accueil du contexte"""
+        membre = self.objet
+        squelette = membre.parent
+        msg = "| |tit|"
+        msg += "Edition du membre {} de {}".format(
+                membre.nom, squelette.cle).ljust(76)
+        msg += "|ff||\n" + self.opts.separateur + "\n"
+        msg += self.aide_courte
+        
+        msg += "\nNom du membre : |ent|" + membre.nom + "|ff|"
+        msg += "\nGroupe : |ent|" + (membre.groupe or "aucun") + "|ff|"
+        msg += "\nProbabilité d'atteindre ce membre en combat : "
+        msg += str(membre.probabilite_atteint) + "/" + str(
+                squelette.probabilite_atteint)
+        msg += "\nFlags :"
+        for flag in FLAGS:
+            msg += "\n   " + flag + " : "
+            if FLAGS[flag] & membre.flags:
+                msg += "|vrc|oui|ff|"
+            else:
+                msg += "|rgc|non|ff|"
+        return msg
     
     def opt_changer_flag(self, arguments):
         """Change l'état d'un flag
@@ -106,27 +130,3 @@ class EdtMembre(Editeur):
         else:
             squelette.renommer_membre(membre.nom, arguments)
             self.actualiser()
-    
-    def accueil(self):
-        """Message d'accueil du contexte"""
-        membre = self.objet
-        squelette = membre.parent
-        msg = "| |tit|"
-        msg += "Edition du membre {} de {}".format(
-                membre.nom, squelette.cle).ljust(76)
-        msg += "|ff||\n" + self.opts.separateur + "\n"
-        msg += self.aide_courte
-        
-        msg += "\n Nom du membre : |ent|" + membre.nom + "|ff|"
-        msg += "\n Groupe : |ent|" + (membre.groupe or "aucun") + "|ff|"
-        msg += "\n Probabilité d'atteindre ce membre en combat : "
-        msg += str(membre.probabilite_atteint) + "/" + str(
-                squelette.probabilite_atteint)
-        msg += "\n Flags :"
-        for flag in FLAGS:
-            msg += "\n     " + flag + " : "
-            if FLAGS[flag] & membre.flags:
-                msg += "oui"
-            else:
-                msg += "non"
-        return msg

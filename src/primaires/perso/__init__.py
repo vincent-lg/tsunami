@@ -133,6 +133,7 @@ class Module(BaseModule):
             commandes.raedit.CmdRaedit(),
             commandes.score.CmdScore(),
             commandes.skedit.CmdSkedit(),
+            commandes.sklist.CmdSklist(),
         ]
         
         for cmd in self.commandes:
