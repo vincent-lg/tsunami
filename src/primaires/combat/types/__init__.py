@@ -33,3 +33,5 @@
 from .arme import Arme
 from .epee import Epee
 from .hache import Hache
+from .lance import Lance
+from .masse import Masse

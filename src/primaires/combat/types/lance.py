@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,66 +28,17 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Force, détaillée plus bas."""
+"""Fichier contenant le type lance."""
 
-from abstraits.obase import *
-from math import sqrt
-from .vecteur import Vecteur
+from .arme import Arme
 
-class Force(BaseObj):
+class Lance(Arme):
     
-    """Classe représentant une force.
+    """Type d'objet: lance.
     
     """
     
-    def __init__(self, subissant=None):
-        """Constructeur de la force"""
-        BaseObj.__init__(self)
-        self.subissant = subissant
-        self.desuette = False
-    
-    def __getnewargs__(self):
-        return ()
-    
-    def __str__(self):
-        return str(self.calcul())
-    
-    @property
-    def valeur(self):
-        return self.calcul()
-    
-    def calcul(self):
-        return Vecteur(0, 0, 0)
-
-class Propulsion(Force):
-    
-    """Classe représentant une force de propulsion.
-    
-    """
-    
-    def __init__(self, valeur=None):
-        """Constructeur de la force"""
-        Force.__init__(self)
-        
-        if valeur:
-            self._valeur = valeur
-        else:
-            self._valeur = Vecteur(1, 0, 0)
-    
-    def calcul(self):
-        return self._valeur
-
-class Frottement(Force):
-    
-    """Classe représentant une force de frottement.
-    
-    """
-    
-    def __init__(self, subissant, coef):
-        """Constructeur de la force"""
-        Force.__init__(self, subissant)
-        
-        self.coef = coef
-    
-    def calcul(self):
-        return -self.coef * self.subissant.vitesse
+    nom_type = "lance"
+    cle_talent = "maniement_lance"
+    nom_talent = "maniement de la lance"
+    difficulte_talent = 0.25

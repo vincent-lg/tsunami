@@ -36,10 +36,11 @@ from .vecteur import Vecteur
 
 import time
 
-#Nombre de seconde virtuelle qui s'écoule en une seconde
+# Nombre de seconde virtuelle qui s'écoule en une seconde
 VIRTSEC = 1
 
 class Module(BaseModule):
+    
     """Classe utilisée pour gérer des véhicules.
     
     """
@@ -54,24 +55,22 @@ class Module(BaseModule):
         
         self.map = {}
     
-    def ajouter_vehicule(self,veh):
-        self.vehicules.append(veh)
+    def ajouter_vehicule(self, vehicule):
+        self.vehicules.append(vehicule)
     
     def boucle(self):
         """A chaque tour de boucle synchro, on fait avancer les vehicules
         
         """
-        
         seconde_virtuelle = (time.time() - self.temps_precedant) * VIRTSEC
         
         self.map = {}
-        
-        for veh in self.vehicules:
-            masque = veh.get_prochaine_coordonnees(seconde_virtuelle)
+        for vehicule in self.vehicules:
+            masque = vehicule.get_prochaine_coordonnees(seconde_virtuelle)
             impact = [x for x in masque if x in self.map]
             if len(impact):
-                veh.collision(impact)
-            veh.avancer(seconde_virtuelle)
+                vehicule.collision(impact)
+            vehicule.avancer(seconde_virtuelle)
             for coords in masque:
-                self.map[coords] = veh
+                self.map[coords] = vehicule
         self.temps_precedant = time.time()

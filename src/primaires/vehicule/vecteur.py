@@ -37,8 +37,10 @@ from primaires.salle.coordonnees import Coordonnees
 
 class Vecteur(BaseObj):
     
-    """Classe représentant un vecteur, gère les opérations usuelles dessus,
-    ainsi que leur rotation autour d'un axe du repère.
+    """Classe représentant un vecteur en trois dimensions.
+    
+    Elle gère les opérations usuelles dessus, ainsi que leur rotation
+    autour d'un axe du repère.
     
     """
     
@@ -101,38 +103,40 @@ class Vecteur(BaseObj):
         r = radians(angle)
         x, y, z = self.x, self.y, self.z
         n = sqrt(x*x+y*y)
-        if n==0:
+        if n == 0:
             if z == 0 or sin(r) == 0 or (x == 0 and y == 0):
                 self.x = 0
                 self.y = 0
                 self.z = z * cos(r)
             else:
-                raise(ValueError("Impossible d'incliner un vecteur vertical"))
+                raise ValueError("Impossible d'incliner un vecteur vertical")
         else:
             self.x = x * cos(r) - z * x * sin(r) / n
             self.y = y * cos(r) - z * y * sin(r) / n
             self.z = z * cos(r) + sin(r) * n
+        
         return self
     
     def direction(self):
-        return - self.argument()
+        return -self.argument()
     
     def inclinaison(self):
         x, y, z = self.x, self.y, self.z
         n = sqrt(x*x+y*y)
-        if n==0:
+        if n == 0:
             if z == 0:
                 return 0
             else:
                 return 90
+            
         return degrees(atan(z/n))
     
     def argument(self):
         x, y = self.x, self.y
         if x > 0:
-            return degrees(atan(y/x))
+            return degrees(atan(y / x))
         elif x < 0:
-            return 180 - ( degrees(atan(y/x)) % 360 )
+            return 180 - (degrees(atan(y / x)) % 360)
         elif y > 0:
             return 90
         elif y < 0:
@@ -141,12 +145,13 @@ class Vecteur(BaseObj):
             return 0
     
     def norme(self):
-        return sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
+        return sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
     
     def normalise(self):
         norme = self.norme()
         if norme == 0:
-            raise(ValueError("Impossible de normaliser nul"))
+            raise ValueError("Impossible de normaliser nul")
+        
         return Vecteur(self.x / norme, self.y / norme, self.z / norme)
     
     # Méthodes spéciales mathématiques
