@@ -28,10 +28,17 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier du package types, contenant les types d'objets du module combat."""
+"""Fichier contenant le type lance."""
 
 from .arme import Arme
-from .epee import Epee
-from .hache import Hache
-from .lance import Lance
-from .masse import Masse
+
+class Lance(Arme):
+    
+    """Type d'objet: lance.
+    
+    """
+    
+    nom_type = "lance"
+    cle_talent = "maniement_lance"
+    nom_talent = "maniement de la lance"
+    difficulte_talent = 0.25
