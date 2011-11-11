@@ -28,12 +28,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module joueur."""
+"""Fichier contenant les convertisseurs de la classe Compte."""
 
-import primaires.joueur.masques.chemin_cmd
-import primaires.joueur.masques.encodage
-import primaires.joueur.masques.groupe_existant
-import primaires.joueur.masques.joueur
-import primaires.joueur.masques.langue
-import primaires.joueur.masques.options
-import primaires.joueur.masques.nv_groupe
+class Convertisseur:
+    """Classe pour envelopper les convertisseurs."""
+    def depuis_version_0(objet, classe):
+        objet.set_version(classe, 1)
+        if objet.encodage.lower() == "latin-1":
+            objet.encodage = "iso-8859-15"
