@@ -54,8 +54,8 @@ class Suppression(Contexte):
     def accueil(self):
         """Message d'accueil du contexte"""
         ret = \
-            "\n|tit|--= Suppression d'un personnage =---|ff|\n" \
-            "Choisissez le |ent|personnage|ff| à supprimer parmi la liste" \
+            "\n|tit|--= Suppression d'un personnage =--|ff|\n" \
+            "Choisissez le |ent|personnage|ff| à supprimer parmi la liste " \
             "ci-dessous :\n"
             
         for i, joueur in enumerate(self.pere.compte.joueurs):
@@ -99,4 +99,3 @@ class Suppression(Contexte):
                 joueur.detruire()
                 self.pere.envoyer("|att|Personnage supprimé !|ff|")
                 self.migrer_contexte(self.opts.rci_ctx_prec)
-                    

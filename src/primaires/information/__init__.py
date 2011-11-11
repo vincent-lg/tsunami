@@ -31,29 +31,33 @@
 """Fichier contenant le module primaire aide."""
 
 from abstraits.module import *
-from .sujet import SujetAide
-from primaires.format.fonctions import supprimer_accents, format_nb
-from . import commandes
+from primaires.format.fonctions import *
+from primaires.information import commandes
+
 from .editeurs.hedit import EdtHedit
+
+from .sujet import SujetAide
+from .versions import Versions
 
 class Module(BaseModule):
     
-    """Cette classe contient les informations du module primaire aide.
+    """Cette classe représente le module primaire information.
     
     Ce module gère l'aide in-game, c'est-à-dire les sujets d'aide
-    (fichier ./sujet.py), la commande aide/help et l'éditeur hedit.
+    (fichier ./sujet.py), ainsi que le système de versions.
     
     """
     
     def __init__(self, importeur):
         """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "aide", "primaire")
+        BaseModule.__init__(self, importeur, "information", "primaire")
         self.__sujets = []
+        self.versions = None
     
     def init(self):
         """Initialisation du module.
         
-        On récupère les sujets d'aide enregistrés.
+        On récupère les sujets d'aide enregistrés et les versions.
         
         """
         sujets = self.importeur.supenr.charger_groupe(SujetAide)
@@ -61,14 +65,23 @@ class Module(BaseModule):
         nb_sujets = len(sujets)
         print(format_nb(nb_sujets, "{nb} sujet{s} d'aide récupéré{s}"))
         
+        versions = None
+        sous_rep = "information"
+        fichier = "versions.sav"
+        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
+            versions = self.importeur.supenr.charger(sous_rep, fichier)
+        else:
+            versions = Versions()
+        self.versions = versions
+        
         BaseModule.init(self)
-    
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.aide.CmdAide(),
             commandes.hedit.CmdHedit(),
+            commandes.versions.CmdVersions(),
         ]
         
         for cmd in self.commandes:
@@ -81,7 +94,6 @@ class Module(BaseModule):
         """Retourne le sujet portant ce titre.
         
         Si le titre n'est pas trouvé, lève l'exception KeyError.
-        
         La recherche du sujet se fait sans tenir compte des accents ni de
         la casse.
         
@@ -90,8 +102,24 @@ class Module(BaseModule):
         for sujet in self.__sujets:
             if supprimer_accents(sujet.titre).lower() == titre:
                 return sujet
-        
         raise KeyError("le titre {} n'a pas pu être trouvé".format(titre))
+    
+    def __delitem__(self, titre):
+        """Détruit un sujet d'aide de manière définitive."""
+        titre = supprimer_accents(titre).lower()
+        for sujet in self.__sujets:
+            if supprimer_accents(sujet.titre).lower() == titre:
+                titre = sujet
+                break
+        self.__sujets.remove(titre)
+    
+    def get_sujet_par_mot_cle(self, mot):
+        """Retourne le sujet correspondant à ce mot-clé."""
+        mot = supprimer_accents(mot.lower())
+        for sujet in self.__sujets:
+            if mot in [supprimer_accents(m) for m in sujet.mots_cles]:
+                return sujet
+        return None
     
     @property
     def sujets(self):
@@ -102,16 +130,14 @@ class Module(BaseModule):
         """Ajoute un sujet à la liste des sujets d'aide.
         
         Le titre du sujet doit être fourni en paramètre.
-        
-        Si le titre est déjà utilisé, lève une exception.
-        
-        Sinon, retourne le sujet nouvellement créé.
+        Si le titre est déjà utilisé, lève une exception. Sinon, retourne
+        le sujet nouvellement créé.
         
         """
         titres_sujets = [supprimer_accents(s.titre).lower() for s in \
                 self.__sujets]
-        
-        if supprimer_accents(titre).lower() in titres_sujets:
+        if supprimer_accents(titre).lower() in titres_sujets or \
+                self.get_sujet_par_mot_cle(titre) is not None:
             raise ValueError("le titre {} est déjà utilisé".format(titre))
         sujet = SujetAide(titre)
         self.__sujets.append(sujet)

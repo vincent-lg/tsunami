@@ -47,6 +47,8 @@ class Compte(ObjetID):
     *   la liste des joueurs liés à ce compte
     
     """
+    _nom = "compte"
+    _version = 1
     groupe = "comptes"
     sous_rep = "comptes"
     

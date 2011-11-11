@@ -43,21 +43,20 @@ class EdtGenres(Uniligne):
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Uniligne.__init__(self, pere, objet, attribut)
-        self.ajouter_option("a", self.changer_distinction)
+        self.ajouter_option("c", self.changer_distinction)
     
     def changer_distinction(self, arguments):
         """Change la distinction anonyme.
         
-        Syntaxe : /a <genre> <distinction>
+        Syntaxe : /c <genre> <distinction>
         
         """
         if len(arguments.split(" ")) < 2:
-            self.pere << "|err|Syntaxe : <genre> <distinction anonyme>|ff|"
+            self.pere << "|err|Précisez un genre et une distinction.|ff|"
             return
-        
-        nom_genre = supprimer_accents(arguments.split(" ")[0]).lower()
+        nom_genre = supprimer_accents(arguments.split(" ")[0].lower())
         distinction = " ".join(arguments.split(" ")[1:])
-        distinction = distinction[0].upper() + distinction[1:]
+        distinction = distinction[0].lower() + distinction[1:]
         try:
             self.objet.changer_distinction(nom_genre, distinction)
         except KeyError:
@@ -67,21 +66,25 @@ class EdtGenres(Uniligne):
     
     def interpreter(self, msg):
         """Interprétation du message"""
-        msg = supprimer_accents(msg.lower())
         genres = self.objet
         genre_entre = msg.split(" ")[0]
+        echap_genre_entre = supprimer_accents(genre_entre.lower())
         corresp = ""
-        if genre_entre in genres:
-            del genres[genre_entre]
+        if echap_genre_entre in genres:
+            del genres[echap_genre_entre]
         else:
-            if genre_entre != "masculin" and genre_entre != "feminin":
+            if echap_genre_entre not in ["masculin", "feminin"]:
                 try:
                     corresp = msg.split(" ")[1]
-                except IndexError:
+                    assert supprimer_accents(corresp) in ["masculin", "feminin"]
+                except (IndexError, AssertionError):
                     self.pere << "|err|Vous devez préciser une " \
-                            "correspondance grammaticale.|ff|"
+                            "correspondance au masculin ou au féminin.|ff|"
                     return
+            if not corresp:
+                corresp = echap_genre_entre
             if corresp == "feminin":
                 corresp = "féminin"
             genres.ajouter_genre(genre_entre, corresp)
         self.actualiser()
+        print(genres._genres, "\n", genres._distinctions)

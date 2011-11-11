@@ -258,17 +258,16 @@ class Salle(ObjetID):
             
             nom_aff = self.sorties.get_nom_abrege(nom)
             if self.sorties.sortie_existe(nom):
+                if sortie.porte and sortie.porte.fermee:
+                    res = "[|rgc|" + nom_aff + "|ff|]"
+                else:
+                    res = "|vr|" + nom_aff + "|ff|"
                 if sortie.cachee:
                     if personnage.est_immortel():
-                        res = "|vr|(i){}|ff|".format(nom_aff)
+                        res = "|rg|(I)|ff|" + res                
                     else:
                         res = " ".ljust(len(self.sorties.get_nom_abrege(
                                 sortie.direction)))
-                else:
-                    res = "|vr|" + nom_aff + "|ff|"
-                
-                if sortie.porte and sortie.porte.fermee:
-                    res = "[" + res + "]"
             else:
                 res = " ".ljust(len(nom_aff))
             

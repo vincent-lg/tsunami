@@ -58,10 +58,12 @@ class CmdOuvrir(Commande):
         if not sortie.porte:
             raise ErreurInterpretation(
                 "|err|Cette sortie n'est pas une porte.|ff|")
-        
         if not sortie.porte.fermee:
             raise ErreurInterpretation(
-                "|err|{} n'est pas fermée.|ff|".format(nom_complet))
+                "Cette porte est déjà ouverte.|ff|".format(nom_complet))
+        if sortie.porte.verrouillee:
+            raise ErreurInterpretation(
+                "Cette porte semble fermée à clef.".format(nom_complet))
         
         sortie.porte.ouvrir()
         personnage << "Vous ouvrez {}.".format(sortie.nom_complet)

@@ -38,6 +38,7 @@ from .couleur import PrmCouleur
 from .encodage import PrmEncodage
 from .langue import PrmLangue
 from .voir import PrmVoir
+from .chmdp import PrmChmdp
 
 class CmdOptions(Commande):
     
@@ -62,8 +63,10 @@ class CmdOptions(Commande):
         prm_encodage = PrmEncodage()
         prm_langue = PrmLangue()
         prm_voir = PrmVoir()
+        prm_chmdp = PrmChmdp()
         
         self.ajouter_parametre(prm_couleur)
         self.ajouter_parametre(prm_encodage)
         self.ajouter_parametre(prm_langue)
         self.ajouter_parametre(prm_voir)
+        self.ajouter_parametre(prm_chmdp)

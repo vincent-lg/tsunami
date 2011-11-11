@@ -41,7 +41,7 @@ class CmdSysteme(Commande):
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "système", "system")
+        Commande.__init__(self, "systeme", "system")
         self.groupe = "administrateur"
         self.schema = ""
         self.aide_courte = "intègre une console interactive Python"
@@ -56,6 +56,9 @@ class CmdSysteme(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
+        if personnage.instance_connexion.adresse_ip != "127.0.0.1":
+            personnage << "|err|Vous devez être connecté en local pour cela.|ff|"
+            return
+        
         contexte = Systeme(personnage.instance_connexion)
         personnage.contexte_actuel.migrer_contexte(contexte)
-

@@ -92,10 +92,10 @@ class EdtSkedit(Presentation):
         membres.parent = self
         membres.apercu = "{objet.presentation_indentee}"
         membres.aide_courte = \
-            "Entrez le |ent|nom d'un membre|ff| pour le créer / l'éditer ou " \
-            "|cmd|/|ff| pour revenir à\n" \
+            "Entrez le |ent|nom d'un membre|ff| pour le créer ou l'éditer, " \
+            "ou |cmd|/|ff| pour revenir à\n" \
             "la fenêtre parente.\n" \
-            "Options :\n" \
+            "Option :\n" \
             " - |ent|/d <membre>|ff| : supprime le membre indiqué\n\n"
         
         # Suppression

@@ -31,6 +31,7 @@
 """Fichier contenant la classe Vehicule, détaillée plus bas."""
 
 from abstraits.id import ObjetID
+from bases.collections.dict_valeurs_id import DictValeursID
 
 from .vecteur import Vecteur
 from .force import Propulsion, Frottement
@@ -53,11 +54,15 @@ class Vehicule(ObjetID):
         self.masse = 1
         self.position = Vecteur(0, 0, 0)
         self.vitesse = Vecteur(0, 0, 0)
+        self.direction = Vecteur(1, 0, 0)
         
         self.propulsion = Propulsion()
         self.frottement = Frottement(self,0.7)
         
         self.forces = [self.propulsion, self.frottement]
+        
+        self.salles = DictValeursID()
+        self.en_collision = False
     
     def __getnewargs__(self):
         return ()
@@ -68,29 +73,65 @@ class Vehicule(ObjetID):
     def incliner(self, angle):
         self.propulsion._valeur.incliner(angle)
     
-    def avancer(self):
+    def energie_cinetique(self):
+        return self.m * self.vitesse.norme() * self.vitesse.norme()
+    
+    """
+    Fonction qui place le véhicule à sa nouvelle position, celle après qu'il
+    se soit écoulé temps seconde virtuelle
+    """
+    def avancer(self, temps):
         """Fait avancer le véhicule"""
         # Calcul de la nouvelle position
-        self.position += self.vitesse
+        if not self.en_collision:
+            self.position += temps * self.vitesse
         
         # Si on a une masse nulle, on ne peut pas continuer
         if self.masse == 0:
             raise ValueError("ce véhicule a une masse nulle")
         
         # On calcule l'accélération à partir des forces
-        acceleration = Vecteur(0, 0, 0)
+        self.acceleration = Vecteur(0, 0, 0)
         for force in self.forces:
-            acceleration += (1 / self.masse) * force.valeur
+            self.acceleration += (1 / self.masse) * force.valeur
+        
+        self.forces = [ force for force in self.forces if not force.desuette]
         
         # On calcule la nouvelle vitesse à partir de l'accélération
-        self.vitesse += acceleration
+        self.vitesse += temps * self.acceleration
         
+        d = -self.direction.direction()
+        i = self.direction.inclinaison()
+        operation = lambda v : self.position + v.tourner_autour_z(d).incliner(i)
+        for (vec,salle) in self.salles.items():
+            salle.coords = operation(vec.copie()).coordonnees
+        
+        self.en_collision = False
+       
         # On renvoie la nouvelle position
         return self.position
     
-    def get_prochaine_coordonnees(self):
+    """
+    Fonction appelé lorsqu'une collision se produit avec ce véhicule
+    """
+    
+    def collision(self, impacts):
+        self.en_collision = True
+    
+    """
+    Fonction qui trouve la prochaine coordonné du véhicule après temps secondes
+    virtuelles en supposant la vitesse constante
+    """
+    def get_prochaine_coordonnees(self, temps):
         """Retourne les prochaines coordonnées
         après avoir avancé à la vitesse courante.
         
         """
-        return self.position + self.vitesse
+        position = self.position + temps * self.vitesse
+        resultat = []
+        d = -self.direction.direction()
+        i = self.direction.inclinaison()
+        operation = lambda v : position + v.tourner_autour_z(d).incliner(i)
+        for (vec,salle) in self.salles.items():
+            resultat += operation(vec.copie()).coordonnees.entier()
+        return resultat

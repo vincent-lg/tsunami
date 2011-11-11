@@ -39,7 +39,6 @@ from . import options
 from . import pset
 from . import quitter
 from . import restaurer
-from . import retenir_nom
+from . import retnom
 from . import shutdown
 from . import where
-from . import chmdp

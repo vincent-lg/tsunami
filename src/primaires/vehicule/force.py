@@ -44,6 +44,7 @@ class Force(BaseObj):
         """Constructeur de la force"""
         BaseObj.__init__(self)
         self.subissant = subissant
+        self.desuette = False
     
     def __getnewargs__(self):
         return ()
@@ -71,7 +72,7 @@ class Propulsion(Force):
         if valeur:
             self._valeur = valeur
         else:
-            self._valeur = Vecteur(0, 0, 0)
+            self._valeur = Vecteur(1, 0, 0)
     
     def calcul(self):
         return self._valeur

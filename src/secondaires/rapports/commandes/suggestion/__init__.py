@@ -46,6 +46,7 @@ class CmdSuggestion(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "suggestion", "suggest")
+        self.nom_categorie = "bugs"
         self.groupe = "joueur"
         self.aide_courte = "Manipulation des suggestions"
         self.aide_longue = \

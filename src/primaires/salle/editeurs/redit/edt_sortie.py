@@ -59,12 +59,15 @@ class EdtSortie(Editeur):
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += self.aide_courte
         
-        msg += "\n Nom de la sortie : |ent|" + sortie.nom_complet + "|ff|"
-        msg += "\n Direction : " + sortie.direction
+        msg += "\n\nNom de la sortie : |ent|" + sortie.nom_complet + "|ff|"
+        msg += "\nDirection : " + sortie.direction
         msg += " (vers |vr|" + str(sortie.salle_dest) + "|ff|)"
-        msg += "\n Réciproque : |cy|" + sortie.correspondante + "|ff|"
-        msg += "\n Sortie cachée : |cy|" + oui_ou_non(sortie.cachee) + "|ff|"
-        msg += "\n Porte : |cy|" + oui_ou_non(bool(sortie.porte)) + "|ff|"
+        msg += "\nRéciproque : |cy|"
+        msg += sortie.correspondante or "aucune (sens unique)"
+        msg += "|ff|\nSortie cachée : " + oui_ou_non(sortie.cachee)
+        msg += "\nPorte : " + oui_ou_non(bool(sortie.porte))
+        if sortie.porte and sortie.porte.clef:
+            msg += " (clef : |bc|" + sortie.porte.clef.nom_singulier + "|ff|)"
         
         return msg
     
@@ -172,6 +175,16 @@ class EdtSortie(Editeur):
         if sortie.porte:
             sortie.supprimer_porte()
         else:
-            sortie.ajouter_porte()
+            clef = None
+            if arguments:
+                ident_clef = arguments.split(" ")[0]
+                if not ident_clef in type(self).importeur.objet.prototypes:
+                    self.pere << "|err|L'objet précisé est introuvable.|ff|"
+                    return
+                clef = type(self).importeur.objet.prototypes[ident_clef]
+                if not clef.est_de_type("clef"):
+                    self.pere << "|err|L'objet précisé n'est pas une clef.|ff|"
+                    return
+            sortie.ajouter_porte(clef=clef)
         
         self.actualiser()

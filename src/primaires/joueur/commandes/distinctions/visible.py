@@ -45,10 +45,11 @@ class PrmVisible(Parametre):
         self.aide_courte = "manipule la distinction visible"
         self.aide_longue = \
             "Cette commande permet, sans paramètre, d'afficher la " \
-            "distinction anonyme visible de votre personnage. Cette distinction est " \
-            "utilisée quand votre personnage fait une action en étant " \
-            "visible. Pour la modifier, entrez %distinctions% " \
-            "%distinctions:visible% |ent|votre nouvelle distinction|ff|."
+            "distinction anonyme visible de votre personnage. Cette " \
+            "distinction est utilisée quand votre personnage fait une " \
+            "action en étant visible. Pour la modifier, entrez " \
+            "%distinctions% %distinctions:visible% |ent|<votre nouvelle " \
+            "distinction>|ff|."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""

@@ -161,7 +161,7 @@ class Sorties(BaseObj):
         """
         for sortie in self._sorties.values():
             if sortie and sortie.nom == nom:
-                if not sortie.cachee  or cachees:
+                if not sortie.cachee or cachees:
                     return sortie
         
         raise KeyError("le nom de sortie {} est inconnu".format(nom))

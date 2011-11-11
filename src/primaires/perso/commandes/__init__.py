@@ -37,3 +37,4 @@ from . import qui
 from . import raedit
 from . import score
 from . import skedit
+from . import sklist

@@ -63,6 +63,7 @@ from .indefini import *
 from .nourriture import Nourriture
 from .vetement import Vetement
 from .viande import Viande
+from .clef import Clef
 
 # Vêtements
 from .chaussette import Chaussette

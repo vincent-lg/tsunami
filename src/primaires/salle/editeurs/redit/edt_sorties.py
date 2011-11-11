@@ -60,7 +60,7 @@ class EdtSorties(Editeur):
         sorties = salle.sorties
         liste_sorties = ""
         for nom in NOMS_SORTIES.keys():
-            direction = "\n |ent|" + nom.ljust(10) + "|ff| :"
+            direction = "\n  |ent|" + nom.ljust(10) + "|ff| :"
             sortie = sorties[nom]
             if sortie:
                 destination = ""
@@ -69,8 +69,8 @@ class EdtSorties(Editeur):
                     destination += " (|vr|" + str(sortie.salle_dest) + "|ff|)"
                 else:
                     destination = " vers |vr|" + str(sortie.salle_dest) + "|ff|"
-                reciproque = ", réciproque : |cy|" + sortie.correspondante 
-                reciproque += "|ff|"
+                reciproque = sortie.correspondante and (", réciproque : " \
+                        "|cy|" + sortie.correspondante + "|ff|") or " "
                 liste_sorties += direction
                 liste_sorties += destination
                 liste_sorties += reciproque
@@ -217,6 +217,11 @@ class EdtSorties(Editeur):
                 " - |cmd|/s <identifiant d'une salle>|ff| : fait pointer la " \
                 "sortie vers la salle\n" \
                 "   spécifiée\n" \
-                " - |cmd|/c|ff| : bascule l'état caché de la sortie"
+                " - |cmd|/dq|ff| : détruit la sortie réciproque (permet de " \
+                "créer des sorties à sens\n   unique)\n" \
+                " - |cmd|/c|ff| : bascule l'état caché de la sortie\n" \
+                " - |cmd|/p (<clef>)|ff| : ajoute ou supprime une porte à " \
+                "la sortie ; vous pouvez\n" \
+                "   préciser l'identifiant d'un objet de type clef"
             contexte = enveloppe.construire(self.pere)
             self.migrer_contexte(contexte)

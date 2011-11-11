@@ -34,7 +34,6 @@ from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.masque.exceptions.erreur_interpretation import \
     ErreurInterpretation
 
-
 class CmdFermer(Commande):
     
     """Commande 'fermer'"""
@@ -58,10 +57,9 @@ class CmdFermer(Commande):
         if not sortie.porte:
             raise ErreurInterpretation(
                 "|err|Cette sortie n'est pas une porte.|ff|")
-        
         if not sortie.porte.ouverte:
             raise ErreurInterpretation(
-                "|err|{} n'est pas ouverte.|ff|".format(nom_complet))
+                "Cette porte est déjà fermée.".format(nom_complet))
         
         sortie.porte.fermer()
         personnage << "Vous fermez {}.".format(sortie.nom_complet)

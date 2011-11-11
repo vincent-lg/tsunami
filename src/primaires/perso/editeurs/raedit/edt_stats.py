@@ -47,17 +47,19 @@ class EdtStats(Editeur):
     def accueil(self):
         """Message d'accueil"""
         msg = \
-            "Entrez |ent|le nom de la stat|ff|, un signe |cmd|/|ff| " \
-            "et la valeur pour modifier une stat.\nExemple : |cmd|force / " \
-            "45|ff|\n\nEntrez |cmd|/|ff| pour revenir à la fenêtre parente\n\n"
+            "Entrez |cmd|/|ff| pour revenir à la fenêtre parente, ou le " \
+            "|ent|nom|ff| d'une stat suivi\nd'un slash |cmd|/|ff| et d'une " \
+            "|ent|valeur|ff| pour modifier la stat.\n\n"
         stats = self.objet
         msg += "+-" + "-" * 20 + "-+-" + "-" * 6 + "-+\n"
-        msg += "| " + "Nom".ljust(20) + " | " + "Valeur".ljust(6) + " |\n"
-        msg += "| " + " ".ljust(20) + " | " + " ".ljust(6) + " |"
+        msg += "||tit| " + "Nom".ljust(20) + " |ff|||tit| "
+        msg += "Valeur".ljust(6) + " |ff||\n"
+        msg += "+-" + "-" * 20 + "-+-" + "-" * 6 + "-+\n"
         for stat in stats:
             if not stat.max:
-                msg += "\n| |ent|" + stat.nom.ljust(20) + "|ff| | "
-                msg += str(stat.defaut).rjust(6) + " |"
+                msg += "| |ent|" + stat.nom.ljust(20) + "|ff| | "
+                msg += str(stat.defaut).rjust(6) + " |\n"
+        msg += "+-" + "-" * 20 + "-+-" + "-" * 6 + "-+"
         
         return msg
     

@@ -42,6 +42,11 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.choix import Choix
+from .edt_resume import EdtResume
+from .edt_mots_cles import EdtMotscles
+from .edt_lies import EdtLies
+from .edt_fils import EdtFils
+from .supprimer import NSupprimer
 
 class EdtHedit(Presentation):
     
@@ -77,25 +82,76 @@ class EdtHedit(Presentation):
             "revenir à la fenêtre parente.\n\nTitre actuel : " \
             "|bc|{objet.titre}|ff|"
         
+        # Résumé
+        resume = self.ajouter_choix("résumé", "r", EdtResume, sujet)
+        resume.parent = self
+        resume.prompt = "Résumé du sujet : "
+        resume.aide_courte = \
+            "Entrez un |ent|résumé|ff| du sujet d'aide ou |cmd|/|ff| pour " \
+            "revenir à la fenêtre parente.\n\nRésumé actuel : " \
+            "|bc|{objet.resume}|ff|"
+        
         # Contenu
         contenu = self.ajouter_choix("contenu", "c", Description, \
                 sujet, "contenu")
         contenu.parent = self
         contenu.apercu = "{objet.contenu.paragraphes_indentes}"
         contenu.aide_courte = \
-            "| |tit|" + "Description du sujet d'aide {}".format(sujet).ljust(72) + \
+            "| |tit|" + "Contenu du sujet d'aide {}".format(sujet).ljust(76) + \
             "|ff||\n" + self.opts.separateur
         
         # Groupe
         str_groupes = sorted(
                 type(self).importeur.interpreteur.groupes.nom_groupes)
-        groupe = self.ajouter_choix("groupe d'utilisateurs", "u", Choix,
+        groupe = self.ajouter_choix("groupe d'utilisateurs", "o", Choix,
                 sujet, "str_groupe", str_groupes)
         groupe.parent = self
-        groupe.prompt = "Groupe d'utilisateur du sujet : "
+        groupe.prompt = "Groupe d'utilisateurs du sujet : "
         groupe.apercu = "{objet.str_groupe}"
         groupe.aide_courte = \
             "Entrez le |ent|groupe|ff| pouvant accéder au sujet d'aide ou " \
-            "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
-            "Groupes existants : " + ", ".join(str_groupes) + "\n\n" \
+            "|cmd|/|ff| pour revenir à la\nfenêtre parente.\n" \
+            "Groupes disponibles : |ent|" + "|ff|, |ent|".join(str_groupes) + "|ff|.\n\n" \
             "Groupe actuel : |bc|{objet.str_groupe}|ff|"
+        
+        # Mots-clés
+        mots_cles = self.ajouter_choix("mots-clés", "m", EdtMotscles, sujet)
+        mots_cles.parent = self
+        mots_cles.prompt = "Entrez un mot-clé :"
+        mots_cles.apercu = "{objet.str_mots_cles}"
+        mots_cles.aide_courte = \
+            "Entrez un |ent|nouveau mot-clé|ff| pour l'ajouter à la liste, " \
+            "un |ent|mot-clé existant|ff| pour\nle supprimer ou |cmd|/|ff| " \
+            "pour revenir à la fenêtre précédente.\n" \
+            "|bc|{objet.str_mots_cles}|ff|"
+        
+        # Sujets liés
+        lies = self.ajouter_choix("sujets liés", "l", EdtLies, sujet)
+        lies.parent = self
+        lies.prompt = "Entrez le nom d'un sujet lié :"
+        lies.aide_courte = \
+            "Entrez le nom d'un sujet pour l'ajouter aux sujets liés ou le supprimer.\n"
+        if sujet.sujets_lies:
+            lies.aide_courte += "\n".join([s.titre for s in sujet.sujets_lies])
+        else:
+            lies.aide_courte += "|att|Aucun sujet lié pour l'instant.|ff|"
+        
+        # Sujets fils
+        fils = self.ajouter_choix("sujets fils", "f", EdtFils, sujet)
+        fils.parent = self
+        fils.prompt = "Entrez le nom d'un sujet fils :"
+        fils.aide_courte = \
+            "Entrez le nom d'un sujet pour l'ajouter aux sujets fils ou le supprimer.\n"
+        if sujet.sujets_fils:
+            fils.aide_courte += "\n".join([s.titre for s in sujet.sujets_fils])
+        else:
+            fils.aide_courte += "|att|Aucun sujet fils pour l'instant.|ff|"
+        
+        # Suppression
+        suppression = self.ajouter_choix("supprimer", "sup", NSupprimer, \
+                sujet)
+        suppression.parent = self
+        suppression.aide_courte = "Souhaitez-vous réellement supprimer " \
+                "le sujet d'aide '{}' ?".format(sujet.titre)
+        suppression.confirme = "Le sujet d'aide '{}' a bien été " \
+                "supprimé.".format(sujet.titre)

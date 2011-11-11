@@ -44,18 +44,19 @@ class Porte(ObjetID):
     
     La classe porte définit :
         serrure -- la présence d'une serrure
-        ouverte -- Le flag d'ouverture de la porte
-            Notez aue la propriété fermee existe également.
+        ouverte -- le flag d'ouverture de la porte
+    Notez que la propriété fermee existe également.
     
     """
     
     groupe = "porte"
     sous_rep = "sorties/portes"
-    def __init__(self):
+    def __init__(self, clef=None):
         """Constructeur de la porte."""
         ObjetID.__init__(self)
         self.ouverte = False
-        self.serrure = False
+        self._clef = clef if clef is None else clef.cle
+        self.verrouillee = False if clef is None else True
         # On passe le statut en CONSTRUIT
         self._construire()
     
@@ -66,18 +67,42 @@ class Porte(ObjetID):
     def fermee(self):
         return not self.ouverte
     
+    @property
+    def serrure(self):
+        return not self.clef is None
+    
+    def _get_clef(self):
+        if self._clef in type(self).importeur.objet.prototypes:
+            return type(self).importeur.objet.prototypes[self._clef]
+        else:
+            self._clef = None
+            return None
+    def _set_clef(self, clef):
+        self._clef = clef.cle
+    clef = property(_get_clef, _set_clef)
+    
     def ouvrir(self):
         """Ouvre la porte."""
         if self.ouverte:
             raise ValueError("la porte est déjà ouverte")
-        
         self.ouverte = True
     
     def fermer(self):
         """Ferme la porte."""
         if not self.ouverte:
             raise ValueError("la porte est déjà fermée")
-        
         self.ouverte = False
+    
+    def verrouiller(self):
+        """Verrouille la porte."""
+        if self.verrouillee:
+            raise ValueError("la porte est déjà verrouillée")
+        self.verrouillee = True
+    
+    def deverrouiller(self):
+        """Déverrouille la porte."""
+        if not self.verrouillee:
+            raise ValueError("la porte est déjà déverrouillée")
+        self.verrouillee = False
 
 ObjetID.ajouter_groupe(Porte)

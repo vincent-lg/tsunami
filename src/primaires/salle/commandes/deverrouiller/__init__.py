@@ -28,27 +28,51 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'chmdp'."""
+"""Package contenant la commande 'deverrouiller'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.masque.exceptions.erreur_interpretation import \
+    ErreurInterpretation
 
-class CmdChmdp(Commande):
+
+class CmdDeverrouiller(Commande):
     
-    """Commande 'chmdp'"""
+    """Commande 'deverrouiller'"""
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "chmdp", "chpasswd")
-        self.groupe = "joueur"
-        self.schema = ""
-        self.aide_courte = "permet de changer son mot de passe"
+        Commande.__init__(self, "deverrouiller", "unlock")
+        self.nom_categorie = "bouger"
+        self.schema = "<nom_sortie>"
+        self.aide_courte = "déverrouille une porte"
         self.aide_longue = \
-            "Cette commande permet de changer son mot de passe."
+            "Cette commande déverrouille une porte de la salle où vous vous " \
+            "trouvez, à condition que vous ayez équipé la clef de la porte " \
+            "en question."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        contexte = "joueur:creation:entrer_pass"
-        contexte = type(self).importeur.interpreteur.contextes[contexte]
-        contexte = contexte(personnage.instance_connexion)
-        personnage.contextes.ajouter(contexte)
-        contexte.actualiser()
+        sortie = dic_masques["nom_sortie"].sortie
+        salle = personnage.salle
+        nom_complet = sortie.nom_complet.capitalize()
+        
+        if not sortie.porte:
+            raise ErreurInterpretation(
+                "|err|Cette sortie n'est pas une porte.|ff|")
+        if not sortie.porte.verrouillee:
+            raise ErreurInterpretation("Cette porte est déjà déverrouillée.")
+        if not sortie.porte.serrure:
+            raise ErreurInterpretation("Cette porte n'a pas de serrure.")
+        if not sortie.porte.clef in [o.prototype for o in \
+                personnage.equipement.tenus] and not personnage.est_immortel():
+            raise ErreurInterpretation("Vous n'avez pas la clef.")
+        
+        sortie.porte.deverrouiller()
+        if personnage.est_immortel():
+            personnage << "Vos doigts étincellent un instant et un déclic " \
+                    "d'ouverture se fait entendre."
+        else:
+            personnage << "Vous tournez la clef dans la serrure et entendez " \
+                    "un déclic léger."
+        salle.envoyer("{{}} déverrouille {}.".format(sortie.nom_complet),
+                personnage)

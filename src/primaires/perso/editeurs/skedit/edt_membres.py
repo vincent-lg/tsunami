@@ -59,11 +59,11 @@ class EdtMembres(Editeur):
         membres = squelette.membres
         liste_membres = ""
         for membre in membres:
-            ligne = "\n |ent|" + membre.nom.ljust(10) + "|ff| :"
+            ligne = "\n |ent|" + membre.nom.ljust(10) + "|ff|"
             liste_membres += ligne
         
         if not liste_membres:
-            liste_membres += "\n Aucun membre pour l'instant."
+            liste_membres += "\n |att|Aucun membre pour l'instant.|ff|"
         msg += liste_membres
         
         return msg
@@ -100,9 +100,13 @@ class EdtMembres(Editeur):
         enveloppe = EnveloppeObjet(EdtMembre, membre, None)
         enveloppe.parent = self
         enveloppe.aide_courte = \
-            "Entrez |ent|/|ff| pour revenir à la fenêtre parente.\n\n" \
+            "Entrez |ent|/|ff| pour revenir à la fenêtre parente.\n" \
             "Options :\n" \
-            " - |ent|/f flag|ff| : change l'état d'un flag\n" \
-            " - |ent|/n nom|ff| : change le nom du membre\n\n"
+            " - |ent|/n <nouveau nom>|ff| : modifie le nom du membre\n" \
+            " - |ent|/g <groupe>|ff| : permet de regrouper plusieurs " \
+            "membres\n" \
+            " - |ent|/p <probabilité>|ff| : change la probabilité de " \
+            "toucher le membre en combat\n" \
+            " - |ent|/f <flag>|ff| : change l'état d'un flag\n"
         contexte = enveloppe.construire(self.pere)
         self.migrer_contexte(contexte)

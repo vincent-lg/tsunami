@@ -44,6 +44,7 @@ class CmdCommande(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "commande", "command")
+        self.nom_categorie = "info"
         self.schema = "(<nom_commande>)"
         self.aide_courte = "affiche les commandes chargées"
         self.aide_longue = \

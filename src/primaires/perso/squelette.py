@@ -100,9 +100,9 @@ class Squelette(ObjetID):
         """Retourne une présentation indentée des membres"""
         membres = [membre.nom for membre in self.__membres]
         if not membres:
-            membres = ["Aucun"]
+            membres = ["Aucun membre."]
         
-        return "\n  " + "\n  ".join(membres)
+        return "\n   " + "\n   ".join(membres)
     
     @property
     def probabilite_atteint(self):

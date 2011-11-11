@@ -39,6 +39,7 @@ class CmdLister(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "lister", "list")
+        self.nom_categorie = "objets"
         self.schema = ""
         self.aide_courte = "liste les objets en vente"
         self.aide_longue = \

@@ -34,7 +34,7 @@ import socket
 
 ENCODAGES = [
     'utf-8',
-    'latin-1',
+    'iso-8859-15',
     'cp850',
     'cp1252',
 ]
@@ -149,7 +149,7 @@ class ClientConnecte:
         
         """
         if not encodages:
-            encodages = ['Utf-8', 'Latin-1']
+            encodages = ['utf-8', 'iso-8859-15']
             if self.encodage:
                 encodages.insert(0, self.encodage)
         
