@@ -31,6 +31,8 @@
 """Fichier contenant la classe ModeleNavire, détaillée plus bas."""
 
 from abstraits.id import ObjetID
+from bases.collections.dict_valeurs_id import DictValeursID
+from bases.collections.liste_id import ListeID
 
 class ModeleNavire(ObjetID):
     
@@ -48,5 +50,18 @@ class ModeleNavire(ObjetID):
         """Constructeur du modèle."""
         ObjetID.__init__(self)
         self.cle = cle
+        self.vehicules = ListeID(self)
+        self.salles = DictValeursID(self)
+    
+    def __getnewargs__(self):
+        return ("", )
+    
+    def detruire(self):
+        """Se détruit, ainsi que les véhicules créés sur ce modèle."""
+        for vehicule in list(self.vehicules):
+            vehicule.detruire()
+        
+        ObjetID.detruire(self)
+
 
 ObjetID.ajouter_groupe(ModeleNavire)

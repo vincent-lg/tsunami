@@ -54,10 +54,21 @@ class Navire(Vehicule):
         """Constructeur du navire."""
         Vehicule.__init__(self)
         self.modele = modele
+        modele.vehicules.append(self)
+        self.cle = "{}_{}".format(modele.cle, len(modele.vehicules) + 1)
         
         # On recopie les salles
         # ...
         # On recherche les voiles, chacune étant liée à une force propulsive
         # ...
+    
+    def __getnewargs__(self):
+        return (None, )
+    
+    def detruire(self):
+        """Destruction du navire."""
+        Vehicule.detruire(self)
+        self.modele.vehicules.remove(self)
+
 
 ObjetID.ajouter_groupe(Navire)

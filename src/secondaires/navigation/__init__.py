@@ -32,17 +32,98 @@
 
 from abstraits.module import *
 from .navire import Navire
+from corps.fonctions import valider_cle
+from primaires.format.fonctions import format_nb
 from .modele import ModeleNavire
 
 class Module(BaseModule):
     
     """Module secondaire définissant la navigation.
+    
+    Ce module définit les navires, modèles de navires et objets liés.
+    
     """
     
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "navigation", "secondaire")
-        self.prototypes = {}
+        self.modeles = {}
         self.navires = {}
-        self.logger = type(self.importeur).man_logs.creer_logger( \
+        self.nav_logger = type(self.importeur).man_logs.creer_logger(
                 "navigation", "navires", "navires.log")
+    
+    def init(self):
+        """Chargement des navires et modèles."""
+        # On récupère les modèles
+        modeles = self.importeur.supenr.charger_groupe(ModeleNavire)
+        for modele in modeles:
+            self.modeles[modele.cle] = modele
+        
+        nb_modeles = len(modeles)
+        self.nav_logger.info(format_nb(nb_modeles,
+                "{nb} modèle{s} de navire récupéré{s}"))
+        
+        # On récupère les navires
+        navires = self.importeur.supenr.charger_groupe(Navire)
+        for navire in navires:
+            self.navires[navire.cle] = navire
+        
+        nb_navires = len(navires)
+        self.nav_logger.info(format_nb(nb_navires,
+                "{nb} navire{s} récupéré{s}"))
+        
+        BaseModule.init(self)
+    
+    def creer_modele(self, cle):
+        """Crée un modèle de navire et l'ajoute dans le dictionnaire.
+        
+        Retourne le modèle créé.
+        
+        Lève une exception KeyError si le modèle existe déjà.
+        
+        """
+        valider_cle(cle)
+        if cle in self.modeles:
+            raise KeyError("le modèle de navire {} existe déjà".format(cle))
+        
+        modele = ModeleNavire(cle)
+        self.ajouter_modele(modele)
+        return modele
+    
+    def ajouter_modele(self, modele):
+        """Ajoute le modèle de navire dans le dictionnaire."""
+        self.modeles[modele.cle] = modele
+    
+    def supprimer_modele(self, cle):
+        """Supprime le modèle de navire portant la clé passée en paramètre."""
+        if cle not in self.modeles:
+            raise KeyError("le modèle de navire de clé {} est inconnue".format(
+                    cle))
+        
+        modele = self.modeles[cle]
+        del self.modeles[cle]
+        modele.detruire()
+    
+    def creer_navire(self, modele):
+        """Crée un navire sur le modèle.
+        
+        Retourne le navire créé.
+        
+        """
+        navire = Navire(modele)
+        print("Navire {} créé".format(navire.cle))
+        self.ajouter_navire(navire)
+        return navire
+    
+    def ajouter_navire(self, navire):
+        """Ajoute le navire à la liste."""
+        self.navires[navire.cle] = navire
+    
+    def supprimer_navire(self, cle):
+        """Supprime le navire dont la clé est passée en paramètre."""
+        if cle not in self.navires:
+            raise KeyError("le navire de clé {} est introuvable".format(cle))
+        
+        navire = self.navires[cle]
+        navire.detruire()
+        del self.navires[cle]
