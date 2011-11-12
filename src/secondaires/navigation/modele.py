@@ -28,21 +28,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module secondaire navigation."""
+"""Fichier contenant la classe ModeleNavire, détaillée plus bas."""
 
-from abstraits.module import *
-from .navire import Navire
-from .modele import ModeleNavire
+from abstraits.id import ObjetID
 
-class Module(BaseModule):
+class ModeleNavire(ObjetID):
     
-    """Module secondaire définissant la navigation.
+    """Classe représentant un modèle de navire ou une embarcation.
+    
+    Les modèles définissent des informations communes à plusieurs navires
+    (une barque, par exemple, sera construite sur un seul modèle mais
+    plusieurs navires seront formés sur ce modèle).
+    
     """
     
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "navigation", "secondaire")
-        self.prototypes = {}
-        self.navires = {}
-        self.logger = type(self.importeur).man_logs.creer_logger( \
-                "navigation", "navires", "navires.log")
+    groupe = "modele_navire"
+    sous_rep = "navires/modeles"
+    def __init__(self, cle):
+        """Constructeur du modèle."""
+        ObjetID.__init__(self)
+        self.cle = cle
+
+ObjetID.ajouter_groupe(ModeleNavire)

@@ -28,21 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module secondaire navigation."""
+"""Fichier contenant la classe Navire, détaillée plus bas."""
 
-from abstraits.module import *
-from .navire import Navire
-from .modele import ModeleNavire
+from abstraits.id import ObjetID
+from primaires.vehicule.vehicule import Vehicule
 
-class Module(BaseModule):
+class Navire(Vehicule):
     
-    """Module secondaire définissant la navigation.
+    """Classe représentant un navire ou une embarcation.
+    
+    Un navire est un véhicule se déplaçant sur une éttendue d'eau,
+    propulsé par ses voiles ou des rameurs.
+    
+    Le navire est un véhicule se déplaçant sur un repère en 2D.
+    
+    Chaque navire possède un modèle (qui détermine ses salles, leurs
+    descriptions, la position des éléments, leur qualité, l'aérodynamisme
+    du navire...). Chaque navire est lié à son modèle en se créant.
+    
     """
     
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "navigation", "secondaire")
-        self.prototypes = {}
-        self.navires = {}
-        self.logger = type(self.importeur).man_logs.creer_logger( \
-                "navigation", "navires", "navires.log")
+    groupe = "navire"
+    sous_rep = "navires/navires"
+    def __init__(self, modele):
+        """Constructeur du navire."""
+        Vehicule.__init__(self)
+        self.modele = modele
+        
+        # On recopie les salles
+        # ...
+        # On recherche les voiles, chacune étant liée à une force propulsive
+        # ...
+
+ObjetID.ajouter_groupe(Navire)
