@@ -207,7 +207,6 @@ class BaseObj(metaclass=MetaBaseObj):
         # On récupère la classe
         classe = type(self)
         # On appel son constructeur
-        print(classe, self.__getnewargs__())
         classe.__init__(self, *self.__getnewargs__())
         # On met à jour les attributs
         self.__dict__.update(dico_attrs)

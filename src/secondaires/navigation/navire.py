@@ -56,7 +56,7 @@ class Navire(Vehicule):
         if modele:
             self.modele = modele
             modele.vehicules.append(self)
-            self.cle = "{}_{}".format(modele.cle, len(modele.vehicules) + 1)
+            self.cle = "{}_{}".format(modele.cle, len(modele.vehicules))
         
         # On recopie les salles
         # ...
