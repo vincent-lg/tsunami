@@ -53,9 +53,10 @@ class Navire(Vehicule):
     def __init__(self, modele):
         """Constructeur du navire."""
         Vehicule.__init__(self)
-        self.modele = modele
-        modele.vehicules.append(self)
-        self.cle = "{}_{}".format(modele.cle, len(modele.vehicules) + 1)
+        if modele:
+            self.modele = modele
+            modele.vehicules.append(self)
+            self.cle = "{}_{}".format(modele.cle, len(modele.vehicules) + 1)
         
         # On recopie les salles
         # ...
