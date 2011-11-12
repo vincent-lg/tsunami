@@ -88,6 +88,9 @@ class Frottement(Force):
         Force.__init__(self, subissant)
         
         self.coef = coef
+
+    def __getnewargs__(self):
+        return (None, 1)
     
     def calcul(self):
         return -self.coef * self.subissant.vitesse
