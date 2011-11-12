@@ -102,7 +102,7 @@ class Vehicule(ObjetID):
         
         self.forces = [self.propulsion, self.frottement]
         
-        self.salles = DictValeursID()
+        self.salles = DictValeursID(self)
         self.en_collision = False
     
     def __getnewargs__(self):
