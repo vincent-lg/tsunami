@@ -250,6 +250,10 @@ class Personnage(ObjetID):
         """
         return IMMORTELS & self.grp.flags != 0
     
+    def est_mort(self):
+        """Retourne True si le personnage est mort, False sinon."""
+        return self.vitalite == 0
+    
     def detruire(self):
         """Méthode appelée lors de la destruction du personage.
         -   On supprime le personnage de la liste des personnages du squelette
@@ -338,6 +342,17 @@ class Personnage(ObjetID):
         etat = self.etat
         if etat:
             etat.peut_faire(cle_action)
+    
+    def mourir(self):
+        """Méthode appelée quand le personange meurt."""
+        self.cle_etat = ""
+        combat = type(self).importeur.combat.get_combat_depuis_salle(
+                self.salle)
+        if combat and self in combat.combattants:
+            combat.supprimer_combattant(self)
+        
+        self << "Vous vous effondrez sur le sol."
+        self.salle.envoyer("{} s'effondre sur le sol.", self)
     
     @staticmethod
     def regarder(moi, personnage):

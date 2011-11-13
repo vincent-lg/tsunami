@@ -33,8 +33,10 @@
 from random import choice, randint
 
 from corps.aleatoire import varier
+from primaires.perso.exceptions.stat import DepassementStat
 from .attaque import Coup
 
+# Constantes
 CLE_TALENT_ESQUIVE = "esquive"
 CLE_TALENT_PARADE = "parade"
 CLE_TALENT_MAINS_NUES = "combat_mains_nues"
@@ -79,6 +81,21 @@ class Combat:
             self.__combattants.append(combattu)
             self.__combattus[combattu] = combattant
     
+    def supprimer_combattant(self, combattant):
+        """Supprime le personnage des combattants / combattus."""
+        if combattant in self.__combattants:
+            self.__combattants.remove(combattant)
+        
+        if combattant in self.__combattus.keys():
+            del self.__combattus[combattant]
+        
+        cles = [cle for cle, valeur in self.__combattus.items() if \
+                valeur is combattant]
+        for cle in cles:
+            self.__combattus[cle] = None
+        
+        self.verifier_combattants()
+    
     def verifier_combattants(self):
         """VVérifie que tous les combattants sont bien dans la salle."""
         for combattant in self.combattants:
@@ -86,9 +103,9 @@ class Combat:
                 self.__combattants.remove(combattant)
         
         for combattant, combattu in self.combattus.items():
-            if combattant.salle != self.salle:
+            if combattant and combattant.salle != self.salle:
                 del self.__combattus[combattant]
-            elif combattu.salle != self.salle:
+            elif combattu and combattu.salle != self.salle:
                 self.__combattus[combattant] = None
         
         # Les combattants ne combattant personne essayent de trouver une
@@ -102,6 +119,14 @@ class Combat:
                 if cibles:
                     cible = choice(cibles)
                     self.__combattus[combattant] = cible
+                else:
+                    combattant.cle_etat = ""
+                    del self.__combattus[combattant]
+        
+        # On reforme la liste des combattants
+        self.__combattants = [p for p in self.__combattus.keys()]
+        self.__combattants += [p for p in self.__combattus.values() if \
+                p not in self.__combattants]
     
     def get_attaques(self, personnage):
         """Retourne les attaques du personnage."""
@@ -115,8 +140,8 @@ class Combat:
         Si la défense est totale, retourne 0.
         
         """
-        if varier(combattu.pratiquer_talent(CLE_TALENT_ESQUIVE), 15) >= \
-                randint(1, 80):
+        if varier(combattu.pratiquer_talent(CLE_TALENT_ESQUIVE), 30) >= \
+                randint(1, 70):
             attaque.envoyer_msg_tentative(combattant, combattu, membre, arme)
             combattant.envoyer("{} esquive votre coup.", combattu)
             combattu.envoyer("Vous esquivez le coup porté par {}.",
@@ -126,9 +151,9 @@ class Combat:
             degats = 0
         elif membre:
             objet = len(membre.equipe) and membre.equipe[-1] or None
-            if objet and objet.est_de_type("armure"):
-                encaisse = objet.encaisser(arme, degats)
-                degats -= encaisse
+            #if objet and objet.est_de_type("armure"):
+            #    encaisse = objet.encaisser(arme, degats)
+            #    degats -= encaisse
         
         return degats
     
@@ -136,6 +161,10 @@ class Combat:
         """Un tour de combat."""
         self.verifier_combattants()
         for combattant, combattu in self.combattus.items():
+            if combattant.est_mort():
+                continue
+            
+            membre = None
             armes = combattant.get_armes()
             armes = armes if armes else [None]
             for arme in armes:
@@ -152,6 +181,10 @@ class Combat:
                     if degats:
                         attaque.envoyer_msg_reussite(combattant, combattu,
                                 membre, degats, arme)
+                        try:
+                            combattu.vitalite -= degats
+                        except DepassementStat:
+                            combattu.mourir()
                 else:
                     attaque.envoyer_msg_tentative(combattant, combattu,
                             membre, arme)

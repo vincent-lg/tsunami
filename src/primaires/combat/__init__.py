@@ -89,6 +89,10 @@ class Module(BaseModule):
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
     
+    def get_combat_depuis_salle(self, salle):
+        """Retourne le combat correspondant à la salle ou None."""
+        return self.combats.get(salle.ident)
+    
     def creer_combat(self, salle, attaquant, attaque):
         """Crée un combat ou met à jour celui existant.
         
