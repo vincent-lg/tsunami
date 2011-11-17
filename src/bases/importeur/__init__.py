@@ -60,7 +60,9 @@ import py_compile
 from abstraits.module import *
 from abstraits.obase import BaseObj, objets_base
 from abstraits.id.id import ID
+from corps.arborescence import getcwd
 
+# Constantes
 REP_PRIMAIRES = "primaires"
 REP_SECONDAIRES = "secondaires"
 
@@ -132,7 +134,7 @@ class Importeur:
         """
         # On commence par parcourir les modules primaires
         Importeur.logger.debug("Chargement des modules :")
-        for nom_package in os.listdir(os.getcwd() + "/" + REP_PRIMAIRES):
+        for nom_package in os.listdir(getcwd() + "/" + REP_PRIMAIRES):
             if not nom_package.startswith("__"):
                 package = __import__(REP_PRIMAIRES + "." + nom_package)
                 module = getattr(getattr(package, nom_package), "Module")
@@ -140,7 +142,7 @@ class Importeur:
                 Importeur.logger.debug("  Le module {0} a été chargé".format( \
                         nom_package))
         # On fait de même avec les modules secondaires
-        for nom_package in os.listdir(os.getcwd() + "/" + REP_SECONDAIRES):
+        for nom_package in os.listdir(getcwd() + "/" + REP_SECONDAIRES):
             if not nom_package.startswith("__"):
                 package = __import__(REP_SECONDAIRES + "." + nom_package)
                 module = getattr(getattr(package, nom_package), "Module")
@@ -342,9 +344,9 @@ class Importeur:
         Importeur.nb_hotboot += 1
         objets_base.clear()
         try:
-             for nom_package in os.listdir(os.getcwd() + "/" + REP_PRIMAIRES):
+             for nom_package in os.listdir(getcwd() + "/" + REP_PRIMAIRES):
                  if not nom_package.startswith("__"):
-                     py_compile.compile(os.getcwd() + "/" + \
+                     py_compile.compile(getcwd() + "/" + \
                             REP_PRIMAIRES + "/" + nom_package + \
                             "/__init__.py", doraise=True)
         except py_compile.PyCompileError:

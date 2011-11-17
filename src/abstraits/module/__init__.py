@@ -32,6 +32,8 @@
 
 import os
 
+from corps.arborescence import getcwd
+
 # Statuts
 INSTANCIE = 0
 CONFIGURE = 1
@@ -197,5 +199,6 @@ class BaseModule:
     @property
     def chemin(self):
         """Retourne le chemin du module"""
-        return self.importeur.chemins_modules[self.type] + os.sep + self.nom
+        rel = self.importeur.chemins_modules[self.type] + os.sep + self.nom
+        return os.path.join(getcwd(), rel)
 
