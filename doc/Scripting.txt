@@ -205,7 +205,7 @@ L'instruction est lue de gauche à droite :
 * Ensuite le premier paramètre, ici la variable @personnage@ contenant un personnage
 * Enfin, le message à envoyer à ce personnage (c'est une chaîne de caractères, donc entourée de guillemets).
 
-Pour connaître la liste des actions disponibles, entrez la commande doc/BaseObj.txt dans un éditeur d'instructions. Le signe / symbolise une option, le point d'interrogation symbolise une aide et la lettre @a@ donne accès à l'aide des actions.
+Pour connaître la liste des actions disponibles, entrez la commande */?a* dans un éditeur d'instructions. Le signe / symbolise une option, le point d'interrogation symbolise une aide et la lettre @a@ donne accès à l'aide des actions.
 
 h3. Les affectations
 
@@ -231,9 +231,9 @@ Voici un exemple simple :
 
 <pre>
 si hasard(30):
- dire personnage "C'est gagné !"
+    dire personnage "C'est gagné !"
 sinon:
- dire personnage "C'est perdu..."
+    dire personnage "C'est perdu..."
 finsi
 </pre>
 
@@ -277,11 +277,11 @@ Voici quelques exemples :
 
 <pre>
 si titre(salle) = "Un champ de bataille":
- ...
+    ...
 finsi
 variable = 5
 si variable < 8.9:
- ...
+    ...
 finsi
 </pre>
 
@@ -289,7 +289,7 @@ Vous pouvez utiliser les mot-clés @et@ / @ou@ pour chaîner des prédicats :
 
 <pre>
 si titre(salle) = "Une maison" ou terrain(salle) = "ville":
- ...
+    ...
 finsi
 </pre>
 
@@ -303,7 +303,7 @@ Vous venez d'écrire votre script. L'interpréteur n'a rejeté aucune de vos ins
 
 Ce que l'interpréteur rejette automatiquement, ce sont les erreurs de syntaxe (vous entrez une chaîne en oubliant les guillemets, par exemple, ou bien vous ne fermez pas autant de parenthèses que vous en ouvrez).
 
- ais la plupart des erreurs pourront se produire lors de l'exécution de votre script. C'est pourquoi il vous est conseillé de tester autant que possible vos scripts avant qu'ils ne soient accessibles et exécutables par tous.
+Mais la plupart des erreurs pourront se produire lors de l'exécution de votre script. C'est pourquoi il vous est conseillé de tester autant que possible vos scripts avant qu'ils ne soient accessibles et exécutables par tous.
 
 Si une erreur se produit lors de l'exécution d'un script, les différents acteurs suivants sont notifiés par mudmail :
 

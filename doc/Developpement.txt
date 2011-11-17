@@ -123,19 +123,19 @@ Il doit contenir une classe appelée @Module@, héritée de @BaseModule@. Ainsi,
 from abstraits.module import BaseModule
 
 class Module(BaseModule):
- 
- """Description courte du module sur une ligne.
- 
- Description plus longue du module
- sur plusieurs lignes
- décrivant son rôle dans Kassie, éventuellement les commandes
- qu'il ajoute, les éditeurs, les fonctionnalités.
- 
- """
- 
- def __init__(self):
- """Constructeur du module <insérez le nom>"""
- BaseModule.__init__(self, "<insérez le nom>", "<insérez le type>")
+    
+    """Description courte du module sur une ligne.
+    
+    Description plus longue du module
+    sur plusieurs lignes
+    décrivant son rôle dans Kassie, éventuellement les commandes
+    qu'il ajoute, les éditeurs, les fonctionnalités.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du module <insérez le nom>"""
+        BaseModule.__init__(self, "<insérez le nom>", "<insérez le type>")
 </code></pre>
 
 +*ATTENTION : la classe doit s'appeler @Module@ et pas le nom du module.*+

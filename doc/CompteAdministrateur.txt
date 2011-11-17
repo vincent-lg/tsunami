@@ -81,7 +81,7 @@ Descendez plus bas dans le fichier. Une donnée correspond au groupe administrat
 compte_admin = "admin"
 </pre>
 
- odifiez la dernière ligne @compte_admin = "admin"@. Remplacez @admin@ par le nom de groupe que vous voulez. Essayez de choisir quelque chose d'assez peu évident (le nom de votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon n'est pas un choix astucieux) :
+Modifiez la dernière ligne @compte_admin = "admin"@. Remplacez @admin@ par le nom de groupe que vous voulez. Essayez de choisir quelque chose d'assez peu évident (le nom de votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon n'est pas un choix astucieux) :
 
 <pre>
 compte_admin = "autrenom"
@@ -93,7 +93,7 @@ Si vous avez déjà créé un compte administrateur avant cette modification, le
 
 h2. Accès aux commandes de configuration
 
- aintenant que vous avez accès aux [[CommandesConfiguration|commandes de configuration]], vous pouvez lire la [[CommandesConfiguration|rubrique consacrée]].
+Maintenant que vous avez accès aux [[CommandesConfiguration|commandes de configuration]], vous pouvez lire la [[CommandesConfiguration|rubrique consacrée]].
 
 * [[Index|Retour à l'index]]
 * [[Configuration|Retour à la configuration]]
