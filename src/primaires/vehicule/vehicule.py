@@ -33,6 +33,7 @@
 from abstraits.id import ObjetID
 from bases.collections.dict_valeurs_id import DictValeursID
 
+from .direction import Direction
 from .vecteur import Vecteur
 from .force import Propulsion, Frottement
 
@@ -95,12 +96,11 @@ class Vehicule(ObjetID):
         self.masse = 1
         self.position = Vecteur(0, 0, 0)
         self.vitesse = Vecteur(0, 0, 0)
-        self.direction = Vecteur(1, 0, 0)
+        self.direction = Direction(self, 1, 0, 0)
         
-        self.propulsion = Propulsion()
         self.frottement = Frottement(self,0.7)
         
-        self.forces = [self.propulsion, self.frottement]
+        self.forces = [self.frottement]
         
         self.salles = DictValeursID(self)
         self.en_collision = False
@@ -108,17 +108,16 @@ class Vehicule(ObjetID):
     def __getnewargs__(self):
         return ()
     
-    def tourner(self, angle):
-        """Fait tourner / virer le véhicule autour de l'âxe Z."""
-        self.propulsion._valeur.tourner_autour_z(angle)
-    
-    def incliner(self, angle):
-        """Incline le véhicule."""
-        self.propulsion._valeur.incliner(angle)
-    
     def energie_cinetique(self):
         return self.m * self.vitesse.norme() * self.vitesse.norme()
-    
+
+    def maj_salle(self):
+        d = -self.direction.direction()
+        i = self.direction.inclinaison()
+        operation = lambda v: self.position + v.tourner_autour_z(d).incliner(i)
+        for vec, salle in self.salles.items():
+            salle.coords = operation(vec.copie()).coordonnees
+
     def avancer(self, temps):
         """Fait avancer le véhicule.
         
@@ -145,11 +144,7 @@ class Vehicule(ObjetID):
         self.vitesse += temps * self.acceleration
         
         # On modifie les coordonnées des salles
-        d = -self.direction.direction()
-        i = self.direction.inclinaison()
-        operation = lambda v: self.position + v.tourner_autour_z(d).incliner(i)
-        for vec, salle in self.salles.items():
-            salle.coords = operation(vec.copie()).coordonnees
+        self.maj_salle()
         
         self.en_collision = False
        

@@ -30,7 +30,7 @@
 
 """Fichier contenant la classe Vecteur, détaillée plus bas."""
 
-from math import sqrt, cos, sin, radians, atan, degrees
+from math import sqrt, cos, sin, radians, degrees, atan
 
 from abstraits.obase import *
 from primaires.salle.coordonnees import Coordonnees
