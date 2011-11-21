@@ -31,6 +31,7 @@
 """Fichier contenant la classe Coordonnees, détaillée plus bas."""
 
 from abstraits.obase import *
+from math import ceil
 
 class Coordonnees(BaseObj):
     
@@ -69,7 +70,7 @@ class Coordonnees(BaseObj):
     
     def __repr__(self):
         """Affichage des coordonnées dans un cas de debug"""
-        return "Coords(x={}, y={}, z={}, valide={})".format(self.x, self.y, \
+        return "Coords(x={}, y={}, z={}, valide={})".format(self.x, self.y,
                 self.z, self.valide)
     
     def __setattr__(self, attr, val):
@@ -100,6 +101,34 @@ class Coordonnees(BaseObj):
     def get_copie(self):
         """Retourne une copie de self, non liée à parent"""
         return Coordonnees(self.x, self.y, self.z, self.valide)
+    
+    def entier(self):
+        resultat_x = []
+        resultat_y = []
+        resultat = []
+        if self.x - ceil(round(self.x, 1)) <= 0.6:
+            resultat_x.append(ceil(round(self.x, 1)))
+        if self.x - ceil(round(self.x, 1)) >= 0.4:
+            resultat_x.append(ceil(round(self.x, 1)) + 1)
+        if self.y - ceil(round(self.y, 1)) <= 0.6:
+            for x in resultat_x:
+                resultat_y.append((x, ceil(round(self.y, 1))))
+        if self.y - ceil(round(self.y, 1)) >= 0.4:
+            for x in resultat_x:
+                resultat_y.append((x, ceil(round(self.y, 1)) + 1))
+        if self.z - ceil(round(self.z, 1)) <= 0.6:
+            for x, y in resultat_y:
+                resultat.append(Coordonnees(x, y, ceil(round(self.z, 1))))
+        if self.z - ceil(round(self.z, 1)) >= 0.4:
+            for x, y in resultat_y:
+                resultat.append(Coordonnees(x, y, ceil(round(self.z, 1)) + 1))
+        return resultat
+    
+    def __eq__(self, autre):
+        return self.x == autre.x and self.y == autre.y and self.z == autre.z
+    
+    def __hash__(self):
+        return hash(hash(self.x) ^ hash(self.y) ^ hash(self.z))
     
     @property
     def est(self):

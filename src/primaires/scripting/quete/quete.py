@@ -142,6 +142,19 @@ class Quete(ObjetID):
         self.__etapes.append(etape)
         self.enregistrer()
     
+    def supprimer_etape(self, num):
+        indice = len(self.niveau) - 1
+        a_effacer = None
+        for (strniveau,etape) in self.get_dictionnaire_etapes().items():
+            niveau = list(etape.niveau)
+            if niveau[indice] > num:
+                niveau[indice] -= 1
+                etape.niveau = tuple(niveau)
+            elif etape.niveau[indice] != num:
+                a_effacer = strniveau
+        del self.get_dictionnaire_etapes()[a_effacer]
+        self.enregistrer()
+    
     def afficher_etapes(self, quete=None):
         """Affiche les étapes qui peuvent être aussi des sous-quêtes."""
         res = ""

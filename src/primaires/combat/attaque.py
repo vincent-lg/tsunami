@@ -73,9 +73,12 @@ class Attaque(BaseObj):
     
     def get_membre(self, moi, contre, arme=None):
         """Retourne un membre visé ou None."""
+        print(self.viser_membre)
         if self.viser_membre:
             membres = contre.equipement.membres
+            print("1")
             membre = choix_probable(membres, attribut="probabilite_atteint")
+            print("2", membre)
         else:
             membre = None
         
@@ -100,7 +103,6 @@ class Attaque(BaseObj):
     
     def envoyer_msg_reussite(self, moi, contre, membre, degats, arme=None):
         """Envoie les messages en cas de réussite."""
-        print(degats)
         salle = moi.salle
         moi.envoyer_lisser(self.msg_reussite["moi"].format(moi="{moi}",
                 contre="{contre}", membre=membre, arme=arme,
@@ -120,11 +122,11 @@ class Coup(Attaque):
         """Constructeur du coup."""
         Attaque.__init__(self, personnage, "coup")
         self.msg_tentative["moi"] = \
-                "Vous tentez d'atteindre {contre} à {membre}."
+                "Vous tentez d'atteindre {contre}."
         self.msg_tentative["contre"] = \
-                "{moi} tente de vous atteindre à {membre}."
+                "{moi} tente de vous atteindre."
         self.msg_tentative["autres"] = \
-                "{moi} tente d'atteindre {contre} à {membre}."
+                "{moi} tente d'atteindre {contre}."
         # Code temporaire
         self.msg_reussite["moi"] = \
                 "Vous atteignez {contre} à {membre} ({degats} points)."

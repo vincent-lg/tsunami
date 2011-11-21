@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010 DAVY Guillaume
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,22 +28,44 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier permet d'ajouter le chemin des bibliothèques aux chemins des
-modules Python.
+"""Fichier contenant la classe Direction, détaillée plus bas."""
 
-Ce fichier n'a besoin d'être importé qu'une seule fois, dans le fichier
-principal.
-Vous pouvez ensuite importer directement les bibliothèques contenues dans
-le répertoire lib.
-Par exemple :
->>> from yaml import load, dump
+from abstraits.obase import *
+from primaires.salle.coordonnees import Coordonnees
+from math import radians, degrees
+from .vecteur import Vecteur
 
-"""
-
-import os
-import sys
-
-from corps.arborescence import getcwd
-
-sys.path.append(os.path.join(getcwd(), "../lib"))
-
+class Direction(Vecteur):
+    
+    """Classe représentant la direction d'un véhicule.
+    
+    Elle gère les mêmes opérations qu'un vecteur mais possède quelques
+    méthodes supplémentaire qui servent de raccourcie à ceux de la classe
+    Vecteur quand on l'utilise il faut utiliser des angles en degré.
+    Mais surtout elle applique les changements au navires quand on la modifie.
+    
+    """
+    
+    
+    def __init__(self, vehicule, x=0, y=0, z=0):
+        """Constructeur du vecteur"""
+        Vecteur.__init__(self,x,y,z)
+        self.vehicule = vehicule
+    
+    def __repr__(self):
+        """Affichage des coordonnées dans un cas de debug"""
+        return "Direction(x={}, y={}, z={})".format(self.x, self.y, self.z)
+    
+    def tourner(self, angle):
+        """Fait tourner / virer le véhicule autour de l'âxe Z."""
+        self.direction._valeur.tourner_autour_z(radians(angle))
+    
+    def incliner(self, angle):
+        """Incline le véhicule."""
+        self.direction._valeur.incliner(radians(angle))
+    
+    def __setattr__(self):
+        BaseObj.__setattr(self)
+        self.vehicule.maj_salle()
+    
+    

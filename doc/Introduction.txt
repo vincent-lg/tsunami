@@ -68,4 +68,4 @@ Si la documentation ne répond pas à vos questions, vous avez différents moyen
 * Le "forum":http://redmine.kassie.fr/projects/kassie/boards de project:kassie
 * L'adresse equipe@kassie.fr pour contacter directement l'équipe des développeurs
 
-[[Index|Retour à l'index]]
+[[Index|Retour à l'index]] 

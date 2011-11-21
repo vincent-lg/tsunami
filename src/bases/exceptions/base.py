@@ -42,7 +42,7 @@ class ExceptionMUD(RuntimeError):
     
     """
     
-    def __init__(self, message):
+    def __init__(self, message=""):
         """Constructeur de l'exception."""
         self.message = message
     

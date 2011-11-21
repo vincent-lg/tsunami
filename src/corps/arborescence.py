@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2011 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,22 +28,23 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier permet d'ajouter le chemin des bibliothèques aux chemins des
-modules Python.
+"""Module contenant des fonctions utiles à la manipulation des dossiers.
 
-Ce fichier n'a besoin d'être importé qu'une seule fois, dans le fichier
-principal.
-Vous pouvez ensuite importer directement les bibliothèques contenues dans
-le répertoire lib.
-Par exemple :
->>> from yaml import load, dump
+Fonctions définies :
+    getcwd -- retourne le chemin du répertoire de l'exécutable
 
 """
 
 import os
 import sys
 
-from corps.arborescence import getcwd
-
-sys.path.append(os.path.join(getcwd(), "../lib"))
+def getcwd():
+    """Retourne le chemin de l'exécutable.
+    
+    A la différence de os.getcwd(), retourne un chemin intégrant
+    celui entré en ligne de commande (iva python3.2 dev/src/kassie.py
+    par exemple).
+    
+    """
+    return os.path.join(os.getcwd(), os.path.split(sys.argv[0])[0])
 

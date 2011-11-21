@@ -26,7 +26,7 @@ Dans votre client devrait apparaître :
 
 <pre>
 +-----------------------------------------------------------------------------+
-| Edition de depart:1 |
+| Edition de depart:1                                                         |
 +-----------------------------------------------------------------------------+
  [C]oordonnées : INV
  [Z]one : depart
@@ -34,7 +34,7 @@ Dans votre client devrait apparaître :
  [T]itre : La salle d'arrivée
  D[e]tails
  [D]escription : 
- Aucune description.
+     Aucune description.
  [S]orties
  [Sc]ripts
  [Q]uitter la fenêtre
@@ -54,7 +54,7 @@ Les informations que vous voyez dans votre client sont :
 
 En entrant la (ou les) lettre(s) entre parenthèses, vous pouvez éditer l'information concernée.
 
-Par exemple, en entrant kdoc.tar vous éditez le titre de la salle, en entrant doc doc.sh kdoc.tar lisser_doc.py vous éditez sa description. Et en entrant *q* vous quittez l'éditeur.
+Par exemple, en entrant *t* vous éditez le titre de la salle, en entrant *d* vous éditez sa description. Et en entrant *q* vous quittez l'éditeur.
 
 h3. Côté développeur
 
@@ -62,7 +62,7 @@ Quand vous entrez la [[DéveloppementCommande|commande]] *redit* dans votre clie
 
 L'éditeur que vous avez sous les yeux en entrant *redit* est de type @Presentation@. C'est un éditeur générique pour afficher un objet possédant de nombreuses informations à éditer.
 
-Quand vous entrez un raccourci comme kdoc.tar pour éditer le titre de la salle, vous changez d'éditeur. Celui dans lequel vous vous trouvez à présent est expressément conçu pour éditer le titre de la salle et n'a pas d'autre but. Une fois le titre changé, vous pouvez revenir à l'éditeur parent grâce au raccourci /.
+Quand vous entrez un raccourci comme *t* pour éditer le titre de la salle, vous changez d'éditeur. Celui dans lequel vous vous trouvez à présent est expressément conçu pour éditer le titre de la salle et n'a pas d'autre but. Une fois le titre changé, vous pouvez revenir à l'éditeur parent grâce au raccourci /.
 
 h2. Attributs et méthodes d'un éditeur
 
@@ -106,27 +106,27 @@ Les deux informations à préciser à la méthode @ajouter_option@ sont :
 Par exemple, considérez ce code extrait du constructeur de la classe @Description@, décrivant l'éditeur @Description@ :
 
 <pre><code class="python">
- self.ajouter_option("r", self.opt_remplacer)
+        self.ajouter_option("r", self.opt_remplacer)
 </code></pre>
 
 Et le code de la méthode @opt_remplacer@ :
 
 <pre><code class="python">
- def opt_remplacer(self, arguments):
- """Fonction appelé pour remplacer du texte dans la description.
- La syntaxe de remplacement est :
- <texte 1> / <texte à remplacer>
- 
- """
- description = self.description
- # On commence par split au niveau du pipe
- try:
- recherche, remplacer_par = arguments.split(" / ")
- except ValueError:
- self.pere << "|err|Syntaxe invalide.|ff|"
- else:
- description.remplacer(recherche, remplacer_par)
- self.actualiser()
+    def opt_remplacer(self, arguments):
+        """Fonction appelé pour remplacer du texte dans la description.
+        La syntaxe de remplacement est :
+        <texte 1> / <texte à remplacer>
+        
+        """
+        description = self.description
+        # On commence par split au niveau du pipe
+        try:
+            recherche, remplacer_par = arguments.split(" / ")
+        except ValueError:
+            self.pere << "|err|Syntaxe invalide.|ff|"
+        else:
+            description.remplacer(recherche, remplacer_par)
+            self.actualiser()
 </code></pre>
 
 Le paramètre @argument@ passé à la fonction (la méthode, ici) contient la chaîne non-interprétée par l'option. Si le joueur entre @/r parmis / parmi@, le paramètre @argument@ vaudra @"parmis / parmi"@.
@@ -179,7 +179,7 @@ C'est l'éditeur que vous voyez quand vous entrez la commande @redit@ pour édit
 
 Il est constitué de plusieurs choix, chacun accessible grâce à un raccourci et menant à un autre éditeur.
 
-Par exemple, le choix *titre* permet d'éditer le titre de la salle. Son raccourci est kdoc.tar (le joueur n'a qu'à entrer kdoc.tar pour se déplacer dans l'éditeur d'édition du titre de la salle).
+Par exemple, le choix *titre* permet d'éditer le titre de la salle. Son raccourci est *t* (le joueur n'a qu'à entrer *t* pour se déplacer dans l'éditeur d'édition du titre de la salle).
 
 Vous pouvez l'utiliser tel quel ou bien l'hériter pour le personnaliser. C'est souvent cette seconde solution qui est choisie. Référez-vous à la [[GlossaireClasse|classe]] @EdtRedit@ définie dans @primaires/salle/editeurs/redit/__init__.py@ pour un exemple complet.
 
@@ -188,7 +188,7 @@ Les méthodes de l'éditeur @Presentation@ sont :
 * @get_raccourci_depuis_nom@ : retourne le raccourci correspondant au nom passé en paramètre
 * @ajouter_choix@ : sans doute la méthode que vous utiliserez le plus avec cet éditeur. Elle permet d'ajouter un choix possible dans l'édition de l'objet. Elle prend en paramètre :
 ** @nom@ : le nom du choix (*titre de la salle* par exemple)
-** @raccourci@ : le raccourci éditant le choix (il doit être présent dans le nom), kdoc.tar par exemple. Il ne doit pas être déjà utilisé
+** @raccourci@ : le raccourci éditant le choix (il doit être présent dans le nom), *t* par exemple. Il ne doit pas être déjà utilisé
 ** @objet_editeur@ : la classe de l'éditeur permettant d'éditer le choix. Ce peut être n'importe quelle classe héritée d'@Editeur@
 ** @objet_edite@ : l'objet édité. Ce peut être self.objet, un de ses attributs ou bien un objet complètement différent
 ** @attribut@ : le nom de l'attribut à éditer (voir plus bas)
@@ -203,14 +203,14 @@ Les méthodes de l'éditeur @Presentation@ sont :
 Exemple extrait de la méthode @ajouter_choix@, extrait de @EdtRedit@ (l'éditeur @Presentation@ de salle) :
 
 <pre><code class="python">
- # Titre
- titre = self.ajouter_choix("titre", "t", Uniligne, salle, "titre")
- titre.parent = self
- titre.prompt = "Titre de la salle : "
- titre.apercu = "{objet.titre}"
- titre.aide_courte = \
- "Entrez le |ent|titre|ff| de la salle ou |cmd|/|ff| pour revenir " \
- "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
+        # Titre
+        titre = self.ajouter_choix("titre", "t", Uniligne, salle, "titre")
+        titre.parent = self
+        titre.prompt = "Titre de la salle : "
+        titre.apercu = "{objet.titre}"
+        titre.aide_courte = \
+            "Entrez le |ent|titre|ff| de la salle ou |cmd|/|ff| pour revenir " \
+            "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
 </code></pre>
 
 La méthode @ajouter_choix@ ne retourne pas un éditeur mais une [[DeveloppementEnveloppeObjet|enveloppe d'éditeur]]. C'est dans cet enveloppe qu'on écrit les attributs @prompt@, @apercu@, @aide_courte@ et potentiellement d'autres. L'enveloppe se chargera de créer, quand le joueur entrera le raccourci du choix, l'éditeur du choix et de recopier les attributs @prompt@, @apercu@ et autre dans l'éditeur construit.
@@ -222,13 +222,13 @@ Cet éditeur est conçu pour éditer l'attribut d'un objet. Par exemple, le titr
 Extrait du fichier @primaires/salle/editeurs/redit/__init__.py@, classe @EdtRedit@, méthode @construire@ :
 
 <pre><code class="python">
- titre = self.ajouter_choix("titre", "t", Uniligne, salle, "titre")
- titre.parent = self
- titre.prompt = "Titre de la salle : "
- titre.apercu = "{objet.titre}"
- titre.aide_courte = \
- "Entrez le |ent|titre|ff| de la salle ou |cmd|/|ff| pour revenir " \
- "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
+        titre = self.ajouter_choix("titre", "t", Uniligne, salle, "titre")
+        titre.parent = self
+        titre.prompt = "Titre de la salle : "
+        titre.apercu = "{objet.titre}"
+        titre.aide_courte = \
+            "Entrez le |ent|titre|ff| de la salle ou |cmd|/|ff| pour revenir " \
+            "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
 </code></pre>
 
 Voici l'explication ligne à ligne :
@@ -258,7 +258,7 @@ Cet éditeur permet d'éditer une description d'un objet. Notez que la descripti
 Par exemple, dans le constructeur d'une salle (@primaires/salle/salle.py@) :
 
 <pre><code class="python">
- self.description = Description(parent=self)
+        self.description = Description(parent=self)
 </code></pre>
 
 La classe @Description@ propose plusieurs méthodes utiles pour, notamment, remplacer du texte (d'une casse différente ou comportant des accents). Il est donc préférable de l'utiliser quand votre objet possède une description visible et surtout, éditable.
@@ -266,14 +266,14 @@ La classe @Description@ propose plusieurs méthodes utiles pour, notamment, remp
 L'éditeur @Description@ est assez simple à utiliser quand on est habitué à la syntaxe de création. Cet exemple est encore une fois extrait de l'éditeur @EdtRedit@ défini dans @primaires/salle/editeurs/redit/__init__.py@, méthode @construire@.
 
 <pre><code class="python">
- # Description
- description = self.ajouter_choix("description", "d", Description, \
- salle)
- description.parent = self
- description.apercu = "{objet.description.paragraphes_indentes}"
- description.aide_courte = \
- "| |tit|" + "Description de la salle {}".format(salle).ljust(76) + \
- "|ff||\n" + self.opts.separateur
+        # Description
+        description = self.ajouter_choix("description", "d", Description, \
+                salle)
+        description.parent = self
+        description.apercu = "{objet.description.paragraphes_indentes}"
+        description.aide_courte = \
+            "| |tit|" + "Description de la salle {}".format(salle).ljust(76) + \
+            "|ff||\n" + self.opts.separateur
 </code></pre>
 
 Deux choses sont à noter :
@@ -300,19 +300,19 @@ Sa seule grande différence est donc qu'il prend un paramètre supplémentaire �
 Exemple extrait de l'éditeur *hedit* (@primaires/aide/hedit/__init__.py@, classe @EdtHedit@, méthode @construire@) :
 
 <pre><code class="python">
- # Groupe
- str_groupes = sorted(
- type(self).importeur.interpreteur.groupes.nom_groupes)
- groupe = self.ajouter_choix("groupe d'utilisateurs", "u", Choix,
- sujet, "str_groupe", str_groupes)
- groupe.parent = self
- groupe.prompt = "Groupe d'utilisateur du sujet : "
- groupe.apercu = "{objet.str_groupe}"
- groupe.aide_courte = \
- "Entrez le |ent|groupe|ff| pouvant accéder au sujet d'aide ou " \
- "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
- "Groupes existants : " + ", ".join(str_groupes) + "\n\n" \
- "Groupe actuel : |bc|{objet.str_groupe}|ff|"
+        # Groupe
+        str_groupes = sorted(
+                type(self).importeur.interpreteur.groupes.nom_groupes)
+        groupe = self.ajouter_choix("groupe d'utilisateurs", "u", Choix,
+                sujet, "str_groupe", str_groupes)
+        groupe.parent = self
+        groupe.prompt = "Groupe d'utilisateur du sujet : "
+        groupe.apercu = "{objet.str_groupe}"
+        groupe.aide_courte = \
+            "Entrez le |ent|groupe|ff| pouvant accéder au sujet d'aide ou " \
+            "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
+            "Groupes existants : " + ", ".join(str_groupes) + "\n\n" \
+            "Groupe actuel : |bc|{objet.str_groupe}|ff|"
 </code></pre>
 
 Notez qu'avant d'appeler @ajouter_choix@, on récupère une liste des choix possibles (liste contenant des chaînes de caractères). Cette liste est passée après le nom de l'attribut dans @ajouter_choix@.
@@ -330,3 +330,5 @@ Il n'existe pas encore d'exemple simple disponible dans le projet. Pour plus d'i
 h2. Étendre un éditeur existant
 
 h2. Créer un nouvel éditeur
+
+

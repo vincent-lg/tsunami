@@ -250,6 +250,10 @@ class Personnage(ObjetID):
         """
         return IMMORTELS & self.grp.flags != 0
     
+    def est_mort(self):
+        """Retourne True si le personnage est mort, False sinon."""
+        return self.vitalite == 0
+    
     def detruire(self):
         """Méthode appelée lors de la destruction du personage.
         -   On supprime le personnage de la liste des personnages du squelette
@@ -275,26 +279,41 @@ class Personnage(ObjetID):
         salle = self.salle
         salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
         sortie = salle.sorties.get_sortie_par_nom(sortie)
+        fermer = False
+        
+        # Si la porte est fermée (pas verrouillée), on l'ouvre
+        if not self.est_immortel() and sortie.porte and \
+                sortie.porte.fermee and not sortie.porte.verrouillee:
+            self << "Vous ouvrez {}.".format(sortie.nom_complet)
+            self.salle.envoyer("{{}} ouvre {}.".format(sortie.nom_complet),
+                    self)
+            sortie.porte.ouvrir()
+            fermer = True
         
         # On appelle l'événement sortir
         salle.script.evenements["sort"].executer(vers=sortie.nom,
                 salle=salle, personnage=self, destination=salle_dest)
         
         if sortie.cachee:
-            for perso in salle.personnages:
-                msg = "{perso} s'en va vers... Vous ne voyez pas très bien où."
-                if perso.est_immortel():
-                    msg = "{perso} s'en va vers {sortie}."
-                if perso is not self:
-                    perso << msg.format(perso=self.get_nom_pour(perso),
+            for personnage in salle.personnages:
+                msg = "{personnage} s'en va vers... Vous ne voyez pas " \
+                        "très bien où."
+                if personnage.est_immortel():
+                    msg = "{personnage} s'en va vers {sortie}."
+                if personnage is not self:
+                    personnage.envoyer(msg, personnage=personnage,
                             sortie=sortie.nom_complet)
-                    if sortie.porte and sortie.porte.fermee:
-                        perso << "Vous entendez une porte se refermer."
         else:
             salle.envoyer("{{}} s'en va vers {}.".format(sortie.nom_complet),
                     self)
-        if sortie.porte and sortie.porte.fermee:
-            self.envoyer("Vous passez la porte et la refermez derrière vous.")
+        
+        if fermer:
+            self.salle.envoyer("Vous entendez une porte se refermer.",
+                    self)
+            sortie.porte.fermer()
+            self.envoyer("Vous passez {} et refermez derrière vous.".format(
+                    sortie.nom_complet))
+        
         self.salle = salle_dest
         self.envoyer(self.salle.regarder(self))
         
@@ -338,6 +357,17 @@ class Personnage(ObjetID):
         etat = self.etat
         if etat:
             etat.peut_faire(cle_action)
+    
+    def mourir(self):
+        """Méthode appelée quand le personange meurt."""
+        self.cle_etat = ""
+        combat = type(self).importeur.combat.get_combat_depuis_salle(
+                self.salle)
+        if combat and self in combat.combattants:
+            combat.supprimer_combattant(self)
+        
+        self << "Vous vous effondrez sur le sol."
+        self.salle.envoyer("{} s'effondre sur le sol.", self)
     
     @staticmethod
     def regarder(moi, personnage):

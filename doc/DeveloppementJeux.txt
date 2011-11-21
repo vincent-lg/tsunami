@@ -58,25 +58,25 @@ Dedans, vous trouvez la [[GlossaireClasse|classe]] @Plateau@ qui définit le pla
 
 <pre><code class="python">
 class Plateau(BaseObj):
- 
- """Plateau de solitaire.
- 
- Il est utilisé pour jouer au... solitaire.
- 
- """
- 
- jeux = ["solitaire"]
- nom = "solitaire"
- 
- def __init__(self):
- """Initialisation du plateau."""
- BaseObj.__init__(self)
- self.nb_joueurs_max = 1
- self.cases = {
- "C1": Bille(),
- "D1": Bille(),
- ...,
- }
+    
+    """Plateau de solitaire.
+    
+    Il est utilisé pour jouer au... solitaire.
+    
+    """
+    
+    jeux = ["solitaire"]
+    nom = "solitaire"
+    
+    def __init__(self):
+        """Initialisation du plateau."""
+        BaseObj.__init__(self)
+        self.nb_joueurs_max = 1
+        self.cases = {
+            "C1": Bille(),
+            "D1": Bille(),
+            ...,
+        }
 </code></pre>
 
 La classe @Plateau@ comporte deux attributs de classe :
@@ -106,19 +106,19 @@ Dedans se trouve une classe @Jeu@ définissant le jeu de solitaire.
 
 <pre><code class="python">
 class Jeu(BaseObj):
- 
- """Ce jeu définit le solitaire.
- 
- Il est rattaché au plateau solitaire.
- 
- """
- 
- nom = "solitaire"
- def __init__(self):
- """Construction du jeu."""
- BaseObj.__init__(self)
- self.plateau = None
- self.partie = None
+    
+    """Ce jeu définit le solitaire.
+    
+    Il est rattaché au plateau solitaire.
+    
+    """
+    
+    nom = "solitaire"
+    def __init__(self):
+        """Construction du jeu."""
+        BaseObj.__init__(self)
+        self.plateau = None
+        self.partie = None
 </code></pre>
 
 Elle possède une méthode @jouer@ qui prend en paramètre le personnage jouant au jeu et la commande entrée par ce personnage.

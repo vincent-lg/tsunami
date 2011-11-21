@@ -57,6 +57,7 @@ class EdtPresentation(Presentation):
         
         # Options
         self.ajouter_option("e", self.ajouter_etape)
+        self.ajouter_option("d", self.supprimer_etape)
         self.ajouter_option("q", self.ajouter_sous_quete)
         self.ajouter_option("d", self.opt_supprimer_etape)
         
@@ -65,6 +66,21 @@ class EdtPresentation(Presentation):
     
     def __getnewargs__(self):
         return (None, None)
+    
+    def supprimer_etape(self, argument):
+        """Supprimer une étape ou une quête.
+        
+        L'argument doit contenir le numéro de l'étape/quête.
+        
+        """
+        try:
+            num = int(argument.strip())
+        except ValueError:
+            self.pere << "|err|Précisez le numéro de l'étape ou de la " \
+                "sous-quête.|ff|"
+        else:
+            self.objet.supprimer_etape(num)
+            self.actualiser()
     
     def ajouter_etape(self, argument):
         """Ajoute une étape.

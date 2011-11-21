@@ -20,10 +20,10 @@ Le constructeur de @BaseObj@ ne prend aucun paramètre. Il est impératif qu'il 
 from abstraits.obase import BaseObj
 
 class NomClasse(BaseObj):
- 
- def __init__(self):
- BaseObj.__init__(self)
- # ...
+    
+    def __init__(self):
+        BaseObj.__init__(self)
+        # ...
 </code></pre>
 
 Cela ne veut pas dire que votre constructeur ne peut prendre aucun paramètre.
@@ -46,31 +46,31 @@ from abstraits.obase import BaseObj
 # (...)
 
 class Membre(BaseObj):
- 
- """Classe définissant un membre, une partie du corps d'un personnage.
- Chaque personnage possède un squelette, qui peut être propre à sa race
- ou à une personnalisation propre. Certains PNJ, par exemple, auront
- des squelettes hors de la définition de toute race;
- 
- """
- 
- def __init__(self, nom, modele=None, parent=None):
- """Constructeur d'un membre"""
- BaseObj.__init__(self)
- self.nom = nom
- self.flags = AUCUN_FLAG
- self.statut = "entier"
- self.equipe = None # l'objet équipé à cet emplacement
- self.tenu = None # l'objet tenu
- self.parent = parent
- 
- # Copie du modèle si existe
- if modele:
- self.nom = modele.nom
- self.flags = modele.flags
- 
- def __getnewargs__(self):
- return ("", )
+    
+    """Classe définissant un membre, une partie du corps d'un personnage.
+    Chaque personnage possède un squelette, qui peut être propre à sa race
+    ou à une personnalisation propre. Certains PNJ, par exemple, auront
+    des squelettes hors de la définition de toute race;
+    
+    """
+    
+    def __init__(self, nom, modele=None, parent=None):
+        """Constructeur d'un membre"""
+        BaseObj.__init__(self)
+        self.nom = nom
+        self.flags = AUCUN_FLAG
+        self.statut = "entier"
+        self.equipe = None # l'objet équipé à cet emplacement
+        self.tenu = None # l'objet tenu
+        self.parent = parent
+        
+        # Copie du modèle si existe
+        if modele:
+            self.nom = modele.nom
+            self.flags = modele.flags
+    
+    def __getnewargs__(self):
+        return ("", )
 </code></pre>
 
 Ici, la classe @Membre@ ne prend qu'un paramètre obligatoire : le nom du membre. La méthode @__getnewargs__@ retourne donc un tuple contenant une chaîne vide.
@@ -85,16 +85,16 @@ Exemple d'une classe héritée de @BaseObj@ ne prenant aucun paramètre :
 from abstraits.obase import BaseObj
 
 class NomClasse(BaseObj):
- 
- """Documentation de la classe..."""
- 
- def __init__(self):
- """Constructeur de la classe."""
- BaseObj.__init__(self)
- # Autres attributs...
- 
- def __getnewargs__(self):
- return ()
+    
+    """Documentation de la classe..."""
+    
+    def __init__(self):
+        """Constructeur de la classe."""
+        BaseObj.__init__(self)
+        # Autres attributs...
+    
+    def __getnewargs__(self):
+        return ()
 </code></pre>
 
 h2. Clôturer le constructeur
@@ -105,16 +105,16 @@ La dernière ligne de votre constructeur doit indiquer au @BaseObj@ que votre ob
 from abstraits.obase import BaseObj
 
 class NomClasse(BaseObj):
- 
- def __init__(self):
- BaseObj.__init__(self)
- # On écrit d'autres attributs
- self.attribut = "quelque chose"
- self.autre_attribut = "autre chose"
- self._construire()
- 
- def __getnewargs__(self):
- return ()
+    
+    def __init__(self):
+        BaseObj.__init__(self)
+        # On écrit d'autres attributs
+        self.attribut = "quelque chose"
+        self.autre_attribut = "autre chose"
+        self._construire()
+    
+    def __getnewargs__(self):
+        return ()
 </code></pre>
 
 h2. Attributs définis

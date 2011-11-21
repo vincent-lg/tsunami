@@ -33,6 +33,7 @@
 from abstraits.id import ObjetID
 from bases.collections.dict_valeurs_id import DictValeursID
 
+from .direction import Direction
 from .vecteur import Vecteur
 from .force import Propulsion, Frottement
 
@@ -50,7 +51,7 @@ class Vehicule(ObjetID):
     *   Les valeurs des forces agissant sur le véhicule
     
     Un véhicule standard possède par défaut deux forces agissant sur lui :
-    *   Sa propulsion (force propulsive)
+    *   Sa propulsion (force propulsive, absente du modèle abstrait [1])
     *   Son frottement (sans quoi sa vitesse tend vers l'infini).
     
     Ce comportement peut être surchargé dans des classes filles.
@@ -60,18 +61,22 @@ class Vehicule(ObjetID):
         position -- la position, représentée par un vecteur (X, Y, Z)
         vitesse -- la vitesse actuelle, là encore sous la forme d'un vecteur [1]
         direction -- la direction du véhicule sous la forme d'un vecteur
-        propulsion -- sa force propulsive
         frottement -- sa force de frottement
         forces -- une liste comportant les forces agissant sur le véhicule
         salles -- un dictionnaire des salles constituant le véhicule [2]
     
-    [1] Le vecteur permet de représenter autant une direction ((1, 0, 0)
+    [1] La force propulsive n'est pas présente directement dans cette classe.
+        En effet, elle est souvent propre au type de véhicule que l'on
+        souhaite créer (les navires, par exemple, n'ont pas de force
+        propulsive à proprement parlé).
+    
+    [2] Le vecteur permet de représenter autant une direction ((1, 0, 0)
         représente un vecteur vers l'est par exemple) qu'une force (le
         vecteur (2, 0, 0) est plus long que (1, 0, 0)). Ces vecteurs
         sont donc utilisés pour représenter la direction, la vitesse
         du véhicule, mais aussi la valeur des forces s'appliquant sur lui.
     
-    [2] Les salles déclarées dans ce dictionnaire sont celles du véhicule
+    [3] Les salles déclarées dans ce dictionnaire sont celles du véhicule
         (son intérieur, par exemple). Toutes ces salles se déplaceront
         avec le véhicule. Le dictionnaire est sous la forme :
         {coordonnes_relatives: salle_correspondante}
@@ -95,12 +100,11 @@ class Vehicule(ObjetID):
         self.masse = 1
         self.position = Vecteur(0, 0, 0)
         self.vitesse = Vecteur(0, 0, 0)
-        self.direction = Vecteur(1, 0, 0)
+        self.direction = Direction(self, 1, 0, 0)
         
-        self.propulsion = Propulsion()
         self.frottement = Frottement(self,0.7)
         
-        self.forces = [self.propulsion, self.frottement]
+        self.forces = [self.frottement]
         
         self.salles = DictValeursID(self)
         self.en_collision = False
@@ -108,17 +112,16 @@ class Vehicule(ObjetID):
     def __getnewargs__(self):
         return ()
     
-    def tourner(self, angle):
-        """Fait tourner / virer le véhicule autour de l'âxe Z."""
-        self.propulsion._valeur.tourner_autour_z(angle)
-    
-    def incliner(self, angle):
-        """Incline le véhicule."""
-        self.propulsion._valeur.incliner(angle)
-    
     def energie_cinetique(self):
         return self.m * self.vitesse.norme() * self.vitesse.norme()
-    
+
+    def maj_salle(self):
+        d = -self.direction.direction()
+        i = self.direction.inclinaison()
+        operation = lambda v: self.position + v.tourner_autour_z(d).incliner(i)
+        for vec, salle in self.salles.items():
+            salle.coords = operation(vec.copie()).coordonnees
+
     def avancer(self, temps):
         """Fait avancer le véhicule.
         
@@ -145,11 +148,7 @@ class Vehicule(ObjetID):
         self.vitesse += temps * self.acceleration
         
         # On modifie les coordonnées des salles
-        d = -self.direction.direction()
-        i = self.direction.inclinaison()
-        operation = lambda v: self.position + v.tourner_autour_z(d).incliner(i)
-        for vec, salle in self.salles.items():
-            salle.coords = operation(vec.copie()).coordonnees
+        self.maj_salle()
         
         self.en_collision = False
        
