@@ -34,8 +34,10 @@ import re
 
 from abstraits.module import *
 from primaires.format.fonctions import format_nb
+
 from .salle import Salle, ZONE_VALIDE, MNEMONIC_VALIDE
 from .sorties import NOMS_SORTIES
+from .etendue import Etendue
 from .config import cfg_salle
 from .templates.terrain import Terrain
 from . import commandes
@@ -85,6 +87,7 @@ class Module(BaseModule):
         self.logger = type(self.importeur).man_logs.creer_logger( \
                 "salles", "salles")
         self.terrains = {}
+        self.etendues = {}
     
     def config(self):
         """Méthode de configuration du module"""
@@ -114,6 +117,15 @@ class Module(BaseModule):
         nb_salles = len(self._salles)
         self.logger.info(format_nb(nb_salles, "{nb} salle{s} récupérée{s}", \
                 fem=True))
+        
+        # On récupère les étendues
+        etendues = self.importeur.supenr.charger_groupe(Etendue)
+        for etendue in etendues:
+            self.ajouter_etendue(etendue)
+        
+        nb_etendues = len(self.etendues)
+        self.logger.info(format_nb(nb_etendues, "{nb} étendue{s} " \
+                "d'eau{x} récupérée{s}", fem=True))
         
         BaseModule.init(self)
     
@@ -315,3 +327,26 @@ class Module(BaseModule):
         
         terrain = Terrain(nom)
         self.terrains[nom] = terrain
+    
+    def creer_etendue(self, cle):
+        """Crée une étendue d'eau."""
+        if cle in self.etendues.keys():
+            raise KeyError("l'étendue d'eau {} existe déjà".format(cle))
+        
+        etendue = Etendue(cle)
+        self.ajouter_etendue(etendue)
+        return etendue
+    
+    def ajouter_etendue(self, etendue):
+        """Ajoute une étendue au dictionnaire."""
+        if etendue.cle in self.etendues.keys():
+            raise KeyError("l'étendue d'eau {} existe déjà".format(
+                    etendue.cle))
+        
+        self.etendues[etendue.cle] = etendue
+    
+    def supprimer_etendue(self, cle):
+        """Supprime l'étendue d'eau."""
+        etendue = self.etendues[cle]
+        etendue.detruire()
+        del self.etendues[cle]
