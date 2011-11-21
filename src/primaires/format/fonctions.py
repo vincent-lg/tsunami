@@ -292,7 +292,7 @@ def format_nb(nb, message, fem=False):
     mots = {
         "nb": nb,
         "s": "s" if nb > 1 else "",
-        "x": "ux" if nb > 1 else "l",
+        "x": "ux" if nb > 1 else "",
     }
     if nb == 0:
         mots["nb"] = "Aucune" if fem else "Aucun"
