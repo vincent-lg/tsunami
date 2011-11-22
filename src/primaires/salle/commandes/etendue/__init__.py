@@ -35,6 +35,7 @@ Dans ce fichier se trouve la commande même.
 
 from primaires.interpreteur.commande.commande import Commande
 from .creer import PrmCreer
+from .info import PrmInfo
 
 class CmdEtendue(Commande):
     
@@ -57,5 +58,7 @@ class CmdEtendue(Commande):
     def ajouter_parametres(self):
         """Ajout des paramètres"""
         prm_creer = PrmCreer()
+        prm_info = PrmInfo()
         
         self.ajouter_parametre(prm_creer)
+        self.ajouter_parametre(prm_info)

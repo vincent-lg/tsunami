@@ -64,6 +64,7 @@ class Etendue(ObjetID):
         """Création de l'éttendue."""
         ObjetID.__init__(self)
         self.cle = cle
+        self.altitude = 0
         self.profondeur = 4
         self.obstacles = []
         self.cotes = DictValeursID(self)

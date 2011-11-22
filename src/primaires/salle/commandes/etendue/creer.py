@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'créer' de la commande 'module'."""
+"""Fichier contenant le paramètre 'créer' de la commande 'étendue'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
