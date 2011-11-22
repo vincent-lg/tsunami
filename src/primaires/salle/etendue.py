@@ -123,7 +123,7 @@ class Etendue(ObjetID):
             # Les tuples sont ramenés à 2 dimensions
             coordonnees = coordonnees[:2]
         elif isinstance(coordonnees, Coordonnees):
-            coordonnees = coordonnees.tuple[:2]
+            coordonnees = coordonnees.tuple()[:2]
         else:
             raise TypeError(
                     "type de coordonnées non traité : {}".format(repr(
@@ -134,17 +134,32 @@ class Etendue(ObjetID):
     def ajouter_obstacle(self, coordonnees):
         """Ajoute l'obstacle."""
         coordonnees = self.convertir_coordonnees(coordonnees)
-        if coordonnees in self.points.keys:
+        if coordonnees in self.points.keys():
             raise ValueError(
                     "un point de coordonnées {} existe déjà".format(
                     coordonnees))
         
         self.obstacles.append(coordonnees)
     
-    def ajouter_cote(self, coordonnees, salle):
-        """Ajoute la côte accostable (peut-être une île dans l'étendue)."""
+    def est_obstacle(self, coordonnees):
+        """Retourne True si les coordonnées sont un obstacle."""
         coordonnees = self.convertir_coordonnees(coordonnees)
-        if coordonnees in self.points.keys:
+        return coordonnees in self.obstacles
+    
+    def est_cote(self, salle):
+        """Retourne True si la salle est une côte."""
+        coordonnees = self.convertir_coordonnees(salle.coords)
+        return coordonnees in self.cotes.keys()
+    
+    def est_lien(self, coordonnees):
+        """Retourne True si les coordonnées sont un lien."""
+        coordonnees = self.convertir_coordonnees(coordonnees)
+        return coordonnees in self.liens.keys()
+    
+    def ajouter_cote(self, salle):
+        """Ajoute la côte accostable (peut-être une île dans l'étendue)."""
+        coordonnees = self.convertir_coordonnees(salle.coords)
+        if coordonnees in self.points.keys():
             raise ValueError(
                     "un point de coordonnées {} existe déjà".format(
                     coordonnees))
@@ -160,12 +175,27 @@ class Etendue(ObjetID):
         
         """
         coordonnees = self.convertir_coordonnees(coordonnees)
-        if coordonnees in self.points.keys:
+        if coordonnees in self.points.keys():
             raise ValueError(
                     "un point de coordonnées {} existe déjà".format(
                     coordonnees))
         
         self.liens[coordonnees] = etendue
+    
+    def supprimer_obstacle(self, coordonnees):
+        """Supprime un obstacle."""
+        coordonnees = self.convertir_coordonnees(coordonnees)
+        self.obstacles.remove(coordonnees)
+    
+    def supprimer_cote(self, salle):
+        """Supprime la salle des côtes."""
+        coordonnees = self.convertir_coordonnees(salle.coords)
+        del self.cotes[coordonnees]
+    
+    def supprimer_lien(self, coordonnees):
+        """Supprime un lien."""
+        coordonnees = self.convertir_coordonnees(coordonnees)
+        del self.liens[coordonnees]
 
 
 ObjetID.ajouter_groupe(Etendue)

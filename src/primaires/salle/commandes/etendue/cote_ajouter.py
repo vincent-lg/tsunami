@@ -28,40 +28,44 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'étendue' et ses sous-commandes.
-Dans ce fichier se trouve la commande même.
+"""Fichier contenant le paramètre 'ajouter' de la commande 'étendue côte'."""
 
-"""
+from primaires.interpreteur.masque.parametre import Parametre
+from primaires.interpreteur.masque.exceptions.erreur_interpretation import \
+    ErreurInterpretation
 
-from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .cote import PrmCote
-from .info import PrmInfo
-
-class CmdEtendue(Commande):
+class PrmCoteAjouter(Parametre):
     
-    """Commande 'étendue'.
+    """Commande 'étendue côte ajouter'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "étendue", "area")
-        self.groupe = "administrateur"
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "manipulation des étendues d'eaux"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "ajouter", "add")
+        self.schema = "<cle>"
+        self.aide_courte = "ajoute la salle comme côte de l'étendue"
         self.aide_longue = \
-            "Cette commande permet de manipuler les étendues d'eaux. " \
-            "Cela inclut en créer, ajouter des obstacles, côtes et " \
-            "liens dans une étendue mais aussi les modifier et les " \
-            "supprimer."
+            "Cette commande permet d'ajouter la salle où vous vous " \
+            "trouvez comme côte de l'étendue précisée en paramètre."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_creer = PrmCreer()
-        prm_cote = PrmCote()
-        prm_info = PrmInfo()
-        
-        self.ajouter_parametre(prm_creer)
-        self.ajouter_parametre(prm_cote)
-        self.ajouter_parametre(prm_info)
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        cle = dic_masques["cle"].cle
+        # On vérifie que la clé est une étendue
+        try:
+            etendue = type(self).importeur.salle.etendues[cle]
+        except KeyError:
+            personnage << "|err|Cette étendue {} n'existe pas.|ff|".format(cle)
+        else:
+            salle = personnage.salle
+            if salle.coords.invalide:
+                personnage << "|err|Cette salle n'a pas de coordonnées " \
+                        "valide.|ff|"
+            elif salle.coords in etendue:
+                personnage << "|err|Ce point existe déjà dans l'étendue.|ff|"
+            else:
+                etendue.ajouter_cote(salle)
+                personnage <<  \
+                        "La salle {} est une côte de l'étendue {}.".format(
+                        salle.ident, etendue.cle)

@@ -28,40 +28,30 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'étendue' et ses sous-commandes.
-Dans ce fichier se trouve la commande même.
+"""Fichier contenant le paramètre 'côte' de la commande 'etendue'."""
 
-"""
+from primaires.interpreteur.masque.parametre import Parametre
+from .cote_ajouter import PrmCoteAjouter
+from .cote_supprimer import PrmCoteSupprimer
 
-from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .cote import PrmCote
-from .info import PrmInfo
-
-class CmdEtendue(Commande):
+class PrmCote(Parametre):
     
-    """Commande 'étendue'.
+    """Commande 'etendue côte'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "étendue", "area")
-        self.groupe = "administrateur"
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "manipulation des étendues d'eaux"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "côte", "coast")
+        self.aide_courte = "gère les côtes de l'étendue"
         self.aide_longue = \
-            "Cette commande permet de manipuler les étendues d'eaux. " \
-            "Cela inclut en créer, ajouter des obstacles, côtes et " \
-            "liens dans une étendue mais aussi les modifier et les " \
-            "supprimer."
+            "Cette commande permet de gérer les côtes d'une étendue (en " \
+            "ajouter ou en supprimer)."
     
     def ajouter_parametres(self):
         """Ajout des paramètres"""
-        prm_creer = PrmCreer()
-        prm_cote = PrmCote()
-        prm_info = PrmInfo()
+        prm_ajouter = PrmCoteAjouter()
+        prm_supprimer = PrmCoteSupprimer()
         
-        self.ajouter_parametre(prm_creer)
-        self.ajouter_parametre(prm_cote)
-        self.ajouter_parametre(prm_info)
+        self.ajouter_parametre(prm_ajouter)
+        self.ajouter_parametre(prm_supprimer)
