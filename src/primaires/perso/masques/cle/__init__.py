@@ -19,7 +19,7 @@
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 # ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# LIABLE FOR ANY DIRECT, INDIRECT, INCcleAL, SPECIAL, EXEMPLARY, OR
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
 # OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
@@ -28,13 +28,54 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module perso."""
+"""Fichier contenant le masque <cle>."""
 
-from . import cle
-from . import commande
-from . import etat
-from . import ident
-from . import nom_stat
-from . import nombre
-from . import personnage
-from . import prompt
+from corps.fonctions import valider_cle
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+
+class Cle(Masque):
+    
+    """Masque <cle>.
+    
+    On attend une clé en paramètre (voir valider_cle).
+    
+    """
+    
+    nom = "cle"
+    nom_complet = "clé identifiante"
+    
+    def init(self):
+        """Initialisation des attributs"""
+        self.cle = ""
+    
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
+        cle = liste_vers_chaine(commande).lstrip()
+        
+        if not cle:
+            raise ErreurValidation( \
+                "Précisez une clé identifiante.")
+        
+        cle = cle.lower()
+        cle = cle.split(" ")[0]
+        commande[:] = commande[len(cle):]
+        self.a_interpreter = cle
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        cle = self.a_interpreter
+        try:
+            valider_cle(cle)
+        except ValueError:
+            raise ErreurValidation(
+                "|err|Cette clé identifiante est invalide.|ff|")
+        
+        self.cle = cle
+        
+        return True
