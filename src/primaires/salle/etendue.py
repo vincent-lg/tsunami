@@ -64,6 +64,7 @@ class Etendue(ObjetID):
         """Création de l'éttendue."""
         ObjetID.__init__(self)
         self.cle = cle
+        self.profondeur = 4
         self.obstacles = []
         self.cotes = DictValeursID(self)
         self.liens = DictValeursID(self)
@@ -108,7 +109,8 @@ class Etendue(ObjetID):
         points.update(self.liens)
         return points
     
-    def convertir_coordonnees(self, coordonnees):
+    @staticmethod
+    def convertir_coordonnees(coordonnees):
         """Retourne un tuple des coordonnées en 2D.
         
         Le type des coordonnées peut être :
@@ -127,6 +129,42 @@ class Etendue(ObjetID):
                     type(coordonnees))))
         
         return coordonnees
+    
+    def ajouter_obstacle(self, coordonnees):
+        """Ajoute l'obstacle."""
+        coordonnees = self.convertir_coordonnees(coordonnees)
+        if coordonnees in self.points.keys:
+            raise ValueError(
+                    "un point de coordonnées {} existe déjà".format(
+                    coordonnees))
+        
+        self.obstacles.append(coordonnees)
+    
+    def ajouter_cote(self, coordonnees, salle):
+        """Ajoute la côte accostable (peut-être une île dans l'étendue)."""
+        coordonnees = self.convertir_coordonnees(coordonnees)
+        if coordonnees in self.points.keys:
+            raise ValueError(
+                    "un point de coordonnées {} existe déjà".format(
+                    coordonnees))
+        
+        self.cotes[coordonnees] = salle
+    
+    def ajouter_lien(self, coordonnees, etendue):
+        """Ajoute le lien vers une autre étendue.
+        
+        Note : un lien lie deux étendues. Par exemple, on peut dire que le
+        point (3, 4) est un lien de l'étendue riviere_picte vers
+        mer_sans_fin.
+        
+        """
+        coordonnees = self.convertir_coordonnees(coordonnees)
+        if coordonnees in self.points.keys:
+            raise ValueError(
+                    "un point de coordonnées {} existe déjà".format(
+                    coordonnees))
+        
+        self.liens[coordonnees] = etendue
 
 
 ObjetID.ajouter_groupe(Etendue)
