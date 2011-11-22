@@ -134,6 +134,7 @@ class Module(BaseModule):
         self.commandes = [
             commandes.addroom.CmdAddroom(),
             commandes.chsortie.CmdChsortie(),
+            commandes.etendue.CmdEtendue(),
             commandes.fermer.CmdFermer(),
             commandes.goto.CmdGoto(),
             commandes.ouvrir.CmdOuvrir(),

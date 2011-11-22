@@ -32,6 +32,7 @@
 
 from . import addroom
 from . import chsortie
+from . import etendue
 from . import fermer
 from . import goto
 from . import ouvrir

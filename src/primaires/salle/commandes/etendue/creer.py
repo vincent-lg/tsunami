@@ -51,18 +51,11 @@ class PrmCreer(Parametre):
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         cle = dic_masques["cle"].cle
-        # On récupère les modules chargés
-        modules = type(self).importeur.modules
-        # On prépare le tableau d'exécution
-        lignes = []
-        for module in modules:
-            lignes.append(
-                "  |cy|{nom}|ff| | {statut}".format(
-                nom=module.nom.ljust(20), statut=module.str_statut.ljust(10)))
+        # On vérifie que cette étendue n'existe pas
+        if cle in type(self).importeur.salle.etendues.keys():
+            personnage << "|err|Cette clé {} existe déjà.|ff|".format(
+                    repr(cle))
+            return
         
-        if lignes:
-            personnage.envoyer("creer des modules chargés :\n\n" + \
-                    "\n".join(sorted(lignes)))
-        else:
-            personnage.envoyer("|att|Aucun module n'est chargé. Ce semble " \
-                "très improbable.|ff|")
+        type(self).importeur.salle.creer_etendue(cle)
+        personnage << "L'étendue {} a bien été créée.".format(repr(cle))
