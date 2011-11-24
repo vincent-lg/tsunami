@@ -138,8 +138,8 @@ class Test(ObjetID):
             return True
         
         py_code = self.__tests.code_python
-        print("Evaluation de", py_code)
         globales = self.get_globales(evenement)
+        print("Evaluation de", py_code, globales)
         return bool(eval(py_code, globales))
     
     def get_globales(self, evenement):

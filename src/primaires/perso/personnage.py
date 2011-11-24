@@ -290,8 +290,8 @@ class Personnage(ObjetID):
             sortie.porte.ouvrir()
             fermer = True
         
-        # On appelle l'événement sortir
-        salle.script.evenements["sort"].executer(vers=sortie.nom,
+        # On appelle l'événement sort.avant
+        salle.script["sort"]["avant"].executer(vers=sortie.nom,
                 salle=salle, personnage=self, destination=salle_dest)
         
         if sortie.cachee:
@@ -314,17 +314,26 @@ class Personnage(ObjetID):
             self.envoyer("Vous passez {} et refermez derrière vous.".format(
                     sortie.nom_complet))
         
+        # On appelle l'évènement sort.apres
+        salle.script["sort"]["apres"].executer(vers=sortie.nom,
+                salle=salle, personnage=self, destination=salle_dest)
+        
         self.salle = salle_dest
-        self.envoyer(self.salle.regarder(self))
+        sortie_opp = sortie.sortie_opposee
+        nom_opp = sortie_opp and sortie_opp.nom or None
         
-        # On appelle l'évènement arrive
+        # On appelle l'évènement arrive.avant
         if self.salle is salle_dest:
-            sortie_opp = sortie.sortie_opposee
-            nom_opp = sortie_opp and sortie_opp.nom or None
-            salle_dest.script.evenements["arrive"].executer(depuis=nom_opp,
-                    salle=salle_dest, personnage=self)
+            salle_dest.script["arrive"]["avant"].executer(
+                    depuis=nom_opp, salle=salle_dest, personnage=self)
         
+        self.envoyer(self.salle.regarder(self))
         salle_dest.envoyer("{} arrive.", self)
+        
+        # On appelle l'évènement arrive.apres
+        if self.salle is salle_dest:
+            salle_dest.script["arrive"]["apres"].executer(
+                    depuis=nom_opp, salle=salle_dest, personnage=self)
     
     def get_talent(self, cle_talent):
         """Retourne la valeur du talent ou 0 si le talent n'est pas trouvé."""
