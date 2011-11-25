@@ -86,7 +86,7 @@ class Observable(Masque):
                 if contient(nom_objet, nom):
                     elt = objet
         
-        if elt:
+        if not elt:
             nom = supprimer_accents(nom)
             if salle.details.detail_existe(nom):
                 detail = salle.details.get_detail(nom)
