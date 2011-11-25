@@ -78,6 +78,7 @@ class BaseType(ObjetID, metaclass=MetaType):
         
         # Script
         self.script = ScriptObjet(self)
+        self.etendre_script()
         
         # Editeur
         self._extensions_editeur = []
@@ -106,6 +107,15 @@ class BaseType(ObjetID, metaclass=MetaType):
         self._prix = int(prix)
         self.enregistrer()
     prix = property(_get_prix, _set_prix)
+    
+    def etendre_script(self):
+        """Méthode appelée pour étendre le scripting.
+        
+        Si une classe-fille la surcharge, elle peut ajouter des évènements
+        au script de ce type d'objet, par exemple.
+        
+        """
+        pass
     
     def etendre_editeur(self, raccourci, ligne, editeur, objet, attribut, *sup):
         """Permet d'étendre l'éditeur d'objet en fonction du type.
