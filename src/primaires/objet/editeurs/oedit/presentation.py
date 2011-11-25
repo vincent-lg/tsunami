@@ -35,6 +35,7 @@
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.scripting.editeurs.edt_script import EdtScript
 from .edt_noms import EdtNoms
 from .supprimer import NSupprimer
 
@@ -87,6 +88,11 @@ class EdtPresentation(Presentation):
         prix.prompt = "Entrez un prix supérieur à 1 :"
         prix.aide_courte = \
             "Entrez la valeur de l'objet.\n\nValeur actuelle : {objet.prix}"
+        
+        # Script
+        scripts = self.ajouter_choix("scripts", "sc", EdtScript,
+                prototype.script)
+        scripts.parent = self
         
         # Suppression
         suppression = self.ajouter_choix("supprimer", "sup", NSupprimer, \

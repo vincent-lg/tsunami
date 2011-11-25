@@ -37,6 +37,7 @@ from fractions import Fraction
 
 from primaires.perso.personnage import Personnage
 from primaires.salle.salle import Salle
+from primaires.objet.objet import Objet
 
 def get(nom):
     """Retourne le type portant le nom."""

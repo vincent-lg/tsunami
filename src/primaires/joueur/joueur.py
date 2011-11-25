@@ -172,6 +172,9 @@ class Joueur(Personnage):
     
     def envoyer(self, msg, *l_formatter, **kw_formatter):
         """On redirige sur l'envoie de l'instance de connexion."""
+        if not msg:
+            return
+        
         l_aff = []
         for objet in l_formatter:
             if isinstance(objet, Personnage):

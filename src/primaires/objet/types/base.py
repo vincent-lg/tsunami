@@ -33,6 +33,7 @@
 from abstraits.id import ObjetID
 from bases.collections.liste_id import ListeID
 from primaires.format.description import Description
+from primaires.objet.script import ScriptObjet
 from . import MetaType
 
 class BaseType(ObjetID, metaclass=MetaType):
@@ -74,6 +75,9 @@ class BaseType(ObjetID, metaclass=MetaType):
         self.emplacement = ""
         self.epaisseur = 1
         self.positions = ()
+        
+        # Script
+        self.script = ScriptObjet(self)
         
         # Editeur
         self._extensions_editeur = []
@@ -183,14 +187,23 @@ class BaseType(ObjetID, metaclass=MetaType):
     def regarder(objet, personnage):
         """Le personnage regarde l'objet"""
         salle = personnage.salle
-        moi = "Vous regardez {} :".format(objet.nom_singulier)
+        personnage << "Vous regardez {} :".format(objet.nom_singulier)
         autre = "{{}} regarde {}.".format(objet.nom_singulier)
+        salle.envoyer(autre, personnage)
+        
+        # Appel du script regarde.avant
+        objet.script["regarde"]["avant"].executer(
+                objet=objet, personnage=personnage)
+        
         description = str(objet.description)
         if not description:
             description = "Il n'y a rien de bien intéressant à voir."
         
-        moi += "\n\n" + description
-        salle.envoyer(autre, personnage)
-        return moi
+        personnage << "\n" + description
+        
+        # Appel du script regarde.après
+        objet.script["regarde"]["apres"].executer(
+                objet=objet, personnage=personnage)
+        return ""
 
 ObjetID.ajouter_groupe(BaseType)

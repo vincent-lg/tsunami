@@ -40,9 +40,9 @@ les extensions n'apparaîtront pas ici.
 
 from primaires.interpreteur.editeur import Editeur
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
-from .presentation import EdtPresentation
 from primaires.objet.types import types
 from primaires.format.fonctions import supprimer_accents, contient
+from .presentation import EdtPresentation
 
 class EdtOedit(Editeur):
     
