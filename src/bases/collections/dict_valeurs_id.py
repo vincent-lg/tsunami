@@ -80,3 +80,6 @@ class DictValeursID(EnrDict):
     
     def __str__(self):
         return str(self.to_dict)
+    
+    def get(self, item, ret=None):
+        return self.to_dict.get(item, ret)
