@@ -48,6 +48,25 @@ class EdtEvenement(Editeur):
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
+        self.ajouter_option("d", self.opt_supprimer_test)
+    
+    def opt_supprimer_test(self, arguments):
+        """Supprime un test.
+        
+        Syntaxe :
+            /d no
+        
+        """
+        evenement = self.objet
+        try:
+            no = int(arguments) - 1
+            assert no >= 0
+            assert no < len(evenement.tests)
+        except (ValueError, AssertionError):
+            self.pere << "|err|Numéro invalide ({}).|ff|".format(arguments)
+        else:
+            evenement.supprimer_test(no)
+            self.actualiser()
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -57,7 +76,8 @@ class EdtEvenement(Editeur):
                 evenement.script.parent).ljust(71)
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += "Description :\n    "
-        msg += "\n    ".join(wrap(evenement.aide_longue))
+        aide_longue = "\n    ".join(wrap(evenement.aide_longue))
+        msg += aide_longue
         msg += "\n\nVariables définies :\n"
         msg += "  "
         variables = evenement.variables
@@ -67,17 +87,40 @@ class EdtEvenement(Editeur):
         else:
             msg += "Aucune variable n'a été définie pour ce script."
         
-        msg += "\n\nConditions :"
-        tests = evenement.tests
-        if tests:
-            msg += "\n  " +"\n  ".join(["{:>3}. si {}".format(i + 1, test) \
-                    for i, test in enumerate(tests)])
-        msg += "\n    |cmd|*|ff|  sinon"
+        msg += "\n\n"
+        evenements = sorted(evenement.evenements.values(),
+                key=lambda evt: evt.nom)
+        if evenements:
+            msg += "Sous-évènement disponibles :\n"
+            msg += "\n".join(
+                ["  {} : {}".format(evt.nom.ljust(15),
+                evt.aide_courte) for evt in evenements])
+        else:
+            msg += "Conditions :"
+            tests = evenement.tests
+            if tests:
+                msg += "\n  " +"\n  ".join(["{:>3}. si {}".format(i + 1,
+                        test) for i, test in enumerate(tests)])
+            msg += "\n    |cmd|*|ff|  sinon"
+        
         return msg
     
     def interpreter(self, msg):
         """Interprétation de l'éditeur"""
         evenement = self.objet
+        if evenement.evenements:
+            nom_evt = supprimer_accents(msg).lower()
+            if nom_evt in evenement.evenements:
+                evenement = evenement.evenements[nom_evt]
+                enveloppe = EnveloppeObjet(EdtEvenement, evenement)
+                enveloppe.parent = self
+                contexte = enveloppe.construire(self.pere)
+                
+                self.migrer_contexte(contexte)
+            else:
+                self.pere << "|err|Cet évènement n'existe pas.|ff|"
+            return
+        
         if msg == "*":
             if evenement.sinon is None:
                 evenement.creer_sinon()

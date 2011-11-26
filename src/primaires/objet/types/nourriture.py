@@ -50,6 +50,17 @@ class Nourriture(BaseType):
         self.etendre_editeur("u", "qualité", Uniligne, self, "qualite")
         self.etendre_editeur("o", "nourrissant", Uniligne, self, "nourrissant")
     
+    def etendre_script(self):
+        """Extension du scripting."""
+        evt_mange = self.script.creer_evenement("mange")
+        evt_mange.aide_courte = "le personnage mange l'objet"
+        evt_mange.aide_longue = \
+            "Cet évènement est appelé quand le personnage mange l'objet."
+        var_perso = evt_mange.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage mangeant l'objet"
+        var_objet = evt_mange.ajouter_variable("objet", "Objet")
+        var_objet.aide = "l'objet mangé"
+
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""
         qualite = enveloppes["u"]

@@ -32,6 +32,7 @@
 
 from abstraits.obase import *
 from bases.collections.liste_id import ListeID
+from primaires.format.fonctions import supprimer_accents
 from .espaces import Espaces
 from .test import Test
 from .variable import Variable
@@ -104,6 +105,11 @@ class Evenement(BaseObj):
         del dico_attr["espaces"]
         return dico_attr
     
+    def __getitem__(self, evenement):
+        """Retourne l'évènement correspondant au nom passé en paramètre."""
+        evenement = supprimer_accents(evenement).lower()
+        return self.__evenements[evenement]
+    
     @property
     def appelant(self):
         """Retourne l'appelant, c'est-à-dire le parent du script."""
@@ -118,6 +124,11 @@ class Evenement(BaseObj):
     def sinon(self):
         """Retourne le test sinon."""
         return self.__sinon
+    
+    @property
+    def evenements(self):
+        """Retourne un dictionnaire déréférencé des évènements."""
+        return self.__evenements.copy()
     
     def creer_sinon(self):
         """Création du test sinon si il n'existe pas."""
@@ -139,6 +150,8 @@ class Evenement(BaseObj):
     
     def supprimer_test(self, indice):
         """Retire le test à l'indice spécifiée."""
+        test = self.__tests[indice]
+        test.detruire()
         del self.__tests[indice]
         self.appelant.enregistrer()
     
@@ -153,12 +166,52 @@ class Evenement(BaseObj):
         if nom in self.variables:
             variable = self.variables[nom]
             variable.changer_type(type)
+            for evt in self.__evenements.values():
+                evt.substituer_variable(nom, variable)
+            
             return variable
         
         variable = Variable(self, nom, type)
         self.variables[nom] = variable
+        for evt in self.__evenements.values():
+            evt.substituer_variable(nom, variable)
         
         return variable
+    
+    def substituer_variable(self, nom, variable):
+        """Modifie la variable nom."""
+        self.variables[nom] = variable
+    
+    def creer_evenement(self, evenement):
+        """Crée et ajoute l'évènement dont le nom est précisé en paramètre.
+        
+        L'évènement doit être une chaîne de caractères non vide.
+        Si l'évènement existe, le retourne.
+        Sinon, retourne le créé.
+        
+        """
+        if not evenement:
+            raise ValueError("un nom vide a été passé en paramètre de " \
+                    "creer_evenement")
+        
+        sa_evenement = supprimer_accents(evenement).lower()
+        
+        if sa_evenement in self.__evenements.keys():
+            evt = self.evenements[sa_evenement]
+            evt.nom = evenement
+            evt.script = self.script
+            evt.parent = self
+            return evt
+        
+        nouv_evenement = Evenement(self.script, evenement, self)
+        self.__evenements[sa_evenement] = nouv_evenement
+        
+        return nouv_evenement
+    
+    def supprimer_evenement(self, evenement):
+        """Supprime l'évènement en le retirant du script."""
+        evenement = supprimer_accents(evenement).lower()
+        del self.__evenements[evenement]
     
     def executer(self, **variables):
         """Exécution de l'évènement."""

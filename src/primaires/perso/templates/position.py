@@ -28,24 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Module contenant les différents types de données manipulées par le
-scripting.
+"""Fichier contenant la classe Position, détaillée plus bas."""
 
-"""
+from corps.fonctions import valider_cle
 
-from fractions import Fraction
-
-from primaires.perso.personnage import Personnage
-from primaires.salle.salle import Salle
-from primaires.objet.objet import Objet
-
-def get(nom):
-    """Retourne le type portant le nom."""
-    builtins = __builtins__.copy()
-    types = __import__("primaires.scripting.types").scripting.types
-    try:
-        t = builtins[nom]
-    except KeyError:
-        t = getattr(types, nom)
+class Position:
     
-    return t
+    """Classe template des positions.
+    
+    Cette classe possède les attributs et méthodes propres à une position
+    (assis, debout...).
+    
+    Attributs :
+        cle -- la clé de la position (ne doit pas changer)
+        etat -- l'état de la position ("est assis")
+        message -- le message par défaut ("sur le sol")
+    
+    """
+    
+    def __init__(self, cle, etat, message):
+        """Constructeur du talent."""
+        valider_cle(cle)
+        self.cle = cle
+        self.etat = etat
+        self.message = message
+    
+    def __repr__(self):
+        return "position'" + self.cle + ")"
+    
+    def __str__(self):
+        return self.cle

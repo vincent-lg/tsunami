@@ -33,6 +33,7 @@
 from abstraits.id import ObjetID
 from bases.collections.liste_id import ListeID
 from primaires.format.description import Description
+from primaires.objet.script import ScriptObjet
 from . import MetaType
 
 class BaseType(ObjetID, metaclass=MetaType):
@@ -75,6 +76,10 @@ class BaseType(ObjetID, metaclass=MetaType):
         self.epaisseur = 1
         self.positions = ()
         
+        # Script
+        self.script = ScriptObjet(self)
+        self.etendre_script()
+        
         # Editeur
         self._extensions_editeur = []
         
@@ -102,6 +107,15 @@ class BaseType(ObjetID, metaclass=MetaType):
         self._prix = int(prix)
         self.enregistrer()
     prix = property(_get_prix, _set_prix)
+    
+    def etendre_script(self):
+        """Méthode appelée pour étendre le scripting.
+        
+        Si une classe-fille la surcharge, elle peut ajouter des évènements
+        au script de ce type d'objet, par exemple.
+        
+        """
+        pass
     
     def etendre_editeur(self, raccourci, ligne, editeur, objet, attribut, *sup):
         """Permet d'étendre l'éditeur d'objet en fonction du type.
@@ -183,14 +197,23 @@ class BaseType(ObjetID, metaclass=MetaType):
     def regarder(objet, personnage):
         """Le personnage regarde l'objet"""
         salle = personnage.salle
-        moi = "Vous regardez {} :".format(objet.nom_singulier)
+        personnage << "Vous regardez {} :".format(objet.nom_singulier)
         autre = "{{}} regarde {}.".format(objet.nom_singulier)
+        salle.envoyer(autre, personnage)
+        
+        # Appel du script regarde.avant
+        objet.script["regarde"]["avant"].executer(
+                objet=objet, personnage=personnage)
+        
         description = str(objet.description)
         if not description:
             description = "Il n'y a rien de bien intéressant à voir."
         
-        moi += "\n\n" + description
-        salle.envoyer(autre, personnage)
-        return moi
+        personnage << "\n" + description
+        
+        # Appel du script regarde.après
+        objet.script["regarde"]["apres"].executer(
+                objet=objet, personnage=personnage)
+        return ""
 
 ObjetID.ajouter_groupe(BaseType)

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2011 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,73 +28,54 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le masque <observable>."""
+"""Fichier contenant le masque <detail>."""
 
 from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
-from primaires.format.fonctions import contient, supprimer_accents
+from primaires.format.fonctions import contient
 
-class Observable(Masque):
+class Detail(Masque):
     
-    """Masque <observable>.
-    On attend le fragment d'un nom observable, un joueur, un objet, un
-    détail...
+    """Masque <detail>.
+    On attend un détail de la salle en paramètre.
     
     """
     
-    nom = "element_observable"
-    nom_complet = "élément observable"
+    nom = "detail"
+    nom_complet = "détail de la salle"
     
     def init(self):
         """Initialisation des attributs"""
-        self.element = ""
+        self.detail = None
     
     def repartir(self, personnage, masques, commande):
         """Répartition du masque."""
-        lstrip(commande)
-        nom = liste_vers_chaine(commande)
+        nom_elt = liste_vers_chaine(commande).lstrip()
+        nom_elt = nom_elt.split(" ")[0]
         
-        if not nom:
+        if not nom_elt:
             raise ErreurValidation( \
-                "Précisez un élément observable.", False)
+                "De quelle stat parlez-vous ?")
         
-        commande[:] = []
-        self.a_interpreter = nom
+        self.a_interpreter = nom_stat
         masques.append(self)
+        commande[:] = commande[len(nom_stat):]
         return True
     
     def valider(self, personnage, dic_masques):
         """Validation du masque"""
         Masque.valider(self, personnage, dic_masques)
-        nom = self.a_interpreter
-        
-        salle = personnage.salle
-        elt = None
-        
-        # On cherche dans les personnages
-        for personnage in salle.personnages:
-            if contient(personnage.nom, nom):
-                elt = personnage
+        nom_personnage = self.a_interpreter
+        for p in personnage.salle.personnages:
+            if p is not personnage and contient(p.get_nom_pour(personnage),
+                    nom_personnage):
+                self.personnage = p
                 break
         
-        if elt is None:
-            # On cherche dans les objets
-            for objet in salle.objets_sol:
-                nom_objet = objet.nom_singulier
-                if contient(nom_objet, nom):
-                    elt = objet
-        
-        if not elt:
-            nom = supprimer_accents(nom)
-            if salle.details.detail_existe(nom):
-                detail = salle.details.get_detail(nom)
-                elt = detail
-        
-        if elt is None:
+        if self.personnage is None:
             raise ErreurValidation(
-                "Il n'y a rien qui ressemble à cela par ici...", True)
+                "Le personnage '{}' est introuvable.".format(nom_personnage))
         
-        self.element = elt
         return True

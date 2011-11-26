@@ -205,7 +205,8 @@ class Salle(ObjetID):
         res = ""
         if personnage.est_immortel():
             res += "# |rgc|" + self.zone + "|ff|:|vrc|" + self.mnemonic
-            res += "|ff|\n\n"
+            res += "|ff| ({})".format(self.coords)
+            res += "\n\n"
         res += "   |tit|" + (self.titre or "Une salle sans titre") + "|ff|\n\n"
         description = str(self.description)
         if not description:

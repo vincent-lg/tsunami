@@ -116,13 +116,15 @@ class Script(BaseObj):
             raise ValueError("un nom vide a été passé en paramètre de " \
                     "creer_evenement")
         
-        evenement = supprimer_accents(evenement).lower()
+        sa_evenement = supprimer_accents(evenement).lower()
         
-        if evenement in self.__evenements.keys():
-            return self.evenements[evenement]
+        if sa_evenement in self.__evenements.keys():
+            evt = self.evenements[sa_evenement]
+            evt.nom = evenement
+            return evt
         
         nouv_evenement = Evenement(self, evenement)
-        self.__evenements[evenement] = nouv_evenement
+        self.__evenements[sa_evenement] = nouv_evenement
         
         return nouv_evenement
     

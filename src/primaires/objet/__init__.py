@@ -84,11 +84,6 @@ class Module(BaseModule):
         # Ajout de l'éditeur 'oedit'
         self.importeur.interpreteur.ajouter_editeur(EdtOedit)
     
-    def preparer(self):
-        """Préparation du module"""
-        for prototype in self.prototypes.values():
-            prototype.objets.supprimer_none()
-    
     @property
     def prototypes(self):
         return dict(self._prototypes)

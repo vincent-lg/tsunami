@@ -42,13 +42,13 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.choix import Choix
+from primaires.scripting.editeurs.edt_script import EdtScript
 from .edt_coords import EdtCoords
 from .edt_zone import EdtZone
 from .edt_mnemonic import EdtMnemonic
 from .edt_magasin import EdtMagasin
 from .edt_sorties import EdtSorties
 from .edt_details import EdtDetails
-from primaires.scripting.editeurs.edt_script import EdtScript
 
 class EdtRedit(Presentation):
     

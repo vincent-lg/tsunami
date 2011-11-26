@@ -45,13 +45,14 @@ class Presentation(Editeur):
     """
     
     nom = "editeur:base:presentation"
-    def __init__(self, pere, objet=None, attribut=None):
+    def __init__(self, pere, objet=None, attribut=None, peut_quitter=True):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
         self.choix = OrderedDict()
         self.raccourcis = {}
-        self.nom_quitter = "quitter la fenêtre"
-        self.ajouter_choix(self.nom_quitter, "q", Quitter)
+        self.nom_quitter = "quitter la fenêtre" if peut_quitter else ""
+        if peut_quitter:
+            self.ajouter_choix(self.nom_quitter, "q", Quitter)
     
     def get_raccourci_depuis_nom(self, recherche):
         """Retourne le raccourci grâce au nom"""
@@ -89,11 +90,12 @@ class Presentation(Editeur):
         enveloppe = EnveloppeObjet(objet_editeur, objet_edite, attribut, *sup)
         self.choix[nom] = enveloppe
         passage_apres = False
-        for cle in tuple(self.choix.keys()):
-            if passage_apres and cle != nom:
-                self.choix.move_to_end(cle)
-            if cle == apres:
-                passage_apres = True
+        if apres:
+            for cle in tuple(self.choix.keys()):
+                if passage_apres and cle != nom:
+                    self.choix.move_to_end(cle)
+                if cle == apres:
+                    passage_apres = True
         
         self.raccourcis[raccourci] = nom
         return enveloppe
@@ -112,11 +114,12 @@ class Presentation(Editeur):
         enveloppe = EnveloppeObjet(objet_editeur, objet_edite, attribut, *sup)
         self.choix[nom] = enveloppe
         passage_apres = False
-        for cle in tuple(self.choix.keys()):
-            if cle == avant:
-                passage_apres = True
-            if passage_apres and cle != nom:
-                self.choix.move_to_end(cle)
+        if avant:
+            for cle in tuple(self.choix.keys()):
+                if cle == avant:
+                    passage_apres = True
+                if passage_apres and cle != nom:
+                    self.choix.move_to_end(cle)
         
         self.raccourcis[raccourci] = nom
         return enveloppe
