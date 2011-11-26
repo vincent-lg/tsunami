@@ -31,6 +31,8 @@
 """Fichier contenant l'éditeur EdtCarte."""
 
 from primaires.interpreteur.editeur import Editeur
+from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
+from .edt_salle import EdtSalle
 
 class EdtCarte(Editeur):
     
@@ -43,6 +45,9 @@ class EdtCarte(Editeur):
         self.ajouter_option("m", self.opt_ajouter_milieu)
         self.ajouter_option("d", self.opt_supprimer_salle)
         self.ajouter_option("bab", self.opt_ajouter_babord)
+        self.ajouter_option("tri", self.opt_ajouter_tribord)
+        self.ajouter_option("ava", self.opt_ajouter_avant)
+        self.ajouter_option("arr", self.opt_ajouter_arriere)
     
     def opt_ajouter_milieu(self, arguments):
         """Ajoute d'une salle au milieu du navire."""
@@ -85,6 +90,57 @@ class EdtCarte(Editeur):
             modele.ajouter_salle(coords[0], coords[1], coords[2])
             self.actualiser()            
     
+    def opt_ajouter_tribord(self, arguments):
+        """Ajoute une salle à tribord.
+        
+        Syntaxe :
+            /tri <mnémonic>
+        
+        """
+        modele = self.objet
+        try:
+            coords, salle = modele.get_salle(arguments)
+        except ValueError:  
+            self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
+        else:
+            coords = (coords[0] + 1, coords[1], coords[2])
+            modele.ajouter_salle(coords[0], coords[1], coords[2])
+            self.actualiser()            
+    
+    def opt_ajouter_avant(self, arguments):
+        """Ajoute une salle à l'avant.
+        
+        Syntaxe :
+            /ava <mnémonic>
+        
+        """
+        modele = self.objet
+        try:
+            coords, salle = modele.get_salle(arguments)
+        except ValueError:  
+            self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
+        else:
+            coords = (coords[0], coords[1] + 1, coords[2])
+            modele.ajouter_salle(coords[0], coords[1], coords[2])
+            self.actualiser()            
+    
+    def opt_ajouter_arriere(self, arguments):
+        """Ajoute une salle à l'arrière.
+        
+        Syntaxe :
+            /tri <mnémonic>
+        
+        """
+        modele = self.objet
+        try:
+            coords, salle = modele.get_salle(arguments)
+        except ValueError:  
+            self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
+        else:
+            coords = (coords[0], coords[1] - 1, coords[2])
+            modele.ajouter_salle(coords[0], coords[1], coords[2])
+            self.actualiser()            
+    
     def accueil(self):
         """Affichage de la carte du navire."""
         modele = self.objet
@@ -116,3 +172,17 @@ class EdtCarte(Editeur):
             msg += "|att|Aucune salle n'est définie pour l'instant.|ff|"
         
         return msg
+    
+    def interpreter(self, msg):
+        """Interprétation du message."""
+        modele = self.objet
+        try:
+            coords, salle = modele.get_salle(msg)
+        except ValueError:
+            self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
+        else:
+            enveloppe = EnveloppeObjet(EdtSalle, salle)
+            enveloppe.parent = self
+            contexte = enveloppe.construire(self.pere.joueur)
+            
+            self.migrer_contexte(contexte)
