@@ -48,6 +48,7 @@ from .niveaux import Niveaux
 from .templates.niveau import Niveau
 from .templates.talent import Talent
 from .templates.etat import Etat
+from .templates.position import Position
 
 class Module(BaseModule):
     
@@ -75,6 +76,7 @@ class Module(BaseModule):
         self.niveaux = {}
         self.talents = {}
         self.etats = {}
+        self.positions = {}
     
     def config(self):
         """Méthode de configuration.
@@ -120,6 +122,9 @@ class Module(BaseModule):
         races = self.importeur.supenr.charger_groupe(Race)
         for race in races:
             self.ajouter_race(race)
+        
+        # Position
+        self.ajouter_position("assis", "est assis", "sur le sol")
         
         BaseModule.init(self)
     
@@ -242,3 +247,9 @@ class Module(BaseModule):
         self.etats[cle] = etat
         
         return etat
+    
+    def ajouter_position(self, cle, etat, message):
+        """Ajoute une position."""
+        position = Position(cle, etat, message)
+        self.positions[cle] = position
+        return position

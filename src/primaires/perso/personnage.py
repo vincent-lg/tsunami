@@ -84,6 +84,10 @@ class Personnage(ObjetID):
         
         # Etat
         self._cle_etat = ""
+        
+        # Position occupé
+        self.position = ""
+        self.occupe = ""
     
     def __getnewargs__(self):
         """Retourne les arguments à passer au constructeur"""
@@ -213,6 +217,21 @@ class Personnage(ObjetID):
             return type(self).importeur.perso.etats[self._cle_etat]
         else:
             return None
+    
+    def get_etat(self):
+        """Retourne l'état visible du personnage."""
+        if self.position and not self.occupe:
+            return self.get_position().message
+        
+        if self.occupe:
+            return self.get_position().etat + " " + \
+                    self.salle.details[self.occupe].positions[self.position]
+        
+        return "est là"
+    
+    def get_position(self):
+        """Retourne la position actuelle du personnage."""
+        return type(self).importeur.perso.positions[self.position]
     
     def get_armes(self):
         """Retourne les armes portées par le personnage.

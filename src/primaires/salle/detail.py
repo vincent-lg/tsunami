@@ -31,6 +31,7 @@
 """Ce fichier contient la classe Detail, détaillée plus bas."""
 
 from abstraits.obase import *
+from bases.collections.enr_dict import EnrDict
 from primaires.format.description import Description
 
 class Detail(BaseObj):
@@ -48,6 +49,7 @@ class Detail(BaseObj):
         self.synonymes = []
         self.titre = "un détail aux alentours"
         self.description = Description()
+        self.positions = EnrDict(self)
         self.parent = parent
         if modele is not None:
             self.synonymes = modele.synonymes

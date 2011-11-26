@@ -145,7 +145,7 @@ class Joueur(Personnage):
             self.afk = ""
     
     def get_nom_etat(self, personnage, nombre):
-        return self.get_nom_pour(personnage) + " est là"
+        return self.get_nom_pour(personnage) + " " + self.get_etat()
     
     def get_distinction_visible(self):
         """Retourne la distinction visible."""
