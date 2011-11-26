@@ -34,6 +34,8 @@ from abstraits.module import *
 from .navire import Navire
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
+from . import commandes
+from . import editeurs
 from .modele import ModeleNavire
 
 class Module(BaseModule):
@@ -47,6 +49,7 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "navigation", "secondaire")
+        self.commandes = []
         self.modeles = {}
         self.navires = {}
         self.nav_logger = type(self.importeur).man_logs.creer_logger(
@@ -73,6 +76,18 @@ class Module(BaseModule):
                 "{nb} navire{s} récupéré{s}"))
         
         BaseModule.init(self)
+    
+    def ajouter_commandes(self):
+        """Ajout des commandes dans l'interpréteur"""
+        self.commandes = [
+            commandes.shedit.CmdShedit(),
+        ]
+        
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)
+        
+        # Ajout de l'éditeur 'shedit'
+        self.importeur.interpreteur.ajouter_editeur(editeurs.shedit.EdtShedit)
     
     def creer_modele(self, cle):
         """Crée un modèle de navire et l'ajoute dans le dictionnaire.

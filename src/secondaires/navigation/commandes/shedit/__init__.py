@@ -28,41 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe ModeleNavire, détaillée plus bas."""
+"""Package contenant la commande 'shedit'."""
 
-from abstraits.id import ObjetID
-from bases.collections.dict_valeurs_id import DictValeursID
-from bases.collections.liste_id import ListeID
+from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.uniligne import Uniligne
 
-class ModeleNavire(ObjetID):
+class CmdShedit(Commande):
     
-    """Classe représentant un modèle de navire ou une embarcation.
+    """Commande 'shedit'"""
     
-    Les modèles définissent des informations communes à plusieurs navires
-    (une barque, par exemple, sera construite sur un seul modèle mais
-    plusieurs navires seront formés sur ce modèle).
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "shedit", "shedit")
+        self.groupe = "administrateur"
+        self.schema = "<cle>"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "ouvre l'éditeur de modèle de navires"
+        self.aide_longue = \
+            "Cette commande ouvre l'éditeur de prototype de navire. " \
+            "Le terme modèle est également utilisé. Vous devez préciser " \
+            "en paramètre la clé du modèle (par exemple |cmd|voilier|ff|). " \
+            "Si le modèle n'existe pas, il sera créé."
     
-    """
-    
-    groupe = "modele_navire"
-    sous_rep = "navires/modeles"
-    def __init__(self, cle):
-        """Constructeur du modèle."""
-        ObjetID.__init__(self)
-        self.cle = cle
-        self.nom = "un navire"
-        self.vehicules = ListeID(self)
-        self.salles = DictValeursID(self)
-    
-    def __getnewargs__(self):
-        return ("", )
-    
-    def detruire(self):
-        """Se détruit, ainsi que les véhicules créés sur ce modèle."""
-        for vehicule in list(self.vehicules):
-            vehicule.detruire()
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        cle = dic_masques["cle"].cle
+        if cle in type(self).importeur.navigation.modeles:
+            modele = type(self).importeur.navigation.modeles[cle]
+        else:
+            modele = type(self).importeur.navigation.creer_modele(cle)
         
-        ObjetID.detruire(self)
-
-
-ObjetID.ajouter_groupe(ModeleNavire)
+        editeur = type(self).importeur.interpreteur.construire_editeur(
+                "shedit", personnage, modele)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()

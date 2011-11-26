@@ -28,41 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe ModeleNavire, détaillée plus bas."""
+"""Package contenant les commandes du module salle."""
 
-from abstraits.id import ObjetID
-from bases.collections.dict_valeurs_id import DictValeursID
-from bases.collections.liste_id import ListeID
-
-class ModeleNavire(ObjetID):
-    
-    """Classe représentant un modèle de navire ou une embarcation.
-    
-    Les modèles définissent des informations communes à plusieurs navires
-    (une barque, par exemple, sera construite sur un seul modèle mais
-    plusieurs navires seront formés sur ce modèle).
-    
-    """
-    
-    groupe = "modele_navire"
-    sous_rep = "navires/modeles"
-    def __init__(self, cle):
-        """Constructeur du modèle."""
-        ObjetID.__init__(self)
-        self.cle = cle
-        self.nom = "un navire"
-        self.vehicules = ListeID(self)
-        self.salles = DictValeursID(self)
-    
-    def __getnewargs__(self):
-        return ("", )
-    
-    def detruire(self):
-        """Se détruit, ainsi que les véhicules créés sur ce modèle."""
-        for vehicule in list(self.vehicules):
-            vehicule.detruire()
-        
-        ObjetID.detruire(self)
-
-
-ObjetID.ajouter_groupe(ModeleNavire)
+from . import shedit

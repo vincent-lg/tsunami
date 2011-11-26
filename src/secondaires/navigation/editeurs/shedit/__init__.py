@@ -28,41 +28,45 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe ModeleNavire, détaillée plus bas."""
+"""Package contenant l'éditeur 'shedit'.
 
-from abstraits.id import ObjetID
-from bases.collections.dict_valeurs_id import DictValeursID
-from bases.collections.liste_id import ListeID
+Si des redéfinitions de contexte-éditeur standard doivent être faites, elles
+seront placées dans ce package
 
-class ModeleNavire(ObjetID):
+"""
+
+from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.uniligne import Uniligne
+
+class EdtShedit(Presentation):
     
-    """Classe représentant un modèle de navire ou une embarcation.
-    
-    Les modèles définissent des informations communes à plusieurs navires
-    (une barque, par exemple, sera construite sur un seul modèle mais
-    plusieurs navires seront formés sur ce modèle).
+    """Classe définissant l'éditeur de salle 'shedit'.
     
     """
     
-    groupe = "modele_navire"
-    sous_rep = "navires/modeles"
-    def __init__(self, cle):
-        """Constructeur du modèle."""
-        ObjetID.__init__(self)
-        self.cle = cle
-        self.nom = "un navire"
-        self.vehicules = ListeID(self)
-        self.salles = DictValeursID(self)
+    nom = "shedit"
+    
+    def __init__(self, personnage, modele):
+        """Constructeur de l'éditeur"""
+        if personnage:
+            instance_connexion = personnage.instance_connexion
+        else:
+            instance_connexion = None
+        
+        Presentation.__init__(self, instance_connexion, modele)
+        if personnage and modele:
+            self.construire(modele)
     
     def __getnewargs__(self):
-        return ("", )
+        return (None, None)
     
-    def detruire(self):
-        """Se détruit, ainsi que les véhicules créés sur ce modèle."""
-        for vehicule in list(self.vehicules):
-            vehicule.detruire()
-        
-        ObjetID.detruire(self)
-
-
-ObjetID.ajouter_groupe(ModeleNavire)
+    def construire(self, modele):
+        """Construction de l'éditeur"""
+        # nom
+        nom = self.ajouter_choix("nom", "n", Uniligne, modele, "nom")
+        nom.parent = self
+        nom.prompt = "Nom du navire : "
+        nom.apercu = "{objet.nom}"
+        nom.aide_courte = \
+            "Entrez le |ent|nom|ff| du navire ou |cmd|/|ff| pour revenir " \
+            "à la fenêtre parente.\n\nNom actuel : |bc|{objet.nom}|ff|"

@@ -28,41 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe ModeleNavire, détaillée plus bas."""
+"""Fichier contenant la classe SalleNavire, détaillée plus bas."""
 
-from abstraits.id import ObjetID
-from bases.collections.dict_valeurs_id import DictValeursID
-from bases.collections.liste_id import ListeID
+from primaires.salle.salle import Salle
 
-class ModeleNavire(ObjetID):
+class SalleNavire(Salle):
     
-    """Classe représentant un modèle de navire ou une embarcation.
+    """Classe représentant une salle de navire.
     
-    Les modèles définissent des informations communes à plusieurs navires
-    (une barque, par exemple, sera construite sur un seul modèle mais
-    plusieurs navires seront formés sur ce modèle).
+    Une salle de navire est une salle standard comportant quelques
+    informations supplémentaires, comme les éléments dérfinis dans cette
+    salle ou le navire qu'elles composent.
     
     """
     
-    groupe = "modele_navire"
-    sous_rep = "navires/modeles"
-    def __init__(self, cle):
-        """Constructeur du modèle."""
-        ObjetID.__init__(self)
-        self.cle = cle
-        self.nom = "un navire"
-        self.vehicules = ListeID(self)
-        self.salles = DictValeursID(self)
-    
-    def __getnewargs__(self):
-        return ("", )
-    
-    def detruire(self):
-        """Se détruit, ainsi que les véhicules créés sur ce modèle."""
-        for vehicule in list(self.vehicules):
-            vehicule.detruire()
-        
-        ObjetID.detruire(self)
-
-
-ObjetID.ajouter_groupe(ModeleNavire)
+    def __init__(self, zone, mnemonic, navire=None):
+        """Constructeur du navire."""
+        Salle.__init__(zone, mnemonic)
+        self.navire = navire
+        self.elements = ListeID(self)
+        self.r_x = 0
+        self.r_y = 0
+        self.r_z = 0
+        if navire:
+            # Déduit les coordonnées
