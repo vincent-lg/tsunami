@@ -37,6 +37,7 @@ seront placées dans ce package
 
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from .edt_carte import EdtCarte
 
 class EdtShedit(Presentation):
     
@@ -70,3 +71,7 @@ class EdtShedit(Presentation):
         nom.aide_courte = \
             "Entrez le |ent|nom|ff| du navire ou |cmd|/|ff| pour revenir " \
             "à la fenêtre parente.\n\nNom actuel : |bc|{objet.nom}|ff|"
+        
+        # Carte
+        carte = self.ajouter_choix("carte", "c", EdtCarte, modele)
+        carte.parent = self

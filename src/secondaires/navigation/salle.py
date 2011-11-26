@@ -30,6 +30,7 @@
 
 """Fichier contenant la classe SalleNavire, détaillée plus bas."""
 
+from bases.collections.liste_id import ListeID
 from primaires.salle.salle import Salle
 
 class SalleNavire(Salle):
@@ -42,13 +43,14 @@ class SalleNavire(Salle):
     
     """
     
-    def __init__(self, zone, mnemonic, navire=None):
+    def __init__(self, zone, mnemonic, r_x=0, r_y=0, r_z=0, navire=None):
         """Constructeur du navire."""
-        Salle.__init__(zone, mnemonic)
+        Salle.__init__(self, zone, mnemonic, valide=False)
         self.navire = navire
         self.elements = ListeID(self)
-        self.r_x = 0
-        self.r_y = 0
-        self.r_z = 0
+        self.r_x = r_x
+        self.r_y = r_y
+        self.r_z = r_z
         if navire:
             # Déduit les coordonnées
+            pass

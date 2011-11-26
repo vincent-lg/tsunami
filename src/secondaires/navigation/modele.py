@@ -33,6 +33,7 @@
 from abstraits.id import ObjetID
 from bases.collections.dict_valeurs_id import DictValeursID
 from bases.collections.liste_id import ListeID
+from .salle import SalleNavire
 
 class ModeleNavire(ObjetID):
     
@@ -56,6 +57,40 @@ class ModeleNavire(ObjetID):
     
     def __getnewargs__(self):
         return ("", )
+    
+    @property
+    def coordonnees_salles(self):
+        """Retourne un tuple des coorodnnées des salles."""
+        return tuple(self.salles.keys())
+    
+    @property
+    def mnemonics_salles(self):
+        """Retourne un tuple des mnémonics des salles."""
+        return tuple(s.mnemonic for s in self.salles.values())
+    
+    def ajouter_salle(self, r_x, r_y, r_z, mnemonic=None):
+        """Ajoute une nouvelle salle.
+        
+        r_x, r_y et r_z sont les coordonnées relatives par rapport
+        au milieu du navire.
+        Si mnemonic est None (par défaut), cherche un mnémonic disponible.
+        
+        """
+        r_coords = (r_x, r_y, r_z)
+        if r_coords in self.salles.keys():
+            raise ValueError("les coordonnées {}.{}.{} sont déjà " \
+                    "occupées".format(*r_coords))
+        
+        if mnemonic is None:
+            # On cherche le plus petit mnémonic non utilisé
+            mnemonics = sorted(self.mnemonics_salles)
+            for i in range(1, max(mnemonics) + 1):
+                if str(i) not in mnemonics:
+                    mnemonic = str(i)
+        
+        salle = SalleNavire(self.cle, mnemonic, r_x, r_y, r_z)
+        self.salles[r_coords] = salle
+        return salle
     
     def detruire(self):
         """Se détruit, ainsi que les véhicules créés sur ce modèle."""
