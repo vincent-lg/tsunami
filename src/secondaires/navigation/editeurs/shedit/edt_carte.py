@@ -42,6 +42,7 @@ class EdtCarte(Editeur):
         self.niveau = 0
         self.ajouter_option("m", self.opt_ajouter_milieu)
         self.ajouter_option("d", self.opt_supprimer_salle)
+        self.ajouter_option("bab", self.opt_ajouter_babord)
     
     def opt_ajouter_milieu(self, arguments):
         """Ajoute d'une salle au milieu du navire."""
@@ -67,6 +68,23 @@ class EdtCarte(Editeur):
             modele.supprimer_salle(arguments)
             self.actualiser()
     
+    def opt_ajouter_babord(self, arguments):
+        """Ajoute une salle à bâbord.
+        
+        Syntaxe :
+            /bab <mnémonic>
+        
+        """
+        modele = self.objet
+        try:
+            coords, salle = modele.get_salle(arguments)
+        except ValueError:  
+            self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
+        else:
+            coords = (coords[0] - 1, coords[1], coords[2])
+            modele.ajouter_salle(coords[0], coords[1], coords[2])
+            self.actualiser()            
+    
     def accueil(self):
         """Affichage de la carte du navire."""
         modele = self.objet
@@ -84,9 +102,9 @@ class EdtCarte(Editeur):
             bas = min(bas_haut)
             haut = max(bas_haut)
             niveau = self.niveau
-            for i in range(ouest, est + 1):
-                for j in range(sud, nord - 1, -1):
-                    t_coords = (i, j, niveau)
+            for i in range(nord, sud - 1, -1):
+                for j in range(ouest, est + 1):
+                    t_coords = (j, i, niveau)
                     salle = modele.salles.get(t_coords)
                     if salle:
                         msg += salle.mnemonic.rjust(3)

@@ -68,6 +68,18 @@ class ModeleNavire(ObjetID):
         """Retourne un tuple des mnémonics des salles."""
         return tuple(s.mnemonic for s in self.salles.values())
     
+    def get_salle(self, mnemonic):
+        """Retourne la salle ayant le mnémonic indiqué.
+        
+        Lève une exception ValueError si la salle n'est pas trouvée.
+        
+        """
+        for coords, salle in self.salles.items():
+            if salle.mnemonic == mnemonic:
+                return coords, salle
+        
+        raise ValueError("la salle {} est introuvable".format(mnemonic))
+    
     def ajouter_salle(self, r_x, r_y, r_z, mnemonic=None):
         """Ajoute une nouvelle salle.
         
@@ -84,7 +96,7 @@ class ModeleNavire(ObjetID):
         if mnemonic is None:
             # On cherche le plus petit mnémonic non utilisé
             mnemonics = sorted(self.mnemonics_salles)
-            for i in range(1, max(mnemonics) + 1):
+            for i in range(1, int(max(mnemonics, key=int)) + 2):
                 if str(i) not in mnemonics:
                     mnemonic = str(i)
         
