@@ -33,7 +33,7 @@
 from abstraits.id import ObjetID
 from bases.collections.dict_valeurs_id import DictValeursID
 from bases.collections.liste_id import ListeID
-from .salle import SalleNavire
+from .salle import *
 
 class ModeleNavire(ObjetID):
     
@@ -100,10 +100,31 @@ class ModeleNavire(ObjetID):
                 if str(i) not in mnemonics:
                     mnemonic = str(i)
         
-        salle = SalleNavire(self.cle, mnemonic, r_x, r_y, r_z)
+        salle = SalleNavire(self.cle, mnemonic, r_x, r_y, r_z, self)
         self.salles[r_coords] = salle
         return salle
     
+    def lier_salle(self, salle_1, salle_2, direction):
+        """Lie la salle salle_1 avec salle_2."""
+        if isinstance(salle_1, str):
+            c, salle_1 = self.get_salle(salle_1)
+        if isinstance(salle_2, str):
+            c, salle_2 = self.get_salle(salle_2)
+        
+        try:
+            nom = NOMS_SORTIES[direction]
+            article = ARTICLES[nom]
+            contraire = NOMS_CONTRAIRES[direction]
+            nom_contraire = NOMS_SORTIES[contraire]
+            article_contraire = ARTICLES[nom_contraire]
+        except KeyError:
+            raise ValueError("cette direction est invalide")
+        else:
+            salle_1.sorties.ajouter_sortie(direction, nom, article, salle_2,
+                    contraire)
+            salle_2.sorties.ajouter_sortie(contraire, nom_contraire,
+                    article_contraire, salle_1, direction)
+            
     def detruire(self):
         """Se détruit, ainsi que les véhicules créés sur ce modèle."""
         for vehicule in list(self.vehicules):

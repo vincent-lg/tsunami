@@ -30,8 +30,37 @@
 
 """Fichier contenant la classe SalleNavire, détaillée plus bas."""
 
+from collections import OrderedDict
+
 from bases.collections.liste_id import ListeID
 from primaires.salle.salle import Salle
+
+# Constantes
+NOMS_SORTIES = OrderedDict()
+NOMS_SORTIES["sud"] = "arrière"
+NOMS_SORTIES["ouest"] = "bâbord"
+NOMS_SORTIES["nord"] = "avant"
+NOMS_SORTIES["est"] = "tribord"
+NOMS_SORTIES["bas"] = "bas"
+NOMS_SORTIES["haut"] = "haut"
+
+ARTICLES = {
+    "bâbord": "",
+    "tribord": "",
+    "avant": "l'",
+    "arrière": "l'",
+    "bas": "le",
+    "haut": "le",
+}
+
+NOMS_CONTRAIRES = {
+    "nord": "sud",
+    "ouest": "est",
+    "est": "ouest",
+    "sud": "nord",
+    "haut": "bas",
+    "bas": "haut",
+}
 
 class SalleNavire(Salle):
     
@@ -43,10 +72,12 @@ class SalleNavire(Salle):
     
     """
     
-    def __init__(self, zone, mnemonic, r_x=0, r_y=0, r_z=0, navire=None):
+    def __init__(self, zone, mnemonic, r_x=0, r_y=0, r_z=0, modele=None,
+            navire=None):
         """Constructeur du navire."""
         Salle.__init__(self, zone, mnemonic, valide=False)
         self.navire = navire
+        self.modele = modele
         self.elements = ListeID(self)
         self.r_x = r_x
         self.r_y = r_y
@@ -54,3 +85,8 @@ class SalleNavire(Salle):
         if navire:
             # Déduit les coordonnées
             pass
+    
+    @property
+    def r_coords(self):
+        """Retourne les coordonnées relatives de la salle."""
+        return (self.r_x, self.r_y, self.r_z)
