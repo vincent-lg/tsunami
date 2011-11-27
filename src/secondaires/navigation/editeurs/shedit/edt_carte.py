@@ -87,7 +87,8 @@ class EdtCarte(Editeur):
             self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
         else:
             coords = (coords[0] - 1, coords[1], coords[2])
-            modele.ajouter_salle(coords[0], coords[1], coords[2])
+            salle_2 = modele.ajouter_salle(coords[0], coords[1], coords[2])
+            modele.lier_salle(salle, salle_2, "ouest")
             self.actualiser()            
     
     def opt_ajouter_tribord(self, arguments):
@@ -104,7 +105,8 @@ class EdtCarte(Editeur):
             self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
         else:
             coords = (coords[0] + 1, coords[1], coords[2])
-            modele.ajouter_salle(coords[0], coords[1], coords[2])
+            salle_2 = modele.ajouter_salle(coords[0], coords[1], coords[2])
+            modele.lier_salle(salle, salle_2, "est")
             self.actualiser()            
     
     def opt_ajouter_avant(self, arguments):
@@ -121,7 +123,8 @@ class EdtCarte(Editeur):
             self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
         else:
             coords = (coords[0], coords[1] + 1, coords[2])
-            modele.ajouter_salle(coords[0], coords[1], coords[2])
+            salle_2 = modele.ajouter_salle(coords[0], coords[1], coords[2])
+            modele.lier_salle(salle, salle_2, "nord")
             self.actualiser()            
     
     def opt_ajouter_arriere(self, arguments):
@@ -138,7 +141,8 @@ class EdtCarte(Editeur):
             self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
         else:
             coords = (coords[0], coords[1] - 1, coords[2])
-            modele.ajouter_salle(coords[0], coords[1], coords[2])
+            salle_2 = modele.ajouter_salle(coords[0], coords[1], coords[2])
+            modele.lier_salle(salle, salle_2, "sud")
             self.actualiser()            
     
     def accueil(self):
