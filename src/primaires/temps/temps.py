@@ -37,6 +37,7 @@ from abstraits.unique import Unique
 class Temps(Unique):
     
     """Classe contenant les informations d'un temps, enregistrée en fichier.
+    
     Cette classe est créée en lui passant en paramètre la configuration du
     module temps.
     
@@ -198,3 +199,71 @@ class Temps(Unique):
         if self.mois + 1 >= len(self.noms_mois):
             self.mois -= len(self.noms_mois)
             self.annee += 1
+    
+    @staticmethod
+    def convertir_heure(chaine):
+        """Convertit la chaîne en un tuple (h, m, s)."""
+        heure = chaine.split(":")
+        try:
+            heure = tuple(int(h) for h in heure)
+        except ValueError:
+            raise ValueError("formattage d'heure invalide".format(heure))
+        else:
+            if len(heure) == 1:
+                return heure + (0, 0)
+            elif len(heure) == 2:
+                return heure + (0, )
+            else:
+                return heure[:3]
+    
+    # Fonctions mathématiques
+    def __hash__(self):
+        return hash(str(self))
+    
+    def __eq__(self, chaine):
+        h, m, s = self.convertir_heure(chaine)
+        return self.heure == h and self.minute == m and self.seconde == s
+    
+    def __ne__(self, chaine):
+        h, m, s = self.convertir_heure(chaine)
+        return self.heure != h or self.minute != m or self.seconde != s
+    
+    def __le__(self, chaine):
+        h, m, s = self.convertir_heure(chaine)
+        if self.heure <= h:
+            return True
+        if self.minute <= m:
+            return True
+        if self.seconde <= s:
+            return True
+        return False
+    
+    def __lt__(self, chaine):
+        h, m, s = self.convertir_heure(chaine)
+        if self.heure < h:
+            return True
+        if self.minute < m:
+            return True
+        if self.seconde < s:
+            return True
+        return False
+    
+    def __ge__(self, chaine):
+        h, m, s = self.convertir_heure(chaine)
+        if self.heure >= h:
+            return True
+        if self.minute >= m:
+            return True
+        if self.seconde >= s:
+            return True
+        return False
+    
+    def __gt__(self, chaine):
+        h, m, s = self.convertir_heure(chaine)
+        if self.heure > h:
+            return True
+        if self.minute > m:
+            return True
+        if self.seconde > s:
+            return True
+        return False
