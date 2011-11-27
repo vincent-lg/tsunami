@@ -50,6 +50,11 @@ class EdtSalle(Presentation):
         
         Presentation.__init__(self, instance_connexion, salle, "", False)
         self.ajouter_option("bab", self.opt_ajouter_babord)
+        self.ajouter_option("tri", self.opt_ajouter_tribord)
+        self.ajouter_option("ava", self.opt_ajouter_avant)
+        self.ajouter_option("arr", self.opt_ajouter_arriere)
+        self.ajouter_option("hau", self.opt_ajouter_haut)
+        self.ajouter_option("bas", self.opt_ajouter_bas)
         if personnage and salle:
             self.construire(salle)
     
@@ -66,6 +71,81 @@ class EdtSalle(Presentation):
         salle = self.objet
         try:
             salle.modele.lier_salle(salle, arguments, "ouest")
+        except ValueError as err:
+            self.pere << "|err|{}|ff|.".format(str(err).capitalize())
+        else:
+            self.actualiser()
+    
+    def opt_ajouter_tribord(self, arguments):
+        """Ajoute une salle à tribord.
+        
+        Syntaxe :
+            /tri <mnémonic>
+        
+        """
+        salle = self.objet
+        try:
+            salle.modele.lier_salle(salle, arguments, "est")
+        except ValueError as err:
+            self.pere << "|err|{}|ff|.".format(str(err).capitalize())
+        else:
+            self.actualiser()
+    
+    def opt_ajouter_avant(self, arguments):
+        """Ajoute une salle à l'avant.
+        
+        Syntaxe :
+            /ava <mnémonic>
+        
+        """
+        salle = self.objet
+        try:
+            salle.modele.lier_salle(salle, arguments, "nord")
+        except ValueError as err:
+            self.pere << "|err|{}|ff|.".format(str(err).capitalize())
+        else:
+            self.actualiser()
+    
+    def opt_ajouter_arriere(self, arguments):
+        """Ajoute une salle à l'arrière.
+        
+        Syntaxe :
+            /arr <mnémonic>
+        
+        """
+        salle = self.objet
+        try:
+            salle.modele.lier_salle(salle, arguments, "sud")
+        except ValueError as err:
+            self.pere << "|err|{}|ff|.".format(str(err).capitalize())
+        else:
+            self.actualiser()
+    
+    def opt_ajouter_bas(self, arguments):
+        """Ajoute une salle vers le bas.
+        
+        Syntaxe :
+            /bas <mnémonic>
+        
+        """
+        salle = self.objet
+        try:
+            salle.modele.lier_salle(salle, arguments, "bas")
+        except ValueError as err:
+            self.pere << "|err|{}|ff|.".format(str(err).capitalize())
+        else:
+            self.actualiser()
+    
+    def opt_ajouter_haut(self, arguments):
+        """Ajoute une salle vers le haut.
+        
+        Syntaxe :
+            /hau <mnémonic>
+        
+        """
+        salle = self.objet
+        try:
+            salle.modele.lier_salle(salle, arguments, "haut")
         except ValueError as err:
             self.pere << "|err|{}|ff|.".format(str(err).capitalize())
         else:
