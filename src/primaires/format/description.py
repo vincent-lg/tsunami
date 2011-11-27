@@ -55,6 +55,7 @@ class Description(BaseObj):
         self.paragraphes = [] # une liste des différents paragraphes
         self.indente = indente
         self.parent = parent
+        self.script = ScriptDescription(self)
         if description:
             self.ajouter_paragraphe(description)
     
@@ -72,6 +73,11 @@ class Description(BaseObj):
             if not res[0].startswith("   "):
                 res[0] = "   " + res[0]
         return "\n".join(res)
+    
+    def enregistrer(self):
+        """Enregistre le parent si existe."""
+        if self.parent:
+            self.parent.enregistrer()
     
     def ajouter_paragraphe(self, paragraphe):
         """Ajoute un paragraphe.
@@ -137,3 +143,16 @@ class Description(BaseObj):
             res.append("Aucune description.")
         
         return indentation + indentation.join(res)
+
+# On importe ici pour éviter les boucles
+from primaires.scripting.script import Script
+
+class ScriptDescription(Script):
+    
+    def init(self):
+        """Initialisation du script."""
+        evt = self.creer_evenement("regarde")
+        var_regarde = evt.ajouter_variable("regarde", "BaseObj")
+        var_personnage = evt.ajouter_variable("personnage", "Personnage")
+        var_regarde.aide = "l'élément regardé"
+        var_personnage.aide = "le personnage regardant"
