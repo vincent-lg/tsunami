@@ -208,7 +208,7 @@ class Salle(ObjetID):
             res += "|ff| ({})".format(self.coords)
             res += "\n\n"
         res += "   |tit|" + (self.titre or "Une salle sans titre") + "|ff|\n\n"
-        description = str(self.description)
+        description = self.description.regarder(personnage)
         if not description:
             description = "   Vous êtes au milieu de nulle part."
         res += description + "\n"
