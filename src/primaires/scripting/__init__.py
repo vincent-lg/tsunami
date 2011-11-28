@@ -63,6 +63,7 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "scripting", "primaire")
         self.cfg = None
+        self.a_charger = []
         self.fonctions = {}
         self.actions = {}
         self.commandes = {}
@@ -70,6 +71,11 @@ class Module(BaseModule):
         self.sujets_aides = {
             "syntaxe": syntaxe,
         }
+    
+    def config(self):
+        """Configuration du module."""
+        self.a_charger.append(self)
+        BaseModule.config(self)
     
     def init(self):
         """Initialisation"""
@@ -110,42 +116,55 @@ class Module(BaseModule):
             script.init()
     
     def charger_actions(self):
-        """Chargement automatique des actions."""
-        # Elles se trouvent dans le sous-répertoire actions
-        chemin = self.chemin + os.sep + "actions"
-        chemin_py = "primaires.scripting.actions"
-        for nom_fichier in os.listdir(chemin):
-            if not nom_fichier.startswith("_") and nom_fichier.endswith(".py"):
-                nom_module = nom_fichier[:-3]
-                chemin_py_mod = chemin_py + ".{}".format(nom_module)
-                action = __import__(chemin_py_mod)
-                action = getattr(getattr(getattr(getattr(action, "scripting"),
-                        "actions"), nom_module), "ClasseAction")
-                action.nom = nom_module
-                action._parametres_possibles = OrderedDict()
-                action.init_types()
-                action.convertir_types()
-                lst_actions[nom_module] = action
-                self.actions[nom_module] = action
+        """Chargement automatique des actions.
+        
+        On parcourt tous les modules dans self.a_charger.
+        
+        """
+        for module in self.a_charger:
+            # Elles se trouvent dans le sous-répertoire actions
+            chemin = module.chemin + os.sep + "actions"
+            chemin_py = module.chemin_py + ".actions"
+            for nom_fichier in os.listdir(chemin):
+                if not nom_fichier.startswith("_") and \
+                        nom_fichier.endswith(".py"):
+                    nom_module = nom_fichier[:-3]
+                    chemin_py_mod = chemin_py + ".{}".format(nom_module)
+                    action = __import__(chemin_py_mod)
+                    action = getattr(getattr(getattr(getattr(action,
+                            module.nom), "actions"), nom_module),
+                            "ClasseAction")
+                    action.nom = nom_module
+                    action._parametres_possibles = OrderedDict()
+                    action.init_types()
+                    action.convertir_types()
+                    lst_actions[nom_module] = action
+                    self.actions[nom_module] = action
             
     def charger_fonctions(self):
-        """Chargement automatique des fonctions."""
-        # Elles se trouvent dans le sous-répertoire fonctions
-        chemin = self.chemin + os.sep + "fonctions"
-        chemin_py = "primaires.scripting.fonctions"
-        for nom_fichier in os.listdir(chemin):
-            if not nom_fichier.startswith("_") and nom_fichier.endswith(".py"):
-                nom_module = nom_fichier[:-3]
-                chemin_py_mod = chemin_py + ".{}".format(nom_module)
-                fonction = __import__(chemin_py_mod)
-                fonction = getattr(getattr(getattr(getattr(fonction,
-                        "scripting"), "fonctions"), nom_module),
-                        "ClasseFonction")
-                fonction.nom = nom_module
-                fonction._parametres_possibles = OrderedDict()
-                fonction.init_types()
-                fonction.convertir_types()
-                self.fonctions[nom_module] = fonction
+        """Chargement automatique des fonctions.
+        
+        On charge les modules dans self.a_charger.
+        
+        """
+        for module in self.a_charger:
+            # Elles se trouvent dans le sous-répertoire fonctions
+            chemin = self.chemin + os.sep + "fonctions"
+            chemin_py = module.chemin_py + ".fonctions"
+            for nom_fichier in os.listdir(chemin):
+                if not nom_fichier.startswith("_") and \
+                        nom_fichier.endswith(".py"):
+                    nom_module = nom_fichier[:-3]
+                    chemin_py_mod = chemin_py + ".{}".format(nom_module)
+                    fonction = __import__(chemin_py_mod)
+                    fonction = getattr(getattr(getattr(getattr(fonction,
+                            module.nom), "fonctions"), nom_module),
+                            "ClasseFonction")
+                    fonction.nom = nom_module
+                    fonction._parametres_possibles = OrderedDict()
+                    fonction.init_types()
+                    fonction.convertir_types()
+                    self.fonctions[nom_module] = fonction
     
     def get_objet(self, identifiant):
         """Récupère l'objet depuis son identifiant.
