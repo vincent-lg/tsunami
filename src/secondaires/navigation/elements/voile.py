@@ -28,7 +28,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents éditeurs"""
+"""Fichier contenant la classe Voile, détaillée plus bas."""
 
-from . import eltedit
-from . import shedit
+from .base import BaseElement
+
+class Voile(BaseElement):
+    
+    """Classe représentant une voile.
+    
+    """
+    
+    nom_type = "voile"
+    
+    def __init__(self, cle=""):
+        """Constructeur d'un type"""
+        BaseElement.__init__(self, cle)

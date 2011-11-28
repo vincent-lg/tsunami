@@ -28,7 +28,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents éditeurs"""
+"""Package contenant les éléments de navire."""
 
-from . import eltedit
-from . import shedit
+from abstraits.obase import MetaBaseObj
+
+types = {} # types d'éléments {nom: classe}
+
+class MetaElt(MetaBaseObj):
+    
+    """Métaclasse des types d'éléments.
+    
+    Elle ajoute le type de l'élément dans le dictionnaire 'types' si il possède
+    un nom.
+    
+    """
+    
+    def __init__(cls, nom, bases, contenu):
+        """Constructeur de la métaclasse"""
+        MetaBaseObj.__init__(cls, nom, bases, contenu)
+        if cls.nom_type:
+            types[cls.nom_type] = cls
+
+from . import voile

@@ -30,4 +30,5 @@
 
 """Package contenant les commandes du module salle."""
 
+from . import eltedit
 from . import shedit

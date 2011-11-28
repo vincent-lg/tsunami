@@ -28,7 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents éditeurs"""
+"""Fichier contenant le contexte éditeur Supprimer"""
 
-from . import eltedit
-from . import shedit
+from primaires.interpreteur.editeur.supprimer import Supprimer
+
+class NSupprimer(Supprimer):
+    
+    """Classe définissant le contexte éditeur 'supprimer'.
+    Ce contexte permet spécifiquement de supprimer un prototype d'objet.
+    
+    """
+    
+    def interpreter(self, msg):
+        """Interprétation du contexte"""
+        msg = msg.lower()
+        prototype = self.objet
+        if msg == "oui":
+            objet = type(self).importeur
+            for nom in self.action.split("."):
+                objet = getattr(objet, nom)
+            
+            nb_objets = len(prototype.objets)
+            if nb_objets > 0:
+                s = nb_objets > 1 and "s" or ""
+                nt = nb_objets > 1 and "nt" or ""
+                self.pere << "|err|{} objet{s} existe{nt} modelé{s} sur ce " \
+                        "prototype. Opération annulée.|ff|".format(nb_objets,
+                        s=s, nt=nt)
+                self.migrer_contexte(self.opts.rci_ctx_prec)
+            else:
+                objet(self.objet.cle)
+                self.pere.joueur.contextes.retirer()
+                self.pere << self.confirme
+        elif msg == "non":
+            self.migrer_contexte(self.opts.rci_ctx_prec)
+        else:
+            self.pere << "|err|Choix invalide.|ff|"

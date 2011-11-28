@@ -31,9 +31,11 @@
 """Fichier contenant le module secondaire navigation."""
 
 from abstraits.module import *
-from .navire import Navire
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
+from .navire import Navire
+from .elements import types as types_elements
+from .elements.base import BaseElement
 from . import commandes
 from . import editeurs
 from .modele import ModeleNavire
@@ -51,9 +53,11 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "navigation", "secondaire")
         self.commandes = []
         self.modeles = {}
-        self.navires = {}
         self.nav_logger = type(self.importeur).man_logs.creer_logger(
                 "navigation", "navires", "navires.log")
+        self.navires = {}
+        self.elements = {}
+        self.types_elements = types_elements
     
     def init(self):
         """Chargement des navires et modèles."""
@@ -75,18 +79,30 @@ class Module(BaseModule):
         self.nav_logger.info(format_nb(nb_navires,
                 "{nb} navire{s} récupéré{s}"))
         
+        # On récupère les éléments
+        elements = self.importeur.supenr.charger_groupe(BaseElement)
+        for element in elements:
+            self.elements[element.cle] = element
+        
+        nb_elements= len(elements)
+        self.nav_logger.info(format_nb(nb_elements,
+                "{nb} élément{s} de navire récupéré{s}"))
+        
         BaseModule.init(self)
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.eltedit.CmdEltedit(),
             commandes.shedit.CmdShedit(),
         ]
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
         
-        # Ajout de l'éditeur 'shedit'
+        # Ajout des éditeurs
+        self.importeur.interpreteur.ajouter_editeur(
+                editeurs.eltedit.EdtEltedit)
         self.importeur.interpreteur.ajouter_editeur(editeurs.shedit.EdtShedit)
     
     def creer_modele(self, cle):
@@ -142,3 +158,26 @@ class Module(BaseModule):
         navire = self.navires[cle]
         navire.detruire()
         del self.navires[cle]
+    
+    def creer_element(self, cle, type_elt):
+        """Crée un élément du type indiqué.
+        
+        Retourne l'élément créé.
+        
+        """
+        elt = type_elt(cle)
+        self.ajouter_element(elt)
+        return elt
+    
+    def ajouter_element(self, element):
+        """Ajoute l'élément au dictionnaire."""
+        self.elements[element.cle] = element
+    
+    def supprimer_element(self, cle):
+        """Supprime l'élément dont la clé est passée en paramètre."""
+        if cle not in self.elements:
+            raise KeyError("l'élément de clé {} est introuvable".format(cle))
+        
+        element = self.elements[cle]
+        element.detruire()
+        del self.elements[cle]
