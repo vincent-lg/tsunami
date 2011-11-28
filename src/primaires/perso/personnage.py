@@ -1,5 +1,4 @@
 # -*-coding:Utf-8 -*
-# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -88,6 +87,12 @@ class Personnage(ObjetID):
         # Position occupé
         self.position = ""
         self.occupe = ""
+        
+        # Nveau prmiaire et niveaux secondaires
+        self.niveau = 1
+        self.niveaux = EnrDict(self)
+        self.xp = 0 # xp dans le niveau principal
+        self.xps = EnrDict(self) # xp dans les niveaux secondaires
     
     def __getnewargs__(self):
         """Retourne les arguments à passer au constructeur"""
@@ -300,6 +305,12 @@ class Personnage(ObjetID):
         sortie = salle.sorties.get_sortie_par_nom(sortie)
         fermer = False
         
+        if not self.est_immortel() and sortie.porte and \
+                sortie.porte.verrouillee:
+            self << "Cette porte semble fermée à clef.".format(
+                    sortie.nom_complet)
+            return
+        
         # Si la porte est fermée (pas verrouillée), on l'ouvre
         if not self.est_immortel() and sortie.porte and \
                 sortie.porte.fermee and not sortie.porte.verrouillee:
@@ -397,6 +408,61 @@ class Personnage(ObjetID):
         self << "Vous vous effondrez sur le sol."
         self.salle.envoyer("{} s'effondre sur le sol.", self)
     
+    def gagner_xp(self, niveau=None, xp=0):
+        """Le personnage gagne de l'expérience.
+        
+        Paramètres attendus :
+            niveau -- le nom du niveau (si principal, None)
+            xp -- le nombre d'xp reçus
+        
+        Le nombre d'xp est un nombre absolu, pas relatif en fonction
+        du niveau. Voir gagner_xp_rel.
+        
+        """
+        if niveau and niveau not in type(self).importeur.perso.niveaux:
+            raise ValueError("le niveau {} n'existe pas".format(niveau))
+        
+        xp_actuel = self.xps[niveau] if niveau else self.xp
+        niveau_actuel = self.niveaux[niveau] if niveau else self.niveau
+        nb_niveaux = type(self).importeur.perso.gen_niveaux.nb_niveaux
+        if xp > 0 and niveau_actuel >= nb_niveaux:
+            return
+        
+        grille = type(self).importeur.perso.gen_niveaux.grille_xp
+        xp_nec = grille[niveau_actuel - 1][1]
+        if niveau:
+            self.xps[niveau] = self.xps.get(niveau, 0) + xp
+            xp_total = self.xps[niveau]
+        else:
+            self.xp += xp
+            xp_total = self.xp
+        
+        nb_gagne = 0
+        while niveau_actuel < nb_niveaux and xp_total >= xp_nec:
+            if niveau:
+                self.niveaux[niveau] = self.niveaux.get(niveau, 0) + 1
+                self.xps[niveau] = self.xps.get(niveau, 0) - xp_nec
+                xp_total = self.xps[niveau]
+            else:
+                self.niveau += 1
+                self.xp -= xp_nec
+                xp_total = self.xp
+            niveau_actuel += 1
+            xp_nec = grille[niveau_actuel - 1][1]
+            nb_gagne += 1
+        
+        nom_niveau = type(self).importeur.perso.niveaux[niveau].nom if \
+                niveau else "principal"
+        self << "Vous recevez {} xp dans le niveau {}.".format(xp, nom_niveau)
+        if nb_gagne > 0:
+            nb = str(nb_gagne) if nb_gagne > 1 else "un"
+            x = "x" if nb_gagne > 1 else ""
+            if niveau:
+                self << "|rg|Vous gagnez {} niveau{} en {}.|ff|".format(nb, x,
+                        nom_niveau)
+            else:
+                self << "|rg|Vous gagnez {} niveau{}.|ff|".format(nb, x)
+
     @staticmethod
     def regarder(moi, personnage):
         """personnage regarde moi."""
