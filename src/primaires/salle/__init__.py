@@ -264,10 +264,6 @@ class Module(BaseModule):
             except KeyError:
                 pass
             else:
-                if sortie.porte and sortie.porte.verrouillee:
-                    personnage << "Cette porte semble fermée à clef.".format(
-                            sortie.nom_complet)
-                    return True
                 personnage.deplacer_vers(sortie.nom)
                 return True
         
@@ -275,10 +271,6 @@ class Module(BaseModule):
             if sortie:
                 if (sortie.cachee and sortie.nom == commande) or ( \
                         not sortie.cachee and sortie.nom.startswith(commande)):
-                    if sortie.porte and sortie.porte.verrouillee:
-                        personnage << "Cette porte semble fermée à clef.".format(
-                                sortie.nom_complet)
-                        return True
                     personnage.deplacer_vers(sortie.nom)
                     return True
         

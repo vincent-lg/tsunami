@@ -300,6 +300,12 @@ class Personnage(ObjetID):
         sortie = salle.sorties.get_sortie_par_nom(sortie)
         fermer = False
         
+        if not self.est_immortel() and sortie.porte and \
+                sortie.porte.verrouillee:
+            self << "Cette porte semble fermée à clef.".format(
+                    sortie.nom_complet)
+            return
+        
         # Si la porte est fermée (pas verrouillée), on l'ouvre
         if not self.est_immortel() and sortie.porte and \
                 sortie.porte.fermee and not sortie.porte.verrouillee:
