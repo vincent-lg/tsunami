@@ -50,11 +50,10 @@ class Description(BaseObj):
     
     """
     
-    def __init__(self, description=None, parent=None, indente=False):
+    def __init__(self, description=None, parent=None):
         """Constructeur"""
         BaseObj.__init__(self)
         self.paragraphes = [] # une liste des différents paragraphes
-        self.indente = indente
         self.parent = parent
         self.script = ScriptDescription(self)
         if description:
@@ -70,9 +69,6 @@ class Description(BaseObj):
             paragraphe = self.wrap_paragraphe(paragraphe)
             paragraphe = paragraphe.replace("|nl|", "\n")
             res.append(paragraphe)
-        if self.indente and len(res) > 0:
-            if not res[0].startswith("   "):
-                res[0] = "   " + res[0]
         return "\n".join(res)
     
     def enregistrer(self):

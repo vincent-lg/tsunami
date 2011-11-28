@@ -87,7 +87,7 @@ class Salle(ObjetID):
         self.coords = Coordonnees(x, y, z, valide, self)
         self.nom_terrain = "ville"
         self.titre = ""
-        self.description = Description(parent=self, indente=True)
+        self.description = Description(parent=self)
         self.sorties = Sorties(parent=self)
         self.details = Details(parent=self)
         self._personnages = ListeID(self) # personnages présents
