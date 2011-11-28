@@ -149,7 +149,8 @@ class Description(BaseObj):
         """Le personnage regarde la description."""
         paragraphes = []
         for paragraphe in self.paragraphes:
-            paragraphe = paragraphe.replace("|nl|", "\n")
+            paragraphe = paragraphe.replace("|nl|", "\n").replace(
+                    "|tab|", "   ")
             evts = re.findall(r"(\$[a-z0-9]+)([\n ,.]|$)", paragraphe)
             evts = [e[0] for e in evts]
             for nom_complet in evts:
