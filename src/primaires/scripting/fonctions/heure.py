@@ -28,25 +28,26 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Module contenant les différents types de données manipulées par le
-scripting.
+"""Fichier contenant la fonction heure."""
 
-"""
+from primaires.scripting.fonction import Fonction
 
-from fractions import Fraction
-
-from abstraits.obase import BaseObj
-from primaires.perso.personnage import Personnage
-from primaires.salle.salle import Salle
-from primaires.objet.objet import Objet
-
-def get(nom):
-    """Retourne le type portant le nom."""
-    builtins = __builtins__.copy()
-    types = __import__("primaires.scripting.types").scripting.types
-    try:
-        t = builtins[nom]
-    except KeyError:
-        t = getattr(types, nom)
+class ClasseFonction(Fonction):
     
-    return t
+    """Retourne l'heure actuelle."""
+    
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.heure)
+    
+    @staticmethod
+    def heure():
+        """Retourne l'heure actuelle.
+        
+        Cette heure peut être comparée en utilisant les opérateurs
+        standards. La valeur comparée doit être une chaîne de la forme
+        "hh:mm" ou "hh:mm:ss". Par exemple :
+            si heure() <= "10:00":
+        
+        """
+        return importeur.temps.temps

@@ -30,6 +30,7 @@
 
 """Fichier contenant la classe Description, détaillée plus bas."""
 
+import re
 from textwrap import wrap
 
 from abstraits.obase import BaseObj
@@ -55,6 +56,7 @@ class Description(BaseObj):
         self.paragraphes = [] # une liste des différents paragraphes
         self.indente = indente
         self.parent = parent
+        self.script = ScriptDescription(self)
         if description:
             self.ajouter_paragraphe(description)
     
@@ -72,6 +74,11 @@ class Description(BaseObj):
             if not res[0].startswith("   "):
                 res[0] = "   " + res[0]
         return "\n".join(res)
+    
+    def enregistrer(self):
+        """Enregistre le parent si existe."""
+        if self.parent:
+            self.parent.enregistrer()
     
     def ajouter_paragraphe(self, paragraphe):
         """Ajoute un paragraphe.
@@ -137,3 +144,33 @@ class Description(BaseObj):
             res.append("Aucune description.")
         
         return indentation + indentation.join(res)
+    
+    def regarder(self, personnage):
+        """Le personnage regarde la description."""
+        paragraphes = []
+        for paragraphe in self.paragraphes:
+            paragraphe = paragraphe.replace("|nl|", "\n").replace(
+                    "|tab|", "   ")
+            evts = re.findall(r"(\$[a-z0-9]+)([\n ,.]|$)", paragraphe)
+            evts = [e[0] for e in evts]
+            for nom_complet in evts:
+                nom = nom_complet[1:]
+                evt = self.script["regarde"][nom]
+                evt.executer(regarde=self, personnage=personnage)
+                retour = evt.espaces.variables["retour"]
+                paragraphe = paragraphe.replace(nom_complet, retour)
+            paragraphes.append("\n".join(wrap(paragraphe)))
+        return "\n".join(paragraphes)
+
+# On importe ici pour éviter les boucles
+from primaires.scripting.script import Script
+
+class ScriptDescription(Script):
+    
+    def init(self):
+        """Initialisation du script."""
+        evt = self.creer_evenement("regarde")
+        var_regarde = evt.ajouter_variable("regarde", "BaseObj")
+        var_personnage = evt.ajouter_variable("personnage", "Personnage")
+        var_regarde.aide = "l'élément regardé"
+        var_personnage.aide = "le personnage regardant"

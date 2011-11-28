@@ -30,8 +30,10 @@
 
 """Ce fichier définit le contexte-éditeur 'Description'."""
 
-from . import Editeur
 from primaires.format.fonctions import *
+from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
+from primaires.scripting.editeurs.edt_instructions import EdtInstructions
+from . import Editeur
 
 class Description(Editeur):
     
@@ -49,6 +51,7 @@ class Description(Editeur):
         self.nom_attribut = attribut or "description"
         self.ajouter_option("d", self.opt_supprimer)
         self.ajouter_option("r", self.opt_remplacer)
+        self.ajouter_option("e", self.opt_editer_evt)
     
     @property
     def description(self):
@@ -132,6 +135,33 @@ class Description(Editeur):
             description.remplacer(recherche, remplacer_par)
             self.actualiser()
     
+    def opt_editer_evt(self, arguments):
+        """Edite ou affiche les éléments de la description."""
+        description = self.description
+        evenements = description.script["regarde"].evenements
+        evt = supprimer_accents(arguments).strip()
+        if not evt:
+            msg = \
+                "Ci-dessous se trouve la liste des éléments observables " \
+                "dans cette description :\n"
+            for nom in sorted(evenements.keys()):
+                msg += "\n  {}".format(nom)
+            if not evenements:
+                msg += "\n  |att|Aucun|ff|"
+            self.pere << msg
+        else:
+            if evt in evenements.keys():
+                evenement = evenements[evt]
+            else:
+                evenement = description.script["regarde"].creer_evenement(evt)
+                description.script.init()
+                evenement.creer_sinon()
+            enveloppe = EnveloppeObjet(EdtInstructions, evenement.sinon)
+            enveloppe.parent = self
+            contexte = enveloppe.construire(self.pere.joueur)
+            
+            self.migrer_contexte(contexte)
+
     def interpreter(self, msg):
         """Interprétation du contexte"""
         description = self.description

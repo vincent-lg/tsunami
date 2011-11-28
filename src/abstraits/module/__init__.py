@@ -201,4 +201,9 @@ class BaseModule:
         """Retourne le chemin du module"""
         rel = self.importeur.chemins_modules[self.type] + os.sep + self.nom
         return os.path.join(getcwd(), rel)
-
+    
+    @property
+    def chemin_py(self):
+        """Retourne le chemin du module"""
+        rel = self.importeur.chemins_modules[self.type] + "." + self.nom
+        return rel
