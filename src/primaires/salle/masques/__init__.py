@@ -30,6 +30,7 @@
 
 """Package des masques du module joueur."""
 
+from . import coordonnees
 from . import direction
 from . import etendue
 from . import ident
