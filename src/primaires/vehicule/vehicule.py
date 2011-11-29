@@ -115,12 +115,13 @@ class Vehicule(ObjetID):
     def energie_cinetique(self):
         return self.m * self.vitesse.norme() * self.vitesse.norme()
 
-    def maj_salle(self):
+    def maj_salles(self):
         d = -self.direction.direction()
         i = self.direction.inclinaison()
         operation = lambda v: self.position + v.tourner_autour_z(d).incliner(i)
         for vec, salle in self.salles.items():
-            salle.coords = operation(vec.copie()).coordonnees
+            vec = Vecteur(*vec)
+            salle.coords = operation(vec).coordonnees
 
     def avancer(self, temps):
         """Fait avancer le véhicule.
@@ -148,7 +149,7 @@ class Vehicule(ObjetID):
         self.vitesse += temps * self.acceleration
         
         # On modifie les coordonnées des salles
-        self.maj_salle()
+        self.maj_salles()
         
         self.en_collision = False
        
@@ -174,8 +175,9 @@ class Vehicule(ObjetID):
         resultat = []
         d = -self.direction.direction()
         i = self.direction.inclinaison()
-        operation = lambda v : position + v.tourner_autour_z(d).incliner(i)
+        operation = lambda v: position + v.tourner_autour_z(d).incliner(i)
         for vec, salle in self.salles.items():
-            resultat += operation(vec.copie()).coordonnees.entier()
+            vec = Vecteur(*vec)
+            resultat += operation(vec).coordonnees.entier()
         
         return resultat
