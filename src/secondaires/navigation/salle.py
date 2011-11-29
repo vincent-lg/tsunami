@@ -90,3 +90,16 @@ class SalleNavire(Salle):
     def r_coords(self):
         """Retourne les coordonnées relatives de la salle."""
         return (self.r_x, self.r_y, self.r_z)
+    
+    def ajouter_element(self, element):
+        """Ajoute un élément dans la salle."""
+        self.elements.append(element)
+    
+    def retirer_element(self, cle):
+        """Retire l'élément de cle indiqué."""
+        for i, elt in enumerate(self.elements):
+            if elt.cle == cle:
+                del self.elements[i]
+                return
+        
+        raise ValueError("l'élément {} n'a pas pu être trouvé".format(cle))

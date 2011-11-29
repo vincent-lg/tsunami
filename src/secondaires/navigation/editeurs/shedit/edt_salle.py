@@ -55,6 +55,7 @@ class EdtSalle(Presentation):
         self.ajouter_option("arr", self.opt_ajouter_arriere)
         self.ajouter_option("hau", self.opt_ajouter_haut)
         self.ajouter_option("bas", self.opt_ajouter_bas)
+        self.ajouter_option("elt", self.opt_ajouter_supprimer_element)
         if personnage and salle:
             self.construire(salle)
     
@@ -171,6 +172,34 @@ class EdtSalle(Presentation):
             "| |tit|" + "Description de la salle {}".format(salle).ljust(76) + \
             "|ff||\n" + self.opts.separateur
     
+    def opt_ajouter_supprimer_element(self, arguments):
+        """Ajoute ou supprime un élément.
+        
+        Syntaxe :
+            /elt <clé_élément>
+        
+        """
+        salle = self.objet
+        cle = arguments.strip()
+        cles = tuple(e.cle for e in salle.elements)
+        types = tuple(e.nom_type for e in salle.elements)
+        if cle in cles:
+            salle.retirer_element(cle)
+            self.actualiser()
+        else:
+            if cle not in type(self).importeur.navigation.elements:
+                self.pere << "|err|Cet élément est introuvable.|ff|"
+                return
+            
+            elt = type(self).importeur.navigation.elements[cle]
+            if elt.nom_type in types:
+                self.pere << "|err|Un élément de ce type est déjà présent " \
+                        "dans cette salle.|ff|"
+                return
+            
+            salle.ajouter_element(elt)
+            self.actualiser()
+    
     def accueil(self):
         """Message d'accueil de l'éditeur."""
         salle = self.objet
@@ -185,5 +214,12 @@ class EdtSalle(Presentation):
                         sortie.salle_dest.mnemonic)
             else:
                 msg += "\n   {}".format(nom.capitalize())
+        
+        msg += "\n"
+        # Éléments
+        msg += "\n Éléments de navire : " + ", ".join(
+                e.cle for e in salle.elements)
+        if not salle.elements:
+            msg += "aucun"
         
         return msg
