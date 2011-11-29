@@ -28,40 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'navire' et ses sous-commandes.
+"""Fichier contenant le paramètre 'téléporter' de la commande 'navire'."""
 
-Dans ce fichier se trouve la commande même.
+from primaires.interpreteur.masque.parametre import Parametre
 
-"""
-
-from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .etendue import PrmEtendue
-from .teleporter import PrmTeleporter
-
-class CmdNavire(Commande):
+class PrmTeleporter(Parametre):
     
-    """Commande 'navire'.
+    """Commande 'navire téléporter'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "navire", "ship")
-        self.groupe = "administrateur"
-        self.aide_courte = "manipulation des navires"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "téléporter", "transfer")
+        self.schema = "<cle_navire> <coordonnees>"
+        self.aide_courte = "téléporte le navire aux coordonnées"
         self.aide_longue = \
-            "Cette commande permet de manipuler les navires, connaître " \
-            "la liste des navires et modèles existants, créer des " \
-            "navires, les téléporter, changer leur orientation, " \
-            "leur vitesse, les forcer à avancer..."
+            "Cette commande téléporte le navire aux coordonnées indiquées. " \
+            "Les coordonnées sont sous la forme |cmd|X.Y.Z|ff|. Chaque " \
+            "âxe doit être remplacé par un nombre entier, négatif, " \
+            "positif ou nul. Par exemple : |cmd|0.5.-3|ff|. Veillez " \
+            "à téléporter le navire dans les limites de l'étendue."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_creer = PrmCreer()
-        prm_etendue = PrmEtendue()
-        prm_teleporter = PrmTeleporter()
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        # On récupère le navire et les coordonnées
+        navire = dic_masques["cle_navire"].navire
+        x, y, z = dic_masques["coordonnees"].coordonnees
+        if navire.etendue is None:
+            personnage << "|err|Ce navire n'est pas présent dans une " \
+                    "étendue d'eau.|ff|"
+            return
         
-        self.ajouter_parametre(prm_creer)
-        self.ajouter_parametre(prm_etendue)
-        self.ajouter_parametre(prm_teleporter)
+        navire.position.x = x
+        navire.position.y = y
+        navire.position.z = z
+        navire.valider_coordonnees()
+        navire.maj_salles()
+        personnage << "Le navire {} a été téléportée aux coordonnées " \
+                "{}.{}.{}.".format(navire.cle, x, y, z)
