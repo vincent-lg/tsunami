@@ -32,6 +32,8 @@
 
 from abstraits.id import ObjetID
 from primaires.vehicule.vehicule import Vehicule
+from .element import Element
+from .salle import SalleNavire
 
 class Navire(Vehicule):
     
@@ -53,15 +55,35 @@ class Navire(Vehicule):
     def __init__(self, modele):
         """Constructeur du navire."""
         Vehicule.__init__(self)
+        self.elements = []
         if modele:
             self.modele = modele
             modele.vehicules.append(self)
             self.cle = "{}_{}".format(modele.cle, len(modele.vehicules))
-        
-        # On recopie les salles
-        # ...
-        # On recherche les voiles, chacune étant liée à une force propulsive
-        # ...
+            # On recopie les salles
+            for r_coords, salle in modele.salles.items():
+                n_salle = SalleNavire(self.cle,
+                        salle.mnemonic, salle.r_x, salle.r_y, salle.r_z,
+                        modele, self)
+                n_salle.titre = salle.titre
+                n_salle.description = salle.description
+                
+                # On recopie les éléments
+                for t_elt in salle.elements:
+                    n_salle.elements.append(Element(t_elt))
+                
+                self.salles[r_coords] = n_salle
+            
+            # On recopie les sorties
+            for salle in modele.salles.values():
+                n_salle = self.salles[salle.r_coords]
+                for dir, sortie in salle.sorties._sorties.items():
+                    if sortie and sortie.salle_dest:
+                        c_salle = self.salles[sortie.salle_dest.r_coords]
+                        print(dir, n_salle, c_salle)
+                        n_salle.sorties.ajouter_sortie(dir, sortie.nom,
+                                sortie.article, c_salle,
+                                sortie.correspondante)
     
     def __getnewargs__(self):
         return (None, )

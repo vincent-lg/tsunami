@@ -46,11 +46,13 @@ class Direction(Vecteur):
     
     """
     
-    
     def __init__(self, vehicule, x=0, y=0, z=0):
         """Constructeur du vecteur"""
-        Vecteur.__init__(self,x,y,z)
+        Vecteur.__init__(self, x, y, z)
         self.vehicule = vehicule
+    
+    def __getnewargs__(self):
+        return (None, )
     
     def __repr__(self):
         """Affichage des coordonnées dans un cas de debug"""
@@ -63,9 +65,3 @@ class Direction(Vecteur):
     def incliner(self, angle):
         """Incline le véhicule."""
         self.direction._valeur.incliner(radians(angle))
-    
-    def __setattr__(self):
-        BaseObj.__setattr(self)
-        self.vehicule.maj_salle()
-    
-    
