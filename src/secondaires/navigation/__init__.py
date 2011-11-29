@@ -37,6 +37,7 @@ from .navire import Navire
 from .elements import types as types_elements
 from .elements.base import BaseElement
 from . import commandes
+from . import masques
 from . import editeurs
 from .modele import ModeleNavire
 
@@ -94,6 +95,7 @@ class Module(BaseModule):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.eltedit.CmdEltedit(),
+            commandes.navire.CmdNavire(),
             commandes.shedit.CmdShedit(),
         ]
         

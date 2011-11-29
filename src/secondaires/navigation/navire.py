@@ -73,6 +73,7 @@ class Navire(Vehicule):
                     n_salle.elements.append(Element(t_elt))
                 
                 self.salles[r_coords] = n_salle
+                type(self).importeur.salle.ajouter_salle(n_salle)
             
             # On recopie les sorties
             for salle in modele.salles.values():

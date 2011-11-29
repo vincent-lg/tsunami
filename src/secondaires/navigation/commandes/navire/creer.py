@@ -28,8 +28,28 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant le paramètre 'créer' de la commande 'navire'."""
 
-from . import eltedit
-from . import navire
-from . import shedit
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmCreer(Parametre):
+    
+    """Commande 'navire créer'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "créer", "create")
+        self.schema = "<modele_navire>"
+        self.aide_courte = "crée un navire sur un modèle"
+        self.aide_longue = \
+                "Crée un navire sur un modèle existant. Cette commande " \
+                "crée un navire mais ne le place dans aucune étendue d'eau."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        # On récupère le modèle
+        modele = dic_masques["modele_navire"].modele
+        navire = type(self).importeur.navigation.creer_navire(modele)
+        personnage << "Le navire {} a bien été créé.".format(navire.cle)

@@ -28,8 +28,55 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant le masque <modele_navire>."""
 
-from . import eltedit
-from . import navire
-from . import shedit
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+
+class ModeleNavire(Masque):
+    
+    """Masque <modele_navire>.
+    
+    On attend une clé de modèle de navire en paramètre.
+    
+    """
+    
+    nom = "modele_navire"
+    nom_complet = "modèle de navire"
+    
+    def init(self):
+        """Initialisation des attributs"""
+        self.identifiant = ""
+        self.modele = None
+    
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
+        ident = liste_vers_chaine(commande)
+        
+        if not ident:
+            raise ErreurValidation( \
+                "Précisez un identifiant de modèle de navire.")
+        
+        ident = ident.split(" ")[0].lower()
+        self.a_interpreter = ident
+        commande[:] = commande[len(ident):]
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        ident = self.a_interpreter
+        
+        try:
+            modele = type(self).importeur.navigation.modeles[ident]
+        except KeyError:
+            raise ErreurValidation(
+                "|err|L'identifiant '{}' n'est pas valide.|ff|".format(ident))
+        
+        self.modele = modele
+        self.ident = modele.cle
+        
+        return True

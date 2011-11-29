@@ -28,8 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'navire' et ses sous-commandes.
 
-from . import eltedit
-from . import navire
-from . import shedit
+Dans ce fichier se trouve la commande même.
+
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+from .creer import PrmCreer
+
+class CmdNavire(Commande):
+    
+    """Commande 'navire'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "navire", "ship")
+        self.groupe = "administrateur"
+        self.aide_courte = "manipulation des navires"
+        self.aide_longue = \
+            "Cette commande permet de manipuler les navires, connaître " \
+            "la liste des navires et modèles existants, créer des " \
+            "navires, les téléporter, changer leur orientation, " \
+            "leur vitesse, les forcer à avancer..."
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
+        prm_creer = PrmCreer()
+        
+        self.ajouter_parametre(prm_creer)

@@ -28,8 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package des masques du module navigation."""
 
-from . import eltedit
-from . import navire
-from . import shedit
+from . import modele
