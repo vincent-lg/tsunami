@@ -28,37 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'navire' et ses sous-commandes.
+"""Fichier contenant le paramètre 'étendue' de la commande 'navire'."""
 
-Dans ce fichier se trouve la commande même.
+from primaires.interpreteur.masque.parametre import Parametre
 
-"""
-
-from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .etendue import PrmEtendue
-
-class CmdNavire(Commande):
+class PrmEtendue(Parametre):
     
-    """Commande 'navire'.
+    """Commande 'navire étendue'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "navire", "ship")
-        self.groupe = "administrateur"
-        self.aide_courte = "manipulation des navires"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "étendue", "area")
+        self.schema = "<cle_navire> <etendue>"
+        self.aide_courte = "transporte le navire dans l'étendue"
         self.aide_longue = \
-            "Cette commande permet de manipuler les navires, connaître " \
-            "la liste des navires et modèles existants, créer des " \
-            "navires, les téléporter, changer leur orientation, " \
-            "leur vitesse, les forcer à avancer..."
+            "Cette commande transporte un navire dans une étendue. " \
+            "Cela n'influence cependant pas ses coordonnées. " \
+            "Après avoir entré cette commande, les coordonnées " \
+            "du navire ne sont pas mises à jour. Pour cela, voir " \
+            "la commande %navire% ...";
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_creer = PrmCreer()
-        prm_etendue = PrmEtendue()
-        
-        self.ajouter_parametre(prm_creer)
-        self.ajouter_parametre(prm_etendue)
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        # On récupère le navire et l'étendue
+        navire = dic_masques["cle_navire"].navire
+        etendue = dic_masques["etendue"].etendue
+        navire.etendue = etendue
+        personnage << \
+                "Le navire {} a bien été placé dans l'étendue {}.".format(
+                navire.cle, etendue.cle)

@@ -31,6 +31,7 @@
 """Package des masques du module joueur."""
 
 from . import direction
+from . import etendue
 from . import ident
 from . import nom_sortie
 from . import nv_ident

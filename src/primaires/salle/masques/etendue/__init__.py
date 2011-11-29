@@ -28,37 +28,55 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'navire' et ses sous-commandes.
+"""Fichier contenant le masque <modele_navire>."""
 
-Dans ce fichier se trouve la commande même.
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
 
-"""
-
-from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .etendue import PrmEtendue
-
-class CmdNavire(Commande):
+class Etendue(Masque):
     
-    """Commande 'navire'.
+    """Masque <etendue>.
+    
+    On attend une clé d'étendues en paramètre.
     
     """
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "navire", "ship")
-        self.groupe = "administrateur"
-        self.aide_courte = "manipulation des navires"
-        self.aide_longue = \
-            "Cette commande permet de manipuler les navires, connaître " \
-            "la liste des navires et modèles existants, créer des " \
-            "navires, les téléporter, changer leur orientation, " \
-            "leur vitesse, les forcer à avancer..."
+    nom = "etendue"
+    nom_complet = "étendue d'eau"
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_creer = PrmCreer()
-        prm_etendue = PrmEtendue()
+    def init(self):
+        """Initialisation des attributs"""
+        self.identifiant = ""
+        self.etendue = None
+    
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
+        ident = liste_vers_chaine(commande)
         
-        self.ajouter_parametre(prm_creer)
-        self.ajouter_parametre(prm_etendue)
+        if not ident:
+            raise ErreurValidation( \
+                "Précisez un identifiant d'étendue d'eau.")
+        
+        ident = ident.split(" ")[0].lower()
+        self.a_interpreter = ident
+        commande[:] = commande[len(ident):]
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        ident = self.a_interpreter
+        
+        try:
+            etendue = type(self).importeur.salle.etendues[ident]
+        except KeyError:
+            raise ErreurValidation(
+                "|err|L'identifiant '{}' n'est pas valide.|ff|".format(ident))
+        
+        self.etendue = etendue
+        self.ident = etendue.cle
+        
+        return True

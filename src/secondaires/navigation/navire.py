@@ -55,6 +55,7 @@ class Navire(Vehicule):
     def __init__(self, modele):
         """Constructeur du navire."""
         Vehicule.__init__(self)
+        self.etendue = None
         self.elements = []
         if modele:
             self.modele = modele
