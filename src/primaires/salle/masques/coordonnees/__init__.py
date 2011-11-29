@@ -38,7 +38,7 @@ from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
 
 # Constantes
-RE_COORDS = re.compile("^-?[0-9]+\.-?[0-9]+\.-?[0-9]+\$")
+RE_COORDS = re.compile(r"^-?[0-9]+\.-?[0-9]+\.-?[0-9]+$")
 
 class Coordonnees(Masque):
     
@@ -78,6 +78,6 @@ class Coordonnees(Masque):
         """Validation du masque"""
         Masque.valider(self, personnage, dic_masques)
         coordonnees = self.a_interpreter
-        coordonnees = tuple(int(e) for e in coordonnes.split("."))
+        coordonnees = tuple(int(e) for e in coordonnees.split("."))
         self.coordonnees = coordonnees
         return True
