@@ -60,6 +60,8 @@ class Module(BaseModule):
         self.navires = {}
         self.elements = {}
         self.types_elements = types_elements
+        self.vents = []
+        self.vents_par_etendue = {}
     
     def init(self):
         """Chargement des navires et modèles."""
@@ -86,11 +88,27 @@ class Module(BaseModule):
         for element in elements:
             self.elements[element.cle] = element
         
-        nb_elements= len(elements)
+        nb_elements = len(elements)
         self.nav_logger.info(format_nb(nb_elements,
                 "{nb} élément{s} de navire récupéré{s}"))
         
+        # On récupère les vents
+        self.vents = self.importeur.supenr.charger_groupe(Vent)
+        nb_vents = len(self.vents)
+        self.nav_logger.info(format_nb(nb_vents,
+                "{nb} vent{s} récupéré{s}"))
+        
         BaseModule.init(self)
+    
+    def preparer(self):
+        """Préparation du module.
+        
+        On ajoute les vents regroupés par étendues.
+        
+        """
+        for vent in self.vents:
+            self.vents_par_etendue[vent.etendue.cle] = \
+                    self.vents_par_etendue.get(vent.etendue.cle, []).append(vent)
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
@@ -184,3 +202,23 @@ class Module(BaseModule):
         element = self.elements[cle]
         element.detruire()
         del self.elements[cle]
+    
+    def get_vents_etendue(self, cle):
+        """Retourne une liste des vents de l'étendue."""
+        return self.vents_par_etendue.get(cle, [])
+    
+    def creer_vent(self, etendue, x, y, z, vitesse=1, direction=0):
+        """Crée un vent dans une étendue.
+        
+        Pour les paramètres, se référez au constructeur de la classe Vent.
+        
+        """
+        vent = Vent(etendue, x, y, z, vitesse, direction)
+        self.ajouter_vent(vent)
+        return vent
+    
+    def ajouter_vent(self, vent):
+        """Ajoute le vent."""
+        self.vents.append(vent)
+        self.vents_par_etendue[vent.etendue.cle] = self.vents_par_etendue.get(
+                vent.etendue.cle, []).append(vent)

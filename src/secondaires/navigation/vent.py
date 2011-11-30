@@ -50,14 +50,14 @@ class Vent(ObjetID):
     
     groupe = "vent"
     sous_rep = "vents"
-    def __init__(self, etendue, x, y, z, vitesse=1, angle=0):
+    def __init__(self, etendue, x, y, z, vitesse=1, direction=0):
         """Constructeur du vent.
         
         Paramètres à préciser :
             etendue est l'étendue d'eau définie
             x, y et z sont les coordonnées de la position du vent
             vitesse est la norme du futur vecteur
-            angle est la direction du futur vecteur.
+            direction est la direction du futur vecteur (un angle en degré).
         
         """
         ObjetID.__init__(self)
@@ -65,7 +65,8 @@ class Vent(ObjetID):
         self.x = x
         self.y = y
         self.z = z
-        self.direction = Vecteur(1, 0, 0).orienter(angle) * vitesse
+        self.vitesse = vitesse * Vecteur(1, 0, 0)
+        self.vitesse.orienter(direction)
     
     def __getnewargs__(self):
         return (None, 0, 0, 0)
