@@ -71,11 +71,46 @@ class Vecteur(BaseObj):
         """Retourne le tuple (x, y, z)"""
         return (self.x, self.y, self.z)
     
-    def copie(self):
+    @property
+    def norme(self):
+        return sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)
+    
+    @property
+    def direction(self):
+        """Retourne un angle en degré représentant la direction.
+        
+            0   => nord
+            45  => nord-est
+            90  => est
+            135 => sud-est
+            180 => sud
+        
+        """
+        return -self.argument()
+    
+    @property
+    def inclinaison(self):
+        """Retourne l'angle d'inclinaison en degré."""
+        x, y, z = self.x, self.y, self.z
+        n = sqrt(x ** 2 + y ** 2)
+        if n == 0:
+            if z == 0:
+                return 0
+            else:
+                return 90
+            
+        return degrees(atan(z/n))
+    
+    def copier(self):
         """Retourne une copie de self"""
         return Vecteur(self.x, self.y, self.z)
     
     def tourner_autour_x(self, angle):
+        """Tourne autour de l'âxe X.
+        
+        L'angle doit être en degré.
+        
+        """
         r = radians(angle)
         x, y, z = self.x, self.y, self.z
         self.x = x * 1 + y * 0 + z * 0
@@ -84,6 +119,11 @@ class Vecteur(BaseObj):
         return self
     
     def tourner_autour_y(self, angle):
+        """Tourne autour de l'âxe Y.
+        
+        L'angle doit être en degré.
+        
+        """
         r = radians(angle)
         x, y, z = self.x, self.y, self.z
         self.x = x * cos(r) - y * 0 + z * sin(r)
@@ -92,6 +132,11 @@ class Vecteur(BaseObj):
         return self
     
     def tourner_autour_z(self, angle):
+        """Tourne autour de l'âxe Z.
+        
+        L'angle doit être en degré.
+        
+        """
         r = radians(angle)
         x, y, z = self.x, self.y, self.z
         self.x = x * cos(r) - y * sin(r) + z * 0
@@ -100,36 +145,27 @@ class Vecteur(BaseObj):
         return self
     
     def incliner(self, angle):
+        """Incline le véhicule.
+        
+        L'angle doit être en degré.
+        
+        """
         r = radians(angle)
         x, y, z = self.x, self.y, self.z
-        n = sqrt(x*x+y*y)
+        n = sqrt(x * x + y * y)
         if n == 0:
             if z == 0 or sin(r) == 0 or (x == 0 and y == 0):
                 self.x = 0
                 self.y = 0
                 self.z = z * cos(r)
             else:
-                raise ValueError("Impossible d'incliner un vecteur vertical")
+                raise ValueError("impossible d'incliner un vecteur vertical")
         else:
             self.x = x * cos(r) - z * x * sin(r) / n
             self.y = y * cos(r) - z * y * sin(r) / n
             self.z = z * cos(r) + sin(r) * n
         
         return self
-    
-    def direction(self):
-        return -self.argument()
-    
-    def inclinaison(self):
-        x, y, z = self.x, self.y, self.z
-        n = sqrt(x*x+y*y)
-        if n == 0:
-            if z == 0:
-                return 0
-            else:
-                return 90
-            
-        return degrees(atan(z/n))
     
     def argument(self):
         x, y = self.x, self.y
@@ -144,29 +180,26 @@ class Vecteur(BaseObj):
         else:
             return 0
     
-    def norme(self):
-        return sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
-    
     def normalise(self):
-        norme = self.norme()
+        norme = self.norme
         if norme == 0:
-            raise ValueError("Impossible de normaliser nul")
+            raise ValueError("impossible de normaliser nul")
         
         return Vecteur(self.x / norme, self.y / norme, self.z / norme)
     
     # Méthodes spéciales mathématiques
     def __neg__(self):
-        """Retourne le vecteur négatif"""
+        """Retourne le vecteur négatif."""
         return Vecteur(-self.x, -self.y, -self.z)
     
     def __add__(self, autre):
-        """Additionne deux vecteur"""
+        """Additionne deux vecteurs."""
         return Vecteur(self.x + autre.x, self.y + autre.y, self.z + autre.z)
     
     def __sub__(self, autre):
-        """Soustrait autre à self"""
+        """Soustrait deux vecteurs."""
         return Vecteur(self.x - autre.x, self.y - autre.y, self.z - autre.z)
     
     def __rmul__(self, valeur):
-        """Multiplie le vecteur par valeur"""
+        """Multiplie le vecteur par un nombre."""
         return Vecteur(self.x * valeur, self.y * valeur, self.z * valeur)
