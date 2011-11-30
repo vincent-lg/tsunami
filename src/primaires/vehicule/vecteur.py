@@ -50,6 +50,7 @@ class Vecteur(BaseObj):
     def __init__(self, x=0, y=0, z=0, parent=None):
         """Constructeur du vecteur"""
         BaseObj.__init__(self)
+        self.parent = parent
         self._x = x
         self._y = y
         self._z = z
