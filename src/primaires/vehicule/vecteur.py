@@ -35,6 +35,9 @@ from math import sqrt, cos, sin, radians, degrees, atan
 from abstraits.obase import *
 from primaires.salle.coordonnees import Coordonnees
 
+# Constantes
+NPRECISION = 5
+
 class Vecteur(BaseObj):
     
     """Classe représentant un vecteur en trois dimensions.
@@ -86,7 +89,7 @@ class Vecteur(BaseObj):
             180 => sud
         
         """
-        return self.argument()
+        return -self.argument() % 360
     
     @property
     def inclinaison(self):
@@ -100,6 +103,24 @@ class Vecteur(BaseObj):
                 return 90
             
         return degrees(atan(z/n))
+    
+    def _get_x(self):
+        return self._x
+    def _set_x(self, x):
+        self._x = round(x, NPRECISION)
+    x = property(_get_x, _set_x)
+    
+    def _get_y(self):
+        return self._y
+    def _set_y(self, y):
+        self._y = round(y, NPRECISION)
+    y = property(_get_y, _set_y)
+    
+    def _get_z(self):
+        return self._z
+    def _set_z(self, z):
+        self._z = round(z, NPRECISION)
+    z = property(_get_z, _set_z)
     
     def copier(self):
         """Retourne une copie de self"""
@@ -139,8 +160,8 @@ class Vecteur(BaseObj):
         """
         r = radians(angle)
         x, y, z = self.x, self.y, self.z
-        self.x = x * cos(r) - y * sin(r) + z * 0
-        self.y = x * sin(r) + y * cos(r) + z * 0
+        self.x = x * cos(r) - -1 * y * sin(r) + z * 0
+        self.y = -1 * x * sin(r) + y * cos(r) + z * 0
         self.z = x * 0 + y * 0 + z * 1
         return self
     
@@ -172,7 +193,7 @@ class Vecteur(BaseObj):
         if x > 0:
             return degrees(atan(y / x))
         elif x < 0:
-            return 180 - (degrees(atan(y / x)) % 360)
+            return (180 + degrees(atan(y / x))) % 360
         elif y > 0:
             return 90
         elif y < 0:
