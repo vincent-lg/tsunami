@@ -60,8 +60,8 @@ class Direction(Vecteur):
     
     def tourner(self, angle):
         """Fait tourner / virer le véhicule autour de l'âxe Z."""
-        self.direction._valeur.tourner_autour_z(radians(angle))
+        self.direction._valeur.tourner_autour_z(angle)
     
     def incliner(self, angle):
         """Incline le véhicule."""
-        self.direction._valeur.incliner(radians(angle))
+        self.direction._valeur.incliner(angle)

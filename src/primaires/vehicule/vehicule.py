@@ -116,7 +116,7 @@ class Vehicule(ObjetID):
         return self.m * self.vitesse.norme ** 2
 
     def maj_salles(self):
-        d = -self.direction.direction
+        d = self.direction.direction
         i = self.direction.inclinaison
         operation = lambda v: self.position + v.tourner_autour_z(d).incliner(i)
         for vec, salle in self.salles.items():
@@ -173,7 +173,7 @@ class Vehicule(ObjetID):
         """
         position = self.position + temps * self.vitesse
         resultat = []
-        d = -self.direction.direction
+        d = self.direction.direction
         i = self.direction.inclinaison
         operation = lambda v: position + v.tourner_autour_z(d).incliner(i)
         for vec, salle in self.salles.items():
