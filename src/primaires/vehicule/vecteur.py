@@ -145,7 +145,7 @@ class Vecteur(BaseObj):
         return self
     
     def incliner(self, angle):
-        """Incline le véhicule.
+        """Incline le vecteur.
         
         L'angle doit être en degré.
         
