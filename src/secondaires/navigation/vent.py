@@ -1,0 +1,78 @@
+# -*-coding:Utf-8 -*
+
+# Copyright (c) 2010 LE GOFF Vincent
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+# * Neither the name of the copyright holder nor the names of its contributors
+#   may be used to endorse or promote products derived from this software
+#   without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+# OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+
+"""Ce fichier contient la classe Vent, détaillée plus bas."""
+
+from abstraits.id import ObjetID
+from primaires.vehicule.vecteur import Vecteur
+
+class Vent(ObjetID):
+    
+    """Cette classe décrit un vent influenaçant la navigation.
+    
+    Attributs définis :
+        etendue -- l'étendue dans laquelle il est défini
+        position -- la position du vent dans l'étendue (coordonnées absolues)
+        vitesse -- la vitesse et la direction du vent [1]
+    
+    [1] La vitesse étant un vecteur, elle contient également la
+        direction. La vitesse du vent est la norme du vecteur. La
+        direction, en degré, du vent peut être obtenu par vitesse.direction.
+    
+    """
+    
+    groupe = "vent"
+    sous_rep = "vents"
+    def __init__(self, etendue, x, y, z, vitesse=1, angle=0):
+        """Constructeur du vent.
+        
+        Paramètres à préciser :
+            etendue est l'étendue d'eau définie
+            x, y et z sont les coordonnées de la position du vent
+            vitesse est la norme du futur vecteur
+            angle est la direction du futur vecteur.
+        
+        """
+        ObjetID.__init__(self)
+        self.etendue = etendue
+        self.x = x
+        self.y = y
+        self.z = z
+        self.direction = Vecteur(1, 0, 0).orienter(angle) * vitesse
+    
+    def __getnewargs__(self):
+        return (None, 0, 0, 0)
+    
+    def __repr__(self):
+        return "vent(étendue={}, x={}, y={}, z={}, vitesse={})".format(
+                self.etendue, self.x, self.y, self.z, self.vitesse)
+
+
+ObjetID.ajouter_groupe(Vent)
