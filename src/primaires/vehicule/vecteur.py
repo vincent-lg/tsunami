@@ -47,7 +47,7 @@ class Vecteur(BaseObj):
     
     """
     
-    def __init__(self, x=0, y=0, z=0):
+    def __init__(self, x=0, y=0, z=0, parent=None):
         """Constructeur du vecteur"""
         BaseObj.__init__(self)
         self._x = x
@@ -140,23 +140,29 @@ class Vecteur(BaseObj):
         return self._x
     def _set_x(self, x):
         self._x = round(x, NPRECISION)
+        if self.parent:
+            self.parent.enregistrer()
     x = property(_get_x, _set_x)
     
     def _get_y(self):
         return self._y
     def _set_y(self, y):
         self._y = round(y, NPRECISION)
+        if self.parent:
+            self.parent.enregistrer()
     y = property(_get_y, _set_y)
     
     def _get_z(self):
         return self._z
     def _set_z(self, z):
         self._z = round(z, NPRECISION)
+        if self.parent:
+            self.parent.enregistrer()
     z = property(_get_z, _set_z)
     
     def copier(self):
         """Retourne une copie de self"""
-        return Vecteur(self.x, self.y, self.z)
+        return Vecteur(self.x, self.y, self.z, parent)
     
     def tourner_autour_x(self, angle):
         """Tourne autour de l'âxe X.

@@ -48,7 +48,7 @@ class Direction(Vecteur):
     
     def __init__(self, vehicule, x=0, y=0, z=0):
         """Constructeur du vecteur"""
-        Vecteur.__init__(self, x, y, z)
+        Vecteur.__init__(self, x, y, z, vehicule)
         self.vehicule = vehicule
     
     def __getnewargs__(self):
@@ -60,8 +60,8 @@ class Direction(Vecteur):
     
     def tourner(self, angle):
         """Fait tourner / virer le véhicule autour de l'âxe Z."""
-        self.direction._valeur.tourner_autour_z(angle)
+        self.tourner_autour_z(angle)
     
     def incliner(self, angle):
         """Incline le véhicule."""
-        self.direction._valeur.incliner(angle)
+        self.incliner(angle)

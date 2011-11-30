@@ -98,8 +98,9 @@ class Vehicule(ObjetID):
         """
         ObjetID.__init__(self)
         self.masse = 1
-        self.position = Vecteur(0, 0, 0)
-        self.vitesse = Vecteur(0, 0, 0)
+        self.position = Vecteur(0, 0, 0, self)
+        self.vitesse = Vecteur(0, 0, 0, self)
+        self.acceleration = Vecteur(0, 0, 0, self)
         self.direction = Direction(self, 1, 0, 0)
         
         self.frottement = Frottement(self,0.7)
