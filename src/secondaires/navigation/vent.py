@@ -65,7 +65,7 @@ class Vent(ObjetID):
         self.x = x
         self.y = y
         self.z = z
-        self.vitesse = vitesse * Vecteur(1, 0, 0)
+        self.vitesse = vitesse * Vecteur(1, 0, 0, self)
         self.vitesse.orienter(direction)
     
     def __getnewargs__(self):
