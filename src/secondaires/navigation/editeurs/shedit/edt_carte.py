@@ -87,9 +87,13 @@ class EdtCarte(Editeur):
             self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
         else:
             coords = (coords[0] - 1, coords[1], coords[2])
-            salle_2 = modele.ajouter_salle(coords[0], coords[1], coords[2])
-            modele.lier_salle(salle, salle_2, "ouest")
-            self.actualiser()            
+            try:
+                salle_2 = modele.ajouter_salle(coords[0], coords[1], coords[2])
+            except ValueError as err:
+                self.pere << "|err|" + str(err).capitalize() + "|ff|"
+            else:
+                modele.lier_salle(salle, salle_2, "ouest")
+                self.actualiser()            
     
     def opt_ajouter_tribord(self, arguments):
         """Ajoute une salle à tribord.
@@ -105,9 +109,13 @@ class EdtCarte(Editeur):
             self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
         else:
             coords = (coords[0] + 1, coords[1], coords[2])
-            salle_2 = modele.ajouter_salle(coords[0], coords[1], coords[2])
-            modele.lier_salle(salle, salle_2, "est")
-            self.actualiser()            
+            try:
+                salle_2 = modele.ajouter_salle(coords[0], coords[1], coords[2])
+            except ValueError as err:
+                self.pere << "|err|" + str(err).capitalize() + "|ff|"
+            else:
+                modele.lier_salle(salle, salle_2, "est")
+                self.actualiser()            
     
     def opt_ajouter_avant(self, arguments):
         """Ajoute une salle à l'avant.
@@ -123,9 +131,13 @@ class EdtCarte(Editeur):
             self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
         else:
             coords = (coords[0], coords[1] + 1, coords[2])
-            salle_2 = modele.ajouter_salle(coords[0], coords[1], coords[2])
-            modele.lier_salle(salle, salle_2, "nord")
-            self.actualiser()            
+            try:
+                salle_2 = modele.ajouter_salle(coords[0], coords[1], coords[2])
+            except ValueError as err:
+                self.pere << "|err|" + str(err).capitalize() + "|ff|"
+            else:
+                modele.lier_salle(salle, salle_2, "nord")
+                self.actualiser()            
     
     def opt_ajouter_arriere(self, arguments):
         """Ajoute une salle à l'arrière.
@@ -141,9 +153,13 @@ class EdtCarte(Editeur):
             self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
         else:
             coords = (coords[0], coords[1] - 1, coords[2])
-            salle_2 = modele.ajouter_salle(coords[0], coords[1], coords[2])
-            modele.lier_salle(salle, salle_2, "sud")
-            self.actualiser()            
+            try:
+                salle_2 = modele.ajouter_salle(coords[0], coords[1], coords[2])
+            except ValueError as err:
+                self.pere << "|err|" + str(err).capitalize() + "|ff|"
+            else:
+                modele.lier_salle(salle, salle_2, "sud")
+                self.actualiser()            
     
     def accueil(self):
         """Affichage de la carte du navire."""
