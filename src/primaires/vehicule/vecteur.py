@@ -86,7 +86,7 @@ class Vecteur(BaseObj):
             180 => sud
         
         """
-        return -self.argument()
+        return self.argument()
     
     @property
     def inclinaison(self):
