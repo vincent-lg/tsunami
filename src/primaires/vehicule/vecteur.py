@@ -102,14 +102,14 @@ class Vecteur(BaseObj):
     def incliner(self, angle):
         r = radians(angle)
         x, y, z = self.x, self.y, self.z
-        n = sqrt(x*x+y*y)
+        n = sqrt(x * x + y * y)
         if n == 0:
             if z == 0 or sin(r) == 0 or (x == 0 and y == 0):
                 self.x = 0
                 self.y = 0
                 self.z = z * cos(r)
             else:
-                raise ValueError("Impossible d'incliner un vecteur vertical")
+                raise ValueError("impossible d'incliner un vecteur vertical")
         else:
             self.x = x * cos(r) - z * x * sin(r) / n
             self.y = y * cos(r) - z * y * sin(r) / n
