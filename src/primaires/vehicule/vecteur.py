@@ -50,9 +50,9 @@ class Vecteur(BaseObj):
     def __init__(self, x=0, y=0, z=0):
         """Constructeur du vecteur"""
         BaseObj.__init__(self)
-        self.x = x
-        self.y = y
-        self.z = z
+        self._x = x
+        self._y = y
+        self._z = z
     
     def __getnewargs__(self):
         return ()
@@ -82,11 +82,14 @@ class Vecteur(BaseObj):
     def direction(self):
         """Retourne un angle en degré représentant la direction.
         
-            0   => nord
-            45  => nord-est
-            90  => est
-            135 => sud-est
-            180 => sud
+              0 => est
+             45 => sud-est
+             90 => sud
+            135 => sud-ouest
+            180 => ouest
+            225 => nord-ouest
+            270 => nord
+            315 => nord-est
         
         """
         return -self.argument() % 360
@@ -103,6 +106,35 @@ class Vecteur(BaseObj):
                 return 90
             
         return degrees(atan(z/n))
+    
+    @property
+    def nom_direction(self):
+        """Retourne le nom de la direction.
+        
+          0 => "est"
+         45 => "sud-est"
+        ...
+        
+        """
+        direction = self.direction
+        if direction < 22.5:
+            return "est"
+        elif direction < 67.5:
+            return "sud-est"
+        elif direction < 112.5:
+            return "sud"
+        elif direction < 157.5:
+            return "sud-ouest"
+        elif direction < 202.5:
+            return "ouest"
+        elif direction < 247.5:
+            return "nord-ouest"
+        elif direction < 292.5:
+            return "nord"
+        elif direction < 337.5:
+            return "nord-est"
+        else:
+            return "est"
     
     def _get_x(self):
         return self._x
@@ -207,6 +239,20 @@ class Vecteur(BaseObj):
             raise ValueError("impossible de normaliser nul")
         
         return Vecteur(self.x / norme, self.y / norme, self.z / norme)
+    
+    def orienter(self, angle):
+        """Oriente le vecteur horizontalement.
+        
+        L'angle doit être indiqué en degré.
+        
+        A la différence de tourner_autour_z, l'angle précisé est absolu.
+        Après l'appelle à la méthode vecteur.orienter(180) par exemple,
+        vecteur.direction doit être 180.
+        
+        """
+        direction = self.direction
+        angle -= direction
+        self.tourner_autour_z(angle)
     
     # Méthodes spéciales mathématiques
     def __neg__(self):
