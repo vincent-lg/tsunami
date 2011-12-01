@@ -28,49 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'navire' et ses sous-commandes.
+"""Fichier contenant le paramètre 'liste' de la commande 'navire'."""
 
-Dans ce fichier se trouve la commande même.
+from primaires.interpreteur.masque.parametre import Parametre
 
-"""
-
-from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .detruire import PrmDetruire
-from .etendue import PrmEtendue
-from .info import PrmInfo
-from .liste import PrmListe
-from .teleporter import PrmTeleporter
-
-class CmdNavire(Commande):
+class PrmListe(Parametre):
     
-    """Commande 'navire'.
+    """Commande 'navire liste'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "navire", "ship")
-        self.groupe = "administrateur"
-        self.aide_courte = "manipulation des navires"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "liste", "list")
+        self.schema = ""
+        self.aide_courte = "liste les navires existants"
         self.aide_longue = \
-            "Cette commande permet de manipuler les navires, connaître " \
-            "la liste des navires et modèles existants, créer des " \
-            "navires, les téléporter, changer leur orientation, " \
-            "leur vitesse, les forcer à avancer..."
+            "Cette commande liste les navires existants."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_creer = PrmCreer()
-        prm_detruire = PrmDetruire()
-        prm_etendue = PrmEtendue()
-        prm_info = PrmInfo()
-        prm_liste = PrmListe()
-        prm_teleporter = PrmTeleporter()
-        
-        self.ajouter_parametre(prm_creer)
-        self.ajouter_parametre(prm_detruire)
-        self.ajouter_parametre(prm_etendue)
-        self.ajouter_parametre(prm_info)
-        self.ajouter_parametre(prm_liste)
-        self.ajouter_parametre(prm_teleporter)
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        navires = list(type(self).importeur.navigation.navires.values())
+        navires = sorted(navires, key=lambda n: n.cle)
+        if navires:
+            lignes = [
+                "  Clé             | Étendue         | " \
+                "Coordonnées     | Vitesse    | Direction"]
+            for navire in navires:
+                vitesse = navire.vitesse.norme
+                vitesse = round(vitesse, 3)
+                vitesse = str(vitesse).replace(".", ",")
+                etendue = navire.etendue and navire.etendue.cle or "aucune"
+                lignes.append(
+                    "  {:<15} | {:<15} | {:>15} | {:>10} | {:>9}".format(
+                    navire.cle, etendue,
+                    navire.position.coordonnees, vitesse,
+                    navire.direction.direction))
+            personnage << "\n".join(lignes)
+        else:
+            personnage << "Aucun navire n'est actuellement défini."

@@ -163,8 +163,11 @@ class Navire(Vehicule):
     
     def detruire(self):
         """Destruction du self."""
-        Vehicule.detruire(self)
+        for salle in self.salles.values():
+            salle.detruire()
+        
         self.modele.vehicules.remove(self)
+        Vehicule.detruire(self)
 
 
 ObjetID.ajouter_groupe(Navire)

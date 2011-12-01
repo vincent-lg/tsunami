@@ -28,49 +28,29 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'navire' et ses sous-commandes.
+"""Fichier contenant le paramètre 'détruire' de la commande 'navire'."""
 
-Dans ce fichier se trouve la commande même.
+from primaires.interpreteur.masque.parametre import Parametre
 
-"""
-
-from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .detruire import PrmDetruire
-from .etendue import PrmEtendue
-from .info import PrmInfo
-from .liste import PrmListe
-from .teleporter import PrmTeleporter
-
-class CmdNavire(Commande):
+class PrmDetruire(Parametre):
     
-    """Commande 'navire'.
+    """Commande 'navire détruire'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "navire", "ship")
-        self.groupe = "administrateur"
-        self.aide_courte = "manipulation des navires"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "détruire", "destroy")
+        self.schema = "<cle_navire>"
+        self.aide_courte = "détruit un navire"
         self.aide_longue = \
-            "Cette commande permet de manipuler les navires, connaître " \
-            "la liste des navires et modèles existants, créer des " \
-            "navires, les téléporter, changer leur orientation, " \
-            "leur vitesse, les forcer à avancer..."
+            "Cette commande détruit le navire passé en paramètre. " \
+            "Avant de l'utiliser, assurez-vous qu'aucun personnage " \
+            "ne s'y trouve encore (vous y compris)."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_creer = PrmCreer()
-        prm_detruire = PrmDetruire()
-        prm_etendue = PrmEtendue()
-        prm_info = PrmInfo()
-        prm_liste = PrmListe()
-        prm_teleporter = PrmTeleporter()
-        
-        self.ajouter_parametre(prm_creer)
-        self.ajouter_parametre(prm_detruire)
-        self.ajouter_parametre(prm_etendue)
-        self.ajouter_parametre(prm_info)
-        self.ajouter_parametre(prm_liste)
-        self.ajouter_parametre(prm_teleporter)
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        # On récupère le navire
+        navire = dic_masques["cle_navire"].navire
+        type(self).importeur.navigation.supprimer_navire(navire.cle)
+        personnage << "Le navire {} a bien été supprimé.".format(navire.cle)

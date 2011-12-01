@@ -28,49 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'navire' et ses sous-commandes.
-
-Dans ce fichier se trouve la commande même.
-
-"""
+"""Package contenant la commande 'gouvernail'."""
 
 from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .detruire import PrmDetruire
-from .etendue import PrmEtendue
-from .info import PrmInfo
-from .liste import PrmListe
-from .teleporter import PrmTeleporter
+from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.uniligne import Uniligne
 
-class CmdNavire(Commande):
+class Cmdgouvernail(Commande):
     
-    """Commande 'navire'.
-    
-    """
+    """Commande 'gouvernail'"""
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "navire", "ship")
+        Commande.__init__(self, "gouvernail", "gouvernail")
         self.groupe = "administrateur"
-        self.aide_courte = "manipulation des navires"
+        self.schema = "<cle>"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "ouvre l'éditeur de modèle de navires"
         self.aide_longue = \
-            "Cette commande permet de manipuler les navires, connaître " \
-            "la liste des navires et modèles existants, créer des " \
-            "navires, les téléporter, changer leur orientation, " \
-            "leur vitesse, les forcer à avancer..."
+            "Cette commande ouvre l'éditeur de prototype de navire. " \
+            "Le terme modèle est également utilisé. Vous devez préciser " \
+            "en paramètre la clé du modèle (par exemple |cmd|voilier|ff|). " \
+            "Si le modèle n'existe pas, il sera créé."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_creer = PrmCreer()
-        prm_detruire = PrmDetruire()
-        prm_etendue = PrmEtendue()
-        prm_info = PrmInfo()
-        prm_liste = PrmListe()
-        prm_teleporter = PrmTeleporter()
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        cle = dic_masques["cle"].cle
+        if cle in type(self).importeur.navigation.modeles:
+            modele = type(self).importeur.navigation.modeles[cle]
+        else:
+            modele = type(self).importeur.navigation.creer_modele(cle)
         
-        self.ajouter_parametre(prm_creer)
-        self.ajouter_parametre(prm_detruire)
-        self.ajouter_parametre(prm_etendue)
-        self.ajouter_parametre(prm_info)
-        self.ajouter_parametre(prm_liste)
-        self.ajouter_parametre(prm_teleporter)
+        editeur = type(self).importeur.interpreteur.construire_editeur(
+                "gouvernail", personnage, modele)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()

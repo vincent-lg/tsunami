@@ -28,49 +28,23 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'navire' et ses sous-commandes.
+"""Fichier contenant la classe Gouvernail, détaillée plus bas."""
 
-Dans ce fichier se trouve la commande même.
+from bases.objet.attribut import Attribut
+from .base import BaseElement
 
-"""
-
-from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .detruire import PrmDetruire
-from .etendue import PrmEtendue
-from .info import PrmInfo
-from .liste import PrmListe
-from .teleporter import PrmTeleporter
-
-class CmdNavire(Commande):
+class Gouvernail(BaseElement):
     
-    """Commande 'navire'.
+    """Classe représentant un gouvernail.
     
     """
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "navire", "ship")
-        self.groupe = "administrateur"
-        self.aide_courte = "manipulation des navires"
-        self.aide_longue = \
-            "Cette commande permet de manipuler les navires, connaître " \
-            "la liste des navires et modèles existants, créer des " \
-            "navires, les téléporter, changer leur orientation, " \
-            "leur vitesse, les forcer à avancer..."
+    nom_type = "gouvernail"
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_creer = PrmCreer()
-        prm_detruire = PrmDetruire()
-        prm_etendue = PrmEtendue()
-        prm_info = PrmInfo()
-        prm_liste = PrmListe()
-        prm_teleporter = PrmTeleporter()
-        
-        self.ajouter_parametre(prm_creer)
-        self.ajouter_parametre(prm_detruire)
-        self.ajouter_parametre(prm_etendue)
-        self.ajouter_parametre(prm_info)
-        self.ajouter_parametre(prm_liste)
-        self.ajouter_parametre(prm_teleporter)
+    def __init__(self, cle=""):
+        """Constructeur d'un type"""
+        BaseElement.__init__(self, cle)
+        # Attributs propres aux gouvernails
+        self._attributs = {
+            "orientation": Attribut(lambda: 0),
+        }

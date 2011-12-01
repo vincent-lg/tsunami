@@ -101,6 +101,10 @@ class Module(BaseModule):
         self.nav_logger.info(format_nb(nb_vents,
                 "{nb} vent{s} récupéré{s}"))
         
+        # Ajout de l'action différée
+        self.importeur.diffact.ajouter_action("dep_navire", 3,
+                self.avancer_navires)
+        
         BaseModule.init(self)
     
     def ajouter_commandes(self):
@@ -215,3 +219,11 @@ class Module(BaseModule):
         self.vents[vent.id.id] = vent
         self.vents_par_etendue[vent.etendue.cle] = self.vents_par_etendue.get(
                 vent.etendue.cle, []) + [vent]
+    
+    def avancer_navires(self):
+        """Fait avancer les navires."""
+        self.importeur.diffact.ajouter_action("dep_navire", 3,
+                self.avancer_navires)
+        for navire in self.navires.values():
+            if navire.etendue:
+                navire.avancer(1)
