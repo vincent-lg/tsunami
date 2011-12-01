@@ -75,7 +75,8 @@ class Navire(Vehicule):
                 
                 # On recopie les éléments
                 for t_elt in salle.elements:
-                    n_salle.elements.append(Element(t_elt))
+                    elt = Element(t_elt)
+                    n_salle.elements.append(elt)
                 
                 self.salles[r_coords] = n_salle
                 type(self).importeur.salle.ajouter_salle(n_salle)
@@ -86,7 +87,6 @@ class Navire(Vehicule):
                 for dir, sortie in salle.sorties._sorties.items():
                     if sortie and sortie.salle_dest:
                         c_salle = self.salles[sortie.salle_dest.r_coords]
-                        print(dir, n_salle, c_salle)
                         n_salle.sorties.ajouter_sortie(dir, sortie.nom,
                                 sortie.article, c_salle,
                                 sortie.correspondante)

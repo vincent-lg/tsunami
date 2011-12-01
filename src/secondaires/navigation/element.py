@@ -67,7 +67,8 @@ class Element(BaseObj):
             # C'est un dictionnaire contenant en clé le nom de l'attribut
             # et en valeur le constructeur de l'objet
             for nom, val in prototype._attributs.items():
-                setattr(self, nom, val.construire(self))
+                val = val.construire(self)
+                setattr(self, nom, val)
         
         self._construire()
     

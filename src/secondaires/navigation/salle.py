@@ -32,7 +32,6 @@
 
 from collections import OrderedDict
 
-from bases.collections.liste_id import ListeID
 from primaires.salle.salle import Salle
 
 # Constantes
@@ -78,7 +77,7 @@ class SalleNavire(Salle):
         Salle.__init__(self, zone, mnemonic, valide=False)
         self.navire = navire
         self.modele = modele
-        self.elements = ListeID(self)
+        self.elements = []
         self.r_x = r_x
         self.r_y = r_y
         self.r_z = r_z

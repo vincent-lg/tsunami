@@ -30,6 +30,7 @@
 
 """Fichier contenant la classe Voile, détaillée plus bas."""
 
+from bases.objet.attribut import Attribut
 from .base import BaseElement
 
 class Voile(BaseElement):
@@ -43,3 +44,7 @@ class Voile(BaseElement):
     def __init__(self, cle=""):
         """Constructeur d'un type"""
         BaseElement.__init__(self, cle)
+        # Attributs propres aux voiles
+        self._attributs = {
+            "orientation": Attribut(lambda: 0),
+        }
