@@ -31,6 +31,8 @@
 """Fichier contenant la classe Navire, détaillée plus bas."""
 
 from abstraits.id import ObjetID
+from primaires.vehicule.force import Force
+from primaires.vehicule.vecteur import Vecteur
 from primaires.vehicule.vehicule import Vehicule
 from .element import Element
 from .salle import SalleNavire
@@ -55,6 +57,8 @@ class Navire(Vehicule):
     def __init__(self, modele):
         """Constructeur du navire."""
         Vehicule.__init__(self)
+        self.propulsion = Propulsion(self)
+        self.forces.append(self.propulsion)
         self.etendue = None
         self.elements = []
         if modele:
@@ -102,3 +106,24 @@ class Navire(Vehicule):
 
 
 ObjetID.ajouter_groupe(Navire)
+
+class Propulsion(Force):
+    
+    """Force de propulsion d'un véhicule.
+    
+    Elle doit être fonction du vent, du nombre de voile et de leur
+    orientation.
+    
+    """
+    
+    def __init__(self, subissant):
+        """Constructeur de la force."""
+        Force.__init__(self, subissant)
+    
+    def __getnewargs__(self):
+        return (None, )
+    
+    def calcul(self):
+        """Retourne le vecteur de la force."""
+        direction = self.subissant.direction.normalise()
+        return direction
