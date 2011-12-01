@@ -36,6 +36,10 @@ from primaires.vehicule.vecteur import Vecteur
 from primaires.vehicule.vehicule import Vehicule
 from .element import Element
 from .salle import SalleNavire
+from .vent import INFLUENCE_MAX
+
+# Constantes
+FACTEUR_MIN = 0.1
 
 class Navire(Vehicule):
     
@@ -60,7 +64,6 @@ class Navire(Vehicule):
         self.propulsion = Propulsion(self)
         self.forces.append(self.propulsion)
         self.etendue = None
-        self.elements = []
         if modele:
             self.modele = modele
             modele.vehicules.append(self)
@@ -94,6 +97,64 @@ class Navire(Vehicule):
     def __getnewargs__(self):
         return (None, )
     
+    @property
+    def elements(self):
+        """Retourne un tuple des éléments."""
+        elts = []
+        for salle in self.salles.values():
+            elts.extend(salle.elements)
+        
+        return tuple(elts)
+    
+    @property
+    def voiles(self):
+        """Retourne les éléments voiles du navire."""
+        elts = self.elements
+        return tuple(e for e in elts if e.nom_type == "voile")
+    
+    @property
+    def vent(self):
+        """Retourne le vecteur du vent le plus proche.
+        
+        Il s'agit en fait d'un condensé des vents allentours.
+        
+        """
+        vec_nul = Vecteur(0, 0, 0)
+        
+        if self.etendue is None:
+            return vec_nul
+        
+        # On récupère le vent le plus proche
+        vents = type(self).importeur.navigation.vents_par_etendue.get(
+                self.etendue.cle, [])
+        
+        if not vents:
+            return vec_nul
+        
+        # On sélectionne le vent le plus proche
+        dist_moy = sum((v.vitesse + self.position).norme for v in vents)
+        dist_moy = dist_moy if dist_moy < INFLUENCE_MAX else INFLUENCE_MAX
+        print(dist_moy)
+        
+        # On sélectionne tous les vents distants de 1,5 * dist_moy au maximum
+        vents = [v for v in vents if (v.vitesse - self.position).norme <= \
+                dist_moy * 1.5]
+        
+        # On calcul un vecteur des vents restants
+        vecteur_vent = Vecteur(0, 0, 0)
+        for vent in vents:
+            norme = (vent.vitesse - self.position).norme / 50
+            if norme <= 1:
+                norme = 1.01
+            
+            facteur = 1 / norme 
+            if facteur < FACTEUR_MIN:
+                facteur = FACTEUR_MIN
+            
+            vecteur_vent += facteur * vent.vitesse
+        
+        return vecteur_vent
+    
     def valider_coordonnees(self):
         """Pour chaque salle, valide ses coordonnées."""
         for salle in self.salles.values():
@@ -101,7 +162,7 @@ class Navire(Vehicule):
                 salle.coords.valide = True
     
     def detruire(self):
-        """Destruction du navire."""
+        """Destruction du self."""
         Vehicule.detruire(self)
         self.modele.vehicules.remove(self)
 
@@ -110,7 +171,7 @@ ObjetID.ajouter_groupe(Navire)
 
 class Propulsion(Force):
     
-    """Force de propulsion d'un véhicule.
+    """Force de propulsion d'un navire.
     
     Elle doit être fonction du vent, du nombre de voile et de leur
     orientation.
@@ -126,5 +187,10 @@ class Propulsion(Force):
     
     def calcul(self):
         """Retourne le vecteur de la force."""
-        direction = self.subissant.direction.normalise()
-        return direction
+        navire = self.subissant
+        vent = navire.vent
+        direction = navire.direction
+        voiles = navire.voiles
+        allure = (direction.direction - vent.direction) % 360
+        print(allure)
+        return vent.norme * direction

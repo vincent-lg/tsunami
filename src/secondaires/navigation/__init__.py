@@ -60,7 +60,7 @@ class Module(BaseModule):
         self.navires = {}
         self.elements = {}
         self.types_elements = types_elements
-        self.vents = []
+        self.vents = {}
         self.vents_par_etendue = {}
     
     def init(self):
@@ -93,22 +93,15 @@ class Module(BaseModule):
                 "{nb} élément{s} de navire récupéré{s}"))
         
         # On récupère les vents
-        self.vents = self.importeur.supenr.charger_groupe(Vent)
+        vents = self.importeur.supenr.charger_groupe(Vent)
+        for vent in vents:
+            self.ajouter_vent(vent)
+        
         nb_vents = len(self.vents)
         self.nav_logger.info(format_nb(nb_vents,
                 "{nb} vent{s} récupéré{s}"))
         
         BaseModule.init(self)
-    
-    def preparer(self):
-        """Préparation du module.
-        
-        On ajoute les vents regroupés par étendues.
-        
-        """
-        for vent in self.vents:
-            self.vents_par_etendue[vent.etendue.cle] = \
-                    self.vents_par_etendue.get(vent.etendue.cle, []).append(vent)
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
@@ -219,6 +212,6 @@ class Module(BaseModule):
     
     def ajouter_vent(self, vent):
         """Ajoute le vent."""
-        self.vents.append(vent)
+        self.vents[vent.id.id] = vent
         self.vents_par_etendue[vent.etendue.cle] = self.vents_par_etendue.get(
-                vent.etendue.cle, []).append(vent)
+                vent.etendue.cle, []) + [vent]

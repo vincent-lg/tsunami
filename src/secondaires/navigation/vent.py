@@ -33,6 +33,9 @@
 from abstraits.id import ObjetID
 from primaires.vehicule.vecteur import Vecteur
 
+# Constantes
+INFLUENCE_MAX = 50
+
 class Vent(ObjetID):
     
     """Cette classe décrit un vent influenaçant la navigation.
