@@ -140,7 +140,7 @@ class Vehicule(ObjetID):
             raise ValueError("ce véhicule a une masse nulle")
         
         # On calcule l'accélération à partir des forces
-        self.acceleration = Vecteur(0, 0, 0)
+        self.acceleration = Vecteur(0, 0, 0, self)
         for force in self.forces:
             self.acceleration += (1 / self.masse) * force.valeur
         
