@@ -97,7 +97,8 @@ class Navire(Vehicule):
     def valider_coordonnees(self):
         """Pour chaque salle, valide ses coordonnées."""
         for salle in self.salles.values():
-            salle.coords.valide = True
+            if not salle.coords.valide:
+                salle.coords.valide = True
     
     def detruire(self):
         """Destruction du navire."""

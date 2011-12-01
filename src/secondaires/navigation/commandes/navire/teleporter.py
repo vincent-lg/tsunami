@@ -63,7 +63,7 @@ class PrmTeleporter(Parametre):
         navire.position.x = x
         navire.position.y = y
         navire.position.z = z
-        navire.valider_coordonnees()
         navire.maj_salles()
+        navire.valider_coordonnees()
         personnage << "Le navire {} a été téléportée aux coordonnées " \
                 "{}.{}.{}.".format(navire.cle, x, y, z)
