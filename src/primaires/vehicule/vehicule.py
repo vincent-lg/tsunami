@@ -122,7 +122,10 @@ class Vehicule(ObjetID):
         operation = lambda v: self.position + v.tourner_autour_z(d).incliner(i)
         for vec, salle in self.salles.items():
             vec = Vecteur(*vec)
-            salle.coords = operation(vec).coordonnees
+            vec = operation(vec)
+            salle.coords.x = int(vec.x)
+            salle.coords.y = int(vec.y)
+            salle.coords.z = int(vec.z)
 
     def avancer(self, temps):
         """Fait avancer le véhicule.
