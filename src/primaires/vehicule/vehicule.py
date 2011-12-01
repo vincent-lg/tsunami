@@ -123,9 +123,9 @@ class Vehicule(ObjetID):
         for vec, salle in self.salles.items():
             vec = Vecteur(*vec)
             vec = operation(vec)
-            salle.coords.x = int(vec.x)
-            salle.coords.y = int(vec.y)
-            salle.coords.z = int(vec.z)
+            salle.coords.x = vec.x
+            salle.coords.y = vec.y
+            salle.coords.z = vec.z
 
     def avancer(self, temps):
         """Fait avancer le véhicule.

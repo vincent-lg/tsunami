@@ -63,7 +63,7 @@ class Coordonnees(BaseObj):
     def __str__(self):
         """Affiche les coordonnées plus proprement"""
         if self.valide:
-            res = "{}.{}.{}".format(self.x, self.y, self.z)
+            res = "{}.{}.{}".format(int(self.x), int(self.y), int(self.z))
         else:
             res = "INV"
         return res
