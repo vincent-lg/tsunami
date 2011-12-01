@@ -308,7 +308,8 @@ class Module(BaseModule):
         """
         a_x, a_y, a_z, a_valide = ancien_tuple
         salle = nouvelles_coords.parent
-        if a_valide: # on va supprimer les anciennes coordonnées
+        if a_valide and (a_x, a_y, a_z) in self._coords:
+            # on va supprimer les anciennes coordonnées
             del self._coords[a_x, a_y, a_z]
         if salle and nouvelles_coords.valide:
             self._coords[nouvelles_coords.tuple()] = salle
