@@ -56,6 +56,7 @@ class PrmEtendue(Parametre):
         navire = dic_masques["cle_navire"].navire
         etendue = dic_masques["etendue"].etendue
         navire.etendue = etendue
+        navire.valider_coordonnees()
         personnage << \
                 "Le navire {} a bien été placé dans l'étendue {}.".format(
                 navire.cle, etendue.cle)
