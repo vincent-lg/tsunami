@@ -136,6 +136,7 @@ class Commande(Masque):
         parametre.adresse = self.adresse + SEP + parametre.nom_francais
         parametre.parente = self
         parametre.deduire_groupe()
+        parametre.ajouter()
         
         type(self).importeur.interpreteur.groupes.ajouter_commande(parametre)
         
