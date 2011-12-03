@@ -28,9 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant le paramètre 'créer' de la commande 'vent'."""
 
-from . import eltedit
-from . import navire
-from . import shedit
-from . import vent
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmCreer(Parametre):
+    
+    """Commande 'vent créer'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "créer", "create")
+        self.schema = "<etendue> (<coordonnees>)"
+        self.aide_courte = "crée un vent dans une étendue"
+        self.aide_longue = \
+                "Cette commande crée un vent dans une étendue existante."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        # On récupère l'étendue
+        etendue = dic_masques["etendue"].etendue
+        if dic_masques["coordonnees"]:
+            coordonnees = dic_masques["coordonnees"].coordonnees
+        else:
+            coordonnees = (0, 0, 0)
+        
+        vent = type(self).importeur.navigation.creer_vent(etendue,
+                *coordonnees)
+        personnage << "Le vent {} a bien été créé.".format(vent.cle)

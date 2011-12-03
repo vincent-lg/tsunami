@@ -31,4 +31,5 @@
 """Package des masques du module navigation."""
 
 from . import cle_navire
+from . import cle_vent
 from . import modele

@@ -28,9 +28,48 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'vent' et ses sous-commandes.
 
-from . import eltedit
-from . import navire
-from . import shedit
-from . import vent
+Dans ce fichier se trouve la commande même.
+
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+from .creer import PrmCreer
+from .detruire import PrmDetruire
+from .direction import PrmDirection
+from .info import PrmInfo
+from .liste import PrmListe
+from .position import PrmPosition
+
+class CmdVent(Commande):
+    
+    """Commande 'vent'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "vent", "wind")
+        self.groupe = "administrateur"
+        self.aide_courte = "manipulation des vents"
+        self.aide_longue = \
+            "Cette commande permet de manipuler les vents, connaître " \
+            "la liste des vents existants, créer des " \
+            "vents, les positionner, changer leur orientation..."
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
+        prm_creer = PrmCreer()
+        prm_detruire = PrmDetruire()
+        prm_direction = PrmDirection()
+        prm_info = PrmInfo()
+        prm_liste = PrmListe()
+        prm_position = PrmPosition()
+        
+        self.ajouter_parametre(prm_creer)
+        self.ajouter_parametre(prm_detruire)
+        self.ajouter_parametre(prm_direction)
+        self.ajouter_parametre(prm_info)
+        self.ajouter_parametre(prm_liste)
+        self.ajouter_parametre(prm_position)

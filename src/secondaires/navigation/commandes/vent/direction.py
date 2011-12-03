@@ -28,9 +28,41 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant le paramètre 'direction' de la commande 'vent'."""
 
-from . import eltedit
-from . import navire
-from . import shedit
-from . import vent
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmDirection(Parametre):
+    
+    """Commande 'vent direction'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "direction", "direction")
+        self.schema = "<cle_vent> <nombre>"
+        self.aide_courte = "place le vent dans la direction"
+        self.aide_longue = \
+            "Cette commande place le vent dans la direction " \
+            "indiquée. Celle-ci doit être en degré, entre 0 (est) et " \
+            "359. Le sens de rotation est horaire, ainsi, 45 => " \
+            "sud-est, 90 => sud et ainsi de suite. Elle prend " \
+            "en premier argument la clé du vent et en second " \
+            "la direction sous la forme d'un angle."
+    
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nombre = self.noeud.get_masque("nombre")
+        nombre.proprietes["limite_inf"] = "0"
+        nombre.proprietes["limite_sup"] = "359"
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        # On récupère le vent et la direction
+        vent = dic_masques["cle_vent"].vent
+        direction = dic_masques["nombre"].nombre
+        vent.vitesse.orienter(direction)
+        personnage << \
+                "Le vent {} a bien été placé dans ladirection {}°.".format(
+                vent.cle, direction)

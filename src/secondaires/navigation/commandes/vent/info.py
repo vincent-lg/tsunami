@@ -28,9 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant le paramètre 'info' de la commande 'vent'."""
 
-from . import eltedit
-from . import navire
-from . import shedit
-from . import vent
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmInfo(Parametre):
+    
+    """Commande 'vent info'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "info", "info")
+        self.schema = "<cle_vent>"
+        self.aide_courte = "donne des informations sur un vent"
+        self.aide_longue = \
+            "Cette commande donne des informations sur le vent passé " \
+            "en paramètre."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        vent = dic_masques["cle_vent"].vent
+        etendue = vent.etendue
+        etendue = etendue and etendue.cle or "aucune"
+        direction = vent.vitesse.direction
+        nom_direction = vent.vitesse.nom_direction
+        vitesse = vent.vitesse.norme
+        vitesse = round(vitesse, 3)
+        vitesse = str(vitesse).replace(".", ",")
+        msg = "Informations sur le vent {} :\n".format(vent.cle)
+        msg += "\n  Étendue : " + etendue
+        msg += "\n  Position : {}".format(vent.coordonnees)
+        msg += "\n  Vitesse : {}".format(vitesse)
+        msg += "\n  Direction : {} ({})".format(direction, nom_direction)
+        personnage << msg

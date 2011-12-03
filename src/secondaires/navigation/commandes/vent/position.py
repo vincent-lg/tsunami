@@ -28,9 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant le paramètre 'position' de la commande 'vent'."""
 
-from . import eltedit
-from . import navire
-from . import shedit
-from . import vent
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmPosition(Parametre):
+    
+    """Commande 'vent position'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "position", "location")
+        self.schema = "<cle_vent> <coordonnees>"
+        self.aide_courte = "place le vent aux coordonnées"
+        self.aide_longue = \
+            "Cette commande place le vent aux coordonnées indiques. " \
+            "Les coordonnées sont sous la forme |cmd|X.Y.Z|ff|. Chaque " \
+            "âxe doit être remplacé par un nombre entier, négatif, " \
+            "positif ou nul. Par exemple : |cmd|0.5.-3|ff|. Veillez " \
+            "à placer le vent dans les limites de l'étendue."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        # On récupère le vent et les coordonnées
+        vent = dic_masques["cle_vent"].vent
+        x, y, z = dic_masques["coordonnees"].coordonnees
+        vent.x = x
+        vent.y = y
+        vent.z = z
+        personnage << "Le vent {} a été placé aux coordonnées " \
+                "{}.{}.{}.".format(vent.cle, x, y, z)

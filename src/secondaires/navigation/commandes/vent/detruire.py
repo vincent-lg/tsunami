@@ -28,9 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant le paramètre 'détruire' de la commande 'vent'."""
 
-from . import eltedit
-from . import navire
-from . import shedit
-from . import vent
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmDetruire(Parametre):
+    
+    """Commande 'vent détruire'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "détruire", "destroy")
+        self.schema = "<cle_vent>"
+        self.aide_courte = "détruit un vent"
+        self.aide_longue = \
+            "Cette commande détruit le vent passé en paramètre."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        # On récupère le vent
+        vent = dic_masques["cle_vent"].vent
+        type(self).importeur.navigation.supprimer_vent(vent.cle)
+        personnage << "Le vent {} a bien été supprimé.".format(vent.cle)

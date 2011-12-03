@@ -28,9 +28,55 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant le masque <cle_vent>."""
 
-from . import eltedit
-from . import navire
-from . import shedit
-from . import vent
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+
+class CleVent(Masque):
+    
+    """Masque <cle_vent>.
+    
+    On attend une clé de vent en paramètre.
+    
+    """
+    
+    nom = "cle_vent"
+    nom_complet = "clé d'un vent"
+    
+    def init(self):
+        """Initialisation des attributs"""
+        self.identifiant = ""
+        self.vent = None
+    
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
+        ident = liste_vers_chaine(commande)
+        
+        if not ident:
+            raise ErreurValidation( \
+                "Précisez un clé de vent.")
+        
+        ident = ident.split(" ")[0].lower()
+        self.a_interpreter = ident
+        commande[:] = commande[len(ident):]
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        ident = self.a_interpreter
+        
+        try:
+            vent = type(self).importeur.navigation.vents[ident]
+        except KeyError:
+            raise ErreurValidation(
+                "|err|L'identifiant '{}' n'est pas valide.|ff|".format(ident))
+        
+        self.vent = vent
+        self.ident = vent.cle
+        
+        return True

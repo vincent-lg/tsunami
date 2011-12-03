@@ -113,6 +113,7 @@ class Module(BaseModule):
             commandes.eltedit.CmdEltedit(),
             commandes.navire.CmdNavire(),
             commandes.shedit.CmdShedit(),
+            commandes.vent.CmdVent(),
         ]
         
         for cmd in self.commandes:
@@ -216,9 +217,16 @@ class Module(BaseModule):
     
     def ajouter_vent(self, vent):
         """Ajoute le vent."""
-        self.vents[vent.id.id] = vent
+        self.vents[vent.cle] = vent
         self.vents_par_etendue[vent.etendue.cle] = self.vents_par_etendue.get(
                 vent.etendue.cle, []) + [vent]
+    
+    def supprimer_vent(self, cle):
+        """Supprime le vent."""
+        vent = self.vents[cle]
+        self.vents_par_etendue[vent.etendue.cle].remove(vent)
+        del self.vents[cle]
+        vent.detruire()
     
     def avancer_navires(self):
         """Fait avancer les navires."""

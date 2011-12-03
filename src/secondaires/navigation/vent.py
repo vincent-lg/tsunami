@@ -31,6 +31,7 @@
 """Ce fichier contient la classe Vent, détaillée plus bas."""
 
 from abstraits.id import ObjetID
+from primaires.salle.coordonnees import Coordonnees
 from primaires.vehicule.vecteur import Vecteur
 
 # Constantes
@@ -41,6 +42,7 @@ class Vent(ObjetID):
     """Cette classe décrit un vent influenaçant la navigation.
     
     Attributs définis :
+        cle -- la clé du vent
         etendue -- l'étendue dans laquelle il est défini
         position -- la position du vent dans l'étendue (coordonnées absolues)
         vitesse -- la vitesse et la direction du vent [1]
@@ -64,19 +66,28 @@ class Vent(ObjetID):
         
         """
         ObjetID.__init__(self)
+        self.cle = "inconnue"
         self.etendue = etendue
         self.x = x
         self.y = y
         self.z = z
         self.vitesse = vitesse * Vecteur(1, 0, 0, self)
         self.vitesse.orienter(direction)
+        if etendue:
+            self.cle = etendue.cle + "_" + str(
+                    len(type(self).importeur.navigation.vents_par_etendue.get(
+                    etendue.cle, [])) + 1)
     
     def __getnewargs__(self):
         return (None, 0, 0, 0)
     
     def __repr__(self):
-        return "vent(étendue={}, x={}, y={}, z={}, vitesse={})".format(
-                self.etendue, self.x, self.y, self.z, self.vitesse)
+        return "vent {} (étendue={}, x={}, y={}, z={}, vitesse={})".format(
+                self.cle, self.etendue, self.x, self.y, self.z, self.vitesse)   
+    
+    @property
+    def coordonnees(self):
+        return Coordonnees(self.x, self.y, self.z)
 
 
 ObjetID.ajouter_groupe(Vent)
