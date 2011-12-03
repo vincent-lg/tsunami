@@ -28,52 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'navire' et ses sous-commandes.
+"""Fichier contenant le paramètre 'direction' de la commande 'navire'."""
 
-Dans ce fichier se trouve la commande même.
+from primaires.interpreteur.masque.parametre import Parametre
 
-"""
-
-from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .detruire import PrmDetruire
-from .direction import PrmDirection
-from .etendue import PrmEtendue
-from .info import PrmInfo
-from .liste import PrmListe
-from .teleporter import PrmTeleporter
-
-class CmdNavire(Commande):
+class PrmDirection(Parametre):
     
-    """Commande 'navire'.
+    """Commande 'navire direction'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "navire", "ship")
-        self.groupe = "administrateur"
-        self.aide_courte = "manipulation des navires"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "direction", "direction")
+        self.schema = "<cle_navire> <nombre>"
+        self.aide_courte = "place le navire dans la direction"
         self.aide_longue = \
-            "Cette commande permet de manipuler les navires, connaître " \
-            "la liste des navires et modèles existants, créer des " \
-            "navires, les téléporter, changer leur orientation, " \
-            "leur vitesse, les forcer à avancer..."
+            "Cette commande place le navire dans la direction " \
+            "indiquée. Celle-ci doit être en degré, entre 0 (est) et " \
+            "359. Le sens de rotation est horaire, ainsi, 45 => " \
+            "sud-est, 90 => sud et ainsi de suite. Elle prend " \
+            "en premier argument la clé du navire et en second " \
+            "la direction sous la forme d'un angle."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_creer = PrmCreer()
-        prm_detruire = PrmDetruire()
-        prm_direction = PrmDirection()
-        prm_etendue = PrmEtendue()
-        prm_info = PrmInfo()
-        prm_liste = PrmListe()
-        prm_teleporter = PrmTeleporter()
-        
-        self.ajouter_parametre(prm_creer)
-        self.ajouter_parametre(prm_detruire)
-        self.ajouter_parametre(prm_direction)
-        self.ajouter_parametre(prm_etendue)
-        self.ajouter_parametre(prm_info)
-        self.ajouter_parametre(prm_liste)
-        self.ajouter_parametre(prm_teleporter)
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nom_objet = self.noeud.get_masque("nombre")
+        nom_objet.proprietes["limite_inf"] = "0"
+        nom_objet.proprietes["limite_sup"] = "359"
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        # On récupère le navire et l'direction
+        navire = dic_masques["cle_navire"].navire
+        direction = dic_masques["nombre"].nombre
+        navire.direction.orienter(direction)
+        navire.maj_salles()
+        personnage << \
+                "Le navire {} a bien été placé dans ladirection {}°.".format(
+                navire.cle, direction)
