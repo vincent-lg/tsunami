@@ -88,6 +88,19 @@ class Vent(ObjetID):
     @property
     def coordonnees(self):
         return Coordonnees(self.x, self.y, self.z)
+    
+    def changer_force(self, force):
+        """"Change la force du vent.
+        
+        La force passée en paramètre est la norme de la nouvelle vitesse.
+        
+        """
+        vitesse = self.vitesse
+        normalise = vitesse.normalise()
+        force = force * normalise
+        self.vitesse.x = force.x
+        self.vitesse.y = force.y
+        self.vitesse.z = force.z
 
 
 ObjetID.ajouter_groupe(Vent)

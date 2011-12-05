@@ -28,51 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'vent' et ses sous-commandes.
+"""Fichier contenant le paramètre 'force' de la commande 'vent'."""
 
-Dans ce fichier se trouve la commande même.
+from primaires.interpreteur.masque.parametre import Parametre
 
-"""
-
-from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .detruire import PrmDetruire
-from .direction import PrmDirection
-from .force import PrmForce
-from .info import PrmInfo
-from .liste import PrmListe
-from .position import PrmPosition
-
-class CmdVent(Commande):
+class PrmForce(Parametre):
     
-    """Commande 'vent'.
+    """Commande 'vent force'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "vent", "wind")
-        self.groupe = "administrateur"
-        self.aide_courte = "manipulation des vents"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "force", "strength")
+        self.schema = "<cle_vent> <nombre>"
+        self.aide_courte = "change la force du vent"
         self.aide_longue = \
-            "Cette commande permet de manipuler les vents, connaître " \
-            "la liste des vents existants, créer des " \
-            "vents, les positionner, changer leur orientation..."
+            "Cette commande permet de changer la force du vent. Cela " \
+            "influe directement sur sa vitesse."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_creer = PrmCreer()
-        prm_detruire = PrmDetruire()
-        prm_direction = PrmDirection()
-        prm_force = PrmForce()
-        prm_info = PrmInfo()
-        prm_liste = PrmListe()
-        prm_position = PrmPosition()
-        
-        self.ajouter_parametre(prm_creer)
-        self.ajouter_parametre(prm_detruire)
-        self.ajouter_parametre(prm_direction)
-        self.ajouter_parametre(prm_force)
-        self.ajouter_parametre(prm_info)
-        self.ajouter_parametre(prm_liste)
-        self.ajouter_parametre(prm_position)
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nombre = self.noeud.get_masque("nombre")
+        nombre.proprietes["limite_inf"] = "0"
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        # On récupère le vent et la force
+        vent = dic_masques["cle_vent"].vent
+        force = dic_masques["nombre"].nombre
+        vent.changer_force(force)
+        personnage << \
+                "Le vent {} a à présent une force de {}.".format(
+                vent.cle, force)
