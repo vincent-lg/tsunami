@@ -16,8 +16,9 @@ def scan_fichier(nom_fichier):
     nb_lignes_code = 0
     nb_lignes_commentaire = 0
     fichier = open(nom_fichier, 'r', encoding = 'utf-8')
+    lignes = fichier.readlines()[29:]
     commentaire = False
-    for ligne in fichier:
+    for ligne in lignes:
         ligne = ligne.strip()
         if ligne:
             nb_lignes += 1
