@@ -108,6 +108,6 @@ class Voile(BaseElement):
         
         facteur = 1 - (angle - or_voile) / 20
         if facteur < 0:
-            facteur + 0
+            facteur = 0
         
         return facteur

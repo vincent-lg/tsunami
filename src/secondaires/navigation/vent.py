@@ -71,8 +71,10 @@ class Vent(ObjetID):
         self.x = x
         self.y = y
         self.z = z
-        self.vitesse = vitesse * Vecteur(1, 0, 0, self)
+        self.vitesse = vitesse * Vecteur(1, 0, 0)
+        self.vitesse.parent = self
         self.vitesse.orienter(direction)
+        self.longueur = 20
         if etendue:
             self.cle = etendue.cle + "_" + str(
                     len(type(self).importeur.navigation.vents_par_etendue.get(

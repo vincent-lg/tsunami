@@ -41,6 +41,7 @@ from .direction import PrmDirection
 from .force import PrmForce
 from .info import PrmInfo
 from .liste import PrmListe
+from .longueur import PrmLongueur
 from .position import PrmPosition
 
 class CmdVent(Commande):
@@ -67,6 +68,7 @@ class CmdVent(Commande):
         prm_force = PrmForce()
         prm_info = PrmInfo()
         prm_liste = PrmListe()
+        prm_longueur = PrmLongueur()
         prm_position = PrmPosition()
         
         self.ajouter_parametre(prm_creer)
@@ -75,4 +77,5 @@ class CmdVent(Commande):
         self.ajouter_parametre(prm_force)
         self.ajouter_parametre(prm_info)
         self.ajouter_parametre(prm_liste)
+        self.ajouter_parametre(prm_longueur)
         self.ajouter_parametre(prm_position)

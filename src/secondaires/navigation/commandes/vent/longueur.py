@@ -28,39 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'info' de la commande 'vent'."""
+"""Fichier contenant le paramètre 'longueur' de la commande 'vent'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmInfo(Parametre):
+class PrmLongueur(Parametre):
     
-    """Commande 'vent info'.
+    """Commande 'vent longueur'.
     
     """
     
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "info", "info")
-        self.schema = "<cle_vent>"
-        self.aide_courte = "donne des informations sur un vent"
+        Parametre.__init__(self, "longueur", "length")
+        self.schema = "<cle_vent> <nombre>"
+        self.aide_courte = "change la longueur du vent"
         self.aide_longue = \
-            "Cette commande donne des informations sur le vent passé " \
-            "en paramètre."
+            "La longueur est la zone dans laquelle le vent influe. " \
+            "Si il a une longueur de 20, les navires à moins de 20 " \
+            "seront affectés par le vent. Plus loin, ils le seront " \
+            "toujours mais de façon moins importante."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
+        # On récupère le vent et la longueur
         vent = dic_masques["cle_vent"].vent
-        etendue = vent.etendue
-        etendue = etendue and etendue.cle or "aucune"
-        direction = vent.vitesse.direction
-        nom_direction = vent.vitesse.nom_direction
-        vitesse = vent.vitesse.norme
-        vitesse = round(vitesse, 3)
-        vitesse = str(vitesse).replace(".", ",")
-        msg = "Informations sur le vent {} :\n".format(vent.cle)
-        msg += "\n  Étendue : " + etendue
-        msg += "\n  Position : {}".format(vent.coordonnees)
-        msg += "\n  Longueur : {}".format(vent.longueur)
-        msg += "\n  Vitesse : {}".format(vitesse)
-        msg += "\n  Direction : {} ({})".format(direction, nom_direction)
-        personnage << msg
+        longueur = dic_masques["nombre"].nombre
+        vent.longueur = longueur
+        personnage << \
+                "Le vent {} a à présent une longueur de {}.".format(
+                vent.cle, longueur)

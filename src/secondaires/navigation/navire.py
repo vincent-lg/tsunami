@@ -243,6 +243,8 @@ class Propulsion(Force):
         if not voiles:
             return vec_nul
         
+        fact_voile = sum(v.facteur_orientation(v, navire, vent) \
+                for v in voiles) / len(voiles) * 0.7
         allure = (direction.direction - vent.direction) % 360
         if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
             facteur = navire.vent_debout()
@@ -257,4 +259,4 @@ class Propulsion(Force):
         else:
             facteur = navire.vent_arriere()
         
-        return facteur * vent.norme * direction
+        return facteur * fact_voile * vent.norme * direction
