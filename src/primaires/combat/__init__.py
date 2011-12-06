@@ -50,8 +50,6 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "combat", "primaire")
         self.combats = {}
-        self.cibles = {}
-        self.cibles_potentielles = {}
     
     def init(self):
         """Initialisation du module."""
@@ -78,7 +76,7 @@ class Module(BaseModule):
         etat = self.importeur.perso.ajouter_etat("combat")
         etat.msg_refus = "Vous êtes en train de combattre"
         etat.msg_visible = "{personnage} combat ici"
-        etat.act_interdites = ["combat", "prendre", "poser"]
+        etat.act_interdites = ["combat", "prendre", "poser", "deplacer"]
         
         BaseModule.init(self)
         

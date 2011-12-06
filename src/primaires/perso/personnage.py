@@ -300,6 +300,7 @@ class Personnage(ObjetID):
     
     def deplacer_vers(self, sortie):
         """Déplacement vers la sortie 'sortie'"""
+        self.agir("deplacer")
         salle = self.salle
         salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
         sortie = salle.sorties.get_sortie_par_nom(sortie)

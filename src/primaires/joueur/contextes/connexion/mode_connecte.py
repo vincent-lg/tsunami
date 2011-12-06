@@ -86,10 +86,16 @@ class ModeConnecte(Contexte):
         
         """
         # On commence par parcourir tous les modules
+        res = False
         for module in type(self).importeur.modules:
-            res = module.traiter_commande(self.pere.joueur, msg)
-            if res:
-                break
+            try:
+                res = module.traiter_commande(self.pere.joueur, msg)
+            except ExceptionAction as err_act:
+                self.pere.joueur << "|err|{}|ff|".format(err_act)
+                return
+            else:
+                if res:
+                    break
         
         if not res:
             interpreteur = type(self).importeur.interpreteur
