@@ -123,29 +123,31 @@ class EdtHedit(Presentation):
             "Entrez un |ent|nouveau mot-clé|ff| pour l'ajouter à la liste, " \
             "un |ent|mot-clé existant|ff| pour\nle supprimer ou |cmd|/|ff| " \
             "pour revenir à la fenêtre précédente.\n" \
-            "|bc|{objet.str_mots_cles}|ff|"
+            "Mots-clés de ce sujet : |bc|{objet.str_mots_cles}|ff|"
         
         # Sujets liés
         lies = self.ajouter_choix("sujets liés", "l", EdtLies, sujet)
         lies.parent = self
-        lies.prompt = "Entrez le nom d'un sujet lié :"
+        lies.prompt = "Entrez le nom d'un sujet :"
         lies.aide_courte = \
-            "Entrez le nom d'un sujet pour l'ajouter aux sujets liés ou le supprimer.\n"
-        if sujet.sujets_lies:
-            lies.aide_courte += "\n".join([s.titre for s in sujet.sujets_lies])
-        else:
-            lies.aide_courte += "|att|Aucun sujet lié pour l'instant.|ff|"
+            "Entrez le |ent|nom|ff| d'un sujet pour l'ajouter à la liste " \
+            "des sujets liés ou\nl'en supprimer ; / pour revenir à la " \
+            "fenêtre précédente.\n" \
+            "Sujets liés à celui-ci : |bc|{objet.str_sujets_lies}|ff|"
+        
         
         # Sujets fils
         fils = self.ajouter_choix("sujets fils", "f", EdtFils, sujet)
         fils.parent = self
-        fils.prompt = "Entrez le nom d'un sujet fils :"
         fils.aide_courte = \
-            "Entrez le nom d'un sujet pour l'ajouter aux sujets fils ou le supprimer.\n"
-        if sujet.sujets_fils:
-            fils.aide_courte += "\n".join([s.titre for s in sujet.sujets_fils])
-        else:
-            fils.aide_courte += "|att|Aucun sujet fils pour l'instant.|ff|"
+            "Entrez le |ent|nom|ff| d'un sujet. Si il n'est pas dans la " \
+            "liste des sujets liés,\n" \
+            "il y sera ajouté, sinon il en sera supprimé.\n" \
+            "Options :\n" \
+            " - |ent|/u <sujet fils>|ff| : déplace un sujet vers le haut de " \
+            "la liste\n" \
+            " - |ent|/d <sujet fils>|ff| : déplace le sujet vers le bas\n\n" \
+            "{objet.tab_sujets_fils}"
         
         # Suppression
         suppression = self.ajouter_choix("supprimer", "sup", NSupprimer, \

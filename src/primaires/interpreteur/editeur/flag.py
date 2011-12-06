@@ -1,4 +1,4 @@
-﻿# -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -25,35 +25,28 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le contexte-éditeur EdtLies"""
+"""Ce fichier définit le contexte-éditeur 'flag'."""
 
-from primaires.interpreteur.editeur.uniligne import Uniligne
-from primaires.format.fonctions import supprimer_accents
+from . import Editeur
 
-class EdtLies(Uniligne):
+class Flag(Editeur):
     
-    """Classe définissant le contexte-éditeur 'liés'.
-    Ce contexte permet de relier des sujets d'aide au sujet présent.
+    """Contexte-éditeur flag.
+    
+    Ce contexte permet de changer la valeur True ou False d'un attribut.
     
     """
     
-    def interpreter(self, msg):
-        """Interprétation du message"""
-        sujet = self.objet
-        sujet_a_lier = type(self).importeur.information.get_sujet(msg)
-        if not sujet_a_lier:
-            self.pere << "|err|Le sujet {} n'existe pas.|ff|".format(msg)
-        elif sujet_a_lier is sujet:
-            self.pere << "|err|Vous ne pouvez lier un sujet avec lui-même.|ff|"
-        elif sujet.est_fils(sujet_a_lier) or sujet.pere is sujet_a_lier:
-            self.pere << "|err|Le sujet {} est déjà fils ou père du sujet " \
-                    "présent.|ff|".format(msg)
+    nom = "editeur:base:flag"
+    
+    def entrer(self):
+        """Quand on entre dans le contexte"""
+        if self.opts.rci_ctx_prec:
+            setattr(self.objet, self.attribut, not getattr(self.objet,
+                    self.attribut))
+            self.migrer_contexte(self.opts.rci_ctx_prec)
         else:
-            if sujet.est_lie(sujet_a_lier):
-                sujet.supprimer_lie(sujet_a_lier)
-            else:
-                sujet.ajouter_lie(sujet_a_lier)
-            self.actualiser()
+            self.pere << "|err|Aucun parent n'a été défini pour ce contexte.|ff|"

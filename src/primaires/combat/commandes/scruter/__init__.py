@@ -28,7 +28,44 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module perso."""
+"""Package contenant la commande 'scruter'.
 
-from . import tuer
-from . import scruter
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdScruter(Commande):
+    
+    """Commande 'scruter'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "scruter", "scan")
+        self.aide_courte = "cherche les personnages alentours"
+        self.aide_longue = \
+            "Cette commande vous fait scruter les alentours à la " \
+            "recherche de personnages."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation de la commande"""
+        rayon = 5
+        
+        # On commence par lister les salles alentours
+        salles = {} # distance: [salle]}
+        lst_salles = []
+        def chercher_salles(salle, distance):
+            if salle in salles:
+                return
+            
+            s_dists = salles.get(distance, [])
+            s_dists.append(salle)
+            salles[distance] = s_dists
+            for nom, s in salle.sorties.iter_couple():
+                if s and s.salle_dest and distance < rayon:
+                    chercher_salles(s.salle_dest, distance + 1)
+        
+        chercher_salles(personnage.salle, 0)
+        print(salles)
+        personnage << "OK."

@@ -66,7 +66,7 @@ class Etat:
     """
     
     def __init__(self, cle):
-        """Constructeur d"'un état."""
+        """Constructeur d'un état."""
         self.cle = cle
         self.msg_refus = "Vous ne pouvez faire cela."
         self.msg_visible = "{personnage} fait quelque chose."

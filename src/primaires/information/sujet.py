@@ -61,7 +61,7 @@ class SujetAide(ObjetID):
         """Constructeur du sujet d'aide."""
         ObjetID.__init__(self)
         self._titre = titre.lower().split(" ")[0]
-        self.pere = ""
+        self._pere = None
         self.resume = "sujet d'aide"
         self.contenu = Description(parent=self)
         self.mots_cles = []
@@ -85,6 +85,15 @@ class SujetAide(ObjetID):
             self._titre = titre
     titre = property(_get_titre, _set_titre)
     
+    def _get_pere(self):
+        if self._pere is None:
+            return None
+        else:
+            return type(self).importeur.parid["aide"][self._pere]
+    def _set_pere(self, pere):
+        self._pere = pere.id if pere else None
+    pere = property(_get_pere, _set_pere)
+    
     @property
     def str_mots_cles(self):
         return ", ".join(self.mots_cles) or "aucun mot-clé"
@@ -106,8 +115,79 @@ class SujetAide(ObjetID):
         return [s for s in self.__sujets_lies if s is not None]
     
     @property
+    def str_sujets_lies(self):
+        """Retourne une chaîne contenant les sujets liés."""
+        return ", ".join([s.titre for s in self.sujets_lies]) or "aucun sujet lié"
+    
+    @property
     def sujets_fils(self):
         """Retourne une liste déréférencée des sujets fils."""
         return [s for s in self.__sujets_fils if s is not None]
+    
+    @property
+    def tab_sujets_fils(self):
+        """Retourne un tableau des sujets fils."""
+        lignes = []
+        taille = max([len(s.titre) for s in self.sujets_fils] or (10, ))
+        sep = "+" + (taille + 2) * "-" + "+" + 52 * "-" + "+"
+        en_tete = sep + "\n" + "| |tit|" + "Sujet".ljust(taille) + "|ff| |"
+        en_tete += " |tit|" + "Résumé".ljust(50) + "|ff| |\n" + sep
+        for s in self.sujets_fils:
+            ligne = "| |ent|" + s.titre.ljust(taille) + "|ff| | "
+            ligne += s.resume.ljust(50) + " |"
+            lignes.append(ligne)
+        if lignes:
+            return en_tete + "\n" + "\n".join(lignes) + "\n" + sep
+        else:
+            return "|att|Aucun sujet affilié.|ff|"
+    
+    def est_lie(self, sujet):
+        """Retourne True si le sujet est lié, False sinon."""
+        return sujet in self.__sujets_lies and self in sujet.__sujets_lies
+    
+    def ajouter_lie(self, sujet):
+        """Lie un sujet au courant."""
+        self.__sujets_lies.append(sujet)
+        sujet.__sujets_lies.append(self)
+        self.enregistrer()
+        sujet.enregistrer()
+    
+    def supprimer_lie(self, sujet):
+        """Supprime un sujet de la liste des sujets liés."""
+        self.__sujets_lies.remove(sujet)
+        sujet.__sujets_lies.remove(self)
+        self.enregistrer()
+        sujet.enregistrer()
+    
+    def est_fils(self, sujet):
+        """Retourne True si le sujet est fils de celui-ci, False sinon."""
+        return sujet in self.__sujets_fils and sujet.pere is self
+    
+    def ajouter_fils(self, sujet):
+        """Ajoute le sujet aux fils."""
+        self.__sujets_fils.append(sujet)
+        sujet.pere = self
+        self.enregistrer()
+        sujet.enregistrer()
+    
+    def supprimer_fils(self, sujet):
+        """Supprime le sujet des fils."""
+        self.__sujets_fils.remove(sujet)
+        sujet.pere = None
+        self.enregistrer()
+        sujet.enregistrer()
+    
+    def echanger_fils(self, sujet, bas=False):
+        """Change un fils de place vers le haut ou le bas de la liste."""
+        i = self.sujets_fils.index(sujet)
+        if i == 0 and not bas:
+            raise ValueError("le sujet est déjà en haut de la liste")
+        elif i == len(self.__sujets_fils) - 1 and bas:
+            raise ValueError("le sujet est déjà en bas de la liste")
+        del self.__sujets_fils[i]
+        if not bas:
+            self.__sujets_fils.insert(i - 1, sujet)
+        else:
+            self.__sujets_fils.insert(i + 1, sujet)
 
 ObjetID.ajouter_groupe(SujetAide)

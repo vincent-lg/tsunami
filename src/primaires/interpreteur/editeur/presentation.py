@@ -31,9 +31,11 @@
 """Ce fichier définit le contexte-éditeur 'présentation'."""
 
 from collections import OrderedDict
+from primaires.format.fonctions import oui_ou_non
 from . import Editeur
 from .quitter import Quitter
 from .env_objet import EnveloppeObjet
+from .flag import Flag
 
 class Presentation(Editeur):
     
@@ -150,7 +152,11 @@ class Presentation(Editeur):
                     nom_maj[pos + len(raccourci):]
             msg += "\n " + nom_m
             enveloppe = self.choix[nom]
-            apercu = enveloppe.get_apercu()
+            if issubclass(enveloppe.editeur, Flag):
+                apercu = oui_ou_non(getattr(enveloppe.objet,
+                        enveloppe.attribut))
+            else:
+                apercu = enveloppe.get_apercu()
             if apercu:
                 msg += " : " + apercu
         

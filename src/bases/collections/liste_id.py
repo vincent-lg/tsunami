@@ -115,7 +115,7 @@ class ListeID(BaseObj):
     
     def insert(self, indice, objet):
         """Ajoute objet.id à la position demandée"""
-        self.__liste.inser(indice, objet.id)
+        self.__liste.insert(indice, objet.id)
         if self.parent:
             self.parent.enregistrer()
     

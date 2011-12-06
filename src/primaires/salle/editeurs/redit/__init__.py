@@ -42,6 +42,7 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.choix import Choix
+from primaires.interpreteur.editeur.flag import Flag
 from primaires.scripting.editeurs.edt_script import EdtScript
 from .edt_coords import EdtCoords
 from .edt_zone import EdtZone
@@ -183,6 +184,11 @@ class EdtRedit(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description de la salle {}".format(salle).ljust(76) + \
             "|ff||\n" + self.opts.separateur
+        
+        # Intérieur / extérieur
+        interieur = self.ajouter_choix("intérieur", "i", Flag, salle,
+                "interieur")
+        interieur.parent = self
         
         # Magasin
         magasin = self.ajouter_choix("magasin", "a", EdtMagasin, salle)

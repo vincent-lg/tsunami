@@ -76,7 +76,7 @@ class Module(BaseModule):
         etat = self.importeur.perso.ajouter_etat("combat")
         etat.msg_refus = "Vous êtes en train de combattre"
         etat.msg_visible = "{personnage} combat ici"
-        etat.act_interdites = ["combat", "prendre", "poser"]
+        etat.act_interdites = ["combat", "prendre", "poser", "deplacer"]
         
         BaseModule.init(self)
         
@@ -84,6 +84,7 @@ class Module(BaseModule):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             #commandes.tuer.CmdTuer(),
+            #commandes.scruter.CmdScruter(),
         ]
         
         for cmd in self.commandes:

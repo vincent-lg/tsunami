@@ -40,19 +40,65 @@ class EdtFils(Uniligne):
     
     """
     
+    def __init__(self, pere, objet=None, attribut=None):
+        """Constructeur de l'éditeur."""
+        Uniligne.__init__(self, pere, objet, attribut)
+        self.ajouter_option("u", self.opt_bouger_up)
+        self.ajouter_option("d", self.opt_bouger_down)
+    
+    def opt_bouger_up(self, arguments):
+        """Option permettant de bouger un sujet vers le haut de la liste.
+        Syntaxe : /u <sujet>
+        
+        """
+        sujet = self.objet
+        titre_fils = arguments.split(" ")[0]
+        sujet_fils = type(self).importeur.information.get_sujet(titre_fils)
+        if not sujet_fils or not sujet.est_fils(sujet_fils):
+            self.pere << "|err|Le sujet {} n'est pas fils du sujet " \
+                    "courant.|ff|".format(titre_fils)
+            return
+        try:
+            sujet.echanger_fils(sujet_fils)
+        except ValueError:
+            self.pere << "|err|Le sujet est déjà en haut de la liste.|ff|"
+            return
+        self.actualiser()
+    
+    def opt_bouger_down(self, arguments):
+        """Option permettant de bouger un sujet vers le bas de la liste.
+        Syntaxe : /d <sujet>
+        
+        """
+        sujet = self.objet
+        titre_fils = arguments.split(" ")[0]
+        sujet_fils = type(self).importeur.information.get_sujet(titre_fils)
+        if not sujet_fils or not sujet.est_fils(sujet_fils):
+            self.pere << "|err|Le sujet {} n'est pas fils du sujet " \
+                    "courant.|ff|".format(titre_fils)
+            return
+        try:
+            sujet.echanger_fils(sujet_fils, bas=True)
+        except ValueError:
+            self.pere << "|err|Le sujet est déjà en bas de la liste.|ff|"
+            return
+        self.actualiser()
+    
     def interpreter(self, msg):
         """Interprétation du message"""
-        pass
-        # msg = msg.split(" ")[0].lower()
-        # sujet = self.objet
-        # if msg in [supprimer_accents(s.titre) for s in \
-                # type(self).importeur.information.sujets] or \
-                # type(self).importeur.information.get_sujet_par_mot_cle(msg):
-            # self.pere << "|err|Le mot-clé {} est déjà utilisé.|ff|".format(msg)
-        # else:
-            # if msg in sujet.mots_cles:
-                # sujet.mots_cles.remove(msg)
-            # else:
-                # sujet.mots_cles.append(msg)
-            # sujet.enregistrer()
-            # self.actualiser()
+        sujet = self.objet
+        sujet_fils = type(self).importeur.information.get_sujet(msg)
+        if not sujet_fils:
+            self.pere << "|err|Le sujet {} n'existe pas.|ff|".format(msg)
+        elif sujet_fils is sujet:
+            self.pere << "|err|Vous ne pouvez affilier un sujet à " \
+                    "lui-même.|ff|"
+        elif sujet.est_lie(sujet_fils):
+            self.pere << "|err|Le sujet {} est déjà lié au sujet " \
+                    "courant.|ff|".format(msg)
+        else:
+            if sujet.est_fils(sujet_fils):
+                sujet.supprimer_fils(sujet_fils)
+            else:
+                sujet.ajouter_fils(sujet_fils)
+            self.actualiser()
