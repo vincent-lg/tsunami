@@ -110,3 +110,11 @@ class SalleNavire(Salle):
             msg.append(element.get_description_ligne(element, personnage))
         
         return "\n".join(msg)
+    
+    def get_elements_observables(self, personnage):
+        """Retourne la liste des éléments observables."""
+        elts = Salle.get_elements_observables(self)
+        for element in self.elements:
+            elts.append(element)
+        
+        return elts
