@@ -50,6 +50,8 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "combat", "primaire")
         self.combats = {}
+        self.cibles = {}
+        self.cibles_potentielles = {}
     
     def init(self):
         """Initialisation du module."""
@@ -84,6 +86,7 @@ class Module(BaseModule):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.tuer.CmdTuer(),
+            commandes.scruter.CmdScruter(),
         ]
         
         for cmd in self.commandes:
