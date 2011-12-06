@@ -134,24 +134,16 @@ class Navire(Vehicule):
         if not vents:
             return vec_nul
         
-        # On sélectionne le vent le plus proche
-        dist_moy = sum((v.vitesse + self.position).norme for v in vents)
-        dist_moy = dist_moy if dist_moy < INFLUENCE_MAX else INFLUENCE_MAX
-        
-        # On sélectionne tous les vents distants de 1,5 * dist_moy au maximum
-        vents = [v for v in vents if (v.vitesse - self.position).norme <= \
-                dist_moy * 1.5]
-        
         # On calcul un vecteur des vents restants
         vecteur_vent = Vecteur(0, 0, 0)
         for vent in vents:
-            norme = (vent.vitesse - self.position).norme / 50
-            if norme <= 1:
-                norme = 1.01
-            
-            facteur = 1 / norme 
-            if facteur < FACTEUR_MIN:
-                facteur = FACTEUR_MIN
+            distance = (vent.position - self.position).norme
+            if distance < vent.longueur:
+                facteur = 1
+            elif distance < vent.longueur ** 2:
+                facteur = 0.6
+            else:
+                facteur = 0.3
             
             vecteur_vent += facteur * vent.vitesse
         

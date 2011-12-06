@@ -91,6 +91,11 @@ class Vent(ObjetID):
     def coordonnees(self):
         return Coordonnees(self.x, self.y, self.z)
     
+    @property
+    def position(self):
+        """Retourne un vecteur représentant la position du vent."""
+        return Vecteur(self.x, self.y, self.z)
+    
     def changer_force(self, force):
         """"Change la force du vent.
         

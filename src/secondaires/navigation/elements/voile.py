@@ -105,6 +105,8 @@ class Voile(BaseElement):
             angle = ANGLE_GRAND_LARGUE
         else:
             angle = ANGLE_ARRIERE
+        if angle == 90 and or_voile < 0:
+            angle = -90
         
         facteur = 1 - (angle - or_voile) / 20
         if facteur < 0:
