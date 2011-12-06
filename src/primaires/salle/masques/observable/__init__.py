@@ -87,6 +87,15 @@ class Observable(Masque):
                     elt = objet
         
         if not elt:
+            # On cherche dans les autres éléments observables
+            elts = salle.get_elements_observables(personnage)
+            for t_elt in elts:
+                nom_elt = t_elt.get_nom_pour(t_elt, personnage)
+                if contient(nom_elt, nom):
+                    elt = t_elt
+                    break
+        
+        if not elt:
             nom = supprimer_accents(nom)
             if salle.details.detail_existe(nom):
                 detail = salle.details.get_detail(nom)

@@ -114,6 +114,10 @@ class BaseElement(ObjetID, metaclass=MetaElt):
     def get_nom_pour(elt, personnage):
         """Retourne le nom de l'élément."""
         return elt.nom
-
+    
+    @staticmethod
+    def regarder(elt, personnage):
+        """personnage regarde l'élément elt."""
+        return "Vous regardez {} :".format(elt.nom)
 
 ObjetID.ajouter_groupe(BaseElement)

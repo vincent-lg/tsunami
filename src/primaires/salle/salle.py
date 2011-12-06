@@ -200,6 +200,10 @@ class Salle(ObjetID):
         
         return tuple(prototypes.items())
     
+    def get_elements_observables(self, personnage):
+        """Retourne une liste des éléments observables dans cette salle."""
+        return []
+    
     def regarder(self, personnage):
         """Le personnage regarde la salle"""
         res = ""

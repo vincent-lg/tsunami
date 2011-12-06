@@ -113,7 +113,7 @@ class SalleNavire(Salle):
     
     def get_elements_observables(self, personnage):
         """Retourne la liste des éléments observables."""
-        elts = Salle.get_elements_observables(self)
+        elts = Salle.get_elements_observables(self, personnage)
         for element in self.elements:
             elts.append(element)
         
