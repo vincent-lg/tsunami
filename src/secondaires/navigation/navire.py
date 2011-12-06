@@ -30,10 +30,13 @@
 
 """Fichier contenant la classe Navire, détaillée plus bas."""
 
+from math import fabs
+
 from abstraits.id import ObjetID
 from primaires.vehicule.force import Force
 from primaires.vehicule.vecteur import Vecteur
 from primaires.vehicule.vehicule import Vehicule
+from .constantes import *
 from .element import Element
 from .salle import SalleNavire
 from .vent import INFLUENCE_MAX
@@ -154,11 +157,51 @@ class Navire(Vehicule):
         
         return vecteur_vent
     
+    @property
+    def nom_allure(self):
+        """Retourne le nom de l'allure."""
+        vent = self.vent
+        allure = (self.direction.direction - vent.direction) % 360
+        if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
+            return "vent debout"
+        elif ALL_BON_PLEIN < allure < (360 - ALL_BON_PLEIN):
+            return "bon plein"
+        elif ALL_LARGUE < allure < (360 - ALL_LARGUE):
+            return "largue"
+        elif ALL_GRAND_LARGUE < allure < (360 - ALL_GRAND_LARGUE):
+            return "grand largue"
+        else:
+            return "vent arrière"
+
     def valider_coordonnees(self):
         """Pour chaque salle, valide ses coordonnées."""
         for salle in self.salles.values():
             if not salle.coords.valide:
                 salle.coords.valide = True
+    
+    def vent_debout(self):
+        """Retourne le facteur de vitesse par l'allure vent debout."""
+        return 0
+    
+    def pret(self):
+        """Retourne le facteur de vitesse par l'allure de prêt."""
+        return 0.5
+    
+    def bon_plein(self):
+        """Retourne le facteur de vitesse par l'allure de bon plein."""
+        return 0.8
+    
+    def largue(self):
+        """Retourne le facteur de vitesse par l'allure de largue."""
+        return 1.2
+    
+    def grand_largue(self):
+        """Retourne le facteur de vitesse par l'allure de grand largue."""
+        return 0.9
+    
+    def vent_arriere(self):
+        """Retourne le facteur de vitesse par l'allure par vent arrière."""
+        return 0.7
     
     def detruire(self):
         """Destruction du self."""
@@ -195,9 +238,19 @@ class Propulsion(Force):
         direction = navire.direction
         voiles = navire.voiles
         voiles = [v for v in voiles if v.hissee]
-        print("Voiles", navire.cle, voiles)
         if not voiles:
             return vec_nul
         
         allure = (direction.direction - vent.direction) % 360
-        return vent.norme * direction
+        if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
+            facteur = navire.vent_debout()
+        elif ALL_BON_PLEIN < allure < (360 - ALL_BON_PLEIN):
+            facteur = navire.bon_plein()
+        elif ALL_LARGUE < allure < (360 - ALL_LARGUE):
+            facteur = navire.largue()
+        elif ALL_GRAND_LARGUE < allure < (360 - ALL_GRAND_LARGUE):
+            facteur = navire.grand_largue()
+        else:
+            facteur = navire.vent_arriere()
+        
+        return facteur * vent.norme * direction

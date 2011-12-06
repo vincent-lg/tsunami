@@ -79,6 +79,7 @@ class PrmInfo(Parametre):
         msg += "\n  Modèle : {} ({})".format(modele.cle, modele.nom)
         msg += "\n  Étendue : " + etendue
         msg += "\n  Coordonnées : {}".format(navire.position.coordonnees)
+        msg += "\n  Allure : {}".format(navire.nom_allure)
         msg += "\n  Vitesse : {}".format(vitesse)
         msg += "\n  Accélération : {} ({}°)".format(acceleration,
                 dir_acceleration)
