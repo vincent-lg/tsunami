@@ -104,5 +104,10 @@ class BaseElement(ObjetID, metaclass=MetaElt):
         
         """
         pass
+    
+    @staticmethod
+    def get_description_ligne(elt, personnage):
+        """Retourne une description d'une ligne de l'élément."""
+        return elt.nom.capitalize() + " est là"
 
 ObjetID.ajouter_groupe(BaseElement)

@@ -102,3 +102,11 @@ class SalleNavire(Salle):
                 return
         
         raise ValueError("l'élément {} n'a pas pu être trouvé".format(cle))
+    
+    def decrire_plus(self, personnage):
+        """Ajoute les éléments observables dans la description de la salle."""
+        msg = []
+        for element in self.elements:
+            msg.append(element.get_description_ligne(element, personnage))
+        
+        return "\n".join(msg)
