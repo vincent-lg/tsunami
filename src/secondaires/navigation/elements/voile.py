@@ -47,4 +47,5 @@ class Voile(BaseElement):
         # Attributs propres aux voiles
         self._attributs = {
             "orientation": Attribut(lambda: 0),
+            "hissee": Attribut(lambda: False),
         }

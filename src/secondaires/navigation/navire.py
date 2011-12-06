@@ -134,7 +134,6 @@ class Navire(Vehicule):
         # On sélectionne le vent le plus proche
         dist_moy = sum((v.vitesse + self.position).norme for v in vents)
         dist_moy = dist_moy if dist_moy < INFLUENCE_MAX else INFLUENCE_MAX
-        print(dist_moy)
         
         # On sélectionne tous les vents distants de 1,5 * dist_moy au maximum
         vents = [v for v in vents if (v.vitesse - self.position).norme <= \
@@ -195,5 +194,4 @@ class Propulsion(Force):
         direction = navire.direction
         voiles = navire.voiles
         allure = (direction.direction - vent.direction) % 360
-        print(allure)
         return vent.norme * direction
