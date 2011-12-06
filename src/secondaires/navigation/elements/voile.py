@@ -31,6 +31,7 @@
 """Fichier contenant la classe Voile, détaillée plus bas."""
 
 from bases.objet.attribut import Attribut
+from secondaires.navigation.constantes import *
 from .base import BaseElement
 
 class Voile(BaseElement):
@@ -51,11 +52,62 @@ class Voile(BaseElement):
         }
     
     @staticmethod
+    def get_nom_orientation(voile):
+        """Retourne le nom de l'orientation de la voile."""
+        or_voile = voile.orientation
+        if -ANGLE_GRAND_LARGUE > or_voile:
+            return "orientée vent arrière sur bâbord amure"
+        elif or_voile > ANGLE_GRAND_LARGUE:
+            return "orientée vent arrière sur tribord amure"
+        elif -ANGLE_LARGUE > or_voile:
+            return "orientée grand largue sur bâbord amure"
+        elif or_voile > ANGLE_LARGUE:
+            return "orientée grand largue sur tribord amure"
+        elif -ANGLE_BON_PLEIN > or_voile:
+            return "orientée au largue sur bâbord amure"
+        elif or_voile > ANGLE_BON_PLEIN:
+            return "orientée au largue sur tribord amure"
+        elif -ANGLE_PRES > or_voile:
+            return "orientée au bon plein sur bâbord amure"
+        elif or_voile > ANGLE_PRES:
+            return "orientée au bon plein sur tribord amure"
+        elif -2 > or_voile:
+            return "serrée au plus près sur bâbord amure"
+        elif or_voile > 2:
+            return "serrée au plus près sur tribord amure"
+        else:
+            return "parfaitement parallèle au pont"
+    
+    @staticmethod
     def get_description_ligne(elt, personnage):
         """Retourne une description d'une ligne de l'élément."""
         if elt.hissee:
-            message = "hissée."
+            message = elt.get_nom_orientation(elt) + "."
         else:
             message = "repliée contre le mât."
         
         return elt.nom.capitalize() + " est " + message
+    
+    @staticmethod
+    def facteur_orientation(voile, navire, vent):
+        """Retourne le facteur d'orientation de la voile."""
+        allure = (navire.direction.direction - vent.direction) % 360
+        or_voile = voile.orientation
+        if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
+            angle = ANGLE_DEBOUT
+        elif ALL_PRES < allure < (360 - ALL_PRES):
+            angle = ANGLE_PRES
+        elif ALL_BON_PLEIN < allure < (360 - ALL_BON_PLEIN):
+            angle = ANGLE_BON_PLEIN
+        elif ALL_LARGUE < allure < (360 - ALL_LARGUE):
+            angle = ANGLE_LARGUE
+        elif ALL_GRAND_LARGUE < allure < (360 - ALL_GRAND_LARGUE):
+            angle = ANGLE_GRAND_LARGUE
+        else:
+            angle = ANGLE_ARRIERE
+        
+        facteur = 1 - (angle - or_voile) / 20
+        if facteur < 0:
+            facteur + 0
+        
+        return facteur

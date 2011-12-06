@@ -250,4 +250,4 @@ class Module(BaseModule):
                 self.avancer_navires)
         for navire in self.navires.values():
             if navire.etendue:
-                navire.avancer(1)
+                navire.avancer(0.4)

@@ -164,6 +164,8 @@ class Navire(Vehicule):
         allure = (self.direction.direction - vent.direction) % 360
         if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
             return "vent debout"
+        elif ALL_PRES < allure < (360 - ALL_PRES):
+            return "au près"
         elif ALL_BON_PLEIN < allure < (360 - ALL_BON_PLEIN):
             return "bon plein"
         elif ALL_LARGUE < allure < (360 - ALL_LARGUE):
@@ -183,8 +185,8 @@ class Navire(Vehicule):
         """Retourne le facteur de vitesse par l'allure vent debout."""
         return 0
     
-    def pret(self):
-        """Retourne le facteur de vitesse par l'allure de prêt."""
+    def pres(self):
+        """Retourne le facteur de vitesse par l'allure de près."""
         return 0.5
     
     def bon_plein(self):
@@ -244,6 +246,8 @@ class Propulsion(Force):
         allure = (direction.direction - vent.direction) % 360
         if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
             facteur = navire.vent_debout()
+        elif ALL_PRES < allure < (360 - ALL_PRES):
+            facteur = navire.pres()
         elif ALL_BON_PLEIN < allure < (360 - ALL_BON_PLEIN):
             facteur = navire.bon_plein()
         elif ALL_LARGUE < allure < (360 - ALL_LARGUE):

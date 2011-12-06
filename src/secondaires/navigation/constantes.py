@@ -31,7 +31,16 @@
 """Fichier contenant les constantes de navigation."""
 
 # FActeurs des allures
-ALL_DEBOUT = 135
-ALL_BON_PLEIN = 110
-ALL_LARGUE = 70
+ALL_DEBOUT = 140
+ALL_PRES = 125
+ALL_BON_PLEIN = 105
+ALL_LARGUE = 75
 ALL_GRAND_LARGUE = 40
+
+# Orientation des voiles
+ANGLE_DEBOUT = 0
+ANGLE_PRES = 8
+ANGLE_BON_PLEIN = 20
+ANGLE_LARGUE = 30
+ANGLE_GRAND_LARGUE = 60
+ANGLE_ARRIERE = 90
