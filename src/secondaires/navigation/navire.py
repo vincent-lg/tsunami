@@ -189,9 +189,14 @@ class Propulsion(Force):
     
     def calcul(self):
         """Retourne le vecteur de la force."""
+        vec_nul = Vecteur(0, 0, 0)
         navire = self.subissant
         vent = navire.vent
         direction = navire.direction
         voiles = navire.voiles
+        voiles = [v for v in voiles if v.hissee]
+        if not voiles:
+            return vec_nul
+        
         allure = (direction.direction - vent.direction) % 360
         return vent.norme * direction

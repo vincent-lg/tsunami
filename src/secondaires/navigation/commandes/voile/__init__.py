@@ -28,10 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'voile'."""
 
-from . import eltedit
-from . import navire
-from . import shedit
-from . import vent
-from . import voile
+from primaires.interpreteur.commande.commande import Commande
+from .hisser import PrmHisser
+from .plier import PrmPlier
+
+class CmdVoile(Commande):
+    
+    """Commande 'voile'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "voile", "sail")
+
+        self.aide_courte = "manipulation de la voile"
+        self.aide_longue = \
+            "Cette commande permet de manipuler une voile se trouvant " \
+            "dans la même pièce que vous. Vous pouvez lahisser, la " \
+            "plier et l'orienter."
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmHisser())
+        self.ajouter_parametre(PrmPlier())

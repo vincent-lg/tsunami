@@ -7,9 +7,9 @@
 # modification, are permitted provided that the following conditions are met:
 # 
 # * Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.
+#   raise of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
-#   this list of conditions and the following disclaimer in the documentation
+#   this raise of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
@@ -28,10 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant le paramètre 'hisser' de la commande 'voile'."""
 
-from . import eltedit
-from . import navire
-from . import shedit
-from . import vent
-from . import voile
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmHisser(Parametre):
+    
+    """Commande 'voile hisser'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "hisser", "up")
+        self.aide_courte = "hisse la voile présente"
+        self.aide_longue = \
+            "Cette commande hisse la voile présente dans la salle où " \
+            "vous vous trouvez."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        salle = personnage.salle
+        if not hasattr(salle, "voiles"):
+            personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
+            return
+        
+        voiles = salle.voiles
+        if not voiles:
+            personnage << "|err|Vous ne voyez aucune voile ici.|ff|"
+            return
+        
+        voile = voiles[0]
+        if voile.hissee:
+            personnage << "|err|Cette voile est déjà hissée.|ff|"
+        else:
+            voile.hissee = True
+            personnage << "Vous hissez {}.".format(voile.nom)

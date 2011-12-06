@@ -90,6 +90,11 @@ class SalleNavire(Salle):
         """Retourne les coordonnées relatives de la salle."""
         return (self.r_x, self.r_y, self.r_z)
     
+    @property
+    def voiles(self):
+        """Retourne les voiles de la salle."""
+        return [e for e in self.elements if e.nom_type == "voile"]
+    
     def ajouter_element(self, element):
         """Ajoute un élément dans la salle."""
         self.elements.append(element)

@@ -114,6 +114,7 @@ class Module(BaseModule):
             commandes.navire.CmdNavire(),
             commandes.shedit.CmdShedit(),
             commandes.vent.CmdVent(),
+            commandes.voile.CmdVoile(),
         ]
         
         for cmd in self.commandes:
