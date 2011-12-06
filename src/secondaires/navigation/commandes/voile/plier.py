@@ -62,5 +62,9 @@ class PrmPlier(Parametre):
         if not voile.hissee:
             personnage << "|err|Cette voile est déjà plié.|ff|"
         else:
+            personnage << "Vous commencez de replier la voile."
+            personnage.cle_etat = "plier_voile"
+            yield 7
+            personnage.cle_etat = ""
             voile.hissee = False
             personnage << "Vous pliez {}.".format(voile.nom)

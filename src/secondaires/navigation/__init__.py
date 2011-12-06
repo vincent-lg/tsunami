@@ -63,6 +63,21 @@ class Module(BaseModule):
         self.vents = {}
         self.vents_par_etendue = {}
     
+    def config(self):
+        """Configuration du module."""
+        his_voile = self.importeur.perso.ajouter_etat("hisser_voile")
+        his_voile.msg_refus = "Vous êtes en train de hisser la voile"
+        his_voile.msg_visible = "{personnage} hisse une voile ici"
+        his_voile.act_interdites = ["combat", "prendre", "poser", "deplacer",
+                "plier_voile"]
+        pli_voile = self.importeur.perso.ajouter_etat("plier_voile")
+        pli_voile.msg_refus = "Vous êtes en train de replier la voile"
+        pli_voile.msg_visible = "{personnage} replie une voile ici"
+        pli_voile.act_interdites = ["combat", "prendre", "poser", "deplacer",
+                "hisser_voile"]
+        
+        BaseModule.config(self)
+    
     def init(self):
         """Chargement des navires et modèles."""
         # On récupère les modèles

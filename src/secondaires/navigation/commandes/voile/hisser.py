@@ -62,5 +62,10 @@ class PrmHisser(Parametre):
         if voile.hissee:
             personnage << "|err|Cette voile est déjà hissée.|ff|"
         else:
+            personnage << "Vous commencez de hisser la voile, au prise " \
+                    "avec les cordages."
+            personnage.cle_etat = "hisser_voile"
+            yield 7
+            personnage.cle_etat = ""
             voile.hissee = True
             personnage << "Vous hissez {}.".format(voile.nom)

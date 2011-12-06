@@ -195,6 +195,7 @@ class Propulsion(Force):
         direction = navire.direction
         voiles = navire.voiles
         voiles = [v for v in voiles if v.hissee]
+        print("Voiles", navire.cle, voiles)
         if not voiles:
             return vec_nul
         

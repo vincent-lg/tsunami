@@ -49,3 +49,13 @@ class Voile(BaseElement):
             "orientation": Attribut(lambda: 0),
             "hissee": Attribut(lambda: False),
         }
+    
+    @staticmethod
+    def get_description_ligne(elt, personnage):
+        """Retourne une description d'une ligne de l'élément."""
+        if elt.hissee:
+            message = "hissée."
+        else:
+            message = "repliée contre le mât."
+        
+        return elt.nom.capitalize() + " est " + message
