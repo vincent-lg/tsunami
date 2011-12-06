@@ -42,17 +42,18 @@ class EdtLies(Uniligne):
     
     def interpreter(self, msg):
         """Interprétation du message"""
-        pass
-        # msg = msg.split(" ")[0].lower()
-        # sujet = self.objet
-        # if msg in [supprimer_accents(s.titre) for s in \
-                # type(self).importeur.information.sujets] or \
-                # type(self).importeur.information.get_sujet_par_mot_cle(msg):
-            # self.pere << "|err|Le mot-clé {} est déjà utilisé.|ff|".format(msg)
-        # else:
-            # if msg in sujet.mots_cles:
-                # sujet.mots_cles.remove(msg)
-            # else:
-                # sujet.mots_cles.append(msg)
-            # sujet.enregistrer()
-            # self.actualiser()
+        sujet = self.objet
+        sujet_a_lier = type(self).importeur.information.get_sujet(msg)
+        if not sujet_a_lier:
+            self.pere << "|err|Le sujet {} n'existe pas.|ff|".format(msg)
+        elif sujet_a_lier is sujet:
+            self.pere << "|err|Vous ne pouvez lier un sujet avec lui-même.|ff|"
+        elif sujet.est_fils(sujet_a_lier) or sujet.pere is sujet_a_lier:
+            self.pere << "|err|Le sujet {} est déjà fils ou père du sujet " \
+                    "présent.|ff|".format(msg)
+        else:
+            if sujet.est_lie(sujet_a_lier):
+                sujet.supprimer_lie(sujet_a_lier)
+            else:
+                sujet.ajouter_lie(sujet_a_lier)
+            self.actualiser()

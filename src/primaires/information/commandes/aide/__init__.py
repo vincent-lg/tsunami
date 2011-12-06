@@ -53,18 +53,5 @@ class CmdAide(Commande):
         if dic_masques["message"]:
             titre = dic_masques["message"].message
         else:
-            # On affiche la liste des sujets d'aides
-            sujets = type(self).importeur.information.sujets
-            peut_lire = []
-            for sujet in sujets:
-                if type(self).importeur.interpreteur.groupes. \
-                        explorer_groupes_inclus(personnage.grp, sujet.str_groupe):
-                    peut_lire.append(sujet)
-            
-            peut_lire = [s.titre for s in peut_lire]
-            if not peut_lire:
-                peut_lire.append("|att|Aucun|ff|")
-            
-            msg = "Sujets d'aides disponibles :\n\n  "
-            msg += "\n  ".join(sorted(peut_lire))
-            personnage << msg
+            personnage << type(self).importeur. \
+                    information.construire_sommaire_pour(personnage)

@@ -121,6 +121,19 @@ class Module(BaseModule):
                 return sujet
         return None
     
+    def get_sujet(self, nom_sujet):
+        """Retourne un sujet ou None si le sujet recherché n'existe pas.
+        Contrairement à __getitem__ et get_sujet_par_mot_cle, le sujet est
+        renvoyé indifféremment en fonction de son nom ou d'un mot-clé.
+        
+        """
+        sujet = None
+        try:
+            sujet = self[nom_sujet]
+        except KeyError:
+            sujet = self.get_sujet_par_mot_cle(nom_sujet)
+        return sujet
+    
     @property
     def sujets(self):
         """Retourne la liste déréférencée des sujets."""
@@ -142,3 +155,20 @@ class Module(BaseModule):
         sujet = SujetAide(titre)
         self.__sujets.append(sujet)
         return sujet
+    
+    def construire_sommaire_pour(self, personnage):
+        """Retourne le sommaire de la rubrique d'aide pour personnage."""
+        # On affiche la liste des sujets d'aides
+        peut_lire = []
+        for sujet in self.sujets:
+            if self.importeur.interpreteur.groupes. \
+                    explorer_groupes_inclus(personnage.grp, sujet.str_groupe):
+                peut_lire.append(sujet)
+        
+        peut_lire = [s.titre for s in peut_lire if s.pere is None]
+        if not peut_lire:
+            peut_lire.append("|att|Aucun|ff|")
+        
+        msg = "Sujets d'aides disponibles :\n\n  "
+        msg += "\n  ".join(sorted(peut_lire))
+        return msg

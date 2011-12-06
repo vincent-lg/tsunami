@@ -44,14 +44,15 @@ class EdtMotscles(Uniligne):
         """Interprétation du message"""
         msg = msg.split(" ")[0].lower()
         sujet = self.objet
-        if msg in [supprimer_accents(s.titre) for s in \
-                type(self).importeur.information.sujets] or \
-                type(self).importeur.information.get_sujet_par_mot_cle(msg):
-            self.pere << "|err|Le mot-clé {} est déjà utilisé.|ff|".format(msg)
-        else:
-            if msg in sujet.mots_cles:
-                sujet.mots_cles.remove(msg)
-            else:
-                sujet.mots_cles.append(msg)
+        if msg in sujet.mots_cles:
+            sujet.mots_cles.remove(msg)
             sujet.enregistrer()
             self.actualiser()
+        else:
+            if type(self).importeur.information.get_sujet(msg) is not None:
+                self.pere << "|err|Le mot-clé {} est déjà utilisé.|ff|".format(
+                        msg)
+            else:
+                sujet.mots_cles.append(msg)
+                sujet.enregistrer()
+                self.actualiser()

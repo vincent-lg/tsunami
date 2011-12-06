@@ -55,15 +55,12 @@ class CmdHedit(Commande):
         """Méthode d'interprétation de commande"""
         titre = dic_masques["message"].message
         titre = titre.split(" ")[0].lower()
+        
         try:
-            sujet = type(self).importeur.information[titre]
-        except KeyError:
-            if type(self).importeur. \
-                    information.get_sujet_par_mot_cle(titre) is None:
-                sujet = type(self).importeur.information.ajouter_sujet(titre)
-            else:
-                sujet = type(self).importeur. \
-                        information.get_sujet_par_mot_cle(titre)
+            sujet = type(self).importeur.information.get_sujet(titre)
+            assert sujet is not None
+        except AssertionError:
+            sujet = type(self).importeur.information.ajouter_sujet(titre)
         
         editeur = type(self).importeur.interpreteur.construire_editeur(
                 "hedit", personnage, sujet)
