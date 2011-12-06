@@ -88,7 +88,7 @@ class Versions(Unique):
         else:
             return ""
     
-    def afficher_dernieres_pour(self, personnage):
+    def afficher_dernieres_pour(self, personnage, lire=True):
         """Affiche les dernières modifications nons lues par 'personnage'."""
         ret = ""
         derniere = 0
@@ -96,6 +96,7 @@ class Versions(Unique):
             derniere = self._lus[personnage.id.id]
         if len(self) - derniere > 0:
             ret = self.afficher(len(self) - derniere)
-        self._lus[personnage.id.id] = len(self)
+        if lire:
+            self._lus[personnage.id.id] = len(self)
         self.enregistrer()
         return ret

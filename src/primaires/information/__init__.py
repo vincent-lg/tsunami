@@ -75,6 +75,12 @@ class Module(BaseModule):
         self.versions = versions
         
         BaseModule.init(self)
+        
+        # On lie la méthode joueur_connecte avec l'hook joueur_connecte
+        # La méthode joueur_connecte sera ainsi appelée quand un joueur
+        # se connecte
+        self.importeur.hook["joueur:connecte"].ajouter_evenement(
+                self.joueur_connecte)
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
@@ -172,3 +178,11 @@ class Module(BaseModule):
         msg = "Sujets d'aides disponibles :\n\n  "
         msg += "\n  ".join(sorted(peut_lire))
         return msg
+    
+    def joueur_connecte(self, joueur):
+        """On avertit le joueur s'il y a de nouvelles versions."""
+        versions = self.versions.afficher_dernieres_pour(joueur, lire=False)
+        if versions:
+            joueur << "\n|vrc|De nouvelles modifications ont été apportées. " \
+                    "Pour les consulter, utilisez\nla commande |ff|" \
+                    "|cmd|versions|ff||vrc|.|ff|"

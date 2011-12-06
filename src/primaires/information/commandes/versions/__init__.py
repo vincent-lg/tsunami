@@ -77,6 +77,7 @@ class CmdVersions(Commande):
         else:
             ret = versions.afficher_dernieres_pour(personnage)
             if not ret:
-                personnage << "|att|Aucune modification pour l'instant.|ff|"
+                personnage << "|att|Aucune nouvelle modification pour " \
+                        "l'instant.|ff|"
             else:
                 personnage << ret
