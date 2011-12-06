@@ -212,6 +212,10 @@ class Salle(ObjetID):
         if not description:
             description = "   Vous êtes au milieu de nulle part."
         res += description + "\n"
+        plus = self.decrire_plus(personnage)
+        if plus:
+            res += plus + "\n"
+        
         liste_messages = []
         flags = 0
         type(self).importeur.hook["salle:regarder"].executer(self,
@@ -287,6 +291,16 @@ class Salle(ObjetID):
             noms_etats.append(prototype.get_nom_etat(nombre))
         
         return noms_etats
+    
+    def decrire_plus(self, personnage):
+        """Ajoute un message au-dessous de la description.
+        
+        Si cette méthode retourne une chaîne non vide, alors cette chaîne
+        sera ajoutée sous la description quand un personnage regardera
+        la salle.
+        
+        """
+        pass
 
 # On ajoute le groupe à ObjetID
 ObjetID.ajouter_groupe(Salle)
