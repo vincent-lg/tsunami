@@ -198,6 +198,17 @@ class Navire(Vehicule):
         """Retourne le facteur de vitesse par l'allure par vent arrière."""
         return 0.7
     
+    def maj_salles(self):
+        d = self.direction.direction + 90
+        i = self.direction.inclinaison
+        operation = lambda v: self.position + v.tourner_autour_z(d).incliner(i)
+        for vec, salle in self.salles.items():
+            vec = Vecteur(*vec)
+            vec = operation(vec)
+            salle.coords.x = vec.x
+            salle.coords.y = vec.y
+            salle.coords.z = vec.z
+
     def avancer(self, temps_virtuel):
         """Fait avancer le navire si il n'est pas immobilisé."""
         if not self.immobilise:
