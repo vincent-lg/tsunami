@@ -35,6 +35,17 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.vehicule.vecteur import Vecteur
 
+def entrer_point(observe, navire, angle, v_dist, coords, point):
+    """Entre un point dans le dictionnaire."""
+    a_point = observe.get(angle)
+    if a_point:
+        # Détermine si le point est plus proche ou non
+        x, y, v, p = a_point
+        if (position - v).norme > v_dist.norme:
+            observe[angle] = (coords[0], coords[1], v_dist, point)
+    else:
+        observe[angle] = (coords[0], coords[1], v_dist, point)
+
 def get_points(navire, distance, precision):
     """Retourne les points les plus près du navire.
     
@@ -53,17 +64,34 @@ def get_points(navire, distance, precision):
         if v_dist.norme <= distance:
             # On cherche l'angle entre la position du navire et du point
             direction = v_dist.direction
-            direction = direction - navire.direction.direction
+            r_direction = direction - navire.direction.direction
             # On détermine l'angle minimum fonction de la précision
-            angle = round(direction / precision) * precision
-            a_point = observe.get(angle)
-            if a_point:
-                # Détermine si le point est plus proche ou non
-                x, y, v, p = a_point
-                if (position - v).norme > v_dist.norme:
-                    observe[angle] = (coords[0], coords[1], v_dist, point)
-            else:
-                observe[angle] = (coords[0], coords[1], v_dist, point)
+            angle = round(r_direction / precision) * precision
+            entrer_point(observe, navire, angle, v_dist, coords, point)
+            test = True
+            t_vec = v_dist.copier()
+            while test:
+                t_vec.tourner_autour_z(precision)
+                if int(t_vec.x) == x and int(t_vec.y) == y:
+                    direction = t_vec.direction
+                    r_direction = direction - navire.direction.direction
+                    angle = round(r_direction / precision) * precision
+                    entrer_point(observe, navire, angle, t_vec, coords, point)
+                else:
+                    test = False
+            
+            test = True
+            t_vec = v_dist.copier()
+            while test:
+                t_vec.tourner_autour_z(-precision)
+                if int(t_vec.x) == x and int(t_vec.y) == y:
+                    direction = t_vec.direction
+                    r_direction = direction - navire.direction.direction
+                    angle = round(r_direction / precision) * precision
+                    entrer_point(observe, navire, angle, t_vec, coords, point)
+                else:
+                    test = False
+                
     
     return observe
 
@@ -139,6 +167,6 @@ class CmdDetailler(Commande):
         
         navire = salle.navire
         # On récupère les points
-        points = get_points(navire, 30, 5)
+        points = get_points(navire, 30, 15)
         msg = formatter_points(points)
         personnage << "\n".join(msg)
