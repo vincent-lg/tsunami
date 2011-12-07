@@ -71,28 +71,37 @@ def get_points(navire, distance, precision):
             entrer_point(observe, navire, position, angle, v_dist, coords, point)
             test = True
             t_vec = v_dist.copier()
+            c_angle = 0
             while test:
                 t_vec.tourner_autour_z(precision)
+                c_angle += precision
                 if int(t_vec.x) == x and int(t_vec.y) == y:
                     direction = t_vec.direction
                     r_direction = direction - navire.direction.direction
-                    angle = round(r_direction / precision) * precision
-                    entrer_point(observe, navire, position, angle, t_vec, coords, point)
+                    t_angle = round(r_direction / precision) * precision
+                    entrer_point(observe, navire, position, t_angle, t_vec,
+                            coords, point)
                 else:
                     test = False
+                if c_angle >= 360:
+                    break
             
             test = True
             t_vec = v_dist.copier()
+            c_angle = 0
             while test:
                 t_vec.tourner_autour_z(-precision)
+                c_angle += precision
                 if int(t_vec.x) == x and int(t_vec.y) == y:
                     direction = t_vec.direction
                     r_direction = direction - navire.direction.direction
-                    angle = round(r_direction / precision) * precision
-                    entrer_point(observe, navire, position, angle, t_vec, coords, point)
+                    t_angle = round(r_direction / precision) * precision
+                    entrer_point(observe, navire, position, t_angle, t_vec,
+                            coords, point)
                 else:
                     test = False
-                
+                if c_angle >= 360:
+                    break
     
     return observe
 
@@ -101,7 +110,7 @@ def formatter_points(points, limite=90):
     msg = []
     for angle, point in sorted(points.items()):
         x, y, vecteur, point = point
-        if angle > 180 + limite or limite < angle < 180:
+        if angle < -limite or angle > limite:
             continue
         
         if angle == 0:
@@ -118,7 +127,7 @@ def formatter_points(points, limite=90):
         msg_dist = "à environ {nb} {unite}{s}"
         if 0 <= distance < 1:
             msg_dist = "tout près"
-        elif 1 <= distance < 10:
+        elif 1 <= distance <= 10:
             pass
         elif 10 < distance <= 20:
             distance = round(distance / 2) * 2
