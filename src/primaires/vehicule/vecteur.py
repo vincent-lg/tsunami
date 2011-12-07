@@ -163,7 +163,7 @@ class Vecteur(BaseObj):
     
     def copier(self):
         """Retourne une copie de self"""
-        return Vecteur(self.x, self.y, self.z, parent)
+        return Vecteur(self.x, self.y, self.z, self.parent)
     
     def tourner_autour_x(self, angle):
         """Tourne autour de l'âxe X.

@@ -35,7 +35,7 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.vehicule.vecteur import Vecteur
 
-def entrer_point(observe, navire, angle, v_dist, coords, point):
+def entrer_point(observe, navire, position, angle, v_dist, coords, point):
     """Entre un point dans le dictionnaire."""
     a_point = observe.get(angle)
     if a_point:
@@ -60,6 +60,7 @@ def get_points(navire, distance, precision):
     # On explore tous les points non débarcables
     for coords, point in etendue.points.items():
         vec = Vecteur(coords[0], coords[1], alt)
+        x, y = coords
         v_dist = vec - position
         if v_dist.norme <= distance:
             # On cherche l'angle entre la position du navire et du point
@@ -67,7 +68,7 @@ def get_points(navire, distance, precision):
             r_direction = direction - navire.direction.direction
             # On détermine l'angle minimum fonction de la précision
             angle = round(r_direction / precision) * precision
-            entrer_point(observe, navire, angle, v_dist, coords, point)
+            entrer_point(observe, navire, position, angle, v_dist, coords, point)
             test = True
             t_vec = v_dist.copier()
             while test:
@@ -76,7 +77,7 @@ def get_points(navire, distance, precision):
                     direction = t_vec.direction
                     r_direction = direction - navire.direction.direction
                     angle = round(r_direction / precision) * precision
-                    entrer_point(observe, navire, angle, t_vec, coords, point)
+                    entrer_point(observe, navire, position, angle, t_vec, coords, point)
                 else:
                     test = False
             
@@ -88,7 +89,7 @@ def get_points(navire, distance, precision):
                     direction = t_vec.direction
                     r_direction = direction - navire.direction.direction
                     angle = round(r_direction / precision) * precision
-                    entrer_point(observe, navire, angle, t_vec, coords, point)
+                    entrer_point(observe, navire, position, angle, t_vec, coords, point)
                 else:
                     test = False
                 
@@ -107,10 +108,10 @@ def formatter_points(points, limite=90):
             direction = "droit devant"
         elif angle == 180:
             direction = "droit à l'arrière"
-        elif angle < 180:
+        elif angle > 0:
             direction = "sur {}° tribord".format(angle)
         else:
-            direction = "sur {}° bâbord".format(angle)
+            direction = "sur {}° bâbord".format(-angle)
         
         distance = round(vecteur.norme * 3.2)
         unite = "brasse"
