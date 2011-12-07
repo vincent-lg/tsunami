@@ -106,8 +106,8 @@ class Etendue(ObjetID):
     def points(self):
         """Constitution d'un dictionnaire des points."""
         points = dict.fromkeys(self.obstacles)
-        points.update(self.cotes)
-        points.update(self.liens)
+        points.update(self.cotes.to_dict)
+        points.update(self.liens.to_dict)
         return points
     
     @staticmethod
