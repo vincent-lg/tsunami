@@ -28,27 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les éléments de navire."""
+"""Package contenant la commande 'passerelle'."""
 
-from abstraits.obase import MetaBaseObj
+from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.uniligne import Uniligne
+from .replier import PrmReplier
+from .deplier import PrmDeplier
 
-types = {} # types d'éléments {nom: classe}
-
-class MetaElt(MetaBaseObj):
+class CmdPasserelle(Commande):
     
-    """Métaclasse des types d'éléments.
+    """Commande 'passerelle'"""
     
-    Elle ajoute le type de l'élément dans le dictionnaire 'types' si il possède
-    un nom.
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "passerelle", "gangway")
+        self.aide_courte = "manipule la passerelle"
+        self.aide_longue = \
+            "Cette commande permet de manipuler la passerelle, la " \
+            "déplier ou la replier."
     
-    """
-    
-    def __init__(cls, nom, bases, contenu):
-        """Constructeur de la métaclasse"""
-        MetaBaseObj.__init__(cls, nom, bases, contenu)
-        if cls.nom_type:
-            types[cls.nom_type] = cls
-
-from . import ancre
-from . import passerelle
-from . import voile
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmReplier())
+        self.ajouter_parametre(PrmDeplier())

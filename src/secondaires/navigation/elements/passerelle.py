@@ -28,27 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les éléments de navire."""
+"""Fichier contenant la classe Passerelle, détaillée plus bas."""
 
-from abstraits.obase import MetaBaseObj
+from bases.objet.attribut import Attribut
+from secondaires.navigation.constantes import *
+from .base import BaseElement
 
-types = {} # types d'éléments {nom: classe}
-
-class MetaElt(MetaBaseObj):
+class Passerelle(BaseElement):
     
-    """Métaclasse des types d'éléments.
-    
-    Elle ajoute le type de l'élément dans le dictionnaire 'types' si il possède
-    un nom.
+    """Classe représentant une passerelle.
     
     """
     
-    def __init__(cls, nom, bases, contenu):
-        """Constructeur de la métaclasse"""
-        MetaBaseObj.__init__(cls, nom, bases, contenu)
-        if cls.nom_type:
-            types[cls.nom_type] = cls
-
-from . import ancre
-from . import passerelle
-from . import voile
+    nom_type = "passerelle"
+    
+    def __init__(self, cle=""):
+        """Constructeur d'un type"""
+        BaseElement.__init__(self, cle)
+        # Attributs propres aux passerelles
+        self._attributs = {
+            "baissee": Attribut(lambda: False),
+        }
+    
+    @staticmethod
+    def get_description_ligne(elt, personnage):
+        """Retourne une description d'une ligne de l'élément."""
+        if elt.baissee:
+            message = "dépliée ici"
+        else:
+            message = "repliée ici"
+        
+        return elt.nom.capitalize() + " est " + message + "."

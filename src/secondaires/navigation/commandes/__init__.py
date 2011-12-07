@@ -33,6 +33,7 @@
 from . import detailler
 from . import eltedit
 from . import navire
+from . import passerelle
 from . import shedit
 from . import vent
 from . import voile

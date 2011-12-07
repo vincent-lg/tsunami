@@ -67,6 +67,7 @@ class Navire(Vehicule):
         self.propulsion = Propulsion(self)
         self.forces.append(self.propulsion)
         self.etendue = None
+        self.immobilise = False
         if modele:
             self.modele = modele
             modele.vehicules.append(self)
@@ -196,6 +197,11 @@ class Navire(Vehicule):
     def vent_arriere(self):
         """Retourne le facteur de vitesse par l'allure par vent arrière."""
         return 0.7
+    
+    def avancer(self, temps_virtuel):
+        """Fait avancer le navire si il n'est pas immobilisé."""
+        if not self.immobilise:
+            Vehicule.avancer(self, temps_virtuel)
     
     def detruire(self):
         """Destruction du self."""

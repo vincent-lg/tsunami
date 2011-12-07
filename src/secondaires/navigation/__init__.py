@@ -128,6 +128,7 @@ class Module(BaseModule):
             commandes.detailler.CmdDetailler(),
             commandes.eltedit.CmdEltedit(),
             commandes.navire.CmdNavire(),
+            commandes.passerelle.CmdPasserelle(),
             commandes.shedit.CmdShedit(),
             commandes.vent.CmdVent(),
             commandes.voile.CmdVoile(),
