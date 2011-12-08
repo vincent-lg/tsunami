@@ -28,13 +28,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'ancre'."""
 
-from . import ancre
-from . import detailler
-from . import eltedit
-from . import navire
-from . import passerelle
-from . import shedit
-from . import vent
-from . import voile
+from primaires.interpreteur.commande.commande import Commande
+from .lever import PrmLever
+from .jeter import PrmJeter
+
+class CmdAncre(Commande):
+    
+    """Commande 'ancre'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "ancre", "anchor")
+        self.aide_courte = "manipule l'ancre"
+        self.aide_longue = \
+            "Cette commande permet de manipuler l'ancre, la " \
+            "jeter ou la lever."
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmJeter())
+        self.ajouter_parametre(PrmLever())

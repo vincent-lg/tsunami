@@ -117,6 +117,16 @@ class Navire(Vehicule):
         return tuple(e for e in elts if e.nom_type == "voile")
     
     @property
+    def passerelle(self):
+        """Retourne True si la passerelle du navire est dépliée."""
+        elts = [e for e in self.elements if e.nom_type == "passerelle"]
+        if not elts:
+            return False
+        
+        e = elts[0]
+        return e.baissee
+    
+    @property
     def vent(self):
         """Retourne le vecteur du vent le plus proche.
         
@@ -213,6 +223,11 @@ class Navire(Vehicule):
         """Fait avancer le navire si il n'est pas immobilisé."""
         if not self.immobilise:
             Vehicule.avancer(self, temps_virtuel)
+    
+    def envoyer(self, message):
+        """Envoie le message à tous les personnages présents dans le navire."""
+        for salle in self.salles.values():
+            salle.envoyer(message)
     
     def detruire(self):
         """Destruction du self."""

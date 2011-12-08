@@ -125,6 +125,7 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.ancre.CmdAncre(),
             commandes.detailler.CmdDetailler(),
             commandes.eltedit.CmdEltedit(),
             commandes.navire.CmdNavire(),
