@@ -79,14 +79,14 @@ class SujetAide(ObjetID):
         return self._titre
     def _set_titre(self, titre):
         titre = titre.lower().split(" ")[0]
-        if titre in [supprimer_accents(s.titre) for s in \
+        if not titre in [supprimer_accents(s.titre) for s in \
                 type(self).importeur.information.sujets] or type(self). \
                 importeur.information.get_sujet_par_mot_cle(titre):
             self._titre = titre
     titre = property(_get_titre, _set_titre)
     
     def _get_pere(self):
-        if self._pere is None:
+        if self._pere is None or self._pere == "":
             return None
         else:
             return type(self).importeur.parid["aide"][self._pere]
@@ -141,6 +141,20 @@ class SujetAide(ObjetID):
         else:
             return "|att|Aucun sujet affilié.|ff|"
     
+    def sommaire(self, personnage, indent=""):
+        """Renvoie le sommaire du sujet, si sommaire il y a."""
+        ret = ""
+        i = 1
+        for sujet in self.sujets_fils:
+            if self.importeur.interpreteur.groupes. \
+                    explorer_groupes_inclus(personnage.grp, sujet.str_groupe):
+                ret += "\n" + indent + str(i) + ". |cmd|"
+                ret += sujet.titre.capitalize() + "|ff| - " + sujet.resume
+                if self.sujets_fils:
+                    ret += sujet.sommaire(personnage, indent=indent+"  ")
+                i += 1
+        return ret
+    
     def est_lie(self, sujet):
         """Retourne True si le sujet est lié, False sinon."""
         return sujet in self.__sujets_lies and self in sujet.__sujets_lies
@@ -189,5 +203,36 @@ class SujetAide(ObjetID):
             self.__sujets_fils.insert(i - 1, sujet)
         else:
             self.__sujets_fils.insert(i + 1, sujet)
+    
+    def afficher_pour(self, personnage):
+        """Affiche le sujet d'aide pour personnage."""
+        nb_ti = int((31 - len(self.titre)) / 2)
+        ret = "|tit|" + "-" * nb_ti + "= " + self.titre.capitalize()
+        ret += " =" + "-" * nb_ti
+        if len(ret) == 39:
+            ret += "-"
+        ret += "|ff|\n" + self.resume.capitalize() + ".\n"
+        if self.sujets_fils:
+            ret += "\nSommaire :"
+            ret += self.sommaire(personnage) + "\n"
+        ret += "\n" + str(self.contenu)
+        if self.mots_cles:
+            s = len(self.mots_cles) > 1 and "s" or ""
+            ret += "\n\nMot{s}-clé{s} ".format(s=s)
+            ret += "renvoyant vers ce sujet : |ent|"
+            ret += "|ff|, |ent|".join(self.mots_cles) + "|ff|."
+        if self.sujets_lies:
+            sujets_lies = []
+            for sujet in self.sujets_lies:
+                if self.importeur.interpreteur.groupes. \
+                        explorer_groupes_inclus(personnage.grp,
+                        sujet.str_groupe):
+                    sujets_lies.append(sujet)
+            if sujets_lies:
+                s = len(sujets_lies) > 1 and "s" or ""
+                ret += "\n\nSujet{s} lié{s} : |ent|".format(s=s)
+                ret += "|ff|, |ent|".join([s.titre for s in sujets_lies])
+                ret += "|ff|."
+        return ret
 
 ObjetID.ajouter_groupe(SujetAide)

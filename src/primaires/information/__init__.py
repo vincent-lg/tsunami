@@ -32,6 +32,7 @@
 
 from abstraits.module import *
 from primaires.format.fonctions import *
+from primaires.information.config import cfg_info
 from primaires.information import commandes
 
 from .editeurs.hedit import EdtHedit
@@ -53,6 +54,13 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "information", "primaire")
         self.__sujets = []
         self.versions = None
+    
+    def config(self):
+        """Configuration du module"""
+        self.cfg_info = type(self.importeur).anaconf.get_config("config_info",
+            "information/config.cfg", "config information", cfg_info)
+        
+        BaseModule.config(self)
     
     def init(self):
         """Initialisation du module.
@@ -171,12 +179,22 @@ class Module(BaseModule):
                     explorer_groupes_inclus(personnage.grp, sujet.str_groupe):
                 peut_lire.append(sujet)
         
-        peut_lire = [s.titre for s in peut_lire if s.pere is None]
-        if not peut_lire:
-            peut_lire.append("|att|Aucun|ff|")
+        sujets_lire = []
+        taille_max = 0
+        for s in peut_lire:
+            if len(s.titre) > taille_max:
+                taille_max = len(s.titre)
+        for sujet in peut_lire:
+            if sujet.pere is None:
+                sujets_lire.append("|ent|" + sujet.titre.ljust(taille_max) + \
+                        "|ff| - " + sujet.resume)
         
-        msg = "Sujets d'aides disponibles :\n\n  "
-        msg += "\n  ".join(sorted(peut_lire))
+        msg = self.cfg_info.accueil_aide + "\n\n"
+        if not sujets_lire:
+            msg += "|att|Aucun sujet disponible.|ff|"
+        else:
+            msg += "Sujets disponibles :\n\n  " + "\n  ".join(sorted(
+                    sujets_lire))
         return msg
     
     def joueur_connecte(self, joueur):
