@@ -45,11 +45,11 @@ class EdtLies(Uniligne):
         sujet = self.objet
         sujet_a_lier = type(self).importeur.information.get_sujet(msg)
         if not sujet_a_lier:
-            self.pere << "|err|Le sujet {} n'existe pas.|ff|".format(msg)
+            self.pere << "|err|Le sujet '{}' n'existe pas.|ff|".format(msg)
         elif sujet_a_lier is sujet:
             self.pere << "|err|Vous ne pouvez lier un sujet avec lui-même.|ff|"
         elif sujet.est_fils(sujet_a_lier) or sujet.pere is sujet_a_lier:
-            self.pere << "|err|Le sujet {} est déjà fils ou père du sujet " \
+            self.pere << "|err|Le sujet '{}' est déjà fils ou père du sujet " \
                     "présent.|ff|".format(msg)
         else:
             if sujet.est_lie(sujet_a_lier):

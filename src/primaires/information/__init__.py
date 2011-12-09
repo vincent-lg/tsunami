@@ -126,6 +126,8 @@ class Module(BaseModule):
                 titre = sujet
                 break
         self.__sujets.remove(titre)
+        titre.vider()
+        titre.detruire()
     
     def get_sujet_par_mot_cle(self, mot):
         """Retourne le sujet correspondant à ce mot-clé."""

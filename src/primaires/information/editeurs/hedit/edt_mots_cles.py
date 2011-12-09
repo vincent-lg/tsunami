@@ -50,7 +50,7 @@ class EdtMotscles(Uniligne):
             self.actualiser()
         else:
             if type(self).importeur.information.get_sujet(msg) is not None:
-                self.pere << "|err|Le mot-clé {} est déjà utilisé.|ff|".format(
+                self.pere << "|err|Le mot-clé '{}' est déjà utilisé.|ff|".format(
                         msg)
             else:
                 sujet.mots_cles.append(msg)

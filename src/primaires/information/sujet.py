@@ -65,7 +65,7 @@ class SujetAide(ObjetID):
         self.resume = "sujet d'aide"
         self.contenu = Description(parent=self)
         self.mots_cles = []
-        self._str_groupe = ""
+        self._str_groupe = "joueur"
         self.__sujets_lies = ListeID(parent=self)
         self.__sujets_fils = ListeID(parent=self)
     
@@ -86,10 +86,10 @@ class SujetAide(ObjetID):
     titre = property(_get_titre, _set_titre)
     
     def _get_pere(self):
-        if self._pere is None or self._pere == "":
-            return None
-        else:
+        try:
             return type(self).importeur.parid["aide"][self._pere]
+        except KeyError:
+            return None
     def _set_pere(self, pere):
         self._pere = pere.id if pere else None
     pere = property(_get_pere, _set_pere)
@@ -203,6 +203,17 @@ class SujetAide(ObjetID):
             self.__sujets_fils.insert(i - 1, sujet)
         else:
             self.__sujets_fils.insert(i + 1, sujet)
+    
+    def vider(self):
+        """Prépare la destruction du sujet."""
+        for s in self.sujets_fils:
+            s.pere = self.pere
+            if self.pere:
+                self.pere.ajouter_fils(s)
+        if self.pere is not None:
+            self.pere.supprimer_fils(self)
+        for s in self.sujets_lies:
+            s.supprimer_lie(self)
     
     def afficher_pour(self, personnage):
         """Affiche le sujet d'aide pour personnage."""
