@@ -46,7 +46,7 @@ def entrer_point(observe, navire, position, angle, v_dist, coords, point):
     else:
         observe[angle] = (coords[0], coords[1], v_dist, point)
 
-def get_points(navire, distance, precision):
+def get_points(personnage, navire, distance, precision):
     """Retourne les points les plus près du navire.
     
     En clé se trouve l'angle, en valeur le point le plus proche observé.
@@ -54,7 +54,7 @@ def get_points(navire, distance, precision):
     """
     etendue = navire.etendue
     alt = etendue.altitude
-    position = navire.position
+    position = Vecteur(*personnage.salle.coords.tuple())
     observe = {}
     
     # On explore tous les points non débarcables
@@ -177,6 +177,9 @@ class CmdDetailler(Commande):
         
         navire = salle.navire
         # On récupère les points
-        points = get_points(navire, 30, 15)
+        points = get_points(personnage, navire, 30, 15)
         msg = formatter_points(points)
-        personnage << "\n".join(msg)
+        if msg:
+            personnage << "\n".join(msg)
+        else:
+            personnage << "Rien n'est en vue auprès de vous."
