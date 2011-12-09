@@ -33,6 +33,7 @@
 from . import ancre
 from . import detailler
 from . import eltedit
+from . import gouvernail
 from . import navire
 from . import passerelle
 from . import shedit

@@ -31,35 +31,44 @@
 """Package contenant la commande 'gouvernail'."""
 
 from primaires.interpreteur.commande.commande import Commande
-from primaires.interpreteur.editeur.presentation import Presentation
-from primaires.interpreteur.editeur.uniligne import Uniligne
+from .tenir import PrmTenir
+from .relacher import PrmRelacher
+from .droite import PrmDroite
+from .gauche import PrmGauche
+from .centre import PrmCentre
 
-class Cmdgouvernail(Commande):
+class CmdGouvernail(Commande):
     
     """Commande 'gouvernail'"""
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "gouvernail", "gouvernail")
-        self.groupe = "administrateur"
-        self.schema = "<cle>"
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "ouvre l'éditeur de modèle de navires"
+        Commande.__init__(self, "gouvernail", "rudder")
+        self.aide_courte = "manipule le gouvernail"
         self.aide_longue = \
-            "Cette commande ouvre l'éditeur de prototype de navire. " \
-            "Le terme modèle est également utilisé. Vous devez préciser " \
-            "en paramètre la clé du modèle (par exemple |cmd|voilier|ff|). " \
-            "Si le modèle n'existe pas, il sera créé."
+            "Cette commande vous permet de tourner le gouvernail " \
+            "vers tribord ou bâbord. Vous devez le tenir auparavant " \
+            "(%gouvernail% %gouvernail:tenir%). Un gouvernail possède " \
+            "5 degrés vers tribord et le même nombre vers bâbord. " \
+            "Pour virer vers bâbord, entrez %gouvernail% " \
+            "%gouvernail:gauche%. La barre sera alors inclinée vers " \
+            "bâbord et le navire se mettra à tourner vers bâbord. " \
+            "Pour le faire s'arrêter, vous devrez replacer la barre " \
+            "droite en l'inclinant vers tribord (%gouvernail% " \
+            "%gouvernail:droite%). Vous pouvez également utiliser la " \
+            "commande %gouvernail% %gouvernail:centre% pour remettre " \
+            "la barre droite. Les commandes %gouvernail% " \
+            "%gouvernail:gauche% et %gouvernail:droite% peuvent " \
+            "prendre en paramètre optionnel un nombre entre 1 et 5. " \
+            "Cela permet d'incliner le gouvernail plus fortement et " \
+            "ainsi, tourner plus vite. Pour relâcher le gouvernail, " \
+            "entrez %gouvernail% %gouvernail:relâcher%. Si vous " \
+            "le faites en marche, vous perdrez le contrôle du navire."
     
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        cle = dic_masques["cle"].cle
-        if cle in type(self).importeur.navigation.modeles:
-            modele = type(self).importeur.navigation.modeles[cle]
-        else:
-            modele = type(self).importeur.navigation.creer_modele(cle)
-        
-        editeur = type(self).importeur.interpreteur.construire_editeur(
-                "gouvernail", personnage, modele)
-        personnage.contextes.ajouter(editeur)
-        editeur.actualiser()
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmGauche())
+        self.ajouter_parametre(PrmDroite())
+        self.ajouter_parametre(PrmCentre())
+        self.ajouter_parametre(PrmTenir())
+        self.ajouter_parametre(PrmRelacher())

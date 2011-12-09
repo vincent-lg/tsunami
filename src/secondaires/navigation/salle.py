@@ -114,6 +114,15 @@ class SalleNavire(Salle):
         """Retourne les voiles de la salle."""
         return [e for e in self.elements if e.nom_type == "voile"]
     
+    @property
+    def gouvernail(self):
+        """Retourne le gouvernail de la salle ou None."""
+        elts = [e for e in self.elements if e.nom_type == "gouvernail"]
+        if elts:
+            return elts[0]
+        
+        return None
+    
     def ajouter_element(self, element):
         """Ajoute un élément dans la salle."""
         self.elements.append(element)

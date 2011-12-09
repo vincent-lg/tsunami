@@ -47,4 +47,38 @@ class Gouvernail(BaseElement):
         # Attributs propres aux gouvernails
         self._attributs = {
             "orientation": Attribut(lambda: 0),
+            "tenu": Attribut(lambda: None),
         }
+    
+    @staticmethod
+    def get_description_ligne(elt, personnage):
+        """Retourne la description en une ligne de l'élément."""
+        if elt.orientation == 0:
+            orientation = "parfaitement au centre"
+        elif elt.orientation < 0:
+            orientation = "incliné de {nb}° sur bâbord".format(
+                    nb=-elt.orientation)
+        else:
+            orientation = "incliné de {nb}° sur tribord".format(
+                    nb=elt.orientation)
+        
+        return elt.nom.capitalize() + " est " + orientation + "."
+    
+    @staticmethod
+    def virer_babord(elt, nombre=1):
+        """Vire vers bâbord."""
+        elt.orientation -= nombre
+        if elt.orientation < -5:
+            elt.orientation = -5
+    
+    @staticmethod
+    def virer_tribord(elt, nombre=1):
+        """Vire vers tribord."""
+        elt.orientation += nombre
+        if elt.orientation > 5:
+            elt.orientation = 5
+    
+    @staticmethod
+    def centrer(elt):
+        """Centre le gouvernail."""
+        elt.orientation = 0

@@ -49,6 +49,7 @@ class MetaElt(MetaBaseObj):
         if cls.nom_type:
             types[cls.nom_type] = cls
 
+from . import gouvernail
 from . import ancre
 from . import passerelle
 from . import voile
