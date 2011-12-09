@@ -127,6 +127,16 @@ class Navire(Vehicule):
         return e.baissee
     
     @property
+    def gouvernail(self):
+        """Retourne le gouvernail si le navire en contient un."""
+        for salle in self.salles.values():
+            gouvernail = salle.gouvernail
+            if gouvernail:
+                return gouvernail
+        
+        return None
+    
+    @property
     def vent(self):
         """Retourne le vecteur du vent le plus proche.
         
@@ -223,6 +233,16 @@ class Navire(Vehicule):
         """Fait avancer le navire si il n'est pas immobilisé."""
         if not self.immobilise:
             Vehicule.avancer(self, temps_virtuel)
+    
+    def virer(self, n=1):
+        """Vire vers tribord ou bâbord de n degrés.
+        
+        Si n est inférieure à 0, vire vers bâbord.
+        Sinon, vire vers tribord.
+        
+        """
+        self.direction.tourner_autour_z(n)
+        self.maj_salles()
     
     def envoyer(self, message):
         """Envoie le message à tous les personnages présents dans le navire."""

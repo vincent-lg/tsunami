@@ -115,6 +115,8 @@ class PrmDeplier(Parametre):
                 return
             
             salle.sorties.ajouter_sortie(dir, "passerelle", "la", dest, oppose)
+            salle.enregistrer()
             dest.sorties.ajouter_sortie(oppose, "passerelle", "la", salle, dir)
+            dest.enregistrer()
             passerelle.baissee = True
             personnage << "Vous déployez {}.".format(passerelle.nom)

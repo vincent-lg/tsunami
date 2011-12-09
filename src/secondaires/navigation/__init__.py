@@ -121,9 +121,11 @@ class Module(BaseModule):
         self.nav_logger.info(format_nb(nb_vents,
                 "{nb} vent{s} récupéré{s}"))
         
-        # Ajout de l'action différée
+        # Ajout des actions différées
         self.importeur.diffact.ajouter_action("dep_navire", 3,
                 self.avancer_navires)
+        self.importeur.diffact.ajouter_action("vir_navire", 3,
+                self.virer_navires)
         
         BaseModule.init(self)
     
@@ -260,3 +262,13 @@ class Module(BaseModule):
         for navire in self.navires.values():
             if navire.etendue:
                 navire.avancer(0.4)
+    
+    def virer_navires(self):
+        """Fait virer les navires."""
+        self.importeur.diffact.ajouter_action("vir_navire", 3,
+                self.virer_navires)
+        for navire in self.navires.values():
+            if not navire.immobilise:
+                gouvernail = navire.gouvernail
+                if gouvernail and gouvernail.orientation != 0:
+                    navire.virer(gouvernail.orientation)

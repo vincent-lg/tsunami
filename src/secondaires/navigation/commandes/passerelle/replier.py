@@ -79,7 +79,9 @@ class PrmReplier(Parametre):
             
             if opp_sortie:
                 dest.sorties.supprimer_sortie(opp_sortie.direction)
+                dest.enregistrer()
             
             salle.sorties.supprimer_sortie(sortie.direction)
+            salle.enregistrer()
             passerelle.baissee = False
             personnage << "Vous repliez {}.".format(passerelle.nom)
