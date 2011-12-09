@@ -38,28 +38,93 @@ les extensions n'apparaîtront pas ici.
 
 """
 
-from primaires.interpreteur.editeur import Editeur
+from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.description import Description
+from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.choix import Choix
+from primaires.interpreteur.editeur.flag import Flag
+from primaires.scripting.editeurs.edt_script import EdtScript
+from .edt_type import EdtType
+from .edt_difficulte import EdtDifficulte
 
-class EdtSpedit(Editeur):
+class EdtSpedit(Presentation):
     
-    """Classe définissant l'éditeur d'attitude 'spedit'.
+    """Classe définissant l'éditeur de sort 'spedit'.
     
     """
     
     nom = "spedit"
     
-    def __init__(self, personnage, objet, attribut=None):
+    def __init__(self, personnage, sort):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
         
-        Editeur.__init__(self, instance_connexion, objet, attribut)
+        Presentation.__init__(self, instance_connexion, sort)
+        if personnage and sort:
+            self.construire(sort)
     
     def __getnewargs__(self):
         return (None, None)
     
-    def accueil(self):
-        """Méthode d'accueil de l'éditeur"""
-        pass
+    def construire(self, sort):
+        """Construction de l'éditeur"""
+        # Nom
+        nom = self.ajouter_choix("nom", "n", Uniligne, sort, "nom")
+        nom.parent = self
+        nom.prompt = "Nom du sort (sans article) : "
+        nom.apercu = "{objet.nom}"
+        nom.aide_courte = \
+            "Entrez le |ent|nom|ff| du sort ou |cmd|/|ff| pour revenir " \
+            "à la fenêtre parente.\n\nNom actuel : |bc|{objet.nom}|ff|"
+        
+        # Description
+        description = self.ajouter_choix("description", "d", Description, \
+                sort)
+        description.parent = self
+        description.apercu = "{objet.description.paragraphes_indentes}"
+        description.aide_courte = \
+            "| |tit|" + "Description du sort {}".format(sort.cle).ljust(76) + \
+            "|ff||\n" + self.opts.separateur
+        
+        # Type de sort
+        type = self.ajouter_choix("type de sort", "s", EdtType, sort)
+        type.parent = self
+        type.apercu = "{objet.str_type}"
+        
+        # Cible
+        types = ["aucune", "personnage", "objet"]
+        cible = self.ajouter_choix("type de cible", "c", Choix, sort,
+                "type_cible", types)
+        cible.parent = self
+        cible.prompt = "Type de cible : "
+        cible.apercu = "{objet.type_cible}"
+        cible.aide_courte = \
+            "Entrez le |ent|type de cible|ff| du sort ou |cmd|/|ff| " \
+            "pour revenir à la fenêtre parente.\nTypes disponibles : |cmd|" \
+            "{}|ff|.\n\nType actuel : |bc|{{objet.type_cible}}|ff|".format(
+            "|ff|, |cmd|".join(types))
+        
+        # Difficulté
+        difficulte = self.ajouter_choix("difficulté", "i", EdtDifficulte, sort)
+        difficulte.parent = self
+        difficulte.prompt = "Difficulté d'apprentissage : "
+        difficulte.apercu = "{objet.difficulte}"
+        difficulte.aide_courte = \
+            "Paramétrez la |ent|difficulté|ff| d'apprentissage du sort " \
+            "entre |cmd|0|ff| et |cmd|100|ff| ou\nentrez |cmd|/|ff| pour " \
+            "revenir à la fenêtre parente. |cmd|0|ff| signifie que le sort " \
+            "ne peut pas\nêtre appris par la pratique.\n\n" \
+            "Difficulté actuelle : |bc|{objet.difficulte}|ff|"
+        
+        # Distance
+        distance = self.ajouter_choix("distance", "t", Flag, sort,
+                "distance")
+        distance.parent = self
+        
+        # Script
+        scripts = self.ajouter_choix("scripts", "sc", EdtScript,
+                sort.script)
+        scripts.parent = self

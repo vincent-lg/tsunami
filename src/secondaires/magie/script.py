@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,32 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'spedit'."""
+"""Fichier contenant la classe ScriptSort détaillée plus bas."""
 
-from primaires.interpreteur.commande.commande import Commande
+from primaires.scripting.script import Script
 
-class CmdSpedit(Commande):
+class ScriptSort(Script):
     
-    """Commande 'spedit'.
+    """Script et évènements propre aux sorts.
+    
+    C'est dans cette classe que sont construits les évènements du scripting
+    de la magie. Il est ainsi plus facile à modifier si vous souhaitez
+    rajouter un évènement.
     
     """
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "spedit", "spedit")
-        self.schema = "<ident>"
-        self.groupe = "administrateur"
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "ouvre l'éditeur de sorts"
-        self.aide_longue = \
-            "Cette commande ouvre l'éditeur de sorts, qui permet de créer " \
-            "des sorts en tout genre."
-    
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        cle_sort = dic_masques["ident"].ident
-        sort = type(self).importeur.magie.sorts.ajouter_ou_modifier(cle_sort)
-        editeur = type(self).importeur.interpreteur.construire_editeur(
-                "spedit", personnage, sort)
-        personnage.contextes.ajouter(editeur)
-        editeur.actualiser()
+    def init(self):
+        """Initialisation du script"""
+        # Evénement arriver
+        evt_concentration = self.creer_evenement("concentration")
+        evt_concentration.aide_courte = "quelqu'un concentre le sort"
+        evt_concentration.aide_longue = \
+            "Cet évènement est appelé lorsqu'un personnage concentre le " \
+            "sort, c'est-à-dire tente de le lancer. On peut par exemple " \
+            "scripter ici une aura qui luit alors autour du lanceur."
+        
+        # Configuration des variables de l'évènement concentration
+        var_perso = evt_concentration.ajouter_variable("personnage",
+                "Personnage")
+        var_perso.aide = "le personnage qui concentre le sort"
+        var_maitrise = evt_concentration.ajouter_variable("maitrise", "int")
+        var_maitrise.aide = "la maîtrise que le personnage a de ce sort"

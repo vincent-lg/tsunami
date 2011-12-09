@@ -32,13 +32,10 @@
 
 from abstraits.obase import *
 from primaires.format.description import Description
+from .script import ScriptSort
 
 STANDARD = 0
 OFFENSIF = 1
-
-AUCUNE = 0
-PERSONNAGE = 1
-OBJET = 2
 
 class Sort(BaseObj):
     
@@ -46,18 +43,44 @@ class Sort(BaseObj):
     
     """
     
-    def __init__(self, nom, parent=None):
+    def __init__(self, cle, parent=None):
         """Constructeur du sort"""
         BaseObj.__init__(self)
         self.parent = parent
-        self.nom = nom
+        self.cle = cle
+        self.nom = "sortilège"
         self.description = Description(parent=self)
         self.type = STANDARD
-        self.type_cible = AUCUNE
-        self.difficulte = 1
+        self.type_cible = "aucune"
+        self.difficulte = 0
         self.distance = False
-        self.valide = False
+        self.script = ScriptSort(self)
+        # On passe le statut en CONSTRUIT
+        self._statut = CONSTRUIT
+    
+    def __getnewargs__(self):
+        return ("", )
+    
+    def __str__(self):
+        return "sort:" + self.cle
+    
+    def __setattr__(self, nom_attr, valeur):
+        """Enregisre le parent si il est précisé"""
+        construit = self.construit
+        BaseObj.__setattr__(self, nom_attr, valeur)
+        if construit and self.parent:
+            self.parent.enregistrer()
     
     def enregistrer(self):
-        if self.parent:
+        """Enregistre le sort dans son parent"""
+        construit = self.construit
+        if construit and self.parent:
             self.parent.enregistrer()
+    
+    @property
+    def str_type(self):
+        """Retourne le type de sort"""
+        if self.type == STANDARD:
+            return "standard"
+        else:
+            return "offensif"

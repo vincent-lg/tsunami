@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -25,35 +25,29 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'spedit'."""
+"""Ce fichier définit le contexte-éditeur 'difficulté'."""
 
-from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.editeur.uniligne import Uniligne
 
-class CmdSpedit(Commande):
+class EdtDifficulte(Uniligne):
     
-    """Commande 'spedit'.
+    """Contexte-éditeur difficulté.
+    
+    Ce contexte permet de changer la difficulté d'apprentissage d'un sort.
     
     """
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "spedit", "spedit")
-        self.schema = "<ident>"
-        self.groupe = "administrateur"
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "ouvre l'éditeur de sorts"
-        self.aide_longue = \
-            "Cette commande ouvre l'éditeur de sorts, qui permet de créer " \
-            "des sorts en tout genre."
-    
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        cle_sort = dic_masques["ident"].ident
-        sort = type(self).importeur.magie.sorts.ajouter_ou_modifier(cle_sort)
-        editeur = type(self).importeur.interpreteur.construire_editeur(
-                "spedit", personnage, sort)
-        personnage.contextes.ajouter(editeur)
-        editeur.actualiser()
+    def interpreter(self, msg):
+        """Interprétation du message"""
+        msg = msg.lower()
+        try:
+            diff = int(msg)
+            assert diff >= 0 and diff <= 100
+        except (ValueError, AssertionError):
+            self.pere << "|err|Entrez un nombre valide, entre 0 et 100.|ff|"
+        else:
+            self.objet.difficulte = diff
+            self.actualiser()

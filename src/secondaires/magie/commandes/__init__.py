@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module perso."""
+"""Package contenant les commandes du module magie."""
 
 import secondaires.magie.commandes.sorts
 import secondaires.magie.commandes.lancer

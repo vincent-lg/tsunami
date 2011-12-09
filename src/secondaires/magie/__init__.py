@@ -38,8 +38,7 @@ from .sorts import Sorts
 
 class Module(BaseModule):
     
-    """
-    Ce module gère la magie en jeu, et tout ce qui s'y rattache.
+    """Ce module gère la magie en jeu, et tout ce qui s'y rattache.
     
     """
     
@@ -49,6 +48,7 @@ class Module(BaseModule):
         self.logger = type(self.importeur).man_logs.creer_logger( \
                 "magie", "magie")
         self.sorts = None
+        self.commandes = []
     
     def init(self):
         """Initialisation du module"""
@@ -63,13 +63,12 @@ class Module(BaseModule):
         else:
             self.logger.info(format_nb(len(sorts), "{nb} sort{s} récupéré{s}"))
         self.sorts = sorts
-    
-    def ajouter_commandes(self):
-        """Ajout des commandes"""
+        
+        # Ajout des commandes
         self.commandes = [
             commandes.sorts.CmdSorts(),
             commandes.lancer.CmdLancer(),
-            commandes.spells.CmdSpells(),
+            commandes.spedit.CmdSpedit(),
         ]
         
         for cmd in self.commandes:

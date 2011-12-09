@@ -52,33 +52,33 @@ class Sorts(Unique):
     def __getnewargs__(self):
         return ()
     
-    def __contains__(self, nom):
+    def __contains__(self, cle):
         """Renvoie True si le sort existe, False sinon"""
-        return nom in self.__sorts
+        return cle in self.__sorts
     
     def __len__(self):
         return len(self.__sorts)
     
-    def __getitem__(self, nom):
-        """Renvoie un sort à partir de son nom"""
-        return self.__sorts[nom]
+    def __getitem__(self, cle):
+        """Renvoie un sort à partir de sa clé"""
+        return self.__sorts[cle]
     
-    def __setitem__(self, nom, sort):
+    def __setitem__(self, cle, sort):
         """Ajoute un sort à la liste"""
-        self.__sorts[nom] = sort
+        self.__sorts[cle] = sort
         self.enregistrer()
     
-    def __delitem__(self, nom):
+    def __delitem__(self, cle):
         """Détruit le sort spécifié"""
-        del self.__sorts[nom]
+        del self.__sorts[cle]
         self.enregistrer()
     
-    def ajouter_ou_modifier(self, nom):
+    def ajouter_ou_modifier(self, cle):
         """Ajoute un sort ou le renvoie si existant"""
-        if nom in self.__sorts:
-            return self.__sorts[nom]
+        if cle in self.__sorts:
+            return self.__sorts[cle]
         else:
-            sort = Sort(nom, self)
-            self.__sorts[nom] = sort
+            sort = Sort(cle, self)
+            self.__sorts[cle] = sort
             self.enregistrer()
             return sort
