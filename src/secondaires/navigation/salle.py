@@ -123,6 +123,15 @@ class SalleNavire(Salle):
         
         return None
     
+    @property
+    def loch(self):
+        """Retourne le loch de la salle ou None."""
+        elts = [e for e in self.elements if e.nom_type == "loch"]
+        if elts:
+            return elts[0]
+        
+        return None
+    
     def ajouter_element(self, element):
         """Ajoute un élément dans la salle."""
         self.elements.append(element)

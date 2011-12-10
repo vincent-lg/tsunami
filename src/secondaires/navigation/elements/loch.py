@@ -28,15 +28,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant la classe Loch, détaillée plus bas."""
 
-from . import ancre
-from . import detailler
-from . import eltedit
-from . import gouvernail
-from . import loch
-from . import navire
-from . import passerelle
-from . import shedit
-from . import vent
-from . import voile
+from secondaires.navigation.constantes import *
+from .base import BaseElement
+
+class Loch(BaseElement):
+    
+    """Classe représentant un loch pour mesurer la vitesse du navire.
+    
+    """
+    
+    nom_type = "loch"
+    
+    def __init__(self, cle=""):
+        """Constructeur d'un type"""
+        BaseElement.__init__(self, cle)
+    
+    @staticmethod
+    def get_description_ligne(elt, personnage):
+        """Retourne une description d'une ligne de l'élément."""
+        return elt.nom.capitalize() + " se trouve ici."

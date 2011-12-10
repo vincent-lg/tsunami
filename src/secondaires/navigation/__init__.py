@@ -82,6 +82,9 @@ class Module(BaseModule):
         ten_gouv.msg_visible = "{personnage} tient le gouvernail ici"
         ten_gouv.act_interdites = ["combat", "prendre", "poser", "deplacer",
                 "hisser_voile", "plier_voile"]
+        u_loch = self.importeur.perso.ajouter_etat("utiliser_loch")
+        u_loch.msg_refus = "Vous êtes en train de manipuler le loch"
+        u_loch.msg_visible = "{personnage} manipule le loch ici"
         
         BaseModule.config(self)
     
@@ -141,6 +144,7 @@ class Module(BaseModule):
             commandes.detailler.CmdDetailler(),
             commandes.eltedit.CmdEltedit(),
             commandes.gouvernail.CmdGouvernail(),
+            commandes.loch.CmdLoch(),
             commandes.navire.CmdNavire(),
             commandes.passerelle.CmdPasserelle(),
             commandes.shedit.CmdShedit(),

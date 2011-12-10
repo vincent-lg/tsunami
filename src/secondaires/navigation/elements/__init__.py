@@ -51,5 +51,6 @@ class MetaElt(MetaBaseObj):
 
 from . import gouvernail
 from . import ancre
+from . import loch
 from . import passerelle
 from . import voile
