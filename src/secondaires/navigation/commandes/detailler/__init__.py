@@ -54,7 +54,8 @@ def get_points(personnage, navire, distance, precision):
     """
     etendue = navire.etendue
     alt = etendue.altitude
-    position = Vecteur(*personnage.salle.coords.tuple())
+    pos_coords = personnage.salle.coords.tuple()
+    position = Vecteur(pos_coords[0], pos_coords[1], alt)
     observe = {}
     
     # On explore tous les points non débarcables
@@ -105,12 +106,12 @@ def get_points(personnage, navire, distance, precision):
     
     return observe
 
-def formatter_points(points, limite=90):
+def formatter_points(points, dir, limite=90):
     """Formatte les points et retourne une chaîne envoyable au joueur."""
     msg = []
     for angle, point in sorted(points.items()):
         x, y, vecteur, point = point
-        if angle < -limite or angle > limite:
+        if angle < dir - limite or angle > dir + limite:
             continue
         
         if angle == 0:
@@ -159,14 +160,23 @@ class CmdDetailler(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "détailler", "detail")
-        self.schema = ""
+        self.schema = "(<nombre>)"
         self.aide_courte = "affiche les détails de l'étendue d'eau"
         self.aide_longue = \
             "Cette commande permet à un navigateur de connaître les " \
             "détails qui l'entourent. Sans paramètre, cette commande " \
             "affiche les côtes, ports, navires visibles sur l'étendue. " \
             "Vous pouvez préciser en paramètre un point à détailler " \
-            "plus particulièrement."
+            "plus particulièrement sous la forme d'un angle. Pour regarder " \
+            "plus précisément, entrer 90. Si vous voulez regarder à " \
+            "bâbord, entrez -90. Vous pouvez entrer 180 pour regarder " \
+            "droit à l'arrière du navire."
+    
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nombre = self.noeud.get_masque("nombre")
+        nombre.proprietes["limite_inf"] = "-179"
+        nombre.proprietes["limite_sup"] = "180"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -176,9 +186,20 @@ class CmdDetailler(Commande):
             return
         
         navire = salle.navire
+        nombre = dic_masques["nombre"]
+        if nombre:
+            direction = nombre.nombre
+            direction = round(direction / 5) * 5
+            limite = 45
+            precision = 5
+        else:
+            direction = 0
+            limite = 90
+            precision = 15
+        
         # On récupère les points
-        points = get_points(personnage, navire, 30, 15)
-        msg = formatter_points(points)
+        points = get_points(personnage, navire, 30, precision)
+        msg = formatter_points(points, direction, limite)
         if msg:
             personnage << "\n".join(msg)
         else:

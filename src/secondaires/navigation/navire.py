@@ -196,7 +196,7 @@ class Navire(Vehicule):
     
     def vent_debout(self):
         """Retourne le facteur de vitesse par l'allure vent debout."""
-        return 0
+        return -0.3
     
     def pres(self):
         """Retourne le facteur de vitesse par l'allure de près."""

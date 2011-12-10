@@ -30,6 +30,8 @@
 
 """Fichier contenant la classe Voile, détaillée plus bas."""
 
+from math import fabs
+
 from bases.objet.attribut import Attribut
 from secondaires.navigation.constantes import *
 from .base import BaseElement
@@ -108,7 +110,7 @@ class Voile(BaseElement):
         if angle == 90 and or_voile < 0:
             angle = -90
         
-        facteur = 1 - (angle - or_voile) / 20
+        facteur = 1 - fabs((angle - or_voile) / 20)
         if facteur < 0:
             facteur = 0
         
