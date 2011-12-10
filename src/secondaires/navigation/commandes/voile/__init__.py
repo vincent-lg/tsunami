@@ -31,6 +31,9 @@
 """Package contenant la commande 'voile'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from .border import PrmBorder
+from .choquer import PrmChoquer
+from .empanner import PrmEmpanner
 from .hisser import PrmHisser
 from .plier import PrmPlier
 
@@ -50,5 +53,8 @@ class CmdVoile(Commande):
     
     def ajouter_parametres(self):
         """Ajout des paramètres."""
+        self.ajouter_parametre(PrmBorder())
+        self.ajouter_parametre(PrmChoquer())
+        self.ajouter_parametre(PrmEmpanner())
         self.ajouter_parametre(PrmHisser())
         self.ajouter_parametre(PrmPlier())
