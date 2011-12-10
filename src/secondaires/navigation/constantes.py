@@ -44,3 +44,8 @@ ANGLE_BON_PLEIN = 20
 ANGLE_LARGUE = 30
 ANGLE_GRAND_LARGUE = 60
 ANGLE_ARRIERE = 90
+
+# Vitesse
+TPS_VIRT = 3
+DIST_AVA = 0.4
+CB_BRASSES = 3.2 # combien de brasses dans une salle

@@ -69,6 +69,9 @@ class PrmInfo(Parametre):
         vitesse = navire.vitesse.norme
         vitesse = round(vitesse, 3)
         vitesse = str(vitesse).replace(".", ",")
+        vitesse_n = navire.vitesse_noeuds
+        vitesse_n = round(vitesse_n, 3)
+        vitesse_n = str(vitesse_n).replace(".", ",")
         acceleration = navire.acceleration.norme
         acceleration = round(acceleration, 3)
         acceleration = str(acceleration).replace(".", ",")
@@ -80,7 +83,7 @@ class PrmInfo(Parametre):
         msg += "\n  Étendue : " + etendue
         msg += "\n  Coordonnées : {}".format(navire.position.coordonnees)
         msg += "\n  Allure : {}".format(navire.nom_allure)
-        msg += "\n  Vitesse : {}".format(vitesse)
+        msg += "\n  Vitesse : {} ({} noeuds)".format(vitesse, vitesse_n)
         msg += "\n  Accélération : {} ({}°)".format(acceleration,
                 dir_acceleration)
         msg += "\n  Direction : {} ({})".format(direction, nom_direction)

@@ -188,6 +188,18 @@ class Navire(Vehicule):
         else:
             return "vent arrière"
 
+    @property
+    def vitesse_noeuds(self):
+        """Retourne la vitesse en noeuds."""
+        vit_ecoulement = type(self).importeur.temps.cfg.vitesse_ecoulement
+        vit_ecoulement = eval(vit_ecoulement)
+        distance = self.vitesse.norme
+        distance = distance * CB_BRASSES / 1000
+        print(distance)
+        distance = distance / (TPS_VIRT / DIST_AVA)
+        distance *= vit_ecoulement
+        return distance * 3600
+    
     def valider_coordonnees(self):
         """Pour chaque salle, valide ses coordonnées."""
         for salle in self.salles.values():

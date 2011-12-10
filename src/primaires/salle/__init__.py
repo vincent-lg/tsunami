@@ -97,11 +97,11 @@ class Module(BaseModule):
                 "Hook appelé dès qu'on regarde une salle.")
         
         # Ajout des terrain
-        self.ajouter_terrain("ville")
-        self.ajouter_terrain("route")
-        self.ajouter_terrain("forêt")
-        self.ajouter_terrain("plaine")
-        self.ajouter_terrain("rive")
+        self.ajouter_terrain("ville", "quelques maisons")
+        self.ajouter_terrain("route", "une route")
+        self.ajouter_terrain("forêt", "des forêts denses")
+        self.ajouter_terrain("plaine", "des plaines verdoyantes")
+        self.ajouter_terrain("rive", "une rive basse")
         
         BaseModule.config(self)
     
@@ -314,12 +314,12 @@ class Module(BaseModule):
         if salle and nouvelles_coords.valide:
             self._coords[nouvelles_coords.tuple()] = salle
     
-    def ajouter_terrain(self, nom):
+    def ajouter_terrain(self, nom, survol):
         """Ajoute un terrain."""
         if nom in self.terrains:
             raise KeyError("le terrain {] existe déjà".format(repr(nom)))
         
-        terrain = Terrain(nom)
+        terrain = Terrain(nom, survol)
         self.terrains[nom] = terrain
     
     def creer_etendue(self, cle):

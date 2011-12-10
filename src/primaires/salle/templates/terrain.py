@@ -34,6 +34,7 @@ class Terrain:
     
     """Classe définissant un terrain."""
     
-    def __init__(self, nom):
+    def __init__(self, nom, survol="un terrain"):
         """Constructeur du terrain."""
         self.nom = nom
+        self.desc_survol = survol

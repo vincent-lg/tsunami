@@ -41,6 +41,7 @@ from . import commandes
 from . import masques
 from . import editeurs
 from .modele import ModeleNavire
+from .constantes import TPS_VIRT, DIST_AVA
 
 class Module(BaseModule):
     
@@ -122,7 +123,7 @@ class Module(BaseModule):
                 "{nb} vent{s} récupéré{s}"))
         
         # Ajout des actions différées
-        self.importeur.diffact.ajouter_action("dep_navire", 3,
+        self.importeur.diffact.ajouter_action("dep_navire", TPS_VIRT,
                 self.avancer_navires)
         self.importeur.diffact.ajouter_action("vir_navire", 3,
                 self.virer_navires)
@@ -257,11 +258,11 @@ class Module(BaseModule):
     
     def avancer_navires(self):
         """Fait avancer les navires."""
-        self.importeur.diffact.ajouter_action("dep_navire", 3,
+        self.importeur.diffact.ajouter_action("dep_navire", TPS_VIRT,
                 self.avancer_navires)
         for navire in self.navires.values():
             if navire.etendue:
-                navire.avancer(0.4)
+                navire.avancer(DIST_AVA)
     
     def virer_navires(self):
         """Fait virer les navires."""

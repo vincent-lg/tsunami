@@ -34,6 +34,7 @@ from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.vehicule.vecteur import Vecteur
+from secondaires.navigation.constantes import CB_BRASSES
 
 def entrer_point(observe, navire, position, angle, v_dist, coords, point):
     """Entre un point dans le dictionnaire."""
@@ -123,7 +124,7 @@ def formatter_points(points, dir, limite=90):
         else:
             direction = "sur {}° bâbord".format(-angle)
         
-        distance = round(vecteur.norme * 3.2)
+        distance = round(vecteur.norme * CB_BRASSES)
         unite = "brasse"
         msg_dist = "à environ {nb} {unite}{s}"
         if 0 <= distance < 1:
@@ -149,7 +150,11 @@ def formatter_points(points, dir, limite=90):
         s = "s" if distance > 1 else ""
         msg_dist = msg_dist.format(nb=distance, unite=unite, s=s)
         
-        msg.append("une terre " + msg_dist + " " + direction)
+        terre = "Une terre"
+        if point:
+            terre = point.terrain.desc_survol.capitalize()
+        
+        msg.append(terre + " " + msg_dist + " " + direction)
     
     return msg
         
@@ -175,7 +180,7 @@ class CmdDetailler(Commande):
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nombre = self.noeud.get_masque("nombre")
-        nombre.proprietes["limite_inf"] = "-179"
+        nombre.proprietes["limite_inf"] = "-180"
         nombre.proprietes["limite_sup"] = "180"
     
     def interpreter(self, personnage, dic_masques):
@@ -186,7 +191,19 @@ class CmdDetailler(Commande):
             return
         
         navire = salle.navire
+        etendue = navire.etendue
+        alt = etendue.altitude
+        hauteur = salle.coords.z - alt
+        if salle.interieur:
+            personnage << "|err|Vous ne pouvez rien voir d'ici.|ff|"
+            return
+        
+        portee = 50
+        if hauteur > 0:
+            portee = 50 * hauteur
+        
         nombre = dic_masques["nombre"]
+        print(nombre, bool(nombre))
         if nombre:
             direction = nombre.nombre
             direction = round(direction / 5) * 5
@@ -198,7 +215,7 @@ class CmdDetailler(Commande):
             precision = 15
         
         # On récupère les points
-        points = get_points(personnage, navire, 30, precision)
+        points = get_points(personnage, navire, portee, precision)
         msg = formatter_points(points, direction, limite)
         if msg:
             personnage << "\n".join(msg)
