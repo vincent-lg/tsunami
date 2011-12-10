@@ -165,6 +165,7 @@ class CmdDetailler(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "détailler", "detail")
+        self.nom_categorie = "navire"
         self.schema = "(<nombre>)"
         self.aide_courte = "affiche les détails de l'étendue d'eau"
         self.aide_longue = \

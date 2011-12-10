@@ -87,6 +87,9 @@ class Module(BaseModule):
     
     def init(self):
         """Chargement des navires et modèles."""
+        self.importeur.interpreteur.categories["navire"] = \
+                "Commandes de navigation"
+        
         # On récupère les modèles
         modeles = self.importeur.supenr.charger_groupe(ModeleNavire)
         for modele in modeles:

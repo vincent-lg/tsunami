@@ -41,6 +41,7 @@ class CmdAncre(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "ancre", "anchor")
+        self.nom_categorie = "navire"
         self.aide_courte = "manipule l'ancre"
         self.aide_longue = \
             "Cette commande permet de manipuler l'ancre, la " \

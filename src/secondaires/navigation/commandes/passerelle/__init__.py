@@ -43,6 +43,7 @@ class CmdPasserelle(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "passerelle", "gangway")
+        self.nom_categorie = "navire"
         self.aide_courte = "manipule la passerelle"
         self.aide_longue = \
             "Cette commande permet de manipuler la passerelle, la " \
