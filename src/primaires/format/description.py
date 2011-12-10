@@ -152,7 +152,7 @@ class Description(BaseObj):
             for nom_complet in evts:
                 nom = nom_complet[1:]
                 evt = self.script["regarde"][nom]
-                evt.executer(regarde=self, personnage=personnage)
+                evt.executer(regarde=self.parent, personnage=personnage)
                 retour = evt.espaces.variables["retour"]
                 paragraphe = paragraphe.replace(nom_complet, retour)
             paragraphes.append("\n".join(wrap(paragraphe)))

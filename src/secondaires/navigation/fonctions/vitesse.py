@@ -48,7 +48,7 @@ class ClasseFonction(Fonction):
         Si la salle ne fait pas parti d'un navire, retourne 0.
         
         """
-        if not hasattr(self, "navire") or salle.navire is None or \
+        if not hasattr(salle, "navire") or salle.navire is None or \
                 salle.navire.etendue is None:
             return 0
         
