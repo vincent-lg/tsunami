@@ -246,9 +246,15 @@ class Commande(Masque):
         # trouvent en chaque index impair
         for i, mot in enumerate(decoupe):
             if i % 2 == 1: # index impair
-                decoupe[i] = "|ent|" + \
-                    type(self).importeur.interpreteur.trouver_commande( \
-                    mot).get_nom_pour(personnage) + "|ff|"
+                try:
+                    decoupe[i] = "|ent|" + \
+                        type(self).importeur.interpreteur.trouver_commande( \
+                        mot).get_nom_pour(personnage) + "|ff|"
+                except ValueError as err:
+                    raise ValueError("Une erreur s'est produite lors " \
+                            "de la recherche du mot {} dans l'aide " \
+                            "de la commande {} :\n".format(
+                            mot, self.nom_francais) + str(err))
         
         return "".join(decoupe)
     
