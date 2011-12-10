@@ -141,9 +141,10 @@ class Description(BaseObj):
         
         return indentation + indentation.join(res)
     
-    def regarder(self, personnage):
+    def regarder(self, personnage, elt=None):
         """Le personnage regarde la description."""
         paragraphes = []
+        elt = elt or self.parent
         for paragraphe in self.paragraphes:
             paragraphe = paragraphe.replace("|nl|", "\n").replace(
                     "|tab|", "   ")
@@ -152,7 +153,7 @@ class Description(BaseObj):
             for nom_complet in evts:
                 nom = nom_complet[1:]
                 evt = self.script["regarde"][nom]
-                evt.executer(regarde=self.parent, personnage=personnage)
+                evt.executer(regarde=elt, personnage=personnage)
                 retour = evt.espaces.variables["retour"]
                 paragraphe = paragraphe.replace(nom_complet, retour)
             paragraphes.append("\n".join(wrap(paragraphe)))
