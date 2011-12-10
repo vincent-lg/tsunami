@@ -66,6 +66,7 @@ class Module(BaseModule):
     
     def config(self):
         """Configuration du module."""
+        self.importeur.scripting.a_charger.append(self)
         his_voile = self.importeur.perso.ajouter_etat("hisser_voile")
         his_voile.msg_refus = "Vous êtes en train de hisser la voile"
         his_voile.msg_visible = "{personnage} hisse une voile ici"

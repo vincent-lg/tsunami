@@ -149,7 +149,7 @@ class Module(BaseModule):
         """
         for module in self.a_charger:
             # Elles se trouvent dans le sous-répertoire fonctions
-            chemin = self.chemin + os.sep + "fonctions"
+            chemin = module.chemin + os.sep + "fonctions"
             chemin_py = module.chemin_py + ".fonctions"
             for nom_fichier in os.listdir(chemin):
                 if not nom_fichier.startswith("_") and \

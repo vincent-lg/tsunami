@@ -38,6 +38,7 @@ class ClasseFonction(Fonction):
     
     @classmethod
     def init_types(cls):
+        print("Ajout")
         cls.ajouter_types(cls.vitesse_salle, "Salle")
     
     @staticmethod
