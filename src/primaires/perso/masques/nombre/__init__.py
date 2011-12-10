@@ -60,13 +60,13 @@ class Nombre(Masque):
             raise ErreurValidation(
                 "Précisez un nombre.", False)
         
+        self.a_interpreter = str_nombre
         if str_nombre.startswith("-"):
             str_nombre = str_nombre[1:]
         if not str_nombre.isdigit():
             raise ErreurValidation(
                 "Ceci n'est pas un nombre.", False)
         
-        self.a_interpreter = str_nombre
         commande[:] = commande[len(str_nombre):]
         masques.append(self)
         return True
