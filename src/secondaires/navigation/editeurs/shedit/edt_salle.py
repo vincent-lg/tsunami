@@ -35,6 +35,7 @@
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.flag import Flag
 from secondaires.navigation.salle import NOMS_SORTIES
 
 class EdtSalle(Presentation):
@@ -171,6 +172,10 @@ class EdtSalle(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description de la salle {}".format(salle).ljust(76) + \
             "|ff||\n" + self.opts.separateur
+        
+        # Intérieur / extérieur
+        inter = self.ajouter_choix("intérieur", "i", Flag, salle, "interieur")
+        inter.parent = self
     
     def opt_ajouter_supprimer_element(self, arguments):
         """Ajoute ou supprime un élément.

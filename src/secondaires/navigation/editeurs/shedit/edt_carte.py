@@ -48,6 +48,8 @@ class EdtCarte(Editeur):
         self.ajouter_option("tri", self.opt_ajouter_tribord)
         self.ajouter_option("ava", self.opt_ajouter_avant)
         self.ajouter_option("arr", self.opt_ajouter_arriere)
+        self.ajouter_option("bas", self.opt_ajouter_bas)
+        self.ajouter_option("hau", self.opt_ajouter_haut)
     
     def opt_ajouter_milieu(self, arguments):
         """Ajoute d'une salle au milieu du navire."""
@@ -159,6 +161,50 @@ class EdtCarte(Editeur):
                 self.pere << "|err|" + str(err).capitalize() + "|ff|"
             else:
                 modele.lier_salle(salle, salle_2, "sud")
+                self.actualiser()            
+    
+    def opt_ajouter_bas(self, arguments):
+        """Ajoute une salle en bas.
+        
+        Syntaxe :
+            /bas <mnémonic>
+        
+        """
+        modele = self.objet
+        try:
+            coords, salle = modele.get_salle(arguments)
+        except ValueError:  
+            self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
+        else:
+            coords = (coords[0], coords[1], coords[2] - 1)
+            try:
+                salle_2 = modele.ajouter_salle(coords[0], coords[1], coords[2])
+            except ValueError as err:
+                self.pere << "|err|" + str(err).capitalize() + "|ff|"
+            else:
+                modele.lier_salle(salle, salle_2, "bas")
+                self.actualiser()            
+    
+    def opt_ajouter_haut(self, arguments):
+        """Ajoute une salle en haut.
+        
+        Syntaxe :
+            /hau <mnémonic>
+        
+        """
+        modele = self.objet
+        try:
+            coords, salle = modele.get_salle(arguments)
+        except ValueError:  
+            self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
+        else:
+            coords = (coords[0], coords[1], coords[2] + 1)
+            try:
+                salle_2 = modele.ajouter_salle(coords[0], coords[1], coords[2])
+            except ValueError as err:
+                self.pere << "|err|" + str(err).capitalize() + "|ff|"
+            else:
+                modele.lier_salle(salle, salle_2, "haut")
                 self.actualiser()            
     
     def accueil(self):
