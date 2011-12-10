@@ -60,6 +60,8 @@ class Nombre(Masque):
             raise ErreurValidation(
                 "Précisez un nombre.", False)
         
+        if str_nombre.startswith("-"):
+            str_nombre = str_nombre[1:]
         if not str_nombre.isdigit():
             raise ErreurValidation(
                 "Ceci n'est pas un nombre.", False)
