@@ -47,3 +47,14 @@ class CmdSorts(Commande):
         self.aide_longue = \
             "Cette commande affiche vos sorts et votre maîtrise de chacun " \
             "d'eux."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        ret = "Vos sorts :\n"
+        for cle, niveau in personnage.sorts.items():
+            sort = type(self).importeur.magie.sorts[cle]
+            ret += "\n  " + sort.nom + " - " + str(niveau) + "%"
+        if len(personnage.sorts) == 0:
+            ret = "Vous ne connaissez aucun sort... pour l'instant."
+        
+        personnage << ret

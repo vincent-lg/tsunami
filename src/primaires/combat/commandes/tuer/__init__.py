@@ -44,11 +44,13 @@ class CmdTuer(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "tuer", "kill")
         self.schema = "<personnage_present>"
+        self.nom_categorie = "combat"
         self.aide_courte = "attaque un personnage présent"
         self.aide_longue = \
             "Cette commande attaque un personnage présent dans la pièce, " \
-            "si vous pouvez le faire. Le combat se terminera plus vraissemblablement " \
-            "par la fuite ou la mort d'un des deux combattants."
+            "si vous pouvez le faire. Le combat se terminera plus " \
+            "vraisemblablement par la fuite ou la mort d'un des deux " \
+            "combattants."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""

@@ -31,11 +31,13 @@
 """Package contenant les commandes du module joueur."""
 
 from . import afk
+from . import apprendre
 from . import chgroupe
 from . import distinctions
 from . import groupe
 from . import module
 from . import options
+from . import oublier
 from . import pset
 from . import quitter
 from . import restaurer

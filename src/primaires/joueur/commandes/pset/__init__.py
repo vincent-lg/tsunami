@@ -68,7 +68,7 @@ class CmdPset(Commande):
         try:
             stat.courante = valeur
         except DepassementStat:
-            personnage << "|att|Votre valeur a soulevée une erreur.|ff|"
+            personnage << "|att|Votre valeur a soulevé une erreur.|ff|"
         
         personnage << "Le personnage {} a à présent la stat {} égale à " \
                 "{}.".format(personnage_mod.nom, nom_stat, stat.courante)

@@ -46,6 +46,7 @@ from primaires.interpreteur.editeur.flag import Flag
 from primaires.scripting.editeurs.edt_script import EdtScript
 from .edt_type import EdtType
 from .edt_difficulte import EdtDifficulte
+from .supprimer import NSupprimer
 
 class EdtSpedit(Presentation):
     
@@ -95,7 +96,7 @@ class EdtSpedit(Presentation):
         type.apercu = "{objet.str_type}"
         
         # Cible
-        types = ["aucune", "personnage", "objet"]
+        types = ["aucune", "personnage", "objet", "salle"]
         cible = self.ajouter_choix("type de cible", "c", Choix, sort,
                 "type_cible", types)
         cible.parent = self
@@ -128,3 +129,13 @@ class EdtSpedit(Presentation):
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,
                 sort.script)
         scripts.parent = self
+        
+        # Suppression
+        suppression = self.ajouter_choix("supprimer", "sup", NSupprimer, \
+                sort)
+        suppression.parent = self
+        suppression.aide_courte = "Souhaitez-vous réellement supprimer " \
+                "le sort {} ?".format(sort.nom)
+        suppression.action = "magie.supprimer_sort"
+        suppression.confirme = "Le sort {} a bien été supprimé.".format(
+                sort.nom)

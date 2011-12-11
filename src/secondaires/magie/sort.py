@@ -30,6 +30,8 @@
 
 """Fichier contenant la classe Sort, détaillée plus bas."""
 
+from math import ceil
+
 from abstraits.obase import *
 from primaires.format.description import Description
 from .script import ScriptSort
@@ -84,3 +86,18 @@ class Sort(BaseObj):
             return "standard"
         else:
             return "offensif"
+    
+    def concentrer(self, personnage, cible=None):
+        """Fait concentrer le sort à 'personnage'."""
+        personnage << "Vous vous concentrez intensément."
+        maitrise = personnage.pratiquer_sort(self.cle)
+        self.script["concentration"].executer(personnage=personnage,
+                maitrise=maitrise)
+        nom_act = "sort_" + self.cle + "_" + personnage.nom
+        duree = ceil(3 * (100 - maitrise) / 100)
+        type(self).importeur.diffact.ajouter_action(nom_act, duree,
+                self.lancer, personnage, cible=cible)
+    
+    def lancer(self, personnage, cible=None):
+        """Fait lancer le sort à 'personnage'."""
+        personnage << "Vous lancez le sort {}.".format(self.nom)

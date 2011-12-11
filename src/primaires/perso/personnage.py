@@ -78,8 +78,9 @@ class Personnage(ObjetID):
         self.quetes = Quetes(self)
         self._construire()
         
-        # Talents
+        # Talents et sorts
         self.talents = EnrDict(self)
+        self.sorts = EnrDict(self)
         
         # Etat
         self._cle_etat = ""
@@ -386,6 +387,20 @@ class Personnage(ObjetID):
                     "talent {}.".format(talent.nom))
         
         return avancement
+    
+    def pratiquer_sort(self, cle_sort):
+        """Pratique un sort et peut l'apprendre."""
+        sort = type(self).importeur.magie.sorts[cle_sort]
+        maitrise = self.sorts.get(cle_sort, 0)
+        if maitrise >= 100:
+            return maitrise
+        restant = (100 - maitrise) / 100
+        if random.random() < (sort.difficulte / 100) * restant:
+            maitrise += 1
+            self.sorts[cle_sort] = maitrise
+            self.envoyer("Vous sentez votre confiance grandir.")
+        
+        return maitrise
     
     def agir(self, cle_action):
         """Fait l'action cle_action.

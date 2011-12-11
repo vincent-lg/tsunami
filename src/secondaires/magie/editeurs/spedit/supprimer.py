@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,35 +28,41 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'lancer'."""
+"""Fichier contenant le contexte éditeur Supprimer"""
 
-from primaires.interpreteur.commande.commande import Commande
-from primaires.format.fonctions import contient
+from primaires.interpreteur.editeur.supprimer import Supprimer
 
-class CmdLancer(Commande):
+class NSupprimer(Supprimer):
     
-    """Commande 'lancer'.
+    """Classe définissant le contexte éditeur 'supprimer'.
+    Ce contexte permet spécifiquement de supprimer un prototype d'objet.
     
     """
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "lancer", "cast")
-        self.groupe = "joueur"
-        self.schema = "<message>"
-        self.nom_categorie = "combat"
-        self.aide_courte = "lance un sort"
-        self.aide_longue = \
-            "Cette commande lance un sort dans la salle où vous vous " \
-            "trouvez, à condition que vous maîtrisiez ce sort bien entendu."
-    
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        nom_sort = dic_masques["message"].message
-        sorts = type(self).importeur.magie.sorts
-        sorts_connus = [sorts[cle] for cle in personnage.sorts.keys()]
-        for sort in sorts_connus:
-            if contient(sort.nom, nom_sort):
-                sort.concentrer(personnage)
-                return
-        personnage << ret
+    def interpreter(self, msg):
+        """Interprétation du contexte"""
+        msg = msg.lower()
+        sort = self.objet
+        if msg == "oui":
+            objet = type(self).importeur
+            for nom in self.action.split("."):
+                objet = getattr(objet, nom)
+            
+            nb_persos = 0
+            for perso in type(self).importeur.connex.joueurs:
+                if sort.cle in perso.sorts and perso.sorts[sort.cle] > 0:
+                    nb_persos += 1
+            if nb_persos > 0:
+                s = nb_persos > 1 and "s" or ""
+                i = nb_persos > 1 and "issen" or "î"
+                self.pere << "|err|{} personnage{s} conna{i}t ce sort. " \
+                        "Opération annulée.|ff|".format(nb_persos, s=s, i=i)
+                self.migrer_contexte(self.opts.rci_ctx_prec)
+            else:
+                objet(sort.cle)
+                self.pere.joueur.contextes.retirer()
+                self.pere << self.confirme
+        elif msg == "non":
+            self.migrer_contexte(self.opts.rci_ctx_prec)
+        else:
+            self.pere << "|err|Choix invalide.|ff|"

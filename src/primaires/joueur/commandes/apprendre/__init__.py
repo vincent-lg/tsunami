@@ -28,35 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'lancer'."""
+"""Package contenant la commande 'apprendre'."""
 
 from primaires.interpreteur.commande.commande import Commande
 from primaires.format.fonctions import contient
 
-class CmdLancer(Commande):
+class CmdApprendre(Commande):
     
-    """Commande 'lancer'.
+    """Commande 'apprendre'.
     
     """
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "lancer", "cast")
-        self.groupe = "joueur"
-        self.schema = "<message>"
-        self.nom_categorie = "combat"
-        self.aide_courte = "lance un sort"
+        Commande.__init__(self, "apprendre", "learn")
+        self.groupe = "administrateur"
+        self.schema = "<nombre> <message>"
+        self.aide_courte = "apprend un sort"
         self.aide_longue = \
-            "Cette commande lance un sort dans la salle où vous vous " \
-            "trouvez, à condition que vous maîtrisiez ce sort bien entendu."
+            "Cette commande force l'apprentissage d'un sort."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
+        niveau = dic_masques["nombre"].nombre
+        if niveau < 1 or niveau > 100:
+            personnage << "|err|Spécifiez un niveau de maîtrise entre 1 et " \
+                    "100.|ff|"
+            return
         nom_sort = dic_masques["message"].message
         sorts = type(self).importeur.magie.sorts
-        sorts_connus = [sorts[cle] for cle in personnage.sorts.keys()]
-        for sort in sorts_connus:
+        for sort in sorts.values():
             if contient(sort.nom, nom_sort):
-                sort.concentrer(personnage)
+                personnage.sorts[sort.cle] = niveau
+                personnage << "Vous avez appris le sort {}.".format(sort.nom)
                 return
-        personnage << ret
+        personnage << "|err|Le sort '{}' est introuvable.|ff|".format(nom_sort)

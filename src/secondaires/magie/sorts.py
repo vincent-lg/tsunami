@@ -73,6 +73,9 @@ class Sorts(Unique):
         del self.__sorts[cle]
         self.enregistrer()
     
+    def values(self):
+        return self.__sorts.values()
+    
     def ajouter_ou_modifier(self, cle):
         """Ajoute un sort ou le renvoie si existant"""
         if cle in self.__sorts:

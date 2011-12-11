@@ -28,35 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'lancer'."""
+"""Package contenant la commande 'oublier'."""
 
 from primaires.interpreteur.commande.commande import Commande
 from primaires.format.fonctions import contient
 
-class CmdLancer(Commande):
+class CmdOublier(Commande):
     
-    """Commande 'lancer'.
+    """Commande 'oublier'.
     
     """
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "lancer", "cast")
+        Commande.__init__(self, "oublier", "forget")
         self.groupe = "joueur"
         self.schema = "<message>"
-        self.nom_categorie = "combat"
-        self.aide_courte = "lance un sort"
+        self.aide_courte = "oublie un sort"
         self.aide_longue = \
-            "Cette commande lance un sort dans la salle où vous vous " \
-            "trouvez, à condition que vous maîtrisiez ce sort bien entendu."
+            "Cette commande permet d'oublier un sort."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         nom_sort = dic_masques["message"].message
         sorts = type(self).importeur.magie.sorts
-        sorts_connus = [sorts[cle] for cle in personnage.sorts.keys()]
-        for sort in sorts_connus:
+        for sort in sorts.values():
             if contient(sort.nom, nom_sort):
-                sort.concentrer(personnage)
+                del personnage.sorts[sort.cle]
+                personnage << "Vous avez oublié le sort {}.".format(sort.nom)
                 return
-        personnage << ret
+        personnage << "|err|Le sort '{}' est introuvable.|ff|".format(nom_sort)

@@ -76,3 +76,8 @@ class Module(BaseModule):
         
         # Ajout de l'éditeur de sorts
         self.importeur.interpreteur.ajouter_editeur(EdtSpedit)
+    
+    def supprimer_sort(self, cle):
+        """Supprime le sort spécifié"""
+        sort = self.sorts[cle]
+        del self.sorts[cle]
