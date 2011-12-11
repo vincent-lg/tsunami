@@ -59,4 +59,5 @@ class CmdLancer(Commande):
             if contient(sort.nom, nom_sort):
                 sort.concentrer(personnage)
                 return
-        personnage << ret
+        personnage << "|err|Vous ne connaissez pas ce sort ni ne possédez " \
+                "de parchemin.|ff|"

@@ -44,17 +44,46 @@ class ScriptSort(Script):
     
     def init(self):
         """Initialisation du script"""
-        # Evénement arriver
+        # Evénement concentration
         evt_concentration = self.creer_evenement("concentration")
         evt_concentration.aide_courte = "quelqu'un concentre le sort"
         evt_concentration.aide_longue = \
             "Cet évènement est appelé lorsqu'un personnage concentre le " \
-            "sort, c'est-à-dire tente de le lancer. On peut par exemple " \
-            "scripter ici une aura qui luit alors autour du lanceur."
+            "sort, c'est-à-dire tente de le lancer. Par exemple : un " \
+            "personnage concentre le sort de boule de feu, une aura rouge " \
+            "l'entoure soudain."
         
         # Configuration des variables de l'évènement concentration
-        var_perso = evt_concentration.ajouter_variable("personnage",
-                "Personnage")
+        var_perso = evt_concentration.ajouter_variable("lanceur", "Personnage")
         var_perso.aide = "le personnage qui concentre le sort"
         var_maitrise = evt_concentration.ajouter_variable("maitrise", "int")
+        var_maitrise.aide = "la maîtrise que le personnage a de ce sort"
+        
+        # Evénement lancement
+        evt_lancement = self.creer_evenement("lancement")
+        evt_lancement.aide_courte = "quelqu'un lance le sort"
+        evt_lancement.aide_longue = \
+            "Cet évènement est appelé lorsqu'un personnage lance le sort, "\
+            "après l'avoir concentré. Par exemple : un personnage lance le " \
+            "sort de boule de feu, la boule prend forme entre ses mains et " \
+            "s'en échappe avec un grésillement."
+        
+        # Configuration des variables de l'évènement lancement
+        var_perso = evt_lancement.ajouter_variable("lanceur", "Personnage")
+        var_perso.aide = "le personnage qui lance le sort"
+        var_maitrise = evt_lancement.ajouter_variable("maitrise", "int")
+        var_maitrise.aide = "la maîtrise que le personnage a de ce sort"
+        
+        # Evénement effet
+        evt_effet = self.creer_evenement("effet")
+        evt_effet.aide_courte = "le sort atteint sa cible"
+        evt_effet.aide_longue = \
+            "Cet évènement est appelé lorsque le sort atteint finalement " \
+            "sa cible. Par exemple : une boule de feu atteint un bot " \
+            "quelconque en explosant avec un grand bruit."
+        
+        # Configuration des variables de l'évènement effet
+        var_perso = evt_effet.ajouter_variable("lanceur", "Personnage")
+        var_perso.aide = "le personnage qui lance le sort"
+        var_maitrise = evt_effet.ajouter_variable("maitrise", "int")
         var_maitrise.aide = "la maîtrise que le personnage a de ce sort"

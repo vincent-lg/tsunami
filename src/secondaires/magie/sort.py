@@ -87,11 +87,15 @@ class Sort(BaseObj):
         else:
             return "offensif"
     
-    def concentrer(self, personnage, cible=None):
+    def concentrer(self, personnage, cible=None, apprendre=True):
         """Fait concentrer le sort à 'personnage'."""
         personnage << "Vous vous concentrez intensément."
-        maitrise = personnage.pratiquer_sort(self.cle)
-        self.script["concentration"].executer(personnage=personnage,
+        maitrise = 0
+        if apprendre:
+            maitrise = personnage.pratiquer_sort(self.cle)
+        else:
+            maitrise = personnage.sorts.get(self.cle, 0)
+        self.script["concentration"].executer(lanceur=personnage,
                 maitrise=maitrise)
         nom_act = "sort_" + self.cle + "_" + personnage.nom
         duree = ceil(3 * (100 - maitrise) / 100)
@@ -101,3 +105,14 @@ class Sort(BaseObj):
     def lancer(self, personnage, cible=None):
         """Fait lancer le sort à 'personnage'."""
         personnage << "Vous lancez le sort {}.".format(self.nom)
+        maitrise = personnage.sorts.get(self.cle, 0)
+        self.script["lancement"].executer(lanceur=personnage,
+                maitrise=maitrise)
+        self.toucher(personnage, cible=cible)
+    
+    def toucher(self, personnage, cible=None):
+        """Active les effets du sort."""
+        personnage << "Le sort {} fait effet.".format(self.nom)
+        maitrise = personnage.sorts.get(self.cle, 0)
+        self.script["effet"].executer(lanceur=personnage,
+                maitrise=maitrise)
