@@ -73,7 +73,7 @@ class EdtEvenement(Editeur):
         evenement = self.objet
         msg = "| |tit|"
         msg += "Edition de l'évènement {} de {}".format(evenement.nom,
-                evenement.script.parent).ljust(71)
+                evenement.script.parent).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += "Description :\n    "
         aide_longue = "\n    ".join(wrap(evenement.aide_longue))
@@ -91,7 +91,7 @@ class EdtEvenement(Editeur):
         evenements = sorted(evenement.evenements.values(),
                 key=lambda evt: evt.nom)
         if evenements:
-            msg += "Sous-évènement disponibles :\n"
+            msg += "Sous-évènements disponibles :\n"
             msg += "\n".join(
                 ["  {} : {}".format(evt.nom.ljust(15),
                 evt.aide_courte) for evt in evenements])

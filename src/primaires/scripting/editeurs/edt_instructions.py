@@ -341,7 +341,7 @@ class EdtInstructions(Editeur):
         appelant = evenement.script.parent
         msg = "| |tit|"
         msg += "Edition d'un script de {}[{}]".format(appelant,
-                evenement.nom).ljust(61)
+                evenement.nom).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
         variables = evenement.variables
         msg += "Variables :\n  "
