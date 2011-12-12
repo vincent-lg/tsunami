@@ -87,7 +87,7 @@ class EdtInstructions(Editeur):
         try:
             test.remplacer_instruction(no, ligne)
         except ValueError as err:
-            self.pere << "|err|" + str(err) + ".|ff|"
+            self.pere << "|err|" + str(err).capitalize() + ".|ff|"
         else:
             self.actualiser()
     
@@ -106,7 +106,7 @@ class EdtInstructions(Editeur):
         try:
             quete, niveau = argument.split(":")
         except ValueError:
-            self.pere << "|err|Formattage de quête invalide.|ff|"
+            self.pere << "|err|Formatage de quête invalide.|ff|"
         else:
             # On cherche la quête
             if not quete in type(self).importeur.scripting.quetes:
@@ -132,12 +132,12 @@ class EdtInstructions(Editeur):
         
         """
         self.pere << \
-            "|rg|Bienvenue dans l'éditeur d'instruction.|ff|\n\n" \
+            "Bienvenue dans l'éditeur d'instructions.\n\n" \
             "Vous pouvez ici entrer des instructions en respectant " \
             "une certaine syntaxe\net modifier les instructions déjà " \
             "existantes. Vous pouvez obtenir plus d'aide\ngrâce " \
             "aux sujets suivants :\n" \
-            "  |cmd|/?s|ff| affiche de l'aide sur la |syntaxe|ff| du " \
+            "  |cmd|/?s|ff| affiche de l'aide sur la |ent|syntaxe|ff| du " \
             "scripting\n" \
             "  |cmd|/?o|ff| affiche la liste des |ent|options|ff| de " \
             "l'éditeur disponibles\n" \
@@ -213,9 +213,10 @@ class EdtInstructions(Editeur):
             # On affiche l'aide de la méthode
             nom = fonction.nom
             t_args = inspect.getargspec(methode)
-            args = ", ".join(t_args.args)
+            args = "|ff|, |bc|".join(t_args.args)
             doc = inspect.getdoc(methode)
-            self.pere << "Fonction {}({})\n{}".format(nom, args, doc)
+            self.pere << "Fonction |ent|{}|ff|(|bc|{}|ff|) :\n{}".format(nom,
+                    args, doc)
         elif fonction:
             # Une fonction est précisée mais pas de méthode
             nom = fonction.nom
@@ -246,9 +247,9 @@ class EdtInstructions(Editeur):
             self.pere << \
                 "Ci-dessous se trouve la liste des fonctions existantes.\n" \
                 "Pour obtenir de l'aide sur une fonction, entrez " \
-                "|cmd|/?f fonction|ff|\n" \
+                "|cmd|/?f fonction|ff|.\n" \
                 "Pour obtenir de l'aide sur un des usages possible " \
-                "de la fonction,\nentrez |cmd|/?f fonction numero|ff|\n\n" \
+                "de la fonction,\nentrez |cmd|/?f fonction numero|ff|.\n\n" \
                 "{}".format(lignes)
             
     def opt_aide_actions(self, arguments):
@@ -340,7 +341,7 @@ class EdtInstructions(Editeur):
         appelant = evenement.script.parent
         msg = "| |tit|"
         msg += "Edition d'un script de {}[{}]".format(appelant,
-                evenement.nom).ljust(61)
+                evenement.nom).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
         variables = evenement.variables
         msg += "Variables :\n  "

@@ -61,6 +61,7 @@ class Commande(Masque):
     
     """
     
+    nb_actions = 0
     def __init__(self, francais, anglais):
         """Constructeur de la commande"""
         Masque.__init__(self)
@@ -245,9 +246,15 @@ class Commande(Masque):
         # trouvent en chaque index impair
         for i, mot in enumerate(decoupe):
             if i % 2 == 1: # index impair
-                decoupe[i] = "|ent|" + \
-                    type(self).importeur.interpreteur.trouver_commande( \
-                    mot).get_nom_pour(personnage) + "|ff|"
+                try:
+                    decoupe[i] = "|ent|" + \
+                        type(self).importeur.interpreteur.trouver_commande( \
+                        mot).get_nom_pour(personnage) + "|ff|"
+                except ValueError as err:
+                    raise ValueError("Une erreur s'est produite lors " \
+                            "de la recherche du mot {} dans l'aide " \
+                            "de la commande {} :\n".format(
+                            mot, self.nom_francais) + str(err))
         
         return "".join(decoupe)
     
@@ -373,3 +380,24 @@ class Commande(Masque):
     def ajouter_parametres(self):
         """Ajoute les paramètres à la commande"""
         pass
+    
+    def execution_differee(self, personnage, dic_masques):
+        """Exécute la commande en différé si nécessaire."""
+        res = self.interpreter(personnage, dic_masques)
+        if res:
+            # C'est un générateur, il va probablement demander des pauses
+            self.execution_progressive(res)
+    
+    def execution_progressive(self, generateur):
+        """Exécute progressivement la commande."""
+        try:
+            tps = next(generateur)
+        except StopIteration:
+            pass
+        else:
+            if isinstance(tps, (int, float)):
+                # On ajoute l'action différée
+                Commande.nb_actions += 1
+                nom = "commandes_{}".format(Commande.nb_actions)
+                type(self).importeur.diffact.ajouter_action(nom, tps,
+                        self.execution_progressive, generateur)

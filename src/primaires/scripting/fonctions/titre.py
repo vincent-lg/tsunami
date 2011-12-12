@@ -34,7 +34,7 @@ from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
     
-    """Retourne le titre d'une salle"""
+    """Retourne le titre d'une salle."""
     
     @classmethod
     def init_types(cls):
