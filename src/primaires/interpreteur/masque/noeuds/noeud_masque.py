@@ -32,9 +32,9 @@
 
 import re
 
+from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
 from primaires.interpreteur.masque.noeuds.embranchement import Embranchement
-from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
 
@@ -46,10 +46,11 @@ class NoeudMasque(BaseNoeud):
     
     """Noeud masque, noeud contenant un masque.
     Sa validation dépend de la validation de ses masques.
-    De part son statut, si il possède un noeud suivant, deux possibilités :
+    De par son statut, s'il possède un noeud suivant, deux possibilités :
     -   soit c'est un noeud optionnel et le noeud masque que contient ce
-        noeud fils est optionnel
-    -   soit c'est un noeud masque également et le masque contenu dans ce fils est obligatoire
+        noeud fils est optionnel ;
+    -   soit c'est un noeud masque également et le masque contenu dans ce fils
+        est obligatoire.
     
     """
     
@@ -63,7 +64,7 @@ class NoeudMasque(BaseNoeud):
         self.defaut = None  # valeur par défaut
     
     def construire_depuis_schema(self, lst_schema):
-        """Construit le masque depuis le schéma"""
+        """Construit le masque depuis le schéma."""
         # On convertit la liste en chaîne
         schema = liste_vers_chaine(lst_schema)
         delimiteurs = ('>', ' ', ')')
@@ -150,7 +151,7 @@ class NoeudMasque(BaseNoeud):
         return self.masques[0]
     
     def est_parametre(self):
-        """Retourne True si le premier masque est un paramètre"""
+        """Retourne True si le premier masque est un paramètre."""
         return self.masque.est_parametre()
     
     def __str__(self):
@@ -174,7 +175,7 @@ class NoeudMasque(BaseNoeud):
             return None
     
     def repartir(self, personnage, masques, commande, tester_fils=True):
-        """Réparti dans le masque si possible."""
+        """Répartit dans le masque si possible."""
         lstrip(commande)
         for masque in self.masques:
             masque.init()
@@ -213,14 +214,16 @@ class NoeudMasque(BaseNoeud):
         return valide
     
     def afficher(self, personnage):
-        """Retourne un affichage du masque pour les joueurs"""
-        msg = "<"
+        """Retourne un affichage du masque pour les joueurs."""
         noms_masques = []
         for masque in self.masques:
             noms_masques.append(masque.nom_complet_pour(personnage))
         
-        msg += " / ".join(noms_masques)
-        msg += ">"
+        msg = ""
+        if self.masque.est_mot_cle():
+            msg += " / ".join(noms_masques)
+        else:
+            msg += "<" + " / ".join(noms_masques) + ">"
         
         if self.suivant:
             msg += " " + self.suivant.afficher(personnage)

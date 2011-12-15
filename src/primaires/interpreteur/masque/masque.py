@@ -28,12 +28,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe Masque détaillée plus bas"""
+"""Fichier définissant la classe Masque, détaillée plus bas."""
 
 import re
 
 masques_def = {}
-
 
 # Constantes
 RE_MOT_CLE = re.compile(r"^([a-z]*)/([a-z]*)$")
@@ -80,6 +79,7 @@ class Masque(metaclass=MetaMasque):
     Les attributs spécifiques que vous voulez ajouter à votre masque
     ne doivent pas être définis dans le constructeur mais dans la méthode
     'init'.
+    
     Exemple :
     >>> class MasquePersonnage(Masque):
     ...     '''Masque attendant un nom de personnage.'''
@@ -118,8 +118,8 @@ class Masque(metaclass=MetaMasque):
         depuis un NoeudMasque.
         
         Elle se charge :
-        -   De savoir si le masque est un mot-clé ou non
-        -   De savoir si le masque possède des propriétés
+        -   de savoir si le masque est un mot-clé ou non ;
+        -   de savoir si le masque possède des propriétés.
         
         """
         mot_cle = RE_MOT_CLE.search(schema)
@@ -138,15 +138,15 @@ class Masque(metaclass=MetaMasque):
         """Méthode de validation.
         
         Elle prend en paramètres :
-        -   le personnage qui a entré la commande
+        -   le personnage qui a entré la commande ;
         -   le dic_masques : un dictionnaire ordonné contenant les masques
-            déjà validés pour cette commande
-        -   la commande, sous la forme d'une liste de caractères
+            déjà validés pour cette commande ;
+        -   la commande, sous la forme d'une liste de caractères.
         
         Cette méthode peut retourner :
-        -   True : le masque a été validé correctement
+        -   True : le masque a été validé correctement ;
         -   False : il s'est produit une erreur et le masque n'a pu
-            être validé
+            être validé.
         
         Habituellement, en cas de non validation, on préférera lever
         une exception ErreurValidation en lui passant en paramètre
@@ -170,11 +170,15 @@ class Masque(metaclass=MetaMasque):
         return self.nom
     
     def est_parametre(self):
-        """Return True si ce masque est un paramètre"""
+        """Retourne True si ce masque est un paramètre."""
+        return False
+    
+    def est_mot_cle(self):
+        """Retourne True si ce masque est un mot-clé."""
         return False
     
     def afficher(self, personnage):
-        """Retourne un affichage du masque pour le personnage"""
+        """Retourne un affichage du masque pour le personnage."""
         return self.nom
     
     def nom_complet_pour(self, personnage):

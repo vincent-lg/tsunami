@@ -78,6 +78,6 @@ class Personnage(Masque):
         
         if self.personnage is None:
             raise ErreurValidation(
-                "Le personnage '{}' est introuvable.".format(nom_personnage))
+                "|err|Ce personnage est introuvable.|ff|".format(nom_personnage))
         
         return True

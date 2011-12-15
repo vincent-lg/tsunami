@@ -38,9 +38,9 @@ class MotCle(Commande):
     
     """Un mot-clé est un masque simple.
     
-    Il se compose de deux mot-clés en fonction de la langue utilisée :
-        un en anglais
-        un en français
+    Il se compose de deux mots-clés en fonction de la langue utilisée :
+    -   un en anglais ;
+    -   un en français.
     
     """
     
@@ -62,7 +62,8 @@ class MotCle(Commande):
     def repartir(self, personnage, masques, commande):
         """Répartition du masque.
         
-        Si la commande est vide, on va la chercher dans le dernier masque réparti.
+        Si la commande est vide, on va la chercher dans le dernier masque
+        réparti.
         
         """
         langue = personnage.langue_cmd
@@ -109,23 +110,27 @@ class MotCle(Commande):
         return valide
     
     def valider(self, personnage, dic_masques):
-        """Fonction de validation du masque mot clé.
+        """Fonction de validation du masque mot-clé.
         
-        Un mot-clé a été validé lors de la répartition.
-        Il est donc automatiquement validé.
+        Un mot-clé a été validé lors de la répartition ; il est donc
+        automatiquement validé.
         
         """
         return True
     
     def est_parametre(self):
-        """Return True puisque c'est un paramètre"""
+        """Retourne False puisque c'est un mot-clé."""
         return False
+    
+    def est_mot_cle(self):
+        """Retourne True puisque c'est un mot-clé."""
+        return True
     
     def nom_complet_pour(self, personnage):
         """Retourne le mot-clé en fonction de la langue."""
-        mot_cles = {
+        mots_cles = {
             "anglais": self.anglais,
             "francais": self.francais,
         }
         
-        return mot_cles[personnage.langue_cmd]
+        return mots_cles[personnage.langue_cmd]

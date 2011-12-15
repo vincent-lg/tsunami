@@ -28,11 +28,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe NoeudOptionnel détaillée plus bas;"""
+"""Fichier définissant la classe NoeudOptionnel, détaillée plus bas."""
 
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
 from primaires.interpreteur.masque.exceptions.erreur_validation import \
         ErreurValidation
+
 class NoeudOptionnel(BaseNoeud):
     
     """Cette classe contient un noeud optionnel.
@@ -49,6 +50,7 @@ class NoeudOptionnel(BaseNoeud):
     
     def _get_reste(self):
         """Retourne le reste.
+        
         On le demande récursivement au noeud optionnel jusqu'à tomber sur un
         noeud masque.
         
@@ -75,16 +77,18 @@ class NoeudOptionnel(BaseNoeud):
         return msg
     
     def get_masque(self, nom_masque):
-        """Retourne le masque du nom 'nom_masque'"""
+        """Retourne le masque du nom 'nom_masque'."""
         if self.interne.nom == nom_masque:
             return self.interne.get_masque(nom_masque)
         elif self.suivant:
             return self.suivant.get_masque(nom_masque)
+        elif self.interne:
+            return self.interne.get_masque(nom_masque)
         else:
             return None
     
     def repartir(self, personnage, masques, commande):
-        """Réparti dans le masque si possible."""
+        """Répartit dans le masque si possible."""
         try:
             valide = self.interne.repartir(personnage, masques, commande)
         except ErreurValidation as err:
@@ -119,7 +123,7 @@ class NoeudOptionnel(BaseNoeud):
         return valide
     
     def afficher(self, personnage):
-        """Retourne un affichage du masque pour les joueurs"""
+        """Retourne un affichage du masque pour les joueurs."""
         msg = "(" + self.interne.afficher(personnage) + ")"
         if self.suivant:
             msg += " " + self.suivant.afficher(personnage)
