@@ -204,7 +204,6 @@ class CmdDetailler(Commande):
             portee = 50 * hauteur
         
         nombre = dic_masques["nombre"]
-        print(nombre, bool(nombre))
         if nombre:
             direction = nombre.nombre
             direction = round(direction / 5) * 5

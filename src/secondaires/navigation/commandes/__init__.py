@@ -30,6 +30,7 @@
 
 """Package contenant les commandes du module salle."""
 
+from . import allure
 from . import ancre
 from . import detailler
 from . import eltedit
