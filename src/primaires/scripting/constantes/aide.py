@@ -30,57 +30,89 @@
 
 """Fichier contenant les aides du scripting."""
 
-syntaxe = r""" 
-Pour écrire une instruction, il suffit de l'entrer dans l'éditeur sans
-la préfixer d'aucune option.
+syntaxe = r"""Tout script se compose d'instructions, chacune écrite sur une ligne, et
+qui sont exécutées au fur et à mesure par le système de scripting. Pour
+écrire une instruction, il suffit de l'entrer dans l'éditeur sans la
+préfixer d'aucune option.
 
 Il existe trois types d'instructions :
+-   les affectations ;
 -   les actions ;
--   les conditions ;
--   les affectations.
+-   les conditions.
+
+
+L'affectation est l'instruction la plus simple : elle affecte une valeur
+à une variable. Dans la suite du script, on pourra utiliser cette variable
+ou la redéfinir. A noter que certaines variables sont définies par défaut
+par les événements édités.
+
+Un exemple d'affectation :
+|bc|>>> age = 5|ff|
+Par la suite, la variable age gardera la valeur 5 jusqu'à ce que vous la
+modifiiez.
+
 
 Les actions sont des instructions qui font agir un élément de l'univers ;
-par exemple, dire quelque-chose à quelqu'un, donner de l'xp à un joueur,
-changer le titre d'une salle, fermer une porte, alerter les
-modérateurs...
-Toutes ces instructions pourraient être des actions car elles effectuent
-une action sur l'univers.
+par exemple, dire quelque chose à quelqu'un, donner de l'xp à un joueur,
+changer le titre d'une salle, fermer une porte, alerter les modérateus...
+Toutes ces instructions pourraient être des actions car elles opèrent
+un changement sur l'univers.
+
+Un exemple d'action :
+|bc|>>> dire personnage "Bouh !"|ff|
+Cette action se contente de dire 'Bouh !' au personnage.
+
 
 Les conditions sont des instructions permettant d'exécuter une ou plusieurs
-actions dans un cas précis.
-Par exemple :
->>> si stat(joueur, "force") > 10:
+actions dans certains cas précis.
+Une condition est formée d'un mot-clé (|cmd|si|ff|, |cmd|sinon si|ff| ou |cmd|sinon|ff|) suivi
+d'un ou plusieurs tests (généralement une valeur, un opérateur conditionnel
+puis une seconde valeur) ; la condition est clôturée par un signe |cmd|:|ff|. Le
+bloc d'instructions placé entre une condition et la suivante (ou le |cmd|finsi|ff|
+qui vient fermer le dernier bloc) s'exécute si la condition est vérifiée.
+Notez que le |cmd|sinon|ff| n'est pas suivi de test, pour la simple raison qu'il
+s'exécute si aucune autre condition n'a été vérifiée.
+
+Un exemple de condition, plus parlant :
+|bc|>>> si stat(joueur, "force") > 10:
 ...     dire personnage "Quelle force !"
 ... sinon:
 ...     dire personnage "Encore trop faible..."
-... finsi
+... finsi|ff|
+Ce script affiche au joueur un message calibré en fonction de sa force, de
+manière assez intuitive.
 
-Les conditions sont formées d'un mot-clé entre |cmd|si|ff|, |cmd|sinon si|ff|,
-et |cmd|sinon|ff| ; |cmd|finsi|ff| marque la fin du bloc conditionnel. Ce
-mot-clé est suivi d'un ou plusieurs tests, généralement constitués d'une
-première valeur, d'un opérateur et d'une seconde valeur.
-Notez que la condition |cmd|sinon|ff| et le |cmd|finsi|ff| ne sont pas suivis de test.
-Enfin, un signe |cmd|:|ff| vient clôturer l'instruction, sauf si
-c'est un |cmd|finsi|ff|.
-
-L'affectation est l'instruction la plus simple. Elle affecte une valeur
-à une certaine variable.
-Par exemple :
->>> nombre = 5
 
 Des fonctions peuvent être utilisées dans les trois instructions ci-dessus.
-Ce sont des outils d'interrogation qui récupèrent une certaine valeur.
-Elles peuvent prendre de 0 à N paramètres (ceci est indiqué dans leurs
-aides respectives) ; les valeurs qu'elles retournent peut être utilisée telle
+Ce sont des outils d'interrogation qui récupèrent une certaine valeur. Elles
+peuvent prendre de 0 à N paramètres (ceci est indiqué dans leurs aides
+respectives) ; la valeur qu'elles retournent peut être utilisée telle
 quelle ou bien enregistrée dans une variable.
-Par exemple, la fonction |cmd|titre|ff| retourne le titre de la salle.
-Elle a besoin en premier et unique paramètre la salle dont le titre
-doit être récupéré.
-Voici quelques exemples d'instructions utilisant cette fonction, sachant
-que la variable |cmd|salle|ff| contient une salle de l'univers :
->>> titre_salle = titre(salle)
-... si titre(salle) = "Une place de village"
-...     dire personnage titre(salle)
+Par exemple, la fonction |cmd|titre|ff| retourne le titre de la salle. Elle a
+besoin en premier et unique paramètre la salle dont le titre doit
+être récupéré.
+
+Un exemple utilisant cette fonction (la variable |cmd|salle|ff| contient une
+salle de l'univers) :
+|bc|>>> titre_salle = titre(salle)
+... si titre_salle = "Une place de village"
+...     dire personnage titre(salle)|ff|
+
+
+Enfin, un dernier type d'instruction s'ajoute à ceux vus plus haut : les
+commentaires. Il s'agit d'instructions non prises en compte par le système
+de scripting, et que vous pouvez placer n'importe où dans votre script.
+Pour écrire un commentaire, vous devez commencer par un signe dièse : #.
+Par exemple :
+|bc|>>> degats = estimer(force_joueur, robustesse_cible)
+... # Le code ci-dessus estime les dégâts reçus selon les caractéristiques.|ff|
+
+Cette dernière ligne n'aura aucun effet ; son utilité est simplement de vous
+rappelez la signification de votre code, par exemple s'il est compliqué
+et que vous y revenez après ne pas y avoir touché pendant longtemps.
+Commenter un script peut s'avérer très utile, même si vous n'en ressentez
+pas le besoin au premier abord.
+
 
 Ceci n'est qu'une introduction à la syntaxe du scripting. Vous pouvez en
 apprendre plus grâce aux commandes suivantes :
@@ -91,6 +123,6 @@ apprendre plus grâce aux commandes suivantes :
   |cmd|/?s types|ff| : affiche plus d'informations sur les types de données
   manipulés
 
-Il vous est conseillé de lire l'aide de chacun de ces sujets avant de commencer
-à scripter."""
+Il vous est conseillé de lire l'aide de chacun de ces sujets avant de
+commencer à scripter."""
 

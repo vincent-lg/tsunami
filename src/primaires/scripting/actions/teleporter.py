@@ -34,7 +34,7 @@ from primaires.scripting.action import Action
 
 class ClasseAction(Action):
     
-    """Téléporte un personnage dans une salle distante"""
+    """Téléporte un personnage dans une salle distante."""
     
     @classmethod
     def init_types(cls):
@@ -43,18 +43,15 @@ class ClasseAction(Action):
     
     @staticmethod
     def teleporter_salle(personnage, salle):
-        """Téléporte le personnage dans une salle distante"""
+        """Téléporte le personnage dans une salle distante."""
         personnage.salle = salle
     
     @staticmethod
     def teleporter_dest(personnage, destination):
-        """Téléporte le personnage vers la destination
-        
-        La destination est précisée sous la forme d'une chaîne de caractères :
-        \"zone:mnémonic\".
-        
-        Une erreur est envoyée si la destination ne peut être trouvée
-        (la salle indiquée n'existe pas).
+        """Téléporte le personnage vers la destination.
+        La destination doit être précisée sous la forme d'une chaîne de
+        caractères : \"zone:mnémonic\". Une erreur est levée si la
+        destination ne peut être trouvée (la salle indiquée n'existe pas).
         
         """
         try:

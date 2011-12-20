@@ -28,10 +28,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+"""Fichier contenant la classe Condition, détaillée plus bas."""
+
 from .instruction import Instruction
 from .parser import expressions
-
-"""Fichier contenant la classe Condition, détaillée plus bas."""
 
 class Condition(Instruction):
     
@@ -39,33 +39,35 @@ class Condition(Instruction):
     
     Une condition est une instruction optionnellement suivie d'une suite
     de tests.
-    
     Par exemple :
-        si variable = 5:
-        sinon si titre(salle) = "...":
-        sinon:
-        finsi
+    >>> si variable = 5:
+    ...     # Instructions si variable vaut 5
+    ... sinon si titre(salle) = "...":
+    ...     # Instructions si le titre de la salle est '...'
+    ... sinon:
+    ...     # Instruction sinon
+    ... finsi
     
     """
     
     def __init__(self):
-        """Construction d'une condition."""
+        """Constructeur d'une condition"""
         Instruction.__init__(self)
         self.type = None
         self.tests = None
     
     def __str__(self):
-        ret = self.type
-        if self.type in ("si", "sinon si"):
-            ret += " " + str(self.tests) + ":"
+        ret = "|mr|" + self.type + "|ff|"
+        if self.type == "si" or self.type == "sinon si":
+            ret += " " + str(self.tests) + "|mr|:|ff|"
         elif self.type == "sinon":
-            ret += ":"
+            ret += "|mr|:|ff|"
         
         return ret
     
     @classmethod
     def peut_interpreter(cls, chaine):
-        """La chaîne peut-elle être interprétée par la classe Condition ?"""
+        """La chaîne peut-elle être interprétée par la classe Condition."""
         mot_cles = ("si ", "sinon si ", "sinon", "finsi")
         return any(chaine.startswith(m) for m in mot_cles)
     
@@ -77,11 +79,13 @@ class Condition(Instruction):
             type tests
             
         """
+        taille_type = 0
         chn_condition = chaine
         condition = Condition()
         mot_cles = ("si ", "sinon si ", "sinon", "finsi")
         for mot in mot_cles:
             if chaine.startswith(mot):
+                taille_type = len(mot)
                 condition.type = mot.rstrip(" ")
                 break
         
@@ -89,7 +93,7 @@ class Condition(Instruction):
             chaine = chaine[:-1]
         
         condition.tests, chaine = expressions["tests"].parser(
-                chaine[len(condition.type) + 1:])
+                chaine[taille_type:])
         
         return condition
     

@@ -25,26 +25,40 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# pereIBILITY OF SUCH DAMAGE.
+# POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit le contexte-éditeur 'type'."""
+"""Fichier contenant l'action blesser."""
 
-from primaires.interpreteur.editeur.uniligne import Uniligne
-from secondaires.magie.sort import STANDARD, OFFENSIF
+from primaires.scripting.action import Action
 
-class EdtType(Uniligne):
+class ClasseAction(Action):
     
-    """Contexte-éditeur type.
+    """Blesse un personnage.
     
-    Ce contexte permet de changer le type de sort.
+    Cette action ôte des points de vitalité au personnage spécifié. Bien
+    entendu, si sa vitalité passe à 0, le personnage meurt."""
     
-    """
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.blesser_personnage_msg, "Personnage", "Fraction",
+                "str")
+        cls.ajouter_types(cls.blesser_personnage, "Personnage", "Fraction")
     
-    def entrer(self):
-        """Quand on entre dans le contexte"""
-        if self.objet.type == STANDARD:
-            self.objet.type = OFFENSIF
-        else:
-            self.objet.type = STANDARD
-        self.migrer_contexte(self.opts.rci_ctx_prec)
+    @staticmethod
+    def blesser_personnage_msg(personnage, valeur, message):
+        """Blesse le personnage en lui envoyant le message d'avertissement
+        spécifié (avant le message standard de mort, s'il meurt)."""
+        personnage.envoyer(message, **variables)
+        try:
+            personnage.stats.vitalite = personnage.stats.vitalite - int(valeur)
+        except:
+            personnage.mourir()
+    
+    @staticmethod
+    def blesser_personnage(personnage, valeur):
+        """Enlève au personnage la valeur précisée en points de vie."""
+        try:
+            personnage.stats.vitalite = personnage.stats.vitalite - int(valeur)
+        except:
+            personnage.mourir()

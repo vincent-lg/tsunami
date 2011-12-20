@@ -1,5 +1,4 @@
 # -*-coding:Utf-8 -*
-# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -29,20 +28,17 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Instruction, détaillée plus bas.
-
-Ce module contient également l'exception ErreurExecution.
+"""Fichier contenant la classe Instruction, détaillée plus bas ; et
+l'exception ErreurExecution.
 
 """
 
 from collections import OrderedDict
 
 from abstraits.obase import BaseObj, MetaBaseObj
-
 from .exceptions import ErreurScripting
 
-# Dictionnaire des instructions {nom: classe}
-instructions = OrderedDict()
+instructions = OrderedDict() # dictionnaire des instructions {nom: classe}
 
 class MetaInstruction(MetaBaseObj):
     

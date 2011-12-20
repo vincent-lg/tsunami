@@ -30,10 +30,10 @@
 
 """Package contenant la commande 'lancer'."""
 
+from primaires.format.fonctions import contient
+from primaires.interpreteur.commande.commande import Commande
 from primaires.perso.personnage import Personnage
 from primaires.objet.objet import Objet
-from primaires.interpreteur.commande.commande import Commande
-from primaires.format.fonctions import contient
 
 class CmdLancer(Commande):
     
@@ -45,46 +45,45 @@ class CmdLancer(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "lancer", "cast")
         self.groupe = "joueur"
-        self.schema = "<nom_sort> (sur/to <cible:personnage_present|nom_objet>)"
+        self.schema = "<nom_sort> (sur/to <cible_sort>)"
         self.nom_categorie = "combat"
         self.aide_courte = "lance un sort"
         self.aide_longue = \
             "Cette commande lance un sort dans la salle où vous vous " \
-            "trouvez, à condition que vous maîtrisiez ce sort bien entendu."
-    
-    def ajouter(self):
-        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
-        nom_objet = self.noeud.get_masque("cible")
-        nom_objet.proprietes["conteneurs"] = "(personnage.equipement.tenus, " \
-                "personnage.salle.objets_sol)"
+            "trouvez, à condition que vous maîtrisiez ce sort bien entendu. " \
+            "Vous pouvez préciser une cible si le sort en demande une."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         sort = dic_masques["nom_sort"].sort
         
-        if dic_masques["cible"] is None:
+        if dic_masques["cible_sort"] is None:
             if sort.type_cible != "aucune":
                 personnage << "|err|Vous devez préciser une cible pour ce " \
                         "sort.|ff|"
             else:
-                sort.concentrer(personnage)
+                personnage.agir("magie")
+                personnage.cle_etat = "magie"
+                sort.concentrer(personnage, personnage)
         else:
             if sort.type_cible == "aucune":
                 personnage << "|err|Ce sort ne peut être lancé sur une " \
                         "cible.|ff|"
             else:
-                if hasattr(dic_masques["cible"], "objet"):
-                    cible = dic_masques["cible"].objet
-                elif hasattr(dic_masques["cible"], "personnage"):
-                    cible = dic_masques["cible"].personnage
+                cible = dic_masques["cible_sort"].cible
                 # Vérification du type de cible
-                if sort.type_cible == "personnage" and not isinstance(cible, Personnage):
-                    personnage << "|err|Ce sort ne peut être lancé que sur un personnage ou une créature.|ff|"
+                if sort.type_cible == "personnage" and not isinstance(cible,
+                        Personnage):
+                    personnage << "|err|Ce sort ne peut être lancé que sur " \
+                            "un personnage ou une créature.|ff|"
                     return
                 if sort.type_cible == "objet" and not isinstance(cible, Objet):
-                    personnage << "|err|Ce sort ne peut être lancé que sur un objet.|ff|"
+                    personnage << "|err|Ce sort ne peut être lancé que sur " \
+                            "un objet.|ff|"
                     return
                 if sort.type_cible == "salle":
                     personnage << "|err|Non implémenté.|ff|"
                     return
+                personnage.agir("magie")
+                personnage.cle_etat = "magie"
                 sort.concentrer(personnage, cible)

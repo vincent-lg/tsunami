@@ -52,8 +52,8 @@ class Sort(BaseObj):
         self.cle = cle
         self.nom = "sortilège"
         self.description = Description(parent=self)
-        self.type = STANDARD
-        self.type_cible = "aucune"
+        self.type = "destruction"
+        self._type_cible = "aucune"
         self.difficulte = 0
         self.distance = False
         self.script = ScriptSort(self)
@@ -73,46 +73,64 @@ class Sort(BaseObj):
         if construit and self.parent:
             self.parent.enregistrer()
     
+    def _get_type_cible(self):
+        """Retourne le type de cible."""
+        return self._type_cible
+    def _set_type_cible(self, nouveau_type):
+        """Change le type de cible et la variable cible du script."""
+        self._type_cible = nouveau_type
+        if nouveau_type == "aucune":
+            for evt in self.script.evenements.values():
+                var_cible = evt.ajouter_variable("cible", "Personnage")
+                var_cible.aide = "la cible du sort (en l'occurence, le lanceur)"
+        elif nouveau_type == "personnage":
+            for evt in self.script.evenements.values():
+                var_cible = evt.ajouter_variable("cible", "Personnage")
+                var_cible.aide = "le personnage ciblé par le sort"
+        elif nouveau_type == "objet":
+            for evt in self.script.evenements.values():
+                var_cible = evt.ajouter_variable("cible", "Objet")
+                var_cible.aide = "l'objet ciblé par le sort"
+        elif nouveau_type == "salle":
+            for evt in self.script.evenements.values():
+                var_cible = evt.ajouter_variable("cible", "Salle")
+                var_cible.aide = "la salle ciblée par le sort"
+    type_cible = property(_get_type_cible, _set_type_cible)
+    
     def enregistrer(self):
         """Enregistre le sort dans son parent"""
         construit = self.construit
         if construit and self.parent:
             self.parent.enregistrer()
     
-    @property
-    def str_type(self):
-        """Retourne le type de sort"""
-        if self.type == STANDARD:
-            return "standard"
-        else:
-            return "offensif"
-    
-    def concentrer(self, personnage, cible=None, apprendre=True):
+    def concentrer(self, personnage, cible, apprendre=True):
         """Fait concentrer le sort à 'personnage'."""
         personnage << "Vous vous concentrez intensément."
         maitrise = 0
         if apprendre:
             maitrise = personnage.pratiquer_sort(self.cle)
+            personnage.pratiquer_talent(self.type)
         else:
             maitrise = personnage.sorts.get(self.cle, 0)
-        self.script["concentration"].executer(lanceur=personnage,
-                maitrise=maitrise)
+        self.script["concentration"].executer(personnage=personnage,
+                maitrise=maitrise, cible=cible)
         nom_act = "sort_" + self.cle + "_" + personnage.nom
         duree = ceil(3 * (100 - maitrise) / 100)
         type(self).importeur.diffact.ajouter_action(nom_act, duree,
-                self.lancer, personnage, cible=cible)
+                self.lancer, personnage, cible)
     
-    def lancer(self, personnage, cible=None):
+    def lancer(self, personnage, cible):
         """Fait lancer le sort à 'personnage'."""
         personnage << "Vous lancez le sort {}.".format(self.nom)
         maitrise = personnage.sorts.get(self.cle, 0)
-        self.script["lancement"].executer(lanceur=personnage,
-                maitrise=maitrise)
-        self.toucher(personnage, cible=cible)
+        self.script["lancement"].executer(personnage=personnage,
+                maitrise=maitrise, cible=cible)
+        self.toucher(personnage, cible)
     
-    def toucher(self, personnage, cible=None):
+    def toucher(self, personnage, cible):
         """Active les effets du sort."""
         personnage << "Le sort {} fait effet.".format(self.nom)
         maitrise = personnage.sorts.get(self.cle, 0)
-        self.script["effet"].executer(lanceur=personnage,
-                maitrise=maitrise)
+        self.script["effet"].executer(personnage=personnage,
+                maitrise=maitrise, cible=cible)
+        personnage.cle_etat = ""

@@ -58,7 +58,7 @@ class Nombre(Expression):
         return "nombre({})".format(self.nombre)
     
     def __str__(self):
-        return str(self.nombre)
+        return "|blc|" + str(self.nombre) + "|ff|"
     
     @classmethod
     def parsable(cls, chaine):

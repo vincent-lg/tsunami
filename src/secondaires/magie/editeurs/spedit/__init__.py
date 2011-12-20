@@ -44,7 +44,6 @@ from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.flag import Flag
 from primaires.scripting.editeurs.edt_script import EdtScript
-from .edt_type import EdtType
 from .edt_difficulte import EdtDifficulte
 from .supprimer import NSupprimer
 
@@ -91,9 +90,17 @@ class EdtSpedit(Presentation):
             "|ff||\n" + self.opts.separateur
         
         # Type de sort
-        type = self.ajouter_choix("type de sort", "s", EdtType, sort)
+        types = ["destruction", "alteration", "invocation", "illusion"]
+        type = self.ajouter_choix("type de sort", "s", Choix, sort,
+                "type", types)
         type.parent = self
-        type.apercu = "{objet.str_type}"
+        type.prompt = "Type de sort : "
+        type.apercu = "{objet.type}"
+        type.aide_courte = \
+            "Entrez le |ent|type|ff| du sort ou |cmd|/|ff| " \
+            "pour revenir à la fenêtre parente.\nTypes disponibles : |cmd|" \
+            "{}|ff|.\n\nType actuel : |bc|{{objet.type}}|ff|".format(
+            "|ff|, |cmd|".join(types))
         
         # Cible
         types = ["aucune", "personnage", "objet", "salle"]

@@ -77,6 +77,22 @@ class Module(BaseModule):
         
         # Ajout de l'éditeur de sorts
         self.importeur.interpreteur.ajouter_editeur(EdtSpedit)
+        
+        # Ajout du niveau magie
+        self.importeur.perso.ajouter_niveau("magie", "magie")
+        
+        # Ajout des talents magiques
+        ajouter_talent = self.importeur.perso.ajouter_talent
+        ajouter_talent("destruction", "destruction", "magie", 0.20)
+        ajouter_talent("alteration", "altération", "magie", 0.25)
+        ajouter_talent("invocation", "invocation", "magie", 0.20)
+        ajouter_talent("illusion", "illusion", "magie", 0.30)
+        
+        # Ajout de l'état
+        etat = self.importeur.perso.ajouter_etat("magie")
+        etat.msg_refus = "Vous êtes en train de lancer un sort."
+        etat.msg_visible = "{personnage} se concentre ici."
+        etat.act_interdites = ["prendre", "poser", "deplacer"]
     
     def supprimer_sort(self, cle):
         """Supprime le sort spécifié"""

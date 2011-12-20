@@ -28,12 +28,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+"""Fichier contenant la classe Fonction, détaillée plus bas."""
+
 from fractions import Fraction
 
 from abstraits.obase import BaseObj
 from .parser import expressions
-
-"""Fichier contenant la classe Fonction, détaillée plus bas."""
 
 class Fonction(BaseObj):
     
@@ -44,18 +44,19 @@ class Fonction(BaseObj):
     retourne quelque chose.
     
     Ainsi, ce sont les grandes différences avec une action :
-    *   une action est une instruction, une fonction n'en est qu'une composante
-    *   une fonction retourne quelque chose, une action non
-    *   une action modifie, une fonction consulte (principalement)
+    -   une action est une instruction, une fonction n'en est qu'une
+        composante ;
+    -   une action ne retourne rien, une fonction si ;
+    -   une action modifie, une fonction consulte (principalement).
     
     NOTE IMPORTANTE : dans le package parser est défini un module fonction
     contenant une classe Fonction. Il ne faut pas confondre ces deux classes
     ayant un but très différent :
-    *   la classe définie dans parser est utile pour parser une fonction,
+    -   la classe définie dans parser est utile pour parser une fonction,
         isoler son nom, ses paramètres. L'objet généré sera stocké dans
         l'instruction ;
-    *   la classe définie ici existe comme classe-mère de toutes
-        les fonctions définies dans le sous-package fonctions.
+    -   la classe définie ici existe comme classe-mère de toutes les
+        fonctions définies dans le sous-package fonctions.
     
     """
     
@@ -79,7 +80,7 @@ class Fonction(BaseObj):
     
     @classmethod
     def get_methode(self, numero):
-        """Retourne la méthode correspondante au numéro d'ordre entré."""
+        """Retourne la méthode correspondant au numéro d'ordre entré."""
         return list(self._parametres_possibles.values())[numero]
     
     @classmethod
@@ -87,18 +88,18 @@ class Fonction(BaseObj):
         """Ajoute une interprétation possible de la fonction.
         
         Les fonctions peuvent avoir plusieurs interprétations possibles
-        en fonction du type de leur paramètre.
+        en fonction du type de leurs paramètres.
         
-        Les paramètres suplémentaires sont les types.
-        Ce doivent tous être des chaînes de caractères.
+        Les paramètres suplémentaires sont les types. Tous doivent être
+        des chaînes de caractères.
         
         """
         if tuple((p for p in parametres if not isinstance(p, str))):
-            raise TypeError("les types doivent être des type 'str'")
+            raise TypeError("Les types doivent être de type 'str'.")
         
         if parametres in cls._parametres_possibles:
-            raise ValueError("les paramètres {} existent déjà pour " \
-                    "cette fonction".format(parametres))
+            raise ValueError("Les paramètres {} existent déjà pour " \
+                    "cette fonction.".format(parametres))
         
         cls._parametres_possibles[parametres] = methode
     
@@ -118,8 +119,8 @@ class Fonction(BaseObj):
             if all(issubclass(p, t) for p, t in zip(ty_p, types)):
                 return methode
         
-        raise ValueError("aucune interprétation de la fonction {} " \
-                "avec les paramètres {} n'est possible (types {})".format(
+        raise ValueError("Aucune interprétation de la fonction {} " \
+                "avec les paramètres {} n'est possible (types {}).".format(
                 cls.nom, parametres, ty_p))
     
     @classmethod

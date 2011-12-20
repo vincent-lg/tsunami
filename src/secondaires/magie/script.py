@@ -54,10 +54,13 @@ class ScriptSort(Script):
             "l'entoure soudain."
         
         # Configuration des variables de l'évènement concentration
-        var_perso = evt_concentration.ajouter_variable("lanceur", "Personnage")
+        var_perso = evt_concentration.ajouter_variable("personnage",
+                "Personnage")
         var_perso.aide = "le personnage qui concentre le sort"
         var_maitrise = evt_concentration.ajouter_variable("maitrise", "int")
         var_maitrise.aide = "la maîtrise que le personnage a de ce sort"
+        var_cible = evt_concentration.ajouter_variable("cible", "Personnage")
+        var_cible.aide = "la cible du sort (en l'occurence, le lanceur)"
         
         # Evénement lancement
         evt_lancement = self.creer_evenement("lancement")
@@ -69,10 +72,12 @@ class ScriptSort(Script):
             "s'en échappe avec un grésillement."
         
         # Configuration des variables de l'évènement lancement
-        var_perso = evt_lancement.ajouter_variable("lanceur", "Personnage")
+        var_perso = evt_lancement.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage qui lance le sort"
         var_maitrise = evt_lancement.ajouter_variable("maitrise", "int")
         var_maitrise.aide = "la maîtrise que le personnage a de ce sort"
+        var_cible = evt_lancement.ajouter_variable("cible", "Personnage")
+        var_cible.aide = "la cible du sort (en l'occurence, le lanceur)"
         
         # Evénement effet
         evt_effet = self.creer_evenement("effet")
@@ -83,7 +88,9 @@ class ScriptSort(Script):
             "quelconque en explosant avec un grand bruit."
         
         # Configuration des variables de l'évènement effet
-        var_perso = evt_effet.ajouter_variable("lanceur", "Personnage")
+        var_perso = evt_effet.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage qui lance le sort"
         var_maitrise = evt_effet.ajouter_variable("maitrise", "int")
         var_maitrise.aide = "la maîtrise que le personnage a de ce sort"
+        var_cible = evt_effet.ajouter_variable("cible", "Personnage")
+        var_cible.aide = "la cible du sort (en l'occurence, le lanceur)"

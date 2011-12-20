@@ -52,7 +52,7 @@ class Connecteur(Expression):
         return " connecteur({}) ".format(self.connecteur)
     
     def __str__(self):
-        return str(self.connecteur)
+        return "|mr|" + str(self.connecteur) + "|ff|"
     
     @classmethod
     def parsable(cls, chaine):

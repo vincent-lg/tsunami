@@ -52,7 +52,7 @@ class Operateur(Expression):
         return " op({}) ".format(self.operateur)
     
     def __str__(self):
-        return str(self.operateur)
+        return "|mr|" + str(self.operateur) + "|ff|"
     
     @classmethod
     def parsable(cls, chaine):

@@ -48,11 +48,11 @@ class Evenement(BaseObj):
     Les évènements peuvent contenir des sous-évènements.
     
     Au niveau de la structure, un évènement contient :
-    *   un dictionnaire de variables qui doivent IMPERATIVEMENT être
-        TOUTES RENSEIGNEES quand on l'appelle
-    *   un dictionnaire pouvant contenir des sous-évènements
-    *   une suite de tests
-    *   plusieurs espaces de nom
+    -   un dictionnaire de variables qui doivent IMPERATIVEMENT être
+        TOUTES RENSEIGNEES quand on l'appelle ;
+    -   un dictionnaire pouvant contenir des sous-évènements ;
+    -   une suite de tests ;
+    -   plusieurs espaces de nom.
     
     En outre, l'évènement garde en mémoire le script dont il est issu,
     qu'il soit sous-évènement ou non.
@@ -62,16 +62,16 @@ class Evenement(BaseObj):
     simple :
         Evènement donner du PNJ tavernier_picte
             1   objet = pot_biere et nombre > 1
-        La condition ci-dessus est appelée si le joueur donne plus d'un
-        pot de bière au tavernier. Cela permet de ranger plus facilement
-        nos lignes de script en fonction de plusieurs variables.
+    La condition ci-dessus est appelée si le joueur donne plus d'un pot de
+    bière au tavernier. Cela permet de ranger plus facilement nos lignes
+    de script en fonction de plusieurs variables.
     
     Les évènements n'ayant aucune variable définie n'ont pas cette
-    distinction en condition pour le bâtisseur. Du point de vue
-    du code, ils ont une seule condition appelée automatiquement.
+    distinction en conditions pour le bâtisseur. Du point de vue du code,
+    ils ont une seule condition appelée automatiquement.
     
-    Les espaces de nom sont présents dans l'attribut 'espaces'.
-    Chaque attribut de cet objet 'Espaces' est un espace de nom différent.
+    Les espaces de nom sont présents dans l'attribut 'espaces'. Chaque
+    attribut de cet objet 'Espaces' est un espace de nom différent.
     Chaque espace se manipule comme un dictionnaire.
     
     Le constructeur d'un évènement prend en paramètre :
@@ -139,17 +139,14 @@ class Evenement(BaseObj):
         self.appelant.enregistrer()
     
     def ajouter_test(self, chaine_test):
-        """Ajoute un test à l'évènement.
-        
-        """
-        # On construit un test
+        """Ajoute un test à l'évènement."""
         test = Test(self, chaine_test)
         self.__tests.append(test)
         self.appelant.enregistrer()
         return len(self.__tests) - 1
     
     def supprimer_test(self, indice):
-        """Retire le test à l'indice spécifiée."""
+        """Retire le test à l'indice spécifié."""
         test = self.__tests[indice]
         test.detruire()
         del self.__tests[indice]
@@ -185,14 +182,13 @@ class Evenement(BaseObj):
     def creer_evenement(self, evenement):
         """Crée et ajoute l'évènement dont le nom est précisé en paramètre.
         
-        L'évènement doit être une chaîne de caractères non vide.
-        Si l'évènement existe, le retourne.
-        Sinon, retourne le créé.
+        L'évènement doit être une chaîne de caractères non vide. Si
+        l'évènement existe, le retourne. Sinon, retourne le créé.
         
         """
         if not evenement:
-            raise ValueError("un nom vide a été passé en paramètre de " \
-                    "creer_evenement")
+            raise ValueError("Un nom vide a été passé en paramètre de " \
+                    "creer_evenement.")
         
         sa_evenement = supprimer_accents(evenement).lower()
         
@@ -209,7 +205,7 @@ class Evenement(BaseObj):
         return nouv_evenement
     
     def supprimer_evenement(self, evenement):
-        """Supprime l'évènement en le retirant du script."""
+        """Supprime l'évènement en le retirant de son parent."""
         evenement = supprimer_accents(evenement).lower()
         del self.__evenements[evenement]
     
@@ -217,7 +213,7 @@ class Evenement(BaseObj):
         """Exécution de l'évènement."""
         self.espaces.variables.update(variables)
         if tuple(v for v in self.variables if v not in self.espaces.variables):
-            raise ValueError("des variables manquent à l'appel")
+            raise ValueError("Des variables manquent à l'appel.")
         
         # On cherche le bon test
         for test in self.__tests:

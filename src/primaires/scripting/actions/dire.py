@@ -34,7 +34,9 @@ from primaires.scripting.action import Action
 
 class ClasseAction(Action):
     
-    """Dire quelque chose"""
+    """Dit quelque chose.
+    
+    C'est l'action standard pour envoyer un message dans l'univers."""
     
     @classmethod
     def init_types(cls):
@@ -43,10 +45,13 @@ class ClasseAction(Action):
     
     @staticmethod
     def dire_personnage(personnage, message):
-        """Dit un message au personnage"""
+        """Envoie un message au personnage."""
         personnage.envoyer(message, **variables)
     
     @staticmethod
     def dire_salle(salle, message):
-        """Dit un message aux personnages présents dans la salle"""
+        """Envoie un message aux personnages présents dans la salle.
+        A noter que tous les personnages contenus dans des variables de
+        ce script, s'il y en a, sont exclus de la liste et ne reçoivent
+        donc pas ce message."""
         salle.envoyer(message, **variables)

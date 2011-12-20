@@ -52,7 +52,7 @@ class Variable(Expression):
         return "Variable({})".format(self.nom)
     
     def __str__(self):
-        return self.nom
+        return "|vr|" + self.nom + "|ff|"
     
     @classmethod
     def parsable(cls, chaine):

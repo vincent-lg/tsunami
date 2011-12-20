@@ -81,7 +81,7 @@ class EdtInstructions(Editeur):
         
         if not ligne.strip():
             self.pere << "|err|Entrez une nouvelle instruction " \
-                    "pour remplacer celle en ligne {}.|ff|".format(no + 1)
+                    "pour remplacer celle de la ligne {}.|ff|".format(no + 1)
             return
         
         try:
@@ -213,9 +213,9 @@ class EdtInstructions(Editeur):
             # On affiche l'aide de la méthode
             nom = fonction.nom
             t_args = inspect.getargspec(methode)
-            args = "|ff|, |bc|".join(t_args.args)
+            args = "|ff|, |vr|".join(t_args.args)
             doc = inspect.getdoc(methode)
-            self.pere << "Fonction |ent|{}|ff|(|bc|{}|ff|) :\n{}".format(nom,
+            self.pere << "Fonction {}(|vr|{}|ff|) :\n{}".format(nom,
                     args, doc)
         elif fonction:
             # Une fonction est précisée mais pas de méthode
@@ -225,12 +225,12 @@ class EdtInstructions(Editeur):
             description = "\n".join(doc[1:])
             doc_methodes = []
             for i, methode in enumerate(fonction._parametres_possibles.values()):
-                args = ", ".join(inspect.getargspec(methode).args)
-                doc_methodes.append("{}. ({})".format(i + 1, args))
+                args = "|ff|, |vr|".join(inspect.getargspec(methode).args)
+                doc_methodes.append("{:>2}. (|vr|{}|ff|)".format(i + 1, args))
             
-            doc = "  " + "\n  ".join(doc_methodes)
-            self.pere << "Fonction {} : {}\n{}\nUsages :\n{}".format(
-                    nom, resume, description, doc)
+            doc = "\n".join(doc_methodes)
+            self.pere << "Fonction |ent|{}|ff| ({}){}\nUsages :\n{}".format(
+                    nom, resume[0].lower() + resume[1:-1], description, doc)
         else:
             # Aucune fonction n'est précisée, on affiche la liste
             fonctions = \
@@ -241,15 +241,16 @@ class EdtInstructions(Editeur):
                 nom = fonction.nom
                 doc = inspect.getdoc(fonction).split("\n")
                 resume = doc[0]
-                lignes.append("{} : {}".format(nom, resume))
+                lignes.append("|ent|{}|ff| : {}".format(nom,
+                        resume[0].lower() + resume[1:-1]))
             
             lignes = "  " + "\n  ".join(lignes)
             self.pere << \
                 "Ci-dessous se trouve la liste des fonctions existantes.\n" \
                 "Pour obtenir de l'aide sur une fonction, entrez " \
-                "|cmd|/?f fonction|ff|.\n" \
-                "Pour obtenir de l'aide sur un des usages possible " \
-                "de la fonction,\nentrez |cmd|/?f fonction numero|ff|.\n\n" \
+                "|cmd|/?f fonction|ff| ; pour obtenir de\nl'aide sur un des " \
+                "usages possibles " \
+                "de la fonction, entrez |cmd|/?f fonction numero|ff|.\n\n" \
                 "{}".format(lignes)
             
     def opt_aide_actions(self, arguments):
@@ -298,7 +299,7 @@ class EdtInstructions(Editeur):
             t_args = inspect.getargspec(methode)
             args = " ".join(t_args.args)
             doc = inspect.getdoc(methode)
-            self.pere << "Action {} {}\n{}".format(nom, args, doc)
+            self.pere << "Action {} |vr|{}|ff| :\n{}".format(nom, args, doc)
         elif action:
             # Une action est précisée mais pas de méthode
             nom = action.nom
@@ -308,11 +309,11 @@ class EdtInstructions(Editeur):
             doc_methodes = []
             for i, methode in enumerate(action._parametres_possibles.values()):
                 args = " ".join(inspect.getargspec(methode).args)
-                doc_methodes.append("{}. {}".format(i + 1, args))
+                doc_methodes.append("{}. |vr|{}|ff|".format(i + 1, args))
             
-            doc = "  " + "\n  ".join(doc_methodes)
-            self.pere << "Action {} : {}\n{}\nUsages :\n{}".format(
-                    nom, resume, description, doc)
+            doc = "\n".join(doc_methodes)
+            self.pere << "Action |ent|{}|ff| ({}){}\nUsages :\n{}".format(
+                    nom, resume[0].lower() + resume[1:-1], description, doc)
         else:
             # Aucune action n'est précisée, on affiche la liste
             actions = sorted(type(self).importeur.scripting.actions.values(),
@@ -322,15 +323,16 @@ class EdtInstructions(Editeur):
                 nom = action.nom
                 doc = inspect.getdoc(action).split("\n")
                 resume = doc[0]
-                lignes.append("{} : {}".format(nom, resume))
+                lignes.append("|ent|{}|ff| : {}".format(nom,
+                        resume[0].lower() + resume[1:-1]))
             
             lignes = "  " + "\n  ".join(lignes)
             self.pere << \
                 "Ci-dessous se trouve la liste des actions existantes.\n" \
                 "Pour obtenir de l'aide sur une action, entrez " \
-                "|cmd|/?a action|ff|\n" \
-                "Pour obtenir de l'aide sur un des usages possible " \
-                "de l'action,\nentrez |cmd|/?a action numero|ff|\n\n" \
+                "|cmd|/?a action|ff| ; pour obtenir de\n" \
+                "l'aide sur un des usages possibles " \
+                "de l'action, entrez |cmd|/?a action numero|ff|.\n\n" \
                 "{}".format(lignes)
             
     def accueil(self):
@@ -343,24 +345,31 @@ class EdtInstructions(Editeur):
         msg += "Edition d'un script de {}[{}]".format(appelant,
                 evenement.nom).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
-        variables = evenement.variables
-        msg += "Variables :\n  "
-        if variables:
-            msg += "\n  ".join(["{:<15} : {}".format(var.nom, var.aide) \
-                    for var in variables.values()])
-        else:
-            msg += "Aucune variable n'a été définie pour ce script."
+        msg += "Entrez directement une |ent|instruction|ff| pour l'ajouter, "
+        msg += "ou |cmd|/|ff| pour revenir à la\nfenêtre précédente. L'option "
+        msg += "|cmd|/?|ff| vous fournira toute l'aide nécessaire si\n"
+        msg += "vous n'êtes pas à l'aise avec cet éditeur.\n\n"
+        variables = evenement.variables.values()
         
-        msg += "\n\n"
         if tests.etape:
             msg += "|att|ATTENTION : ce script est relié à la quête " \
-                    "{}:{}.\n\n|ff|".format(tests.etape.quete.cle,
-                    tests.etape.niveau)
+                    "{} (étape {}).\n\n|ff|".format(tests.etape.quete.cle,
+                    tests.etape.str_niveau)
+        if variables:
+            msg += "Variables definies dans ce script :\n"
+            t_max = 0
+            for v in variables:
+                if len(v.nom) > t_max:
+                    t_max = len(v.nom)
+            lignes = ["|grf|" + var.nom.ljust(t_max) + "|ff| : " + var.aide \
+                    for var in variables]
+            msg += "\n".join(lignes)
+            msg += "\n\n"
         
-        msg += "Instructions :\n  "
+        msg += "|cy|Instructions|ff|\n\n "
         if instructions:
-            msg += "\n  ".join(["{:>3} {}{}".format(i + 1,
-                    "  " * instruction.niveau, instruction) \
+            msg += "\n ".join(["|grf|{:>3}|ff| {}{}".format(i + 1,
+                    "  " * instruction.niveau, echapper_accolades(str(instruction))) \
                     for i, instruction in enumerate(instructions)])
         else:
             msg += "Aucune instruction n'est définie dans ce script."
@@ -374,6 +383,6 @@ class EdtInstructions(Editeur):
             tests.ajouter_instruction(msg)
         except ValueError as err:
             print(traceback.format_exc())
-            self.pere << "|err|" + str(err) + "|ff|"
+            self.pere << "|err|" + str(err).capitalize() + ".|ff|"
         else:
             self.actualiser()
