@@ -31,6 +31,7 @@
 """Package contenant la commande 'allure'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from secondaires.navigation.constantes import *
 
 class CmdAllure(Commande):
     
@@ -93,4 +94,20 @@ class CmdAllure(Commande):
             msg_vent = "Le vent souffle directement face au navire."
         
         msg_vent = msg_vent.format(cote=cote, angle=angle)
-        personnage << msg_vent
+        
+        # Allure
+        if angle > ALL_DEBOUT:
+            msg_allure = "Le navire est au vent debout."
+        elif angle > ALL_PRES:
+            msg_allure = "Le navire est au près face au vent."
+        elif angle > ALL_BON_PLEIN:
+            msg_allure = "Le navire est au bon plein."
+        elif angle > ALL_LARGUE:
+            msg_allure = "Le navire est au largue, le vent portant par " \
+                    "le travers."
+        elif angle > ALL_GRAND_LARGUE:
+            msg_allure = "Le navire est au grand largue."
+        else:
+            msg_allure = "Le navire est vent arrière."
+        
+        personnage << msg_vent + "\n" + msg_allure

@@ -30,7 +30,7 @@
 
 """Fichier contenant les constantes de navigation."""
 
-# FActeurs des allures
+# Facteurs des allures
 ALL_DEBOUT = 140
 ALL_PRES = 125
 ALL_BON_PLEIN = 105
