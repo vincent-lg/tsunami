@@ -37,9 +37,14 @@ from primaires.joueur.config import cfg_joueur
 from .joueur import Joueur
 from . import contextes
 
+# Constantes
+NB_TICKS = 12
+
 class Module(BaseModule):
-    """Classe utilisée pour gérer des joueurs, c'est-à-dire des personnages
-    connecté par client, à distinguer des PNJ.
+    
+    """Module gérant les joueurs.
+    
+    Les joueurs sont des personnages connectés à la différence des PNJ.
     
     Les mécanismes de jeu propres aux personnages, c'est-à-dire communs aux
     joueurs et PNJ, ne sont pas défini dans ce module mais dans le module
@@ -54,6 +59,9 @@ class Module(BaseModule):
         self.joueurs = {}
         self.compte_systeme = ""
         self.joueur_systeme = ""
+        self.ticks = {}
+        for no in range(1, NB_TICKS + 1):
+            self.ticks[no] = []
     
     def config(self):
         """Méthode de configuration du module"""
@@ -73,6 +81,12 @@ class Module(BaseModule):
         joueurs = self.importeur.supenr.charger_groupe(Joueur)
         for joueur in joueurs:
             self.joueurs[joueur.nom] = joueur
+        
+        # Ajout des actions différées pour chaque tick
+        intervalle = 60 / NB_TICKS
+        for no in self.ticks.keys():
+            self.importeur.diffact.ajouter_action("ptick_{}".format(no),
+                    intervalle * no, self.tick, no)
         
         BaseModule.init(self)
     
@@ -131,3 +145,24 @@ class Module(BaseModule):
             self.compte_systeme.creer_joueur(self.joueur_systeme)
         
         self.joueur_systeme = self.joueurs[self.joueur_systeme]
+    
+    def ajouter_joueur_tick(self, joueur):
+        """Ajoute un joueur au tick semblant le moins chargé."""
+        moins_charge = min(self.ticks.keys(),
+                key=lambda no: len(self.ticks[no]))
+        
+        joueur.no_tick = moins_charge
+        self.ticks[moins_charge].append(joueur)
+    
+    def retirer_joueur_tick(self, joueur):
+        """Retire un joueur de son tick."""
+        no = joueur.no_tick
+        if joueur in self.ticks[no]:
+            self.ticks[no].remove(joueur)
+    
+    def tick(self, no):
+        """Exécute un tick."""
+        self.importeur.diffact.ajouter_action("ptick_{}".format(no),
+                60, self.tick, no)
+        for joueur in self.ticks[no]:
+            joueur.tick()
