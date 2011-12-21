@@ -30,8 +30,12 @@
 
 """Ce fichier contient la classe BasePertu, détaillée plus bas."""
 
+from math import sqrt, pow, ceil
+from random import randint
+
 from abstraits.id import ObjetID
 from . import MetaPertu
+from primaires.salle.coordonnees import Coordonnees
 
 class BasePertu(ObjetID, metaclass=MetaPertu):
     
@@ -44,13 +48,35 @@ class BasePertu(ObjetID, metaclass=MetaPertu):
     groupe = "perturbations"
     sous_rep = "meteo/perturbations"
     nom_pertu = ""
+    rayon_max = 0 # à redéfinir selon la perturbation
     
     def __init__(self):
         """Constructeur d'un type"""
         ObjetId.__init__(self)
-        pass
+        self.centre = Coordonnees()
+        self.rayon = randint(self.rayon_max / 2, self.rayon_max)
+        self._age = 0
+        self.duree = 10
+        self.direction = "est"
+        self.message = "Une perturbation roule au-dessus de votre tête."
     
     def __getnewargs__(self):
         return ()
+    
+    @property
+    def age(self):
+        return self._age
+    
+    def distance_au_centre(self, salle):
+        """Retourne la distance de salle au centre de la perturbation"""
+        x1 = salle.coords.x
+        x2 = self.centre.x
+        y1 = salle.coords.y
+        y2 = self.centre.y
+        return ceil(sqrt(pow(x1 - x2) + pow(y1 - y2)))
+    
+    def est_sur(self, salle):
+        """Retourne True si salle est au-dessous de la perturbation"""
+        return self.distance_au_centre(salle) <= self.rayon
 
 ObjetID.ajouter_groupe(BasePertu)

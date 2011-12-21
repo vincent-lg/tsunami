@@ -30,9 +30,12 @@
 
 """Fichier contenant le module primaire meteo."""
 
+from random import choice
+
 from abstraits.module import *
 from .config import cfg_meteo
 from .perturbations.base import BasePertu
+from .perturbations import perturbations as liste_perturbations
 
 class Module(BaseModule):
     
@@ -49,7 +52,8 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "meteo", "primaire")
-        self._perturbations = {}
+        self._perturbations = []
+        self.perturbations_actuelles = {}
     
     def config(self):
         """Configuration du module"""
@@ -64,8 +68,22 @@ class Module(BaseModule):
                 self.donner_meteo)
                 
         perturbations = self.importeur.supenr.charger_groupe(BasePertu)
+        for pertu in perturbations:
+            self._perturbations.append(pertu)
         
         BaseModule.init(self)
+    
+    def preparer(self):
+        """Préparation du module"""
+        self.cycle_meteo()
+    
+    def cycle_meteo(self):
+        self.importeur.diffact.ajouter_action("cycle_meteo", 60,
+                self.cycle_meteo)
+        print("Nouveau cycle.")
+        # On tente de créer une perturbation
+        if liste_perturbations:
+            pertu = choice(liste_perturbations)
     
     def donner_meteo(self, salle, liste_messages):
         """Affichage de la météo d'une salle"""

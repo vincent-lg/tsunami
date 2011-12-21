@@ -28,26 +28,23 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce package contient toutes les perturbations météorologiques existantes,
-héritées de la perturbation basique (voir base.py).
+"""Ce fichier contient la classe Pluie, détaillée plus bas."""
 
-"""
+from .base import BasePertu
 
-from abstraits.obase import MetaBaseObj
-
-perturbations = []
-
-class MetaPertu(MetaBaseObj):
+class Pluie(BasePertu):
     
-    """Métaclasse des perturbations météorologiques.
-    Elle ajoute la perturbations dans le dictionnaire ci-dessus.
+    """Classe abstraite représentant la perturbation 'pluie'.
     
     """
     
-    def __init__(cls, nom, bases, contenu):
-        """Constructeur de la métaclasse"""
-        MetaBaseObj.__init__(cls, nom, bases, contenu)
-        if cls.nom_pertu:
-            perturbations.append(cls)
-
-from .pluie import Pluie
+    nom_pertu = "pluie"
+    rayon_max = 16
+    
+    def __init__(self):
+        """Constructeur de la perturbation"""
+        BasePertu.__init__(self)
+        self.duree = 10
+        self.direction = "est"
+        self.message = "Une fine pluie martèle le sol dans un doux " \
+                "crépitement."
