@@ -54,9 +54,9 @@ class Conteneur(BaseType):
         
         # Attributs propres à l'objet (non au prototype)
         self._attributs = {
-            "conteneur", Attribut(
-                lambda obj: setattr(obj, "conteneur", ConteneurObjet(obj)),
-                ("")),
+            "conteneur": Attribut(
+                lambda obj: ConteneurObjet(obj),
+                ("", )),
         }
     
     @property
@@ -79,6 +79,15 @@ class Conteneur(BaseType):
     def str_types(self):
         """Retourne une chaîne représentant les types actuels."""
         return ", ".join(type(self).importeur.objet.noms_types)
+    
+    @staticmethod
+    def calculer_poids(objet):
+        """Retourne le poids de l'objet et celui des objets contenus."""
+        poids = objet.poids_unitaire
+        for o, nb in objet.conteneur.iter_nombres():
+            poids += o.poids * nb
+        
+        return poids
     
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""

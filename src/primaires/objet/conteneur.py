@@ -71,6 +71,13 @@ class ConteneurObjet(BaseObj):
     def __str__(self):
         return str(self._objets) + str(self._non_uniques)
     
+    def iter_nombres(self):
+        """Parcourt les objets et quantités du conteneur."""
+        for objet in self._objets:
+            yield (objet, 1)
+        for objet in self._non_uniques:
+            yield (objet.prototype, objet.nombre)
+    
     def ajouter(self, objet, nombre=1):
         """On ajoute l'objet dans le conteneur.
         

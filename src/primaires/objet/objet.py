@@ -35,6 +35,7 @@ from abstraits.id import ObjetID
 class Objet(ObjetID):
     
     """Cette classe contient un Objet issu d'un prototype.
+    
     Pour rappel, un prototype définit une suite d'action propre au type de
     l'objet, ainsi que des attributs génériques. Les administrateurs en
     charge de l'univers créent des prototypes et sur ce prototype (qui est
@@ -98,6 +99,18 @@ class Objet(ObjetID):
     
     def __str__(self):
         return self.nom_singulier
+    
+    @property
+    def poids(self):
+        """Retourne le poids total.
+        
+        Ce peut être :
+        *   Le point unitaire pour un objet standard
+        *   Le poids unitaire plus le poids de tous les objets
+            contenus pour un conteneur.
+        
+        """
+        return self.prototype.calculer_poids(self)
     
     def detruire(self):
         """Destruction de l'objet"""

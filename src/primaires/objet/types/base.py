@@ -70,6 +70,7 @@ class BaseType(ObjetID, metaclass=MetaType):
         self.unique = True # par défaut tout objet est unique
         self._prix = 1 # valeur en magasin
         self.sans_prix = False
+        self.poids_unitaire = 1 # 1 Kg
         
         # Equipement
         self.emplacement = ""
@@ -191,6 +192,11 @@ class BaseType(ObjetID, metaclass=MetaType):
         """
         classe = type(self).importeur.objet.types[nom_type]
         return isinstance(self, classe)
+    
+    @staticmethod
+    def calculer_poids(objet):
+        """Retourne le poids de l'objet."""
+        return objet.poids_unitaire
     
     # Actions sur les objets
     @staticmethod
