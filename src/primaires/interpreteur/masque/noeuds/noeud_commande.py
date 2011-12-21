@@ -53,7 +53,7 @@ class NoeudCommande(BaseNoeud):
             self.construire_arborescence(schema)
     
     def construire_arborescence(self, schema):
-        """Redirection vers la construction de la commande"""
+        """Redirection vers la construction de la commande."""
         self.suivant = self.commande.construire_arborescence(schema)
     
     def __str__(self):
@@ -67,8 +67,8 @@ class NoeudCommande(BaseNoeud):
     @property
     def fils(self):
         """Retourne les fils, c'est-à-dire :
-        -   le noeud éventuel du schéma de la commande
-        -   les différents paramètres de la commande
+        -   le noeud éventuel du schéma de la commande ;
+        -   les différents paramètres de la commande.
         
         """
         fils = Embranchement()
@@ -80,7 +80,7 @@ class NoeudCommande(BaseNoeud):
         return fils
     
     def get_masque(self, nom_masque):
-        """Récupère le masque nom_masque dans l'arborescence"""
+        """Récupère le masque nom_masque dans l'arborescence."""
         if self.suivant:
             return self.suivant.get_masque(nom_masque)
         
@@ -103,7 +103,7 @@ class NoeudCommande(BaseNoeud):
         return valide
     
     def valider(self, personnage, dic_masques, tester_fils=True):
-        """Validation du noeud commande."""
+        """Méthode de validation du noeud commande"""
         return tester_fils and bool(self.fils) and  self.fils.valider(
                 personnage, dic_masques)
     
@@ -114,7 +114,7 @@ class NoeudCommande(BaseNoeud):
             fils.interpreter(personnage, dic_masques)
     
     def afficher(self, personnage):
-        """Retourne un affichage du masque pour les joueurs"""
+        """Retourne un affichage du masque pour les joueurs."""
         msg = self.commande.get_nom_pour(personnage)
         if self.suivant:
             msg += " " + self.suivant.afficher(personnage)

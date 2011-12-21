@@ -89,16 +89,19 @@ class EdtFils(Uniligne):
         sujet = self.objet
         sujet_fils = type(self).importeur.information.get_sujet(msg)
         if not sujet_fils:
-            self.pere << "|err|Le sujet {} n'existe pas.|ff|".format(msg)
+            self.pere << "|err|Le sujet '{}' n'existe pas.|ff|".format(msg)
         elif sujet_fils is sujet:
             self.pere << "|err|Vous ne pouvez affilier un sujet à " \
                     "lui-même.|ff|"
         elif sujet.est_lie(sujet_fils):
-            self.pere << "|err|Le sujet {} est déjà lié au sujet " \
+            self.pere << "|err|Le sujet '{}' est déjà lié au sujet " \
                     "courant.|ff|".format(msg)
         else:
             if sujet.est_fils(sujet_fils):
                 sujet.supprimer_fils(sujet_fils)
+            elif sujet_fils.pere is not None:
+                self.pere << "|err|Le sujet '{}' est déjà affilié au " \
+                        "sujet '{}'.|ff|".format(msg, sujet_fils.pere.titre)
             else:
                 sujet.ajouter_fils(sujet_fils)
-            self.actualiser()
+                self.actualiser()

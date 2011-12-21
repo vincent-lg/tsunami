@@ -36,9 +36,9 @@ from fractions import Fraction
 
 from abstraits.id import ObjetID
 from primaires.format.fonctions import echapper_accolades
-from .parser import expressions
+from primaires.scripting.parser import expressions
+from primaires.scripting.instruction import Instruction, ErreurExecution
 from primaires.scripting.constantes.connecteurs import CONNECTEURS
-from .instruction import Instruction, ErreurExecution
 
 class Test(ObjetID):
     
@@ -51,9 +51,9 @@ class Test(ObjetID):
     def __init__(self, evenement, chaine_test=""):
         """Constructeur d'une suite de tests.
         
-        Elle prend en paramètre :
+        Il prend en paramètre :
             evenement -- l'évènement qui possède le test
-            chaine_test -- la suite de test sous la forme d'une chaîne
+            chaine_test -- la suite de tests sous la forme d'une chaîne
         
         """
         ObjetID.__init__(self)
@@ -116,7 +116,7 @@ class Test(ObjetID):
     def remplacer_instruction(self, ligne, message):
         """Remplace une instruction."""
         if ligne not in range(len(self.__instructions)):
-            raise IndexError("la ligne {} n'existe pas".format(ligne))
+            raise IndexError("La ligne {} n'existe pas.".format(ligne))
         
         ancienne_instruction = self.__instructions[ligne]
         type_instruction = Instruction.test_interpreter(message)
@@ -126,8 +126,8 @@ class Test(ObjetID):
         self.enregistrer()
     
     def tester(self, evenement):
-        """Test le tests."""
-        # Si le test est relié à une quête, on test le niveau dans la quête
+        """Teste le test."""
+        # Si le test est relié à une quête, on teste le niveau dans la quête
         etape = self.etape
         if etape:
             if not self.acteur.quetes[etape.quete.cle].peut_faire(
@@ -156,9 +156,9 @@ class Test(ObjetID):
         """Méthode remontant l'erreur aux immortels concernés.
         
         Deux types d'informations sont remontées :
-        *   Au créateur et aux suiveurs, , le message d'erreur
-            (explicite au possible) est envoyé
-        *   Aux administrateurs, le traceback entier est envoyé.
+        -   au créateur et aux suiveurs, le message d'erreur (explicite au
+            possible) ;
+        -   aux administrateurs, le traceback entier.
         
         Si il y a doute quant à savoir si un joueur doit recevoir
         le message uniquement ou le traceback complet, le traceback
@@ -168,7 +168,7 @@ class Test(ObjetID):
         appelant = str(self.appelant)
         evt = str(self.evenement.nom)
         tests = self.__tests and "si " + str(self) or "sinon"
-        titre = "{}[{}] {}".format(appelant, evt, tests)
+        titre = "{}[{}] : {}".format(appelant, evt, tests)
         pile = echapper_accolades(traceback.format_exc()).split("\n")
         
         # On récupère le joueur système, expéditeur des messages
@@ -181,18 +181,17 @@ class Test(ObjetID):
             ligne = echapper_accolades(str(self.__instructions[no_ligne - 1]))
         else:
             no_ligne = "|err|inconnue|ff|"
-            ligne = "|err|inconnue|ff|"
+            ligne = "Ligne inconnue."
         
         # Création du mudmail simple
         mail_simple = type(self).importeur.communication.mails.creer_mail(
                 systeme)
-        mail_simple.sujet = "Erreur lors de l'exécution du script {}".format(
-                titre)
+        mail_simple.sujet = "Erreur sur le script {}".format(titre)
         ecrire = mail_simple.contenu.ajouter_paragraphe
         ecrire("Une erreur s'est produite lors de l'exécution " \
                 "de ce script :")
-        ecrire("|tab|{}, ligne {} :".format(titre, no_ligne))
-        ecrire("|tab||tab|{}".format(ligne))
+        ecrire("|tab||cy|{}|ff|, ligne {} :".format(titre, no_ligne))
+        ecrire("|tab||tab||ent|{}|ff|".format(ligne))
         ecrire("")
         ecrire("{}.".format(message))
         msgs = list(mail_simple.contenu.paragraphes)

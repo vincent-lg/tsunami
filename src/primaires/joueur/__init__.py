@@ -80,11 +80,13 @@ class Module(BaseModule):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.afk.CmdAfk(),
+            commandes.apprendre.CmdApprendre(),
             commandes.chgroupe.CmdChgroupe(),
             commandes.groupe.CmdGroupe(),
             commandes.distinctions.CmdDistinctions(),
             commandes.module.CmdModule(),
             commandes.options.CmdOptions(),
+            commandes.oublier.CmdOublier(),
             commandes.pset.CmdPset(),
             commandes.quitter.CmdQuitter(),
             commandes.quitter.CmdQuitter(),

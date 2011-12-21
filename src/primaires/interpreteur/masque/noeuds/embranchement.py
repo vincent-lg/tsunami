@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe Embranchement détaillée plus bas."""
+"""Fichier définissant la classe Embranchement, détaillée plus bas."""
 
 from primaires.interpreteur.masque.noeuds.base_noeud import BaseNoeud
 from primaires.interpreteur.masque.exceptions.erreur_validation \
@@ -52,7 +52,6 @@ class Embranchement(BaseNoeud):
         
         """
         return tuple(self.suivant)
-    
     fils = property(_get_fils)
     
     def __iter__(self):
@@ -74,13 +73,12 @@ class Embranchement(BaseNoeud):
     def repartir(self, personnage, masques, commande):
         """Répartition de la commande.
         
-        On test chaque embranchement en s'arrêtant dès qu'un embranchement
+        On teste chaque embranchement en s'arrêtant dès qu'un embranchement
         répartit.
         
         """
         liste_fils = self.fils
-        # Tri la liste des fils soit par ordrre alphabétique français
-        # ou anglais
+        # Tri la liste des fils par ordre alphabétique français ou anglais
         if personnage.langue_cmd == "francais":
             liste_fils = sorted(liste_fils, \
                 key=lambda noeud: noeud.commande.nom_francais)
@@ -105,14 +103,13 @@ class Embranchement(BaseNoeud):
     
     def valider(self, personnage, dic_masques, commande, tester_fils=True):
         """Validation du noeud Embranchement.
-        La commande entrée par le personnage peut avoir déjà été réduite par
+        La commande entrée par le personnage peut avoir été déjà réduite par
         les noeuds précédents. Elle est sous la forme d'une liste de
         caractères.
         
         """
         liste_fils = self.fils
-        # Tri la liste des fils soit par ordrre alphabétique français
-        # ou anglais
+        # Tri la liste des fils par ordre alphabétique français ou anglais
         if personnage.langue_cmd == "francais":
             liste_fils = sorted(liste_fils, \
                 key=lambda noeud: noeud.commande.nom_francais)
@@ -136,7 +133,6 @@ class Embranchement(BaseNoeud):
         return valide
     
     def interpreter(self, personnage, dic_masques):
-        """Redirection vers la méthode interpreter des fils"""
+        """Redirection vers la méthode interpreter des fils."""
         for fils in self.fils:
             fils.interpreter(personnage, dic_masques)
-    

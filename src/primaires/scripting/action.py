@@ -28,12 +28,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+"""Fichier contenant la classe Action, détaillée plus bas."""
+
 from fractions import Fraction
 
 from .instruction import Instruction
 from .parser import expressions
-
-"""Fichier contenant la classe Action, détaillée plus bas."""
 
 actions = {} # dictionnaire des actions répertoriées
 
@@ -54,13 +54,12 @@ class Action(Instruction):
     au lancement du module scripting.
     
     Chaque ClasseAction doit redéfinir :
-        La méthode init_types -- généralement, dans cette méthode,
-                on fait appel à ajouter_types (voir plus bas)
-        Plusieurs méthodes statiques représentant les différentes actions
-        en fonction des types
+    -   la méthode init_types, dans laquelle on fait appel généralement
+        à ajouter_types (voir plus bas) ;
+    -   plusieurs méthodes statiques représentant les différentes actions
+        en fonction des types.
     
-    Exemple du code de la classe dire.
-    Il se trouve dans le sous-package actions, fichier dire.py :
+    Exemple du code de l'action dire (sous-package actions, fichier dire.py) :
     >>> from primaires.scripting.action import Action
     ... class ClasseAction(Action):
     ...     @classmethod
@@ -72,37 +71,19 @@ class Action(Instruction):
     ...         personnage.envoyer(message)
     ...     @staticmethod
     ...     def dire_salle(salle, message):
-    ...         sal    le.envoyer(message)
-    ...
+    ...         salle.envoyer(message)
     
     """
     
     _parametres_possibles = None
     
-    @classmethod
-    def init_types(cls):
-        """Initialise les types à passer à l'action.
-        
-        Cette méthode est à redéfinir dans chaque sous-classe.
-        
-        """
-        raise NotImplementedError
-    
     def __init__(self):
-        """Construction d'une action.
-        
-        """
+        """Constructeur d'une action"""
         Instruction.__init__(self)
         self.parametres = ()
     
     def __str__(self):
         return self.nom + " " + " ".join(self.str_parametres)
-    
-    @classmethod
-    def executer(cls, evenement, *parametres):
-        """Exécute l'action selon l'évènement."""
-        action = cls.quelle_action(parametres)
-        return action(*parametres)
     
     @property
     def str_parametres(self):
@@ -114,6 +95,21 @@ class Action(Instruction):
         return tuple(parametres)
     
     @classmethod
+    def init_types(cls):
+        """Initialise les types à passer à l'action.
+        
+        Cette méthode est à redéfinir dans chaque sous-classe.
+        
+        """
+        raise NotImplementedError
+    
+    @classmethod
+    def executer(cls, evenement, *parametres):
+        """Exécute l'action selon l'évènement."""
+        action = cls.quelle_action(parametres)
+        return action(*parametres)
+    
+    @classmethod
     def get_methode(self, numero):
         """Retourne la méthode correspondante au numéro d'ordre entré."""
         return list(self._parametres_possibles.values())[numero]
@@ -123,24 +119,20 @@ class Action(Instruction):
         """Ajoute une interprétation possible de l'action.
         
         Les actions peuvent avoir plusieurs interprétations possibles
-        en fonction du type de leur paramètre.
+        en fonction du type de leur paramètre. Par exemple, dire peut
+        prendre en paramètres un joueur et un message, ou bien une salle
+        et un message.
         
-        Par exemple :
-            dire peut prendre un simple message en paramètre
-            dire peut aussi prendre un joueur et un message
-            dire peut prendre une salle et un message
-            ...
-        
-        Les paramètres suplémentaires sont les types.
-        Ce doivent tous être des chaînes de caractères.
+        Les paramètres suplémentaires sont les types. Tous doivent être
+        des chaînes de caractères.
         
         """
         if tuple((p for p in parametres if not isinstance(p, str))):
-            raise TypeError("les types doivent être des type 'str'")
+            raise TypeError("Les types doivent être de type 'str'.")
         
         if parametres in cls._parametres_possibles:
-            raise ValueError("les paramètres {} existent déjà pour " \
-                    "cette action".format(parametres))
+            raise ValueError("Les paramètres {} existent déjà pour " \
+                    "cette action.".format(parametres))
         
         cls._parametres_possibles[parametres] = methode
     
@@ -160,8 +152,8 @@ class Action(Instruction):
             if all(issubclass(p, t) for p, t in zip(ty_p, types)):
                 return methode
         
-        raise ValueError("aucune interprétation de la fonction {} " \
-                "avec les paramètres {} n'est possible (types {})".format(
+        raise ValueError("Aucune interprétation de la fonction {} " \
+                "avec les paramètres {} n'est possible (types {}).".format(
                 cls.nom, parametres, ty_p))
     
     @classmethod
@@ -174,15 +166,15 @@ class Action(Instruction):
         """Construit l'instruction.
         
         L'instruction est sous la forme :
-            action parametre1 parametre2 parametre3 ...
+        >>> action parametre1 parametre2 parametre3 ...
         
-        Le premier mot est donc le nom de l'action.  Ceux suivant
-        sont ses paramètres.
+        Le premier mot est donc le nom de l'action. Les suivants sont
+        ses paramètres.
         
         """
         action = chaine
         if not chaine.strip():
-            raise ValueError("Entrez au moins un nom d'action")
+            raise ValueError("Entrez au moins un nom d'action.")
         
         chaine = chaine.split(" ")
         nom_action = chaine[0]
@@ -197,10 +189,10 @@ class Action(Instruction):
             
             types_app = [type for type in types if type.parsable(chaine)]
             if not types_app:
-                raise ValueError("impossible de parser {}".format(action))
+                raise ValueError("Impossible de parser {}.".format(action))
             elif len(types_app) > 1:
-                raise ValueError("l'action {} peut être différemment " \
-                        "interprétée".format(action))
+                raise ValueError("L'action {} peut être différemment " \
+                        "interprétée.".format(action))
             
             type = types_app[0]
             arg, chaine = type.parser(chaine)
@@ -214,7 +206,7 @@ class Action(Instruction):
         try:
             action = actions[nom_action]()
         except KeyError:
-            raise ValueError("l'action {} n'existe pas".format(nom_action))
+            raise ValueError("L'action {} n'existe pas.".format(nom_action))
         
         action.parametres = parametres
         
@@ -236,7 +228,7 @@ class Action(Instruction):
     
     @property
     def code_python(self):
-        """Retourne le code Pytho associé à l'action."""
+        """Retourne le code Python associé à l'action."""
         py_code = "actions['" + self.nom + "']"
         py_args = ["evt"] + [a.code_python for a in self.parametres]
         py_code += ".executer(" + ", ".join(py_args) + ")"

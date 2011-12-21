@@ -51,6 +51,9 @@ class EnrDict(BaseObj):
     def __contains__(self, item):
         return item in self.__dict
     
+    def __len__(self):
+        return len(self.__dict)
+    
     def __getitem__(self, nom_elt):
         return self.__dict[nom_elt]
     
@@ -81,4 +84,3 @@ class EnrDict(BaseObj):
     
     def values(self):
         return self.__dict.values()
-

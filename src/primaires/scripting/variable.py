@@ -42,7 +42,7 @@ class Variable(BaseObj):
     """
     
     def __init__(self, evenement, nom, str_type=None):
-        """Constructeur d'une variable."""
+        """Constructeur d'une variable"""
         BaseObj.__init__(self)
         self.evenement = evenement
         self.nom = nom

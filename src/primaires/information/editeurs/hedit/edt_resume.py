@@ -42,7 +42,8 @@ class EdtResume(Uniligne):
     def interpreter(self, msg):
         """Interprétation du message"""
         if len(msg) > 50:
-            self.pere << "|err|Le résumé ne doit pas dépasser 50 caractères.|ff|"
+            self.pere << "|err|Le résumé ne doit pas dépasser 50 " \
+                    "caractères.|ff|"
         else:
             self.objet.resume = msg[0].lower() + msg[1:]
             self.actualiser()

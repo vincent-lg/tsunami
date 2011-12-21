@@ -36,7 +36,9 @@ from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
     
-    """Retourne vrai ou faux aléatoirement"""
+    """Retourne vrai ou faux aléatoirement.
+    
+    Cette fonction peut être utilisée associée à une condition."""
     
     @classmethod
     def init_types(cls):

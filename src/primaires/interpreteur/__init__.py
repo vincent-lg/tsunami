@@ -127,6 +127,7 @@ class Module(BaseModule):
         self.categories["divers"] = "Commandes générales"
         self.categories["info"] = "Information et aide en jeu"
         self.categories["bouger"] = "Mobilité et aide au déplacement"
+        self.categories["combat"] = "Commandes de combat"
         self.categories["objets"] = "Gestion des objets et commerce"
         self.categories["parler"] = "Communication"
         self.categories["bugs"] = "Bugs et suggestions"

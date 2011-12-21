@@ -33,7 +33,7 @@
 from abstraits.id import StatutObjet
 from abstraits.obase import *
 from primaires.format.fonctions import *
-from .evenement import Evenement
+from primaires.scripting.evenement import Evenement
 
 scripts = []
 
@@ -41,26 +41,25 @@ class Script(BaseObj):
     
     """Classe contenant un script.
     
-    Un script est un ensemble d'évènements. Chaque instance devant
-    faire appel à un évènement doit contenir un attribut possédant un script
+    Un script est un ensemble d'évènements. Chaque instance devant faire
+    appel à un évènement doit contenir un attribut possédant un script
     l'identifiant comme l'auteur des évènements qu'il contient.
     
     Par exemple :
-        class Personnage:
-            def __init__(self):
-                ...
-                self.script = Script(self)
+    >>> class Personnage:
+    ...     def __init__(self):
+    ...         self.script = Script(self)
     
     Comme indiqué, chaque instance de script peut contenir un ou plusieurs
     évènements qu'il est nécessaire de définir précisément avant l'appel.
-    Chaque évènement peut contenir plusieurs sous-évènements.
-    Pour plus d'informations, voir la classe Evenement définie dans ce package.
+    Chaque évènement peut contenir plusieurs sous-évènements. Pour plus
+    d'informations, voir la classe Evenement définie dans ce package.
     
     A noter que c'est l'évènement qui stocke les instructions, pas le script
     lui-même.
     
     Pour se construire, un script prend en paramètre :
-        parent -- l'objet qui appellera le script
+    -   parent -- l'objet qui appellera le script
     
     """
     
@@ -107,14 +106,13 @@ class Script(BaseObj):
     def creer_evenement(self, evenement):
         """Crée et ajoute l'évènement dont le nom est précisé en paramètre.
         
-        L'évènement doit être une chaîne de caractères non vide.
-        Si l'évènement existe, le retourne.
-        Sinon, retourne le créé.
+        L'évènement doit être une chaîne de caractères non vide. Si
+        l'évènement existe, le retourne. Sinon, retourne le créé.
         
         """
         if not evenement:
-            raise ValueError("un nom vide a été passé en paramètre de " \
-                    "creer_evenement")
+            raise ValueError("Un nom vide a été passé en paramètre de " \
+                    "creer_evenement.")
         
         sa_evenement = supprimer_accents(evenement).lower()
         

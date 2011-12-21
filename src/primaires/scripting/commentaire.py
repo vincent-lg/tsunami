@@ -28,9 +28,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-from .instruction import Instruction
-
 """Fichier contenant la classe Commentaire, détaillée plus bas."""
+
+from .instruction import Instruction
 
 class Commentaire(Instruction):
     
@@ -47,7 +47,7 @@ class Commentaire(Instruction):
         self.commentaire = ""
     
     def __str__(self):
-        return "#" + self.commentaire
+        return "|grf|#" + self.commentaire + "|ff|"
     
     @classmethod
     def peut_interpreter(cls, chaine):

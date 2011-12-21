@@ -46,7 +46,7 @@ class ChaineDeCaracteres(Expression):
         return "chaine({})".format(self.chaine)
         
     def __str__(self):
-        return "\"" + self.chaine + "\""
+        return "|bc|\"" + self.chaine + "\"|ff|"
     
     @classmethod
     def parsable(cls, chaine):

@@ -51,6 +51,7 @@ class NomObjet(Masque):
         Masque.__init__(self)
         self.proprietes["conteneurs"] = "(personnage.salle.objets_sol, )"
         self.proprietes["type"] = "None"
+        self.proprietes["tout_interpreter"] = "True"
     
     @property
     def objet(self):
@@ -76,7 +77,8 @@ class NomObjet(Masque):
         # nom_objet se valide. Le mot-clé from n'a plus rien à valider
         # mais il sait qu'il doit chercher dans le masque précédemment validé
         # (ici nom_objet) pour trouver l'objet
-        commande[:] = []
+        if self.proprietes["tout_interpreter"] == "True":
+            commande[:] = []
         self.a_interpreter = nom
         masques.append(self)
         return True

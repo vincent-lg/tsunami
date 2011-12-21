@@ -34,5 +34,7 @@ from bases.exceptions.base import ExceptionMUD
 
 class ErreurScripting(ExceptionMUD):
     
-    """Cette exception est la classe-mère des erreurs du scripting."""
+    """Cette exception est la classe-mère des erreurs du scripting.
+    
+    """
     pass

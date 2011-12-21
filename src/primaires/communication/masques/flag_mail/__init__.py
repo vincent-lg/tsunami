@@ -30,7 +30,7 @@
 
 """Fichier contenant le masque <flag_mail>."""
 
-from primaires.format.fonctions import supprimer_accents
+from primaires.format.fonctions import supprimer_accents, contient
 from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.exceptions.erreur_validation \
@@ -48,7 +48,8 @@ class FlagMail(Masque):
     
     def init(self):
         """Initialisation des attributs"""
-        self.flag = ""
+        self.flag = "recus"
+        self.liste_flags = ["recus", "brouillons", "archives", "envoyes"]
     
     def repartir(self, personnage, masques, commande):
         """Répartition du masque."""
@@ -58,10 +59,10 @@ class FlagMail(Masque):
             raise ErreurValidation(
                 "Précisez un flag de filtre.", False)
         
-        liste_flags = ["recus", "brouillons", "archives", "envoyes"]
         nom_flag = nom_flag.split(" ")[0]
         
-        if not supprimer_accents(nom_flag.lower()) in liste_flags:
+        if not contient("".join(self.liste_flags),
+                supprimer_accents(nom_flag.lower())):
             raise ErreurValidation(
                 "|err|Le flag précisé n'existe pas.|ff|", False)
         else:
@@ -74,5 +75,7 @@ class FlagMail(Masque):
         """Validation du masque"""
         Masque.valider(self, personnage, dic_masques)
         nom_flag = self.a_interpreter
-        self.flag = nom_flag
+        for flag in self.liste_flags:
+            if contient(flag, nom_flag):
+                self.flag = flag
         return True

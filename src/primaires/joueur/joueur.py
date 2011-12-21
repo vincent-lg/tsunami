@@ -165,7 +165,9 @@ class Joueur(Personnage):
     
     def get_nom_pour(self, personnage):
         """Retourne le nom pour le personnage passé en paramètre."""
-        if hasattr(personnage, "retenus") and self.id.id in personnage.retenus:
+        if personnage is self:
+            return self.nom
+        elif hasattr(personnage, "retenus") and self.id.id in personnage.retenus:
             return personnage.retenus[self.id.id]
         else:
             return self.get_distinction_visible()

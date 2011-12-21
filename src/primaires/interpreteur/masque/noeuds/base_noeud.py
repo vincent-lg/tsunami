@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier définissant la classe BaseNoeud détaillée plus bas;"""
+"""Fichier définissant la classe BaseNoeud détaillée plus bas."""
 
 class BaseNoeud:
     
@@ -49,21 +49,20 @@ class BaseNoeud:
         Cette méthode est à redéfinir dans chacune des classes-filles créée.
         Chaque type de noeud a sa propre méthode de validation.
         Dans tous les cas, une booléen doit être retourné :
-        -   True si le noeud a pu être interprété
-        -   False sinon
+        -   True si le noeud a pu être interprété ;
+        -   False sinon.
         
         Note : pour la plupart des noeuds, la validation est aussi fonction
-            des fils.
+        des fils.
         
         """
         raise NotImplementedError
     
     def _get_fils(self):
-        """Retourne les fils du noeud sous la forme d'une liste"""
+        """Retourne les fils du noeud sous la forme d'une liste."""
         return [self.suivant]
-    
     fils = property(_get_fils)
     
     def afficher(self, personnage):
-        """Retourne un affichage du masque pour les joueurs"""
+        """Retourne un affichage du masque pour les joueurs."""
         return ""

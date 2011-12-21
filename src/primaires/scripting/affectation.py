@@ -28,21 +28,21 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+"""Fichier contenant la classe Affectation, détaillée plus bas."""
+
 from .instruction import Instruction
 from .parser import expressions
-
-"""Fichier contenant la classe Affectation, détaillée plus bas."""
 
 class Affectation(Instruction):
     
     """Classe définissant une instruction d'affectation.
     
     Une instruction se présente sous une forme très simple :
-        variable = autre_variable
-            ou
-        variable = expression
-            ou
-        variable = fonction(parametres)
+    >>> variable = autre_variable
+    ou
+    >>> variable = expression
+    ou
+    >>> variable = fonction(parametres)
     
     """
     
@@ -53,7 +53,7 @@ class Affectation(Instruction):
         self.expression = None
     
     def __str__(self):
-        return str(self.variable) + " = " + str(self.expression)
+        return str(self.variable) + " |mr|=|ff| " + str(self.expression)
     
     @classmethod
     def peut_interpreter(cls, chaine):
@@ -65,7 +65,7 @@ class Affectation(Instruction):
         """Construit l'instruction.
         
         L'instruction est sous la forme :
-            nom_variable = expression
+        >>> nom_variable = expression
             
         """
         chn_affectation = chaine
@@ -75,10 +75,11 @@ class Affectation(Instruction):
         try:
             nom_variable, expression = chaine.split("=")
         except ValueError as err:
-            print("Erreur de parsage de l'affectation", chn_affectation)
+            print("Erreur de parsage de l'affectation", chn_affectation, ".")
             return
         
-        affectation.variable, chn = expressions["variable"].parser(nom_variable.rstrip())
+        affectation.variable, chn = expressions["variable"].parser(
+                nom_variable.rstrip())
         
         # Parsage de l'expression
         chaine = expression.lstrip(" ")
@@ -86,10 +87,10 @@ class Affectation(Instruction):
         types = tuple([expressions[nom] for nom in types])
         types_app = [type for type in types if type.parsable(chaine)]
         if not types_app:
-            raise ValueError("impossible de parser {}".format(chaine))
+            raise ValueError("Impossible de parser {}.".format(chaine))
         elif len(types_app) > 1:
-            raise ValueError("l'expression {} peut être différemment " \
-                    "interprétée".format(chaine))
+            raise ValueError("L'expression {} peut être différemment " \
+                    "interprétée.".format(chaine))
         
         type = types_app[0]
         exp, chaine = type.parser(chaine)
