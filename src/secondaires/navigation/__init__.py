@@ -38,8 +38,9 @@ from .elements import types as types_elements
 from .elements.base import BaseElement
 from .vent import Vent
 from . import commandes
-from . import masques
 from . import editeurs
+from . import masques
+from . import types
 from .modele import ModeleNavire
 from .constantes import TPS_VIRT, DIST_AVA
 

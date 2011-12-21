@@ -28,48 +28,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce package contient les différents types d'objet, sous la forme
-d'une classe par fichier, héritée de BaseType (voir base.py).
+"""Fichier contenant le type instrument."""
 
-"""
+from .base import BaseType
 
-from abstraits.obase import MetaBaseObj
-
-types = {} # types d'objet {nom:classe}
-
-class MetaType(MetaBaseObj):
+class Instrument(BaseType):
     
-    """Métaclasse des types d'objet.
-    
-    Elle ajoute le type de l'objet dans le dictionnaire 'types' si il possède
-    un nom.
+    """Type d'objet: instrument.
     
     """
     
-    def __init__(cls, nom, bases, contenu):
-        """Constructeur de la métaclasse"""
-        MetaBaseObj.__init__(cls, nom, bases, contenu)
-        cls.types = {}
-        if cls.nom_type:
-            types[cls.nom_type] = cls
-            
-            # On l'ajoute dans la classe-mère
-            base = bases and bases[0] or None
-            if base:
-                base.types[cls.nom_type] = cls
-
-from .conteneur import Conteneur
-from .indefini import *
-from .instrument import *
-from .nourriture import Nourriture
-from .vetement import Vetement
-from .viande import Viande
-from .clef import Clef
-
-# Vêtements
-from .chaussette import Chaussette
-from .chaussure import Chaussure
-from .chemise import Chemise
-from .pantalon import Pantalon
-from .jupe import Jupe
-
+    nom_type = "instrument"
