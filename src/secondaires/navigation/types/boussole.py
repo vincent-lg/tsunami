@@ -74,8 +74,9 @@ class Boussole(Instrument):
             return moi
         
         navire = salle.navire
-        vent = navire.vent
-        ven_dir = round(vent.direction / objet.precision) * objet.precision
+        vent = navire.vent.copier().tourner_autour_z(180)
+        ven_dir = vent.direction
+        ven_dir = round(ven_dir / objet.precision) * objet.precision
         nav_dir = round(navire.direction.direction / objet.precision) * \
                 objet.precision
         msg_vent = lisser("Le vent souffle de le {} ({}°).".format(

@@ -69,7 +69,7 @@ class CmdAllure(Commande):
             personnage << "|err|Vous ne ressentez aucun souffle de vent.|ff|"
             return
         
-        ven_direction = vent.direction
+        ven_direction = (vent.direction - 180) % 360
         angle = (ven_direction - nav_direction) % 360
         precision = 10 # précision en degré
         angle = round(angle / precision) * precision

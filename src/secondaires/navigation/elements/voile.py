@@ -56,7 +56,7 @@ class Voile(BaseElement):
     @staticmethod
     def get_nom_orientation(voile):
         """Retourne le nom de l'orientation de la voile."""
-        or_voile = voile.orientation
+        or_voile = -voile.orientation
         if -ANGLE_GRAND_LARGUE > or_voile:
             return "orientée vent arrière sur bâbord amure"
         elif or_voile > ANGLE_GRAND_LARGUE:
@@ -94,7 +94,7 @@ class Voile(BaseElement):
     def facteur_orientation(voile, navire, vent):
         """Retourne le facteur d'orientation de la voile."""
         allure = (navire.direction.direction - vent.direction) % 360
-        or_voile = voile.orientation
+        or_voile = -voile.orientation
         if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
             angle = ANGLE_DEBOUT
         elif ALL_PRES < allure < (360 - ALL_PRES):
