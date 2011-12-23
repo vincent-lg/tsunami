@@ -48,7 +48,7 @@ class PrmBorder(Parametre):
             "vous vous trouvez. Plus la voile est bordée, plus elle " \
             "est parallèle à l'âxe du navire. La voile doit être plus " \
             "ou moins bordée selon l'allure du navire. Si vous voulez " \
-            "changer d'amure, utilisez la commande %voile% %voile:empanner."
+            "changer d'amure, utilisez la commande %voile% %voile:empanner%."
     
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
