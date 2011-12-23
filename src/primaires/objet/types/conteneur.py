@@ -103,3 +103,20 @@ class Conteneur(BaseType):
             "possibles.\n\n" \
             "Types possibles : {objet.str_types}\n\n" \
             "Types admis actuels : {objet.str_types_admis}"
+    
+    # Actions sur les objets
+    @staticmethod
+    def regarder(objet, personnage):
+        """Le personnage regarde l'objet"""
+        msg = BaseType.regarder(objet, personnage)
+        objets = []
+        for o, nb in objet.conteneur.iter_nombres():
+            objets.append(o.get_nom(nb))
+        
+        if objets:
+            msg += "\n\nVous voyez à l'intérieur :\n  " + \
+                    "\n  ".join(objets)
+        else:
+            msg += "\n\nVous ne voyez rien à l'intérieur."
+        
+        return msg

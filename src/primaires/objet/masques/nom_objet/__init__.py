@@ -58,6 +58,15 @@ class NomObjet(Masque):
         """Retourne le premier objet."""
         return self.objets[0][0]
     
+    @property
+    def objets_seuls(self):
+        """Retourne un tuple des objets sans leur conteneur."""
+        objets = []
+        for o, c in self.objets:
+            objets.append(o)
+        
+        return tuple(objets)
+    
     def init(self):
         """Initialisation des attributs"""
         self.objets = []
@@ -94,7 +103,7 @@ class NomObjet(Masque):
         for c in conteneurs:
             for o in c:
                 if contient(o.nom_singulier, nom):
-                    if o_type and o.nom_type != o_type:
+                    if o_type and not o.prototype.est_de_type(o_type):
                         raise ErreurValidation(
                                 "|err|" + o.err_type.format(o.nom_singulier) \
                                 + "|ff|")

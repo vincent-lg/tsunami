@@ -40,7 +40,8 @@ class CmdPoser(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "poser", "drop")
         self.nom_categorie = "objets"
-        self.schema = "(<nombre>) <nom_objet>"
+        self.schema = "(<nombre>) <nom_objet> " \
+                "(dans/into <conteneur:nom_objet>)"
         self.aide_courte = "pose un objet"
         self.aide_longue = \
                 "Cette commande permet de poser un ou plusieurs objets."
@@ -48,7 +49,13 @@ class CmdPoser(Commande):
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("nom_objet")
-        nom_objet.proprietes["conteneurs"] = "(personnage.equipement.tenus, )"
+        nom_objet.proprietes["conteneurs"] = \
+                "(personnage.equipement.tenus, )"
+        conteneur = self.noeud.get_masque("conteneur")
+        conteneur.prioritaire = True
+        conteneur.proprietes["conteneurs"] = \
+                "(personnage.equipement.tenus, personnage.salle.objets_sol)"
+        conteneur.proprietes["type"] = "'conteneur'"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -56,13 +63,24 @@ class CmdPoser(Commande):
         if dic_masques["nombre"]:
             nombre = dic_masques["nombre"].nombre
         objets = dic_masques["nom_objet"].objets[:nombre]
+        dans = dic_masques["conteneur"]
+        dans = dans and dans.objet or None
         
         pose = 0
         for objet, conteneur in objets:
             conteneur.retirer(objet)
-            personnage.salle.objets_sol.ajouter(objet)
+            if dans:
+                dans.conteneur.ajouter(objet)
+            else:
+                personnage.salle.objets_sol.ajouter(objet)
             pose += 1
         
-        personnage << "Vous posez {}.".format(objet.get_nom(pose))
-        personnage.salle.envoyer("{{}} pose {}.".format(
-                    objet.get_nom(pose)), personnage)
+        if dans:
+            personnage << "Vous posez {} dans {}.".format(
+                    objet.get_nom(pose), dans.nom_singulier)
+            personnage.salle.envoyer("{{}} pose {} dans {}.".format(
+                        objet.get_nom(pose), dans.nom_singulier), personnage)
+        else:
+            personnage << "Vous déposez {}.".format(objet.get_nom(pose))
+            personnage.salle.envoyer("{{}} dépose {}.".format(
+                        objet.get_nom(pose)), personnage)

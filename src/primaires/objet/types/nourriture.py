@@ -47,7 +47,7 @@ class Nourriture(BaseType):
         BaseType.__init__(self, cle)
         self.qualite = 1
         self.nourrissant = 1
-        self.etendre_editeur("u", "qualité", Uniligne, self, "qualite")
+        self.etendre_editeur("a", "qualité", Uniligne, self, "qualite")
         self.etendre_editeur("o", "nourrissant", Uniligne, self, "nourrissant")
     
     def etendre_script(self):
@@ -63,7 +63,7 @@ class Nourriture(BaseType):
 
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""
-        qualite = enveloppes["u"]
+        qualite = enveloppes["a"]
         qualite.apercu = "{objet.qualite}"
         qualite.prompt = "Qualité de la nourriture : "
         qualite.aide_courte = \

@@ -100,6 +100,10 @@ class Objet(ObjetID):
     def __str__(self):
         return self.nom_singulier
     
+    def __iter__(self):
+        """Parcourt les objets contenus."""
+        return iter(self.conteneur)
+    
     @property
     def poids(self):
         """Retourne le poids total.
