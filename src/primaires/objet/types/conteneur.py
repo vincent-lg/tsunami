@@ -54,9 +54,9 @@ class Conteneur(BaseType):
         
         # Attributs propres à l'objet (non au prototype)
         self._attributs = {
-            "conteneur", Attribut(
-                lambda obj: setattr(obj, "conteneur", ConteneurObjet(obj)),
-                ("")),
+            "conteneur": Attribut(
+                lambda obj: ConteneurObjet(obj),
+                ("", )),
         }
     
     @property
@@ -80,6 +80,15 @@ class Conteneur(BaseType):
         """Retourne une chaîne représentant les types actuels."""
         return ", ".join(type(self).importeur.objet.noms_types)
     
+    @staticmethod
+    def calculer_poids(objet):
+        """Retourne le poids de l'objet et celui des objets contenus."""
+        poids = objet.poids_unitaire
+        for o, nb in objet.conteneur.iter_nombres():
+            poids += o.poids * nb
+        
+        return poids
+    
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""
         types_admis = enveloppes["t"]
@@ -94,3 +103,20 @@ class Conteneur(BaseType):
             "possibles.\n\n" \
             "Types possibles : {objet.str_types}\n\n" \
             "Types admis actuels : {objet.str_types_admis}"
+    
+    # Actions sur les objets
+    @staticmethod
+    def regarder(objet, personnage):
+        """Le personnage regarde l'objet"""
+        msg = BaseType.regarder(objet, personnage)
+        objets = []
+        for o, nb in objet.conteneur.iter_nombres():
+            objets.append(o.get_nom(nb))
+        
+        if objets:
+            msg += "\n\nVous voyez à l'intérieur :\n  " + \
+                    "\n  ".join(objets)
+        else:
+            msg += "\n\nVous ne voyez rien à l'intérieur."
+        
+        return msg

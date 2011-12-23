@@ -31,11 +31,14 @@
 """Ce fichier définit le contexte-éditeur 'présentation'."""
 
 from collections import OrderedDict
+
+from corps.math import aff_flottant
 from primaires.format.fonctions import oui_ou_non
 from . import Editeur
 from .quitter import Quitter
 from .env_objet import EnveloppeObjet
 from .flag import Flag
+from .flottant import Flottant
 
 class Presentation(Editeur):
     
@@ -154,6 +157,9 @@ class Presentation(Editeur):
             enveloppe = self.choix[nom]
             if issubclass(enveloppe.editeur, Flag):
                 apercu = oui_ou_non(getattr(enveloppe.objet,
+                        enveloppe.attribut))
+            elif issubclass(enveloppe.editeur, Flottant):
+                apercu = aff_flottant(getattr(enveloppe.objet,
                         enveloppe.attribut))
             else:
                 apercu = enveloppe.get_apercu()

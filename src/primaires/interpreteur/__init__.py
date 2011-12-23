@@ -185,9 +185,20 @@ class Module(BaseModule):
             raise ErreurValidation("|err|Commande inconnue.|ff|")
     
     def valider(self, personnage, dic_masques):
-        """Validation du dic_masques."""
+        """Validation du dic_masques.
+        
+        On valide d'abord les masques prioritaires.
+        
+        """
+        valides = []
         for masque in dic_masques.values():
-            masque.valider(personnage, dic_masques)
+            if masque.prioritaire:
+                masque.valider(personnage, dic_masques)
+                valides.append(masque)
+        
+        for masque in dic_masques.values():
+            if masque not in valides:
+                masque.valider(personnage, dic_masques)
     
     def trouver_commande(self, lst_commande, commandes=None):
         """On cherche la commande correspondante.

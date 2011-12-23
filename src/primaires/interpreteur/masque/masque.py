@@ -106,6 +106,7 @@ class Masque(metaclass=MetaMasque):
             "francais": "",
             "anglais": "",
         }
+        self.prioritaire = False
     
     def init(self):
         """Méthode à redéfinir pour initialiser des attributs"""

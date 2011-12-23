@@ -40,10 +40,24 @@ class CmdPrendre(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "prendre", "get")
         self.nom_categorie = "objets"
-        self.schema = "(<nombre>) <nom_objet> (depuis/from)"
+        self.schema = "(<nombre>) <nom_objet> " \
+                "(depuis/from <conteneur:nom_objet>)"
         self.aide_courte = "ramasse un objet"
         self.aide_longue = \
                 "Cette commande permet de ramasser un ou plusieurs objets."
+    
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nom_objet = self.noeud.get_masque("nom_objet")
+        nom_objet.proprietes["conteneurs"] = \
+                "dic_masques['conteneur'] and " \
+                "dic_masques['conteneur'].objets_seuls or " \
+                "(personnage.salle.objets_sol, )"
+        conteneur = self.noeud.get_masque("conteneur")
+        conteneur.prioritaire = True
+        conteneur.proprietes["conteneurs"] = \
+                "(personnage.equipement.tenus, personnage.salle.objets_sol)"
+        conteneur.proprietes["type"] = "'conteneur'"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -51,6 +65,8 @@ class CmdPrendre(Commande):
         if dic_masques["nombre"]:
             nombre = dic_masques["nombre"].nombre
         objets = dic_masques["nom_objet"].objets[:nombre]
+        depuis = dic_masques["conteneur"]
+        depuis = depuis and depuis.objet or None
         
         # On cherche les emplacements libres chez le personnage
         membres_libres = []
@@ -65,12 +81,21 @@ class CmdPrendre(Commande):
             for objet, conteneur in objets:
                 membre = membres_libres[0]
                 membres_libres.pop(0)
-                personnage.salle.objets_sol.retirer(objet)
+                if depuis:
+                    depuis.conteneur.retirer(objet)
+                else:
+                    personnage.salle.objets_sol.retirer(objet)
                 membre.tenu = objet
                 pris += 1
                 if not membres_libres:
                     break
             
-            personnage << "Vous ramassez {}.".format(objet.get_nom(pris))
-            personnage.salle.envoyer("{{}} ramasse {}.".format(
-                    objet.get_nom(pris)), personnage)
+            if depuis:
+                personnage << "Vous prenez {} depuis {}.".format(
+                        objet.get_nom(pris), depuis.nom_singulier)
+                personnage.salle.envoyer("{{}} prend {} depuis {}.".format(
+                        objet.get_nom(pris), depuis.nom_singulier), personnage)
+            else:
+                personnage << "Vous ramassez {}.".format(objet.get_nom(pris))
+                personnage.salle.envoyer("{{}} ramasse {}.".format(
+                        objet.get_nom(pris)), personnage)

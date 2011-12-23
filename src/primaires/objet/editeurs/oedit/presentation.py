@@ -34,6 +34,7 @@
 
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
+from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.scripting.editeurs.edt_script import EdtScript
 from .edt_noms import EdtNoms
@@ -88,6 +89,15 @@ class EdtPresentation(Presentation):
         prix.prompt = "Entrez un prix supérieur à 1 :"
         prix.aide_courte = \
             "Entrez la valeur de l'objet.\n\nValeur actuelle : {objet.prix}"
+        
+        # Poids
+        poids = self.ajouter_choix("poids unitaire", "u", Flottant, prototype,
+                "poids_unitaire")
+        poids.parent = self
+        poids.prompt = "Entrez le poids unitaire de l'objet : "
+        poids.aide_courte = \
+            "Entrez le poids unitaire de l'objet.\n\nPoids actuel : " \
+            "{objet.poids_unitaire}"
         
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,

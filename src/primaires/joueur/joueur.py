@@ -54,6 +54,7 @@ class Joueur(Personnage):
         self.retenus = {}
         self.distinction_visible = ""
         self.distinction_audible = ""
+        self.no_tick = 1
     
     def __getstate__(self):
         retour = Personnage.__getstate__(self)
@@ -78,6 +79,7 @@ class Joueur(Personnage):
     
     def pre_connecter(self):
         """Méthode appelée pour préparer la connexion.
+        
         ATTENTION : on parle ici de la connexion du joueur. Elle
         n'intervient pas à la connexion du client mais quand un joueur
         entre dans l'univers.
@@ -124,11 +126,15 @@ class Joueur(Personnage):
         
         self << self.contexte_actuel.accueil()
         
+        # On place le joueur dans un tick
+        type(self).importeur.joueur.ajouter_joueur_tick(self)
+        
         # On appelle l'hook à la connexion
         type(self).importeur.hook["joueur:connecte"].executer(self)
     
     def pre_deconnecter(self):
         """Cette méthode prépare la déconnexion du joueur.
+        
         Là encore, elle est à dissocier de la déconnexion du client.
         Si un client se déconnecte, le joueur n'est pas forcément
         déconnecté. De même, le joueur peut être déconnecté (c'est-à-dire
@@ -143,7 +149,10 @@ class Joueur(Personnage):
                 conversations.vider_conversations_pour(self)
         if self.afk:
             self.afk = ""
-    
+        
+        # On retire le joueur de son tick
+        type(self).importeur.joueur.retirer_joueur_tick(self)
+        
     def get_nom_etat(self, personnage, nombre):
         return self.get_nom_pour(personnage) + " " + self.get_etat()
     
@@ -194,6 +203,11 @@ class Joueur(Personnage):
         msg = msg.format(*l_aff, **d_aff)
         if self.instance_connexion:
             self.instance_connexion.envoyer(msg)
+    
+    def tick(self):
+        """Méthode appelée à chaque tick."""
+        pass
+
 
 # On ajoute le groupe à ObjetID
 ObjetID.ajouter_groupe(Joueur)
