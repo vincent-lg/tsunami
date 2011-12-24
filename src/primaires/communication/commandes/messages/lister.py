@@ -1,4 +1,5 @@
-﻿# Copyright (c) 2010 LE GOFF Vincent
+﻿# -*-coding:Utf-8 -*
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -63,6 +64,8 @@ class PrmLister(Parametre):
                 mails = mails.get_mails_pour(personnage, ARCHIVE)
             elif flag == "envoyes":
                 mails = mails.get_mails_pour(personnage, ENVOYE)
+            else:
+                print("Reçu un flag", flag)
         else:
             mails = mails.get_mails_pour(personnage, RECU)
             mails = [mail for mail in mails if not mail.lu]
@@ -99,7 +102,8 @@ class PrmLister(Parametre):
                         taille = t_sujet
                 taille = (taille < 5 and 5) or taille
                 msg = "+" + "-".ljust(taille + 45, "-") + "+\n"
-                msg += "| |tit|N°|ff| | |tit|Lu|ff|  | |tit|" + "Sujet".ljust(taille)
+                msg += "| |tit|N°|ff| | |tit|Lu|ff|  | |tit|" + "Sujet".ljust(
+                        taille)
                 msg += "|ff| | |tit|Expéditeur|ff| | |tit|" + "Date".ljust(16)
                 msg += "|ff| |\n"
                 i = 1
