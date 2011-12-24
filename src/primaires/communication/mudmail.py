@@ -34,8 +34,9 @@ import datetime
 
 from abstraits.obase import *
 from bases.collections.liste_id import ListeID
-from primaires.format.description import Description
 from primaires.format.date import get_date
+from primaires.format.description import Description
+from primaires.format.fonctions import echapper_accolades
 
 # Etats possible d'un mail
 EN_COURS = 0
@@ -119,8 +120,8 @@ class MUDmail(BaseObj):
         """Affiche le mail"""
         ret = "Expéditeur      : " + self.expediteur.nom + "\n"
         ret += "Destinataire(s) : " + self.aff_dest + "\n"
-        ret += "Sujet           : " + self.sujet + "\n"
-        ret += str(self.contenu)
+        ret += "Sujet           : " + echapper_accolades(self.sujet) + "\n"
+        ret += echapper_accolades(str(self.contenu))
         ret += "\n" + get_date(self.date.timetuple()).capitalize() + "."
         return ret
     

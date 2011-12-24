@@ -1,4 +1,5 @@
 ﻿# -*-coding:Utf-8 -*
+
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -64,8 +65,6 @@ class PrmLister(Parametre):
                 mails = mails.get_mails_pour(personnage, ARCHIVE)
             elif flag == "envoyes":
                 mails = mails.get_mails_pour(personnage, ENVOYE)
-            else:
-                print("Reçu un flag", flag)
         else:
             mails = mails.get_mails_pour(personnage, RECU)
             mails = [mail for mail in mails if not mail.lu]
