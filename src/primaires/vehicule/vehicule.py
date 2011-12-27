@@ -137,23 +137,23 @@ class Vehicule(ObjetID):
         # Calcul de la nouvelle position
         if not self.en_collision:
             self.position += temps * self.vitesse
-        
-        # Si on a une masse nulle, on ne peut pas continuer
-        if self.masse == 0:
-            raise ValueError("ce véhicule a une masse nulle")
-        
-        # On calcule l'accélération à partir des forces
-        self.acceleration = Vecteur(0, 0, 0, self)
-        for force in self.forces:
-            self.acceleration += (1 / self.masse) * force.valeur
-        
-        self.forces = [force for force in self.forces if not force.desuette]
-        
-        # On calcule la nouvelle vitesse à partir de l'accélération
-        self.vitesse += temps * self.acceleration
-        
-        # On modifie les coordonnées des salles
-        self.maj_salles()
+            
+            # Si on a une masse nulle, on ne peut pas continuer
+            if self.masse == 0:
+                raise ValueError("ce véhicule a une masse nulle")
+            
+            # On calcule l'accélération à partir des forces
+            self.acceleration = Vecteur(0, 0, 0, self)
+            for force in self.forces:
+                self.acceleration += (1 / self.masse) * force.valeur
+            
+            self.forces = [force for force in self.forces if not force.desuette]
+            
+            # On calcule la nouvelle vitesse à partir de l'accélération
+            self.vitesse += temps * self.acceleration
+            
+            # On modifie les coordonnées des salles
+            self.maj_salles()
        
         # On renvoie la nouvelle position
         return self.position

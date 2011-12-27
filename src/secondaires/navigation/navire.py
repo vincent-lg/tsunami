@@ -291,13 +291,21 @@ class Navire(Vehicule):
     def collision(self):
         """Méthode appelée lors d'une collision avec un point."""
         Vehicule.collision(self, None)
+        vitesse = self.vitesse_noeuds
         self.vitesse.x = 0
         self.vitesse.y = 0
         self.vitesse.z = 0
         self.acceleration.x = 0
         self.acceleration.y = 0
         self.acceleration.z = 0
-        self.envoyer("Collision...")
+        if vitesse < 0.1:
+            pass
+        elif vitesse < 0.6:
+            self.envoyer("Un léger choc ébranle le navire.")
+        elif vitesse < 1.5:
+            self.envoyer("Un choc violent ébranle l'ensemble du navire !")
+        else:
+            self.envoyer("Craaash !")
     
     def virer(self, n=1):
         """Vire vers tribord ou bâbord de n degrés.
