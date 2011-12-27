@@ -51,4 +51,6 @@ class ClasseFonction(Fonction):
                 salle.navire.etendue is None:
             return 0
         
-        return salle.navire.vitesse_noeuds
+        vitesse = salle.navire.vitesse_noeuds
+        vitesse = round(vitesse, 2)
+        return vitesse
