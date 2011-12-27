@@ -93,7 +93,7 @@ class Voile(BaseElement):
     @staticmethod
     def regarder(elt, personnage):
         """personnage regarde l'élément elt."""
-        msg = "Vous regardez {} :".format(elt.nom)
+        msg = BaseElement.regarder(elt, personnage)
         or_voile = elt.orientation
         cote = "tribord"
         if or_voile < 0:

@@ -59,6 +59,7 @@ class BaseElement(ObjetID, metaclass=MetaElt):
     
         self._attributs = {}
         self.nom = "un élément inconnu"
+        self.description = Description(parent=self)
         
         # Editeur
         self._extensions_editeur = []
@@ -118,6 +119,8 @@ class BaseElement(ObjetID, metaclass=MetaElt):
     @staticmethod
     def regarder(elt, personnage):
         """personnage regarde l'élément elt."""
-        return "Vous regardez {} :".format(elt.nom)
+        msg = "Vous regardez {} :".format(elt.nom) + "\n\n"
+        msg += elt.description.regarder(personnage, elt)
+        return msg
 
 ObjetID.ajouter_groupe(BaseElement)

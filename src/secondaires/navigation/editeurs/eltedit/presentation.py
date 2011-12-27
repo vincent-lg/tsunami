@@ -68,6 +68,15 @@ class EdtPresentation(Presentation):
             "Entrez le |ent|nom|ff| de l'élément.\n\nNom actuel : " \
             "{objet.nom}"
         
+        # Description
+        description = self.ajouter_choix("description", "d", Description, \
+                element)
+        description.parent = self
+        description.apercu = "{objet.description.paragraphes_indentes}"
+        description.aide_courte = \
+            "| |tit|" + "Description de l'élément {}".format(
+            element.cle).ljust(74) + "|ff||\n" + self.opts.separateur
+        
         # Extensions
         for extension in element._extensions_editeur:
             rac, ligne, editeur, objet, attr, sup = extension
