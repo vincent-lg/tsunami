@@ -127,6 +127,8 @@ class Voile(BaseElement):
             angle = ANGLE_GRAND_LARGUE
         else:
             angle = ANGLE_ARRIERE
+        if allure < 180:
+            angle = -angle
         if angle == 90 and or_voile < 0:
             angle = -90
         
