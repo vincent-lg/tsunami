@@ -56,7 +56,7 @@ class Voile(BaseElement):
     @staticmethod
     def get_nom_orientation(voile):
         """Retourne le nom de l'orientation de la voile."""
-        or_voile = -voile.orientation
+        or_voile = voile.orientation
         if -ANGLE_GRAND_LARGUE > or_voile:
             return "orientée vent arrière sur bâbord amure"
         elif or_voile > ANGLE_GRAND_LARGUE:
