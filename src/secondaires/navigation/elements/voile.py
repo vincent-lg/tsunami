@@ -91,6 +91,26 @@ class Voile(BaseElement):
         return elt.nom.capitalize() + " est " + message
     
     @staticmethod
+    def regarder(elt, personnage):
+        """personnage regarde l'élément elt."""
+        msg = "Vous regardez {} :".format(elt.nom)
+        or_voile = elt.orientation
+        cote = "tribord"
+        if or_voile < 0:
+            cote = "bâbord"
+            or_voile = -or_voile
+        
+        or_voile = round(or_voile / 5) * 5
+        if elt.hissee:
+            msg += "\nCette voile est " + elt.get_nom_orientation(elt)
+            msg += " ({orientation}° {cote}).".format(
+                    orientation=or_voile, cote=cote)
+        else:
+            msg += "\nCette voile est repliée contre le mât."
+        
+        return msg
+    
+    @staticmethod
     def facteur_orientation(voile, navire, vent):
         """Retourne le facteur d'orientation de la voile."""
         allure = (navire.direction.direction - vent.direction) % 360
