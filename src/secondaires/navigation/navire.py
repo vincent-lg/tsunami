@@ -195,7 +195,6 @@ class Navire(Vehicule):
         vit_ecoulement = eval(vit_ecoulement)
         distance = self.vitesse.norme
         distance = distance * CB_BRASSES / 1000
-        print(distance)
         distance = distance / (TPS_VIRT / DIST_AVA)
         distance *= vit_ecoulement
         return distance * 3600
@@ -243,8 +242,62 @@ class Navire(Vehicule):
 
     def avancer(self, temps_virtuel):
         """Fait avancer le navire si il n'est pas immobilisé."""
+        origine = self.position.copier()
         if not self.immobilise:
             Vehicule.avancer(self, temps_virtuel)
+            arrive = self.position.copier()
+            
+            # On contrôle les collisions
+            # On cherche toutes les positions successives du navire
+            vecteurs = [origine]
+            distance = (arrive - origine).norme
+            if distance > 0:
+                vec = int((1 / distance)) * (arrive - origine)
+                for i in range(1, int(distance)):
+                    t_vec = origine + int((1 / i)) * vec
+                    vecteurs.append(t_vec)
+            
+            if len(vecteurs) == 1:
+                vecteurs.append(arrive)
+            
+            # On parcourt tous les points parcourus par le navire
+            nav_points = {}
+            d = self.direction.direction + 90
+            i = self.direction.inclinaison
+            operation = lambda p, v: p + v.tourner_autour_z(d).incliner(i)
+            for p in vecteurs:
+                for vec, salle in self.salles.items():
+                    vec = Vecteur(*vec)
+                    vec = operation(p, vec)
+                    if vec not in nav_points:
+                        nav_points[vec] = p
+            
+            # On parcourt chaque point de l'étendue
+            etendue = self.etendue
+            for c, point in etendue.points.items():
+                c = Vecteur(c[0], c[1], etendue.altitude)
+                for v, p in nav_points.items():
+                    dist = (c - v).norme
+                    if dist < 1:
+                        self.collision()
+                        self.position.x = p.x
+                        self.position.y = p.y
+                        self.position.z = p.z
+                        self.en_collision = True
+                        return
+        
+        self.en_collision = False
+    
+    def collision(self):
+        """Méthode appelée lors d'une collision avec un point."""
+        Vehicule.collision(self, None)
+        self.vitesse.x = 0
+        self.vitesse.y = 0
+        self.vitesse.z = 0
+        self.acceleration.x = 0
+        self.acceleration.y = 0
+        self.acceleration.z = 0
+        self.envoyer("Collision...")
     
     def virer(self, n=1):
         """Vire vers tribord ou bâbord de n degrés.
