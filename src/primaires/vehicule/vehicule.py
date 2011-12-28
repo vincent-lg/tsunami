@@ -155,8 +155,6 @@ class Vehicule(ObjetID):
         # On modifie les coordonnées des salles
         self.maj_salles()
         
-        self.en_collision = False
-       
         # On renvoie la nouvelle position
         return self.position
     

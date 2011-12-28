@@ -306,5 +306,6 @@ class Salle(ObjetID):
         """
         pass
 
+
 # On ajoute le groupe à ObjetID
 ObjetID.ajouter_groupe(Salle)

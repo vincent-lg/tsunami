@@ -64,11 +64,33 @@ class Equipement(BaseObj):
     
     @property
     def membres(self):
-        """Retourne un dictionnaire déréférencé des membres"""
+        """Retourne une liste déréférencée des membres"""
         return list(self.__membres)
+    
+    @property
+    def inventaire(self):
+        """Retourne la liste des objets tenus.
+        
+        Il s'agit d'un inventaire, car les objets sont aussi ceux contenus
+        dans les conteneurs équipés / tenus.
+        
+        Pour connaître le conteneur contenant l'objet, on se reporte à
+        objet.contenu.
+        
+        """
+        res = []
+        for membre in self.membres:
+            objets = list(membre.equipe) + [membre.tenu]
+            objets = [o for o in objets if o is not None]
+            for objet in objets:
+                objets = objet.extraire_contenus()
+                res.extend(objets)
+        
+        return res
     
     def get_membre(self, nom_membre):
         """Récupère le membre dont le nom est nom_membre.
+        
         On peut très bien passer par self.membres[nom_membre], la méthode
         courante a simplement l'avantage d'afficher une erreur explicite
         en cas de problème.
@@ -108,6 +130,7 @@ class Equipement(BaseObj):
     
     def membre_est_equipe(self, nom_membre):
         """Retourne True si le membre est équipé, False sinon.
+        
         Un membre est équipé si son attribut objet n'est pas None.
         Si le membre ne peut être trouvé dans l'équipement, une exception est
         levée.
@@ -118,6 +141,7 @@ class Equipement(BaseObj):
     
     def equiper_objet(self, nom_membre, objet):
         """Equipe le membre nom_membre avec l'objet.
+        
         Si le membre possède un objet, une exception est levée.
         
         """
@@ -132,13 +156,15 @@ class Equipement(BaseObj):
                     "desequiper_objet")
         
         membre.equipe = objet
+        objet.contenu = self.equipes
     
     def desequiper_objet(self, nom_membre):
         """Retire un objet de l'équipement.
         
         """
         membre = self.get_membre(nom_membre)
-        membre.equipe.pop(-1)
+        objet = membre.equipe.pop(-1)
+        objet.contenu = None
     
     def tenir_objet(self, nom_membre=None, objet=None):
         """Fait tenir l'objet objet au membre nom_membre. """
@@ -163,10 +189,13 @@ class Equipement(BaseObj):
                    "retirer un objet tenu, utilisez la méthode retirer_objet")
         
         membre.tenu = objet
+        objet.contenu = self.tenus
     
     def retirer_objet(self, nom_membre):
         """Retire l'objet tenu sur nom_membre."""
         membre = self.get_membre(nom_membre)
+        objet = membre.tenu
+        objet.contenu = None
         membre.tenu = None
     
     def remonter_membre(self, nom_membre):
@@ -194,10 +223,12 @@ class Equipement(BaseObj):
         
         return nb
 
+
 class Equipes(BaseObj):
     
-    """Classe se comportement comme un objet conteneur, contenant
-    les objets équipés.
+    """Classe se comportantt comme un objet conteneur.
+    
+    Elle contient les objets équipés.
     
     """
     
@@ -234,8 +265,9 @@ class Equipes(BaseObj):
 
 class Tenus(BaseObj):
     
-    """Classe se comportant comme un objet conteneur, contenant
-    les objets tenus.
+    """Classe se comportant comme un objet conteneur.
+    
+    Elle contient les objets tenus.
     
     """
     

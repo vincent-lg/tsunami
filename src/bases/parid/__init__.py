@@ -157,8 +157,8 @@ class Parid:
         ancien_trace = self.traces.get(objet_id.id)
         if ancien_trace:
             raise RuntimeError("L'objet_id {} a déjà été chargé :\n" \
-                    "{}\n{}".format(objet_id, ancien_trace,
-                    traceback.format_stack()))
+                    "{}\n{}".format(objet_id, "\n".join(ancien_trace),
+                    "\n".join(traceback.format_stack())))
         
         self.traces[objet_id.id] = traceback.format_stack()
         self.groupes[groupe][n_id] = objet_id

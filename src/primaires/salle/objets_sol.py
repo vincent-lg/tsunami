@@ -34,9 +34,9 @@ from primaires.objet.conteneur import ConteneurObjet
 
 class ObjetsSol(ConteneurObjet):
     
-    """Classe faisant référence au sol d'une salle, sur lequel se trouve des
-    objets.
+    """Classe faisant référence au sol d'une salle.
     
+    Sur ce sol se trouve des objets.
     Elle hérite donc de ConteneurObjet.
     
     """

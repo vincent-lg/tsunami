@@ -82,6 +82,19 @@ class EdtPresentation(Presentation):
             env = self.ajouter_choix(ligne, rac, editeur, objet, attr, *sup)
             env.parent = self
         
+        # Emplacement
+        emp = self.ajouter_choix("emplacement", "e", Uniligne, prototype,
+                "emplacement")
+        emp.parent = self
+        emp.apercu = "{objet.emplacement}"
+        emp.prompt = "Entrez un emplacement (groupe ou membre) : "
+        emp.aide_courte = \
+            "Entrez l'emplacement de l'objet.\n" \
+            "Cet emplacement peut être un nom de groupe (comme " \
+            "|cmd|mains|ff|)\n" \
+            "ou un nom de membre (comme |cmd|cou|ff|).\n\n" \
+            "Emplacement actuel : {objet.emplacement}"
+        
         # Prix
         prix = self.ajouter_choix("prix", "p", Uniligne, prototype, "prix")
         prix.parent = self

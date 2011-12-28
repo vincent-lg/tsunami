@@ -80,6 +80,31 @@ class Conteneur(BaseType):
         """Retourne une chaîne représentant les types actuels."""
         return ", ".join(type(self).importeur.objet.noms_types)
     
+    def prefere_type(self, objet):
+        """Retourne True si l'objet est l'un des types admis, False sinon.
+        
+        Comparé à la méthode accepte_type, celle-ci retourne True
+        uniquement si le conteneur accepte seulement certains types, 
+        pas tous.
+        
+        """
+        if self.types_admis == ['*']:
+            return False
+        
+        for type in self.types_admis:
+            if objet.est_de_type(type):
+                print("2 ok")
+                return True
+        
+        print("2 !")
+        return False
+    
+    def accepte_type(self, objet):
+        """Retourne True si le conteneur accepte le type d'objet."""
+        print("1", self.types_admis == ['*'])
+        c=input()
+        return self.types_admis == ["*"] or self.prefere_type(objet)
+    
     @staticmethod
     def calculer_poids(objet):
         """Retourne le poids de l'objet et celui des objets contenus."""
