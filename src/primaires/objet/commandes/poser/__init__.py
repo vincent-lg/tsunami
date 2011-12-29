@@ -50,7 +50,7 @@ class CmdPoser(Commande):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("nom_objet")
         nom_objet.proprietes["conteneurs"] = \
-                "(personnage.equipement.tenus, )"
+                "(personnage.equipement.inventaire, )"
         conteneur = self.noeud.get_masque("conteneur")
         conteneur.prioritaire = True
         conteneur.proprietes["conteneurs"] = \
@@ -76,11 +76,11 @@ class CmdPoser(Commande):
             pose += 1
         
         if dans:
-            personnage << "Vous posez {} dans {}.".format(
+            personnage << "Vous déposez {} dans {}.".format(
                     objet.get_nom(pose), dans.nom_singulier)
-            personnage.salle.envoyer("{{}} pose {} dans {}.".format(
+            personnage.salle.envoyer("{{}} dépose {} dans {}.".format(
                         objet.get_nom(pose), dans.nom_singulier), personnage)
         else:
-            personnage << "Vous déposez {}.".format(objet.get_nom(pose))
-            personnage.salle.envoyer("{{}} dépose {}.".format(
+            personnage << "Vous posez {}.".format(objet.get_nom(pose))
+            personnage.salle.envoyer("{{}} pose {}.".format(
                         objet.get_nom(pose)), personnage)

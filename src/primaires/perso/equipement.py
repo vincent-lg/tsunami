@@ -163,8 +163,7 @@ class Equipement(BaseObj):
         
         """
         membre = self.get_membre(nom_membre)
-        objet = membre.equipe.pop(-1)
-        objet.contenu = None
+        membre.equipe.pop(-1)
     
     def tenir_objet(self, nom_membre=None, objet=None):
         """Fait tenir l'objet objet au membre nom_membre. """
