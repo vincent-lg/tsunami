@@ -36,6 +36,30 @@ from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.vehicule.vecteur import Vecteur
 from secondaires.navigation.constantes import CB_BRASSES
 
+def norme_angle(angle):
+    """Normalise l'angle.
+    
+    Il doit être précis entre 0 et 360.
+    Il faut le ramener entre -180 et 180.
+    
+    """
+    if angle > 180:
+        angle = -360 + angle
+    
+    return angle
+
+def norme_inv_angle(angle):
+    """Norme inverse de l'angle.
+    
+    On attend un angle entre -180 et 180.
+    On retourne un angle entre 0 et 360.
+    
+    """
+    if angle < 0:
+        angle += 360
+    
+    return angle
+
 def entrer_point(observe, navire, position, angle, v_dist, coords, point):
     """Entre un point dans le dictionnaire."""
     a_point = observe.get(angle)
@@ -67,20 +91,22 @@ def get_points(personnage, navire, distance, precision):
         if v_dist.norme <= distance:
             # On cherche l'angle entre la position du navire et du point
             direction = v_dist.direction
-            r_direction = direction - navire.direction.direction
+            r_direction = (direction - navire.direction.direction) % 360
             # On détermine l'angle minimum fonction de la précision
-            angle = round(r_direction / precision) * precision
+            angle = norme_angle(round(r_direction / precision) * precision)
             entrer_point(observe, navire, position, angle, v_dist, coords, point)
             test = True
             t_vec = v_dist.copier()
             c_angle = 0
             while test:
-                t_vec.tourner_autour_z(precision)
+                a_vec = position + t_vec.tourner_autour_z(precision)
                 c_angle += precision
-                if int(t_vec.x) == x and int(t_vec.y) == y:
+                if int(a_vec.x) == x and int(a_vec.y) == y:
                     direction = t_vec.direction
-                    r_direction = direction - navire.direction.direction
-                    t_angle = round(r_direction / precision) * precision
+                    r_direction = (direction - navire.direction.direction) % \
+                            360
+                    t_angle = norme_angle(round(r_direction / precision) * \
+                            precision)
                     entrer_point(observe, navire, position, t_angle, t_vec,
                             coords, point)
                 else:
@@ -92,12 +118,14 @@ def get_points(personnage, navire, distance, precision):
             t_vec = v_dist.copier()
             c_angle = 0
             while test:
-                t_vec.tourner_autour_z(-precision)
+                a_vec = position + t_vec.tourner_autour_z(-precision)
                 c_angle += precision
-                if int(t_vec.x) == x and int(t_vec.y) == y:
+                if int(a_vec.x) == x and int(a_vec.y) == y:
                     direction = t_vec.direction
-                    r_direction = direction - navire.direction.direction
-                    t_angle = round(r_direction / precision) * precision
+                    r_direction = (direction - navire.direction.direction) % \
+                            360
+                    t_angle = norme_angle(round(r_direction / precision) * \
+                            precision)
                     entrer_point(observe, navire, position, t_angle, t_vec,
                             coords, point)
                 else:
@@ -110,9 +138,15 @@ def get_points(personnage, navire, distance, precision):
 def formatter_points(points, dir, limite=90):
     """Formatte les points et retourne une chaîne envoyable au joueur."""
     msg = []
-    for angle, point in sorted(points.items()):
+    limite_inf = dir - limite
+    limite_sup = dir + limite
+    points = sorted(points.items(), key=lambda t: norme_inv_angle(t[0]))
+    for angle, point in points:
         x, y, vecteur, point = point
-        if angle < dir - limite or angle > dir + limite:
+        a_angle = angle
+        if angle < 0:
+            a_angle = 360 + angle
+        if a_angle < limite_inf or a_angle > limite_sup:
             continue
         
         if angle == 0:
