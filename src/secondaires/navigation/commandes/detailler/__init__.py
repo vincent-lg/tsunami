@@ -135,18 +135,27 @@ def get_points(personnage, navire, distance, precision):
     
     return observe
 
+def trier_points(points):
+    """Trie les points donnés sous la forme d'undictionnaire."""
+    i_points = points.items()
+    neg = [a for a in points if a < 0]
+    pos = [a for a in points if a >= 0]
+    if min(pos) > 90 and neg:
+        points_1 = sorted([(a, points[a]) for a in neg], reverse=True)
+        points_2 = sorted([(a, points[a]) for a in pos], reverse=True)
+        return tuple(points_1) + tuple(points_2)
+    
+    return sorted(i_points)
+
 def formatter_points(points, dir, limite=90):
     """Formatte les points et retourne une chaîne envoyable au joueur."""
     msg = []
     limite_inf = dir - limite
     limite_sup = dir + limite
-    points = sorted(points.items(), key=lambda t: norme_inv_angle(t[0]))
+    points = trier_points(points)
     for angle, point in points:
         x, y, vecteur, point = point
-        a_angle = angle
-        if angle < 0:
-            a_angle = 360 + angle
-        if a_angle < limite_inf or a_angle > limite_sup:
+        if angle < limite_inf or angle > limite_sup:
             continue
         
         if angle == 0:
