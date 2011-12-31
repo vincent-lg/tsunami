@@ -83,7 +83,7 @@ class PrmDeplier(Parametre):
                     dest = t_salle
                     distance = diff.norme
             
-            if dest is None or distance > 1:
+            if dest is None or distance > 2.5:
                 personnage << "|err|Vous ne pouvez déployer votre " \
                         "passerelle ici.|ff|"
                 return
