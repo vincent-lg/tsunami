@@ -140,7 +140,7 @@ def trier_points(points):
     i_points = points.items()
     neg = [a for a in points if a < 0]
     pos = [a for a in points if a >= 0]
-    if min(pos) > 90 and neg:
+    if pos and min(pos) > 90 and neg:
         points_1 = sorted([(a, points[a]) for a in neg], reverse=True)
         points_2 = sorted([(a, points[a]) for a in pos], reverse=True)
         return tuple(points_1) + tuple(points_2)
