@@ -65,6 +65,8 @@ class PrmInfo(Parametre):
         etendue = navire.etendue
         etendue = etendue and etendue.cle or "aucune"
         direction = navire.direction.direction
+        direction = round(direction, 3)
+        direction = str(direction).replace(".", ",")
         nom_direction = navire.direction.nom_direction
         vitesse = navire.vitesse.norme
         vitesse = round(vitesse, 3)
@@ -78,11 +80,25 @@ class PrmInfo(Parametre):
         dir_acceleration = navire.acceleration.direction
         dir_acceleration = round(dir_acceleration, 3)
         dir_acceleration = str(dir_acceleration).replace(".", ",")
+        gouvernail = navire.gouvernail
+        if gouvernail:
+            orient = gouvernail.orientation
+            if orient < 0:
+                orient = -orient
+                msg_gouv = "poussé de {}° sur bâbord".format(orient)
+            elif orient > 0:
+                msg_gouv = "poussé de {}° sur tribord".format(orient)
+            else:
+                msg_gouv = "parfaitement au centre"
+        else:
+            msg_gouv = "aucun"
+        
         msg = "Informations sur le navire {} :\n".format(navire.cle)
         msg += "\n  Modèle : {} ({})".format(modele.cle, modele.nom)
         msg += "\n  Étendue : " + etendue
         msg += "\n  Coordonnées : {}".format(navire.position.coordonnees)
         msg += "\n  Allure : {}".format(navire.nom_allure)
+        msg += "\n  Gouvernail : " + msg_gouv
         msg += "\n  Vitesse : {} ({} noeuds)".format(vitesse, vitesse_n)
         msg += "\n  Accélération : {} ({}°)".format(acceleration,
                 dir_acceleration)
