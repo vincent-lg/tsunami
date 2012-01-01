@@ -31,6 +31,7 @@
 """Fichier contenant l'action blesser."""
 
 from primaires.scripting.action import Action
+import primaires.perso.exceptions.stat
 
 class ClasseAction(Action):
     
@@ -41,24 +42,12 @@ class ClasseAction(Action):
     
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.blesser_personnage_msg, "Personnage", "Fraction",
-                "str")
         cls.ajouter_types(cls.blesser_personnage, "Personnage", "Fraction")
-    
-    @staticmethod
-    def blesser_personnage_msg(personnage, valeur, message):
-        """Blesse le personnage en lui envoyant le message d'avertissement
-        spécifié (avant le message standard de mort, s'il meurt)."""
-        personnage.envoyer(message, **variables)
-        try:
-            personnage.stats.vitalite = personnage.stats.vitalite - int(valeur)
-        except:
-            personnage.mourir()
     
     @staticmethod
     def blesser_personnage(personnage, valeur):
         """Enlève au personnage la valeur précisée en points de vie."""
         try:
             personnage.stats.vitalite = personnage.stats.vitalite - int(valeur)
-        except:
+        except StatIEO:
             personnage.mourir()

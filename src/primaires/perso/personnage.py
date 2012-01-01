@@ -396,7 +396,8 @@ class Personnage(ObjetID):
         if maitrise >= 100:
             return maitrise
         restant = (100 - maitrise) / 100
-        if random.random() < (sort.difficulte / 100) * restant:
+        difficulte = (100 - sort.difficulte) / 100
+        if random.random() < difficulte * restant:
             maitrise += 1
             self.sorts[cle_sort] = maitrise
             self.envoyer("Vous sentez votre confiance grandir.")

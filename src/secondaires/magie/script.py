@@ -62,6 +62,22 @@ class ScriptSort(Script):
         var_cible = evt_concentration.ajouter_variable("cible", "Personnage")
         var_cible.aide = "la cible du sort (en l'occurence, le lanceur)"
         
+        # Evénement échec
+        evt_echec = self.creer_evenement("echec")
+        evt_echec.aide_courte = "quelqu'un échoue à lancer le sort"
+        evt_echec.aide_longue = \
+            "Cet évènement est appelé lorsqu'un personnage tente de lancer " \
+            "le sort, mais échoue. Par exemple : un personnage concentre " \
+            "boule de feu, perd le contrôle et se fait flamber lui-même."
+        
+        # Configuration des variables de l'évènement échec
+        var_perso = evt_echec.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage qui lance le sort"
+        var_maitrise = evt_echec.ajouter_variable("maitrise", "int")
+        var_maitrise.aide = "la maîtrise que le personnage a de ce sort"
+        var_cible = evt_echec.ajouter_variable("cible", "Personnage")
+        var_cible.aide = "la cible du sort (en l'occurence, le lanceur)"
+        
         # Evénement lancement
         evt_lancement = self.creer_evenement("lancement")
         evt_lancement.aide_courte = "quelqu'un lance le sort"
