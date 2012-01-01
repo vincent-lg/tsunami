@@ -35,10 +35,10 @@ import traceback
 from fractions import Fraction
 
 from abstraits.id import ObjetID
-from primaires.format.fonctions import echapper_accolades
 from primaires.scripting.parser import expressions
 from primaires.scripting.instruction import Instruction, ErreurExecution
 from primaires.scripting.constantes.connecteurs import CONNECTEURS
+from .alerte import Alerte
 
 class Test(ObjetID):
     
@@ -155,71 +155,27 @@ class Test(ObjetID):
     def erreur_execution(self, message):
         """Méthode remontant l'erreur aux immortels concernés.
         
-        Deux types d'informations sont remontées :
-        -   au créateur et aux suiveurs, le message d'erreur (explicite au
-            possible) ;
-        -   aux administrateurs, le traceback entier.
-        
-        Si il y a doute quant à savoir si un joueur doit recevoir
-        le message uniquement ou le traceback complet, le traceback
-        lui est envoyé (le message est de toute façon contenu dedans).
+        Une alerte est créée pour remonter l'information.
         
         """
-        appelant = str(self.appelant)
-        evt = str(self.evenement.nom)
+        appelant = self.appelant
+        evenement = str(self.evenement.nom)
         tests = self.__tests and "si " + str(self) or "sinon"
-        titre = "{}[{}] : {}".format(appelant, evt, tests)
-        pile = echapper_accolades(traceback.format_exc()).split("\n")
-        
-        # On récupère le joueur système, expéditeur des messages
-        systeme = type(self).importeur.joueur.joueur_systeme
+        pile = traceback.format_exc()
         
         # Extraction de la ligne d'erreur
-        reg = re.search("File \"\<string\>\", line ([0-9]+)", "\n".join(pile))
+        reg = re.search("File \"\<string\>\", line ([0-9]+)", pile)
         if reg:
             no_ligne = int(reg.groups()[-1])
-            ligne = echapper_accolades(str(self.__instructions[no_ligne - 1]))
+            ligne = str(self.__instructions[no_ligne - 1])
         else:
             no_ligne = "|err|inconnue|ff|"
             ligne = "Ligne inconnue."
         
-        # Création du mudmail simple
-        mail_simple = type(self).importeur.communication.mails.creer_mail(
-                systeme)
-        mail_simple.sujet = "Erreur sur le script {}".format(titre)
-        ecrire = mail_simple.contenu.ajouter_paragraphe
-        ecrire("Une erreur s'est produite lors de l'exécution " \
-                "de ce script :")
-        ecrire("|tab||cy|{}|ff|, ligne {} :".format(titre, no_ligne))
-        ecrire("|tab||tab||ent|{}|ff|".format(ligne))
-        ecrire("")
-        ecrire("{}.".format(message))
-        msgs = list(mail_simple.contenu.paragraphes)
-        ecrire("Le créateur, les suiveurs et administrateurs ont été " \
-                "notifiés de cette erreur.")
-        
-        # Création du mudmail complet
-        mail_complet = type(self).importeur.communication.mails.creer_mail(
-                systeme)
-        mail_complet.sujet = mail_simple.sujet
-        for msg in msgs:
-            mail_complet.contenu.ajouter_paragraphe(msg)
-        
-        ecrire = mail_complet.contenu.ajouter_paragraphe
-        ecrire("")
-        ecrire("Ci-dessous se trouve le traceback complet levé par Python :")
-        for msg in pile:
-            ecrire(msg)
-        
-        for joueur in type(self).importeur.joueur.joueurs.values():
-            if joueur.nom_groupe == "administrateur":
-                mail_complet.liste_dest.append(joueur)
-        
-        if mail_complet.liste_dest:
-            mail_complet.envoyer()
-        
-        if mail_simple.liste_dest:
-            mail_simple.envoyer()
+        # Création de l'alerte
+        alerte = Alerte(appelant, evenement, tests, no_ligne, ligne,
+                message, pile)
+        type(self).importeur.scripting.alertes[alerte.no] = alerte
     
     def executer_instructions(self, evenement):
         """Convertit et exécute la suite d'instructions.

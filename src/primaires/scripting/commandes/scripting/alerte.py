@@ -28,7 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'scripting alerte'."""
 
-from . import qedit
-from . import scripting
+from primaires.interpreteur.masque.parametre import Parametre
+from .alerte_info import PrmInfo
+#from .alerte_liste import PrmListe
+#from .alerte_resoudre import PrmResoudre
+
+class PrmAlerte(Parametre):
+    
+    """Commande 'scripting alerte'"""
+    
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "alerte", "alert")
+        self.aide_courte = "manipule les alertes scripting"
+        self.aide_longue = \
+            "Cette commande permet de manipuler les alertes du scripting. " \
+            "Les lister (sous-commande %scripting:alerte:liste%), " \
+            "obtenir des informations sur une alerte précise " \
+            "(sous-commande %scripting:alerte:info%) ou les " \
+            "marquer comme résolues (sous-commande " \
+            "%scripting:alerte:resoudre%)."
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmInfo())
+        #self.ajouter_parametre(PrmListe())
+        #self.ajouter_parametre(PrmResoudre())

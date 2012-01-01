@@ -28,7 +28,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'scripting'."""
 
-from . import qedit
-from . import scripting
+from primaires.interpreteur.commande.commande import Commande
+from .alerte import PrmAlerte
+
+class CmdScripting(Commande):
+    
+    """Commande 'scripting'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "scripting", "scripting")
+        self.groupe = "administrateur"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "manipule les scripts"
+        self.aide_longue = \
+            "Cette commande permet de manipuler les scripting, de " \
+            "consulter les alertes envoyés lors d'une erreur de script."
+        
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmAlerte())

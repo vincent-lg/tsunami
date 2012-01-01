@@ -28,7 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'qedit'."""
 
-from . import qedit
-from . import scripting
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmCommande(Parametre):
+    
+    """Commande 'qedit'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "qedit", "qedit")
+        self.groupe = "administrateur"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "ouvre l'éditeur de quêtes"
+        self.aide_longue = \
+            "Cette commande permet d'accéder à l'éditeur de quête. Elle " \
+            "ne prend aucun paramètre."
+        
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        editeur = type(self).importeur.interpreteur.construire_editeur(
+                "qedit", personnage, None)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()

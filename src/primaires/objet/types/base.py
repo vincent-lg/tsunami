@@ -49,6 +49,7 @@ class BaseType(ObjetID, metaclass=MetaType):
     groupe = "prototypes_objets"
     sous_rep = "objets/prototypes"
     nom_type = "" # à redéfinir
+    nom_scripting = "l'objet"
     _nom = "base_type_objet"
     _version = 2
     

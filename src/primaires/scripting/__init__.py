@@ -48,6 +48,7 @@ from .test import Test
 from .editeurs.qedit import EdtQedit
 from .constantes.aide import *
 from .script import scripts
+from .alerte import Alerte
 
 class Module(BaseModule):
     
@@ -68,6 +69,7 @@ class Module(BaseModule):
         self.actions = {}
         self.commandes = {}
         self.quetes = {}
+        self.alertes = {}
         self.sujets_aides = {
             "syntaxe": syntaxe,
         }
@@ -92,12 +94,19 @@ class Module(BaseModule):
         # Chargement des étapes et tests
         etapes = self.importeur.supenr.charger_groupe(Etape)
         tests = self.importeur.supenr.charger_groupe(Test)
+        
+        # Chargement des alertes
+        alertes = self.importeur.supenr.charger_groupe(Alerte)
+        for alerte in alertes:
+            self.alertes[alerte.no] = alerte
+        
         BaseModule.init(self)
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.qedit.CmdQedit(),
+            commandes.scripting.CmdScripting(),
         ]
         
         for cmd in self.commandes:
