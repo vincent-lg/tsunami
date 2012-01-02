@@ -35,6 +35,7 @@ import re
 from collections import OrderedDict
 
 from abstraits.module import *
+from primaires.format.fonctions import format_nb
 from .instruction import Instruction
 from .condition import Condition
 from .affectation import Affectation
@@ -99,6 +100,12 @@ class Module(BaseModule):
         alertes = self.importeur.supenr.charger_groupe(Alerte)
         for alerte in alertes:
             self.alertes[alerte.no] = alerte
+        
+        # On lie la méthode informer_alertes avec l'hook joueur_connecte
+        # La méthode informer_alertes sera ainsi appelée quand un joueur
+        # se connecte
+        self.importeur.hook["joueur:connecte"].ajouter_evenement(
+                self.informer_alertes)
         
         BaseModule.init(self)
     
@@ -174,6 +181,17 @@ class Module(BaseModule):
                     fonction.init_types()
                     fonction.convertir_types()
                     self.fonctions[nom_module] = fonction
+    
+    def informer_alertes(self, personnage):
+        """Informe le personnage si des alertes non résolues sont à lire.
+        
+        Ce message n'est envoyé que si le personnage est immortel.
+        
+        """
+        if personnage.est_immortel() and self.alertes:
+            msg = format_nb(len(self.alertes),
+                    "|rg|{nb} alerte{s} non lue{s}.|ff|", fem=True)
+            personnage << msg
     
     def get_objet(self, identifiant):
         """Récupère l'objet depuis son identifiant.

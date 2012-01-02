@@ -176,6 +176,13 @@ class Test(ObjetID):
         alerte = Alerte(appelant, evenement, tests, no_ligne, ligne,
                 message, pile)
         type(self).importeur.scripting.alertes[alerte.no] = alerte
+        
+        # On informe les immortels connectés
+        for joueur in type(self).importeur.connex.joueurs_connectes:
+            if joueur.est_immortel():
+                joueur << "|err|Une erreur s'est produite lors de " \
+                        "l'exécution d'un script.\nL'alerte {} a été " \
+                        "créée pour en rendre compte.|ff|".format(alerte.no)
     
     def executer_instructions(self, evenement):
         """Convertit et exécute la suite d'instructions.
