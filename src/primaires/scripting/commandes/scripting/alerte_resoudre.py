@@ -28,27 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'qedit'."""
+"""Package contenant la commande 'scripting alerte resoudre'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmCommande(Parametre):
+class PrmResoudre(Parametre):
     
-    """Commande 'qedit'"""
+    """Commande 'scripting alerte resoudre'"""
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "qedit", "qedit")
-        self.groupe = "administrateur"
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "ouvre l'éditeur de quêtes"
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "résoudre", "resolve")
+        self.schema = "<nombre>"
+        self.aide_courte = "marque une alerte comme résolue"
         self.aide_longue = \
-            "Cette commande permet d'accéder à l'éditeur de quête. Elle " \
-            "ne prend aucun paramètre."
-        
+            "Cette commande marque une alerte comme résolue et la " \
+            "supprime donc."
+    
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        editeur = type(self).importeur.interpreteur.construire_editeur(
-                "qedit", personnage, None)
-        personnage.contextes.ajouter(editeur)
-        editeur.actualiser()
+        nombre = dic_masques["nombre"].nombre
+        try:
+            alerte = type(self).importeur.scripting.alertes[nombre]
+        except KeyError:
+            personnage << "|err|Ce numéro d'alerte est invalide.|ff|"
+        else:
+            del type(self).importeur.scripting.alertes[alerte.no]
+            alerte.detruire()
+            personnage << "L'alerte {} a bien été supprimée.".format(alerte.no)

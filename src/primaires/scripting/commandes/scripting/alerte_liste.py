@@ -28,27 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'qedit'."""
+"""Package contenant la commande 'scripting alerte liste'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
+from primaires.format.fonctions import echapper_accolades
 
-class PrmCommande(Parametre):
+class PrmListe(Parametre):
     
-    """Commande 'qedit'"""
+    """Commande 'scripting alerte liste'"""
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "qedit", "qedit")
-        self.groupe = "administrateur"
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "ouvre l'éditeur de quêtes"
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "liste", "list")
+        self.aide_courte = "affiche la liste des alertes"
         self.aide_longue = \
-            "Cette commande permet d'accéder à l'éditeur de quête. Elle " \
-            "ne prend aucun paramètre."
-        
+            "Affiche la liste des alertes existantes. Notez " \
+            "que les alertes, lues ou non, sont affichées. " \
+            "Si une erreur est corrigée, utilisez le paramètre " \
+            "%scripting:alerte:resoudre%."
+    
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        editeur = type(self).importeur.interpreteur.construire_editeur(
-                "qedit", personnage, None)
-        personnage.contextes.ajouter(editeur)
-        editeur.actualiser()
+        alertes = []
+        for alerte in type(self).importeur.scripting.alertes.values():
+            message = alerte.message
+            if len(message) > 30:
+                message = message[:30] + "..."
+            message = echapper_accolades(message)
+            
+            msg = str(alerte.no).rjust(3) + " "
+            msg += alerte.objet + "[" + alerte.evenement + "]"
+            msg += " " + str(alerte.date.date())
+            msg += " " + message
+            alertes.append(msg)
+        
+        if alertes:
+            personnage << "Liste des alertes non résolues :\n\n  " + \
+                    "\n  ".join(alertes)
+        else:
+            personnage << "Aucune alerte non résolu n'est conservée."

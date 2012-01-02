@@ -32,8 +32,8 @@
 
 from primaires.interpreteur.masque.parametre import Parametre
 from .alerte_info import PrmInfo
-#from .alerte_liste import PrmListe
-#from .alerte_resoudre import PrmResoudre
+from .alerte_liste import PrmListe
+from .alerte_resoudre import PrmResoudre
 
 class PrmAlerte(Parametre):
     
@@ -54,5 +54,5 @@ class PrmAlerte(Parametre):
     def ajouter_parametres(self):
         """Ajout des paramètres."""
         self.ajouter_parametre(PrmInfo())
-        #self.ajouter_parametre(PrmListe())
-        #self.ajouter_parametre(PrmResoudre())
+        self.ajouter_parametre(PrmListe())
+        self.ajouter_parametre(PrmResoudre())

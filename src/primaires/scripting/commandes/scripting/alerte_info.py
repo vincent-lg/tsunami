@@ -32,6 +32,7 @@
 
 from primaires.interpreteur.masque.parametre import Parametre
 from primaires.format.fonctions import echapper_accolades
+from primaires.format.date import get_date
 
 class PrmInfo(Parametre):
     
@@ -55,7 +56,7 @@ class PrmInfo(Parametre):
         else:
             msg = "Informations sur l'alerte {} :".format(alerte.no)
             msg += "\n  S'est produit sur {} {}".format(alerte.type,
-                    alerte.objet)
+                    alerte.objet) + " " + get_date(alerte.date.timetuple())
             msg += "\n  Evenement {}, test {}, ligne {}".format(
                     alerte.evenement, echapper_accolades(alerte.test),
                     alerte.no_ligne)

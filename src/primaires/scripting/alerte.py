@@ -64,6 +64,7 @@ class Alerte(ObjetID):
         ObjetID.__init__(self)
         self.no = self.id.id
         self.objet = repr(objet)
+        self.date = datetime.now()
         if objet:
             self.type = type(objet).nom_scripting
         else:
