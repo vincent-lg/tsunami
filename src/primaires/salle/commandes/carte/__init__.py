@@ -30,6 +30,8 @@
 
 """Package contenant la commande 'carte'."""
 
+import time
+
 from primaires.interpreteur.commande.commande import Commande
 
 class CmdCarte(Commande):
@@ -61,16 +63,21 @@ class CmdCarte(Commande):
                 " en argument les coordonnées de deux salles     |          " \
                 "             sous la forme |cmd|x1.y1/x2.y2|ff| (en ommetta" \
                 "nt les    |                       altitudes) et la carte gé" \
-                "nérée sera un rectangle avec   " \
-"|                       ces salles pour angles.                                " \
+                "nérée sera un rectangle avec   |                       ces " \
+                "salles pour angles.                                " \
+"|  -e ARG, --ecrase=ARG Ecrase les salles cartographiées sur l'épaisseur       " \
+"|                       spécifiée. Seule la plus haute salle d'une couche      " \
+"|                       de ARG salles à partir de l'altitude sera affichée,    " \
+"|                       ce qui permet d'aplatir certaines zones où le relief   " \
+"|                       ne permet pas de visualiser correctement la carte.     " \
 "+  -i, --interieur      Affiche l'état du flag dans chaque salle."
     
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("options")
-        nom_objet.proprietes["options_courtes"] = "'f:t:a:c:i'"
+        nom_objet.proprietes["options_courtes"] = "'f:t:a:c:e:i'"
         nom_objet.proprietes["options_longues"] = "['format=', 'taille=', " \
-                "'alt=', 'coords=', 'interieur', ]"
+                "'alt=', 'coords=', 'ecrase=', 'interieur']"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -78,6 +85,7 @@ class CmdCarte(Commande):
         distance = 5
         altitude = coords.z
         nord = sud = est = ouest = 0
+        epaisseur = 0
         
         # Traitement des options
         if dic_masques["options"] is not None:
@@ -119,6 +127,12 @@ class CmdCarte(Commande):
                         personnage << "|err|Précisez deux salles " \
                                 "distinctes.|ff|"
                         return
+                    if abs(int(x1) - int(x2)) > 19 or \
+                            abs(int(y1) - int(y2)) > 19:
+                        personnage << "|err|Les dimensions d'est en ouest " \
+                                "et du nord au sud doivent être inférieures " \
+                                "à 20.|ff|"
+                        return
                     if int(x1) <= int(x2):
                         ouest, est = int(x1), int(x2)
                     else:
@@ -127,10 +141,18 @@ class CmdCarte(Commande):
                         sud, nord = int(y1), int(y2)
                     else:
                         sud, nord = int(y2), int(y1)
+            if "ecrase" in options:
+                try:
+                    epaisseur = int(options["ecrase"])
+                    assert epaisseur > 1
+                except (ValueError, AssertionError):
+                    personnage << "|err|L'épaisseur d'écrasement doit être " \
+                            "un nombre positif supérieur à 1.|ff|"
+                    return
         
         # Construction de la carte
         str_map = ""
-        # Si les coordonnées ne sont pas définies
+        # Si les coordonnées ne sont pas définies on le définit avec distance
         if not(ouest or est or nord or sud):
             ouest = coords.x - distance
             est = coords.x + distance
@@ -138,25 +160,41 @@ class CmdCarte(Commande):
             sud = coords.y - distance
         lat = nord - sud + 1
         lon = est - ouest + 1
+        # On parcourt les salles de la zone délimitée
         for y in range(lat):
             for x in range(lon):
-                try:
-                    salle = type(self).importeur.salle[(ouest + x, nord - y,
-                            altitude)]
-                except KeyError:
-                    str_map += ". "
-                else:
-                    if salle is personnage.salle:
-                        str_map += "i "
-                    else:
-                        if "interieur" in options:
-                            str_map += "o " if salle.interieur else "n "
+                # On teste si une salle existe à ces coordonnées
+                # Si une épaisseur est spécifiée, on teste toutes les salles
+                # sur cette épaisseur en partant du haut
+                salle = None
+                if epaisseur:
+                    for z in range(epaisseur):
+                        try:
+                            salle = type(self).importeur.salle[(ouest + x,
+                                    nord - y, altitude + epaisseur - z - 1)]
+                        except KeyError:
+                            pass
                         else:
-                            str_map += salle.nom_terrain[0] + " "
+                            break
+                else:
+                    try:
+                        salle = type(self).importeur.salle[(ouest + x,
+                                nord - y, altitude)]
+                    except KeyError:
+                        pass
+                if salle is None:
+                    str_map += ". "
+                elif salle is personnage.salle:
+                    str_map += "i "
+                else:
+                    if "interieur" in options:
+                        str_map += "o " if salle.interieur else "n "
+                    else:
+                        str_map += salle.nom_terrain[0] + " "
         
         # Formattage de la carte
-        f_map = ""
+        f_map = "Carte de l'univers entre {ouest}.{nord} et {est}.{sud} :\n"
         while len(str_map) > 0:
             f_map += str_map[:lon * 2] + "\n"
             str_map = str_map[lon * 2:]
-        personnage << f_map
+        personnage << f_map.format(ouest=ouest, nord=nord, est=est, sud=sud)
