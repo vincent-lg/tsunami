@@ -121,10 +121,8 @@ class Attitude(BaseObj):
             return
         
         def formater(str, acteur="", cible=""):
-            str = str.replace("_b_acteur_b_", acteur)
-            str = str.replace("_b_cible_b_", cible)
-            de = (cible[0] in ["a", "e", "i", "o", "u", "y"] and "d'" or "de ")
-            str = str.replace("_b_de_b_", de)
+            str = str.replace("_b_acteur_b_", "{acteur}")
+            str = str.replace("_b_cible_b_", "{cible}")
             return str
         
         try:
@@ -139,14 +137,14 @@ class Attitude(BaseObj):
                     if personnage is acteur:
                         personnage << self.independant["aim"]
                     else:
-                        personnage << formater(self.independant["oim"],
-                                acteur=acteur.nom)
+                        personnage.envoyer(formater(self.independant["oim"]),
+                                acteur=acteur)
                 else:
                     if personnage is acteur:
                         personnage << self.independant["aif"]
                     else:
-                        personnage << formater(self.independant["oif"],
-                                acteur=acteur.nom)
+                        personnage.envoyer(formater(self.independant["oif"]),
+                                acteur=acteur)
         else:
             # Le joueur a précisé une cible
             if statut == SANS_CIBLE:
@@ -154,7 +152,7 @@ class Attitude(BaseObj):
                 return
             cible = None
             for personnage in acteur.salle.personnages:
-                nom_perso = personnage.nom.lower()
+                nom_perso = personnage.get_nom_pour(acteur)
                 if contient(nom_perso, nom_cible):
                     cible = personnage
             if cible is None:
@@ -163,21 +161,21 @@ class Attitude(BaseObj):
             for personnage in acteur.salle.personnages:
                 if acteur.est_masculin():
                     if personnage is acteur:
-                        personnage << formater(self.dependant["adm"],
-                                cible=cible.nom)
+                        personnage.envoyer(formater(self.dependant["adm"]),
+                                cible=cible)
                     elif personnage is cible:
-                        personnage << formater(self.dependant["idm"],
-                                acteur=acteur.nom)
+                        personnage.envoyer(formater(self.dependant["idm"]),
+                                acteur=acteur)
                     else:
-                        personnage << formater(self.dependant["odm"],
-                                acteur=acteur.nom, cible=cible.nom)
+                        personnage.envoyer(formater(self.dependant["odm"]),
+                                acteur=acteur, cible=cible)
                 else:
                     if personnage is acteur:
-                        personnage << formater(self.dependant["adf"],
-                                cible=cible.nom)
+                        personnage.envoyer(formater(self.dependant["adf"]),
+                                cible=cible)
                     elif personnage is cible:
-                        personnage << formater(self.dependant["idf"],
-                                acteur=acteur.nom)
+                        personnage.envoyer(formater(self.dependant["idf"]),
+                                acteur=acteur)
                     else:
-                        personnage << formater(self.dependant["odf"],
-                                acteur=acteur.nom, cible=cible.nom)
+                        personnage.envoyer(formater(self.dependant["odf"]),
+                                acteur=acteur, cible=cible)
