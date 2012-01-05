@@ -73,6 +73,7 @@ class Objet(ObjetID):
         """Constructeur de l'objet"""
         ObjetID.__init__(self)
         self.prototype = prototype
+        self.contenu = None # contenu dans
         if prototype:
             self.identifiant = prototype.cle + "_" + str(
                     prototype.no)
@@ -116,10 +117,21 @@ class Objet(ObjetID):
         """
         return self.prototype.calculer_poids(self)
     
+    def extraire_contenus(self):
+        """Extrait les objets contenus."""
+        res = [self]
+        if hasattr(self, "conteneur"):
+            res.extend(list(self.conteneur))
+            for objet in self.conteneur:
+                res.extend(objet.extraire_contenus())
+        
+        return res
+    
     def detruire(self):
         """Destruction de l'objet"""
         if self in self.prototype.objets:
             self.prototype.objets.remove(self)
         ObjetID.detruire(self)
+
 
 ObjetID.ajouter_groupe(Objet)

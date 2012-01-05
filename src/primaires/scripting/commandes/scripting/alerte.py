@@ -28,17 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Sol détaillée plus bas."""
+"""Package contenant la commande 'scripting alerte'."""
 
-from primaires.objet.conteneur import ConteneurObjet
+from primaires.interpreteur.masque.parametre import Parametre
+from .alerte_info import PrmInfo
+from .alerte_liste import PrmListe
+from .alerte_resoudre import PrmResoudre
 
-class ObjetsSol(ConteneurObjet):
+class PrmAlerte(Parametre):
     
-    """Classe faisant référence au sol d'une salle.
+    """Commande 'scripting alerte'"""
     
-    Sur ce sol se trouve des objets.
-    Elle hérite donc de ConteneurObjet.
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "alerte", "alert")
+        self.aide_courte = "manipule les alertes scripting"
+        self.aide_longue = \
+            "Cette commande permet de manipuler les alertes du scripting. " \
+            "Les lister (sous-commande %scripting:alerte:liste%), " \
+            "obtenir des informations sur une alerte précise " \
+            "(sous-commande %scripting:alerte:info%) ou les " \
+            "marquer comme résolues (sous-commande " \
+            "%scripting:alerte:resoudre%)."
     
-    """
-    
-    pass
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmInfo())
+        self.ajouter_parametre(PrmListe())
+        self.ajouter_parametre(PrmResoudre())

@@ -28,17 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Sol détaillée plus bas."""
+"""Package contenant la commande 'scripting alerte liste'."""
 
-from primaires.objet.conteneur import ConteneurObjet
+from primaires.interpreteur.masque.parametre import Parametre
+from primaires.format.fonctions import echapper_accolades
 
-class ObjetsSol(ConteneurObjet):
+class PrmListe(Parametre):
     
-    """Classe faisant référence au sol d'une salle.
+    """Commande 'scripting alerte liste'"""
     
-    Sur ce sol se trouve des objets.
-    Elle hérite donc de ConteneurObjet.
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "liste", "list")
+        self.aide_courte = "affiche la liste des alertes"
+        self.aide_longue = \
+            "Affiche la liste des alertes existantes. Notez " \
+            "que les alertes, lues ou non, sont affichées. " \
+            "Si une erreur est corrigée, utilisez le paramètre " \
+            "%scripting:alerte:resoudre%."
     
-    """
-    
-    pass
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        alertes = []
+        for alerte in type(self).importeur.scripting.alertes.values():
+            message = alerte.message
+            if len(message) > 30:
+                message = message[:30] + "..."
+            message = echapper_accolades(message)
+            
+            msg = str(alerte.no).rjust(3) + " "
+            msg += alerte.objet + "[" + alerte.evenement + "]"
+            msg += " " + str(alerte.date.date())
+            msg += " " + message
+            alertes.append(msg)
+        
+        if alertes:
+            personnage << "Liste des alertes non résolues :\n\n  " + \
+                    "\n  ".join(alertes)
+        else:
+            personnage << "Aucune alerte non résolu n'est conservée."

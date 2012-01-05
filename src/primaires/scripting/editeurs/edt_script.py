@@ -63,11 +63,16 @@ class EdtScript(Editeur):
         evenements = sorted(script.evenements.values(),
                 key=lambda evt: evt.nom)
         if evenements:
-            msg += "\n".join(
-                ["  {} : {}".format(evenement.nom.ljust(15),
-                evenement.aide_courte) for evenement in evenements])
+            msg += "|cy|Evènements disponibles :|ff|\n\n"
+            t_max = 0
+            for evt in evenements:
+                if len(evt.nom) > t_max:
+                    t_max = len(evt.nom)
+            lignes = ["  " + evt.nom.ljust(t_max) + " : " + evt.aide_courte \
+                    for evt in evenements]
+            msg += "\n".join(lignes)
         else:
-            msg += "  |att|Aucun évènement n'est disponible pour cet objet.|ff|"
+            msg += "|att|Aucun évènement n'est disponible pour cet objet.|ff|"
         
         return msg
     

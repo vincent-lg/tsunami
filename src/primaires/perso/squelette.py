@@ -116,7 +116,7 @@ class Squelette(ObjetID):
         Membre.
         
         """
-        if len(nom) < 4:
+        if len(nom) < 3:
             raise ValueError("ce nom de membre est invalide.")
         
         membre = Membre(nom, *args, parent=self, **kwargs)

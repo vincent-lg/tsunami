@@ -28,17 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Sol détaillée plus bas."""
+"""Package contenant la commande 'scripting alerte resoudre'."""
 
-from primaires.objet.conteneur import ConteneurObjet
+from primaires.interpreteur.masque.parametre import Parametre
 
-class ObjetsSol(ConteneurObjet):
+class PrmResoudre(Parametre):
     
-    """Classe faisant référence au sol d'une salle.
+    """Commande 'scripting alerte resoudre'"""
     
-    Sur ce sol se trouve des objets.
-    Elle hérite donc de ConteneurObjet.
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "résoudre", "resolve")
+        self.schema = "<nombre>"
+        self.aide_courte = "marque une alerte comme résolue"
+        self.aide_longue = \
+            "Cette commande marque une alerte comme résolue et la " \
+            "supprime donc."
     
-    """
-    
-    pass
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        nombre = dic_masques["nombre"].nombre
+        try:
+            alerte = type(self).importeur.scripting.alertes[nombre]
+        except KeyError:
+            personnage << "|err|Ce numéro d'alerte est invalide.|ff|"
+        else:
+            del type(self).importeur.scripting.alertes[alerte.no]
+            alerte.detruire()
+            personnage << "L'alerte {} a bien été supprimée.".format(alerte.no)

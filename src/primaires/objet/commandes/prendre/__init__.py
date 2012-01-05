@@ -68,34 +68,28 @@ class CmdPrendre(Commande):
         depuis = dic_masques["conteneur"]
         depuis = depuis and depuis.objet or None
         
-        # On cherche les emplacements libres chez le personnage
-        membres_libres = []
-        for membre in personnage.equipement.membres:
-            if membre.peut_tenir() and membre.tenu is None:
-                membres_libres.append(membre)
-        
-        if not membres_libres:
-            personnage << "Vous n'avez aucune main libre."
-        else:
-            pris = 0
-            for objet, conteneur in objets:
-                membre = membres_libres[0]
-                membres_libres.pop(0)
-                if depuis:
-                    depuis.conteneur.retirer(objet)
-                else:
-                    personnage.salle.objets_sol.retirer(objet)
-                membre.tenu = objet
-                pris += 1
-                if not membres_libres:
-                    break
+        pris = 0
+        for objet, conteneur in objets:
+            dans = personnage.ramasser(objet, depuis)
+            if dans is None:
+                break
             
             if depuis:
-                personnage << "Vous prenez {} depuis {}.".format(
-                        objet.get_nom(pris), depuis.nom_singulier)
-                personnage.salle.envoyer("{{}} prend {} depuis {}.".format(
-                        objet.get_nom(pris), depuis.nom_singulier), personnage)
+                depuis.conteneur.retirer(objet)
             else:
-                personnage << "Vous ramassez {}.".format(objet.get_nom(pris))
-                personnage.salle.envoyer("{{}} ramasse {}.".format(
-                        objet.get_nom(pris)), personnage)
+                personnage.salle.objets_sol.retirer(objet)
+            pris += 1
+            
+        if pris == 0:
+            personnage << "|err|Vous n'avez aucune main de libre.|ff|"
+            return
+        
+        if depuis:
+            personnage << "Vous prenez {} depuis {}.".format(
+                    objet.get_nom(pris), depuis.nom_singulier)
+            personnage.salle.envoyer("{{}} prend {} depuis {}.".format(
+                    objet.get_nom(pris), depuis.nom_singulier), personnage)
+        else:
+            personnage << "Vous ramassez {}.".format(objet.get_nom(pris))
+            personnage.salle.envoyer("{{}} ramasse {}.".format(
+                    objet.get_nom(pris)), personnage)

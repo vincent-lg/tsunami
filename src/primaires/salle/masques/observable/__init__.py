@@ -74,10 +74,16 @@ class Observable(Masque):
         elt = None
         
         # On cherche dans les personnages
-        for personnage in salle.personnages:
-            if contient(personnage.nom, nom):
-                elt = personnage
+        for perso in salle.personnages:
+            if contient(perso.nom, nom):
+                elt = perso
                 break
+        
+        if elt is None:
+            for objet in personnage.equipement.inventaire:
+                if contient(objet.nom_singulier, nom):
+                    elt = objet
+                    break
         
         if elt is None:
             # On cherche dans les objets

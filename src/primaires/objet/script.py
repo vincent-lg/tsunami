@@ -58,7 +58,7 @@ class ScriptObjet(Script):
             "ne soit envoyée au personnage le regardant."
         evt_reg_apres.aide_longue = \
             "Cet évènement est appelé après que la description de l'objet " \
-            "n'est envoyée au personnage le regardant."
+            "ait été envoyée au personnage le regardant."
         
         # Configuration des variables de l'évènement regarde
         var_perso = evt_regarde.ajouter_variable("personnage", "Personnage")

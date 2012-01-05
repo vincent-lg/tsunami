@@ -28,26 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'action blesser."""
+"""Ce package contient les différents types d'objet du module magie."""
 
-from primaires.scripting.action import Action
-import primaires.perso.exceptions.stat
-
-class ClasseAction(Action):
-    
-    """Blesse un personnage.
-    
-    Cette action ôte des points de vitalité au personnage spécifié. Bien
-    entendu, si sa vitalité passe à 0, le personnage meurt."""
-    
-    @classmethod
-    def init_types(cls):
-        cls.ajouter_types(cls.blesser_personnage, "Personnage", "Fraction")
-    
-    @staticmethod
-    def blesser_personnage(personnage, valeur):
-        """Enlève au personnage la valeur précisée en points de vie."""
-        try:
-            personnage.stats.vitalite = personnage.stats.vitalite - int(valeur)
-        except StatIEO:
-            personnage.mourir()
+from .parchemin import Parchemin

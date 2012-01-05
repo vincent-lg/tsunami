@@ -28,33 +28,55 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Position, détaillée plus bas."""
+"""Fichier contenant la classe alerte détailée plus bas."""
 
-from corps.fonctions import valider_cle
+from datetime import datetime
 
-class Position:
+from abstraits.id import ObjetID
+from bases.collections.liste_id import ListeID
+
+class Alerte(ObjetID):
     
-    """Classe template des positions.
+    """Classe définissant une alerte scripting.
     
-    Cette classe possède les attributs et méthodes propres à une position
-    (assis, debout...).
-    
-    Attributs :
-        cle -- la clé de la position (ne doit pas changer)
-        etat -- l'état de la position ("est assis")
-        message -- le message par défaut ("sur le sol")
+    Une alerte est levée en cas d'erreur lors de l'exécution d'un script.
+    Les alertes sont visibles par un groupe d'immortels. L'alerte
+    contient les informations utiles à la correction du bug.
     
     """
     
-    def __init__(self, cle, etat, message):
-        """Constructeur du talent."""
-        valider_cle(cle)
-        self.cle = cle
-        self.etat = etat
+    groupe = "alerte"
+    sous_rep = "scripting/alertes"
+    def __init__(self, objet, evenement, test, no_ligne, ligne, message,
+            traceback):
+        """Cration d'une alerte.
+        
+        Les paramètres attendus sont :
+            objet -- l'objet scripté
+            evenement - le nom de l'évènement exécuté
+            test -- le nom du test
+            no_ligne -- le numéro à laquel s'est produit l'erreur
+            ligne -- la ligne de script elle-même
+            message -- le message d'erreur
+            traceback -- le traceback complet de l'exception levée.
+        
+        """
+        ObjetID.__init__(self)
+        self.no = self.id.id
+        self.objet = repr(objet)
+        self.date = datetime.now()
+        if objet:
+            self.type = type(objet).nom_scripting
+        else:
+            self.type = "inconnu"
+        self.evenement = evenement
+        self.test = test
+        self.no_ligne = no_ligne
+        self.ligne = ligne
         self.message = message
+        self.traceback = traceback
     
-    def __repr__(self):
-        return "position(" + self.cle + ")"
-    
-    def __str__(self):
-        return self.cle
+    def __getnewargs__(self):
+        return (None, "", "", "", "", "", "")
+
+ObjetID.ajouter_groupe(Alerte)

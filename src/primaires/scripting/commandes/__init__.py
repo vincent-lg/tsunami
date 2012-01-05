@@ -31,3 +31,4 @@
 """Package contenant les commandes du module salle."""
 
 from . import qedit
+from . import scripting

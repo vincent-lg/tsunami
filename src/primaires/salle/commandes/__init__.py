@@ -31,6 +31,7 @@
 """Package contenant les commandes du module salle."""
 
 from . import addroom
+from . import carte
 from . import chsortie
 from . import etendue
 from . import fermer

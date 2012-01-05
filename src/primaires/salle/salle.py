@@ -76,6 +76,7 @@ class Salle(ObjetID):
     
     groupe = "salles"
     sous_rep = "salles"
+    nom_scripting = "la salle"
     _nom = "salle"
     _version = 2
     
@@ -101,12 +102,7 @@ class Salle(ObjetID):
     
     def __repr__(self):
         """Affichage de la salle en mode debug"""
-        res = "Salle ({}, {})".format(self.ident, self.coords)
-        # Sorties
-        for nom, sortie in self.sorties.iter_couple():
-            if sortie:
-                res += "\n  {} : {}".format(nom, sortie.salle_dest.ident)
-        return res
+        return self._zone + ":" + self._mnemonic
     
     def __str__(self):
         """Retourne l'identifiant 'zone:mnemonic'"""
@@ -305,6 +301,7 @@ class Salle(ObjetID):
         
         """
         pass
+
 
 # On ajoute le groupe à ObjetID
 ObjetID.ajouter_groupe(Salle)

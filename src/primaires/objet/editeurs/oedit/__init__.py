@@ -113,7 +113,6 @@ class EdtOedit(Editeur):
             else:
                 choix = types[type_choisi]
                 # Si aucun type enfant n'existe
-                print(choix.types)
                 if not choix.types:
                     self.objet = type(self).importeur.objet.creer_prototype(
                             self.identifiant, type_choisi)

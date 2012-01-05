@@ -396,7 +396,8 @@ class Personnage(ObjetID):
         if maitrise >= 100:
             return maitrise
         restant = (100 - maitrise) / 100
-        if random.random() < (sort.difficulte / 100) * restant:
+        difficulte = (100 - sort.difficulte) / 100
+        if random.random() < difficulte * restant:
             maitrise += 1
             self.sorts[cle_sort] = maitrise
             self.envoyer("Vous sentez votre confiance grandir.")
@@ -478,7 +479,38 @@ class Personnage(ObjetID):
                         nom_niveau)
             else:
                 self << "|rg|Vous gagnez {} niveau{}.|ff|".format(nb, x)
-
+    
+    def ramasser(self, objet, exception=None):
+        """Ramasse l'objet objet.
+        
+        On cherche à placer l'objet de préférence :
+        1   Dans un conteneur dédié à ce type
+        2   Dans un autre conteneur
+        3   Dans les mains du joueur si le reste échoue.
+        
+        """
+        print(exception)
+        for o in self.equipement.inventaire:
+            if o is not exception and o.est_de_type("conteneur") and \
+                    o.prefere_type(objet):
+                o.conteneur.ajouter(objet)
+                return o
+        
+        for o in self.equipement.inventaire:
+            print(o, o.est_de_type("conteneur"), o.accepte_type(objet))
+            if o is not exception and o.est_de_type("conteneur") and \
+                    o.accepte_type(objet):
+                o.conteneur.ajouter(objet)
+                return o
+        
+        for membre in self.equipement.membres:
+            if membre.peut_tenir() and membre.tenu is None:
+                membre.tenu = objet
+                objet.contenu = self.equipement.tenus
+                return membre
+        
+        return None
+    
     @staticmethod
     def regarder(moi, personnage):
         """personnage regarde moi."""

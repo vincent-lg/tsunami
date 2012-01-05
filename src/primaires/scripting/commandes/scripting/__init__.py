@@ -28,17 +28,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Sol détaillée plus bas."""
+"""Package contenant la commande 'scripting'."""
 
-from primaires.objet.conteneur import ConteneurObjet
+from primaires.interpreteur.commande.commande import Commande
+from .alerte import PrmAlerte
 
-class ObjetsSol(ConteneurObjet):
+class CmdScripting(Commande):
     
-    """Classe faisant référence au sol d'une salle.
+    """Commande 'scripting'"""
     
-    Sur ce sol se trouve des objets.
-    Elle hérite donc de ConteneurObjet.
-    
-    """
-    
-    pass
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "scripting", "scripting")
+        self.groupe = "administrateur"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "manipule les scripts"
+        self.aide_longue = \
+            "Cette commande permet de manipuler les scripting, de " \
+            "consulter les alertes envoyés lors d'une erreur de script."
+        
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmAlerte())

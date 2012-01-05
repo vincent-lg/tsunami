@@ -74,7 +74,8 @@ class ListeID(BaseObj):
     def __getstate__(self):
         """On enregistre juste les IDs dans le fichier"""
         BaseObj.__getstate__(self)
-        return (self._id_base, self.parent, list(self.__liste))
+        parent = object.__getattribute__(self, "parent")
+        return (self._id_base, parent, list(self.__liste))
     
     def __setstate__(self, liste):
         """On place la liste dans self.__liste"""
@@ -92,7 +93,7 @@ class ListeID(BaseObj):
         self.__liste = liste
     
     def __iter__(self):
-        """Parcourt (on veille à parcourir les objets, pas les IDs)"""
+        """Parcourt (on veille à parcourir les objets, pas les IDs)."""
         for id in self.__liste:
             yield id.get_objet()
     

@@ -146,6 +146,8 @@ class Membre(BaseObj):
     def equiper(self, objet):
         """Equipe l'objet."""
         self.equipe.append(objet)
+        if self.parent:
+            objet.contenu = self.parent.equipement.equipes
 
 class Groupe(BaseObj):
     

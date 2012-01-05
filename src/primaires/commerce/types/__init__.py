@@ -28,6 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce package contient les différents types d'objet du module ocmmerce."""
+"""Ce package contient les différents types d'objet du module commerce."""
 
 from .argent import Argent

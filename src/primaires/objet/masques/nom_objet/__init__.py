@@ -108,7 +108,7 @@ class NomObjet(Masque):
                                 "|err|" + o.err_type.format(o.nom_singulier) \
                                 + "|ff|")
                     
-                    objets.append((o, c))
+                    objets.append((o, o.contenu))
         
         if not objets:
             raise ErreurValidation(

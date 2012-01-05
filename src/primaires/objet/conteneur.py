@@ -86,6 +86,7 @@ class ConteneurObjet(BaseObj):
         """
         prototype = hasattr(objet, "prototype") and objet.prototype or objet
         if prototype.unique:
+            objet.contenu = self
             if objet not in self._objets:
                 self._objets.append(objet)
             else:

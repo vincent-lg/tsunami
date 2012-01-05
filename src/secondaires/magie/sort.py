@@ -31,6 +31,7 @@
 """Fichier contenant la classe Sort, détaillée plus bas."""
 
 from math import ceil
+from random import random
 
 from abstraits.obase import *
 from primaires.format.description import Description
@@ -81,18 +82,20 @@ class Sort(BaseObj):
         self._type_cible = nouveau_type
         if nouveau_type == "aucune":
             for evt in self.script.evenements.values():
-                var_cible = evt.ajouter_variable("cible", "Personnage")
-                var_cible.aide = "la cible du sort (en l'occurence, le lanceur)"
+                self.script = ScriptSort(self)
         elif nouveau_type == "personnage":
             for evt in self.script.evenements.values():
+                self.script = ScriptSort(self)
                 var_cible = evt.ajouter_variable("cible", "Personnage")
                 var_cible.aide = "le personnage ciblé par le sort"
         elif nouveau_type == "objet":
             for evt in self.script.evenements.values():
+                self.script = ScriptSort(self)
                 var_cible = evt.ajouter_variable("cible", "Objet")
                 var_cible.aide = "l'objet ciblé par le sort"
         elif nouveau_type == "salle":
             for evt in self.script.evenements.values():
+                self.script = ScriptSort(self)
                 var_cible = evt.ajouter_variable("cible", "Salle")
                 var_cible.aide = "la salle ciblée par le sort"
     type_cible = property(_get_type_cible, _set_type_cible)
@@ -103,34 +106,48 @@ class Sort(BaseObj):
         if construit and self.parent:
             self.parent.enregistrer()
     
+    def echoue(self, personnage):
+        """Détermine si personnage réussit ou non à lancer ce sort."""
+        maitrise = (100 - personnage.sorts.get(self.cle, 0)) / 100
+        difficulte = self.difficulte / 100
+        if random() < difficulte * maitrise:
+            return True
+        return False
+    
     def concentrer(self, personnage, cible, apprendre=True):
         """Fait concentrer le sort à 'personnage'."""
-        personnage << "Vous vous concentrez intensément."
-        maitrise = 0
+        maitrise = 100
         if apprendre:
             maitrise = personnage.pratiquer_sort(self.cle)
             personnage.pratiquer_talent(self.type)
-        else:
-            maitrise = personnage.sorts.get(self.cle, 0)
-        self.script["concentration"].executer(personnage=personnage,
-                maitrise=maitrise, cible=cible)
+        try:
+            self.script["concentration"].executer(personnage=personnage,
+                    maitrise=maitrise, cible=cible)
+        except Exception as err:
+            print(err)
+        action = self.lancer
+        if self.echoue(personnage) and apprendre:
+            action = self.echouer
         nom_act = "sort_" + self.cle + "_" + personnage.nom
         duree = ceil(3 * (100 - maitrise) / 100)
+        duree = duree or 1
         type(self).importeur.diffact.ajouter_action(nom_act, duree,
-                self.lancer, personnage, cible)
+                action, personnage, maitrise, cible)
     
-    def lancer(self, personnage, cible):
-        """Fait lancer le sort à 'personnage'."""
-        personnage << "Vous lancez le sort {}.".format(self.nom)
-        maitrise = personnage.sorts.get(self.cle, 0)
+    def echouer(self, personnage, maitrise, cible):
+        """Fait rater le sort à personnage."""
+        personnage.cle_etat = ""
+        self.script["echec"].executer(personnage=personnage, maitrise=maitrise,
+                cible=cible)
+    
+    def lancer(self, personnage, maitrise, cible):
+        """Fait lancer le sort à personnage."""
+        personnage.cle_etat = ""
         self.script["lancement"].executer(personnage=personnage,
                 maitrise=maitrise, cible=cible)
-        self.toucher(personnage, cible)
+        self.toucher(personnage, maitrise, cible)
     
-    def toucher(self, personnage, cible):
+    def toucher(self, personnage, maitrise, cible):
         """Active les effets du sort."""
-        personnage << "Le sort {} fait effet.".format(self.nom)
-        maitrise = personnage.sorts.get(self.cle, 0)
         self.script["effet"].executer(personnage=personnage,
                 maitrise=maitrise, cible=cible)
-        personnage.cle_etat = ""
