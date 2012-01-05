@@ -281,6 +281,7 @@ class Navire(Vehicule):
                 for v, p in nav_points.items():
                     dist = (c - v).norme
                     if dist < 1:
+                        print("Collision entre", point, c, "et", p, v)
                         self.collision()
                         self.position.x = p.x
                         self.position.y = p.y
