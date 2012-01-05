@@ -70,14 +70,15 @@ class CmdCarte(Commande):
 "|                       de ARG salles à partir de l'altitude sera affichée,    " \
 "|                       ce qui permet d'aplatir certaines zones où le relief   " \
 "|                       ne permet pas de visualiser correctement la carte.     " \
-"+  -i, --interieur      Affiche l'état du flag dans chaque salle."
+"|  -i, --interieur      Affiche l'état du flag dans chaque salle.              " \
+"+  -s, --stats          Affiche quelques données sur la carte."
     
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("options")
-        nom_objet.proprietes["options_courtes"] = "'f:t:a:c:e:i'"
+        nom_objet.proprietes["options_courtes"] = "'f:t:a:c:e:is'"
         nom_objet.proprietes["options_longues"] = "['format=', 'taille=', " \
-                "'alt=', 'coords=', 'ecrase=', 'interieur']"
+                "'alt=', 'coords=', 'ecrase=', 'interieur', 'stats']"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -86,6 +87,8 @@ class CmdCarte(Commande):
         altitude = coords.z
         nord = sud = est = ouest = 0
         epaisseur = 0
+        nb_salles = 0
+        terrains = []
         
         # Traitement des options
         if dic_masques["options"] is not None:
@@ -127,11 +130,11 @@ class CmdCarte(Commande):
                         personnage << "|err|Précisez deux salles " \
                                 "distinctes.|ff|"
                         return
-                    if abs(int(x1) - int(x2)) > 19 or \
-                            abs(int(y1) - int(y2)) > 19:
+                    if abs(int(x1) - int(x2)) > 39 or \
+                            abs(int(y1) - int(y2)) > 39:
                         personnage << "|err|Les dimensions d'est en ouest " \
                                 "et du nord au sud doivent être inférieures " \
-                                "à 20.|ff|"
+                                "à 40.|ff|"
                         return
                     if int(x1) <= int(x2):
                         ouest, est = int(x1), int(x2)
@@ -191,10 +194,31 @@ class CmdCarte(Commande):
                         str_map += "o " if salle.interieur else "n "
                     else:
                         str_map += salle.nom_terrain[0] + " "
+                # Statistiques
+                if salle is not None:
+                    nb_salles += 1
+                    if salle.nom_terrain not in terrains:
+                        terrains.append(salle.nom_terrain)
         
         # Formattage de la carte
-        f_map = "Carte de l'univers entre {ouest}.{nord} et {est}.{sud} :\n"
+        titre = "Carte du monde entre {ouest}.{nord} et {est}.{sud}".format(
+                ouest=ouest, nord=nord, est=est, sud=sud)
+        larg = max(len(titre), lon * 2)
+        marge = " " if larg == lon * 2 else ""
+        f_map = "|tit|" + titre.center(larg) + "|ff|\n"
         while len(str_map) > 0:
-            f_map += str_map[:lon * 2] + "\n"
+            f_map += marge + str_map[:lon * 2].center(larg) + "\n"
             str_map = str_map[lon * 2:]
-        personnage << f_map.format(ouest=ouest, nord=nord, est=est, sud=sud)
+        if "stats" in options:
+            f_map += \
+                    "\nTaille de la carte du nord au sud : |rg|{ns}|ff|\n" \
+                    ".................. d'est en ouest : |vr|{eo}|ff|\n" \
+                    "Altitude : |bl|{alt}|ff|\n" \
+                    "Epaisseur d'écrasement : |bc|{epaisseur}|ff|\n" \
+                    "Nombre de salles affichées : |bc|{nb}|ff|\n" \
+                    "Nombre de terrains différents : |bc|{ter}|ff|".format(
+                    ns=nord - sud + 1, eo=est - ouest + 1, alt=altitude,
+                    epaisseur=epaisseur, nb=nb_salles, ter=len(terrains))
+        else:
+            f_map = f_map.rstrip("\n")
+        personnage << f_map
