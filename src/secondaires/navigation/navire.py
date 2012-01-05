@@ -242,9 +242,11 @@ class Navire(Vehicule):
 
     def avancer(self, temps_virtuel):
         """Fait avancer le navire si il n'est pas immobilisé."""
+        vit_or = vit_fin = self.vitesse_noeuds
         origine = self.position.copier()
         if not self.immobilise:
             Vehicule.avancer(self, temps_virtuel)
+            vit_fin = self.vitesse_noeuds
             arrive = self.position.copier()
             
             # On contrôle les collisions
@@ -286,6 +288,12 @@ class Navire(Vehicule):
                         self.en_collision = True
                         return
         
+        if vit_or == 0 and vit_fin > 0.05:
+            if vit_fin < 0.5:
+                self.envoyer("Vous sentez le navire accélérer en douceur.")
+            elif vit_fin >= 0.5:
+                self.envoyer("Vous sentez le navire prendre rapidement " \
+                        "de la vitesse.")
         self.en_collision = False
     
     def collision(self):

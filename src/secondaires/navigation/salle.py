@@ -135,12 +135,14 @@ class SalleNavire(Salle):
     def ajouter_element(self, element):
         """Ajoute un élément dans la salle."""
         self.elements.append(element)
+        self.enregistrer()
     
     def retirer_element(self, cle):
         """Retire l'élément de cle indiqué."""
         for i, elt in enumerate(self.elements):
             if elt.cle == cle:
                 del self.elements[i]
+                self.enregistrer()
                 return
         
         raise ValueError("l'élément {} n'a pas pu être trouvé".format(cle))
