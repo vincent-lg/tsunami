@@ -273,6 +273,7 @@ class Navire(Vehicule):
                     vec = operation(p, vec)
                     if vec not in nav_points:
                         nav_points[vec] = p
+                        print(vec, p, salle)
             
             # On parcourt chaque point de l'étendue
             etendue = self.etendue
