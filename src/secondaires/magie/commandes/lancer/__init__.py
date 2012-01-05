@@ -56,6 +56,7 @@ class CmdLancer(Commande):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         sort = dic_masques["nom_sort"].sort
+        parchemin = dic_masques["nom_sort"].parchemin
         
         if dic_masques["cible_sort"] is None:
             if sort.type_cible != "aucune":
@@ -64,7 +65,11 @@ class CmdLancer(Commande):
             else:
                 personnage.agir("magie")
                 personnage.cle_etat = "magie"
-                sort.concentrer(personnage, personnage)
+                if parchemin:
+                    sort.concentrer(personnage, personnage, apprendre=False)
+                    parchemin.charges -= 1
+                else:
+                    sort.concentrer(personnage, personnage)
         else:
             if sort.type_cible == "aucune":
                 personnage << "|err|Ce sort ne peut être lancé sur une " \
@@ -86,4 +91,8 @@ class CmdLancer(Commande):
                     return
                 personnage.agir("magie")
                 personnage.cle_etat = "magie"
-                sort.concentrer(personnage, cible)
+                if parchemin:
+                    sort.concentrer(personnage, cible, apprendre=False)
+                    parchemin.charges -= 1
+                else:
+                    sort.concentrer(personnage, cible)

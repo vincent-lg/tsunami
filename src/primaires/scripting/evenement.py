@@ -96,6 +96,16 @@ class Evenement(BaseObj):
         self.espaces = Espaces(self)
         self._construire()
     
+    @property
+    def nom_complet(self):
+        """Retourne le nom complet de l'événement."""
+        ret = self.nom
+        parent = self.parent
+        while parent is not None:
+            ret = parent.nom + "." + ret
+            parent = parent.parent
+        return ret
+        
     def __getnewargs__(self):
         return (None, "")
     

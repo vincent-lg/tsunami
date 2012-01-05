@@ -49,6 +49,7 @@ class NomSort(Masque):
     def init(self):
         """Initialisation des attributs"""
         self.sort = None
+        self.parchemin = None
     
     def repartir(self, personnage, masques, commande):
         """Répartition du masque.
@@ -78,6 +79,13 @@ class NomSort(Masque):
                 self.sort = sort
                 return True
         
+        for objet in personnage.equipement.inventaire:
+            if objet.nom_type == "parchemin" and contient(objet.sort.nom,
+                    nom_sort) and objet.charges > 0:
+                self.sort = objet.sort
+                self.parchemin = objet
+                return True
+        
         raise ErreurValidation(
             "|err|Vous ne connaissez pas ce sort ni ne possédez de " \
-            "parchemin.|ff|")
+            "parchemin fonctionnel.|ff|")

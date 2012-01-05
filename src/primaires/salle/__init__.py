@@ -121,6 +121,7 @@ class Module(BaseModule):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.addroom.CmdAddroom(),
+            commandes.carte.CmdCarte(),
             commandes.chsortie.CmdChsortie(),
             commandes.fermer.CmdFermer(),
             commandes.goto.CmdGoto(),

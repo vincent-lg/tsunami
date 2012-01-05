@@ -72,36 +72,45 @@ class EdtEvenement(Editeur):
         """Message d'accueil du contexte"""
         evenement = self.objet
         msg = "| |tit|"
-        msg += "Edition de l'évènement {} de {}".format(evenement.nom,
+        msg += "Edition de l'évènement {} de {}".format(evenement.nom_complet,
                 evenement.script.parent).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
-        msg += "Description :\n    "
-        aide_longue = "\n    ".join(wrap(evenement.aide_longue))
-        msg += aide_longue
-        msg += "\n\nVariables définies :\n"
-        msg += "  "
-        variables = evenement.variables
+        aide_longue = "\n".join(wrap(evenement.aide_longue))
+        msg += aide_longue + "\n\n"
+        variables = evenement.variables.values()
         if variables:
-            msg += "\n  ".join(["{:<15} : {}".format(var.nom, var.aide) \
-                    for var in variables.values()])
-        else:
-            msg += "Aucune variable n'a été définie pour ce script."
-        
-        msg += "\n\n"
+            msg += "Variables definies dans ce script :\n"
+            t_max = 0
+            for v in variables:
+                if len(v.nom) > t_max:
+                    t_max = len(v.nom)
+            lignes = ["|grf|" + var.nom.ljust(t_max) + "|ff| : " + var.aide \
+                    for var in variables]
+            msg += "\n".join(lignes)
+            msg += "\n\n"
         evenements = sorted(evenement.evenements.values(),
                 key=lambda evt: evt.nom)
         if evenements:
-            msg += "Sous-évènements disponibles :\n"
-            msg += "\n".join(
-                ["  {} : {}".format(evt.nom.ljust(15),
-                evt.aide_courte) for evt in evenements])
+            msg += "|cy|Sous-évènements disponibles :|ff|\n\n"
+            t_max = 0
+            for evt in evenements:
+                if len(evt.nom) > t_max:
+                    t_max = len(evt.nom)
+            lignes = ["  " + evt.nom.ljust(t_max) + " : " + evt.aide_courte \
+                    for evt in evenements]
+            msg += "\n".join(lignes)
         else:
-            msg += "Conditions :"
+            msg += "|cy|Conditions :|ff|\n"
             tests = evenement.tests
+            longueur = 1
             if tests:
-                msg += "\n  " +"\n  ".join(["{:>3}. si {}".format(i + 1,
-                        test) for i, test in enumerate(tests)])
-            msg += "\n    |cmd|*|ff|  sinon"
+                if len(tests) >= 10:
+                    longueur = 2
+                for i, test in enumerate(tests):
+                    si = "|mr|si|ff| " if i == 0 else "|mr|sinon si|ff| "
+                    msg += "\n  |cmd|" + str(i + 1).rjust(longueur) + "|ff| "
+                    msg += si + str(test)
+            msg += "\n " + " " * longueur + "|cmd|*|ff| |mr|sinon|ff|"
         
         return msg
     
@@ -142,6 +151,8 @@ class EdtEvenement(Editeur):
                 contexte = enveloppe.construire(self.pere)
                 
                 self.migrer_contexte(contexte)
+        elif not msg:
+            self.pere << "|err|Précisez un test.|ff|"
         else:
             try:
                 evenement.ajouter_test(msg)

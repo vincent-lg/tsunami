@@ -54,7 +54,7 @@ class Position:
         self.message = message
     
     def __repr__(self):
-        return "position'" + self.cle + ")"
+        return "position(" + self.cle + ")"
     
     def __str__(self):
         return self.cle

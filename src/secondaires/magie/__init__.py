@@ -34,6 +34,7 @@ from abstraits.module import *
 from primaires.format.fonctions import *
 from secondaires.magie import commandes
 from secondaires.magie import masques
+from secondaires.magie import types
 from .editeurs.spedit import EdtSpedit
 from .sorts import Sorts
 

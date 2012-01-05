@@ -342,7 +342,7 @@ class EdtInstructions(Editeur):
         evenement = tests.evenement
         appelant = evenement.script.parent
         msg = "| |tit|"
-        msg += "Edition d'un script de {}[{}]".format(appelant,
+        msg += "Edition d'un test de {}[{}]".format(appelant,
                 evenement.nom).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += "Entrez directement une |ent|instruction|ff| pour l'ajouter, "
@@ -366,13 +366,13 @@ class EdtInstructions(Editeur):
             msg += "\n".join(lignes)
             msg += "\n\n"
         
-        msg += "|cy|Instructions|ff|\n\n "
+        msg += "|cy|Instructions :|ff|\n\n "
         if instructions:
             msg += "\n ".join(["|grf|{:>3}|ff| {}{}".format(i + 1,
                     "  " * instruction.niveau, echapper_accolades(str(instruction))) \
                     for i, instruction in enumerate(instructions)])
         else:
-            msg += "Aucune instruction n'est définie dans ce script."
+            msg += " Aucune instruction n'est définie dans ce script."
         
         return msg
     

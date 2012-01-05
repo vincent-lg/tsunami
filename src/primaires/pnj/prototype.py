@@ -94,7 +94,7 @@ class Prototype(ObjetID):
                         return nom[1]
             return str(nombre) + " " + self.nom_pluriel
     
-    def get_nom_etat(self, nombre):
+    def get_nom_etat(self, personnage, nombre):
         """Retourne le nom et l'état en fonction du nombre."""
         nom = self.get_nom(nombre)
         if nombre == 1:

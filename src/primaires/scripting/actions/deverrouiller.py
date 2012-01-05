@@ -43,7 +43,6 @@ class ClasseAction(Action):
     @staticmethod
     def deverrouiller_porte(salle, nom_sortie):
         """Déverrouille une porte.
-        
         Le paramètre nom_sortie est un nom de sortie ou une direction.
         Une erreur est envoyée si la sortie n'est pas trouvée ou si
         aucune porte n'est définie sur cette sortie.

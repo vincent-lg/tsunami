@@ -79,7 +79,7 @@ class Options(Masque):
             opts, args = getopt.getopt(lst_options, courtes, longues)
         except getopt.GetoptError as err:
             print(err, type(err))
-            raise ErreurValidation("Options invalides.")
+            raise ErreurValidation("|err|Options invalides.|ff|")
         else:
             lst_courtes = ["-{}".format(c) for c in list(courtes_net)]
             longues_net = ["--{}".format(l) for l in longues_net]

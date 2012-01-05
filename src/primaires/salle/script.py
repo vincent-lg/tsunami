@@ -58,14 +58,14 @@ class ScriptSalle(Script):
             "déplacement par |cmd|goto|ff| qui ne déclenche pas cet évènement."
         evt_arr_avant.aide_longue = \
             "Cet évènement est appelé avant que le personnage n'arrive, " \
-            "c'est-à-dire avant que les différents messages ne soit " \
+            "c'est-à-dire avant que les différents messages ne soient " \
             "envoyés pour informer de son arrivée. On ne peut retenir " \
             "le joueur dans sa salle de départ depuis cet évènement " \
             "car le déplacement s'est déjà fait."
         evt_arr_apres.aide_longue = \
-            "Cet évènement est appelé après que le personnage est arrivé " \
-            "dans la salle et après qu'il (et les autres personnages " \
-            "présents) en aient été informés."
+            "Cet évènement est appelé après que le personnage soit arrivé " \
+            "dans la salle et après que lui et les autres personnages " \
+            "présents en aient été informés."
         
         # Configuration des variables de l'évènement arrive
         var_depuis = evt_arriver.ajouter_variable("depuis", "str")
@@ -83,20 +83,20 @@ class ScriptSalle(Script):
         evt_sort_avant.aide_courte = "avant le départ de la salle"
         evt_sort_apres.aide_courte = "après le départ de la salle"
         evt_sort.aide_longue = \
-            "Cet évènement est appelée quand un personnage quitte une " \
+            "Cet évènement est appelé quand un personnage quitte une " \
             "salle via un déplacement standard (en entrant un nom de " \
             "sortie). Le déplacement par |cmd|goto|ff| n'appelle " \
             "pas cet évènement."
         evt_sort_avant.aide_longue = \
             "Cet évènement est appelé avant que le joueur ne quitte une " \
             "salle dans son déplacement. Les autres personnages présents " \
-            "n'ont pas encore reçus les messages informant de son " \
+            "n'ont pas encore reçu les messages informant de son " \
             "déplacement."
         evt_sort_apres.aide_longue = \
-            "Cet évènement est appelé après qu'un personnage est sorti " \
-            "d'une salle. Il n'est pas encore arrivé dans sa salle cible " \
+            "Cet évènement est appelé après qu'un personnage soit sorti " \
+            "d'une salle. Il n'est pas encore arrivé dans la salle cible " \
             "mais son déplacement est bel et bien en court. Les personnages " \
-            "présents dans la salle de départ en ont été informés."
+            "présents dans la salle de départ en ont déjà été informés."
         
         # Configuration des variables de l'événement.
         var_vers = evt_sort.ajouter_variable("vers", "str")

@@ -106,8 +106,9 @@ class Commande(Masque):
                         self.nom_categorie]
         except KeyError:
             type(self).importeur.interpreteur.logger.info("La catégorie de " \
-                        "commandes '{}' n'est pas disponible, la commande a " \
-                        "été déplacée dans 'divers'".format(self.nom_categorie))
+                        "commandes '{}' n'est pas disponible, la commande " \
+                        "{} a été déplacée dans 'divers'.".format(
+                        self.nom_categorie, self.nom_anglais))
             
             return Categorie("divers", "Commandes générales")
         
