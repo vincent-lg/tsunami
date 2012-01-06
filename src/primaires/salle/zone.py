@@ -28,18 +28,48 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant la classe Zone, détaillée plus bas."""
 
-from . import addroom
-from . import carte
-from . import chsortie
-from . import deverrouiller
-from . import etendue
-from . import fermer
-from . import goto
-from . import ouvrir
-from . import redit
-from . import regarder
-from . import supsortie
-from . import verrouiller
-from . import zone
+from abstraits.id import ObjetID
+from bases.collections.liste_id import ListeID
+
+class Zone(ObjetID):
+    
+    """Classe représentant une zone.
+    
+    Une zone est un ensemble de salle. Certaines informations génériques
+    sont conservés dans la zone plutôt que dans chaque salle.
+    
+    """
+    
+    groupe = "zones"
+    sous_rep = "zones"
+    
+    def __init__(self, cle):
+        """Constructeur de la zone."""
+        ObjetID.__init__(self)
+        self.cle = cle
+        self.salles = ListeID(self)
+        self.ouverte = False
+    
+    def __getnewargs__(self):
+        return ("", )
+    
+    def __repr__(self):
+        return "zone {}".format(repr(self.cle))
+    
+    def __str__(self):
+        return self.cle
+    
+    def ajouter(self, salle):
+        """Ajoute une salle à la zone."""
+        if salle not in self.salles:
+            self.salles.append(salle)
+    
+    def retirer(self, salle):
+        """Retire la salle de la zone."""
+        if salle in self.salles:
+            self.salles.remove(salle)
+
+
+ObjetID.ajouter_groupe(Zone)

@@ -54,5 +54,5 @@ class EdtZone(Uniligne):
             self.pere.envoyer("|err|L'identifiant {} est déjà utilisé " \
                     "dans l'univers.|ff|".format(ident))
         else:
-            self.objet.zone = msg
+            self.objet.nom_zone = msg
             self.actualiser()

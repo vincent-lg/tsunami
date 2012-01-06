@@ -28,18 +28,29 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'zone' et ses sous-commandes.
 
-from . import addroom
-from . import carte
-from . import chsortie
-from . import deverrouiller
-from . import etendue
-from . import fermer
-from . import goto
-from . import ouvrir
-from . import redit
-from . import regarder
-from . import supsortie
-from . import verrouiller
-from . import zone
+Dans ce fichier se trouve la commande même.
+
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+from .liste import PrmListe
+
+class CmdZone(Commande):
+    
+    """Commande 'zone'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "zone", "zone")
+        self.groupe = "administrateur"
+        self.aide_courte = "manipulation des zones"
+        self.aide_longue = \
+            "Cette commande permet de manipuler les zones existantes."
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
+        self.ajouter_parametre(PrmListe())

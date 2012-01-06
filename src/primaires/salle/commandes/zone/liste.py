@@ -28,18 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant le paramètre 'liste' de la commande 'zone'."""
 
-from . import addroom
-from . import carte
-from . import chsortie
-from . import deverrouiller
-from . import etendue
-from . import fermer
-from . import goto
-from . import ouvrir
-from . import redit
-from . import regarder
-from . import supsortie
-from . import verrouiller
-from . import zone
+from primaires.interpreteur.masque.parametre import Parametre
+from primaires.format.fonctions import oui_ou_non
+
+class PrmListe(Parametre):
+    
+    """Commande 'zone liste'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "liste", "list")
+        self.aide_courte = "liste les zones existantes"
+        self.aide_longue = \
+            "Cette commande liste les zones existantes."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        zones = list(type(self).importeur.salle.zones.values())
+        zones = [z for z in zones if z.cle and z.salles]
+        zones = sorted(zones, key=lambda z: z.cle)
+        if zones:
+            lignes = [
+                "  Clé             | Salles | Ouverte |"]
+            for zone in zones:
+                ouverte = oui_ou_non(zone.ouverte)
+                lignes.append(
+                    "  {:<15} | {:>6} | {}     |".format(
+                    zone.cle, len(zone.salles), ouverte))
+            personnage << "\n".join(lignes)
+        else:
+            personnage << "Aucune zone n'est actuellement défini."

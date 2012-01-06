@@ -34,21 +34,22 @@ import re
 
 from abstraits.module import *
 from primaires.format.fonctions import format_nb
-
+from .config import cfg_salle
+from .coordonnees import Coordonnees
+from .etendue import Etendue
+from .porte import Porte
 from .salle import Salle, ZONE_VALIDE, MNEMONIC_VALIDE
 from .sorties import NOMS_SORTIES
-from .etendue import Etendue
-from .config import cfg_salle
+from .zone import Zone
 from .templates.terrain import Terrain
 from . import commandes
 from .editeurs.redit import EdtRedit
-from .coordonnees import Coordonnees
 from . import masques
-from .porte import Porte
 
 class Module(BaseModule):
     
     """Classe utilisée pour gérer des salles.
+    
     Dans la terminologie des MUDs, les salles sont des "cases" avec une
     description et une liste de sorties possibles, que le joueur peut
     emprunter. L'ensemble des salles consiste l'univers, auquel il faut
@@ -63,6 +64,7 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "salle", "primaire")
         self._salles = {} # ident:salle
+        self._zones = {} # {cle: zone}
         self._coords = {} # coordonnee:salle
         self.commandes = []
         self.salle_arrivee = ""
@@ -88,6 +90,16 @@ class Module(BaseModule):
                 "salles", "salles")
         self.terrains = {}
         self.etendues = {}
+    
+    @property
+    def salles(self):
+        """Retourne un dictionnaire déréférencé des salles."""
+        return dict(self._salles)
+    
+    @property
+    def zones(self):
+        """Retourne un dictionnaire déréférencé des zones."""
+        return dict(self._zones)
     
     def config(self):
         """Méthode de configuration du module"""
@@ -127,6 +139,14 @@ class Module(BaseModule):
         self.logger.info(format_nb(nb_etendues, "{nb} étendue{s} " \
                 "d'eau{x} récupérée{s}", fem=True))
         
+        # On récupère les zones
+        zones = self.importeur.supenr.charger_groupe(Zone)
+        for zone in zones:
+            self._zones[zone.cle] = zone
+        nb_zones = len(self._zones)
+        self.logger.info(format_nb(nb_zones, "{nb} zone{s} récupérée{s}", \
+                fem=True))
+        
         BaseModule.init(self)
     
     def ajouter_commandes(self):
@@ -135,6 +155,7 @@ class Module(BaseModule):
             commandes.addroom.CmdAddroom(),
             commandes.carte.CmdCarte(),
             commandes.chsortie.CmdChsortie(),
+            commandes.deverrouiller.CmdDeverrouiller(),
             commandes.etendue.CmdEtendue(),
             commandes.fermer.CmdFermer(),
             commandes.goto.CmdGoto(),
@@ -143,7 +164,7 @@ class Module(BaseModule):
             commandes.regarder.CmdRegarder(),
             commandes.supsortie.CmdSupsortie(),
             commandes.verrouiller.CmdVerrouiller(),
-            commandes.deverrouiller.CmdDeverrouiller(),
+            commandes.zone.CmdZone(),
         ]
         
         for cmd in self.commandes:
@@ -155,10 +176,11 @@ class Module(BaseModule):
     def preparer(self):
         """Préparation du module.
         On vérifie que :
-        -   les salles de retour et d'arrivée sont bien créés (sinon,
+        -   Les salles de retour et d'arrivée sont bien créés (sinon,
             on les recrée)
-        -   les personnages présents dans self._personnages soient
+        -   Les personnages présents dans self._personnages soient
             toujours là
+        -   Chaque salle est dans une zone
         
         """
         # On récupère la configuration
@@ -184,9 +206,21 @@ class Module(BaseModule):
         self.salle_retour = salle_retour
         
         for salle in self._salles.values():
+            zone = salle.zone
+            zone.ajouter(salle)
             for personnage in salle.personnages:
                 if personnage.salle is not salle:
                     salle.retirer_personnage(personnage)
+    
+    def detruire(self):
+        """Destruction du module.
+        
+        * On détruit toutes les zones vides
+        
+        """
+        for zone in self._zones.values():
+            if not zone.salles:
+                zone.detruire()
     
     def __len__(self):
         """Retourne le nombre de salles"""
@@ -299,6 +333,13 @@ class Module(BaseModule):
         salle = self._salles[ancien_ident]
         del self._salles[ancien_ident]
         self._salles[nouveau_ident] = salle
+        
+        # On change la salle de zone si la zone est différente
+        a_zone = ancien_ident.split(":")[0]
+        n_zone = nouveau_ident.split(":")[0]
+        if a_zone != n_zone:
+            self.get_zone(a_zone).retirer(salle)
+            self.get_zone(n_zone).ajouter(salle)
     
     def changer_coordonnees(self, ancien_tuple, nouvelles_coords):
         """Change les coordonnées d'une salle.
@@ -345,3 +386,12 @@ class Module(BaseModule):
         etendue = self.etendues[cle]
         etendue.detruire()
         del self.etendues[cle]
+    
+    def get_zone(self, cle):
+        """Retourne la zone correspondante ou la crée."""
+        zone = self._zones.get(cle)
+        if zone is None:
+            zone = Zone(cle)
+            self._zones[cle] = zone
+        
+        return zone
