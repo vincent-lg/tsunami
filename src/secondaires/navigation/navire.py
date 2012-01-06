@@ -262,6 +262,7 @@ class Navire(Vehicule):
             if len(vecteurs) == 1:
                 vecteurs.append(arrive)
             
+            print("Vecteurs", vecteurs)
             # On parcourt tous les points parcourus par le navire
             nav_points = {}
             d = self.direction.direction + 90
