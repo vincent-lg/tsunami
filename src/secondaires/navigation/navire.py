@@ -281,11 +281,17 @@ class Navire(Vehicule):
                 for v, p in nav_points.items():
                     dist = (c - v).norme
                     if dist < 0.5:
-                        if valide != origine:
+                        if not self.en_collision:
                             self.collision()
                             self.position.x = valide.x
                             self.position.y = valide.y
                             self.position.z = valide.z
+                        self.vitesse.x = 0
+                        self.vitesse.y = 0
+                        self.vitesse.z = 0
+                        self.acceleration.x = 0
+                        self.acceleration.y = 0
+                        self.acceleration.z = 0
                         self.en_collision = True
                         return
                     valide = p
@@ -302,12 +308,6 @@ class Navire(Vehicule):
         """Méthode appelée lors d'une collision avec un point."""
         Vehicule.collision(self, None)
         vitesse = self.vitesse_noeuds
-        self.vitesse.x = 0
-        self.vitesse.y = 0
-        self.vitesse.z = 0
-        self.acceleration.x = 0
-        self.acceleration.y = 0
-        self.acceleration.z = 0
         if vitesse < 0.1:
             pass
         elif vitesse < 0.6:
