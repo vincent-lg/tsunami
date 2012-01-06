@@ -254,13 +254,12 @@ class Navire(Vehicule):
             vecteurs = [origine]
             distance = (arrive - origine).norme
             if distance > 0:
-                vec = int((1 / distance)) * (arrive - origine)
+                vec = (1 / distance) * (arrive - origine)
                 for i in range(1, int(distance)):
-                    t_vec = origine + int((1 / i)) * vec
+                    t_vec = origine + i * vec
                     vecteurs.append(t_vec)
             
-            if len(vecteurs) == 1:
-                vecteurs.append(arrive)
+            vecteurs.append(arrive)
             
             print("Vecteurs", vecteurs)
             # On parcourt tous les points parcourus par le navire
@@ -278,18 +277,21 @@ class Navire(Vehicule):
             
             # On parcourt chaque point de l'étendue
             etendue = self.etendue
+            valide = vecteurs[0]
             for c, point in etendue.points.items():
                 c = Vecteur(c[0], c[1], etendue.altitude)
                 for v, p in nav_points.items():
                     dist = (c - v).norme
                     if dist < 0.5:
                         print("Collision entre", point, c, "et", p, v, dist)
-                        self.collision()
-                        self.position.x = p.x
-                        self.position.y = p.y
-                        self.position.z = p.z
-                        self.en_collision = True
-                        return
+                        if valide != origine:
+                            self.collision()
+                            self.position.x = valide.x
+                            self.position.y = valide.y
+                            self.position.z = valide.z
+                            self.en_collision = True
+                            return
+                    valide = p
         
         if vit_or == 0 and vit_fin > 0.05:
             if vit_fin < 0.5:
