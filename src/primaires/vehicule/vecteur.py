@@ -277,3 +277,6 @@ class Vecteur(BaseObj):
     def __rmul__(self, valeur):
         """Multiplie le vecteur par un nombre."""
         return Vecteur(self.x * valeur, self.y * valeur, self.z * valeur)
+    
+    def __eq__(self, autre):
+        return self.x == autre.x and self.y == autre.y and self.z == autre.z
