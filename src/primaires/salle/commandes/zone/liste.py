@@ -28,31 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le contexte éditeur EdtZone"""
+"""Fichier contenant le paramètre 'liste' de la commande 'zone'."""
 
-import re
+from primaires.interpreteur.masque.parametre import Parametre
+from primaires.format.fonctions import oui_ou_non
 
-from primaires.interpreteur.editeur.uniligne import Uniligne
-from primaires.salle.salle import ZONE_VALIDE
-
-class EdtZone(Uniligne):
+class PrmListe(Parametre):
     
-    """Classe définissant le contexte éditeur 'zone'.
-    Ce contexte permet simplement d'éditer le nom de la zone.
+    """Commande 'zone liste'.
     
     """
     
-    def interpreter(self, msg):
-        """Interprétation du message"""
-        msg = msg.lower()
-        ancien_ident = self.objet.ident
-        ident = msg + ":" + self.objet.mnemonic
-        if not re.search(ZONE_VALIDE, msg):
-            self.pere.envoyer("|err|Ce nom de zone est invalide. Veuillez " \
-                    "réessayer.|ff|")
-        elif ident in type(self).importeur.salle and ancien_ident != ident:
-            self.pere.envoyer("|err|L'identifiant {} est déjà utilisé " \
-                    "dans l'univers.|ff|".format(ident))
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "liste", "list")
+        self.aide_courte = "liste les zones existantes"
+        self.aide_longue = \
+            "Cette commande liste les zones existantes."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        zones = list(type(self).importeur.salle.zones.values())
+        zones = [z for z in zones if z.cle and z.salles]
+        zones = sorted(zones, key=lambda z: z.cle)
+        if zones:
+            lignes = [
+                "  Clé             | Salles | Ouverte |"]
+            for zone in zones:
+                ouverte = oui_ou_non(zone.ouverte)
+                lignes.append(
+                    "  {:<15} | {:>6} | {}     |".format(
+                    zone.cle, len(zone.salles), ouverte))
+            personnage << "\n".join(lignes)
         else:
-            self.objet.nom_zone = msg
-            self.actualiser()
+            personnage << "Aucune zone n'est actuellement défini."

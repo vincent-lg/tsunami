@@ -110,7 +110,7 @@ class EdtRedit(Presentation):
         zone = self.ajouter_choix("zone", "z", EdtZone, salle)
         zone.parent = self
         zone.prompt = "Nom de la zone : "
-        zone.apercu = "{objet.zone}"
+        zone.apercu = "{objet.nom_zone}"
         zone.aide_courte = \
             "Entrez la |ent|zone|ff| de la salle ou |cmd|/|ff| pour revenir " \
             "à la fenêtre mère.\n" \

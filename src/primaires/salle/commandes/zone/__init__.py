@@ -28,31 +28,29 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le contexte éditeur EdtZone"""
+"""Package contenant la commande 'zone' et ses sous-commandes.
 
-import re
+Dans ce fichier se trouve la commande même.
 
-from primaires.interpreteur.editeur.uniligne import Uniligne
-from primaires.salle.salle import ZONE_VALIDE
+"""
 
-class EdtZone(Uniligne):
+from primaires.interpreteur.commande.commande import Commande
+from .liste import PrmListe
+
+class CmdZone(Commande):
     
-    """Classe définissant le contexte éditeur 'zone'.
-    Ce contexte permet simplement d'éditer le nom de la zone.
+    """Commande 'zone'.
     
     """
     
-    def interpreter(self, msg):
-        """Interprétation du message"""
-        msg = msg.lower()
-        ancien_ident = self.objet.ident
-        ident = msg + ":" + self.objet.mnemonic
-        if not re.search(ZONE_VALIDE, msg):
-            self.pere.envoyer("|err|Ce nom de zone est invalide. Veuillez " \
-                    "réessayer.|ff|")
-        elif ident in type(self).importeur.salle and ancien_ident != ident:
-            self.pere.envoyer("|err|L'identifiant {} est déjà utilisé " \
-                    "dans l'univers.|ff|".format(ident))
-        else:
-            self.objet.nom_zone = msg
-            self.actualiser()
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "zone", "zone")
+        self.groupe = "administrateur"
+        self.aide_courte = "manipulation des zones"
+        self.aide_longue = \
+            "Cette commande permet de manipuler les zones existantes."
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
+        self.ajouter_parametre(PrmListe())

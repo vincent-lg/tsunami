@@ -38,3 +38,7 @@ class Convertisseur:
     def depuis_version_1(objet, classe):
         objet.set_version(classe, 2)
         objet._personnages.parent = objet
+    def depuis_version_2(objet, classe):
+        objet.set_version(classe, 3)
+        objet._nom_zone = objet._zone
+        del objet._zone

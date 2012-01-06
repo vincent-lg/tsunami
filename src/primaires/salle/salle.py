@@ -78,12 +78,12 @@ class Salle(ObjetID):
     sous_rep = "salles"
     nom_scripting = "la salle"
     _nom = "salle"
-    _version = 2
+    _version = 3
     
     def __init__(self, zone, mnemonic, x=0, y=0, z=0, valide=True):
         """Constructeur de la salle"""
         ObjetID.__init__(self)
-        self._zone = zone
+        self._nom_zone = zone
         self._mnemonic = mnemonic
         self.coords = Coordonnees(x, y, z, valide, self)
         self.nom_terrain = "ville"
@@ -102,17 +102,17 @@ class Salle(ObjetID):
     
     def __repr__(self):
         """Affichage de la salle en mode debug"""
-        return self._zone + ":" + self._mnemonic
+        return self._nom_zone + ":" + self._mnemonic
     
     def __str__(self):
         """Retourne l'identifiant 'zone:mnemonic'"""
-        return self._zone + ":" + self._mnemonic
+        return self._nom_zone + ":" + self._mnemonic
     
-    def _get_zone(self):
-        return self._zone
-    def _set_zone(self, zone):
+    def _get_nom_zone(self):
+        return self._nom_zone
+    def _set_nom_zone(self, zone):
         ident = self.ident
-        self._zone = zone.lower()
+        self._nom_zone = zone.lower()
         self.enregistrer()
         type(self).importeur.salle.changer_ident(ident, self.ident)
     
@@ -124,13 +124,18 @@ class Salle(ObjetID):
         self.enregistrer()
         type(self).importeur.salle.changer_ident(ident, self.ident)
     
-    zone = property(_get_zone, _set_zone)
+    nom_zone = property(_get_nom_zone, _set_nom_zone)
     mnemonic = property(_get_mnemonic, _set_mnemonic)
+    
+    @property
+    def zone(self):
+        """Retourne la zone  correspondante."""
+        return type(self).importeur.salle.get_zone(self._nom_zone)
     
     @property
     def ident(self):
         """Retourne l'identifiant, c'est-à-dire une chaîne 'zone:mnemonic'"""
-        return "{}:{}".format(self._zone, self._mnemonic)
+        return "{}:{}".format(self._nom_zone, self._mnemonic)
     
     @property
     def personnages(self):
@@ -204,7 +209,7 @@ class Salle(ObjetID):
         """Le personnage regarde la salle"""
         res = ""
         if personnage.est_immortel():
-            res += "# |rgc|" + self.zone + "|ff|:|vrc|" + self.mnemonic
+            res += "# |rgc|" + self.nom_zone + "|ff|:|vrc|" + self.mnemonic
             res += "|ff| ({})".format(self.coords)
             res += "\n\n"
         res += "   |tit|" + (self.titre or "Une salle sans titre") + "|ff|\n\n"

@@ -33,6 +33,7 @@
 from . import addroom
 from . import carte
 from . import chsortie
+from . import deverrouiller
 from . import fermer
 from . import goto
 from . import ouvrir
@@ -40,4 +41,4 @@ from . import redit
 from . import regarder
 from . import supsortie
 from . import verrouiller
-from . import deverrouiller
+from . import zone

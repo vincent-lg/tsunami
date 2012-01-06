@@ -28,31 +28,48 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le contexte éditeur EdtZone"""
+"""Fichier contenant la classe Zone, détaillée plus bas."""
 
-import re
+from abstraits.id import ObjetID
+from bases.collections.liste_id import ListeID
 
-from primaires.interpreteur.editeur.uniligne import Uniligne
-from primaires.salle.salle import ZONE_VALIDE
-
-class EdtZone(Uniligne):
+class Zone(ObjetID):
     
-    """Classe définissant le contexte éditeur 'zone'.
-    Ce contexte permet simplement d'éditer le nom de la zone.
+    """Classe représentant une zone.
+    
+    Une zone est un ensemble de salle. Certaines informations génériques
+    sont conservés dans la zone plutôt que dans chaque salle.
     
     """
     
-    def interpreter(self, msg):
-        """Interprétation du message"""
-        msg = msg.lower()
-        ancien_ident = self.objet.ident
-        ident = msg + ":" + self.objet.mnemonic
-        if not re.search(ZONE_VALIDE, msg):
-            self.pere.envoyer("|err|Ce nom de zone est invalide. Veuillez " \
-                    "réessayer.|ff|")
-        elif ident in type(self).importeur.salle and ancien_ident != ident:
-            self.pere.envoyer("|err|L'identifiant {} est déjà utilisé " \
-                    "dans l'univers.|ff|".format(ident))
-        else:
-            self.objet.nom_zone = msg
-            self.actualiser()
+    groupe = "zones"
+    sous_rep = "zones"
+    
+    def __init__(self, cle):
+        """Constructeur de la zone."""
+        ObjetID.__init__(self)
+        self.cle = cle
+        self.salles = ListeID(self)
+        self.ouverte = False
+    
+    def __getnewargs__(self):
+        return ("", )
+    
+    def __repr__(self):
+        return "zone {}".format(repr(self.cle))
+    
+    def __str__(self):
+        return self.cle
+    
+    def ajouter(self, salle):
+        """Ajoute une salle à la zone."""
+        if salle not in self.salles:
+            self.salles.append(salle)
+    
+    def retirer(self, salle):
+        """Retire la salle de la zone."""
+        if salle in self.salles:
+            self.salles.remove(salle)
+
+
+ObjetID.ajouter_groupe(Zone)
