@@ -261,7 +261,6 @@ class Navire(Vehicule):
             
             vecteurs.append(arrive)
             
-            print("Vecteurs", vecteurs)
             # On parcourt tous les points parcourus par le navire
             nav_points = {}
             d = self.direction.direction + 90
@@ -273,7 +272,6 @@ class Navire(Vehicule):
                     vec = operation(p, vec)
                     if vec not in nav_points:
                         nav_points[vec] = p
-                        print(vec, p, salle)
             
             # On parcourt chaque point de l'étendue
             etendue = self.etendue
@@ -283,14 +281,13 @@ class Navire(Vehicule):
                 for v, p in nav_points.items():
                     dist = (c - v).norme
                     if dist < 0.5:
-                        print("Collision entre", point, c, "et", p, v, dist)
                         if valide != origine:
                             self.collision()
                             self.position.x = valide.x
                             self.position.y = valide.y
                             self.position.z = valide.z
-                            self.en_collision = True
-                            return
+                        self.en_collision = True
+                        return
                     valide = p
         
         if vit_or == 0 and vit_fin > 0.05:
