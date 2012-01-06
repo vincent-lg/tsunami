@@ -280,3 +280,6 @@ class Vecteur(BaseObj):
     
     def __eq__(self, autre):
         return self.x == autre.x and self.y == autre.y and self.z == autre.z
+    
+    def __hash__(self):
+        return hash(self.tuple)
