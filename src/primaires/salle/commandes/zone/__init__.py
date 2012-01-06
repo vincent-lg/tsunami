@@ -35,6 +35,7 @@ Dans ce fichier se trouve la commande même.
 """
 
 from primaires.interpreteur.commande.commande import Commande
+from .edit import PrmEdit
 from .liste import PrmListe
 
 class CmdZone(Commande):
@@ -53,4 +54,5 @@ class CmdZone(Commande):
     
     def ajouter_parametres(self):
         """Ajout des paramètres"""
+        self.ajouter_parametre(PrmEdit())
         self.ajouter_parametre(PrmListe())

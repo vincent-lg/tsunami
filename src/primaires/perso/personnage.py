@@ -304,6 +304,10 @@ class Personnage(ObjetID):
         self.agir("deplacer")
         salle = self.salle
         salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
+        if not self.est_immortel() and salle_dest.zone.fermee:
+            self << "|err|Vous ne pouvez pas aller par là...|ff|"
+            return
+        
         sortie = salle.sorties.get_sortie_par_nom(sortie)
         fermer = False
         

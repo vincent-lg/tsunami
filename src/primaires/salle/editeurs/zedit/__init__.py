@@ -28,52 +28,44 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Zone, détaillée plus bas."""
+"""Package contenant l'éditeur 'zedit'.
+Si des redéfinitions de contexte-éditeur standard doivent être faites, elles
+seront placées dans ce package
 
-from abstraits.id import ObjetID
-from bases.collections.liste_id import ListeID
+Note importante : ce package contient la définition d'un éditeur, mais
+celui-ci peut très bien être étendu par d'autres modules. Au quel cas,
+les extensions n'apparaîtront pas ici.
 
-class Zone(ObjetID):
+"""
+
+from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.flag import Flag
+
+class EdtZedit(Presentation):
     
-    """Classe représentant une zone.
-    
-    Une zone est un ensemble de salle. Certaines informations génériques
-    sont conservés dans la zone plutôt que dans chaque salle.
+    """Classe définissant l'éditeur de zone 'zedit'.
     
     """
     
-    groupe = "zones"
-    sous_rep = "zones"
+    nom = "zedit"
     
-    def __init__(self, cle):
-        """Constructeur de la zone."""
-        ObjetID.__init__(self)
-        self.cle = cle
-        self.salles = ListeID(self)
-        self.ouverte = True
+    def __init__(self, personnage, zone):
+        """Constructeur de l'éditeur"""
+        if personnage:
+            instance_connexion = personnage.instance_connexion
+        else:
+            instance_connexion = None
+        
+        Presentation.__init__(self, instance_connexion, zone)
+        if personnage and zone:
+            self.construire(zone)
     
     def __getnewargs__(self):
-        return ("", )
+        return (None, None)
     
-    def __repr__(self):
-        return "zone {}".format(repr(self.cle))
-    
-    def __str__(self):
-        return self.cle
-    
-    @property
-    def fermee(self):
-        return not self.ouverte
-    
-    def ajouter(self, salle):
-        """Ajoute une salle à la zone."""
-        if salle not in self.salles:
-            self.salles.append(salle)
-    
-    def retirer(self, salle):
-        """Retire la salle de la zone."""
-        if salle in self.salles:
-            self.salles.remove(salle)
-
-
-ObjetID.ajouter_groupe(Zone)
+    def construire(self, zone):
+        """Construction de l'éditeur"""
+        # Ouverte / fermée
+        ouverte = self.ajouter_choix("ouverte", "o", Flag, zone,
+                "ouverte")
+        ouverte.parent = self
