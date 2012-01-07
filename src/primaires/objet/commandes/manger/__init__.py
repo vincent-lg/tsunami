@@ -28,14 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module objet."""
+"""Package contenant la commande 'manger'."""
 
-from . import manger
-from . import oedit
-from . import olist
-from . import opurge
-from . import ospawn
-from . import porter
-from . import poser
-from . import prendre
-from . import retirer
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdManger(Commande):
+    
+    """Commande 'manger'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "manger", "eat")
+        self.nom_categorie = "objets"
+        self.schema = "<nom_objet>"
+        self.aide_courte = "mange un objet"
+        self.aide_longue = \
+                "Cette commande permet de se nourrir, à condition que " \
+                "précisé soit comestible."
+    
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nom_objet = self.noeud.get_masque("nom_objet")
+        nom_objet.proprietes["conteneurs"] = \
+                "(personnage.equipement.inventaire, )"
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        objets = dic_masques["nom_objet"].objets[0]
+        objet, conteneur = objets
+        
+        if not objet.est_de_type("nourriture"):
+            personnage << "Visiblement, ce n'est pas comestible."
+            return
+        
+        personnage << objet.message_mange
+        objet.detruire()
