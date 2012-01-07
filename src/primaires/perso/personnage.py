@@ -282,10 +282,13 @@ class Personnage(ObjetID):
     def detruire(self):
         """Méthode appelée lors de la destruction du personage.
         -   On supprime le personnage de la liste des personnages du squelette
+        -   On supprime le personnage de la salle
         
         """
         if self.equipement:
             self.equipement.squelette.personnages.remove(self)
+        if self.salle:
+            self.salle.retirer_personnage(self)
     
     def get_nom_pour(self, personnage):
         """Retourne le nom pour le personnage passé en paramètre."""
@@ -514,6 +517,10 @@ class Personnage(ObjetID):
                 return membre
         
         return None
+    
+    def tick(sef):
+        """Méthode appelée à chaque tick (chaque minute)."""
+        pass
     
     @staticmethod
     def regarder(moi, personnage):

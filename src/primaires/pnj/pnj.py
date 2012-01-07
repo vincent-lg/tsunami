@@ -64,6 +64,9 @@ class PNJ(Personnage):
             # et en valeur le constructeur de l'objet
             for nom, val in prototype._attributs.items():
                 setattr(self, nom, val.construire(self))
+            
+            # On force l'écriture de la race
+            self.race = prototype.race
     
     def __getnewargs__(self):
         return (None, )
@@ -112,10 +115,17 @@ class PNJ(Personnage):
         """Retourne le nom pour le personnage passé en paramètre."""
         return self.nom_singulier
     
+    def mourir(self):
+        """La mort d'un PNJ signifie sa destruction."""
+        Personnage.mourir(self)
+        type(self).importeur.pnj.supprimer_PNJ(self.identifiant)
+    
     def detruire(self):
         """Destruction du PNJ."""
+        Personnage.detruire(self)
         if self in self.prototype.pnj:
             self.prototype.pnj.remove(self)
+        
         ObjetID.detruire(self)
 
 ObjetID.ajouter_groupe(PNJ)

@@ -37,9 +37,13 @@ from . import commandes
 from . import masques
 from .editeurs.pedit import EdtPedit
 
+# Constantes
+NB_TICKS = 12
+
 class Module(BaseModule):
     
     """Cette classe contient les informations du module primaire pnj.
+    
     Comme son nom l'indique, ce module gère les PNJ de l'univers,
     personnages non joueurs, hérités de Personnage mais distincts des
     joueurs dans le sens où ils sont animés par l'univers et non par
@@ -56,6 +60,9 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "pnj", "primaire")
         self._PNJ = {}
         self._prototypes = {}
+        self.ticks = {}
+        for no in range(1, NB_TICKS + 1):
+            self.ticks[no] = []
     
     def init(self):
         """Initialisation du module"""
@@ -66,6 +73,12 @@ class Module(BaseModule):
         pnjs = self.importeur.supenr.charger_groupe(PNJ)
         for pnj in pnjs:
             self._PNJ[pnj.identifiant] = pnj
+        
+        # Ajout des actions différées pour chaque tick
+        intervalle = 60 / NB_TICKS
+        for no in self.ticks.keys():
+            self.importeur.diffact.ajouter_action("ntick_{}".format(no),
+                    intervalle * no, self.tick, no)
         
         BaseModule.init(self)
     
@@ -140,3 +153,25 @@ class Module(BaseModule):
         pnj = self._PNJ[identifiant]
         del self._PNJ[identifiant]
         pnj.detruire()
+    
+    def tick(self, no):
+        """Exécute un tick."""
+        self.importeur.diffact.ajouter_action("ntick_{}".format(no),
+                60, self.tick, no)
+        
+        # On sélectionne les PNJ à tick
+        pnj = list(self._PNJ.values())
+        tick = []
+        i = no - 1
+        while i < len(pnj):
+            try:
+                p = pnj[i]
+            except IndexError:
+                pass
+            else:
+                tick.append(p)
+            i += NB_TICKS
+        
+        for p in tick:
+            print("Tick", p.identifiant, no)
+            p.tick()
