@@ -41,6 +41,7 @@ les extensions n'apparaîtront pas ici.
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.flag import Flag
 from primaires.scripting.editeurs.edt_script import EdtScript
@@ -116,16 +117,41 @@ class EdtSpedit(Presentation):
             "|ff|, |cmd|".join(types))
         
         # Difficulté
-        difficulte = self.ajouter_choix("difficulté", "i", EdtDifficulte, sort)
+        difficulte = self.ajouter_choix("difficulté", "i", Entier, sort,
+                "difficulte", 0, 100)
         difficulte.parent = self
         difficulte.prompt = "Difficulté d'apprentissage : "
         difficulte.apercu = "{objet.difficulte}"
         difficulte.aide_courte = \
             "Paramétrez la |ent|difficulté|ff| d'apprentissage du sort " \
-            "entre |cmd|0|ff| et |cmd|100|ff| ou\nentrez |cmd|/|ff| pour " \
-            "revenir à la fenêtre parente. |cmd|0|ff| signifie que le sort " \
+            "entre |cmd|0|ff| et |cmd|100|ff| ou entrez\n|cmd|/|ff| pour " \
+            "revenir à la fenêtre parente. |cmd|100|ff| signifie que le sort " \
             "ne peut pas\nêtre appris par la pratique.\n\n" \
             "Difficulté actuelle : |bc|{objet.difficulte}|ff|"
+        
+        # Coût
+        cout = self.ajouter_choix("coût", "o", Entier, sort, "cout")
+        cout.parent = self
+        cout.prompt = "Coùt en mana : "
+        cout.apercu = "{objet.cout}"
+        cout.aide_courte = \
+            "Entrez la |ent|quantité|ff| d'énergie magique nécessaire pour " \
+            "lancer ce sort ou |cmd|/|ff| pour\nrevenir à la fenêtre " \
+            "parente.\n\n" \
+            "Coût : |bc|{objet.cout}|ff|"
+        
+        # Durée
+        duree = self.ajouter_choix("durée de concentration", "u", Entier, sort,
+                "duree", 1)
+        duree.parent = self
+        duree.prompt = "Durée de concentration : "
+        duree.apercu = "{objet.duree}"
+        duree.aide_courte = \
+            "Entrez la |ent|durée|ff| de concentration du sort, en " \
+            "secondes, ou |cmd|/|ff| pour revenir à\nla fenêtre parente. La " \
+            "durée diminue automatiquement quand la maîtrise du sort\n" \
+            "augmente ; la valeur entrée correspond au temps maximum.\n\n" \
+            "Durée actuelle : |bc|{objet.duree}|ff|"
         
         # Distance
         distance = self.ajouter_choix("distance", "t", Flag, sort,
