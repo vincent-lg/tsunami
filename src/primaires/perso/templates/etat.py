@@ -72,6 +72,7 @@ class Etat:
         self.msg_visible = "{personnage} fait quelque chose."
         self.act_autorisees = []
         self.act_interdites = []
+        self.fact_recuperation = 1 # facteur de récupération
     
     def peut_faire(self, cle_action):
         """Si ne peut pas faire l'action, lève une exception ExceptionEtat.

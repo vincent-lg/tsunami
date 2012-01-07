@@ -206,7 +206,7 @@ class Joueur(Personnage):
     
     def tick(self):
         """Méthode appelée à chaque tick."""
-        pass
+        Personnage.tick(self)
 
 
 # On ajoute le groupe à ObjetID

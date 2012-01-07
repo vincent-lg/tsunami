@@ -120,6 +120,10 @@ class PNJ(Personnage):
         Personnage.mourir(self)
         type(self).importeur.pnj.supprimer_PNJ(self.identifiant)
     
+    def tick(self):
+        """Méthode appelée à chaque tick."""
+        Personnage.__init__(self)
+    
     def detruire(self):
         """Destruction du PNJ."""
         Personnage.detruire(self)

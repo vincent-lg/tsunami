@@ -496,7 +496,6 @@ class Personnage(ObjetID):
         3   Dans les mains du joueur si le reste échoue.
         
         """
-        print(exception)
         for o in self.equipement.inventaire:
             if o is not exception and o.est_de_type("conteneur") and \
                     o.prefere_type(objet):
@@ -518,9 +517,21 @@ class Personnage(ObjetID):
         
         return None
     
-    def tick(sef):
+    def tick(self):
         """Méthode appelée à chaque tick (chaque minute)."""
-        pass
+        stats = {
+            "vitalite": "force",
+            "mana": "intelligence",
+            "endurance": "agilite",
+        }
+        for nom, liee in stats.items():
+            stat = self.stats[nom]
+            courante = stat.courante
+            max = stat.max
+            if courante < max:
+                courante_liee = self.stats[liee].courante
+                plus = int(courante_liee * 0.9)
+                stat.courante = stat.courante + plus
     
     @staticmethod
     def regarder(moi, personnage):
