@@ -46,3 +46,6 @@ class Convertisseur:
         objet.set_version(classe, 4)
         objet._prompt = "Vit   {stats.vitalite}     Man   {stats.mana}     " \
                 "End   {stats.endurance}"
+    def depuis_version_4(objet, classe):
+        objet.set_version(classe, 5)
+        objet.stats.parent = objet

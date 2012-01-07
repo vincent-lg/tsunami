@@ -57,7 +57,7 @@ class Personnage(ObjetID):
     groupe = "personnages"
     sous_rep = "personnages"
     _nom = "personnage"
-    _version = 4
+    _version = 5
     
     def __init__(self):
         """Constructeur d'un personnage"""
@@ -67,7 +67,7 @@ class Personnage(ObjetID):
         self.contextes = FileContexte(self) # file d'attente des contexte
         self.langue_cmd = "francais"
         self._salle = None
-        self.stats = Stats()
+        self.stats = Stats(self)
         self._prompt = "Vit   {stats.vitalite}     Man   {stats.mana}     " \
                 "End   {stats.endurance}"
         self.equipement = None

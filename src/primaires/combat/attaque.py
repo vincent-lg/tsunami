@@ -73,12 +73,9 @@ class Attaque(BaseObj):
     
     def get_membre(self, moi, contre, arme=None):
         """Retourne un membre visé ou None."""
-        print(self.viser_membre)
         if self.viser_membre:
             membres = contre.equipement.membres
-            print("1")
             membre = choix_probable(membres, attribut="probabilite_atteint")
-            print("2", membre)
         else:
             membre = None
         
