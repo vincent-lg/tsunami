@@ -53,4 +53,5 @@ from . import gouvernail
 from . import ancre
 from . import loch
 from . import passerelle
+from . import rames
 from . import voile

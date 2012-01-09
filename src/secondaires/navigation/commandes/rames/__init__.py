@@ -28,42 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les constantes de navigation."""
+"""Package contenant la commande 'rames'."""
 
-# Facteurs des allures
-ALL_DEBOUT = 140
-ALL_PRES = 125
-ALL_BON_PLEIN = 105
-ALL_LARGUE = 75
-ALL_GRAND_LARGUE = 40
+from primaires.interpreteur.commande.commande import Commande
+from .centre import PrmCentre
+from .droite import PrmDroite
+from .gauche import PrmGauche
+from .relacher import PrmRelacher
+from .tenir import PrmTenir
+from .vitesse import PrmVitesse
 
-# Orientation des voiles
-ANGLE_DEBOUT = 0
-ANGLE_PRES = 8
-ANGLE_BON_PLEIN = 20
-ANGLE_LARGUE = 30
-ANGLE_GRAND_LARGUE = 60
-ANGLE_ARRIERE = 90
-
-# Vitesse
-TPS_VIRT = 3
-DIST_AVA = 0.4
-CB_BRASSES = 3.2 # combien de brasses dans une salle
-
-# Vitesse des rames
-VIT_RAMES = {
-    "arrière": -0.5,
-    "immobile": 0,
-    "lente": 0.3,
-    "moyenne": 0.8,
-    "rapide": 1.4,
-}
-
-# Endurance consommée par vitesse
-END_VIT_RAMES = {
-    "arrière": 2,
-    "immobile": 0,
-    "lente": 1,
-    "moyenne": 3,
-    "rapide": 6,
-}
+class CmdRames(Commande):
+    
+    """Commande 'rames'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "rames", "oar")
+        self.nom_categorie = "navire"
+        self.aide_courte = "manipule les rames"
+        self.aide_longue = \
+            "Cette commande permet de manipuler les rames. Pour ramer, " \
+            "vous devez d'abord tenir les rames (commande %rames% " \
+            "%rames:tenir%), puis spécifier une vitesse (%rames% " \
+            "%rames:vitesse%). Vous pouvez utiliser cette commande " \
+            "pour tourner également."
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmGauche())
+        self.ajouter_parametre(PrmDroite())
+        self.ajouter_parametre(PrmCentre())
+        self.ajouter_parametre(PrmTenir())
+        self.ajouter_parametre(PrmRelacher())
+        self.ajouter_parametre(PrmVitesse())

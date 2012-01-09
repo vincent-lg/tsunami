@@ -137,6 +137,17 @@ class Navire(Vehicule):
         return None
     
     @property
+    def rames(self):
+        """Retourne les paires de rames contenues dans le navire."""
+        rames = []
+        for salle in self.salles.values():
+            t_rames = salle.rames
+            if t_rames:
+                rames.append(t_rames)
+        
+        return rames
+    
+    @property
     def vent(self):
         """Retourne le vecteur du vent le plus proche.
         

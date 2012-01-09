@@ -46,7 +46,7 @@ class Rames(BaseElement):
         BaseElement.__init__(self, cle)
         # Attributs propres aux ramess
         self._attributs = {
-            "vitesse": Attribut(lambda: 0),
+            "vitesse": Attribut(lambda: ""),
             "orientation": Attribut(lambda: 0),
             "tenu": Attribut(lambda: None),
         }
@@ -55,3 +55,18 @@ class Rames(BaseElement):
     def get_description_ligne(elt, personnage):
         """Retourne la description en une ligne de l'élément."""
         return elt.nom.capitalize() + " se trouve là."
+    
+    @staticmethod
+    def centrer(elt):
+        """Centre les rames."""
+        elt.orientation = 0
+    
+    @staticmethod
+    def virer_tribord(elt):
+        """Vire à tribord."""
+        elt.orientation = 1
+    
+    @staticmethod
+    def virer_babord(elt):
+        """Vire à bâbord."""
+        elt.orientation = -1

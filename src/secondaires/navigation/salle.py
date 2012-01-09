@@ -132,6 +132,15 @@ class SalleNavire(Salle):
         
         return None
     
+    @property
+    def rames(self):
+        """Retourne les rames de la salle ou None."""
+        elts = [e for e in self.elements if e.nom_type == "rames"]
+        if elts:
+            return elts[0]
+        
+        return None
+    
     def ajouter_element(self, element):
         """Ajoute un élément dans la salle."""
         self.elements.append(element)

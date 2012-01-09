@@ -87,6 +87,10 @@ class Module(BaseModule):
         u_loch.msg_refus = "Vous êtes en train de manipuler le loch"
         u_loch.msg_visible = "{personnage} manipule le loch ici"
         
+        ten_rames = self.importeur.perso.ajouter_etat("tenir_rames")
+        ten_rames.msg_refus = "Vous tenez actuellement les rames"
+        ten_rames.msg_visible = "{personnage} rame ici"
+        
         BaseModule.config(self)
     
     def init(self):
@@ -149,6 +153,7 @@ class Module(BaseModule):
             commandes.loch.CmdLoch(),
             commandes.navire.CmdNavire(),
             commandes.passerelle.CmdPasserelle(),
+            commandes.rames.CmdRames(),
             commandes.shedit.CmdShedit(),
             commandes.vent.CmdVent(),
             commandes.voile.CmdVoile(),

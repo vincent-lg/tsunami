@@ -38,6 +38,7 @@ from . import gouvernail
 from . import loch
 from . import navire
 from . import passerelle
+from . import rames
 from . import shedit
 from . import vent
 from . import voile
