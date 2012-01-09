@@ -102,6 +102,11 @@ class Navire(Vehicule):
         return (None, )
     
     @property
+    def taille(self):
+        """Retourne la taille du navire déduit de son nombre de salles."""
+        return len(self.salles)
+    
+    @property
     def elements(self):
         """Retourne un tuple des éléments."""
         elts = []
@@ -359,7 +364,7 @@ class Propulsion(Force):
     """Force de propulsion d'un navire.
     
     Elle doit être fonction du vent, du nombre de voile et de leur
-    orientation.
+    orientation. Elle est également fonction des rames et rameurs.
     
     """
     
@@ -378,23 +383,34 @@ class Propulsion(Force):
         direction = navire.direction
         voiles = navire.voiles
         voiles = [v for v in voiles if v.hissee]
-        if not voiles:
-            return vec_nul
+        rames = [r for r in navire.rames if r.tenu is not None]
+        vecteur = vec_nul
+        if voiles:
+            fact_voile = sum(v.facteur_orientation(v, navire, vent) \
+                    for v in voiles) / len(voiles) * 0.7
+            allure = (direction.direction - vent.direction) % 360
+            if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
+                facteur = navire.vent_debout()
+            elif ALL_PRES < allure < (360 - ALL_PRES):
+                facteur = navire.pres()
+            elif ALL_BON_PLEIN < allure < (360 - ALL_BON_PLEIN):
+                facteur = navire.bon_plein()
+            elif ALL_LARGUE < allure < (360 - ALL_LARGUE):
+                facteur = navire.largue()
+            elif ALL_GRAND_LARGUE < allure < (360 - ALL_GRAND_LARGUE):
+                facteur = navire.grand_largue()
+            else:
+                facteur = navire.vent_arriere()
+            
+            vecteur = facteur * fact_voile * vent.norme * direction
         
-        fact_voile = sum(v.facteur_orientation(v, navire, vent) \
-                for v in voiles) / len(voiles) * 0.7
-        allure = (direction.direction - vent.direction) % 360
-        if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
-            facteur = navire.vent_debout()
-        elif ALL_PRES < allure < (360 - ALL_PRES):
-            facteur = navire.pres()
-        elif ALL_BON_PLEIN < allure < (360 - ALL_BON_PLEIN):
-            facteur = navire.bon_plein()
-        elif ALL_LARGUE < allure < (360 - ALL_LARGUE):
-            facteur = navire.largue()
-        elif ALL_GRAND_LARGUE < allure < (360 - ALL_GRAND_LARGUE):
-            facteur = navire.grand_largue()
-        else:
-            facteur = navire.vent_arriere()
+        # Calcul des rames
+        if rames:
+            facts = [VIT_RAMES[rame.vitesse] for rame in rames]
+            fact = 1.1
+            for f in facts:
+                fact *= f
+            
+            vecteur = vecteur + fact * direction
         
-        return facteur * fact_voile * vent.norme * direction
+        return vecteur

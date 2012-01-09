@@ -55,8 +55,8 @@ VIT_RAMES = {
     "arrière": -0.5,
     "immobile": 0,
     "lente": 0.3,
-    "moyenne": 0.8,
-    "rapide": 1.4,
+    "moyenne": 0.7,
+    "rapide": 1.1,
 }
 
 # Endurance consommée par vitesse

@@ -286,5 +286,12 @@ class Module(BaseModule):
         for navire in self.navires.values():
             if not navire.immobilise:
                 gouvernail = navire.gouvernail
-                if gouvernail and gouvernail.orientation != 0:
-                    navire.virer(gouvernail.orientation)
+                orientation = 0
+                if gouvernail:
+                    orientation = gouvernail.orientation
+                for rame in navire.rames:
+                    if rame.tenu is not None and rame.orientation != 0:
+                        orientation += rame.orientation * 5 / navire.taille
+                orientation = int(orientation)
+                if orientation != 0:
+                    navire.virer(orientation)
