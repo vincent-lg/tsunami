@@ -284,7 +284,8 @@ class Equipes(BaseObj):
                 self.equipement.desequiper_objet(membre.nom)
                 return
         
-        raise ValueError
+        raise ValueError("l'objet {} n'a pu être trouvé dans cet " \
+                "équipement".format(objet.cle))
 
 class Tenus(BaseObj):
     

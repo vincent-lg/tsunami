@@ -58,8 +58,8 @@ class CmdPorter(Commande):
         
         for membre in personnage.equipement.membres:
             if membre.peut_equiper(objet):
-                membre.equiper(objet)
                 objet.contenu.retirer(objet)
+                membre.equiper(objet)
                 personnage << "Vous équipez {}.".format(objet.nom_singulier)
                 personnage.salle.envoyer(
                     "{{}} équipe {}.".format(objet.nom_singulier), personnage)
