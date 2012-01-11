@@ -120,7 +120,8 @@ class Stat(BaseObj):
     courante = property(_get_courante, _set_courante)
     
     def set(self, courante, flags):
-        """Modifie la stat couarnte.
+        """Modifie la stat courante.
+        
         C'est dans cette méthode qu'on lève des exceptions en fonction des
         valeurs modifiées.
         
@@ -152,6 +153,8 @@ class Stat(BaseObj):
             base = self.marge_min
         
         if self.max and base > self.max:
+            base = self.max
+        if self.parent.parent.est_immortel() and self.max:
             base = self.max
         
         self.__base = base

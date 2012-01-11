@@ -28,52 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Zone, détaillée plus bas."""
+"""Package contenant le paramètre 'edit' de la commande 'zone'."""
 
-from abstraits.id import ObjetID
-from bases.collections.liste_id import ListeID
+from primaires.interpreteur.masque.parametre import Parametre
+from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.uniligne import Uniligne
 
-class Zone(ObjetID):
+class PrmEdit(Parametre):
     
-    """Classe représentant une zone.
+    """Commande 'zone edit'"""
     
-    Une zone est un ensemble de salle. Certaines informations génériques
-    sont conservés dans la zone plutôt que dans chaque salle.
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "edit", "edit")
+        self.groupe = "administrateur"
+        self.schema = "<cle>"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "ouvre l'éditeur de zone"
+        self.aide_longue = \
+            "Cette commande ouvre l'éditeur de zone."
     
-    """
-    
-    groupe = "zones"
-    sous_rep = "zones"
-    
-    def __init__(self, cle):
-        """Constructeur de la zone."""
-        ObjetID.__init__(self)
-        self.cle = cle
-        self.salles = ListeID(self)
-        self.ouverte = True
-    
-    def __getnewargs__(self):
-        return ("", )
-    
-    def __repr__(self):
-        return "zone {}".format(repr(self.cle))
-    
-    def __str__(self):
-        return self.cle
-    
-    @property
-    def fermee(self):
-        return not self.ouverte
-    
-    def ajouter(self, salle):
-        """Ajoute une salle à la zone."""
-        if salle not in self.salles:
-            self.salles.append(salle)
-    
-    def retirer(self, salle):
-        """Retire la salle de la zone."""
-        if salle in self.salles:
-            self.salles.remove(salle)
-
-
-ObjetID.ajouter_groupe(Zone)
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        cle = dic_masques["cle"].cle
+        try:
+            zone = type(self).importeur.salle.zones[cle]
+        except KeyError:
+            personnage << "|err-Zone inconnue {}.|ff|".format(cle)
+        else:
+            editeur = type(self).importeur.interpreteur.construire_editeur(
+                    "zedit", personnage, zone)
+            personnage.contextes.ajouter(editeur)
+            editeur.actualiser()

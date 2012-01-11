@@ -55,6 +55,8 @@ class Sort(BaseObj):
         self.description = Description(parent=self)
         self.type = "destruction"
         self._type_cible = "aucune"
+        self.cout = 10
+        self.duree = 3
         self.difficulte = 0
         self.distance = False
         self.script = ScriptSort(self)
@@ -116,6 +118,11 @@ class Sort(BaseObj):
     
     def concentrer(self, personnage, cible, apprendre=True):
         """Fait concentrer le sort à 'personnage'."""
+        if self.cout > personnage.mana:
+            personnage << "Vous n'avez pas assez de mana pour lancer ce sort."
+            personnage.cle_etat = ""
+            return
+        personnage.mana -= self.cout
         maitrise = 100
         if apprendre:
             maitrise = personnage.pratiquer_sort(self.cle)
@@ -129,8 +136,7 @@ class Sort(BaseObj):
         if self.echoue(personnage) and apprendre:
             action = self.echouer
         nom_act = "sort_" + self.cle + "_" + personnage.nom
-        duree = ceil(3 * (100 - maitrise) / 100)
-        duree = duree or 1
+        duree = ceil(self.duree * (100 - maitrise) / 100)
         type(self).importeur.diffact.ajouter_action(nom_act, duree,
                 action, personnage, maitrise, cible)
     

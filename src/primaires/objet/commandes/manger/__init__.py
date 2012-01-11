@@ -28,59 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'poser'."""
+"""Package contenant la commande 'manger'."""
 
 from primaires.interpreteur.commande.commande import Commande
 
-class CmdPoser(Commande):
+class CmdManger(Commande):
     
-    """Commande 'poser'"""
+    """Commande 'manger'"""
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "poser", "drop")
+        Commande.__init__(self, "manger", "eat")
         self.nom_categorie = "objets"
-        self.schema = "(<nombre>) <nom_objet> " \
-                "(dans/into <conteneur:nom_objet>)"
-        self.aide_courte = "pose un objet"
+        self.schema = "<nom_objet>"
+        self.aide_courte = "mange un objet"
         self.aide_longue = \
-                "Cette commande permet de poser un ou plusieurs objets."
+                "Cette commande permet de se nourrir, à condition que " \
+                "précisé soit comestible."
     
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("nom_objet")
         nom_objet.proprietes["conteneurs"] = \
-                "(personnage.equipement.inventaire_simple, )"
-        conteneur = self.noeud.get_masque("conteneur")
-        conteneur.prioritaire = True
-        conteneur.proprietes["conteneurs"] = \
-                "(personnage.equipement.tenus, personnage.salle.objets_sol)"
-        conteneur.proprietes["type"] = "'conteneur'"
+                "(personnage.equipement.inventaire, )"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        nombre = 1
-        if dic_masques["nombre"]:
-            nombre = dic_masques["nombre"].nombre
-        objets = dic_masques["nom_objet"].objets[:nombre]
-        dans = dic_masques["conteneur"]
-        dans = dans and dans.objet or None
+        objets = dic_masques["nom_objet"].objets[0]
+        objet, conteneur = objets
         
-        pose = 0
-        for objet, conteneur in objets:
-            conteneur.retirer(objet)
-            if dans:
-                dans.conteneur.ajouter(objet)
-            else:
-                personnage.salle.objets_sol.ajouter(objet)
-            pose += 1
+        if not objet.est_de_type("nourriture"):
+            personnage << "Visiblement, ce n'est pas comestible."
+            return
         
-        if dans:
-            personnage << "Vous déposez {} dans {}.".format(
-                    objet.get_nom(pose), dans.nom_singulier)
-            personnage.salle.envoyer("{{}} dépose {} dans {}.".format(
-                        objet.get_nom(pose), dans.nom_singulier), personnage)
-        else:
-            personnage << "Vous posez {}.".format(objet.get_nom(pose))
-            personnage.salle.envoyer("{{}} pose {}.".format(
-                        objet.get_nom(pose)), personnage)
+        personnage << objet.message_mange
+        objet.detruire()

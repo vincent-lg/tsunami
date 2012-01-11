@@ -57,7 +57,7 @@ class Personnage(ObjetID):
     groupe = "personnages"
     sous_rep = "personnages"
     _nom = "personnage"
-    _version = 4
+    _version = 5
     
     def __init__(self):
         """Constructeur d'un personnage"""
@@ -67,7 +67,7 @@ class Personnage(ObjetID):
         self.contextes = FileContexte(self) # file d'attente des contexte
         self.langue_cmd = "francais"
         self._salle = None
-        self.stats = Stats()
+        self.stats = Stats(self)
         self._prompt = "Vit   {stats.vitalite}     Man   {stats.mana}     " \
                 "End   {stats.endurance}"
         self.equipement = None
@@ -282,10 +282,13 @@ class Personnage(ObjetID):
     def detruire(self):
         """Méthode appelée lors de la destruction du personage.
         -   On supprime le personnage de la liste des personnages du squelette
+        -   On supprime le personnage de la salle
         
         """
         if self.equipement:
             self.equipement.squelette.personnages.remove(self)
+        if self.salle:
+            self.salle.retirer_personnage(self)
     
     def get_nom_pour(self, personnage):
         """Retourne le nom pour le personnage passé en paramètre."""
@@ -304,6 +307,10 @@ class Personnage(ObjetID):
         self.agir("deplacer")
         salle = self.salle
         salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
+        if not self.est_immortel() and salle_dest.zone.fermee:
+            self << "|err|Vous ne pouvez pas aller par là...|ff|"
+            return
+        
         sortie = salle.sorties.get_sortie_par_nom(sortie)
         fermer = False
         
@@ -489,27 +496,46 @@ class Personnage(ObjetID):
         3   Dans les mains du joueur si le reste échoue.
         
         """
-        print(exception)
+        print(self.equipement.inventaire)
         for o in self.equipement.inventaire:
             if o is not exception and o.est_de_type("conteneur") and \
                     o.prefere_type(objet):
+                print("1", objet)
                 o.conteneur.ajouter(objet)
                 return o
         
         for o in self.equipement.inventaire:
-            print(o, o.est_de_type("conteneur"), o.accepte_type(objet))
+            print("Test", o, objet)
             if o is not exception and o.est_de_type("conteneur") and \
                     o.accepte_type(objet):
+                print("2", objet)
                 o.conteneur.ajouter(objet)
                 return o
         
         for membre in self.equipement.membres:
             if membre.peut_tenir() and membre.tenu is None:
                 membre.tenu = objet
+                print(membre, objet, self.equipement.tenus)
                 objet.contenu = self.equipement.tenus
                 return membre
         
         return None
+    
+    def tick(self):
+        """Méthode appelée à chaque tick (chaque minute)."""
+        stats = {
+            "vitalite": "force",
+            "mana": "intelligence",
+            "endurance": "agilite",
+        }
+        for nom, liee in stats.items():
+            stat = self.stats[nom]
+            courante = stat.courante
+            max = stat.max
+            if courante < max:
+                courante_liee = self.stats[liee].courante
+                plus = int(courante_liee * 0.9)
+                stat.courante = stat.courante + plus
     
     @staticmethod
     def regarder(moi, personnage):

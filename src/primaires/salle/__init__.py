@@ -44,6 +44,7 @@ from .zone import Zone
 from .templates.terrain import Terrain
 from . import commandes
 from .editeurs.redit import EdtRedit
+from .editeurs.zedit import EdtZedit
 from . import masques
 
 class Module(BaseModule):
@@ -170,8 +171,9 @@ class Module(BaseModule):
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
         
-        # Ajout de l'éditeur 'redit'
+        # Ajout des l'éditeurs 'redit' et 'zedit'
         self.importeur.interpreteur.ajouter_editeur(EdtRedit)
+        self.importeur.interpreteur.ajouter_editeur(EdtZedit)
     
     def preparer(self):
         """Préparation du module.

@@ -88,6 +88,31 @@ class Equipement(BaseObj):
         
         return res
     
+    @property
+    def inventaire_simple(self):
+        """Retourne l'inventaire simple, c'est-à-dire sans les objets équipés.
+        
+        Attention cependant : cette méthode retourne les objets contenus
+        dans un conteneur équipés. Si par exemple l'équipement contient un
+        sac à dos, le sac à dos lui-même ne figurera pas dans la liste,
+        en revanche son contenu y figurera.
+        
+        """
+        res = []
+        for membre in self.membres:
+            objets = list(membre.equipe)
+            objets = [o for o in objets if o is not None]
+            for objet in objets:
+                objets = objet.extraire_contenus()
+                del objets[0]
+                res.extend(objets)
+            
+            if membre.tenu:
+                objets = membre.tenu.extraire_contenus()
+                res.extend(objets)
+        
+        return res
+        
     def get_membre(self, nom_membre):
         """Récupère le membre dont le nom est nom_membre.
         
@@ -194,7 +219,6 @@ class Equipement(BaseObj):
         """Retire l'objet tenu sur nom_membre."""
         membre = self.get_membre(nom_membre)
         objet = membre.tenu
-        objet.contenu = None
         membre.tenu = None
     
     def remonter_membre(self, nom_membre):
@@ -260,7 +284,8 @@ class Equipes(BaseObj):
                 self.equipement.desequiper_objet(membre.nom)
                 return
         
-        raise ValueError
+        raise ValueError("l'objet {} n'a pu être trouvé dans cet " \
+                "équipement".format(objet.cle))
 
 class Tenus(BaseObj):
     
@@ -291,3 +316,7 @@ class Tenus(BaseObj):
         for membre in self.equipement.membres:
             if membre.tenu is objet:
                 self.equipement.retirer_objet(membre.nom)
+                return
+        
+        raise ValueError("l'objet {} n'est pas tenu".format(
+                self.objet.cle))

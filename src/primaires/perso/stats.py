@@ -75,6 +75,10 @@ class Stats(BaseObj):
                 self.__stats]
         return iter(tuple(stats))
     
+    def __getitem__(self, stat):
+        """Retourne la stat."""
+        return self.to_dict[stat]
+    
     def __getattr__(self, nom_attr):
         """Si le 'nom_attr' n'est pas trouvé, on redirige vers la valeur
         courante de la stat. Par exemple, si on entre 'stats.force', on
@@ -93,6 +97,15 @@ class Stats(BaseObj):
                 pass
         else:
             BaseObj.__setattr__(self, nom_attr, val_attr)
+    
+    @property
+    def to_dict(self):
+        """Retourne un dictionnaire des stats {nom: stat}."""
+        stats = {}
+        for stat in self:
+            stats[stat.nom] = stat
+        
+        return stats
     
     def enregistrer(self):
         """Enregistre le parent"""

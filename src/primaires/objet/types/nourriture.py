@@ -31,6 +31,7 @@
 """Fichier contenant le type Nourriture."""
 
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.entier import Entier
 from bases.objet.attribut import Attribut
 from .base import BaseType
 
@@ -47,8 +48,12 @@ class Nourriture(BaseType):
         BaseType.__init__(self, cle)
         self.qualite = 1
         self.nourrissant = 1
-        self.etendre_editeur("a", "qualité", Uniligne, self, "qualite")
-        self.etendre_editeur("o", "nourrissant", Uniligne, self, "nourrissant")
+        self.message_mange = "Vous mangez {}.".format(self.nom_singulier)
+        self.etendre_editeur("a", "qualité", Entier, self, "qualite", 1, 10)
+        self.etendre_editeur("o", "nourrissant", Entier, self, "nourrissant",
+                1, 10)
+        self.etendre_editeur("m", "message d'ingestion", Uniligne, self,
+                "message_mange")
     
     def etendre_script(self):
         """Extension du scripting."""
@@ -71,7 +76,6 @@ class Nourriture(BaseType):
             "et |cmd|10|ff|\nou |cmd|/|ff| pour revenir à la fenêtre " \
             "parente.\n\n" \
             "Qualité actuelle : {objet.qualite}"
-        qualite.type = int
         
         nourrissant = enveloppes["o"]
         nourrissant.apercu = "{objet.nourrissant}"
@@ -81,4 +85,10 @@ class Nourriture(BaseType):
             "|cmd|1|ff| et |cmd|10|ff|\nou |cmd|/|ff| pour revenir à la " \
             "fenêtre parente.\n\n" \
             "Valeur nourrissante actuelle : {objet.nourrissant}"
-        nourrissant.type = int
+        
+        message_mange = enveloppes["m"]
+        message_mange.prompt = "Message lors de l'ingestion : "
+        message_mange.aide_courte = \
+            "Entrez le |ent|texte|ff| affiché au joueur lorsqu'il mange la nourriture ou |cmd|/|ff| pour revenir à la " \
+            "fenêtre parente.\n\n" \
+            "Message présent : {objet.message_mange}"
