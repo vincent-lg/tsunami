@@ -496,22 +496,26 @@ class Personnage(ObjetID):
         3   Dans les mains du joueur si le reste échoue.
         
         """
+        print(self.equipement.inventaire)
         for o in self.equipement.inventaire:
             if o is not exception and o.est_de_type("conteneur") and \
                     o.prefere_type(objet):
+                print("1", objet)
                 o.conteneur.ajouter(objet)
                 return o
         
         for o in self.equipement.inventaire:
-            print(o, o.est_de_type("conteneur"), o.accepte_type(objet))
+            print("Test", o, objet)
             if o is not exception and o.est_de_type("conteneur") and \
                     o.accepte_type(objet):
+                print("2", objet)
                 o.conteneur.ajouter(objet)
                 return o
         
         for membre in self.equipement.membres:
             if membre.peut_tenir() and membre.tenu is None:
                 membre.tenu = objet
+                print(membre, objet, self.equipement.tenus)
                 objet.contenu = self.equipement.tenus
                 return membre
         

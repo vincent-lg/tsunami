@@ -45,6 +45,12 @@ class CmdPorter(Commande):
         self.aide_longue = \
                 "Cette commande permet d'équiper un ou plusieurs objets."
     
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nom_objet = self.noeud.get_masque("nom_objet")
+        nom_objet.proprietes["conteneurs"] = \
+                "(personnage.equipement.inventaire_simple, )"
+    
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         objets = dic_masques["nom_objet"].objets[0]
@@ -53,7 +59,7 @@ class CmdPorter(Commande):
         for membre in personnage.equipement.membres:
             if membre.peut_equiper(objet):
                 membre.equiper(objet)
-                personnage.salle.objets_sol.retirer(objet)
+                objet.contenu.retirer(objet)
                 personnage << "Vous équipez {}.".format(objet.nom_singulier)
                 personnage.salle.envoyer(
                     "{{}} équipe {}.".format(objet.nom_singulier), personnage)

@@ -93,16 +93,12 @@ class Conteneur(BaseType):
         
         for type in self.types_admis:
             if objet.est_de_type(type):
-                print("2 ok")
                 return True
         
-        print("2 !")
         return False
     
     def accepte_type(self, objet):
         """Retourne True si le conteneur accepte le type d'objet."""
-        print("1", self.types_admis == ['*'])
-        c=input()
         return self.types_admis == ["*"] or self.prefere_type(objet)
     
     @staticmethod

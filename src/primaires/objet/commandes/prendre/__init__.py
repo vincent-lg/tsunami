@@ -61,6 +61,7 @@ class CmdPrendre(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
+        print(personnage.equipement.inventaire)
         nombre = 1
         if dic_masques["nombre"]:
             nombre = dic_masques["nombre"].nombre

@@ -108,6 +108,7 @@ class NomObjet(Masque):
                                 "|err|" + o.err_type.format(o.nom_singulier) \
                                 + "|ff|")
                     
+                    print(o, o.contenu)
                     objets.append((o, o.contenu))
         
         if not objets:

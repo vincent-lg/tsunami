@@ -75,22 +75,24 @@ class ListeID(BaseObj):
         """On enregistre juste les IDs dans le fichier"""
         BaseObj.__getstate__(self)
         parent = object.__getattribute__(self, "parent")
-        return (self._id_base, parent, list(self.__liste))
+        return (self._id_base, self._ts, parent, list(self.__liste))
     
     def __setstate__(self, liste):
         """On place la liste dans self.__liste"""
-        # Après la migration de la bêta, on pourra supprimer cette condition
-        if isinstance(liste, tuple):
+        # Code à suppriemr après la transition sous Tsunami
+        try:
+            id_base, ts, parent, liste = liste
+        except ValueError:
             id_base, parent, liste = liste
-        else:
-            id_base = -1
-            parent = None
+            ts = 1
         
         BaseObj.__setstate__(self, {
             '_id_base': id_base,
+            '_ts': ts,
             'parent': parent,
         })
-        self.__liste = liste
+        if liste:
+            self.__liste = liste
     
     def __iter__(self):
         """Parcourt (on veille à parcourir les objets, pas les IDs)."""

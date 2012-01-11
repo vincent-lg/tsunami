@@ -50,7 +50,7 @@ class CmdPoser(Commande):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("nom_objet")
         nom_objet.proprietes["conteneurs"] = \
-                "(personnage.equipement.inventaire, )"
+                "(personnage.equipement.inventaire_simple, )"
         conteneur = self.noeud.get_masque("conteneur")
         conteneur.prioritaire = True
         conteneur.proprietes["conteneurs"] = \

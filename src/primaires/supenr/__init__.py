@@ -346,3 +346,11 @@ class Module(BaseModule):
             if "fichier_enr" in locals():
                 fichier_enr.close()
             self.enregistre_actuellement = False
+    
+    def tout_enregistrer(self):
+        """Enregistre tous les objets dans parid."""
+        parid = type(self.importeur).parid
+        for groupe in parid.groupes.values():
+            for objet in groupe.values():
+                if hasattr(objet, "enregistrer"):
+                    objet.enregistrer()
