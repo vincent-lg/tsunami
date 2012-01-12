@@ -156,6 +156,7 @@ class BaseType(ObjetID, metaclass=MetaType):
         Sinon : retourne le nombre et le nom pluriel
         
         """
+        print("get_nom", type(self))
         if nombre <= 0:
             raise ValueError("la fonction get_nom a été appelée " \
                     "avec un nombre négatif ou nul.")
@@ -200,27 +201,26 @@ class BaseType(ObjetID, metaclass=MetaType):
         return objet.poids_unitaire
     
     # Actions sur les objets
-    @staticmethod
-    def regarder(objet, personnage):
+    def regarder(self, personnage):
         """Le personnage regarde l'objet"""
         salle = personnage.salle
-        personnage << "Vous regardez {} :".format(objet.nom_singulier)
-        autre = "{{}} regarde {}.".format(objet.nom_singulier)
+        personnage << "Vous regardez {} :".format(self.nom_singulier)
+        autre = "{{}} regarde {}.".format(self.nom_singulier)
         salle.envoyer(autre, personnage)
         
         # Appel du script regarde.avant
-        objet.script["regarde"]["avant"].executer(
-                objet=objet, personnage=personnage)
+        self.script["regarde"]["avant"].executer(
+                objet=self, personnage=personnage)
         
-        description = str(objet.description)
+        description = str(self.description)
         if not description:
             description = "Il n'y a rien de bien intéressant à voir."
         
         personnage << "\n" + description
         
         # Appel du script regarde.après
-        objet.script["regarde"]["apres"].executer(
-                objet=objet, personnage=personnage)
+        self.script["regarde"]["apres"].executer(
+                objet=self, personnage=personnage)
         return ""
 
 ObjetID.ajouter_groupe(BaseType)

@@ -30,6 +30,8 @@
 
 """Ce fichier contient la classe ConteneurObjet, détaillée plus bas."""
 
+from collections import OrderedDict
+
 from abstraits.obase import BaseObj
 from bases.collections.liste_id import ListeID
 from .objet_non_unique import ObjetNonUnique
@@ -77,6 +79,29 @@ class ConteneurObjet(BaseObj):
             yield (objet, 1)
         for objet in self._non_uniques:
             yield (objet.prototype, objet.nombre)
+    
+    def get_objets_par_nom(self):
+        """Retourne une liste de couples (objet, nombre).
+        
+        ATTENTION : pour les objets non uniques, on retourne le
+        prototype mais le comportement devrait être identique la
+        plupart du temps.
+        
+        """
+        objets = OrderedDict()
+        nombres = {}
+        for objet in self._objets:
+            nom = objet.nom_singulier
+            objets[nom] = objet
+            nb = nombres.get(nom, 0)
+            nombres[nom] = nb + 1
+        
+        ret = []
+        for nom, objet in objets.items():
+            nombre = nombres[nom]
+            ret.append((objet, nombre))
+        
+        return tuple(ret)
     
     def ajouter(self, objet, nombre=1):
         """On ajoute l'objet dans le conteneur.
