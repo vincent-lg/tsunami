@@ -185,22 +185,6 @@ class Salle(ObjetID):
         """Méthode redirigeant vers envoyer mais lissant la chaîne."""
         self.envoyer(lisser(chaine), *personnages, **kw_personnages)
     
-    def get_objets_nombres(self):
-        """Retourne un tuple contenant des couples prototype, nombre"""
-        prototypes = OrderedDict()   # {prototype: nombre}
-        # On parcourt les objets de la salle
-        for objet in self.objets_sol:
-            prototype = objet.prototype
-            nombre = 1
-            if not prototype.unique:
-                nombre = objet.nombre
-            if prototype not in prototypes:
-                prototypes[prototype] = nombre
-            else:
-                prototypes[prototype] += nombre
-        
-        return tuple(prototypes.items())
-    
     def get_elements_observables(self, personnage):
         """Retourne une liste des éléments observables dans cette salle."""
         return []
@@ -287,13 +271,21 @@ class Salle(ObjetID):
     
     def afficher_noms_objets(self):
         """Retourne les noms et états des objets sur le sol de la salle"""
-        # On récupère les couples prototype, nombre
-        prototypes = self.get_objets_nombres()
+        # On trie les objets par leurs noms affichés
+        objets = []
+        for objet in self.objets_sol:
+            objets.append((objet.get_nom(), objet))
+        noms = {}
+        for o_nom, o in objets:
+            if not o_nom in noms:
+                noms[o_nom] = (o, 1)
+            else:
+                noms[o_nom] = (o, noms[o_nom][1] + 1)
         
-        # On parcourt à présent les prototypes pour récupérer leur nom et état
+        # On parcourt le tout pour afficher
         noms_etats = []
-        for prototype, nombre in prototypes:
-            noms_etats.append(prototype.get_nom_etat(nombre))
+        for o in noms.values():
+            noms_etats.append(o[0].get_nom_etat(o[1]))
         
         return noms_etats
     

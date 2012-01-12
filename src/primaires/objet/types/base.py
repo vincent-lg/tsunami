@@ -136,6 +136,16 @@ class BaseType(ObjetID, metaclass=MetaType):
         self._extensions_editeur.append(
             (raccourci, ligne, editeur, objet, attribut, sup))
     
+    def reduire_editeur(self, raccourci):
+        """Permet de supprimer un contexte-éditeur de la liste d'extensions."""
+        sup = ()
+        for editeur in self._extensions_editeur:
+            if editeur[0] == raccourci:
+                sup = editeur
+                break
+        if sup:
+            self._extensions_editeur.remove(sup)
+    
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes.
         
@@ -148,7 +158,7 @@ class BaseType(ObjetID, metaclass=MetaType):
         """
         pass
     
-    def get_nom(self, nombre):
+    def get_nom(self, nombre=1):
         """Retourne le nom complet en fonction du nombre.
         
         Par exemple :
