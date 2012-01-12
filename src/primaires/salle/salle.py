@@ -271,23 +271,11 @@ class Salle(ObjetID):
     
     def afficher_noms_objets(self):
         """Retourne les noms et états des objets sur le sol de la salle"""
-        # On trie les objets par leurs noms affichés
         objets = []
-        for objet in self.objets_sol:
-            objets.append((objet.get_nom(), objet))
-        noms = {}
-        for o_nom, o in objets:
-            if not o_nom in noms:
-                noms[o_nom] = (o, 1)
-            else:
-                noms[o_nom] = (o, noms[o_nom][1] + 1)
+        for o, nb in self.objets_sol.get_objets_par_nom():
+            objets.append(o.get_nom_etat(nb))
         
-        # On parcourt le tout pour afficher
-        noms_etats = []
-        for o in noms.values():
-            noms_etats.append(o[0].get_nom_etat(o[1]))
-        
-        return noms_etats
+        return objets
     
     def decrire_plus(self, personnage):
         """Ajoute un message au-dessous de la description.

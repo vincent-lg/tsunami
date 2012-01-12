@@ -166,7 +166,6 @@ class BaseType(ObjetID, metaclass=MetaType):
         Sinon : retourne le nombre et le nom pluriel
         
         """
-        print("get_nom", type(self))
         if nombre <= 0:
             raise ValueError("la fonction get_nom a été appelée " \
                     "avec un nombre négatif ou nul.")
