@@ -50,7 +50,7 @@ class NomObjet(Masque):
         """Constructeur du masque"""
         Masque.__init__(self)
         self.proprietes["conteneurs"] = "(personnage.salle.objets_sol, )"
-        self.proprietes["type"] = "None"
+        self.proprietes["types"] = "None"
         self.proprietes["tout_interpreter"] = "True"
     
     @property
@@ -97,13 +97,14 @@ class NomObjet(Masque):
         Masque.valider(self, personnage, dic_masques)
         nom = self.a_interpreter
         conteneurs = self.conteneurs
-        o_type = self.type
+        o_types = self.types
         objets = []
         
         for c in conteneurs:
             for o in c:
                 if contient(o.nom_singulier, nom):
-                    if o_type and not o.prototype.est_de_type(o_type):
+                    if o_types and not [o_t for o_t in o_types \
+                            if o.prototype.est_de_type(o_t)]:
                         raise ErreurValidation(
                                 "|err|" + o.err_type.format(o.nom_singulier) \
                                 + "|ff|")

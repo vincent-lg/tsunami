@@ -33,12 +33,17 @@
 from primaires.interpreteur.editeur.choix import Choix
 from corps.fonctions import lisser
 from .base import BaseType
-from .conteneur import Conteneur
 
 # Constante
-LISTE_SUFFIXES = [""]
+LISTE_CONNECTEURS = [
+        "de",
+        "rempli{s} de",
+        "remplie{s} de",
+        "plein{s} de",
+        "pleine{s} de",
+        ]
 
-class ConteneurNourriture(Conteneur):
+class ConteneurNourriture(BaseType):
     
     """Type d'objet: conteneur de nourriture.
     
@@ -50,28 +55,31 @@ class ConteneurNourriture(Conteneur):
     
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
-        Conteneur.__init__(self, cle)
-        self.types_admis = ["nourriture"]
-        self.suffixe = "de"
-        self.reduire_editeur("t")
-        self.etendre_editeur("s", "suffixe", Choix, self,
-                "suffixe", LISTE_SUFFIXES)
+        BaseType.__init__(self, cle)
+        self.bouffe = None
+        self.connecteur = "de"
+        self.etendre_editeur("c", "connecteur", Choix, self,
+                "connecteur", LISTE_CONNECTEURS)
+        
+        # Erreur de validation du type
+        self.err_type = "Laissez la nourriture dans son plat, grossier personnage."
     
     @property
-    def suffixes(self):
+    def connecteurs(self):
         """Retourne la liste des suffixes possibles."""
-        return ", ".join(LISTE_SUFFIXES)
+        return ", ".join(LISTE_CONNECTEURS)
             
     def travailler_enveloppes(self, enveloppes):
-        """Travail sur les enveloppes"""
-        suffixe = enveloppes["s"]
-        suffixe.apercu = "{objet.suffixe}"
-        suffixe.aide_courte = \
-            "Choisissez un |ent|types admis|ff| ou entrez |cmd|/|ff| pour revenir à la " \
-            "fenêtre parente.\nLe suffixe sera utilisé pour afficher le contenu de cet objet, par exemple :\n" \
+        """Travail sur les enveloppes."""
+        connecteur = enveloppes["c"]
+        connecteur.apercu = "{objet.connecteur}"
+        connecteur.aide_courte = \
+            "Choisissez un |ent|connecteur|ff| ou entrez |cmd|/|ff| pour " \
+            "revenir à la fenêtre parente.\nLe connecteur sera utilisé pour " \
+            "afficher le contenu de cet objet, par exemple :\n" \
             "|grf|une assiette|ff| |bc|pleine de|ff| |grf|ragoût|ff|.\n\n" \
-            "Choix possibles : {objet.suffixes}\n\n" \
-            "Suffixe actuel : {objet.suffixe}"
+            "Choix possibles : {objet.connecteurs}\n\n" \
+            "Connecteur actuel : {objet.connecteur}"
     
     # Actions sur les objets
     def get_nom(self, nombre=1):
@@ -82,13 +90,12 @@ class ConteneurNourriture(Conteneur):
         Sinon : retourne le nombre et le nom pluriel
         
         """
-        print("get_nom", type(self))
         ajout = ""
-        if hasattr(self, "conteneur"):
-            for contenu in self.conteneur:
-                nom = contenu.get_nom()
-                nom = nom[3:] if nom.startswith("un ") else nom[4:]
-                ajout = lisser(" " + self.suffixe + " " + nom)
+        if self.bouffe is not None:
+            s = "s" if nombre > 1 else ""
+            nom = self.bouffe.get_nom()
+            nom = nom[3:] if nom.startswith("un ") else nom[4:]
+            ajout = lisser(" " + self.connecteur.format(s=s) + " " + nom)
         if nombre <= 0:
             raise ValueError("la fonction get_nom a été appelée " \
                     "avec un nombre négatif ou nul.")
@@ -100,18 +107,14 @@ class ConteneurNourriture(Conteneur):
                 noms_sup.reverse()
                 for nom in noms_sup:
                     if nombre >= nom[0]:
-                        return nom[1]
+                        return nom[1] + ajout
             return str(nombre) + " " + self.nom_pluriel + ajout
     
     def regarder(self, personnage):
         """Le personnage regarde l'objet"""
         msg = BaseType.regarder(self, personnage)
-        contenu = None
-        for o in self.conteneur:
-            contenu = o
         
-        if contenu:
-            msg += "\nCe plat contient " + contenu.get_nom() + " :\n"
-            msg += str(contenu.description)
+        if self.bouffe is not None:
+            msg += "\n" + str(self.bouffe.description)
         
         return msg

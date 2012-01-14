@@ -91,7 +91,7 @@ class ConteneurObjet(BaseObj):
         objets = OrderedDict()
         nombres = {}
         for objet in self._objets:
-            nom = objet.nom_singulier
+            nom = objet.get_nom()
             objets[nom] = objet
             nb = nombres.get(nom, 0)
             nombres[nom] = nb + 1

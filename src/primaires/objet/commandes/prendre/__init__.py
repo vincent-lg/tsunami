@@ -57,7 +57,7 @@ class CmdPrendre(Commande):
         conteneur.prioritaire = True
         conteneur.proprietes["conteneurs"] = \
                 "(personnage.equipement.tenus, personnage.salle.objets_sol)"
-        conteneur.proprietes["type"] = "'conteneur'"
+        conteneur.proprietes["types"] = "('conteneur', )"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
