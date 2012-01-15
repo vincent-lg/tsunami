@@ -194,6 +194,10 @@ class BaseType(ObjetID, metaclass=MetaType):
                         return nom + " " + nom_sup[2]
             return nom + " " + self.etat_pluriel
     
+    def extraire_contenus(self):
+        """Méthode redéfinie pour la manipulation d'objets non uniques."""
+        return [self]
+    
     def est_de_type(self, nom_type):
         """Retourne True si le type d'objet est de celui entré ou dérivé.
         

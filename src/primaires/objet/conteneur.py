@@ -97,6 +97,9 @@ class ConteneurObjet(BaseObj):
             nombres[nom] = nb + 1
         
         ret = []
+        for objet in self._non_uniques:
+            ret.append((objet.prototype, objet.nombre))
+        
         for nom, objet in objets.items():
             nombre = nombres[nom]
             ret.append((objet, nombre))

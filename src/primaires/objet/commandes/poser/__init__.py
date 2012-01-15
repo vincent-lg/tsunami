@@ -67,11 +67,7 @@ class CmdPoser(Commande):
         dans = dans.objet if dans else None
         
         pose = 0
-        print(objets, len(objets))
-        c=input()
         for objet, conteneur in objets:
-            print(objet, conteneur, objet.contenu)
-            c=input()
             pose += 1
             if dans and hasattr(dans, "bouffe"):
                 if dans.bouffe is not None:

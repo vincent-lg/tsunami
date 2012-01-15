@@ -59,14 +59,11 @@ class CmdOspawn(Commande):
         nb_obj = 1
         if dic_masques["nombre"] is not None:
             nb_obj = dic_masques["nombre"].nombre
-            i = 0
-            while i < nb_obj:
-                objet = type(self).importeur.objet.creer_objet(prototype)
-                salle.objets_sol.ajouter(objet)
-                i += 1
-        else:
+        i = 0
+        while i < nb_obj:
             objet = type(self).importeur.objet.creer_objet(prototype)
             salle.objets_sol.ajouter(objet)
+            i += 1
         personnage << "Vous faites apparaître {} du néant.".format(
                 objet.get_nom(nb_obj))
         salle.envoyer("{{}} fait apparaître {} du néant.".format(
