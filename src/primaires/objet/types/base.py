@@ -202,7 +202,8 @@ class BaseType(ObjetID, metaclass=MetaType):
         
         """
         classe = type(self).importeur.objet.types[nom_type]
-        return isinstance(self, classe)
+        prototype = hasattr(self, "prototype") and self.prototype or self
+        return isinstance(prototype, classe)
     
     @staticmethod
     def calculer_poids(objet):

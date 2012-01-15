@@ -131,7 +131,6 @@ class Objet(ObjetID):
         """Extrait les objets contenus."""
         res = [self]
         if hasattr(self, "conteneur"):
-            res.extend(list(self.conteneur))
             for objet in self.conteneur:
                 res.extend(objet.extraire_contenus())
         

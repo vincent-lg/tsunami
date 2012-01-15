@@ -102,6 +102,7 @@ class NomObjet(Masque):
         
         for c in conteneurs:
             for o in c:
+                print(o, c)
                 if contient(o.nom_singulier, nom):
                     if o_types and not [o_t for o_t in o_types \
                             if o.prototype.est_de_type(o_t)]:
@@ -109,13 +110,11 @@ class NomObjet(Masque):
                                 "|err|" + o.err_type.format(o.nom_singulier) \
                                 + "|ff|")
                     
-                    print(o, o.contenu)
                     objets.append((o, o.contenu))
         
         if not objets:
             raise ErreurValidation(
                 "|err|Ce nom d'objet est introuvable.|ff|")
-        
         self.objets = objets
         
         return True

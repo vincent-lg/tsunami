@@ -496,7 +496,6 @@ class Personnage(ObjetID):
         3   Dans les mains du joueur si le reste échoue.
         
         """
-        print(self.equipement.inventaire)
         for o in self.equipement.inventaire:
             if o is not exception and o.est_de_type("conteneur") and \
                     o.prefere_type(objet):
@@ -505,7 +504,6 @@ class Personnage(ObjetID):
                 return o
         
         for o in self.equipement.inventaire:
-            print("Test", o, objet)
             if o is not exception and o.est_de_type("conteneur") and \
                     o.accepte_type(objet):
                 print("2", objet)
