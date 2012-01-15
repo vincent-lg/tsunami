@@ -80,10 +80,12 @@ class Equipement(BaseObj):
         """
         res = []
         for membre in self.membres:
+            print("tm", membre)
             objets = list(membre.equipe) + [membre.tenu]
             objets = [o for o in objets if o is not None]
             for objet in objets:
                 objets = objet.extraire_contenus()
+                print("  o", objets)
                 res.extend(objets)
         
         return res

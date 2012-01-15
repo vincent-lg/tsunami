@@ -57,9 +57,21 @@ class CmdManger(Commande):
         objets = dic_masques["nom_objet"].objets[0]
         objet, conteneur = objets
         
+        if hasattr(objet, "bouffe"):
+            if objet.bouffe is None:
+                personnage << "Il n'y a rien à manger là-dedans."
+                return
+            objet.bouffe.script["mange"].executer(personnage=personnage,
+                    objet=objet)
+            personnage << objet.bouffe.message_mange
+            objet.bouffe.detruire()
+            objet.bouffe = None
+            return
+        
         if not objet.est_de_type("nourriture"):
             personnage << "Visiblement, ce n'est pas comestible."
             return
         
+        objet.script["mange"].executer(personnage=personnage, objet=objet)
         personnage << objet.message_mange
         objet.detruire()

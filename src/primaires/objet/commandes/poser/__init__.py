@@ -55,7 +55,7 @@ class CmdPoser(Commande):
         conteneur.prioritaire = True
         conteneur.proprietes["conteneurs"] = \
                 "(personnage.equipement.tenus, personnage.salle.objets_sol)"
-        conteneur.proprietes["type"] = "'conteneur'"
+        conteneur.proprietes["types"] = "('conteneur', 'conteneur de nourriture')"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -64,16 +64,24 @@ class CmdPoser(Commande):
             nombre = dic_masques["nombre"].nombre
         objets = dic_masques["nom_objet"].objets[:nombre]
         dans = dic_masques["conteneur"]
-        dans = dans and dans.objet or None
+        dans = dans.objet if dans else None
         
         pose = 0
         for objet, conteneur in objets:
+            pose += 1
+            if dans and hasattr(dans, "bouffe"):
+                if dans.bouffe is not None:
+                    personnage << "Il y a déjà à manger là-dedans."
+                    return
             conteneur.retirer(objet)
             if dans:
-                dans.conteneur.ajouter(objet)
+                if hasattr(dans, "conteneur"):
+                    dans.conteneur.ajouter(objet)
+                else:
+                    dans.bouffe = objet
+                    break
             else:
                 personnage.salle.objets_sol.ajouter(objet)
-            pose += 1
         
         if dans:
             personnage << "Vous déposez {} dans {}.".format(

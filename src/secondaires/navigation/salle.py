@@ -160,7 +160,7 @@ class SalleNavire(Salle):
         """Ajoute les éléments observables dans la description de la salle."""
         msg = []
         for element in self.elements:
-            msg.append(element.get_description_ligne(element, personnage))
+            msg.append(element.get_description_ligne(personnage))
         
         return "\n".join(msg)
     

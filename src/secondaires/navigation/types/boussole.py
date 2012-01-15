@@ -64,10 +64,9 @@ class Boussole(Instrument):
         precision.type = int
     
     # Actions sur les objets
-    @staticmethod
-    def regarder(objet, personnage):
+    def regarder(self, personnage):
         """Quand on regarde la boussole."""
-        moi = Instrument.regarder(objet, personnage)
+        moi = Instrument.regarder(self, personnage)
         salle = personnage.salle
         if not hasattr(salle, "navire") or salle.navire is None or \
                 salle.navire.etendue is None:
@@ -77,9 +76,9 @@ class Boussole(Instrument):
         vent = navire.vent.copier()
         vent.tourner_autour_z(180)
         ven_dir = vent.direction
-        ven_dir = round(ven_dir / objet.precision) * objet.precision
-        nav_dir = round(navire.direction.direction / objet.precision) * \
-                objet.precision
+        ven_dir = round(ven_dir / self.precision) * self.precision
+        nav_dir = round(navire.direction.direction / self.precision) * \
+                self.precision
         msg_vent = lisser("Le vent souffle de le {} ({}°).".format(
                 vent.nom_direction, ven_dir))
         msg_navire = lisser("Le navire se dirige vers le {} ({}°).".format(

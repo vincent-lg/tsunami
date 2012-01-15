@@ -70,7 +70,6 @@ def lisser(chaine):
         (" le i", " l'i"),
         (" le o", " l'o"),
         (" le u", " l'u"),
-        (" le y", " l'y"),
         (" le é", " l'é"),
         (" la a", " l'a"),
         (" la e", " l'e"),
@@ -78,11 +77,17 @@ def lisser(chaine):
         (" la i", " l'i"),
         (" la o", " l'o"),
         (" la u", " l'u"),
-        (" la y", " l'y"),
         (" la é", " l'é"),
         (" de le ", " du "),
         (" de les ", " des "),
         (" à les ", " aux "),
+        (" de a", " d'a"),
+        (" de e", " d'e"),
+        (" de h", " d'h"),
+        (" de i", " d'i"),
+        (" de o", " d'o"),
+        (" de u", " d'u"),
+        (" de é", " d'é"),
     )
     for o_val, r_val in schemas:
         chaine = chaine.replace(o_val, r_val)

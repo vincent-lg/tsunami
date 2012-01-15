@@ -95,8 +95,18 @@ class Objet(ObjetID):
         """Si le nom d'attribut n'est pas trouvé, le chercher
         dans le prototype
         
+        - D'abord on cherche dans la classe
+          Si trouvé et que c'est une méthode d'objet on lui passe en
+          paramètre l'objet au lieu du prototype
+        - Sinon on regarde dans le prorotype.
+
         """
-        return getattr(self.prototype, nom_attr)
+        try:
+            attribut = getattr(type(self.prototype), nom_attr)
+            assert callable(attribut)
+            return MethodeObjet(attribut, self)
+        except (AttributeError, AssertionError):
+            return getattr(self.prototype, nom_attr)
     
     def __str__(self):
         return self.nom_singulier
@@ -121,7 +131,6 @@ class Objet(ObjetID):
         """Extrait les objets contenus."""
         res = [self]
         if hasattr(self, "conteneur"):
-            res.extend(list(self.conteneur))
             for objet in self.conteneur:
                 res.extend(objet.extraire_contenus())
         
@@ -135,3 +144,14 @@ class Objet(ObjetID):
 
 
 ObjetID.ajouter_groupe(Objet)
+
+class MethodeObjet:
+    
+    """Classe enveloppant une méthode d'objet."""
+    
+    def __init__(self, methode, objet):
+        self.methode = methode
+        self.objet = objet
+    
+    def __call__(self, *args, **kwargs):
+        return self.methode(self.objet, *args, **kwargs)

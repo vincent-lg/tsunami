@@ -71,7 +71,7 @@ class PrmLire(Parametre):
             personnage << "|att|Vous n'avez aucun nouveau message.|ff|"
         else:
             if dic_masques["id_mail"] is None:
-                num = min(mails,key=lambda mail : mail.date)
+                num = max(mails,key=lambda mail : mail.date)
             else:
                 num = dic_masques["id_mail"].id_mail
             

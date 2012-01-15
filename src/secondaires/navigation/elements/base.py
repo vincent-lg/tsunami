@@ -116,11 +116,10 @@ class BaseElement(ObjetID, metaclass=MetaElt):
         """Retourne le nom de l'élément."""
         return elt.nom
     
-    @staticmethod
-    def regarder(elt, personnage):
-        """personnage regarde l'élément elt."""
-        msg = "Vous regardez {} :".format(elt.nom) + "\n\n"
-        msg += elt.description.regarder(personnage, elt)
+    def regarder(self, personnage):
+        """personnage regarde self."""
+        msg = "Vous regardez {} :".format(self.nom) + "\n\n"
+        msg += self.description.regarder(personnage, self)
         return msg
 
 ObjetID.ajouter_groupe(BaseElement)

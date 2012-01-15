@@ -138,6 +138,9 @@ class Module(BaseModule):
         L'objet est ensuite ajouté à la liste des objets existants.
         
         """
+        if not prototype.unique:
+            return prototype
+        
         objet = Objet(prototype)
         self.ajouter_objet(objet)
         return objet

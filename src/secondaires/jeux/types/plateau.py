@@ -77,11 +77,10 @@ class Plateau(BaseType):
             "|bc|{objet.plateau} |ff|"
         
     # Actions sur les objets
-    @staticmethod
-    def regarder(objet, personnage):
+    def regarder(self, personnage):
         """Quand on regarde le plateau."""
-        partie = objet.partie
-        moi = BaseType.regarder(objet, personnage)
+        partie = self.partie
+        moi = BaseType.regarder(self, personnage)
         if partie:
             moi += "\n\n" + partie.afficher(personnage)
         

@@ -496,7 +496,6 @@ class Personnage(ObjetID):
         3   Dans les mains du joueur si le reste échoue.
         
         """
-        print(self.equipement.inventaire)
         for o in self.equipement.inventaire:
             if o is not exception and o.est_de_type("conteneur") and \
                     o.prefere_type(objet):
@@ -505,7 +504,6 @@ class Personnage(ObjetID):
                 return o
         
         for o in self.equipement.inventaire:
-            print("Test", o, objet)
             if o is not exception and o.est_de_type("conteneur") and \
                     o.accepte_type(objet):
                 print("2", objet)
@@ -537,11 +535,10 @@ class Personnage(ObjetID):
                 plus = int(courante_liee * 0.9)
                 stat.courante = stat.courante + plus
     
-    @staticmethod
-    def regarder(moi, personnage):
-        """personnage regarde moi."""
-        equipement = moi.equipement
-        msg = "Vous regardez {} :\n".format(moi.nom)
+    def regarder(self, personnage):
+        """personnage regarde self."""
+        equipement = self.equipement
+        msg = "Vous regardez {} :\n".format(self.get_nom_pour(personnage))
         objets = []
         for membre in equipement.membres:
             objet = membre.equipe and membre.equipe[-1] or membre.tenu
@@ -554,6 +551,6 @@ class Personnage(ObjetID):
         else:
             msg += "Il porte :\n\n  " + "\n  ".join(objets)
         
-        moi.envoyer("{} vous regarde.", personnage)
-        personnage.salle.envoyer("{} regarde {}.", personnage, moi)
+        self.envoyer("{} vous regarde.", personnage)
+        personnage.salle.envoyer("{} regarde {}.", personnage, self)
         return msg

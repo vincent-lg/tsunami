@@ -136,6 +136,16 @@ class BaseType(ObjetID, metaclass=MetaType):
         self._extensions_editeur.append(
             (raccourci, ligne, editeur, objet, attribut, sup))
     
+    def reduire_editeur(self, raccourci):
+        """Permet de supprimer un contexte-éditeur de la liste d'extensions."""
+        sup = ()
+        for editeur in self._extensions_editeur:
+            if editeur[0] == raccourci:
+                sup = editeur
+                break
+        if sup:
+            self._extensions_editeur.remove(sup)
+    
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes.
         
@@ -148,7 +158,7 @@ class BaseType(ObjetID, metaclass=MetaType):
         """
         pass
     
-    def get_nom(self, nombre):
+    def get_nom(self, nombre=1):
         """Retourne le nom complet en fonction du nombre.
         
         Par exemple :
@@ -184,6 +194,10 @@ class BaseType(ObjetID, metaclass=MetaType):
                         return nom + " " + nom_sup[2]
             return nom + " " + self.etat_pluriel
     
+    def extraire_contenus(self):
+        """Méthode redéfinie pour la manipulation d'objets non uniques."""
+        return [self]
+    
     def est_de_type(self, nom_type):
         """Retourne True si le type d'objet est de celui entré ou dérivé.
         
@@ -192,7 +206,8 @@ class BaseType(ObjetID, metaclass=MetaType):
         
         """
         classe = type(self).importeur.objet.types[nom_type]
-        return isinstance(self, classe)
+        prototype = hasattr(self, "prototype") and self.prototype or self
+        return isinstance(prototype, classe)
     
     @staticmethod
     def calculer_poids(objet):
@@ -200,27 +215,26 @@ class BaseType(ObjetID, metaclass=MetaType):
         return objet.poids_unitaire
     
     # Actions sur les objets
-    @staticmethod
-    def regarder(objet, personnage):
+    def regarder(self, personnage):
         """Le personnage regarde l'objet"""
         salle = personnage.salle
-        personnage << "Vous regardez {} :".format(objet.nom_singulier)
-        autre = "{{}} regarde {}.".format(objet.nom_singulier)
+        personnage << "Vous regardez {} :".format(self.nom_singulier)
+        autre = "{{}} regarde {}.".format(self.nom_singulier)
         salle.envoyer(autre, personnage)
         
         # Appel du script regarde.avant
-        objet.script["regarde"]["avant"].executer(
-                objet=objet, personnage=personnage)
+        self.script["regarde"]["avant"].executer(
+                objet=self, personnage=personnage)
         
-        description = str(objet.description)
+        description = str(self.description)
         if not description:
             description = "Il n'y a rien de bien intéressant à voir."
         
         personnage << "\n" + description
         
         # Appel du script regarde.après
-        objet.script["regarde"]["apres"].executer(
-                objet=objet, personnage=personnage)
+        self.script["regarde"]["apres"].executer(
+                objet=self, personnage=personnage)
         return ""
 
 ObjetID.ajouter_groupe(BaseType)

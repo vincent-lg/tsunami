@@ -58,13 +58,14 @@ class MetaType(MetaBaseObj):
             if base:
                 base.types[cls.nom_type] = cls
 
+from .clef import Clef
 from .conteneur import Conteneur
+from .conteneur_nourriture import ConteneurNourriture
 from .indefini import *
 from .instrument import *
 from .nourriture import Nourriture
 from .vetement import Vetement
 from .viande import Viande
-from .clef import Clef
 
 # Vêtements
 from .chaussette import Chaussette
@@ -72,4 +73,3 @@ from .chaussure import Chaussure
 from .chemise import Chemise
 from .pantalon import Pantalon
 from .jupe import Jupe
-

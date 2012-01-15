@@ -31,6 +31,7 @@
 """Ce fichier contient la classe Element, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
+from primaires.objet.objet import MethodeObjet
 
 class Element(BaseObj):
     
@@ -80,7 +81,12 @@ class Element(BaseObj):
         dans le prototype
         
         """
-        return getattr(self.prototype, nom_attr)
+        try:
+            attribut = getattr(type(self.prototype), nom_attr)
+            assert callable(attribut)
+            return MethodeObjet(attribut, self)
+        except (AttributeError, AssertionError):
+            return getattr(self.prototype, nom_attr)
     
     def __str__(self):
         return self.nom

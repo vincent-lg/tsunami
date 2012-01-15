@@ -90,18 +90,17 @@ class Voile(BaseElement):
         
         return elt.nom.capitalize() + " est " + message
     
-    @staticmethod
-    def regarder(elt, personnage):
-        """personnage regarde l'élément elt."""
-        msg = BaseElement.regarder(elt, personnage)
-        or_voile = elt.orientation
+    def regarder(self, personnage):
+        """personnage regarde self."""
+        msg = BaseElement.regarder(self, personnage)
+        or_voile = self.orientation
         cote = "tribord"
         if or_voile < 0:
             cote = "bâbord"
             or_voile = -or_voile
         
         or_voile = round(or_voile / 5) * 5
-        if elt.hissee:
+        if self.hissee:
             msg += "\nCette voile est " + elt.get_nom_orientation(elt)
             msg += " ({orientation}° {cote}).".format(
                     orientation=or_voile, cote=cote)
