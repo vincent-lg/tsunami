@@ -30,10 +30,12 @@
 
 """Ce fichier contient le module primaire email."""
 
-import smtplib
-
-from email.mime.text import MIMEText
-from socket import error as SocketError
+try:
+    import smtplib
+    from email.mime.text import MIMEText
+    from socket import error as SocketError
+except ImportError:
+    smtplib = None
 
 from abstraits.module import *
 from abstraits.id import ObjetID, est_objet_id
@@ -106,7 +108,7 @@ class Module(BaseModule):
         Enfin, le sujet et le message doivent être des chaînes non encodées.
         
         """
-        if self.serveur_mail:
+        if self.serveur_mail and smtplib:
             if not self.nom_hote: # le nom d'hôte n'est pas précisé
                 self.logger.warning("Impossible d'envoyer le mail à {0} " \
                         "(sujet : {1}) car le nom d'hôte n'est pas précisé " \

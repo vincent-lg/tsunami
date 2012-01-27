@@ -30,7 +30,10 @@
 
 """Ce fichier définit la classe ClientConnecte, détaillée plus bas."""
 
-import socket
+try:
+    import socket
+except ImportError:
+    socket = None
 
 ENCODAGES = [
     'utf-8',
