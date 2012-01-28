@@ -28,13 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module joueur."""
+"""Fichier contenant le paramètre 'flags' de la commande 'groupe'."""
 
-from . import chemin_cmd
-from . import encodage
-from . import flags
-from . import groupe_existant
-from . import joueur
-from . import langue
-from . import options
-from . import nv_groupe
+from primaires.interpreteur.masque.parametre import Parametre
+from primaires.interpreteur.groupe.groupe import FLAGS
+
+class PrmFlags(Parametre):
+    
+    """Commande 'groupe flags'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "flags", "flags")
+        self.schema = "<groupe_existant> <flags_groupes>"
+        self.aide_courte = "modifie les flags du groupe"
+        self.aide_longue = \
+            "Cette commande permet de modifier les flags du groupe. " \
+            "Vous devez préciser en paramètre un ou plusieurs flags " \
+            "séparés par des espaces. Si le flag est présent sur " \
+            "le groupe, il sera désactivé. Si il ne l'est pas " \
+            "au contraire, il sera activé. Les flags existants sont : " \
+            "{}.".format(",  ".join(FLAGS.keys()))
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        nom_groupe = dic_masques["groupe_existant"].nom_groupe
+        groupe = type(self).importeur.interpreteur.groupes[nom_groupe]
+        flags = dic_masques["flags_groupes"].flags
+        for nom in flags:
+            groupe.flags = groupe.flags ^ FLAGS[nom]
+        
+        personnage << "Les flags du groupe ont bien été mis à jour."
