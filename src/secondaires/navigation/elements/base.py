@@ -110,7 +110,7 @@ class BaseElement(ObjetID, metaclass=MetaElt):
         """Retourne une description d'une ligne de l'élément."""
         return self.nom.capitalize() + " est là"
     
-    def get_nom_pour(personnage):
+    def get_nom_pour(self, personnage):
         """Retourne le nom de l'élément."""
         return self.nom
     

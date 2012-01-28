@@ -100,7 +100,7 @@ class Voile(BaseElement):
         
         or_voile = round(or_voile / 5) * 5
         if self.hissee:
-            msg += "\nCette voile est " + self.get_nom_orientation(self)
+            msg += "\nCette voile est " + self.get_nom_orientation()
             msg += " ({orientation}° {cote}).".format(
                     orientation=or_voile, cote=cote)
         else:
