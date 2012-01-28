@@ -36,6 +36,7 @@ from abstraits.id import ObjetID
 from bases.collections.liste_id import ListeID
 from corps.fonctions import lisser
 from primaires.format.description import Description
+from .chemins import Chemins
 from .coordonnees import Coordonnees
 from .sorties import Sorties, NOMS_SORTIES
 from .details import Details
@@ -167,6 +168,10 @@ class Salle(ObjetID):
         if personnage in self.personnages:
             self._personnages.remove(personnage)
             self.enregistrer()
+    
+    def salles_autour(self, rayon=15):
+        """Retourne les chemins autour de self dans le rayon précisé."""
+        return Chemins.salles_autour(self, rayon)
     
     def envoyer(self, message, *personnages, **kw_personnages):
         """Envoie le message aux personnages présents dans la salle.

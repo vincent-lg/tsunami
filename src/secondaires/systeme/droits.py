@@ -1,6 +1,6 @@
-# -*-coding:Utf-8 -*
+﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,38 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module secondaire systeme."""
+"""Ce fichier contient la configuration par défaut du module 'systeme'."""
 
-from abstraits.module import *
-from . import commandes
-from .droits import cfg_droits
+cfg_droits = r"""
+# Ce fichier contient la configuration des droits du module systeme.
+# Il permet de paramétrer les options de sécurité du module systeme.
+# Ce module permettant l'accès aux commandes systèmes de Kassie, configurer
+# ces options est recommandé.
+# Pour plus d'informations, consultez la documentation :
+# http://redmine.kassie.fr/projects/documentation/wiki/Deploiement
+# ou consultez le fichier doc/Deploiement.txt
 
-class Module(BaseModule):
-    
-    """Module proposant des commandes système.
-    
-    Ces commandes permettent par exemple d'entrer du code, de surveiller
-    les logs...
-    
-    """
-    
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "systeme", "secondaire")
-        self.cfg_droits = None
-    
-    def config(self):
-        """Méthode de configuration du module"""
-        self.cfg_droits = type(self.importeur).anaconf.get_config("systeme",
-            "systeme/droits.cfg", "config système", cfg_droits)
-        
-        BaseModule.config(self)
-    
-    def ajouter_commandes(self):
-        """On ajoute les commandes du module"""
-        self.commandes = [
-            commandes.systeme.CmdSysteme(),
-        ]
-        
-        for cmd in self.commandes:
-            self.importeur.interpreteur.ajouter_commande(cmd)
+## Commande systeme
+
+# Active ou inactive
+# Vous pouvez ici activer ou désactiver la commande système/system.
+# Mettez la variable à False pour désactiver la commande ou à True sinon.
+cmd_systeme = True
+
+# Adresses IP autorisées
+# Vous pouvez configurer ici une liste d'adresse IP ayant le droit
+# d'utiliser la commande système/system. Notez que si la variable
+# cmd_systeme est à True, un client connecté en local aura toujours
+# le droit d'exécuter système/system. Cela veut dire que l'adresse
+# IP 127.0.0.1 est toujours implicite dans la liste ci-dessous.
+# Rajoutez les adresses IP des personnes en qui vous pouvez avoir
+# confiance.
+cmd_systeme_ip = []
+
+"""

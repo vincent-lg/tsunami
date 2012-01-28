@@ -119,6 +119,11 @@ class Sorties(BaseObj):
         if self.construit and self.parent:
             self.parent.enregistrer()
     
+    def __iter__(self):
+        """Retourne chaque sortie dans l'ordre du dictionnaire."""
+        sorties = [s for s in self._sorties.values() if s is not None]
+        return iter(list(sorties))
+    
     def ajouter_sortie(self, direction, *args, **kwargs):
         """Ajoute une sortie.
         Le nom doit être un des noms sorties prévu et caractérise une direction.

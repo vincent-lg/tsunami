@@ -30,11 +30,13 @@
 
 """Ce fichier contient la classe Email, détaillée plus bas."""
 
-import smtplib
+try:
+    import smtplib
+    from email.mime.text import MIMEText
+    from socket import error as SocketError
+except ImportError:
+    smtplib = None
 import threading
-
-from email.mime.text import MIMEText
-from socket import error as SocketError
 
 from abstraits.module import *
 from abstraits.id import ObjetID, est_objet_id

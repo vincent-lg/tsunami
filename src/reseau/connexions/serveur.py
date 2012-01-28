@@ -52,8 +52,12 @@ Par défaut, ces fonctions de callback valent None.
 """
 
 import sys
-import socket
-import select
+try:
+    import socket
+    import select
+except ImportError:
+    print("Le réseau n'a pas pu démarrer.")
+    socket = select = None
 import time
 
 from reseau.connexions.client_connecte import ClientConnecte
@@ -141,26 +145,29 @@ class ConnexionServeur:
     
     def init(self):
         """Cette méthode doit être appelée après l'appel au constructeur.
+        
         Elle se charge d'initialiser le socket serveur et, en somme,
         de le mettre en écoute sur le port spécifié.
         
         """
-        # Initialisation du socket serveur
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        
-        # On paramètre le socket
-        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        if socket:
+            # Initialisation du socket serveur
+            self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            
+            # On paramètre le socket
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-        # On essaye de se mettre en écoute sur le port précisé
-        # Si ça ne marche pas, on affiche l'erreur et on quitte immédiatement
-        try:
-            self.socket.bind(('', self.port))
-        except socket.error as erreur:
-            print("Le socket serveur n'a pu être connecté: {0}".format(erreur))
-            sys.exit(1)
+            # On essaye de se mettre en écoute sur le port précisé
+            # Si ça ne marche pas, on affiche l'erreur et on quitte immédiatement
+            try:
+                self.socket.bind(('', self.port))
+            except socket.error as erreur:
+                print("Le socket serveur n'a pu être connecté: {0}".format(
+                        erreur))
+                sys.exit(1)
 
-        # On met en écoute le socket serveur
-        self.socket.listen(self.nb_clients_attente)
+            # On met en écoute le socket serveur
+            self.socket.listen(self.nb_clients_attente)
 
     def get_client_depuis_socket(self, socket):
         """Cette méthode retourne le client connecté, en fonction du
@@ -248,6 +255,9 @@ class ConnexionServeur:
         et on le déconnecte du serveur.
 
         """
+        if select is None:
+            return
+        
         self.verifier_deconnexions()
         # On attend avec select.select qu'une connexion se présente
         # Si aucune connexion ne se présente, au bout du temps indiqué
@@ -285,6 +295,9 @@ class ConnexionServeur:
         à réceptionner. Elle se base sur select.select pour cela.
 
         """
+        if select is None:
+            return
+        
         self.verifier_deconnexions()
         # On attend avec select.select qu'un message soit réceptionné
         # Si aucun message n'est à réceptionner au bout du temps indiqué
@@ -325,6 +338,9 @@ class ConnexionServeur:
         semble être le seul moyen).
         
         """
+        if select is None:
+            return
+        
         for client in self.clients.values():
             try:
                 r, none, none = select.select([client.socket], [], [], 0)

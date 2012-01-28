@@ -74,12 +74,13 @@ class ParserCMD(dict):
         # - e (chemin-enregistrement) : chemin du dossier d'enregistrement
         #                              des données sauvegardées
         # - h (help) : l'aide bien entendu
+        # - i (interactif) : console interactive
         # - l (chemin-logs) : chemin d'enregistrement des logs
         # - p (port) : port d'écoute du serveur
         # - s 'serveur) : lancer le serveur (on ou off)
-        flags_courts = "c:e:hl:p:s:"
+        flags_courts = "c:e:hil:p:s:"
         flags_longs = ["chemin-configuration=", "chemin-enregistrement=",
-                "help", "chemin-logs=", "port=", "serveur="]
+                "help", "interactif", "chemin-logs=", "port=", "serveur="]
         
         # Création de l'objet analysant la ligne de commande
         try:
@@ -102,6 +103,8 @@ class ParserCMD(dict):
             elif nom in ["-h", "--help"]:
                 self.help()
                 sys.exit(1)
+            elif nom in ["-i", "--interactif"]:
+                self["interactif"] = True
             elif nom in ["-p", "--port"]:
                 # On doit tenter de convertir le port
                 try:
@@ -135,6 +138,7 @@ class ParserCMD(dict):
             "-c, chemin-configuration\n" \
             "-e, chemin-enregistrement\n" \
             "-h, help : affiche ce message d'aide\n" \
+            "-i, interactif : lance Kassie en mode débuggage interactif\n" \
             "-l, chemin-logs\n" \
             "-p, port : paramètre le port d'écoute du serveur\n" \
             "-s, serveur (on ou off) : lance ou arrête le serveur")

@@ -84,6 +84,8 @@ from bases.logs import man_logs
 from bases.parid import parid
 from corps.config import pere
 from primaires.format.date import *
+from bases.interactif import ConsoleInteractive
+
 # Définition des fonctions appelées pour arrêter le MUD
 # Le lancement du MUD se trouve sous la fonction
 def arreter_MUD():
@@ -187,6 +189,12 @@ importeur.tout_configurer()
 importeur.tout_initialiser()
 importeur.tout_preparer()
 
+# Création si demandée de la console interactive
+if "interactif" in parser_cmd.keys():
+    console = ConsoleInteractive(importeur)
+else:
+    console = None
+
 # Lancement de la boucle synchro
 # Note: tout se déroule ici, dans une boucle temps réelle qui se répète
 # jusqu'à l'arrêt du MUD. De cette manière, on garde le contrôle total
@@ -194,6 +202,8 @@ importeur.tout_preparer()
 
 if __name__ == "__main__":
     while serveur.lance:
+        if console:
+            console.boucle()
         importeur.boucle()
         serveur.verifier_connexions()
         serveur.verifier_receptions()

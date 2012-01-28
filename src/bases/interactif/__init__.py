@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,38 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module secondaire systeme."""
+"""Fichier contenant la classe ConsoleInteractive détaillée plus bas."""
 
-from abstraits.module import *
-from . import commandes
-from .droits import cfg_droits
+import sys
+import traceback
 
-class Module(BaseModule):
+class ConsoleInteractive:
     
-    """Module proposant des commandes système.
+    """Classe représentant une console interactive.
     
-    Ces commandes permettent par exemple d'entrer du code, de surveiller
-    les logs...
+    Dans cette console peut être entrée du code Python. Si Kassie est
+    lancé avec l'option -i (--interactif), à chaque tour de boucle
+    l'utilisateur pourra entrer du code Python et voir le résultat affiché
+    à l'écran.
+    
+    Cette console est utile si le réseau est inactif sur la machine (ou
+    inopérant) et que vous souhaitez tester Kassie malgré tout.
     
     """
     
     def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "systeme", "secondaire")
-        self.cfg_droits = None
+        """Constructeur."""
+        self.espace = {
+            "importeur": importeur,
+        }
     
-    def config(self):
-        """Méthode de configuration du module"""
-        self.cfg_droits = type(self.importeur).anaconf.get_config("systeme",
-            "systeme/droits.cfg", "config système", cfg_droits)
-        
-        BaseModule.config(self)
-    
-    def ajouter_commandes(self):
-        """On ajoute les commandes du module"""
-        self.commandes = [
-            commandes.systeme.CmdSysteme(),
-        ]
-        
-        for cmd in self.commandes:
-            self.importeur.interpreteur.ajouter_commande(cmd)
+    def boucle(self):
+        """A chaque tour de boucle."""
+        code = input(">>> ")
+        if code:
+            try:
+                exec(code, self.espace)
+            except Exception:
+                print(traceback.format_exc())
