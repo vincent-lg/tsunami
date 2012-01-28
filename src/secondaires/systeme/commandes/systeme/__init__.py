@@ -56,8 +56,16 @@ class CmdSysteme(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        if personnage.instance_connexion.adresse_ip != "127.0.0.1":
-            personnage << "|err|Vous devez être connecté en local pour cela.|ff|"
+        # On récupère la configuration des droits du module système
+        cfg_droits = type(self).importeur.systeme.cfg_droits
+        if not cfg_droits.cmd_systeme:
+            personnage << "|err|Cette commande a été désactivée.|ff|"
+            return
+        
+        adresse_ip = list(cfg_droits.cmd_systeme_ip)
+        adresse_ip.insert(0, "127.0.0.1")
+        if not personnage.instance_connexion.adresse_ip in adresse_ip:
+            personnage << "|err|Cette adresse IP n'est pas autorisée.|ff|"
             return
         
         contexte = Systeme(personnage.instance_connexion)
