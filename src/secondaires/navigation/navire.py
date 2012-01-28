@@ -81,7 +81,7 @@ class Navire(Vehicule):
                 n_salle.description = salle.description
                 
                 # On recopie les éléments
-                for t_elt in salle.elements:
+                for t_elt in salle.mod_elements:
                     elt = Element(t_elt)
                     n_salle.elements.append(elt)
                 
@@ -386,7 +386,7 @@ class Propulsion(Force):
         rames = [r for r in navire.rames if r.tenu is not None]
         vecteur = vec_nul
         if voiles:
-            fact_voile = sum(v.facteur_orientation(v, navire, vent) \
+            fact_voile = sum(v.facteur_orientation(navire, vent) \
                     for v in voiles) / len(voiles) * 0.7
             allure = (direction.direction - vent.direction) % 360
             if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):

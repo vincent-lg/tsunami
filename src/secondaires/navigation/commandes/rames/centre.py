@@ -68,6 +68,6 @@ class PrmCentre(Parametre):
             personnage << "|err|Vous n'orientez pas vos rames pour " \
                     "tourner.|ff|"
         else:
-            rames.centrer(rames)
+            rames.centrer()
             salle.enregistrer()
             personnage << "Vous arrêtez de tourner en centrant les rames."

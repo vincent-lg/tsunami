@@ -32,6 +32,7 @@
 
 from collections import OrderedDict
 
+from bases.collections.liste_id import ListeID
 from primaires.salle.salle import Salle
 
 # Constantes
@@ -78,6 +79,7 @@ class SalleNavire(Salle):
         self.navire = navire
         self.modele = modele
         self.elements = []
+        self.mod_elements = ListeID(self)
         self.r_x = r_x
         self.r_y = r_y
         self.r_z = r_z
@@ -143,18 +145,17 @@ class SalleNavire(Salle):
     
     def ajouter_element(self, element):
         """Ajoute un élément dans la salle."""
-        self.elements.append(element)
-        self.enregistrer()
+        self.mod_elements.append(element)
     
     def retirer_element(self, cle):
-        """Retire l'élément de cle indiqué."""
-        for i, elt in enumerate(self.elements):
-            if elt.cle == cle:
-                del self.elements[i]
-                self.enregistrer()
+        """Retire l'élément indiqué."""
+        for i, elt in enumerate(self.mod_elements):
+            if elt.nom_type == cle:
+                del self.mod_elements[i]
                 return
         
-        raise ValueError("l'élément {} n'a pas pu être trouvé".format(cle))
+        raise ValueError("l'élément {} n'a pas pu être trouvé".format(
+                element))
     
     def decrire_plus(self, personnage):
         """Ajoute les éléments observables dans la description de la salle."""

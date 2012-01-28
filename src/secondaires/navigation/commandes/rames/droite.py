@@ -67,6 +67,6 @@ class PrmDroite(Parametre):
         elif rames.orientation > 0:
             personnage << "|err|Vous tournez déjà sur tribord.|ff|"
         else:
-            rames.virer_tribord(rames)
+            rames.virer_tribord()
             salle.enregistrer()
             personnage << "Vous commencez de ramez en tournant vers tribord."

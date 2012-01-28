@@ -43,7 +43,7 @@ class CmdGouvernail(Commande):
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "gouvernail", "rudder")
+        Commande.__init__(self, "gouvernail", "tiller")
         self.nom_categorie = "navire"
         self.aide_courte = "manipule le gouvernail"
         self.aide_longue = \

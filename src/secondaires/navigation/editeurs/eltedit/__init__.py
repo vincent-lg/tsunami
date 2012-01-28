@@ -96,6 +96,7 @@ class EdtEltedit(Editeur):
             self.pere.joueur.contextes.retirer()
             self.pere.envoyer("Opération annulée.")
         else:
+            type_choisi = ""
             p_types = type(self).importeur.navigation.types_elements
             for nom in p_types.keys():
                 if contient(nom, msg):

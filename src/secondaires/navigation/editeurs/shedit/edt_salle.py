@@ -186,7 +186,7 @@ class EdtSalle(Presentation):
         """
         salle = self.objet
         cle = arguments.strip()
-        cles = tuple(e.cle for e in salle.elements)
+        cles = tuple(e.nom_type for e in salle.mod_elements)
         types = tuple(e.nom_type for e in salle.elements)
         if cle in cles:
             salle.retirer_element(cle)
@@ -223,8 +223,8 @@ class EdtSalle(Presentation):
         msg += "\n"
         # Éléments
         msg += "\n Éléments de navire : " + ", ".join(
-                e.cle for e in salle.elements)
-        if not salle.elements:
+                e.cle for e in salle.mod_elements)
+        if not salle.mod_elements:
             msg += "aucun"
         
         return msg

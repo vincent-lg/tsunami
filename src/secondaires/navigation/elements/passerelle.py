@@ -50,12 +50,11 @@ class Passerelle(BaseElement):
             "baissee": Attribut(lambda: False),
         }
     
-    @staticmethod
-    def get_description_ligne(elt, personnage):
+    def get_description_ligne(self, personnage):
         """Retourne une description d'une ligne de l'élément."""
-        if elt.baissee:
+        if self.baissee:
             message = "dépliée ici"
         else:
             message = "repliée ici"
         
-        return elt.nom.capitalize() + " est " + message + "."
+        return self.nom.capitalize() + " est " + message + "."

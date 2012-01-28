@@ -44,8 +44,3 @@ class Loch(BaseElement):
     def __init__(self, cle=""):
         """Constructeur d'un type"""
         BaseElement.__init__(self, cle)
-    
-    @staticmethod
-    def get_description_ligne(elt, personnage):
-        """Retourne une description d'une ligne de l'élément."""
-        return elt.nom.capitalize() + " se trouve ici."

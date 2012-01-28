@@ -106,15 +106,13 @@ class BaseElement(ObjetID, metaclass=MetaElt):
         """
         pass
     
-    @staticmethod
-    def get_description_ligne(elt, personnage):
+    def get_description_ligne(self, personnage):
         """Retourne une description d'une ligne de l'élément."""
-        return elt.nom.capitalize() + " est là"
+        return self.nom.capitalize() + " est là"
     
-    @staticmethod
-    def get_nom_pour(elt, personnage):
+    def get_nom_pour(personnage):
         """Retourne le nom de l'élément."""
-        return elt.nom
+        return self.nom
     
     def regarder(self, personnage):
         """personnage regarde self."""

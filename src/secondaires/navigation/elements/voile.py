@@ -80,15 +80,14 @@ class Voile(BaseElement):
         else:
             return "parfaitement parallèle au pont"
     
-    @staticmethod
-    def get_description_ligne(elt, personnage):
+    def get_description_ligne(self, personnage):
         """Retourne une description d'une ligne de l'élément."""
-        if elt.hissee:
-            message = elt.get_nom_orientation(elt) + "."
+        if self.hissee:
+            message = self.get_nom_orientation() + "."
         else:
             message = "repliée contre le mât."
         
-        return elt.nom.capitalize() + " est " + message
+        return self.nom.capitalize() + " est " + message
     
     def regarder(self, personnage):
         """personnage regarde self."""
@@ -101,7 +100,7 @@ class Voile(BaseElement):
         
         or_voile = round(or_voile / 5) * 5
         if self.hissee:
-            msg += "\nCette voile est " + elt.get_nom_orientation(elt)
+            msg += "\nCette voile est " + self.get_nom_orientation(self)
             msg += " ({orientation}° {cote}).".format(
                     orientation=or_voile, cote=cote)
         else:
@@ -109,11 +108,10 @@ class Voile(BaseElement):
         
         return msg
     
-    @staticmethod
-    def facteur_orientation(voile, navire, vent):
+    def facteur_orientation(self, navire, vent):
         """Retourne le facteur d'orientation de la voile."""
         allure = (navire.direction.direction - vent.direction) % 360
-        or_voile = -voile.orientation
+        or_voile = -self.orientation
         if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
             angle = ANGLE_DEBOUT
         elif ALL_PRES < allure < (360 - ALL_PRES):

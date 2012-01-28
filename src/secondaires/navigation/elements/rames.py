@@ -51,22 +51,18 @@ class Rames(BaseElement):
             "tenu": Attribut(lambda: None),
         }
     
-    @staticmethod
-    def get_description_ligne(elt, personnage):
+    def get_description_ligne(self, personnage):
         """Retourne la description en une ligne de l'élément."""
-        return elt.nom.capitalize() + " se trouve là."
+        return self.nom.capitalize() + " se trouve là."
     
-    @staticmethod
-    def centrer(elt):
+    def centrer(self):
         """Centre les rames."""
-        elt.orientation = 0
+        self.orientation = 0
     
-    @staticmethod
-    def virer_tribord(elt):
+    def virer_tribord(self):
         """Vire à tribord."""
-        elt.orientation = 1
+        self.orientation = 1
     
-    @staticmethod
-    def virer_babord(elt):
+    def virer_babord(self):
         """Vire à bâbord."""
-        elt.orientation = -1
+        self.orientation = -1

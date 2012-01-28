@@ -51,10 +51,9 @@ class Ancre(BaseElement):
             "longueur": Attribut(lambda: 8),
         }
     
-    @staticmethod
-    def get_description_ligne(elt, personnage):
+    def get_description_ligne(self, personnage):
         """Retourne une description d'une ligne de l'élément."""
-        if elt.jetee:
+        if self.jetee:
             return "L'ancre est jetée."
         else:
             return "La chaîne de l'ancre est enroulée sur le pont."
