@@ -96,7 +96,7 @@ class Observable(Masque):
             # On cherche dans les autres éléments observables
             elts = salle.get_elements_observables(personnage)
             for t_elt in elts:
-                nom_elt = t_elt.get_nom_pour(t_elt, personnage)
+                nom_elt = t_elt.get_nom_pour(personnage)
                 if contient(nom_elt, nom):
                     elt = t_elt
                     break
