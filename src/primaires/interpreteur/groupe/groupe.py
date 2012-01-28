@@ -29,6 +29,7 @@
 
 
 """Ce fichier définit les groupes de personnages.
+
 Un groupe est un objet donnant plusieurs informations sur les
 utilisateurs et permettant de différencier les joueurs des administrateurs
 par exemple.

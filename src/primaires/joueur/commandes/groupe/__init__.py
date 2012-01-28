@@ -35,6 +35,7 @@ Dans ce fichier se trouve la commande même.
 
 from primaires.interpreteur.commande.commande import Commande
 from .ajouter import PrmAjouter
+from .flags import PrmFlags
 from .inclus import PrmInclus
 from .info import PrmInfo
 from .liste import PrmListe
@@ -67,12 +68,14 @@ class CmdGroupe(Commande):
     def ajouter_parametres(self):
         """Ajout des paramètres"""
         prm_ajouter = PrmAjouter()
+        prm_flags = PrmFlags()
         prm_inclus = PrmInclus()
         prm_info = PrmInfo()
         prm_liste = PrmListe()
         prm_supprimer = PrmSupprimer()
         
         self.ajouter_parametre(prm_ajouter)
+        self.ajouter_parametre(prm_flags)
         self.ajouter_parametre(prm_inclus)
         self.ajouter_parametre(prm_info)
         self.ajouter_parametre(prm_liste)
