@@ -28,15 +28,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le poste capitaine."""
+"""Fichier contenant la classe Matelot, détaillée plus bas."""
 
-from . import Poste
+from abstraits.id import ObjetID
 
-class Capitaine(Poste):
+class Matelot(ObjetID):
     
-    """Classe définissant le poste capitaine."""
+    """Un matelot est un PNJ particulier membre d'un équipage d'un navire.
     
-    nom = "capitaine"
-    def __init__(self):
-        """Constructeur du poste."""
-        self.autorite = 100
+    Si la classe représentant un Matelot n'est pas directement héritée de PNJ,
+    c'est surtout pour permettre la transition à la volée d'un PNJ à un
+    matelot et inversement. Si un Matelot est hérité de PNJ, alors un
+    PNJ doit être déclaré dès le départ comme un Matelot et ne pourra
+    plus être modifié par la suite.
