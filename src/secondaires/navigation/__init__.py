@@ -43,6 +43,7 @@ from . import masques
 from . import types
 from .modele import ModeleNavire
 from .constantes import TPS_VIRT, DIST_AVA
+from .equipage.matelot import Matelot
 
 class Module(BaseModule):
     
@@ -64,6 +65,7 @@ class Module(BaseModule):
         self.types_elements = types_elements
         self.vents = {}
         self.vents_par_etendue = {}
+        self.matelots = {}
     
     def config(self):
         """Configuration du module."""
@@ -133,6 +135,15 @@ class Module(BaseModule):
         nb_vents = len(self.vents)
         self.nav_logger.info(format_nb(nb_vents,
                 "{nb} vent{s} récupéré{s}"))
+        
+        # On récupère les matelots
+        matelots = self.importeur.supenr.charger_groupe(Matelot)
+        for matelot in matelots:
+            self.ajouter_matelot(matelot)
+        
+        nb_mat = len(self.matelots)
+        self.nav_logger.info(format_nb(nb_mat,
+                "{nb} matelot{s} récupéré{s}"))
         
         # Ajout des actions différées
         self.importeur.diffact.ajouter_action("dep_navire", TPS_VIRT,
@@ -270,6 +281,22 @@ class Module(BaseModule):
         self.vents_par_etendue[vent.etendue.cle].remove(vent)
         del self.vents[cle]
         vent.detruire()
+    
+    def creer_matelot(self, personnage):
+        """Crée un matelot depuis un personnage."""
+        matelot = Matelot(personnage)
+        self.ajouter_matelot(matelot)
+        return matelot
+    
+    def ajouter_matelot(self, matelot):
+        """Ajoute le matelot."""
+        self.matelots[matelot.id.id] = matelot
+    
+    def supprimer_matelot(self, n_id):
+        """Supprime le matelot."""
+        matelot = self.matelots[n_id]
+        del self.matelots[n_id]
+        matelot.detruire()
     
     def avancer_navires(self):
         """Fait avancer les navires."""

@@ -41,3 +41,31 @@ class Matelot(ObjetID):
     matelot et inversement. Si un Matelot est hérité de PNJ, alors un
     PNJ doit être déclaré dès le départ comme un Matelot et ne pourra
     plus être modifié par la suite.
+    
+    Le matelot possède plus spécifiquement :
+        un poste de prédilection
+        une confiance éprouvée envers le capitaine
+    
+    Les autres informations sont propres au PNJ et sont accessibles
+    directement. La méthode __getattr__ a été construit sur le même
+    modèle que celle des objets ou des éléments de navire : si
+    l'information n'est pas trouvée dans l'objet, on cherche dans le PNJ.
+    
+    """
+    
+    groupe = "matelots"
+    sous_rep = "navigation.matelots"
+    def __init__(self, personnage):
+        """Constructeur du matelot."""
+        self.personnage = personnage
+        self.nom_poste = "matelot"
+        self.confiance = 0
+    
+    def __getnewargs__(self):
+        return (None, )
+    
+    def __getattr__(self, nom_attr):
+        """On cherche l'attribut dans le personnage."""
+        return getattr(self.personnage, nom_attr)
+
+ObjetID.ajouter_groupe(Matelot)
