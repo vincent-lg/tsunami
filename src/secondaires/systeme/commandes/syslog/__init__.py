@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,39 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module secondaire systeme."""
+"""Package contenant la commande 'syslog'"""
 
-from abstraits.module import *
-from . import commandes
-from .droits import cfg_droits
+from primaires.interpreteur.commande.commande import Commande
 
-class Module(BaseModule):
+class CmdSyslog(Commande):
     
-    """Module proposant des commandes système.
-    
-    Ces commandes permettent par exemple d'entrer du code, de surveiller
-    les logs...
+    """Commande 'syslog'.
     
     """
     
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "systeme", "secondaire")
-        self.cfg_droits = None
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "syslog", "syslog")
+        self.groupe = "administrateur"
+        self.aide_courte = "affiche les derniers messages systèmes"
+        self.aide_longue = \
+            "Cette commande permet d'afficher les derniers messages " \
+            "reçus par le système. Notez que ces systèmes sont ceux " \
+            "transitant par le système de log interne à Kassie (man_log). " \
+            "Les messages affichés à la console d'une autre façon ne " \
+            "seront pas visibles grâce à cette commande."
     
-    def config(self):
-        """Méthode de configuration du module"""
-        self.cfg_droits = type(self.importeur).anaconf.get_config("systeme",
-            "systeme/droits.cfg", "config système", cfg_droits)
-        
-        BaseModule.config(self)
-    
-    def ajouter_commandes(self):
-        """On ajoute les commandes du module"""
-        self.commandes = [
-            commandes.systeme.CmdSysteme(),
-            commandes.syslog.CmdSyslog(),
-        ]
-        
-        for cmd in self.commandes:
-            self.importeur.interpreteur.ajouter_commande(cmd)
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        messages = type(self).importeur.man_logs.messages
+        messages = messages[-20:]
+        msg = "\n".join([m.message for m in messages])
+        personnage << msg

@@ -31,3 +31,4 @@
 """Ce paquet contient les commandes du module systeme."""
 
 from . import systeme
+from . import syslog

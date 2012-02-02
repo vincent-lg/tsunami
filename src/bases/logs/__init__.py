@@ -86,6 +86,7 @@ from bases.logs.logger import *
 REP_LOGS = os.path.expanduser("~") + os.sep + "kassie" + os.sep + "logs"
 
 class ManLogs:
+    
     """Cette classe permet d'enregistrer et gérer les fichiers de log.
     
     Chaque module primaire ou secondaire ayant besoin de logger des
@@ -95,9 +96,11 @@ class ManLogs:
     On conserve une trace des loggers créés.
 
     """
+    
     def __init__(self):
         """Constructeur du gestionnaire"""
         self.loggers = {} # {nom_logger:logger}
+        self.messages = []
     
     def config(self, anaconf, parser_cmd):
         """Configuration du gestionnaire"""
@@ -127,6 +130,7 @@ class ManLogs:
     
     def creer_logger(self, sous_rep, nom_logger, nom_fichier=""):
         """Retourne un nouveau logger.
+        
         Si le nom de fichier n'est pas spécifié, on s'appuie sur le nom
         du logger .log.
         On se base dans tous les cas sur rep_base lié au sous_rep pour
@@ -137,7 +141,7 @@ class ManLogs:
         if nom_fichier == "":
             nom_fichier = "{0}.log".format(nom_logger)
 
-        logger = Logger(REP_LOGS, sous_rep, nom_fichier, nom_logger)
+        logger = Logger(self, REP_LOGS, sous_rep, nom_fichier, nom_logger)
         logger.verif_rep()
         self.loggers[nom_logger] = logger
         return logger

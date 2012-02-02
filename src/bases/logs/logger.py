@@ -34,6 +34,7 @@ from bases.logs.message import Message
 
 import os
 import time
+from datetime import datetime
 
 # Constantes prédéfinies
 # Niveaux d'erreur
@@ -59,7 +60,9 @@ for cle, val in NIVEAUX.items():
 FORMAT = "%date% %heurems% [%niveau%] : %message%"
 
 class Logger:
+    
     """Cette classe représente des loggers.
+    
     Ce sont des objets permettant d'enregistrer différentes informations.
     Une instance d'un logger est créée à chaque fois qu'on souhaite obtenir
     une information indépendante des autres. Par exemple, chaque module
@@ -82,11 +85,14 @@ class Logger:
     et fatal, respectivement pour chaque niveau d'erreur.
 
     """
+    
     en_file = True # par défaut on log en file d'attente
-    def __init__(self, rep_base, sous_rep, nom_fichier, nom_logger, \
+    def __init__(self, man_logs, rep_base, sous_rep, nom_fichier, nom_logger,
             console=True, format=FORMAT, niveau_min=INFO):
-        """Constructeur du logger. Seuls les quatre premiers paramètres
-        sont obligatoires :
+        """Constructeur du logger.
+        
+        Seuls les cinq premiers paramètres sont obligatoires :
+        -   le manager créant le logger
         -   le répertoire de base (probablement constant d'un logger à l'autre)
         -   le sous-répertoire
         -   le nom du fichier de log
@@ -98,6 +104,7 @@ class Logger:
         -   le niveau minimum pour afficher un message
         
         """
+        self.man_logs = man_logs
         self.nom = nom_logger
         self.en_file = type(self).en_file # par défaut, on met en file d'attente
         self.file_attente = [] # file d'attente des messages à sauver
@@ -111,6 +118,7 @@ class Logger:
 
     def _get_rep_complet(self):
         """Cette méthode retourne le répertoire complet rep_base et sous_rep.
+        
         Si sous_rep est vide on s'assure que le chemin reste cohérent.
         
         """
@@ -120,27 +128,29 @@ class Logger:
             rep_complet = rep_base
         else:
             rep_complet = rep_base + os.sep + sous_rep
-
+        
         return rep_complet
-
+    
     rep_complet = property(_get_rep_complet)
-
+    
     def filtrer_niveau(self, niveau_str):
         """Permet de changer le niveau minimum de filtrage des messages.
+        
         ATTENTION : le niveau est donné sous la forme d'une chaîne.
         
         """
         self.niveau_min = REV_NIVEAUX[niveau_str]
-
+    
     def verif_rep(self):
         """Cette méthode vérifie si le répertoire de log existe.
+        
         Si ce n'est pas le cas, on le crée.
 
         """
         rep = self.rep_complet
         if not os.path.exists(rep):
             os.makedirs(rep)
-
+    
     def ouvrir_fichier(self):
         """Méthode chargée d'ouvrir le fichier configuré."""
         rep = self.rep_complet
@@ -152,13 +162,13 @@ class Logger:
             print("Impossible d'ouvrir le fichier de log {0}".format( \
                     nom_fichier))
             self.fichier = None
-
+    
     def fermer_fichier(self):
         """Méthode chargée de fermer le fichier de log."""
         if self.fichier is not None:
             self.fichier.close()
             self.fichier = None
-
+    
     def formater(self, niveau, message):
         """Méthode retournant la chaîne formatée.
         
@@ -166,7 +176,7 @@ class Logger:
         On définit un format spécifique comme une partie de chaîne entourée
         de deux signes %.
         Par exemple, %date% sera remplacé par la date actuel dans le message.
-
+        
         """
         sdate = time.struct_time(time.localtime())
         ms = "{0:f}".format(time.time()).split(".")[1][:3]
@@ -183,7 +193,7 @@ class Logger:
         chaine = chaine.replace("%niveau%", niveau)
         chaine = chaine.replace("%message%", message)
         return chaine
-
+    
     def doit_afficher(self, niveau, module):
         """Retourne True si le logger doit afficher le message de ce
         niveau, False sinon.
@@ -194,7 +204,7 @@ class Logger:
             if self.console is True and self.niveau_min <= niveau:
                 doit = True
         return doit
-
+    
     def log_formate(self, niveau, message, formate, module):
         """Cette méthode permet de logger un message déjà formaté. La
         méthodes log fait directement appel à elle.
@@ -209,26 +219,31 @@ class Logger:
                 pass
         
         self.fermer_fichier()
-
+    
     def log(self, niveau, message, module):
         """Méthode permettant de logger un message.
+        
         Les méthodes info, debug, warning et fatal redirigent dessus.
         
         """
         s_niveau = NIVEAUX[niveau]
         f_message = self.formater(s_niveau, message)
+        msg = Message(module, datetime.now(), s_niveau, message)
         if Logger.en_file:
             self.file_attente.append(Message(s_niveau, message, f_message))
             if self.doit_afficher(niveau, module):
+                self.man_logs.messages.append(msg)
                 print(message)
         else:
             if self.doit_afficher(niveau, module):
+                self.man_logs.messages.append(msg)
                 print(message)
             
             self.log_formate(niveau, message, f_message, self.nom)
-
+    
     def enregistrer_file_attente(self):
         """Cette méthode ne doit être appelée qu'une fois.
+        
         Elle permet d'enregistrer la file d'attente du logger.
         Cette file d'attente s'est remplie pendant que le module 'log' se
         configurait. Dès son initialisation, le module demande à cette méthode
@@ -238,20 +253,30 @@ class Logger:
         for message in self.file_attente:
             self.log_formate(message.niveau, message.message, \
                     message.message_formate,self.nom)
-    
+        
     def debug(self, message):
         """Méthode permettant de logger un niveau de message DEBUG"""
         self.log(DEBUG, message, self.nom)
-
+    
     def info(self, message):
         """Méthode permettant de logger un niveau de message INFO"""
         self.log(INFO, message, self.nom)
-
+    
     def warning(self, message):
         """Méthode permettant de logger un niveau de message WARNING"""
         self.log(WARNING, message, self.nom)
-
+    
     def fatal(self, message):
         """Méthode permettant de logger un niveau de message FATAL"""
         self.log(FATAL, message, self.nom)
 
+class Message:
+    
+    """Classe représentant un message de log."""
+    
+    def __init__(self, module, date, niveau, message):
+        """Constructeur d'un message de log."""
+        self.module = module
+        self.date = date
+        self.niveau = niveau
+        self.message = message
