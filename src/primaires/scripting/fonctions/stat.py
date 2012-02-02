@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,35 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction salle."""
+"""Fichier contenant la fonction stat."""
 
 from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
     
-    """Retourne la salle d'un personnage."""
+    """Retourne la stat d'un personnage."""
     
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.salle_personnage, "Personnage")
-        cls.ajouter_types(cls.salle_chaine, "str")
+        cls.ajouter_types(cls.stat, "Personnage", "str")
     
     @staticmethod
-    def salle_personnage(personnage):
-        """Retourne la salle du personnage passé en paramètre"""
-        return personnage.salle
-    
-    @staticmethod
-    def salle_chaine(cle):
-        """Retourne la salle correspondante à la clé entrée.
+    def stat(personnage, stat):
+        """Retourne la stat du personnage passé en paramètre
         
-        La clé doit être la zone de la salle et son ménmonic
-        séparés par le signe deux points. Par exemple, "picte:1".
+        La stat doit également être précisé sous la forme d'une chaîne
+        contenant son nom (comme "force" par exemple).
         
         """
         try:
-            salle = importeur.salle[cle]
+            return personnage.stats[stat]
         except KeyError:
-            raise ErreurExecution("salle inconnue : {}".format(cle))
-        else:
-            return salle
+            raise ErreurExecution("stat inconnue : {}".format(stat))

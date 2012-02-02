@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,35 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction salle."""
+"""Fichier contenant la fonction niveau."""
 
 from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
     
-    """Retourne la salle d'un personnage."""
+    """Retourne le niveau d'un personnage."""
     
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.salle_personnage, "Personnage")
-        cls.ajouter_types(cls.salle_chaine, "str")
+        cls.ajouter_types(cls.niveau_principal, "Personnage")
+        cls.ajouter_types(cls.niveau_secondaire, "Personnage", "str")
     
     @staticmethod
-    def salle_personnage(personnage):
-        """Retourne la salle du personnage passé en paramètre"""
-        return personnage.salle
+    def niveau_principal(personnage):
+        """Retourne le niveau principal du personnage passé en paramètre"""
+        return personnage.niveau
     
     @staticmethod
-    def salle_chaine(cle):
-        """Retourne la salle correspondante à la clé entrée.
+    def niveau_secondaire(personnage, niveau):
+        """Retourne le niveau secondaire du personnage passé en paramètre
         
-        La clé doit être la zone de la salle et son ménmonic
-        séparés par le signe deux points. Par exemple, "picte:1".
+        Le niveau doit également être précisé sous la forme d'une chaîne
+        contenant son nom.
         
         """
         try:
-            salle = importeur.salle[cle]
+            return personnage.niveaux[niveau]
         except KeyError:
-            raise ErreurExecution("salle inconnue : {}".format(cle))
-        else:
-            return salle
+            raise ErreurExecution("Niveau inconnu : {}".format(niveau))

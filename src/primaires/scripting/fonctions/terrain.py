@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,35 +28,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction salle."""
+"""Fichier contenant la fonction terrain."""
 
 from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
     
-    """Retourne la salle d'un personnage."""
+    """Retourne le terrain d'une salle."""
     
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.salle_personnage, "Personnage")
-        cls.ajouter_types(cls.salle_chaine, "str")
+        cls.ajouter_types(cls.terrain_salle, "Salle")
     
     @staticmethod
-    def salle_personnage(personnage):
-        """Retourne la salle du personnage passé en paramètre"""
-        return personnage.salle
-    
-    @staticmethod
-    def salle_chaine(cle):
-        """Retourne la salle correspondante à la clé entrée.
-        
-        La clé doit être la zone de la salle et son ménmonic
-        séparés par le signe deux points. Par exemple, "picte:1".
-        
-        """
-        try:
-            salle = importeur.salle[cle]
-        except KeyError:
-            raise ErreurExecution("salle inconnue : {}".format(cle))
-        else:
-            return salle
+    def terrain_salle(salle):
+        """Retourne le terrain d'une salle passée en paramètre"""
+        return salle.nom_terrain
