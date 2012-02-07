@@ -28,9 +28,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Message, définie plus bas."""
+"""Ce fichier contient la classe MessageTmp, définie plus bas."""
 
-class Message:
+class MessageTmp:
+    
     """Cette classe représente un message de log stocké par la fil
     d'attente du Logger.
     

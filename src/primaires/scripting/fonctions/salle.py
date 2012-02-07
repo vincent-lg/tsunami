@@ -39,8 +39,24 @@ class ClasseFonction(Fonction):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.salle_personnage, "Personnage")
+        cls.ajouter_types(cls.salle_chaine, "str")
     
     @staticmethod
     def salle_personnage(personnage):
         """Retourne la salle du personnage passé en paramètre"""
         return personnage.salle
+    
+    @staticmethod
+    def salle_chaine(cle):
+        """Retourne la salle correspondante à la clé entrée.
+        
+        La clé doit être la zone de la salle et son ménmonic
+        séparés par le signe deux points. Par exemple, "picte:1".
+        
+        """
+        try:
+            salle = importeur.salle[cle]
+        except KeyError:
+            raise ErreurExecution("salle inconnue : {}".format(cle))
+        else:
+            return salle

@@ -28,4 +28,101 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Contient les backends de jeux."""
+"""Ce package contient les backens de jeu.
+
+Ce fichier contient la classe BaseJeu dont doit être hérité chaque jeu.
+Cette classe est détaillée plus bas.
+
+"""
+
+from abstraits.obase import BaseObj
+
+class BaseJeu(BaseObj):
+    
+    """Classe définissant un jeu.
+    
+    Ce jeu est indépendant du plateau. En effet, un plateau peut être
+    utilisé pour différents jeux, par exemple on trouve beaucoup de jeux
+    différents utilisant 52 cartes.
+    
+    Le jeu tel que défini dans cette classe est l'ensemble des règles
+    du jeu indépendemment du plateau. Le plateau lui va contenir les
+    cases, les différents pions et d'autres détails. Les informations
+    ponctuelles sur le jeu (la position des joueurs, les tours de chacun)
+    va être défini dans la partie.
+    
+    """
+    
+    nom = "" # nom du jeu
+    def __init__(self):
+        """Constructeur d'un jeu.
+        
+        Il ne doit pas être redéfini. Pour ajouter des attributs,
+        redéfinir plutôt la méthode init qui est appelée par le constructeur.
+        
+        """
+        BaseObj.__init__(self)
+        self.partie = None
+        self.plateau = None
+        self.nb_joueurs_min = 1
+        self.nb_joueurs_max = 1
+        self.init()
+        self._construire()
+    
+    def __getnewargs__(self):
+        return ()
+    
+    def peut_commencer(self):
+        """La partie peut-elle commencée ?"""
+        return True
+    
+    def peut_jouer(self, personnage):
+        """Le joueur peut-il jouer ?
+        
+        Cette méthode retourne True si le joueur peut jouer ou False sinon.
+        En outre, si une explication doit être donnée sur le fait que
+        ce joueur ne eput pas jouer, ce doit être ici.
+        
+        """
+        return True
+    
+    def jouer(self, personnage, msg):
+        """Joue au jeu.
+        
+        La variable msg contient le message entré par le joueur voulant jouer.
+        
+        Pour rappel, le contexte de jeu interprète les messages commençant
+        par un slash (/) comme des options. Tous les autres sont des
+        ordres adressés au jeu pour jouer et sont transmis à cette méthode.
+        Chaque jeu peut avoir une différente syntaxe pour jouer
+        (par exemple, le solitaire demandra qu'on entre deux coordonnées
+        séparés par un espace, ce sera aussi le cas des échecs, mais ce
+        ne sera pas le cas d'un jeu de carte où il faudra choisir le numéro
+        de la carte que l'on souhaite jouer par exemple). Cela est à
+        l'initiative de cette méthode de comprendre le message et de
+        l'interpréter.
+        
+        Chaque jeu doit donc redéfinir cette méthode.
+        
+        """
+        self.partie.en_cours = True
+    
+    def enregistrer(self):
+        if self.partie:
+            self.partie.enregistrer()
+    
+    # Options
+    # Le nom des méthodes est opt_ suivi du raccourci. Ainsi, pour
+    # quitter le jeu, il faut entrer /q ce qui redirigera vers
+    # la méthode opt_q
+    def opt_q(self, personnage, message):
+        """Quitte le jeu."""
+        personnage.contextes.retirer()
+        personnage << "Vous quittez la partie."
+        self.partie.retirer_joueur(personnage)
+        if len(self.partie.joueurs) == 0:
+            self.partie.detruire()
+    
+    def opt_v(self, personnage, message):
+        """Affiche le plateau."""
+        personnage << self.partie.afficher(personnage)

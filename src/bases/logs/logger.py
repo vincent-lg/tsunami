@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-from bases.logs.message import Message
+from bases.logs.message import MessageTmp
 
 """Ce fichier définit la classe Logger, détaillée plus bas."""
 
@@ -230,7 +230,7 @@ class Logger:
         f_message = self.formater(s_niveau, message)
         msg = Message(module, datetime.now(), s_niveau, message)
         if Logger.en_file:
-            self.file_attente.append(Message(s_niveau, message, f_message))
+            self.file_attente.append(MessageTmp(s_niveau, message, f_message))
             if self.doit_afficher(niveau, module):
                 self.man_logs.messages.append(msg)
                 print(message)

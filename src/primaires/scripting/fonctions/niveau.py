@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,39 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les plateaux.
+"""Fichier contenant la fonction niveau."""
 
-Chaque sous-package est un plateau.
+from primaires.scripting.fonction import Fonction
 
-Il possède un fichier __init__.py dans lequel se trouve la classe Plateau.
-
-Ce fichier définit la classe BasePlateau dont doit être héritée chaque plateau.
-Elle est détaillée plus bas.
-
-"""
-
-from abstraits.obase import BaseObj
-
-class BasePlateau(BaseObj):
+class ClasseFonction(Fonction):
     
-    """Classe définissant un plateau de jeu.
+    """Retourne le niveau d'un personnage."""
     
-    Un plateau est différent du
-    jeu lui-même (on peut jouer à plusieurs jeux depuis le même plateau).
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.niveau_principal, "Personnage")
+        cls.ajouter_types(cls.niveau_secondaire, "Personnage", "str")
     
-    """
+    @staticmethod
+    def niveau_principal(personnage):
+        """Retourne le niveau principal du personnage passé en paramètre"""
+        return personnage.niveau
     
-    jeux = [] # liste des noms de jeux liés à ce plateau
-    nom = "" # nom de ce plateau
-    def __init__(self):
-        """Initialisation du plateau."""
-        BaseObj.__init__(self)
-        self.init()
-        self._construire()
-    
-    def __getnewargs__(self):
-        return ()
-    
-    def afficher(self, personnage, jeu, partie):
-        """Affiche la partie en cours au personnage."""
-        return ""
+    @staticmethod
+    def niveau_secondaire(personnage, niveau):
+        """Retourne le niveau secondaire du personnage passé en paramètre
+        
+        Le niveau doit également être précisé sous la forme d'une chaîne
+        contenant son nom.
+        
+        """
+        try:
+            return personnage.niveaux[niveau]
+        except KeyError:
+            raise ErreurExecution("Niveau inconnu : {}".format(niveau))

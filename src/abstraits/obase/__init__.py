@@ -207,7 +207,11 @@ class BaseObj(metaclass=MetaBaseObj):
         # On récupère la classe
         classe = type(self)
         # On appel son constructeur
-        classe.__init__(self, *self.__getnewargs__())
+        try:
+            classe.__init__(self, *self.__getnewargs__())
+        except TypeError:
+            print("Erreur lors de l'appel au constructeur de", classe)
+            sys.exit(1)
         # On met à jour les attributs
         self.__dict__.update(dico_attrs)
         # Si l'objet existe dans le dictionnaire des BaseObj

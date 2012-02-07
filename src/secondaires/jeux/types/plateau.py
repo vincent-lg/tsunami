@@ -50,7 +50,7 @@ class Plateau(BaseType):
         BaseType.__init__(self, cle)
         plateaux = list(sorted(type(self).importeur.jeux.plateaux.keys()))
         self.plateau = ""
-        self.etendre_editeur("p", "plateau", Choix, self, "plateau", plateaux)
+        self.etendre_editeur("l", "plateau", Choix, self, "plateau", plateaux)
         # Attributs propres à l'objet (non au prototype)
         self._attributs = {
             "partie": Attribut(),
@@ -66,7 +66,7 @@ class Plateau(BaseType):
         'etendre_editeur'.
         
         """
-        env = enveloppes["p"] # on récupère 'jeu'
+        env = enveloppes["l"] # on récupère 'jeu'
         env.prompt = "Entrez un nom de plateau : "
         env.apercu = "{objet.plateau}"
         env.aide_courte = \

@@ -69,16 +69,40 @@ class Plateau(Contexte):
     
     def interpreter(self, msg):
         """Interprétation du message."""
+        partie = self.partie
+        jeu = partie.jeu
         if msg.startswith("/"):
             # C'est une option
-            msg = msg[1:].lower()
-            if hasattr(self.partie.jeu, "opt_" + msg):
-                getattr(self.partie.jeu, "opt_" + msg)(self.personnage)
-                if msg == "q":
-                    self.personnage.contextes.retirer()
-                    self.objet.partie.detruire()
-                    self.objet.partie = None
+            msg = msg[1:]
+            opt = msg.split(" ")[0].lower()
+            msg = " ".join(msg.split(" ")[1:])
+            if hasattr(self.partie.jeu, "opt_" + opt):
+                getattr(self.partie.jeu, "opt_" + opt)(self.personnage, msg)
             else:
                 self.pere << "|err|Option invalide.|ff|"
+        elif partie.finie:
+            self.personnage << "|err|La partie est finie.|ff|"
+            return
+        elif self.partie.tour is not self.personnage:
+            self.personnage << "|err|Ce n'est pas votre tour.|ff|"
         else:
-            self.partie.jeu.jouer(self.personnage, msg)
+            if len(partie.joueurs) < jeu.nb_joueurs_min:
+                self.personnage << "|err|Vous n'êtes pas assez nombreux " \
+                        "pour commencer à jouer."
+                return
+            elif not jeu.peut_commencer():
+                return
+            
+            partie.jeu.jouer(self.personnage, msg)
+            partie.changer_tour()
+            
+            # On replace le tour
+            p = partie.tour
+            nb_tours = partie.nb_tours
+            while not partie.finie and not jeu.peut_jouer(p):
+                partie.changer_tour()
+                p = partie.tour
+                if partie.nb_tours > nb_tours + 3:
+                    partie.envoyer("La partie est déclarée nulle.")
+                    partie.terminer()
+                    break
