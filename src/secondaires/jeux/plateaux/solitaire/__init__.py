@@ -30,11 +30,11 @@
 
 """Plateau solitaire."""
 
-from abstraits.obase import BaseObj
+from .. import BasePlateau
 from .bille import Bille
 from .vide import CaseVide
 
-class Plateau(BaseObj):
+class Plateau(BasePlateau):
     
     """Plateau de solitaire.
     
@@ -45,10 +45,8 @@ class Plateau(BaseObj):
     jeux = ["solitaire"]
     nom = "solitaire"
     
-    def __init__(self):
+    def init(self):
         """Initialisation du plateau."""
-        BaseObj.__init__(self)
-        self.nb_joueurs_max = 1
         self.cases = {
             "C1": Bille(),
             "D1": Bille(),
@@ -88,12 +86,8 @@ class Plateau(BaseObj):
             "D7": Bille(),
             "E7": Bille(),
         }
-        self._construire()
     
-    def __getnewargs__(self):
-        return ()
-    
-    def afficher(self, personnage):
+    def afficher(self, personnage, jeu, partie):
         """Affiche la partie en cours au personnage."""
         plateau = \
             "  A B C D E F G\n" \

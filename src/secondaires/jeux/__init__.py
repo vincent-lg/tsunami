@@ -58,7 +58,7 @@ class Module(BaseModule):
         self.charger_plateaux()
         
         # On charge les parties
-        parties = self.importeur.supenr.charger_groupe(Partie)
+        self.parties = self.importeur.supenr.charger_groupe(Partie)
 
         BaseModule.init(self)
     
@@ -82,7 +82,6 @@ class Module(BaseModule):
                 jeu = getattr(getattr(getattr(getattr(jeu, "jeux"),
                         "jeux"), nom_module), "Jeu")
                 self.jeux[jeu.nom] = jeu
-                print("On charge le jeu", nom_module)
     
     def charger_plateaux(self):
         """Chargement des plateaux."""
@@ -100,10 +99,10 @@ class Module(BaseModule):
                 plateau = getattr(getattr(getattr(getattr(plateau, "jeux"),
                         "plateaux"), nom_module), "Plateau")
                 self.plateaux[plateau.nom] = plateau
-                print("On charge le plateau", nom_module)
     
     def get_jeu(self, nom):
         """Retourne le jeu portant le nom 'nom'.
+        
         Si aucun jeu n'est trouvé, retourne None.
         
         """

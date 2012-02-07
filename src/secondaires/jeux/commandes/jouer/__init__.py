@@ -66,17 +66,23 @@ class CmdJouer(Commande):
         jeu = plateau.jeux[0]
         jeu = jeux[jeu]
         
-        if objet.partie:
-            self.pere << "|err|Vous ne pouvez rejoindre cette partie.|ff|"
-        else:
+        partie = objet.partie
+        if partie is None:
             plateau = plateau()
             jeu = jeu()
-            partie = Partie(jeu, plateau)
+            partie = Partie(objet, jeu, plateau)
             jeu.plateau = plateau
             jeu.partie = partie
-            partie.ajouter_joueur(personnage)
             objet.partie = partie
-            contexte = ContextePlateau(personnage.instance_connexion, objet,
-                    partie)
-            personnage.contextes.ajouter(contexte)
-            personnage << contexte.accueil()
+        elif partie.en_cours:
+            personnage << "|err|La partie est déjà commencée.|ff|"
+            return
+        elif len(partie.joueurs) >= partie.jeu.nb_joueurs_max:
+            personnage << "|err|Il n'y a plus de place libre.|ff|"
+            return
+        
+        partie.ajouter_joueur(personnage)
+        contexte = ContextePlateau(personnage.instance_connexion, objet,
+                partie)
+        personnage.contextes.ajouter(contexte)
+        personnage << contexte.accueil()

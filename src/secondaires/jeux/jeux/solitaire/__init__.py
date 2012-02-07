@@ -32,14 +32,14 @@
 
 from math import fabs
 
-from abstraits.obase import BaseObj
+from .. import BaseJeu
 from secondaires.jeux.plateaux.solitaire.vide import CaseVide
 
 def abs(valeur):
     """Retourne la valeur entière absolue de valeur."""
     return int(fabs(valeur))
 
-class Jeu(BaseObj):
+class Jeu(BaseJeu):
     
     """Ce jeu définit le solitaire.
     
@@ -48,15 +48,6 @@ class Jeu(BaseObj):
     """
     
     nom = "solitaire"
-    def __init__(self):
-        """Construction du jeu."""
-        BaseObj.__init__(self)
-        self.plateau = None
-        self.partie = None
-    
-    def __getnewargs__(self):
-        return ()
-    
     @property
     def personnage(self):
         """Retourne le personnage jouant au jeu."""
@@ -137,11 +128,3 @@ class Jeu(BaseObj):
         if not self.plateau.cases[entre]: return False
         if self.plateau.cases[coord_a]: return False
         return entre
-    
-    # Options
-    def opt_q(self, personnage):
-        """Quitte le jeu."""
-        personnage << "Vous quittez la partie."
-    
-    def opt_v(self, personnage):
-        self.partie.afficher_tous()

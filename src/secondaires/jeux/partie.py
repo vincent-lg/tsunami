@@ -43,35 +43,89 @@ class Partie(ObjetID):
     
     groupe = "partie"
     sous_rep = "jeux/parties"
-    def __init__(self, jeu, plateau):
+    def __init__(self, objet, jeu, plateau):
         """Constructeur de la partie."""
         ObjetID.__init__(self)
+        self.objet = objet
         self.jeu = jeu
         self.plateau = plateau
         self.__joueurs = ListeID(self)
+        self.tour = None
+        self.sens = 1
+        self.en_cours = False
+        self.nb_tours = 0
+        self.finie = False
     
     def __getnewargs__(self):
-        return (None, None)
+        return (None, None, None)
     
     @property
     def personnage(self):
         """Retourne le premier joueur."""
         return self.__joueurs[0]
     
+    @property
+    def joueurs(self):
+        """Retourne une liste déréférencée des joueurs."""
+        return list(self.__joueurs)
+    
     def ajouter_joueur(self, personnage):
         """Ajoute le personnage comme joueur."""
-        if self.plateau.nb_joueurs_max > len(self.__joueurs):
+        if self.jeu.nb_joueurs_max > len(self.__joueurs):
             self.__joueurs.append(personnage)
+            if self.tour is None:
+                self.tour = personnage
+            
             return True
         
         return False
     
+    def retirer_joueur(self, personnage):
+        """Retire le joueur de la partie."""
+        if personnage in self.__joueurs:
+            if self.tour is personnage:
+                self.changer_tour()
+            self.__joueurs.remove(personnage)
+    
+    def changer_tour(self):
+        """Change de tour."""
+        i = self.joueurs.index(self.tour)
+        if self.sens > 0:
+            i += 1
+        else:
+            i -= 1
+        i = i % len(self.__joueurs)
+        self.tour = self.__joueurs[i]
+        
+        if i == 0:
+            self.nb_tours += 1
+    
     def afficher(self, personnage):
-        return self.plateau.afficher(personnage)
+        return self.plateau.afficher(personnage, self.jeu, self)
     
     def afficher_tous(self):
         """Affiche la partie à tous les participants."""
         for p in self.__joueurs:
-            p << self.afficher(p)
+            p << self.afficher(p, self.jeu, self)
+    
+    def envoyer(self, message, *joueurs, **kw_joueurs):
+        """Envoie le message à tous les joueurs de la partie.
+        
+        Sauf ceux dans joueurs et kw_joueurs qui sont les exceptions.
+        
+        """
+        for joueur in self.joueurs:
+            if joueur not in joueurs and joueur not in kw_joueurs.values():
+                joueur.envoyer(message, *joueurs, **kw_joueurs)
+    
+    def terminer(self):
+        """Termine la partie."""
+        self.finie = True
+        self.envoyer("La partie est finie !")
+    
+    def detruire(self):
+        """Destruction de la partie."""
+        self.objet.partie = None
+        ObjetID.detruire(self)
 
 ObjetID.ajouter_groupe(Partie)

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,39 +28,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les plateaux.
-
-Chaque sous-package est un plateau.
-
-Il possède un fichier __init__.py dans lequel se trouve la classe Plateau.
-
-Ce fichier définit la classe BasePlateau dont doit être héritée chaque plateau.
-Elle est détaillée plus bas.
-
-"""
+"""Fichier définissant la classe Pion, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
 
-class BasePlateau(BaseObj):
+class Pion(BaseObj):
     
-    """Classe définissant un plateau de jeu.
+    """Classe représentant un pion."""
     
-    Un plateau est différent du
-    jeu lui-même (on peut jouer à plusieurs jeux depuis le même plateau).
-    
-    """
-    
-    jeux = [] # liste des noms de jeux liés à ce plateau
-    nom = "" # nom de ce plateau
-    def __init__(self):
-        """Initialisation du plateau."""
+    def __init__(self, couleur, numero):
+        """Constructeur du pion."""
         BaseObj.__init__(self)
-        self.init()
+        self.couleur = couleur
+        self.numero = numero
         self._construire()
     
     def __getnewargs__(self):
-        return ()
-    
-    def afficher(self, personnage, jeu, partie):
-        """Affiche la partie en cours au personnage."""
-        return ""
+        return ("", 0)
