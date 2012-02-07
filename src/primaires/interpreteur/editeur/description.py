@@ -32,7 +32,6 @@
 
 from primaires.format.fonctions import *
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
-from primaires.scripting.editeurs.edt_instructions import EdtInstructions
 from . import Editeur
 
 class Description(Editeur):
@@ -167,3 +166,5 @@ class Description(Editeur):
         description = self.description
         description.ajouter_paragraphe(msg)
         self.actualiser()
+
+from primaires.scripting.editeurs.edt_instructions import EdtInstructions
