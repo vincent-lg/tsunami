@@ -93,8 +93,9 @@ class Plateau(Contexte):
             elif not jeu.peut_commencer():
                 return
             
-            partie.jeu.jouer(self.personnage, msg)
-            partie.changer_tour()
+            res = partie.jeu.jouer(self.personnage, msg)
+            if res:
+                partie.changer_tour()
             
             # On replace le tour
             p = partie.tour
