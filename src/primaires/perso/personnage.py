@@ -139,6 +139,7 @@ class Personnage(ObjetID):
     
     def _get_salle(self):
         return self._salle
+    
     @propriete_id
     def _set_salle(self, salle):
         """Redéfinit la salle du joueur.

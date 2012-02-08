@@ -122,7 +122,7 @@ class PNJ(Personnage):
     
     def tick(self):
         """Méthode appelée à chaque tick."""
-        Personnage.__init__(self)
+        Personnage.tick(self)
     
     def detruire(self):
         """Destruction du PNJ."""
