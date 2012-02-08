@@ -99,8 +99,10 @@ class Jeu(BaseJeu):
                     "{{}} lance les dés et obtient {}.".format(
                     de), personnage)
             self.avancer(personnage, de)
+            return True
         else:
             personnage << "|err|Coup invalide.|ff|"
+            return False
     
     def get_position(self, personnage):
         """Retourne la position du personnage."""
@@ -111,8 +113,8 @@ class Jeu(BaseJeu):
         pos = self.get_position(personnage)
         rec = 0
         if pos + x >= len(self.plateau.cases):
-            rec = (len(self.plateau.cases) + x - 1) % len(self.plateau.cases)
-            x = len(self.plateau.cases) - pos - 1
+            rec = x - (len(self.plateau.cases) - 1 - pos)
+            x -= rec
             print(x, rec)
         
         msg = "Vous avancez d"
@@ -166,4 +168,5 @@ class Jeu(BaseJeu):
             pions = ["{}  {}".format(p.numero, p.couleur) for p in \
                     self.plateau.pions.values() if p not in \
                     self.pions.values()]
+            pions.sort()
             personnage << "Pions disponibles :\n\n  " + "\n  ".join(pions)
