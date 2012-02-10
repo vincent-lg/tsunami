@@ -45,10 +45,13 @@ class PNJ(Personnage):
     
     groupe = "pnjs"
     sous_rep = "pnj/pnj"
-    
+    no_c = 1
     def __init__(self, prototype):
         """Constructeur du PNJ"""
         type(self).importeur.logger.info("Début du constructeur du PNJ")
+        type(self).no_c += 1
+        if type(self).no_c > 200:
+            raise ValueError
         Personnage.__init__(self)
         self._nom = ""
         self.prototype = prototype
