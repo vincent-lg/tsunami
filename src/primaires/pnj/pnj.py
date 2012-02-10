@@ -48,6 +48,7 @@ class PNJ(Personnage):
     
     def __init__(self, prototype):
         """Constructeur du PNJ"""
+        type(self).importeur.logger.info("Début du constructeur du PNJ")
         Personnage.__init__(self)
         self._nom = ""
         self.prototype = prototype
@@ -67,6 +68,7 @@ class PNJ(Personnage):
             
             # On force l'écriture de la race
             self.race = prototype.race
+        type(self).importeur.logger.info("Fin du constructeur du PNJ")
     
     def __getnewargs__(self):
         return (None, )
