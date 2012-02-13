@@ -105,7 +105,14 @@ class Module(BaseModule):
         if not self.pret:
             raise RuntimeError("le supenr n'est pas prêt à enregistrer")
         
-        a_enregistrer = [o for o in objets if o.e_existe]
+        if self.enregistre_actuellement:
+            return
+        
+        a_enregistrer = [o for o in objets.values() if o.e_existe]
+        print(len(a_enregistrer), "objets, dans " + \
+                str(len(pickle.dumps(a_enregistrer))) + "o sont " \
+                "prêts à être enregistrés.")
+        c=input()
         self.enregistre_actuellement = True
         chemin_dest = REP_ENRS + os.sep + "enregistrements.bin"
         
@@ -143,6 +150,7 @@ class Module(BaseModule):
         finally:
             if "fichier_enr" in locals():
                 fichier_enr.close()
+            print(len(objets), "objets récupérés")
         
     def charger_groupe(self, groupe):
         """Cette fonction retourne les objets d'un groupe.

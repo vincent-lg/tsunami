@@ -41,9 +41,10 @@ objets_base = {} # dictionnaire des différents BaseObj {nom_cls:cls}
 
 
 # Objets chargés
-objets = []
+objets = {}
 objets_par_type = {}
-ids = []
+ids = {}
+statut_gen = 0 # 0 => OK, 1 => en cours
 
 class MetaBaseObj(type):
     
@@ -108,15 +109,17 @@ class BaseObj(metaclass=MetaBaseObj):
         # On initialise le dictionnaire des versions de l'objet
         self._dict_version = {}
         self.e_existe = True
-        if id(self) not in ids:
-            ids.append(id(self))
-            objets.append(self)
-            liste = objets_par_type.get(type(self), [])
-            liste.append(self)
-            objets_par_type[type(self)] = liste
+        self.ajouter_enr()
     
     def __getnewargs__(self):
         raise NotImplementedError
+    
+    def ajouter_enr(self):
+        if statut_gen == 0 and id(self) not in objets:
+            objets[id(self)] = self
+            liste = objets_par_type.get(type(self), [])
+            liste.append(self)
+            objets_par_type[type(self)] = liste
     
     def version_actuelle(self, classe):
         """Retourne la version actuelle de l'objet.
@@ -149,6 +152,8 @@ class BaseObj(metaclass=MetaBaseObj):
     
     def __setstate__(self, dico_attrs):
         """Méthode appelée lors de la désérialisation de l'objet"""
+        global statut_gen
+        statut_gen = 1
         # On récupère la classe
         classe = type(self)
         # On appel son constructeur
@@ -157,11 +162,12 @@ class BaseObj(metaclass=MetaBaseObj):
         except TypeError:
             print("Erreur lors de l'appel au constructeur de", classe)
             sys.exit(1)
-        # On met à jour les attributs
         self.__dict__.update(dico_attrs)
         
         # On vérifie s'il a besoin d'une vraie mis à jour
         self._update(classe)
+        statut_gen = 0
+        self.ajouter_enr()
     
     def _update(self, classe):
         """Méthode appelée pendant la désérialisation de l'objet,
