@@ -80,18 +80,15 @@ class Groupe(BaseObj):
         """
         if groupe not in self.groupes_inclus:
             self.groupes_inclus.append(groupe)
-            self.parent.enregistrer()
     
     def supprimer_groupe_inclus(self, groupe):
         """Supprime 'groupe' des groupes inclus"""
         if groupe in self.groupes_inclus:
             self.groupes_inclus.remove(groupe)
-            self.parent.enregistrer()
     
     def vider_groupe_inclus(self):
         """Vide les groupes inclus"""
         self.groupes_inclus = []
-        self.parent.enregistrer()
     
     @property
     def str_flags(self):

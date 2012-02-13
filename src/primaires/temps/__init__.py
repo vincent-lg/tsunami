@@ -62,17 +62,14 @@ class Module(BaseModule):
     def init(self):
         """Initialisation du module"""
         # On récupère ou crée le temps
-        temps = None
-        sous_rep = "temps"
-        fichier = "temps.sav"
-        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
-            temps = self.importeur.supenr.charger(sous_rep, fichier)
+        temps = self.importeur.supenr.charger_unique(Temps)
         if temps is None:
             temps = Temps(self.cfg)
+        self.temps = temps
+        
         self.importeur.hook["salle:regarder"].ajouter_evenement(
                 self.voir_ciel)
         
-        self.temps = temps
         BaseModule.init(self)
     
     def ajouter_commandes(self):

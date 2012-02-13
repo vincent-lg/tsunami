@@ -30,14 +30,14 @@
 
 """Ce fichier contient la classe Vent, détaillée plus bas."""
 
-from abstraits.id import ObjetID
+from abstraits.obase import BaseObj
 from primaires.salle.coordonnees import Coordonnees
 from primaires.vehicule.vecteur import Vecteur
 
 # Constantes
 INFLUENCE_MAX = 50
 
-class Vent(ObjetID):
+class Vent(BaseObj):
     
     """Cette classe décrit un vent influenaçant la navigation.
     
@@ -53,8 +53,6 @@ class Vent(ObjetID):
     
     """
     
-    groupe = "vent"
-    sous_rep = "vents"
     def __init__(self, etendue, x, y, z, vitesse=1, direction=0):
         """Constructeur du vent.
         
@@ -65,7 +63,7 @@ class Vent(ObjetID):
             direction est la direction du futur vecteur (un angle en degré).
         
         """
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.cle = "inconnue"
         self.etendue = etendue
         self.x = x
@@ -108,6 +106,3 @@ class Vent(ObjetID):
         self.vitesse.x = force.x
         self.vitesse.y = force.y
         self.vitesse.z = force.z
-
-
-ObjetID.ajouter_groupe(Vent)

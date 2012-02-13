@@ -79,13 +79,10 @@ class Module(BaseModule):
         # On récupère les comptes
         comptes = self.importeur.supenr.charger_groupe(Compte)
         for compte in comptes:
-            self.comptes[compte.id.id] = compte
+            self.comptes[compte.nom] = compte
         
         # On récupère les instances de connexion
-        if NOM_GROUPE in type(self.importeur).parid:
-            objets = type(self.importeur).parid[NOM_GROUPE].values()
-        else:
-            objets = []
+        objets = []
         
         comptes_a_pas_effacer = []
         
@@ -100,9 +97,6 @@ class Module(BaseModule):
         for compte in comptes:
             if (not compte.valide) and (not compte.nom in comptes_a_pas_effacer):
                 self.supprimer_compte(compte)
-        
-        # On ajoute le dictionnaire 'instances' comme groupe fictif de 'parid'
-        type(self.importeur).parid[NOM_GROUPE] = self.instances
         
         nb_comptes = len(self.comptes)
         self.cpt_logger.info(
@@ -197,18 +191,18 @@ class Module(BaseModule):
         nouv_compte = Compte(nom_compte)
         self.cpt_logger.info("Création du compte {}: {}".format(
                 nom_compte, nouv_compte))
-        self.comptes[nouv_compte.id.id] = nouv_compte
+        self.comptes[nouv_compte.nom] = nouv_compte
         return nouv_compte
     
     def supprimer_compte(self, compte):
         """Supprime le compte 'compte'"""
-        if compte.id.id in self.comptes.keys():
+        if compte.nom in self.comptes.keys():
             self.cpt_logger.info("Suppression du compte {0}: {1}".format( \
                     compte.nom, compte))
-            del self.comptes[compte.id.id]
+            del self.comptes[compte.nom]
             compte.detruire()
         else:
-            raise KeyError("Le compte {0} n'est pas dans la liste " \
+            raise KeyError("Le compte n'est pas dans la liste " \
                     "des comptes existants".format(compte))
     
     def get_compte(self, nom):

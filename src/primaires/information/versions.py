@@ -32,9 +32,9 @@
 
 from textwrap import wrap
 
-from abstraits.unique import Unique
+from abstraits.obase import BaseObj
 
-class Versions(Unique):
+class Versions(BaseObj):
 
     """Classe conteneur des versions.
     Cette classe liste les modifications de version du logiciel
@@ -44,7 +44,7 @@ class Versions(Unique):
     
     def __init__(self):
         """Constructeur du conteneur"""
-        Unique.__init__(self, "information", "versions")
+        BaseObj.__init__(self)
         self.__modifications = []
         self._lus = {}
     
@@ -61,17 +61,14 @@ class Versions(Unique):
     def __setitem__(self, id, modif):
         """Edite une modification enregistrée."""
         self.__modifications[id] = modif
-        self.enregistrer()
     
     def __delitem__(self, id):
         """Supprime une modification en fonction de son index."""
         del self.__modifications[id]
-        self.enregistrer()
     
     def append(self, texte):
         """Ajoute une modification à la liste."""
         self.__modifications.append(texte)
-        self.enregistrer()
     
     def afficher(self, offset=0):
         """Retourne les dernières modifications jusqu'à l'offset."""
@@ -92,11 +89,10 @@ class Versions(Unique):
         """Affiche les dernières modifications nons lues par 'personnage'."""
         ret = ""
         derniere = 0
-        if personnage.id.id in self._lus:
-            derniere = self._lus[personnage.id.id]
+        if personnage in self._lus:
+            derniere = self._lus[personnage]
         if len(self) - derniere > 0:
             ret = self.afficher(len(self) - derniere)
         if lire:
-            self._lus[personnage.id.id] = len(self)
-        self.enregistrer()
+            self._lus[personnage] = len(self)
         return ret

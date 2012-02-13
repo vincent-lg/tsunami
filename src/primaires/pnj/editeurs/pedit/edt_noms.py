@@ -128,7 +128,6 @@ class EdtNoms(Editeur):
                             break
                         i += 1
                     prototype.noms_sup.insert(i, [nombre, nom, etat])
-                prototype.enregistrer()
                 self.actualiser()
     
     def opt_supprimer_nom_sup(self, arguments):
@@ -150,7 +149,6 @@ class EdtNoms(Editeur):
                     break
                 i += 1
             del prototype.noms_sup[i]
-            prototype.enregistrer()
             self.actualiser()
     
     def interpreter(self, msg):

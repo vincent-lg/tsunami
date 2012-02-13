@@ -81,7 +81,6 @@ from bases.importeur import Importeur
 from bases.parser_cmd import ParserCMD
 from bases.anaconf import anaconf
 from bases.logs import man_logs
-from bases.parid import parid
 from corps.config import pere
 from primaires.format.date import *
 from bases.interactif import ConsoleInteractive
@@ -92,10 +91,6 @@ def arreter_MUD():
     """Fonction appelée pour arrêter le MUD proprement"""
     global importeur, log
     importeur.deconnecter_joueurs()
-    
-    # On s'assure que tous les fichiers sont bien enregistré pour éviter
-    # de corrompre des données
-    importeur.supenr.enregistrer_file_attente()
     
     importeur.tout_detruire()
     importeur.tout_arreter()
@@ -151,7 +146,7 @@ serveur = ConnexionServeur(port, config_globale.nb_clients_attente, \
         config_globale.nb_max_connectes)
 
 # On crée l'importeur, gérant les différents modules (primaires et secondaires)
-importeur = Importeur(parser_cmd, anaconf, man_logs, parid, serveur)
+importeur = Importeur(parser_cmd, anaconf, man_logs, serveur)
 
 # On lance le processus d'instanciation des modules
 importeur.tout_charger()

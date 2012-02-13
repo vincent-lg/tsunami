@@ -99,13 +99,6 @@ class Sortie(BaseObj):
     def __getnewargs__(self):
         return ("", "")
     
-    def __setattr__(self, nom_attr, valeur):
-        """Enregisre le parent si il est précisé"""
-        construit = self.construit
-        BaseObj.__setattr__(self, nom_attr, valeur)
-        if construit and self.parent:
-            self.parent.enregistrer()
-    
     def deduire_article(self):
         """Déduit l'article en fonction du nom de la sortie"""
         if self.nom in NOMS_VERS_ARTICLES.keys():

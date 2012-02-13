@@ -34,7 +34,6 @@ from abstraits.module import *
 from . import commandes
 from . import types
 from .combat import *
-from .distance import Choix, Cibles
 from .types.arme import Arme
 
 class Module(BaseModule):
@@ -82,20 +81,6 @@ class Module(BaseModule):
         etat.msg_refus = "Vous êtes en train de combattre"
         etat.msg_visible = "{personnage} combat ici"
         etat.act_interdites = ["combat", "prendre", "poser", "deplacer"]
-        
-        # On récupère les cibles et choix
-        sous_rep = "combat"
-        fichier = "cibles.sav"
-        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
-            self.cibles = self.importeur.supenr.charger(sous_rep, fichier)
-        else:
-            self.cibles = Cibles()
-        sous_rep = "combat"
-        fichier = "choix.sav"
-        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
-            self.choix = self.importeur.supenr.charger(sous_rep, fichier)
-        else:
-            self.choix = Choix()
         
         BaseModule.init(self)
         

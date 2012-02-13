@@ -64,7 +64,6 @@ class PrmTenir(Parametre):
             personnage << "|err|Vous tenez déjà ces rames.|ff|"
         else:
             rames.tenu = personnage
-            salle.enregistrer()
             personnage.cle_etat = "tenir_rames"
             personnage << "Vous empoignez {}.".format(
                     rames.nom)

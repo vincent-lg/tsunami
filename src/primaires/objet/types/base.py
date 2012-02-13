@@ -30,13 +30,12 @@
 
 """Ce fichier contient la classe BaseType, détaillée plus bas."""
 
-from abstraits.id import ObjetID
-from bases.collections.liste_id import ListeID
+from abstraits.obase import BaseObj
 from primaires.format.description import Description
 from primaires.objet.script import ScriptObjet
 from . import MetaType
 
-class BaseType(ObjetID, metaclass=MetaType):
+class BaseType(BaseObj, metaclass=MetaType):
     
     """Classe abstraite représentant le type de base d'un objet.
     
@@ -46,8 +45,6 @@ class BaseType(ObjetID, metaclass=MetaType):
     
     """
     
-    groupe = "prototypes_objets"
-    sous_rep = "objets/prototypes"
     nom_type = "" # à redéfinir
     nom_scripting = "l'objet"
     _nom = "base_type_objet"
@@ -57,7 +54,7 @@ class BaseType(ObjetID, metaclass=MetaType):
     types = {}
     def __init__(self, cle=""):
         """Constructeur d'un type"""
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.cle = cle
         self._attributs = {}
         self.no = 0 # nombre d'objets créés sur ce prototype
@@ -67,7 +64,7 @@ class BaseType(ObjetID, metaclass=MetaType):
         self.etat_pluriel = "sont posés là"
         self.noms_sup = []
         self.description = Description(parent=self)
-        self.objets = ListeID(self)
+        self.objets = []
         self.unique = True # par défaut tout objet est unique
         self._prix = 1 # valeur en magasin
         self.sans_prix = False
@@ -96,7 +93,7 @@ class BaseType(ObjetID, metaclass=MetaType):
     
     def __getstate__(self):
         """Retourne le dictionnaire à enregistrer."""
-        attrs = dict(ObjetID.__getstate__(self))
+        attrs = dict(BaseObj.__getstate__(self))
         del attrs["_extensions_editeur"]
         del attrs["_attributs"]
         return attrs
@@ -107,7 +104,6 @@ class BaseType(ObjetID, metaclass=MetaType):
     def _set_prix(self, prix):
         """Modifie le prix"""
         self._prix = int(prix)
-        self.enregistrer()
     prix = property(_get_prix, _set_prix)
     
     def etendre_script(self):
@@ -236,5 +232,3 @@ class BaseType(ObjetID, metaclass=MetaType):
         self.script["regarde"]["apres"].executer(
                 objet=self, personnage=personnage)
         return ""
-
-ObjetID.ajouter_groupe(BaseType)

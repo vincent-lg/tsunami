@@ -74,7 +74,6 @@ class PrmGauche(Parametre):
             nombre = dic_masques["nombre"]
             nombre = nombre and nombre.nombre or 1
             gouvernail.virer_babord(nombre)
-            salle.enregistrer()
             personnage << "Vous inclinez le gouvernail sur bâbord."
             personnage.salle.envoyer("{} incline le gouvernail sur bâbord.",
                     personnage)

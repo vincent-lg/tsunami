@@ -32,7 +32,6 @@
 
 from collections import OrderedDict
 
-from bases.collections.liste_id import ListeID
 from primaires.salle.salle import Salle
 
 # Constantes
@@ -79,7 +78,7 @@ class SalleNavire(Salle):
         self.navire = navire
         self.modele = modele
         self.elements = []
-        self.mod_elements = ListeID(self)
+        self.mod_elements = []
         self.r_x = r_x
         self.r_y = r_y
         self.r_z = r_z
@@ -96,7 +95,6 @@ class SalleNavire(Salle):
     def passerelle(self):
         """Retourne la passerelle de la salle ou None."""
         elts = [e for e in self.elements if e.nom_type == "passerelle"]
-        print(elts, self.elements)
         if elts:
             return elts[0]
         

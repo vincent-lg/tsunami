@@ -30,9 +30,9 @@
 
 """Fichier contenant la classe Matelot, détaillée plus bas."""
 
-from abstraits.id import ObjetID
+from abstraits.obase import BaseObj
 
-class Matelot(ObjetID):
+class Matelot(BaseObj):
     
     """Un matelot est un PNJ particulier membre d'un équipage d'un navire.
     
@@ -53,10 +53,9 @@ class Matelot(ObjetID):
     
     """
     
-    groupe = "matelots"
-    sous_rep = "navigation.matelots"
     def __init__(self, personnage):
         """Constructeur du matelot."""
+        BaseObj.__init__(self)
         self.personnage = personnage
         self.nom_poste = "matelot"
         self.confiance = 0
@@ -67,5 +66,3 @@ class Matelot(ObjetID):
     def __getattr__(self, nom_attr):
         """On cherche l'attribut dans le personnage."""
         return getattr(self.personnage, nom_attr)
-
-ObjetID.ajouter_groupe(Matelot)

@@ -34,20 +34,18 @@ import re
 import traceback
 from fractions import Fraction
 
-from abstraits.id import ObjetID
+from abstraits.obase import BaseObj
 from primaires.scripting.parser import expressions
 from primaires.scripting.instruction import Instruction, ErreurExecution
 from primaires.scripting.constantes.connecteurs import CONNECTEURS
 from .alerte import Alerte
 
-class Test(ObjetID):
+class Test(BaseObj):
     
     """Classe contenant un ensemble de tests.
     
     """
     
-    groupe = "test"
-    sous_rep = "scripting/tests"
     def __init__(self, evenement, chaine_test=""):
         """Constructeur d'une suite de tests.
         
@@ -56,7 +54,7 @@ class Test(ObjetID):
             chaine_test -- la suite de tests sous la forme d'une chaîne
         
         """
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.__evenement = evenement
         self.__tests = None
         self.__instructions = []
@@ -102,7 +100,6 @@ class Test(ObjetID):
         """
         # On essaye d'interpréter la suite de tests
         self.__tests = expressions["tests"].parser(chaine_test)[0]
-        self.enregistrer()
     
     def ajouter_instruction(self, message):
         """Construit et ajoute l'instruction."""
@@ -111,7 +108,6 @@ class Test(ObjetID):
         instruction.deduire_niveau(self.dernier_niveau)
         self.dernier_niveau = instruction.get_niveau_suivant()
         self.__instructions.append(instruction)
-        self.evenement.appelant.enregistrer()
     
     def remplacer_instruction(self, ligne, message):
         """Remplace une instruction."""
@@ -123,7 +119,6 @@ class Test(ObjetID):
         instruction = type_instruction.construire(message)
         instruction.niveau = ancienne_instruction.niveau
         self.__instructions[ligne] = instruction
-        self.enregistrer()
     
     def tester(self, evenement):
         """Teste le test."""
@@ -208,7 +203,6 @@ class Test(ObjetID):
         globales = self.get_globales(evenement)
         
         # Exécution
-        __builtins__["importeur"] = type(self).importeur
         __builtins__["ErreurExecution"] = ErreurExecution
         __builtins__["variables"] = evenement.espaces.variables
         try:
@@ -218,7 +212,6 @@ class Test(ObjetID):
         except Exception as err:
             self.erreur_execution(str(err))
         finally:
-            del __builtins__["importeur"]
             del __builtins__["ErreurExecution"]
             del __builtins__["variables"]
         
@@ -227,5 +220,3 @@ class Test(ObjetID):
             # Si aucun verrou n'a été posé
             if not self.acteur.quetes[etape.quete.cle].verrouille:
                 self.acteur.quetes.valider(etape.quete, etape.niveau)
-
-ObjetID.ajouter_groupe(Test)

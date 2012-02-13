@@ -107,10 +107,6 @@ class BaseJeu(BaseObj):
         """
         self.partie.en_cours = True
     
-    def enregistrer(self):
-        if self.partie:
-            self.partie.enregistrer()
-    
     # Options
     # Le nom des méthodes est opt_ suivi du raccourci. Ainsi, pour
     # quitter le jeu, il faut entrer /q ce qui redirigera vers

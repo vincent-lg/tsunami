@@ -32,10 +32,9 @@
 
 from datetime import datetime
 
-from abstraits.id import ObjetID
-from bases.collections.liste_id import ListeID
+from abstraits.obase import BaseObj
 
-class Alerte(ObjetID):
+class Alerte(BaseObj):
     
     """Classe définissant une alerte scripting.
     
@@ -45,8 +44,6 @@ class Alerte(ObjetID):
     
     """
     
-    groupe = "alerte"
-    sous_rep = "scripting/alertes"
     def __init__(self, objet, evenement, test, no_ligne, ligne, message,
             traceback):
         """Cration d'une alerte.
@@ -61,8 +58,8 @@ class Alerte(ObjetID):
             traceback -- le traceback complet de l'exception levée.
         
         """
-        ObjetID.__init__(self)
-        self.no = self.id.id
+        BaseObj.__init__(self)
+        self.no = len(type(self).importeur.scripting.alertes) + 1
         self.objet = repr(objet)
         self.date = datetime.now()
         if objet:
@@ -78,5 +75,3 @@ class Alerte(ObjetID):
     
     def __getnewargs__(self):
         return (None, "", "", "", "", "", "")
-
-ObjetID.ajouter_groupe(Alerte)

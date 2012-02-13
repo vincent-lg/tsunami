@@ -82,7 +82,6 @@ class Jeu(BaseJeu):
                 plateau.cases[coord_de] = CaseVide()
                 plateau.cases[coord_entre] = CaseVide()
                 partie.afficher_tous()
-                partie.enregistrer()
             else:
                 personnage << "|err|Ce coup est invalide.|ff|"
     

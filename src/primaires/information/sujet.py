@@ -30,12 +30,11 @@
 
 """Fichier contenant la classe SujetAide, détaillée plus bas."""
 
-from abstraits.id import ObjetID
+from abstraits.obase import BaseObj
 from primaires.format.description import Description
-from bases.collections.liste_id import ListeID
 from primaires.format.fonctions import supprimer_accents
 
-class SujetAide(ObjetID):
+class SujetAide(BaseObj):
     
     """Classe représentant un sujet d'aide.
     
@@ -55,19 +54,17 @@ class SujetAide(ObjetID):
     
     """
     
-    groupe = "aide"
-    sous_rep = "aide/sujets"
     def __init__(self, titre):
         """Constructeur du sujet d'aide."""
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self._titre = titre.lower().split(" ")[0]
-        self._pere = None
+        self.pere = None
         self.resume = "sujet d'aide"
         self.contenu = Description(parent=self)
         self.mots_cles = []
         self._str_groupe = "joueur"
-        self.__sujets_lies = ListeID(parent=self)
-        self.__sujets_fils = ListeID(parent=self)
+        self.__sujets_lies = []
+        self.__sujets_fils = []
     
     def __getnewargs__(self):
         return ("", )
@@ -84,15 +81,6 @@ class SujetAide(ObjetID):
                 importeur.information.get_sujet_par_mot_cle(titre):
             self._titre = titre
     titre = property(_get_titre, _set_titre)
-    
-    def _get_pere(self):
-        try:
-            return type(self).importeur.parid["aide"][self._pere]
-        except KeyError:
-            return None
-    def _set_pere(self, pere):
-        self._pere = pere.id if pere else None
-    pere = property(_get_pere, _set_pere)
     
     @property
     def str_mots_cles(self):
@@ -163,15 +151,11 @@ class SujetAide(ObjetID):
         """Lie un sujet au courant."""
         self.__sujets_lies.append(sujet)
         sujet.__sujets_lies.append(self)
-        self.enregistrer()
-        sujet.enregistrer()
     
     def supprimer_lie(self, sujet):
         """Supprime un sujet de la liste des sujets liés."""
         self.__sujets_lies.remove(sujet)
         sujet.__sujets_lies.remove(self)
-        self.enregistrer()
-        sujet.enregistrer()
     
     def est_fils(self, sujet):
         """Retourne True si le sujet est fils de celui-ci, False sinon."""
@@ -181,15 +165,11 @@ class SujetAide(ObjetID):
         """Ajoute le sujet aux fils."""
         self.__sujets_fils.append(sujet)
         sujet.pere = self
-        self.enregistrer()
-        sujet.enregistrer()
     
     def supprimer_fils(self, sujet):
         """Supprime le sujet des fils."""
         self.__sujets_fils.remove(sujet)
         sujet.pere = None
-        self.enregistrer()
-        sujet.enregistrer()
     
     def echanger_fils(self, sujet, bas=False):
         """Change un fils de place vers le haut ou le bas de la liste."""
@@ -245,5 +225,3 @@ class SujetAide(ObjetID):
                 ret += "|ff|, |ent|".join([s.titre for s in sujets_lies])
                 ret += "|ff|."
         return ret
-
-ObjetID.ajouter_groupe(SujetAide)

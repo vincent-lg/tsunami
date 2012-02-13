@@ -44,8 +44,8 @@ class Conversation(BaseObj):
     
     def __init__(self, emetteur, cible, phrase):
         """Constructeur de la classe"""
-        self._emetteur = emetteur.id.id
-        self._cible = cible.id.id
+        self.emetteur = emetteur
+        self.cible = cible
         self._phrase = phrase
         self.focus = False
         self.date = datetime.datetime.now()
@@ -56,16 +56,6 @@ class Conversation(BaseObj):
     
     def __getnewarges__(self):
         return (None, None, "")
-    
-    @property
-    def emetteur(self):
-        """Retourne l'émetteur de la conversation"""
-        return type(self).importeur.parid["joueurs"][self._emetteur]
-    
-    @property
-    def cible(self):
-        """Retourne la cible de la conversation"""
-        return type(self).importeur.parid["joueurs"][self._cible]
     
     def _get_phrase(self):
         """Retourne la phrase mise en forme"""

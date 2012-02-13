@@ -68,10 +68,7 @@ class Module(BaseModule):
                 self.cb_reception, *reception.args, **reception.kwargs)
         
         # On récupère les informations statistiques
-        sous_rep = "stats"
-        fichier = "stats.sav"
-        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
-            self.stats = self.importeur.supenr.charger(sous_rep, fichier)
+        self.stats = self.importeur.supenr.charger_unique(Stats)
         if self.stats is None or self.stats.uptime != \
                 type(self.importeur).serveur.uptime:
             self.stats = Stats(type(self.importeur).serveur.uptime)

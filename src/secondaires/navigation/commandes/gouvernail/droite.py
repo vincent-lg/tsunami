@@ -74,7 +74,6 @@ class PrmDroite(Parametre):
             nombre = dic_masques["nombre"]
             nombre = nombre and nombre.nombre or 1
             gouvernail.virer_tribord(nombre)
-            salle.enregistrer()
             personnage << "Vous inclinez le gouvernail sur tribord."
             personnage.salle.envoyer("{} incline le gouvernail sur tribord.",
                     personnage)

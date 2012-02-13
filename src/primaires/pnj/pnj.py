@@ -32,10 +32,11 @@
 
 import sys
 
-from abstraits.id import ObjetID
+from abstraits.obase import BaseObj
 from primaires.perso.personnage import Personnage
 
 class PNJ(Personnage):
+    
     """Classe représentant un PNJ, c'est-à-dire un personnage virtuel.
     
     Ce personnage est géré par l'univers et n'est pas connecté, à
@@ -43,15 +44,8 @@ class PNJ(Personnage):
     
     """
     
-    groupe = "pnjs"
-    sous_rep = "pnj/pnj"
-    no_c = 1
     def __init__(self, prototype):
         """Constructeur du PNJ"""
-        type(self).importeur.logger.info("Début du constructeur du PNJ")
-        type(self).no_c += 1
-        if type(self).no_c > 200:
-            raise ValueError
         Personnage.__init__(self)
         self._nom = ""
         self.prototype = prototype
@@ -71,7 +65,6 @@ class PNJ(Personnage):
             
             # On force l'écriture de la race
             self.race = prototype.race
-        type(self).importeur.logger.info("Fin du constructeur du PNJ")
     
     def __getnewargs__(self):
         return (None, )
@@ -135,6 +128,4 @@ class PNJ(Personnage):
         if self in self.prototype.pnj:
             self.prototype.pnj.remove(self)
         
-        ObjetID.detruire(self)
-
-ObjetID.ajouter_groupe(PNJ)
+        BaseObj.detruire(self)

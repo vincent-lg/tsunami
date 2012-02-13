@@ -78,17 +78,6 @@ class Attitude(BaseObj):
     def __getnewargs__(self):
         return ("", None)
     
-    def __setattr__(self, nom_attr, valeur):
-        """Enregisre le parent si il est précisé"""
-        construit = self.construit
-        BaseObj.__setattr__(self, nom_attr, valeur)
-        if construit and self.parent:
-            self.parent.enregistrer()
-    
-    def enregistrer(self):
-        if self.parent:
-            self.parent.enregistrer()
-    
     @property
     def statut(self):
         """Renvoie le statut de l'attitude"""

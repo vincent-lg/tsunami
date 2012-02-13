@@ -35,7 +35,6 @@ jambe.
 """
 
 from abstraits.obase import BaseObj
-from bases.collections.liste_id import ListeID
 
 # Flags
 AUCUN_FLAG = 0
@@ -59,8 +58,6 @@ class Membre(BaseObj):
     
     """
     
-    _nom = "membre"
-    _version = 1
     def __init__(self, nom, modele=None, parent=None):
         """Constructeur d'un membre"""
         BaseObj.__init__(self)
@@ -70,7 +67,7 @@ class Membre(BaseObj):
         self.groupe = ""
         self.probabilite_atteint = 0
         self.supporte = 3
-        self.equipe = ListeID(parent) # les objets équipés à cet emplacement
+        self.equipe = []
         self.tenu = None # l'objet tenu
         self.parent = parent
         
@@ -84,12 +81,6 @@ class Membre(BaseObj):
     
     def __getnewargs__(self):
         return ("", )
-    
-    def __setattr__(self, nom_attr, val_attr):
-        BaseObj.__setattr__(self, nom_attr, val_attr)
-        if not nom_attr.startswith("_") and hasattr(self, "parent") and \
-                self.parent:
-            self.parent.enregistrer()
     
     def __repr__(self):
         return "membre({})".format(self.nom)
@@ -105,9 +96,6 @@ class Membre(BaseObj):
                     "un membre".format(statut))
         
         self._statut_m = statut
-        
-        if hasattr(self, "parent") and self.parent:
-            self.parent.enregistrer()
     
     statut = property(_get_statut, _set_statut)
     

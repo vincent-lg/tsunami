@@ -68,5 +68,4 @@ class PrmDroite(Parametre):
             personnage << "|err|Vous tournez déjà sur tribord.|ff|"
         else:
             rames.virer_tribord()
-            salle.enregistrer()
             personnage << "Vous commencez de ramez en tournant vers tribord."

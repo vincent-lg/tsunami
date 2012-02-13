@@ -59,7 +59,6 @@ import py_compile
 
 from abstraits.module import *
 from abstraits.obase import BaseObj, objets_base
-from abstraits.id.id import ID
 from corps.arborescence import getcwd
 
 # Constantes
@@ -81,7 +80,6 @@ class Importeur:
     anaconf = None # analyseur des fichiers de configuration
     man_logs = None # gestionnaire des loggers
     logger = None # le logger de l'importeur
-    parid = None
     serveur = None
     nb_hotboot = 0
     chemins_modules = {
@@ -89,7 +87,7 @@ class Importeur:
         "secondaire": REP_SECONDAIRES,
     }
     
-    def __init__(self, parser_cmd, anaconf, man_logs, parid, serveur):
+    def __init__(self, parser_cmd, anaconf, man_logs, serveur):
         """Constructeur de l'importeur. Il vérifie surtout
         qu'un seul est créé.
         
@@ -97,7 +95,6 @@ class Importeur:
         -   le parser de commande
         -   l'analyseur des fichiers de configuration
         -   le gestionnaire des loggers
-        -   le gestionnaire des IDs
         -   le serveur
         Ces informations sont stockées comme des attributs de classe.
         Si un module souaite y faire apel il n'aura qu'à faire
@@ -112,11 +109,10 @@ class Importeur:
         Importeur.parser_cmd = parser_cmd
         Importeur.anaconf = anaconf
         Importeur.man_logs = man_logs
-        Importeur.parid = parid
         Importeur.serveur = serveur
         Importeur.logger = man_logs.creer_logger("", "importeur", "")
         BaseObj.importeur = self
-        ID.importeur = self
+        __builtins__["importeur"] = self
     
     def __str__(self):
         """Retourne sous une forme un peu plus lisible les modules importés."""
@@ -235,10 +231,10 @@ class Importeur:
     
     def tout_initialiser(self):
         """Méthode permettant d'initialiser tous les modules qui en ont besoin.
+        
         Les modules à initialiser sont ceux configurés.
         
         """
-        type(self).parid.se_charge()
         conf_glb = Importeur.anaconf.get_config("globale")
         Importeur.logger.debug("Initialisation des modules :")
         # On initialise d'abord les modules à initialiser en priorité
@@ -258,8 +254,6 @@ class Importeur:
                 module.init()
                 Importeur.logger.debug("  Le module {0} a été " \
                         "initialisé".format(module.nom))
-        
-        type(self).parid.se_construit()
         
         for module in self.__dict__.values():
             if module.statut == INITIALISE:

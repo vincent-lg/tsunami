@@ -46,7 +46,6 @@ class EdtMotscles(Uniligne):
         sujet = self.objet
         if msg in sujet.mots_cles:
             sujet.mots_cles.remove(msg)
-            sujet.enregistrer()
             self.actualiser()
         else:
             if type(self).importeur.information.get_sujet(msg) is not None:
@@ -54,5 +53,4 @@ class EdtMotscles(Uniligne):
                         msg)
             else:
                 sujet.mots_cles.append(msg)
-                sujet.enregistrer()
                 self.actualiser()

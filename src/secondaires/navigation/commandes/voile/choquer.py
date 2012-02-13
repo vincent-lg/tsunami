@@ -79,7 +79,6 @@ class PrmChoquer(Parametre):
                 voile.orientation -= nombre
                 if voile.orientation < -90:
                     voile.orientation = -90
-                salle.enregistrer()
                 personnage << "Vous choquez {}.".format(voile.nom)
                 personnage.salle.envoyer("{{}} choque {}.".format(
                         voile.nom), personnage)
@@ -87,7 +86,6 @@ class PrmChoquer(Parametre):
                 voile.orientation += nombre
                 if voile.orientation > 90:
                     voile.orientation = 90
-                salle.enregistrer()
                 personnage << "Vous choquez {}.".format(voile.nom)
                 personnage.salle.envoyer("{{}} choque {}.".format(
                         voile.nom), personnage)

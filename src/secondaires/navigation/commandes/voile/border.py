@@ -76,7 +76,6 @@ class PrmBorder(Parametre):
                 voile.orientation += nombre
                 if voile.orientation > -5:
                     voile.orientation = -5
-                salle.enregistrer()
                 personnage << "Vous bordez {}.".format(voile.nom)
                 personnage.salle.envoyer("{{}} borde {}.".format(
                         voile.nom), personnage)
@@ -84,7 +83,6 @@ class PrmBorder(Parametre):
                 voile.orientation -= nombre
                 if voile.orientation < 5:
                     voile.orientation = 5
-                salle.enregistrer()
                 personnage << "Vous bordez {}.".format(voile.nom)
                 personnage.salle.envoyer("{{}} borde {}.".format(
                         voile.nom), personnage)

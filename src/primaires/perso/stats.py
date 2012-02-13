@@ -107,11 +107,6 @@ class Stats(BaseObj):
         
         return stats
     
-    def enregistrer(self):
-        """Enregistre le parent"""
-        if self.construit and self.parent:
-            self.parent.enregistrer()
-    
     def restaurer(self):
         """Restaure les stats.
         

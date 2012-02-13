@@ -66,7 +66,6 @@ class PrmTenir(Parametre):
             personnage << "|err|Vous tenez déjà ce gouvernail.|ff|"
         else:
             gouvernail.tenu = personnage
-            salle.enregistrer()
             personnage.cle_etat = "tenir_gouvernail"
             personnage << "Vous empoignez fermement {}.".format(
                     gouvernail.nom)

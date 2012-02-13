@@ -115,9 +115,6 @@ class Sorties(BaseObj):
                     "de sortie".format(repr(nom)))
         
         self._sorties[nom] = sortie
-        
-        if self.construit and self.parent:
-            self.parent.enregistrer()
     
     def __iter__(self):
         """Retourne chaque sortie dans l'ordre du dictionnaire."""

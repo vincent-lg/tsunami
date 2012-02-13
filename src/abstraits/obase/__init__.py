@@ -34,34 +34,21 @@ import sys
 import traceback
 import time
 
-class ObjetsCharges:
-    
-    """Cette classe possède le comportement d'un dictionnaire.
-    Elle permet de stocker les BaseObj récupérés depuis des fichiers.
-    
-    """
-    
-    def __init__(self):
-        self.__objets = {}
-    
-    def __contains__(self, item):
-        return item in self.__objets
-    
-    def __getitem__(self, item):
-        return self.__objets.get(item)
-    
-    def __setitem__(self, item, val):
-        self.__objets[item] = val
-    
-    def keys(self):
-        return self.__objets.keys()
+from bases.collections.dictionnaire import Dictionnaire
+from bases.collections.liste import Liste
 
 objets_base = {} # dictionnaire des différents BaseObj {nom_cls:cls}
-dict_base_obj = ObjetsCharges()
+
+
+# Objets chargés
+objets = []
+objets_par_type = {}
+ids = []
 
 class MetaBaseObj(type):
     
     """Métaclasse des objets de base.
+    
     Cette métaclasse est là pour gérer les versions des différents objets
     BaseObj :
         Si un objet BaseObj change de structure, pour X raison (par exemple
@@ -82,7 +69,6 @@ class MetaBaseObj(type):
         # Si on trouve les attributs _nom et _version,
         # c'est que la classe est versionnée
         if "_nom" in contenu and "_version" in contenu:
-            
             cls._version = contenu["_version"]
             cls._nom = contenu["_nom"]
             # Pas de doublons !
@@ -108,62 +94,33 @@ INIT, CONSTRUIT = 0, 1
 
 class BaseObj(metaclass=MetaBaseObj):
     
-    """Cette classe définit la base d'un objet destiné à être enregistré,
-    directement ou indirectement dans un fichier.
+    """Classe devant être héritée de la grande majorité des classes de Kassie.
     
-    Rappelons que :
-    *   Les objets destinés à être DIRECTEMENT enregistrés dans des fichiers
-        doivent être hérités soit de :
-        -   ObjetID (voir abstraits/id/__init__.py)
-        -   Unique (voir abstraits/unique/__init__.py)
-        
-        Ces deux classes héritent de BaseObj et en reprennent donc les
-        mécanismes.
-    *   Les objets destinés à être INDIRECTEMENT enregistrés dans des fichiers
-        doivent être hérités de BaseObj.
-        Ces objets sont ceux destinés à être enregistrés dans des fichiers
-        sous la forme d'attributs d'autres objets par exemple.
-    
-    Si vous héritez la classe BaseObj, vous devrez redéfinir une
-    méthode __getnewargs__. Cette méthode est appelée
-    à la récupération de l'objet depuis un fichier et doit retourner un tuple
-    des informations à retourner pour construire l'objet.
-    L'intérêt est qu'ainsi, à chaque récupération de votre objet, il est
-    reconstruit. Si d'une session à l'autre vous redéfinissez de nouveaux
-    attributs, ils seront donc bien présents quand vous aurez récupéré votre
-    objet.
-    
-    Chaque BaseObj possède :
-    -   un numéro d'identification > 0
-        Celui-ci est créé lors de la construction de BaseObj.
-        Vous n'avez pas à vous en soucier, simplement veiller que
-        le constructeur de votre objet hérité de BaseObj appelle bien
-        le constructeur de BaseObj:
-        >>> class HeriteDeBaseObj(BaseObj):
-        ...     def __init__(self, ...):
-        ...         BaseObj.__init__(self)
-        ..          ...
-    -   un timestamp mis à jour lors de l'enregistrement de l'objet.
-        Voir la méthode __getstate__ de BaseObj.
+    Le test est simple : si l'objet issu de la classe doit être enregistré,
+    l'hériter de BaseObj.
     
     """
     
     importeur = None
-    _id_base_actuel = 1
-    
     def __init__(self):
         """Instancie un simple statut"""
         self._statut = INIT
         # On initialise le dictionnaire des versions de l'objet
         self._dict_version = {}
-        self._ts = time.time() # le timestamp actuel
-        self._id_base = None
+        self.e_existe = True
+        if id(self) not in ids:
+            ids.append(id(self))
+            objets.append(self)
+            liste = objets_par_type.get(type(self), [])
+            liste.append(self)
+            objets_par_type[type(self)] = liste
     
     def __getnewargs__(self):
         raise NotImplementedError
     
     def version_actuelle(self, classe):
         """Retourne la version actuelle de l'objet.
+        
         Cette version est celle enregistrée dans l'objet. Elle peut
         donc être différence de la classe (c'est le cas au chargement d'un
         objet à mettre à jour).
@@ -175,32 +132,20 @@ class BaseObj(metaclass=MetaBaseObj):
             return 0
     
     def set_version(self, classe, version):
-        """Met le numéro de version dans le dictionnaire de version de l'objet.
-        
-        """
+        """Met le numéro de version dans le dictionnaire de version."""
         self._dict_version[classe._nom] = version
     
     def _construire(self):
         """Construit l'objet"""
         self._statut = CONSTRUIT
     
+    def _detruire(self):
+        """Marque l'objet comme détruit."""
+        self.e_existe = False
+    
     @property
     def construit(self):
         return hasattr(self, "_statut") and self._statut == CONSTRUIT
-    
-    def __getstate__(self):
-        """Méthode appelée au moment de sérialiser l'objet.
-        On met à jour le timestamp contenu dans self._ts.
-        Ainsi, au moment de la récupération de plusieurs BaseObj de même
-        _base_id, on saura quel a été le dernier enregistré.
-        
-        """
-        self._ts = time.time()
-        if self._id_base is None:
-            self._id_base = BaseObj._id_base_actuel
-            BaseObj._id_base_actuel += 1
-            type(self).importeur.supenr.enregistrer_id_base()
-        return self.__dict__.copy()
     
     def __setstate__(self, dico_attrs):
         """Méthode appelée lors de la désérialisation de l'objet"""
@@ -214,19 +159,8 @@ class BaseObj(metaclass=MetaBaseObj):
             sys.exit(1)
         # On met à jour les attributs
         self.__dict__.update(dico_attrs)
-        # Si l'objet existe dans le dictionnaire des BaseObj
-        if self._id_base in dict_base_obj.keys():
-            # Si le temps d'enregistrement de self est supérieur à celui de
-            # l'objet dans le dictionnaire, on le remplace
-            if self._ts > dict_base_obj[self._id_base]._ts:
-                dict_base_obj[self._id_base] = self
-        else:
-            dict_base_obj[self._id_base] = self
         
-        # On ajoute l'objet dans supenr, pour un futur nettoyage
-        type(self).importeur.supenr.objets_a_nettoyer.append(self)
-        
-        # On vérifie maintenant s'il a besoin d'une vraie mis à jour
+        # On vérifie s'il a besoin d'une vraie mis à jour
         self._update(classe)
     
     def _update(self, classe):
@@ -278,32 +212,27 @@ class BaseObj(metaclass=MetaBaseObj):
     
     def __getattribute__(self, nom_attr):
         """Méthode appelé quand on cherche à récupérer l'attribut nom_attr
-        Si l'attribut qu'on cherche à récupérer est un type ID, on retourne
-        l'objet correspondant à l'ID.
-        Pour ce faire, on demande à parid l'objet correspondant à notre ID.
+        
+        Si l'attribut n'existe plus, on retourne None.
         
         """
         objet = object.__getattribute__(self, nom_attr)
-        if nom_attr != "id" and est_id(objet):
-            # On cherche l'objet correspondant à cet ID
-            objet = objet.get_objet()
+        if hasattr(objet, "e_existe") and not objet.e_existe:
+            return None
         
         return objet
     
     def __setattr__(self, nom_attr, val_attr):
-        """Méthode appelée quand on cherche à écrire l'objet val_attr dans
-        l'attribut nom_attr.
+        """Méthode appelée quand on cherche à écrire l'objet val_attr.
         
-        Si val_attr est un ObjetID (il possède l'attribut id), on écrit
-        dans l'attribut nom_attr non pas val_attr mais l'ID de val_attr.
+        Si la valeur est une liste, on la remplace par un type Liste de
+        façon transparente. La même chose' est faite si la valeur est un
+        dictionnaire.
         
         """
-        if nom_attr != "id" and hasattr(type(val_attr), "est_objet_id"):
-            # val_attr est un ObjetID
-            val_attr = val_attr.id
+        if isinstance(val_attr, list):
+            val_attr = Liste(val_attr)
+        elif isinstance(val_attr, dict):
+            val_attr = Dictionnaire(val_attr)
         
         object.__setattr__(self, nom_attr, val_attr)
-
-def est_id(objet):
-    """Retourne True si objet est un ID"""
-    return hasattr(type(objet), "_objetid_")

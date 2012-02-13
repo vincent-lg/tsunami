@@ -30,14 +30,13 @@
 
 """Fichier contenant la classe Squelette, détaillée plus bas."""
 
-from abstraits.id import ObjetID
-from bases.collections.liste_id import ListeID
+from abstraits.obase import BaseObj
 from primaires.format.description import Description
 from primaires.format.fonctions import supprimer_accents
 from .membre import Membre
 from .membre import Groupe
 
-class Squelette(ObjetID):
+class Squelette(BaseObj):
     
     """Classe représentant un squelette.
     
@@ -60,7 +59,7 @@ class Squelette(ObjetID):
     sous_rep = "squelettes"
     def __init__(self, cle):
         """Constructeur du squelette"""
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.cle = cle
         self.nom = "un squelette"
         self.description = Description(parent=self)
@@ -68,7 +67,7 @@ class Squelette(ObjetID):
         self.__groupes = {}
         
         # Liste des personnages dont l'équipement dérive de ce squelette
-        self.personnages = ListeID(parent=self)
+        self.personnages = []
     
     def __getnewargs__(self):
         return ("", )
@@ -125,7 +124,6 @@ class Squelette(ObjetID):
         for personnage in self.personnages:
             personnage.equipement.ajouter_membre(membre)
         
-        self.enregistrer()
         return membre
     
     def supprimer_membre(self, nom):
@@ -144,7 +142,6 @@ class Squelette(ObjetID):
         for personnage in self.personnages:
             personnage.equipement.supprimer_membre(nom)
         
-        self.enregistrer()
     
     def get_membre(self, nom):
         """Retourne le membre si il le trouve grâce à son nom."""
@@ -258,8 +255,6 @@ class Squelette(ObjetID):
             equipement = personnage.equipement
             a_membre = equipement.get_membre(nom_membre)
             a_membre.groupe = nom_groupe
-        
-        self.enregistrer()
     
     def alterne_groupe_dissociable(self, nom_groupe):
         """Change le flag dissociable du groupe si existe."""
@@ -268,7 +263,3 @@ class Squelette(ObjetID):
         
         groupe = self.groupes[nom_groupe]
         groupe.dissociable = not groupe.dissociable
-        self.enregistrer()
-
-
-ObjetID.ajouter_groupe(Squelette)

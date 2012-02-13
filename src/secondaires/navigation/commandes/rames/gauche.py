@@ -68,5 +68,4 @@ class PrmGauche(Parametre):
             personnage << "|err|Vous tournez déjà sur bâbord.|ff|"
         else:
             rames.virer_babord()
-            salle.enregistrer()
             personnage << "Vous commencez de ramez en tournant vers bâbord."

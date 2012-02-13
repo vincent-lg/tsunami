@@ -63,7 +63,6 @@ class PrmRelacher(Parametre):
             personnage << "|err|Vous ne tenez pas ce gouvernail.|ff|"
         else:
             gouvernail.tenu = None
-            salle.enregistrer()
             personnage.cle_etat = ""
             personnage << "Vous relâchez {}.".format(
                     gouvernail.nom)

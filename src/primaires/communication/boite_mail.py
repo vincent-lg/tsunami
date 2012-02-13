@@ -30,10 +30,10 @@
 
 """Ce fichier contient la classe BoiteMail détaillée plus bas."""
 
-from abstraits.unique import Unique
+from abstraits.obase import BaseObj
 from .mudmail import *
 
-class BoiteMail(Unique):
+class BoiteMail(BaseObj):
 
     """Boîte mail du moteur.
     
@@ -45,7 +45,7 @@ class BoiteMail(Unique):
     
     def __init__(self):
         """Constructeur du conteneur"""
-        Unique.__init__(self, "communication", "mails")
+        BaseObj.__init__(self)
         self._mails = {}
     
     def __getnewargs__(self):
@@ -62,18 +62,15 @@ class BoiteMail(Unique):
     def __setitem__(self, id, mail):
         """Modifie un mail"""
         self._mails[id] = mail
-        self.enregistrer()
     
     def __delitem__(self, id):
         """Supprime un mail"""
         del self._mails[id]
-        self.enregistrer()
     
     def creer_mail(self, expediteur, source=None):
         """Cree un message vide et le retourne"""
         mail = MUDmail(self, expediteur, source=source)
         self._mails[mail.id] = mail
-        self.enregistrer()
         return mail
     
     def get_mails_pour(self, personnage, etat):

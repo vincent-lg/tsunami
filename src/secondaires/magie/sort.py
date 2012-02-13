@@ -69,13 +69,6 @@ class Sort(BaseObj):
     def __str__(self):
         return "sort:" + self.cle
     
-    def __setattr__(self, nom_attr, valeur):
-        """Enregisre le parent si il est précisé"""
-        construit = self.construit
-        BaseObj.__setattr__(self, nom_attr, valeur)
-        if construit and self.parent:
-            self.parent.enregistrer()
-    
     def _get_type_cible(self):
         """Retourne le type de cible."""
         return self._type_cible
@@ -101,12 +94,6 @@ class Sort(BaseObj):
                 var_cible = evt.ajouter_variable("cible", "Salle")
                 var_cible.aide = "la salle ciblée par le sort"
     type_cible = property(_get_type_cible, _set_type_cible)
-    
-    def enregistrer(self):
-        """Enregistre le sort dans son parent"""
-        construit = self.construit
-        if construit and self.parent:
-            self.parent.enregistrer()
     
     def echoue(self, personnage):
         """Détermine si personnage réussit ou non à lancer ce sort."""

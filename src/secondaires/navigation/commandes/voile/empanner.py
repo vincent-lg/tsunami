@@ -72,7 +72,6 @@ class PrmEmpanner(Parametre):
                 return
             
             voile.orientation = -voile.orientation
-            salle.enregistrer()
             personnage << "Vous empannez {}.".format(voile.nom)
             personnage.salle.envoyer("{{}} empanne {}.".format(
                     voile.nom), personnage)

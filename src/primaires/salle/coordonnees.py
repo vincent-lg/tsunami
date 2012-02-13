@@ -30,8 +30,9 @@
 
 """Fichier contenant la classe Coordonnees, détaillée plus bas."""
 
-from abstraits.obase import *
 from math import ceil
+
+from abstraits.obase import *
 
 class Coordonnees(BaseObj):
     
@@ -50,7 +51,7 @@ class Coordonnees(BaseObj):
         self.valide = valide
         self.parent = parent
         # On passe le statut en CONSTRUIT
-        self._statut = CONSTRUIT
+        self._construire()
     
     def __getnewargs__(self):
         return ()
@@ -82,7 +83,6 @@ class Coordonnees(BaseObj):
                 construit and self.parent:
             mod_salle = type(self.parent).importeur.salle
             mod_salle.changer_coordonnees(anc_tuple, self)
-            self.parent.enregistrer()
     
     def tuple(self):
         """Retourne le tuple (x, y, z)"""

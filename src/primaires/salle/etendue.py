@@ -30,12 +30,10 @@
 
 """Fichier contenant la classe Etendue, détaillée plus bas."""
 
-from abstraits.id import ObjetID
-from bases.collections.dict_valeurs_id import DictValeursID
-
+from abstraits.obase import BaseObj
 from .coordonnees import Coordonnees
 
-class Etendue(ObjetID):
+class Etendue(BaseObj):
     
     """Cette classe représente une étendue d'eau.
     
@@ -58,11 +56,9 @@ class Etendue(ObjetID):
     
     """
     
-    groupe = "etendue"
-    sous_rep = "etendues"
     def __init__(self, cle):
         """Création de l'éttendue."""
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.cle = cle
         self.altitude = 0
         self.profondeur = 4
@@ -196,6 +192,3 @@ class Etendue(ObjetID):
         """Supprime un lien."""
         coordonnees = self.convertir_coordonnees(coordonnees)
         del self.liens[coordonnees]
-
-
-ObjetID.ajouter_groupe(Etendue)

@@ -215,7 +215,6 @@ class Module(BaseModule):
         
         """
         navire = Navire(modele)
-        print("Navire {} créé".format(navire.cle))
         self.ajouter_navire(navire)
         return navire
     
@@ -290,13 +289,14 @@ class Module(BaseModule):
     
     def ajouter_matelot(self, matelot):
         """Ajoute le matelot."""
-        self.matelots[matelot.id.id] = matelot
+        pass
     
     def supprimer_matelot(self, n_id):
         """Supprime le matelot."""
-        matelot = self.matelots[n_id]
-        del self.matelots[n_id]
-        matelot.detruire()
+        #matelot = self.matelots[n_id]
+        #del self.matelots[n_id]
+        #matelot.detruire()
+        pass
     
     def avancer_navires(self):
         """Fait avancer les navires."""

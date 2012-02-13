@@ -30,12 +30,10 @@
 
 """Fichier contenant la classe ModeleNavire, détaillée plus bas."""
 
-from abstraits.id import ObjetID
-from bases.collections.dict_valeurs_id import DictValeursID
-from bases.collections.liste_id import ListeID
+from abstraits.obase import BaseObj
 from .salle import *
 
-class ModeleNavire(ObjetID):
+class ModeleNavire(BaseObj):
     
     """Classe représentant un modèle de navire ou une embarcation.
     
@@ -45,15 +43,13 @@ class ModeleNavire(ObjetID):
     
     """
     
-    groupe = "modele_navire"
-    sous_rep = "navires/modeles"
     def __init__(self, cle):
         """Constructeur du modèle."""
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.cle = cle
         self.nom = "un navire"
-        self.vehicules = ListeID(self)
-        self.salles = DictValeursID(self)
+        self.vehicules = []
+        self.salles = {}
     
     def __getnewargs__(self):
         return ("", )
@@ -130,7 +126,4 @@ class ModeleNavire(ObjetID):
         for vehicule in list(self.vehicules):
             vehicule.detruire()
         
-        ObjetID.detruire(self)
-
-
-ObjetID.ajouter_groupe(ModeleNavire)
+        BaseObj.detruire(self)

@@ -32,7 +32,7 @@
 
 from math import fabs
 
-from abstraits.id import ObjetID
+from abstraits.obase import BaseObj
 from primaires.vehicule.force import Force
 from primaires.vehicule.vecteur import Vecteur
 from primaires.vehicule.vehicule import Vehicule
@@ -59,8 +59,6 @@ class Navire(Vehicule):
     
     """
     
-    groupe = "navire"
-    sous_rep = "navires/navires"
     def __init__(self, modele):
         """Constructeur du navire."""
         Vehicule.__init__(self)
@@ -356,8 +354,6 @@ class Navire(Vehicule):
         self.modele.vehicules.remove(self)
         Vehicule.detruire(self)
 
-
-ObjetID.ajouter_groupe(Navire)
 
 class Propulsion(Force):
     

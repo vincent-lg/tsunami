@@ -76,7 +76,6 @@ class PrmVitesse(Parametre):
                 return
             
             rames.vitesse = n_vitesse
-            salle.enregistrer()
             msg = "Vous commencez de ramer {vitesse}."
             msg_autre = "{{personnage}} commence à ramer {vitesse}."
             msg_vit = ""

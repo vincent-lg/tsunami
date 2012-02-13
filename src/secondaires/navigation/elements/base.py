@@ -30,13 +30,12 @@
 
 """Fichier contenant la classe BaseElement, détaillée plus bas."""
 
-from abstraits.id import ObjetID
-from bases.collections.liste_id import ListeID
+from abstraits.obase import BaseObj
 from corps.fonctions import valider_cle
 from primaires.format.description import Description
 from . import MetaElt
 
-class BaseElement(ObjetID, metaclass=MetaElt):
+class BaseElement(BaseObj, metaclass=MetaElt):
     
     """Classe abstraite représentant le type de base d'un élément.
     
@@ -45,16 +44,13 @@ class BaseElement(ObjetID, metaclass=MetaElt):
     
     """
     
-    groupe = "elements"
-    sous_rep = "navires/elements"
     nom_type = "" # à redéfinir
-    
     def __init__(self, cle=""):
         """Constructeur d'un type"""
         if cle:
             valider_cle(cle)
         
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.cle = cle
     
         self._attributs = {}
@@ -119,5 +115,3 @@ class BaseElement(ObjetID, metaclass=MetaElt):
         msg = "Vous regardez {} :".format(self.nom) + "\n\n"
         msg += self.description.regarder(personnage, self)
         return msg
-
-ObjetID.ajouter_groupe(BaseElement)

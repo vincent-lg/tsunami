@@ -33,7 +33,6 @@
 from random import randint
 
 from .. import BaseJeu
-from bases.collections.dict_cles_id import DictClesID
 
 class Jeu(BaseJeu):
     
@@ -48,11 +47,11 @@ class Jeu(BaseJeu):
         """Construction du jeu."""
         self.nb_joueurs_min = 2
         self.nb_joueurs_max = 6
-        self.joueurs = DictClesID(self)
-        self.hotellerie = DictClesID(self)
+        self.joueurs = {}
+        self.hotellerie = {}
         self.puits = None
         self.prison = None
-        self.pions = DictClesID(self)
+        self.pions = {}
     
     def peut_commencer(self):
         """La partie peut-elle commencer ?"""

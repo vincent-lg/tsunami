@@ -66,9 +66,8 @@ class PrmRelacher(Parametre):
                 rames.vitesse = "immobile"
                 personnage << "Vous arrêtez de ramer."
                 salle.envoyer("{personnage} arrête de ramer.", personnage)
-            rames.centrer(rames)
+            rames.centrer()
             rames.tenu = None
-            salle.enregistrer()
             personnage.cle_etat = ""
             personnage << "Vous lâchez {}.".format(
                     rames.nom)

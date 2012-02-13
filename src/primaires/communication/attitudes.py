@@ -30,10 +30,10 @@
 
 """Ce fichier contient la classe Attitudes détaillée plus bas."""
 
-from abstraits.unique import Unique
+from abstraits.obase import BaseObj
 from .attitude import Attitude
 
-class Attitudes(Unique):
+class Attitudes(BaseObj):
 
     """Classe conteneur des attitudes sociales.
     Cette classe liste tous les items Attitude utilisables dans l'univers
@@ -45,8 +45,9 @@ class Attitudes(Unique):
     
     def __init__(self):
         """Constructeur du conteneur"""
-        Unique.__init__(self, "communication", "attitudes")
+        BaseObj.__init__(self)
         self._attitudes = {}
+        self._construire()
     
     def __getnewargs__(self):
         return ()
@@ -65,12 +66,10 @@ class Attitudes(Unique):
     def __setitem__(self, cle, valeur):
         """Ajoute une attitude à la liste"""
         self._attitudes[cle] = valeur
-        self.enregistrer()
     
     def __delitem__(self, cle):
         """Détruit l'attitude spécifiée"""
         del self._attitudes[cle]
-        self.enregistrer()
     
     def keys(self):
         """Renvoie une liste des attitudes par clés"""
@@ -87,6 +86,5 @@ class Attitudes(Unique):
         else:
             attitude = Attitude(cle, self)
             self._attitudes[cle] = attitude
-            self.enregistrer()
             return attitude
     

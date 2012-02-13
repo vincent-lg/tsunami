@@ -87,11 +87,7 @@ class Module(BaseModule):
     def init(self):
         """Initialisation du module"""
         # On récupère ou crée puis configure les groupes d'utilisateur
-        groupes = None
-        sous_rep = "groupes"
-        fichier = "groupes.sav"
-        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
-            groupes = self.importeur.supenr.charger(sous_rep, fichier)
+        groupes = self.importeur.supenr.charger_unique(ConteneurGroupes)
         if groupes is None:
             groupes = ConteneurGroupes()
             self.logger.info("Aucun groupe d'utilisateurs récupéré")

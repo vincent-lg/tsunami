@@ -30,10 +30,9 @@
 
 """Fichier contenant la classe Zone, détaillée plus bas."""
 
-from abstraits.id import ObjetID
-from bases.collections.liste_id import ListeID
+from abstraits.obase import BaseObj
 
-class Zone(ObjetID):
+class Zone(BaseObj):
     
     """Classe représentant une zone.
     
@@ -42,14 +41,11 @@ class Zone(ObjetID):
     
     """
     
-    groupe = "zones"
-    sous_rep = "zones"
-    
     def __init__(self, cle):
         """Constructeur de la zone."""
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.cle = cle
-        self.salles = ListeID(self)
+        self.salles = []
         self.ouverte = True
     
     def __getnewargs__(self):
@@ -74,6 +70,3 @@ class Zone(ObjetID):
         """Retire la salle de la zone."""
         if salle in self.salles:
             self.salles.remove(salle)
-
-
-ObjetID.ajouter_groupe(Zone)

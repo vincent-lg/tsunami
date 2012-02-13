@@ -64,6 +64,5 @@ class PrmCentre(Parametre):
             personnage << "|err|Vous ne tenez pas ce gouvernail.|ff|"
         else:
             gouvernail.centrer()
-            salle.enregistrer()
             personnage << "Vous centrez le gouvernail."
             personnage.salle.envoyer("{} centre le gouvernail.", personnage)

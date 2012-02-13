@@ -31,7 +31,6 @@
 """Ce fichier contient la classe Canal détaillée plus bas."""
 
 from abstraits.obase import BaseObj
-from bases.collections.liste_id import ListeID
 from primaires.format.constantes import COULEURS_INV
 from primaires.format.description import Description
 from primaires.format.fonctions import echapper_accolades
@@ -68,10 +67,10 @@ class Canal(BaseObj):
         self.clr = "|cyc|"
         self.resume = "canal de communication"
         self.description = Description(parent=parent)
-        self.moderateurs = ListeID(parent)
-        self.immerges = ListeID(parent)
-        self.connectes = ListeID(parent)
-        self.liste_noire = ListeID(parent)
+        self.moderateurs = []
+        self.immerges = []
+        self.connectes = []
+        self.liste_noire = []
         self.parent = parent
     
     def __getnewargs__(self):
@@ -299,10 +298,3 @@ class Canal(BaseObj):
                         connecte << im
                     else:
                         connecte << ex_autre
-    
-    def nettoyer(self):
-        """Nettoie le canal en supprimant les None des ListeID."""
-        self.moderateurs.supprimer_none()
-        self.immerges.supprimer_none()
-        self.connectes.supprimer_none()
-        self.liste_noire.supprimer_none()

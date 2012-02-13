@@ -30,9 +30,9 @@
 
 """Fichier contenant la classe Porte, détaillée plus bas;"""
 
-from abstraits.id import ObjetID
+from abstraits.obase import BaseObj
 
-class Porte(ObjetID):
+class Porte(BaseObj):
     
     """Cette classe définit une porte dans une sortie.
     
@@ -53,7 +53,7 @@ class Porte(ObjetID):
     sous_rep = "sorties/portes"
     def __init__(self, clef=None):
         """Constructeur de la porte."""
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.ouverte = False
         self._clef = clef if clef is None else clef.cle
         self.verrouillee = False if clef is None else True
@@ -104,5 +104,3 @@ class Porte(ObjetID):
         if not self.verrouillee:
             raise ValueError("la porte est déjà déverrouillée")
         self.verrouillee = False
-
-ObjetID.ajouter_groupe(Porte)
