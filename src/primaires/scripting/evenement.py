@@ -31,7 +31,6 @@
 """Fichier contenant la classe Evenement détaillée plus bas."""
 
 from abstraits.obase import *
-from bases.collections.liste_id import ListeID
 from primaires.format.fonctions import supprimer_accents
 from .espaces import Espaces
 from .test import Test
@@ -91,7 +90,7 @@ class Evenement(BaseObj):
         self.parent = parent
         self.variables = {}
         self.__evenements = {}
-        self.__tests = ListeID(self)
+        self.__tests = []
         self.__sinon = None
         self.espaces = Espaces(self)
         self._construire()
@@ -111,7 +110,7 @@ class Evenement(BaseObj):
     
     def __getstate__(self):
         """Ne sauvegarde pas les variables en fichier."""
-        dico_attr = BaseObj.__getstate__(self).copy()
+        dico_attr = self.__dict__.copy()
         del dico_attr["espaces"]
         return dico_attr
     
@@ -145,14 +144,10 @@ class Evenement(BaseObj):
         if self.__sinon is None:
             self.__sinon = Test(self)
     
-    def enregistrer(self):
-        self.appelant.enregistrer()
-    
     def ajouter_test(self, chaine_test):
         """Ajoute un test à l'évènement."""
         test = Test(self, chaine_test)
         self.__tests.append(test)
-        self.appelant.enregistrer()
         return len(self.__tests) - 1
     
     def supprimer_test(self, indice):
@@ -160,7 +155,6 @@ class Evenement(BaseObj):
         test = self.__tests[indice]
         test.detruire()
         del self.__tests[indice]
-        self.appelant.enregistrer()
     
     def ajouter_variable(self, nom, type):
         """Ajoute une variable au dictionnaire des variables.

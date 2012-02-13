@@ -55,11 +55,7 @@ class Module(BaseModule):
     def init(self):
         """Initialisation du module"""
         # On récupère les sorts
-        sorts = None
-        sous_rep = "magie"
-        fichier = "sorts.sav"
-        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
-            sorts = self.importeur.supenr.charger(sous_rep, fichier)
+        sorts = self.importeur.supenr.charger_unique(Sorts)
         if sorts is None:
             sorts = Sorts()
         else:

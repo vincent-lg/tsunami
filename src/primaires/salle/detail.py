@@ -31,7 +31,6 @@
 """Ce fichier contient la classe Detail, détaillée plus bas."""
 
 from abstraits.obase import *
-from bases.collections.enr_dict import EnrDict
 from primaires.format.description import Description
 
 class Detail(BaseObj):
@@ -49,7 +48,7 @@ class Detail(BaseObj):
         self.synonymes = []
         self.titre = "un détail aux alentours"
         self.description = Description()
-        self.positions = EnrDict(self)
+        self.positions = {}
         self.parent = parent
         if modele is not None:
             self.synonymes = modele.synonymes
@@ -63,19 +62,6 @@ class Detail(BaseObj):
     
     def __str__(self):
         return self.nom
-    
-    def __setattr__(self, nom_attr, valeur):
-        """Enregisre le parent si il est précisé"""
-        construit = self.construit
-        BaseObj.__setattr__(self, nom_attr, valeur)
-        if construit and self.parent:
-            self.parent.enregistrer()
-    
-    def enregistrer(self):
-        """Enregistre le détail dans son parent"""
-        construit = self.construit
-        if construit and self.parent:
-            self.parent.enregistrer()
     
     def regarder(self, personnage):
         """Le personnage regarde le détail"""

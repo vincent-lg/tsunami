@@ -33,7 +33,6 @@
 from collections import OrderedDict
 
 from abstraits.obase import BaseObj
-from bases.collections.liste_id import ListeID
 from .objet_non_unique import ObjetNonUnique
 
 class ConteneurObjet(BaseObj):
@@ -53,12 +52,10 @@ class ConteneurObjet(BaseObj):
     
     """
     
-    _nom = "objet_conteneur"
-    _version = 1
     def __init__(self, parent=None):
         """Constructeur du conteneur"""
         BaseObj.__init__(self)
-        self._objets = ListeID(parent)
+        self._objets = []
         self._non_uniques = []
         self.parent = parent
     
@@ -133,9 +130,6 @@ class ConteneurObjet(BaseObj):
             else:
                 non_unique = ObjetNonUnique(prototype, nombre)
                 self._non_uniques.append(non_unique)
-        
-        if self.parent:
-            self.parent.enregistrer()
     
     def retirer(self, objet, nombre=1):
         """On retire l'objet du conteneur"""
@@ -159,12 +153,7 @@ class ConteneurObjet(BaseObj):
             else:
                 raise ValueError("le conteneur {} ne contient pas l'objet " \
                         "{}".format(self, objet))
-        
-        if self.parent:
-            self.parent.enregistrer()
     
     def nettoyer_non_uniques(self):
         """Nettoie les objets non uniques présents en quantité négative."""
         self._non_uniques = [o for o in self._non_uniques if o.nombre > 0]
-        if self.parent:
-            self.parent.enregistrer()

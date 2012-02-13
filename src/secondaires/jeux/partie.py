@@ -30,10 +30,9 @@
 
 """Fichier contenant la classe Partie, détaillée plus bas."""
 
-from abstraits.id import ObjetID
-from bases.collections.liste_id import ListeID
+from abstraits.obase import BaseObj
 
-class Partie(ObjetID):
+class Partie(BaseObj):
     
     """Classe représentant une partie.
     
@@ -41,15 +40,13 @@ class Partie(ObjetID):
     
     """
     
-    groupe = "partie"
-    sous_rep = "jeux/parties"
     def __init__(self, objet, jeu, plateau):
         """Constructeur de la partie."""
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.objet = objet
         self.jeu = jeu
         self.plateau = plateau
-        self.__joueurs = ListeID(self)
+        self.__joueurs = []
         self.tour = None
         self.sens = 1
         self.en_cours = False
@@ -126,6 +123,4 @@ class Partie(ObjetID):
     def detruire(self):
         """Destruction de la partie."""
         self.objet.partie = None
-        ObjetID.detruire(self)
-
-ObjetID.ajouter_groupe(Partie)
+        BaseObj.detruire(self)

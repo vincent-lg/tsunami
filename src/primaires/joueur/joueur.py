@@ -30,7 +30,7 @@
 
 """Fichier contenant la classe Joueur, détaillée plus bas."""
 
-from abstraits.id import ObjetID
+from abstraits.obase import BaseObj
 from primaires.perso.personnage import Personnage
 
 class Joueur(Personnage):
@@ -57,7 +57,7 @@ class Joueur(Personnage):
         self.no_tick = 1
     
     def __getstate__(self):
-        retour = Personnage.__getstate__(self)
+        retour = dict(self.__dict__)
         retour["instance_connexion"] = None
         return retour
     
@@ -75,7 +75,6 @@ class Joueur(Personnage):
                 "personnage:connexion:mode_connecte"](self.instance_connexion)
         self.contextes.vider()
         self.contexte_actuel = contexte
-        self.enregistrer()
     
     def pre_connecter(self):
         """Méthode appelée pour préparer la connexion.
@@ -176,8 +175,8 @@ class Joueur(Personnage):
         """Retourne le nom pour le personnage passé en paramètre."""
         if personnage is self:
             return self.nom
-        elif hasattr(personnage, "retenus") and self.id.id in personnage.retenus:
-            return personnage.retenus[self.id.id]
+        elif hasattr(personnage, "retenus") and self in personnage.retenus:
+            return personnage.retenus[self]
         else:
             return self.get_distinction_visible()
     
@@ -209,5 +208,3 @@ class Joueur(Personnage):
         Personnage.tick(self)
 
 
-# On ajoute le groupe à ObjetID
-ObjetID.ajouter_groupe(Joueur)

@@ -30,10 +30,10 @@
 
 """Fichier contenant la centralisation des statistiques dans un même objet."""
 
-from abstraits.unique import Unique
+from abstraits.obase import BaseObj
 from .dic_max import DicMax
 
-class Stats(Unique):
+class Stats(BaseObj):
     
     """Classe contenant les différentes statistiques du MUD.
     Ces stats sont enregistrées en fichier pour être rechargées en cas de
@@ -51,7 +51,7 @@ class Stats(Unique):
     
     def __init__(self, uptime):
         """Constructeur de l'objet"""
-        Unique.__init__(self, "stats", "stats")
+        BaseObj.__init__(self)
         self.uptime = uptime
         self.nb_commandes = 0
         self.tps_moy_commandes = None

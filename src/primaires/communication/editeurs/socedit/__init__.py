@@ -129,50 +129,40 @@ class EdtSocedit(Editeur):
     
     def opt_aim(self, arguments):
         self.objet.independant["aim"] = arguments
-        self.objet.enregistrer()
         self.actualiser()
    
     def opt_aif(self, arguments):
         self.objet.independant["aif"] = arguments
-        self.objet.enregistrer()
         self.actualiser()
     
     def opt_oim(self, arguments):
         self.objet.independant["oim"] = arguments
-        self.objet.enregistrer()
         self.actualiser()
     
     def opt_oif(self, arguments):
         self.objet.independant["oif"] = arguments
-        self.objet.enregistrer()
         self.actualiser()
     
     def opt_adm(self, arguments):
         self.objet.dependant["adm"] = arguments
-        self.objet.enregistrer()
         self.actualiser()
    
     def opt_adf(self, arguments):
         self.objet.dependant["adf"] = arguments
-        self.objet.enregistrer()
         self.actualiser()
     
     def opt_idm(self, arguments):
         self.objet.dependant["idm"] = arguments
-        self.objet.enregistrer()
         self.actualiser()
    
     def opt_idf(self, arguments):
         self.objet.dependant["idf"] = arguments
-        self.objet.enregistrer()
         self.actualiser()
     
     def opt_odm(self, arguments):
         self.objet.dependant["odm"] = arguments
-        self.objet.enregistrer()
         self.actualiser()
     
     def opt_odf(self, arguments):
         self.objet.dependant["odf"] = arguments
-        self.objet.enregistrer()
         self.actualiser()

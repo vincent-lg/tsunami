@@ -71,31 +71,19 @@ class Description(BaseObj):
             res.append(paragraphe)
         return "\n".join(res)
     
-    def enregistrer(self):
-        """Enregistre le parent si existe."""
-        if self.parent:
-            self.parent.enregistrer()
-    
     def ajouter_paragraphe(self, paragraphe):
         """Ajoute un paragraphe.
         
         """
         self.paragraphes.append(paragraphe)
-        
-        if self.parent:
-            self.parent.enregistrer()
     
     def supprimer_paragraphe(self, no):
         """Supprime le paragraphe #no"""
         del self.paragraphes[no]
-        if self.parent:
-            self.parent.enregistrer()
     
     def vider(self):
         """Supprime toute la description"""
         self.paragraphes[:] = []
-        if self.parent:
-            self.parent.enregistrer()
     
     def remplacer(self, origine, par):
         """Remplace toutes les occurences de 'origine' par 'par'.
@@ -115,8 +103,6 @@ class Description(BaseObj):
                 paragraphe = supprimer_accents(self.paragraphes[i]).lower()
                 no_car = paragraphe.find(origine, no_car + len(par))
         
-        if self.parent:
-            self.parent.enregistrer()
     
     def wrap_paragraphe(self, paragraphe, lien="\n", aff_sp_cars=False):
         """Wrap un paragraphe et le retourne"""

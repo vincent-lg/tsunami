@@ -91,21 +91,13 @@ class Module(BaseModule):
         self.conversations = Conversations()
         
         # On récupère les attitudes
-        attitudes = None
-        sous_rep = "communication"
-        fichier = "attitudes.sav"
-        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
-            attitudes = self.importeur.supenr.charger(sous_rep, fichier)
-        else:
+        attitudes = self.importeur.supenr.charger_unique(Attitudes)
+        if attitudes is None:
             attitudes = Attitudes()
         self.attitudes = attitudes
         
         # On récupère les canaux
-        canaux = None
-        sous_rep = "communication"
-        fichier = "canaux.sav"
-        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
-            canaux = self.importeur.supenr.charger(sous_rep, fichier)
+        canaux = self.importeur.supenr.charger_unique(Canaux)
         if canaux is None:
             canaux = Canaux()
         else:
@@ -132,10 +124,7 @@ class Module(BaseModule):
         
         # On récupère les mails
         mails = None
-        sous_rep = "communication"
-        fichier = "mails.sav"
-        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
-            mails = self.importeur.supenr.charger(sous_rep, fichier)
+        mails = self.importeur.supenr.charger_unique(BoiteMail)
         if mails is None:
             mails = BoiteMail()
         else:
@@ -173,14 +162,6 @@ class Module(BaseModule):
         self.importeur.interpreteur.ajouter_editeur(EdtSocedit)
         self.importeur.interpreteur.ajouter_editeur(EdtMedit)
         self.importeur.interpreteur.ajouter_editeur(EdtMessagerie)
-    
-    def preparer(self):
-        """Préparation du module.
-        On nettoie tous les canaux.
-        
-        """
-        for canal in self._canaux.iter().values():
-            canal.nettoyer()
     
     @property
     def canaux(self):

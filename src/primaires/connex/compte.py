@@ -32,13 +32,14 @@
 
 import hashlib
 
-from bases.collections.liste_id import ListeID
-from abstraits.id import ObjetID
+from abstraits.obase import BaseObj
 from primaires.communication.canal import IMM_AUTOCONNECT, PERSO_AUTOCONNECT
 from primaires.joueur.joueur import Joueur
 
-class Compte(ObjetID):
+class Compte(BaseObj):
+    
     """Classe représentant un compte.
+    
     On peut y trouver différentes informations :
     *   le nom (naturellement), identifiant du compte
     *   le mot de passe chiffré, protégeant le compte
@@ -49,22 +50,21 @@ class Compte(ObjetID):
     """
     _nom = "compte"
     _version = 1
-    groupe = "comptes"
-    sous_rep = "comptes"
     
     def __init__(self, nom_compte):
         """Constructeur d'un compte."""
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.nom = nom_compte
         self.mot_de_passe = ""
         self.adresse_email = ""
         self.encodage = ""
         self.valide = False
         self.code_validation = ""
-        self.msg_validation = False # à True si le message de validation a été envoyé
+        self.msg_validation = False # à True si le message de validation
+                                    # a été envoyé
         self.tentatives_validation = 0 # tentatives de validation
         self.nb_essais = 0 # tentatives d'intrusion (mot de passe erroné)
-        self.joueurs = ListeID()
+        self.joueurs = []
         
         # Options
         self.couleur = True # couleurs activées par défaut
@@ -122,11 +122,7 @@ class Compte(ObjetID):
                     joueur not in canal.connectes:
                 canal.rejoindre_ou_quitter(joueur, aff=False, forcer=True)        
         self.joueurs.append(joueur)
-        self.enregistrer()
     
     def supprimer_joueur(self, joueur):
         """Supprime le joueur passé en paramètre de la liste des joueurs"""
         self.joueurs.remove(joueur)
-        self.enregistrer()
-
-ObjetID.ajouter_groupe(Compte)

@@ -33,7 +33,6 @@
 import datetime
 
 from abstraits.obase import *
-from bases.collections.liste_id import ListeID
 from primaires.format.date import get_date
 from primaires.format.description import Description
 from primaires.format.fonctions import echapper_accolades
@@ -61,7 +60,7 @@ class MUDmail(BaseObj):
             self._etat = BROUILLON
             self.sujet = str(source.sujet)
             self.expediteur = expediteur
-            self.liste_dest = ListeID(self)
+            self.liste_dest = []
             for d in list(source.liste_dest):
                 self.liste_dest.append(d)
             
@@ -72,7 +71,7 @@ class MUDmail(BaseObj):
             self._etat = EN_COURS
             self.sujet = "aucun sujet"
             self.expediteur = expediteur
-            self.liste_dest = ListeID(self)
+            self.liste_dest = []
             self.contenu = Description(parent=self)
             self.id_source = 0
         self.destinataire = None
@@ -83,13 +82,6 @@ class MUDmail(BaseObj):
     
     def __getnewargs__(self):
         return ()
-    
-    def __setattr__(self, nom_attr, valeur):
-        """Enregisre le parent si il est précisé"""
-        construit = self.construit
-        BaseObj.__setattr__(self, nom_attr, valeur)
-        if construit and self.parent:
-            self.parent.enregistrer()
     
     @property
     def etat(self):
@@ -125,12 +117,6 @@ class MUDmail(BaseObj):
         ret += "\n" + get_date(self.date.timetuple()).capitalize() + "."
         return ret
     
-    def enregistrer(self):
-        """Enregistre le mail dans son parent"""
-        construit = self.construit
-        if construit and self.parent:
-            self.parent.enregistrer()
-    
     def envoyer(self):
         """Envoie le mail"""
         for dest in self.liste_dest:
@@ -141,25 +127,15 @@ class MUDmail(BaseObj):
             mail.destinataire = dest
             mail.contenu = self.contenu
             mail._etat = RECU
-            mail.enregistrer()
             if dest in type(self).importeur.connex.joueurs_connectes:
                 dest << "\n|jn|Vous avez reçu un nouveau message.|ff|"
         self.date = datetime.datetime.now()
         self._etat = ENVOYE
-        self.enregistrer()
-    
-    def enregistrer_brouillon(self):
-        """Enregistre le mail comme brouillon"""
-        self.date = datetime.datetime.now()
-        self._etat = BROUILLON
-        self.enregistrer()
     
     def archiver(self):
         """Archive le mail"""
         self._etat = ARCHIVE
-        self.enregistrer()
     
     def restaurer(self):
         """Restaure le mail"""
         self._etat = RECU
-        self.enregistrer()

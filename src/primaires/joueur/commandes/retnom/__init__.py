@@ -65,5 +65,4 @@ class CmdRetnom(Commande):
         
         personnage.envoyer("{{}} sera, pour vous, désormais connu sous le " \
                 "nom de {}.".format(message), joueur)
-        personnage.retenus[joueur.id.id] = message
-        personnage.enregistrer()
+        personnage.retenus[joueur] = message

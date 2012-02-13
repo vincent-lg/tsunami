@@ -32,9 +32,9 @@
 
 from fractions import Fraction
 
-from abstraits.unique import Unique
+from abstraits.obase import BaseObj
 
-class Temps(Unique):
+class Temps(BaseObj):
     
     """Classe contenant les informations d'un temps, enregistrée en fichier.
     
@@ -48,7 +48,7 @@ class Temps(Unique):
     
     def __init__(self, config):
         """Constructeur de l'objet"""
-        Unique.__init__(self, "temps", "temps")
+        BaseObj.__init__(self)
         if not config:
             return
         

@@ -30,7 +30,6 @@
 
 """Fichier contenant la classe Magasin, détaillée plus bas."""
 
-from bases.collections.liste_id import ListeID
 from abstraits.obase import *
 from primaires.pnj.prototype import Prototype
 from primaires.objet.types.base import BaseType
@@ -51,17 +50,10 @@ class Magasin(BaseObj):
         self.caisse = 0
         self._o_prototypes = {} # clé_obj : quantité
         self._p_prototypes = {} # clé_pnj : quantité
-        # On passe le statut à 'construit'
-        self._statut = CONSTRUIT
+        self._construire()
     
     def __getnewargs__(self):
         return ("", )
-    
-    def enregistrer(self):
-        """Enregistre le magasin dans son parent"""
-        construit = self.construit
-        if construit and self.parent:
-            self.parent.enregistrer()
     
     def __str__(self):
         """Affichage du magasin en éditeur"""
@@ -123,7 +115,6 @@ class Magasin(BaseObj):
             self._o_prototypes[item] = quantite
         elif isinstance(self.get_item_par_cle(item), Prototype):
             self._p_prototypes[item] = quantite
-        self.enregistrer()
     
     def __delitem__(self, item):
         """Retire un objet du magasin"""
@@ -132,7 +123,6 @@ class Magasin(BaseObj):
                 del self._o_prototypes[item]
             elif item in self._p_prototypes:
                 del self._p_prototypes[item]
-        self.enregistrer()
     
     def _get_vendeur(self):
         """Retourne le prototype vendeur"""
@@ -143,8 +133,7 @@ class Magasin(BaseObj):
             return None
     def _set_vendeur(self, cle):
         self._vendeur = cle
-        self.enregistrer()
-    vendeur = property(_get_vendeur, _set_vendeur)
+        eur = property(_get_vendeur, _set_vendeur)
     
     @property
     def cle_vendeur(self):
@@ -155,7 +144,7 @@ class Magasin(BaseObj):
     @property
     def monnaies(self):
         """Retourne la liste des prototypes de monnaie utilisables"""
-        ret = ListeID()
+        ret = []
         for m in self._monnaies:
             if m in type(self).importeur.objet.prototypes:
                 ret.append(type(self).importeur.objet.prototypes[m])
@@ -173,7 +162,7 @@ class Magasin(BaseObj):
     @property
     def liste_objets(self):
         """Retourne les objets en vente, par ordre alphabétique"""
-        ret = ListeID()
+        ret = []
         liste_cles = sorted(list(self._o_prototypes.keys()))
         for cle in liste_cles:
             ret.append(self.get_item_par_cle(cle))
@@ -182,7 +171,7 @@ class Magasin(BaseObj):
     @property
     def liste_pnjs(self):
         """Retourne la liste des PNJs en vente, par ordre alphabétique"""
-        ret = ListeID()
+        ret = []
         liste_cles = sorted(list(self._p_prototypes.keys()))
         for cle in liste_cles:
             ret.append(self.get_item_par_cle(cle))
@@ -191,17 +180,14 @@ class Magasin(BaseObj):
     def ajouter_monnaie(self, monnaie):
         """Ajoute une monnaie à la liste"""
         self._monnaies.append(monnaie)
-        self.enregistrer()
     
     def supprimer_monnaie(self, monnaie):
         """Supprime la monnaie de la liste"""
         self._monnaies.remove(monnaie)
-        self.enregistrer()
     
     def encaisser(self, calcul):
         """Modifie la valeur de la caisse en fonction d'une chaîne de calcul"""
         self.caisse = eval(str(self.caisse) + calcul)
-        self.enregistrer()
     
     def est_en_vente(self, objet):
         """Retourne True si la clé correspond à un objet en vente,

@@ -161,6 +161,3 @@ class Stat(BaseObj):
     
     def __setattr__(self, nom, val):
         BaseObj.__setattr__(self, nom, val)
-        
-        if self.construit and self.parent and not nom.startswith("_"):
-            self.parent.enregistrer()

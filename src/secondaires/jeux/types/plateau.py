@@ -30,9 +30,6 @@
 
 """Fichier contenant le type jeu."""
 
-from bases.collections.liste_id import ListeID
-from bases.objet.attribut import Attribut
-
 from bases.objet.attribut import Attribut
 from primaires.interpreteur.editeur.choix import Choix
 from primaires.objet.types.base import BaseType

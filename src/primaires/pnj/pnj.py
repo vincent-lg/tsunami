@@ -32,19 +32,17 @@
 
 import sys
 
-from abstraits.id import ObjetID
+from abstraits.obase import BaseObj
 from primaires.perso.personnage import Personnage
 
 class PNJ(Personnage):
+    
     """Classe représentant un PNJ, c'est-à-dire un personnage virtuel.
     
     Ce personnage est géré par l'univers et n'est pas connecté, à
     la différence d'un joueur.
     
     """
-    
-    groupe = "pnjs"
-    sous_rep = "pnj/pnj"
     
     def __init__(self, prototype):
         """Constructeur du PNJ"""
@@ -130,6 +128,4 @@ class PNJ(Personnage):
         if self in self.prototype.pnj:
             self.prototype.pnj.remove(self)
         
-        ObjetID.detruire(self)
-
-ObjetID.ajouter_groupe(PNJ)
+        BaseObj.detruire(self)

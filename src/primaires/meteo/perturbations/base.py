@@ -34,7 +34,7 @@ from math import sqrt, pow, ceil
 from random import randint, choice
 from collections import OrderedDict
 
-from abstraits.id import ObjetID
+from abstraits.obase import BaseObj
 from . import MetaPertu
 from primaires.salle.coordonnees import Coordonnees
 
@@ -49,7 +49,7 @@ AUCUN_FLAG = 0
 STATIQUE = 1
 OPAQUE = 2
 
-class BasePertu(ObjetID, metaclass=MetaPertu):
+class BasePertu(BaseObj, metaclass=MetaPertu):
     
     """Classe abstraite représentant la base d'une perturbation météo.
     Cette classe contient tout ce qui est commun à toutes les perturbations
@@ -65,7 +65,7 @@ class BasePertu(ObjetID, metaclass=MetaPertu):
     
     def __init__(self, pos):
         """Constructeur d'une perturbation météo"""
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.centre = pos
         self.rayon = randint(ceil(self.rayon_max / 2), self.rayon_max)
         self.duree = randint(ceil(self.duree_max / 1.5), self.duree_max)
@@ -173,5 +173,3 @@ class BasePertu(ObjetID, metaclass=MetaPertu):
                 msg = etat[1]
                 break
         return msg
-
-ObjetID.ajouter_groupe(BasePertu)

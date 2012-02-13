@@ -30,10 +30,10 @@
 
 """Fichier contenant la classe Sorts, détaillée plus bas."""
 
-from abstraits.unique import Unique
+from abstraits.obase import BaseObj
 from .sort import Sort
 
-class Sorts(Unique):
+class Sorts(BaseObj):
     
     """Classe-conteneur des sorts.
     Cette classe contient tous les sortilèges et autres maléfices de
@@ -46,7 +46,7 @@ class Sorts(Unique):
     
     def __init__(self):
         """Constructeur du conteneur"""
-        Unique.__init__(self, "magie", "sorts")
+        BaseObj.__init__(self)
         self.__sorts = {}
     
     def __getnewargs__(self):
@@ -66,12 +66,10 @@ class Sorts(Unique):
     def __setitem__(self, cle, sort):
         """Ajoute un sort à la liste"""
         self.__sorts[cle] = sort
-        self.enregistrer()
     
     def __delitem__(self, cle):
         """Détruit le sort spécifié"""
         del self.__sorts[cle]
-        self.enregistrer()
     
     def values(self):
         return self.__sorts.values()
@@ -83,5 +81,4 @@ class Sorts(Unique):
         else:
             sort = Sort(cle, self)
             self.__sorts[cle] = sort
-            self.enregistrer()
             return sort

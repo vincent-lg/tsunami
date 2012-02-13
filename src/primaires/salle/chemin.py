@@ -31,7 +31,6 @@
 """Fichier contenant la classe Chemin, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
-from bases.collections.liste_id import ListeID
 from primaires.vehicule.vecteur import Vecteur
 
 class Chemin(BaseObj):

@@ -32,8 +32,7 @@
 
 import random
 
-from abstraits.id import ObjetID, propriete_id
-from bases.collections.enr_dict import EnrDict
+from abstraits.obase import BaseObj
 from corps.fonctions import lisser
 from primaires.interpreteur.file import FileContexte
 from primaires.interpreteur.groupe.groupe import *
@@ -43,9 +42,10 @@ from .equipement import Equipement
 from .quetes import Quetes
 from .stats import Stats
 
-class Personnage(ObjetID):
+class Personnage(BaseObj):
     
     """Classe représentant un personnage.
+    
     C'est une classe abstraite. Elle doit être héritée pour faire des joueurs
     et PNJs. Ces autres classes peuvent être également héritées, à leur tour.
     
@@ -54,14 +54,12 @@ class Personnage(ObjetID):
     
     """
     
-    groupe = "personnages"
-    sous_rep = "personnages"
     _nom = "personnage"
     _version = 5
     
     def __init__(self):
         """Constructeur d'un personnage"""
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.nom = ""
         self.nom_groupe = "pnj"
         self.contextes = FileContexte(self) # file d'attente des contexte
@@ -76,11 +74,10 @@ class Personnage(ObjetID):
         
         # Quêtes
         self.quetes = Quetes(self)
-        self._construire()
         
         # Talents et sorts
-        self.talents = EnrDict(self)
-        self.sorts = EnrDict(self)
+        self.talents = {}
+        self.sorts = {}
         
         # Etat
         self._cle_etat = ""
@@ -91,9 +88,11 @@ class Personnage(ObjetID):
         
         # Nveau prmiaire et niveaux secondaires
         self.niveau = 1
-        self.niveaux = EnrDict(self)
+        self.niveaux = {}
         self.xp = 0 # xp dans le niveau principal
-        self.xps = EnrDict(self) # xp dans les niveaux secondaires
+        self.xps = {}
+        
+        self._construire()
     
     def __getnewargs__(self):
         """Retourne les arguments à passer au constructeur"""
@@ -121,7 +120,7 @@ class Personnage(ObjetID):
                 hasattr(self.stats,nom_attr):
             setattr(self.stats, nom_attr, val_attr)
         else:
-            ObjetID.__setattr__(self, nom_attr, val_attr)
+            BaseObj.__setattr__(self, nom_attr, val_attr)
     
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel, c'est-à-dire le premier de la file"""
@@ -140,7 +139,6 @@ class Personnage(ObjetID):
     def _get_salle(self):
         return self._salle
     
-    @propriete_id
     def _set_salle(self, salle):
         """Redéfinit la salle du joueur.
         On en profite pour :
@@ -154,7 +152,6 @@ class Personnage(ObjetID):
             anc_salle.retirer_personnage(self)
         
         self._salle = salle
-        self.enregistrer()
         
         if salle:
             salle.ajouter_personnage(self)

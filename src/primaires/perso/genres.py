@@ -90,7 +90,6 @@ class Genres(BaseObj):
                 nom = d
                 break
         del self._distinctions[nom]
-        self.parent.enregistrer()
     
     def ajouter_genre(self, nom, corresp=""):
         """Ajoute un genre"""
@@ -100,7 +99,6 @@ class Genres(BaseObj):
             self._distinctions[nom] = "un jeune homme"
         else:
             self._distinctions[nom] = "une jeune femme"
-        self.parent.enregistrer()
     
     @property
     def str_genres(self):
@@ -147,4 +145,3 @@ class Genres(BaseObj):
             if nom == supprimer_accents(d.lower()):
                 self._distinctions[d] = distinction
                 break
-        self.parent.enregistrer()

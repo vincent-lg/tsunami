@@ -33,9 +33,9 @@ C'est un objet unique.
 
 """
 
-from abstraits.unique import Unique
+from abstraits.obase import BaseObj
 
-class Canaux(Unique):
+class Canaux(BaseObj):
     
     """Classe contenant les canaux.
     C'est une classe enveloppe de dictionnaire.
@@ -44,7 +44,7 @@ class Canaux(Unique):
     
     def __init__(self):
         """Constructeur du conteneur"""
-        Unique.__init__(self, "communication", "canaux")
+        BaseObj.__init__(self)
         self._canaux = {}
     
     def __getnewargs__(self):
@@ -61,12 +61,10 @@ class Canaux(Unique):
     def __setitem__(self, nom_canal, canal):
         """Place 'canal' dans 'nom_canal'"""
         self._canaux[nom_canal] = canal
-        self.enregistrer()
     
     def __delitem__(self, nom_canal):
         """Supprime le canal"""
         del self._canaux[nom_canal]
-        self.enregistrer()
     
     def __len__(self):
         """Retourne le nombre de canaux"""

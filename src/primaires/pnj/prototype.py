@@ -30,26 +30,23 @@
 
 """Ce fichier contient la classe Prototype, détaillée plus bas."""
 
-from abstraits.id import ObjetID
-from bases.collections.liste_id import ListeID
+from abstraits.obase import BaseObj
 from primaires.format.description import Description
 from primaires.perso.stats import Stats
 
-class Prototype(ObjetID):
+class Prototype(BaseObj):
     
     """Classe représentant un prototype de PNJ.
     
     """
     
-    groupe = "prototypes_pnj"
-    sous_rep = "pnj/prototypes"
     def __init__(self, cle):
         """Constructeur d'un type"""
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.cle = cle
         self._attributs = {}
         self.no = 0 # nombre de PNJ créés sur ce prototype
-        self.pnj = ListeID(self)
+        self.pnj = []
         
         # Prototypes
         self.nom_singulier = "quelqu'un"
@@ -126,5 +123,3 @@ class Prototype(ObjetID):
     
     def est_feminin(self):
         return not self.est_masculin()
-
-ObjetID.ajouter_groupe(Prototype)

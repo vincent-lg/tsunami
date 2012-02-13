@@ -39,7 +39,6 @@ except ImportError:
 import threading
 
 from abstraits.module import *
-from abstraits.id import ObjetID, est_objet_id
 from primaires.email.config import cfg_email
 from primaires.format.fonctions import supprimer_accents
 

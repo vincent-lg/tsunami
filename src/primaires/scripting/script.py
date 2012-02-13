@@ -30,7 +30,6 @@
 
 """Fichier contenant la classe Script détaillée plus bas."""
 
-from abstraits.id import StatutObjet
 from abstraits.obase import *
 from primaires.format.fonctions import *
 from primaires.scripting.evenement import Evenement

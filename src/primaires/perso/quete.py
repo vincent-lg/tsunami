@@ -103,14 +103,10 @@ class Quete(BaseObj):
     def verrouiller(self):
         """Verrouille la quête."""
         self.__verrou = True
-        if self.parent:
-            self.parent.enregistrer()
     
     def deverouiller(self):
         """Déverouille la quête."""
         self.__verrou = False
-        if self.parent:
-            self.parent.enregistrer()
     
     def mettre_a_jour(self, niveau):
         """Met à jour le niveau de la quête.
@@ -120,8 +116,6 @@ class Quete(BaseObj):
         """
         if niveau not in self.__niveaux:
             self.__niveaux.append(niveau)
-            if self.parent:
-                self.parent.enregistrer()
     
     @property
     def niveau_suivant(self):
@@ -203,6 +197,3 @@ class Quete(BaseObj):
                 quete.get_dictionnaire_etapes(True).values()):
             print("Valide")
             self.__niveaux.append(quete.niveau)
-        
-        if self.parent:
-            self.parent.enregistrer()

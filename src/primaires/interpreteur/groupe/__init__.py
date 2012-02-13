@@ -30,14 +30,14 @@
 
 """Ce fichier définit un conteneur de groupe. Il doit n'y voir qu'un conteneur
 de groupes et c'est de ce fait à la fois une classe singleton implicite
-dérivée de Unique.
+dérivée de BaseObj.
 
 """
 
-from abstraits.unique import Unique
+from abstraits.obase import BaseObj
 from primaires.interpreteur.groupe.groupe import *
 
-class ConteneurGroupes(Unique):
+class ConteneurGroupes(BaseObj):
     
     """Classe conteneur des groupes.
     Elle peut être soit créée directement par le système si le fichier
@@ -49,7 +49,7 @@ class ConteneurGroupes(Unique):
     _version = 1
     def __init__(self):
         """Constructeur du conteneur."""
-        Unique.__init__(self, "groupes", "groupes")
+        BaseObj.__init__(self)
         self._groupes = {} # nom_groupe:groupe
         
         # Dictionnaire associant une adresse de commande à un groupe
@@ -83,27 +83,23 @@ class ConteneurGroupes(Unique):
         """
         groupe = Groupe(self, nom_groupe, flags)
         self._groupes[nom_groupe] = groupe
-        self.enregistrer()
         return groupe
     
     def supprimer_groupe(self, nom_groupe):
         """Supprime le groupe nom_groupe"""
         del self._groupes[nom_groupe]
-        self.enregistrer()
     
     def ajouter_commande(self, commande):
         """Ajout de 'commande' dans son groupe"""
         if not commande.adresse in self.commandes.keys():
             groupe = self[commande.groupe]
             self.commandes[commande.adresse] = groupe
-            self.enregistrer()
     
     def supprimer_commande(self, commande):
         """On supprime la commande 'commande'.
         
         """
         del self.commandes[commande.adresse]
-        self.enregistrer()
     
     def changer_groupe_commande(self, chemin, nom_groupe):
         """Change le groupe d'une commande.
@@ -111,7 +107,6 @@ class ConteneurGroupes(Unique):
         """
         nouveau_groupe = self[nom_groupe]
         self.commandes[chemin] = nouveau_groupe
-        self.enregistrer()
     
     def personnage_a_le_droit(self, personnage, commande):
         """Le personnage a-t-il le droit d'appeler 'commande' ?"""

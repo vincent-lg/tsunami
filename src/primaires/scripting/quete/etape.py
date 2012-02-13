@@ -30,11 +30,11 @@
 
 """Fichier contenant la classe Etape détaillée plus bas."""
 
-from abstraits.id import ObjetID
+from abstraits.obase import BaseObj
 from primaires.format.description import Description
 from primaires.perso.quete import Quete
 
-class Etape(ObjetID):
+class Etape(BaseObj):
     
     """Classe définissant une étape simple dans la quête.
     
@@ -45,11 +45,9 @@ class Etape(ObjetID):
     
     """
     
-    groupe = "etape"
-    sous_rep = "scripting/etapes"
     def __init__(self, quete):
         """Constructeur de l'étape."""
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.type = "etape"
         self.quete = quete
         self.niveau = ()
@@ -85,6 +83,3 @@ class Etape(ObjetID):
     def mettre_a_jour_niveau(self, niveau):
         """Méthode mettant à jour le niveau de la quête."""
         self.niveau = niveau
-
-
-ObjetID.ajouter_groupe(Etape)

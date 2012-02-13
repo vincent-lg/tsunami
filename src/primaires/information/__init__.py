@@ -73,12 +73,8 @@ class Module(BaseModule):
         nb_sujets = len(sujets)
         print(format_nb(nb_sujets, "{nb} sujet{s} d'aide récupéré{s}"))
         
-        versions = None
-        sous_rep = "information"
-        fichier = "versions.sav"
-        if self.importeur.supenr.fichier_existe(sous_rep, fichier):
-            versions = self.importeur.supenr.charger(sous_rep, fichier)
-        else:
+        versions = self.importeur.supenr.charger_unique(Versions)
+        if versions is None:
             versions = Versions()
         self.versions = versions
         

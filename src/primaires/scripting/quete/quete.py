@@ -34,8 +34,7 @@ import re
 from datetime import datetime
 from collections import OrderedDict
 
-from abstraits.id import ObjetID
-from bases.collections.liste_id import ListeID
+from abstraits.obase import BaseObj
 from primaires.format.description import Description
 from primaires.format.fonctions import oui_ou_non
 from .etape import Etape
@@ -43,7 +42,7 @@ from .etape import Etape
 # Constantes
 RE_QUETE_VALIDE = re.compile(r"^[a-z][a-z0-9_]*$")
 
-class Quete(ObjetID):
+class Quete(BaseObj):
     
     """Classe définissant une quête dans le scripting.
     
@@ -60,11 +59,9 @@ class Quete(ObjetID):
     
     """
     
-    groupe = "quete"
-    sous_rep = "scripting/quetes"
     def __init__(self, cle, auteur, parent=None, niveau=(1, )):
         """Constructeur de la quête."""
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.type = "quete"
         self.cle = cle
         self.niveau = niveau
@@ -74,7 +71,7 @@ class Quete(ObjetID):
         self.titre = "une quelconque quête"
         self.description = Description(parent=self)
         self.ordonnee = True
-        self.__etapes = ListeID(self)
+        self.__etapes = []
         self._construire()
     
     def __getnewargs__(self):
@@ -132,7 +129,6 @@ class Quete(ObjetID):
         etape.titre = titre
         etape.niveau = self.sous_niveau
         self.__etapes.append(etape)
-        self.enregistrer()
     
     def ajouter_sous_quete(self, titre):
         """Ajoute une sous-quête à la quête."""
@@ -140,7 +136,6 @@ class Quete(ObjetID):
         etape.titre = titre
         etape.niveau = self.sous_niveau
         self.__etapes.append(etape)
-        self.enregistrer()
     
     def supprimer_etape(self, num):
         indice = len(self.niveau) - 1
@@ -153,7 +148,6 @@ class Quete(ObjetID):
             elif etape.niveau[indice] != num:
                 a_effacer = strniveau
         del self.get_dictionnaire_etapes()[a_effacer]
-        self.enregistrer()
     
     def afficher_etapes(self, quete=None):
         """Affiche les étapes qui peuvent être aussi des sous-quêtes."""
@@ -198,7 +192,4 @@ class Quete(ObjetID):
         for etape in self.__etapes:
             etape.detruire()
         
-        ObjetID.detruire(self)
-        
-
-ObjetID.ajouter_groupe(Quete)
+        BaseObj.detruire(self)

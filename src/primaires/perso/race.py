@@ -29,23 +29,21 @@
 
 """Fichier décrivant la classe Race, détaillée plus bas."""
 
-from abstraits.id import ObjetID
+from abstraits.obase import BaseObj
 from primaires.format.description import Description
 
 from .stats import Stats
 from .genres import Genres
 
-class Race(ObjetID):
+class Race(BaseObj):
     
     """Classe définissant les races des personnages.
     
     """
     
-    groupe = "races"
-    sous_rep = "races"
     def __init__(self, nom):
         """Constructeur d'une race."""
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.nom = nom
         self.description = Description(parent=self)
         self.stats = Stats(parent=self)
@@ -75,5 +73,3 @@ class Race(ObjetID):
             res = self.squelette.cle
         
         return res
-
-ObjetID.ajouter_groupe(Race)

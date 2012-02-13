@@ -61,16 +61,10 @@ class Details(BaseObj):
     def __setitem__(self, nom, detail):
         """Modifie le détail 'nom'"""
         self._details[nom] = detail
-        
-        if self.construit and self.parent:
-            self.parent.enregistrer()
     
     def __delitem__(self, nom):
         """Détruit le détail passée en paramètre"""
         del self._details[nom]
-        
-        if self.construit and self.parent:
-            self.parent.enregistrer()
     
     def iter(self):
         """Retourne un dictionnaire contenant les details"""

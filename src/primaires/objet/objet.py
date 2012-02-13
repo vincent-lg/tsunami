@@ -30,9 +30,9 @@
 
 """Ce fichier contient la classe Objet, détaillée plus bas."""
 
-from abstraits.id import ObjetID
+from abstraits.obase import BaseObj
 
-class Objet(ObjetID):
+class Objet(BaseObj):
     
     """Cette classe contient un Objet issu d'un prototype.
     
@@ -67,11 +67,9 @@ class Objet(ObjetID):
     
     """
     
-    groupe = "objets"
-    sous_rep = "objets/objets"
     def __init__(self, prototype):
         """Constructeur de l'objet"""
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.prototype = prototype
         self.contenu = None # contenu dans
         if prototype:
@@ -140,18 +138,4 @@ class Objet(ObjetID):
         """Destruction de l'objet"""
         if self in self.prototype.objets:
             self.prototype.objets.remove(self)
-        ObjetID.detruire(self)
-
-
-ObjetID.ajouter_groupe(Objet)
-
-class MethodeObjet:
-    
-    """Classe enveloppant une méthode d'objet."""
-    
-    def __init__(self, methode, objet):
-        self.methode = methode
-        self.objet = objet
-    
-    def __call__(self, *args, **kwargs):
-        return self.methode(self.objet, *args, **kwargs)
+        BaseObj.detruire(self)

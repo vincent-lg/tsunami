@@ -68,8 +68,6 @@ class FileContexte(BaseObj):
     def __setitem__(self, index, contexte):
         """Change le contexte se trouvant à l'index 'index'"""
         self._file.__setitem__(index, contexte)
-        if self.parent:
-            self.parent.enregistrer()
     
     def __len__(self):
         """Retourne la taille de la file"""
@@ -123,8 +121,6 @@ class FileContexte(BaseObj):
     def ajouter(self, objet):
         """Ajoute l'objet à ajouter en index self._position."""
         self._file.insert(self._position, objet)
-        if self.parent:
-            self.parent.enregistrer()
     
     def retirer(self):
         """Retire le contexte actuel et le retourne.
@@ -137,8 +133,6 @@ class FileContexte(BaseObj):
             raise FileVide
         objet = self.actuel
         del self._file[self._position]
-        if self.parent:
-            self.parent.enregistrer()
         
         return objet
     
@@ -167,8 +161,6 @@ class FileContexte(BaseObj):
         """
         nouveau_contexte = self[self._position + 1]
         self._position += 1
-        if self.parent:
-            self.parent.enregistrer()
         
         return nouveau_contexte
     
@@ -186,8 +178,6 @@ class FileContexte(BaseObj):
         
         nouveau_contexte = self[self._position - 1]
         self._position -= 1
-        if self.parent:
-            self.parent.enregistrer()
         
         return nouveau_contexte
 

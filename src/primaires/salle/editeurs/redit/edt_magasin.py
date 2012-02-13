@@ -129,7 +129,6 @@ class EdtMagasin(Editeur):
             return
         else:
             salle.magasin.encaisser("+" + str(valeur))
-            salle.enregistrer()
             self.actualiser()
     
     def opt_objet(self, arguments):
@@ -176,14 +175,11 @@ class EdtMagasin(Editeur):
         salle = self.objet
         if msg == "supprimer" and salle.magasin is not None:
             salle.magasin = None
-            salle.enregistrer()
             self.migrer_contexte(self.opts.rci_ctx_prec)
         else:
             if salle.magasin is None:
                 salle.magasin = Magasin(msg, parent=salle)
-                salle.enregistrer()
                 self.actualiser()
             else:
                 salle.magasin.nom = msg
-                salle.enregistrer()
                 self.actualiser()

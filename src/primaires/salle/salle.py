@@ -32,8 +32,7 @@
 
 from collections import OrderedDict
 
-from abstraits.id import ObjetID
-from bases.collections.liste_id import ListeID
+from abstraits.obase import BaseObj
 from corps.fonctions import lisser
 from primaires.format.description import Description
 from .chemins import Chemins
@@ -47,7 +46,7 @@ from .script import ScriptSalle
 ZONE_VALIDE = r"^[a-z0-9_]{3,20}$"
 MNEMONIC_VALIDE = r"^[a-z0-9_]{1,15}$"
 
-class Salle(ObjetID):
+class Salle(BaseObj):
     
     """Classe représentant une salle de l'univers.
     
@@ -75,15 +74,13 @@ class Salle(ObjetID):
     
     """
     
-    groupe = "salles"
-    sous_rep = "salles"
     nom_scripting = "la salle"
     _nom = "salle"
     _version = 3
     
     def __init__(self, zone, mnemonic, x=0, y=0, z=0, valide=True):
         """Constructeur de la salle"""
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self._nom_zone = zone
         self._mnemonic = mnemonic
         self.coords = Coordonnees(x, y, z, valide, self)
@@ -92,7 +89,7 @@ class Salle(ObjetID):
         self.description = Description(parent=self)
         self.sorties = Sorties(parent=self)
         self.details = Details(parent=self)
-        self._personnages = ListeID(self) # personnages présents
+        self._personnages = []
         self.objets_sol = ObjetsSol(parent=self)
         self.script = ScriptSalle(self)
         self.interieur = False
@@ -114,7 +111,6 @@ class Salle(ObjetID):
     def _set_nom_zone(self, zone):
         ident = self.ident
         self._nom_zone = zone.lower()
-        self.enregistrer()
         type(self).importeur.salle.changer_ident(ident, self.ident)
     
     def _get_mnemonic(self):
@@ -122,7 +118,6 @@ class Salle(ObjetID):
     def _set_mnemonic(self, mnemonic):
         ident = self.ident
         self._mnemonic = mnemonic.lower()
-        self.enregistrer()
         type(self).importeur.salle.changer_ident(ident, self.ident)
     
     nom_zone = property(_get_nom_zone, _set_nom_zone)
@@ -161,13 +156,11 @@ class Salle(ObjetID):
         """Ajoute le personnage dans la salle"""
         if personnage not in self.personnages:
             self._personnages.append(personnage)
-            self.enregistrer()
     
     def retirer_personnage(self, personnage):
         """Retire le personnage des personnages présents"""
         if personnage in self.personnages:
             self._personnages.remove(personnage)
-            self.enregistrer()
     
     def salles_autour(self, rayon=15):
         """Retourne les chemins autour de self dans le rayon précisé."""
@@ -293,5 +286,3 @@ class Salle(ObjetID):
         pass
 
 
-# On ajoute le groupe à ObjetID
-ObjetID.ajouter_groupe(Salle)

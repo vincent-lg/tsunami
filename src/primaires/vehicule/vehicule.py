@@ -30,18 +30,17 @@
 
 """Fichier contenant la classe Vehicule, détaillée plus bas."""
 
-from abstraits.id import ObjetID
-from bases.collections.dict_valeurs_id import DictValeursID
+from abstraits.obase import BaseObj
 
 from .direction import Direction
 from .vecteur import Vecteur
 from .force import Propulsion, Frottement
 
-class Vehicule(ObjetID):
+class Vehicule(BaseObj):
     
     """Classe représentant un véhicule
     
-    Un véhicule est un objet potentiellement enregistrable (hérité d'ObjetID)
+    Un véhicule est un objet potentiellement enregistrable (hérité d'BaseObj)
     possédant plusieurs attributs et méthodes caractérisant le déplacement
     d'un véhicule d'un type standard en trois dimensions.
     
@@ -96,7 +95,7 @@ class Vehicule(ObjetID):
         ne pourra pas augmenter indéfiniment.
             
         """
-        ObjetID.__init__(self)
+        BaseObj.__init__(self)
         self.masse = 1
         self.position = Vecteur(0, 0, 0, self)
         self.vitesse = Vecteur(0, 0, 0, self)
@@ -107,7 +106,7 @@ class Vehicule(ObjetID):
         
         self.forces = [self.frottement]
         
-        self.salles = DictValeursID(self)
+        self.salles = {}
         self.en_collision = False
     
     def __getnewargs__(self):
