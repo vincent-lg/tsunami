@@ -87,7 +87,7 @@ class Module(BaseModule):
             os.makedirs(REP_ENRS)
         
         # On augmente la limite de récursion
-        sys.setrecursionlimit(10000)
+        sys.setrecursionlimit(12000)
         
         self.pret = True
         BaseModule.config(self)
