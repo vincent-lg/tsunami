@@ -93,11 +93,16 @@ class Sortie(BaseObj):
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
     
+    def __getnewargs__(self):
+        return ("", "")
+    
     def __str__(self):
         return self.nom
     
-    def __getnewargs__(self):
-        return ("", "")
+    def __getstate__(self):
+        attrs = self.__dict__.copy()
+        attrs["salle_dest"] = self.salle_dest.ident
+        return attrs
     
     def deduire_article(self):
         """Déduit l'article en fonction du nom de la sortie"""
