@@ -57,6 +57,7 @@ class Squelette(BaseObj):
     
     groupe = "squelettes"
     sous_rep = "squelettes"
+    enregistrer = True
     def __init__(self, cle):
         """Constructeur du squelette"""
         BaseObj.__init__(self)

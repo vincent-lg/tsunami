@@ -41,6 +41,7 @@ class Zone(BaseObj):
     
     """
     
+    enregistrer = True
     def __init__(self, cle):
         """Constructeur de la zone."""
         BaseObj.__init__(self)

@@ -44,6 +44,7 @@ class BaseElement(BaseObj, metaclass=MetaElt):
     
     """
     
+    enregistrer = True
     nom_type = "" # à redéfinir
     def __init__(self, cle=""):
         """Constructeur d'un type"""

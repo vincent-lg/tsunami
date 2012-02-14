@@ -59,6 +59,7 @@ class Navire(Vehicule):
     
     """
     
+    enregistrer = True
     def __init__(self, modele):
         """Constructeur du navire."""
         Vehicule.__init__(self)

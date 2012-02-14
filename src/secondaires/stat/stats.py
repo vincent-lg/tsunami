@@ -49,6 +49,7 @@ class Stats(BaseObj):
     
     """
     
+    enregistrer = True
     def __init__(self, uptime):
         """Constructeur de l'objet"""
         BaseObj.__init__(self)

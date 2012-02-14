@@ -59,6 +59,7 @@ class Quete(BaseObj):
     
     """
     
+    enregistrer = True
     def __init__(self, cle, auteur, parent=None, niveau=(1, )):
         """Constructeur de la quête."""
         BaseObj.__init__(self)

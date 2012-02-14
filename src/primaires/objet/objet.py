@@ -67,6 +67,7 @@ class Objet(BaseObj):
     
     """
     
+    enregistrer = True
     def __init__(self, prototype):
         """Constructeur de l'objet"""
         BaseObj.__init__(self)

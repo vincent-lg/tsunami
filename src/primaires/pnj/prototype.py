@@ -40,6 +40,7 @@ class Prototype(BaseObj):
     
     """
     
+    enregistrer = True
     def __init__(self, cle):
         """Constructeur d'un type"""
         BaseObj.__init__(self)

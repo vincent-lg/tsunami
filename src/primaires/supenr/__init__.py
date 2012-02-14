@@ -109,10 +109,9 @@ class Module(BaseModule):
             return
         
         a_enregistrer = [o for o in objets.values() if o.e_existe]
-        print(len(a_enregistrer), "objets, dans " + \
-                str(len(pickle.dumps(a_enregistrer))) + "o sont " \
-                "prêts à être enregistrés.")
-        c=input()
+        self.logger.info("{} objets, dans {}o sont prêts à être " \
+                "enregistrés.".format(str(len(a_enregistrer)),
+                str(len(pickle.dumps(a_enregistrer)))))
         self.enregistre_actuellement = True
         chemin_dest = REP_ENRS + os.sep + "enregistrements.bin"
         
@@ -130,6 +129,8 @@ class Module(BaseModule):
             if "fichier_enr" in locals():
                 fichier_enr.close()
             self.enregistre_actuellement = False
+            for classe, liste in objets_par_type.items():
+                liste = [o for o in liste if o.e_existe]
     
     def charger(self):
         """Charge le fichier indiqué et retourne l'objet dépicklé"""
@@ -150,7 +151,7 @@ class Module(BaseModule):
         finally:
             if "fichier_enr" in locals():
                 fichier_enr.close()
-            print(len(objets), "objets récupérés")
+            self.logger.info("{} objets récupérés".format(len(objets)))
         
     def charger_groupe(self, groupe):
         """Cette fonction retourne les objets d'un groupe.

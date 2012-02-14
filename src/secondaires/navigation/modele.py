@@ -43,6 +43,7 @@ class ModeleNavire(BaseObj):
     
     """
     
+    enregistrer = True
     def __init__(self, cle):
         """Constructeur du modèle."""
         BaseObj.__init__(self)

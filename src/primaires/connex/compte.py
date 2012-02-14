@@ -51,6 +51,7 @@ class Compte(BaseObj):
     _nom = "compte"
     _version = 1
     
+    enregistrer = True
     def __init__(self, nom_compte):
         """Constructeur d'un compte."""
         BaseObj.__init__(self)

@@ -103,6 +103,7 @@ class BaseObj(metaclass=MetaBaseObj):
     """
     
     importeur = None
+    enregistrer = False
     def __init__(self):
         """Instancie un simple statut"""
         self._statut = INIT
@@ -115,7 +116,8 @@ class BaseObj(metaclass=MetaBaseObj):
         raise NotImplementedError
     
     def ajouter_enr(self):
-        if statut_gen == 0 and id(self) not in objets:
+        if type(self).enregistrer and statut_gen == 0 and id(self) not in \
+                objets:
             objets[id(self)] = self
             liste = objets_par_type.get(type(self), [])
             liste.append(self)
@@ -142,9 +144,11 @@ class BaseObj(metaclass=MetaBaseObj):
         """Construit l'objet"""
         self._statut = CONSTRUIT
     
-    def _detruire(self):
+    def detruire(self):
         """Marque l'objet comme détruit."""
         self.e_existe = False
+        if id(self) in objets:
+            del objets[id(self)]
     
     @property
     def construit(self):

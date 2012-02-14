@@ -53,6 +53,7 @@ class Matelot(BaseObj):
     
     """
     
+    enregistrer = True
     def __init__(self, personnage):
         """Constructeur du matelot."""
         BaseObj.__init__(self)

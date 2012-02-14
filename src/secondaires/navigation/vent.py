@@ -53,6 +53,7 @@ class Vent(BaseObj):
     
     """
     
+    enregistrer = True
     def __init__(self, etendue, x, y, z, vitesse=1, direction=0):
         """Constructeur du vent.
         

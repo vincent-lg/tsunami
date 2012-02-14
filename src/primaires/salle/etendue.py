@@ -56,6 +56,7 @@ class Etendue(BaseObj):
     
     """
     
+    enregistrer = True
     def __init__(self, cle):
         """Création de l'éttendue."""
         BaseObj.__init__(self)

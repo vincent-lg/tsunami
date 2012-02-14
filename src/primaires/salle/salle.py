@@ -78,6 +78,7 @@ class Salle(BaseObj):
     _nom = "salle"
     _version = 3
     
+    enregistrer = True
     def __init__(self, zone, mnemonic, x=0, y=0, z=0, valide=True):
         """Constructeur de la salle"""
         BaseObj.__init__(self)
