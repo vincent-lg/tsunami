@@ -88,7 +88,9 @@ class Module(BaseModule):
     
     def init(self):
         """Initialisation du module"""
-        self.conversations = Conversations()
+        self.conversations = self.importeur.supenr.charger_unique(Conversations)
+        if self.conversations is None:
+            self.conversations = Conversations()
         
         # On récupère les attitudes
         attitudes = self.importeur.supenr.charger_unique(Attitudes)

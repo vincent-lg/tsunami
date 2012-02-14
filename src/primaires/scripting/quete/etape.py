@@ -45,6 +45,7 @@ class Etape(BaseObj):
     
     """
     
+    enregistrer = True
     def __init__(self, quete):
         """Constructeur de l'étape."""
         BaseObj.__init__(self)

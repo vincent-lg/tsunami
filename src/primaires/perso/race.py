@@ -41,6 +41,7 @@ class Race(BaseObj):
     
     """
     
+    enregistrer = True
     def __init__(self, nom):
         """Constructeur d'une race."""
         BaseObj.__init__(self)

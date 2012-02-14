@@ -63,6 +63,7 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
     rayon_max = 0 # à redéfinir selon la perturbation
     duree_max = 15 # à peu près en minutes
     
+    enregistrer = True
     def __init__(self, pos):
         """Constructeur d'une perturbation météo"""
         BaseObj.__init__(self)

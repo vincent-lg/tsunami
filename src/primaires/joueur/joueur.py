@@ -42,6 +42,7 @@ class Joueur(Personnage):
     groupe = "joueurs"
     sous_rep = "joueurs"
     
+    enregistrer = True
     def __init__(self):
         """Constructeur du joueur"""
         Personnage.__init__(self)

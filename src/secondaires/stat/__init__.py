@@ -35,7 +35,7 @@ import time
 from abstraits.module import *
 from bases.fonction import *
 from .stats import Stats
-import secondaires.stat.commandes
+from . import commandes
 
 class Module(BaseModule):
     
@@ -69,8 +69,12 @@ class Module(BaseModule):
         
         # On récupère les informations statistiques
         self.stats = self.importeur.supenr.charger_unique(Stats)
-        if self.stats is None or self.stats.uptime != \
+        if self.stats is not None and self.stats.uptime != \
                 type(self.importeur).serveur.uptime:
+            self.stats.detruire()
+            self.stats = None
+        
+        if self.stats is None:
             self.stats = Stats(type(self.importeur).serveur.uptime)
         
         # On ajoute les commandes du module

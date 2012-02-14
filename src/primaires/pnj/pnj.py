@@ -44,6 +44,7 @@ class PNJ(Personnage):
     
     """
     
+    enregistrer = True
     def __init__(self, prototype):
         """Constructeur du PNJ"""
         Personnage.__init__(self)

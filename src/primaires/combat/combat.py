@@ -55,6 +55,7 @@ class Combat:
     
     """
     
+    enregistrer = True
     def __init__(self, salle):
         """Constructeur d'un combat."""
         self.salle = salle

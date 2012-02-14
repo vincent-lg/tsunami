@@ -46,6 +46,7 @@ class Conversations(BaseObj):
     
     """
     
+    enregistrer = True
     def __init__(self, parent=None):
         """Constructeur du conteneur"""
         BaseObj.__init__(self)

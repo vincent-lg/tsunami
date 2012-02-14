@@ -42,6 +42,7 @@ class Versions(BaseObj):
     
     """
     
+    enregistrer = True
     def __init__(self):
         """Constructeur du conteneur"""
         BaseObj.__init__(self)

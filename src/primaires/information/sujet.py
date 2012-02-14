@@ -54,6 +54,7 @@ class SujetAide(BaseObj):
     
     """
     
+    enregistrer = True
     def __init__(self, titre):
         """Constructeur du sujet d'aide."""
         BaseObj.__init__(self)

@@ -45,6 +45,7 @@ class Attaque(BaseObj):
     
     """Classe représentant une attaque."""
     
+    enregistrer = True
     def __init__(self, personnage, cle):
         """Constructeur de l'attaque."""
         BaseObj.__init__(self)
