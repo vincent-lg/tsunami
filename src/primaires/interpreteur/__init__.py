@@ -164,11 +164,11 @@ class Module(BaseModule):
         """Commande de validation"""
         str_commande = liste_vers_chaine(lst_commande)
         trouve = False
-        commandes = []
+        commandes = self.lister_commandes_pour_groupe(personnage.grp)
         if personnage.langue_cmd == "francais":
-            commandes = self.commandes_francais
+            commandes.sort(key=lambda c: c.commande.nom_francais)
         elif personnage.langue_cmd == "anglais":
-            commandes = self.commandes_anglais
+            commandes.sort(key=lambda c: c.commande.nom_anglais)
         
         for cmd in commandes:
             if cmd.repartir(personnage, masques, lst_commande):
@@ -246,3 +246,15 @@ class Module(BaseModule):
     def creer_mot_cle(self, francais, anglais):
         """Crée et retourne un mot-clé."""
         return MotCle(francais, anglais)
+    
+    def lister_commandes_pour_groupe(self, groupe):
+        """Liste les commandes que le groupe donné a le droit d'exécuter."""
+        groupes = self.groupes.commandes.dictionnaire.copy()
+        p_groupes = groupe.get_groupes_inclus()
+        commandes = []
+        for cmd in self.commandes:
+            t_groupe = groupes[cmd.commande.adresse]
+            if t_groupe in p_groupes:
+                commandes.append(cmd)
+        
+        return commandes

@@ -103,3 +103,14 @@ class Groupe(BaseObj):
                 str_flags.append(nom)
         
         return ", ".join(str_flags) if str_flags else "aucun"
+    
+    def get_groupes_inclus(self, liste=None):
+        """Retourne la liste des groupes inclus, comptant self."""
+        if liste is None:
+            liste = [self]
+        
+        for groupe in self.groupes_inclus:
+            groupe = type(self).importeur.interpreteur.groupes[groupe]
+            liste.extend(groupe.get_groupes_inclus())
+        
+        return liste

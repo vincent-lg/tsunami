@@ -57,6 +57,11 @@ class Parametre(Commande):
     
     def repartir(self, personnage, masques, commande):
         """Répartition du paramètre."""
+        # Si le personnage n'a pas le droit d'appeler la commande, on s'arrête
+        if not type(self).importeur.interpreteur.groupes.personnage_a_le_droit(
+                personnage, self):
+            return False
+        
         str_commande = liste_vers_chaine(commande)
         
         if str_commande.startswith(" "):
