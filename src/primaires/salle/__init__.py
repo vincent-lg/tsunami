@@ -37,6 +37,7 @@ from primaires.format.fonctions import format_nb
 from .config import cfg_salle
 from .coordonnees import Coordonnees
 from .salle import Salle, ZONE_VALIDE, MNEMONIC_VALIDE
+from .sortie import Sortie
 from .sorties import NOMS_SORTIES
 from .porte import Porte
 from .zone import Zone
@@ -166,9 +167,11 @@ class Module(BaseModule):
     
     def preparer(self):
         """Préparation du module.
+        
         On vérifie que :
         -   Les salles de retour et d'arrivée sont bien créés (sinon,
             on les recrée)
+        -   On recrée le lien entre sorties et salles
         -   Les personnages présents dans self._personnages soient
             toujours là
         -   Chaque salle est dans une zone
@@ -195,6 +198,11 @@ class Module(BaseModule):
         
         self.salle_arrivee = salle_arrivee
         self.salle_retour = salle_retour
+        
+        # On prépare les sorties
+        for salle in self.salles.values():
+            for sortie in salle.sorties:
+                sortie.salle_dest = self.salles[sortie.salle_dest]
         
         for salle in self._salles.values():
             zone = salle.zone
