@@ -33,8 +33,9 @@
 import sys
 import traceback
 import time
+from collections import OrderedDict
 
-from bases.collections.dictionnaire import Dictionnaire
+from bases.collections.dictionnaire import *
 from bases.collections.liste import Liste
 
 objets_base = {} # dictionnaire des différents BaseObj {nom_cls:cls}
@@ -242,6 +243,8 @@ class BaseObj(metaclass=MetaBaseObj):
         """
         if isinstance(val_attr, list):
             val_attr = Liste(val_attr)
+        elif isinstance(val_attr, OrderedDict):
+            val_attr = DictionnaireOrdonne(val_attr)
         elif isinstance(val_attr, dict):
             val_attr = Dictionnaire(val_attr)
         
