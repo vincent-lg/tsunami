@@ -241,11 +241,11 @@ class BaseObj(metaclass=MetaBaseObj):
         dictionnaire.
         
         """
-        if isinstance(val_attr, list):
+        if type(val_attr) is list:
             val_attr = Liste(val_attr)
-        elif isinstance(val_attr, OrderedDict):
+        elif type(val_attr) is OrderedDict:
             val_attr = DictionnaireOrdonne(val_attr)
-        elif isinstance(val_attr, dict):
+        elif type(val_attr) is dict:
             val_attr = Dictionnaire(val_attr)
         
         object.__setattr__(self, nom_attr, val_attr)
