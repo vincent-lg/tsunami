@@ -59,10 +59,10 @@ class CmdCommande(Commande):
         if dic_masques["nom_commande"] is None:
             categories = type(self).importeur.interpreteur.categories
             commandes = {}
-            for cmd in type(self).importeur.interpreteur.commandes:
-                if type(self).importeur.interpreteur.groupes. \
-                        personnage_a_le_droit(personnage, cmd.commande):
-                    commandes[cmd.commande.get_nom_pour(personnage)] = cmd.commande
+            cmds = importeur.interpreteur.lister_commandes_pour_groupe(
+                    personnage.grp)
+            for cmd in cmds:
+                commandes[cmd.commande.get_nom_pour(personnage)] = cmd.commande
             
             if not commandes:
                 personnage << "Aucune commande ne semble être définie." \
