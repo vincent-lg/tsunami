@@ -85,8 +85,6 @@ class FileContexte(BaseObj):
         return self._position
     def _set_position(self, position):
         self._position = position
-        if self.parent:
-            self.parent.enregistrer()
     position = property(_get_position, _set_position)
     
     def get(self, index):

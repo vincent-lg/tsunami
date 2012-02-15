@@ -40,6 +40,7 @@ from primaires.interpreteur.groupe.groupe import *
 class ConteneurGroupes(BaseObj):
     
     """Classe conteneur des groupes.
+    
     Elle peut être soit créée directement par le système si le fichier
     n'existe pas, soit récupérée depuis son fichier de sauvegarde.
     
@@ -47,6 +48,7 @@ class ConteneurGroupes(BaseObj):
     
     _nom = "groupes_commandes"
     _version = 1
+    enregistrer = True
     def __init__(self):
         """Constructeur du conteneur."""
         BaseObj.__init__(self)
