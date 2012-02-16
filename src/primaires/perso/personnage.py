@@ -160,7 +160,6 @@ class Personnage(BaseObj):
     def _get_race(self):
         return self._race
     def _set_race(self, race):
-        race = race.get_objet()
         self._race = race
         
         for stat in race.stats:
