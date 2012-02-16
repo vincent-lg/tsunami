@@ -30,9 +30,11 @@
 
 """Ce fichier contient le module primaire supenr."""
 
-import sys
+import copy
 import os
 import pickle
+import sys
+import time
 
 from abstraits.module import *
 from abstraits.obase import *
@@ -92,6 +94,11 @@ class Module(BaseModule):
     def init(self):
         """Chargement de tous les objets."""
         self.charger()
+        
+        # Création de l'action différée pour enregistrer périodiquement
+        importeur.diffact.ajouter_action("enregistrement", 60 * 15,
+                self.enregistrer_periodiquement)
+        
         BaseModule.init(self)
     
     def detruire(self):
@@ -132,6 +139,20 @@ class Module(BaseModule):
             for classe, liste in objets_par_type.items():
                 liste = [o for o in liste if o.e_existe]
     
+    def enregistrer_periodiquement(self):
+        """Cette méthode est appelée périodiquement pour enregistrer les objets.
+        
+        """
+        importeur.diffact.ajouter_action("enregistrement", 60 * 15,
+                self.enregistrer_periodiquement)
+        if self.enregistre_actuellement:
+            return
+        
+        t1 = time.time()
+        self.enregistrer()
+        t2 = time.time()
+        print("Enregistrement fait en", t2 - t1)
+        
     def charger(self):
         """Charge le fichier indiqué et retourne l'objet dépicklé"""
         global REP_ENRS

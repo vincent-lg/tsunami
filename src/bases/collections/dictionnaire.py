@@ -30,6 +30,8 @@
 
 """Fichier contenant la classe Dictionnaire détaillée plus bas."""
 
+import copy
+
 from collections import OrderedDict
 
 class Dictionnaire:
@@ -159,6 +161,12 @@ class DictionnaireOrdonne:
         self.nettoyer()
         return len(self.dictionnaire)
 
+    def __deepcopy__(self, memo):
+        """Méthode surchargée pour permettre la copie de ce dictionnaire."""
+        dictionnaire = copy.deepcopy(object.__getattribute__(self,
+                "dictionnaire"), memo)
+        return dictionnaire
+    
     def nettoyer(self):
         """Nettoie le dictionnaire."""
         dictionnaire = OrderedDict()

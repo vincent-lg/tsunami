@@ -30,6 +30,8 @@
 
 """Fichier contenant la classe Liste détaillée plus bas."""
 
+import copy
+
 class Liste:
     
     """Classe représentant une liste, très semblable aux listes builtins.
@@ -85,6 +87,11 @@ class Liste:
     def __len__(self):
         self.nettoyer()
         return len(self.liste)
+    
+    def __deepcopy__(self, memo):
+        """Méthode surchargée pour permettre la copie de ces listes."""
+        liste = copy.deepcopy(object.__getattribute__(self, "liste"), memo)
+        return liste
     
     def nettoyer(self):
         """Nettoie la liste."""
