@@ -28,13 +28,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit les fonctions de callback, appelées dans le cadre
-d'évènements serveur (connexion d'un client, déconnexion, réception
-d'un message...)
+"""Ce fichier définit les fonctions de callback du serveur.
+
+Ces fonctions sont appelées dans le cadre d'évènements serveur (connexion
+d'un client, déconnexion, réception d'un message...)
 
 Elles prennent toutes le préfixe cb_ (callback)
 
 """
+
+import traceback
 
 def cb_connexion(serveur, importeur, logger, client):
     """Que se passe-t-il quand client se connecte ?"""
@@ -50,4 +53,13 @@ def cb_deconnexion(serveur, importeur, logger, client):
 def cb_reception(serveur, importeur, logger, client, msg):
     """Que se passe-t-il quand client envoie un message au serveur ?"""
     instance = importeur.connex[client]
-    instance.receptionner(msg)
+    try:
+        instance.receptionner(msg)
+    except Exception:
+        logger.fatal("Exception levée lors de l'interprétation de " \
+                "l'entrée : {}".format(msg))
+        logger.fatal(traceback.format_exc())
+        instance.envoyer(
+            "|err|Une erreur s'est produite lors du traitement " \
+            "de votre commande.\nLes administrateurs en ont été " \
+            "avertis.|ff|")
