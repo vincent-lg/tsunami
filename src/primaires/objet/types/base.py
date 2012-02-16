@@ -94,9 +94,11 @@ class BaseType(BaseObj, metaclass=MetaType):
     
     def __getstate__(self):
         """Retourne le dictionnaire à enregistrer."""
-        attrs = dict(BaseObj.__getstate__(self))
-        del attrs["_extensions_editeur"]
-        del attrs["_attributs"]
+        attrs = self.__dict__.copy()
+        if "_extensions_editeur" in attrs:
+            del attrs["_extensions_editeur"]
+        if "_attribut" in attrs:
+            del attrs["_attributs"]
         return attrs
     
     def _get_prix(self):

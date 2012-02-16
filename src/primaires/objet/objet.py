@@ -140,3 +140,14 @@ class Objet(BaseObj):
         if self in self.prototype.objets:
             self.prototype.objets.remove(self)
         BaseObj.detruire(self)
+
+class MethodeObjet:
+    
+    """Classe enveloppant une méthode d'objet."""
+    
+    def __init__(self, methode, objet):
+        self.methode = methode
+        self.objet = objet
+    
+    def __call__(self, *args, **kwargs):
+        return self.methode(self.objet, *args, **kwargs)
