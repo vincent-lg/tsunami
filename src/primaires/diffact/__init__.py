@@ -30,6 +30,8 @@
 
 """Fichier contenant le module primaire diffact."""
 
+import traceback
+
 from abstraits.module import *
 from .action_differee import ActionDifferee
 
@@ -80,6 +82,7 @@ class Module(BaseModule):
     
     def boucle(self):
         """Redéfinition de la méthode boucle du Module.
+        
         Cette méthode est appelée pour chaque module, à chaque tour de boucle
         temps réel.
         
@@ -138,6 +141,12 @@ class Module(BaseModule):
                 # On la supprime avant toute chose
                 self.retirer_action(nom)
                 # On l'exécute ensuite
-                action.executer()
+                try:
+                    action.executer()
+                except Exception:
+                    self.logger.fatal("Une erreur s'est produite lors " \
+                            "de l'exécution de l'action {}.".format(
+                            action.nom))
+                    self.logger.fatal(traceback.format_exc())
             else:
                 break

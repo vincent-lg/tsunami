@@ -208,4 +208,3 @@ class Joueur(Personnage):
         """Méthode appelée à chaque tick."""
         Personnage.tick(self)
 
-

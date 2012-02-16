@@ -141,12 +141,3 @@ class ModeConnecte(Contexte):
                     self.pere.joueur << "|err|{}|ff|.".format(err_act)
                 except exception as err_int:
                     self.pere.joueur.envoyer(str(err_int))
-                except Exception:
-                    logger.fatal("Exception levée " \
-                        "lors de l'interprétation d'une commande.")
-                    logger.fatal(traceback.format_exc())
-                    self.pere.joueur.envoyer(
-                        "|err|Une erreur s'est produite lors du traitement " \
-                        "de votre commande.\nLes administrateurs en ont été " \
-                        "avertis.|ff|")
-
