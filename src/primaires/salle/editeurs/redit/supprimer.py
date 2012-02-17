@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,30 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le contexte éditeur EdtDroits"""
+"""Fichier contenant le contexte éditeur Supprimer"""
 
-from primaires.interpreteur.editeur import Editeur
+from primaires.interpreteur.editeur.supprimer import Supprimer
 
-class EdtEnvoyer(Editeur):
+class NSupprimer(Supprimer):
     
-    """Classe définissant le contexte éditeur 'envoyer'.
-    Ce contexte permet d'envoyer un message.
+    """Classe définissant le contexte éditeur 'supprimer'.
+    
+    Ce contexte permet spécifiquement de supprimer une salle.
     
     """
     
-    def __init__(self, pere, objet=None, attribut=None):
-        """Constructeur de l'éditeur"""
-        Editeur.__init__(self, pere, objet, attribut)
-    
-    def entrer(self):
-        mail = self.objet
-        if not mail.liste_dest and mail.destinataire is None:
-            self.pere.joueur << "|err|Vous devez préciser au moins un " \
-                    "destinataire.|ff|\n"
+    def interpreter(self, msg):
+        """Interprétation du contexte"""
+        msg = msg.lower()
+        salle = self.objet
+        if msg == "oui":
+            if salle.personnages:
+                self.pere << "|err|Des personnages sont présents dans " \
+                        "cette salle.\nOpération annulée.|ff|"
+            else:
+                importeur.salle.supprimer_salle(salle.ident)
+                self.fermer()
+                self.pere << "|rg|La salle {} a bien été " \
+                        "supprimée.|ff|".format(salle.ident)
+        elif msg == "non":
             self.migrer_contexte(self.opts.rci_ctx_prec)
         else:
-            if mail.id_source:
-                del type(self).importeur.communication.mails[mail.id_source]
-            mail.envoyer()
-            self.fermer()
-            self.pere.joueur << "|att|Votre mudmail a bien été envoyé.|ff|"
+            self.pere << "|err|Choix invalide.|ff|"

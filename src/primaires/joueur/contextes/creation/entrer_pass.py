@@ -47,6 +47,6 @@ class EntrerPassJoueur(EntrerPass):
         retiré de la pile.
         
         """
-        self.pere.joueur.contextes.retirer()
+        self.fermer()
         Contexte.migrer_contexte(self, contexte, afficher_accueil)
         self.pere.contexte_actuel.pere = self.pere

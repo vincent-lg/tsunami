@@ -124,7 +124,7 @@ class EdtSocedit(Editeur):
     
     def opt_quitter(self, arguments):
         """Option quitter"""
-        self.pere.joueur.contextes.retirer()
+        self.fermer()
         self.pere.envoyer("Fermeture de l'éditeur.")
     
     def opt_aim(self, arguments):

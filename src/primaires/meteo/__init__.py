@@ -66,8 +66,9 @@ class Module(BaseModule):
         """Initialisation du module"""        
         self.importeur.hook["salle:regarder"].ajouter_evenement(
                 self.donner_meteo)
-        self.importeur.supenr.charger_groupe(BasePertu)
-        
+        self.perturbations_actuelles = self.importeur.supenr.charger_groupe(
+                BasePertu)
+        print("Récupération de", len(self.perturbations_actuelles))
         BaseModule.init(self)
     
     def preparer(self):
@@ -109,6 +110,7 @@ class Module(BaseModule):
                     else:
                         print("la perturbation {} n'existe pas". \
                                 format(nom_pertu_enchainer))
+                pertu.detruire()
                 self.perturbations_actuelles.remove(pertu)
             # On fait bouger les perturbations existantes
             pertu.cycle()

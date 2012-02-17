@@ -83,8 +83,8 @@ class Confirmation(Contexte):
         args = self.arguments
         if msg.lower() == "oui":
             fonction(*args)
-            self.pere.joueur.contextes.retirer()
+            self.fermer()
             self.pere.joueur << "Vous avez bien confirmé."
         else:
-            self.pere.joueur.contextes.retirer()
+            self.fermer()
             self.pere.joueur << "Vous avez bien annulé."

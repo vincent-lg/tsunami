@@ -88,7 +88,7 @@ class EdtQedit(Editeur):
         msg = msg.lower()
         print(msg, RE_QUETE_VALIDE.search(msg))
         if msg == "q":
-            self.pere.joueur.contextes.retirer()
+            self.fermer()
             self.pere.envoyer("Fermeture de l'éditeur de quêtes.")
         elif RE_QUETE_VALIDE.search(msg) is None:
             self.pere << "|err|Cette clé de quête est invalide.|ff|"

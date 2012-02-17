@@ -117,8 +117,8 @@ class BaseObj(metaclass=MetaBaseObj):
         raise NotImplementedError
     
     def ajouter_enr(self):
-        if type(self).enregistrer and statut_gen == 0 and id(self) not in \
-                objets:
+        if self.e_existe and type(self).enregistrer and statut_gen == 0 and \
+                id(self) not in objets:
             objets[id(self)] = self
             liste = objets_par_type.get(type(self), [])
             liste.append(self)

@@ -71,7 +71,7 @@ class ConfirmerPass(Contexte):
             self.pere.compte.hash_mot_de_pass(clef_salage, \
                 type_chiffrement, msg):
             if self.suivant is None:
-                self.pere.joueur.contextes.retirer()
+                self.fermer()
                 self.pere.envoyer("|att|Votre mot de passe a bien été " \
                         "modifié.|ff|")
             else:

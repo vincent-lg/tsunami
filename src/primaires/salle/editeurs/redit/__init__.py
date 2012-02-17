@@ -50,6 +50,7 @@ from .edt_mnemonic import EdtMnemonic
 from .edt_magasin import EdtMagasin
 from .edt_sorties import EdtSorties
 from .edt_details import EdtDetails
+from . supprimer import NSupprimer
 
 class EdtRedit(Presentation):
     
@@ -242,3 +243,10 @@ class EdtRedit(Presentation):
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,
                 salle.script)
         scripts.parent = self
+        
+        # Supprimer
+        sup = self.ajouter_choix("supprimer", "sup", NSupprimer,
+                salle)
+        sup.parent = self
+        sup.aide_courte = "Souhaitez-vous réellement supprimer " \
+                "la salle {} ?".format(salle.ident)

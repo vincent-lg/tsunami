@@ -56,5 +56,5 @@ class EdtAnnuler(Editeur):
                 print(type(self).importeur.communication.mails[mail.id_source])
             except KeyError:
                 print("Le mail source n'existe plus.")
-        self.pere.joueur.contextes.retirer()
+        self.fermer()
         self.pere.joueur << "|rg|Vos modifications ont été annulées.|ff|"

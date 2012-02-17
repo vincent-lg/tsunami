@@ -63,9 +63,9 @@ class Invitation(Contexte):
         if msg == "o":
             # On tente de connecter joueur
             self.canal.rejoindre_ou_quitter(joueur, forcer=True)
-            joueur.contextes.retirer()
+            self.fermer()
         elif msg == "n":
             joueur << "|att|Vous avez refusé l'invitation.|ff|"
-            joueur.contextes.retirer()
+            self.fermer()
         else:
             joueur << "|err|Vous devez accepter ou refuser.|ff|"

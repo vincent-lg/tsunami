@@ -80,7 +80,7 @@ class Systeme(Contexte):
         if msg.startswith("/"):
             msg = msg[1:]
             if msg == "q":
-                self.pere.joueur.contextes.retirer()
+                self.fermer()
                 self.pere << "Fermeture de la console Python."
             else:
                 self.pere << "|err|Option inconnue.|ff|"

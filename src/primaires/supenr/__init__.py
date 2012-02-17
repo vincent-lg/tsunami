@@ -186,7 +186,12 @@ class Module(BaseModule):
         if not self.pret:
             raise RuntimeError("le supenr n'est pas prêt à charger un groupe")
         
-        return objets_par_type.get(groupe, [])
+        objets = []
+        for cls in objets_par_type.keys():
+            if issubclass(cls, groupe):
+                objets.extend(objets_par_type[cls])
+        
+        return objets
     
     def charger_unique(self, groupe):
         """Cette fonction retourne l'objet unique correspondant.

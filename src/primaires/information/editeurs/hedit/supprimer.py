@@ -45,7 +45,7 @@ class NSupprimer(Supprimer):
         sujet = self.objet
         if msg == "oui":
             del type(self).importeur.information[sujet.titre]
-            self.pere.joueur.contextes.retirer()
+            self.fermer()
             self.pere << self.confirme
         elif msg == "non":
             self.migrer_contexte(self.opts.rci_ctx_prec)
