@@ -64,8 +64,8 @@ class Etendue(BaseObj):
         self.altitude = 0
         self.profondeur = 4
         self.obstacles = []
-        self.cotes = DictValeursID(self)
-        self.liens = DictValeursID(self)
+        self.cotes = {}
+        self.liens = {}
     
     def __getnewargs__(self):
         return ("", )
@@ -103,8 +103,8 @@ class Etendue(BaseObj):
     def points(self):
         """Constitution d'un dictionnaire des points."""
         points = dict.fromkeys(self.obstacles)
-        points.update(self.cotes.to_dict)
-        points.update(self.liens.to_dict)
+        points.update(self.cotes)
+        points.update(self.liens)
         return points
     
     @staticmethod

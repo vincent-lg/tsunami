@@ -69,7 +69,7 @@ class BaseElement(BaseObj, metaclass=MetaElt):
     
     def __getstate__(self):
         """Retourne le dictionnaire à enregistrer."""
-        attrs = dict(ObjetID.__getstate__(self))
+        attrs = self.__dict__.copy()
         del attrs["_extensions_editeur"]
         del attrs["_attributs"]
         return attrs
