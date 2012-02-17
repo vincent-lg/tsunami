@@ -80,7 +80,7 @@ class Module(BaseModule):
                 self.cycle_meteo)
         # On tue les perturbations trop vieilles
         for pertu in self.perturbations_actuelles:
-            if pertu.age == pertu.duree:
+            if pertu.age >= pertu.duree:
                 i = randint(0, 100)
                 nom_pertu_enchainer = ""
                 msg_enchainement = ""
