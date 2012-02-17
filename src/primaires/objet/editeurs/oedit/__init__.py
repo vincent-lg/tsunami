@@ -95,7 +95,7 @@ class EdtOedit(Editeur):
         """Interprétation du message"""
         msg = msg.lower()
         if msg == "a":
-            self.pere.joueur.contextes.retirer()
+            self.fermer()
             self.pere.envoyer("Opération annulée.")
         else:
             type_choisi = ""

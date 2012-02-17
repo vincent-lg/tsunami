@@ -89,7 +89,7 @@ class EdtRaedit(Editeur):
     
     def opt_quitter(self, argument):
         """Option quitter."""
-        self.pere.joueur.contextes.retirer()
+        self.fermer()
         self.pere.envoyer("Fermeture de l'éditeur.")
     
     def opt_suppr_race(self, arguments):

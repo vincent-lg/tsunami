@@ -63,7 +63,7 @@ class Supprimer(Editeur):
             for nom in self.action.split("."):
                 objet = getattr(objet, nom)
             objet(self.objet.cle)
-            self.pere.joueur.contextes.retirer()
+            self.fermer()
             self.pere << self.confirme
         elif msg == "non":
             self.migrer_contexte(self.opts.rci_ctx_prec)

@@ -355,4 +355,7 @@ class Contexte(BaseObj, metaclass=MetaContexte):
             return
         
         return True
-
+    
+    def fermer(self):
+        """Fermeture du contexte."""
+        self.pere.joueur.contextes.retirer(self)

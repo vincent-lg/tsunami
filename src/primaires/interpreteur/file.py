@@ -120,19 +120,24 @@ class FileContexte(BaseObj):
         """Ajoute l'objet à ajouter en index self._position."""
         self._file.insert(self._position, objet)
     
-    def retirer(self):
-        """Retire le contexte actuel et le retourne.
+    def retirer(self, contexte=None):
+        """Retire le contexte précisé ou actuel et le retourne.
         
         Si la taille de la liste est trop faible (self._taille_min), une
         exception est levée.
         
-        """
-        if len(self._file) <= self._taille_min:
-            raise FileVide
-        objet = self.actuel
-        del self._file[self._position]
+        Si le contexte est précisé, retire le contexte précis.
         
-        return objet
+        """
+        if contexte:
+            self._file.remove(contexte)
+        else:
+            if len(self._file) <= self._taille_min:
+                raise FileVide
+            contexte = self.actuel
+            del self._file[self._position]
+        
+        return contexte
     
     def vider(self):
         """Vide la file des contextes"""

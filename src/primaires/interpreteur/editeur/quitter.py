@@ -44,5 +44,5 @@ class Quitter(Editeur):
     
     def entrer(self):
         """Quand on entre dans le contexte"""
-        self.pere.joueur.contextes.retirer()
+        self.fermer()
         self.pere.envoyer("Fermeture de l'éditeur.")

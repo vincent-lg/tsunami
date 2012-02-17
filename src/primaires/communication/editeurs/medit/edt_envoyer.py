@@ -53,5 +53,5 @@ class EdtEnvoyer(Editeur):
             if mail.id_source:
                 del type(self).importeur.communication.mails[mail.id_source]
             mail.envoyer()
-            self.pere.joueur.contextes.retirer()
+            self.fermer()
             self.pere.joueur << "|att|Votre mudmail a bien été envoyé.|ff|"

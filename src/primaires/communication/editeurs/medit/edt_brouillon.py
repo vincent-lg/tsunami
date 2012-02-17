@@ -48,11 +48,11 @@ class EdtBrouillon(Editeur):
         if mail.id_source:
             del type(self).importeur.communication.mails[mail.id_source]
             mail.enregistrer_brouillon()
-            self.pere.joueur.contextes.retirer()
+            self.fermer()
             self.pere.joueur << "|att|Vos modifications ont bien été " \
                     "enregistrées.|ff|"
         else:
             mail.enregistrer_brouillon()
-            self.pere.joueur.contextes.retirer()
+            self.fermer()
             self.pere.joueur << "|att|Votre mudmail a bien été enregistré " \
                     "dans les brouillons.|ff|"

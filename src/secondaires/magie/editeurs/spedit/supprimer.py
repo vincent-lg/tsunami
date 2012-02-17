@@ -60,7 +60,7 @@ class NSupprimer(Supprimer):
                 self.migrer_contexte(self.opts.rci_ctx_prec)
             else:
                 objet(sort.cle)
-                self.pere.joueur.contextes.retirer()
+                self.fermer()
                 self.pere << self.confirme
         elif msg == "non":
             self.migrer_contexte(self.opts.rci_ctx_prec)
