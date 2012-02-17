@@ -244,7 +244,7 @@ class CmdDetailler(Commande):
         
         portee = 50
         if hauteur > 0:
-            portee = 50 * hauteur
+            portee += 50 * hauteur
         
         nombre = dic_masques["nombre"]
         if nombre:

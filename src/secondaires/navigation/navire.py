@@ -404,7 +404,7 @@ class Propulsion(Force):
         # Calcul des rames
         if rames:
             facts = [VIT_RAMES[rame.vitesse] for rame in rames]
-            fact = 1.1
+            fact = 0.8
             for f in facts:
                 fact *= f
             

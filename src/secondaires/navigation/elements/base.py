@@ -70,8 +70,10 @@ class BaseElement(BaseObj, metaclass=MetaElt):
     def __getstate__(self):
         """Retourne le dictionnaire à enregistrer."""
         attrs = self.__dict__.copy()
-        del attrs["_extensions_editeur"]
-        del attrs["_attributs"]
+        if "_extensions_editeur" in attrs:
+            del attrs["_extensions_editeur"]
+        if "_attributs" in attrs:
+            del attrs["_attributs"]
         return attrs
     
     def etendre_editeur(self, raccourci, ligne, editeur, objet, attribut, *sup):
