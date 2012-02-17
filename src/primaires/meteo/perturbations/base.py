@@ -57,8 +57,6 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
     
     """
     
-    groupe = "perturbations"
-    sous_rep = "meteo/perturbations"
     nom_pertu = ""
     rayon_max = 0 # à redéfinir selon la perturbation
     duree_max = 15 # à peu près en minutes
@@ -110,6 +108,7 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
     
     def cycle(self):
         """Entame un nouveau cycle de la perturbation.
+        
         Par défaut, elle se contente de bouger.
         
         """
