@@ -47,6 +47,7 @@ from primaires.interpreteur.masque.exceptions.erreur_validation \
 from primaires.interpreteur.groupe import ConteneurGroupes
 from primaires.interpreteur.groupe.groupe import *
 from .masque.masque import masques_def
+from .options import UOptions
 
 class Module(BaseModule):
     
@@ -129,6 +130,12 @@ class Module(BaseModule):
         self.categories["bugs"] = "Bugs et suggestions"
         self.categories["groupes"] = "Manipulation des groupes et modules"
         self.categories["batisseur"] = "Commandes de création"
+        
+        # On récupère les options utilisateurs
+        options = self.importeur.supenr.charger_unique(UOptions)
+        if options is None:
+            options = UOptions()
+        self.options = options
         
         BaseModule.init(self)
     

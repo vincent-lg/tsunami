@@ -54,6 +54,7 @@ class Description(BaseObj):
         """Constructeur"""
         BaseObj.__init__(self)
         self.paragraphes = [] # une liste des différents paragraphes
+        self.saut_de_ligne = False
         self.parent = parent
         self.script = ScriptDescription(self)
         if description:

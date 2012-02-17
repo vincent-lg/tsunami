@@ -33,6 +33,7 @@
 from primaires.format.fonctions import *
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
 from . import Editeur
+from primaires.interpreteur.options import *
 
 class Description(Editeur):
     
@@ -51,11 +52,23 @@ class Description(Editeur):
         self.ajouter_option("d", self.opt_supprimer)
         self.ajouter_option("r", self.opt_remplacer)
         self.ajouter_option("e", self.opt_editer_evt)
+        self.ajouter_option("o", self.opt_editer_options)
     
     @property
     def description(self):
         """Retourne la description, attribut de self.objet"""
         return getattr(self.objet, self.nom_attribut)
+    
+    def get_prompt(self):
+        """Retourne le prompt."""
+        description = self.description
+        personnage = self.pere.joueur
+        options = importeur.interpreteur.options
+        if not options.a_option(personnage, OPT_AUTONL) and not \
+                description.saut_de_ligne:
+            return "-? "
+        else:
+            return "-> "
     
     def get_apercu(self):
         """Aperçu de la description"""
@@ -161,10 +174,51 @@ class Description(Editeur):
             
             self.migrer_contexte(contexte)
 
+    def opt_editer_options(self, arguments):
+        """Fonction appelé pour consulter et éditer ses options.
+        
+        La syntaxe est :
+            /o pour consulter ses options
+            /o nom pour modifier ses options
+        
+        """
+        arguments = arguments.strip()
+        personnage = self.pere.joueur
+        if arguments:
+            options = importeur.interpreteur.options
+            try:
+                nombre = options.get_nombre_option(arguments)
+            except ValueError:
+                self.pere << "|err|Ce nom d'option est inconnu.|ff|"
+            else:
+                options.changer_option(personnage, nombre)
+                self.pere << "Vos options ont bien été modifiées."
+        else:
+            # Affichage des options
+            options = importeur.interpreteur.options.afficher_options(
+                    personnage)
+            self.pere << "Vos options actuelles :\n\n  " + "\n  ".join(
+                    options)
+    
     def interpreter(self, msg):
         """Interprétation du contexte"""
         description = self.description
+        personnage = self.pere.joueur
+        options = importeur.interpreteur.options
+        if not options.a_option(personnage, OPT_AUTONL):
+            if msg and not description.saut_de_ligne:
+                if description.paragraphes:
+                    paragraphe = description.paragraphes[-1]
+                    msg = paragraphe + " " + msg
+                    description.supprimer_paragraphe(-1)
+            elif not msg:
+                description.saut_de_ligne = True
+                self.actualiser()
+                return
+        elif options.a_option(personnage, OPT_AUTOTAB) and msg:
+            msg = "|tab|" + msg
         description.ajouter_paragraphe(msg)
+        description.saut_de_ligne = False
         self.actualiser()
 
 from primaires.scripting.editeurs.edt_instructions import EdtInstructions
