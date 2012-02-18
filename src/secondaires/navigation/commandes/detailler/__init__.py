@@ -101,7 +101,7 @@ def get_points(personnage, navire, distance, precision):
             while test:
                 a_vec = position + t_vec.tourner_autour_z(precision)
                 c_angle += precision
-                if int(a_vec.x) == x and int(a_vec.y) == y:
+                if round(a_vec.x) == x and round(a_vec.y) == y:
                     direction = t_vec.direction
                     r_direction = (direction - navire.direction.direction) % \
                             360
@@ -120,7 +120,7 @@ def get_points(personnage, navire, distance, precision):
             while test:
                 a_vec = position + t_vec.tourner_autour_z(-precision)
                 c_angle += precision
-                if int(a_vec.x) == x and int(a_vec.y) == y:
+                if round(a_vec.x) == x and round(a_vec.y) == y:
                     direction = t_vec.direction
                     r_direction = (direction - navire.direction.direction) % \
                             360
