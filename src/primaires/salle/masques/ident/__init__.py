@@ -77,8 +77,10 @@ class Ident(Masque):
         try:
             salle = type(self).importeur.salle[ident]
         except KeyError:
+            print("Erreur")
             raise ErreurValidation(
-                "|err|L'identifiant '{}' n'est pas valide.|ff|".format(ident))
+                "|err|L'identifiant '{}' n'est pas valide.|ff|".format(ident),
+                True)
         
         self.salle = salle
         self.ident = salle.ident
