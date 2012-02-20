@@ -202,8 +202,13 @@ class Temps(BaseObj):
             self.annee += 1
     
     @staticmethod
-    def convertir_heure(chaine):
-        """Convertit la chaîne en un tuple (h, m, s)."""
+    def convertir_heure(chaine, defaut=None):
+        """Convertit la chaîne en un tuple (h, m, s).
+        
+        Si les minutes ou secondes ne sont pas précisés, retourne defaut
+        dans le tuple.
+        
+        """
         heure = chaine.split(":")
         try:
             heure = tuple(int(h) for h in heure)
@@ -211,9 +216,9 @@ class Temps(BaseObj):
             raise ValueError("formattage d'heure invalide".format(heure))
         else:
             if len(heure) == 1:
-                return heure + (0, 0)
+                return heure + (defaut, defaut)
             elif len(heure) == 2:
-                return heure + (0, )
+                return heure + (defaut, )
             else:
                 return heure[:3]
     
@@ -222,20 +227,22 @@ class Temps(BaseObj):
         return hash(str(self))
     
     def __eq__(self, chaine):
-        h, m, s = self.convertir_heure(chaine)
+        h, m, s = self.convertir_heure(chaine, 0)
         return self.heure == h and self.minute == m and self.seconde == s
     
     def __ne__(self, chaine):
-        h, m, s = self.convertir_heure(chaine)
+        h, m, s = self.convertir_heure(chaine, 0)
         return self.heure != h or self.minute != m or self.seconde != s
     
     def __le__(self, chaine):
         h, m, s = self.convertir_heure(chaine)
-        if self.heure <= h:
+        if self.heure < h:
             return True
-        if self.minute <= m:
+        elif self.heure == h and m is not None and self.minute <= m and \
+                s is None:
             return True
-        if self.seconde <= s:
+        elif self.heure == h and m is not None and self.minute == m and \
+                s is not None and self.seconde <= s:
             return True
         return False
     
@@ -243,19 +250,23 @@ class Temps(BaseObj):
         h, m, s = self.convertir_heure(chaine)
         if self.heure < h:
             return True
-        if self.minute < m:
+        elif self.heure == h and m is not None and self.minute < m and \
+                s is None:
             return True
-        if self.seconde < s:
+        elif self.heure == h and m is not None and self.minute == m and \
+                s is not None and self.seconde < s:
             return True
         return False
     
     def __ge__(self, chaine):
         h, m, s = self.convertir_heure(chaine)
-        if self.heure >= h:
+        if self.heure > h:
             return True
-        if self.minute >= m:
+        elif self.heure == h and m is not None and self.minute >= m and \
+                s is None:
             return True
-        if self.seconde >= s:
+        elif self.heure == h and m is not None and self.minute == m and \
+                s is not None and self.seconde >= s:
             return True
         return False
     
@@ -263,8 +274,10 @@ class Temps(BaseObj):
         h, m, s = self.convertir_heure(chaine)
         if self.heure > h:
             return True
-        if self.minute > m:
+        elif self.heure == h and m is not None and self.minute > m and \
+                s is None:
             return True
-        if self.seconde > s:
+        elif self.heure == h and m is not None and self.minute == m and \
+                s is not None and self.seconde > s:
             return True
         return False
