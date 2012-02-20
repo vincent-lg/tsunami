@@ -96,7 +96,7 @@ class CmdCarte(Commande):
             if "format" in options:
                 try:
                     format = int(options["format"]) - 1
-                    assert format > 0
+                    assert format >= 0
                     distance = (5, 10, 15)[format]
                 except (ValueError, IndexError, AssertionError):
                     personnage << "|err|Spécifiez un format existante " \
@@ -157,10 +157,10 @@ class CmdCarte(Commande):
         str_map = ""
         # Si les coordonnées ne sont pas définies on le définit avec distance
         if not(ouest or est or nord or sud):
-            ouest = coords.x - distance
-            est = coords.x + distance
-            nord = coords.y + distance
-            sud = coords.y - distance
+            ouest = int(coords.x) - distance
+            est = int(coords.x) + distance
+            nord = int(coords.y) + distance
+            sud = int(coords.y) - distance
         lat = nord - sud + 1
         lon = est - ouest + 1
         # On parcourt les salles de la zone délimitée
