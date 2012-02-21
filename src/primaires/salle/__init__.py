@@ -388,6 +388,12 @@ class Module(BaseModule):
             objets = [o for o in s.objets_sol._objets if o.nettoyer]
             for o in objets:
                 if (o.ajoute_a - maintenant).seconds >= NB_MIN_NETTOYAGE * 60:
-                    print("On détruit", o)
                     o.contenu.retirer(o)
                     o.detruire()
+    
+    def repop_salles(self):
+        """Méthode chargée de repop les salles."""
+        importeur.diffact.ajouter_action("repop", 900,
+                self.repop_salles)
+        for s in self.salles.values():
+            s.repop()

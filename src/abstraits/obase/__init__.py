@@ -164,6 +164,9 @@ class BaseObj(metaclass=MetaBaseObj):
         # On appel son constructeur
         try:
             classe.__init__(self, *self.__getnewargs__())
+        except NotImplementedError:
+            print("Méthode __getnewargs__ non définie pour", classe)
+            sys.exit(1)
         except TypeError:
             print("Erreur lors de l'appel au constructeur de", classe)
             sys.exit(1)

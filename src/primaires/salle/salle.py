@@ -95,6 +95,9 @@ class Salle(BaseObj):
         self.script = ScriptSalle(self)
         self.interieur = False
         self.magasin = None
+        
+        # Repop
+        self.pnj_repop = {}
     
     def __getnewargs__(self):
         return ("", "")
@@ -285,5 +288,22 @@ class Salle(BaseObj):
         
         """
         pass
-
-
+    
+    def pop_pnj(self, pnj):
+        """Méthode appelée quand un PNJ pop dans la salle."""
+        pro = pnj.prototype
+        if pro in self.pnj_repop:
+            self.pnj_repop[pro] = self.pnj_repop[pro] - 1
+    
+    def det_pnj(self, pnj):
+        """Méthode appelée quand un PNJ disparaît.."""
+        pro = pnj.prototype
+        if pro in self.pnj_repop:
+            self.pnj_repop[pro] = self.pnj_repop[pro] + 1
+    
+    def repop(self):
+        """Méthode appelée à chaque repop."""
+        for pro, nb in self.pnj_repop.items():
+            if nb > 0:
+                for i in range(nb):
+                    importeur.pnj.creer_PNJ(pro, self)

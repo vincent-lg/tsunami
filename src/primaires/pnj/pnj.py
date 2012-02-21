@@ -45,11 +45,16 @@ class PNJ(Personnage):
     """
     
     enregistrer = True
-    def __init__(self, prototype):
+    def __init__(self, prototype, salle=None):
         """Constructeur du PNJ"""
         Personnage.__init__(self)
         self._nom = ""
         self.prototype = prototype
+        self.salle = salle
+        self.salle_origine = salle
+        if salle:
+            salle.pop_pnj(self)
+        
         if prototype:
             prototype.no += 1
             self.identifiant = prototype.cle + "_" + str(
@@ -128,5 +133,8 @@ class PNJ(Personnage):
         Personnage.detruire(self)
         if self in self.prototype.pnj:
             self.prototype.pnj.remove(self)
+        
+        if self.salle_origine:
+            self.salle_origine.det_pnj(self)
         
         BaseObj.detruire(self)
