@@ -44,7 +44,7 @@ class Conteneur(BaseType):
     """
     
     nom_type = "conteneur"
-    
+    nettoyer = False
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)

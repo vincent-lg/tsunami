@@ -30,6 +30,8 @@
 
 """Ce fichier contient la classe Objet, détaillée plus bas."""
 
+from datetime import datetime
+
 from abstraits.obase import BaseObj
 
 class Objet(BaseObj):
@@ -73,6 +75,7 @@ class Objet(BaseObj):
         BaseObj.__init__(self)
         self.prototype = prototype
         self.contenu = None # contenu dans
+        self.ajoute_a = datetime.now()
         if prototype:
             self.identifiant = prototype.cle + "_" + str(
                     prototype.no)
