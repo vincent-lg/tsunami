@@ -41,15 +41,18 @@ class PrmEcrire(Parametre):
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "ecrire", "write")
-        self.schema = ""
+        self.schema = "(<nom_joueur>)"
         self.aide_courte = "ouvre l'éditeur de mudmail"
         self.aide_longue = \
             "Cette sous-commande ouvre un éditeur dans lequel vous pouvez " \
-            "créer un message et l'envoyer."
+            "créer un message et l'envoyer. Le joueur passé en paramètre " \
+            "(facultatif) sera ajouté comme destinataire du message."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         mail = type(self).importeur.communication.mails.creer_mail(personnage)
+        if dic_masques["nom_joueur"]:
+            mail.liste_dest.append(dic_masques["nom_joueur"].joueur)
         
         editeur = type(self).importeur.interpreteur.construire_editeur(
                 "medit", personnage, mail)
