@@ -31,6 +31,7 @@
 """Fichier contenant le module primaire salle."""
 
 import re
+from datetime import datetime
 
 from abstraits.module import *
 from primaires.format.fonctions import format_nb
@@ -47,6 +48,9 @@ from . import commandes
 from .editeurs.redit import EdtRedit
 from .editeurs.zedit import EdtZedit
 from . import masques
+
+# Constantes
+NB_MIN_NETTOYAGE = 20
 
 class Module(BaseModule):
     
@@ -148,6 +152,9 @@ class Module(BaseModule):
         nb_zones = len(self._zones)
         self.logger.info(format_nb(nb_zones, "{nb} zone{s} récupérée{s}", \
                 fem=True))
+        
+        importeur.diffact.ajouter_action("net_salles", 300,
+                self.nettoyer_salles)
         
         BaseModule.init(self)
     
@@ -405,3 +412,16 @@ class Module(BaseModule):
             self._zones[cle] = zone
         
         return zone
+    
+    def nettoyer_salles(self):
+        """Nettoyage des salles et des objets trop vieux."""
+        importeur.diffact.ajouter_action("net_salles", 300,
+                self.nettoyer_salles)
+        maintenant = datetime.now()
+        for s in self.salles.values():
+            objets = [o for o in s.objets_sol._objets if o.nettoyer]
+            for o in objets:
+                if (o.ajoute_a - maintenant).seconds >= NB_MIN_NETTOYAGE * 60:
+                    print("On détruit", o)
+                    o.contenu.retirer(o)
+                    o.detruire()

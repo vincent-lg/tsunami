@@ -50,6 +50,8 @@ class BaseType(BaseObj, metaclass=MetaType):
     _nom = "base_type_objet"
     _version = 2
     
+    # Doit-çon nettoyer l'objet en cas d'inactivité
+    nettoyer = True
     # Types enfants
     types = {}
     enregistrer = True

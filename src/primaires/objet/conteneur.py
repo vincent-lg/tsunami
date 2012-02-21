@@ -31,6 +31,7 @@
 """Ce fichier contient la classe ConteneurObjet, détaillée plus bas."""
 
 from collections import OrderedDict
+from datetime import datetime
 
 from abstraits.obase import BaseObj
 from .objet_non_unique import ObjetNonUnique
@@ -112,6 +113,7 @@ class ConteneurObjet(BaseObj):
         prototype = hasattr(objet, "prototype") and objet.prototype or objet
         if prototype.unique:
             objet.contenu = self
+            objet.ajoute_a = datetime.now()
             if objet not in self._objets:
                 self._objets.append(objet)
             else:
