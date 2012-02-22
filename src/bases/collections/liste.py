@@ -47,6 +47,7 @@ class Liste:
     
     def __init__(self, *args):
         """Constructeur de la liste."""
+        self.a_nettoyer = True
         self.liste = list(*args)
     
     def __getattr__(self, attr):
@@ -56,7 +57,16 @@ class Liste:
         l'objet concerné que l'on cherche dans liste.
         
         """
+        net = False
         if object.__getattribute__(self, "liste"):
+            try:
+                coll = object.__getattribute__(self, "liste")
+                a_nettoyer = object.__getattribute__(self, "a_nettoyer")
+                if a_nettoyer:
+                    net = True
+            except AttributeError:
+                pass
+        if net:
             self.nettoyer()
         return getattr(self.liste, attr)
     
