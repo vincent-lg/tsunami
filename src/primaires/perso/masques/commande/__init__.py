@@ -71,16 +71,15 @@ class Commande(Masque):
         
         # On cherche dans les commandes du module interpreteur
         commande = None
-        commandes = type(self).importeur.interpreteur.commandes
+        commandes = importeur.interpreteur.lister_commandes_pour_groupe(
+                    personnage.grp)
         commandes = sorted(commandes, key=lambda noeud: \
                 noeud.commande.get_nom_pour(personnage))
         for cmd in commandes:
-            if type(self).importeur.interpreteur.groupes. \
-                    personnage_a_le_droit(personnage, cmd.commande):
-                nom = cmd.commande.get_nom_pour(personnage)
-                if nom.startswith(nom_commande):
-                    commande = cmd
-                    break
+            nom = cmd.commande.get_nom_pour(personnage)
+            if nom.startswith(nom_commande):
+                commande = cmd
+                break
         
         if not commande:
             raise ErreurValidation(
