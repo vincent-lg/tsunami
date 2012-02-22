@@ -64,7 +64,7 @@ class CmdWhere(Commande):
             res += " |tit|Position|ff|".ljust(26) + "|\n"
             res += "+" + "-" * 22 + "+" + "-" * 17 + "+\n"
             for joueur in joueurs:
-                ident = "|rgc|" + joueur.salle.zone + "|ff|:|vrc|" 
+                ident = "|rgc|" + joueur.salle.nom_zone + "|ff|:|vrc|" 
                 ident += joueur.salle.mnemonic + "|ff|"
                 ident = ident.ljust(33)
                 nom = joueur.nom.rjust(20)

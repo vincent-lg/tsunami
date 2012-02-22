@@ -72,6 +72,7 @@ class Module(BaseModule):
         
         type(self.importeur).logger.info("Chargement des prototypes")
         pnjs = self.importeur.supenr.charger_groupe(PNJ)
+        pnjs = [p for p in pnjs if hasattr(p, "identifiant")]
         for pnj in pnjs:
             self._PNJ[pnj.identifiant] = pnj
         
@@ -134,12 +135,13 @@ class Module(BaseModule):
         del self._prototypes[cle]
         prototype.detruire()
     
-    def creer_PNJ(self, prototype):
+    def creer_PNJ(self, prototype, salle=None):
         """Crée un PNJ depuis le prototype prototype.
+        
         Le PNJ est ensuite ajouté à la liste des PNJ existants.
         
         """
-        pnj = PNJ(prototype)
+        pnj = PNJ(prototype, salle)
         self.ajouter_PNJ(pnj)
         return pnj
     

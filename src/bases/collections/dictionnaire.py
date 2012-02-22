@@ -1,4 +1,5 @@
 # -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
@@ -50,6 +51,7 @@ class Dictionnaire:
 
     def __init__(self, *args, **kw_args):
         """Constructeur du dictionnaire."""
+        self.a_nettoyer = True
         self.dictionnaire = dict(*args, **kw_args)
         self.e_existe = True
 
@@ -60,7 +62,16 @@ class Dictionnaire:
         l'objet concerné que l'on cherche dans dictionnaire.
 
         """
+        net = False
         if object.__getattribute__(self, "dictionnaire"):
+            try:
+                coll = object.__getattribute__(self, "dictionnaire")
+                a_nettoyer = object.__getattribute__(self, "a_nettoyer")
+                if a_nettoyer:
+                    net = True
+            except AttributeError:
+                pass
+        if net:
             self.nettoyer()
         return getattr(self.dictionnaire, attr)
 

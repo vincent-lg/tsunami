@@ -50,7 +50,8 @@ from .edt_mnemonic import EdtMnemonic
 from .edt_magasin import EdtMagasin
 from .edt_sorties import EdtSorties
 from .edt_details import EdtDetails
-from . supprimer import NSupprimer
+from .edt_pnj_repop import EdtPnjRepop
+from .supprimer import NSupprimer
 
 class EdtRedit(Presentation):
     
@@ -190,6 +191,16 @@ class EdtRedit(Presentation):
         interieur = self.ajouter_choix("intérieur", "i", Flag, salle,
                 "interieur")
         interieur.parent = self
+        
+        # PNJ disponibles au repop
+        pnj = self.ajouter_choix("pNJ disponibles au repop", "p", EdtPnjRepop,
+                salle)
+        pnj.parent = self
+        pnj.aide_courte = \
+            "Entrez la clé du prototype suivi d'un espace et du " \
+            "nombre de PNJ à repop\ndans cette salle pour l'ajouter " \
+            "et le modifier.\nPrécisez un nombre de |cmd|0|ff| " \
+            "pour le retirer."
         
         # Magasin
         magasin = self.ajouter_choix("magasin", "a", EdtMagasin, salle)
