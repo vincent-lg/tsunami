@@ -30,6 +30,8 @@
 
 """Ce fichier contient la classe Prototype, détaillée plus bas."""
 
+from collections import OrderedDict
+
 from abstraits.obase import BaseObj
 from primaires.format.description import Description
 from primaires.perso.stats import Stats
@@ -56,9 +58,11 @@ class Prototype(BaseObj):
         self.etat_pluriel = "se tiennent ici"
         self.noms_sup = []
         self.description = Description(parent=self)
-        self.race = None
+        self._race = None
         self.genre = "aucun"
         self.stats = Stats(self)
+        self.squelette = None
+        self.equipement = OrderedDict()
     
     def __getnewargs__(self):
         return ("", )
@@ -70,6 +74,13 @@ class Prototype(BaseObj):
     def nom_race(self):
         """Retourne le nom de la race si existant ou une chaîne vide."""
         return (self.race and self.race.nom) or ""
+    
+    def _get_race(self):
+        return self._race
+    def _set_race(self, race):
+        self._race = race
+        self.squelette = race.squelette
+    race = property(_get_race, _set_race)
     
     def get_nom(self, nombre):
         """Retourne le nom complet en fonction du nombre.
@@ -124,3 +135,12 @@ class Prototype(BaseObj):
     
     def est_feminin(self):
         return not self.est_masculin()
+    
+    @property
+    def nom_squelette(self):
+        return self.squelette and self.squelette.nom or "aucun"
+    
+    @property
+    def cle_squelette(self):
+        return self.squelette and self.squelette.cle or "aucun"
+    
