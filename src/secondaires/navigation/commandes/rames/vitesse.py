@@ -96,4 +96,4 @@ class PrmVitesse(Parametre):
             msg = msg.format(vitesse=msg_vit)
             msg_autre = msg_autre.format(vitesse=msg_vit)
             personnage << msg
-            salle.envoyer(msg_autre, personnage)
+            salle.envoyer(msg_autre, personnage=personnage)
