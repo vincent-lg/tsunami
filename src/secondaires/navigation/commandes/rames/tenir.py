@@ -62,6 +62,8 @@ class PrmTenir(Parametre):
         
         if rames.tenu is personnage:
             personnage << "|err|Vous tenez déjà ces rames.|ff|"
+        elif rames.tenu is not None:
+            personnage << "|err|Quelqu'un tient déjà ces rames.|ff|"
         else:
             rames.tenu = personnage
             personnage.cle_etat = "tenir_rames"
