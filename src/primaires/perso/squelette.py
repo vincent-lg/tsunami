@@ -142,7 +142,6 @@ class Squelette(BaseObj):
         
         for personnage in self.personnages:
             personnage.equipement.supprimer_membre(nom)
-        
     
     def get_membre(self, nom):
         """Retourne le membre si il le trouve grâce à son nom."""

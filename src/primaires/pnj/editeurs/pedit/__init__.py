@@ -40,6 +40,7 @@ from .edt_stats import EdtStats
 from .edt_race import EdtRace
 from .edt_genre import EdtGenre
 from .edt_squelette import EdtSquelette
+from .edt_equipement import EdtEquipement
 
 class EdtPedit(Presentation):
     
@@ -117,3 +118,16 @@ class EdtPedit(Presentation):
             "Entrez la |ent|clé identifiante|ff| du squelette ou |cmd|/|ff| " \
             "pour revenir à la fenêtre parente.\n\nSquelette actuel : " \
             "|bc|{objet.cle_squelette}|ff|"
+        
+        # Squelette
+        eq = self.ajouter_choix("equipement", "eq", EdtEquipement,
+                prototype)
+        eq.parent = self
+        eq.aide_courte = \
+            "Entrez |cmd|/|ff| pour revenir à la fenêtre précédente.\n" \
+            "Pour ajouter un nouvel emplacement défini dans l'équipement, " \
+            "entrez |cmd|le nom du\nmembre|ff| suivi de |cmd|la clé de " \
+            "l'objet à ajouter sur ce membre|ff|.\n" \
+            "Exemple : |cmd|main gauche sarbacane_bambou|ff|\n" \
+            "Pour supprimer un membre, entrez |cmd|0|ff| comme clé de " \
+            "l'objet.\nExemple : |cmd|main gauche 0|ff|\n\n"

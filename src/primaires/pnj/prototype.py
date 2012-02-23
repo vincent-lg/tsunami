@@ -30,6 +30,8 @@
 
 """Ce fichier contient la classe Prototype, détaillée plus bas."""
 
+from collections import OrderedDict
+
 from abstraits.obase import BaseObj
 from primaires.format.description import Description
 from primaires.perso.stats import Stats
@@ -60,6 +62,7 @@ class Prototype(BaseObj):
         self.genre = "aucun"
         self.stats = Stats(self)
         self.squelette = None
+        self.equipement = OrderedDict()
     
     def __getnewargs__(self):
         return ("", )

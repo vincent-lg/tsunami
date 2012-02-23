@@ -173,16 +173,12 @@ class Equipement(BaseObj):
         
         """
         membre = self.get_membre(nom_membre)
-        if membre.equipe:
-            raise ValueError("le membre {} possède déjà l'objet {} " \
-                    "équipé".format(nom_membre, membre.equipe))
-        
         if objet is None:
             raise ValueError("l'objet passé en paramètre est None. Pour " \
                     "retirer un objet équipé, utilisez la méthode " \
                     "desequiper_objet")
         
-        membre.equipe = objet
+        membre.equipe.append(objet)
         objet.contenu = self.equipes
     
     def desequiper_objet(self, nom_membre):
