@@ -39,6 +39,7 @@ from .edt_noms import EdtNoms
 from .edt_stats import EdtStats
 from .edt_race import EdtRace
 from .edt_genre import EdtGenre
+from .edt_squelette import EdtSquelette
 
 class EdtPedit(Presentation):
     
@@ -105,3 +106,14 @@ class EdtPedit(Presentation):
             "pour revenir à la fenêtre parente.\n\nGenres disponibles : " \
             "|bc|{objet.genres_possibles}|ff|\nGenre actuel : " \
             "|bc|{objet.genre}|ff|"
+        
+        # Squelette
+        squelette = self.ajouter_choix("squelette", "sq", EdtSquelette,
+                prototype)
+        squelette.parent = self
+        squelette.prompt = "Clé du squelette : "
+        squelette.apercu = "{objet.nom_squelette}"
+        squelette.aide_courte = \
+            "Entrez la |ent|clé identifiante|ff| du squelette ou |cmd|/|ff| " \
+            "pour revenir à la fenêtre parente.\n\nSquelette actuel : " \
+            "|bc|{objet.cle_squelette}|ff|"

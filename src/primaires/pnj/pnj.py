@@ -108,7 +108,6 @@ class PNJ(Personnage):
         
         """
         self._nom = nouveau_nom
-    
     nom = property(_get_nom, _set_nom)
     
     def envoyer(self, msg, *personnages, **kw_personnages):
