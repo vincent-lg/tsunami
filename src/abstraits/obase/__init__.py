@@ -114,7 +114,9 @@ class BaseObj(metaclass=MetaBaseObj):
         self.ajouter_enr()
     
     def __getnewargs__(self):
-        raise NotImplementedError
+        raise NotImplementedError(
+                "la classe " + str(type(self)) + " n'a pas de méthode " \
+                "__getnewargs__")
     
     def ajouter_enr(self):
         if self.e_existe and type(self).enregistrer and statut_gen == 0 and \
