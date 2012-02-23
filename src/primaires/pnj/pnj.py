@@ -71,6 +71,11 @@ class PNJ(Personnage):
             
             # On force l'écriture de la race
             self.race = prototype.race
+            for stat in prototype.stats:
+                t_stat = getattr(self.stats, "_{}".format(stat.nom))
+                t_stat.defaut = stat.defaut
+                t_stat.courante = stat.defaut
+            self.lier_equipement(prototype.squelette)
     
     def __getnewargs__(self):
         return (None, )
@@ -109,6 +114,10 @@ class PNJ(Personnage):
         """
         self._nom = nouveau_nom
     nom = property(_get_nom, _set_nom)
+    
+    def _set_race(self, race):
+        self._race = race
+    race = property(Personnage._get_race, _set_race)
     
     def envoyer(self, msg, *personnages, **kw_personnages):
         """Envoie un message"""
