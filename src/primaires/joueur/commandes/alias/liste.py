@@ -49,7 +49,7 @@ class PrmListe(Parametre):
         """Interprétation du paramètre"""
         # On récupère les alias
         alias = personnage.alias
-        print(alias)
+        print(personnage.nom, len(personnage.alias_anglais), alias)
         lignes = []
         for nom, signification in alias.items():
             print(nom, end=" ")
