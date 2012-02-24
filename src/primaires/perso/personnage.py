@@ -282,6 +282,7 @@ class Personnage(BaseObj):
         -   On supprime le personnage de la salle
         
         """
+        BaseObj.detruire(self)
         if self.equipement:
             self.equipement.squelette.personnages.remove(self)
         if self.salle:
