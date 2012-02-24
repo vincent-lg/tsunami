@@ -149,6 +149,6 @@ class Plateau(BasePlateau):
             case = cases[pos]
             pion = jeu.pions.get(joueur)
             if pion:
-                cases[pos] = case.couleur + str(pion.numero) + "|ff|"
+                cases[pos] = str(pion.numero)
         
         return self.ordre.format(*cases)
