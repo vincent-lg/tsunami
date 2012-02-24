@@ -37,7 +37,7 @@ from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
 
-RE_IDENT_VALIDE = r"^[a-z0-9_]{3,20}$"
+RE_IDENT_VALIDE = r"^[a-z0-9_]{3,40}$"
 
 class Ident(Masque):
     
