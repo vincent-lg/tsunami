@@ -48,6 +48,7 @@ class CmdAlias(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "alias", "alias")
+        self.groupe = "joueur"
         self.aide_courte = "manipulation des aliass"
         self.aide_longue = \
             "Cette commande vous permet de manipuler vos alias. " \
