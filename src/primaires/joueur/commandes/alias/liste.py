@@ -49,8 +49,10 @@ class PrmListe(Parametre):
         """Interprétation du paramètre"""
         # On récupère les alias
         alias = personnage.alias
+        print(alias)
         lignes = []
         for nom, signification in alias.items():
+            print(nom, end=" ")
             lignes.append("|cmd|" + nom.ljust(10) + "|ff| = |cmd|" + \
                     signification + "|ff|")
         
