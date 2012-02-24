@@ -33,6 +33,7 @@
 """
 
 from primaires.format.constantes import ponctuations_finales
+from primaires.format.fonctions import echapper_accolades
 
 from primaires.interpreteur.commande.commande import Commande
 
@@ -61,5 +62,6 @@ class CmdEmote(Commande):
         message = message.rstrip(" \n")
         if not message[-1] in ponctuations_finales:
             message += "."
-        personnage.salle.envoyer(personnage.nom + " " + message)
-    
+        message = echapper_accolades(message)
+        personnage.envoyer("{{}} {}".format(message), personnage)
+        personnage.salle.envoyer("{{}} {}".format(message), personnage)
