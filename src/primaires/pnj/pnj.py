@@ -150,5 +150,3 @@ class PNJ(Personnage):
         
         if self.salle_origine:
             self.salle_origine.det_pnj(self)
-        
-        BaseObj.detruire(self)
