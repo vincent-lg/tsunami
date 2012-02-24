@@ -51,9 +51,10 @@ class Conversation(BaseObj):
         self.date = datetime.datetime.now()
         # On déduit l'id
         conversations = type(self).importeur.communication.conversations
+        self.id = -1
         if emetteur:
             p_conversations = conversations.get_conversations_pour(emetteur)
-        self.id = len(p_conversations) + 1
+            self.id = len(p_conversations) + 1
     
     def __getnewargs__(self):
         return (None, None, "")
