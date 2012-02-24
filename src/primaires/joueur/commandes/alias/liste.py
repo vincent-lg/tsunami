@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,20 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Fichier contenant le paramètre 'liste' de la commande 'alias'."""
 
-from . import afk
-from . import apprendre
-from . import alias
-from . import chgroupe
-from . import distinctions
-from . import groupe
-from . import module
-from . import options
-from . import oublier
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retnom
-from . import shutdown
-from . import where
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmListe(Parametre):
+    
+    """Commande 'alias liste'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "liste", "list")
+        self.aide_courte = "affiche votre liste des alias"
+        self.aide_longue = \
+                "Affiche la liste des alias que vous avez configuré."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        # On récupère les alias
+        if personnage.langue_cmd == "anglais":
+            alias = personnage.alias_anglais
+        elif personnage.langue_cmd == "francais":
+            alias = personnage.alias_francais
+        else:
+            raise ValueError("langue inconnue".format(personnage.langue_cmd))
+        
+        lignes = []
+        for nom, signification in alias.items():
+            lignes.append("|cmd|" + nom.ljust(10) + "|ff| = |cmd|" + \
+                    signification + "|ff|")
+        
+        lignes.sort()
+        if lignes:
+            personnage << "Vos alias :\n\n  " + "\n  ".join(lignes)
+        else:
+            personnage << "Vous n'avez encore défini aucun alias."

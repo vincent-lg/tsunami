@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,20 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Fichier contenant la classe CommandeDynamique, détaillée plus bas."""
 
-from . import afk
-from . import apprendre
-from . import alias
-from . import chgroupe
-from . import distinctions
-from . import groupe
-from . import module
-from . import options
-from . import oublier
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retnom
-from . import shutdown
-from . import where
+from abstraits.obase import BaseObj
+frop primaires.format.description import Description
+from .commande import Commande
+
+class CommandeDynamique(BaseObj):
+    
+    """Classe définissant une commande dynamique.
+    
+    A la différence des commandes standards, les commandes dynamiques
+    peuvent être gérées par les bâtisseurs qui peuvent en ajouter et en
+    modifier pour le besoin des quêtes. Un système de script permet de
+    faire réagir dcertains objets, PNJ, détails de la description à ces
+    commandes.
+    
+    """
+    
+    enregistrer = True
+    def __init__(self, nom_francais):
+        """Construdcteur de la commande."""
+        self.nom_francais = nom_francais
+        self.nom_anglais = "unkown"
+        self.aide_courte = "aucune"
+        self.aide_longue = Description()
+    
+    def __getnewargs__(self):
+        return ("", )
+    
+    def construire(self):
+        """Construit une commande."""
+        

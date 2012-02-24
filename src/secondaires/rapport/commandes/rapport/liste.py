@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,20 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Fichier contenant le paramètre 'liste' de la commande 'rapport'."""
 
-from . import afk
-from . import apprendre
-from . import alias
-from . import chgroupe
-from . import distinctions
-from . import groupe
-from . import module
-from . import options
-from . import oublier
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retnom
-from . import shutdown
-from . import where
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmListe(Parametre):
+    
+    """Commande 'rapport liste'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "liste", "list")
+        self.aide_courte = "liste les rapports existants"
+        self.aide_longue = \
+            "Cette commande liste les rapports existants."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        rapports = list(type(self).importeur.rapport.rapports.values())
+        rapports = sorted(rapports, key=lambda r: r.date)
+        if rapports:
+            lignes = [
+                "  Clé             | Salles | Ouverte |"]
+            for rapport in rapports:
+                ouverte = oui_ou_non(rapport.ouverte)
+                lignes.append(
+                    "  {:<15} | {:>6} | {}     |".format(
+                    rapport.cle, len(rapport.salles), ouverte))
+            personnage << "\n".join(lignes)
+        else:
+            personnage << "Aucun rapport n'est actuellement défini."

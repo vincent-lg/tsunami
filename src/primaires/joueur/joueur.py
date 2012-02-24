@@ -56,6 +56,10 @@ class Joueur(Personnage):
         self.distinction_visible = ""
         self.distinction_audible = ""
         self.no_tick = 1
+        self.alias_francais = {}
+        self.alias_francais.a_nettoyer = False
+        self.alias_anglais = {}
+        self.alias_anglais.a_nettoyer = False
     
     def __getstate__(self):
         retour = dict(self.__dict__)
@@ -66,6 +70,16 @@ class Joueur(Personnage):
     def encodage(self):
         """Retourne l'encodage du compte"""
         return self.compte.encodage
+    
+    @property
+    def alias(self):
+        if self.langue_cmd == "francais":
+            return self.alias_francais
+        elif self.langue_cmd == "anglais":
+            return self.alias_anglais
+        else:
+            raise ValueError("langue {} inconnue pour le joueur {}".format(
+                    self.langue_cmd, self.nom))
     
     def est_connecte(self):
         """Retourne la valeur de self.connecte"""

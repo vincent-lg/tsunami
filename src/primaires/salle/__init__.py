@@ -34,7 +34,7 @@ import re
 from datetime import datetime
 
 from abstraits.module import *
-from primaires.format.fonctions import format_nb
+from primaires.format.fonctions import format_nb, supprimer_accents
 from .config import cfg_salle
 from .coordonnees import Coordonnees
 from .etendue import Etendue
@@ -319,23 +319,22 @@ class Module(BaseModule):
         if len(commande) == 0:
             return False
         
-        commande = commande.lower()
+        commande = supprimer_accents(commande).lower()
         salle = personnage.salle
-        if commande in self.aliases.keys():
-            commande = self.aliases[commande]
-            try:
-                sortie = salle.sorties.get_sortie_par_nom(commande,
-                        cachees=False)
-            except KeyError:
-                pass
-            else:
-                personnage.deplacer_vers(sortie.nom)
-                return True
+        try:
+            sortie = salle.sorties.get_sortie_par_nom(commande,
+                    cachees=False)
+        except KeyError:
+            pass
+        else:
+            personnage.deplacer_vers(sortie.nom)
+            return True
         
         for nom, sortie in salle.sorties.iter_couple():
-            if sortie:
-                if (sortie.cachee and sortie.nom == commande) or ( \
-                        not sortie.cachee and sortie.nom.startswith(commande)):
+            if sortie and sortie.salle_dest:
+                nom = supprimer_accents(sortie.nom).lower()
+                if (sortie.cachee and nom == commande) or ( \
+                        not sortie.cachee and nom.startswith(commande)):
                     personnage.deplacer_vers(sortie.nom)
                     return True
         

@@ -33,6 +33,7 @@
 from collections import OrderedDict
 
 from abstraits.obase import *
+from primaires.format.fonctions import supprimer_accents
 from .sortie import Sortie
 
 NOMS_SORTIES = OrderedDict()
@@ -154,6 +155,7 @@ class Sorties(BaseObj):
     
     def get_sortie_par_nom(self, nom, cachees=True):
         """Récupère la sortie par son nom.
+        
         ATTENTION : la méthode __getitem__ semble faire la même chose.
         En fait, __getitem__ accepte des noms de direction immuables
         (comme 'est', 'sud-est', 'sud', 'sud-ouest'...) alors que la
@@ -161,10 +163,13 @@ class Sorties(BaseObj):
         par exemple).
         
         """
+        nom = supprimer_accents(nom).lower()
         for sortie in self._sorties.values():
-            if sortie and sortie.nom == nom:
-                if not sortie.cachee or cachees:
-                    return sortie
+            if sortie:
+                s_nom = supprimer_accents(sortie.nom).lower()
+                if sortie.salle_dest and s_nom == nom:
+                    if not sortie.cachee or cachees:
+                        return sortie
         
         raise KeyError("le nom de sortie {} est inconnu".format(nom))
     

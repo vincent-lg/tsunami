@@ -219,7 +219,8 @@ class Commande(Masque):
         """
         return self.noeud.afficher(personnage)
     
-    def remplacer_mots_cles(self, personnage, aide):
+    @staticmethod
+    def remplacer_mots_cles(personnage, aide):
         """Sert à remplacer les mots clés d'un fichier d'aide.
         Dans un fichier d'aide, on trouve du texte standard et certains mots
         entourés du symbole %.
@@ -244,13 +245,12 @@ class Commande(Masque):
             if i % 2 == 1: # index impair
                 try:
                     decoupe[i] = "|ent|" + \
-                        type(self).importeur.interpreteur.trouver_commande( \
+                        importeur.interpreteur.trouver_commande( \
                         mot).get_nom_pour(personnage) + "|ff|"
                 except ValueError as err:
                     raise ValueError("Une erreur s'est produite lors " \
-                            "de la recherche du mot {} dans l'aide " \
-                            "de la commande {} :\n".format(
-                            mot, self.nom_francais) + str(err))
+                            "de la recherche du mot {} : ".format(
+                            mot) + str(err))
         
         return "".join(decoupe)
     

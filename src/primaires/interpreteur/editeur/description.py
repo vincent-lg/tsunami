@@ -150,6 +150,10 @@ class Description(Editeur):
     def opt_editer_evt(self, arguments):
         """Edite ou affiche les éléments de la description."""
         description = self.description
+        if not description.scriptable:
+            self.pere << "|err|Option inconnue.|ff|"
+            return
+        
         evenements = description.script["regarde"].evenements
         evt = supprimer_accents(arguments).strip()
         if not evt:
