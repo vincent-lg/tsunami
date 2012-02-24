@@ -104,6 +104,8 @@ class Module(BaseModule):
                 "e": "est",
                 "s-e": "sud-est",
                 "se": "sud-est",
+                "h": "haut",
+                "b": "bas",
         }
         self.alias_francais = {
                 "+ooc": "+hrp",
@@ -123,6 +125,8 @@ class Module(BaseModule):
                 "e": "est",
                 "s-e": "sud-est",
                 "se": "sud-est",
+                "h": "haut",
+                "b": "bas",
         }
     
     def init(self):
