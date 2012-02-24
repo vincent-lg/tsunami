@@ -44,6 +44,7 @@ class Conversation(BaseObj):
     
     def __init__(self, emetteur, cible, phrase):
         """Constructeur de la classe"""
+        BaseObj.__init__(self)
         self.emetteur = emetteur
         self.cible = cible
         self._phrase = phrase
