@@ -333,13 +333,13 @@ class Personnage(BaseObj):
         
         if sortie.cachee:
             for personnage in salle.personnages:
-                msg = "{personnage} s'en va vers... Vous ne voyez pas " \
+                msg = "{{personnage}} s'en va vers... Vous ne voyez pas " \
                         "très bien où."
                 if personnage.est_immortel():
-                    msg = "{personnage} s'en va vers {sortie}."
+                    msg = "{{personnage}} s'en va vers {sortie}."
+                msg = msg.format(sortie=sortie.nom_complet)
                 if personnage is not self:
-                    personnage.envoyer(msg, personnage=personnage,
-                            sortie=sortie.nom_complet)
+                    personnage.envoyer(msg, personnage=self)
         else:
             salle.envoyer("{{}} s'en va vers {}.".format(sortie.nom_complet),
                     self)
