@@ -144,3 +144,5 @@ class Prototype(BaseObj):
     def cle_squelette(self):
         return self.squelette and self.squelette.cle or "aucun"
     
+    def est_immortel(self):
+        return False
