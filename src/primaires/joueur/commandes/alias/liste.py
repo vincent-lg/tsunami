@@ -48,19 +48,14 @@ class PrmListe(Parametre):
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         # On récupère les alias
-        if personnage.langue_cmd == "anglais":
-            alias = personnage.alias_anglais
-        elif personnage.langue_cmd == "francais":
-            alias = personnage.alias_francais
-        else:
-            raise ValueError("langue inconnue".format(personnage.langue_cmd))
-        
+        alias = personnage.alias
         lignes = []
         for nom, signification in alias.items():
             lignes.append("|cmd|" + nom.ljust(10) + "|ff| = |cmd|" + \
                     signification + "|ff|")
         
         lignes.sort()
+        print(lignes, bool(lignes))
         if lignes:
             personnage << "Vos alias :\n\n  " + "\n  ".join(lignes)
         else:
