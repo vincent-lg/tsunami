@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,20 +28,30 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Ce fichier contient la classe Rapport, détaillée plus bas."""
 
-from . import afk
-from . import apprendre
-from . import alias
-from . import chgroupe
-from . import distinctions
-from . import groupe
-from . import module
-from . import options
-from . import oublier
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retnom
-from . import shutdown
-from . import where
+from datetime import datetime
+
+from abstraits.obase import BaseObj
+
+class Rapport(BaseObj):
+    
+    """Classe définissant un rapport de bug ou une suggestion."""
+    
+    enregistrer = True
+    id_actuel = 1
+    def __init__(self, createur, titre=""):
+        """Constructeur d'un rapport."""
+        BaseObj.__init__(self)
+        self.id = type(self).id_actuel
+        type(self).id_actuel += 1
+        self.titre = titre
+        self.description = Description(parent=self, scriptable=False)
+        self.date = datetime.now()
+        self.createur = createur
+        self.salle = None
+        if createur:
+            self.salle = createur.salle
+    
+    def __getnewargs__(self):
+        return (None, "")

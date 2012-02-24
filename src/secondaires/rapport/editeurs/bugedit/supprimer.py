@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,20 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Fichier contenant le contexte éditeur Supprimer"""
 
-from . import afk
-from . import apprendre
-from . import alias
-from . import chgroupe
-from . import distinctions
-from . import groupe
-from . import module
-from . import options
-from . import oublier
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retnom
-from . import shutdown
-from . import where
+from primaires.interpreteur.editeur.supprimer import Supprimer
+
+class NSupprimer(Supprimer):
+    
+    """Classe définissant le contexte éditeur 'supprimer'.
+    
+    Ce contexte permet spécifiquement de supprimer une salle.
+    
+    """
+    
+    def interpreter(self, msg):
+        """Interprétation du contexte"""
+        msg = msg.lower()
+        salle = self.objet
+        if msg == "oui":
+            if salle.personnages:
+                self.pere << "|err|Des personnages sont présents dans " \
+                        "cette salle.\nOpération annulée.|ff|"
+            else:
+                importeur.salle.supprimer_salle(salle.ident)
+                self.fermer()
+                self.pere << "|rg|La salle {} a bien été " \
+                        "supprimée.|ff|".format(salle.ident)
+        elif msg == "non":
+            self.migrer_contexte(self.opts.rci_ctx_prec)
+        else:
+            self.pere << "|err|Choix invalide.|ff|"

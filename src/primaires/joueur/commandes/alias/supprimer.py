@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,20 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Fichier contenant le paramètre 'supprimer' de la commande 'alias'."""
 
-from . import afk
-from . import apprendre
-from . import alias
-from . import chgroupe
-from . import distinctions
-from . import groupe
-from . import module
-from . import options
-from . import oublier
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retnom
-from . import shutdown
-from . import where
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmSupprimer(Parametre):
+    
+    """Commande 'alias supprimer'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "supprimer", "del")
+        self.schema = "<message>"
+        self.aide_courte = "supprime un alias"
+        self.aide_longue = \
+            "Cette commande permet de supprimer un de vos alias. " \
+            "Précisez simplement le nom de l'alias en paramètre."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        message = dic_masques["message"].message
+        message = message.lower()
+        if message in personnage.alias:
+            del personnage.alias[message]
+            personnage << "L'alias {} a été retiré de votre " \
+                    "configuration.".format(message)
+        else:
+            personnage << "|err|Vous n'avez pas défini cet alias.|ff|"

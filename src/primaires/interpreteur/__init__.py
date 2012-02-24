@@ -84,6 +84,46 @@ class Module(BaseModule):
         
         # Groupes d'utilisateurs
         self.groupes = None
+        
+        # Alias
+        self.alias_anglais = {
+                "+ooc": "+hrp",
+                "-ooc": "-hrp",
+                "ooc": "hrp",
+                "l": "look",
+                "eq": "equipment",
+                "s": "sud",
+                "s-o": "sud-ouest",
+                "so": "sud-ouest",
+                "o": "ouest",
+                "n-o": "nord-ouest",
+                "no": "nord-ouest",
+                "n": "nord",
+                "n-e": "nord-est",
+                "ne": "nord-est",
+                "e": "est",
+                "s-e": "sud-est",
+                "se": "sud-est",
+        }
+        self.alias_francais = {
+                "+ooc": "+hrp",
+                "-ooc": "-hrp",
+                "ooc": "hrp",
+                "r": "regarder",
+                "eq": "equipement",
+                "s": "sud",
+                "s-o": "sud-ouest",
+                "so": "sud-ouest",
+                "o": "ouest",
+                "n-o": "nord-ouest",
+                "no": "nord-ouest",
+                "n": "nord",
+                "n-e": "nord-est",
+                "ne": "nord-est",
+                "e": "est",
+                "s-e": "sud-est",
+                "se": "sud-est",
+        }
     
     def init(self):
         """Initialisation du module"""
@@ -138,6 +178,14 @@ class Module(BaseModule):
         self.options = options
         
         BaseModule.init(self)
+    
+    def preparer(self):
+        """Préparation du module."""
+        for joueur in importeur.joueur.joueurs.values():
+            if not joueur.alias_francais:
+                joueur.alias_francais.update(self.alias_francais)
+            if not joueur.alias_anglais:
+                joueur.alias_anglais.update(self.alias_anglais)
     
     def ajouter_commande(self, commande):
         """Ajoute une commande à l'embranchement"""

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,20 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Package contenant le paramètre 'edit' de la commande 'rapport'."""
 
-from . import afk
-from . import apprendre
-from . import alias
-from . import chgroupe
-from . import distinctions
-from . import groupe
-from . import module
-from . import options
-from . import oublier
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retnom
-from . import shutdown
-from . import where
+from primaires.interpreteur.masque.parametre import Parametre
+from primaires.interpreteur.editeur.presentation import Presentation
+
+class PrmEdit(Parametre):
+    
+    """Commande 'rapport edit'"""
+    
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "edit", "edit")
+        self.groupe = "administrateur"
+        self.schema = "<nombre>"
+        self.aide_courte = "ouvre l'éditeur de rapport"
+        self.aide_longue = \
+            "Cette commande ouvre l'éditeur de rapport."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        r_id = dic_masques["nombre"].nombre
+        try:
+            rapport = type(self).importeur.rapport.rapports[r_id]
+        except KeyError:
+            personnage << "|err|Rapport inconnu {}.|ff|".format(r_id)
+        else:
+            editeur = type(self).importeur.interpreteur.construire_editeur(
+                    "bugedit+", personnage, rapport)
+            personnage.contextes.ajouter(editeur)
+            editeur.actualiser()

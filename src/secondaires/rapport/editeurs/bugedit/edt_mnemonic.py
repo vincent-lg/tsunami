@@ -28,20 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Fichier contenant le contexte éditeur EdtMnemonic"""
 
-from . import afk
-from . import apprendre
-from . import alias
-from . import chgroupe
-from . import distinctions
-from . import groupe
-from . import module
-from . import options
-from . import oublier
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retnom
-from . import shutdown
-from . import where
+import re
+
+from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.salle.salle import MNEMONIC_VALIDE
+
+class EdtMnemonic(Uniligne):
+    
+    """Classe définissant le contexte éditeur 'mnemonic'.
+    Ce contexte permet simplement d'éditer le mnémonic de la salle.
+    
+    """
+    
+    def interpreter(self, msg):
+        """Interprétation du message"""
+        msg = msg.lower()
+        ancien_ident = self.objet.ident
+        ident = self.objet.zone + ":" + msg
+        if not re.search(MNEMONIC_VALIDE, msg):
+            self.pere.envoyer("|err|Ce mnémonic est invalide. Veuillez " \
+                    "réessayer.|ff|")
+        elif ident in type(self).importeur.salle and ancien_ident != ident:
+            self.pere.envoyer("|err|L'identifiant {} est déjà utilisé " \
+                    "dans l'univers.|ff|".format(ident))
+        else:
+            self.objet.mnemonic = msg
+            self.actualiser()

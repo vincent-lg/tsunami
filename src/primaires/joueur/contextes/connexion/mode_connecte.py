@@ -70,6 +70,7 @@ class ModeConnecte(Contexte):
     
     def interpreter(self, msg):
         """Méthode d'interprétation.
+        
         Ce contexte est destiné à l'interprétation de commande en mode
         connecté.
         On commence donc par valider la commande entrée par le joueur
@@ -85,6 +86,21 @@ class ModeConnecte(Contexte):
         l'instance pourrait ne pas être à jour.
         
         """
+        personnage = self.pere.joueur
+        
+        # D'abord, on cherche à isoler les alias
+        if msg:
+            msgs = msg.split(" ")
+            comm = msgs[0]
+            a_msg = " ".join(msgs[1:])
+            comm = comm.lower()
+            alias = personnage.alias
+            if comm in alias:
+                comm = alias[comm]
+                msg = comm
+                if a_msg:
+                    msg += " " + a_msg
+        
         # On commence par parcourir tous les modules
         res = False
         for module in type(self).importeur.modules:

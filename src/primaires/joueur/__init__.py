@@ -94,6 +94,7 @@ class Module(BaseModule):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.afk.CmdAfk(),
+            commandes.alias.CmdAlias(),
             commandes.apprendre.CmdApprendre(),
             commandes.chgroupe.CmdChgroupe(),
             commandes.groupe.CmdGroupe(),

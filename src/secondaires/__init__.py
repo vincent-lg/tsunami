@@ -49,7 +49,7 @@ NOTE: les modules primaires et secondaires ne doivent pas porter de noms
 identiques.
 
 Voici un résumé des modules primaires existants :
--   rapports    Module chargé de traiter les rapports de bug et suggestions
+-   rapport     Module chargé de traiter les rapports de bug et suggestions
 -   stat        Module chargé d'effectuer des statistiques sur le serveur
 -   systeme     Module offrant des commandes de manipulation système
 

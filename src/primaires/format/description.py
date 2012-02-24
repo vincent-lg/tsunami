@@ -50,13 +50,14 @@ class Description(BaseObj):
     
     """
     
-    def __init__(self, description=None, parent=None):
+    def __init__(self, description=None, parent=None, scriptable=True):
         """Constructeur"""
         BaseObj.__init__(self)
         self.paragraphes = [] # une liste des différents paragraphes
         self.saut_de_ligne = False
         self.parent = parent
         self.script = ScriptDescription(self)
+        self.scriptable = scriptable
         if description:
             self.ajouter_paragraphe(description)
     
@@ -103,7 +104,6 @@ class Description(BaseObj):
                         par + self.paragraphes[i][no_car + len(origine):]
                 paragraphe = supprimer_accents(self.paragraphes[i]).lower()
                 no_car = paragraphe.find(origine, no_car + len(par))
-        
     
     def wrap_paragraphe(self, paragraphe, lien="\n", aff_sp_cars=False):
         """Wrap un paragraphe et le retourne"""
@@ -135,14 +135,15 @@ class Description(BaseObj):
         for paragraphe in self.paragraphes:
             paragraphe = paragraphe.replace("|nl|", "\n").replace(
                     "|tab|", "   ")
-            evts = re.findall(r"(\$[a-z0-9]+)([\n ,.]|$)", paragraphe)
-            evts = [e[0] for e in evts]
-            for nom_complet in evts:
-                nom = nom_complet[1:]
-                evt = self.script["regarde"][nom]
-                evt.executer(regarde=elt, personnage=personnage)
-                retour = evt.espaces.variables["retour"]
-                paragraphe = paragraphe.replace(nom_complet, retour)
+            if self.scriptable:
+                evts = re.findall(r"(\$[a-z0-9]+)([\n ,.]|$)", paragraphe)
+                evts = [e[0] for e in evts]
+                for nom_complet in evts:
+                    nom = nom_complet[1:]
+                    evt = self.script["regarde"][nom]
+                    evt.executer(regarde=elt, personnage=personnage)
+                    retour = evt.espaces.variables["retour"]
+                    paragraphe = paragraphe.replace(nom_complet, retour)
             paragraphes.append("\n".join(wrap(paragraphe)))
         return "\n".join(paragraphes)
 

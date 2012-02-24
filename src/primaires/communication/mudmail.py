@@ -64,7 +64,7 @@ class MUDmail(BaseObj):
             for d in list(source.liste_dest):
                 self.liste_dest.append(d)
             
-            self.contenu = Description(parent=self)
+            self.contenu = Description(parent=self, scriptable=False)
             self.contenu.ajouter_paragraphe(str(source.contenu))
             self.id_source = int(source.id)
         else:

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,20 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Fichier contenant le module secondaire rapport."""
 
-from . import afk
-from . import apprendre
-from . import alias
-from . import chgroupe
-from . import distinctions
-from . import groupe
-from . import module
-from . import options
-from . import oublier
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retnom
-from . import shutdown
-from . import where
+from abstraits.module import *
+from . import commandes
+from . import editeurs
+from .rapport import Rapport
+
+class Module(BaseModule):
+    
+    """Classe utilisée pour gérer des rapports de bug et suggestion.
+    
+    """
+    
+    def __init__(self, importeur):
+        """Constructeur du module"""
+        BaseModule.__init__(self, importeur, "rapport", "secondaire")
+        self.rapports = {}
+        self.commandes = []
+    
+    def init(self):
+        """Méthode d'initialisation du module"""
+        # On récupère les rapports
+        rapports = self.importeur.supenr.charger_groupe(Rapport)
+        for rapport in rapports:
+            self.rapports[rapport.id] = rapport
+        
+        BaseModule.init(self)
+    
+    def ajouter_commandes(self):
+        """Ajout des commandes dans l'interpréteur"""
+        self.commandes = [
+            commandes.rapport.CmdRapport(),
+        ]
+        
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)
