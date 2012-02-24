@@ -44,6 +44,8 @@ from .creation.nouveau_nom import NouveauNom
 from .creation.entrer_pass import EntrerPassJoueur
 from .creation.choisir_pass import ChoisirPassJoueur
 from .creation.confirmer_pass import ConfirmerPassJoueur
+from .creation.recup_vancia import RecupVancia
+from .creation.entrer_v_pass import EntrerVPassJoueur
 
 # Contextes de suppression
 from .suppression.suppression import Suppression

@@ -36,6 +36,7 @@ cmd_creer = "c"
 cmd_supprimer = "s"
 cmd_quitter = "q"
 cmd_chmdp = "m"
+cmd_recup_vancia = "v"
 
 class ChoisirPersonnage(Contexte):
     """Contexte du choix de personnage
@@ -54,8 +55,6 @@ class ChoisirPersonnage(Contexte):
         
         """
         self.pere.client.encodage = self.pere.compte.encodage
-        if len(self.pere.compte.joueurs) == 0:
-            self.migrer_contexte("personnage:creation:nouveau_nom")
     
     def get_prompt(self):
         """Message de prompt"""
@@ -92,6 +91,8 @@ class ChoisirPersonnage(Contexte):
         
         ret += " |cmd|{M}|ff| pour changer votre |ent|mot de passe|ff|" \
                 "\n".format(M = cmd_chmdp.upper())
+        ret += " |cmd|{V}|ff| pour importer un |ent|joueur de Vancia|ff|" \
+                "\n".format(V=cmd_recup_vancia.upper())
         
         ret += " |cmd|{Q}|ff| pour |ent|quitter|ff| le jeu".format( \
                 Q = cmd_quitter.upper())
@@ -146,5 +147,8 @@ class ChoisirPersonnage(Contexte):
         elif msg == cmd_chmdp:
             # On redirige vers la modification de mot de passe
             self.migrer_contexte("connex:connexion:choisir_pass")
+        elif msg == cmd_recup_vancia:
+            # On redirige vers le contexte de récupération de Vancia
+            self.migrer_contexte("personnage:creation:recup_vancia")
         else:
             self.pere.envoyer("|err|Votre choix est invalide.|ff|")

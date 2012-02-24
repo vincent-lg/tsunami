@@ -1,6 +1,6 @@
-﻿# -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
-# Copyright (c) 2011 DAVY Guillaume
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -27,22 +27,31 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from primaires.interpreteur.contexte import Contexte
-from primaires.connex.contextes.commun.choisir_pass import ChoisirPass
+import hashlib
 
-class ChoisirPassJoueur(ChoisirPass):
-    nom = "joueur:creation:choisir_pass"
+from primaires.interpreteur.contexte import Contexte
+
+class EntrerVPassJoueur(Contexte):
+    nom = "joueur:creation:entrer_v_pass"
+    def accueil(self):
+        """Message d'accueil du contexte"""
+        return \
+            "\n|tit|----= Mot de passe du joueur de Vancia =----|ff|\n" \
+            "Entrez à présent le mot de passe que vous entriez " \
+            "sur Vancia\npour vous connecter avec ce joueur."
     
-    def __init__(self, pere):
-        ChoisirPass.__init__(self, pere)
-        self.suivant = "joueur:creation:confirmer_pass"
+    def get_prompt(self):
+        """Message de prompt"""
+        return "Mot de passe : "
     
-    def migrer_contexte(self, contexte, afficher_accueil=True):
-        """Redéfinition de la méthode 'migrer_contexte' de Contexte.
-        Quand on migre un éditeur à l'autre, l'ancien éditeur doit être
-        retiré de la pile.
-        
-        """
-        self.fermer()
-        Contexte.migrer_contexte(self, contexte, afficher_accueil)
-        self.pere.contexte_actuel.pere = self.pere
+    def interpreter(self, msg):
+        """Méthode d'interprétation"""
+        mdp = hashlib.new("md5", msg.encode())
+        mdp = mdp.digest()
+        if mdp == self.pere.joueur.v_mot_de_passe:
+            joueur = self.pere.joueur
+            del joueur.v_mot_de_passe
+            joueur.instance_connexion = self.pere
+            self.migrer_contexte("personnage:creation:langue_cmd")
+        else:
+            self.pere << "|err|Mot de passe inconnu.|ff|"

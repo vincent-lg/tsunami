@@ -25,7 +25,7 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# pereIBILITY OF SUCH DAMAGE.
+# POSSIBILITY OF SUCH DAMAGE.
 
 
 """Fichier contenant le contexte "personnage:creation:langue_cmd"""
@@ -79,7 +79,7 @@ class LangueCMD(Contexte):
                 self.pere.joueur.alias_anglais.update(
                         importeur.interpreteur.alias_anglais)
             races = type(self).importeur.perso.races
-            if races:
+            if self.pere.joueur.race is None and races:
                 self.migrer_contexte("personnage:creation:choix_race")
             else:
                 self.pere.compte.ajouter_joueur(self.pere.joueur)
