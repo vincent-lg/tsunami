@@ -48,7 +48,7 @@ class PrmLister(Parametre):
         """Interprétation du paramètre"""
         attitudes = None
         if personnage.est_immortel():
-            attitudes = type(self).importeur.communication.attitudes
+            attitudes = type(self).importeur.communication.attitudes.values()
         else:
             attitudes = type(self).importeur.communication.attitudes_jouables
         if attitudes is None:
