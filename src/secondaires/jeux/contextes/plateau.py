@@ -88,7 +88,7 @@ class Plateau(Contexte):
         else:
             if len(partie.joueurs) < jeu.nb_joueurs_min:
                 self.personnage << "|err|Vous n'êtes pas assez nombreux " \
-                        "pour commencer à jouer."
+                        "pour commencer à jouer.|ff|"
                 return
             elif not jeu.peut_commencer():
                 return
