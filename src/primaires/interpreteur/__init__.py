@@ -237,8 +237,11 @@ class Module(BaseModule):
                 break
         
         if not trouve:
-            raise ErreurValidation("|err|Commande inconnue.|ff|")
-    
+            if lst_commande:
+                raise ErreurValidation("|err|Commande inconnue.|ff|")	
+            else:
+                raise ErreurValidation()
+
     def valider(self, personnage, dic_masques):
         """Validation du dic_masques.
         
