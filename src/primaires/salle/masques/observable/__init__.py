@@ -75,7 +75,7 @@ class Observable(Masque):
         
         # On cherche dans les personnages
         for perso in salle.personnages:
-            if contient(perso.nom, nom):
+            if contient(perso.get_nom_pour(personnage), nom):
                 elt = perso
                 break
         
