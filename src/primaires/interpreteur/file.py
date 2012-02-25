@@ -62,8 +62,20 @@ class FileContexte(BaseObj):
         return ()
     
     def __getitem__(self, index):
-        """Retourne l'objet se trouvant à l'index 'index'"""
-        return self._file.__getitem__(index)
+        """Retourne l'objet se trouvant à l'index 'index'
+        
+        index peut également être un type de contexte.
+        
+        """
+        if isinstance(index, int):
+            return self._file.__getitem__(index)
+        else:
+            for contexte in self._file:
+                if isinstance(contexte, index):
+                    print(contexte)
+                    return contexte
+            
+            raise ValueError("contexte de type inconnu".format(index))
     
     def __setitem__(self, index, contexte):
         """Change le contexte se trouvant à l'index 'index'"""
@@ -131,17 +143,20 @@ class FileContexte(BaseObj):
         """
         if contexte:
             self._file.remove(contexte)
+            self.actualiser_position()
         else:
             if len(self._file) <= self._taille_min:
                 raise FileVide
             contexte = self.actuel
             del self._file[self._position]
+            self.actualiser_position()
         
         return contexte
     
     def vider(self):
         """Vide la file des contextes"""
         self._file[:] = []
+        self.actualiser_position()
     
     @property
     def actuel(self):
@@ -164,6 +179,7 @@ class FileContexte(BaseObj):
         """
         nouveau_contexte = self[self._position + 1]
         self._position += 1
+        self.actualiser_position()
         
         return nouveau_contexte
     
@@ -181,8 +197,19 @@ class FileContexte(BaseObj):
         
         nouveau_contexte = self[self._position - 1]
         self._position -= 1
+        self.actualiser_position()
         
         return nouveau_contexte
+    
+    def actualiser_position(self):
+        """Actualise la position.
+        
+        Si la position est supérieure à la liste des contextes,
+        la remet à un nouveau raisonnable.
+        
+        """
+        if self._position >= len(self._file):
+            self._position = len(self._file) - 1
 
 
 class FileVide(RuntimeError):

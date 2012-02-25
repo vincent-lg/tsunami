@@ -164,7 +164,8 @@ class Canal(BaseObj):
                         immerge << res
         else:
             self.immerges.remove(joueur)
-            joueur.contextes.retirer()
+            joueur.contextes[Immersion].fermer()
+            joueur.envoyer("Vous sortez d'immersion.")
             if aff is True:
                 for immerge in self.immerges:
                     if immerge in type(self).importeur.connex.joueurs_connectes:
