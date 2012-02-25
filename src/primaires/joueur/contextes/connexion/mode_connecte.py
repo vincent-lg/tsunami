@@ -130,7 +130,7 @@ class ModeConnecte(Contexte):
                 err_val = str(err_val)
                 for masque in masques:
                     dic_masques[masque.nom] = masque
-                if not err_val:
+                if not err_val and dic_masques:
                     masque = dic_masques.dernier_parametre
                     err_val = masque.erreur_validation(self.pere.joueur, \
                             dic_masques)
