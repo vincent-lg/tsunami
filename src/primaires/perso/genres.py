@@ -73,8 +73,9 @@ class Genres(BaseObj):
     
     def __getitem__(self, nom):
         """Retourne le genre correspondant"""
+        nom = supprimer_accents(nom).lower()
         for genre in self._genres.keys():
-            if nom == supprimer_accents(genre.lower()):
+            if nom == supprimer_accents(genre).lower():
                 return self._genres[genre]
         raise KeyError(nom)
     
