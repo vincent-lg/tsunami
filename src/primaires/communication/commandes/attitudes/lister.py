@@ -61,7 +61,7 @@ class PrmLister(Parametre):
             taille = 0
             liste_attitudes = []
             i = 0
-            for att in sorted([att.cle for att in attitudes.values()]):
+            for att in sorted([att.cle for att in attitudes]):
                 if i == 0:
                     liste_attitudes.append(att.ljust(19))
                     i += 1
