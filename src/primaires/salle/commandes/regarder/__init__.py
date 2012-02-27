@@ -44,16 +44,16 @@ class CmdRegarder(Commande):
         self.aide_courte = "permet de regarder autour de soi"
         self.aide_longue = \
             "Cette commande permet de regarder autour de vous, de voir la " \
-            "salle oÃ¹ vous vous trouvez, les diffÃ©rents personnages et " \
-            "objets prÃ©sents. Vous pouvez Ã©galement trouver, en bas de la " \
+            "salle où vous vous trouvez, les différents personnages et " \
+            "objets présents. Vous pouvez également trouver, en bas de la " \
             "description, une liste des sorties que vous pouvez emprunter " \
-            "pour changer de salle et vous dÃ©placer dans l'univers. " \
-            "Vous pouvez passer en paramÃ¨tre de cette commande un Ã©lÃ©ment " \
+            "pour changer de salle et vous déplacer dans l'univers. " \
+            "Vous pouvez passer en paramètre de cette commande un élément " \
             "observable autour de vous, un joueur, un objet ou un " \
-            "Ã©lÃ©ment de la description."
+            "élément de la description."
     
     def interpreter(self, personnage, dic_masques):
-        """MÃ©thode d'interprÃ©tation de commande"""
+        """Méthode d'interprétation de commande"""
         masque = dic_masques["element_observable"]
         if masque:
             elt = masque.element
