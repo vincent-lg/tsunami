@@ -189,8 +189,15 @@ class Immersion(Contexte):
         message = arguments.rstrip(" \n")
         if not message[-1] in ponctuations_finales:
             message += "."
-        for immerge in canal.immerges:
-            immerge << canal.clr + "<" + joueur.nom + " " + message + ">|ff|"
+        im = canal.clr + "<" + joueur.nom + " " + message + ">|ff|"
+        ex = canal.clr + "[" + canal.nom + "] " + joueur.nom + " "
+        ex += message + "|ff|"
+        for connecte in canal.connectes:
+            if connecte in type(self).importeur.connex.joueurs_connectes:
+                if connecte in canal.immerges:
+                    connecte << im
+                else:
+                    connecte << ex
     
     def opt_eject(self, arguments):
         """Option permettant d'éjecter un joueur connecté : /e <joueur>"""
