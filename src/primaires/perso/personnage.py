@@ -1,4 +1,4 @@
-# -*-coding:Utf-8 -*
+﻿# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Personnage, dÃ©taillÃ©e plus bas."""
+"""Fichier contenant la classe Personnage, détaillée plus bas."""
 
 import random
 
@@ -44,12 +44,12 @@ from .stats import Stats
 
 class Personnage(BaseObj):
     
-    """Classe reprÃ©sentant un personnage.
+    """Classe représentant un personnage.
     
-    C'est une classe abstraite. Elle doit Ãªtre hÃ©ritÃ©e pour faire des joueurs
-    et PNJs. Ces autres classes peuvent Ãªtre Ã©galement hÃ©ritÃ©es, Ã  leur tour.
+    C'est une classe abstraite. Elle doit être héritée pour faire des joueurs
+    et PNJs. Ces autres classes peuvent être également héritées, à leur tour.
     
-    Note: on prÃ©cise bel et bien un nom de groupe, mais on ne l'ajoute pas Ã 
+    Note: on précise bel et bien un nom de groupe, mais on ne l'ajoute pas à
     ObjetID puisqu'il s'agit d'une classe abstraite.
     
     """
@@ -72,7 +72,7 @@ class Personnage(BaseObj):
         self._race = None
         self.genre = "aucun"
         
-        # QuÃªtes
+        # Quêtes
         self.quetes = Quetes(self)
         
         # Talents et sorts
@@ -82,7 +82,7 @@ class Personnage(BaseObj):
         # Etat
         self._cle_etat = ""
         
-        # Position occupÃ©
+        # Position occupé
         self.position = ""
         self.occupe = ""
         
@@ -95,7 +95,7 @@ class Personnage(BaseObj):
         self._construire()
     
     def __getnewargs__(self):
-        """Retourne les arguments Ã  passer au constructeur"""
+        """Retourne les arguments à passer au constructeur"""
         return ()
     
     def __lshift__(self, msg):
@@ -123,12 +123,12 @@ class Personnage(BaseObj):
             BaseObj.__setattr__(self, nom_attr, val_attr)
     
     def _get_contexte_actuel(self):
-        """Retourne le contexte actuel, c'est-Ã -dire le premier de la file"""
+        """Retourne le contexte actuel, c'est-à-dire le premier de la file"""
         return self.contextes.actuel
     def _set_contexte_actuel(self, nouveau_contexte):
-        """Ajoute le nouveau contexte Ã  la file des contextes.
-        Note : la file peut trÃ¨s bien Ãªtre manipulÃ©e par un contexte qui
-        utilisera dans ce cas les mÃ©thodes 'ajouter' et 'retirer' de la file
+        """Ajoute le nouveau contexte à la file des contextes.
+        Note : la file peut très bien être manipulée par un contexte qui
+        utilisera dans ce cas les méthodes 'ajouter' et 'retirer' de la file
         des contextes.
         
         """
@@ -140,9 +140,9 @@ class Personnage(BaseObj):
         return self._salle
     
     def _set_salle(self, salle):
-        """RedÃ©finit la salle du joueur.
+        """Redéfinit la salle du joueur.
         On en profite pour :
-        -   s'assurer que le joueur a bien Ã©tÃ© retirÃ© de son ancienne
+        -   s'assurer que le joueur a bien été retiré de son ancienne
             salle, si existante
         -   ajouter le joueur dans la nouvelle salle
         
@@ -176,7 +176,7 @@ class Personnage(BaseObj):
         if self.race is not None:
             return self.race.genres.str_genres
         else:
-            return "masculin, fÃ©minin"
+            return "masculin, féminin"
     
     def est_masculin(self):
         """Retourne True si le personnage est masculin, False sinon"""
@@ -191,7 +191,7 @@ class Personnage(BaseObj):
     
     @property
     def prompt(self):
-        """Retourne le prompt formattÃ©"""
+        """Retourne le prompt formatté"""
         return self._prompt.format(stats=self.stats)
     
     @property
@@ -203,7 +203,7 @@ class Personnage(BaseObj):
     def _get_cle_etat(self):
         return self._cle_etat
     def _set_cle_etat(self, cle):
-        """On vÃ©rifie que l'Ã©tat existe."""
+        """On vérifie que l'état existe."""
         if cle:
             try:
                 etat = type(self).importeur.perso.etats[cle]
@@ -215,14 +215,14 @@ class Personnage(BaseObj):
     
     @property
     def etat(self):
-        """Retourne l'Ã©tat correspondant Ã  'cle_etat'."""
+        """Retourne l'état correspondant à 'cle_etat'."""
         if self._cle_etat:
             return type(self).importeur.perso.etats[self._cle_etat]
         else:
             return None
     
     def get_etat(self):
-        """Retourne l'Ã©tat visible du personnage."""
+        """Retourne l'état visible du personnage."""
         if self.position and not self.occupe:
             return self.get_position().message
         
@@ -230,15 +230,15 @@ class Personnage(BaseObj):
             return self.get_position().etat + " " + \
                     self.salle.details[self.occupe].positions[self.position]
         
-        return "est lÃ "
+        return "est là"
     
     def get_position(self):
         """Retourne la position actuelle du personnage."""
         return type(self).importeur.perso.positions[self.position]
     
     def get_armes(self):
-        """Retourne les armes portÃ©es par le personnage.
-        Ces armes sont celles portÃ©es.
+        """Retourne les armes portées par le personnage.
+        Ces armes sont celles portées.
         
         """
         armes = []
@@ -250,7 +250,7 @@ class Personnage(BaseObj):
         return tuple(armes)
     
     def lier_equipement(self, squelette):
-        """CrÃ©e un nouvel Ã©quipement pour le personnage en fonction
+        """Crée un nouvel équipement pour le personnage en fonction
         du squelette.
         
         """
@@ -261,8 +261,8 @@ class Personnage(BaseObj):
         return self.nom
     
     def get_nom_etat(self, personnage, nombre):
-        """Retourne le nom et un Ã©tat par dÃ©faut."""
-        return self.nom + " est lÃ "
+        """Retourne le nom et un état par défaut."""
+        return self.nom + " est là"
     
     def est_immortel(self):
         """Retourne True si le personnage est immortel.
@@ -277,7 +277,7 @@ class Personnage(BaseObj):
         return self.vitalite == 0
     
     def detruire(self):
-        """MÃ©thode appelÃ©e lors de la destruction du personage.
+        """Méthode appelée lors de la destruction du personage.
         -   On supprime le personnage de la liste des personnages du squelette
         -   On supprime le personnage de la salle
         
@@ -289,24 +289,24 @@ class Personnage(BaseObj):
             self.salle.retirer_personnage(self)
     
     def get_nom_pour(self, personnage):
-        """Retourne le nom pour le personnage passÃ© en paramÃ¨tre."""
+        """Retourne le nom pour le personnage passé en paramètre."""
         raise NotImplementedError
     
     def envoyer(self, msg, *personnages, **kw_personnages):
-        """MÃ©thode envoyer"""
+        """Méthode envoyer"""
         raise NotImplementedError
     
     def envoyer_lisser(self, chaine, *personnages, **kw_personnages):
-        """MÃ©thode redirigeant vers envoyer mais lissant la chaÃ®ne."""
+        """Méthode redirigeant vers envoyer mais lissant la chaîne."""
         self.envoyer(lisser(chaine), *personnages, **kw_personnages)
     
     def deplacer_vers(self, sortie):
-        """DÃ©placement vers la sortie 'sortie'"""
+        """Déplacement vers la sortie 'sortie'"""
         self.agir("deplacer")
         salle = self.salle
         salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
         if not self.est_immortel() and salle_dest.zone.fermee:
-            self << "|err|Vous ne pouvez pas aller par lÃ ...|ff|"
+            self << "|err|Vous ne pouvez pas aller par là...|ff|"
             return
         
         sortie = salle.sorties.get_sortie_par_nom(sortie)
@@ -314,11 +314,11 @@ class Personnage(BaseObj):
         
         if not self.est_immortel() and sortie.porte and \
                 sortie.porte.verrouillee:
-            self << "Cette porte semble fermÃ©e Ã  clef.".format(
+            self << "Cette porte semble fermée à clef.".format(
                     sortie.nom_complet)
             return
         
-        # Si la porte est fermÃ©e (pas verrouillÃ©e), on l'ouvre
+        # Si la porte est fermée (pas verrouillée), on l'ouvre
         if not self.est_immortel() and sortie.porte and \
                 sortie.porte.fermee and not sortie.porte.verrouillee:
             self << "Vous ouvrez {}.".format(sortie.nom_complet)
@@ -327,14 +327,14 @@ class Personnage(BaseObj):
             sortie.porte.ouvrir()
             fermer = True
         
-        # On appelle l'Ã©vÃ©nement sort.avant
+        # On appelle l'événement sort.avant
         salle.script["sort"]["avant"].executer(vers=sortie.nom,
                 salle=salle, personnage=self, destination=salle_dest)
         
         if sortie.cachee:
             for personnage in salle.personnages:
                 msg = "{{personnage}} s'en va vers... Vous ne voyez pas " \
-                        "trÃ¨s bien oÃ¹."
+                        "très bien où."
                 if personnage.est_immortel():
                     msg = "{{personnage}} s'en va vers {sortie}."
                 msg = msg.format(sortie=sortie.nom_complet)
@@ -348,10 +348,10 @@ class Personnage(BaseObj):
             self.salle.envoyer("Vous entendez une porte se refermer.",
                     self)
             sortie.porte.fermer()
-            self.envoyer("Vous passez {} et refermez derriÃ¨re vous.".format(
+            self.envoyer("Vous passez {} et refermez derrière vous.".format(
                     sortie.nom_complet))
         
-        # On appelle l'Ã©vÃ¨nement sort.apres
+        # On appelle l'évènement sort.apres
         salle.script["sort"]["apres"].executer(vers=sortie.nom,
                 salle=salle, personnage=self, destination=salle_dest)
         
@@ -359,7 +359,7 @@ class Personnage(BaseObj):
         sortie_opp = sortie.sortie_opposee
         nom_opp = sortie_opp and sortie_opp.nom or None
         
-        # On appelle l'Ã©vÃ¨nement arrive.avant
+        # On appelle l'évènement arrive.avant
         if self.salle is salle_dest:
             salle_dest.script["arrive"]["avant"].executer(
                     depuis=nom_opp, salle=salle_dest, personnage=self)
@@ -367,13 +367,13 @@ class Personnage(BaseObj):
         self.envoyer(self.salle.regarder(self))
         salle_dest.envoyer("{} arrive.", self)
         
-        # On appelle l'Ã©vÃ¨nement arrive.apres
+        # On appelle l'évènement arrive.apres
         if self.salle is salle_dest:
             salle_dest.script["arrive"]["apres"].executer(
                     depuis=nom_opp, salle=salle_dest, personnage=self)
     
     def get_talent(self, cle_talent):
-        """Retourne la valeur du talent ou 0 si le talent n'est pas trouvÃ©."""
+        """Retourne la valeur du talent ou 0 si le talent n'est pas trouvé."""
         return self.talents.get(cle_talent, 0)
     
     def pratiquer_talent(self, cle_talent):
@@ -412,7 +412,7 @@ class Personnage(BaseObj):
     def agir(self, cle_action):
         """Fait l'action cle_action.
         
-        Si l'Ã©tat interdit de faire cette action, une exception est levÃ©e.
+        Si l'état interdit de faire cette action, une exception est levée.
         
         """
         etat = self.etat
@@ -420,7 +420,7 @@ class Personnage(BaseObj):
             etat.peut_faire(cle_action)
     
     def mourir(self):
-        """MÃ©thode appelÃ©e quand le personage meurt."""
+        """Méthode appelée quand le personage meurt."""
         self.cle_etat = ""
         combat = type(self).importeur.combat.get_combat_depuis_salle(
                 self.salle)
@@ -431,11 +431,11 @@ class Personnage(BaseObj):
         self.salle.envoyer("{} s'effondre sur le sol.", self)
     
     def gagner_xp(self, niveau=None, xp=0):
-        """Le personnage gagne de l'expÃ©rience.
+        """Le personnage gagne de l'expérience.
         
-        ParamÃ¨tres attendus :
+        Paramètres attendus :
             niveau -- le nom du niveau (si principal, None)
-            xp -- le nombre d'xp reÃ§us
+            xp -- le nombre d'xp reçus
         
         Le nombre d'xp est un nombre absolu, pas relatif en fonction
         du niveau. Voir gagner_xp_rel.
@@ -488,10 +488,10 @@ class Personnage(BaseObj):
     def ramasser(self, objet, exception=None):
         """Ramasse l'objet objet.
         
-        On cherche Ã  placer l'objet de prÃ©fÃ©rence :
-        1   Dans un conteneur dÃ©diÃ© Ã  ce type
+        On cherche à placer l'objet de préférence :
+        1   Dans un conteneur dédié à ce type
         2   Dans un autre conteneur
-        3   Dans les mains du joueur si le reste Ã©choue.
+        3   Dans les mains du joueur si le reste échoue.
         
         """
         for o in self.equipement.inventaire:
@@ -518,7 +518,7 @@ class Personnage(BaseObj):
         return None
     
     def tick(self):
-        """MÃ©thode appelÃ©e Ã  chaque tick (chaque minute)."""
+        """Méthode appelée à chaque tick (chaque minute)."""
         stats = {
             "vitalite": "force",
             "mana": "intelligence",
