@@ -44,19 +44,23 @@ class CmdRegarder(Commande):
         self.aide_courte = "permet de regarder autour de soi"
         self.aide_longue = \
             "Cette commande permet de regarder autour de vous, de voir la " \
-            "salle où vous vous trouvez, les différents personnages et " \
-            "objets présents. Vous pouvez également trouver, en bas de la " \
+            "salle oÃ¹ vous vous trouvez, les diffÃ©rents personnages et " \
+            "objets prÃ©sents. Vous pouvez Ã©galement trouver, en bas de la " \
             "description, une liste des sorties que vous pouvez emprunter " \
-            "pour changer de salle et vous déplacer dans l'univers. " \
-            "Vous pouvez passer en paramètre de cette commande un élément " \
+            "pour changer de salle et vous dÃ©placer dans l'univers. " \
+            "Vous pouvez passer en paramÃ¨tre de cette commande un Ã©lÃ©ment " \
             "observable autour de vous, un joueur, un objet ou un " \
-            "élément de la description."
+            "Ã©lÃ©ment de la description."
     
     def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
+        """MÃ©thode d'interprÃ©tation de commande"""
         masque = dic_masques["element_observable"]
         if masque:
             elt = masque.element
-            personnage << elt.regarder(personnage)
+            # patch : on ne peut pas se regarder soi-même. A garder jusqu'à la sortie des miroirs.
+            if personnage is elt:
+                personnage << "Vous ne pouvez pas vous regarder vous-même..."
+            else:
+                personnage << elt.regarder(personnage)
         else:
             personnage << personnage.salle.regarder(personnage)
