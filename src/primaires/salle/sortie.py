@@ -101,7 +101,8 @@ class Sortie(BaseObj):
     
     def __getstate__(self):
         attrs = self.__dict__.copy()
-        attrs["salle_dest"] = self.salle_dest.ident
+        if not isinstance(attrs["salle_dest"], str):
+            attrs["salle_dest"] = self.salle_dest.ident
         return attrs
     
     def deduire_article(self):
