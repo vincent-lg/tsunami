@@ -149,8 +149,8 @@ class Presentation(Editeur):
             # Si le nom d'origine est 'description' et le raccourci est 'd',
             # le nom final doit être '[D]escription'
             pos = nom.find(raccourci)
-            raccourci = ((pos == 0) and raccourci.capitalize()) or raccourci
-            nom_maj = nom.capitalize()
+            raccourci = ((pos == 0) and raccourci[0].upper()) or raccourci
+            nom_maj = nom[0].upper() + nom[1:]
             nom_m = nom_maj[:pos] + "[|cmd|" + raccourci + "|ff|]" + \
                     nom_maj[pos + len(raccourci):]
             msg += "\n " + nom_m
