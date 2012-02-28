@@ -63,11 +63,9 @@ class Conversation(BaseObj):
     def _get_phrase(self):
         """Retourne la phrase mise en forme"""
         return couper_phrase(self._phrase, 40)
-    
     def _set_phrase(self, phrase):
         """Stocke phrase dans self._phrase"""
         self._phrase = phrase
-    
     phrase = property(_get_phrase, _set_phrase)
     
     def __str__(self):

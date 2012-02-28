@@ -74,7 +74,7 @@ class CmdRepondre(Commande):
                 res = ""
                 for conversation in p_conversations:
                     res += "\n "
-                    res += str(len(p_conversations) + 1 - conversation.id)
+                    res += str(conversation.id)
                     res += ". Avec "
                     if conversation.focus:
                         res += "|grf|[c] " + conversation.cible.nom + "|ff|"
@@ -91,8 +91,7 @@ class CmdRepondre(Commande):
                     personnage << "Vos conversations en cours :\n" + res
             else:
                 if dic_masques["id_conversation"].perte_focus:
-                    for conversation in type(self).importeur.communication. \
-                            conversations.iter():
+                    for conversation in conversations.iter():
                         if conversation in p_conversations:
                             if conversation.focus:
                                 conversation.ch_focus()
@@ -102,8 +101,7 @@ class CmdRepondre(Commande):
                     # On place le focus sur le correspondant indiqué
                     id = dic_masques["id_conversation"].id_conversation
                     cible = dic_masques["id_conversation"].cible
-                    for conversation in type(self).importeur.communication. \
-                            conversations.iter():
+                    for conversation in conversations.iter():
                         if conversation.id == id and \
                                 conversation.emetteur is personnage and \
                                 conversation.cible is cible:

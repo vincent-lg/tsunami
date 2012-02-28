@@ -85,16 +85,14 @@ class IdConversation(Masque):
         except ValueError:
             return False
         
-        if id_conversation < 1 or id_conversation > len(p_conversations):
-            raise ErreurValidation(
-                "|err|Le numéro spécifié ne correspond à aucun personnage.|ff|")
-        
-        try:
-            cible = p_conversations[id_conversation - 1].cible
-        except IndexError:
+        for conversation in p_conversations:
+            if conversation.id == id_conversation:
+                cible = conversation.cible
+                break
+        if cible is None:
             raise ErreurValidation(
                 "|err|Le numéro spécifié ne correspond à aucun personnage.|ff|")
         else:
-            self.id_conversation = len(p_conversations) + 1 - id_conversation
+            self.id_conversation = id_conversation
             self.cible = cible
             return True
