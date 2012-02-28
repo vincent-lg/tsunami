@@ -46,7 +46,7 @@ class Etendue(BaseObj):
     la mer).
     
     Attributs :
-        obstacles -- liste des obstacles (on liste juste les coordonnées 2D)
+        obstacles -- dictionnaire des obstacles
         cotes -- un dictionnaire des côtes ({coord: salle}) [1]
         liens -- un dictionnaire des liens avec d'autres étendues
                 ({coord: etendue})
@@ -57,15 +57,20 @@ class Etendue(BaseObj):
     """
     
     enregistrer = True
+    _inom = "etendue"
+    _version = 1
     def __init__(self, cle):
         """Création de l'éttendue."""
         BaseObj.__init__(self)
         self.cle = cle
         self.altitude = 0
         self.profondeur = 4
-        self.obstacles = []
+        self.obstacles = {}
         self.cotes = {}
         self.liens = {}
+        self.obstacles.a_nettoyer = False
+        self.cotes.a_nettoyer = False
+        self.liens.a_nettoyer = False
     
     def __getnewargs__(self):
         return ("", )
@@ -102,7 +107,7 @@ class Etendue(BaseObj):
     @property
     def points(self):
         """Constitution d'un dictionnaire des points."""
-        points = dict.fromkeys(self.obstacles)
+        points = self.obstacles.copy()
         points.update(self.cotes)
         points.update(self.liens)
         return points
@@ -128,7 +133,7 @@ class Etendue(BaseObj):
         
         return coordonnees
     
-    def ajouter_obstacle(self, coordonnees):
+    def ajouter_obstacle(self, coordonnees, obstacle):
         """Ajoute l'obstacle."""
         coordonnees = self.convertir_coordonnees(coordonnees)
         if coordonnees in self.points.keys():
@@ -136,7 +141,7 @@ class Etendue(BaseObj):
                     "un point de coordonnées {} existe déjà".format(
                     coordonnees))
         
-        self.obstacles.append(coordonnees)
+        self.obstacles[coordonnees] = obstacle
     
     def est_obstacle(self, coordonnees):
         """Retourne True si les coordonnées sont un obstacle."""
@@ -182,7 +187,7 @@ class Etendue(BaseObj):
     def supprimer_obstacle(self, coordonnees):
         """Supprime un obstacle."""
         coordonnees = self.convertir_coordonnees(coordonnees)
-        self.obstacles.remove(coordonnees)
+        del self.obstacles[coordonnees]
     
     def supprimer_cote(self, salle):
         """Supprime la salle des côtes."""
