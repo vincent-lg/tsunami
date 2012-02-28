@@ -118,6 +118,10 @@ class Module(BaseModule):
         self.ajouter_terrain("forêt")
         self.ajouter_terrain("plaine")
         self.ajouter_terrain("rive")
+        self.ajouter_terrain("désert")
+        self.ajouter_terrain("caverne")
+        self.ajouter_terrain("aquatique")
+        self.ajouter_terrain("subaquatique")
         
         BaseModule.config(self)
     
