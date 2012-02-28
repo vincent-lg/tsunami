@@ -120,6 +120,10 @@ class Module(BaseModule):
         self.ajouter_terrain("forêt", "des forêts denses")
         self.ajouter_terrain("plaine", "des plaines verdoyantes")
         self.ajouter_terrain("rive", "une rive basse")
+        self.ajouter_terrain("désert", "des terres désertiques")
+        self.ajouter_terrain("caverne", "une muraille de roches")
+        self.ajouter_terrain("aquatique", "des terres flottantes")
+        self.ajouter_terrain("subaquatique", "des terres sous-marines")
         
         BaseModule.config(self)
     
