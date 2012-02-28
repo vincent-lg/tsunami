@@ -181,8 +181,10 @@ class Personnage(BaseObj):
     def est_masculin(self):
         """Retourne True si le personnage est masculin, False sinon"""
         if self.race is not None:
-            return self.race.genres[self.genre] == "masculin" or \
-                    self.genre == "aucun"
+            try:
+                return self.race.genres[self.genre] == "masculin"
+            except KeyError:
+                return self.genre == "aucun"
         else:
             return self.genre == "masculin" or self.genre == "aucun"
     
