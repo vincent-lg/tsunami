@@ -175,5 +175,4 @@ class Module(BaseModule):
             i += NB_TICKS
         
         for p in tick:
-            print("Tick", p.identifiant, no)
             p.tick()
