@@ -72,7 +72,7 @@ class Conversations(BaseObj):
             conversation = self._conversations[cle]
         else:
             conversation = Conversation(emetteur, cible, phrase)
-            self._conversations.insert(0, conversation)
+            self._conversations.append(conversation)
     
     def conversation_existe(self, emetteur, cible):
         """Renvoie True si la conversation existe, False sinon"""
@@ -82,7 +82,7 @@ class Conversations(BaseObj):
         """Renvoie la cle d'une conversation"""
         i = 0
         for conversation in self._conversations:
-            if conversation.emetteur == emetteur and \
+            if conversation.emetteur is emetteur and \
                     conversation.cible is cible:
                 return i
             i += 1
