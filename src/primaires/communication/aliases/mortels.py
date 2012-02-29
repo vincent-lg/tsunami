@@ -28,30 +28,21 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le contexte éditeur EdtDroits"""
+"""Ce fichier contient la classe Mortels, détaillée plus bas."""
 
-from primaires.interpreteur.editeur import Editeur
+from .alias import Alias
 
-class EdtEnvoyer(Editeur):
+class Mortels(Alias):
     
-    """Classe définissant le contexte éditeur 'envoyer'.
-    Ce contexte permet d'envoyer un message.
+    """Alias : @mortels.
     
     """
     
-    def __init__(self, pere, objet=None, attribut=None):
-        """Constructeur de l'éditeur"""
-        Editeur.__init__(self, pere, objet, attribut)
+    nom_alias = "mortels"
     
-    def entrer(self):
-        mail = self.objet
-        if not mail.liste_dest and not mail.aliases and mail.destinataire is None:
-            self.pere.joueur << "|err|Vous devez préciser au moins un " \
-                    "destinataire.|ff|\n"
-            self.migrer_contexte(self.opts.rci_ctx_prec)
-        else:
-            if mail.id_source:
-                del type(self).importeur.communication.mails[mail.id_source]
-            mail.envoyer()
-            self.fermer()
-            self.pere.joueur << "|att|Votre mudmail a bien été envoyé.|ff|"
+    @classmethod
+    def retourner_joueurs(self):
+        """Retourne une liste des mortels."""
+        joueurs = importeur.connex.joueurs
+        return [j for j in joueurs if not j.est_immortel()]
+    

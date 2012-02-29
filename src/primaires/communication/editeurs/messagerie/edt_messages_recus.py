@@ -181,6 +181,10 @@ class EdtMessagesRecus(Editeur):
                     self.pere.joueur)
             mail.sujet = "RE:" + r_mail.sujet
             mail.liste_dest.append(r_mail.expediteur)
+            mail.liste_dest = list(mail.liste_dest) + \
+                    [d for d in r_mail.copies_a if not hasattr(d, "nom_alias")]
+            mail.aliases = list(mail.aliases) + \
+                    [a for a in r_mail.copies_a if hasattr(a, "nom_alias")]
             mail.contenu.ajouter_paragraphe(
                     r_mail.expediteur.nom + " a écrit :\n")
             mail.contenu.ajouter_paragraphe(str(r_mail.contenu))

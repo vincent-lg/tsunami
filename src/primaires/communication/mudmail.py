@@ -63,7 +63,8 @@ class MUDmail(BaseObj):
             self.liste_dest = []
             for d in list(source.liste_dest):
                 self.liste_dest.append(d)
-            
+            self.aliases = source.aliases
+            self.copies_a = source.copies_a
             self.contenu = Description(parent=self, scriptable=False)
             self.contenu.ajouter_paragraphe(str(source.contenu))
             self.id_source = int(source.id)
@@ -72,6 +73,8 @@ class MUDmail(BaseObj):
             self.sujet = "aucun sujet"
             self.expediteur = expediteur
             self.liste_dest = []
+            self.aliases = []
+            self.copies_a = []
             self.contenu = Description(parent=self)
             self.id_source = 0
         self.destinataire = None
@@ -96,6 +99,10 @@ class MUDmail(BaseObj):
             res += self.destinataire.nom
         else:
             res += ", ".join([dest.nom for dest in self.liste_dest])
+            if self.aliases:
+                res += ", " if res else ""
+                res += ", ".join(["|bc|@" + a.nom_alias + "|ff|" \
+                        for a in self.aliases])
             if not res:
                 res += "aucun"
         return res
@@ -119,13 +126,26 @@ class MUDmail(BaseObj):
     
     def envoyer(self):
         """Envoie le mail"""
-        for dest in self.liste_dest:
+        liste_dest = []
+        if self.aliases:
+            for alias in self.aliases:
+                liste_dest += alias.retourner_joueurs()
+        # On nettoie la liste pour supprimer les doublons éventuels
+        for dest in list(liste_dest):
+            while liste_dest.count(dest) > 2:
+                liste_dest.remove(dest)
+        if self.expediteur in liste_dest:
+            liste_dest.remove(self.expediteur)
+        for dest in liste_dest:
             mail = type(self).importeur.communication.mails.creer_mail(
                     self.expediteur)
             mail.date = datetime.datetime.now()
             mail.sujet = self.sujet
             mail.destinataire = dest
             mail.contenu = self.contenu
+            mail.copies_a = list(self.liste_dest) + list(self.aliases)
+            if dest in mail.copies_a:
+                mail.copies_a.remove(dest)
             mail._etat = RECU
             if dest in type(self).importeur.connex.joueurs_connectes:
                 dest << "\n|jn|Vous avez reçu un nouveau message.|ff|"

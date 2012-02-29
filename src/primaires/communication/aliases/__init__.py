@@ -28,30 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le contexte éditeur EdtDroits"""
+"""Ce package contient les aliases de destinataires (mudmail).
 
-from primaires.interpreteur.editeur import Editeur
+"""
 
-class EdtEnvoyer(Editeur):
+from abstraits.obase import MetaBaseObj
+
+aliases = {} # aliases {nom:classe}
+
+class MetaAlias(MetaBaseObj):
     
-    """Classe définissant le contexte éditeur 'envoyer'.
-    Ce contexte permet d'envoyer un message.
+    """Métaclasse des aliases.
+    
+    Elle ajoute l'alias dans le dictionnaire si il possède un nom.
     
     """
     
-    def __init__(self, pere, objet=None, attribut=None):
-        """Constructeur de l'éditeur"""
-        Editeur.__init__(self, pere, objet, attribut)
-    
-    def entrer(self):
-        mail = self.objet
-        if not mail.liste_dest and not mail.aliases and mail.destinataire is None:
-            self.pere.joueur << "|err|Vous devez préciser au moins un " \
-                    "destinataire.|ff|\n"
-            self.migrer_contexte(self.opts.rci_ctx_prec)
-        else:
-            if mail.id_source:
-                del type(self).importeur.communication.mails[mail.id_source]
-            mail.envoyer()
-            self.fermer()
-            self.pere.joueur << "|att|Votre mudmail a bien été envoyé.|ff|"
+    def __init__(cls, nom, bases, contenu):
+        """Constructeur de la métaclasse"""
+        MetaBaseObj.__init__(cls, nom, bases, contenu)
+        cls.aliases = {}
+        if cls.nom_alias:
+            aliases[cls.nom_alias] = cls
+            
+            # On l'ajoute dans la classe-mère
+            base = bases and bases[0] or None
+            if base:
+                base.aliases[cls.nom_alias] = cls
+
+from .immortels import Immortels
+from .mortels import Mortels
+from .tous import Tous

@@ -28,30 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le contexte éditeur EdtDroits"""
+"""Ce fichier contient la classe Alias, détaillée plus bas."""
 
-from primaires.interpreteur.editeur import Editeur
+from abstraits.obase import BaseObj
+from . import MetaAlias
 
-class EdtEnvoyer(Editeur):
+class Alias(BaseObj, metaclass=MetaAlias):
     
-    """Classe définissant le contexte éditeur 'envoyer'.
-    Ce contexte permet d'envoyer un message.
+    """Classe abstraite représentant un alias de destinataires.
     
     """
     
-    def __init__(self, pere, objet=None, attribut=None):
-        """Constructeur de l'éditeur"""
-        Editeur.__init__(self, pere, objet, attribut)
+    nom_alias = "" # à redéfinir
+    _nom = "base_alias"
+    _version = 1
     
-    def entrer(self):
-        mail = self.objet
-        if not mail.liste_dest and not mail.aliases and mail.destinataire is None:
-            self.pere.joueur << "|err|Vous devez préciser au moins un " \
-                    "destinataire.|ff|\n"
-            self.migrer_contexte(self.opts.rci_ctx_prec)
-        else:
-            if mail.id_source:
-                del type(self).importeur.communication.mails[mail.id_source]
-            mail.envoyer()
-            self.fermer()
-            self.pere.joueur << "|att|Votre mudmail a bien été envoyé.|ff|"
+    enregistrer = True
+    
+    def __init__(self):
+        """Constructeur d'un alias"""
+        BaseObj.__init__(self)
+    
+    @classmethod
+    def retourner_joueurs(self):
+        """Retourne une liste des joueurs concernés par l'alias."""
+        raise NotImplementedError
+    
+    def __getnewargs__(self):
+        return ()
+    
