@@ -70,20 +70,17 @@ class Module(BaseModule):
         for prototype in prototypes:
             self._prototypes[prototype.cle] = prototype
         
-        type(self.importeur).logger.info("Chargement des prototypes")
         pnjs = self.importeur.supenr.charger_groupe(PNJ)
         pnjs = [p for p in pnjs if hasattr(p, "identifiant")]
         for pnj in pnjs:
             self._PNJ[pnj.identifiant] = pnj
         
-        type(self.importeur).logger.info("Chargement des PNJ")
         # Ajout des actions différées pour chaque tick
         intervalle = 60 / NB_TICKS
         for no in self.ticks.keys():
             self.importeur.diffact.ajouter_action("ntick_{}".format(no),
                     intervalle * no, self.tick, no)
         
-        type(self.importeur).logger.info("Ajout des actions différées")
         BaseModule.init(self)
     
     def ajouter_commandes(self):
