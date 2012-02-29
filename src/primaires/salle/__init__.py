@@ -38,6 +38,7 @@ from primaires.format.fonctions import format_nb, supprimer_accents
 from .config import cfg_salle
 from .coordonnees import Coordonnees
 from .etendue import Etendue
+from .obstacle import Obstacle
 from .porte import Porte
 from .salle import Salle, ZONE_VALIDE, MNEMONIC_VALIDE
 from .sortie import Sortie
@@ -96,6 +97,7 @@ class Module(BaseModule):
                 "salles", "salles")
         self.terrains = {}
         self.etendues = {}
+        self.obstacles = {}
     
     @property
     def salles(self):
@@ -149,6 +151,11 @@ class Module(BaseModule):
         self.logger.info(format_nb(nb_etendues, "{nb} étendue{s} " \
                 "d'eau{x} récupérée{s}", fem=True))
         
+        # On récupère les obstacles
+        obstacles = self.importeur.supenr.charger_groupe(Obstacle)
+        for obstacle in obstacles:
+            self.ajouter_obstacle(obstacle)
+        
         # On récupère les zones
         zones = self.importeur.supenr.charger_groupe(Zone)
         for zone in zones:
@@ -197,6 +204,7 @@ class Module(BaseModule):
         -   Les personnages présents dans self._personnages soient
             toujours là
         -   Chaque salle est dans une zone
+        -   Chaque terrain a sa réciproque en obstacle
         
         """
         # On récupère la configuration
@@ -232,6 +240,11 @@ class Module(BaseModule):
             for personnage in salle.personnages:
                 if personnage.salle is not salle:
                     salle.retirer_personnage(personnage)
+        
+        # On recrée les obstacles
+        for nom, terrain in self.terrains.items():
+            if nom not in self.obstacles:
+                self.creer_obstacle(terrain.nom, terrain.desc_survol)
     
     def detruire(self):
         """Destruction du module.
@@ -406,6 +419,25 @@ class Module(BaseModule):
         etendue = self.etendues[cle]
         etendue.detruire()
         del self.etendues[cle]
+    
+    def creer_obstacle(self, *args, **kw_args):
+        """Création d'un obstacle."""
+        obstacle = Obstacle(*args, **kw_args)
+        self.ajouter_obstacle(obstacle)
+        return obstacle
+    
+    def ajouter_obstacle(self, obstacle):
+        """Ajoute un obstacle dans le dictionnaire du module."""
+        if obstacle.nom in self.obstacles:
+            raise ValueError("l'obstacle {} existe déjà".format(obstacle.nom))
+        
+        self.obstacles[obstacle.nom] = obstacle
+    
+    def supprimer_obstacle(self, nom):
+        """Détruit l'obstacle."""
+        obstacle = self.obstacles[nom]
+        obstacle.detruire()
+        del self.obstacles[nom]
     
     def get_zone(self, cle):
         """Retourne la zone correspondante ou la crée."""

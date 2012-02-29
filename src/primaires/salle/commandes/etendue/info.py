@@ -70,7 +70,8 @@ class PrmInfo(Parametre):
         msg += "  Profondeur moyenne de l'étendue : {}\n".format(
                 etendue.profondeur)
         msg += "  Obstacles :\n"
-        obstacles = " ".join("{}.{}".format(*o) for o in etendue.obstacles)
+        obstacles = " ".join("{1}.{2} ({0})".format(point.nom, *o) \
+                for o, point in etendue.obstacles.items())
         obstacles = obstacles or "Aucun"
         msg += "    " + "\n    ".join(wrap(obstacles))
         msg += "\n  Côtes :\n"

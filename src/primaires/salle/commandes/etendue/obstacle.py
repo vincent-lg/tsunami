@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,43 +28,30 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'étendue' et ses sous-commandes.
-Dans ce fichier se trouve la commande même.
+"""Fichier contenant le paramètre 'obstacle' de la commande 'etendue'."""
 
-"""
+from primaires.interpreteur.masque.parametre import Parametre
+from .obstacle_ajouter import PrmObstacleAjouter
+from .obstacle_supprimer import PrmObstacleSupprimer
 
-from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .cote import PrmCote
-from .info import PrmInfo
-from .obstacle import PrmObstacle
-
-class CmdEtendue(Commande):
+class PrmObstacle(Parametre):
     
-    """Commande 'étendue'.
+    """Commande 'etendue obstacle'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "étendue", "area")
-        self.groupe = "administrateur"
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "manipulation des étendues d'eaux"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "obstacle", "obstacle")
+        self.aide_courte = "gère les obstacles de l'étendue"
         self.aide_longue = \
-            "Cette commande permet de manipuler les étendues d'eaux. " \
-            "Cela inclut en créer, ajouter des obstacles, côtes et " \
-            "liens dans une étendue mais aussi les modifier et les " \
-            "supprimer."
+            "Cette commande permet de gérer les obstacles d'une étendue (en " \
+            "ajouter ou en supprimer)."
     
     def ajouter_parametres(self):
         """Ajout des paramètres"""
-        prm_creer = PrmCreer()
-        prm_cote = PrmCote()
-        prm_info = PrmInfo()
-        prm_obstacle = PrmObstacle()
+        prm_ajouter = PrmObstacleAjouter()
+        prm_supprimer = PrmObstacleSupprimer()
         
-        self.ajouter_parametre(prm_creer)
-        self.ajouter_parametre(prm_cote)
-        self.ajouter_parametre(prm_info)
-        self.ajouter_parametre(prm_obstacle)
+        self.ajouter_parametre(prm_ajouter)
+        self.ajouter_parametre(prm_supprimer)

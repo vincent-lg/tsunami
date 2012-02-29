@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,43 +28,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'étendue' et ses sous-commandes.
-Dans ce fichier se trouve la commande même.
+"""Fichier contenant la classe Obstacle, détaillée plus bas."""
 
-"""
+from abstraits.obase import BaseObj
 
-from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .cote import PrmCote
-from .info import PrmInfo
-from .obstacle import PrmObstacle
-
-class CmdEtendue(Commande):
+class Obstacle(BaseObj):
     
-    """Commande 'étendue'.
+    """Classe représentant un obstacle dans une étendue d'eau.
+    
+    Les obstacles sont des points uniques dont seule la localisation
+    change. Cela permet d'économiser beaucoup d'espaces pour des étendues
+    comptant quelques centaines d'obstacles, voire plus.
     
     """
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "étendue", "area")
-        self.groupe = "administrateur"
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "manipulation des étendues d'eaux"
-        self.aide_longue = \
-            "Cette commande permet de manipuler les étendues d'eaux. " \
-            "Cela inclut en créer, ajouter des obstacles, côtes et " \
-            "liens dans une étendue mais aussi les modifier et les " \
-            "supprimer."
+    enregistrer = True
+    def __init__(self, nom, desc_survol):
+        """Constructeur de l'obstacle."""
+        self.nom = nom
+        self.desc_survol = desc_survol
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_creer = PrmCreer()
-        prm_cote = PrmCote()
-        prm_info = PrmInfo()
-        prm_obstacle = PrmObstacle()
-        
-        self.ajouter_parametre(prm_creer)
-        self.ajouter_parametre(prm_cote)
-        self.ajouter_parametre(prm_info)
-        self.ajouter_parametre(prm_obstacle)
+    def __getnewargs__(self):
+        return ("", "")
