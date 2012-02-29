@@ -144,6 +144,8 @@ class Immersion(Contexte):
             res += "\n   Commandes de modération :"
             res += "\n   - |cmd|/e <joueur>|ff| : éjecte un joueur"
             res += "\n   - |cmd|/b <joueur>|ff| : bannit ou rappelle un joueur"
+            res += "\n   - |cmd|/a <message>|ff| : permet d'envoyer une "
+            res += "annonce impersonnelle"
         if personnage is canal.auteur:
             res += "\n   Commandes d'administration :"
             res += "\n   - |cmd|/p <joueur>|ff| : promeut ou déchoit un joueur "

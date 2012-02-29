@@ -43,6 +43,7 @@ MUET = 2
 INVISIBLE = 4
 IMM_AUTOCONNECT = 8
 PERSO_AUTOCONNECT = 16
+BLOQUE = 32
 
 FLAGS = {
     "prive": PRIVE,
@@ -50,6 +51,7 @@ FLAGS = {
     "invisible": INVISIBLE,
     "autoconnecter imm": IMM_AUTOCONNECT,
     "autoconnecter joueur": PERSO_AUTOCONNECT,
+    "bloqué": BLOQUE
 }
 
 class Canal(BaseObj):
@@ -126,7 +128,8 @@ class Canal(BaseObj):
                     joueur << "|att|Vous êtes à présent connecté au canal " \
                             "{}.|ff|".format(self.nom)
                 for connecte in self.connectes:
-                    if connecte in type(self).importeur.connex.joueurs_connectes:
+                    if connecte in type(self).importeur. \
+                            connex.joueurs_connectes:
                         if connecte is not joueur:
                             if connecte in self.immerges:
                                 res = self.clr + "<" + joueur.nom
@@ -140,7 +143,8 @@ class Canal(BaseObj):
             self.connectes.remove(joueur)
             if aff is True:
                 for connecte in self.connectes:
-                    if connecte in type(self).importeur.connex.joueurs_connectes:
+                    if connecte in type(self).importeur. \
+                            connex.joueurs_connectes:
                         if connecte in self.immerges:
                             res = self.clr + "<" + joueur.nom
                             res += " quitte le canal.>|ff|"
