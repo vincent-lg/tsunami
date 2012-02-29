@@ -45,6 +45,7 @@ class Obstacle(BaseObj):
     enregistrer = True
     def __init__(self, nom, desc_survol):
         """Constructeur de l'obstacle."""
+        BaseObj.__init__(self)
         self.nom = nom
         self.desc_survol = desc_survol
     

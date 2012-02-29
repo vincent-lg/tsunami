@@ -195,7 +195,7 @@ def formatter_points(points, dir, limite=90):
         
         terre = "Une terre"
         if point:
-            terre = point.terrain.desc_survol.capitalize()
+            terre = point.desc_survol.capitalize()
         
         msg.append(terre + " " + msg_dist + " " + direction)
     

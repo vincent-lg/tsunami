@@ -152,6 +152,10 @@ class Salle(BaseObj):
         """Retourne l'objet terrain."""
         return type(self).importeur.salle.terrains[self.nom_terrain]
     
+    @property
+    def desc_survol(self):
+        return self.terrain.desc_survol
+    
     def personnage_est_present(self, personnage):
         """Si le personnage est présent, retourne True, False sinon."""
         return personnage in self._personnages
