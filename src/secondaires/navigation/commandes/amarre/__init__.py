@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,47 +28,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les constantes de navigation."""
+"""Package contenant la commande 'amarre'."""
 
-# Facteurs des allures
-ALL_DEBOUT = 140
-ALL_PRES = 125
-ALL_BON_PLEIN = 105
-ALL_LARGUE = 75
-ALL_GRAND_LARGUE = 40
+from primaires.interpreteur.commande.commande import Commande
+from .attacher import PrmAttacher
+from .detacher import PrmDetacher
 
-# Orientation des voiles
-ANGLE_DEBOUT = 0
-ANGLE_PRES = 8
-ANGLE_BON_PLEIN = 20
-ANGLE_LARGUE = 30
-ANGLE_GRAND_LARGUE = 60
-ANGLE_ARRIERE = 90
-
-# Vitesse
-TPS_VIRT = 3
-DIST_AVA = 0.4
-CB_BRASSES = 3.2 # combien de brasses dans une salle
-
-# Vitesse des rames
-VIT_RAMES = {
-    "arrière": -0.5,
-    "immobile": 0,
-    "lente": 0.3,
-    "moyenne": 0.7,
-    "rapide": 1.1,
-}
-
-# Endurance consommée par vitesse
-END_VIT_RAMES = {
-    "arrière": 2,
-    "immobile": 0,
-    "lente": 1,
-    "moyenne": 3,
-    "rapide": 6,
-}
-
-# Terrains
-TERRAINS_QUAI = [
-    "ville",
-]
+class CmdAmarre(Commande):
+    
+    """Commande 'amarre'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "amarre", "cable")
+        self.nom_categorie = "navire"
+        self.aide_courte = "manipule l'amarres"
+        self.aide_longue = \
+            "Cette commande permet d'attacher ou détacher l'amarre."
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmAttacher())
+        self.ajouter_parametre(PrmDetacher())

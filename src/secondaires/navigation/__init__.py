@@ -157,6 +157,7 @@ class Module(BaseModule):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.allure.CmdAllure(),
+            commandes.amarre.CmdAmarre(),
             commandes.ancre.CmdAncre(),
             commandes.detailler.CmdDetailler(),
             commandes.eltedit.CmdEltedit(),

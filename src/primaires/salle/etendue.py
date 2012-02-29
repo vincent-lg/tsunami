@@ -167,6 +167,7 @@ class Etendue(BaseObj):
                     coordonnees))
         
         self.cotes[coordonnees] = salle
+        salle.etendue = self
     
     def ajouter_lien(self, coordonnees, etendue):
         """Ajoute le lien vers une autre étendue.
@@ -192,6 +193,8 @@ class Etendue(BaseObj):
     def supprimer_cote(self, salle):
         """Supprime la salle des côtes."""
         coordonnees = self.convertir_coordonnees(salle.coords)
+        salle = self.cotes[coordonnees]
+        salle.etendue = None
         del self.cotes[coordonnees]
     
     def supprimer_lien(self, coordonnees):

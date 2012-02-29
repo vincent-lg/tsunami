@@ -110,6 +110,15 @@ class SalleNavire(Salle):
         return None
     
     @property
+    def amarre(self):
+        """Retourne l'ancre de la salle ou None."""
+        elts = [e for e in self.elements if e.nom_type == "amarre"]
+        if elts:
+            return elts[0]
+        
+        return None
+    
+    @property
     def voiles(self):
         """Retourne les voiles de la salle."""
         return [e for e in self.elements if e.nom_type == "voile"]

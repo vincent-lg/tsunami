@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,47 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les constantes de navigation."""
+"""Fichier contenant la classe Amarre, détaillée plus bas."""
 
-# Facteurs des allures
-ALL_DEBOUT = 140
-ALL_PRES = 125
-ALL_BON_PLEIN = 105
-ALL_LARGUE = 75
-ALL_GRAND_LARGUE = 40
+from bases.objet.attribut import Attribut
+from secondaires.navigation.constantes import *
+from .base import BaseElement
 
-# Orientation des voiles
-ANGLE_DEBOUT = 0
-ANGLE_PRES = 8
-ANGLE_BON_PLEIN = 20
-ANGLE_LARGUE = 30
-ANGLE_GRAND_LARGUE = 60
-ANGLE_ARRIERE = 90
-
-# Vitesse
-TPS_VIRT = 3
-DIST_AVA = 0.4
-CB_BRASSES = 3.2 # combien de brasses dans une salle
-
-# Vitesse des rames
-VIT_RAMES = {
-    "arrière": -0.5,
-    "immobile": 0,
-    "lente": 0.3,
-    "moyenne": 0.7,
-    "rapide": 1.1,
-}
-
-# Endurance consommée par vitesse
-END_VIT_RAMES = {
-    "arrière": 2,
-    "immobile": 0,
-    "lente": 1,
-    "moyenne": 3,
-    "rapide": 6,
-}
-
-# Terrains
-TERRAINS_QUAI = [
-    "ville",
-]
+class Amarre(BaseElement):
+    
+    """Classe représentant une amarre.
+    
+    """
+    
+    nom_type = "amarre"
+    
+    def __init__(self, cle=""):
+        """Constructeur d'un type"""
+        BaseElement.__init__(self, cle)
+        # Attributs propres aux amarres
+        self._attributs = {
+            "attachee": Attribut(lambda: None),
+        }
+    
+    def get_description_ligne(self, personnage):
+        """Retourne une description d'une ligne de l'élément."""
+        if self.attachee:
+            return self.nom.capitalize() + " est attachée au quai."
+        else:
+            return self.nom.capitalize() + " est roulée sur le pont."

@@ -98,6 +98,9 @@ class Salle(BaseObj):
         
         # Repop
         self.pnj_repop = {}
+        
+        # Etendue
+        self.etendue = None
     
     def __getnewargs__(self):
         return ("", "")

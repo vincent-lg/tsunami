@@ -214,6 +214,10 @@ class Navire(Vehicule):
         distance *= vit_ecoulement
         return distance * 3600
     
+    @property
+    def nom(self):
+        return self.modele.nom
+    
     def valider_coordonnees(self):
         """Pour chaque salle, valide ses coordonnées."""
         for salle in self.salles.values():

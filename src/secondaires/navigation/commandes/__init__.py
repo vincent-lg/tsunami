@@ -32,6 +32,7 @@
 
 from . import allure
 from . import ancre
+from . import amarre
 from . import detailler
 from . import eltedit
 from . import gouvernail
