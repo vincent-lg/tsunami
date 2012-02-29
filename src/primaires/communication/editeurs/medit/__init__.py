@@ -38,6 +38,7 @@ les extensions n'apparaîtront pas ici.
 
 """
 
+from primaires.communication.aliases import aliases
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_destinataires import EdtDestinataires
@@ -115,6 +116,7 @@ class EdtMedit(Presentation):
             "Entrez un nouveau |ent|destinataire|ff| à ajouter à votre " \
             "message, ou un déjà existant\npour le supprimer ; " \
             "|cmd|/|ff| pour revenir à la fenêtre parente.\n" \
+            "Vous pouvez utiliser un des alias suivants : @" + ", @".join(aliases.keys()) + ".\n\n" \
             "Destinataire(s) actuel : {objet.aff_dest}"
         
         # Contenu

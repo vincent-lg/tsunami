@@ -140,11 +140,14 @@ class Immersion(Contexte):
         res += "le canal"
         res += "\n   - |cmd|/me <message>|ff| : joue une emote dans le canal"
         res += "\n   - |cmd|/q|ff| : permet de sortir du mode immersif"
-        if personnage in canal.moderateurs or personnage is canal.auteur:
+        if personnage in canal.moderateurs or personnage is canal.auteur \
+                or personnage.est_immortel():
             res += "\n   Commandes de modération :"
             res += "\n   - |cmd|/e <joueur>|ff| : éjecte un joueur"
             res += "\n   - |cmd|/b <joueur>|ff| : bannit ou rappelle un joueur"
-        if personnage is canal.auteur:
+            res += "\n   - |cmd|/a <message>|ff| : permet d'envoyer une "
+            res += "annonce impersonnelle"
+        if personnage is canal.auteur or personnage.est_immortel():
             res += "\n   Commandes d'administration :"
             res += "\n   - |cmd|/p <joueur>|ff| : promeut ou déchoit un joueur "
             res += "modérateur"

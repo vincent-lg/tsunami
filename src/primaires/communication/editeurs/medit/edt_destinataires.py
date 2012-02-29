@@ -31,6 +31,7 @@
 """Fichier contenant le contexte éditeur EdtDestinataires"""
 
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.communication.aliases import aliases
 
 class EdtDestinataires(Uniligne):
     
@@ -45,19 +46,30 @@ class EdtDestinataires(Uniligne):
     
     def interpreter(self, msg):
         """Interprétation du message"""
-        nom_joueur = msg.split(" ")[0].lower()
-        joueur = None
-        joueurs = type(self).importeur.connex.joueurs
-        for t_joueur in joueurs:
-            nom = t_joueur.nom.lower()
-            if nom == nom_joueur:
-                joueur = t_joueur
-                break
-        if joueur is None:
-            self.pere << "|err|Ce joueur n'a pu être trouvé.|ff|"
-        else:
-            if joueur in self.objet.liste_dest:
-                self.objet.liste_dest.remove(joueur)
+        entree = msg.split(" ")[0].lower()
+        if entree.startswith("@"):
+            if not entree[1:] in aliases:
+                self.pere << "|err|Cet alias n'existe pas.|ff|"
             else:
-                self.objet.liste_dest.append(joueur)
-            self.actualiser()
+                cls_alias = aliases[entree[1:]]
+                if cls_alias in self.objet.aliases:
+                    self.objet.aliases.remove(cls_alias)
+                else:
+                    self.objet.aliases.append(cls_alias)
+                self.actualiser()
+        else:
+            joueur = None
+            joueurs = type(self).importeur.connex.joueurs
+            for t_joueur in joueurs:
+                nom = t_joueur.nom.lower()
+                if nom == entree:
+                    joueur = t_joueur
+                    break
+            if joueur is None:
+                self.pere << "|err|Ce joueur n'a pu être trouvé.|ff|"
+            else:
+                if joueur in self.objet.liste_dest:
+                    self.objet.liste_dest.remove(joueur)
+                else:
+                    self.objet.liste_dest.append(joueur)
+                self.actualiser()

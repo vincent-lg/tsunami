@@ -82,6 +82,7 @@ class Module(BaseModule):
             "INVISIBLE": INVISIBLE,
             "IMM_AUTOCONNECT": IMM_AUTOCONNECT,
             "PERSO_AUTOCONNECT": PERSO_AUTOCONNECT,
+            "BLOQUE": BLOQUE,
         })
         
         BaseModule.config(self)
@@ -226,6 +227,9 @@ class Module(BaseModule):
         canal = self.canaux[nom_canal]
         if personnage not in canal.connectes:
             personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
+            return
+        if canal.flags & BLOQUE:
+            personnage << "|err|Vous ne pouvez quitter ce canal.|ff|"
             return
         self.canaux[nom_canal].rejoindre_ou_quitter(personnage)
         res = "Vous avez bien quitté le canal {}.".format(nom_canal)

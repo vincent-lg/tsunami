@@ -29,7 +29,7 @@
 """Fichier contenant le paramètre 'lister' de la commande 'canaux'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
-from primaires.communication.canal import INVISIBLE
+from primaires.communication.canal import INVISIBLE, PRIVE, BLOQUE
 
 class PrmLister(Parametre):
     
@@ -48,8 +48,15 @@ class PrmLister(Parametre):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        canaux = type(self).importeur.communication.canaux
-        canaux = [canal for canal in canaux.iter().values() if not canal.flags & INVISIBLE]
+        tous_canaux = type(self).importeur.communication.canaux
+        canaux = []
+        for canal in tous_canaux.iter().values():
+            if personnage in canal.connectes:
+                if not canal.flags & BLOQUE:
+                    canaux.append(canal)
+            else:
+                if not canal.flags & INVISIBLE and not canal.flags & PRIVE:
+                    canaux.append(canal)
         if not canaux:
             res = "|err|Il n'y a aucun canal de communication.|ff|"
         else:
