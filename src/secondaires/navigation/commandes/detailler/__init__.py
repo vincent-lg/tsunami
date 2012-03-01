@@ -30,6 +30,8 @@
 
 """Package contenant la commande 'détailler'."""
 
+from math import sqrt
+
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
@@ -80,16 +82,18 @@ def get_points(personnage, navire, distance, precision):
     etendue = navire.etendue
     alt = etendue.altitude
     pos_coords = personnage.salle.coords.tuple()
+    p_x, p_y, p_z = pos_coords
     position = Vecteur(pos_coords[0], pos_coords[1], alt)
     observe = {}
     
     # On explore tous les points non débarcables
     for coords, point in etendue.points.items():
-        vec = Vecteur(coords[0], coords[1], alt)
         x, y = coords
-        v_dist = vec - position
-        if v_dist.norme <= distance:
+        t_distance = sqrt((p_x - x) ** 2 + (p_y - y) ** 2)
+        if t_distance <= distance:
             # On cherche l'angle entre la position du navire et du point
+            vec = Vecteur(coords[0], coords[1], alt)
+            v_dist = vec - position
             direction = v_dist.direction
             r_direction = (direction - navire.direction.direction) % 360
             # On détermine l'angle minimum fonction de la précision

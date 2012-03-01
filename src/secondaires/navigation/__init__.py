@@ -42,7 +42,7 @@ from . import editeurs
 from . import masques
 from . import types
 from .modele import ModeleNavire
-from .constantes import TPS_VIRT, DIST_AVA
+from .constantes import *
 from .equipage.matelot import Matelot
 
 class Module(BaseModule):
@@ -97,6 +97,8 @@ class Module(BaseModule):
     
     def init(self):
         """Chargement des navires et modèles."""
+        self.importeur.hook["salle:regarder"].ajouter_evenement(
+                self.navire_amarre)
         self.importeur.interpreteur.categories["navire"] = \
                 "Commandes de navigation"
         
@@ -325,3 +327,17 @@ class Module(BaseModule):
                 orientation = int(orientation)
                 if orientation != 0:
                     navire.virer(orientation)
+    
+    def navire_amarre(self, salle, liste_messages, flags):
+        """Si un navire est amarré, on l'affiche."""
+        if salle.etendue is None or salle.nom_terrain not in TERRAINS_QUAI:
+            return
+        
+        etendue = salle.etendue
+        navires = [n for n in self.navires.values() if n.etendue is etendue]
+        for navire in navires:
+            for t_salle in navire.salles.values():
+                if t_salle.amarre and t_salle.amarre.attachee is salle:
+                    liste_messages.insert(0, "{} est ammarée ici.".format(
+                            navire.nom.capitalize()))
+                    return

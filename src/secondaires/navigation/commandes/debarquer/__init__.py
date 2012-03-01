@@ -30,7 +30,7 @@
 
 """Package contenant la commande 'débarquer'."""
 
-from math import sqrt, fabs
+from math import sqrt
 
 from primaires.interpreteur.commande.commande import Commande
 from secondaires.navigation.constantes import *
@@ -61,6 +61,7 @@ class CmdDebarquer(Commande):
             personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
             return
         
+        personnage.agir("deplacer")
         # On va chercher la salle la plus proche
         etendue = navire.etendue
     

@@ -67,6 +67,7 @@ class CmdEmbarquer(Commande):
         navires = [n for n in importeur.navigation.navires.values() if \
                 n.etendue is etendue and n is not o_navire]
         
+        personnage.agir("deplacer")
         # On cherche la salle de nagvire la plus proche
         d_salle = None # la salle de destination
         navire = None
