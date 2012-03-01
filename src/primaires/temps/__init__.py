@@ -99,4 +99,4 @@ class Module(BaseModule):
                 opaque = True
                 break
         if salle.exterieur and not opaque:
-            liste_messages.append(self.temps.ciel_actuel)
+            liste_messages.append("|cy|" + self.temps.ciel_actuel + "|ff|")
