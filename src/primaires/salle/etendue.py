@@ -57,7 +57,7 @@ class Etendue(BaseObj):
     """
     
     enregistrer = True
-    _inom = "etendue"
+    _nom = "etendue"
     _version = 1
     def __init__(self, cle):
         """Création de l'éttendue."""

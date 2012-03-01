@@ -44,7 +44,7 @@ class CmdVoile(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "voile", "sail")
-
+        self.nom_categorie = "navire"
         self.aide_courte = "manipulation de la voile"
         self.aide_longue = \
             "Cette commande permet de manipuler une voile se trouvant " \
