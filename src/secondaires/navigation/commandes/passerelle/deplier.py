@@ -30,9 +30,12 @@
 
 """Fichier contenant le paramètre 'déplier' de la commande 'passerelle'."""
 
+from math import sqrt
+
 from primaires.interpreteur.masque.parametre import Parametre
 from primaires.salle.sorties import NOMS_OPPOSES
 from primaires.vehicule.vecteur import Vecteur
+from secondaires.navigation.constantes import *
 
 class PrmDeplier(Parametre):
     
@@ -73,15 +76,18 @@ class PrmDeplier(Parametre):
             personnage << "|err|L'ancre du navire n'a pas été jetée.|ff|"
         else:
             position = Vecteur(*salle.coords.tuple())
+            x, y, z = salle.coords.tuple()
             distance = 10
             dest = None
             # Cherche la salle la plus proche
             for t_salle in etendue.cotes.values():
-                vecteur = Vecteur(*t_salle.coords.tuple())
-                diff = position - vecteur
-                if diff.norme < distance:
-                    dest = t_salle
-                    distance = diff.norme
+                if t_salle.coords.z == etendue.altitude and \
+                        t_salle.nom_terrain in TERRAINS_QUAI:
+                    t_x, t_y, t_z = t_salle.coords.tuple()
+                    t_distance = sqrt((x - t_x) ** 2 + (y - t_y) ** 2)
+                    if t_distance < distance:
+                        dest = t_salle
+                        distance = t_distance
             
             if dest is None or distance > 2.5:
                 personnage << "|err|Vous ne pouvez déployer votre " \

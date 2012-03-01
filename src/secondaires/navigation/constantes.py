@@ -69,6 +69,14 @@ END_VIT_RAMES = {
 }
 
 # Terrains
+TERRAINS_ACCOSTABLES = [
+    "quai de pierre",
+    "quai de bois",
+    "plage de sable blanc",
+    "plage de sable noir",
+]
+
 TERRAINS_QUAI = [
-    "ville",
+    "quai de bois",
+    "quai de pierre",
 ]

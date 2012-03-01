@@ -126,6 +126,14 @@ class Module(BaseModule):
         self.ajouter_terrain("caverne", "une muraille de roches")
         self.ajouter_terrain("aquatique", "des terres flottantes")
         self.ajouter_terrain("subaquatique", "des terres sous-marines")
+        self.ajouter_terrain("quai de bois", "des quais de bois")
+        self.ajouter_terrain("quai de pierre", "des quais de pierre")
+        self.ajouter_terrain("falaise", "de hautes falaises")
+        self.ajouter_terrain("montagne", "de hautes montagnes")
+        self.ajouter_terrain("plage de sable blanc",
+                "des plages de sable blanc")
+        self.ajouter_terrain("plage de sable noir",
+                "des plages de sable noir")
         
         BaseModule.config(self)
     

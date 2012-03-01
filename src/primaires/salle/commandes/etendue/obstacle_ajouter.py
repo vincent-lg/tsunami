@@ -43,7 +43,7 @@ class PrmObstacleAjouter(Parametre):
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "ajouter", "add")
-        self.schema = "<etendue:cle> <coords2d> <cle>"
+        self.schema = "<etendue:cle> <coords2d> <message>"
         self.aide_courte = "ajoute l'obstacle aux coordonnées"
         self.aide_longue = \
             "Cette commande permet d'ajouter l'obstacle dont le nom " \
@@ -57,7 +57,7 @@ class PrmObstacleAjouter(Parametre):
         """Interprétation du paramètre"""
         coords = dic_masques["coords2d"].coords
         etendue = dic_masques["etendue"].cle
-        cle = dic_masques["cle"].cle
+        point = dic_masques["message"].message
         # On vérifie que la clé est une étendue
         try:
             etendue = importeur.salle.etendues[etendue]
@@ -65,12 +65,12 @@ class PrmObstacleAjouter(Parametre):
             personnage << "|err|Cette étendue {} n'existe pas.|ff|".format(
                     etendue)
         else:
-            if cle not in importeur.salle.obstacles:
-                personnage << "|err|Le point {} n'existe pas.".format(cle)
+            if point not in importeur.salle.obstacles:
+                personnage << "|err|Le point {} n'existe pas.".format(point)
             elif coords in etendue:
                 personnage << "|err|Ce point existe déjà dans l'étendue.|ff|"
             else:
-                obstacle = importeur.salle.obstacles[cle]
+                obstacle = importeur.salle.obstacles[point]
                 str_coords = str(coords[0]) + "." + str(coords[1])
                 etendue.ajouter_obstacle(coords, obstacle)
                 personnage <<  \

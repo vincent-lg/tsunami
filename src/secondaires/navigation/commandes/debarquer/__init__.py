@@ -30,7 +30,7 @@
 
 """Package contenant la commande 'débarquer'."""
 
-from math import sqrt
+from math import sqrt, fabs
 
 from primaires.interpreteur.commande.commande import Commande
 from secondaires.navigation.constantes import *
@@ -69,11 +69,12 @@ class CmdDebarquer(Commande):
         distance = 2
         x, y, z = salle.coords.tuple()
         for t_salle in etendue.cotes.values():
-            t_x, t_y, t_z = t_salle.coords.tuple()
-            t_distance = sqrt((x - t_x) ** 2 + (y - t_y) ** 2)
-            if t_distance < distance:
-                d_salle = t_salle
-                distance = t_distance
+            if t_salle.coords.z == z:
+                t_x, t_y, t_z = t_salle.coords.tuple()
+                t_distance = sqrt((x - t_x) ** 2 + (y - t_y) ** 2)
+                if t_distance < distance:
+                    d_salle = t_salle
+                    distance = t_distance
         
         if d_salle is None:
             personnage << "|err|Aucun quai n'a pu être trouvé à " \
