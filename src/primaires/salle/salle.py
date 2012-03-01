@@ -198,7 +198,7 @@ class Salle(BaseObj):
             res += "# |rgc|" + self.nom_zone + "|ff|:|vrc|" + self.mnemonic
             res += "|ff| ({})".format(self.coords)
             res += "\n\n"
-        res += "   |tit|" + (self.titre or "Une salle sans titre") + "|ff|\n\n"
+        res += "   |tit|" + (self.titre or "Une salle sans titre") + "|ff|\n"
         description = self.description.regarder(personnage, self)
         if not description:
             description = "   Vous êtes au milieu de nulle part."
