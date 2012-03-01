@@ -144,4 +144,4 @@ class Module(BaseModule):
                     break
             if not res:
                 res += self.cfg.beau_temps
-            liste_messages.append(res)
+            liste_messages.append("|cy|" + res + "|ff|")

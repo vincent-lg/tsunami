@@ -219,7 +219,7 @@ class Salle(BaseObj):
         type(self).importeur.hook["salle:regarder"].executer(self,
                 liste_messages, flags)
         if liste_messages:
-            res += "|cy|" + "\n".join(liste_messages) + "|ff|\n"
+            res += "\n".join(liste_messages) + "\n"
         res += "\nSorties : "
         res += self.afficher_sorties(personnage)
         

@@ -338,6 +338,6 @@ class Module(BaseModule):
         for navire in navires:
             for t_salle in navire.salles.values():
                 if t_salle.amarre and t_salle.amarre.attachee is salle:
-                    liste_messages.insert(0, "{} est ammarée ici.".format(
+                    liste_messages.insert(0, "{} est amarrée ici.".format(
                             navire.nom.capitalize()))
                     return
