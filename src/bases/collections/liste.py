@@ -103,6 +103,12 @@ class Liste:
         liste = copy.deepcopy(object.__getattribute__(self, "liste"), memo)
         return liste
     
+    def __eq__(self, autre):
+        return self.liste == autre
+    
+    def __ne__(self, autre):
+        return self.liste != autre
+    
     def nettoyer(self):
         """Nettoie la liste."""
         liste = []

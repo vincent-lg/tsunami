@@ -99,7 +99,7 @@ class BaseType(BaseObj, metaclass=MetaType):
         attrs = self.__dict__.copy()
         if "_extensions_editeur" in attrs:
             del attrs["_extensions_editeur"]
-        if "_attribut" in attrs:
+        if "_attributs" in attrs:
             del attrs["_attributs"]
         return attrs
     
