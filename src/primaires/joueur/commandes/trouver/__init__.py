@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,55 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce package contient les différents types d'objet, sous la forme
-d'une classe par fichier, héritée de BaseType (voir base.py).
+"""Package contenant la commande 'trouver' et ses sous-commandes.
+
+Dans ce fichier se trouve la commande même.
 
 """
 
-from abstraits.obase import MetaBaseObj
+from primaires.interpreteur.commande.commande import Commande
+from .ajouter import PrmAjouter
+from .liste import PrmListe
+from .supprimer import PrmSupprimer
 
-types = {} # types d'objet {nom:classe}
-
-class MetaType(MetaBaseObj):
+class CmdTrouver(Commande):
     
-    """Métaclasse des types d'objet.
-    
-    Elle ajoute le type de l'objet dans le dictionnaire 'types' si il possède
-    un nom.
+    """Commande 'trouver'.
     
     """
     
-    def __init__(cls, nom, bases, contenu):
-        """Constructeur de la métaclasse"""
-        MetaBaseObj.__init__(cls, nom, bases, contenu)
-        cls.types = {}
-        if cls.nom_type:
-            types[cls.nom_type] = cls
-            
-            # On l'ajoute dans la classe-mère
-            base = bases and bases[0] or None
-            if base:
-                base.types[cls.nom_type] = cls
-
-from .bijou import Bijou
-from .clef import Clef
-from .conteneur import Conteneur
-from .conteneur_nourriture import ConteneurNourriture
-from .indefini import *
-from .nourriture import Nourriture
-from .vetement import Vetement
-from .viande import Viande
-
-# Vêtements
-from .chapeau import Chapeau
-from .chaussette import Chaussette
-from .chaussure import Chaussure
-from .chemise import Chemise
-from .pantalon import Pantalon
-from .jupe import Jupe
-
-# Bijoux
-from .bague import Bague
-from .boucle_oreille import BoucleOreille
-from .bracelet import Bracelet
-from .collier import Collier
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "trouver", "find")
+        self.groupe = "joueur"
+        self.aide_courte = "manipulation des aliass"
+        self.aide_longue = \
+            ""
