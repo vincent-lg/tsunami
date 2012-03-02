@@ -33,4 +33,5 @@
 from . import cle_navire
 from . import cle_vent
 from . import modele
+from . import point_visible
 from . import vitesse_rames

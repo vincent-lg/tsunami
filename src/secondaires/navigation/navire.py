@@ -218,6 +218,10 @@ class Navire(Vehicule):
     def nom(self):
         return self.modele.nom
     
+    @property
+    def desc_survol(self):
+        return self.nom
+    
     def valider_coordonnees(self):
         """Pour chaque salle, valide ses coordonnées."""
         for salle in self.salles.values():
@@ -294,8 +298,10 @@ class Navire(Vehicule):
             
             # On parcourt chaque point de l'étendue
             etendue = self.etendue
+            points = tuple(etendue.points.items())
+            points += importeur.navigation.points_navires(self)
             valide = vecteurs[0]
-            for c, point in etendue.points.items():
+            for c, point in points:
                 c = Vecteur(c[0], c[1], etendue.altitude)
                 for v, p in nav_points.items():
                     dist = (c - v).norme

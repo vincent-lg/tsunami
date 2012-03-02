@@ -33,6 +33,7 @@
 from abstraits.module import *
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
+from primaires.salle.salle import Salle
 from .navire import Navire
 from .elements import types as types_elements
 from .elements.base import BaseElement
@@ -341,3 +342,32 @@ class Module(BaseModule):
                     liste_messages.insert(0, "{} est amarrée ici.".format(
                             navire.nom.capitalize()))
                     return
+    
+    def get_symbole(self, point):
+        """Retourne le symbole correspondant."""
+        if isinstance(point, Salle) and point.nom_terrain in \
+                TERRAINS_ACCOSTABLES:
+            return "#"
+        elif isinstance(point, Navire):
+            return "*"
+        
+        return ""
+    
+    def points_navires(self, navire):
+        """Retourne un tuple de couples (cooreds, salle).
+        
+        Le navire passé en paramètre est à la fois l'exception qui
+        n'apparaîtra pas dans le tuple retourné et celui sur lequel
+        on se base pour savoir quelle étendue tester.
+        
+        """
+        etendue = navire.etendue
+        navires = [n for n in self.navires.values() if \
+                n.etendue is etendue and n is not navire]
+        points = []
+        for navire in navires:
+            for salle in navire.salles.values():
+                x, y, z = salle.coords.tuple()
+                points.append(((x, y), salle))
+        
+        return tuple(points)
