@@ -217,7 +217,7 @@ class Visible:
             if distance <= portee:
                 # N'y a-t-il pas de terre plus proche
                 v_cote = visible.cotes.get(angle, (None, None, None, None))[2]
-                if v_cote is None or v_cote.norme >= v_point.norme:
+                if v_cote is None or v_cote.norme >= v_dist.norme:
                     visible.navires.append((angle, (t_x, t_y, v_point,
                             t_navire)))
         

@@ -70,7 +70,7 @@ class PrmAttacher(Parametre):
         # On cherche la salle de nagvire la plus proche
         d_salle = None # la salle de destination
         navire = None
-        distance = 5
+        distance = 2
         x, y, z = salle.coords.tuple()
         for t_navire in navires:
             for t_salle in t_navire.salles.values():
