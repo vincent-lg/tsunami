@@ -77,8 +77,8 @@ class PrmDetacher(Parametre):
             return
         
         d_salle.amarre.attachee = None
-        t_navire.immobilise = False
+        d_salle.navire.immobilise = False
         personnage << "Vous détachez l'amarre retenant {}.".format(
-                t_navire.nom)
+                d_salle.navire.nom)
         salle.envoyer("{{}} détache l'amarre retenant {}.".format(
-                t_navire.nom), personnage)
+                d_salle.navire.nom), personnage)

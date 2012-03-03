@@ -76,8 +76,10 @@ def entrer_point(dictionnaire, position, angle, v_dist, coords, point):
     if a_point:
         # Détermine si le point est plus proche ou non
         x, y, p_vecteur, a_point = a_point
-        if (position - p_vecteur).norme > v_dist.norme and isinstance(point,
+        if (position - p_vecteur).norme == v_dist.norme and isinstance(point,
                 Salle):
+            dictionnaire[angle] = (coords[0], coords[1], v_dist, point)
+        elif (position - p_vecteur).norme > v_dist.norme:
             dictionnaire[angle] = (coords[0], coords[1], v_dist, point)
     else:
         dictionnaire[angle] = (coords[0], coords[1], v_dist, point)
@@ -100,7 +102,7 @@ class Visible:
     def __init__(self):
         """Constructeur, à ne pas appeler directement."""
         self.cotes = {}
-        self.navires = {}
+        self.navires = []
     
     @classmethod
     def observer(cls, personnage, portee, precision):
@@ -186,6 +188,9 @@ class Visible:
                     s.coords.z == altitude]
             
             distance = None
+            d_salle = None
+            t_x = t_y = None
+            v_dist = None
             for t_salle in t_salles:
                 # Calcul de la distance entre salle et t_salle
                 t_coords = t_salle.coords.tuple()
@@ -193,19 +198,28 @@ class Visible:
                 t_distance = sqrt((x - t_x) ** 2 + (y - t_y) ** 2)
                 if distance is None or t_distance < distance:
                     distance = t_distance
+                    d_salle = t_salle
+                    t_x, t_y, t_z = t_salle.coords.tuple()
                 else:
                     continue
-                
-                v_point = Vecteur(t_x, t_y, altitude)
-                v_dist = v_point - position
-                direction = v_dist.direction
-                r_direction = (direction - navire.direction.direction) % 360
-                
-                # On détermine l'angle minimum fonction de la précision
-                angle = norme_angle(round(r_direction / precision) * precision)
             
-            entrer_point(visible.navires, position, angle, v_dist,
-                        t_coords, t_navire)
+            if t_x is None:
+                continue
+            
+            v_point = Vecteur(t_x, t_y, altitude)
+            v_dist = v_point - position
+            direction = v_dist.direction
+            r_direction = (direction - navire.direction.direction) % 360
+            
+            # On détermine l'angle minimum fonction de la précision
+            angle = norme_angle(round(r_direction / precision) * precision)
+            
+            if distance <= portee:
+                # N'y a-t-il pas de terre plus proche
+                v_cote = visible.cotes.get(angle, (None, None, None, None))[2]
+                if v_cote is None or v_cote.norme >= v_point.norme:
+                    visible.navires.append((angle, (t_x, t_y, v_point,
+                            t_navire)))
         
         return visible
     
@@ -224,7 +238,7 @@ class Visible:
         
         """
         # On commence par trier les points
-        points = tuple(self.cotes.items()) + tuple(self.navires.items())
+        points = tuple(self.cotes.items()) + tuple(self.navires)
         neg = [(a,  p) for a, p in points if a < 0]
         pos = [(a, p) for a, p in points if a >= 0]
         if pos and min(a for a, p in pos) > 90 and neg:

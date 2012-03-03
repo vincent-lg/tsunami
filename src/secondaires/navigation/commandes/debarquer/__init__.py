@@ -73,7 +73,8 @@ class CmdDebarquer(Commande):
             if t_salle.coords.z == z:
                 t_x, t_y, t_z = t_salle.coords.tuple()
                 t_distance = sqrt((x - t_x) ** 2 + (y - t_y) ** 2)
-                if t_distance < distance:
+                if t_distance < distance and t_salle.nom_terrain in \
+                        TERRAINS_ACCOSTABLES:
                     d_salle = t_salle
                     distance = t_distance
         
