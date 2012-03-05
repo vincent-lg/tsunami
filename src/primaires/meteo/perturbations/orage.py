@@ -54,7 +54,7 @@ class Orage(BasePertu):
         ]
         self.message_debut = "Un violent orage éclate au-dessus de votre " \
                 "tête."
-        self.message_fin = "L'orage s'évanouit comme qu'il a commencé, " \
+        self.message_fin = "L'orage s'évanouit comme il a commencé, " \
                 "laissant l'air moite et pesant."
         self.message_entrer = "Un orage puissant venant {dir} obscurcit le " \
                 "ciel et déverse sa colère."
