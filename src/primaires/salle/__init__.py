@@ -464,7 +464,7 @@ class Module(BaseModule):
         for s in self.salles.values():
             objets = [o for o in s.objets_sol._objets if o.nettoyer]
             for o in objets:
-                if (o.ajoute_a - maintenant).seconds >= NB_MIN_NETTOYAGE * 60:
+                if (maintenant - o.ajoute_a).seconds >= NB_MIN_NETTOYAGE * 60:
                     o.contenu.retirer(o)
                     o.detruire()
     

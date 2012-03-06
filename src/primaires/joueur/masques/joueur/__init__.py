@@ -59,7 +59,6 @@ class Joueur(Masque):
         
         nom_joueur = nom_joueur.split(" ")[0].lower()
         commande[:] = commande[len(nom_joueur):]
-        print("reste", commande)
         masques.append(self)
         self.a_interpreter = nom_joueur
         return True
