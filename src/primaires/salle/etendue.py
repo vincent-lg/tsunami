@@ -101,7 +101,7 @@ class Etendue(BaseObj):
             etendue : une étendue voisine
         
         """
-        coordoonnees = self.convertir_coordonnees(coordonnees)
+        coordonnees = self.convertir_coordonnees(item)
         return self.points[coordonnees]
     
     @property

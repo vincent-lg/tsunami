@@ -150,12 +150,15 @@ class CmdCarte(Commande):
                     assert epaisseur > 1
                 except (ValueError, AssertionError):
                     personnage << "|err|L'épaisseur d'écrasement doit être " \
-                            "un nombre positif supérieur à 1.|ff|"
+                            "un nombre entier supérieur à 1.|ff|"
                     return
         
         # Construction de la carte
         str_map = ""
-        # Si les coordonnées ne sont pas définies on le définit avec distance
+        a_salles = []
+        for ajouter in importeur.salle.salles_a_cartographier:
+            a_salles.extend(ajouter())
+        # Si les coordonnées ne sont pas définies on les définit avec distance
         if not(ouest or est or nord or sud):
             ouest = int(coords.x) - distance
             est = int(coords.x) + distance
@@ -178,27 +181,47 @@ class CmdCarte(Commande):
                         except KeyError:
                             pass
                         else:
+                            salle = (salle.nom_terrain, salle.interieur,
+                                    (salle.coords.x, salle.coords.y))
                             break
                 else:
                     try:
                         salle = type(self).importeur.salle[(ouest + x,
                                 nord - y, altitude)]
+                        salle = (salle.nom_terrain, salle.interieur,
+                                (salle.coords.x, salle.coords.y))
                     except KeyError:
                         pass
+                # La salle en question peut être un obstacle d'étendue
+                for etendue in importeur.salle.etendues.values():
+                    if (ouest + x, nord - y) in etendue:
+                        point = etendue[(ouest + x, nord - y)]
+                        if hasattr(point, "nom_terrain"):
+                            salle = (point.nom_terrain, point.interieur,
+                                    (point.coords.x, point.coords.y))
+                        else:
+                            salle = (point.nom, False, (ouest + x, nord - y))
+                # Ou une salle ajoutée par un module secondaire
+                for a_salle in a_salles:
+                    if ouest + x == a_salle[2][0] and nord - y == a_salle[2][1]:
+                        salle = a_salle
+                
                 if salle is None:
                     str_map += ". "
-                elif salle is personnage.salle:
-                    str_map += "i "
                 else:
-                    if "interieur" in options:
-                        str_map += "o " if salle.interieur else "n "
+                    if salle[2][0] == round(personnage.salle.coords.x) and \
+                            salle[2][1] == round(personnage.salle.coords.y):
+                        str_map += "i "
                     else:
-                        str_map += salle.nom_terrain[0] + " "
+                        if "interieur" in options:
+                            str_map += "o " if salle[1] else "n "
+                        else:
+                            str_map += salle[0][0] + " "
                 # Statistiques
                 if salle is not None:
                     nb_salles += 1
-                    if salle.nom_terrain not in terrains:
-                        terrains.append(salle.nom_terrain)
+                    if salle[0] not in terrains:
+                        terrains.append(salle[0])
         
         # Formattage de la carte
         titre = "Carte du monde entre {ouest}.{nord} et {est}.{sud}".format(

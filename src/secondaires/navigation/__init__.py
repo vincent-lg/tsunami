@@ -154,6 +154,10 @@ class Module(BaseModule):
         self.importeur.diffact.ajouter_action("vir_navire", 3,
                 self.virer_navires)
         
+        # Ajout des bateaux au module salle
+        self.importeur.salle.salles_a_cartographier.append(
+                self.get_navires_presents)
+        
         BaseModule.init(self)
     
     def ajouter_commandes(self):
@@ -371,3 +375,14 @@ class Module(BaseModule):
                 points.append(((x, y), salle))
         
         return tuple(points)
+    
+    def get_navires_presents(self):
+        """Retourne les navires présents sous la forme d'une liste de tuples
+        (nom, False, (x, y)) (voir module salle, commande cartographier).
+        
+        """
+        l_navires = []
+        for navire in self.navires.values():
+            l_navires.append(("Navire", False, \
+                    (round(navire.position.x), round(navire.position.y))))
+        return l_navires

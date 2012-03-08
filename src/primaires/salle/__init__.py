@@ -98,6 +98,13 @@ class Module(BaseModule):
         self.terrains = {}
         self.etendues = {}
         self.obstacles = {}
+        
+        # Liste des méthodes ajoutant des salles éventuelles à cartographier
+        # Par exemple, un éventuel module secondaire de navigation ajoute à
+        # cette liste une fonction retournant les bateaux. Cette fonction
+        # doit impérativement retourner une liste de salles sous la forme
+        # d'un tuple (nom, interieur, (x, y)) (interieur est un booléen).
+        self.salles_a_cartographier = []
     
     @property
     def salles(self):
