@@ -55,15 +55,18 @@ class PrmListe(Parametre):
                 "  Clé             | Étendue         | " \
                 "Coordonnées     | Vitesse    | Direction"]
             for navire in navires:
-                vitesse = navire.vitesse.norme
+                vitesse = navire.vitesse_noeuds
                 vitesse = round(vitesse, 3)
                 vitesse = str(vitesse).replace(".", ",")
+                direction = navire.direction.direction
+                direction = round(direction, 3)
+                direction = str(direction).replace(".", ",")
                 etendue = navire.etendue and navire.etendue.cle or "aucune"
                 lignes.append(
                     "  {:<15} | {:<15} | {:>15} | {:>10} | {:>9}".format(
                     navire.cle, etendue,
                     navire.position.coordonnees, vitesse,
-                    navire.direction.direction))
+                    direction))
             personnage << "\n".join(lignes)
         else:
             personnage << "Aucun navire n'est actuellement défini."
