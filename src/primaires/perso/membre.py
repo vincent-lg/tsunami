@@ -126,10 +126,23 @@ class Membre(BaseObj):
         else:
             epaisseurs = sum(o.epaisseur for o in self.equipe)
             emplacement = self.groupe or self.nom
-            print(equipable, emplacement == objet.emplacement, epaisseurs + objet.epaisseur <= self.supporte, epaisseurs + 1 in objet.positions)
-            return equipable and objet.emplacement == emplacement and \
-                    epaisseurs + objet.epaisseur <= self.supporte and \
-                    epaisseurs + 1 in objet.positions
+            sur = self.equipe and self.equipe[-1] or None
+            peut_equiper = True
+            if sur:
+                peut_equiper = False
+                for t in objet.empilable_sur:
+                    if sur.est_de_type(t):
+                        peut_equiper = True
+                        break
+                
+                for t in sur.empilable_sous:
+                    if objet.est_de_type(t):
+                        peut_equiper = True
+                        break
+            
+            return peut_equiper and equipable and objet.emplacement == \
+                    emplacement and epaisseurs + objet.epaisseur <= \
+                    self.supporte and epaisseurs + 1 in objet.positions
     
     def equiper(self, objet):
         """Equipe l'objet."""

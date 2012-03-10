@@ -43,4 +43,5 @@ class Chaussure(Vetement):
         Vetement.__init__(self, cle)
         self.emplacement = "pieds"
         self.positions = (1, 2)
+        self.empilable_sur = ["chaussette"]
 

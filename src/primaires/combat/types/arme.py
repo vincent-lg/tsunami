@@ -49,10 +49,11 @@ class Arme(BaseType):
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
-        self.degats_fixes = 5
-        self.degats_variables = 0
         self.emplacement = "mains"
         self.positions = (1, 2)
+        self.empilable_sur = ["vêtement"]
+        self.degats_fixes = 5
+        self.degats_variables = 0
         
         # Editeurs
         self.etendre_editeur("f", "dégâts fixes", Uniligne, self, "degats_fixes")
@@ -66,7 +67,8 @@ class Arme(BaseType):
         fixes.prompt = "Dégâts fixes de l'arme : "
         fixes.aide_courte = \
             "Entrez les |ent|dégâts fixes|ff| de l'arme. Ils représentent,\n" \
-            "ajoutés aux dégâts variables, les dégâts infligés par cette arme.\n" \
+            "ajoutés aux dégâts variables, les dégâts infligés par cette " \
+            "arme.\n" \
             "Si une arme a |cmd|5|ff| de dégâts fixes et |cmd|2|ff| " \
             "de dégâts variables,\nses dégâts réels se situeront entre 5 " \
             "et 7.\n\n" \
