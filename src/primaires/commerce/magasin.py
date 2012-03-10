@@ -31,98 +31,65 @@
 """Fichier contenant la classe Magasin, détaillée plus bas."""
 
 from abstraits.obase import *
-from primaires.pnj.prototype import Prototype
-from primaires.objet.types.base import BaseType
 
 class Magasin(BaseObj):
     
     """Cette classe représente un magasin.
     
+    Un magasin possède plusieurs informations :
+    -   Un inventaire des services [1] en vente actuellement
+    -   Une liste de services en stock [2]
+    -   Des taux d'achats et taux d'intérêts
+    -   Une caisse représentant la liquidité du magasin
+    
+    [1] Les services nommés peuvent être de plusieurs types :
+        l'obtension d'un objet en l'échange d'une somme est le service
+        le plus évident, mais des PNJ peuvent également être achetés
+        ainsi que d'autres types de services sur d'autres branches du moteur.
+        Ainsi, l'implémentation d'un magasin est générique au possible.
+    
+    [2] Les services en stock sont ceux devant être renouvelés au moment
+        opportun. Tous les services ne sont pas remplaçables et pas
+        à la même vitesse. Les produits renouvelés passent du stock
+        dans l'inventaire actuel du magasin mais ne disparaissent
+        pas du stock.
+    
     """
     
     def __init__(self, nom, parent=None):
-        """Constructeur de la classe"""
+        """Constructeur de la classe."""
         BaseObj.__init__(self)
         self.nom = nom
         self.parent = parent
         self._vendeur = ""
         self._monnaies = []
         self.caisse = 0
-        self._o_prototypes = {} # clé_obj : quantité
-        self._p_prototypes = {} # clé_pnj : quantité
+        self.inventaire = []
+        self.stock = []
         self._construire()
     
     def __getnewargs__(self):
         return ("", )
     
     def __str__(self):
-        """Affichage du magasin en éditeur"""
-        liste_obj = []
-        liste_pnj = []
-        taille_max = 0
-        for o in self.liste_objets:
-            if o and len(o.cle) > taille_max:
-                taille_max = len(o.cle) + 1
-        for p in self.liste_pnjs:
-            if p and len(p.cle) > taille_max:
-                taille_max = len(p.cle) + 1
-        taille_max = taille_max >= 6 and taille_max or 6
-        a_detruire = []
-        for o, nb in self._o_prototypes.items():
-            obj = self.get_item_par_cle(o)
-            if not obj:
-                a_detruire.append(o)
-            else:
-                liste_obj.append(obj.cle.ljust(taille_max) + "|" + str( \
-                        obj.prix).rjust(7) + " |" + str(nb).rjust(9) + " |\n")
-        for p, nb in self._p_prototypes.items():
-            pnj = self.get_item_par_cle(p)
-            if not pnj:
-                a_detruire.append(o)
-            else:
-                liste_pnj.append(pnj.cle.ljust(taille_max) + "|" + str( \
-                        pnj.prix).rjust(7) + " |" + str(nb).rjust(9) + " |\n")
-        for item in a_detruire: # purge des items inexistants
-            del self[item]
-        liste_obj = sorted(liste_obj)
-        liste_pnj = sorted(liste_pnj)
-        if liste_obj or liste_pnj:
-            ret = "+" + "-" * (taille_max + 1) + "+--------+----------+\n"
-            ret += "| |tit|" + "Objet".ljust(taille_max) + "|ff|"
-            ret += "|   |tit|Prix|ff| | |tit|Quantité|ff| |\n"
-            if liste_obj:
-                ret += "+" + "-" * (taille_max + 1) + "+--------+----------+\n"
-                ret += "| " + "| ".join(liste_obj)
-            if liste_pnj:
-                ret += "+" + "-" * (taille_max + 1) + "+--------+----------+\n"
-                ret += "| " + "| ".join(liste_pnj)
-            ret += "+" + "-" * (taille_max + 1) + "+--------+----------+"
+        """Affichage du magasin en éditeur."""
+        services = sorted(self.stock, key=lambda s: s[0].valeur)
+        if services:
+            ret = "+" + "-" * 10 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
+                    "-" * 10 + "+\n"
+            ret += "| |tit|" + "Type".ljust(8) + "|ff|"
+            ret += "| |tit|" + "Nom".ljust(42) + "|ff|"
+            ret += "|       |tit|Prix|ff| | |tit|Quantité|ff| |\n"
+            ret = "+" + "-" * 10 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
+                    "-" * 10 + "+"
+            for ligne in services:
+                service, quantite, flags = igne
+                ret += "\n| " + service.type_achat.ljust(12) + " "
+                res += "| " + str(service).ljust(40) 
+                ret += "| {:<9} | {:<8} |".format(service.valeur, quantite)
         else:
-            ret = "|att|Aucun objet en vente.|ff|"
+            ret = "|att|Aucun service en vente.|ff|"
         return ret
-    
-    def __contains__(self, item):
-        """Retourne True si l'objet est en vente, False sinon"""
-        return item in self._o_prototypes or item in self._p_prototypes
-    
-    def __getitem__(self, item):
-        """Retourne la quantité d'item en vente"""
-        return self._o_prototypes[item] or self._p_prototypes[item]
-    
-    def __setitem__(self, item, quantite):
-        """Ajoute un objet ou modifie sa quantité"""
-        if isinstance(self.get_item_par_cle(item), BaseType):
-            self._o_prototypes[item] = quantite
-        elif isinstance(self.get_item_par_cle(item), Prototype):
-            self._p_prototypes[item] = quantite
-    
-    def __delitem__(self, item):
-        """Retire un objet du magasin"""
-        if isinstance(item, str):
-            if item in self._o_prototypes:
-                del self._o_prototypes[item]
-            elif item in self._p_prototypes:
-                del self._p_prototypes[item]
     
     def _get_vendeur(self):
         """Retourne le prototype vendeur"""
@@ -133,7 +100,7 @@ class Magasin(BaseObj):
             return None
     def _set_vendeur(self, cle):
         self._vendeur = cle
-        eur = property(_get_vendeur, _set_vendeur)
+    vendeur = property(_get_vendeur, _set_vendeur)
     
     @property
     def cle_vendeur(self):
@@ -141,130 +108,24 @@ class Magasin(BaseObj):
         return ("|vrc|" + self._vendeur + "|ff|") if self._vendeur else \
                 "|rgc|aucun|ff|"
     
-    @property
-    def monnaies(self):
-        """Retourne la liste des prototypes de monnaie utilisables"""
-        ret = []
-        for m in self._monnaies:
-            if m in type(self).importeur.objet.prototypes:
-                ret.append(type(self).importeur.objet.prototypes[m])
-            else:
-                self._monnaies.remove(m)
-        return ret
-    
-    @property
-    def str_monnaies(self):
-        """Affiche la liste des monnaies utilisables dans ce magasin"""
-        ret = "|ff|, |jn|".join(sorted(self._monnaies))
-        ret = "|rgc|aucune|ff|" if not ret else ("|jn|" + ret + "|ff|")
-        return ret
-    
-    @property
-    def liste_objets(self):
-        """Retourne les objets en vente, par ordre alphabétique"""
-        ret = []
-        liste_cles = sorted(list(self._o_prototypes.keys()))
-        for cle in liste_cles:
-            ret.append(self.get_item_par_cle(cle))
-        return ret
-    
-    @property
-    def liste_pnjs(self):
-        """Retourne la liste des PNJs en vente, par ordre alphabétique"""
-        ret = []
-        liste_cles = sorted(list(self._p_prototypes.keys()))
-        for cle in liste_cles:
-            ret.append(self.get_item_par_cle(cle))
-        return ret
-    
-    def ajouter_monnaie(self, monnaie):
-        """Ajoute une monnaie à la liste"""
-        self._monnaies.append(monnaie)
-    
-    def supprimer_monnaie(self, monnaie):
-        """Supprime la monnaie de la liste"""
-        self._monnaies.remove(monnaie)
-    
-    def encaisser(self, calcul):
-        """Modifie la valeur de la caisse en fonction d'une chaîne de calcul"""
-        self.caisse = eval(str(self.caisse) + calcul)
-    
-    def est_en_vente(self, objet):
-        """Retourne True si la clé correspond à un objet en vente,
-        False sinon.
-        
-        """
-        return objet in self._o_prototypes.keys()
-    
-    def get_item_par_id(self, id):
-        """Retourne un objet en fonction de son id (voir self.afficher)"""
-        liste_items = list(self._o_prototypes.keys()) + \
-                list(self._p_prototypes.keys())
-        try:
-            item = get_item_par_cle(liste_items[id - 1])
-            assert(item is not None)
-        except (IndexError, AssertionError):
-            del self[liste_items[id - 1]]
-            return None
-        else:
-            return item
-    
-    def get_item_par_cle(self, cle):
-        """Retourne un objet en fonction de sa clé"""
-        if cle in type(self).importeur.objet.prototypes:
-            return type(self).importeur.objet.prototypes[cle]
-        else:
-            return None
-    
-    def afficher(self):
+    def afficher(self, personnage):
         """Affichage du magasin en jeu"""
+        services = sorted(self.inventaire, key=lambda s: s[0].valeur)
         ret = self.nom + "\n\n"
-        liste_obj = []
-        liste_pnj = []
-        taille_max = 0
-        for o in self.liste_objets:
-            if o and len(o.nom_singulier) > taille_max:
-                taille_max = len(o.nom_singulier) + 1
-        for p in self.liste_pnjs:
-            if p and len(p.nom_singulier) > taille_max:
-                taille_max = len(p.nom_singulier) + 1
-        taille_max = taille_max >= 6 and taille_max or 6
-        id = 1
-        a_detruire = []
-        for o, nb in self._o_prototypes.items():
-            obj = self.get_item_par_cle(o)
-            if not obj:
-                a_detruire.append(o)
-            else:
-                liste_obj.append(("#" + str(id)).rjust(3) + " | " + \
-                        obj.nom_singulier.ljust(taille_max) + "|" + str( \
-                        obj.prix).rjust(5) + " |" + str(nb).rjust(5) + " |\n")
-            id += 1
-        for p, nb in self._p_prototypes.items():
-            pnj = self.get_item_par_cle(p)
-            if not pnj:
-                a_detruire.append(p)
-            else:
-                liste_pnj.append(("#" + str(id)).rjust(3) + " | " + \
-                        pnj.nom_singulier.ljust(taille_max) + "|" + str( \
-                        pnj.prix).rjust(5) + " |" + str(nb).rjust(5) + " |\n")
-            id += 1
-        for item in a_detruire: # purge des items inexistants
-            del self[item]
-        liste_obj = sorted(liste_obj)
-        liste_pnj = sorted(liste_pnj)
-        if liste_obj or liste_pnj:
-            ret += "+-----+-" + "-" * taille_max + "+------+------+\n"
-            ret += "|  |tit|ID|ff| | |tit|" + "Objet".ljust(taille_max)
-            ret += "|ff|| |tit|Prix|ff| |  |tit|Qtt|ff| |\n"
-            if liste_obj:
-                ret += "+-----+-" + "-" * taille_max + "+------+------+\n"
-                ret += "| " + "| ".join(liste_obj)
-            if liste_pnj:
-                ret += "+-----+-" + "-" * taille_max + "+------+------+\n"
-                ret += "| " + "| ".join(liste_pnj)
-            ret += "+-----+-" + "-" * taille_max + "+------+------+"
+        if services:
+            ret = "+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
+                    "-" * 10 + "+\n"
+            ret += "| |tit|" + "ID".ljust(4) + "|ff|"
+            ret += "| |tit|" + "Nom".ljust(42) + "|ff|"
+            ret += "|       |tit|Prix|ff| | |tit|Quantité|ff| |\n"
+            ret = "+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
+                    "-" * 10 + "+"
+            i = 1
+            for ligne in services:
+                service, quantite, flags = ligne
+                ret += "\n| " + ("#" + str(i)).ljust(4) + " "
+                res += "| " + service.nom_achat.ljust(40) 
+                ret += "| {:<9} | {:<8} |".format(service.valeur, quantite)
         else:
-            ret += "|att|Le magasin ne semble pas approvisionné pour le " \
-                    "moment.|ff|"
+            ret = "|att|Aucun produit n'est en vente actuellement.|ff|"
         return ret

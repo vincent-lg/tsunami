@@ -42,10 +42,10 @@ class EdtMagasin(Editeur):
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
-        self.ajouter_option("v", self.opt_changer_vendeur)
-        self.ajouter_option("m", self.opt_monnaie)
-        self.ajouter_option("c", self.opt_modifier_caisse)
-        self.ajouter_option("o", self.opt_objet)
+        #self.ajouter_option("v", self.opt_changer_vendeur)
+        #self.ajouter_option("m", self.opt_monnaie)
+        #self.ajouter_option("c", self.opt_modifier_caisse)
+        self.ajouter_option("s", self.opt_stock)
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -56,19 +56,15 @@ class EdtMagasin(Editeur):
         if salle.magasin is not None:
             msg += "\n\nNom du magasin : " + salle.magasin.nom
             msg += "\nVendeur actuel : " + salle.magasin.cle_vendeur
-            if len(salle.magasin.monnaies) != 1:
-                msg += "\nMonnaies acceptées : "
-            else:
-                msg += "\nMonnaie acceptée : "
-            msg += salle.magasin.str_monnaies
             msg += "\nEtat de la caisse : |bc|" + str(salle.magasin.caisse)
             msg += "|ff|\n\n" + str(salle.magasin)
         
         return msg
     
-    def opt_changer_vendeur(self, arguments):
-        """Change le vendeur du magasin.
-        Syntaxe : /v <prototype de bot>
+    def opt_stock(self, arguments):
+        """Modifie le stock.
+        
+        Syntaxe : /s <quantité> <type> <service>
         
         """
         salle = self.objet
@@ -76,73 +72,26 @@ class EdtMagasin(Editeur):
             self.pere << "|err|Il n'y a pas de magasin dans cette salle.|ff|"
             return
         if not arguments:
-            self.pere << "|err|Précisez un prototype de PNJ.|ff|"
-            return
-        proto = arguments.split(" ")[0].lower()
-        if not proto in type(self).importeur.pnj.prototypes:
-            self.pere << "|err|Ce prototype est introuvable.|ff|"
-            return
-        proto = type(self).importeur.pnj.prototypes[proto]
-        salle.magasin.vendeur = proto.cle
-        self.actualiser()
-    
-    def opt_monnaie(self, arguments):
-        """Ajoute ou supprime une monnaie.
-        Syntaxe : /m <objet de type argent>
-        
-        """
-        salle = self.objet
-        if not salle.magasin:
-            self.pere << "|err|Il n'y a pas de magasin dans cette salle.|ff|"
-            return
-        if not arguments:
-            self.pere << "|err|Précisez un prototype d'objet.|ff|"
-            return
-        monnaie = arguments.split(" ")[0].lower()
-        if not monnaie in type(self).importeur.objet.prototypes:
-            self.pere << "|err|Ce prototype est introuvable.|ff|"
-            return
-        monnaie = type(self).importeur.objet.prototypes[monnaie]
-        if not monnaie in salle.magasin.monnaies:
-            salle.magasin.ajouter_monnaie(monnaie.cle)
-        else:
-            salle.magasin.supprimer_monnaie(monnaie.cle)
-        self.actualiser()
-    
-    def opt_modifier_caisse(self, arguments):
-        """Modifie le contenu de la caisse.
-        Syntaxe : /c <nombre>
-        
-        """
-        salle = self.objet
-        if not salle.magasin:
-            self.pere << "|err|Il n'y a pas de magasin dans cette salle.|ff|"
-            return
-        if not arguments:
-            self.pere << "|err|Précisez une valeur.|ff|"
+            self.pere << "|err|Précisez une quantité, un type et une clé.|ff|"
             return
         try:
-            valeur = int(arguments.split(" ")[0])
-            assert valeur > 0
-        except (ValueError, AssertionError):
-            self.pere << "|err|Entrez un nombre valide et positif.|ff|"
+            quantite, type, cle = argument.split(" ")
+        except ValueError:
+            self.pere << "|err|Précisez une quantité, un type et une clé.|ff|"
             return
-        else:
-            salle.magasin.encaisser("+" + str(valeur))
-            self.actualiser()
-    
-    def opt_objet(self, arguments):
-        """Ajoute ou supprime un objet.
-        Syntaxe : /o <prototype d'objet> (<quantité>)
         
-        """
-        salle = self.objet
-        if not salle.magasin:
-            self.pere << "|err|Il n'y a pas de magasin dans cette salle.|ff|"
+        # Conversion de la quantité
+        try:
+            quantite = int(quantite)
+            assert quantite >= 0
+        except (ValueError, AssertionError):
+            self.pere << "|err|Quantité invalide.|ff|"
             return
-        if not arguments:
-            self.pere << "|err|Précisez un prototype d'objet.|ff|"
+        if type not in importeur.commerce.types_services:
+            self.pere << "|err|Type {} invalide.".format(type)
             return
+        
+        # Compléter...
         try:
             objet = arguments.split(" ")[0].lower()
             quantite = arguments.split(" ")[1].lower()

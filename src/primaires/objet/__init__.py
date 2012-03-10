@@ -53,6 +53,11 @@ class Module(BaseModule):
         self._prototypes = {}
         self._objets = {}
     
+    def config(self):
+        """Configuration du module."""
+        importeur.commerce.types_services["objet"] = self._prototypes
+        BaseModule.config(self)
+    
     def init(self):
         """Initialisation du module"""
         prototypes = self.importeur.supenr.charger_groupe(BaseType)
