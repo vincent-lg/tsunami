@@ -1,0 +1,67 @@
+h1. Déploiement de project:kassie
+
+Cette rubrique détail quelques points concernant le déploiement d'un "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon développé sur le moteur project:kassie. Ce sont des conseils de sécurité, portant davantage sur la stabilité du système déployé que son [[Installation|installation]].
+
+h2. Dépendances
+
+h3. Python
+
+project:kassie a été développé avec le moins de dépendances possibles. Il n'a en effet besoin, pour se lancer, que de "Python":http://www.python.org dans sa version 3.2.
+
+Installer "Python":http://www.python.org doit donc être suffisant pour faire tourner project:kassie sur de nombreux systèmes. Pour plus d'informations, consultez la rubrique [[Installation|consacrée à l'installation]].
+
+h3. Serveur mail
+
+Pour un environnement en production cependant, il vous est conseillé de mettre en place un "serveur mail":http://www.zeitoun.net/articles/installation-d-un-serveur-de-mails/start sur votre machine. Celui-ci permettra à project:kassie d'envoyer des e-mails aux utilisateurs (pour la validation de compte, l'alerte en cas de "bruteforcing":http://fr.wikipedia.org/wiki/Attaque_par_force_brute constatée ou dans de nombreuses autres situations).
+
+Notez qu'il n'est pas nécessaire que votre machine puisse recevoir et traiter des e-mails (bien que ce puisse être un plus). project:kassie a simplement besoin d'en envoyer, pas en recevoir.
+
+Après avoir configuré un service le permettant (comme "sendmail":http://www.sendmail.com/sm/open_source/ par exemple), il vous faut configurer project:kassie. Le fichier concerné se trouve dans @config/email/serveur.cfg@ (*config* étant le répertoire de configuration). Si vous ne savez pas où trouver votre répertoire de configuration, référez-vous à [[FichiersConfiguration|la rubrique traitant des fichiers de configuration]].
+
+Le fichier @serveur.cfg@ est abondamment commenté et ne devrait pas nécessiter d'explications supplémentaires. Assurez-vous de mettre la valeur *serveur* à *True* sans quoi project:kassie ne pourra envoyer d'e-mails :
+
+<pre>
+## Autorisation
+
+# Si vous mettez cette donnée à False, le serveur d'e-mail sera considéré
+# comme inactif. Le module primaire 'email' ne pourra donc pas envoyer
+# d'e-mails.
+# Notez tout de même qu'il est préférable d'avoir un serveur mail configuré
+# sur le serveur hébergeant le projet.
+serveur_mail = True
+</pre>
+
+Vous devez également changer le nom d'hôte (celui-ci sera utilisé dans tout message qui sera envoyé aux utilisateurs via project:kassie. Si le serveur est actif mais que le nom d'hôte n'est pas renseigné, project:kassie enverra un message d'erreur au moment d'envoyer un e-mail.
+
+<pre>
+## Nom d'hôte
+
+# Modifiez cette donnée pour spécifier le nom d'hôte de votre serveur
+# d'e-mail. Si vous précisez "exemple.com" en nom d'hôte, les messages envoyés
+# depuis l'alias "info" seront envoyés depuis l'adresse "info@exemple.com".
+# Si vous précisez une chaîne vide en nom d'hôte, aucun mail ne pourra être
+# envoyé. Si le serveur d'e-mail est considéré comme actif (voir plus haut)
+# et que le nom d'hôte est une chaîne vide, une erreur sera loggée.
+nom_hote = "kassie.fr"
+</pre>
+
+h2. Changer le nom du compte administrateur
+
+Le [[CompteAdministrateur|compte administrateur]] dans project:kassie est le compte qui a tous les droits : les joueurs créés dans ce compte auront accus aux [[CommandesConfiguration|commandes de configuration]]. Ce compte est identifié par son nom (*admin* par défaut). Il vous est fortement conseillé de changer ce nom. Vous trouverez l'explication de la démarche dans la rubrique [[CompteAdministrateur|compte administrateur]].
+
+h2. Le module systeme
+
+Le module *systeme* (module secondaire) définit les commandes dites "systèmes" de project:kassie. Ces commandes permettent des manipulations très avancées (et potentiellement dangereuses) dans project:kassie.
+
+Par exemple, la commande *système/system* ouvre une [[GlossaireConsolePython|console Python]] dans votre [[GlossaireClientMUD|client MUD]]. Cette console vous permet d'entrer du code "Python":http://www.python.org qui sera exécuté directement par project:kassie (le résultat affiché sera envoyé à votre client).
+
+C'est une commande extrêmement pratique pour des corrections ponctuelles de bug, obtenir des informations sur les objets de project:kassie et plus d'un développeur aime l'avoir sous la main pour vérifier des informations à la volée. Mais c'est une commande dangereuse également.
+
+Rien de plus facile que de faire planter project:kassie (en intégrant des données corrompues dans l'univers par exemple) avec une telle commande. Rien de plus facile, également, d'accéder à votre machine pour obtenir des informations sur votre serveur. Bien sûr, si c'est vous (et quelques personnes de confiance) qui avez accès à cette commande, il est peu probable que vous tentiez de pirater votre propre serveur, sauf peut-être par intérêt professionnel. En revanche, si un joueur arrive à obtenir cette commande, il peut faire de gros dommages.
+
+C'est une des raisons (pas la seule) pour éviter de lancer project:kassie en tant que "super utilisateur":http://fr.wikipedia.org/wiki/Utilisateur_root. Avec un compte aux droits restreints, un pirate aura un peu moins de contrôle. Vous pouvez également suivre un ou plusieurs des conseils suivants :
+
+# Interdire l'usage de cette commande à tout autre que les joueurs de votre compte. Dans ce cas, vérifiez que votre compte est sécurisé au possible (que son mot de passe, notamment, n'est pas évident)
+# Désactiver tout simplement le module *systeme* : c'est la méthode qui reste la plus efficace et la plus sécuritaire en production. Elle vous prive des commandes systèmes qui sont parfois utiles mais garantie que personne ne pourra y avoir accès.
+
+[[Index|Retour à l'index]]
