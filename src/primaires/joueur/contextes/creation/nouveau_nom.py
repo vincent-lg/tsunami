@@ -65,7 +65,9 @@ class NouveauNom(Contexte):
             # On recherche la salle
             cle = type(self).importeur.salle.salle_arrivee
             salle = type(self).importeur.salle[cle]
-            self.pere.joueur.salle = salle
+            # On ne l'écrit pas dans salle mais _salle pour que le joueur
+            # ne soit pas ajouté dans les personnages de la salle
+            self.pere.joueur._salle = salle
     
     def accueil(self):
         """Message d'accueil du contexte"""
