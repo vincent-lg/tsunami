@@ -39,3 +39,7 @@ class Vetement(BaseType):
     """
     
     nom_type = "vêtement"
+    def __init__(self, cle=""):
+        """Constructeur de l'objet"""
+        BaseType.__init__(self, cle)
+        self.empilable_sur = ["vêtement"]

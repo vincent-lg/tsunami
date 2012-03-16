@@ -48,6 +48,7 @@ class Conteneur(BaseType):
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
+        self.empilable_sur = ["vêtement"]
         self.types_admis = ["*"]
         self.etendre_editeur("t", "types admis", Selection, self,
                 "types_admis", type(self).importeur.objet.noms_types)

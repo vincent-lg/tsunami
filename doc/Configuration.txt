@@ -1,6 +1,6 @@
 h1. Configuration de project:kassie
 
-Configurer project:kassie se fait de différents moyens qui sont brièvement présentés ici. Des liens menant à des rubriques plus complètes sont proposées dans cette page : ce n'est qu'un index des différents moyens pour configurer project:kassie.
+Configurer project:kassie se fait de différents moyens qui sont brièvement présentés ici. Des liens menant à des rubriques plus complètes sont proposés dans cette page : ce n'est qu'un index des différents moyens pour configurer project:kassie.
 
 Vous y apprendrez comment personnaliser votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon à partir de project:kassie.
 
@@ -17,22 +17,27 @@ project:kassie vous permet de configurer votre "MUD":http://fr.wikipedia.org/wik
 
 Ces [[FichiersConfiguration|fichiers]] ont été conçus pour être simples à comprendre et à modifier. Il en existe un certain nombre, cependant, et bien qu'ils soient triés dans certains répertoires, vous pouvez (avec raison) vous demander lequel sert à quoi.
 
-Donc, pour obtenir plus d'informations sur ces [[FichiersConfiguration|fichiers de configuration]], consultez [[FichiersConfiguration|cette rubrique]].
+Pour obtenir plus d'informations sur ces [[FichiersConfiguration|fichiers de configuration]], consultez [[FichiersConfiguration|la rubrique qui leur est consacrée]].
 
 h2. Via des commandes
 
-De nombreuses [[CommandesConfiguration|commandes de configuration]] sont mises à votre disposition. Elles vous permettent de configurer et créer l'univers de votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon. En outre, ces commandes peuvent être, dans l'ensemble, réutilisables à n'importe quel moment si vous avez décider de changer la configuration.
+De nombreuses [[CommandesConfiguration|commandes de configuration]] sont mises à votre disposition. Elles vous permettent de configurer et créer l'univers de votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon. En outre, ces commandes peuvent être, dans l'ensemble, réutilisables à n'importe quel moment si vous avez décider de changer la configuration de votre univers.
 
 Bien entendu, votre univers sera probablement en constante évolution. Voici une liste non exhaustive des choses que vous pourrez faire grâce aux [[CommandesConfiguration|commandes de configuration]] :
 
 * Construire votre univers : créer des salles, PNJ, objets, races, quêtes...
-* Configurer les droits d'accès aux commandes : project:kassie met en place un système de groupe d'utilisateurs avancé permettant de gérer dynamiquement les droits des différents joueurs.
+* Configurer les droits d'accès aux commandes : project:kassie met en place un système de groupes d'utilisateurs avancé permettant de gérer dynamiquement les droits des différents joueurs.
 
 Vous disposez également de nombreuses commandes d'information vous permettant :
 
 * D'obtenir des statistiques sur votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon
 * De connaître la liste des modules chargés et leur statut
 * D'obtenir des informations sur l'univers et les joueurs présents (leur position dans l'univers, leur avancement dans les quêtes...).
+
+Enfin, certaines commandes, plus dangereuses et puissantes, vous sont proposées pour :
+
+* Obtenir les informations loggées en temps réel
+* Déébugger votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon en accédant aux différents objets chargés. Le terme *objet* ici se réfère au terme de programmation et ne désigne pas uniquement les objets physiques de l'univers.
 
 Pour toutes ces manipulations cependant, vous devez disposer d'un [[CompteAdministrateur|compte administrateur]]. Les informations pour créer un tel compte sont disponibles dans [[CompteAdministrateur|cette rubrique]].
 
@@ -48,16 +53,47 @@ Rappel : les options courtes doivent être précédées d'un tiret, les options 
 | c | chemin-configuration | Chemin du dossier contenant les fichiers de configuration |
 | e | chemin-enregistrement | Chemin du dossier d'enregistrement des données sauvegardées |
 | h | help | L'aide bien entendu |
+| i | interactif | Lance project:kassie en [[#Le mode interactif|mode interactif]] |
 | l | chemin-logs | Chemin d'enregistrement des logs |
 | p | port | Port d'écoute du serveur |
 | s | serveur | Lancer le serveur (on ou off) |
 
 Exemples :
 
-* @python3.2 kassie.py -h@ : affiche de l'aide sur project:kassie et les arguments disponibles
+* @python3.2 kassie.py -h@ : affichage de l'aide sur project:kassie et les arguments disponibles
 * @python3.2 kassie.py -p 5566@ : change le port d'écoute du serveur à 5566
 * @python3.2 kassie.py --serveur off@ : ne lance pas le réseau
 * ...
+
+h3. Le mode interactif
+
+C'est un mode de débuggage avancé. Le "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon se lancera normalement mais après le chargement, l'initialisation et la préparation des différents modules, la console dans laquelle vous avez lancé project:kassie vous propose d'entrer du code "Python":http://www.python.org qui sera exécuté interactivement. Cette console ne s'affichant qu'à chaque tour de boucle, ne soyez pas surpris si project:kassie semble réfléchir quelques secondes entre chaque instruction.
+
+Il ne vous est pas recommandé d'utiliser ce mode autrement que pour du débuggage et encore, si vous savez réellement ce que vous faites et si aucun joueur n'est susceptible de se connecter à votre "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon pendant l'opération. Voici, à titre indicatif, quelques exemples de ce que le mode interactif permet de faire :
+
+<pre>python3.2 kassie.py -i
+Session démarrée le vendredi 16 mars 2012 à **:**:**
+Le serveur est à présent en écoute sur le port 4000
+24 objets récupérés
+5 groupes d'utilisateurs récupérés
+4 canaux de communication récupérés
+Aucun mudmail récupéré
+Aucun sujet d'aide récupéré
+2 comptes récupérés
+Une salle récupérée
+Une zone récupérée
+Aucun sort récupéré
+>>> print(len(importeur.connex.joueurs_connectes))
+0
+>>> print(importeur.objet.prototypes.keys())
+dict_keys(['hache', 'sac'])
+>>> prototype = importeur.objet.prototypes["sac"]
+>>> print(prototype.nom_singulier)
+un sac
+>>>
+</pre>
+
+Vous avez accès en permanance à l'importeur via la variable @importeur@ et grâce à elle, vous pouvez accéder à tous les modules chargés et à la plupart des objets. Vous pouvez également importer à la main d'autres modules si besoin.
 
 h2. Déploiement
 

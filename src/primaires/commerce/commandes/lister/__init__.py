@@ -52,4 +52,4 @@ class CmdLister(Commande):
         if salle.magasin is None:
             personnage << "|err|Il n'y a pas de magasin ici.|ff|"
         else:
-            personnage << salle.magasin.afficher()
+            personnage << salle.magasin.afficher(personnage)

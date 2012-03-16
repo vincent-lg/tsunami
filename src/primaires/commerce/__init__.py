@@ -31,9 +31,9 @@
 """Fichier contenant le module primaire commerce."""
 
 from abstraits.module import *
-from primaires.commerce import masques
-from primaires.commerce import commandes
-from primaires.commerce import types
+from . import masques
+from . import commandes
+from . import types
 
 class Module(BaseModule):
     
@@ -42,13 +42,27 @@ class Module(BaseModule):
     Ce module gère le commerce, c'est-à-dire les transactions, les magasins,
     les monnaies.
     
+    Note : on peut étendre ce module en proposant de nouveaux objets pouvant être vendus. Pour cela, il faut :
+    1.  Lors de la configuration du module contenant les nouveaux
+        objets, on doit signaler au module ocmmerce qu'un nouveau type
+        d'objet sera susceptible d'être vendu. Pour cela, il faut ajouter
+        une entrée dans le dictionnaire types_services avec en clé le
+        nom du nouvel objet et en valeur, un dictionnaire permettant
+        de trouver l'objet grâce à sa clé. Pour des exemples, regardez
+        le module primaires objet
+    2.  La classe produisant des objets pouvant être vendus en magasin
+        doit posséder :
+        A.  Un attribut de classe type_achat (str)
+        B.  Une propriété ou un attribut d'objet valeur (float)
+        C.  à voir
+    
     """
     
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "commerce", "primaire")
         self.commandes = []
-        self.masques = []
+        self.types_services = {}
     
     def ajouter_commandes(self):
         """Ajout des commandes"""
@@ -59,4 +73,4 @@ class Module(BaseModule):
         ]
         
         for cmd in self.commandes:
-            self.importeur.interpreteur.ajouter_commande(cmd)
+            importeur.interpreteur.ajouter_commande(cmd)

@@ -43,6 +43,15 @@ class BaseType(BaseObj, metaclass=MetaType):
     (un objet a un nom, une description, quelque soit son type) c'est dans
     cette classe qu'elles apparaissent.
     
+    Notons les attributs d'objet :
+        empilable_sur -- une liste de chaînes définissant les types
+                         sur lesquels on peut empiler le type d'objet
+        empilable_sous -- une liste de chaînes identiques mais
+                          désignant les types d'objets qui peuvent être
+                          empilés par-dessus le type défini. On évitera
+                          d'utiliser cet attribut sauf si le type
+                          d'objet est défini dans un module secondaire
+    
     """
     
     nom_type = "" # à redéfinir
@@ -77,6 +86,8 @@ class BaseType(BaseObj, metaclass=MetaType):
         self.emplacement = ""
         self.epaisseur = 1
         self.positions = ()
+        self.empilable_sur = []
+        self.empilable_sous = []
         
         # Script
         self.script = ScriptObjet(self)
