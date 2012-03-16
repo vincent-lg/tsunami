@@ -47,20 +47,22 @@ class PrmCommande(Parametre):
             "Utilisez cette commande pour changer une commande de " \
             "groupe. Si par exemple vous voulez rendre l'écriture de " \
             "mudmails accessibles aux joueurs, déplacez la commande " \
-            "|cmd|mail|ff| dans le groupe |tit|joueur|ff| grâce à la " \
-            "commande : %chgroupe% %chgroupe:commande% |cmd|mail joueur|ff|. " \
-            "Il est préférable, quand vous ajoutez une nouvelle commande " \
-            "au MUD, de la placer d'office dans un groupe essentiel " \
-            "(|tit|pnj|ff|, |tit|joueur|ff| ou |tit|administrateur|ff|). " \
-            "Une fois que la commande a bien été ajoutée, vous pourrez " \
-            "la déplacer dans le groupe final de destination. " \
+            "|cmd|messages|ff| dans le groupe |tit|joueur|ff| grâce à la " \
+            "commande : %chgroupe% %chgroupe:commande% |cmd|messages " \
+            "joueur|ff|. Il est préférable, quand vous ajoutez " \
+            "une nouvelle commande au MUD, de la placer d'office " \
+            "dans un groupe essentiel (|tit|pnj|ff|, |tit|joueur|ff| " \
+            "ou |tit|administrateur|ff|). Une fois que la commande " \
+            "a bien été ajoutée, vous pourrez la déplacer dans " \
+            "le groupe final de destination. " \
             "Enfin, sachez qu'en déplaçant une commande, toutes ses " \
             "sous-commandes seront déplacées dans le même groupe. Pour "\
             "évitez cela, mettez un point (|cmd|.|ff|) après le nom de " \
             "votre commande. Si vous faites %chgroupe% %chgroupe:commande% " \
-            "|cmd|mail. joueur|ff|, la commande |cmd|mail|ff| sera déplacée " \
-            "mais aucun de ses paramètres. Libre à vous de les transférer " \
-            "ensuite un à un pour n'autoriser que certains paramètres aux " \
+            "|cmd|messages. joueur|ff|, la commande |cmd|mail|ff| " \
+            "sera déplacée mais aucun de ses paramètres. " \
+            "Libre à vous de les transférer ensuite un à un pour " \
+            "n'autoriser que certains paramètres aux " \
             "joueurs, tout en en laissant certains accessibles qu'aux " \
             "administrateurs."
     
