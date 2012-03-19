@@ -390,6 +390,11 @@ class Propulsion(Force):
         direction = navire.direction
         voiles = navire.voiles
         voiles = [v for v in voiles if v.hissee]
+        for rames in navire.rames:
+            if rames.tenu and not rames.tenu.est_connecte():
+                rames.tenu.cle_etat = ""
+                rames.tenu = None
+        
         rames = [r for r in navire.rames if r.tenu is not None]
         vecteur = vec_nul
         if voiles:
