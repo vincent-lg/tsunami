@@ -42,14 +42,15 @@ class Module(BaseModule):
     Ce module gère le commerce, c'est-à-dire les transactions, les magasins,
     les monnaies.
     
-    Note : on peut étendre ce module en proposant de nouveaux objets pouvant être vendus. Pour cela, il faut :
+    Note : on peut étendre ce module en proposant de nouveaux objets pouvant
+    être vendus. Pour cela, il faut :
     1.  Lors de la configuration du module contenant les nouveaux
-        objets, on doit signaler au module ocmmerce qu'un nouveau type
+        objets, on doit signaler au module commerce qu'un nouveau type
         d'objet sera susceptible d'être vendu. Pour cela, il faut ajouter
         une entrée dans le dictionnaire types_services avec en clé le
-        nom du nouvel objet et en valeur, un dictionnaire permettant
+        nom du nouveau service et en valeur, un dictionnaire permettant
         de trouver l'objet grâce à sa clé. Pour des exemples, regardez
-        le module primaires objet
+        le module primaire objet
     2.  La classe produisant des objets pouvant être vendus en magasin
         doit posséder :
         A.  Un attribut de classe type_achat (str)

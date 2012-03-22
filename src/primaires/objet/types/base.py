@@ -56,6 +56,7 @@ class BaseType(BaseObj, metaclass=MetaType):
     
     nom_type = "" # à redéfinir
     nom_scripting = "l'objet"
+    type_achat = "objet"
     _nom = "base_type_objet"
     _version = 2
     
@@ -122,6 +123,10 @@ class BaseType(BaseObj, metaclass=MetaType):
         self._prix = int(prix)
         self.enregistrer()
     prix = property(_get_prix, _set_prix)
+    
+    @property
+    def valeur(self):
+        return self._prix
     
     def etendre_script(self):
         """Méthode appelée pour étendre le scripting.

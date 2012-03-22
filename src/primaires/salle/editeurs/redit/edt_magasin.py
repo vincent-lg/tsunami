@@ -91,32 +91,18 @@ class EdtMagasin(Editeur):
             self.pere << "|err|Type {} invalide.".format(type)
             return
         
-        # Compléter...
-        try:
-            objet = arguments.split(" ")[0].lower()
-            quantite = arguments.split(" ")[1].lower()
-        except IndexError:
-            objet = arguments.split(" ")[0].lower()
-            if not salle.magasin.est_en_vente(objet):
-                self.pere << "|err|Précisez une quantité pour cet objet.|ff|"
+        objets = importeur.commerce.types_services[type]
+        if quantite > 0:
+            if cle not in objets:
+                self.pere << "|err|Le produit {} n'a pas pu être " \
+                        "trouvé.".format(cle)
                 return
-            del salle.magasin[objet]
+            
+            service = objets[cle]
+            salle.magasin.ajouter_stock(service, quantite)
         else:
-            try:
-                quantite = int(quantite)
-                assert quantite > 0
-            except (ValueError, AssertionError):
-                self.pere << "|err|Précisez une quantité valide et " \
-                        "positive.|ff|"
-                return
-            else:
-                if not objet in type(self).importeur.objet.prototypes:
-                    self.pere << "|err|Ce prototype est introuvable.|ff|"
-                    return
-                if type(self).importeur.objet.prototypes[objet].sans_prix:
-                    self.pere << "|err|Vous ne pouvez mettre cet objet en " \
-                            "vente.|ff|"
-                salle.magasin[objet] = quantite
+            salle.magasin.retirer_stock(type, cle)
+        
         self.actualiser()
     
     def interpreter(self, msg):
