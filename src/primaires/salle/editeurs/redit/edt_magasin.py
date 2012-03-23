@@ -75,7 +75,7 @@ class EdtMagasin(Editeur):
             self.pere << "|err|Précisez une quantité, un type et une clé.|ff|"
             return
         try:
-            quantite, type, cle = argument.split(" ")
+            quantite, type, cle = arguments.split(" ")
         except ValueError:
             self.pere << "|err|Précisez une quantité, un type et une clé.|ff|"
             return

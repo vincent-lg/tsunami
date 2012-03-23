@@ -78,15 +78,15 @@ class Magasin(BaseObj):
             ret = "+" + "-" * 10 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
                     "-" * 10 + "+\n"
             ret += "| |tit|" + "Type".ljust(8) + "|ff|"
-            ret += "| |tit|" + "Nom".ljust(42) + "|ff|"
-            ret += "|       |tit|Prix|ff| | |tit|Quantité|ff| |\n"
-            ret = "+" + "-" * 10 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
+            ret += " | |tit|" + "Nom".ljust(40) + "|ff|"
+            ret += " |      |tit|Prix|ff| | |tit|Quantité|ff| |\n"
+            ret += "+" + "-" * 10 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
                     "-" * 10 + "+"
             for ligne in services:
                 service, quantite, flags = ligne
-                ret += "\n| " + service.type_achat.ljust(12) + " "
-                res += "| " + str(service).ljust(40) 
-                ret += "| {:<9} | {:<8} |".format(service.valeur, quantite)
+                ret += "\n| " + service.type_achat.ljust(8) + " "
+                ret += "| " + str(service).ljust(40) 
+                ret += " | {:>9} | {:>8} |".format(service.valeur, quantite)
         else:
             ret = "|att|Aucun service en vente.|ff|"
         return ret
@@ -118,7 +118,7 @@ class Magasin(BaseObj):
             ret += "| |tit|" + "ID".ljust(4) + "|ff|"
             ret += "| |tit|" + "Nom".ljust(42) + "|ff|"
             ret += "|       |tit|Prix|ff| | |tit|Quantité|ff| |\n"
-            ret = "+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
+            ret += "+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
                     "-" * 10 + "+"
             i = 1
             for ligne in services:
