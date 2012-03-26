@@ -114,6 +114,19 @@ class Equipement(BaseObj):
                 res.extend(objets)
         
         return res
+    
+    @property
+    def inventaire_qtt(self):
+        """Retourne l'inventaire (objet, quantité)."""
+        res = []
+        for membre in self.membres:
+            objets = list(membre.equipe) + [membre.tenu]
+            objets = [o for o in objets if o is not None]
+            for objet in objets:
+                objets = objet.extraire_contenus_qtt()
+                res.extend(objets)
+        
+        return res
         
     def get_membre(self, nom_membre):
         """Récupère le membre dont le nom est nom_membre.

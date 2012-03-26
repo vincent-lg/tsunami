@@ -103,6 +103,9 @@ class BaseType(BaseObj, metaclass=MetaType):
     def __getnewargs__(self):
         return ()
     
+    def __repr__(self):
+        return "<{} {}>".format(self.nom_type, self.cle)
+    
     def __str__(self):
         return self.cle
     
@@ -125,7 +128,7 @@ class BaseType(BaseObj, metaclass=MetaType):
     prix = property(_get_prix, _set_prix)
     
     @property
-    def valeur(self):
+    def m_valeur(self):
         return self._prix
     
     def etendre_script(self):
@@ -215,6 +218,10 @@ class BaseType(BaseObj, metaclass=MetaType):
     def extraire_contenus(self):
         """Méthode redéfinie pour la manipulation d'objets non uniques."""
         return [self]
+    
+    def extraire_contenus_qtt(self):
+        """Méthode redéfinie pour la manipulation d'objets non uniques."""
+        return [(self, 1)]
     
     def est_de_type(self, nom_type):
         """Retourne True si le type d'objet est de celui entré ou dérivé.

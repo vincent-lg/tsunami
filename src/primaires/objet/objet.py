@@ -138,6 +138,17 @@ class Objet(BaseObj):
         
         return res
     
+    def extraire_contenus_qtt(self):
+        """Extrait les objets contenus."""
+        res = [(self, 1)]
+        if hasattr(self, "conteneur"):
+            for objet in self.conteneur._objets:
+                res.extend(objet.extraire_contenus_qtt())
+            for objet in self.conteneur._non_uniques:
+                res.append((objet.prototype, objet.nombre))
+        
+        return res
+    
     def detruire(self):
         """Destruction de l'objet"""
         if self in self.prototype.objets:
