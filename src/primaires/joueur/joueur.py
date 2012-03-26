@@ -85,6 +85,12 @@ class Joueur(Personnage):
         """Retourne la valeur de self.connecte"""
         return self.connecte
     
+    def __repr__(self):
+        return "<joueur {}>".format(self.nom)
+    
+    def __str__(self):
+        return self.nom
+    
     def retablir_contextes(self):
         contexte = type(self).importeur.interpreteur.contextes[
                 "personnage:connexion:mode_connecte"](self.instance_connexion)

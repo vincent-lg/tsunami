@@ -77,6 +77,7 @@ class Systeme(Contexte):
     def interpreter(self, msg):
         """Méthode d'interprétation du contexte"""
         self.espace["importeur"] = type(self).importeur
+        self.espace["joueur"] = self.pere.joueur
         if msg.startswith("/"):
             msg = msg[1:]
             if msg == "q":
