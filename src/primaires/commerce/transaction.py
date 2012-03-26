@@ -117,7 +117,6 @@ class Transaction:
         # On trie la monnaie 
         argent_tt = sorted(tuple(argent_dct.items()),
                 key=lambda t: t[0].valeur, reverse=True)
-        print(argent_tt)
         argent_donne = []
         argent_rendu = []
         
@@ -137,31 +136,34 @@ class Transaction:
                 argent_donne.append((argent, qtt))
                 t_somme -= qtt * argent.valeur
         
-        print(argent_donne)
         # Après cette opération, la somme peut être incomplète
         # La boucle précédente ne réunit que la somme exacte
         # On cherche maintenant une somme supérieure si besoin
-        print(t_somme)
         if t_somme > 0:
-            for i, (argent, qtt) in enumerate(list(argent_donne)):
-                if t_somme == 0:
+            argent_donne = []
+            t_somme = somme
+            for argent, qtt in argent_tt:
+                if t_somme <= 0:
                     break
                 
-                j = 0
-                t_qtt = argent_dct[argent]
-                while j < t_qtt and t_somme > 0:
-                    argent_donne[i] = (argent_donne[i][0],
-                            argent_donne[i][1] + 1)
-                    t_somme -= argent.valeur
-                    j += 1
+                d_somme = t_somme // argent.valeur
+                if d_somme >= 0:
+                    if d_somme == 0:
+                        d_somme = 1
+                    if qtt > d_somme:
+                        qtt = d_somme
+                    elif qtt < d_somme:
+                        continue
+                
+                    argent_donne.append((argent, qtt))
+                    t_somme -= qtt * argent.valeur
         
-        print(argent_donne)
         # On s'occupe de rendre l'argent
         somme_donnee = Transaction.somme_argent(dict(argent_donne))
         if somme_donnee > somme:
             monnaies = sorted([p for p in \
                     importeur.objet.prototypes.values() if p.est_de_type(
-                    "argent")], reverse=True)
+                    "argent")], key=lambda m: m.valeur, reverse=True)
             t_somme = somme_donnee - somme
             for monnaie in monnaies:
                 if t_somme == 0:
@@ -178,7 +180,7 @@ class Transaction:
                     "à la somme donnée ({}) moins la somme rendue ({})".format(
                     somme, somme_donnee, somme_rendue))
         
-        self.argent_donne = dict(argent_donne)
-        self.argent_rendu = dict(argent_rendu)
+        transaction.argent_donne = dict(argent_donne)
+        transaction.argent_rendu = dict(argent_rendu)
         
         return transaction
