@@ -43,7 +43,7 @@ class Transaction:
     mais la méthode initier_transaction.
     
     Les méthodes d'instances sont :
-        prelever_argent_du() -- prélève l'argent dû à l'initiateur
+        payer() -- prélève l'argent dû à l'initiateur et paye le receveur
     
     """
     
@@ -184,3 +184,24 @@ class Transaction:
         transaction.argent_rendu = dict(argent_rendu)
         
         return transaction
+    
+    def payer(self):
+        """Prélève l'argent dû et paye le receveur."""
+        # On liste les conteneurs contenant l'argent
+        preleve = 0
+        for objet, qtt in self.argent_donne:
+            t_conteneurs = [o for o in \ 
+                    self.initiateur.equipement.invenaire if o.est_de_type(
+                    "conteneur")]
+            for t_conteneur in t_conteneurs:
+                if t_conteneur.contient(objet, qtt):
+                    t_conteneur.conteneur.retirer(objet, qtt)
+                    preleve += 1
+                    break
+        
+        if preleve != len(self.argent_donne):
+            raise ValueError("tout l'argent donné n'a pas pu être trouvé " \
+                    "dans l'inventaire de {}".format(self.initiateur.nom))
+        
+        self.receveur.caisse += self.somme
+

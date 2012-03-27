@@ -240,6 +240,13 @@ class BaseType(BaseObj, metaclass=MetaType):
         return objet.poids_unitaire
     
     # Actions sur les objets
+    def acheter(self, quantite, magasin, transaction):
+        """Achète les objets dans la quantité spécifiée."""
+        salle = magasin.parent
+        for i in range(quantite):
+            objet = importeur.objet.creer_objet(self)
+            salle.objets_sol.ajouter(objet)
+    
     def regarder(self, personnage):
         """Le personnage regarde l'objet"""
         salle = personnage.salle

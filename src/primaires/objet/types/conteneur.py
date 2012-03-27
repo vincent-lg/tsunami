@@ -111,6 +111,23 @@ class Conteneur(BaseType):
         
         return poids
     
+    def contient(self, objet, quantite):
+        """Retourne True si le conteneur contient l'objet, False sinon.
+        
+        Si l'objet est présente au moins dans la quantité indiquée,
+        retourne True mais False si ce n'est pas le cas.
+        Si on cherche un objet en quantité N et que l'objet est trouvé
+        en quantité >= N, on retourne True sinon False.
+        
+        """
+        for o, qtt in self.conteneur.iter_nombres():
+            if objet is o:
+                if qtt >= quantite:
+                    return True
+                return False
+        
+        return False
+    
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""
         types_admis = enveloppes["t"]
