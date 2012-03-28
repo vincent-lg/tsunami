@@ -73,7 +73,7 @@ class Magasin(BaseObj):
     
     def __str__(self):
         """Affichage du magasin en éditeur."""
-        services = sorted(self.stock, key=lambda s: s[0].valeur)
+        services = sorted(self.stock, key=lambda s: s[0].m_valeur)
         if services:
             ret = "+" + "-" * 10 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
                     "-" * 10 + "+\n"
@@ -86,7 +86,7 @@ class Magasin(BaseObj):
                 service, quantite, flags = ligne
                 ret += "\n| " + service.type_achat.ljust(8) + " "
                 ret += "| " + str(service).ljust(40) 
-                ret += " | {:>9} | {:>8} |".format(service.valeur, quantite)
+                ret += " | {:>9} | {:>8} |".format(service.m_valeur, quantite)
         else:
             ret = "|att|Aucun service en vente.|ff|"
         return ret
@@ -110,22 +110,24 @@ class Magasin(BaseObj):
     
     def afficher(self, personnage):
         """Affichage du magasin en jeu"""
-        services = sorted(self.inventaire, key=lambda s: s[0].valeur)
+        services = sorted(self.inventaire, key=lambda s: s[0].m_valeur)
         ret = self.nom + "\n\n"
         if services:
             ret = "+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
                     "-" * 10 + "+\n"
             ret += "| |tit|" + "ID".ljust(4) + "|ff|"
-            ret += "| |tit|" + "Nom".ljust(42) + "|ff|"
-            ret += "|       |tit|Prix|ff| | |tit|Quantité|ff| |\n"
+            ret += " | |tit|" + "Nom".ljust(41) + "|ff|"
+            ret += "|      |tit|Prix|ff| | |tit|Quantité|ff| |\n"
             ret += "+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
                     "-" * 10 + "+"
             i = 1
             for ligne in services:
-                service, quantite, flags = ligne
+                service, quantite = ligne
                 ret += "\n| " + ("#" + str(i)).ljust(4) + " "
-                res += "| " + service.nom_achat.ljust(40) 
-                ret += "| {:<9} | {:<8} |".format(service.valeur, quantite)
+                ret += "| " + service.nom_achat.ljust(40) 
+                ret += " | {:>9} | {:>8} |".format(service.m_valeur, quantite)
+            ret += "\n+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
+                    "-" * 10 + "+"
         else:
             ret = "|att|Aucun produit n'est en vente actuellement.|ff|"
         return ret
@@ -160,9 +162,9 @@ class Magasin(BaseObj):
         service, si présent, est remplacée par la nouvelle.
         
         """
-        services = list(self.services)
+        services = list(self.stock)
         trouve = False
-        for i, (t_service, t_qtt) in enumerate(services):
+        for i, (t_service, t_qtt, flags) in enumerate(services):
             if t_service is service:
                 qtt = t_qtt if not inc_qtt else qtt
                 services[i] = (t_service, qtt)
