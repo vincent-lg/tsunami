@@ -68,7 +68,6 @@ class Module(BaseModule):
                 self.donner_meteo)
         self.perturbations_actuelles = self.importeur.supenr.charger_groupe(
                 BasePertu)
-        print("Récupération de", len(self.perturbations_actuelles))
         BaseModule.init(self)
     
     def preparer(self):
