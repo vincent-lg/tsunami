@@ -151,4 +151,26 @@ class Magasin(BaseObj):
                 return
         
         raise ValueError("le service {} {} n'existe pas".format(type, cle))
-
+    
+    def ajouter_inventaire(self, service, qtt, inc_qtt=True):
+        """Ajoute des services dans l'inventaire.
+        
+        Si inc_qtt est à True, la quantité spécifiée est ajoutée à celle
+        du service de l'inventaire, si présent. Sinon, la quantité du
+        service, si présent, est remplacée par la nouvelle.
+        
+        """
+        services = list(self.services)
+        trouve = False
+        for i, (t_service, t_qtt) in enumerate(services):
+            if t_service is service:
+                qtt = t_qtt if not inc_qtt else qtt
+                services[i] = (t_service, qtt)
+                trouve = True
+                break
+        
+        if not trouve:
+            services.append((service, qtt))
+            services = sorted(services, key=lambda l: l[0].m_valeur)
+        
+        self.inventaire[:] = services

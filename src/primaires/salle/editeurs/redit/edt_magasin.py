@@ -46,6 +46,7 @@ class EdtMagasin(Editeur):
         #self.ajouter_option("m", self.opt_monnaie)
         #self.ajouter_option("c", self.opt_modifier_caisse)
         self.ajouter_option("s", self.opt_stock)
+        self.ajouter_option("ren", self.opt_renouveler_inventaire)
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -60,6 +61,20 @@ class EdtMagasin(Editeur):
             msg += "|ff|\n\n" + str(salle.magasin)
         
         return msg
+    
+    def opt_renouveler_inventaire(self, arguments):
+        """Met à jour l'inventaire du magasin depuis le stock.
+        
+        Syntaxe : /ren
+        
+        """
+        salle = self.objet
+        if not salle.magasin:
+            self.pere << "|err|Il n'y a pas de magasin dans cette salle.|ff|"
+            return
+        magasin = salle.magasin
+        for service, qtt, flags in magasin.stock:
+            magasin.ajouter_inventaire(service, qtt, inc_qtt=False)
     
     def opt_stock(self, arguments):
         """Modifie le stock.
