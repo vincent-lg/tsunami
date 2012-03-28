@@ -70,7 +70,7 @@ class NomObjetMagasin(Masque):
         nom_objet = self.a_interpreter
         magasin = personnage.salle.magasin
         service = None
-        for i, (t_service, quantite, flags) in enumerate(magasin.inventaire):
+        for i, (t_service, quantite) in enumerate(magasin.inventaire):
             if contient(t_service.nom_achat, nom_objet):
                 service = t_service
                 break

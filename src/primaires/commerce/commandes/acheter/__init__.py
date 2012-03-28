@@ -61,7 +61,7 @@ class CmdAcheter(Commande):
         nb_obj = dic_masques["nombre"].nombre if \
             dic_masques["nombre"] is not None else 1
         no_ligne = dic_masques["objet"].no_ligne
-        service, qtt, flags = magasin.inventaire[no_ligne]
+        service, qtt = magasin.inventaire[no_ligne]
         if qtt < nb_obj:
             nb_obj = qtt
         
