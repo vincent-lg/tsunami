@@ -74,6 +74,9 @@ class CmdAcheter(Commande):
             personnage << "|err|Vous n'avez pas assez d'argent.|ff|"
             return
         
+        # On prélève l'argent
+        transaction.payer()
+        
         # Distribution des objets
         service.acheter(nb_obj, magasin, transaction)
         personnage << "Vous achetez {}.".format(service.get_nom(nb_obj))

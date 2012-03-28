@@ -192,9 +192,9 @@ class Transaction:
         """Prélève l'argent dû et paye le receveur."""
         # On liste les conteneurs contenant l'argent
         preleve = 0
-        for objet, qtt in self.argent_donne:
+        for objet, qtt in self.argent_donne.items():
             t_conteneurs = [o for o in \
-                    self.initiateur.equipement.invenaire if o.est_de_type(
+                    self.initiateur.equipement.inventaire if o.est_de_type(
                     "conteneur")]
             for t_conteneur in t_conteneurs:
                 if t_conteneur.contient(objet, qtt):
@@ -205,6 +205,11 @@ class Transaction:
         if preleve != len(self.argent_donne):
             raise ValueError("tout l'argent donné n'a pas pu être trouvé " \
                     "dans l'inventaire de {}".format(self.initiateur.nom))
+        
+        # Le personnage doit ramasser l'argent à rendre
+        for objet, qtt in self.argent_rendu.items():
+            self.initiateur.ramasser(objet, qtt=qtt)
+            print(self.initiateur.nom, "ramasse", objet.get_nom(qtt))
         
         self.receveur.caisse += self.somme
 
