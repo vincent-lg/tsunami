@@ -131,6 +131,10 @@ class BaseType(BaseObj, metaclass=MetaType):
     def m_valeur(self):
         return self._prix
     
+    @property
+    def nom_achat(self):
+        return self.nom_singulier
+    
     def etendre_script(self):
         """Méthode appelée pour étendre le scripting.
         

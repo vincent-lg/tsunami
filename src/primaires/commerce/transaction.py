@@ -30,6 +30,8 @@
 
 """Fichier contenant la classe Transaction, détaillée plus bas."""
 
+from bases.exceptions.base import ExceptionMUD
+
 class Transaction:
     
     """Cette classe représente une transaction entre deux acteurs.
@@ -111,8 +113,9 @@ class Transaction:
         argent_dct = Transaction.get_argent(initiateur)
         somme_ini = Transaction.somme_argent(argent_dct)
         if somme_ini < somme:
-            raise ValueError("la somme d'argent de l'initiateur ({}) est " \
-                    "insuffisante pour cette transaction".format(somme_ini))
+            raise FondsInsuffisants("la somme d'argent de l'initiateur ({}) " \
+                    "est insuffisante pour cette transaction".format(
+                    somme_ini))
         
         # On trie la monnaie 
         argent_tt = sorted(tuple(argent_dct.items()),
@@ -190,7 +193,7 @@ class Transaction:
         # On liste les conteneurs contenant l'argent
         preleve = 0
         for objet, qtt in self.argent_donne:
-            t_conteneurs = [o for o in \ 
+            t_conteneurs = [o for o in \
                     self.initiateur.equipement.invenaire if o.est_de_type(
                     "conteneur")]
             for t_conteneur in t_conteneurs:
@@ -205,3 +208,8 @@ class Transaction:
         
         self.receveur.caisse += self.somme
 
+class FondsInsuffisants(ExceptionMUD):
+    
+    """Exception levée si les fonds ne sont pas suffisants pour acheter."""
+    
+    pass

@@ -38,17 +38,19 @@ from primaires.format.fonctions import contient
 
 class NomObjetMagasin(Masque):
     
-    """Masque <nom_objet_magasin>.
-    On attend le nom d'un objet en vente dans la salle où se trouve le joueur.
+    """Masque <nom__objet_magasin>.
+    
+    On attend le nom d'un service en vente dans la salle où se trouve le joueur.
     
     """
     
     nom = "nom_objet_magasin"
-    nom_complet = "nom d'un objet en vente"
+    nom_complet = "objet en vente"
     
     def init(self):
         """Initialisation des attributs du masque"""
-        self.objet = None
+        self.service = None
+        self.no_ligne = None
     
     def repartir(self, personnage, masques, commande):
         """Répartition du masque."""
@@ -67,18 +69,15 @@ class NomObjetMagasin(Masque):
         Masque.valider(self, personnage, dic_masques)
         nom_objet = self.a_interpreter
         magasin = personnage.salle.magasin
-        objet = None
-        for o in magasin.liste_objets:
-            if contient(o.nom_singulier, nom_objet):
-                objet = o
+        service = None
+        for i, (t_service, quantite, flags) in enumerate(magasin.inventaire):
+            if contient(t_service.nom_achat, nom_objet):
+                service = t_service
                 break
-        for p in magasin.liste_pnjs:
-            if contient(p.nom_singulier, nom_objet):
-                objet = p
-                break
-        if objet is None:
+        if service is None:
             raise ErreurValidation( \
                 "|err|L'objet demandé n'est pas en vente.|ff|")
         else:
-            self.objet = objet
+            self.service = service
+            self.no_ligne = i
             return True
