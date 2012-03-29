@@ -357,6 +357,6 @@ class Inventaire:
             qtt = self.quantite[objet]
             if conteneur:
                 t_conteneur = self.contenu_dans[objet]
-                yield (objet, qtt, conteneur)
+                yield (objet, qtt, t_conteneur.conteneur)
             else:
                 yield (objet, qtt)

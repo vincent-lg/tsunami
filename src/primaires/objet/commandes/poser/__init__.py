@@ -71,6 +71,7 @@ class CmdPoser(Commande):
         
         pose = 0
         for objet, qtt, conteneur in objets:
+            print(objet, qtt, conteneur, type(conteneur))
             pose += 1
             if qtt > nombre:
                 qtt = nombre
