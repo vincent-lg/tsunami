@@ -78,17 +78,7 @@ class Equipement(BaseObj):
         objet.contenu.
         
         """
-        res = []
-        for membre in self.membres:
-            print("tm", membre)
-            objets = list(membre.equipe) + [membre.tenu]
-            objets = [o for o in objets if o is not None]
-            for objet in objets:
-                objets = objet.extraire_contenus()
-                print("  o", objets)
-                res.extend(objets)
-        
-        return res
+        return Inventaire(self, simple=False)
     
     @property
     def inventaire_simple(self):
@@ -100,33 +90,12 @@ class Equipement(BaseObj):
         en revanche son contenu y figurera.
         
         """
-        res = []
-        for membre in self.membres:
-            objets = list(membre.equipe)
-            objets = [o for o in objets if o is not None]
-            for objet in objets:
-                objets = objet.extraire_contenus()
-                del objets[0]
-                res.extend(objets)
-            
-            if membre.tenu:
-                objets = membre.tenu.extraire_contenus()
-                res.extend(objets)
-        
-        return res
+        return Inventaire(self, simple=True)
     
     @property
     def inventaire_qtt(self):
         """Retourne l'inventaire (objet, quantité)."""
-        res = []
-        for membre in self.membres:
-            objets = list(membre.equipe) + [membre.tenu]
-            objets = [o for o in objets if o is not None]
-            for objet in objets:
-                objets = objet.extraire_contenus_qtt()
-                res.extend(objets)
-        
-        return res
+        return Inventaire(self, simple=False).iter_objets_qtt()
         
     def get_membre(self, nom_membre):
         """Récupère le membre dont le nom est nom_membre.
@@ -331,3 +300,63 @@ class Tenus(BaseObj):
         
         raise ValueError("l'objet {} n'est pas tenu".format(
                 self.objet.cle))
+
+class Inventaire:
+    
+    """Classe représentant un inventaire, un objet temporaire.
+    
+    Celui-ci contient les objets équipés et leurs contenants.
+    Si l'inventaire est dit simple, il ne contiendra que le contenu
+    des objets équipés, pas les objets équipés eux-mêmes.
+    
+    """
+    
+    def __init__(self, equipement, simple=False):
+        """Constructeur de l'inventaire."""
+        self.equipement = equipement
+        self.simple = simple
+        self.objets = []
+        self.contenu_dans = {}
+        self.quantite = {}
+        self.get_objets(simple)
+    
+    def __iter__(self):
+        """Parcourt des objets."""
+        return iter(self.objets)
+    
+    def get_objets(self, simple=False):
+        """Récupère les objets de l'inventaire."""
+        res = []
+        quantite = {}
+        contenu_dans = {}
+        for membre in self.equipement.membres:
+            objets = list(membre.equipe)
+            objets = [o for o in objets if o is not None]
+            for objet in objets:
+                objets = objet.extraire_contenus(quantite, contenu_dans)
+                if simple:
+                    del objets[0]
+                res.extend(objets)
+            
+            if membre.tenu:
+                objets = membre.tenu.extraire_contenus(quantite, contenu_dans)
+                res.extend(objets)
+        
+        self.objets = res
+        self.contenu_dans = contenu_dans
+        self.quantite = quantite
+    
+    def iter_objets_qtt(self, conteneur=False):
+        """Retourne une liste de tuples (objet, qtt, conteneur).
+        
+        Si conteneur est à False (par défaut), le tuple ne sera que de
+        deux éléments (objet, qtt).
+        
+        """
+        for objet in self.objets:
+            qtt = self.quantite[objet]
+            if conteneur:
+                t_conteneur = self.contenu_dans[objet]
+                yield (objet, qtt, conteneur)
+            else:
+                yield (objet, qtt)

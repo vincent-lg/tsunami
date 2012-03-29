@@ -129,12 +129,24 @@ class Objet(BaseObj):
         """
         return self.prototype.calculer_poids(self)
     
-    def extraire_contenus(self):
+    def extraire_contenus(self, quantite=None, contenu_dans=None):
         """Extrait les objets contenus."""
         res = [self]
+        if quantite is not None:
+            quantite[self] = 1
+        if contenu_dans is not None:
+            contenu_dans[self] = self.contenu
+        
         if hasattr(self, "conteneur"):
             for objet in self.conteneur:
-                res.extend(objet.extraire_contenus())
+                if objet.prototype.unique:
+                    res.extend(objet.extraire_contenus(quantite, contenu_dans))
+                else:
+                    res.append(objet.prototype)
+                    if quantite is not None:
+                        quantite[objet.prototype] = objet.nombre
+                    if contenu_dans is not None:
+                        contenu_dans[objet.prototype] = self
         
         return res
     
