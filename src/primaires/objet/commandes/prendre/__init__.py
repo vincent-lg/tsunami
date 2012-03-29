@@ -51,8 +51,8 @@ class CmdPrendre(Commande):
         nom_objet = self.noeud.get_masque("nom_objet")
         nom_objet.proprietes["conteneurs"] = \
                 "dic_masques['conteneur'] and " \
-                "dic_masques['conteneur'].objets_qtt or " \
-                "(personnage.salle.objets_sol.iter_nombres(), )"
+                "(dic_masques['conteneur'].objet.conteneur.iter_nombres(), " \
+                ") or (personnage.salle.objets_sol.iter_nombres(), )"
         nom_objet.proprietes["quantite"] = "True"
         conteneur = self.noeud.get_masque("conteneur")
         conteneur.prioritaire = True
