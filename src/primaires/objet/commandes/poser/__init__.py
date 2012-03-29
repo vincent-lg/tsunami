@@ -50,7 +50,10 @@ class CmdPoser(Commande):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("nom_objet")
         nom_objet.proprietes["conteneurs"] = \
-                "(personnage.equipement.inventaire_simple, )"
+                "(personnage.equipement.inventaire_simple.iter_objets_qtt(" \
+                "True), )"
+        nom_objet.proprietes["quantite"] = "True"
+        nom_objet.proprietes["conteneur"] = "True"
         conteneur = self.noeud.get_masque("conteneur")
         conteneur.prioritaire = True
         conteneur.proprietes["conteneurs"] = \
@@ -62,26 +65,32 @@ class CmdPoser(Commande):
         nombre = 1
         if dic_masques["nombre"]:
             nombre = dic_masques["nombre"].nombre
-        objets = dic_masques["nom_objet"].objets[:nombre]
+        objets = list(dic_masques["nom_objet"].objets_qtt_conteneurs)[:nombre]
         dans = dic_masques["conteneur"]
         dans = dans.objet if dans else None
         
         pose = 0
-        for objet, conteneur in objets:
+        for objet, qtt, conteneur in objets:
             pose += 1
+            if qtt > nombre:
+                qtt = nombre
+            
             if dans and hasattr(dans, "bouffe"):
                 if dans.bouffe is not None:
                     personnage << "Il y a déjà à manger là-dedans."
                     return
-            conteneur.retirer(objet)
+            conteneur.retirer(objet, qtt)
             if dans:
                 if hasattr(dans, "conteneur"):
-                    dans.conteneur.ajouter(objet)
+                    dans.conteneur.ajouter(objet, qtt)
                 else:
                     dans.bouffe = objet
                     break
             else:
-                personnage.salle.objets_sol.ajouter(objet)
+                personnage.salle.objets_sol.ajouter(objet, qtt)
+        
+        if pose < qtt:
+            pose = qtt
         
         if dans:
             personnage << "Vous déposez {} dans {}.".format(
