@@ -110,6 +110,9 @@ class Objet(BaseObj):
         except (AttributeError, AssertionError):
             return getattr(self.prototype, nom_attr)
     
+    def __repr__(self):
+        return "<objet {}>".format(self.identifiant)
+    
     def __str__(self):
         return self.nom_singulier
     

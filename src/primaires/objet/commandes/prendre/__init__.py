@@ -51,14 +51,16 @@ class CmdPrendre(Commande):
         nom_objet = self.noeud.get_masque("nom_objet")
         nom_objet.proprietes["conteneurs"] = \
                 "dic_masques['conteneur'] and " \
-                "dic_masques['conteneur'].objets_seuls or " \
+                "dic_masques['conteneur'].objets_qtt or " \
                 "(personnage.salle.objets_sol.iter_nombres(), )"
         nom_objet.proprietes["quantite"] = "True"
         conteneur = self.noeud.get_masque("conteneur")
         conteneur.prioritaire = True
         conteneur.proprietes["conteneurs"] = \
-                "(personnage.equipement.tenus, personnage.salle.objets_sol)"
+                "(personnage.equipement.tenus.iter_nombres(), " \
+                "personnage.salle.objets_sol.iter_nombres())"
         conteneur.proprietes["types"] = "('conteneur', )"
+        conteneur.proprietes["quantite"] = "True"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""

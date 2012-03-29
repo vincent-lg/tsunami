@@ -257,7 +257,7 @@ class Equipes(BaseObj):
         """Ajoute un objet à l'équipoement"""
         raise NotImplementedError
     
-    def retirer(self, objet):
+    def retirer(self, objet, qtt=1):
         """Retire l'objet passé en paramètre"""
         for membre in self.equipement.membres:
             if membre.equipe and membre.equipe[-1] == objet:
@@ -287,11 +287,16 @@ class Tenus(BaseObj):
         return iter([membre.tenu for membre in self.equipement.membres \
                 if membre.tenu])
     
+    def iter_nombres(self):
+        objets = list(iter(self))
+        qtts = [1] * len(objets)
+        return iter(list(zip(objets, qtts)))
+    
     def ajouter(self, objet):
         """Ajoute un objet à l'équipoement"""
         raise NotImplementedError
     
-    def retirer(self, objet):
+    def retirer(self, objet, qtt=1):
         """Retire l'objet passé en paramètre"""
         for membre in self.equipement.membres:
             if membre.tenu is objet:
@@ -357,6 +362,9 @@ class Inventaire:
             qtt = self.quantite[objet]
             if conteneur:
                 t_conteneur = self.contenu_dans[objet]
-                yield (objet, qtt, t_conteneur.conteneur)
+                if hasattr(t_conteneur, "conteneur"):
+                    t_conteneur = t_conteneur.conteneur
+                
+                yield (objet, qtt, t_conteneur)
             else:
                 yield (objet, qtt)

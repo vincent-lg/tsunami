@@ -117,6 +117,7 @@ class NomObjet(Masque):
         o_conteneurs = []
         
         for c in conteneurs:
+            print(self.nom, c)
             for ligne in c:
                 if self.quantite and self.conteneur:
                     o, qtt, t_conteneur = ligne

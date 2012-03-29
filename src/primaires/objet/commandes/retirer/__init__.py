@@ -55,7 +55,7 @@ class CmdRetirer(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        objets = dic_masques["nom_objet"].objets[0]
+        objets = list(dic_masques["nom_objet"].objets_conteneurs)[0]
         objet, conteneur = objets
         try:
             conteneur.retirer(objet)
