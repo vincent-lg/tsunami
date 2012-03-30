@@ -115,10 +115,10 @@ class NomObjet(Masque):
         objets = []
         quantites = []
         o_conteneurs = []
+        prototype = None
         
         for c in conteneurs:
             for ligne in c:
-                print(ligne)
                 if self.quantite and self.conteneur:
                     o, qtt, t_conteneur = ligne
                 elif self.quantite:
@@ -132,6 +132,9 @@ class NomObjet(Masque):
                     qtt = 1
                     t_conteneur = None
                 
+                t_proto = hasattr(o, "prototype") and o.prototype or o
+                if prototype and t_proto is not prototype:
+                    continue
                 if contient(o.nom_singulier, nom):
                     if o_types and not [o_t for o_t in o_types \
                             if o.prototype.est_de_type(o_t)]:
@@ -145,6 +148,7 @@ class NomObjet(Masque):
                         o_conteneurs.append(t_conteneur)
                     else:
                         o_conteneurs.append(c)
+                    prototype = t_proto
         
         if not objets:
             raise ErreurValidation(
