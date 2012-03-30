@@ -135,6 +135,11 @@ class BaseType(BaseObj, metaclass=MetaType):
     def nom_achat(self):
         return self.nom_singulier
     
+    @property
+    def poids(self):
+        """Retourne le poids unitaire."""
+        return self.poids_unitaire
+    
     def etendre_script(self):
         """Méthode appelée pour étendre le scripting.
         
@@ -238,10 +243,9 @@ class BaseType(BaseObj, metaclass=MetaType):
         prototype = hasattr(self, "prototype") and self.prototype or self
         return isinstance(prototype, classe)
     
-    @staticmethod
-    def calculer_poids(objet):
+    def calculer_poids(self):
         """Retourne le poids de l'objet."""
-        return objet.poids_unitaire
+        return self.poids_unitaire
     
     # Actions sur les objets
     def acheter(self, quantite, magasin, transaction):

@@ -50,6 +50,7 @@ class Conteneur(BaseType):
         BaseType.__init__(self, cle)
         self.empilable_sur = ["vêtement"]
         self.types_admis = ["*"]
+        self.poids_max = 10
         self.etendre_editeur("t", "types admis", Selection, self,
                 "types_admis", type(self).importeur.objet.noms_types)
         
@@ -102,11 +103,10 @@ class Conteneur(BaseType):
         """Retourne True si le conteneur accepte le type d'objet."""
         return self.types_admis == ["*"] or self.prefere_type(objet)
     
-    @staticmethod
-    def calculer_poids(objet):
+    def calculer_poids(self):
         """Retourne le poids de l'objet et celui des objets contenus."""
-        poids = objet.poids_unitaire
-        for o, nb in objet.conteneur.iter_nombres():
+        poids = self.poids_unitaire
+        for o, nb in self.conteneur.iter_nombres():
             poids += o.poids * nb
         
         return poids

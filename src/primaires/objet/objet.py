@@ -107,7 +107,7 @@ class Objet(BaseObj):
             attribut = getattr(type(self.prototype), nom_attr)
             assert callable(attribut)
             return MethodeObjet(attribut, self)
-        except (AttributeError, AssertionError):
+        except (AttributeError, AssertionError) as err:
             return getattr(self.prototype, nom_attr)
     
     def __repr__(self):
@@ -130,7 +130,7 @@ class Objet(BaseObj):
             contenus pour un conteneur.
         
         """
-        return self.prototype.calculer_poids(self)
+        return self.calculer_poids()
     
     def extraire_contenus(self, quantite=None, contenu_dans=None):
         """Extrait les objets contenus."""

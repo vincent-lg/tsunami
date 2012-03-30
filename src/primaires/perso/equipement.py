@@ -31,6 +31,7 @@
 
 from abstraits.obase import *
 from primaires.format.fonctions import supprimer_accents
+from primaires.objet.conteneur import SurPoids
 from .membre import Membre
 
 class Equipement(BaseObj):
@@ -96,7 +97,19 @@ class Equipement(BaseObj):
     def inventaire_qtt(self):
         """Retourne l'inventaire (objet, quantité)."""
         return Inventaire(self, simple=False).iter_objets_qtt()
+    
+    @property
+    def poids(self):
+        """Retourne le poids de tous les objets tenus ou équipés."""
+        poids = 0
+        for membre in self.membres:
+            objets = list(membre.equipe) + [membre.tenu]
+            objets = [o for o in objets if o is not None]
+            for o in objets:
+                poids += o.poids
         
+        return poids
+    
     def get_membre(self, nom_membre):
         """Récupère le membre dont le nom est nom_membre.
         
@@ -225,6 +238,19 @@ class Equipement(BaseObj):
                 nb += 1
         
         return nb
+    
+    def supporter_poids_sup(self, poids, recursif=True):
+        """Méthode vérifiant que le conteneur peut contenir le poids.
+        
+        Ici, on vérifie que le personnage peut porter davantage.
+        
+        """
+        poids_max = self.parent.poids_max
+        poids_actuel = self.poids
+        if poids_actuel + poids > poids_max:
+            raise SurPoids("Vous ne pouvez porter davantage.")
+        
+        return True
 
 
 class Equipes(BaseObj):
