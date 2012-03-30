@@ -114,6 +114,7 @@ class ConteneurObjet(BaseObj):
         """
         prototype = hasattr(objet, "prototype") and objet.prototype or objet
         if prototype.unique:
+            self.supporter_poids_sup(objet.poids)
             objet.contenu = self
             objet.ajoute_a = datetime.now()
             if objet not in self._objets:
@@ -122,13 +123,16 @@ class ConteneurObjet(BaseObj):
                 raise ValueError("le conteneur {} contient déjà l'objet " \
                         "{}".format(self, objet))
         else:
+            qtt = nombre
             # On cherche l'objet non unique correspondant au prototype
             non_unique = None
             for objet in self._non_uniques:
                 if objet.prototype == prototype:
                     non_unique = objet
+                    qtt -= objet.nombre
                     break
             
+            self.supporter_poids_sup(prototype.poids_unitaire * qtt)
             if non_unique:
                 non_unique.nombre += nombre
             else:
@@ -186,7 +190,7 @@ class ConteneurObjet(BaseObj):
         if recursif:
             parent = self.parent
             contenu = hasattr(parent, "contenu") and parent.contenu or parent
-            parent.supporter_poids_sup(poids, recursif)
+            contenu.supporter_poids_sup(poids, recursif)
 
 
 class SurPoids(ExceptionMUD):

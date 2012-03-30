@@ -223,6 +223,11 @@ class Personnage(BaseObj):
         else:
             return None
     
+    @property
+    def poids_max(self):
+        """Retourne le poids que peut porter le personnage."""
+        return self.stats.force * 5
+    
     def get_etat(self):
         """Retourne l'état visible du personnage."""
         if self.position and not self.occupe:

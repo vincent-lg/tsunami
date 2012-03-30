@@ -108,7 +108,7 @@ class Equipement(BaseObj):
             for o in objets:
                 poids += o.poids
         
-        return poids
+        return round(poids, 3)
     
     def get_membre(self, nom_membre):
         """Récupère le membre dont le nom est nom_membre.
@@ -245,7 +245,7 @@ class Equipement(BaseObj):
         Ici, on vérifie que le personnage peut porter davantage.
         
         """
-        poids_max = self.parent.poids_max
+        poids_max = self.personnage.poids_max
         poids_actuel = self.poids
         if poids_actuel + poids > poids_max:
             raise SurPoids("Vous ne pouvez porter davantage.")
@@ -292,6 +292,14 @@ class Equipes(BaseObj):
         
         raise ValueError("l'objet {} n'a pu être trouvé dans cet " \
                 "équipement".format(objet.cle))
+    
+    def supporter_poids_sup(self, poids, recursif=True):
+        """Supporte le poids supplémentaire spécifiée.
+        
+        Redirige sur l'équipement.
+        
+        """
+        return self.equipement.supporter_poids_sup(poids, recursif)
 
 class Tenus(BaseObj):
     
@@ -331,6 +339,14 @@ class Tenus(BaseObj):
         
         raise ValueError("l'objet {} n'est pas tenu".format(
                 self.objet.cle))
+    
+    def supporter_poids_sup(self, poids, recursif=True):
+        """Supporte le poids supplémentaire spécifiée.
+        
+        Redirige sur l'équipement.
+        
+        """
+        return self.equipement.supporter_poids_sup(poids, recursif)
 
 class Inventaire:
     

@@ -109,7 +109,7 @@ class Conteneur(BaseType):
         for o, nb in self.conteneur.iter_nombres():
             poids += o.poids * nb
         
-        return poids
+        return round(poids, 3)
     
     def contient(self, objet, quantite):
         """Retourne True si le conteneur contient l'objet, False sinon.

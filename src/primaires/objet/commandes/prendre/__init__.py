@@ -31,6 +31,7 @@
 """Package contenant la commande 'prendre'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.objet.conteneur import SurPoids
 
 class CmdPrendre(Commande):
     
@@ -76,7 +77,12 @@ class CmdPrendre(Commande):
         for objet, qtt, conteneur in objets:
             if nombre > qtt:
                 nombre = qtt
-            dans = personnage.ramasser(objet, depuis, nombre)
+            try:
+                dans = personnage.ramasser(objet, depuis, nombre)
+            except SurPoids as err:
+                personnage << "|err|" + str(err) + "|ff|"
+                return
+            
             if dans is None:
                 break
             
