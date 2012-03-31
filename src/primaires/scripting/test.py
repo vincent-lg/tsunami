@@ -161,7 +161,7 @@ class Test(BaseObj):
         # Extraction de la ligne d'erreur
         reg = re.search("File \"\<string\>\", line ([0-9]+)", pile)
         if reg:
-            no_ligne = int(reg.groups()[-1])
+            no_ligne = int(reg.groups()[-1]) - 1
             ligne = str(self.__instructions[no_ligne - 1])
         else:
             no_ligne = "|err|inconnue|ff|"
@@ -190,14 +190,15 @@ class Test(BaseObj):
         if etape:
             self.acteur.quetes[etape.quete.cle].deverouiller()
         
+        code = "def script():\n"
         lignes = []
         instructions = self.instructions
         for instruction in instructions:
-            lignes.append((" " * 4 * instruction.niveau) + \
+            lignes.append((" " * 4 * (instruction.niveau + 1)) + \
                     instruction.code_python)
         
-        code = "\n".join(lignes)
-        print("Code :", code, sep="\n")
+        code += "\n".join(lignes)
+        print("Code :", code)
         
         # Constitution des globales
         globales = self.get_globales(evenement)
@@ -205,8 +206,9 @@ class Test(BaseObj):
         # Exécution
         __builtins__["ErreurExecution"] = ErreurExecution
         __builtins__["variables"] = evenement.espaces.variables
+        exec(code, globales)
         try:
-            exec(code, globales)
+            ret = globales['script']()
         except ErreurExecution as err:
             self.erreur_execution(str(err))
         except Exception as err:
