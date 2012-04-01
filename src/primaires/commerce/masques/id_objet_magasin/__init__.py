@@ -63,8 +63,7 @@ class IdObjetMagasin(Masque):
             assert id_objet.startswith("#")
             id_objet = int(id_objet[1:])
         except (AssertionError, ValueError):
-            raise ErreurValidation( \
-                "L'ID doit être sous la forme #<nombre>.", False)
+            return False
         else:
             self.a_interpreter = id_objet
             commande[:] = commande[(len(str(id_objet)) + 1):]
@@ -78,7 +77,7 @@ class IdObjetMagasin(Masque):
         magasin = personnage.salle.magasin
         try:
             assert id_objet > 0
-            service, qtt, flags = magasin.inventaire[id_objet - 1]
+            service, qtt = magasin.inventaire[id_objet - 1]
         except (AssertionError, IndexError):
             raise ErreurValidation( \
                 "|err|L'ID spécifié ne correspond à aucun objet en " \
