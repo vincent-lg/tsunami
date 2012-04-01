@@ -56,4 +56,8 @@ class ObjetNonUnique(BaseObj):
     def __getnewargs__(self):
         return (None, )
     
+    @property
+    def poids(self):
+        return round(self.prototype.poids_unitaire * self.nombre, 3)
+    
     __getattr__ = Objet.__getattr__

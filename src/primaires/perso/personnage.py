@@ -223,6 +223,11 @@ class Personnage(BaseObj):
         else:
             return None
     
+    @property
+    def poids_max(self):
+        """Retourne le poids que peut porter le personnage."""
+        return self.stats.force * 5
+    
     def get_etat(self):
         """Retourne l'état visible du personnage."""
         if self.position and not self.occupe:
@@ -487,7 +492,7 @@ class Personnage(BaseObj):
             else:
                 self << "|rg|Vous gagnez {} niveau{}.|ff|".format(nb, x)
     
-    def ramasser(self, objet, exception=None):
+    def ramasser(self, objet, exception=None, qtt=1):
         """Ramasse l'objet objet.
         
         On cherche à placer l'objet de préférence :
@@ -499,21 +504,21 @@ class Personnage(BaseObj):
         for o in self.equipement.inventaire:
             if o is not exception and o.est_de_type("conteneur") and \
                     o.prefere_type(objet):
-                print("1", objet)
-                o.conteneur.ajouter(objet)
+                o.conteneur.ajouter(objet, qtt)
                 return o
         
         for o in self.equipement.inventaire:
             if o is not exception and o.est_de_type("conteneur") and \
                     o.accepte_type(objet):
-                print("2", objet)
-                o.conteneur.ajouter(objet)
+                o.conteneur.ajouter(objet, qtt)
                 return o
+        
+        if qtt > 1:
+            return None
         
         for membre in self.equipement.membres:
             if membre.peut_tenir() and membre.tenu is None:
                 membre.tenu = objet
-                print(membre, objet, self.equipement.tenus)
                 objet.contenu = self.equipement.tenus
                 return membre
         

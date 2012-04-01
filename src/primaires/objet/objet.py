@@ -107,8 +107,11 @@ class Objet(BaseObj):
             attribut = getattr(type(self.prototype), nom_attr)
             assert callable(attribut)
             return MethodeObjet(attribut, self)
-        except (AttributeError, AssertionError):
+        except (AttributeError, AssertionError) as err:
             return getattr(self.prototype, nom_attr)
+    
+    def __repr__(self):
+        return "<objet {}>".format(self.identifiant)
     
     def __str__(self):
         return self.nom_singulier
@@ -127,14 +130,37 @@ class Objet(BaseObj):
             contenus pour un conteneur.
         
         """
-        return self.prototype.calculer_poids(self)
+        return self.calculer_poids()
     
-    def extraire_contenus(self):
+    def extraire_contenus(self, quantite=None, contenu_dans=None):
         """Extrait les objets contenus."""
         res = [self]
+        if quantite is not None:
+            quantite[self] = 1
+        if contenu_dans is not None:
+            contenu_dans[self] = self.contenu
+        
         if hasattr(self, "conteneur"):
             for objet in self.conteneur:
-                res.extend(objet.extraire_contenus())
+                if objet.prototype.unique:
+                    res.extend(objet.extraire_contenus(quantite, contenu_dans))
+                else:
+                    res.append(objet.prototype)
+                    if quantite is not None:
+                        quantite[objet.prototype] = objet.nombre
+                    if contenu_dans is not None:
+                        contenu_dans[objet.prototype] = self
+        
+        return res
+    
+    def extraire_contenus_qtt(self):
+        """Extrait les objets contenus."""
+        res = [(self, 1)]
+        if hasattr(self, "conteneur"):
+            for objet in self.conteneur._objets:
+                res.extend(objet.extraire_contenus_qtt())
+            for objet in self.conteneur._non_uniques:
+                res.append((objet.prototype, objet.nombre))
         
         return res
     

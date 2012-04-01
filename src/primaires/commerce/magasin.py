@@ -73,20 +73,20 @@ class Magasin(BaseObj):
     
     def __str__(self):
         """Affichage du magasin en éditeur."""
-        services = sorted(self.stock, key=lambda s: s[0].valeur)
+        services = sorted(self.stock, key=lambda s: s[0].m_valeur)
         if services:
             ret = "+" + "-" * 10 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
                     "-" * 10 + "+\n"
             ret += "| |tit|" + "Type".ljust(8) + "|ff|"
-            ret += "| |tit|" + "Nom".ljust(42) + "|ff|"
-            ret += "|       |tit|Prix|ff| | |tit|Quantité|ff| |\n"
-            ret = "+" + "-" * 10 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
+            ret += " | |tit|" + "Nom".ljust(40) + "|ff|"
+            ret += " |      |tit|Prix|ff| | |tit|Quantité|ff| |\n"
+            ret += "+" + "-" * 10 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
                     "-" * 10 + "+"
             for ligne in services:
-                service, quantite, flags = igne
-                ret += "\n| " + service.type_achat.ljust(12) + " "
-                res += "| " + str(service).ljust(40) 
-                ret += "| {:<9} | {:<8} |".format(service.valeur, quantite)
+                service, quantite, flags = ligne
+                ret += "\n| " + service.type_achat.ljust(8) + " "
+                ret += "| " + str(service).ljust(40) 
+                ret += " | {:>9} | {:>8} |".format(service.m_valeur, quantite)
         else:
             ret = "|att|Aucun service en vente.|ff|"
         return ret
@@ -110,22 +110,69 @@ class Magasin(BaseObj):
     
     def afficher(self, personnage):
         """Affichage du magasin en jeu"""
-        services = sorted(self.inventaire, key=lambda s: s[0].valeur)
+        services = sorted(self.inventaire, key=lambda s: s[0].m_valeur)
         ret = self.nom + "\n\n"
         if services:
             ret = "+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
                     "-" * 10 + "+\n"
             ret += "| |tit|" + "ID".ljust(4) + "|ff|"
-            ret += "| |tit|" + "Nom".ljust(42) + "|ff|"
-            ret += "|       |tit|Prix|ff| | |tit|Quantité|ff| |\n"
-            ret = "+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
+            ret += " | |tit|" + "Nom".ljust(41) + "|ff|"
+            ret += "|      |tit|Prix|ff| | |tit|Quantité|ff| |\n"
+            ret += "+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
                     "-" * 10 + "+"
             i = 1
             for ligne in services:
-                service, quantite, flags = ligne
+                service, quantite = ligne
                 ret += "\n| " + ("#" + str(i)).ljust(4) + " "
-                res += "| " + service.nom_achat.ljust(40) 
-                ret += "| {:<9} | {:<8} |".format(service.valeur, quantite)
+                ret += "| " + service.nom_achat.ljust(40) 
+                ret += " | {:>9} | {:>8} |".format(service.m_valeur, quantite)
+            ret += "\n+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
+                    "-" * 10 + "+"
         else:
             ret = "|att|Aucun produit n'est en vente actuellement.|ff|"
         return ret
+    
+    def ajouter_stock(self, service, quantite=1):
+        """Ajoute un service dans le stock."""
+        # D'abord on vérifie que le service n'est pas déjà présent
+        # Si c'est le cas, on modifie simplement sa quantité
+        for ligne in self.stock:
+            if ligne[0].type_achat == service.type_achat and \
+                    ligne[0].cle == service.cle:
+                ligne[1] = quantite
+                return
+        
+        self.stock.append((service, quantite, 0))
+    
+    def retirer_stock(self, type, cle):
+        """Retire le service du stock."""
+        for i, ligne in enumerate(list(self.stock)):
+            service = ligne[0]
+            if service.type_achat == type and service.cle == cle:
+                del self.stock[i]
+                return
+        
+        raise ValueError("le service {} {} n'existe pas".format(type, cle))
+    
+    def ajouter_inventaire(self, service, qtt, inc_qtt=True):
+        """Ajoute des services dans l'inventaire.
+        
+        Si inc_qtt est à True, la quantité spécifiée est ajoutée à celle
+        du service de l'inventaire, si présent. Sinon, la quantité du
+        service, si présent, est remplacée par la nouvelle.
+        
+        """
+        services = list(self.stock)
+        trouve = False
+        for i, (t_service, t_qtt, flags) in enumerate(services):
+            if t_service is service:
+                qtt = t_qtt if not inc_qtt else qtt
+                services[i] = (t_service, qtt)
+                trouve = True
+                break
+        
+        if not trouve:
+            services.append((service, qtt))
+            services = sorted(services, key=lambda l: l[0].m_valeur)
+        
+        self.inventaire[:] = services

@@ -56,6 +56,7 @@ class BaseType(BaseObj, metaclass=MetaType):
     
     nom_type = "" # à redéfinir
     nom_scripting = "l'objet"
+    type_achat = "objet"
     _nom = "base_type_objet"
     _version = 2
     
@@ -102,6 +103,9 @@ class BaseType(BaseObj, metaclass=MetaType):
     def __getnewargs__(self):
         return ()
     
+    def __repr__(self):
+        return "<{} {}>".format(self.nom_type, self.cle)
+    
     def __str__(self):
         return self.cle
     
@@ -121,6 +125,19 @@ class BaseType(BaseObj, metaclass=MetaType):
         """Modifie le prix"""
         self._prix = int(prix)
     prix = property(_get_prix, _set_prix)
+    
+    @property
+    def m_valeur(self):
+        return self._prix
+    
+    @property
+    def nom_achat(self):
+        return self.nom_singulier
+    
+    @property
+    def poids(self):
+        """Retourne le poids unitaire."""
+        return self.poids_unitaire
     
     def etendre_script(self):
         """Méthode appelée pour étendre le scripting.
@@ -210,6 +227,10 @@ class BaseType(BaseObj, metaclass=MetaType):
         """Méthode redéfinie pour la manipulation d'objets non uniques."""
         return [self]
     
+    def extraire_contenus_qtt(self):
+        """Méthode redéfinie pour la manipulation d'objets non uniques."""
+        return [(self, 1)]
+    
     def est_de_type(self, nom_type):
         """Retourne True si le type d'objet est de celui entré ou dérivé.
         
@@ -221,12 +242,18 @@ class BaseType(BaseObj, metaclass=MetaType):
         prototype = hasattr(self, "prototype") and self.prototype or self
         return isinstance(prototype, classe)
     
-    @staticmethod
-    def calculer_poids(objet):
+    def calculer_poids(self):
         """Retourne le poids de l'objet."""
-        return objet.poids_unitaire
+        return self.poids_unitaire
     
     # Actions sur les objets
+    def acheter(self, quantite, magasin, transaction):
+        """Achète les objets dans la quantité spécifiée."""
+        salle = magasin.parent
+        for i in range(quantite):
+            objet = importeur.objet.creer_objet(self)
+            salle.objets_sol.ajouter(objet)
+    
     def regarder(self, personnage):
         """Le personnage regarde l'objet"""
         salle = personnage.salle

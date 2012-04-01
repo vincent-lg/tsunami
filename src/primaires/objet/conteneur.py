@@ -30,6 +30,7 @@
 
 """Ce fichier contient la classe ConteneurObjet, détaillée plus bas."""
 
+from bases.exceptions.base import ExceptionMUD
 from collections import OrderedDict
 from datetime import datetime
 
@@ -69,7 +70,8 @@ class ConteneurObjet(BaseObj):
         return iter(liste)
     
     def __str__(self):
-        return str(self._objets) + str(self._non_uniques)
+        parent = repr(self.parent) if self.parent else "sans parent"
+        return parent + " " + str(self._objets) + " " + str(self._non_uniques)
     
     def iter_nombres(self):
         """Parcourt les objets et quantités du conteneur."""
@@ -112,6 +114,7 @@ class ConteneurObjet(BaseObj):
         """
         prototype = hasattr(objet, "prototype") and objet.prototype or objet
         if prototype.unique:
+            self.supporter_poids_sup(objet.poids)
             objet.contenu = self
             objet.ajoute_a = datetime.now()
             if objet not in self._objets:
@@ -120,13 +123,16 @@ class ConteneurObjet(BaseObj):
                 raise ValueError("le conteneur {} contient déjà l'objet " \
                         "{}".format(self, objet))
         else:
+            qtt = nombre
             # On cherche l'objet non unique correspondant au prototype
             non_unique = None
             for objet in self._non_uniques:
                 if objet.prototype == prototype:
                     non_unique = objet
+                    qtt -= objet.nombre
                     break
             
+            self.supporter_poids_sup(prototype.poids_unitaire * qtt)
             if non_unique:
                 non_unique.nombre += nombre
             else:
@@ -159,3 +165,36 @@ class ConteneurObjet(BaseObj):
     def nettoyer_non_uniques(self):
         """Nettoie les objets non uniques présents en quantité négative."""
         self._non_uniques = [o for o in self._non_uniques if o.nombre > 0]
+    
+    def supporter_poids_sup(self, poids, recursif=True):
+        """Méthode vérifiant que le conteneur peut contenir le poids.
+        
+        Le poids indiqué est le poids supplémentaire.
+        
+        Si recursif est à True, on vérifie que les conteneurs
+        qui contiennent l'objet peuvent également supporter ce nouveau poids.
+        
+        Si une erreur survient (dans cet objet ou l'un de ses pères)
+        on lève l'exception SurPoids.
+        
+        """
+        if not self.parent:
+            return True
+        
+        poids_actuel = self.parent.poids
+        poids_max = self.parent.poids_max
+        if poids_actuel + poids > poids_max:
+            raise SurPoids("{} ne peut contenir davantage.".format(
+                    self.parent.nom_singulier.capitalize()))
+        
+        if recursif:
+            parent = self.parent
+            contenu = hasattr(parent, "contenu") and parent.contenu or parent
+            contenu.supporter_poids_sup(poids, recursif)
+
+
+class SurPoids(ExceptionMUD):
+    
+    """Exception levée en cas de sur poids."""
+    
+    pass

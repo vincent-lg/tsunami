@@ -31,6 +31,7 @@
 """Package contenant la commande 'prendre'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.objet.conteneur import SurPoids
 
 class CmdPrendre(Commande):
     
@@ -51,39 +52,52 @@ class CmdPrendre(Commande):
         nom_objet = self.noeud.get_masque("nom_objet")
         nom_objet.proprietes["conteneurs"] = \
                 "dic_masques['conteneur'] and " \
-                "dic_masques['conteneur'].objets_seuls or " \
-                "(personnage.salle.objets_sol, )"
+                "(dic_masques['conteneur'].objet.conteneur.iter_nombres(), " \
+                ") or (personnage.salle.objets_sol.iter_nombres(), )"
+        nom_objet.proprietes["quantite"] = "True"
         conteneur = self.noeud.get_masque("conteneur")
         conteneur.prioritaire = True
         conteneur.proprietes["conteneurs"] = \
-                "(personnage.equipement.tenus, personnage.salle.objets_sol)"
+                "(personnage.equipement.tenus.iter_nombres(), " \
+                "personnage.salle.objets_sol.iter_nombres())"
         conteneur.proprietes["types"] = "('conteneur', )"
+        conteneur.proprietes["quantite"] = "True"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        print(personnage.equipement.inventaire)
         nombre = 1
         if dic_masques["nombre"]:
             nombre = dic_masques["nombre"].nombre
-        objets = dic_masques["nom_objet"].objets[:nombre]
+        objets = list(dic_masques["nom_objet"].objets_qtt_conteneurs)
+        objets = objets[:nombre]
         depuis = dic_masques["conteneur"]
         depuis = depuis and depuis.objet or None
         
         pris = 0
-        for objet, conteneur in objets:
-            dans = personnage.ramasser(objet, depuis)
+        for objet, qtt, conteneur in objets:
+            if nombre > qtt:
+                nombre = qtt
+            try:
+                dans = personnage.ramasser(objet, depuis, nombre)
+            except SurPoids as err:
+                personnage << "|err|" + str(err) + "|ff|"
+                return
+            
             if dans is None:
                 break
             
             if depuis:
-                depuis.conteneur.retirer(objet)
+                depuis.conteneur.retirer(objet, nombre)
             else:
-                personnage.salle.objets_sol.retirer(objet)
+                personnage.salle.objets_sol.retirer(objet, nombre)
             pris += 1
             
         if pris == 0:
             personnage << "|err|Vous n'avez aucune main de libre.|ff|"
             return
+        
+        if pris < nombre:
+            pris = nombre
         
         if depuis:
             personnage << "Vous prenez {} depuis {}.".format(

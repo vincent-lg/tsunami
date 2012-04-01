@@ -48,11 +48,11 @@ class IdObjetMagasin(Masque):
     
     def init(self):
         """Initialisation des attributs du masque"""
-        self.objet = None
+        self.service = None
+        self.no_ligne = None
     
     def repartir(self, personnage, masques, commande):
         """Répartition du masque."""
-        print("répartition")
         id_objet = liste_vers_chaine(commande)
         if not id_objet:
             raise ErreurValidation( \
@@ -62,7 +62,6 @@ class IdObjetMagasin(Masque):
         try:
             assert id_objet.startswith("#")
             id_objet = int(id_objet[1:])
-            print(id_objet)
         except (AssertionError, ValueError):
             raise ErreurValidation( \
                 "L'ID doit être sous la forme #<nombre>.", False)
@@ -74,15 +73,17 @@ class IdObjetMagasin(Masque):
     
     def valider(self, personnage, dic_masques):
         """Validation du masque"""
-        print("validation")
         Masque.valider(self, personnage, dic_masques)
         id_objet = self.a_interpreter
         magasin = personnage.salle.magasin
-        objet = magasin.get_item_par_id(id_objet)
-        if objet is None:
+        try:
+            assert id_objet > 0
+            service, qtt, flags = magasin.inventaire[id_objet - 1]
+        except (AssertionError, IndexError):
             raise ErreurValidation( \
                 "|err|L'ID spécifié ne correspond à aucun objet en " \
-                "magasin.|ff|")
+                "vente.|ff|")
         else:
-            self.objet = objet
+            self.service = service
+            self.no_ligne = id_objet - 1
             return True

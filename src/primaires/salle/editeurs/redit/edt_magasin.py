@@ -46,6 +46,7 @@ class EdtMagasin(Editeur):
         #self.ajouter_option("m", self.opt_monnaie)
         #self.ajouter_option("c", self.opt_modifier_caisse)
         self.ajouter_option("s", self.opt_stock)
+        self.ajouter_option("ren", self.opt_renouveler_inventaire)
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -61,6 +62,20 @@ class EdtMagasin(Editeur):
         
         return msg
     
+    def opt_renouveler_inventaire(self, arguments):
+        """Met à jour l'inventaire du magasin depuis le stock.
+        
+        Syntaxe : /ren
+        
+        """
+        salle = self.objet
+        if not salle.magasin:
+            self.pere << "|err|Il n'y a pas de magasin dans cette salle.|ff|"
+            return
+        magasin = salle.magasin
+        for service, qtt, flags in magasin.stock:
+            magasin.ajouter_inventaire(service, qtt, inc_qtt=False)
+    
     def opt_stock(self, arguments):
         """Modifie le stock.
         
@@ -75,7 +90,7 @@ class EdtMagasin(Editeur):
             self.pere << "|err|Précisez une quantité, un type et une clé.|ff|"
             return
         try:
-            quantite, type, cle = argument.split(" ")
+            quantite, type, cle = arguments.split(" ")
         except ValueError:
             self.pere << "|err|Précisez une quantité, un type et une clé.|ff|"
             return
@@ -91,32 +106,18 @@ class EdtMagasin(Editeur):
             self.pere << "|err|Type {} invalide.".format(type)
             return
         
-        # Compléter...
-        try:
-            objet = arguments.split(" ")[0].lower()
-            quantite = arguments.split(" ")[1].lower()
-        except IndexError:
-            objet = arguments.split(" ")[0].lower()
-            if not salle.magasin.est_en_vente(objet):
-                self.pere << "|err|Précisez une quantité pour cet objet.|ff|"
+        objets = importeur.commerce.types_services[type]
+        if quantite > 0:
+            if cle not in objets:
+                self.pere << "|err|Le produit {} n'a pas pu être " \
+                        "trouvé.".format(cle)
                 return
-            del salle.magasin[objet]
+            
+            service = objets[cle]
+            salle.magasin.ajouter_stock(service, quantite)
         else:
-            try:
-                quantite = int(quantite)
-                assert quantite > 0
-            except (ValueError, AssertionError):
-                self.pere << "|err|Précisez une quantité valide et " \
-                        "positive.|ff|"
-                return
-            else:
-                if not objet in type(self).importeur.objet.prototypes:
-                    self.pere << "|err|Ce prototype est introuvable.|ff|"
-                    return
-                if type(self).importeur.objet.prototypes[objet].sans_prix:
-                    self.pere << "|err|Vous ne pouvez mettre cet objet en " \
-                            "vente.|ff|"
-                salle.magasin[objet] = quantite
+            salle.magasin.retirer_stock(type, cle)
+        
         self.actualiser()
     
     def interpreter(self, msg):

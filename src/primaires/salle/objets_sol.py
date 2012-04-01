@@ -41,4 +41,10 @@ class ObjetsSol(ConteneurObjet):
     
     """
     
-    pass
+    def supporter_poids_sup(self, poids, recursif=True):
+        """Méthode vérifiant que le conteneur peut contenir le poids.
+        
+        Une salle supporte de toute façon le poids indiqué.
+        
+        """
+        return True

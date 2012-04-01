@@ -52,24 +52,38 @@ class NomObjet(Masque):
         self.proprietes["conteneurs"] = "(personnage.salle.objets_sol, )"
         self.proprietes["types"] = "None"
         self.proprietes["tout_interpreter"] = "True"
+        self.proprietes["quantite"] = "False"
+        self.proprietes["conteneur"] = "False"
     
     @property
     def objet(self):
         """Retourne le premier objet."""
-        return self.objets[0][0]
+        return self.objets[0]
     
     @property
-    def objets_seuls(self):
-        """Retourne un tuple des objets sans leur conteneur."""
-        objets = []
-        for o, c in self.objets:
-            objets.append(o)
-        
-        return tuple(objets)
+    def objets_qtt(self):
+        """Retourne un itérateur de couples (objet, quantite)."""
+        for objet, qtt in zip(self.objets, self.quantites):
+            yield (objet, qtt)
+    
+    @property
+    def objets_conteneurs(self):
+        """Retourne un itérateur de couples (objet, conteneur)."""
+        for objet, conteneur in zip(self.objets, self.conteneurs):
+            yield (objet, conteneur)
+    
+    @property
+    def objets_qtt_conteneurs(self):
+        """Retourne un itérateur de couples (objet, quantite, conteneur)."""
+        for objet, qtt, conteneur in \
+                zip(self.objets, self.quantites, self.conteneurs):
+            yield (objet, qtt, conteneur)
     
     def init(self):
         """Initialisation des attributs"""
         self.objets = []
+        self.quantites = []
+        self.conteneurs = []
     
     def repartir(self, personnage, masques, commande):
         """Répartition du masque."""
@@ -99,9 +113,28 @@ class NomObjet(Masque):
         conteneurs = self.conteneurs
         o_types = self.types
         objets = []
+        quantites = []
+        o_conteneurs = []
+        prototype = None
         
         for c in conteneurs:
-            for o in c:
+            for ligne in c:
+                if self.quantite and self.conteneur:
+                    o, qtt, t_conteneur = ligne
+                elif self.quantite:
+                    o, qtt = ligne
+                    t_conteneur = None
+                elif self.conteneur:
+                    o, t_conteneur = ligne
+                    qtt = 1
+                else:
+                    o = ligne
+                    qtt = 1
+                    t_conteneur = None
+                
+                t_proto = hasattr(o, "prototype") and o.prototype or o
+                if prototype and t_proto is not prototype:
+                    continue
                 if contient(o.nom_singulier, nom):
                     if o_types and not [o_t for o_t in o_types \
                             if o.prototype.est_de_type(o_t)]:
@@ -109,14 +142,20 @@ class NomObjet(Masque):
                                 "|err|" + o.err_type.format(o.nom_singulier) \
                                 + "|ff|")
                     
-                    if o.prototype.unique:
-                        objets.append((o, o.contenu))
+                    objets.append(o)
+                    quantites.append(qtt)
+                    if t_conteneur:
+                        o_conteneurs.append(t_conteneur)
                     else:
-                        objets.append((o, c))
+                        o_conteneurs.append(c)
+                    prototype = t_proto
         
         if not objets:
             raise ErreurValidation(
                 "|err|Ce nom d'objet est introuvable.|ff|")
         self.objets = objets
+        self.quantites = quantites
+        self.conteneurs = o_conteneurs
         
         return True
+

@@ -31,6 +31,7 @@
 """Package contenant la commande 'acheter'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.commerce.transaction import *
 
 class CmdAcheter(Commande):
     
@@ -43,7 +44,12 @@ class CmdAcheter(Commande):
         self.schema = "(<nombre>) <objet:nom_objet_magasin|id_objet_magasin>"
         self.aide_courte = "achète un objet"
         self.aide_longue = \
-            "Cette commande permet d'acheter des objets dans un magasin."
+            "Cette commande permet d'acheter des objets dans un magasin. " \
+            "Vous devez posséder l'argent nécessaire sur vous. Notez " \
+            "que le magasin peut avoir à vous rendre une partie de " \
+            "l'argent si vous ne possédez pas exactement la somme " \
+            "requise, mais plus. Vous devez également pouvoir prendre " \
+            "l'article, sans quoi la transaction est annulée."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -51,28 +57,26 @@ class CmdAcheter(Commande):
         if salle.magasin is None:
             personnage << "|err|Il n'y a pas de magasin ici.|ff|"
             return
+        magasin = salle.magasin
         nb_obj = dic_masques["nombre"].nombre if \
             dic_masques["nombre"] is not None else 1
-        prototype = dic_masques["objet"].objet
+        no_ligne = dic_masques["objet"].no_ligne
+        service, qtt = magasin.inventaire[no_ligne]
+        if qtt < nb_obj:
+            nb_obj = qtt
         
-        # Vérifications avant de valider l'achat
-        if nb_obj > salle.magasin[prototype.cle]:
-            personnage << "|err|Les stocks sont insuffisant.|ff|"
+        somme = service.m_valeur * nb_obj
+        
+        # On crée la transaction associée
+        try:
+            transaction = Transaction.initier(personnage, magasin, somme)
+        except FondsInsuffisants:
+            personnage << "|err|Vous n'avez pas assez d'argent.|ff|"
             return
-        # Vérification de l'argent possédé par le perso
         
-        # Tout est bon, on extorque l'argent
+        # On prélève l'argent
+        transaction.payer()
         
         # Distribution des objets
-        salle.magasin[prototype.cle] -= nb_obj
-        for i in range(nb_obj):
-            objet = type(self).importeur.objet.creer_objet(prototype)
-            objet_spawne = False
-            for membre in personnage.equipement.membres:
-                if membre.peut_tenir() and membre.tenu is None:
-                    membre.tenu = objet
-                    objet_spawne = True
-                    break
-            if not objet_spawne:
-                salle.objets_sol.ajouter(objet)
-        personnage << "Vous achetez {}.".format(prototype.get_nom(nb_obj))
+        service.acheter(nb_obj, magasin, transaction)
+        personnage << "Vous achetez {}.".format(service.get_nom(nb_obj))
