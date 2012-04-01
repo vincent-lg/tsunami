@@ -113,7 +113,9 @@ class Magasin(BaseObj):
         services = sorted(self.inventaire, key=lambda s: s[0].m_valeur)
         ret = self.nom + "\n\n"
         if services:
-            ret = "+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
+            ret = "+" + "-" * 72 + "+\n"
+            ret += "+ " + self.nom.ljust(71) + "+\n"
+            ret += "+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
                     "-" * 10 + "+\n"
             ret += "| |tit|" + "ID".ljust(4) + "|ff|"
             ret += " | |tit|" + "Nom".ljust(41) + "|ff|"
@@ -126,6 +128,7 @@ class Magasin(BaseObj):
                 ret += "\n| " + ("#" + str(i)).ljust(4) + " "
                 ret += "| " + service.nom_achat.ljust(40) 
                 ret += " | {:>9} | {:>8} |".format(service.m_valeur, quantite)
+                i += 1
             ret += "\n+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
                     "-" * 10 + "+"
         else:

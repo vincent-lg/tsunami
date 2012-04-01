@@ -52,6 +52,10 @@ class CmdVendre(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
+        personnage << "|err|Cette commande n'est pas utilisable " \
+                "pour l'instant.|ff|"
+        return
+        
         salle = personnage.salle
         if salle.magasin is None:
             personnage << "|err|Il n'y a pas de magasin ici.|ff|"
