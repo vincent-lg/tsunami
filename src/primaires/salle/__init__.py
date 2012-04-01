@@ -149,6 +149,8 @@ class Module(BaseModule):
         
         importeur.diffact.ajouter_action("net_salles", 300,
                 self.nettoyer_salles)
+        importeur.diffact.ajouter_action("repop_salles", 900,
+                self.repop_salles)
         
         BaseModule.init(self)
     
@@ -396,7 +398,7 @@ class Module(BaseModule):
     
     def repop_salles(self):
         """Méthode chargée de repop les salles."""
-        importeur.diffact.ajouter_action("repop", 900,
+        importeur.diffact.ajouter_action("repop_salles", 900,
                 self.repop_salles)
         for s in self.salles.values():
             s.repop()
