@@ -179,6 +179,48 @@ class Test(BaseObj):
                         "l'exécution d'un script.\nL'alerte {} a été " \
                         "créée pour en rendre compte.|ff|".format(alerte.no)
     
+    def executer_code(self, evenement, code):
+        """Exécute le code passé en paramètre.
+        
+        Le code est sous la forme d'un générateur. On appelle donc
+        la fonction next et récupère le retour (la valeur suivant
+        le yield).
+            Si ce retour est 0, on continue l'exécution (appel récursif).
+            Si le retour est un autre nombre, on diffère l'exécutçion
+            Si le retour est None, ohn s'arrête.
+        
+        """
+        # Exécution
+        __builtins__["ErreurExecution"] = ErreurExecution
+        __builtins__["variables"] = evenement.espaces.variables
+        try:
+            ret = next(code)
+        except ErreurExecution as err:
+            self.erreur_execution(str(err))
+        except Exception as err:
+            self.erreur_execution(str(err))
+        else:
+            if ret is None:
+                return
+            
+            tps = 0
+            try:
+                tps = int(ret)
+                assert tps >= 0
+            except (ValueError, AssertionError):
+                pass
+            
+            if tps == 0:
+                self.executer_script(evenement, code)
+            else:
+                # On diffère l'exécution du script
+                nom = "script_dif<" + str(id(code)) + ">"
+                importeur.diffact.ajouter_action(nom, tps,
+                        self.executer_code, evenement, code)
+        finally:
+            del __builtins__["ErreurExecution"]
+            del __builtins__["variables"]
+    
     def executer_instructions(self, evenement):
         """Convertit et exécute la suite d'instructions.
         
@@ -198,24 +240,19 @@ class Test(BaseObj):
                     instruction.code_python)
         
         code += "\n".join(lignes)
+        code += "\n    yield None"
         print("Code :", code)
         
         # Constitution des globales
         globales = self.get_globales(evenement)
         
-        # Exécution
-        __builtins__["ErreurExecution"] = ErreurExecution
-        __builtins__["variables"] = evenement.espaces.variables
-        exec(code, globales)
         try:
-            ret = globales['script']()
-        except ErreurExecution as err:
+            code = exec(code, globales)
+        except Exception:
             self.erreur_execution(str(err))
-        except Exception as err:
-            self.erreur_execution(str(err))
-        finally:
-            del __builtins__["ErreurExecution"]
-            del __builtins__["variables"]
+        else:
+            code = globales['script']()
+            self.executer_code(evenement, code)
         
         # Si le test est relié à une quête
         if etape:
