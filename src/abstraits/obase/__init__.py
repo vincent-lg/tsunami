@@ -239,20 +239,3 @@ class BaseObj(metaclass=MetaBaseObj):
             return None
         
         return objet
-    
-    def __setattr__(self, nom_attr, val_attr):
-        """Méthode appelée quand on cherche à écrire l'objet val_attr.
-        
-        Si la valeur est une liste, on la remplace par un type Liste de
-        façon transparente. La même chose' est faite si la valeur est un
-        dictionnaire.
-        
-        """
-        if type(val_attr) is list:
-            val_attr = Liste(val_attr)
-        elif type(val_attr) is OrderedDict:
-            val_attr = DictionnaireOrdonne(val_attr)
-        elif type(val_attr) is dict:
-            val_attr = Dictionnaire(val_attr)
-        
-        object.__setattr__(self, nom_attr, val_attr)
