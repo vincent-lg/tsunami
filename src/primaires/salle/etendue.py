@@ -68,9 +68,6 @@ class Etendue(BaseObj):
         self.obstacles = {}
         self.cotes = {}
         self.liens = {}
-        self.obstacles.a_nettoyer = False
-        self.cotes.a_nettoyer = False
-        self.liens.a_nettoyer = False
     
     def __getnewargs__(self):
         return ("", )
