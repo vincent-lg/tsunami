@@ -91,7 +91,7 @@ class Systeme(Contexte):
             sys.stdout = self.pere
             nb_msg = self.pere.nb_msg
             try:
-                exec(msg, self.espace.dictionnaire)
+                exec(msg, self.espace)
             except Exception:
                 self.pere << traceback.format_exc()
             else:
