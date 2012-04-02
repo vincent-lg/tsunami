@@ -34,7 +34,3 @@ class Convertisseur:
     """Classe pour envelopper les convertisseurs."""
     def depuis_version_0(objet, classe):
         objet.set_version(classe, 1)
-        objet.obstacles = {}
-        objet.obstacles.a_nettoyer = False
-        objet.cotes.a_nettoyer = False
-        objet.liens.a_nettoyer = False
