@@ -1,5 +1,4 @@
 # -*-coding:Utf-8 -*
-# -*-coding:Utf-8 -*
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
@@ -51,32 +50,20 @@ class Dictionnaire:
 
     def __init__(self, *args, **kw_args):
         """Constructeur du dictionnaire."""
-        self.a_nettoyer = True
         self.dictionnaire = dict(*args, **kw_args)
+        self.a_nettoyer = True
         self.e_existe = True
 
     def __getattr__(self, attr):
-        """L'attribut en question est probablement une méthode.
-
-        Dans tous les cas, on nettoie la dictionnaire avant de retourner
-        l'objet concerné que l'on cherche dans dictionnaire.
-
-        """
-        net = False
-        if object.__getattribute__(self, "dictionnaire"):
-            try:
-                coll = object.__getattribute__(self, "dictionnaire")
-                a_nettoyer = object.__getattribute__(self, "a_nettoyer")
-                if a_nettoyer:
-                    net = True
-            except AttributeError:
-                pass
-        if net:
-            self.nettoyer()
         return getattr(self.dictionnaire, attr)
-
+    
+    def __getstate__(self):
+        return self.__dict__.copy()
+    
+    def __setstate__(self, dico_attr):
+        self.__dict__.update(dico_attr)
+    
     def __getitem__(self, item):
-        self.nettoyer()
         return self.dictionnaire[item]
 
     def __setitem__(self, item, valeur):
@@ -86,19 +73,15 @@ class Dictionnaire:
         del self.dictionnaire[item]
 
     def __repr__(self):
-        self.nettoyer()
         return repr(self.dictionnaire)
 
     def __str__(self):
-        self.nettoyer()
         return str(self.dictionnaire)
 
     def __iter__(self):
-        self.nettoyer()
         return iter(self.dictionnaire)
 
     def __len__(self):
-        self.nettoyer()
         return len(self.dictionnaire)
 
     def nettoyer(self):
@@ -136,18 +119,15 @@ class DictionnaireOrdonne:
         self.e_existe = True
 
     def __getattr__(self, attr):
-        """L'attribut en question est probablement une méthode.
-
-        Dans tous les cas, on nettoie la dictionnaire avant de retourner
-        l'objet concerné que l'on cherche dans dictionnaire.
-
-        """
-        if object.__getattribute__(self, "dictionnaire"):
-            self.nettoyer()
         return getattr(self.dictionnaire, attr)
-
+    
+    def __getstate__(self):
+        return self.__dict__.copy()
+    
+    def __setstate__(self, dico_attr):
+        self.__dict__.update(dico_attr)
+    
     def __getitem__(self, item):
-        self.nettoyer()
         return self.dictionnaire[item]
 
     def __setitem__(self, item, valeur):
@@ -157,19 +137,15 @@ class DictionnaireOrdonne:
         del self.dictionnaire[item]
 
     def __repr__(self):
-        self.nettoyer()
         return repr(self.dictionnaire)
 
     def __str__(self):
-        self.nettoyer()
         return str(self.dictionnaire)
 
     def __iter__(self):
-        self.nettoyer()
         return iter(self.dictionnaire)
 
     def __len__(self):
-        self.nettoyer()
         return len(self.dictionnaire)
 
     def __deepcopy__(self, memo):

@@ -47,55 +47,37 @@ class Liste:
     
     def __init__(self, *args):
         """Constructeur de la liste."""
-        self.a_nettoyer = True
         self.liste = list(*args)
+        self.a_nettoyer = True
     
     def __getattr__(self, attr):
-        """L'attribut en question est probablement une méthode.
-        
-        Dans tous les cas, on nettoie la liste avant de retourner
-        l'objet concerné que l'on cherche dans liste.
-        
-        """
-        net = False
-        if object.__getattribute__(self, "liste"):
-            try:
-                coll = object.__getattribute__(self, "liste")
-                a_nettoyer = object.__getattribute__(self, "a_nettoyer")
-                if a_nettoyer:
-                    net = True
-            except AttributeError:
-                pass
-        if net:
-            self.nettoyer()
         return getattr(self.liste, attr)
     
+    def __getstate__(self):
+        return self.__dict__.copy()
+    
+    def __setstate__(self, dico_attr):
+        self.__dict__.update(dico_attr)
+    
     def __getitem__(self, item):
-        self.nettoyer()
         return self.liste[item]
     
     def __setitem__(self, item, valeur):
-        self.nettoyer()
         self.liste[item] = valeur
     
     def __delitem__(self, item):
-        self.nettoyer()
         del self.liste[item]
     
     def __repr__(self):
-        self.nettoyer()
         return repr(self.liste)
     
     def __str__(self):
-        self.nettoyer()
         return str(self.liste)
     
     def __iter__(self):
-        self.nettoyer()
         return iter(self.liste)
     
     def __len__(self):
-        self.nettoyer()
         return len(self.liste)
     
     def __deepcopy__(self, memo):
