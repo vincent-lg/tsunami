@@ -56,7 +56,6 @@ class ConteneurGroupes(BaseObj):
         
         # Dictionnaire associant une adresse de commande à un groupe
         self.commandes = {}
-        self.commandes.a_nettoyer = False
     
     def __getnewargs__(self):
         return ()

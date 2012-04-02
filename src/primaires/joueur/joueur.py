@@ -57,9 +57,7 @@ class Joueur(Personnage):
         self.distinction_audible = ""
         self.no_tick = 1
         self.alias_francais = {}
-        self.alias_francais.a_nettoyer = False
         self.alias_anglais = {}
-        self.alias_anglais.a_nettoyer = False
     
     def __getstate__(self):
         retour = dict(self.__dict__)
