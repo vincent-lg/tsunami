@@ -311,7 +311,7 @@ class Module(BaseModule):
     
     def lister_commandes_pour_groupe(self, groupe):
         """Liste les commandes que le groupe donné a le droit d'exécuter."""
-        groupes = self.groupes.commandes.dictionnaire.copy()
+        groupes = self.groupes.commandes.copy()
         p_groupes = groupe.get_groupes_inclus()
         commandes = []
         for cmd in self.commandes:

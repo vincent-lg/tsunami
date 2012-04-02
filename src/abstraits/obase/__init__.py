@@ -105,6 +105,8 @@ class BaseObj(metaclass=MetaBaseObj):
     
     importeur = None
     enregistrer = False
+    _nom = "base_obj"
+    _version = 1
     def __init__(self):
         """Instancie un simple statut"""
         self._statut = INIT
