@@ -86,10 +86,7 @@ class Canal(BaseObj):
     def infos(self):
         """Renvoie l'aide du canal"""
         res = self.nom + "|ff| : " + self.resume
-        nb_connectes = 0
-        for connecte in self.connectes:
-            if connecte in type(self).importeur.connex.joueurs_connectes:
-                nb_connectes += 1
+        nb_connectes = len(self.actuellement_connectes)
         res += " (|rgc|" + str(nb_connectes) + "|ff|)"
         return res
     
@@ -112,6 +109,11 @@ class Canal(BaseObj):
     def clr_nom(self):
         """Renvoie le nom de la couleur du canal"""
         return COULEURS_INV[self.clr]
+    
+    @property
+    def actuellement_connectes(self):
+        """Retourne la liste des joueurs connectés au canal et au MUD."""
+        return [j for j in self.connectes if j.est_connecte()]
     
     def rejoindre_ou_quitter(self, joueur, aff=True, forcer=False):
         """Connecte ou déconnecte un joueur et le signale aux connectés"""
@@ -270,7 +272,7 @@ class Canal(BaseObj):
         ex = self.clr + "[" + self.nom + "] " + message + "|ff|"
         im = self.clr + "<" + message + ">"
         
-        for connecte in self.connectes:
+        for connecte in self.actuellement_connectes:
             if connecte in type(self).importeur.connex.joueurs_connectes:
                 if connecte in self.immerges:
                     connecte << im
@@ -296,7 +298,7 @@ class Canal(BaseObj):
         else:
             joueur << ex_moi
         
-        for connecte in self.connectes:
+        for connecte in self.actuellement_connectes:
             if connecte is not joueur:
                 if connecte in type(self).importeur.connex.joueurs_connectes:
                     if connecte in self.immerges:
