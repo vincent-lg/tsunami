@@ -8,53 +8,64 @@ On se base sur un chemin passé en premier paramètre.
 """
 
 import os
+import re
 import sys
 import getopt
 
+# Constantes
+RE_CLASSES = re.compile(r"^class [A-Za-z_][A-Za-z0-9_]*")
+
+class Stats:
+    
+    """Classe conservant les statistiques globales ou d'un élément."""
+    
+    def __init__(self, nom):
+        self.nom = nom
+        self.lignes = 0
+        self.lignes_code = 0
+        self.lignes_commentaire = 0
+        self.fichiers = 0
+        self.classes = 0
+    
+    def copier(self, autre):
+        self.lignes += autre.lignes
+        self.lignes_code += autre.lignes_code
+        self.lignes_commentaire += autre.lignes_commentaire
+        self.fichiers += autre.fichiers
+        self.classes += autre.classes
+
 def scan_fichier(nom_fichier):
-    nb_lignes = 0
-    nb_lignes_code = 0
-    nb_lignes_commentaire = 0
+    stats = Stats(nom_fichier)
+    stats.fichiers = 1
     fichier = open(nom_fichier, 'r', encoding = 'utf-8')
     lignes = fichier.readlines()[29:]
     commentaire = False
     for ligne in lignes:
+        if RE_CLASSES.search(ligne):
+            stats.classes += 1
         ligne = ligne.strip()
         if ligne:
-            nb_lignes += 1
+            stats.lignes += 1
             if ligne.startswith("\"\"\""):
                 commentaire = True
             if ligne.startswith("#") or commentaire:
-                nb_lignes_commentaire += 1
+                stats.lignes_commentaire += 1
             else:
-                nb_lignes_code += 1
+                stats.lignes_code += 1
             if ligne.endswith("\"\"\""):
                 commentaire = False
-    print("  {0}: {1} lignes dont {2} de code et {3} de commentaire".format(nom_fichier, nb_lignes, nb_lignes_code, nb_lignes_commentaire))
-    return nb_lignes, nb_lignes_code, nb_lignes_commentaire
+    print("  {0}: {1} lignes dont {2} de code et {3} de commentaire".format(nom_fichier, stats.lignes, stats.lignes_code, stats.lignes_commentaire))
+    return stats
 
 def scan_dossier(chemin):
-    nb_fichiers = 0
-    nb_lignes = 0
-    nb_lignes_code = 0
-    nb_lignes_commentaire = 0
+    stats = Stats(chemin)
     for contenu in os.listdir(chemin):
         if os.path.isdir(chemin + os.sep + contenu):
             print("Scan du dossier {0}".format(contenu))
-            t_fichiers, t_lignes, t_lignes_code, t_lignes_commentaire = \
-                scan_dossier(chemin + os.sep + contenu)
-            nb_fichiers += t_fichiers
-            nb_lignes += t_lignes
-            nb_lignes_code += t_lignes_code
-            nb_lignes_commentaire += t_lignes_commentaire
+            stats.copier(scan_dossier(chemin + os.sep + contenu))
         elif os.path.isfile(chemin + os.sep + contenu) and contenu.endswith(".py"):
-            t_lignes, t_lignes_code, t_lignes_commentaire = scan_fichier( \
-                chemin + os.sep + contenu)
-            nb_fichiers += 1
-            nb_lignes += t_lignes
-            nb_lignes_code += t_lignes_code
-            nb_lignes_commentaire += t_lignes_commentaire
-    return nb_fichiers, nb_lignes, nb_lignes_code, nb_lignes_commentaire
+            stats.copier(scan_fichier(chemin + os.sep + contenu))
+    return stats
             
 # On extrait le premier paramètre de la ligne de commande si il existe
 if len(sys.argv) == 1:
@@ -69,19 +80,15 @@ if not os.path.exists(chemin):
     sys.exit(1)
 
 # Initialisation des variables contenant les informations statistiques
-lignes = 0
-lignes_code = 0
-lignes_commentaire = 0
-fichiers = 0
-
 if os.path.isfile(chemin):
-    fichiers = 1
-    lignes, lignes_code, lignes_commentaire = scan_fichier(chemin)
+    stats = scan_fichier(chemin)
 else:
-    fichiers, lignes, lignes_code, lignes_commentaire = scan_dossier(chemin)
+    stats = scan_dossier(chemin)
 
 print("\n\n\n" + "-" * 80)
-print("{0} fichier(s) scanné(s)".format(fichiers))
-print("{0} lignes dans le projet, dont {1} lignes de code et {2} de commentaires".format(lignes, lignes_code, lignes_commentaire))
-print("Moyenne des lignes par fichier: {0}".format(lignes // fichiers))
-print("Taux d'apparition des commentaires: {0}%".format(lignes_commentaire / lignes * 100))
+print("{0} fichier(s) scanné(s)".format(stats.fichiers))
+print("{0} lignes dans le projet, dont {1} lignes de code et {2} de commentaires".format(stats.lignes, stats.lignes_code, stats.lignes_commentaire))
+print("{} classes trouvées.".format(stats.classes))
+print("Moyenne des lignes par fichier: {0}".format(stats.lignes // stats.fichiers))
+print("Taux d'apparition des commentaires: {0}%".format(round(stats.lignes_commentaire / stats.lignes * 100), 3))
+
