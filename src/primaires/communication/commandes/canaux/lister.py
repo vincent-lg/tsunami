@@ -1,3 +1,5 @@
+# -*-coding:Utf-8 -*
+
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
@@ -50,10 +52,12 @@ class PrmLister(Parametre):
         """Interprétation du paramètre"""
         tous_canaux = type(self).importeur.communication.canaux
         canaux = []
+        connectes = []
         for canal in tous_canaux.iter().values():
-            if personnage in canal.connectes:
+            if personnage in canal.actuellement_connectes:
                 if not canal.flags & BLOQUE:
                     canaux.append(canal)
+                    connectes.append(canal.nom)
             else:
                 if not canal.flags & INVISIBLE and not canal.flags & PRIVE:
                     canaux.append(canal)
@@ -62,17 +66,20 @@ class PrmLister(Parametre):
         else:
             # On détermine la taille du tableau
             taille = 0
+            infos = []
             for canal in canaux:
-                if len(canal.infos) > taille:
-                    taille = len(canal.infos)
+                info = canal.infos
+                if len(info) > taille:
+                    taille = len(info)
+                infos.append(info)
             res = "+" + "-" * (taille - 9) + "+\n"
             res += "| |tit|" + "Canaux existants".ljust(taille - 11) + "|ff| |\n"
             res += "+" + "-" * (taille - 9) + "+\n"
-            for canal in canaux:
-                if personnage in canal.connectes:
-                    res += "| |bc|* " + canal.infos.ljust(taille) + "|ff| |\n"
+            for canal, info in zip(canaux, infos):
+                if canal.nom in connectes:
+                    res += "| |bc|* " + info.ljust(taille) + "|ff| |\n"
                 else:
-                    res += "| |cmd|" + canal.infos.ljust(taille + 2) + "|ff| |\n"
+                    res += "| |cmd|" + info.ljust(taille + 2) + "|ff| |\n"
             res += "+" + "-" * (taille - 9) + "+"
             res += \
                 "\n|cmd|canal|ff| : résumé (|rgc|nombre de connectés|ff|)\n" \
