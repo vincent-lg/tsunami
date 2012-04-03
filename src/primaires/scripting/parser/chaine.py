@@ -30,7 +30,13 @@
 
 """Fichier contenant la classe ChaineDeCaracteres, détaillée plus bas."""
 
+import re
+
+from primaires.format.fonctions import echapper_accolades
 from .expression import Expression
+
+# Constantes
+RE_SUP = re.compile(r"\$\{\{([A-Za-z][A-Za-z0-9_]*?)\}\}")
 
 class ChaineDeCaracteres(Expression):
     
@@ -75,4 +81,6 @@ class ChaineDeCaracteres(Expression):
     def code_python(self):
         """Retourne le code Python associé."""
         chaine = repr(self.chaine)
-        return chaine
+        chaine = echapper_accolades(chaine)
+        chaine = RE_SUP.sub(r"{\1}", chaine)
+        return "formatter(" + chaine + ")"

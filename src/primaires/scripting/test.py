@@ -38,6 +38,7 @@ from abstraits.obase import BaseObj
 from primaires.scripting.parser import expressions
 from primaires.scripting.instruction import Instruction, ErreurExecution
 from primaires.scripting.constantes.connecteurs import CONNECTEURS
+from primaires.scripting.utile.fonctions import formatter
 from .alerte import Alerte
 
 class Test(BaseObj):
@@ -193,6 +194,7 @@ class Test(BaseObj):
         # Exécution
         __builtins__["ErreurExecution"] = ErreurExecution
         __builtins__["variables"] = evenement.espaces.variables
+        __builtins__["formatter"] = formatter
         try:
             ret = next(code)
         except ErreurExecution as err:
@@ -220,6 +222,7 @@ class Test(BaseObj):
         finally:
             del __builtins__["ErreurExecution"]
             del __builtins__["variables"]
+            del __builtins__["formatter"]
     
     def executer_instructions(self, evenement):
         """Convertit et exécute la suite d'instructions.

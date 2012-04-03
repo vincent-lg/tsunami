@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,42 +28,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Variable détaillée plus bas."""
+"""Fichier contenant les fonctions utiles au scripting."""
 
-from abstraits.obase import *
-
-class Variable(BaseObj):
+def formatter(chaine):
+    f_variables = {}
+    for nom, variable in variables.items():
+        if hasattr(variable, "get_nom_pour"):
+            f_variables[nom] = "{" + nom + "}"
+        else:
+            f_variables[nom] = str(variable)
     
-    """Classe contenant une variable d'évènement.
-    
-    Une variable d'évènement contient un nom, un certain type bien entendu,
-    ainsi qu'une aide.
-    
-    """
-    
-    def __init__(self, evenement, nom, str_type=None):
-        """Constructeur d'une variable"""
-        BaseObj.__init__(self)
-        self.evenement = evenement
-        self.nom = nom
-        self.type = type(None)
-        self.aide = "non précisée"
-        if str_type:
-            # On cherche le type dans les builtins ou dans le module types
-            self.changer_type(str_type)
-        
-        self._construire()
-    
-    def __getnewargs__(self):
-        return (None, "")
-    
-    def changer_type(self, type):
-        """On change le type de la variable."""
-        # On récupère les types
-        types = __import__("primaires.scripting.types").scripting.types
-        builtins = __builtins__.copy()
-        try:
-            self.type = builtins[type]
-        except KeyError:
-            self.type = getattr(types, type)
-
+    return chaine.format(**f_variables)
