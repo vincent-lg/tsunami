@@ -27,56 +27,45 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+"""Fichier contenant les constantes du module secondaire rapport."""
 
-"""Fichier contenant le module secondaire rapport."""
+TYPES = (
+    "bug",
+    "évolution",
+    "suggestion",
+)
 
-from abstraits.module import *
-from . import commandes
-from . import editeurs
-from .rapport import Rapport
+CATEGORIES = (
+    "design",
+    "faute",
+    "réseau",
+    "scripting",
+    "sécurité",
+)
 
-class Module(BaseModule):
-    
-    """Classe utilisée pour gérer des rapports de bug et suggestion.
-    
-    """
-    
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "rapport", "secondaire")
-        self.rapports = {}
-        self.commandes = []
-    
-    def init(self):
-        """Méthode d'initialisation du module"""
-        # On récupère les rapports
-        rapports = self.importeur.supenr.charger_groupe(Rapport)
-        for rapport in rapports:
-            self.rapports[rapport.id] = rapport
-        
-        if self.rapports:
-            Rapport.id_actuel = max(self.rapports.keys())
-        else:
-            Rapport.id_actuel = 1
-        
-        BaseModule.init(self)
-    
-    def ajouter_commandes(self):
-        """Ajout des commandes dans l'interpréteur"""
-        self.commandes = [
-            commandes.rapport.CmdRapport(),
-        ]
-        
-        for cmd in self.commandes:
-            self.importeur.interpreteur.ajouter_commande(cmd)
-    
-    def creer_rapport(self, titre, createur=None):
-        """Crée un rapport."""
-        rapport = Rapport(titre, createur)
-        self.ajouter_rapport(rapport)
-        return rapport
-    
-    def ajouter_rapport(self, rapport):
-        """Ajoute un rapport."""
-        self.rapports[rapport.id] = rapport
+STATUTS = (
+    "nouveau",
+    "en cours",
+    "fermé",
+    "rejeté",
+    "dupliqué",
+)
+
+PRIORITES = (
+    "faible",
+    "normale",
+    "haute",
+    "urgente",
+    "immédiate",
+)
+
+ATTRS_STATUTS = {
+    "fermé": (
+        ("avancement", 100),
+        ("ouvert", False)),
+    "rejeté": (
+        ("ouvert", False)),
+    "dupliqué": (
+        ("ouvert", False)),
+}
 
