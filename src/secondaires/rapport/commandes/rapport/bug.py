@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,31 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le contexte éditeur EdtZone"""
+"""Package contenant le paramètre 'bug' de la commande 'rapport'."""
 
-import re
+from primaires.interpreteur.masque.parametre import Parametre
+from primaires.interpreteur.editeur.presentation import Presentation
 
-from primaires.interpreteur.editeur.uniligne import Uniligne
-from primaires.salle.salle import ZONE_VALIDE
+class PrmBug(Parametre):
+    
+    """Commande 'rapport bug'"""
+    
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "bug", "bug")
+        self.groupe = "joueur"
+        self.schema = "<message>"
+        self.aide_courte = "crée un rapport de bug"
+        self.aide_longue = \
+            "Cette commande permet de créer un nouveau rapport de " \
+            "bug. Vous devez préciser en argument le titre du rapport " \
+            "à créer. Un éditeur s'ouvrira alors pour vous permettre " \
+            "de renseigner plus précisément le bug rencontré."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        titre = dic_masques["message"]
+        rapport = importeur.rapport.creer_rapport(titre, personnage,
+                ajouter=False)
+        rapport.type = "bug"
+        editeur = importeur.interpreteur.construire_editeur(
+                "bugedit", personnage, rapport)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()
 
-class EdtZone(Uniligne):
-    
-    """Classe définissant le contexte éditeur 'zone'.
-    Ce contexte permet simplement d'éditer le nom de la zone.
-    
-    """
-    
-    def interpreter(self, msg):
-        """Interprétation du message"""
-        msg = msg.lower()
-        ancien_ident = self.objet.ident
-        ident = msg + ":" + self.objet.mnemonic
-        if not re.search(ZONE_VALIDE, msg):
-            self.pere.envoyer("|err|Ce nom de zone est invalide. Veuillez " \
-                    "réessayer.|ff|")
-        elif ident in type(self).importeur.salle and ancien_ident != ident:
-            self.pere.envoyer("|err|L'identifiant {} est déjà utilisé " \
-                    "dans l'univers.|ff|".format(ident))
-        else:
-            self.objet.nom_zone = msg
-            self.actualiser()

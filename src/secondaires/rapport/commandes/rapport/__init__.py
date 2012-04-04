@@ -35,6 +35,7 @@ Dans ce fichier se trouve la commande même.
 """
 
 from primaires.interpreteur.commande.commande import Commande
+from .bug import PrmBug
 from .edit import PrmEdit
 from .liste import PrmListe
 
@@ -47,29 +48,15 @@ class CmdRapport(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "rapport", "report")
-        self.schema = "(<message>)"
-        self.aide_courte = "manipulation des rapports de bug"
+        self.aide_courte = "manipulation des rapports"
         self.aide_longue = \
-            "Cette commande permet de créer un nouveau rapport de bug. " \
-            "En l'entrant, vous serez placé dans un éditeur vous " \
-            "permettant de spécifier plusieurs informations qu'il vous " \
-            "faudra remplir. Une fois envoyé, votre rapport de bug " \
-            "sera examiné par un immortel en charge et traité selon " \
-            "sa priorité. Inutile de reporter un bug plusieurs fois."
+            "Cette commande permet de créer un nouveau rapport de bug " \
+            "ou de manipuler les rapports existants (pour une correction). " \
+            "Pour créer un nouveau rapport, utilisez la sous-commande " \
+            "%rapport:bug% si vous voulez rapporter un bug."
     
     def ajouter_parametres(self):
         """Ajout des paramètres"""
+        self.ajouter_parametre(PrmBug())
         self.ajouter_parametre(PrmEdit())
         self.ajouter_parametre(PrmListe())
-    
-    def erreur_validation(self):
-        """Aucun paramètre n'a été précisé."""
-        if dic_masques["message"] is not None:
-            titre = dic_masques["message"].message
-        else:
-            titre = ""
-        rapport = importeur.rapport.creer_rapport()
-        editeur = type(self).importeur.interpreteur.construire_editeur(
-                "bugedit", personnage, rapport)
-        personnage.contextes.ajouter(editeur)
-        editeur.actualiser()
