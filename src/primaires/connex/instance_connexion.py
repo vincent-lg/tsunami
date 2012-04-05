@@ -34,6 +34,13 @@ from abstraits.obase import BaseObj
 from primaires.format.fonctions import *
 from .motd import MOTD
 
+import telnetlib as tlib
+
+OPTIONS = {
+    "masquer": tlib.IAC + tlib.WILL + tlib.ECHO,
+    "afficher": tlib.IAC + tlib.WONT + tlib.ECHO,
+}
+
 class InstanceConnexion(BaseObj):
     """Classe représentant une instance de connexion.
     Elle est là pour faire la jonction entre un client connecté et un
@@ -213,6 +220,7 @@ class InstanceConnexion(BaseObj):
     
     def envoyer(self, msg):
         """Envoie au client le message.
+        
         On est capable d'envoyer deux types de message :
         *   un type str : dans ce cas, on l'encode
         *   un type bytes : on n'a pas besoin de l'encoder
@@ -276,6 +284,12 @@ class InstanceConnexion(BaseObj):
         
             if self.client:
                 self.client.envoyer(msg)
+    
+    def envoyer_options(self, nom):
+        """Envoie des options au client."""
+        option = OPTIONS[nom]
+        if self.client:
+            self.client.envoyer(option)
     
     def receptionner(self, message):
         """Cette méthode est appelée quand l'instance de connexion
