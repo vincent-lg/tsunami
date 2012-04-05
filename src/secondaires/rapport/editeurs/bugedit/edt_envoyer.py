@@ -27,50 +27,37 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""Fichier contenant les constantes du module secondaire rapport."""
 
-TYPES = (
-    "bug",
-    "évolution",
-    "suggestion",
-)
+"""Fichier contenant le contexte éditeur EdtEnvoyer."""
 
-CATEGORIES = (
-    "design",
-    "faute",
-    "réseau",
-    "scripting",
-    "sécurité",
-)
+from primaires.interpreteur.editeur import Editeur
 
-STATUTS = (
-    "nouveau",
-    "en cours",
-    "fermé",
-    "rejeté",
-    "dupliqué",
-)
-
-PRIORITES = (
-    "faible",
-    "normale",
-    "haute",
-    "urgente",
-    "immédiate",
-)
-
-ATTRS_STATUTS = {
-    "fermé": (
-        ("avancement", 100),
-        ("ouvert", False)),
-    "rejeté": (
-        ("ouvert", False)),
-    "dupliqué": (
-        ("ouvert", False)),
-}
-
-COMPLETE = {
-    "titre": "titre",
-    "description": "description",
-}
+class EdtEnvoyer(Editeur):
+    
+    """Classe définissant le contexte éditeur 'envoyer'.
+    
+    Ce contexte permet d'envoyer un rapport de bug si il est complété.
+    
+    """
+    
+    def entrer(self):
+        """En entrant dans l'éditeur."""
+        rapport = self.objet
+        if not rapport.est_complete():
+            champs = rapport.get_champs_a_completer()
+            if len(champs) > 1:
+                str_champs = "|ent|" + "|ff|, |ent|".join(champs[:-1]) + "|ff|"
+                str_champs += " et |ent|" + champs[-1] + "|ff|"
+            else:
+                str_champs = "|ent|" + champs[0] + "|ff|"
+            
+            self.pere.joueur << "|err|Ce rapport n'est pas proprement " \
+                    "complété.\nVous devez encore remplir les champs " \
+                    "{}.|ff|\n".format(str_champs)
+            self.migrer_contexte(self.opts.rci_ctx_prec)
+        else:
+            importeur.rapport.ajouter_rapport(rapport)
+            self.fermer()
+            self.pere.joueur << "|att|Le rapport {} a bien été " \
+                    "envoyé.|ff|".format(rapport.id)
 

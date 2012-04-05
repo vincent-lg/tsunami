@@ -133,4 +133,26 @@ class Rapport(BaseObj):
         attrs = ATTRS_STATUTS.get(statut, ())
         for nom, valeur in attrs:
             setattr(self, nom, valeur)
+    
+    def est_complete(self):
+        """Return True si le rapport est complété, False sinon.
+        
+        On considère qu'un rapport est complété si tous les attributs
+        en clé du dictionnaire COMPLETE sont vrais pour self.
+        
+        """
+        for attr in COMPLETE.keys():
+            if not getattr(self, attr):
+                return False
+        
+        return True
+    
+    def get_champs_a_completer(self):
+        """Retourne les champs à compléter."""
+        champs = []
+        for attr, nom in COMPLETE.items():
+            if not getattr(self, attr):
+                champs.append(nom)
+        
+        return champs
 

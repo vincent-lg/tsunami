@@ -44,6 +44,8 @@ from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.flag import Flag
+from .edt_annuler import EdtAnnuler
+from .edt_envoyer import EdtEnvoyer
 
 class EdtBugedit(Presentation):
     
@@ -60,7 +62,8 @@ class EdtBugedit(Presentation):
         else:
             instance_connexion = None
         
-        Presentation.__init__(self, instance_connexion, rapport)
+        Presentation.__init__(self, instance_connexion, rapport,
+                peut_quitter=False)
         if personnage and rapport:
             self.construire(rapport)
     
@@ -86,4 +89,13 @@ class EdtBugedit(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description du rapport #{}".format(rapport.id).ljust(74) + \
             "|ff||\n" + self.opts.separateur
- 
+        
+        # Envoyer
+        envoyer = self.ajouter_choix("envoyer", "e", EdtEnvoyer, rapport)
+        envoyer.parent = self
+        
+        # Annuler
+        annuler = self.ajouter_choix("annuler et quitter la fenêtre", "ann", \
+                EdtAnnuler, rapport)
+        annuler.parent = self
+

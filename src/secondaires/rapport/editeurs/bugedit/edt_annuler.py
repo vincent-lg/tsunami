@@ -27,50 +27,24 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""Fichier contenant les constantes du module secondaire rapport."""
 
-TYPES = (
-    "bug",
-    "évolution",
-    "suggestion",
-)
+"""Fichier contenant le contexte éditeur EdtAnnuler."""
 
-CATEGORIES = (
-    "design",
-    "faute",
-    "réseau",
-    "scripting",
-    "sécurité",
-)
+from primaires.interpreteur.editeur import Editeur
 
-STATUTS = (
-    "nouveau",
-    "en cours",
-    "fermé",
-    "rejeté",
-    "dupliqué",
-)
-
-PRIORITES = (
-    "faible",
-    "normale",
-    "haute",
-    "urgente",
-    "immédiate",
-)
-
-ATTRS_STATUTS = {
-    "fermé": (
-        ("avancement", 100),
-        ("ouvert", False)),
-    "rejeté": (
-        ("ouvert", False)),
-    "dupliqué": (
-        ("ouvert", False)),
-}
-
-COMPLETE = {
-    "titre": "titre",
-    "description": "description",
-}
+class EdtAnnuler(Editeur):
+    
+    """Classe définissant le contexte éditeur 'annuler'.
+    
+    Ce contexte permet d'annuler l'envoie d'un rapport.
+    
+    """
+    
+    def entrer(self):
+        """En entrant dans l'éditeur."""
+        rapport = self.objet
+        rapport.detruire()
+        self.fermer()
+        self.pere.joueur << "|rg|Vos modifications ont été annulées.|ff|\n" \
+                "|rg|Le rapport ne sera pas envoyé.|ff|"
 
