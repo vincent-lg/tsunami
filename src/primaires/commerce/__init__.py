@@ -34,6 +34,7 @@ from abstraits.module import *
 from . import masques
 from . import commandes
 from . import types
+from .questeur import Questeur
 
 class Module(BaseModule):
     
@@ -55,7 +56,6 @@ class Module(BaseModule):
         doit posséder :
         A.  Un attribut de classe type_achat (str)
         B.  Une propriété ou un attribut d'objet valeur (float)
-        C.  à voir
     
     """
     
@@ -64,6 +64,13 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "commerce", "primaire")
         self.commandes = []
         self.types_services = {}
+        self.questeurs = []
+    
+    def init(self):
+        """Initialisation du module."""
+        # On récupère les questeurs
+        self.questeurs = self.importeur.supenr.charger_groupe(Questeur)
+        BaseModule.init(self)
     
     def ajouter_commandes(self):
         """Ajout des commandes"""
