@@ -51,7 +51,7 @@ class PrmBug(Parametre):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        titre = dic_masques["message"]
+        titre = dic_masques["message"].message
         rapport = importeur.rapport.creer_rapport(titre, personnage,
                 ajouter=False)
         rapport.type = "bug"

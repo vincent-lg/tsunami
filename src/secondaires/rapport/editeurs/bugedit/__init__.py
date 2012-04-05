@@ -44,9 +44,9 @@ from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.flag import Flag
+from secondaires.rapport.constantes import CATEGORIES
 from .edt_annuler import EdtAnnuler
 from .edt_envoyer import EdtEnvoyer
-
 class EdtBugedit(Presentation):
     
     """Classe définissant l'éditeur de rapport 'bugedit'.
@@ -89,6 +89,19 @@ class EdtBugedit(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description du rapport #{}".format(rapport.id).ljust(74) + \
             "|ff||\n" + self.opts.separateur
+        
+        # Catégorie
+        categories = sorted(CATEGORIES)
+        categorie = self.ajouter_choix("catégorie", "c", Choix, rapport,
+                "categorie", categories)
+        categorie.parent = self
+        categorie.prompt = "Catégorie du rapport : "
+        categorie.apercu = "{objet.categorie}"
+        categorie.aide_courte = \
+            "Entrez la |ent|catégorie|ff| du rapport ou |cmd|/|ff| pour revenir " \
+            "à la fenêtre parente.\n\nCatégorie disponibles : {}.\n\n" \
+            "Catégorie actuelle : |bc|{{objet.categorie}}|ff|".format(
+            ", ".join(categories))
         
         # Envoyer
         envoyer = self.ajouter_choix("envoyer", "e", EdtEnvoyer, rapport)
