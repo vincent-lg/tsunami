@@ -42,13 +42,16 @@ class Flottant(Editeur):
     
     nom = "editeur:base:flottant"
     
-    def __init__(self, pere, objet=None, attribut=None):
+    def __init__(self, pere, objet=None, attribut=None, signe=""):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
+        self.signe = signe
     
     def accueil(self):
         """Retourne l'aide courte"""
-        return self.aide_courte.format(objet = self.objet)
+        valeur = str(getattr(self.objet, self.attribut)).replace(".", ",") + \
+                self.signe
+        return self.aide_courte.format(objet=self.objet)
     
     def interpreter(self, msg):
         """Interprétation du contexte"""

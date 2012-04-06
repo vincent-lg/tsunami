@@ -35,6 +35,7 @@ from . import commandes
 from . import editeurs
 from .rapport import Rapport
 from .editeurs.bugedit import EdtBugedit
+from .editeurs.bugedit_p import EdtBugeditP
 
 class Module(BaseModule):
     
@@ -71,8 +72,9 @@ class Module(BaseModule):
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
         
-        # Ajout de l'éditeur 'bugedit'
+        # Ajout des éditeurs 'bugedit*'
         self.importeur.interpreteur.ajouter_editeur(EdtBugedit)
+        self.importeur.interpreteur.ajouter_editeur(EdtBugeditP)
     
     def creer_rapport(self, titre, createur=None, ajouter=True):
         """Crée un rapport."""

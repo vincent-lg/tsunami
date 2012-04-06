@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant le paramètre 'edit' de la commande 'rapport'."""
+"""Package contenant le paramètre 'editer' de la commande 'rapport'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 from primaires.interpreteur.editeur.presentation import Presentation
@@ -39,22 +39,33 @@ class PrmEdit(Parametre):
     
     def __init__(self):
         """Constructeur du paramètre."""
-        Parametre.__init__(self, "edit", "edit")
-        self.groupe = "administrateur"
+        Parametre.__init__(self, "editer", "edit")
         self.schema = "<nombre>"
         self.aide_courte = "ouvre l'éditeur de rapport"
         self.aide_longue = \
-            "Cette commande ouvre l'éditeur de rapport."
+            "Cette commande ouvre l'éditeur de rapport pour vous permettre " \
+            "d'éditer un rapport existant."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        r_id = dic_masques["nombre"].nombre
+        id = dic_masques["nombre"].nombre
         try:
-            rapport = type(self).importeur.rapport.rapports[r_id]
+            rapport = importeur.rapport.rapports[id]
         except KeyError:
-            personnage << "|err|Rapport inconnu {}.|ff|".format(r_id)
+            if personnage.est_immortel():
+                personnage << "|err|Ce rapport n'existe pas.|ff|"
+            else:
+                personnage << "|err|Vous ne pouvez éditer ce rapport.|ff|"
         else:
-            editeur = type(self).importeur.interpreteur.construire_editeur(
-                    "bugedit+", personnage, rapport)
+            if not personnage.est_immortel() and rapport.createur is not \
+                    personnage:
+                personnage << "|err|Vous ne pouvez éditer ce rapport.|ff|"
+                return
+            elif not personnage.est_immortel():
+                personnage << "Edition du rapport..."
+            else:
+                editeur = importeur.interpreteur.construire_editeur(
+                        "bugedit+", personnage, rapport)
             personnage.contextes.ajouter(editeur)
             editeur.actualiser()
+
