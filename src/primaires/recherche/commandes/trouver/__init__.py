@@ -1,4 +1,4 @@
-# -*-coding:Utf-8 -*
+﻿# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -25,41 +25,26 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# pereIBILITY OF SUCH DAMAGE.
+# POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit le contexte-éditeur 'flottant'."""
+"""Package contenant la commande 'trouver'."""
 
-from . import Editeur
+from primaires.interpreteur.commande.commande import Commande
 
-class Flottant(Editeur):
+class CmdTrouver(Commande):
     
-    """Contexte-éditeur flottant.
+    """Commande 'trouver'"""
     
-    Ce contexte sert à modifier des attributs de type 'float'.
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "trouver", "find")
+        self.nom_categorie = "divers"
+        self.schema = ""
+        self.aide_courte = "permet de rechercher dans l'univers"
+        self.aide_longue = \
+                ""
     
-    """
-    
-    nom = "editeur:base:flottant"
-    
-    def __init__(self, pere, objet=None, attribut=None, signe=""):
-        """Constructeur de l'éditeur"""
-        Editeur.__init__(self, pere, objet, attribut)
-        self.signe = signe
-    
-    def accueil(self):
-        """Retourne l'aide courte"""
-        valeur = str(getattr(self.objet, self.attribut)).replace(".", ",") + \
-                self.signe
-        return self.aide_courte.format(objet=self.objet)
-    
-    def interpreter(self, msg):
-        """Interprétation du contexte"""
-        try:
-            msg = msg.replace(",", ".")
-            msg = float(msg)
-        except ValueError:
-            self.pere << "|err|Cette valeur est invalide.|ff|"
-        else:
-            setattr(self.objet, self.attribut, msg)
-            self.actualiser()
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        pass

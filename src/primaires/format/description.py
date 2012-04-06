@@ -73,6 +73,10 @@ class Description(BaseObj):
             res.append(paragraphe)
         return "\n".join(res)
     
+    def __bool__(self):
+        """Retourne True si la description n'est pas vide, False sinon."""
+        return bool(str(self))
+    
     def ajouter_paragraphe(self, paragraphe):
         """Ajoute un paragraphe.
         

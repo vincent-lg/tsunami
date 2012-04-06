@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,31 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le contexte éditeur EdtMnemonic"""
+"""Fichier contenant le contexte éditeur EdtEnvoyer."""
 
-import re
+from primaires.interpreteur.editeur import Editeur
 
-from primaires.interpreteur.editeur.uniligne import Uniligne
-from primaires.salle.salle import MNEMONIC_VALIDE
-
-class EdtMnemonic(Uniligne):
+class EdtEnvoyer(Editeur):
     
-    """Classe définissant le contexte éditeur 'mnemonic'.
-    Ce contexte permet simplement d'éditer le mnémonic de la salle.
+    """Classe définissant le contexte éditeur 'envoyer'.
+    
+    Ce contexte permet d'envoyer un rapport de bug si il est complété.
     
     """
     
-    def interpreter(self, msg):
-        """Interprétation du message"""
-        msg = msg.lower()
-        ancien_ident = self.objet.ident
-        ident = self.objet.zone + ":" + msg
-        if not re.search(MNEMONIC_VALIDE, msg):
-            self.pere.envoyer("|err|Ce mnémonic est invalide. Veuillez " \
-                    "réessayer.|ff|")
-        elif ident in type(self).importeur.salle and ancien_ident != ident:
-            self.pere.envoyer("|err|L'identifiant {} est déjà utilisé " \
-                    "dans l'univers.|ff|".format(ident))
+    def entrer(self):
+        """En entrant dans l'éditeur."""
+        rapport = self.objet
+        if not rapport.est_complete():
+            champs = rapport.get_champs_a_completer()
+            if len(champs) > 1:
+                str_champs = "|ent|" + "|ff|, |ent|".join(champs[:-1]) + "|ff|"
+                str_champs += " et |ent|" + champs[-1] + "|ff|"
+            else:
+                str_champs = "|ent|" + champs[0] + "|ff|"
+            
+            self.pere.joueur << "|err|Ce rapport n'est pas proprement " \
+                    "complété.\nVous devez encore remplir les champs " \
+                    "{}.|ff|\n".format(str_champs)
+            self.migrer_contexte(self.opts.rci_ctx_prec)
         else:
-            self.objet.mnemonic = msg
-            self.actualiser()
+            importeur.rapport.ajouter_rapport(rapport)
+            self.fermer()
+            self.pere.joueur << "|att|Le rapport {} a bien été " \
+                    "envoyé.|ff|".format(rapport.id)
+

@@ -1,4 +1,4 @@
-# -*-coding:Utf-8 -*
+﻿# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -25,41 +25,38 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# pereIBILITY OF SUCH DAMAGE.
+# POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit le contexte-éditeur 'flottant'."""
+"""Fichier contenant le masque <cherchable>."""
 
-from . import Editeur
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
 
-class Flottant(Editeur):
+class MCherchable(Masque):
     
-    """Contexte-éditeur flottant.
-    
-    Ce contexte sert à modifier des attributs de type 'float'.
+    """Masque <cherchable>.
+    On attend un nom d'objet recherchable en paramètre.
     
     """
     
-    nom = "editeur:base:flottant"
+    nom = "cherchable"
+    nom_complet = "objet cherchable"
     
-    def __init__(self, pere, objet=None, attribut=None, signe=""):
-        """Constructeur de l'éditeur"""
-        Editeur.__init__(self, pere, objet, attribut)
-        self.signe = signe
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self)
     
-    def accueil(self):
-        """Retourne l'aide courte"""
-        valeur = str(getattr(self.objet, self.attribut)).replace(".", ",") + \
-                self.signe
-        return self.aide_courte.format(objet=self.objet)
+    def init(self):
+        """Initialisation des attributs"""
+        pass
     
-    def interpreter(self, msg):
-        """Interprétation du contexte"""
-        try:
-            msg = msg.replace(",", ".")
-            msg = float(msg)
-        except ValueError:
-            self.pere << "|err|Cette valeur est invalide.|ff|"
-        else:
-            setattr(self.objet, self.attribut, msg)
-            self.actualiser()
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
+        pass
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        pass

@@ -28,27 +28,23 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'trouver' et ses sous-commandes.
+"""Fichier contenant le contexte éditeur EdtAnnuler."""
 
-Dans ce fichier se trouve la commande même.
+from primaires.interpreteur.editeur import Editeur
 
-"""
-
-from primaires.interpreteur.commande.commande import Commande
-from .ajouter import PrmAjouter
-from .liste import PrmListe
-from .supprimer import PrmSupprimer
-
-class CmdTrouver(Commande):
+class EdtAnnuler(Editeur):
     
-    """Commande 'trouver'.
+    """Classe définissant le contexte éditeur 'annuler'.
+    
+    Ce contexte permet d'annuler l'envoie d'un rapport.
     
     """
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "trouver", "find")
-        self.groupe = "joueur"
-        self.aide_courte = "manipulation des aliass"
-        self.aide_longue = \
-            ""
+    def entrer(self):
+        """En entrant dans l'éditeur."""
+        rapport = self.objet
+        rapport.detruire()
+        self.fermer()
+        self.pere.joueur << "|rg|Vos modifications ont été annulées.|ff|\n" \
+                "|rg|Le rapport ne sera pas envoyé.|ff|"
+

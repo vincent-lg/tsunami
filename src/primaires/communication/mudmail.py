@@ -126,16 +126,16 @@ class MUDmail(BaseObj):
     
     def envoyer(self):
         """Envoie le mail"""
-        liste_dest = []
+        liste_dest = set(self.liste_dest)
         if self.aliases:
             for alias in self.aliases:
-                liste_dest += alias.retourner_joueurs()
-        # On nettoie la liste pour supprimer les doublons éventuels
-        for dest in list(liste_dest):
-            while liste_dest.count(dest) > 2:
-                liste_dest.remove(dest)
+                [liste_dest.add(j) for j in alias.retourner_joueurs()]
         if self.expediteur in liste_dest:
             liste_dest.remove(self.expediteur)
+        
+        if not liste_dest:
+            raise ValueError("la liste de destinataires est vide")
+        
         for dest in liste_dest:
             mail = type(self).importeur.communication.mails.creer_mail(
                     self.expediteur)

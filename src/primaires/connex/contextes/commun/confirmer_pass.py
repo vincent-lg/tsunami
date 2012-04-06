@@ -49,10 +49,12 @@ class ConfirmerPass(Contexte):
     def entrer(self):
         """En arrivant dans le contexte"""
         self.pere.client.masquer = True
+        self.pere.envoyer_options("masquer")
         
     def sortir(self):
         """En sortant du contexte"""
         self.pere.client.masquer = False
+        self.pere.envoyer_options("afficher")
         
     def accueil(self):
         """Message d'accueil"""

@@ -27,33 +27,50 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+"""Fichier contenant les constantes du module secondaire rapport."""
 
-"""Fichier contenant le contexte éditeur Supprimer"""
+TYPES = (
+    "bug",
+    "évolution",
+    "suggestion",
+)
 
-from primaires.interpreteur.editeur.supprimer import Supprimer
+CATEGORIES = (
+    "design",
+    "faute",
+    "réseau",
+    "scripting",
+    "sécurité",
+)
 
-class NSupprimer(Supprimer):
-    
-    """Classe définissant le contexte éditeur 'supprimer'.
-    
-    Ce contexte permet spécifiquement de supprimer une salle.
-    
-    """
-    
-    def interpreter(self, msg):
-        """Interprétation du contexte"""
-        msg = msg.lower()
-        salle = self.objet
-        if msg == "oui":
-            if salle.personnages:
-                self.pere << "|err|Des personnages sont présents dans " \
-                        "cette salle.\nOpération annulée.|ff|"
-            else:
-                importeur.salle.supprimer_salle(salle.ident)
-                self.fermer()
-                self.pere << "|rg|La salle {} a bien été " \
-                        "supprimée.|ff|".format(salle.ident)
-        elif msg == "non":
-            self.migrer_contexte(self.opts.rci_ctx_prec)
-        else:
-            self.pere << "|err|Choix invalide.|ff|"
+STATUTS = (
+    "nouveau",
+    "en cours",
+    "fermé",
+    "rejeté",
+    "dupliqué",
+)
+
+PRIORITES = (
+    "faible",
+    "normale",
+    "haute",
+    "urgente",
+    "immédiate",
+)
+
+ATTRS_STATUTS = {
+    "fermé": (
+        ("avancement", 100),
+        ("ouvert", False)),
+    "rejeté": (
+        ("ouvert", False)),
+    "dupliqué": (
+        ("ouvert", False)),
+}
+
+COMPLETE = {
+    "titre": "titre",
+    "description": "description",
+}
+

@@ -40,17 +40,20 @@ class Entier(Editeur):
     
     """
     
-    nom = "editeur:base:flottant"
+    nom = "editeur:base:entier"
     
-    def __init__(self, pere, objet=None, attribut=None, inf=0, sup=None):
+    def __init__(self, pere, objet=None, attribut=None, inf=0, sup=None,
+            signe=""):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
         self.limite_inf = inf
         self.limite_sup = sup
+        self.signe = signe
     
     def accueil(self):
         """Retourne l'aide courte"""
-        return self.aide_courte.format(objet = self.objet)
+        valeur = str(getattr(self.objet, self.attribut)) + self.signe
+        return self.aide_courte.format(objet=self.objet, valeur=valeur)
     
     def interpreter(self, msg):
         """Interprétation du contexte"""

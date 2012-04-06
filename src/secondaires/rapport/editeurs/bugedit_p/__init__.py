@@ -42,18 +42,18 @@ les extensions n'apparaîtront pas ici.
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.flag import Flag
-from secondaires.rapport.constantes import CATEGORIES
-from .edt_annuler import EdtAnnuler
-from .edt_envoyer import EdtEnvoyer
-class EdtBugedit(Presentation):
+from secondaires.rapport.constantes import *
+
+class EdtBugeditP(Presentation):
     
     """Classe définissant l'éditeur de rapport 'bugedit'.
     
     """
     
-    nom = "bugedit"
+    nom = "bugedit+"
     
     def __init__(self, personnage, rapport):
         """Constructeur de l'éditeur"""
@@ -62,8 +62,7 @@ class EdtBugedit(Presentation):
         else:
             instance_connexion = None
         
-        Presentation.__init__(self, instance_connexion, rapport,
-                peut_quitter=False)
+        Presentation.__init__(self, instance_connexion, rapport)
         if personnage and rapport:
             self.construire(rapport)
     
@@ -87,9 +86,33 @@ class EdtBugedit(Presentation):
         description.parent = self
         description.apercu = "{objet.description.paragraphes_indentes}"
         description.aide_courte = \
-            "| |tit|" + "Description du rapport #{}".format(rapport.id).ljust(74) + \
+            "| |tit|" + "Description du rapport #{}".format(
+            rapport.id).ljust(74) + \
             "|ff||\n" + self.opts.separateur
         
+        # Statut
+        statut = self.ajouter_choix("statut", "s", Choix, rapport,
+                "statut", STATUTS)
+        statut.parent = self
+        statut.prompt = "Statut du rapport : "
+        statut.apercu = "{objet.statut}"
+        statut.aide_courte = \
+            "Entrez le |ent|statut|ff| du rapport ou |cmd|/|ff| pour " \
+            "revenir à la fenêtre parente.\n\nStatuts disponibles : " \
+            "{}.\n\nStatut actuel : |bc|{{objet.statut}}|ff|".format(
+            ", ".join(STATUTS))
+        
+        # Avancement
+        avancement = self.ajouter_choix("avancement", "a", Entier, rapport,
+                "avancement", 0, 100, "%")
+        avancement.parent = self
+        avancement.prompt = "Avancement de la tâche : "
+        avancement.apercu = "{objet.avancement}"
+        avancement.aide_courte = \
+            "Entrez l'|ent|avancement|ff| en pourcent de la tâche ou " \
+            "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
+            "Avancement actuel : |bc|{valeur}|ff|"
+
         # Catégorie
         categories = sorted(CATEGORIES)
         categorie = self.ajouter_choix("catégorie", "c", Choix, rapport,
@@ -98,17 +121,7 @@ class EdtBugedit(Presentation):
         categorie.prompt = "Catégorie du rapport : "
         categorie.apercu = "{objet.categorie}"
         categorie.aide_courte = \
-            "Entrez la |ent|catégorie|ff| du rapport ou |cmd|/|ff| pour revenir " \
-            "à la fenêtre parente.\n\nCatégorie disponibles : {}.\n\n" \
-            "Catégorie actuelle : |bc|{{objet.categorie}}|ff|".format(
+            "Entrez la |ent|catégorie|ff| du rapport ou |cmd|/|ff| pour " \
+            "revenir à la fenêtre parente.\n\nCatégorie disponibles : " \
+            "{}.\n\nCatégorie actuelle : |bc|{{objet.categorie}}|ff|".format(
             ", ".join(categories))
-        
-        # Envoyer
-        envoyer = self.ajouter_choix("envoyer", "e", EdtEnvoyer, rapport)
-        envoyer.parent = self
-        
-        # Annuler
-        annuler = self.ajouter_choix("annuler et quitter la fenêtre", "ann", \
-                EdtAnnuler, rapport)
-        annuler.parent = self
-

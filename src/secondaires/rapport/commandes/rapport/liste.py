@@ -31,6 +31,7 @@
 """Fichier contenant le paramètre 'liste' de la commande 'rapport'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
+from primaires.format.fonctions import oui_ou_non
 
 class PrmListe(Parametre):
     
@@ -47,16 +48,22 @@ class PrmListe(Parametre):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        rapports = list(type(self).importeur.rapport.rapports.values())
-        rapports = sorted(rapports, key=lambda r: r.date)
+        rapports = list(importeur.rapport.rapports.values())
         if rapports:
             lignes = [
-                "  Clé             | Salles | Ouverte |"]
+                "+-" + "-" * 5 + "-+-" + "-" * 10 + "-+-" + "-" * 40 + "-+",
+                "|    ID | Créateur   | Sujet" + " " * 35 + " |",
+                "+-" + "-" * 5 + "-+-" + "-" * 10 + "-+-" + "-" * 40 + "-+",
+            ]
             for rapport in rapports:
-                ouverte = oui_ou_non(rapport.ouverte)
+                createur = rapport.createur and rapport.createur.nom or \
+                        "inconnu"
                 lignes.append(
-                    "  {:<15} | {:>6} | {}     |".format(
-                    rapport.cle, len(rapport.salles), ouverte))
+                    "| {:>5} | {:<10} | {:<40} |".format(
+                    rapport.id, createur, rapport.titre))
+            
+            lignes.append(
+                "+-" + "-" * 5 + "-+-" + "-" * 10 + "-+-" + "-" * 40 + "-+")
             personnage << "\n".join(lignes)
         else:
             personnage << "Aucun rapport n'est actuellement défini."

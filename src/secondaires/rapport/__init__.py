@@ -34,6 +34,8 @@ from abstraits.module import *
 from . import commandes
 from . import editeurs
 from .rapport import Rapport
+from .editeurs.bugedit import EdtBugedit
+from .editeurs.bugedit_p import EdtBugeditP
 
 class Module(BaseModule):
     
@@ -54,6 +56,11 @@ class Module(BaseModule):
         for rapport in rapports:
             self.rapports[rapport.id] = rapport
         
+        if self.rapports:
+            Rapport.id_actuel = max(self.rapports.keys())
+        else:
+            Rapport.id_actuel = 1
+        
         BaseModule.init(self)
     
     def ajouter_commandes(self):
@@ -64,3 +71,20 @@ class Module(BaseModule):
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
+        
+        # Ajout des éditeurs 'bugedit*'
+        self.importeur.interpreteur.ajouter_editeur(EdtBugedit)
+        self.importeur.interpreteur.ajouter_editeur(EdtBugeditP)
+    
+    def creer_rapport(self, titre, createur=None, ajouter=True):
+        """Crée un rapport."""
+        rapport = Rapport(titre, createur)
+        if ajouter:
+            self.ajouter_rapport(rapport)
+        
+        return rapport
+    
+    def ajouter_rapport(self, rapport):
+        """Ajoute un rapport."""
+        self.rapports[rapport.id] = rapport
+
