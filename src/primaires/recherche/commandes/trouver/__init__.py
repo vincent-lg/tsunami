@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 NOEL-BARON Léo
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,8 @@
 
 """Package contenant la commande 'trouver'."""
 
+import getopt
+
 from primaires.interpreteur.commande.commande import Commande
 
 class CmdTrouver(Commande):
@@ -40,11 +42,19 @@ class CmdTrouver(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "trouver", "find")
         self.nom_categorie = "divers"
-        self.schema = ""
+        self.schema = "<cherchable> (<message>)"
         self.aide_courte = "permet de rechercher dans l'univers"
         self.aide_longue = \
                 ""
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        pass
+        cherchable = dic_masques["cherchable"].cherchable
+        if dic_masques["message"] is None:
+            retour = cherchable.items
+        else:
+            message = dic_masque["message"].message
+            options, args = getopt.getopt(message, cherchable.courtes,
+                    cherchables.longues)
+            # On catch les options génériques
+            retour = cherchable.tester(options)

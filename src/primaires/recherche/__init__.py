@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 NOEL-BARON Léo
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,8 @@
 
 from abstraits.module import *
 from primaires.recherche import commandes
+from primaires.recherche import masques
+from primaires.recherche import cherchables
 
 class Module(BaseModule):
     
@@ -48,12 +50,12 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "recherche", "primaire")
         self.logger = type(self.importeur).man_logs.creer_logger( \
                 "recherche", "recherche")
-        self._cherchables = None
+        self.masques = []
+        self.commandes = []
+        self._cherchables = cherchables
     
     def init(self):
         """Initialisation du module"""
-        # ...
-        
         BaseModule.init(self)
     
     def ajouter_commandes(self):
@@ -71,12 +73,4 @@ class Module(BaseModule):
     @property
     def cherchables(self):
         """Retourne les cherchables existants"""
-        return self._cherchables
-    
-    def ajouter_cherchable(self, cherchable):
-        """Ajoute un objet cherchable"""
-        pass
-    
-    def traiter_commande(self, personnage, commande):
-        """Traite les commandes au premier niveau"""
-        pass
+        return list(self._cherchables)
