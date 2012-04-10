@@ -28,46 +28,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire recherche."""
+"""Ce package contient les objets cherchables du module.
 
-from abstraits.module import *
-from primaires.recherche import commandes
-from primaires.recherche import masques
-from primaires.recherche.cherchables import *
+"""
 
-class Module(BaseModule):
-    
-    """Classe représentant le module primaire 'recherche'.
-    
-    Ce module constitue le moteur de recherche de la plateforme. On peut
-    y implémenter divers outils dont la finalité est de permettre aux
-    administrateurs de mieux manipuler l'univers qu'ils créent.
-    
-    """
-    
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "recherche", "primaire")
-        self.logger = type(self.importeur).man_logs.creer_logger( \
-                "recherche", "recherche")
-        self.masques = []
-        self.commandes = []
-        self._cherchables = l_cherchables
-    
-    def init(self):
-        """Initialisation du module"""
-        BaseModule.init(self)
-    
-    def ajouter_commandes(self):
-        """Ajout des commandes"""
-        self.commandes = [
-            commandes.trouver.CmdTrouver(),
-        ]
-        
-        for cmd in self.commandes:
-            self.importeur.interpreteur.ajouter_commande(cmd)
-    
-    @property
-    def cherchables(self):
-        """Retourne les cherchables existants"""
-        return dict(self._cherchables)
+from .objet import CherchableObjet

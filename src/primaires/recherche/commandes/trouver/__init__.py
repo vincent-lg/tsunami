@@ -31,6 +31,7 @@
 """Package contenant la commande 'trouver'."""
 
 import getopt
+import shlex
 
 from primaires.interpreteur.commande.commande import Commande
 
@@ -50,11 +51,17 @@ class CmdTrouver(Commande):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         cherchable = dic_masques["cherchable"].cherchable
+        retour = []
         if dic_masques["message"] is None:
             retour = cherchable.items
         else:
-            message = dic_masque["message"].message
-            options, args = getopt.getopt(message, cherchable.courtes,
-                    cherchables.longues)
-            # On catch les options génériques
+            message = dic_masques["message"].message
+            options, args = getopt.getopt(shlex.split(message),
+                    cherchable.courtes, cherchable.longues)
+            # On catch les options génériques, A FAIRE
             retour = cherchable.tester(options)
+        # On trie le retour si nécessaire, A FAIRE
+        retour_aff = []
+        for o in retour:
+            retour_aff.append(cherchable.afficher(o))
+        personnage << "\n".join(sorted(retour_aff))

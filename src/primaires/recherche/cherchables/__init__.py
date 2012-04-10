@@ -34,7 +34,7 @@
 
 from abstraits.obase import MetaBaseObj
 
-cherchables = {} # objets cherchables {nom:classe}
+l_cherchables = {} # objets cherchables {nom:classe}
 
 class MetaCherchable(MetaBaseObj):
     
@@ -50,6 +50,6 @@ class MetaCherchable(MetaBaseObj):
         MetaBaseObj.__init__(cls, nom, bases, contenu)
         cls.cherchables = {}
         if cls.nom_cherchable:
-            cherchables[cls.nom_cherchable] = cls
+            l_cherchables[cls.nom_cherchable] = cls
 
 from .cherchable import Cherchable

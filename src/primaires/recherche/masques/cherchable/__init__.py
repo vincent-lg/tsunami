@@ -54,7 +54,7 @@ class MCherchable(Masque):
         nom_cherchable = liste_vers_chaine(commande)
         
         if not nom_cherchable:
-            raise ErreurValidation( \
+            raise ErreurValidation(
                 "Précisez l'objet de votre recherche.")
         
         nom_cherchable = nom_cherchable.split(" ")[0]
@@ -70,5 +70,7 @@ class MCherchable(Masque):
         cherchables = importeur.recherche.cherchables
         if nom_cherchable in cherchables:
             self.cherchable = cherchables[nom_cherchable]()
-        
-        return True
+            return True
+        else:
+            raise ErreurValidation(
+                "|err|Vous ne pouvez rechercher cela.|ff|")

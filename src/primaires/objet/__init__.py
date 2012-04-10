@@ -35,6 +35,7 @@ from . import types
 from . import commandes
 from . import editeurs
 from . import masques
+from . import cherchables
 from .editeurs.oedit import EdtOedit
 from .types import types as o_types
 from .types.base import BaseType
