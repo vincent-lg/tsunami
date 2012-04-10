@@ -51,17 +51,39 @@ class CmdTrouver(Commande):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         cherchable = dic_masques["cherchable"].cherchable
+        # On crée les listes d'options
+        opt_courtes = cherchable.courtes + "a"
+        opt_longues = cherchable.longues + ["aide"]
         retour = []
         if dic_masques["message"] is None:
             retour = cherchable.items
         else:
             message = dic_masques["message"].message
-            options, args = getopt.getopt(shlex.split(message),
-                    cherchable.courtes, cherchable.longues)
-            # On catch les options génériques, A FAIRE
-            retour = cherchable.tester(options)
-        # On trie le retour si nécessaire, A FAIRE
-        retour_aff = []
-        for o in retour:
-            retour_aff.append(cherchable.afficher(o))
-        personnage << "\n".join(sorted(retour_aff))
+            try:
+                options, args = getopt.getopt(shlex.split(message),
+                        opt_courtes, opt_longues)
+            except getopt.GetoptError as err:
+                print(err)
+                personnage << "|err|Une option n'a pas été reconnue.|ff|"
+                return False
+            # On catch les options génériques
+            for opt, arg in options:
+                if opt in ("-a", "--aide"):
+                    personnage << "aide"
+                    return
+            try:
+                retour = cherchable.tester(options, cherchable.items)
+            except TypeError:
+                personnage << "|err|Les options n'ont pas été bien " \
+                        "interprétées.|ff|"
+                return False
+        # Post-traitement et affichage
+        if not retour:
+            personnage << "|att|Aucun retour pour ces paramètres de " \
+                    "recherche.|ff|"
+        else:
+            # On trie le retour si nécessaire, A FAIRE
+            retour_aff = []
+            for o in retour:
+                retour_aff.append(cherchable.afficher(o))
+            personnage << "\n".join(sorted(retour_aff))

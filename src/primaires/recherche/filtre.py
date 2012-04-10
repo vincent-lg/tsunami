@@ -57,7 +57,7 @@ class Filtre:
         if self.type:
             if self.type == "str":
                 try:
-                    valeur = re.compile(valeur)
+                    valeur = re.compile(valeur.replace("_b_", "|"))
                 except re.error:
                     raise TypeError(
                             "le type précisé doit être une chaîne valide")

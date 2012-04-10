@@ -51,6 +51,8 @@ class CherchableObjet(Cherchable):
         
         """
         self.ajouter_filtre("n", "nom", "nom_singulier", "str")
+        self.ajouter_filtre("c", "cle", "cle", "str")
+        self.ajouter_filtre("i", "ident", "identifiant", "str")
     
     @property
     def items(self):

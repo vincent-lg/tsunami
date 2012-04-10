@@ -37,7 +37,7 @@ from abstraits.obase import BaseObj
 from primaires.recherche.filtre import Filtre
 from primaires.recherche.cherchables import MetaCherchable
 
-INTERDITS = []
+INTERDITS = ["a", "aide"]
 
 class Cherchable(BaseObj, metaclass=MetaCherchable):
     
@@ -76,11 +76,13 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
         avec = []
         sans = ""
         for filtre in self.filtres:
+            courte = filtre.opt_courte
+            courte += ":" if filtre.type else ""
             if filtre.opt_longue:
-                avec.append(filtre.opt_courte)
+                avec.append(courte)
             else:
-                sans += filtre.opt_courte
-        avec = ":".join(sorted(avec)) + ":"
+                sans += courte
+        avec = "".join(sorted(avec))
         print(avec + sans)
         return avec + sans
     
@@ -102,35 +104,38 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
     
     def ajouter_filtre(self, opt_courte, opt_longue, test, type=""):
         """Ajoute le filtre spécifié"""
-        opt_courtes = [f.opt_courte for f in self.filtres]
-        if opt_courte in opt_courtes or opt_courte in INTERDITS:
-            raise ValueError("l'option courte {} est indisponible".format(
+        longues = [f.opt_longue for f in self.filtres]
+        if opt_courte in self.courtes or opt_courte in INTERDITS:
+            raise ValueError("l'option courte '{}' est indisponible".format(
                     opt_courte))
+        if opt_longue in longues or opt_longue in INTERDITS:
+            raise ValueError("l'option longue '{}' est indisponible".format(
+                    opt_longue))
         if type and type not in ("int", "str", "bool"):
             raise ValueError("le type {} est invalide".format(type))
         self.filtres.append(Filtre(opt_courte, opt_longue, test, type))
     
-    def tester(self, options):
+    def tester(self, options, liste):
         """Teste une liste de couples (option, argument)"""
         if not options:
-            return self.items
+            return liste
         liste_ret = []
+        # On regarde la première option
+        o, a = options[0]
         # Pour chaque objet de la liste à traiter
-        for item in self.items:
-            # On regarde les options une par une
-            for o, a in options:
-                o_testee = False
-                # On récupère le filtre adéquat
-                for filtre in self.filtres:
-                    if o in ("-" + filtre.opt_courte,
-                            "--" + filtre.opt_longue):
-                        # Si le filtre dit oui, on retient l'objet en question
-                        if filtre.tester(item, a):
-                            liste_ret.append(item)
-                        o_testee = True
-                if not o_testee:
-                    raise ValueError("l'option {} n'existe pas".format(o))
-        return liste_ret
+        for item in liste:
+            o_testee = False
+            # On récupère le filtre adéquat
+            for filtre in self.filtres:
+                if o in ("-" + filtre.opt_courte, "--" + filtre.opt_longue):
+                    # Si le filtre dit oui, on retient l'objet en question
+                    if filtre.tester(item, a):
+                        liste_ret.append(item)
+                    o_testee = True
+            if not o_testee:
+                raise ValueError("l'option {} n'existe pas".format(o))
+        del options[0]
+        return self.tester(options, liste_ret)
     
     def afficher(self, objet):
         """Méthode d'affichage des objets traités"""
