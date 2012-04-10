@@ -55,7 +55,11 @@ class ConsoleInteractive:
     
     def boucle(self):
         """A chaque tour de boucle."""
-        code = input(">>> ")
+        try:
+            code = input(">>> ")
+        except (KeyboardInterrupt, EOFError):
+            importeur.serveur.lance = False
+            return
         if code:
             try:
                 exec(code, self.espace)

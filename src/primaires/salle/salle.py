@@ -170,6 +170,16 @@ class Salle(BaseObj):
         """Retourne les chemins autour de self dans le rayon précisé."""
         return Chemins.salles_autour(self, rayon)
     
+    def trouver_chemin(self, destination, rayon=5):
+        """Retourne, si trouvé, le chemin menant à destination ou None.
+        
+        Le rayon passé en argument est celui de recherche. Plus il est
+        élevé, plus le temps de calcul risque d'être important.
+        
+        """
+        chemins = Chemins.salles_autour(self, rayon)
+        return chemins.get(destination)
+    
     def envoyer(self, message, *personnages, **kw_personnages):
         """Envoie le message aux personnages présents dans la salle.
         
