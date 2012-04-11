@@ -108,7 +108,6 @@ class Objet(BaseObj):
             assert callable(attribut)
             return MethodeObjet(attribut, self)
         except (AttributeError, AssertionError) as err:
-            print(err)
             return getattr(self.prototype, nom_attr)
     
     def __repr__(self):
