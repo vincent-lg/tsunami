@@ -161,7 +161,8 @@ class CasePuits(Case):
             autre = jeu.puits
             autre << "Vous pouvez sortir du puits !"
             a_pion = jeu.pions[autre]
-            partie.envoyer("{} sort du puits.".format(a_pion.couleur), autre)
+            partie.envoyer("Le pion {} sort du puits.".format(a_pion.couleur),
+                    autre)
         pion = jeu.pions[personnage]
         personnage << "Vous devez attendre que quelqu'un vous délivre."
         jeu.puits = personnage
@@ -185,7 +186,8 @@ class CasePrison(Case):
             autre = jeu.prison
             autre << "Vous êtes libre ! Vous pouvez quitter la prison."
             a_pion = jeu.pions[autre]
-            partie.envoyer("{} quitte la prison.".format(a_pion.couleur), autre)
+            partie.envoyer("Le pion {} quitte la prison.".format(
+                    a_pion.couleur), autre)
         pion = jeu.pions[personnage]
         personnage << "Vous devez attendre que quelqu'un vous délivre."
         jeu.prison = personnage
