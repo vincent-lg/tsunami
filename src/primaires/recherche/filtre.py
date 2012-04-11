@@ -80,7 +80,7 @@ class Filtre:
             return self.test(objet, valeur)
         else:
             if self.type == "str":
-                return valeur.search(objet.__getattr__(self.test))
+                return valeur.search(getattr(objet, self.test))
             elif self.type in ("int", "bool"):
                 return objet.__getattr__(self.test) == valeur
             else:
