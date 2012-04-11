@@ -28,46 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire recherche."""
+"""Ce fichier définit la classe Cherchable, classe abstraite de base
+pour les objets de recherche (voir plus bas).
 
-from abstraits.module import *
-from primaires.recherche import commandes
-from primaires.recherche import masques
-from primaires.recherche.cherchables import *
+"""
 
-class Module(BaseModule):
+from primaires.recherche.cherchables.cherchable import Cherchable
+
+class CherchableObjet(Cherchable):
     
-    """Classe représentant le module primaire 'recherche'.
-    
-    Ce module constitue le moteur de recherche de la plateforme. On peut
-    y implémenter divers outils dont la finalité est de permettre aux
-    administrateurs de mieux manipuler l'univers qu'ils créent.
+    """Classe cherchable pour les objets de l'univers.
     
     """
     
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "recherche", "primaire")
-        self.logger = type(self.importeur).man_logs.creer_logger( \
-                "recherche", "recherche")
-        self.masques = []
-        self.commandes = []
-        self._cherchables = l_cherchables
+    nom_cherchable = "objet"
     
     def init(self):
-        """Initialisation du module"""
-        BaseModule.init(self)
-    
-    def ajouter_commandes(self):
-        """Ajout des commandes"""
-        self.commandes = [
-            commandes.trouver.CmdTrouver(),
-        ]
+        """Méthode d'initialisation.
         
-        for cmd in self.commandes:
-            self.importeur.interpreteur.ajouter_commande(cmd)
+        C'est ici que l'on ajoute réellement les filtres, avec la méthode
+        dédiée.
+        
+        """
+        self.ajouter_filtre("n", "nom", "nom_singulier", "str")
+        self.ajouter_filtre("c", "cle", "cle", "str")
+        self.ajouter_filtre("i", "ident", "identifiant", "str")
     
     @property
-    def cherchables(self):
-        """Retourne les cherchables existants"""
-        return dict(self._cherchables)
+    def items(self):
+        """Renvoie la liste des objets traités"""
+        return list(importeur.objet.objets.values())
+    
+    def afficher(self, objet):
+        """Méthode d'affichage des objets traités"""
+        return objet.identifiant + " : " + objet.nom_singulier

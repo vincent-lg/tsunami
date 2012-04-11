@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 NOEL-BARON Léo
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,35 +28,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit la classe BaseCherchable, classe abstraite de base
-pour les objets de recherche (voir plus bas).
+"""Ce package contient les objets cherchables du module.
 
 """
 
-from abstraits.obase import MetaBaseObj
-
-cherchables = {} # objets cherchables {nom:classe}
-
-class MetaCherchable(MetaBaseObj):
-    
-    """Métaclasse des cherchables.
-    
-    Elle ajoute l'objet dans le dictionnaire 'cherchables' s'il possède
-    un nom.
-    
-    """
-    
-    def __init__(cls, nom, bases, contenu):
-        """Constructeur de la métaclasse"""
-        MetaBaseObj.__init__(cls, nom, bases, contenu)
-        cls.cherchables = {}
-        if cls.nom_cherchable:
-            cherchables[cls.nom_cherchable] = cls
-
-class Cherchable(BaseObj, metaclass=MetaCherchable):
-    
-    """Classe de base des objets de recherche.
-    
-    """
-    
-    pass
+from .objet import CherchableObjet

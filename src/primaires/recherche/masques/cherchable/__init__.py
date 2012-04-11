@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 NOEL-BARON Léo
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -43,20 +43,34 @@ class MCherchable(Masque):
     """
     
     nom = "cherchable"
-    nom_complet = "objet cherchable"
-    
-    def __init__(self):
-        """Constructeur du masque"""
-        Masque.__init__(self)
+    nom_complet = "objet de la recherche"
     
     def init(self):
         """Initialisation des attributs"""
-        pass
+        self.cherchable = None
     
     def repartir(self, personnage, masques, commande):
         """Répartition du masque."""
-        pass
+        nom_cherchable = liste_vers_chaine(commande)
+        
+        if not nom_cherchable:
+            raise ErreurValidation(
+                "Précisez l'objet de votre recherche.")
+        
+        nom_cherchable = nom_cherchable.split(" ")[0]
+        self.a_interpreter = nom_cherchable
+        commande[:] = commande[len(nom_cherchable):]
+        masques.append(self)
+        return True
     
     def valider(self, personnage, dic_masques):
         """Validation du masque"""
-        pass
+        Masque.valider(self, personnage, dic_masques)
+        nom_cherchable = self.a_interpreter
+        cherchables = importeur.recherche.cherchables
+        if nom_cherchable in cherchables:
+            self.cherchable = cherchables[nom_cherchable]()
+            return True
+        else:
+            raise ErreurValidation(
+                "|err|Vous ne pouvez rechercher cela.|ff|")
