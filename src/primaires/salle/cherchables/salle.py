@@ -28,19 +28,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit le cherchable des objets.
+"""Ce fichier définit le cherchable des salles.
 
 """
 
 from primaires.recherche.cherchables.cherchable import Cherchable
 
-class CherchableObjet(Cherchable):
+class CherchableSalle(Cherchable):
     
-    """Classe cherchable pour les objets de l'univers.
+    """Classe cherchable pour les salles de l'univers.
     
     """
     
-    nom_cherchable = "objet"
+    nom_cherchable = "salle"
     
     def init(self):
         """Méthode d'initialisation.
@@ -49,43 +49,14 @@ class CherchableObjet(Cherchable):
         dédiée.
         
         """
-        self.ajouter_filtre("n", "nom", "nom_singulier", "str")
-        self.ajouter_filtre("l", "cle", "cle", "str")
-        self.ajouter_filtre("i", "ident", "identifiant", "str")
-        self.ajouter_filtre("t", "type", self.test_type, "str!")
+        self.ajouter_filtre("t", "titre", "titre", "str")
+        self.ajouter_filtre("i", "interieur", "interieur", "bool")
     
     @property
     def items(self):
         """Renvoie la liste des objets traités"""
-        return list(importeur.objet.objets.values())
-    
-    @property
-    def attributs_tri(self):
-        """Renvoie la liste des attributs par lesquels on peut trier"""
-        return ["identifiant", "cle", "nom"]
-    
-    @property
-    def colonnes(self):
-        """Retourne un dictionnaire des valeurs que l'on peut disposer en
-        colonne à l'affichage final, de la forme :
-        >>> {nom: attribut/méthode}
-        (une colonne peut être remplie par une méthode du cherchable).
-        
-        """
-        return {"ident":"identifiant", "nom":"nom_singulier", "cle":"cle"}
+        return list(importeur.salle.salles.values())
     
     def afficher(self, objet):
-        """Méthode d'affichage standard des objets traités"""
-        return objet.identifiant + " : " + objet.nom_singulier
-    
-    def test_type(self, objet, valeur):
-        """Permet une recherche sur le type de l'objet. Le type spécifié
-        doit être un type valide et existant ; si l'objet est de ce type ou
-        d'un de ses fils, il sera retourné à la recherche (cette option
-        n'accepte pas les regex).
-        
-        """
-        try:
-            return objet.est_de_type(valeur)
-        except KeyError:
-            return False
+        """Méthode d'affichage des objets traités"""
+        return objet.ident + " : " + objet.titre

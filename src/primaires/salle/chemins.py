@@ -30,6 +30,8 @@
 
 """Fichier contenant la classe Chemins, détaillée plus bas."""
 
+from math import cos, sin, tan, radians, sqrt
+
 from abstraits.obase import BaseObj
 from primaires.vehicule.vecteur import Vecteur
 from .chemin import Chemin
@@ -100,3 +102,81 @@ class Chemins(BaseObj):
         # Enfin, on retourne la liste obtenue
         o_chemins.chemins.extend(list(salles.values()))
         return o_chemins
+    
+    @classmethod
+    def get_salles_entre(cls, origine, destination, D3=True):
+        """Retourne une liste de salles entre origine et destination.
+        
+        Les paramètres origine et destination doivent être des salles.
+        Sont retournées toutes les salles dont la distance par rapport
+        à l'une et à l'autre est inférieure à la distance entre
+        origine et destination.
+        
+        Par exemple, si origine est (0, 2, 0) et destination est (2, 2, 0),
+        la distance entre origine et destination est de 2 (nrome du vecteur).
+        Seront retournées toutes les salles ayant une distance maximum de 2
+        par rapport à origine ou destination.
+        
+        Le paramètre d3 (3D) (à True par défaut) permet de tenir compte
+        de l'information Z d'une coordonnée (l'altitude de la salle).
+        Si ce paramètre est à False, on ne tient pas compte de l'altitude.
+        
+        Enfin, notez que la liste retournée par cette méthode n'est pas triée.
+        
+        """
+        o_coords = origine.coords.tuple()
+        d_coords = destination.coords.tuple()
+        if not D3:
+            o_coords = o_coords[:1] + (0, )
+            d_coords = d_coords[:1] + (0, )
+        
+        vecteur = Vecteur(*d_coords) - Vecteur(*o_coords)
+        distance_max = vecteur.norme
+        o_x, o_y, o_z = o_coords
+        d_x, d_y, d_z = d_coords
+        salles = []
+        for coords, salle in importeur.salle._coords.items():
+            x, y, z = coords
+            if not D3:
+                z = 0
+            
+            d1 = sqrt((x - o_x) ** 2 + (y - o_y) ** 2 + (z - o_z) ** 2)
+            d2 = sqrt((x - d_x) ** 2 + (y - d_y) ** 2 + (z - d_z) ** 2)
+            if d1 < distance_max or d2 < distance_max:
+                salles.append(salle)
+        
+        # On parcourt les salles qui restent
+        v_o = v_c = Vecteur(o_x, o_y, o_z)
+        v_d = Vecteur(d_z, d_y, d_z)
+        v_distance = v_d - v_o
+        trajectoires = []
+        for salle in salles:
+            v_a = Vecteur(*salle.coords.tuple())
+            if not D3:
+                v_a.z = 0
+            
+            v_ac = v_a - v_c
+            ac = v_ac.norme
+            gamma = (v_c - v_ac).direction % 90
+            alpha = 90 - gamma
+            beta = 90
+            #if alpha == 0:
+            #    trajectoires.append(salle)
+            #    continue
+            
+            bc = sin(radians(alpha)) *  ac
+            if bc == 0:
+                continue
+            
+            v_bc = v_ac.copier().tourner_autour_z((
+                    v_ac.direction - v_distance.direction) % 360) * \
+                    (v_ac.norme / bc)
+            
+            v_b = v_c + v_bc
+            v_ab = v_b - v_a
+            print("v_b", v_b, salle.ident, salle.coords)
+            if v_b.norme <= 0.5:
+                trajectoires.append(salle)
+        
+        return trajectoires
+

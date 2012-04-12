@@ -151,11 +151,15 @@ class Jeu(BaseJeu):
         """Choisit un pion."""
         message = message.strip()
         partie = self.partie
+        if partie.en_cours:
+            personnage << "|err|La partie a commencé.|ff|"
+            return
+        
         if message:
             pion = self.plateau.pions.get(message)
             if pion is None:
                 personnage << "|err|Ce pion n'existe pas.|ff|"
-            elif pion in self.pions.keys():
+            elif pion in self.pions.values():
                 personnage << "|err|Ce pion est déjà pris.|ff|"
             else:
                 self.pions[personnage] = pion

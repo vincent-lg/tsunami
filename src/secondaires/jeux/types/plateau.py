@@ -41,6 +41,7 @@ class Plateau(BaseType):
     """
     
     nom_type = "plateau de jeu"
+    nettoyer = False
     
     def __init__(self, cle=""):
         """Constructeur du type jeu"""

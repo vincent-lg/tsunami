@@ -52,6 +52,14 @@ class Filtre:
         self.test = test
         self.type = type
     
+    def __str__(self):
+        courte = "-" + self.opt_courte
+        longue = "--" + self.opt_longue if self.opt_longue else ""
+        if self.type:
+            courte += " ARG"
+            longue += "=ARG" if self.opt_longue else ""
+        return courte + ", " + longue if self.opt_longue else courte
+    
     def tester(self, objet, valeur):
         """Teste le filtre"""
         if self.type:
@@ -68,7 +76,7 @@ class Filtre:
                     raise TypeError("le type précisé doit être un int")
             elif self.type == "bool":
                 try:
-                    assert valeur in ("", "1", "0")
+                    assert valeur in ("1", "0")
                 except AssertionError:
                     raise TypeError("le type précisé doit être un booléen")
                 else:
@@ -82,6 +90,6 @@ class Filtre:
             if self.type == "str":
                 return valeur.search(getattr(objet, self.test))
             elif self.type in ("int", "bool"):
-                return objet.__getattr__(self.test) == valeur
+                return getattr(objet, self.test) == valeur
             else:
-                return bool(objet.__getattr__(self.test))
+                return bool(getattr(objet, self.test))

@@ -32,6 +32,7 @@
 
 import getopt
 import shlex
+import re
 
 from primaires.interpreteur.commande.commande import Commande
 
@@ -46,15 +47,25 @@ class CmdTrouver(Commande):
         self.schema = "<cherchable> (<message>)"
         self.aide_courte = "permet de rechercher dans l'univers"
         self.aide_longue = \
-                ""
+                "Cette commande est le moteur de recherche de l'univers. " \
+                "Elle permet d'effectuer des recherches dans diverses " \
+                "catégories, selon des paramètres optionnels fins (la " \
+                "syntaxe est celle des options sous Linux). Pour plus de " \
+                "l'aide sur une catégorie en particulier, entrez %trouver% " \
+                "|cmd| <objet de la recherche> -a|ff|/|cmd|--aide|ff|. Les " \
+                "objets de recherche disponibles sont : "
+        self.aide_longue += ", ".join(
+                [c for c in importeur.recherche.cherchables.keys()]) + "."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         cherchable = dic_masques["cherchable"].cherchable
         # On crée les listes d'options
-        opt_courtes = cherchable.courtes + "a"
-        opt_longues = cherchable.longues + ["aide"]
+        opt_courtes = "ao:c:" + cherchable.courtes
+        opt_longues = ["aide", "org=", "colonnes="] + cherchable.longues
         retour = []
+        tri = ""
+        colonnes = []
         if dic_masques["message"] is None:
             retour = cherchable.items
         else:
@@ -62,15 +73,35 @@ class CmdTrouver(Commande):
             try:
                 options, args = getopt.getopt(shlex.split(message),
                         opt_courtes, opt_longues)
-            except getopt.GetoptError as err:
-                print(err)
-                personnage << "|err|Une option n'a pas été reconnue.|ff|"
+            except (getopt.GetoptError, ValueError) as err:
+                personnage << "|err|Une option n'a pas été reconnue ou bien " \
+                        "interprétée.|ff|"
                 return False
             # On catch les options génériques
+            nettoyer = []
             for opt, arg in options:
                 if opt in ("-a", "--aide"):
-                    personnage << "aide"
+                    personnage << cherchable.aide
                     return
+                elif opt in ("-o", "--org"):
+                    if arg in cherchable.attributs_tri:
+                        tri = arg
+                    else:
+                        personnage << "|err|Vous ne pouvez trier ainsi.|ff|"
+                        tri = ""
+                    nettoyer.append((opt, arg))
+                elif opt in ("-c", "--colonnes"):
+                    try:
+                        colonnes = arg.split(", ")
+                        for c in colonnes:
+                            assert c in cherchable.colonnes
+                    except AssertionError:
+                        personnage << "|err|Les colonnes spécifiées sont " \
+                                "invalides.|ff|"
+                        colonnes = []
+                    nettoyer.append((opt, arg))
+            for couple in nettoyer:
+                options.remove(couple)
             try:
                 retour = cherchable.tester(options, cherchable.items)
             except TypeError:
@@ -82,8 +113,50 @@ class CmdTrouver(Commande):
             personnage << "|att|Aucun retour pour ces paramètres de " \
                     "recherche.|ff|"
         else:
-            # On trie le retour si nécessaire, A FAIRE
+            # On trie la liste de retour
+            if tri:
+                retour = sorted(retour, key=lambda obj: getattr(obj, tri))
             retour_aff = []
-            for o in retour:
-                retour_aff.append(cherchable.afficher(o))
-            personnage << "\n".join(sorted(retour_aff))
+            if colonnes:
+                retour_tab = []
+                longueurs = []
+                for i, o in enumerate(retour):
+                    retour_tab.append([])
+                    for l, c in enumerate(colonnes):
+                        if callable(cherchable.colonnes[c]):
+                            aff = cherchable.colonnes[c](o)
+                        else:
+                            aff = getattr(o, cherchable.colonnes[c])
+                        retour_tab[i].append(aff)
+                        try:
+                            if longueurs[l] < len(aff):
+                                longueurs[l] = len(aff)
+                        except IndexError:
+                            longueurs.append(len(aff))
+                    for i, c in enumerate(colonnes):
+                        if longueurs[i] < len(c):
+                            longueurs[i] = len(c)
+                for ligne in retour_tab:
+                    c_ligne = []
+                    for l, elt in enumerate(ligne):
+                        plus = len(re.findall("\|[a-z]{2}\|.*\|ff\|", elt)) * 8
+                        plus += len(re.findall("\|[a-z]{3}\|.*\|ff\|",
+                                elt)) * 9
+                        c_ligne.append(elt.ljust(longueurs[l] + plus))
+                    retour_aff.append("| " + " | ".join(c_ligne) + " |")
+                somme_lg = -1
+                for l in longueurs:
+                    somme_lg += l + 3
+                en_tete = ["+" + "-" * somme_lg + "+",
+                    "| |tit|" + "|ff| | |tit|".join(
+                            [c.capitalize().ljust(longueurs[i]) \
+                            for i, c in enumerate(colonnes)]) + " |ff||",
+                    "+" + "-" * somme_lg + "+"]
+                retour_aff = en_tete + retour_aff
+                retour_aff += ["+" + "-" * somme_lg + "+"]
+            else:
+                for o in retour:
+                    retour_aff.append(cherchable.afficher(o))
+            if not tri and not colonnes:
+                retour_aff = sorted(retour_aff)
+            personnage << "\n".join(retour_aff)

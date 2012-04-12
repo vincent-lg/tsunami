@@ -33,11 +33,19 @@ pour les objets de recherche (voir plus bas).
 
 """
 
+import inspect
+import textwrap
+
 from abstraits.obase import BaseObj
 from primaires.recherche.filtre import Filtre
 from primaires.recherche.cherchables import MetaCherchable
 
-INTERDITS = ["a", "aide"]
+INTERDITS = ["a", "aide", "o", "org", "c", "colonnes"]
+PARAMS = {"str":"une chaîne",
+    "str!":"une chaîne (n'accepte pas les regex)",
+    "int":"un nombre entier",
+    "bool":"un booléen",
+}
 
 class Cherchable(BaseObj, metaclass=MetaCherchable):
     
@@ -83,7 +91,6 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
             else:
                 sans += courte
         avec = "".join(sorted(avec))
-        print(avec + sans)
         return avec + sans
     
     @property
@@ -94,13 +101,67 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
             if filtre.opt_longue:
                 egal = "=" if filtre.type else ""
                 ret.append(filtre.opt_longue + egal)
-        print(sorted(ret))
         return sorted(ret)
     
     @property
     def items(self):
         """Renvoie la liste des objets traités"""
         raise NotImplementedError
+    
+    @property
+    def attributs_tri(self):
+        """Renvoie la liste des attributs par lesquels on peut trier"""
+        return []
+    
+    @property
+    def colonnes(self):
+        """Retourne un dictionnaire des valeurs que l'on peut disposer en
+        colonne à l'affichage final, de la forme :
+        >>> {nom: attribut/méthode}
+        (une colonne peut être remplie par une méthode du cherchable).
+        
+        """
+        return {}
+    
+    @property
+    def aide(self):
+        """Retourne l'aide du cherchable"""
+        aide = "Catégorie de recherche |cmd|" + self.nom_cherchable + "|ff|\n"
+        aide += inspect.getdoc(self).rstrip() + "\n\n"
+        aide += "Filtres disponibles :\n"
+        noms_filtres = [str(f) for f in self.filtres]
+        l_max = 0
+        for f in noms_filtres:
+            if len(f) > l_max:
+                l_max = len(f)
+        for i, filtre in enumerate(self.filtres):
+            aide += "   " + noms_filtres[i].ljust(l_max) + " "
+            if callable(filtre.test):
+                aide_filtre = inspect.getdoc(filtre.test)
+            else:
+                param = PARAMS[filtre.type]
+                aide_filtre = "Recherche à partir de l'attribut |cmd|"
+                aide_filtre += filtre.test + "|ff|. Cette option prend en "
+                aide_filtre += "paramètre " + param + "."
+            lignes = textwrap.wrap(aide_filtre, width=75 - l_max)
+            aide += ("\n" + " " * (l_max + 4)).join(lignes).strip() + "\n"
+        if self.attributs_tri:
+            attr_tri = "|ent|" + "|ff|, |ent|".join(self.attributs_tri)
+            attr_tri += "|ff|"
+            aide += "\nPossibilités de tri : " + attr_tri + ".\n"
+            aide += "L'option de tri (-o ARG, --org=ARG) permet, en précisant "
+            aide += "une des possibilités\nqui précèdent, de trier le retour "
+            aide += "de la recherche en fonction de cet argument.\n"
+        if self.colonnes:
+            colonnes = list(self.colonnes.keys())
+            colonnes = "|ent|" + "|ff|, |ent|".join(colonnes) + "|ff|"
+            aide += "\nColonnes possibles : " + colonnes + ".\n"
+            aide += "L'option colonnes (-c ARG, --colonnes=ARG) permet "
+            aide += "d'organiser le retour en un\ntableau ; précisez pour "
+            aide += "cela une ou plusieurs des colonnes ci-dessus, séparées\n"
+            aide += "par des virgules (par exemple |ent|nom, identifiant, "
+            aide += "autre|ff|)."
+        return aide.strip()
     
     def ajouter_filtre(self, opt_courte, opt_longue, test, type=""):
         """Ajoute le filtre spécifié"""
@@ -111,7 +172,7 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
         if opt_longue in longues or opt_longue in INTERDITS:
             raise ValueError("l'option longue '{}' est indisponible".format(
                     opt_longue))
-        if type and type not in ("int", "str", "bool"):
+        if type and type not in ("int", "str", "str!", "bool"):
             raise ValueError("le type {} est invalide".format(type))
         self.filtres.append(Filtre(opt_courte, opt_longue, test, type))
     
@@ -138,5 +199,5 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
         return self.tester(options, liste_ret)
     
     def afficher(self, objet):
-        """Méthode d'affichage des objets traités"""
+        """Méthode d'affichage standard des objets traités"""
         raise NotImplementedError
