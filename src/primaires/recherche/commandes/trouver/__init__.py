@@ -47,7 +47,15 @@ class CmdTrouver(Commande):
         self.schema = "<cherchable> (<message>)"
         self.aide_courte = "permet de rechercher dans l'univers"
         self.aide_longue = \
-                ""
+                "Cette commande est le moteur de recherche de l'univers. " \
+                "Elle permet d'effectuer des recherches dans diverses " \
+                "catégories, selon des paramètres optionnels fins (la " \
+                "syntaxe est celle des options sous Linux). Pour plus de " \
+                "l'aide sur une catégorie en particulier, entrez %trouver% " \
+                "|cmd| <objet de la recherche> -a|ff|/|cmd|--aide|ff|. Les " \
+                "objets de recherche disponibles sont : "
+        self.aide_longue += ", ".join(
+                [c for c in importeur.recherche.cherchables.keys()]) + "."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -149,4 +157,6 @@ class CmdTrouver(Commande):
             else:
                 for o in retour:
                     retour_aff.append(cherchable.afficher(o))
+            if not tri and not colonnes:
+                retour_aff = sorted(retour_aff)
             personnage << "\n".join(retour_aff)
