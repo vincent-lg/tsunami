@@ -46,6 +46,7 @@ from .porte import Porte
 from .zone import Zone
 from .templates.terrain import Terrain
 from . import commandes
+from . import cherchables
 from .editeurs.redit import EdtRedit
 from .editeurs.zedit import EdtZedit
 from . import masques
