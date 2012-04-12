@@ -268,6 +268,10 @@ class Vecteur(BaseObj):
         """Soustrait deux vecteurs."""
         return Vecteur(self.x - autre.x, self.y - autre.y, self.z - autre.z)
     
+    def __mul__(self, valeur):
+        """Multiplie le vecteur par un nombre."""
+        return Vecteur(self.x * valeur, self.y * valeur, self.z * valeur)
+    
     def __rmul__(self, valeur):
         """Multiplie le vecteur par un nombre."""
         return Vecteur(self.x * valeur, self.y * valeur, self.z * valeur)
