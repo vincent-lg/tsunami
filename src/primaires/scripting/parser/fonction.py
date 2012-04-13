@@ -56,7 +56,7 @@ class Fonction(Expression):
         fin_nom = chaine.find("(")
         nom = chaine[:fin_nom]
         chaine = chaine[:fin_nom + 1]
-        return fin_nom >= 0  and RE_VARIABLE.search(nom)
+        return fin_nom >= 0 and RE_VARIABLE.search(nom)
     
     @classmethod
     def parser(cls, fonction):
@@ -72,7 +72,7 @@ class Fonction(Expression):
         objet.nom = nom
         
         # Parsage des paramètres
-        types = ("variable", "nombre", "chaine", "fonction")
+        types = ("variable", "nombre", "chaine", "fonction", "calcul")
         types = tuple([expressions[nom] for nom in types])
         parametres = []
         while True:

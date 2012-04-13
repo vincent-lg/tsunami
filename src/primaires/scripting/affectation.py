@@ -83,18 +83,23 @@ class Affectation(Instruction):
         
         # Parsage de l'expression
         chaine = expression.lstrip(" ")
-        types = ("variable", "nombre", "chaine", "fonction")
+        types = ("variable", "nombre", "chaine", "fonction", "calcul")
         types = tuple([expressions[nom] for nom in types])
         types_app = [type for type in types if type.parsable(chaine)]
         if not types_app:
             raise ValueError("Impossible de parser {}.".format(chaine))
-        elif len(types_app) > 1:
-            raise ValueError("L'expression {} peut être différemment " \
-                    "interprétée.".format(chaine))
         
-        type = types_app[0]
-        exp, chaine = type.parser(chaine)
-        affectation.expression = exp
+        a_chaine = chaine
+        o_chaine = ""
+        expression = None
+        for type in types_app:
+            chaine = a_chaine
+            exp, chaine = type.parser(chaine)
+            if not o_chaine or not chaine or chaine not in o_chaine:
+                expression = exp
+                o_chaine = chaine
+        
+        affectation.expression = expression
         
         return affectation
     

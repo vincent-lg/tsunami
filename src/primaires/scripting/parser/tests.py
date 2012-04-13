@@ -65,7 +65,7 @@ class Tests(Expression):
         
         # Parsage des expressions
         types = ("variable", "nombre", "chaine", "fonction",
-                        "operateur", "connecteur")
+                        "operateur", "connecteur", "calcul")
         types = tuple([expressions[nom] for nom in types])
         expressions = []
         while chaine.strip():
