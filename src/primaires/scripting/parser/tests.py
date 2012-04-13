@@ -66,18 +66,9 @@ class Tests(Expression):
         # Parsage des expressions
         types = ("variable", "nombre", "chaine", "fonction",
                         "operateur", "connecteur", "calcul")
-        types = tuple([expressions[nom] for nom in types])
         expressions = []
         while chaine.strip():
-            types_app = [type for type in types if type.parsable(chaine)]
-            if not types_app:
-                raise ValueError("impossible de parser {}".format(chaine))
-            elif len(types_app) > 1:
-                raise ValueError("les tests {} peuvent être différemment " \
-                        "interprétée".format(chaine))
-            
-            type = types_app[0]
-            arg, chaine = type.parser(chaine)
+            arg, chaine = cls.choisir(types, chaine)
             expressions.append(arg)
         
         objet.expressions = tuple(expressions)

@@ -31,7 +31,7 @@
 """Fichier contenant la classe Affectation, détaillée plus bas."""
 
 from .instruction import Instruction
-from .parser import expressions
+from .parser import expressions, MetaExpression
 
 class Affectation(Instruction):
     
@@ -84,21 +84,7 @@ class Affectation(Instruction):
         # Parsage de l'expression
         chaine = expression.lstrip(" ")
         types = ("variable", "nombre", "chaine", "fonction", "calcul")
-        types = tuple([expressions[nom] for nom in types])
-        types_app = [type for type in types if type.parsable(chaine)]
-        if not types_app:
-            raise ValueError("Impossible de parser {}.".format(chaine))
-        
-        a_chaine = chaine
-        o_chaine = ""
-        expression = None
-        for type in types_app:
-            chaine = a_chaine
-            exp, chaine = type.parser(chaine)
-            if not o_chaine or not chaine or chaine not in o_chaine:
-                expression = exp
-                o_chaine = chaine
-        
+        expression, chaine = MetaExpression.choisir(types, chaine)
         affectation.expression = expression
         
         return affectation

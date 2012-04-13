@@ -30,7 +30,7 @@
 
 """Fichier contenant la fonction ent_alea."""
 
-from random import randint, random
+from random import randint, random, choice
 from fractions import Fraction
 
 from primaires.scripting.fonction import Fonction
@@ -61,6 +61,6 @@ class ClasseFonction(Fonction):
         """
         seq = []
         for i in range(100):
-            for x in range(100 - abs(i - pond)):
+            for x in range(100 - abs(i - int(pond))):
                 seq.append(i)            
         return Fraction(choice(seq))

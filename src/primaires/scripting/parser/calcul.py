@@ -86,7 +86,6 @@ class Calcul(Expression):
         
         # Parsage des paramètres
         types = ("variable", "nombre", "chaine", "fonction")
-        types = tuple([expressions[nom] for nom in types])
         while True:
             chaine = chaine.lstrip(" ")
             if not chaine:
@@ -95,25 +94,29 @@ class Calcul(Expression):
             if RE_OPERATEURS.search(chaine[0]):
                 # C'est un opérateur, on l'ajoute à la chaîne operateurs
                 operateur = chaine[0]
+                if operateur == ")" and "(" not in objet.operateurs:
+                    break
+                
                 chaine = chaine[1:]
                 dernier_car = objet.operateurs and objet.operateurs[-1] or ""
                 if dernier_car and operateur in "+-*/" and dernier_car not in \
                         "+-/*(":
                     objet.operateurs += " "
                 objet.operateurs += operateur
+                ops = objet.operateurs
+                if operateur == ")" and ops.count("(") == ops.count(")"):
+                    break
             else:
-                # C'est une epxression supposée
-                types_app = [type for type in types if type.parsable(chaine)]
-                if not types_app:
-                    raise ValueError("impossible de parser {}".format(chaine))
-                elif len(types_app) > 1:
-                    propositions = ", ".join([t.nom for t in types_app])
-                    raise ValueError("l'expression {} peut être " \
-                            "différemment interprétée ({})".format(chaine,
-                            propositions))
+                # C'est une expression supposée
+                try:
+                    arg, chaine = cls.choisir(types, chaine)
+                except ValueError:
+                    break
                 
-                type = types_app[0]
-                arg, chaine = type.parser(chaine)
+                dernier_car = objet.operateurs and objet.operateurs[-1] or ""
+                if dernier_car and dernier_car in "+-*/)":
+                    objet.operateurs += " "
+                
                 objet.operateurs += "{" + str(len(objet.expressions)) + "}"
                 objet.expressions.append(arg)
         

@@ -60,6 +60,37 @@ class MetaExpression(MetaBaseObj):
         if cls.nom:
             expressions[cls.nom] = cls
             cls.expressions_def = expressions
+    
+    @staticmethod
+    def choisir(types, chaine):
+        """Parse la chaîne entre les types sélectionnés et en choisit un.
+        
+        Les types doivent être donnés sous la forme d'une liste de
+        chaînes de caractères, comme ("calcul", "fonction", "variable"].
+        
+        On retourne l'expression du type choisi et la chaîne non interprétée.
+        
+        Le choix se fait sur le critère d'interprétation : le type
+        d'expression interprétant la plus grande partie de la chaîne
+        est choisi.
+        
+        """
+        types = [expressions[t] for t in types]
+        types_app = [type for type in types if type.parsable(chaine)]
+        if not types_app:
+            raise ValueError("impossible de parser {}".format(chaine))
+        
+        a_chaine = t_chaine = chaine
+        expression = None
+        for type in types_app:
+            chaine = a_chaine
+            exp, chaine = type.parser(chaine)
+            if len(chaine) < len(t_chaine):
+                t_chaine = chaine
+                expression = exp
+        
+        return expression, t_chaine
+
 
 from .chaine import *
 from .nombre import *
