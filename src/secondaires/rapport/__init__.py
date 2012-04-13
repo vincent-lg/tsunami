@@ -57,7 +57,7 @@ class Module(BaseModule):
             self.rapports[rapport.id] = rapport
         
         if self.rapports:
-            Rapport.id_actuel = max(self.rapports.keys())
+            Rapport.id_actuel = max(self.rapports.keys()) + 1
         else:
             Rapport.id_actuel = 1
         
@@ -87,4 +87,3 @@ class Module(BaseModule):
     def ajouter_rapport(self, rapport):
         """Ajoute un rapport."""
         self.rapports[rapport.id] = rapport
-

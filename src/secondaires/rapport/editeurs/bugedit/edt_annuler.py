@@ -36,7 +36,7 @@ class EdtAnnuler(Editeur):
     
     """Classe définissant le contexte éditeur 'annuler'.
     
-    Ce contexte permet d'annuler l'envoie d'un rapport.
+    Ce contexte permet d'annuler l'envoi d'un rapport.
     
     """
     
@@ -45,6 +45,5 @@ class EdtAnnuler(Editeur):
         rapport = self.objet
         rapport.detruire()
         self.fermer()
-        self.pere.joueur << "|rg|Vos modifications ont été annulées.|ff|\n" \
-                "|rg|Le rapport ne sera pas envoyé.|ff|"
-
+        self.pere.joueur << "|att|Vos modifications ont été annulées.\n" \
+                "Le rapport ne sera pas envoyé.|ff|"

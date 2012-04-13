@@ -45,19 +45,20 @@ class EdtEnvoyer(Editeur):
         rapport = self.objet
         if not rapport.est_complete():
             champs = rapport.get_champs_a_completer()
+            s = ""
             if len(champs) > 1:
-                str_champs = "|ent|" + "|ff|, |ent|".join(champs[:-1]) + "|ff|"
-                str_champs += " et |ent|" + champs[-1] + "|ff|"
+                str_champs = "'" + "', '".join(champs[:-1]) + "'"
+                str_champs += " et '" + champs[-1] + "'"
+                s = "s"
             else:
                 str_champs = "|ent|" + champs[0] + "|ff|"
             
             self.pere.joueur << "|err|Ce rapport n'est pas proprement " \
-                    "complété.\nVous devez encore remplir les champs " \
-                    "{}.|ff|\n".format(str_champs)
+                    "complété.\nVous devez encore remplir le{s} champ{s} " \
+                    "{champs}.|ff|\n".format(s=s, champs=str_champs)
             self.migrer_contexte(self.opts.rci_ctx_prec)
         else:
             importeur.rapport.ajouter_rapport(rapport)
             self.fermer()
-            self.pere.joueur << "|att|Le rapport {} a bien été " \
+            self.pere.joueur << "|att|Le rapport #{} a bien été " \
                     "envoyé.|ff|".format(rapport.id)
-

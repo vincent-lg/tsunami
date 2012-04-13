@@ -59,4 +59,3 @@ class PrmBug(Parametre):
                 "bugedit", personnage, rapport)
         personnage.contextes.ajouter(editeur)
         editeur.actualiser()
-
