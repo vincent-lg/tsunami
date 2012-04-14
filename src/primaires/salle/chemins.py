@@ -130,53 +130,86 @@ class Chemins(BaseObj):
             o_coords = o_coords[:1] + (0, )
             d_coords = d_coords[:1] + (0, )
         
-        vecteur = Vecteur(*d_coords) - Vecteur(*o_coords)
-        distance_max = vecteur.norme
+        # On récupère les salles dans un rectangle autour d'origine et
+        # destination, sans parcourir toutes les salles de l'univers
+        salles = []
+        x, y, z = o_coords
         o_x, o_y, o_z = o_coords
         d_x, d_y, d_z = d_coords
-        salles = []
-        for coords, salle in importeur.salle._coords.items():
+        while x <= d_x:
+            while y <= d_y:
+                while z <= d_z:
+                    try:
+                        salles.append(importeur.salle[(x, y, z)])
+                    except KeyError:
+                        pass
+                    z += 1
+                y += 1
+            x += 1
+        
+        ab = Vecteur((d_x - o_x, d_y - o_y, d_z - o_z))
+        # On parcourt les salles
+        for salle in salles:
+            coords = salle.coords.tuple()
             x, y, z = coords
-            if not D3:
-                z = 0
+            ac = Vecteur((x - o_x, y - o_y, z - o_z))
+            # On détermine les angles horizontaux et verticaux entre ab et ac
+            alpha = ab.argument - ac.argument
+            # angle de ab avec (O, x, y) : arctan(z/sqrt(x² + y²))
+            beta_ab = atan(ab.z / sqrt(ab.x ** 2 + ab.y ** 2))
+            # angle de ac avec (O, x, y) idem
+            beta_ac = atan(ac.z / sqrt(ac.x ** 2 + ac.y ** 2))
+            beta = beta_ab - beta_ac
+            # Distances horizontale et verticale entre c et ab
+            mc_x = ac.norme * sin(alpha)
+            mc_z = ac.norme * sin(beta)
+        # vecteur = Vecteur(*d_coords) - Vecteur(*o_coords)
+        # distance_max = vecteur.norme
+        # o_x, o_y, o_z = o_coords
+        # d_x, d_y, d_z = d_coords
+        # salles = []
+        # for coords, salle in importeur.salle._coords.items():
+            # x, y, z = coords
+            # if not D3:
+                # z = 0
             
-            d1 = sqrt((x - o_x) ** 2 + (y - o_y) ** 2 + (z - o_z) ** 2)
-            d2 = sqrt((x - d_x) ** 2 + (y - d_y) ** 2 + (z - d_z) ** 2)
-            if d1 < distance_max or d2 < distance_max:
-                salles.append(salle)
+            # d1 = sqrt((x - o_x) ** 2 + (y - o_y) ** 2 + (z - o_z) ** 2)
+            # d2 = sqrt((x - d_x) ** 2 + (y - d_y) ** 2 + (z - d_z) ** 2)
+            # if d1 < distance_max or d2 < distance_max:
+                # salles.append(salle)
         
         # On parcourt les salles qui restent
-        v_o = v_c = Vecteur(o_x, o_y, o_z)
-        v_d = Vecteur(d_z, d_y, d_z)
-        v_distance = v_d - v_o
-        trajectoires = []
-        for salle in salles:
-            v_a = Vecteur(*salle.coords.tuple())
-            if not D3:
-                v_a.z = 0
+        # v_o = v_c = Vecteur(o_x, o_y, o_z)
+        # v_d = Vecteur(d_z, d_y, d_z)
+        # v_distance = v_d - v_o
+        # trajectoires = []
+        # for salle in salles:
+            # v_a = Vecteur(*salle.coords.tuple())
+            # if not D3:
+                # v_a.z = 0
             
-            v_ac = v_a - v_c
-            ac = v_ac.norme
-            gamma = (v_c - v_ac).direction % 90
-            alpha = 90 - gamma
-            beta = 90
-            #if alpha == 0:
-            #    trajectoires.append(salle)
-            #    continue
+            # v_ac = v_a - v_c
+            # ac = v_ac.norme
+            # gamma = (v_c - v_ac).direction % 90
+            # alpha = 90 - gamma
+            # beta = 90
+            # if alpha == 0:
+               # trajectoires.append(salle)
+               # continue
             
-            bc = sin(radians(alpha)) *  ac
-            if bc == 0:
-                continue
+            # bc = sin(radians(alpha)) *  ac
+            # if bc == 0:
+                # continue
             
-            v_bc = v_ac.copier().tourner_autour_z((
-                    v_ac.direction - v_distance.direction) % 360) * \
-                    (v_ac.norme / bc)
+            # v_bc = v_ac.copier().tourner_autour_z((
+                    # v_ac.direction - v_distance.direction) % 360) * \
+                    # (v_ac.norme / bc)
             
-            v_b = v_c + v_bc
-            v_ab = v_b - v_a
-            print("v_b", v_b, salle.ident, salle.coords)
-            if v_b.norme <= 0.5:
-                trajectoires.append(salle)
+            # v_b = v_c + v_bc
+            # v_ab = v_b - v_a
+            # print("v_b", v_b, salle.ident, salle.coords)
+            # if v_b.norme <= 0.5:
+                # trajectoires.append(salle)
         
-        return trajectoires
+        # return trajectoires
 

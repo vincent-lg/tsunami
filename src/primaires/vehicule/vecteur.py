@@ -224,7 +224,7 @@ class Vecteur(BaseObj):
     def argument(self):
         x, y = self.x, self.y
         if x > 0:
-            return degrees(atan(y / x))
+            return degrees(atan(y / x)) % 360
         elif x < 0:
             return (180 + degrees(atan(y / x))) % 360
         elif y > 0:
