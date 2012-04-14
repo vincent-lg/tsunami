@@ -67,6 +67,8 @@ class Rapport(BaseObj):
         self._priorite = "normale"
         self._categorie = ""
         self._statut = "nouveau"
+        # Copie
+        self.source = None
     
     def __getnewargs__(self):
         return ("", None)
@@ -107,6 +109,22 @@ class Rapport(BaseObj):
             raise ValueError("catégorie {} inconnue".format(categorie))
         self._categorie = categorie
     categorie = property(_get_categorie, _set_categorie)
+    
+    def copier(self, autre):
+        """Copie les attributs d'un autre rapport."""
+        self.source = autre
+        self.ouvert = autre.ouvert
+        self.titre = autre.titre
+        self.avancement = autre.avancement
+        self.description = autre.description
+        self.date = autre.date
+        self.createur = autre.createur
+        self.assigne_a = autre.assigne_a
+        self.salle = autre.salle
+        self._type = autre.type
+        self._priorite = autre.priorite
+        self._categorie = autre.categorie
+        self._statut = autre.statut
     
     def verifier(self):
         """Vérifie que createur et assigne_a sont toujours présents."""

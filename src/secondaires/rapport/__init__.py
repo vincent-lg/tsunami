@@ -87,3 +87,7 @@ class Module(BaseModule):
     def ajouter_rapport(self, rapport):
         """Ajoute un rapport."""
         self.rapports[rapport.id] = rapport
+        if rapport.source:
+            del self.rapports[rapport.source.id]
+            rapport.source.detruire()
+            rapport.source = None

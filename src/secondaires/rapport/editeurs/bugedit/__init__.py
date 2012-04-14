@@ -112,4 +112,3 @@ class EdtBugedit(Presentation):
         annuler = self.ajouter_choix("annuler et quitter la fenêtre", "ann", \
                 EdtAnnuler, rapport)
         annuler.parent = self
-

@@ -51,7 +51,7 @@ class EdtEnvoyer(Editeur):
                 str_champs += " et '" + champs[-1] + "'"
                 s = "s"
             else:
-                str_champs = "|ent|" + champs[0] + "|ff|"
+                str_champs = "'" + champs[0] + "'"
             
             self.pere.joueur << "|err|Ce rapport n'est pas proprement " \
                     "complété.\nVous devez encore remplir le{s} champ{s} " \
