@@ -62,10 +62,16 @@ class PrmEdit(Parametre):
                 personnage << "|err|Vous ne pouvez éditer ce rapport.|ff|"
                 return
             elif not personnage.est_immortel():
-                personnage << "Edition du rapport..."
+                if rapport.statut != "nouveau":
+                    personnage << "|err|Vous ne pouvez éditer ce rapport.|ff|"
+                    return
+                c_rapport = importeur.rapport.creer_rapport("titre",
+                        personnage, ajouter=False)
+                c_rapport.copier(rapport)
+                editeur = importeur.interpreteur.construire_editeur(
+                        "bugedit", personnage, c_rapport)
             else:
                 editeur = importeur.interpreteur.construire_editeur(
                         "bugedit+", personnage, rapport)
             personnage.contextes.ajouter(editeur)
             editeur.actualiser()
-

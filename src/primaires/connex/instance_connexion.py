@@ -43,6 +43,7 @@ OPTIONS = {
 
 class InstanceConnexion(BaseObj):
     """Classe représentant une instance de connexion.
+    
     Elle est là pour faire la jonction entre un client connecté et un
     personnage.
     
@@ -50,6 +51,7 @@ class InstanceConnexion(BaseObj):
     
     def __init__(self, client, creer_contexte=True):
         """Constructeur d'une instance de connexion.
+        
         On peut y trouver trois informations :
         *   le client connecté
         *   le compte émetteur (une fois qu'il est déclaré)
@@ -72,6 +74,7 @@ class InstanceConnexion(BaseObj):
         self.contexte = None
         self.nb_essais = 0
         self.nb_msg = 0 # nombre de messages envoyés
+        self.avec_prompt = True
         
         if creer_contexte:
             self.contexte = type(self).importeur.interpreteur. \
@@ -271,16 +274,19 @@ class InstanceConnexion(BaseObj):
     
     def envoyer_file_attente(self, ajt_prompt = True):
         """On récupère puis on envoie la file d'attente des messages à envoyer.
-        On ajoute le prompt à la fine d'attente si ajt_prompt est à True.
+        
+        On ajoute le prompt à la fine d'attente si ajt_prompt est à True et
+        si self.avec_prompt.
         
         """
         if self.file_attente:
             msg = self.get_file_attente()
             self.file_attente = []
-            if ajt_prompt:
+            if ajt_prompt and self.avec_prompt:
                 msg += 2 * NL + self.get_prompt()
             else:
                 msg += NL
+            self.avec_prompt = True
         
             if self.client:
                 self.client.envoyer(msg)
@@ -290,6 +296,10 @@ class InstanceConnexion(BaseObj):
         option = OPTIONS[nom]
         if self.client:
             self.client.envoyer(option)
+    
+    def sans_prompt(self):
+        """Désactive le prompt pour le prochain message envoyé."""
+        self.avec_prompt = False
     
     def receptionner(self, message):
         """Cette méthode est appelée quand l'instance de connexion

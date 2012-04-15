@@ -56,7 +56,7 @@ class Fonction(Expression):
         fin_nom = chaine.find("(")
         nom = chaine[:fin_nom]
         chaine = chaine[:fin_nom + 1]
-        return fin_nom >= 0  and RE_VARIABLE.search(nom)
+        return fin_nom >= 0 and RE_VARIABLE.search(nom)
     
     @classmethod
     def parser(cls, fonction):
@@ -72,8 +72,7 @@ class Fonction(Expression):
         objet.nom = nom
         
         # Parsage des paramètres
-        types = ("variable", "nombre", "chaine", "fonction")
-        types = tuple([expressions[nom] for nom in types])
+        types = ("variable", "nombre", "chaine", "fonction", "calcul")
         parametres = []
         while True:
             chaine = chaine.lstrip(" ")
@@ -81,15 +80,7 @@ class Fonction(Expression):
                 chaine = chaine[1:]
                 break
             
-            types_app = [type for type in types if type.parsable(chaine)]
-            if not types_app:
-                raise ValueError("impossible de parser {}".format(fonction))
-            elif len(types_app) > 1:
-                raise ValueError("la fonction {] peut être différemment " \
-                        "interprétée".format(fonction))
-            
-            type = types_app[0]
-            arg, chaine = type.parser(chaine)
+            arg, chaine = cls.choisir(types, chaine)
             parametres.append(arg)
             
             chaine = chaine.lstrip(" ")
@@ -100,7 +91,7 @@ class Fonction(Expression):
                 break
             else:
                 raise ValueError("erreur de syntaxe dans la fonction " \
-                        "{}".format(fonction))
+                        "{} ({})".format(fonction, chaine))
         
         objet.parametres = tuple(parametres)
         

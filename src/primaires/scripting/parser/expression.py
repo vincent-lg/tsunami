@@ -112,3 +112,7 @@ class Expression(BaseObj, metaclass=MetaExpression):
         
         """
         raise NotImplementedError
+    
+    @staticmethod
+    def choisir(types, chaine):
+        return MetaExpression.choisir(types, chaine)

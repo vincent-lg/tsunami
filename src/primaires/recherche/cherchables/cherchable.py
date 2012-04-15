@@ -69,6 +69,9 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
         # Initialisation du cherchable
         self.init()
     
+    def __getnewargs__(self):
+        return ()
+    
     def init(self):
         """Méthode d'initialisation.
         

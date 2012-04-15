@@ -180,7 +180,7 @@ class Action(Instruction):
         nom_action = chaine[0]
         chaine = " ".join(chaine[1:])
         parametres = []
-        types = ("variable", "nombre", "chaine", "fonction")
+        types = ("variable", "nombre", "chaine", "fonction", "calcul")
         types = tuple([expressions[nom] for nom in types])
         while True:
             chaine = chaine.lstrip(" ")

@@ -199,6 +199,11 @@ class Joueur(Personnage):
         else:
             return self.get_distinction_visible()
     
+    def sans_prompt(self):
+        """Désactive le prompt pour le prochain message envoyé."""
+        if self.instance_connexion:
+            self.instance_connexion.sans_prompt()
+    
     def envoyer(self, msg, *l_formatter, **kw_formatter):
         """On redirige sur l'envoie de l'instance de connexion."""
         if not msg:

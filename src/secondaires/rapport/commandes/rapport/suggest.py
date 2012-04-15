@@ -1,11 +1,11 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-#
+# 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-#
+# 
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-#
+# 
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -28,39 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction ent_alea."""
+"""Package contenant le paramètre 'suggest' de la commande 'rapport'."""
 
-from random import randint, random, choice
-from fractions import Fraction
+from primaires.interpreteur.masque.parametre import Parametre
+from primaires.interpreteur.editeur.presentation import Presentation
 
-from primaires.scripting.fonction import Fonction
-
-class ClasseFonction(Fonction):
-
-    """Retourne un entier aléatoire."""
-
-    @classmethod
-    def init_types(cls):
-        cls.ajouter_types(cls.ent_alea, "Fraction")
-        cls.ajouter_types(cls.ent_alea_pond, "Fraction", "Fraction")
-
-    @staticmethod
-    def ent_alea(max):
-        """Retourne un entier aléatoire entre 1 et la valeur maximale précisée.
-
-        """
-        return Fraction(randint(1, int(max)))
+class PrmSuggest(Parametre):
     
-    @staticmethod
-    def ent_alea_pond(max, pond):
-        """Retourne un entier aléatoire entre 1 et la valeur maximale,
-        pondéré par la valeur précisée en deuxième argument.
-        Cette fonction est utile pour calculer des dégâts en fonction
-        d'un talent d'un personnage.
-        
-        """
-        seq = []
-        for i in range(100):
-            for x in range(100 - abs(i - int(pond))):
-                seq.append(i)            
-        return Fraction(choice(seq))
+    """Commande 'rapport suggest'"""
+    
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "suggest", "suggest")
+        self.groupe = "joueur"
+        self.schema = "<message>"
+        self.aide_courte = "crée une suggestion"
+        self.aide_longue = \
+            "Cette commande permet de créer une nouvelle suggestion. " \
+            "Vous devez préciser en argument le titre du rapport " \
+            "à créer. Un éditeur s'ouvrira alors pour vous permettre " \
+            "de renseigner plus précisément l'idée suggérée."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        titre = dic_masques["message"].message
+        rapport = importeur.rapport.creer_rapport(titre, personnage,
+                ajouter=False)
+        rapport.type = "suggest"
+        editeur = importeur.interpreteur.construire_editeur(
+                "bugedit", personnage, rapport)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()

@@ -30,7 +30,7 @@
 
 """Fichier contenant la classe Chemins, détaillée plus bas."""
 
-from math import cos, sin, tan, radians, sqrt
+from math import sin, atan, radians, sqrt
 
 from abstraits.obase import BaseObj
 from primaires.vehicule.vecteur import Vecteur
@@ -50,7 +50,7 @@ class Chemins(BaseObj):
         return "<chemins [" + ", ".join(chemins) + "]>"
     
     def get(self, salle):
-        """Retourne si trouvée le chemin dont la destination est salle.
+        """Retourne si trouvé le chemin dont la destination est salle.
         
         Si non trouvé retourne None.
         
@@ -65,7 +65,7 @@ class Chemins(BaseObj):
     def salles_autour(cls, salle, rayon=15):
         """Retourne les chemins autour de salle dans un rayon donné."""
         o_chemins = cls()
-        salles = {} # salle: chemin}
+        salles = {} # {salle: chemin}
         
         # Fonction explorant une salle et retournant ses sorties récursivement
         def get_sorties_rec(salle, rayon=0, max=15, salles=None):
@@ -104,79 +104,101 @@ class Chemins(BaseObj):
         return o_chemins
     
     @classmethod
-    def get_salles_entre(cls, origine, destination, D3=True):
-        """Retourne une liste de salles entre origine et destination.
+    def get_salles_entre(cls, origine, destination, d3=True, sensibilite=0.5):
+        """Retourne une liste [1] de salles entre origine et destination.
         
         Les paramètres origine et destination doivent être des salles.
-        Sont retournées toutes les salles dont la distance par rapport
-        à l'une et à l'autre est inférieure à la distance entre
-        origine et destination.
+        Sont retournées toutes les salles situées approximativement sur une
+        ligne droite entre ces deux salles, à la sensibilité près [2].
         
         Par exemple, si origine est (0, 2, 0) et destination est (2, 2, 0),
-        la distance entre origine et destination est de 2 (nrome du vecteur).
-        Seront retournées toutes les salles ayant une distance maximum de 2
-        par rapport à origine ou destination.
+        les salles retournées seront origine et destination, et potentiellement
+        une salle (0, 1, 0) si elle existe.
         
         Le paramètre d3 (3D) (à True par défaut) permet de tenir compte
         de l'information Z d'une coordonnée (l'altitude de la salle).
-        Si ce paramètre est à False, on ne tient pas compte de l'altitude.
+        Si ce paramètre est à False, on ne tient pas compte de l'altitude et
+        la trajectoire retournée est en deux dimensions.
         
-        Enfin, notez que la liste retournée par cette méthode n'est pas triée.
+        [1] La liste est triée en fonction de la distance à l'origine ;
+            ainsi, on retourne réellement une trajectoire de l'origine
+            vers la destination.
+        
+        [2] La sensibilité ne prendra pas en compte les salles situées
+            en-dehors d'un pavé délimité par origine et destination.
         
         """
+        if origine is destination:
+            return [origine]
+        
         o_coords = origine.coords.tuple()
         d_coords = destination.coords.tuple()
-        if not D3:
+        if not d3:
             o_coords = o_coords[:1] + (0, )
             d_coords = d_coords[:1] + (0, )
         
-        vecteur = Vecteur(*d_coords) - Vecteur(*o_coords)
-        distance_max = vecteur.norme
+        # On récupère les salles dans un rectangle autour d'origine et
+        # destination, sans parcourir toutes les salles de l'univers
+        salles = []
         o_x, o_y, o_z = o_coords
         d_x, d_y, d_z = d_coords
-        salles = []
         for coords, salle in importeur.salle._coords.items():
             x, y, z = coords
-            if not D3:
-                z = 0
-            
-            d1 = sqrt((x - o_x) ** 2 + (y - o_y) ** 2 + (z - o_z) ** 2)
-            d2 = sqrt((x - d_x) ** 2 + (y - d_y) ** 2 + (z - d_z) ** 2)
-            if d1 < distance_max or d2 < distance_max:
+            if x <= max(o_x, d_x) and x >= min(o_x, d_x) \
+                and y <= max(o_y, d_y) and y >= min(o_y, d_y) \
+                and z <= max(o_z, d_z) and z >= min(o_z, d_z):
                 salles.append(salle)
+        print("salles sélectionnées :", salles)
         
-        # On parcourt les salles qui restent
-        v_o = v_c = Vecteur(o_x, o_y, o_z)
-        v_d = Vecteur(d_z, d_y, d_z)
-        v_distance = v_d - v_o
-        trajectoires = []
+        # On parcourt les salles
+        trajectoire = []
+        ab = Vecteur(d_x - o_x, d_y - o_y, d_z - o_z)
+        print("vecteur origine-destination :", ab)
         for salle in salles:
-            v_a = Vecteur(*salle.coords.tuple())
-            if not D3:
-                v_a.z = 0
-            
-            v_ac = v_a - v_c
-            ac = v_ac.norme
-            gamma = (v_c - v_ac).direction % 90
-            alpha = 90 - gamma
-            beta = 90
-            #if alpha == 0:
-            #    trajectoires.append(salle)
-            #    continue
-            
-            bc = sin(radians(alpha)) *  ac
-            if bc == 0:
+            print(salle)
+            if salle in (origine, destination):
+                trajectoire.append(salle)
                 continue
-            
-            v_bc = v_ac.copier().tourner_autour_z((
-                    v_ac.direction - v_distance.direction) % 360) * \
-                    (v_ac.norme / bc)
-            
-            v_b = v_c + v_bc
-            v_ab = v_b - v_a
-            print("v_b", v_b, salle.ident, salle.coords)
-            if v_b.norme <= 0.5:
-                trajectoires.append(salle)
+            coords = salle.coords.tuple()
+            x, y, z = coords
+            if not d3:
+                z = 0
+            ac = Vecteur(x - o_x, y - o_y, z - o_z)
+            print("vecteur origine-salle :", ac)
+            d = 0
+            # On détermine les angles horizontaux et verticaux entre ab et ac
+            alpha = radians(ab.argument() - ac.argument())
+            if not d3:
+                d = ac.norme * sin(alpha)
+            else:
+                if ab.x or ab.y:
+                    # angle de ab avec (O, x, y) : arctan(z/sqrt(x² + y²))
+                    beta_ab = atan(ab.z / sqrt(ab.x ** 2 + ab.y ** 2))
+                elif ab.z < 0:
+                    beta_ab = radians(-90)
+                else:
+                    beta_ab = radians(90)
+                if ac.x or ac.y:
+                    # angle de ac avec (O, x, y) idem
+                    beta_ac = atan(ac.z / sqrt(ac.x ** 2 + ac.y ** 2))
+                elif ac.z < 0:
+                    beta_ac = radians(-90)
+                else:
+                    beta_ac = radians(90)
+                beta = beta_ab - beta_ac
+                # Distances horizontale et verticale entre c et ab
+                mc_x = ac.norme * sin(alpha)
+                mc_z = ac.norme * sin(beta)
+                d = sqrt(mc_x ** 2 + mc_z ** 2)
+            if d <= sensibilite:
+                trajectoire.append(salle)
         
-        return trajectoires
-
+        # Fonction retournant la distance de la salle à l'origine
+        def distance(salle):
+            x, y, z = salle.coords.tuple()
+            v_o_salle = Vecteur(x - o_x, y - o_y, z - o_z)
+            return v_o_salle.norme
+        
+        trajectoire = sorted(trajectoire, key=distance)
+        print(trajectoire)
+        return trajectoire

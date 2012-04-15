@@ -43,6 +43,7 @@ class CmdTrouver(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "trouver", "find")
+        self.groupe = "administrateur"
         self.nom_categorie = "divers"
         self.schema = "<cherchable> (<message>)"
         self.aide_courte = "permet de rechercher dans l'univers"

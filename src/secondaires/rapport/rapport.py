@@ -49,6 +49,7 @@ class Rapport(BaseObj):
     
     enregistrer = True
     id_actuel = 1
+    
     def __init__(self, titre, createur=None):
         """Constructeur d'un rapport."""
         BaseObj.__init__(self)
@@ -61,19 +62,19 @@ class Rapport(BaseObj):
         self.date = datetime.now()
         self.createur = createur
         self.assigne_a = None
+        self.salle = createur.salle if createur else None
         self._type = "bug"
         self._priorite = "normale"
         self._categorie = ""
         self._statut = "nouveau"
-        self.salle = None
-        if createur:
-            self.salle = createur.salle
+        # Copie
+        self.source = None
     
     def __getnewargs__(self):
         return ("", None)
     
     def __repr__(self):
-        return "<rapport {} #{} : {} ({}%)".format(
+        return "<rapport {} #{} : {} ({}%)>".format(
                 self.type, self.id, self.titre, self.avancement)
     
     def _get_type(self):
@@ -81,7 +82,6 @@ class Rapport(BaseObj):
     def _set_type(self, type):
         if type not in TYPES:
             raise ValueError("type {} inconnu".format(type))
-        
         self._type = type
     type = property(_get_type, _set_type)
     
@@ -90,7 +90,6 @@ class Rapport(BaseObj):
     def _set_priorite(self, priorite):
         if priorite not in PRIORITES:
             raise ValueError("priorité {} inconnue".format(priorite))
-        
         self._priorite = priorite
     priorite = property(_get_priorite, _set_priorite)
     
@@ -99,7 +98,6 @@ class Rapport(BaseObj):
     def _set_statut(self, statut):
         if statut not in STATUTS:
             raise ValueError("statut {} inconnu".format(statut))
-        
         self._statut = statut
         self.appliquer_statut()
     statut = property(_get_statut, _set_statut)
@@ -109,9 +107,24 @@ class Rapport(BaseObj):
     def _set_categorie(self, categorie):
         if categorie not in CATEGORIES:
             raise ValueError("catégorie {} inconnue".format(categorie))
-        
         self._categorie = categorie
     categorie = property(_get_categorie, _set_categorie)
+    
+    def copier(self, autre):
+        """Copie les attributs d'un autre rapport."""
+        self.source = autre
+        self.ouvert = autre.ouvert
+        self.titre = autre.titre
+        self.avancement = autre.avancement
+        self.description = autre.description
+        self.date = autre.date
+        self.createur = autre.createur
+        self.assigne_a = autre.assigne_a
+        self.salle = autre.salle
+        self._type = autre.type
+        self._priorite = autre.priorite
+        self._categorie = autre.categorie
+        self._statut = autre.statut
     
     def verifier(self):
         """Vérifie que createur et assigne_a sont toujours présents."""
@@ -155,4 +168,3 @@ class Rapport(BaseObj):
                 champs.append(nom)
         
         return champs
-

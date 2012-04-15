@@ -116,7 +116,8 @@ class Fonction(BaseObj):
         """
         ty_p = [type(p) for p in parametres]
         for types, methode in cls._parametres_possibles.items():
-            if all(issubclass(p, t) for p, t in zip(ty_p, types)):
+            if len(types) == len(ty_p) and all(issubclass(p, t) for p, t in \
+                    zip(ty_p, types)):
                 return methode
         
         raise ValueError("Aucune interprétation de la fonction {} " \

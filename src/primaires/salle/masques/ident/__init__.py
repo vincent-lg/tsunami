@@ -59,15 +59,10 @@ class Ident(Masque):
                 "Précisez un identifiant de salle.")
         
         ident = ident.split(" ")[0].lower()
-        if ident in type(self).importeur.salle:
-            self.a_interpreter = ident
-            commande[:] = commande[len(ident):]
-            masques.append(self)
-            ret = True
-        else:
-            ret = False
-        
-        return ret
+        self.a_interpreter = ident
+        commande[:] = commande[len(ident):]
+        masques.append(self)
+        return True
     
     def valider(self, personnage, dic_masques):
         """Validation du masque"""
@@ -75,12 +70,11 @@ class Ident(Masque):
         ident = self.a_interpreter
         
         try:
-            salle = type(self).importeur.salle[ident]
+            salle = importeur.salle[ident]
         except KeyError:
-            print("Erreur")
             raise ErreurValidation(
-                "|err|L'identifiant '{}' n'est pas valide.|ff|".format(ident),
-                True)
+                "|err|Impossible d'éditer la salle '{}', clé invalide ou " \
+                "mnémo inconnu.|ff|".format(ident))
         
         self.salle = salle
         self.ident = salle.ident

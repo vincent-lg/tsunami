@@ -46,7 +46,7 @@ class EdtMnemonic(Uniligne):
         """Interprétation du message"""
         msg = msg.lower()
         ancien_ident = self.objet.ident
-        ident = self.objet.zone + ":" + msg
+        ident = str(self.objet.zone) + ":" + msg
         if not re.search(MNEMONIC_VALIDE, msg):
             self.pere.envoyer("|err|Ce mnémonic est invalide. Veuillez " \
                     "réessayer.|ff|")

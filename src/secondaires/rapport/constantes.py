@@ -73,4 +73,3 @@ COMPLETE = {
     "titre": "titre",
     "description": "description",
 }
-

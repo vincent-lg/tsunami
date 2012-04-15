@@ -30,95 +30,100 @@
 
 """Fichier contenant la classe Calcul, détaillée plus bas."""
 
+import re
+
 from .expression import Expression
 from . import expressions
-from ..constantes.calcul import OPERATEURS
+
+## Constantes
+# Regex
+RE_INV = re.compile(r"[A-Za-z_]\(")
+RE_OPERATEURS = re.compile(r"[-+*/()]")
 
 class Calcul(Expression):
     
-    """Expression calcul."""
+    """Expression calcul.
+    
+    Cette expression permet d'intégrer des calculs avec des opérateurs
+    mathématiques et des parenthèses. Les expression pouvant être
+    parsées par cette expression sont :
+        1 + 2
+        1 - variable
+        3 * autre
+        (4 + variable) / 2
+        fonction(chose) + (3 * autre_variable) - 1
+    
+    """
     
     nom = "calcul"
     def __init__(self):
         """Constructeur de l'expression."""
         Expression.__init__(self)
-        self.chaine = []
+        self.expressions = []
+        self.operateurs = ""
     
     def __repr__(self):
-        chaine = [str(p) for p in self.parametres]
-        return self.nom + "(" + ", ".join(params) + ")"
+        expressions = [str(e) for e in self.expressions]
+        return self.operateurs.format(*expressions)
     
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
-        chaine = chaine.lstrip()
-        fin_nom = chaine.find("(")
-        nom = chaine[:fin_nom]
-        chaine = chaine[:fin_nom + 1]
-        return fin_nom >= 0  and RE_VARIABLE.search(nom)
+        inv = RE_INV.search(chaine)
+        if inv:
+            return False
+        
+        return RE_OPERATEURS.search(chaine) is not None
     
     @classmethod
-    def parser(cls, fonction):
+    def parser(cls, chaine):
         """Parse la chaîne.
         
         Retourne l'objet créé et la partie non interprétée de la chaîne.
         
         """
         objet = cls()
-        fin_nom = fonction.find("(")
-        nom = fonction[:fin_nom]
-        chaine = fonction[fin_nom + 1:].lstrip(" ")
-        objet.nom = nom
         
         # Parsage des paramètres
         types = ("variable", "nombre", "chaine", "fonction")
-        types = tuple([expressions[nom] for nom in types])
-        parametres = []
         while True:
             chaine = chaine.lstrip(" ")
-            if chaine.startswith(")"):
-                chaine = chaine[1:]
+            if not chaine:
                 break
             
-            types_app = [type for type in types if type.parsable(chaine)]
-            if not types_app:
-                raise ValueError("impossible de parser {}".format(fonction))
-            elif len(types_app) > 1:
-                raise ValueError("la fonction {] peut être différemment " \
-                        "interprétée".format(fonction))
-            
-            type = types_app[0]
-            arg, chaine = type.parser(chaine)
-            parametres.append(arg)
-            
-            chaine = chaine.lstrip(" ")
-            if chaine.startswith(","):
+            if RE_OPERATEURS.search(chaine[0]):
+                # C'est un opérateur, on l'ajoute à la chaîne operateurs
+                operateur = chaine[0]
+                if operateur == ")" and "(" not in objet.operateurs:
+                    break
+                
                 chaine = chaine[1:]
-            elif chaine.startswith(")"):
-                chaine = chaine[1:]
-                break
+                dernier_car = objet.operateurs and objet.operateurs[-1] or ""
+                if dernier_car and operateur in "+-*/" and dernier_car not in \
+                        "+-/*(":
+                    objet.operateurs += " "
+                objet.operateurs += operateur
+                ops = objet.operateurs
+                if operateur == ")" and ops.count("(") == ops.count(")"):
+                    break
             else:
-                raise ValueError("erreur de syntaxe dans la fonction " \
-                        "{}".format(fonction))
-        
-        objet.parametres = tuple(parametres)
+                # C'est une expression supposée
+                try:
+                    arg, chaine = cls.choisir(types, chaine)
+                except ValueError:
+                    break
+                
+                dernier_car = objet.operateurs and objet.operateurs[-1] or ""
+                if dernier_car and dernier_car in "+-*/)":
+                    objet.operateurs += " "
+                
+                objet.operateurs += "{" + str(len(objet.expressions)) + "}"
+                objet.expressions.append(arg)
         
         return objet, chaine
-    
-    def get_valeur(self, evt):
-        """Retourne la valeur de retour de la fonction."""
-        fonctions = type(self).importeur.scripting.fonctions
-        if self.nom not in fonctions:
-            raise ValueError("la fonction {} est introuvable".format(self.nom))
-        
-        fonction = fonctions[self.nom](self)
-        
-        return fonction(evt)
     
     @property
     def code_python(self):
         """Retourne le code Python associé à la fonction."""
-        py_code = "fonctions['" + self.nom + "']"
-        py_args = ["evt"] + [a.code_python for a in self.parametres]
-        py_code += ".executer(" + ", ".join(py_args) + ")"
-        return py_code
+        expressions = [e.code_python for e in self.expressions]
+        return self.operateurs.format(*expressions)
