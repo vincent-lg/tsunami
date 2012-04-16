@@ -33,6 +33,7 @@
 from abstraits.module import *
 from . import commandes
 from . import editeurs
+from . import cherchables
 from .rapport import Rapport
 from .editeurs.bugedit import EdtBugedit
 from .editeurs.bugedit_p import EdtBugeditP

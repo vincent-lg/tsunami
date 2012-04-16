@@ -33,28 +33,28 @@
 from primaires.interpreteur.masque.parametre import Parametre
 from primaires.interpreteur.editeur.presentation import Presentation
 
-class PrmSuggest(Parametre):
+class PrmSuggestion(Parametre):
     
     """Commande 'rapport suggest'"""
     
     def __init__(self):
         """Constructeur du paramètre."""
-        Parametre.__init__(self, "suggest", "suggest")
+        Parametre.__init__(self, "suggestion", "suggest")
         self.groupe = "joueur"
         self.schema = "<message>"
         self.aide_courte = "crée une suggestion"
         self.aide_longue = \
-            "Cette commande permet de créer une nouvelle suggestion. " \
-            "Vous devez préciser en argument le titre du rapport " \
-            "à créer. Un éditeur s'ouvrira alors pour vous permettre " \
-            "de renseigner plus précisément l'idée suggérée."
+            "Cette commande permet de créer une nouvelle suggestion liée " \
+            "à l'évolution de l'univers. Vous devez préciser en argument " \
+            "le titre du rapport à créer. Un éditeur s'ouvrira alors pour " \
+            "vous permettre de renseigner plus précisément l'idée suggérée."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         titre = dic_masques["message"].message
         rapport = importeur.rapport.creer_rapport(titre, personnage,
                 ajouter=False)
-        rapport.type = "suggest"
+        rapport.type = "suggestion"
         editeur = importeur.interpreteur.construire_editeur(
                 "bugedit", personnage, rapport)
         personnage.contextes.ajouter(editeur)

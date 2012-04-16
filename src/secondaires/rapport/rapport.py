@@ -77,6 +77,10 @@ class Rapport(BaseObj):
         return "<rapport {} #{} : {} ({}%)>".format(
                 self.type, self.id, self.titre, self.avancement)
     
+    @property
+    def aff_assigne_a(self):
+        return self.assigne_a and self.assigne_a.nom or "personne"
+    
     def _get_type(self):
         return self._type
     def _set_type(self, type):

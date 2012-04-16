@@ -30,8 +30,11 @@
 
 """Fichier contenant le paramètre 'liste' de la commande 'rapport'."""
 
+from math import floor
+
 from primaires.interpreteur.masque.parametre import Parametre
 from primaires.format.fonctions import oui_ou_non
+from secondaires.rapport.constantes import CLR_STATUTS, CLR_AVC
 
 class PrmListe(Parametre):
     
@@ -49,21 +52,54 @@ class PrmListe(Parametre):
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         rapports = list(importeur.rapport.rapports.values())
-        if rapports:
+        if not personnage.est_immortel():
+            # On récupère les rapports envoyés par le joueur mortel
+            rapports = [r for r in rapports if r.createur is personnage]
+            if not rapports:
+                personnage << "|att|Vous n'avez envoyé aucun rapport.|ff|"
+            else:
+                l_id = max([len(str(r.id)) for r in rapports] + [2])
+                l_titre = max([len(r.titre) for r in rapports] + [5])
+                lignes = [
+                    "+" + "-" * (l_id + l_titre + 29) + "+",
+                    "| |tit|" + "ID".ljust(l_id) + "|ff| | |tit|" \
+                            + "Titre".ljust(l_titre) + "|ff| | " \
+                            "|tit|Statut|ff|   | |tit|Avancement|ff| |",
+                    "+" + "-" * (l_id + l_titre + 29) + "+",
+                ]
+                for rapport in rapports:
+                    id = "|vrc|" + str(rapport.id).ljust(l_id) + "|ff|"
+                    titre = rapport.titre.ljust(l_titre)
+                    stat = CLR_STATUTS[rapport.statut]
+                    stat += rapport.statut.ljust(8) + "|ff|"
+                    clr = CLR_AVC[floor(rapport.avancement / 12.5)]
+                    avc = clr + str(rapport.avancement).rjust(9)
+                    lignes.append(
+                            "| {id} | {titre} | {stat} | {avc}%|ff| |".format(
+                            id=id, titre=titre, stat=stat, avc=avc))
+                lignes.append("+" + "-" * (l_id + l_titre + 29) + "+")
+                personnage << "\n".join(lignes)
+        else:
+            if not rapports:
+                personnage << "|err|Aucun rapport n'a été envoyé.|ff|"
+                return
+            l_id = max([len(str(r.id)) for r in rapports] + [2])
+            l_createur = max([len(r.createur.nom) if r.createur else 7 \
+                    for r in rapports] + [8])
+            l_titre = max([len(r.titre) for r in rapports] + [5])
             lignes = [
-                "+-" + "-" * 5 + "-+-" + "-" * 10 + "-+-" + "-" * 40 + "-+",
-                "|    ID | Créateur   | Sujet" + " " * 35 + " |",
-                "+-" + "-" * 5 + "-+-" + "-" * 10 + "-+-" + "-" * 40 + "-+",
+                "+" + "-" * (l_id + l_createur + l_titre + 8) + "+",
+                "| |tit|" + "ID".ljust(l_id) + "|ff| | |tit|" \
+                        + "Créateur".ljust(l_createur) + "|ff| | |tit|" \
+                        + "Titre".ljust(l_titre) + "|ff| |",
+                "+" + "-" * (l_id + l_createur + l_titre + 8) + "+",
             ]
             for rapport in rapports:
                 createur = rapport.createur and rapport.createur.nom or \
                         "inconnu"
-                lignes.append(
-                    "| {:>5} | {:<10} | {:<40} |".format(
-                    rapport.id, createur, rapport.titre))
-            
+                lignes.append("| |vrc|" + str(rapport.id).ljust(l_id) \
+                        + "|ff| | " + createur.ljust(l_createur) + " | " \
+                        + rapport.titre.ljust(l_titre) + " |")
             lignes.append(
-                "+-" + "-" * 5 + "-+-" + "-" * 10 + "-+-" + "-" * 40 + "-+")
+                "+" + "-" * (l_id + l_createur + l_titre + 8) + "+")
             personnage << "\n".join(lignes)
-        else:
-            personnage << "Aucun rapport n'est actuellement défini."

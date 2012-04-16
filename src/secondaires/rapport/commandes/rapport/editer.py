@@ -33,7 +33,7 @@
 from primaires.interpreteur.masque.parametre import Parametre
 from primaires.interpreteur.editeur.presentation import Presentation
 
-class PrmEdit(Parametre):
+class PrmEditer(Parametre):
     
     """Commande 'rapport edit'"""
     

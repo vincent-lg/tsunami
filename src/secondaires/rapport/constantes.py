@@ -41,6 +41,9 @@ CATEGORIES = (
     "réseau",
     "scripting",
     "sécurité",
+    "communication",
+    "combat",
+    "autre",
 )
 
 STATUTS = (
@@ -51,6 +54,25 @@ STATUTS = (
     "dupliqué",
 )
 
+CLR_STATUTS = {
+    "nouveau":"|vrc|",
+    "en cours":"|vr|",
+    "fermé":"|grf|",
+    "rejeté":"|rgc|",
+    "dupliqué":"|cy|",
+}
+
+CLR_AVC = (
+    "|rg|",
+    "|rgc|",
+    "|jn|",
+    "|bc|",
+    "|cyc|",
+    "|cy|",
+    "|vr|",
+    "|vrc|",
+)
+
 PRIORITES = (
     "faible",
     "normale",
@@ -58,6 +80,14 @@ PRIORITES = (
     "urgente",
     "immédiate",
 )
+
+PRIORITES_VAL = {
+    "faible":0,
+    "normale":1,
+    "haute":2,
+    "urgente":3,
+    "immédiate":4,
+}
 
 ATTRS_STATUTS = {
     "fermé": (
