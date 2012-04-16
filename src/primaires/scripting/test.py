@@ -246,7 +246,7 @@ class Test(BaseObj):
         
         __builtins__["ErreurExecution"] = ErreurExecution
         __builtins__["variables"] = evenement.espaces.variables
-        __builtins__["formatter"] = formatter
+        __builtins__["get_variables"] = get_variables
         try:
             code = exec(code, globales)
         except Exception:
@@ -257,7 +257,7 @@ class Test(BaseObj):
         finally:
             del __builtins__["ErreurExecution"]
             del __builtins__["variables"]
-            del __builtins__["formatter"]
+            del __builtins__["get_variables"]
         
         # Si le test est relié à une quête
         if etape:
