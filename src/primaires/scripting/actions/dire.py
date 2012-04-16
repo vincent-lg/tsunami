@@ -53,5 +53,8 @@ class ClasseAction(Action):
         """Envoie un message aux personnages présents dans la salle.
         A noter que tous les personnages contenus dans des variables de
         ce script, s'il y en a, sont exclus de la liste et ne reçoivent
-        donc pas ce message."""
-        salle.envoyer(message, **variables)
+        donc pas ce message.
+        
+        """
+        f_variables = get_variables(variables, message)
+        salle.envoyer(message, **f_variables)

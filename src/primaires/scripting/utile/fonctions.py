@@ -30,7 +30,12 @@
 
 """Fichier contenant les fonctions utiles au scripting."""
 
-def formatter(chaine):
+import re
+
+# Constantes
+RE_VAR = re.compile(r"(?!\{)\{([A-Za-z_][A-Za-z0-9_]*)\}(?!\})")
+
+def formatter(variables, chaine):
     f_variables = {}
     for nom, variable in variables.items():
         if hasattr(variable, "get_nom_pour"):
@@ -39,3 +44,13 @@ def formatter(chaine):
             f_variables[nom] = str(variable)
     
     return chaine.format(**f_variables)
+
+def get_variables(variables, chaine):
+    """Retourne les variables trouvées dans la chaîne."""
+    f_variables = {}
+    for ligne in RE_VAR.search(chaine):
+        nom = ligne[1]
+        f_variables[nom] = variables[nom]
+    
+    return f_variables
+

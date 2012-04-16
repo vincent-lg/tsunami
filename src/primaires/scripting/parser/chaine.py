@@ -83,4 +83,4 @@ class ChaineDeCaracteres(Expression):
         chaine = repr(self.chaine)
         chaine = echapper_accolades(chaine)
         chaine = RE_SUP.sub(r"{\1}", chaine)
-        return "formatter(" + chaine + ")"
+        return "formatter(variables, " + chaine + ")"
