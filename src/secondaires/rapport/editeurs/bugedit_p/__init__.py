@@ -45,6 +45,7 @@ from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.flag import Flag
+from .edt_assigne import EdtAssigne
 from secondaires.rapport.constantes import *
 
 class EdtBugeditP(Presentation):
@@ -80,6 +81,45 @@ class EdtBugeditP(Presentation):
             "Entrez le |ent|titre|ff| du rapport ou |cmd|/|ff| pour revenir " \
             "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
         
+        # Type
+        types = sorted(TYPES)
+        type = self.ajouter_choix("type", "y", Choix, rapport,
+                "type", types)
+        type.parent = self
+        type.prompt = "Type de rapport : "
+        type.apercu = "{objet.type}"
+        type.aide_courte = \
+            "Entrez le |ent|type|ff| de rapport ou |cmd|/|ff| pour " \
+            "revenir à la fenêtre parente.\n\Types disponibles : " \
+            "{}.\n\Type actuel : |bc|{{objet.type}}|ff|".format(
+            ", ".join(types))
+
+        # Catégorie
+        categories = sorted(CATEGORIES)
+        categorie = self.ajouter_choix("catégorie", "c", Choix, rapport,
+                "categorie", categories)
+        categorie.parent = self
+        categorie.prompt = "Catégorie du rapport : "
+        categorie.apercu = "{objet.categorie}"
+        categorie.aide_courte = \
+            "Entrez la |ent|catégorie|ff| du rapport ou |cmd|/|ff| pour " \
+            "revenir à la fenêtre parente.\n\nCatégories disponibles : " \
+            "{}.\n\nCatégorie actuelle : |bc|{{objet.categorie}}|ff|".format(
+            ", ".join(categories))
+        
+        # Priorité
+        priorites = sorted(PRIORITES)
+        priorite = self.ajouter_choix("priorité", "p", Choix, rapport,
+                "priorite", priorites)
+        priorite.parent = self
+        priorite.prompt = "Priorité du rapport : "
+        priorite.apercu = "{objet.priorite}"
+        priorite.aide_courte = \
+            "Entrez la |ent|priorité|ff| du rapport ou |cmd|/|ff| pour " \
+            "revenir à la fenêtre parente.\n\nPriorités disponibles : " \
+            "{}.\n\nPriorité actuelle : |bc|{{objet.priorite}}|ff|".format(
+            ", ".join(priorites))
+        
         # Description
         description = self.ajouter_choix("description", "d", Description, \
                 rapport)
@@ -112,16 +152,13 @@ class EdtBugeditP(Presentation):
             "Entrez l'|ent|avancement|ff| en pourcent de la tâche ou " \
             "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
             "Avancement actuel : |bc|{valeur}|ff|"
-
-        # Catégorie
-        categories = sorted(CATEGORIES)
-        categorie = self.ajouter_choix("catégorie", "c", Choix, rapport,
-                "categorie", categories)
-        categorie.parent = self
-        categorie.prompt = "Catégorie du rapport : "
-        categorie.apercu = "{objet.categorie}"
-        categorie.aide_courte = \
-            "Entrez la |ent|catégorie|ff| du rapport ou |cmd|/|ff| pour " \
-            "revenir à la fenêtre parente.\n\nCatégorie disponibles : " \
-            "{}.\n\nCatégorie actuelle : |bc|{{objet.categorie}}|ff|".format(
-            ", ".join(categories))
+        
+        # Assigné à
+        assigne_a = self.ajouter_choix("assigné à", "i", EdtAssigne, rapport)
+        assigne_a.parent = self
+        assigne_a.prompt = "Entrez un nom de joueur : "
+        assigne_a.apercu = "{objet.aff_assigne_a}"
+        assigne_a.aide_courte = \
+            "Entrez un |ent|Immortel|ff| à qui assigner ce rapport, ou " \
+            "|cmd|/|ff| pour revenir à la fenêtre parente.\n" \
+            "Actuellement assigné à : {objet.aff_assigne_a}"

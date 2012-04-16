@@ -36,9 +36,11 @@ Dans ce fichier se trouve la commande même.
 
 from primaires.interpreteur.commande.commande import Commande
 from .bug import PrmBug
-from .suggest import PrmSuggest
-from .edit import PrmEdit
+from .suggestion import PrmSuggestion
+from .evolution import PrmEvolution
+from .editer import PrmEditer
 from .liste import PrmListe
+from .voir import PrmVoir
 
 class CmdRapport(Commande):
     
@@ -55,11 +57,14 @@ class CmdRapport(Commande):
             "ou de manipuler les rapports existants (pour une correction). " \
             "Pour créer un nouveau rapport, utilisez la sous-commande " \
             "%rapport:bug% si vous voulez rapporter un bug, " \
-            "%rapport:suggest% pour une suggestion."
+            "%rapport:suggestion% pour une suggestion ou %rapport:evolution% " \
+            "pour une amélioration."
     
     def ajouter_parametres(self):
         """Ajout des paramètres"""
         self.ajouter_parametre(PrmBug())
-        self.ajouter_parametre(PrmSuggest())
-        self.ajouter_parametre(PrmEdit())
+        self.ajouter_parametre(PrmSuggestion())
+        self.ajouter_parametre(PrmEvolution())
+        self.ajouter_parametre(PrmEditer())
         self.ajouter_parametre(PrmListe())
+        self.ajouter_parametre(PrmVoir())
