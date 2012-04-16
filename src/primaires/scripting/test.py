@@ -146,6 +146,7 @@ class Test(BaseObj):
             "variables": evenement.espaces.variables,
             "evt": evenement,
             "Fraction": Fraction,
+            "formatter": formatter,
         }
     
     def erreur_execution(self, message):
