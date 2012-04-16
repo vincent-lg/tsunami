@@ -38,7 +38,7 @@ from abstraits.obase import BaseObj
 from primaires.scripting.parser import expressions
 from primaires.scripting.instruction import Instruction, ErreurExecution
 from primaires.scripting.constantes.connecteurs import CONNECTEURS
-from primaires.scripting.utile.fonctions import formatter
+from primaires.scripting.utile.fonctions import *
 from .alerte import Alerte
 
 class Test(BaseObj):
@@ -147,6 +147,7 @@ class Test(BaseObj):
             "evt": evenement,
             "Fraction": Fraction,
             "formatter": formatter,
+            "get_variables": get_variables,
         }
     
     def erreur_execution(self, message):
