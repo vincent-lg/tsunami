@@ -68,9 +68,15 @@ class BoiteMail(BaseObj):
         """Supprime un mail"""
         del self._mails[id]
     
+    @property
+    def id_suivant(self):
+        """Retourne l'ID maximum enregistré + 1."""
+        return max(self._mails.keys()) + 1
+    
     def creer_mail(self, expediteur, source=None):
         """Cree un message vide et le retourne"""
         mail = MUDmail(self, expediteur, source=source)
+        mail.id = self.id_suivant
         self._mails[mail.id] = mail
         return mail
     

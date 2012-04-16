@@ -54,8 +54,7 @@ class MUDmail(BaseObj):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
         self.parent = parent
-        mails = type(self).importeur.communication.mails or {}
-        self.id = len(mails) + 1
+        self.id = -1
         if source is not None: # édition d'un brouillon
             self._etat = BROUILLON
             self.sujet = str(source.sujet)
