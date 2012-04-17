@@ -33,7 +33,7 @@
 import re
 
 # Constantes
-RE_VAR = re.compile(r"(?!\{)\{([A-Za-z_][A-Za-z0-9_]*)\}(?!\})")
+RE_VAR = re.compile(r"(?!\{)\{([A-Za-z_][A-Za-z0-9_]*?)\}(?!\})")
 
 def formatter(variables, chaine):
     f_variables = {}
@@ -47,10 +47,15 @@ def formatter(variables, chaine):
 
 def get_variables(variables, chaine):
     """Retourne les variables trouvées dans la chaîne."""
-    f_variables = {}
-    for ligne in RE_VAR.search(chaine):
-        nom = ligne[1]
-        f_variables[nom] = variables[nom]
-    
-    return f_variables
+    return VariablesAAfficher(variables)
 
+class VariablesAAfficher(dict):
+    
+    """Classe héritant d'un dictionnaire, chargée de retourner les variables.
+    
+    Les variables retournées sont uniquement celles demandées.
+    
+    """
+    
+    def __getitem__(self, item):
+        return dict.__getitem__(self, item)
