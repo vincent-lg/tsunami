@@ -197,9 +197,9 @@ class EdtRedit(Presentation):
                 salle)
         pnj.parent = self
         pnj.aide_courte = \
-            "Entrez la clé du prototype suivi d'un espace et du " \
-            "nombre de PNJ à repop\ndans cette salle pour l'ajouter " \
-            "et le modifier.\nPrécisez un nombre de |cmd|0|ff| " \
+            "Entrez la |ent|clé|ff| du prototype suivi d'un espace et du " \
+            "|ent|nombre|ff| de PNJ à repop\ndans cette salle pour " \
+            "l'ajouter et le modifier.\nPrécisez un nombre de |cmd|0|ff| " \
             "pour le retirer."
         
         # Magasin
