@@ -180,7 +180,7 @@ class Salle(BaseObj):
         chemins = Chemins.salles_autour(self, rayon)
         return chemins.get(destination)
     
-    def envoyer(self, message, prompt=True, *personnages, **kw_personnages):
+    def envoyer(self, message, *personnages, prompt=True, **kw_personnages):
         """Envoie le message aux personnages présents dans la salle.
         
         Les personnages dans les paramètres supplémentaires (nommés ou non)

@@ -223,6 +223,7 @@ class Joueur(Personnage):
             else:
                 d_aff[cle] = str(objet)
         
+        print(msg)
         msg = msg.format(*l_aff, **d_aff)
         if self.instance_connexion:
             self.instance_connexion.envoyer(msg)

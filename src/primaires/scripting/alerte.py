@@ -44,7 +44,8 @@ class Alerte(BaseObj):
     
     """
     
-    no_actuel = 1
+    no_actuel = 0
+    enregistrer = True
     def __init__(self, objet, evenement, test, no_ligne, ligne, message,
             traceback):
         """Cration d'une alerte.
