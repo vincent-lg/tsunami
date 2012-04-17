@@ -44,6 +44,7 @@ class Alerte(BaseObj):
     
     """
     
+    no_actuel = 1
     def __init__(self, objet, evenement, test, no_ligne, ligne, message,
             traceback):
         """Cration d'une alerte.
@@ -59,7 +60,7 @@ class Alerte(BaseObj):
         
         """
         BaseObj.__init__(self)
-        self.no = len(type(self).importeur.scripting.alertes) + 1
+        self.no = self.inc_no()
         self.objet = repr(objet)
         self.date = datetime.now()
         if objet:
@@ -75,3 +76,9 @@ class Alerte(BaseObj):
     
     def __getnewargs__(self):
         return (None, "", "", "", "", "", "")
+    
+    @classmethod
+    def inc_no(cls):
+        cls.no_actuel += 1
+        return cls.no_actuel
+

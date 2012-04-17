@@ -32,7 +32,6 @@
 
 import re
 
-from primaires.format.fonctions import echapper_accolades
 from .expression import Expression
 
 # Constantes
@@ -81,6 +80,6 @@ class ChaineDeCaracteres(Expression):
     def code_python(self):
         """Retourne le code Python associé."""
         chaine = repr(self.chaine)
-        chaine = echapper_accolades(chaine)
+        chaine = chaine
         chaine = RE_SUP.sub(r"{\1}", chaine)
         return "formatter(variables, " + chaine + ")"

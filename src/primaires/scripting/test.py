@@ -35,6 +35,7 @@ import traceback
 from fractions import Fraction
 
 from abstraits.obase import BaseObj
+from primaires.format.fonctions import echapper_accolades
 from primaires.scripting.parser import expressions
 from primaires.scripting.instruction import Instruction, ErreurExecution
 from primaires.scripting.constantes.connecteurs import CONNECTEURS
@@ -165,7 +166,7 @@ class Test(BaseObj):
         reg = re.search("File \"\<string\>\", line ([0-9]+)", pile)
         if reg:
             no_ligne = int(reg.groups()[-1]) - 1
-            ligne = str(self.__instructions[no_ligne - 1])
+            ligne = echapper_accolades(str(self.__instructions[no_ligne - 1]))
         else:
             no_ligne = "|err|inconnue|ff|"
             ligne = "Ligne inconnue."
