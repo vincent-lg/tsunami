@@ -77,4 +77,4 @@ class Orage(BasePertu):
         ]
         for salle in salles:
             if randint(1, 10) < 3 and salle.exterieur:
-                salle.envoyer(choice(messages))
+                salle.envoyer(choice(messages), prompt=False)

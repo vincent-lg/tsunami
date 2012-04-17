@@ -46,9 +46,9 @@ class EdtPnjRepop(Editeur):
         """Message d'accueil du contexte"""
         salle = self.objet
         msg = "| |tit|" + "Edition des pnj disponibles au repop de {}".format(
-        salle).ljust(59)
+        salle).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
-        msg += self.aide_courte
+        msg += self.aide_courte + "\n"
         msg += "PNJ disponibles au repop :"
         
         # Parcours des pnj
@@ -57,7 +57,7 @@ class EdtPnjRepop(Editeur):
         for proto, nb in repop.items():
             nb_e = len([p for p in proto.pnj if p.salle_origine is salle])
             nb += nb_e
-            pnj.append(proto.cle.ljust(20) + " (" + str(nb).rjust(3))
+            pnj.append(proto.cle.ljust(20) + " (" + str(nb).rjust(3) + ")")
         
         pnj.sort
         if pnj:
@@ -73,7 +73,7 @@ class EdtPnjRepop(Editeur):
         try:
             cle, nb = msg.split(" ")
         except ValueError:
-            self.pere << "|err|Syntaxe invalide."
+            self.pere << "|err|Syntaxe invalide.|ff|"
             return
         
         try:

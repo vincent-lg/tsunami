@@ -91,11 +91,13 @@ class Module(BaseModule):
                 if not nom_pertu_enchainer:
                     for salle in pertu.liste_salles_sous:
                         if salle.exterieur:
-                            salle.envoyer("|cy|" + pertu.message_fin + "|ff|")
+                            salle.envoyer("|cy|" + pertu.message_fin + "|ff|",
+                                    prompt=False)
                 else:
                     for salle in pertu.liste_salles_sous:
                         if salle.exterieur:
-                            salle.envoyer("|cy|" + msg_enchainement + "|ff|")
+                            salle.envoyer("|cy|" + msg_enchainement + "|ff|",
+                                    prompt=False)
                     cls_pertu_enchainer = None
                     for pertu_existante in perturbations:
                         if pertu_existante.nom_pertu == nom_pertu_enchainer:
@@ -132,7 +134,8 @@ class Module(BaseModule):
                     self.perturbations_actuelles.append(pertu)
                     for salle in pertu.liste_salles_sous:
                         if salle.exterieur:
-                            salle.envoyer("|cy|" + pertu.message_debut + "|ff|")
+                            salle.envoyer("|cy|" + pertu.message_debut + "|ff|",
+                                    prompt=False)
     
     def donner_meteo(self, salle, liste_messages, flags):
         """Affichage de la météo d'une salle"""

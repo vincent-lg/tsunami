@@ -187,7 +187,7 @@ class Salle(BaseObj):
         chemins = Chemins.salles_autour(self, rayon)
         return chemins.get(destination)
     
-    def envoyer(self, message, *personnages, **kw_personnages):
+    def envoyer(self, message, *personnages, prompt=True, **kw_personnages):
         """Envoie le message aux personnages présents dans la salle.
         
         Les personnages dans les paramètres supplémentaires (nommés ou non)
@@ -198,6 +198,8 @@ class Salle(BaseObj):
         exceptions = personnages + tuple(kw_personnages.values())
         for personnage in self.personnages:
             if personnage not in exceptions:
+                if not prompt:
+                    personnage.instance_connexion.sans_prompt()
                 personnage.envoyer(message, *personnages, **kw_personnages)
     
     def envoyer_lisser(self, chaine, *personnages, **kw_personnages):

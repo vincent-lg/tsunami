@@ -101,6 +101,9 @@ class Module(BaseModule):
         for alerte in alertes:
             self.alertes[alerte.no] = alerte
         
+        if alertes:
+            Alerte.no_actuel = max(a.no for a in alertes)
+        
         # On lie la méthode informer_alertes avec l'hook joueur_connecte
         # La méthode informer_alertes sera ainsi appelée quand un joueur
         # se connecte
