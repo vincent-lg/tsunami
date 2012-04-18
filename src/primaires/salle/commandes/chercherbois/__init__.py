@@ -1,0 +1,93 @@
+﻿# -*-coding:Utf-8 -*
+
+# Copyright (c) 2012 NOEL-BARON Léo
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+# * Neither the name of the copyright holder nor the names of its contributors
+#   may be used to endorse or promote products derived from this software
+#   without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+# OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+
+"""Package contenant la commande 'chercherbois'."""
+
+from random import random, randint, choice
+from math import sqrt
+
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdChercherBois(Commande):
+    
+    """Commande 'chercherbois'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "chercherbois", "gatherwood")
+        self.nom_categorie = "objets"
+        self.aide_courte = "permet de chercher du bois"
+        self.aide_longue = \
+            "Cette commande permet de chercher du combustible dans la salle " \
+            "où vous vous trouvez."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        prototypes = importeur.objet.prototypes.values()
+        prototypes = [p for p in prototypes if p.est_de_type("combustible")]
+        combustibles = []
+        for proto in prototypes:
+            if personnage.salle.terrain.nom in proto.terrains:
+                combustibles.append((proto.rarete, proto))
+        combustibles = sorted(combustibles, key=lambda combu: combu[0])
+        print(combustibles)
+        if not combustibles:
+            personnage << "|err|Il n'y a rien qui puisse brûler par ici.|ff|"
+        else:
+            personnage.cle_etat = "collecte_bois"
+            personnage << "Vous vous penchez et commencez à chercher du bois."
+            personnage.salle.envoyer(
+                    "{} se met à chercher quelque chose par terre.",
+                    personnage)
+            yield 5
+            niveau = personnage.get_talent("collecte_bois")
+            niveau = sqrt(niveau / 100)
+            proba_trouver = round(random(), 1)
+            personnage.cle_etat = ""
+            if proba_trouver <= niveau: # on trouve du bois
+                possibles = []
+                for proba, combustible in combustibles:
+                    if 2 * proba_trouver >= (proba - 1) / 10:
+                        for i in range(int(10 / proba)):
+                            possibles.append(combustible)
+                nb_obj = randint(int(proba_trouver * 10), int(niveau * 10)) + 1
+                if possibles:
+                    for i in range(nb_obj):
+                        objet = importeur.objet.creer_objet(choice(possibles))
+                        personnage.salle.objets_sol.ajouter(objet)
+                    personnage.pratiquer_talent("collecte_bois")
+                    personnage << "Vous amassez un petit tas de combustible " \
+                            "et vous relevez."
+                    personnage.salle.envoyer("{} se relève, l'air satisfait.",
+                            personnage)
+                    return
+            personnage << "Vous vous redressez sans avoir rien trouvé."
+            personnage.salle.envoyer("{} se relève, l'air dépité.",
+                    personnage)

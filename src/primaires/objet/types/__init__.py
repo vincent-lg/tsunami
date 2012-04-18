@@ -64,6 +64,7 @@ from .conteneur import Conteneur
 from .conteneur_nourriture import ConteneurNourriture
 from .indefini import *
 from .nourriture import Nourriture
+from .pierre_feu import PierreFeu
 from .vetement import Vetement
 
 # Nourriture

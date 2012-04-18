@@ -40,16 +40,18 @@ from primaires.vehicule.vecteur import Vecteur
 from .config import cfg_salle
 from .coordonnees import Coordonnees
 from .salle import Salle, ZONE_VALIDE, MNEMONIC_VALIDE
+from .feu import Feu
 from .sortie import Sortie
 from .sorties import NOMS_SORTIES
 from .porte import Porte
 from .zone import Zone
 from .templates.terrain import Terrain
-from . import commandes
-from . import cherchables
 from .editeurs.redit import EdtRedit
 from .editeurs.zedit import EdtZedit
+from . import cherchables
+from . import commandes
 from . import masques
+from . import types
 
 # Constantes
 NB_MIN_NETTOYAGE = 20
@@ -72,7 +74,8 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "salle", "primaire")
         self._salles = {} # ident:salle
-        self._zones = {} # {cle: zone}
+        self.feux = {} # ident:feu
+        self._zones = {} # cle:zone
         self._coords = {} # coordonnee:salle
         self.commandes = []
         self.salle_arrivee = ""
@@ -94,7 +97,7 @@ class Module(BaseModule):
             "n-e": "nord-est",
         }
         
-        self.logger = type(self.importeur).man_logs.creer_logger( \
+        self.logger = importeur.man_logs.creer_logger( \
                 "salles", "salles")
         self.terrains = {}
     
@@ -110,12 +113,12 @@ class Module(BaseModule):
     
     def config(self):
         """Méthode de configuration du module"""
-        type(self.importeur).anaconf.get_config("salle", \
+        importeur.anaconf.get_config("salle", \
             "salle/salle.cfg", "config salle", cfg_salle)
-        self.importeur.hook.ajouter_hook("salle:regarder",
+        importeur.hook.ajouter_hook("salle:regarder",
                 "Hook appelé dès qu'on regarde une salle.")
         
-        # Ajout des terrain
+        # Ajout des terrains
         self.ajouter_terrain("ville")
         self.ajouter_terrain("route")
         self.ajouter_terrain("forêt")
@@ -131,9 +134,9 @@ class Module(BaseModule):
     def init(self):
         """Méthode d'initialisation du module"""
         # On récupère les portes
-        portes = self.importeur.supenr.charger_groupe(Porte)
+        portes = importeur.supenr.charger_groupe(Porte)
         # On récupère les salles
-        salles = self.importeur.supenr.charger_groupe(Salle)
+        salles = importeur.supenr.charger_groupe(Salle)
         for salle in salles:
             self.ajouter_salle(salle)
         
@@ -141,8 +144,16 @@ class Module(BaseModule):
         self.logger.info(format_nb(nb_salles, "{nb} salle{s} récupérée{s}", \
                 fem=True))
         
+        # On récupère les feux
+        feux = importeur.supenr.charger_groupe(Feu)
+        for feu in feux:
+            self.feux[feu.salle.ident] = feu
+        # On implémente le hook correspondant
+        self.importeur.hook["salle:regarder"].ajouter_evenement(
+                self.feu_present)
+        
         # On récupère les zones
-        zones = self.importeur.supenr.charger_groupe(Zone)
+        zones = importeur.supenr.charger_groupe(Zone)
         for zone in zones:
             self._zones[zone.cle] = zone
         
@@ -154,6 +165,20 @@ class Module(BaseModule):
                 self.nettoyer_salles)
         importeur.diffact.ajouter_action("repop_salles", 900,
                 self.repop_salles)
+        importeur.diffact.ajouter_action("repop_feux", 5, Feu.repop)
+        
+        # On ajoute les niveaux et talents
+        importeur.perso.ajouter_niveau("survie", "survie")
+        importeur.perso.ajouter_talent("collecte_bois", "collecte de bois",
+                "survie", 0.50)
+        importeur.perso.ajouter_talent("feu_camp", "feu de camp", "survie",
+                0.10)
+        
+        # On ajoute de l'état
+        etat = importeur.perso.ajouter_etat("collecte_bois")
+        etat.msg_refus = "Vous êtes en train de ramasser du bois"
+        etat.msg_visible = "{personnage} ramasse du bois"
+        etat.act_interdites = ["combat", "prendre", "poser", "deplacer"]
         
         BaseModule.init(self)
     
@@ -162,10 +187,12 @@ class Module(BaseModule):
         self.commandes = [
             commandes.addroom.CmdAddroom(),
             commandes.carte.CmdCarte(),
+            commandes.chercherbois.CmdChercherBois(),
             commandes.chsortie.CmdChsortie(),
             commandes.deverrouiller.CmdDeverrouiller(),
             commandes.fermer.CmdFermer(),
             commandes.goto.CmdGoto(),
+            commandes.mettrefeu.CmdMettreFeu(),
             commandes.ouvrir.CmdOuvrir(),
             commandes.redit.CmdRedit(),
             commandes.regarder.CmdRegarder(),
@@ -175,11 +202,11 @@ class Module(BaseModule):
         ]
         
         for cmd in self.commandes:
-            self.importeur.interpreteur.ajouter_commande(cmd)
+            importeur.interpreteur.ajouter_commande(cmd)
         
         # Ajout des l'éditeurs 'redit' et 'zedit'
-        self.importeur.interpreteur.ajouter_editeur(EdtRedit)
-        self.importeur.interpreteur.ajouter_editeur(EdtZedit)
+        importeur.interpreteur.ajouter_editeur(EdtRedit)
+        importeur.interpreteur.ajouter_editeur(EdtZedit)
     
     def preparer(self):
         """Préparation du module.
@@ -194,7 +221,7 @@ class Module(BaseModule):
         
         """
         # On récupère la configuration
-        conf_salle = type(self.importeur).anaconf.get_config("salle")
+        conf_salle = importeur.anaconf.get_config("salle")
         salle_arrivee = conf_salle.salle_arrivee
         salle_retour = conf_salle.salle_retour
         
@@ -405,3 +432,26 @@ class Module(BaseModule):
                 self.repop_salles)
         for s in self.salles.values():
             s.repop()
+    
+    def allumer_feu(self, salle, puissance=10):
+        """Allume un feu dans salle."""
+        if not salle.ident in self.feux:
+            feu = Feu(salle, puissance)
+            self.feux[salle.ident] = feu
+        else:
+            feu = salle.feux[salle.ident]
+        return feu
+    
+    def eteindre_feu(self, salle):
+        """Eteint un éventuel feu dans salle."""
+        if salle.ident in self.feux:
+            self.feux[salle.ident].detruire()
+            del self.feux[salle.ident]
+    
+    def feu_present(self, salle, liste_messages, flags):
+        """Si un feu se trouve dans la salle, on l'affiche"""
+        if self.feux:
+            for feu in self.feux.values():
+                if salle == feu.salle:
+                    liste_messages.insert(0, str(feu))
+                    return
