@@ -178,8 +178,4 @@ class Magasin(BaseObj):
             services.append((service, qtt))
             services = sorted(services, key=lambda l: l[0].m_valeur)
         
-        f_services = []
-        for service, qtt, flags in services:
-            f_services.append((service, qtt))
-        
-        self.inventaire[:] = f_services
+        self.inventaire[:] = services
