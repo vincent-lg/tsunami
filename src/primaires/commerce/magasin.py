@@ -165,9 +165,9 @@ class Magasin(BaseObj):
         service, si présent, est remplacée par la nouvelle.
         
         """
-        services = list(self.stock)
+        services = list(self.inventaire)
         trouve = False
-        for i, (t_service, t_qtt, flags) in enumerate(services):
+        for i, (t_service, t_qtt) in enumerate(services):
             if t_service is service:
                 qtt = t_qtt if not inc_qtt else qtt
                 services[i] = (t_service, qtt)
