@@ -97,6 +97,7 @@ class CmdMettreFeu(Commande):
                 if proba_reussit <= niveau:
                     personnage << "Une étincelle vole et le feu prend."
                     feu = importeur.salle.allumer_feu(salle, somme_combu)
+                    personnage.gagner_xp("survie", somme_combu * 20)
                     for objet in objets_sol:
                         if objet.prototype in combustibles:
                             objets_sol.retirer(objet)

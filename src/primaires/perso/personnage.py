@@ -453,13 +453,13 @@ class Personnage(BaseObj):
         if niveau and niveau not in type(self).importeur.perso.niveaux:
             raise ValueError("le niveau {} n'existe pas".format(niveau))
         
-        xp_actuel = self.xps[niveau] if niveau else self.xp
-        niveau_actuel = self.niveaux[niveau] if niveau else self.niveau
+        xp_actuel = self.xps.get(niveau, 0) if niveau else self.xp
+        niveau_actuel = self.niveaux.get(niveau, 0) if niveau else self.niveau
         nb_niveaux = type(self).importeur.perso.gen_niveaux.nb_niveaux
-        if xp > 0 and niveau_actuel >= nb_niveaux:
+        if xp_actuel > 0 and niveau_actuel >= nb_niveaux:
             return
         
-        grille = type(self).importeur.perso.gen_niveaux.grille_xp
+        grille = importeur.perso.gen_niveaux.grille_xp
         xp_nec = grille[niveau_actuel - 1][1]
         if niveau:
             self.xps[niveau] = self.xps.get(niveau, 0) + xp
