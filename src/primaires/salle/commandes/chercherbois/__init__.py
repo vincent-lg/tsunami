@@ -89,6 +89,7 @@ class CmdChercherBois(Commande):
                     personnage.salle.envoyer("{} se relève, l'air satisfait.",
                             personnage)
                     return
+            personnage.pratiquer_talent("collecte_bois", 4)
             personnage << "Vous vous redressez sans avoir rien trouvé."
             personnage.salle.envoyer("{} se relève, l'air dépité.",
                     personnage)

@@ -383,17 +383,19 @@ class Personnage(BaseObj):
         """Retourne la valeur du talent ou 0 si le talent n'est pas trouvé."""
         return self.talents.get(cle_talent, 0)
     
-    def pratiquer_talent(self, cle_talent):
+    def pratiquer_talent(self, cle_talent, proba=1):
         """Pratique le talent et peut potentiellement l'apprendre.
         
         Retourne la connaissance actuelle du personnage dans le talent.
+        L'argument facultatif proba permet d'introduire une probabilité
+        supplémentaire.
         
         """
         talent = type(self).importeur.perso.talents[cle_talent]
         avancement = self.get_talent(cle_talent)
         configuration = type(self).importeur.perso.cfg_talents
         apprendre = talent.estimer_difficulte(configuration, avancement)
-        if random.random() < apprendre:
+        if random.random() < apprendre and random.random() < 1 / proba:
             avancement += 1
             self.talents[cle_talent] = avancement
             self.envoyer("Vous progressez dans l'apprentissage du " \
