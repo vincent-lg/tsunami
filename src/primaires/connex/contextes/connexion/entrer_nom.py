@@ -37,6 +37,14 @@ from primaires.connex.motd import MOTD
 # Regex
 RE_NOUVEAU = None # on ne connaît pas la chaîne
 
+# Messages
+FERMETURE_ERREUR = \
+    "|rg|L'univers de Vancia est temporérement fermé aux joueurs.|ff|\n" \
+    "Vous ne pouvez vous connecter à l'univers avec ce compte.\n" \
+    "Si vous souhaitez malgré tout vous connectez, envoyez un e-mail à " \
+    "l'adresse\n" \
+    "|ent|vanciamud@gmail.com|ff| pour obtenir ce droit."
+
 class EntrerNom(Contexte):
     """Contexte demandant au client d'entrer le nom de son compte.
     
@@ -78,14 +86,21 @@ class EntrerNom(Contexte):
         cfg_connex = type(self).importeur.anaconf.get_config("connex")
         msg = msg.lower()
         if RE_NOUVEAU.search(msg): # le client demande un nouveau compte
-            if cfg_connex.creation_autorisee or self.pere.connexion_locale():
+            if cfg_connex.creation_autorisee or \
+                    not cfg_connex.fermeture_filtree or \
+                    self.pere.connexion_locale():
                 self.migrer_contexte("connex:creation:entrer_nom")
             else:
                 self.pere << "|err|La création de compte sur ce MUD " \
                         "est interdite.|ff|"
         elif type(self).importeur.connex.compte_est_cree(msg):
-            self.pere.compte = type(self).importeur.connex.get_compte(msg)
-            self.migrer_contexte("connex:connexion:entrer_pass")
+            compte = importeur.connex.get_compte(msg)
+            if compte.nom != cfg_connex.compte_admin and \
+                    cfg_connex.fermeture_filtree and not compte.autorise:
+                self.pere.envoyer(FERMETURE_ERREUR)
+            else:
+                self.pere.compte = compte
+                self.migrer_contexte("connex:connexion:entrer_pass")
         else:
             self.pere.envoyer("|err|Ce compte n'existe pas.|ff|\n" \
                     "Entrez |grf|{0}|ff| si vous souhaitez le créer.".format( \

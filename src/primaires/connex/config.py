@@ -121,6 +121,13 @@ pass_min = 6
 # liés à un compte. Pour enlever cette limite, mettez à -1.
 nb_perso_max = 5
 
+## Fermeture du MUD aux comptes non autorisés
+# Si l'option fermeture_filtree est à True, chaque compte devra être
+# autorisé manuellement pour pouvoir se connecter, sauf le compte
+# administrateur. Dans ce mode, aucune création de compte n'est
+# possible par la voie habituelle.
+fermeture_filtree = False
+
 ## Compte administrateur
 # Sur Kassie, un nom de compte est retenu comme étant
 # "le compte administrateur". Tous les joueurs créés dans ce compte seront dans

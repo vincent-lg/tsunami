@@ -60,6 +60,7 @@ class Compte(BaseObj):
         self.adresse_email = ""
         self.encodage = ""
         self.valide = False
+        self.autorise = False
         self.code_validation = ""
         self.msg_validation = False # à True si le message de validation
                                     # a été envoyé
