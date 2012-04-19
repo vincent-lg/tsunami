@@ -86,8 +86,8 @@ class EntrerNom(Contexte):
         cfg_connex = type(self).importeur.anaconf.get_config("connex")
         msg = msg.lower()
         if RE_NOUVEAU.search(msg): # le client demande un nouveau compte
-            if cfg_connex.creation_autorisee or \
-                    not cfg_connex.fermeture_filtree or \
+            if (cfg_connex.creation_autorisee and \
+                    not cfg_connex.fermeture_filtree) or \
                     self.pere.connexion_locale():
                 self.migrer_contexte("connex:creation:entrer_nom")
             else:
