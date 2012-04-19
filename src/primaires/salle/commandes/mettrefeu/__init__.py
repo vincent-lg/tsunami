@@ -64,10 +64,18 @@ class CmdMettreFeu(Commande):
         if not somme_combu:
             personnage << "|err|Il n'y a rien qui puisse brûler par ici.|ff|"
             return
-        print(somme_combu)
         # On tente d'allumer ou de nourrir le feu
         if salle.ident in importeur.salle.feux:
-            pass
+            feu = importeur.salle.feux[salle.ident]
+            feu.puissance += somme_combu
+            personnage << "Vous poussez du bois dans le feu et celui-ci " \
+                    "gagne en vigueur et en éclat."
+            for objet in objets_sol:
+                if objet.prototype in combustibles:
+                    objets_sol.retirer(objet)
+                    if objet.identifiant:
+                        importeur.objet.supprimer_objet(
+                                objet.identifiant)
         else:
             pierre = None
             for objet in personnage.equipement.tenus:
@@ -78,20 +86,14 @@ class CmdMettreFeu(Commande):
                 personnage << "|err|Vous ne tenez rien pour allumer.|ff|"
                 return
             personnage.pratiquer_talent("feu_camp")
-            print(pierre)
             niveau = sqrt(personnage.get_talent("feu_camp") / 100)
-            print("niveau :", niveau)
             efficace = pierre.efficacite / 50
             if pierre.efficacite > 0:
                 pierre.efficacite -= 1
-            print("efficace :", efficace)
             proba_marche = random()
-            print("proba_marche :", proba_marche)
             # Si la pierre fonctionne
             if proba_marche <= efficace:
-                print(pierre.efficacite / 50)
                 proba_reussit = round(random(), 1)
-                print("proba_reussit :", proba_reussit)
                 if proba_reussit <= niveau:
                     personnage << "Une étincelle vole et le feu prend."
                     feu = importeur.salle.allumer_feu(salle, somme_combu)
@@ -105,8 +107,7 @@ class CmdMettreFeu(Commande):
                     return
             personnage << "Le feu refuse de démarrer."            
             proba_casse = random()
-            solidite = efficace ** (1 / 3)
-            print(proba_casse, "/", solidite)
+            solidite = efficace ** (1 / 5)
             if proba_casse >= solidite:
                 personnage << "{} se brise en mille morceaux.".format(
                         pierre.nom_singulier)

@@ -61,10 +61,10 @@ messages_feu = (
     (8, "Un petit feu ronfle de temps en temps et lance quelques étincelles."),
     (15, "Un beau feu de camp crépite gaiement et darde ses flammes vers le ciel."),
     (25, "Un feu crépitant flamboie avec ardeur, débordant d'étincelles."),
-    (30, "Les flammes d'un feu de camp montent et menacent d'échapper du foyer."),
-    (45, "Un début d'incendie menace, envahissant peu à peu les lieux."),
-    (60, "Un brasier enthousiaste flamboie ici et vous roussit le poil."),
-    (75, "Une fournaise étouffante vous prend à la gorge et menace de vous consummer."),
+    (40, "Les flammes d'un feu de camp montent et menacent d'échapper du foyer."),
+    (55, "Un début d'incendie menace, envahissant peu à peu les lieux."),
+    (70, "Un brasier enthousiaste flamboie ici et vous roussit le poil."),
+    (85, "Une fournaise étouffante vous prend à la gorge et menace de vous consummer."),
     (100, "Un véritable bûcher se dresse tout autour de vous, sans espoir de survie."),
 )
 

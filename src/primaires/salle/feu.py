@@ -72,7 +72,7 @@ class Feu(BaseObj):
     def bruler(self):
         """Méthode d'action de base du feu"""
         if self.puissance > 1:
-            self.puissance -= 3
+            self.puissance -= 1
             message = choice([
                 "Une bûche cède soudain dans un grand craquement.",
                 "Quelques étincelles volent joyeusement.",
@@ -94,7 +94,7 @@ class Feu(BaseObj):
     def propager(self):
         """Méthode de propagation.
         
-        Un feu est maîtrisé jusqu'à une puissance de 30 ; au-delà la
+        Un feu est maîtrisé jusqu'à une puissance de 40 ; au-delà la
         probabilité qu'il gonfle spontanément et se propage est multipliée.
         Un feu se propage de proche en proche en perdant 10 de puissance à
         chaque fois, mais rien n'empêche qu'il reprenne de la puissance une

@@ -57,18 +57,19 @@ class CmdChercherBois(Commande):
             if personnage.salle.terrain.nom in proto.terrains:
                 combustibles.append((proto.rarete, proto))
         combustibles = sorted(combustibles, key=lambda combu: combu[0])
-        print(combustibles)
         if not combustibles:
             personnage << "|err|Il n'y a rien qui puisse brûler par ici.|ff|"
         else:
+            personnage.agir("chercher")
             personnage.cle_etat = "collecte_bois"
             personnage << "Vous vous penchez et commencez à chercher du bois."
             personnage.salle.envoyer(
                     "{} se met à chercher quelque chose par terre.",
                     personnage)
             yield 5
-            niveau = personnage.get_talent("collecte_bois")
-            niveau = sqrt(niveau / 100)
+            niveau = sqrt(personnage.get_talent("collecte_bois") / 100)
+            if not niveau:
+                niveau = 0.1
             proba_trouver = round(random(), 1)
             personnage.cle_etat = ""
             if proba_trouver <= niveau: # on trouve du bois

@@ -170,15 +170,16 @@ class Module(BaseModule):
         # On ajoute les niveaux et talents
         importeur.perso.ajouter_niveau("survie", "survie")
         importeur.perso.ajouter_talent("collecte_bois", "collecte de bois",
-                "survie", 0.50)
+                "survie", 0.55)
         importeur.perso.ajouter_talent("feu_camp", "feu de camp", "survie",
-                0.10)
+                0.23)
         
         # On ajoute de l'état
         etat = importeur.perso.ajouter_etat("collecte_bois")
         etat.msg_refus = "Vous êtes en train de ramasser du bois"
         etat.msg_visible = "{personnage} ramasse du bois"
-        etat.act_interdites = ["combat", "prendre", "poser", "deplacer"]
+        etat.act_interdites = ["combat", "prendre", "poser", "deplacer",
+            "chercher"]
         
         BaseModule.init(self)
     
