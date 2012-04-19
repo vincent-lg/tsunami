@@ -39,7 +39,7 @@ RE_NOUVEAU = None # on ne connaît pas la chaîne
 
 # Messages
 FERMETURE_ERREUR = \
-    "|rg|L'univers de Vancia est temporérement fermé aux joueurs.|ff|\n" \
+    "|rg|L'univers de Vancia est temporairement fermé aux joueurs.|ff|\n" \
     "Vous ne pouvez vous connecter à l'univers avec ce compte.\n" \
     "Si vous souhaitez malgré tout vous connectez, envoyez un e-mail à " \
     "l'adresse\n" \
