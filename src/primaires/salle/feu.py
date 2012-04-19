@@ -30,7 +30,7 @@
 
 """Fichier contenant la classe Feu, détaillée plus bas."""
 
-from random import randint, choice
+from random import randint, choice, random
 
 from abstraits.obase import BaseObj
 
@@ -71,25 +71,53 @@ class Feu(BaseObj):
     
     def bruler(self):
         """Méthode d'action de base du feu"""
-        if self.puissance > 1:
-            self.puissance -= 1
-            message = choice([
-                "Une bûche cède soudain dans un grand craquement.",
-                "Quelques étincelles volent joyeusement.",
-                "Le feu redouble d'ardeur et les flammes montent.",
-                "Un crépitement sec retentit.",
-            ])
-            self.envoyer(message)
-        elif self.puissance < 0:
-            self.puissance = 0
-        else:
-            if randint(1, 10) < 2:
-                self.envoyer("Un petit nuage de cendres annonce la mort " \
-                        "définitive du feu.")
+        messages_standard = [
+            "Une bûche cède soudain dans un grand craquement.",
+            "Quelques étincelles volent joyeusement.",
+            "Le feu redouble d'ardeur et les flammes montent.",
+            "Un crépitement sec retentit.",
+            "Une ou deux flammes tentent de s'échapper du foyer.",
+            "Les flammes dansent sous un léger coup de vent.",
+            "Le feu vascille, hésite et reprend de plus belle.",
+            "Les flammes montent à l'assaut d'un nouveau bout de bois.",
+            "Une langue de feu s'échappe vers le ciel dans un souffle.",
+            "Une branche un peu verte proteste bruyamment.",
+        ]
+        messages_fin = [
+            "Le feu crachote comme un vieillard malade.",
+            "Quelques flammes faiblardes tentent de s'extirper de la cendre.",
+            "Les flammes se ravivent un instant, puis retombent, vaincues.",
+        ]
+        if random() < self.stabilite:
+            if self.puissance <= 20:
+                self.salle.envoyer("Le feu s'éteint sans crier gare, à la " \
+                        "faveur d'un souffle d'air.", prompt=False)
                 importeur.salle.eteindre_feu(self.salle)
                 return
-        
-        self.propager()
+            elif self.puissance <= 40:
+                # Entre 20 et 40, on laisse osciller un peu la puissance
+                if random() < 0.33:
+                    self.puissance += randint(1, 5)
+            else:
+                self.propager()
+                # plus
+        # Cas standard, sans tenir compte de l'instabilité
+        if self.puissance == 1:
+            if random() < 0.20:
+                self.salle.envoyer("Un petit nuage de cendres annonce la " \
+                        "mort définitive du feu.", prompt=False)
+                importeur.salle.eteindre_feu(self.salle)
+        elif self.puissance <= 5:
+            self.salle.envoyer(choice(messages_fin), prompt=False)
+            # On rend le feu instable
+            self.stabilite += 1 - self.puissance / 5
+            self.puissance -= 1
+        elif self.puissance <= 40:
+            self.salle.envoyer(choice(messages_standard), prompt=False)
+            self.puissance -= 1
+        else:
+            # Cas de l'incendie
+            self.puissance -= 10
     
     def propager(self):
         """Méthode de propagation.
@@ -107,12 +135,6 @@ class Feu(BaseObj):
         """
         if self.puissance > 30:
             pass
-    
-    def envoyer(self, message):
-        """Envoie message à la salle du feu."""
-        for personnage in self.salle.personnages:
-            personnage.instance_connexion.sans_prompt()
-            personnage << message
     
     @classmethod
     def repop(cls):

@@ -104,7 +104,7 @@ class CmdMettreFeu(Commande):
                             if objet.identifiant:
                                 importeur.objet.supprimer_objet(
                                         objet.identifiant)
-                    feu.stabilite = niveau ** (1/3)
+                    feu.stabilite = 1 - niveau ** (1/3)
                     return
             personnage << "Le feu refuse de démarrer."            
             proba_casse = random()
