@@ -383,17 +383,19 @@ class Personnage(BaseObj):
         """Retourne la valeur du talent ou 0 si le talent n'est pas trouvé."""
         return self.talents.get(cle_talent, 0)
     
-    def pratiquer_talent(self, cle_talent):
+    def pratiquer_talent(self, cle_talent, proba=1):
         """Pratique le talent et peut potentiellement l'apprendre.
         
         Retourne la connaissance actuelle du personnage dans le talent.
+        L'argument facultatif proba permet d'introduire une probabilité
+        supplémentaire.
         
         """
         talent = type(self).importeur.perso.talents[cle_talent]
         avancement = self.get_talent(cle_talent)
         configuration = type(self).importeur.perso.cfg_talents
         apprendre = talent.estimer_difficulte(configuration, avancement)
-        if random.random() < apprendre:
+        if random.random() < apprendre and random.random() < 1 / proba:
             avancement += 1
             self.talents[cle_talent] = avancement
             self.envoyer("Vous progressez dans l'apprentissage du " \
@@ -451,13 +453,13 @@ class Personnage(BaseObj):
         if niveau and niveau not in type(self).importeur.perso.niveaux:
             raise ValueError("le niveau {} n'existe pas".format(niveau))
         
-        xp_actuel = self.xps[niveau] if niveau else self.xp
-        niveau_actuel = self.niveaux[niveau] if niveau else self.niveau
+        xp_actuel = self.xps.get(niveau, 0) if niveau else self.xp
+        niveau_actuel = self.niveaux.get(niveau, 0) if niveau else self.niveau
         nb_niveaux = type(self).importeur.perso.gen_niveaux.nb_niveaux
-        if xp > 0 and niveau_actuel >= nb_niveaux:
+        if xp_actuel > 0 and niveau_actuel >= nb_niveaux:
             return
         
-        grille = type(self).importeur.perso.gen_niveaux.grille_xp
+        grille = importeur.perso.gen_niveaux.grille_xp
         xp_nec = grille[niveau_actuel - 1][1]
         if niveau:
             self.xps[niveau] = self.xps.get(niveau, 0) + xp

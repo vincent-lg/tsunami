@@ -43,6 +43,11 @@ cfg_talents = r"""
 # * coef est la valeur que vous configurée ici
 # Pour en savoir plus, consultez le code
 # (primaires/perso/templates/talents.py - méthode estimer_difficulte)
+# [NOTE]
+# Un coefficient entier correspond à une harmonisation des difficultés vers
+# le bas (aplatissement de la courbe pour les petites valeurs) et donc une
+# hausse globale du niveau du jeu ; à l'inverse, un coefficient fractionnaire
+# (1/2, 1/3...) harmonise vers le haut et baisse la difficulté du jeu.
 coefficient_apprentissage = 2
 
 """

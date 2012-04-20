@@ -30,6 +30,7 @@
 
 """Package contenant les commandes du module objet."""
 
+from . import boire
 from . import manger
 from . import oedit
 from . import olist

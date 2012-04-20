@@ -61,10 +61,13 @@ class MetaType(MetaBaseObj):
 from .bijou import Bijou
 from .clef import Clef
 from .conteneur import Conteneur
+from .conteneur_potion import ConteneurPotion
 from .conteneur_nourriture import ConteneurNourriture
 from .indefini import *
 from .instrument import *
+from .potion import Potion
 from .nourriture import Nourriture
+from .pierre_feu import PierreFeu
 from .vetement import Vetement
 
 # Nourriture

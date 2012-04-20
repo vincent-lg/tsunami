@@ -64,21 +64,17 @@ class Selection(Editeur):
             # En clé, c'est le nom de la donnée
             # En valeur, True si la clé a été sélectionné, False sinon
             selectionne = DictSansAccent((nom, False) for nom in self.liste)
-            print(selectionne)
             for nom in getattr(self.objet, self.attribut):
                 if nom in selectionne.keys():
                     selectionne[nom] = True
             
-            print(selectionne)
             if msg in selectionne.cles_sa():
                 selectionne[msg] = not selectionne[msg]
             else:
                 self.pere << "|err|L'option {} est invalide.|ff|".format(msg)
                 return
             
-            print(selectionne)
             selectionne = [nom for nom, val in selectionne.items() if val]
-            print(selectionne)
             setattr(self.objet, self.attribut, selectionne)
         
         self.actualiser()

@@ -32,11 +32,13 @@
 
 from . import addroom
 from . import carte
+from . import chercherbois
 from . import chsortie
 from . import deverrouiller
 from . import etendue
 from . import fermer
 from . import goto
+from . import mettrefeu
 from . import ouvrir
 from . import redit
 from . import regarder

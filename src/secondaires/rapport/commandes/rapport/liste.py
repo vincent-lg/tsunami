@@ -33,7 +33,7 @@
 from math import floor
 
 from primaires.interpreteur.masque.parametre import Parametre
-from primaires.format.fonctions import oui_ou_non
+from primaires.format.fonctions import couper_phrase
 from secondaires.rapport.constantes import CLR_STATUTS, CLR_AVC
 
 class PrmListe(Parametre):
@@ -52,6 +52,7 @@ class PrmListe(Parametre):
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         rapports = list(importeur.rapport.rapports.values())
+        rapports = [r for r in rapports if r.ouvert]
         if not personnage.est_immortel():
             # On récupère les rapports envoyés par le joueur mortel
             rapports = [r for r in rapports if r.createur is personnage]
@@ -60,16 +61,22 @@ class PrmListe(Parametre):
             else:
                 l_id = max([len(str(r.id)) for r in rapports] + [2])
                 l_titre = max([len(r.titre) for r in rapports] + [5])
+                l_titre_max = 49 - l_id # longueur max possible d'un titre
+                ljust_titre = min(l_titre_max, l_titre)
                 lignes = [
-                    "+" + "-" * (l_id + l_titre + 29) + "+",
+                    "+" + "-" * (l_id + ljust_titre + 29) + "+",
                     "| |tit|" + "ID".ljust(l_id) + "|ff| | |tit|" \
-                            + "Titre".ljust(l_titre) + "|ff| | " \
+                            + "Titre".ljust(ljust_titre) + "|ff| | " \
                             "|tit|Statut|ff|   | |tit|Avancement|ff| |",
-                    "+" + "-" * (l_id + l_titre + 29) + "+",
+                    "+" + "-" * (l_id + ljust_titre + 29) + "+",
                 ]
                 for rapport in rapports:
                     id = "|vrc|" + str(rapport.id).ljust(l_id) + "|ff|"
-                    titre = rapport.titre.ljust(l_titre)
+                    if l_titre_max < l_titre:
+                        titre = couper_phrase(rapport.titre, l_titre_max)
+                    else:
+                        titre = rapport.titre
+                    titre = titre.ljust(ljust_titre)
                     stat = CLR_STATUTS[rapport.statut]
                     stat += rapport.statut.ljust(8) + "|ff|"
                     clr = CLR_AVC[floor(rapport.avancement / 12.5)]
@@ -77,7 +84,7 @@ class PrmListe(Parametre):
                     lignes.append(
                             "| {id} | {titre} | {stat} | {avc}%|ff| |".format(
                             id=id, titre=titre, stat=stat, avc=avc))
-                lignes.append("+" + "-" * (l_id + l_titre + 29) + "+")
+                lignes.append("+" + "-" * (l_id + ljust_titre + 29) + "+")
                 personnage << "\n".join(lignes)
         else:
             if not rapports:
@@ -87,19 +94,25 @@ class PrmListe(Parametre):
             l_createur = max([len(r.createur.nom) if r.createur else 7 \
                     for r in rapports] + [8])
             l_titre = max([len(r.titre) for r in rapports] + [5])
+            l_titre_max = 70 - l_createur - l_id # longueur max d'un titre
+            ljust_titre = min(l_titre_max, l_titre)
             lignes = [
-                "+" + "-" * (l_id + l_createur + l_titre + 8) + "+",
+                "+" + "-" * (l_id + l_createur + ljust_titre + 8) + "+",
                 "| |tit|" + "ID".ljust(l_id) + "|ff| | |tit|" \
                         + "Créateur".ljust(l_createur) + "|ff| | |tit|" \
-                        + "Titre".ljust(l_titre) + "|ff| |",
-                "+" + "-" * (l_id + l_createur + l_titre + 8) + "+",
+                        + "Titre".ljust(ljust_titre) + "|ff| |",
+                "+" + "-" * (l_id + l_createur + ljust_titre + 8) + "+",
             ]
             for rapport in rapports:
+                if l_titre_max < l_titre:
+                    titre = couper_phrase(rapport.titre, l_titre_max)
+                else:
+                    titre = rapport.titre
                 createur = rapport.createur and rapport.createur.nom or \
                         "inconnu"
                 lignes.append("| |vrc|" + str(rapport.id).ljust(l_id) \
                         + "|ff| | " + createur.ljust(l_createur) + " | " \
-                        + rapport.titre.ljust(l_titre) + " |")
+                        + titre.ljust(ljust_titre) + " |")
             lignes.append(
-                "+" + "-" * (l_id + l_createur + l_titre + 8) + "+")
+                "+" + "-" * (l_id + l_createur + ljust_titre + 8) + "+")
             personnage << "\n".join(lignes)

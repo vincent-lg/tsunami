@@ -72,7 +72,7 @@ class Entier(Editeur):
                     is not None else ""
             et = " et " if sup and inf else ""
             err = "|err|Le nombre entré doit être {sup}{et}{inf}.|ff|".format(
-                    su=sup, et=et, nf=inf)
+                    sup=sup, et=et, inf=inf)
             self.pere << err
         else:
             setattr(self.objet, self.attribut, msg)
