@@ -74,8 +74,8 @@ class Rapport(BaseObj):
         return ("", None)
     
     def __repr__(self):
-        return "<rapport {} #{} : {} ({}%)>".format(
-                self.type, self.id, self.titre, self.avancement)
+        return "<rapport {} #{} ({}%)>".format(
+                self.type, self.id, self.avancement)
     
     @property
     def aff_assigne_a(self):

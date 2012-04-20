@@ -46,6 +46,7 @@ from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.flag import Flag
 from .edt_assigne import EdtAssigne
+from .supprimer import NSupprimer
 from secondaires.rapport.constantes import *
 
 class EdtBugeditP(Presentation):
@@ -150,7 +151,7 @@ class EdtBugeditP(Presentation):
         avancement.apercu = "{objet.avancement}"
         avancement.aide_courte = \
             "Entrez l'|ent|avancement|ff| en pourcent de la tâche ou " \
-            "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
+            "|cmd|/|ff| pour revenir à la\nfenêtre parente.\n\n" \
             "Avancement actuel : |bc|{valeur}|ff|"
         
         # Assigné à
@@ -160,5 +161,12 @@ class EdtBugeditP(Presentation):
         assigne_a.apercu = "{objet.aff_assigne_a}"
         assigne_a.aide_courte = \
             "Entrez un |ent|Immortel|ff| à qui assigner ce rapport, ou " \
-            "|cmd|/|ff| pour revenir à la fenêtre parente.\n" \
+            "|cmd|/|ff| pour revenir à la\nfenêtre parente.\n\n" \
             "Actuellement assigné à : {objet.aff_assigne_a}"
+        
+        # Supprimer
+        sup = self.ajouter_choix("supprimer", "sup", NSupprimer,
+                rapport)
+        sup.parent = self
+        sup.aide_courte = "Souhaitez-vous réellement supprimer " \
+                "le rapport #{} ?".format(rapport.id)

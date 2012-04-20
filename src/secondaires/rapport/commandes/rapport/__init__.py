@@ -36,10 +36,12 @@ Dans ce fichier se trouve la commande même.
 
 from primaires.interpreteur.commande.commande import Commande
 from .bug import PrmBug
-from .suggestion import PrmSuggestion
-from .evolution import PrmEvolution
 from .editer import PrmEditer
+from .evolution import PrmEvolution
 from .liste import PrmListe
+from .mien import PrmMien
+from .nettoyer import PrmNettoyer
+from .suggestion import PrmSuggestion
 from .voir import PrmVoir
 
 class CmdRapport(Commande):
@@ -63,8 +65,10 @@ class CmdRapport(Commande):
     def ajouter_parametres(self):
         """Ajout des paramètres"""
         self.ajouter_parametre(PrmBug())
-        self.ajouter_parametre(PrmSuggestion())
-        self.ajouter_parametre(PrmEvolution())
         self.ajouter_parametre(PrmEditer())
+        self.ajouter_parametre(PrmEvolution())
         self.ajouter_parametre(PrmListe())
+        self.ajouter_parametre(PrmMien())
+        self.ajouter_parametre(PrmNettoyer())
+        self.ajouter_parametre(PrmSuggestion())
         self.ajouter_parametre(PrmVoir())

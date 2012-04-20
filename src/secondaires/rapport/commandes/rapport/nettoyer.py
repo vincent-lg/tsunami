@@ -28,49 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'voir' de la commande 'rapport'."""
+"""Fichier contenant le paramètre 'nettoyer' de la commande 'rapport'."""
 
-from primaires.format.date import get_date
 from primaires.interpreteur.masque.parametre import Parametre
-from secondaires.rapport.constantes import CLR_STATUTS, CLR_AVC
 
-class PrmVoir(Parametre):
+class PrmNettoyer(Parametre):
     
-    """Commande 'rapport voir'.
+    """Commande 'rapport nettoyer'.
     
     """
     
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "voir", "view")
-        self.schema = "<nombre>"
-        self.aide_courte = "visionne un rapport particulier"
+        Parametre.__init__(self, "nettoyer", "clean")
+        self.schema = ""
+        self.groupe = "administrateur"
+        self.aide_courte = "supprime tous les rapports fermés"
         self.aide_longue = \
-            "Cette commande offre un affichage détaillé d'un rapport."
+            "Cette commande nettoie la liste des rapports en supprimant " \
+            "définitivement tous ceux qui sont fermés."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        id = dic_masques["nombre"].nombre
-        try:
-            rapport = importeur.rapport.rapports[id]
-        except KeyError:
-            if personnage.est_immortel():
-                personnage << "|err|Ce rapport n'existe pas.|ff|"
-            else:
-                personnage << "|err|Vous ne pouvez lire ce rapport.|ff|"
+        nb_sup = 0
+        for rapport in list(importeur.rapport.rapports.values()):
+            if not rapport.ouvert:
+                importeur.rapport.rapports[rapport.id].detruire()
+                del importeur.rapport.rapports[rapport.id]
+                nb_sup += 1
+        if not nb_sup:
+            personnage << "|err|Tous les rapports de la liste sont " \
+                    "ouverts ; aucune suppression.|ff|"
         else:
-            if not personnage.est_immortel() and rapport.createur is not \
-                    personnage:
-                personnage << "|err|Vous ne pouvez lire ce rapport.|ff|"
-            else:
-                createur = rapport.createur.nom if rapport.createur \
-                        else "personne"
-                ret = "Rapport #" + str(rapport.id) + " : " + rapport.titre + "\n"
-                ret += "Catégorie : " + rapport.type + " (" + rapport.categorie + ")\n"
-                ret += "Statut : " + rapport.statut + ", avancement : " + str(rapport.avancement) + "%\n"
-                ret += "Ce rapport est classé en priorité " + rapport.priorite + ".\n"
-                ret += "Détail :\n"
-                ret += str(rapport.description) + "\n"
-                ret += "Rapport envoyé par " + createur + " " + get_date(rapport.date.timetuple()) + ",\n"
-                ret += "depuis " + str(rapport.salle) + " ; assigné à " + rapport.aff_assigne_a + ".\n"
-                personnage << ret
+            s = "s" if nb_sup > 1 else ""
+            personnage << "|att|{nb} rapport{s} supprimé{s}.|ff|".format(
+                    nb=nb_sup, s=s)
