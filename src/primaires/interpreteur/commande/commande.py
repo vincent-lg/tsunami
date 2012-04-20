@@ -47,6 +47,7 @@ SEP = ":"
 class Commande(Masque):
     
     """Classe-mère de toutes les commandes.
+    
     Elle contient :
     -   un nom, en français et en anglais
     -   un flag pour savoir si l'on peut tronquer la commande
