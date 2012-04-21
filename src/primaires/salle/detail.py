@@ -49,6 +49,7 @@ class Detail(BaseObj):
         self.titre = "un détail aux alentours"
         self.description = Description()
         self.positions = {}
+        self.est_visible = True
         self.parent = parent
         if modele is not None:
             self.synonymes = modele.synonymes

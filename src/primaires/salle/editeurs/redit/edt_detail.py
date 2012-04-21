@@ -25,7 +25,7 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# pereIBILITY OF SUCH DAMAGE.
+# POSSIBILITY OF SUCH DAMAGE.
 
 
 """Ce fichier contient l'éditeur EdtDetail, détaillé plus bas."""
@@ -33,6 +33,7 @@
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.flag import Flag
 
 class EdtDetail(Presentation):
     
@@ -130,3 +131,9 @@ class EdtDetail(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description du détail {}".format(detail).ljust(76) + \
             "|ff||\n" + self.opts.separateur
+        
+        
+        # Est visible
+        visible = self.ajouter_choix("est visible", "v", Flag, detail,
+                "est_visible")
+        visible.parent = self
