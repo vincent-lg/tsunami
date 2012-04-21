@@ -69,6 +69,8 @@ class CommandeDynamique(BaseObj):
         self.aide_longue = Description(parent=self, scriptable=False)
         self.aide_courte_evt = "Un personnage fait quelque chose"
         self.aide_longue_evt = Description(parent=self, scriptable=False)
+        self.latence = 0
+        self.message_erreur = "Vous ne pouvez faire cela."
     
     def __getnewargs__(self):
         return ("", "")
@@ -92,9 +94,18 @@ class CommandeDynamique(BaseObj):
         commande.nom_categorie = self.nom_categorie
         commande.aide_courte = self.aide_courte
         commande.aide_longue = str(self.aide_longue)
-        #commande.schema = "<element_observable>"
+        commande.schema = "<element_observable>"
         commande.interpreter = self.interpreter
         importeur.interpreteur.ajouter_commande(commande)
        
     def interpreter(self, personnage, dic_masques):
+        """Méthode outre-passant l'interprétation de la commande statique.
+        
+        Quand la commande statique ajoutée est exécutée, c'est cette
+        méthode qui est appelée (voir la méthode ajouter pour voir le
+        cheminement). Les paramètres de cette méthode sont les mêmes
+        que Commande.interpreter, à ceci près que le self est la commande
+        dynamique, pas la commande statique qui se trouve derrière.
+        
+        """
         personnage << "pop !"
