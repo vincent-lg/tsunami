@@ -34,6 +34,7 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.flag import Flag
+from primaires.scripting.editeurs.edt_script import EdtScript
 
 class EdtDetail(Presentation):
     
@@ -137,3 +138,8 @@ class EdtDetail(Presentation):
         visible = self.ajouter_choix("est visible", "v", Flag, detail,
                 "est_visible")
         visible.parent = self
+        
+        # Script
+        scripts = self.ajouter_choix("scripts", "sc", EdtScript,
+                detail.script)
+        scripts.parent = self
