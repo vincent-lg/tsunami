@@ -62,6 +62,7 @@ class CommandeDynamique(BaseObj):
     
     def __init__(self, nom_francais, nom_anglais):
         """Constructeur d'une commande dynamique."""
+        BaseObj.__init__(self)
         self.nom_francais = nom_francais
         self.nom_anglais = nom_anglais
         self.nom_categorie = "divers"
@@ -108,4 +109,16 @@ class CommandeDynamique(BaseObj):
         dynamique, pas la commande statique qui se trouve derrière.
         
         """
-        personnage << "pop !"
+        element = dic_masques["element_observable"].element
+        if not hasattr(element, "script"):
+            personnage << self.message_erreur
+            return
+        
+        script = element.script
+        try:
+            evt = script[self.nom_francais]
+        except KeyError:
+            personnage << self.message_erreur
+        else:
+            script[self.nom_francais].executer(personnage=personnage, element=element)
+

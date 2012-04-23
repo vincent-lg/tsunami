@@ -35,7 +35,7 @@ import re
 from collections import OrderedDict
 
 from abstraits.module import *
-from primaires.format.fonctions import format_nb
+from primaires.format.fonctions import format_nb, supprimer_accents
 from .instruction import Instruction
 from .condition import Condition
 from .affectation import Affectation
@@ -50,6 +50,7 @@ from .editeurs.qedit import EdtQedit
 from .constantes.aide import *
 from .script import scripts
 from .alerte import Alerte
+from .commande_dynamique import CommandeDynamique
 
 class Module(BaseModule):
     
@@ -71,9 +72,19 @@ class Module(BaseModule):
         self.commandes = {}
         self.quetes = {}
         self.alertes = {}
+        self.commandes_dynamiques = {}
         self.sujets_aides = {
             "syntaxe": syntaxe,
         }
+    
+    @property
+    def commandes_dynamiques_sa(self):
+        """Retourne les commandes dynamiques {cle_sans_accent: commande}."""
+        cmds = {}
+        for cmd in self.commandes_dynamiques.values():
+            cmds[supprimer_accents(cmd.nom_francais)] = cmd
+        
+        return cmds
     
     def config(self):
         """Configuration du module."""
@@ -100,6 +111,12 @@ class Module(BaseModule):
         alertes = self.importeur.supenr.charger_groupe(Alerte)
         for alerte in alertes:
             self.alertes[alerte.no] = alerte
+        
+        # Chargement des commandes dynamiques
+        commandes_dynamiques = importeur.supenr.charger_groupe(
+                CommandeDynamique)
+        for cmd in commandes_dynamiques:
+            self.commandes_dynamiques[cmd.nom_francais] = cmd
         
         if alertes:
             Alerte.no_actuel = max(a.no for a in alertes)
@@ -128,11 +145,15 @@ class Module(BaseModule):
     def preparer(self):
         """Préparation du module.
         
-        On initialise les scripts.
+        * On initialise les scripts.
+        * On ajoute les commandes dynamiques.
         
         """
         for script in scripts:
             script.init()
+        
+        for cmd in self.commandes_dynamiques.values():
+            cmd.ajouter()
     
     def charger_actions(self):
         """Chargement automatique des actions.
@@ -204,3 +225,15 @@ class Module(BaseModule):
         
         """
         return self.importeur.salle[identifiant]
+    
+    def get_commande_dynamique(self, nom):
+        """Retourne la commande dynamique correspondante au nom.
+        
+        Le nom peut être avec ou sans accent.
+        
+        Si la commande dynamique n'est pas trouvée, lève une exception
+        KeyError.
+        
+        """
+        return self.commandes_dynamiques_sa[nom]
+

@@ -125,6 +125,26 @@ class Script(BaseObj):
         
         return nouv_evenement
     
+    def creer_evenement_dynamique(self, nom):
+        """Essaye de créer un évènement dynamique du nom indiqué.
+        
+        Retourne l'évènement si l'évènement a pu être créé, None sinon.
+        
+        """
+        if supprimer_accents(nom) not in \
+                importeur.scripting.commandes_dynamiques_sa:
+            return None
+        
+        commande = importeur.scripting.get_commande_dynamique(nom)
+        evenement = self.creer_evenement(commande.nom_francais)
+        evenement.aide_courte = commande.aide_courte_evt
+        evenement.aide_longue = str(commande.aide_longue_evt)
+        var_perso = evenement.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage exécutant la commande"
+        var_elt = evenement.ajouter_variable("element", "object")
+        var_elt.aide = "l'élément observé par le personnage"
+        return evenement
+    
     def supprimer_evenement(self, evenement):
         """Supprime l'évènement en le retirant du script."""
         evenement = supprimer_accents(evenement).lower()
