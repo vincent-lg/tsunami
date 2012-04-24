@@ -176,7 +176,7 @@ class Module(BaseModule):
         
         # On ajoute de l'état
         etat = importeur.perso.ajouter_etat("collecte_bois")
-        etat.msg_refus = "Vous êtes en train de ramasser du bois"
+        etat.msg_refus = "Vous êtes en train de ramasser du bois."
         etat.msg_visible = "{personnage} ramasse du bois"
         etat.act_interdites = ["combat", "prendre", "poser", "deplacer",
             "chercher"]

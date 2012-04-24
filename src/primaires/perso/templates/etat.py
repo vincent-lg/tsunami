@@ -69,7 +69,7 @@ class Etat:
         """Constructeur d'un état."""
         self.cle = cle
         self.msg_refus = "Vous ne pouvez faire cela."
-        self.msg_visible = "{personnage} fait quelque chose."
+        self.msg_visible = "{personnage} fait quelque chose"
         self.act_autorisees = []
         self.act_interdites = []
         self.fact_recuperation = 1 # facteur de récupération
