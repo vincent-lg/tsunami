@@ -290,7 +290,7 @@ class Personnage(BaseObj):
         
         """
         BaseObj.detruire(self)
-        if self.equipement:
+        if self.equipement and self.equipoement.squelette:
             self.equipement.squelette.personnages.remove(self)
         if self.salle:
             self.salle.retirer_personnage(self)
