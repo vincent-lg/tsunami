@@ -25,59 +25,28 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# pereIBILITY OF SUCH DAMAGE.
+# POSSIBILITY OF SUCH DAMAGE.
 
 
 """Ce fichier contient l'éditeur EdtDetail, détaillé plus bas."""
 
+from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
-from primaires.format.fonctions import supprimer_accents
+from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.flag import Flag
+from primaires.scripting.editeurs.edt_script import EdtScript
 
-class EdtDetail(Description):
+class EdtDetail(Presentation):
     
     """Ce contexte permet d'éditer un detail observable d'une salle.
     
     """
     
-    def __init__(self, pere, objet=None, attribut=None):
+    def __init__(self, pere, detail=None, attribut=None):
         """Constructeur de l'éditeur"""
-        Description.__init__(self, pere, objet, attribut)
-        self.ajouter_option("n", self.opt_renommer_detail)
-        self.ajouter_option("s", self.opt_synonymes)
-        self.ajouter_option("t", self.opt_changer_titre)
-    
-    def accueil(self):
-        """Message d'accueil du contexte"""
-        detail = self.objet
-        description = self.description
-        salle = detail.parent
-        msg = "| |tit|"
-        msg += "Edition du détail {} de {}".format(detail, salle).ljust(76)
-        msg += "|ff||\n" + self.opts.separateur + "\n"
-        msg += self.aide_courte
-        msg += "Nom : |ent|" + detail.nom + "|ff|\n"
-        if detail.synonymes:
-            if len(detail.synonymes) == 1:
-                msg += "Synonyme : |ent|"
-            else:
-                msg += "Synonymes : |ent|"
-            msg += "|ff|, |ent|".join(detail.synonymes) + "|ff|\n"
-        msg += "Titre : |tit|" + detail.titre + "|ff|\n\n"
-        msg += "Description existante :\n"
-        
-        # Aperçu de la description existante
-        if len(description.paragraphes) > 0:
-            no_ligne = 1
-            for paragraphe in description.paragraphes:
-                paragraphe = description.wrap_paragraphe(paragraphe,
-                        aff_sp_cars=True)
-                paragraphe = paragraphe.replace("\n", "\n   ")
-                msg += "\n{: 2} {}".format(no_ligne, paragraphe)
-                no_ligne += 1
-        else:
-            msg += "\n Aucune description."
-        
-        return msg
+        Presentation.__init__(self, pere, detail, attribut, False)
+        if pere and detail:
+            self.construire(detail)
     
     def opt_renommer_detail(self, arguments):
         """Renomme le détail courant.
@@ -144,16 +113,33 @@ class EdtDetail(Description):
                 detail.synonymes.append(synonyme)
                 self.actualiser()
     
-    def opt_changer_titre(self, arguments):
-        """Change le titre du détail.
-        Syntaxe : /t <nouveau titre>
+    def construire(self, detail):
+        """Construction de l'éditeur"""
+        # Titre
+        titre = self.ajouter_choix("titre", "t", Uniligne, detail, "titre")
+        titre.parent = self
+        titre.prompt = "Titre du détail : "
+        titre.apercu = "{objet.titre}"
+        titre.aide_courte = \
+            "Entrez le |ent|titre|ff| du détail ou |cmd|/|ff| pour revenir " \
+            "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
         
-        """
-        detail = self.objet
-        salle = detail.parent
-        titre = arguments
-        if not titre:
-            self.pere << "|err|Précisez un titre.|ff|"
-        else:
-            detail.titre = titre
-            self.actualiser()
+        # Description
+        description = self.ajouter_choix("description", "d", Description, \
+                detail)
+        description.parent = self
+        description.apercu = "{objet.description.paragraphes_indentes}"
+        description.aide_courte = \
+            "| |tit|" + "Description du détail {}".format(detail).ljust(76) + \
+            "|ff||\n" + self.opts.separateur
+        
+        
+        # Est visible
+        visible = self.ajouter_choix("est visible", "v", Flag, detail,
+                "est_visible")
+        visible.parent = self
+        
+        # Script
+        scripts = self.ajouter_choix("scripts", "sc", EdtScript,
+                detail.script)
+        scripts.parent = self

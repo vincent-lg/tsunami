@@ -78,7 +78,7 @@ class Module(BaseModule):
                 0.20)
         # Ajout de l'état
         etat = self.importeur.perso.ajouter_etat("combat")
-        etat.msg_refus = "Vous êtes en train de combattre"
+        etat.msg_refus = "Vous êtes en train de combattre."
         etat.msg_visible = "{personnage} combat ici"
         etat.act_interdites = ["combat", "prendre", "poser", "deplacer"]
         
