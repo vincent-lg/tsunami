@@ -91,7 +91,7 @@ class EdtCmdedit(Presentation):
             commande).ljust(76) + "|ff||\n" + self.opts.separateur
         
         # Aide courte evt
-        aide_courte = self.ajouter_choix("Aide de l'évènement", "a", Uniligne,
+        aide_courte = self.ajouter_choix("aide de l'évènement", "a", Uniligne,
                 commande, "aide_courte_evt")
         aide_courte.parent = self
         aide_courte.prompt = "Aide courte de l'vènement : "
@@ -102,7 +102,7 @@ class EdtCmdedit(Presentation):
             "Aide courte actuelle : |bc|{objet.aide_courte_evt}|ff|"
         
         # Aide longue evt
-        aide_longue_evt = self.ajouter_choix("aide longue de l'év ènement",
+        aide_longue_evt = self.ajouter_choix("aide longue de l'évènement",
                 "u", Description, commande, "aide_longue_evt")
         aide_longue_evt.parent = self
         aide_longue_evt.apercu = "{objet.aide_longue_evt.paragraphes_indentes}"
@@ -114,6 +114,7 @@ class EdtCmdedit(Presentation):
         latence = self.ajouter_choix("latence", "l", Entier, commande,
                 "latence")
         latence.parent = self
+        latence.apercu = "{objet.latence}"
         latence.prompt = "Latence de la commande : "
         latence.aide_courte = \
             "Entrez la |ent|latence|ff| de la commande ou |cmd|/|ff| " \
