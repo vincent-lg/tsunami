@@ -65,13 +65,16 @@ class CommandeDynamique(BaseObj):
         BaseObj.__init__(self)
         self.nom_francais = nom_francais
         self.nom_anglais = nom_anglais
-        self.nom_categorie = "divers"
-        self.aide_courte = "à renseigner..."
-        self.aide_longue = Description(parent=self, scriptable=False)
+        self.commande = None # commande statique liée
+        self._nom_categorie = "divers"
+        self._aide_courte = "à renseigner..."
+        self.aide_longue = Description(parent=self, scriptable=False,
+                callback="maj")
         self.aide_courte_evt = "Un personnage fait quelque chose"
         self.aide_longue_evt = Description(parent=self, scriptable=False)
         self.latence = 0
         self.message_erreur = "Vous ne pouvez faire cela."
+        self.message_attente = ""
     
     def __getnewargs__(self):
         return ("", "")
@@ -82,6 +85,22 @@ class CommandeDynamique(BaseObj):
     
     def __str__(self):
         return self.nom_francais + "/" + self.nom_anglais
+    
+    def _get_aide_courte(self):
+        return self._aide_courte
+    def _set_aide_courte(self, aide):
+        if len(aide) > 70:
+            aide = aide[:70]
+        self._aide_courte = aide
+        self.maj()
+    aide_courte = property(_get_aide_courte, _set_aide_courte)
+    
+    def _get_nom_categorie(self):
+        return self._nom_categorie
+    def _set_nom_categorie(self, categorie):
+        self._nom_categorie = nom_categorie
+        self.maj()
+    nom_categorie = property(_get_nom_categorie, _set_nom_categorie)
     
     def ajouter(self):
         """Ajoute la commande dans l'interpréteur.
@@ -98,6 +117,8 @@ class CommandeDynamique(BaseObj):
         commande.schema = "<element_observable>"
         commande.interpreter = self.interpreter
         importeur.interpreteur.ajouter_commande(commande)
+        self.commande = commande
+        return commande
        
     def interpreter(self, personnage, dic_masques):
         """Méthode outre-passant l'interprétation de la commande statique.
@@ -121,4 +142,12 @@ class CommandeDynamique(BaseObj):
             personnage << self.message_erreur
         else:
             script[self.nom_francais].executer(personnage=personnage, element=element)
+    
+    def maj(self):
+        """Mise à jour de la commande dynamique."""
+        print("Mise à jour.")
+        if self.commande:
+            self.commande.nom_categorie = self.nom_categorie
+            self.commande.aide_courte = self._aide_courte
+            self.commande.aide_longue = str(self.aide_longue)
 

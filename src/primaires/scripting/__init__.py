@@ -47,6 +47,7 @@ from .quete.quete import Quete
 from .quete.etape import Etape
 from .test import Test
 from .editeurs.qedit import EdtQedit
+from .editeurs.cmdedit import EdtCmdedit
 from .constantes.aide import *
 from .script import scripts
 from .alerte import Alerte
@@ -139,8 +140,9 @@ class Module(BaseModule):
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
         
-        # Ajout de l'éditeur 'qedit'
+        # Ajout des éditeurs 'qedit' et 'cmdedit'
         self.importeur.interpreteur.ajouter_editeur(EdtQedit)
+        self.importeur.interpreteur.ajouter_editeur(EdtCmdedit)
     
     def preparer(self):
         """Préparation du module.
@@ -236,4 +238,11 @@ class Module(BaseModule):
         
         """
         return self.commandes_dynamiques_sa[nom]
+    
+    def creer_commande_dynamique(self, nom_francais, nom_anglais):
+        """Crée et ajoute une commande dynamique."""
+        commande = CommandeDynamique(nom_francais, nom_anglais)
+        commande.ajouter()
+        self.commande_dynamiques[nom_francais] = commande
+        return commande
 
