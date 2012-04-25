@@ -198,7 +198,7 @@ class Salle(BaseObj):
         exceptions = personnages + tuple(kw_personnages.values())
         for personnage in self.personnages:
             if personnage not in exceptions:
-                if not prompt:
+                if not prompt and hasattr(personnage, "instance_connexion"):
                     personnage.instance_connexion.sans_prompt()
                 personnage.envoyer(message, *personnages, **kw_personnages)
     
