@@ -30,6 +30,7 @@
 
 """Fichier contenant le module primaire scripting."""
 
+import inspect
 import os
 import re
 from collections import OrderedDict
@@ -98,6 +99,7 @@ class Module(BaseModule):
         # Chargement des actions
         self.charger_actions()
         self.charger_fonctions()
+        self.ecrire_documentation()
         
         # Chargement des quêtes
         quetes = self.importeur.supenr.charger_groupe(Quete)
@@ -247,4 +249,22 @@ class Module(BaseModule):
         commande.ajouter()
         self.commandes_dynamiques[nom_francais] = commande
         return commande
+    
+    def ecrire_documentation(self):
+        """Écrit la documentation disponible au format Dokuwiki.
+        
+        Deux fichiers de documentation sont écrits :
+            La documentation des actions
+            La documentation des fonctions
+        
+        """
+        msg = "====== Liste des actions disponibles :======\n"
+        for action in sorted(self.actions.values(), key=lambda a: a.nom):
+            nom = action.nom
+            msg += "\n=====" + action.nom + "=====\n\n"
+            msg += inspect.getdoc(action) + "\n"
+            for methode in action._parametres_possibles.values():
+                args = " ".join(inspect.getargspec(methode).args)
+                msg += "\n====" + args + "====\n\n"
+                msg += inspect.getdoc(methode) + "\n"
 
