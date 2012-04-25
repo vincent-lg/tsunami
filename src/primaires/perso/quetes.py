@@ -129,8 +129,6 @@ class Quetes(BaseObj):
             self.__quetes[cle_quete].mettre_a_jour(valeur)
         else:   
             self.__quetes[cle_quete] = Quete(cle_quete, valeur, self.parent)
-        
-        self.parent.enregistrer()
     
     def valider(self, quete, niveau):
         """Valide la quête."""
