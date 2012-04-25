@@ -50,6 +50,7 @@ from .quete.etape import Etape
 from .test import Test
 from .editeurs.qedit import EdtQedit
 from .editeurs.cmdedit import EdtCmdedit
+from .config import *
 from .constantes.aide import *
 from .script import scripts
 from .alerte import Alerte
@@ -68,7 +69,7 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "scripting", "primaire")
-        self.cfg = None
+        self.cfg_exportation = None
         self.a_charger = []
         self.fonctions = {}
         self.actions = {}
@@ -92,6 +93,10 @@ class Module(BaseModule):
     def config(self):
         """Configuration du module."""
         self.a_charger.append(self)
+        self.cfg_exportation = importeur.anaconf.get_config("exportation", \
+                "scripting/exportation.cfg", "config exportation",
+                cfg_exportation)
+        
         BaseModule.config(self)
     
     def init(self):
@@ -99,7 +104,8 @@ class Module(BaseModule):
         # Chargement des actions
         self.charger_actions()
         self.charger_fonctions()
-        self.ecrire_documentation()
+        if self.cfg_exportation.active:
+            self.ecrire_documentation()
         
         # Chargement des quêtes
         quetes = self.importeur.supenr.charger_groupe(Quete)
@@ -258,13 +264,48 @@ class Module(BaseModule):
             La documentation des fonctions
         
         """
-        msg = "====== Liste des actions disponibles :======\n"
+        msg = "====== Liste des actions disponibles :======\n\n" \
+                "Ce document, __automatiquement généré__, " \
+                "décrit la liste des actions disponibles dans le " \
+                "scripting du moteur **Tsunami**.\n"
         for action in sorted(self.actions.values(), key=lambda a: a.nom):
             nom = action.nom
-            msg += "\n=====" + action.nom + "=====\n\n"
+            msg += "\n===== " + action.nom + " =====\n\n"
             msg += inspect.getdoc(action) + "\n"
             for methode in action._parametres_possibles.values():
                 args = " ".join(inspect.getargspec(methode).args)
-                msg += "\n====" + args + "====\n\n"
+                msg += "\n==== " + action.nom + " " + args + " ====\n\n"
                 msg += inspect.getdoc(methode) + "\n"
-
+        
+        chemin_actions = self.cfg_exportation.chemin_doc_actions
+        if os.path.exists(chemin_actions) and not os.access(chemin_actions,
+                os.W_OK):
+            print("Droits d'écriture refusés sur le chemin {}".format(
+                    chemin_actions))
+        else:
+            fichier = open(chemin_actions, 'w')
+            fichier.write(msg)
+            fichier.close()
+        
+        msg = "====== Liste des fonctions disponibles :======\n\n" \
+                "Ce document, __automatiquement généré__, " \
+                "décrit la liste des fonctions disponibles dans le " \
+                "scripting du moteur **Tsunami**.\n"
+        for fonction in sorted(self.fonctions.values(), key=lambda f: f.nom):
+            nom = fonction.nom
+            msg += "\n===== " + nom + " =====\n\n"
+            msg += inspect.getdoc(fonction) + "\n"
+            for methode in fonction._parametres_possibles.values():
+                args = ", ".join(inspect.getargspec(methode).args)
+                msg += "\n==== " + nom + "(" + args + ") ====\n\n"
+                msg += inspect.getdoc(methode) + "\n"
+        
+        chemin_fonctions = self.cfg_exportation.chemin_doc_fonctions
+        if os.path.exists(chemin_fonctions) and not os.access(chemin_fonctions,
+                os.W_OK):
+            print("Droits d'écriture refusés sur le chemin {}".format(
+                    chemin_fonctions))
+        else:
+            fichier = open(chemin_fonctions, 'w')
+            fichier.write(msg)
+            fichier.close()
