@@ -86,6 +86,13 @@ class CommandeDynamique(BaseObj):
     def __str__(self):
         return self.nom_francais + "/" + self.nom_anglais
     
+    def __getstate__(self):
+        dico_attr = self.__dict__.copy()
+        if "commande" in dico_attr:
+            del dico_attr["commande"]
+        
+        return dico_attr
+    
     def _get_aide_courte(self):
         return self._aide_courte
     def _set_aide_courte(self, aide):

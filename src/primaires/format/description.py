@@ -72,6 +72,7 @@ class Description(BaseObj):
         self.parent = parent
         self.script = ScriptDescription(self)
         self.scriptable = scriptable
+        self.callback = callback
         if description:
             self.ajouter_paragraphe(description)
     

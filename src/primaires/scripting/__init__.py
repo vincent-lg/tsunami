@@ -43,6 +43,7 @@ from .commentaire import Commentaire
 from .action import Action, actions as lst_actions
 from . import parser
 from . import commandes
+from . import masques
 from .quete.quete import Quete
 from .quete.etape import Etape
 from .test import Test
@@ -133,6 +134,7 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.dyncom.CmdDyncom(),
             commandes.qedit.CmdQedit(),
             commandes.scripting.CmdScripting(),
         ]
@@ -243,6 +245,6 @@ class Module(BaseModule):
         """Crée et ajoute une commande dynamique."""
         commande = CommandeDynamique(nom_francais, nom_anglais)
         commande.ajouter()
-        self.commande_dynamiques[nom_francais] = commande
+        self.commandes_dynamiques[nom_francais] = commande
         return commande
 

@@ -32,7 +32,7 @@
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class CmdEditer(Parametre):
+class PrmEditer(Parametre):
     
     """Paramètre 'édit de la commande 'dyncom'er'"""
     

@@ -31,7 +31,6 @@
 """Package contenant la commande 'dyncom'."""
 
 from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
 from .editer import PrmEditer
 from .liste import PrmListe
 
@@ -64,6 +63,5 @@ class CmdDyncom(Commande):
     
     def ajouter_parametres(self):
         """Ajout des paramètres."""
-        self.ajouter_parametre(PrmCreer())
         self.ajouter_parametre(PrmEditer())
         self.ajouter_parametre(PrmListe())
