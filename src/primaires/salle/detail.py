@@ -42,6 +42,7 @@ class Detail(BaseObj):
     
     """
     
+    nom_scripting = "le détail"
     def __init__(self, nom, parent=None, modele=None):
         """Constructeur de la classe"""
         BaseObj.__init__(self)

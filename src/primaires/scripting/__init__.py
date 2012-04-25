@@ -30,6 +30,7 @@
 
 """Fichier contenant le module primaire scripting."""
 
+import inspect
 import os
 import re
 from collections import OrderedDict
@@ -43,10 +44,13 @@ from .commentaire import Commentaire
 from .action import Action, actions as lst_actions
 from . import parser
 from . import commandes
+from . import masques
 from .quete.quete import Quete
 from .quete.etape import Etape
 from .test import Test
 from .editeurs.qedit import EdtQedit
+from .editeurs.cmdedit import EdtCmdedit
+from .config import *
 from .constantes.aide import *
 from .script import scripts
 from .alerte import Alerte
@@ -65,7 +69,7 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "scripting", "primaire")
-        self.cfg = None
+        self.cfg_exportation = None
         self.a_charger = []
         self.fonctions = {}
         self.actions = {}
@@ -89,6 +93,10 @@ class Module(BaseModule):
     def config(self):
         """Configuration du module."""
         self.a_charger.append(self)
+        self.cfg_exportation = importeur.anaconf.get_config("exportation", \
+                "scripting/exportation.cfg", "config exportation",
+                cfg_exportation)
+        
         BaseModule.config(self)
     
     def init(self):
@@ -96,6 +104,8 @@ class Module(BaseModule):
         # Chargement des actions
         self.charger_actions()
         self.charger_fonctions()
+        if self.cfg_exportation.active:
+            self.ecrire_documentation()
         
         # Chargement des quêtes
         quetes = self.importeur.supenr.charger_groupe(Quete)
@@ -132,6 +142,7 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.dyncom.CmdDyncom(),
             commandes.qedit.CmdQedit(),
             commandes.scripting.CmdScripting(),
         ]
@@ -139,8 +150,9 @@ class Module(BaseModule):
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
         
-        # Ajout de l'éditeur 'qedit'
+        # Ajout des éditeurs 'qedit' et 'cmdedit'
         self.importeur.interpreteur.ajouter_editeur(EdtQedit)
+        self.importeur.interpreteur.ajouter_editeur(EdtCmdedit)
     
     def preparer(self):
         """Préparation du module.
@@ -236,4 +248,64 @@ class Module(BaseModule):
         
         """
         return self.commandes_dynamiques_sa[nom]
-
+    
+    def creer_commande_dynamique(self, nom_francais, nom_anglais):
+        """Crée et ajoute une commande dynamique."""
+        commande = CommandeDynamique(nom_francais, nom_anglais)
+        commande.ajouter()
+        self.commandes_dynamiques[nom_francais] = commande
+        return commande
+    
+    def ecrire_documentation(self):
+        """Écrit la documentation disponible au format Dokuwiki.
+        
+        Deux fichiers de documentation sont écrits :
+            La documentation des actions
+            La documentation des fonctions
+        
+        """
+        msg = "====== Liste des actions disponibles :======\n\n" \
+                "Ce document, __automatiquement généré__, " \
+                "décrit la liste des actions disponibles dans le " \
+                "scripting du moteur **Tsunami**.\n"
+        for action in sorted(self.actions.values(), key=lambda a: a.nom):
+            nom = action.nom
+            msg += "\n===== " + action.nom + " =====\n\n"
+            msg += inspect.getdoc(action) + "\n"
+            for methode in action._parametres_possibles.values():
+                args = " ".join(inspect.getargspec(methode).args)
+                msg += "\n==== " + action.nom + " " + args + " ====\n\n"
+                msg += inspect.getdoc(methode) + "\n"
+        
+        chemin_actions = self.cfg_exportation.chemin_doc_actions
+        if os.path.exists(chemin_actions) and not os.access(chemin_actions,
+                os.W_OK):
+            print("Droits d'écriture refusés sur le chemin {}".format(
+                    chemin_actions))
+        else:
+            fichier = open(chemin_actions, 'w')
+            fichier.write(msg)
+            fichier.close()
+        
+        msg = "====== Liste des fonctions disponibles :======\n\n" \
+                "Ce document, __automatiquement généré__, " \
+                "décrit la liste des fonctions disponibles dans le " \
+                "scripting du moteur **Tsunami**.\n"
+        for fonction in sorted(self.fonctions.values(), key=lambda f: f.nom):
+            nom = fonction.nom
+            msg += "\n===== " + nom + " =====\n\n"
+            msg += inspect.getdoc(fonction) + "\n"
+            for methode in fonction._parametres_possibles.values():
+                args = ", ".join(inspect.getargspec(methode).args)
+                msg += "\n==== " + nom + "(" + args + ") ====\n\n"
+                msg += inspect.getdoc(methode) + "\n"
+        
+        chemin_fonctions = self.cfg_exportation.chemin_doc_fonctions
+        if os.path.exists(chemin_fonctions) and not os.access(chemin_fonctions,
+                os.W_OK):
+            print("Droits d'écriture refusés sur le chemin {}".format(
+                    chemin_fonctions))
+        else:
+            fichier = open(chemin_fonctions, 'w')
+            fichier.write(msg)
+            fichier.close()

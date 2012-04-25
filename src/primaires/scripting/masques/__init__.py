@@ -28,8 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package des masques du module joueur."""
 
-from . import dyncom
-from . import qedit
-from . import scripting
+from . import commande_dynamique
