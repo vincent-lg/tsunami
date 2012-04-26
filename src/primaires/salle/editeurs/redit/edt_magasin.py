@@ -56,7 +56,6 @@ class EdtMagasin(Editeur):
         msg += self.aide_courte
         if salle.magasin is not None:
             msg += "\n\nNom du magasin : " + salle.magasin.nom
-            msg += "\nVendeur actuel : " + salle.magasin.cle_vendeur
             msg += "\nEtat de la caisse : |bc|" + str(salle.magasin.caisse)
             msg += "|ff|\n\n" + str(salle.magasin)
         
@@ -72,9 +71,12 @@ class EdtMagasin(Editeur):
         if not salle.magasin:
             self.pere << "|err|Il n'y a pas de magasin dans cette salle.|ff|"
             return
+        
         magasin = salle.magasin
         for service, qtt, flags in magasin.stock:
             magasin.ajouter_inventaire(service, qtt, inc_qtt=False)
+        
+        self.pere << "L'inventaire du magasin a bien été renouvelé."
     
     def opt_stock(self, arguments):
         """Modifie le stock.

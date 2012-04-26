@@ -139,10 +139,10 @@ class Magasin(BaseObj):
         """Ajoute un service dans le stock."""
         # D'abord on vérifie que le service n'est pas déjà présent
         # Si c'est le cas, on modifie simplement sa quantité
-        for ligne in self.stock:
+        for i, ligne in enumerate(self.stock):
             if ligne[0].type_achat == service.type_achat and \
                     ligne[0].cle == service.cle:
-                ligne[1] = quantite
+                self.stock[i] = (ligne[0], quantite, ligne[2])
                 return
         
         self.stock.append((service, quantite, 0))

@@ -211,17 +211,9 @@ class EdtRedit(Presentation):
             "désactiver le magasin dans cette salle ; |cmd|/|ff| pour\n" \
             "retourner à la fenêtre parente.\n" \
             "Options :\n" \
-            " - |cmd|/v <prototype de PNJ>|ff| : change le vendeur\n" \
-            " - |cmd|/m <objet de type argent>|ff| : ajoute ou supprime une " \
-            "monnaie\n" \
-            " - |cmd|/c <nombre>|ff| : modifie la valeur de la caisse, " \
-            "c'est-à-dire l'argent dont\n" \
-            "   dispose le vendeur.\n" \
-            " - |cmd|/o <prototype d'objet> (<quantité>)|ff| : ajoute un " \
-            "objet à la vente, ou\n" \
-            "   modifie sa quantité si il est déjà en vente ; si vous " \
-            "précisez un objet\n" \
-            "   en vente et pas de quantité, le supprime."
+            " - |cmd|/s <qtt> <type> <service>|ff| : ajoute ou retire un " \
+            "produit au stock\n" \
+            " - |cmd|/ren|ff| : transfert le stock dans l'inventaire"
         
         # Sorties
         sorties = self.ajouter_choix("sorties", "s", EdtSorties, salle,
