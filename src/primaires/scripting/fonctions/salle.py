@@ -50,7 +50,7 @@ class ClasseFonction(Fonction):
     def salle_chaine(cle):
         """Retourne la salle correspondante à la clé entrée.
         
-        La clé doit être la zone de la salle et son ménmonic
+        La clé doit être la zone de la salle et son mnémonic
         séparés par le signe deux points. Par exemple, "picte:1".
         
         """

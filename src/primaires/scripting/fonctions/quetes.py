@@ -34,7 +34,7 @@ from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
     
-    """Permet d'interroger les niveaux de quête d'un eprsonnage."""
+    """Permet d'interroger les niveaux de quête d'un personnage."""
     
     @classmethod
     def init_types(cls):
