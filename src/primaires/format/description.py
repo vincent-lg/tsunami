@@ -42,15 +42,29 @@ TAILLE_LIGNE = 75
 class Description(BaseObj):
     
     """Cette classe définit une description générique.
+    
     Ce peut être une description de salle, d'objet, de balise, de
     véhicule...
     
     Elle propose plusieurs méthodes facilitant son déploiement dans un
     éditeur et sa mise en forme.
     
+    Paramètres à préciser à la création :
+            description -- la description de base (aucune par défaut)
+            parent -- l'objet décrit
+            scriptable -- permet de scripter la description
+            callback -- permet d'appeler un callback en cas de mise à jour
+        
+        Ce dernier paramètre doit être une chaîne de caractères
+        représentant le nom de méthode du parent qui sera appelée
+        à chaque fois que la description sera modifiée.
+        Cela permet d'effectuer d'autres actions si la description
+        est modifiée. Voir la méthode maj_auto.
+    
     """
     
-    def __init__(self, description=None, parent=None, scriptable=True):
+    def __init__(self, description=None, parent=None, scriptable=True,
+            callback=None):
         """Constructeur"""
         BaseObj.__init__(self)
         self.paragraphes = [] # une liste des différents paragraphes
@@ -58,6 +72,7 @@ class Description(BaseObj):
         self.parent = parent
         self.script = ScriptDescription(self)
         self.scriptable = scriptable
+        self.callback = callback
         if description:
             self.ajouter_paragraphe(description)
     
@@ -77,19 +92,27 @@ class Description(BaseObj):
         """Retourne True si la description n'est pas vide, False sinon."""
         return bool(str(self))
     
+    def maj_auto(self):
+        """Appelle le callback (si défini) pour mettre à jour le parent."""
+        if self.parent and self.callback:
+            getattr(self.parent, self.callback)()
+    
     def ajouter_paragraphe(self, paragraphe):
         """Ajoute un paragraphe.
         
         """
         self.paragraphes.append(paragraphe)
+        self.maj_auto()
     
     def supprimer_paragraphe(self, no):
         """Supprime le paragraphe #no"""
         del self.paragraphes[no]
+        self.maj_auto()
     
     def vider(self):
         """Supprime toute la description"""
         self.paragraphes[:] = []
+        self.maj_auto()
     
     def remplacer(self, origine, par):
         """Remplace toutes les occurences de 'origine' par 'par'.
@@ -108,6 +131,8 @@ class Description(BaseObj):
                         par + self.paragraphes[i][no_car + len(origine):]
                 paragraphe = supprimer_accents(self.paragraphes[i]).lower()
                 no_car = paragraphe.find(origine, no_car + len(par))
+        
+        self.maj_auto()
     
     def wrap_paragraphe(self, paragraphe, lien="\n", aff_sp_cars=False):
         """Wrap un paragraphe et le retourne"""

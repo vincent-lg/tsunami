@@ -80,7 +80,8 @@ class EdtScript(Editeur):
         """Interprétation de l'éditeur"""
         script = self.objet
         nom_evt = supprimer_accents(msg).lower()
-        if nom_evt in script.evenements:
+        if nom_evt in script.evenements or script.creer_evenement_dynamique(
+                msg):
             evenement = script.evenements[nom_evt]
             enveloppe = EnveloppeObjet(EdtEvenement, evenement)
             enveloppe.parent = self

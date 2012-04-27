@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'dyncom liste'."""
 
-from . import dyncom
-from . import qedit
-from . import scripting
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmListe(Parametre):
+    
+    """Commande 'dyncom liste'"""
+    
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "liste", "list")
+        self.aide_courte = "affiche les commandes dynamiques"
+        self.aide_longue = \
+            "Cette commande affiche la liste des commandes dynamiques."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande."""
+        commandes = [(str(c), c.aide_courte) for c in \
+                importeur.scripting.commandes_dynamiques.values()]
+        commandes.sort()
+        if commandes:
+            msg = "Liste des commandes dynamiques :\n"
+            for nom, aide in commandes:
+                msg += "\n  " + nom + " : " + aide
+            
+            personnage << msg
+        else:
+            personnage << "Aucune commande dynamique n'a été définie."

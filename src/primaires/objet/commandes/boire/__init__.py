@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 EILERS Christoff
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,51 +28,50 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'ppurge'.
-
-"""
+"""Package contenant la commande 'boire'."""
 
 from primaires.interpreteur.commande.commande import Commande
 
-class CmdPpurge(Commande):
+class CmdBoire(Commande):
     
-    """Commande 'ppurge'.
-    
-    """
+    """Commande 'boire'"""
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "ppurge", "ppurge")
-        self.groupe = "administrateur"
-        self.nom_categorie = "batisseur"
-        self.schema = "<ident_prototype_pnj>"
-        self.aide_courte = "retire un PNJ de la salle"
+        Commande.__init__(self, "boire", "drink")
+        self.nom_categorie = "objets"
+        self.schema = "<nom_objet>"
+        self.aide_courte = "boit une potion"
         self.aide_longue = \
-            "Cette commande permet de faire disparaître un PNJ " \
-            "de la salle. Vous devez préciser en paramètre l'identifiant " \
-            "du prototype et tous les PNJ de ce prototype présents " \
-            "dans la salle seront effacés. Cette suppression est " \
-            "définitive. Le prototype ne sera, en revanche, pas supprimé."
+                "Cette commande permet de boire un liquide (potion " \
+                "ou autre) depuis un contenant."
+    
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nom_objet = self.noeud.get_masque("nom_objet")
+        nom_objet.proprietes["conteneurs"] = \
+                "(personnage.equipement.inventaire, )"
     
     def interpreter(self, personnage, dic_masques):
-        """Interprétation de la commande"""
-        prototype = dic_masques["ident_prototype_pnj"].prototype
-        salle = personnage.salle
-        nb_det = 0
-        for personnage in salle.personnages:
-            if hasattr(personnage, "prototype") and personnage.prototype is \
-                    prototype:
-                salle.retirer_personnage(personnage)
-                personnage.salle = None
-                importeur.pnj.supprimer_PNJ(pnj.identifiant)
-                nb_det += 1
+        """Méthode d'interprétation de commande"""
+        objets = dic_masques["nom_objet"].objets[0]
+        objet, conteneur = objets
         
-        if nb_det == 1:
-            personnage << "{} PNJ a été retiré de cette salle.".format(
-                    nb_det)
-        elif nb_det > 1:
-            personnage << "{} PNJs ont été retirés de cette salle.".format(
-                    nb_det)
-        else:
-            personnage << "|att|Aucun PNJ modelé sur ce prototype n'est " \
-                    "présent dans cette salle.|ff|"
+        if hasattr(objet, "potion"):
+            if objet.potion is None:
+                personnage << "Il n'y a rien à boire là-dedans."
+                return
+            objet.potion.script["mange"].executer(personnage=personnage,
+                    objet=objet)
+            personnage << objet.potion.message_boit
+            objet.potion.detruire()
+            objet.potion = None
+            return
+        
+        if not objet.est_de_type("potion"):
+            personnage << "Visiblement, ce n'est pas à boire."
+            return
+        
+        objet.script["boit"].executer(personnage=personnage, objet=objet)
+        personnage << objet.message_boit
+        objet.detruire()

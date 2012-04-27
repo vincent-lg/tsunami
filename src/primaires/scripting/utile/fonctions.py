@@ -43,6 +43,16 @@ def formatter(variables, chaine):
         else:
             f_variables[nom] = str(variable)
     
+    i = chaine.find("${")
+    while i >= 0:
+        if len(chaine) > i + 2:
+            if chaine[i + 2] != "{":
+                chaine = chaine[:i] + chaine[i + 1:]
+        else:
+            chaine = chaine[:i] + chaine[i + 1:]
+            break
+        i = chaine.find("${", i)
+    
     return chaine.format(**f_variables)
 
 def get_variables(variables, chaine):

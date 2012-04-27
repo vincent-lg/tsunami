@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,51 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'ppurge'.
-
-"""
+"""Package contenant la commande 'dyncom'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from .editer import PrmEditer
+from .liste import PrmListe
 
-class CmdPpurge(Commande):
+class CmdDyncom(Commande):
     
-    """Commande 'ppurge'.
-    
-    """
+    """Commande 'dyncom'"""
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "ppurge", "ppurge")
+        Commande.__init__(self, "dyncom", "dyncom")
         self.groupe = "administrateur"
         self.nom_categorie = "batisseur"
-        self.schema = "<ident_prototype_pnj>"
-        self.aide_courte = "retire un PNJ de la salle"
+        self.aide_courte = "manipule les commandes dynamiques"
         self.aide_longue = \
-            "Cette commande permet de faire disparaître un PNJ " \
-            "de la salle. Vous devez préciser en paramètre l'identifiant " \
-            "du prototype et tous les PNJ de ce prototype présents " \
-            "dans la salle seront effacés. Cette suppression est " \
-            "définitive. Le prototype ne sera, en revanche, pas supprimé."
+            "Cette commande permet de créer, éditer et lister " \
+            "les commandes dynamiques. Une commande dynamique, " \
+            "à la différence des commandes statiques (définies dans " \
+            "le code) peut être créée par les bâtisseurs. En fonction " \
+            "des noms (français et anglais) qui lui sont assignés, " \
+            "elle se connecte avec des évènements d'éélments observables " \
+            "dans la salle d'action. Si par exemple une commande " \
+            "dynamique |cmd|pousser/push|ff| est définie, elle pourra " \
+            "être utilisée par les joueurs pour pousser des éléments " \
+            "observables dans la salle. Les éléments observables " \
+            "peuvent être des détails descriptifs, des objets, " \
+            "même des joueurs ou PNJ. Pour modifier le comportement " \
+            "d'un de ces éléments en particulier, il faut le scripter " \
+            "en lui ajoutant un évènement portant le nom français " \
+            "de la commande (|ent|pousser|ff| dans cet exemple)."
     
-    def interpreter(self, personnage, dic_masques):
-        """Interprétation de la commande"""
-        prototype = dic_masques["ident_prototype_pnj"].prototype
-        salle = personnage.salle
-        nb_det = 0
-        for personnage in salle.personnages:
-            if hasattr(personnage, "prototype") and personnage.prototype is \
-                    prototype:
-                salle.retirer_personnage(personnage)
-                personnage.salle = None
-                importeur.pnj.supprimer_PNJ(pnj.identifiant)
-                nb_det += 1
-        
-        if nb_det == 1:
-            personnage << "{} PNJ a été retiré de cette salle.".format(
-                    nb_det)
-        elif nb_det > 1:
-            personnage << "{} PNJs ont été retirés de cette salle.".format(
-                    nb_det)
-        else:
-            personnage << "|att|Aucun PNJ modelé sur ce prototype n'est " \
-                    "présent dans cette salle.|ff|"
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmEditer())
+        self.ajouter_parametre(PrmListe())

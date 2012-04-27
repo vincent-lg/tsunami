@@ -369,7 +369,7 @@ class EdtInstructions(Editeur):
         msg += "|cy|Instructions :|ff|\n\n "
         if instructions:
             msg += "\n ".join(["|grf|{:>3}|ff| {}{}".format(i + 1,
-                    "  " * instruction.niveau, echapper_accolades(str(instruction))) \
+                    "  " * instruction.niveau, str(instruction)) \
                     for i, instruction in enumerate(instructions)])
         else:
             msg += " Aucune instruction n'est définie dans ce script."

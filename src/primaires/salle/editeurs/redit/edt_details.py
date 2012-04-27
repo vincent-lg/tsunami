@@ -69,7 +69,6 @@ class EdtDetails(Editeur):
                     liste_details += "(synonymes : |ent|"
                 liste_details += "|ff|, |ent|".join(detail.synonymes)
                 liste_details += "|ff|)"
-            liste_details += detail.description.paragraphes_indentes
         if not liste_details:
             liste_details += "\n Aucun détail pour l'instant."
         msg += liste_details
@@ -142,26 +141,6 @@ class EdtDetails(Editeur):
             detail = details.ajouter_detail(msg)
         enveloppe = EnveloppeObjet(EdtDetail, detail, "description")
         enveloppe.parent = self
-        enveloppe.aide_courte = \
-            "Entrez une |cmd|phrase|ff| à ajouter au détail ou |ent|/|ff| " \
-            "pour revenir à la\nfenêtre mère.\n" \
-            "Symboles :\n" \
-            " - |ent||tab||ff| : symbolise une tabulation\n" \
-            " - |ent||nl||ff| : symbolise un saut de ligne\n" \
-            "Options :\n" \
-            " - |ent|/d <numéro>/*|ff| : supprime un paragraphe ou toute la " \
-            "description\n" \
-            " - |ent|/r <texte 1> / <texte 2>|ff| : remplace " \
-            "|cmd|texte 1|ff| par |cmd|texte 2|ff|\n" \
-            " - |ent|/n <nouveau nom>|ff| : renomme le détail en " \
-            "|ent|nouveau nom|ff|\n" \
-            " - |ent|/t <nouveau titre>|ff| : change le titre du détail\n" \
-            " - |ent|/s <synonyme 1> (/ <synonyme 2> / ...)|ff| : permet de " \
-            "modifier les synonymes" \
-            "\n   du détail. Pour chaque synonyme " \
-            "donné à l'option, s'il existe,\n" \
-            "   il sera supprimé ; sinon, il sera ajouté à la " \
-            "liste.\n\n"
         contexte = enveloppe.construire(self.pere)
         
         self.migrer_contexte(contexte)

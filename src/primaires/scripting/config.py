@@ -1,6 +1,6 @@
-# -*-coding:Utf-8 -*
+﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Ce fichier contient la configuration par défaut du module 'scripting'."""
 
-from . import dyncom
-from . import qedit
-from . import scripting
+cfg_exportation = r"""
+# Ce fichier contient la configuration de l'exportation du scripting.
+# L'exportation du scripting permet de générer automtiquement
+# la documentation des fonctions et actions du scripting et de
+# l'enregistrer dans un fichier txt au format Dokuwiki.
+
+# Cette exportation est désactivée par défaut. Si vous voulez l'activer,
+# lisez bien la configuration qui suit.
+
+# Pour activer l'exportation, mettez l'option qui suit à True.
+active = False
+
+# Chemin du fichier dans lequel écrire la documentation des actions
+chemin_doc_actions = "actions.txt"
+
+# Chemin du fichier dans lequel écrire la documentation des fonctions
+chemin_doc_fonctions = "fonctions.txt"
+
+"""

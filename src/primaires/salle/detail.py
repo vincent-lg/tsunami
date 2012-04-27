@@ -32,6 +32,7 @@
 
 from abstraits.obase import *
 from primaires.format.description import Description
+from primaires.scripting.script import Script
 
 class Detail(BaseObj):
     
@@ -41,6 +42,7 @@ class Detail(BaseObj):
     
     """
     
+    nom_scripting = "le détail"
     def __init__(self, nom, parent=None, modele=None):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
@@ -49,6 +51,8 @@ class Detail(BaseObj):
         self.titre = "un détail aux alentours"
         self.description = Description()
         self.positions = {}
+        self.est_visible = True
+        self.script = ScriptDetail(self)
         self.parent = parent
         if modele is not None:
             self.synonymes = modele.synonymes
@@ -72,3 +76,11 @@ class Detail(BaseObj):
         
         moi += "\n\n" + description
         return moi
+
+class ScriptDetail(Script):
+    
+    """Script s'appliquant à un détail."""
+    
+    def init(self):
+        """Initialisation du script"""
+        pass

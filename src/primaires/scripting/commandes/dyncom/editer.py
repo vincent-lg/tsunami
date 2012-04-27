@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant le paramètre 'editer' de la commande 'dyncom'."""
 
-from . import dyncom
-from . import qedit
-from . import scripting
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmEditer(Parametre):
+    
+    """Paramètre 'édit de la commande 'dyncom'er'"""
+    
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "éditer", "edit")
+        self.schema = "<commande_dynamique>"
+        self.aide_courte = "ouvre l'éditeur dyncom"
+        self.aide_longue = \
+            "Cette commande permet d'accéder à l'éditeur " \
+            "de la commande dynamique indiquée."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        commande = dic_masques["commande_dynamique"].commande
+        editeur = importeur.interpreteur.construire_editeur("cmdedit",
+                personnage, commande)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()
