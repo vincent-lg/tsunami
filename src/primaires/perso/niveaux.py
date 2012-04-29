@@ -30,7 +30,7 @@
 
 """Fichier contenant la classe Niveaux, détaillée plus bas."""
 
-from math import sqrt
+from math import fabs, sqrt
 
 class Niveaux:
     
@@ -75,3 +75,31 @@ class Niveaux:
         
         grille.append((cls.nb_niveaux, cls.xp_max))
         cls.grille_xp = grille
+    
+    @classmethod
+    def calculer_xp_rel(cls, niveau_prevu, pourcentage, niveau_effectif):
+        """Classe retournant l'XP absolue correspondant à l'XP relative entrée.
+        
+        Les paramètres à préciser sont :
+            niveau_prevu -- le niveau prévu de l'XP relative
+            pourcentage -- le pourcentage du niveau prévu (entre 0 et 100)
+            niveau_effectif -- le niveau effectif du personnage recevant l'XP.
+        
+        Pour rappel, l'XP relative consiste à donner une partie de
+        l'XP d'un niveau prévu en fonction du niveau effectif d'un
+        personnage. Par exemple, si on veut donner 5% du niveau
+        10, un personnage niveau 10 recevra 5% de l'XP nécessaire
+        pour gagner son niveau. Cependant, si le personnage
+        n'est pas au niveau 10, il gagnera un pourcentage inférieur
+        de son niveau (si il est niveau 5, il gagnera peut-être 3%
+        du niveau 5 par exemple).
+        
+        """
+        diff_niveaux = fabs(niveau_prevu - niveau_effectif)
+        diff_niveaux = diff_niveaux / cls.nb_niveaux
+        diff_niveaux = 1 - (1 - diff_niveaux) ** 2
+        
+        pourcentage = pourcentage - diff_niveaux * pourcentage
+        xp = int(cls.grille_xp[niveau_effectif - 1][1] * pourcentage)
+        print("diff_niveaux", diff_niveaux, "pourcentage =", pourcentage, "xp =", xp)
+        return xp
