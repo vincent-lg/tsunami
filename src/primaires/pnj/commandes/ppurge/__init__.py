@@ -64,7 +64,7 @@ class CmdPpurge(Commande):
                     prototype:
                 salle.retirer_personnage(personnage)
                 personnage.salle = None
-                importeur.pnj.supprimer_PNJ(pnj.identifiant)
+                importeur.pnj.supprimer_PNJ(personnage.identifiant)
                 nb_det += 1
         
         if nb_det == 1:

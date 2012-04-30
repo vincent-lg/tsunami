@@ -98,6 +98,14 @@ class Module(BaseModule):
         # Ajout de l'éditeur 'redit'
         self.importeur.interpreteur.ajouter_editeur(EdtPedit)
     
+    def preparer(self):
+        """Préparation du module."""
+        for p in self._prototypes.values():
+            p.pnj = []
+        
+        for pnj in self._PNJ.values():
+            pnj.prototype.pnj.append(pnj)
+    
     @property
     def PNJ(self):
         """Retourne un dictionnaire déréférencé des PNJ."""
