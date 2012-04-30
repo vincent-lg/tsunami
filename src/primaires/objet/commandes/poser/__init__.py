@@ -58,7 +58,7 @@ class CmdPoser(Commande):
         conteneur.prioritaire = True
         conteneur.proprietes["conteneurs"] = \
                 "(personnage.equipement.tenus, personnage.salle.objets_sol)"
-        conteneur.proprietes["types"] = "('conteneur', 'conteneur de nourriture')"
+        conteneur.proprietes["types"] = "('conteneur', )"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -76,17 +76,10 @@ class CmdPoser(Commande):
             if qtt > nombre:
                 qtt = nombre
             
-            if dans and hasattr(dans, "bouffe"):
-                if dans.bouffe is not None:
-                    personnage << "Il y a déjà à manger là-dedans."
-                    return
             conteneur.retirer(objet, qtt)
             if dans:
                 if hasattr(dans, "conteneur"):
                     dans.conteneur.ajouter(objet, qtt)
-                else:
-                    dans.bouffe = objet
-                    break
             else:
                 personnage.salle.objets_sol.ajouter(objet, qtt)
         

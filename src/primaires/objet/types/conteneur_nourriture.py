@@ -30,24 +30,18 @@
 
 """Fichier contenant le type ConteneurNourriture."""
 
-from primaires.interpreteur.editeur.choix import Choix
+from math import ceil
+
+from primaires.interpreteur.editeur.entier import Entier
 from corps.fonctions import lisser
 from .base import BaseType
-
-# Constante
-LISTE_CONNECTEURS = [
-        "de",
-        "rempli{s} de",
-        "remplie{s} de",
-        "plein{s} de",
-        "pleine{s} de",
-        ]
 
 class ConteneurNourriture(BaseType):
     
     """Type d'objet: conteneur de nourriture.
     
-    Les conteneurs de nourriture sont des conteneurs spéciaux genre assiette.
+    Les conteneurs de nourriture sont des conteneurs spéciaux genre assiette,
+    bol, écuelle...
     
     """
     
@@ -56,30 +50,34 @@ class ConteneurNourriture(BaseType):
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
-        self.bouffe = None
-        self.connecteur = "de"
-        self.etendre_editeur("c", "connecteur", Choix, self,
-                "connecteur", LISTE_CONNECTEURS)
-        
-        # Erreur de validation du type
-        self.err_type = "Laissez la nourriture dans son plat, grossier personnage."
-    
-    @property
-    def connecteurs(self):
-        """Retourne la liste des suffixes possibles."""
-        return ", ".join(LISTE_CONNECTEURS)
+        self.nourriture = []
+        self.statuts = [
+            (5, "à moitié plein"),
+            (10, "rempli"),
+        ]
+        self.poids_max = 10
+        self.etendre_editeur("m", "poids maximum", Entier, self,
+                "poids_max", 1)
             
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes."""
-        connecteur = enveloppes["c"]
-        connecteur.apercu = "{objet.connecteur}"
-        connecteur.aide_courte = \
-            "Choisissez un |ent|connecteur|ff| ou entrez |cmd|/|ff| pour " \
-            "revenir à la fenêtre parente.\nLe connecteur sera utilisé pour " \
-            "afficher le contenu de cet objet, par exemple :\n" \
-            "|grf|une assiette|ff| |bc|pleine de|ff| |grf|ragoût|ff|.\n\n" \
-            "Choix possibles : {objet.connecteurs}\n\n" \
-            "Connecteur actuel : {objet.connecteur}"
+        poids_max = enveloppes["m"]
+        poids_max.apercu = "{objet.poids_max}"
+        poids_max.aide_courte = \
+            "Entrez le |ent|poids maximum|ff| que peut contenir cet objet " \
+            "ou |cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
+            "Poids maximum actuel : {objet.poids_max}"
+    
+    @property
+    def nourriture_qtt(self):
+        """Retourne un dictionnaire {Nourriture:quantité}."""
+        dico_qtt = {}
+        for item in self.nourriture:
+            if item.prototype not in dico_qtt:
+                dico_qtt[item.prototype] = 1
+            else:
+                dico_qtt[item.prototype] += 1
+        return dico_qtt
     
     # Actions sur les objets
     def get_nom(self, nombre=1):
@@ -90,31 +88,41 @@ class ConteneurNourriture(BaseType):
         Sinon : retourne le nombre et le nom pluriel
         
         """
-        ajout = ""
-        if self.bouffe is not None:
-            s = "s" if nombre > 1 else ""
-            nom = self.bouffe.get_nom()
-            nom = nom[3:] if nom.startswith("un ") else nom[4:]
-            ajout = lisser(" " + self.connecteur.format(s=s) + " " + nom)
+        ajout = "vide"
+        if self.nourriture:
+            poids_contenu = sum([o.poids_unitaire for o in self.nourriture])
+            ratio = ceil(poids_contenu / self.poids_max)
+            for r, message in self.statuts:
+                if ratio <= r:
+                    ajout = message
+                    break
         if nombre <= 0:
             raise ValueError("la fonction get_nom a été appelée " \
                     "avec un nombre négatif ou nul.")
         elif nombre == 1:
-            return self.nom_singulier + ajout
+            return self.nom_singulier + " " + ajout
         else:
             if self.noms_sup:
                 noms_sup = list(self.noms_sup)
                 noms_sup.reverse()
                 for nom in noms_sup:
                     if nombre >= nom[0]:
-                        return nom[1] + ajout
-            return str(nombre) + " " + self.nom_pluriel + ajout
+                        return nom[1]
+            return str(nombre) + " " + self.nom_pluriel + " " + ajout
     
     def regarder(self, personnage):
         """Le personnage regarde l'objet"""
         msg = BaseType.regarder(self, personnage)
         
-        if self.bouffe is not None:
-            msg += "\n" + str(self.bouffe.description)
+        if self.nourriture:
+            nourriture = [o.get_nom(nb) for o, nb \
+                    in self.nourriture_qtt.items()]
+            if len(nourriture) > 1:
+                ajout = ", ".join(nourriture[:-1]) + " et " + nourriture[-1]
+            else:
+                ajout = nourriture[0]
+            msg += "\nCe récipient contient " + ajout + "."
+        else:
+            msg += "\nCe récipient est vide."
         
         return msg

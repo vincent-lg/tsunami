@@ -44,7 +44,7 @@ class CmdManger(Commande):
         self.aide_courte = "mange un objet"
         self.aide_longue = \
                 "Cette commande permet de se nourrir, à condition que " \
-                "précisé soit comestible."
+                "l'objet précisé soit comestible."
     
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
@@ -57,16 +57,16 @@ class CmdManger(Commande):
         objets = dic_masques["nom_objet"].objets[0]
         objet, conteneur = objets
         
-        if hasattr(objet, "bouffe"):
-            if objet.bouffe is None:
-                personnage << "Il n'y a rien à manger là-dedans."
-                return
-            objet.bouffe.script["mange"].executer(personnage=personnage,
-                    objet=objet)
-            personnage << objet.bouffe.message_mange
-            objet.bouffe.detruire()
-            objet.bouffe = None
-            return
+        # if hasattr(objet, "nourriture"):
+            # if objet.bouffe is None:
+                # personnage << "Il n'y a rien à manger là-dedans."
+                # return
+            # objet.bouffe.script["mange"].executer(personnage=personnage,
+                    # objet=objet)
+            # personnage << objet.bouffe.message_mange
+            # objet.bouffe.detruire()
+            # objet.bouffe = None
+            # return
         
         if not objet.est_de_type("nourriture"):
             personnage << "Visiblement, ce n'est pas comestible."
