@@ -28,25 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'voir' de la commande 'rapport'."""
+"""Fichier contenant le paramètre 'supprimer' de la commande 'rapport'."""
 
 from primaires.format.date import get_date
 from primaires.interpreteur.masque.parametre import Parametre
+from primaires.format.fonctions import oui_ou_non
 from secondaires.rapport.constantes import CLR_STATUTS, CLR_AVC
 
-class PrmVoir(Parametre):
+class PrmSupprimer(Parametre):
     
-    """Commande 'rapport voir'.
+    """Commande 'rapport supprimer'.
     
     """
     
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "voir", "view")
+        Parametre.__init__(self, "supprimer", "delete")
         self.schema = "<nombre>"
-        self.aide_courte = "visionne un rapport particulier"
+        self.aide_courte = "supprime un rapport définitivement"
         self.aide_longue = \
-            "Cette commande offre un affichage détaillé d'un rapport."
+            "Cette commande supprime un rapport, qui n'est dès lors plus " \
+            "récupérable (ne se contente PAS de fermer le rapport)."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""

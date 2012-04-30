@@ -160,13 +160,12 @@ class CmdCanaux(Commande):
         aide += afficher_param(dic_parametres["immerge"])
         aide += afficher_param(dic_parametres["quit"])
         aide += afficher_param(dic_parametres["invite"])
-        if statut_perso is "modo" or statut_perso is "admin" \
-                or personnage.est_immortel():
+        if statut_perso in ("modo", "admin") or personnage.est_immortel():
             aide += "\n\n  Paramètres de modération :"
             aide += afficher_param(dic_parametres["eject"])
             aide += afficher_param(dic_parametres["ban"])
             aide += afficher_param(dic_parametres["announce"])
-        if statut_perso is "admin" or personnage.est_immortel():
+        if statut_perso == "admin" or personnage.est_immortel():
             aide += "\n\n  Paramètres d'administration :"
             aide += afficher_param(dic_parametres["promote"])
             aide += afficher_param(dic_parametres["edit"])
@@ -219,12 +218,12 @@ class CmdCanaux(Commande):
         aide += afficher_param(dic_parametres["immerge"])
         aide += afficher_param(dic_parametres["quit"])
         aide += afficher_param(dic_parametres["invite"])
-        if statut_perso is "modo" or statut_perso is "admin":
+        if statut_perso in ("modo", "admin") or personnage.est_immortel():
             aide += "\n\n  Paramètres de modération :"
             aide += afficher_param(dic_parametres["eject"])
             aide += afficher_param(dic_parametres["ban"])
             aide += afficher_param(dic_parametres["announce"])
-        if statut_perso is "admin":
+        if statut_perso == "admin" or personnage.est_immortel():
             aide += "\n\n  Paramètres d'administration :"
             aide += afficher_param(dic_parametres["promote"])
             aide += afficher_param(dic_parametres["edit"])

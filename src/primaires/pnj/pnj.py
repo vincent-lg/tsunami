@@ -99,6 +99,9 @@ class PNJ(Personnage):
             except AttributeError:
                 return getattr(self.prototype, nom_attr)
     
+    def __repr__(self):
+        return "<pnj {}>".format(self.identifiant)
+    
     def _get_nom(self):
         """Retourne le nom singulier définit dans le prototype.
         

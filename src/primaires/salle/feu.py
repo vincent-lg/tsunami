@@ -57,6 +57,7 @@ class Feu(BaseObj):
         self.puissance = puissance
         self.salle = salle
         self.stabilite = 0
+        self.generation = 0
     
     def __getnewargs__(self):
         return (None, )
@@ -99,8 +100,8 @@ class Feu(BaseObj):
                 if random() < 0.33:
                     self.puissance += randint(1, 5)
             else:
+                self.puissance += randint(0, 3)
                 self.propager()
-                # plus
         # Cas standard, sans tenir compte de l'instabilité
         if self.puissance == 1:
             if random() < 0.20:
@@ -117,7 +118,8 @@ class Feu(BaseObj):
             self.puissance -= 1
         else:
             # Cas de l'incendie
-            self.puissance -= 10
+            self.stabilite = self.puissance / 200
+            self.puissance -= 3
     
     def propager(self):
         """Méthode de propagation.
@@ -133,8 +135,28 @@ class Feu(BaseObj):
         (par exemple verser de l'eau) pour endiguer un incendie.
         
         """
-        if self.puissance > 30:
-            pass
+        if self.generation >= 5:
+            return
+        perturbation = None
+        pertus = [p for p in importeur.meteo.perturbations_actuelles \
+                if p.est_sur(self.salle)]
+        if pertus:
+            perturbation = pertus[0]
+        # if perturbation and perturbation.nom_pertu in ("pluie", "orage"):
+            # return
+        if perturbation and perturbation.nom_pertu == "vent":
+            coef_puissance = 0
+        else:
+            coef_puissance = 10
+        salle_fils = choice([s.salle_dest for s in self.salle.sorties])
+        print(salle_fils)
+        if salle_fils.ident in importeur.salle.feux:
+            feu_fils = importeur.salle.feux[salle_fils.ident]
+        else:
+            feu_fils = importeur.salle.allumer_feu(salle_fils)
+        feu_fils.puissance = self.puissance - coef_puissance
+        feu_fils.generation = self.generation + 1
+        salle_fils.envoyer("Le feuuuu !")
     
     @classmethod
     def repop(cls):
