@@ -132,6 +132,14 @@ class Objet(BaseObj):
         """
         return self.calculer_poids()
     
+    @property
+    def grand_parent(self):
+        """Retourne le grand parent de l'objet."""
+        if hasattr(self.contenu, "grand_parent"):
+            return self.contenu.grand_parent
+        else:
+            return self.contenu
+    
     def extraire_contenus(self, quantite=None, contenu_dans=None):
         """Extrait les objets contenus."""
         res = [self]
@@ -168,6 +176,11 @@ class Objet(BaseObj):
         """Destruction de l'objet"""
         if self in self.prototype.objets:
             self.prototype.objets.remove(self)
+        
+        if hasattr(self, "conteneur"):
+            for objet in self.conteneur._objets:
+                importeur.objet.supprimer_objet(objet.identifiant)
+        
         BaseObj.detruire(self)
 
 class MethodeObjet:

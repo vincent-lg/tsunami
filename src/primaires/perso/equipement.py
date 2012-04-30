@@ -279,6 +279,10 @@ class Equipes(BaseObj):
         
         return iter(ret)
     
+    @property
+    def grand_parent(self):
+        return self.equipement.personnage
+    
     def ajouter(self, objet):
         """Ajoute un objet à l'équipoement"""
         raise NotImplementedError
@@ -320,6 +324,10 @@ class Tenus(BaseObj):
     def __iter__(self):
         return iter([membre.tenu for membre in self.equipement.membres \
                 if membre.tenu])
+    
+    @property
+    def grand_parent(self):
+        return self.equipement.personnage
     
     def iter_nombres(self):
         objets = list(iter(self))
