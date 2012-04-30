@@ -33,7 +33,7 @@
 from math import ceil
 
 from primaires.interpreteur.editeur.entier import Entier
-from corps.fonctions import lisser
+from bases.objet.attribut import Attribut
 from .base import BaseType
 
 class ConteneurNourriture(BaseType):
@@ -46,11 +46,11 @@ class ConteneurNourriture(BaseType):
     """
     
     nom_type = "conteneur de nourriture"
+    nettoyer = False
     
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
-        self.nourriture = []
         self.statuts = [
             (5, "à moitié plein"),
             (10, "rempli"),
@@ -58,6 +58,11 @@ class ConteneurNourriture(BaseType):
         self.poids_max = 10
         self.etendre_editeur("m", "poids maximum", Entier, self,
                 "poids_max", 1)
+        
+        # Attributs propres à l'objet (non au prototype)
+        self._attributs = {
+            "nourriture": Attribut(list),
+        }
             
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes."""
@@ -78,6 +83,14 @@ class ConteneurNourriture(BaseType):
             else:
                 dico_qtt[item.prototype] += 1
         return dico_qtt
+    
+    def calculer_poids(self):
+        """Retourne le poids de l'objet et celui des objets contenus."""
+        poids = self.poids_unitaire
+        for o, nb in self.conteneur.iter_nombres():
+            poids += o.poids * nb
+        
+        return round(poids, 3)
     
     # Actions sur les objets
     def get_nom(self, nombre=1):

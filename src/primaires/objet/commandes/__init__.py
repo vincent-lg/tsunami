@@ -41,3 +41,4 @@ from . import poser
 from . import prendre
 from . import remplir
 from . import retirer
+from . import vider
