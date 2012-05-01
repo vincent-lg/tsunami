@@ -85,6 +85,7 @@ class Module(BaseModule):
             commandes.prendre.CmdPrendre(),
             commandes.remplir.CmdRemplir(),
             commandes.retirer.CmdRetirer(),
+            commandes.vider.CmdVider(),
         ]
         
         for cmd in self.commandes:

@@ -73,6 +73,13 @@ class ConteneurObjet(BaseObj):
         parent = repr(self.parent) if self.parent else "sans parent"
         return parent + " " + str(self._objets) + " " + str(self._non_uniques)
     
+    @property
+    def grand_parent(self):
+        if hasattr(self.parent, "grand_parent"):
+            return self.parent.grand_parent
+        else:
+            return self.parent
+    
     def iter_nombres(self):
         """Parcourt les objets et quantités du conteneur."""
         for objet in self._objets:

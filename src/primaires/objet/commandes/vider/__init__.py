@@ -28,83 +28,64 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'prendre'."""
+"""Package contenant la commande 'vider'."""
 
 from primaires.interpreteur.commande.commande import Commande
 from primaires.objet.conteneur import SurPoids
 
-class CmdPrendre(Commande):
+class CmdVider(Commande):
     
-    """Commande 'prendre'"""
+    """Commande 'vider'"""
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "prendre", "get")
+        Commande.__init__(self, "vider", "empty")
         self.nom_categorie = "objets"
-        self.schema = "(<nombre>) <nom_objet> " \
-                "(depuis/from <conteneur:nom_objet>)"
-        self.aide_courte = "ramasse un objet"
+        self.schema = "(<nombre>) <nom_objet> depuis/from <plat:nom_objet>"
+        self.aide_courte = "vide un plat"
         self.aide_longue = \
-                "Cette commande permet de ramasser un ou plusieurs objets."
+                "Cette commande permet d'enlever un ou plusieurs objets " \
+                "d'un plat, du moins si l'opération est faisable (difficile " \
+                "par exemple de retirer une soupe d'un bol autrement qu'en " \
+                "la mangeant)."
     
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("nom_objet")
         nom_objet.proprietes["conteneurs"] = \
-                "dic_masques['conteneur'] and " \
-                "(dic_masques['conteneur'].objet.conteneur.iter_nombres(), " \
-                ") or (personnage.salle.objets_sol.iter_nombres(), )"
-        nom_objet.proprietes["quantite"] = "True"
-        conteneur = self.noeud.get_masque("conteneur")
-        conteneur.prioritaire = True
-        conteneur.proprietes["conteneurs"] = \
-                "(personnage.equipement.tenus.iter_nombres(), " \
-                "personnage.salle.objets_sol.iter_nombres())"
-        conteneur.proprietes["types"] = "('conteneur', )"
-        conteneur.proprietes["quantite"] = "True"
+                "(dic_masques['plat'].objet.nourriture, )"
+        plat = self.noeud.get_masque("plat")
+        plat.prioritaire = True
+        plat.proprietes["conteneurs"] = \
+                "(personnage.equipement.tenus, personnage.salle.objets_sol)"
+        plat.proprietes["types"] = "('conteneur de nourriture', )"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         nombre = 1
         if dic_masques["nombre"]:
             nombre = dic_masques["nombre"].nombre
-        objets = list(dic_masques["nom_objet"].objets_qtt_conteneurs)
+        objets = list(dic_masques["nom_objet"].objets)
         objets = objets[:nombre]
-        depuis = dic_masques["conteneur"]
-        depuis = depuis and depuis.objet or None
+        plat = dic_masques["plat"].objet
         
         pris = 0
-        for objet, qtt, conteneur in objets:
-            if nombre > qtt:
-                nombre = qtt
+        for objet in objets:
             try:
-                dans = personnage.ramasser(objet, depuis, nombre)
+                dans = personnage.ramasser(objet, plat)
             except SurPoids as err:
                 personnage << "|err|" + str(err) + "|ff|"
                 return
-            
             if dans is None:
                 break
-            
-            if depuis:
-                depuis.conteneur.retirer(objet, nombre)
-            else:
-                personnage.salle.objets_sol.retirer(objet, nombre)
+            plat.nourriture.remove(objet)
             pris += 1
             
         if pris == 0:
             personnage << "|err|Vous n'avez aucune main de libre.|ff|"
             return
         
-        if pris < nombre:
-            pris = nombre
-        
-        if depuis:
-            personnage << "Vous prenez {} depuis {}.".format(
-                    objet.get_nom(pris), depuis.nom_singulier)
-            personnage.salle.envoyer("{{}} prend {} depuis {}.".format(
-                    objet.get_nom(pris), depuis.nom_singulier), personnage)
-        else:
-            personnage << "Vous ramassez {}.".format(objet.get_nom(pris))
-            personnage.salle.envoyer("{{}} ramasse {}.".format(
-                    objet.get_nom(pris)), personnage)
+        personnage << "Vous prenez {} depuis {}.".format(
+                objet.get_nom(pris), plat.nom_singulier)
+        personnage.salle.envoyer("{{}} prend {} depuis {}.".format(
+                objet.get_nom(pris), plat.nom_singulier), personnage)

@@ -31,6 +31,7 @@
 """Package contenant la commande 'manger'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from corps.fonctions import lisser
 
 class CmdManger(Commande):
     
@@ -54,19 +55,23 @@ class CmdManger(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        objets = dic_masques["nom_objet"].objets[0]
-        objet, conteneur = objets
+        objet = dic_masques["nom_objet"].objet
         
-        # if hasattr(objet, "nourriture"):
-            # if objet.bouffe is None:
-                # personnage << "Il n'y a rien à manger là-dedans."
-                # return
-            # objet.bouffe.script["mange"].executer(personnage=personnage,
-                    # objet=objet)
-            # personnage << objet.bouffe.message_mange
-            # objet.bouffe.detruire()
-            # objet.bouffe = None
-            # return
+        if hasattr(objet, "nourriture"):
+            if not objet.nourriture:
+                personnage << "Il n'y a rien à manger là-dedans."
+                return
+            personnage << "Vous commencez votre repas."
+            personnage.agir("manger")
+            for item in objet.nourriture:
+                item.script["mange"].executer(personnage=personnage,
+                        objet=objet)
+                item.detruire()
+                yield item.nourrissant
+            objet.nourriture = []
+            personnage << lisser("Vous mangez le contenu de {}.".format(
+                    objet.nom_singulier))
+            return
         
         if not objet.est_de_type("nourriture"):
             personnage << "Visiblement, ce n'est pas comestible."

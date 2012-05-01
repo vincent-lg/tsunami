@@ -295,6 +295,13 @@ class Personnage(BaseObj):
             self.equipement.squelette.personnages.remove(self)
         if self.salle:
             self.salle.retirer_personnage(self)
+        
+        if self.equipement:
+            for membre in self.equipement.membres:
+                for objet in membre.equipe:
+                    importeur.objet.supprimer_objet(objet.identifiant)
+                if membre.tenu:
+                    importeur.objet.supprimer_objet(membre.tenu.identifiant)
     
     def get_nom_pour(self, personnage):
         """Retourne le nom pour le personnage passé en paramètre."""
