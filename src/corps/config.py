@@ -80,6 +80,21 @@ nb_clients_attente = 5
 # Mettre à -1 pour un nombre infini de connectés
 nb_max_connectes = -1
 
+# Contrôle de la boucle synchro
+# La boucle synchro met par défaut un peu plus de 100 ms à s'exécuter.
+# Pendant ce temps, les nouveaux clients en attente sont connectés,
+# les nouvelles commandes envoyées sont traitées et certaines opérations
+# cycliques sont également effectuées (obtension des statistiques,
+# traitement des actions différées...). Deux valeurs permettent
+# de contrôler le temps que met chaque boucle synchro en moyenne :
+# le temps d'attente des connexions et le temps d'attente de réception.
+# Vous pouvez ici modifier leur valeur (en seconde).
+# Note : plus les valeurs de ces données sont basses, plus la boucle
+# sera rapide. En contre-partie, le système sera mis à plus forte
+# contribution.
+tps_attente_connexion = 0.05
+tps_attente_reception = 0.05
+
 
 ## Chemins d'accès
 

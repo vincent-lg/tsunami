@@ -143,7 +143,8 @@ if "serveur" in parser_cmd.keys():
 # le constructeur de ServeurConnexion (voir reseau/connexions/serveur.py)
 # La plupart des informations se trouve dans la configuration globale
 serveur = ConnexionServeur(port, config_globale.nb_clients_attente, \
-        config_globale.nb_max_connectes)
+        config_globale.nb_max_connectes, config_globale.tps_attente_connexion,
+        config_globale.tps_attente_reception)
 
 # On crée l'importeur, gérant les différents modules (primaires et secondaires)
 importeur = Importeur(parser_cmd, anaconf, man_logs, serveur)

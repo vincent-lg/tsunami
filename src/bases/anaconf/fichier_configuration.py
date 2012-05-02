@@ -30,23 +30,27 @@
 
 """Ce fichier décrit la classe FichierConfiguration, détaillée plus bas."""
 
-# On aura besoin des regex pour analyser le fichier
 import re
-
-# On utilise le module textwrap pour tout aligner
 import textwrap
 
-# On importe les exceptions d'anaconf
 from .exceptions import *
 
 class FichierConfiguration:
+    
     """Cette classe définit un fichier de configuration.
+    
     Le fichier créé par cette classe est déjà ouvert. La classe se contente
     de l'analyser et de placer les données dans un dictionnaire.
     
+    Elle est également en charge de mettre un jour un fichier en tenant
+    compte d'un autre fichier (mettre à jour un modèle en tenant compte
+    des données configurées, ici).
+    
     """
+    
     def __init__(self, nom, chaine, logger):
         """Constructeur d'un fichier de configuration.
+        
         On lui passe la chaîne lue dans le fichier, non analysée.
         Cette chaîne contient donc les données brutes, il faut l'analyser.
         
@@ -54,65 +58,71 @@ class FichierConfiguration:
         self.nom = nom
         self.fichier = chaine
         self.donnees = {}
+        self.lignes = {}
         self.logger = logger
-        # On analyse la chaîne
-        t_contenu = []
-        for ligne in chaine.split('\n'):
-            ligne = ligne.strip()
-            if not ligne.startswith("#"):
-                t_contenu.append(ligne)
-        contenu = "\n".join(t_contenu)
-        # On imbrique les lignes découpées
-        # Elles finissent par un délimiteur
-        delimiteurs_a_sup = ('\\')
-        delimiteurs_a_garder = (',', '[', '{', '(')
-        for delimiteur in delimiteurs_a_sup:
-            contenu = contenu.replace("{}\n".format(delimiteur), " ")
-        for delimiteur in delimiteurs_a_garder:
-            contenu = contenu.replace("{}\n".format(delimiteur), delimiteur)
         
-        # A présent, on lit les données
-        for i, ligne in enumerate(contenu.split("\n")):
-            if ligne == "":
+        # On analyse la chaîne
+        t_contenu = chaine.split("\n")
+        contenu = chaine
+        delimiteurs = ('\\', ',', '[', '{', '(')
+        
+        # On lit les données
+        i = 0
+        while i < len(t_contenu):
+            ligne = t_contenu[i]
+            if ligne.strip() == "":
+                i += 1
+                continue
+            elif ligne.lstrip().startswith("#"):
+                i += 1
                 continue
             elif "=" not in ligne:
-                self.logger.warning("[{0}:{1}]: le signe '=' n'a pas été trouvé " \
-                        "('{2}')".format(self.nom, i+1, ligne))
+                self.logger.warning("[{}:{}]: le signe '=' n'a pas été " \
+                        "trouvé ('{}')".format(self.nom, i + 1, ligne))
+                i += 1
             else:
                 nom_donnee = ligne.split("=")[0].strip()
-                donnee = "=".join(ligne.split("=")[1:]).strip()
+                donnee = "=".join(ligne.split("=")[1:]).lstrip()
+                
+                # Si la ligne se poursuit, on continue
+                ligne_debut = i
+                while ligne.rstrip()[-1] in delimiteurs or \
+                        ligne.lstrip().startswith("#"):
+                    i += 1
+                    if i >= len(t_contenu):
+                        break
+                    
+                    ligne = t_contenu[i]
+                    donnee += "\n" + ligne
+                
+                ligne_fin = i
+                self.lignes[nom_donnee] = (ligne_debut, ligne_fin)
                 self.donnees[nom_donnee] = donnee
+                i += 1
     
     def mettre_a_jour(self, autre_fichier):
-        """On met à jour l'attribut 'chaine' en fonction de cet autre fichier
-        de configuration :
+        """Met à jour l'attribut 'chaine' en fonction d'un autre fichier.
+        
         On parcourt les données de cet autre fichier.
         *   Si la donnée est présente dans self.donnees, on la réécrit
             sans savoir si elle est identique ou non, on l'écrase)
-        *   Sinon on ne la réécrit pas
+        *   Sinon on ne la réécrit pas.
         
         """
+        t_contenu = self.fichier.split("\n")
         for nom_don, val_don in autre_fichier.donnees.items():
             if nom_don in self.donnees.keys(): # la donnée existe
                 # On la met à jour
                 self.donnees[nom_don] = val_don
-                # On utilise les regex pour remplacer la ligne concernée dans
-                # self.fichier
-                # 1- on cherche la position de la donnée
-                t_match = re.search(r"^" + nom_don + r" *=", self.fichier, re.M)
-                if t_match is None:
+                if nom_don not in self.lignes:
                     # La donnée n'a pas été trouvée
-                    raise ErreurInterpretation("La donnée {} n'a pas " \
+                    raise ErreurInterpretation("la donnée {} n'a pas " \
                             "été trouvée dans le fichier à mettre à " \
                             "jour".format(nom_don))
-                debut = t_match.start()
-                egal = t_match.end()
-                # 2- maintenant on cherche la fin
-                t_match = re.search("(?<!\\\\)\n", self.fichier[debut:])
-                fin = debut + t_match.end()
-                t_nom = len(nom_don)
-                nou_val = (" \\\n" + " " * (t_nom + 2)).join( \
-                        textwrap.wrap(val_don, 75 - t_nom))
-                self.fichier = self.fichier[:egal] + " " + nou_val + \
-                        self.fichier[fin - 1:]
+                debut, fin = self.lignes[nom_don]
+                nv_val = nom_don + " = " + val_don
+                nv_val = nv_val.split("\n")
+                t_contenu = t_contenu[:debut] + nv_val + t_contenu[fin + 1:]
+        
+        self.fichier = "\n".join(t_contenu)
 
