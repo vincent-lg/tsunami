@@ -107,7 +107,7 @@ class Module(BaseModule):
             pnj.prototype.pnj.append(pnj)
         
         # Code à supprimer après mise à jour
-        if all(p.salles_repop == [] for p in self._prototypes.values()):
+        if all(p.salles_repop == {} for p in self._prototypes.values()):
             print("Nettoyage")
             for pnj in self._PNJ.values():
                 if pnj.salle_origine:
