@@ -502,6 +502,39 @@ class Personnage(BaseObj):
             else:
                 self << "|rg|Vous gagnez {} niveau{}.|ff|".format(nb, x)
     
+    def gagner_xp_rel(self, niveau, pourcentage, niv_secondaire=None):
+        """Gagne de l'XP relatif.
+        
+        Les paramètres à entrer sont :
+            niveau -- le niveau attendu comme base de l'XP relative
+            pourcentage -- le pourcentage d'XP du niveau gagné
+            niveau_secondaire -- le nom du niveau secondaire ou None.
+        
+        L'XP relative est calculée sur la base d'un pourcentage d'XP
+        d'un certain niveau. Si le niveau est 10 et que le pourcentage
+        est 5%, un joueur niveau 10 gagnera 5% de l'XP attendue.
+        Mais un joueur ayant un niveau inférieur ou supérieur
+        gagnera moins de 10% de SON niveau.
+        Par exemple, un joueur niveau 8 gagnera quelque chose comme
+        9% du niveau 8.
+        
+        Si le niveau_secondaire est None, l'XP est reçue en niveau principal.
+        
+        """
+        p_niveau = self.niveau
+        if niveau_secondaire:
+            if niveau_secondaire not in importeur.perso.niveaux:
+                raise ValueError("niveau secondaire {} inconnu".format(
+                        niveau_secondaire))
+            
+            p_niveau = self.niveaux[niveau_secondaire]
+        
+        # On calcul l'XP relative en se basant sur niveau et p_niveau
+        xp = importeur.perso.gn_niveaux;calculer_xp_rel(niveau, pourcentage,
+                p_niveau)
+        if xp > 0:
+            self.gagner_xp(niveau_secondaire, xp)
+    
     def ramasser(self, objet, exception=None, qtt=1):
         """Ramasse l'objet objet.
         
