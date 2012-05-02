@@ -91,18 +91,19 @@ class EdtPnjRepop(Editeur):
         
         a_nb = salle in proto.salles_repop and proto.salles_repop[salle] or 0
         a_repop = proto in salle.pnj_repop and salle.pnj_repop[proto] or 0
-        d_nb = nb - (a_nb - a_repop)
+        d_nb = nb - a_nb + a_repop
         
         if nb == 0:
             if proto in salle.pnj_repop:
                 salle.pnj_repop[proto] = d_nb
-                self.actualiser()
             else:
                 self.pere << "|err|Cette clé n'est pas définie dans le " \
                         "repop et ne peut donc être supprimée.|ff|"
+                return
             if salle in proto.salles_repop:
                 del proto.salles_repop[salle]
+            self.actualiser()
         else:
-            salle.pnj_repop[proto] = nb
+            salle.pnj_repop[proto] = d_nb
             proto.salles_repop[salle] = nb
             self.actualiser()
