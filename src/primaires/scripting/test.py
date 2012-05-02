@@ -195,6 +195,9 @@ class Test(BaseObj):
         
         """
         # Exécution
+        __builtins__["ErreurExecution"] = ErreurExecution
+        __builtins__["variables"] = evenement.espaces.variables
+        __builtins__["get_variables"] = get_variables
         try:
             ret = next(code)
         except ErreurExecution as err:
@@ -219,6 +222,10 @@ class Test(BaseObj):
                 nom = "script_dif<" + str(id(code)) + ">"
                 importeur.diffact.ajouter_action(nom, tps,
                         self.executer_code, evenement, code)
+        finally:
+            del __builtins__["ErreurExecution"]
+            del __builtins__["variables"]
+            del __builtins__["get_variables"]
     
     def executer_instructions(self, evenement):
         """Convertit et exécute la suite d'instructions.
@@ -255,10 +262,6 @@ class Test(BaseObj):
         else:
             code = globales['script']()
             self.executer_code(evenement, code)
-        finally:
-            del __builtins__["ErreurExecution"]
-            del __builtins__["variables"]
-            del __builtins__["get_variables"]
         
         # Si le test est relié à une quête
         if etape:

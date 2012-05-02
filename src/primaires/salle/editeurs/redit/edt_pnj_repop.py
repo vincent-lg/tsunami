@@ -54,10 +54,10 @@ class EdtPnjRepop(Editeur):
         # Parcours des pnj
         repop = salle.pnj_repop
         pnj = []
-        for proto, nb in repop.items():
-            nb_e = len([p for p in proto.pnj if p.salle_origine is salle])
-            nb += nb_e
-            pnj.append(proto.cle.ljust(20) + " (" + str(nb).rjust(3) + ")")
+        for proto in repop.keys():
+            nb = proto.salles_repop.get(salle, 0)
+            if nb > 0:
+                pnj.append(proto.cle.ljust(20) + " (" + str(nb).rjust(3) + ")")
         
         pnj.sort
         if pnj:
@@ -89,15 +89,21 @@ class EdtPnjRepop(Editeur):
             self.pere << "|err|Clé {} invalide.|ff|".format(cle)
             return
         
-        nb_e = len([p for p in proto.pnj if p.salle_origine is self])
-        nb = nb - nb_e
-        if nb <= 0:
+        a_nb = salle in proto.salles_repop and proto.salles_repop[salle] or 0
+        a_repop = proto in salle.pnj_repop and salle.pnj_repop[proto] or 0
+        d_nb = nb - a_nb + a_repop
+        
+        if nb == 0:
             if proto in salle.pnj_repop:
-                del salle.pnj_repop[proto]
-                self.actualiser()
+                salle.pnj_repop[proto] = d_nb
             else:
                 self.pere << "|err|Cette clé n'est pas définie dans le " \
                         "repop et ne peut donc être supprimée.|ff|"
+                return
+            if salle in proto.salles_repop:
+                del proto.salles_repop[salle]
+            self.actualiser()
         else:
-            salle.pnj_repop[proto] = nb
+            salle.pnj_repop[proto] = d_nb
+            proto.salles_repop[salle] = nb
             self.actualiser()

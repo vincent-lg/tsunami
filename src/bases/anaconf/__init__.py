@@ -70,7 +70,7 @@ Mode d'emploi :
     Ces modèles sont enregistrés dans une chaîne de caractères du même
     format qu'un fichier de configuration. Ce modèle permet à l'analyseur
     de savoir quelles données doivent être définies dans le fichier de
-    configuration analysée. Si les données ne sont pas présentes dans le
+    configuration analysé. Si les données ne sont pas présentes dans le
     fichier analysé, on prend leur valeur par défaut dans le modèle.
     Le modèle permet également de construire un fichier si certaines données
     manquent ou même si le fichier de configuration n'existe pas.
@@ -98,8 +98,10 @@ from bases.logs import man_logs
 REP_CONFIG = os.path.expanduser("~") + os.sep + "kassie" + os.sep + "config"
 
 class Anaconf:
-    """Cette classe gère la lecture, l'écriture et l'interprétation de fichiers
-    de configuration.
+    
+    """Classe manipulant les fichiers de configuration.
+    
+    Elle gère la lecture, l'écriture et l'interprétation de ces fichiers.
     
     Chaque module primaire ou secondaire ayant besoin d'enregistrer des
     informations de configuration devra passer par anaconf.
@@ -107,12 +109,18 @@ class Anaconf:
     (configuration générale).
     
     """
+    
     def __init__(self):
-        """Constructeur du gestionnaire"""
+        """Constructeur du gestionnaire de configuration."""
         self.configs = {}
     
     def config(self, parser_cmd):
         """Méthode de configuration.
+        
+        On se charge ici de modifier la valeur de REP_CONFIG
+        (le chemin menant au fichier de configuration) si la ligne
+        de commande précise un autre chemin. On crée le dossier
+        si il n'existe pas.
         
         """
         global REP_CONFIG
@@ -122,18 +130,21 @@ class Anaconf:
         # On construit le répertoire s'il n'existe pas
         if not os.path.exists(REP_CONFIG):
             os.makedirs(REP_CONFIG)
-        
+    
     def get_config(self, nom_id, chemin="", nom_defaut="", defaut=""):
-        """Cette méthode permet de charger une configuration contenue dans
+        """Charge ou retourne une configuration existante.
+        
+        Cette méthode permet de charger une configuration contenue dans
         le fichier passé en paramètre.
         Si le fichier a déjà été chargé, on retourne l'analyseur correspondant.
         Le paramètre 'nom_id' sert d'identifiant pour les configurations déjà
         chargées.
-        Le paramètre 'defauts' est une chaîne écrite comme un fichier
+        Le paramètre 'defaut' est une chaîne écrite comme un fichier
         de configuration, analysée comme telle et contenant les données par
-        défaut.
-        Si certaines données ne sont pas trouvées, on les met à jour grâce
-        à ce paramètre et on met à jour le fichier de configuration.
+        défaut du modèle.
+        Si certaines données ne sont pas trouvées dans le fichier chargé,
+        on les met à jour grâce à ce paramètre et on met à jour
+        le fichier de configuration.
         
         """
         global REP_CONFIG
@@ -142,17 +153,29 @@ class Anaconf:
             # On construit l'analyseur
             # Cela revient à charger le fichier de configuration
             # ATTENTION : si le chemin est laissé vide, on lève une exception
+            # De même, l'utilisateur doit avoir accès en lecture
+            # et écriture au fichier
             if chemin == "":
-                raise RuntimeError("Le chargement de l'analyseur {0} " \
-                        "a échoué. Aucun chemin passé en paramètre".format( \
+                raise RuntimeError("le chargement de l'analyseur {} " \
+                        "a échoué. Aucun chemin passé en paramètre".format(
                         nom_id))
+            elif os.path.exists(chemin) and not os.access(chemin, os.R_OK):
+                raise RuntimeError("le chargement de l'analyseur {} " \
+                        "a échoué. Droits en lecture refusés sur {}".format(
+                        nom_id, chemin))
+            elif os.path.exists(chemin) and not os.access(chemin, os.W_OK):
+                raise RuntimeError("le chargement de l'analyseur {} " \
+                        "a échoué. Droits en écriture refusés sur {}".format(
+                        nom_id, chemin))
+            
             logger = man_logs.creer_logger("anaconf", nom_id)
             # On construit le répertoire s'il n'existe pas
             rep = os.path.split(chemin)[0]
             if not os.path.exists(rep):
                 os.makedirs(rep)
+            
             # On l'ajoute aux configurations chargées
-            self.configs[nom_id] = Analyseur(chemin, \
+            self.configs[nom_id] = Analyseur(chemin,
                     nom_defaut, defaut, logger)
         
         # On retourne l'analyseur

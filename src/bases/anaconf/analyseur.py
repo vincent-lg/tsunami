@@ -43,7 +43,10 @@ import os
 import sys
 
 class Analyseur:
-    """Cette classe définit un gestionnaire de fichiers de configuration chargé
+    
+    """Analyseur de fichiers de configuration.
+    
+    Cette classe définit un gestionnaire de fichiers de configuration chargé
     de lire, écrire et interpréter les données de configuration.
     
     Le schéma d'exécution est le suivant :
@@ -65,11 +68,11 @@ class Analyseur:
         '#' et sera ignorée.
         Note: si dans le fichier de configuration, une référence est faite
         à une fonction ou une classe, il est nécessaire que la fonction ou
-        classe soit déclarée comme globales de l'interpréteur (voir
+        classe soit déclarée comme globale de l'interpréteur (voir
         '_set_globales').
     -   Lors de la lecture, chaque nom de donnée est stocké à même l'objet,
-        en tant qu'attribut propre. Ainsi les noms des donénes devront
-        respecter une syntaxe propre, sans espaces ni accents ni caractères
+        en tant qu'attribut d'instance. Ainsi les noms des donénes devront
+        respecter une syntaxe Python, sans espaces ni accents ni caractères
         spéciaux, hormis le signe souligné (_). Il est également préférable
         de n'avoir aucun caractère en majuscule, pour des raisons de 
         convention. Le résultat de la donnée est enregistré en tant
@@ -91,11 +94,14 @@ class Analyseur:
     
     """
     def __init__(self, nom_fichier, nom_defaut, defaut, logger):
-        """Permet de lire et enregistrer les données de configuration propres
-        au fichier de configuration.
+        """Lit et charge un fichier de configuration.
+        
+        Cette méthode permet de lire et enregistrer les données de
+        configuration propres au fichier de configuration.
         
         Notez qu'un analyseur doit être construit depuis la méthode
         'get_config' d''anaconf' et non directement.
+        
         On passe en paramètre du constructeur :
         *   Le nom du fichier de configuration. Il permet naturellement
             de l'ouvrir, étape indispensable pour l'analyser
@@ -118,26 +124,34 @@ class Analyseur:
         self._globales = {
             'oui': True,
             'non': False,
+            'on': True,
+            'off': False,
         }
         self._logger = logger
         self._logger.filtrer_niveau("warning")
         # On cherche le fichier pour commencer
         fichier_charge = None
         if not os.path.exists(nom_fichier):
-            self._logger.info("Le fichier de configuration {0} n'existe pas " \
+            self._logger.info("Le fichier de configuration {} n'existe pas " \
                     "encore".format(nom_fichier))
+        elif not os.access(nom_fichier, os.R_OK):
+            self._logger.warning("Le fichier de configuration {} n'est pas " \
+                    "accessible en lecture".format(nom_fichier))
+        elif not os.access(nom_fichier, os.W_OK):
+            self._logger.warning("Le fichier de configuration {} n'est pas " \
+                    "accessible en écriture".format(nom_fichier))
         elif not os.path.isfile(nom_fichier):
-            self._logger.info("Le fichier de configuration {0} n'est pas un " \
+            self._logger.warning("Le fichier de configuration {} n'est pas un " \
                     "fichier, accès impossible".format(nom_fichier))
         else: # on va pouvoir lire le fichier
             with open(nom_fichier, 'r') as fichier_conf:
                 contenu = fichier_conf.read()           
             # On analyse le fichier de configuration
-            fichier_charge = FichierConfiguration(nom_fichier, contenu, \
+            fichier_charge = FichierConfiguration(nom_fichier, contenu,
                     self._logger)
         
         # On analyse le fichier par défaut
-        fichier_defaut = FichierConfiguration(nom_defaut, defaut, \
+        fichier_defaut = FichierConfiguration(nom_defaut, defaut,
                 self._logger)
         
         # On met à jour self
@@ -151,42 +165,37 @@ class Analyseur:
         # On réenregistre le fichier de configuration si nécessaire
         if fichier_charge is None or fichier_defaut.donnees.keys() != \
                 fichier_charge.donnees.keys():
-            self._logger.info("On réécrit le fichier {0}".format(nom_fichier))
-            try:
-                fichier_conf = open(nom_fichier, 'w')
-            except IOError:
-                self._logger.warning("Le fichier de configuration ne peut pas être édité")
-            else:
-                # On demande au fichier par défaut de prendre en compte les
-                # données de configuration du fichier chargé
-                if fichier_charge:
-                    fichier_defaut.mettre_a_jour(fichier_charge)
-                fichier_conf.write(fichier_defaut.fichier.strip("\n"))
-                fichier_conf.close()
-
+            self._logger.info("On réécrit le fichier {}".format(nom_fichier))
+            fichier_conf = open(nom_fichier, 'w')
+            
+            # On demande au fichier par défaut de prendre en compte les
+            # données de configuration du fichier chargé
+            if fichier_charge:
+                fichier_defaut.mettre_a_jour(fichier_charge)
+            fichier_conf.write(fichier_defaut.fichier.strip("\n"))
+            fichier_conf.close()
+    
     def __getattribute__(self, nom):
-        """Méthode qui, au lieu de retourner la valeur de l'objet, retourne
-        la donnée interprétée.
-        
-        """
+        """Retourne l'évaluation de la donnée de configuration."""
         if nom.startswith("_") or not object.__getattribute__(self, nom):
             return object.__getattribute__(self, nom)
         elif nom in self.__dict__.keys():
             attribut = object.__getattribute__(self, nom)
             return eval(attribut, self._globales)
         else:
-            raise ValueError("La donnée '{0}' n'a pu être trouvée dans " \
+            raise ValueError("La donnée '{}' n'a pu être trouvée dans " \
                     "cette configuration".format(nom))
     
     def _set_globales(self, globales):
         """Paramètre les globales, données sous la forme d'un dictionnaires.
+        
         Ces globales sont utilisées dans l'évaluation de données de
         configuration.
         Si par exemple une de vos données de configuration fait appel à la
         fonction 'randrange', il faut l'ajouter dans les globales.
         >>> import random
         >>> analyseur = Analyseur("....cfg")
-        >>> analyseur._set_globales({"randrange":random.randrange})
+        >>> analyseur._set_globales({"randrange": random.randrange})
         >>> analyseur.hasard # contient randrange(8)
         6
         

@@ -63,9 +63,15 @@ class Prototype(BaseObj):
         self.stats = Stats(self)
         self.squelette = None
         self.equipement = OrderedDict()
+        
+        # Salles repop
+        self.salles_repop = {}
     
     def __getnewargs__(self):
         return ("", )
+    
+    def __repr__(self):
+        return "<prototype PNJ '{}'>".format(self.cle)
     
     def __str__(self):
         return self.cle
