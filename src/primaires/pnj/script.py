@@ -44,12 +44,44 @@ class ScriptPNJ(Script):
     
     def init(self):
         """Initialisation du script"""
-        # Evénement regarder
+        # Evénement arrive
+        evt_arriver = self.creer_evenement("arrive")
+        evt_arriver.aide_courte = "le PNJ arrive quelque part"
+        evt_arriver.aide_longue = \
+            "Cet évènement est appelé quand le PNJ " \
+            "arrive dans la salle, quelque soit sa salle de provenance et " \
+            "de destination."
+        
+        # Configuration des variables de l'évènement arrive
+        var_depuis = evt_arriver.ajouter_variable("depuis", "str")
+        var_depuis.aide = "la direction d'où vient le PNJ"
+        var_salle = evt_arriver.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle actuelle du PNJ"
+        
+        # Evénement sort
+        evt_sort = self.creer_evenement("sort")
+        evt_sort.aide_courte = "le PNJ quitte une salle"
+        evt_sort.aide_longue = \
+            "Cet évènement est appelé quand le PNJ quitte une " \
+            "salle via un déplacement standard (en entrant un nom de " \
+            "sortie). Le déplacement par |cmd|goto|ff| n'appelle " \
+            "pas cet évènement. Cependant, un déplacement par script " \
+            "l'appelle (faire attention aux boucles infinies potentielles)."
+        
+        # Configuration des variables de l'évènement sort
+        var_vers = evt_sort.ajouter_variable("vers", "str")
+        var_vers.aide = "la direction empruntée par le PNJ"
+        var_salle = evt_sort.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle quittée par le PNJ"
+        var_destination = evt_sort.ajouter_variable("destination", "Salle")
+        var_destination.aide = "la salle où se rend le PNJ"
+        
+        # Evénement regarde
         evt_regarde = self.creer_evenement("regarde")
         evt_reg_avant = evt_regarde.creer_evenement("avant")
         evt_reg_apres = evt_regarde.creer_evenement("après")
         evt_regarde.aide_courte = "un personnage regarde le PNJ"
-        evt_reg_avant.aide_courte = "avant la description de PNJ"
+        evt_reg_avant.aide_courte = "avant la description du PNJ"
         evt_reg_apres.aide_courte = "après la description du PNJ"
         evt_regarde.aide_longue = \
             "Cet évènement est appelé quand un personnage regarde le PNJ."
@@ -63,5 +95,9 @@ class ScriptPNJ(Script):
         # Configuration des variables de l'évènement regarde
         var_perso = evt_regarde.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage regardant le PNJ"
-        var_pnj = evt_regarde.ajouter_variable("pnj", "PNJ")
-        var_pnj.aide = "le PNJ regardé"
+        
+        # On ajoute à tous les évènements la variable 'pnj'
+        for evt in self.evenements.values():
+            var_pnj = evt.ajouter_variable("pnj", "PNJ")
+            var_pnj.aide = "le PNJ scripté"
+

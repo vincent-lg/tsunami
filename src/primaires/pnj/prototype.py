@@ -35,6 +35,7 @@ from collections import OrderedDict
 from abstraits.obase import BaseObj
 from primaires.format.description import Description
 from primaires.perso.stats import Stats
+from .script import ScriptPNJ
 
 class Prototype(BaseObj):
     
@@ -63,6 +64,7 @@ class Prototype(BaseObj):
         self.stats = Stats(self)
         self.squelette = None
         self.equipement = OrderedDict()
+        self.script = ScriptPNJ(self)
         
         # Salles repop
         self.salles_repop = {}

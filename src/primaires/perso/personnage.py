@@ -610,6 +610,6 @@ class Personnage(BaseObj):
         else:
             msg += genre + " porte :\n\n  " + "\n  ".join(objets)
         
+        personnage.envoyer(msg)
         self.envoyer("{} vous regarde.", personnage)
         personnage.salle.envoyer("{} regarde {}.", personnage, self)
-        return msg
