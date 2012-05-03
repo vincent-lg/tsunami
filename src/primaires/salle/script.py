@@ -107,3 +107,19 @@ class ScriptSalle(Script):
         var_destination.aide = "la salle de destination"
         var_perso = evt_sort.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage se déplaçant"
+        
+        # Evénement dire
+        evt_dire = self.creer_evenement("dire")
+        evt_dire.aide_courte = "un personnage dit quelque chose dans la salle"
+        evt_dire.aide_longue = \
+            "Cet évènement est appelé quand un personnage dit quelque " \
+            "chose dans la salle. Ce qu'il dit se trouve dans la " \
+            "variable |ent|message|ff|."
+        
+        # Configuration des variables de l'événement.
+        var_message = evt_dire.ajouter_variable("message", "str")
+        var_message.aide = "le message prononcé"
+        var_salle = evt_dire.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle actuelle"
+        var_perso = evt_dire.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage qui parle"
