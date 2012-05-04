@@ -41,4 +41,4 @@ class Masse(Arme):
     nom_type = "masse"
     cle_talent = "maniement_masse"
     nom_talent = "maniement de la masse"
-    difficulte_talent = 0.25
+    difficulte_talent = 0.36

@@ -139,6 +139,7 @@ class Module(BaseModule):
             commandes.score.CmdScore(),
             commandes.skedit.CmdSkedit(),
             commandes.sklist.CmdSklist(),
+            commandes.talents.CmdTalents(),
         ]
         
         for cmd in self.commandes:

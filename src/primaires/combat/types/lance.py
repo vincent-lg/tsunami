@@ -41,4 +41,4 @@ class Lance(Arme):
     nom_type = "lance"
     cle_talent = "maniement_lance"
     nom_talent = "maniement de la lance"
-    difficulte_talent = 0.25
+    difficulte_talent = 0.32
