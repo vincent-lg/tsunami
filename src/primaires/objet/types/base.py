@@ -277,3 +277,12 @@ class BaseType(BaseObj, metaclass=MetaType):
         self.script["regarde"]["apres"].executer(
                 objet=self, personnage=personnage)
         return ""
+    
+    def detruire(self):
+        """Destruction du prototype d'objet."""
+        # Destruction des objets à dépecer
+        for proto in self.depecer_de:
+            if self in proto.a_depecer:
+                del proto.a_depecer[self]
+        
+        BaseObj.detruire(self)

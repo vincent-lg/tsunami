@@ -155,3 +155,11 @@ class Prototype(BaseObj):
     
     def est_immortel(self):
         return False
+    
+    def detruire(self):
+        """Destruction du prototype."""
+        for objet, nb in self.a_depecer:
+            if self in objet.depecer_de:
+                objet.depecer_de.remove(self)
+        
+        BaseObj.detruire(self)

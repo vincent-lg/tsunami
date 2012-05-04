@@ -181,11 +181,6 @@ class Objet(BaseObj):
             for objet in self.conteneur._objets:
                 importeur.objet.supprimer_objet(objet.identifiant)
         
-        # Destruction des objets à dépecer
-        for proto in self.depecer_de:
-            if self in proto.a_depecer:
-                del proto.a_depecer[self]
-        
         BaseObj.detruire(self)
 
 class MethodeObjet:
