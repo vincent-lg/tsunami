@@ -67,6 +67,9 @@ class Attaque(BaseObj):
         self.viser_membre = False
         self._construire()
     
+    def __getnewargs__(self):
+        return (None, "")
+    
     def essayer(self, moi, contre, arme=None):
         """Retourne True si l'attaque a réussit, False sinon."""
         return True
@@ -133,6 +136,9 @@ class Coup(Attaque):
                 "{moi} atteint {contre} à {membre}."
         self.viser_membre = True
     
+    def __getnewargs__(self):
+        return (None, )
+    
     def essayer(self, moi, contre, arme=None):
         """Retourne True si l'attaque réussit, False sinon."""
         if arme:
@@ -142,7 +148,7 @@ class Coup(Attaque):
             connaissance = moi.pratiquer_talent("combat_mains_nues")
         
         connaissance = varier(connaissance, 20)
-        return randint(1, connaissance) >= randint(1, 80)
+        return randint(connaissance - 10, connaissance) >= randint(1, 90)
     
     def calculer_degats(self, moi, contre, membre, arme=None):
         """Retourne les dégâts infligés par l'arme."""

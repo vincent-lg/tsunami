@@ -133,12 +133,14 @@ class Module(BaseModule):
         self.commandes = [
             commandes.commande.CmdCommande(),
             commandes.equipement.CmdEquipement(),
+            commandes.niveaux.CmdNiveaux(),
             commandes.prompt.CmdPrompt(),
             commandes.qui.CmdQui(),
             commandes.raedit.CmdRaedit(),
             commandes.score.CmdScore(),
             commandes.skedit.CmdSkedit(),
             commandes.sklist.CmdSklist(),
+            commandes.talents.CmdTalents(),
         ]
         
         for cmd in self.commandes:

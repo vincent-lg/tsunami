@@ -40,6 +40,7 @@ from .attaque import Coup
 CLE_TALENT_ESQUIVE = "esquive"
 CLE_TALENT_PARADE = "parade"
 CLE_TALENT_MAINS_NUES = "combat_mains_nues"
+ARMES_PARADE = ["épée", "hache", "masse"]
 
 class Combat:
     
@@ -141,6 +142,7 @@ class Combat:
         Si la défense est totale, retourne 0.
         
         """
+        armes_def = combattu.get_armes()
         if varier(combattu.pratiquer_talent(CLE_TALENT_ESQUIVE), 30) >= \
                 randint(1, 70):
             attaque.envoyer_msg_tentative(combattant, combattu, membre, arme)
@@ -148,6 +150,16 @@ class Combat:
             combattu.envoyer("Vous esquivez le coup porté par {}.",
                     combattant)
             combattant.salle.envoyer("{} esquive le coup porté par {}.",
+                    combattu, combattant)
+            degats = 0
+        elif len([arme for arme in armes_def if arme.nom_type in \
+                ARMES_PARADE]) > 0 and varier(combattu.pratiquer_talent(
+                CLE_TALENT_PARADE), 20) >= randint(15, 70):
+            attaque.envoyer_msg_tentative(combattant, combattu, membre, arme)
+            combattant.envoyer("{} parre votre coup.", combattu)
+            combattu.envoyer("Vous parrez le coup porté par {}.",
+                    combattant)
+            combattant.salle.envoyer("{} parre le coup porté par {}.",
                     combattu, combattant)
             degats = 0
         elif membre:

@@ -41,4 +41,4 @@ class Epee(Arme):
     nom_type = "épée"
     cle_talent = "maniement_epee"
     nom_talent = "maniement de l'épée"
-    difficulte_talent = 0.25
+    difficulte_talent = 0.32
