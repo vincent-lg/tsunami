@@ -39,6 +39,7 @@ from abstraits.obase import BaseObj
 from primaires.perso.personnage import Personnage
 from primaires.salle.salle import Salle
 from primaires.objet.objet import Objet
+from primaires.pnj.pnj import PNJ
 
 def get(nom):
     """Retourne le type portant le nom."""

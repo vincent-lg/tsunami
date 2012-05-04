@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,42 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'dire'.
+"""Fichier contenant la fonction contient."""
 
-"""
+from primaires.scripting.fonction import Fonction
+from primaires.format.fonctions import contient
 
-from primaires.interpreteur.commande.commande import Commande
-from primaires.format.fonctions import echapper_accolades
-
-class CmdDire(Commande):
+class ClasseFonction(Fonction):
     
-    """Commande 'dire'.
+    """Test si une chaîne contient une autre chaîne."""
     
-    """
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.contient, "str", "str")
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "dire", "say")
-        self.nom_categorie = "parler"
-        self.schema = "<message>"
-        self.aide_courte = "dit une phrase dans la votre salle"
-        self.aide_longue = \
-            "Cette commande permet de dire une phrase dans la salle " \
-            "où vous vous trouvez. Tous les personnages présents dans " \
-            "la salle l'entendront. C'est la commande standard pour " \
-            "discuter RP dans l'univers. Elle prend simplement en " \
-            "paramètre le message que vous souhaitez dire."
-    
-    def interpreter(self, personnage, dic_masques):
-        """Interprétation de la commande"""
-        message = dic_masques["message"].message
-        message = echapper_accolades(message)
-        salle = personnage.salle
-        moi = "Vous dites : " + message
-        autre = "{} dit : " + message
-        personnage.envoyer(moi)
-        salle.envoyer(autre, personnage)
+    @staticmethod
+    def contient(chaine_complete, expression):
+        """Retourne vrai si la chaine_complete contient expression.
         
-        # Appel de l'évènement 'dire' de la salle
-        salle.script["dire"].executer(personnage=personnage,
-                salle=salle, message=message)
+        Le test ne tient ni compte des majuscules ni des accents.
+        Une expression est contenue dans une chaîne si l'expression
+        est le début d'un des mots de la chaîne complète.
+        Par exemple :
+            "chien" est contenue dans "un chien de ferme"
+        Ou :
+            "po" est contenue dans "une pomme rouge"
+        Mais :
+            "table" n'est pas contenue dans "une étable"
+        Car "table" n'est pas le début d'un des mots de "une étable".
+        
+        """
+        return contient(chaine_complete, expression)
+

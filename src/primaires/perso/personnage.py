@@ -462,7 +462,7 @@ class Personnage(BaseObj):
             raise ValueError("le niveau {} n'existe pas".format(niveau))
         
         xp_actuel = self.xps.get(niveau, 0) if niveau else self.xp
-        niveau_actuel = self.niveaux.get(niveau, 0) if niveau else self.niveau
+        niveau_actuel = self.niveaux.get(niveau, 1) if niveau else self.niveau
         nb_niveaux = type(self).importeur.perso.gen_niveaux.nb_niveaux
         if xp_actuel > 0 and niveau_actuel >= nb_niveaux:
             return
@@ -501,6 +501,39 @@ class Personnage(BaseObj):
                         nom_niveau)
             else:
                 self << "|rg|Vous gagnez {} niveau{}.|ff|".format(nb, x)
+    
+    def gagner_xp_rel(self, niveau, pourcentage, niv_secondaire=None):
+        """Gagne de l'XP relatif.
+        
+        Les paramètres à entrer sont :
+            niveau -- le niveau attendu comme base de l'XP relative
+            pourcentage -- le pourcentage d'XP du niveau gagné
+            niv_secondaire -- le nom du niveau secondaire ou None.
+        
+        L'XP relative est calculée sur la base d'un pourcentage d'XP
+        d'un certain niveau. Si le niveau est 10 et que le pourcentage
+        est 5%, un joueur niveau 10 gagnera 5% de l'XP attendue.
+        Mais un joueur ayant un niveau inférieur ou supérieur
+        gagnera moins de 10% de SON niveau.
+        Par exemple, un joueur niveau 8 gagnera quelque chose comme
+        9% du niveau 8.
+        
+        Si le niveau_secondaire est None, l'XP est reçue en niveau principal.
+        
+        """
+        p_niveau = self.niveau
+        if niv_secondaire:
+            if niv_secondaire not in importeur.perso.niveaux:
+                raise ValueError("niveau secondaire {} inconnu".format(
+                        niv_secondaire))
+            
+            p_niveau = self.niveaux[niv_secondaire]
+        
+        # On calcul l'XP relative en se basant sur niveau et p_niveau
+        xp = importeur.perso.gen_niveaux.calculer_xp_rel(niveau, pourcentage,
+                p_niveau)
+        if xp > 0:
+            self.gagner_xp(niv_secondaire, xp)
     
     def ramasser(self, objet, exception=None, qtt=1):
         """Ramasse l'objet objet.
@@ -577,6 +610,6 @@ class Personnage(BaseObj):
         else:
             msg += genre + " porte :\n\n  " + "\n  ".join(objets)
         
+        personnage.envoyer(msg)
         self.envoyer("{} vous regarde.", personnage)
         personnage.salle.envoyer("{} regarde {}.", personnage, self)
-        return msg

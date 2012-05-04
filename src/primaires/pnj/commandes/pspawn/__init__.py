@@ -61,11 +61,13 @@ class CmdPspawn(Commande):
             nb_pnj = dic_masques["nombre"].nombre
             i = 0
             while i < nb_pnj:
-                pnj = type(self).importeur.pnj.creer_PNJ(prototype, salle)
+                pnj = type(self).importeur.pnj.creer_PNJ(prototype)
+                pnj.salle = salle
                 i += 1
             salle.envoyer("{} apparaissent du néant.".format(
                     prototype.get_nom(nb_pnj)))
         else:
-            pnj = type(self).importeur.pnj.creer_PNJ(prototype, salle)
+            pnj = type(self).importeur.pnj.creer_PNJ(prototype)
+            pnj.salle = salle
             salle.envoyer("{} apparaît du néant.".format(
                     pnj.nom_singulier))

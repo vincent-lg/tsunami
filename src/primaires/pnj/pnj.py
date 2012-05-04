@@ -145,6 +145,14 @@ class PNJ(Personnage):
         """Méthode appelée à chaque tick."""
         Personnage.tick(self)
     
+    def regarder(self, personnage):
+        """personnage regarde self."""
+        self.script["regarde"]["avant"].executer(personnage=personnage,
+                pnj=self)
+        Personnage.regarder(self, personnage)
+        self.script["regarde"]["après"].executer(personnage=personnage,
+                pnj=self)
+    
     def detruire(self):
         """Destruction du PNJ."""
         Personnage.detruire(self)

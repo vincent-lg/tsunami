@@ -35,6 +35,7 @@
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.scripting.editeurs.edt_script import EdtScript
 from .edt_noms import EdtNoms
 from .edt_stats import EdtStats
 from .edt_race import EdtRace
@@ -131,3 +132,8 @@ class EdtPedit(Presentation):
             "Exemple : |cmd|main gauche sarbacane_bambou|ff|\n" \
             "Pour supprimer un membre, entrez |cmd|0|ff| comme clé de " \
             "l'objet.\nExemple : |cmd|main gauche 0|ff|\n\n"
+        
+        # Script
+        scripts = self.ajouter_choix("scripts", "sc", EdtScript,
+                prototype.script)
+        scripts.parent = self

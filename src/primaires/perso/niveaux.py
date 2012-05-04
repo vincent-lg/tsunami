@@ -96,10 +96,10 @@ class Niveaux:
         
         """
         diff_niveaux = fabs(niveau_prevu - niveau_effectif)
-        diff_niveaux = diff_niveaux / cls.nb_niveaux
+        diff_niveaux = diff_niveaux / 30
         diff_niveaux = 1 - (1 - diff_niveaux) ** 2
         
         pourcentage = pourcentage - diff_niveaux * pourcentage
-        xp = int(cls.grille_xp[niveau_effectif - 1][1] * pourcentage)
+        xp = int(cls.grille_xp[niveau_effectif - 1][1] * pourcentage / 100)
         print("diff_niveaux", diff_niveaux, "pourcentage =", pourcentage, "xp =", xp)
         return xp
