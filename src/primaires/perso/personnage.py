@@ -447,28 +447,32 @@ class Personnage(BaseObj):
         self << "Vous vous effondrez sur le sol."
         self.salle.envoyer("{} s'effondre sur le sol.", self)
     
-    def gagner_xp(self, niveau=None, xp=0):
+    def gagner_xp(self, niveau=None, xp=0, retour=True):
         """Le personnage gagne de l'expérience.
         
         Paramètres attendus :
             niveau -- le nom du niveau (si principal, None)
             xp -- le nombre d'xp reçus
+            retour -- laisser à True par défaut
         
         Le nombre d'xp est un nombre absolu, pas relatif en fonction
         du niveau. Voir gagner_xp_rel.
+        
+        Retourne le nombre de niveaux gagnés.
         
         """
         if niveau and niveau not in type(self).importeur.perso.niveaux:
             raise ValueError("le niveau {} n'existe pas".format(niveau))
         
-        xp_actuel = self.xps.get(niveau, 0) if niveau else self.xp
-        niveau_actuel = self.niveaux.get(niveau, 1) if niveau else self.niveau
+        xp = int(xp)
+        xp_actuel = int(self.xps.get(niveau, 0)) if niveau else int(self.xp)
+        niveau_actuel = self.niveaux.get(niveau, 0) if niveau else self.niveau
         nb_niveaux = type(self).importeur.perso.gen_niveaux.nb_niveaux
         if xp_actuel > 0 and niveau_actuel >= nb_niveaux:
             return
         
-        grille = importeur.perso.gen_niveaux.grille_xp
-        xp_nec = grille[niveau_actuel - 1][1]
+        grille = [(0, 1)] + list(importeur.perso.gen_niveaux.grille_xp)
+        xp_nec = grille[niveau_actuel][1]
         if niveau:
             self.xps[niveau] = self.xps.get(niveau, 0) + xp
             xp_total = self.xps[niveau]
@@ -490,17 +494,42 @@ class Personnage(BaseObj):
             xp_nec = grille[niveau_actuel - 1][1]
             nb_gagne += 1
         
+        if not retour:
+            return nb_gagne
+        
+        if niveau:
+            niveau_actuel = self.niveaux[niveau]
+            facteur = niveau_actuel / importeur.perso.gen_niveaux.nb_niveaux
+            n_xp = xp - int((xp * facteur))
+            principal_gagne = self.gagner_xp(None, n_xp, False)
+        
         nom_niveau = type(self).importeur.perso.niveaux[niveau].nom if \
                 niveau else "principal"
-        self << "Vous recevez {} xp dans le niveau {}.".format(xp, nom_niveau)
+        if niveau:
+            self << "Vous recevez {} xp dans le niveau {} et {} dans " \
+                    "le niveau principal.".format(xp, nom_niveau, n_xp)
+        else:
+            self << "Vous recevez {} xp dans le niveau principal.".format(xp)
+
         if nb_gagne > 0:
             nb = str(nb_gagne) if nb_gagne > 1 else "un"
             x = "x" if nb_gagne > 1 else ""
+            msg = "|rg|Vous gagnez "
             if niveau:
-                self << "|rg|Vous gagnez {} niveau{} en {}.|ff|".format(nb, x,
-                        nom_niveau)
+                msg += "{} niveau{} en {}".format(nb, x, nom_niveau)
+                nb = str(principal_gagne) if principal_gagne > 1 else "un"
+                x = "x" if nb_gagne > 1 else ""
+                if principal_gagne > 0:
+                    msg += " !|ff|\nVous gagnez {} niveau{}".format(nb, x)
             else:
-                self << "|rg|Vous gagnez {} niveau{}.|ff|".format(nb, x)
+                msg += "{} niveau{}".format(nb, x)
+            msg += " !|ff|"
+            self << msg
+        elif niveau and principal_gagne > 0:
+            nb = str(nb_gagne) if nb_gagne > 1 else "un"
+            x = "x" if nb_gagne > 1 else ""
+            msg = "|rg|Vous gagnez {} niveau{} !|ff|".format(nb, x)
+            self << msg
     
     def gagner_xp_rel(self, niveau, pourcentage, niv_secondaire=None):
         """Gagne de l'XP relatif.

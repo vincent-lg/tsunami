@@ -71,7 +71,7 @@ class Niveaux:
             coef = 2 - (1 - etape / cls.nb_niveaux) * 0.4
             xp = ((etape / cls.nb_niveaux) ** coef * marge) ** 2
             xp += cls.xp_min * (1 - etape / cls.nb_niveaux)
-            grille.append((etape, xp))
+            grille.append((etape, int(xp)))
         
         grille.append((cls.nb_niveaux, cls.xp_max))
         cls.grille_xp = grille

@@ -133,6 +133,7 @@ class Module(BaseModule):
         self.commandes = [
             commandes.commande.CmdCommande(),
             commandes.equipement.CmdEquipement(),
+            commandes.niveaux.CmdNiveaux(),
             commandes.prompt.CmdPrompt(),
             commandes.qui.CmdQui(),
             commandes.raedit.CmdRaedit(),
