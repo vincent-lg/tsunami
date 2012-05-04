@@ -82,6 +82,7 @@ class BaseType(BaseObj, metaclass=MetaType):
         self._prix = 1 # valeur en magasin
         self.sans_prix = False
         self.poids_unitaire = 1 # 1 Kg
+        self.depecer_de = []
         
         # Equipement
         self.emplacement = ""
@@ -124,6 +125,7 @@ class BaseType(BaseObj, metaclass=MetaType):
     def _set_prix(self, prix):
         """Modifie le prix"""
         self._prix = int(prix)
+        self.enregistrer()
     prix = property(_get_prix, _set_prix)
     
     @property

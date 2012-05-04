@@ -42,6 +42,7 @@ from .edt_race import EdtRace
 from .edt_genre import EdtGenre
 from .edt_squelette import EdtSquelette
 from .edt_equipement import EdtEquipement
+from .edt_a_depecer import EdtADepecer
 
 class EdtPedit(Presentation):
     
@@ -137,3 +138,16 @@ class EdtPedit(Presentation):
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,
                 prototype.script)
         scripts.parent = self
+        
+        # À dépecer
+        depecer = self.ajouter_choix("à dépecer", "dé", EdtADepecer,
+                prototype)
+        depecer.parent = self
+        depecer.aide_courte = \
+            "Entrez |cmd|/|ff| pour revenir à la fenêtre précédente.\n" \
+            "Pour ajouter un nouvel objet à dépecer de ce prototype, " \
+            "entrez |cmd|la clé de\nl'objet|ff| suivi du |cmd|nombre " \
+            "d'objets à ajouter|ff|.\n" \
+            "Exemple : |cmd|peau_ours 1|\n" \
+            "Pour supprimer un objet, entrez |cmd|0|ff| comme nombre " \
+            "d'objets.\nExemple : |cmd|peau_ours 0|ff|\n\n"

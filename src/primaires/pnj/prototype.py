@@ -65,6 +65,7 @@ class Prototype(BaseObj):
         self.squelette = None
         self.equipement = OrderedDict()
         self.script = ScriptPNJ(self)
+        self.a_depecer = {}
         
         # Salles repop
         self.salles_repop = {}
