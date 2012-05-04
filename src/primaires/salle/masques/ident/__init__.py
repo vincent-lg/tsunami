@@ -49,6 +49,7 @@ class Ident(Masque):
         """Initialisation des attributs"""
         self.identifiant = ""
         self.salle = None
+        self.force = False
     
     def repartir(self, personnage, masques, commande):
         """Répartition du masque."""
@@ -57,6 +58,10 @@ class Ident(Masque):
         if not ident:
             raise ErreurValidation( \
                 "Précisez un identifiant de salle.")
+        
+        if ident.count(":") != 1 and self.force:
+            raise ErreurValidation( \
+                "Format de l'identifiant inconnu.")
         
         ident = ident.split(" ")[0].lower()
         self.a_interpreter = ident
@@ -73,8 +78,8 @@ class Ident(Masque):
             salle = importeur.salle[ident]
         except KeyError:
             raise ErreurValidation(
-                "|err|Impossible d'éditer la salle '{}', clé invalide ou " \
-                "mnémo inconnu.|ff|".format(ident))
+                "|err|Salle '{}' introuvable, clé invalide ou " \
+                "mnémo inconnu.|ff|".format(ident), self.force)
         
         self.salle = salle
         self.ident = salle.ident
