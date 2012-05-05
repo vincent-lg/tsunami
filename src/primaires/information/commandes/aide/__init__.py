@@ -31,6 +31,8 @@
 """Package contenant la commande 'aide'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.information.contextes.page import Page
+
 
 class CmdAide(Commande):
     
@@ -56,7 +58,9 @@ class CmdAide(Commande):
             if sujet is None:
                 personnage << "|err|Il n'y a pas d'aide à ce sujet, désolé.|ff|"
             else:
-                personnage << sujet.afficher_pour(personnage)
+                texte = sujet.afficher_pour(personnage)
+                contexte = Page(personnage.instance_connexion, texte)
+                personnage.contexte_actuel.migrer_contexte(contexte)
         else:
             personnage << type(self).importeur. \
                     information.construire_sommaire_pour(personnage)

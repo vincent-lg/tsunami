@@ -140,7 +140,8 @@ class SujetAide(BaseObj):
                 ret += "\n" + indent + str(i) + ". |cmd|"
                 ret += sujet.titre.capitalize() + "|ff| - " + sujet.resume
                 if self.sujets_fils:
-                    ret += sujet.sommaire(personnage, indent=indent+"  ")
+                    ret += sujet.sommaire(personnage, \
+                            indent=indent+"{}.".format(i))
                 i += 1
         return ret
     
@@ -207,12 +208,8 @@ class SujetAide(BaseObj):
         if self.sujets_fils:
             ret += "\nSommaire :"
             ret += self.sommaire(personnage) + "\n"
-        ret += "\n" + str(self.contenu)
-        if self.mots_cles:
-            s = len(self.mots_cles) > 1 and "s" or ""
-            ret += "\n\nMot{s}-clé{s} ".format(s=s)
-            ret += "renvoyant vers ce sujet : |ent|"
-            ret += "|ff|, |ent|".join(self.mots_cles) + "|ff|."
+            ret += "|sp|\n"
+        ret += "\n" + self.afficher_contenu()
         if self.sujets_lies:
             sujets_lies = []
             for sujet in self.sujets_lies:
@@ -225,4 +222,13 @@ class SujetAide(BaseObj):
                 ret += "\n\nSujet{s} lié{s} : |ent|".format(s=s)
                 ret += "|ff|, |ent|".join([s.titre for s in sujets_lies])
                 ret += "|ff|."
+        return ret
+    
+    def afficher_contenu(self, ident=""):
+        """Affiche le contenu de self et ses sujets fils."""
+        ret = "\n".join(self.contenu.paragraphes)
+        for i, s in enumerate(self.sujets_fils):
+            ret += "\n|sp|\n|tit|" + ident + " " + s.titre + "|ff|"
+            ret += "\n\n" + s.afficher_contenu(ident=ident + "{}.".format(i))
+        
         return ret
