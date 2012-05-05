@@ -207,7 +207,7 @@ class SujetAide(BaseObj):
         if self.sujets_fils:
             ret += "\nSommaire :"
             ret += self.sommaire(personnage) + "\n"
-        ret += "\n" + str(self.contenu)
+        ret += "\n" + "\n".join(self.contenu.paragraphes)
         if self.mots_cles:
             s = len(self.mots_cles) > 1 and "s" or ""
             ret += "\n\nMot{s}-clé{s} ".format(s=s)

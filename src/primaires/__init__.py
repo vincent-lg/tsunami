@@ -73,6 +73,7 @@ Voici un résumé des modules primaires existants :
 -   perso           Module gérant les personnages, connectés (joueurs) ou non
                     (PNJ)
 -   pnj             Module gérant les personnages non joueurs
+-   recherche       Module gérant la recherche d'informations dans l'univers
 -   salle           Module gérant les salles du MUD
 -   scripting       Module gérant le scripting
 -   supenr          Superviseur de l'enregistrement des objets dans des
@@ -80,5 +81,6 @@ Voici un résumé des modules primaires existants :
 -   temps           Module gérant le temps, non pas la météo, mais le temporel
                     (
                     (années, saisons, mois, jours, heures...)
+-  vehicule         Module gérant les véhicules et vecteurs
 
 """
