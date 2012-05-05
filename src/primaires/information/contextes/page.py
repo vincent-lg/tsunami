@@ -63,8 +63,9 @@ class Page(Contexte):
     
     def get_prompt(self):
         """Retourne le prompt"""
-        return "-- Page {}/{}     (|cmd|a|ff|ide, |cmd|q|ff|uitter) --".format(
-                self.curseur + 1, len(self.pages))
+        return "-- Page {}/{}     (|ent|Entrée|ff| pour continuer / " \
+                "|cmd|q|ff|uitter) --".format(self.curseur + 1,
+                len(self.pages))
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -125,10 +126,12 @@ class Page(Contexte):
     
     def interpreter(self, msg):
         """Méthode d'interprétation du contexte"""
-        msg = msg.lower()
+        msg = msg.strip().lower()
         if not msg:
             self.curseur += 1
             self.pere.envoyer(self.accueil())
         elif msg == "q":
             self.fermer()
             self.pere << "Arrêt de la lecture."
+        else:
+            self.pere << "|err|Entrée invalide.|ff|"
