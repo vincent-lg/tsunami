@@ -44,8 +44,8 @@ class SujetAide(BaseObj):
     sujets.
     
     Ses attributs sont :
+        cle -- la clé identifiant le sujet pour les immortels
         titre -- le titre du sujet
-        resume -- un résumé du sujet (50 caractères max)
         contenu -- le contenu du sujet d'aide
         mots_cles -- des mots-clés pointant vers ce sujet
         str_groupe -- une chaîne décrivant le groupe autorisé
@@ -55,13 +55,15 @@ class SujetAide(BaseObj):
     """
     
     enregistrer = True
-    def __init__(self, titre):
+    _nom = "sujet_aide"
+    _version = 1
+    def __init__(self, cle):
         """Constructeur du sujet d'aide."""
         BaseObj.__init__(self)
-        self._titre = titre.lower().split(" ")[0]
+        self.cle = cle
+        self.titre = "un sujet d'aide"
         self.pere = None
-        self.resume = "sujet d'aide"
-        self.contenu = Description(parent=self)
+        self.contenu = Description(parent=self, scriptable=False)
         self.mots_cles = []
         self._str_groupe = "joueur"
         self.__sujets_lies = []
@@ -71,17 +73,7 @@ class SujetAide(BaseObj):
         return ("", )
     
     def __str__(self):
-        return "aide:" + self._titre
-    
-    def _get_titre(self):
-        return self._titre
-    def _set_titre(self, titre):
-        titre = titre.lower().split(" ")[0]
-        if not titre in [supprimer_accents(s.titre) for s in \
-                type(self).importeur.information.sujets] or type(self). \
-                importeur.information.get_sujet_par_mot_cle(titre):
-            self._titre = titre
-    titre = property(_get_titre, _set_titre)
+        return "aide:" + self.titre
     
     @property
     def str_mots_cles(self):
@@ -106,7 +98,8 @@ class SujetAide(BaseObj):
     @property
     def str_sujets_lies(self):
         """Retourne une chaîne contenant les sujets liés."""
-        return ", ".join([s.titre for s in self.sujets_lies]) or "aucun sujet lié"
+        return ", ".join([s.titre for s in self.sujets_lies]) or \
+                "aucun sujet lié"
     
     @property
     def sujets_fils(self):
@@ -120,10 +113,10 @@ class SujetAide(BaseObj):
         taille = max([len(s.titre) for s in self.sujets_fils] or (10, ))
         sep = "+" + (taille + 2) * "-" + "+" + 52 * "-" + "+"
         en_tete = sep + "\n" + "| |tit|" + "Sujet".ljust(taille) + "|ff| |"
-        en_tete += " |tit|" + "Résumé".ljust(50) + "|ff| |\n" + sep
+        en_tete += " |tit|" + "Titre".ljust(50) + "|ff| |\n" + sep
         for s in self.sujets_fils:
-            ligne = "| |ent|" + s.titre.ljust(taille) + "|ff| | "
-            ligne += s.resume.ljust(50) + " |"
+            ligne = "| |ent|" + s.cle.ljust(taille) + "|ff| | "
+            ligne += s.titre.ljust(50) + " |"
             lignes.append(ligne)
         if lignes:
             return en_tete + "\n" + "\n".join(lignes) + "\n" + sep
@@ -137,8 +130,8 @@ class SujetAide(BaseObj):
         for sujet in self.sujets_fils:
             if self.importeur.interpreteur.groupes. \
                     explorer_groupes_inclus(personnage.grp, sujet.str_groupe):
-                ret += "\n" + indent + str(i) + ". |cmd|"
-                ret += sujet.titre.capitalize() + "|ff| - " + sujet.resume
+                ret += "\n" + indent + str(i + 1) + ". |cmd|"
+                ret += sujet.titre.capitalize() + "|ff|"
                 if self.sujets_fils:
                     ret += sujet.sommaire(personnage, \
                             indent=indent+"{}.".format(i))
@@ -202,13 +195,10 @@ class SujetAide(BaseObj):
         nb_ti = int((31 - len(self.titre)) / 2)
         ret = "|tit|" + "-" * nb_ti + "= " + self.titre.capitalize()
         ret += " =" + "-" * nb_ti
-        if len(ret) == 39:
-            ret += "-"
-        ret += "|ff|\n" + self.resume.capitalize() + ".\n"
+        ret += "|ff|\n"
         if self.sujets_fils:
             ret += "\nSommaire :"
             ret += self.sommaire(personnage) + "\n"
-            ret += "|sp|\n"
         ret += "\n" + self.afficher_contenu()
         if self.sujets_lies:
             sujets_lies = []
@@ -228,7 +218,8 @@ class SujetAide(BaseObj):
         """Affiche le contenu de self et ses sujets fils."""
         ret = "\n".join(self.contenu.paragraphes)
         for i, s in enumerate(self.sujets_fils):
-            ret += "\n|sp|\n|tit|" + ident + " " + s.titre + "|ff|"
+            ret += "\n|sp|\n|tit|" + ident + str(i + 1) + " " + s.titre + \
+                    "|ff|"
             ret += "\n\n" + s.afficher_contenu(ident=ident + "{}.".format(i))
         
         return ret

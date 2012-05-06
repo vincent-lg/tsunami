@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,39 +28,15 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'hedit'."""
+"""Fichier contenant les convertisseurs de la classe SujetAide."""
 
-from primaires.interpreteur.commande.commande import Commande
+from primaires.format.fonctions import supprimer_accents
 
-class CmdHedit(Commande):
-    
-    """Commande 'hedit'"""
-    
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "hedit", "hedit")
-        self.groupe = "administrateur"
-        self.schema = "<message>"
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "ouvre l'éditeur de sujets d'aide"
-        self.aide_longue = \
-            "Cette commande permet d'ouvrir l'éditeur de sujets d'aide. " \
-            "Il permet à n'importe quel bâtisseur (ou administrateur) " \
-            "d'ajouter ou éditer les sujets d'aide. Il peut également " \
-            "paramétrer les joueurs ayant le droit de lire le message " \
-            "d'aide. Certains sujets peuvent en effet être réservés aux " \
-            "administrateurs uniquement."
-    
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        cle = dic_masques["message"].message
-        
-        try:
-            sujet = importeur.information.sujets[cle]
-        except KeyError:
-            sujet = importeur.information.ajouter_sujet(cle)
-        
-        editeur = type(self).importeur.interpreteur.construire_editeur(
-                "hedit", personnage, sujet)
-        personnage.contextes.ajouter(editeur)
-        editeur.actualiser()
+class Convertisseur:
+    """Classe pour envelopper les convertisseurs."""
+    def depuis_version_0(objet, classe):
+        objet.set_version(classe, 1)
+        objet.cle = supprimer_accents(objet.titre)
+        objet.titre = objet.resume
+        del objet.resume
+        objet.contenu.scriptable = False

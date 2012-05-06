@@ -54,7 +54,7 @@ class CmdAide(Commande):
         """Méthode d'interprétation de commande"""
         if dic_masques["message"]:
             titre = dic_masques["message"].message
-            sujet = type(self).importeur.information.get_sujet(titre)
+            sujet = importeur.information.get_sujet(titre)
             if sujet is None:
                 personnage << "|err|Il n'y a pas d'aide à ce sujet, désolé.|ff|"
             else:

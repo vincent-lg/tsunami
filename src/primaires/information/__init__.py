@@ -148,23 +148,24 @@ class Module(BaseModule):
     
     @property
     def sujets(self):
-        """Retourne la liste déréférencée des sujets."""
-        return list(self.__sujets)
+        """Retourne un dictionnaire {cle: sujet} des sujets existants."""
+        dic = {}
+        for sujet in self.__sujets:
+            dic[sujet.cle] = sujet
+        
+        return dic
     
-    def ajouter_sujet(self, titre):
+    def ajouter_sujet(self, cle):
         """Ajoute un sujet à la liste des sujets d'aide.
         
-        Le titre du sujet doit être fourni en paramètre.
-        Si le titre est déjà utilisé, lève une exception. Sinon, retourne
+        La clé du sujet doit être fournie en paramètre.
+        Si la clé est déjà utilisée, lève une exception. Sinon, retourne
         le sujet nouvellement créé.
         
         """
-        titres_sujets = [supprimer_accents(s.titre).lower() for s in \
-                self.__sujets]
-        if supprimer_accents(titre).lower() in titres_sujets or \
-                self.get_sujet_par_mot_cle(titre) is not None:
-            raise ValueError("le titre {} est déjà utilisé".format(titre))
-        sujet = SujetAide(titre)
+        if cle in self.sujets.keys():
+            raise ValueError("la clé {} est déjà utilisée".format(cle))
+        sujet = SujetAide(cle)
         self.__sujets.append(sujet)
         return sujet
     
@@ -172,7 +173,7 @@ class Module(BaseModule):
         """Retourne le sommaire de la rubrique d'aide pour personnage."""
         # On affiche la liste des sujets d'aides
         peut_lire = []
-        for sujet in self.sujets:
+        for sujet in self.__sujets:
             if self.importeur.interpreteur.groupes. \
                     explorer_groupes_inclus(personnage.grp, sujet.str_groupe):
                 peut_lire.append(sujet)
@@ -184,8 +185,7 @@ class Module(BaseModule):
                 taille_max = len(s.titre)
         for sujet in peut_lire:
             if sujet.pere is None:
-                sujets_lire.append("|ent|" + sujet.titre.ljust(taille_max) + \
-                        "|ff| - " + sujet.resume)
+                sujets_lire.append("|ent|" + sujet.titre.ljust(taille_max))
         
         msg = self.cfg_info.accueil_aide + "\n\n"
         if not sujets_lire:

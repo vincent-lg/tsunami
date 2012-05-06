@@ -52,11 +52,11 @@ class EdtFils(Uniligne):
         
         """
         sujet = self.objet
-        titre_fils = arguments.split(" ")[0]
-        sujet_fils = type(self).importeur.information.get_sujet(titre_fils)
+        cle_fils = arguments
+        sujet_fils = importeur.information.sujets.get(cle_fils)
         if not sujet_fils or not sujet.est_fils(sujet_fils):
             self.pere << "|err|Le sujet {} n'est pas fils du sujet " \
-                    "courant.|ff|".format(titre_fils)
+                    "courant.|ff|".format(cle_fils)
             return
         try:
             sujet.echanger_fils(sujet_fils)
@@ -71,11 +71,11 @@ class EdtFils(Uniligne):
         
         """
         sujet = self.objet
-        titre_fils = arguments.split(" ")[0]
-        sujet_fils = type(self).importeur.information.get_sujet(titre_fils)
+        cle_fils = arguments
+        sujet_fils = importeur.information.sujets.get(cle_fils)
         if not sujet_fils or not sujet.est_fils(sujet_fils):
             self.pere << "|err|Le sujet {} n'est pas fils du sujet " \
-                    "courant.|ff|".format(titre_fils)
+                    "courant.|ff|".format(cle_fils)
             return
         try:
             sujet.echanger_fils(sujet_fils, bas=True)
@@ -87,7 +87,7 @@ class EdtFils(Uniligne):
     def interpreter(self, msg):
         """Interprétation du message"""
         sujet = self.objet
-        sujet_fils = type(self).importeur.information.get_sujet(msg)
+        sujet_fils = importeur.information.sujets.get(msg)
         if not sujet_fils:
             self.pere << "|err|Le sujet '{}' n'existe pas.|ff|".format(msg)
         elif sujet_fils is sujet:
@@ -101,7 +101,7 @@ class EdtFils(Uniligne):
                 sujet.supprimer_fils(sujet_fils)
             elif sujet_fils.pere is not None:
                 self.pere << "|err|Le sujet '{}' est déjà affilié au " \
-                        "sujet '{}'.|ff|".format(msg, sujet_fils.pere.titre)
+                        "sujet '{}'.|ff|".format(msg, sujet_fils.pere.cle)
             else:
                 sujet.ajouter_fils(sujet_fils)
                 self.actualiser()
