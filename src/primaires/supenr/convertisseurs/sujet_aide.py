@@ -38,5 +38,6 @@ class Convertisseur:
         objet.set_version(classe, 1)
         objet.cle = supprimer_accents(objet._titre)
         objet.titre = objet.resume
+        del objet._titre
         del objet.resume
         objet.contenu.scriptable = False

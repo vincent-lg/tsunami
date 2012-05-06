@@ -130,7 +130,7 @@ class SujetAide(BaseObj):
         for sujet in self.sujets_fils:
             if self.importeur.interpreteur.groupes. \
                     explorer_groupes_inclus(personnage.grp, sujet.str_groupe):
-                ret += "\n" + indent + str(i + 1) + ". |cmd|"
+                ret += "\n" + indent + str(i) + ". |cmd|"
                 ret += sujet.titre.capitalize() + "|ff|"
                 if self.sujets_fils:
                     ret += sujet.sommaire(personnage, \
