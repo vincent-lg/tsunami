@@ -32,7 +32,7 @@
 
 from abstraits.obase import BaseObj
 from primaires.format.description import Description
-from primaires.format.fonctions import supprimer_accents
+from primaires.format.fonctions import supprimer_accents, couper_phrase
 
 class SujetAide(BaseObj):
     
@@ -111,12 +111,15 @@ class SujetAide(BaseObj):
         """Retourne un tableau des sujets fils."""
         lignes = []
         taille = max([len(s.titre) for s in self.sujets_fils] or (10, ))
-        sep = "+" + (taille + 2) * "-" + "+" + 52 * "-" + "+"
-        en_tete = sep + "\n" + "| |tit|" + "Sujet".ljust(taille) + "|ff| |"
-        en_tete += " |tit|" + "Titre".ljust(50) + "|ff| |\n" + sep
+        if taille > 30:
+            taille = 30
+        
+        sep = "+" + 17 * "-" + "+" + (taille + 2) * "-" + "+"
+        en_tete = sep + "\n" + "| |tit|" + "Sujet".ljust(15) + "|ff| |"
+        en_tete += " |tit|" + "Titre".ljust(taille) + "|ff| |\n" + sep
         for s in self.sujets_fils:
-            ligne = "| |ent|" + s.cle.ljust(taille) + "|ff| | "
-            ligne += s.titre.ljust(50) + " |"
+            ligne = "| |ent|" + s.cle.ljust(15) + "|ff| | "
+            ligne += couper_phrase(s.titre, taille).ljust(taille) + " |"
             lignes.append(ligne)
         if lignes:
             return en_tete + "\n" + "\n".join(lignes) + "\n" + sep
@@ -218,8 +221,8 @@ class SujetAide(BaseObj):
         """Affiche le contenu de self et ses sujets fils."""
         ret = "\n".join(self.contenu.paragraphes)
         for i, s in enumerate(self.sujets_fils):
-            ret += "\n|sp|\n|tit|" + ident + str(i + 1) + " " + s.titre + \
-                    "|ff|"
+            ret += "\n|sp|\n|tit|" + ident + str(i + 1) + " " + \
+                    s.titre.capitalize() + "|ff|"
             ret += "\n\n" + s.afficher_contenu(ident=ident + "{}.".format(i))
         
         return ret
