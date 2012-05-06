@@ -43,7 +43,7 @@ class EdtLies(Uniligne):
     def interpreter(self, msg):
         """Interprétation du message"""
         sujet = self.objet
-        sujet_a_lier = type(self).importeur.information.get_sujet(msg)
+        sujet_a_lier = importeur.information.sujets.get(msg)
         if not sujet_a_lier:
             self.pere << "|err|Le sujet '{}' n'existe pas.|ff|".format(msg)
         elif sujet_a_lier is sujet:

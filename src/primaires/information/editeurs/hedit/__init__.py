@@ -82,15 +82,6 @@ class EdtHedit(Presentation):
             "revenir à la fenêtre parente.\n\nTitre actuel : " \
             "|bc|{objet.titre}|ff|"
         
-        # Résumé
-        resume = self.ajouter_choix("résumé", "r", EdtResume, sujet)
-        resume.parent = self
-        resume.prompt = "Résumé du sujet : "
-        resume.aide_courte = \
-            "Entrez un |ent|résumé|ff| du sujet d'aide ou |cmd|/|ff| pour " \
-            "revenir à la fenêtre parente.\n\nRésumé actuel : " \
-            "|bc|{objet.resume}|ff|"
-        
         # Contenu
         contenu = self.ajouter_choix("contenu", "c", Description, \
                 sujet, "contenu")
@@ -111,7 +102,8 @@ class EdtHedit(Presentation):
         groupe.aide_courte = \
             "Entrez le |ent|groupe|ff| pouvant accéder au sujet d'aide ou " \
             "|cmd|/|ff| pour revenir à la\nfenêtre parente.\n" \
-            "Groupes disponibles : |ent|" + "|ff|, |ent|".join(str_groupes) + "|ff|.\n\n" \
+            "Groupes disponibles : |ent|" + "|ff|, |ent|".join(
+            str_groupes) + "|ff|.\n\n" \
             "Groupe actuel : |bc|{objet.str_groupe}|ff|"
         
         # Mots-clés
@@ -130,7 +122,7 @@ class EdtHedit(Presentation):
         lies.parent = self
         lies.prompt = "Entrez le nom d'un sujet :"
         lies.aide_courte = \
-            "Entrez le |ent|nom|ff| d'un sujet pour l'ajouter à la liste " \
+            "Entrez la |ent|clé|ff| d'un sujet pour l'ajouter à la liste " \
             "des sujets liés ou\nl'en supprimer ; / pour revenir à la " \
             "fenêtre précédente.\n" \
             "Sujets liés à celui-ci : |bc|{objet.str_sujets_lies}|ff|"
@@ -140,7 +132,7 @@ class EdtHedit(Presentation):
         fils = self.ajouter_choix("sujets fils", "f", EdtFils, sujet)
         fils.parent = self
         fils.aide_courte = \
-            "Entrez le |ent|nom|ff| d'un sujet. Si il n'est pas dans la " \
+            "Entrez la |ent|clé|ff| d'un sujet. Si il n'est pas dans la " \
             "liste des sujets liés,\n" \
             "il y sera ajouté, sinon il en sera supprimé.\n" \
             "Options :\n" \

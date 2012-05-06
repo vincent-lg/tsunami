@@ -48,7 +48,7 @@ class EdtMotscles(Uniligne):
             sujet.mots_cles.remove(msg)
             self.actualiser()
         else:
-            if type(self).importeur.information.get_sujet(msg) is not None:
+            if importeur.information.get_sujet(msg) is not None:
                 self.pere << "|err|Le mot-clé '{}' est déjà utilisé.|ff|".format(
                         msg)
             else:
