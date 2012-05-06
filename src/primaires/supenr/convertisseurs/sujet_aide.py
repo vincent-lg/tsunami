@@ -36,7 +36,7 @@ class Convertisseur:
     """Classe pour envelopper les convertisseurs."""
     def depuis_version_0(objet, classe):
         objet.set_version(classe, 1)
-        objet.cle = supprimer_accents(objet.titre)
+        objet.cle = supprimer_accents(objet._titre)
         objet.titre = objet.resume
         del objet.resume
         objet.contenu.scriptable = False
