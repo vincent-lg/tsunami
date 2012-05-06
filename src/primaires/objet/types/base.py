@@ -240,7 +240,7 @@ class BaseType(BaseObj, metaclass=MetaType):
         car le type 'arme' a pour classes-filles 'épée' (notamment).
         
         """
-        classe = type(self).importeur.objet.types[nom_type]
+        classe = importeur.objet.types[nom_type]
         prototype = hasattr(self, "prototype") and self.prototype or self
         return isinstance(prototype, classe)
     

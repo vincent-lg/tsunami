@@ -68,21 +68,11 @@ class ConteneurNourriture(BaseType):
         """Travail sur les enveloppes."""
         poids_max = enveloppes["m"]
         poids_max.apercu = "{objet.poids_max}"
+        poids_max.prompt = "Poids maximum : "
         poids_max.aide_courte = \
             "Entrez le |ent|poids maximum|ff| que peut contenir cet objet " \
             "ou |cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
             "Poids maximum actuel : {objet.poids_max}"
-    
-    @property
-    def nourriture_qtt(self):
-        """Retourne un dictionnaire {Nourriture:quantité}."""
-        dico_qtt = {}
-        for item in self.nourriture:
-            if item.prototype not in dico_qtt:
-                dico_qtt[item.prototype] = 1
-            else:
-                dico_qtt[item.prototype] += 1
-        return dico_qtt
     
     def calculer_poids(self):
         """Retourne le poids de l'objet et celui des objets contenus."""
@@ -127,9 +117,15 @@ class ConteneurNourriture(BaseType):
         """Le personnage regarde l'objet"""
         msg = BaseType.regarder(self, personnage)
         
+        dico_qtt = {}
+        for item in self.nourriture:
+            if item.prototype not in dico_qtt:
+                dico_qtt[item.prototype] = 1
+            else:
+                dico_qtt[item.prototype] += 1
+        
         if self.nourriture:
-            nourriture = [o.get_nom(nb) for o, nb \
-                    in self.nourriture_qtt.items()]
+            nourriture = [o.get_nom(nb) for o, nb in dico_qtt.items()]
             if len(nourriture) > 1:
                 ajout = ", ".join(nourriture[:-1]) + " et " + nourriture[-1]
             else:

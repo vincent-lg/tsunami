@@ -199,7 +199,7 @@ class Module(BaseModule):
         importeur.diffact.ajouter_action("repop_feux", 5, Feu.repop)
         
         # On ajoute les niveaux et talents
-        importeur.perso.ajouter_niveau("survie", "survie")
+        # importeur.perso.ajouter_niveau("survie", "survie")
         importeur.perso.ajouter_talent("collecte_bois", "collecte de bois",
                 "survie", 0.55)
         importeur.perso.ajouter_talent("feu_camp", "feu de camp", "survie",
