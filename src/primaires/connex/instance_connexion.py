@@ -286,8 +286,10 @@ class InstanceConnexion(BaseObj):
                 msg = msg.rstrip(b"\r\n")
                 if self.contexte_actuel.opts.nl:
                     msg += NL
+                if msg:
+                    msg += NL
                 
-                msg += NL + self.get_prompt()
+                msg += self.get_prompt()
             else:
                 msg += NL
             self.avec_prompt = True

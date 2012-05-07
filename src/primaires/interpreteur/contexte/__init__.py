@@ -55,7 +55,7 @@ class MetaContexte(MetaBaseObj):
         if cls.nom:
             contextes[cls.nom] = cls
 
-class OptionsContexte:
+class OptionsContexte(BaseObj):
     """Options du contexte.
     
     Liste des options :
@@ -92,6 +92,7 @@ class OptionsContexte:
     """    
     def __init__(self):
         """Constructeur par défaut des options"""
+        BaseObj.__init__(self)
         # Options de réception
         self.echp_sp_cars = True
         
@@ -105,6 +106,9 @@ class OptionsContexte:
         
         # Options de navigation
         self.rci_ctx_prec = ""
+    
+    def __getnewargs__(self):
+        return ()
 
 RCI_PREC = "/"
 
@@ -172,10 +176,6 @@ class Contexte(BaseObj, metaclass=MetaContexte):
             nom = "inconnu"
         
         return nom
-    
-    def __setstate__(self, dico_attr):
-        self.__dict__.update(dico_attr)
-        self.opts = OptionsContexte()
     
     @property
     def u_nom(self):
