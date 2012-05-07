@@ -217,12 +217,13 @@ class SujetAide(BaseObj):
                 ret += "|ff|."
         return ret
     
-    def afficher_contenu(self, ident=""):
+    def afficher_contenu(self, ident="", sp="|sp|"):
         """Affiche le contenu de self et ses sujets fils."""
         ret = "\n".join(self.contenu.paragraphes)
         for i, s in enumerate(self.sujets_fils):
-            ret += "\n|sp|\n|tit|" + ident + str(i + 1) + " " + \
+            ret += "\n" + sp + "\n|tit|" + ident + str(i + 1) + " " + \
                     s.titre.capitalize() + "|ff|"
-            ret += "\n\n" + s.afficher_contenu(ident=ident + "{}.".format(i))
+            ret += "\n\n" + s.afficher_contenu(ident=ident + "{}.".format(i),
+                    sp="\n\n")
         
         return ret
