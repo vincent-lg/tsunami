@@ -77,6 +77,7 @@ class OptionsContexte:
     *   prompt_clr - colorisation du prompt :
         Si un code couleur est précisé dans cette option, on l'applique au
         prompt pour le faire ressortir sur le texte
+    *   nl - saut de ligne supplémentaire avant le prompt
     *   prompt_prf - préfixage du prompt :
         Contient une chaîne de caractères (str) qui est utilisée en tant que
         préfixe du prompt, pour le faire ressortir par rapport aux instructions.
@@ -100,6 +101,7 @@ class OptionsContexte:
         self.separateur = None
         self.prompt_clr = ""
         self.prompt_prf = ""
+        self.nl = True
         
         # Options de navigation
         self.rci_ctx_prec = ""
@@ -170,6 +172,10 @@ class Contexte(BaseObj, metaclass=MetaContexte):
             nom = "inconnu"
         
         return nom
+    
+    def __setstate__(self, dico_attr):
+        self.__dict__.update(dico_attr)
+        self.opts = OptionsContexte()
     
     @property
     def u_nom(self):
