@@ -64,7 +64,6 @@ class Module(BaseModule):
         self.logger.info(format_nb(nb_recettes,
                 "{nb} recette{s} récupérée{s}", fem=True))
                 
-        importeur.perso.ajouter_niveau("survie", "survie")
         ajouter_talent = self.importeur.perso.ajouter_talent
         ajouter_talent("cuisine", "cuisine", "survie", 0.20)
         

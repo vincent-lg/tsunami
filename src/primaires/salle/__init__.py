@@ -148,6 +148,9 @@ class Module(BaseModule):
         self.ajouter_terrain("plage de sable noir",
                 "des plages de sable noir")
         
+        # On ajoute les niveaux
+        importeur.perso.ajouter_niveau("survie", "survie")
+        
         BaseModule.config(self)
     
     def init(self):
@@ -198,8 +201,7 @@ class Module(BaseModule):
                 self.repop_salles)
         importeur.diffact.ajouter_action("repop_feux", 5, Feu.repop)
         
-        # On ajoute les niveaux et talents
-        # importeur.perso.ajouter_niveau("survie", "survie")
+        # On ajoute les talents
         importeur.perso.ajouter_talent("collecte_bois", "collecte de bois",
                 "survie", 0.55)
         importeur.perso.ajouter_talent("feu_camp", "feu de camp", "survie",
