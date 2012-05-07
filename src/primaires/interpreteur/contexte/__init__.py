@@ -55,7 +55,7 @@ class MetaContexte(MetaBaseObj):
         if cls.nom:
             contextes[cls.nom] = cls
 
-class OptionsContexte:
+class OptionsContexte(BaseObj):
     """Options du contexte.
     
     Liste des options :
@@ -77,6 +77,7 @@ class OptionsContexte:
     *   prompt_clr - colorisation du prompt :
         Si un code couleur est précisé dans cette option, on l'applique au
         prompt pour le faire ressortir sur le texte
+    *   nl - saut de ligne supplémentaire avant le prompt
     *   prompt_prf - préfixage du prompt :
         Contient une chaîne de caractères (str) qui est utilisée en tant que
         préfixe du prompt, pour le faire ressortir par rapport aux instructions.
@@ -91,6 +92,7 @@ class OptionsContexte:
     """    
     def __init__(self):
         """Constructeur par défaut des options"""
+        BaseObj.__init__(self)
         # Options de réception
         self.echp_sp_cars = True
         
@@ -100,9 +102,13 @@ class OptionsContexte:
         self.separateur = None
         self.prompt_clr = ""
         self.prompt_prf = ""
+        self.nl = True
         
         # Options de navigation
         self.rci_ctx_prec = ""
+    
+    def __getnewargs__(self):
+        return ()
 
 RCI_PREC = "/"
 

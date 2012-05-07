@@ -30,6 +30,7 @@
 
 """Fichier contenant la classe ConsoleInteractive détaillée plus bas."""
 
+from code import InteractiveConsole
 import sys
 import traceback
 
@@ -52,16 +53,20 @@ class ConsoleInteractive:
         self.espace = {
             "importeur": importeur,
         }
+        self.console = InteractiveConsole(self.espace)
+        self.prompt = ">>> "
     
     def boucle(self):
         """A chaque tour de boucle."""
         try:
-            code = input(">>> ")
+            code = input(self.prompt)
         except (KeyboardInterrupt, EOFError):
             importeur.serveur.lance = False
             return
-        if code:
-            try:
-                exec(code, self.espace)
-            except Exception:
-                print(traceback.format_exc())
+        try:
+            ret = self.console.push(code)
+        except Exception:
+            print(traceback.format_exc())
+        else:
+            self.prompt = "... " if ret else ">>> "
+

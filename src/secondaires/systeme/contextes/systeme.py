@@ -32,9 +32,9 @@
 
 import sys
 import traceback
+from code import InteractiveConsole
 
 from primaires.format.constantes import ponctuations_finales
-
 from primaires.interpreteur.contexte import Contexte
 
 class Systeme(Contexte):
@@ -50,16 +50,23 @@ class Systeme(Contexte):
         Contexte.__init__(self, pere)
         self.opts.prompt_prf = ""
         self.opts.prompt_clr = ""
+        self.opts.nl = False
         self.espace = {}
+        self.console = InteractiveConsole(self.espace)
+        self.py_prompt = ">>> "
     
     def __getstate__(self):
         attrs = Contexte.__getstate__(self)
         attrs["espace"] = {}
+        attrs["py_prompt"] = ">>> "
+        if "console" in attrs:
+            del attrs["console"]
+        
         return attrs
     
     def get_prompt(self):
         """Retourne le prompt"""
-        return ">>> "
+        return self.py_prompt
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -89,14 +96,18 @@ class Systeme(Contexte):
             # Exécution du code
             sys.stdin = self.pere
             sys.stdout = self.pere
+            sys.stderr = self.pere
+            ret = False
             nb_msg = self.pere.nb_msg
             try:
-                exec(msg, self.espace)
+                ret = self.console.push(msg)
+                self.py_prompt = "... " if ret else ">>> "
             except Exception:
                 self.pere << traceback.format_exc()
             else:
-                if self.pere.nb_msg == nb_msg:
+                if nb_msg == self.pere.nb_msg:
                     self.pere.envoyer("")
             finally:
                 sys.stdin = sys.__stdin__
                 sys.stdout = sys.__stdout__
+                sys.stderr = sys.__stderr__

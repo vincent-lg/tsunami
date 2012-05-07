@@ -283,11 +283,17 @@ class InstanceConnexion(BaseObj):
             msg = self.get_file_attente()
             self.file_attente = []
             if ajt_prompt and self.avec_prompt:
-                msg += 2 * NL + self.get_prompt()
+                msg = msg.rstrip(b"\r\n")
+                if self.contexte_actuel.opts.nl:
+                    msg += NL
+                if msg:
+                    msg += NL
+                
+                msg += self.get_prompt()
             else:
                 msg += NL
             self.avec_prompt = True
-        
+            
             if self.client:
                 self.client.envoyer(msg)
     
