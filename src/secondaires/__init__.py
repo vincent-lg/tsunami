@@ -49,6 +49,11 @@ NOTE: les modules primaires et secondaires ne doivent pas porter de noms
 identiques.
 
 Voici un résumé des modules primaires existants :
+-   cuisine     Module chargé de la cuisine
+-   jeux        Module traitant les jeux et plateaux de jeu
+-   magie       Module contenant la magie et les sorts
+-   navigation  Module gérant la navigation, navires, équipages
+-   peche       Module gérant la pêche
 -   rapport     Module chargé de traiter les rapports de bug et suggestions
 -   stat        Module chargé d'effectuer des statistiques sur le serveur
 -   systeme     Module offrant des commandes de manipulation système
