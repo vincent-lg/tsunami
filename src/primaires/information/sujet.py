@@ -223,7 +223,7 @@ class SujetAide(BaseObj):
         for i, s in enumerate(self.sujets_fils):
             ret += "\n" + sp + "\n|tit|" + ident + str(i + 1) + " " + \
                     s.titre.capitalize() + "|ff|"
-            ret += "\n\n" + s.afficher_contenu(ident=ident + "{}.".format(i),
-                    sp="\n\n")
+            ret += "\n\n" + s.afficher_contenu(ident=ident + "{}.".format(
+                    i + 1), sp="\n\n")
         
         return ret
