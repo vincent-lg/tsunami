@@ -97,6 +97,10 @@ class Banc(BaseObj):
         self.abondance_actuelle = abondance_max
     abondance_max = property(_get_abondance_max, _set_abondance_max)
     
+    @property
+    def aff_etendue(self):
+        return self.etendue and self.etendue.cle or "aucune"
+    
     def pecher_poisson(self, salle, poisson):
         """Pêche le poisson indiqué."""
         if salle in self.salles:

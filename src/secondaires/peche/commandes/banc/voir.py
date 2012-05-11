@@ -64,6 +64,7 @@ class PrmVoir(Parametre):
             poissons.append("Aucun")
         
         msg = "Banc {}:\n".format(banc.cle)
+        msg += "\n  Etendue d'eau : {}".format(banc.aff_etendue)
         msg += "\n  Abondance actuelle / abondance maximum : {} / {} " \
                 "({}%)".format(banc.abondance_actuelle, banc._abondance_max,
                 int(banc.abondance_actuelle / banc._abondance_max * 100))

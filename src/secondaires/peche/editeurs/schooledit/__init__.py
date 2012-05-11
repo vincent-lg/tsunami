@@ -45,6 +45,7 @@ from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.flag import Flag
+from .edt_etendue import EdtEtendue
 from .supprimer import NSupprimer
 
 class EdtSchooledit(Presentation):
@@ -71,6 +72,16 @@ class EdtSchooledit(Presentation):
     
     def construire(self, banc):
         """Construction de l'éditeur"""
+        # Etendue
+        etendue = self.ajouter_choix("etendue", "e", EdtEtendue, banc)
+        etendue.parent = self
+        etendue.prompt = "Entrez une clé d'étendue : "
+        etendue.apercu = "{objet.aff_etendue}"
+        etendue.aide_courte = \
+            "Entrez une |ent|clé d'étendue|ff|, ou " \
+            "|cmd|/|ff| pour revenir à la\nfenêtre parente.\n\n" \
+            "Etendue actuelle : {objet.aff_etendue}"
+        
         # Abondance
         abondance = self.ajouter_choix("abondance maximum", "a", Entier, banc,
                 "abondance_max")
