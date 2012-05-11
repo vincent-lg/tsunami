@@ -40,8 +40,8 @@ class Banc(BaseObj):
         cle -- une clé identifiante
         etendue -- une étendue utilisant ce banc (optionnel)
         salles -- une liste de salles utilisant ce banc (optionnel)
-        abondance_max -- l'abondance maximum (entre 1 et 100)
-        abondance_actuelle -- l'abondance actuelle du banc (entre 1 et 100)
+        abondance_max -- l'abondance maximum (entre en Kg / heure
+        abondance_actuelle -- l'abondance actuelle du banc (entre 1 et max
         poissons -- un dictionnaire représentant les poissons à pêcher {1]
     
     [1] Le dictionnaire des poissons à pêcher est sous la forme :
@@ -72,7 +72,7 @@ class Banc(BaseObj):
         self.cle = cle
         self.etendue = None
         self.salles = []
-        self.abondance_max = 100
+        self._abondance_max = 100
         self.abondance_actuelle = 100
         self.poissons = {}
         if modele:
@@ -83,7 +83,29 @@ class Banc(BaseObj):
     
     def __repr__(self):
         """Affichage de debug."""
-        return "<banc {}>".format(repr(self.cle))
+        return "<banc {} {}/{} ({}%)>".format(repr(
+                self.cle), self.abondance_actuelle, self._abondance_max,
+                int(self.abondance_actuelle / self._abondance_max * 100))
     
     def __str__(self):
         return self.cle
+    
+    def _get_abondance_max(self):
+        return self._abondance_max
+    def _set_abondance_max(self, abondance_max):
+        self._abondance_max = abondance_max
+        self.abondance_actuelle = abondance_max
+    abondance_max = property(_get_abondance_max, _set_abondance_max)
+    
+    def pecher_poisson(self, salle, poisson):
+        """Pêche le poisson indiqué."""
+        if salle in self.salles:
+            self.abondance_actuelle -= poisson.poids
+    
+    def tick(self):
+        """Tick qui doit être appelé toute les minutes."""
+        if self.abondance_actuelle < self.abondance_max:
+            self.abondance_actuelle += int(self.abondance_max / 60)
+        
+        if self.abondance_actuelle > self.abondance_max:
+            self.abondance_actuelle = self.abondance_max

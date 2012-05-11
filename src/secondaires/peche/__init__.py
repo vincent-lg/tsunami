@@ -63,6 +63,9 @@ class Module(BaseModule):
         for banc in bancs:
             self.bancs[banc.cle] = banc
         
+        importeur.diffact.ajouter_action("bancs", 60,
+                self.tick_bancs)
+        
         BaseModule.init(self)
     
     def ajouter_commandes(self):
@@ -102,3 +105,10 @@ class Module(BaseModule):
         banc = self.bancs[cle]
         del self.bancs[cle]
         banc.detruire()
+    
+    def tick_bancs(self):
+        """Tick les bancs."""
+        importeur.diffact.ajouter_action("bancs", 60,
+                self.tick_bancs)
+        for banc in self.bancs.values():
+            banc.tick()
