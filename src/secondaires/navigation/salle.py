@@ -150,6 +150,9 @@ class SalleNavire(Salle):
         
         return None
     
+    def get_etendue(self):
+        return self.navire and self.navire.etendue or None
+    
     def ajouter_element(self, element):
         """Ajoute un élément dans la salle."""
         self.mod_elements.append(element)

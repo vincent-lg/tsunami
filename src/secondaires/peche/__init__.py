@@ -36,6 +36,9 @@ from .banc import Banc
 from . import commandes
 from .editeurs.schooledit import EdtSchooledit
 
+# Constantes
+TERRAINS_PECHE = ("rive", )
+
 class Module(BaseModule):
     
     """Module secondaire définissant la pêche."""
@@ -118,3 +121,23 @@ class Module(BaseModule):
                 self.tick_bancs)
         for banc in self.bancs.values():
             banc.tick()
+    
+    def get_banc_pour(self, salle):
+        """Retourne le banc de poisson pour la salle ou None.
+        
+        Si la salle a une étendue définie et que cette étendue a
+        un banc de poisson, retourne ce banc. Si la salle est dans un des
+        terrains pêches, retourne (si trouvé) le banc 'base'.
+        
+        """
+        etendue = salle.get_etendue()
+        if etendue:
+            for banc in self.bancs.values():
+                if banc.etendue is etendue:
+                    return banc
+            return self.bancs.get("base")
+        
+        if salle.nom_terrain not in TERRAINS_PECHE:
+            return None
+        
+        return self.bancs.get("base")

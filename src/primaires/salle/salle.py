@@ -159,6 +159,9 @@ class Salle(BaseObj):
     def desc_survol(self):
         return self.terrain.desc_survol
     
+    def get_etendue(self):
+        return self.etendue
+    
     def personnage_est_present(self, personnage):
         """Si le personnage est présent, retourne True, False sinon."""
         return personnage in self._personnages
