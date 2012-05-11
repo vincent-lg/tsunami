@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'pêcher'."""
 
-from . import appater
-from . import banc
-from . import pecher
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdPecher(Commande):
+    
+    """Commande 'pêcher'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "pêcher", "fish")
+        self.aide_courte = "jète une ligne à l'eau"
+        self.aide_longue = \
+            "Cette commande permet de commencer à pêcher en jetant une " \
+            "ligne à l'eau. Elle permet également d'arrêter de pêcher à " \
+            "tout moment (entrer %pêcher% pour commencer à pêcher, puis " \
+            "%pêcher% pour arrêter). En fonction de l'étendue d'eau " \
+            "ou de la salle où vous vous trouvez, vous pêcherez dans " \
+            "un banc différent. Avant de commencer à pêcher, vous devez " \
+            "disposer d'une canne à pêche et l'appâter (voir ...)."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation de la commande."""
+        salle = personnage.salle
+        banc = importeur.peche.get_banc_pour(salle)
+        if banc is None:
+            personnage << "|err|Vous ne pouvez pêcher ici.|ff|"
+            return
+        
+        personnage << "Vous commencez à pêcher dans le banc {}.".format(banc)

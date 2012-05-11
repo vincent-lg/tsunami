@@ -77,7 +77,9 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.appater.CmdAppater(),
             commandes.banc.CmdBanc(),
+            commandes.pecher.CmdPecher(),
         ]
         
         for cmd in self.commandes:

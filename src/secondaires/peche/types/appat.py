@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant le type Appat."""
 
-from . import appater
-from . import banc
-from . import pecher
+from primaires.interpreteur.editeur.entier import Entier
+from bases.objet.attribut import Attribut
+from primaires.objet.types.base import BaseType
+
+class Appat(BaseType):
+    
+    """Type d'objet: appât.
+    
+    """
+    
+    nom_type = "appât"
+    
+    def __init__(self, cle=""):
+        """Constructeur de l'objet"""
+        BaseType.__init__(self, cle)
+        self.qualite = 1
+        self.etendre_editeur("a", "qualité", Entier, self, "qualite", 1, 10)
+
+    def travailler_enveloppes(self, enveloppes):
+        """Travail sur les enveloppes"""
+        qualite = enveloppes["a"]
+        qualite.apercu = "{objet.qualite}"
+        qualite.prompt = "Qualité de l'appât : "
+        qualite.aide_courte = \
+            "Entrez la |ent|qualité|ff| de l'appât, entre |cmd|1|ff| " \
+            "et |cmd|10|ff|\nou |cmd|/|ff| pour revenir à la fenêtre " \
+            "parente.\n\n" \
+            "Qualité actuelle : {objet.qualite}"

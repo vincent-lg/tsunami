@@ -28,6 +28,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier du package types, contenant les types d'objets du module combat."""
+"""Fichier du package types, contenant les types d'objets du module peche."""
 
+from . import appat
+from . import canne_a_peche
 from . import poisson
