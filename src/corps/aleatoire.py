@@ -31,12 +31,18 @@
 """Module contenant la base des fonctions aléatoires.
 
 Fonctions définies :
+    chance_sur(probabilite)
     choix_probable(objets, attribut)
+    choix_probable_liste(objets, poids)
     varier(base, variable, min=1, max=None)
 
 """
 
 import random
+
+def chance_sur(probabilite):
+    """Retourne True ou False aléatoirement."""
+    return random.random() < probabilite / 100
 
 def choix_probable(objets, attribut="probabilite"):
     """Retourne aléatoirement un choix en fonction de certaines probabilités.
@@ -58,6 +64,23 @@ def choix_probable(objets, attribut="probabilite"):
     
     """
     poids = [getattr(objet, attribut) for objet in objets]
+    rnd = random.random() * sum(poids)
+    for i, w in enumerate(poids):
+        rnd -= w
+        if rnd < 0:
+            return objets[i]
+
+def choix_probable_liste(objets, poids):
+    """Retourne aléatoirement un choix en fonction de certaines probabilités.
+    
+    On attend :
+        objets -- la liste d'objets
+        poids -- la liste des poids correspondants.
+    
+    La probabilité indiquée est un poids en terme d'effectif,
+    pas nécessairement un taux ou pourcentage.
+    
+    """
     rnd = random.random() * sum(poids)
     for i, w in enumerate(poids):
         rnd -= w
