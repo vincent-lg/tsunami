@@ -33,6 +33,7 @@
 from abstraits.module import *
 from corps.fonctions import valider_cle
 from .banc import Banc
+from . import commandes
 
 class Module(BaseModule):
     
@@ -71,6 +72,7 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.banc.CmdBanc(),
         ]
         
         for cmd in self.commandes:
