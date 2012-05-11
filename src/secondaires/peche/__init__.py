@@ -35,6 +35,7 @@ from corps.fonctions import valider_cle
 from .banc import Banc
 from . import commandes
 from .editeurs.schooledit import EdtSchooledit
+from . import types
 
 # Constantes
 TERRAINS_PECHE = ("rive", )

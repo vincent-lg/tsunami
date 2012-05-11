@@ -46,6 +46,7 @@ from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.flag import Flag
 from .edt_etendue import EdtEtendue
+from .edt_poissons import EdtPoissons
 from .supprimer import NSupprimer
 
 class EdtSchooledit(Presentation):
@@ -95,6 +96,20 @@ class EdtSchooledit(Presentation):
             "Chaque poisson pêché dans ce banc ôtera de l'abondance " \
             "actuelle son propre\npoids.\n\n" \
             "Abondance maximum actuelle : |bc|{valeur}|ff|"
+        
+        # Poissons
+        poissons = self.ajouter_choix("poissons", "p", EdtPoissons, banc)
+        poissons.parent = self
+        poissons.aide_courte = \
+            "Entrez |cmd|/|ff| pour revenir à la\nfenêtre parente.\n\n" \
+            "Pour ajouter un poisson dans ce banc, entrez la clé de " \
+            "l'objet poisson suivie\n" \
+            "d'un espace et de sa probabilité\n" \
+            "Exemple : |ent|truite 5|ff|\n" \
+            "Pour le supprimer, précisez une probabilité de |ent|0|ff|.\n" \
+            "La probabilité maximale n'est pas 100 mais la somme des " \
+            "probabilité de\n" \
+            "chaque poisson."
         
         # Supprimer
         sup = self.ajouter_choix("supprimer", "sup", NSupprimer,
