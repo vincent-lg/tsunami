@@ -30,7 +30,10 @@
 
 """Fichier contenant le module secondaire napeche."""
 
+import random
+
 from abstraits.module import *
+from corps.aleatoire import *
 from corps.fonctions import valider_cle
 from .banc import Banc
 from . import commandes
@@ -144,3 +147,94 @@ class Module(BaseModule):
             return None
         
         return self.bancs.get("base")
+    
+    def get_talent_peche(self, salle):
+        """Retourne la clé du talent de pêche correspondant à la salle."""
+        if hasattr(salle, "navire") and salle.navire:
+            return "peche_mer"
+        
+        return "peche_terre"
+    
+    def attendre_pecher(self, personnage, canne):
+        """Le personnage pêche."""
+        talent = self.get_talent_peche(personnage.salle)
+        if personnage.cle_etat != "pecher":
+            return
+        
+        if canne.appat is None:
+            personnage.cle_etat = ""
+        
+        personnage.pratiquer_talent(talent, 5)
+        if chance_sur(5):
+            personnage.sans_prompt()
+            personnage << "Votre ligne frémit légèrement, comme " \
+                    "sensiblement éflerée."
+            importeur.diffact.ajouter_action("pecher:" + personnage.nom, 10,
+                    self.touche, personnage, canne)
+        else:
+            importeur.diffact.ajouter_action("pecher:" + personnage.nom, 12,
+                    self.attendre_pecher, personnage, canne)
+            personnage.sans_prompt()
+            personnage << "Votre ligne est toujours aussi immobile..."
+    
+    def touche(self, personnage, canne):
+        """Une touche se transforme ou non en prise."""
+        banc = self.get_banc_pour(personnage.salle)
+        talent = self.get_talent_peche(personnage.salle)
+        if personnage.cle_etat != "pecher":
+            return
+        
+        if canne.appat is None:
+            personnage.cle_etat = ""
+        
+        personnage.pratiquer_talent(talent, 3)
+        qualite = varier(canne.appat.qualite, 2)
+        qualite /= 10
+        if banc.poissons and random.random() < qualite:
+            # On choisit le poisson
+            poissons = list(banc.poissons.keys())
+            poids = list(banc.poissons.values())
+            poisson = choix_probable_liste(poissons, poids)
+            tps = varier(poisson.poids, 4, 1, 15)
+            personnage.sans_prompt()
+            personnage << "Une violente secousse agite votre ligne !"
+            personnage << "Vous rejetez votre canne en arrière..."
+            personnage.salle.envoyer("{} rejète sa canne en arrière...",
+                    personnage, prompt=False)
+            importeur.diffact.ajouter_action("pecher:" + personnage.nom, tps,
+                    self.pecher, personnage, canne, poisson)
+        else:
+            importeur.diffact.ajouter_action("pecher:" + personnage.nom, 15,
+                    self.attendre_pecher, personnage, canne)
+    
+    def pecher(self, personnage, canne, poisson):
+        """Pêche le poisson."""
+        banc = self.get_banc_pour(personnage.salle)
+        talent = self.get_talent_peche(personnage.salle)
+        if personnage.cle_etat != "pecher":
+            return
+        
+        if canne.appat is None:
+            personnage.cle_etat = ""
+        
+        personnage.pratiquer_talent(talent)
+        
+        if canne.tension_max < poisson.poids:
+            personnage << "Dans un craquement brutal, votre canne à " \
+                    "pêche se brise !"
+            personnage.salle.envoyer_lisser("Dans un craquement brutal, " \
+                    "la canne à pêche de {} se brise !", personnage)
+            importeur.objet.supprimer_objet(canne.appat.cle)
+            canne.contenu.retirer(canne)
+            importeur.objet.supprimer_objet(canne.cle)
+            return
+        
+        poisson = importeur.objet.creer_objet(poisson)
+        personnage.salle.objets_sol.ajouter(poisson)
+        personnage << "{} décrit un arc dans les airs et tombe à vos " \
+                "pieds !".format(poisson.get_nom())
+        personnage.salle.envoyer_lisser("{} décrit un arc dans les airs " \
+                "et tombe aux pieds de {{}}.".format(poisson.get_nom()),
+                personnage)
+        personnage.cle_etat = ""
+        canne.appat = None

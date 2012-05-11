@@ -57,4 +57,32 @@ class CmdPecher(Commande):
             personnage << "|err|Vous ne pouvez pêcher ici.|ff|"
             return
         
-        personnage << "Vous commencez à pêcher dans le banc {}.".format(banc)
+        if personnage.cle_etat == "pecher":
+            personnage.cle_etat = ""
+            personnage << "Vous retirez votre ligne de l'eau."
+            personnage.salle.envoyer("{} retire sa ligne de l'eau.",
+                    personnage)
+            return
+        
+        canne = None
+        for membre in personnage.equipement.membres:
+            for objet in membre.equipe:
+                if objet.est_de_type("canne à pêche"):
+                    canne = objet
+                    break
+        
+        if canne is None:
+            personnage << "|err|Vous n'équipez pas de canne à pêche.|ff|"
+            return
+        
+        if canne.appat is None:
+            personnage << "|err|{} n'est pas appâtée.".format(
+                    canne.get_nom().capitalize())
+            return
+        
+        personnage.agir("pecher")
+        personnage << "Vous jetez votre ligne à l'eau."
+        personnage.salle.envoyer("{} jète sa lègne à l'eau.", personnage)
+        personnage.cle_etat = "pecher"
+        importeur.diffact.ajouter_action("peche:" + personnage.nom, 15,
+                importeur.peche.attendre_pecher, personnage, canne)
