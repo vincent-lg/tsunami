@@ -34,6 +34,7 @@ from abstraits.module import *
 from corps.fonctions import valider_cle
 from .banc import Banc
 from . import commandes
+from .editeurs.schooledit import EdtSchooledit
 
 class Module(BaseModule):
     
@@ -77,6 +78,9 @@ class Module(BaseModule):
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
+            
+        # Ajout des éditeurs
+        self.importeur.interpreteur.ajouter_editeur(EdtSchooledit)
     
     def creer_banc(self, cle):
         """Crée un banc de poisson et l'ajoute dans le dictionnaire.
