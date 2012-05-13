@@ -237,6 +237,9 @@ class Personnage(BaseObj):
             return self.get_position().etat + " " + \
                     self.salle.details[self.occupe].positions[self.position]
         
+        if self.etat:
+            return self.etat.msg_visible
+        
         return "est là"
     
     def get_position(self):
