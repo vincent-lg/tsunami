@@ -33,6 +33,7 @@
 from math import ceil
 
 from primaires.interpreteur.editeur.entier import Entier
+from primaires.objet.editeurs.edt_statuts import EdtStatuts
 from bases.objet.attribut import Attribut
 from .base import BaseType
 
@@ -58,6 +59,7 @@ class ConteneurNourriture(BaseType):
         self.poids_max = 10
         self.etendre_editeur("m", "poids maximum", Entier, self,
                 "poids_max", 1)
+        self.etendre_editeur("s", "statuts", EdtStatuts, self, "statuts")
         
         # Attributs propres à l'objet (non au prototype)
         self._attributs = {
@@ -73,6 +75,18 @@ class ConteneurNourriture(BaseType):
             "Entrez le |ent|poids maximum|ff| que peut contenir cet objet " \
             "ou |cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
             "Poids maximum actuel : {objet.poids_max}"
+        
+        statuts = enveloppes["s"]
+        statuts.aide_courte = \
+            "Entrez un |ent|ratio|ff| et un |ent|message|ff| à ajouter aux " \
+            "statuts actuels, ou un |ent|ratio\nexistant|ff| et un " \
+            "|ent|nouveau message|ff| pour modifier celui " \
+            "existant. Ce ratio, sur 10,\ncorrespond au remplissage du " \
+            "conteneur jusqu'auquel le message sera affiché\n(exemple : " \
+            "|vr|5|ff| |bc|à moitié plein|ff| signifie qu'on affiche " \
+            "|grf|un bol à moitié plein|ff|).\n" \
+            "Option :\n" \
+            " - |ent|/d <ratio>|ff| : supprime le statut précisé\n"
     
     def calculer_poids(self):
         """Retourne le poids de l'objet et celui des objets contenus."""

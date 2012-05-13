@@ -88,7 +88,7 @@ class Module(BaseModule):
         # Ajout de l'état
         etat = self.importeur.perso.ajouter_etat("magie")
         etat.msg_refus = "Vous êtes en train de lancer un sort."
-        etat.msg_visible = "{personnage} se concentre ici"
+        etat.msg_visible = "se concentre ici"
         etat.act_interdites = ["prendre", "poser", "deplacer"]
     
     def supprimer_sort(self, cle):
