@@ -31,6 +31,7 @@
 """Fichier contenant le type poisson."""
 
 from primaires.objet.types.nourriture import Nourriture
+from primaires.interpreteur.editeur.entier import Entier
 
 class Poisson(Nourriture):
     
@@ -44,3 +45,26 @@ class Poisson(Nourriture):
         """Constructeur de l'objet"""
         Nourriture.__init__(self, cle)
         self.nourrissant = 3
+        self.niveau_peche = 5
+        self.etendre_editeur("ni", "niveau", Entier, self, "niveau_peche",
+                1, 100)
+
+    def travailler_enveloppes(self, enveloppes):
+        """Travail sur les enveloppes"""
+        niveau = enveloppes["ni"]
+        niveau.apercu = "{objet.niveau_peche}"
+        niveau.prompt = "Niveau pêche du poisson : "
+        niveau.aide_courte = \
+            "Entrez le |ent|niveau|ff| du poisson, entre |cmd|1|ff| " \
+            "et |cmd|100|ff|\nou |cmd|/|ff| pour revenir à la fenêtre " \
+            "parente.\n\n" \
+            "Le niveau du poisson influence l'XP gagnée par le joueur " \
+            "qui le pêchera.\n" \
+            "C'est un calcul d'XP relative se faisant entre le niveau " \
+            "du poisson et\n" \
+            "le niveau survie du joueur pêchant le poisson. Plus " \
+            "le poisson est difficile\n" \
+            "et rare, plus son niveau peut être élevé. Au contraire, " \
+            "un poisson très\n" \
+            "commun ne devra pas être au-delà du niveau 10.\n\n" \
+            "Niveau actuel : {objet.niveau_peche}"

@@ -230,6 +230,7 @@ class Module(BaseModule):
             return
         
         poisson = importeur.objet.creer_objet(poisson)
+        banc.pecher(poisson)
         personnage.salle.objets_sol.ajouter(poisson)
         personnage << "{} décrit un arc dans les airs et tombe à vos " \
                 "pieds !".format(poisson.get_nom())
@@ -238,3 +239,18 @@ class Module(BaseModule):
                 personnage)
         personnage.cle_etat = ""
         canne.appat = None
+        
+        # Gain d'XP
+        p_niveau = personnage.niveaux.get("survie", 1)
+        if p_niveau <= 5:
+            fact = 0.2
+        elif p_niveau <= 10:
+            fact = 0.1
+        elif p_niveau <= 20:
+            fact = 0.07
+        elif p_niveau <= 50:
+            fact = 0.05
+        else:
+            fact = 0.01
+        
+        personnage.gagner_xp_rel(poisson.niveau_peche, fact * 100, "survie")

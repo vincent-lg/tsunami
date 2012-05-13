@@ -101,10 +101,9 @@ class Banc(BaseObj):
     def aff_etendue(self):
         return self.etendue and self.etendue.cle or "aucune"
     
-    def pecher_poisson(self, salle, poisson):
+    def pecher(self, poisson):
         """Pêche le poisson indiqué."""
-        if salle in self.salles:
-            self.abondance_actuelle -= poisson.poids
+        self.abondance_actuelle -= poisson.poids
     
     def tick(self):
         """Tick qui doit être appelé toute les minutes."""
