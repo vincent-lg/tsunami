@@ -464,17 +464,24 @@ class Personnage(BaseObj):
         if niveau and niveau not in type(self).importeur.perso.niveaux:
             raise ValueError("le niveau {} n'existe pas".format(niveau))
         
+        if niveau and niveau not in self.niveaux:
+            self.niveaux[niveau] = 1
+            self.xps[niveau] = 0
+        
         xp = int(xp)
-        xp_actuel = int(self.xps.get(niveau, 0)) if niveau else int(self.xp)
-        niveau_actuel = self.niveaux.get(niveau, 0) if niveau else self.niveau
-        nb_niveaux = type(self).importeur.perso.gen_niveaux.nb_niveaux
-        if xp_actuel > 0 and niveau_actuel >= nb_niveaux:
+        if xp <= 0:
             return
         
-        grille = [(0, 1)] + list(importeur.perso.gen_niveaux.grille_xp)
-        xp_nec = grille[niveau_actuel][1]
+        xp_actuel = int(self.xps[niveau]) if niveau else int(self.xp)
+        niveau_actuel = self.niveaux[niveau] if niveau else self.niveau
+        nb_niveaux = type(self).importeur.perso.gen_niveaux.nb_niveaux
+        if niveau_actuel >= nb_niveaux:
+            return
+        
+        grille = list(importeur.perso.gen_niveaux.grille_xp)
+        xp_nec = grille[niveau_actuel - 1][1]
         if niveau:
-            self.xps[niveau] = self.xps.get(niveau, 0) + xp
+            self.xps[niveau] = self.xps[niveau] + xp
             xp_total = self.xps[niveau]
         else:
             self.xp += xp
@@ -483,8 +490,8 @@ class Personnage(BaseObj):
         nb_gagne = 0
         while niveau_actuel < nb_niveaux and xp_total >= xp_nec:
             if niveau:
-                self.niveaux[niveau] = self.niveaux.get(niveau, 0) + 1
-                self.xps[niveau] = self.xps.get(niveau, 0) - xp_nec
+                self.niveaux[niveau] = self.niveaux[niveau] + 1
+                self.xps[niveau] = self.xps[niveau] - xp_nec
                 xp_total = self.xps[niveau]
             else:
                 self.niveau += 1
@@ -556,7 +563,7 @@ class Personnage(BaseObj):
                 raise ValueError("niveau secondaire {} inconnu".format(
                         niv_secondaire))
             
-            p_niveau = self.niveaux[niv_secondaire]
+            p_niveau = self.niveaux.get(niv_secondaire, 1)
         
         # On calcul l'XP relative en se basant sur niveau et p_niveau
         xp = importeur.perso.gen_niveaux.calculer_xp_rel(niveau, pourcentage,
