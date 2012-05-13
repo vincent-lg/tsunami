@@ -187,15 +187,16 @@ class Module(BaseModule):
         if canne.appat is None:
             personnage.cle_etat = ""
         
-        personnage.pratiquer_talent(talent, 3)
+        connaissance = personnage.pratiquer_talent(talent, 3)
         qualite = varier(canne.appat.qualite, 2)
-        qualite /= 10
+        qualite /= 15
+        qualite += connaissance / 250
         if banc.poissons and random.random() < qualite:
             # On choisit le poisson
             poissons = list(banc.poissons.keys())
             poids = list(banc.poissons.values())
             poisson = choix_probable_liste(poissons, poids)
-            tps = varier(poisson.poids, 4, 1, 15)
+            tps = varier(int(poisson.poids), 4, 1, 15)
             personnage.sans_prompt()
             personnage << "Une violente secousse agite votre ligne !"
             personnage << "Vous rejetez votre canne en arrière..."

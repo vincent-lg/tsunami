@@ -51,6 +51,7 @@ class Poisson(Nourriture):
 
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""
+        Nourriture.travailler_enveloppes(self)
         niveau = enveloppes["ni"]
         niveau.apercu = "{objet.niveau_peche}"
         niveau.prompt = "Niveau pêche du poisson : "
