@@ -111,6 +111,7 @@ class Module(BaseModule):
         # doit impérativement retourner une liste de salles sous la forme
         # d'un tuple (nom, interieur, (x, y)) (interieur est un booléen).
         self.salles_a_cartographier = []
+        self.graph = {}
     
     @property
     def salles(self):
@@ -281,7 +282,9 @@ class Module(BaseModule):
         # On prépare les sorties
         for salle in self.salles.values():
             for sortie in salle.sorties:
-                sortie.salle_dest = self.salles[sortie.salle_dest]
+                salle_dest = self.salles[sortie.salle_dest]
+                sortie.salle_dest = salle_dest
+                self.ajouter_chemin(salle, salle_dest, sortie.direction)
         
         for salle in self._salles.values():
             zone = salle.zone
@@ -538,3 +541,22 @@ class Module(BaseModule):
                 if salle == feu.salle:
                     liste_messages.insert(0, str(feu))
                     return
+    
+    def ajouter_chemin(self, origine, destination, direction):
+        """Ajoute un chemin dans le graph entre deux salles.
+        
+        Le graph représente TOUS les chemins possibles entre deux salles.
+        la forme du graph (self.graph) est un dictionnaire contenant en
+        clé la salle d'origine et en valeur un dictionnaire contenant
+        en clé la destination et en valeur la sortie.
+        
+        """
+        for t_graph in self.graph.values():
+            t_chemin = t_graph.get(origine)
+            if t_chemin:
+                t_graph[destination] = t_chemin
+        
+        d_origine = self.graph.get(origine, {})
+        d_origine[destination] = direction
+        self.graph[origine] = d_origine
+
