@@ -31,6 +31,7 @@
 """Fichier contenant le paramètre 'mien' de la commande 'rapport'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
+from primaires.format.fonctions import couper_phrase
 
 class PrmMien(Parametre):
     

@@ -87,17 +87,6 @@ class ConteneurNourriture(BaseType):
             "Option :\n" \
             " - |ent|/d <ratio>|ff| : supprime le statut précisé\n"
     
-    @property
-    def nourriture_qtt(self):
-        """Retourne un dictionnaire {Nourriture:quantité}."""
-        dico_qtt = {}
-        for item in self.nourriture:
-            if item.prototype not in dico_qtt:
-                dico_qtt[item.prototype] = 1
-            else:
-                dico_qtt[item.prototype] += 1
-        return dico_qtt
-    
     def calculer_poids(self):
         """Retourne le poids de l'objet et celui des objets contenus."""
         poids = self.poids_unitaire
@@ -118,7 +107,7 @@ class ConteneurNourriture(BaseType):
         ajout = "vide"
         if self.nourriture:
             poids_contenu = sum([o.poids_unitaire for o in self.nourriture])
-            ratio = ceil(poids_contenu / self.poids_max)
+            ratio = ceil(10 * poids_contenu / self.poids_max)
             for r, message in self.statuts:
                 if ratio <= r:
                     ajout = message
@@ -141,9 +130,15 @@ class ConteneurNourriture(BaseType):
         """Le personnage regarde l'objet"""
         msg = BaseType.regarder(self, personnage)
         
+        dico_qtt = {}
+        for item in self.nourriture:
+            if item.prototype not in dico_qtt:
+                dico_qtt[item.prototype] = 1
+            else:
+                dico_qtt[item.prototype] += 1
+        
         if self.nourriture:
-            nourriture = [o.get_nom(nb) for o, nb \
-                    in self.nourriture_qtt.items()]
+            nourriture = [o.get_nom(nb) for o, nb in dico_qtt.items()]
             if len(nourriture) > 1:
                 ajout = ", ".join(nourriture[:-1]) + " et " + nourriture[-1]
             else:

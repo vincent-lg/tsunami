@@ -64,6 +64,9 @@ class EdtStatuts(Editeur):
         if not arguments:
             self.pere << "|err|Vous devez préciser un nombre.|ff|"
             return
+        if len(prototype.statuts) <= 1:
+            self.pere << "|err|La liste de statuts ne peut être vide.|ff|"
+            return
         try:
             nombre = int(arguments.split(" ")[0])
             assert nombre in [ligne[0] for ligne in prototype.statuts]
@@ -71,6 +74,9 @@ class EdtStatuts(Editeur):
             self.pere << "|err|Vous devez préciser un nombre valide faisant " \
                     "partie de la liste.|ff|"
         else:
+            if nombre == 10:
+                self.perre << "|err|Le statut 10 doit être précisé.|ff|"
+                return
             i = 0
             for ratio, message in list(prototype.statuts):
                 if ratio == nombre:
@@ -86,7 +92,8 @@ class EdtStatuts(Editeur):
                     "message.|ff|"
             return
         try:
-            nombre, message = msg.split(" ")
+            msg = msg.split(" ")
+            nombre, message = msg[0], " ".join(msg[1:])
             nombre = int(nombre)
             assert 1 <= nombre <= 10
         except (ValueError, AssertionError):
@@ -95,13 +102,12 @@ class EdtStatuts(Editeur):
         else:
             if nombre in [ligne[0] for ligne in prototype.statuts]:
                 i = 0
-                for ratio, message in prototype.statuts:
+                for ratio, statut in prototype.statuts:
                     if ratio == nombre:
                         break
                     i += 1
-                prototype.statuts[i][1] = message
-            else:
-                prototype.statuts.append((nombre, message))
-                prototype.statuts = sorted(prototype.statuts,
-                        key=lambda ligne: ligne[0])
+                del prototype.statuts[i]
+            prototype.statuts.append((nombre, message))
+            prototype.statuts = sorted(prototype.statuts,
+                    key=lambda ligne: ligne[0])
             self.actualiser()

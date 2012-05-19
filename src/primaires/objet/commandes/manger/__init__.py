@@ -66,8 +66,8 @@ class CmdManger(Commande):
             for item in objet.nourriture:
                 item.script["mange"].executer(personnage=personnage,
                         objet=objet)
-                item.detruire()
                 yield item.nourrissant
+                importeur.objet.supprimer_objet(item.identifiant)
             objet.nourriture = []
             personnage << lisser("Vous mangez le contenu de {}.".format(
                     objet.nom_singulier))
@@ -79,4 +79,4 @@ class CmdManger(Commande):
         
         objet.script["mange"].executer(personnage=personnage, objet=objet)
         personnage << objet.message_mange
-        objet.detruire()
+        importeur.objet.supprimer_objet(objet.identifiant)
