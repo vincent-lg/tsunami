@@ -33,6 +33,7 @@
 from random import randint, choice, random
 
 from abstraits.obase import BaseObj
+import primaires.perso.exceptions.stat
 
 class Feu(BaseObj):
     
@@ -54,10 +55,11 @@ class Feu(BaseObj):
     def __init__(self, salle, puissance=10):
         """Constructeur d'un feu"""
         BaseObj.__init__(self)
-        self.puissance = puissance
+        self._puissance = puissance if puissance <= 100 else 100
         self.salle = salle
         self.stabilite = 0
         self.generation = 0
+        self.tour = 0
     
     def __getnewargs__(self):
         return (None, )
@@ -70,8 +72,20 @@ class Feu(BaseObj):
             if self.puissance <= puissance_max:
                 return msg
     
+    def _set_puissance(self, valeur):
+        if valeur >= 100:
+            self._puissance = 100
+        elif valeur <= 0:
+            self._puissance = 0
+        else:
+            self._puissance = valeur
+    def _get_puissance(self):
+        return self._puissance
+    puissance = property(_get_puissance, _set_puissance)
+    
     def bruler(self):
         """Méthode d'action de base du feu"""
+        self.tour = 0 if self.tour == 5 else self.tour + 1
         messages_standard = [
             "Une bûche cède soudain dans un grand craquement.",
             "Quelques étincelles volent joyeusement.",
@@ -89,16 +103,16 @@ class Feu(BaseObj):
             "Quelques flammes faiblardes tentent de s'extirper de la cendre.",
             "Les flammes se ravivent un instant, puis retombent, vaincues.",
         ]
-        if random() < self.stabilite:
-            if self.puissance <= 20:
+        if random() < self.stabilite and self.tour == 5:
+            if self.puissance <= 5:
                 self.salle.envoyer("Le feu s'éteint sans crier gare, à la " \
                         "faveur d'un souffle d'air.", prompt=False)
                 importeur.salle.eteindre_feu(self.salle)
                 return
             elif self.puissance <= 40:
-                # Entre 20 et 40, on laisse osciller un peu la puissance
-                if random() < 0.33:
-                    self.puissance += randint(1, 5)
+                # Entre 5 et 40, on laisse osciller un peu la puissance
+                if random() < 0.44:
+                    self.puissance += randint(-3, 3)
             else:
                 self.puissance += randint(0, 3)
                 self.propager()
@@ -111,15 +125,28 @@ class Feu(BaseObj):
         elif self.puissance <= 5:
             self.salle.envoyer(choice(messages_fin), prompt=False)
             # On rend le feu instable
-            self.stabilite += 1 - self.puissance / 5
-            self.puissance -= 1
+            if self.tour == 5:
+                self.stabilite += 1 - self.puissance / 5
+                self.puissance -= 1
         elif self.puissance <= 40:
-            self.salle.envoyer(choice(messages_standard), prompt=False)
-            self.puissance -= 1
+            if random() < 0.67:
+                self.salle.envoyer(choice(messages_standard), prompt=False)
+            if self.tour == 5:
+                self.puissance -= 1
         else:
             # Cas de l'incendie
-            self.stabilite = self.puissance / 200
-            self.puissance -= 3
+            for personnage in self.salle.personnages:
+                dommages = int(0.1 * personnage.vitalite_max)
+                print(dommages)
+                try:
+                    personnage << "Le feu vous brûle la couenne."
+                    personnage.vitalite = personnage.vitalite - dommages
+                except StatIEO:
+                    personnage << "Vous rendez l'âme dans le brasier."
+                    personnage.mourir()
+            if self.tour == 5:
+                self.stabilite = self.puissance / 200
+                self.puissance -= 1
     
     def propager(self):
         """Méthode de propagation.
@@ -142,8 +169,9 @@ class Feu(BaseObj):
                 if p.est_sur(self.salle)]
         if pertus:
             perturbation = pertus[0]
-        # if perturbation and perturbation.nom_pertu in ("pluie", "orage"):
-            # return
+        # Pas de propagation possible en cas d'orage ou de pluie
+        if perturbation and perturbation.nom_pertu in ("pluie", "orage"):
+            return
         if perturbation and perturbation.nom_pertu == "vent":
             coef_puissance = 0
         else:
@@ -156,7 +184,7 @@ class Feu(BaseObj):
             feu_fils = importeur.salle.allumer_feu(salle_fils)
         feu_fils.puissance = self.puissance - coef_puissance
         feu_fils.generation = self.generation + 1
-        salle_fils.envoyer("Le feuuuu !")
+        salle_fils.envoyer("Un incendie se déclare tout à coup.", prompt=False)
     
     @classmethod
     def repop(cls):
@@ -166,4 +194,4 @@ class Feu(BaseObj):
         """
         for feu in list(importeur.salle.feux.values()):
             feu.bruler()
-        importeur.diffact.ajouter_action("repop_feux", 5, cls.repop)
+        importeur.diffact.ajouter_action("repop_feux", 9, cls.repop)
