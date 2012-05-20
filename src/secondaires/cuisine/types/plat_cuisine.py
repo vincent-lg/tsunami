@@ -43,3 +43,4 @@ class PlatCuisine(Nourriture):
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         Nourriture.__init__(self, cle)
+        self.peut_prendre = False

@@ -67,6 +67,11 @@ class CmdCuisiner(Commande):
         except (KeyError, AssertionError):
             personnage << "|err|Il n'y a pas de feu adéquat par ici.|ff|"
             return
+        for objet in personnage.salle.objets_sol:
+            if objet.est_de_type("ustensile") \
+                    and objet.etat_singulier == objet.etat_cuisson:
+                personnage << "|err|Quelque chose cuit déjà sur ce feu.|ff|"
+                return
         
         # On commence réellement à cuisiner
         personnage.agir("cuisiner")
