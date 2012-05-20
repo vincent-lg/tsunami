@@ -36,6 +36,7 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.entier import Entier
 from primaires.scripting.editeurs.edt_script import EdtScript
 from .edt_noms import EdtNoms
 from .supprimer import NSupprimer
@@ -96,7 +97,7 @@ class EdtPresentation(Presentation):
             "Emplacement actuel : {objet.emplacement}"
         
         # Prix
-        prix = self.ajouter_choix("prix", "p", Uniligne, prototype, "prix")
+        prix = self.ajouter_choix("prix", "p", Entier, prototype, "prix", 1)
         prix.parent = self
         prix.apercu = "{objet.prix}"
         prix.prompt = "Entrez un prix supérieur à 1 :"

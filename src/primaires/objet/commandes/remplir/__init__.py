@@ -71,8 +71,23 @@ class CmdRemplir(Commande):
         dans = dic_masques["plat"].objet
         
         pose = 0
+        poids_total = 0
         for objet, qtt, conteneur in objets:
-            print(objet, qtt, conteneur, type(conteneur))
+            if not objet.peut_prendre:
+                personnage << "Vous ne pouvez pas prendre {} avec vos " \
+                        "mains...".format(objet.get_nom())
+                return
+            poids_total += objet.poids
+            if poids_total > dans.poids_max:
+                if pose == 0:
+                    personnage << "Vous ne pouvez rien y poser de plus."
+                else:
+                    personnage << "Vous déposez {} dans {}.".format(
+                            objet.get_nom(pose), dans.nom_singulier)
+                    personnage.salle.envoyer("{{}} dépose {} dans {}.".format(
+                            objet.get_nom(pose), dans.nom_singulier),
+                            personnage)
+                return
             pose += 1
             if qtt > nombre:
                 qtt = nombre

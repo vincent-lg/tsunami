@@ -71,6 +71,10 @@ class CmdPoser(Commande):
         
         pose = 0
         for objet, qtt, conteneur in objets:
+            if not objet.peut_prendre:
+                personnage << "Vous ne pouvez pas prendre {} avec vos " \
+                        "mains...".format(objet.nom_singulier)
+                return
             print(objet, qtt, conteneur, type(conteneur))
             pose += 1
             if qtt > nombre:

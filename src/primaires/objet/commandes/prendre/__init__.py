@@ -75,6 +75,10 @@ class CmdPrendre(Commande):
         
         pris = 0
         for objet, qtt, conteneur in objets:
+            if not objet.peut_prendre:
+                personnage << "Vous ne pouvez pas prendre {} avec vos " \
+                        "mains...".format(objet.nom_singulier)
+                return
             if nombre > qtt:
                 nombre = qtt
             try:
