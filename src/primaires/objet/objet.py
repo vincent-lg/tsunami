@@ -177,6 +177,9 @@ class Objet(BaseObj):
         if self in self.prototype.objets:
             self.prototype.objets.remove(self)
         
+        if self.contenu:
+            self.contenu.retirer(self)
+        
         if hasattr(self, "conteneur"):
             for objet in self.conteneur._objets:
                 importeur.objet.supprimer_objet(objet.identifiant)
