@@ -85,6 +85,7 @@ class BaseType(BaseObj, metaclass=MetaType):
         self.depecer_de = []
         
         # Equipement
+        self.peut_prendre = True # définit si on peut manipuler l'objet à main
         self.emplacement = ""
         self.epaisseur = 1
         self.positions = ()
@@ -125,7 +126,6 @@ class BaseType(BaseObj, metaclass=MetaType):
     def _set_prix(self, prix):
         """Modifie le prix"""
         self._prix = int(prix)
-        self.enregistrer()
     prix = property(_get_prix, _set_prix)
     
     @property

@@ -71,6 +71,10 @@ class CmdVider(Commande):
         
         pris = 0
         for objet in objets:
+            if not objet.peut_prendre:
+                personnage << "Vous ne pouvez pas prendre {} avec vos " \
+                        "mains...".format(objet.nom_singulier)
+                return
             try:
                 dans = personnage.ramasser(objet, plat)
             except SurPoids as err:

@@ -32,7 +32,7 @@
 
 from math import ceil
 
-from primaires.interpreteur.editeur.entier import Entier
+from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.objet.editeurs.edt_statuts import EdtStatuts
 from bases.objet.attribut import Attribut
 from .base import BaseType
@@ -56,9 +56,8 @@ class ConteneurNourriture(BaseType):
             (5, "à moitié plein"),
             (10, "rempli"),
         ]
-        self.poids_max = 10
-        self.etendre_editeur("m", "poids maximum", Entier, self,
-                "poids_max", 1)
+        self.poids_max = 0.5
+        self.etendre_editeur("m", "poids maximum", Flottant, self, "poids_max")
         self.etendre_editeur("s", "statuts", EdtStatuts, self, "statuts")
         
         # Attributs propres à l'objet (non au prototype)
@@ -108,7 +107,7 @@ class ConteneurNourriture(BaseType):
         ajout = "vide"
         if self.nourriture:
             poids_contenu = sum([o.poids_unitaire for o in self.nourriture])
-            ratio = ceil(poids_contenu / self.poids_max)
+            ratio = ceil(10 * poids_contenu / self.poids_max)
             for r, message in self.statuts:
                 if ratio <= r:
                     ajout = message
