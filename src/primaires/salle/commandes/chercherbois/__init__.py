@@ -86,7 +86,7 @@ class CmdChercherBois(Commande):
                         objet = importeur.objet.creer_objet(choix)
                         personnage.salle.objets_sol.ajouter(objet)
                         somme_qualites += objet.qualite
-                    personnage << "Vous trouvez {} et " \
+                    personnage << "Vous trouvez {} " \
                             "et vous relevez.".format(choix.get_nom(nb_obj))
                     personnage.salle.envoyer("{} se relève, l'air satisfait.",
                             personnage)

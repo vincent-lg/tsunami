@@ -56,7 +56,7 @@ class CmdMettreFeu(Commande):
         combustibles = importeur.objet.prototypes.values()
         combustibles = [c for c in combustibles \
                 if c.est_de_type("combustible")]
-        objets_sol = salle.objets_sol
+        objets_sol = list(salle.objets_sol)
         somme_combu = 0
         for objet in list(objets_sol):
             if objet.prototype in combustibles:
@@ -72,10 +72,8 @@ class CmdMettreFeu(Commande):
                     "gagne en vigueur et en éclat."
             for objet in objets_sol:
                 if objet.prototype in combustibles:
-                    objets_sol.retirer(objet)
-                    if objet.identifiant:
-                        importeur.objet.supprimer_objet(
-                                objet.identifiant)
+                    importeur.objet.supprimer_objet(
+                            objet.identifiant)
         else:
             pierre = None
             for objet, qtt, t_conteneur in \
@@ -103,7 +101,6 @@ class CmdMettreFeu(Commande):
                     personnage.gagner_xp("survie", somme_combu * 20)
                     for objet in objets_sol:
                         if objet.prototype in combustibles:
-                            objets_sol.retirer(objet)
                             if objet.identifiant:
                                 importeur.objet.supprimer_objet(
                                         objet.identifiant)

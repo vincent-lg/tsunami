@@ -65,16 +65,17 @@ class CmdManger(Commande):
             personnage.salle.envoyer("{} commence à manger.", personnage)
             personnage.agir("manger")
             for item in objet.nourriture:
-                if not objet.est_de_type("nourriture"):
+                if not item.est_de_type("nourriture"):
                     continue
+                
                 item.script["mange"].executer(personnage=personnage,
                         objet=objet)
                 yield item.nourrissant
+                personnage << "Vous mangez {}.".format(item.get_nom())
+                personnage << item.message_mange
                 importeur.objet.supprimer_objet(item.identifiant)
             objet.nourriture = [o for o in objet.nourriture \
                     if not o.est_de_type("nourriture")]
-            personnage << lisser("Vous mangez le contenu de {}.".format(
-                    objet.nom_singulier))
             personnage.salle.envoyer("{} termine son repas.", personnage)
             return
         
@@ -83,6 +84,7 @@ class CmdManger(Commande):
             return
         
         objet.script["mange"].executer(personnage=personnage, objet=objet)
+        personnage << "Vous mangez {}.".format(objet.get_nom())
         personnage << objet.message_mange
         personnage.salle.envoyer("{{}} mange {}.".format(objet.get_nom()),
                 personnage)

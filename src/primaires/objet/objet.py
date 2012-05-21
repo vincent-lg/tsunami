@@ -177,7 +177,7 @@ class Objet(BaseObj):
         if self in self.prototype.objets:
             self.prototype.objets.remove(self)
         
-        if self.contenu:
+        if self.contenu and self in self.contenu:
             self.contenu.retirer(self)
         
         if hasattr(self, "conteneur"):
