@@ -73,6 +73,9 @@ class ConteneurObjet(BaseObj):
         parent = repr(self.parent) if self.parent else "sans parent"
         return parent + " " + str(self._objets) + " " + str(self._non_uniques)
     
+    def __contains__(self, objet):
+        return objet in self._objets
+    
     @property
     def grand_parent(self):
         if hasattr(self.parent, "grand_parent"):
