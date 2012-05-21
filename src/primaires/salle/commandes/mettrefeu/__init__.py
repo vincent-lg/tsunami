@@ -103,7 +103,6 @@ class CmdMettreFeu(Commande):
                     personnage.gagner_xp("survie", somme_combu * 20)
                     for objet in objets_sol:
                         if objet.prototype in combustibles:
-                            objets_sol.retirer(objet)
                             if objet.identifiant:
                                 importeur.objet.supprimer_objet(
                                         objet.identifiant)
