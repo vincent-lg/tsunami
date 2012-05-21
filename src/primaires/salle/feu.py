@@ -88,8 +88,8 @@ class Feu(BaseObj):
         self.tour = 0 if self.tour == 5 else self.tour + 1
         messages_standard = [
             "Une bûche cède soudain dans un grand craquement.",
-            "Quelques étincelles volent joyeusement.",
-            "Le feu redouble d'ardeur et les flammes montent.",
+            "Quelques étincelles s'envolent vers le ciel.",
+            "Le feu redouble d'ardeur et les flammes montent brusquement.",
             "Un crépitement sec retentit.",
             "Une ou deux flammes tentent de s'échapper du foyer.",
             "Les flammes dansent sous un léger coup de vent.",
@@ -97,6 +97,7 @@ class Feu(BaseObj):
             "Les flammes montent à l'assaut d'un nouveau bout de bois.",
             "Une langue de feu s'échappe vers le ciel dans un souffle.",
             "Une branche un peu verte proteste bruyamment.",
+            "Un noeud dans le bois éclate en une pluie d'étincelle.",
         ]
         messages_fin = [
             "Le feu crachote comme un vieillard malade.",

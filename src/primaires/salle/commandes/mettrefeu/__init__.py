@@ -78,9 +78,12 @@ class CmdMettreFeu(Commande):
                                 objet.identifiant)
         else:
             pierre = None
-            for objet in personnage.equipement.tenus:
+            for objet, qtt, t_conteneur in \
+                    personnage.equipement.inventaire.iter_objets_qtt(
+                    conteneur=True):
                 if objet.est_de_type("pierre à feu"):
                     pierre = objet
+                    conteneur = t_conteneur
                     break
             if not pierre:
                 personnage << "|err|Vous ne tenez rien pour allumer.|ff|"
@@ -112,6 +115,5 @@ class CmdMettreFeu(Commande):
             if proba_casse >= solidite:
                 personnage << "{} se brise en mille morceaux.".format(
                         pierre.nom_singulier)
-                personnage.equipement.tenus.retirer(pierre)
-                if pierre.identifiant:
-                    importeur.objet.supprimer_objet(pierre.identifiant)
+                conteneur.retirer(pierre)
+                importeur.objet.supprimer_objet(pierre.identifiant)
