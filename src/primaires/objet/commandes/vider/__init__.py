@@ -57,7 +57,8 @@ class CmdVider(Commande):
         plat = self.noeud.get_masque("plat")
         plat.prioritaire = True
         plat.proprietes["conteneurs"] = \
-                "(personnage.equipement.tenus, personnage.salle.objets_sol)"
+                "(personnage.equipement.inventaire, " \
+                "personnage.salle.objets_sol)"
         plat.proprietes["types"] = "('conteneur de nourriture', )"
     
     def interpreter(self, personnage, dic_masques):
