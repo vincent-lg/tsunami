@@ -72,10 +72,8 @@ class CmdMettreFeu(Commande):
                     "gagne en vigueur et en éclat."
             for objet in objets_sol:
                 if objet.prototype in combustibles:
-                    objets_sol.retirer(objet)
-                    if objet.identifiant:
-                        importeur.objet.supprimer_objet(
-                                objet.identifiant)
+                    importeur.objet.supprimer_objet(
+                            objet.identifiant)
         else:
             pierre = None
             for objet, qtt, t_conteneur in \
