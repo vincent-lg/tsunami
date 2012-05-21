@@ -56,7 +56,7 @@ class CmdMettreFeu(Commande):
         combustibles = importeur.objet.prototypes.values()
         combustibles = [c for c in combustibles \
                 if c.est_de_type("combustible")]
-        objets_sol = salle.objets_sol
+        objets_sol = list(salle.objets_sol)
         somme_combu = 0
         for objet in list(objets_sol):
             if objet.prototype in combustibles:
