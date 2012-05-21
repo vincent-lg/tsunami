@@ -52,9 +52,12 @@ class CmdCuisiner(Commande):
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         ustensile = None
-        for objet in personnage.equipement.tenus:
+        for objet, qtt, t_conteneur in \
+                personnage.equipement.inventaire.iter_objets_qtt(
+                conteneur=True):
             if objet.est_de_type("ustensile") and objet.nourriture:
                 ustensile = objet
+                conteneur = t_conteneur
                 break
         if ustensile is None:
             personnage << "|err|Vous ne tenez rien susceptible de cuire ou " \
@@ -77,7 +80,7 @@ class CmdCuisiner(Commande):
         personnage.agir("cuisiner")
         personnage << "Vous posez délicatement {} sur le feu.".format(
                 ustensile.get_nom())
-        personnage.equipement.tenus.retirer(ustensile)
+        conteneur.retirer(ustensile)
         personnage.salle.objets_sol.ajouter(ustensile)
         ustensile.etat_singulier = ustensile.etat_cuisson
         recette, qtt = importeur.cuisine.identifier_recette(
@@ -99,7 +102,7 @@ class CmdCuisiner(Commande):
                         break
                 if i + 1 == recette.temps_cuisson: # Si on a cuit jusqu'au bout
                     for item in ustensile.nourriture:
-                        item.detruire()
+                        importeur.objet.supprimer_objet(item.identifiant)
                     ustensile.nourriture = []
                     del ustensile.etat_singulier
                     for i in range(qtt):
@@ -111,6 +114,6 @@ class CmdCuisiner(Commande):
         personnage << "Votre préparation crame et se mue en un résidu " \
                 "noirâtre que vous préférez jeter immédiatament au feu."
         for item in ustensile.nourriture:
-            item.detruire()
+            importeur.objet.supprimer_objet(item.identifiant)
         ustensile.nourriture = []
         del ustensile.etat_singulier
