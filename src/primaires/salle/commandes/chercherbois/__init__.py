@@ -80,13 +80,14 @@ class CmdChercherBois(Commande):
                             possibles.append(combustible)
                 nb_obj = randint(int(proba_trouver * 10), int(niveau * 10)) + 1
                 if possibles:
+                    choix = choice(possibles)
                     somme_qualites = 0
                     for i in range(nb_obj):
-                        objet = importeur.objet.creer_objet(choice(possibles))
+                        objet = importeur.objet.creer_objet(choix)
                         personnage.salle.objets_sol.ajouter(objet)
                         somme_qualites += objet.qualite
-                    personnage << "Vous amassez un petit tas de combustible " \
-                            "et vous relevez."
+                    personnage << "Vous trouvez {} et " \
+                            "et vous relevez.".format(choix.get_nom(nb_obj))
                     personnage.salle.envoyer("{} se relève, l'air satisfait.",
                             personnage)
                     personnage.pratiquer_talent("collecte_bois")
