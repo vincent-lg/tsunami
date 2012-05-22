@@ -112,6 +112,7 @@ class Module(BaseModule):
         # d'un tuple (nom, interieur, (x, y)) (interieur est un booléen).
         self.salles_a_cartographier = []
         self.graph = {}
+        self.details_dynamiques = []
     
     @property
     def salles(self):
