@@ -32,6 +32,9 @@
 
 from abstraits.module import *
 from corps.fonctions import valider_cle
+from primaires.format.fonctions import format_nb
+from .plante import Plante
+from .prototype import PrototypePlante
 
 class Module(BaseModule):
     
@@ -48,7 +51,68 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "botanique", "secondaire")
         self.commandes = []
+        self.prototypes = {}
+        self.plantes = {}
+        self.logger = importeur.man_logs.creer_logger(
+                "botanique", "botanique")
     
     def config(self):
         """Configuration du module."""
         BaseModule.config(self)
+    
+    def init(self):
+        """Méthode d'initialisation du module."""
+        # On récupère les prototypes
+        prototypes = importeur.supenr.charger_groupe(PrototypePlante)
+        for prototype in prototypes:
+            self.ajouter_prototype(prototype)
+        
+        nb_prototypes = len(prototypes)
+        self.logger.info(format_nb(nb_prototypes, "{nb} prototype{s} " \
+                "de plante récupéré{s}"))
+        
+        # On récupère les plantes
+        plantes = self.importeur.supenr.charger_groupe(Plante)
+        for plante in plantes:
+            self.ajouter_plante(plante)
+        
+        nb_plantes = len(plantes)
+        self.logger.info(format_nb(nb_plantes, "{nb} plante{s} " \
+                "récupérée{s}", fem=True))
+        
+        BaseModule.init(self)
+    
+    def creer_prototype(self, cle):
+        """Création du prototype de plante."""
+        if cle in self.prototypes:
+            raise KeyError("la clé {} existe déjà".format(cle))
+        
+        prototype = PrototypePlante(cle)
+        self.ajouter_prototype(prototype)
+        return prototype
+    
+    def ajouter_prototype(self, prototype):
+        """Ajout du prototype au dictionnaire."""
+        self.prototypes[prototype.cle] = prototype
+    
+    def supprimer_prototype(self, cle):
+        """Suppression du prototype."""
+        prototype = self.prototypes[cle]
+        prototype.detruire()
+        del self.prototypes[cle]
+    
+    def creer_plante(self, prototype, salle):
+        """Création de la plante."""
+        plante = Plante(salle, prototype)
+        self.ajouter_plante(plante)
+        return plante
+    
+    def ajouter_plante(self, plante):
+        """Ajout de la plante au dictionnaire."""
+        self.plantes[plante.identifiant] = plante
+    
+    def supprimer_plante(self, cle):
+        """Suppression de la plante."""
+        plante = self.plantes[cle]
+        plante.detruire()
+        del self.plantes[cle]
