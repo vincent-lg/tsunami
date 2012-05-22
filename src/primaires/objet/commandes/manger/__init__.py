@@ -65,7 +65,7 @@ class CmdManger(Commande):
             personnage.salle.envoyer("{} commence à manger.", personnage)
             personnage.agir("manger")
             for item in objet.nourriture:
-                if not objet.est_de_type("nourriture"):
+                if not item.est_de_type("nourriture"):
                     continue
                 item.script["mange"].executer(personnage=personnage,
                         objet=objet)
