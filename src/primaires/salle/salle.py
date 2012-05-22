@@ -203,7 +203,7 @@ class Salle(BaseObj):
         """Retourne une liste des éléments observables dans cette salle."""
         liste = []
         for methode in importeur.salle.details_dynamiques:
-            liste.extends(methode(self))
+            liste.extends(methode(self, personnage))
         
         return []
     
