@@ -101,6 +101,7 @@ class Module(BaseModule):
                 "salles", "salles")
         self.terrains = {}
         self.graph = {}
+        self.details_dynamiques = []
     
     @property
     def salles(self):

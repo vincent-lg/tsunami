@@ -201,6 +201,10 @@ class Salle(BaseObj):
     
     def get_elements_observables(self, personnage):
         """Retourne une liste des éléments observables dans cette salle."""
+        liste = []
+        for methode in importeur.salle.details_dynamiques:
+            liste.extends(methode(self))
+        
         return []
     
     def regarder(self, personnage):
