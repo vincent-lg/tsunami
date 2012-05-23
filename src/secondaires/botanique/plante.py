@@ -49,17 +49,32 @@ class Plante(BaseObj):
         BaseObj.__init__(self)
         self.prototype = prototype
         self.salle = salle
-        self.identifiant = "inconnu"
+        self.n_id = -1
         self.elements = {}
+        self.age = 0
+        self.periode = None
         if prototype:
-            self.identifiant = prototype.cle + prototype.nb_plantes
-            type(prototype).nb_plantes += 1
+            self.n_id = prototype.n_id
+            type(prototype).n_id += 1
+            prototype.plantes.append(self)
     
     def __getnewargs__(self):
         return (None, None)
     
     def __repr__(self):
-        return "<plante {}>".format(repr(self.identifiant))
+        return "<plante {} (âge={})>".format(repr(self.identifiant), self.age)
     
     def __str__(self):
         return self.identifiant
+    
+    @property
+    def cle(self):
+        return self.prototype and self.prototype.cle or "inconnue"
+    
+    @property
+    def identifiant(self):
+        return self.cle + "_" + str(self.n_id)
+    
+    @property
+    def cycle(self):
+        return self.periode and self.periode.cycle or None

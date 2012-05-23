@@ -66,6 +66,9 @@ class Module(BaseModule):
         prototypes = importeur.supenr.charger_groupe(PrototypePlante)
         for prototype in prototypes:
             self.ajouter_prototype(prototype)
+            if prototype.plantes:
+                prototype.n_id = max(p.n_id for p in \
+                        prototype.plantes) + 1
         
         nb_prototypes = len(prototypes)
         self.logger.info(format_nb(nb_prototypes, "{nb} prototype{s} " \
@@ -103,7 +106,7 @@ class Module(BaseModule):
     
     def creer_plante(self, prototype, salle):
         """Création de la plante."""
-        plante = Plante(salle, prototype)
+        plante = Plante(prototype, salle)
         self.ajouter_plante(plante)
         return plante
     

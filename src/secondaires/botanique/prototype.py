@@ -31,9 +31,10 @@
 """Ce fichier contient la classe PlantePrototype, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
+from corps.fonctions import valider_cle
 from corps.aleatoire import varier
 from primaires.format.fonctions import supprimer_accents
-from .periode import Periode
+from .cycle import Cycle
 
 class PrototypePlante(BaseObj):
     
@@ -42,24 +43,36 @@ class PrototypePlante(BaseObj):
     Les informations contenues dans les objets de ce type sont communes
     à une espèce de plante. On y trouve :
     cle -- la clé identifiante unique de la plante
-    periodes -- une liste des périodes de maturation
+    croissance -- une liste des cycles de croissance de maturation
     
-    Beaucoup d'informations sont définies pour chaque période. Une
-    période de la plante correspond à un moment de maturation (par exemple,
-    entre le premier jour du mois de janvier et le quatrième jour
-    de février à plus ou moins 5 jours, la plante est à l'état
-    de pouce, rien n'est récoltable dessus).
+    Beaucoup d'informations sont définies pour chaque cycle. Une
+    cycle dur au minimum un an (souvent plusieurs) et détermine
+    la croissance de la plante. Chaque cycle contient plusieurs périodes
+    qui reviennent chaque année.
+    Par exemple :
+        un pommier se trouve au début à l'état de graine (cycle invisible)
+        puis à l'état de pouce
+        puis à l'état de jeune pommier. Ce cycle contient :
+            une période d'arbre nu
+            une période de floraison
+        un cycle mature
+        ...
+    
+    Pour plus d'informations, consultez la classe Cycle (définie dans
+    le fichier cycle.py) et la classe Periode (définie dans le fichier
+    periode.py).
     
     """
     
     enregistrer = True
+    n_id = 1
     def __init__(self, cle=""):
         """Constructeur du prototype."""
         BaseObj.__init__(self)
         if cle:
             valider_cle(cle)
             self.cle = cle
-        self.periodes = []
+        self.cycles = []
         self.plantes = []
     
     def __getnewargs__(self):
@@ -100,61 +113,66 @@ class PrototypePlante(BaseObj):
         
         return self.periodes[0]
     
-    def ajouter_periode(self, nom):
-        """Ajoute une période et la retourne.
+    def ajouter_cycle(self, nom, age):
+        """Ajoute un cycle et le retourne.
         
-        Si la période existe (le nom est déjà pris), lève une exception
+        Si le cycle existe (le nom ou l'âge est déjà pris), lève une exception
         ValueError.
         
         """
-        if self.est_periode(nom):
-            raise ValueError("la période {} existe déjà".format(nom))
+        if self.est_cycle(nom):
+            raise ValueError("le cycle {} existe déjà".format(nom))
         
-        periode = Periode(nom.lower(), self)
-        self.periodes.ajouter(periode)
-        return periode
+        for cycle in self.cycles:
+            if cycle.age == age:
+                raise ValueError("l'âge {} est déjà défini pour " \
+                        "le cycle {}".format(age, cycle.nom))
+        
+        cycle = Cycle(nom.lower(), age, self)
+        self.cycles.append(cycle)
+        return cycle
     
-    def est_periode(self, nom):
-        """Retourne True si la période est trouvée, False sinon.
+    def est_cycle(self, nom):
+        """Retourne True si le cycle est trouvé, False sinon.
         
         La recherche ne tient pas compte des accents ou majuscules /
         minuscules.
         
         """
         nom = supprimer_accents(nom).lower()
-        for periode in self.periodes:
-            if supprimer_accents(periode.nom) == nom:
+        for cycle in self.cycles:
+            if supprimer_accents(cycle.nom) == nom:
                 return True
         
         return False
     
-    def get_periode(self, nom):
-        """Retourne la période si existe.
+    def get_cycle(self, nom):
+        """Retourne le cycle si existe.
         
-        Si elle n'existe pas, lève l'exception ValueError.
+        Si il n'existe pas, lève l'exception ValueError.
         
         """
         nom = supprimer_accents(nom).lower()
-        for periode in self.periodes:
-            if supprimer_accents(periode.nom) == nom:
-                return periode
+        for cycle in self.cycles:
+            if supprimer_accents(cycle.nom) == nom:
+                return cycle
         
-        raise ValueError("période {} introuvable".format(nom))
+        raise ValueError("cycle {} introuvable".format(nom))
     
-    def supprimer_periode(self, nom):
-        """Supprime la période donnée.
+    def supprimer_cycle(self, nom):
+        """Supprime le cycle donné.
         
-        Si al période n'est pas trouvée, lève l'exception ValueError.
+        Si le cycle n'est pas trouvé, lève l'exception ValueError.
         
         """
         nom = supprimer_accents(nom).lower()
-        for periode in list(self.periodes):
-            if supprimer_accents(periode.nom) == nom:
-                self.periodes.remove(periode)
-                periode.detruire()
+        for cycle in list(self.cycles):
+            if supprimer_accents(cycle.nom) == nom:
+                self.cycles.remove(cycle)
+                cycle.detruire()
                 return
         
-        raise ValueError("période {} introuvable".format(nom))
+        raise ValueError("cycle {} introuvable".format(nom))
         
     def detruire(self):
         """Destruction du prototype."""
@@ -162,7 +180,7 @@ class PrototypePlante(BaseObj):
             if plante.e_existe:
                 importeur.botanique.supprimer_plante(plante.identifiant)
         
-        for periode in self.periodes:
-            periode.detruire()
+        for cycle in self.cycles:
+            cycle.detruire()
         
         BaseObj.detruire(self)

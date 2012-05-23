@@ -61,11 +61,11 @@ class Periode(BaseObj):
     
     """
     
-    def __init__(self, nom, plante):
+    def __init__(self, nom, cycle):
         """Constructeur de la période."""
         BaseObj.__init__(self)
         self.nom = nom
-        self.plante = plante
+        self.cycle = cycle
         self.nom_singulier = "une plante"
         self.nom_pluriel = "plantes"
         self.etat_singulier = "fleurit ici"
@@ -89,6 +89,10 @@ class Periode(BaseObj):
         """Retourne la date de fin grâce aux informations du module temps."""
         return "{} du {}".format(importeur.temps.cfg.noms_jours[ \
                 self.fin[0]], importeur.temps.cfg.mois[self.fin[1]][0])
+    
+    @property
+    def plante(self):
+        return self.cycle and self.cycle.plante or None
     
     def ajouter_element(self, objet, quantite):
         """Ajout d'un élément.
