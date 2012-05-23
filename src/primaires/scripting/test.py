@@ -191,7 +191,7 @@ class Test(BaseObj):
         le yield).
             Si ce retour est 0, on continue l'exécution (appel récursif).
             Si le retour est un autre nombre, on diffère l'exécutçion
-            Si le retour est None, ohn s'arrête.
+            Si le retour est None, on s'arrête.
         
         """
         # Exécution
@@ -216,14 +216,14 @@ class Test(BaseObj):
                 pass
             
             if tps == 0:
-                self.executer_script(evenement, code)
+                self.executer_code(evenement, code)
             else:
                 # On diffère l'exécution du script
                 nom = "script_dif<" + str(id(code)) + ">"
                 importeur.diffact.ajouter_action(nom, tps,
                         self.executer_code, evenement, code)
         finally:
-            del __builtins__["ErreurExecution"]
+            # del __builtins__["ErreurExecution"]
             del __builtins__["variables"]
             del __builtins__["get_variables"]
     

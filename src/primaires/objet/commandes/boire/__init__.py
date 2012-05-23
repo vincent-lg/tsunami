@@ -64,7 +64,7 @@ class CmdBoire(Commande):
             objet.potion.script["mange"].executer(personnage=personnage,
                     objet=objet)
             personnage << objet.potion.message_boit
-            objet.potion.detruire()
+            importeur.objet.supprimer_objet(objet.identifiant)
             objet.potion = None
             return
         
@@ -74,4 +74,4 @@ class CmdBoire(Commande):
         
         objet.script["boit"].executer(personnage=personnage, objet=objet)
         personnage << objet.message_boit
-        objet.detruire()
+        importeur.objet.supprimer_objet(objet.identifiant)

@@ -28,25 +28,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'remplir'."""
+"""Package contenant la commande 'donner'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.objet.conteneur import SurPoids
 
-class CmdRemplir(Commande):
+class CmdDonner(Commande):
     
-    """Commande 'remplir'"""
+    """Commande 'donner'"""
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "remplir", "fill")
+        Commande.__init__(self, "donner", "give")
         self.nom_categorie = "objets"
-        self.schema = "<plat:nom_objet> avec/with (<nombre>) <nom_objet>"
-        self.aide_courte = "remplit un plat de nourriture"
+        self.schema = "(<nombre>) <nom_objet> " \
+                "a/to <cible:personnage_present|nom_pnj>"
+        self.aide_courte = "donne un objet"
         self.aide_longue = \
-                "Cette commande permet de manipuler des plats (assiette, " \
-                "bol voire poêlon, marmite) en y mettant des objets de type " \
-                "nourriture. Un repas pris de cette manière sera meilleur " \
-                "et plus nourrissant."
+                ""
     
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
@@ -56,12 +55,6 @@ class CmdRemplir(Commande):
                 "True), )"
         nom_objet.proprietes["quantite"] = "True"
         nom_objet.proprietes["conteneur"] = "True"
-        plat = self.noeud.get_masque("plat")
-        plat.prioritaire = True
-        plat.proprietes["conteneurs"] = \
-                "(personnage.equipement.inventaire, " \
-                "personnage.salle.objets_sol)"
-        plat.proprietes["types"] = "('conteneur de nourriture', )"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -69,39 +62,49 @@ class CmdRemplir(Commande):
         if dic_masques["nombre"]:
             nombre = dic_masques["nombre"].nombre
         objets = list(dic_masques["nom_objet"].objets_qtt_conteneurs)[:nombre]
-        dans = dic_masques["plat"].objet
+        if hasattr(dic_masques["cible"], "personnage"):
+            cible = dic_masques["cible"].personnage
+        else:
+            cible = dic_masques["cible"].pnj
         
-        pose = 0
-        poids_total = 0
+        donne = 0
         for objet, qtt, conteneur in objets:
             if not objet.peut_prendre:
                 personnage << "Vous ne pouvez pas prendre {} avec vos " \
-                        "mains...".format(objet.get_nom())
+                        "mains...".format(objet.nom_singulier)
                 return
-            poids_total += objet.poids
-            if poids_total > dans.poids_max:
-                if pose == 0:
-                    personnage << "Vous ne pouvez rien y poser de plus."
-                else:
-                    personnage << "Vous déposez {} dans {}.".format(
-                            objet.get_nom(pose), dans.nom_singulier)
-                    personnage.salle.envoyer("{{}} dépose {} dans {}.".format(
-                            objet.get_nom(pose), dans.nom_singulier),
-                            personnage)
-                return
-            pose += 1
             if qtt > nombre:
                 qtt = nombre
             
+            try:
+                dans = cible.ramasser(objet, qtt=qtt)
+            except SurPoids:
+                personnage << "{} ne peut rien porter de plus.".format(
+                        cible.get_nom_pour(personnage))
+                return
+            
+            if dans is None:
+                break
             conteneur.retirer(objet, qtt)
-            objet.conteneur = dans # on change le conteneur de l'objet
-            for i in range(qtt):
-                dans.nourriture.append(objet)
+            donne += 1
         
-        if pose < qtt:
-            pose = qtt
+        if donne == 0:
+            personnage << "{} ne peut pas prendre cela.".format(
+                    cible.get_nom_pour(personnage))
+            return
         
-        personnage << "Vous déposez {} dans {}.".format(
-                objet.get_nom(pose), dans.nom_singulier)
-        personnage.salle.envoyer("{{}} dépose {} dans {}.".format(
-                objet.get_nom(pose), dans.nom_singulier), personnage)
+        if donne < qtt:
+            donne = qtt
+        
+        personnage << "Vous donnez {} à {}.".format(objet.get_nom(donne),
+                cible.get_nom_pour(personnage))
+        if not hasattr(cible, "prototype"):
+            cible << "{} vous donne {}.".format(personnage.get_nom_pour(cible),
+                    objet.get_nom(donne))
+        personnage.salle.envoyer("{{}} donne {} à {{}}.".format(
+                objet.get_nom(donne)), personnage, cible)
+        
+        # Appel de l'évènement 'donne' du PNJ
+        if hasattr(cible, "prototype"):
+            cible.script["donne"].executer(objet=objet, quantite=donne,
+                    personnage=personnage, pnj=cible)

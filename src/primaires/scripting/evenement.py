@@ -216,8 +216,11 @@ class Evenement(BaseObj):
     def executer(self, **variables):
         """Exécution de l'évènement."""
         self.espaces.variables.update(variables)
-        if tuple(v for v in self.variables if v not in self.espaces.variables):
-            raise ValueError("Des variables manquent à l'appel.")
+        var_manquantes = tuple(v for v in self.variables \
+                if v not in self.espaces.variables)
+        if var_manquantes:
+            raise ValueError("Des variables manquent à l'appel ({}).".format(
+                    ", ".join(var_manquantes)))
         
         # On cherche le bon test
         for test in self.__tests:

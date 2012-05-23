@@ -147,6 +147,7 @@ class Module(BaseModule):
         """Ajout des commandes"""
         self.commandes = [
             commandes.dire.CmdDire(),
+            commandes.discuter.CmdDiscuter(),
             commandes.emote.CmdEmote(),
             commandes.parler.CmdParler(),
             commandes.repondre.CmdRepondre(),

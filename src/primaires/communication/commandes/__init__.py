@@ -31,6 +31,7 @@
 """Package contenant les commandes du module communication."""
 
 import primaires.communication.commandes.dire
+import primaires.communication.commandes.discuter
 import primaires.communication.commandes.emote
 import primaires.communication.commandes.parler
 import primaires.communication.commandes.repondre

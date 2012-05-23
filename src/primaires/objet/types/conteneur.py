@@ -155,6 +155,6 @@ class Conteneur(BaseType):
             msg += "\nVous voyez à l'intérieur :\n  " + \
                     "\n  ".join(objets)
         else:
-            msg += "\n\nVous ne voyez rien à l'intérieur."
+            msg += "\nVous ne voyez rien à l'intérieur."
         
         return msg

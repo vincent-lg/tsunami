@@ -58,7 +58,7 @@ class CmdEquipement(Commande):
             objet = membre.equipe and membre.equipe[-1] or membre.tenu
             if objet:
                 objets.append("{} [{}]".format(membre.nom.capitalize(),
-                        objet.nom_singulier))
+                        objet.get_nom()))
         
         if not objets:
             msg = "Vous ne portez rien actuellement."
