@@ -44,10 +44,11 @@ class DetailMod(Detail):
     
     def __init__(self, salle):
         """Constructeur de la période."""
-        Detail.__init__(self, "vegetation plantes arbres", parent=self)
+        Detail.__init__(self, "vegetation plantes arbres", parent=salle)
         self.titre = "la végétation alentours"
     
     def get_nom_pour(self, personnage):
+        print("nom", self.nom)
         return self.nom
     
     def regarder(self, personnage):

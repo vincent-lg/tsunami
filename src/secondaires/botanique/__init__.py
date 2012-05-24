@@ -158,7 +158,7 @@ class Module(BaseModule):
                 plante.periode = plante.periode.periode_suivante
             plante.actualiser_elements()
     
-    def detailler_salle(self, salle):
+    def detailler_salle(self, salle, personnage):
         """Détailler la salle salle pour personnage.
         
         On ajoute :
@@ -166,5 +166,6 @@ class Module(BaseModule):
         -   Les différents végétaux observabes.
         
         """
-        det = DetailMod(parent=salle)
+        det = DetailMod(salle)
+        print("Ajout de", det.nom)
         return [det]
