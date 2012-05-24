@@ -32,6 +32,7 @@
 
 from abstraits.obase import BaseObj
 from corps.aleatoire import varier
+from primaires.format.description import Description
 from primaires.format.fonctions import supprimer_accents
 from .element import Element
 
@@ -40,10 +41,10 @@ class Periode(BaseObj):
     """Classe décrivant une période de temps (cycle pour une plante).
     
     Une période possède :
-    nom -- le nom de la période
-    nom_singulier, nom_pluriel, etat_singulier, etat_pluriel
-        Noms et états du végétal pour la période
     plante -- le prototype de plante définissant la période
+    nom -- le nom de la période
+    nom_singulier, nom_pluriel -- les noms définis pour cettte période
+    description -- la description du végétal à cette période
     fin -- un tuple (jour, mois) représentant la fin du cycle
     variation -- un nombre de jours représentant la variation aléatoire [1]
     elements -- une liste représentant les éléments récoltables
@@ -70,8 +71,7 @@ class Periode(BaseObj):
         self.cycle = cycle
         self.nom_singulier = "une plante"
         self.nom_pluriel = "plantes"
-        self.etat_singulier = "fleurit ici"
-        self.etat_pluriel = "fleurient ici"
+        self.description = Description(parent=self)
         self.fin = (0, 0)
         self.variation = 0
         self.elements = []
@@ -169,6 +169,15 @@ class Periode(BaseObj):
                 return elt
         
         raise ValueError("le nom d'élément {} est introuvable".format(nom))
+    
+    def get_element_depuis_objet(self, objet):
+        """Retourne l'élément associé à l'objet."""
+        for elt in self.elements:
+            if elt.objet is objet:
+                return elt
+        
+        raise ValueError("aucun élément ne correspond à l'objet {}".Format(
+                objet.cle))
     
     def supprimer_element(self, nom):
         """Supprime l'élément."""

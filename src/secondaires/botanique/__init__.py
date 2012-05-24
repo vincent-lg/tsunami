@@ -164,4 +164,7 @@ class Module(BaseModule):
         
         """
         det = DetailMod(salle)
-        return [det]
+        plantes = [p for p in self.salles.get(salle, []) if \
+                p.cycle.visible]
+        
+        return [det] + plantes

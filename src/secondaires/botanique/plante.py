@@ -99,6 +99,24 @@ class Plante(BaseObj):
         self.elements.clear()
         self.elements.update(n_elements)
     
+    def get_nom_pour(self, personnage):
+        return self.nom
+    
+    def regarder(self, personnage):
+        """personnage regarde la plante."""
+        msg = "Vous regardez {} :\n\n".format(self.nom)
+        msg += self.periode.description.regarder(personnage, self)
+        if self.elements:
+            msg += "\n\nVous y voyez :\n"
+            for elt, qtt in self.elements.items():
+                nom_elt = self.periode.get_element_depuis_objet(elt).nom
+                msg += "\n  " + nom_elt.capitalize() + " : " + elt.get_nom(qtt)
+        
+        personnage.salle.envoyer("{{}} regarde {}.".format(self.nom),
+                personnage)
+        
+        return msg
+    
     def detruire(self):
         """Destruction de la plante."""
         if self in self.prototype.plantes:
