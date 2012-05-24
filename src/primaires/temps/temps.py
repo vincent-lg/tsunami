@@ -195,11 +195,11 @@ class Temps(BaseObj):
             self.heure -= 24
             self.jour += 1
             importeur.temps.changer_jour()
-        if self.jour + 1 >= len(self.noms_jours):
+        if self.jour >= len(self.noms_jours):
             self.jour -= len(self.noms_jours)
             self.mois += 1
             importeur.temps.changer_mois()
-        if self.mois + 1 >= len(self.noms_mois):
+        if self.mois >= len(self.noms_mois):
             self.mois -= len(self.noms_mois)
             self.annee += 1
             importeur.temps.changer_annee()
