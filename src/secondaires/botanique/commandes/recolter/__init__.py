@@ -69,10 +69,16 @@ class CmdRecolter(Commande):
             nombre = dic_masques["nombre"].nombre
         
         element = dic_masques["element_recoltable"].element
-        if element.quantite < nombre:
-            nombre = element.quantite
-        objet = element.objet
         vegetal = dic_masques["vegetal"].vegetal
+        qtt = vegetal.elements.get(element.objet, 0)
+        if qtt == 0:
+            personnage << "|err|Cet élément récoltable est épuisé.|ff|"
+            return
+        
+        if qtt < nombre:
+            nombre = qtt
+        
+        objet = element.objet
         pris = 0
         for i in range(nombre):
             t_o = importeur.objet.creer_objet(objet)
