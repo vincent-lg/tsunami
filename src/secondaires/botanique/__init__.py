@@ -35,6 +35,7 @@ from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
 from .plante import Plante
 from .prototype import PrototypePlante
+from .detail import DetailMod
 
 class Module(BaseModule):
     
@@ -61,6 +62,7 @@ class Module(BaseModule):
         """Configuration du module."""
         importeur.temps.met_changer_annee.append(self.actualiser_cycles)
         importeur.temps.met_changer_jour.append(self.actualiser_periodes)
+        importeur.salle.details_dynamiques.append(self.detailler_salle)
         BaseModule.config(self)
     
     def init(self):
@@ -155,3 +157,14 @@ class Module(BaseModule):
             if plante.periode.finie:
                 plante.periode = plante.periode.periode_suivante
             plante.actualiser_elements()
+    
+    def detailler_salle(self, salle):
+        """Détailler la salle salle pour personnage.
+        
+        On ajoute :
+        -   Le détail végétation
+        -   Les différents végétaux observabes.
+        
+        """
+        det = DetailMod(parent=salle)
+        return [det]
