@@ -32,6 +32,7 @@
 
 from abstraits.obase import BaseObj
 from corps.aleatoire import varier
+from primaires.format.fonctions import supprimer_accents
 from .element import Element
 
 class Periode(BaseObj):
@@ -132,38 +133,46 @@ class Periode(BaseObj):
             return True
         return False
     
-    def ajouter_element(self, objet, quantite):
+    def ajouter_element(self, nom, objet, quantite):
         """Ajout d'un élément.
         
         Si on cherche à ajouter un élément existant (l'objet est défini
         dans un autre élément), une exception ValueError est levée.
         
         """
+        sa_nom = supprimer_accents(nom)
         for elt in self.elements:
-            if elt.objet is objet:
+            if elt.objet is objet or supprimer_accents(elt.nom) == sa_nom:
                 raise ValueError("l'élément {} existe déjà".format(elt))
         
-        elt = Element(self.plante, self, objet, quantite)
+        elt = Element(self.plante, self, nom.lower(), objet, quantite)
         self.elements.append(elt)
         return elt
     
-    def get_element(self, cle):
-        """Retourne l'élément dont l'objet a la clé indiquée."""
+    def get_element(self, nom):
+        """Retourne l'élément portant ce nom
+        
+        La recherche n'est pas sensible aux majuscules / minuscules
+        ou aux accents.
+        
+        """
+        nom = supprimer_accents(nom).lower()
         for elt in self.elements:
-            if elt.objet.cle == cle:
+            if elt.nom == nom:
                 return elt
         
-        raise ValueError("la clé d'élément {} est introuvable".format(cle))
+        raise ValueError("le nom d'élément {} est introuvable".format(nom))
     
-    def supprimer_element(self, cle):
+    def supprimer_element(self, nom):
         """Supprime l'élément."""
+        nom = supprimer_accents(nom).lower()
         for elt in list(self.elements):
-            if elt.objet.cle == cle:
+            if elt.nom == nom:
                 self.elements.remove(elt)
                 elt.detruire()
                 return
         
-        raise ValueError("aucun élément ne porte la clé {}".format(cle))
+        raise ValueError("aucun élément ne porte le nom {}".format(nom))
     
     def detruire(self):
         """Destruction de la période."""

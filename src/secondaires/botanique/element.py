@@ -44,19 +44,21 @@ class Element(BaseObj):
     
     """
     
-    def __init__(self, plante, periode, objet, quantite):
+    def __init__(self, plante, periode, nom, objet, quantite):
         """Constructeur de la période."""
         BaseObj.__init__(self)
         self.plante = plante
         self.periode = periode
+        self.nom = nom
         self.objet = objet
         self.quantite = quantite
     
     def __getnewargs__(self):
-        return (None, None, None, 1)
+        return (None, None, "", None, 1)
     
     def __repr__(self):
-        return "<élément {} en quantité {}>".format(str(self), self.quantite)
+        return "<élément {}: {} en quantité {}>".format(self.nom, 
+                str(self), self.quantite)
     
     def __str__(self):
         return self.objet and self.objet.cle or "aucun"
