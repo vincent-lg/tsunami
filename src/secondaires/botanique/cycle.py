@@ -53,6 +53,7 @@ class Cycle(BaseObj):
         self.age = age
         self.duree = 1
         self.variation = 0
+        self.visible = True
     
     def __getnewargs__(self):
         return ("", 1, None)
