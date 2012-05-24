@@ -58,6 +58,7 @@ class Module(BaseModule):
     
     def config(self):
         """Configuration du module."""
+        importeur.temps.met_changer_annee.append(self.actualiser_cycles)
         BaseModule.config(self)
     
     def init(self):
@@ -119,3 +120,29 @@ class Module(BaseModule):
         plante = self.plantes[cle]
         plante.detruire()
         del self.plantes[cle]
+    
+    def actualiser_cycles(self):
+        """Actualise les cycles de TOUTES les plantes.
+        
+        Cette méthode n'est censée être appelée qu'à chaque nouvelle année.
+        
+        """
+        for plante in list(self.plantes.values()):
+            plante.age += 1
+            if plante.age >= plante.cycle.fin:
+                n_cycle = plante.cycle.cycle_suivant
+                if n_cycle is None:
+                    self.supprimer_plante(plante.identifiant)
+                else:
+                    plante.periode = cycle.periodes[0]
+    
+    def actualiser_periodes(self):
+        """Actualise les périodes de TOUTES les plantes.
+        
+        Cette méthode n'est censée être appelée qu'à chaque nouveau jour.
+        
+        """
+        for plante in list(self.plantes.values()):
+            if plante.periode.finie:
+                plante.periode = plante.periode.periode_suivante
+            plante.actualiser_elements()

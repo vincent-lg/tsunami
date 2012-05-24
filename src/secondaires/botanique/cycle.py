@@ -31,6 +31,7 @@
 """Ce fichier contient la classe Cycle, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
+from corps.aleatoire import varier
 from primaires.format.fonctions import supprimer_accents
 from .periode import Periode
 
@@ -47,9 +48,11 @@ class Cycle(BaseObj):
         """Constructeur du cycle."""
         BaseObj.__init__(self)
         self.nom = nom
+        self.plante = plante
         self.periodes = []
         self.age = age
         self.duree = 1
+        self.variation = 0
     
     def __getnewargs__(self):
         return ("", 1, None)
@@ -60,6 +63,33 @@ class Cycle(BaseObj):
     
     def __str__(self):
         return self.nom
+    
+    @property
+    def fin(self):
+        """Retourne la fin semie aléatoire du cycle."""
+        if self.variation > 0:
+            return varier(self.age + self.duree, self.variation)
+        else:
+            return self.age + self.duree
+    
+    @property
+    def cycle_suivant(self):
+        """Retourne, si trouve, le cycle suivant.
+        
+        Si aucun cycle ne vient après, retourne None.
+        Si le cycle présent ne peut être trouvé dans la plante, lève une
+        exception IndexError.
+        
+        """
+        indice = self.plante.cycles.index(self)
+        if indice == -1:
+            raise IndexError("cycle introuvable {} dans la plante {}".format(
+                    self, self.plante))
+        
+        try:
+            return self.plante.cycles[indice + 1]
+        except IndexError:
+            return None
     
     def ajouter_periode(self, nom):
         """Ajoute une période et la retourne.

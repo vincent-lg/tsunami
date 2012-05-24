@@ -31,6 +31,7 @@
 """Ce fichier contient la classe Plante, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
+from corps.aleatoire import varier
 
 class Plante(BaseObj):
     
@@ -57,6 +58,7 @@ class Plante(BaseObj):
             self.n_id = prototype.n_id
             type(prototype).n_id += 1
             prototype.plantes.append(self)
+            self.periode = prototype.cycles[0].periodes[0]
     
     def __getnewargs__(self):
         return (None, None)
@@ -78,3 +80,23 @@ class Plante(BaseObj):
     @property
     def cycle(self):
         return self.periode and self.periode.cycle or None
+    
+    def actualiser_elements(self):
+        """Actualise les éléments en fonction de la période."""
+        periode = self.periode
+        n_elements = {}
+        for elt in periode.elements:
+            qtt = self.elements.get(elt.objet, 0)
+            n_qtt = varier(elt.quantite, 3, 0)
+            qtt += n_qtt
+            if qtt > 0:
+                n_elements[elt.objet] = qtt
+        
+        self.elements.clear()
+        self.elements.update(n_elements)
+    
+    def detruire(self):
+        """Destruction de la plante."""
+        if self in self.prototype.plantes:
+            self.prototype.plantes.remove(self)
+        BaseObj.__init__(self)

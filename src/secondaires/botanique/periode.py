@@ -31,6 +31,7 @@
 """Ce fichier contient la classe Periode, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
+from corps.aleatoire import varier
 from .element import Element
 
 class Periode(BaseObj):
@@ -93,6 +94,43 @@ class Periode(BaseObj):
     @property
     def plante(self):
         return self.cycle and self.cycle.plante or None
+    
+    @property
+    def periode_suivante(self):
+        """Retourne, si trouvée, la période suivante.
+        
+        Si aucune période ne vient après, retourne self.
+        Si la période présente ne peut être trouvée dans le cycle, lève une
+        exception IndexError.
+        
+        """
+        indice = self.cycle.periodes.index(self)
+        if indice == -1:
+            raise IndexError("période introuvable {} dans la plante {}".format(
+                    self, self.plante))
+        
+        try:
+            return self.cycle.periodes[indice + 1]
+        except IndexError:
+            return self
+    
+    @property
+    def finie(self):
+        """Retourne true si la période est finie, False sinon."""
+        tps = importeur.temps.temps
+        jour = tps.jour
+        mois = tps.mois
+        t_j, t_m = self.fin
+        t_j += varier(t_j, self.variation, min=None)
+        if t_j < 0:
+            t_m -= t_j // 30
+            t_j = t_j % 30
+        
+        if mois > t_m:
+            return True
+        elif mois == t_m and jour > t_j:
+            return True
+        return False
     
     def ajouter_element(self, objet, quantite):
         """Ajout d'un élément.
