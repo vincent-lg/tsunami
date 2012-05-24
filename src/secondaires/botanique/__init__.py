@@ -36,6 +36,8 @@ from primaires.format.fonctions import format_nb
 from .plante import Plante
 from .prototype import PrototypePlante
 from .detail import DetailMod
+from . import commandes
+from . import masques
 
 class Module(BaseModule):
     
@@ -86,6 +88,15 @@ class Module(BaseModule):
                 "récupérée{s}", fem=True))
         
         BaseModule.init(self)
+    
+    def ajouter_commandes(self):
+        """Ajout des commandes dans l'interpréteur"""
+        self.commandes = [
+            commandes.recolter.CmdRecolter(),
+        ]
+        
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)
     
     def creer_prototype(self, cle):
         """Création du prototype de plante."""

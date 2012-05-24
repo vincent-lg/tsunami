@@ -117,6 +117,16 @@ class Plante(BaseObj):
         
         return msg
     
+    def recolter(self, objet, nombre):
+        """Récolte un objet, soustrait la quantité de l'élément."""
+        if objet in self.elements:
+            self.elements[objet] = self.elements[objet] - nombre
+            if self.elements[objet] <= 0:
+                del self.elements[objet]
+        else:
+            raise ValueError("l'élément {} n'est pas défini dans {}".format(
+                    objet.identifiant, self.identifiant))
+    
     def detruire(self):
         """Destruction de la plante."""
         if self in self.prototype.plantes:
