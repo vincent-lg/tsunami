@@ -74,17 +74,14 @@ class Module(BaseModule):
             if prototype.plantes:
                 prototype.n_id = max(p.n_id for p in \
                         prototype.plantes) + 1
+                for plante in prototype.plantes:
+                    self.ajouter_plante(plante)
         
         nb_prototypes = len(prototypes)
         self.logger.info(format_nb(nb_prototypes, "{nb} prototype{s} " \
                 "de plante récupéré{s}"))
         
-        # On récupère les plantes
-        plantes = self.importeur.supenr.charger_groupe(Plante)
-        for plante in plantes:
-            self.ajouter_plante(plante)
-        
-        nb_plantes = len(plantes)
+        nb_plantes = len(self.plantes)
         self.logger.info(format_nb(nb_plantes, "{nb} plante{s} " \
                 "récupérée{s}", fem=True))
         

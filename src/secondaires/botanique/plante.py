@@ -44,7 +44,6 @@ class Plante(BaseObj):
     
     """
     
-    enregistrer = True
     def __init__(self, prototype, salle):
         """Constructeur de la plante."""
         BaseObj.__init__(self)
