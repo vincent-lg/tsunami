@@ -215,7 +215,7 @@ class Salle(BaseObj):
         for methode in importeur.salle.details_dynamiques:
             liste.extend(methode(self, personnage))
         
-        return []
+        return liste
     
     def regarder(self, personnage):
         """Le personnage regarde la salle"""
