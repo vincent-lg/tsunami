@@ -53,12 +53,14 @@ class Module(BaseModule):
         self.commandes = []
         self.prototypes = {}
         self.plantes = {}
+        self.salles = {}
         self.logger = importeur.man_logs.creer_logger(
                 "botanique", "botanique")
     
     def config(self):
         """Configuration du module."""
         importeur.temps.met_changer_annee.append(self.actualiser_cycles)
+        importeur.temps.met_changer_jour.append(self.actualiser_periodes)
         BaseModule.config(self)
     
     def init(self):
@@ -114,10 +116,17 @@ class Module(BaseModule):
     def ajouter_plante(self, plante):
         """Ajout de la plante au dictionnaire."""
         self.plantes[plante.identifiant] = plante
+        ls_plantes = self.salles.get(plante.salle, [])
+        ls_plantes.append(plante)
+        self.salles[plante.salle] = ls_plantes
     
     def supprimer_plante(self, cle):
         """Suppression de la plante."""
         plante = self.plantes[cle]
+        if plante.salle in self.salles and plante in \
+                self.salles[plante.salle]:
+            self.salles[plante.salle].remove(plante)
+        
         plante.detruire()
         del self.plantes[cle]
     

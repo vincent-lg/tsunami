@@ -99,4 +99,4 @@ class Plante(BaseObj):
         """Destruction de la plante."""
         if self in self.prototype.plantes:
             self.prototype.plantes.remove(self)
-        BaseObj.__init__(self)
+        BaseObj.detruire(self)

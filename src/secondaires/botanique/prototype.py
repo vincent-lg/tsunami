@@ -176,7 +176,7 @@ class PrototypePlante(BaseObj):
         
     def detruire(self):
         """Destruction du prototype."""
-        for plante in self.plantes:
+        for plante in list(self.plantes):
             if plante.e_existe:
                 importeur.botanique.supprimer_plante(plante.identifiant)
         
