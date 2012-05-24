@@ -133,6 +133,13 @@ class Periode(BaseObj):
             return True
         return False
     
+    def get_nom(self, nombre=1):
+        """Retourne le nom singulier ou pluriel en fonction du nombre."""
+        if nombre == 1:
+            return self.nom_singulier
+        
+        return str(nombre) + " " + self.nom_pluriel
+    
     def ajouter_element(self, nom, objet, quantite):
         """Ajout d'un élément.
         

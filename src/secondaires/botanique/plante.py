@@ -81,6 +81,11 @@ class Plante(BaseObj):
     def cycle(self):
         return self.periode and self.periode.cycle or None
     
+    @property
+    def nom(self):
+        """Retourne le nom singulier associée à la période."""
+        return self.periode.nom_singulier
+    
     def actualiser_elements(self):
         """Actualise les éléments en fonction de la période."""
         periode = self.periode

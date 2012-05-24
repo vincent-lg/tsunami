@@ -167,5 +167,4 @@ class Module(BaseModule):
         
         """
         det = DetailMod(salle)
-        print("Ajout de", det.nom)
         return [det]

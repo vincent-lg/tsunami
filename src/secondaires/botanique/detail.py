@@ -48,8 +48,30 @@ class DetailMod(Detail):
         self.titre = "la végétation alentours"
     
     def get_nom_pour(self, personnage):
-        print("nom", self.nom)
         return self.nom
     
     def regarder(self, personnage):
-        personnage << "La végétation allentours."
+        """Le personnage regarde le détail dynamique.
+        
+        Ici, on lui affiche les plantes présentes dans la salle si il y en a.
+        
+        """
+        msg = "Vous regardez la végétation alentours :\n"
+        plantes = importeur.botanique.salles.get(self.parent, [])
+        plantes = [p for p in plantes if p.cycle.visible]
+        if not plantes:
+            return "|att|Vous ne voyez rien de récoltable ici.|ff|"
+        
+        groupe = {}
+        periodes = {}
+        for plante in plantes:
+            nb = groupe.get(plante.nom, 0)
+            nb += 1
+            groupe[plante.nom] = nb
+            periodes[plante.nom] = plante.periode
+        
+        for nom, nb in groupe.items():
+            periode = periodes[nom]
+            msg += "\n  " + periode.get_nom(nb)
+        
+        return msg

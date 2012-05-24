@@ -84,35 +84,6 @@ class PrototypePlante(BaseObj):
     def __str__(self):
         return self.cle
     
-    def get_periode_actuelle(self):
-        """Retourne la période actuelle en fonction du temps.
-        
-        NOTE : si aucune période ne peut être trouvée correspondant
-        au temps actuel, retourne la première période.
-        Si aucune période n'est définie, lève une exception ValueError.
-        
-        La période rest retournée aléatoirement en fonction de la variation
-        spécifiée.
-        
-        """
-        if not self.periodes:
-            raise ValueError("aucune période définie")
-        
-        tps = importeur.temps.temps
-        jour = tps.jour
-        mois = tps.mois
-        for periode in self.periodes:
-            t_j, t_m = periode.fin
-            t_j += varier(t_j, periode.variation, min=None)
-            if t_j < 0:
-                t_m -= t_j // 30
-                t_j = t_j % 30
-            
-            if jour <= t_j and mois <= t_m:
-                return periode
-        
-        return self.periodes[0]
-    
     def ajouter_cycle(self, nom, age):
         """Ajoute un cycle et le retourne.
         
