@@ -28,7 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module botanique."""
+"""Package contenant le paramètre 'créer' de la commande 'vegetal'."""
 
-from . import recolter
-from . import vegetal
+from primaires.interpreteur.masque.parametre import Parametre
+from primaires.interpreteur.editeur.presentation import Presentation
+
+class PrmCreer(Parametre):
+    
+    """Commande 'vegetal créer'"""
+    
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "creer", "create")
+        self.schema = "<cle>"
+        self.aide_courte = "crée un végétal"
+        self.aide_longue = \
+            "Cette commande permet de créer un nouveau végétal. Si le " \
+            "végétal n'existe pas, l'éditeur permettant de le configurer " \
+            "sera ensuite affiché."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        cle = dic_masques["cle"].cle
+        if cle in importeur.botanique.prototypes:
+            personnage << "|err|Ce végétal existe déjà.|ff|"
+            return
+        
+        prototype = importeur.botanique.creer_prototype(cle)
+        editeur = importeur.interpreteur.construire_editeur(
+                "vegedit", personnage, prototype)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()

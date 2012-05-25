@@ -28,7 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module botanique."""
+"""Package contenant la commande 'vegetal'."""
 
-from . import recolter
-from . import vegetal
+from primaires.interpreteur.commande.commande import Commande
+from .creer import PrmCreer
+from .editer import PrmEditer
+from .liste import PrmListe
+from .planter import PrmPlanter
+from .voir import PrmVoir
+
+class CmdVegetal(Commande):
+    
+    """Commande 'vegetal'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "végétal", "vegetal")
+        self.groupe = "administrateur"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "manipule les vegetaux"
+        self.aide_longue = \
+            "Cette commande permet de créer, éditer et lister, " \
+            "planter et voir les végétaux définis."
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmCreer())
+        self.ajouter_parametre(PrmEditer())
+        self.ajouter_parametre(PrmListe())
+        self.ajouter_parametre(PrmPlanter())
+        self.ajouter_parametre(PrmVoir())

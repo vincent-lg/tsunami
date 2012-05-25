@@ -28,7 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module botanique."""
+"""Package contenant le paramètre 'éditer' de la commande 'vegetal'."""
 
-from . import recolter
-from . import vegetal
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmEditer(Parametre):
+    
+    """Paramètre 'éditer de la commande 'vegetal'"""
+    
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "éditer", "edit")
+        self.schema = "<cle>"
+        self.aide_courte = "ouvre l'éditeur de végétal"
+        self.aide_longue = \
+            "Cette commande permet d'accéder à l'éditeur " \
+            "du végétal indiqué. Notez que cette commande permet " \
+            "d'éditer un prototype de végétal, pas une plante " \
+            "construite sur l'un de ces prototypes."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        cle = dic_masques["cle"].cle
+        if cle not in importeur.botanique.prototypes:
+            personnage << "|err|Ce végétal n'existe pas.|ff|"
+            return
+        
+        prototype = importeur.botanique.prototypes[cle]
+        editeur = importeur.interpreteur.construire_editeur(
+                "vegedit", personnage, prototype)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()

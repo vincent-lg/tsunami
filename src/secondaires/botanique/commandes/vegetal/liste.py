@@ -28,7 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module botanique."""
+"""Package contenant la commande 'vegetal liste'."""
 
-from . import recolter
-from . import vegetal
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmListe(Parametre):
+    
+    """Commande 'vegetal liste'"""
+    
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "liste", "list")
+        self.aide_courte = "affiche les végétals définis"
+        self.aide_longue = \
+            "Cette commande affiche la liste des végétaux définis."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande."""
+        prototypes = sorted([p for p in \
+                importeur.botanique.prototypes.values()],
+                key=lambda prototype: prototype.cle)
+        if prototypes:
+            htab = "+----------------------+---------+"
+            msg = htab
+            msg += "\n| Clé                  | Plantes |"
+            for prototype in prototypes:
+                msg += "\n| {:<20} | {:>7} |".format(
+                        prototype.cle, len(prototype.plantes))
+            msg += "\n" + htab
+            personnage << msg
+        else:
+            personnage << "Aucun végétal n'a encore été défini."
