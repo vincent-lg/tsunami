@@ -28,83 +28,74 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe EdtCycle."""
+"""Fichier contenant la classe Edtperiode."""
 
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.flag import Flag
-from .edt_periodes import EdtPeriodes
 
-class EdtCycle(Presentation):
+class EdtPeriode(Presentation):
     
-    """Classe définissant l'éditeur de cycle végétal."""
+    """Classe définissant l'éditeur de periode végétal."""
     
-    def __init__(self, instance_connexion, cycle, attribut=None):
+    def __init__(self, instance_connexion, periode, attribut=None):
         """Constructeur de l'éditeur"""
-        Presentation.__init__(self, instance_connexion, cycle, attribut, False)
-        if instance_connexion and cycle:
-            self.construire(cycle)
+        Presentation.__init__(self, instance_connexion, periode, attribut, False)
+        if instance_connexion and periode:
+            self.construire(periode)
     
     def __getnewargs__(self):
         return (None, None)
     
-    def construire(self, cycle):
+    def construire(self, periode):
         """Construction de l'éditeur"""
         # Nom
-        nom = self.ajouter_choix("nom", "n", Uniligne, cycle, "nom")
+        nom = self.ajouter_choix("nom", "n", Uniligne, periode, "nom")
         nom.parent = self
-        nom.prompt = "Nom du cycle : "
+        nom.prompt = "Nom du periode : "
         nom.apercu = "{objet.nom}"
         nom.aide_courte = \
-            "Entrez le |ent|nouveau nom|ff| du cycle, ou " \
+            "Entrez le |ent|nouveau nom|ff| du periode, ou " \
             "|cmd|/|ff| pour revenir à la\nfenêtre parente.\n\n" \
             "Nom actuel : {objet.nom}"
         
-        # Age
-        age = self.ajouter_choix("age minimum", "a", Entier, cycle,
-                "age", 0)
-        age.parent = self
-        age.prompt = "Age minimum du cycle : "
-        age.apercu = "{objet.age}"
-        age.aide_courte = \
-            "Entrez l'|ent|âge minimum|ff| d'une plante de ce cycle ou " \
+        # Nom singulier
+        nom_s = self.ajouter_choix("nom singulier de la plante", "s",
+                Uniligne, periode, "nom_singulier")
+        nom_s.parent = self
+        nom_s.prompt = "Nom singulier de la plante pour cette période : "
+        nom_s.apercu = "{objet.nom_singulier}"
+        nom_s.aide_courte = \
+            "Entrez le |ent|nouveau nom singulier|ff| de la plante ou " \
             "|cmd|/|ff| pour revenir à la\nfenêtre parente.\n\n" \
-            "Age minimum actuel : |bc|{valeur}|ff|"
+            "Nom singulier actuel : {objet.nom_singulier}"
         
-        # Durée
-        duree = self.ajouter_choix("durée du cycle", "d", Entier, cycle,
-                "duree", 1)
-        duree.parent = self
-        duree.prompt = "Durée en année du cycle : "
-        duree.apercu = "{objet.duree}"
-        duree.aide_courte = \
-            "Entrez |ent|la durée|ff| du cycle ou " \
+        # Nom pluriel
+        nom_p = self.ajouter_choix("nom pluriel de la plante", "p",
+                Uniligne, periode, "nom_pluriel")
+        nom_p.parent = self
+        nom_p.prompt = "Nom pluriel de la plante pour cette période : "
+        nom_p.apercu = "{objet.nom_pluriel}"
+        nom_p.aide_courte = \
+            "Entrez le |ent|nouveau nom pluriel|ff| de la plante ou " \
             "|cmd|/|ff| pour revenir à la\nfenêtre parente.\n\n" \
-            "Un cycle dure au minimum un an.\n\n" \
-            "Durée actuelle : |bc|{valeur}|ff|"
+            "Nom pluriel actuel : {objet.nom_pluriel}"
         
         # Variation
-        variation = self.ajouter_choix("variation", "v", Entier, cycle,
+        variation = self.ajouter_choix("variation", "v", Entier, periode,
                 "variation", 0)
         variation.parent = self
-        variation.prompt = "Variation en année du cycle : "
+        variation.prompt = "Variation en année de la période : "
         variation.apercu = "{objet.variation}"
         variation.aide_courte = \
-            "Entrez |ent|la variation|ff| du cycle en année " \
+            "Entrez |ent|la variation|ff| de la période en année ou " \
             "|cmd|/|ff| pour revenir à la\nfenêtre parente.\n\n" \
-            "La variation influence aléatoirement la fin du " \
-            "cycle. Si un cycle comence\n" \
-            "à l'âge 0 de la plante et dure 3 ans avec une " \
-            "variation de 1, la plante\n" \
-            "pourra passer au cycle suivant entre 2 et 4 ans.\n\n" \
+            "La variation influence aléatoirement la fin de la " \
+            "période. Si une période fini\n" \
+            "le dixième jour du quatrième mois avec " \
+            "une variation de 20 jours, la\n" \
+            "plante pourrait passer à la période suivante " \
+            "le vingtième jour du\n" \
+            "troisième mois au plus tôt.\n\n" \
             "Variation actuelle : |bc|{valeur}|ff|"
-        
-        # Périodes
-        periodes = self.ajouter_choix("périodes", "p", EdtPeriodes, cycle)
-        periodes.parent = self
-        
-        # Visible
-        visible = self.ajouter_choix("visible", "vi", Flag, cycle,
-                "visible")
-        visible.parent = self
