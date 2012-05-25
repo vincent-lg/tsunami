@@ -36,6 +36,7 @@ seront placées dans ce package
 """
 
 from primaires.interpreteur.editeur.presentation import Presentation
+from .edt_cycles import EdtCycles
 from .supprimer import NSupprimer
 
 class EdtVegedit(Presentation):
@@ -62,6 +63,14 @@ class EdtVegedit(Presentation):
     
     def construire(self, prototype):
         """Construction de l'éditeur"""
+        # Cycles
+        cycles = self.ajouter_choix("cycles", "c", EdtCycles,
+                prototype)
+        cycles.parent = self
+        cycles.aide_courte = \
+            "Entrez |ent|le nom|ff| d'un cycle pour l'éditer ou " \
+            "|ent|/|ff| pour revenir à la fene^tre parente."
+        
         # Supprimer
         sup = self.ajouter_choix("supprimer", "sup", NSupprimer,
                 prototype)

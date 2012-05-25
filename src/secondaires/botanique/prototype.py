@@ -65,10 +65,10 @@ class PrototypePlante(BaseObj):
     """
     
     enregistrer = True
-    n_id = 1
     def __init__(self, cle=""):
         """Constructeur du prototype."""
         BaseObj.__init__(self)
+        self.n_id = 1
         if cle:
             valider_cle(cle)
             self.cle = cle

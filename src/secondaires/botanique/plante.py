@@ -55,7 +55,7 @@ class Plante(BaseObj):
         self.periode = None
         if prototype:
             self.n_id = prototype.n_id
-            type(prototype).n_id += 1
+            prototype.n_id += 1
             prototype.plantes.append(self)
             self.periode = prototype.cycles[0].periodes[0]
     
