@@ -37,6 +37,7 @@ from .plante import Plante
 from .prototype import PrototypePlante
 from .detail import DetailMod
 from . import commandes
+from . import editeurs
 from . import masques
 
 class Module(BaseModule):
@@ -99,6 +100,10 @@ class Module(BaseModule):
         
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
+            
+        # Ajout des éditeurs
+        self.importeur.interpreteur.ajouter_editeur(
+                editeurs.vegedit.EdtVegedit)
     
     def creer_prototype(self, cle):
         """Création du prototype de plante."""
