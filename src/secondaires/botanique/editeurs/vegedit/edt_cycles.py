@@ -43,6 +43,67 @@ class EdtCycles(Editeur):
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
+        self.ajouter_option("n", self.opt_ajouter_cycle)
+        self.ajouter_option("d", self.opt_supprimer_cycle)
+    
+    def opt_ajouter_cycle(self, arguments):
+        """Ajout d'un cycle.
+        
+        Syntaxe : /n <age> <nom du cycle>
+        
+        """
+        prototype = self.objet
+        arguments = arguments.strip()
+        if not arguments:
+            self.pere << "|err|Précisez l'âge minimum du cycle suivi " \
+                    "d'un espace et de son nom.|ff|"
+            return
+        
+        args = arguments.split(" ")
+        age = args[0]
+        nom = " ".join(args[1:])
+        if not nom:
+            self.pere << "|err|Précisez un nom.|ff|"
+            return
+        
+        try:
+            age = int(age)
+            assert age >= 0
+        except (ValueError, AssertionError):
+            self.pere << "|err|Age invalide.|ff|"
+            return
+        
+        if prototype.est_cycle(nom):
+            self.pere << "|err|Ce nom de cycle est déjà utilisé.|ff|"
+            return
+        
+        prototype.ajouter_cycle(nom, age)
+        self.actualiser()
+    
+    def opt_supprimer_cycle(self, arguments):
+        """Suppression d'un cycle.
+        
+        Syntaxe : /d <nom du cycle>
+        
+        """
+        prototype = self.objet
+        arguments = arguments.strip()
+        if not arguments:
+            self.pere << "|err|Précisez le nom du cycle.|ff|"
+            return
+        
+        nom = arguments
+        if not prototype.est_cycle(nom):
+            self.pere << "|err|Ce nom de cycle n'existe pas.|ff|"
+            return
+        
+        if len(prototype.cycles) == 1:
+            self.pere << "|err|Vous ne pouvez supprimer tous les " \
+                    "cycles d'un prototype.|ff|"
+            return
+        
+        prototype.supprimer_cycle(nom)
+        self.actualiser()
     
     def accueil(self):
         """Message d'accueil du contexte"""

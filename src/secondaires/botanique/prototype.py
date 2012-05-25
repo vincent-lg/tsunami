@@ -94,11 +94,6 @@ class PrototypePlante(BaseObj):
         if self.est_cycle(nom):
             raise ValueError("le cycle {} existe déjà".format(nom))
         
-        for cycle in self.cycles:
-            if cycle.age == age:
-                raise ValueError("l'âge {} est déjà défini pour " \
-                        "le cycle {}".format(age, cycle.nom))
-        
         cycle = Cycle(nom.lower(), age, self)
         self.cycles.append(cycle)
         return cycle
