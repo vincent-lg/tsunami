@@ -51,6 +51,9 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "temps", "primaire")
         self.cfg = None
         self.temps = None
+        self.met_changer_jour = []
+        self.met_changer_mois = []
+        self.met_changer_annee = []
     
     def config(self):
         """Méthode de configuration du module"""
@@ -100,3 +103,18 @@ class Module(BaseModule):
                 break
         if salle.exterieur and not opaque:
             liste_messages.append("|cy|" + self.temps.ciel_actuel + "|ff|")
+    
+    def changer_jour(self):
+        """Appel les callbacks contenus dans met_changer_jour."""
+        for met in self.met_changer_jour:
+            met()
+    
+    def changer_mois(self):
+        """Appel les callbacks contenus dans met_changer_mois."""
+        for met in self.met_changer_mois:
+            met()
+    
+    def changer_annee(self):
+        """Appel les callbacks contenus dans met_changer_annee."""
+        for met in self.met_changer_annee:
+            met()

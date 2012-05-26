@@ -112,12 +112,10 @@ class Module(BaseModule):
             [nom for nom in self.ordre_actions if self.actions[nom] > action]
         
         
-        self.logger.debug("Ajout de l'action {} exécutée dans {}s".format(
-                nom_action, tps))
     
     def retirer_action(self, nom):
         """Méthode permettant de retirer une action différée de la liste de
-       celles en attente.
+        celles en attente.
         
         """
         if not nom in self.ordre_actions:
@@ -126,7 +124,6 @@ class Module(BaseModule):
         else:
             del self.actions[nom]
             del self.ordre_actions[self.ordre_actions.index(nom)]
-            self.logger.debug("L'action {0} a bien été supprimée".format(nom))
 
     def mettre_a_jour_actions(self):
         """Cette méthode se charge de mettre à jour les actions différées en

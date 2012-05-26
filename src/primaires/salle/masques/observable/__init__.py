@@ -30,15 +30,21 @@
 
 """Fichier contenant le masque <observable>."""
 
+import re
+
 from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
 from primaires.format.fonctions import contient, supprimer_accents
 
+# Constantes
+RE_NB = re.compile(r"^([0-9]+)\.")
+
 class Observable(Masque):
     
     """Masque <observable>.
+    
     On attend le fragment d'un nom observable, un joueur, un objet, un
     détail...
     
@@ -50,11 +56,25 @@ class Observable(Masque):
     def init(self):
         """Initialisation des attributs"""
         self.element = ""
+        self.nombre = 1
     
     def repartir(self, personnage, masques, commande):
         """Répartition du masque."""
         lstrip(commande)
         nom = liste_vers_chaine(commande)
+        
+        re_nb = RE_NB.search(nom)
+        if re_nb:
+            nb = re_nb.groups()[0]
+            nom = nom[len(nb) + 1:]
+            try:
+                nb = int(nb)
+                assert nb > 0
+            except (ValueError, AssertionError):
+                raise ErreurValidation( \
+                    "Ce nombre est invalide.", False)
+            else:
+                self.nombre = nb
         
         if not nom:
             raise ErreurValidation( \
@@ -69,6 +89,8 @@ class Observable(Masque):
         """Validation du masque"""
         Masque.valider(self, personnage, dic_masques)
         nom = self.a_interpreter
+        nombre = self.nombre
+        nb = 0
         
         salle = personnage.salle
         elt = None
@@ -76,21 +98,27 @@ class Observable(Masque):
         # On cherche dans les personnages
         for perso in salle.personnages:
             if contient(perso.get_nom_pour(personnage), nom):
-                elt = perso
-                break
+                nb += 1
+                if nb == nombre:
+                    elt = perso
+                    break
         
         if elt is None:
             for objet in personnage.equipement.inventaire:
                 if contient(objet.nom_singulier, nom):
-                    elt = objet
-                    break
+                    nb += 1
+                    if nb == nombre:
+                        elt = objet
+                        break
         
         if elt is None:
             # On cherche dans les objets
             for objet in salle.objets_sol:
                 nom_objet = objet.nom_singulier
                 if contient(nom_objet, nom):
-                    elt = objet
+                    nb += 1
+                    if nb == nombre:
+                        elt = objet
         
         if not elt:
             # On cherche dans les autres éléments observables
@@ -98,14 +126,18 @@ class Observable(Masque):
             for t_elt in elts:
                 nom_elt = t_elt.get_nom_pour(personnage)
                 if contient(nom_elt, nom):
-                    elt = t_elt
-                    break
+                    nb += 1
+                    if nb == nombre:
+                        elt = t_elt
+                        break
         
         if not elt:
             nom = supprimer_accents(nom)
             if salle.details.detail_existe(nom):
                 detail = salle.details.get_detail(nom)
-                elt = detail
+                nb += 1
+                if nb == nombre:
+                    elt = detail
         
         if elt is None:
             raise ErreurValidation(

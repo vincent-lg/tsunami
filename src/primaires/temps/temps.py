@@ -194,12 +194,15 @@ class Temps(BaseObj):
         if self.heure >= 24:
             self.heure -= 24
             self.jour += 1
-        if self.jour + 1 >= len(self.noms_jours):
+            importeur.temps.changer_jour()
+        if self.jour >= len(self.noms_jours):
             self.jour -= len(self.noms_jours)
             self.mois += 1
-        if self.mois + 1 >= len(self.noms_mois):
+            importeur.temps.changer_mois()
+        if self.mois >= len(self.noms_mois):
             self.mois -= len(self.noms_mois)
             self.annee += 1
+            importeur.temps.changer_annee()
     
     @staticmethod
     def convertir_heure(chaine, defaut=None):
