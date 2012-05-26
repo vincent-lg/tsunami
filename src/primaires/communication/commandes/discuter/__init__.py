@@ -45,7 +45,7 @@ class CmdDiscuter(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "discuter", "talk")
         self.nom_categorie = "parler"
-        self.schema = "<nom_pnj> de/about <message>"
+        self.schema = "<nom_pnj> (de/about <message>)"
         self.aide_courte = "engage une discussion avec un PNJ"
         self.aide_longue = \
             "Cette commande engage une discussion avec un PNJ présent dans " \
@@ -55,10 +55,14 @@ class CmdDiscuter(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
-        message = dic_masques["message"].message
+        if dic_masques["message"] is None:
+            message = ""
+            ret = "Vous engagez la discussion avec {}."
+        else:
+            message = dic_masques["message"].message
+            ret = "Vous engagez la discussion avec {} à propos de \"{}\"."
         pnj = dic_masques["nom_pnj"].pnj
-        personnage << "Vous engagez la discussion avec {} à propos de " \
-                "\"{}\".".format(pnj.get_nom_pour(personnage), message)
+        personnage << ret.format(pnj.get_nom_pour(personnage), message)
         
         # Appel de l'évènement 'discute' du PNJ
         pnj.script["discute"].executer(sujet=message, personnage=personnage,

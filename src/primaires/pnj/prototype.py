@@ -44,6 +44,7 @@ class Prototype(BaseObj):
     """
     
     enregistrer = True
+    nom_scripting = "le prototype de PNJ"
     def __init__(self, cle):
         """Constructeur d'un type"""
         BaseObj.__init__(self)

@@ -53,10 +53,13 @@ class EdtInstructions(Editeur):
         Editeur.__init__(self, pere, objet, attribut)
         self.ajouter_option("?", self.opt_aide_generale)
         self.ajouter_option("?s", self.opt_aide_syntaxe)
-        #self.ajouter_option("?o", self.opt_aide_options)
+        self.ajouter_option("?o", self.opt_aide_options)
         self.ajouter_option("?f", self.opt_aide_fonctions)
         self.ajouter_option("?a", self.opt_aide_actions)
         self.ajouter_option("r", self.opt_remplacer_instruction)
+        self.ajouter_option("i", self.opt_inserer_instruction)
+        self.ajouter_option("d", self.opt_supprimer_instructions)
+        self.ajouter_option("o", self.opt_reordonner)
         self.ajouter_option("q", self.opt_relier_quete)
     
     def opt_remplacer_instruction(self, arguments):
@@ -87,9 +90,93 @@ class EdtInstructions(Editeur):
         try:
             test.remplacer_instruction(no, ligne)
         except ValueError as err:
-            self.pere << "|err|" + str(err).capitalize() + ".|ff|"
+            self.pere << "|err|" + str(err).capitalize() + "|ff|"
         else:
             self.actualiser()
+    
+    def opt_inserer_instruction(self, arguments):
+        """Insère une instruction avant la ligne précisée.
+        Syntaxe : /i no
+        
+        """
+        test = self.objet
+        instructions = test.instructions
+        if not arguments.strip():
+            self.pere << "|err|Entrez un numéro de ligne.|ff|"
+            return
+        
+        arguments = arguments.split(" ")
+        no = arguments[0]
+        ligne = " ".join(arguments[1:])
+        
+        try:
+            no = int(no) - 1
+            assert no >= 0
+            assert no < len(instructions)
+        except (ValueError, AssertionError):
+            self.pere << "|err|Entrez un numéro de ligne valide.|ff|"
+            return
+        
+        if not ligne.strip():
+            self.pere << "|err|Entrez une nouvelle instruction " \
+                    "à insérer avant celle de la ligne {}.|ff|".format(no + 1)
+            return
+        
+        try:
+            test.inserer_instruction(no, ligne)
+        except ValueError as err:
+            self.pere << "|err|" + str(err).capitalize() + "|ff|"
+        else:
+            self.actualiser()
+    
+    def opt_supprimer_instructions(self, arguments):
+        """Supprime des instructions du test.
+        Syntaxe : /d x-y ou /d x, y, z... ou /d *
+        
+        """
+        if arguments == "*":
+            longueur = len(self.objet.instructions)
+            for n in range(longueur):
+                self.objet.supprimer_instruction(longueur - (n + 1))
+            self.actualiser()
+            return
+        
+        try:
+            min, max = arguments.split("-")
+            min = int(min)
+            max = int(max)
+            lignes = [n for n in range(min, max + 1)]
+            assert min < max
+            assert min > 0
+            assert max <= len(self.objet.instructions)
+        except AssertionError:
+            self.pere << "|err|Précisez un intervalle correct " \
+                    "(|ent|min-max|ff||err|).|ff|"
+            return
+        except ValueError:
+            try:
+                lignes = [int(n) for n in arguments.split(",")]
+                assert len(lignes) > 0
+                assert all([0 < n <= len(self.objet.instructions) \
+                        for n in lignes])
+            except (ValueError, AssertionError):
+                self.pere << "|err|Précisez la (les) ligne(s) à supprimer " \
+                        "dans un format correct.|ff|"
+                return
+        lignes = sorted(lignes, reverse=True)
+        for n in lignes:
+            self.objet.supprimer_instruction(n - 1)
+        self.actualiser()
+        return
+    
+    def opt_reordonner(self, arguments):
+        """Vérifie les niveaux d'indentation des instructions du test et les
+        corrige si besoin.
+        
+        """
+        test = self.objet
+        test.reordonner()
+        self.actualiser()
     
     def opt_relier_quete(self, argument):
         """Relie à une quête.
@@ -128,7 +215,7 @@ class EdtInstructions(Editeur):
     def opt_aide_generale(self, argument):
         """Option aide générale.
         
-        Aucun argument n'est attendue.
+        Aucun argument n'est attendu.
         
         """
         self.pere << \
@@ -137,14 +224,14 @@ class EdtInstructions(Editeur):
             "une certaine syntaxe\net modifier les instructions déjà " \
             "existantes. Vous pouvez obtenir plus d'aide\ngrâce " \
             "aux sujets suivants :\n" \
-            "  |cmd|/?s|ff| affiche de l'aide sur la |ent|syntaxe|ff| du " \
+            "  |cmd|/?s|ff| : aide sur la |ent|syntaxe|ff| du " \
             "scripting\n" \
-            "  |cmd|/?o|ff| affiche la liste des |ent|options|ff| de " \
-            "l'éditeur disponibles\n" \
-            "  |cmd|/?a|ff| affiche la liste des |ent|actions|ff| " \
+            "  |cmd|/?o|ff| : liste des |ent|options|ff| de " \
+            "l'éditeur\n" \
+            "  |cmd|/?a|ff| : liste des |ent|actions|ff| " \
             "disponibles\n" \
-            "  |cmd|/?f|ff| affiche la liste des |ent|fonctions|ff| " \
-            "disponibles.\n\n" \
+            "  |cmd|/?f|ff| : liste des |ent|fonctions|ff| " \
+            "disponibles\n\n" \
             "Si donc la syntaxe du scripting ne vous est pas familière, " \
             "il vous est\nconseillé de lire l'aide consacrée en tapant " \
             "|cmd|/?s|ff|.\nSi vous connaissez la syntaxe mais " \
@@ -152,6 +239,29 @@ class EdtInstructions(Editeur):
             "du scripting, tapez |cmd|/?a|ff| pour connaître " \
             "la liste des\nactions et |cmd|/?f|ff| pour connaître " \
             "la liste des fonctions."
+    
+    def opt_aide_options(self, argument):
+        """Option d'aide sur les options.
+        Aucun argument attendu.
+        ridoq
+        """
+        self.pere << \
+            "Options disponibles :\n" \
+            " - |cmd|/r <no> <instruction>|ff| : remplace l'instruction en " \
+            "ligne |ent|no|ff| par celle précisée\n" \
+            " - |cmd|/i <no> <instruction>|ff| : insère " \
+            "l'|ent|instruction|ff| " \
+            "avant la ligne |ent|no|ff|\n" \
+            " - |cmd|/d <no1>(, <no2>, <no3>...)|ff| / " \
+            "|cmd|<no1>-<no2>|ff| / " \
+            "|cmd|*|ff| : supprime des instructions.\n   Si vous précisez " \
+            "une plage à l'aide du tiret |cmd|-|ff|, en supprime " \
+            "l'intégralité.\n   Si vous entrez l'étoile |cmd|*|ff|, " \
+            "supprime tout.\n" \
+            " - |cmd|/o|ff| : réordonne les instructions. Cette option est " \
+            "à utiliser si vous\n   constatez une incohérence dans " \
+            "l'indentation de votre script (voir |cmd|/?s|ff|).\n" \
+            " - |cmd|/q <quete>:<niveau>|ff| : relie le script à une quête"
     
     def opt_aide_syntaxe(self, argument):
         """Option aide syntaxe.
@@ -383,6 +493,6 @@ class EdtInstructions(Editeur):
             tests.ajouter_instruction(msg)
         except ValueError as err:
             print(traceback.format_exc())
-            self.pere << "|err|" + str(err).capitalize() + ".|ff|"
+            self.pere << "|err|" + str(err).capitalize() + "|ff|"
         else:
             self.actualiser()
