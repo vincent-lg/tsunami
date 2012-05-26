@@ -32,8 +32,10 @@
 
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.flag import Flag
+from .edt_date import EdtDate
 
 class EdtPeriode(Presentation):
     
@@ -81,6 +83,21 @@ class EdtPeriode(Presentation):
             "Entrez le |ent|nouveau nom pluriel|ff| de la plante ou " \
             "|cmd|/|ff| pour revenir à la\nfenêtre parente.\n\n" \
             "Nom pluriel actuel : {objet.nom_pluriel}"
+        
+        # Description
+        description = self.ajouter_choix("description", "d", Description, \
+                periode)
+        description.parent = self
+        description.apercu = "{objet.description.paragraphes_indentes}"
+        description.aide_courte = \
+            "| |tit|" + "Description de la période {}".format(
+            periode).ljust(76) + "|ff||\n" + self.opts.separateur
+        
+        # Date de fin
+        date = self.ajouter_choix("date de fin", "t", EdtDate, periode)
+        date.parent = self
+        date.prompt = "Entrez la date de fin de période : "
+        date.apercu = "{objet.date_fin}"
         
         # Variation
         variation = self.ajouter_choix("variation", "v", Entier, periode,
