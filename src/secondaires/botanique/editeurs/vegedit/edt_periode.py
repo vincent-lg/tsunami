@@ -36,6 +36,7 @@ from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.flag import Flag
 from .edt_date import EdtDate
+from .edt_elements import EdtElements
 
 class EdtPeriode(Presentation):
     
@@ -116,3 +117,7 @@ class EdtPeriode(Presentation):
             "le vingtième jour du\n" \
             "troisième mois au plus tôt.\n\n" \
             "Variation actuelle : |bc|{valeur}|ff|"
+        
+        # Eléments
+        elts = self.ajouter_choix("eléments", "e", EdtElements, periode)
+        elts.parent = self

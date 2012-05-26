@@ -103,6 +103,9 @@ class EdtCycle(Presentation):
         # Périodes
         periodes = self.ajouter_choix("périodes", "p", EdtPeriodes, cycle)
         periodes.parent = self
+        periodes.aide_courte = "Options :\n" \
+            "  |ent|/n <nouveau nom>|ff| : ajoute une période\n" \
+            "  |ent|/d <nom>|ff| : supprime une période"
         
         # Visible
         visible = self.ajouter_choix("visible", "vi", Flag, cycle,

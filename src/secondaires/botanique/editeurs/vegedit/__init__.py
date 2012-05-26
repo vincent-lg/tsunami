@@ -69,7 +69,10 @@ class EdtVegedit(Presentation):
         cycles.parent = self
         cycles.aide_courte = \
             "Entrez |ent|le nom|ff| d'un cycle pour l'éditer ou " \
-            "|ent|/|ff| pour revenir à la fene^tre parente."
+            "|ent|/|ff| pour revenir à la fenêtre parente.\n\n" \
+            "Options :\n" \
+            "  |ent|/n <nouveau nom>|ff| : ajoute un cycle\n" \
+            "  |ent|/d <nom>|ff| : supprime un cycle"
         
         # Supprimer
         sup = self.ajouter_choix("supprimer", "sup", NSupprimer,

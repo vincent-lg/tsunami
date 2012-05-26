@@ -147,7 +147,7 @@ class Periode(BaseObj):
         dans un autre élément), une exception ValueError est levée.
         
         """
-        sa_nom = supprimer_accents(nom)
+        sa_nom = supprimer_accents(nom).lower()
         for elt in self.elements:
             if elt.objet is objet or supprimer_accents(elt.nom) == sa_nom:
                 raise ValueError("l'élément {} existe déjà".format(elt))
@@ -178,6 +178,13 @@ class Periode(BaseObj):
         
         raise ValueError("aucun élément ne correspond à l'objet {}".Format(
                 objet.cle))
+    
+    def est_element(self, nom):
+        """Retourne True si l'élément existe, False sinon."""
+        try:
+            return bool(self.get_element(nom))
+        except KeyError:
+            return False
     
     def supprimer_element(self, nom):
         """Supprime l'élément."""
