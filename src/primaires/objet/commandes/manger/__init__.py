@@ -82,9 +82,9 @@ class CmdManger(Commande):
             personnage << "Visiblement, ce n'est pas comestible."
             return
         
-        objet.script["mange"].executer(personnage=personnage, objet=objet)
         personnage << "Vous mangez {}.".format(objet.get_nom())
         personnage << objet.message_mange
         personnage.salle.envoyer("{{}} mange {}.".format(objet.get_nom()),
                 personnage)
+        objet.script["mange"].executer(personnage=personnage, objet=objet)
         importeur.objet.supprimer_objet(objet.identifiant)
