@@ -84,6 +84,17 @@ class PrototypePlante(BaseObj):
     def __str__(self):
         return self.cle
     
+    @property
+    def valide(self):
+        """Retourne True si le prototype est valide, False sinon.
+        
+        Un prototype est valide si il défini au moins un cycle et si chacun
+        de ses cycles contient au moins une période.
+        
+        """
+        return len(self.cycles) > 0 and all(len(c.periodes) > 0 for c in \
+                self.cycles)
+    
     def ajouter_cycle(self, nom, age):
         """Ajoute un cycle et le retourne.
         

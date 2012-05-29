@@ -154,6 +154,12 @@ class PrmPlanter(Parametre):
                     cle)
             return
         
+        if not prototype.valide:
+            personnage << "|err|Ce prototype n'est pas complet.\n" \
+                "Il doit avoir au moins un cycle et chacun de " \
+                "ses cycles doit avoir au moins\nune période.|ff|"
+            return
+        
         if zone:
             salles = [s for s in salles if s.nom_zone == zone]
             if not salles:
@@ -180,6 +186,8 @@ class PrmPlanter(Parametre):
                 if random() <= fact:
                     plante = importeur.botanique.creer_plante(prototype, salle)
                     plante.age = age
+                    plante.ajuster()
+                    plante.actualiser_elements()
                     nb += 1
         
         personnage << "{} plante(s) créée(s).".format(nb)

@@ -127,6 +127,27 @@ class Plante(BaseObj):
             raise ValueError("l'élément {} n'est pas défini dans {}".format(
                     objet.identifiant, self.identifiant))
     
+    def ajuster(self):
+        """Ajuste automatiquement le cycle et la période de la plante."""
+        cycle = None
+        for t_cycle in self.prototype.cycles:
+            if self.age <= t_cycle.age:
+                cycle = t_cycle
+            else:
+                break
+        
+        if cycle is None:
+            cycle = self.prototype.cycles[-1]
+        
+        # Choix de la période
+        periodes = [p for p in cycle.periodes if not p.finie]
+        if periodes:
+            periode = periodes[0]
+        else:
+            periode = cycle.periodes[0]
+        
+        self.periode = periode
+    
     def detruire(self):
         """Destruction de la plante."""
         if self in self.prototype.plantes:
