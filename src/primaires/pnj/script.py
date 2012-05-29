@@ -96,8 +96,37 @@ class ScriptPNJ(Script):
         var_perso = evt_regarde.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage regardant le PNJ"
         
+        # Evénement discute
+        evt_discute = self.creer_evenement("discute")
+        evt_discute.aide_courte = "un personnage engage une discussion avec " \
+                "le PNJ"
+        evt_discute.aide_longue = \
+            "Cet évènement est appelé quand un personnage engage une " \
+            "discussion avec le PNJ à propos d'un sujet quelconque."
+        
+        # Configuration des variables de l'évènement discute
+        var_sujet = evt_discute.ajouter_variable("sujet", "str")
+        var_sujet.aide = "le sujet de la discussion"
+        var_perso = evt_discute.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage regardant le PNJ"
+        
+        # Evénement donne
+        evt_donne = self.creer_evenement("donne")
+        evt_donne.aide_courte = "un personnage donne un objet au PNJ"
+        evt_donne.aide_longue = \
+            "Cet évènement est appelé quand un personnage donne un ou " \
+            "plusieurs objet(s) au PNJ, à condition que le PNJ puisse " \
+            "le(s) prendre."
+        
+        # Configuration des variables de l'évènement donne
+        var_objet = evt_donne.ajouter_variable("objet", "Objet")
+        var_objet.aide = "l'objet donné"
+        var_qtt = evt_donne.ajouter_variable("quantite", "int")
+        var_qtt.aide = "la quantité remise"
+        var_perso = evt_donne.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le donneur"
+        
         # On ajoute à tous les évènements la variable 'pnj'
         for evt in self.evenements.values():
             var_pnj = evt.ajouter_variable("pnj", "PNJ")
             var_pnj.aide = "le PNJ scripté"
-

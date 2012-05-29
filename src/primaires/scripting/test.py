@@ -121,6 +121,32 @@ class Test(BaseObj):
         instruction = type_instruction.construire(message)
         instruction.niveau = ancienne_instruction.niveau
         self.__instructions[ligne] = instruction
+        self.reordonner()
+    
+    def inserer_instruction(self, ligne, message):
+        """Insère une instruction à la ligne précisée."""
+        if ligne not in range(len(self.__instructions)):
+            raise IndexError("La ligne {} n'existe pas.".format(ligne))
+        
+        type_instruction = Instruction.test_interpreter(message)
+        instruction = type_instruction.construire(message)
+        self.__instructions.insert(ligne, instruction)
+        self.reordonner()
+    
+    def supprimer_instruction(self, ligne):
+        """Supprime une instruction."""
+        if ligne not in range(len(self.__instructions)):
+            raise IndexError("La ligne {} n'existe pas.".format(ligne))
+        
+        del self.__instructions[ligne]
+        self.reordonner()
+    
+    def reordonner(self):
+        """Vérifie et corrige les tabulations de toutes les instructions."""
+        self.dernier_niveau = 0
+        for instruction in self.__instructions:
+            instruction.deduire_niveau(self.dernier_niveau)
+            self.dernier_niveau = instruction.get_niveau_suivant()
     
     def tester(self, evenement):
         """Teste le test."""
@@ -191,7 +217,7 @@ class Test(BaseObj):
         le yield).
             Si ce retour est 0, on continue l'exécution (appel récursif).
             Si le retour est un autre nombre, on diffère l'exécutçion
-            Si le retour est None, ohn s'arrête.
+            Si le retour est None, on s'arrête.
         
         """
         # Exécution
@@ -216,14 +242,14 @@ class Test(BaseObj):
                 pass
             
             if tps == 0:
-                self.executer_script(evenement, code)
+                self.executer_code(evenement, code)
             else:
                 # On diffère l'exécution du script
                 nom = "script_dif<" + str(id(code)) + ">"
                 importeur.diffact.ajouter_action(nom, tps,
                         self.executer_code, evenement, code)
         finally:
-            del __builtins__["ErreurExecution"]
+            # del __builtins__["ErreurExecution"]
             del __builtins__["variables"]
             del __builtins__["get_variables"]
     
@@ -257,7 +283,7 @@ class Test(BaseObj):
         __builtins__["get_variables"] = get_variables
         try:
             code = exec(code, globales)
-        except Exception:
+        except Exception as err:
             self.erreur_execution(str(err))
         else:
             code = globales['script']()

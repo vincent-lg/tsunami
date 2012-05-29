@@ -74,7 +74,8 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
-             commandes.boire.CmdBoire(),
+            commandes.boire.CmdBoire(),
+            commandes.donner.CmdDonner(),
             commandes.manger.CmdManger(),
             commandes.oedit.CmdOedit(),
             commandes.olist.CmdOlist(),

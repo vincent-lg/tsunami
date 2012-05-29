@@ -131,7 +131,6 @@ class NomObjet(Masque):
                     o = ligne
                     qtt = 1
                     t_conteneur = None
-                
                 t_proto = hasattr(o, "prototype") and o.prototype or o
                 if prototype and t_proto is not prototype:
                     continue

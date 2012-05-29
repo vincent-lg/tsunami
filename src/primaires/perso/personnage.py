@@ -632,7 +632,7 @@ class Personnage(BaseObj):
             objet = membre.equipe and membre.equipe[-1] or membre.tenu
             if objet:
                 objets.append("{} [{}]".format(membre.nom.capitalize(),
-                        objet.nom_singulier))
+                        objet.get_nom()))
         
         if self.est_masculin():
             genre = "Il"

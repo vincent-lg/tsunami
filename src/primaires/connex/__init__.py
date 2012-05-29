@@ -30,6 +30,9 @@
 
 """Fichier contenant le module primaire connex."""
 
+import hashlib
+import sys
+
 from abstraits.module import *
 from primaires.connex.instance_connexion import InstanceConnexion
 from reseau.connexions.client_connecte import ClientConnecte
@@ -63,8 +66,19 @@ class Module(BaseModule):
         dans les contextes.
         
         """
-        type(self.importeur).anaconf.get_config("connex", \
+        cfg = type(self.importeur).anaconf.get_config("connex", \
             "connex/connex.cfg", "modele connexion", cfg_connex)
+        
+        if cfg.type_chiffrement not in hashlib.algorithms_guaranteed and \
+                cfg.type_chiffrement in hashlib.algorithms_available:
+            self.cnx_logger.warning("L'algorithme '{}' utilisé pour " \
+                    "chiffrer les mots de passe n'est pas portable.".format(
+                    cfg.type_chiffrement))
+        elif cfg.type_chiffrement not in hashlib.algorithms_available:
+            self.cnx_logger.fatal("L'algortihme '{}' utilisé pour " \
+                    "chiffrer les mots de passe n'existe pas.".format(
+                    cfg.type_chiffrement))
+            sys.exit(1)
         
         BaseModule.config(self)
     

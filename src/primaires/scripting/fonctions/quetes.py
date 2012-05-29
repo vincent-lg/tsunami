@@ -47,7 +47,7 @@ class ClasseFonction(Fonction):
         Les paramètres à entrer sont :
           * Le personnage à tester
           * La clé de la quête
-          * Le niveau testé (sous la forme d'une chaîne, comme "1.2)
+          * Le niveau testé (sous la forme d'une chaîne, comme "1.2")
         
         """
         try:
@@ -62,4 +62,3 @@ class ClasseFonction(Fonction):
             return False
         else:
             return niveau in quete.niveaux
-
