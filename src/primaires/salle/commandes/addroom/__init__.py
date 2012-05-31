@@ -83,6 +83,7 @@ class CmdAddroom(Commande):
                     salle_dest=nv_salle, corresp=dir_opposee)
             nv_salle.sorties.ajouter_sortie(dir_opposee, dir_opposee,
                     salle_dest=salle, corresp=direction)
+            nv_salle.nom_terrain = salle.nom_terrain
             
             personnage << "|att|La salle {} a bien été ajouté vers {}.|ff|". \
                     format(nv_salle.ident, salle.sorties[direction].nom_complet)
