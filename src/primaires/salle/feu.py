@@ -33,7 +33,7 @@
 from random import randint, choice, random
 
 from abstraits.obase import BaseObj
-import primaires.perso.exceptions.stat
+from primaires.perso.exceptions.stat import *
 
 class Feu(BaseObj):
     
@@ -139,10 +139,10 @@ class Feu(BaseObj):
             for personnage in self.salle.personnages:
                 dommages = int(0.1 * personnage.vitalite_max)
                 print(dommages)
+                personnage << "Le feu vous brûle la couenne."
                 try:
-                    personnage << "Le feu vous brûle la couenne."
                     personnage.vitalite = personnage.vitalite - dommages
-                except StatIEO:
+                except DepassementStat:
                     personnage << "Vous rendez l'âme dans le brasier."
                     personnage.mourir()
             if self.tour == 5:
