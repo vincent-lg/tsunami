@@ -84,7 +84,7 @@ class Connecteur(Expression):
             fin = None
         objet.connecteur = chaine[:fin]
         chaine = chaine[fin:]
-        return objet, chaine
+        return objet, chaine.lstrip()
     
     def get_valeur(self, evt):
         """Retourne le connecteur."""

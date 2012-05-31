@@ -64,8 +64,8 @@ class Tests(Expression):
         expressions = cls.expressions_def
         
         # Parsage des expressions
-        types = ("variable", "nombre", "chaine", "fonction",
-                        "operateur", "connecteur", "calcul")
+        types = ("nombre", "chaine", "fonction", "operateur", "connecteur", \
+                "variable", "calcul")
         expressions = []
         while chaine.strip():
             arg, chaine = cls.choisir(types, chaine)
