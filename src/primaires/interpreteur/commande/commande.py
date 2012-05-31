@@ -177,7 +177,7 @@ class Commande(Masque):
             return False
         
         if personnage.langue_cmd == "francais":
-            nom_com = self.nom_francais
+            nom_com = supprimer_accents(self.nom_francais)
         elif personnage.langue_cmd == "anglais":
             nom_com = self.nom_anglais
         else:
