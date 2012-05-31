@@ -260,6 +260,7 @@ class Module(BaseModule):
     
     def trouver_commande(self, lst_commande, commandes=None):
         """On cherche la commande correspondante.
+        
         Ce peut être une commande mais aussi une sous-commande, du premier
         niveau ou plus.
         
