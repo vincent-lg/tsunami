@@ -74,6 +74,9 @@ class MetaExpression(MetaBaseObj):
         d'expression interprétant la plus grande partie de la chaîne
         est choisi.
         
+        Si deux types d'expression interprètent autant, c'est la première
+        qui est gardée.
+        
         """
         types = [expressions[t] for t in types]
         types_app = [type for type in types if type.parsable(chaine)]
