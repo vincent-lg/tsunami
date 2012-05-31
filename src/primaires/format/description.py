@@ -63,6 +63,7 @@ class Description(BaseObj):
     
     """
     
+    nom_scripting = "description"
     def __init__(self, description=None, parent=None, scriptable=True,
             callback=None):
         """Constructeur"""
