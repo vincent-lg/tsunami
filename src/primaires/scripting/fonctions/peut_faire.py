@@ -34,7 +34,7 @@ from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
     
-    """Test si un personnage peut faire la quête."""
+    """Teste si un personnage peut faire la quête."""
     
     @classmethod
     def init_types(cls):
@@ -47,7 +47,7 @@ class ClasseFonction(Fonction):
         Les paramètres à entrer sont :
           * Le personnage à tester
           * La clé de la quête
-          * Le niveau testé (sous la forme d'une chaîne, comme "1.2)
+          * Le niveau testé (sous la forme d'une chaîne, comme "1.2")
         
         """
         try:

@@ -35,7 +35,7 @@ from primaires.format.fonctions import contient
 
 class ClasseFonction(Fonction):
     
-    """Test si une chaîne contient une autre chaîne."""
+    """Teste si une chaîne contient une autre chaîne."""
     
     @classmethod
     def init_types(cls):
@@ -58,4 +58,3 @@ class ClasseFonction(Fonction):
         
         """
         return contient(chaine_complete, expression)
-

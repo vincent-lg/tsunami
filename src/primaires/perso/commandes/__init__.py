@@ -34,6 +34,7 @@ from . import commande
 from . import equipement
 from . import niveaux
 from . import prompt
+from . import quete
 from . import qui
 from . import raedit
 from . import score

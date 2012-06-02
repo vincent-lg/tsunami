@@ -107,6 +107,7 @@ class Module(BaseModule):
             commandes.quitter.CmdQuitter(),
             commandes.restaurer.CmdRestaurer(),
             commandes.retnom.CmdRetnom(),
+            commandes.setquest.CmdSetQuest(),
             commandes.shutdown.CmdShutdown(),
             commandes.where.CmdWhere(),
         ]

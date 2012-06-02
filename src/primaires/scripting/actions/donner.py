@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,30 +28,45 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'action attendre."""
+"""Fichier contenant l'action donner."""
 
 from primaires.scripting.action import Action
+import primaires.perso.exceptions.stat
 
 class ClasseAction(Action):
     
-    """Attend X secondes.
-    
-    Cette action permet d'attendre un nombre de secondes spécifiées
-    afin de reprendre l'exécution du script plus tard. Notez cependant que,
-    pendant que le script est en pause, le jeu continue (le personnage a
-    peut-être changé d'état, de salle...).
-    
-    """
+    """Donne quelque chose à un personnage."""
     
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.attendre, "Fraction")
+        cls.ajouter_types(cls.donner_objet, "Personnage", "Objet")
+        cls.ajouter_types(cls.donner_prototype_nb, "Personnage", "str",
+                "Fraction")
     
     @staticmethod
-    def attendre(valeur):
-        """Attend le nombre de secondes spécifiées."""
-        return valeur
+    def donner_objet(personnage, objet):
+        """Donne un objet au personnage (variable de type Objet)."""
+        if not objet.peut_prendre:
+            raise ErreurExecution("{} ne peut pas être manipulé".format(
+                    objet.get_nom()))
+        dans = personnage.ramasser(objet)
+        if dans is None:
+            raise ErreurExecution("{} ne peut pas prendre {}".format(
+                    personnage.nom, objet.get_nom()))
     
-    @property
-    def code_python(self):
-        return "yield " + Action.code_python.__get__(self)
+    @staticmethod
+    def donner_prototype_nb(personnage, prototype, nb):
+        """Donne au personnage nb objets modelés sur le prototype précisé."""
+        nb = int(nb)
+        if not prototype in importeur.objet.prototypes:
+            raise ErreurExecution("prototype {} introuvable".format(prototype))
+        prototype = importeur.objet.prototypes[prototype]
+        for i in range(nb):
+            objet = importeur.objet.creer_objet(prototype)
+            if not objet.peut_prendre:
+                raise ErreurExecution("{} ne peut pas être manipulé".format(
+                        objet.get_nom()))
+            dans = personnage.ramasser(objet)
+            if dans is None:
+                raise ErreurExecution("{} ne peut pas prendre {}".format(
+                        personnage.nom, objet.get_nom()))

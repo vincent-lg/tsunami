@@ -135,6 +135,7 @@ class Module(BaseModule):
             commandes.equipement.CmdEquipement(),
             commandes.niveaux.CmdNiveaux(),
             commandes.prompt.CmdPrompt(),
+            commandes.quete.CmdQuete(),
             commandes.qui.CmdQui(),
             commandes.raedit.CmdRaedit(),
             commandes.score.CmdScore(),

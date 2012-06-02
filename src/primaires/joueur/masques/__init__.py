@@ -31,6 +31,7 @@
 """Package des masques du module joueur."""
 
 from . import chemin_cmd
+from . import cle_quete
 from . import encodage
 from . import flags
 from . import groupe_existant
