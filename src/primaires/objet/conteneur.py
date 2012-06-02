@@ -205,6 +205,6 @@ class ConteneurObjet(BaseObj):
 
 class SurPoids(ExceptionMUD):
     
-    """Exception levée en cas de sur poids."""
+    """Exception levée en cas de surpoids."""
     
     pass

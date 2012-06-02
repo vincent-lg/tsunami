@@ -43,5 +43,6 @@ from . import pset
 from . import quitter
 from . import restaurer
 from . import retnom
+from . import setquest
 from . import shutdown
 from . import where

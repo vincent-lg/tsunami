@@ -28,30 +28,28 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'action attendre."""
+"""Fichier contenant la fonction creer_objet."""
 
-from primaires.scripting.action import Action
+from primaires.scripting.fonction import Fonction
 
-class ClasseAction(Action):
+class ClasseFonction(Fonction):
     
-    """Attend X secondes.
-    
-    Cette action permet d'attendre un nombre de secondes spécifiées
-    afin de reprendre l'exécution du script plus tard. Notez cependant que,
-    pendant que le script est en pause, le jeu continue (le personnage a
-    peut-être changé d'état, de salle...).
-    
-    """
+    """Crée un objet à partir du prototype précisé."""
     
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.attendre, "Fraction")
+        cls.ajouter_types(cls.creer_objet, "str")
     
     @staticmethod
-    def attendre(valeur):
-        """Attend le nombre de secondes spécifiées."""
-        return valeur
-    
-    @property
-    def code_python(self):
-        return "yield " + Action.code_python.__get__(self)
+    def creer_objet(prototype):
+        """Crée un objet sur le prototype précisé.
+        
+        Prenez garde de toujours stocker les objets créés dans des variables
+        afin de ne pas créer d'objets fantômes.
+        
+        """
+        if not prototype in importeur.objet.prototypes:
+            raise ErreurExecution("prototype {} introuvable".format(prototype))
+        prototype = importeur.objet.prototypes[prototype]
+        objet = importeur.objet.creer_objet(prototype)
+        return objet

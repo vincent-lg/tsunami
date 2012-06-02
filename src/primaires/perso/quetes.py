@@ -134,3 +134,11 @@ class Quetes(BaseObj):
         """Valide la quête."""
         self[quete.cle] = niveau
         self.__quetes[quete.cle].valider(quete, niveau)
+    
+    def vider(self, cle_quete):
+        """Remet à zéro la quête spécifiée."""
+        if cle_quete in self.__quetes.keys():
+            self.__quetes[cle_quete].detruire()
+            del self.__quetes[cle_quete]
+        else:
+            raise KeyError("la quête {} n'a pu être trouvée".format(cle_quete))

@@ -74,12 +74,12 @@ class ConfirmerPass(Contexte):
                 type_chiffrement, msg):
             if self.suivant is None:
                 self.fermer()
-                self.pere.envoyer("|att|Votre mot de passe a bien été " \
+                self.pere.envoyer("\n|att|Votre mot de passe a bien été " \
                         "modifié.|ff|")
             else:
                 self.migrer_contexte(self.suivant)
         else:
-            self.pere.envoyer("|err|Le mot de passe de confirmation ne " \
+            self.pere.envoyer("\n|err|Le mot de passe de confirmation ne " \
                     "correspond pas à celui entré à l'étape\n" \
                     "précédente. Si cette erreur persiste, vous vous " \
                     "êtes peut-être trompé\n" \
