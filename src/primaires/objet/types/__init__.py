@@ -75,6 +75,9 @@ from .legume import *
 from .fruit import *
 from .gateau import *
 
+from .assiette import Assiette
+from .bol import Bol
+
 # Vêtements
 from .chapeau import Chapeau
 from .chaussette import Chaussette

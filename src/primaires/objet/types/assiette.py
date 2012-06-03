@@ -32,7 +32,7 @@
 
 from .conteneur_nourriture import ConteneurNourriture
 
-class Assiette(BaseType):
+class Assiette(ConteneurNourriture):
     
     """Type d'objet: assiette
     

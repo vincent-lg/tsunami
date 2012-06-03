@@ -32,7 +32,7 @@
 
 from .conteneur_nourriture import ConteneurNourriture
 
-class Bol(BaseType):
+class Bol(ConteneurNourriture):
     
     """Type d'objet: bol
     
