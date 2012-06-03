@@ -57,6 +57,10 @@ class CmdPspawn(Commande):
         prototype = dic_masques["ident_prototype_pnj"].prototype
         salle = personnage.salle
         nb_pnj = 1
+        if prototype.squelette is None:
+            personnage << "|err|Ce prototype n'a aucun squelette défini.|ff|"
+            return
+        
         if dic_masques["nombre"] is not None:
             nb_pnj = dic_masques["nombre"].nombre
             i = 0

@@ -94,7 +94,6 @@ class CmdRemplir(Commande):
                 qtt = nombre
             
             conteneur.retirer(objet, qtt)
-            objet.contenu = dans # on change le conteneur de l'objet
             for i in range(qtt):
                 dans.nourriture.append(objet)
         
