@@ -38,19 +38,19 @@ class ClasseAction(Action):
     
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.poser_objet, "Objet", "Salle")
+        cls.ajouter_types(cls.poser_objet, "Salle", "Objet")
         cls.ajouter_types(cls.poser_objet_conteneur, "Objet", "Objet")
-        cls.ajouter_types(cls.poser_proto_nb, "str", "Fraction", "Salle")
-        cls.ajouter_types(cls.poser_proto_nb_conteneur, "str", "Fraction",
-                "Objet")
+        cls.ajouter_types(cls.poser_proto_nb, "Salle", "str", "Fraction")
+        cls.ajouter_types(cls.poser_proto_nb_conteneur, "Objet", "str",
+                "Fraction")
     
     @staticmethod
-    def poser_objet(objet, salle):
+    def poser_objet(salle, objet):
         """Pose l'objet sur le sol de la salle."""
         salle.objets_sol.ajouter(objet)
     
     @staticmethod
-    def poser_objet_conteneur(objet, conteneur):
+    def poser_objet_conteneur(conteneur, objet):
         """Pose l'objet dans le conteneur.
         
         Attention, l'objet conteneur ne peut en aucun cas être "flottant" mais
@@ -67,7 +67,7 @@ class ClasseAction(Action):
         conteneur.conteneur.ajouter(objet)
     
     @staticmethod
-    def poser_proto_nb(prototype, nb, salle):
+    def poser_proto_nb(salle, prototype, nb):
         """Pose sur le sol de la salle nb objets du prototype précisé."""
         nb = int(nb)
         if not prototype in importeur.objet.prototypes:
@@ -78,7 +78,7 @@ class ClasseAction(Action):
             salle.objets_sol.ajouter(objet)
     
     @staticmethod
-    def poser_proto_nb_conteneur(prototype, nb, conteneur):
+    def poser_proto_nb_conteneur(conteneur, prototype, nb):
         """Pose dans le conteneur nb objets du prototype précisé.
         
         Attention, l'objet conteneur ne peut en aucun cas être "flottant" mais
