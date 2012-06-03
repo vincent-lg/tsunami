@@ -104,6 +104,11 @@ class EdtPnjRepop(Editeur):
                 del proto.salles_repop[salle]
             self.actualiser()
         else:
+            if proto.squelette is None:
+                self.pere << "|err|Ce prototype de PNJ n'a aucun squelette " \
+                        "défini.|ff|"
+                return
+            
             salle.pnj_repop[proto] = d_nb
             proto.salles_repop[salle] = nb
             self.actualiser()
