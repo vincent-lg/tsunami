@@ -33,6 +33,7 @@
 from math import fabs
 
 from abstraits.obase import BaseObj
+from primaires.perso.exceptions.stat import DepassementStat
 from primaires.vehicule.force import Force
 from primaires.vehicule.vecteur import Vecteur
 from primaires.vehicule.vehicule import Vehicule
@@ -40,6 +41,7 @@ from .constantes import *
 from .element import Element
 from .salle import SalleNavire
 from .vent import INFLUENCE_MAX
+from .constantes import END_VIT_RAMES
 
 # Constantes
 FACTEUR_MIN = 0.1
@@ -222,6 +224,30 @@ class Navire(Vehicule):
     def desc_survol(self):
         return self.nom
     
+    def faire_ramer(self):
+        """Cette méthode fait ramer les personnages du navire.
+        
+        Elle consomme l'endurance qu'ils doivent dépenser en fonction de
+        la vitesse des rames manipulées.
+        
+        """
+        for rames in self.rames:
+            if rames.tenu:
+                personnage = rames.tenu
+                vitesse = rames.vitesse
+                end = END_VIT_RAMES[vitesse]
+                if end > 0:
+                    try:
+                        personnage.stats.endurance -= end
+                    except DepassementStat:
+                        personnage << "Vous lâchez les rames d'épuisement."
+                        personnage.salle.envoyer("{} lâche les rames " \
+                                "d'épuisement.", personnage)
+                        rames.centrer()
+                        rames.vitesse = "immobile"
+                        rames.tenu = None
+                        personnage.cle_etat = ""
+    
     def valider_coordonnees(self):
         """Pour chaque salle, valide ses coordonnées."""
         for salle in self.salles.values():
@@ -395,6 +421,7 @@ class Propulsion(Force):
                 rames.tenu.cle_etat = ""
                 rames.tenu = None
         
+        navire.faire_ramer()
         rames = [r for r in navire.rames if r.tenu is not None]
         vecteur = vec_nul
         if voiles:
