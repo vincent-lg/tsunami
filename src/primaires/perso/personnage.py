@@ -41,6 +41,7 @@ from .race import Race
 from .equipement import Equipement
 from .quetes import Quetes
 from .stats import Stats
+from .exceptions.stat import DepassementStat
 
 class Personnage(BaseObj):
     
@@ -320,6 +321,12 @@ class Personnage(BaseObj):
     
     def deplacer_vers(self, sortie):
         """Déplacement vers la sortie 'sortie'"""
+        try:
+            self.stats.endurance -= self.salle.terrain.perte_endurance_dep
+        except DepassementStat:
+            self << "|err|Vous êtes trop fatigué.|ff|"
+            return
+        
         self.agir("deplacer")
         salle = self.salle
         salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest

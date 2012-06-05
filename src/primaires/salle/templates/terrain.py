@@ -37,3 +37,5 @@ class Terrain:
     def __init__(self, nom):
         """Constructeur du terrain."""
         self.nom = nom
+        self.perte_endurance_dep = 1
+
