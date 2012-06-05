@@ -131,8 +131,8 @@ class SujetAide(BaseObj):
         ret = ""
         i = 1
         for sujet in self.sujets_fils:
-            if self.importeur.interpreteur.groupes. \
-                    explorer_groupes_inclus(personnage.grp, sujet.str_groupe):
+            if importeur.interpreteur.groupes.explorer_groupes_inclus(
+                    personnage.grp, sujet.str_groupe):
                 ret += "\n" + indent + str(i) + ". |cmd|"
                 ret += sujet.titre.capitalize() + "|ff|"
                 if self.sujets_fils:
@@ -202,7 +202,7 @@ class SujetAide(BaseObj):
         if self.sujets_fils:
             ret += "\nSommaire :"
             ret += self.sommaire(personnage) + "\n"
-        ret += "\n" + self.afficher_contenu()
+        ret += "\n" + self.afficher_contenu(personnage)
         if self.sujets_lies:
             sujets_lies = []
             for sujet in self.sujets_lies:
@@ -217,13 +217,15 @@ class SujetAide(BaseObj):
                 ret += "|ff|."
         return ret
     
-    def afficher_contenu(self, ident="", sp="|sp|"):
+    def afficher_contenu(self, personnage, ident="", sp="|sp|"):
         """Affiche le contenu de self et ses sujets fils."""
         ret = "\n".join(self.contenu.paragraphes)
         for i, s in enumerate(self.sujets_fils):
-            ret += "\n" + sp + "\n|tit|" + ident + str(i + 1) + " " + \
+            if importeur.interpreteur.groupes.explorer_groupes_inclus(
+                    personnage.grp, s.str_groupe):
+                ret += "\n" + sp + "\n|tit|" + ident + str(i + 1) + ". " + \
                     s.titre.capitalize() + "|ff|"
-            ret += "\n\n" + s.afficher_contenu(ident=ident + "{}.".format(
-                    i + 1), sp="\n\n")
+            ret += "\n\n" + s.afficher_contenu(personnage,
+                    ident=ident + "{}.".format(i + 1), sp="\n\n")
         
         return ret

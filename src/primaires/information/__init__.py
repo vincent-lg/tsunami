@@ -174,8 +174,8 @@ class Module(BaseModule):
         # On affiche la liste des sujets d'aides
         peut_lire = []
         for sujet in self.__sujets:
-            if self.importeur.interpreteur.groupes. \
-                    explorer_groupes_inclus(personnage.grp, sujet.str_groupe):
+            if importeur.interpreteur.groupes.explorer_groupes_inclus(
+                    personnage.grp, sujet.str_groupe):
                 peut_lire.append(sujet)
         
         sujets_lire = []
