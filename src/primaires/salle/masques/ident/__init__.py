@@ -59,9 +59,11 @@ class Ident(Masque):
             raise ErreurValidation( \
                 "Précisez un identifiant de salle.")
         
-        if ident.count(":") != 1 and self.force:
-            raise ErreurValidation( \
-                "Format de l'identifiant inconnu.")
+        if ident.count(":") != 1:
+            if self.force:
+                raise ErreurValidation(
+                      "Format de l'identifiant inconnu.")
+            return False
         
         ident = ident.split(" ")[0].lower()
         self.a_interpreter = ident
