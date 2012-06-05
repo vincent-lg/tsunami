@@ -55,12 +55,14 @@ class CmdAide(Commande):
         if dic_masques["message"]:
             titre = dic_masques["message"].message
             sujet = importeur.information.get_sujet(titre)
-            if sujet is None:
+            if sujet is None or not \
+                    importeur.interpreteur.groupes.explorer_groupes_inclus(
+                    personnage.grp, sujet.str_groupe):
                 personnage << "|err|Il n'y a pas d'aide à ce sujet, désolé.|ff|"
             else:
                 texte = sujet.afficher_pour(personnage)
                 contexte = Page(personnage.instance_connexion, texte)
                 personnage.contexte_actuel.migrer_contexte(contexte)
         else:
-            personnage << type(self).importeur. \
-                    information.construire_sommaire_pour(personnage)
+            personnage << importeur.information.construire_sommaire_pour(
+                    personnage)
