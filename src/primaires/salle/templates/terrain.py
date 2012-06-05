@@ -38,3 +38,4 @@ class Terrain:
         """Constructeur du terrain."""
         self.nom = nom
         self.desc_survol = survol
+        self.perte_endurance_dep = 1

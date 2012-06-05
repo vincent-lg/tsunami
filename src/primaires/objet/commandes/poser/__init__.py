@@ -31,6 +31,7 @@
 """Package contenant la commande 'poser'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.objet.conteneur import SurPoids
 
 class CmdPoser(Commande):
     
@@ -83,7 +84,14 @@ class CmdPoser(Commande):
             conteneur.retirer(objet, qtt)
             if dans:
                 if hasattr(dans, "conteneur"):
-                    dans.conteneur.ajouter(objet, qtt)
+                    try:
+                        dans.conteneur.ajouter(objet, qtt)
+                    except SurPoids as err:
+                        personnage << "|err|" + str(err) + ".|ff|"
+                        personnage << "|err|{} tombe sur le sol.|ff|".format(
+                                objet.get_nom(qtt))
+                        personnage.salle.objets_sol.ajouter(objet, qtt)
+                        return
             else:
                 personnage.salle.objets_sol.ajouter(objet, qtt)
         

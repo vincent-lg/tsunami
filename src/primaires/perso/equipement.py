@@ -283,7 +283,7 @@ class Equipes(BaseObj):
     def grand_parent(self):
         return self.equipement.personnage
     
-    def ajouter(self, objet):
+    def ajouter(self, objet, nombre=1):
         """Ajoute un objet à l'équipoement"""
         raise NotImplementedError
     
@@ -334,7 +334,7 @@ class Tenus(BaseObj):
         qtts = [1] * len(objets)
         return iter(list(zip(objets, qtts)))
     
-    def ajouter(self, objet):
+    def ajouter(self, objet, nombre=1):
         """Ajoute un objet à l'équipoement"""
         raise NotImplementedError
     
