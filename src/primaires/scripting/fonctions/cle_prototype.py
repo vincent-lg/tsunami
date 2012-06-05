@@ -28,19 +28,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction nom_type."""
+"""Fichier contenant la fonction cle_prototype."""
 
 from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
     
-    """Retourne le nom du type d'un objet."""
+    """Retourne le prototype d'un objet."""
     
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.nom_type_objet, "Objet")
+        cls.ajouter_types(cls.nom_prototype_objet, "Objet")
     
     @staticmethod
-    def nom_type_objet(objet):
-        """Retourne le nom du type de l'objet (viande, vetement...)."""
-        return objet.nom_type
+    def nom_prototype_objet(objet):
+        """Retourne la clé du prototype dont est issu l'objet."""
+        return objet.cle
