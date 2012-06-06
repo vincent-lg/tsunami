@@ -30,8 +30,11 @@
 
 """Package contenant les commandes du module perso."""
 
+from . import allonger
+from . import asseoir
 from . import commande
 from . import equipement
+from . import lever
 from . import niveaux
 from . import prompt
 from . import quete

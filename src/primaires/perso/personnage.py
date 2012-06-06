@@ -85,9 +85,9 @@ class Personnage(BaseObj):
         
         # Position occupé
         self.position = ""
-        self.occupe = ""
+        self.occupe = None
         
-        # Nveau prmiaire et niveaux secondaires
+        # Niveau prmiaire et niveaux secondaires
         self.niveau = 1
         self.niveaux = {}
         self.xp = 0 # xp dans le niveau principal
@@ -231,12 +231,12 @@ class Personnage(BaseObj):
     
     def get_etat(self):
         """Retourne l'état visible du personnage."""
-        if self.position and not self.occupe:
-            return self.get_position().message
+        if self.position and self.occupe:
+            return self.get_position().get_message(self) + " " + \
+                    self.occupe.connecteur + " " + self.occupe.titre
         
-        if self.occupe:
-            return self.get_position().etat + " " + \
-                    self.salle.details[self.occupe].positions[self.position]
+        if self.position:
+            return self.get_position().get_message(self) + " là"
         
         if self.etat:
             return self.etat.msg_visible

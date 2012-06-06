@@ -46,15 +46,22 @@ class Position:
     
     """
     
-    def __init__(self, cle, etat, message):
+    def __init__(self, cle, etat_m, etat_f):
         """Constructeur du talent."""
         valider_cle(cle)
         self.cle = cle
-        self.etat = etat
-        self.message = message
+        self.etat_m = etat_m
+        self.etat_f = etat_f
     
     def __repr__(self):
-        return "position(" + self.cle + ")"
+        return "<position " + self.cle + ">"
     
     def __str__(self):
         return self.cle
+    
+    def get_message(self, personnage):
+        """Retourne le message masculin ou féminin."""
+        if personnage.genre == "féminin":
+            return self.etat_f
+        return self.etat_m
+

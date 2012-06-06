@@ -35,6 +35,7 @@ from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.flag import Flag
 from primaires.scripting.editeurs.edt_script import EdtScript
+from .edt_repos import EdtRepos
 
 class EdtDetail(Presentation):
     
@@ -138,6 +139,11 @@ class EdtDetail(Presentation):
         visible = self.ajouter_choix("est visible", "v", Flag, detail,
                 "est_visible")
         visible.parent = self
+        
+        # Repos
+        repos = self.ajouter_choix("repos", "r", EdtRepos, detail)
+        repos.parent = self
+        repos.apercu = "{objet.repos}"
         
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,
