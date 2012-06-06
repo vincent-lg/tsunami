@@ -28,21 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'escalader'."""
 
-from . import addroom
-from . import carte
-from . import chercherbois
-from . import chsortie
-from . import deverrouiller
-from . import escalader
-from . import etendue
-from . import fermer
-from . import goto
-from . import mettrefeu
-from . import ouvrir
-from . import redit
-from . import regarder
-from . import supsortie
-from . import verrouiller
-from . import zone
+from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.masque.exceptions.erreur_interpretation import \
+    ErreurInterpretation
+
+
+class CmdEscalader(Commande):
+    
+    """Commande 'escalader'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "escalader", "climb")
+        self.nom_categorie = "bouger"
+        self.schema = "<nom_sortie>"
+        self.aide_courte = "escalade une paroie"
+        self.aide_longue = \
+            "Cette commande permet d'escalader une parioe. Il vous faut " \
+            "préciser le nom de la sortie à escalader."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        sortie = dic_masques["nom_sortie"].sortie
+        salle = personnage.salle
+        nom_complet = sortie.nom_complet.capitalize()
+        
+        if not sortie.direction in ("bas", "haut") or not sortie.diff_escalade:
+            raise ErreurInterpretation(
+                "Vous n'avez pas besoin d'escalader dans cette direction.")
+        
+        personnage.deplacer_vers(sortie.nom, escalade=True)
+

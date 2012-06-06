@@ -226,6 +226,7 @@ class Module(BaseModule):
             commandes.chercherbois.CmdChercherBois(),
             commandes.chsortie.CmdChsortie(),
             commandes.deverrouiller.CmdDeverrouiller(),
+            commandes.escalader.CmdEscalader(),
             commandes.etendue.CmdEtendue(),
             commandes.fermer.CmdFermer(),
             commandes.goto.CmdGoto(),

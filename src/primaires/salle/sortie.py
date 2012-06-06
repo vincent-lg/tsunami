@@ -89,6 +89,7 @@ class Sortie(BaseObj):
         # Autres informations
         self.cachee = False
         self.porte = None
+        self._diff_escalade = 0
         
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
@@ -104,6 +105,16 @@ class Sortie(BaseObj):
         if not isinstance(attrs["salle_dest"], str):
             attrs["salle_dest"] = self.salle_dest.ident
         return attrs
+    
+    def _get_diff_escalade(self):
+        return self._diff_escalade
+    def _set_diff_escalade(self, difficulte):
+        assert 0 <= difficulte <= 10
+        self._diff_escalade = difficulte
+        corresp = self.sortie_opposee
+        if corresp:
+            corresp._diff_escalade = difficulte
+    diff_escalade = property(_get_diff_escalade, _set_diff_escalade)
     
     def deduire_article(self):
         """Déduit l'article en fonction du nom de la sortie"""

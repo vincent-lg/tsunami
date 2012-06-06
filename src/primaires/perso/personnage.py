@@ -33,6 +33,7 @@
 import random
 
 from abstraits.obase import BaseObj
+from corps.aleatoire import varier
 from corps.fonctions import lisser
 from primaires.interpreteur.file import FileContexte
 from primaires.interpreteur.groupe.groupe import *
@@ -319,10 +320,22 @@ class Personnage(BaseObj):
         """Méthode redirigeant vers envoyer mais lissant la chaîne."""
         self.envoyer(lisser(chaine), *personnages, **kw_personnages)
     
-    def deplacer_vers(self, sortie):
+    def deplacer_vers(self, sortie, escalade=False):
         """Déplacement vers la sortie 'sortie'"""
+        o_sortie = self.salle.sorties.get_sortie_par_nom(sortie)
+        if o_sortie.diff_escalade and o_sortie.direction in ("haut", "bas") \
+                and not self.est_immortel() and not escalade:
+            self << "|err|Vous devez escalader pour aller dans cette " \
+                    "direction.|ff|"
+            return
+        
+        if escalade:
+            end = 8
+        else:
+            end = self.salle.terrain.perte_endurance_dep
+        
         try:
-            self.stats.endurance -= self.salle.terrain.perte_endurance_dep
+            self.stats.endurance -= end
         except DepassementStat:
             self << "|err|Vous êtes trop fatigué.|ff|"
             return
@@ -333,6 +346,13 @@ class Personnage(BaseObj):
         if not self.est_immortel() and salle_dest.zone.fermee:
             self << "|err|Vous ne pouvez pas aller par là...|ff|"
             return
+        
+        if escalade:
+            connaissance = varier(self.pratiquer_talent("escalade"), 10)
+            reussir = connaissance / 10 >= o_sortie.diff_escalade
+            if not reussir:
+                self.tomber()
+                return
         
         sortie = salle.sorties.get_sortie_par_nom(sortie)
         fermer = False
@@ -356,17 +376,21 @@ class Personnage(BaseObj):
         salle.script["sort"]["avant"].executer(vers=sortie.nom,
                 salle=salle, personnage=self, destination=salle_dest)
         
+        verbe = "s'en va vers"
+        if escalade:
+            verbe = "escalade"
+        
         if sortie.cachee:
             for personnage in salle.personnages:
-                msg = "{{personnage}} s'en va vers... Vous ne voyez pas " \
+                msg = "{{personnage}} {verbe}... Vous ne voyez pas " \
                         "très bien où."
                 if personnage.est_immortel():
-                    msg = "{{personnage}} s'en va vers {sortie}."
-                msg = msg.format(sortie=sortie.nom_complet)
+                    msg = "{{personnage}} {verbe} {sortie}."
+                msg = msg.format(sortie=sortie.nom_complet, verbe=verbe)
                 if personnage is not self:
                     personnage.envoyer(msg, personnage=self)
         else:
-            salle.envoyer("{{}} s'en va vers {}.".format(sortie.nom_complet),
+            salle.envoyer("{{}} {} {}.".format(verbe, sortie.nom_complet),
                     self)
         
         if fermer:
@@ -659,3 +683,45 @@ class Personnage(BaseObj):
         personnage.envoyer(msg)
         self.envoyer("{} vous regarde.", personnage)
         personnage.salle.envoyer("{} regarde {}.", personnage, self)
+    
+    def tomber(self):
+        """self tombe de salles en salles."""
+        def get_chute(salle, salles):
+            """Cherche récursivement la dernière salle de la chute."""
+            salles.append(salle)
+            try:
+                bas = salle.sorties["bas"]
+            except KeyError:
+                return salles
+            
+            if bas._diff_escalade:
+                salle = bas.salle_dest
+                return get_chute(salle, salles)
+            return salles
+        
+        salles = get_chute(self.salle, [])
+        if len(salles) == 1:
+            self << "Vous tentez d'escalader la paroie... sans succès."
+            self.salle.envoyer("{} tente d'escalader la paroie... " \
+                    "sans succès.", self)
+            return
+        
+        self << "Vous vascillez... |att|et tombez dans le vide !|ff|"
+        self.salle.envoyer("{} vascille... et tombe dans le vide !", self)
+        for salle in salles[1:-1]:
+            salle.envoyer("Le corps de {} passe en plongeant devant vous.",
+                    self)
+        
+        f_salle = salles[-1]
+        self.salle = f_salle
+        degats = int(self.vitalite_max / 3 * (len(salles) - 1))
+        try:
+            self.vitalite -= degats
+        except DepassementStat:
+            self.mourir()
+            self.salle.envoyer("Le corps sans vie de {} s'écrase au sol.",
+                    self)
+        else:
+            self << "Vous vous redressez en grimaçant."
+            self.salle.envoyer("{} heurte le sol et se redresse.", self)
+

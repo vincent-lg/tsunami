@@ -46,6 +46,7 @@ class EdtSortie(Editeur):
         self.ajouter_option("r", self.opt_renommer_sortie)
         self.ajouter_option("s", self.opt_changer_sortie)
         self.ajouter_option("c", self.opt_cacher)
+        self.ajouter_option("e", self.opt_escalade)
         self.ajouter_option("dq", self.opt_detruire_reciproque)
         self.ajouter_option("p", self.opt_changer_porte)
     
@@ -68,6 +69,11 @@ class EdtSortie(Editeur):
         msg += "\nPorte : " + oui_ou_non(bool(sortie.porte))
         if sortie.porte and sortie.porte.clef:
             msg += " (clef : |bc|" + sortie.porte.clef.nom_singulier + "|ff|)"
+        if sortie.direction in ("bas, haut"):
+            a_esc = sortie._diff_escalade > 0
+            msg += "\nÀ escalader : " + oui_ou_non(a_esc)
+            if a_esc:
+                msg += " ({:>2}/10)".format(sortie._diff_escalade)
         
         return msg
     
@@ -144,6 +150,23 @@ class EdtSortie(Editeur):
         sortie = self.objet
         sortie.cachee = not sortie.cachee
         self.actualiser()
+    
+    def opt_escalade(self, argument):
+        """Change la difficulté d'escalader cette sortie.
+        
+        Syntaxe :
+            /e difficulte
+        
+        """
+        sortie = self.objet
+        try:
+            valeur = int(argument)
+            assert 0 <= valeur <= 10
+        except (ValueError, AssertionError):
+            self.pere << "|err|Ce nombre est invalide.|ff|"
+        else:
+            sortie.diff_escalade = valeur
+            self.actualiser()
     
     def opt_detruire_reciproque(self, argument):
         """Permet de détruire la réciproque.

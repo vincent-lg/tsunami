@@ -223,5 +223,8 @@ class EdtSorties(Editeur):
                 " - |cmd|/p (<clef>)|ff| : ajoute ou supprime une porte à " \
                 "la sortie ; vous pouvez\n" \
                 "   préciser l'identifiant d'un objet de type clef"
+            if sortie.direction in ("bas", "haut"):
+                enveloppe.aide_courte += \
+                    "\n - |cmd|/e <difficulté à escalader entre 1 et 10|ff|"
             contexte = enveloppe.construire(self.pere)
             self.migrer_contexte(contexte)

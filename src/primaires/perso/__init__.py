@@ -101,6 +101,8 @@ class Module(BaseModule):
         self.cfg_talents = type(self.importeur).anaconf.get_config(
                 "talents", "perso/talents.cfg", "modele talents", cfg_talents)
         
+        self.ajouter_niveau("art_pisteur", "art du pisteur")
+        
         BaseModule.config(self)
     
     def init(self):
@@ -134,6 +136,7 @@ class Module(BaseModule):
         allonge.msg_refus = "Vous êtes allongé."
         allonge.msg_visible = "est allongé là"
         allonge.act_autorisees.append("lever")
+        self.ajouter_talent("escalade", "escalade", "survie", 0.25)
         
         BaseModule.init(self)
     
