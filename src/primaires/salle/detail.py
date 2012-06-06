@@ -32,11 +32,13 @@
 
 from abstraits.obase import *
 from primaires.format.description import Description
+from primaires.format.fonctions import oui_ou_non
 from primaires.scripting.script import Script
 
 class Detail(BaseObj):
     
     """Cette classe représente un détail observable dans une salle.
+    
     Elle permet d'ajouter à la description d'une salle des détails invisibles
     au premier abord, mais discernable avec la commande look.
     
@@ -49,10 +51,17 @@ class Detail(BaseObj):
         self.nom = nom
         self.synonymes = []
         self.titre = "un détail aux alentours"
-        self.description = Description()
+        self.description = Description(parent=self)
         self.positions = {}
         self.est_visible = True
         self.script = ScriptDetail(self)
+        self.peut_asseoir = False
+        self.peut_allonger = False
+        self.facteur_asseoir = 1.1
+        self.facteur_allonger = 1.2
+        self.connecteur = "sur"
+        self.nb_places_assises = 1
+        self.nb_places_allongees = 1
         self.parent = parent
         if modele is not None:
             self.synonymes = modele.synonymes
@@ -66,6 +75,10 @@ class Detail(BaseObj):
     
     def __str__(self):
         return self.nom
+    
+    @property
+    def repos(self):
+        return oui_ou_non(self.peut_asseoir or self.peut_allonger)
     
     def regarder(self, personnage):
         """Le personnage regarde le détail"""

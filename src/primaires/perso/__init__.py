@@ -124,15 +124,27 @@ class Module(BaseModule):
             self.ajouter_race(race)
         
         # Position
-        self.ajouter_position("assis", "est assis", "sur le sol")
+        self.ajouter_position("assis", "est assis", "est assise")
+        self.ajouter_position("allonge", "est allongé", "est allongée")
+        assis = self.ajouter_etat("assis")
+        assis.msg_refus = "Vous êtes assis."
+        assis.msg_visible = "est assis là"
+        assis.act_autorisees.append("lever")
+        allonge = self.ajouter_etat("allonge")
+        allonge.msg_refus = "Vous êtes allongé."
+        allonge.msg_visible = "est allongé là"
+        allonge.act_autorisees.append("lever")
         
         BaseModule.init(self)
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.allonger.CmdAllonger(),
+            commandes.asseoir.CmdAsseoir(),
             commandes.commande.CmdCommande(),
             commandes.equipement.CmdEquipement(),
+            commandes.lever.CmdLever(),
             commandes.niveaux.CmdNiveaux(),
             commandes.prompt.CmdPrompt(),
             commandes.quete.CmdQuete(),
@@ -251,8 +263,8 @@ class Module(BaseModule):
         
         return etat
     
-    def ajouter_position(self, cle, etat, message):
+    def ajouter_position(self, cle, etat_m, etat_f):
         """Ajoute une position."""
-        position = Position(cle, etat, message)
+        position = Position(cle, etat_m, etat_f)
         self.positions[cle] = position
         return position
