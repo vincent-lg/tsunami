@@ -72,6 +72,9 @@ class Etendue(BaseObj):
     def __getnewargs__(self):
         return ("", )
     
+    def __repr__(self):
+        return "<étendue {}>".format(repr(self.cle))
+    
     def __str__(self):
         return self.cle
     

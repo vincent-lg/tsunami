@@ -51,6 +51,7 @@ class ModeleNavire(BaseObj):
         self.nom = "un navire"
         self.vehicules = []
         self.salles = {}
+        self.poids_max = 200
     
     def __getnewargs__(self):
         return ("", )

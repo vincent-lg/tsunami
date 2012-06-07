@@ -72,6 +72,7 @@ class Navire(Vehicule):
         if modele:
             self.modele = modele
             modele.vehicules.append(self)
+            # TODO: calculer le n_id suivant disponible
             self.cle = "{}_{}".format(modele.cle, len(modele.vehicules))
             # On recopie les salles
             for r_coords, salle in modele.salles.items():
@@ -80,6 +81,7 @@ class Navire(Vehicule):
                         modele, self)
                 n_salle.titre = salle.titre
                 n_salle.description = salle.description
+                n_salle.noyable = salle.noyable
                 
                 # On recopie les éléments
                 for t_elt in salle.mod_elements:
@@ -224,6 +226,18 @@ class Navire(Vehicule):
     def desc_survol(self):
         return self.nom
     
+    @property
+    def poids_max(self):
+        return self.modele.poids_max
+    
+    @property
+    def poids(self):
+        poids = 0
+        for salle in self.salles.values():
+            poids += salle.poids_eau
+        
+        return podis
+    
     def faire_ramer(self):
         """Cette méthode fait ramer les personnages du navire.
         
@@ -312,6 +326,7 @@ class Navire(Vehicule):
             
             # On parcourt tous les points parcourus par le navire
             nav_points = {}
+            nav_salles = {}
             d = self.direction.direction + 90
             i = self.direction.inclinaison
             operation = lambda p, v: p + v.tourner_autour_z(d).incliner(i)
@@ -321,6 +336,7 @@ class Navire(Vehicule):
                     vec = operation(p, vec)
                     if vec not in nav_points:
                         nav_points[vec] = p
+                        nav_salles[vec] = salle
             
             # On parcourt chaque point de l'étendue
             etendue = self.etendue
@@ -333,7 +349,7 @@ class Navire(Vehicule):
                     dist = (c - v).norme
                     if dist < 0.5:
                         if not self.en_collision:
-                            self.collision()
+                            self.collision(nav_salles[v], point)
                             self.position.x = valide.x
                             self.position.y = valide.y
                             self.position.z = valide.z
@@ -355,7 +371,7 @@ class Navire(Vehicule):
                         "de la vitesse.")
         self.en_collision = False
     
-    def collision(self):
+    def collision(self, salle, contre=None):
         """Méthode appelée lors d'une collision avec un point."""
         Vehicule.collision(self, None)
         vitesse = self.vitesse_noeuds
@@ -366,7 +382,14 @@ class Navire(Vehicule):
         elif vitesse < 1.5:
             self.envoyer("Un choc violent ébranle l'ensemble du navire !")
         else:
-            self.envoyer("Craaash !")
+            self.envoyer("Le craquement du bois se brisant vous emplit " \
+                    "les oreilles.")
+            self.envoyer("|att|Le navire commence à sombrer !|ff|")
+            if salle.noyable:
+                salle.poids_eau += int(vitesse * 30)
+            for o_salle in self.salles.values():
+                if o_salle is not salle and o_salle.noyable:
+                    o_salle.poids_eau += int(vitesse * 10)
     
     def virer(self, n=1):
         """Vire vers tribord ou bâbord de n degrés.

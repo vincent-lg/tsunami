@@ -176,6 +176,10 @@ class EdtSalle(Presentation):
         # Intérieur / extérieur
         inter = self.ajouter_choix("intérieur", "i", Flag, salle, "interieur")
         inter.parent = self
+        
+        # Noyable
+        noyable = self.ajouter_choix("noyable", "n", Flag, salle, "noyable")
+        noyable.parent = self
     
     def opt_ajouter_supprimer_element(self, arguments):
         """Ajoute ou supprime un élément.

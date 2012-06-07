@@ -36,6 +36,7 @@ seront placées dans ce package
 """
 
 from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_carte import EdtCarte
 
@@ -71,6 +72,16 @@ class EdtShedit(Presentation):
         nom.aide_courte = \
             "Entrez le |ent|nom|ff| du navire ou |cmd|/|ff| pour revenir " \
             "à la fenêtre parente.\n\nNom actuel : |bc|{objet.nom}|ff|"
+        
+        # Poids max
+        poids_max = self.ajouter_choix("poids maximum", "p", Entier, modele, "poids_max", 1)
+        poids_max.parent = self
+        poids_max.apercu = "{objet.poids_max} kg"
+        poids_max.prompt = "Poids maximum avant de sombrer (en kg) : "
+        poids_max.aide_courte = \
+            "Entrez |ent|le poids maximum|ff| du navire avant qu'il ne " \
+            "sombre ou |cmd|/|ff| pour revenir\nà la fenêtre parente.\n\n" \
+            "Poids maximum actuel : {objet.poids_max} kg"
         
         # Carte
         carte = self.ajouter_choix("carte", "c", EdtCarte, modele)

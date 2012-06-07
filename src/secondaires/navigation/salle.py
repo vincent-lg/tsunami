@@ -82,6 +82,8 @@ class SalleNavire(Salle):
         self.r_x = r_x
         self.r_y = r_y
         self.r_z = r_z
+        self.noyable = True
+        self.poids_eau = 0
         if navire:
             # Déduit les coordonnées
             pass
