@@ -236,7 +236,7 @@ class Navire(Vehicule):
         for salle in self.salles.values():
             poids += salle.poids_eau
         
-        return podis
+        return poids
     
     def faire_ramer(self):
         """Cette méthode fait ramer les personnages du navire.
@@ -384,12 +384,11 @@ class Navire(Vehicule):
         else:
             self.envoyer("Le craquement du bois se brisant vous emplit " \
                     "les oreilles.")
-            self.envoyer("|att|Le navire commence à sombrer !|ff|")
             if salle.noyable:
-                salle.poids_eau += int(vitesse * 30)
+                salle.poids_eau += int(vitesse * 20)
             for o_salle in self.salles.values():
                 if o_salle is not salle and o_salle.noyable:
-                    o_salle.poids_eau += int(vitesse * 10)
+                    o_salle.poids_eau += int(vitesse * 8)
     
     def virer(self, n=1):
         """Vire vers tribord ou bâbord de n degrés.
@@ -408,8 +407,8 @@ class Navire(Vehicule):
     
     def detruire(self):
         """Destruction du self."""
-        for salle in self.salles.values():
-            salle.detruire()
+        for salle in list(self.salles.values()):
+            importeur.salle.supprimer_salle(salle.ident)
         
         self.modele.vehicules.remove(self)
         Vehicule.detruire(self)

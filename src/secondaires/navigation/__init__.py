@@ -153,6 +153,8 @@ class Module(BaseModule):
                 self.avancer_navires)
         self.importeur.diffact.ajouter_action("vir_navire", 3,
                 self.virer_navires)
+        self.importeur.diffact.ajouter_action("nauffrages", 5,
+                self.nauffrages)
         
         # Ajout des bateaux au module salle
         self.importeur.salle.salles_a_cartographier.append(
@@ -332,6 +334,28 @@ class Module(BaseModule):
                 orientation = int(orientation)
                 if orientation != 0:
                     navire.virer(orientation)
+    
+    def nauffrages(self):
+        """Gère les nauffrages."""
+        self.importeur.diffact.ajouter_action("nauffrages", 5,
+                self.nauffrages)
+        for navire in list(self.navires.values()):
+            for salle in navire.salles.values():
+                salle.poids_eau = int(salle.poids_eau * 1.2)
+            
+            poids = navire.poids
+            poids_max = navire.poids_max
+            if poids >= poids_max:
+                # Nauffrage
+                navire.envoyer("Le navire s'enfonce sous l'eau.")
+                salle_retour = importeur.salle[importeur.salle.salle_retour]
+                for salle in navire.salles.values():
+                    for personnage in salle.personnages:
+                        personnage.salle = salle_retour
+                        personnage << salle_retour.regarder(personnage)
+                self.supprimer_navire(navire.cle)
+            elif poids > poids_max / 2:
+                navire.envoyer("L'eau emplit le navire de plus en plus vite.")
     
     def navire_amarre(self, salle, liste_messages, flags):
         """Si un navire est amarré, on l'affiche."""
