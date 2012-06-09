@@ -102,7 +102,7 @@ class Sortie(BaseObj):
     
     def __getstate__(self):
         attrs = self.__dict__.copy()
-        if not isinstance(attrs["salle_dest"], str):
+        if self.salle_dest and not isinstance(attrs["salle_dest"], str):
             attrs["salle_dest"] = self.salle_dest.ident
         return attrs
     
