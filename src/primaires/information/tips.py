@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,33 +28,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la configuration du module information."""
+"""Ce fichier contient la classe Tips détaillée plus bas."""
 
-cfg_info = r"""
-# Ce fichier contient la configuration du module primaire information.
+from abstraits.obase import BaseObj
 
-## Aide en jeu
-# Configurez ici le message d'accueil de l'aide en jeu (commande help/aide).
-accueil_aide = \
-    "|tit|----------= Aide en jeu =----------|ff|\n" \
-    "Bienvenue dans l'aide du jeu. Ci-dessous se trouve une liste des " \
-    "sujets\nd'aide disponibles ; vous pouvez consulter chacun d'entre eux " \
-    "avec la\ncommande d'aide. Cette liste n'est cependant pas exhaustive : " \
-    "certain\nsujets sont organisés de manière hiérarchique et peuvent " \
-    "être parcourus à\nla manière d'un cours, au fur et à mesure. De plus, " \
-    "chaque sujet est aussi\naccessible par divers mots-clés. N'hésitez " \
-    "pas à tenter des recherches."
+class Tips(BaseObj):
 
-## Système de tips
-# Le système de tip permet d'envoyer des messages courts d'aide
-# contextuelle, permettant à un nouveau joueur d'apprendre les principales
-# commandes et de découvrir l'univers. Si ce système est activé, la
-# première fois qu'un joueur entrera dans un magasin par exemple,
-# il recevra un message lui donnant des indications sur "comment
-# consulter la liste des produits en vente". Ce système est une
-# façon simple et non intrusive pour apprendre les commandes usuelles
-# et peut également être contrôlé par le scripting pour introduire
-# l'univers. Vous pouvez l'activer ou le désactiver ici.
-tips = on
-
-"""
+    """Classe conteneur des informations de tips (qui a eu quelle tip)."""
+    
+    enregistrer = True
+    def __init__(self):
+        """Constructeur du conteneur"""
+        BaseObj.__init__(self)
+        self.personnages = {}
+    
+    def __getnewargs__(self):
+        return ()

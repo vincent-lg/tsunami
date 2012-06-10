@@ -32,4 +32,5 @@
 
 from . import aide
 from . import hedit
+from . import tips
 from . import versions

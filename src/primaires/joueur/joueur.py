@@ -58,6 +58,7 @@ class Joueur(Personnage):
         self.no_tick = 1
         self.alias_francais = {}
         self.alias_anglais = {}
+        self.tips = importeur.information.cfg_info.tips
     
     def __getstate__(self):
         retour = dict(self.__dict__)
