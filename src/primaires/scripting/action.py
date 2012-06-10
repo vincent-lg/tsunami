@@ -149,10 +149,11 @@ class Action(Instruction):
         """
         ty_p = [type(p) for p in parametres]
         for types, methode in cls._parametres_possibles.items():
-            if all(issubclass(p, t) for p, t in zip(ty_p, types)):
+            if len(ty_p) == len(types) and \
+                    all(issubclass(p, t) for p, t in zip(ty_p, types)):
                 return methode
         
-        raise ValueError("Aucune interprétation de la fonction {} " \
+        raise ValueError("aucune interprétation de l'action {} " \
                 "avec les paramètres {} n'est possible (types {}).".format(
                 cls.nom, parametres, ty_p))
     

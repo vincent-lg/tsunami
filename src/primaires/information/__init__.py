@@ -38,6 +38,7 @@ from primaires.information import commandes
 from .editeurs.hedit import EdtHedit
 
 from .sujet import SujetAide
+from .tips import Tips
 from .versions import Versions
 
 class Module(BaseModule):
@@ -53,6 +54,7 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "information", "primaire")
         self.__sujets = []
+        self.tips = None
         self.versions = None
     
     def config(self):
@@ -78,19 +80,25 @@ class Module(BaseModule):
             versions = Versions()
         self.versions = versions
         
-        BaseModule.init(self)
+        tips = self.importeur.supenr.charger_unique(Tips)
+        if not tips:
+            tips = Tips()
+        self.tips = tips
         
         # On lie la méthode joueur_connecte avec l'hook joueur_connecte
         # La méthode joueur_connecte sera ainsi appelée quand un joueur
         # se connecte
         self.importeur.hook["joueur:connecte"].ajouter_evenement(
                 self.joueur_connecte)
+        
+        BaseModule.init(self)
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.aide.CmdAide(),
             commandes.hedit.CmdHedit(),
+            commandes.tips.CmdTips(),
             commandes.versions.CmdVersions(),
         ]
         
@@ -202,3 +210,16 @@ class Module(BaseModule):
             joueur << "\n|vrc|De nouvelles modifications ont été apportées. " \
                     "Pour les consulter, utilisez\nla commande |ff|" \
                     "|cmd|versions|ff||vrc|.|ff|"
+    
+    def entree_tip(self, personnage, cle):
+        """Retourne True si le personnage a lue la tip, False sinon."""
+        liste = self.tips.personnages.get(personnage, [])
+        return cle in liste
+    
+    def noter_tip(self, personnage, cle):
+        """Note la tip cle comme lue pour le personnage."""
+        liste = self.tips.personnages.get(personnage, [])
+        if cle not in liste:
+            liste.append(cle)
+        
+        self.tips.personnages[personnage] = liste

@@ -34,6 +34,7 @@ import random
 
 from abstraits.obase import BaseObj
 from corps.fonctions import lisser
+from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.file import FileContexte
 from primaires.interpreteur.groupe.groupe import *
 
@@ -92,6 +93,9 @@ class Personnage(BaseObj):
         self.niveaux = {}
         self.xp = 0 # xp dans le niveau principal
         self.xps = {}
+        
+        # Système de tips
+        self.tips = False
         
         self._construire()
     
@@ -392,6 +396,11 @@ class Personnage(BaseObj):
         self.envoyer(self.salle.regarder(self))
         salle_dest.envoyer("{} arrive.", self)
         
+        # Envoie d'une tip
+        if salle_dest.magasin:
+            self.envoyer_tip("Entrez %lister% pour voir les produits " \
+                    "en vente dans ce magasin.")
+        
         # On appelle l'évènement arrive.apres
         if self.salle is salle_dest:
             salle_dest.script["arrive"]["apres"].executer(
@@ -628,6 +637,23 @@ class Personnage(BaseObj):
                 courante_liee = self.stats[liee].courante
                 plus = int(courante_liee * 0.9)
                 stat.courante = stat.courante + plus
+    
+    def envoyer_tip(self, message, cle=None, unique=False):
+        """Envoie un message de tip (aide contextuel) au personnage."""
+        if not self.tips:
+            return
+        
+        if unique and not cle:
+            raise ValueError("une tip unique avec une clé vide a été envoyée.")
+        
+        if unique and importeur.information.entree_tip(self, cle):
+            return
+        
+        message = "|att|TIP : " + message + "|ff|"
+        message = Commande.remplacer_mots_cles(self, message)
+        self.envoyer(message)
+        if unique:
+            importeur.information.noter_tip(self, cle)
     
     def regarder(self, personnage):
         """personnage regarde self."""

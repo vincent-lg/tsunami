@@ -52,6 +52,13 @@ class Zone(BaseObj):
     def __getnewargs__(self):
         return ("", )
     
+    def __getstate__(self):
+        attrs = self.__dict__.copy()
+        if "salles" in attrs:
+            del attrs["salles"]
+        
+        return attrs
+    
     def __repr__(self):
         return "zone {}".format(repr(self.cle))
     
