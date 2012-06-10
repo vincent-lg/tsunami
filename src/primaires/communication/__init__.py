@@ -146,16 +146,17 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajout des commandes"""
         self.commandes = [
+            commandes.attitudes.CmdAttitudes(),
+            commandes.canaux.CmdCanaux(),
+            commandes.chuchoter.CmdChuchoter(),
+            commandes.crier.CmdCrier(),
             commandes.dire.CmdDire(),
             commandes.discuter.CmdDiscuter(),
             commandes.emote.CmdEmote(),
+            commandes.messages.CmdMessages(),
             commandes.parler.CmdParler(),
             commandes.repondre.CmdRepondre(),
-            commandes.canaux.CmdCanaux(),
             commandes.socedit.CmdSocedit(),
-            commandes.attitudes.CmdAttitudes(),
-            commandes.messages.CmdMessages(),
-            commandes.chuchoter.CmdChuchoter(),
         ]
         
         for cmd in self.commandes:

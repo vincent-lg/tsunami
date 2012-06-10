@@ -679,6 +679,42 @@ class Personnage(BaseObj):
         if unique:
             importeur.information.noter_tip(self, cle)
     
+    def crier(self, message):
+        """Crie le message dans la salle courante et les salles alentours.
+        
+        La transmission du message se fait grâce à des actions différées
+        programmées pour s'exécuter instantanément (au prochain cycle du WD).
+        
+        """
+        salle = self.salle
+        self << "Vous vous écriez : " + message
+        salle.envoyer("{} s'écrie: " + message, self)
+        importeur.diffact.ajouter_action("yell({}).{}:{}".format(self.nom,
+                salle.ident, id(message)), 0, self.act_crier, salle, [salle],
+                message)
+    
+    def act_crier(self, salle, salles, message, dist=0):
+        """Crie le message.
+        
+        On parle de salle et on transmet le message à 
+        toutes les salles autour de salle dans un rayon de 1. On appelle
+        ensuite récursivement l'action.
+        
+        """
+        print(self.nom, message, dist, salle)
+        if dist >= 8:
+            return
+        
+        for chemin in salle.salles_autour(1).chemins:
+            t_salle = chemin.destination
+            if t_salle not in salles:
+                salles.append(t_salle)
+                t_salle.envoyer("{} s'écrie: {}".format(
+                        self.get_distinction_audible(), message))
+                importeur.diffact.ajouter_action("yell({}).{}:{}".format(
+                        self.nom, t_salle.ident, id(message)), 0, self.act_crier,
+                        t_salle, salles, message, dist + 1)
+                
     def regarder(self, personnage):
         """personnage regarde self."""
 
