@@ -717,7 +717,8 @@ class Personnage(BaseObj):
             salles.append(salle)
             try:
                 bas = salle.sorties["bas"]
-            except KeyError:
+                assert bas is not None
+            except (KeyError, AssertionError):
                 return salles
             
             if bas._diff_escalade:
