@@ -31,6 +31,7 @@
 """Fichier contenant le paramètre 'info' de la commande 'navire'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
+from primaires.format.fonctions import oui_ou_non
 
 class PrmInfo(Parametre):
     
@@ -96,6 +97,8 @@ class PrmInfo(Parametre):
         msg = "Informations sur le navire {} :\n".format(navire.cle)
         msg += "\n  Modèle : {} ({})".format(modele.cle, modele.nom)
         msg += "\n  Étendue : " + etendue
+        msg += "\n  Immobilisé : {}   En collision : {}".format(
+                oui_ou_non(navire.immobilise), oui_ou_non(navire.en_collision))
         msg += "\n  Coordonnées : {}".format(navire.position.coordonnees)
         msg += "\n  Allure : {}".format(navire.nom_allure)
         msg += "\n  Gouvernail : " + msg_gouv
