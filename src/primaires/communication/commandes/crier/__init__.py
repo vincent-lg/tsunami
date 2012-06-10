@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -19,7 +19,7 @@
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 # ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# LIABLE FOR ANY crierCT, INcrierCT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
 # OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
@@ -28,16 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module communication."""
+"""Package contenant la commande 'crier'.
 
-from . import attitudes
-from . import canaux
-from . import chuchoter
-from . import crier
-from . import dire
-from . import discuter
-from . import emote
-from . import messages
-from . import parler
-from . import repondre
-from . import socedit
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+from primaires.format.fonctions import echapper_accolades
+
+class CmdCrier(Commande):
+    
+    """Commande 'crier'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "crier", "yell")
+        self.nom_categorie = "parler"
+        self.schema = "<message>"
+        self.aide_courte = "crie un message"
+        self.aide_longue = \
+            "Cette commande permet de crier un message qui sera " \
+            "entendu des salles avoisinantes. Plus la salle est " \
+            "distante, plus il lui faudra du temps pour recevoir le " \
+            "message (la transmission du son reste assez rapide, moins " \
+            "d'une seconde pour traverser 8 salles). Au-delà d'un " \
+            "certain seul, le message est bien entendu perdu."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation de la commande"""
+        message = dic_masques["message"].message
+        message = echapper_accolades(message)
+        personnage.crier(message)

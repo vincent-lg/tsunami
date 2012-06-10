@@ -86,7 +86,7 @@ class Chemins(BaseObj):
                 else:
                     salles[t_salle] = n_chemin
             
-            if rayon < max:
+            if rayon < max - 1:
                 for sortie in salle.sorties:
                     t_salle = sortie.salle_dest
                     get_sorties_rec(t_salle, rayon + 1, max, salles)
