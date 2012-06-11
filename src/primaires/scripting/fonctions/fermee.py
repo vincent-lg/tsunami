@@ -28,48 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les fonctions utiles au scripting."""
+"""Fichier contenant la fonction fermee."""
 
-import re
+from primaires.scripting.fonction import Fonction
 
-# Constantes
-RE_VAR = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*?)\}")
+class ClasseFonction(Fonction):
+    
+    """Test si une porte est fermée ou non."""
+    
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.fermee, "Salle", "str")
+    
+    @staticmethod
+    def fermee(salle, nom_sortie):
+        """Retourne vrai si la sortie de la salle est fermée, faux sinon.
+        
+        NOTE: si la sortie indiquée n'est pas une porte, une erreur est envoyée.
+        
+        """
+        sortie = salle.sorties.get_sortie_par_nom_ou_direction(nom_sortie)
+        if sortie is None:
+            raise ErreurExecution("la sortie {} n'existe pas dans la " \
+                    "salle {}".format(repr(nom_sortie), repr(salle.ident)))
+        
+        if not sortie.porte:
+            raise ErreurExecution("cette sortie n'a aucune porte")
+        
+        return sortie.porte.fermee
 
-def formatter(variables, chaine):
-    f_variables = {}
-    for nom, variable in variables.items():
-        if hasattr(variable, "get_nom_pour"):
-            f_variables[nom] = "{" + nom + "}"
-        else:
-            f_variables[nom] = str(variable)
-    
-    i = chaine.find("${")
-    while i >= 0:
-        if len(chaine) > i + 2:
-            if chaine[i + 2] != "{":
-                chaine = chaine[:i] + chaine[i + 1:]
-        else:
-            chaine = chaine[:i] + chaine[i + 1:]
-            break
-        i = chaine.find("${", i)
-    
-    return chaine.format(**f_variables)
-
-def get_variables(variables, chaine):
-    """Retourne les variables trouvées dans la chaîne."""
-    vars = {}
-    for var in RE_VAR.findall(chaine):
-        vars[var] = variables[var]
-    
-    return vars
-
-class VariablesAAfficher(dict):
-    
-    """Classe héritant d'un dictionnaire, chargée de retourner les variables.
-    
-    Les variables retournées sont uniquement celles demandées.
-    
-    """
-    
-    def __getitem__(self, item):
-        return dict.__getitem__(self, item)
