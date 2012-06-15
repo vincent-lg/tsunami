@@ -107,3 +107,5 @@ class CmdPoser(Commande):
             personnage << "Vous posez {}.".format(objet.get_nom(pose))
             personnage.salle.envoyer("{{}} pose {}.".format(
                         objet.get_nom(pose)), personnage)
+        
+        objet.script["pose"].executer(objet=objet, personnage=personnage)
