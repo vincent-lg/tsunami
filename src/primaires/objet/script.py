@@ -44,7 +44,7 @@ class ScriptObjet(Script):
     
     def init(self):
         """Initialisation du script"""
-        # Evénement regarder
+        # Evénement regarde
         evt_regarde = self.creer_evenement("regarde")
         evt_reg_avant = evt_regarde.creer_evenement("avant")
         evt_reg_apres = evt_regarde.creer_evenement("après")
@@ -64,4 +64,28 @@ class ScriptObjet(Script):
         var_perso = evt_regarde.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage regardant l'objet"
         var_objet = evt_regarde.ajouter_variable("objet", "Objet")
+        var_objet.aide = "l'objet regardé"
+        
+        # Evénement prend
+        evt_prend = self.creer_evenement("prend")
+        evt_prend.aide_courte = "un personnage prend l'objet"
+        evt_prend.aide_longue = \
+            "Cet évènement est appelé quand un personnage prend l'objet."
+        
+        # Configuration des variables de l'évènement prend
+        var_perso = evt_prend.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage regardant l'objet"
+        var_objet = evt_prend.ajouter_variable("objet", "Objet")
+        var_objet.aide = "l'objet regardé"
+        
+        # Evénement pose
+        evt_pose = self.creer_evenement("pose")
+        evt_pose.aide_courte = "un personnage prendre l'objet"
+        evt_pose.aide_longue = \
+            "Cet évènement est appelé quand un personnage prend l'objet."
+        
+        # Configuration des variables de l'évènement pose
+        var_perso = evt_pose.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage regardant l'objet"
+        var_objet = evt_pose.ajouter_variable("objet", "Objet")
         var_objet.aide = "l'objet regardé"

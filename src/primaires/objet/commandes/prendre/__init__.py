@@ -112,3 +112,5 @@ class CmdPrendre(Commande):
             personnage << "Vous ramassez {}.".format(objet.get_nom(pris))
             personnage.salle.envoyer("{{}} ramasse {}.".format(
                     objet.get_nom(pris)), personnage)
+        
+        objet.script["prend"].executer(objet=objet, personnage=personnage)
