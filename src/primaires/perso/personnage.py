@@ -360,6 +360,12 @@ class Personnage(BaseObj):
         salle.script["sort"]["avant"].executer(vers=sortie.nom,
                 salle=salle, personnage=self, destination=salle_dest)
         
+        # On appelle l'événement personnage.sort si nécessaire
+        if hasattr(self, "script"):
+            if self.salle is salle_dest:
+                personnage.script["sort"].executer(vers=sortie.nom,
+                        salle=salle, destination=salle_dest, pnj=self)
+        
         if sortie.cachee:
             for personnage in salle.personnages:
                 msg = "{{personnage}} s'en va vers... Vous ne voyez pas " \
@@ -388,9 +394,9 @@ class Personnage(BaseObj):
         sortie_opp = sortie.sortie_opposee
         nom_opp = sortie_opp and sortie_opp.nom or None
         
-        # On appelle l'évènement arrive.avant
+        # On appelle l'évènement entre.avant
         if self.salle is salle_dest:
-            salle_dest.script["arrive"]["avant"].executer(
+            salle_dest.script["entre"]["avant"].executer(
                     depuis=nom_opp, salle=salle_dest, personnage=self)
         
         self.envoyer(self.salle.regarder(self))
@@ -401,9 +407,15 @@ class Personnage(BaseObj):
             self.envoyer_tip("Entrez %lister% pour voir les produits " \
                     "en vente dans ce magasin.")
         
-        # On appelle l'évènement arrive.apres
+        # On appelle l'événement personnage.entre si nécessaire
+        if hasattr(self, "script"):
+            if self.salle is salle_dest:
+                personnage.script["entre"].executer(depuis=nom_opp,
+                        salle=salle_dest, pnj=self)
+        
+        # On appelle l'évènement entre.apres
         if self.salle is salle_dest:
-            salle_dest.script["arrive"]["apres"].executer(
+            salle_dest.script["entre"]["apres"].executer(
                     depuis=nom_opp, salle=salle_dest, personnage=self)
     
     def get_talent(self, cle_talent):

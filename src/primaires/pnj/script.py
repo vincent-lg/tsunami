@@ -44,18 +44,18 @@ class ScriptPNJ(Script):
     
     def init(self):
         """Initialisation du script"""
-        # Evénement arrive
-        evt_arriver = self.creer_evenement("arrive")
-        evt_arriver.aide_courte = "le PNJ arrive quelque part"
-        evt_arriver.aide_longue = \
-            "Cet évènement est appelé quand le PNJ " \
-            "arrive dans la salle, quelque soit sa salle de provenance et " \
+        # Evénement entre
+        evt_entre = self.creer_evenement("entre")
+        evt_entre.aide_courte = "le PNJ entre quelque part"
+        evt_entre.aide_longue = \
+            "Cet évènement est appelé quand le PNJ entre dans une salle, " \
+            "quelque soit sa salle de provenance et " \
             "de destination."
         
-        # Configuration des variables de l'évènement arrive
-        var_depuis = evt_arriver.ajouter_variable("depuis", "str")
+        # Configuration des variables de l'évènement entre
+        var_depuis = evt_entre.ajouter_variable("depuis", "str")
         var_depuis.aide = "la direction d'où vient le PNJ"
-        var_salle = evt_arriver.ajouter_variable("salle", "Salle")
+        var_salle = evt_entre.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle actuelle du PNJ"
         
         # Evénement sort
