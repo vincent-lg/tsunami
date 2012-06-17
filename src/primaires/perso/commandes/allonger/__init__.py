@@ -53,7 +53,7 @@ class CmdAllonger(Commande):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         masque = dic_masques["element_observable"]
-        personnage.agir("allonger")
+        personnage.agir("bouger")
         if masque:
             elt = masque.element
             if not hasattr(elt, "peut_allonger") or not elt.peut_allonger:

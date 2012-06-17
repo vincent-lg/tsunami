@@ -55,6 +55,7 @@ class CmdRegarder(Commande):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         masque = dic_masques["element_observable"]
+        personnage.agir("regarder")
         if masque:
             elt = masque.element
             # patch : on ne peut pas se regarder soi-même. A garder jusqu'à la sortie des miroirs.

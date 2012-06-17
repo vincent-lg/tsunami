@@ -60,6 +60,7 @@ class CmdJouer(Commande):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         objet = dic_masques["nom_objet"].objet
+        personnage.agir("jouer")
         jeux = type(self).importeur.jeux.jeux
         plateaux = type(self).importeur.jeux.plateaux
         plateau = plateaux[objet.plateau]
@@ -81,6 +82,7 @@ class CmdJouer(Commande):
             personnage << "|err|Il n'y a plus de place libre.|ff|"
             return
         
+        personnage.cle_etat = "jeu"
         partie.ajouter_joueur(personnage)
         contexte = ContextePlateau(personnage.instance_connexion, objet,
                 partie)

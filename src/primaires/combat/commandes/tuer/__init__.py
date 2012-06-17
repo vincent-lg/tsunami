@@ -59,7 +59,7 @@ class CmdTuer(Commande):
         if attaque.salle is not personnage.salle:
             return
         
-        personnage.agir("combat")
+        personnage.agir("tuer")
         personnage.cle_etat = "combat"
         attaque.cle_etat = "combat"
         type(self).importeur.combat.creer_combat(personnage.salle,

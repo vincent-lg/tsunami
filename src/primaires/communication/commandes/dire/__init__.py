@@ -56,6 +56,7 @@ class CmdDire(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
+        personnage.agir("parler")
         message = dic_masques["message"].message
         message = echapper_accolades(message)
         salle = personnage.salle

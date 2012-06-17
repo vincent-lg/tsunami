@@ -60,7 +60,7 @@ class CmdChercherBois(Commande):
         if not combustibles:
             personnage << "|err|Il n'y a rien qui puisse brûler par ici.|ff|"
         else:
-            personnage.agir("chercher")
+            personnage.agir("chercherbois")
             personnage.cle_etat = "collecte_bois"
             personnage << "Vous vous penchez et commencez à chercher du bois."
             personnage.salle.envoyer(

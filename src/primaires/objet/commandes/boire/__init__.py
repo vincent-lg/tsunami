@@ -56,6 +56,7 @@ class CmdBoire(Commande):
         """Méthode d'interprétation de commande"""
         objets = dic_masques["nom_objet"].objets[0]
         objet, conteneur = objets
+        personnage.agir("ingerer")
         
         if hasattr(objet, "potion"):
             if objet.potion is None:

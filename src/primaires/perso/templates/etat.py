@@ -63,6 +63,12 @@ class Etat:
     de la commande et envoyant un message de refus au joueur
     (vous êtes en train de combattre).
     
+    NOTE : Si seul le dictionnaire des actions interdites est renseigné,
+    toutes les actions non interdites sont, par défaut, autorisées. Si seul
+    le dictionnaire des actions autorisées est renseigné, toutes les actions
+    non autorisées sont interdites. Si les deux sont vides, toutes les actions
+    sont interdites.
+    
     """
     
     def __init__(self, cle):
@@ -80,6 +86,6 @@ class Etat:
         Sinon, laisse passer.
         
         """
-        if cle_action in self.act_interdites or cle_action not in \
-                self.act_autorisees:
+        if cle_action in self.act_interdites or (not self.act_interdites \
+                and not cle_action in self.act_autorisees):
             raise ExceptionAction(self.msg_refus)

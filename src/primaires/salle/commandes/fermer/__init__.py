@@ -53,6 +53,7 @@ class CmdFermer(Commande):
         sortie = dic_masques["nom_sortie"].sortie
         salle = personnage.salle
         nom_complet = sortie.nom_complet.capitalize()
+        personnage.agir("fermer")
         
         if not sortie.porte:
             raise ErreurInterpretation(

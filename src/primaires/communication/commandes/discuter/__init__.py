@@ -55,6 +55,7 @@ class CmdDiscuter(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
+        personnage.agir("parler")
         if dic_masques["message"] is None:
             message = ""
             ret = "Vous engagez la discussion avec {}."

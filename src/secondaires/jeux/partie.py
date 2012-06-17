@@ -84,6 +84,7 @@ class Partie(BaseObj):
             if self.tour is personnage:
                 self.changer_tour()
             self.__joueurs.remove(personnage)
+            personnage.cle_etat = ""
     
     def changer_tour(self):
         """Change de tour."""
