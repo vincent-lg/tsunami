@@ -38,65 +38,55 @@ class ClasseAction(Action):
     
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.poser_objet, "Salle", "Objet")
-        cls.ajouter_types(cls.poser_objet_conteneur, "Objet", "Objet")
-        cls.ajouter_types(cls.poser_proto_nb, "Salle", "str", "Fraction")
-        cls.ajouter_types(cls.poser_proto_nb_conteneur, "Objet", "str",
+        cls.ajouter_types(cls.remplir_objet, "Objet", "Objet")
+        cls.ajouter_types(cls.remplir_proto_nb, "Objet", "str",
                 "Fraction")
     
     @staticmethod
-    def poser_objet(salle, objet):
-        """Pose l'objet sur le sol de la salle."""
-        salle.objets_sol.ajouter(objet)
-    
-    @staticmethod
-    def poser_objet_conteneur(conteneur, objet):
-        """Pose l'objet dans le conteneur (pas conteneur de nourriture).
+    def remplir_objet(conteneur, objet):
+        """Pose l'objet dans le conteneur.
         
         Attention, l'objet conteneur ne peut en aucun cas être "flottant" mais
         doit lui-même être contenu quelque part (sol d'une salle, inventaire
         d'un personnage, autre conteneur...).
         
         """
-        if not conteneur.est_de_type("conteneur"):
+        if not conteneur.est_de_type("conteneur de nourriture"):
             raise ErreurExecution("{} n'est pas un conteneur".format(
                     conteneur.get_nom()))
         if not conteneur.contenu:
             raise ErreurExecution("{} n'est contenu nul part".format(
                     conteneur.get_nom()))
-        conteneur.conteneur.ajouter(objet)
+        if objet.poids_unitaire > conteneur.poids_max:
+            raise ErreurExecution("{} est plein".format(conteneur.get_nom()))
+        conteneur.nourriture.append(objet)
     
     @staticmethod
-    def poser_proto_nb(salle, prototype, nb):
-        """Pose sur le sol de la salle nb objets du prototype précisé."""
-        nb = int(nb)
-        if not prototype in importeur.objet.prototypes:
-            raise ErreurExecution("prototype {} introuvable".format(prototype))
-        prototype = importeur.objet.prototypes[prototype]
-        for i in range(nb):
-            objet = importeur.objet.creer_objet(prototype)
-            salle.objets_sol.ajouter(objet)
-    
-    @staticmethod
-    def poser_proto_nb_conteneur(conteneur, prototype, nb):
+    def remplir_proto_nb(conteneur, prototype, nb):
         """Pose dans le conteneur nb objets du prototype précisé.
         
         Attention, l'objet conteneur ne peut en aucun cas être "flottant" mais
         doit lui-même être contenu quelque part (sol d'une salle, inventaire
-        d'un personnage, autre conteneur...). Il ne doit pas en outre être
-        un conteneur de nourriture.
+        d'un personnage, autre conteneur...).
         
         """
         nb = int(nb)
         if not prototype in importeur.objet.prototypes:
             raise ErreurExecution("prototype {} introuvable".format(prototype))
         prototype = importeur.objet.prototypes[prototype]
-        if not conteneur.est_de_type("conteneur"):
+        if not conteneur.est_de_type("conteneur de nourriture"):
             raise ErreurExecution("{} n'est pas un conteneur".format(
                     conteneur.get_nom()))
         if not conteneur.contenu:
             raise ErreurExecution("{} n'est contenu nul part".format(
                     conteneur.get_nom()))
+        pose = 0
+        poids_total = 0
         for i in range(nb):
+            poids_total += prototype.poids
+            if poids_total > conteneur.poids_max:
+                raise ErreurExecution("{} est plein".format(
+                        conteneur.get_nom()))
             objet = importeur.objet.creer_objet(prototype)
-            conteneur.conteneur.ajouter(objet)
+            conteneur.nourriture.append(objet)
+            pose += 1

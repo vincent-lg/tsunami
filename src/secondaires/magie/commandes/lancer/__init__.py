@@ -57,6 +57,7 @@ class CmdLancer(Commande):
         """Méthode d'interprétation de commande"""
         sort = dic_masques["nom_sort"].sort
         parchemin = dic_masques["nom_sort"].parchemin
+        personnage.agir("lancersort")
         
         if dic_masques["cible_sort"] is None:
             if sort.type_cible != "aucune":

@@ -69,6 +69,12 @@ class Module(BaseModule):
         for objet in objets:
             self._objets[objet.identifiant] = objet
         
+        # Ajout de l'état repas
+        etat = self.importeur.perso.ajouter_etat("repas")
+        etat.msg_refus = "Vous êtes en train de manger."
+        etat.msg_visible = "mange ici"
+        etat.act_autorisees = ["regarder", "bouger"]
+        
         BaseModule.init(self)
     
     def ajouter_commandes(self):

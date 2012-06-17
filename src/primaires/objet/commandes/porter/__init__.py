@@ -55,6 +55,7 @@ class CmdPorter(Commande):
         """Méthode d'interprétation de commande"""
         objets = list(dic_masques["nom_objet"].objets_conteneurs)[0]
         objet, conteneur = objets
+        personnage.agir("porter")
         
         for membre in personnage.equipement.membres:
             if membre.peut_equiper(objet):

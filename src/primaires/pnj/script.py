@@ -44,18 +44,18 @@ class ScriptPNJ(Script):
     
     def init(self):
         """Initialisation du script"""
-        # Evénement arrive
-        evt_arriver = self.creer_evenement("arrive")
-        evt_arriver.aide_courte = "le PNJ arrive quelque part"
-        evt_arriver.aide_longue = \
-            "Cet évènement est appelé quand le PNJ " \
-            "arrive dans la salle, quelque soit sa salle de provenance et " \
+        # Evénement entre
+        evt_entre = self.creer_evenement("entre")
+        evt_entre.aide_courte = "le PNJ entre quelque part"
+        evt_entre.aide_longue = \
+            "Cet évènement est appelé quand le PNJ entre dans une salle, " \
+            "quelque soit sa salle de provenance et " \
             "de destination."
         
-        # Configuration des variables de l'évènement arrive
-        var_depuis = evt_arriver.ajouter_variable("depuis", "str")
+        # Configuration des variables de l'évènement entre
+        var_depuis = evt_entre.ajouter_variable("depuis", "str")
         var_depuis.aide = "la direction d'où vient le PNJ"
-        var_salle = evt_arriver.ajouter_variable("salle", "Salle")
+        var_salle = evt_entre.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle actuelle du PNJ"
         
         # Evénement sort
@@ -75,6 +75,35 @@ class ScriptPNJ(Script):
         var_salle.aide = "la salle quittée par le PNJ"
         var_destination = evt_sort.ajouter_variable("destination", "Salle")
         var_destination.aide = "la salle où se rend le PNJ"
+        
+        # Evénement arrive
+        evt_arrive = self.creer_evenement("arrive")
+        evt_arrive.aide_courte = "un personnage arrive dans la salle du PNJ"
+        evt_arrive.aide_longue = \
+            "Cet évènement est appelé quand un personnage arrive dans la " \
+            "salle où se trouve le PNJ."
+        
+        # Configuration des variables de l'évènement arrive
+        var_depuis = evt_arrive.ajouter_variable("depuis", "str")
+        var_depuis.aide = "la direction d'où vient le personnage"
+        var_personnage = evt_arrive.ajouter_variable("personnage",
+                "Personnage")
+        var_personnage.aide = "le personnage qui arrive"
+        
+        # Evénement part
+        evt_part = self.creer_evenement("part")
+        evt_part.aide_courte = "un personnage part de la salle du PNJ"
+        evt_part.aide_longue = \
+            "Cet évènement est appelé quand un personnage quitte la salle " \
+            "où se trouve le PNJ."
+        
+        # Configuration des variables de l'évènement part
+        var_vers = evt_part.ajouter_variable("vers", "str")
+        var_vers.aide = "la direction empruntée par le personnage"
+        var_destination = evt_part.ajouter_variable("destination", "Salle")
+        var_destination.aide = "la salle où se rend le personnage"
+        var_personnage = evt_part.ajouter_variable("personnage", "Personnage")
+        var_personnage.aide = "le personnage qui arrive"
         
         # Evénement regarde
         evt_regarde = self.creer_evenement("regarde")

@@ -125,17 +125,20 @@ class Module(BaseModule):
         for race in races:
             self.ajouter_race(race)
         
-        # Position
+        # Positions
         self.ajouter_position("assis", "est assis", "est assise")
         self.ajouter_position("allonge", "est allongé", "est allongée")
+        
+        # Ajout des états (assis et allongé)
         assis = self.ajouter_etat("assis")
         assis.msg_refus = "Vous êtes assis."
         assis.msg_visible = "est assis là"
-        assis.act_autorisees.append("lever")
+        assis.act_autorisees = ["regarder", "poser", "parler", "ingerer",
+                "lancersort", "lever"]
         allonge = self.ajouter_etat("allonge")
         allonge.msg_refus = "Vous êtes allongé."
         allonge.msg_visible = "est allongé là"
-        allonge.act_autorisees.append("lever")
+        allonge.act_autorisees = ["regarder", "parler", "ingerer", "lever"]
         self.ajouter_talent("escalade", "escalade", "survie", 0.25)
         
         BaseModule.init(self)

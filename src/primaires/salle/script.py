@@ -44,35 +44,35 @@ class ScriptSalle(Script):
     
     def init(self):
         """Initialisation du script"""
-        # Evénement arriver
-        evt_arriver = self.creer_evenement("arrive")
-        evt_arr_avant = evt_arriver.creer_evenement("avant")
-        evt_arr_apres = evt_arriver.creer_evenement("après")
-        evt_arriver.aide_courte = "un personnage arrive dans la salle"
-        evt_arr_avant.aide_courte = "avant d'arriver"
-        evt_arr_apres.aide_courte = "après être arrivé"
-        evt_arriver.aide_longue = \
+        # Evénement entre
+        evt_entre = self.creer_evenement("entre")
+        evt_entre_avt = evt_entre.creer_evenement("avant")
+        evt_entre_apr = evt_entre.creer_evenement("après")
+        evt_entre.aide_courte = "un personnage entre dans la salle"
+        evt_entre_avt.aide_courte = "avant d'entrer"
+        evt_entre_apr.aide_courte = "après être entré"
+        evt_entre.aide_longue = \
             "Cet évènement est appelé quand un personnage, joueur ou PNJ, " \
-            "arrive dans la salle, quelque soit sa salle de provenance et " \
+            "entre dans la salle, quelque soit sa salle de provenance et " \
             "son moyen de déplacement. Il faut cependant retirer le " \
             "déplacement par |cmd|goto|ff| qui ne déclenche pas cet évènement."
-        evt_arr_avant.aide_longue = \
-            "Cet évènement est appelé avant que le personnage n'arrive, " \
+        evt_entre_avt.aide_longue = \
+            "Cet évènement est appelé avant que le personnage n'entre, " \
             "c'est-à-dire avant que les différents messages ne soient " \
             "envoyés pour informer de son arrivée. On ne peut retenir " \
             "le joueur dans sa salle de départ depuis cet évènement " \
             "car le déplacement s'est déjà fait."
-        evt_arr_apres.aide_longue = \
-            "Cet évènement est appelé après que le personnage soit arrivé " \
+        evt_entre_apr.aide_longue = \
+            "Cet évènement est appelé après que le personnage soit entré " \
             "dans la salle et après que lui et les autres personnages " \
             "présents en aient été informés."
         
-        # Configuration des variables de l'évènement arrive
-        var_depuis = evt_arriver.ajouter_variable("depuis", "str")
+        # Configuration des variables de l'évènement entre
+        var_depuis = evt_entre.ajouter_variable("depuis", "str")
         var_depuis.aide = "la direction d'où vient le personnage"
-        var_salle = evt_arriver.ajouter_variable("salle", "Salle")
+        var_salle = evt_entre.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle actuelle"
-        var_perso = evt_arriver.ajouter_variable("personnage", "Personnage")
+        var_perso = evt_entre.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage se déplaçant"
         
         # Evénement sort
@@ -108,8 +108,8 @@ class ScriptSalle(Script):
         var_perso = evt_sort.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage se déplaçant"
         
-        # Evénement dire
-        evt_dire = self.creer_evenement("dire")
+        # Evénement dit
+        evt_dire = self.creer_evenement("dit")
         evt_dire.aide_courte = "un personnage dit quelque chose dans la salle"
         evt_dire.aide_longue = \
             "Cet évènement est appelé quand un personnage dit quelque " \

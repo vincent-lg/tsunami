@@ -80,8 +80,8 @@ class Module(BaseModule):
         etat = self.importeur.perso.ajouter_etat("combat")
         etat.msg_refus = "Vous êtes en train de combattre."
         etat.msg_visible = "combat ici"
-        etat.act_interdites = ["combat", "prendre", "poser", "deplacer"]
-        
+        etat.act_interdites = ["tuer", "bouger", "prendre", "poser",
+                "chercherbois", "ouvrir", "fermer", "jouer", "lancersort"]
         BaseModule.init(self)
         
     def ajouter_commandes(self):

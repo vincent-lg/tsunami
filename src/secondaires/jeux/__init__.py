@@ -59,6 +59,13 @@ class Module(BaseModule):
         
         # On charge les parties
         self.parties = self.importeur.supenr.charger_groupe(Partie)
+        
+        # On ajoute de l'état
+        etat = importeur.perso.ajouter_etat("jeu")
+        etat.msg_refus = "Vous êtes en train de jouer."
+        etat.msg_visible = "joue ici"
+        etat.act_interdites = ["tuer", "bouger", "chercherbois", "ouvrir",
+                "fermer", "mettrefeu", "jouer"]
 
         BaseModule.init(self)
     

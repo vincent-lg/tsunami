@@ -57,6 +57,7 @@ class CmdChuchoter(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
+        personnage.agir("parler")
         cible = dic_masques["personnage_present"].joueur
         message = dic_masques["message"].message
         if personnage is cible:

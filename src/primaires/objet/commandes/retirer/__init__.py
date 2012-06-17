@@ -57,6 +57,7 @@ class CmdRetirer(Commande):
         """Méthode d'interprétation de commande"""
         objets = list(dic_masques["nom_objet"].objets_conteneurs)[0]
         objet, conteneur = objets
+        personnage.agir("retirer")
         try:
             conteneur.retirer(objet)
         except ValueError:  

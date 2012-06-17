@@ -35,7 +35,7 @@ from primaires.objet.conteneur import SurPoids
 
 class ClasseFonction(Fonction):
     
-    """Teste si le conteneur a de la place pour un ou des objets."""
+    """Teste si le conteneur a de la place."""
     
     @classmethod
     def init_types(cls):
@@ -49,6 +49,12 @@ class ClasseFonction(Fonction):
         L'objet testé doit être une variable de type Objet.
         
         """
+        if conteneur.est_de_type("conteneur de nourriture"):
+            if sum(o.poids_unitaire for o in conteneur.nourriture) \
+                    + objet.poids_unitaire > conteneur.poids_max:
+                return False
+            else:
+                return True
         try:
             conteneur.conteneur.supporter_poids_sup(objet.poids_unitaire,
                     recursif=False)
@@ -72,6 +78,12 @@ class ClasseFonction(Fonction):
         if not prototype in importeur.objet.prototypes:
             raise ErreurExecution("prototype {} introuvable".format(prototype))
         prototype = importeur.objet.prototypes[prototype]
+        if conteneur.est_de_type("conteneur de nourriture"):
+            if sum(o.poids_unitaire for o in conteneur.nourriture) \
+                    + prototype.poids_unitaire * nb > conteneur.poids_max:
+                return False
+            else:
+                return True
         try:
             conteneur.conteneur.supporter_poids_sup(
                     prototype.poids_unitaire * nb, recursif=False)

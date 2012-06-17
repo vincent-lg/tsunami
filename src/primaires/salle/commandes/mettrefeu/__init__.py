@@ -52,6 +52,7 @@ class CmdMettreFeu(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
+        personnage.agir("mettrefeu")
         salle = personnage.salle
         combustibles = importeur.objet.prototypes.values()
         combustibles = [c for c in combustibles \

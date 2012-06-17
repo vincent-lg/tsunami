@@ -50,6 +50,7 @@ class CmdScruter(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
+        personnage.agir("regarder")
         rayon = 5
         
         # On commence par lister les salles alentours

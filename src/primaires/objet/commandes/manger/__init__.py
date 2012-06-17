@@ -56,12 +56,14 @@ class CmdManger(Commande):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         objet = dic_masques["nom_objet"].objet
+        personnage.agir("ingerer")
         
         if hasattr(objet, "nourriture"):
             if not objet.nourriture:
                 personnage << "Il n'y a rien à manger là-dedans."
                 return
             personnage << "Vous commencez votre repas."
+            personnage.cle_etat = "repas"
             personnage.salle.envoyer("{} commence à manger.", personnage)
             personnage.agir("manger")
             for item in objet.nourriture:
