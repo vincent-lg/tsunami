@@ -76,6 +76,35 @@ class ScriptPNJ(Script):
         var_destination = evt_sort.ajouter_variable("destination", "Salle")
         var_destination.aide = "la salle où se rend le PNJ"
         
+        # Evénement arrive
+        evt_arrive = self.creer_evenement("arrive")
+        evt_arrive.aide_courte = "un personnage arrive dans la salle du PNJ"
+        evt_arrive.aide_longue = \
+            "Cet évènement est appelé quand un personnage arrive dans la " \
+            "salle où se trouve le PNJ."
+        
+        # Configuration des variables de l'évènement arrive
+        var_depuis = evt_arrive.ajouter_variable("depuis", "str")
+        var_depuis.aide = "la direction d'où vient le personnage"
+        var_personnage = evt_arrive.ajouter_variable("personnage",
+                "Personnage")
+        var_personnage.aide = "le personnage qui arrive"
+        
+        # Evénement part
+        evt_part = self.creer_evenement("part")
+        evt_part.aide_courte = "un personnage part de la salle du PNJ"
+        evt_part.aide_longue = \
+            "Cet évènement est appelé quand un personnage quitte la salle " \
+            "où se trouve le PNJ."
+        
+        # Configuration des variables de l'évènement part
+        var_vers = evt_part.ajouter_variable("vers", "str")
+        var_vers.aide = "la direction empruntée par le personnage"
+        var_destination = evt_part.ajouter_variable("destination", "Salle")
+        var_destination.aide = "la salle où se rend le personnage"
+        var_personnage = evt_part.ajouter_variable("personnage", "Personnage")
+        var_personnage.aide = "le personnage qui arrive"
+        
         # Evénement regarde
         evt_regarde = self.creer_evenement("regarde")
         evt_reg_avant = evt_regarde.creer_evenement("avant")

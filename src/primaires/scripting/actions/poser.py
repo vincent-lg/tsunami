@@ -51,7 +51,7 @@ class ClasseAction(Action):
     
     @staticmethod
     def poser_objet_conteneur(conteneur, objet):
-        """Pose l'objet dans le conteneur.
+        """Pose l'objet dans le conteneur (pas conteneur de nourriture).
         
         Attention, l'objet conteneur ne peut en aucun cas être "flottant" mais
         doit lui-même être contenu quelque part (sol d'une salle, inventaire
@@ -83,7 +83,8 @@ class ClasseAction(Action):
         
         Attention, l'objet conteneur ne peut en aucun cas être "flottant" mais
         doit lui-même être contenu quelque part (sol d'une salle, inventaire
-        d'un personnage, autre conteneur...).
+        d'un personnage, autre conteneur...). Il ne doit pas en outre être
+        un conteneur de nourriture.
         
         """
         nb = int(nb)

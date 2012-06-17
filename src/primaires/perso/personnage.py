@@ -143,7 +143,6 @@ class Personnage(BaseObj):
     
     def _get_salle(self):
         return self._salle
-    
     def _set_salle(self, salle):
         """Redéfinit la salle du joueur.
         On en profite pour :
@@ -339,6 +338,8 @@ class Personnage(BaseObj):
             return
         
         sortie = salle.sorties.get_sortie_par_nom(sortie)
+        sortie_opp = sortie.sortie_opposee
+        nom_opp = sortie_opp and sortie_opp.nom or ""
         fermer = False
         
         if not self.est_immortel() and sortie.porte and \
@@ -346,6 +347,27 @@ class Personnage(BaseObj):
             self << "Cette porte semble fermée à clef.".format(
                     sortie.nom_complet)
             return
+        
+        # On appelle l'événement sort.avant
+        salle.script["sort"]["avant"].executer(vers=sortie.nom,
+                salle=salle, personnage=self, destination=salle_dest)
+        
+        # On appelle l'évènement entre.avant
+        if self.salle is salle_dest:
+            salle_dest.script["entre"]["avant"].executer(
+                    depuis=nom_opp, salle=salle_dest, personnage=self)
+        
+        # On appelle l'événement personnage.sort si nécessaire
+        if hasattr(self, "script"):
+            if self.salle is salle_dest:
+                personnage.script["sort"].executer(vers=sortie.nom,
+                        salle=salle, destination=salle_dest, pnj=self)
+        
+        # On appelle les pnj.part des PNJs de la salle
+        for perso in self.salle.personnages:
+            if hasattr(perso, "script"):
+                perso.script["part"].executer(vers=sortie.nom, 
+                        destination=salle_dest, pnj=perso, personnage=self)
         
         # Si la porte est fermée (pas verrouillée), on l'ouvre
         if not self.est_immortel() and sortie.porte and \
@@ -355,16 +377,6 @@ class Personnage(BaseObj):
                     self)
             sortie.porte.ouvrir()
             fermer = True
-        
-        # On appelle l'événement sort.avant
-        salle.script["sort"]["avant"].executer(vers=sortie.nom,
-                salle=salle, personnage=self, destination=salle_dest)
-        
-        # On appelle l'événement personnage.sort si nécessaire
-        if hasattr(self, "script"):
-            if self.salle is salle_dest:
-                personnage.script["sort"].executer(vers=sortie.nom,
-                        salle=salle, destination=salle_dest, pnj=self)
         
         if sortie.cachee:
             for personnage in salle.personnages:
@@ -386,26 +398,23 @@ class Personnage(BaseObj):
             self.envoyer("Vous passez {} et refermez derrière vous.".format(
                     sortie.nom_complet))
         
+        self.salle = salle_dest
+        self.envoyer(self.salle.regarder(self))
+        salle_dest.envoyer("{} arrive.", self)
+        
+        # Envoi d'un tip
+        if salle_dest.magasin:
+            self.envoyer_tip("Entrez %lister% pour voir les produits " \
+                    "en vente dans ce magasin.")
+        
         # On appelle l'évènement sort.apres
         salle.script["sort"]["apres"].executer(vers=sortie.nom,
                 salle=salle, personnage=self, destination=salle_dest)
         
-        self.salle = salle_dest
-        sortie_opp = sortie.sortie_opposee
-        nom_opp = sortie_opp and sortie_opp.nom or None
-        
-        # On appelle l'évènement entre.avant
+        # On appelle l'évènement entre.apres
         if self.salle is salle_dest:
-            salle_dest.script["entre"]["avant"].executer(
+            salle_dest.script["entre"]["apres"].executer(
                     depuis=nom_opp, salle=salle_dest, personnage=self)
-        
-        self.envoyer(self.salle.regarder(self))
-        salle_dest.envoyer("{} arrive.", self)
-        
-        # Envoie d'une tip
-        if salle_dest.magasin:
-            self.envoyer_tip("Entrez %lister% pour voir les produits " \
-                    "en vente dans ce magasin.")
         
         # On appelle l'événement personnage.entre si nécessaire
         if hasattr(self, "script"):
@@ -413,10 +422,11 @@ class Personnage(BaseObj):
                 personnage.script["entre"].executer(depuis=nom_opp,
                         salle=salle_dest, pnj=self)
         
-        # On appelle l'évènement entre.apres
-        if self.salle is salle_dest:
-            salle_dest.script["entre"]["apres"].executer(
-                    depuis=nom_opp, salle=salle_dest, personnage=self)
+        # On appelle les pnj.arrive des PNJs de la salle
+        for perso in salle_dest.personnages:
+            if hasattr(perso, "script"):
+                perso.script["arrive"].executer(depuis=nom_opp, pnj=perso,
+                        personnage=self)
     
     def get_talent(self, cle_talent):
         """Retourne la valeur du talent ou 0 si le talent n'est pas trouvé."""
