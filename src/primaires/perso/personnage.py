@@ -343,7 +343,7 @@ class Personnage(BaseObj):
             self << "|err|Vous êtes trop fatigué.|ff|"
             return
         
-        personnage.agir("bouger")
+        self.agir("bouger")
         salle = self.salle
         salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
         if not self.est_immortel() and salle_dest.zone.fermee:
