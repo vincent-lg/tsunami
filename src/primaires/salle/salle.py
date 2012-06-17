@@ -76,7 +76,7 @@ class Salle(BaseObj):
     
     nom_scripting = "la salle"
     _nom = "salle"
-    _version = 3
+    _version = 4
     
     enregistrer = True
     def __init__(self, zone, mnemonic, x=0, y=0, z=0, valide=True):

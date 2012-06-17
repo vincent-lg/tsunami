@@ -42,3 +42,10 @@ class Convertisseur:
         objet.set_version(classe, 3)
         objet._nom_zone = objet._zone
         del objet._zone
+    def depuis_version_3(objet, classe):
+        objet.set_version(classe, 4)
+        objet.script._Script__evenements["entre"]["avant"]._Evenement__tests = objet.script._Script__evenements["arrive"]["avant"]._Evenement__tests
+        objet.script._Script__evenements["entre"]["apres"]._Evenement__tests = objet.script._Script__evenements["arrive"]["apres"]._Evenement__tests
+        objet.script._Script__evenements["dit"]._Evenement__tests = objet.script._Script__evenements["dire"]._Evenement__tests
+        del objet.script._Script__evenements["arrive"]
+        del objet.script._Script__evenements["dire"]
