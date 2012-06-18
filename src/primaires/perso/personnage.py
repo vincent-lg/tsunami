@@ -426,7 +426,7 @@ class Personnage(BaseObj):
         for perso in salle_dest.personnages:
             if hasattr(perso, "script"):
                 perso.script["arrive"].executer(depuis=nom_opp, pnj=perso,
-                        personnage=self)
+                        personnage=self, salle=salle)
     
     def get_talent(self, cle_talent):
         """Retourne la valeur du talent ou 0 si le talent n'est pas trouvé."""
