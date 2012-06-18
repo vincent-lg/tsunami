@@ -89,6 +89,8 @@ class ScriptPNJ(Script):
         var_personnage = evt_arrive.ajouter_variable("personnage",
                 "Personnage")
         var_personnage.aide = "le personnage qui arrive"
+        var_salle = evt_arrive.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle d'où vient le personnage"
         
         # Evénement part
         evt_part = self.creer_evenement("part")
