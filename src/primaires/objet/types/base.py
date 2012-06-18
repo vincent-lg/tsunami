@@ -267,7 +267,7 @@ class BaseType(BaseObj, metaclass=MetaType):
         self.script["regarde"]["avant"].executer(
                 objet=self, personnage=personnage)
         
-        description = str(self.description)
+        description = self.description.regarder(personnage, self)
         if not description:
             description = "Il n'y a rien de bien intéressant à voir."
         
