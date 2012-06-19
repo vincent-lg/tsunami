@@ -32,6 +32,18 @@
 
 from bases.exceptions.base import ExceptionMUD
 
+class InterrompreCommande(ExceptionMUD):
+    
+    """Cette exception permet d'interrompre une commande.
+    
+    """
+    
+    def __init__(self, msg=""):
+        self.message = msg
+    
+    def __str__(self):
+        return self.message
+
 class ErreurScripting(ExceptionMUD):
     
     """Cette exception est la classe-mère des erreurs du scripting.

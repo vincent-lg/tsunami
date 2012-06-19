@@ -38,6 +38,7 @@ from abstraits.obase import BaseObj
 from primaires.format.fonctions import echapper_accolades
 from primaires.scripting.parser import expressions
 from primaires.scripting.instruction import Instruction, ErreurExecution
+from primaires.scripting.exceptions import InterrompreCommande
 from primaires.scripting.constantes.connecteurs import CONNECTEURS
 from primaires.scripting.utile.fonctions import *
 from .alerte import Alerte
@@ -228,6 +229,8 @@ class Test(BaseObj):
             ret = next(code)
         except ErreurExecution as err:
             self.erreur_execution(str(err))
+        except InterrompreCommande as err:
+            raise err
         except Exception as err:
             self.erreur_execution(str(err))
         else:
