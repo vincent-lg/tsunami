@@ -112,7 +112,7 @@ class ModeConnecte(Contexte):
                 return
             except InterrompreCommande as err:
                 if err.message:
-                    self.pere.joueur << "|err|{}|ff|".format(err)
+                    self.pere.joueur << str(err)
                 return
             else:
                 if res:
