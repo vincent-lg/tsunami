@@ -170,15 +170,12 @@ class PNJ(Personnage):
         Personnage.mourir(self)
         type(self).importeur.pnj.supprimer_PNJ(self.identifiant)
     
+    def get_distinction_audible(self):
+        return self.nom_singulier
+    
     def tick(self):
         """Méthode appelée à chaque tick."""
         Personnage.tick(self)
-    
-    def accueil(self):
-        msg = ModeConnecte.accueil(self)
-        msg += "\n\n" + "|rg|Entrez /q pour quitter le contrôle de " \
-                "ce PNJ.|ff|"
-        return msg
     
     def regarder(self, personnage):
         """personnage regarde self."""
