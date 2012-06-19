@@ -30,6 +30,7 @@
 
 """Package contenant les commandes du module salle."""
 
+from . import controler
 from . import pedit
 from . import plist
 from . import ppurge
