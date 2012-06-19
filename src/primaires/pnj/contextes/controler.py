@@ -70,6 +70,12 @@ class Controler(ModeConnecte):
         pass
     pere = property(_get_pere, _set_pere)
     
+    def accueil(self):
+        msg = ModeConnecte.accueil(self)
+        msg += "\n\n" + "|rg|Entrez /q pour quitter le contrôle de " \
+                "ce PNJ.|ff|"
+        return msg
+    
     def opt_quitter(self):
         """Quitte le contexte."""
         if self.pnj:
