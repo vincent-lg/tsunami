@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,10 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant la classe InstanceControlelr, détaillée plus bas."""
 
-from . import controler
-from . import pedit
-from . import plist
-from . import ppurge
-from . import pspawn
+from primaires.connex.instance_connexion import InstanceConnexion
+
+class InstanceControler(InstanceConnexion):
+    
+    """Instance de connexion virtuelle pour les PNJ contrôlés."""
+    
+    def __init__(self, joueur, pnj):
+        InstanceConnexion.__init__(self, None)
+        self.t_joueur = joueur
+        self.pnj = pnj
+        self.joueur = pnj
+    
+    def __getnewargs__(self):
+        return (None, None)
+    
+    @property
+    def encodage(self):
+        encodage = "Utf-8"
+        if not hasattr(self, "t_joueur") or self.t_joueur is None:
+            return encodage
+        if self.t_joueur.compte:
+            return self.t_joueur.compte.encodage
+        return encodage
+    
+    def envoyer(self, msg):
+        """Redéfinition de la méthode envoyer."""
+        self.nb_msg += 1
+        msg = self.formater_message(msg)
+        if hasattr(self, "t_joueur") and self.t_joueur and \
+                self.t_joueur.instance_connexion:
+            self.t_joueur.instance_connexion.file_attente.append(msg)

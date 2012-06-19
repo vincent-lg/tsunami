@@ -1,6 +1,5 @@
 # -*-coding:Utf-8 -*
-
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,10 +27,43 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'contrôler'.
 
-from . import controler
-from . import pedit
-from . import plist
-from . import ppurge
-from . import pspawn
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+from primaires.pnj.contextes.controler import Controler
+
+class CmdControler(Commande):
+    
+    """Commande 'contrôler'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "contrôler", "control")
+        self.groupe = "administrateur"
+        self.nom_categorie = "batisseur"
+        self.schema = "<cle>"
+        self.aide_courte = "contrôle un PNJ"
+        self.aide_longue = \
+            "Cette commande permet de prendre le contrôle d'un PNJ. Les " \
+            "commandes que vous entrerez seront exécutées par lui."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation de la commande"""
+        cle = dic_masques["cle"].cle
+        try:
+            pnj = importeur.pnj.PNJ[cle]
+        except KeyError:
+            personnage << "|err|Ce PNJ est introuvable.|ff|"
+        else:
+            if pnj.controle_par is not None:
+                personnage << "|err|Ce PNJ est déjà contrôlé.|ff|"
+                return
+            
+            pnj.controle_par = personnage
+            contexte = Controler(personnage, pnj)
+            personnage.contextes.ajouter(contexte)
+            personnage << contexte.accueil()

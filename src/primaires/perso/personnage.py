@@ -290,6 +290,9 @@ class Personnage(BaseObj):
         """Retourne True si le personnage est mort, False sinon."""
         return self.vitalite == 0
     
+    def est_connecte(self):
+        return False
+    
     def detruire(self):
         """Méthode appelée lors de la destruction du personage.
         -   On supprime le personnage de la liste des personnages du squelette
@@ -419,7 +422,7 @@ class Personnage(BaseObj):
         # On appelle l'événement personnage.entre si nécessaire
         if hasattr(self, "script"):
             if self.salle is salle_dest:
-                personnage.script["entre"].executer(depuis=nom_opp,
+                self.script["entre"].executer(depuis=nom_opp,
                         salle=salle_dest, pnj=self)
         
         # On appelle les pnj.arrive des PNJs de la salle
