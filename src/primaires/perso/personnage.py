@@ -233,6 +233,10 @@ class Personnage(BaseObj):
         """Retourne le poids que peut porter le personnage."""
         return self.stats.force * 5
     
+    def sans_prompt(self):
+        if self.controle_par:
+            self.controle_par.sans_prompt()
+    
     def get_etat(self):
         """Retourne l'état visible du personnage."""
         if self.position and self.occupe:
