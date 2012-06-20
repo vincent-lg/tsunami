@@ -28,13 +28,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'action teleporter."""
+"""Fichier contenant l'action effacer_memoire."""
 
 from primaires.scripting.action import Action
 
 class ClasseAction(Action):
     
-    """A documenter."""
+    """Efface une mémoire de scripting."""
     
     @classmethod
     def init_types(cls):
@@ -44,7 +44,7 @@ class ClasseAction(Action):
     
     @staticmethod
     def effacer_salle(salle, cle):
-        """A documenter."""
+        """Efface une mémoire de salle."""
         if salle in importeur.scripting.memoires:
             if cle in importeur.scripting.memoires[salle]:
                 del importeur.scripting.memoires[salle][cle]
@@ -58,7 +58,7 @@ class ClasseAction(Action):
     
     @staticmethod
     def effacer_perso(personnage, cle):
-        """A documenter."""
+        """Efface une mémoire de personnage."""
         if personnage in importeur.scripting.memoires:
             if cle in importeur.scripting.memoires[personnage]:
                 del importeur.scripting.memoires[personnage][cle]
@@ -72,7 +72,7 @@ class ClasseAction(Action):
     
     @staticmethod
     def effacer_objet(objet, cle):
-        """A documenter."""
+        """Efface une mémoire d'objet."""
         if objet in importeur.scripting.memoires:
             if cle in importeur.scripting.memoires[objet]:
                 del importeur.scripting.memoires[objet][cle]

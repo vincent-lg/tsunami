@@ -28,13 +28,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'action teleporter."""
+"""Fichier contenant l'action ecrire_memoire."""
 
 from primaires.scripting.action import Action
 
 class ClasseAction(Action):
     
-    """A documenter."""
+    """Ecrit dans la mémoire du scripting.
+        
+    Une mémoire peut être spécifiée pour une salle, un personnage (joueur
+    ou PNJ) ou un objet. La valeur de la mémoire peut être de n'importe quel
+    type, sa clé doit être une chaîne.
+    """
     
     @classmethod
     def init_types(cls):
@@ -44,7 +49,7 @@ class ClasseAction(Action):
     
     @staticmethod
     def ecrire_salle(salle, cle, valeur):
-        """A documenter."""
+        """Ecrit une mémoire de salle."""
         if salle in importeur.scripting.memoires:
             importeur.scripting.memoires[salle][cle] = valeur
         else:
@@ -52,7 +57,7 @@ class ClasseAction(Action):
     
     @staticmethod
     def ecrire_perso(personnage, cle, valeur):
-        """A documenter."""
+        """Ecrit une mémoire de personnage (joueur ou PNJ)."""
         if personnage in importeur.scripting.memoires:
             importeur.scripting.memoires[personnage][cle] = valeur
         else:
@@ -60,7 +65,7 @@ class ClasseAction(Action):
     
     @staticmethod
     def ecrire_objet(objet, cle, valeur):
-        """A documenter."""
+        """Ecrit une mémoire d'objet."""
         if objet in importeur.scripting.memoires:
             importeur.scripting.memoires[objet][cle] = valeur
         else:
