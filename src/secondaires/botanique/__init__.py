@@ -39,6 +39,7 @@ from .detail import DetailMod
 from . import commandes
 from . import editeurs
 from . import masques
+from . import types
 
 class Module(BaseModule):
     

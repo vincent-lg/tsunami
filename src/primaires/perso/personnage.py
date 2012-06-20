@@ -405,10 +405,6 @@ class Personnage(BaseObj):
             sortie.porte.ouvrir()
             fermer = True
         
-        # On appelle l'événement sort.avant
-        salle.script["sort"]["avant"].executer(vers=sortie.nom,
-                salle=salle, personnage=self, destination=salle_dest)
-        
         verbe = "s'en va vers"
         if escalade:
             verbe = "escalade"
