@@ -28,13 +28,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction creer_PNJ."""
+"""Fichier contenant la fonction memoire_existe."""
 
 from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
     
-    """A documenter."""
+    """Teste si une mémoire de scripting est écrite."""
     
     @classmethod
     def init_types(cls):
@@ -44,7 +44,7 @@ class ClasseFonction(Fonction):
     
     @staticmethod
     def memoire_salle_existe(salle, cle):
-        """A documenter."""
+        """Renvoie vrai si la mémoire de salle existe, faux sinon."""
         if salle in importeur.scripting.memoires:
             return cle in importeur.scripting.memoires[salle]
         else:
@@ -52,7 +52,7 @@ class ClasseFonction(Fonction):
     
     @staticmethod
     def memoire_perso_existe(personnage, cle):
-        """A documenter."""
+        """Renvoie vrai si la mémoire de personnage existe, faux sinon."""
         if personnage in importeur.scripting.memoires:
             return cle in importeur.scripting.memoires[personnage]
         else:
@@ -60,7 +60,7 @@ class ClasseFonction(Fonction):
     
     @staticmethod
     def memoire_objet_existe(objet, cle):
-        """A documenter."""
+        """Renvoie vrai si la mémoire d'objet existe, faux sinon."""
         if objet in importeur.scripting.memoires:
             return cle in importeur.scripting.memoires[objet]
         else:

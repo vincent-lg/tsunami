@@ -34,7 +34,7 @@ from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
     
-    """A documenter."""
+    """Renvoie la valeur d'une mémoire de scripting."""
     
     @classmethod
     def init_types(cls):
@@ -44,7 +44,7 @@ class ClasseFonction(Fonction):
     
     @staticmethod
     def memoire_salle(salle, cle):
-        """A documenter."""
+        """Renvoie une mémoire de salle."""
         if salle in importeur.scripting.memoires:
             if cle in importeur.scripting.memoires[salle]:
                 return importeur.scripting.memoires[salle][cle]
@@ -53,7 +53,7 @@ class ClasseFonction(Fonction):
     
     @staticmethod
     def memoire_perso(personnage, cle):
-        """A documenter."""
+        """Renvoie une mémoire de personnage."""
         if personnage in importeur.scripting.memoires:
             if cle in importeur.scripting.memoires[personnage]:
                 return importeur.scripting.memoires[personnage][cle]
@@ -62,7 +62,7 @@ class ClasseFonction(Fonction):
     
     @staticmethod
     def memoire_objet(objet, cle):
-        """A documenter."""
+        """Renvoie une mémoire d'objet."""
         if objet in importeur.scripting.memoires:
             if cle in importeur.scripting.memoires[objet]:
                 return importeur.scripting.memoires[objet][cle]
