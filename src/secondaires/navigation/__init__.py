@@ -190,6 +190,18 @@ class Module(BaseModule):
                 editeurs.eltedit.EdtEltedit)
         self.importeur.interpreteur.ajouter_editeur(editeurs.shedit.EdtShedit)
     
+    def preparer(self):
+        """Préparation du module.
+        
+        Actions effectuées :
+        -   Mise à jour systématique des éléments du navire
+        
+        """
+        for navire in self.navires.values():
+            for salle in navire.salles.values():
+                for element in salle.elements:
+                    element.mettre_a_jour_attributs()
+    
     def creer_modele(self, cle):
         """Crée un modèle de navire et l'ajoute dans le dictionnaire.
         

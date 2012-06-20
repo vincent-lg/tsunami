@@ -31,6 +31,7 @@
 """Fichier contenant la classe Matelot, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
+from primaires.objet.objet import MethodeObjet
 
 class Matelot(BaseObj):
     
@@ -60,10 +61,54 @@ class Matelot(BaseObj):
         self.personnage = personnage
         self.nom_poste = "matelot"
         self.confiance = 0
+        self.ordres = []
     
     def __getnewargs__(self):
         return (None, )
     
     def __getattr__(self, nom_attr):
         """On cherche l'attribut dans le personnage."""
-        return getattr(self.personnage, nom_attr)
+        try:
+            attribut = getattr(type(self.personnage), nom_attr)
+            assert callable(attribut)
+            return MethodeObjet(attribut, self)
+        except (AttributeError, AssertionError):
+            return getattr(self.personnage, nom_attr)
+    
+    def executer_ordre(sef, priorite=1):
+        """Exécute le premier ordre de la liste.
+        
+        Traite les cas :
+            Impossibilité anticipée -> annulation
+            Difficulté anticipée -> information
+            Empêchement temporaire -> information
+            Impossibilité constatée -> annulation
+        
+        En fonction du statut de l'ordre, la liste entière peut être affectée.
+        
+        NOTE : le paramètre propriete (entre 1 et 100) permet de rendre un ordre plus impératif :
+            Un ordre à 1 sera refusé si le moindre problème est anticipé
+            Un ordre à 100 sera toujours tenté (urgence !)
+        
+        """
+        if self.ordres:
+            ordre = self.ordres[0]
+            if ordre.calculer_empechement() > priorite:
+                raise PrioriteTropFaible
+            
+            try:
+                ordre.executer(personnage)
+            except OrdreDiffere as err:
+                if err.priorite > priorite:
+                    raise err
+            except OrdreEmpeche as err:
+                raise err
+    
+    def ordre_accompil(self):
+        """Le premier ordre est accompli."""
+        if self.ordres:
+            del self.ordres[0]
+    
+    def detruire(self):
+        """Destruction du matelot."""
+        self.personnage.detruire()

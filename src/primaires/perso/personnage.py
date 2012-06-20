@@ -330,8 +330,11 @@ class Personnage(BaseObj):
         """Méthode redirigeant vers envoyer mais lissant la chaîne."""
         self.envoyer(lisser(chaine), *personnages, **kw_personnages)
     
-    def deplacer_vers(self, sortie, escalade=False):
+    def deplacer_vers(self, sortie, escalade=False, nage=False):
         """Déplacement vers la sortie 'sortie'"""
+        self.agir("bouger")
+        salle = self.salle
+        salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
         o_sortie = self.salle.sorties.get_sortie_par_nom(sortie)
         if o_sortie.diff_escalade and o_sortie.direction in ("haut", "bas") \
                 and not self.est_immortel() and not escalade:
@@ -339,8 +342,16 @@ class Personnage(BaseObj):
                     "direction.|ff|"
             return
         
+        if self.salle.nom_terrain in ("aquatique", "subaquatique") and \
+                not self.est_immortel() and not nage:
+            self << "|err|Vous devez nager pour aller dans cette " \
+                    "direction.|ff|"
+            return
+        
         if escalade:
             end = 8
+        elif nage:
+            end = 10
         else:
             end = self.salle.terrain.perte_endurance_dep
         
@@ -350,9 +361,6 @@ class Personnage(BaseObj):
             self << "|err|Vous êtes trop fatigué.|ff|"
             return
         
-        self.agir("bouger")
-        salle = self.salle
-        salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
         if not self.est_immortel() and salle_dest.zone.fermee:
             self << "|err|Vous ne pouvez pas aller par là...|ff|"
             return
@@ -364,6 +372,16 @@ class Personnage(BaseObj):
                 self.tomber()
                 return
         
+        if nage:
+            connaissance = varier(self.pratiquer_talent("nage"), 20)
+            reussir = connaissance >= varier(50, 60)
+            if not reussir:
+                self << "|err|Vous battez des bras et des jambes mais " \
+                        "n'avancez pas.|ff|"
+                self.salle.envoyer("{} bat des bras et des jambes mais " \
+                        "n'avance pas.", self)
+                return
+
         sortie = salle.sorties.get_sortie_par_nom(sortie)
         sortie_opp = sortie.sortie_opposee
         nom_opp = sortie_opp and sortie_opp.nom or ""
@@ -378,11 +396,6 @@ class Personnage(BaseObj):
         # On appelle l'événement sort.avant
         salle.script["sort"]["avant"].executer(vers=sortie.nom,
                 salle=salle, personnage=self, destination=salle_dest)
-        
-        # On appelle l'évènement entre.avant
-        if self.salle is salle_dest:
-            salle_dest.script["entre"]["avant"].executer(
-                    depuis=nom_opp, salle=salle_dest, personnage=self)
         
         # On appelle l'événement personnage.sort si nécessaire
         if hasattr(self, "script"):
@@ -408,6 +421,8 @@ class Personnage(BaseObj):
         verbe = "s'en va vers"
         if escalade:
             verbe = "escalade"
+        elif nage:
+            verbe = "nage vers"
         
         if sortie.cachee:
             for personnage in salle.personnages:
@@ -422,6 +437,10 @@ class Personnage(BaseObj):
             salle.envoyer("{{}} {} {}.".format(verbe, sortie.nom_complet),
                     self)
         
+        # On appelle l'évènement sort.apres
+        salle.script["sort"]["apres"].executer(vers=sortie.nom,
+                salle=salle, personnage=self, destination=salle_dest)
+        
         if fermer:
             self.salle.envoyer("Vous entendez une porte se refermer.",
                     self)
@@ -431,16 +450,18 @@ class Personnage(BaseObj):
         
         self.salle = salle_dest
         self.envoyer(self.salle.regarder(self))
+        
+        # On appelle l'évènement entre.avant
+        if self.salle is salle_dest:
+            salle_dest.script["entre"]["avant"].executer(
+                    depuis=nom_opp, salle=salle_dest, personnage=self)
+        
         salle_dest.envoyer("{} arrive.", self)
         
         # Envoi d'un tip
         if salle_dest.magasin:
             self.envoyer_tip("Entrez %lister% pour voir les produits " \
                     "en vente dans ce magasin.")
-        
-        # On appelle l'évènement sort.apres
-        salle.script["sort"]["apres"].executer(vers=sortie.nom,
-                salle=salle, personnage=self, destination=salle_dest)
         
         # On appelle l'évènement entre.apres
         if self.salle is salle_dest:

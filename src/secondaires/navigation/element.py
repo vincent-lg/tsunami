@@ -90,3 +90,11 @@ class Element(BaseObj):
     
     def __str__(self):
         return self.nom
+    
+    def mettre_a_jour_attributs(self):
+        """Met à jour les attributs contenus dans _attributs."""
+        if self.prototype:
+            for nom, val in self.prototype._attributs.items():
+                if not hasattr(self, nom):
+                    val = val.construire(self)
+                    setattr(self, nom, val)

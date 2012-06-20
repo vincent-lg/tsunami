@@ -230,6 +230,7 @@ class Module(BaseModule):
             commandes.fermer.CmdFermer(),
             commandes.goto.CmdGoto(),
             commandes.mettrefeu.CmdMettreFeu(),
+            commandes.nager.CmdNager(),
             commandes.ouvrir.CmdOuvrir(),
             commandes.redit.CmdRedit(),
             commandes.regarder.CmdRegarder(),
