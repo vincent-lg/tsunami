@@ -233,6 +233,10 @@ class Personnage(BaseObj):
         """Retourne le poids que peut porter le personnage."""
         return self.stats.force * 5
     
+    @property
+    def nom_unique(self):
+        return self.nom.lower()
+    
     def sans_prompt(self):
         if self.controle_par:
             self.controle_par.sans_prompt()

@@ -170,6 +170,10 @@ class PNJ(Personnage):
         Personnage.mourir(self)
         type(self).importeur.pnj.supprimer_PNJ(self.identifiant)
     
+    @property
+    def nom_unique(self):
+        return self.cle.lower()
+    
     def get_distinction_audible(self):
         return self.nom_singulier
     
