@@ -452,6 +452,10 @@ class Personnage(BaseObj):
             self.envoyer("Vous passez {} et refermez derrière vous.".format(
                     sortie.nom_complet))
         
+        if salle.nom_terrain != "subaquatique" and \
+                salle_dest.nom_terrain == "subaquatique":
+            self.plonger()
+        
         self.salle = salle_dest
         self.envoyer(self.salle.regarder(self))
         
@@ -462,10 +466,14 @@ class Personnage(BaseObj):
         
         salle_dest.envoyer("{} arrive.", self)
         
-        # Envoi d'un tip
+        # Envoi de tips
         if salle_dest.magasin:
             self.envoyer_tip("Entrez %lister% pour voir les produits " \
                     "en vente dans ce magasin.")
+        if salle.nom_terrain != "subaquatique" and \
+                salle_dest.nom_terrain == "subaquatique":
+            self.envoyer_tip("Vous êtes sous l'eau. " \
+                    "Attention au manque d'air !")
         
         # On appelle l'évènement entre.apres
         if self.salle is salle_dest:
@@ -841,4 +849,42 @@ class Personnage(BaseObj):
         else:
             self << "Vous vous redressez en grimaçant."
             self.salle.envoyer("{} heurte le sol et se redresse.", self)
-
+    
+    def plonger(self):
+        """self plonge."""
+        self << "|att|Vous prenez une grande inspiration avant " \
+                "de plonger.|ff|"
+        nom = "noyade_" + self.nom_unique
+        if not self.est_immortel() and nom not in \
+                importeur.diffact.actions:
+            importeur.diffact.ajouter_action(nom, 5, self.act_noyer, 5)
+    
+    def act_noyer(self, tps):
+        """Noie progressivement le joueur."""
+        if self.salle.nom_terrain != "subaquatique":
+            return
+        
+        nom = "noyade_" + self.nom_unique
+        
+        if self.est_mort():
+            tps = 0
+        
+        importeur.diffact.ajouter_action(nom, 5, self.act_noyer,
+                tps + 5)
+        
+        if self.est_mort():
+            return
+        
+        if tps >= 90:
+            try:
+                self.vitalite = 0
+            except DepassementStat:
+                self << "|err|Vos poumons vides se remplissent d'eau...|ff|"
+                self.mourir()
+        elif tps == 80:
+            self.sans_prompt()
+            self << "|att|Vos poumons sont presques vides et vous commencez à " \
+                    "étouffer.|ff|"
+        elif tps == 60:
+            self.sans_prompt()
+            self << "|att|Il ne vous reste plus beaucoup d'air...|ff|"

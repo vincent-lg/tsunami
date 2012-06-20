@@ -170,6 +170,15 @@ class Module(BaseModule):
         self.importeur.interpreteur.ajouter_editeur(EdtRaedit)
         self.importeur.interpreteur.ajouter_editeur(EdtSkedit)
     
+    def preparer(self):
+        """Préparation des personnages."""
+        personnages = list(importeur.joueur.joueurs.values()) + list(
+                importeur.pnj.PNJ.values())
+        for personnage in personnages:
+            if personnage.salle and personnage.salle.nom_terrain == \
+                    "subaquatique" and not personnage.est_immortel():
+                personnage.plonger()
+    
     def creer_squelette(self, cle):
         """Création d'un squelette"""
         squelette = Squelette(cle)
