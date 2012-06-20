@@ -98,7 +98,7 @@ class InstanceConnexion(BaseObj):
         -   sinon, on retourne le contexte de l'isntance
         
         """
-        if self.joueur and self.joueur.est_connecte():
+        if self.joueur and len(self.joueur.contextes) > 0:
             contexte = self.joueur.contexte_actuel
         else:
             contexte = self.contexte
@@ -112,7 +112,7 @@ class InstanceConnexion(BaseObj):
         celui de l'instance de connexion, soit celui du joueur).
         
         """
-        if self.joueur and self.joueur.est_connecte():
+        if self.joueur and len(self.joueur.contextes) > 0:
             self.joueur.contexte_actuel = nouveau_contexte
         else:
             self.contexte = nouveau_contexte

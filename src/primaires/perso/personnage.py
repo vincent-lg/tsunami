@@ -233,6 +233,10 @@ class Personnage(BaseObj):
         """Retourne le poids que peut porter le personnage."""
         return self.stats.force * 5
     
+    def sans_prompt(self):
+        if self.controle_par:
+            self.controle_par.sans_prompt()
+    
     def get_etat(self):
         """Retourne l'état visible du personnage."""
         if self.position and self.occupe:
@@ -290,6 +294,9 @@ class Personnage(BaseObj):
     def est_mort(self):
         """Retourne True si le personnage est mort, False sinon."""
         return self.vitalite == 0
+    
+    def est_connecte(self):
+        return False
     
     def detruire(self):
         """Méthode appelée lors de la destruction du personage.
@@ -447,7 +454,7 @@ class Personnage(BaseObj):
         # On appelle l'événement personnage.entre si nécessaire
         if hasattr(self, "script"):
             if self.salle is salle_dest:
-                personnage.script["entre"].executer(depuis=nom_opp,
+                self.script["entre"].executer(depuis=nom_opp,
                         salle=salle_dest, pnj=self)
         
         # On appelle les pnj.arrive des PNJs de la salle

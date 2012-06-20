@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2011 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,25 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Module contenant les exceptions du scripting."""
+"""Package contenant les contexes de PNJ."""
 
-from bases.exceptions.base import ExceptionMUD
-
-class InterrompreCommande(ExceptionMUD):
-    
-    """Cette exception permet d'interrompre une commande.
-    
-    """
-    
-    def __init__(self, msg=""):
-        self.message = msg
-    
-    def __str__(self):
-        return self.message
-
-class ErreurScripting(ExceptionMUD):
-    
-    """Cette exception est la classe-mère des erreurs du scripting.
-    
-    """
-    pass
+from . import controler

@@ -86,6 +86,7 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.controler.CmdControler(),
             commandes.pedit.CmdPedit(),
             commandes.plist.CmdPlist(),
             commandes.ppurge.CmdPpurge(),

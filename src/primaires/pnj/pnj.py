@@ -52,6 +52,8 @@ class PNJ(Personnage):
         self.prototype = prototype
         self.salle = salle
         self.salle_origine = salle
+        self.controle_par = None
+        self.instance_connexion = None
         if salle:
             salle.pop_pnj(self)
         
@@ -128,9 +130,36 @@ class PNJ(Personnage):
         self._race = race
     race = property(Personnage._get_race, _set_race)
     
+    def _get_contextes(self):
+        return self.controle_par and self.controle_par.contextes or \
+                None
+    def _set_contextes(self, contextes):
+        pass
+    contextes = property(_get_contextes, _set_contextes)
+    
+    def _get_alias(self):
+        alias = {}
+        if self.controle_par:
+            return self.controle_par.alias
+        return alias
+    def _set_alias(self, alias):
+        pass
+    alias = property(_get_alias, _set_alias)
+    
+    def _get_langue_cmd(self):
+        if self.controle_par:
+            return self.controle_par.langue_cmd
+        else:
+            return "francais"
+    def _set_langue_cmd(self, langue):
+        pass
+    langue_cmd = property(_get_langue_cmd, _set_langue_cmd)
+    
     def envoyer(self, msg, *personnages, **kw_personnages):
         """Envoie un message"""
-        pass
+        if self.controle_par:
+            self.controle_par.envoyer(msg, *personnages,
+                    **kw_personnages)
     
     def get_nom_pour(self, personnage):
         """Retourne le nom pour le personnage passé en paramètre."""
@@ -140,6 +169,9 @@ class PNJ(Personnage):
         """La mort d'un PNJ signifie sa destruction."""
         Personnage.mourir(self)
         type(self).importeur.pnj.supprimer_PNJ(self.identifiant)
+    
+    def get_distinction_audible(self):
+        return self.nom_singulier
     
     def tick(self):
         """Méthode appelée à chaque tick."""
@@ -155,9 +187,24 @@ class PNJ(Personnage):
     
     def detruire(self):
         """Destruction du PNJ."""
+        self.decontroller()
         Personnage.detruire(self)
         if self in self.prototype.pnj:
             self.prototype.pnj.remove(self)
         
         if self.salle_origine:
             self.salle_origine.det_pnj(self)
+    
+    def decontroller(self):
+        """Arrête de contrôler self."""
+        if self.controle_par:
+            try:
+                contexte = \
+                    self.controle_par.contextes.get_contexte_par_unom(
+                    "ctrl_pnj(" + self.identifiant + ")")
+            except KeyError:
+                pass
+            else:
+                self.controle_par.contextes.retirer(contexte)
+                self.controle_par = None
+                self.instance_connexion = None

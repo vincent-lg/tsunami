@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2011 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,25 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Module contenant les exceptions du scripting."""
+"""Fichier contenant la classe InstanceControlelr, détaillée plus bas."""
 
-from bases.exceptions.base import ExceptionMUD
+from primaires.connex.instance_connexion import InstanceConnexion
 
-class InterrompreCommande(ExceptionMUD):
+class InstanceControler(InstanceConnexion):
     
-    """Cette exception permet d'interrompre une commande.
+    """Instance de connexion virtuelle pour les PNJ contrôlés."""
     
-    """
+    def __init__(self, joueur, pnj):
+        InstanceConnexion.__init__(self, None)
+        self.t_joueur = joueur
+        self.pnj = pnj
+        self.joueur = pnj
     
-    def __init__(self, msg=""):
-        self.message = msg
+    def __getnewargs__(self):
+        return (None, None)
     
-    def __str__(self):
-        return self.message
-
-class ErreurScripting(ExceptionMUD):
+    @property
+    def encodage(self):
+        encodage = "Utf-8"
+        if not hasattr(self, "t_joueur") or self.t_joueur is None:
+            return encodage
+        if self.t_joueur.compte:
+            return self.t_joueur.compte.encodage
+        return encodage
     
-    """Cette exception est la classe-mère des erreurs du scripting.
-    
-    """
-    pass
+    def envoyer(self, msg):
+        """Redéfinition de la méthode envoyer."""
+        self.nb_msg += 1
+        msg = self.formater_message(msg)
+        if hasattr(self, "t_joueur") and self.t_joueur and \
+                self.t_joueur.instance_connexion:
+            self.t_joueur.instance_connexion.file_attente.append(msg)

@@ -68,7 +68,11 @@ class FileContexte(BaseObj):
         
         """
         if isinstance(index, int):
-            return self._file.__getitem__(index)
+            try:
+                return self._file.__getitem__(index)
+            except IndexError as err:
+                print(self._file, index)
+                raise err
         else:
             for contexte in self._file:
                 if isinstance(contexte, index):
@@ -127,6 +131,14 @@ class FileContexte(BaseObj):
             return self._file.index(contexte)
         except ValueError:
             return self._position
+    
+    def get_contexte_par_unom(self, unom):
+        """Retourne, si trouvé, le contexte du nom indiqué."""
+        for contexte in self._file:
+            if contexte.unom == unom:
+                return contexte
+        
+        raise KeyError("contexte introuvable {}".format(unom))
     
     def ajouter(self, objet):
         """Ajoute l'objet à ajouter en index self._position."""

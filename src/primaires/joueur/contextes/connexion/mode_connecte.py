@@ -38,6 +38,7 @@ from primaires.interpreteur.masque.exceptions.erreur_interpretation \
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
 from primaires.perso.exceptions.action import ExceptionAction
+from primaires.scripting.exceptions import InterrompreCommande
 
 class ModeConnecte(Contexte):
     
@@ -108,6 +109,10 @@ class ModeConnecte(Contexte):
                 res = module.traiter_commande(self.pere.joueur, msg)
             except ExceptionAction as err_act:
                 self.pere.joueur << "|err|{}|ff|".format(err_act)
+                return
+            except InterrompreCommande as err:
+                if err.message:
+                    self.pere.joueur << str(err)
                 return
             else:
                 if res:

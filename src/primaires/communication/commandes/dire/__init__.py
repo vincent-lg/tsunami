@@ -66,5 +66,5 @@ class CmdDire(Commande):
         salle.envoyer(autre, personnage)
         
         # Appel de l'évènement 'dire' de la salle
-        salle.script["dire"].executer(personnage=personnage,
+        salle.script["dit"].executer(personnage=personnage,
                 salle=salle, message=message)
