@@ -55,6 +55,7 @@ from .constantes.aide import *
 from .script import scripts
 from .alerte import Alerte
 from .commande_dynamique import CommandeDynamique
+from .memoires import Memoires
 
 class Module(BaseModule):
     
@@ -70,6 +71,7 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "scripting", "primaire")
         self.cfg_exportation = None
+        self.memoires = None
         self.a_charger = []
         self.fonctions = {}
         self.actions = {}
@@ -101,6 +103,11 @@ class Module(BaseModule):
     
     def init(self):
         """Initialisation"""
+        # Récupération de la mémoire du scripting
+        self.memoires = self.importeur.supenr.charger_unique(Memoires)
+        if self.memoires is None:
+            self.memoires = Memoires()
+        
         # Chargement des actions
         self.charger_actions()
         self.charger_fonctions()
