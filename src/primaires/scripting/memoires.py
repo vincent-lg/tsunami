@@ -58,6 +58,9 @@ class Memoires(BaseObj):
     def __getnewargs__(self):
         return ()
     
+    def __delitem__(self, cle):
+        del self._memoires[cle]
+
     def __getitem__(self, cle):
         return self._memoires[cle]
     
