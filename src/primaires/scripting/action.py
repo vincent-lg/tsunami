@@ -33,7 +33,7 @@
 from fractions import Fraction
 
 from .instruction import Instruction
-from .parser import expressions
+from .parser import expressions, MetaExpression
 
 actions = {} # dictionnaire des actions répertoriées
 
@@ -182,21 +182,12 @@ class Action(Instruction):
         chaine = " ".join(chaine[1:])
         parametres = []
         types = ("variable", "nombre", "chaine", "fonction", "calcul")
-        types = tuple([expressions[nom] for nom in types])
         while True:
             chaine = chaine.lstrip(" ")
             if not chaine:
                 break
             
-            types_app = [type for type in types if type.parsable(chaine)]
-            if not types_app:
-                raise ValueError("Impossible de parser {}.".format(action))
-            elif len(types_app) > 1:
-                raise ValueError("L'action {} peut être différemment " \
-                        "interprétée.".format(action))
-            
-            type = types_app[0]
-            arg, chaine = type.parser(chaine)
+            arg, chaine = MetaExpression.choisir(types, chaine)
             parametres.append(arg)
             
             chaine.lstrip(" ")

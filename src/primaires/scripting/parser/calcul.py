@@ -73,6 +73,11 @@ class Calcul(Expression):
         if inv:
             return False
         
+        for op in ('\\"', '\\(', '\\)', '\\+', '-', '\\*', '/'):
+            reg = r"\".*?" + op + r".*?\""
+            if re.search(reg, chaine):
+                return False
+        
         return RE_OPERATEURS.search(chaine) is not None
     
     @classmethod
