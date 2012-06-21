@@ -53,27 +53,28 @@ class CmdQuete(Commande):
         faites = [q for q in importeur.scripting.quetes.values() \
                 if personnage.quetes[q.cle].niveaux != [(0, )]]
         ret = "|tit|Vos quêtes en cours :|ff|"
-        # on parcourt les quêtes en cours / terminees
+        # On parcourt les quêtes en cours / terminees
         terminees = []
         for quete in faites:
             etapes_faites = [e for e in quete.etapes.values() \
                     if e.niveau in personnage.quetes[quete.cle].niveaux]
             etapes_a_faire = [e for e in quete.etapes.values() \
                     if e not in etapes_faites]
-            # si la quête est terminee on passe le tour
-            if all(e in etapes_faites for e in quete.etapes.values()):
+            # Si la quête est terminée on passe le tour
+            if not etapes_a_faire:
                 terminees.append(quete)
                 continue
             ret += "\n|cy|" + quete.titre[0].upper() + quete.titre[1:] + "|ff|"
-            if quete.ordonnee: # si c'est une quête ordonnée
-                etape = sorted(etapes_faites, key=lambda e: e.niveau)[-1]
-                # si l'étape courante fait partie d'une sous-quête non ordonée
+            if quete.ordonnee: # Si c'est une quête ordonnée
+                # On sélectionne la première étape à faire
+                etape = sorted(etapes_a_faire, key=lambda e: e.niveau)[0]
+                # Si l'étape courante fait partie d'une sous-quête non ordonée
                 if etape.parent.type == "quete" and not etape.parent.ordonnee:
                     ret += "\n - " + etape.parent.titre + " :"
                     for s_etape in etape.parent.etapes.values():
-                        if s_etape in etapes_a_faire \
-                                and s_etape is not etape.parent \
-                                and len(s_etape.niveau) == len(etape.niveau):
+                        if s_etape in etapes_a_faire and \
+                                s_etape is not etape.parent and \
+                                len(s_etape.niveau) == len(etape.niveau):
                             ret += "\n   " + s_etape.titre
                 else:
                     ret += "\n - " + etape.titre
