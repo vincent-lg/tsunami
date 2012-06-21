@@ -347,7 +347,8 @@ class Personnage(BaseObj):
             return
         
         if self.salle.nom_terrain in ("aquatique", "subaquatique") and \
-                not self.est_immortel() and not nage:
+                not self.est_immortel() and not nage and not \
+                o_sortie.diff_escalade:
             self << "|err|Vous devez nager pour aller dans cette " \
                     "direction.|ff|"
             return
