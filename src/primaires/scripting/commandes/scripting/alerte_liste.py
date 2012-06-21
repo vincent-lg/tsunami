@@ -66,4 +66,4 @@ class PrmListe(Parametre):
             personnage << "Liste des alertes non résolues :\n\n  " + \
                     "\n  ".join(alertes)
         else:
-            personnage << "Aucune alerte non résolu n'est conservée."
+            personnage << "|att|Aucune alerte non résolue n'est conservée.|ff|"

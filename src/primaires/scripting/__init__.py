@@ -233,7 +233,7 @@ class Module(BaseModule):
         """
         if personnage.est_immortel() and self.alertes:
             msg = format_nb(len(self.alertes),
-                    "|rg|{nb} alerte{s} non lue{s}.|ff|", fem=True)
+                    "|rg|{nb} alerte{s} non résolue{s}.|ff|", fem=True)
             personnage << msg
     
     def get_objet(self, identifiant):
