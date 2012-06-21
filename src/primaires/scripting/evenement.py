@@ -213,7 +213,7 @@ class Evenement(BaseObj):
         evenement = supprimer_accents(evenement).lower()
         del self.__evenements[evenement]
     
-    def executer(self, **variables):
+    def executer(self, forcer=False, **variables):
         """Exécution de l'évènement."""
         self.espaces.variables.update(variables)
         var_manquantes = tuple(v for v in self.variables \
@@ -224,9 +224,9 @@ class Evenement(BaseObj):
         
         # On cherche le bon test
         for test in self.__tests:
-            if test.tester(self):
+            if test.tester(self, forcer):
                 test.executer_instructions(self)
                 return
         
-        if self.sinon and self.sinon.tester(self):
+        if self.sinon and self.sinon.tester(self, forcer):
             self.sinon.executer_instructions(self)

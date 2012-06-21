@@ -83,6 +83,7 @@ class Detail(BaseObj):
     def regarder(self, personnage):
         """Le personnage regarde le détail"""
         moi = "Vous examinez {} :".format(self.titre)
+        print("Regarde", personnage, self)
         description = self.description.regarder(personnage, self)
         if not description:
             description = "Il n'y a rien de bien intéressant à voir."

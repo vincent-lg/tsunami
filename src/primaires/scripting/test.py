@@ -149,12 +149,13 @@ class Test(BaseObj):
             instruction.deduire_niveau(self.dernier_niveau)
             self.dernier_niveau = instruction.get_niveau_suivant()
     
-    def tester(self, evenement):
+    def tester(self, evenement, forcer=False):
         """Teste le test."""
         # Si le test est relié à une quête, on teste le niveau dans la quête
         etape = self.etape
         if etape:
-            if not self.acteur.quetes[etape.quete.cle].peut_faire(
+            if not forcer and not \
+                    self.acteur.quetes[etape.quete.cle].peut_faire(
                     etape.quete, etape.niveau):
                 return False
         

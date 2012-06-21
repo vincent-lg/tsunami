@@ -61,7 +61,7 @@ class ClasseFonction(Fonction):
         try:
             quete = personnage.quetes[cle_de_quete]
         except KeyError:
-            return True
+            return niveau == (1, )
         else:
             return niveau not in quete.niveaux
 
