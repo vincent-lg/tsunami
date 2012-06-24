@@ -28,40 +28,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction creer_PNJ."""
+"""Fichier contenant l'action disparaître."""
 
-from primaires.scripting.fonction import Fonction
+from primaires.scripting.action import Action
 
-class ClasseFonction(Fonction):
+class ClasseAction(Action):
     
-    """Renvoie la valeur d'une mémoire de scripting."""
+    """Fait disparaître un PNJ.
+    
+    """
     
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.memoire_salle, "Salle", "str")
-        cls.ajouter_types(cls.memoire_perso, "Personnage", "str")
-        cls.ajouter_types(cls.memoire_objet, "Objet", "str")
+        cls.ajouter_types(cls.apparaitre_proto_nb, "Personnage")
     
     @staticmethod
-    def memoire_salle(salle, cle):
-        """Renvoie une mémoire de salle."""
-        if salle in importeur.scripting.memoires:
-            if cle in importeur.scripting.memoires[salle]:
-                return importeur.scripting.memoires[salle][cle]
-        return None
-    
-    @staticmethod
-    def memoire_perso(personnage, cle):
-        """Renvoie une mémoire de personnage."""
-        if personnage in importeur.scripting.memoires:
-            if cle in importeur.scripting.memoires[personnage]:
-                return importeur.scripting.memoires[personnage][cle]
-        return None
-    
-    @staticmethod
-    def memoire_objet(objet, cle):
-        """Renvoie une mémoire d'objet."""
-        if objet in importeur.scripting.memoires:
-            if cle in importeur.scripting.memoires[objet]:
-                return importeur.scripting.memoires[objet][cle]
-        return None
+    def apparaitre_proto_nb(pnj):
+        """Fait disparaître le PNJ précisé (équivalent commande ppurge)."""
+        if not hasattr(pnj, "prototype"):
+            raise ErreurExecution("{} n'est pas un PNJ".format(pnj))
+        pnj.salle.retirer_personnage(pnj)
+        pnj.salle = None
+        importeur.pnj.supprimer_PNJ(pnj.identifiant)
