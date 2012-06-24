@@ -48,8 +48,7 @@ class ClasseFonction(Fonction):
         if salle in importeur.scripting.memoires:
             if cle in importeur.scripting.memoires[salle]:
                 return importeur.scripting.memoires[salle][cle]
-        raise ErreurExecution("la mémoire {}:{} n'existe pas".format(
-                salle, cle))
+        return None
     
     @staticmethod
     def memoire_perso(personnage, cle):
@@ -57,8 +56,7 @@ class ClasseFonction(Fonction):
         if personnage in importeur.scripting.memoires:
             if cle in importeur.scripting.memoires[personnage]:
                 return importeur.scripting.memoires[personnage][cle]
-        raise ErreurExecution("la mémoire {}:{} n'existe pas".format(
-                personnage, cle))
+        return None
     
     @staticmethod
     def memoire_objet(objet, cle):
@@ -66,5 +64,4 @@ class ClasseFonction(Fonction):
         if objet in importeur.scripting.memoires:
             if cle in importeur.scripting.memoires[objet]:
                 return importeur.scripting.memoires[objet][cle]
-        raise ErreurExecution("la mémoire {}:{} n'existe pas".format(
-                objet, cle))
+        return None

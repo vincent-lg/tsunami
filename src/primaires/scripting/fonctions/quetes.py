@@ -48,17 +48,19 @@ class ClasseFonction(Fonction):
           * Le personnage à tester
           * La clé de la quête
           * Le niveau testé (sous la forme d'une chaîne, comme "1.2")
+        Vous pouvez préciser plusieurs niveaux sous à l'aide du pipe |
+        (par exemple "1|2|3.1|3.2").
         
         """
+        niveau = niveau.split("_b_")
         try:
-            niveau = tuple(int(v) for v in niveau.split("."))
+            niveau = [tuple(int(v) for v in n.split(".")) for n in niveau]
         except ValueError:
             raise ErreurExecution("niveau spécifié invalide {}".format(
                     niveau))
-        
-        try:
-            quete = personnage.quetes[cle_de_quete]
-        except KeyError:
-            return False
-        else:
-            return niveau in quete.niveaux
+        faits = []
+        if personnage.quetes[cle_de_quete].niveaux != [(0, )]:
+            faits = personnage.quetes[cle_de_quete].niveaux
+        if all(n in faits for n in niveau):
+            return True
+        return False
