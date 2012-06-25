@@ -58,6 +58,7 @@ class ClasseAction(Action):
         et après ignorées (voir plus bas).
         
         """
+        message = message.replace("_b_", "|")
         personnage.envoyer_tip(message)
     
     @staticmethod
@@ -74,4 +75,5 @@ class ClasseAction(Action):
             raise ErreurExecution("une clé vide a été passée pour " \
                     "envoyer une tip unique")
         
+        message = message.replace("_b_", "|")
         personnage.envoyer_tip(message, cle=cle, unique=True)
