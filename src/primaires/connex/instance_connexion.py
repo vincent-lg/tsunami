@@ -268,7 +268,7 @@ class InstanceConnexion(BaseObj):
         Retourne les messages sous la forme d'un type bytes (chaîne encodée).
         
         """
-        msg = NL.join(self.file_attente)
+        msg = (NL * 2).join(self.file_attente)
         
         return msg
     
