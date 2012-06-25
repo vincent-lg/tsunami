@@ -67,7 +67,6 @@ couleur_tell = "|vrc|"
 liste_canaux = (
     # Nom  | Couleur | Flags
     ("hrp" , "|cyc|" , PERSO_AUTOCONNECT),
-    ("aide", "|rgc|" , PERSO_AUTOCONNECT),
     ("imm" , "|jn|"  , PRIVE | INVISIBLE | IMM_AUTOCONNECT),
 )
 
