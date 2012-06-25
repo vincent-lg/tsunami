@@ -123,3 +123,19 @@ class ScriptSalle(Script):
         var_salle.aide = "la salle actuelle"
         var_perso = evt_dire.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage qui parle"
+        
+        # Evénement connecte
+        evt_connecte = self.creer_evenement("connecte")
+        evt_connecte.aide_courte = "un joueur se connecte dans la salle"
+        evt_connecte.aide_longue = \
+            "Cet évènement est appelé quand un joueur se connecte dans la " \
+            "salle. Notez que, bien que le terme \"personnage\" soit utilisé " \
+            "pour des raisons principalement techniques, les PNJ ne se " \
+            "connectent jamais. Cet évènement ne concerne donc que les " \
+            "joueurs."
+        
+        # Configuration des variables de l'événement.
+        var_salle = evt_connecte.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle actuelle"
+        var_perso = evt_connecte.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage qui se connecte"
