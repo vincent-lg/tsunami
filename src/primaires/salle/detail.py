@@ -82,14 +82,18 @@ class Detail(BaseObj):
     
     def regarder(self, personnage):
         """Le personnage regarde le détail"""
-        moi = "Vous examinez {} :".format(self.titre)
-        print("Regarde", personnage, self)
+        personnage << "Vous examinez {} :".format(self.titre)
+        self.script["regarde"]["avant"].executer(personnage=personnage,
+                salle=personnage.salle)
         description = self.description.regarder(personnage, self)
         if not description:
             description = "Il n'y a rien de bien intéressant à voir."
         
-        moi += "\n\n" + description
-        return moi
+        personnage << "\n" + description
+        
+        self.script["regarde"]["apres"].executer(personnage=personnage,
+                salle=personnage.salle)
+
 
 class ScriptDetail(Script):
     
@@ -97,4 +101,24 @@ class ScriptDetail(Script):
     
     def init(self):
         """Initialisation du script"""
-        pass
+        # Evénement regarde
+        evt_regarde = self.creer_evenement("regarde")
+        evt_reg_avant = evt_regarde.creer_evenement("avant")
+        evt_reg_apres = evt_regarde.creer_evenement("après")
+        evt_regarde.aide_courte = "un personnage regarde le détail"
+        evt_reg_avant.aide_courte = "avant la description du détail"
+        evt_reg_apres.aide_courte = "après la description du détail"
+        evt_regarde.aide_longue = \
+            "Cet évènement est appelé quand un personnage regarde le détail."
+        evt_reg_avant.aide_longue = \
+            "Cet évènement est appelé avant que la description du détail " \
+            "ne soit envoyée au personnage le regardant."
+        evt_reg_apres.aide_longue = \
+            "Cet évènement est appelé après que la description du détail " \
+            "ait été envoyée au personnage le regardant."
+        
+        # Configuration des variables de l'évènement regarde
+        var_perso = evt_regarde.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage regardant le détail"
+        var_salle = evt_regarde.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle dans laquelle se trouve le détail"
