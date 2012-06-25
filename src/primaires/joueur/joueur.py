@@ -30,6 +30,8 @@
 
 """Fichier contenant la classe Joueur, détaillée plus bas."""
 
+from datetime import datetime
+
 from abstraits.obase import BaseObj
 from primaires.perso.personnage import Personnage
 
@@ -59,6 +61,8 @@ class Joueur(Personnage):
         self.alias_francais = {}
         self.alias_anglais = {}
         self.tips = importeur.information.cfg_info.tips
+        self.creation = datetime.now()
+        self.derniere_connexion = None
     
     def __getstate__(self):
         retour = dict(self.__dict__)
@@ -145,11 +149,17 @@ class Joueur(Personnage):
         
         self << self.contexte_actuel.accueil()
         
+        # On appelle l'évènement connecte de la salle
+        salle.script["connecte"].executer(personnage=self, salle=salle)
+        
         # On place le joueur dans un tick
         type(self).importeur.joueur.ajouter_joueur_tick(self)
         
-        # On appelle l'hook à la connexion
-        type(self).importeur.hook["joueur:connecte"].executer(self)
+        if self.derniere_connexion:
+            # On appelle l'hook à la connexion
+            type(self).importeur.hook["joueur:connecte"].executer(self)
+        
+        self.derniere_connexion = datetime.now()
     
     def pre_deconnecter(self):
         """Cette méthode prépare la déconnexion du joueur.
