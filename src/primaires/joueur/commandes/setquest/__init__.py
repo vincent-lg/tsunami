@@ -89,7 +89,8 @@ class CmdSetQuest(Commande):
                     personnage_mod.nom, quete.cle)
                 etapes = []
                 for n in personnage_mod.quetes[quete.cle].niveaux:
-                    etapes.append(quete.etapes[".".join([str(i) for i in n])])
+                    n = [str(niv) for niv in n]
+                    etapes.append(quete.etapes[".".join(n)])
                 ret += "\n  ".join(sorted([e.str_niveau + " - " + e.titre \
                         for e in etapes]))
                 personnage << ret
@@ -106,24 +107,10 @@ class CmdSetQuest(Commande):
                                 "réinitialisée pour {}.|ff|".format(
                                 quete.cle, personnage_mod.nom)
                 else:
-                    niveaux = [n.strip() for n in niveaux.split(",")]
-                    faits = []
-                    if personnage_mod.quetes[quete.cle].niveaux != [(0, )]:
-                        faits = personnage_mod.quetes[quete.cle].niveaux
-                    print(faits)
-                    for n in niveaux:
-                        n = tuple([int(n) for n in n.split(".")])
-                        print(n)
-                        if n in faits:
-                            faits.remove(n)
-                        else:
-                            faits.append(n)
-                    if personnage_mod.quetes[quete.cle].niveaux != [(0, )]:
-                        personnage_mod.quetes.vider(quete.cle)
-                    print(faits)
-                    for n in faits:
-                        if ".".join([str(i) for i in n]) in quete.etapes:
-                            personnage_mod.quetes[quete.cle] = n
+                    niveaux = [tuple(int(e) for e in n) for \
+                            n in niveaux.split(",")]
+                    quete_mod = personnage_mod.quetes.get_quete(quete.cle)
+                    quete_mod.changer_niveaux(niveaux)
                     personnage << "|att|La quête {} a bien été " \
                             "mise à jour pour {}.|ff|".format(
                             quete.cle, personnage_mod.nom)

@@ -91,6 +91,10 @@ class Quete(BaseObj):
     def __getnewargs__(self):
         return ("", (0, ))
     
+    def __repr__(self):
+        niveaux = " ".join([".".join([str(niv) for niv in n]) for n in \
+                self.__niveaux])
+        return "<quete " + str(self.cle_quete) + " " + niveaux + ">"
     @property
     def verrouille(self):
         """Retourne True si la quête est verrouillé."""
@@ -116,6 +120,23 @@ class Quete(BaseObj):
         """
         if niveau not in self.__niveaux:
             self.__niveaux.append(niveau)
+    
+    def changer_niveaux(self, niveaux):
+        """Change la valeur des niveaux.
+        
+        Pour chaque élément dans les niveaux :
+            si le niveau est présent, le supprime
+            sinon l'ajoute.
+        
+        """
+        if () in self.__niveaux:
+            self.__niveaux.remove(())
+        
+        for n in niveaux:
+            if n in self.__niveaux:
+                self.__niveaux.remove(n)
+            else:
+                self.__niveaux.append(n)
     
     @property
     def niveau_suivant(self):

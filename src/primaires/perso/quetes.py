@@ -130,6 +130,16 @@ class Quetes(BaseObj):
         else:   
             self.__quetes[cle_quete] = Quete(cle_quete, valeur, self.parent)
     
+    def __iter__(self):
+        """On itère sur les quêtes."""
+        return iter(self.__quetes.copy())
+    
+    def __repr__(self):
+        return "<quetes " + repr(self.__quetes) + ">"
+    
+    def __str__(self):
+        return str(self.__quetes)
+    
     def valider(self, quete, niveau):
         """Valide la quête."""
         self[quete.cle] = niveau
@@ -142,3 +152,9 @@ class Quetes(BaseObj):
             del self.__quetes[cle_quete]
         else:
             raise KeyError("la quête {} n'a pu être trouvée".format(cle_quete))
+    
+    def get_quete(self, cle):
+        """Retourne la quête en la créant si n'existe pas."""
+        if cle not in self.__quetes:
+            self.__quetes[cle] = Quete(cle, (), self.parent)
+        return self.__quetes[cle]
