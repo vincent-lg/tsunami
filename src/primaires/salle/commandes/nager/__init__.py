@@ -56,5 +56,8 @@ class CmdNager(Commande):
         sortie = dic_masques["nom_sortie"].sortie
         salle = personnage.salle
         nom_complet = sortie.nom_complet.capitalize()
+        if salle.nom_terrain not in ["aquatique", "subaquatique"]:
+            personnage << "|err|Vous n'avez pas besoin de nager.|ff|"
+            return
         
         personnage.deplacer_vers(sortie.nom, nage=True)
