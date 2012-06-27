@@ -172,7 +172,7 @@ class PNJ(Personnage):
     
     @property
     def nom_unique(self):
-        return self.cle.lower()
+        return self.identifiant
     
     def get_distinction_audible(self):
         return self.nom_singulier

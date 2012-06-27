@@ -34,6 +34,7 @@ import inspect
 import os
 import re
 from collections import OrderedDict
+from datetime import datetime
 
 from abstraits.module import *
 from primaires.format.fonctions import format_nb, supprimer_accents
@@ -143,6 +144,10 @@ class Module(BaseModule):
         # se connecte
         self.importeur.hook["joueur:connecte"].ajouter_evenement(
                 self.informer_alertes)
+        
+        # Création de l'action différée pour nettoyer les mémoires
+        importeur.diffact.ajouter_action("eff_memoires", 90,
+                self.nettoyer_memoires)
         
         BaseModule.init(self)
     
@@ -316,3 +321,20 @@ class Module(BaseModule):
             fichier = open(chemin_fonctions, 'w')
             fichier.write(msg)
             fichier.close()
+    
+    def nettoyer_memoires(self):
+        """Nettoie périodiquement les mémoires."""
+        importeur.diffact.ajouter_action("eff_memoires", 60,
+                self.nettoyer_memoires)
+        mtn = datetime.now()
+        for cle, entrees in list(self.memoires._a_detruire.items()):
+            for valeur, moment in list(entrees.items()):
+                if moment <= mtn:
+                    del self.memoires._a_detruire[cle][valeur]
+                    if cle in self.memoires and valeur in self.memoires[cle]:
+                        del self.memoires[cle][valeur]
+            
+            if not self.memoires._a_detruire[cle]:
+                del self.memoires._a_detruire[cle]
+            if not self.memoires[cle]:
+                del self.memoires[cle]

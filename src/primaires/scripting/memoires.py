@@ -28,11 +28,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Instruction, détaillée plus bas ; et
-l'exception ErreurExecution.
+"""Fichier contenant la classe Memoire, détaillée plus bas."""
 
-"""
-
+from datetime import datetime, timedelta
 from collections import OrderedDict
 
 from abstraits.obase import BaseObj, MetaBaseObj
@@ -49,11 +47,11 @@ class Memoires(BaseObj):
     """
     
     enregistrer = True
-    
     def __init__(self, parent=None):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
         self._memoires = {}
+        self._a_detruire = {}
     
     def __getnewargs__(self):
         return ()
@@ -69,3 +67,37 @@ class Memoires(BaseObj):
     
     def __contains__(self, valeur):
         return valeur in self._memoires
+    
+    def nettoyer_memoire(self, cle, valeur):
+        """Nettoie la mémoire à détruire.
+        
+        Cette méthode est appelée quand on efface tout de suite une mémoire.
+        Si la mémoire est effacée mais qu'elle est toujours programmée pour
+        destruction, il va y avoir problème. On nettoie donc les mémoires à détruire.
+        
+        """
+        if cle in self._a_detruire and valeur in self._a_detruire[cle]:
+            del self._a_detruire[cle][valeur]
+        if cle in self._a_detruire and not self._a_detruire[cle]:
+            del self._a_detruire[cle]
+    
+    def programmer_destruction(self, cle, valeur, temps):
+        """Programme la destruction de la mémoire.
+        
+        Paramètres :
+            cle -- la clé de la mémoire (souvent un objet, une salle, un PNJ...)
+            valeur -- la valeur de la mémoire (c'est-à-dire le nom mémorisé)
+            temps -- le temps en minutes
+        
+        """
+        if cle not in self or valeur not in self[cle]:
+            raise ValueError("la mémoire {} n'existe pas dans {}".format(
+                    valeur, cle))
+        
+        if cle in self._a_detruire and valeur in self._a_detruire[cle]:
+            raise ValueError("la destruction de la mémoire {} de {} est déjà " \
+                    "prévue".format(valeur, cle))
+        
+        a_detruire = self._a_detruire.get(cle, {})
+        a_detruire[valeur] = datetime.now() + timedelta(seconds=temps * 60)
+        self._a_detruire[cle] = a_detruire
