@@ -130,20 +130,21 @@ class CmdTrouver(Commande):
                             aff = getattr(o, cherchable.colonnes[c])
                         retour_tab[i].append(aff)
                         try:
-                            if longueurs[l] < len(aff):
-                                longueurs[l] = len(aff)
+                            if longueurs[l] < len(str(aff)):
+                                longueurs[l] = len(str(aff))
                         except IndexError:
-                            longueurs.append(len(aff))
+                            longueurs.append(len(str(aff)))
                     for i, c in enumerate(colonnes):
                         if longueurs[i] < len(c):
                             longueurs[i] = len(c)
                 for ligne in retour_tab:
                     c_ligne = []
                     for l, elt in enumerate(ligne):
-                        plus = len(re.findall("\|[a-z]{2}\|.*\|ff\|", elt)) * 8
+                        plus = len(re.findall("\|[a-z]{2}\|.*\|ff\|",
+                                str(elt))) * 8
                         plus += len(re.findall("\|[a-z]{3}\|.*\|ff\|",
-                                elt)) * 9
-                        c_ligne.append(elt.ljust(longueurs[l] + plus))
+                                str(elt))) * 9
+                        c_ligne.append(str(elt).ljust(longueurs[l] + plus))
                     retour_aff.append("| " + " | ".join(c_ligne) + " |")
                 somme_lg = -1
                 for l in longueurs:

@@ -32,4 +32,6 @@
 
 """
 
-from .objet import CherchableObjet
+from . import prototype
+from . import objet
+from . import prototype
