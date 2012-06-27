@@ -234,7 +234,7 @@ class Personnage(BaseObj):
     
     @property
     def nom_unique(self):
-        return self.nom.lower()
+        return self.nom
     
     def sans_prompt(self):
         if self.controle_par:

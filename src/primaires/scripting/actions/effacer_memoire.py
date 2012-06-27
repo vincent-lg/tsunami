@@ -30,24 +30,65 @@
 
 """Fichier contenant l'action effacer_memoire."""
 
+import re
+from fractions import Fraction
+
 from primaires.scripting.action import Action
 
+# Constantes
+RE_TEMPS = re.compile(r"^[0-9]+[mhj]$")
 class ClasseAction(Action):
     
-    """Efface une mémoire de scripting."""
+    """Efface ou programme l'effacement d'une mémoire de scripting."""
     
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.effacer_salle, "Salle", "str")
         cls.ajouter_types(cls.effacer_perso, "Personnage", "str")
         cls.ajouter_types(cls.effacer_objet, "Objet", "str")
+        cls.ajouter_types(cls.effacer_salle, "Salle", "str", "Fraction")
+        cls.ajouter_types(cls.effacer_perso, "Personnage", "str", "Fraction")
+        cls.ajouter_types(cls.effacer_objet, "Objet", "str", "Fraction")
+        cls.ajouter_types(cls.effacer_salle, "Salle", "str", "str")
+        cls.ajouter_types(cls.effacer_perso, "Personnage", "str", "str")
+        cls.ajouter_types(cls.effacer_objet, "Objet", "str", "str")
     
     @staticmethod
-    def effacer_salle(salle, cle):
-        """Efface une mémoire de salle."""
+    def effacer_salle(salle, cle, temps=0):
+        """Efface une mémoire de salle.
+        
+        Si un temps est précisé, la mémoire n'est pas effacé tout de suite mais
+        son effacement est programmé. Il est        ainsi possible d'avoir
+        des mémoires temporaires, devant exister 5 minutes par exemple.
+        
+        Le temps peut-être précisé :
+          * Sous la forme d'un nombre (le nombre de minutes à attendre)
+          * Sous la forme d'une chaîne (détail plus bas).
+        
+        La chaîne contient un nombre suivi d'une lettre. Les lettres sont :
+          * m : nombre de minutes
+          * h : nombre d'heures
+          * j : nombre de jours.
+        
+        Par exemple :
+          * "12h" signifie "supprimer la mémoire dans 12 heures d'ici
+          * "5j" signifie "supprimer la mémoire dans 5 jours d'ici
+          * ...
+        
+        """
+        temps = temps_en_minutes(temps)
+        if temps:
+            try:
+                importeur.scripting.memoires.programmer_destruction(
+                        salle, cle, temps)
+            except ValueError as err:
+                raise ErreurExecution(str(err))
+            return
+        
         if salle in importeur.scripting.memoires:
             if cle in importeur.scripting.memoires[salle]:
                 del importeur.scripting.memoires[salle][cle]
+                importeur.scripting.memoires.nettoyer_memoire(salle, cle)
             else:
                 raise ErreurExecution("la mémoire {}:{} n'existe pas".format(
                         salle, cle))
@@ -57,8 +98,37 @@ class ClasseAction(Action):
             raise ErreurExecution("pas de mémoire pour {}".format(salle))
     
     @staticmethod
-    def effacer_perso(personnage, cle):
-        """Efface une mémoire de personnage."""
+    def effacer_perso(personnage, cle, temps=0):
+        """Efface une mémoire de personnage.
+        
+        Si un temps est précisé, la mémoire n'est pas effacé tout de suite mais
+        son effacement est programmé. Il est        ainsi possible d'avoir
+        des mémoires temporaires, devant exister 5 minutes par exemple.
+        
+        Le temps peut-être précisé :
+          * Sous la forme d'un nombre (le nombre de minutes à attendre)
+          * Sous la forme d'une chaîne (détail plus bas).
+        
+        La chaîne contient un nombre suivi d'une lettre. Les lettres sont :
+          * m : nombre de minutes
+          * h : nombre d'heures
+          * j : nombre de jours.
+        
+        Par exemple :
+          * "12h" signifie "supprimer la mémoire dans 12 heures d'ici
+          * "5j" signifie "supprimer la mémoire dans 5 jours d'ici
+          * ...
+        
+        """
+        temps = temps_en_minutes(temps)
+        if temps:
+            try:
+                importeur.scripting.memoires.programmer_destruction(
+                        personnage, cle, temps)
+            except ValueError as err:
+                raise ErreurExecution(str(err))
+            return
+        
         if personnage in importeur.scripting.memoires:
             if cle in importeur.scripting.memoires[personnage]:
                 del importeur.scripting.memoires[personnage][cle]
@@ -67,15 +137,47 @@ class ClasseAction(Action):
                         personnage, cle))
             if not importeur.scripting.memoires[personnage]:
                 del importeur.scripting.memoires[personnage]
+                importeur.scripting.memoires.nettoyer_memoire(personnage,
+                        cle)
         else:
             raise ErreurExecution("pas de mémoire pour {}".format(personnage))
     
     @staticmethod
-    def effacer_objet(objet, cle):
-        """Efface une mémoire d'objet."""
+    def effacer_objet(objet, cle, temps=0):
+        """Efface une mémoire d'objet.
+        
+        Si un temps est précisé, la mémoire n'est pas effacé tout de suite mais
+        son effacement est programmé. Il est        ainsi possible d'avoir
+        des mémoires temporaires, devant exister 5 minutes par exemple.
+        
+        Le temps peut-être précisé :
+          * Sous la forme d'un nombre (le nombre de minutes à attendre)
+          * Sous la forme d'une chaîne (détail plus bas).
+        
+        La chaîne contient un nombre suivi d'une lettre. Les lettres sont :
+          * m : nombre de minutes
+          * h : nombre d'heures
+          * j : nombre de jours.
+        
+        Par exemple :
+          * "12h" signifie "supprimer la mémoire dans 12 heures d'ici
+          * "5j" signifie "supprimer la mémoire dans 5 jours d'ici
+          * ...
+        
+        """
+        temps = temps_en_minutes(temps)
+        if temps:
+            try:
+                importeur.scripting.memoires.programmer_destruction(
+                        objet, cle, temps)
+            except ValueError as err:
+                raise ErreurExecution(str(err))
+            return
+        
         if objet in importeur.scripting.memoires:
             if cle in importeur.scripting.memoires[objet]:
                 del importeur.scripting.memoires[objet][cle]
+                importeur.scripting.memoires.nettoyer_memoire(objet, cle)
             else:
                 raise ErreurExecution("la mémoire {}:{} n'existe pas".format(
                         objet, cle))
@@ -83,3 +185,27 @@ class ClasseAction(Action):
                 del importeur.scripting.memoires[objet]
         else:
             raise ErreurExecution("pas de mémoire pour {}".format(objet))
+
+def temps_en_minutes(temps):
+    """Retourne le temps en minutes."""
+    if isinstance(temps, (Fraction, int)):
+        return int(temps)
+    elif isinstance(temps, str):
+        if not RE_TEMPS.search(temps):
+            raise ErreurExecution("syntaxe de temps invalide")
+        
+        mul = temps[-1]
+        temps = temps[:-1]
+        try:
+            temps = int(temps)
+        except ValueError:
+            raise ErreurExecution("temps invalide")
+        
+        if mul == "h":
+            temps *= 60
+        elif mul == "j":
+            temps *= 60 * 24
+        
+        return temps
+    else:
+        raise ValueError("type de temps invalide")

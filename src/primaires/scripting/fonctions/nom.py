@@ -42,5 +42,12 @@ class ClasseFonction(Fonction):
     
     @staticmethod
     def nom_personnage(personnage):
-        """Retourne le nom du personnage passé en paramètre"""
-        return personnage.nom
+        """Retourne le nom du personnage passé en paramètre.
+        
+        Note : le nom est un nom unique, ce qui signifie qu'il reste un
+        identifiant pour les joueurs ou pour les PNJ. Pour les joueurs, c'est
+        le nom du joueur tel quel. Pour les PNJ, c'est l'identifiant du PNJ
+        (sa clé suivie d'un numéro).
+        
+        """
+        return personnage.nom_unique
