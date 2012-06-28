@@ -100,11 +100,11 @@ class Combat:
     
     def verifier_combattants(self):
         """VVérifie que tous les combattants sont bien dans la salle."""
-        for combattant in self.combattants:
-            if combattant.salle != self.salle:
+        for combattant in list(self.combattants):
+            if combattant is None or combattant.salle != self.salle:
                 self.__combattants.remove(combattant)
         
-        for combattant, combattu in self.combattus.items():
+        for combattant, combattu in list(self.combattus.items()):
             if combattant and combattant.salle != self.salle:
                 del self.__combattus[combattant]
             elif combattu and combattu.salle != self.salle:
