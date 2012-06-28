@@ -65,6 +65,8 @@ class Prototype(BaseObj):
         self.stats = Stats(self)
         self.squelette = None
         self.equipement = OrderedDict()
+        self.niveau = 1
+        self.xp = 0
         self.script = ScriptPNJ(self)
         self.a_depecer = {}
         

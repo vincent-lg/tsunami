@@ -783,6 +783,10 @@ class Personnage(BaseObj):
 
         equipement = self.equipement
         msg = "Vous regardez {} :\n".format(self.get_nom_pour(personnage))
+        if hasattr(self, "description"):
+            msg += "\n" + self.description.regarder(personnage=personnage,
+                    elt=self) + "\n"
+        
         objets = []
         for membre in equipement.membres:
             objet = membre.equipe and membre.equipe[-1] or membre.tenu
