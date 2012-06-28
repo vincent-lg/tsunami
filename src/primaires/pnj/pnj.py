@@ -78,12 +78,16 @@ class PNJ(Personnage):
                 t_stat.defaut = stat.defaut
                 t_stat.courante = stat.defaut
             self.lier_equipement(prototype.squelette)
+            self.genre = prototype.genre
             
             # Copie de l'équipement
             for membre, p_objet in prototype.equipement.items():
                 if self.equipement.squelette.a_membre(membre):
                     objet = importeur.objet.creer_objet(p_objet)
                     self.equipement.equiper_objet(membre, objet)
+            
+            # On force l'écriture du niveau
+            self.niveau = prototype.niveau
     
     def __getnewargs__(self):
         return (None, )
