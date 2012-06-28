@@ -60,7 +60,10 @@ class CmdBoire(Commande):
             if objet.potion is None:
                 personnage << "Il n'y a rien à boire là-dedans."
                 return
+            
             personnage << objet.potion.message_boit
+            personnage.salle.envoyer("{} boit à " + objet.get_nom() + ".",
+                    personnage)
             objet.potion.script["boit"].executer(personnage=personnage,
                     objet=objet)
             importeur.objet.supprimer_objet(objet.potion.identifiant)

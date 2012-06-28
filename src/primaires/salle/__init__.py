@@ -82,6 +82,7 @@ class Module(BaseModule):
         self.commandes = []
         self.salle_arrivee = ""
         self.salle_retour = ""
+        self.p_nettoyer = True
         self.aliases = {
             "e": "est",
             "se": "sud-est",
@@ -502,6 +503,9 @@ class Module(BaseModule):
     
     def nettoyer_salles(self):
         """Nettoyage des salles et des objets trop vieux."""
+        if not self.p_nettoyer:
+            return
+        
         importeur.diffact.ajouter_action("net_salles", 300,
                 self.nettoyer_salles)
         maintenant = datetime.now()
@@ -509,8 +513,7 @@ class Module(BaseModule):
             objets = [o for o in s.objets_sol._objets if o.nettoyer]
             for o in objets:
                 if (maintenant - o.ajoute_a).seconds >= NB_MIN_NETTOYAGE * 60:
-                    o.contenu.retirer(o)
-                    o.detruire()
+                    importeur.objet.supprimer_objet(o.identifiant)
     
     def repop_salles(self):
         """Méthode chargée de repop les salles."""
