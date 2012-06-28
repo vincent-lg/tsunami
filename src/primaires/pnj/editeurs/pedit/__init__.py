@@ -35,6 +35,8 @@
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.entier import Entier
+from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.scripting.editeurs.edt_script import EdtScript
 from .edt_noms import EdtNoms
 from .edt_stats import EdtStats
@@ -132,6 +134,26 @@ class EdtPedit(Presentation):
             "Exemple : |cmd|main gauche sarbacane_bambou|ff|\n" \
             "Pour supprimer un membre, entrez |cmd|0|ff| comme clé de " \
             "l'objet.\nExemple : |cmd|main gauche 0|ff|\n\n"
+        
+        # Niveau
+        niveau = self.ajouter_choix("niveau", "ni", Entier, prototype,
+                "niveau", 0)
+        niveau.parent = self
+        niveau.apercu = "{objet.niveau}"
+        niveau.prompt = "Entrez un niveau : "
+        niveau.aide_courte = \
+            "Entrez le niveau du PNJ.\n\nNiveau actuel : {objet.niveau}"
+        
+        # XP
+        xp = self.ajouter_choix("xP", "x", Flottant, prototype,
+                "gain_xp")
+        xp.parent = self
+        xp.apercu = "{objet.gain_xp}%"
+        xp.prompt = "Entrez le pourcentage d'XP reçue par l'adversaire : "
+        xp.aide_courte = \
+            "Entrez le pourcentage d'XP relative gagnée par l'adversaire lors " \
+            "de la mort du\nPNJ.\n\n" \
+            "Pourcentage actuel : {objet.gain_xp}%"
         
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,
