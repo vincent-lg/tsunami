@@ -94,7 +94,6 @@ class ConteneurPotion(BaseType):
         if self.potion is not None:
             s = "s" if nombre > 1 else ""
             nom = self.potion.get_nom()
-            nom = nom[3:] if nom.startswith("un ") else nom[4:]
             ajout = lisser(" " + self.connecteur.format(s=s) + " " + nom)
         if nombre <= 0:
             raise ValueError("la fonction get_nom a été appelée " \

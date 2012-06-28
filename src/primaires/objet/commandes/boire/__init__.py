@@ -54,15 +54,14 @@ class CmdBoire(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        objets = dic_masques["nom_objet"].objets[0]
-        objet, conteneur = objets
+        objet = dic_masques["nom_objet"].objet
         personnage.agir("ingerer")
         
         if hasattr(objet, "potion"):
             if objet.potion is None:
                 personnage << "Il n'y a rien à boire là-dedans."
                 return
-            objet.potion.script["mange"].executer(personnage=personnage,
+            objet.potion.script["boit"].executer(personnage=personnage,
                     objet=objet)
             personnage << objet.potion.message_boit
             importeur.objet.supprimer_objet(objet.identifiant)

@@ -61,7 +61,8 @@ class CmdRemplir(Commande):
         plat.proprietes["conteneurs"] = \
                 "(personnage.equipement.inventaire, " \
                 "personnage.salle.objets_sol)"
-        plat.proprietes["types"] = "('conteneur de nourriture', )"
+        plat.proprietes["types"] = "('conteneur de nourriture', " \
+                "'conteneur de potion')"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -75,6 +76,9 @@ class CmdRemplir(Commande):
         pose = 0
         poids_total = 0
         for objet, qtt, conteneur in objets:
+            if dans.est_de_type("conteneur de potion"):
+                dans.potion = objet
+                return
             if not objet.peut_prendre:
                 personnage << "Vous ne pouvez pas prendre {} avec vos " \
                         "mains...".format(objet.get_nom())
