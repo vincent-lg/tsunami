@@ -66,7 +66,7 @@ class Prototype(BaseObj):
         self.squelette = None
         self.equipement = OrderedDict()
         self.niveau = 1
-        self.xp = 0
+        self.gain_xp = 0
         self.script = ScriptPNJ(self)
         
         # Salles repop

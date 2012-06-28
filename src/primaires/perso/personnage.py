@@ -122,7 +122,7 @@ class Personnage(BaseObj):
     def __setattr__(self, nom_attr, val_attr):
         """Si nom_attr est dans 'self.stats', modifie 'self.stats'"""
         if not nom_attr.startswith("_") and hasattr(self, "stats") and \
-                hasattr(self.stats,nom_attr):
+                nom_attr in self.stats.to_dict:
             setattr(self.stats, nom_attr, val_attr)
         else:
             BaseObj.__setattr__(self, nom_attr, val_attr)
@@ -296,7 +296,10 @@ class Personnage(BaseObj):
     
     def est_mort(self):
         """Retourne True si le personnage est mort, False sinon."""
-        return self.vitalite == 0
+        if not self.e_existe:
+            return True
+        
+        return self.stats.vitalite == 0
     
     def est_connecte(self):
         return False
@@ -488,16 +491,13 @@ class Personnage(BaseObj):
         if etat:
             etat.peut_faire(cle_action)
     
-    def mourir(self):
+    def mourir(self, adversaire=None):
         """Méthode appelée quand le personage meurt."""
         self.cle_etat = ""
         combat = type(self).importeur.combat.get_combat_depuis_salle(
                 self.salle)
         if combat and self in combat.combattants:
             combat.supprimer_combattant(self)
-        
-        self << "Vous vous effondrez sur le sol."
-        self.salle.envoyer("{} s'effondre sur le sol.", self)
     
     def gagner_xp(self, niveau=None, xp=0, retour=True):
         """Le personnage gagne de l'expérience.

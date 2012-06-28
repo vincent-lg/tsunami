@@ -88,4 +88,5 @@ class EdtStats(Editeur):
                     self.pere << "|err|Valeur invalide.|ff|"
                 else:
                     stat.defaut = valeur
+                    stat.courante = valeur
                     self.actualiser()

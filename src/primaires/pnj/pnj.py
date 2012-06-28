@@ -77,6 +77,7 @@ class PNJ(Personnage):
                 t_stat = getattr(self.stats, "_{}".format(stat.nom))
                 t_stat.defaut = stat.defaut
                 t_stat.courante = stat.defaut
+            self.stats.restaurer()
             self.lier_equipement(prototype.squelette)
             self.genre = prototype.genre
             
@@ -169,10 +170,15 @@ class PNJ(Personnage):
         """Retourne le nom pour le personnage passé en paramètre."""
         return self.nom_singulier
     
-    def mourir(self):
+    def mourir(self, adversaire=None):
         """La mort d'un PNJ signifie sa destruction."""
-        Personnage.mourir(self)
-        type(self).importeur.pnj.supprimer_PNJ(self.identifiant)
+        Personnage.mourir(self, adversaire=adversaire)
+        
+        # Gain d'XP
+        if adversaire and self.gain_xp:
+            adversaire.gagner_xp_rel(self.niveau, self.gain_xp, "combat")
+        
+        importeur.pnj.supprimer_PNJ(self.identifiant)
     
     @property
     def nom_unique(self):

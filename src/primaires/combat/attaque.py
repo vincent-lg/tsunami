@@ -45,7 +45,6 @@ class Attaque(BaseObj):
     
     """Classe représentant une attaque."""
     
-    enregistrer = True
     def __init__(self, personnage, cle):
         """Constructeur de l'attaque."""
         BaseObj.__init__(self)
@@ -148,7 +147,7 @@ class Coup(Attaque):
             connaissance = moi.pratiquer_talent("combat_mains_nues")
         
         connaissance = varier(connaissance, 20)
-        return randint(connaissance - 10, connaissance) >= randint(1, 90)
+        return randint(1, 20) + connaissance >= randint(1, 90)
     
     def calculer_degats(self, moi, contre, membre, arme=None):
         """Retourne les dégâts infligés par l'arme."""
