@@ -37,13 +37,17 @@ from primaires.interpreteur.commande.commande import Commande
 # Chaîne représentant le score
 chn_score = \
 "/----------------------------------------------\\\n" \
-"| {nom: <15}                              |\n" \
+"| {nom: <15}      {nom_race:>12} ({genre:<8}) |\n" \
 "|                                              |\n" \
 "|    Vitalité   |     Mana    |   Endurance    |\n" \
 "|   {v: >5}/{vm: <5} | {m: >5}/{mm: <5} | {e: >5}/{em: <5}    |\n" \
 "|                                              |\n" \
 "|      For - Agi - Rob - Int - Cha - Sen       |\n" \
 "|      {f: >3} | {a: >3} | {r: >3} | {i: >3} | {c: >3} | {s: >3}       |\n" \
+"|                                              |\n" \
+"| Poids porté : {poids:>3} / {poids_max:>3} ({poids_pc:>3}%)               |\n" \
+"|                                              |\n" \
+"| Points d'apprentissage : {p_app:>4} / {p_app_max:>4}         |\n" \
 "|                                              |\n" \
 "\\----------------------------------------------/"
 
@@ -66,8 +70,14 @@ class CmdScore(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
+        nom_race = personnage.race and personnage.race.nom or "inconnue"
+        poids = int(personnage.poids)
+        poids_max = int(personnage.poids_max)
+        poids_pc = int(poids / poids_max * 100)
         personnage << chn_score.format(
             nom=personnage.nom,
+            nom_race=nom_race,
+            genre=personnage.genre,
             v=personnage.vitalite,
             vm=personnage.vitalite_max,
             m=personnage.mana,
@@ -80,4 +90,9 @@ class CmdScore(Commande):
             i=personnage.intelligence,
             c=personnage.charisme,
             s=personnage.sensibilite,
+            poids=poids,
+            poids_max=poids_max,
+            poids_pc=poids_pc,
+            p_app=personnage.points_apprentissage,
+            p_app_max=personnage.points_apprentissage_max,
         )

@@ -87,7 +87,7 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
-            #commandes.tuer.CmdTuer(),
+            commandes.tuer.CmdTuer(),
             #commandes.scruter.CmdScruter(),
         ]
         

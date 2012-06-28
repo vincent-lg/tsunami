@@ -229,6 +229,11 @@ class Personnage(BaseObj):
             return None
     
     @property
+    def poids(self):
+        """Retourne le poids du personnage."""
+        return self.equipement and self.equipement.poids or 0
+    
+    @property
     def poids_max(self):
         """Retourne le poids que peut porter le personnage."""
         return self.stats.force * 5
@@ -236,6 +241,15 @@ class Personnage(BaseObj):
     @property
     def nom_unique(self):
         return self.nom
+    
+    @property
+    def points_apprentissage(self):
+        """Retourne les points d'apprentissages du personnage."""
+        return sum(v for v in self.talents.values())
+    
+    @property
+    def points_apprentissage_max(self):
+        return len(importeur.perso.talents) * 50
     
     def sans_prompt(self):
         if self.controle_par:
@@ -510,6 +524,9 @@ class Personnage(BaseObj):
         """
         talent = type(self).importeur.perso.talents[cle_talent]
         avancement = self.get_talent(cle_talent)
+        if self.points_apprentissage >= self.points_apprentissage_max:
+            return avancement
+        
         configuration = type(self).importeur.perso.cfg_talents
         apprendre = talent.estimer_difficulte(configuration, avancement)
         if random.random() < apprendre and random.random() < 1 / proba:
