@@ -56,22 +56,15 @@ class CmdBoire(Commande):
         """Méthode d'interprétation de commande"""
         objet = dic_masques["nom_objet"].objet
         personnage.agir("ingerer")
-        
         if hasattr(objet, "potion"):
             if objet.potion is None:
                 personnage << "Il n'y a rien à boire là-dedans."
                 return
+            personnage << objet.potion.message_boit
             objet.potion.script["boit"].executer(personnage=personnage,
                     objet=objet)
-            personnage << objet.potion.message_boit
-            importeur.objet.supprimer_objet(objet.identifiant)
+            importeur.objet.supprimer_objet(objet.potion.identifiant)
             objet.potion = None
             return
         
-        if not objet.est_de_type("potion"):
-            personnage << "Visiblement, ce n'est pas à boire."
-            return
-        
-        objet.script["boit"].executer(personnage=personnage, objet=objet)
-        personnage << objet.message_boit
-        importeur.objet.supprimer_objet(objet.identifiant)
+        personnage << "|err|Vous ne pouvez boire cela.|ff|"

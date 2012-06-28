@@ -76,7 +76,9 @@ class CmdRemplir(Commande):
         pose = 0
         poids_total = 0
         for objet, qtt, conteneur in objets:
-            if dans.est_de_type("conteneur de potion"):
+            if dans.est_de_type("conteneur de potion") and objet.est_de_type(
+                    "potion"):
+                conteneur.retirer(objet)
                 dans.potion = objet
                 return
             if not objet.peut_prendre:
