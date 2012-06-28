@@ -144,7 +144,7 @@ class Combat:
         """
         armes_def = combattu.get_armes()
         if varier(combattu.pratiquer_talent(CLE_TALENT_ESQUIVE), 30) >= \
-                randint(1, 70):
+                randint(1, 90):
             attaque.envoyer_msg_tentative(combattant, combattu, membre, arme)
             combattant.envoyer("{} esquive votre coup.", combattu)
             combattu.envoyer("Vous esquivez le coup porté par {}.",
@@ -194,10 +194,15 @@ class Combat:
                     if degats:
                         attaque.envoyer_msg_reussite(combattant, combattu,
                                 membre, degats, arme)
+                        
                         try:
                             combattu.vitalite -= degats
                         except DepassementStat:
-                            combattu.mourir()
+                            combattu.envoyer("|att|C'est de trop ! Vous " \
+                                    "plongez dans l'inconscience.|ff|")
+                            combattu.salle.envoyer("{} s'écroule sur le sol, " \
+                                    "baignant dans son sang.", combattu)
+                            combattu.mourir(adversaire=combattant)
                 else:
                     attaque.envoyer_msg_tentative(combattant, combattu,
                             membre, arme)
