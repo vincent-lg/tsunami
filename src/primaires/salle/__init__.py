@@ -82,7 +82,7 @@ class Module(BaseModule):
         self.commandes = []
         self.salle_arrivee = ""
         self.salle_retour = ""
-        self.p_nettoyer = True
+        self.p_nettoyer = False
         self.aliases = {
             "e": "est",
             "se": "sud-est",
