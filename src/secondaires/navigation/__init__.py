@@ -74,18 +74,12 @@ class Module(BaseModule):
         his_voile = self.importeur.perso.ajouter_etat("hisser_voile")
         his_voile.msg_refus = "Vous êtes en train de hisser la voile"
         his_voile.msg_visible = "hisse une voile ici"
-        his_voile.act_interdites = ["combat", "prendre", "poser", "deplacer",
-                "plier_voile", "tenir_gouvernail"]
         pli_voile = self.importeur.perso.ajouter_etat("plier_voile")
         pli_voile.msg_refus = "Vous êtes en train de replier la voile"
         pli_voile.msg_visible = "replie une voile ici"
-        pli_voile.act_interdites = ["combat", "prendre", "poser", "deplacer",
-                "hisser_voile", "tenir_gouvernail"]
         ten_gouv = self.importeur.perso.ajouter_etat("tenir_gouvernail")
         ten_gouv.msg_refus = "Vous tenez actuellement le gouvernail"
         ten_gouv.msg_visible = "tient le gouvernail ici"
-        ten_gouv.act_interdites = ["combat", "prendre", "poser", "deplacer",
-                "hisser_voile", "plier_voile"]
         u_loch = self.importeur.perso.ajouter_etat("utiliser_loch")
         u_loch.msg_refus = "Vous êtes en train de manipuler le loch"
         u_loch.msg_visible = "manipule le loch ici"
