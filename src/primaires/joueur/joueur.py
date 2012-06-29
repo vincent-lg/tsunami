@@ -221,7 +221,6 @@ class Joueur(Personnage):
         if not msg:
             return
         
-        print(self, msg, mort, self.est_mort())
         if not mort and self.est_mort():
             return
         

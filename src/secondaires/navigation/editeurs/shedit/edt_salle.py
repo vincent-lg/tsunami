@@ -36,6 +36,7 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.flag import Flag
+from primaires.salle.editeurs.redit.edt_details import EdtDetails
 from secondaires.navigation.salle import NOMS_SORTIES
 
 class EdtSalle(Presentation):
@@ -172,6 +173,25 @@ class EdtSalle(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description de la salle {}".format(salle).ljust(76) + \
             "|ff||\n" + self.opts.separateur
+        
+        # Détails
+        details = self.ajouter_choix("details", "e", EdtDetails, salle,
+                "details")
+        details.parent = self
+        details.aide_courte = \
+            "Entrez le nom d'un |cmd|détail existant|ff| pour l'éditer ou " \
+            "un |cmd|nouveau détail|ff|\n" \
+            "pour le créer ; |ent|/|ff| pour revenir à la fenêtre parente.\n" \
+            "Options :\n" \
+            " - |ent|/s <détail existant> / <synonyme 1> (/ <synonyme 2> / " \
+            "...)|ff| : permet\n" \
+            "   de modifier les synonymes du détail passée en paramètre. " \
+            "Pour chaque\n" \
+            "   synonyme donné à l'option, s'il existe, il sera supprimé ; " \
+            "sinon, il sera\n" \
+            "   ajouté à la liste.\n" \
+            " - |ent|/d <détail existant>|ff| : supprime le détail " \
+            "indiqué\n\n"
         
         # Intérieur / extérieur
         inter = self.ajouter_choix("intérieur", "i", Flag, salle, "interieur")

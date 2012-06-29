@@ -405,6 +405,37 @@ class Navire(Vehicule):
         for salle in self.salles.values():
             salle.envoyer(message)
     
+    def synchroniser_modele(self):
+        """Cette méthode force la synchronisation d'informations sur le modèle.
+        
+        On parcourt toutes les salles du modèle et recrée certaines
+        informations commes les détails si nécessaire.
+        
+        """
+        for m_coords, m_salle in self.modele.salles.items():
+            salle = self.salles[m_coords]
+            salle.titre = m_salle.titre
+            for det_nom, m_detail in m_salle.details._details.items():
+                details = salle.details._details
+                if det_nom not in details:
+                    detail = salle.details.ajouter_detail(det_nom,
+                            modele=m_detail)
+                else:
+                    detail = details[det_nom]
+                
+                detail.synonymes = list(m_detail.synonymes)
+                detail.titre = m_detail.titre
+                detail.positions = dict(m_detail.positions)
+                detail.est_visible = m_detail.est_visible
+                detail.script = m_detail.script
+                detail.peut_asseoir = m_detail.peut_asseoir
+                detail.peut_allonger = m_detail.peut_allonger
+                detail.facteur_asseoir = m_detail.facteur_asseoir
+                detail.facteur_allonger = m_detail.facteur_allonger
+                detail.connecteur = m_detail.connecteur
+                detail.nb_places_assises = m_detail.nb_places_assises
+                detail.nb_places_allongees = m_detail.nb_places_allongees
+    
     def detruire(self):
         """Destruction du self."""
         for salle in list(self.salles.values()):
