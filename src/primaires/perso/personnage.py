@@ -314,7 +314,7 @@ class Personnage(BaseObj):
         if not self.e_existe:
             return True
         
-        return self.stats.vitalite == 0
+        return self.stats.vitalite == 0 or self.cle_etat == "mort"
     
     def est_connecte(self):
         return False
@@ -569,6 +569,10 @@ class Personnage(BaseObj):
                 self.salle)
         if combat and self in combat.combattants:
             combat.supprimer_combattant(self)
+        
+        self.cle_etat = "mort"
+        self.envoyer_tip("Vous reprendrez conscience d'ici 10 à 15 minutes.",
+                "inconscience", True)
     
     def gagner_xp(self, niveau=None, xp=0, retour=True):
         """Le personnage gagne de l'expérience.

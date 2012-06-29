@@ -190,7 +190,8 @@ class Salle(BaseObj):
         chemins = Chemins.salles_autour(self, rayon)
         return chemins.get(destination)
     
-    def envoyer(self, message, *personnages, prompt=True, **kw_personnages):
+    def envoyer(self, message, *personnages, prompt=True, mort=False,
+            **kw_personnages):
         """Envoie le message aux personnages présents dans la salle.
         
         Les personnages dans les paramètres supplémentaires (nommés ou non)
@@ -201,6 +202,9 @@ class Salle(BaseObj):
         exceptions = personnages + tuple(kw_personnages.values())
         for personnage in self.personnages:
             if personnage not in exceptions:
+                if personnage.est_mort() and not mort:
+                    continue
+                
                 if hasattr(personnage, "instance_connexion") and not \
                         prompt and personnage.instance_connexion:
                     personnage.instance_connexion.sans_prompt()
@@ -220,6 +224,11 @@ class Salle(BaseObj):
     
     def regarder(self, personnage):
         """Le personnage regarde la salle"""
+        if personnage.est_mort():
+            personnage << "|err|Vous êtes inconscient et ne voyez pas " \
+                    "grand chose...|ff|"
+            return
+        
         res = ""
         if personnage.est_immortel():
             res += "# |rgc|" + self.nom_zone + "|ff|:|vrc|" + self.mnemonic

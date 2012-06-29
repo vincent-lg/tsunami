@@ -139,6 +139,11 @@ class Module(BaseModule):
         allonge.msg_refus = "Vous êtes allongé."
         allonge.msg_visible = "est allongé là"
         allonge.act_autorisees = ["regarder", "parler", "ingerer", "lever"]
+        
+        mort = self.ajouter_etat("mort")
+        mort.msg_refus = "Vous êtes inconscient."
+        mort.msg_visible = "est inconscient ici"
+        
         self.ajouter_talent("escalade", "escalade", "survie", 0.25)
         self.ajouter_talent("nage", "nage", "survie", 0.25)
         

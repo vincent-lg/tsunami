@@ -63,6 +63,7 @@ class Joueur(Personnage):
         self.tips = importeur.information.cfg_info.tips
         self.creation = datetime.now()
         self.derniere_connexion = None
+        self.cpt_mort = 0
     
     def __getstate__(self):
         retour = dict(self.__dict__)
@@ -215,9 +216,13 @@ class Joueur(Personnage):
         if self.instance_connexion:
             self.instance_connexion.sans_prompt()
     
-    def envoyer(self, msg, *l_formatter, **kw_formatter):
+    def envoyer(self, msg, *l_formatter, mort=True, **kw_formatter):
         """On redirige sur l'envoie de l'instance de connexion."""
         if not msg:
+            return
+        
+        print(self, msg, mort, self.est_mort())
+        if not mort and self.est_mort():
             return
         
         l_aff = []
@@ -240,5 +245,19 @@ class Joueur(Personnage):
     
     def tick(self):
         """Méthode appelée à chaque tick."""
+        if self.est_mort():
+            self.cpt_mort += 1
+            if self.cpt_mort <= 12:
+                return
+            else:
+                self.cle_etat = ""
+                self.stats.vitalite = 1
+                self.envoyer("Vous reprenez lentement conscience, vous " \
+                        "sentant encore très faible.")
+                self.cpt_mort = 0
+        
         Personnage.tick(self)
-
+    
+    def mourir(self, adversaire):
+        Personnage.mourir(self, adversaire)
+        self.cpt_mort = 0
