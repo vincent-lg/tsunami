@@ -193,7 +193,9 @@ class Module(BaseModule):
                 taille_max = len(s.titre)
         for sujet in peut_lire:
             if sujet.pere is None:
-                sujets_lire.append("|ent|" + sujet.titre.ljust(taille_max))
+                cle = " (" + sujet.cle + ")" if personnage.est_immortel else ""
+                sujets_lire.append(
+                        "|ent|" + sujet.titre.ljust(taille_max) + "|ff|" + cle)
         
         msg = self.cfg_info.accueil_aide + "\n\n"
         if not sujets_lire:

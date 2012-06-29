@@ -30,18 +30,18 @@
 
 """Fichier contenant le contexte 'page'.
 
-Ce contexte est chargé d'afficher une grande quantité de textes page par page.
+Ce contexte est chargé d'afficher une grande quantité de texte page par page.
 
 """
 
-import textwrap
+from textwrap import wrap
 
 from primaires.interpreteur.contexte import Contexte
 from primaires.interpreteur.commande.commande import Commande
 
 class Page(Contexte):
     
-    """Contexte affichant de grandes quantités de textes en plusieurs pages.
+    """Contexte affichant de grandes quantités de texte en plusieurs pages.
     
     """
     
@@ -54,18 +54,20 @@ class Page(Contexte):
         self.opts.prompt_clr = ""
         self.texte = texte
         self.curseur = 0
+        self.chapitres = []
         self.pages = []
         if texte:
-            self.pages = self.decouper(self.pere.joueur, texte)
+            self.chapitres, self.pages = self.decouper(self.pere.joueur, texte)
     
     def __getnewargs__(self):
         return (None, "")
     
     def get_prompt(self):
         """Retourne le prompt"""
-        return "-- Page {}/{}     (|ent|Entrée|ff| pour continuer / " \
-                "|cmd|q|ff|uitter) --".format(self.curseur + 1,
-                len(self.pages))
+        return "[{}/{}]  (|ent|Entrée|ff| pour continuer / " \
+                "[|ent|C|ff|]hapitre |ent|<numéro>|ff| / " \
+                "[|ent|Q|ff|]uitter)  ".format(self.curseur + 1,
+                len(self.pages)).ljust(111, ">")
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -93,10 +95,11 @@ class Page(Contexte):
         for paragraphe in texte.split("\n"):
             paragraphe = Commande.remplacer_mots_cles(personnage, paragraphe)
             paragraphe = paragraphe.replace("|tab|", "   ")
-            paragraphe = "\n".join(textwrap.wrap(paragraphe))
+            paragraphe = "\n".join(wrap(paragraphe, 75))
             paragraphes.append(paragraphe)
         
-        # Constitution des pages
+        # Constitution des pages et chapitres
+        chapitres = []
         pages = []
         page = ""
         for paragraphe in paragraphes:
@@ -104,25 +107,21 @@ class Page(Contexte):
                 if page.count("\n") >= nb_lignes - 1:
                     pages.append(page)
                     page = ""
-                
                 if ligne.lstrip(" ").lower() == "|sp|":
                     if page != "":
                         page += "\n"
-                    
                     page += "\n" * (nb_lignes - page.count("\n") - 1)
                     pages.append(page)
+                    chapitres.append(len(pages))
                     page = ""
                     continue
-                
                 if page:
                     page += "\n"
-                
                 page += ligne
         
         if page:
             pages.append(page)
-        
-        return pages
+        return chapitres, pages
     
     def interpreter(self, msg):
         """Méthode d'interprétation du contexte"""
@@ -130,6 +129,15 @@ class Page(Contexte):
         if not msg:
             self.curseur += 1
             self.pere.envoyer(self.accueil())
+        elif msg.startswith("c"):
+            try:
+                num_chap = int(msg.split(" ")[1])
+                assert num_chap <= len(self.chapitres)
+            except ValueError:
+                self.pere << "|err|Précisez un numéro de chapitre valide.|ff|"
+            else:
+                self.curseur = self.chapitres[num_chap - 1]
+                self.pere.envoyer(self.accueil())
         elif msg == "q":
             self.fermer()
             self.pere << "Arrêt de la lecture."
