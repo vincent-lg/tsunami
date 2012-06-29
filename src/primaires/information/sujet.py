@@ -219,7 +219,7 @@ class SujetAide(BaseObj):
     
     def afficher_contenu(self, personnage, ident="", sp="|sp|"):
         """Affiche le contenu de self et ses sujets fils."""
-        ret = "\n".join(self.contenu.paragraphes)
+        ret = str(self.contenu)
         for i, s in enumerate(self.sujets_fils):
             if importeur.interpreteur.groupes.explorer_groupes_inclus(
                     personnage.grp, s.str_groupe):

@@ -40,7 +40,7 @@ accueil_aide = \
     "Bienvenue dans l'aide du jeu. Ci-dessous se trouve une liste des " \
     "sujets\nd'aide disponibles ; vous pouvez consulter chacun d'entre eux " \
     "avec la\ncommande d'aide. Cette liste n'est cependant pas exhaustive : " \
-    "certain\nsujets sont organisés de manière hiérarchique et peuvent " \
+    "certains\nsujets sont organisés de manière hiérarchique et peuvent " \
     "être parcourus à\nla manière d'un cours, au fur et à mesure. De plus, " \
     "chaque sujet est aussi\naccessible par divers mots-clés. N'hésitez " \
     "pas à tenter des recherches."
