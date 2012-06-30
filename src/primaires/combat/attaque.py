@@ -157,14 +157,14 @@ class Coup(Attaque):
         else:
             connaissance = moi.get_talent("combat_mains_nues")
         
-        facteur = 0.5 + moi.force / 200 + connaissance / 200
+        facteur = 0.8 + moi.force / 300 + connaissance / 300
         
         if arme:
             degats_min = facteur * arme.degats_fixes
             degats_max = facteur * (arme.degats_fixes + arme.degats_variables)
         else:
-            degats_min = facteur * 0.9
-            degats_max = facteur * 1.2
+            degats_min = facteur * moi.force * 0.9
+            degats_max = facteur * moi.force * 1.3
         
         degats = randint(int(degats_min), int(degats_max))
         return degats if degats > 0 else 1
