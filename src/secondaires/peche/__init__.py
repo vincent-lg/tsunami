@@ -58,6 +58,7 @@ class Module(BaseModule):
         pecher = self.importeur.perso.ajouter_etat("pecher")
         pecher.msg_refus = "Vous êtes en train de pêcher"
         pecher.msg_visible = "pêche ici"
+        pecher.act_autorisees = ["regarder", "parler"]
         
         BaseModule.config(self)
     
