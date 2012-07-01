@@ -221,7 +221,7 @@ class InstanceConnexion(BaseObj):
         
         return msg
     
-    def envoyer(self, msg):
+    def envoyer(self, msg, nl=2):
         """Envoie au client le message.
         
         On est capable d'envoyer deux types de message :
@@ -238,7 +238,7 @@ class InstanceConnexion(BaseObj):
         """
         self.nb_msg += 1
         msg = self.formater_message(msg)
-        self.file_attente.append(msg)
+        self.file_attente.append((nl, msg))
     
     def get_prompt(self):
         """Méthode retournant le prompt déduit du contexte.
@@ -268,7 +268,11 @@ class InstanceConnexion(BaseObj):
         Retourne les messages sous la forme d'un type bytes (chaîne encodée).
         
         """
-        msg = (NL * 2).join(self.file_attente)
+        msg = b""
+        for i in range(len(self.file_attente)):
+            if i > 0:
+                msg += NL * self.file_attente[i][0]
+            msg += self.file_attente[i][1]
         
         return msg
     

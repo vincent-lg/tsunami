@@ -66,7 +66,7 @@ class ChangerEncodage(Contexte):
             ret += b"\n  |cmd|" + str(i + 1).encode() + b"|ff| - " + \
                     test.encode(encodage) + encodage.encode()
         
-        ret += b"\n  |cmd|" + str(i + 2).encode() + b"|ff| - affichage " \
+        ret += b"\n  |cmd|" + str(i + 2).encode() + b"|ff| - Affichage " \
                 b"sans accent"
         return ret
 

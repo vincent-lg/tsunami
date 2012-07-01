@@ -54,10 +54,10 @@ class InstanceControler(InstanceConnexion):
             return self.t_joueur.compte.encodage
         return encodage
     
-    def envoyer(self, msg):
+    def envoyer(self, msg, nl=2):
         """Redéfinition de la méthode envoyer."""
         self.nb_msg += 1
         msg = self.formater_message(msg)
         if hasattr(self, "t_joueur") and self.t_joueur and \
                 self.t_joueur.instance_connexion:
-            self.t_joueur.instance_connexion.file_attente.append(msg)
+            self.t_joueur.instance_connexion.file_attente.append((nl, msg))

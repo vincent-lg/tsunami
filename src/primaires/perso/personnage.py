@@ -739,7 +739,8 @@ class Personnage(BaseObj):
         
         objets = []
         for membre in equipement.membres:
-            objet = membre.equipe and membre.equipe[-1] or membre.tenu
+            # on affiche l'objet tenu prioritairement, sinon l'objet équipé
+            objet = membre.tenu or membre.equipe and membre.equipe[-1] or None
             if objet:
                 objets.append("{} [{}]".format(membre.nom.capitalize(),
                         objet.get_nom()))

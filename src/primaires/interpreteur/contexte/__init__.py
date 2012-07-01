@@ -247,7 +247,7 @@ class Contexte(BaseObj, metaclass=MetaContexte):
             # s'affiche en double
             if self.pere.contexte_actuel.opts.separateur is not None:
                 self.pere.envoyer(self.pere.contexte_actuel.opts.separateur)
-            self.pere.envoyer(self.pere.contexte_actuel.accueil())
+            self.pere.envoyer(self.pere.contexte_actuel.accueil(), nl=1)
     
     def interpreter(self, msg):
         """Méthode appelée quand le contexte reçoit un message à interpréter.

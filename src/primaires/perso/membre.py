@@ -101,7 +101,11 @@ class Membre(BaseObj):
     
     def peut_tenir(self):
         """Retourne True si le membre peut tenir."""
-        return self.flags & PEUT_TENIR != 0 and not self.equipe
+        if self.equipe:
+            return self.flags & PEUT_TENIR != 0 \
+                    and all(o.peut_tenir for o in self.equipe)
+        else:
+            return self.flags & PEUT_TENIR != 0
     
     def affichable(self):
         """Retourne True si le membre est affichable"""
