@@ -92,3 +92,6 @@ from .bague import Bague
 from .boucle_oreille import BoucleOreille
 from .bracelet import Bracelet
 from .collier import Collier
+
+# Cadavre
+from .cadavre import Cadavre

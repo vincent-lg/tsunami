@@ -101,6 +101,11 @@ class Module(BaseModule):
         # Ajout de l'éditeur 'oedit'
         self.importeur.interpreteur.ajouter_editeur(EdtOedit)
     
+    def preparer(self):
+        """Préparation du module."""
+        if "cadavre" not in self._prototypes:
+            self.creer_prototype("cadavre", "cadavre")
+    
     @property
     def prototypes(self):
         return dict(self._prototypes)
