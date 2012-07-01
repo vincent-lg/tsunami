@@ -59,9 +59,9 @@ class Arme(BaseType):
         
         # Editeurs
         self.etendre_editeur("f", "dégâts fixes", Uniligne, self, "degats_fixes")
-        self.etendre_editeur("pe", "peut dépecer", Flag, self, "peut_depecer")
         self.etendre_editeur("v", "dégâts variables", Uniligne, self,
                 "degats_variables")
+        self.etendre_editeur("pe", "peut dépecer", Flag, self, "peut_depecer")
     
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""
