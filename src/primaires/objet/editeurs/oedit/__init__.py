@@ -74,12 +74,12 @@ class EdtOedit(Editeur):
         """
         identifiant = self.identifiant
         if self.choisi:
-            noms_types = tuple([t for t in types[self.choisi].types.keys() if \
+            noms_types = tuple([t.nom_type for t in types[self.choisi].types.values() if \
                     t.selectable])
         else:
-            noms_types = tuple(
-                    [t for t in importeur.objet.types_premier_niveau.keys() \
-                            if t.selectable])
+            noms_types = tuple([t.nom_type for t in \
+                    importeur.objet.types_premier_niveau.values() if \
+                    t.selectable])
         
         noms_types = sorted(noms_types)
         return "|tit|Création du prototype {}|ff|\n\n".format(identifiant) + \
