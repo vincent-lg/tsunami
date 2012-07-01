@@ -31,6 +31,7 @@
 """Fichier contenant le type arme."""
 
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.flag import Flag
 from bases.objet.attribut import Attribut
 from primaires.objet.types.base import BaseType
 
@@ -54,9 +55,11 @@ class Arme(BaseType):
         self.empilable_sur = ["vêtement"]
         self.degats_fixes = 5
         self.degats_variables = 0
+        self.peut_depecer = False
         
         # Editeurs
         self.etendre_editeur("f", "dégâts fixes", Uniligne, self, "degats_fixes")
+        self.etendre_editeur("pe", "peut dépecer", Flag, self, "peut_depecer")
         self.etendre_editeur("v", "dégâts variables", Uniligne, self,
                 "degats_variables")
     

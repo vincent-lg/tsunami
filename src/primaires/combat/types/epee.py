@@ -42,3 +42,7 @@ class Epee(Arme):
     cle_talent = "maniement_epee"
     nom_talent = "maniement de l'épée"
     difficulte_talent = 0.32
+    def __init__(self, cle=""):
+        """Constructeur de l'objet"""
+        Arme.__init__(self, cle)
+        self.peut_depecer = True

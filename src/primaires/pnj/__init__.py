@@ -81,12 +81,21 @@ class Module(BaseModule):
             self.importeur.diffact.ajouter_action("ntick_{}".format(no),
                     intervalle * no, self.tick, no)
         
+        # Ajout des états
+        depece = importeur.perso.ajouter_etat("depece")
+        depece.msg_refus = "Vous êtes en train de dépecer un cadavre."
+        depece.msg_visible = "dépece un cadavre ici"
+        depece.act_autorisees = ["regarder", "parler"]
+        
+        importeur.perso.ajouter_talent("depecage", "dépeçage", "survie", 0.25)
+        
         BaseModule.init(self)
     
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.controler.CmdControler(),
+            commandes.depecer.CmdDepecer(),
             commandes.pedit.CmdPedit(),
             commandes.plist.CmdPlist(),
             commandes.ppurge.CmdPpurge(),
