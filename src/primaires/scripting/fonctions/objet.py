@@ -45,7 +45,6 @@ class ClasseFonction(Fonction):
     def objet_perso(personnage, cle_prototype):
         """Retourne, si trouvé, l'objet indiqué possédé par le personnage.
         
-        
         La recherche se fait dans l'inventaire étendu (comprenant
         donc l'équipement) du personnage. Vous pouvez par exemple
         chercher le premier objet de clé "sac_toile" possédé par
@@ -56,7 +55,7 @@ class ClasseFonction(Fonction):
         """
         # on teste l'inventaire
         for o in personnage.equipement.inventaire:
-            if o.cle == cle:
+            if o.cle == cle_prototype:
                 return o
         
         return None

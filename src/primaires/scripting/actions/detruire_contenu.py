@@ -38,10 +38,10 @@ class ClasseAction(Action):
     
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.detruire_contenu, "Personnage", "Objet")
+        cls.ajouter_types(cls.detruire_contenu, "Objet")
     
     @staticmethod
-    def detruire_contenu(personnage, objet):
+    def detruire_contenu(objet):
         """Détruit le contenu de l'objet précisé.
         
         L'objet doit être un conteneur. Tout ce qu'il contient est
