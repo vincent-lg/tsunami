@@ -114,6 +114,11 @@ class Module(BaseModule):
             self.importeur.diffact.ajouter_action(
                 "combat:{}".format(salle.ident), 3, combat.tour, self.importeur)
     
+    def supprimer_combat(self, ident):
+        """Supprime un combat."""
+        if ident in self.combats:
+            del self.combats[ident]
+    
     def detruire(self):
         """Destruction du module."""
         for combat in self.combats.values():
