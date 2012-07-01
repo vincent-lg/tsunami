@@ -95,3 +95,7 @@ from .collier import Collier
 
 # Cadavre
 from .cadavre import Cadavre
+
+# Matériau
+from .matiere import Matiere
+from .fourrure import Fourrure
