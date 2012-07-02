@@ -76,7 +76,7 @@ class CmdPecher(Commande):
             return
         
         if canne.appat is None:
-            personnage << "|err|{} n'est pas appâtée.".format(
+            personnage << "|err|{} n'est pas appâtée.|ff|".format(
                     canne.get_nom().capitalize())
             return
         
