@@ -56,21 +56,33 @@ class CmdQui(Commande):
             personnage.envoyer("Aucun joueur ne semble être présent, mais " \
                     "qui es-tu alors ?")
         else:
-            noms_joueurs = []
+            noms_joueurs = {}
             for joueur in joueurs:
-                nom = joueur.nom
+                imm = 0
+                if joueur.est_immortel():
+                    nom = "|cyc|~ " + joueur.nom + " ~|ff|"
+                    imm = 9
+                else:
+                    nom = joueur.nom
                 if joueur.afk:
                     raison = ""
                     if joueur.afk is not "afk":
                         raison = " '" + joueur.afk + "'"
                     nom += " (|rgc|AFK" + raison + "|ff|)"
-                    noms_joueurs.append(nom.ljust(48) + "|")
+                    noms_joueurs[joueur] = nom.ljust(48 + imm) + "|"
                 else:
-                    noms_joueurs.append(nom.ljust(39) + "|")
+                    noms_joueurs[joueur] = nom.ljust(39 + imm) + "|"
             res = "+" + "-" * 40 + "+\n"
             res += "| |tit|Joueurs présents|ff|".ljust(50) + "|\n"
-            res += "+" + "-" * 40 + "+\n| "
-            res += "\n| ".join(sorted(noms_joueurs))
-            res += "\n+" + "-" * 40 + "+\n"
+            res += "+" + "-" * 40 + "+\n"
+            if [j for j in noms_joueurs.keys() if j.est_immortel()]:
+                res += "| " + "\n| ".join(sorted(
+                        n for j, n in noms_joueurs.items() \
+                        if j.est_immortel())) + "\n"
+            if [j for j in noms_joueurs.keys() if not j.est_immortel()]:
+                res += "| " + "\n| ".join(sorted(
+                        n for j, n in noms_joueurs.items() \
+                        if not j.est_immortel())) + "\n"
+            res += "+" + "-" * 40 + "+\n"
             res = res.rstrip("\n")
             personnage << res
