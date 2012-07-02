@@ -198,7 +198,7 @@ class Joueur(Personnage):
         """Retourne la distinction audible."""
         ret = self.distinction_audible
         if not ret:
-            ret = self.race.genres.get_distinctions(self.genre)
+            ret = self.race.genres.get_distinction(self.genre)
         
         return ret
     
