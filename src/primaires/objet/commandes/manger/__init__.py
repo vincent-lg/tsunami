@@ -78,6 +78,7 @@ class CmdManger(Commande):
             objet.nourriture = [o for o in objet.nourriture \
                     if not o.est_de_type("nourriture")]
             personnage.salle.envoyer("{} termine son repas.", personnage)
+            personnage.cle_etat = ""
             return
         
         if not objet.est_de_type("nourriture"):

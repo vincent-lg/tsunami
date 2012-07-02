@@ -84,5 +84,5 @@ class CmdQui(Commande):
                         n for j, n in noms_joueurs.items() \
                         if not j.est_immortel())) + "\n"
             res += "+" + "-" * 40 + "+\n"
-            res = res.rstrip("\n")
+            res += "Nombre de joueurs connectés : " + len(joueurs)
             personnage << res
