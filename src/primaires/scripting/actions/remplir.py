@@ -28,13 +28,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'action poser."""
+"""Fichier contenant l'action remplir."""
 
 from primaires.scripting.action import Action
 
 class ClasseAction(Action):
     
-    """Pose quelque chose sur le sol ou dans un conteneur."""
+    """Remplit un conteneur de nourriture ou de potion."""
     
     @classmethod
     def init_types(cls):
@@ -44,21 +44,31 @@ class ClasseAction(Action):
     
     @staticmethod
     def remplir_objet(conteneur, objet):
-        """Pose l'objet dans le conteneur.
+        """Met l'objet dans le conteneur de nourriture.
         
         Attention, l'objet conteneur ne peut en aucun cas être "flottant" mais
         doit lui-même être contenu quelque part (sol d'une salle, inventaire
         d'un personnage, autre conteneur...).
         
         """
-        if not conteneur.est_de_type("conteneur de nourriture"):
-            raise ErreurExecution("{} n'est pas un conteneur".format(
-                    conteneur.get_nom()))
         if not conteneur.contenu:
             raise ErreurExecution("{} n'est contenu nul part".format(
                     conteneur.get_nom()))
+        if conteneur.est_de_type("conteneur de potion"):
+            if conteneur.potion:
+                raise ErreurExecution("{} est plein".format(
+                        conteneur.get_nom()))
+            if objet.contenu:
+                objet.contenu.retirer(objet)
+            conteneur.potion = objet
+            return
+        if not conteneur.est_de_type("conteneur de nourriture"):
+            raise ErreurExecution("{} n'est pas un conteneur".format(
+                    conteneur.get_nom()))
         if objet.poids_unitaire > conteneur.poids_max:
             raise ErreurExecution("{} est plein".format(conteneur.get_nom()))
+        if objet.contenu:
+            objet.contenu.retirer(objet)
         conteneur.nourriture.append(objet)
     
     @staticmethod
@@ -74,13 +84,19 @@ class ClasseAction(Action):
         if not prototype in importeur.objet.prototypes:
             raise ErreurExecution("prototype {} introuvable".format(prototype))
         prototype = importeur.objet.prototypes[prototype]
-        if not conteneur.est_de_type("conteneur de nourriture"):
-            raise ErreurExecution("{} n'est pas un conteneur".format(
-                    conteneur.get_nom()))
         if not conteneur.contenu:
             raise ErreurExecution("{} n'est contenu nul part".format(
                     conteneur.get_nom()))
-        pose = 0
+        if conteneur.est_de_type("conteneur de potion"):
+            if conteneur.potion:
+                raise ErreurExecution("{} est plein".format(
+                        conteneur.get_nom()))
+            objet = importeur.objet.creer_objet(prototype)
+            conteneur.potion = objet
+            return
+        if not conteneur.est_de_type("conteneur de nourriture"):
+            raise ErreurExecution("{} n'est pas un conteneur".format(
+                    conteneur.get_nom()))
         poids_total = 0
         for i in range(nb):
             poids_total += prototype.poids
@@ -89,4 +105,3 @@ class ClasseAction(Action):
                         conteneur.get_nom()))
             objet = importeur.objet.creer_objet(prototype)
             conteneur.nourriture.append(objet)
-            pose += 1

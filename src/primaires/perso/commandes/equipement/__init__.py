@@ -55,10 +55,13 @@ class CmdEquipement(Commande):
         msg = ""
         objets = []
         for membre in equipement.membres:
-            objet = membre.equipe and membre.equipe[-1] or membre.tenu
-            if objet:
-                objets.append("{} [{}]".format(membre.nom.capitalize(),
-                        objet.get_nom()))
+            m_objets = ""
+            if membre.equipe:
+                m_objets = " [" + " > ".join(
+                        o.get_nom() for o in membre.equipe) + "]"
+            tenu = " - " + membre.tenu.get_nom() if membre.tenu else ""
+            if m_objets or tenu:
+                objets.append(membre.nom.capitalize() + m_objets + tenu)
         
         if not objets:
             msg = "Vous ne portez rien actuellement."

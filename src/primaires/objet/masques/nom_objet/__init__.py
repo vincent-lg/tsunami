@@ -134,11 +134,11 @@ class NomObjet(Masque):
                 t_proto = hasattr(o, "prototype") and o.prototype or o
                 if prototype and t_proto is not prototype:
                     continue
-                if contient(o.nom_singulier, nom):
+                if contient(o.get_nom(), nom):
                     if o_types and not [o_t for o_t in o_types \
                             if o.prototype.est_de_type(o_t)]:
                         raise ErreurValidation(
-                                "|err|" + o.err_type.format(o.nom_singulier) \
+                                "|err|" + o.err_type.format(o.get_nom()) \
                                 + "|ff|")
                     
                     objets.append(o)

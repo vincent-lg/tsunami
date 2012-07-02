@@ -95,7 +95,7 @@ class Editeur(Contexte):
         
         """
         self.pere.envoyer(self.pere.contexte_actuel.opts.separateur)
-        self.pere.envoyer(self.accueil())
+        self.pere.envoyer(self.accueil(), nl=1)
     
     def get_apercu(self):
         """Retourne l'aperçu"""

@@ -57,23 +57,21 @@ class ClasseAction(Action):
     def effacer_salle(salle, cle, temps=0):
         """Efface une mémoire de salle.
         
-        Si un temps est précisé, la mémoire n'est pas effacé tout de suite mais
-        son effacement est programmé. Il est        ainsi possible d'avoir
-        des mémoires temporaires, devant exister 5 minutes par exemple.
+        Si un temps est précisé, la mémoire n'est pas effacée tout de suite
+        mais sa suppression est programmée. Il est ainsi possible d'avoir des
+        mémoires temporaires, devant exister 5 minutes par exemple.
         
         Le temps peut-être précisé :
-          * Sous la forme d'un nombre (le nombre de minutes à attendre)
-          * Sous la forme d'une chaîne (détail plus bas).
+         -  sous la forme d'un nombre (le nombre de minutes à attendre) ;
+         -  sous la forme d'une chaîne (détail plus bas).
         
-        La chaîne contient un nombre suivi d'une lettre. Les lettres sont :
-          * m : nombre de minutes
-          * h : nombre d'heures
-          * j : nombre de jours.
+        La chaîne doit contenir un nombre suivi d'une lettre. Les lettres sont
+        m pour un nombre de minutes, h pour les heures et j pour les jours.
         
         Par exemple :
-          * "12h" signifie "supprimer la mémoire dans 12 heures d'ici
-          * "5j" signifie "supprimer la mémoire dans 5 jours d'ici
-          * ...
+         *  "12h" signifie "supprimer la mémoire dans 12 heures" ;
+         *  "5j" signifie "supprimer la mémoire dans 5 jours" ;
+         *  "38m" est équivalent à 38.
         
         """
         temps = temps_en_minutes(temps)
@@ -101,23 +99,21 @@ class ClasseAction(Action):
     def effacer_perso(personnage, cle, temps=0):
         """Efface une mémoire de personnage.
         
-        Si un temps est précisé, la mémoire n'est pas effacé tout de suite mais
-        son effacement est programmé. Il est        ainsi possible d'avoir
-        des mémoires temporaires, devant exister 5 minutes par exemple.
+        Si un temps est précisé, la mémoire n'est pas effacée tout de suite
+        mais sa suppression est programmée. Il est ainsi possible d'avoir des
+        mémoires temporaires, devant exister 5 minutes par exemple.
         
         Le temps peut-être précisé :
-          * Sous la forme d'un nombre (le nombre de minutes à attendre)
-          * Sous la forme d'une chaîne (détail plus bas).
+         -  sous la forme d'un nombre (le nombre de minutes à attendre) ;
+         -  sous la forme d'une chaîne (détail plus bas).
         
-        La chaîne contient un nombre suivi d'une lettre. Les lettres sont :
-          * m : nombre de minutes
-          * h : nombre d'heures
-          * j : nombre de jours.
+        La chaîne doit contenir un nombre suivi d'une lettre. Les lettres sont
+        m pour un nombre de minutes, h pour les heures et j pour les jours.
         
         Par exemple :
-          * "12h" signifie "supprimer la mémoire dans 12 heures d'ici
-          * "5j" signifie "supprimer la mémoire dans 5 jours d'ici
-          * ...
+         *  "12h" signifie "supprimer la mémoire dans 12 heures" ;
+         *  "5j" signifie "supprimer la mémoire dans 5 jours" ;
+         *  "38m" est équivalent à 38.
         
         """
         temps = temps_en_minutes(temps)
@@ -146,23 +142,21 @@ class ClasseAction(Action):
     def effacer_objet(objet, cle, temps=0):
         """Efface une mémoire d'objet.
         
-        Si un temps est précisé, la mémoire n'est pas effacé tout de suite mais
-        son effacement est programmé. Il est        ainsi possible d'avoir
-        des mémoires temporaires, devant exister 5 minutes par exemple.
+        Si un temps est précisé, la mémoire n'est pas effacée tout de suite
+        mais sa suppression est programmée. Il est ainsi possible d'avoir des
+        mémoires temporaires, devant exister 5 minutes par exemple.
         
         Le temps peut-être précisé :
-          * Sous la forme d'un nombre (le nombre de minutes à attendre)
-          * Sous la forme d'une chaîne (détail plus bas).
+         -  sous la forme d'un nombre (le nombre de minutes à attendre) ;
+         -  sous la forme d'une chaîne (détail plus bas).
         
-        La chaîne contient un nombre suivi d'une lettre. Les lettres sont :
-          * m : nombre de minutes
-          * h : nombre d'heures
-          * j : nombre de jours.
+        La chaîne doit contenir un nombre suivi d'une lettre. Les lettres sont
+        m pour un nombre de minutes, h pour les heures et j pour les jours.
         
         Par exemple :
-          * "12h" signifie "supprimer la mémoire dans 12 heures d'ici
-          * "5j" signifie "supprimer la mémoire dans 5 jours d'ici
-          * ...
+         *  "12h" signifie "supprimer la mémoire dans 12 heures" ;
+         *  "5j" signifie "supprimer la mémoire dans 5 jours" ;
+         *  "38m" est équivalent à 38.
         
         """
         temps = temps_en_minutes(temps)

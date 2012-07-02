@@ -80,11 +80,13 @@ from .assiette import Assiette
 from .bol import Bol
 
 # Vêtements
+from .cape import Cape
 from .chapeau import Chapeau
 from .chaussette import Chaussette
 from .chaussure import Chaussure
 from .chemise import Chemise
 from .pantalon import Pantalon
+from .robe import Robe
 from .jupe import Jupe
 
 # Bijoux

@@ -152,9 +152,9 @@ class Conteneur(BaseType):
             objets.append(o.get_nom(nb))
         
         if objets:
-            msg += "\nVous voyez à l'intérieur :\n  " + \
+            msg += "Vous voyez à l'intérieur :\n  " + \
                     "\n  ".join(objets)
         else:
-            msg += "\nVous ne voyez rien à l'intérieur."
+            msg += "Vous ne voyez rien à l'intérieur."
         
         return msg

@@ -90,6 +90,7 @@ class BaseType(BaseObj, metaclass=MetaType):
         
         # Equipement
         self.peut_prendre = True # définit si on peut manipuler l'objet à main
+        self.peut_tenir = False # définit si on peut tenir un objet par-dessus
         self.emplacement = ""
         self.epaisseur = 1
         self.positions = ()
@@ -275,7 +276,7 @@ class BaseType(BaseObj, metaclass=MetaType):
         if not description:
             description = "Il n'y a rien de bien intéressant à voir."
         
-        personnage << "\n" + description
+        personnage << description
         
         # Appel du script regarde.après
         self.script["regarde"]["apres"].executer(

@@ -28,74 +28,44 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction peut_prendre."""
+"""Fichier contenant la fonction combien_dans."""
 
 from primaires.scripting.fonction import Fonction
-from primaires.objet.conteneur import SurPoids
 
 class ClasseFonction(Fonction):
     
-    """Teste si le conteneur a de la place."""
+    """Renvoie le nombre d'objets dans un conteneur."""
     
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.peut_contenir_objet, "Objet", "Objet")
-        cls.ajouter_types(cls.peut_contenir_proto, "Objet", "str", "Fraction")
+        cls.ajouter_types(cls.cb_dans, "Objet")
+        cls.ajouter_types(cls.cb_dans_proto, "Objet", "str")
     
     @staticmethod
-    def peut_contenir_objet(conteneur, objet):
-        """Renvoie vrai si le conteneur peut contenir l'objet, faux sinon.
-        
-        L'objet testé doit être une variable de type Objet.
-        
-        """
+    def cb_dans(conteneur):
+        """RRenvoie le nombre d'objets contenus dans le conteneur."""
         if conteneur.est_de_type("conteneur de potion"):
-            return conteneur.potion is None
+            return 1 if conteneur.potion else 0
         if conteneur.est_de_type("conteneur de nourriture"):
-            if sum(o.poids_unitaire for o in conteneur.nourriture) \
-                    + objet.poids_unitaire > conteneur.poids_max:
-                return False
-            else:
-                return True
-        try:
-            conteneur.conteneur.supporter_poids_sup(objet.poids_unitaire,
-                    recursif=False)
-            assert conteneur.est_de_type("conteneur")
-            assert conteneur.accepte_type(objet)
-        except (AssertionError, SurPoids):
-            return False
-        else:
-            return True
-        return False
+            return len(conteneur.nourriture)
+        if conteneur.est_de_type("conteneur"):
+            return sum(nb for o, nb in conteneur.conteneur.iter_nombres)
+        raise ErreurExecution("{} n'est pas un conteneur".format(conteneur))
     
     @staticmethod
-    def peut_contenir_proto(conteneur, prototype, nb):
-        """Renvoie vrai si le conteneur peut contenir nb objets, faux sinon.
-        
-        Cet usage permet de tester à partir d'un objet non encore créé, et
-        surtout de tester une quantité. Le conteneur, lui, doit être une
-        variable de type Objet.
-        
-        """
-        nb = int(nb)
+    def cb_dans_proto(conteneur, prototype):
+        """Renvoie la quantité d'objets du prototype dans le conteneur."""
         if not prototype in importeur.objet.prototypes:
             raise ErreurExecution("prototype {} introuvable".format(prototype))
         prototype = importeur.objet.prototypes[prototype]
         if conteneur.est_de_type("conteneur de potion"):
-            return conteneur.potion is None and nb <= 1
+            if conteneur.potion and conteneur.potion.prototype is prototype:
+                return 1 
+            return 0
         if conteneur.est_de_type("conteneur de nourriture"):
-            if sum(o.poids_unitaire for o in conteneur.nourriture) \
-                    + prototype.poids_unitaire * nb > conteneur.poids_max:
-                return False
-            else:
-                return True
-        try:
-            conteneur.conteneur.supporter_poids_sup(
-                    prototype.poids_unitaire * nb, recursif=False)
-            assert conteneur.est_de_type("conteneur")
-            assert conteneur.accepte_type(prototype)
-        except (AssertionError, SurPoids):
-            return False
-        else:
-            return True
-        return False
+            return len(o for o in conteneur.nourriture \
+                    if o.prototype is prototype)
+        if conteneur.est_de_type("conteneur"):
+            return sum(nb for o, nb in conteneur.conteneur.iter_nombres \
+                    if o.prototype is prototype)
+        raise ErreurExecution("{} n'est pas un conteneur".format(conteneur))
