@@ -205,8 +205,8 @@ class Salle(BaseObj):
                 if personnage.est_mort() and not mort:
                     continue
                 
-                if hasattr(personnage, "instance_connexion") and not \
-                        prompt and personnage.instance_connexion:
+                if hasattr(personnage, "instance_connexion") and \
+                        personnage.instance_connexion and not prompt:
                     personnage.instance_connexion.sans_prompt()
                 personnage.envoyer(message, *personnages, **kw_personnages)
     
