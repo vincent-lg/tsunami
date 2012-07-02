@@ -62,10 +62,10 @@ class CmdManger(Commande):
             if not objet.nourriture:
                 personnage << "Il n'y a rien à manger là-dedans."
                 return
+            personnage.agir("manger")
             personnage << "Vous commencez votre repas."
             personnage.cle_etat = "repas"
             personnage.salle.envoyer("{} commence à manger.", personnage)
-            personnage.agir("manger")
             for item in objet.nourriture:
                 if not item.est_de_type("nourriture"):
                     continue
