@@ -185,6 +185,9 @@ class Combat:
             armes = combattant.get_armes()
             armes = armes if armes else [None]
             for arme in armes:
+                if combattu.est_mort():
+                    continue
+                
                 attaques = self.get_attaques(combattant)
                 attaque = choice(attaques)
                 membre = attaque.get_membre(combattant, combattu, arme)
