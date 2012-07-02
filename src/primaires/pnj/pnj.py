@@ -173,6 +173,10 @@ class PNJ(Personnage):
     def mourir(self, adversaire=None):
         """La mort d'un PNJ signifie sa destruction."""
         Personnage.mourir(self, adversaire=adversaire)
+        cadavre = importeur.objet.creer_objet(importeur.objet.prototypes[
+                "cadavre"])
+        cadavre.pnj = self.prototype
+        self.salle.objets_sol.ajouter(cadavre)
         
         # Gain d'XP
         if adversaire and self.gain_xp:

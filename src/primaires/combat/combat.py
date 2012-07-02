@@ -173,6 +173,10 @@ class Combat:
     def tour(self, importeur):
         """Un tour de combat."""
         self.verifier_combattants()
+        if not self.combattants:
+            importeur.combat.supprimer_combat(self.salle.ident)
+            return
+        
         for combattant, combattu in self.combattus.items():
             if combattant.est_mort():
                 continue

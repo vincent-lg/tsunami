@@ -198,7 +198,7 @@ class Joueur(Personnage):
         """Retourne la distinction audible."""
         ret = self.distinction_audible
         if not ret:
-            ret = self.race.genres._distinctions[self.genre]
+            ret = self.race.genres.get_distinctions(self.genre)
         
         return ret
     
@@ -257,6 +257,6 @@ class Joueur(Personnage):
         
         Personnage.tick(self)
     
-    def mourir(self, adversaire):
+    def mourir(self, adversaire=None):
         Personnage.mourir(self, adversaire)
         self.cpt_mort = 0
