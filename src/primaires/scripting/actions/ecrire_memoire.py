@@ -58,6 +58,8 @@ class ClasseAction(Action):
     @staticmethod
     def ecrire_perso(personnage, cle, valeur):
         """Ecrit une mémoire de personnage (joueur ou PNJ)."""
+        personnage = hasattr(personnage, "prototype") and \
+                personnage.prototype or personnage
         if personnage in importeur.scripting.memoires:
             importeur.scripting.memoires[personnage][cle] = valeur
         else:

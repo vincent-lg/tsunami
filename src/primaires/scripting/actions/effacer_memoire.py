@@ -116,6 +116,8 @@ class ClasseAction(Action):
          *  "38m" est équivalent à 38.
         
         """
+        personnage = hasattr(personnage, "prototype") and \
+                personnage.prototype or personnage
         temps = temps_en_minutes(temps)
         if temps:
             try:
