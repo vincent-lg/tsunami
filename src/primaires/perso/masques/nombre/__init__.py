@@ -45,11 +45,15 @@ class Nombre(Masque):
     nom = "nombre"
     nom_complet = "nombre"
     
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self)
+        self.proprietes["limite_inf"] = "1"
+        self.proprietes["limite_sup"] = "None"
+    
     def init(self):
         """Initialisation des attributs"""
         self.nombre = None
-        self.limite_inf = 1
-        self.limite_sup = None
     
     def repartir(self, personnage, masques, commande):
         """Répartition du masque."""
@@ -65,7 +69,7 @@ class Nombre(Masque):
             str_nombre = str_nombre[1:]
         if not str_nombre.isdigit():
             raise ErreurValidation(
-                "Ceci n'est pas un nombre.", False)
+                "|err|Ceci n'est pas un nombre.|ff|", False)
         
         commande[:] = commande[len(str_nombre):]
         masques.append(self)
@@ -84,7 +88,7 @@ class Nombre(Masque):
                 assert nombre <= self.limite_sup
         except (ValueError, AssertionError):
             raise ErreurValidation( \
-                "Ce nombre est invalide.")
+                "|err|Ce nombre est invalide.|ff|")
         
         self.nombre = nombre
         

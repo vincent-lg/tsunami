@@ -33,6 +33,7 @@
 """
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.format.fonctions import format_nb
 
 class CmdQui(Commande):
     
@@ -84,5 +85,12 @@ class CmdQui(Commande):
                         n for j, n in noms_joueurs.items() \
                         if not j.est_immortel())) + "\n"
             res += "+" + "-" * 40 + "+\n"
-            res += "Nombre de joueurs connectés : " + str(len(joueurs))
+            nb_joueurs = len(joueurs)
+            nb_imms = len([j for j in noms_joueurs.keys() if j.est_immortel()])
+            if nb_imms > 0:
+                s = "s" if nb_imms > 1 else ""
+                nb = "un" if nb_imms == 1 else str(nb_imms)
+                imms = ", dont |jn|{nb} Immortel{s}|ff|".format(nb=nb, s=s)
+            res += format_nb(nb_joueurs,
+                    "{{nb}} joueur{{s}} connecté{{s}}{}.".format(imms))
             personnage << res

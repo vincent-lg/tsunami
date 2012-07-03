@@ -40,11 +40,13 @@ class CmdBoire(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "boire", "drink")
         self.nom_categorie = "objets"
-        self.schema = "<nom_objet>"
+        self.schema = "(<nom_objet>)"
         self.aide_courte = "boit une potion"
         self.aide_longue = \
                 "Cette commande permet de boire un liquide (potion " \
-                "ou autre) depuis un contenant."
+                "ou autre) depuis un conteneur. Sans argument, vous buvez " \
+                "l'eau à portée s'il y en a (près d'une rivière ou autre " \
+                "étendue d'eau)."
     
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
@@ -54,6 +56,23 @@ class CmdBoire(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
+        if dic_masques["nom_objet"] is None:
+            if personnage.salle.terrain.nom in ("rive", "aquatique",
+                    "subaquatique"):
+                if personnage.estomac <= 2.9:
+                    personnage << "Vous buvez à grande gorgées."
+                    personnage.salle.envoyer("{} boit à grandes gorgées.",
+                            personnage)
+                    if personnage.soif > 0:
+                        personnage.soif -= 1
+                    personnage.estomac += 0.1
+                else:
+                    e = "e" if personnage.est_feminin() else ""
+                    personnage << "Vous êtes plein{e} ; une gorgée de plus " \
+                            "et vous éclaterez.".format(e=e)
+            else:
+                personnage << "|err|Il n'y a pas d'eau par ici.|ff|"
+            return
         objet = dic_masques["nom_objet"].objet
         personnage.agir("ingerer")
         if hasattr(objet, "potion"):
@@ -61,13 +80,22 @@ class CmdBoire(Commande):
                 personnage << "Il n'y a rien à boire là-dedans."
                 return
             
-            objet.potion.script["boit"].executer(personnage=personnage,
-                    objet=objet)
-            personnage << objet.potion.message_boit
-            personnage.salle.envoyer("{} boit " + objet.get_nom() + ".",
-                    personnage)
-            importeur.objet.supprimer_objet(objet.potion.identifiant)
-            objet.potion = None
+            if personnage.estomac + objet.potion.poids_unitaire <= 3:
+                personnage << objet.potion.message_boit
+                personnage.soif -= objet.potion.remplissant
+                if personnage.soif < 0:
+                    personnage.soif = 0
+                personnage.estomac += objet.potion.poids_unitaire
+                importeur.objet.supprimer_objet(objet.potion.identifiant)
+                objet.potion = None
+                personnage.salle.envoyer("{} boit " + objet.get_nom() + ".",
+                        personnage)
+                objet.potion.script["boit"].executer(personnage=personnage,
+                        objet=objet)
+            else:
+                e = "e" if personnage.est_feminin() else ""
+                personnage << "Vous êtes plein{e} ; une gorgée de plus " \
+                        "et vous éclaterez.".format(e=e)
             return
         
         personnage << "|err|Vous ne pouvez boire cela.|ff|"

@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,9 +28,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module magie."""
+"""Fichier contenant le type tunique."""
 
-import secondaires.magie.commandes.lancer
-import secondaires.magie.commandes.oublier
-import secondaires.magie.commandes.sorts
-import secondaires.magie.commandes.spedit
+from .vetement import Vetement
+
+class Tunique(Vetement):
+    
+    """Type d'objet: tunique.
+    
+    """
+    
+    nom_type = "tunique"
+    def __init__(self, cle=""):
+        Vetement.__init__(self, cle)
+        self.emplacement = "corps"
+        self.positions = (1, 2)
+

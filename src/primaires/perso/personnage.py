@@ -74,6 +74,11 @@ class Personnage(BaseObj):
         self._race = None
         self.genre = "aucun"
         
+        # Faim et soif
+        self.soif = 0
+        self.faim = 0
+        self.estomac = 0 # Maxi : 3 kg
+        
         # Quêtes
         self.quetes = Quetes(self)
         
@@ -84,11 +89,11 @@ class Personnage(BaseObj):
         # Etat
         self._cle_etat = ""
         
-        # Position occupé
+        # Position occupée
         self.position = ""
         self.occupe = None
         
-        # Niveau prmiaire et niveaux secondaires
+        # Niveau primaire et niveaux secondaires
         self.niveau = 1
         self.niveaux = {}
         self.xp = 0 # xp dans le niveau principal
@@ -138,7 +143,6 @@ class Personnage(BaseObj):
         
         """
         self.contextes.ajouter(nouveau_contexte)
-    
     contexte_actuel = property(_get_contexte_actuel, _set_contexte_actuel)
     
     def _get_salle(self):
@@ -674,6 +678,60 @@ class Personnage(BaseObj):
                 courante_liee = self.stats[liee].courante
                 plus = int(courante_liee * 0.9)
                 stat.courante = stat.courante + plus
+        # Faim et soif
+        if self.soif < 100:
+            self.soif += 1/3
+        if self.faim < 100:
+            self.faim += 1/6
+        if self.estomac > 0:
+            self.estomac -= 0.05
+        msg_soif = [
+            (20, ("Vous avez soif.", 0)),
+            (60, ("La soif vous assèche le gosier.", 0)),
+            (80, ("Votre gorge asséchée vous fait souffrir le martyr.", 5)),
+            (95, ("Votre vision se trouble sous l'effet de la déshydratation.",
+                    20)),
+        ]
+        msg_faim = [
+            (20, ("Vous avez faim.", 0)),
+            (40, ("Votre estomac gargouille avec insistance.", 0)),
+            (60, ("La faim vous noue douloureusement le ventre.", 0)),
+            (80, ("Votre ventre proteste violemment.", 0)),
+            (90, ("Vous souffrez horriblement de la faim.", 3)),
+            (98, ("Des visions de banquets croulant sous la nourriture vous " \
+                    "assaillent...", 20)),
+        ]
+        if not self.est_immortel():
+            if self.soif >= 100:
+                self << "Vous mourrez de soif."
+                self.mourir()
+                return
+            if self.faim >= 100:
+                self << "Vous mourrez de faim."
+                self.mourir()
+                return
+            for seuil, msg in reversed(msg_soif):
+                if self.soif >= seuil:
+                    self.instance_connexion.sans_prompt()
+                    self.instance_connexion.envoyer(msg[0], nl=1)
+                    try:
+                        self.vitalite -= msg[1]
+                    except DepassementStat:
+                        self << "Vous mourrez de soif."
+                        self.mourir()
+                        return
+                    break
+            for seuil, msg in reversed(msg_faim):
+                if self.faim >= seuil:
+                    self.instance_connexion.sans_prompt()
+                    self.instance_connexion.envoyer(msg[0], nl=1)
+                    try:
+                        self.vitalite -= msg[1]
+                    except DepassementStat:
+                        self << "Vous mourrez de faim."
+                        self.mourir()
+                        return
+                    break
     
     def envoyer_tip(self, message, cle=None, unique=False):
         """Envoie un message de tip (aide contextuel) au personnage."""
