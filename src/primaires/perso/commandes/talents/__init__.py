@@ -70,5 +70,5 @@ class CmdTalents(Commande):
             
             personnage << msg
         else:
-            personnage << "|err|Vous ne maîtrisez pour l'heure aucun " \
-                    "talent.|ff|"
+            personnage << "Vous ne maîtrisez pour l'heure aucun " \
+                    "talent."

@@ -323,7 +323,7 @@ class Module(BaseModule):
         mails = self.mails.get_mails_pour(joueur, RECU)
         mails = [mail for mail in mails if not mail.lu]
         if len(mails) == 1:
-            joueur << "\n|jn|Vous avez un message non lu.|ff|"
+            joueur << "|jn|Vous avez un message non lu.|ff|"
         elif len(mails) > 1:
-            joueur << "\n|jn|Vous avez {} messages non lus.|ff|".format(
+            joueur << "|jn|Vous avez {} messages non lus.|ff|".format(
                     len(mails))

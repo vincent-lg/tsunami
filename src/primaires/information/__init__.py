@@ -209,7 +209,7 @@ class Module(BaseModule):
         """On avertit le joueur s'il y a de nouvelles versions."""
         versions = self.versions.afficher_dernieres_pour(joueur, lire=False)
         if versions:
-            joueur << "\n|vrc|De nouvelles modifications ont été apportées. " \
+            joueur << "|vrc|De nouvelles modifications ont été apportées. " \
                     "Pour les consulter, utilisez\nla commande |ff|" \
                     "|cmd|versions|ff||vrc|.|ff|"
     

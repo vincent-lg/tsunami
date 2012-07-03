@@ -28,9 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module magie."""
+"""Package contenant la commande 'oublier'."""
 
-import secondaires.magie.commandes.lancer
-import secondaires.magie.commandes.oublier
-import secondaires.magie.commandes.sorts
-import secondaires.magie.commandes.spedit
+from primaires.interpreteur.commande.commande import Commande
+from primaires.format.fonctions import contient
+
+class CmdOublier(Commande):
+    
+    """Commande 'oublier'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "oublier", "forget")
+        self.groupe = "joueur"
+        self.schema = "<message>"
+        self.aide_courte = "oublie un talent ou un sort"
+        self.aide_longue = \
+            "Cette commande permet d'oublier un sort ou un talent. L'oubli " \
+            "est irréversible et vous devrez réapprendre ce talent ou sort " \
+            "à partir de zéro si vous changez d'avis."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        nom_talent = dic_masques["message"].message
+        for sort in importeur.magie.sorts.values():
+            if contient(sort.nom, nom_talent) and sort.cle in personnage.sorts:
+                del personnage.sorts[sort.cle]
+                personnage << "Vous avez oublié le sort {}.".format(sort.nom)
+                return
+        for tal in importeur.perso.talents.values():
+            if contient(tal.nom, nom_talent) and tal.cle in personnage.talents:
+                del personnage.talents[tal.cle]
+                personnage << "Vous avez oublié le talent {}.".format(tal.nom)
+                return
+        personnage << "|err|'{}' n'est ni un sort, ni un talent.|ff|".format(
+                nom_sort)

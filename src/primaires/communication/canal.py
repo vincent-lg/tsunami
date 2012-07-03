@@ -116,7 +116,7 @@ class Canal(BaseObj):
         return [j for j in self.connectes if j.est_connecte()]
     
     def rejoindre_ou_quitter(self, joueur, aff=True, forcer=False):
-        """Connecte ou déconnecte un joueur et le signale aux connectés"""
+        """Connecte ou déconnecte un joueur"""
         if not joueur in self.connectes:
             if joueur in self.liste_noire:
                 joueur << "|err|Vous êtes sur la liste noire de ce canal.|ff|"
@@ -129,32 +129,8 @@ class Canal(BaseObj):
                 if aff:
                     joueur << "|att|Vous êtes à présent connecté au canal " \
                             "{}.|ff|".format(self.nom)
-                for connecte in self.connectes:
-                    if connecte in type(self).importeur. \
-                            connex.joueurs_connectes:
-                        if connecte is not joueur:
-                            if connecte in self.immerges:
-                                res = self.clr + "<" + joueur.nom
-                                res += " rejoint le canal.>|ff|"
-                                connecte << res
-                            else:
-                                res = self.clr + "[" + self.nom + "] "
-                                res += joueur.nom + " rejoint le canal.|ff|"
-                                connecte << res
         else:
             self.connectes.remove(joueur)
-            if aff is True:
-                for connecte in self.connectes:
-                    if connecte in type(self).importeur. \
-                            connex.joueurs_connectes:
-                        if connecte in self.immerges:
-                            res = self.clr + "<" + joueur.nom
-                            res += " quitte le canal.>|ff|"
-                            connecte << res
-                        else:
-                            res = self.clr + "[" + self.nom + "] " + joueur.nom
-                            res += " quitte le canal.|ff|"
-                            connecte << res
     
     def immerger_ou_sortir(self, joueur, aff=True):
         """Immerge un joueur et le signale aux immergés"""
@@ -196,7 +172,8 @@ class Canal(BaseObj):
         for connecte in self.connectes:
             if connecte in type(self).importeur.connex.joueurs_connectes:
                 if connecte in self.immerges:
-                    connecte << self.clr + "<" + joueur.nom + " a été éjecté.>|ff|"
+                    connecte << self.clr + "<" + joueur.nom \
+                            + " a été éjecté.>|ff|"
                 else:
                     res = self.clr + "[" + self.nom + "] " + joueur.nom
                     res += " a été éjecté.|ff|"
@@ -213,7 +190,8 @@ class Canal(BaseObj):
             for connecte in self.connectes:
                 if connecte in type(self).importeur.connex.joueurs_connectes:
                     if connecte in self.immerges:
-                        res = self.clr + "<" + joueur.nom + " a été banni.>|ff|"
+                        res = self.clr + "<" + joueur.nom \
+                                + " a été banni.>|ff|"
                         connecte << res
                     else:
                         res = self.clr + "[" + self.nom + "] " + joueur.nom
@@ -300,8 +278,7 @@ class Canal(BaseObj):
         
         for connecte in self.actuellement_connectes:
             if connecte is not joueur:
-                if connecte in type(self).importeur.connex.joueurs_connectes:
-                    if connecte in self.immerges:
-                        connecte << im
-                    else:
-                        connecte << ex_autre
+                if connecte in self.immerges:
+                    connecte << im
+                else:
+                    connecte << ex_autre

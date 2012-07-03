@@ -44,17 +44,19 @@ class CmdOublier(Commande):
         Commande.__init__(self, "oublier", "forget")
         self.groupe = "joueur"
         self.schema = "<message>"
-        self.aide_courte = "oublie un sort"
+        self.aide_courte = "oublie un talent"
         self.aide_longue = \
-            "Cette commande permet d'oublier un sort."
+            "Cette commande permet d'oublier un talent. L'oubli " \
+            "est irréversible et vous devrez réapprendre ce talent " \
+            "à partir de zéro si vous changez d'avis."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        nom_sort = dic_masques["message"].message
-        sorts = type(self).importeur.magie.sorts
-        for sort in sorts.values():
-            if contient(sort.nom, nom_sort):
-                del personnage.sorts[sort.cle]
-                personnage << "Vous avez oublié le sort {}.".format(sort.nom)
+        nom_talent = dic_masques["message"].message
+        for tal in importeur.perso.talents.values():
+            if contient(tal.nom, nom_talent) and tal.cle in personnage.talents:
+                del personnage.talents[tal.cle]
+                personnage << "Vous avez oublié le talent {}.".format(tal.nom)
                 return
-        personnage << "|err|Le sort '{}' est introuvable.|ff|".format(nom_sort)
+        personnage << "|err|Le talent '{}' est introuvable.|ff|".format(
+                nom_sort)

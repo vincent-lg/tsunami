@@ -64,8 +64,9 @@ class Module(BaseModule):
         
         # Ajout des commandes
         self.commandes = [
-            commandes.sorts.CmdSorts(),
             commandes.lancer.CmdLancer(),
+            commandes.oublier.CmdOublier(),
+            commandes.sorts.CmdSorts(),
             commandes.spedit.CmdSpedit(),
         ]
         
@@ -89,6 +90,8 @@ class Module(BaseModule):
         etat = self.importeur.perso.ajouter_etat("magie")
         etat.msg_refus = "Vous êtes en train de lancer un sort."
         etat.msg_visible = "se concentre ici"
+        
+        BaseModule.init(self)
     
     def supprimer_sort(self, cle):
         """Supprime le sort spécifié"""

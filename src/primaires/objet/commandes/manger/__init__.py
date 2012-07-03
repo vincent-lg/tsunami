@@ -62,22 +62,27 @@ class CmdManger(Commande):
             if not objet.nourriture:
                 personnage << "Il n'y a rien à manger là-dedans."
                 return
-            personnage.agir("manger")
             personnage << "Vous commencez votre repas."
             personnage.cle_etat = "repas"
             personnage.salle.envoyer("{} commence à manger.", personnage)
-            for item in objet.nourriture:
+            for item in list(objet.nourriture):
                 if not item.est_de_type("nourriture"):
                     continue
-                
-                item.script["mange"].executer(personnage=personnage,
-                        objet=objet)
+                if personnage.estomac + item.poids_unitaire > 3:
+                    personnage << "Vous avez eu les yeux plus gros que le " \
+                            "ventre et ne terminez pas le plat."
+                    break
                 yield item.nourrissant
                 personnage << "Vous mangez {}.".format(item.get_nom())
                 personnage << item.message_mange
+                personnage.faim -= item.nourrissant
+                if personnage.faim < 0:
+                    personnage.faim = 0
+                personnage.estomac += item.poids_unitaire
                 importeur.objet.supprimer_objet(item.identifiant)
-            objet.nourriture = [o for o in objet.nourriture \
-                    if not o.est_de_type("nourriture")]
+                objet.nourriture.remove(item)
+                item.script["mange"].executer(personnage=personnage,
+                        objet=objet)
             personnage.salle.envoyer("{} termine son repas.", personnage)
             personnage.cle_etat = ""
             return
@@ -86,9 +91,18 @@ class CmdManger(Commande):
             personnage << "Visiblement, ce n'est pas comestible."
             return
         
-        personnage << "Vous mangez {}.".format(objet.get_nom())
-        personnage << objet.message_mange
-        personnage.salle.envoyer("{{}} mange {}.".format(objet.get_nom()),
-                personnage)
-        objet.script["mange"].executer(personnage=personnage, objet=objet)
-        importeur.objet.supprimer_objet(objet.identifiant)
+        if personnage.estomac + objet.poids_unitaire <= 3:
+            personnage << "Vous mangez {}.".format(objet.get_nom())
+            personnage << objet.message_mange
+            personnage.faim -= objet.nourrissant
+            if personnage.faim < 0:
+                personnage.faim = 0
+            personnage.estomac += objet.poids_unitaire
+            importeur.objet.supprimer_objet(objet.identifiant)
+            personnage.salle.envoyer("{{}} mange {}.".format(objet.get_nom()),
+                    personnage)
+            objet.script["mange"].executer(personnage=personnage, objet=objet)
+        else:
+            e = "e" if personnage.est_feminin() else ""
+            personnage << "Vous êtes plein{e} ; une bouchée de plus " \
+                    "et vous exploserez.".format(e=e)
