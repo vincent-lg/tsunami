@@ -395,8 +395,9 @@ class Personnage(BaseObj):
                 return
         
         if nage:
-            connaissance = varier(self.pratiquer_talent("nage"), 20)
-            reussir = connaissance >= varier(50, 60)
+            connaissance = varier(self.pratiquer_talent("nage"), 15)
+            pc_poids = varier(int(self.poids / self.poids_max * 100), 5)
+            reussir = connaissance >= pc_poids
             if not reussir:
                 self << "|err|Vous battez des bras et des jambes mais " \
                         "n'avancez pas.|ff|"
