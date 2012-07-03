@@ -35,6 +35,7 @@ from . import apprendre
 from . import alias
 from . import chgroupe
 from . import distinctions
+from . import fixer
 from . import groupe
 from . import module
 from . import options

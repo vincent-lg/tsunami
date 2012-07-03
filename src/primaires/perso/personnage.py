@@ -80,6 +80,7 @@ class Personnage(BaseObj):
         
         # Talents et sorts
         self.talents = {}
+        self.l_talents = {}
         self.sorts = {}
         
         # Etat
