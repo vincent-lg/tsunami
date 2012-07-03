@@ -53,6 +53,8 @@ class ClasseFonction(Fonction):
     @staticmethod
     def memoire_perso_existe(personnage, cle):
         """Renvoie vrai si la mémoire de personnage existe, faux sinon."""
+        personnage = hasattr(personnage, "prototype") and \
+                personnage.prototype or personnage
         if personnage in importeur.scripting.memoires:
             return cle in importeur.scripting.memoires[personnage]
         else:

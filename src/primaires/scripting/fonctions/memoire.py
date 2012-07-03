@@ -53,6 +53,8 @@ class ClasseFonction(Fonction):
     @staticmethod
     def memoire_perso(personnage, cle):
         """Renvoie une mémoire de personnage."""
+        personnage = hasattr(personnage, "prototype") and \
+                personnage.prototype or personnage
         if personnage in importeur.scripting.memoires:
             if cle in importeur.scripting.memoires[personnage]:
                 return importeur.scripting.memoires[personnage][cle]
