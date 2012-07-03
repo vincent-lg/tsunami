@@ -27,39 +27,16 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""Package définissant les différents éditeurs propres à AutoQuete."""
 
-from primaires.interpreteur.contexte import MetaContexte
-from primaires.interpreteur.editeur.entier import Entier
-from primaires.interpreteur.editeur.flag import Flag
-from primaires.interpreteur.editeur.flottant import Flottant
-
-# Types d'éditeurs
-editeurs = {
-    "entier": Entier,
-    "flag": Flag,
-    "flottant": Flottant,
-}
-
-class MetaEditeur(MetaContexte):
+class AutoQuete:
     
-    """Métaclasse des éditeurs pour les autoquetes.
+    """Classe définissant le type d'autoquête coursier.
     
-    Note : ce module peut utiliser des éditeurs qui ne sont
-    pas définis (ou redéfinis) ici sans inconvénient,
-    mais ils devront être ajoutés à la main dans le dictionnaire editeurs.
+    Le coursier (le personnage demandant la quête) doit apporter une forme
+    de liste de cousres au PNJ.
     
     """
     
-    def __init__(cls, nom, bases, contenu):
-        """Constructeur de la métaclasse"""
-        MetaContexte.__init__(cls, nom, bases, contenu)
-        if not cls.nom:
-            raise ValueError("la classe " + str(cls) + " ne défini " \
-                    "aucun nom")
-        
-        if cls.nom in editeurs:
-            raise ValueError("la classe " + cls.nom + " a déjà " \
-                    "été définie")
-        
-        editeurs[cls.nom] = cls
+    nom_type = "coursier"
+    parent = "avec_PNJ"
+    concrete = False
