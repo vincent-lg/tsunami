@@ -64,7 +64,7 @@ class CmdQui(Commande):
                     nom = "|cyc|~ " + joueur.nom + " ~|ff|"
                     imm = 9
                 else:
-                    nom = joueur.nom
+                    nom = "  " + joueur.nom
                 if joueur.afk:
                     raison = ""
                     if joueur.afk is not "afk":
@@ -76,21 +76,16 @@ class CmdQui(Commande):
             res = "+" + "-" * 40 + "+\n"
             res += "| |tit|Joueurs présents|ff|".ljust(50) + "|\n"
             res += "+" + "-" * 40 + "+\n"
-            if [j for j in noms_joueurs.keys() if j.est_immortel()]:
-                res += "| " + "\n| ".join(sorted(
-                        n for j, n in noms_joueurs.items() \
-                        if j.est_immortel())) + "\n"
-            if [j for j in noms_joueurs.keys() if not j.est_immortel()]:
-                res += "| " + "\n| ".join(sorted(
-                        n for j, n in noms_joueurs.items() \
-                        if not j.est_immortel())) + "\n"
-            res += "+" + "-" * 40 + "+\n"
+            for j, nom in sorted(noms_joueurs.items(), key=lambda c: c[0].nom):
+                res += "\n| " + nom
+            res += "\n+" + "-" * 40 + "+\n"
             nb_joueurs = len(joueurs)
             nb_imms = len([j for j in noms_joueurs.keys() if j.est_immortel()])
+            imms = ""
             if nb_imms > 0:
                 s = "s" if nb_imms > 1 else ""
                 nb = "un" if nb_imms == 1 else str(nb_imms)
-                imms = ", dont |jn|{nb} Immortel{s}|ff|".format(nb=nb, s=s)
+                imms = ", dont |jn|{nb} immortel{s}|ff|".format(nb=nb, s=s)
             res += format_nb(nb_joueurs,
                     "{{nb}} joueur{{s}} connecté{{s}}{}.".format(imms))
             personnage << res
