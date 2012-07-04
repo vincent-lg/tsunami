@@ -34,6 +34,13 @@ import os
 from abstraits.module import *
 from corps.arborescence import getcwd
 from .editeurs import editeurs
+from .v_editeur import ValidateurEditeur
+
+# Constantes
+ATTRIBUTS_AUTOQUETE = (
+    "nom_type",
+    "est_complete",
+)
 
 class Module(BaseModule):
     
@@ -92,14 +99,16 @@ class Module(BaseModule):
                             "types/" + nom + "/__init__.py ne contient pas de classe AutoQuete")
                 
                 classe = module.AutoQuete
-                if not hasattr(classe, "nom_type") or not classe.nom_type:
-                    raise ValueError("le t_type d'autoquête " + nom + \
-                            " n'a pas de nom_type défini")
+                for attr in ATTRIBUTS_AUTOQUETE:
+                    if not hasattr(classe, attr):
+                        raise ValueError("la classe d'autoquête " + nom + \
+                                " n'a pas d'attribut ou méthode " + repr(attr))
                 
                 if not hasattr(classe, "parent"):
-                    raise ValueError("le t_type d'autoquête " + nom + \
+                    raise ValueError("le type d'autoquête " + nom + \
                             " n'a pas de parent défini")
                 
+                classe.nom_rep = nom
                 self.types[classe.nom_type] = classe
         
         # On ordonne les classes pour qu'elle soit dans l'ordre de plus
@@ -138,5 +147,13 @@ class Module(BaseModule):
                 n_classe = type(nom_c, (parent, ), dict(
                         classe.__dict__))
                 self.types[classe.nom_type] = n_classe
+                classe = n_classe
+            
+            # Chargement de la configuration des éditeurs du type
+            config = ValidateurEditeur.get_config(classe.nom_rep)
+            if config:
+                ValidateurEditeur.valider_config(config)
+            
+            ValidateurEditeur.etendre_config(classe, config)
         
         print(self.types)

@@ -202,14 +202,4 @@ Informations obligatoires : aucune
 
 Informations facultatives : aucune
 
-E. description
-
-Le type description permet, comme son nom l'indique, d'éditer une description
-(c'est un type particulier, pas str mais Description qui est défini dans
-primaires.format.description).
-
-Informations obligatoires : aucune
-
-Informations facultatives : aucune
-
 """

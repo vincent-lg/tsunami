@@ -40,3 +40,7 @@ class AutoQuete:
     nom_type = "avec_PNJ"
     parent = "base"
     concrete = False
+    
+    def est_complete(self, personnage):
+        """Retourne True si l'autoquête est complète pour personnage."""
+        return False
