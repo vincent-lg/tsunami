@@ -31,6 +31,7 @@
 """Fichier contenant le module secondaire rapport."""
 
 from abstraits.module import *
+from primaires.format.fonctions import format_nb
 from . import commandes
 from . import editeurs
 from . import cherchables
@@ -61,6 +62,12 @@ class Module(BaseModule):
             Rapport.id_actuel = max(self.rapports.keys()) + 1
         else:
             Rapport.id_actuel = 1
+        
+        # On lie la méthode joueur_connecte avec l'hook joueur_connecte
+        # La méthode joueur_connecte sera ainsi appelée quand un joueur
+        # se connecte
+        self.importeur.hook["joueur:connecte"].ajouter_evenement(
+                self.joueur_connecte)
         
         BaseModule.init(self)
     
@@ -94,3 +101,11 @@ class Module(BaseModule):
             rapport.id = rapport.source.id
             rapport.source.detruire()
             rapport.source = None
+    
+    def joueur_connecte(self, joueur):
+        """On avertit du nombre de rapports qui lui sont assignés."""
+        rapports = [r for r in self.rapports.values() if r.ouvert and \
+                r.assigne_a is joueur]
+        if rapports:
+            joueur << format_nb(len(rapports), "{nb} rapport{s} vous " \
+                    "{est} actuellement assigné{s}.")

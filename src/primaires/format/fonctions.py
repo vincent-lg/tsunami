@@ -286,6 +286,7 @@ def oui_ou_non(flag):
 
 def format_nb(nb, message, fem=False):
     """Formate une chaîne de caractère en fonction de nb.
+    
     Le paramètre fem signifie féminin.
     
     """
@@ -293,6 +294,7 @@ def format_nb(nb, message, fem=False):
         "nb": nb,
         "s": "s" if nb > 1 else "",
         "x": "ux" if nb > 1 else "",
+        "est": "sont" if nb > 1 else "est",
     }
     if nb == 0:
         mots["nb"] = "Aucune" if fem else "Aucun"
