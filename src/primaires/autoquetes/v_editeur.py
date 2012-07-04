@@ -37,6 +37,7 @@ from corps.arborescence import getcwd
 
 ## Constantes de validation
 CHAMPS_OBLIGATOIRES = (
+    "raccourci",
     "type",
     "aide",
 )
@@ -98,8 +99,8 @@ class ValidateurEditeur:
         le fichier n'a pas la bonne structure, une exception est levée.
         
         """
-        chemin = getcwd() + os.sep + "types" + os.sep + nom + os.sep + \
-                "editeur.yml"
+        chemin = getcwd() + os.sep.join(("primaires", "autoquetes", "types",
+                nom, "editeur.yml"))
         if not os.path.exists(chemin):
             return None
         
@@ -109,7 +110,7 @@ class ValidateurEditeur:
         if not os.access(chemin, os.R_OK):
             raise os.error(chemin + " ne peut être lu")
         
-        with open(chemin, "r") as fichier:
+        with open(chemin, "r", encoding="Utf-8") as fichier:
             config = load(fichier)
         
         # Vérifie la syntaxe du fichier
@@ -136,23 +137,24 @@ class ValidateurEditeur:
         Si une erreur survient, une exception ValueError est levée explicitant le problème.
         
         """
-        for e_nom, info in config.items():
-            # D'abord vérifie les champs obligatoires
-            for nom in CHAMPS_OBLIGATOIRES:
-                if nom not in info:
-                    raise Valueerror("le champ {} pour l'éditeur {} n'est " \
-                            "pas précisé".format(nom, e_nom))
-            
-            e_type = info["type"]
-            if e_type not in CHAMPS_OBLIGATOIRES_TYPES:
-                raise ValueError("le type d'éditeur {} pour {} n'existe " \
-                        "pas".format(e_type, e_nom))
-            
-            for nom in info.keys():
-                if nom not in CHAMPS_TYPE[e_type]:
-                    raise ValueError("l'information {} est inconnue pour le " \
-                            "type d'éditeur {} ({})".format(nom, e_type,
-                            e_nom))
+        for ligne in config:
+            for e_nom, info in ligne.items():
+                # D'abord vérifie les champs obligatoires
+                for nom in CHAMPS_OBLIGATOIRES:
+                    if nom not in info:
+                        raise ValueError("le champ {} pour l'éditeur {} " \
+                                "n'est pas précisé".format(nom, e_nom))
+                
+                e_type = info["type"]
+                if e_type not in CHAMPS_OBLIGATOIRES_TYPE:
+                    raise ValueError("le type d'éditeur {} pour {} n'existe " \
+                            "pas".format(e_type, e_nom))
+                
+                for nom in info.keys():
+                    if nom not in CHAMPS_TYPE[e_type]:
+                        raise ValueError("l'information {} est inconnue pour " \
+                                "le type d'éditeur {} ({})".format(
+                                nom, e_type, e_nom))
     
     @staticmethod
     def etendre_config(classe, config):

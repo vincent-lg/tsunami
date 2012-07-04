@@ -124,6 +124,7 @@ Chaque information éditable se trouve dans un bloc à part. Les informations sp
 
 # Début du bloc YAML
 - temps d'attente avant de reproposer la quête:
+    raccourci: t
     attribut: tps_attente
     type: entier
     minimum: 1
@@ -138,6 +139,8 @@ Dans l'ordre :
   Elle commence par un tiret suivi d'un espace et du nom de l'information.
   Elle se termine par le signe ':' (car le détail de la configuration se
   trouve au-dessous, légèrement indenté).
+* On définit ensuite le raccourci de l'éditeur, une ou plusieurs lignes
+  contenues dans le titre
 * On définit ensuite le nom de l'attribut qui sera modifié (ici, tps_attente)
 * On définit ensuite le type d'information à modifier. Cela influence bien
   entendu l'éditeur qui sera sélectionné pour éditer l'information. Ici,
@@ -162,6 +165,7 @@ toujours préciser et certaines, optionnelles, qui ont cours pour tous les
 types.
 
 Informations obligatoires :
+    raccourci -- le raccourci à entrer pour se rendre dans l'éditeur-enfant
     type -- le type d'information (voire les types disponibles plus bas)
     aide -- le message d'aide à afficher pour le bâtisseur.
 

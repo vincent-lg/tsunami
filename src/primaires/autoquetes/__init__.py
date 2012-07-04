@@ -134,7 +134,6 @@ class Module(BaseModule):
                     noms.append(t_type.parent)
                     noms.append(nom)
         
-        print(noms)
         classes = [self.types[n] for n in noms]
         
         # On réécrit les classes à présent
@@ -156,4 +155,3 @@ class Module(BaseModule):
             
             ValidateurEditeur.etendre_config(classe, config)
         
-        print(self.types)
