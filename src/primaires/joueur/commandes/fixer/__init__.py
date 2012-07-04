@@ -49,7 +49,12 @@ class CmdFixer(Commande):
             "Cette commande permet de fixer un seuil à l'apprentissage d'un " \
             "talent, afin d'économiser des points d'apprentissage. Sans " \
             "argument, la commande renvoie une liste de vos seuils actuels. " \
-            "Pour débloquer un talent, utilisez la valeur |ent|0|ff|."
+            "Pour débloquer un talent, utilisez la valeur |ent|100|ff|."
+    
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nombre = self.noeud.get_masque("nombre")
+        nombre.proprietes["limite_inf"] = "0"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -58,10 +63,10 @@ class CmdFixer(Commande):
             try:
                 limite = dic_masques["nombre"].nombre
                 limite = int(limite)
-                assert limite >= 0
+                assert 0 <= limite <= 100
             except (AttributeError, ValueError, AssertionError):
                 personnage << "|err|Vous devez préciser un nombre positif " \
-                        "ou nul.|ff|"
+                        "inférieur ou égal à 100.|ff|"
             else:
                 for talent in importeur.perso.talents.values():
                     if contient(talent.nom, nom_talent) \
@@ -72,7 +77,7 @@ class CmdFixer(Commande):
                                     "talent est déjà supérieure à " \
                                     "{}%.|ff|".format(limite)
                             return
-                        if limite == 0:
+                        if limite == 100:
                             del personnage.l_talents[talent.cle]
                             personnage << "Le talent {} est débloqué.".format(
                                     talent.nom)
