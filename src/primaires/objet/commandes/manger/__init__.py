@@ -75,7 +75,7 @@ class CmdManger(Commande):
                 yield item.nourrissant
                 personnage << "Vous mangez {}.".format(item.get_nom())
                 personnage << item.message_mange
-                personnage.faim -= item.nourrissant
+                personnage.faim -= item.nourrissant * 5
                 if personnage.faim < 0:
                     personnage.faim = 0
                 personnage.estomac += item.poids_unitaire
@@ -94,7 +94,7 @@ class CmdManger(Commande):
         if personnage.estomac + objet.poids_unitaire <= 3:
             personnage << "Vous mangez {}.".format(objet.get_nom())
             personnage << objet.message_mange
-            personnage.faim -= objet.nourrissant
+            personnage.faim -= objet.nourrissant * 5
             if personnage.faim < 0:
                 personnage.faim = 0
             personnage.estomac += objet.poids_unitaire

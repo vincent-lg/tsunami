@@ -64,8 +64,8 @@ class CmdBoire(Commande):
                     personnage.salle.envoyer("{} boit à grandes gorgées.",
                             personnage)
                     if personnage.soif > 0:
-                        personnage.soif -= 1
-                    personnage.estomac += 0.1
+                        personnage.soif -= 8
+                    personnage.estomac += 0.25
                 else:
                     e = "e" if personnage.est_feminin() else ""
                     personnage << "Vous êtes plein{e} ; une gorgée de plus " \
@@ -82,7 +82,7 @@ class CmdBoire(Commande):
             
             if personnage.estomac + objet.potion.poids_unitaire <= 3:
                 personnage << objet.potion.message_boit
-                personnage.soif -= objet.potion.remplissant
+                personnage.soif -= objet.potion.remplissant * 5
                 if personnage.soif < 0:
                     personnage.soif = 0
                 personnage.estomac += objet.potion.poids_unitaire
