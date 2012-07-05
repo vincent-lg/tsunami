@@ -142,8 +142,8 @@ class ConteneurNourriture(BaseType):
                 ajout = ", ".join(nourriture[:-1]) + " et " + nourriture[-1]
             else:
                 ajout = nourriture[0]
-            msg += "\nCe récipient contient " + ajout + "."
+            msg += "Ce récipient contient " + ajout + "."
         else:
-            msg += "\nCe récipient est vide."
+            msg += "Ce récipient est vide."
         
         return msg

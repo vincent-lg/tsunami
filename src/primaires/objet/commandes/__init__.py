@@ -40,6 +40,7 @@ from . import ospawn
 from . import porter
 from . import poser
 from . import prendre
+from . import puiser
 from . import remplir
 from . import retirer
 from . import vider

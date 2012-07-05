@@ -43,9 +43,10 @@ class CmdRetirer(Commande):
         self.schema = "<nom_objet>"
         self.aide_courte = "déséquipe un objet"
         self.aide_longue = \
-                "Cette commande permet de déséquiper un objet. Vous " \
-                "tiendrez l'objet retiré dans vos mains, sauf si vous ne pouvez le " \
-                "porter. Dans ce dernier cas, il se retrouvera sur le sol."
+                "Cette commande permet de déséquiper un objet. Vous devez " \
+                "pour cela avoir une main libre au moins ; de plus vous ne " \
+                "pouvez vous déséquiper que couche par couche (inutile de " \
+                "songer à retirer vos chaussette avant vos chaussures).
     
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
@@ -58,21 +59,19 @@ class CmdRetirer(Commande):
         objets = list(dic_masques["nom_objet"].objets_conteneurs)[0]
         objet, conteneur = objets
         personnage.agir("retirer")
+        
+        if personnage.equipement.cb_peut_tenir() < 1:
+            personnage << "|err|Il vous faut au moins une main libre pour " \
+                    "vous déséquiper.|ff|"
+            return
+        
         try:
             conteneur.retirer(objet)
         except ValueError:  
-            personnage << "Vous ne pouvez retirer {}.".format(
+            personnage << "|err|Vous ne pouvez retirer {}.|ff|".format(
                 objet.nom_singulier)
         else:
             personnage << "Vous retirez {}.".format(objet.nom_singulier)
             personnage.salle.envoyer(
                 "{{}} retire {}.".format(objet.nom_singulier), personnage)
-            
-            if personnage.equipement.cb_peut_tenir() > 0:
-                personnage.equipement.tenir_objet(objet=objet)
-            else:
-                personnage.salle.objets_sol.ajouter(objet)
-                personnage << "Vous ne pouvez tenir {}.".format(objet.nom_singulier)
-                personnage << "Vous posez {}.".format(objet.nom_singulier)
-                personnage.salle.envoyer(
-                    "{{}} pose {}.".format(objet.nom_singulier), personnage)
+            personnage.equipement.tenir_objet(objet=objet)

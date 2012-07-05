@@ -51,7 +51,7 @@ class CmdManger(Commande):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("nom_objet")
         nom_objet.proprietes["conteneurs"] = \
-                "(personnage.equipement.inventaire, )"
+                "(personnage.equipement.inventaire_simple, )"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -73,16 +73,16 @@ class CmdManger(Commande):
                             "ventre et ne terminez pas le plat."
                     break
                 yield item.nourrissant
-                personnage << "Vous mangez {}.".format(item.get_nom())
-                personnage << item.message_mange
+                personnage << "Vous mangez {}.\n{}".format(item.get_nom(),
+                        item.message_mange)
                 personnage.faim -= item.nourrissant
                 if personnage.faim < 0:
                     personnage.faim = 0
                 personnage.estomac += item.poids_unitaire
-                importeur.objet.supprimer_objet(item.identifiant)
-                objet.nourriture.remove(item)
                 item.script["mange"].executer(personnage=personnage,
                         objet=objet)
+                importeur.objet.supprimer_objet(item.identifiant)
+                objet.nourriture.remove(item)
             personnage.salle.envoyer("{} termine son repas.", personnage)
             personnage.cle_etat = ""
             return
@@ -92,16 +92,16 @@ class CmdManger(Commande):
             return
         
         if personnage.estomac + objet.poids_unitaire <= 3:
-            personnage << "Vous mangez {}.".format(objet.get_nom())
-            personnage << objet.message_mange
+            personnage << "Vous mangez {}.\n{}".format(objet.get_nom(),
+                    item.message_mange)
             personnage.faim -= objet.nourrissant
             if personnage.faim < 0:
                 personnage.faim = 0
             personnage.estomac += objet.poids_unitaire
+            objet.script["mange"].executer(personnage=personnage, objet=objet)
             importeur.objet.supprimer_objet(objet.identifiant)
             personnage.salle.envoyer("{{}} mange {}.".format(objet.get_nom()),
                     personnage)
-            objet.script["mange"].executer(personnage=personnage, objet=objet)
         else:
             e = "e" if personnage.est_feminin() else ""
             personnage << "Vous êtes plein{e} ; une bouchée de plus " \

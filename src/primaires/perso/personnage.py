@@ -422,8 +422,8 @@ class Personnage(BaseObj):
         
         # Envoi d'un tip
         if salle_dest.magasin:
-            self.envoyer_tip("Entrez %lister% pour voir les produits " \
-                    "en vente dans ce magasin.")
+            self.envoyer_tip("Entrez %lister%|vr| pour voir les produits " \
+                    "en vente dans ce magasin.", "magasin", True)
         
         # On appelle l'évènement sort.apres
         salle.script["sort"]["apres"].executer(vers=sortie.nom,

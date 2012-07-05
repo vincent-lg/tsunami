@@ -64,7 +64,7 @@ class CmdTalents(Commande):
         if par_niveaux:
             msg = "Talents que vous connaissez :\n"
             for niveau, talents in sorted(par_niveaux.items()):
-                msg += "\n* {} :".format(niveau.capitalize())
+                msg += "\n* {} :".format(niveau[0].upper() + niveau[1:])
                 for talent in sorted(talents):
                     msg += "\n  " + talent.capitalize()
             

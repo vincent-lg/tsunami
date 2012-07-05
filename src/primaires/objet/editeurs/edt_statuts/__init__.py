@@ -75,7 +75,7 @@ class EdtStatuts(Editeur):
                     "partie de la liste.|ff|"
         else:
             if nombre == 10:
-                self.perre << "|err|Le statut 10 doit être précisé.|ff|"
+                self.pere << "|err|Le statut 10 doit être précisé.|ff|"
                 return
             i = 0
             for ratio, message in list(prototype.statuts):

@@ -40,6 +40,8 @@ from .editeurs.oedit import EdtOedit
 from .types import types as o_types
 from .types.base import BaseType
 from .objet import Objet
+from .potions_vente import PotionsVente
+from .nourritures_vente import NourrituresVente
 
 class Module(BaseModule):
     
@@ -57,6 +59,25 @@ class Module(BaseModule):
     def config(self):
         """Configuration du module."""
         importeur.commerce.types_services["objet"] = self._prototypes
+        importeur.commerce.aides_types["objet"] = \
+            "Ce service se contente, à l'achat, de faire apparaître " \
+            "l'objet précisé sur\nle sol de la salle."
+        importeur.commerce.types_services["potion"] = PotionsVente()
+        importeur.commerce.aides_types["potion"] = \
+            "Ce service permet de proposer à la vente des potions " \
+            "dans des conteneurs.\nPour cela, précisé un couple sous la " \
+            "forme |cmd|<conteneur>/<potion>|ff| (par exemple,\n|ent|chope/" \
+            "biere|ff| pour une chope de bière."
+        importeur.commerce.types_services["nourriture"] = NourrituresVente()
+        importeur.commerce.aides_types["nourriture"] = \
+            "Ce service permet la vente de nourriture dans des plats, " \
+            "dans un restaurant\npar exemple. Pour cela, précisez un " \
+            "conteneur de nourriture puis une liste\nd'aliments sous la " \
+            "forme |cmd|<conteneur>/<al1>(+<al2>+<al3>...)|ff| (par " \
+            "exemple,\n|ent|assiette/patate+tomate+carotte|ff| pour une " \
+            "assiette contenant ces trois légumes).\nSi le poids de la liste " \
+            "d'aliments que vous proposez est supérieur au poids\nmaximum du " \
+            "conteneur, l'ajout du service ne fonctionnera pas."
         BaseModule.config(self)
     
     def init(self):
@@ -90,6 +111,7 @@ class Module(BaseModule):
             commandes.porter.CmdPorter(),
             commandes.poser.CmdPoser(),
             commandes.prendre.CmdPrendre(),
+            commandes.puiser.CmdPuiser(),
             commandes.remplir.CmdRemplir(),
             commandes.retirer.CmdRetirer(),
             commandes.vider.CmdVider(),
@@ -128,6 +150,22 @@ class Module(BaseModule):
     def types_premier_niveau(self):
         """Retourne un dictionnaire des types du premier niveau."""
         return BaseType.types
+    
+    # @property
+    # def conteneurs_potions(self):
+        # """Retourne un dictionnaire pour la vente de potions.
+        # Ce dictionnaire a pour clés tous les conteneur/potion de l'univers
+        # et pour valeurs les objets PotionVente correspondants.
+        
+        # """
+        # dico = {}
+        # for c, o_c in [p for p in self.prototypes if p.est_de_type(
+                # "conteneur de potion")]:
+            # for po, o_po in [p for p in self.prototypes if p.est_de_type(
+                    # "potion")]:
+                # dico[c + "/" + po] = PotionVente(o_c, o_po)
+        
+        # return dico
     
     def creer_prototype(self, cle, nom_type="indéfini"):
         """Crée un prototype et l'ajoute aux prototypes existants"""

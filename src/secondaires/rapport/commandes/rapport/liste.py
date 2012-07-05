@@ -45,14 +45,30 @@ class PrmListe(Parametre):
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "liste", "list")
+        self.schema = "(<message>)"
         self.aide_courte = "liste les rapports existants"
         self.aide_longue = \
-            "Cette commande liste les rapports existants."
+            "Cette commande liste les rapports existants. Vous pouvez " \
+            "préciser un ou plusieurs flags séparés par des virgules ; " \
+            "les flags disponibles sont |ent|non assignes|ff| pour voir " \
+            "uniquement les rapports non assignes, et |ent|fermes|ff| pour " \
+            "voir tous les rapports, y compris ceux fermés."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
+        flags = {"non assignes": False, "fermes": False}
+        if dic_masques["message"] is not None:
+            t_flags = dic_masques["message"].message
+            t_flags = [f.strip() for f in t_flags.split(",")]
+            for f in flags.keys():
+                if f in t_flags:
+                    flags[f] = True
+        
         rapports = list(importeur.rapport.rapports.values())
-        rapports = [r for r in rapports if r.ouvert]
+        if not flags["fermes"]:
+            rapports = [r for r in rapports if r.ouvert]
+        if flags["non assignes"]:
+            rapports = [r for r in rapports if r.assigne_a is None]
         if not personnage.est_immortel():
             # On récupère les rapports envoyés par le joueur mortel
             rapports = [r for r in rapports if r.createur is personnage]

@@ -75,7 +75,7 @@ class CmdQui(Commande):
                     noms_joueurs[joueur] = nom.ljust(39 + imm) + "|"
             res = "+" + "-" * 40 + "+\n"
             res += "| |tit|Joueurs présents|ff|".ljust(50) + "|\n"
-            res += "+" + "-" * 40 + "+\n"
+            res += "+" + "-" * 40 + "+"
             for j, nom in sorted(noms_joueurs.items(), key=lambda c: c[0].nom):
                 res += "\n| " + nom
             res += "\n+" + "-" * 40 + "+\n"

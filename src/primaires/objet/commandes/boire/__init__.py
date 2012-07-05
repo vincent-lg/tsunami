@@ -56,6 +56,8 @@ class CmdBoire(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
+        personnage.agir("ingerer")
+        
         if dic_masques["nom_objet"] is None:
             if personnage.salle.terrain.nom in ("rive", "aquatique",
                     "subaquatique"):
@@ -73,21 +75,35 @@ class CmdBoire(Commande):
             else:
                 personnage << "|err|Il n'y a pas d'eau par ici.|ff|"
             return
+        
         objet = dic_masques["nom_objet"].objet
-        personnage.agir("ingerer")
         if hasattr(objet, "potion"):
             if objet.potion is None:
                 personnage << "Il n'y a rien à boire là-dedans."
                 return
+            if objet.potion == "eau":
+                if personnage.estomac <= 2.9:
+                    personnage << "Vous buvez {}.".format(objet.get_nom())
+                    personnage.salle.envoyer("{{}} boit {}.".format(
+                            objet.get_nom()), personnage)
+                    if personnage.soif > 0:
+                        personnage.soif -= 2
+                    personnage.estomac += 0.1
+                    objet.potion = None
+                else:
+                    e = "e" if personnage.est_feminin() else ""
+                    personnage << "Vous êtes plein{e} ; une gorgée de plus " \
+                            "et vous éclaterez.".format(e=e)
+                return
             
             if personnage.estomac + objet.potion.poids_unitaire <= 3:
                 personnage << objet.potion.message_boit
+                personnage.salle.envoyer("{} boit " + objet.get_nom() + ".",
+                        personnage)
                 personnage.soif -= objet.potion.remplissant
                 if personnage.soif < 0:
                     personnage.soif = 0
                 personnage.estomac += objet.potion.poids_unitaire
-                personnage.salle.envoyer("{} boit " + objet.get_nom() + ".",
-                        personnage)
                 objet.potion.script["boit"].executer(personnage=personnage,
                         objet=objet)
                 importeur.objet.supprimer_objet(objet.potion.identifiant)

@@ -54,8 +54,12 @@ class Module(BaseModule):
     2.  La classe produisant des objets pouvant être vendus en magasin
         doit posséder :
         A.  Un attribut de classe type_achat (str)
-        B.  Une propriété ou un attribut d'objet valeur (float)
-        C.  à voir
+        B.  Un attribut de classe aide_achat (str)
+        B.  Une propriété ou un attribut d'objet m_valeur (float)
+        C.  Une propriété ou un attribut d'objet nom_achat (str)
+        D.  Un attribut d'objet cle (str) correspondant à sa clé dans le
+            dictionnaire
+        E.  Une méthode acheter réalisant l'achat
     
     """
     
@@ -64,6 +68,7 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "commerce", "primaire")
         self.commandes = []
         self.types_services = {}
+        self.aides_types = {}
     
     def ajouter_commandes(self):
         """Ajout des commandes"""
