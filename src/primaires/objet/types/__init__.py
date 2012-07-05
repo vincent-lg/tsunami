@@ -103,7 +103,3 @@ from .cadavre import Cadavre
 # Matériau
 from .matiere import Matiere
 from .fourrure import Fourrure
-
-# Prêts à manger
-from .a_manger import AManger
-from .a_boire import ABoire
