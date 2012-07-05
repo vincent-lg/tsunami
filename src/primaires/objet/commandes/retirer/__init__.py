@@ -46,7 +46,7 @@ class CmdRetirer(Commande):
                 "Cette commande permet de déséquiper un objet. Vous devez " \
                 "pour cela avoir une main libre au moins ; de plus vous ne " \
                 "pouvez vous déséquiper que couche par couche (inutile de " \
-                "songer à retirer vos chaussette avant vos chaussures).
+                "songer à retirer vos chaussette avant vos chaussures)."
     
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
