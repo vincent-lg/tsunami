@@ -86,12 +86,12 @@ class CmdBoire(Commande):
                 if personnage.soif < 0:
                     personnage.soif = 0
                 personnage.estomac += objet.potion.poids_unitaire
-                importeur.objet.supprimer_objet(objet.potion.identifiant)
-                objet.potion = None
                 personnage.salle.envoyer("{} boit " + objet.get_nom() + ".",
                         personnage)
                 objet.potion.script["boit"].executer(personnage=personnage,
                         objet=objet)
+                importeur.objet.supprimer_objet(objet.potion.identifiant)
+                objet.potion = None
             else:
                 e = "e" if personnage.est_feminin() else ""
                 personnage << "Vous êtes plein{e} ; une gorgée de plus " \
