@@ -213,7 +213,8 @@ class EdtRedit(Presentation):
             "Options :\n" \
             " - |cmd|/s <qtt> <type> <service>|ff| : ajoute ou retire un " \
             "produit au stock\n" \
-            " - |cmd|/ren|ff| : transfert le stock dans l'inventaire"
+            " - |cmd|/ren|ff| : transfert le stock dans l'inventaire\n" \
+            " - |cmd|/h|ff| : fournit de l'aide sur les services disponibles"
         
         # Sorties
         sorties = self.ajouter_choix("sorties", "s", EdtSorties, salle,

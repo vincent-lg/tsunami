@@ -47,6 +47,7 @@ class EdtMagasin(Editeur):
         #self.ajouter_option("c", self.opt_modifier_caisse)
         self.ajouter_option("s", self.opt_stock)
         self.ajouter_option("ren", self.opt_renouveler_inventaire)
+        self.ajouter_option("h", self.opt_aide)
     
     def accueil(self):
         """Message d'accueil du contexte"""
@@ -105,14 +106,15 @@ class EdtMagasin(Editeur):
             self.pere << "|err|Quantité invalide.|ff|"
             return
         if type not in importeur.commerce.types_services:
-            self.pere << "|err|Type {} invalide.".format(type)
+            self.pere << "|err|Type {} invalide.|ff|".format(type)
             return
         
         objets = importeur.commerce.types_services[type]
         if quantite > 0:
+            print(objets)
             if cle not in objets:
                 self.pere << "|err|Le produit {} n'a pas pu être " \
-                        "trouvé.".format(cle)
+                        "trouvé.|ff|".format(cle)
                 return
             
             service = objets[cle]
@@ -121,6 +123,26 @@ class EdtMagasin(Editeur):
             salle.magasin.retirer_stock(type, cle)
         
         self.actualiser()
+    
+    def opt_aide(self, arguments):
+        """Option d'aide.
+        
+        Syntaxe : /h (<service>)
+        
+        """
+        if not arguments:
+            ret = "Voici une liste des types de services que vous " \
+                    "pouvez ajouter à ce magasin.\nPour de l'aide sur un " \
+                    "type en particulier, entrez |ent|/h <type>|ff|.\n\n"
+            ret += "Services disponibles :\n "
+            ret += "\n ".join(importeur.commerce.types_services.keys())
+            self.pere << ret
+            return
+        type = arguments.split(" ")[0]
+        if not type in importeur.commerce.types_services:
+            self.pere << "|err|Ce type de service n'existe pas.|ff|"
+            return
+        self.pere << importeur.commerce.aides_types[type]
     
     def interpreter(self, msg):
         """Interprétation de la présentation"""

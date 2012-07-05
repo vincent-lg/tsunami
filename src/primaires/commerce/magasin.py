@@ -30,7 +30,11 @@
 
 """Fichier contenant la classe Magasin, détaillée plus bas."""
 
+import re
+from textwrap import wrap
+
 from abstraits.obase import *
+from primaires.format.constantes import COULEURS
 
 class Magasin(BaseObj):
     
@@ -75,18 +79,32 @@ class Magasin(BaseObj):
         """Affichage du magasin en éditeur."""
         services = sorted(self.stock, key=lambda s: s[0].m_valeur)
         if services:
-            ret = "+" + "-" * 10 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
+            ret = "+" + "-" * 12 + "+" + "-" * 42 + "+" + "-" * 10 + "+" + \
                     "-" * 10 + "+\n"
-            ret += "| |tit|" + "Type".ljust(8) + "|ff|"
+            ret += "| |tit|" + "Type".ljust(10) + "|ff|"
             ret += " | |tit|" + "Nom".ljust(40) + "|ff|"
-            ret += " |      |tit|Prix|ff| | |tit|Quantité|ff| |\n"
-            ret += "+" + "-" * 10 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
+            ret += " |     |tit|Prix|ff| | |tit|Quantité|ff| |\n"
+            ret += "+" + "-" * 12 + "+" + "-" * 42 + "+" + "-" * 10 + "+" + \
                     "-" * 10 + "+"
             for ligne in services:
                 service, quantite, flags = ligne
-                ret += "\n| " + service.type_achat.ljust(8) + " "
-                ret += "| " + str(service).ljust(40) 
-                ret += " | {:>9} | {:>8} |".format(service.m_valeur, quantite)
+                nom_service = str(service)
+                i = 0
+                while len(nom_service) > 0:
+                    if i == 0:
+                        ret += "\n| " + service.type_achat.ljust(10) + " "
+                        ret += "| " + nom_service[:40].ljust(40)
+                        ret += " | {:>8} | {:>8} |".format(service.m_valeur,
+                            quantite)
+                        nom_service = nom_service[40:]
+                    else:
+                        ret += "\n|" + " " * 12 + "| ..."
+                        ret += nom_service[:37].ljust(37)
+                        ret += " |" + " " * 10 + "|" + " " * 10 + "|"
+                        nom_service = nom_service[37:]
+                    i += 1
+            ret += "\n+" + "-" * 12 + "+" + "-" * 42 + "+" + "-" * 10 + "+" + \
+                    "-" * 10 + "+"
         else:
             ret = "|att|Aucun service en vente.|ff|"
         return ret
@@ -113,23 +131,37 @@ class Magasin(BaseObj):
         services = sorted(self.inventaire, key=lambda s: s[0].m_valeur)
         ret = self.nom + "\n\n"
         if services:
-            ret = "+" + "-" * 72 + "+\n"
-            ret += "+ " + self.nom.ljust(71) + "+\n"
-            ret += "+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
+            ret = "+" + "-" * 71 + "+\n"
+            ret += "+ |cy|" + self.nom.ljust(70) + "|ff|+\n"
+            ret += "+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 10 + "+" + \
                     "-" * 10 + "+\n"
             ret += "| |tit|" + "ID".ljust(4) + "|ff|"
             ret += " | |tit|" + "Nom".ljust(41) + "|ff|"
-            ret += "|      |tit|Prix|ff| | |tit|Quantité|ff| |\n"
-            ret += "+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
+            ret += "|     |tit|Prix|ff| | |tit|Quantité|ff| |\n"
+            ret += "+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 10 + "+" + \
                     "-" * 10 + "+"
             i = 1
             for ligne in services:
                 service, quantite = ligne
-                ret += "\n| " + ("#" + str(i)).ljust(4) + " "
-                ret += "| " + service.nom_achat.ljust(40) 
-                ret += " | {:>9} | {:>8} |".format(service.m_valeur, quantite)
+                nom_service = wrap(service.nom_achat, width=40)
+                j = 0
+                while len(nom_service) > 0:
+                    plus = sum(len(car) for car \
+                            in re.findall("\|[a-z]{2,3}\|", nom_service[0]) \
+                            if car in list(COULEURS.values()) + ["|ff|"])
+                    if j == 0:
+                        ret += "\n| " + ("#" + str(i)).ljust(4) + " "
+                        ret += "| " + nom_service[0].ljust(40 + plus)
+                        ret += " | {:>8} | {:>8} |".format(service.m_valeur,
+                                quantite)
+                    else:
+                        ret += "\n|" + " " * 6 + "| "
+                        ret += nom_service[0].ljust(40 + plus)
+                        ret += " |" + " " * 10 + "|" + " " * 10 + "|"
+                    del nom_service[0]
+                    j += 1
                 i += 1
-            ret += "\n+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 11 + "+" + \
+            ret += "\n+" + "-" * 6 + "+" + "-" * 42 + "+" + "-" * 10 + "+" + \
                     "-" * 10 + "+"
         else:
             ret = "|att|Aucun produit n'est en vente actuellement.|ff|"

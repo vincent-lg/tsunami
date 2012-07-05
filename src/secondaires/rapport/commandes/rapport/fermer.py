@@ -28,27 +28,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'supprimer' de la commande 'rapport'."""
+"""Fichier contenant le paramètre 'fermer' de la commande 'rapport'."""
 
-from primaires.format.date import get_date
 from primaires.interpreteur.masque.parametre import Parametre
-from primaires.format.fonctions import oui_ou_non
-from secondaires.rapport.constantes import CLR_STATUTS, CLR_AVC
 
-class PrmSupprimer(Parametre):
+class PrmFermer(Parametre):
     
-    """Commande 'rapport supprimer'.
+    """Commande 'rapport fermer'.
     
     """
     
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "supprimer", "delete")
+        Parametre.__init__(self, "fermer", "close")
         self.schema = "<nombre>"
-        self.aide_courte = "supprime un rapport définitivement"
+        self.groupe = "administrateur"
+        self.aide_courte = "ferme un rapport"
         self.aide_longue = \
-            "Cette commande supprime un rapport, qui n'est dès lors plus " \
-            "récupérable (ne se contente PAS de fermer le rapport)."
+            "Cette commande ferme un rapport."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
@@ -56,23 +53,7 @@ class PrmSupprimer(Parametre):
         try:
             rapport = importeur.rapport.rapports[id]
         except KeyError:
-            if personnage.est_immortel():
-                personnage << "|err|Ce rapport n'existe pas.|ff|"
-            else:
-                personnage << "|err|Vous ne pouvez lire ce rapport.|ff|"
+            personnage << "|err|Ce rapport n'existe pas.|ff|"
         else:
-            if not personnage.est_immortel() and rapport.createur is not \
-                    personnage:
-                personnage << "|err|Vous ne pouvez lire ce rapport.|ff|"
-            else:
-                createur = rapport.createur.nom if rapport.createur \
-                        else "personne"
-                ret = "Rapport #" + str(rapport.id) + " : " + rapport.titre + "\n"
-                ret += "Catégorie : " + rapport.type + " (" + rapport.categorie + ")\n"
-                ret += "Statut : " + rapport.statut + ", avancement : " + str(rapport.avancement) + "%\n"
-                ret += "Ce rapport est classé en priorité " + rapport.priorite + ".\n"
-                ret += "Détail :\n"
-                ret += str(rapport.description) + "\n"
-                ret += "Rapport envoyé par " + createur + " " + get_date(rapport.date.timetuple()) + ",\n"
-                ret += "depuis " + str(rapport.salle) + " ; assigné à " + rapport.aff_assigne_a + ".\n"
-                personnage << ret
+            rapport.statut = "fermé"
+            personnage << "|att|Le rapport #{} a été fermé.|ff|".format(id)

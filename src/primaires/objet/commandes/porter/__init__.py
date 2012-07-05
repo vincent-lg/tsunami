@@ -43,7 +43,10 @@ class CmdPorter(Commande):
         self.schema = "<nom_objet>"
         self.aide_courte = "équipe un objet"
         self.aide_longue = \
-                "Cette commande permet d'équiper un ou plusieurs objets."
+                "Cette commande permet d'équiper des objets (vêtements, " \
+                "armures, armes...). Vous devez pour cela avoir au moins " \
+                "une main libre, ainsi qu'un emplacement corporel adéquat " \
+                "(un pied nu pour une chaussette)."
     
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
@@ -56,6 +59,11 @@ class CmdPorter(Commande):
         objets = list(dic_masques["nom_objet"].objets_conteneurs)[0]
         objet, conteneur = objets
         personnage.agir("porter")
+        
+        if personnage.equipement.cb_peut_tenir() < 1:
+            personnage << "|err|Il vous faut au moins une main libre pour " \
+                    "vous équiper.|ff|"
+            return
         
         for membre in personnage.equipement.membres:
             if membre.peut_equiper(objet):

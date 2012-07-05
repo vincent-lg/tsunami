@@ -105,7 +105,7 @@ class Observable(Masque):
         
         if elt is None:
             for objet in personnage.equipement.inventaire:
-                if contient(objet.nom_singulier, nom):
+                if contient(objet.get_nom(), nom):
                     nb += 1
                     if nb == nombre:
                         elt = objet
@@ -114,7 +114,7 @@ class Observable(Masque):
         if elt is None:
             # On cherche dans les objets
             for objet in salle.objets_sol:
-                nom_objet = objet.nom_singulier
+                nom_objet = objet.get_nom()
                 if contient(nom_objet, nom):
                     nb += 1
                     if nb == nombre:

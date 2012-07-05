@@ -494,7 +494,7 @@ class Personnage(BaseObj):
         
         # Envoi de tips
         if salle_dest.magasin:
-            self.envoyer_tip("Entrez %lister% pour voir les produits " \
+            self.envoyer_tip("Entrez %lister%|vr| pour voir les produits " \
                     "en vente dans ce magasin.")
         if salle.nom_terrain != "subaquatique" and \
                 salle_dest.nom_terrain == "subaquatique":

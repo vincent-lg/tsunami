@@ -230,7 +230,7 @@ class BaseType(BaseObj, metaclass=MetaType):
                         return nom + " " + nom_sup[2]
             return nom + " " + self.etat_pluriel
     
-    def extraire_contenus(self):
+    def extraire_contenus(self, quantite=None, contenu_dans=None):
         """Méthode redéfinie pour la manipulation d'objets non uniques."""
         return [self]
     
@@ -264,8 +264,8 @@ class BaseType(BaseObj, metaclass=MetaType):
     def regarder(self, personnage):
         """Le personnage regarde l'objet"""
         salle = personnage.salle
-        personnage << "Vous regardez {} :".format(self.nom_singulier)
-        autre = "{{}} regarde {}.".format(self.nom_singulier)
+        personnage << "Vous regardez {} :".format(self.get_nom())
+        autre = "{{}} regarde {}.".format(self.get_nom())
         salle.envoyer(autre, personnage)
         
         # Appel du script regarde.avant
