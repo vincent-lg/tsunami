@@ -127,6 +127,10 @@ class Module(BaseModule):
         """Préparation du module."""
         if "cadavre" not in self._prototypes:
             self.creer_prototype("cadavre", "cadavre")
+        
+        if "eau" not in self._prototypes:
+            eau = self.creer_prototype("eau", "potion")
+            eau.remplissant = 2
     
     @property
     def prototypes(self):
