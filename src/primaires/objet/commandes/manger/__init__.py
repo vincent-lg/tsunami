@@ -93,7 +93,7 @@ class CmdManger(Commande):
         
         if personnage.estomac + objet.poids_unitaire <= 3:
             personnage << "Vous mangez {}.\n{}".format(objet.get_nom(),
-                    item.message_mange)
+                    objet.message_mange)
             personnage.faim -= objet.nourrissant * 5
             if personnage.faim < 0:
                 personnage.faim = 0
