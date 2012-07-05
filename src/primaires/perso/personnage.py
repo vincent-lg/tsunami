@@ -86,6 +86,8 @@ class Personnage(BaseObj):
         # Talents et sorts
         self.talents = {}
         self.l_talents = {}
+        self.malus = 0
+        self.points_malus = 0
         self.sorts = {}
         
         # Etat
@@ -250,7 +252,7 @@ class Personnage(BaseObj):
     @property
     def points_apprentissage(self):
         """Retourne les points d'apprentissages du personnage."""
-        return sum(v for v in self.talents.values())
+        return sum(v for v in self.talents.values()) + self.points_malus
     
     @property
     def points_apprentissage_max(self):

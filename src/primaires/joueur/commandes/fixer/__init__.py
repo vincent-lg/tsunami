@@ -56,6 +56,12 @@ class CmdFixer(Commande):
         nombre = self.noeud.get_masque("nombre")
         nombre.proprietes["limite_inf"] = "0"
     
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nombre = self.noeud.get_masque("nombre")
+        nombre.proprietes["limite_inf"] = "0"
+        nombre.proprietes["limite_sup"] = "100"
+    
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         if dic_masques["message"] is not None:
@@ -71,12 +77,12 @@ class CmdFixer(Commande):
                 for talent in importeur.perso.talents.values():
                     if contient(talent.nom, nom_talent) \
                             and talent.cle in personnage.talents:
-                        personnage.l_talents[talent.cle] = limite
                         if limite < personnage.get_talent(talent.cle):
                             personnage << "|err|Votre connaissance de ce " \
                                     "talent est déjà supérieure à " \
                                     "{}%.|ff|".format(limite)
                             return
+                        personnage.l_talents[talent.cle] = limite
                         if limite == 100:
                             del personnage.l_talents[talent.cle]
                             personnage << "Le talent {} est débloqué.".format(
@@ -95,7 +101,8 @@ class CmdFixer(Commande):
             lignes = []
             for cle, limite in personnage.l_talents.items():
                 talent = importeur.perso.talents[cle]
-                ligne = talent.nom + " (" + str(limite) + "%)"
+                ligne = talent.nom[0].upper() + talent.nom[1:]
+                ligne += " (" + str(limite) + "%)"
                 lignes.append(ligne)
             ret += "\n- " + "\n- ".join(lignes)
             personnage << ret

@@ -46,15 +46,24 @@ class CmdOublier(Commande):
         self.schema = "<message>"
         self.aide_courte = "oublie un talent"
         self.aide_longue = \
-            "Cette commande permet d'oublier un talent. L'oubli " \
+            "Cette commande permet d'oublier un talent en récupérant les " \
+            "points d'apprentissage utilisés pour l'apprendre. L'oubli " \
             "est irréversible et vous devrez réapprendre ce talent " \
-            "à partir de zéro si vous changez d'avis."
+            "à partir de zéro si vous changez d'avis. Un malus augmentant " \
+            "à chaque utilisation de cette commande limitera les points " \
+            "d'apprentissage récupérés, sauf si vous avez une connaissance " \
+            "du talent inférieure à 10%."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         nom_talent = dic_masques["message"].message
         for tal in importeur.perso.talents.values():
             if contient(tal.nom, nom_talent) and tal.cle in personnage.talents:
+                oubli = personnage.talents[tal.cle]
+                malus = int(oubli / 100 * 5) + 1 if oubli > 10 else 0
+                personnage.malus += malus
+                if personnage.malus > 60:
+                    personnage.malus = 60
                 del personnage.talents[tal.cle]
                 personnage << "Vous avez oublié le talent {}.".format(tal.nom)
                 return
