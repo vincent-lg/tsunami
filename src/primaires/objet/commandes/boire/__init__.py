@@ -81,20 +81,6 @@ class CmdBoire(Commande):
             if objet.potion is None:
                 personnage << "Il n'y a rien à boire là-dedans."
                 return
-            if objet.potion == "eau":
-                if personnage.estomac <= 2.9:
-                    personnage << "Vous buvez {}.".format(objet.get_nom())
-                    personnage.salle.envoyer("{{}} boit {}.".format(
-                            objet.get_nom()), personnage)
-                    if personnage.soif > 0:
-                        personnage.soif -= 2
-                    personnage.estomac += 0.1
-                    objet.potion = None
-                else:
-                    e = "e" if personnage.est_feminin() else ""
-                    personnage << "Vous êtes plein{e} ; une gorgée de plus " \
-                            "et vous éclaterez.".format(e=e)
-                return
             
             if personnage.estomac + objet.potion.poids_unitaire <= 3:
                 personnage << objet.potion.message_boit

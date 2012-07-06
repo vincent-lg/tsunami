@@ -93,10 +93,7 @@ class ConteneurPotion(BaseType):
         ajout = ""
         if self.potion is not None:
             s = "s" if nombre > 1 else ""
-            if self.potion == "eau":
-                nom = "eau"
-            else:
-                nom = self.potion.get_nom()
+            nom = self.potion.get_nom()
             ajout = lisser(" " + self.connecteur.format(s=s) + " " + nom)
         if nombre <= 0:
             raise ValueError("la fonction get_nom a été appelée " \
@@ -115,10 +112,6 @@ class ConteneurPotion(BaseType):
     def regarder(self, personnage):
         """Le personnage regarde l'objet"""
         msg = BaseType.regarder(self, personnage)
-        
-        if self.potion == "eau":
-            msg += "L'eau est claire et semble fraîche."
-        elif self.potion is not None:
-            msg += str(self.potion.description)
+        msg += str(self.potion.description)
         
         return msg
