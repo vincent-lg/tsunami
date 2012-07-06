@@ -99,7 +99,3 @@ from .collier import Collier
 
 # Cadavre
 from .cadavre import Cadavre
-
-# Prêts à manger
-from .a_manger import AManger
-from .a_boire import ABoire

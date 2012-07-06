@@ -263,7 +263,7 @@ class Joueur(Personnage):
         if self.faim < 100:
             self.faim += 1/6
         if self.estomac > 0:
-            self.estomac -= 0.05
+            self.estomac -= 0.1
         msg_soif = [
             (20, ("Vous avez soif.", 0)),
             (60, ("La soif vous assèche le gosier.", 0)),

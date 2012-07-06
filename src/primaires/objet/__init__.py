@@ -127,6 +127,16 @@ class Module(BaseModule):
         """Préparation du module."""
         if "cadavre" not in self._prototypes:
             self.creer_prototype("cadavre", "cadavre")
+        if "eau" not in self._prototypes:
+            eau = self.creer_prototype("eau", "potion")
+            eau.nom_singulier = "eau"
+            eau.description.ajouter_paragraphe(
+                    "L'eau est claire et semble fraîche.")
+            eau.remplissant = 2
+            eau.message_boit = "Vous buvez une gorgée d'eau qui vous " \
+                    "rafraîchit agréablement le gosier."
+            eau.poids_unitaire = 0.1
+            eau.prix = 0
     
     @property
     def prototypes(self):
@@ -150,22 +160,6 @@ class Module(BaseModule):
     def types_premier_niveau(self):
         """Retourne un dictionnaire des types du premier niveau."""
         return BaseType.types
-    
-    # @property
-    # def conteneurs_potions(self):
-        # """Retourne un dictionnaire pour la vente de potions.
-        # Ce dictionnaire a pour clés tous les conteneur/potion de l'univers
-        # et pour valeurs les objets PotionVente correspondants.
-        
-        # """
-        # dico = {}
-        # for c, o_c in [p for p in self.prototypes if p.est_de_type(
-                # "conteneur de potion")]:
-            # for po, o_po in [p for p in self.prototypes if p.est_de_type(
-                    # "potion")]:
-                # dico[c + "/" + po] = PotionVente(o_c, o_po)
-        
-        # return dico
     
     def creer_prototype(self, cle, nom_type="indéfini"):
         """Crée un prototype et l'ajoute aux prototypes existants"""
