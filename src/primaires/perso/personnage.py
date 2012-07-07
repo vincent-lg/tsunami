@@ -532,7 +532,9 @@ class Personnage(BaseObj):
         """
         talent = type(self).importeur.perso.talents[cle_talent]
         avancement = self.get_talent(cle_talent)
-        if self.points_apprentissage >= self.points_apprentissage_max:
+        if self.points_apprentissage >= self.points_apprentissage_max \
+                or (cle_talent in self.l_talents \
+                and self.l_talents[cle_talent] <= avancement):
             return avancement
         
         configuration = type(self).importeur.perso.cfg_talents
