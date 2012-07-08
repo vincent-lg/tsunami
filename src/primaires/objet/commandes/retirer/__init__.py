@@ -60,7 +60,15 @@ class CmdRetirer(Commande):
         objet, conteneur = objets
         personnage.agir("retirer")
         
-        if personnage.equipement.cb_peut_tenir() < 1:
+        # Vérifie que l'objet à retiré n'est pas sur un membre peut tenir
+        tenir = False
+        for membre in personnage.equipement.membres:
+            o = membre.equipe and membre.equipe[-1] or None
+            if membre.tester("peut tenir") and o is objet:
+                tenir = True
+                break
+        
+        if personnage.equipement.cb_peut_tenir() < 1 and not tenir:
             personnage << "|err|Il vous faut au moins une main libre pour " \
                     "vous déséquiper.|ff|"
             return
@@ -74,4 +82,4 @@ class CmdRetirer(Commande):
             personnage << "Vous retirez {}.".format(objet.nom_singulier)
             personnage.salle.envoyer(
                 "{{}} retire {}.".format(objet.nom_singulier), personnage)
-            personnage.equipement.tenir_objet(objet=objet)
+            personnage.ramasser(objet=objet)
