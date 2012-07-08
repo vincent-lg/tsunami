@@ -66,6 +66,7 @@ class CmdDepecer(Commande):
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         objet = dic_masques["nom_objet"].objet
+        personnage.agir("depecer")
         if not objet.est_de_type("cadavre"):
             personnage << "|err|Vous ne pouvez dépecer " + objet.get_nom() + \
                     ".|ff|"

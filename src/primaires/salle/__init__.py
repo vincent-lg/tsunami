@@ -138,7 +138,8 @@ class Module(BaseModule):
         self.ajouter_terrain("forêt", "des forêts denses")
         self.ajouter_terrain("plaine", "des plaines verdoyantes")
         self.ajouter_terrain("rive", "une rive basse")
-        self.ajouter_terrain("désert", "des terres désertiques")
+        des = self.ajouter_terrain("désert", "des terres désertiques")
+        des.perte_endurance_dep = 4
         self.ajouter_terrain("caverne", "une muraille de roches")
         self.ajouter_terrain("aquatique", "des terres flottantes")
         self.ajouter_terrain("subaquatique", "des terres sous-marines")
@@ -449,6 +450,7 @@ class Module(BaseModule):
         
         terrain = Terrain(nom, survol)
         self.terrains[nom] = terrain
+        return terrain
     
     def creer_etendue(self, cle):
         """Crée une étendue d'eau."""
