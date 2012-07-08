@@ -44,7 +44,9 @@ class PrmListe(Parametre):
         self.schema = ""
         self.aide_courte = "liste les navires existants"
         self.aide_longue = \
-            "Cette commande liste les navires existants."
+            "Cette commande liste les navires existants et donne " \
+            "quelques informations pour voir facilement où ils " \
+            "se trouvent, leur vitesse et direction..."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
@@ -52,8 +54,8 @@ class PrmListe(Parametre):
         navires = sorted(navires, key=lambda n: n.cle)
         if navires:
             lignes = [
-                "  Clé             | Étendue         | " \
-                "Coordonnées     | Vitesse    | Direction"]
+                "  Clé                 | Étendue         | " \
+                "Vitesse    | Direction"]
             for navire in navires:
                 vitesse = navire.vitesse_noeuds
                 vitesse = round(vitesse, 3)
@@ -63,10 +65,8 @@ class PrmListe(Parametre):
                 direction = str(direction).replace(".", ",")
                 etendue = navire.etendue and navire.etendue.cle or "aucune"
                 lignes.append(
-                    "  {:<15} | {:<15} | {:>15} | {:>10} | {:>9}".format(
-                    navire.cle, etendue,
-                    navire.position.coordonnees, vitesse,
-                    direction))
+                    "  {:<19} | {:<15} | {:>10} | {:>9}".format(
+                    navire.cle, etendue, vitesse, direction))
             personnage << "\n".join(lignes)
         else:
             personnage << "Aucun navire n'est actuellement défini."
