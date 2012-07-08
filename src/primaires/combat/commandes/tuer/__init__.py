@@ -64,5 +64,5 @@ class CmdTuer(Commande):
         attaque.cle_etat = "combat"
         type(self).importeur.combat.creer_combat(personnage.salle,
                 personnage, attaque)
-        personnage << "Vous attaquez {}.".format(attaque.nom)
-        attaque << "{} vous attaque.".format(personnage.nom)
+        personnage.envoyer("Vous attaquez {}.", attaque)
+        attaque.envoyer("{} vous attaque.", personnage)

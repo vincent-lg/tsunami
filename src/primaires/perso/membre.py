@@ -151,10 +151,13 @@ class Membre(BaseObj):
     def equiper(self, objet):
         """Equipe l'objet."""
         self.equipe.append(objet)
-        print("On équipe", objet, "sur", self.nom)
-        print(self.equipe)
         if self.parent:
             objet.contenu = self.parent.equipement.equipes
+    
+    def tester(self, nom_flag):
+        """Teste le flag nom_flag."""
+        flag = FLAGS[nom_flag]
+        return self.flags & flag
 
 class Groupe(BaseObj):
     

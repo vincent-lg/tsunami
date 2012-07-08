@@ -33,6 +33,7 @@
 from datetime import datetime
 
 from abstraits.obase import BaseObj
+from primaires.perso.exceptions.stat import DepassementStat
 from primaires.perso.personnage import Personnage
 
 class Joueur(Personnage):

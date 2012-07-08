@@ -175,7 +175,7 @@ class Description(BaseObj):
                     print("execute", personnage, elt)
                     retour = evt.espaces.variables["retour"]
                     paragraphe = paragraphe.replace(nom_complet, retour)
-            paragraphes.append("\n".join(wrap(paragraphe)))
+            paragraphes.append("\n".join(wrap(paragraphe, TAILLE_LIGNE)))
         return "\n".join(paragraphes)
 
 # On importe ici pour éviter les boucles

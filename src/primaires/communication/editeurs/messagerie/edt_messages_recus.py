@@ -89,7 +89,7 @@ class EdtMessagesRecus(Editeur):
                 msg += (mail.lu and "|vrc|oui|ff|" or "|rgc|non|ff|")
                 msg += " | |vr|" + couper_phrase(mail.sujet, 29).ljust( \
                         taille) + "|ff| | |blc|"
-                msg += mail.expediteur.nom.ljust(10) + "|ff| | |jn|"
+                msg += mail.nom_expediteur.ljust(10) + "|ff| | |jn|"
                 msg += mail.date.isoformat(" ")[:16] + "|ff| |\n"
                 i += 1
             msg += "+" + "-".ljust(taille + 45, "-") + "+"
@@ -186,7 +186,7 @@ class EdtMessagesRecus(Editeur):
             mail.aliases = list(mail.aliases) + \
                     [a for a in r_mail.copies_a if hasattr(a, "nom_alias")]
             mail.contenu.ajouter_paragraphe(
-                    r_mail.expediteur.nom + " a écrit :\n")
+                    r_mail.nom_expediteur + " a écrit :\n")
             mail.contenu.ajouter_paragraphe(str(r_mail.contenu))
             mail.contenu.ajouter_paragraphe("+------------------------------+")
             enveloppe = EnveloppeObjet(EdtMedit, mail, None)
