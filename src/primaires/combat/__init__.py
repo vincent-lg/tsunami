@@ -82,7 +82,7 @@ class Module(BaseModule):
         etat.msg_visible = "combat ici"
         etat.act_interdites = ["tuer", "bouger", "prendre", "poser",
                 "chercherbois", "ouvrir", "fermer", "jouer", "lancersort",
-                "porter", "retirer"]
+                "porter", "retirer", "ingerer"]
         BaseModule.init(self)
         
     def ajouter_commandes(self):
