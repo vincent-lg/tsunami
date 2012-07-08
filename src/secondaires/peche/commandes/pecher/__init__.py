@@ -82,7 +82,7 @@ class CmdPecher(Commande):
         
         personnage.agir("pecher")
         personnage << "Vous jetez votre ligne à l'eau."
-        personnage.salle.envoyer("{} jète sa lègne à l'eau.", personnage)
+        personnage.salle.envoyer("{} jète sa ligne à l'eau.", personnage)
         personnage.cle_etat = "pecher"
         importeur.diffact.ajouter_action("peche:" + personnage.nom, 15,
                 importeur.peche.attendre_pecher, personnage, canne)
