@@ -114,6 +114,11 @@ class MUDmail(BaseObj):
             apercu = "\n   Aucun contenu."
         return apercu
     
+    @property
+    def nom_expediteur(self):
+        """Retourne, si trouvé, le nom de l'expéditeur."""
+        return self.expediteur and self.expediteur.nom or "inconnu"
+    
     def afficher(self):
         """Affiche le mail"""
         ret = "Expéditeur      : " + self.expediteur.nom + "\n"
