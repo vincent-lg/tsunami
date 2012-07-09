@@ -98,7 +98,7 @@ class Transaction:
         
         Les acteurs ne sont pas nécessairement des personnages.
         Dans le cas où un personnage achète un objet, la transaction
-        initiée l'est apr l'acheteur et le receveur est le magasin.
+        initiée l'est par l'acheteur et le receveur est le magasin.
         
         """
         transaction = cls()
