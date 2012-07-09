@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,54 +28,28 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Zone, détaillée plus bas."""
+"""Ce fichier contient la configuration par défaut du module 'tresor'."""
 
-from abstraits.obase import BaseObj
+cfg_tresor = r"""
+# Ce fichier contient la configuration globale de la monnaie et du trésor.
 
-class Zone(BaseObj):
-    
-    """Classe représentant une zone.
-    
-    Une zone est un ensemble de salle. Certaines informations génériques
-    sont conservés dans la zone plutôt que dans chaque salle.
-    
-    """
-    
-    enregistrer = True
-    def __init__(self, cle):
-        """Constructeur de la zone."""
-        BaseObj.__init__(self)
-        self.cle = cle
-        self.salles = []
-        self.ouverte = True
-        self.argent_total = 0
-    
-    def __getnewargs__(self):
-        return ("", )
-    
-    def __getstate__(self):
-        attrs = self.__dict__.copy()
-        if "salles" in attrs:
-            del attrs["salles"]
-        
-        return attrs
-    
-    def __repr__(self):
-        return "zone {}".format(repr(self.cle))
-    
-    def __str__(self):
-        return self.cle
-    
-    @property
-    def fermee(self):
-        return not self.ouverte
-    
-    def ajouter(self, salle):
-        """Ajoute une salle à la zone."""
-        if salle not in self.salles:
-            self.salles.append(salle)
-    
-    def retirer(self, salle):
-        """Retire la salle de la zone."""
-        if salle in self.salles:
-            self.salles.remove(salle)
+## Nom d'unité
+# Le nom de l'unité permet d'indiquer l'unité dans laquelle sera exprimée
+# la valeur du trésor. Si l'unité est un simple signe, vous pouvez le
+# préciser simplement, entre guillemets. Si l'unité est un nom (comme
+# euro, dollar), vous devez le préciser d'un espace (" euro" par exemple).
+unite = " unités monétaires"
+
+## Nombre de jours de fluctuation
+# Les statistiques donnent également la fluctuation du marché. En vérité,
+# il s'agit simplement de l'augmentation ou la baisse de la valeur monétaire
+# injectée dans l'univers. Cette statistique se base sur les statistiques
+# actuelles et celles il y a X jours. Vous pouvez changer le nombre
+# de jours sur lequel porte cette étude.
+# Notez qu'un ombre de jours trop faible (1 ou 2) demande une consultation
+# régulière, alors qu'un nombre trop élevé aura du mal à mettre
+# en évidence la fluctuation rapide du marché. On parle ici de jours IRL ;
+# une semaine est conseillée.
+nb_jours_fluctuation = 7
+
+"""

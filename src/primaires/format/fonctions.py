@@ -303,3 +303,12 @@ def format_nb(nb, message, fem=False):
     
     return message.format(**mots)
 
+def aff_flottant(flottant, arrondi=3):
+    """Retourne le flottant sous la forme d'une chaîne de caractères.
+    
+    Le point décimal est remplacé par une virgule.
+    Le flottant est arrondi à la valeur passée en paramètre (3 par défaut).
+    
+    """
+    flottant = round(flottant, arrondi)
+    return str(flottant).replace(".", ",")

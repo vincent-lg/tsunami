@@ -258,6 +258,19 @@ class Personnage(BaseObj):
     def points_apprentissage_max(self):
         return len(importeur.perso.talents) * 50
     
+    @property
+    def argent_total(self):
+        """Retourne l'argent contenu dans l'inventaire."""
+        total = 0
+        if not self.equipement:
+            return total
+        
+        for o, qtt in self.equipement.inventaire.iter_objets_qtt():
+            if o.est_de_type("argent"):
+                total += qtt * o.valeur
+        
+        return total
+    
     def sans_prompt(self):
         if self.controle_par:
             self.controle_par.sans_prompt()

@@ -40,6 +40,7 @@ les extensions n'apparaîtront pas ici.
 
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.flag import Flag
+from primaires.interpreteur.editeur.entier import Entier
 
 class EdtZedit(Presentation):
     
@@ -69,3 +70,14 @@ class EdtZedit(Presentation):
         ouverte = self.ajouter_choix("ouverte", "o", Flag, zone,
                 "ouverte")
         ouverte.parent = self
+        
+        # Trésor
+        tresor = self.ajouter_choix("tresor", "t", Entier, zone,
+                "argent_total")
+        tresor.parent = self
+        tresor.apercu = "{objet.argent_total}"
+        tresor.prompt = "Entrez le trésor de la zone : "
+        tresor.aide_courte = \
+            "Entrez |ent|le trésor|ff| de la zone.\n\nTrésor actuel : " \
+            "{objet.argent_total}"
+        

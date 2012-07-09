@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,54 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Zone, détaillée plus bas."""
+"""Package contenant la commande 'tresor' et ses sous-commandes.
 
-from abstraits.obase import BaseObj
+Dans ce fichier se trouve la commande même.
 
-class Zone(BaseObj):
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+from .glob import PrmGlobal
+from .joueur import PrmJoueur
+
+class CmdTresor(Commande):
     
-    """Classe représentant une zone.
-    
-    Une zone est un ensemble de salle. Certaines informations génériques
-    sont conservés dans la zone plutôt que dans chaque salle.
+    """Commande 'tresor'.
     
     """
     
-    enregistrer = True
-    def __init__(self, cle):
-        """Constructeur de la zone."""
-        BaseObj.__init__(self)
-        self.cle = cle
-        self.salles = []
-        self.ouverte = True
-        self.argent_total = 0
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "tresor", "resource")
+        self.groupe = "administrateur"
+        self.aide_courte = "information sur le trésor"
+        self.aide_longue = \
+            "Cette commande offre plusieurs sous-commandes pour " \
+            "consulter le trésor global (c'est-à-dire l'argent en jeu) " \
+            "ou plus particulier."
     
-    def __getnewargs__(self):
-        return ("", )
-    
-    def __getstate__(self):
-        attrs = self.__dict__.copy()
-        if "salles" in attrs:
-            del attrs["salles"]
-        
-        return attrs
-    
-    def __repr__(self):
-        return "zone {}".format(repr(self.cle))
-    
-    def __str__(self):
-        return self.cle
-    
-    @property
-    def fermee(self):
-        return not self.ouverte
-    
-    def ajouter(self, salle):
-        """Ajoute une salle à la zone."""
-        if salle not in self.salles:
-            self.salles.append(salle)
-    
-    def retirer(self, salle):
-        """Retire la salle de la zone."""
-        if salle in self.salles:
-            self.salles.remove(salle)
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
+        self.ajouter_parametre(PrmGlobal())
+        #self.ajouter_parametre(PrmJoueur())

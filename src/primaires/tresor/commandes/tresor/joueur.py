@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,54 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Zone, détaillée plus bas."""
+"""Fichier contenant le paramètre 'liste' de la commande 'zone'."""
 
-from abstraits.obase import BaseObj
+from primaires.interpreteur.masque.parametre import Parametre
+from primaires.format.fonctions import oui_ou_non
 
-class Zone(BaseObj):
+class PrmJoueur(Parametre):
     
-    """Classe représentant une zone.
-    
-    Une zone est un ensemble de salle. Certaines informations génériques
-    sont conservés dans la zone plutôt que dans chaque salle.
+    """Commande 'zone liste'.
     
     """
     
-    enregistrer = True
-    def __init__(self, cle):
-        """Constructeur de la zone."""
-        BaseObj.__init__(self)
-        self.cle = cle
-        self.salles = []
-        self.ouverte = True
-        self.argent_total = 0
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "liste", "list")
+        self.aide_courte = "liste les zones existantes"
+        self.aide_longue = \
+            "Cette commande liste les zones existantes."
     
-    def __getnewargs__(self):
-        return ("", )
-    
-    def __getstate__(self):
-        attrs = self.__dict__.copy()
-        if "salles" in attrs:
-            del attrs["salles"]
-        
-        return attrs
-    
-    def __repr__(self):
-        return "zone {}".format(repr(self.cle))
-    
-    def __str__(self):
-        return self.cle
-    
-    @property
-    def fermee(self):
-        return not self.ouverte
-    
-    def ajouter(self, salle):
-        """Ajoute une salle à la zone."""
-        if salle not in self.salles:
-            self.salles.append(salle)
-    
-    def retirer(self, salle):
-        """Retire la salle de la zone."""
-        if salle in self.salles:
-            self.salles.remove(salle)
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        zones = list(type(self).importeur.salle.zones.values())
+        zones = [z for z in zones if z.cle and z.salles]
+        zones = sorted(zones, key=lambda z: z.cle)
+        if zones:
+            lignes = [
+                "  Clé             | Salles | Ouverte |"]
+            for zone in zones:
+                ouverte = oui_ou_non(zone.ouverte)
+                lignes.append(
+                    "  {:<15} | {:>6} | {}     |".format(
+                    zone.cle, len(zone.salles), ouverte))
+            personnage << "\n".join(lignes)
+        else:
+            personnage << "Aucune zone n'est actuellement défini."

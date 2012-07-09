@@ -409,7 +409,7 @@ class Inventaire:
         
         """
         for objet in self.objets:
-            qtt = self.quantite[objet]
+            qtt = self.quantite.get(objet, 1)
             if conteneur:
                 t_conteneur = self.contenu_dans[objet]
                 if hasattr(t_conteneur, "conteneur"):
