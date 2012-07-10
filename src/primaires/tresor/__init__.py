@@ -95,16 +95,16 @@ class Module(BaseModule):
         """Retourne le montant arrondi si nécessaire."""
         if montant >= 1000000000000:
             montant = str(round(montant, -12))
-            montant = montant[-12] + "T"
+            montant = montant[:-12] + "T"
         elif montant >= 1000000000:
             montant = str(round(montant, -9))
-            montant = montant[-9] + "G"
+            montant = montant[:-9] + "G"
         elif montant >= 1000000:
             montant = str(round(montant, -6))
-            montant = montant[-6] + "M"
+            montant = montant[:-6] + "M"
         elif montant >= 1000:
             montant = str(round(montant, -3))
-            montant = montant[-3] + "K"
+            montant = montant[:-3] + "K"
         else:
             montant = str(montant)
         
