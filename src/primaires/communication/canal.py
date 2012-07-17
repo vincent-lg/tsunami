@@ -118,7 +118,10 @@ class Canal(BaseObj):
     def rejoindre_ou_quitter(self, joueur, aff=True, forcer=False):
         """Connecte ou déconnecte un joueur"""
         if not joueur in self.connectes:
-            if joueur in self.liste_noire:
+            if not joueur.est_connecte:
+                joueur << "|err|Votre instance de connexion n'a pu être " \
+                        "validée, connexion au canal refusée.|ff|"
+            elif joueur in self.liste_noire:
                 joueur << "|err|Vous êtes sur la liste noire de ce canal.|ff|"
             elif self.flags & PRIVE and not forcer and self.connectes and not \
                     joueur.est_immortel():

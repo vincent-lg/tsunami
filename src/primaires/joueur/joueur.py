@@ -252,6 +252,9 @@ class Joueur(Personnage):
             else:
                 self.cle_etat = ""
                 self.stats.vitalite = 1
+                self.soif = 0
+                self.faim = 0
+                self.estomac = 0
                 self.envoyer("Vous reprenez lentement conscience, vous " \
                         "sentant encore très faible.")
                 self.cpt_mort = 0

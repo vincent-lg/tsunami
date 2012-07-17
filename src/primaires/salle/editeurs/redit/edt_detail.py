@@ -134,7 +134,6 @@ class EdtDetail(Presentation):
             "| |tit|" + "Description du détail {}".format(detail).ljust(76) + \
             "|ff||\n" + self.opts.separateur
         
-        
         # Est visible
         visible = self.ajouter_choix("est visible", "v", Flag, detail,
                 "est_visible")
@@ -144,6 +143,22 @@ class EdtDetail(Presentation):
         repos = self.ajouter_choix("repos", "r", EdtRepos, detail)
         repos.parent = self
         repos.apercu = "{objet.repos}"
+        repos.aide_courte = \
+            "Paramétrez ici le repos possible sur ce détail.\nOptions :\n" \
+            " - |ent|/s <nombre de places> (<facteur>)|ff| : permet de " \
+            "modifier le repos assis.\n" \
+            "   Le deuxième nombre correspond au facteur de récupération " \
+            "(optionnel).\n" \
+            "   Si vous précisez |ent|0|ff| en nombre de places, le repos " \
+            "assis sera désactivé.\n" \
+            " - |ent|/l <nombre de places> (<facteur>)|ff| : permet de " \
+            "modifier le repos allongé de\n" \
+            "   la même manière\n" \
+            " - |ent|/c <connecteur>|ff| : spécifie le connecteur de ce détail. " \
+            "Le connecteur fait\n" \
+            "   la liaison entre l'action et le titre du détail. Par " \
+            "exemple : \"Vous vous\n" \
+            "   allongez |vr|sur|ff| une table.|ff|\"\n\n"
         
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,

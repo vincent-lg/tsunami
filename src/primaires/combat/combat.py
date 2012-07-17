@@ -99,7 +99,7 @@ class Combat:
         self.verifier_combattants()
     
     def verifier_combattants(self):
-        """VVérifie que tous les combattants sont bien dans la salle."""
+        """Vérifie que tous les combattants sont bien dans la salle."""
         for combattant in list(self.combattants):
             if combattant is None or combattant.salle != self.salle:
                 self.__combattants.remove(combattant)
@@ -156,10 +156,10 @@ class Combat:
                 ARMES_PARADE]) > 0 and varier(combattu.pratiquer_talent(
                 CLE_TALENT_PARADE), 20) >= randint(15, 70):
             attaque.envoyer_msg_tentative(combattant, combattu, membre, arme)
-            combattant.envoyer("{} parre votre coup.", combattu)
-            combattu.envoyer("Vous parrez le coup porté par {}.",
+            combattant.envoyer("{} pare votre coup.", combattu)
+            combattu.envoyer("Vous parez le coup porté par {}.",
                     combattant)
-            combattant.salle.envoyer("{} parre le coup porté par {}.",
+            combattant.salle.envoyer("{} pare le coup porté par {}.",
                     combattu, combattant)
             degats = 0
         elif membre:
@@ -205,7 +205,7 @@ class Combat:
                         try:
                             combattu.vitalite -= degats
                         except DepassementStat:
-                            combattu.envoyer("|att|C'est de trop ! Vous " \
+                            combattu.envoyer("|att|C'en est trop ! Vous " \
                                     "plongez dans l'inconscience.|ff|")
                             combattu.salle.envoyer("{} s'écroule sur le sol, " \
                                     "baignant dans son sang.", combattu)
