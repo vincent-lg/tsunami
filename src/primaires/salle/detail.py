@@ -82,6 +82,9 @@ class Detail(BaseObj):
     
     def regarder(self, personnage):
         """Le personnage regarde le détail"""
+        if not self.est_visible:
+            personnage << "Il n'y a rien qui ressemble à cela par ici..."
+            return
         personnage << "Vous examinez {} :".format(self.titre)
         self.script["regarde"]["avant"].executer(personnage=personnage,
                 salle=personnage.salle)
@@ -89,11 +92,10 @@ class Detail(BaseObj):
         if not description:
             description = "Il n'y a rien de bien intéressant à voir."
         
-        personnage << "\n" + description
+        personnage << description
         
         self.script["regarde"]["apres"].executer(personnage=personnage,
                 salle=personnage.salle)
-
 
 class ScriptDetail(Script):
     

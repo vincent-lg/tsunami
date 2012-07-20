@@ -34,6 +34,7 @@ from random import random, randint, choice
 from math import sqrt
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.perso.exceptions.stat import DepassementStat
 
 class CmdChercherBois(Commande):
     
@@ -50,9 +51,11 @@ class CmdChercherBois(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
+        personnage.agir("chercherbois")
         prototypes = importeur.objet.prototypes.values()
         prototypes = [p for p in prototypes if p.est_de_type("combustible")]
         combustibles = []
+        choix = None
         for proto in prototypes:
             if personnage.salle.terrain.nom in proto.terrains:
                 combustibles.append((proto.rarete, proto))
@@ -60,18 +63,10 @@ class CmdChercherBois(Commande):
         if not combustibles:
             personnage << "|err|Il n'y a rien qui puisse brûler par ici.|ff|"
         else:
-            personnage.agir("chercherbois")
-            personnage.cle_etat = "collecte_bois"
-            personnage << "Vous vous penchez et commencez à chercher du bois."
-            personnage.salle.envoyer(
-                    "{} se met à chercher quelque chose par terre.",
-                    personnage)
-            yield 5
             niveau = sqrt(personnage.get_talent("collecte_bois") / 100)
             if not niveau:
                 niveau = 0.1
             proba_trouver = round(random(), 1)
-            personnage.cle_etat = ""
             if proba_trouver <= niveau: # on trouve du bois
                 possibles = []
                 for proba, combustible in combustibles:
@@ -82,18 +77,39 @@ class CmdChercherBois(Commande):
                 if possibles:
                     choix = choice(possibles)
                     somme_qualites = 0
-                    for i in range(nb_obj):
-                        objet = importeur.objet.creer_objet(choix)
-                        personnage.salle.objets_sol.ajouter(objet)
-                        somme_qualites += objet.qualite
-                    personnage << "Vous trouvez {} " \
-                            "et vous relevez.".format(choix.get_nom(nb_obj))
-                    personnage.salle.envoyer("{} se relève, l'air satisfait.",
-                            personnage)
-                    personnage.pratiquer_talent("collecte_bois")
-                    personnage.gagner_xp("survie", somme_qualites * 2)
-                    return
-            personnage << "Vous vous redressez sans avoir rien trouvé."
-            personnage.salle.envoyer("{} se relève, l'air dépité.",
+                    end = int(choix.poids_unitaire * nb_obj / 2)
+                    try:
+                        personnage.stats.endurance -= end
+                    except DepassementStat:
+                        personnage << "|err|Vous êtes trop fatigué pour " \
+                                "cela.|ff|"
+                        return
+            try:
+                personnage.stats.endurance -= 3
+            except DepassementStat:
+                personnage << "|err|Vous êtes trop fatigué pour cela.|ff|"
+                return
+            # On cherche le bois
+            personnage.cle_etat = "collecte_bois"
+            personnage << "Vous vous penchez et commencez à chercher du bois."
+            personnage.salle.envoyer(
+                    "{} se met à chercher quelque chose par terre.",
                     personnage)
-            personnage.pratiquer_talent("collecte_bois", 4)
+            yield 5
+            if choix:
+                for i in range(nb_obj):
+                    objet = importeur.objet.creer_objet(choix)
+                    personnage.salle.objets_sol.ajouter(objet)
+                    somme_qualites += objet.qualite
+                personnage << "Vous trouvez {} " \
+                        "et vous relevez.".format(choix.get_nom(nb_obj))
+                personnage.salle.envoyer("{} se relève, l'air satisfait.",
+                        personnage)
+                personnage.pratiquer_talent("collecte_bois")
+                personnage.gagner_xp("survie", somme_qualites * 2)
+            else:
+                personnage << "Vous vous redressez sans avoir rien trouvé."
+                personnage.salle.envoyer("{} se relève, l'air dépité.",
+                        personnage)
+                personnage.pratiquer_talent("collecte_bois", 4)
+            personnage.cle_etat = ""

@@ -110,60 +110,65 @@ class Transaction:
         # Dans un cas simple, si on achète un produit à 1€ avec un billet de
         # 10€, l'argent donné est 10€ et l'argent rendu est 9€,
         # probablement décomposé en 9 pièces de 1€.
-        argent_dct = Transaction.get_argent(initiateur)
-        somme_ini = Transaction.somme_argent(argent_dct)
-        if somme_ini < somme:
-            raise FondsInsuffisants("la somme d'argent de l'initiateur ({}) " \
-                    "est insuffisante pour cette transaction".format(
-                    somme_ini))
-        
-        # On trie la monnaie 
-        argent_tt = sorted(tuple(argent_dct.items()),
-                key=lambda t: t[0].valeur, reverse=True)
-        argent_donne = []
-        argent_rendu = []
-        
-        # On décompose la somme en fonction des valeurs
-        t_somme = somme
-        for argent, qtt in argent_tt:
-            if t_somme == 0:
-                break
+        if somme > 0:
+            argent_dct = Transaction.get_argent(initiateur)
+            somme_ini = Transaction.somme_argent(argent_dct)
+            if somme_ini < somme:
+                raise FondsInsuffisants("la somme d'argent de l'initiateur ({}) " \
+                        "est insuffisante pour cette transaction".format(
+                        somme_ini))
             
-            d_somme = t_somme // argent.valeur
-            if d_somme > 0:
-                if qtt > d_somme:
-                    qtt = d_somme
-                elif qtt < d_somme:
-                    continue
-                
-                argent_donne.append((argent, qtt))
-                t_somme -= qtt * argent.valeur
-        
-        # Après cette opération, la somme peut être incomplète
-        # La boucle précédente ne réunit que la somme exacte
-        # On cherche maintenant une somme supérieure si besoin
-        if t_somme > 0:
+            # On trie la monnaie 
+            argent_tt = sorted(tuple(argent_dct.items()),
+                    key=lambda t: t[0].valeur, reverse=True)
             argent_donne = []
+            argent_rendu = []
+            
+            # On décompose la somme en fonction des valeurs
             t_somme = somme
             for argent, qtt in argent_tt:
-                if t_somme <= 0:
+                if t_somme == 0:
                     break
                 
                 d_somme = t_somme // argent.valeur
-                if d_somme >= 0:
-                    if d_somme == 0:
-                        d_somme = 1
+                if d_somme > 0:
                     if qtt > d_somme:
                         qtt = d_somme
                     elif qtt < d_somme:
                         continue
-                
+                    
                     argent_donne.append((argent, qtt))
                     t_somme -= qtt * argent.valeur
+            
+            # Après cette opération, la somme peut être incomplète
+            # La boucle précédente ne réunit que la somme exacte
+            # On cherche maintenant une somme supérieure si besoin
+            if t_somme > 0:
+                argent_donne = []
+                t_somme = somme
+                for argent, qtt in argent_tt:
+                    if t_somme <= 0:
+                        break
+                    
+                    d_somme = t_somme // argent.valeur
+                    if d_somme >= 0:
+                        if d_somme == 0:
+                            d_somme = 1
+                        if qtt > d_somme:
+                            qtt = d_somme
+                        elif qtt < d_somme:
+                            continue
+                    
+                        argent_donne.append((argent, qtt))
+                        t_somme -= qtt * argent.valeur
+            somme_donnee = Transaction.somme_argent(dict(argent_donne))
+        else:
+            argent_donne = {}
+            argent_rendu = []
+            somme_donnee = 0
         
         # On s'occupe de rendre l'argent
-        somme_donnee = Transaction.somme_argent(dict(argent_donne))
-        if somme_donnee > somme:
+        if somme_donnee > somme or somme < 0:
             monnaies = sorted([p for p in \
                     importeur.objet.prototypes.values() if p.est_de_type(
                     "argent")], key=lambda m: m.valeur, reverse=True)
@@ -211,7 +216,7 @@ class Transaction:
             self.initiateur.ramasser(objet, qtt=qtt)
             print(self.initiateur.nom, "ramasse", objet.get_nom(qtt))
         
-        self.receveur.caisse += self.somme
+        self.receveur.parent.zone.argent_total += self.somme
 
 class FondsInsuffisants(ExceptionMUD):
     

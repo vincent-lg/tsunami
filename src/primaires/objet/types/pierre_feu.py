@@ -57,7 +57,7 @@ class PierreFeu(BaseType):
         efficacite.prompt = "Entrez une efficacité : "
         efficacite.aide_courte = \
             "Entrez l'|ent|efficacité|ff| initiale de la pierre, de " \
-            "|cmd|1|ff| (quasi nulle) à |cmd|50|ff| (maximale). Cette " \
+            "|cmd|1|ff| (quasi nulle) à |cmd|50|ff| (maximale).\nCette " \
             "efficacité conditionne la solidité de la pierre et se " \
-            "décrémente de 1 à chaque utilisation.\n\n" \
-            "Terrains actuels : {objet.efficacite}"
+            "décrémente de 1\nà chaque utilisation.\n\n" \
+            "Efficacité actuelle : {objet.efficacite}"

@@ -28,96 +28,118 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient l'éditeur EdtRepos, détaillé plus bas."""
+"""Ce fichier définit le contexte-éditeur 'edt_repos'."""
 
-from primaires.interpreteur.editeur.presentation import Presentation
-from primaires.interpreteur.editeur.uniligne import Uniligne
-from primaires.interpreteur.editeur.flottant import Flottant
-from primaires.interpreteur.editeur.entier import Entier
-from primaires.interpreteur.editeur.flag import Flag
+from primaires.interpreteur.editeur import Editeur
+from primaires.format.fonctions import format_nb
 
-class EdtRepos(Presentation):
+class EdtRepos(Editeur):
     
     """Ce contexte permet d'éditer la sous-catégorie 'repos' d'un détail.
     
     """
     
-    def __init__(self, pere, detail=None, attribut=None):
+    def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur."""
-        Presentation.__init__(self, pere, detail, attribut, False)
-        if pere and detail:
-            self.construire(detail)
+        Editeur.__init__(self, pere, objet, attribut)
+        self.ajouter_option("s", self.opt_asseoir)
+        self.ajouter_option("l", self.opt_allonger)
+        self.ajouter_option("c", self.opt_connecteur)
     
-    def construire(self, detail):
-        """Construction de l'éditeur"""
-        # Peut s'asseoir
-        asseoir = self.ajouter_choix("peut s'asseoir", "as", Flag, detail,
-                "peut_asseoir")
-        asseoir.parent = self
+    def accueil(self):
+        """Message d'accueil du contexte"""
+        detail = self.objet
+        msg = "| |tit|" + "Edition du détail '{}'".format(detail).ljust(76)
+        msg += "|ff||\n" + self.opts.separateur + "\n"
+        msg += self.aide_courte
+        msg += format_nb(detail.nb_places_assises,
+                "{nb} place{s} assise{s} ", fem=True)
+        msg += "(récupération : {}).\n".format(detail.facteur_asseoir)
+        msg += format_nb(detail.nb_places_allongees,
+                "{nb} place{s} allongée{s} ", fem=True)
+        msg += "(récupération : {}).\n".format(detail.facteur_allonger)
+        msg += "Connecteur : |ent|" + detail.connecteur + "|ff|\n"
         
-        # Peut s'allonger
-        allonger = self.ajouter_choix("peut s'allonger", "al", Flag, detail,
-                "peut_allonger")
-        allonger.parent = self
+        return msg
+    
+    def opt_asseoir(self, arguments):
+        """Option asseoir.
+        Syntaxe : /s <nb> (<facteur>)
         
-        # Nombre de places assises
-        nb_assises = self.ajouter_choix("nombre de places assises", "n",
-                Entier, detail, "nb_places_assises", 1)
-        nb_assises.parent = self
-        nb_assises.apercu = "{objet.nb_places_assises}"
-        nb_assises.prompt = "Entrez le nombre de places assises : "
-        nb_assises.aide_courte = \
-            "Entrez le |ent|nombre de places assises|ff| du détail ou\n" \
-            "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
-            "Nombre actuel : {objet.nb_places_assises}"
+        """
+        detail = self.objet
+        if not arguments:
+            self.pere << "|err|Précisez au moins un nombre de places.|ff|"
+            return
+        nb_places = facteur = 0
+        try:
+            nb_places, facteur = arguments.split(" ")
+        except ValueError:
+            try:
+                nb_places = int(arguments.split(" ")[0])
+                assert nb_places >= 0
+            except (ValueError, AssertionError):
+                self.pere << "|err|Précisez un nombre valide et positif.|ff|"
+                return
+        try:
+            nb_places = int(nb_places)
+            facteur = float(facteur)
+        except ValueError:
+            self.pere << "|err|Précisez des nombres valides.|ff|"
+            return
+        if nb_places:
+            detail.peut_allonger = True
+            detail.nb_places_assises = nb_places
+        else:
+            detail.peut_allonger = False
+            detail.nb_places_assises = 0
+        if facteur:
+            detail.facteur_asseoir = facteur
+        self.actualiser()
+    
+    def opt_allonger(self, arguments):
+        """Option allonger.
+        Syntaxe : /l <nb> (<facteur>)
         
-        # Nombre de places allongées
-        nb_allongees = self.ajouter_choix("nombre de places allongées", "b",
-                Entier, detail, "nb_places_allongees", 1)
-        nb_allongees.parent = self
-        nb_allongees.apercu = "{objet.nb_places_allongees}"
-        nb_allongees.prompt = "Entrez le nombre de places allongées : "
-        nb_allongees.aide_courte = \
-            "Entrez le |ent|nombre de places allongées|ff| du détail ou\n" \
-            "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
-            "Nombre actuel : {objet.nb_places_allongees}"
+        """
+        detail = self.objet
+        if not arguments:
+            self.pere << "|err|Précisez au moins un nombre de places.|ff|"
+            return
+        nb_places = facteur = 0
+        try:
+            nb_places, facteur = arguments.split(" ")
+        except ValueError:
+            try:
+                nb_places = int(arguments.split(" ")[0])
+                assert nb_places >= 0
+            except (ValueError, AssertionError):
+                self.pere << "|err|Précisez un nombre valide et positif.|ff|"
+                return
+        try:
+            nb_places = int(nb_places)
+            facteur = float(facteur)
+        except ValueError:
+            self.pere << "|err|Précisez des nombres valides.|ff|"
+            return
+        if nb_places:
+            detail.peut_allonger = True
+            detail.nb_places_allongees = nb_places
+        else:
+            detail.peut_allonger = False
+            detail.nb_places_allongees = 0
+        if facteur:
+            detail.facteur_allonger = facteur
+        self.actualiser()
+    
+    def opt_connecteur(self, arguments):
+        """Option connecteur.
+        Syntaxe : /c <connecteur>
         
-        # Connecteur
-        connecteur = self.ajouter_choix("connecteur", "c", Uniligne, detail,
-                "connecteur")
-        connecteur.parent = self
-        connecteur.prompt = "Connecteur du détail : "
-        connecteur.apercu = "{objet.connecteur}"
-        connecteur.aide_courte = \
-            "Entrez le |ent|connecteur|ff| du détail ou |cmd|/|ff| pour " \
-            "revenir à la fenêtre parente.\n\nLe connecteur fait la " \
-            "liaison entre l'action et le titre du détail.\nPar exemple : " \
-            "\"Vous vous allongez |att|sur|ff| une table.|ff|\"\n\n" \
-            "Connecteur actuel : |bc|{objet.connecteur}|ff|"
-        
-        # Facteur de récupération quand on s'asseoit
-        facteur_as = self.ajouter_choix(
-                "facteur de récupération en s'asseyant", "f", Flottant,
-                detail, "facteur_asseoir")
-        facteur_as.parent = self
-        facteur_as.prompt = "Entrez le facteur de récupération : "
-        facteur_as.aide_courte = \
-            "Entrez le facteur de récupération du détail quand on " \
-            "s'asseoit dessus\nou |cmd|/|ff| pour revenir à la fenêtre " \
-            "parente.\n\nLe facteur doit tourner autour de 1 (1 = une " \
-            "récupération normale).\n\nFacteur de récupération actuel : " \
-            "{objet.facteur_asseoir}"
-        
-        # Facteur de récupération quand on s'allonge
-        facteur_al = self.ajouter_choix(
-                "facteur de récupération en s'allongeant", "u", Flottant,
-                detail, "facteur_allonger")
-        facteur_al.parent = self
-        facteur_al.prompt = "Entrez le facteur de récupération : "
-        facteur_al.aide_courte = \
-            "Entrez le facteur de récupération du détail quand on " \
-            "s'allonge dessus\nou |cmd|/|ff| pour revenir à la fenêtre " \
-            "parente.\n\nLe facteur doit tourner autour de 1 (1 = une " \
-            "récupération normale).\n\nFacteur de récupération actuel : " \
-            "{objet.facteur_allonger}"
-
+        """
+        detail = self.objet
+        if not arguments:
+            self.pere << "|err|Précisez un connecteur.|ff|"
+            return
+        detail.connecteur = arguments
+        self.actualiser()

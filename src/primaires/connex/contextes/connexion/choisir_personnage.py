@@ -80,8 +80,9 @@ class ChoisirPersonnage(Contexte):
         
         if len(self.pere.compte.joueurs) > 0:
             # on saute deux lignes
-            ret += "\n\n"
+            ret += "\n"
         
+        ret += "\n"
         ret += " |cmd|{C}|ff| pour |ent|créer|ff| un nouveau " \
                 "personnage\n".format(C = cmd_creer.upper())
         if len(self.pere.compte.joueurs) > 0:

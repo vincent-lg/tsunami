@@ -103,15 +103,16 @@ class Attaque(BaseObj):
     def envoyer_msg_reussite(self, moi, contre, membre, degats, arme=None):
         """Envoie les messages en cas de réussite."""
         salle = moi.salle
+        s = "s" if degats > 1 else ""
         moi.envoyer_lisser(self.msg_reussite["moi"].format(moi="{moi}",
                 contre="{contre}", membre=membre, arme=arme,
-                degats=degats), moi=moi, contre=contre)
+                degats=degats, s=s), moi=moi, contre=contre)
         contre.envoyer_lisser(self.msg_reussite["contre"].format(moi="{moi}",
                 contre="{contre}", membre=membre, arme=arme,
-                degats=degats), moi=moi, contre=contre)
+                degats=degats, s=s), moi=moi, contre=contre)
         salle.envoyer_lisser(self.msg_reussite["autres"].format(moi="{moi}",
                 contre="{contre}", membre=membre, arme=arme,
-                degats=degats), moi=moi, contre=contre)
+                degats=degats, s=s), moi=moi, contre=contre)
 
 class Coup(Attaque):
     
@@ -128,9 +129,9 @@ class Coup(Attaque):
                 "{moi} tente d'atteindre {contre}."
         # Code temporaire
         self.msg_reussite["moi"] = \
-                "Vous atteignez {contre} à {membre} ({degats} points)."
+                "Vous atteignez {contre} à {membre} ({degats} point{s})."
         self.msg_reussite["contre"] = \
-                "{moi} vous atteint à {membre} ({degats} points)."
+                "{moi} vous atteint à {membre} ({degats} point{s})."
         self.msg_reussite["autres"] = \
                 "{moi} atteint {contre} à {membre}."
         self.viser_membre = True

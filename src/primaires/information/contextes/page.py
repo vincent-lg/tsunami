@@ -132,7 +132,7 @@ class Page(Contexte):
         elif msg.startswith("c"):
             try:
                 num_chap = int(msg.split(" ")[1])
-                assert num_chap <= len(self.chapitres)
+                assert 0 < num_chap <= len(self.chapitres)
             except ValueError:
                 self.pere << "|err|Précisez un numéro de chapitre valide.|ff|"
             else:
