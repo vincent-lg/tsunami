@@ -63,5 +63,4 @@ class CmdOublier(Commande):
                 del personnage.talents[tal.cle]
                 personnage << "Vous avez oublié le talent {}.".format(tal.nom)
                 return
-        personnage << "|err|'{}' n'est ni un sort, ni un talent.|ff|".format(
-                nom_sort)
+        personnage << "|err|'{}' n'est ni un sort, ni un talent.|ff|".format(nom_talent)
