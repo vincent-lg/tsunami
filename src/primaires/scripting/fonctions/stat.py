@@ -49,6 +49,8 @@ class ClasseFonction(Fonction):
         
         """
         try:
-            return personnage.stats[stat]
+            stat = personnage.stats[stat]
         except KeyError:
             raise ErreurExecution("stat inconnue : {}".format(stat))
+        else:
+            return stat.courante
