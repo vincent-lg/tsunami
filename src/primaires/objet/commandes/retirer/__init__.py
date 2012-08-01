@@ -82,4 +82,7 @@ class CmdRetirer(Commande):
             personnage << "Vous retirez {}.".format(objet.nom_singulier)
             personnage.salle.envoyer(
                 "{{}} retire {}.".format(objet.nom_singulier), personnage)
-            personnage.ramasser(objet=objet)
+            try:
+                personnage.ramasser(objet=objet)
+            except SurPoids:
+                personnage.equipement.tenir_objet(objet=objet)
