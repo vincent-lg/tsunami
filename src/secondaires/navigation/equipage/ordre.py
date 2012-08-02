@@ -30,10 +30,27 @@
 
 """Fichier contenant la classe Ordre et ses exceptions."""
 
-from abstraits.obase import BaseObj
+from abstraits.obase import BaseObj, MetaBaseObj
 from bases.exceptions.base import ExceptionMUD
 
-class Ordre(BaseObj):
+ordres = {}
+
+class MetaOrdre(MetaBaseObj):
+    
+    """Métaclasse des ordres.
+    
+    Elle ajoute l'ordre dans le dictionnaire 'ordres' si il possède
+    une clé.
+    
+    """
+    
+    def __init__(cls, nom, bases, contenu):
+        """Constructeur de la métaclasse"""
+        MetaBaseObj.__init__(cls, nom, bases, contenu)
+        if cls.cle:
+            ordres[cls.cle] = cls
+    
+class Ordre(BaseObj, metaclass=MetaOrdre):
     
     """Classe représentant un ordre.
     
@@ -42,12 +59,14 @@ class Ordre(BaseObj):
     
     Méthodes définies :
         choisir_personnage -- choisit un personnage pour cet ordre
-        calculer_empechement -- retourne l'empêchement calculéd du mtelot
+        calculer_empechement -- retourne l'empêchement calculé du mtelot
         executer -- commence l'exécution de l'ordre
     
     """
     
-    def __init__(self, matelot, cle, navire):
+    id_actuel = 1
+    cle = ""
+    def __init__(self, matelot, navire):
         """Construit un ordre.
         
         Si le navire existe et qu'aucun matelot n'a été trouvé pour cet ordre, recherche le meilleur matelot.
@@ -55,7 +74,9 @@ class Ordre(BaseObj):
         """
         BaseObj.__init__(self)
         self.matelot = matelot
-        self.cle = cle
+        self.id = Ordre.id_actuel
+        Ordre.id_actuel += 1
+        self.priorite = 1
         if self.matelot is None and navire:
             matelots = navire.matelots
             self.matelot = self.choisir_matelot(matelots)
@@ -64,11 +85,12 @@ class Ordre(BaseObj):
         return (None, "", None)
     
     def __repr__(self):
-        return "<ordre '{}' pour {}".format(self.cle, self.cle_matelot)
+        return "<ordre '{}({})' pour {}".format(self.cle, self.id,
+                self.cle_matelot)
     
     @property
     def cle_matelot(self):
-        return self.matelot and self.matelot.cle or "inconnue"
+        return self.matelot and self.matelot.identifiant or "inconnue"
     
     def choisir_matelot(self, matelots):
         """Retourne le meilleur matelot pour cet ordre.
@@ -142,3 +164,13 @@ class OrdreEmpeche(ExceptionOrdre):
     """Exception levée quand un ordre est impossible de part les circonstances."""
     
     pass
+
+class OrdreSansSubstitution(ExceptionOrdre):
+    
+    """Exception appelée si on cherche un matelot de substitution.
+    
+    Tous les ordres n'acceptent pas de choisir des matelots de substitution.
+    Certains ordres sont faits pour UN matelot et ne doivent pas en choisir
+    de substitution.
+    
+    """

@@ -28,11 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package equipage du module navigation.
+"""Fichier contenant l'ordre Deplacer."""
 
-Ce package contient tout ce qui concerne l'équipage.
-Les postes sont listés dans le sous-package postes.
+from ..ordre import *
 
-"""
-
-from . import ordres
+class Deplacer(Ordre):
+    
+    """Ordre deplacer.
+    
+    Cet ordre est appelé pour demander à un matelot de se déplacer dans
+    une certaine direction. Ce déplacement est minimale : le matelot
+    ne fait aucune recherche de chemin, il se contente d'aller dans
+    la direction indiquée.
+    
+    """
+    
+    cle = "deplacer"
+    def __init__(self, matelot, navire, direction):
+        Ordre.__init__(self, matelot, navire)
+        self.direction = direction
+    
+    def choisir_matelot(self, matelots):
+        """Un matelot de substitution ne peut pas être trouvé pour cet ordre."""
+        raise OrdreSansSubstitution
+    
+    def calculer_empechement(self):
+        """Retourne une estimation de l'empêchement du matelot."""
+        if self.matelot.cle_etat:
+            return 100
+        else:
+            return 0
+    
+    def executer(self):
+        """Exécute l'ordre : déplace le matelot."""
+        self.matelot.personnage.deplacer_vers(self.direction)

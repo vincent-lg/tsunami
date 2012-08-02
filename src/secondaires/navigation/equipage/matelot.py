@@ -32,6 +32,7 @@
 
 from abstraits.obase import BaseObj
 from primaires.objet.objet import MethodeObjet
+from .ordre import *
 
 class Matelot(BaseObj):
     
@@ -75,7 +76,7 @@ class Matelot(BaseObj):
         except (AttributeError, AssertionError):
             return getattr(self.personnage, nom_attr)
     
-    def executer_ordre(sef, priorite=1):
+    def executer_ordre(self, priorite=1):
         """Exécute le premier ordre de la liste.
         
         Traite les cas :
@@ -97,17 +98,21 @@ class Matelot(BaseObj):
                 raise PrioriteTropFaible
             
             try:
-                ordre.executer(personnage)
+                ordre.executer()
             except OrdreDiffere as err:
                 if err.priorite > priorite:
                     raise err
             except OrdreEmpeche as err:
                 raise err
     
-    def ordre_accompil(self):
+    def ordre_accompli(self):
         """Le premier ordre est accompli."""
         if self.ordres:
             del self.ordres[0]
+    
+    def ordonner(self, ordre):
+        """Ajoute l'ordre."""
+        self.ordres.append(ordre)
     
     def detruire(self):
         """Destruction du matelot."""

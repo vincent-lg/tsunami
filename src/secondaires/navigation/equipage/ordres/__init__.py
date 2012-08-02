@@ -28,11 +28,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package equipage du module navigation.
+"""Package contenant les différents ordres définis chacun dans un fichier.
 
-Ce package contient tout ce qui concerne l'équipage.
-Les postes sont listés dans le sous-package postes.
+La classe-mère des ordres est définie dans le répertoire parent, fichier
+ordre.py.
 
 """
 
-from . import ordres
+from .deplacer import Deplacer
