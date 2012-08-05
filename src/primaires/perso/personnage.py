@@ -271,6 +271,27 @@ class Personnage(BaseObj):
         
         return total
     
+    @property
+    def points_entrainement_max(self):
+        """Retourne le nombre de points d'entraînement total."""
+        return importeur.perso.gen_niveaux.points_entrainement_disponibles(
+                self.niveau)
+    
+    @property
+    def points_entrainement_consommes(self):
+        """Retourne le nombre de points d'entraînement consommés."""
+        return importeur.perso.gen_niveaux.points_entrainement_consommes(self)
+    
+    @property
+    def points_entrainement(self):
+        """Retourne le nombre de points d'entraînement du personnage."""
+        nb = self.points_entrainement_max - \
+                self.points_entrainement_consommes
+        if nb < 0:
+            nb = 0
+        
+        return nb
+    
     def sans_prompt(self):
         if self.controle_par:
             self.controle_par.sans_prompt()
@@ -720,6 +741,24 @@ class Personnage(BaseObj):
                 p_niveau)
         if xp > 0:
             self.gagner_xp(niv_secondaire, xp)
+    
+    def gagner_stat(self, nom_stat):
+        """Gagne un point dans une statistique.
+        
+        ATTENTION : si le nombre de points d'entraînement disponibles n'est
+        pas suffisant, lève une exception ValueError.
+        
+        """
+        if self.points_entrainement <= 0:
+            raise ValueError("le personnage {} ne peut rien apprendre de " \
+                    "plus".format(self))
+        
+        stat = self.stats[nom_stat]
+        if stat.base >= stat.marge_max:
+            raise ValueError("la stat {} de {} est déjà au maximum".format(
+                    nom_stat, self))
+        
+        stat.courante = stat.courante + 1
     
     def ramasser(self, objet, exception=None, qtt=1):
         """Ramasse l'objet objet.

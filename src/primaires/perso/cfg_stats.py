@@ -106,4 +106,26 @@ stats = (
     ( "sensibilite"   , 's'     ,      5 ,   100 , ""               , ),
 )
 
+## Stats pouvant être entraînées
+# Ce dictionnaire définit, en clé, le nom des stats pouvant être entraînées
+# et en valeur le message de progression.
+entrainables = {
+    "force": "Votre force musculaire est maintenant plus importante.",
+    "agilite": "Votre agilité est plus importante.",
+    "robustesse": "Votre robustesse est plus importante.",
+    "intelligence": "Vous vous sentez plus intelligent",
+    "charisme": "Vous sentez votre charisme augmenter.",
+    "sensibilite": "Vous sentez votre sensibilité augmenter",
+}
+
+## Stats liées
+# Ce dictionnaire définit les stats dont la progression influence une
+# autre stat. Indiquez en clé la stat à entraîner pour que la seconde
+# progresse.
+entrainement_liees = {
+    "agilite": "endurance_max",
+    "robustesse": "vitalite_max",
+    "intelligence": "mana_max",
+}
+
 """

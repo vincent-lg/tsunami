@@ -49,6 +49,9 @@ class Niveaux:
     xp_max = None
     grille_xp = []
     nb_points_quetes = None
+    points_entrainement_fixes = 0
+    points_entrainement_paliers = {}
+    stats_entrainables = []
     
     @classmethod
     def calculer_grille(cls):
@@ -101,5 +104,30 @@ class Niveaux:
         
         pourcentage = pourcentage - diff_niveaux * pourcentage
         xp = int(cls.grille_xp[niveau_effectif - 1][1] * pourcentage / 100)
-        print("diff_niveaux", diff_niveaux, "pourcentage =", pourcentage, "xp =", xp)
         return xp
+    
+    @classmethod
+    def points_entrainement_disponibles(cls, niveau):
+        """Retourne le nombre de points d'entraînement disponible.
+        
+        On doit préciser le niveau en paramètre.
+        
+        """
+        nb = niveau * cls.points_entrainement_fixes
+        for niv, sup in sorted(cls.points_entrainement_paliers.items()):
+            if niveau >= niv:
+                nb += sup
+            else:
+                break
+        
+        return nb
+    
+    @classmethod
+    def points_entrainement_consommes(cls, personnage):
+        """Retourne le nombre de points d'entraînement consommés."""
+        nom_stats = cls.stats_entrainables
+        stats = {}
+        for nom in nom_stats:
+            stats[nom] = personnage.stats[nom].base
+        
+        return sum(stats.values())

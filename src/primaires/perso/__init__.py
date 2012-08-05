@@ -112,6 +112,11 @@ class Module(BaseModule):
         niveaux.nb_niveaux = self.cfg_niveaux.nb_niveaux
         niveaux.xp_min = self.cfg_niveaux.xp_min
         niveaux.xp_max = self.cfg_niveaux.xp_max
+        niveaux.points_entrainement_fixes = \
+                self.cfg_niveaux.points_entrainement_fixes
+        niveaux.points_entrainement_paliers = \
+                self.cfg_niveaux.points_entrainement_paliers
+        niveaux.stats_entrainables = self.cfg_stats.entrainables
         niveaux.calculer_grille()
         self.gen_niveaux = niveaux
         
