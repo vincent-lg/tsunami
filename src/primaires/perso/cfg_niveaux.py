@@ -38,6 +38,8 @@ cfg_niveaux = r"""
 # vous pouvez modifier le calcul dans src/perso/niveaux.py, méthode
 # calculer_grille.
 
+### Niveaux et expérience
+
 ## Nombre de niveaux
 # Cette variable modifie le nombre de niveaux.
 # Elle doit être supérieure ou égale à 2.
@@ -52,5 +54,26 @@ xp_min = 1
 # dernier niveau.
 # Avec ces trois informations, le système calcule une progression.
 xp_max = 100
+
+### Points d'entraînement
+
+# Les points d'entraînement permettent au joueur de progresser dans ses
+# statistiques. Il en gagne un nombre fixe par niveau et on peut
+# également définir des paliers où il en gagne plus.
+
+## Nombre fixe
+# Ce paramètre détermine le nombre de points d'entraînement que gagne
+# le joueur à chaque niveau principal. Un point d'entraînement équivant
+# à une connaissance dans la statistique (par exemple, 1 point doit
+# être utilisé pour monter de 1 en force).
+points_entrainement_fixes = 2
+
+## Paliers
+# Cette option permet de définir les paliers des points d'entraînement reçus
+# à chaque niveau.
+points_entrainement_paliers = {
+    # Niveau # Nombre de points supplémentaires
+    5: 5,
+}
 
 """

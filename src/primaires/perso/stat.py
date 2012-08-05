@@ -134,7 +134,7 @@ class Stat(BaseObj):
         le max ni la marge.
         
         """
-        base = courante + self.__variable
+        base = courante - self.__variable
         # Levée d'exceptions
         if base < 0 and flags & I0:
             self.__base = 0
