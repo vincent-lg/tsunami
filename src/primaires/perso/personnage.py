@@ -770,7 +770,6 @@ class Personnage(BaseObj):
         ensuite récursivement l'action.
         
         """
-        print(self.nom, message, dist, salle)
         if dist >= 8:
             return
         

@@ -87,6 +87,9 @@ class Stat(BaseObj):
     def __getnewargs__(self):
         return ("", "", "", 0, "")
     
+    def __repr__(self):
+        return "<stat {}={}>".format(self.nom, self.courante)
+    
     def __str__(self):
         return "{}={} (base={}, variable={}, max={})".format(
                 self.nom, self.courante, self.base, self.variable, self.max)

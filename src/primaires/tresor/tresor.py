@@ -108,7 +108,6 @@ class Tresor(BaseObj):
         joueur_max = None
         valeur_max = 0
         for joueur in importeur.joueur.joueurs.values():
-            print("joueur", joueur)
             nb = joueur.argent_total
             total += nb
             total_joueurs += nb
