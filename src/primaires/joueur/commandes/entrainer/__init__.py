@@ -63,4 +63,19 @@ class CmdEntrainer(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        pass
+        # La première étape est de chercher les "maîtres" dans la salle
+        maitres = [p for p in personnage.salle.PNJ if p.entraine_stats]
+        stats = {} # nom: prototype
+        max = {} # nom_stat: valeur_max
+        for pnj in maitres:
+            for stat, niveau in pnj.entraine_stats.items():
+                if niveau > max.get(stat, 0):
+                    stats[stat] = pnj
+                    max[stat] = niveau
+        
+        if dic_masques["stat_ent"]:
+            stat = dic_masques["stat_ent"].stat_ent
+            niveau = dic_masques["niveau_secondaire"].niveau_secondaire
+            if personnage.niveaux.get(niveau) < personnage.stats[stat].base:
+                # Compléter...
+                pass
