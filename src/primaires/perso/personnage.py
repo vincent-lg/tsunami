@@ -682,6 +682,12 @@ class Personnage(BaseObj):
                     nom_stat, self))
         
         stat.courante = stat.courante + 1
+        
+        # On entraîne la stat liée
+        liee = importeur.perso.cfg_stats.entrainement_liees.get(nom_stat)
+        if liee:
+            stat_liee = personnage.stats[liee]
+            stat_liee.courante = stat_liee.courante + stat.courante
     
     def ramasser(self, objet, exception=None, qtt=1):
         """Ramasse l'objet objet.

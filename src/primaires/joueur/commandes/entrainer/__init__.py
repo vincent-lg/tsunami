@@ -31,6 +31,7 @@
 """Package contenant la commande 'entrainer'"""
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.perso.exceptions.stat import DepassementStat
 
 class CmdEntrainer(Commande):
     
@@ -67,15 +68,54 @@ class CmdEntrainer(Commande):
         maitres = [p for p in personnage.salle.PNJ if p.entraine_stats]
         stats = {} # nom: prototype
         max = {} # nom_stat: valeur_max
+        xps = {} # stat: xp_nécessaire
         for pnj in maitres:
             for stat, niveau in pnj.entraine_stats.items():
                 if niveau > max.get(stat, 0):
                     stats[stat] = pnj
                     max[stat] = niveau
+                if stat not in xp:
+                    base = personnage.stats[stat].base
+                    if base < 100 and base < niveau:
+                        xp = int(importeur.perso.gen_niveaux.grille_xp[ \
+                                base - 1][1] / 2)
+                        xps[stat] = xp
+                    else:
+                        xps[stat] = None
         
         if dic_masques["stat_ent"]:
             stat = dic_masques["stat_ent"].stat_ent
+            maitre = stats[stat]
+            max = max[stat]
+            xp = xps[stat]
             niveau = dic_masques["niveau_secondaire"].niveau_secondaire
-            if personnage.niveaux.get(niveau) < personnage.stats[stat].base:
-                # Compléter...
-                pass
+            if personnage.niveaux.get(niveau) >= personnage.stats[stat].base:
+                personnage << "|err|Vous n'êtes pas assez expérimenté dans ce niveau.|ff|"
+                return
+            
+            if personnage.niveaux.get(niveau, 0) > max:
+                personnage.envoyer("|err|{} ne peut vous enseigner davantage " \
+                        "cette caractéristique.|ff|", maitre)
+                return
+            
+            if personnage.xps.get(niveau, 0) < xp:
+                personnage << "|err|Vous devez avoir au moins {} xp dans " \
+                        "ce niveau.|ff|".format(xp)
+                return
+            
+            personnage.agir("entrainer")
+            end = 20
+            try:
+                personnage.stats.endurance -= end
+            except DepassementStat:
+                personnage << "|err|Vous êtes trop fatigué pour vous entraîner.|ff|"
+                return
+            
+            personnage << "Vous commencez à vous entraîner."
+            personnage.salle.envoyer("{} commence à s'entraîner.", personnage)
+            personnage.cle_etat = "entrainer"
+            yield 60
+            personnage.cle_etat = ""
+            personnage << importeur.perso.cfg_stats.entrainables[stat]
+            personnage.xps[niveau] -= xp
+            personnage.gagner_stat(stat)
