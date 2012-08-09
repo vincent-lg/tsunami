@@ -436,9 +436,7 @@ class Personnage(BaseObj):
                 return
         
         if nage:
-            connaissance = varier(self.pratiquer_talent("nage"), 15)
-            pc_poids = varier(int(self.poids / self.poids_max * 100), 5)
-            reussir = connaissance >= pc_poids
+            reussir = self.essayer_nage(self.salle, salle_dest)
             if not reussir:
                 self << "|err|Vous battez des bras et des jambes mais " \
                         "n'avancez pas.|ff|"
@@ -551,6 +549,32 @@ class Personnage(BaseObj):
             if hasattr(perso, "script"):
                 perso.script["arrive"].executer(depuis=nom_opp, pnj=perso,
                         personnage=self, salle=salle)
+    
+    def essayer_nage(self, origine, destination):
+        """Essaye de nager et retourne un booléen de réussite.
+        
+        Le calcul compare la connaissance du talent nage, légèrement varié,
+        au pourcentage porté par le joueur. Il est donc complètement lié
+        à la force du joueur et à ce qu'il porte.
+        
+        Pour aider les nouveaux cela dit, le calcul est plus favorable :
+        -   Si le joueur tente d'aller vers le bord
+        -   Si le joueur est relativement bas niveau (entre 1 et 30).
+        
+        """
+        pc_poids = varier(int(self.poids / self.poids_max * 100), 5)
+        connaissance = varier(self.pratiquer_talent("nage"), 15)
+        
+        # Si le joueur va vers le bord
+        if destination.nom_terrain not in ("aquatique", "subaquatique"):
+            connaissance += varier(40, 10)
+        
+        # Si le joueur est relativement bas niveau
+        if self.niveau < 30:
+            connaissance += varier(30 - self.niveau, 5)
+        
+        reussir = connaissance >= pc_poids
+        return reussir
     
     def get_talent(self, cle_talent):
         """Retourne la valeur du talent ou 0 si le talent n'est pas trouvé."""
