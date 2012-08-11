@@ -54,7 +54,6 @@ class StatEnt(Masque):
     def repartir(self, personnage, masques, commande):
         """Répartition du masque."""
         stat_ent = liste_vers_chaine(commande).lstrip()
-        stat_ent = stat_ent.split(" ")[0]
         
         if not stat_ent:
             raise ErreurValidation( \
@@ -62,7 +61,7 @@ class StatEnt(Masque):
         
         self.a_interpreter = stat_ent
         masques.append(self)
-        commande[:] = commande[len(stat_ent):]
+        commande[:] = []
         return True
     
     def valider(self, personnage, dic_masques):

@@ -54,7 +54,6 @@ class PNJ(Personnage):
         self.salle_origine = salle
         self.controle_par = None
         self.instance_connexion = None
-        self.entraine_stats = {}
         if salle:
             salle.pop_pnj(self)
         

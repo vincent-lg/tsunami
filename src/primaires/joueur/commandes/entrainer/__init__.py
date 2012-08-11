@@ -59,7 +59,7 @@ class CmdEntrainer(Commande):
             "d'expérience du niveau secondaire que vous choisissez. " \
             "Ce pourcentage dépendra de votre connaissance dans la " \
             "caractéristique : si par exemple vous avez 20 en force, " \
-            "vous aurez besoin de 10% d'XP du niveau secondaire " \
+            "vous aurez besoin de 10 pourcent d'XP du niveau secondaire " \
             "choisi pour gagner un point en force."
     
     def interpreter(self, personnage, dic_masques):
@@ -67,6 +67,7 @@ class CmdEntrainer(Commande):
         # La première étape est de chercher les "maîtres" dans la salle
         maitres = [p for p in personnage.salle.PNJ if p.entraine_stats]
         stats = {} # nom: prototype
+        prototypes = {} # prototype: {stat]
         max = {} # nom_stat: valeur_max
         xps = {} # stat: xp_nécessaire
         for pnj in maitres:
@@ -74,7 +75,7 @@ class CmdEntrainer(Commande):
                 if niveau > max.get(stat, 0):
                     stats[stat] = pnj
                     max[stat] = niveau
-                if stat not in xp:
+                if stat not in xps:
                     base = personnage.stats[stat].base
                     if base < 100 and base < niveau:
                         xp = int(importeur.perso.gen_niveaux.grille_xp[ \
@@ -82,14 +83,22 @@ class CmdEntrainer(Commande):
                         xps[stat] = xp
                     else:
                         xps[stat] = None
+                liste = prototypes.get(pnj, [])
+                liste.append(stat)
+                prototypes[pnj] = liste
         
         if dic_masques["stat_ent"]:
             stat = dic_masques["stat_ent"].stat_ent
             maitre = stats[stat]
             max = max[stat]
             xp = xps[stat]
+            if not dic_masques["niveau_secondaire"]:
+                personnage << "|err|Précisez le niveau secondaire " \
+                        "contenant l'expérience à verser.|ff|"
+                return
+            
             niveau = dic_masques["niveau_secondaire"].niveau_secondaire
-            if personnage.niveaux.get(niveau) >= personnage.stats[stat].base:
+            if personnage.niveaux.get(niveau, 0) < personnage.stats[stat].base:
                 personnage << "|err|Vous n'êtes pas assez expérimenté dans ce niveau.|ff|"
                 return
             
@@ -119,3 +128,24 @@ class CmdEntrainer(Commande):
             personnage << importeur.perso.cfg_stats.entrainables[stat]
             personnage.xps[niveau] -= xp
             personnage.gagner_stat(stat)
+        else:
+            # On affiche les stats que peuvent apprendre les personnages présents
+            if not maitres:
+                personnage << "|err|Aucun maître n'est actuellement " \
+                        "présent.|ff|"
+                return
+            
+            lignes = []
+            for p, l_stats in prototypes.items():
+                lignes.append(p.nom_singulier + " peut vous enseigner :")
+                for s in l_stats:
+                    xp = xps[s]
+                    if xp is None:
+                        xp = "..."
+                    else:
+                        xp = str(xp)
+                    
+                    lignes.append("  " + s.ljust(10) + " pour " + \
+                            xp.rjust(15) + " XP")
+            
+            personnage << "\n".join(lignes)

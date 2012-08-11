@@ -44,6 +44,7 @@ from .edt_race import EdtRace
 from .edt_genre import EdtGenre
 from .edt_squelette import EdtSquelette
 from .edt_equipement import EdtEquipement
+from .edt_entraine import EdtEntraine
 
 class EdtPedit(Presentation):
     
@@ -154,6 +155,17 @@ class EdtPedit(Presentation):
             "Entrez le pourcentage d'XP relative gagnée par l'adversaire lors " \
             "de la mort du\nPNJ.\n\n" \
             "Pourcentage actuel : {objet.gain_xp}%"
+        
+        # Stats à entraîner
+        en = self.ajouter_choix("stats pouvant être entraînées", "en",
+                EdtEntraine, prototype)
+        en.parent = self
+        en.aide_courte = \
+            "Entrez |cmd|/|ff| pour revenir à la fenêtre précédente.\n" \
+            "Préciser le nom de la stat, suivie d'un espace et de la " \
+            "valeur maximum\npouvant être entraînée par ce prototype. Le " \
+            "ou les PNJ construits sur ce\nprototype ne pourront pas " \
+            "entraîner cette stat au-delà du niveau maximum\nspécifié."
         
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,

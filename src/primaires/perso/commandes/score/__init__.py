@@ -37,13 +37,15 @@ from primaires.interpreteur.commande.commande import Commande
 # Chaîne représentant le score
 chn_score = \
 "/----------------------------------------------\\\n" \
-"| {nom: <15}                              |\n" \
+"| {nom: <15}      {nom_race:>12} ({genre:<8}) |\n" \
 "|                                              |\n" \
 "|    Vitalité   |     Mana    |   Endurance    |\n" \
 "|   {v: >5}/{vm: <5} | {m: >5}/{mm: <5} | {e: >5}/{em: <5}    |\n" \
 "|                                              |\n" \
 "|      For - Agi - Rob - Int - Cha - Sen       |\n" \
 "|      {f: >3} | {a: >3} | {r: >3} | {i: >3} | {c: >3} | {s: >3}       |\n" \
+"|                                              |\n" \
+"| Points d'entraînement : {p_en:>4}                 |\n" \
 "|                                              |\n" \
 "\\----------------------------------------------/"
 
@@ -66,8 +68,11 @@ class CmdScore(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
+        nom_race = personnage.race and personnage.race.nom or "inconnue"
         personnage << chn_score.format(
             nom=personnage.nom,
+            nom_race=nom_race,
+            genre=personnage.genre,
             v=personnage.vitalite,
             vm=personnage.vitalite_max,
             m=personnage.mana,
@@ -80,4 +85,5 @@ class CmdScore(Commande):
             i=personnage.intelligence,
             c=personnage.charisme,
             s=personnage.sensibilite,
+            p_en=personnage.points_entrainement,
         )

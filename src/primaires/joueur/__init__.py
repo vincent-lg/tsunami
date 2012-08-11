@@ -97,6 +97,7 @@ class Module(BaseModule):
             commandes.alias.CmdAlias(),
             commandes.apprendre.CmdApprendre(),
             commandes.chgroupe.CmdChgroupe(),
+            commandes.entrainer.CmdEntrainer(),
             commandes.groupe.CmdGroupe(),
             commandes.distinctions.CmdDistinctions(),
             commandes.module.CmdModule(),

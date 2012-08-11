@@ -68,6 +68,7 @@ class Prototype(BaseObj):
         self.niveau = 1
         self.gain_xp = 0
         self.script = ScriptPNJ(self)
+        self.entraine_stats = {}
         
         # Salles repop
         self.salles_repop = {}
