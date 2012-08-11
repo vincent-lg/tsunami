@@ -180,7 +180,9 @@ class PNJ(Personnage):
         
         # Gain d'XP
         if adversaire and self.gain_xp:
-            adversaire.gagner_xp_rel(self.niveau, self.gain_xp, "combat")
+            xp = importeur.perso.gen_niveaux.grille_xp[self.niveau][1]
+            xp = xp * self.gain_xp / 100
+            adversaire.gagner_xp("combat", xp)
         
         importeur.pnj.supprimer_PNJ(self.identifiant)
     
