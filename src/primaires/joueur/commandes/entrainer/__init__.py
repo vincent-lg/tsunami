@@ -89,6 +89,11 @@ class CmdEntrainer(Commande):
         
         if dic_masques["stat_ent"]:
             stat = dic_masques["stat_ent"].stat_ent
+            if stat not in stats:
+                personnage << "|err|Aucun maître présent ne peut vous " \
+                        "enseigner cela.|ff|"
+                return
+            
             maitre = stats[stat]
             max = max[stat]
             xp = xps[stat]
@@ -102,7 +107,7 @@ class CmdEntrainer(Commande):
                 personnage << "|err|Vous n'êtes pas assez expérimenté dans ce niveau.|ff|"
                 return
             
-            if personnage.niveaux.get(niveau, 0) > max:
+            if personnage.stats[stat].base > max:
                 personnage.envoyer("|err|{} ne peut vous enseigner davantage " \
                         "cette caractéristique.|ff|", maitre)
                 return
