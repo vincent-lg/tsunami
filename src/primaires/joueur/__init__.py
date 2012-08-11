@@ -98,6 +98,7 @@ class Module(BaseModule):
             commandes.apprendre.CmdApprendre(),
             commandes.chgroupe.CmdChgroupe(),
             commandes.distinctions.CmdDistinctions(),
+            commandes.entrainer.CmdEntrainer(),
             commandes.fixer.CmdFixer(),
             commandes.groupe.CmdGroupe(),
             commandes.module.CmdModule(),

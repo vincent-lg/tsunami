@@ -63,6 +63,9 @@ class Stats(BaseObj):
     def __getnewargs__(self):
         return ()
     
+    def __repr__(self):
+        return "<stats " + repr(self.to_dict) + ">"
+    
     def __str__(self):
         ret = "  "
         for stat in self.__stats:
@@ -74,6 +77,9 @@ class Stats(BaseObj):
         stats = [getattr(self, "_{}".format(stat.nom)) for stat in \
                 self.__stats]
         return iter(tuple(stats))
+    
+    def __contains__(self, stat):
+        return stat in self.to_dict
     
     def __getitem__(self, stat):
         """Retourne la stat."""

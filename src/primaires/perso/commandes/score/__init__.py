@@ -49,6 +49,8 @@ chn_score = \
 "|                                              |\n" \
 "| Points d'apprentissage : {p_app:>4} / {p_app_max:>4}         |\n" \
 "|                                              |\n" \
+"| Points d'entraînement : {p_en:>4}                 |\n" \
+"|                                              |\n" \
 "\\----------------------------------------------/"
 
 class CmdScore(Commande):
@@ -95,4 +97,5 @@ class CmdScore(Commande):
             poids_pc=poids_pc,
             p_app=personnage.points_apprentissage,
             p_app_max=personnage.points_apprentissage_max,
+            p_en=personnage.points_entrainement,
         )

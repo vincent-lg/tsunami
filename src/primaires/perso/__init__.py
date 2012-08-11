@@ -33,6 +33,7 @@
 from collections import namedtuple
 
 from abstraits.module import *
+from primaires.format.fonctions import supprimer_accents
 
 from . import commandes
 from . import masques
@@ -149,6 +150,11 @@ class Module(BaseModule):
         mort.msg_refus = "Vous êtes inconscient."
         mort.msg_visible = "est inconscient ici"
         
+        entraine = self.ajouter_etat("entrainer")
+        entraine.msg_refus = "Vous êtes ent train de vous entraîner."
+        entraine.msg_visible = "s'entraîne ici"
+        entraine.act_autorisees = ["regarder", "parler"]
+        
         self.ajouter_talent("escalade", "escalade", "survie", 0.25)
         self.ajouter_talent("nage", "nage", "survie", 0.25)
         
@@ -188,6 +194,15 @@ class Module(BaseModule):
             if personnage.salle and personnage.salle.nom_terrain == \
                     "subaquatique" and not personnage.est_immortel():
                 personnage.plonger()
+    
+    def get_niveau_par_nom(self, nom):
+        """Retourne le niveau dont le nom est donn├®."""
+        nom = supprimer_accents(nom).lower()
+        for niveau in self.niveaux.values():
+            if supprimer_accents(niveau.nom).lower() == nom:
+                return niveau
+    
+        raise ValueError("niveau inconnu {}".format(nom))
     
     def creer_squelette(self, cle):
         """Création d'un squelette"""

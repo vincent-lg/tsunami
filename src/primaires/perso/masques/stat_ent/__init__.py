@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,23 +28,48 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Fichier contenant le masque <stat_ent>."""
 
-from . import afk
-from . import apprendre
-from . import alias
-from . import chgroupe
-from . import distinctions
-from . import entrainer
-from . import fixer
-from . import groupe
-from . import module
-from . import options
-from . import oublier
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retnom
-from . import setquest
-from . import shutdown
-from . import where
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.format.fonctions import supprimer_accents
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+
+class StatEnt(Masque):
+    
+    """Masque <stat_ent>.
+    
+    On attend un nom de stat entraînable en paramètre.
+    
+    """
+    
+    nom = "stat_ent"
+    nom_complet = "stat à entraîner"
+    
+    def init(self):
+        """Initialisation des attributs"""
+        self.stat = None
+    
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
+        stat_ent = liste_vers_chaine(commande).lstrip()
+        
+        if not stat_ent:
+            raise ErreurValidation( \
+                "De quelle stat parlez-vous ?")
+        
+        self.a_interpreter = stat_ent
+        masques.append(self)
+        commande[:] = []
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        stat_ent = supprimer_accents(self.a_interpreter).lower()
+        if not stat_ent in importeur.perso.cfg_stats.entrainables:
+            raise ErreurValidation( \
+                "Stat inconnue.")
+        
+        self.stat_ent = stat_ent

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,23 +28,48 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Fichier contenant le masque <niveau_secondaire>."""
 
-from . import afk
-from . import apprendre
-from . import alias
-from . import chgroupe
-from . import distinctions
-from . import entrainer
-from . import fixer
-from . import groupe
-from . import module
-from . import options
-from . import oublier
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retnom
-from . import setquest
-from . import shutdown
-from . import where
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+
+class NiveauSecondaire(Masque):
+    
+    """Masque <niveau_secondaire>.
+    
+    On attend un nom de niveau secondaire en paramètre.
+    
+    """
+    
+    nom = "niveau_secondaire"
+    nom_complet = "niveau secondaire"
+    
+    def init(self):
+        """Initialisation des attributs"""
+        self.niveau = ""
+    
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
+        niveau_secondaire = liste_vers_chaine(commande).lstrip()
+        if not niveau_secondaire:
+            raise ErreurValidation( \
+                "De quel niveau parlez-vous ?")
+        
+        self.a_interpreter = niveau_secondaire
+        masques.append(self)
+        commande[:] = []
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        niveau_secondaire = self.a_interpreter
+        try:
+            niveau = importeur.perso.get_niveau_par_nom(niveau_secondaire)
+        except ValueError:
+            raise ErreurValidation( \
+                "Niveau secondaire inconnue.")
+        
+        self.niveau_secondaire = niveau_secondaire

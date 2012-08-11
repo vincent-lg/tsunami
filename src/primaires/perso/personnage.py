@@ -773,6 +773,7 @@ class Personnage(BaseObj):
         pas suffisant, lève une exception ValueError.
         
         """
+        print("en", nom_stat)
         if self.points_entrainement <= 0:
             raise ValueError("le personnage {} ne peut rien apprendre de " \
                     "plus".format(self))
@@ -783,6 +784,13 @@ class Personnage(BaseObj):
                     nom_stat, self))
         
         stat.courante = stat.courante + 1
+        
+        # On entraîne la stat liée
+        liee = importeur.perso.cfg_stats.entrainement_liees.get(nom_stat)
+        print("liée", liee)
+        if liee:
+            stat_liee = self.stats[liee]
+            stat_liee.courante = stat_liee.courante + stat.courante
     
     def ramasser(self, objet, exception=None, qtt=1):
         """Ramasse l'objet objet.
@@ -871,7 +879,6 @@ class Personnage(BaseObj):
         ensuite récursivement l'action.
         
         """
-        print(self.nom, message, dist, salle)
         if dist >= 8:
             return
         

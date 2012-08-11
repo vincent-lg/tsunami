@@ -34,7 +34,9 @@ from . import cle
 from . import commande
 from . import etat
 from . import ident
+from . import niveau_secondaire
 from . import nom_stat
 from . import nombre
 from . import personnage
 from . import prompt
+from . import stat_ent
