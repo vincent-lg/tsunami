@@ -102,7 +102,7 @@ class CmdEntrainer(Commande):
                 personnage << "|err|Vous n'êtes pas assez expérimenté dans ce niveau.|ff|"
                 return
             
-            if personnage.niveaux.get(niveau, 0) > max:
+            if personnage.stats[stat].base > max:
                 personnage.envoyer("|err|{} ne peut vous enseigner davantage " \
                         "cette caractéristique.|ff|", maitre)
                 return
