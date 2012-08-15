@@ -105,7 +105,7 @@ class ConteneurNourriture(BaseType):
         
         """
         ajout = "vide"
-        if self.nourriture:
+        if hasattr(self, "nourriture") and self.nourriture:
             poids_contenu = sum([o.poids_unitaire for o in self.nourriture])
             ratio = ceil(10 * poids_contenu / self.poids_max)
             for r, message in self.statuts:
