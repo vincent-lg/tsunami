@@ -31,6 +31,7 @@
 """Package contenant la commande 'retirer'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.objet.conteneur import SurPoids
 
 class CmdRetirer(Commande):
     
