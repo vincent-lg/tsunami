@@ -28,6 +28,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+"""Classe représentant l'autoquête coursier."""
+
 class AutoQuete:
     
     """Classe définissant le type d'autoquête coursier.
@@ -40,6 +42,16 @@ class AutoQuete:
     nom_type = "coursier"
     parent = "avec_PNJ"
     concrete = False
+    
+    def __init__(self):
+        super().__init__(self)
+        self.liste_courses = {}
+        self.mot_activation = "travail"
+        self.messages = {
+            "introduction": "Voudrais-tu faire un travail pour moi ?",
+            "explications": "J'ai besoin de ça et ça parce que ceci.",
+            "remerciements": "Merci ! Tu t'es montré efficace.",
+        }
     
     def est_complete(self, personnage):
         """Retourne True si l'autoquête est complète pour personnage."""

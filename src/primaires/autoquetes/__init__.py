@@ -33,7 +33,9 @@ import os
 
 from abstraits.module import *
 from corps.arborescence import getcwd
+from primaires.format.fonctions import format_nb
 from .editeurs import editeurs
+from .types.base import AutoQuete
 from .v_editeur import ValidateurEditeur
 
 # Constantes
@@ -77,6 +79,15 @@ class Module(BaseModule):
     def init(self):
         """Initialisation du module."""
         self.charger_types()
+        
+        # On récupère les autoquêtes
+        autoquetes = importeur.supenr.charger_groupe(AutoQuete)
+        nb_autoquetes = len(autoquetes)
+        if autoquetes:
+            AutoQuete._no = max(q.id for q in autoquetes)
+        self.autoquetes = autoquetes
+        self.logger.info(format_nb(nb_autoquetes, "{nb} autoquête{s} " \
+                "récupérée{s}", fem=True))
         BaseModule.init(self)
     
     def ajouter_commandes(self):

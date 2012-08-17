@@ -42,7 +42,7 @@ pour ajouter un nouveau type de quête.
 1. Création du répertoire contenant le type d'autoquêtes
 
 C'est le plus simple. Créer, à la racine de ce package, un répertoire
-qui définira un type de sous-quête. Donenz-lui un nom Python valide assez
+qui définira un type de sous-quête. Donnez-lui un nom Python valide assez
 proche du nom qui sera affiché en définitive. Si possible, faites tenir
 ce nom en un seul mot, tout en minuscule, les espaces éventuels sont
 remplacés par des signes soulignés (_). Pour des raisons d'encodage,
@@ -148,7 +148,7 @@ Dans l'ordre :
   l'éditeur entier sera sélectionné (la liste des éditeurs possibles
   est listée plus bas, ainsi que les paramètres qu'ils attendent).
 * On définit ensuite la configuration de nom 'minimum'. Cette donnée
-  de configuration fait parti de celels qui sont attendues par le type
+  de configuration fait parti de celles qui sont attendues par le type
   entier (là encore, voire plus bas).
 * Les dernières lignes définies l'aide spécifiée pour éditer cette
   information. C'est un message plus explicite pour le bâtisseur qui paramètre

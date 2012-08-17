@@ -27,6 +27,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+"""Fichier contenant la classe Autoquete, détaillée plus bas."""
+
 from datetime import datetime
 
 from abstraits.obase import BaseObj

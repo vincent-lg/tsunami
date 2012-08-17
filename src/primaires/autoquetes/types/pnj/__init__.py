@@ -28,6 +28,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+"""Fichier contenant la classe définissant l'AutoQuete avec_PNJ."""
+
 class AutoQuete:
     
     """Classe autoquête avec_PNJ.
@@ -41,6 +43,11 @@ class AutoQuete:
     parent = "base"
     concrete = False
     
+    def __init__(self):
+        """Constructeur de l'autoquête."""
+        super().__init__(self)
+        self.prototype = None
+    
     def est_complete(self, personnage):
-        """Retourne True si l'autoquête est complète pour personnage."""
+        """L'autoquête est-elle complute ?"""
         return False
