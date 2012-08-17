@@ -185,7 +185,7 @@ class Combat:
             armes = combattant.get_armes()
             armes = armes if armes else [None]
             for arme in armes:
-                if combattu.est_mort():
+                if combattu is None or combattu.est_mort():
                     continue
                 
                 attaques = self.get_attaques(combattant)
