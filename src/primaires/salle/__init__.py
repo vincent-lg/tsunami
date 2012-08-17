@@ -114,6 +114,10 @@ class Module(BaseModule):
         self.salles_a_cartographier = []
         self.graph = {}
         self.details_dynamiques = []
+        
+        # Constantes
+        self.TERRAINS_SANS_FEU = ("ville", "désert", "route", "aquatique",
+                "subaquatique", "rive")
     
     @property
     def salles(self):

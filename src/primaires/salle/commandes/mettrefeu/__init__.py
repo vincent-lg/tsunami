@@ -76,6 +76,11 @@ class CmdMettreFeu(Commande):
                     importeur.objet.supprimer_objet(
                             objet.identifiant)
         else:
+            if salle.interieur or salle.nom_terrain in ("rive", "aquatique",
+                    "subaquatique", "ville", "route"):
+                personnage << "|err|Vous ne pouvez pas faire de feu ici.|ff|"
+                return
+            
             pierre = None
             for objet, qtt, t_conteneur in \
                     personnage.equipement.inventaire.iter_objets_qtt(

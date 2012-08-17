@@ -104,6 +104,9 @@ class Feu(BaseObj):
             "Quelques flammes faiblardes tentent de s'extirper de la cendre.",
             "Les flammes se ravivent un instant, puis retombent, vaincues.",
         ]
+        if self.salle.nom_terrain in importeur.salle.TERRAINS_SANS_FEU:
+            self.puissance = 1
+        
         if random() < self.stabilite and self.tour == 5:
             if self.puissance <= 5:
                 self.salle.envoyer("Le feu s'éteint sans crier gare, à la " \
@@ -177,8 +180,13 @@ class Feu(BaseObj):
             coef_puissance = 0
         else:
             coef_puissance = 10
-        salle_fils = choice([s.salle_dest for s in self.salle.sorties])
-        print(salle_fils)
+        salles = [s.salle_dest for s in self.salle.sorties]
+        salles = [s for s in salles if s.nom_terrain not in \
+                importeur.salle.TERRAINS_SANS_FEU]
+        if not salles:
+            return
+        
+        salle_fils = choice(salles)
         if salle_fils.ident in importeur.salle.feux:
             feu_fils = importeur.salle.feux[salle_fils.ident]
         else:
