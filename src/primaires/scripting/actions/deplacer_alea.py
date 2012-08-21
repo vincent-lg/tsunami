@@ -33,6 +33,7 @@
 from random import choice
 
 from primaires.format.fonctions import supprimer_accents
+from primaires.perso.exceptions.action import ExceptionAction
 from primaires.scripting.action import Action
 
 class ClasseAction(Action):
@@ -73,7 +74,10 @@ class ClasseAction(Action):
             return
         
         sortie = choice(sorties)
-        personnage.deplacer_vers(sortie)
+        try:
+            personnage.deplacer_vers(sortie)
+        except ExceptionAction:
+            pass
     
     def deplacer_alea_personnage_terrains(personnage, terrains):
         """Déplace aléatoirement le personnage en fonction de terrains.
@@ -113,4 +117,7 @@ class ClasseAction(Action):
             return
         
         sortie = choice(sorties)
-        personnage.deplacer_vers(sortie)
+        try:
+            personnage.deplacer_vers(sortie)
+        except ExceptionAction:
+            pass
