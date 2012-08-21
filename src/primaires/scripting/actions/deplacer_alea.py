@@ -67,7 +67,7 @@ class ClasseAction(Action):
         for sortie in personnage.salle.sorties:
             if sortie and not sortie.cachee and (not sortie.porte or \
                     not sortie.porte.verrouillee):
-                sorties.append(sortie.direction)
+                sorties.append(sortie.nom)
         
         if not sorties:
             # Aucune sortie disponible
@@ -110,7 +110,7 @@ class ClasseAction(Action):
                     not sortie.porte.verrouillee) and sortie.salle_dest and \
                     supprimer_accents(sortie.salle_dest.nom_terrain) in \
                     terrains:
-                sorties.append(sortie.direction)
+                sorties.append(sortie.nom)
         
         if not sorties:
             # Aucune sortie disponible
