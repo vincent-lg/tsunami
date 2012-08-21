@@ -196,6 +196,7 @@ class PNJ(Personnage):
     def tick(self):
         """Méthode appelée à chaque tick."""
         Personnage.tick(self)
+        self.script["tick"].executer(pnj=self)
     
     def regarder(self, personnage):
         """personnage regarde self."""
