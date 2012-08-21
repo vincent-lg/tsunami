@@ -157,6 +157,13 @@ class ScriptPNJ(Script):
         var_perso = evt_donne.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le donneur"
         
+        # Evénement tick
+        evt_tick = self.creer_evenement("tick")
+        evt_tick.aide_courte = "le tick du PNJ se déclenche"
+        evt_tick.aide_longue = \
+            "Cet évènement est appelé quand le tick du PNJ se déclenche " \
+            "(toutes les minutes)."
+        
         # On ajoute à tous les évènements la variable 'pnj'
         for evt in self.evenements.values():
             var_pnj = evt.ajouter_variable("pnj", "PNJ")
