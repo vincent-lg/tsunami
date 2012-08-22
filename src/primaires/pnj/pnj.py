@@ -80,6 +80,7 @@ class PNJ(Personnage):
             self.stats.restaurer()
             self.lier_equipement(prototype.squelette)
             self.genre = prototype.genre
+            self.talents.update(prototype.talents)
             
             # Copie de l'équipement
             for membre, p_objet in prototype.equipement.items():

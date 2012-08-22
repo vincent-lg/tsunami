@@ -149,7 +149,7 @@ class EdtPedit(Presentation):
         xp = self.ajouter_choix("xP", "x", Flottant, prototype,
                 "gain_xp")
         xp.parent = self
-        xp.apercu = "{objet.gain_xp}%"
+        xp.apercu = "{objet.gain_xp}% ({objet.gain_xp_absolu} XP)"
         xp.prompt = "Entrez le pourcentage d'XP reçue par l'adversaire : "
         xp.aide_courte = \
             "Entrez le pourcentage d'XP relative gagnée par l'adversaire lors " \

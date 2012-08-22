@@ -53,7 +53,8 @@ class CmdWhere(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
-        joueurs = type(self).importeur.connex.joueurs_connectes
+        joueurs = sorted([j for j in importeur.connex.joueurs_connectes],
+                key=lambda j: j.nom)
         liste_affichee = []
         if not joueurs:
             personnage.envoyer("Aucun joueur ne semble être présent, mais " \
