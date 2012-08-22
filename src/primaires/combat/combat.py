@@ -143,8 +143,14 @@ class Combat:
         
         """
         armes_def = combattu.get_armes()
-        if varier(combattu.pratiquer_talent(CLE_TALENT_ESQUIVE), 30) >= \
-                randint(1, 90):
+        poids_combattant = combattant.poids / combattant.poids_max
+        poids_combattu = combattu.poids / combattu.poids_max
+        diff = (poids_combattant - poids_combattu) * 30
+        conn = combattu.get_talent("mains_nues")
+        if armes_def:
+            conn = combattu.get_talent(armes_def[0].cle_talent)
+        if varier(combattu.pratiquer_talent(CLE_TALENT_ESQUIVE), 15) + diff >= \
+                varier(90, 10):
             attaque.envoyer_msg_tentative(combattant, combattu, membre, arme)
             combattant.envoyer("{} esquive votre coup.", combattu)
             combattu.envoyer("Vous esquivez le coup porté par {}.",
@@ -154,7 +160,7 @@ class Combat:
             degats = 0
         elif len([arme for arme in armes_def if arme.nom_type in \
                 ARMES_PARADE]) > 0 and varier(combattu.pratiquer_talent(
-                CLE_TALENT_PARADE), 20) >= randint(15, 70):
+                CLE_TALENT_PARADE), 10) >= varier(conn, 15):
             attaque.envoyer_msg_tentative(combattant, combattu, membre, arme)
             combattant.envoyer("{} pare votre coup.", combattu)
             combattu.envoyer("Vous parez le coup porté par {}.",
