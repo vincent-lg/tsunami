@@ -70,6 +70,7 @@ class Prototype(BaseObj):
         self.script = ScriptPNJ(self)
         self.a_depecer = {}
         self.entraine_stats = {}
+        self.talents = {}
         
         # Salles repop
         self.salles_repop = {}
@@ -87,6 +88,11 @@ class Prototype(BaseObj):
     def nom_race(self):
         """Retourne le nom de la race si existant ou une chaîne vide."""
         return (self.race and self.race.nom) or ""
+    
+    @property
+    def gain_xp_absolu(self):
+        return int(importeur.perso.gen_niveaux.grille_xp[self.niveau - 1][1] \
+                * self.gain_xp / 100)
     
     def _get_race(self):
         return self._race
