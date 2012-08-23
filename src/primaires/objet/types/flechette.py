@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,20 +28,44 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module objet."""
+"""Fichier contenant le type fléchette."""
 
-from . import boire
-from . import donner
-from . import jeter
-from . import manger
-from . import oedit
-from . import olist
-from . import opurge
-from . import ospawn
-from . import porter
-from . import poser
-from . import prendre
-from . import puiser
-from . import remplir
-from . import retirer
-from . import vider
+from corps.aleatoire import *
+from .base import BaseType
+from .cible import Cible
+
+class Flechette(BaseType):
+    
+    """Type d'objet: fléchette.
+    
+    """
+    
+    nom_type = "fléchette"
+    def veut_jeter(self, personnage, sur):
+        """Le personnage veut jeter l'objet sur sur."""
+        if not hasattr(sur, "prototype") or not isinstance(sur.prototype,
+                Cible):
+            return ""
+        
+        return "jeter_cible"
+    
+    def jeter(self, personnage, elt):
+        """Jète la fléchette sur un élément."""
+        fact = varier(personnage.agilite, 20) / 100
+        fact *= (1 - personnage.poids / personnage.poids_max)
+        reussite = chance_sur(fact * 100 + varier(25, 10))
+        if reussite:
+            personnage << "Vous lancez {} sur {}".format(self.get_nom(), elt)
+            personnage.salle.envoyer("{{}} envoie {} sur {}.".format(
+                    self.get_nom(), elt), personnage)
+        else:
+            personnage << "Vous lancez {} mais manquez {}".format(self.get_nom(), elt)
+            personnage.salle.envoyer("{{}} envoie {} mais manque {}.".format(
+                    self.get_nom(), elt), personnage)
+            personnage.salle.objets_sol.ajouter(self)
+        
+        return reussite
+    
+    def jeter_cible(self, personnage, cible):
+        personnage << "Bien joué !"
+        personnage.salle.objets_sol.ajouter(self)

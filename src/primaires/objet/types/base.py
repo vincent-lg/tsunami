@@ -283,6 +283,35 @@ class BaseType(BaseObj, metaclass=MetaType):
                 objet=self, personnage=personnage)
         return ""
     
+    def veut_jeter(self, personnage, sur):
+        """Méthode appelée pour tester si le personnage peut jeter l'objet.
+        
+        On doit préciser :
+            personnage -- le personnage voulant jeter l'objet
+            sur -- sur quoi veut-il jeter l'objet ?
+        
+        Le dernier paramètre peut être n'importe quel élément observable
+        (un autre objet, un autre personnage...).
+        
+        La méthode doit retourner :
+            Une chaîne vide si l'objet ne peut pas être lancé
+            Un nom de méthode à appeler si l'objet peut être lancé
+        
+        """
+        return ""
+    
+    def jeter(self, personnage, sur):
+        """Jète self sur sur.
+        
+        Les paramètres sont les mêmes que veut_jeter.
+        
+        On retourne :
+            True si on a pu jeter l'objet
+            False sinon
+        
+        """
+        return False
+    
     def detruire(self):
         """Destruction du prototype d'objet."""
         # Destruction des objets à dépecer

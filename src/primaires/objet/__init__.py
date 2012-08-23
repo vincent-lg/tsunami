@@ -103,6 +103,7 @@ class Module(BaseModule):
         self.commandes = [
             commandes.boire.CmdBoire(),
             commandes.donner.CmdDonner(),
+            commandes.jeter.CmdJeter(),
             commandes.manger.CmdManger(),
             commandes.oedit.CmdOedit(),
             commandes.olist.CmdOlist(),

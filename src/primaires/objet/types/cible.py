@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,20 +28,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module objet."""
+"""Fichier contenant le type cible."""
 
-from . import boire
-from . import donner
-from . import jeter
-from . import manger
-from . import oedit
-from . import olist
-from . import opurge
-from . import ospawn
-from . import porter
-from . import poser
-from . import prendre
-from . import puiser
-from . import remplir
-from . import retirer
-from . import vider
+from .base import BaseType
+
+class Cible(BaseType):
+    
+    """Type d'objet: cible.
+    
+    """
+    
+    nom_type = "cible"

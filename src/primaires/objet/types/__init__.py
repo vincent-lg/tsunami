@@ -59,10 +59,12 @@ class MetaType(MetaBaseObj):
                 base.types[cls.nom_type] = cls
 
 from .bijou import Bijou
+from .cible import Cible
 from .clef import Clef
 from .conteneur import Conteneur
 from .conteneur_potion import ConteneurPotion
 from .conteneur_nourriture import ConteneurNourriture
+from .flechette import Flechette
 from .indefini import *
 from .livre import Livre
 from .potion import Potion
@@ -81,6 +83,7 @@ from .bol import Bol
 
 # Vêtements
 from .cape import Cape
+from .ceinture import Ceinture
 from .chapeau import Chapeau
 from .chaussette import Chaussette
 from .chaussure import Chaussure
