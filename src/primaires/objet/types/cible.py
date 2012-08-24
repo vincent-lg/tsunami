@@ -30,6 +30,8 @@
 
 """Fichier contenant le type cible."""
 
+from abstraits.obase import BaseObj
+from primaires.format.fonctions import supprimer_accents
 from .base import BaseType
 
 class Cible(BaseType):
@@ -39,3 +41,92 @@ class Cible(BaseType):
     """
     
     nom_type = "cible"
+    def __init__(self, cle=""):
+        """Constructeur de l'objet"""
+        BaseType.__init__(self, cle)
+        self.elements = []
+    
+    def get_element(self, nom):
+        """Retourne l'élément du nom indiqué.
+        
+        Si l'élément ne peut être trouvé, lève une exception ValueError.
+        
+        """
+        nom = supprimer_accents(nom).lower()
+        for element in self.elements:
+            if supprimer_accents(element.nom).lower() == nom:
+                return element
+        
+        raise ValueError("l'élément {} ne peut être trouvé".format(nom))
+    
+    def est_element(self, nom):
+        """Retourne True si l'élément du nom indiqué est trouvé."""
+        try:
+            elt = self.get_element(nom)
+        except ValueError:
+            return False
+        else:
+            return True
+    
+    def ajouter_element(self, nom, *args, **kwargs):
+        """Ajoute un élément.
+        
+        Le paramètre obligatoire est le nom de l'élément.
+        Les paramètres supplémentaires (obligatoires ou non) sont transmis
+        au constructeur de Element (voire la classe plus bas).
+        
+        Si le nom de l'élément est déjà utilisé, lève une exception ValueError.
+        
+        """
+        if self.est_element(nom):
+            raise ValueError("l'élément {} est déjà utilisé".format(nom))
+        
+        element = Element(nom, *args, **kwargs)
+        self.elements.append(element)
+        return element
+    
+    def supprimer_element(self, nom):
+        """Supprime l'élément du nom indiqué."""
+        nom = supprimer_accents(nom).lower()
+        for i, element in enumerate(self.elements):
+            if supprimer_accents(element.nom).lower == nom:
+                del self.elements[i]
+                return
+        
+        raise ValueError("l'élément {} ne peut être trouvé".format(nom))
+
+class Element(BaseObj):
+    
+    """Classe représentant un élément de la cible.
+    
+    Il contient :
+            nom -- le nom d'élément
+            probabilite -- la probabilité de le toucher [1]
+            points -- le nombre de points de l'élément
+    
+    [1] La probabilité totale n'est pas 100 mais la somme des probabilités
+        de tous les éléments de la cible.
+    
+    """
+    
+    def __init__(self, nom, probabilite=1, points=1):
+        """Constructeur de l'élément."""
+        BaseObj.__init__(self)
+        self.nom = nom
+        self.probabilite = probabilite
+        self.points = points
+    
+    def __getnewargs__(self):
+        return ("inconnu", )
+    
+    def __repr__(self):
+        return "<élément de cible {}>".format(self.nom)
+    
+    @property
+    def msg_points(self):
+        """Retourne une chaîne représentant le nombre de points."""
+        points = self.points
+        if points > 1:
+            return "{} points".format(points)
+        else:
+            return "{} point".format(points)

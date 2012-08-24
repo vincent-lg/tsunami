@@ -52,8 +52,8 @@ class Flechette(BaseType):
     def jeter(self, personnage, elt):
         """Jète la fléchette sur un élément."""
         fact = varier(personnage.agilite, 20) / 100
-        fact *= (1 - personnage.poids / personnage.poids_max)
-        reussite = chance_sur(fact * 100 + varier(25, 10))
+        fact *= (1.6 - personnage.poids / personnage.poids_max)
+        reussite = chance_sur(fact * 100 + varier(30, 10))
         if reussite:
             personnage << "Vous lancez {} sur {}".format(self.get_nom(), elt)
             personnage.salle.envoyer("{{}} envoie {} sur {}.".format(
@@ -67,5 +67,7 @@ class Flechette(BaseType):
         return reussite
     
     def jeter_cible(self, personnage, cible):
-        personnage << "Bien joué !"
+        touche = choix_probable(cible.elements)
+        personnage.salle.envoyer("{} frappe {} ({}) !".format(
+                self.get_nom().capitalize(), touche.nom, touche.msg_points))
         personnage.salle.objets_sol.ajouter(self)
