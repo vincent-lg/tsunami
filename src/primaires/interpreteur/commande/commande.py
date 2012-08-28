@@ -251,9 +251,9 @@ class Commande(Masque):
                 except ValueError as err:
                     raise ValueError("Une erreur s'est produite lors " \
                             "de la recherche du mot {} : ".format(
-                            mot) + str(err))
+                            mot) + str(err) + "\n" + aide)
         
-        return "".join(decoupe)
+        return "".join(decoupe).replace("|pc|", "%")
     
     def aide_longue_pour(self, personnage):
         """Retourne l'aide longue de la commande.

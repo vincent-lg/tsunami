@@ -65,7 +65,7 @@ class Module(BaseModule):
         # Ajout des commandes
         self.commandes = [
             commandes.lancer.CmdLancer(),
-            commandes.oublier.CmdOublier(),
+            #commandes.oublier.CmdOublier(),
             commandes.sorts.CmdSorts(),
             commandes.spedit.CmdSpedit(),
         ]

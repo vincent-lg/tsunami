@@ -52,7 +52,7 @@ class CmdOublier(Commande):
             "à partir de zéro si vous changez d'avis. Un malus augmentant " \
             "à chaque utilisation de cette commande limitera les points " \
             "d'apprentissage récupérés, sauf si vous avez une connaissance " \
-            "du talent inférieure à 10%."
+            "du talent inférieure à 10|pc|."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -61,9 +61,9 @@ class CmdOublier(Commande):
             if contient(tal.nom, nom_talent) and tal.cle in personnage.talents:
                 oubli = personnage.talents[tal.cle]
                 malus = int(oubli / 100 * 5) + 1 if oubli > 10 else 0
-                personnage.malus += malus
-                if personnage.malus > 60:
-                    personnage.malus = 60
+                #personnage.malus += malus
+                #if personnage.malus > 60:
+                    #personnage.malus = 60
                 del personnage.talents[tal.cle]
                 personnage << "Vous avez oublié le talent {}.".format(tal.nom)
                 return
