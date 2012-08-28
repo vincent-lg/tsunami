@@ -253,9 +253,9 @@ class Test(BaseObj):
                 importeur.diffact.ajouter_action(nom, tps,
                         self.executer_code, evenement, code)
         finally:
-            # del __builtins__["ErreurExecution"]
-            del __builtins__["variables"]
-            del __builtins__["get_variables"]
+            self.retirer_builtins("ErreurExecution")
+            self.retirer_builtins("variables")
+            self.retirer_builtins("get_variables")
     
     def executer_instructions(self, evenement):
         """Convertit et exécute la suite d'instructions.
@@ -277,7 +277,6 @@ class Test(BaseObj):
         
         code += "\n".join(lignes)
         code += "\n    yield None"
-        print("Code :", code)
         
         # Constitution des globales
         globales = self.get_globales(evenement)
@@ -298,3 +297,9 @@ class Test(BaseObj):
             # Si aucun verrou n'a été posé
             if not self.acteur.quetes[etape.quete.cle].verrouille:
                 self.acteur.quetes.valider(etape.quete, etape.niveau)
+    
+    @staticmethod
+    def retirer_builtins(nom):
+        """Retire (si nécessaire) le nom des __builtins__."""
+        if nom in __builtins__:
+            del __builtins__[nom]
