@@ -88,8 +88,9 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
-            commandes.tuer.CmdTuer(),
+            commandes.paix.CmdPaix(),
             commandes.scruter.CmdScruter(),
+            commandes.tuer.CmdTuer(),
         ]
         
         for cmd in self.commandes:
@@ -118,7 +119,13 @@ class Module(BaseModule):
     def supprimer_combat(self, ident):
         """Supprime un combat."""
         if ident in self.combats:
+            combat = self.combats[ident]
             del self.combats[ident]
+            self.importeur.diffact.retirer_action(
+                "combat:{}".format(ident))
+            for personnage in combat.combattants:
+                if personnage.cle_etat == "combat":
+                    personnage.cle_etat = ""
     
     def detruire(self):
         """Destruction du module."""
