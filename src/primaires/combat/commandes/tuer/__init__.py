@@ -55,8 +55,8 @@ class CmdTuer(Commande):
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         attaque = dic_masques["personnage_present"].personnage
-        # A supprimer quand le masque sera créé
-        if attaque.salle is not personnage.salle:
+        if attaque.est_mort():
+            personnage << "|err|Vous ne pensez pas que c'est suffisant ?|ff|"
             return
         
         personnage.agir("tuer")

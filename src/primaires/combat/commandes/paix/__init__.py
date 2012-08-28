@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module perso."""
+"""Package contenant la commande 'paix'.
 
-from . import paix
-from . import scruter
-from . import tuer
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdPaix(Commande):
+    
+    """Commande 'paix'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "paix", "peace")
+        self.schema = "(<ident_salle>)"
+        self.groupe = "administrateur"
+        self.nom_categorie = "combat"
+        self.aide_courte = "supprime le combat dans une salle"
+        self.aide_longue = \
+            "Cette commande supprime le combat dans une salle. Sans " \
+            "paramètres, la salle est celle où vous vous trouvez, mais " \
+            "vous pouvez aussi préciser une salle (sous la forme " \
+            "|ent|zone:mnémonique|ff|)."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation de la commande"""
+        if dic_masques["ident_salle"]:
+            salle = dic_masques["ident_salle"].salle
+        else:
+            salle = personnage.salle
+        
+        if salle.ident not in importeur.combat.combats:
+            personnage << "|err|Aucun combat n'existe dans cette salle.|ff|"
+            return
+        
+        importeur.combat.supprimer_combat(salle.ident)
+        personnage << "|err|Le combat a été interrompu en salle '{}'.".format(
+                salle.ident)

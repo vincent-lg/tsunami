@@ -83,7 +83,7 @@ class Module(BaseModule):
         self.commandes = [
             commandes.acheter.CmdAcheter(),
             commandes.lister.CmdLister(),
-            commandes.vendre.CmdVendre(),
+            #commandes.vendre.CmdVendre(),
         ]
         
         for cmd in self.commandes:
