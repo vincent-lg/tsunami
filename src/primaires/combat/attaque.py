@@ -141,22 +141,21 @@ class Coup(Attaque):
     
     def essayer(self, moi, contre, arme=None):
         """Retourne True si l'attaque réussit, False sinon."""
-        poids_contre = varier(int(contre.poids / contre.poids_max * 100), 15)
-        poids_contre -= int(poids_contre * contre.stats.agilite / 200)
+        fact_m = moi.stats.agilite
+        fact_m -= int(moi.poids / moi.poids_max * fact_m)
+        fact_m /= 100
+        fact_c = contre.stats.agilite
+        fact_c -= int(contre.poids / contre.poids_max * fact_c)
+        fact_c /= 100
+        resistance = int(varier(contre.stats.agilite, 15) * fact_c)
         if arme:
             talent = arme.cle_talent
             connaissance = moi.pratiquer_talent(talent)
         else:
             connaissance = moi.pratiquer_talent("combat_mains_nues")
         
-        if connaissance < 30:
-            plus = 30
-        else:
-            plus = 15
-        
-        connaissance = varier(connaissance, plus)
-        print(connaissance, poids_contre)
-        return connaissance > poids_contre
+        connaissance = int(fact_m * varier(connaissance, 30))
+        return connaissance > resistance
     
     def calculer_degats(self, moi, contre, membre, arme=None):
         """Retourne les dégâts infligés par l'arme."""
