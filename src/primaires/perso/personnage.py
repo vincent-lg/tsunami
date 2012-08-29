@@ -342,6 +342,14 @@ class Personnage(BaseObj):
     def est_connecte(self):
         return False
     
+    def est_en_combat(self):
+        """Retourne True si le personnage est en combat, False sinon."""
+        combat = importeur.combat.combats.get(self.salle.ident)
+        if combat is None:
+            return False
+        
+        return self in combat.combattants
+    
     def detruire(self):
         """Méthode appelée lors de la destruction du personage.
         -   On supprime le personnage de la liste des personnages du squelette
@@ -374,8 +382,20 @@ class Personnage(BaseObj):
         """Méthode redirigeant vers envoyer mais lissant la chaîne."""
         self.envoyer(lisser(chaine), *personnages, **kw_personnages)
     
-    def deplacer_vers(self, sortie):
+    def deplacer_vers(self, sortie, fuir=True):
         """Déplacement vers la sortie 'sortie'"""
+        if self.est_en_combat():
+            reussite = self.essayer_fuir()
+            if reussite:
+                self << "Vous vous enfuyez..."
+                self.cle_etat = ""
+                combat = type(self).importeur.combat.get_combat_depuis_salle(
+                        self.salle)
+                combat.supprimer_combattant(self)
+            else:
+                self << "|err|Vous ne parvenez pas à vous enfuir !|ff|"
+                return
+        
         try:
             self.stats.endurance -= self.salle.terrain.perte_endurance_dep
         except DepassementStat:
@@ -753,6 +773,23 @@ class Personnage(BaseObj):
         self.envoyer(message)
         if unique:
             importeur.information.noter_tip(self, cle)
+    
+    def essayer_fuir(self):
+        """Retourne True si le personnage peut fuir, False sinon.
+        
+        Il est pris pour acquis que le personnage est en combat.
+        
+        """
+        fuite = 3
+        if self.stats.endurance < fuite:
+            self << "|err|Vous êtes trop fatigué.|ff|"
+            return False
+        self.stats.endurance -= fuite
+        combat = type(self).importeur.combat.get_combat_depuis_salle(
+                self.salle)
+        combattu = combat.combattus[self]
+        plus = random.randint(1, 25)
+        return self.stats.agilite + plus >= combattu.stats.agilite
     
     def crier(self, message):
         """Crie le message dans la salle courante et les salles alentours.
