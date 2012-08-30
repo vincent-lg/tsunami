@@ -125,6 +125,22 @@ class ConteneurNourriture(BaseType):
                         return nom[1]
             return str(nombre) + " " + self.nom_pluriel + " " + ajout
     
+    def peut_vendre(self, vendeur):
+        """Retourne True si peut vendre, False sinon."""
+        if hasattr(self, "nourriture") and self.nourriture:
+            vendeur << "|err|{} n'est pas vide.|ff|".format(self.get_nom())
+            return False
+        
+        return True
+    
+    def peut_vendre(self, vendeur):
+        """Retourne True si peut vendre, False sinon."""
+        if hasattr(self, "potion") and self.potion:
+            vendeur << "|err|{} n'est pas vide.|ff|".format(self.get_nom())
+            return False
+        
+        return True
+    
     def regarder(self, personnage):
         """Le personnage regarde l'objet"""
         msg = BaseType.regarder(self, personnage)

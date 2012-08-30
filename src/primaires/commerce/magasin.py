@@ -44,7 +44,6 @@ class Magasin(BaseObj):
     -   Un inventaire des services [1] en vente actuellement
     -   Une liste de services en stock [2]
     -   Des taux d'achats et taux d'intérêts
-    -   Une caisse représentant la liquidité du magasin
     
     [1] Les services nommés peuvent être de plusieurs types :
         l'obtension d'un objet en l'échange d'une somme est le service
@@ -60,16 +59,26 @@ class Magasin(BaseObj):
     
     """
     
+    _nom = "magasin"
+    _version = 1
     def __init__(self, nom, parent=None):
         """Constructeur de la classe."""
         BaseObj.__init__(self)
         self.nom = nom
         self.parent = parent
-        self._vendeur = ""
-        self._monnaies = []
-        self.caisse = 0
+        self.prototype_vendeur = None
         self.inventaire = []
         self.stock = []
+        self.renouvellement_jours = 1
+        self.nb_jours = 0 # nombre de jours sans renouvellement
+        self.renouveler_ouverture = True
+        self.renouveler_fermeture = False
+        self.ouverture = (8, 0)
+        self.fermeture = (22, 0)
+        self.vente_stock = True
+        self.types_vente = []
+        self.max_vente_unitaire = -1
+        self.max_vente_total = 1000
         self._construire()
     
     def __getnewargs__(self):
@@ -109,22 +118,41 @@ class Magasin(BaseObj):
             ret = "|att|Aucun service en vente.|ff|"
         return ret
     
-    def _get_vendeur(self):
-        """Retourne le prototype vendeur"""
-        if self._vendeur in type(self).importeur.pnj.prototypes:
-            return type(self).importeur.pnj.prototypes[self._vendeur]
-        else:
-            self._vendeur = ""
+    @property
+    def vendeur(self):
+        """Retourne, si trouvé, le PNJ représentant le vendeur."""
+        if self.parent is None or self.prototype_vendeur is None:
             return None
-    def _set_vendeur(self, cle):
-        self._vendeur = cle
-    vendeur = property(_get_vendeur, _set_vendeur)
+        
+        for pnj in self.parent.PNJ:
+            if pnj.prototype is self.prototype_vendeur:
+                return pnj
+        
+        return None
     
     @property
     def cle_vendeur(self):
-        """Retourne le nom du vendeur"""
-        return ("|vrc|" + self._vendeur + "|ff|") if self._vendeur else \
-                "|rgc|aucun|ff|"
+        """Retourne la clé du vendeur."""
+        return ("|vrc|" + self.prototype_vendeur.cle + "|ff|") if \
+                self.prototype_vendeur else "|rgc|aucun|ff|"
+    
+    @property
+    def aff_max_vente_unitaire(self):
+        if self.max_vente_unitaire < 0:
+            return "[infinie]"
+        
+        return self.max_vente_unitaire
+    
+    @property
+    def aff_max_vente_total(self):
+        if self.max_vente_total < 0:
+            return "[infinie]"
+        
+        return self.max_vente_total
+    
+    @property
+    def valeur_inventaire(self):
+        return sum(s[0].m_valeur for s in self.inventaire)
     
     def afficher(self, personnage):
         """Affichage du magasin en jeu"""
@@ -201,7 +229,7 @@ class Magasin(BaseObj):
         trouve = False
         for i, (t_service, t_qtt) in enumerate(services):
             if t_service is service:
-                qtt = t_qtt if not inc_qtt else qtt
+                qtt = qtt if not inc_qtt else qtt + t_qtt
                 services[i] = (t_service, qtt)
                 trouve = True
                 break
@@ -211,3 +239,54 @@ class Magasin(BaseObj):
             services = sorted(services, key=lambda l: l[0].m_valeur)
         
         self.inventaire[:] = services
+    
+    def peut_acheter(self, vendeur, objet, qtt=1):
+        """Retourne la valeur si le magasin peut acheter l'objet, False sinon.
+        
+        Un message peut être envoyé au vendeur si le magasin ne peut
+        acheter l'objet.
+        
+        """
+        acheteur = self.vendeur
+        if acheteur is None:
+            vendeur << "|err|Aucun marchand n'est présent pour le moment.|ff|"
+            return False
+        
+        bon_type = False
+        for type_vente in self.types_vente:
+            if objet.est_de_type(type_vente):
+                bon_type = True
+                break
+        
+        if not bon_type:
+            vendeur.envoyer("{} vous dit : je n'achète pas cela.", acheteur)
+            return False
+        
+        if not objet.peut_vendre(vendeur):
+            return False
+        
+        d_qtt = 0
+        for service, t_qtt in self.inventaire:
+            if service is objet.prototype:
+                d_qtt = t_qtt
+                break
+        
+        if d_qtt > 5:
+            vendeur.envoyer("{} vous dit : j'en ai bien assez, merci !",
+                    acheteur)
+            return False
+        
+        valeur_achat = int(objet.estimer_valeur(self, vendeur))
+        if self.max_vente_unitaire >= 0 and valeur_achat * qtt > \
+                self.max_vente_unitaire:
+            vendeur.envoyer("{} vous dit : c'est bien trop cher pour moi !",
+                    acheteur)
+            return False
+        
+        if self.max_vente_total >= 0 and self.valeur_inventaire + \
+                valeur_achat * qtt > self.max_vente_total:
+            vendeur.envoyer("{} vous dit : je n'ai rien besoin de plus, " \
+                    "merci.", acheteur)
+            return False
+        
+        return valeur_achat * qtt

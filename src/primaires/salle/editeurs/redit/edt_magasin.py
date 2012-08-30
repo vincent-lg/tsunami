@@ -43,8 +43,6 @@ class EdtMagasin(Editeur):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
         #self.ajouter_option("v", self.opt_changer_vendeur)
-        #self.ajouter_option("m", self.opt_monnaie)
-        #self.ajouter_option("c", self.opt_modifier_caisse)
         self.ajouter_option("s", self.opt_stock)
         self.ajouter_option("ren", self.opt_renouveler_inventaire)
         self.ajouter_option("h", self.opt_aide)
@@ -57,7 +55,6 @@ class EdtMagasin(Editeur):
         msg += self.aide_courte
         if salle.magasin is not None:
             msg += "\n\nNom du magasin : " + salle.magasin.nom
-            msg += "\nEtat de la caisse : |bc|" + str(salle.magasin.caisse)
             msg += "|ff|\n\n" + str(salle.magasin)
         
         return msg
