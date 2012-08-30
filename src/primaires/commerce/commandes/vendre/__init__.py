@@ -103,6 +103,7 @@ class CmdVendre(Commande):
             
             vendus += qtt
             a_prototype = objet.prototype
+            importeur.objet.supprimer_objet(objet.identifiant)
             if vendus >= nombre:
                 break
         
