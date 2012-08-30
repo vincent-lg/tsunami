@@ -122,7 +122,7 @@ class Module(BaseModule):
             combat = self.combats[ident]
             del self.combats[ident]
             self.importeur.diffact.retirer_action(
-                "combat:{}".format(ident))
+                "combat:{}".format(ident), warning=False)
             for personnage in combat.combattants:
                 if personnage.cle_etat == "combat":
                     personnage.cle_etat = ""

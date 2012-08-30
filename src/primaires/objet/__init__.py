@@ -31,6 +31,7 @@
 """Fichier contenant le module primaire objet."""
 
 from abstraits.module import *
+from primaires.format.fonctions import supprimer_accents
 from . import types
 from . import commandes
 from . import editeurs
@@ -160,6 +161,20 @@ class Module(BaseModule):
     def types_premier_niveau(self):
         """Retourne un dictionnaire des types du premier niveau."""
         return BaseType.types
+    
+    def get_type(self, nom_type):
+        """Retourne, si trouvé, le type indiqué ou lève une KeyError.
+        
+        La recherche se fait indépendemment des majuscules, minuscules ou des
+        accents.
+        
+        """
+        nom_type = supprimer_accents(nom_type).lower()
+        for type in self.types.values():
+            if supprimer_accents(type.nom_type) == nom_type:
+                return type
+        
+        raise KeyError("type {} introuvable".format(nom_type))
     
     def creer_prototype(self, cle, nom_type="indéfini"):
         """Crée un prototype et l'ajoute aux prototypes existants"""

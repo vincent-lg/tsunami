@@ -240,6 +240,18 @@ class Magasin(BaseObj):
         
         self.inventaire[:] = services
     
+    def retirer_inventaire(self, service, qtt):
+        """Retire le service indiqué."""
+        for i, (t_service, t_qtt) in enumerate(self.inventaire):
+            if t_service is service:
+                if qtt >= t_qtt:
+                    del self.inventaire[i]
+                else:
+                    self.inventaire[i] = (t_service, t_qtt - qtt)
+                return
+        
+        raise ValueError("service introuvable")
+    
     def peut_acheter(self, vendeur, objet, qtt=1):
         """Retourne la valeur si le magasin peut acheter l'objet, False sinon.
         
@@ -290,3 +302,8 @@ class Magasin(BaseObj):
             return False
         
         return valeur_achat * qtt
+    
+    def renouveler(self):
+        """Renouvelle l'inventaire depuis le stock."""
+        for service, qtt, flags in self.stock:
+            self.ajouter_inventaire(service, qtt, inc_qtt=False)

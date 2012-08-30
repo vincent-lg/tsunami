@@ -32,6 +32,7 @@
 
 from primaires.interpreteur.editeur import Editeur
 from primaires.commerce.magasin import Magasin
+from primaires.format.fonctions import oui_ou_non
 
 class EdtMagasin(Editeur):
     
@@ -42,7 +43,15 @@ class EdtMagasin(Editeur):
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
-        #self.ajouter_option("v", self.opt_changer_vendeur)
+        self.ajouter_option("v", self.opt_changer_vendeur)
+        #self.ajouter_option("o", self.opt_ouverture)
+        #self.ajouter_option("f", self.opt_fermeture)
+        #self.ajouter_option("r", self.opt_renouvelement)
+        self.ajouter_option("ro", self.opt_renouveler_ouverture)
+        self.ajouter_option("rf", self.opt_renouveler_fermeture)
+        #self.ajouter_option("xu", self.opt_max_unitaire)
+        #self.ajouter_option("xt", self.opt_max_total)
+        self.ajouter_option("ty", self.opt_types_vente)
         self.ajouter_option("s", self.opt_stock)
         self.ajouter_option("ren", self.opt_renouveler_inventaire)
         self.ajouter_option("h", self.opt_aide)
@@ -54,10 +63,48 @@ class EdtMagasin(Editeur):
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += self.aide_courte
         if salle.magasin is not None:
+            magasin = salle.magasin
+            cle_vendeur = magasin.prototype_vendeur and \
+                    magasin.prototype_vendeur.cle or "|rg|aucun|ff|"
+            vendeur = magasin.vendeur and magasin.vendeur.nom_singulier or "aucun"
             msg += "\n\nNom du magasin : " + salle.magasin.nom
-            msg += "|ff|\n\n" + str(salle.magasin)
+            msg += "\nVendeur {} ({})".format(cle_vendeur, vendeur)
+            msg += "\nOuverture à {:02}:{:02}   Fermeture à {:02}:" \
+                    "{:02}".format(*(magasin.ouverture + magasin.fermeture))
+            msg += "\nRenouvellement tous les {} jour(s)".format(
+                    magasin.renouvellement_jours)
+            msg += " (à l'ouverture {}   à la fermeture {})".format(
+                    oui_ou_non(magasin.renouveler_ouverture), oui_ou_non(
+                    magasin.renouveler_fermeture))
+            msg += "\n\nTypes admis en vente : " + ", ".join(
+                    magasin.types_vente)
+            msg += "\nVente unitaire maximum {}   Vente totale maximum " \
+                    "{}".format(magasin.aff_max_vente_unitaire,
+                    magasin.aff_max_vente_total)
+            msg += "\n\n" + str(salle.magasin)
         
         return msg
+    
+    def opt_changer_vendeur(self, arguments):
+        """Change le prototype de PNJ du vendeur.
+        
+        /v <clé_prototype>
+        
+        """
+        salle = self.objet
+        if not salle.magasin:
+            self.pere << "|err|Il n'y a pas de magasin dans cette salle.|ff|"
+            return
+        
+        try:
+            prototype = importeur.pnj.prototypes[arguments.lower().strip()]
+        except KeyError:
+            self.pere << "|err|Impossible de trouver le prototype de PNJ " \
+                    "{}.|ff|".format(arguments)
+            return
+        
+        salle.magasin.prototype_vendeur = prototype
+        self.actualiser()
     
     def opt_renouveler_inventaire(self, arguments):
         """Met à jour l'inventaire du magasin depuis le stock.
@@ -71,9 +118,7 @@ class EdtMagasin(Editeur):
             return
         
         magasin = salle.magasin
-        for service, qtt, flags in magasin.stock:
-            magasin.ajouter_inventaire(service, qtt, inc_qtt=False)
-        
+        magasin.renouveler()
         self.pere << "L'inventaire du magasin a bien été renouvelé."
     
     def opt_stock(self, arguments):
@@ -140,6 +185,57 @@ class EdtMagasin(Editeur):
             self.pere << "|err|Ce type de service n'existe pas.|ff|"
             return
         self.pere << importeur.commerce.aides_types[type]
+    
+    def opt_types_vente(self, arguments):
+        """Ajoute ou supprime des types admis de vente.
+        
+        /ty <type>
+        
+        """
+        nom_types = arguments.split("/")
+        salle = self.objet
+        if not salle.magasin:
+            self.pere << "|err|Il n'y a pas de magasin dans cette salle.|ff|"
+            return
+        
+        magasin = salle.magasin
+        for nom_type in nom_types:
+            nom_type = nom_type.strip()
+            try:
+                type = importeur.objet.get_type(nom_type)
+            except KeyError:
+                self.pere << "|err|Type inconnu {}.|ff|".format(nom_type)
+                return
+            else:
+                nom_type = type.nom_type
+                if nom_type in magasin.types_vente:
+                    magasin.types_vente.remove(nom_type)
+                else:
+                    magasin.types_vente.append(nom_type)
+                    magasin.types_vente.sort()
+            self.actualiser()
+    
+    def opt_renouveler_ouverture(self, arguments):
+        """Renouvelle à l'ouverture du magasin."""
+        salle = self.objet
+        if not salle.magasin:
+            self.pere << "|err|Il n'y a pas de magasin dans cette salle.|ff|"
+            return
+        
+        magasin = salle.magasin
+        magasin.renouveler_ouverture = not magasin.renouveler_ouverture
+        self.actualiser()
+    
+    def opt_renouveler_fermeture(self, arguments):
+        """Renouvelle à la fermeture du magasin."""
+        salle = self.objet
+        if not salle.magasin:
+            self.pere << "|err|Il n'y a pas de magasin dans cette salle.|ff|"
+            return
+        
+        magasin = salle.magasin
+        magasin.renouveler_fermeture = not magasin.renouveler_fermeture
+        self.actualiser()
     
     def interpreter(self, msg):
         """Interprétation de la présentation"""

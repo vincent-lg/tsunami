@@ -86,4 +86,5 @@ class CmdAcheter(Commande):
         
         # Distribution des objets
         service.acheter(nb_obj, magasin, transaction)
+        magasin.retirer_inventaire(service, nb_obj)
         personnage << "Vous achetez {}.".format(service.get_nom(nb_obj))
