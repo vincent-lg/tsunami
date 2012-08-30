@@ -414,13 +414,6 @@ class Personnage(BaseObj):
                 self << "|err|Vous ne parvenez pas à vous enfuir !|ff|"
                 return
         
-        try:
-            self.stats.endurance -= self.salle.terrain.perte_endurance_dep
-        except DepassementStat:
-            self << "|err|Vous êtes trop fatigué.|ff|"
-            return
-        
-
         self.agir("bouger")
         salle = self.salle
         salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
