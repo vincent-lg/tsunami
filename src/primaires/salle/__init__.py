@@ -114,6 +114,7 @@ class Module(BaseModule):
         self.salles_a_cartographier = []
         self.graph = {}
         self.details_dynamiques = []
+        self.a_renouveler = {}
         
         # Constantes
         self.TERRAINS_SANS_FEU = ("ville", "désert", "route", "aquatique",
@@ -289,6 +290,16 @@ class Module(BaseModule):
         
         # On prépare les sorties
         for salle in self.salles.values():
+            if salle.magasin:
+                magasin = salle.magasin
+                if magasin.renouveler_ouverture:
+                    liste = self.a_renouveler.get(magasin.ouverture, [])
+                    liste.append(magasin)
+                    self.a_renouveler[magasin.ouverture] = liste
+                if magasin.renouveler_fermeture:
+                    liste = self.a_renouveler.get(magasin.fermeture, [])
+                    liste.append(magasin)
+                    self.a_renouveler[magasin.ouverture] = liste
             for sortie in salle.sorties:
                 salle_dest = self.salles[sortie.salle_dest]
                 sortie.salle_dest = salle_dest

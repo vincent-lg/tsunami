@@ -261,6 +261,15 @@ class BaseType(BaseObj, metaclass=MetaType):
             objet = importeur.objet.creer_objet(self)
             salle.objets_sol.ajouter(objet)
     
+    def peut_vendre(self, vendeur):
+        """Retourne True si peut vendre l'objet."""
+        return True
+    
+    def estimer_valeur(self, magasin, vendeur):
+        """Estime la valeur d'un objet."""
+        valeur = self.m_valeur
+        return valeur * 0.7
+    
     def regarder(self, personnage):
         """Le personnage regarde l'objet"""
         salle = personnage.salle

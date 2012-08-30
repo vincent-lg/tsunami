@@ -58,7 +58,13 @@ class CmdAcheter(Commande):
         if salle.magasin is None:
             personnage << "|err|Il n'y a pas de magasin ici.|ff|"
             return
+        
+        
         magasin = salle.magasin
+        if magasin.vendeur is None:
+            personnage << "|err|Aucun vendeur n'est présent pour l'instant.|ff|"
+            return
+        
         nb_obj = dic_masques["nombre"].nombre if \
             dic_masques["nombre"] is not None else 1
         no_ligne = dic_masques["objet"].no_ligne
@@ -80,4 +86,5 @@ class CmdAcheter(Commande):
         
         # Distribution des objets
         service.acheter(nb_obj, magasin, transaction)
+        magasin.retirer_inventaire(service, nb_obj)
         personnage << "Vous achetez {}.".format(service.get_nom(nb_obj))

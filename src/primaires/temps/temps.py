@@ -181,6 +181,16 @@ class Temps(BaseObj):
         elif h_now > self.h_coucher or h_now < self.h_lever - 1:
             return config.nuit        
     
+    @property
+    def heure_minute(self):
+        """Retourne un tuple heure, minute."""
+        heure = self.heure
+        minute = self.minute
+        if minute >= 60:
+            minute %= 60
+            heure += 1
+        return (heure, minute)
+    
     def inc(self):
         """Incrémente de 1 seconde réelle"""
         self.seconde += 1 / self.vitesse_ecoulement
@@ -188,6 +198,7 @@ class Temps(BaseObj):
         if self.seconde >= 60:
             self.seconde = Fraction()
             self.minute += 1
+            importeur.temps.changer_minute()
         if self.minute >= 60:
             self.minute -= 60
             self.heure += 1

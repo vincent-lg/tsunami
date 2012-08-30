@@ -113,12 +113,15 @@ class Module(BaseModule):
         
         
     
-    def retirer_action(self, nom):
+    def retirer_action(self, nom, warning=True):
         """Méthode permettant de retirer une action différée de la liste de
         celles en attente.
         
         """
         if not nom in self.ordre_actions:
+            if not warning:
+                return
+            
             self.logger.warning("L'action différée {0} devant être " \
                     "supprimée n'existe pas".format(nom))
         else:

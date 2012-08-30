@@ -62,6 +62,20 @@ class Transaction:
                 self.initiateur, self.receveur, self.somme)
     
     @staticmethod
+    def aff_argent(argent):
+        """Affiche l'argent."""
+        if not argent:
+            return "rien"
+        
+        argent = sorted(argent.items(), key=lambda a: a[0].valeur,
+                reverse=True)
+        argent = [a.get_nom(qtt) for a, qtt in argent]
+        if len(argent) >= 2:
+            return ", ".join(argent[:-1]) + " et " + argent[-1]
+        
+        return ", ".join(argent)
+    
+    @staticmethod
     def somme_argent(objets):
         """Retourne la somme de la valeur des objets.
         
@@ -214,7 +228,6 @@ class Transaction:
         # Le personnage doit ramasser l'argent à rendre
         for objet, qtt in self.argent_rendu.items():
             self.initiateur.ramasser(objet, qtt=qtt)
-            print(self.initiateur.nom, "ramasse", objet.get_nom(qtt))
         
         self.receveur.parent.zone.argent_total += self.somme
 

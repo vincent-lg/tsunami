@@ -104,6 +104,18 @@ class Module(BaseModule):
         if salle.exterieur and not opaque:
             liste_messages.append("|cy|" + self.temps.ciel_actuel + "|ff|")
     
+    def changer_minute(self):
+        """Change de minute.
+        
+        Renouvelle les magasins.
+        
+        """
+        magasins = importeur.salle.a_renouveler.get(self.temps.heure_minute)
+        if magasins:
+            for magasin in magasins:
+                magasin.inventaire[:] = []
+                magasin.renouveler()
+    
     def changer_jour(self):
         """Appel les callbacks contenus dans met_changer_jour."""
         for met in self.met_changer_jour:
