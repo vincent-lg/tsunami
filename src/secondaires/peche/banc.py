@@ -108,7 +108,10 @@ class Banc(BaseObj):
     def tick(self):
         """Tick qui doit être appelé toute les minutes."""
         if self.abondance_actuelle < self.abondance_max:
-            self.abondance_actuelle += int(self.abondance_max / 60)
+            plus = int(self.abondance_max / 60)
+            if plus == 0:
+                plus = 1
+            self.abondance_actuelle += plus
         
         if self.abondance_actuelle > self.abondance_max:
             self.abondance_actuelle = self.abondance_max

@@ -166,7 +166,7 @@ class Module(BaseModule):
             personnage.cle_etat = ""
         
         personnage.pratiquer_talent(talent, 5)
-        if chance_sur(5):
+        if chance_sur(5) and banc.abondance_actuelle >= 0:
             personnage.sans_prompt()
             personnage << "Votre ligne frémit légèrement, comme " \
                     "sensiblement éfleurée."
@@ -190,8 +190,9 @@ class Module(BaseModule):
         
         connaissance = personnage.pratiquer_talent(talent, 3)
         qualite = varier(canne.appat.qualite, 2)
-        qualite /= 15
-        qualite += connaissance / 250
+        qualite /= 21
+        abondance = banc.abondance_actuelle
+        qualite += connaissance / 400 + abondance / 400
         if banc.poissons and random.random() < qualite:
             # On choisit le poisson
             poissons = list(banc.poissons.keys())
