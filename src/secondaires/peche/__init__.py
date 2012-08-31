@@ -158,6 +158,7 @@ class Module(BaseModule):
     
     def attendre_pecher(self, personnage, canne):
         """Le personnage pêche."""
+        banc = self.get_banc_pour(personnage.salle)
         talent = self.get_talent_peche(personnage.salle)
         if personnage.cle_etat != "pecher":
             return
@@ -166,7 +167,7 @@ class Module(BaseModule):
             personnage.cle_etat = ""
         
         personnage.pratiquer_talent(talent, 5)
-        if chance_sur(5) and banc.abondance_actuelle >= 0:
+        if chance_sur(5) and banc.abondance_actuelle > 0:
             personnage.sans_prompt()
             personnage << "Votre ligne frémit légèrement, comme " \
                     "sensiblement éfleurée."
