@@ -39,6 +39,7 @@ from primaires.vehicule.vecteur import Vecteur
 from .chemin import Chemin
 from .chemins import Chemins
 from .coordonnees import Coordonnees
+from .sortie import Sortie
 from .sorties import Sorties, NOMS_SORTIES
 from .details import Details
 from .objets_sol import ObjetsSol
