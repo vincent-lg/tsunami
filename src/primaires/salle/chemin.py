@@ -47,6 +47,15 @@ class Chemin(BaseObj):
         self.sorties = []
         self._construire()
     
+    def __repr__(self):
+        """Affichage du chemin."""
+        sorties = [sortie.nom for sortie in self.sorties]
+        return "De {} vers {} ({})".format(self.origine, self.destination,
+                ", ".join(sorties))
+    
+    def __bool__(self):
+        return True
+    
     @property
     def longueur(self):
         """Retourne la taille du chemin.
@@ -73,15 +82,6 @@ class Chemin(BaseObj):
             a_v = v
         
         return norme
-    
-    def __repr__(self):
-        """Affichage du chemin."""
-        sorties = [sortie.nom for sortie in self.sorties]
-        return "De {} vers {} ({})".format(self.origine, self.destination,
-                ", ".join(sorties))
-    
-    def __bool__(self):
-        return True
     
     @property
     def origine(self):
@@ -114,3 +114,40 @@ class Chemin(BaseObj):
         else:
             # Algorithme 2 : recherche de salles sur le parcours
             return
+    
+    def raccourcir(self):
+        """Tente de raccourcir le chemin.
+        
+        On raccourci un chemin en vérifiant qu'un chemin plus court
+        ne peut exister en passant au-dessus d'une salle. Par exemple,
+        si le chemin compte trois salles, A, B et C, on vérifie que A
+        n'a pas une sortie directe vers C. Et si c'est le cas, on retire
+        l'intermédiaire B.
+        
+        """
+        sorties = []
+        i = 0
+        while i < len(self.sorties):
+            sortie = self.sorties[i]
+            if (i + 1) < len(self.sorties):
+                suivante = self.sorties[i + 1]
+            else:
+                sorties.append(sortie)
+                break
+            
+            a = sortie.parent
+            b = sortie.salle_dest
+            c = suivante.salle_dest
+            trouve = False
+            for t_sortie in a.sorties:
+                if t_sortie.salle_dest is c:
+                    sorties.append(t_sortie)
+                    i += 2
+                    trouve = True
+                    break
+            
+            if not trouve:
+                sorties.append(sortie)
+                i += 1
+        
+        self.sorties = sorties
