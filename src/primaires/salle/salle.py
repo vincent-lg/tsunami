@@ -35,6 +35,8 @@ from collections import OrderedDict
 from abstraits.obase import BaseObj
 from corps.fonctions import lisser
 from primaires.format.description import Description
+from primaires.vehicule.vecteur import Vecteur
+from .chemin import Chemin
 from .chemins import Chemins
 from .coordonnees import Coordonnees
 from .sorties import Sorties, NOMS_SORTIES
@@ -185,7 +187,7 @@ class Salle(BaseObj):
         """Retourne les chemins autour de self dans le rayon précisé."""
         return Chemins.salles_autour(self, rayon)
     
-    def trouver_chemin(self, destination, rayon=5):
+    def trouver_chemin_absolu(self, destination, rayon=5):
         """Retourne, si trouvé, le chemin menant à destination ou None.
         
         Le rayon passé en argument est celui de recherche. Plus il est
@@ -194,6 +196,52 @@ class Salle(BaseObj):
         """
         chemins = Chemins.salles_autour(self, rayon)
         return chemins.get(destination)
+    
+    def trouver_chemin(self, destination):
+        """Recherche et retourne le chemin entre deux salles.
+        
+        Plusieurs algorithmes de recherche sont utilisés en fonction
+        des situations. Pour des raisons de performance, certains sont
+        plus efficaces que d'autres.
+        
+        Si l'une des salles a des coordonnées invalides, on cherche
+        le chemin absolu. Sinon, on recherche le chemin relatif et,
+        au besoin, on le complète au fur et à mesure grâce à l'algorithme
+        de chemin absolu.
+        
+        NOTE IMORTANTE : aucune de ces méthodes ne garantie qu'un
+        chemin sera trouvé, quand bien même il en existe un.
+        
+        """
+        # Si l'une des salles n'a pas de coordonnées valide
+        if self.coords.invalide or destination.coords.invalide:
+            return self.trouver_chemin_absolu(destination, 4)
+        
+        salles = Chemins.get_salles_entre(self, destination)
+        # On détermine, si possible, le chemin entre chaque salle
+        chemin = Chemin()
+        a_salle = None
+        for d_salle in salles:
+            if a_salle is None:
+                a_salle = d_salle
+                continue
+            
+            d_chemin = a_salle.trouver_chemin_absolu(d_salle, 2)
+            if d_chemin is None:
+                vecteur = Vecteur(*d_salle.coords.tuple()) - \
+                        Vecteur(*a_salle.coords.tuple())
+                sortie = Sortie(vecteur.nom_direction, vecteur.nom_direction,
+                        "le", d_salle, "", a_salle)
+                chemin.sorties.append(sortie)
+            else:
+                chemin.sorties.extend(d_chemin.sorties)
+            
+            a_salle = d_salle
+        
+        if chemin.origine is not self or chemin.destination is not destination:
+            return None
+        
+        return chemin
     
     def envoyer(self, message, *personnages, prompt=True, mort=False,
             **kw_personnages):

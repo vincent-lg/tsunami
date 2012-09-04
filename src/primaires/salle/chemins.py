@@ -148,14 +148,11 @@ class Chemins(BaseObj):
                 and y <= max(o_y, d_y) and y >= min(o_y, d_y) \
                 and z <= max(o_z, d_z) and z >= min(o_z, d_z):
                 salles.append(salle)
-        print("salles sélectionnées :", salles)
         
         # On parcourt les salles
         trajectoire = []
         ab = Vecteur(d_x - o_x, d_y - o_y, d_z - o_z)
-        print("vecteur origine-destination :", ab)
         for salle in salles:
-            print(salle)
             if salle in (origine, destination):
                 trajectoire.append(salle)
                 continue
@@ -164,7 +161,6 @@ class Chemins(BaseObj):
             if not d3:
                 z = 0
             ac = Vecteur(x - o_x, y - o_y, z - o_z)
-            print("vecteur origine-salle :", ac)
             d = 0
             # On détermine les angles horizontaux et verticaux entre ab et ac
             alpha = radians(ab.argument() - ac.argument())
@@ -200,5 +196,4 @@ class Chemins(BaseObj):
             return v_o_salle.norme
         
         trajectoire = sorted(trajectoire, key=distance)
-        print(trajectoire)
         return trajectoire
