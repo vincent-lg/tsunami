@@ -242,6 +242,7 @@ class Salle(BaseObj):
         if chemin.origine is not self or chemin.destination is not destination:
             return None
         
+        chemin.raccourcir()
         return chemin
     
     def envoyer(self, message, *personnages, prompt=True, mort=False,
