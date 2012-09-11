@@ -58,6 +58,8 @@ class PrmVoir(Parametre):
         res = "Options actuelles :\n\n"
         res += "  Couleurs : {}\n".format(oui_ou_non(
                 personnage.compte.couleur))
+        res += "  Envoi des newsletters : {}\n".format(oui_ou_non(
+                personnage.compte.newsletter))
         res += "  Votre encodage : |ent|" + encodage + "|ff|.\n"
         res += "  Encodages disponibles : |ent|" + "|ff|, |ent|".join(
                 encodages) + "|ff|.\n\n"

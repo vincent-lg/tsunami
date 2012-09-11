@@ -69,6 +69,7 @@ class Compte(BaseObj):
         
         # Options
         self.couleur = True # couleurs activées par défaut
+        self.newsletter = True
     
     def __getnewargs__(self):
         """Méthode retournant les valeurs par défaut du constructeur"""

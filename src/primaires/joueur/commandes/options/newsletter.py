@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,48 +28,41 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'options' et ses sous-commandes.
-Dans ce fichier se trouve la commande même.
+"""Fichier contenant le paramètre 'newsletter' de la commande 'options'."""
 
-"""
+from primaires.interpreteur.masque.parametre import Parametre
 
-from primaires.interpreteur.commande.commande import Commande
-from .chmdp import PrmChmdp
-from .couleur import PrmCouleur
-from .encodage import PrmEncodage
-from .langue import PrmLangue
-from .newsletter import PrmNewsletter
-from .voir import PrmVoir
-
-class CmdOptions(Commande):
+class PrmNewsletter(Parametre):
     
-    """Commande 'options'.
+    """Commande 'options newsletter'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "options", "options")
-        self.groupe = "joueur"
-        self.aide_courte = "change vos options de compte et joueur"
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "newsletter", "newsletter")
+        self.tronquer = True
+        self.schema = "<etat>"
+        self.aide_courte = "active / désactive la newsletter"
         self.aide_longue = \
-            "Cette commande permet de manipuler les options de votre " \
-            "joueur et de votre compte. Tapez %options% sans paramètrse " \
-            "pour voir les options disponibles, ou lisez l'aide des " \
-            "sous-commandes ci-dessous."
-    
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_couleur = PrmCouleur()
-        prm_encodage = PrmEncodage()
-        prm_langue = PrmLangue()
-        prm_newsletter = PrmNewsletter()
-        prm_voir = PrmVoir()
-        prm_chmdp = PrmChmdp()
-        
-        self.ajouter_parametre(prm_couleur)
-        self.ajouter_parametre(prm_encodage)
-        self.ajouter_parametre(prm_langue)
-        self.ajouter_parametre(prm_newsletter)
-        self.ajouter_parametre(prm_voir)
-        self.ajouter_parametre(prm_chmdp)
+            "Cette commande permet d'activer ou désactiver l'envoi de la " \
+            "newsletter à ce compte. Si cette option est active, les " \
+            "newsletters envoyées par les administrateurs seront envoyées " \
+            "à ce compte. Elles ne seront pas envoyées si l'option est " \
+            "désactivée."
+            "newsletter. Si la newsletter vous gène ou vous est inutile, " \
+            "vous pouvez donc la désactiver en entrant %options% " \
+            "%options:newsletter% |cmd|off|ff|. Remplacez |cmd|off|ff| " \
+            "par |cmd|on|ff| pour voir de nouveau les newsletters."
+   
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre."""
+        etat = dic_masques["etat"].flag
+        if personnage.compte.newsletter == etat:
+            personnage << "|att|C'est déjà le cas.|ff|"
+        else:
+            personnage.compte.newsletter = etat
+            if etat:
+                personnage << "Envoi des newsletters activé."
+            else:
+                personnage << "Envoi des newsletters désactivé."
