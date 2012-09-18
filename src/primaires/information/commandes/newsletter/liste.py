@@ -28,17 +28,17 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'liste' de la commande 'rapport'."""
+"""Fichier contenant le paramètre 'liste' de la commande 'newsletter'."""
 
 from math import floor
 
 from primaires.interpreteur.masque.parametre import Parametre
 from primaires.format.fonctions import couper_phrase
-from secondaires.rapport.constantes import CLR_STATUTS, CLR_AVC
+from secondaires.newsletter.constantes import CLR_STATUTS, CLR_AVC
 
 class PrmListe(Parametre):
     
-    """Commande 'rapport liste'.
+    """Commande 'newsletter liste'.
     
     """
     
@@ -46,13 +46,13 @@ class PrmListe(Parametre):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "liste", "list")
         self.schema = "(<message>)"
-        self.aide_courte = "liste les rapports existants"
+        self.aide_courte = "liste les newsletters existants"
         self.aide_longue = \
-            "Cette commande liste les rapports existants. Vous pouvez " \
+            "Cette commande liste les newsletters existants. Vous pouvez " \
             "préciser un ou plusieurs flags séparés par des virgules ; " \
             "les flags disponibles sont |ent|non assignes|ff| pour voir " \
-            "uniquement les rapports non assignes, et |ent|fermes|ff| pour " \
-            "voir tous les rapports, y compris ceux fermés."
+            "uniquement les newsletters non assignes, et |ent|fermes|ff| pour " \
+            "voir tous les newsletters, y compris ceux fermés."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
@@ -64,19 +64,19 @@ class PrmListe(Parametre):
                 if f in t_flags:
                     flags[f] = True
         
-        rapports = list(importeur.rapport.rapports.values())
+        newsletters = list(importeur.newsletter.newsletters.values())
         if not flags["fermes"]:
-            rapports = [r for r in rapports if r.ouvert]
+            newsletters = [r for r in newsletters if r.ouvert]
         if flags["non assignes"]:
-            rapports = [r for r in rapports if r.assigne_a is None]
+            newsletters = [r for r in newsletters if r.assigne_a is None]
         if not personnage.est_immortel():
-            # On récupère les rapports envoyés par le joueur mortel
-            rapports = [r for r in rapports if r.createur is personnage]
-            if not rapports:
-                personnage << "|att|Vous n'avez envoyé aucun rapport.|ff|"
+            # On récupère les newsletters envoyés par le joueur mortel
+            newsletters = [r for r in newsletters if r.createur is personnage]
+            if not newsletters:
+                personnage << "|att|Vous n'avez envoyé aucun newsletter.|ff|"
             else:
-                l_id = max([len(str(r.id)) for r in rapports] + [2])
-                l_titre = max([len(r.titre) for r in rapports] + [5])
+                l_id = max([len(str(r.id)) for r in newsletters] + [2])
+                l_titre = max([len(r.titre) for r in newsletters] + [5])
                 l_titre_max = 49 - l_id # longueur max possible d'un titre
                 ljust_titre = min(l_titre_max, l_titre)
                 lignes = [
@@ -86,30 +86,30 @@ class PrmListe(Parametre):
                             "|tit|Statut|ff|   | |tit|Avancement|ff| |",
                     "+" + "-" * (l_id + ljust_titre + 29) + "+",
                 ]
-                for rapport in rapports:
-                    id = "|vrc|" + str(rapport.id).ljust(l_id) + "|ff|"
+                for newsletter in newsletters:
+                    id = "|vrc|" + str(newsletter.id).ljust(l_id) + "|ff|"
                     if l_titre_max < l_titre:
-                        titre = couper_phrase(rapport.titre, l_titre_max)
+                        titre = couper_phrase(newsletter.titre, l_titre_max)
                     else:
-                        titre = rapport.titre
+                        titre = newsletter.titre
                     titre = titre.ljust(ljust_titre)
-                    stat = CLR_STATUTS[rapport.statut]
-                    stat += rapport.statut.ljust(8) + "|ff|"
-                    clr = CLR_AVC[floor(rapport.avancement / 12.5)]
-                    avc = clr + str(rapport.avancement).rjust(9)
+                    stat = CLR_STATUTS[newsletter.statut]
+                    stat += newsletter.statut.ljust(8) + "|ff|"
+                    clr = CLR_AVC[floor(newsletter.avancement / 12.5)]
+                    avc = clr + str(newsletter.avancement).rjust(9)
                     lignes.append(
                             "| {id} | {titre} | {stat} | {avc}%|ff| |".format(
                             id=id, titre=titre, stat=stat, avc=avc))
                 lignes.append("+" + "-" * (l_id + ljust_titre + 29) + "+")
                 personnage << "\n".join(lignes)
         else:
-            if not rapports:
-                personnage << "|err|Aucun rapport n'a été envoyé.|ff|"
+            if not newsletters:
+                personnage << "|err|Aucun newsletter n'a été envoyé.|ff|"
                 return
-            l_id = max([len(str(r.id)) for r in rapports] + [2])
+            l_id = max([len(str(r.id)) for r in newsletters] + [2])
             l_createur = max([len(r.createur.nom) if r.createur else 7 \
-                    for r in rapports] + [8])
-            l_titre = max([len(r.titre) for r in rapports] + [5])
+                    for r in newsletters] + [8])
+            l_titre = max([len(r.titre) for r in newsletters] + [5])
             l_titre_max = 70 - l_createur - l_id # longueur max d'un titre
             ljust_titre = min(l_titre_max, l_titre)
             lignes = [
@@ -119,14 +119,14 @@ class PrmListe(Parametre):
                         + "Titre".ljust(ljust_titre) + "|ff| |",
                 "+" + "-" * (l_id + l_createur + ljust_titre + 8) + "+",
             ]
-            for rapport in rapports:
+            for newsletter in newsletters:
                 if l_titre_max < l_titre:
-                    titre = couper_phrase(rapport.titre, l_titre_max)
+                    titre = couper_phrase(newsletter.titre, l_titre_max)
                 else:
-                    titre = rapport.titre
-                createur = rapport.createur and rapport.createur.nom or \
+                    titre = newsletter.titre
+                createur = newsletter.createur and newsletter.createur.nom or \
                         "inconnu"
-                lignes.append("| |vrc|" + str(rapport.id).ljust(l_id) \
+                lignes.append("| |vrc|" + str(newsletter.id).ljust(l_id) \
                         + "|ff| | " + createur.ljust(l_createur) + " | " \
                         + titre.ljust(ljust_titre) + " |")
             lignes.append(

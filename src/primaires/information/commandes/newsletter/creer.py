@@ -42,18 +42,18 @@ class PrmCreer(Parametre):
         self.schema = "<message>"
         self.aide_courte = "crée une nouvelle News Letter"
         self.aide_longue = \
-            "Cette commande permet de créer une nouvelle News Letter. L'éditeur de News Letter s'ouvrira dès la création et le sujet précisé en paramètre de la commande sera considéré comme le sujet futur (modifiable par la suite) de la News Letter. Le statut d'une
-            "creer. Vous devez préciser en argument le titre du newsletter " \
-            "à créer. Un éditeur s'ouvrira alors pour vous permettre " \
-            "de renseigner plus précisément le creer rencontré."
+            "Cette commande permet de créer une nouvelle News Letter. " \
+            "L'éditeur de News Letter s'ouvrira dès la création et le sujet " \
+            "précisé en paramètre de la commande sera considéré comme le " \
+            "sujet futur (modifiable par la suite) de la News Letter. " \
+            "Le statut d'une news letter nouvellement crée est \"brouillon\" " \
+            "et, tant qu'elle n'est pas envoyée, elle reste éditable."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         titre = dic_masques["message"].message
-        newsletter = importeur.newsletter.creer_newsletter(titre, personnage,
-                ajouter=False)
-        newsletter.type = "creer"
+        newsletter = importeur.information.creer_newsletter(titre)
         editeur = importeur.interpreteur.construire_editeur(
-                "creeredit", personnage, newsletter)
+                "nleredit", personnage, newsletter)
         personnage.contextes.ajouter(editeur)
         editeur.actualiser()

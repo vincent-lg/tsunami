@@ -28,50 +28,43 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant le paramètre 'editer' de la commande 'rapport'."""
+"""Package contenant le paramètre 'editer' de la commande 'newsletter'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
-from primaires.interpreteur.editeur.presentation import Presentation
 
 class PrmEditer(Parametre):
     
-    """Commande 'rapport edit'"""
+    """Commande 'newsletter edit'"""
     
     def __init__(self):
         """Constructeur du paramètre."""
         Parametre.__init__(self, "editer", "edit")
         self.schema = "<nombre>"
-        self.aide_courte = "ouvre l'éditeur de rapport"
+        self.aide_courte = "ouvre l'éditeur de newsletter"
         self.aide_longue = \
-            "Cette commande ouvre l'éditeur de rapport pour vous permettre " \
-            "d'éditer un rapport existant."
+            "Cette commande ouvre l'éditeur de news letter pour vous " \
+            "permettre d'éditer une news letter non envoyée (en statut " \
+            "\"brouillon\"). Vous pourrez ainsi modifier son sujet et " \
+            "sa description, ainsi que l'envoyer si elle est prête."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         id = dic_masques["nombre"].nombre
         try:
-            rapport = importeur.rapport.rapports[id]
-        except KeyError:
-            if personnage.est_immortel():
-                personnage << "|err|Ce rapport n'existe pas.|ff|"
-            else:
-                personnage << "|err|Vous ne pouvez éditer ce rapport.|ff|"
+            newsletter = importeur.newsletter.newsletters[id - 1]
+        except IndexError:
+            personnage << "|err|Cette newsletter n'existe pas.|ff|"
         else:
-            if not personnage.est_immortel() and rapport.createur is not \
-                    personnage:
-                personnage << "|err|Vous ne pouvez éditer ce rapport.|ff|"
+            if newsletter.envoyee:
+                personnage << "|err|Cette news letter a déjà été envoyée.|ff|"
                 return
-            elif not personnage.est_immortel():
-                if rapport.statut != "nouveau":
-                    personnage << "|err|Vous ne pouvez éditer ce rapport.|ff|"
-                    return
-                c_rapport = importeur.rapport.creer_rapport("titre",
-                        personnage, ajouter=False)
-                c_rapport.copier(rapport)
-                editeur = importeur.interpreteur.construire_editeur(
-                        "bugedit", personnage, c_rapport)
-            else:
-                editeur = importeur.interpreteur.construire_editeur(
-                        "bugedit+", personnage, rapport)
+            
+            if newsletter.editee:
+                personnage << "|err|Cette news letter est en cours " \
+                        "d'édition par un autre administrateur.|ff|"
+                return
+            
+            editeur = importeur.interpreteur.construire_editeur(
+                    "nl", personnage, newsletter)
             personnage.contextes.ajouter(editeur)
             editeur.actualiser()

@@ -30,6 +30,8 @@
 
 """Ce fichier contient la classe Newsletter, détaillée plus bas."""
 
+from datetime import datetime
+
 from abstraits.obase import BaseObj
 from primaires.format.description import Description
 
@@ -59,6 +61,8 @@ class Newsletter(BaseObj):
         self.contenu = Description(parent=self, scriptable=False)
         self.statut = "brouillon"
         self.editee = False
+        self.date_creation = datetime.now()
+        self.date_envoi = None
     
     def __getnewargs__(self):
         return ()
@@ -81,12 +85,13 @@ class Newsletter(BaseObj):
         
         """
         inscrits = [compte for compte in importeur.connex.comptes.values() if \
-                compte.newsletter]
+                compte.newsletter and compte.adresse_email]
         destinateur = "news"
         sujet = self.sujet
         corps = str(self.contenu)
         nb = 0
         self.statut = "envoyée"
+        self.date_envoi = datetime.now()
         if not importeur.email.serveur_mail:
             return 0
         

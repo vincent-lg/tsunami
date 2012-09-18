@@ -49,6 +49,7 @@ class CmdNewsletter(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "newsletter", "newsletter")
+        self.groupe = "administrateur"
         self.aide_courte = "gestionnaire des news letters"
         self.aide_longue = \
             "Cette commande permet de créer, éditer et consulter la liste " \
