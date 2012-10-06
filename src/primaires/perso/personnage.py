@@ -983,13 +983,13 @@ class Personnage(BaseObj):
         
         salles = get_chute(self.salle, [])
         if len(salles) == 1:
-            self << "Vous tentez d'escalader la paroie... sans succès."
-            self.salle.envoyer("{} tente d'escalader la paroie... " \
+            self << "Vous tentez d'escalader la paroi... sans succès."
+            self.salle.envoyer("{} tente d'escalader la paroi... " \
                     "sans succès.", self)
             return
         
-        self << "Vous vascillez... |att|et tombez dans le vide !|ff|"
-        self.salle.envoyer("{} vascille... et tombe dans le vide !", self)
+        self << "Vous vacillez... |att|et tombez dans le vide !|ff|"
+        self.salle.envoyer("{} vacille... et tombe dans le vide !", self)
         for salle in salles[1:-1]:
             salle.envoyer("Le corps de {} passe en plongeant devant vous.",
                     self)
