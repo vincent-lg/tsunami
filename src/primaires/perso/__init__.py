@@ -151,7 +151,7 @@ class Module(BaseModule):
         mort.msg_visible = "est inconscient ici"
         
         entraine = self.ajouter_etat("entrainer")
-        entraine.msg_refus = "Vous êtes ent train de vous entraîner."
+        entraine.msg_refus = "Vous êtes en train de vous entraîner."
         entraine.msg_visible = "s'entraîne ici"
         entraine.act_autorisees = ["regarder", "parler"]
         
