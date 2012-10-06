@@ -32,7 +32,6 @@
 
 from .. import BasePlateau
 from .piece import Piece
-from .combinaisons import combinaisons
 
 class Plateau(BasePlateau):
     

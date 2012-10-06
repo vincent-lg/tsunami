@@ -35,6 +35,7 @@ from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.flag import Flag
+from primaires.interpreteur.editeur.flottant import Flottant
 from .edt_date import EdtDate
 from .edt_elements import EdtElements
 
@@ -121,3 +122,12 @@ class EdtPeriode(Presentation):
         # Eléments
         elts = self.ajouter_choix("eléments", "e", EdtElements, periode)
         elts.parent = self
+        
+        # Poids
+        poids = self.ajouter_choix("poids total", "po", Flottant, periode,
+                "poids_max")
+        poids.parent = self
+        poids.prompt = "Entrez le poids maximum que peut porter la plante : "
+        poids.aide_courte = \
+            "Entrez le poids maximum que peut porter la plante.\n\nPoids " \
+            "actuel : {objet.poids_max} kg"

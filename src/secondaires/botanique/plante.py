@@ -85,11 +85,22 @@ class Plante(BaseObj):
         """Retourne le nom singulier associée à la période."""
         return self.periode.nom_singulier
     
+    def peut_porter(self):
+        """Retourne True si la plante peut porter davantage."""
+        poids = 0
+        for objet, qtt in self.elements.items():
+            poids += objet.poids_unitaire * qtt
+        
+        return poids < self.periode.poids_max
+        
     def actualiser_elements(self):
         """Actualise les éléments en fonction de la période."""
         periode = self.periode
         n_elements = {}
         for elt in periode.elements:
+            if not self.peut_porter():
+                break
+            
             qtt = self.elements.get(elt.objet, 0)
             n_qtt = varier(elt.quantite, 3, 0)
             qtt += n_qtt

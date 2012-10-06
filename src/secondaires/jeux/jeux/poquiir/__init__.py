@@ -33,6 +33,7 @@
 from random import *
 
 from .. import BaseJeu
+from .combinaisons import combinaisons
 
 class Jeu(BaseJeu):
     
@@ -48,11 +49,22 @@ class Jeu(BaseJeu):
         self.nb_joueurs_min = 2
         self.nb_joueurs_max = 6
         self.en_main = {}
-        self.non_distribuees = []
+        self.tableau = []
+        self.non_distribuees = list(self.plateau.pieces)
+        self.combinaisons = {}
         self.abandons = []
+        self.petite_blinde = 0
+    
+    @property
+    def grande_blinde(self):
+        """Retourne le montant de la grande blinde."""
+        return self.petite_blinde * 2
     
     def peut_commencer(self):
         """La partie peut-elle commencer ?"""
+        if self.petite_blinde == 0:
+            self.partie.envoyer("Le montant de la petite blinde n'a pas " \
+                    "été fixé.")
         return True
     
     def peut_jouer(self, personnage):
@@ -102,3 +114,88 @@ class Jeu(BaseJeu):
                 return False
 
         return False
+    
+    def get_combinaison(self, personnage):
+        """Retourne la combinaison ou None si aucune."""
+        pieces = self.en_main.get(personnage)
+        if pieces is None:
+            return None
+        
+        pieces.extend(self.tableau)
+        
+        # On tri les pièces
+        d_pieces = {}
+        for piece in pieces:
+            points = piece.points
+            liste = d_pieces.get(points, [])
+            liste.append(piece)
+            d_pieces[points] = liste
+        
+        pieces = sorted([liste for liste in d_pieces.values()],
+                key=lambda liste: liste[0].points, reverse=True)
+        
+        essai = None
+        for combinaison in combinaisons:
+            essai = combinaison.forme(pieces)
+            if essai:
+                break
+        
+        return essai
+    
+    def choisir_piece(self):
+        """Choisit et retourne une pièce parmi les non distribuées.
+        
+        La pièce retournée est considérée comme distribuée, on ne sait pas
+        si c'est sur le tableau ou à un personnage, mais on la retire des
+        pièces distribuées et on recalcul les combinaisons de chacun.
+        
+        """
+        piece = choice(self.non_distribuees)
+        self.non_distribuees.remove(piece)
+        for joueur, pieces in self.en_main.items():
+            combinaison = self.get_combinaison(joueur)
+            if combinaison:
+                self.combinaisons[joueur] = combinaison
+        
+        return piece
+    
+    def tour_1(self):
+        """Commence une manche.
+        
+        On distribue les pièces des joueurs.
+        
+        """
+        for joueur in self.partie.joueurs:
+            piece_1 = self.choisir_piece()
+            piece_2 = self.choisir_piece()
+            self.en_main[joueur] = [piece_1, piece_2]
+            joueur << "Vous recevez {} et {}.".format(
+                    piece_1.nom_complet_indefini, piece_2.nom_complet_indefini)
+    
+    def tour_2(self):
+        """On pose le flop (les trois premières cases sur le tableau)."""
+        p1 = self.choisir_piece()
+        p2 = self.choisir_piece()
+        p3 = self.choisir_piece()
+        self.tableau = [p1, p2, p3]
+        noms = [p.nom_complet_indefini for p in (p1, p2, p3)]
+        noms = noms[0] + ", " + noms[1] + " et " + noms[2]
+        self.partie.envoyer("Trois pièces sont retournées face " \
+                "visible sur le tableau :\n- {}".format(noms))
+    
+    def tour_3(self):
+        """On ne retourne qu'une pièce."""
+        piece = self.choisir_piece()
+        self.tableau.append(piece)
+        self.envoyer("On retourne {} face visible sur le tableau.".format(
+                piece.nom_complet_indefini))
+    def tour_4(self):
+        """On ne retourne qu'une pièce."""
+        piece = self.choisir_piece()
+        self.tableau.append(piece)
+        self.envoyer("On retourne {} face visible sur le tableau.".format(
+                piece.nom_complet_indefini))
+    
+    def tour_5(self):
+        """On détermine le ou les vainqueurs de la manche."""
+        # à compléter

@@ -172,6 +172,7 @@ class Module(BaseModule):
         for plante in list(self.plantes.values()):
             if plante.periode.finie:
                 plante.periode = plante.periode.periode_suivante
+                plante.elements = {}
             plante.actualiser_elements()
     
     def detailler_salle(self, salle, personnage):
