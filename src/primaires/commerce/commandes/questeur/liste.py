@@ -48,18 +48,18 @@ class PrmListe(Parametre):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        questeurs = list(importeur.commerce.questeurs)
+        questeurs = list(importeur.commerce.questeurs.values())
         questeurs = [q for q in questeurs if q.salle]
         questeurs = sorted(questeurs, key=lambda q: q.salle.ident)
         if questeurs:
             lignes = [
-                "  Salle           |    Caisse | Comptes |      Total",
+                "  Salle           | Comptes |      Total",
+            ]
             for questeur in questeurs:
                 total = sum(c for c in questeur.comptes.values())
                 lignes.append(
-                    "  {:<15} | {:>9} | {:>7} | {:>10}".format(
-                    questeur.salle.ident, questeur.caisse,
-                    len(questeur.comptes), total))
+                    "  {:<15} | {:>7} | {:>10}".format(
+                    questeur.salle.ident, len(questeur.comptes), total))
             personnage << "\n".join(lignes)
         else:
             personnage << "Aucun questeur n'est actuellement défini."

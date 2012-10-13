@@ -70,12 +70,15 @@ class Module(BaseModule):
         self.commandes = []
         self.types_services = {}
         self.aides_types = {}
-        self.questeurs = []
+        self.questeurs = {}
     
     def init(self):
         """Initialisation du module."""
         # On récupère les questeurs
-        self.questeurs = self.importeur.supenr.charger_groupe(Questeur)
+        questeurs = self.importeur.supenr.charger_groupe(Questeur)
+        for questeur in questeurs:
+            self.ajouter_questeur(questeur)
+        
         BaseModule.init(self)
     
     def ajouter_commandes(self):
@@ -83,8 +86,35 @@ class Module(BaseModule):
         self.commandes = [
             commandes.acheter.CmdAcheter(),
             commandes.lister.CmdLister(),
+            commandes.questeur.CmdQuesteur(),
             commandes.vendre.CmdVendre(),
         ]
         
         for cmd in self.commandes:
             importeur.interpreteur.ajouter_commande(cmd)
+    
+    def preparer(self):
+        """Préparation du module."""
+        for cle, questeur in tuple(self.questeurs.items()):
+            if not cle.e_existe:
+                del self.questeurs[cle]
+    
+    def creer_questeur(self, salle):
+        """Crée un questeur et l'ajout dans le dictionnaire."""
+        questeur = Questeur(salle)
+        self.ajouter_questeur(questeur)
+        return questeur
+    
+    def ajouter_questeur(self, questeur):
+        """Ajoute le questeur dans le dictionnaire."""
+        self.questeurs[questeur.salle] = questeur
+    
+    def questeur_existe(self, salle):
+        """Retourne True ou False si le questeur existe dans la salle."""
+        return self.questeurs.get(salle) is not None
+    
+    def supprimer_questeur(self, salle):
+        """Supprime le questeur."""
+        questeur = self.questeurs[salle]
+        questeur.detruire()
+        del self.questeurs[salle]

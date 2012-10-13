@@ -30,6 +30,7 @@
 
 """Package contenant les commandes du module commerce."""
 
-import primaires.commerce.commandes.acheter
-import primaires.commerce.commandes.lister
-import primaires.commerce.commandes.vendre
+from . import acheter
+from . import lister
+from . import questeur
+from . import vendre

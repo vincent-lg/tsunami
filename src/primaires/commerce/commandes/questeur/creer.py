@@ -42,14 +42,13 @@ class PrmCreer(Parametre):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "créer", "create")
         self.groupe = "administrateur"
-        self.aide_courte = "crée un questeur dans la salle où vous vous trouvez"
+        self.aide_courte = "crée un questeur"
         self.aide_longue = \
             "Cette commande crée un questeur dans la salle où vous vous " \
-            " trouvez."
+            "trouvez."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        questeurs = importeur.salle.questeurs.values())
         salle = personnage.salle
         if importeur.commerce.questeur_existe(salle):
             personnage << "|err|Un questeur existe déjà dans cette salle.|ff|"

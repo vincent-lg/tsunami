@@ -36,7 +36,7 @@ class Questeur(BaseObj):
     
     """Classe définissant un questeur monétaire.
     
-    Un questeur est une sorte de banque, eprmettant de :
+    Un questeur est une sorte de banque, permettant de :
     * Conserver de la monnaie déposée
     * Retirer la monnaie dans la quantité et la valeur souhaitée
     * Récupérer des lettres de crédits pour les grosses sommes.
@@ -49,15 +49,15 @@ class Questeur(BaseObj):
     """
     
     enregistrer = True
-    def __init__(zself, salle):
+    def __init__(self, salle):
         """Constructeur du questeur."""
+        BaseObj.__init__(self)
         self.salle = salle
         self.comptes = {}
         self.monnaies = []
         self.prototype_servant = None
         self.taux_deposer = 100
         self.montant_min = 5
-        self.caisse = 0
     
     def __getnewargs__(self):
         return (None, )
@@ -69,7 +69,7 @@ class Questeur(BaseObj):
         On parcourt pour ce faire les personnages de la salle. Si un
         PNJ est trouvé avec le prototype indiqué dans l'attribut
         prototype_servant, le PNJ est retourné. Sinon, on retourne None
-        ce qui veut dire qu'aucun servaant n'est disponible (le questeur
+        ce qui veut dire qu'aucun servant n'est disponible (le questeur
         est inutilisable par les joueurs).
         
         """
@@ -104,7 +104,7 @@ class Questeur(BaseObj):
             return 0
         
         s_montant = o_montant - montant # Montant superflu
-        self.caisse += s_montant
+        self.salle.zone.caisse += s_montant
         
         # On prélève l'argent du joueur
         preleve = False

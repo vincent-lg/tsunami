@@ -49,4 +49,10 @@ class PrmSupprimer(Parametre):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        # À compléter...
+        salle = personnage.salle
+        if importeur.commerce.questeur_existe(salle):
+            importeur.commerce.supprimer_questeur(salle)
+            personnage << "Le questeur a bien été supprimé."
+        else:
+            personnage << "|err|Aucun questeur n'a été défini dans " \
+                    "cette salle."
