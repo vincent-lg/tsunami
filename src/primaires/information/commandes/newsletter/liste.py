@@ -34,7 +34,6 @@ from math import floor
 
 from primaires.interpreteur.masque.parametre import Parametre
 from primaires.format.fonctions import couper_phrase
-from secondaires.newsletter.constantes import CLR_STATUTS, CLR_AVC
 
 class PrmListe(Parametre):
     

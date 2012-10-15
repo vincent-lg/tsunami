@@ -49,8 +49,8 @@ class PrmNewsletter(Parametre):
             "newsletter à ce compte. Si cette option est active, les " \
             "newsletters envoyées par les administrateurs seront envoyées " \
             "à ce compte. Elles ne seront pas envoyées si l'option est " \
-            "désactivée."
-            "newsletter. Si la newsletter vous gène ou vous est inutile, " \
+            "désactivée. " \
+            "Si la newsletter vous gène ou vous est inutile, " \
             "vous pouvez donc la désactiver en entrant %options% " \
             "%options:newsletter% |cmd|off|ff|. Remplacez |cmd|off|ff| " \
             "par |cmd|on|ff| pour voir de nouveau les newsletters."
