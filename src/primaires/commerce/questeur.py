@@ -56,7 +56,7 @@ class Questeur(BaseObj):
         self.comptes = {}
         self.monnaies = []
         self.prototype_servant = None
-        self.taux_deposer = 100
+        self.taux_deposer = 95
         self.montant_min = 5
     
     def __getnewargs__(self):
@@ -92,7 +92,7 @@ class Questeur(BaseObj):
             Le nombre d'objets déposés.
         
         """
-        montant = o_montant = nombre * argent.valeur
+        montant = o_montant = nombre * argent.m_valeur
         if montant < self.montant_min:
             return 0
         

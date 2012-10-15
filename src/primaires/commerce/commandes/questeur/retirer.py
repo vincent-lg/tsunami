@@ -7,9 +7,9 @@
 # modification, are permitted provided that the following conditions are met:
 # 
 # * Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.
+#   create of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
-#   this list of conditions and the following disclaimer in the documentation
+#   this create of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
@@ -28,38 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'questeur' et ses sous-commandes.
+"""Fichier contenant le paramètre 'créer' de la commande 'questeur'."""
 
-Dans ce fichier se trouve la commande même.
+from primaires.interpreteur.masque.parametre import Parametre
 
-"""
-
-from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .deposer import PrmDeposer
-from .liste import PrmListe
-from .supprimer import PrmSupprimer
-
-class CmdQuesteur(Commande):
+class PrmCreer(Parametre):
     
-    """Commande 'questeur'.
+    """Commande 'questeur créer'.
     
     """
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "questeur", "questor")
-        self.groupe = "joueur"
-        self.aide_courte = "manipulation des questeurs"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "créer", "create")
+        self.groupe = "administrateur"
+        self.aide_courte = "crée un questeur"
         self.aide_longue = \
-            "Cette commande permet d'interragir avec un questeur présent " \
-            "dans la salle où vous vous trouver, pour déposer de " \
-            "l'argent, en retirer ou consulter votre compte ouvert " \
-            "chez ce questeur."
+            "Cette commande crée un questeur dans la salle où vous vous " \
+            "trouvez."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        self.ajouter_parametre(PrmCreer())
-        self.ajouter_parametre(PrmDeposer())
-        self.ajouter_parametre(PrmListe())
-        self.ajouter_parametre(PrmSupprimer())
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        salle = personnage.salle
+        if importeur.commerce.questeur_existe(salle):
+            personnage << "|err|Un questeur existe déjà dans cette salle.|ff|"
+            return
+        
+        questeur = importeur.commerce.creer_questeur(salle)
+        personnage << "Un questeur a été créé dans la salle {}.".format(
+                salle.ident)
