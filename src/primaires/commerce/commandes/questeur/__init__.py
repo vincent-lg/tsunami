@@ -38,6 +38,7 @@ from primaires.interpreteur.commande.commande import Commande
 from .creer import PrmCreer
 from .deposer import PrmDeposer
 from .liste import PrmListe
+from .montant import PrmMontant
 from .supprimer import PrmSupprimer
 
 class CmdQuesteur(Commande):
@@ -62,4 +63,5 @@ class CmdQuesteur(Commande):
         self.ajouter_parametre(PrmCreer())
         self.ajouter_parametre(PrmDeposer())
         self.ajouter_parametre(PrmListe())
+        self.ajouter_parametre(PrmMontant())
         self.ajouter_parametre(PrmSupprimer())

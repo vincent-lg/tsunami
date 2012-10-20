@@ -28,32 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'créer' de la commande 'questeur'."""
+"""Fichier contenant le paramètre 'montant' de la commande 'questeur'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmCreer(Parametre):
+class PrmMontant(Parametre):
     
-    """Commande 'questeur créer'.
+    """Commande 'questeur montant'.
     
     """
     
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "créer", "create")
-        self.groupe = "administrateur"
-        self.aide_courte = "crée un questeur"
+        Parametre.__init__(self, "montant", "balance")
+        self.aide_courte = "demande le montant conservé"
         self.aide_longue = \
-            "Cette commande crée un questeur dans la salle où vous vous " \
-            "trouvez."
+            "Cette commande interroge la valeur de l'argent déposé dans " \
+            "le questeur présent dans la salle où vous vous trouvez."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         salle = personnage.salle
-        if importeur.commerce.questeur_existe(salle):
-            personnage << "|err|Un questeur existe déjà dans cette salle.|ff|"
+        if not importeur.commerce.questeur_existe(salle):
+            personnage << "|err|Aucun questeur n'est présent là où " \
+                    "vous vous trouvez.|ff|"
             return
         
-        questeur = importeur.commerce.creer_questeur(salle)
-        personnage << "Un questeur a été créé dans la salle {}.".format(
-                salle.ident)
+        questeur = importeur.commerce.questeurs[salle]
+        if questeur.servant is None:
+            personnage << "|err|Personne n'est présent pour s'en charger.|ff|"
+            return
+        
+        montant = questeur.comptes.get(personnage, 0)
+        if montant == 0:
+            personnage << "Vous n'avez rien déposé dans ce questeur."
+        else:
+            personnage << "Vous disposez de {} pièces de bronze sur votre " \
+                    "compte.".format(montant)
