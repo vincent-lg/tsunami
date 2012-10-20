@@ -30,6 +30,7 @@
 
 """Fichier contenant le paramètre 'déposer' de la commande 'questeur'."""
 
+from primaires.commerce.transaction import Transaction
 from primaires.interpreteur.masque.parametre import Parametre
 
 class PrmDeposer(Parametre):
@@ -53,6 +54,14 @@ class PrmDeposer(Parametre):
             "pourcentage plus ou moins important sur ce que vous leur " \
             "confiez."
     
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nom_objet = self.noeud.get_masque("nom_objet")
+        nom_objet.proprietes["conteneurs"] = \
+                "(personnage.equipement.inventaire_simple.iter_objets_qtt()" \
+                ", )"
+        nom_objet.proprietes["quantite"] = "True"
+    
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         salle = personnage.salle
@@ -68,7 +77,15 @@ class PrmDeposer(Parametre):
             personnage << "|err|Ceci n'est pas de l'argent.|ff|"
             return
         
-        prototype = objet.prototype
+        prototype = objet
+        argent = Transaction.get_argent(personnage)
+        if prototype not in argent:
+            personnage << "|err|Vous ne possédez pas cela.|ff|" # improbable
+            return
+        
+        if somme > argent[prototype]:
+            somme = argent[prototype]
+        
         if questeur.servant is None:
             personnage << "|err|Personne n'est présent pour s'en charger.|ff|"
             return
@@ -84,4 +101,9 @@ class PrmDeposer(Parametre):
             return
         
         montant = questeur.deposer(personnage, prototype, somme)
-        
+        if montant == 0:
+            personnage << "|err|Vous n'avez rien à déposer apparemment.|ff|"
+        else:
+            personnage.envoyer("{{}} entrepose votre argent dans ses " \
+                    "coffres et ajoute {} pièces de bronze sur votre " \
+                    "compte.".format(montant), questeur.servant)

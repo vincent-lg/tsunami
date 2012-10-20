@@ -97,14 +97,14 @@ class Questeur(BaseObj):
             return 0
         
         # Le montant est estimé en fonction du taux_deposer
-        if 1 < self.taux_deposer < 100:
-            montant = int(self.taux_deposer * montant)
+        if 1 <= self.taux_deposer <= 100:
+            montant = int(self.taux_deposer / 100 * montant)
         
         if montant == 0:
             return 0
         
         s_montant = o_montant - montant # Montant superflu
-        self.salle.zone.caisse += s_montant
+        self.salle.zone.argent_total += montant
         
         # On prélève l'argent du joueur
         preleve = False
