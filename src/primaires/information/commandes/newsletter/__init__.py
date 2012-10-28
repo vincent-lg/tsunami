@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,48 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'options' et ses sous-commandes.
+"""Package contenant la commande 'newsletter' et ses sous-commandes.
+
 Dans ce fichier se trouve la commande même.
 
 """
 
 from primaires.interpreteur.commande.commande import Commande
-from .chmdp import PrmChmdp
-from .couleur import PrmCouleur
-from .encodage import PrmEncodage
-from .langue import PrmLangue
-from .newsletter import PrmNewsletter
+from .creer import PrmCreer
+from .editer import PrmEditer
+from .liste import PrmListe
 from .voir import PrmVoir
 
-class CmdOptions(Commande):
+class CmdNewsletter(Commande):
     
-    """Commande 'options'.
+    """Commande 'newsletter'.
     
     """
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "options", "options")
-        self.groupe = "joueur"
-        self.aide_courte = "change vos options de compte et joueur"
+        Commande.__init__(self, "newsletter", "newsletter")
+        self.groupe = "administrateur"
+        self.aide_courte = "gestionnaire des news letters"
         self.aide_longue = \
-            "Cette commande permet de manipuler les options de votre " \
-            "joueur et de votre compte. Tapez %options% sans paramètrse " \
-            "pour voir les options disponibles, ou lisez l'aide des " \
-            "sous-commandes ci-dessous."
+            "Cette commande permet de créer, éditer et consulter la liste " \
+            "des news letters. Les news letters envoyées peuvent être " \
+            "consultées mais ne peuvent pas être éditées après coup. " \
+            "En revanche, il est possible de créer une news letter, " \
+            "la remplir partiellement et l'envoyer après coup. Deux " \
+            "administrateurs ne pourront éditer en même temps la News Letter."
     
     def ajouter_parametres(self):
         """Ajout des paramètres"""
-        prm_couleur = PrmCouleur()
-        prm_encodage = PrmEncodage()
-        prm_langue = PrmLangue()
-        prm_newsletter = PrmNewsletter()
-        prm_voir = PrmVoir()
-        prm_chmdp = PrmChmdp()
-        
-        self.ajouter_parametre(prm_couleur)
-        self.ajouter_parametre(prm_encodage)
-        self.ajouter_parametre(prm_langue)
-        self.ajouter_parametre(prm_newsletter)
-        self.ajouter_parametre(prm_voir)
-        self.ajouter_parametre(prm_chmdp)
+        self.ajouter_parametre(PrmCreer())
+        self.ajouter_parametre(PrmEditer())
+        self.ajouter_parametre(PrmListe())
+        self.ajouter_parametre(PrmVoir())

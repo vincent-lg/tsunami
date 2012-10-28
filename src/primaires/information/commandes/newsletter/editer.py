@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,42 +28,43 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'voir' de la commande 'options'."""
+"""Package contenant le paramètre 'editer' de la commande 'newsletter'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
-from reseau.connexions.client_connecte import ENCODAGES
-from primaires.format.fonctions import oui_ou_non
 
-class PrmVoir(Parametre):
+class PrmEditer(Parametre):
     
-    """Commande 'options voir'.
-    
-    """
+    """Commande 'newsletter edit'"""
     
     def __init__(self):
-        """Constructeur du paramètre"""
-        Parametre.__init__(self, "voir", "view")
-        self.schema = ""
-        self.aide_courte = "visualise les options du joueur"
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "editer", "edit")
+        self.schema = "<nombre>"
+        self.aide_courte = "ouvre l'éditeur de newsletter"
         self.aide_longue = \
-            "Cette commande permet de voir l'état actuel des options que " \
-            "vous pouvez éditer avec la commande %options%. Elle donne aussi " \
-            "un aperçu des valeurs disponibles."
+            "Cette commande ouvre l'éditeur de news letter pour vous " \
+            "permettre d'éditer une news letter non envoyée (en statut " \
+            "\"brouillon\"). Vous pourrez ainsi modifier son sujet et " \
+            "sa description, ainsi que l'envoyer si elle est prête."
     
     def interpreter(self, personnage, dic_masques):
-        """Interprétation du paramètre"""
-        langue = personnage.langue_cmd
-        encodage = personnage.compte.encodage or "aucun"
-        encodages = ["aucun"] + ENCODAGES
-        res = "Options actuelles :\n\n"
-        res += "  Couleurs : {}\n".format(oui_ou_non(
-                personnage.compte.couleur))
-        res += "  Envoi des newsletters : {}\n".format(oui_ou_non(
-                personnage.compte.newsletter))
-        res += "  Votre encodage : |ent|" + encodage + "|ff|.\n"
-        res += "  Encodages disponibles : |ent|" + "|ff|, |ent|".join(
-                encodages) + "|ff|.\n\n"
-        res += "  Votre langue : |ent|" + langue + "|ff|.\n"
-        res += "  Langues disponibles : |ent|français|ff|, " \
-            "|ent|anglais|ff|."
-        personnage << res
+        """Méthode d'interprétation de commande"""
+        id = dic_masques["nombre"].nombre
+        try:
+            newsletter = importeur.newsletter.newsletters[id - 1]
+        except IndexError:
+            personnage << "|err|Cette newsletter n'existe pas.|ff|"
+        else:
+            if newsletter.envoyee:
+                personnage << "|err|Cette news letter a déjà été envoyée.|ff|"
+                return
+            
+            if newsletter.editee:
+                personnage << "|err|Cette news letter est en cours " \
+                        "d'édition par un autre administrateur.|ff|"
+                return
+            
+            editeur = importeur.interpreteur.construire_editeur(
+                    "nl", personnage, newsletter)
+            personnage.contextes.ajouter(editeur)
+            editeur.actualiser()

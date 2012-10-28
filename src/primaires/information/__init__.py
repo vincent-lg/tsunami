@@ -37,6 +37,7 @@ from primaires.information import commandes
 
 from .editeurs.hedit import EdtHedit
 
+from .newsletter import Newsletter
 from .sujet import SujetAide
 from .tips import Tips
 from .versions import Versions
@@ -56,6 +57,7 @@ class Module(BaseModule):
         self.__sujets = []
         self.tips = None
         self.versions = None
+        self.newsletters = []
     
     def config(self):
         """Configuration du module"""
@@ -84,6 +86,9 @@ class Module(BaseModule):
         if not tips:
             tips = Tips()
         self.tips = tips
+        
+        self.newsletters = sorted(importeur.supenr.charger_groupe(Newsletter),
+                key=lambda nl: nl.date_creation)
         
         # On lie la méthode joueur_connecte avec l'hook joueur_connecte
         # La méthode joueur_connecte sera ainsi appelée quand un joueur

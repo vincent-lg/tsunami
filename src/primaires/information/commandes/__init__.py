@@ -32,5 +32,6 @@
 
 from . import aide
 from . import hedit
+from . import newsletter
 from . import tips
 from . import versions

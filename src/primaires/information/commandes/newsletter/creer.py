@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,48 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'options' et ses sous-commandes.
-Dans ce fichier se trouve la commande même.
+"""Package contenant le paramètre 'créer' de la commande 'newsletter'."""
 
-"""
+from primaires.interpreteur.masque.parametre import Parametre
 
-from primaires.interpreteur.commande.commande import Commande
-from .chmdp import PrmChmdp
-from .couleur import PrmCouleur
-from .encodage import PrmEncodage
-from .langue import PrmLangue
-from .newsletter import PrmNewsletter
-from .voir import PrmVoir
-
-class CmdOptions(Commande):
+class PrmCreer(Parametre):
     
-    """Commande 'options'.
-    
-    """
+    """Commande 'newsletter créer'"""
     
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "options", "options")
-        self.groupe = "joueur"
-        self.aide_courte = "change vos options de compte et joueur"
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "créer", "create")
+        self.schema = "<message>"
+        self.aide_courte = "crée une nouvelle News Letter"
         self.aide_longue = \
-            "Cette commande permet de manipuler les options de votre " \
-            "joueur et de votre compte. Tapez %options% sans paramètrse " \
-            "pour voir les options disponibles, ou lisez l'aide des " \
-            "sous-commandes ci-dessous."
+            "Cette commande permet de créer une nouvelle News Letter. " \
+            "L'éditeur de News Letter s'ouvrira dès la création et le sujet " \
+            "précisé en paramètre de la commande sera considéré comme le " \
+            "sujet futur (modifiable par la suite) de la News Letter. " \
+            "Le statut d'une news letter nouvellement crée est \"brouillon\" " \
+            "et, tant qu'elle n'est pas envoyée, elle reste éditable."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_couleur = PrmCouleur()
-        prm_encodage = PrmEncodage()
-        prm_langue = PrmLangue()
-        prm_newsletter = PrmNewsletter()
-        prm_voir = PrmVoir()
-        prm_chmdp = PrmChmdp()
-        
-        self.ajouter_parametre(prm_couleur)
-        self.ajouter_parametre(prm_encodage)
-        self.ajouter_parametre(prm_langue)
-        self.ajouter_parametre(prm_newsletter)
-        self.ajouter_parametre(prm_voir)
-        self.ajouter_parametre(prm_chmdp)
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        titre = dic_masques["message"].message
+        newsletter = importeur.information.creer_newsletter(titre)
+        editeur = importeur.interpreteur.construire_editeur(
+                "nleredit", personnage, newsletter)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()
