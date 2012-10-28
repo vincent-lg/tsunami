@@ -95,7 +95,7 @@ class EdtOedit(Editeur):
     
     def interpreter(self, msg):
         """Interprétation du message"""
-        msg = msg.lower()
+        msg = supprimer_accents(msg).lower()
         if msg == "a":
             self.fermer()
             self.pere.envoyer("Opération annulée.")
@@ -107,7 +107,7 @@ class EdtOedit(Editeur):
                 p_types = type(self).importeur.objet.types_premier_niveau
             
             for nom, p_type in p_types.items():
-                if contient(nom, msg) and p_type.selectable:
+                if supprimer_accents(nom) == msg and p_type.selectable:
                     type_choisi = nom
             
             if not type_choisi:
