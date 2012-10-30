@@ -315,7 +315,8 @@ class Salle(BaseObj):
         for personne in self.personnages:
             if personne is not personnage:
                 if not hasattr(personne, "prototype"):
-                    personnages[personne] = 1
+                    if personnage.peut_voir(personne):
+                        personnages[personne] = 1
                 else:
                     personnages[personne.prototype] = personnages.get(
                             personne.prototype, 0) + 1

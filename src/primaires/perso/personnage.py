@@ -92,6 +92,7 @@ class Personnage(BaseObj):
         
         # Etat
         self._cle_etat = ""
+        self.super_invisible = False
         
         # Position occupée
         self.position = ""
@@ -206,7 +207,11 @@ class Personnage(BaseObj):
     @property
     def prompt(self):
         """Retourne le prompt formatté"""
-        return self._prompt.format(stats=self.stats)
+        prompt = self._prompt.format(stats=self.stats)
+        if self.super_invisible:
+            prompt = "[i] " + prompt
+        
+        return prompt
     
     @property
     def grp(self):
@@ -291,6 +296,13 @@ class Personnage(BaseObj):
             nb = 0
         
         return nb
+    
+    def peut_voir(self, personnage):
+        """Retourne True si peut voir le personnage, False sinon."""
+        if self.est_immortel():
+            return True
+        
+        return not personnage.super_invisible
     
     def sans_prompt(self):
         if self.controle_par:
