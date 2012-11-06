@@ -41,6 +41,8 @@ class Pluie(BasePertu):
     nom_pertu = "pluie"
     rayon_max = 16
     duree_max = 12
+    temperature_min = 4
+    origine = False
     
     def __init__(self, pos):
         """Constructeur de la perturbation"""

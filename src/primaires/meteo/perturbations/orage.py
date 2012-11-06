@@ -41,6 +41,7 @@ class Orage(BasePertu):
     nom_pertu = "orage"
     rayon_max = 13
     duree_max = 7
+    origine = False
     
     def __init__(self, pos):
         """Constructeur de la perturbation"""

@@ -52,6 +52,7 @@ OPAQUE = 2
 class BasePertu(BaseObj, metaclass=MetaPertu):
     
     """Classe abstraite représentant la base d'une perturbation météo.
+    
     Cette classe contient tout ce qui est commun à toutes les perturbations
     météorologiques.
     
@@ -60,6 +61,9 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
     nom_pertu = ""
     rayon_max = 0 # à redéfinir selon la perturbation
     duree_max = 15 # à peu près en minutes
+    temperature_min = None
+    temperature_max = None
+    origine = True
     
     enregistrer = True
     def __init__(self, pos):
@@ -97,6 +101,10 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
     def __getnewargs__(self):
         return (None, )
     
+    def __repr__(self):
+        """Représentation de la perturbation."""
+        return "<{} ({}>)".format(self.nom_pertu, repr(self.centre))
+    
     @property
     def liste_salles_sous(self):
         """Renvoie la liste des salles sous la perturbation"""
@@ -127,6 +135,7 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
     
     def action_cycle(self, salles):
         """Définit une ou plusieurs actions effectuées à chaque cycle.
+        
         Méthode à redéfinir pour des perturbations plus originales (l'orage
         par exemple qui tonne à chaque cycle aléatoirement).
         
@@ -143,13 +152,24 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
         self.centre.x += vent_x[self.dir + x]
         self.centre.y += vent_y[self.dir + x]
         for salle in self.liste_salles_sous:
-            if not salle in salles and salle.exterieur:
-                salle.envoyer("|cy|" + self.message_entrer.format(
-                        dir=vents_opp[self.dir]) + "|ff|", prompt=False)
+            if salle not in salles:
+                temperature = salle.zone.temperature
+                if (self.temperature_min and temperature < \
+                        self.temperature_min) or (self.temperature_max and \
+                        temperature > self.temperature_max):
+                    self.detruire()
+                    importeur.meteo.perturbations_actuelles.remove(self)
+                    break
+                
+                if salle.exterieur:
+                    salle.envoyer("|cy|" + self.message_entrer.format(
+                            dir=vents_opp[self.dir]) + "|ff|", prompt=False)
+        
         for salle in salles:
             if not self.est_sur(salle) and salle.exterieur:
                 salle.envoyer("|cy|" + self.message_sortir.format(
                         dir=vents[self.dir]) + "|ff|", prompt=False)
+        
         if randint(1, 10) <= self.alea_dir / 2:
             self.dir = randint(0, 7)
     
@@ -173,3 +193,20 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
                 msg = etat[1]
                 break
         return msg
+    
+    @classmethod
+    def accepte_temperature(cls, temperature):
+        """Retourne True si accepte la température, False sinon.
+        
+        NOTE: une perturbation accepte une température donnée si
+        elle est dans ses bornes de températures minimum et maximum.
+        Bien entendu, si ces bornes n'existent pas (restent à None),
+        cela n'a pas d'importance et la méthode retournera True.
+        
+        """
+        if cls.temperature_min and cls.temperature_min > temperature:
+            return False
+        if cls.temperature_max and cls.temperature_max < temperature:
+            return False
+        
+        return True

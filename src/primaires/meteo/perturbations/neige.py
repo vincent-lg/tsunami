@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,60 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Zone, détaillée plus bas."""
+"""Ce fichier contient la classe Neige, détaillée plus bas."""
 
-from abstraits.obase import BaseObj
+from .base import *
 
-class Zone(BaseObj):
+class Neige(BasePertu):
     
-    """Classe représentant une zone.
-    
-    Une zone est un ensemble de salle. Certaines informations génériques
-    sont conservés dans la zone plutôt que dans chaque salle.
+    """Classe abstraite représentant la perturbation 'neige'.
     
     """
     
-    enregistrer = True
-    def __init__(self, cle):
-        """Constructeur de la zone."""
-        BaseObj.__init__(self)
-        self.cle = cle
-        self.salles = []
-        self.ouverte = True
-        self.argent_total = 0
-        self.mod_temperature = 0
+    nom_pertu = "neige"
+    rayon_max = 10
+    duree_max = 6
+    temperature_min = -2
+    temperature_max = 4
+    origine = False
     
-    def __getnewargs__(self):
-        return ("", )
-    
-    def __getstate__(self):
-        attrs = self.__dict__.copy()
-        if "salles" in attrs:
-            del attrs["salles"]
-        
-        return attrs
-    
-    def __repr__(self):
-        return "zone {}".format(repr(self.cle))
-    
-    def __str__(self):
-        return self.cle
-    
-    @property
-    def fermee(self):
-        return not self.ouverte
-    
-    @property
-    def temperature(self):
-        """Retourne la température actuelle."""
-        return importeur.meteo.temperature + self.mod_temperature
-    
-    def ajouter(self, salle):
-        """Ajoute une salle à la zone."""
-        if salle not in self.salles:
-            self.salles.append(salle)
-    
-    def retirer(self, salle):
-        """Retire la salle de la zone."""
-        if salle in self.salles:
-            self.salles.remove(salle)
+    def __init__(self, pos):
+        """Constructeur de la perturbation"""
+        BasePertu.__init__(self, pos)
+        self.flags = OPAQUE
+        self.alea_dir = 1
+        self.etat = [
+            (10, "De fins flocons tourbillonnent dans l'air frais."),
+        ]
+        self.message_fin = "Les nuages blancs se divisent en fines " \
+                "écharpes emportées par le vent et la neige cesse."
+        self.message_entrer = "De lourds nuages blancs " \
+                "arrivent {dir}, apportant la neige."
+        self.message_sortir = "Les lourds nuages blancs s'éloignent " \
+                "peu à peu vers {dir} et la neige cesse."
+        self.fins_possibles = [
+            ("tempete_neige", "Le vent forcit soudain et la neige " \
+                    "devient subitement épaisse.", 30),
+        ]
