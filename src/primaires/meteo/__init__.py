@@ -131,7 +131,6 @@ class Module(BaseModule):
                     p.accepte_temperature(t_min) and p.accepte_temperature(t_max)]
             salles = list(self.importeur.salle._salles.values())
             cls_pertu = choice(perturbations)
-            print(cls_pertu, perturbations)
             if cls_pertu.temperature_min or cls_pertu.temperature_max:
                 t_min = cls_pertu.temperature_min
                 t_max = cls_pertu.temperature_max
@@ -141,23 +140,26 @@ class Module(BaseModule):
                 if t_max:
                     zones = [z for z in zones if z.temperature <= t_max]
                 salles = [s for s in salles if s.zone in zones]
+            salles = [s for s in salles if s.coords.valide]
             try:
                 salle_dep = choice(salles)
             except IndexError:
                 pass
             else:
                 deja_pertu = False
+                n_pertu = cls_pertu(salle_dep.coords.get_copie())
                 for pertu in self.perturbations_actuelles:
-                    if pertu.est_sur(salle_dep):
+                    if pertu.va_recouvrir(n_pertu):
                         deja_pertu = True
                         break
-                if salle_dep.coords.valide and not deja_pertu:
-                    pertu = cls_pertu(salle_dep.coords.get_copie())
-                    self.perturbations_actuelles.append(pertu)
-                    for salle in pertu.liste_salles_sous:
+                if not deja_pertu:
+                    self.perturbations_actuelles.append(n_pertu)
+                    for salle in n_pertu.liste_salles_sous:
                         if salle.exterieur:
-                            salle.envoyer("|cy|" + pertu.message_debut + "|ff|",
-                                    prompt=False)
+                            salle.envoyer("|cy|" + n_pertu.message_debut + \
+                                    "|ff|", prompt=False)
+                else:
+                    n_pertu.detruire()
     
     def donner_meteo(self, salle, liste_messages, flags):
         """Affichage de la météo d'une salle"""

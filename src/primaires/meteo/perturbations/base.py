@@ -122,15 +122,15 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
         """
         salles = self.liste_salles_sous
         self.action_cycle(salles)
+        n_x, n_y = self.calculer_prochaines_coords()
         # Détection des collisions
+        if self.flags & STATIQUE:
+            self.flags = self.flags ^ STATIQUE
         for pertu in type(self).importeur.meteo.perturbations_actuelles:
-            if pertu is not self:
-                if sqrt(pow(pertu.centre.x - self.centre.x, 2) + \
-                        pow(pertu.centre.y - self.centre.y, 2)) <= \
-                        self.rayon + pertu.rayon:
-                    self.flags = self.flags ^ STATIQUE
+            if pertu is not self and self.va_recouvrir(pertu, n_x, n_y):
+                self.flags = self.flags ^ STATIQUE
         if not self.flags & STATIQUE:
-            self.bouger(salles)
+            self.bouger(salles, n_x, n_y)
         self.age += 1
     
     def action_cycle(self, salles):
@@ -142,15 +142,10 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
         """
         pass
     
-    def bouger(self, salles):
+    def bouger(self, salles, n_x, n_y):
         """Bouge une perturbation"""
-        x = 0
-        if randint(1, 10) <= self.alea_dir:
-            x = choice([-1, 1])
-        if self.dir + x > 7 or self.dir + x < 0:
-            x = (x == -1 and 7) or -7
-        self.centre.x += vent_x[self.dir + x]
-        self.centre.y += vent_y[self.dir + x]
+        self.centre.x = n_x
+        self.centre.y = n_y
         for salle in self.liste_salles_sous:
             if salle not in salles:
                 temperature = salle.zone.temperature
@@ -210,3 +205,24 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
             return False
         
         return True
+    
+    def calculer_prochaines_coords(self):
+        """Retourn les prochains (x, y)."""
+        n_x = n_y = 0
+        x = 0
+        if randint(1, 10) <= self.alea_dir:
+            x = choice([-1, 1])
+        if self.dir + x > 7 or self.dir + x < 0:
+            x = (x == -1 and 7) or -7
+        n_x = self.centre.x + vent_x[self.dir + x]
+        n_y = self.centre.y + vent_y[self.dir + x]
+        return n_x, n_y
+
+    def va_recouvrir(self, pertu, n_x=None, n_y=None):
+        """Retourne True si le prochain mouvement de self va recouvrir pertu."""
+        if n_x is None or n_y is None:
+            n_x = self.centre.x
+            n_y = self.centre.y
+        
+        return sqrt((pertu.centre.x - n_x) ** 2 + (pertu.centre.y - n_y) ** 2) <= \
+                self.rayon + pertu.rayon
