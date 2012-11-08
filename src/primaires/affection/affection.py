@@ -28,44 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Neige, détaillée plus bas."""
+"""Ce module contient la classe Affection, détaillée plus bas."""
 
-from .base import *
+from abstraits.obase import BaseObj
 
-class Neige(BasePertu):
+class Affection(BaseObj):
     
-    """Classe abstraite représentant la perturbation 'neige'.
+    """Affection concrète, affectant un subissant (personnage, salle...).
+    
+    Quand un subissant est affecté (la neige tombe dans une salle, par exemple), si l'affection n'est pas présente un objet de cette classe est créé. Il contient :
+        L'objet indirectement hérité de AffectionAbstraite (Neige ici)
+        Des valeurs propres à cette affection (sa durée restante, sa forcce)
     
     """
     
-    nom_pertu = "neige"
-    rayon_max = 10
-    duree_max = 6
-    temperature_min = -2
-    temperature_max = 4
-    origine = False
+    def __init__(self, affection, affecte, duree, force):
+        BaseObj.__init__(self)
+        self.affecte = affecte
+        self.affection = affection
+        self.age = 0
+        self.duree = duree
+        self.force = force
     
-    def __init__(self, pos):
-        """Constructeur de la perturbation"""
-        BasePertu.__init__(self, pos)
-        self.flags = OPAQUE
-        self.alea_dir = 1
-        self.etat = [
-            (10, "De fins flocons tourbillonnent dans l'air frais."),
-        ]
-        self.message_fin = "Les nuages blancs se divisent en fines " \
-                "écharpes emportées par le vent et la neige cesse."
-        self.message_entrer = "De lourds nuages blancs " \
-                "arrivent {dir}, apportant la neige."
-        self.message_sortir = "Les lourds nuages blancs s'éloignent " \
-                "peu à peu vers {dir} et la neige cesse."
-        self.fins_possibles = [
-            ("tempete_neige", "Le vent forcit soudain et la neige " \
-                    "devient subitement épaisse.", 30),
-        ]
+    def __getnewargs__(self):
+        return (None, None, 0, 0)
     
-    def action_cycle(self, salles):
-        """Définit une ou plusieurs actions effectuées à chaque cycle."""
-        for salle in salles:
-            if salle.exterieur:
-                salle.affecte("neige", 2, 1)
+    def __repr__(self):
+        return "<affection de {} par {} (force={}, duree={})>".format(
+                self.nom_affecte, self.cle_affection, self.force, self.duree)
+    
+    @property
+    def nom_affecte(self):
+        return self.affecte and self.affecte.nom_unique or "inconnu"
+    
+    @property
+    def cle_affection(self):
+        return self.affection and self.affection.cle or "aucune"

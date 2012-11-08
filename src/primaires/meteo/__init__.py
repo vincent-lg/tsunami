@@ -125,8 +125,12 @@ class Module(BaseModule):
         
         # On tente de créer une perturbation
         if len(self.perturbations_actuelles) < self.cfg.nb_pertu_max:
-            t_min = min(z.temperature for z in importeur.salle.zones.values())
-            t_max = max(z.temperature for z in importeur.salle.zones.values())
+            t_min = t_max = self.temperature
+            if importeur.salle.zones:
+                t_min = min(z.temperature for z in \
+                        importeur.salle.zones.values())
+                t_max = max(z.temperature for z in \
+                        importeur.salle.zones.values())
             perturbations = [p for p in self.perturbations if p.origine and \
                     p.accepte_temperature(t_min) and p.accepte_temperature(t_max)]
             salles = list(self.importeur.salle._salles.values())

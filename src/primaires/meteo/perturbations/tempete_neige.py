@@ -63,3 +63,9 @@ class TempeteNeige(BasePertu):
             ("neige", "Le vent retombe petit à petit et la neige se " \
                     "fait moins épaisse.", 50),
         ]
+    
+    def action_cycle(self, salles):
+        """Définit une ou plusieurs actions effectuées à chaque cycle."""
+        for salle in salles:
+            if salle.exterieur:
+                salle.affecte("neige", 4, 2)

@@ -52,6 +52,7 @@ NOTE: les modules primaires et secondaires ne doivent pas porter de noms
 identiques, susceptibles d'entrer en conflit.
 
 Voici un résumé des modules primaires existants :
+-   affection       Module gérant les affections temporaires de l'univers
 -   combat          Module gérant le combat rapproché
 -   commerce        Module gérant les magasins et transactions    
 -   communication   Module gérant la communication dans l'univers

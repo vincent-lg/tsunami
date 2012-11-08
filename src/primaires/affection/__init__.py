@@ -31,6 +31,7 @@
 """Ce fichier contient le module primaire affection."""
 
 from abstraits.module import *
+from . import defaut
 
 class Module(BaseModule):
     
@@ -56,3 +57,27 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "affection", "primaire")
         self.logger = type(self.importeur).man_logs.creer_logger("affection", \
                 "affections")
+        self.aff_salles = {}
+    
+    def preparer(self):
+        """Prépare le module.
+        
+        Crée les affections par défaut si elles n'existent pas.
+        
+        """
+        aff_salles = {
+            "neige": defaut.salle.neige.Neige,
+        }
+        
+        for cle, classe in aff_salles.items():
+            if cle not in self.aff_salles:
+                classe() # crée (et enregistre automatiquement) l'affection
+    
+    def get_affection(self, type, cle):
+        """Retourne, si trouvé, l'objet représentant l'affection."""
+        types = {
+            "salle": self.aff_salles,
+        }
+        
+        affections = types[type]
+        return affections[cle]
