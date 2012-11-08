@@ -161,7 +161,8 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
                             dir=vents_opp[self.dir]) + "|ff|", prompt=False)
         
         for salle in salles:
-            if not self.est_sur(salle) and salle.exterieur:
+            if (not self.e_existe or not self.est_sur(salle)) and \
+                    salle.exterieur:
                 salle.envoyer("|cy|" + self.message_sortir.format(
                         dir=vents[self.dir]) + "|ff|", prompt=False)
         

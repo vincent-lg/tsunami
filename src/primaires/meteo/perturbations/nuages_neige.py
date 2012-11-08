@@ -41,7 +41,6 @@ class NuagesNeige(BasePertu):
     nom_pertu = "nuages_neige"
     rayon_max = 10
     duree_max = 6
-    temperature_min = -5
     temperature_max = 4
     
     def __init__(self, pos):
