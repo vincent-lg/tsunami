@@ -28,21 +28,28 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce module contient la classe AffectionSalle, détaillée plus bas."""
+"""Package contenant la commande 'meteo'."""
 
-from .base import AffectionAbstraite
+from primaires.interpreteur.commande.commande import Commande
+from .creer import PrmCreer
+from .liste import PrmListe
 
-class AffectionSalle(AffectionAbstraite):
+class CmdMeteo(Commande):
     
-    """Affection propre à une salle."""
+    """Commande 'meteo'"""
     
-    nom_type = "salle"
-    def __init__(self, cle):
-        AffectionAbstraite.__init__(self, cle)
-        self.visible = True
-        importeur.affection.aff_salles[self.cle] = self
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "météo", "meteo")
+        self.groupe = "administrateur"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "manipule la météorologie"
+        self.aide_longue = \
+            "Cette commande permet de manipuer les perturbations " \
+            "météorologiques, dans un premier temps de savoir les " \
+            "perturbations existantes et d'en ajouter si besoin."
     
-    def programmer_destruction(self, affection):
-        """Programme la destruction de l'affection de salle."""
-        affection.affecte.envoyer(self.message_detruire(affection),
-                prompt=False)
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmCreer())
+        self.ajouter_parametre(PrmListe())
