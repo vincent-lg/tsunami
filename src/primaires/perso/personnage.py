@@ -449,7 +449,7 @@ class Personnage(BaseObj):
         
         # On appelle les pnj.part des PNJs de la salle
         for perso in self.salle.personnages:
-            if hasattr(perso, "script"):
+            if hasattr(perso, "script") and perso.peut_voir(self):
                 perso.script["part"].executer(vers=sortie.nom, 
                         destination=salle_dest, pnj=perso, personnage=self)
         
@@ -508,7 +508,7 @@ class Personnage(BaseObj):
         
         # On appelle les pnj.arrive des PNJs de la salle
         for perso in salle_dest.personnages:
-            if hasattr(perso, "script"):
+            if hasattr(perso, "script") and perso.peut_voir(self):
                 perso.script["arrive"].executer(depuis=nom_opp, pnj=perso,
                         personnage=self, salle=salle)
     

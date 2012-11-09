@@ -142,7 +142,8 @@ class Attitude(BaseObj):
             cible = None
             for personnage in acteur.salle.personnages:
                 nom_perso = personnage.get_nom_pour(acteur)
-                if contient(nom_perso, nom_cible):
+                if acteur.peut_voir(personnage) and contient(nom_perso,
+                        nom_cible):
                     cible = personnage
             if cible is None:
                 acteur << "|err|Vous ne voyez pas cette personne ici.|ff|"

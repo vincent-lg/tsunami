@@ -97,7 +97,8 @@ class Observable(Masque):
         
         # On cherche dans les personnages
         for perso in salle.personnages:
-            if contient(perso.get_nom_pour(personnage), nom):
+            if personnage.peut_voir(perso) and \
+                    contient(perso.get_nom_pour(personnage), nom):
                 nb += 1
                 if nb == nombre:
                     elt = perso
