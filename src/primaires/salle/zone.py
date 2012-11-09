@@ -49,6 +49,7 @@ class Zone(BaseObj):
         self.salles = []
         self.ouverte = True
         self.argent_total = 0
+        self.mod_temperature = 0
     
     def __getnewargs__(self):
         return ("", )
@@ -69,6 +70,11 @@ class Zone(BaseObj):
     @property
     def fermee(self):
         return not self.ouverte
+    
+    @property
+    def temperature(self):
+        """Retourne la température actuelle."""
+        return importeur.meteo.temperature + self.mod_temperature
     
     def ajouter(self, salle):
         """Ajoute une salle à la zone."""

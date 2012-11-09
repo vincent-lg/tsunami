@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Ce module contient la classe AffectionAbstraite, détaillée plus bas."""
 
-from . import afk
-from . import apprendre
-from . import alias
-from . import chgroupe
-from . import distinctions
-from . import entrainer
-from . import fixer
-from . import groupe
-from . import module
-from . import options
-from . import oublier
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retnom
-from . import setquest
-from . import shutdown
-from . import superinv
-from . import where
+from abstraits.obase import BaseObj
+from corps.fonctions import valider_cle
+from .affection import Affection
+
+class AffectionAbstraite(BaseObj):
+    
+    """Affection abstraite, propre à toutes les affections."""
+    
+    nom_type = "non renseigné"
+    def __init__(self, cle):
+        valider_cle(cle)
+        BaseObj.__init__(self)
+        self.cle = cle
+    
+    def __getnewargs__(self):
+        return ("inconnue", )
+    
+    def __repr__(self):
+        return "<affection de {} {}>".format(self.nom_type, self.cle)

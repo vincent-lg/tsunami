@@ -228,14 +228,20 @@ class Joueur(Personnage):
         l_aff = []
         for objet in l_formatter:
             if isinstance(objet, Personnage):
-                l_aff.append(objet.get_nom_pour(self))
+                if self.peut_voir(objet):
+                    l_aff.append(objet.get_nom_pour(self))
+                else:
+                    return
             else:
                 l_aff.append(str(objet))
         
         d_aff = {}
         for cle, objet in kw_formatter.items():
             if isinstance(objet, Personnage):
-                d_aff[cle] = objet.get_nom_pour(self)
+                if self.peut_voir(objet):
+                    d_aff[cle] = objet.get_nom_pour(self)
+                else:
+                    return
             else:
                 d_aff[cle] = str(objet)
         

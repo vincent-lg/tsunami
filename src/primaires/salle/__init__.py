@@ -57,6 +57,7 @@ from . import types
 
 # Constantes
 NB_MIN_NETTOYAGE = 20
+NB_TICKS = 12
 
 class Module(BaseModule):
     
@@ -119,6 +120,11 @@ class Module(BaseModule):
         # Constantes
         self.TERRAINS_SANS_FEU = ("ville", "désert", "route", "aquatique",
                 "subaquatique", "rive")
+        
+        # Ticks
+        self.ticks = {}
+        for no in range(1, NB_TICKS + 1):
+            self.ticks[no] = []
     
     @property
     def salles(self):
@@ -221,6 +227,12 @@ class Module(BaseModule):
         etat.msg_refus = "Vous êtes en train de ramasser du bois."
         etat.msg_visible = "ramasse du bois"
         etat.act_autorisees = ["regarder", "parler"]
+        
+        # Ajout des actions différées pour chaque tick
+        intervalle = 60 / NB_TICKS
+        for no in self.ticks.keys():
+            self.importeur.diffact.ajouter_action("stick_{}".format(no),
+                    intervalle * no, self.tick, no)
         
         BaseModule.init(self)
     
@@ -561,3 +573,25 @@ class Module(BaseModule):
                 if salle == feu.salle:
                     liste_messages.insert(0, str(feu))
                     return
+    
+    def tick(self, no):
+        """Exécute un tick."""
+        self.importeur.diffact.ajouter_action("stick_{}".format(no),
+                60, self.tick, no)
+        
+        # On sélectionne les salles à tick
+        salles = list(self._salles.values())
+        tick = []
+        i = no - 1
+        while i < len(salles):
+            try:
+                s = salles[i]
+            except IndexError:
+                pass
+            else:
+                if s.affections:
+                    tick.append(s)
+            i += NB_TICKS
+        
+        for s in tick:
+            s.tick()

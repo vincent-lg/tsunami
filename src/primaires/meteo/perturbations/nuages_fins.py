@@ -41,6 +41,7 @@ class NuagesFins(BasePertu):
     nom_pertu = "nuages_fins"
     rayon_max = 23
     duree_max = 18
+    temperature_min = 15
     
     def __init__(self, pos):
         """Constructeur de la perturbation"""

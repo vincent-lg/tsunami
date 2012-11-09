@@ -52,6 +52,7 @@ OPAQUE = 2
 class BasePertu(BaseObj, metaclass=MetaPertu):
     
     """Classe abstraite représentant la base d'une perturbation météo.
+    
     Cette classe contient tout ce qui est commun à toutes les perturbations
     météorologiques.
     
@@ -60,6 +61,9 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
     nom_pertu = ""
     rayon_max = 0 # à redéfinir selon la perturbation
     duree_max = 15 # à peu près en minutes
+    temperature_min = None
+    temperature_max = None
+    origine = True
     
     enregistrer = True
     def __init__(self, pos):
@@ -97,6 +101,10 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
     def __getnewargs__(self):
         return (None, )
     
+    def __repr__(self):
+        """Représentation de la perturbation."""
+        return "<{} ({}>)".format(self.nom_pertu, repr(self.centre))
+    
     @property
     def liste_salles_sous(self):
         """Renvoie la liste des salles sous la perturbation"""
@@ -114,42 +122,50 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
         """
         salles = self.liste_salles_sous
         self.action_cycle(salles)
+        n_x, n_y = self.calculer_prochaines_coords()
         # Détection des collisions
+        if self.flags & STATIQUE:
+            self.flags = self.flags ^ STATIQUE
         for pertu in type(self).importeur.meteo.perturbations_actuelles:
-            if pertu is not self:
-                if sqrt(pow(pertu.centre.x - self.centre.x, 2) + \
-                        pow(pertu.centre.y - self.centre.y, 2)) <= \
-                        self.rayon + pertu.rayon:
-                    self.flags = self.flags ^ STATIQUE
+            if pertu is not self and self.va_recouvrir(pertu, n_x, n_y):
+                self.flags = self.flags ^ STATIQUE
         if not self.flags & STATIQUE:
-            self.bouger(salles)
+            self.bouger(salles, n_x, n_y)
         self.age += 1
     
     def action_cycle(self, salles):
         """Définit une ou plusieurs actions effectuées à chaque cycle.
+        
         Méthode à redéfinir pour des perturbations plus originales (l'orage
         par exemple qui tonne à chaque cycle aléatoirement).
         
         """
         pass
     
-    def bouger(self, salles):
+    def bouger(self, salles, n_x, n_y):
         """Bouge une perturbation"""
-        x = 0
-        if randint(1, 10) <= self.alea_dir:
-            x = choice([-1, 1])
-        if self.dir + x > 7 or self.dir + x < 0:
-            x = (x == -1 and 7) or -7
-        self.centre.x += vent_x[self.dir + x]
-        self.centre.y += vent_y[self.dir + x]
+        self.centre.x = n_x
+        self.centre.y = n_y
         for salle in self.liste_salles_sous:
-            if not salle in salles and salle.exterieur:
-                salle.envoyer("|cy|" + self.message_entrer.format(
-                        dir=vents_opp[self.dir]) + "|ff|", prompt=False)
+            if salle not in salles:
+                temperature = salle.zone.temperature
+                if (self.temperature_min and temperature < \
+                        self.temperature_min) or (self.temperature_max and \
+                        temperature > self.temperature_max):
+                    self.detruire()
+                    importeur.meteo.perturbations_actuelles.remove(self)
+                    break
+                
+                if salle.exterieur:
+                    salle.envoyer("|cy|" + self.message_entrer.format(
+                            dir=vents_opp[self.dir]) + "|ff|", prompt=False)
+        
         for salle in salles:
-            if not self.est_sur(salle) and salle.exterieur:
+            if (not self.e_existe or not self.est_sur(salle)) and \
+                    salle.exterieur:
                 salle.envoyer("|cy|" + self.message_sortir.format(
                         dir=vents[self.dir]) + "|ff|", prompt=False)
+        
         if randint(1, 10) <= self.alea_dir / 2:
             self.dir = randint(0, 7)
     
@@ -173,3 +189,41 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
                 msg = etat[1]
                 break
         return msg
+    
+    @classmethod
+    def accepte_temperature(cls, temperature):
+        """Retourne True si accepte la température, False sinon.
+        
+        NOTE: une perturbation accepte une température donnée si
+        elle est dans ses bornes de températures minimum et maximum.
+        Bien entendu, si ces bornes n'existent pas (restent à None),
+        cela n'a pas d'importance et la méthode retournera True.
+        
+        """
+        if cls.temperature_min and cls.temperature_min > temperature:
+            return False
+        if cls.temperature_max and cls.temperature_max < temperature:
+            return False
+        
+        return True
+    
+    def calculer_prochaines_coords(self):
+        """Retourn les prochains (x, y)."""
+        n_x = n_y = 0
+        x = 0
+        if randint(1, 10) <= self.alea_dir:
+            x = choice([-1, 1])
+        if self.dir + x > 7 or self.dir + x < 0:
+            x = (x == -1 and 7) or -7
+        n_x = self.centre.x + vent_x[self.dir + x]
+        n_y = self.centre.y + vent_y[self.dir + x]
+        return n_x, n_y
+
+    def va_recouvrir(self, pertu, n_x=None, n_y=None):
+        """Retourne True si le prochain mouvement de self va recouvrir pertu."""
+        if n_x is None or n_y is None:
+            n_x = self.centre.x
+            n_y = self.centre.y
+        
+        return sqrt((pertu.centre.x - n_x) ** 2 + (pertu.centre.y - n_y) ** 2) <= \
+                self.rayon + pertu.rayon

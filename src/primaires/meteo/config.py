@@ -41,4 +41,28 @@ beau_temps = "L'atmosphère est claire, le ciel pur, libre de tout nuage."
 # moyenne d'une perturbation est d'environ 15 cases.
 nb_pertu_max = 3
 
+## Température saisonnières
+# Cette donnée permet de fixer les marges minimums et maximums des
+# températures saisonières. Il s'agit par exemple de définir qu'au
+# mois de janvier, la température globale est entre 2 et 7°.
+# La donnée est la forme d'une liste de tuples : chaque tuple, de
+# deux éléments, indique la marge minimum suivie de la marge maximum
+# du mois. La position dans la liste détermine le mois en question
+# (le mois de janvier par exemple sera en premier, puis viendra
+# février, ainsi de suite).
+temperatures = [
+    (1, 7),
+    (0, 9),
+    (2, 12),
+    (5, 18),
+    (8, 21),
+    (14, 26),
+    (18, 31),
+    (22, 37),
+    (20, 34),
+    (12, 26),
+    (2, 14),
+    (-1, 8),
+]
+
 """

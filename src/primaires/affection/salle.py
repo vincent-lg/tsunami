@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Ce module contient la classe AffectionSalle, détaillée plus bas."""
 
-from . import afk
-from . import apprendre
-from . import alias
-from . import chgroupe
-from . import distinctions
-from . import entrainer
-from . import fixer
-from . import groupe
-from . import module
-from . import options
-from . import oublier
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retnom
-from . import setquest
-from . import shutdown
-from . import superinv
-from . import where
+from .base import AffectionAbstraite
+
+class AffectionSalle(AffectionAbstraite):
+    
+    """Affection propre à une salle."""
+    
+    nom_type = "salle"
+    def __init__(self, cle):
+        AffectionAbstraite.__init__(self, cle)
+        self.visible = True
+        importeur.affection.aff_salles[self.cle] = self

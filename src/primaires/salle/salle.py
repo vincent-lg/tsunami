@@ -34,6 +34,7 @@ from collections import OrderedDict
 
 from abstraits.obase import BaseObj
 from corps.fonctions import lisser
+from primaires.affection.affection import Affection
 from primaires.format.description import Description
 from primaires.vehicule.vecteur import Vecteur
 from .chemin import Chemin
@@ -104,6 +105,9 @@ class Salle(BaseObj):
         
         # Etendue
         self.etendue = None
+        
+        # Affections
+        self.affections = {}
     
     def __getnewargs__(self):
         return ("", "")
@@ -169,6 +173,10 @@ class Salle(BaseObj):
     
     def get_etendue(self):
         return self.etendue
+    
+    @property
+    def nom_unique(self):
+        return self.ident
     
     def personnage_est_present(self, personnage):
         """Si le personnage est présent, retourne True, False sinon."""
@@ -298,12 +306,20 @@ class Salle(BaseObj):
         if plus:
             res += plus + "\n"
         
+        res_affections = []
+        for affection in self.affections.values():
+            res_affections.append(affection.affection.message(affection))
+        
+        if res_affections:
+            res += "\n".join(res_affections) + "\n"
+        
         liste_messages = []
         flags = 0
         type(self).importeur.hook["salle:regarder"].executer(self,
                 liste_messages, flags)
         if liste_messages:
             res += "\n".join(liste_messages) + "\n"
+        
         res += "\nSorties : "
         res += self.afficher_sorties(personnage)
         
@@ -315,7 +331,8 @@ class Salle(BaseObj):
         for personne in self.personnages:
             if personne is not personnage:
                 if not hasattr(personne, "prototype"):
-                    personnages[personne] = 1
+                    if personnage.peut_voir(personne):
+                        personnages[personne] = 1
                 else:
                     personnages[personne.prototype] = personnages.get(
                             personne.prototype, 0) + 1
@@ -399,3 +416,26 @@ class Salle(BaseObj):
             if nb > 0:
                 for i in range(nb):
                     importeur.pnj.creer_PNJ(pro, self)
+    
+    def affecte(self, cle, duree, force):
+        """Affecte la salle avec une affection.
+        
+        Si l'affection est déjà présente, la force est modulée.
+        
+        """
+        affection = importeur.affection.get_affection("salle", cle)
+        if cle in self.affections:
+            concrete = self.affections[cle]
+            affection.moduler(concrete, duree, force)
+        else:
+            concrete = Affection(affection, self, duree, force)
+            self.affections[cle] = concrete
+    
+    def tick(self):
+        """Méthode appelée à chaque tick de la salle."""
+        for affection in self.affections.values():
+            affection.affection.dec_duree(affection)
+        
+        for cle, affection in list(self.affections.items()):
+            if not affection.e_existe or affection.duree <= 0:
+                del self.affections[cle]

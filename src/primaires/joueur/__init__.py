@@ -111,6 +111,7 @@ class Module(BaseModule):
             commandes.retnom.CmdRetnom(),
             commandes.setquest.CmdSetQuest(),
             commandes.shutdown.CmdShutdown(),
+            commandes.superinv.CmdSuperinv(),
             commandes.where.CmdWhere(),
         ]
         

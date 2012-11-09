@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,42 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Pluie, détaillée plus bas."""
+"""Fichier contenant l'action attaquer."""
 
-from .base import *
+from primaires.format.fonctions import supprimer_accents
+from primaires.perso.exceptions.action import ExceptionAction
+from primaires.scripting.action import Action
 
-class Pluie(BasePertu):
+class ClasseAction(Action):
     
-    """Classe abstraite représentant la perturbation 'pluie'.
+    """Attaque un personnage présent.
+    
+    Cette action demande à un premier personnage (de préférence un
+    PNJ) d'attaquer un second personnage présent dans la salle.
+    Les deux personnages doivent être précisés.
     
     """
     
-    nom_pertu = "pluie"
-    rayon_max = 16
-    duree_max = 12
-    temperature_min = 4
-    origine = False
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.attaquer_personnage, "Personnage", "Personnage")
     
-    def __init__(self, pos):
-        """Constructeur de la perturbation"""
-        BasePertu.__init__(self, pos)
-        self.flags = OPAQUE
-        self.alea_dir = 4
-        self.etat = [
-            (5, "Une pluie incessante et violente tombe du ciel en colère."),
-            (10, "Une fine pluie martèle le sol dans un doux crépitement."),
-        ]
-        self.message_debut = "Quelques nuages s'amoncellent, grossisent " \
-                "puis donnent naissance à une averse."
-        self.message_fin = "Les nuées se dispersent rapidement et la pluie " \
-                "cesse."
-        self.message_entrer = "Des nuages gonflés d'eau arrivent {dir} et " \
-                "apportent la pluie."
-        self.message_sortir = "Les nuages s'éloignent peu à peu vers {dir}, " \
-                "la pluie cessant soudain."
-        self.fins_possibles = [
-            ("nuages", "L'averse cesse sans un souffle mais les nuages " \
-                    "restent, encore menaçants.", 12),
-            ("orage", "La pluie s'intensifie soudain et le tonnerre retentit.",
-                    30),
-        ]
+    @staticmethod
+    def attaquer_personnage(auteur, cible):
+        """Demande au personnage auteur d'attaquer cible."""
+        if cible.est_mort():
+            return
+        
+        auteur.agir("tuer")
+        auteur.cle_etat = "combat"
+        cible.cle_etat = "combat"
+        importeur.combat.creer_combat(auteur.salle, auteur, cible)
+        auteur.envoyer("Vous attaquez {}.", cible)
+        cible.envoyer("{} vous attaque.", auteur)

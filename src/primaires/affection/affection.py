@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Ce module contient la classe Affection, détaillée plus bas."""
 
-from . import afk
-from . import apprendre
-from . import alias
-from . import chgroupe
-from . import distinctions
-from . import entrainer
-from . import fixer
-from . import groupe
-from . import module
-from . import options
-from . import oublier
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retnom
-from . import setquest
-from . import shutdown
-from . import superinv
-from . import where
+from abstraits.obase import BaseObj
+
+class Affection(BaseObj):
+    
+    """Affection concrète, affectant un subissant (personnage, salle...).
+    
+    Quand un subissant est affecté (la neige tombe dans une salle, par exemple), si l'affection n'est pas présente un objet de cette classe est créé. Il contient :
+        L'objet indirectement hérité de AffectionAbstraite (Neige ici)
+        Des valeurs propres à cette affection (sa durée restante, sa forcce)
+    
+    """
+    
+    def __init__(self, affection, affecte, duree, force):
+        BaseObj.__init__(self)
+        self.affecte = affecte
+        self.affection = affection
+        self.age = 0
+        self.duree = duree
+        self.force = force
+    
+    def __getnewargs__(self):
+        return (None, None, 0, 0)
+    
+    def __repr__(self):
+        return "<affection de {} par {} (force={}, duree={})>".format(
+                self.nom_affecte, self.cle_affection, self.force, self.duree)
+    
+    @property
+    def nom_affecte(self):
+        return self.affecte and self.affecte.nom_unique or "inconnu"
+    
+    @property
+    def cle_affection(self):
+        return self.affection and self.affection.cle or "aucune"

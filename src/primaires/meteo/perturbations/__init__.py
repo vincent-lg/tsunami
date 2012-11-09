@@ -50,7 +50,11 @@ class MetaPertu(MetaBaseObj):
         if cls.nom_pertu:
             perturbations.append(cls)
 
+from .grele import Grele
 from .pluie import Pluie
+from .neige import Neige
 from .nuages import Nuages
-from .orage import Orage
 from .nuages_fins import NuagesFins
+from .nuages_neige import NuagesNeige
+from .orage import Orage
+from .tempete_neige import TempeteNeige

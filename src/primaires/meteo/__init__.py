@@ -54,12 +54,14 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "meteo", "primaire")
         self.perturbations_actuelles = []
+        self.temperature = 10
     
     def config(self):
         """Configuration du module"""
         self.cfg = type(self.importeur).anaconf.get_config("config_meteo",
                 "meteo/config.cfg", "config meteo", cfg_meteo)
         
+        importeur.temps.met_changer_jour.append(self.changer_temperature)
         BaseModule.config(self)
     
     def init(self):
@@ -72,7 +74,13 @@ class Module(BaseModule):
     
     def preparer(self):
         """Préparation du module"""
+        min, max = self.cfg.temperatures[importeur.temps.temps.mois]
+        self.temperature = randint(min, max)
         self.cycle_meteo()
+    
+    @property
+    def perturbations(self):
+        return perturbations
     
     def cycle_meteo(self):
         self.importeur.diffact.ajouter_action("cycle_meteo", 60,
@@ -99,7 +107,7 @@ class Module(BaseModule):
                             salle.envoyer("|cy|" + msg_enchainement + "|ff|",
                                     prompt=False)
                     cls_pertu_enchainer = None
-                    for pertu_existante in perturbations:
+                    for pertu_existante in self.perturbations:
                         if pertu_existante.nom_pertu == nom_pertu_enchainer:
                             cls_pertu_enchainer = pertu_existante
                             break
@@ -108,34 +116,54 @@ class Module(BaseModule):
                         pertu_enchainer.rayon = pertu.rayon
                         pertu_enchainer.dir = pertu.dir
                         self.perturbations_actuelles.append(pertu_enchainer)
-                    else:
-                        print("la perturbation {} n'existe pas". \
-                                format(nom_pertu_enchainer))
                 pertu.detruire()
                 self.perturbations_actuelles.remove(pertu)
+                continue
+            
             # On fait bouger les perturbations existantes
             pertu.cycle()
+        
         # On tente de créer une perturbation
         if len(self.perturbations_actuelles) < self.cfg.nb_pertu_max:
+            t_min = t_max = self.temperature
+            if importeur.salle.zones:
+                t_min = min(z.temperature for z in \
+                        importeur.salle.zones.values())
+                t_max = max(z.temperature for z in \
+                        importeur.salle.zones.values())
+            perturbations = [p for p in self.perturbations if p.origine and \
+                    p.accepte_temperature(t_min) and p.accepte_temperature(t_max)]
             salles = list(self.importeur.salle._salles.values())
+            cls_pertu = choice(perturbations)
+            if cls_pertu.temperature_min or cls_pertu.temperature_max:
+                t_min = cls_pertu.temperature_min
+                t_max = cls_pertu.temperature_max
+                zones = list(importeur.salle.zones.values())
+                if t_min:
+                    zones = [z for z in zones if z.temperature >= t_min]
+                if t_max:
+                    zones = [z for z in zones if z.temperature <= t_max]
+                salles = [s for s in salles if s.zone in zones]
+            salles = [s for s in salles if s.coords.valide]
             try:
                 salle_dep = choice(salles)
-                cls_pertu = choice(perturbations)
             except IndexError:
                 pass
             else:
                 deja_pertu = False
+                n_pertu = cls_pertu(salle_dep.coords.get_copie())
                 for pertu in self.perturbations_actuelles:
-                    if pertu.est_sur(salle_dep):
+                    if pertu.va_recouvrir(n_pertu):
                         deja_pertu = True
                         break
-                if salle_dep.coords.valide and not deja_pertu:
-                    pertu = cls_pertu(salle_dep.coords.get_copie())
-                    self.perturbations_actuelles.append(pertu)
-                    for salle in pertu.liste_salles_sous:
+                if not deja_pertu:
+                    self.perturbations_actuelles.append(n_pertu)
+                    for salle in n_pertu.liste_salles_sous:
                         if salle.exterieur:
-                            salle.envoyer("|cy|" + pertu.message_debut + "|ff|",
-                                    prompt=False)
+                            salle.envoyer("|cy|" + n_pertu.message_debut + \
+                                    "|ff|", prompt=False)
+                else:
+                    n_pertu.detruire()
     
     def donner_meteo(self, salle, liste_messages, flags):
         """Affichage de la météo d'une salle"""
@@ -148,3 +176,15 @@ class Module(BaseModule):
             if not res:
                 res += self.cfg.beau_temps
             liste_messages.append("|cy|" + res + "|ff|")
+    
+    def changer_temperature(self):
+        """Change aléatoirement la température."""
+        min, max = self.cfg.temperatures[importeur.temps.temps.mois]
+        variation = randint(-2, 2)
+        temperature = self.temperature + variation
+        if temperature < min:
+            temperature = min
+        elif temperature > max:
+            temperature = max
+        
+        self.temperature = temperature
