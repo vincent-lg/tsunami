@@ -40,6 +40,7 @@ perturbations = []
 class MetaPertu(MetaBaseObj):
     
     """Métaclasse des perturbations météorologiques.
+    
     Elle ajoute la perturbations dans le dictionnaire ci-dessus.
     
     """

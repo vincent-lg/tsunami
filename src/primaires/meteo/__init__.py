@@ -34,6 +34,7 @@ from random import choice, randint
 from math import ceil
 
 from abstraits.module import *
+from . import commandes
 from .config import cfg_meteo
 from .perturbations import perturbations
 from .perturbations.base import BasePertu, AUCUN_FLAG
@@ -71,6 +72,15 @@ class Module(BaseModule):
         self.perturbations_actuelles = self.importeur.supenr.charger_groupe(
                 BasePertu)
         BaseModule.init(self)
+    
+    def ajouter_commandes(self):
+        """Ajoute les commandes à l'interpréteur."""
+        self.commandes = [
+            commandes.meteo.CmdMeteo(),
+        ]
+        
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)
     
     def preparer(self):
         """Préparation du module"""

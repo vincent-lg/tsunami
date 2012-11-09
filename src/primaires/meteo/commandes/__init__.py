@@ -28,21 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce module contient la classe AffectionSalle, détaillée plus bas."""
+"""Package contenant les commandes du module botanique."""
 
-from .base import AffectionAbstraite
-
-class AffectionSalle(AffectionAbstraite):
-    
-    """Affection propre à une salle."""
-    
-    nom_type = "salle"
-    def __init__(self, cle):
-        AffectionAbstraite.__init__(self, cle)
-        self.visible = True
-        importeur.affection.aff_salles[self.cle] = self
-    
-    def programmer_destruction(self, affection):
-        """Programme la destruction de l'affection de salle."""
-        affection.affecte.envoyer(self.message_detruire(affection),
-                prompt=False)
+from . import meteo
