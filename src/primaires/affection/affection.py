@@ -64,3 +64,8 @@ class Affection(BaseObj):
     @property
     def cle_affection(self):
         return self.affection and self.affection.cle or "aucune"
+    
+    def detruire(self):
+        """Destruction de l'affection."""
+        self.affection.programmer_destruction(self)
+        BaseObj.detruire(self)

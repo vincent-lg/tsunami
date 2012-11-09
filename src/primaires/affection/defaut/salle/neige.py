@@ -81,3 +81,7 @@ class Neige(AffectionSalle):
         """Module, c'est-à-dire ici ajoute simplement les forces et durées."""
         affection.duree += duree
         affection.force += force
+    
+    def message_detruire(self, affection):
+        """Destruction de l'affection de salle."""
+        return "La neige fond, ne laissant que quelques flaques au sol."

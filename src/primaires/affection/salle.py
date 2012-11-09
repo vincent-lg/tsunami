@@ -41,3 +41,7 @@ class AffectionSalle(AffectionAbstraite):
         AffectionAbstraite.__init__(self, cle)
         self.visible = True
         importeur.affection.aff_salles[self.cle] = self
+    
+    def programmer_destruction(self, affection):
+        """Programme la destruction de l'affection de salle."""
+        affection.affecte.envoyer(self.message_detruire(affection))
