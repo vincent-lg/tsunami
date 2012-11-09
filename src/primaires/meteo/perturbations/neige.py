@@ -40,7 +40,7 @@ class Neige(BasePertu):
     
     nom_pertu = "neige"
     rayon_max = 10
-    duree_max = 6
+    duree_max = 8
     temperature_max = 4
     origine = False
     

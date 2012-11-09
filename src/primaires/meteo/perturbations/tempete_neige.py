@@ -40,7 +40,7 @@ class TempeteNeige(BasePertu):
     
     nom_pertu = "tempete_neige"
     rayon_max = 10
-    duree_max = 6
+    duree_max = 10
     temperature_max = 2
     origine = False
     

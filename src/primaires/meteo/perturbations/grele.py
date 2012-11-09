@@ -40,7 +40,7 @@ class Grele(BasePertu):
     
     nom_pertu = "grele"
     rayon_max = 10
-    duree_max = 6
+    duree_max = 9
     temperature_max = 3
     origine = False
     
