@@ -307,3 +307,19 @@ class Magasin(BaseObj):
         """Renouvelle l'inventaire depuis le stock."""
         for service, qtt, flags in self.stock:
             self.ajouter_inventaire(service, qtt, inc_qtt=False)
+    
+    def ouvrir(self):
+        """Ouverture du magasin."""
+        vendeur = self.vendeur
+        if vendeur is None and self.prototype_vendeur and \
+                self.prototype_vendeur.pnj:
+            vendeur = self.prototype_vendeur.pnj[0]
+        
+        if vendeur:
+            vendeur.script["marchand"]["ouvre"].executer(pnj=vendeur)
+    
+    def fermer(self):
+        """Fermeture du magasin."""
+        vendeur = self.vendeur
+        if vendeur:
+            vendeur.script["marchand"]["ferme"].executer(pnj=vendeur)

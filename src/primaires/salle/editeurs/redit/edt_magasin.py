@@ -44,8 +44,8 @@ class EdtMagasin(Editeur):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
         self.ajouter_option("v", self.opt_changer_vendeur)
-        #self.ajouter_option("o", self.opt_ouverture)
-        #self.ajouter_option("f", self.opt_fermeture)
+        self.ajouter_option("o", self.opt_ouverture)
+        self.ajouter_option("f", self.opt_fermeture)
         #self.ajouter_option("r", self.opt_renouvelement)
         self.ajouter_option("ro", self.opt_renouveler_ouverture)
         self.ajouter_option("rf", self.opt_renouveler_fermeture)
@@ -235,6 +235,70 @@ class EdtMagasin(Editeur):
         
         magasin = salle.magasin
         magasin.renouveler_fermeture = not magasin.renouveler_fermeture
+        self.actualiser()
+    
+    def opt_ouverture(self, arguments):
+        """Change l'heure d'ouverture.
+        
+        Sytaxe :
+            /o <heure:minute>
+        
+        """
+        salle = self.objet
+        if not salle.magasin:
+            self.pere << "|err|Il n'y a pas de magasin dans cette salle.|ff|"
+            return
+        
+        magasin = salle.magasin
+        try:
+            heure, minute = arguments.split(":")
+        except ValueError:
+            self.pere << "|err|Syntaxe invalide. Précisez heure:minute " \
+                    "(12:00 par exemple).|ff|"
+            return
+        
+        try:
+            heure = int(heure)
+            minute = int(minute)
+            assert 0 <= heure < 24
+            assert 0 <= minute < 60
+        except (ValueError, AssertionError):
+            self.pere << "|err|Nombre invalide.|ff|"
+            return
+        
+        magasin.ouverture = (heure, minute)
+        self.actualiser()
+    
+    def opt_fermeture(self, arguments):
+        """Change l'heure de fermeture.
+        
+        Sytaxe :
+            /f <heure:minute>
+        
+        """
+        salle = self.objet
+        if not salle.magasin:
+            self.pere << "|err|Il n'y a pas de magasin dans cette salle.|ff|"
+            return
+        
+        magasin = salle.magasin
+        try:
+            heure, minute = arguments.split(":")
+        except ValueError:
+            self.pere << "|err|Syntaxe invalide. Précisez heure:minute " \
+                    "(12:00 par exemple).|ff|"
+            return
+        
+        try:
+            heure = int(heure)
+            minute = int(minute)
+            assert 0 <= heure < 24
+            assert 0 <= minute < 60
+        except (ValueError, AssertionError):
+            self.pere << "|err|Nombre invalide.|ff|"
+            return
+        
+        magasin.fermeture = (heure, minute)
         self.actualiser()
     
     def interpreter(self, msg):

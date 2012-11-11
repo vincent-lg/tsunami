@@ -105,6 +105,8 @@ class Module(BaseModule):
         self.graph = {}
         self.details_dynamiques = []
         self.a_renouveler = {}
+        self.magasins_a_ouvrir = {}
+        self.magasins_a_fermer = {}
         
         # Ticks
         self.ticks = {}
@@ -270,6 +272,14 @@ class Module(BaseModule):
                     liste = self.a_renouveler.get(magasin.fermeture, [])
                     liste.append(magasin)
                     self.a_renouveler[magasin.ouverture] = liste
+                
+                liste = self.magasins_a_ouvrir.get(magasin.ouverture, [])
+                liste.append(magasin)
+                self.magasins_a_ouvrir[magasin.ouverture] = liste
+                liste = self.magasins_a_fermer.get(magasin.fermeture, [])
+                liste.append(magasin)
+                self.magasins_a_fermer[magasin.fermeture] = liste
+
             for sortie in salle.sorties:
                 salle_dest = self.salles[sortie.salle_dest]
                 sortie.salle_dest = salle_dest
