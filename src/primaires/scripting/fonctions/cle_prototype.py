@@ -34,13 +34,19 @@ from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
     
-    """Retourne le prototype d'un objet."""
+    """Retourne la clé du prototype d'un objet ou PNJ."""
     
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.nom_prototype_objet, "Objet")
+        cls.ajouter_types(cls.nom_prototype_PNJ, "PNJ")
     
     @staticmethod
     def nom_prototype_objet(objet):
         """Retourne la clé du prototype dont est issu l'objet."""
         return objet.cle
+    
+    @staticmethod
+    def nom_prototype_PNJ(pnj):
+        """Retourne la clé du prototype dont est issu le PNJ."""
+        return pnj.prototype.cle
