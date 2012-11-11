@@ -164,6 +164,24 @@ class ScriptPNJ(Script):
             "Cet évènement est appelé quand le tick du PNJ se déclenche " \
             "(toutes les minutes)."
         
+        # Evénement magasin
+        evt_marchand = self.creer_evenement("marchand")
+        evt_marchand_ouvre = evt_marchand.creer_evenement("ouvre")
+        evt_marchand_ferme = evt_marchand.creer_evenement("ferme")
+        evt_marchand.aide_courte = "le vendeur du magasin agit"
+        evt_marchand_ouvre.aide_courte = "le magasin ouvre ses portes"
+        evt_marchand_ferme.aide_courte = "la magasin ferme ses portes"
+        evt_marchand.aide_longue = \
+            "Cet évènement est appelé si le PNJ est un vendeur de magasin, " \
+            "dans différentes situations qui sont classées en sous-évènements."
+        evt_marchand_ouvre.aide_longue = \
+            "Cet évènement est appelé quand le magasin ouvre ses portes. Si " \
+            "le vendeur n'est pas trouvé dans la salle du magasin, alors " \
+            "le premier PNJ modelé sur le prototype indiqué dans le " \
+            "magasin est choisi (qu'il soit là où non)."
+        evt_marchand_ferme.aide_longue = \
+            "Cet évènement est appelé quand le magasin ferme ses portes."
+        
         # On ajoute à tous les évènements la variable 'pnj'
         for evt in self.evenements.values():
             var_pnj = evt.ajouter_variable("pnj", "PNJ")

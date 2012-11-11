@@ -110,11 +110,21 @@ class Module(BaseModule):
         Renouvelle les magasins.
         
         """
-        magasins = importeur.salle.a_renouveler.get(self.temps.heure_minute)
-        if magasins:
-            for magasin in magasins:
-                magasin.inventaire[:] = []
-                magasin.renouveler()
+        magasins = importeur.salle.a_renouveler.get(self.temps.heure_minute,
+                [])
+        for magasin in magasins:
+            magasin.inventaire[:] = []
+            magasin.renouveler()
+        
+        magasins = importeur.salle.magasins_a_ouvrir.get(
+                self.temps.heure_minute, [])
+        for magasin in magasins:
+            magasin.ouvrir()
+        
+        magasins = importeur.salle.magasins_a_fermer.get(
+                self.temps.heure_minute, [])
+        for magasin in magasins:
+            magasin.fermer()
     
     def changer_jour(self):
         """Appel les callbacks contenus dans met_changer_jour."""

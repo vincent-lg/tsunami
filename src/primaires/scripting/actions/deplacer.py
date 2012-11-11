@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,25 +28,47 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction cle_prototype."""
+"""Fichier contenant l'action deplacer."""
 
-from primaires.scripting.fonction import Fonction
+from primaires.format.fonctions import supprimer_accents
+from primaires.perso.exceptions.action import ExceptionAction
+from primaires.scripting.action import Action
 
-class ClasseFonction(Fonction):
+class ClasseAction(Action):
     
-    """Retourne la clé du prototype d'un objet ou PNJ."""
+    """Un ppersonnage se déplace vers une sortie indiquée.
+    
+    Cette action demande à un personnage de se déplacer dans la direction
+    indiquée. Il est préférable de l'utiliser avec des tests ou conditions
+    pour s'assurer que le personnage est bien dans la salle choisie
+    avant de lui demander de se déplacer, sauf si c'est vraiment le but
+    recherché. En outre, cette action peut aussi bien agir sur les
+    PNJ que les joueurs, soyez prudent.
+    
+    """
     
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.nom_prototype_objet, "Objet")
-        cls.ajouter_types(cls.nom_prototype_PNJ, "PNJ")
+        cls.ajouter_types(cls.deplacer_personnage, "Personnage",
+                "str")
     
     @staticmethod
-    def nom_prototype_objet(objet):
-        """Retourne la clé du prototype dont est issu l'objet."""
-        return objet.cle
-    
-    @staticmethod
-    def nom_prototype_PNJ(pnj):
-        """Retourne la clé du prototype dont est issu le PNJ."""
-        return pnj.prototype.cle
+    def deplacer_personnage(personnage, sortie):
+        """Déplace le personnage vers la sortie indiquée.
+        
+        La sortie peut être donnée sous la forme de sa direction absolue
+        ou son nom renommé (les noms comme "escalier" sont autorisés).
+        
+        """
+        # Obtension de la direction
+        try:
+            sortie = personnage.salle.sorties.get_sortie_par_nom_ou_direction(
+                    supprimer_accents(sortie).lower())
+        except KeyError:
+            raise ErreurExecution("la sortie {} est introuvable en {}".format(
+                    sortie, personnage.salle))
+        
+        try:
+            personnage.deplacer_vers(sortie.nom)
+        except ExceptionAction:
+            pass
