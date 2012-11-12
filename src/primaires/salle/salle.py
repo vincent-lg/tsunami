@@ -240,7 +240,6 @@ class Salle(BaseObj):
         v_destination = Vecteur(*destination.coords.tuple())
         distance = (v_destination - v_origine).norme
         if distance > 6:
-            print("Distance trop importante.")
             return None
         
         salles = Chemins.get_salles_entre(self, destination)
@@ -259,8 +258,7 @@ class Salle(BaseObj):
                 continu = False
                 vecteur = Vecteur(*d_salle.coords.tuple()) - \
                         Vecteur(*a_salle.coords.tuple())
-                sortie = Sortie(vecteur.nom_direction, vecteur.nom_direction,
-                        "le", d_salle, "", a_salle)
+                sortie = a_salle.get_sortie(vecteur, d_salle)
                 chemin.sorties.append(sortie)
             else:
                 chemin.sorties.extend(d_chemin.sorties)
@@ -285,6 +283,12 @@ class Salle(BaseObj):
         
         """
         return self.etendue is not None
+    
+    def get_sortie(self, vecteur, destination):
+        """Retourne une sortie en fonction du vecteur donné."""
+        sortie = Sortie(vecteur.nom_direction, vecteur.nom_direction,
+                        "le", destination, "", self)
+        return sortie
     
     def envoyer(self, message, *personnages, prompt=True, mort=False,
             **kw_personnages):
