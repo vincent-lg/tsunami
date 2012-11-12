@@ -30,6 +30,7 @@
 
 """Fichier contenant la classe Sort, détaillée plus bas."""
 
+from fractions import Fraction
 from math import ceil
 from random import random
 
@@ -46,6 +47,7 @@ class Sort(BaseObj):
     
     """
     
+    nom_scripting = "le sort"
     def __init__(self, cle, parent=None):
         """Constructeur du sort"""
         BaseObj.__init__(self)
@@ -107,6 +109,7 @@ class Sort(BaseObj):
         """Fait concentrer le sort à 'personnage'."""
         if self.cout > personnage.mana:
             personnage << "Vous n'avez pas assez de mana pour lancer ce sort."
+            self.dissiper(personnage, maitrise)
             personnage.cle_etat = ""
             return
         personnage.mana -= self.cout
@@ -114,17 +117,15 @@ class Sort(BaseObj):
         if apprendre:
             maitrise = personnage.pratiquer_sort(self.cle)
             personnage.pratiquer_talent(self.type)
-        try:
-            self.script["concentration"].executer(personnage=personnage,
-                    maitrise=maitrise, cible=cible)
-        except Exception as err:
-            print(err)
+        maitrise = Fraction(maitrise)
+        self.script["concentration"].executer(personnage=personnage,
+                maitrise=maitrise, cible=cible)
         action = self.lancer
         if self.echoue(personnage) and apprendre:
             action = self.echouer
         nom_act = "sort_" + self.cle + "_" + personnage.nom
         duree = ceil(self.duree * (100 - maitrise) / 100)
-        type(self).importeur.diffact.ajouter_action(nom_act, duree,
+        importeur.diffact.ajouter_action(nom_act, duree,
                 action, personnage, maitrise, cible)
     
     def echouer(self, personnage, maitrise, cible):
@@ -135,12 +136,43 @@ class Sort(BaseObj):
     
     def lancer(self, personnage, maitrise, cible):
         """Fait lancer le sort à personnage."""
+        dest = personnage.salle
+        sorties = []
         personnage.cle_etat = ""
+        if hasattr(cible, "salle"):
+            dest = cible.salle
+            if dest is not personnage.salle:
+                chemin = personnage.salle.trouver_chemin(dest)
+                if chemin is None:
+                    self.dissiper(personnage, maitrise)
+                    return
+                
+                sorties = chemin.sorties
+        
         self.script["lancement"].executer(personnage=personnage,
                 maitrise=maitrise, cible=cible)
+        for sortie in sorties:
+            origine = sortie.parent
+            destination = sortie.salle_dest
+            nom_complet = sortie.nom_complet
+            self.script["part"].executer(personnage=personnage,
+                maitrise=maitrise, cible=cible, salle=origine,
+                destination=destination, direction=nom_complet)
+            self.script["arrive"].executer(personnage=personnage,
+                maitrise=maitrise, cible=cible, salle=destination,
+                origine=origine)
         self.toucher(personnage, maitrise, cible)
     
     def toucher(self, personnage, maitrise, cible):
         """Active les effets du sort."""
+        dest = personnage.salle
+        if hasattr(cible, "salle"):
+            dest = cible.salle
+        
         self.script["effet"].executer(personnage=personnage,
-                maitrise=maitrise, cible=cible)
+                maitrise=maitrise, cible=cible, salle=dest)
+    
+    def dissiper(self, personnage, maitrise):
+        """Dissipe le sort."""
+        self.script["dissipe"].executer(personnage=personnage,
+                maitrise=maitrise)

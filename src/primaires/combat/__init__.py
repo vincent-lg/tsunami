@@ -50,6 +50,7 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "combat", "primaire")
         self.combats = {}
+        self.cibles = {}
         
         # Combat à distance
         self.cibles = None
