@@ -33,6 +33,7 @@
 from collections import OrderedDict
 
 from primaires.salle.salle import Salle
+from primaires.salle.sortie import Sortie
 
 # Constantes
 NOMS_SORTIES = OrderedDict()
@@ -188,3 +189,39 @@ class SalleNavire(Salle):
     def accepte_discontinu(self):
         """Retourne True si cette salle supporte les chemins discontinu."""
         return True
+    
+    def get_sortie(self, vecteur, destination):
+        """Retourne une sortie en fonction du vecteur donné."""
+        if self.navire is None:
+            return Salle.get_sortie(self, vecteur, destination)
+        
+        direction = (vecteur.direction - self.navire.direction.direction) % \
+                360
+        if 45 <= direction < 65:
+            nom = "avant-tribord"
+            article = "l'"
+        elif 65 <= direction < 115:
+            nom = "tribord"
+            article = ""
+        elif 115 <= direction < 165:
+            nom = "arrière-tribord"
+            article = "l'"
+        elif 165 <= direction < 205:
+            nom = "arrière"
+            article = ""
+        elif 205 <= direction < 245:
+            nom = "arrière-bâbord"
+            article = "l'"
+        elif 245 <= direction < 295:
+            nom = "bâbord"
+            article = ""
+        elif 295 <= direction < 335:
+            nom = "avant-bâbord"
+            article = "l'"
+        else:
+            nom = "avant"
+            article = ""
+        
+        sortie = Sortie(vecteur.nom_direction, nom, article,
+                destination, "", self)
+        return sortie
