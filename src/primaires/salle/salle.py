@@ -213,23 +213,42 @@ class Salle(BaseObj):
         des situations. Pour des raisons de performance, certains sont
         plus efficaces que d'autres.
         
-        Si l'une des salles a des coordonnées invalides, on cherche
-        le chemin absolu. Sinon, on recherche le chemin relatif et,
-        au besoin, on le complète au fur et à mesure grâce à l'algorithme
-        de chemin absolu.
+        Avant tout, plusieurs chemins peuvent être retournés :
+        *   Un chemin continue (toutes les salles entre deux points)
+        *   Un chemin discontinu (ou brisé).
         
-        NOTE IMORTANTE : aucune de ces méthodes ne garantie qu'un
-        chemin sera trouvé, quand bien même il en existe un.
+        La grande différence est qu'un personnage peut emprunter
+        un chemin continu pour aller d'une salle à une autre, mais
+        ne peut pas emprunter un chemin discontinu. Les chemins
+        discontinus ne sont pas tolérés par défaut (ceci est réglable).
+        
+        La recherche du chemin (continu ou discontinu) fait ensuite
+        appel à deux algorithmes :
+        *   Si les coordonnées des deux salles sont valides, cherche le
+            chemin relatifs (Chemin.salles_entre)
+        *   Sinon, cherche le chemin absolu (toutes les salles
+            autour de la première salle dans un rayon d'estime).
         
         """
         # Si l'une des salles n'a pas de coordonnées valide
         if self.coords.invalide or destination.coords.invalide:
             return self.trouver_chemin_absolu(destination, 4)
         
+        # Les deux salles ont des coordonnées valides
+        # On vérifie que le rayon n'es tpas trop important
+        v_origine = Vecteur(*self.coords.tuple())
+        v_destination = Vecteur(*destination.coords.tuple())
+        distance = (v_destination - v_origine).norme
+        if distance > 6:
+            print("Distance trop importante.")
+            return None
+        
         salles = Chemins.get_salles_entre(self, destination)
+        
         # On détermine, si possible, le chemin entre chaque salle
         chemin = Chemin()
         a_salle = None
+        continu = True
         for d_salle in salles:
             if a_salle is None:
                 a_salle = d_salle
@@ -237,6 +256,7 @@ class Salle(BaseObj):
             
             d_chemin = a_salle.trouver_chemin_absolu(d_salle, 2)
             if d_chemin is None:
+                continu = False
                 vecteur = Vecteur(*d_salle.coords.tuple()) - \
                         Vecteur(*a_salle.coords.tuple())
                 sortie = Sortie(vecteur.nom_direction, vecteur.nom_direction,
@@ -250,8 +270,20 @@ class Salle(BaseObj):
         if chemin.origine is not self or chemin.destination is not destination:
             return None
         
+        if not continu and (not self.accepte_discontinu() or not \
+                destination.accepte_discontinu()):
+            return None
+        
         chemin.raccourcir()
         return chemin
+    
+    def accepte_discontinu(self):
+        """Retourne True si cette salle supporte les chemins discontinu.
+        
+        Par défaut Kassie ne supporte pas ce type de chemin.
+        
+        """
+        return False
     
     def envoyer(self, message, *personnages, prompt=True, mort=False,
             **kw_personnages):
