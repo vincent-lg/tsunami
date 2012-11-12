@@ -280,10 +280,11 @@ class Salle(BaseObj):
     def accepte_discontinu(self):
         """Retourne True si cette salle supporte les chemins discontinu.
         
-        Par défaut Kassie ne supporte pas ce type de chemin.
+        Tsunami supporte ce type de chemin si la salle est une côte
+        de l'étendue.
         
         """
-        return False
+        return self.etendue is not None
     
     def envoyer(self, message, *personnages, prompt=True, mort=False,
             **kw_personnages):

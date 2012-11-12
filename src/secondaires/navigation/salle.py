@@ -184,3 +184,7 @@ class SalleNavire(Salle):
             elts.append(element)
         
         return elts
+    
+    def accepte_discontinu(self):
+        """Retourne True si cette salle supporte les chemins discontinu."""
+        return True
