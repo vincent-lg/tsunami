@@ -242,11 +242,13 @@ class Visible:
         neg = [(a,  p) for a, p in points if a < 0]
         pos = [(a, p) for a, p in points if a >= 0]
         if pos and min(a for a, p in pos) > 90 and neg:
-            points_1 = sorted([(a, p) for a, p in neg], reverse=True)
-            points_2 = sorted([(a, p) for a, p in pos], reverse=True)
+            points_1 = sorted([(a, p) for a, p in neg], \
+                    key=lambda couple: couple[0, reverse=True)
+            points_2 = sorted([(a, p) for a, p in pos], \
+                    key=lambda couple: couple[0, reverse=True)
             points = tuple(points_1) + tuple(points_2)
         else:
-            points = sorted(points)
+            points = sorted(points, key=lambda couple: couple[0])
         
         # On formatte les points obtenus
         msg = []

@@ -56,6 +56,7 @@ class CmdDetailler(Commande):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         salle = personnage.salle
+        print(personnage, salle, hasattr(salle, "navire"))
         if not hasattr(salle, "navire") or salle.navire is None:
             personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
             return

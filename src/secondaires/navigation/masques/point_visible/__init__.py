@@ -67,6 +67,9 @@ class VPointVisible(Masque):
         Masque.valider(self, personnage, dic_masques)
         point = self.a_interpreter
         salle = personnage.salle
+        if not hasattr(salle, "navire"):
+            return False
+        
         navire = salle.navire
         etendue = navire.etendue
         alt = etendue.altitude
