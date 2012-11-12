@@ -109,4 +109,67 @@ class ScriptSort(Script):
         var_maitrise = evt_effet.ajouter_variable("maitrise", "int")
         var_maitrise.aide = "la maîtrise que le personnage a de ce sort"
         var_cible = evt_effet.ajouter_variable("cible", "Personnage")
-        var_cible.aide = "la cible du sort (en l'occurence, le lanceur)"
+        var_cible.aide = "la cible du sort"
+        var_salle = evt_effet.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle où le sort prend effet"
+        
+        # Evénement part
+        evt_part = self.creer_evenement("part")
+        evt_part.aide_courte = "le sort quitte la salle"
+        evt_part.aide_longue = \
+            "Cet évènement est appelé lorsque le sort quitte la salle " \
+            "courante pour se rendre dans une salle distante. Bien " \
+            "entendu, cet évènement n'est appelé que si la cible est dans une " \
+            "salle différente du lanceur. Si la cible est distante " \
+            "de plusieurs salles, l'évènement sera appelé à chaque " \
+            "fois que le sort quitte une salle pour aller dans une " \
+            "autre."
+        
+        # Configuration des variables de l'évènement part
+        var_perso = evt_part.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage qui lance le sort"
+        var_maitrise = evt_part.ajouter_variable("maitrise", "int")
+        var_maitrise.aide = "la maîtrise que le personnage a de ce sort"
+        var_cible = evt_part.ajouter_variable("cible", "Personnage")
+        var_cible.aide = "la cible du sort"
+        var_salle = evt_part.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle courante du sort"
+        var_destination = evt_part.ajouter_variable("destination", "Salle")
+        var_destination.aide = "la salle de destination du sort"
+        var_direction = evt_part.ajouter_variable("direction", "str")
+        var_direction.aide = "la direction empruntée par le sort"
+        
+        # Evénement part
+        evt_arrive = self.creer_evenement("arrive")
+        evt_arrive.aide_courte = "le sort arrive dans une salle"
+        evt_arrive.aide_longue = \
+            "Cet évènement est appelé lorsque le sort arrive dans " \
+            "une nouvelle salle en se déplaçant. De ce fait, il " \
+            "n'est appelé que si la cible du sort (si présente) n'est " \
+            "pas dans la même salle que le lanceur."
+        
+        # Configuration des variables de l'évènement arrive
+        var_perso = evt_arrive.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage qui lance le sort"
+        var_maitrise = evt_arrive.ajouter_variable("maitrise", "int")
+        var_maitrise.aide = "la maîtrise que le personnage a de ce sort"
+        var_cible = evt_arrive.ajouter_variable("cible", "Personnage")
+        var_cible.aide = "la cible du sort"
+        var_salle = evt_arrive.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle d'arrivée du sort"
+        var_origine = evt_arrive.ajouter_variable("origine", "Salle")
+        var_origine.aide = "la salle d'origine du sort"
+        
+        # Evénement dissipe
+        evt_dissipe = self.creer_evenement("dissipe")
+        evt_dissipe.aide_courte = "le sort se dissipe"
+        evt_dissipe.aide_longue = \
+            "Cet évènement est appelé lorsque le sort se dissipe, " \
+            "souvent parce que le lanceur n'a pas fufisamment de mana " \
+            "ou parce que la cible visée est trop éloignée."
+        
+        # Configuration des variables de l'évènement dissipe
+        var_perso = evt_dissipe.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage qui lance le sort"
+        var_maitrise = evt_dissipe.ajouter_variable("maitrise", "int")
+        var_maitrise.aide = "la maîtrise que le personnage a de ce sort"

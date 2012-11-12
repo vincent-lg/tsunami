@@ -58,8 +58,13 @@ class CmdLancer(Commande):
         sort = dic_masques["nom_sort"].sort
         parchemin = dic_masques["nom_sort"].parchemin
         personnage.agir("lancersort")
+        cible = dic_masques["cible_sort"] and dic_masques["cible_sort"].cible \
+                or importeur.combat.cibles.get(personnage)
+        salle_cible = personnage.salle
+        if isinstance(cible, Personnage):
+            salle_cible = cible.salle
         
-        if dic_masques["cible_sort"] is None:
+        if cible is None:
             if sort.type_cible != "aucune":
                 personnage << "|err|Vous devez préciser une cible pour ce " \
                         "sort.|ff|"
@@ -76,7 +81,6 @@ class CmdLancer(Commande):
                 personnage << "|err|Ce sort ne peut être lancé sur une " \
                         "cible.|ff|"
             else:
-                cible = dic_masques["cible_sort"].cible
                 # Vérification du type de cible
                 if sort.type_cible == "personnage" and not isinstance(cible,
                         Personnage):

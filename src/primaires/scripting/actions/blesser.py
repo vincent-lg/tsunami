@@ -31,7 +31,7 @@
 """Fichier contenant l'action blesser."""
 
 from primaires.scripting.action import Action
-import primaires.perso.exceptions.stat
+from primaires.perso.exceptions.stat import DepassementStat
 
 class ClasseAction(Action):
     
@@ -49,5 +49,5 @@ class ClasseAction(Action):
         """Enlève au personnage la valeur précisée en points de vie."""
         try:
             personnage.stats.vitalite = personnage.stats.vitalite - int(valeur)
-        except StatIEO:
+        except DepassementStat:
             personnage.mourir()
