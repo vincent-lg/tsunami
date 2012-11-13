@@ -67,7 +67,6 @@ class Module(BaseModule):
             commandes.lancer.CmdLancer(),
             commandes.oublier.CmdOublier(),
             commandes.sorts.CmdSorts(),
-            commandes.spedit.CmdSpedit(),
         ]
         
         for cmd in self.commandes:

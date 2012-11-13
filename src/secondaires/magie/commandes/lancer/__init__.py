@@ -93,9 +93,7 @@ class CmdLancer(Commande):
                     personnage << "|err|Ce sort ne peut être lancé que sur " \
                             "un objet.|ff|"
                     return
-                if sort.type_cible == "salle":
-                    personnage << "|err|Non implémenté.|ff|"
-                    return
+                
                 personnage.agir("magie")
                 personnage.cle_etat = "magie"
                 if parchemin:

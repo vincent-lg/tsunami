@@ -31,6 +31,10 @@
 """Package contenant la commande 'sorts'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from .creer import PrmCreer
+from .editer import PrmEditer
+from .liste import PrmListe
+from .miens import PrmMiens
 
 class CmdSorts(Commande):
     
@@ -41,20 +45,13 @@ class CmdSorts(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "sorts", "spells")
-        self.groupe = "joueur"
-        self.nom_categorie = "combat"
-        self.aide_courte = "affiche vos sorts"
+        self.aide_courte = "manipule les sorts"
         self.aide_longue = \
-            "Cette commande affiche vos sorts et votre maîtrise de chacun " \
-            "d'eux."
+            "Cette commande permet de manipuler vos sorts."
     
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        ret = "Vos sorts :\n"
-        for cle, niveau in personnage.sorts.items():
-            sort = type(self).importeur.magie.sorts[cle]
-            ret += "\n  " + sort.nom + " - " + str(niveau) + "%"
-        if len(personnage.sorts) == 0:
-            ret = "Vous ne connaissez aucun sort... pour l'instant."
-        
-        personnage << ret
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmCreer())
+        self.ajouter_parametre(PrmEditer())
+        self.ajouter_parametre(PrmListe())
+        self.ajouter_parametre(PrmMiens())

@@ -74,6 +74,7 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
         self.duree = randint(ceil(self.duree_max / 1.5), self.duree_max)
         self.age = 0
         self.flags = AUCUN_FLAG
+        self.statique = False
         self.dir = randint(0, 7)
         # 0 pour une perturbation en ligne droite, 1 pour aucun changement
         # majeur de direction, jusqu'à 10 pour un comportement aléatoire
@@ -129,7 +130,7 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
         for pertu in type(self).importeur.meteo.perturbations_actuelles:
             if pertu is not self and self.va_recouvrir(pertu, n_x, n_y):
                 self.flags = self.flags ^ STATIQUE
-        if not self.flags & STATIQUE:
+        if not self.flags & STATIQUE and not self.statique:
             self.bouger(salles, n_x, n_y)
         self.age += 1
     
