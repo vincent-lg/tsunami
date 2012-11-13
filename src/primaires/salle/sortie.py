@@ -121,7 +121,7 @@ class Sortie(BaseObj):
     def nom_complet(self):
         """Retourne le nom et l'article"""
         sep = " "
-        if self.article:
+        if not self.article:
             sep = ""
         if self.article.endswith("'"):
             sep = ""
