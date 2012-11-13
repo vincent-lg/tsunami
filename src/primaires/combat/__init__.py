@@ -51,10 +51,6 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "combat", "primaire")
         self.combats = {}
         self.cibles = {}
-        
-        # Combat à distance
-        self.cibles = None
-        self.choix = None
     
     def init(self):
         """Initialisation du module."""

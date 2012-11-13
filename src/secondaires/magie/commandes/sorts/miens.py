@@ -1,15 +1,15 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 # 
 # * Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer.
+#   mine of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
-#   this list of conditions and the following disclaimer in the documentation
+#   this mine of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
@@ -28,30 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'sorts'."""
+"""Package contenant la commande 'sorts miens'."""
 
-from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .editer import PrmEditer
-from .liste import PrmListe
-from .miens import PrmMiens
+from primaires.interpreteur.masque.parametre import Parametre
 
-class CmdSorts(Commande):
+class PrmMiens(Parametre):
     
-    """Commande 'sorts'.
+    """Commande 'sorts miens'.
     
     """
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "sorts", "spells")
-        self.aide_courte = "manipule les sorts"
+        Parametre.__init__(self, "miens", "mine")
+        self.aide_courte = "liste vos sorts"
         self.aide_longue = \
-            "Cette commande permet de manipuler vos sorts."
+            "Cette commande vous permet de consulter votre niveau actuel " \
+            "dans chacun des sorts que vous connaissez."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres."""
-        self.ajouter_parametre(PrmCreer())
-        self.ajouter_parametre(PrmEditer())
-        self.ajouter_parametre(PrmListe())
-        self.ajouter_parametre(PrmMiens())
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        ret = "Vos sorts :\n"
+        sorts = {}
+        for cle, niveau in tuple(personnage.sorts.items()):
+            try:
+                sort = importeur.magie.sorts[cle]
+            except KeyError:
+                del personnage.sorts[cle]
+            
+            sorts[sort.nom] = niveau
+        
+        for nom, niveau in sorted(sorts.items()):
+            ret += "\n  {:<20} - {:>3}%".format(nom, niveau)
+        
+        if not sorts:
+            ret = "Vous ne connaissez aucun sort... pour l'instant."
+        
+        personnage << ret

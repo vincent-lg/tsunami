@@ -33,4 +33,3 @@
 import secondaires.magie.commandes.lancer
 import secondaires.magie.commandes.oublier
 import secondaires.magie.commandes.sorts
-import secondaires.magie.commandes.spedit

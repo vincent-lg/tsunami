@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,30 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'sorts'."""
+"""Package contenant la commande 'sorts créer'."""
 
-from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .editer import PrmEditer
-from .liste import PrmListe
-from .miens import PrmMiens
+from primaires.interpreteur.masque.parametre import Parametre
 
-class CmdSorts(Commande):
+class PrmCreer(Parametre):
     
-    """Commande 'sorts'.
+    """Commande 'sorts créer'.
     
     """
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "sorts", "spells")
-        self.aide_courte = "manipule les sorts"
+        Parametre.__init__(self, "créer", "create")
+        self.schema = "<ident>"
+        self.groupe = "administrateur"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "crée un sort"
         self.aide_longue = \
-            "Cette commande permet de manipuler vos sorts."
+            "Cette commande crée un sort et ouvre l'éditeur."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres."""
-        self.ajouter_parametre(PrmCreer())
-        self.ajouter_parametre(PrmEditer())
-        self.ajouter_parametre(PrmListe())
-        self.ajouter_parametre(PrmMiens())
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        cle_sort = dic_masques["ident"].ident
+        if cle_sort in importeur.magie.sorts:
+            personnage << "|err|Ce sort existe déjà.|ff|"
+            return
+        
+        sort = importeur.magie.sorts.ajouter_ou_modifier(cle_sort)
+        editeur = importeur.interpreteur.construire_editeur(
+                "spedit", personnage, sort)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()

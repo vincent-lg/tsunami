@@ -61,8 +61,10 @@ class CmdLancer(Commande):
         cible = dic_masques["cible_sort"] and dic_masques["cible_sort"].cible \
                 or importeur.combat.cibles.get(personnage)
         salle_cible = personnage.salle
-        if isinstance(cible, Personnage):
+        if sort.type_cible == "personnage" and isinstance(cible, Personnage):
             salle_cible = cible.salle
+        if sort.type_cible == "salle":
+            cible = personnage.salle
         
         if cible is None:
             if sort.type_cible != "aucune":
@@ -72,10 +74,10 @@ class CmdLancer(Commande):
                 personnage.agir("magie")
                 personnage.cle_etat = "magie"
                 if parchemin:
-                    sort.concentrer(personnage, personnage, apprendre=False)
+                    sort.concentrer(personnage, None, apprendre=False)
                     parchemin.charges -= 1
                 else:
-                    sort.concentrer(personnage, personnage)
+                    sort.concentrer(personnage, None)
         else:
             if sort.type_cible == "aucune":
                 personnage << "|err|Ce sort ne peut être lancé sur une " \
@@ -91,9 +93,7 @@ class CmdLancer(Commande):
                     personnage << "|err|Ce sort ne peut être lancé que sur " \
                             "un objet.|ff|"
                     return
-                if sort.type_cible == "salle":
-                    personnage << "|err|Non implémenté.|ff|"
-                    return
+                
                 personnage.agir("magie")
                 personnage.cle_etat = "magie"
                 if parchemin:

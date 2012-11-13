@@ -59,8 +59,8 @@ class ScriptSort(Script):
         var_perso.aide = "le personnage qui concentre le sort"
         var_maitrise = evt_concentration.ajouter_variable("maitrise", "int")
         var_maitrise.aide = "la maîtrise que le personnage a de ce sort"
-        var_cible = evt_concentration.ajouter_variable("cible", "Personnage")
-        var_cible.aide = "la cible du sort (en l'occurence, le lanceur)"
+        var_salle = evt_concentration.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle de lancement du sort (celle du lanceur)"
         
         # Evénement échec
         evt_echec = self.creer_evenement("echec")
@@ -75,8 +75,8 @@ class ScriptSort(Script):
         var_perso.aide = "le personnage qui lance le sort"
         var_maitrise = evt_echec.ajouter_variable("maitrise", "int")
         var_maitrise.aide = "la maîtrise que le personnage a de ce sort"
-        var_cible = evt_echec.ajouter_variable("cible", "Personnage")
-        var_cible.aide = "la cible du sort (en l'occurence, le lanceur)"
+        var_salle = evt_echec.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle de lancement du sort (celle du lanceur)"
         
         # Evénement lancement
         evt_lancement = self.creer_evenement("lancement")
@@ -92,8 +92,8 @@ class ScriptSort(Script):
         var_perso.aide = "le personnage qui lance le sort"
         var_maitrise = evt_lancement.ajouter_variable("maitrise", "int")
         var_maitrise.aide = "la maîtrise que le personnage a de ce sort"
-        var_cible = evt_lancement.ajouter_variable("cible", "Personnage")
-        var_cible.aide = "la cible du sort (en l'occurence, le lanceur)"
+        var_salle = evt_lancement.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle de lancement du sort (celle du lanceur)"
         
         # Evénement effet
         evt_effet = self.creer_evenement("effet")
@@ -108,8 +108,6 @@ class ScriptSort(Script):
         var_perso.aide = "le personnage qui lance le sort"
         var_maitrise = evt_effet.ajouter_variable("maitrise", "int")
         var_maitrise.aide = "la maîtrise que le personnage a de ce sort"
-        var_cible = evt_effet.ajouter_variable("cible", "Personnage")
-        var_cible.aide = "la cible du sort"
         var_salle = evt_effet.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle où le sort prend effet"
         
@@ -130,8 +128,6 @@ class ScriptSort(Script):
         var_perso.aide = "le personnage qui lance le sort"
         var_maitrise = evt_part.ajouter_variable("maitrise", "int")
         var_maitrise.aide = "la maîtrise que le personnage a de ce sort"
-        var_cible = evt_part.ajouter_variable("cible", "Personnage")
-        var_cible.aide = "la cible du sort"
         var_salle = evt_part.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle courante du sort"
         var_destination = evt_part.ajouter_variable("destination", "Salle")
@@ -153,8 +149,6 @@ class ScriptSort(Script):
         var_perso.aide = "le personnage qui lance le sort"
         var_maitrise = evt_arrive.ajouter_variable("maitrise", "int")
         var_maitrise.aide = "la maîtrise que le personnage a de ce sort"
-        var_cible = evt_arrive.ajouter_variable("cible", "Personnage")
-        var_cible.aide = "la cible du sort"
         var_salle = evt_arrive.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle d'arrivée du sort"
         var_origine = evt_arrive.ajouter_variable("origine", "Salle")
@@ -173,3 +167,5 @@ class ScriptSort(Script):
         var_perso.aide = "le personnage qui lance le sort"
         var_maitrise = evt_dissipe.ajouter_variable("maitrise", "int")
         var_maitrise.aide = "la maîtrise que le personnage a de ce sort"
+        var_salle = evt_dissipe.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle du lanceur"

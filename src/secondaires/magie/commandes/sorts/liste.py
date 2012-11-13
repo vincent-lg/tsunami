@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,30 +28,41 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'sorts'."""
+"""Package contenant la commande 'sorts liste'."""
 
-from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .editer import PrmEditer
-from .liste import PrmListe
-from .miens import PrmMiens
+from primaires.interpreteur.masque.parametre import Parametre
 
-class CmdSorts(Commande):
+class PrmListe(Parametre):
     
-    """Commande 'sorts'.
+    """Commande 'sorts liste'.
     
     """
     
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "sorts", "spells")
-        self.aide_courte = "manipule les sorts"
+        Parametre.__init__(self, "list", "list")
+        self.groupe = "administrateur"
+        self.aide_courte = "liste les sorts existants"
         self.aide_longue = \
-            "Cette commande permet de manipuler vos sorts."
+            "Cette commande permet de lister les sorts existants."
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres."""
-        self.ajouter_parametre(PrmCreer())
-        self.ajouter_parametre(PrmEditer())
-        self.ajouter_parametre(PrmListe())
-        self.ajouter_parametre(PrmMiens())
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        sorts = sorted([sort for sort in importeur.magie.sorts.values()], \
+                key=lambda sort: sort.cle)
+        if not sorts:
+            personnage << "|err|Aucun sort n'a encore été créé."
+            return
+        
+        lignes = [
+            "+-----------------+----------------------+------------+",
+            "| Clé du sort     | Nom                  | Cible      |",
+        ]
+        
+        lignes.append(lignes[0])
+        for sort in sorts:
+            lignes.append("| {:<15} | {:<20} | {:<10} |".format(
+                    sort.cle, sort.nom, sort._type_cible))
+        
+        lignes.append(lignes[0])
+        personnage << "\n".join(lignes)
