@@ -208,7 +208,7 @@ class SalleNavire(Salle):
             article = "l'"
         elif 165 <= direction < 205:
             nom = "arrière"
-            article = ""
+            article = "l'"
         elif 205 <= direction < 245:
             nom = "arrière-bâbord"
             article = "l'"
@@ -220,7 +220,7 @@ class SalleNavire(Salle):
             article = "l'"
         else:
             nom = "avant"
-            article = ""
+            article = "l'"
         
         sortie = Sortie(vecteur.nom_direction, nom, article,
                 destination, "", self)
