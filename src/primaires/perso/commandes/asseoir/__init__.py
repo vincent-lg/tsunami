@@ -54,6 +54,11 @@ class CmdAsseoir(Commande):
         """Méthode d'interprétation de commande"""
         masque = dic_masques["element_observable"]
         personnage.agir("bouger")
+        salle = personnage.salle
+        if salle.nom_terrain in ("aquatique", "subaquatique"):
+            personnage << "|err|Vous ne pouvez vous asseoir ici.|ff|"
+            return
+        
         if masque:
             elt = masque.element
             if not hasattr(elt, "peut_asseoir") or not elt.peut_asseoir:

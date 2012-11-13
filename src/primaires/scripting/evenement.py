@@ -183,6 +183,14 @@ class Evenement(BaseObj):
         """Modifie la variable nom."""
         self.variables[nom] = variable
     
+    def supprimer_variable(self, nom):
+        """Supprime, si trouvé, la variable."""
+        if nom in self.variables:
+            del self.variables[nom]
+        
+        for evt in self.__evenements.values():
+            evt.supprimer_variable(nom)
+    
     def creer_evenement(self, evenement):
         """Crée et ajoute l'évènement dont le nom est précisé en paramètre.
         

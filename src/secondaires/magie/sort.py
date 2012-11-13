@@ -79,23 +79,33 @@ class Sort(BaseObj):
         self._type_cible = nouveau_type
         if nouveau_type == "aucune":
             for evt in self.script.evenements.values():
-                self.script = ScriptSort(self)
+                evt.supprimer_variable("cible")
         elif nouveau_type == "personnage":
             for evt in self.script.evenements.values():
-                self.script = ScriptSort(self)
                 var_cible = evt.ajouter_variable("cible", "Personnage")
                 var_cible.aide = "le personnage ciblé par le sort"
         elif nouveau_type == "objet":
             for evt in self.script.evenements.values():
-                self.script = ScriptSort(self)
                 var_cible = evt.ajouter_variable("cible", "Objet")
                 var_cible.aide = "l'objet ciblé par le sort"
         elif nouveau_type == "salle":
             for evt in self.script.evenements.values():
-                self.script = ScriptSort(self)
                 var_cible = evt.ajouter_variable("cible", "Salle")
                 var_cible.aide = "la salle ciblée par le sort"
     type_cible = property(_get_type_cible, _set_type_cible)
+    
+    @classmethod
+    def get_variables(self, cible=None):
+        """Retourne un dictionnaire de variables pré-rempli avec la cible.
+        
+        Si la cible est None, le dictionnaire sera vide.
+        
+        """
+        variables = {}
+        if cible is not None:
+            variables["cible"] = cible
+        
+        return variables
     
     def echoue(self, personnage):
         """Détermine si personnage réussit ou non à lancer ce sort."""
@@ -116,10 +126,13 @@ class Sort(BaseObj):
         maitrise = 100
         if apprendre:
             maitrise = personnage.pratiquer_sort(self.cle)
-            personnage.pratiquer_talent(self.type)
+            #personnage.pratiquer_talent(self.type)
         maitrise = Fraction(maitrise)
-        self.script["concentration"].executer(personnage=personnage,
-                maitrise=maitrise, cible=cible)
+        variables = self.get_variables(cible)
+        variables["personnage"] = personnage
+        variables["maitrise"] = maitrise
+        variables["salle"] = personnage.salle
+        self.script["concentration"].executer(**variables)
         action = self.lancer
         if self.echoue(personnage) and apprendre:
             action = self.echouer
@@ -131,36 +144,46 @@ class Sort(BaseObj):
     def echouer(self, personnage, maitrise, cible):
         """Fait rater le sort à personnage."""
         personnage.cle_etat = ""
-        self.script["echec"].executer(personnage=personnage, maitrise=maitrise,
-                cible=cible)
+        variables = self.get_variables(cible)
+        variables["personnage"] = personnage
+        variables["maitrise"] = maitrise
+        variables["salle"] = personnage.salle
+        self.script["echec"].executer(**variables)
     
     def lancer(self, personnage, maitrise, cible):
         """Fait lancer le sort à personnage."""
         dest = personnage.salle
         sorties = []
         personnage.cle_etat = ""
+        variables = self.get_variables(cible)
+        variables["personnage"] = personnage
+        variables["maitrise"] = maitrise
+        variables["salle"] = personnage.salle
         if hasattr(cible, "salle"):
             dest = cible.salle
             if dest is not personnage.salle:
                 chemin = personnage.salle.trouver_chemin(dest)
                 if chemin is None:
-                    self.dissiper(personnage, maitrise)
+                    self.dissiper(personnage, maitrise, cible)
                     return
                 
                 sorties = chemin.sorties
         
-        self.script["lancement"].executer(personnage=personnage,
-                maitrise=maitrise, cible=cible)
+        self.script["lancement"].executer(**variables)
         for sortie in sorties:
             origine = sortie.parent
             destination = sortie.salle_dest
             nom_complet = sortie.nom_complet
-            self.script["part"].executer(personnage=personnage,
-                maitrise=maitrise, cible=cible, salle=origine,
-                destination=destination, direction=nom_complet)
-            self.script["arrive"].executer(personnage=personnage,
-                maitrise=maitrise, cible=cible, salle=destination,
-                origine=origine)
+            t_variables = variables.copy()
+            t_variables["salle"] = origine
+            t_variables["destination"] = destination
+            t_variables["direction"] = nom_complet
+            del t_variables["destination"]
+            del t_variables["direction"]
+            t_variables["origine"] = origine
+            t_variables["salle"] = destination
+            self.script["part"].executer(**t_variables)
+            self.script["arrive"].executer(**variables)
         self.toucher(personnage, maitrise, cible)
     
     def toucher(self, personnage, maitrise, cible):
@@ -169,10 +192,16 @@ class Sort(BaseObj):
         if hasattr(cible, "salle"):
             dest = cible.salle
         
-        self.script["effet"].executer(personnage=personnage,
-                maitrise=maitrise, cible=cible, salle=dest)
+        variables = self.get_variables(cible)
+        variables["personnage"] = personnage
+        variables["maitrise"] = maitrise
+        variables["salle"] = dest
+        self.script["effet"].executer(**variables)
     
-    def dissiper(self, personnage, maitrise):
+    def dissiper(self, personnage, maitrise, cible):
         """Dissipe le sort."""
-        self.script["dissipe"].executer(personnage=personnage,
-                maitrise=maitrise)
+        variables = self.get_variables(cible)
+        variables["personnage"] = personnage
+        variables["maitrise"] = maitrise
+        variables["salle"] = personnage.salle
+        self.script["dissipe"].executer(**variables)
