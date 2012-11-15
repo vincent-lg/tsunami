@@ -89,5 +89,4 @@ class ClasseFonction(Fonction):
             for salle in t_salles:
                 r_salles.add(salle)
         
-        print(r_salles)
         return list(r_salles)

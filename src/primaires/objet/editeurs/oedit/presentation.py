@@ -111,6 +111,10 @@ class EdtPresentation(Presentation):
             "(une armure peut être tout contre\n" \
             "la peau mais aussi recouvrir une ou deux " \
             "épaisseurs de vêtement.\n\n" \
+            "Options disponibles :\n" \
+            " |cmd|/e <épaisseur>|ff| pou changer l'épaisseur\n" \
+            " |cmd|/p <position1, position2, ...>|ff| pour changer " \
+            "les positions\n\n" \
             "Emplacement actuel : {objet.emplacement}\n" \
             "Epaisseur actuelle : {objet.epaisseur}"
         
