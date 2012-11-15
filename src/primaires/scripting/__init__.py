@@ -39,6 +39,7 @@ from datetime import datetime
 from abstraits.module import *
 from primaires.format.fonctions import format_nb, supprimer_accents
 from .instruction import Instruction
+from .boucle import Boucle
 from .condition import Condition
 from .affectation import Affectation
 from .commentaire import Commentaire

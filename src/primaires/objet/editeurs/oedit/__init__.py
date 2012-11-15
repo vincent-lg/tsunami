@@ -109,6 +109,7 @@ class EdtOedit(Editeur):
             for nom, p_type in p_types.items():
                 if supprimer_accents(nom) == msg and p_type.selectable:
                     type_choisi = nom
+                    break
             
             if not type_choisi:
                 self.pere << "|err|Ce type est inconnu.|ff|"
