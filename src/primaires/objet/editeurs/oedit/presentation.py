@@ -39,6 +39,7 @@ from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.scripting.editeurs.edt_script import EdtScript
 from .edt_noms import EdtNoms
+from .edt_emplacement import EdtEmplacement
 from .supprimer import NSupprimer
 
 class EdtPresentation(Presentation):
@@ -84,8 +85,8 @@ class EdtPresentation(Presentation):
             env.parent = self
         
         # Emplacement
-        emp = self.ajouter_choix("emplacement", "e", Uniligne, prototype,
-                "emplacement")
+        emp = self.ajouter_choix("emplacement", "e", EdtEmplacement,
+                prototype, "emplacement")
         emp.parent = self
         emp.apercu = "{objet.emplacement}"
         emp.prompt = "Entrez un emplacement (groupe ou membre) : "
@@ -94,7 +95,24 @@ class EdtPresentation(Presentation):
             "Cet emplacement peut être un nom de groupe (comme " \
             "|cmd|mains|ff|)\n" \
             "ou un nom de membre (comme |cmd|cou|ff|).\n\n" \
-            "Emplacement actuel : {objet.emplacement}"
+            "Vous pouvez également modifier l'épaisseur et les positions " \
+            "de l'objet.\n" \
+            "Les positions autorisées d'un objet indiquent à quelle " \
+            "épaisseur il peut\n" \
+            "être équipé. Par exemple, une chemise a généralement " \
+            "une position de 1\n" \
+            "(c'est-à-dire qu'on peut l'enfiler sans rien " \
+            "au-dessous). Une armure a une\n" \
+            "position plus importante (si elle est de 2, " \
+            "par exemple, cela signifie qu'il\n" \
+            "faut au moins un objet d'épaisseur 1 au-dessous, " \
+            "pour pouvoir l'enfiler).\n" \
+            "Généralement, un objet a plusieurs positions " \
+            "(une armure peut être tout contre\n" \
+            "la peau mais aussi recouvrir une ou deux " \
+            "épaisseurs de vêtement.\n\n" \
+            "Emplacement actuel : {objet.emplacement}\n" \
+            "Epaisseur actuelle : {objet.epaisseur}"
         
         # Prix
         prix = self.ajouter_choix("prix", "p", Entier, prototype, "prix", 1)
