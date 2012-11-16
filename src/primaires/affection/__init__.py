@@ -48,7 +48,10 @@ class Module(BaseModule):
     doivent être appelées au cas par cas (grâce au scripting).
     
     Voici le plan des principales classes du module :
-        Aucune pour l'heure
+        Affection -- une affection concrète générique
+        AffectionAbstraite -- une affection abstraite
+        AffectionPersonnage -- une affection propre aux personnages
+        AffectionSalle -- une affection de salle
     
     """
     
@@ -58,6 +61,7 @@ class Module(BaseModule):
         self.logger = type(self.importeur).man_logs.creer_logger("affection", \
                 "affections")
         self.aff_salles = {}
+        self.aff_personnages = {}
     
     def preparer(self):
         """Prépare le module.
@@ -68,14 +72,22 @@ class Module(BaseModule):
         aff_salles = {
             "neige": defaut.salle.neige.Neige,
         }
+        aff_personnages = {
+            "alcool": defaut.personnage.alcool.Alcool,
+        }
         
         for cle, classe in aff_salles.items():
             if cle not in self.aff_salles:
+                classe() # crée (et enregistre automatiquement) l'affection
+        
+        for cle, classe in aff_personnages.items():
+            if cle not in self.aff_personnages:
                 classe() # crée (et enregistre automatiquement) l'affection
     
     def get_affection(self, type, cle):
         """Retourne, si trouvé, l'objet représentant l'affection."""
         types = {
+            "personnage": self.aff_personnages,
             "salle": self.aff_salles,
         }
         

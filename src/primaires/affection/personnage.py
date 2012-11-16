@@ -28,7 +28,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les affections par défaut."""
+"""Ce module contient la classe AffectionPersonnage, détaillée plus bas."""
 
-from . import personnage
-from . import salle
+from .base import AffectionAbstraite
+
+class AffectionPersonnage(AffectionAbstraite):
+    
+    """Affection propre à un personnage."""
+    
+    nom_type = "personnage"
+    def __init__(self, cle):
+        AffectionAbstraite.__init__(self, cle)
+        self.visible = True
+        importeur.affection.aff_personnages[self.cle] = self
+    
+    def programmer_destruction(self, affection):
+        """Programme la destruction de l'affection de personnage."""
+        self.message_detruire(affection)

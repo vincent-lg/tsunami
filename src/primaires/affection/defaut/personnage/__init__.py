@@ -28,7 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les affections par défaut."""
+"""Package contenant les affections de personnage par défaut."""
 
-from . import personnage
-from . import salle
+from . import alcool
