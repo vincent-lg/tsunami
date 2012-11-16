@@ -59,4 +59,8 @@ class CmdCrier(Commande):
         """Interprétation de la commande"""
         message = dic_masques["message"].message
         message = echapper_accolades(message)
+        if "alcool" in personnage.affections:
+            affection = personnage.affections["alcool"]
+            message = affection.affection.deformer_message(affection, message)
+        
         personnage.crier(message)

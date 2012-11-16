@@ -35,6 +35,7 @@ import random
 from abstraits.obase import BaseObj
 from corps.aleatoire import varier
 from corps.fonctions import lisser
+from primaires.affection.affection import Affection
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.file import FileContexte
 from primaires.interpreteur.groupe.groupe import *
@@ -93,6 +94,7 @@ class Personnage(BaseObj):
         # Etat
         self._cle_etat = ""
         self.super_invisible = False
+        self.affections = {}
         
         # Position occupée
         self.position = ""
@@ -856,6 +858,20 @@ class Personnage(BaseObj):
         
         return None
     
+    def affecte(self, cle, duree, force):
+        """Affecte le personnage avec une affection.
+        
+        Si l'affection est déjà présente, la force est modulée.
+        
+        """
+        affection = importeur.affection.get_affection("personnage", cle)
+        if cle in self.affections:
+            concrete = self.affections[cle]
+            affection.moduler(concrete, duree, force)
+        else:
+            concrete = Affection(affection, self, duree, force)
+            self.affections[cle] = concrete
+    
     def tick(self):
         """Méthode appelée à chaque tick (chaque minute)."""
         stats = {
@@ -871,6 +887,14 @@ class Personnage(BaseObj):
                 courante_liee = self.stats[liee].courante
                 plus = int(courante_liee * 0.9)
                 stat.courante = stat.courante + plus
+        
+        # Traitement des affections
+        for affection in self.affections.values():
+            affection.affection.dec_duree(affection)
+        
+        for cle, affection in list(self.affections.items()):
+            if not affection.e_existe or affection.duree <= 0:
+                del self.affections[cle]
     
     def envoyer_tip(self, message, cle=None, unique=False):
         """Envoie un message de tip (aide contextuel) au personnage."""
@@ -948,7 +972,16 @@ class Personnage(BaseObj):
         msg = "Vous regardez {} :\n".format(self.get_nom_pour(personnage))
         if hasattr(self, "description"):
             msg += "\n" + self.description.regarder(personnage=personnage,
-                    elt=self) + "\n"
+                    elt=self) + "\n\n"
+        
+        # Affections
+        aff_msg = []
+        for cle, affection in self.affections.items():
+            aff_msg.append(lisser(affection.affection.message(
+                    affection)) + ".")
+        
+        if aff_msg:
+            msg += "\n".join(aff_msg) + "\n\n"
         
         objets = []
         for membre in equipement.membres:
@@ -973,7 +1006,7 @@ class Personnage(BaseObj):
         else:
             msg += genre + " porte :\n\n  " + "\n  ".join(objets)
         
-        personnage.envoyer(msg)
+        personnage.envoyer(msg, perso=self)
         self.envoyer("{} vous regarde.", personnage)
         personnage.salle.envoyer("{} regarde {}.", personnage, self)
     

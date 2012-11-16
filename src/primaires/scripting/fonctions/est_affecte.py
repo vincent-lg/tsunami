@@ -28,7 +28,41 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les affections par défaut."""
+"""Fichier contenant la fonction est_affecte."""
 
-from . import personnage
-from . import salle
+from primaires.scripting.fonction import Fonction
+
+class ClasseFonction(Fonction):
+    
+    """Retourne vrai si le personnage ou la salle est affecté(e)."""
+    
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.est_affecte_personnage, "Personnage", "str")
+        cls.ajouter_types(cls.est_affecte_salle, "Salle", "str")
+    
+    @staticmethod
+    def est_affecte_personnage(personnage, affection):
+        """Retourne vrai si le personnage est affecté par l'affection.
+        
+        Cette fonction prend en paramètre le personnage à tester et la clé
+        de l'affection.
+        
+        Exemple : si est_affecte(personnage, "alcool"):
+        
+        """
+        cle = affection.lower()
+        return cle in personnage.affections
+    
+    @staticmethod
+    def est_affecte_salle(salle, affection):
+        """Retourne vrai si la salle est affectée par l'affection.
+        
+        Cette fonction prend en paramètre la salle à tester et la clé
+        de l'affection.
+        
+        Exemple : si est_affecte(salle, "neige"):
+        
+        """
+        cle = affection.lower()
+        return cle in salle.affections

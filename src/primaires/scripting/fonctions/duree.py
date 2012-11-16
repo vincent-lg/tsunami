@@ -28,7 +28,45 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les affections par défaut."""
+"""Fichier contenant la fonction duree."""
 
-from . import personnage
-from . import salle
+from primaires.scripting.fonction import Fonction
+
+class ClasseFonction(Fonction):
+    
+    """Retourne la durée de l'affection du personnage."""
+    
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.duree_personnage, "Personnage", "str")
+        cls.ajouter_types(cls.duree_salle, "Salle", "str")
+    
+    @staticmethod
+    def duree_personnage(personnage, affection):
+        """Retourne la durée de l'affection du personnage.
+        
+        Si le personnage n'est pas affecté par l'affection précisée, cette
+        fonction retourne 0.
+        
+        """
+        cle = affection.lower()
+        affection = personnage.affections.get(cle)
+        if affection is None:
+            return 0
+        
+        return affection.duree
+    
+    @staticmethod
+    def duree_salle(salle, affection):
+        """Retourne la durée de l'affection de la salle.
+        
+        Si la salle n'est pas affectée par l'affection précisée, cette
+        fonction retourne 0.
+        
+        """
+        cle = affection.lower()
+        affection = salle.affections.get(cle)
+        if affection is None:
+            return 0
+        
+        return affection.duree
