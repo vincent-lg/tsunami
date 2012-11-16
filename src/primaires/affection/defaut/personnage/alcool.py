@@ -54,6 +54,8 @@ class Alcool(AffectionPersonnage):
         
         """
         affection.duree -= duree
+        if affection.duree <= 0:
+            affection.detruire()
     
     def message(self, affection):
         """Retourne le message du personnage affecté par l'alcool."""
@@ -81,8 +83,9 @@ class Alcool(AffectionPersonnage):
     
     def message_detruire(self, affection):
         """Destruction de l'affection du personnage."""
+        affection.affecte.sans_prompt()
         affection.affecte.envoyer("Vous retrouvez votre clarté d'esprit, " \
-                "très lentement.", prompt=False)
+                "très lentement.")
     
     def deformer_message(self, affection, message):
         """Déforme le message en fonction de l'alcool."""
