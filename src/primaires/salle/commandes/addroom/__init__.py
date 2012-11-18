@@ -43,7 +43,7 @@ class CmdAddroom(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "addroom", "addroom")
         self.groupe = "administrateur"
-        self.schema = "<direction> <nv_ident_salle>"
+        self.schema = "<direction> (<nv_ident_salle>)"
         self.nom_categorie = "batisseur"
         self.aide_courte = "ajoute une salle à l'univers"
         self.aide_longue = \
@@ -57,9 +57,14 @@ class CmdAddroom(Commande):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         direction = dic_masques["direction"].direction
-        zone = dic_masques["nv_ident_salle"].zone
-        mnemonic = dic_masques["nv_ident_salle"].mnemonic
         salle = personnage.salle
+        if dic_masques["nv_ident_salle"]:
+            zone = dic_masques["nv_ident_salle"].zone
+            mnemonic = dic_masques["nv_ident_salle"].mnemonic
+        else:
+            zone = salle.nom_zone
+            mnemonic = salle.zone.chercher_mnemonic_libre(salle.mnemonic)
+        
         dir_opposee = salle.sorties.get_nom_oppose(direction)
         
         if salle.sorties.sortie_existe(direction):
@@ -74,7 +79,7 @@ class CmdAddroom(Commande):
         x, y, z, valide = nv_coords.tuple_complet()
         
         try:
-            nv_salle = type(self).importeur.salle.creer_salle(zone, mnemonic,
+            nv_salle = importeur.salle.creer_salle(zone, mnemonic,
                     x, y, z, valide)
         except ValueError as err_val:
             personnage << str(err_val) + "."
@@ -83,6 +88,7 @@ class CmdAddroom(Commande):
                     salle_dest=nv_salle, corresp=dir_opposee)
             nv_salle.sorties.ajouter_sortie(dir_opposee, dir_opposee,
                     salle_dest=salle, corresp=direction)
+            nv_salle.interieur = salle.interieur
             nv_salle.nom_terrain = salle.nom_terrain
             
             personnage << "|att|La salle {} a bien été ajouté vers {}.|ff|". \
