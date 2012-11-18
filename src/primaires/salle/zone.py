@@ -30,6 +30,8 @@
 
 """Fichier contenant la classe Zone, détaillée plus bas."""
 
+import re
+
 from abstraits.obase import BaseObj
 
 class Zone(BaseObj):
@@ -85,3 +87,33 @@ class Zone(BaseObj):
         """Retire la salle de la zone."""
         if salle in self.salles:
             self.salles.remove(salle)
+    
+    def chercher_mnemonic_libre(self, mnemonic):
+        """Cherche le mnémonique libre suivant.
+        
+        On se base ici sur une partie chaîne et une partie chiffrée. Si
+        la partie chaîne est nullée, alors la partie chiffrée sera 1, 2,
+        3, ainsi de suite.
+        
+        """
+        re_mnemo = r"^[a-z_]*(\d+)$"
+        reg = re.search(re_mnemo, mnemonic)
+        if reg and reg.groups():
+            entiere = int(reg.groups()[0])
+            chaine = mnemonic[:-len(str(entiere))]
+        else:
+            chaine = mnemonic
+            entiere = 0
+        
+        mnemos = [s.mnemonic for s in self.salles if \
+                s.mnemonic.startswith(chaine)]
+        
+        trouve = False
+        while not trouve:
+            entiere += 1
+            mnemo = chaine + str(entiere)
+            if not mnemo in mnemos:
+                trouve = True
+                break
+        
+        return mnemo
