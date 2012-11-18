@@ -101,23 +101,24 @@ class Combat:
     def verifier_combattants(self):
         """Vérifie que tous les combattants sont bien dans la salle."""
         for combattant in list(self.combattants):
-            if combattant is None or combattant.salle != self.salle:
+            if combattant is None or combattant.salle is not self.salle or \
+                    combattant.est_mort():
                 self.__combattants.remove(combattant)
         
         for combattant, combattu in list(self.combattus.items()):
-            if combattant and combattant.salle != self.salle:
+            if combattant and combattant.salle is not self.salle:
                 del self.__combattus[combattant]
-            elif combattu and combattu.salle != self.salle:
+            elif combattu and combattu.salle is not self.salle:
                 self.__combattus[combattant] = None
         
         # Les combattants ne combattant personne essayent de trouver une
         # autre cible
-        for combattant, combattus in self.combattus.items():
+        for combattant, combattu in self.combattus.items():
             if combattu is None:
                 # On liste les cibles possibles du combattant
                 # (ceux qui le combattent)
                 cibles = [cbt for cbt, cbu in self.combattus.items() if \
-                        cbu == combattant]
+                        cbu is combattant]
                 if cibles:
                     cible = choice(cibles)
                     self.__combattus[combattant] = cible
