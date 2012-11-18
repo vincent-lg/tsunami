@@ -183,23 +183,26 @@ class Quete(BaseObj):
         if quete.ordonnee:
             return niveau == self.niveau_suivant
         else:
-            # Le niveau parent doit être validé
-            # Note : le niveau parent de (2, 3) et (1, )
-            # Celui de (1, 5, 2) est (1, 4)
-            t_niveau = niveau[:-2] + (niveau[-2] - 1, )
-            
-            # On retire les 0 en fin de niveau
-            f_niveau = []
-            non_zero = False
-            for n in reversed(t_niveau):
-                if n <= 0:
-                    if non_zero:
+            if len(niveau) > 1:
+                # Le niveau parent doit être validé
+                # Note : le niveau parent de (2, 3) et (1, )
+                # Celui de (1, 5, 2) est (1, 4)
+                t_niveau = niveau[:-2] + (niveau[-2] - 1, )
+                
+                # On retire les 0 en fin de niveau
+                f_niveau = []
+                non_zero = False
+                for n in reversed(t_niveau):
+                    if n <= 0:
+                        if non_zero:
+                            f_niveau.insert(0, n)
+                    else:
                         f_niveau.insert(0, n)
-                else:
-                    f_niveau.insert(0, n)
-                    non_zero = True
-            
-            return tuple(f_niveau) in self.__niveaux
+                        non_zero = True
+                
+                return tuple(f_niveau) in self.__niveaux
+        
+        return True
     
     def valider(self, quete, niveau):
         """Valide la quête passée en paramètre.
