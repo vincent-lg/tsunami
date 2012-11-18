@@ -69,6 +69,9 @@ class ChaineDeCaracteres(Expression):
         objet = ChaineDeCaracteres()
         chaine = chaine.lstrip()
         fin = chaine.index("\"", 1)
+        if fin < 0:
+            raise ValueError("syntaxe invalide pour une chaîne de caractères")
+        
         objet.chaine = chaine[1:fin]
         return objet, chaine[fin + 1:]
     

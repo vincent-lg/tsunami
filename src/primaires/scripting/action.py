@@ -188,6 +188,9 @@ class Action(Instruction):
                 break
             
             arg, chaine = MetaExpression.choisir(types, chaine)
+            if not arg:
+                raise ValueError("Erreur lors de l'interprétation de l'action")
+            
             parametres.append(arg)
             
             chaine.lstrip(" ")
