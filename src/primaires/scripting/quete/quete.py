@@ -78,6 +78,9 @@ class Quete(BaseObj):
     def __getnewargs__(self):
         return ("", None)
     
+    def __repr__(self):
+        return "<quête {}>".format(repr(self.titre))
+    
     def __str__(self):
         return self.cle + ", " + \
                 (self.auteur and "par " + self.auteur.nom or "auteur inconnu")

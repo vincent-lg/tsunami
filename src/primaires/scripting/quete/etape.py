@@ -59,6 +59,9 @@ class Etape(BaseObj):
     def __getnewargs__(self):
         return (None, )
     
+    def __repr__(self):
+        return "<étape {}>".format(repr(self.titre))
+    
     def __str__(self):
         return self.str_niveau.ljust(5) + " " + self.titre
     
