@@ -63,8 +63,8 @@ class Module(BaseModule):
         self.aff_salles = {}
         self.aff_personnages = {}
     
-    def preparer(self):
-        """Prépare le module.
+    def config(self):
+        """Configure le module.
         
         Crée les affections par défaut si elles n'existent pas.
         
@@ -83,6 +83,8 @@ class Module(BaseModule):
         for cle, classe in aff_personnages.items():
             if cle not in self.aff_personnages:
                 classe() # crée (et enregistre automatiquement) l'affection
+        
+        BaseModule.config(self)
     
     def get_affection(self, type, cle):
         """Retourne, si trouvé, l'objet représentant l'affection."""

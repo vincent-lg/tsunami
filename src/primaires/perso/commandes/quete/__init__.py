@@ -50,42 +50,33 @@ class CmdQuete(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        faites = [q for q in importeur.scripting.quetes.values() \
-                if personnage.quetes[q.cle].niveaux != [(0, )]]
-        ret = "|tit|Vos quêtes en cours :|ff|"
-        # On parcourt les quêtes en cours / terminees
-        terminees = []
-        for quete in faites:
-            etapes_faites = [e for e in quete.etapes.values() \
-                    if e.niveau in personnage.quetes[quete.cle].niveaux]
-            etapes_a_faire = [e for e in quete.etapes.values() \
-                    if e not in etapes_faites]
-            # Si la quête est terminée on passe le tour
-            if not etapes_a_faire:
-                terminees.append(quete)
-                continue
-            ret += "\n|cy|" + quete.titre[0].upper() + quete.titre[1:] + "|ff|"
-            if quete.ordonnee: # Si c'est une quête ordonnée
-                # On sélectionne la première étape à faire
-                etape = sorted(etapes_a_faire, key=lambda e: e.niveau)[0]
-                # Si l'étape courante fait partie d'une sous-quête non ordonée
-                if etape.parent.type == "quete" and not etape.parent.ordonnee:
-                    ret += "\n - " + etape.parent.titre + " :"
-                    for s_etape in etape.parent.etapes.values():
-                        if s_etape in etapes_a_faire and \
-                                s_etape is not etape.parent and \
-                                len(s_etape.niveau) == len(etape.niveau):
-                            ret += "\n   " + s_etape.titre
-                else:
+        a_faire = personnage.quetes.etapes_a_faire
+        faites = personnage.quetes.etapes_accomplies
+        ret = ""
+        if not faites and not a_faire:
+            personnage << "Vous n'avez encore aucune quête en cours ou accomplie."
+            return
+        
+        if a_faire:
+            ret += "|tit|Vos quêtes en cours :|ff|"
+            # On parcourt les quêtes en cours / terminees
+            for quete, etapes in a_faire.items():
+                ret += "\n|cy|" + quete.titre[0].upper() + quete.titre[1:] + "|ff|"
+                for etape in etapes:
                     ret += "\n - " + etape.titre
-            else: # si elle n'est pas ordonnée
-                for etape in quete.etapes.values():
-                    if etape in etapes_a_faire and len(etape.niveau) == 1:
-                        ret += "\n - " + etape.titre
-        if all(q in terminees for q in faites):
-            ret += "\n|att|Aucune quête en cours pour le moment.|ff|"
-        if terminees:
-            ret += "\n\n|tit|Vos quêtes accomplies :|ff|"
-            for quete in terminees:
-                ret += "\n - " + quete.titre
+        
+        if faites:
+            if a_faire:
+                ret += "\n\n"
+            
+            ret += "|tit|Vos quêtes accomplies :|ff|"
+            for quete, etapes in faites.items():
+                ret += "\n" + quete.titre[0].upper() + quete.titre[1:]
+                print(etapes, len(etapes), quete, etapes[0] is quete)
+                if len(etapes) == 1 and quete.ordonnee:
+                    continue
+                
+                for etape in etapes:
+                    ret += "\n - " + etape.titre
+            
         personnage << ret

@@ -29,6 +29,8 @@
 
 """Ce fichier contient la classe Quete, détaillée plus bas."""
 
+from collections import OrderedDict
+
 from abstraits.obase import *
 
 class Quete(BaseObj):
@@ -95,6 +97,7 @@ class Quete(BaseObj):
         niveaux = " ".join([".".join([str(niv) for niv in n]) for n in \
                 self.__niveaux])
         return "<quete " + str(self.cle_quete) + " " + niveaux + ">"
+    
     @property
     def verrouille(self):
         """Retourne True si la quête est verrouillé."""
@@ -161,8 +164,73 @@ class Quete(BaseObj):
         if pos == len(niveaux) - 1:
             return ()
         
-        print("Retourne", niveaux[etapes[pos + 1]])
         return niveaux[etapes[pos + 1]].niveau
+    
+    @property
+    def etapes_accomplies(self):
+        """Parcourt les niveaux et retourne la liste des étapes accomplies."""
+        etapes = OrderedDict()
+        quete = importeur.scripting.quetes.get(self.cle_quete)
+        if quete is None:
+            return ()
+        
+        for niveau in sorted(self.__niveaux):
+            str_niveau = ".".join(str(n) for n in niveau)
+            parent = niveau[:-1]
+            str_parent = ".".join(str(n) for n in parent)
+            etape = quete.etapes.get(str_niveau)
+            if etape in etapes:
+                continue
+            
+            if not str_parent:
+                q_parent = etape.parent
+            else:
+                q_parent = quete.etapes.get(str_parent)
+            
+            if q_parent is None:
+                q_parent = etape.parent
+            
+            print(niveau, q_parent, etape)
+            if q_parent.type == "etape" or q_parent.ordonnee:
+                etapes[q_parent] = etape
+            else:
+                etapes[etape] = etape
+        
+        return etapes
+    
+    @property
+    def etapes_a_faire(self):
+        """Parcourt les niveaux et retourne la liste des étapes à faire."""
+        etapes = OrderedDict()
+        quete = importeur.scripting.quetes.get(self.cle_quete)
+        if quete is None:
+            return ()
+        
+        for niveau in sorted(self.__niveaux):
+            str_niveau = ".".join(str(n) for n in niveau)
+            parent = niveau[:-1]
+            str_parent = ".".join(str(n) for n in parent)
+            niv_suivant = niveau[:-1] + (niveau[-1] + 1, )
+            etape = quete.etapes.get(str_niveau)
+            if not str_parent:
+                q_parent = etape.parent
+            else:
+                q_parent = quete.etapes.get(str_parent)
+            
+            if etape and niv_suivant not in self.__niveaux:
+                q_parent = quete.etapes.get(str_parent)
+                str_suivant = ".".join(str(n) for n in niv_suivant)
+                if q_parent is None:
+                    q_parent = etape.parent
+                
+                e_suivant = quete.etapes.get(str_suivant)
+                if not e_suivant:
+                    continue
+                
+                if q_parent.ordonnee:
+                    etapes[q_parent] = e_suivant
+        
+        return etapes
     
     def peut_faire(self, quete, niveau):
         """Retourne True si la quête peut être faite, False sinon.
@@ -171,6 +239,7 @@ class Quete(BaseObj):
         Le niveau est le niveau demandé.
         
         """
+        print("peut faire", quete, quete.ordonnee, niveau, self.niveaux)
         if niveau in self.__niveaux:
             return False
         
@@ -188,7 +257,7 @@ class Quete(BaseObj):
                 # Note : le niveau parent de (2, 3) et (1, )
                 # Celui de (1, 5, 2) est (1, 4)
                 t_niveau = niveau[:-2] + (niveau[-2] - 1, )
-                
+                print(t_niveau)
                 # On retire les 0 en fin de niveau
                 f_niveau = []
                 non_zero = False
@@ -200,7 +269,7 @@ class Quete(BaseObj):
                         f_niveau.insert(0, n)
                         non_zero = True
                 
-                return tuple(f_niveau) in self.__niveaux
+                return self.peut_faire(quete.parent, tuple(f_niveau))
         
         return True
     

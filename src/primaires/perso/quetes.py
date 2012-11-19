@@ -29,6 +29,8 @@
 
 """Ce fichier contient la classe Quetes, détaillée plus bas."""
 
+from collections import OrderedDict
+
 from abstraits.obase import *
 from .quete import Quete
 
@@ -139,6 +141,40 @@ class Quetes(BaseObj):
     
     def __str__(self):
         return str(self.__quetes)
+    
+    @property
+    def quetes(self):
+        return dict(self.__quetes)
+    
+    @property
+    def etapes_accomplies(self):
+        etapes = OrderedDict()
+        res_etapes = [q.etapes_accomplies for q in self.__quetes.values()]
+        for t_etapes in res_etapes:
+            for quete, etape in t_etapes.items():
+                if quete.type == "etape" and not quete.parent.ordonnee:
+                    liste = etapes.get(quete.parent, [])
+                    liste.append(etape)
+                    etapes[quete.parent] = liste
+                else:
+                    etapes[quete] = [etape]
+        
+        return etapes
+    
+    @property
+    def etapes_a_faire(self):
+        etapes = OrderedDict()
+        res_etapes = [q.etapes_a_faire for q in self.__quetes.values()]
+        for t_etapes in res_etapes:
+            for quete, etape in t_etapes.items():
+                if quete.type == "etape" and not quete.parent.ordonnee:
+                    liste = etapes.get(quete.parent, [])
+                    liste.append(etape)
+                    etapes[quete.parent] = liste
+                else:
+                    etapes[quete] = [etape]
+        
+        return etapes
     
     def valider(self, quete, niveau):
         """Valide la quête."""
