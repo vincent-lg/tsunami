@@ -49,6 +49,7 @@ class EdtEvenement(Editeur):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
         self.ajouter_option("d", self.opt_supprimer_test)
+        self.ajouter_option("r", self.opt_modifier_test)
     
     def opt_supprimer_test(self, arguments):
         """Supprime un test.
@@ -66,6 +67,41 @@ class EdtEvenement(Editeur):
             self.pere << "|err|Numéro invalide ({}).|ff|".format(arguments)
         else:
             evenement.supprimer_test(no)
+            self.actualiser()
+    
+    def opt_modifier_test(self, arguments):
+        """Modifie un test.
+        
+        Syntaxe :
+            /r <id> <ligne>
+        
+        """
+        evenement = self.objet
+        msgs = arguments.split(" ")
+        if len(msgs) < 2:
+            self.pere << "|err|Précisez un numéro de test suivi " \
+                    "d'une nouvelle suite de tests.|ff|"
+            return
+        
+        try:
+            i = int(msgs[0])
+            assert i > 0
+        except (ValueError, AssertionError):
+            self.pere << "|err|Nombre invalide.|ff|"
+            return
+        
+        msg = " ".join(msgs[1:])
+        try:
+            test = evenement.tests[i - 1]
+        except IndexError:
+            self.pere << "|err|Test introuvable.|ff|"
+            return
+        
+        try:
+            test.construire(msg)
+        except ValueError as err:
+            self.pere << "|err|Erreur lors du parsage du test.|ff|"
+        else:
             self.actualiser()
     
     def accueil(self):
@@ -100,6 +136,14 @@ class EdtEvenement(Editeur):
                     for evt in evenements]
             msg += "\n".join(lignes)
         else:
+            msg += "|cy|Options :\n\n"
+            msg += " Entrez |ent|une suite de prédicats|ff| pour "
+            msg += "ajouter un test\n"
+            msg += " Ou |ent|un numéro de ligne|ff| pour l'éditer\n"
+            msg += " Ou |cmd|*|ff| pour ééditer le test sinon\n"
+            msg += " |cmd|/d <numéro de ligne>|ff| pour supprimer un test\n"
+            msg += " |cmd|/r <numéro de ligne> <prédicats>|ff| pour "
+            msg += "modifier un test\n\n"
             msg += "|cy|Conditions :|ff|\n"
             tests = evenement.tests
             longueur = 1
@@ -113,7 +157,7 @@ class EdtEvenement(Editeur):
             msg += "\n " + " " * longueur + "|cmd|*|ff| |mr|sinon|ff|"
         
         return msg
-    
+
     def interpreter(self, msg):
         """Interprétation de l'éditeur"""
         evenement = self.objet
