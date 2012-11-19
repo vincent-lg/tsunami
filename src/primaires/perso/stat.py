@@ -138,17 +138,18 @@ class Stat(BaseObj):
         
         """
         base = courante - self.__variable
-        # Levée d'exceptions
-        if base < 0 and flags & I0:
-            self.__base = 0
-            raise StatI0
-        if base <= 0 and flags & IE0:
-            self.__base = 0
-            raise StatIE0
-        if self.max and flags & SM and base > self.max:
-            raise StatSM
-        if self.max and flags & SEM and base >= self.max:
-            raise StatSEM
+        if not self.parent.parent.est_immortel():
+            # Levée d'exceptions
+            if base < 0 and flags & I0:
+                self.__base = 0
+                raise StatI0
+            if base <= 0 and flags & IE0:
+                self.__base = 0
+                raise StatIE0
+            if self.max and flags & SM and base > self.max:
+                raise StatSM
+            if self.max and flags & SEM and base >= self.max:
+                raise StatSEM
         
         if base > self.marge_max:
             base = self.marge_max
