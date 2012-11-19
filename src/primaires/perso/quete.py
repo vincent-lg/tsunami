@@ -170,6 +170,9 @@ class Quete(BaseObj):
     def etapes_accomplies(self):
         """Parcourt les niveaux et retourne la liste des étapes accomplies."""
         etapes = OrderedDict()
+        if self.etapes_a_faire:
+            return etapes
+        
         quete = importeur.scripting.quetes.get(self.cle_quete)
         if quete is None:
             return ()
