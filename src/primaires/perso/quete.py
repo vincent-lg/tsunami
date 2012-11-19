@@ -259,7 +259,7 @@ class Quete(BaseObj):
                 # Le niveau parent doit être validé
                 # Note : le niveau parent de (2, 3) et (1, )
                 # Celui de (1, 5, 2) est (1, 4)
-                t_niveau = niveau[:-2] + (niveau[-2] - 1, )
+                t_niveau = niveau[:-1] + (niveau[-1] - 1, )
                 print(t_niveau)
                 # On retire les 0 en fin de niveau
                 f_niveau = []
