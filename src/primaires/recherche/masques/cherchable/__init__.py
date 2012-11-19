@@ -69,7 +69,7 @@ class MCherchable(Masque):
         nom_cherchable = self.a_interpreter
         cherchables = importeur.recherche.cherchables
         if nom_cherchable in cherchables:
-            self.cherchable = cherchables[nom_cherchable]()
+            self.cherchable = cherchables[nom_cherchable]
             return True
         else:
             raise ErreurValidation(

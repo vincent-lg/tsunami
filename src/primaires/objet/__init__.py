@@ -56,6 +56,7 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "objet", "primaire")
         self._prototypes = {}
         self._objets = {}
+        self.cherchable_pr = None
     
     def config(self):
         """Configuration du module."""
@@ -97,6 +98,7 @@ class Module(BaseModule):
         etat.msg_visible = "mange ici"
         etat.act_autorisees = ["regarder", "bouger"]
         
+        self.cherchable_pry = cherchables.prototype.CherchablePrototypeObjet
         BaseModule.init(self)
     
     def ajouter_commandes(self):
