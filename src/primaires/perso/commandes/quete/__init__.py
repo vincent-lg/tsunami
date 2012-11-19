@@ -52,12 +52,13 @@ class CmdQuete(Commande):
         """Méthode d'interprétation de commande"""
         a_faire = personnage.quetes.etapes_a_faire
         faites = personnage.quetes.etapes_accomplies
+        ret = ""
         if not faites and not a_faire:
             personnage << "Vous n'avez encore aucune quête en cours ou accomplie."
             return
         
         if a_faire:
-            ret = "|tit|Vos quêtes en cours :|ff|"
+            ret += "|tit|Vos quêtes en cours :|ff|"
             # On parcourt les quêtes en cours / terminees
             for quete, etapes in a_faire.items():
                 ret += "\n|cy|" + quete.titre[0].upper() + quete.titre[1:] + "|ff|"
@@ -71,6 +72,10 @@ class CmdQuete(Commande):
             ret += "|tit|Vos quêtes accomplies :|ff|"
             for quete, etapes in faites.items():
                 ret += "\n" + quete.titre[0].upper() + quete.titre[1:]
+                print(etapes, len(etapes), quete, etapes[0] is quete)
+                if len(etapes) == 1 and quete.ordonnee:
+                    continue
+                
                 for etape in etapes:
                     ret += "\n - " + etape.titre
             

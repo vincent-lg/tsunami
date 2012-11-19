@@ -182,13 +182,19 @@ class Quete(BaseObj):
             if etape in etapes:
                 continue
             
-            if str_parent and etape:
+            if not str_parent:
+                q_parent = etape.parent
+            else:
                 q_parent = quete.etapes.get(str_parent)
-                if q_parent:
-                    if q_parent.ordonnee:
-                        etapes[q_parent] = etape
-                    else:
-                        etapes[etape] = etape
+            
+            if q_parent is None:
+                q_parent = etape.parent
+            
+            print(niveau, q_parent, etape)
+            if q_parent.type == "etape" or q_parent.ordonnee:
+                etapes[q_parent] = etape
+            else:
+                etapes[etape] = etape
         
         return etapes
     
@@ -206,16 +212,23 @@ class Quete(BaseObj):
             str_parent = ".".join(str(n) for n in parent)
             niv_suivant = niveau[:-1] + (niveau[-1] + 1, )
             etape = quete.etapes.get(str_niveau)
-            if str_parent and etape and niv_suivant not in self.__niveaux:
+            if not str_parent:
+                q_parent = etape.parent
+            else:
+                q_parent = quete.etapes.get(str_parent)
+            
+            if etape and niv_suivant not in self.__niveaux:
                 q_parent = quete.etapes.get(str_parent)
                 str_suivant = ".".join(str(n) for n in niv_suivant)
-                if q_parent:
-                    e_suivant = quete.etapes.get(str_suivant)
-                    if not e_suivant:
-                        continue
-                    
-                    if q_parent.ordonnee:
-                        etapes[q_parent] = e_suivant
+                if q_parent is None:
+                    q_parent = etape.parent
+                
+                e_suivant = quete.etapes.get(str_suivant)
+                if not e_suivant:
+                    continue
+                
+                if q_parent.ordonnee:
+                    etapes[q_parent] = e_suivant
         
         return etapes
     
