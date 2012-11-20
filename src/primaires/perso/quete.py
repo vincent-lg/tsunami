@@ -175,7 +175,7 @@ class Quete(BaseObj):
         
         quete = importeur.scripting.quetes.get(self.cle_quete)
         if quete is None:
-            return ()
+            return etapes
         
         for niveau in sorted(self.__niveaux):
             str_niveau = ".".join(str(n) for n in niveau)
@@ -189,6 +189,9 @@ class Quete(BaseObj):
                 q_parent = etape.parent
             else:
                 q_parent = quete.etapes.get(str_parent)
+            
+            if q_parent in etapes:
+                continue
             
             if q_parent is None:
                 q_parent = etape.parent
