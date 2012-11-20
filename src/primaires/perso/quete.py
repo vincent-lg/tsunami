@@ -242,7 +242,8 @@ class Quete(BaseObj):
         Le niveau est le niveau demandé.
         
         """
-        print("peut faire", quete, quete.ordonnee, niveau, self.niveaux)
+        ordonnee = quete and quete.ordonnee or "oo"
+        print("peut faire", quete, ordonnee, niveau, self.niveaux)
         if niveau in self.__niveaux:
             return False
         
@@ -253,28 +254,22 @@ class Quete(BaseObj):
             return True
         
         if quete.ordonnee:
-            return niveau == self.niveau_suivant
+            # On parcourt les niveaux pour trouver le dernier
+            p_niveau = niveau[:-1]
+            t_max = (0, )
+            for t_niveau in sorted(self.__niveaux):
+                if t_niveau[:len(p_niveau)] == p_niveau:
+                    t_max = t_niveau
+            
+            t_max = t_max[:-1] + (t_max[-1] + 1, )
+            print("t_max", p_niveau, t_max, niveau)
+            if (len(t_max) != len(p_niveau) and niveau[-1] == 1) or \
+                    t_max == niveau:
+                return self.peut_faire(quete.parent, niveau[:-1])
+            else:
+                return False
         else:
-            if len(niveau) > 1:
-                # Le niveau parent doit être validé
-                # Note : le niveau parent de (2, 3) et (1, )
-                # Celui de (1, 5, 2) est (1, 4)
-                t_niveau = niveau[:-1] + (niveau[-1] - 1, )
-                print(t_niveau)
-                # On retire les 0 en fin de niveau
-                f_niveau = []
-                non_zero = False
-                for n in reversed(t_niveau):
-                    if n <= 0:
-                        if non_zero:
-                            f_niveau.insert(0, n)
-                    else:
-                        f_niveau.insert(0, n)
-                        non_zero = True
-                
-                return self.peut_faire(quete.parent, tuple(f_niveau))
-        
-        return True
+            return self.peut_faire(quete.parent, niveau[:-1])
     
     def valider(self, quete, niveau):
         """Valide la quête passée en paramètre.
