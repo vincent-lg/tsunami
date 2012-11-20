@@ -72,8 +72,7 @@ class CmdQuete(Commande):
             ret += "|tit|Vos quêtes accomplies :|ff|"
             for quete, etapes in faites.items():
                 ret += "\n" + quete.titre[0].upper() + quete.titre[1:]
-                print(etapes, len(etapes), quete, etapes[0] is quete)
-                if len(etapes) == 1 and quete.ordonnee:
+                if len(etapes) == 1 and (quete.ordonnee or quete is etapes[0]):
                     continue
                 
                 for etape in etapes:
