@@ -28,19 +28,17 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit le cherchable des prototypes d'objet.
-
-"""
+"""Ce fichier définit le cherchable des prototypes de PNJ."""
 
 from primaires.recherche.cherchables.cherchable import Cherchable
 
-class CherchablePrototypeObjet(Cherchable):
+class CherchablePrototypePNJ(Cherchable):
     
     """Classe cherchable pour les prototypes d'objet de l'univers.
     
     """
     
-    nom_cherchable = "probjet"
+    nom_cherchable = "prpnj"
     
     def init(self):
         """Méthode d'initialisation.
@@ -51,19 +49,16 @@ class CherchablePrototypeObjet(Cherchable):
         """
         self.ajouter_filtre("n", "nom", "nom_singulier", "str")
         self.ajouter_filtre("l", "cle", "cle", "str")
-        self.ajouter_filtre("t", "type", self.test_type, "str!")
-        self.ajouter_filtre("p", "prix", "prix", "int")
-        self.ajouter_filtre("i", "poids", "poids", "int")
     
     @property
     def items(self):
         """Renvoie la liste des objets traités"""
-        return list(importeur.objet.prototypes.values())
+        return list(importeur.pnj.prototypes.values())
     
     @property
     def attributs_tri(self):
         """Renvoie la liste des attributs par lesquels on peut trier"""
-        return ["cle", "nom", "prix"]
+        return ["cle", "nom"]
     
     @property
     def colonnes(self):
@@ -74,24 +69,9 @@ class CherchablePrototypeObjet(Cherchable):
         
         """
         return {
-            "prix": "prix",
             "nom": "nom_singulier",
             "cle": "cle",
-            "poids": "poids",
         }
-    
-    def test_type(self, prototype, valeur):
-        """Permet une recherche sur le type de l'objet.
-        
-        Le type spécifié doit être un type valide et existant ;
-        si l'objet est de ce type ou d'un de ses fils, il sera
-        retourné à la recherche (cette option n'accepte pas les regex).
-        
-        """
-        try:
-            return prototype.est_de_type(valeur)
-        except KeyError:
-            return False
     
     def colonnes_par_defaut(self):
         """Retourne les colonnes d'affichage par défaut.

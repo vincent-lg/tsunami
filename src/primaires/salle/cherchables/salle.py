@@ -57,6 +57,36 @@ class CherchableSalle(Cherchable):
         """Renvoie la liste des objets traités"""
         return list(importeur.salle.salles.values())
     
-    def afficher(self, objet):
-        """Méthode d'affichage des objets traités"""
-        return objet.ident + " : " + objet.titre
+    @property
+    def attributs_tri(self):
+        """Renvoie la liste des attributs par lesquels on peut trier"""
+        return ["ident", "titre"]
+    
+    @property
+    def colonnes(self):
+        """Retourne un dictionnaire des valeurs que l'on peut disposer en
+        colonne à l'affichage final, de la forme :
+        >>> {nom: attribut/méthode}
+        (une colonne peut être remplie par une méthode du cherchable).
+        
+        """
+        return {
+            "ident": "ident",
+            "coords": "coords",
+            "titre": "titre",
+        }
+    
+    def colonnes_par_defaut(self):
+        """Retourne les colonnes d'affichage par défaut.
+        
+        Si une ou plusieurs colonnes sont spécifiés lors de la recherche,
+        les colonnes par défaut ne sont pas utilisées.
+        
+        Cette méthode doit retourner une liste de nom de colonnes.
+        
+        """
+        return ("ident", "coords", "titre")
+    
+    def tri_par_defaut(self):
+        """Sur quelle colonne se base-t-on pour trier par défaut ?"""
+        return "ident"

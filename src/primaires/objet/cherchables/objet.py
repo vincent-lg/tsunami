@@ -72,11 +72,11 @@ class CherchableObjet(Cherchable):
         (une colonne peut être remplie par une méthode du cherchable).
         
         """
-        return {"ident":"identifiant", "nom":"nom_singulier", "cle":"cle"}
-    
-    def afficher(self, objet):
-        """Méthode d'affichage standard des objets traités"""
-        return objet.identifiant + " : " + objet.nom_singulier
+        return {
+            "identifiant": "identifiant",
+            "nom": "nom_singulier",
+            "cle": "cle"
+        }
     
     def test_type(self, objet, valeur):
         """Permet une recherche sur le type de l'objet. Le type spécifié
@@ -89,3 +89,18 @@ class CherchableObjet(Cherchable):
             return objet.est_de_type(valeur)
         except KeyError:
             return False
+    
+    def colonnes_par_defaut(self):
+        """Retourne les colonnes d'affichage par défaut.
+        
+        Si une ou plusieurs colonnes sont spécifiés lors de la recherche,
+        les colonnes par défaut ne sont pas utilisées.
+        
+        Cette méthode doit retourner une liste de nom de colonnes.
+        
+        """
+        return ("identifiant", "nom")
+    
+    def tri_par_defaut(self):
+        """Sur quelle colonne se base-t-on pour trier par défaut ?"""
+        return "identifiant"
