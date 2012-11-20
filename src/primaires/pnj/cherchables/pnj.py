@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2012 NOEL-BARON Léo
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,19 +28,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit le cherchable des prototypes d'objet.
+"""Ce fichier définit le cherchable des PNJ.
 
 """
 
 from primaires.recherche.cherchables.cherchable import Cherchable
 
-class CherchablePrototypeObjet(Cherchable):
+class CherchablePNJ(Cherchable):
     
-    """Classe cherchable pour les prototypes d'objet de l'univers.
+    """Classe cherchable pour les PNJ de l'univers.
     
     """
     
-    nom_cherchable = "probjet"
+    nom_cherchable = "pnj"
     
     def init(self):
         """Méthode d'initialisation.
@@ -49,21 +49,17 @@ class CherchablePrototypeObjet(Cherchable):
         dédiée.
         
         """
-        self.ajouter_filtre("n", "nom", "nom_singulier", "str")
         self.ajouter_filtre("l", "cle", "cle", "str")
-        self.ajouter_filtre("t", "type", self.test_type, "str!")
-        self.ajouter_filtre("p", "prix", "prix", "int")
-        self.ajouter_filtre("i", "poids", "poids", "int")
     
     @property
     def items(self):
         """Renvoie la liste des objets traités"""
-        return list(importeur.objet.prototypes.values())
+        return list(importeur.pnj.PNJ.values())
     
     @property
     def attributs_tri(self):
         """Renvoie la liste des attributs par lesquels on peut trier"""
-        return ["cle", "nom", "prix"]
+        return ["identifiant", "nom"]
     
     @property
     def colonnes(self):
@@ -74,24 +70,11 @@ class CherchablePrototypeObjet(Cherchable):
         
         """
         return {
-            "prix": "prix",
+            "identifiant": "identifiant",
             "nom": "nom_singulier",
             "cle": "cle",
-            "poids": "poids",
+            "salle": "salle",
         }
-    
-    def test_type(self, prototype, valeur):
-        """Permet une recherche sur le type de l'objet.
-        
-        Le type spécifié doit être un type valide et existant ;
-        si l'objet est de ce type ou d'un de ses fils, il sera
-        retourné à la recherche (cette option n'accepte pas les regex).
-        
-        """
-        try:
-            return prototype.est_de_type(valeur)
-        except KeyError:
-            return False
     
     def colonnes_par_defaut(self):
         """Retourne les colonnes d'affichage par défaut.
@@ -102,8 +85,8 @@ class CherchablePrototypeObjet(Cherchable):
         Cette méthode doit retourner une liste de nom de colonnes.
         
         """
-        return ("cle", "nom")
+        return ("identifiant", "nom", "salle")
     
     def tri_par_defaut(self):
         """Sur quelle colonne se base-t-on pour trier par défaut ?"""
-        return "cle"
+        return "identifiant"

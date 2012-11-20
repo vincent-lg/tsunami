@@ -45,6 +45,7 @@ class CmdPlist(Commande):
         Commande.__init__(self, "plist", "plist")
         self.groupe = "administrateur"
         self.nom_categorie = "batisseur"
+        self.schema = "(<message>)"
         self.aide_courte = "affiche la liste des prototypes de PNJ"
         self.aide_longue = \
             "Cette commande affiche une liste ordonnée des prototypes " \
@@ -52,16 +53,11 @@ class CmdPlist(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
-        prototypes = type(self).importeur.pnj.prototypes
-        prototypes = [(identifiant, prototype.nom_singulier) \
-                for identifiant, prototype in sorted(prototypes.items())]
-        
-        res = []
-        for identifiant, nom in prototypes:
-            res.append("{: <20} : {}".format(identifiant, nom))
-        
-        if not res:
-            personnage << "|att|Aucun prototype n'a pu être trouvé.|ff|"
+        cherchable = importeur.recherche.cherchables["prpnj"]
+        if dic_masques["message"]:
+            chaine = dic_masques["message"].message
         else:
-            personnage << "Liste des prototypes de PNJ existants :\n\n" + \
-                    "\n".join(res)
+            chaine = ""
+        
+        message = cherchable.trouver_depuis_chaine(chaine)
+        personnage << message

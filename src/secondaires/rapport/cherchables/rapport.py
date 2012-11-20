@@ -74,19 +74,31 @@ class CherchableRapport(Cherchable):
         
         """
         return {"id":lambda objet: str(objet.id),
-            "titre":"titre",
-            "date":lambda objet: get_date(objet.date.timetuple()),
-            "salle":lambda objet: str(objet.salle),
-            "categorie":"categorie",
-            "statut":"statut",
-            "assigne_a":"aff_assigne_a",
-            "priorite":"priorite",
-            "createur":self.get_createur}
-    
-    def afficher(self, objet):
-        """Méthode d'affichage standard des objets traités"""
-        return "#" + str(objet.id) + " : " + objet.titre
+            "titre": "titre",
+            "date": lambda objet: get_date(objet.date.timetuple()),
+            "salle": "salle",
+            "categorie": "categorie",
+            "statut": "statut",
+            "assigne_a": "aff_assigne_a",
+            "priorite": "priorite",
+            "createur": self.get_createur
+        }
     
     def get_createur(self, objet):
         """Retourne le créateur"""
         return objet.createur and objet.createur.nom or "inconnu"
+    
+    def colonnes_par_defaut(self):
+        """Retourne les colonnes d'affichage par défaut.
+        
+        Si une ou plusieurs colonnes sont spécifiés lors de la recherche,
+        les colonnes par défaut ne sont pas utilisées.
+        
+        Cette méthode doit retourner une liste de nom de colonnes.
+        
+        """
+        return ("id", "statut", "createur", "titre")
+    
+    def tri_par_defaut(self):
+        """Sur quelle colonne se base-t-on pour trier par défaut ?"""
+        return "id"

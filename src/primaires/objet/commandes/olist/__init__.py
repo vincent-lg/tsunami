@@ -52,7 +52,7 @@ class CmdOlist(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
-        cherchable = importeur.objet.cherchable_pry
+        cherchable = importeur.recherche.cherchables["probjet"]
         if dic_masques["message"]:
             chaine = dic_masques["message"].message
         else:

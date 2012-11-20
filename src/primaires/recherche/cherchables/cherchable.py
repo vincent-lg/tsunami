@@ -208,6 +208,21 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
         """Méthode d'affichage standard des objets traités"""
         raise NotImplementedError
     
+    def colonnes_par_defaut(self):
+        """Retourne les colonnes d'affichage par défaut.
+        
+        Si une ou plusieurs colonnes sont spécifiés lors de la recherche,
+        les colonnes par défaut ne sont pas utilisées.
+        
+        Cette méthode doit retourner une liste de nom de colonnes.
+        
+        """
+        raise NotImplementedError
+    
+    def tri_par_defaut(self):
+        """Sur quelle colonne se base-t-on pour trier par défaut ?"""
+        raise NotImplementedError
+    
     @classmethod
     def trouver_depuis_chaine(cls, chaine):
         """Retourne un message en fonction de la chaîne passée en paramètre."""
@@ -268,56 +283,58 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
                     "recherche.|ff|"
         else:
             # On trie la liste de retour
-            if tri:
-                retour = sorted(retour, key=lambda obj: getattr(obj, tri))
-            retour_aff = []
-            if colonnes:
-                retour_tab = []
-                longueurs = []
-                for i, o in enumerate(retour):
-                    retour_tab.append([])
-                    for l, c in enumerate(colonnes):
-                        c = c.strip()
-                        if callable(cherchable.colonnes[c]):
-                            aff = cherchable.colonnes[c](o)
-                        else:
-                            aff = getattr(o, cherchable.colonnes[c])
-                        retour_tab[i].append(aff)
-                        try:
-                            if longueurs[l] < len(str(aff)):
-                                longueurs[l] = len(str(aff))
-                        except IndexError:
-                            longueurs.append(len(str(aff)))
-                    for i, c in enumerate(colonnes):
-                        if longueurs[i] < len(c):
-                            longueurs[i] = len(c)
-                for ligne in retour_tab:
-                    c_ligne = []
-                    for l, elt in enumerate(ligne):
-                        plus = len(re.findall("\|[a-z]{2}\|.*\|ff\|",
-                                str(elt))) * 8
-                        plus += len(re.findall("\|[a-z]{3}\|.*\|ff\|",
-                                str(elt))) * 9
-                        c_ligne.append(str(elt).ljust(longueurs[l] + plus))
-                    retour_aff.append("| " + " | ".join(c_ligne) + " |")
-                
-                somme_lg = -1
-                for l in longueurs:
-                    somme_lg += l + 3
-                
-                en_tete = ["+" + "-" * somme_lg + "+",
-                    "| |tit|" + "|ff| | |tit|".join(
-                            [c.capitalize().ljust(longueurs[i]) \
-                            for i, c in enumerate(colonnes)]) + " |ff||",
-                    "+" + "-" * somme_lg + "+"]
-                
-                retour_aff = en_tete + retour_aff
-                retour_aff += ["+" + "-" * somme_lg + "+"]
-            else:
-                for o in retour:
-                    retour_aff.append(cherchable.afficher(o))
+            if not tri:
+                tri = cherchable.tri_par_defaut()
             
-            if not tri and not colonnes:
+            retour = sorted(retour, key=lambda obj: getattr(obj, tri))
+            
+            retour_aff = []
+            if not colonnes:
+                colonnes = cherchable.colonnes_par_defaut()
+            
+            retour_tab = []
+            longueurs = []
+            for i, o in enumerate(retour):
+                retour_tab.append([])
+                for l, c in enumerate(colonnes):
+                    c = c.strip()
+                    if callable(cherchable.colonnes[c]):
+                        aff = cherchable.colonnes[c](o)
+                    else:
+                        aff = getattr(o, cherchable.colonnes[c])
+                    retour_tab[i].append(aff)
+                    try:
+                        if longueurs[l] < len(str(aff)):
+                            longueurs[l] = len(str(aff))
+                    except IndexError:
+                        longueurs.append(len(str(aff)))
+                for i, c in enumerate(colonnes):
+                    if longueurs[i] < len(c):
+                        longueurs[i] = len(c)
+            for ligne in retour_tab:
+                c_ligne = []
+                for l, elt in enumerate(ligne):
+                    plus = len(re.findall("\|[a-z]{2}\|.*\|ff\|",
+                            str(elt))) * 8
+                    plus += len(re.findall("\|[a-z]{3}\|.*\|ff\|",
+                            str(elt))) * 9
+                    c_ligne.append(str(elt).ljust(longueurs[l] + plus))
+                retour_aff.append("| " + " | ".join(c_ligne) + " |")
+            
+            somme_lg = -1
+            for l in longueurs:
+                somme_lg += l + 3
+            
+            en_tete = ["+" + "-" * somme_lg + "+",
+                "| |tit|" + "|ff| | |tit|".join(
+                        [c.capitalize().ljust(longueurs[i]) \
+                        for i, c in enumerate(colonnes)]) + " |ff||",
+                "+" + "-" * somme_lg + "+"]
+            
+            retour_aff = en_tete + retour_aff
+            retour_aff += ["+" + "-" * somme_lg + "+"]
+            
+            if not tri:
                 retour_aff = sorted(retour_aff)
             
             return "\n".join(retour_aff)

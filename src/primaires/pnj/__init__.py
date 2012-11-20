@@ -33,6 +33,7 @@
 from abstraits.module import *
 from .prototype import Prototype
 from .pnj import PNJ
+from . import cherchables
 from . import commandes
 from . import masques
 from .editeurs.pedit import EdtPedit
