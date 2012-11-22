@@ -343,11 +343,11 @@ class Module(BaseModule):
     # Méthodes statistiques
     def cb_joueurs(self):
         """Retourne le nombre de joueurs enregistrés."""
-        return len(importeur.joueur.joueurs)
+        return len(importeur.connex.joueurs)
     
     def cb_joueurs_quete(self, cle_quete):
         """Retourne le nombre de joueurs ayant fait la quête."""
-        joueurs = [j for j in importeur.joueur.joueurs.values() \
+        joueurs = [j for j in importeur.connex.joueurs \
                 if cle_quete in j.quetes]
         return len(joueurs)
     
@@ -359,7 +359,7 @@ class Module(BaseModule):
         par exemple).
         
         """
-        joueurs = [j for j in importeur.joueur.joueurs.values() \
+        joueurs = [j for j in importeur.connex.joueurs \
                 if cle_quete in j.quetes and etape in \
                 j.quetes[cle_quete].niveaux]
         return len(joueurs)
