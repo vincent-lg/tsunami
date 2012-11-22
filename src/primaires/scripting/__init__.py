@@ -339,3 +339,27 @@ class Module(BaseModule):
                 del self.memoires._a_detruire[cle]
             if not self.memoires[cle]:
                 del self.memoires[cle]
+    
+    # Méthodes statistiques
+    def cb_joueurs(self):
+        """Retourne le nombre de joueurs enregistrés."""
+        return len(importeur.joueur.joueurs)
+    
+    def cb_joueurs_quete(self, cle_quete):
+        """Retourne le nombre de joueurs ayant fait la quête."""
+        joueurs = [j for j in importeur.joueur.joueurs.values() \
+                if cle_quete in j.quetes]
+        return len(joueurs)
+    
+    def cb_joueurs_etape(self, cle_quete, etape):
+        """Retourne le nombre de joueurs ayant fait la quête à ce niveau.
+        
+        La quête doit e^tre précisée sous la forme d'une clé de
+        quête et le niveau sous la forme d'un tuple ((1, 1, 2)
+        par exemple).
+        
+        """
+        joueurs = [j for j in importeur.joueur.joueurs.values() \
+                if cle_quete in j.quetes and etape in \
+                j.quetes[cle_quete].niveaux]
+        return len(joueurs)
