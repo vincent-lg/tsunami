@@ -204,6 +204,8 @@ class ScriptPNJ(Script):
         # Configuration des variables de l'évènement meurt et sous-évènements
         var_salle = evt_meurt.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle où meurt le PNJ"
+        var_adv = evt_meurt.ajouter_variable("adversaire", "Personnage")
+        var_adv.aide = "l'adversaire du PNJ (si meurt en combat)"
         
         # On ajoute à tous les évènements la variable 'pnj'
         for evt in self.evenements.values():
