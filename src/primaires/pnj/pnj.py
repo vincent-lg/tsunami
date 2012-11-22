@@ -173,7 +173,9 @@ class PNJ(Personnage):
     
     def mourir(self, adversaire=None):
         """La mort d'un PNJ signifie sa destruction."""
+        self.script["meurt"]["avant"].executer(pnj=self, salle=self.salle)
         Personnage.mourir(self, adversaire=adversaire)
+        self.script["meurt"]["apres"].executer(pnj=self, salle=self.salle)
         cadavre = importeur.objet.creer_objet(importeur.objet.prototypes[
                 "cadavre"])
         cadavre.pnj = self.prototype
