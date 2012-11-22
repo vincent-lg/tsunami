@@ -54,9 +54,13 @@ class ClasseAction(Action):
         if cible.est_mort():
             return
         
-        auteur.agir("tuer")
-        auteur.cle_etat = "combat"
-        cible.cle_etat = "combat"
-        importeur.combat.creer_combat(auteur.salle, auteur, cible)
-        auteur.envoyer("Vous attaquez {}.", cible)
-        cible.envoyer("{} vous attaque.", auteur)
+        try:
+            auteur.agir("tuer")
+        except ExceptionAction:
+            pass
+        else:
+            auteur.cle_etat = "combat"
+            cible.cle_etat = "combat"
+            importeur.combat.creer_combat(auteur.salle, auteur, cible)
+            auteur.envoyer("Vous attaquez {}.", cible)
+            cible.envoyer("{} vous attaque.", auteur)
