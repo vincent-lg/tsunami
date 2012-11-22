@@ -182,6 +182,29 @@ class ScriptPNJ(Script):
         evt_marchand_ferme.aide_longue = \
             "Cet évènement est appelé quand le magasin ferme ses portes."
         
+        # Evénement meurt
+        evt_meurt = self.creer_evenement("meurt")
+        evt_meurt_avant = evt_meurt.creer_evenement("avant")
+        evt_meurt_apres = evt_meurt.creer_evenement("après")
+        evt_meurt.aide_courte = "le PNJ meurt"
+        evt_meurt_avant.aide_courte = "avant la mort du PNJ"
+        evt_meurt_apres.aide_courte = "après la mort du PNJ"
+        evt_meurt.aide_longue = \
+            "Cet évènement est appelé quand le PNJ meurt d'une façon ou " \
+            "d'une autre (lors d'un combat, tué par un script, tué à " \
+            "proximité ou à distance)."
+        evt_meurt_avant.aide_longue = \
+            "Cet évènement est appelé avant la mort du PNJ. Le PNJ n'est " \
+            "pas encore réellement mort, cependant le message a déjà été " \
+            "envoyé aux autres joueurs présents dans la salle."
+        evt_meurt_apres.aide_longue = \
+            "Cet évènement est appelé quand le PNJ est déjà mort et que " \
+            "son cadavre a été créé sur le sol."
+        
+        # Configuration des variables de l'évènement meurt et sous-évènements
+        var_salle = evt_meurt.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle où meurt le PNJ"
+        
         # On ajoute à tous les évènements la variable 'pnj'
         for evt in self.evenements.values():
             var_pnj = evt.ajouter_variable("pnj", "PNJ")
