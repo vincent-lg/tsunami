@@ -210,7 +210,7 @@ class Quete(BaseObj):
         etapes = OrderedDict()
         quete = importeur.scripting.quetes.get(self.cle_quete)
         if quete is None:
-            return ()
+            return etapes
         
         for niveau in sorted(self.__niveaux):
             str_niveau = ".".join(str(n) for n in niveau)
