@@ -82,8 +82,17 @@ class Quete(BaseObj):
         return "<quête {}>".format(repr(self.titre))
     
     def __str__(self):
-        return self.cle + ", " + \
+        ret = self.cle + ", " + \
                 (self.auteur and "par " + self.auteur.nom or "auteur inconnu")
+        
+        # Statistiques
+        nb_joueurs = importeur.scripting.cb_joueurs()
+        nb_quete = importeur.scripting.cb_joueurs_quete(self.cle)
+        pc = 0
+        if nb_joueurs > 0:
+            pc = int(nb_quete / nb_joueurs * 100)
+        ret += " - {} / {} ({}%)".format(nb_quete, nb_joueurs, pc)
+        return ret
     
     def __getitem__(self, niveau):
         """Retourne l'étape."""
@@ -157,8 +166,20 @@ class Quete(BaseObj):
         """Affiche les étapes qui peuvent être aussi des sous-quêtes."""
         res = ""
         if self.parent and quete is not self:
-            res += " " + "  " * len(self.niveau) + self.str_niveau
-            res += " - " + self.titre + "\n"
+            res += " " + "  " * len(self.niveau) + "|bc|" + \
+                    self.str_niveau
+            res += "|ff| - " + self.titre
+            
+            # Statistiques
+            nb_quete = importeur.scripting.cb_joueurs_quete(self.cle)
+            nb_etape = importeur.scripting.cb_joueurs_etape(self.cle,
+                    self.niveau)
+            pc = 0
+            if nb_quete > 0:
+                pc = int(nb_etape / nb_quete * 100)
+            res += " - {} / {} ({}%)\n".format(
+                    nb_etape, nb_quete, pc)
+        
         for etape in self.__etapes:
             res += etape.afficher_etapes(quete)
             res += "\n"

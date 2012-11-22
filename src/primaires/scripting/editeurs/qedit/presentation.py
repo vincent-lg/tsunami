@@ -143,7 +143,7 @@ class EdtPresentation(Presentation):
         msg += " |tit|Etapes de la quête :|ff|\n"
         etapes = quete.afficher_etapes(quete)
         if not etapes:
-            etapes = "   |att|aucune pour le moment|ff|"
+            etapes = "   |att|Aucune pour le moment|ff|"
         
         msg += etapes
         

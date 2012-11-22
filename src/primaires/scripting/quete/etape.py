@@ -81,8 +81,19 @@ class Etape(BaseObj):
     
     def afficher_etapes(self, quete=None):
         """Affiche les étapes (en l'occurence, elle-même seulement)."""
-        return " " + "  " * len(self.niveau) + self.str_niveau + " - " + \
-                self.titre
+        msg = " " + "  " * len(self.niveau) + "|rg|" + self.str_niveau + \
+                "|ff| - " + self.titre
+        
+        # Statistiques
+        nb_quete = importeur.scripting.cb_joueurs_quete(self.quete.cle)
+        nb_etape = importeur.scripting.cb_joueurs_etape(self.quete.cle,
+                self.niveau)
+        pc = 0
+        if nb_quete > 0:
+            pc = int(nb_etape / nb_quete * 100)
+        msg += " - {} / {} ({}%)".format(
+                nb_etape, nb_quete, pc)
+        return msg
     
     def mettre_a_jour_niveau(self, niveau):
         """Méthode mettant à jour le niveau de la quête."""

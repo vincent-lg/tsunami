@@ -86,7 +86,6 @@ class EdtQedit(Editeur):
     def interpreter(self, msg):
         """Interprétation du message"""
         msg = msg.lower()
-        print(msg, RE_QUETE_VALIDE.search(msg))
         if msg == "q":
             self.fermer()
             self.pere.envoyer("Fermeture de l'éditeur de quêtes.")
