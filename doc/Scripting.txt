@@ -13,7 +13,7 @@ h2. Hiérarchie du scripting
 Les objets dit "scriptables" possèdent une hiérarchie permettant leur extension via le scripting. Voici cette hiérarchie (chaque élément est expliqué plus en détail par la suite) :
 
 * Tout en haut de la hiérarchie, on trouve un script. Pour chaque objet "scriptable", il existe un script différent. On trouve dans ce script :
-** Plusieurs évènements. Un évènement représente grossièrement une suite d'instructions qui s'exécuteront dans un cas particulier. Par exemple, dans le script de chaque salle, il existe un évènement appelé quand un personnage entre dans la salle. Ces évènements contiennent :
+** Plusieurs évènements. Un évènement représente grossièrement une suite d'instructions qui s'exécuteront dans un cas particulier. Par exemple, dans le script de chaque salle, il existe un évènement appelé quand un personnage entre dans la salle. Ces évènements peuvent contenir des sous-évènements plus spécifiques. Chaque évènement ou sous-évènement contient :
 *** Une liste de variables propres à chaque évènement. Ces variables contiennent des informations spécifiques à l'évènement. Si on reprend l'exemple de l'évènement *arrive* (appelé quand un personnage entre dans la salle), on trouve plusieurs variables dans cet évènement, une variable contenant la salle, une autre contenant le personnage qui entre dans la salle...
 *** Une suite de tests. Quand un évènement s'exécute, il interroge chaque test et un seul d'entre eux sera exécuté. Les tests permettent de séparer différentes suites d'instructions en fonction des variables définies dans l'évènement. Ce point sera approfondi par la suite. Chaque test contient :
 **** Une suite d'instructions. La syntaxe des instructions sera détaillée plus bas, ainsi que le mécanisme se cachant derrière leur exécution.
@@ -34,7 +34,9 @@ Les évènements regroupent plusieurs instructions qui seront exécutées à un 
 
 Pour éditer un évènement, entrez simplement son nom (*arrive* pour éditer l'évènement *arrive* par exemple).
 
-Vous vous retrouvez à présent dans l'éditeur de tests.
+Vous pouvez vous retrouver dans une liste de sous-évènements. Vous entrer dans le sous-évènement voulu de la même façon, en entrant simplement son nom.
+
+Vous vous retrouvez alors dans l'éditeur de tests.
 
 h3. Les tests
 
@@ -62,9 +64,10 @@ Dans l'éditeur d'instructions, vous pouvez entrer, comme son nom l'indique, des
 
 * D'effectuer certaines actions
 * D'affecter de nouvelles valeurs à vos variables
-* De créer des conditions.
+* De créer des conditions
+* De créer des boucles.
 
-Ces trois types d'instructions sont détaillés plus bas ainsi que leur syntaxe.
+Ces types d'instructions sont détaillés plus bas ainsi que leur syntaxe.
 
 Toutefois, pour commencer, une présentation des types de données utilisés s'impose.
 
@@ -90,34 +93,23 @@ Les nombres forment le type de données le plus élémentaire. Leur syntaxe est 
 
 h3. Les chaînes de caractères
 
-Ce type de données représente une suite de lettres, de chiffres ou d'autres symboles. Il peut être requis pour des messages, des noms, des clés et autre.
+Ce type de données représente une suite de lettres, de chiffres ou d'autres symboles. Il peut être requis pour des messages, des noms, des clés identifiantes et autre.
 
 Pour représenter une chaîne de caractères (peu importe sa longueur), il faut l'entourer de guillemets :
 
 <pre>"ceci est une chaîne"</pre>
 
-Certaines actions (comme l'action *dire*) vous permettent d'inclure, dans votre chaîne, les valeurs des variables existantes. Voici un exemple simple :
+Vous pouvez inclure, dans vos chaînes, le contenu de variables. Pour cela, vous devez entrer dans la chaîne @${nom_variable}}". Voici quelques exemples :
 
 <pre>
-variable = 3
-dire salle "Le train sifflera {variable} fois."
+nombre = 3
+dire personnage "Le train sifflera ${nombre} fois."
+dire salle "${personnage} fait quelque chose."
 </pre>
-
-Cette instruction enverra à la salle :
-
-bq. Le train sifflera 3 fois.
-
-Si vous voulez, pour une raison ou une autre, écrire des accolades dans vos chaînes de caractères, doublez l'accolade que vous souhaitez écrire :
-
-<pre>
-"Une accolade ouvrante : {{ et une accolade fermante : }}."
-</pre>
-
-+*ATTENTION*+ : toutes les actions n'utilisent pas cette fonctionnalité de remplacement des variables par leur valeur dans les chaînes. C'est à voir au cas par cas. En revanche, le fait d'échapper les accolades en les doublant est *toujours* nécessaire.
 
 h3. Les fonctions
 
-Les fonctions permettent de récupérer une certaine information (par exemple, récupérer le titre d'une salle). La syntaxe d'une fonction est assez semblable à la plupart des langages de programmation :
+Les fonctions permettent de récupérer une certaine information (par exemple, récupérer le titre d'une salle). La syntaxe d'une fonction est assez semblable à celle de la plupart des langages de programmation :
 
 <pre>nom_de_la_fonction(parametre1, parametre2, parametre3, parametreN)</pre>
 
@@ -158,6 +150,20 @@ Notez que les fonctions, à l'instar des actions (voir plus bas), peuvent réagi
 
 Pour connaître la liste des fonctions disponibles, entrez la commande @/?f@ dans un éditeur d'instructions.
 
+h3. Les calculs
+
+Un calcul est une suite d'opérations impliquant des nombres, variables ou fonctions. Voici quelques exemples :
+
+<pre>
+variable = 2 + 8
+variable = (variable + 5) / 2
+fonction(variable - 3)
+variable = fonction(variable) + 8
+...
+</pre>
+
+Si un calcul est passé en paramètre d'une fonction, c'est le résultat du calcul qui est transmis en tant que paramètre.
+
 h3. D'autres types
 
 Comme nous l'avons vu, il n'existe pas seulement les nombres, chaînes de caractères et fonctions. Le scripting peut aussi utiliser d'autres types propres à l'univers (personnages, salles, objets...).
@@ -171,7 +177,8 @@ Il existe plusieurs types d'instructions utilisables dans le scripting :
 * Les commentaires
 * Les actions
 * Les affectations
-* Les conditions.
+* Les conditions
+* Les boucles.
 
 h3. Les commentaires
 
@@ -191,7 +198,7 @@ La syntaxe d'une action est la suivante :
 
 <pre>nom_action parametre1 parametre2 parametre3 parametreN</pre>
 
-A l'instar des fonctions, une action peut ne prendre aucun paramètre (dans ce cas, le nom de l'action suffira pour l'exécuter), un paramètre ou plusieurs. Comme vous le voyez, les paramètres sont séparés par un simple espace.
+À l'instar des fonctions, une action peut ne prendre aucun paramètre (dans ce cas, le nom de l'action suffira pour l'exécuter), un paramètre ou plusieurs. Comme vous le voyez, les paramètres sont séparés par un simple espace.
 
 Voici une syntaxe possible de l'action @dire@. On part du principe que dans la variable @personnage@ se trouve un personnage (joueur ou PNJ) :
 
@@ -206,6 +213,8 @@ L'instruction est lue de gauche à droite :
 * Enfin, le message à envoyer à ce personnage (c'est une chaîne de caractères, donc entourée de guillemets).
 
 Pour connaître la liste des actions disponibles, entrez la commande */?a* dans un éditeur d'instructions. Le signe / symbolise une option, le point d'interrogation symbolise une aide et la lettre @a@ donne accès à l'aide des actions.
+
+Certaines installations de project:kassie ou dérivées exportent la liste des actions et fonctions au format Dokuwiki pour être plus facilement consultables par les bâtisseurs. Demandez aux codeurs du projet si c'est le cas. Si ça ne l'est pas mais que cette fonctionnalité est jugée utile, il suffit d'éditer un fichier de configuration du scripting.
 
 h3. Les affectations
 
@@ -293,6 +302,79 @@ si titre(salle) = "Une maison" ou terrain(salle) = "ville":
 finsi
 </pre>
 
+h3. Les boucles
+
+Les boucles sont des instructions permettant de parcourir une liste (généralement, de salles, de personnages, etc) pour y appliquer des actions individuellement. La syntaxe est on ne peut plus simple :
+
+<pre>
+pour chaque variable dans liste:
+    ... instructions ...
+fait
+</pre>
+
+Voici par exemple un petit script qui fait perdre 20 points de vie à tous les personnages (joueurs ou PNJ) présents dans une salle.
+
+<pre>
+pour chaque personnage dans personnages(salle):
+    blesser personnage 20
+fait
+</pre>
+
+* La première ligne *pour chaque...* est la boucle proprement dit. On y trouve dans l'ordre :
+** @pour chaque@ : les mot-clés qui précédent toujours une boucle
+** @personnage@ : le nom de la variable qui va accueillir chaque personnage présent
+** @dans@ : le mot-clé *dans*, constant lui aussi
+** @personnages(salle)@ : une fonction qui retourne tous les personnages présents dans une salle (la salle est contenue dans la variable *salle*)
+** Le signe deux points (:) à ne pas oublier.
+* La seconde ligne du script est la première (et ici la seule) instruction exécutée dans notre boucle. C'est une action toute simple, elle enlève 20 points de vie au personnage contenu dans la variable *personnage*. Nous avons défini cette variable dans la boucle au-dessus
+* Enfin, la troisième ligne ne comporte que le mot-clé *fait* qui referme la boucle et indique que ce qui suit n'est plus dedans. Il peut être comparé au mot-clé *finsi* qui a la même fonction pour les conditions.
+
+En terme d'exécution, voici ce qui se passe :
+
+# Le script va exécuter la fonction *personnages* et récupérer tous les personnages présents dans la variable *salle*
+# Le script affecte le premier personnage à la variable *personnage*
+# La ligne 2 est appelée une première fois, @blesser personnage 20@ qui ôte de la vie au personnage contenu dans la variable *personnage*
+# Le second personnage présent dans la salle est sélectionné et placé dans la variable *personnage*
+# La ligne 2 @blesser personnage 20@ est de nouveau appelé, pour cette fois le second personnage
+# ... ainsi de suite, autant de fois qu'il y a de personnages dans la salle.
+
+Si aucun personnage n'est présent dans la salle, la ligne 2 n'est jamais exécuté. Si il n'y a qu'un personnage présent, elle n'est appelée qu'une fois.
+
+Voici quelques autres exemples des boucles en action.
+
+<pre>
+# Parcourt toutes les salles de la zone 'depart' pour leur envoyer un message
+# si elles sont en extérieur
+pour chaque salle dans zone("depart"):
+    si est_exterieur(salle):
+      dire salle "Brrr... il fait froid !"
+    finsi
+fait
+</pre>
+
+<pre>
+# Parcourt tous les joueurs présents dans une zone et les tue tous
+# Ce script ne tue pas les PNJ
+# ... ce reste un peu extrême ...
+pour chaque salle dans zone("depart"):
+    pour chaque personnage dans personnages(salle):
+        si est_joueur(personnage):
+            tuer personnage
+        finsi
+    fait
+fait
+</pre>
+
+<pre>
+# Parcourt les salles autour de 'salle' pour leur envoyer un message
+# Les salles récupérées se trouvent dans un rayon de 4.
+pour chaque salle dans autour(salle, 4):
+    dire salle "Un coup de canon raisonne dans le silence."
+fait
+</pre>
+
+Les fonctions retournant ou utilisant des listes sont bien entendu propres à votre branche de project:kassie. Consultez l'aide du scripting pour votre branche afin de les connaître.
+
 h3. Conclusion
 
 Ces instructions peuvent être entrées dans l'éditeur d'instructions. Si le parser du scripting arrive à les analyser, il les ajoutera à la liste des instructions. Sinon, il vous affichera une erreur.
@@ -305,17 +387,12 @@ Ce que l'interpréteur rejette automatiquement, ce sont les erreurs de syntaxe (
 
 Mais la plupart des erreurs pourront se produire lors de l'exécution de votre script. C'est pourquoi il vous est conseillé de tester autant que possible vos scripts avant qu'ils ne soient accessibles et exécutables par tous.
 
-Si une erreur se produit lors de l'exécution d'un script, les différents acteurs suivants sont notifiés par mudmail :
-
-* Le créateur du script
-* Les administrateurs.
-
-Le créateur va recevoir un mudmail contenant :
+Si une erreur se produit lors de l'exécution d'un script, une alerte du scripting est créée. Elle sera visible par tous les immortels (et ce, dès la connexion ce qui assure que le problème sera résolu dans les meilleurs délais). Les informations données sont :
 
 * Le script concerné (l'objet, l'évènement et le test)
 * Le numéro de la ligne où s'est produit l'erreur
 * La ligne de script posant apparemment problème
-* Le message d'erreur. Il peut être très explicite (*cette variable n'existe pas*, *la salle entré est introuvable*) ou bien moins explicite. Les messages en anglais impliquent que l'erreur fait partie de celles non prévues par les codeurs.
+* Le message d'erreur. Il peut être très explicite (*cette variable n'existe pas*, *la salle entrée est introuvable*) ou bien moins explicite. Les messages en anglais impliquent que l'erreur fait partie de celles non prévues par les codeurs.
 
 Les mêmes informations sont envoyés aux administrateurs, ainsi que :
 
@@ -323,7 +400,7 @@ Les mêmes informations sont envoyés aux administrateurs, ainsi que :
 
 h2. Utiliser le scripting pour rédiger des quêtes
 
-Le scripting peut naturellement permettre de construire des quêtes. Il est à utiliser conjointement avec l'éditeur de quêtes. Pour savoir comment créer des quêtes, consultez la [[CreerQuete|rubrique consacrée]].
+Le scripting peut naturellement permettre de construire des quêtes. Il est à utiliser conjointement avec l'éditeur de quêtes. Pour savoir comment créer des quêtes, consultez la [[Quetes|rubrique consacrée]].
 
 * [[Index|Retour à l'index]]
 * [[Configuration|Retour à la configuration]]
