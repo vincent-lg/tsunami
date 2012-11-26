@@ -1,0 +1,285 @@
+h1. Les quêtes dans project:kassie
+
+Le système de quête dans project:kassie est très lié à celui du [[Scripting|scripting]]. Faire des quêtes dans project:kassie est en quelque sorte un perfectionnement du [[Scripting|scripting]]. Si vous n'avez pas lu la documentation consacré au [[Scripting|scripting]], vous devriez le faire à présent.
+
+Sommaire :
+
+{{toc}}
+
+h2. Qu'entend-nous par quête ?
+
+Une quête telle que définie sur project:kassie est une suite d'étapes représentant une progression d'un joueur. Généralement, ces étapes sont des formes de "missions", d'objectifs que le joueur doit atteindre. La définition est cependant assez large. Dans la suite de ce document, plusieurs exemples de quête plus spécifiques seront donnés mais il est important de garder à l'esprit que beaucoup de situations peuvent être modélisées par ce système.
+
+Une quête est donc une suite d'étapes. Si une quête est une "mission globale", les étapes peuvent être les missions secondaires constituant la mission principale.
+
+h3. Exemple
+
+L'exemple ci-dessous est tiré du MUD anglais "The Two Towers":http://t2tmud.org/.
+
+Un joueur pourrait, au cours de ces voyages dans l'univers, découvrir une ferme. En la visitant, il rencontre une vieille femme et si il prend la peine de discuter avec elle, elle lui confie une quête. Peu de choses, mais elle n'arrive plus à trouver son pauvre chat, elle a regardée partout !
+
+Il faut d'abord se représenter quelles sont les étapes successives côté joueur :
+
+* Il commence par parler à la vieille femme qui lui confie ses malheurs
+* Il explore sa maison et son petit jardin en regardant partout : dans les placards, sous le lit, dans le four (on ne sait jamais)... avant de se rendre compte que le chat est probablement monté dans l'arbre
+* Il cherche un moyen de monter dans l'arbre à son tour. Durant son exploration préalable, il s'est rendu compte qu'une seule porte de la maison est fermée à clef, celle de l’appentis. Il cherche donc la clef
+* Il trouve la clef, entre dans l'appentis et s’empare de l'échelle qui s'y trouve
+* Il retourne à l'arbre et monte à l'échelle
+* Il rapporte le chat à la vieille femme qui l’inonde de gratitude.
+
+Ici, la quête est "retrouver le chat de la vieille femme". La liste d'étapes ci-dessus est celle qu'un joueur effectue pour accomplir la quête. Il faut cependant noter que ces étapes ne sont pas toutes absolument nécessaires à configurer dans la quête.
+
+Est-il indispensable que le joueur ait regardé partout avant de voir le chat dans l'arbre, par exemple ?
+
+Côté bâtisseur, on divisera probablement la quête dans les étapes suivantes :
+
+* Le joueur parle à la vieille femme qui lui confie ses malheurs
+* Il trouve la clé de l'appentis
+* Il ramène le chat à la vieille femme.
+
+Comme vous le voyez, cette quête peut être limitée, côté bâtisseur, à trois étapes : une étape initiale, une étape de transition et une étape finale (à laquelle le joueur reçoit sa récompense, si il y en a une).
+
+Ce nombre d'étapes est bien entendu variable en fonction de la complexité de la quête. Certaines peuvent en avoir uniquement 2, d'autres peuvent en avoir bien plus et cela est à voir au cas par cas.
+
+h2. L'éditeur de quête
+
+project:kassie propose un éditeur de quête, appelé *qedit*, qui permet de centraliser toutes les quêtes à un endroit. Cela a plusieurs avantages, dont l'un des plus importants est d'avoir une vision globale des quêtes proposées dans tout l'univers.
+
+Pour ouvrir l'éditeur, entrez la commande *qedit* (en français ou en anglais).
+
+Si c'est la première fois que vous ouvrez l'éditeur, il devrait vous indiquer que la liste des quêtes est vide.
+
+<pre>
++-----------------------------------------------------------------------------+
+| Editeur de quêtes                                                           |
++-----------------------------------------------------------------------------+
+Ci-dessous se trouve la liste des quêtes existantes. Entrez simplement
+la clé d'une quête pour l'éditer, ou une nouvelle pour la créer.
+Tapez q pour quitter cet éditeur.
+Aucune quête en jeu pour le moment.
+-> 
+</pre>
+
+Pour en créer une, entrez une clé identifiant la quête. C'est une clé identifiante, donc aucun espace ni caractère spécial hormis le signe souligné (_).
+
+Vous vous retrouvez ensuite dans un second éditeur qui vous présente la quête que vous venez de créer (ou que vous éditez).
+
+<pre>
+-> trouver_chat_ferme
++-----------------------------------------------------------------------------+
+| Edition de la quête trouver_chat_ferme, par Kredh                           |
++-----------------------------------------------------------------------------+
+Entrez / pour revenir à la fenêtre précédente.
+Options :
+ - /e <titre de l'étape> : ajoute une étape simple à la quête
+ - /d <niveau de l'étape> : supprime l'étape
+ - /q <titre de la sous-quête> : ajoute une sous-quête (qui pourra elle-même
+   contenir sous-quêtes et étapes simples)
+Pour éditer une étape ou une sous-quête, entrez simplement son niveau.
+ [T]itre : une quelconque quête
+ [D]escription : 
+   Aucune description.
+ [O]rdonnée : oui
+Etapes de la quête :
+aucune pour le moment
+ [Q]uitter la fenêtre
+-> 
+</pre>
+
+Il vous est proposé de préciser un titre et une description pour la quête. Ne négligez pas ces étapes. Le titre, notamment, est important car il pourra être visible par le joueur accomplissant la quête. La description ne le sera pas en revanche et vous pouvez en profiter pour décrire plus en détail la quête (comment la commencer, ses subtilités). Ne détaillez pas trop les étapes car vous pourrez détailler précisément chacune d'entre elles par la suite.
+
+<pre>
++-----------------------------------------------------------------------------+
+| Edition de la quête trouver_chat_ferme, par Kredh                           |
++-----------------------------------------------------------------------------+
+Entrez / pour revenir à la fenêtre précédente.
+Options :
+ - /e <titre de l'étape> : ajoute une étape simple à la quête
+ - /d <niveau de l'étape> : supprime l'étape
+ - /q <titre de la sous-quête> : ajoute une sous-quête (qui pourra elle-même
+   contenir sous-quêtes et étapes simples)
+Pour éditer une étape ou une sous-quête, entrez simplement son niveau.
+ [T]itre : Trouver le chat de la vieille femme
+ [D]escription : 
+      Cette quête commence avec le PNJ vieille_femme_ferme. Il faut lui parler
+   pour l'obtenir.
+      Le but de la quête est de retrouver le chat de la vieille femme qui se
+   trouve dans l'arbre. Pour le joueur, il s'agit d'abord de trouver le chat
+   (dans l'arbre) puis de trouver comment monter dans l'arbre.
+ [O]rdonnée : oui
+Etapes de la quête :
+aucune pour le moment
+ [Q]uitter la fenêtre
+-> 
+</pre>
+
+Maintenant que la quête est documentée, il nous faut ajouter des étapes. Pour ce faire, utilisez la commande */e* suivie d'un espace et du nom de l'étape à créer.
+
+<pre>
+/e Parler à la vieille femme
+</pre>
+
+Cela crée une nouvelle étape. Un niveau lui est automatiquement assigné, dépendant du nombre d'étapes. La première étape ajoutée aura le niveau 1, la seconde aura le niveau 2 et ainsi de suite. Ces numéros (ou niveaux) sont très importants et nous verrons par la suite quel est leur véritable portée.
+
+Créez les étapes dont vous avez besoin. Si votre quête est plus complexe qu'une suite d'étapes à faire dans l'ordre, vous trouverez plus d'informations dans la rubrique [[#Quetes complexes|quêtes complexes]].
+
+En entrant le niveau d'une étape, vous entrez dans l'éditeur de l'étape dans lequel vous pouvez documenter son titre et sa description. Là encore, la description n'est pas visible par le joueur faisant la quête, elle est juste là pour donner des informations aux bâtisseurs s'intéressant à la quête.
+
+Vous pouvez donc éditer l'étape *1* de la quête en entrant *1*.
+
+Une fois que vous avez créé les différentes étapes, définie leur titre, renseigné leur description, sortez de l'éditeur *qedit*. Il s'agit maintenant de relier chaque étape avec un script.
+
+h2. Relier les étapes à des scripts
+
+Faire la hiérarchie de nos quêtes via le *qedit* est le premier pas. Maintenant, il nous faut considérer chaque étape du point de vue du scripting. La question qu'il faut se poser est :
+
+bq. Comment cette étape est-elle validée ?
+
+Prenons l'exemple de notre première étape : "parler à la vieille femme". De toute évidence, cette étape est validée quand le joueur parle au PNJ représentant la vieille femme en question (et peut-être lui dit quelque chose de particulier).
+
+Direction l'éditeur de script. Ici, on va d'abord éditer le PNJ représentant la vieille femme (par exemple, *pedit vieille_femme_ferme*) puis taper *sc* ensuite pour accéder à l'éditeur de script.
+
+On édite l'évènement *discuter* (qui, comme l'éditeur le précise, est appelé quand un personnage discute avec le PNJ).
+
+Ici, une nouvelle question se présente :
+
+bq. Crée-t-on un nouveau test ou éditons-nous le test *sinon* ?
+
+La réponse n'est pas très difficile. Le script que nous allons écrire doit s'exécuter dans un cas : si le personnage parlant au PNJ peut faire l'étape *1* de la quête *trouver_chat_ferme* que nous avons définie.
+
+Si le joueur ne peut pas faire cette étape (il l'a déjà complétée, voire a fini la quête), ce script ne doit pas être exécuté. On va donc créer un test qui n'est exécuté que si le joueur peut faire l'étape *1* de la quête *trouver_chat_ferme*.
+
+Il existe une fonction du scripting qui test cela. Elle s'appelle tout simplement *peut_faire* et prend trois paramètres :
+
+* Le personnage à tester
+* La clé de la quête
+* Le niveau représentant l'étape de la quête.
+
+Nous allons donc créer le test :
+
+<pre>peut_faire(personnage, "trouver_chat_ferme", "1")</pre>
+
+Entrez directement ce test. Si vous n'avez pas fait de faute, il devrait apparaître dans les tests disponibles :
+
+Entrez *1* pour éditer le test nouvellement créé. Vous vous trouvez dans l'éditeur d'instructions.
+
+Il nous reste à :
+
+* Relier ce script avec l'étape *1* de la quête *trouver_chat_ferme*
+* Écrire les instructions du script
+* S'assurer du bon fonctionnement de notre script.
+
+h3. Relier un script à une étape de quête
+
+Dans l'éditeur d'instructions (dans lequel vous devez normalement vous trouver), il suffit d'utiliser l'option */q*. Elle prend en paramètre le nom de la quête suivi du signe deux points (:) et du niveau représentant l'étape à laquelle ce script doit être relié.
+
+Si on suit toujours le même exemple, nous ferons donc :
+
+<pre>
+/q trouver_chat_ferme:1
+</pre>
+
+Si tout va bien, un message devrait nous informer que ce script est désormais relié à l'étape *1* de la quête *trouver_chat_ferme*. Ce message apparaît dans l'en-tête de notre éditeur, au-dessus de la liste des variables prédéfinies du script.
+
+h3. Écrire les instructions du script
+
+C'est le plus facile. Ici, on parle à la vieille femme de la ferme, elle nous confie ses malheurs :
+
+<pre>
+dire pnj personnage "Vous tombez bien ! Je n'arrive pas à retrouver mon chat !"
+</pre>
+
+Ce script est naturellement pour l'exemple, vous pouvez (et devriez) faire quelque chose de plus interactif et immersif pour le joueur.
+
+h3. Vérifier la viabilité de notre script
+
+On y est presque. Il reste cependant une étape importante. Elle n'est pas obligatoire dans le sens littéral du terme mais vous ne devriez pas passer au-dessus malgré tout. Il s'agit de tester que notre script a bien été relié à notre quête. Pour ce faire, il suffit de se mettre à la place d'un joueur.
+
+Entrez dans la ferme, avisez la vieille femme et parlez-lui. Elle devrait vous dire :
+
+<pre>
+Vous tombez bien ! Je n'arrive pas à retrouver mon chat !
+</pre>
+
+Vous avez fait la première étape de la quête. Si vous voulez en être sûr, essayez de reparler à la vieille femme. Rien ne devrait se passer cette fois : le script s'est exécuté, la vieille femme vous a expliqué (ou commencé à expliquer) ses problèmes et vous avez validé la première étape de la quête. Cette validation s'est fait automatiquement dès lors que le script relié à l'étape s'est exécuté.
+
+h2. Retour sur le mécanisme
+
+Reprenons la hiérarchie de nos quêtes et étapes :
+
+* Une quête est définie. Elle contient :
+** Un titre
+** Une description (visible par les bâtisseurs uniquement)
+** Une suite d'étapes. Chaque étape contient :
+*** Un titre décrivant l'objectif à atteindre pour valider cette étape
+*** Une description (visible uniquement par les bâtisseurs)
+*** Un script validant cette étape.
+
+Ce script peut être défini dans n'importe quel évènement de tout scriptable (PNJ, objet, salle...). Il est préférable qu'il soit défini dans un test qui vérifie que le joueur peut faire cette étape de quête. Ceci n'est, à proprement parlé, pas obligatoire car dès lors que le test est relié, il ne sera pas exécuté si le personnage ne peut pas faire l'étape de la quête à laquelle le script est relié.
+
+Dès lors que le script s'exécute, l'étape de la quête est validée pour le joueur. En d'autre terme, un script relié à une étape ne sera exécuté qu'une fois pour un joueur, au moment où il pourra faire l'étape.
+
+Si besoin, le niveau actuel d'un joueur dans une quête peut être modifié afin de lui permettre de refaire une étape de la quête (en cas d'erreur notamment, ou pour tester de nouveau le bon fonctionnement d'une quête).
+
+h2. Quêtes complexes
+
+Cette rubrique détail des moyens mis à disposition pour faire des structures de quêtes plus complexes, dans lesquelles une quête ne se limite pas à une suite d'étapes à faire dans l'ordre.
+
+h3. Quêtes ordonnées et non ordonnées
+
+Par défaut, une quête est dite "ordonnée", c'est-à-dire que les étapes qui la composent sont à faire dans l'ordre.
+
+D'abord la *1*, ensuite la *2*, ainsi de suite. On ne peut pas faire la *2* avant d'avoir validé la *1*.
+
+On peut cependant construire des quêtes "non ordonnées". Dans ce cas, les étapes peuvent être faites dans le désordre.
+
+On peut faire d'abord la *2*, puis après la *1* et après la *3* pourquoi pas.
+
+Notez malgré tout que les étapes restent validées au fur et à mesure : si un joueur valide l'étape *2*, il ne pourra pas la refaire une nouvelle fois après.
+
+Pour définir si une quête est ordonnée ou non, rendez-vous dans l'éditeur de quête *qedit*. Entrez dans la quête que vous souhaitez modifier et tapez *o* pour changer l'option d'ordre. Il s'agit un peu d'une case à cocher : soit elle est cochée (la quête est ordonnée) soit elle ne l'est pas. En tapant *o*, si elle est cochée elle se décoche et réciproquement.
+
+h3. Des quêtes contenant d'autres quêtes
+
+Dans certaines quêtes plus complexes, on peut définir une étape comme étant une quête à part entière. Par exemple (quête *salle_conseil*) :
+
+* Étape 1 : parler au chef du village. Il nous dit qu'il faut convaincre trois commerçants pour entrer dans la salle du conseil
+* Étape 2 : convaincre les trois commerçants
+** Étape 2.1 : convaincre le tisserand
+** Étape 2.2 : convaincre le boulanger
+** Étape 2.3 : convaincre le brasseur de bière.
+
+Dans cet exemple, la quête *salle_conseil* a deux étapes :
+
+* Parler au chef du village
+* Convaincre trois commerçants.
+
+La seconde étape est divisée en trois. C'est donc, non pas une étape simple, mais une sous-quête qu'il faut créer.
+
+Pour créer une sous-quête dans l'éditeur de quête, au lieu d'utiliser l'option */e* pour créer une étape, on utilise */q* suivie, là encore, du titre de la quête :
+
+<pre>
+/q Convaincre trois commerçants
+</pre>
+
+On peut ensuite accéder à la configuration de cette quête en entrant son niveau comme une étape classique. En entrant *2*, on se retrouve dans l'éditeur de la sous-quête *salle_conseil:2*.
+
+Il est important de se souvenir qu'une sous-quête est une quête standard. Elle peut donc :
+
+* Avoir un titre et une description
+* Avoir une liste d'étapes (voire d'autres sous-sous-quêtes)
+* Être ordonnée ou non.
+
+Ce dernier point mérite qu'on s'y attarde : la quête principale *salle_conseil* est une quête ordonnée. On doit d'abord faire l'étape *1* (parler au chef du village) et ensuite faire l'étape *2* (convaincre trois commerçants).
+
+Mais concernant la sous-quête *salle_conseil:2* ? Au fond, pourquoi ne pas convaincre le boulanger avant le tisserand, ou même commencé par le brasseur ? Il suffit dans ce cas de définir la sous-quête *salle_conseil:2* comme "non ordonnée".
+
+Une quête ordonnée peut très bien contenir des sous-quêtes non ordonnées et réciproquement.
+
+Enfin, il reste quelques détails à noter :
+
+* Le niveau des sous-étapes est une suite de chiffres séparés par un point (.) qui représentent chacun le niveau du parent. Par exemple, notre sous-quête *salle_conseil:2* aura des étapes de niveau *2.1*, *2.2*, *2.3*. Là encore, c'est le système lui-même qui affecte ces niveaux, vous n'aurez pas à vous en soucier mais souvenez-vous en lors de l'utilisation de la fonction *peut_faire*
+* Quand toutes les étapes d'une sous-quête sont validées, la sous-quête même est validée. Cela signifie que quand le joueur a validé *2.1*, *2.2* et *2.3*, le système valide automatiquement *2*.
+
+* [[Scripting|Accès au document décrivant le scripting]]
+* [[Index|Retour à l'index]]

@@ -1,0 +1,95 @@
+h1. Les commandes dynamiques dans project:kassie
+
+project:kassie permet de créer deux types de commandes :
+
+* Les commandes statiques, définies dans le code
+* Les commandes dynamiques, pouvant être définies et gérées par les bâtisseurs.
+
+C'est ce second type de commande qui est décrit dans ce document.
+
+Sommaire :
+
+{{toc}}
+
+h2. Principe des commandes dynamiques
+
+Lorsqu'une commande dynamique est créée, elle s'ajoute automatiquement dans le tableau des commandes pouvant être utilisées, comme les commandes statiques. D'ailleurs, un joueur sera probablement incapable de faire la différence entre une commande statique ou dynamique.
+
+Une commande dynamique a un schéma simple : @<element_observable>@. Cela signifie que, pour l'utiliser, le joueur doit entrer un élément observable à la suite de la commande.
+
+Pour rappel, les éléments observables peuvent être :
+
+* Des détails descriptifs de la salle
+* Des objets présents
+* Des PNJ
+* Des joueurs
+* D'autres informations définies dans certaines salles.
+
+Les éléments observables qui peuvent être scriptés peuvent réagir à des commandes dynamiques. C'est le cas des détails descriptifs, objets et PNJ.
+
+h2. Créer une nouvelle commande dynamique
+
+La création de nouvelles commandes dynamiques n'est pour l'instant pas possible pour les bâtisseurs. Il s'agit avant tout d'une précaution de sécurité et de cohérence : les commandes dynamiques ne doivent pas être créées par centaines et une erreur lors de la création (un nom erroné, par exemple) pourrait s'avérer difficile à corriger. Toutefois, une commande existera pour créer des commandes dynamiques et l'administrateur du "MUD":http://fr.wikipedia.org/wiki/Multi-user_dungeon décidera d'autoriser ou interdire cette commande aux bâtisseurs.
+
+En attendant, pour créer une commande dynamique, il faut :
+
+# Entrer dans le mode *system*
+# Entrer l'instruction @importeur.scripting.creer_commande_dynamique("nom francais, "nom anglais")@ en remplaçant @nom francais@ par le nom en français de la commande et @nom anglais@ par son équivalent en anglais
+# Quitter le mode *system* en tapant */q*.
+
+Pour créer la commande *pousser/push*, il faudra donc entrer l'instruction :
+
+<pre>
+importeur.scripting.creer_commande_dynamique("pousser", "push")
+</pre>
+
+Pour vérifier que la commande a bien été ajoutée, affichez la liste des commandes en tapant *commande/command*. La nouvelle commande devrait apparaître. Si vous demandez l'aide de la commande, vous ne verrez pas grand chose d'utile : c'est à vous de la configurer maintenant.
+
+h2. Configurer une commande dynamique grâce à dyncom
+
+*dyncom* est le nom de l'éditeur de commande dynamique. Il peut être invoqué en entrant @dyncom éditer/edit <commande>@.
+
+Par exemple :
+
+<pre>
+dyncom edit pousser/push
+</pre>
+
+Note : vous devez préciser le nom français suivi d'un slash (/) et du nom anglais sans espaces. Une erreur vous sera retournée si la commande n'existe pas.
+
+Si la commande a pu être trouvée, un éditeur s'affiche qui vous permet de préciser de nombreuses informations sur la commande, parmi lesquelles :
+
+* Son synopsis : c'est l'aide courte que vous verrez en tapant @commande/command <commande>@
+* Son aide longue : c'est cette fois l'aide longue de la commande donnant plus d'informations sur son utilité ou son contexte d'utilisation
+* L'aide courte de l'évènement lié : souvenez-vous qu'une commande dynamique peut être liée à un évènement pour être scriptée. C'est pourquoi les évènements liés à une commande doivent avoir une aide courte et longue
+* L'aide longue de l'évènement : cette fois, c'est l'aide longue, plus détaillée, de l'évènement lié à la commande
+* ...
+
+Une fois que les modifications ont été faites dans cet éditeur, affichez l'aide de la commande pour être sûr que côté joueur, ces modifications ont bien été appliquées.
+
+h2. Lier la commande avec un élément observable
+
+Continuons sur notre exemple de la commande *pousser/push*. Vous l'avez créée dans les étapes précédentes et vous voudriez à présent pouvoir *pousser* un mur dans une salle.
+
+Entrez dans la salle voulue, tapez *redit*, *e* pour entrer dans l'éditeur de détails. Tapez *mur* pour créer (ou éditer) le détail *mur*. Renseignez son titre et sa description si ce n'est pas déjà fait puis éditez le script du détail en entrant *sc*.
+
+Vous vous retrouvez dans l'éditeur d'évènements. Entrez le nom français de la commande dynamique que vous souhaitez appliquer (ici, *pousser*). L'évènement correspondant sera lié automatiquement à la commande et vous vous retrouvez dans l'éditeur de tests de l'évènement.
+
+Entrez par exemple @*@ pour éditer le test *sinon*. Puis entrez l'instruction :
+
+<pre>
+dire personnage "Vous poussez le mur... c'est LOUUUURD !"
+</pre>
+
+Ressortez de l'éditeur en tapant plusieurs fois @/@. Une fois de retour dans le mode connecté, essayez d'entrer la commande *pousser/push* en précisant en paramètre le mur :
+
+<pre>
+pousser mur
+Vous poussez le mur... c'est LOUUUURD !
+</pre>
+
+Et voilà ! Vous pouvez appliquer les mêmes étapes si vous voulez qu'un PNJ ou qu'un objet réagisse à une commande dynamique. La puissance du scripting vous permet là encore de créer des quêtes complexes et l'ajout des commandes dynamiques crée encore plus de flexibilité et de puissance potentielle.
+
+* [[Scripting|Accéder à l'aide du scripting]]
+* [[Quetes|Accéder à l'aide des quêtes]]
+* [[Index|Retour à l'index]]
