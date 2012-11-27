@@ -35,6 +35,7 @@ Elles sont donc utilisables par les modules, primaires ou secondaires.
 Liste des fonctions :
     valider_cle     Valide une chaîne comme une clé (un identifiant) valide
     lisser          Lisse une chaîne ("de le" = "du")
+    get_nom_nombre  Retourne le nom du nombre
 
 """
 
@@ -42,7 +43,28 @@ import re
 
 # Constantes
 RE_CLE_VALIDE = re.compile(r"^[a-z0-9_]+$")
-
+NOMBRES = {
+    1: "un",
+    2: "deux",
+    3: "trois",
+    4: "quatre",
+    5: "cinq",
+    6: "six",
+    7: "sept",
+    8: "huit",
+    9: "neuf",
+    10: "dix",
+    11: "onze",
+    12: "douze",
+    13: "treize",
+    14: "quatorze",
+    15: "quinze",
+    16: "seize",
+    17: "dix-sept",
+    18: "dix-huit",
+    19: "dix-neuf",
+    20: "vingt",
+}
 def valider_cle(chaine):
     """Valide la chaîne passée en paramètre comme étant une clé.
     
@@ -93,3 +115,14 @@ def lisser(chaine):
         chaine = chaine.replace(o_val, r_val)
     
     return chaine
+
+def get_nom_nombre(nombre):
+    """Retourne, si trouvé, le nom du nombre.
+    
+    Si le nombre est 1, retourne par exemple "un".
+    
+    Si le nombre est trop élevé (seuls les vingt premiers
+    nombres sont donnés), retourne le nombre en forme de chaîne.
+    
+    """
+    return NOMBRES.get(nombre, str(nombre))

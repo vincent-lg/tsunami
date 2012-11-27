@@ -40,10 +40,11 @@ from primaires.vehicule.vecteur import Vecteur
 from .chemin import Chemin
 from .chemins import Chemins
 from .coordonnees import Coordonnees
-from .sortie import Sortie
-from .sorties import Sorties, NOMS_SORTIES
+from .decor import Decor
 from .details import Details
 from .objets_sol import ObjetsSol
+from .sortie import Sortie
+from .sorties import Sorties, NOMS_SORTIES
 from .script import ScriptSalle
 
 # Constantes
@@ -108,6 +109,9 @@ class Salle(BaseObj):
         
         # Affections
         self.affections = {}
+        
+        # Décors
+        self.decors = []
     
     def __getnewargs__(self):
         return ("", "")
@@ -339,6 +343,14 @@ class Salle(BaseObj):
         if not description:
             description = "   Vous êtes au milieu de nulle part."
         res += description + "\n"
+        
+        res_decors = []
+        for nom in self.regrouper_decors():
+            res_decors.append(nom.capitalize() + ".")
+        
+        if res_decors:
+            res += "\n".join(res_decors) + "\n"
+        
         plus = self.decrire_plus(personnage)
         if plus:
             res += plus + "\n"
@@ -476,3 +488,43 @@ class Salle(BaseObj):
         for cle, affection in list(self.affections.items()):
             if not affection.e_existe or affection.duree <= 0:
                 del self.affections[cle]
+    
+    def regrouper_decors(self):
+        """Regroupe les décors par nom."""
+        decors = OrderedDict()
+        nombres = OrderedDict()
+        res = OrderedDict()
+        for decor in self.decors:
+            nom = decor.get_nom()
+            decors[nom] = decor
+            nb = nombres.get(nom, 0)
+            nb += 1
+            nombres[nom] = nb
+        
+        for nom, nb in nombres.items():
+            decor = decors[nom]
+            nom = decor.get_nom_etat(nb)
+            res[nom] = decor
+        
+        return res
+    
+    def ajouter_decor(self, prototype):
+        """Ajoute un décor dans la salle."""
+        decor = Decor(prototype, self)
+        self.decors.append(decor)
+        return decor
+    
+    def get_decors(self, cle):
+        """Retourne tous les décors ayant la clé indiquée."""
+        return [d for d in self.decors if d.prototype and \
+                d.prototype.cle == cle]
+    
+    def supprimer_decor(self, decor):
+        """Supprime les décors indiqués."""
+        self.decors.remove(decor)
+        decor.detruire()
+    
+    def supprimer_decors(self, cle):
+        """Supprime les décors de clé indiquée."""
+        for decor in self.get_decors(cle):
+            self.supprimer_decor(decor)

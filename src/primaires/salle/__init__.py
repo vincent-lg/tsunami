@@ -39,6 +39,7 @@ from primaires.format.fonctions import format_nb, supprimer_accents
 from primaires.vehicule.vecteur import Vecteur
 from .config import cfg_salle
 from .coordonnees import Coordonnees
+from .decor import PrototypeDecor
 from .etendue import Etendue
 from .obstacle import Obstacle
 from .porte import Porte
@@ -50,6 +51,7 @@ from .zone import Zone
 from .templates.terrain import Terrain
 from .editeurs.redit import EdtRedit
 from .editeurs.zedit import EdtZedit
+from .editeurs.decedit import EdtDecedit
 from . import cherchables
 from . import commandes
 from . import masques
@@ -115,6 +117,7 @@ class Module(BaseModule):
         self.salles_a_cartographier = []
         self.graph = {}
         self.details_dynamiques = []
+        self.decors = {}
         self.a_renouveler = {}
         self.magasins_a_ouvrir = {}
         self.magasins_a_fermer = {}
@@ -172,8 +175,6 @@ class Module(BaseModule):
     
     def init(self):
         """Méthode d'initialisation du module"""
-        # On récupère les portes
-        portes = importeur.supenr.charger_groupe(Porte)
         # On récupère les salles
         salles = importeur.supenr.charger_groupe(Salle)
         for salle in salles:
@@ -196,6 +197,15 @@ class Module(BaseModule):
         obstacles = self.importeur.supenr.charger_groupe(Obstacle)
         for obstacle in obstacles:
             self.ajouter_obstacle(obstacle)
+        
+        # On récupère les décors
+        decors = importeur.supenr.charger_groupe(PrototypeDecor)
+        for decor in decors:
+            self.ajouter_decor(decor)
+        
+        nb_decors = len(self.decors)
+        self.logger.info(format_nb(nb_decors, "{nb} décor{s} récupéré{s}"))
+        
         # On récupère les feux
         feux = importeur.supenr.charger_groupe(Feu)
         for feu in feux:
@@ -245,6 +255,7 @@ class Module(BaseModule):
             commandes.carte.CmdCarte(),
             commandes.chercherbois.CmdChercherBois(),
             commandes.chsortie.CmdChsortie(),
+            commandes.decor.CmdDecor(),
             commandes.deverrouiller.CmdDeverrouiller(),
             commandes.escalader.CmdEscalader(),
             commandes.etendue.CmdEtendue(),
@@ -263,7 +274,8 @@ class Module(BaseModule):
         for cmd in self.commandes:
             importeur.interpreteur.ajouter_commande(cmd)
         
-        # Ajout des l'éditeurs 'redit' et 'zedit'
+        # Ajout des éditeurs 'decedit', 'redit' et 'zedit'
+        importeur.interpreteur.ajouter_editeur(EdtDecedit)
         importeur.interpreteur.ajouter_editeur(EdtRedit)
         importeur.interpreteur.ajouter_editeur(EdtZedit)
     
@@ -419,6 +431,32 @@ class Module(BaseModule):
             del self._coords[coords.tuple()]
         del self._salles[cle]
         salle.detruire()
+    
+    def creer_decor(self, cle):
+        """Créée un nouveau prototype de décor."""
+        cle = cle.lower()
+        if cle in self.decors:
+            raise ValueError("le décor {} existe déjà".format(repr(cle)))
+        
+        decor = PrototypeDecor(cle)
+        self.ajouter_decor(decor)
+        return decor
+    
+    def ajouter_decor(self, decor):
+        """Ajoute un prototype de décor."""
+        if decor.cle in self.decors:
+            raise ValueError("le décor {} existe déjà".format(repr(decor.cle)))
+        
+        self.decors[decor.cle] = decor
+    
+    def supprimer_decor(self, cle):
+        """Supprime un prototype de décor."""
+        if cle not in self.decors:
+            raise ValueError("le décor {} n'existe pas".format(repr(cle)))
+        
+        decor = self.decors[cle]
+        del self.decors[cle]
+        decor.detruire()
     
     def traiter_commande(self, personnage, commande):
         """Traite les déplacements"""

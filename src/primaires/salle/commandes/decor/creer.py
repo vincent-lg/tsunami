@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,23 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant le paramètre 'créer' de la commande 'décor'."""
 
-from . import addroom
-from . import carte
-from . import chercherbois
-from . import chsortie
-from . import decor
-from . import deverrouiller
-from . import escalader
-from . import etendue
-from . import fermer
-from . import goto
-from . import mettrefeu
-from . import nager
-from . import ouvrir
-from . import redit
-from . import regarder
-from . import supsortie
-from . import verrouiller
-from . import zone
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmCreer(Parametre):
+    
+    """Commande 'décor créer'"""
+    
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "créer", "create")
+        self.schema = "<cle>"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "crée un nouveau décor"
+        self.aide_longue = \
+            "Cette commande permet de créer un nouveau décor et " \
+            "ouvre son éditeur."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        cle = dic_masques["cle"].cle
+        if cle in importeur.salle.decors:
+            personnage << "|err|Ce décor existe déjà.|ff|"
+        else:
+            decor = importeur.salle.creer_decor(cle)
+            editeur = importeur.interpreteur.construire_editeur(
+                    "decedit", personnage, decor)
+            personnage.contextes.ajouter(editeur)
+            editeur.actualiser()

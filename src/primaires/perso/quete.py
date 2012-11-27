@@ -196,7 +196,6 @@ class Quete(BaseObj):
             if q_parent is None:
                 q_parent = etape.parent
             
-            print(niveau, q_parent, etape)
             if q_parent.type == "etape" or q_parent.ordonnee:
                 etapes[q_parent] = etape
             else:

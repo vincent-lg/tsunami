@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,23 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant le paramètre 'liste' de la commande 'décor'."""
 
-from . import addroom
-from . import carte
-from . import chercherbois
-from . import chsortie
-from . import decor
-from . import deverrouiller
-from . import escalader
-from . import etendue
-from . import fermer
-from . import goto
-from . import mettrefeu
-from . import nager
-from . import ouvrir
-from . import redit
-from . import regarder
-from . import supsortie
-from . import verrouiller
-from . import zone
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmListe(Parametre):
+    
+    """Commande 'décor liste'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "liste", "list")
+        self.schema = "(<message>)"
+        self.aide_courte = "liste les décors existants"
+        self.aide_longue = \
+            "Cette commande liste les décors existants."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        cherchable = importeur.recherche.cherchables["prdecor"]
+        if dic_masques["message"]:
+            chaine = dic_masques["message"].message
+        else:
+            chaine = ""
+        
+        message = cherchable.trouver_depuis_chaine(chaine)
+        personnage << message
