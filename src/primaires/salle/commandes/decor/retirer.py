@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,20 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant le paramètre 'retirer' de la commande 'décor'."""
 
-from . import addroom
-from . import carte
-from . import chercherbois
-from . import chsortie
-from . import decor
-from . import deverrouiller
-from . import fermer
-from . import goto
-from . import mettrefeu
-from . import ouvrir
-from . import redit
-from . import regarder
-from . import supsortie
-from . import verrouiller
-from . import zone
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmRetirer(Parametre):
+    
+    """Commande 'décor retirer'"""
+    
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "retirer", "remove")
+        self.schema = "<cle>"
+        self.aide_courte = "retire un décor"
+        self.aide_longue = \
+            "Cette commande permet de retirer un ou plusieurs décors " \
+            "dans la salle où vous vous trouvez. Vous devez préciser " \
+            "la clé du prototype de décor. Si plusieurs décors de " \
+            "ce prototype sont dans la salle, ils seront tous retirés."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        cle = dic_masques["cle"].cle
+        try:
+            decor = importeur.salle.decors[cle]
+        except KeyError:
+            personnage << "|err|Ce décor {} est inconnu.|ff|".format(cle)
+        else:
+            nb_avt = len(personnage.salle.decors)
+            personnage.salle.supprimer_decors(decor.cle)
+            nb_apr = len(personnage.salle.decors)
+            nb = nb_avt - nb_apr
+            if nb == 0:
+                personnage << "|err|aucun décor n'a été retiré.|ff|"
+            else:
+                personnage << "{} décor(s) retiré(s).".format(nb)

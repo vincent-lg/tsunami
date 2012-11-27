@@ -113,6 +113,15 @@ class Observable(Masque):
                         break
         
         if elt is None:
+            # On cherche dans les décors
+            for decor in salle.decors:
+                nom_decor = decor.get_nom()
+                if contient(nom_decor, nom):
+                    nb += 1
+                    if nb == nombre:
+                        elt = decor
+        
+        if elt is None:
             # On cherche dans les objets
             for objet in salle.objets_sol:
                 nom_objet = objet.get_nom()

@@ -33,3 +33,5 @@
 """
 
 from .salle import CherchableSalle
+from .decor import CherchableDecor
+from .prototype_decor import CherchablePrototypeDecor

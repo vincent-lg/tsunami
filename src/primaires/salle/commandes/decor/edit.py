@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,20 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant le paramètre 'edit' de la commande 'décor'."""
 
-from . import addroom
-from . import carte
-from . import chercherbois
-from . import chsortie
-from . import decor
-from . import deverrouiller
-from . import fermer
-from . import goto
-from . import mettrefeu
-from . import ouvrir
-from . import redit
-from . import regarder
-from . import supsortie
-from . import verrouiller
-from . import zone
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmEdit(Parametre):
+    
+    """Commande 'décor edit'"""
+    
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "éditer", "edit")
+        self.schema = "<cle>"
+        self.aide_courte = "ouvre l'éditeur de décor"
+        self.aide_longue = \
+            "Cette commande permet d'éditer un décor existant."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        cle = dic_masques["cle"].cle
+        try:
+            decor = importeur.salle.decors[cle]
+        except KeyError:
+            personnage << "|err|Ce décor {} est inconnu.|ff|".format(cle)
+        else:
+            editeur = importeur.interpreteur.construire_editeur(
+                    "decedit", personnage, decor)
+            personnage.contextes.ajouter(editeur)
+            editeur.actualiser()

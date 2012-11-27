@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,20 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'décor' et ses sous-commandes.
 
-from . import addroom
-from . import carte
-from . import chercherbois
-from . import chsortie
-from . import decor
-from . import deverrouiller
-from . import fermer
-from . import goto
-from . import mettrefeu
-from . import ouvrir
-from . import redit
-from . import regarder
-from . import supsortie
-from . import verrouiller
-from . import zone
+Dans ce fichier se trouve la commande même.
+
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+from .creer import PrmCreer
+from .edit import PrmEdit
+from .installer import PrmInstaller
+from .liste import PrmListe
+from .retirer import PrmRetirer
+
+class CmdDecor(Commande):
+    
+    """Commande 'decor'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "décor", "decor")
+        self.groupe = "administrateur"
+        self.aide_courte = "manipulation des décors"
+        self.aide_longue = \
+            "Cette commande permet de manipuler les prototypes de " \
+            "décors, en créer ou éditer."
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
+        self.ajouter_parametre(PrmCreer())
+        self.ajouter_parametre(PrmEdit())
+        self.ajouter_parametre(PrmInstaller())
+        self.ajouter_parametre(PrmListe())
+        self.ajouter_parametre(PrmRetirer())
