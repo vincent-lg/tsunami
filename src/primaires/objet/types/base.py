@@ -253,6 +253,19 @@ class BaseType(BaseObj, metaclass=MetaType):
         """Retourne le poids de l'objet."""
         return self.poids_unitaire
     
+    def objets_contenus(self, objet):
+        """Retourne les objets contenus."""
+        return []
+    
+    def detruire_objet(self, objet):
+        """Détruit l'objet passé en paramètre.
+        
+        Par défaut cette méthode ne fait rien, mais si le type
+        est fait pour contenir d'autres objets, il doit les détruire.
+        
+        """
+        pass
+    
     # Actions sur les objets
     def acheter(self, quantite, magasin, transaction):
         """Achète les objets dans la quantité spécifiée."""

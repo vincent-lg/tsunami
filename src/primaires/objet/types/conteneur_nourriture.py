@@ -126,6 +126,25 @@ class ConteneurNourriture(BaseType):
                         return nom[1]
             return str(nombre) + " " + self.nom_pluriel + " " + ajout
     
+    def objets_contenus(self, conteneur):
+        """Retourne les objets contenus."""
+        objets = []
+        for objet in conteneur.nourriture:
+            objets.append(objet)
+            objets.extend(objet.prototype.objets_contenus(objet))
+        
+        return objets
+    
+    def detruire_objet(self, conteneur):
+        """Détruit l'objet passé en paramètre.
+        
+        On va détruire tout ce qu'il contient.
+        
+        """
+        for objet in list(conteneur.nourriture):
+            if objet.unique and objet.e_existe:
+                importeur.objet.supprimer_objet(objet.identifiant)
+    
     def peut_vendre(self, vendeur):
         """Retourne True si peut vendre, False sinon."""
         if hasattr(self, "nourriture") and self.nourriture:

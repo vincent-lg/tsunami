@@ -31,7 +31,7 @@
 """Fichier contenant le module primaire objet."""
 
 from abstraits.module import *
-from primaires.format.fonctions import supprimer_accents
+from primaires.format.fonctions import format_nb, supprimer_accents
 from . import types
 from . import commandes
 from . import editeurs
@@ -57,6 +57,8 @@ class Module(BaseModule):
         self._prototypes = {}
         self._objets = {}
         self.cherchable_pr = None
+        self.logger = importeur.man_logs.creer_logger(
+                "objets", "objets")
     
     def config(self):
         """Configuration du module."""
@@ -88,9 +90,16 @@ class Module(BaseModule):
         for prototype in prototypes:
             self._prototypes[prototype.cle] = prototype
         
+        nb_prototypes = len(prototypes)
+        self.logger.info(format_nb(nb_prototypes, "{nb} prototype{s} " \
+                "d'objet récupéré{s}"))
+        
         objets = self.importeur.supenr.charger_groupe(Objet)
         for objet in objets:
             self._objets[objet.identifiant] = objet
+        
+        nb_objets = len(objets)
+        self.logger.info(format_nb(nb_objets, "{nb} objet{s} récupéré{s}"))
         
         # Ajout de l'état repas
         etat = self.importeur.perso.ajouter_etat("repas")
@@ -141,6 +150,39 @@ class Module(BaseModule):
                     "rafraîchit agréablement le gosier."
             eau.poids_unitaire = 0.1
             eau.prix = 0
+        
+        # Nettoyage des objets existants sans lien
+        existants = []
+        for joueur in importeur.connex.joueurs:
+            if joueur.equipement:
+                existants.extend(joueur.equipement.objets_uniques)
+        for pnj in importeur.pnj.PNJ.values():
+            if pnj.equipement:
+                existants.extend(pnj.equipement.objets_uniques)
+        for salle in importeur.salle.salles.values():
+            existants.extend(salle.objets_uniques)
+        
+        a_detruire = []
+        for objet in importeur.objet.objets.values():
+            if objet not in existants:
+                a_detruire.append(objet)
+        
+        self.logger.info(format_nb(len(a_detruire), "{nb} objet{s} à " \
+                "détruire"))
+        types = {}
+        for objet in a_detruire:
+            type = objet.nom_type
+            nb = types.get(type, 0)
+            nb += 1
+            types[type] = nb
+            try:
+                importeur.objet.supprimer_objet(objet.identifiant)
+            except KeyError:
+                objet.detruire()
+        
+        for nom, nombre in sorted(types.items(), key=lambda c: c[1], \
+                reverse=True):
+            self.logger.info("  Dont {} de type {}".format(nombre, nom))
     
     @property
     def prototypes(self):

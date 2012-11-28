@@ -110,6 +110,21 @@ class Equipement(BaseObj):
         
         return round(poids, 3)
     
+    @property
+    def objets_uniques(self):
+        """Retourne TOUS les objets non uniques."""
+        objets = []
+        for membre in self.membres:
+            for objet in membre.equipe:
+                objets.append(objet)
+                objets.extend(objet.prototype.objets_contenus(objet))
+            if membre.tenu:
+                objet = membre.tenu
+                objets.append(objet)
+                objets.extend(objet.prototype.objets_contenus(objet))
+        
+        return objets
+    
     def get_membre(self, nom_membre):
         """Récupère le membre dont le nom est nom_membre.
         
@@ -251,7 +266,6 @@ class Equipement(BaseObj):
             raise SurPoids("Vous ne pouvez porter davantage.")
         
         return True
-
 
 class Equipes(BaseObj):
     
