@@ -143,7 +143,7 @@ class ConteneurNourriture(BaseType):
         
         """
         for objet in list(conteneur.nourriture):
-            if objet.unique and objet.e_existe:
+            if conteneur is not objet and objet.unique and objet.e_existe:
                 importeur.objet.essayer_supprimer_objet(objet)
     
     def peut_vendre(self, vendeur):
