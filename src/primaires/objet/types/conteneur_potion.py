@@ -109,6 +109,27 @@ class ConteneurPotion(BaseType):
                         return nom[1] + ajout
             return str(nombre) + " " + self.nom_pluriel + ajout
     
+    def objets_contenus(self, conteneur):
+        """Retourne les objets contenus."""
+        objets = []
+        if hasattr(conteneur, "potion") and conteneur.potion:
+            objet = conteneur.potion
+            objets.append(objet)
+            objets.extend(objet.prototype.objets_contenus(objet))
+        
+        return objets
+    
+    def detruire_objet(self, conteneur):
+        """Détruit l'objet passé en paramètre.
+        
+        On va détruire tout ce qu'il contient.
+        
+        """
+        if hasattr(conteneur, "potion") and conteneur.potion:
+            objet = conteneur.potion
+            if objet.unique and objet.e_existe:
+                importeur.objet.supprimer_objet(objet.identifiant)
+    
     def regarder(self, personnage):
         """Le personnage regarde l'objet"""
         msg = BaseType.regarder(self, personnage)

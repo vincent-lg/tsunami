@@ -53,6 +53,7 @@ class CherchableObjet(Cherchable):
         self.ajouter_filtre("l", "cle", "cle", "str")
         self.ajouter_filtre("i", "ident", "identifiant", "str")
         self.ajouter_filtre("t", "type", self.test_type, "str!")
+        self.ajouter_filtre("p", "position", self.test_position, "str!")
     
     @property
     def items(self):
@@ -75,7 +76,8 @@ class CherchableObjet(Cherchable):
         return {
             "identifiant": "identifiant",
             "nom": "nom_singulier",
-            "cle": "cle"
+            "cle": "cle",
+            "position": "str_grand_parent",
         }
     
     def test_type(self, objet, valeur):
@@ -90,6 +92,14 @@ class CherchableObjet(Cherchable):
         except KeyError:
             return False
     
+    def test_position(self, objet, valeur):
+        """Permet une recherche sur le grand parent de l'objet
+        (l'endroit où il se trouve, une salle ou un joueur.
+        
+        """
+        return objet.grand_parent and objet.grand_parent.nom_unique == \
+                valeur
+    
     def colonnes_par_defaut(self):
         """Retourne les colonnes d'affichage par défaut.
         
@@ -99,7 +109,7 @@ class CherchableObjet(Cherchable):
         Cette méthode doit retourner une liste de nom de colonnes.
         
         """
-        return ("identifiant", "nom")
+        return ("identifiant", "nom", "position")
     
     def tri_par_defaut(self):
         """Sur quelle colonne se base-t-on pour trier par défaut ?"""

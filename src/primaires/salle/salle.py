@@ -172,6 +172,16 @@ class Salle(BaseObj):
     def nom_unique(self):
         return self.ident
     
+    @property
+    def objets_uniques(self):
+        """Retourne les objets uniques posés dans la salle."""
+        objets = []
+        for objet in self.objets_sol._objets:
+            objets.append(objet)
+            objets.extend(objet.prototype.objets_contenus(objet))
+        
+        return objets
+    
     def personnage_est_present(self, personnage):
         """Si le personnage est présent, retourne True, False sinon."""
         return personnage in self._personnages

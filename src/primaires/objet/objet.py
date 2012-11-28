@@ -140,6 +140,15 @@ class Objet(BaseObj):
         else:
             return self.contenu
     
+    @property
+    def str_grand_parent(self):
+        """Retourne une chaîne représentant le grand parent."""
+        parent = self.grand_parent
+        if parent is None:
+            return "aucun"
+        else:
+            return parent.nom_unique
+
     def extraire_contenus(self, quantite=None, contenu_dans=None):
         """Extrait les objets contenus."""
         res = [self]
@@ -180,10 +189,7 @@ class Objet(BaseObj):
         if self.contenu and self in self.contenu:
             self.contenu.retirer(self)
         
-        if hasattr(self, "conteneur"):
-            for objet in self.conteneur._objets:
-                importeur.objet.supprimer_objet(objet.identifiant)
-        
+        self.prototype.detruire_objet(self)
         BaseObj.detruire(self)
 
 class MethodeObjet:
