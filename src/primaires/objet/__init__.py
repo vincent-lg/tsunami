@@ -166,6 +166,7 @@ class Module(BaseModule):
             if objet not in existants:
                 a_detruire.append(objet)
         
+        a_detruire = [o for o in a_detruire if o and o.prototype]
         self.logger.info(format_nb(len(a_detruire), "{nb} objet{s} à " \
                 "détruire"))
         types = {}
