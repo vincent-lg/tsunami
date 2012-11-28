@@ -271,3 +271,13 @@ class Module(BaseModule):
         objet = self._objets[identifiant]
         del self._objets[identifiant]
         objet.detruire()
+    
+    def essayer_supprimer_objet(self, objet):
+        """Essaye de supprimer l'objet."""
+        if not objet.unique:
+            return
+        
+        try:
+            self.supprimer_objet(objet.identifiant)
+        except KeyError:
+            objet.detruire()

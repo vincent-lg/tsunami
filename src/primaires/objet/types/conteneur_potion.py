@@ -129,7 +129,7 @@ class ConteneurPotion(BaseType):
         if hasattr(conteneur, "potion") and conteneur.potion:
             objet = conteneur.potion
             if objet.unique and objet.e_existe:
-                importeur.objet.supprimer_objet(objet.identifiant)
+                importeur.objet.essayer_supprimer_objet(objet)
     
     def regarder(self, personnage):
         """Le personnage regarde l'objet"""
