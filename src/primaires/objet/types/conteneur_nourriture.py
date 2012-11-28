@@ -130,7 +130,9 @@ class ConteneurNourriture(BaseType):
         objets = []
         for objet in conteneur.nourriture:
             objets.append(objet)
-            objets.extend(objet.prototype.objets_contenus(objet))
+            if objet.unique:
+                objets.append(objet)
+                objets.extend(objet.prototype.objets_contenus(objet))
         
         return objets
     

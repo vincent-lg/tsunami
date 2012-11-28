@@ -115,7 +115,8 @@ class ConteneurPotion(BaseType):
         if hasattr(conteneur, "potion") and conteneur.potion:
             objet = conteneur.potion
             objets.append(objet)
-            objets.extend(objet.prototype.objets_contenus(objet))
+            if objet.unique:
+                objets.extend(objet.prototype.objets_contenus(objet))
         
         return objets
     
