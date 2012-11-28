@@ -116,9 +116,10 @@ class Equipement(BaseObj):
         objets = []
         for membre in self.membres:
             for objet in membre.equipe:
-                objets.append(objet)
-                objets.extend(objet.prototype.objets_contenus(objet))
-            if membre.tenu:
+                if objet.unique:
+                    objets.append(objet)
+                    objets.extend(objet.prototype.objets_contenus(objet))
+            if membre.tenu and membre.tenu.unique:
                 objet = membre.tenu
                 objets.append(objet)
                 objets.extend(objet.prototype.objets_contenus(objet))
