@@ -159,7 +159,7 @@ class Conteneur(BaseType):
         
         """
         for objet in list(conteneur.conteneur._objets):
-            if objet.unique and objet.e_existe:
+            if conteneur is not objet and objet.unique and objet.e_existe:
                 importeur.objet.supprimer_objet(objet.identifiant)
     
     # Actions sur les objets
