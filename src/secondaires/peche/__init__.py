@@ -228,9 +228,9 @@ class Module(BaseModule):
                     "pêche se brise !"
             personnage.salle.envoyer_lisser("Dans un craquement brutal, " \
                     "la canne à pêche de {} se brise !", personnage)
-            importeur.objet.supprimer_objet(canne.appat.cle)
+            importeur.objet.supprimer_objet(canne.appat.identifiant)
             canne.contenu.retirer(canne)
-            importeur.objet.supprimer_objet(canne.cle)
+            importeur.objet.supprimer_objet(canne.identifiant)
             return
         
         poisson = importeur.objet.creer_objet(poisson)
@@ -242,6 +242,7 @@ class Module(BaseModule):
                 "et tombe aux pieds de {{}}.".format(poisson.get_nom()),
                 personnage)
         personnage.cle_etat = ""
+        importeur.objet.supprimer_objet(canne.appat.identifiant)
         canne.appat = None
         
         # Gain d'XP

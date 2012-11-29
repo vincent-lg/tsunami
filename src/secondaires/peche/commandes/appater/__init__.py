@@ -81,7 +81,7 @@ class CmdAppater(Commande):
         appat.contenu.retirer(appat)
         a_appat = canne.appat
         if a_appat:
-            a_appat.detruire()
+            importeur.objet.supprimer_objet(a_appat.identifiant)
         
         canne.appat = appat
         personnage << "Vous appâtez {} avec {}.".format(
