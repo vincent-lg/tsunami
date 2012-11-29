@@ -68,6 +68,10 @@ class Module(BaseModule):
         temps = self.importeur.supenr.charger_unique(Temps)
         if temps is None:
             temps = Temps(self.cfg)
+        else:
+            temps.formatage_date = self.cfg.formatage_date
+            temps.formatage_heure = self.cfg.formatage_heure
+
         self.temps = temps
         
         self.importeur.hook["salle:regarder"].ajouter_evenement(

@@ -33,6 +33,7 @@
 from fractions import Fraction
 
 from abstraits.obase import BaseObj
+from .constantes import *
 
 class Temps(BaseObj):
     
@@ -124,6 +125,46 @@ class Temps(BaseObj):
         return "{:02}".format(self.minute)
     
     @property
+    def nom_quart(self):
+        """Retourne l'heure sous la forme d'un nom de quart.
+        
+        par exemple :
+            une heure moins le quart du matin
+        
+        """
+        heure = self.heure
+        minute = self.minute
+        quart = round(minute / 15)
+        if quart >= 4:
+            quart = 3
+        
+        minutes = ""
+        masc_minutes = ""
+        if quart == 1:
+            masc_minutes = minutes = "et quart"
+        elif quart == 2:
+            minutes = "et demie"
+            masc_minutes = "et demi"
+        elif quart == 3:
+            heure += 1
+            heure = heure % 24
+            masc_minutes = minutes = "moins le quart"
+        
+        moment = "du matin"
+        if heure >= 13:
+            if heure < 17:
+                moment = "de l'après-midi"
+            else:
+                moment = "du soir"
+            heure = heure % 12
+        
+        nom_heure = NOMS_HEURES[heure]
+        nom_heure = nom_heure.format(minutes=minutes,
+                masc_minutes=masc_minutes, moment=moment)
+        nom_heure = nom_heure.replace("  ", " ")
+        return nom_heure.rstrip()
+    
+    @property
     def date_formatee(self):
         """Retourne la date formatée"""
         return self.formatage_date.format(no_j=self.no_j,
@@ -133,7 +174,8 @@ class Temps(BaseObj):
     @property
     def heure_formatee(self):
         """Retourne l'heure formatée"""
-        return self.formatage_heure.format(no_h=self.no_h, no_m=self.no_m)
+        return self.formatage_heure.format(no_h=self.no_h, no_m=self.no_m,
+                nm_q=self.nom_quart)
     
     @property
     def h_lever(self):
