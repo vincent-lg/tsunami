@@ -32,6 +32,7 @@
 
 """
 
+from primaires.format.fonctions import supprimer_accents
 from primaires.recherche.cherchables.cherchable import Cherchable
 
 class CherchableObjet(Cherchable):
@@ -95,10 +96,13 @@ class CherchableObjet(Cherchable):
     def test_position(self, objet, valeur):
         """Permet une recherche sur le grand parent de l'objet
         (l'endroit où il se trouve, une salle ou un joueur.
+        Pour préciser une salle, entrez son identifiant (zone:mnémo)
+        et pour un joueur ou PNJ, entrez son nom ou son identifiant.
         
         """
-        return objet.grand_parent and objet.grand_parent.nom_unique == \
-                valeur
+        return objet.grand_parent and supprimer_accents(
+                objet.grand_parent.nom_unique).lower() == supprimer_accents(
+                valeur).lower()
     
     def colonnes_par_defaut(self):
         """Retourne les colonnes d'affichage par défaut.
