@@ -156,7 +156,7 @@ class Temps(BaseObj):
                 moment = "de l'après-midi"
             else:
                 moment = "du soir"
-            heure += 12
+            heure = heure % 12
         
         nom_heure = NOMS_HEURES[heure]
         nom_heure = nom_heure.format(minutes=minutes,
