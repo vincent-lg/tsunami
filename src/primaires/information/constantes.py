@@ -28,40 +28,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'voir' de la commande 'newsletter'."""
+"""Ce fichier contient les constantes du module information."""
 
-from primaires.interpreteur.masque.parametre import Parametre
+# Bas de page de la News Letter
 
-class PrmVoir(Parametre):
-    
-    """Commande 'newsletter voir'.
-    
-    """
-    
-    def __init__(self):
-        """Constructeur du paramètre."""
-        Parametre.__init__(self, "voir", "view")
-        self.schema = "<nombre>"
-        self.aide_courte = "affiche le détail d'une news letter"
-        self.aide_longue = \
-            "Cette commande permet d'afficher le détail d'une news letter " \
-            "(si elle est envyée, la date d'envoi est affichée)."
-    
-    def interpreter(self, personnage, dic_masques):
-        """Interprétation du paramètre"""
-        id = dic_masques["nombre"].nombre
-        try:
-            newsletter = importeur.information.newsletters[id - 1]
-        except IndexError:
-            personnage << "|err|Cette news letter n'existe pas.|ff|"
-        else:
-            msg = "Newsletter numéro {} : {}\n".format(id, newsletter.sujet)
-            msg += "Créée le : {}     Statut : {}\n".format(
-                    newsletter.date_creation.date(), newsletter.statut)
-            if newsletter.envoyee:
-                msg += "Envoyée le : {}   Nombre d'envois : {}\n".format(
-                        newsletter.date_envoi.date(), newsletter.nombre_envois)
-            
-            msg += "-" * 79 + "\n"
-            msg += str(newsletter.contenu)
-            personnage << msg
+bas_page = """
+
+
+-------------------------------------------------------------------------------
+POUR VOUS DÉSABONNER DE CETTE NEWS LETTER, CONNECTEZ-VOUS :
+Nom d'hôte : non précisé
+Port : 4000
+Compte : {nom_compte}
+
+Une fois connecté sur un joueur du compte, entrez la commande :
+    options newsletter off
+
+"""

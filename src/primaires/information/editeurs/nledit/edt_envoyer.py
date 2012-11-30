@@ -28,32 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant le paramètre 'créer' de la commande 'newsletter'."""
+"""Fichier contenant le contexte éditeur EdtEnvoyer."""
 
-from primaires.interpreteur.masque.parametre import Parametre
+from primaires.format.fonctions import format_nb
+from primaires.interpreteur.editeur import Editeur
 
-class PrmCreer(Parametre):
+class EdtEnvoyer(Editeur):
     
-    """Commande 'newsletter créer'"""
+    """Classe définissant le contexte éditeur 'envoyer'.
     
-    def __init__(self):
-        """Constructeur du paramètre."""
-        Parametre.__init__(self, "créer", "create")
-        self.schema = "<message>"
-        self.aide_courte = "crée une nouvelle News Letter"
-        self.aide_longue = \
-            "Cette commande permet de créer une nouvelle News Letter. " \
-            "L'éditeur de News Letter s'ouvrira dès la création et le sujet " \
-            "précisé en paramètre de la commande sera considéré comme le " \
-            "sujet futur (modifiable par la suite) de la News Letter. " \
-            "Le statut d'une news letter nouvellement crée est \"brouillon\" " \
-            "et, tant qu'elle n'est pas envoyée, elle reste éditable."
+    Ce contexte permet d'envoyer une news letter.
     
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        titre = dic_masques["message"].message
-        newsletter = importeur.information.creer_newsletter(titre)
-        editeur = importeur.interpreteur.construire_editeur(
-                "nledit", personnage, newsletter)
-        personnage.contextes.ajouter(editeur)
-        editeur.actualiser()
+    """
+    
+    def __init__(self, pere, objet=None, attribut=None):
+        """Constructeur de l'éditeur"""
+        Editeur.__init__(self, pere, objet, attribut)
+    
+    def entrer(self):
+        newsletter = self.objet
+        nb_envoi = newsletter.envoyer()
+        msg = format_nb(nb_envoi, "{nb} messages envoyés.")
+        msg = msg.capitalize()
+        self.fermer()
+        self.pere << "|att|{}|ff|".format(msg)

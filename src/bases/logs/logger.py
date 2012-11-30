@@ -233,11 +233,11 @@ class Logger:
             self.file_attente.append(MessageTmp(s_niveau, message, f_message))
             if self.doit_afficher(niveau, module):
                 self.man_logs.messages.append(msg)
-                print(message)
+                self.print(message)
         else:
             if self.doit_afficher(niveau, module):
                 self.man_logs.messages.append(msg)
-                print(message)
+                self.print(message)
             
             self.log_formate(niveau, message, f_message, self.nom)
     
@@ -269,6 +269,13 @@ class Logger:
     def fatal(self, message):
         """Méthode permettant de logger un niveau de message FATAL"""
         self.log(FATAL, message, self.nom)
+    
+    def print(self, message):
+        """Affiche le message en utilisant la fonction print."""
+        try:
+            print(message)
+        except UnicodeError:
+            print("*** inconnu ***")
 
 class Message:
     

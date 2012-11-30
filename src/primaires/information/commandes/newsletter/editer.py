@@ -51,7 +51,7 @@ class PrmEditer(Parametre):
         """Méthode d'interprétation de commande"""
         id = dic_masques["nombre"].nombre
         try:
-            newsletter = importeur.newsletter.newsletters[id - 1]
+            newsletter = importeur.information.newsletters[id - 1]
         except IndexError:
             personnage << "|err|Cette newsletter n'existe pas.|ff|"
         else:
@@ -65,6 +65,6 @@ class PrmEditer(Parametre):
                 return
             
             editeur = importeur.interpreteur.construire_editeur(
-                    "nl", personnage, newsletter)
+                    "nledit", personnage, newsletter)
             personnage.contextes.ajouter(editeur)
             editeur.actualiser()

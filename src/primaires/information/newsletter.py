@@ -34,6 +34,7 @@ from datetime import datetime
 
 from abstraits.obase import BaseObj
 from primaires.format.description import Description
+from .constantes import *
 
 class Newsletter(BaseObj):
 
@@ -54,18 +55,19 @@ class Newsletter(BaseObj):
     """
     
     enregistrer = True
-    def __init__(self):
+    def __init__(self, sujet):
         """Constructeur de la News Letter."""
         BaseObj.__init__(self)
-        self.sujet = "une News Letter"
+        self.sujet = sujet
         self.contenu = Description(parent=self, scriptable=False)
         self.statut = "brouillon"
         self.editee = False
         self.date_creation = datetime.now()
         self.date_envoi = None
+        self.nombre_envois = 0
     
     def __getnewargs__(self):
-        return ()
+        return ("aucun", )
     
     def __repr__(self):
         return "<news letter {}>".format(repr(self.sujet))
@@ -88,7 +90,7 @@ class Newsletter(BaseObj):
                 compte.newsletter and compte.adresse_email]
         destinateur = "news"
         sujet = self.sujet
-        corps = str(self.contenu)
+        contenu = str(self.contenu)
         nb = 0
         self.statut = "envoyée"
         self.date_envoi = datetime.now()
@@ -97,7 +99,9 @@ class Newsletter(BaseObj):
         
         for compte in inscrits:
             destinataire = compte.adresse_email
+            corps = contenu + bas_page.format(nom_compte=compte.nom).rstrip()
             importeur.email.envoyer(destinateur, destinataire, sujet, corps)
             nb += 1
         
+        self.nombre_envois = nb
         return nb
