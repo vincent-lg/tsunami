@@ -30,10 +30,7 @@
 
 """Fichier contenant le paramètre 'liste' de la commande 'newsletter'."""
 
-from math import floor
-
 from primaires.interpreteur.masque.parametre import Parametre
-from primaires.format.fonctions import couper_phrase
 
 class PrmListe(Parametre):
     
@@ -44,90 +41,34 @@ class PrmListe(Parametre):
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "liste", "list")
-        self.schema = "(<message>)"
-        self.aide_courte = "liste les newsletters existants"
+        self.aide_courte = "liste les news letters existantes"
         self.aide_longue = \
-            "Cette commande liste les newsletters existants. Vous pouvez " \
-            "préciser un ou plusieurs flags séparés par des virgules ; " \
-            "les flags disponibles sont |ent|non assignes|ff| pour voir " \
-            "uniquement les newsletters non assignes, et |ent|fermes|ff| pour " \
-            "voir tous les newsletters, y compris ceux fermés."
+            "Cette commande liste les news letters existantes ainsi que " \
+            "leur statut."
     
     def interpreter(self, personnage, dic_masques):
-        """Interprétation du paramètre"""
-        flags = {"non assignes": False, "fermes": False}
-        if dic_masques["message"] is not None:
-            t_flags = dic_masques["message"].message
-            t_flags = [f.strip() for f in t_flags.split(",")]
-            for f in flags.keys():
-                if f in t_flags:
-                    flags[f] = True
+        """Interprétation du paramètre."""
+        newsletters = list(importeur.information.newsletters)
+        if len(newsletters) == 0:
+            personnage << "Aucune news letter n'a été créé pour l'instant."
+            return
         
-        newsletters = list(importeur.newsletter.newsletters.values())
-        if not flags["fermes"]:
-            newsletters = [r for r in newsletters if r.ouvert]
-        if flags["non assignes"]:
-            newsletters = [r for r in newsletters if r.assigne_a is None]
-        if not personnage.est_immortel():
-            # On récupère les newsletters envoyés par le joueur mortel
-            newsletters = [r for r in newsletters if r.createur is personnage]
-            if not newsletters:
-                personnage << "|att|Vous n'avez envoyé aucun newsletter.|ff|"
-            else:
-                l_id = max([len(str(r.id)) for r in newsletters] + [2])
-                l_titre = max([len(r.titre) for r in newsletters] + [5])
-                l_titre_max = 49 - l_id # longueur max possible d'un titre
-                ljust_titre = min(l_titre_max, l_titre)
-                lignes = [
-                    "+" + "-" * (l_id + ljust_titre + 29) + "+",
-                    "| |tit|" + "ID".ljust(l_id) + "|ff| | |tit|" \
-                            + "Titre".ljust(ljust_titre) + "|ff| | " \
-                            "|tit|Statut|ff|   | |tit|Avancement|ff| |",
-                    "+" + "-" * (l_id + ljust_titre + 29) + "+",
-                ]
-                for newsletter in newsletters:
-                    id = "|vrc|" + str(newsletter.id).ljust(l_id) + "|ff|"
-                    if l_titre_max < l_titre:
-                        titre = couper_phrase(newsletter.titre, l_titre_max)
-                    else:
-                        titre = newsletter.titre
-                    titre = titre.ljust(ljust_titre)
-                    stat = CLR_STATUTS[newsletter.statut]
-                    stat += newsletter.statut.ljust(8) + "|ff|"
-                    clr = CLR_AVC[floor(newsletter.avancement / 12.5)]
-                    avc = clr + str(newsletter.avancement).rjust(9)
-                    lignes.append(
-                            "| {id} | {titre} | {stat} | {avc}%|ff| |".format(
-                            id=id, titre=titre, stat=stat, avc=avc))
-                lignes.append("+" + "-" * (l_id + ljust_titre + 29) + "+")
-                personnage << "\n".join(lignes)
-        else:
-            if not newsletters:
-                personnage << "|err|Aucun newsletter n'a été envoyé.|ff|"
-                return
-            l_id = max([len(str(r.id)) for r in newsletters] + [2])
-            l_createur = max([len(r.createur.nom) if r.createur else 7 \
-                    for r in newsletters] + [8])
-            l_titre = max([len(r.titre) for r in newsletters] + [5])
-            l_titre_max = 70 - l_createur - l_id # longueur max d'un titre
-            ljust_titre = min(l_titre_max, l_titre)
-            lignes = [
-                "+" + "-" * (l_id + l_createur + ljust_titre + 8) + "+",
-                "| |tit|" + "ID".ljust(l_id) + "|ff| | |tit|" \
-                        + "Créateur".ljust(l_createur) + "|ff| | |tit|" \
-                        + "Titre".ljust(ljust_titre) + "|ff| |",
-                "+" + "-" * (l_id + l_createur + ljust_titre + 8) + "+",
-            ]
-            for newsletter in newsletters:
-                if l_titre_max < l_titre:
-                    titre = couper_phrase(newsletter.titre, l_titre_max)
-                else:
-                    titre = newsletter.titre
-                createur = newsletter.createur and newsletter.createur.nom or \
-                        "inconnu"
-                lignes.append("| |vrc|" + str(newsletter.id).ljust(l_id) \
-                        + "|ff| | " + createur.ljust(l_createur) + " | " \
-                        + titre.ljust(ljust_titre) + " |")
-            lignes.append(
-                "+" + "-" * (l_id + l_createur + ljust_titre + 8) + "+")
-            personnage << "\n".join(lignes)
+        lignes = [
+            "+----|------------+------------+---------------------------|",
+            "| ID | Date       | Statut     | Sujet                     |",
+        ]
+        lignes.append(lignes[0])
+        nid = len(newsletters)
+        for newsletter in newsletters:
+            date = str(newsletter.date_creation.date())
+            statut = newsletter.statut
+            sujet = newsletter.sujet
+            if len(sujet) > 25:
+                sujet = sujet[:22] + "..."
+            
+            lignes.append("| {:>2} | {} | {:<10} | {:<25} |".format(
+                    nid, date, statut, sujet))
+            nid -= 1
+        
+        lignes.append(lignes[0])
+        personnage << "\n".join(lignes)

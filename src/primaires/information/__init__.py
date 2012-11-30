@@ -36,7 +36,7 @@ from primaires.information.config import cfg_info
 from primaires.information import commandes
 
 from .editeurs.hedit import EdtHedit
-
+from .editeurs.nledit import EdtNledit
 from .newsletter import Newsletter
 from .sujet import SujetAide
 from .tips import Tips
@@ -103,6 +103,7 @@ class Module(BaseModule):
         self.commandes = [
             commandes.aide.CmdAide(),
             commandes.hedit.CmdHedit(),
+            commandes.newsletter.CmdNewsletter(),
             commandes.tips.CmdTips(),
             commandes.versions.CmdVersions(),
         ]
@@ -110,8 +111,9 @@ class Module(BaseModule):
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
         
-        # Ajout de l'éditeur 'hedit'
+        # Ajout des éditeurs 'hedit' et 'nledit'
         self.importeur.interpreteur.ajouter_editeur(EdtHedit)
+        self.importeur.interpreteur.ajouter_editeur(EdtNledit)
     
     def __getitem__(self, titre):
         """Retourne le sujet portant ce titre.
@@ -181,6 +183,12 @@ class Module(BaseModule):
         sujet = SujetAide(cle)
         self.__sujets.append(sujet)
         return sujet
+    
+    def creer_newsletter(self, sujet):
+        """Créée et retourne la News Letter."""
+        newsletter = Newsletter(sujet)
+        self.newsletters.append(newsletter)
+        return newsletter
     
     def construire_sommaire_pour(self, personnage):
         """Retourne le sommaire de la rubrique d'aide pour personnage."""
