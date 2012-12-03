@@ -465,7 +465,7 @@ class Personnage(BaseObj):
             return
         
         if escalade:
-            connaissance = varier(self.pratiquer_talent("escalade"), 10)
+            connaissance = varier(self.pratiquer_talent("escalade"))
             reussir = connaissance / 10 >= o_sortie.diff_escalade
             if not reussir:
                 self.tomber()

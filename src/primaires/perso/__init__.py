@@ -155,7 +155,7 @@ class Module(BaseModule):
         entraine.msg_visible = "s'entraîne ici"
         entraine.act_autorisees = ["regarder", "parler"]
         
-        self.ajouter_talent("escalade", "escalade", "survie", 0.25)
+        self.ajouter_talent("escalade", "escalade", "survie", 0.27)
         self.ajouter_talent("nage", "nage", "survie", 0.25)
         
         BaseModule.init(self)
