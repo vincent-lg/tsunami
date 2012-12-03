@@ -162,6 +162,11 @@ class Salle(BaseObj):
         return [p for p in self._personnages if hasattr(p, "prototype")]
     
     @property
+    def joueurs(self):
+        """Retourne une liste déférencée des joueurs présents."""
+        return [p for p in self._personnages if not hasattr(p, "prototype")]
+    
+    @property
     def exterieur(self):
         """Retourne True si la salle est extérieure, False sinon."""
         return not self.interieur
