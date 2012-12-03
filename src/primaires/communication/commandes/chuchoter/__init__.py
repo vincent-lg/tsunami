@@ -32,9 +32,8 @@
 
 """
 
+from primaires.format.fonctions import echapper_accolades
 from primaires.interpreteur.commande.commande import Commande
-from random import randint
-from math import ceil
 
 class CmdChuchoter(Commande):
     
@@ -46,51 +45,30 @@ class CmdChuchoter(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "chuchoter", "whisper")
         self.nom_categorie = "parler"
-        self.schema = "<nom_joueur> <message>"
-        self.aide_courte = "chuchote une phrase à un autre joueur"
+        self.schema = "<message> a/to <personnage_present>"
+        self.aide_courte = "chuchote une phrase à un personnage"
         self.aide_longue = \
-            "Cette commande permet de parler à un autre joueur ou à un bot " \
-            "présent dans la même salle. Ce que vous dites par ce moyen " \
-            "est soumis aux règles du RP. La commande prend en paramètres " \
-            "de votre chuchotement (NPC ou joueur), et ce que vous " \
-            "souhaitez lui dire."
+            "Cette commande permet de parler à un autre joueur ou à un PNJ " \
+            "présent dans la même salle. Ce mode de communication est " \
+            "RP et soumis aux mêmes règles que la commande %dire%."
     
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         personnage.agir("parler")
-        cible = dic_masques["personnage_present"].joueur
+        cible = dic_masques["personnage_present"].personnage
         message = dic_masques["message"].message
+        message = echapper_accolades(message)
         if personnage is cible:
-            personnage << "Hem. Vous parlez tout seul."
-        elif not personnage.salle is cible.salle:
-            personnage << "|err|Cette personne n'est pas avec vous.|ff|"
-        else:
-            personnage << "Vous chuchotez à {} : {}".format(
-                    cible.nom, message)
-            cible << "{} vous chuchote : {}".format(personnage.nom, message)
-            moyenne_sens = ceil((personnage.sensibilite + \
-                    cible.sensibilite) / 2)
-            for perso in personnage.salle.personnages:
-                if perso is not personnage and perso is not cible:
-                    # On vérifie si la personne a plus de sens que la moyenne
-                    # des deux autres. Si c'est le cas, un random détermine
-                    # pour chaque mot si elle l'entend. Sinon, un random 
-                    # beaucoup moins probable joue le même rôle.
-                    if perso.sensibilite > moyenne_sens:
-                        random_entendre = 5 # une chance sur deux
-                    else:
-                        random_entendre = 2 # une sur cinq
-                    phrase = []
-                    for mot in message.split():
-                        if not mot in "?!;:":
-                            if randint(1, 10) <= random_entendre:
-                                phrase.append(mot)
-                            else:
-                                phrase.append("...")
-                        else:
-                            phrase.append(mot)
-                    
-                    phrase = " ".join(phrase)
-                    perso << "{} chuchote quelque chose à {}. Vous parvenez " \
-                            "à entendre : {}".format(personnage.nom,
-                            cible.nom, phrase)
+            personnage << "|att|Hem... Vous parlez tout seul.|ff|"
+            return
+        
+        if "alcool" in personnage.affections:
+            affection = personnage.affections["alcool"]
+            message = affection.affection.deformer_message(affection, message)
+        
+        personnage.envoyer("Vous chuchotez à {{}} : {}".format(
+                message), cible)
+        cible.envoyer("{{}} vous chuchote : {}".format(message),
+                personnage)
+        personnage.salle.envoyer("{} chuchote quelque chose à " \
+                "l'oreille de {}.", personnage, cible)
