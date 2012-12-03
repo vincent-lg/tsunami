@@ -36,8 +36,10 @@ bas_page = """
 
 
 -------------------------------------------------------------------------------
+Contactez vanciamud@gmail.com pour réagir.
+
 POUR VOUS DÉSABONNER DE CETTE NEWS LETTER, CONNECTEZ-VOUS :
-Nom d'hôte : non précisé
+Nom d'hôte : vanciamud.fr
 Port : 4000
 Compte : {nom_compte}
 
