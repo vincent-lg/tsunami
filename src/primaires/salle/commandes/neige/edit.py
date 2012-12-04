@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant le paramètre 'edit' de la commande 'neige'."""
 
-from . import addroom
-from . import carte
-from . import chercherbois
-from . import chsortie
-from . import decor
-from . import deverrouiller
-from . import escalader
-from . import etendue
-from . import fermer
-from . import goto
-from . import mettrefeu
-from . import nager
-from . import neige
-from . import ouvrir
-from . import redit
-from . import regarder
-from . import supsortie
-from . import verrouiller
-from . import zone
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmEdit(Parametre):
+    
+    """Commande 'neige edit'"""
+    
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "éditer", "edit")
+        self.groupe = "administrateur"
+        self.schema = "<cle>"
+        self.aide_courte = "ouvre l'éditeur de bonhomme"
+        self.aide_longue = \
+            "Cette commande permet d'éditer un prototype de bonhomme " \
+            "de neige existant."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        cle = dic_masques["cle"].cle
+        try:
+            bonhomme = importeur.salle.bonhommes_neige[cle]
+        except KeyError:
+            personnage << "|err|Ce bonhomme de neige {} est " \
+                    "inconnu.|ff|".format(cle)
+        else:
+            editeur = importeur.interpreteur.construire_editeur(
+                    "sbedit", personnage, decor)
+            personnage.contextes.ajouter(editeur)
+            editeur.actualiser()

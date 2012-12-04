@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'neige' et ses sous-commandes.
 
-from . import addroom
-from . import carte
-from . import chercherbois
-from . import chsortie
-from . import decor
-from . import deverrouiller
-from . import escalader
-from . import etendue
-from . import fermer
-from . import goto
-from . import mettrefeu
-from . import nager
-from . import neige
-from . import ouvrir
-from . import redit
-from . import regarder
-from . import supsortie
-from . import verrouiller
-from . import zone
+Dans ce fichier se trouve la commande même.
+
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+from .creer import PrmCreer
+from .edit import PrmEdit
+
+class CmdNeige(Commande):
+    
+    """Commande 'neige'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "neige", "snow")
+        self.aide_courte = "gère la construction dans la neige"
+        self.aide_longue = \
+            "Cette commande permet la construction de bonhommes " \
+            "de neige et de boule de neige. Voir plus en détail " \
+            "la commande %neige:construire%."
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
+        self.ajouter_parametre(PrmCreer())
+        self.ajouter_parametre(PrmEdit())

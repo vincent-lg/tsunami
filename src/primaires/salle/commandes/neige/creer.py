@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant le paramètre 'créer' de la commande 'neige'."""
 
-from . import addroom
-from . import carte
-from . import chercherbois
-from . import chsortie
-from . import decor
-from . import deverrouiller
-from . import escalader
-from . import etendue
-from . import fermer
-from . import goto
-from . import mettrefeu
-from . import nager
-from . import neige
-from . import ouvrir
-from . import redit
-from . import regarder
-from . import supsortie
-from . import verrouiller
-from . import zone
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmCreer(Parametre):
+    
+    """Commande 'neige créer'"""
+    
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "créer", "create")
+        self.groupe = "administrateur"
+        self.schema = "<cle>"
+        self.aide_courte = "crée un prototype de bonhomme"
+        self.aide_longue = \
+            "Cette commande permet de créer un nouveau prototype " \
+            "de bonhomme de neige (un modèle, en somme). Plusieurs " \
+            "bonhommes de neige pourront ensuite être construits par les " \
+            "joueurs sur ce modèle."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        cle = dic_masques["cle"].cle
+        if cle in importeur.salle.decors or cle in \
+                importeur.salle.bonhommes_neige:
+            personnage << "|err|Ce décor existe déjà.|ff|"
+        else:
+            prototype = importeur.salle.creer_prototype(cle)
+            editeur = importeur.interpreteur.construire_editeur(
+                    "sbedit", personnage, prototype)
+            personnage.contextes.ajouter(editeur)
+            editeur.actualiser()
