@@ -109,7 +109,6 @@ class PrototypeBonhommeNeige(PrototypeDecor):
         self.etats = [Etat(self)]
         self.elements = OrderedDict()
         self._construire()
-        print(self.__dict__)
     
     def __getnewargs__(self):
         return (None, )
@@ -131,11 +130,11 @@ class PrototypeBonhommeNeige(PrototypeDecor):
         if nombre <= 0:
             raise ValueError("le nombre {} est négatif ou nul".format(nombre))
         
-        etat = self.etats[etat]
+        d_etat = self.etats[etat]
         if nombre == 1:
-            return self.get_nom(etat, 1) + " " + etat.etat_singulier
+            return self.get_nom(etat, 1) + " " + d_etat.etat_singulier
         else:
-            return self.get_nom(etat, nombre) + " " + etat.etat_pluriel
+            return self.get_nom(etat, nombre) + " " + d_etat.etat_pluriel
     
     def get_description(self, etat):
         """Retourne la description correspondante à l'état."""
