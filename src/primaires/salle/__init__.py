@@ -37,6 +37,7 @@ from datetime import datetime
 from abstraits.module import *
 from primaires.format.fonctions import format_nb, supprimer_accents
 from primaires.vehicule.vecteur import Vecteur
+from .bonhomme_neige import *
 from .config import cfg_salle
 from .coordonnees import Coordonnees
 from .decor import PrototypeDecor
@@ -118,6 +119,7 @@ class Module(BaseModule):
         self.graph = {}
         self.details_dynamiques = []
         self.decors = {}
+        self.bonhommes_neige = {}
         self.a_renouveler = {}
         self.magasins_a_ouvrir = {}
         self.magasins_a_fermer = {}
@@ -205,6 +207,15 @@ class Module(BaseModule):
         
         nb_decors = len(self.decors)
         self.logger.info(format_nb(nb_decors, "{nb} décor{s} récupéré{s}"))
+        
+        # On récupère les bonhommes de neige
+        bonhommes = importeur.supenr.charger_groupe(PrototypeBonhommeNeige)
+        for bonhomme in bonhommes:
+            self.ajouter_bonhomme_neige(bonhomme)
+        
+        nb_bonhommes = len(self.bonhommes_neige)
+        self.logger.info(format_nb(nb_bonhommes, "{nb} prototype{s} " \
+                "de bonhomme de neige récupéré{s}"))
         
         # On récupère les feux
         feux = importeur.supenr.charger_groupe(Feu)
@@ -457,6 +468,35 @@ class Module(BaseModule):
         decor = self.decors[cle]
         del self.decors[cle]
         decor.detruire()
+    
+    def creer_bonhomme_neige(self, cle):
+        """Créée un nouveau prototype de bonhomme de neige."""
+        cle = cle.lower()
+        if cle in self.bonhommes_neige or cle in self.decors:
+            raise ValueError("le bonhomme de neige {} existe déjà".format(
+                    repr(cle)))
+        
+        bonhomme = PrototypeBonhommeNeige(cle)
+        self.ajouter_bonhommeneige(bonhomme)
+        return bonhomme
+    
+    def ajouter_bonhomme_neige(self, bonhomme):
+        """Ajoute un prototype de bonhomme de neige."""
+        if bonhomme.cle in self.decors or bonhomme.cle in self.bonhommes_neige:
+            raise ValueError("le bonhomme de neige {} existe déjà".format(
+                    repr(decor.cle)))
+        
+        self.bonhommes_neige[bonhomme.cle] = bonhomme
+    
+    def supprimer_bonhomme_neige(self, cle):
+        """Supprime un prototype de bonhomme de neige."""
+        if cle not in self.bonhommes_neige:
+            raise ValueError("le bonhomme de neige {} n'existe pas".format(
+                    repr(cle)))
+        
+        bonhomme = self.bonhommes_neige[cle]
+        del self.bonhommes_neige[cle]
+        bonhomme.detruire()
     
     def traiter_commande(self, personnage, commande):
         """Traite les déplacements"""
