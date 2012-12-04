@@ -477,14 +477,14 @@ class Module(BaseModule):
                     repr(cle)))
         
         bonhomme = PrototypeBonhommeNeige(cle)
-        self.ajouter_bonhommeneige(bonhomme)
+        self.ajouter_bonhomme_neige(bonhomme)
         return bonhomme
     
     def ajouter_bonhomme_neige(self, bonhomme):
         """Ajoute un prototype de bonhomme de neige."""
-        if bonhomme.cle in self.decors or bonhomme.cle in self.bonhommes_neige:
+        if bonhomme.cle in self.bonhommes_neige:
             raise ValueError("le bonhomme de neige {} existe déjà".format(
-                    repr(decor.cle)))
+                    repr(bonhomme.cle)))
         
         self.bonhommes_neige[bonhomme.cle] = bonhomme
     

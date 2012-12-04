@@ -37,6 +37,7 @@ from corps.fonctions import lisser
 from primaires.affection.affection import Affection
 from primaires.format.description import Description
 from primaires.vehicule.vecteur import Vecteur
+from .bonhomme_neige import *
 from .chemin import Chemin
 from .chemins import Chemins
 from .coordonnees import Coordonnees
@@ -525,7 +526,11 @@ class Salle(BaseObj):
     
     def ajouter_decor(self, prototype):
         """Ajoute un décor dans la salle."""
-        decor = Decor(prototype, self)
+        if isinstance(prototype, PrototypeBonhommeNeige):
+            decor = BonhommeNeige(prototype, self)
+        else:
+            decor = Decor(prototype, self)
+        
         self.decors.append(decor)
         return decor
     

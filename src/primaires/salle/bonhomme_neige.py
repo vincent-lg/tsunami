@@ -32,8 +32,11 @@
 BonhommeNeige -- un bonhomme de neige concret
 PrototypeBonhommeNeige -- un prototype de bonhomme de neige
 Etat -- un état de prototype
+Element -- un élément de l'habillement du bonhomme de neige
 
 """
+
+from collections import OrderedDict
 
 from abstraits.obase import BaseObj
 from primaires.format.description import Description
@@ -52,6 +55,7 @@ class BonhommeNeige(Decor):
         """Constructeur de la classe"""
         Decor.__init__(self, prototype, parent)
         self.etat = -1
+        self.elements = {}
         self._construire()
     
     def __getnewargs__(self):
@@ -72,6 +76,15 @@ class BonhommeNeige(Decor):
         ret = "Vous regardez {} :\n\n".format(self.get_nom())
         ret += self.prototype.get_description(self.etat).regarder(
                 personnage, self)
+        if self.elements:
+            ret += "\n"
+        
+        for nom in self.prototype.elements:
+            objet = self.elements.get(nom)
+            if objet:
+                ret += "\n" + nom.capitalize().ljust(20)
+                ret += " : " + objet.get_nom()
+        
         personnage << ret
         personnage.salle.envoyer("{{}} regarde {}.".format(self.get_nom()),
                 personnage)
@@ -94,6 +107,9 @@ class PrototypeBonhommeNeige(PrototypeDecor):
         del self.etat_pluriel
         del self.description
         self.etats = [Etat(self)]
+        self.elements = OrderedDict()
+        self._construire()
+        print(self.__dict__)
     
     def __getnewargs__(self):
         return (None, )
@@ -135,6 +151,15 @@ class PrototypeBonhommeNeige(PrototypeDecor):
     def supprimer_etat(self, indice):
         """Supprime un état."""
         del self.etats[indice]
+    
+    def ajouter_element(self, nom):
+        """Ajoute un élément."""
+        element = Element(self, nom)
+        self.elements[nom] = element
+    
+    def supprimer_element(self, nom):
+        """Supprime un élément."""
+        del self.elements[nom]
 
 
 class Etat(BaseObj):
@@ -164,3 +189,30 @@ class Etat(BaseObj):
     
     def __str__(self):
         return self.nom_singulier
+
+
+class Element(BaseObj):
+    
+    """Classe représentant un élément habillable du bonhomme de neige.
+    
+    Par exemple, on pourrait vouloir mettre un bonnet sur la
+    tête d'un bonhomme de neige. Cet habillement est propre
+    à un prototype de bonhomme de neige.
+    
+    """
+    
+    def __init__(self, prototype, nom):
+        BaseObj.__init__(self)
+        self.prototype = prototype
+        self.nom = nom
+        self.objets_autorises = []
+        self.types_autorises = []
+    
+    def __getnewargs__(self):
+        return (None, "aucun")
+    
+    def __repr__(self):
+        return "<élément {}>".format(self.nom)
+    
+    def __str__(self):
+        return self.nom
