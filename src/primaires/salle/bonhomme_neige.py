@@ -40,6 +40,7 @@ from collections import OrderedDict
 
 from abstraits.obase import BaseObj
 from primaires.format.description import Description
+from primaires.format.fonctions import supprimer_accents
 from .decor import *
 
 class BonhommeNeige(Decor):
@@ -101,7 +102,6 @@ class PrototypeBonhommeNeige(PrototypeDecor):
     
     def __init__(self, cle):
         PrototypeDecor.__init__(self, cle)
-        del self.nom_singulier
         del self.nom_pluriel
         del self.etat_singulier
         del self.etat_pluriel
@@ -112,6 +112,27 @@ class PrototypeBonhommeNeige(PrototypeDecor):
     
     def __getnewargs__(self):
         return (None, )
+    
+    def _get_nom_singulier(self):
+        """Retourne le nom singulier du dernier état."""
+        return self.etats[-1].nom_singulier
+    def _set_nom_singulier(self, nom):
+        pass
+    nom_singulier = property(_get_nom_singulier, _set_nom_singulier)
+    
+    @property
+    def str_etats(self):
+        """Retourne la chaîne des états possibles."""
+        chaine = "\n  " + "\n  ".join(e.nom_singulier for e in self.etats)
+        return chaine
+    
+    @property
+    def str_elements(self):
+        """Retourne la chaîne des éléments existants."""
+        if not self.elements:
+            return "aucun"
+        
+        return "\n  " + "\n  ".join(self.elements.keys())
     
     def get_nom(self, etat, nombre):
         """Retourne le nom singulier ou pluriel."""
@@ -140,6 +161,22 @@ class PrototypeBonhommeNeige(PrototypeDecor):
         """Retourne la description correspondante à l'état."""
         return self.etats[etat].description
     
+    def get_etat(self, nom):
+        """Retourne, si trouvé, l'état du nom indiqué.
+        
+        Si l'état n'est pas trouvé, retourne None.
+        
+        La recherche se fait sans tenir compte de la casse ou des
+        accents.
+        
+        """
+        nom = supprimer_accents(nom).lower()
+        for etat in self.etats:
+            if supprimer_accents(etat.nom_singulier).lower() == nom:
+                return etat
+        
+        return None
+    
     def ajouter_etat(self, nom_singulier):
         """Ajoute un nouvel état."""
         etat = Etat(self)
@@ -150,6 +187,22 @@ class PrototypeBonhommeNeige(PrototypeDecor):
     def supprimer_etat(self, indice):
         """Supprime un état."""
         del self.etats[indice]
+    
+    def get_element(self, nom):
+        """Retourne, si trouvé, l'élément du nom indiqué.
+        
+        Si l'élément n'est pas trouvé, retourne None.
+        
+        La recherche se fait sans tenir compte de la casse ou des
+        accents.
+        
+        """
+        nom = supprimer_accents(nom).lower()
+        for t_nom, element in self.elements.items():
+            if supprimer_accents(t_nom).lower() == nom:
+                return element
+        
+        return None
     
     def ajouter_element(self, nom):
         """Ajoute un élément."""
@@ -204,8 +257,8 @@ class Element(BaseObj):
         BaseObj.__init__(self)
         self.prototype = prototype
         self.nom = nom
-        self.objets_autorises = []
-        self.types_autorises = []
+        self.objets_admis = []
+        self.types_admis = []
     
     def __getnewargs__(self):
         return (None, "aucun")
@@ -215,3 +268,33 @@ class Element(BaseObj):
     
     def __str__(self):
         return self.nom
+    
+    @property
+    def str_types_admis(self):
+        """Retourne les noms en une chaîne des types admis."""
+        if not self.types_admis:
+            return "Aucun"
+        
+        return ", ".join(self.types_admis)
+    
+    @property
+    def str_objets_admis(self):
+        """Retourne les cléss en une chaîne des objets admis."""
+        if not self.objets_admis:
+            return "Aucun"
+        
+        return ", ".join(self.objets_admis)
+    
+    def ajouter_ou_retirer_type_admis(self, nom):
+        """Ajoute ou retire un type admis."""
+        if nom in self.types_admis:
+            self.types_admis.remove(nom)
+        else:
+            self.types_admis.append(nom)
+    
+    def ajouter_ou_retirer_objet_admis(self, cle):
+        """Ajoute ou retire un objet admis."""
+        if cle in self.objets_admis:
+            self.objets_admis.remove(cle)
+        else:
+            self.objets_admis.append(cle)

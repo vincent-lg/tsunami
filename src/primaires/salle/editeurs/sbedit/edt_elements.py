@@ -28,91 +28,83 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit le contexte-éditeur 'edt_etats'."""
+"""Ce fichier définit le contexte-éditeur 'edt_elements'."""
 
 from primaires.interpreteur.editeur import Editeur
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
-from .edt_etat import EdtEtat
+from .edt_element import EdtElement
 
-class EdtEtats(Editeur):
+class EdtElements(Editeur):
     
-    """Contexte-éditeur d'édition des états."""
+    """Contexte-éditeur d'édition des éléments."""
     
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
-        self.ajouter_option("n", self.opt_creer_etat)
-        self.ajouter_option("d", self.opt_supprimer_etat)
+        self.ajouter_option("n", self.opt_creer_element)
+        self.ajouter_option("d", self.opt_supprimer_element)
     
     def accueil(self):
         """Message d'accueil du contexte"""
         prototype = self.objet
-        msg = "| |tit|" + "Edition des états de {}".format(prototype).ljust(76)
+        msg = "| |tit|" + "Edition des éléments de {}".format(
+                prototype).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += "Options :\n"
-        msg += " |cmd|/n <nom singulier de l'état à créer>|ff|\n"
-        msg += " |cmd|/d <numéro de l'état à supprimer>|ff|\n\n"
-        msg += "États actuels :\n"
+        msg += " |cmd|/n <nom singulier de l'élément à créer>|ff|\n"
+        msg += " |cmd|/d <nom de l'élément à supprimer>|ff|\n\n"
+        msg += "Éléments actuels :\n"
         
-        # Parcours des états
-        i = 1
-        for etat in prototype.etats:
-            msg += "\n  " + str(i).rjust(2) + " " + etat.nom_singulier
-            i += 1
+        # Parcours des éléments
+        for nom, element in prototype.elements.items():
+            msg += "\n  " + nom
         
-        if not prototype.etats:
-            msg += "\n  Aucun état pour l'instant"
+        if not prototype.elements:
+            msg += "\n  Aucun élément pour l'instant"
         
         return msg
     
-    def opt_creer_etat(self, arguments):
-        """Crée un nouvel état.
+    def opt_creer_element(self, arguments):
+        """Crée un nouvel élément.
         
         Syntaxe:
-            /n <nouveau nom singulier d'état>
+            /n <nouveau nom d'emplacement>
         
         """
         prototype = self.objet
-        etat = prototype.get_etat(arguments)
-        if etat is not None:
-            self.pere << "|err|Ce nom d'état existe déjà.|ff|"
+        element = prototype.get_element(arguments)
+        if element is not None:
+            self.pere << "|err|Ce nom d'élément existe déjà.|ff|"
             return
         
-        prototype.ajouter_etat(arguments)
+        prototype.ajouter_element(arguments)
         self.actualiser()
         
-    def opt_supprimer_etat(self, arguments):
-        """Supprime un état.
+    def opt_supprimer_element(self, arguments):
+        """Supprime un élément.
         
         Syntaxe :
-            /d <numéro>
+            /d <nom de l'élément>
         
         """
         prototype = self.objet
-        try:
-            no = int(arguments)
-            assert no > 0
-            assert no <= len(prototype.etats)
-        except (ValueError, AssertionError):
-            self.pere << "|err|Nombre invalide.|ff|"
-        else:
-            prototype.supprimer_etat(no - 1)
-            self.actualiser()
-    
-    def interpreter(self, msg):
-        """Interprétation de l'éditeur."""
-        prototype = self.objet
-        etats = prototype.etats
-        try:
-            no = int(msg)
-            assert no > 0
-            assert no <= len(etats)
-        except ValueError:
-            self.pere << "|err|Nombre invalide.|ff|"
+        element = prototype.get_element(arguments)
+        if element is None:
+            self.pere << "|err|Cet élément est introuvable.|ff|"
             return
         
-        etat = etats[no - 1]
-        enveloppe = EnveloppeObjet(EdtEtat, etat, None)
+        prototype.supprimer_element(element.nom)
+        self.actualiser()
+    
+    def interpreter(self, msg):
+        """Interprélémention de l'éditeur."""
+        prototype = self.objet
+        element = prototype.get_element(msg)
+        if element is None:
+            self.pere << "|err|Cet élément est introuvable.|ff|"
+            return
+        
+        enveloppe = EnveloppeObjet(EdtElement, element, None)
         enveloppe.parent = self
         contexte = enveloppe.construire(self.pere)
         self.migrer_contexte(contexte)

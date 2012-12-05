@@ -56,6 +56,6 @@ class PrmEdit(Parametre):
                     "inconnu.|ff|".format(cle)
         else:
             editeur = importeur.interpreteur.construire_editeur(
-                    "sbedit", personnage, decor)
+                    "sbedit", personnage, bonhomme)
             personnage.contextes.ajouter(editeur)
             editeur.actualiser()

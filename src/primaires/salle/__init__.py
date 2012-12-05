@@ -50,9 +50,10 @@ from .sortie import Sortie
 from .sorties import NOMS_SORTIES
 from .zone import Zone
 from .templates.terrain import Terrain
-from .editeurs.redit import EdtRedit
-from .editeurs.zedit import EdtZedit
 from .editeurs.decedit import EdtDecedit
+from .editeurs.redit import EdtRedit
+from .editeurs.sbedit import EdtSbedit
+from .editeurs.zedit import EdtZedit
 from . import cherchables
 from . import commandes
 from . import masques
@@ -274,6 +275,7 @@ class Module(BaseModule):
             commandes.goto.CmdGoto(),
             commandes.mettrefeu.CmdMettreFeu(),
             commandes.nager.CmdNager(),
+            commandes.neige.CmdNeige(),
             commandes.ouvrir.CmdOuvrir(),
             commandes.redit.CmdRedit(),
             commandes.regarder.CmdRegarder(),
@@ -285,9 +287,10 @@ class Module(BaseModule):
         for cmd in self.commandes:
             importeur.interpreteur.ajouter_commande(cmd)
         
-        # Ajout des éditeurs 'decedit', 'redit' et 'zedit'
+        # Ajout des éditeurs 'decedit', 'sbedit', 'redit' et 'zedit'
         importeur.interpreteur.ajouter_editeur(EdtDecedit)
         importeur.interpreteur.ajouter_editeur(EdtRedit)
+        importeur.interpreteur.ajouter_editeur(EdtSbedit)
         importeur.interpreteur.ajouter_editeur(EdtZedit)
     
     def preparer(self):

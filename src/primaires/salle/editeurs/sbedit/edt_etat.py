@@ -53,9 +53,6 @@ class EdtEtat(Presentation):
         noms = self.ajouter_choix("noms", "n", EdtNoms, etat)
         noms.parent = self
         noms.apercu = "{objet.nom_singulier}"
-        noms.aide_courte = \
-            "Entrez le |ent|titre|ff| du état ou |cmd|/|ff| pour revenir " \
-            "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
         
         # Description
         description = self.ajouter_choix("description", "d", Description, \
