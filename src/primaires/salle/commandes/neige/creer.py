@@ -55,7 +55,7 @@ class PrmCreer(Parametre):
                 importeur.salle.bonhommes_neige:
             personnage << "|err|Ce décor existe déjà.|ff|"
         else:
-            prototype = importeur.salle.creer_prototype(cle)
+            prototype = importeur.salle.creer_bonhomme_neige(cle)
             editeur = importeur.interpreteur.construire_editeur(
                     "sbedit", personnage, prototype)
             personnage.contextes.ajouter(editeur)

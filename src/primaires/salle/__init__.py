@@ -490,6 +490,7 @@ class Module(BaseModule):
                     repr(bonhomme.cle)))
         
         self.bonhommes_neige[bonhomme.cle] = bonhomme
+        self.decors[bonhomme.cle] = bonhomme
     
     def supprimer_bonhomme_neige(self, cle):
         """Supprime un prototype de bonhomme de neige."""
