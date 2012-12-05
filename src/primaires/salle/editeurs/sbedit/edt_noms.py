@@ -36,7 +36,8 @@ class EdtNoms(Editeur):
     
     """Classe définissant le contexte éditeur 'noms'.
     
-    Ce contexte permet d'éditer les noms et états d'un prototype de décor.
+    Ce contexte permet d'éditer les noms et états d'un état de bonhomme
+    de neige.
     
     """
     
@@ -51,34 +52,34 @@ class EdtNoms(Editeur):
     
     def accueil(self):
         """Message d'accueil"""
-        prototype = self.objet
+        etat = self.objet
         ret = "Options :\n"
         ret += " - |cmd|/n <nom singulier avec déterminant>|ff| : |bc|"
-        ret += prototype.nom_singulier + "|ff|\n"
+        ret += etat.nom_singulier + "|ff|\n"
         ret += " - |cmd|/s <nom pluriel sans déterminant>|ff|   : |bc|"
-        ret += prototype.nom_pluriel + "|ff|\n"
+        ret += etat.nom_pluriel + "|ff|\n"
         ret += " - |cmd|/e <état singulier>|ff| : |bc|"
-        ret += prototype.etat_singulier + "|ff|\n"
+        ret += etat.etat_singulier + "|ff|\n"
         ret += " - |cmd|/p <état pluriel>|ff|   : |bc|"
-        ret += prototype.etat_pluriel + "|ff|\n"
+        ret += etat.etat_pluriel + "|ff|\n"
         return ret
     
     def opt_nom_singulier(self, arguments):
-        """Change le nom singulier du prototype"""
+        """Change le nom singulier de l'état"""
         self.objet.nom_singulier = arguments
         self.actualiser()
     
     def opt_etat_singulier(self, arguments):
-        """Change l'état singulier du prototype"""
+        """Change l'état singulier de l'état"""
         self.objet.etat_singulier = arguments
         self.actualiser()
     
     def opt_nom_pluriel(self, arguments):
-        """Change le nom pluriel du prototype"""
+        """Change le nom pluriel de l'état"""
         self.objet.nom_pluriel = arguments
         self.actualiser()
     
     def opt_etat_pluriel(self, arguments):
-        """Change l'état pluriel du prototype"""
+        """Change l'état pluriel de l'état"""
         self.objet.etat_pluriel = arguments
         self.actualiser()
