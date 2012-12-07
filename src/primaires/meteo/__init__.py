@@ -55,7 +55,8 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "meteo", "primaire")
         self.perturbations_actuelles = []
-        self.temperature = 10
+        self.temperature = 0
+        self.temperature_dynamique = True
     
     def config(self):
         """Configuration du module"""
@@ -84,8 +85,10 @@ class Module(BaseModule):
     
     def preparer(self):
         """Préparation du module"""
-        min, max = self.cfg.temperatures[importeur.temps.temps.mois]
-        self.temperature = randint(min, max)
+        if self.temperature_dynamique:
+            min, max = self.cfg.temperatures[importeur.temps.temps.mois]
+            self.temperature = randint(min, max)
+        
         self.cycle_meteo()
     
     @property
