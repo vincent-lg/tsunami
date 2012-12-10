@@ -173,6 +173,7 @@ class InstanceConnexion(BaseObj):
     
     def deconnecter(self, msg):
         """Méthode pour déconnecter le client.
+
         Si un joueur est lié à l'instance, on demande la pré-déconnexion
         du joueur.
         
