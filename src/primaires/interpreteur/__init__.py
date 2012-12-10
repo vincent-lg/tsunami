@@ -172,6 +172,7 @@ class Module(BaseModule):
         self.categories["objets"] = "Gestion des objets et commerce"
         self.categories["parler"] = "Communication"
         self.categories["bugs"] = "Bugs et suggestions"
+        self.categories["moderation"] = "Modération"
         self.categories["groupes"] = "Manipulation des groupes et modules"
         self.categories["batisseur"] = "Commandes de création"
         
