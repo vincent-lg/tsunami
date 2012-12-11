@@ -38,6 +38,8 @@ class Neige(AffectionSalle):
     
     def __init__(self):
         AffectionSalle.__init__(self, "neige")
+        self.force_max = 60
+        self.duree_max = 120
         self.visible = True
     
     def __getnewargs__(self):
@@ -55,9 +57,16 @@ class Neige(AffectionSalle):
         if affection.duree == 0:
             return
         
+        if affection.affecte.zone.temperature < 1:
+            return
+        
         fact_dec = (affection.duree - duree) / affection.duree
-        affection.duree -= duree
-        affection.force *= fact_dec
+        duree = affection.duree - duree
+        force = affection.force * fact_dec
+        force = self.equilibrer_force(force)
+        duree = self.equilibrer_duree(duree)
+        affection.force = force
+        affection.duree = duree
         if affection.force <= 0:
             affection.detruire()
     
@@ -75,12 +84,14 @@ class Neige(AffectionSalle):
             if affection.force <= t_force:
                 return message
         
-        return messages[-1][0]
+        return messages[-1][1]
     
     def moduler(self, affection, duree, force):
         """Module, c'est-à-dire ici ajoute simplement les forces et durées."""
-        affection.duree += duree
-        affection.force += force
+        force = self.equilibrer_force(affection.force + force)
+        duree = self.equilibrer_duree(affection.duree + duree)
+        affection.duree = duree
+        affection.force = force
     
     def message_detruire(self, affection):
         """Destruction de l'affection de salle."""
