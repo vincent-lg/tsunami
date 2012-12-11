@@ -193,12 +193,13 @@ class Module(BaseModule):
     
     def changer_temperature(self):
         """Change aléatoirement la température."""
-        min, max = self.cfg.temperatures[importeur.temps.temps.mois]
-        variation = randint(-2, 2)
-        temperature = self.temperature + variation
-        if temperature < min:
-            temperature = min
-        elif temperature > max:
-            temperature = max
-        
-        self.temperature = temperature
+        if self.temperature_dynamique:
+            min, max = self.cfg.temperatures[importeur.temps.temps.mois]
+            variation = randint(-2, 2)
+            temperature = self.temperature + variation
+            if temperature < min:
+                temperature = min
+            elif temperature > max:
+                temperature = max
+            
+            self.temperature = temperature
