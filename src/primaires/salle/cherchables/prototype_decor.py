@@ -68,7 +68,7 @@ class CherchablePrototypeDecor(Cherchable):
         """
         return {
             "cle": "cle",
-            "nom": "nom_singulier",
+            "nom": "nom",
         }
     
     def colonnes_par_defaut(self):

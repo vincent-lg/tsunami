@@ -40,6 +40,8 @@ les extensions n'apparaîtront pas ici.
 """
 
 from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.flag import Flag
+from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_etats import EdtEtats
 from .edt_elements import EdtElements
 
@@ -67,6 +69,21 @@ class EdtSbedit(Presentation):
     
     def construire(self, prototype):
         """Construction de l'éditeur."""
+        # Nom
+        nom = self.ajouter_choix("nom", "n", Uniligne, prototype, "nom")
+        nom.parent = self
+        nom.prompt = "Nom de construction du bonhomme de neige : "
+        nom.apercu = "{objet.nom}"
+        nom.aide_courte = \
+            "Entrez le |ent|nom|ff| du bonhomme de neige ou |cmd|/|ff| " \
+            "pour revenir à la fenêtre parente.\n\n" \
+            "Nom actuel : |bc|{objet.nom}|ff|"
+        
+        # Utilisable par les joueurs
+        utilisable = self.ajouter_choix("utilisable par les joueurs", "u",
+                Flag, prototype, "utilisable_joueurs")
+        utilisable.parent = self
+        
         # États
         etats = self.ajouter_choix("états", "t", EdtEtats, prototype)
         etats.parent = self

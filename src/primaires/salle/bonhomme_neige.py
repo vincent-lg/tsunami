@@ -106,6 +106,8 @@ class PrototypeBonhommeNeige(PrototypeDecor):
         del self.etat_singulier
         del self.etat_pluriel
         del self.description
+        self.nom = "bonhomme"
+        self.utilisable_joueurs = True
         self.etats = [Etat(self)]
         self.elements = OrderedDict()
         self._construire()
