@@ -62,7 +62,8 @@ class Module(BaseModule):
         """Configuration du module"""
         self.cfg = type(self.importeur).anaconf.get_config("config_meteo",
                 "meteo/config.cfg", "config meteo", cfg_meteo)
-        
+        self.temperature = self.cfg.temperature_statique
+        self.temperature_dynamique = self.cfg.temperature_dynamique
         importeur.temps.met_changer_jour.append(self.changer_temperature)
         BaseModule.config(self)
     
@@ -144,8 +145,8 @@ class Module(BaseModule):
                         importeur.salle.zones.values())
                 t_max = max(z.temperature for z in \
                         importeur.salle.zones.values())
-            perturbations = [p for p in self.perturbations if p.origine and \
-                    p.accepte_temperature(t_min) and p.accepte_temperature(t_max)]
+            perturbations = [p for p in self.perturbations if p.origine and ( \
+                    p.accepte_temperature(t_min) or p.accepte_temperature(t_max))]
             salles = list(self.importeur.salle._salles.values())
             cls_pertu = choice(perturbations)
             if cls_pertu.temperature_min or cls_pertu.temperature_max:
