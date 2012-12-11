@@ -39,6 +39,7 @@ class Neige(AffectionSalle):
     def __init__(self):
         AffectionSalle.__init__(self, "neige")
         self.force_max = 60
+        self.duree_max = 120
         self.visible = True
     
     def __getnewargs__(self):
@@ -60,8 +61,8 @@ class Neige(AffectionSalle):
             return
         
         fact_dec = (affection.duree - duree) / affection.duree
-        duree -= duree
-        force *= fact_dec
+        duree = affection.duree - duree
+        force = affection.force * fact_dec
         force = self.equilibrer_force(force)
         duree = self.equilibrer_duree(duree)
         affection.force = force
@@ -83,12 +84,12 @@ class Neige(AffectionSalle):
             if affection.force <= t_force:
                 return message
         
-        return messages[-1][0]
+        return messages[-1][1]
     
     def moduler(self, affection, duree, force):
         """Module, c'est-à-dire ici ajoute simplement les forces et durées."""
-        force = self.equilibrer_force(self.force + force)
-        duree = self.equilibrer_duree(self.duree + duree)
+        force = self.equilibrer_force(affection.force + force)
+        duree = self.equilibrer_duree(affection.duree + duree)
         affection.duree = duree
         affection.force = force
     
