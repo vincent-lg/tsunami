@@ -41,6 +41,20 @@ beau_temps = "L'atmosphère est claire, le ciel pur, libre de tout nuage."
 # moyenne d'une perturbation est d'environ 15 cases.
 nb_pertu_max = 3
 
+## Température dynamiqu
+# Si cette donnée est à True, alors la température sera
+# calculée automatiquement (en fonction de la température saisonière
+# comme décrit plus bas ou des modifieurs de zone). Si cette donnée
+# est à False, alors la température statique (voire plus bas) est
+# choisie comme température globale.
+temperature_dynamique = True
+
+## Température statique
+# Si la température dynamique (voire au-dessus) est désactivée, alors
+# cette donnée doit contenir la température globale de l'univers (les
+# modifieurs de zone seront appliqués comme d'habitude).
+temperature_statique = 0
+
 ## Température saisonnières
 # Cette donnée permet de fixer les marges minimums et maximums des
 # températures saisonières. Il s'agit par exemple de définir qu'au

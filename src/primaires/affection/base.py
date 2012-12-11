@@ -43,9 +43,25 @@ class AffectionAbstraite(BaseObj):
         valider_cle(cle)
         BaseObj.__init__(self)
         self.cle = cle
+        self.force_max = 50
+        self.duree_max = -1
     
     def __getnewargs__(self):
         return ("inconnue", )
     
     def __repr__(self):
         return "<affection de {} {}>".format(self.nom_type, self.cle)
+    
+    def equilibrer_force(self, force):
+        """Équilibre la force et retourne la force_max si besoin."""
+        if force > self.force_max:
+            force = self.force_max
+        
+        return force
+    
+    def equilibrer_duree(self, duree):
+        """Équilibre la durée et retourne la duree_max si besoin."""
+        if self.duree_max > 0 and duree > self.duree_max:
+            duree = self.duree_max
+        
+        return duree
