@@ -254,7 +254,6 @@ class Test(BaseObj):
                 importeur.diffact.ajouter_action(nom, tps,
                         self.executer_code, evenement, code)
         finally:
-            importeur.scripting.execute_test = None
             self.retirer_builtins("ErreurExecution")
             self.retirer_builtins("variables")
             self.retirer_builtins("get_variables")
