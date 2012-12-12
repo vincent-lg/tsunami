@@ -85,4 +85,4 @@ class ChaineDeCaracteres(Expression):
         chaine = repr(self.chaine)
         chaine = chaine
         chaine = RE_SUP.sub(r"{\1}", chaine)
-        return "formatter(variables, " + chaine + ")"
+        return "formatter(" + chaine + ")"

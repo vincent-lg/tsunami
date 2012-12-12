@@ -35,7 +35,8 @@ import re
 # Constantes
 RE_VAR = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*?)\}")
 
-def formatter(variables, chaine):
+def formatter(chaine):
+    variables = importeur.scripting.execute_test.evenement.espaces.variables
     f_variables = {}
     for nom, variable in variables.items():
         if hasattr(variable, "get_nom_pour"):
@@ -55,8 +56,9 @@ def formatter(variables, chaine):
     
     return chaine.format(**f_variables)
 
-def get_variables(variables, chaine):
+def get_variables(chaine):
     """Retourne les variables trouvées dans la chaîne."""
+    variables = importeur.scripting.execute_test.evenement.espaces.variables
     vars = {}
     for var in RE_VAR.findall(chaine):
         vars[var] = variables[var]
