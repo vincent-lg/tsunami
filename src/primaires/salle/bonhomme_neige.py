@@ -56,6 +56,7 @@ class BonhommeNeige(Decor):
         """Constructeur de la classe"""
         Decor.__init__(self, prototype, parent)
         self.etat = -1
+        self.createur = None
         self.elements = {}
         self._construire()
     
@@ -65,6 +66,14 @@ class BonhommeNeige(Decor):
     def __repr__(self):
         return "<bonhomme de neige {} (état={}) en {}>".format(
                 self.cle_prototype, self.etat, self.parent)
+    
+    @property
+    def complet(self):
+        """Retourne True si le bonhomme est complet, False sinon."""
+        if self.etat == -1:
+            return True
+        
+        return self.etat == len(self.prototype.etats) - 1
     
     def get_nom(self, nombre=1):
         return self.prototype.get_nom(self.etat, nombre)

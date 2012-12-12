@@ -30,6 +30,7 @@
 
 """Package des masques du module joueur."""
 
+from . import bonhomme_neige
 from . import coordonnees
 from . import coordonnees2d
 from . import direction

@@ -252,6 +252,11 @@ class Module(BaseModule):
         etat.msg_visible = "ramasse du bois"
         etat.act_autorisees = ["regarder", "parler"]
         
+        etat = importeur.perso.ajouter_etat("bonhomme_neige")
+        etat.msg_refus = "Vous êtes en train de fabriquer un bonhomme de neige."
+        etat.msg_visible = "fabrique un bonhomme de neige"
+        etat.act_autorisees = ["regarder", "parler"]
+        
         # Ajout des actions différées pour chaque tick
         intervalle = 60 / NB_TICKS
         for no in self.ticks.keys():

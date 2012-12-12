@@ -299,6 +299,20 @@ class Personnage(BaseObj):
         
         return nb
     
+    @property
+    def nb_mains_libres(self):
+        """Retourne le nombre de mains libres de self."""
+        nb = 0
+        if self.equipement is None:
+            return nb
+        
+        for membre in self.equipement.membres:
+            if membre.peut_tenir() and not membre.tenu and \
+                    not membre.equipe:
+                nb += 1
+        
+        return nb
+    
     def peut_voir(self, personnage):
         """Retourne True si peut voir le personnage, False sinon."""
         if self.est_immortel():
