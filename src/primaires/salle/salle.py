@@ -496,6 +496,16 @@ class Salle(BaseObj):
             concrete = Affection(affection, self, duree, force)
             self.affections[cle] = concrete
     
+    def peut_affecter(self, cle_affection):
+        """La salle self peut-elle être affectée par l'affection ?"""
+        if cle_affection == "neige":
+            if self.interieur:
+                return False
+            elif self.nom_terrain in ["aquatique", "subaquatique"]:
+                return False
+        
+        return True
+    
     def tick(self):
         """Méthode appelée à chaque tick de la salle."""
         for affection in self.affections.values():

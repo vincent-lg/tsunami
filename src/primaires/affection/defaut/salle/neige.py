@@ -67,6 +67,7 @@ class Neige(AffectionSalle):
         duree = self.equilibrer_duree(duree)
         affection.force = force
         affection.duree = duree
+        self.verifier_validite(affection)
         if affection.force <= 0:
             affection.detruire()
     
@@ -92,6 +93,18 @@ class Neige(AffectionSalle):
         duree = self.equilibrer_duree(affection.duree + duree)
         affection.duree = duree
         affection.force = force
+        self.verifier_validite(affection)
+    
+    def verifier_validite(self, affection):
+        """Vérifie la validité de l'affection.
+        
+        Si la salle est passée en intérieur ou en un terrain inapproprié,
+        par exemple, l'affection doit se détruire.
+        
+        """
+        if not affection.affecte.peut_affecter("neige"):
+            affection.force = 0
+            affection.duree = 0
     
     def message_detruire(self, affection):
         """Destruction de l'affection de salle."""
