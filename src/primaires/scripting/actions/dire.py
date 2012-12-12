@@ -31,6 +31,7 @@
 """Fichier contenant l'action dire."""
 
 from primaires.scripting.action import Action
+from primaires.scripting.utile.fonctions import *
 
 class ClasseAction(Action):
     
