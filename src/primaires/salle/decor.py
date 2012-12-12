@@ -68,6 +68,10 @@ class Decor(BaseObj):
     def cle_prototype(self):
         return self.prototype and self.prototype.cle or "aucune"
     
+    @property
+    def nom(self):
+        return self.get_nom()
+    
     def get_nom(self, nombre=1):
         return self.prototype.get_nom(nombre)
     

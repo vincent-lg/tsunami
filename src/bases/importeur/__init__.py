@@ -52,6 +52,8 @@ inconnue pour l'importeur.
 
 """
 
+from imp import reload
+import importlib
 import os
 import sys
 import traceback
@@ -67,9 +69,11 @@ REP_SECONDAIRES = "secondaires"
 
 class Importeur:
     
-    """Classe chargée de créer un objet Importeur. Il contient sous la forme
-    d'attributs les modules primaires et secondaires chargés. Les modules
-    primaires et secondaires ne sont pas distingués.
+    """Classe chargée de créer un objet Importeur.
+    
+    Il contient sous la forme d'attributs les modules primaires et
+    secondaires chargés. Les modules primaires et secondaires ne sont
+    pas distingués.
     
     On ne doit créer qu'un seul objet Importeur.
 
@@ -86,6 +90,7 @@ class Importeur:
         "primaire": REP_PRIMAIRES,
         "secondaire": REP_SECONDAIRES,
     }
+    py_modules = {}
     
     def __init__(self, parser_cmd, anaconf, man_logs, serveur):
         """Constructeur de l'importeur. Il vérifie surtout
@@ -132,17 +137,13 @@ class Importeur:
         Importeur.logger.debug("Chargement des modules :")
         for nom_package in os.listdir(getcwd() + "/" + REP_PRIMAIRES):
             if not nom_package.startswith("__"):
-                package = __import__(REP_PRIMAIRES + "." + nom_package)
-                module = getattr(getattr(package, nom_package), "Module")
-                setattr(self, nom_package, module)
+                self.charger_module("primaire", nom_package)
                 Importeur.logger.debug("  Le module {0} a été chargé".format( \
                         nom_package))
         # On fait de même avec les modules secondaires
         for nom_package in os.listdir(getcwd() + "/" + REP_SECONDAIRES):
             if not nom_package.startswith("__"):
-                package = __import__(REP_SECONDAIRES + "." + nom_package)
-                module = getattr(getattr(package, nom_package), "Module")
-                setattr(self, nom_package, module)
+                self.charger_module("secondaire", nom_package)
                 Importeur.logger.debug("  Le module {0} a été chargé".format( \
                         nom_package))
 
@@ -188,6 +189,8 @@ class Importeur:
                     setattr(self, nom_module, module(self))
                     Importeur.logger.debug("  Le module {0} a été " \
                             "instancié".format(nom_module))
+                elif isinstance(module, BaseModule):
+                    pass
                 else:
                     Importeur.logger.warning("  Le module {0} n'a pas été " \
                             "instancié".format(nom_module))
@@ -381,7 +384,7 @@ class Importeur:
         """Méthode permettant de charger un module en fonction de son type et
         de son nom.
         
-        Si le module est déjà chargé, on ne fait rien.
+        Si le module est déjà chargé, on le recharge.
 
         Note: à la différence de tout_charger, cette méthode crée directement
         l'objet gérant le module.
@@ -395,12 +398,14 @@ class Importeur:
             raise ValueError("le type {0} n'est ni primaire ni secondaire" \
                     .format(type))
         
-        if self.module_est_charge(nom):
-            print("Le module {0} est déjà chargé.".format(nom))
-        else:
-            package = __import__(rep + "." + nom)
-            module = getattr(getattr(package, nom), "Module")
-            setattr(self, nom, module(self))
+        py_chemin = rep + "." + nom
+        if py_chemin in type(self).py_modules:
+            reload(type(self).py_modules[py_chemin])
+        
+        module = importlib.import_module(py_chemin)
+        type(self).py_modules[py_chemin] = module
+        c_module = getattr(module, "Module")
+        setattr(self, nom, c_module(self))
     
     def decharger_module(self, m_type, nom):
         """Méthode permettant de décharger un module.
@@ -411,19 +416,6 @@ class Importeur:
         -   de supprimer l'instance du module dans self
 
         """
-        if m_type == "primaire":
-            rep = REP_PRIMAIRES
-        elif m_type == "secondaire":
-            rep = REP_SECONDAIRES
-        else:
-            raise ValueError("le type {0} n'est ni primaire ni secondaire" \
-                    .format(m_type))
-
-        nom_complet = rep + "." + nom
-        for cle in list(sys.modules.keys()):
-            if cle.startswith(nom_complet):
-                del sys.modules[cle]
-
         if self.module_est_charge(nom):
             getattr(self, nom).detruire()
             delattr(self, nom)
@@ -431,13 +423,21 @@ class Importeur:
             print("{0} n'est pas dans les attributs de l'importeur".format(nom))
 
     def recharger_module(self, m_type, nom):
-        """Cette méthode permet de recharger un module. Elle passe par :
+        """Cette méthode permet de recharger un module.
+        
+        Elle passe par :
         -   decharger_module
+        -   recharge le module grâce à imp.reload
         -   charger_module
         -   config_module
         -   init_module
         
         """
+        if m_type == "primaire":
+            rep = "primaires"
+        else:
+            rep = "secondaires"
+        
         self.decharger_module(m_type, nom)
         self.charger_module(m_type, nom)
         self.config_module(nom)
