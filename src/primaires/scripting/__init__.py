@@ -84,6 +84,7 @@ class Module(BaseModule):
         self.sujets_aides = {
             "syntaxe": syntaxe,
         }
+        self.execute_test = None
     
     @property
     def commandes_dynamiques_sa(self):
