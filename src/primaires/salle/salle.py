@@ -503,6 +503,10 @@ class Salle(BaseObj):
                 return False
             elif self.nom_terrain in ["aquatique", "subaquatique"]:
                 return False
+            
+            sortie = self.sorties["bas"]
+            if sortie and sortie.diff_escalade:
+                return False
         
         return True
     
