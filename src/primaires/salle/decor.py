@@ -113,6 +113,10 @@ class PrototypeDecor(BaseObj):
     def __str__(self):
         return self.cle
     
+    @property
+    def nom(self):
+        return self.get_nom(1)
+    
     def get_nom(self, nombre):
         """Retourne le nom singulier ou pluriel."""
         if nombre <= 0:
