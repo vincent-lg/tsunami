@@ -66,5 +66,5 @@ class Neige(BasePertu):
     def action_cycle(self, salles):
         """Définit une ou plusieurs actions effectuées à chaque cycle."""
         for salle in salles:
-            if salle.exterieur:
+            if salle.peut_affecter("neige"):
                 salle.affecte("neige", 2, 1)
