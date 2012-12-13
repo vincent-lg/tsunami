@@ -42,6 +42,9 @@ class EdtElement(Editeur):
         Editeur.__init__(self, pere, objet, attribut)
         self.ajouter_option("t", self.opt_editer_type)
         self.ajouter_option("o", self.opt_editer_objet)
+        self.ajouter_option("c", self.opt_connecteur)
+        self.ajouter_option("g", self.opt_genre)
+        self.ajouter_option("e", self.opt_etat_min)
     
     def accueil(self):
         """Message d'accueil du contexte."""
@@ -50,9 +53,28 @@ class EdtElement(Editeur):
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += "Options :\n"
         msg += " |cmd|/t <type d'objet à ajouter ou supprimer>|ff|\n"
-        msg += " |cmd|/o <objet à ajouter ou supprimer>|ff|\n\n"
+        msg += " |cmd|/o <objet à ajouter ou supprimer>|ff|\n"
+        msg += " |cmd|/c <connecteur>\n"
+        msg += " |cmd|/g|ff| pour changer le genre (masculin ou " \
+                "féminin)\n"
+        msg += " |cmd|/e <état minimum>|ff|\n\n"
         msg += "Types admis : " + element.str_types_admis + "\n"
-        msg += "Objets admis : " + element.str_objets_admis
+        msg += "Objets admis : " + element.str_objets_admis + "\n"
+        msg += "Connecteur : " + element.connecteur + "\n"
+        msg += "Genre : "
+        if element.masculin:
+            msg += "masculin"
+        else:
+            msg += "féminin"
+        msg += "\n"
+        msg += "État minimum : " + str(element.etat_min + 1) + " ("
+        try:
+            etat = element.prototype.etats[element.etat_min]
+        except IndexError:  
+            msg += "|rg|inconnu|ff|"
+        else:
+            msg += etat.nom_singulier
+        
         return msg
     
     def opt_editer_type(self, arguments):
@@ -97,4 +119,42 @@ class EdtElement(Editeur):
         else:
             element.ajouter_ou_retirer_objet_admis(prototype.cle)
             self.actualiser()
-
+    
+    def opt_connecteur(self, arguments):
+        """Modifie le connecteur.
+        
+        Syntaxe :
+            /c <connecteur>
+        
+        """
+        element = self.objet
+        element.connecteur = arguments.lower()
+        self.actualiser()
+    
+    def opt_genre(self, arguments):
+        """Change le genre de l'élément.
+        
+        Syntaxe :
+            /g
+        
+        """
+        element = self.objet
+        element.masculin = not element.masculin
+        self.actualiser()
+    
+    def opt_etat_min(self, arguments):
+        """Change l'état minimum de l'élément.
+        
+        Syntaxe :
+            /e <état minimum>
+        
+        """
+        element = self.objet
+        try:
+            nb = int(arguments)
+            assert nb > 0 and nb <= len(element.prototype.etats)
+        except (ValueError, AssertionError):
+            self.pere << "|err|Nomvre invalide.|ff|"
+        else:
+            element.etat_min = nb - 1
+            self.actualiser()
