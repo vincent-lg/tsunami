@@ -115,7 +115,7 @@ class PrototypeBonhommeNeige(PrototypeDecor):
         del self.etat_singulier
         del self.etat_pluriel
         del self.description
-        self.nom = "bonhomme"
+        self.nom_prototype = "bonhomme"
         self.utilisable_joueurs = True
         self.etats = [Etat(self)]
         self.elements = OrderedDict()
@@ -123,6 +123,12 @@ class PrototypeBonhommeNeige(PrototypeDecor):
     
     def __getnewargs__(self):
         return (None, )
+    
+    def _get_nom(self):
+        return self.nom_prototype
+    def _set_nom(self, nom):
+        self.nom_prototype = nom
+    nom = property(_get_nom, _set_nom)
     
     def _get_nom_singulier(self):
         """Retourne le nom singulier du dernier état."""
