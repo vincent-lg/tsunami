@@ -270,6 +270,9 @@ class Element(BaseObj):
         self.nom = nom
         self.objets_admis = []
         self.types_admis = []
+        self.etat_min = 0
+        self.connecteur = "sur"
+        self.masculin = True
     
     def __getnewargs__(self):
         return (None, "aucun")
@@ -295,6 +298,24 @@ class Element(BaseObj):
             return "Aucun"
         
         return ", ".join(self.objets_admis)
+    
+    @property
+    def article(self):
+        """Retourne l'article."""
+        if self.masculin:
+            return "le"
+        else:
+            return "la"
+    
+    @property
+    def nom_complet(self):
+        """Retourne le nom complet."""
+        nom = self.nom
+        article = self.article
+        if nom.startswith("aeiouyh"):
+            return "l'" + nom
+        
+        return article + " " + nom
     
     def ajouter_ou_retirer_type_admis(self, nom):
         """Ajoute ou retire un type admis."""
