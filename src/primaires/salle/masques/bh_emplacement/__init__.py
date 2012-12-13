@@ -28,40 +28,47 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'neige' et ses sous-commandes.
+"""Fichier contenant le masque <bh_element>."""
 
-Dans ce fichier se trouve la commande même.
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+from primaires.format.fonctions import *
 
-"""
-
-from primaires.interpreteur.commande.commande import Commande
-from .creer import PrmCreer
-from .edit import PrmEdit
-from .fabriquer import PrmFabriquer
-from .installer import PrmInstaller
-from .poursuivre import PrmPoursuivre
-from .retirer import PrmRetirer
-
-class CmdNeige(Commande):
+class BhEmplacement(Masque):
     
-    """Commande 'neige'.
+    """Masque <bh_emplacement></bh_emplacement></bh_emplacement>.
+    
+    On attend un emplacement de bonhomme de neige mais on ne fait
+    aucune vérification.
     
     """
     
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "neige", "snow")
-        self.aide_courte = "gère la construction dans la neige"
-        self.aide_longue = \
-            "Cette commande permet la construction de bonhommes " \
-            "de neige et de boule de neige. Voir plus en détail " \
-            "la commande %neige:fabriquer%."
+    nom = "bh_emplacement"
+    nom_complet = "emplacement"
     
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        self.ajouter_parametre(PrmCreer())
-        self.ajouter_parametre(PrmEdit())
-        self.ajouter_parametre(PrmFabriquer())
-        self.ajouter_parametre(PrmInstaller())
-        self.ajouter_parametre(PrmPoursuivre())
-        self.ajouter_parametre(PrmRetirer())
+    def init(self):
+        """Initialisation des attributs"""
+        self.emplacement = ""
+    
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque."""
+        nom = liste_vers_chaine(commande)
+        
+        if not nom:
+            raise ErreurValidation( \
+                "Précisez un emplacement de bonhomme de neige.")
+        
+        commande[:] = []
+        self.a_interpreter = nom
+        masques.append(self)
+        return True
+    
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        nom = self.a_interpreter
+        self.emplacement = nom
+        return True
+

@@ -161,6 +161,9 @@ class Module(BaseModule):
                 existants.extend(pnj.equipement.objets_uniques)
         for salle in importeur.salle.salles.values():
             existants.extend(salle.objets_uniques)
+            for decor in salle.decors:
+                if hasattr(decor, "elements"):
+                    existants.extend(list(decor.elements.values()))
         
         a_detruire = []
         for objet in importeur.objet.objets.values():

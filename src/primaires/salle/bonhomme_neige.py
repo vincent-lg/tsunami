@@ -330,3 +330,14 @@ class Element(BaseObj):
             self.objets_admis.remove(cle)
         else:
             self.objets_admis.append(cle)
+    
+    def accepte_objet(self, objet):
+        """Vérifie que l'élément accepte ou non l'objet."""
+        if objet.cle in self.objets_admis:
+            return True
+        
+        for o_type in self.types_admis:
+            if objet.est_de_type(o_type):
+                return True
+        
+        return False
