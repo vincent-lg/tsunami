@@ -57,6 +57,10 @@ class CmdMettreFeu(Commande):
         combustibles = importeur.objet.prototypes.values()
         combustibles = [c for c in combustibles \
                 if c.est_de_type("combustible")]
+        if "neige" in salle.affections:
+            personnage << "|err|Il fait trop humide.|ff|"
+            return
+        
         objets_sol = list(salle.objets_sol)
         somme_combu = 0
         for objet in list(objets_sol):

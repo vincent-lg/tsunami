@@ -54,6 +54,9 @@ class PrmCreer(Parametre):
         if cle in importeur.salle.decors or cle in \
                 importeur.salle.bonhommes_neige:
             personnage << "|err|Ce décor existe déjà.|ff|"
+        elif not cle.startswith("bh_"):
+            personnage << "|err|Votre clé de bonhomme de neige doit " \
+                    "commencer par |cmd|bh_|err|.|ff|"
         else:
             prototype = importeur.salle.creer_bonhomme_neige(cle)
             editeur = importeur.interpreteur.construire_editeur(
