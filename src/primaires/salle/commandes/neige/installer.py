@@ -45,9 +45,12 @@ class PrmInstaller(Parametre):
         self.aide_courte = "installe un élément sur un bonhomme"
         self.aide_longue = \
             "Cette commande permet d'installer un élément sur un bonhomme " \
-            "de neige. Vous devez préciser le nom de l'objet, le nom " \
-            "de l'emplacement et le bonhomme de neige, dans l'ordre " \
-            "(faites attention à la syntaxe, les mot-clés sont essentiels). " \
+            "de neige. Vous devez préciser le nom de l'objet à installer, " \
+            "suivi du mot-clé |cmd|sur|ff| (|cmd|on|ff| en anglais), suivi " \
+            "du nom de l'emplacement, suivi du mot-clé |cmd|de|ff| " \
+            "(|cmd|of|ff| en anglais), suivi enfin du nom du bonhomme de " \
+            "neige, dans l'ordre (faites attention à la syntaxe, " \
+            "les mot-clés sont essentiels). " \
             "Les éléments disponibles diffèrent d'un bonhomme de neige " \
             "à l'autre et c'est à vous de les trouver, bien que la " \
             "description du dit bonhomme peut parfois vous y aider."
