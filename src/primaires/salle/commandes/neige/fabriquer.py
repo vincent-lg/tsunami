@@ -57,6 +57,7 @@ class PrmFabriquer(Parametre):
         salle = personnage.salle
         force = 7
         end = 25
+        personnage.agir("neige")
         try:
             personnage.stats.endurance -= end
         except DepassementStat:

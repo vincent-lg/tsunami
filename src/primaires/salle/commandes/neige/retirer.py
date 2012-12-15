@@ -58,6 +58,7 @@ class PrmRetirer(Parametre):
         salle = personnage.salle
         emplacement = dic_masques["bh_emplacement"].emplacement
         bonhomme = dic_masques["element_observable"].element
+        personnage.agir("neige")
         if not isinstance(bonhomme, BonhommeNeige):
             personnage << "|err|Ceci n'est pas un bonhomme de neige.|ff|"
             return

@@ -36,6 +36,7 @@ Dans ce fichier se trouve la commande même.
 
 from primaires.interpreteur.commande.commande import Commande
 from .creer import PrmCreer
+from .detruire import PrmDetruire
 from .edit import PrmEdit
 from .fabriquer import PrmFabriquer
 from .installer import PrmInstaller
@@ -60,6 +61,7 @@ class CmdNeige(Commande):
     def ajouter_parametres(self):
         """Ajout des paramètres"""
         self.ajouter_parametre(PrmCreer())
+        self.ajouter_parametre(PrmDetruire())
         self.ajouter_parametre(PrmEdit())
         self.ajouter_parametre(PrmFabriquer())
         self.ajouter_parametre(PrmInstaller())

@@ -54,6 +54,7 @@ class PrmPoursuivre(Parametre):
         salle = personnage.salle
         end = 25
         force = 7
+        personnage.agir("neige")
         
         # Vérifie qu'il s'agit bien d'un bonhomme de neige
         if not isinstance(elt, BonhommeNeige):

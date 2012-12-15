@@ -70,6 +70,7 @@ class PrmInstaller(Parametre):
         objet, conteneur = list(dic_masques["nom_objet"].objets_conteneurs)[0]
         emplacement = dic_masques["bh_emplacement"].emplacement
         bonhomme = dic_masques["element_observable"].element
+        personnage.agir("neige")
         if not isinstance(bonhomme, BonhommeNeige):
             personnage << "|err|Ceci n'est pas un bonhomme de neige.|ff|"
             return
