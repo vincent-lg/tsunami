@@ -77,7 +77,7 @@ class PrmInstaller(Parametre):
         
         modele = bonhomme.prototype
         element = modele.get_element(emplacement)
-        if element is None or element.etat_min < bonhomme.etat:
+        if element is None or element.etat_min > bonhomme.etat:
             personnage << "|err|Vous ne pouvez rien mettre ici.|ff|"
             return
         
