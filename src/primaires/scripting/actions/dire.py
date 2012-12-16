@@ -57,5 +57,5 @@ class ClasseAction(Action):
         donc pas ce message.
         
         """
-        f_variables = get_variables(message)
+        f_variables = get_variables(variables, message)
         salle.envoyer(message, **f_variables)
