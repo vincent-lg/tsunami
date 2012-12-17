@@ -31,7 +31,7 @@
 """Fichier contenant l'action dire."""
 
 from primaires.scripting.action import Action
-from primaires.scripting.utile.fonctions import *
+from primaires.scripting.utile.fonctions import get_variables
 
 class ClasseAction(Action):
     
@@ -57,5 +57,7 @@ class ClasseAction(Action):
         donc pas ce message.
         
         """
+        variables = importeur.scripting.execute_test[-1].evenement.espaces. \
+                variables
         f_variables = get_variables(variables, message)
         salle.envoyer(message, **f_variables)

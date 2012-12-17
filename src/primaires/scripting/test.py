@@ -151,7 +151,6 @@ class Test(BaseObj):
     
     def tester(self, evenement, forcer=False):
         """Teste le test."""
-        importeur.scripting.execute_test = self
         # Si le test est relié à une quête, on teste le niveau dans la quête
         etape = self.etape
         if etape:
@@ -224,10 +223,7 @@ class Test(BaseObj):
         
         """
         # Exécution
-        __builtins__["ErreurExecution"] = ErreurExecution
-        __builtins__["variables"] = evenement.espaces.variables
-        __builtins__["get_variables"] = get_variables
-        importeur.scripting.execute_test = self
+        importeur.scripting.execute_test.append(self)
         try:
             ret = next(code)
         except ErreurExecution as err:
@@ -255,10 +251,7 @@ class Test(BaseObj):
                 importeur.diffact.ajouter_action(nom, tps,
                         self.executer_code, evenement, code)
         finally:
-            importeur.scripting.execute_test = None
-            self.retirer_builtins("ErreurExecution")
-            self.retirer_builtins("variables")
-            self.retirer_builtins("get_variables")
+            importeur.scripting.execute_test.remove(self)
     
     def executer_instructions(self, evenement):
         """Convertit et exécute la suite d'instructions.
@@ -283,10 +276,6 @@ class Test(BaseObj):
         
         # Constitution des globales
         globales = self.get_globales(evenement)
-        
-        __builtins__["ErreurExecution"] = ErreurExecution
-        __builtins__["variables"] = evenement.espaces.variables
-        __builtins__["get_variables"] = get_variables
         try:
             code = exec(code, globales)
         except Exception as err:
