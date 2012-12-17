@@ -47,6 +47,8 @@ class ClasseAction(Action):
     @staticmethod
     def dire_personnage(personnage, message):
         """Envoie un message au personnage."""
+        variables = importeur.scripting.execute_test[-1].evenement.espaces. \
+                variables
         personnage.envoyer(message, **variables)
     
     @staticmethod
