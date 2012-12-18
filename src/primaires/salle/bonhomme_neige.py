@@ -36,6 +36,7 @@ Element -- un élément de l'habillement du bonhomme de neige
 
 """
 
+from datetime import datetime
 from collections import OrderedDict
 
 from abstraits.obase import BaseObj
@@ -57,6 +58,7 @@ class BonhommeNeige(Decor):
         Decor.__init__(self, prototype, parent)
         self.etat = -1
         self.createur = None
+        self.date_creation = datetime.now()
         self.elements = {}
         self._construire()
     
