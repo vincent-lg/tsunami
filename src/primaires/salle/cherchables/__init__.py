@@ -32,6 +32,7 @@
 
 """
 
-from .salle import CherchableSalle
+from .bonhomme import CherchableBonhommeNeige
 from .decor import CherchableDecor
 from .prototype_decor import CherchablePrototypeDecor
+from .salle import CherchableSalle

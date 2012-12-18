@@ -77,6 +77,26 @@ class BonhommeNeige(Decor):
         
         return self.etat == len(self.prototype.etats) - 1
     
+    @property
+    def nom_createur(self):
+        """Retourne si trouvé le nom du créateur."""
+        createur = self.createur
+        nom = "inconnu"
+        if createur and createur.e_existe:
+            nom = createur.nom
+        
+        return nom
+    
+    @property
+    def str_date(self):
+        """Retourne une cha^çine représentant la taille formatée.
+        
+        Le format d'affichage est :
+            YYYY-mm-ss HH:MM
+        
+        """
+        return self.date_creation.strftime("%Y-%m-%d %H:%S")
+    
     def get_nom(self, nombre=1):
         return self.prototype.get_nom(self.etat, nombre)
     
