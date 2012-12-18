@@ -353,9 +353,16 @@ class Module(BaseModule):
                 liste.append(magasin)
                 self.magasins_a_fermer[magasin.fermeture] = liste
 
-            for sortie in salle.sorties:
-                salle_dest = self.salles[sortie.salle_dest]
-                sortie.salle_dest = salle_dest
+            for sortie in list(salle.sorties):
+                try:
+                    salle_dest = self.salles[sortie.salle_dest]
+                except KeyError:
+                    salle.sorties.supprimer_sortie(sortie.direction)
+                else:
+                    if salle_dest is None or not salle_dest.e_existe:
+                        salle.sorties.supprimer_sortie(sortie.direction)
+                    else:
+                        sortie.salle_dest = salle_dest
             
             zone = salle.zone
             zone.ajouter(salle)
