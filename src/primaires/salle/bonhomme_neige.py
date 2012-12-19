@@ -89,13 +89,13 @@ class BonhommeNeige(Decor):
     
     @property
     def str_date(self):
-        """Retourne une cha^çine représentant la taille formatée.
+        """Retourne une chaîne représentant la taille formatée.
         
         Le format d'affichage est :
             YYYY-mm-ss HH:MM
         
         """
-        return self.date_creation.strftime("%Y-%m-%d %H:%S")
+        return self.date_creation.strftime("%Y-%m-%d %H:%M")
     
     def get_nom(self, nombre=1):
         return self.prototype.get_nom(self.etat, nombre)
