@@ -35,7 +35,6 @@ from datetime import datetime
 from bases.objet.attribut import Attribut
 from corps.aleatoire import *
 from primaires.salle.salle import Salle
-from primaires.perso.personnage import Personnage
 from .base import BaseType
 
 class BouleNeige(BaseType):
@@ -66,7 +65,7 @@ class BouleNeige(BaseType):
     
     def veut_jeter(self, personnage, sur):
         """Le personnage veut jeter l'objet sur sur."""
-        if isinstance(sur, Personnage):
+        if hasattr(sur, "equipement"):
             return "jeter_personnage"
         
         return ""
