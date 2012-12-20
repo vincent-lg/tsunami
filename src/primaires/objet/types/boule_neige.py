@@ -79,7 +79,7 @@ class BouleNeige(BaseType):
         fact_a *= (1.6 - adversaire.poids / adversaire.poids_max)
         reussite = fact >= fact_a
         if reussite:
-            personnage.envoyer("Vous lancez {} sur {{}}.".format(
+            personnage.envoyer("Vous lancez {} sur {{}} !".format(
                     self.get_nom()), adversaire)
             adversaire.envoyer("{{}} vous lance {} dessus !".format(
                     self.get_nom()), personnage)
@@ -95,7 +95,8 @@ class BouleNeige(BaseType):
         return reussite
     
     def jeter_personnage(self, personnage, adversaire):
-        pass
+        """Quand on jète la boule de neige, on la détruit."""
+        importeur.objet.supprimer_objet(self.identifiant)
     
     def nettoyage_cyclique(self):
         """Nettoyage cyclique de la boule de neige."""
