@@ -106,3 +106,5 @@ from .cadavre import Cadavre
 # Matériau
 from .matiere import Matiere
 from .fourrure import Fourrure
+
+from .boule_neige import BouleNeige

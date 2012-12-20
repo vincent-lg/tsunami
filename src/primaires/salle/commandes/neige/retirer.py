@@ -63,15 +63,24 @@ class PrmRetirer(Parametre):
             personnage << "|err|Ceci n'est pas un bonhomme de neige.|ff|"
             return
         
+        if bonhomme.createur is not personnage:
+            personnage << "|err|Ce bonhomme de neige n'est pas à vous.|ff|"
+            return
+        
         modele = bonhomme.prototype
-        element = modele.get_element(emplacement)
         if personnage.nb_mains_libres < 1:
             personnage << "|err|Il vous faut au moins une main " \
                     "de libre.|ff|"
             return
         
+        element = modele.get_element(emplacement)
+        if element is None:
+            personnage << "|err|Ce bonhomme de neige ne possède pas " \
+                    "cet emplacement.|ff|"
+            return
+        
         if bonhomme.elements.get(element.nom) is None:
-            personnage << "|err|Ce bonhomme de neige n'a aps quelque " \
+            personnage << "|err|Ce bonhomme de neige n'a pas quelque " \
                     "chose ici.|ff|"
             return
         

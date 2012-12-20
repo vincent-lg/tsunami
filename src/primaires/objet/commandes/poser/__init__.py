@@ -77,7 +77,6 @@ class CmdPoser(Commande):
                 personnage << "Vous ne pouvez pas prendre {} avec vos " \
                         "mains...".format(objet.nom_singulier)
                 return
-            print(objet, qtt, conteneur, type(conteneur))
             pose += 1
             if qtt > nombre:
                 qtt = nombre
@@ -108,5 +107,5 @@ class CmdPoser(Commande):
             personnage << "Vous posez {}.".format(objet.get_nom(pose))
             personnage.salle.envoyer("{{}} pose {}.".format(
                         objet.get_nom(pose)), personnage)
-        
-        objet.script["pose"].executer(objet=objet, personnage=personnage)
+            
+            objet.prototype.poser(objet, personnage)

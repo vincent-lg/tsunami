@@ -334,6 +334,10 @@ class BaseType(BaseObj, metaclass=MetaType):
         """
         return False
     
+    def poser(self, objet, personnage):
+        """L'objet est posé."""
+        objet.script["pose"].executer(objet=objet, personnage=personnage)
+    
     def detruire(self):
         """Destruction du prototype d'objet."""
         # Destruction des objets à dépecer
@@ -342,3 +346,7 @@ class BaseType(BaseObj, metaclass=MetaType):
                 del proto.a_depecer[self]
         
         BaseObj.detruire(self)
+    
+    def nettoyage_cyclique(self):
+        """Nettoyage cyclique de l'objet si besoin."""
+        pass

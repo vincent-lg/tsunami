@@ -140,6 +140,8 @@ class Module(BaseModule):
         """Préparation du module."""
         if "cadavre" not in self._prototypes:
             self.creer_prototype("cadavre", "cadavre")
+        if "boule_neige" not in self._prototypes:
+            self.creer_prototype("boule_neige", "boule de neige")
         if "eau" not in self._prototypes:
             eau = self.creer_prototype("eau", "potion")
             eau.nom_singulier = "eau"
@@ -187,6 +189,10 @@ class Module(BaseModule):
         for nom, nombre in sorted(types.items(), key=lambda c: c[1], \
                 reverse=True):
             self.logger.info("  Dont {} de type {}".format(nombre, nom))
+        
+        # Opérations de nettoyage cycliques
+        importeur.diffact.ajouter_action("net_boule de neige", 60,
+                self.nettoyage_cyclique, "boule de neige")
     
     @property
     def prototypes(self):
@@ -285,3 +291,12 @@ class Module(BaseModule):
             self.supprimer_objet(objet.identifiant)
         except KeyError:
             objet.detruire()
+    
+    def nettoyage_cyclique(self, nom_type):
+        """Nettoyage cyclique, appelé toutes les minutes."""
+        importeur.diffact.ajouter_action("net_{}".format(nom_type), 60,
+                self.nettoyage_cyclique, nom_type)
+        objets = [o for o in self.objets.values() if o.nom_type == nom_type]
+        print("net", objets)
+        for objet in objets:
+            objet.nettoyage_cyclique()

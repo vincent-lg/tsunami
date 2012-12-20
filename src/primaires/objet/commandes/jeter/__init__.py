@@ -68,7 +68,6 @@ class CmdJeter(Commande):
         elt = dic_masques["element_observable"].element
         nom = objet.veut_jeter(personnage, elt)
         if nom:
-            print(conteneur, objet)
             conteneur.retirer(objet)
             tentative = objet.jeter(personnage, elt)
             if not tentative:
@@ -76,5 +75,5 @@ class CmdJeter(Commande):
             
             getattr(objet, nom)(personnage, elt)
         else:
-            personnage << "|err|Vous ne pouvez jeter {} sur {}.".format(
-                    objet.get_nom(), elt)
+            personnage.envoyer("|err|Vous ne pouvez jeter {} sur {{}}" \
+                    ".|ff|".format(objet.get_nom()), elt)
