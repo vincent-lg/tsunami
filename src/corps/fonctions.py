@@ -103,6 +103,7 @@ def lisser(chaine):
         (" de le ", " du "),
         (" de les ", " des "),
         (" à les ", " aux "),
+        (" à le ", " au "),
         (" de a", " d'a"),
         (" de e", " d'e"),
         (" de h", " d'h"),
