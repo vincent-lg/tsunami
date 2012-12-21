@@ -91,13 +91,13 @@ class Attaque(BaseObj):
         """Envoie les messages en cas de tentative."""
         salle = moi.salle
         moi.envoyer_lisser(self.msg_tentative["moi"].format(moi="{moi}",
-                contre="{contre}", membre=membre, arme=arme),
+                contre="{contre}", membre=membre.nom_complet, arme=arme),
                 moi=moi, contre=contre)
         contre.envoyer_lisser(self.msg_tentative["contre"].format(moi="{moi}",
-                contre="{contre}", membre=membre, arme=arme),
+                contre="{contre}", membre=membre.nom_complet, arme=arme),
                 moi=moi, contre=contre)
         salle.envoyer_lisser(self.msg_tentative["autres"].format(moi="{moi}",
-                contre="{contre}", membre=membre, arme=arme),
+                contre="{contre}", membre=membre.nom_complet, arme=arme),
                 moi=moi, contre=contre)
     
     def envoyer_msg_reussite(self, moi, contre, membre, degats, arme=None):
@@ -105,13 +105,13 @@ class Attaque(BaseObj):
         salle = moi.salle
         s = "s" if degats > 1 else ""
         moi.envoyer_lisser(self.msg_reussite["moi"].format(moi="{moi}",
-                contre="{contre}", membre=membre, arme=arme,
+                contre="{contre}", membre=membre.nom_complet, arme=arme,
                 degats=degats, s=s), moi=moi, contre=contre)
         contre.envoyer_lisser(self.msg_reussite["contre"].format(moi="{moi}",
-                contre="{contre}", membre=membre, arme=arme,
+                contre="{contre}", membre=membre.nom_complet, arme=arme,
                 degats=degats, s=s), moi=moi, contre=contre)
         salle.envoyer_lisser(self.msg_reussite["autres"].format(moi="{moi}",
-                contre="{contre}", membre=membre, arme=arme,
+                contre="{contre}", membre=membre.nom_complet, arme=arme,
                 degats=degats, s=s), moi=moi, contre=contre)
 
 class Coup(Attaque):

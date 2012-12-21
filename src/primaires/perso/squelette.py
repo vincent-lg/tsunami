@@ -179,7 +179,7 @@ class Squelette(BaseObj):
             a_membre = equipement.get_membre(nom)
             a_membre.flags = flags
     
-    def renommer_membre(self, nom, nouveau_nom):
+    def renommer_membre(self, nom, nouveau_nom, article=None):
         """Renomme le membre nom.
         
         Répercute ces modifications dans les autres membres dérivés.
@@ -187,11 +187,17 @@ class Squelette(BaseObj):
         """
         membre = self.get_membre(nom)
         membre.nom = nouveau_nom
+        if article:
+            membre.article = article
+        else:
+            membre.recalculer_article()
+            article = membre.article
         
         for personnage in self.personnages:
             equipement = personnage.equipement
             a_membre = equipement.get_membre(nom)
             a_membre.nom = nouveau_nom
+            a_membre.article = article
     
     def remonter_membre(self, nom_membre):
         """Remonte un membre dans la liste des membres."""

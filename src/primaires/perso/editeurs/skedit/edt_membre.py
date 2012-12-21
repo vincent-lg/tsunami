@@ -60,6 +60,7 @@ class EdtMembre(Editeur):
         msg += self.aide_courte
         
         msg += "\nNom du membre : |ent|" + membre.nom + "|ff|"
+        msg += "\nArticle : |ent|" + membre.article + "|ff|"
         msg += "\nGroupe : |ent|" + (membre.groupe or "aucun") + "|ff|"
         msg += "\nProbabilité d'atteindre ce membre en combat : "
         msg += str(membre.probabilite_atteint) + "/" + str(
@@ -119,14 +120,20 @@ class EdtMembre(Editeur):
     
     def opt_changer_nom(self, arguments):
         """Change le nom
+        
         Syntaxe : /n nom
         
         """
+        try:
+            nom, article = arguments.split(" / ")
+        except ValueError:
+            nom = arguments
+            article = None
+        
         membre = self.objet
         squelette = membre.parent
-        nom = supprimer_accents(arguments).lower()
-        if squelette.a_membre(nom):
+        if squelette.a_membre(supprimer_accents(nom).lower()):
             self.pere << "|err|Ce nom est déjà utilisé.|ff|"
         else:
-            squelette.renommer_membre(membre.nom, arguments)
+            squelette.renommer_membre(membre.nom, nom, article)
             self.actualiser()
