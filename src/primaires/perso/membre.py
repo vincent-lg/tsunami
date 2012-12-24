@@ -35,6 +35,7 @@ jambe.
 """
 
 from abstraits.obase import BaseObj
+from primaires.format.fonctions import supprimer_accents
 
 # Flags
 AUCUN_FLAG = 0
@@ -58,10 +59,13 @@ class Membre(BaseObj):
     
     """
     
+    _nom = "membre"
+    _version = 1
     def __init__(self, nom, modele=None, parent=None):
         """Constructeur d'un membre"""
         BaseObj.__init__(self)
         self.nom = nom
+        self.article = "le"
         self.flags = AFFICHABLE
         self.statut = "entier"
         self.groupe = ""
@@ -70,10 +74,13 @@ class Membre(BaseObj):
         self.equipe = []
         self.tenu = None # l'objet tenu
         self.parent = parent
+        if nom:
+            self.recalculer_article()
         
         # Copie du modèle si existe
         if modele:
             self.nom = modele.nom
+            self.article = modele.article
             self.flags = modele.flags
             self.groupe = modele.groupe
             self.probabilite_atteint = modele.probabilite_atteint
@@ -87,6 +94,16 @@ class Membre(BaseObj):
     
     def __str__(self):
         return self.nom
+    
+    @property
+    def nom_complet(self):
+        """Retourne le nom complet avec article."""
+        article = self.article
+        nom = self.nom
+        if article.endswith("'"):
+            return article + nom
+        else:
+            return article + " " + nom
     
     def _get_statut(self):
         return self._statut_m
@@ -158,6 +175,21 @@ class Membre(BaseObj):
         """Teste le flag nom_flag."""
         flag = FLAGS[nom_flag]
         return self.flags & flag
+    
+    def recalculer_article(self):
+        """Recalcule l'article."""
+        feminins = ("tete", "main", "patte")
+        article = "le"
+        nom = supprimer_accents(self.nom).lower()
+        for debut in feminins:
+            if nom.startswith(debut):
+                article = "la"
+                break
+        
+        if nom.startswith("aeiouyh"):
+            article = "l'"
+        
+        self.article = article
 
 class Groupe(BaseObj):
     
