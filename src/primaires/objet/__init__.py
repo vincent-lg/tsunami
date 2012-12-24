@@ -297,6 +297,5 @@ class Module(BaseModule):
         importeur.diffact.ajouter_action("net_{}".format(nom_type), 60,
                 self.nettoyage_cyclique, nom_type)
         objets = [o for o in self.objets.values() if o.nom_type == nom_type]
-        print("net", objets)
         for objet in objets:
             objet.nettoyage_cyclique()
