@@ -33,6 +33,7 @@
 from . import afk
 from . import apprendre
 from . import alias
+from . import bannir
 from . import chgroupe
 from . import distinctions
 from . import ejecter

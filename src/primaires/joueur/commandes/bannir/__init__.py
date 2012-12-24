@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,16 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module perso."""
+"""Package contenant la commande 'bannir' et ses sous-commandes.
 
-from . import cle
-from . import commande
-from . import duree
-from . import etat
-from . import ident
-from . import niveau_secondaire
-from . import nom_stat
-from . import nombre
-from . import personnage
-from . import prompt
-from . import stat_ent
+Dans ce fichier se trouve la commande même.
+
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+from .bloquer import PrmBloquer
+from .joueur import PrmJoueur
+from .liste import PrmListe
+
+class CmdBannir(Commande):
+    
+    """Commande 'bannir'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "bannir", "ban")
+        self.groupe = "administrateur"
+        self.aide_courte = "gère le bannissement"
+        self.aide_longue = \
+            "Cette commande permet de gérer les bannissements, " \
+            "temporaires ou prolongés, de joueurs, comptes ou " \
+            "adresses."
+    
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
+        self.ajouter_parametre(PrmBloquer())
+        self.ajouter_parametre(PrmJoueur())
+        self.ajouter_parametre(PrmListe())

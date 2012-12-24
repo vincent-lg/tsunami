@@ -1,6 +1,6 @@
-# -*-coding:Utf-8 -*
+﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,16 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module perso."""
+"""Ce fichier contient la table des banissements."""
 
-from . import cle
-from . import commande
-from . import duree
-from . import etat
-from . import ident
-from . import niveau_secondaire
-from . import nom_stat
-from . import nombre
-from . import personnage
-from . import prompt
-from . import stat_ent
+from abstraits.obase import BaseObj
+
+class Bannissements(BaseObj):
+    
+    """Table des bannissements.
+    
+    Cet objet (singleton) contient les tables des différents
+    bannissements.
+    
+    """
+    
+    enregistrer = True
+    def __init__(self):
+        BaseObj.__init__(self)
+        self.temporaires = {}
+        self.joueurs = []
+    
+    def __getnewargs__(self):
+        return ()
+    
+    def __getstate__(self):
+        attrs = self.__dict__.copy()
+        if attrs["temporaires"] and hasattr(
+                list(attrs["temporaires"].keys())[0], "nom"):
+            attrs["temporaires"] = dict([(j.nom, date) for j, date in \
+                    attrs["temporaires"].items()])
+        
+        if attrs["joueurs"] and hasattr(attrs["joueurs"][0], "nom"):
+            attrs["joueurs"] = [j.nom for j in attrs["joueurs"]]
+        
+        return attrs
