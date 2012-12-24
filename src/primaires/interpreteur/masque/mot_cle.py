@@ -93,14 +93,14 @@ class MotCle(Commande):
         else:
             str_commande = liste_vers_chaine(commande)
             
-            if str_commande.startswith(" "):
-                commande.pop(0)
-                if str_commande.startswith(mot_cle):
-                    commande[:] = commande[len(mot_cle):]
-                    valide = True
-                else:
-                    commande.insert(0, " ")
-                    valide = False
+            if str_commande.startswith(mot_cle) or \
+                    str_commande.startswith(" " + mot_cle):
+                plus = 0
+                if str_commande.startswith(" "):
+                    plus = 1
+                
+                commande[:] = commande[len(mot_cle) + plus:]
+                valide = True
             else:
                 valide = False
         

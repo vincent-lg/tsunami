@@ -96,6 +96,7 @@ class Module(BaseModule):
             commandes.afk.CmdAfk(),
             commandes.alias.CmdAlias(),
             commandes.apprendre.CmdApprendre(),
+            commandes.bannir.CmdBannir(),
             commandes.chgroupe.CmdChgroupe(),
             commandes.distinctions.CmdDistinctions(),
             commandes.ejecter.CmdEjecter(),

@@ -25,8 +25,9 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# pereIBILITY OF SUCH DAMAGE.
+# POSSIBILITY OF SUCH DAMAGE.
 
+from datetime import datetime
 import re
 
 from primaires.interpreteur.contexte import Contexte
@@ -70,7 +71,33 @@ class ChoisirPersonnage(Contexte):
             no = " |cmd|" + str(i + 1) + "|ff|"
             ret += "\n" + no + " pour jouer |ent|{0}|ff|".format( \
                 joueur.nom)
-            if joueur.est_connecte():
+            if joueur in importeur.connex.bannissements_temporaires:
+                mtn = datetime.now()
+                date = importeur.connex.bannissements_temporaires[joueur]
+                duree = (date - mtn).seconds
+                mesure = "seconde"
+                if mtn > date:
+                    duree = 0
+                elif duree >= 86400:
+                    duree //= 86400
+                    mesure = "jour"
+                elif duree >= 3600:
+                    duree //= 3600
+                    mesure = "heure"
+                elif duree > 60:
+                    duree //= 60
+                    mesure = "minute"
+                
+                s = ""
+                if duree > 1:
+                    s = "s"
+                
+                temps = " (|rg|banni pour {} {}{s})".format(duree,
+                        mesure, s=s)
+                ret += temps
+            elif joueur in importeur.connex.joueurs_bannis:
+                ret += " (|rg|banni du serveur)|ff|"
+            elif joueur.est_connecte():
                 ret += " (connecté sur "
                 adresse_ip = joueur.instance_connexion.adresse_ip
                 if self.pere.adresse_ip == adresse_ip:
@@ -113,6 +140,13 @@ class ChoisirPersonnage(Contexte):
                 self.pere.envoyer("|err|Aucun personnage ne correspond à ce " \
                         "numéro.|ff|")
             else:
+                # On vérifie qu'il n'est pas banni
+                joueur = self.pere.compte.joueurs[choix]
+                if joueur in importeur.connex.bannissements_temporaires or \
+                        joueur in importeur.connex.joueurs_bannis:
+                    self.pere << "|err|Ce joueur est banni du serveur.|ff|"
+                    return
+                
                 # on se connecte sur le joueur
                 joueur = self.pere.compte.joueurs[choix]
                 self.pere.joueur = joueur

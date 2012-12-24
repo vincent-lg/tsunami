@@ -32,6 +32,7 @@
 
 from . import cle
 from . import commande
+from . import duree
 from . import etat
 from . import ident
 from . import niveau_secondaire

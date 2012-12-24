@@ -30,6 +30,7 @@
 
 """Fichier contenant le module primaire connex."""
 
+from datetime import datetime
 import hashlib
 import sys
 
@@ -39,6 +40,7 @@ from reseau.connexions.client_connecte import ClientConnecte
 from primaires.connex.compte import Compte
 from primaires.connex.config import cfg_connex
 from . import contextes
+from .bannissements import Bannissements
 from primaires.format.fonctions import format_nb
 
 # Nom du groupe fictif
@@ -59,6 +61,8 @@ class Module(BaseModule):
         self.comptes = {}
         self.cpt_logger = type(self.importeur).man_logs.creer_logger( \
                 "connex", "comptes")
+        self.joueurs_bannis = []
+        self.bannissements_temporaires = {}
     
     def config(self):
         """Configuration du module.
@@ -84,6 +88,7 @@ class Module(BaseModule):
     
     def init(self):
         """Initialisation du module.
+        
         On récupère les instances de connexion et on les stocke dans
         'self.instances' si elles sont encore connectées.
         
@@ -116,6 +121,15 @@ class Module(BaseModule):
         self.cpt_logger.info(
             format_nb(nb_comptes, "{nb} compte{s} récupéré{s}"))
         
+        # On récupère ou crée la table des bannissements
+        bannissements = self.importeur.supenr.charger_unique(Bannissements)
+        if bannissements is None:
+            bannissements = Bannissements()
+        else:
+            self.bannissements_temporaires = bannissements.temporaires
+            self.joueurs_bannis = bannissements.joueurs
+        self.bannissements = bannissements
+        
         BaseModule.init(self)
     
     def preparer(self):
@@ -125,6 +139,35 @@ class Module(BaseModule):
                     (not joueur.equipement.squelette and \
                     joueur.race.squelette)):
                 joueur.lier_equipement(joueur.race.squelette)
+        
+        temporaires = {}
+        joueurs = []
+        for nom, date in self.bannissements.temporaires.items():
+            try:
+                joueur = importeur.joueur.joueurs[nom]
+            except KeyError:
+                pass
+            else:
+                if not joueur.e_existe:
+                    continue
+                
+                temporaires[joueur] = date
+        
+        for nom in self.bannissements.joueurs:
+            try:
+                joueur = importeur.joueur.joueurs[nom]
+            except KeyError:
+                pass
+            else:
+                if not joueur.e_existe:
+                    continue
+                
+                joueurs.append(joueur)
+        
+        self.bannissements.temporaires.clear()
+        self.bannissements.temporaires.update(temporaires)
+        self.bannissements.joueurs[:] = joueurs
+        self.actualiser_bannissements()
     
     def boucle(self):
         """A chaque tour de boucle synchro, on envoie la file d'attente des
@@ -273,3 +316,14 @@ class Module(BaseModule):
         
         """
         return nom_compte in self.nom_comptes
+    
+    def actualiser_bannissements(self):
+        """Actualise les bannissements temporaires."""
+        self.importeur.diffact.ajouter_action("ban_tmp",
+                60, self.actualiser_bannissements)
+        maintenant = datetime.now()
+        for joueur, date in tuple(self.bannissements_temporaires.items()):
+            if not joueur.e_existe:
+                del self.bannissements_temporaires[joueur]
+            elif maintenant > date:
+                del self.bannissements_temporaires[joueur]
