@@ -33,6 +33,7 @@
 from random import *
 
 from primaires.commerce.transaction import *
+from primaires.objet.conteneur import SurPoids
 from .. import BaseJeu
 from .combinaisons import combinaisons
 
@@ -50,6 +51,7 @@ class Jeu(BaseJeu):
         self.nb_joueurs_min = 2
         self.nb_joueurs_max = 6
         self.en_main = {}
+        self.tableau = []
         self.tableau = []
         self.non_distribuees = list(self.plateau.pieces)
         self.abandons = []
@@ -99,7 +101,7 @@ class Jeu(BaseJeu):
         
         if msg:
             opt = msg.split(" ")[0].lower()
-            reste = msg[len(msg):]
+            reste = msg[len(opt):]
             if opt == "m":
                 try:
                     montant = int(reste)
@@ -108,7 +110,7 @@ class Jeu(BaseJeu):
                             reste)
                     return False
                 else:
-                    return self.monter(personnage, reste)
+                    return self.monter(personnage, montant)
             elif opt == "s":
                 return self.suivre(personnage)
             elif opt == "ab":
@@ -192,6 +194,7 @@ class Jeu(BaseJeu):
         
         # On prélève l'argent
         transaction.payer()
+        self.pot += montant
         return True
     
     def verifier_tour(self):
@@ -250,6 +253,15 @@ class Jeu(BaseJeu):
         
         return essai
     
+    def get_points_pieces(self, joueur):
+        """Retourne les points des pièces du joueur."""
+        pièces = list(self.en_main.get(joueur, []))
+        pieces.extend(self.tableau)
+        if pieces:
+            return sum(p.points for p in pieces)
+        
+        return 0
+        
     def choisir_piece(self):
         """Choisit et retourne une pièce parmi les non distribuées.
         
@@ -333,7 +345,7 @@ class Jeu(BaseJeu):
                     continue
                 
                 if points == combinaison.points_complet:
-                    lst_combinaisons.append((j, combinaison))
+                    lst_combinaisons.append((joueur, combinaison))
                 else:
                     break
             
@@ -341,11 +353,11 @@ class Jeu(BaseJeu):
                 self.gagner(lst_combinaisons[0][0], combinaisons=combinaisons)
             else:
                 # On cherche les gagnants
-                combinaisons = sorted([(j, cbn) for j, cbn in \
+                t_combinaisons = sorted([(j, cbn) for j, cbn in \
                         lst_combinaisons], key=lambda couple: \
                         couple[1].points_exterieurs, reverse=True)
                 
-                joueurs = [j for j, cbn in combinaisons]
+                joueurs = [j for j, cbn in t_combinaisons]
                 self.gagner(*joueurs, combinaisons=combinaisons)
         else:
             t_joueurs = []
@@ -361,9 +373,57 @@ class Jeu(BaseJeu):
             joueurs = [j for j, p in t_joueurs]
             self.gagner(*joueurs)
     
-    def gagner(self, *joueurs, combinaisons=None):
+    def gagner(self, *joueurs, masque=False, combinaisons=None):
         """Les joueurs indiqués ont gagnés la partie."""
-        print(joueurs, combinaisons)
+        if not masque:
+            combinaisons = combinaisons if combinaisons else {}
+            for joueur, combinaison in combinaisons.items():
+                piece1, piece2 = self.en_main.get(joueur, (None, None))
+                nom = "rien"
+                if combinaison:
+                    nom = combinaison.nom
+                
+                if piece1 and piece2:
+                    msg = "{{}} avait {} et {}, ce qui lui donne {}.".format(
+                            piece1.nom_complet_indefini,
+                            piece2.nom_complet_indefini, nom)
+                    self.partie.envoyer(msg, joueur)
+        
+        if len(joueurs) == 1:
+            joueur = joueurs[0]
+            pot = self.pot
+            joueur.envoyer("Vous remportez le pot total de {} pièces de " \
+                    "bronze !".format(pot))
+            self.partie.envoyer("{{}} remporte le pot total de {} pièces de " \
+                    "bronze !".format(pot), joueur)
+            self.donner_argent(joueur, pot)
+        else:
+            partage = self.pot // len(joueurs)
+            for joueur in joueurs:
+                joueur.envoyer("Vous remportez le pot partagé de {} pièces " \
+                        "de bronze !".format(partage))
+                self.partie.envoyer("{{}} remporte le pot partagé de {} " \
+                        "pièces de bronze !".format(partage), joueur)
+                self.donner_argent(joueur, partage)
+        
+        self.init()
+    
+    def donner_argent(self, joueur, montant):
+        """Donne l'argent au joueur.
+        
+        Si le joueur ne peut pas prendre l'argent, le pose.
+        
+        """
+        # D'abord on cherche l'argent le plus faible
+        prototypes = [p for p in importeur.objet.prototypes.values() if \
+                p.est_de_type("argent") and p.m_valeur == 1]
+        prototype = prototypes[0]
+        try:
+            joueur.ramasser(prototype, qtt=montant)
+        except SurPoids:
+            joueur << "|att|C'est trop lourd pour vous, l'argent se " \
+                    "retrouve par terre.|ff|"
+            joueur.salle.objets_sol.ajouter(prototype, montant)
     
     def opt_b(self, personnage, montant):
         """Change la petite blinde."""
