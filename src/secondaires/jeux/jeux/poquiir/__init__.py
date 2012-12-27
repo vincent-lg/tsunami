@@ -32,6 +32,7 @@
 
 from random import *
 
+from primaires.commerce.transaction import *
 from .. import BaseJeu
 from .combinaisons import combinaisons
 
@@ -51,9 +52,11 @@ class Jeu(BaseJeu):
         self.en_main = {}
         self.tableau = []
         self.non_distribuees = list(self.plateau.pieces)
-        self.combinaisons = {}
         self.abandons = []
         self.petite_blinde = 0
+        self.pot = 0
+        self.sommes_manche = {}
+        self.tour = 1
     
     @property
     def grande_blinde(self):
@@ -65,6 +68,8 @@ class Jeu(BaseJeu):
         if self.petite_blinde == 0:
             self.partie.envoyer("Le montant de la petite blinde n'a pas " \
                     "été fixé.")
+            return False
+        
         return True
     
     def peut_jouer(self, personnage):
@@ -79,7 +84,7 @@ class Jeu(BaseJeu):
         """Joue au jeu.
         
         Les possibilités sont :
-            m <montant> : pour miser davantage
+            m <montant> : pour miser (raise) davantage
             s : suivre (check) sans miser davantage
             ab : abandonner
         
@@ -87,7 +92,7 @@ class Jeu(BaseJeu):
         possibilites = \
             "Les possibilités sont :\n\n" \
             " |cmd|m <montant>|ff| pour miser davantage (exemple " \
-            "|cmd|m 200|ff|\n)" \
+            "|cmd|m 200|ff|\n" \
             " |cmd|s|ff| pour suivre sans miser davantage\n" \
             " |cmd|ab|ff| pour abandonner la manche\n\n" \
             "|att|Les montants sont toujours donnés en pièces de bronze.|ff|"
@@ -115,9 +120,111 @@ class Jeu(BaseJeu):
 
         return False
     
+    def monter(self, personnage, montant):
+        """Le personnage mise davantage."""
+        en_jeu = self.sommes_manche.get(personnage, 0)
+        if montant <= 0 or montant % self.petite_blinde != 0:
+            personnage << "|err|Vous devez miser un multiple de {}." \
+                    "|ff|".format(self.petite_blinde)
+            return False
+        
+        payer = self.payer(personnage, montant)
+        if payer:
+            personnage << "Vous misez {}.".format(montant)
+            self.partie.envoyer("{{}} mise {}.".format(montant),
+                    personnage)
+            self.sommes_manche[personnage] = en_jeu + montant
+            return True
+        
+        return False
+    
+    def suivre(self, personnage):
+        """Suit la manche.
+        
+        Cela peut vouloir dire mettre la main au porte-feuille.
+        
+        """
+        enjeu = self.sommes_manche.get(personnage, 0)
+        max_enjeu = 0
+        if self.sommes_manche:
+            max_enjeu = max(self.sommes_manche.values())
+        if self.tour == 1 and max_enjeu < self.petite_blinde:
+            max_enjeu = self.petite_blinde
+        
+        if max_enjeu > enjeu:
+            montant = max_enjeu - enjeu
+            payer = self.payer(personnage, montant)
+            if payer:
+                personnage << "Vous suivez en misant {}.".format(montant)
+                self.partie.envoyer("{{}} suit en misant {}.".format(
+                        montant), personnage)
+                self.sommes_manche[personnage] = max_enjeu
+                self.verifier_tour()
+                return True
+            return False
+        else:
+            personnage << "Vous suivez."
+            self.partie.envoyer("{} suit.", personnage)
+            self.sommes_manche[personnage] = enjeu
+            self.verifier_tour()
+            return True
+    
+    def abandonner(self, personnage):
+        """Abandonne la partie."""
+        self.abandons.append(personnage)
+        personnage << "Vous abandonnez cette manche."
+        self.partie.envoyer("{} abandonne cette manche.", personnage)
+        self.verifier_tour()
+        return True
+    
+    def payer(self, personnage, montant):
+        """Le personnage essaye de payer le montant demandé.
+        
+        Retourne True si il y réussi, False sinon.
+        
+        """
+        # Constitution de la transaction
+        try:
+            transaction = Transaction.initier(personnage, None, montant)
+        except FondsInsuffisants:
+            personnage << "|err|Vous n'avez pas assez d'argent.|ff|"
+            return False
+        
+        # On prélève l'argent
+        transaction.payer()
+        return True
+    
+    def verifier_tour(self):
+        """Vérifie si un tour (une main) se termine.
+        
+        La condition pour que cela arrive est que tous les joueurs
+        toujours dans la manche ont misés autant.
+        
+        """
+        enjeux = self.sommes_manche.copy()
+        no = 0
+        for abandon in self.abandons:
+            if abandon in enjeux:
+                del enjeux[abandon]
+                no += 1
+        
+        min_enjeu = max_enjeu = 0
+        joueurs = self.partie.joueurs
+        if self.sommes_manche:
+            min_enjeu = min(enjeux.values())
+            max_enjeu = max(enjeux.values())
+        
+        fini = (no + len(enjeux) == len(joueurs) and min_enjeu == max_enjeu)
+        if fini:
+            self.sommes_manche = {}
+            tour = self.tour + 1
+            methode = "tour_" + str(tour)
+            self.tour += 1
+            getattr(self, methode)()
+    
     def get_combinaison(self, personnage):
         """Retourne la combinaison ou None si aucune."""
-        pieces = self.en_main.get(personnage)
+        pieces = list(self.en_main.get(personnage))
         if pieces is None:
             return None
         
@@ -131,11 +238,12 @@ class Jeu(BaseJeu):
             liste.append(piece)
             d_pieces[points] = liste
         
-        pieces = sorted([liste for liste in d_pieces.values()],
+        p_pieces = sorted([liste for liste in d_pieces.values()],
                 key=lambda liste: liste[0].points, reverse=True)
         
         essai = None
         for combinaison in combinaisons:
+            pieces = list(p_pieces)
             essai = combinaison.forme(pieces)
             if essai:
                 break
@@ -152,13 +260,12 @@ class Jeu(BaseJeu):
         """
         piece = choice(self.non_distribuees)
         self.non_distribuees.remove(piece)
-        for joueur, pieces in self.en_main.items():
-            combinaison = self.get_combinaison(joueur)
-            if combinaison:
-                self.combinaisons[joueur] = combinaison
-        
         return piece
     
+    def initier_tour(self):
+        """Commence la manche."""
+        self.tour_1()
+        
     def tour_1(self):
         """Commence une manche.
         
@@ -187,15 +294,99 @@ class Jeu(BaseJeu):
         """On ne retourne qu'une pièce."""
         piece = self.choisir_piece()
         self.tableau.append(piece)
-        self.envoyer("On retourne {} face visible sur le tableau.".format(
-                piece.nom_complet_indefini))
+        self.partie.envoyer("On retourne {} face visible sur le " \
+                "tableau.".format(piece.nom_complet_indefini))
+    
     def tour_4(self):
         """On ne retourne qu'une pièce."""
         piece = self.choisir_piece()
         self.tableau.append(piece)
-        self.envoyer("On retourne {} face visible sur le tableau.".format(
-                piece.nom_complet_indefini))
+        self.partie.envoyer("On retourne {} face visible sur le " \
+                "tableau.".format(piece.nom_complet_indefini))
     
     def tour_5(self):
         """On détermine le ou les vainqueurs de la manche."""
-        # à compléter
+        # On cherche toutes les combinaisons
+        joueurs = []
+        combinaisons = {}
+        for joueur in self.partie.joueurs:
+            if joueur not in self.abandons:
+                joueurs.append(joueur)
+                combinaisons[joueur] = self.get_combinaison(joueur)
+        
+        if len(combinaisons) == 1:
+            return self.gagner(joueur, combinaisons=combinaisons)
+        
+        # On cherche la combinaison la plus élevée
+        if any(combinaisons.values()):
+            lst_combinaisons = sorted([(j, cbn) for j, cbn in \
+                    combinaisons.items() if cbn], key=lambda couple: \
+                    couple[1].points_complet, reverse=True)
+            
+            t_combinaisons = list(lst_combinaisons)
+            lst_combinaisons = []
+            points = None
+            for joueur, combinaison in t_combinaisons:
+                if points is None:
+                    points = combinaison.points_complet
+                    lst_combinaisons.append((joueur, combinaison))
+                    continue
+                
+                if points == combinaison.points_complet:
+                    lst_combinaisons.append((j, combinaison))
+                else:
+                    break
+            
+            if len(lst_combinaisons) == 1:
+                self.gagner(lst_combinaisons[0][0], combinaisons=combinaisons)
+            else:
+                # On cherche les gagnants
+                combinaisons = sorted([(j, cbn) for j, cbn in \
+                        lst_combinaisons], key=lambda couple: \
+                        couple[1].points_exterieurs, reverse=True)
+                
+                joueurs = [j for j, cbn in combinaisons]
+                self.gagner(*joueurs, combinaisons=combinaisons)
+        else:
+            t_joueurs = []
+            for joueur in joueurs:
+                points = self.get_points_pieces(joueur)
+                t_joueurs.append((joueur, points))
+            
+            t_joueurs = sorted(t_joueurs, lambda couple: couple[1],
+                    reverse=True)
+            for joueur, points in list(t_joueurs):
+                if points != t_joueurs[0][1]:
+                    t_joueurs.remove((joueur, points))
+            joueurs = [j for j, p in t_joueurs]
+            self.gagner(*joueurs)
+    
+    def gagner(self, *joueurs, combinaisons=None):
+        """Les joueurs indiqués ont gagnés la partie."""
+        print(joueurs, combinaisons)
+    
+    def opt_b(self, personnage, montant):
+        """Change la petite blinde."""
+        if not montant:
+            personnage << "|err|Précisez un montant pour la petite " \
+                    "blinde.|ff|"
+        
+        try:
+            montant = int(montant)
+            assert montant > 1
+        except (ValueError, AssertionError):
+            personnage << "|err|Montant invalide.|ff|"
+        else:
+            self.petite_blinde = montant
+            self.partie.envoyer("La petite blinde est à présent à " \
+                    "{} pièces de bronze.".format(montant))
+            self.initier_tour()
+    
+    def opt_c(self, personnage, reste):
+        """Affiche la combinaison."""
+        combinaison = self.get_combinaison(personnage)
+        if combinaison:
+            personnage << "Votre plus forte combinaison : {}.".format(
+                    combinaison.nom)
+        else:
+            personnage << "Vous ne possédez aucune combinaison."

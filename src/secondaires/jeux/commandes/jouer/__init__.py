@@ -75,6 +75,7 @@ class CmdJouer(Commande):
             jeu.plateau = plateau
             jeu.partie = partie
             objet.partie = partie
+            jeu.init()
         elif partie.en_cours:
             personnage << "|err|La partie est déjà commencée.|ff|"
             return

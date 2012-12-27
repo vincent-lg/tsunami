@@ -50,19 +50,19 @@ class Plateau(BasePlateau):
         self.pieces = []
         couleurs = ["noir{e}", "rouge", "vert{e}", "gris{e}"]
         noms_pieces = [
-            ("chien", True),
-            ("mandiant", True),
-            ("voleur", True),
-            ("page", True),
-            ("troubadour", True),
-            ("druide", True),
-            ("sorcière", False),
-            ("fantassin", True),
-            ("cavalier", True),
-            ("laquais", True),
-            ("courtisane", False),
-            ("roi", True),
-            ("immortel", True),
+            ("chien", False),
+            ("mandiant", False),
+            ("voleur", False),
+            ("page", False),
+            ("troubadour", False),
+            ("druide", False),
+            ("sorcière", True),
+            ("fantassin", False),
+            ("cavalier", False),
+            ("laquais", False),
+            ("courtisane", True),
+            ("roi", False),
+            ("immortel", False),
         ]
         for couleur in couleurs:
             points = 1
@@ -73,8 +73,8 @@ class Plateau(BasePlateau):
     
     def afficher(self, personnage, jeu, partie):
         """Affiche la partie en cours au personnage."""
-        en_main = jeu.en_main[personnage]
-        tableau = jeu.tableau[jeu.visible - 1]
+        en_main = jeu.en_main.get(personnage)
+        tableau = jeu.tableau
         if en_main:
             msg = "Dans votre main, vous avez {} et {}.".format(
                     en_main[0].nom_complet_indefini,
@@ -84,8 +84,8 @@ class Plateau(BasePlateau):
         
         if tableau:
             tableau = [piece.nom_complet_indefini for piece in tableau]
-            aff_tableau = ", ".join(tableau[:-2]) + " et " + tableau[-1]
-            msg += "\nSur le tableau se trouve {}.".format(aff_tagbleau)
+            aff_tableau = ", ".join(tableau[:-1]) + " et " + tableau[-1]
+            msg += "\nSur le tableau se trouve {}.".format(aff_tableau)
 
         if partie.tour is personnage:
             msg += "\nC'est votre tour."

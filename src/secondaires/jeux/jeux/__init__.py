@@ -66,7 +66,6 @@ class BaseJeu(BaseObj):
         self.plateau = None
         self.nb_joueurs_min = 1
         self.nb_joueurs_max = 1
-        self.init()
         self._construire()
     
     def __getnewargs__(self):

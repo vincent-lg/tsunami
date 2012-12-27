@@ -60,6 +60,16 @@ class Combinaison(BaseObj):
         """Retourne le nom de la combinaison."""
         return "rien"
     
+    @property
+    def points_complet(self):
+        """Retourne les points de la combinaison spécifique."""
+        return (self.points, self.combinaison[-1].points)
+    
+    @property
+    def points_exterieurs(self):
+        """Retourne la somme des points des cartes non utilisées."""
+        return sum(piece.points for piece in self.exterieures)
+    
     @classmethod
     def forme(cls, pieces):
         """Retourne une combinaison si les pièces forment une combinaison.
@@ -178,7 +188,7 @@ class Suite(Combinaison):
         for groupe in pieces:
             a_pieces.extend(groupe)
         
-        a_pieces = sorted(a_piece, key=lambda piece: piece.points,
+        a_pieces = sorted(a_pieces, key=lambda piece: piece.points,
                 reverse=True)
         for i, piece in enumerate(a_pieces):
             t_pieces = [piece]
@@ -188,9 +198,10 @@ class Suite(Combinaison):
                     t_pieces.append(a_piece)
                     nb += 1
                     if len(t_pieces) == 5:
-                        exterieures = list(a_piece)
+                        exterieures = list(a_pieces)
                         for t_piece in t_pieces:
-                            exterieures.remove(t_piece)
+                            if t_piece in exterieures:
+                                exterieures.remove(t_piece)
                         
                         suite = cls(t_pieces, exterieures)
                         return suite
@@ -214,18 +225,20 @@ class Couleur(Combinaison):
         for groupe in pieces:
             a_pieces.extend(groupe)
         
-        a_pieces = sorted(a_piece, lambda piece: piece.points, reverse=True)
+        a_pieces = sorted(a_pieces, key=lambda piece: piece.points,
+                reverse=True)
         couleurs = {}
         for piece in a_pieces:
             liste = couleurs.get(piece._couleur, [])
             liste.append(piece)
             couleurs[piece._couleur] = liste
         
-        for groupe in couleurs:
+        for groupe in couleurs.values():
             if len(groupe) >= 5:
                 exterieures = list(a_pieces)
                 for piece in groupe:
-                    exterieures.remove(piece)
+                    if piece in exterieures:
+                        exterieures.remove(piece)
                 
                 couleur = cls(groupe, exterieures)
                 return couleur
@@ -245,6 +258,7 @@ class Carre(Combinaison):
     
     @classmethod
     def forme(cls, pieces):
+        print("carré", pieces)
         for groupe in pieces:
             if len(groupe) == 4:
                 autres = list(pieces)

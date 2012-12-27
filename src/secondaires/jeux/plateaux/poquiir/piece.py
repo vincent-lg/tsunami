@@ -36,7 +36,7 @@ class Piece(BaseObj):
     
     """Classe représentant une pièce du poquiir."""
     
-    def __init__(self, nom, couleur, points, fem=False):
+    def __init__(self, nom, couleur, points, fem=True):
         """Constructeur du pion."""
         BaseObj.__init__(self)
         self.nom = nom
@@ -47,6 +47,9 @@ class Piece(BaseObj):
     
     def __getnewargs__(self):
         return ("", "", 0)
+    
+    def __repr__(self):
+        return self.nom_complet_indefini
     
     @property
     def couleur(self):
@@ -75,7 +78,7 @@ class Piece(BaseObj):
     
     @property
     def nom_complet_indefini(self):
-        nom = self.article_indefini
+        nom = self.article_indefini + " "
         nom += self.nom
         nom += " " + self.couleur
         nom += " (" + str(self.points) + ")"

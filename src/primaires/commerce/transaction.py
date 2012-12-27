@@ -229,7 +229,8 @@ class Transaction:
         for objet, qtt in self.argent_rendu.items():
             self.initiateur.ramasser(objet, qtt=qtt)
         
-        self.receveur.parent.zone.argent_total += self.somme
+        if self.receveur:
+            self.receveur.parent.zone.argent_total += self.somme
 
 class FondsInsuffisants(ExceptionMUD):
     
