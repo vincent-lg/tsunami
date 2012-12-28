@@ -93,8 +93,8 @@ class Paire(Combinaison):
     
     @property
     def nom(self):
-        nom_piece = self.combinaison[0].nom
-        return "une paire de {}s".format(nom_piece)
+        nom_piece = self.combinaison[0].nom.rstrip("s")
+        return lisser("une paire de {}s".format(nom_piece))
     
     @classmethod
     def forme(cls, pieces):
@@ -119,9 +119,9 @@ class DoublePaire(Combinaison):
     
     @property
     def nom(self):
-        nom_1 = self.combinaison[0].nom
-        nom_2 = self.combinaison[2].nom
-        return "une double-paire de {}s et {}s".format(nom_1, nom_2)
+        nom_1 = self.combinaison[0].nom.rstrip("s")
+        nom_2 = self.combinaison[2].nom.rstrip("s")
+        return lisser("une double-paire de {}s et de {}s".format(nom_1, nom_2))
     
     @classmethod
     def forme(cls, pieces):
@@ -153,8 +153,8 @@ class Brelan(Combinaison):
     
     @property
     def nom(self):
-        nom_piece = self.combinaison[0].nom
-        return "un brelan de {}s".format(nom_piece)
+        nom_piece = self.combinaison[0].nom.rstrip("s")
+        return lisser("un brelan de {}s".format(nom_piece))
     
     @classmethod
     def forme(cls, pieces):
@@ -180,6 +180,7 @@ class Suite(Combinaison):
     @property
     def nom(self):
         nom_piece = self.combinaison[0].nom_complet_defini
+        nom_piece = " ".join(nom_piece.split(" ")[:-2])
         return lisser("une suite à {}".format(nom_piece))
     
     @classmethod
@@ -217,6 +218,7 @@ class Couleur(Combinaison):
     @property
     def nom(self):
         nom_piece = self.combinaison[0].nom_complet_defini
+        nom_piece = " ".join(nom_piece.split(" ")[:-2])
         return lisser("une couleur à {}".format(nom_piece))
     
     @classmethod
@@ -253,8 +255,8 @@ class Carre(Combinaison):
     
     @property
     def nom(self):
-        nom_piece = self.combinaison[0].nom
-        return "un carré de {}s".format(nom_piece)
+        nom_piece = self.combinaison[0].nom.strip("s")
+        return lisser("un carré de {}s".format(nom_piece))
     
     @classmethod
     def forme(cls, pieces):

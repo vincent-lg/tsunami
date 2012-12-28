@@ -67,6 +67,11 @@ class Jeu(BaseJeu):
     
     def peut_commencer(self):
         """La partie peut-elle commencer ?"""
+        if not self.partie.en_cours:
+            self.partie.envoyer(
+                    "|err|La partie n'a pas encore commencée.|ff|")
+            return False
+        
         if self.petite_blinde == 0:
             self.partie.envoyer("Le montant de la petite blinde n'a pas " \
                     "été fixé.")
@@ -150,8 +155,8 @@ class Jeu(BaseJeu):
         max_enjeu = 0
         if self.sommes_manche:
             max_enjeu = max(self.sommes_manche.values())
-        if self.tour == 1 and max_enjeu < self.petite_blinde:
-            max_enjeu = self.petite_blinde
+        if self.tour == 1 and max_enjeu < self.grande_blinde:
+            max_enjeu = self.grande_blinde
         
         if max_enjeu > enjeu:
             montant = max_enjeu - enjeu
@@ -207,17 +212,17 @@ class Jeu(BaseJeu):
         enjeux = self.sommes_manche.copy()
         no = 0
         for abandon in self.abandons:
+            no += 1
             if abandon in enjeux:
                 del enjeux[abandon]
-                no += 1
         
         min_enjeu = max_enjeu = 0
         joueurs = self.partie.joueurs
-        if self.sommes_manche:
+        if enjeux:
             min_enjeu = min(enjeux.values())
             max_enjeu = max(enjeux.values())
-        
-        fini = (no + len(enjeux) == len(joueurs) and min_enjeu == max_enjeu)
+        print(no, len(enjeux), len(joueurs), min_enjeu, max_enjeu)
+        fini = no + len(enjeux) == len(joueurs) and min_enjeu == max_enjeu
         if fini:
             self.sommes_manche = {}
             tour = self.tour + 1
@@ -277,6 +282,7 @@ class Jeu(BaseJeu):
     def initier_tour(self):
         """Commence la manche."""
         self.tour_1()
+        self.partie.en_cours = True
         
     def tour_1(self):
         """Commence une manche.
@@ -325,6 +331,10 @@ class Jeu(BaseJeu):
             if joueur not in self.abandons:
                 joueurs.append(joueur)
                 combinaisons[joueur] = self.get_combinaison(joueur)
+        
+        if len(joueurs) == 1:
+            return self.gagner(joueur, masque=True,
+                    combinaisons=combinaisons)
         
         if len(combinaisons) == 1:
             return self.gagner(joueur, combinaisons=combinaisons)
@@ -406,7 +416,10 @@ class Jeu(BaseJeu):
                         "pièces de bronze !".format(partage), joueur)
                 self.donner_argent(joueur, partage)
         
+        blinde = self.petite_blinde
         self.init()
+        self.petite_blinde = blinde
+        self.partie.en_cours = False
     
     def donner_argent(self, joueur, montant):
         """Donne l'argent au joueur.
@@ -427,9 +440,14 @@ class Jeu(BaseJeu):
     
     def opt_b(self, personnage, montant):
         """Change la petite blinde."""
+        if self.partie.en_cours:
+            personnage << "|err|La partie a déjà commencée.|ff|"
+            return
+        
         if not montant:
             personnage << "|err|Précisez un montant pour la petite " \
                     "blinde.|ff|"
+            return
         
         try:
             montant = int(montant)
@@ -440,7 +458,6 @@ class Jeu(BaseJeu):
             self.petite_blinde = montant
             self.partie.envoyer("La petite blinde est à présent à " \
                     "{} pièces de bronze.".format(montant))
-            self.initier_tour()
     
     def opt_c(self, personnage, reste):
         """Affiche la combinaison."""
@@ -450,3 +467,36 @@ class Jeu(BaseJeu):
                     combinaison.nom)
         else:
             personnage << "Vous ne possédez aucune combinaison."
+    
+    def opt_p(self, personnage, reste):
+        """Renvoie le pot total."""
+        personnage << "Le pot total contient {} pièces de bronze.".format(
+                self.pot)
+    
+    def opt_s(self, personnage, reste):
+        """Retourne le montant que doit payer le personnage pour pouvoir suivre."""
+        montant = 0
+        enjeu = self.sommes_manche.get(personnage, 0)
+        max_enjeu = 0
+        if self.sommes_manche:
+            max_enjeu = max(self.sommes_manche.values())
+        if self.tour == 1 and max_enjeu < self.grande_blinde:
+            max_enjeu = self.grande_blinde
+        
+        if max_enjeu > enjeu:
+            montant = max_enjeu - enjeu
+        
+        personnage << "Pour suivre, vous devez payer {} pièces de " \
+                "bronze.".format(montant)
+    
+    def opt_j(self, personnage, reste):
+        """Lance la partie."""
+        if self.partie.en_cours:
+            personnage << "|err|La partie a déjà commencée.|ff|"
+            return
+        
+        if self.petite_blinde == 0:
+            personnage << "|err|La petite blinde n'a pas encore été fixée.|ff|"
+            return
+        
+        self.initier_tour()

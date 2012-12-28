@@ -46,6 +46,7 @@ class Plateau(BaseType):
     def __init__(self, cle=""):
         """Constructeur du type jeu"""
         BaseType.__init__(self, cle)
+        self.peut_prendre = False
         plateaux = list(sorted(type(self).importeur.jeux.plateaux.keys()))
         self.plateau = ""
         self.etendre_editeur("l", "plateau", Choix, self, "plateau", plateaux)
