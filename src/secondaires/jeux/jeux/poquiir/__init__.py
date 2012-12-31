@@ -221,7 +221,7 @@ class Jeu(BaseJeu):
         if enjeux:
             min_enjeu = min(enjeux.values())
             max_enjeu = max(enjeux.values())
-        print(no, len(enjeux), len(joueurs), min_enjeu, max_enjeu)
+        
         fini = no + len(enjeux) == len(joueurs) and min_enjeu == max_enjeu
         if fini:
             self.sommes_manche = {}
@@ -260,7 +260,7 @@ class Jeu(BaseJeu):
     
     def get_points_pieces(self, joueur):
         """Retourne les points des pièces du joueur."""
-        pièces = list(self.en_main.get(joueur, []))
+        pieces = list(self.en_main.get(joueur, []))
         pieces.extend(self.tableau)
         if pieces:
             return sum(p.points for p in pieces)
@@ -333,6 +333,7 @@ class Jeu(BaseJeu):
                 combinaisons[joueur] = self.get_combinaison(joueur)
         
         if len(joueurs) == 1:
+            joueur = joueurs[0]
             return self.gagner(joueur, masque=True,
                     combinaisons=combinaisons)
         

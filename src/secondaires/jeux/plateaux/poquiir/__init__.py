@@ -51,7 +51,7 @@ class Plateau(BasePlateau):
         couleurs = ["noir{e}", "rouge", "vert{e}", "gris{e}"]
         noms_pieces = [
             ("chien", False),
-            ("mandiant", False),
+            ("mendiant", False),
             ("voleur", False),
             ("page", False),
             ("troubadour", False),
