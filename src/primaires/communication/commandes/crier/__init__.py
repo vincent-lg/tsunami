@@ -58,6 +58,7 @@ class CmdCrier(Commande):
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         message = dic_masques["message"].message
+        personnage.agir("parler")
         message = echapper_accolades(message)
         if "alcool" in personnage.affections:
             affection = personnage.affections["alcool"]
