@@ -104,6 +104,10 @@ class Attitude(BaseObj):
     
     def jouer(self, acteur, arguments):
         """Joue le social pour acteur"""
+        if acteur.est_mort():
+            acteur << "|err|Vous êtes comme inconscient.|ff|"
+            return
+        
         statut = self.statut
         if statut == INACHEVEE:
             acteur << "|err|Cette attitude n'est pas achevée.|ff|"
