@@ -90,8 +90,9 @@ class ConteneurNourriture(BaseType):
     def calculer_poids(self):
         """Retourne le poids de l'objet et celui des objets contenus."""
         poids = self.poids_unitaire
-        for o, nb in self.conteneur.iter_nombres():
-            poids += o.poids * nb
+        if hasattr(self, "nourriture"):
+            for objet in self.nourriture:
+                poids += objet.poids
         
         return round(poids, 3)
     
