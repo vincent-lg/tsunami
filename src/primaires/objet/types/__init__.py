@@ -88,6 +88,7 @@ from .chapeau import Chapeau
 from .chaussette import Chaussette
 from .chaussure import Chaussure
 from .chemise import Chemise
+from .ceinture import Ceinture
 from .gant import Gant
 from .jupe import Jupe
 from .pantalon import Pantalon

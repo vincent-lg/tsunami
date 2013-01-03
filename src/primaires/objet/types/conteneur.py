@@ -103,6 +103,13 @@ class Conteneur(BaseType):
         """Retourne True si le conteneur accepte le type d'objet."""
         return self.types_admis == ["*"] or self.prefere_type(objet)
     
+    def peut_contenir(self, objet, qtt=1):
+        """Retourne True si le conteneur peut prendre l'objet."""
+        poids = objet.poids * qtt
+        contenu = self.poids
+        poids_max = self.poids_max
+        return contenu + poids <= poids_max
+    
     def calculer_poids(self):
         """Retourne le poids de l'objet et celui des objets contenus."""
         poids = self.poids_unitaire

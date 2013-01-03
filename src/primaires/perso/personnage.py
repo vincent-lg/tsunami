@@ -853,17 +853,19 @@ class Personnage(BaseObj):
         """
         for o in self.equipement.inventaire:
             if o is not objet and o is not exception and o.est_de_type(
-                    "conteneur") and o.prefere_type(objet):
+                    "conteneur") and o.prefere_type(objet) and \
+                    o.peut_contenir(objet, qtt):
                 o.conteneur.ajouter(objet, qtt)
                 return o
         
         for o in self.equipement.inventaire:
             if o is not objet and o is not exception and o.est_de_type(
-                    "conteneur") and o.accepte_type(objet):
+                    "conteneur") and o.accepte_type(objet) and \
+                    o.peut_contenir(objet, qtt):
                 o.conteneur.ajouter(objet, qtt)
                 return o
         
-        if qtt > 1:
+        if not objet.unique:
             return None
         
         for membre in self.equipement.membres:
