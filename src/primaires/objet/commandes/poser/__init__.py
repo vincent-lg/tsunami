@@ -77,7 +77,7 @@ class CmdPoser(Commande):
                 personnage << "Vous ne pouvez pas prendre {} avec vos " \
                         "mains...".format(objet.nom_singulier)
                 return
-            pose += 1
+            
             if qtt > nombre:
                 qtt = nombre
             
@@ -94,9 +94,10 @@ class CmdPoser(Commande):
                         return
             else:
                 personnage.salle.objets_sol.ajouter(objet, qtt)
-        
-        if pose < qtt:
-            pose = qtt
+            
+            pose += qtt
+            if pose >= nombre:
+                break
         
         if dans:
             personnage << "Vous déposez {} dans {}.".format(
@@ -108,4 +109,8 @@ class CmdPoser(Commande):
             personnage.salle.envoyer("{{}} pose {}.".format(
                         objet.get_nom(pose)), personnage)
             
-            objet.prototype.poser(objet, personnage)
+            prototype = objet
+            if hasattr(objet, "prototype"):
+                prototype = objet.prototype
+            
+            prototype.poser(objet, personnage)

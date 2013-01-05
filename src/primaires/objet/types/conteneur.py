@@ -30,6 +30,7 @@
 
 """Fichier contenant le type Conteneur."""
 
+from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.interpreteur.editeur.selection import Selection
 from bases.objet.attribut import Attribut
 from .base import BaseType
@@ -51,6 +52,7 @@ class Conteneur(BaseType):
         self.empilable_sur = ["vêtement"]
         self.types_admis = ["*"]
         self.poids_max = 10
+        self.etendre_editeur("x", "poids max", Flottant, self, "poids_max")
         self.etendre_editeur("t", "types admis", Selection, self,
                 "types_admis", type(self).importeur.objet.noms_types)
         
@@ -106,7 +108,7 @@ class Conteneur(BaseType):
     def peut_contenir(self, objet, qtt=1):
         """Retourne True si le conteneur peut prendre l'objet."""
         poids = objet.poids * qtt
-        contenu = self.poids
+        contenu = self.poids - self.prototype.poids_unitaire
         poids_max = self.poids_max
         return contenu + poids <= poids_max
     
@@ -149,6 +151,14 @@ class Conteneur(BaseType):
             "possibles.\n\n" \
             "Types possibles : {objet.str_types}\n\n" \
             "Types admis actuels : {objet.str_types_admis}"
+        
+        poids_max = enveloppes["x"]
+        poids_max.apercu = "{objet.poids_max} kg"
+        poids_max.prompt = "Poids max du conteneur : "
+        poids_max.aide_courte = \
+            "Entrez le |ent|poids maximum|ff| du conteneur ou " \
+            "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
+            "Poids maximum actuel : {objet.poids_max}"
     
     def objets_contenus(self, conteneur):
         """Retourne les objets contenus."""

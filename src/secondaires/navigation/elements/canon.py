@@ -87,6 +87,20 @@ class Canon(BaseElement):
         
         return messages[-1][1]
     
+    @property
+    def vecteur(self):
+        """Retourne le vecteur anticipé de la direction du projectile.
+        
+        On se base sur la charge et le poids du projectile pour estimer
+        la distance à laquelle le projectile peut être tiré. On se base
+        sur l'alignement pour estimer la direction du projectile.
+        
+        Sans le nuancer avec la direction du navire et sa position, ce
+        vecteur ne peut pas être utilisé.
+        
+        """
+        return 0
+        
     def tirer(self, navire):
         """Le projectile part."""
         if self.projectile is None:
