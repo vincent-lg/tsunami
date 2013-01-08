@@ -30,11 +30,16 @@
 
 """Fichier contenant la classe Canon, détaillée plus bas."""
 
+from datetime import datetime
+from math import *
+
 from bases.objet.attribut import Attribut
+from primaires.perso.exceptions.stat import DepassementStat
+from primaires.salle.salle import Salle
 from primaires.vehicule.vecteur import Vecteur
 from .base import BaseElement
 
-# Charge minimum pour que le combustible part
+# Charge minimum pour que le projectile part
 CHARGE_MIN = 2
 
 class Canon(BaseElement):
@@ -59,9 +64,10 @@ class Canon(BaseElement):
             "v_angle": Attribut(lambda: 0),
             "projectile": Attribut(lambda: None),
             "charge": Attribut(lambda: 0),
+            "en_cours": Attribut(lambda: False),
+            "dernier_tir": Attribut(lambda: None),
         }
     
-    @property
     def facteur_charge(self):
         """Retourne le facteur de charge, en pourcent."""
         if self.charge_max == 0:
@@ -69,26 +75,25 @@ class Canon(BaseElement):
         
         return self.charge / self.charge_max * 100
     
-    @property
     def message_charge(self):
         """Retourne le message correspondant à la charge du canon."""
         messages = [
-            (5, "Une explosion assez discrète se fait entendre."),
+            (5, "Une explosion assez discrète se fait entendre"),
             (20, "Une explosion assez sonore retentit"),
             (50, "Une explosion assez forte fait frémir le navire"),
             (75, "Une violente détonation fait trembler le navire"),
+            (75, "Une violente détonation fait trembler le navire"),
             (95, "Une détonnation assourdissante fait trembler le " \
-                    "bois sous vos pieds."),
+                    "bois sous vos pieds"),
         ]
         
-        facteur = self.facteur_charge
+        facteur = self.facteur_charge()
         for t_facteur, message in messages:
             if facteur < t_facteur:
                 return message
         
         return messages[-1][1]
     
-    @property
     def vecteur(self):
         """Retourne le vecteur anticipé de la direction du projectile.
         
@@ -108,7 +113,7 @@ class Canon(BaseElement):
         if self.projectile is None:
             return vec_nul
         
-        norme = self.charge * 15 / self.projectile.poids
+        norme = self.charge * 15 / self.projectile.poids_unitaire
         
         # À présent, oriente le vecteur en fonction de l'angle du canon
         vecteur = Vecteur(1, 0, 0, self)
@@ -116,7 +121,6 @@ class Canon(BaseElement):
         vecteur.orienter(self.h_angle)
         return vecteur
     
-    @property
     def cible(self):
         """Retourne la cible du canon.
         
@@ -127,20 +131,19 @@ class Canon(BaseElement):
         
         """
         # On calcul le vecteur du boulet
-        direction = self.vecteur
+        direction = self.vecteur()
         
         # On le nuance avec la direction du navire
         salle = self.parent
         if salle is None:
-            return None
+            return (direction, None)
         
-        navire = parent.navire
+        navire = salle.navire
         if navire is None:
-            return None
+            return (direction, None)
         
         direction.tourner_autour_z(navire.direction.direction)
         direction = direction + navire.position
-        
         # On récupère toutes les salles avec coordonnées
         cibles = importeur.salle._coords
         if navire.etendue:
@@ -148,16 +151,112 @@ class Canon(BaseElement):
             for o_coords, obstacle in etendue.obstacles.items():
                 cibles[(o_coords + etendue.altitude)] = obstacle
         
+        # On cherche les salles entre origine et destination
+        origine = navire.position.tuple
+        destination = direction.tuple
+        sensibilite = 0.5
+        entre = []
+        o_x, o_y, o_z = origine
+        d_x, d_y, d_z = destination
+        for coords, cible in cibles.items():
+            x, y, z = coords
+            if x <= max(o_x, d_x) and x >= min(o_x, d_x) \
+                and y <= max(o_y, d_y) and y >= min(o_y, d_y) \
+                and z <= max(o_z, d_z) and z >= min(o_z, d_z):
+                entre.append((coords, cible))
         
-    def tirer(self, navire):
-        """Le projectile part."""
-        if self.projectile is None:
-            raise ValueError("aucun projectile")
+        # On parcourt les cibles dans le rectangle
+        trajectoire = []
+        ab = Vecteur(d_x - o_x, d_y - o_y, d_z - o_z)
+        for coords, cible in entre:
+            if coords == origine:
+                continue
+            
+            x, y, z = coords
+            ac = Vecteur(x - o_x, y - o_y, z - o_z)
+            d = 0
+            # On détermine les angles horizontaux et verticaux entre ab et ac
+            alpha = radians(ab.argument() - ac.argument())
+            if ab.x or ab.y:
+                # angle de ab avec (O, x, y) : arctan(z/sqrt(x² + y²))
+                beta_ab = atan(ab.z / sqrt(ab.x ** 2 + ab.y ** 2))
+            elif ab.z < 0:
+                beta_ab = radians(-90)
+            else:
+                beta_ab = radians(90)
+            if ac.x or ac.y:
+                # angle de ac avec (O, x, y) idem
+                beta_ac = atan(ac.z / sqrt(ac.x ** 2 + ac.y ** 2))
+            elif ac.z < 0:
+                beta_ac = radians(-90)
+            else:
+                beta_ac = radians(90)
+            beta = beta_ab - beta_ac
+            # Distances horizontale et verticale entre c et ab
+            mc_x = ac.norme * sin(alpha)
+            mc_z = ac.norme * sin(beta)
+            d = sqrt(mc_x ** 2 + mc_z ** 2)
+            
+            if d <= sensibilite:
+                trajectoire.append((coords, cible))
         
+        # Fonction retournant la distance du tuple (coords, cible)
+        def distance(couple):
+            coords, cible = couple
+            x, y, z = coords
+            v_o_salle = Vecteur(x - o_x, y - o_y, z - o_z)
+            return v_o_salle.norme
+        
+        trajectoire = sorted(trajectoire, key=distance)
+        if trajectoire:
+            return (direction, trajectoire[0][1])
+        
+        return (direction, None)
+    
+    def tirer(self, auteur=None):
+        """Le canon tire son projectile."""
         if self.charge == 0:
-            raise ValueError("charge nulle")
+            return
         
-        # On calcul la tension du projectile en fonction de son poids
-        # et de la charge de poudre
-        # Le rapport est 1 kg de poudre propulse 5 kg de projectile à XY=1
-        msg = self.message_charge
+        if self.projectile is None:
+            return
+        
+        vecteur, cible = self.cible()
+        if self.parent and self.parent.navire:
+            vecteur = self.parent.navire.position - vecteur
+        
+        distance = vecteur.norme
+        temps = distance / 15
+        msg = self.message_charge()
+        if self.parent:
+            self.parent.envoyer(msg)
+        projectile = self.projectile
+        self.projectile = None
+        self.dernier_tir = datetime.now()
+        if temps <= 0.5:
+            self.endommager(projectile, cible, auteur=auteur)
+        else:
+            importeur.diffact.ajouter_action("canon_" + str(id(self)),
+                    temps, self.endommager, projectile, cible, auteur=auteur)
+            self.en_cours = True
+    
+    def endommager(self, projectile, cible, auteur=None):
+        """Endommage la cible."""
+        self.en_cours = False
+        if isinstance(cible, Salle):
+            titre = cible.titre
+            cible.envoyer(
+                    "|rg|" + projectile.nom_singulier.capitalize() + \
+                    " détonne près de vous !|ff|")
+            degats = projectile.degats
+            for personnage in cible.personnages:
+                try:
+                    personnage.stats.vitalite -= degats
+                except DepassementStat:
+                    personnage.mourir()
+        else:
+            titre = cible.desc_survol
+        
+        if auteur:
+            auteur << "{} atteint {} !".format(projectile.nom_singulier, titre)
+        importeur.objet.supprimer_objet(projectile.identifiant)

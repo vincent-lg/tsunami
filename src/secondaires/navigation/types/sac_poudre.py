@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,32 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les éléments de navire."""
+"""Fichier contenant le type sac de poudre."""
 
-from abstraits.obase import MetaBaseObj
+from bases.objet.attribut import Attribut
+from primaires.interpreteur.editeur.flag import Flag
+from primaires.interpreteur.editeur.flottant import Flottant
+from primaires.objet.types.base import BaseType
 
-types = {} # types d'éléments {nom: classe}
-
-class MetaElt(MetaBaseObj):
+class SacPoudre(BaseType):
     
-    """Métaclasse des types d'éléments.
-    
-    Elle ajoute le type de l'élément dans le dictionnaire 'types' si il possède
-    un nom.
+    """Type d'objet: sac de poudre.
     
     """
     
-    def __init__(cls, nom, bases, contenu):
-        """Constructeur de la métaclasse"""
-        MetaBaseObj.__init__(cls, nom, bases, contenu)
-        if cls.nom_type:
-            types[cls.nom_type] = cls
-
-from . import ancre
-from . import amarre
-from . import canon
-from . import gouvernail
-from . import loch
-from . import passerelle
-from . import rames
-from . import voile
+    nom_type = "sac de poudre"
+    def __init__(self, cle=""):
+        """Constructeur de l'objet"""
+        BaseType.__init__(self, cle)
+        self.masculin = True
+        self.poids_max_contenu = 1.0
+        self.etendre_editeur("co", "contenu en kilos", Flottant,
+                self, "poids_max_contenu", "kg")
+        self.etendre_editeur("ma", "genre masculin", Flag, self, "masculin")
+        
+        # Attributs propres à l'objet (non au prototype)
+        self._attributs = {
+            "poids_contenu": Attribut(lambda: self.poids_max_contenu),
+        }
+    
+    def travailler_enveloppes(self, enveloppes):
+        """Travail sur les enveloppes"""
+        contenu = enveloppes["co"]
+        contenu.apercu = "{objet.contenu}"
+        contenu.prompt = "Quantité que peut contenir le sac en kilos : "
+        contenu.aide_courte = \
+            "Entrez le |ent|contenu|ff| en kilos " \
+            "du sac de poudre\n" \
+            "Entrez |cmd|/|ff| pour revenir à la fenêtre " \
+            "parente.\n\n" \
+            "Contenu actuel : {objet.poids_max_contenu} kg"

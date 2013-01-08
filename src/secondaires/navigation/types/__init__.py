@@ -30,4 +30,6 @@
 
 """Package contenant les types d'objets propres à la navigation."""
 
+from . import boulet
 from . import boussole
+from . import sac_poudre
