@@ -85,7 +85,7 @@ class Navire(Vehicule):
                 
                 # On recopie les éléments
                 for t_elt in salle.mod_elements:
-                    elt = Element(t_elt)
+                    elt = Element(t_elt, n_salle)
                     n_salle.elements.append(elt)
                 
                 self.salles[r_coords] = n_salle

@@ -31,6 +31,7 @@
 """Fichier contenant la classe Canon, détaillée plus bas."""
 
 from bases.objet.attribut import Attribut
+from primaires.vehicule.vecteur import Vecteur
 from .base import BaseElement
 
 # Charge minimum pour que le combustible part
@@ -54,7 +55,7 @@ class Canon(BaseElement):
         # Attributs propres aux canons
         self.charge_max = 1
         self._attributs = {
-            "o_angle": Attribut(lambda: 0),
+            "h_angle": Attribut(lambda: 0),
             "v_angle": Attribut(lambda: 0),
             "projectile": Attribut(lambda: None),
             "charge": Attribut(lambda: 0),
@@ -99,7 +100,54 @@ class Canon(BaseElement):
         vecteur ne peut pas être utilisé.
         
         """
-        return 0
+        # D'abord, on calcule la longueur du vecteur (sa norme)
+        vec_nul = Vecteur(0, 0, 0)
+        if self.charge == 0:
+            return vec_nul
+        
+        if self.projectile is None:
+            return vec_nul
+        
+        norme = self.charge * 15 / self.projectile.poids
+        
+        # À présent, oriente le vecteur en fonction de l'angle du canon
+        vecteur = Vecteur(1, 0, 0, self)
+        vecteur = norme * vecteur
+        vecteur.orienter(self.h_angle)
+        return vecteur
+    
+    @property
+    def cible(self):
+        """Retourne la cible du canon.
+        
+        La cible est soit :
+            Une salle (salle de navire ou non)
+            Une côte d'une étendue
+            None si rien n'est trouvé comme cible.
+        
+        """
+        # On calcul le vecteur du boulet
+        direction = self.vecteur
+        
+        # On le nuance avec la direction du navire
+        salle = self.parent
+        if salle is None:
+            return None
+        
+        navire = parent.navire
+        if navire is None:
+            return None
+        
+        direction.tourner_autour_z(navire.direction.direction)
+        direction = direction + navire.position
+        
+        # On récupère toutes les salles avec coordonnées
+        cibles = importeur.salle._coords
+        if navire.etendue:
+            etendue = navire.etendue
+            for o_coords, obstacle in etendue.obstacles.items():
+                cibles[(o_coords + etendue.altitude)] = obstacle
+        
         
     def tirer(self, navire):
         """Le projectile part."""
@@ -112,5 +160,4 @@ class Canon(BaseElement):
         # On calcul la tension du projectile en fonction de son poids
         # et de la charge de poudre
         # Le rapport est 1 kg de poudre propulse 5 kg de projectile à XY=1
-        tension = self.charge * 5 / self.projectile.poids
         msg = self.message_charge

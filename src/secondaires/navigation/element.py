@@ -57,10 +57,11 @@ class Element(BaseObj):
     
     """
     
-    def __init__(self, prototype):
+    def __init__(self, prototype, parent=None):
         """Constructeur de l'élément"""
         BaseObj.__init__(self)
         self.prototype = prototype
+        self.parent = parent
         if prototype:
             # On copie les attributs propres à l'element
             # Ils sont disponibles dans le prototype, dans la variable

@@ -72,6 +72,8 @@ class SalleNavire(Salle):
     
     """
     
+    _nom = "salle_navire"
+    _version = 1
     def __init__(self, zone, mnemonic, r_x=0, r_y=0, r_z=0, modele=None,
             navire=None):
         """Constructeur du navire."""
