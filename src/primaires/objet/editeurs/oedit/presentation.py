@@ -34,9 +34,11 @@
 
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
+from primaires.interpreteur.editeur.flags import Flags
 from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.entier import Entier
+from primaires.objet.types.base import FLAGS
 from primaires.scripting.editeurs.edt_script import EdtScript
 from .edt_noms import EdtNoms
 from .edt_emplacement import EdtEmplacement
@@ -78,11 +80,12 @@ class EdtPresentation(Presentation):
             "| |tit|" + "Description de l'objet {}".format(prototype).ljust(
             76) + "|ff||\n" + self.opts.separateur
         
-        # Extensions
-        for extension in prototype._extensions_editeur:
-            rac, ligne, editeur, objet, attr, sup = extension
-            env = self.ajouter_choix(ligne, rac, editeur, objet, attr, *sup)
-            env.parent = self
+        # Flags
+        flags = self.ajouter_choix("flags", "fl", Flags, prototype, "flags",
+                FLAGS)
+        flags.parent = self
+        flags.aide_courte = \
+            "Flags d'objet de {} :".format(prototype.cle)
         
         # Emplacement
         emp = self.ajouter_choix("emplacement", "e", EdtEmplacement,
@@ -134,6 +137,12 @@ class EdtPresentation(Presentation):
         poids.aide_courte = \
             "Entrez le poids unitaire de l'objet.\n\nPoids actuel : " \
             "{objet.poids_unitaire}"
+        
+        # Extensions
+        for extension in prototype._extensions_editeur:
+            rac, ligne, editeur, objet, attr, sup = extension
+            env = self.ajouter_choix(ligne, rac, editeur, objet, attr, *sup)
+            env.parent = self
         
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,

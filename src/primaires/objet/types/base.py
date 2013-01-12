@@ -35,6 +35,11 @@ from primaires.format.description import Description
 from primaires.objet.script import ScriptObjet
 from . import MetaType
 
+# Constantes
+FLAGS = {
+    "ne peut pas prendre": 1,
+}
+
 class BaseType(BaseObj, metaclass=MetaType):
     
     """Classe abstraite représentant le type de base d'un objet.
@@ -83,6 +88,7 @@ class BaseType(BaseObj, metaclass=MetaType):
         self.description = Description(parent=self)
         self.objets = []
         self.unique = True # par défaut tout objet est unique
+        self.flags = 0
         self._prix = 1 # valeur en magasin
         self.sans_prix = False
         self.poids_unitaire = 1 # 1 Kg

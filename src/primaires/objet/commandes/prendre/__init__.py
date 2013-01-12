@@ -31,6 +31,7 @@
 """Package contenant la commande 'prendre'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.objet.types.base import FLAGS
 from primaires.objet.conteneur import SurPoids
 
 class CmdPrendre(Commande):
@@ -76,7 +77,8 @@ class CmdPrendre(Commande):
         
         pris = 0
         for objet, qtt, conteneur in objets:
-            if not objet.peut_prendre:
+            if not objet.peut_prendre or objet.flags & \
+                    FLAGS["ne peut pas prendre"] != 0:
                 personnage << "Vous ne pouvez pas prendre {} avec vos " \
                         "mains...".format(objet.nom_singulier)
                 return
