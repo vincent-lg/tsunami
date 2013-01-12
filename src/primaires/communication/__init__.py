@@ -213,6 +213,10 @@ class Module(BaseModule):
                 return
             self.canaux[nom_canal].rejoindre_ou_quitter(personnage)
         else:
+            if not personnage.est_immortel():
+                personnage << "|err|Ce canal n'existe pas.|ff|"
+                return
+            
             canal = self.ajouter_canal(nom_canal, personnage)
             personnage << "|att|Le canal {} a été créé.|ff|".format(nom_canal)
             canal.rejoindre_ou_quitter(personnage)
