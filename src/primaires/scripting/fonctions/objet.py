@@ -39,7 +39,24 @@ class ClasseFonction(Fonction):
     
     @classmethod
     def init_types(cls):
+        cls.ajouter_types(cls.objet_salle, "Salle", "str")
         cls.ajouter_types(cls.objet_perso, "Personnage", "str")
+    
+    @staticmethod
+    def objet_salle(salle, cle_prototype):
+        """Retourne, si trouvé, l'objet indiqué posé dans la salle.
+        
+        Vous devez préciser en paramètre la salle et la clé du prototype
+        de l'objet. L'objet retourné est cherché parmi les objets posés
+        au sol de la salle. Si aucun n'est trouvé, retourne une valeur
+        nulle.
+        
+        """
+        for objet in salle.objets_sol._objets:
+            if objet.cle == cle_prototype:
+                return objet
+        
+        return None
     
     @staticmethod
     def objet_perso(personnage, cle_prototype):
