@@ -417,6 +417,15 @@ class Inventaire:
         self.contenu_dans = contenu_dans
         self.quantite = quantite
     
+    def iter_objets(self):
+        """Retourne une liste de tuples (objet, conteneur)."""
+        for objet in self.objets:
+            t_conteneur = self.contenu_dans[objet]
+            if hasattr(t_conteneur, "conteneur"):
+                t_conteneur = t_conteneur.conteneur
+            
+            yield (objet, t_conteneur)
+    
     def iter_objets_qtt(self, conteneur=False):
         """Retourne une liste de tuples (objet, qtt, conteneur).
         

@@ -315,7 +315,6 @@ class Module(BaseModule):
             self.dire_canal(personnage, commande)
         
         for att in self.attitudes_jouables:
-            print(att.cle, commande)
             if contient(att.cle, commande.split(" ")[0]):
                 res = True
                 self.attitudes[att.cle].jouer(personnage, commande)

@@ -134,6 +134,7 @@ class NomObjet(Masque):
                 t_proto = hasattr(o, "prototype") and o.prototype or o
                 if prototype and t_proto is not prototype:
                     continue
+                
                 if contient(o.get_nom(), nom):
                     if o_types and not [o_t for o_t in o_types \
                             if o.prototype.est_de_type(o_t)]:

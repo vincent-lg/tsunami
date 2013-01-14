@@ -58,7 +58,8 @@ class CmdPoser(Commande):
         conteneur = self.noeud.get_masque("conteneur")
         conteneur.prioritaire = True
         conteneur.proprietes["conteneurs"] = \
-                "(personnage.equipement.tenus, personnage.salle.objets_sol)"
+                "(personnage.equipement.inventaire_simple, " \
+                "personnage.salle.objets_sol)"
         conteneur.proprietes["types"] = "('conteneur', )"
     
     def interpreter(self, personnage, dic_masques):

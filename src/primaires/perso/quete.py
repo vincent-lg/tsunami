@@ -245,7 +245,6 @@ class Quete(BaseObj):
         
         """
         ordonnee = quete and quete.ordonnee or "oo"
-        print("peut faire", quete, ordonnee, niveau, self.niveaux)
         if niveau in self.__niveaux:
             return False
         
@@ -264,7 +263,6 @@ class Quete(BaseObj):
                     t_max = t_niveau
             
             t_max = t_max[:-1] + (t_max[-1] + 1, )
-            print("t_max", p_niveau, t_max, niveau)
             if (len(t_max) != len(p_niveau) and niveau[-1] == 1) or \
                     t_max == niveau:
                 return self.peut_faire(quete.parent, niveau[:-1])
@@ -285,8 +283,6 @@ class Quete(BaseObj):
         if niveau not in self.__niveaux:
             self.__niveaux.append(niveau)
         
-        print(quete, quete.parent, quete.niveau)
         if quete.parent and all(e.niveau in self.__niveaux for e in \
                 quete.get_dictionnaire_etapes(True).values()):
-            print("Valide")
             self.__niveaux.append(quete.niveau)
