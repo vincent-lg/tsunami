@@ -130,6 +130,7 @@ class BaseJeu(BaseObj):
         
         if personnage in self.partie.joueurs:
             self.partie.retirer_joueur(personnage)
+            self.partie.observateurs.append(personnage)
             personnage.cle_etat = "jeu"
             personnage << "Vous êtes à présent observateur " \
                     "du plateau."
