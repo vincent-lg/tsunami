@@ -121,3 +121,26 @@ class BaseJeu(BaseObj):
     def opt_v(self, personnage, message):
         """Affiche le plateau."""
         personnage << self.partie.afficher(personnage)
+    
+    def opt_o(self, personnage, message):
+        """Bascule entre le mode joueur et le mode observateur."""
+        if self.partie.en_cours:
+            personnage << "|err|La partie a déjà commencée.|ff|"
+            return
+        
+        if personnage in self.partie.joueurs:
+            self.partie.retirer_joueur(personnage)
+            personnage.cle_etat = "jeu"
+            personnage << "Vous êtes à présent observateur " \
+                    "du plateau."
+            return
+        
+        if personnage in self.partie.observateurs:
+            self.partie.observateurs.remove(personnage)
+            if self.partie.ajouter_joueur(personnage):
+                personnage << "Vous n'êtes plus observateur et pouvez " \
+                        "jouer à la partie."
+            else:
+                personnage << "Vous ne pouvez rejoindre les joueurs actuels " \
+                        "de la partie."
+                self.partie.observateurs.append(personnage)

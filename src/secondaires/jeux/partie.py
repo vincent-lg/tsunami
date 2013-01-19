@@ -48,6 +48,7 @@ class Partie(BaseObj):
         self.jeu = jeu
         self.plateau = plateau
         self.__joueurs = []
+        self.observateurs = []
         self.tour = None
         self.sens = 1
         self.en_cours = False
@@ -80,21 +81,32 @@ class Partie(BaseObj):
     
     def retirer_joueur(self, personnage):
         """Retire le joueur de la partie."""
+        if personnage.cle_etat == "jeu":
+            personnage.cle_etat = ""
         if personnage in self.__joueurs:
+            self.__joueurs.remove(personnage)
+            
             if self.tour is personnage:
                 self.changer_tour()
-            self.__joueurs.remove(personnage)
-            personnage.cle_etat = ""
     
     def changer_tour(self):
         """Change de tour."""
-        i = self.joueurs.index(self.tour)
+        try:
+            i = self.joueurs.index(self.tour)
+        except ValueError:
+            i = 0
+        
         if self.sens > 0:
             i += 1
         else:
             i -= 1
-        i = i % len(self.__joueurs)
-        self.tour = self.__joueurs[i]
+        if self.__joueurs:
+            i = i % len(self.__joueurs)
+        
+        if self.__joueurs:
+            self.tour = self.__joueurs[i]
+        else:
+            self.tour = None
         
         if i == 0:
             self.nb_tours += 1
@@ -113,7 +125,7 @@ class Partie(BaseObj):
         Sauf ceux dans joueurs et kw_joueurs qui sont les exceptions.
         
         """
-        for joueur in self.joueurs:
+        for joueur in self.joueurs + self.observateurs:
             if joueur not in joueurs and joueur not in kw_joueurs.values():
                 joueur.envoyer(message, *joueurs, **kw_joueurs)
     

@@ -376,7 +376,7 @@ class Jeu(BaseJeu):
                 points = self.get_points_pieces(joueur)
                 t_joueurs.append((joueur, points))
             
-            t_joueurs = sorted(t_joueurs, lambda couple: couple[1],
+            t_joueurs = sorted(t_joueurs, key=lambda couple: couple[1],
                     reverse=True)
             for joueur, points in list(t_joueurs):
                 if points != t_joueurs[0][1]:
