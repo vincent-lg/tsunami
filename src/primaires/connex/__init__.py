@@ -311,11 +311,18 @@ class Module(BaseModule):
     
     nom_joueurs = property(_get_nom_joueurs)
 
-    def compte_est_cree(self, nom_compte):
+    def compte_est_cree(self, nom_compte, ouvert=True):
         """Return True si le compte est créé, False sinon.
         
         """
-        return nom_compte in self.nom_comptes
+        if nom_compte in self.nom_comptes:
+            compte = self.comptes[nom_compte]
+            if ouvert and not compte.ouvert:
+                return False
+            
+            return True
+        
+        return False
     
     def actualiser_bannissements(self):
         """Actualise les bannissements temporaires."""

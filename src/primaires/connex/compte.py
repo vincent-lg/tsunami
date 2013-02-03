@@ -67,6 +67,7 @@ class Compte(BaseObj):
         self.tentatives_validation = 0 # tentatives de validation
         self.nb_essais = 0 # tentatives d'intrusion (mot de passe erroné)
         self.joueurs = []
+        self.ouvert = True
         
         # Options
         self.couleur = True # couleurs activées par défaut
