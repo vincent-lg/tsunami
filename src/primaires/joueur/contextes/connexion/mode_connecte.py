@@ -160,5 +160,9 @@ class ModeConnecte(Contexte):
                     commande.execution_differee(self.pere.joueur, dic_masques)
                 except ExceptionAction as err_act:
                     self.pere.joueur << "|err|{}|ff|".format(err_act)
+                except InterrompreCommande as err:
+                    if err.message:
+                        self.pere.joueur << str(err)
+                    return
                 except exception as err_int:
                     self.pere.joueur.envoyer(str(err_int))
