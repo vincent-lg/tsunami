@@ -50,16 +50,17 @@ class AutoQuete(BaseObj):
     parent = None
     concrete = False
     _no = 1
-    def __init__(self):
+    def __init__(self, cle):
         """Cosntructeur de l'auto-quête."""
         self.id = Base._no
         Base._no += 1
+        self.cle = cle
         self.tps_attente = 1
         self._memoire = {}
         self._a_detruire = {}
     
     def __getnewargs__(self):
-        return ()
+        return ("inconnue", )
     
     def __repr__(self):
         return "<autoquête {} (type={}>".format(self.id, self.nom_type)

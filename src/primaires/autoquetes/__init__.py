@@ -33,7 +33,10 @@ import os
 
 from abstraits.module import *
 from corps.arborescence import getcwd
-from primaires.format.fonctions import format_nb
+from primaires.format.fonctions import *
+from primaires.interpreteur.editeur.presentation import Presentation
+
+from . import commandes
 from .editeurs import editeurs
 from .types.base import AutoQuete
 from .v_editeur import ValidateurEditeur
@@ -85,7 +88,10 @@ class Module(BaseModule):
         nb_autoquetes = len(autoquetes)
         if autoquetes:
             AutoQuete._no = max(q.id for q in autoquetes)
-        self.autoquetes = autoquetes
+        
+        for autoquete in autoquetes:
+            self.autoquetes[autoquete.cle] = autoquete
+        
         self.logger.info(format_nb(nb_autoquetes, "{nb} autoquête{s} " \
                 "récupérée{s}", fem=True))
         BaseModule.init(self)
@@ -93,6 +99,7 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajout des commandes."""
         self.commandes = [
+            commandes.autoquete.CmdAutoquete(),
         ]
         
         for cmd in self.commandes:
@@ -165,4 +172,22 @@ class Module(BaseModule):
                 ValidateurEditeur.valider_config(config)
             
             ValidateurEditeur.etendre_config(classe, config)
+    
+    def editer(self, personnage, autoquete):
+        """Édite l'autoquête en constituant l'éditeur automatiquement.
         
+        On se base sur la configuration dans autoquete.editeur.
+        
+        """
+        editeurs = autoquete.editeur
+        presentation = Presentation(personnage.instance_connexion, autoquete)
+        for ligne in editeurs:
+            nom, info = tuple(ligne.items())
+            raccourci = info["raccourci"]
+            type = info["type"]
+            aide = info["aide"]
+            attribut = info.get("attribut")
+            edt_type = editeurs[type]
+            choix = presentation.ajouter_choix(nom, raccourci, edt_type,
+                    autoquete, attribut)
+            choix.aide_courte = aide

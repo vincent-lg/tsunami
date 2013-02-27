@@ -43,9 +43,9 @@ class AutoQuete:
     parent = "base"
     concrete = False
     
-    def __init__(self):
+    def __init__(self, cle):
         """Constructeur de l'autoquête."""
-        super().__init__(self)
+        super(type(self), self).__init__(cle)
         self.prototype = None
     
     def est_complete(self, personnage):

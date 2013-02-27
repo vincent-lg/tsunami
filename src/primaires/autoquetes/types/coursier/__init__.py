@@ -43,8 +43,8 @@ class AutoQuete:
     parent = "avec_PNJ"
     concrete = False
     
-    def __init__(self):
-        super().__init__(self)
+    def __init__(self, cle):
+        super(type(self), self).__init__(cle)
         self.liste_courses = {}
         self.mot_activation = "travail"
         self.messages = {
