@@ -36,7 +36,7 @@ from abstraits.obase import BaseObj
 
 class Annonces(BaseObj):
 
-    """Classe conteneur des differentes annonces (organisation de tournois, etc)."""
+    """Classe conteneur des differentes annonces (organisation de tournois...)."""
 
     enregistrer = True
 
@@ -55,47 +55,47 @@ class Annonces(BaseObj):
 
     def __getitem__(self, id):
         """Retourne une annonce par son index."""
-
         return self.__annonces[id]
 
     def __setitem__(self, id, modif):
         """Edite une annonce enregistrée."""
-
         self.__annonces[id] = modif
 
     def __delitem__(self, id):
         """Supprime une annonce avec l'index passé en paramètre."""
-
         del self.__annonces[id]
 
     def append(self, texte):
         """Ajoute une annonce à la liste."""
-
         self.__annonces.append(texte)
-        type(self).importeur.communication.canaux["info"].envoyer_imp("|vr|Une nouvelle annonce a été créée.|ff|") # On prévient les joueurs qu'une nouvelle annonce a été créée.
+        # On envoie l'annonce dans le canal info.
+        type(self).importeur.communication.canaux["info"].envoyer_imp( \
+                                            "\n".join(wrap(texte, 75)))
 
-    def afficher(self, offset=0, afficher_id=False):
-        """Retourne les dernières annonces jusqu'à l'offset (qui limite le nombre d'annonces a afficher)."""
+    def afficher(self, limite=0, afficher_id=False):
+        """Retourne les dernières annonces jusqu'à la limite."""
 
         annonces = self.__annonces
-        if offset > 0:
-            annonces = annonces[-offset:]
+        if limite > 0:
+            annonces = annonces[-limite:]
         if len(annonces) > 0:
             for i in range(len(annonces)):
                 id = "[|rgc|" + str(self.__annonces.index(annonces[i]) + 1)
                 id += "|ff|] "
                 indent = "\n" + (len(id) - 9) * " "
                 if afficher_id:
-                    annonces[i] = id + indent.join(wrap(annonces[i], 75)) # wrap permet de limiter la largeur du texte.
+                    # wrap permet de limiter la largeur du texte.
+                    annonces[i] = id + indent.join(wrap(annonces[i], 75))
                 else:
                     annonces[i] = "- " + indent.join(wrap(annonces[i], 75))
-            return "\n\n".join(annonces) # On saute deux lignes entre chaque annonce (pour différencier les différentes annonces).
+            # On saute deux lignes entre chaque annonce (pour différencier les
+            # différentes annonces).
+            return "\n\n".join(annonces)
         else:
             return ""
 
     def afficher_dernieres_pour(self, personnage, lire=True):
         """Affiche les dernières annonces nons lues par 'personnage'."""
-
         ret = ""
         derniere = 0
         if personnage in self._deja_vues:

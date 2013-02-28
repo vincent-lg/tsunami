@@ -44,7 +44,8 @@ class PrmSupprimer(Parametre):
         self.aide_courte = "supprime une annonce"
         self.aide_longue = \
             "Cette sous-commande supprime l'annonce dont vous " \
-            "précisez l'index (affiché dans la liste des annonces pour les administrateurs)."
+            "précisez l'index (affiché dans la liste des annonces pour les " \
+            " administrateurs)."
 
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
