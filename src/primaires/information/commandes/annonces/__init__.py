@@ -46,7 +46,7 @@ class CmdAnnonces(Commande):
         Commande.__init__(self, "annonces", "news")
         self.nom_categorie = "info"
         self.schema = "(<message>)"
-        self.aide_courte = "permet de suivre les modifications"
+        self.aide_courte = "affiche les différentes annonces"
         self.aide_longue = \
             "Cette commande renvoie les |ent|nombre|ff| dernières " \
             "annonces créées par les administrateurs. Si vous " \
