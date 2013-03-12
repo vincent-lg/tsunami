@@ -76,7 +76,7 @@ class Module(BaseModule):
         self.importeur.interpreteur.ajouter_editeur(EdtSpedit)
         
         # Ajout du niveau magie
-        self.importeur.perso.ajouter_niveau("magie", "magie")
+        self.importeur.perso.ajouter_niveau("magie", "mysticisme")
         
         # Ajout des talents magiques
         ajouter_talent = self.importeur.perso.ajouter_talent

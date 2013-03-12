@@ -39,6 +39,7 @@ from primaires.affection.affection import Affection
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.file import FileContexte
 from primaires.interpreteur.groupe.groupe import *
+from primaires.objet.conteneur import SurPoids
 
 from .race import Race
 from .equipement import Equipement
@@ -867,6 +868,10 @@ class Personnage(BaseObj):
         
         if not objet.unique:
             return None
+        
+        if not self.est_immortel() and self.poids + objet.poids > \
+                self.poids_max:
+            raise SurPoids("C'est bien trop lourd !")
         
         for membre in self.equipement.membres:
             if membre.peut_tenir() and membre.tenu is None:

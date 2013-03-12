@@ -51,6 +51,12 @@ class CmdChercherBois(Commande):
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
+        salle = personnage.salle
+        if salle.interieur:
+            personnage << "|err|Vous ne pouvez chercher du combustible " \
+                    "ici.|ff|"
+            return
+        
         personnage.agir("chercherbois")
         prototypes = importeur.objet.prototypes.values()
         prototypes = [p for p in prototypes if p.est_de_type("combustible")]
