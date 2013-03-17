@@ -88,10 +88,10 @@ class EdtRepos(Editeur):
             self.pere << "|err|Précisez des nombres valides.|ff|"
             return
         if nb_places:
-            detail.peut_allonger = True
+            detail.peut_asseoir = True
             detail.nb_places_assises = nb_places
         else:
-            detail.peut_allonger = False
+            detail.peut_asseoir = False
             detail.nb_places_assises = 0
         if facteur:
             detail.facteur_asseoir = facteur
