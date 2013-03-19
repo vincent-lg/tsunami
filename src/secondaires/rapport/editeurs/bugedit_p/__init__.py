@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -50,27 +50,27 @@ from .supprimer import NSupprimer
 from secondaires.rapport.constantes import *
 
 class EdtBugeditP(Presentation):
-    
+
     """Classe définissant l'éditeur de rapport 'bugedit'.
-    
+
     """
-    
+
     nom = "bugedit+"
-    
+
     def __init__(self, personnage, rapport):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
-        
+
         Presentation.__init__(self, instance_connexion, rapport)
         if personnage and rapport:
             self.construire(rapport)
-    
+
     def __getnewargs__(self):
         return (None, None)
-    
+
     def construire(self, rapport):
         """Construction de l'éditeur"""
         # Titre
@@ -81,7 +81,7 @@ class EdtBugeditP(Presentation):
         titre.aide_courte = \
             "Entrez le |ent|titre|ff| du rapport ou |cmd|/|ff| pour revenir " \
             "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
-        
+
         # Type
         types = sorted(TYPES)
         type = self.ajouter_choix("type", "y", Choix, rapport,
@@ -107,7 +107,7 @@ class EdtBugeditP(Presentation):
             "revenir à la fenêtre parente.\n\nCatégories disponibles : " \
             "{}.\n\nCatégorie actuelle : |bc|{{objet.categorie}}|ff|".format(
             ", ".join(categories))
-        
+
         # Priorité
         priorites = sorted(PRIORITES)
         priorite = self.ajouter_choix("priorité", "p", Choix, rapport,
@@ -120,7 +120,7 @@ class EdtBugeditP(Presentation):
             "revenir à la fenêtre parente.\n\nPriorités disponibles : " \
             "{}.\n\nPriorité actuelle : |bc|{{objet.priorite}}|ff|".format(
             ", ".join(priorites))
-        
+
         # Description
         description = self.ajouter_choix("description", "d", Description, \
                 rapport)
@@ -130,7 +130,11 @@ class EdtBugeditP(Presentation):
             "| |tit|" + "Description du rapport #{}".format(
             rapport.id).ljust(74) + \
             "|ff||\n" + self.opts.separateur
-        
+
+        # Public
+        public = self.ajouter_choix("public", "b", Flag, rapport, "public")
+        public.parent = self
+
         # Statut
         statut = self.ajouter_choix("statut", "s", Choix, rapport,
                 "statut", STATUTS)
@@ -142,7 +146,7 @@ class EdtBugeditP(Presentation):
             "revenir à la fenêtre parente.\n\nStatuts disponibles : " \
             "{}.\n\nStatut actuel : |bc|{{objet.statut}}|ff|".format(
             ", ".join(STATUTS))
-        
+
         # Avancement
         avancement = self.ajouter_choix("avancement", "a", Entier, rapport,
                 "avancement", 0, 100, "%")
@@ -153,7 +157,7 @@ class EdtBugeditP(Presentation):
             "Entrez l'|ent|avancement|ff| en pourcent de la tâche ou " \
             "|cmd|/|ff| pour revenir à la\nfenêtre parente.\n\n" \
             "Avancement actuel : |bc|{valeur}|ff|"
-        
+
         # Assigné à
         assigne_a = self.ajouter_choix("assigné à", "i", EdtAssigne, rapport)
         assigne_a.parent = self
@@ -163,7 +167,7 @@ class EdtBugeditP(Presentation):
             "Entrez un |ent|Immortel|ff| à qui assigner ce rapport, ou " \
             "|cmd|/|ff| pour revenir à la\nfenêtre parente.\n\n" \
             "Actuellement assigné à : {objet.aff_assigne_a}"
-        
+
         # Supprimer
         sup = self.ajouter_choix("supprimer", "sup", NSupprimer,
                 rapport)

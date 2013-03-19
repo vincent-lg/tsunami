@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,48 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les fonctions utiles au scripting."""
+"""Package contenant les commandes du module affection."""
 
-import re
-
-# Constantes
-RE_VAR = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*?)\}")
-
-def formatter(variables, chaine):
-    f_variables = {}
-    for nom, variable in variables.items():
-        if hasattr(variable, "get_nom_pour"):
-            f_variables[nom] = "{" + nom + "}"
-        else:
-            f_variables[nom] = str(variable)
-
-    i = chaine.find("${")
-    while i >= 0:
-        if len(chaine) > i + 2:
-            if chaine[i + 2] != "{":
-                chaine = chaine[:i] + chaine[i + 1:]
-        else:
-            chaine = chaine[:i] + chaine[i + 1:]
-            break
-        i = chaine.find("${", i)
-
-    return chaine.format(**f_variables)
-
-def get_variables(variables, chaine):
-    """Retourne les variables trouvées dans la chaîne."""
-    vars = {}
-    for var in RE_VAR.findall(chaine):
-        vars[var] = variables[var]
-
-    return vars
-
-class VariablesAAfficher(dict):
-
-    """Classe héritant d'un dictionnaire, chargée de retourner les variables.
-
-    Les variables retournées sont uniquement celles demandées.
-
-    """
-
-    def __getitem__(self, item):
-        return dict.__getitem__(self, item)
+from . import affection

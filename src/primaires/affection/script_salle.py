@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,48 +28,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les fonctions utiles au scripting."""
+"""Fichier contenant la classe ScriptAffectionSalle détaillée plus bas."""
 
-import re
+from primaires.affection.script import ScriptAffection
 
-# Constantes
-RE_VAR = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*?)\}")
+class ScriptAffectionSalle(ScriptAffection):
 
-def formatter(variables, chaine):
-    f_variables = {}
-    for nom, variable in variables.items():
-        if hasattr(variable, "get_nom_pour"):
-            f_variables[nom] = "{" + nom + "}"
-        else:
-            f_variables[nom] = str(variable)
+    """Script et évènements propre aux affections salle.
 
-    i = chaine.find("${")
-    while i >= 0:
-        if len(chaine) > i + 2:
-            if chaine[i + 2] != "{":
-                chaine = chaine[:i] + chaine[i + 1:]
-        else:
-            chaine = chaine[:i] + chaine[i + 1:]
-            break
-        i = chaine.find("${", i)
-
-    return chaine.format(**f_variables)
-
-def get_variables(variables, chaine):
-    """Retourne les variables trouvées dans la chaîne."""
-    vars = {}
-    for var in RE_VAR.findall(chaine):
-        vars[var] = variables[var]
-
-    return vars
-
-class VariablesAAfficher(dict):
-
-    """Classe héritant d'un dictionnaire, chargée de retourner les variables.
-
-    Les variables retournées sont uniquement celles demandées.
+    C'est dans cette classe que sont construits les évènements du scripting
+    des affections de salle. Elle hérite de ScriptAffection et
+    propose les mêmes scripts de base mais aussi quelques évènements
+    en plus.
 
     """
 
-    def __getitem__(self, item):
-        return dict.__getitem__(self, item)
+    def init(self):
+        """Initialisation du script"""
+        ScriptAffection.init(self)
+        # Ajout de la variable salle
+        for evt in self.evenements.values():
+            var_salle = evt.ajouter_variable("salle", "Salle")
+            var_salle.aide = "la salle subissant l'affection"

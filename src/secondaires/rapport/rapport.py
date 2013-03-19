@@ -64,6 +64,7 @@ class Rapport(BaseObj):
         self.assigne_a = None
         self.salle = createur.salle if createur else None
         self._type = "bug"
+        self.public = False # Rapport non public de base.
         self._priorite = "normale"
         self._categorie = ""
         self._statut = "nouveau"

@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -49,28 +49,28 @@ from .edt_annuler import EdtAnnuler
 from .edt_envoyer import EdtEnvoyer
 
 class EdtBugedit(Presentation):
-    
+
     """Classe définissant l'éditeur de rapport 'bugedit'.
-    
+
     """
-    
+
     nom = "bugedit"
-    
+
     def __init__(self, personnage, rapport):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
-        
+
         Presentation.__init__(self, instance_connexion, rapport,
                 peut_quitter=False)
         if personnage and rapport:
             self.construire(rapport)
-    
+
     def __getnewargs__(self):
         return (None, None)
-    
+
     def construire(self, rapport):
         """Construction de l'éditeur"""
         # Titre
@@ -81,7 +81,7 @@ class EdtBugedit(Presentation):
         titre.aide_courte = \
             "Entrez le |ent|titre|ff| du rapport ou |cmd|/|ff| pour revenir " \
             "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
-        
+
         # Description
         description = self.ajouter_choix("description", "d", Description, \
                 rapport)
@@ -90,7 +90,7 @@ class EdtBugedit(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description du rapport #{}".format(
             rapport.id).ljust(76) + "|ff||\n" + self.opts.separateur
-        
+
         # Catégorie
         categories = sorted(CATEGORIES)
         categorie = self.ajouter_choix("catégorie", "c", Choix, rapport,
@@ -103,11 +103,15 @@ class EdtBugedit(Presentation):
             "revenir à la fenêtre parente.\n\nCatégories disponibles : {}.\n" \
             "\nCatégorie actuelle : |bc|{{objet.categorie}}|ff|".format(
             ", ".join(categories))
-        
+
+        # Public
+        public = self.ajouter_choix("public", "p", Flag, rapport, "public")
+        public.parent = self
+
         # Envoyer
         envoyer = self.ajouter_choix("envoyer", "e", EdtEnvoyer, rapport)
         envoyer.parent = self
-        
+
         # Annuler
         annuler = self.ajouter_choix("annuler et quitter la fenêtre", "ann", \
                 EdtAnnuler, rapport)

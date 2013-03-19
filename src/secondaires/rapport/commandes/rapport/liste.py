@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -37,11 +37,11 @@ from primaires.format.fonctions import couper_phrase
 from secondaires.rapport.constantes import CLR_STATUTS, CLR_AVC
 
 class PrmListe(Parametre):
-    
+
     """Commande 'rapport liste'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "liste", "list")
@@ -53,7 +53,7 @@ class PrmListe(Parametre):
             "les flags disponibles sont |ent|non assignes|ff| pour voir " \
             "uniquement les rapports non assignes, et |ent|fermes|ff| pour " \
             "voir tous les rapports, y compris ceux fermés."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         flags = {"non assignes": False, "fermes": False}
@@ -63,7 +63,7 @@ class PrmListe(Parametre):
             for f in flags.keys():
                 if f in t_flags:
                     flags[f] = True
-        
+
         rapports = list(importeur.rapport.rapports.values())
         if not flags["fermes"]:
             rapports = [r for r in rapports if r.ouvert]
@@ -71,23 +71,28 @@ class PrmListe(Parametre):
             rapports = [r for r in rapports if r.assigne_a is None]
         if not personnage.est_immortel():
             # On récupère les rapports envoyés par le joueur mortel
-            rapports = [r for r in rapports if r.createur is personnage]
+            rapports = [r for r in rapports if r.createur is personnage or \
+                    r.public]
             if not rapports:
                 personnage << "|att|Vous n'avez envoyé aucun rapport.|ff|"
             else:
                 l_id = max([len(str(r.id)) for r in rapports] + [2])
+                l_createur = 15
                 l_titre = max([len(r.titre) for r in rapports] + [5])
-                l_titre_max = 49 - l_id # longueur max possible d'un titre
+                l_titre_max = 34 - l_id # longueur max possible d'un titre
                 ljust_titre = min(l_titre_max, l_titre)
                 lignes = [
-                    "+" + "-" * (l_id + ljust_titre + 29) + "+",
-                    "| |tit|" + "ID".ljust(l_id) + "|ff| | |tit|" \
-                            + "Titre".ljust(ljust_titre) + "|ff| | " \
-                            "|tit|Statut|ff|   | |tit|Avancement|ff| |",
-                    "+" + "-" * (l_id + ljust_titre + 29) + "+",
+                    "+" + "-" * (l_id + l_createur + ljust_titre + 32) + "+",
+                    "| |tit|" + "ID".ljust(l_id) + "|ff| | |tit|" + \
+                    "Créateur".ljust(l_createur) + "|ff| | |tit|" + "Titre".ljust(ljust_titre) + "|ff| | " \
+                    "|tit|Statut|ff|   | |tit|Avancement|ff| |",
+                    "+" + "-" * (l_id + l_createur + ljust_titre + 32) + "+",
                 ]
                 for rapport in rapports:
                     id = "|vrc|" + str(rapport.id).ljust(l_id) + "|ff|"
+                    createur = rapport.createur.nom if rapport.createur else \
+                            "inconnu"
+                    createur = createur.ljust(l_createur)
                     if l_titre_max < l_titre:
                         titre = couper_phrase(rapport.titre, l_titre_max)
                     else:
@@ -98,9 +103,12 @@ class PrmListe(Parametre):
                     clr = CLR_AVC[floor(rapport.avancement / 12.5)]
                     avc = clr + str(rapport.avancement).rjust(9)
                     lignes.append(
-                            "| {id} | {titre} | {stat} | {avc}%|ff| |".format(
-                            id=id, titre=titre, stat=stat, avc=avc))
-                lignes.append("+" + "-" * (l_id + ljust_titre + 29) + "+")
+                            "| {id} | {createur} | {titre} | {stat} | " \
+                            "{avc}%|ff| |".format(id=id,
+                            createur=createur, titre=titre, stat=stat,
+                            avc=avc))
+                lignes.append("+" + "-" * (l_id + l_createur + ljust_titre + \
+                        32) + "+")
                 personnage << "\n".join(lignes)
         else:
             if not rapports:

@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -31,18 +31,41 @@
 """Ce module contient la classe AffectionSalle, détaillée plus bas."""
 
 from .base import AffectionAbstraite
+from primaires.affection.script_salle import ScriptAffectionSalle
 
 class AffectionSalle(AffectionAbstraite):
-    
+
     """Affection propre à une salle."""
-    
+
     nom_type = "salle"
+    nom_scripting = "affection de salle"
     def __init__(self, cle):
         AffectionAbstraite.__init__(self, cle)
-        self.visible = True
-        importeur.affection.aff_salles[self.cle] = self
-    
+        self.script = ScriptAffectionSalle(self)
+        if cle:
+            importeur.affection.aff_salles[self.cle] = self
+
     def programmer_destruction(self, affection):
         """Programme la destruction de l'affection de salle."""
-        affection.affecte.envoyer(self.message_detruire(affection),
-                prompt=False)
+        try:
+            affection.affecte.envoyer(self.message_detruire(affection),
+                    prompt=False)
+        except NotImplementedError:
+            self.executer_script("détruit", affection)
+
+    def message_detruire(self, affection):
+        """Retourne le message à afficher quand l'affection se termine.
+
+        Par défaut, lève une exception NotImplementedError. Cela a
+        pour effet d'exécuter l'évènement 'détruit' à la place. Si
+        vous souhaitez faire une affection par défaut, redéfinissez la
+        méthode 'message_detruire' en sachant que, par défaut, elle
+        n'appellera pas l'évènement 'détruit'.
+
+        """
+        raise NotImplementedError
+
+    def executer_script(self, evenement, affection, **variables):
+        """Exécute le script lié."""
+        self.script[evenement].executer(salle=affection.affecte,
+                force=affection.force, duree=affection.duree, **variables)

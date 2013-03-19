@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,48 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les fonctions utiles au scripting."""
+"""Fichier contenant le paramètre 'liste' de la commande 'affection'."""
 
-import re
+from primaires.interpreteur.masque.parametre import Parametre
 
-# Constantes
-RE_VAR = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*?)\}")
+class PrmLister(Parametre):
 
-def formatter(variables, chaine):
-    f_variables = {}
-    for nom, variable in variables.items():
-        if hasattr(variable, "get_nom_pour"):
-            f_variables[nom] = "{" + nom + "}"
-        else:
-            f_variables[nom] = str(variable)
-
-    i = chaine.find("${")
-    while i >= 0:
-        if len(chaine) > i + 2:
-            if chaine[i + 2] != "{":
-                chaine = chaine[:i] + chaine[i + 1:]
-        else:
-            chaine = chaine[:i] + chaine[i + 1:]
-            break
-        i = chaine.find("${", i)
-
-    return chaine.format(**f_variables)
-
-def get_variables(variables, chaine):
-    """Retourne les variables trouvées dans la chaîne."""
-    vars = {}
-    for var in RE_VAR.findall(chaine):
-        vars[var] = variables[var]
-
-    return vars
-
-class VariablesAAfficher(dict):
-
-    """Classe héritant d'un dictionnaire, chargée de retourner les variables.
-
-    Les variables retournées sont uniquement celles demandées.
+    """Commande 'affection lister'.
 
     """
 
-    def __getitem__(self, item):
-        return dict.__getitem__(self, item)
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "lister", "list")
+        self.aide_courte = "liste les affections existantes"
+        self.aide_longue = \
+            "Cette commande liste les affections existantes."
+
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        ligne_max = 40
+        affections = importeur.affection.affections
+        if affections:
+            lignes = [
+                "  Type       | Clé             | Résumé",
+            ]
+            for affection in affections:
+                resume = affection.resume
+                if len(resume) > ligne_max:
+                    resume = resume[:ligne_max - 3] + "..."
+
+                lignes.append(
+                    "  {:<10} | {:<15} | {:<40} ".format(
+                    affection.nom_type, affection.cle, resume))
+
+            personnage << "\n".join(lignes)
+        else:
+            personnage << "Aucune affection n'est actuellement définie."
