@@ -46,6 +46,7 @@ from .mien import PrmMien
 from .nettoyer import PrmNettoyer
 from .suggestion import PrmSuggestion
 from .voir import PrmVoir
+from .public import PrmPublic
 
 class CmdRapport(Commande):
     
@@ -78,3 +79,4 @@ class CmdRapport(Commande):
         self.ajouter_parametre(PrmNettoyer())
         self.ajouter_parametre(PrmSuggestion())
         self.ajouter_parametre(PrmVoir())
+        self.ajouter_parametre(PrmPublic())

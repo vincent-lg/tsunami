@@ -60,7 +60,7 @@ class PrmVoir(Parametre):
                 personnage << "|err|Vous ne pouvez lire ce rapport.|ff|"
         else:
             if not personnage.est_immortel() and rapport.createur is not \
-                    personnage:
+                    personnage and not rapport.public:
                 personnage << "|err|Vous ne pouvez lire ce rapport.|ff|"
             else:
                 createur = rapport.createur.nom if rapport.createur \

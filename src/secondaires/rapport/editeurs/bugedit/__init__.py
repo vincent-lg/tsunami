@@ -103,7 +103,9 @@ class EdtBugedit(Presentation):
             "revenir à la fenêtre parente.\n\nCatégories disponibles : {}.\n" \
             "\nCatégorie actuelle : |bc|{{objet.categorie}}|ff|".format(
             ", ".join(categories))
-        
+        # Public
+        public = self.ajouter_choix("public", "p", Flag, rapport, "public")
+        public.parent = self
         # Envoyer
         envoyer = self.ajouter_choix("envoyer", "e", EdtEnvoyer, rapport)
         envoyer.parent = self
