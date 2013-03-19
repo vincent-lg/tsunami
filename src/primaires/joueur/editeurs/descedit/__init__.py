@@ -28,26 +28,43 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Package contenant l'éditeur 'descedit'."""
 
-from . import afk
-from . import apprendre
-from . import alias
-from . import bannir
-from . import chgroupe
-from . import distinctions
-from . import ejecter
-from . import entrainer
-from . import groupe
-from . import module
-from . import options
-from . import oublier
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retnom
-from . import setquest
-from . import shutdown
-from . import superinv
-from . import where
-from . import decrire
+from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.description import Description
+
+class EdtDescedit(Presentation):
+
+    """Classe définissant l'éditeur de description 'descedit'.
+
+    """
+
+    nom = "descedit"
+
+    def __init__(self, personnage, joueur):
+        """Constructeur de l'éditeur
+
+        joueur représente ici le même objet que personnage.
+
+        """
+        if personnage:
+            instance_connexion = personnage.instance_connexion
+        else:
+            instance_connexion = None
+
+        Presentation.__init__(self, instance_connexion)
+        if personnage and joueur:
+            self.construire(joueur)
+
+    def __getnewargs__(self):
+        return (None, None)
+
+    def construire(self, joueur):
+        """Construction de l'éditeur"""
+
+        # Description
+        description = self.ajouter_choix("description", "d", Description, \
+                joueur, "description_a_valider")
+        description.parent = self
+        description.apercu = "{objet.description.paragraphes_indentes}"
+        description.aide_courte = "Modifier sa description."
