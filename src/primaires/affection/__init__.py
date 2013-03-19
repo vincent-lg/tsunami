@@ -32,7 +32,11 @@
 
 from abstraits.module import *
 from . import defaut
+from . import commandes
+from .editeurs.affedit import EdtAffedit
 from primaires.affection.base import AffectionAbstraite
+from primaires.affection.personnage import AffectionPersonnage
+from primaires.affection.salle import AffectionSalle
 
 class Module(BaseModule):
 
@@ -64,11 +68,36 @@ class Module(BaseModule):
         self.aff_salles = {}
         self.aff_personnages = {}
 
+    @property
+    def affections(self):
+        """Retourne une liste des affections abstraites créées."""
+        affections = list(self.aff_salles.values())
+        affections += list(self.aff_personnages.values())
+        affections = sorted(affections, key=lambda aff: \
+                (aff.nom_type, aff.cle))
+        return affections
+
     def init(self):
         """Méthode d'initialisation du module"""
         affections = self.importeur.supenr.charger_groupe(AffectionAbstraite)
         for affection in affections:
             self.ajouter_affection(affection)
+
+        BaseModule.init(self)
+
+    def ajouter_commandes(self):
+        """Ajout des commandes dans l'interpréteur"""
+        print("Ajout des commandes")
+        self.commandes = [
+            commandes.affection.CmdAffection(),
+        ]
+
+        for cmd in self.commandes:
+            print("Ajout de", cmd)
+            importeur.interpreteur.ajouter_commande(cmd)
+
+        # Ajout des éditeurs
+        importeur.interpreteur.ajouter_editeur(EdtAffedit)
 
     def preparer(self):
         """Préparation du module.
@@ -76,6 +105,7 @@ class Module(BaseModule):
         Crée les affections par défaut si elles n'existent pas.
 
         """
+        print("Préparation")
         aff_salles = {
             "neige": defaut.salle.neige.Neige,
         }
@@ -90,6 +120,18 @@ class Module(BaseModule):
         for cle, classe in aff_personnages.items():
             if cle not in self.aff_personnages:
                 classe() # crée (et enregistre automatiquement) l'affection
+
+    def creer_affection(a_type, cle):
+        """Crée et ajoute l'affection."""
+        types = {
+            "personnage": AffectionPersonnage,
+            "salle": AffectionSalle,
+        }
+
+        classe = types[a_type]
+        affection = classe(cle)
+        self.ajouter_affection(affection)
+        return affection
 
     def ajouter_affection(self, affection):
         """Ajoute l'affection dans le bon dictionnaire."""
@@ -110,3 +152,13 @@ class Module(BaseModule):
 
         affections = types[type]
         return affections[cle]
+
+    def affection_existe(self, a_type, cle):
+        """Retourne True si l'affection du type et de la clé indiquée existe."""
+        types = {
+            "personnage": self.aff_personnages,
+            "salle": self.aff_salles,
+        }
+
+        affections = types[a_type]
+        return cle in affections

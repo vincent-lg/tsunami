@@ -45,6 +45,7 @@ class AffectionAbstraite(BaseObj):
             valider_cle(cle)
 
         BaseObj.__init__(self)
+        self.resume = "non spécifié"
         self.visible = True
         self.cle = cle
         self.force_max = 50
@@ -119,7 +120,7 @@ class AffectionAbstraite(BaseObj):
         duree = affection.duree - duree
         if self.variation == 0: # La force ne bouge pas
             force = affection.force
-        elif self.variation == -1: # La force se décrémente
+        elif self.variation < 0: # La force se décrémente
             force = affection.force * fact_dec
         else:
             force = affection.force / fact_dec

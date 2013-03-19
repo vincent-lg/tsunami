@@ -38,6 +38,7 @@ class AffectionSalle(AffectionAbstraite):
     """Affection propre à une salle."""
 
     nom_type = "salle"
+    nom_scripting = "affection de salle"
     def __init__(self, cle):
         AffectionAbstraite.__init__(self, cle)
         self.script = ScriptAffectionSalle(self)
@@ -63,7 +64,6 @@ class AffectionSalle(AffectionAbstraite):
 
         """
         raise NotImplementedError
-
 
     def executer_script(self, evenement, affection, **variables):
         """Exécute le script lié."""

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,48 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les fonctions utiles au scripting."""
+"""Package contenant la commande 'affection' et ses sous-commandes.
 
-import re
+Dans ce fichier se trouve la commande même.
 
-# Constantes
-RE_VAR = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*?)\}")
+"""
 
-def formatter(variables, chaine):
-    f_variables = {}
-    for nom, variable in variables.items():
-        if hasattr(variable, "get_nom_pour"):
-            f_variables[nom] = "{" + nom + "}"
-        else:
-            f_variables[nom] = str(variable)
+from primaires.interpreteur.commande.commande import Commande
+from .creer import PrmCreer
+from .editer import PrmEditer
+from .lister import PrmLister
 
-    i = chaine.find("${")
-    while i >= 0:
-        if len(chaine) > i + 2:
-            if chaine[i + 2] != "{":
-                chaine = chaine[:i] + chaine[i + 1:]
-        else:
-            chaine = chaine[:i] + chaine[i + 1:]
-            break
-        i = chaine.find("${", i)
+class CmdAffection(Commande):
 
-    return chaine.format(**f_variables)
-
-def get_variables(variables, chaine):
-    """Retourne les variables trouvées dans la chaîne."""
-    vars = {}
-    for var in RE_VAR.findall(chaine):
-        vars[var] = variables[var]
-
-    return vars
-
-class VariablesAAfficher(dict):
-
-    """Classe héritant d'un dictionnaire, chargée de retourner les variables.
-
-    Les variables retournées sont uniquement celles demandées.
+    """Commande 'affection'.
 
     """
 
-    def __getitem__(self, item):
-        return dict.__getitem__(self, item)
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "affection", "affection")
+        self.groupe = "administrateur"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "manipulation des affections"
+        self.aide_longue = \
+            "Cette commande permet de créer et éditer des affections. " \
+            "Il existe à cette heure deux types d'affection : les " \
+            "affections de salle (comme la neige) et les affections de " \
+            "personnage (comme l'alcool). Certaines affections sont " \
+            "créées par le système et ne peuvent pas être supprimées."
+
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
+        self.ajouter_parametre(PrmCreer())
+        self.ajouter_parametre(PrmEditer())
+        self.ajouter_parametre(PrmLister())

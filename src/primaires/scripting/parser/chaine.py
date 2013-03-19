@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -38,51 +38,51 @@ from .expression import Expression
 RE_SUP = re.compile(r"\$\{\{([A-Za-z][A-Za-z0-9_]*?)\}\}")
 
 class ChaineDeCaracteres(Expression):
-    
+
     """Expression chaîne de caractères."""
-    
+
     nom = "chaine"
     def __init__(self):
         """Constructeur de l'expression."""
         Expression.__init__(self)
         self.chaine = None
-    
+
     def __repr__(self):
         return "chaine({})".format(self.chaine)
-        
+
     def __str__(self):
         return "|bc|\"" + self.chaine + "\"|ff|"
-    
+
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
         chaine = chaine.lstrip()
         return chaine.startswith("\"") and chaine.count("\"") >= 2
-    
+
     @classmethod
     def parser(cls, chaine):
         """Parse la chaîne.
-        
+
         Retourne l'objet créé et la partie non interprétée de la chaîne.
-        
+
         """
         objet = ChaineDeCaracteres()
         chaine = chaine.lstrip()
         fin = chaine.index("\"", 1)
         if fin < 0:
             raise ValueError("syntaxe invalide pour une chaîne de caractères")
-        
+
         objet.chaine = chaine[1:fin]
         return objet, chaine[fin + 1:]
-    
+
     def get_valeur(self, evt):
         """Retourne la chaîne au format str."""
         return self.chaine
-    
+
     @property
     def code_python(self):
         """Retourne le code Python associé."""
         chaine = repr(self.chaine)
         chaine = chaine
         chaine = RE_SUP.sub(r"{\1}", chaine)
-        return "formatter(" + chaine + ")"
+        return "formatter(variables, " + chaine + ")"

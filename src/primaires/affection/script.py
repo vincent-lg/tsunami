@@ -57,8 +57,8 @@ class ScriptAffection(Script):
 
         # Évènement valide
         evt_valide = self.creer_evenement("valide")
-        evt_detruit.aide_courte = "vérifie que l'affection est valide"
-        evt_detruit.aide_longue = \
+        evt_valide.aide_courte = "vérifie que l'affection est valide"
+        evt_valide.aide_longue = \
             "Cet évènement est appelé toutes les minutes tant que " \
             "l'affection existe. Il permet de vérifier la validité de " \
             "l'affection (éventuellement varier sa force ou sa durée si " \

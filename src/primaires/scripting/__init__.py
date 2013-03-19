@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -60,15 +60,15 @@ from .commande_dynamique import CommandeDynamique
 from .memoires import Memoires
 
 class Module(BaseModule):
-    
+
     """Cette classe contient les informations du module primaire scripting.
-    
+
     Ce module gère le langage de script utilisé pour écrire des quêtes et
     personnaliser certains objets de l'univers. Il regroupe également les
     éditeurs et les objets gérant les quêtes.
-    
+
     """
-    
+
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "scripting", "primaire")
@@ -84,75 +84,75 @@ class Module(BaseModule):
         self.sujets_aides = {
             "syntaxe": syntaxe,
         }
-        self.execute_test = None
-    
+        self.execute_test = []
+
     @property
     def commandes_dynamiques_sa(self):
         """Retourne les commandes dynamiques {cle_sans_accent: commande}."""
         cmds = {}
         for cmd in self.commandes_dynamiques.values():
             cmds[supprimer_accents(cmd.nom_francais)] = cmd
-        
+
         return cmds
-    
+
     def config(self):
         """Configuration du module."""
         self.a_charger.append(self)
         self.cfg_exportation = importeur.anaconf.get_config("exportation", \
                 "scripting/exportation.cfg", "config exportation",
                 cfg_exportation)
-        
+
         BaseModule.config(self)
-    
+
     def init(self):
         """Initialisation"""
         # Récupération de la mémoire du scripting
         self.memoires = self.importeur.supenr.charger_unique(Memoires)
         if self.memoires is None:
             self.memoires = Memoires()
-        
+
         # Chargement des actions
         self.charger_actions()
         self.charger_fonctions()
         if self.cfg_exportation.active:
             self.ecrire_documentation()
-        
+
         # Chargement des quêtes
         quetes = self.importeur.supenr.charger_groupe(Quete)
         for quete in quetes:
             if quete.parent is None:
                 self.quetes[quete.cle] = quete
-        
+
         # Chargement des étapes et tests
         etapes = self.importeur.supenr.charger_groupe(Etape)
         tests = self.importeur.supenr.charger_groupe(Test)
-        
+
         # Chargement des alertes
         alertes = self.importeur.supenr.charger_groupe(Alerte)
         for alerte in alertes:
             self.alertes[alerte.no] = alerte
-        
+
         # Chargement des commandes dynamiques
         commandes_dynamiques = importeur.supenr.charger_groupe(
                 CommandeDynamique)
         for cmd in commandes_dynamiques:
             self.commandes_dynamiques[cmd.nom_francais] = cmd
-        
+
         if alertes:
             Alerte.no_actuel = max(a.no for a in alertes)
-        
+
         # On lie la méthode informer_alertes avec l'hook joueur_connecte
         # La méthode informer_alertes sera ainsi appelée quand un joueur
         # se connecte
         self.importeur.hook["joueur:connecte"].ajouter_evenement(
                 self.informer_alertes)
-        
+
         # Création de l'action différée pour nettoyer les mémoires
         importeur.diffact.ajouter_action("eff_memoires", 90,
                 self.nettoyer_memoires)
-        
+
         BaseModule.init(self)
-    
+
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
@@ -160,32 +160,32 @@ class Module(BaseModule):
             commandes.qedit.CmdQedit(),
             commandes.scripting.CmdScripting(),
         ]
-        
+
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
-        
+
         # Ajout des éditeurs 'qedit' et 'cmdedit'
         self.importeur.interpreteur.ajouter_editeur(EdtQedit)
         self.importeur.interpreteur.ajouter_editeur(EdtCmdedit)
-    
+
     def preparer(self):
         """Préparation du module.
-        
+
         * On initialise les scripts.
         * On ajoute les commandes dynamiques.
-        
+
         """
         for script in scripts:
             script.init()
-        
+
         for cmd in self.commandes_dynamiques.values():
             cmd.ajouter()
-    
+
     def charger_actions(self):
         """Chargement automatique des actions.
-        
+
         On parcourt tous les modules dans self.a_charger.
-        
+
         """
         for module in self.a_charger:
             # Elles se trouvent dans le sous-répertoire actions
@@ -206,12 +206,12 @@ class Module(BaseModule):
                     action.convertir_types()
                     lst_actions[nom_module] = action
                     self.actions[nom_module] = action
-            
+
     def charger_fonctions(self):
         """Chargement automatique des fonctions.
-        
+
         On charge les modules dans self.a_charger.
-        
+
         """
         for module in self.a_charger:
             # Elles se trouvent dans le sous-répertoire fonctions
@@ -231,52 +231,52 @@ class Module(BaseModule):
                     fonction.init_types()
                     fonction.convertir_types()
                     self.fonctions[nom_module] = fonction
-    
+
     def informer_alertes(self, personnage):
         """Informe le personnage si des alertes non résolues sont à lire.
-        
+
         Ce message n'est envoyé que si le personnage est immortel.
-        
+
         """
         if personnage.est_immortel() and self.alertes:
             msg = format_nb(len(self.alertes),
                     "|rg|{nb} alerte{s} non résolue{s}.|ff|", fem=True)
             personnage << msg
-    
+
     def get_objet(self, identifiant):
         """Récupère l'objet depuis son identifiant.
-        
+
         Sont successivement testées :
         -   les salles
-        
+
         """
         return self.importeur.salle[identifiant]
-    
+
     def get_commande_dynamique(self, nom):
         """Retourne la commande dynamique correspondante au nom.
-        
+
         Le nom peut être avec ou sans accent.
-        
+
         Si la commande dynamique n'est pas trouvée, lève une exception
         KeyError.
-        
+
         """
         return self.commandes_dynamiques_sa[nom]
-    
+
     def creer_commande_dynamique(self, nom_francais, nom_anglais):
         """Crée et ajoute une commande dynamique."""
         commande = CommandeDynamique(nom_francais, nom_anglais)
         commande.ajouter()
         self.commandes_dynamiques[nom_francais] = commande
         return commande
-    
+
     def ecrire_documentation(self):
         """Écrit la documentation disponible au format Dokuwiki.
-        
+
         Deux fichiers de documentation sont écrits :
             La documentation des actions
             La documentation des fonctions
-        
+
         """
         msg = "====== Liste des actions disponibles :======\n\n" \
                 "Ce document, __automatiquement généré__, " \
@@ -290,7 +290,7 @@ class Module(BaseModule):
                 args = " ".join(inspect.getargspec(methode).args)
                 msg += "\n==== " + action.nom + " " + args + " ====\n\n"
                 msg += inspect.getdoc(methode) + "\n"
-        
+
         chemin_actions = self.cfg_exportation.chemin_doc_actions
         if os.path.exists(chemin_actions) and not os.access(chemin_actions,
                 os.W_OK):
@@ -300,7 +300,7 @@ class Module(BaseModule):
             fichier = open(chemin_actions, 'w')
             fichier.write(msg)
             fichier.close()
-        
+
         msg = "====== Liste des fonctions disponibles :======\n\n" \
                 "Ce document, __automatiquement généré__, " \
                 "décrit la liste des fonctions disponibles dans le " \
@@ -313,7 +313,7 @@ class Module(BaseModule):
                 args = ", ".join(inspect.getargspec(methode).args)
                 msg += "\n==== " + nom + "(" + args + ") ====\n\n"
                 msg += inspect.getdoc(methode) + "\n"
-        
+
         chemin_fonctions = self.cfg_exportation.chemin_doc_fonctions
         if os.path.exists(chemin_fonctions) and not os.access(chemin_fonctions,
                 os.W_OK):
@@ -323,7 +323,7 @@ class Module(BaseModule):
             fichier = open(chemin_fonctions, 'w')
             fichier.write(msg)
             fichier.close()
-    
+
     def nettoyer_memoires(self):
         """Nettoie périodiquement les mémoires."""
         importeur.diffact.ajouter_action("eff_memoires", 60,
@@ -335,30 +335,30 @@ class Module(BaseModule):
                     del self.memoires._a_detruire[cle][valeur]
                     if cle in self.memoires and valeur in self.memoires[cle]:
                         del self.memoires[cle][valeur]
-            
+
             if not self.memoires._a_detruire[cle]:
                 del self.memoires._a_detruire[cle]
             if not self.memoires[cle]:
                 del self.memoires[cle]
-    
+
     # Méthodes statistiques
     def cb_joueurs(self):
         """Retourne le nombre de joueurs enregistrés."""
         return len(importeur.connex.joueurs)
-    
+
     def cb_joueurs_quete(self, cle_quete):
         """Retourne le nombre de joueurs ayant fait la quête."""
         joueurs = [j for j in importeur.connex.joueurs \
                 if cle_quete in j.quetes]
         return len(joueurs)
-    
+
     def cb_joueurs_etape(self, cle_quete, etape):
         """Retourne le nombre de joueurs ayant fait la quête à ce niveau.
-        
+
         La quête doit e^tre précisée sous la forme d'une clé de
         quête et le niveau sous la forme d'un tuple ((1, 1, 2)
         par exemple).
-        
+
         """
         joueurs = [j for j in importeur.connex.joueurs \
                 if cle_quete in j.quetes and etape in \

@@ -38,6 +38,7 @@ class AffectionPersonnage(AffectionAbstraite):
     """Affection propre à un personnage."""
 
     nom_type = "personnage"
+    nom_scripting = "affection de salle"
     def __init__(self, cle):
         AffectionAbstraite.__init__(self, cle)
         self.script = ScriptAffectionPersonnage(self)
