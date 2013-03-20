@@ -786,13 +786,13 @@ class Personnage(BaseObj):
             if courante < max:
                 courante_liee = self.stats[liee].courante
                 if self.position == "allonge":
-                    facteur_position = 1.5
+                    facteur_position = 1.25
                     if self.occupe != None:
-                        facteur_position += self.occupe.facteur_allonger 
+                        facteur_position *= self.occupe.facteur_allonger
                 elif self.position == "assis":
-                    facteur_position = 1.2
+                    facteur_position = 1.1
                     if self.occupe != None:
-                        facteur_position += self.occupe.facteur_asseoir 
+                        facteur_position *= self.occupe.facteur_asseoir
                 else:
                     facteur_position = 0.9
                 plus = int(courante_liee * facteur_position * 0.9)
