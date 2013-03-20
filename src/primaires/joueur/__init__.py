@@ -135,6 +135,10 @@ class Module(BaseModule):
             if joueur.est_connecte() and (i_c is None or not i_c.est_connecte()):
                 joueur.pre_deconnecter()
 
+            # On parcourt les affections
+            for affection in joueur.affections.values():
+                affection.prevoir_tick()
+
         # On vérifie que le groupe par défaut existe dans les groupes existants
         gen_logger = type(self.importeur).man_logs.get_logger("sup")
         groupe_par_defaut = "joueur"

@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -60,19 +60,19 @@ NB_MIN_NETTOYAGE = 20
 NB_TICKS = 12
 
 class Module(BaseModule):
-    
+
     """Classe utilisée pour gérer des salles.
-    
+
     Dans la terminologie des MUDs, les salles sont des "cases" avec une
     description et une liste de sorties possibles, que le joueur peut
     emprunter. L'ensemble des salles consiste l'univers, auquel il faut
     naturellement rajouter des PNJ et objets pour qu'il soit riche un minimum.
-    
+
     Pour plus d'informations, consultez le fichier
     src/primaires/salle/salle.py contenant la classe Salle.
-    
+
     """
-    
+
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "salle", "primaire")
@@ -100,7 +100,7 @@ class Module(BaseModule):
             "n-o": "nord-ouest",
             "n-e": "nord-est",
         }
-        
+
         self.logger = importeur.man_logs.creer_logger( \
                 "salles", "salles")
         self.terrains = {}
@@ -110,29 +110,29 @@ class Module(BaseModule):
         self.a_renouveler = {}
         self.magasins_a_ouvrir = {}
         self.magasins_a_fermer = {}
-        
+
         # Ticks
         self.ticks = {}
         for no in range(1, NB_TICKS + 1):
             self.ticks[no] = []
-    
+
     @property
     def salles(self):
         """Retourne un dictionnaire déréférencé des salles."""
         return dict(self._salles)
-    
+
     @property
     def zones(self):
         """Retourne un dictionnaire déréférencé des zones."""
         return dict(self._zones)
-    
+
     def config(self):
         """Méthode de configuration du module"""
         importeur.anaconf.get_config("salle", \
             "salle/salle.cfg", "config salle", cfg_salle)
         importeur.hook.ajouter_hook("salle:regarder",
                 "Hook appelé dès qu'on regarde une salle.")
-        
+
         # Ajout des terrains
         self.ajouter_terrain("ville")
         self.ajouter_terrain("route")
@@ -143,28 +143,28 @@ class Module(BaseModule):
         self.ajouter_terrain("caverne")
         self.ajouter_terrain("aquatique")
         self.ajouter_terrain("subaquatique")
-        
+
         BaseModule.config(self)
-    
+
     def init(self):
         """Méthode d'initialisation du module"""
         # On récupère les salles
         salles = importeur.supenr.charger_groupe(Salle)
         for salle in salles:
             self.ajouter_salle(salle)
-        
+
         nb_salles = len(self._salles)
         self.logger.info(format_nb(nb_salles, "{nb} salle{s} récupérée{s}", \
                 fem=True))
-        
+
         # On récupère les décors
         decors = importeur.supenr.charger_groupe(PrototypeDecor)
         for decor in decors:
             self.ajouter_decor(decor)
-        
+
         nb_decors = len(self.decors)
         self.logger.info(format_nb(nb_decors, "{nb} décor{s} récupéré{s}"))
-        
+
         # On récupère les feux
         feux = importeur.supenr.charger_groupe(Feu)
         for feu in feux:
@@ -172,43 +172,43 @@ class Module(BaseModule):
         # On implémente le hook correspondant
         self.importeur.hook["salle:regarder"].ajouter_evenement(
                 self.feu_present)
-        
+
         # On récupère les zones
         zones = importeur.supenr.charger_groupe(Zone)
         for zone in zones:
             self._zones[zone.cle] = zone
-        
+
         nb_zones = len(self._zones)
         self.logger.info(format_nb(nb_zones, "{nb} zone{s} récupérée{s}", \
                 fem=True))
-        
+
         importeur.diffact.ajouter_action("net_salles", 300,
                 self.nettoyer_salles)
         importeur.diffact.ajouter_action("repop_salles", 900,
                 self.repop_salles)
         importeur.diffact.ajouter_action("repop_feux", 5, Feu.repop)
-        
+
         # On ajoute les niveaux et talents
         importeur.perso.ajouter_niveau("survie", "survie")
         importeur.perso.ajouter_talent("collecte_bois", "collecte de bois",
                 "survie", 0.55)
         importeur.perso.ajouter_talent("feu_camp", "feu de camp", "survie",
                 0.23)
-        
+
         # On ajoute de l'état
         etat = importeur.perso.ajouter_etat("collecte_bois")
         etat.msg_refus = "Vous êtes en train de ramasser du bois."
         etat.msg_visible = "ramasse du bois"
         etat.act_autorisees = ["regarder", "parler"]
-        
+
         # Ajout des actions différées pour chaque tick
         intervalle = 60 / NB_TICKS
         for no in self.ticks.keys():
             self.importeur.diffact.ajouter_action("stick_{}".format(no),
                     intervalle * no, self.tick, no)
-        
+
         BaseModule.init(self)
-    
+
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
@@ -228,18 +228,18 @@ class Module(BaseModule):
             commandes.verrouiller.CmdVerrouiller(),
             commandes.zone.CmdZone(),
         ]
-        
+
         for cmd in self.commandes:
             importeur.interpreteur.ajouter_commande(cmd)
-        
+
         # Ajout des éditeurs 'decedit', 'redit' et 'zedit'
         importeur.interpreteur.ajouter_editeur(EdtDecedit)
         importeur.interpreteur.ajouter_editeur(EdtRedit)
         importeur.interpreteur.ajouter_editeur(EdtZedit)
-    
+
     def preparer(self):
         """Préparation du module.
-        
+
         On vérifie que :
         -   Les salles de retour et d'arrivée sont bien créés (sinon,
             on les recrée)
@@ -247,30 +247,30 @@ class Module(BaseModule):
         -   Les personnages présents dans self._personnages soient
             toujours là
         -   Chaque salle est dans une zone
-        
+
         """
         # On récupère la configuration
         conf_salle = importeur.anaconf.get_config("salle")
         salle_arrivee = conf_salle.salle_arrivee
         salle_retour = conf_salle.salle_retour
-        
+
         if salle_arrivee not in self:
             # On crée la salle d'arrivée
             zone, mnemonic = salle_arrivee.split(":")
             salle_arrivee = self.creer_salle(zone, mnemonic, valide=False)
             salle_arrivee.titre = "La salle d'arrivée"
             salle_arrivee = salle_arrivee.ident
-        
+
         if salle_retour not in self:
             # On crée la salle de retour
             zone, mnemonic = salle_retour.split(":")
             salle_retour = self.creer_salle(zone, mnemonic, valide=False)
             salle_retour.titre = "La salle de retour"
             salle_retour = salle_retour.ident
-        
+
         self.salle_arrivee = salle_arrivee
         self.salle_retour = salle_retour
-        
+
         # On prépare les sorties
         for salle in self.salles.values():
             if salle.magasin:
@@ -283,7 +283,7 @@ class Module(BaseModule):
                     liste = self.a_renouveler.get(magasin.fermeture, [])
                     liste.append(magasin)
                     self.a_renouveler[magasin.ouverture] = liste
-                
+
                 liste = self.magasins_a_ouvrir.get(magasin.ouverture, [])
                 liste.append(magasin)
                 self.magasins_a_ouvrir[magasin.ouverture] = liste
@@ -301,34 +301,38 @@ class Module(BaseModule):
                         salle.sorties.supprimer_sortie(sortie.direction)
                     else:
                         sortie.salle_dest = salle_dest
-            
+
             zone = salle.zone
             zone.ajouter(salle)
             for personnage in salle.personnages:
                 if personnage.salle is not salle:
                     salle.retirer_personnage(personnage)
-    
+
+            # Ajout des affections
+            for affection in salle.affections.values():
+                affection.prevoir_tick()
+
     def detruire(self):
         """Destruction du module.
-        
+
         * On détruit toutes les zones vides
-        
+
         """
         for zone in self._zones.values():
             if not zone.salles:
                 zone.detruire()
-    
+
     def __len__(self):
         """Retourne le nombre de salles"""
         return len(self._salles)
-    
+
     def __getitem__(self, cle):
         """Retourne la salle correspondante à la clé.
         Celle-ci peut être de différents types :
         *   une chaîne : c'est l'identifiant 'zone:mnemonic'
         *   un objet Coordonnees
         *   un tuple représentant les coordonnées
-        
+
         """
         if type(cle) is str:
             return self._salles[cle]
@@ -339,11 +343,11 @@ class Module(BaseModule):
         else:
             raise TypeError("un type non traité sert d'identifiant " \
                     "({})".format(repr(cle)))
-    
+
     def __contains__(self, cle):
         """Retourne True si la clé se trouve dans l'un des dictionnaires de
         salles. Voir la méthode __getitem__ pour connaître les types acceptés.
-        
+
         """
         if type(cle) is str:
             return cle in self._salles.keys()
@@ -354,16 +358,16 @@ class Module(BaseModule):
         else:
             raise TypeError("un type non traité sert d'identifiant " \
                     "({})".format(repr(cle)))
-    
+
     def ajouter_salle(self, salle):
         """Ajoute la salle aux deux dictionnaires
         self._salles et self._coords.
-        
+
         """
         self._salles[salle.ident] = salle
         if salle.coords.valide:
             self._coords[salle.coords.tuple()] = salle
-    
+
     def creer_salle(self, zone, mnemonic, x=0, y=0, z=0, valide=True):
         """Permet de créer une salle"""
         ident = zone + ":" + mnemonic
@@ -374,15 +378,15 @@ class Module(BaseModule):
         if not re.search(MNEMONIC_VALIDE, mnemonic):
             raise ValueError("Mnémonic {} invalide ({})".format(mnemonic,
                     MNEMONIC_VALIDE))
-        
+
         salle = Salle(zone, mnemonic, x, y, z, valide)
         self.ajouter_salle(salle)
         return salle
-    
+
     def supprimer_salle(self, cle):
         """Supprime la salle.
         La clé est l'identifiant de la salle.
-        
+
         """
         salle = self._salles[cle]
         coords = salle.coords
@@ -390,40 +394,40 @@ class Module(BaseModule):
             del self._coords[coords.tuple()]
         del self._salles[cle]
         salle.detruire()
-    
+
     def creer_decor(self, cle):
         """Créée un nouveau prototype de décor."""
         cle = cle.lower()
         if cle in self.decors:
             raise ValueError("le décor {} existe déjà".format(repr(cle)))
-        
+
         decor = PrototypeDecor(cle)
         self.ajouter_decor(decor)
         return decor
-    
+
     def ajouter_decor(self, decor):
         """Ajoute un prototype de décor."""
         if decor.cle in self.decors:
             raise ValueError("le décor {} existe déjà".format(repr(decor.cle)))
-        
+
         self.decors[decor.cle] = decor
-    
+
     def supprimer_decor(self, cle):
         """Supprime un prototype de décor."""
         if cle not in self.decors:
             raise ValueError("le décor {} n'existe pas".format(repr(cle)))
-        
+
         decor = self.decors[cle]
         del self.decors[cle]
         decor.detruire()
-    
+
     def traiter_commande(self, personnage, commande):
         """Traite les déplacements"""
-        
+
         # Si la commande est vide, on ne se déplace pas
         if len(commande) == 0:
             return False
-        
+
         commande = supprimer_accents(commande).lower()
         salle = personnage.salle
         try:
@@ -434,7 +438,7 @@ class Module(BaseModule):
         else:
             personnage.deplacer_vers(sortie.nom)
             return True
-        
+
         for nom, sortie in salle.sorties.iter_couple():
             if sortie and sortie.salle_dest:
                 nom = supprimer_accents(sortie.nom).lower()
@@ -442,32 +446,32 @@ class Module(BaseModule):
                         not sortie.cachee and nom.startswith(commande)):
                     personnage.deplacer_vers(sortie.nom)
                     return True
-        
+
         if commande in NOMS_SORTIES.keys():
             personnage << "Vous ne pouvez aller par là..."
             return True
-        
+
         return False
-    
+
     def changer_ident(self, ancien_ident, nouveau_ident):
         """Change l'identifiant d'une salle"""
         salle = self._salles[ancien_ident]
         del self._salles[ancien_ident]
         self._salles[nouveau_ident] = salle
-        
+
         # On change la salle de zone si la zone est différente
         a_zone = ancien_ident.split(":")[0]
         n_zone = nouveau_ident.split(":")[0]
         if a_zone != n_zone:
             self.get_zone(a_zone).retirer(salle)
             self.get_zone(n_zone).ajouter(salle)
-    
+
     def changer_coordonnees(self, ancien_tuple, nouvelles_coords):
         """Change les coordonnées d'une salle.
         Les anciennes coordonnées sont données sous la forme d'un tuple
             (x, y, z, valide)
         Les nouvelles sont un objet Coordonnees.
-        
+
         """
         a_x, a_y, a_z, a_valide = ancien_tuple
         salle = nouvelles_coords.parent
@@ -476,29 +480,29 @@ class Module(BaseModule):
             del self._coords[a_x, a_y, a_z]
         if salle and nouvelles_coords.valide:
             self._coords[nouvelles_coords.tuple()] = salle
-    
+
     def ajouter_terrain(self, nom):
         """Ajoute un terrain."""
         if nom in self.terrains:
             raise KeyError("le terrain {] existe déjà".format(repr(nom)))
-        
+
         terrain = Terrain(nom)
         self.terrains[nom] = terrain
-    
+
     def get_zone(self, cle):
         """Retourne la zone correspondante ou la crée."""
         zone = self._zones.get(cle)
         if zone is None:
             zone = Zone(cle)
             self._zones[cle] = zone
-        
+
         return zone
-    
+
     def nettoyer_salles(self):
         """Nettoyage des salles et des objets trop vieux."""
         if not self.p_nettoyer:
             return
-        
+
         importeur.diffact.ajouter_action("net_salles", 300,
                 self.nettoyer_salles)
         maintenant = datetime.now()
@@ -507,14 +511,14 @@ class Module(BaseModule):
             for o in objets:
                 if (maintenant - o.ajoute_a).seconds >= NB_MIN_NETTOYAGE * 60:
                     importeur.objet.supprimer_objet(o.identifiant)
-    
+
     def repop_salles(self):
         """Méthode chargée de repop les salles."""
         importeur.diffact.ajouter_action("repop_salles", 900,
                 self.repop_salles)
         for s in self.salles.values():
             s.repop()
-    
+
     def allumer_feu(self, salle, puissance=10):
         """Allume un feu dans salle."""
         if not salle.ident in self.feux:
@@ -523,13 +527,13 @@ class Module(BaseModule):
         else:
             feu = salle.feux[salle.ident]
         return feu
-    
+
     def eteindre_feu(self, salle):
         """Eteint un éventuel feu dans salle."""
         if salle.ident in self.feux:
             self.feux[salle.ident].detruire()
             del self.feux[salle.ident]
-    
+
     def feu_present(self, salle, liste_messages, flags):
         """Si un feu se trouve dans la salle, on l'affiche"""
         if self.feux:
@@ -537,12 +541,12 @@ class Module(BaseModule):
                 if salle == feu.salle:
                     liste_messages.insert(0, str(feu))
                     return
-    
+
     def tick(self, no):
         """Exécute un tick."""
         self.importeur.diffact.ajouter_action("stick_{}".format(no),
                 60, self.tick, no)
-        
+
         # On sélectionne les salles à tick
         salles = list(self._salles.values())
         tick = []
@@ -556,6 +560,6 @@ class Module(BaseModule):
                 if s.affections:
                     tick.append(s)
             i += NB_TICKS
-        
+
         for s in tick:
             s.tick()
