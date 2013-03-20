@@ -785,7 +785,17 @@ class Personnage(BaseObj):
             max = stat.max
             if courante < max:
                 courante_liee = self.stats[liee].courante
-                plus = int(courante_liee * 0.9)
+                if self.position == "allonge":
+                    facteur_position = 1.5
+                    if self.occupe != None:
+                        facteur_position += self.occupe.facteur_allonger 
+                elif self.position == "assis":
+                    facteur_position = 1.2
+                    if self.occupe != None:
+                        facteur_position += self.occupe.facteur_asseoir 
+                else:
+                    facteur_position = 0.9
+                plus = int(courante_liee * facteur_position * 0.9)
                 stat.courante = stat.courante + plus
 
         # Traitement des affections
