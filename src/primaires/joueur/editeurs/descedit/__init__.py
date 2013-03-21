@@ -59,12 +59,49 @@ class EdtDescedit(Presentation):
     def __getnewargs__(self):
         return (None, None)
 
+    def accueil(self):
+        """Message d'accueil du contexte"""
+        msg = "| |tit|Edition de sa description|ff|".ljust(87) + "|\n"
+        msg += self.opts.separateur + "\n\n"
+        msg += " " \
+            "Une description qui doit se faire à la troisième personne du " \
+            "singulier (il a les yeux clairs ou elle est de stature semblant " \
+            "vigoureuse...). Pas de mention d'équipement, de vêtement ou " \
+            "ornements. Rien que de l'objectif, des informations que l'on peut " \
+            "obtenir au premier regard.\n"
+
+        # Parcours des choix possibles
+        for nom, objet in self.choix.items():
+            raccourci = self.get_raccourci_depuis_nom(nom)
+            # On constitue le nom final
+            # Si le nom d'origine est 'description' et le raccourci est 'd',
+            # le nom final doit être '[D]escription'
+            pos = nom.find(raccourci)
+            raccourci = ((pos == 0) and raccourci.capitalize()) or raccourci
+            nom_maj = nom.capitalize()
+            nom_m = nom_maj[:pos] + "[|cmd|" + raccourci + "|ff|]" + \
+                    nom_maj[pos + len(raccourci):]
+            msg += "\n " + nom_m
+            enveloppe = self.choix[nom]
+            apercu = enveloppe.get_apercu()
+            if apercu:
+                msg += " : " + apercu
+
+        return msg
+
     def construire(self, joueur):
         """Construction de l'éditeur"""
 
         # Description
-        description = self.ajouter_choix("description", "d", Description, \
-                joueur, "description_a_valider")
+        # Si le personnage est immortel, on travaille directement sur
+        # l'attribut description, sinon on utilise description_a_valider.
+        if joueur.est_immortel():
+            description = self.ajouter_choix("description", "d", \
+                    Description, joueur, "description")
+            description.apercu = "{objet.description.paragraphes_indentes}"
+        else:
+            description = self.ajouter_choix("description", "d", \
+                    Description, joueur, "description_a_valider")
+            description.apercu = "{objet.description_a_valider.paragraphes_indentes}"
         description.parent = self
-        description.apercu = "{objet.description.paragraphes_indentes}"
         description.aide_courte = "Modifier sa description."

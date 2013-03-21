@@ -849,7 +849,7 @@ class Personnage(BaseObj):
         """
         salle = self.salle
         self << "Vous vous écriez : " + message
-        salle.envoyer("{} s'écrie: " + message, self)
+        salle.envoyer("{} s'écrie : " + message, self)
         importeur.diffact.ajouter_action("yell({}).{}:{}".format(self.nom,
                 salle.ident, id(message)), 0, self.act_crier, salle, [salle],
                 message)
