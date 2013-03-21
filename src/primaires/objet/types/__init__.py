@@ -90,6 +90,7 @@ from .jupe import Jupe
 from .pantalon import Pantalon
 from .robe import Robe
 from .tunique import Tunique
+from .veste import Veste
 
 # Bijoux
 from .bague import Bague

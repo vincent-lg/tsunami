@@ -1,0 +1,13 @@
+=== modified file 'src/secondaires/rapport/commandes/rapport/voir.py'
+--- src/secondaires/rapport/commandes/rapport/voir.py	2013-03-19 15:47:53 +0000
++++ src/secondaires/rapport/commandes/rapport/voir.py	2013-03-20 12:07:58 +0000
+@@ -72,5 +72,7 @@
+                 ret += "Détail :\n"
+                 ret += str(rapport.description) + "\n"
+                 ret += "Rapport envoyé par " + createur + " " + get_date(rapport.date.timetuple()) + ",\n"
+-                ret += "depuis " + str(rapport.salle) + " ; assigné à " + rapport.aff_assigne_a + ".\n"
++                if personnage.est_immortel():
++                    ret += "depuis " + str(rapport.salle)
++                ret += "Assigné à " + rapport.aff_assigne_a + ".\n"
+                 personnage << ret
+
