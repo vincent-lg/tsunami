@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,13 +34,14 @@
 
 from primaires.interpreteur.commande.commande import Commande
 from primaires.communication.conversation import Conversation
+from primaires.format.fonctions import echapper_accolades
 
 class CmdRepondre(Commande):
-    
+
     """Commande 'repondre'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "repondre", "reply")
@@ -60,13 +61,13 @@ class CmdRepondre(Commande):
             "|ent|<numéro du personnage>|ff| (le personnage ainsi " \
             "sélectionné apparaîtra grisé dans la liste numérotée) ou " \
             "%repondre% |ent|-|ff| pour réinitialiser."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         conversations = type(self).importeur.communication.conversations
         p_conversations = conversations.get_conversations_pour(personnage)
         clr = type(self).importeur.anaconf.get_config("config_com").couleur_tell
-                
+
         # Si on n'a pas envoyé de message
         if dic_masques["message"] is None:
             if dic_masques["id_conversation"] is None:
@@ -116,6 +117,7 @@ class CmdRepondre(Commande):
         # Sinon
         else:
             message = dic_masques["message"].message
+            message = echapper_accolades(message)
             cible = None
             # On récupère la cible du reply
             if dic_masques["id_conversation"] is not None:

@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,13 +33,14 @@
 """
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.format.fonctions import echapper_accolades
 
 class CmdParler(Commande):
-    
+
     """Commande 'parler'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "parler", "tell")
@@ -51,11 +52,12 @@ class CmdParler(Commande):
             "l'univers. Ce que vous dites par ce moyen n'est pas soumis aux " \
             "règles du RP. La commande prend en paramètres le nom du joueur, " \
             "et ce que vous souhaitez dire."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         cible = dic_masques["nom_joueur"].joueur
         message = dic_masques["message"].message
+        message = echapper_accolades(message)
         if cible is personnage:
             personnage << "Vous parlez tout seul... Hum."
         elif cible not in type(self).importeur.connex.joueurs_connectes:
@@ -68,5 +70,7 @@ class CmdParler(Commande):
                     message)
             cible << clr + "{} vous dit : {}|ff|".format(personnage.nom,
                     message)
+            cible.envoyer_tip("Utilisez la commande %repondre% pour " \
+                    "répondre.", "repondre", True)
             type(self).importeur.communication.conversations. \
                     ajouter_ou_remplacer(cible, personnage, message)
