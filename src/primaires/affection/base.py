@@ -30,6 +30,8 @@
 
 """Ce module contient la classe AffectionAbstraite, détaillée plus bas."""
 
+from fractions import Fraction
+
 from abstraits.obase import BaseObj
 from corps.fonctions import valider_cle
 from .affection import Affection
@@ -52,6 +54,7 @@ class AffectionAbstraite(BaseObj):
         self.duree_max = -1
         self.infinie = False
         self.variation = -1
+        self.duree_tick = 60 # durée du tick en secondes
 
         # Liste de tuple (force, message)
         self.messages_visibles = []
@@ -61,6 +64,23 @@ class AffectionAbstraite(BaseObj):
 
     def __repr__(self):
         return "<affection de {} {}>".format(self.nom_type, self.cle)
+
+    def _get_duree_max_ticks(self):
+        """Returne la durée en ticks."""
+        return 60 * self.duree_max / self.duree_tick
+    def _set_duree_max_ticks(self, duree):
+        """Modifie la durée en ticks."""
+        self.duree = Fraction(duree) * self.duree_tick / 60
+    duree_max_en_ticks = property(_get_duree_max_ticks, _set_duree_max_ticks)
+
+    @property
+    def aff_duree_max_en_ticks(self):
+        """Affichage de la durée."""
+        duree_ticks = self.duree_max_en_ticks
+        if duree_ticks < 0:
+            return "infinie"
+
+        return str(duree_ticks)
 
     def message(self, affection):
         """Retourne le message visible en fonction de la forde."""
@@ -140,3 +160,21 @@ class AffectionAbstraite(BaseObj):
     def executer_script(self, evenement, affection, **variables):
         """Exécute le script lié."""
         raise NotImplementedError
+
+    def tick(self, affection):
+        """Méthode appelée à chaque tick de l'action.
+
+        NOTE IMPORTANTE : le tick N'EST PAS forcément toutes les
+        minutes. Pour les affections, le tick peut s'exécuter toutes
+        les 3 secondes ou toutes les 20 secondes, ce paramètre est
+        réglable par les adimnistrateurs.
+
+        """
+        # On appelle le script tick
+        if affection.e_existe:
+            self.executer_script("tick", affection)
+
+        # On ajoute l'action différée
+        if affection.e_existe:
+            importeur.diffact.ajouter_action("aff_" + str(id(affection)),
+                    self.duree_tick, self.tick, affection)

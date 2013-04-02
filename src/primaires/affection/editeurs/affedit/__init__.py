@@ -79,6 +79,33 @@ class EdtAffedit(Presentation):
             "Entrez |ent|le résumé|ff| de l'affection.\n\nrésumé actuel : " \
             "{objet.resume}"
 
+        # Durée d'un tick en secondes
+        duree_tick = self.ajouter_choix("durée d'un tick en secondes",
+                "t", Entier, affection, "duree_tick")
+        duree_tick.parent = self
+        duree_tick.apercu = "{objet.duree_tick} seconde(s)"
+        duree_tick.prompt = "Entrez la durée d'un tick de l'affection : "
+        duree_tick.aide_courte = \
+            "Entrez |ent|la durée d'un tick en secondes|ff| de " \
+            "l'affection.\n\nDurée actuelle : {objet.duree_tick}"
+
+        # Durée max
+        duree_max = self.ajouter_choix("durée maximum", "x", Entier,
+                affection, "duree_max_en_ticks", None)
+        duree_max.parent = self
+        duree_max.apercu = "{objet.aff_duree_max_en_ticks}"
+        duree_max.prompt = "Entrez la durée max de l'affection en ticks : "
+        duree_max.aide_courte = \
+            "Entrez |ent|la durée max en ticks|ff| de l'affection.\n\n" \
+            "La durée maximum doit être donnée en ticks. Si par " \
+            "exemple la durée d'un tick\n" \
+            "est de 5 secondes, alors donner une durée maximum de 20 " \
+            "ticks fera une affection qui\n" \
+            "durera 100 secondes au maximum.\n" \
+            "Si la durée max est inférieure à 1, alors il n'y a " \
+            "pas de limite.\n\n" \
+            "Durée maximum actuelle : {objet.aff_duree_max_en_ticks}"
+
         # Infinie
         infinie = self.ajouter_choix("infinie", "inf", Flag, affection,
                 "infinie")

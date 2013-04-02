@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,11 +36,11 @@ from primaires.interpreteur.commande.commande import Commande
 from primaires.format.fonctions import echapper_accolades
 
 class CmdDire(Commande):
-    
+
     """Commande 'dire'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "dire", "say")
@@ -53,7 +53,7 @@ class CmdDire(Commande):
             "la salle l'entendront. C'est la commande standard pour " \
             "discuter RP dans l'univers. Elle prend simplement en " \
             "paramètre le message que vous souhaitez dire."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         personnage.agir("parler")
@@ -62,13 +62,17 @@ class CmdDire(Commande):
         if "alcool" in personnage.affections:
             affection = personnage.affections["alcool"]
             message = affection.affection.deformer_message(affection, message)
-        
+
         salle = personnage.salle
         moi = "Vous dites : " + message
         autre = "{} dit : " + message
         personnage.envoyer(moi)
         salle.envoyer(autre, personnage)
-        
+        for autre in salle.joueurs:
+            if autre is not personnage:
+                autre.envoyer_tip("Utilisez la commande %dire% pour " \
+                        "parler en RP dans la salle.", "dire", True)
+
         # Appel de l'évènement 'dire' de la salle
         salle.script["dit"].executer(personnage=personnage,
                 salle=salle, message=message)

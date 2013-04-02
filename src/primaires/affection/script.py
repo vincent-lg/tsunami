@@ -55,6 +55,16 @@ class ScriptAffection(Script):
             "à 0. Il est aussi appelé quand on demande à l'affection " \
             "de se détruire par script."
 
+        # Évènement tick
+        evt_tick = self.creer_evenement("tick")
+        evt_tick.aide_courte = "chaque tick de l'affection"
+        evt_tick.aide_longue = \
+            "Cet évènement est appelé à chaque tick de l'affection " \
+            "tant qu'elle existe. Les ticks peuvent être d'une minute " \
+            "(60 secondes) mais peuvent être plus courts. Cet évènement " \
+            "n'est donc pas strictement appelé toutes les minutes " \
+            "(clla dépend de la configuration de l'affection)."
+
         # Évènement valide
         evt_valide = self.creer_evenement("valide")
         evt_valide.aide_courte = "vérifie que l'affection est valide"

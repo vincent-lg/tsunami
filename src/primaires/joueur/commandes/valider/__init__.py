@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 CORTIER Benoît
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,49 +28,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'parler'.
-
-"""
+"""Package contenant la commande 'valider'"""
 
 from primaires.interpreteur.commande.commande import Commande
-from primaires.format.fonctions import echapper_accolades
 
-class CmdParler(Commande):
+class CmdDecrire(Commande):
 
-    """Commande 'parler'.
+    """Commande 'valider'.
 
     """
 
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "parler", "tell")
-        self.nom_categorie = "parler"
-        self.schema = "<nom_joueur> <message>"
-        self.aide_courte = "dit une phrase à un autre joueur"
+        Commande.__init__(self, "valider", "validate")
+        self.groupe = "moderation"
+        self.aide_courte = "..."
         self.aide_longue = \
-            "Cette commande permet de parler à un autre joueur connecté dans " \
-            "l'univers. Ce que vous dites par ce moyen n'est pas soumis aux " \
-            "règles du RP. La commande prend en paramètres le nom du joueur, " \
-            "et ce que vous souhaitez dire."
+            "..." \
+            "..." \
 
     def interpreter(self, personnage, dic_masques):
-        """Interprétation de la commande"""
-        cible = dic_masques["nom_joueur"].joueur
-        message = dic_masques["message"].message
-        message = echapper_accolades(message)
-        if cible is personnage:
-            personnage << "Vous parlez tout seul... Hum."
-        elif cible not in type(self).importeur.connex.joueurs_connectes:
-            personnage << "|err|Le joueur passé en paramètre n'a pu être " \
-                    "trouvé.|ff|"
-        else:
-            clr = type(self).importeur.anaconf. \
-                    get_config("config_com").couleur_tell
-            personnage << clr + "Vous dites à {} : {}|ff|".format(cible.nom,
-                    message)
-            cible << clr + "{} vous dit : {}|ff|".format(personnage.nom,
-                    message)
-            cible.envoyer_tip("Utilisez la commande %repondre% pour " \
-                    "répondre.", "repondre", True)
-            type(self).importeur.communication.conversations. \
-                    ajouter_ou_remplacer(cible, personnage, message)
+        """Méthode d'interprétation de commande"""
+        pass

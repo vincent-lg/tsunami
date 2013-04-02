@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -42,20 +42,20 @@ from .editeurs.pedit import EdtPedit
 NB_TICKS = 12
 
 class Module(BaseModule):
-    
+
     """Cette classe contient les informations du module primaire pnj.
-    
+
     Comme son nom l'indique, ce module gère les PNJ de l'univers,
     personnages non joueurs, hérités de Personnage mais distincts des
     joueurs dans le sens où ils sont animés par l'univers et non par
     des joueurs connectés.
-    
+
     Ce module gère également les prototypes de PNJ. Plusieurs PNJ peuvent
     être modelés sur le même prototype (être du même nom, de la même race,
     avoir le même équipement, par exemple deux gardes d'une Cité).
-    
+
     """
-    
+
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "pnj", "primaire")
@@ -64,34 +64,34 @@ class Module(BaseModule):
         self.ticks = {}
         for no in range(1, NB_TICKS + 1):
             self.ticks[no] = []
-    
+
     def init(self):
         """Initialisation du module"""
         prototypes = self.importeur.supenr.charger_groupe(Prototype)
         for prototype in prototypes:
             self._prototypes[prototype.cle] = prototype
-        
+
         pnjs = self.importeur.supenr.charger_groupe(PNJ)
         pnjs = [p for p in pnjs if hasattr(p, "identifiant")]
         for pnj in pnjs:
             self._PNJ[pnj.identifiant] = pnj
-        
+
         # Ajout des actions différées pour chaque tick
         intervalle = 60 / NB_TICKS
         for no in self.ticks.keys():
             self.importeur.diffact.ajouter_action("ntick_{}".format(no),
                     intervalle * no, self.tick, no)
-        
+
         # Ajout des états
         depece = importeur.perso.ajouter_etat("depece")
         depece.msg_refus = "Vous êtes en train de dépecer un cadavre."
         depece.msg_visible = "dépece un cadavre ici"
         depece.act_autorisees = ["regarder", "parler"]
-        
+
         importeur.perso.ajouter_talent("depecage", "dépeçage", "survie", 0.25)
-        
+
         BaseModule.init(self)
-    
+
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
@@ -102,93 +102,88 @@ class Module(BaseModule):
             commandes.ppurge.CmdPpurge(),
             commandes.pspawn.CmdPspawn(),
         ]
-        
+
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
-        
+
         # Ajout de l'éditeur 'redit'
         self.importeur.interpreteur.ajouter_editeur(EdtPedit)
-    
+
     def preparer(self):
         """Préparation du module."""
         for p in self._prototypes.values():
             p.pnj = []
-        
+
         for pnj in self._PNJ.values():
             pnj.prototype.pnj.append(pnj)
-        
-        # Code à supprimer après mise à jour
-        if all(p.salles_repop == {} for p in self._prototypes.values()):
-            print("Nettoyage")
-            for pnj in self._PNJ.values():
-                if pnj.salle_origine:
-                    pnj.prototype.salles_repop[pnj.salle_origine] = \
-                            pnj.prototype.salles_repop.get(
-                            pnj.salle_origine, 0) + 1
-    
+
+            # Ajout des affections à diffact
+            for affection in pnj.affections.values():
+                affection.prevoir_tick()
+
     @property
     def PNJ(self):
         """Retourne un dictionnaire déréférencé des PNJ."""
         return dict(self._PNJ)
-    
+
     @property
     def prototypes(self):
         """Retourne un dictionnaire déréférencé des prototypes."""
         return dict(self._prototypes)
-    
+
     def creer_prototype(self, cle):
         """Crée un prototype et l'ajoute aux prototypes existants"""
         if cle in self._prototypes:
             raise ValueError("la clé {} est déjà utilisée comme " \
                     "prototype".format(cle))
-        
+
         prototype = Prototype(cle)
         self.ajouter_prototype(prototype)
         return prototype
-    
+
     def ajouter_prototype(self, prototype):
         """Ajoute un prototype au dictionnaire des prototypes"""
         if prototype.cle in self._prototypes:
             raise ValueError("la clé {} est déjà utilisée comme " \
                     "prototype".format(prototype.cle))
-        
+
         self._prototypes[prototype.cle] = prototype
-    
+
     def supprimer_prototype(self, cle):
         """Supprime le prototype cle"""
         prototype = self._prototypes[cle]
         del self._prototypes[cle]
         prototype.detruire()
-    
+
     def creer_PNJ(self, prototype, salle=None):
         """Crée un PNJ depuis le prototype prototype.
-        
+
         Le PNJ est ensuite ajouté à la liste des PNJ existants.
-        
+
         """
         pnj = PNJ(prototype, salle)
         self.ajouter_PNJ(pnj)
         return pnj
-    
+
     def ajouter_PNJ(self, pnj):
         """Ajoute le PNJ à la liste des PNJ"""
         if pnj.identifiant in self._PNJ:
             raise ValueError("l'identifiant {} est déjà utilisé comme " \
                     "PNJ".format(pnj.identifiant))
-        
+
         self._PNJ[pnj.identifiant] = pnj
-    
+
     def supprimer_PNJ(self, identifiant):
         """Supprime le PNJ de la liste des PNJ."""
         pnj = self._PNJ[identifiant]
         del self._PNJ[identifiant]
         pnj.detruire()
-    
+
     def tick(self, no):
         """Exécute un tick."""
         self.importeur.diffact.ajouter_action("ntick_{}".format(no),
                 60, self.tick, no)
-        
+
         # On sélectionne les PNJ à tick
         pnj = list(self._PNJ.values())
         tick = []
@@ -201,6 +196,6 @@ class Module(BaseModule):
             else:
                 tick.append(p)
             i += NB_TICKS
-        
+
         for p in tick:
             p.tick()

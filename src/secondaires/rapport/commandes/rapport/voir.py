@@ -72,5 +72,7 @@ class PrmVoir(Parametre):
                 ret += "Détail :\n"
                 ret += str(rapport.description) + "\n"
                 ret += "Rapport envoyé par " + createur + " " + get_date(rapport.date.timetuple()) + ",\n"
-                ret += "depuis " + str(rapport.salle) + " ; assigné à " + rapport.aff_assigne_a + ".\n"
+                if personnage.est_immortel():
+                    ret += "depuis " + str(rapport.salle)
+                ret += "Assigné à " + rapport.aff_assigne_a + ".\n"
                 personnage << ret
