@@ -102,6 +102,7 @@ class Module(BaseModule):
             commandes.ejecter.CmdEjecter(),
             commandes.entrainer.CmdEntrainer(),
             commandes.groupe.CmdGroupe(),
+            #commandes.decrire.CmdDecrire(),
             commandes.distinctions.CmdDistinctions(),
             commandes.module.CmdModule(),
             commandes.options.CmdOptions(),
@@ -115,7 +116,6 @@ class Module(BaseModule):
             commandes.shutdown.CmdShutdown(),
             commandes.superinv.CmdSuperinv(),
             commandes.where.CmdWhere(),
-            commandes.decrire.CmdDecrire(),
         ]
 
         for cmd in self.commandes:
