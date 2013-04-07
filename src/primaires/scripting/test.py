@@ -156,7 +156,7 @@ class Test(BaseObj):
         # Si le test est relié à une quête, on teste le niveau dans la quête
         etape = self.etape
         if etape:
-            if not forcer and notself.acteur or not self.acteur.quetes[
+            if not forcer and not self.acteur or not self.acteur.quetes[
                     etape.quete.cle].peut_faire(etape.quete, etape.niveau):
                 return False
 
