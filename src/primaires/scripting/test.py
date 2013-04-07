@@ -92,10 +92,12 @@ class Test(BaseObj):
     def acteur(self):
         """Retourne l'acteur de la quête.
 
-        C'est la variable personnage. Elle doit donc exister.
+        Dans la plupart des cas, c'est la variable 'personnage'. Mais
+        l'évènement a la possibilité de redéfinir cette variable.
 
         """
-        return self.evenement.espaces.variables["personnage"]
+        acteur = self.evenement.nom_acteur
+        return self.evenement.espaces.variables[acteur]
 
     def construire(self, chaine_test):
         """Construit la suite de chaînes en fonction de la chaîne.
@@ -154,8 +156,8 @@ class Test(BaseObj):
         # Si le test est relié à une quête, on teste le niveau dans la quête
         etape = self.etape
         if etape:
-            if not self.acteur.quetes[etape.quete.cle].peut_faire(
-                    etape.quete, etape.niveau):
+            if not self.acteur or not self.acteur.quetes[
+                    etape.quete.cle].peut_faire(etape.quete, etape.niveau):
                 return False
 
         if not self.__tests:
@@ -265,7 +267,7 @@ class Test(BaseObj):
 
         """
         etape = self.etape
-        if etape:
+        if etape and self.acteur:
             self.acteur.quetes[etape.quete.cle].deverouiller()
 
         code = "def script():\n"
@@ -293,7 +295,7 @@ class Test(BaseObj):
             self.executer_code(evenement, code)
 
         # Si le test est relié à une quête
-        if etape:
+        if etape and self.acteur:
             # Si aucun verrou n'a été posé
             if not self.acteur.quetes[etape.quete.cle].verrouille:
                 self.acteur.quetes.valider(etape.quete, etape.niveau)
