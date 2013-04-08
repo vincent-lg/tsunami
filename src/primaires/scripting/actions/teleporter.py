@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -31,28 +31,29 @@
 """Fichier contenant l'action teleporter."""
 
 from primaires.scripting.action import Action
+from primaires.scripting.instruction import ErreurExecution
 
 class ClasseAction(Action):
-    
+
     """Téléporte un personnage dans une salle distante."""
-    
+
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.teleporter_salle, "Personnage", "Salle")
         cls.ajouter_types(cls.teleporter_dest, "Personnage", "str")
-    
+
     @staticmethod
     def teleporter_salle(personnage, salle):
         """Téléporte le personnage dans une salle distante."""
         personnage.salle = salle
-    
+
     @staticmethod
     def teleporter_dest(personnage, destination):
         """Téléporte le personnage vers la destination.
         La destination doit être précisée sous la forme d'une chaîne de
         caractères : \"zone:mnémonic\". Une erreur est levée si la
         destination ne peut être trouvée (la salle indiquée n'existe pas).
-        
+
         """
         try:
             salle = importeur.salle[destination]

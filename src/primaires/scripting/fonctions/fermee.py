@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -31,29 +31,30 @@
 """Fichier contenant la fonction fermee."""
 
 from primaires.scripting.fonction import Fonction
+from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
-    
+
     """Test si une porte est fermée ou non."""
-    
+
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.fermee, "Salle", "str")
-    
+
     @staticmethod
     def fermee(salle, nom_sortie):
         """Retourne vrai si la sortie de la salle est fermée, faux sinon.
-        
+
         NOTE: si la sortie indiquée n'est pas une porte, une erreur est envoyée.
-        
+
         """
         sortie = salle.sorties.get_sortie_par_nom_ou_direction(nom_sortie)
         if sortie is None:
             raise ErreurExecution("la sortie {} n'existe pas dans la " \
                     "salle {}".format(repr(nom_sortie), repr(salle.ident)))
-        
+
         if not sortie.porte:
             raise ErreurExecution("cette sortie n'a aucune porte")
-        
+
         return sortie.porte.fermee
 

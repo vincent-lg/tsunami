@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -31,16 +31,17 @@
 """Fichier contenant la fonction combien_dans."""
 
 from primaires.scripting.fonction import Fonction
+from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
-    
+
     """Renvoie le nombre d'objets dans un conteneur."""
-    
+
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.cb_dans, "Objet")
         cls.ajouter_types(cls.cb_dans_proto, "Objet", "str")
-    
+
     @staticmethod
     def cb_dans(conteneur):
         """RRenvoie le nombre d'objets contenus dans le conteneur."""
@@ -51,7 +52,7 @@ class ClasseFonction(Fonction):
         if conteneur.est_de_type("conteneur"):
             return sum(nb for o, nb in conteneur.conteneur.iter_nombres)
         raise ErreurExecution("{} n'est pas un conteneur".format(conteneur))
-    
+
     @staticmethod
     def cb_dans_proto(conteneur, prototype):
         """Renvoie la quantité d'objets du prototype dans le conteneur."""
@@ -60,7 +61,7 @@ class ClasseFonction(Fonction):
         prototype = importeur.objet.prototypes[prototype]
         if conteneur.est_de_type("conteneur de potion"):
             if conteneur.potion and conteneur.potion.prototype is prototype:
-                return 1 
+                return 1
             return 0
         if conteneur.est_de_type("conteneur de nourriture"):
             return len(o for o in conteneur.nourriture \

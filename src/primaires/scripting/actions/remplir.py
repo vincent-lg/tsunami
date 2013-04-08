@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -31,25 +31,26 @@
 """Fichier contenant l'action remplir."""
 
 from primaires.scripting.action import Action
+from primaires.scripting.instruction import ErreurExecution
 
 class ClasseAction(Action):
-    
+
     """Remplit un conteneur de nourriture ou de potion."""
-    
+
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.remplir_objet, "Objet", "Objet")
         cls.ajouter_types(cls.remplir_proto_nb, "Objet", "str",
                 "Fraction")
-    
+
     @staticmethod
     def remplir_objet(conteneur, objet):
         """Met l'objet dans le conteneur de nourriture.
-        
+
         Attention, l'objet conteneur ne peut en aucun cas être "flottant" mais
         doit lui-même être contenu quelque part (sol d'une salle, inventaire
         d'un personnage, autre conteneur...).
-        
+
         """
         if not conteneur.contenu:
             raise ErreurExecution("{} n'est contenu nul part".format(
@@ -70,15 +71,15 @@ class ClasseAction(Action):
         if objet.contenu:
             objet.contenu.retirer(objet)
         conteneur.nourriture.append(objet)
-    
+
     @staticmethod
     def remplir_proto_nb(conteneur, prototype, nb):
         """Pose dans le conteneur nb objets du prototype précisé.
-        
+
         Attention, l'objet conteneur ne peut en aucun cas être "flottant" mais
         doit lui-même être contenu quelque part (sol d'une salle, inventaire
         d'un personnage, autre conteneur...).
-        
+
         """
         nb = int(nb)
         if not prototype in importeur.objet.prototypes:

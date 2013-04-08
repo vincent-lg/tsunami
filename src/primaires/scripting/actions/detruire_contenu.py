@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -31,29 +31,30 @@
 """Fichier contenant l'action detruire_contenu."""
 
 from primaires.scripting.action import Action
+from primaires.scripting.instruction import ErreurExecution
 
 class ClasseAction(Action):
-    
+
     """Détruit le contenu d'un objet."""
-    
+
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.detruire_contenu, "Objet")
-    
+
     @staticmethod
     def detruire_contenu(objet):
         """Détruit le contenu de l'objet précisé.
-        
+
         L'objet doit être un conteneur. Tout ce qu'il contient est
         __DEFINiTIVEMENT__ supprimé.
-        
+
         """
         if not hasattr(objet, "conteneur"):
             raise ErreurExecution("{} n'est pas un conteneur".format(
                     objet.cle))
         for o in list(objet.conteneur._objets):
             importeur.objet.supprimer_objet(o.identifiant)
-        
+
         objet.conteneur._objets = []
         objet.conteneur._non_uniques = []
 

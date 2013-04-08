@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -31,28 +31,29 @@
 """Fichier contenant la fonction salle."""
 
 from primaires.scripting.fonction import Fonction
+from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
-    
+
     """Retourne la salle d'un personnage."""
-    
+
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.salle_personnage, "Personnage")
         cls.ajouter_types(cls.salle_chaine, "str")
-    
+
     @staticmethod
     def salle_personnage(personnage):
         """Retourne la salle du personnage passé en paramètre"""
         return personnage.salle
-    
+
     @staticmethod
     def salle_chaine(cle):
         """Retourne la salle correspondante à la clé entrée.
-        
+
         La clé doit être la zone de la salle et son mnémonic
         séparés par le signe deux points. Par exemple, "picte:1".
-        
+
         """
         try:
             salle = importeur.salle[cle]

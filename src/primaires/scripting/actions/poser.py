@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -31,11 +31,12 @@
 """Fichier contenant l'action poser."""
 
 from primaires.scripting.action import Action
+from primaires.scripting.instruction import ErreurExecution
 
 class ClasseAction(Action):
-    
+
     """Pose quelque chose sur le sol ou dans un conteneur."""
-    
+
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.poser_objet, "Salle", "Objet")
@@ -43,20 +44,20 @@ class ClasseAction(Action):
         cls.ajouter_types(cls.poser_proto_nb, "Salle", "str", "Fraction")
         cls.ajouter_types(cls.poser_proto_nb_conteneur, "Objet", "str",
                 "Fraction")
-    
+
     @staticmethod
     def poser_objet(salle, objet):
         """Pose l'objet sur le sol de la salle."""
         salle.objets_sol.ajouter(objet)
-    
+
     @staticmethod
     def poser_objet_conteneur(conteneur, objet):
         """Pose l'objet dans le conteneur (pas conteneur de nourriture).
-        
+
         Attention, l'objet conteneur ne peut en aucun cas être "flottant" mais
         doit lui-même être contenu quelque part (sol d'une salle, inventaire
         d'un personnage, autre conteneur...).
-        
+
         """
         if not conteneur.est_de_type("conteneur"):
             raise ErreurExecution("{} n'est pas un conteneur".format(
@@ -65,7 +66,7 @@ class ClasseAction(Action):
             raise ErreurExecution("{} n'est contenu nul part".format(
                     conteneur.get_nom()))
         conteneur.conteneur.ajouter(objet)
-    
+
     @staticmethod
     def poser_proto_nb(salle, prototype, nb):
         """Pose sur le sol de la salle nb objets du prototype précisé."""
@@ -76,16 +77,16 @@ class ClasseAction(Action):
         for i in range(nb):
             objet = importeur.objet.creer_objet(prototype)
             salle.objets_sol.ajouter(objet)
-    
+
     @staticmethod
     def poser_proto_nb_conteneur(conteneur, prototype, nb):
         """Pose dans le conteneur nb objets du prototype précisé.
-        
+
         Attention, l'objet conteneur ne peut en aucun cas être "flottant" mais
         doit lui-même être contenu quelque part (sol d'une salle, inventaire
         d'un personnage, autre conteneur...). Il ne doit pas en outre être
         un conteneur de nourriture.
-        
+
         """
         nb = int(nb)
         if not prototype in importeur.objet.prototypes:
