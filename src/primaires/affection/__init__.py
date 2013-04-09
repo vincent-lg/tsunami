@@ -87,13 +87,11 @@ class Module(BaseModule):
 
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
-        print("Ajout des commandes")
         self.commandes = [
             commandes.affection.CmdAffection(),
         ]
 
         for cmd in self.commandes:
-            print("Ajout de", cmd)
             importeur.interpreteur.ajouter_commande(cmd)
 
         # Ajout des éditeurs
@@ -105,7 +103,6 @@ class Module(BaseModule):
         Crée les affections par défaut si elles n'existent pas.
 
         """
-        print("Préparation")
         aff_salles = {
             "neige": defaut.salle.neige.Neige,
         }

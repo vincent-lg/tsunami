@@ -52,17 +52,16 @@ class ClasseFonction(Fonction):
 
         """
         try:
-            niveau = tuple(int(v) for v in niveau.split("."))
+            t_niveau = tuple(int(v) for v in niveau.split("."))
         except ValueError:
             raise ErreurExecution("niveau spécifié invalide {}".format(
                     niveau))
-        if niveau == (0, ):
-            return True
 
-        try:
-            quete = personnage.quetes[cle_de_quete]
-        except KeyError:
-            return niveau == (1, )
-        else:
-            return niveau not in quete.niveaux
+        quete = personnage.quetes[cle_de_quete]
+        template = importeur.scripting.quetes[cle_de_quete].etapes.get(niveau)
+        if template is None:
+            return False
+        elif template.parent:
+            template = template.parent
 
+        return quete.peut_faire(template, t_niveau)
