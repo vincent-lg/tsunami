@@ -118,7 +118,7 @@ class Module(BaseModule):
             if cle not in self.aff_personnages:
                 classe() # crée (et enregistre automatiquement) l'affection
 
-    def creer_affection(a_type, cle):
+    def creer_affection(self, a_type, cle):
         """Crée et ajoute l'affection."""
         types = {
             "personnage": AffectionPersonnage,
