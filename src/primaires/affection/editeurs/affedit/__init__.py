@@ -41,6 +41,7 @@ les extensions n'apparaîtront pas ici.
 
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.flag import Flag
+from primaires.interpreteur.editeur.flags import Flags
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.scripting.editeurs.edt_script import EdtScript
@@ -78,6 +79,13 @@ class EdtAffedit(Presentation):
         resume.aide_courte = \
             "Entrez |ent|le résumé|ff| de l'affection.\n\nrésumé actuel : " \
             "{objet.resume}"
+
+        # Flags
+        flags = self.ajouter_choix("flags", "fl", Flags, affection, "flags",
+                type(affection).def_flags)
+        flags.parent = self
+        flags.aide_courte = \
+            "Flags d'affection de {} :".format(affection.cle)
 
         # Durée d'un tick en secondes
         duree_tick = self.ajouter_choix("durée d'un tick en secondes",

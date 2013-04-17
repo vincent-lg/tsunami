@@ -32,6 +32,7 @@
 
 from math import sqrt
 import re
+from random import random, randint
 from datetime import datetime
 
 from abstraits.module import *
@@ -705,3 +706,98 @@ class Module(BaseModule):
 
         for s in tick:
             s.tick()
+
+    def peut_allumer_feu(self, salle):
+        """Retourne si on peut allumer un feu dans cette salle ou non."""
+        if salle.interieur or salle.nom_terrain in ("rive", "aquatique",
+                    "subaquatique", "ville", "route"):
+            return False
+
+        for affection in salle.affections.values():
+            if affection.affection.a_flag("humide"):
+                return False
+
+        return True
+
+    def allumer_ou_recharger(self, personnage, utiliser_pierre=True,
+            utiliser_niveau=True):
+        """Allume ou recharge un feu."""
+        salle = personnage.salle
+        if "neige" in salle.affections:
+            personnage << "|err|Il fait trop humide.|ff|"
+            return
+
+        objets_sol = list(salle.objets_sol)
+        somme_combu = 0
+        for objet in list(objets_sol):
+            if objet.est_de_type("combustible"):
+                somme_combu += objet.qualite
+        if not somme_combu:
+            personnage << "|err|Il n'y a rien qui puisse brûler par ici.|ff|"
+            return
+
+        # On tente d'allumer ou de nourrir le feu
+        if salle.ident in self.feux:
+            feu = self.feux[salle.ident]
+            feu.puissance += somme_combu
+            personnage << "Vous poussez du bois dans le feu et celui-ci " \
+                    "gagne en vigueur et en éclat."
+            for objet in objets_sol:
+                if objet.est_de_type("combustible"):
+                    importeur.objet.supprimer_objet(objet.identifiant)
+        else:
+            if not self.peut_allumer_feu(salle):
+                personnage << "|err|Vous ne pouvez pas faire de feu ici.|ff|"
+                return
+
+            efficacite_pierre = 100
+            if utiliser_pierre:
+                pierre = None
+                for objet, qtt, t_conteneur in \
+                        personnage.equipement.inventaire.iter_objets_qtt(
+                        conteneur=True):
+                    if objet.est_de_type("pierre à feu"):
+                        pierre = objet
+                        conteneur = t_conteneur
+                        break
+
+                if not pierre:
+                    personnage << "|err|Vous ne tenez rien pour allumer.|ff|"
+                    return
+
+                efficacite_pierre = pierre.efficacite
+                if pierre.efficacite > 0:
+                    pierre.efficacite -= 1
+
+            if utiliser_niveau:
+                personnage.pratiquer_talent("feu_camp")
+                niveau = sqrt(personnage.get_talent("feu_camp") / 100)
+            else:
+                niveau = 1
+
+            efficace = efficacite_pierre / 50
+            proba_marche = random()
+
+            # Si la pierre fonctionne
+            if proba_marche <= efficace:
+                proba_reussit = round(random(), 1)
+                if proba_reussit <= niveau:
+                    personnage << "Une étincelle vole et le feu prend."
+                    feu = importeur.salle.allumer_feu(salle, somme_combu)
+                    personnage.gagner_xp("survie", somme_combu * 20)
+                    for objet in objets_sol:
+                        if objet.est_de_type("combustible"):
+                            if objet.identifiant:
+                                importeur.objet.supprimer_objet(
+                                        objet.identifiant)
+                    feu.stabilite = 1 - niveau ** (1 / 3)
+                    return
+
+            personnage << "Le feu refuse de démarrer."
+            proba_casse = random()
+            solidite = efficace ** (1 / 5)
+            if proba_casse >= solidite and utiliser_pierre:
+                personnage << "{} se brise en mille morceaux.".format(
+                        pierre.nom_singulier)
+                conteneur.retirer(pierre)
+                importeur.objet.supprimer_objet(pierre.identifiant)

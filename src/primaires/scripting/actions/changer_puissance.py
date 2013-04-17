@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 NOEL-BARON Léo
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,29 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'mettrefeu'."""
+"""Fichier contenant l'action changer_puissance."""
 
-from random import random, randint, choice
-from math import sqrt
+from primaires.scripting.action import Action
+from primaires.scripting.instruction import ErreurExecution
 
-from primaires.interpreteur.commande.commande import Commande
+class ClasseAction(Action):
 
-class CmdMettreFeu(Commande):
+    """Change la puissance d'un feu dans une salle."""
 
-    """Commande 'mettrefeu'"""
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.changer_puissance, "Salle", "Fraction")
 
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "mettrefeu", "setfire")
-        self.nom_categorie = "objets"
-        self.aide_courte = "allume ou entretient un feu"
-        self.aide_longue = \
-            "Cette commande permet d'allumer un feu si vous tenez une " \
-            "pierre ou un briquet et qu'il y a du combustible dans la " \
-            "salle ; si un feu est déjà allumé et qu'il y a du combustible, " \
-            "elle le nourrit."
+    @staticmethod
+    def changer_puissance(salle, puissance):
+        """Change la puissance du feu dans la salle.
 
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        personnage.agir("mettrefeu")
-        importeur.salle.allumer_ou_recharger(personnage)
+        La puissance doit être entre 1 et 100. Une puissance inférieure
+        à 5 donnera une durée de vie au feu très courte. Une puissance
+        supérieure à 50 créera un incendie dans la salle qui se propagera.
+
+        N'utilisez pas une puissance nulle ou négative pour supprimer
+        un feu. Préférez l'action 'eteindre_feu'.
+
+        """
+        if salle.ident not in importeur.salle.feux:
+            raise ErreurExecution("aucunf eu n'est allumé dans cette salle")
+
+        if int(puissance) <= 0:
+            raise ErreurExecution("la puissance fournie est négative ou nulle")
+
+        feu = importeur.salle.feux[salle.ident]
+        feu.puissance = int(puissance)

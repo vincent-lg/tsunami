@@ -39,6 +39,9 @@ class AffectionSalle(AffectionAbstraite):
 
     nom_type = "salle"
     nom_scripting = "affection de salle"
+    def_flags = {
+        "humide": 1,
+    }
     def __init__(self, cle):
         AffectionAbstraite.__init__(self, cle)
         self.script = ScriptAffectionSalle(self)

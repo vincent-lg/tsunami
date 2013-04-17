@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 NOEL-BARON Léo
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,29 +28,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'mettrefeu'."""
+"""Fichier contenant la fonction feu_existe."""
 
-from random import random, randint, choice
-from math import sqrt
+from primaires.scripting.fonction import Fonction
 
-from primaires.interpreteur.commande.commande import Commande
+class ClasseFonction(Fonction):
 
-class CmdMettreFeu(Commande):
+    """Teste si un feu existe dans la salle précisée."""
 
-    """Commande 'mettrefeu'"""
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.feu_existe, "Salle")
 
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "mettrefeu", "setfire")
-        self.nom_categorie = "objets"
-        self.aide_courte = "allume ou entretient un feu"
-        self.aide_longue = \
-            "Cette commande permet d'allumer un feu si vous tenez une " \
-            "pierre ou un briquet et qu'il y a du combustible dans la " \
-            "salle ; si un feu est déjà allumé et qu'il y a du combustible, " \
-            "elle le nourrit."
-
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        personnage.agir("mettrefeu")
-        importeur.salle.allumer_ou_recharger(personnage)
+    @staticmethod
+    def feu_existe(salle):
+        """Retourne vraie si un feu existe dans cette salle, faux sinon."""
+        return salle.ident in importeur.salle.feux

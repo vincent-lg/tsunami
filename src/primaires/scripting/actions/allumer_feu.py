@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 NOEL-BARON Léo
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,29 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'mettrefeu'."""
+"""Fichier contenant l'action allumer_feu."""
 
-from random import random, randint, choice
-from math import sqrt
+from primaires.scripting.action import Action
+from primaires.scripting.instruction import ErreurExecution
 
-from primaires.interpreteur.commande.commande import Commande
+class ClasseAction(Action):
 
-class CmdMettreFeu(Commande):
+    """Allume un feu dans une salle."""
 
-    """Commande 'mettrefeu'"""
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.allumer_feu, "Salle", "Fraction")
 
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "mettrefeu", "setfire")
-        self.nom_categorie = "objets"
-        self.aide_courte = "allume ou entretient un feu"
-        self.aide_longue = \
-            "Cette commande permet d'allumer un feu si vous tenez une " \
-            "pierre ou un briquet et qu'il y a du combustible dans la " \
-            "salle ; si un feu est déjà allumé et qu'il y a du combustible, " \
-            "elle le nourrit."
+    @staticmethod
+    def allumer_feu(salle, puissance):
+        """Allume le feu dans la salle avec la puissance indiquée.
 
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        personnage.agir("mettrefeu")
-        importeur.salle.allumer_ou_recharger(personnage)
+        La puissance doit être entre 1 et 100 : une puissance entre
+        1 et 5 ne donnera une durée de vie au feu que très courte. Une
+        puissance supérieure à 50 déclenchera un incendie qui se
+        propagera de salle en salle.
+
+        NOTE : aucun feu ne doit être allumé dans la salle. Utilisez la
+        fonction 'feu_existe' pour le vérifier avant tout et, si vous voulez
+        faire varier la puissance d'un feu existant, utiliser l'action
+        'changer_puissance'.
+
+        Enfin, cette action allume un feu dans la salle sans besoin de
+        combustible. Si vous souhaitez utiliser du combustible, utiliser
+        l'action 'allumer_feu_avec_combustible'.
+
+        """
+        if salle.ident in importeur.salle.feux:
+            raise ErreurExecution("un feu est déjà allumé dans cette salle")
+
+        importeur.salle.allumer_feu(salle, int(puissance))

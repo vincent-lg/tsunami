@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 NOEL-BARON Léo
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,29 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'mettrefeu'."""
+"""Fichier contenant l'action allumer_feu_avec_combustible."""
 
-from random import random, randint, choice
-from math import sqrt
+from primaires.scripting.action import Action
+from primaires.scripting.instruction import ErreurExecution
 
-from primaires.interpreteur.commande.commande import Commande
+class ClasseAction(Action):
 
-class CmdMettreFeu(Commande):
+    """Allume un feu dans une salle en utilisant le combustible."""
 
-    """Commande 'mettrefeu'"""
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.allumer_feu, "Personnage")
 
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "mettrefeu", "setfire")
-        self.nom_categorie = "objets"
-        self.aide_courte = "allume ou entretient un feu"
-        self.aide_longue = \
-            "Cette commande permet d'allumer un feu si vous tenez une " \
-            "pierre ou un briquet et qu'il y a du combustible dans la " \
-            "salle ; si un feu est déjà allumé et qu'il y a du combustible, " \
-            "elle le nourrit."
+    @staticmethod
+    def allumer_feu(personnage):
+        """Demande au personnage d'allumer un feu avec le combustible au sol.
 
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        personnage.agir("mettrefeu")
-        importeur.salle.allumer_ou_recharger(personnage)
+        Cette action utilise le combustible posé au sol, sans besoin de
+        pierre. Le talent du personnage n'est également pas utilisée. Si
+        un feu existe déjà dans cette salle, une alerte sera créée.
+
+        """
+        salle = personnage.salle
+        if salle.ident in importeur.salle.feux:
+            raise ErreurExecution("un feu est déjà allumé dans cette salle")
+
+        importeur.salle.allumer_ou_recharger(personnage, utiliser_pierre=False,
+                utiliser_niveau=False)
+

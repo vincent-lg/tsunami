@@ -42,6 +42,8 @@ class AffectionAbstraite(BaseObj):
 
     nom_type = "non renseigné"
     enregistrer = True
+    def_flags = {}
+
     def __init__(self, cle):
         if cle:
             valider_cle(cle)
@@ -55,6 +57,7 @@ class AffectionAbstraite(BaseObj):
         self.infinie = False
         self.variation = -1
         self.duree_tick = 60 # durée du tick en secondes
+        self.flags = 0
 
         # Liste de tuple (force, message)
         self.messages_visibles = []
@@ -81,6 +84,11 @@ class AffectionAbstraite(BaseObj):
             return "infinie"
 
         return str(duree_ticks)
+
+    def a_flag(self, nom_flag):
+        """Retourne True si l'affection a le flag, False sinon."""
+        valeur = type(self).def_flags[nom_flag]
+        return self.flags & valeur != 0
 
     def message(self, affection):
         """Retourne le message visible en fonction de la forde."""

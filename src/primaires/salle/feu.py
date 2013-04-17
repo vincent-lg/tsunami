@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 NOEL-BARON Léo
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,22 +36,22 @@ from abstraits.obase import BaseObj
 from primaires.perso.exceptions.stat import *
 
 class Feu(BaseObj):
-    
+
     """Classe représentant une feu.
-    
+
     Un feu est, aussi simplement que son nom l'indique, un feu de camp, un
-    incendie ou autre. Il est caractérisé par une salle parente, et une 
+    incendie ou autre. Il est caractérisé par une salle parente, et une
     puissance entre 1 et 100 dont dépendent sa durée de vie et une propension
     à se propager. Les feux sont gérés par le module salle via une action
     différée qui permet leur évolution dans le temps.
-    
+
     Un feu peut en outre être allumé, puis alimenté via deux commandes.
-    
+
     """
-    
+
     _nom = "feu"
     enregistrer = True
-    
+
     def __init__(self, salle, puissance=10):
         """Constructeur d'un feu"""
         BaseObj.__init__(self)
@@ -60,10 +60,10 @@ class Feu(BaseObj):
         self.stabilite = 0
         self.generation = 0
         self.tour = 0
-    
+
     def __getnewargs__(self):
         return (None, )
-    
+
     def __str__(self):
         """Méthode d'affichage du feu (fonction de la puissance)"""
         cfg_salle = importeur.anaconf.get_config("salle")
@@ -71,7 +71,7 @@ class Feu(BaseObj):
         for puissance_max, msg in messages_feu:
             if self.puissance <= puissance_max:
                 return msg
-    
+
     def _set_puissance(self, valeur):
         if valeur >= 100:
             self._puissance = 100
@@ -82,7 +82,7 @@ class Feu(BaseObj):
     def _get_puissance(self):
         return self._puissance
     puissance = property(_get_puissance, _set_puissance)
-    
+
     def bruler(self):
         """Méthode d'action de base du feu"""
         self.tour = 0 if self.tour == 5 else self.tour + 1
@@ -98,6 +98,7 @@ class Feu(BaseObj):
             "Une langue de feu s'échappe vers le ciel dans un souffle.",
             "Une branche un peu verte proteste bruyamment.",
             "Un noeud dans le bois éclate en une pluie d'étincelle.",
+            "Une brusque rafale de vent couche les flammes un instant.",
         ]
         messages_fin = [
             "Le feu crachote comme un vieillard malade.",
@@ -106,7 +107,7 @@ class Feu(BaseObj):
         ]
         if self.salle.nom_terrain in importeur.salle.TERRAINS_SANS_FEU:
             self.puissance = 1
-        
+
         if random() < self.stabilite and self.tour == 5:
             if self.puissance <= 5:
                 self.salle.envoyer("Le feu s'éteint sans crier gare, à la " \
@@ -116,10 +117,11 @@ class Feu(BaseObj):
             elif self.puissance <= 40:
                 # Entre 5 et 40, on laisse osciller un peu la puissance
                 if random() < 0.44:
-                    self.puissance += randint(-3, 3)
+                    self.puissance += randint(-1, 1)
             else:
-                self.puissance += randint(0, 3)
+                self.puissance += randint(0, 2)
                 self.propager()
+
         # Cas standard, sans tenir compte de l'instabilité
         if self.puissance == 1:
             if random() < 0.20:
@@ -141,7 +143,6 @@ class Feu(BaseObj):
             # Cas de l'incendie
             for personnage in self.salle.personnages:
                 dommages = int(0.1 * personnage.vitalite_max)
-                print(dommages)
                 personnage << "Le feu vous brûle la couenne."
                 try:
                     personnage.vitalite = personnage.vitalite - dommages
@@ -151,20 +152,20 @@ class Feu(BaseObj):
             if self.tour == 5:
                 self.stabilite = self.puissance / 200
                 self.puissance -= 1
-    
+
     def propager(self):
         """Méthode de propagation.
-        
+
         Un feu est maîtrisé jusqu'à une puissance de 40 ; au-delà la
         probabilité qu'il gonfle spontanément et se propage est multipliée.
         Un feu se propage de proche en proche en perdant 10 de puissance à
         chaque fois, mais rien n'empêche qu'il reprenne de la puissance une
         fois installé dans la salle de destination, et ainsi de suite en
         fonction de la météo et d'autres conditions.
-        
+
         Il faudra alors avoir certains talents et faire certaines actions
         (par exemple verser de l'eau) pour endiguer un incendie.
-        
+
         """
         if self.generation >= 5:
             return
@@ -185,7 +186,7 @@ class Feu(BaseObj):
                 importeur.salle.TERRAINS_SANS_FEU]
         if not salles:
             return
-        
+
         salle_fils = choice(salles)
         if salle_fils.ident in importeur.salle.feux:
             feu_fils = importeur.salle.feux[salle_fils.ident]
@@ -194,12 +195,12 @@ class Feu(BaseObj):
         feu_fils.puissance = self.puissance - coef_puissance
         feu_fils.generation = self.generation + 1
         salle_fils.envoyer("Un incendie se déclare tout à coup.", prompt=False)
-    
+
     @classmethod
     def repop(cls):
         """Méthode de repop des feux ; boucle sur les feux en déclenchant
         leur méthode bruler.
-        
+
         """
         for feu in list(importeur.salle.feux.values()):
             feu.bruler()
