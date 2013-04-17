@@ -55,8 +55,8 @@ class CmdTuer(Commande):
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         attaque = dic_masques["personnage_present"].personnage
-        if attaque.est_mort():
-            personnage << "|err|Vous ne pensez pas que c'est suffisant ?|ff|"
+        # A supprimer quand le masque sera créé
+        if attaque.salle is not personnage.salle:
             return
         
         personnage.agir("tuer")
@@ -64,5 +64,5 @@ class CmdTuer(Commande):
         attaque.cle_etat = "combat"
         type(self).importeur.combat.creer_combat(personnage.salle,
                 personnage, attaque)
-        personnage.envoyer("Vous attaquez {}.", attaque)
-        attaque.envoyer("{} vous attaque.", personnage)
+        personnage << "Vous attaquez {}.".format(attaque.nom)
+        attaque << "{} vous attaque.".format(personnage.nom)

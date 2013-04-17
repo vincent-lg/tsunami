@@ -30,28 +30,30 @@
 
 """Package contenant la commande 'decrire'"""
 
-from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.masque.parametre import Parametre
 
-class CmdDecrire(Commande):
+class PrmAccepter(Parametre):
 
-    """Commande 'decrire'.
+    """Commande 'valider voir'.
 
     """
 
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "décrire", "describe")
-        self.groupe = "joueur"
-        self.aide_courte = "Ouvre un éditeur pour se décrire."
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "accepter", "accept")
+        self.schema = "<nom_joueur>"
+        self.aide_courte = "Valider la description d'un joueur."
         self.aide_longue = \
-            "Cette commande permet de manipuler votre description. " \
-            "Elle ouvre un éditeur dans lequel vous pouvez modifier " \
-            "cette description. La description doit d'abord être validée " \
-            "par un administrateur avant d'être visible à tous."
+            "Valide la description d'un joueur."
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        editeur = type(self).importeur.interpreteur.construire_editeur(
-                "descedit", personnage, personnage)
-        personnage.contextes.ajouter(editeur)
-        editeur.actualiser()
+        joueur = dic_masques["nom_joueur"].joueur
+
+        if joueur.description_a_valider == joueur.description:
+            personnage << "Le joueur n'a pas de description à valider."
+        else:
+            joueur.description = joueur.description_a_valider
+            personnage << "La description du joueur a bien été validée."
+            joueur << "Votre nouvelle description vient d'être validée."
+

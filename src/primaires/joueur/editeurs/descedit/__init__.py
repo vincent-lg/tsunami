@@ -54,7 +54,7 @@ class EdtDescedit(Presentation):
 
         Presentation.__init__(self, instance_connexion)
         if personnage and joueur:
-            self.construire(joueur)
+            self.construire(personnage, joueur)
 
     def __getnewargs__(self):
         return (None, None)
@@ -89,13 +89,14 @@ class EdtDescedit(Presentation):
 
         return msg
 
-    def construire(self, joueur):
+    def construire(self, personnage, joueur):
         """Construction de l'éditeur"""
 
         # Description
-        # Si le personnage est immortel, on travaille directement sur
-        # l'attribut description, sinon on utilise description_a_valider.
-        if joueur.est_immortel():
+        # Si le personnage (l'utilisateur qui édite) est immortel, on travaille
+        # directement sur l'attribut description, sinon on utilise
+        # description_a_valider.
+        if personnage is joueur and personnage.est_immortel():
             description = self.ajouter_choix("description", "d", \
                     Description, joueur, "description")
             description.apercu = "{objet.description.paragraphes_indentes}"

@@ -31,8 +31,13 @@
 """Package contenant la commande 'valider'"""
 
 from primaires.interpreteur.commande.commande import Commande
+from .voir import PrmVoir
+from .accepter import PrmAccepter
+from .editer import PrmEditer
+from .lister import PrmLister
+from .refuser import PrmRefuser
 
-class CmdDecrire(Commande):
+class CmdValider(Commande):
 
     """Commande 'valider'.
 
@@ -41,12 +46,17 @@ class CmdDecrire(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "valider", "validate")
-        self.groupe = "moderation"
-        self.aide_courte = "..."
+        self.nom_categorie = "moderation"
+        self.groupe = "administrateur"
+        self.aide_courte = "Modère les descriptions des joueurs."
         self.aide_longue = \
-            "..." \
-            "..." \
+            "Cette commande permet de vérifier, manipuler et valider ou non " \
+            "la description des joueurs." \
 
-    def interpreter(self, personnage, dic_masques):
+    def ajouter_parametres(self):
         """Méthode d'interprétation de commande"""
-        pass
+        self.ajouter_parametre(PrmVoir())
+        self.ajouter_parametre(PrmAccepter())
+        self.ajouter_parametre(PrmEditer())
+        self.ajouter_parametre(PrmLister())
+        self.ajouter_parametre(PrmRefuser())
