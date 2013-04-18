@@ -58,7 +58,7 @@ class BouleNeige(BaseType):
     
     def poser(self, objet, personnage):
         """On pose l'objet."""
-        Salle = importlib.import_module("primaires.salle.salle.Salle")
+        Salle = importlib.import_module("primaires.salle.salle").Salle
         if isinstance(objet.contenu, Salle) and \
                 (datetime.now() - objet.apparition).seconds < 100:
             objet.apparition = datetime.now()
@@ -100,7 +100,7 @@ class BouleNeige(BaseType):
     
     def nettoyage_cyclique(self):
         """Nettoyage cyclique de la boule de neige."""
-        Salle = importlib.import_module("primaires.salle.salle.Salle")
+        Salle = importlib.import_module("primaires.salle.salle").Salle
         parent = self.grand_parent
         if not isinstance(parent, Salle) and \
                 (datetime.now() - self.apparition).seconds > 300:
