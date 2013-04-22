@@ -1,11 +1,11 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -28,38 +28,59 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'apprendre'."""
+"""Package contenant la commande 'sort apprendre'."""
 
-from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.masque.parametre import Parametre
 from primaires.format.fonctions import contient
 
-class CmdApprendre(Commande):
-    
-    """Commande 'apprendre'.
-    
+class PrmApprendre(Parametre):
+
+    """Commande 'sort apprendre'.
+
     """
-    
+
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "apprendre", "learn")
+        Parametre.__init__(self, "apprendre", "learn")
         self.groupe = "administrateur"
-        self.schema = "<nombre> <message>"
+        self.schema = "<nombre> <cle>"
         self.aide_courte = "apprend un sort"
         self.aide_longue = \
-            "Cette commande force l'apprentissage d'un sort."
-    
+            "Cette commande force l'apprentissage d'un sort. " \
+            "Vous devez préciser en premier paramètre le nombre " \
+            "auquel vous voulez apprendre le sort et, en second " \
+            "paramètre, la clé du sort. Précisez un nombre de |cmd|0|ff| " \
+            "pour oublier le sort."
+
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nombre = self.noeud.get_masque("nombre")
+        nombre.proprietes["limite_inf"] = "0"
+        nombre.proprietes["limite_sup"] = "100"
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         niveau = dic_masques["nombre"].nombre
-        if niveau < 1 or niveau > 100:
-            personnage << "|err|Spécifiez un niveau de maîtrise entre 1 et " \
+        if niveau < 0 or niveau > 100:
+            personnage << "|err|Spécifiez un niveau de maîtrise entre 0 et " \
                     "100.|ff|"
             return
-        nom_sort = dic_masques["message"].message
-        sorts = type(self).importeur.magie.sorts
-        for sort in sorts.values():
-            if contient(sort.nom, nom_sort):
-                personnage.sorts[sort.cle] = niveau
-                personnage << "Vous avez appris le sort {}.".format(sort.nom)
-                return
-        personnage << "|err|Le sort '{}' est introuvable.|ff|".format(nom_sort)
+
+        cle = dic_masques["cle"].cle
+        try:
+            sort = importeur.magie.sorts[cle]
+        except KeyError:
+            personnage << "|err|Le sort '{}' est " \
+                    "introuvable.|ff|".format(cle)
+        else:
+            if niveau > 0:
+                personnage.sorts[cle] = niveau
+                personnage << "Vous avez bien appris le sort {} à " \
+                        "{}%.".format(sort.nom, niveau)
+            else:
+                if cle in personnage.sorts:
+                    del personnage.sorts[cle]
+                    personnage << "Vous avez bien oublié le sort {}.".format(
+                            sort.nom)
+                else:
+                    personnage << "|err|Vous ne connaissez pas ce sort."

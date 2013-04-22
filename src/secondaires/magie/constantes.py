@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,32 +28,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'sorts'."""
+"""Fichier contenant des constantes propres à la magie sur Tsunami."""
 
-from primaires.interpreteur.commande.commande import Commande
-from .apprendre import PrmApprendre
-from .creer import PrmCreer
-from .editer import PrmEditer
-from .liste import PrmListe
-from .miens import PrmMiens
-
-class CmdSorts(Commande):
-
-    """Commande 'sorts'.
-
-    """
-
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "sorts", "spells")
-        self.aide_courte = "manipule les sorts"
-        self.aide_longue = \
-            "Cette commande permet de manipuler vos sorts."
-
-    def ajouter_parametres(self):
-        """Ajout des paramètres."""
-        self.ajouter_parametre(PrmApprendre())
-        self.ajouter_parametre(PrmCreer())
-        self.ajouter_parametre(PrmEditer())
-        self.ajouter_parametre(PrmListe())
-        self.ajouter_parametre(PrmMiens())
+ELEMENTS = [
+    "air",
+    "eau",
+    "feu",
+    "terre",
+]

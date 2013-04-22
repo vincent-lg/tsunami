@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 DAVY Guillaume
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -42,11 +42,11 @@ STANDARD = 0
 OFFENSIF = 1
 
 class Sort(BaseObj):
-    
+
     """Classe représentant un sortilège.
-    
+
     """
-    
+
     nom_scripting = "le sort"
     def __init__(self, cle, parent=None):
         """Constructeur du sort"""
@@ -55,6 +55,8 @@ class Sort(BaseObj):
         self.cle = cle
         self.nom = "sortilège"
         self.description = Description(parent=self)
+        self.offensif = False
+        self.elements = []
         self.type = "destruction"
         self._type_cible = "aucune"
         self.cout = 10
@@ -64,13 +66,13 @@ class Sort(BaseObj):
         self.script = ScriptSort(self)
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
-    
+
     def __getnewargs__(self):
         return ("", )
-    
+
     def __str__(self):
         return "sort:" + self.cle
-    
+
     def _get_type_cible(self):
         """Retourne le type de cible."""
         return self._type_cible
@@ -93,20 +95,24 @@ class Sort(BaseObj):
                 var_cible = evt.ajouter_variable("cible", "Salle")
                 var_cible.aide = "la salle ciblée par le sort"
     type_cible = property(_get_type_cible, _set_type_cible)
-    
+
+    @property
+    def str_elements(self):
+        return ", ".join(sorted(self.elements))
+
     @classmethod
     def get_variables(self, cible=None):
         """Retourne un dictionnaire de variables pré-rempli avec la cible.
-        
+
         Si la cible est None, le dictionnaire sera vide.
-        
+
         """
         variables = {}
         if cible is not None:
             variables["cible"] = cible
-        
+
         return variables
-    
+
     def echoue(self, personnage):
         """Détermine si personnage réussit ou non à lancer ce sort."""
         maitrise = (100 - personnage.sorts.get(self.cle, 0)) / 100
@@ -114,7 +120,7 @@ class Sort(BaseObj):
         if random() < difficulte * maitrise:
             return True
         return False
-    
+
     def concentrer(self, personnage, cible, apprendre=True):
         """Fait concentrer le sort à 'personnage'."""
         if self.cout > personnage.mana:
@@ -122,11 +128,12 @@ class Sort(BaseObj):
             self.dissiper(personnage, maitrise)
             personnage.cle_etat = ""
             return
+
         personnage.mana -= self.cout
         maitrise = 100
         if apprendre:
             maitrise = personnage.pratiquer_sort(self.cle)
-            #personnage.pratiquer_talent(self.type)
+
         maitrise = Fraction(maitrise)
         variables = self.get_variables(cible)
         variables["personnage"] = personnage
@@ -140,7 +147,7 @@ class Sort(BaseObj):
         duree = ceil(self.duree * (100 - maitrise) / 100)
         importeur.diffact.ajouter_action(nom_act, duree,
                 action, personnage, maitrise, cible)
-    
+
     def echouer(self, personnage, maitrise, cible):
         """Fait rater le sort à personnage."""
         personnage.cle_etat = ""
@@ -149,7 +156,7 @@ class Sort(BaseObj):
         variables["maitrise"] = maitrise
         variables["salle"] = personnage.salle
         self.script["echec"].executer(**variables)
-    
+
     def lancer(self, personnage, maitrise, cible):
         """Fait lancer le sort à personnage."""
         dest = personnage.salle
@@ -166,9 +173,9 @@ class Sort(BaseObj):
                 if chemin is None:
                     self.dissiper(personnage, maitrise, cible)
                     return
-                
+
                 sorties = chemin.sorties
-        
+
         self.script["lancement"].executer(**variables)
         for sortie in sorties:
             origine = sortie.parent
@@ -185,19 +192,19 @@ class Sort(BaseObj):
             self.script["part"].executer(**t_variables)
             self.script["arrive"].executer(**variables)
         self.toucher(personnage, maitrise, cible)
-    
+
     def toucher(self, personnage, maitrise, cible):
         """Active les effets du sort."""
         dest = personnage.salle
         if hasattr(cible, "salle"):
             dest = cible.salle
-        
+
         variables = self.get_variables(cible)
         variables["personnage"] = personnage
         variables["maitrise"] = maitrise
         variables["salle"] = dest
         self.script["effet"].executer(**variables)
-    
+
     def dissiper(self, personnage, maitrise, cible):
         """Dissipe le sort."""
         variables = self.get_variables(cible)

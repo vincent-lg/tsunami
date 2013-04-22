@@ -31,7 +31,6 @@
 """Package contenant les commandes du module joueur."""
 
 from . import afk
-from . import apprendre
 from . import alias
 from . import bannir
 from . import chgroupe

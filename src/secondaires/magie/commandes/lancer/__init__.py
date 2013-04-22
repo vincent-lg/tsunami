@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 DAVY Guillaume
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,15 +36,15 @@ from primaires.perso.personnage import Personnage
 from primaires.objet.objet import Objet
 
 class CmdLancer(Commande):
-    
+
     """Commande 'lancer'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "lancer", "cast")
-        self.groupe = "joueur"
+        self.groupe = "pnj"
         self.schema = "<nom_sort> (sur/to <cible_sort>)"
         self.nom_categorie = "combat"
         self.aide_courte = "lance un sort"
@@ -52,20 +52,23 @@ class CmdLancer(Commande):
             "Cette commande lance un sort dans la salle où vous vous " \
             "trouvez, à condition que vous maîtrisiez ce sort bien entendu. " \
             "Vous pouvez préciser une cible si le sort en demande une."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         sort = dic_masques["nom_sort"].sort
         parchemin = dic_masques["nom_sort"].parchemin
         personnage.agir("lancersort")
         cible = dic_masques["cible_sort"] and dic_masques["cible_sort"].cible \
-                or importeur.combat.cibles.get(personnage)
+                or None
+        if sort.offensif:
+            cible = importeur.combat.cibles.get(personnage)
+        else:
+            cible = personnage
+
         salle_cible = personnage.salle
-        if sort.type_cible == "personnage" and isinstance(cible, Personnage):
-            salle_cible = cible.salle
-        if sort.type_cible == "salle":
-            cible = personnage.salle
-        
+        if sort.type_cible == "salle" and isinstance(cible, Personnage):
+            cible = cible.salle
+
         if cible is None:
             if sort.type_cible != "aucune":
                 personnage << "|err|Vous devez préciser une cible pour ce " \
@@ -93,7 +96,7 @@ class CmdLancer(Commande):
                     personnage << "|err|Ce sort ne peut être lancé que sur " \
                             "un objet.|ff|"
                     return
-                
+
                 personnage.agir("magie")
                 personnage.cle_etat = "magie"
                 if parchemin:

@@ -90,6 +90,7 @@ class Personnage(BaseObj):
         self.l_talents = {}
         self.malus = 0
         self.points_malus = 0
+        self.element = None
         self.sorts = {}
 
         # Etat

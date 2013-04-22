@@ -96,7 +96,6 @@ class Module(BaseModule):
         self.commandes = [
             commandes.afk.CmdAfk(),
             commandes.alias.CmdAlias(),
-            commandes.apprendre.CmdApprendre(),
             commandes.bannir.CmdBannir(),
             commandes.chgroupe.CmdChgroupe(),
             commandes.distinctions.CmdDistinctions(),
