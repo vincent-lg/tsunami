@@ -66,6 +66,7 @@ class Chemins(BaseObj):
         """Retourne les chemins autour de salle dans un rayon donné."""
         o_chemins = cls()
         salles = {} # {salle: chemin}
+        o_salle = salle
 
         # Fonction explorant une salle et retournant ses sorties récursivement
         def get_sorties_rec(salle, rayon=0, max=15, salles=None):
@@ -105,11 +106,11 @@ class Chemins(BaseObj):
         if not absolu and salle.coords.valide:
             o_x, o_y, o_z = salle.coords.tuple()
             for coords, d_salle in importeur.salle._coords.items():
-                if d_salle is salle or d_salle in salles.keys():
+                if d_salle is o_salle or d_salle in salles.keys():
                     continue
 
                 x, y, z = coords
-                if sqrt((x - o_x) ** 2 + (y - o_y) ** 2 + (z - o_z) ** 2) >= \
+                if sqrt((x - o_x) ** 2 + (y - o_y) ** 2 + (z - o_z) ** 2) <= \
                         rayon:
                     chemin = Chemin()
                     d_chemin = salle.trouver_chemin_absolu(d_salle, 2)
