@@ -230,7 +230,7 @@ class Salle(BaseObj):
         élevé, plus le temps de calcul risque d'être important.
 
         """
-        chemins = Chemins.salles_autour(self, rayon)
+        chemins = Chemins.salles_autour(self, rayon, absolu=True)
         return chemins.get(destination)
 
     def trouver_chemin(self, destination):

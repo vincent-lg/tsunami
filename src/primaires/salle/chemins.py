@@ -62,7 +62,7 @@ class Chemins(BaseObj):
         return None
 
     @classmethod
-    def salles_autour(cls, salle, rayon=15):
+    def salles_autour(cls, salle, rayon=15, absolu=False):
         """Retourne les chemins autour de salle dans un rayon donné."""
         o_chemins = cls()
         salles = {} # {salle: chemin}
@@ -102,7 +102,7 @@ class Chemins(BaseObj):
         o_chemins.chemins.extend(list(salles.values()))
 
         # Si la salle d'origine a des coordonnées valides
-        if salle.coords.valide:
+        if not continu and salle.coords.valide:
             o_x, o_y, o_z = salle.coords.tuple()
             for coords, d_salle in importeur.salle._coords.items():
                 if d_salle is salle or d_salle in salles.keys():
