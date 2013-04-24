@@ -105,7 +105,7 @@ class Chemins(BaseObj):
         if salle.coords.valide:
             o_x, o_y, o_z = salle.coords.tuple()
             for coords, d_salle in importeur.salle._coords.items():
-                if d_salle is salle or d_salle in salles:
+                if d_salle is salle or d_salle in salles.keys():
                     continue
 
                 x, y, z = coords
@@ -121,7 +121,7 @@ class Chemins(BaseObj):
                     else:
                         chemin.sorties.extend(d_chemin.sorties)
 
-                o_chemins.chemins.append(chemin)
+                    o_chemins.chemins.append(chemin)
 
         return o_chemins
 

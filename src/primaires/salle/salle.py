@@ -315,6 +315,7 @@ class Salle(BaseObj):
         """Retourne une sortie en fonction du vecteur donné."""
         sortie = Sortie(vecteur.nom_direction, vecteur.nom_direction,
                         "le", destination, "", self)
+        sortie.longueur = vecteur.norme
         return sortie
 
     def envoyer(self, message, *personnages, prompt=True, mort=False,
