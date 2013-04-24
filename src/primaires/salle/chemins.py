@@ -102,7 +102,7 @@ class Chemins(BaseObj):
         o_chemins.chemins.extend(list(salles.values()))
 
         # Si la salle d'origine a des coordonnées valides
-        if not continu and salle.coords.valide:
+        if not absolu and salle.coords.valide:
             o_x, o_y, o_z = salle.coords.tuple()
             for coords, d_salle in importeur.salle._coords.items():
                 if d_salle is salle or d_salle in salles.keys():
