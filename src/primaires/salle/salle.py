@@ -212,8 +212,15 @@ class Salle(BaseObj):
         if personnage in self.personnages:
             self._personnages.remove(personnage)
 
-    def salles_autour(self, rayon=15):
-        """Retourne les chemins autour de self dans le rayon précisé."""
+    def salles_autour(self, rayon=5):
+        """Retourne les chemins autour de self dans le rayon précisé.
+
+        Si la salle a des coordonnées valide, ajoute également
+        les salles semblant proches. Cependant, pour celles-ci,
+        presque aucune vérification de chemin n'est faite,
+        c'est-à-dire qu'elles peuvent être entièrement inaccessible.
+
+        """
         return Chemins.salles_autour(self, rayon)
 
     def trouver_chemin_absolu(self, destination, rayon=5):
