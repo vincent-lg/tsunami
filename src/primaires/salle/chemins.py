@@ -62,14 +62,15 @@ class Chemins(BaseObj):
         return None
 
     @classmethod
-    def salles_autour(cls, salle, rayon=15, absolu=False):
+    def salles_autour(cls, salle, rayon=15, absolu=False, empruntable=True):
         """Retourne les chemins autour de salle dans un rayon donné."""
         o_chemins = cls()
         salles = {} # {salle: chemin}
         o_salle = salle
 
         # Fonction explorant une salle et retournant ses sorties récursivement
-        def get_sorties_rec(salle, rayon=0, max=15, salles=None):
+        def get_sorties_rec(salle, rayon=0, max=15, salles=None, \
+                empruntable=True):
             salles = salles or {}
             chemin = salles.get(salle)
             if chemin:
@@ -77,6 +78,9 @@ class Chemins(BaseObj):
             else:
                 sorties = []
             for sortie in salle.sorties:
+                if empruntable and not sortie.empruntable:
+                    continue
+
                 t_salle = sortie.salle_dest
                 n_chemin = Chemin()
                 n_chemin.sorties.extend(sorties + [sortie])
@@ -89,12 +93,16 @@ class Chemins(BaseObj):
 
             if rayon < max - 1:
                 for sortie in salle.sorties:
+                    if empruntable and not sortie.empruntable:
+                        continue
+
                     t_salle = sortie.salle_dest
-                    get_sorties_rec(t_salle, rayon + 1, max, salles)
+                    get_sorties_rec(t_salle, rayon + 1, max, salles, \
+                            empruntable=empruntable)
 
             return salles
 
-        sorties = get_sorties_rec(salle, max=rayon)
+        sorties = get_sorties_rec(salle, max=rayon, empruntable=empruntable)
         for salle, chemin in sorties.items():
             # Constitution du chemin
             if chemin.origine is not chemin.destination:
@@ -121,6 +129,9 @@ class Chemins(BaseObj):
                         chemin.sorties.append(sortie)
                     else:
                         chemin.sorties.extend(d_chemin.sorties)
+
+                    if empruntable and not chemin.empruntable:
+                        continue
 
                     o_chemins.chemins.append(chemin)
 

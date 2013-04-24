@@ -318,6 +318,17 @@ class Salle(BaseObj):
         sortie.longueur = vecteur.norme
         return sortie
 
+    def sortie_empruntable(self, sortie):
+        """Retourne True si la sortie est empruntable, False sinon.
+
+        Pour une salle standard, une sortie est empruntable si elle existe réellement.
+
+        """
+        if self.etendue:
+            return sortie.direction not in self.sorties
+
+        return sortie.direction in self.sorties
+
     def envoyer(self, message, *personnages, prompt=True, mort=False,
             **kw_personnages):
         """Envoie le message aux personnages présents dans la salle.

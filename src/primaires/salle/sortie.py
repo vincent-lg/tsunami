@@ -151,6 +151,25 @@ class Sortie(BaseObj):
 
         return corresp
 
+    @property
+    def empruntable(self):
+        """Retourne True si la sortie est empruntable, False sinon.
+
+        Une sortie est empruntable si :
+            Elle ne définit aucune porte fermée
+            La salle parente le permet
+
+        La salle parente ne permet pas systématiquement que la
+        sortie soit empruntable. C'est une interrogation de
+        salle, car les navires notamment ont une définition
+        différente de ce qui est permis ou non.
+
+        """
+        if self.porte and self.porte.fermee:
+            return False
+
+        return self.parent.sortie_empruntable(self)
+
     def ajouter_porte(self, clef=None):
         """Ajoute une porte sur la sortie et sa sortie opposée.
 

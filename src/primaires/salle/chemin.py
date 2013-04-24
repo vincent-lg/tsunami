@@ -75,6 +75,11 @@ class Chemin(BaseObj):
         """
         return sum(sortie.longueur for sortie in self.sorties)
 
+    @property
+    def empruntable(self):
+        """Retourne True si toutes les sorties du chemin sont empruntables."""
+        return all(sortie.empruntable for sortie in self.sorties)
+
     @classmethod
     def trouver(cls, origine, destination, chaine=True, rayon=15):
         """Retourne, si trouvé, le chemin trouvé entre origine et destination.
