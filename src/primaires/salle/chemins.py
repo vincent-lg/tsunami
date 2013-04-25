@@ -49,6 +49,9 @@ class Chemins(BaseObj):
         chemins = [str(c) for c in self.chemins]
         return "<chemins [" + ", ".join(chemins) + "]>"
 
+    def __iter__(self):
+        return iter(self.chemins)
+
     def get(self, salle):
         """Retourne si trouvé le chemin dont la destination est salle.
 

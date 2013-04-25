@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,12 +28,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier du package types, contenant les types d'objets du module combat."""
+"""Fichier contenant le type Projectile."""
 
 from .arme import Arme
-from .arme_de_jet import ArmeDeJet
-from .epee import Epee
-from .hache import Hache
-from .lance import Lance
-from .masse import Masse
-from .projectile import Projectile
+
+class Projectile(Arme):
+
+    """Type d'objet: projectile.
+
+    """
+
+    nom_type = "projectile"
+
+    def __init__(self, cle=""):
+        """Constructeur de l'objet"""
+        Arme.__init__(self, cle)
+        self.peut_depecer = False
+        self.emplacement = ""
+        self.positions = ()
+
+    def travailler_enveloppes(self, enveloppes):
+        """Travail sur les enveloppes"""
+        del enveloppes["pe"]

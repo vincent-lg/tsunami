@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'scruter'.
+"""Package contenant la commande 'viser'.
 
 """
 
@@ -36,48 +36,47 @@ from random import random
 
 from primaires.interpreteur.commande.commande import Commande
 
-class CmdScruter(Commande):
+class CmdViser(Commande):
 
-    """Commande 'scruter'.
+    """Commande 'viser'.
 
     """
 
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "scruter", "scan")
+        Commande.__init__(self, "viser", "target")
         self.nom_categorie = "combat"
-        self.aide_courte = "cherche les personnages alentours"
+        self.schema = "(<nombre>)"
+        self.aide_courte = "vise un personnage"
         self.aide_longue = \
-            "Cette commande vous fait scruter les alentours à la " \
-            "recherche de personnages."
+            "Cette commande vous permet de viser un personnage que " \
+            "vous avez auparavant aperçu avec la commande %scruter%. " \
+            "Vous devez simplement préciser en paramètre un nombre " \
+            "(celui donné par %scruter% pour la cible particulière). " \
+            "Si vous souhaitez arrêter de viser qui que ce soit, " \
+            "entrez cette commande sans paramètre."
 
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
-        personnage.agir("regarder")
-        salle = personnage.salle
-        rayon = 3 + round(personnage.stats.sensibilite / 30)
-        chemins = salle.salles_autour(rayon)
-        chemins = sorted(chemins, key=lambda chemin: chemin.longueur)
-        savoir = personnage.pratiquer_talent("scruter", 10)
+        if dic_masques["nombre"]:
+            nombre = dic_masques["nombre"].nombre
+            cibles = importeur.combat.cibles.get(personnage)
+            if cibles is None:
+                personnage << "|err|Vous ne voyez aucune cible " \
+                        "pour l'heure.|ff|"
+                return
 
-        # 0.25 <= sens < 0.92
-        sens = 0.25 + personnage.stats.sensibilite / 300 + savoir / 300
-        cibles = []
-        for chemin in chemins:
-            tmp_sens = sens - (1 - (rayon - chemin.longueur) / rayon)
-            for autre in chemin.destination.personnages:
-                if random() < tmp_sens:
-                    cibles.append((chemin, autre))
-                    personnage.pratiquer_talent("scruter", 5)
+            try:
+                chemin, cible = cibles[nombre - 1]
+            except IndexError:
+                personnage << "|err|Ce nombre est invalide.|ff|"
+                return
 
-        if cibles:
-            importeur.combat.cibles[personnage] = cibles
-            lignes = []
-            for i, (chemin, cible) in enumerate(cibles):
-                sortie = chemin.sorties[0].nom_complet
-                lignes.append("  {:>2}  {:<20} vers {}".format(
-                        i + 1, cible.get_nom_pour(personnage), sortie))
-
-            personnage << "Vous voyez autour de vous :\n\n" + "\n".join(lignes)
+            importeur.combat.cible[personnage] = cible
+            personnage.envoyer("Vous commencez à viser {}.", cible)
         else:
-            personnage << "Vous ne voyez personne autour de vous."
+            if personnage in importeur.combat.cible:
+                del importeur.combat.cible[personnage]
+                personnage << "Vous ne visez plus personne."
+            else:
+                personnage << "Vous ne visez personne actuellement."
