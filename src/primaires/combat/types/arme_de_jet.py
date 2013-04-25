@@ -90,6 +90,17 @@ class ArmeDeJet(Arme):
                 "projectile")]
         projectiles.sup = (cles_projectiles, )
 
+    def objets_contenus(self, conteneur):
+        """Retourne les objets contenus."""
+        objets = []
+        if conteneur.projectile:
+            objet = conteneur.projectile
+            objets.append(objet)
+            if objet.unique:
+                objets.extend(objet.prototype.objets_contenus(objet))
+
+        return objets
+
     # Actions sur les objets
     def regarder(self, personnage):
         """Le personnage regarde l'objet"""
