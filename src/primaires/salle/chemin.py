@@ -56,6 +56,9 @@ class Chemin(BaseObj):
     def __bool__(self):
         return True
 
+    def __iter__(self):
+        return iter(self.sorties)
+
     @property
     def origine(self):
         return self.sorties and self.sorties[0].parent or None
@@ -79,6 +82,21 @@ class Chemin(BaseObj):
     def empruntable(self):
         """Retourne True si toutes les sorties du chemin sont empruntables."""
         return all(sortie.empruntable for sortie in self.sorties)
+
+    @property
+    def droit(self):
+        """Retourne True si le chemin est droit, False sinon.
+
+        Un chemin est considéré droit si toutes les sorties qu'il
+        contient ont la même direction. Si le chemin est vide il est
+        droit par défaut.
+
+        """
+        if len(self.sorties) == 0:
+            return True
+
+        direction = self.sorties[0].direction
+        return all(sortie.direction == direction for sortie in self.sorties)
 
     @classmethod
     def trouver(cls, origine, destination, chaine=True, rayon=15):

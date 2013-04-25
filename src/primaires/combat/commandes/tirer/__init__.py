@@ -35,6 +35,7 @@
 from corps.aleatoire import varier
 from corps.fonctions import lisser
 from primaires.interpreteur.commande.commande import Commande
+from primaires.perso.exceptions.stat import DepassementStat
 
 class CmdTirer(Commande):
 
@@ -80,7 +81,7 @@ class CmdTirer(Commande):
             cible = dic_masques["personnage_present"].personnage
         else:
             cible = importeur.combat.cible.get(personnage)
-            if cible is None or (hasattr(cible, "connecte") and not cible.connecte):
+            if cible is None or (hasattr(cible, "connecte") and not cible.connecte) or cible.est_mort():
                 personnage << "|err|Vous ne visez personne actuellement.|ff|"
                 return
 
@@ -107,27 +108,52 @@ class CmdTirer(Commande):
                 direction = sortie.nom_complet
                 if origine is personnage.salle:
                     origine.envoyer("{} part en sifflant vers {}.".format(
-                            projectile.get_nom(), direction))
+                            projectile.get_nom().capitalize(), direction))
                 else:
                     origine.envoyer("{} passe en sifflant vers {}.".format(
-                            projectile.get_nom(), direction))
+                            projectile.get_nom().capitalize(), direction))
 
                 if destination is cible.salle:
                     destination.envoyer("{} arrive en sifflant dans les " \
-                            "airs.".format(projectile.get_nom()))
+                            "airs.".format(projectile.get_nom().capitalize()))
         else:
             # personnage et  ible sont dans la même salle
             personnage.salle.envoyer("{} part en sifflant dans l'air.".format(
-                projectile.get_nom()))
+                projectile.get_nom().capitalize()))
 
         # 3. On voit si on atteint on manque la cible
         fact_p = varier(personnage.stats.agilite, 20) / 150
-        fact_p += (1 - personnage.poids / personnage.poids_max) / 3
+        fact_p += (1 - personnage.poids / personnage.poids_max) / 4
+        fact_p += personnage.pratiquer_talent("maniement_arc") / 400
         fact_c = varier(cible.stats.agilite, 20) / 150
         fact_c += (1 - cible.poids / cible.poids_max) / 3
         if fact_p > fact_c:
-            personnage << "Touché !"
+            degats = varier(projectile.degats_fixes, \
+                    projectile.degats_variables, projectile.degats_fixes)
+            if personnage.salle is cible.salle:
+                personnage.envoyer("{} atteint {{}} ({} points).".format(
+                        projectile.get_nom().capitalize(), degats), cible)
+
+            cible << "{} vous atteint de plein fouet ({} " \
+                    "points).".format(projectile.get_nom(), degats)
+            for autre in cible.salle.personnages:
+                if autre is not personnage and autre is not cible:
+                    autre.envoyer("{} atteint {{}} de plein fouet.".format(
+                            projectile.get_nom().capitalize()), cible)
+
+            try:
+                cible.stats.vitalite -= degats
+            except DepassementStat:
+                cible << "Trop, c'est trop ! Vous perdez conscience."
+                cible.salle.envoyer("{} s'écroule sur le sol.", cible)
+                if personnage.salle is not cible.salle:
+                    personnage << "Vous entendez un cri d'agonie non loin."
+                cible.mourir(adversaire=personnage)
+
             importeur.objet.supprimer_objet(projectile.identifiant)
         else:
-            personnage << "Pas touché"
+            cible << "Vous esquivez {} d'un mouvement rapide.".format(
+                    projectile.get_nom())
+            cible.salle.envoyer("{{}} esquive {} d'un mouvement " \
+                    "rapide.".format(projectile.get_nom()), cible)
             personnage.salle.objets_sol.ajouter(projectile)
