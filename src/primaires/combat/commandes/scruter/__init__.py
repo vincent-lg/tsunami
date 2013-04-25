@@ -55,7 +55,7 @@ class CmdScruter(Commande):
         """Interprétation de la commande"""
         personnage.agir("regarder")
         salle = personnage.salle
-        rayon = 3 + round(personnage.stats.sensibilite / 30)
+        rayon = 2 + round(personnage.stats.sensibilite / 40)
         chemins = salle.salles_autour(rayon)
         chemins = sorted(chemins, key=lambda chemin: chemin.longueur)
         savoir = personnage.pratiquer_talent("scruter", 10)
