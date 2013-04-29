@@ -45,7 +45,7 @@ class CmdTirer(Commande):
 
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "tirer", "shoot")
+        Commande.__init__(self, "décocher", "shoot")
         self.nom_categorie = "combat"
         self.schema = "(<personnage_present>)"
         self.aide_courte = "décharge une arme de jet"

@@ -43,7 +43,7 @@ class CmdBander(Commande):
 
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "bander", "bend")
+        Commande.__init__(self, "charger", "bend")
         self.nom_categorie = "combat"
         self.schema = "<jet:nom_objet> (avec/with <projectile:nom_objet>)"
         self.aide_courte = "charge une arme de jet"
