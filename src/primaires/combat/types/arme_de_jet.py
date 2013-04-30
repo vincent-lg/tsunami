@@ -90,6 +90,44 @@ class ArmeDeJet(Arme):
                 "projectile")]
         projectiles.sup = (cles_projectiles, )
 
+    def etendre_script(self):
+        """Extension du scripting."""
+        # Évènement charge
+        evt_charge = self.script.creer_evenement("charge")
+        evt_charge.aide_courte = "le personnage charge l'arme de jet"
+        evt_charge.aide_longue = \
+            "Cet évènement est appelé quand un personnage charge l'arme de " \
+            "avec un projectile en utilisant la commande charger/bend. " \
+            "Cet évènement est appelé avant que le retour de la commande ne " \
+            "s'affiche aux joueurs, vous pouvez donc interrompre le " \
+            "processus avec l'action interrompre."
+        var_perso = evt_charge.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage chargeant l'arme"
+        var_arme = evt_charge.ajouter_variable("arme", "Objet")
+        var_arme.aide = "l'arme de jet que l'on charge"
+        var_projectile = evt_charge.ajouter_variable("projectile", "Objet")
+        var_projectile.aide = "le projectile que l'on charge sur l'arme"
+
+        # Évènement décoche
+        evt_decoche = self.script.creer_evenement("décoche")
+        evt_decoche.aide_courte = "un personnage décharge l'arme de jet"
+        evt_decoche.aide_longue = \
+            "Cet évènement est appelé quand un personnage décharge " \
+            "l'arme de jet sur une cible, présente dans la salle ou " \
+            "distante. Il est appelé après que le message informant les " \
+            "personnages présents que la flèche s'envole est parti, mais " \
+            "avant que la flèche ne parte de la salle où n'atteigne " \
+            "la cible. Vous pouvez contrôler de façon plus fine la façon " \
+            "dont la flèche est gérée en scriptant la flèche-même."
+        var_perso = evt_decoche.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage déchargeant l'arme"
+        var_cible = evt_decoche.ajouter_variable("cible", "Personnage")
+        var_cible.aide = "la cible désignée par le tir"
+        var_arme = evt_decoche.ajouter_variable("arme", "Objet")
+        var_arme.aide = "l'arme de jet que l'on décharge"
+        var_projectile = evt_decoche.ajouter_variable("projectile", "Objet")
+        var_projectile.aide = "le projectile qui est déchargé de l'arme"
+
     def objets_contenus(self, conteneur):
         """Retourne les objets contenus."""
         objets = []
