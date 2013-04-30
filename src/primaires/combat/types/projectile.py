@@ -47,6 +47,21 @@ class Projectile(Arme):
         self.emplacement = ""
         self.positions = ()
 
-    def travailler_enveloppes(self, enveloppes):
-        """Travail sur les enveloppes"""
-        del enveloppes["pe"]
+    def etendre_script(self):
+        """Extension du scripting."""
+        # Évènement atteint
+        evt_atteint = self.script.creer_evenement("atteint")
+        evt_atteint.aide_courte = "le projectile atteint une cible"
+        evt_atteint.aide_longue = \
+            "Cet évènement est appelé quand le projectile vient " \
+            "d'atteindre une cible (juste après les messages informant " \
+            "des dégâts éventuels). Il peut être utile pour par " \
+            "exemple placer une affection sur la cible."
+        var_auteur = evt_atteint.ajouter_variable("auteur", "Personnage")
+        var_auteur.aide = "le personnage à l'auteur du tir"
+        var_cible = evt_atteint.ajouter_variable("cible", "Personnage")
+        var_cible.aide = "la cible atteinte par le projectile"
+        var_arme = evt_atteint.ajouter_variable("arme", "Objet")
+        var_arme.aide = "l'arme de jet à l'origine du tir"
+        var_projectile = evt_atteint.ajouter_variable("projectile", "Objet")
+        var_projectile.aide = "le projectile qui atteint la cible"

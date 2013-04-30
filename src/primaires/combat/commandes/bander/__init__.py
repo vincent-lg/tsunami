@@ -118,6 +118,8 @@ class CmdBander(Commande):
             arme_de_jet.projectile = None
 
         conteneur.retirer(projectile)
+        arme_de_jet.script["charge"].executer(personnage=personnage,
+                arme=arme_de_jet, projectile=projectile)
         arme_de_jet.projectile = projectile
         personnage << "Vous bandez {} avec {}.".format(
                 arme_de_jet.get_nom(), projectile.get_nom())

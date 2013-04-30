@@ -81,7 +81,8 @@ class CmdTirer(Commande):
             cible = dic_masques["personnage_present"].personnage
         else:
             cible = importeur.combat.cible.get(personnage)
-            if cible is None or (hasattr(cible, "connecte") and not cible.connecte) or cible.est_mort():
+            if cible is None or (hasattr(cible, "connecte") and \
+                    not cible.connecte) or cible.est_mort():
                 personnage << "|err|Vous ne visez personne actuellement.|ff|"
                 return
 
@@ -89,7 +90,8 @@ class CmdTirer(Commande):
         if personnage.salle is not cible.salle:
             chemin = personnage.salle.trouver_chemin(cible.salle)
             if chemin is None or not chemin.droit:
-                personnage << "|err|Vous ne disposez pas d'un bon angle de tir.|ff|"
+                personnage << "|err|Vous ne disposez pas d'un bon " \
+                        "angle de tir.|ff|"
                 return
 
         # 1. On fait partir le projectile
@@ -99,6 +101,8 @@ class CmdTirer(Commande):
         personnage.salle.envoyer(lisser("{{}} libère la tension de {}.".format(
                 arme_de_jet.get_nom())), personnage)
         arme_de_jet.projectile = None
+        arme_de_jet.script["décoche"].executer(personnage=personnage,
+                arme=arme_de_jet, projectile=projectile, cible=cible)
 
         # 2. On parcourt les salles adjacentes, si il y en a
         if chemin:
@@ -128,27 +132,47 @@ class CmdTirer(Commande):
         fact_c = varier(cible.stats.agilite, 20) / 150
         fact_c += (1 - cible.poids / cible.poids_max) / 3
         if fact_p > fact_c:
-            degats = varier(projectile.degats_fixes, \
-                    projectile.degats_variables, projectile.degats_fixes)
-            if personnage.salle is cible.salle:
-                personnage.envoyer("{} atteint {{}} ({} points).".format(
-                        projectile.get_nom().capitalize(), degats), cible)
+            if projectile.degats_fixes == 0:
+                degats = 0
+            else:
+                degats = varier(projectile.degats_fixes, \
+                        projectile.degats_variables, projectile.degats_fixes)
 
-            cible << "{} vous atteint de plein fouet ({} " \
-                    "points).".format(projectile.get_nom(), degats)
+            msg_auteur = "{} atteint {{}}"
+            msg_cible = "{} vous atteint de plein fouet"
+            if degats > 0:
+                msg_auteur += " ({degats} points)."
+                msg_cible += " ({degats} points) !"
+            else:
+                msg_auteur += "."
+                msg_cible += " !"
+
+            if personnage.salle is cible.salle:
+                personnage.envoyer(msg_auteur.format(
+                        projectile.get_nom().capitalize(),
+                        degats=degats), cible)
+
+            cible << msg_cible.format(projectile.get_nom().capitalize(),
+                    degats=degats)
+
             for autre in cible.salle.personnages:
                 if autre is not personnage and autre is not cible:
                     autre.envoyer("{} atteint {{}} de plein fouet.".format(
                             projectile.get_nom().capitalize()), cible)
 
-            try:
-                cible.stats.vitalite -= degats
-            except DepassementStat:
-                cible << "Trop, c'est trop ! Vous perdez conscience."
-                cible.salle.envoyer("{} s'écroule sur le sol.", cible)
-                if personnage.salle is not cible.salle:
-                    personnage << "Vous entendez un cri d'agonie non loin."
-                cible.mourir(adversaire=personnage)
+            # On appelle le script du projectile
+            projectile.script["atteint"].executer(auteur=personnage,
+                    cible=cible, projectile=projectile, arme=arme_de_jet)
+
+            if degats > 0:
+                try:
+                    cible.stats.vitalite -= degats
+                except DepassementStat:
+                    cible << "Trop, c'est trop ! Vous perdez conscience."
+                    cible.salle.envoyer("{} s'écroule sur le sol.", cible)
+                    if personnage.salle is not cible.salle:
+                        personnage << "Vous entendez un cri d'agonie non loin."
+                    cible.mourir(adversaire=personnage)
 
             importeur.objet.supprimer_objet(projectile.identifiant)
         else:
