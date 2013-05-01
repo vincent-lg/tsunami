@@ -60,11 +60,16 @@ class CmdScruter(Commande):
         chemins = sorted(chemins, key=lambda chemin: chemin.longueur)
         savoir = personnage.pratiquer_talent("scruter", 10)
 
+        personnage << "Vous regardez autour de vous."
+        personnage.cle_etat = "scruter"
+        yield 2
+        personnage.cle_etat = ""
+
         # 0.25 <= sens < 0.92
         sens = 0.25 + personnage.stats.sensibilite / 300 + savoir / 300
         cibles = []
         for chemin in chemins:
-            tmp_sens = sens - (1 - (rayon - chemin.longueur) / rayon)
+            tmp_sens = sens - (chemin.longueur - 1) * 0.04
             for autre in chemin.destination.personnages:
                 if random() < tmp_sens:
                     cibles.append((chemin, autre))

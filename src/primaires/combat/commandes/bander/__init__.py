@@ -72,6 +72,7 @@ class CmdBander(Commande):
 
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
+        personnage.agir("charger")
         arme_de_jet = dic_masques["jet"].objet
         if not arme_de_jet.est_de_type("arme de jet"):
             personnage << "|err|Ceci n'est pas une arme de jet.|ff|"
@@ -101,6 +102,12 @@ class CmdBander(Commande):
             personnage << "|err|Vous ne pouvez utiliser {} avec " \
                     "{}.|ff|".format(arme_de_jet.get_nom(),
                     projectile.get_nom())
+
+        personnage << "Vous commencez à recharger {}.".format(
+                arme_de_jet.get_nom())
+        personnage.cle_etat = "charger"
+        yield 1
+        personnage.cle_etat = ""
 
         # Si l'arme de jet est déjà chargée
         if arme_de_jet.projectile:

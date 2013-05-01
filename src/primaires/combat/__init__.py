@@ -87,6 +87,18 @@ class Module(BaseModule):
         etat.act_interdites = ["tuer", "bouger", "prendre", "poser",
                 "chercherbois", "ouvrir", "fermer", "jouer", "lancersort",
                 "porter", "retirer", "ingerer"]
+
+        # État scruter
+        etat = self.importeur.perso.ajouter_etat("scruter")
+        etat.msg_refus = "Vous êtes un peu occupé."
+        etat.msg_visible = "se trouve ici"
+
+        # État charger
+        etat = self.importeur.perso.ajouter_etat("charger")
+        etat.msg_refus = "Vous êtes un peu occupé."
+        etat.msg_visible = "se trouve ici"
+        etat.act_autorisees = ["regarder", "parler"]
+
         BaseModule.init(self)
 
     def ajouter_commandes(self):
