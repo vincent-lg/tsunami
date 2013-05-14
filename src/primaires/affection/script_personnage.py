@@ -46,6 +46,19 @@ class ScriptAffectionPersonnage(ScriptAffection):
     def init(self):
         """Initialisation du script"""
         ScriptAffection.init(self)
+
+        # Évènement sort
+        evt_sort = self.creer_evenement("sort")
+        evt_sort.aide_courte = "avant que le personnage ne quitte la salle"
+        evt_sort.aide_longue = \
+            "Cet évènement est appelé quand le personnage affecté " \
+            "quitte une salle. L'affection peut ainsi être détruite si " \
+            "le personnage bouge, ou au contraire la renforcer. Cet " \
+            "évènement est appelé avant que le personnage ne quitte " \
+            "la salle, donc il peut être empêché de bouger si nécessaire."
+        var_salle = evt_sort.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle que quitte le personnage"
+
         # Ajout de la variable personnage
         for evt in self.evenements.values():
             var_perso = evt.ajouter_variable("personnage", "Personnage")

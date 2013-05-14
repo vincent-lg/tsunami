@@ -436,7 +436,14 @@ class Personnage(BaseObj):
                     sortie.nom_complet)
             return
 
-        # On appelle l'événement sort.avant
+        # On appelle l'évènement sort des affections du personnage
+        for affection in self.affections.values():
+            duree = affection.duree
+            force = affection.force
+            affection.affection.script["sort"].executer(personnage=self,
+                    salle=salle, force=force, duree=duree)
+
+        # On appelle l'événement sort.avant de la salle
         salle.script["sort"]["avant"].executer(vers=sortie.nom,
                 salle=salle, personnage=self, destination=salle_dest)
 
