@@ -69,7 +69,7 @@ class ClasseAction(Action):
             raise ErreurExecution("le personnage n'est pas affecté par " \
                     "cette affection")
 
-        del personnage.affections[cle]
+        personnage.affections.pop(cle).detruire()
 
     @staticmethod
     def desaffecter_salle(salle, affection):
@@ -96,4 +96,4 @@ class ClasseAction(Action):
             raise ErreurExecution("la salle n'est pas affectée par " \
                     "cette affection")
 
-        del salle.affections[cle]
+        salle.affections.pop(cle).detruire()
