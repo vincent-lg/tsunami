@@ -2,10 +2,10 @@
 # -*-coding:Utf-8 -*
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,11 +35,11 @@
 from primaires.interpreteur.commande.commande import Commande
 
 class CmdTuer(Commande):
-    
+
     """Commande 'tuer'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "tuer", "kill")
@@ -51,14 +51,14 @@ class CmdTuer(Commande):
             "si vous pouvez le faire. Le combat se terminera plus " \
             "vraisemblablement par la fuite ou la mort d'un des deux " \
             "combattants."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         attaque = dic_masques["personnage_present"].personnage
         if attaque.est_mort():
             personnage << "|err|Vous ne pensez pas que c'est suffisant ?|ff|"
             return
-        
+
         personnage.agir("tuer")
         personnage.cle_etat = "combat"
         attaque.cle_etat = "combat"

@@ -51,3 +51,4 @@ from . import shutdown
 from . import superinv
 from . import where
 from . import decrire
+from . import valider

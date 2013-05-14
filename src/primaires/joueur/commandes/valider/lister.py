@@ -30,28 +30,33 @@
 
 """Package contenant la commande 'decrire'"""
 
-from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.masque.parametre import Parametre
 
-class CmdDecrire(Commande):
+class PrmLister(Parametre):
 
-    """Commande 'decrire'.
+    """Commande 'valider voir'.
 
     """
 
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "décrire", "describe")
-        self.groupe = "joueur"
-        self.aide_courte = "Ouvre un éditeur pour se décrire."
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "lister", "list")
+        self.schema = ""
+        self.aide_courte = "Lister les joueurs à valider."
         self.aide_longue = \
-            "Cette commande permet de manipuler votre description. " \
-            "Elle ouvre un éditeur dans lequel vous pouvez modifier " \
-            "cette description. La description doit d'abord être validée " \
-            "par un administrateur avant d'être visible à tous."
+            "Affiche les joueurs ayant une description à valider."
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        editeur = type(self).importeur.interpreteur.construire_editeur(
-                "descedit", personnage, personnage)
-        personnage.contextes.ajouter(editeur)
-        editeur.actualiser()
+        personnage << "Personnages ayant une description à valider :"
+        aucun_a_valider = True
+
+        for joueur in importeur.joueur.joueurs.values():
+            # Ici, on récupère les différents joueurs.
+            if joueur.description_a_valider:
+                if joueur.description_a_valider != joueur.description:
+                    aucun_a_valider = False
+                    personnage << "- {}".format(joueur)
+
+        if aucun_a_valider:
+            personnage << "Aucun."

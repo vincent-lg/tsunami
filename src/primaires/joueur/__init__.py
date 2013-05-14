@@ -104,6 +104,7 @@ class Module(BaseModule):
             commandes.fixer.CmdFixer(),
             commandes.groupe.CmdGroupe(),
             #commandes.decrire.CmdDecrire(),
+            commandes.valider.CmdValider(),
             commandes.distinctions.CmdDistinctions(),
             commandes.module.CmdModule(),
             commandes.options.CmdOptions(),
