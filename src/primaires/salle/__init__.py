@@ -380,6 +380,7 @@ class Module(BaseModule):
                     MNEMONIC_VALIDE))
 
         salle = Salle(zone, mnemonic, x, y, z, valide)
+        salle.zone.ajouter(salle)
         self.ajouter_salle(salle)
         return salle
 
