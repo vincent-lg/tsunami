@@ -49,11 +49,12 @@ class PrmAccepter(Parametre):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         joueur = dic_masques["nom_joueur"].joueur
-
-        if joueur.description_a_valider == joueur.description:
-            personnage << "Le joueur n'a pas de description à valider."
+        if not joueur.description_modifiee:
+            personnage << "|err|Le joueur n'a pas de description à " \
+                    "valider.|ff|"
         else:
-            joueur.description = joueur.description_a_valider
+            joueur.description_modifiee = False
+            joueur.description.paragraphes[:] = \
+                    joueur.description_a_valider.paragraphes[:]
             personnage << "La description du joueur a bien été validée."
             joueur << "Votre nouvelle description vient d'être validée."
-

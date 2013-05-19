@@ -42,21 +42,33 @@ class PrmLister(Parametre):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "lister", "list")
         self.schema = ""
-        self.aide_courte = "Lister les joueurs à valider."
+        self.aide_courte = "Liste les joueurs à valider."
         self.aide_longue = \
-            "Affiche les joueurs ayant une description à valider."
+            "Cette commande liste les joueurs en attente d'une validation " \
+            "de description. Si la demande a été pris en charge par un " \
+            "autre administrateur, elle n'apparaîtra normalement pas."
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        personnage << "Personnages ayant une description à valider :"
-        aucun_a_valider = True
+        joueurs = [joueur for joueur in importeur.joueur.joueurs.values() if \
+                joueur.description_modifiee]
+        if not joueurs:
+            personnage << "Aucun joueur n'est en attente de validation " \
+                    "de description pour l'heure."
+            return
 
-        for joueur in importeur.joueur.joueurs.values():
-            # Ici, on récupère les différents joueurs.
-            if joueur.description_a_valider:
-                if joueur.description_a_valider != joueur.description:
-                    aucun_a_valider = False
-                    personnage << "- {}".format(joueur)
+        joueurs = sorted(joueurs, key=lambda joueur: joueur.nom)
+        ligne = []
+        lignes = [ligne]
+        for joueur in joueurs:
+            if len(ligne) > 4:
+                ligne = []
+                lignes.append(ligne)
 
-        if aucun_a_valider:
-            personnage << "Aucun."
+            ligne.append(joueur.nom.ljust(15))
+
+        aff = []
+        for ligne in lignes:
+            aff.append(" ".join(ligne))
+
+        personnage << "\n".join(aff)

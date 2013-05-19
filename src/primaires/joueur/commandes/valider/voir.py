@@ -42,19 +42,19 @@ class PrmVoir(Parametre):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "voir", "view")
         self.schema = "<nom_joueur>"
-        self.aide_courte = "Affiche la description d'un joueur."
+        self.aide_courte = "affiche la description d'un joueur."
         self.aide_longue = \
-            "Affiche la description d'un joueur."
+            "Cette commande affiche la description d'un joueur : " \
+            "si le joueur est listé dans les joueurs à valider, sa " \
+            "description affichée sera celle à valider. Sinon, la " \
+            "description affichée sera celle validée."
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         joueur = dic_masques["nom_joueur"].joueur
-
-        if joueur.description_a_valider == joueur.description:
-            personnage << "La description de ce joueur a déjà été validée."
+        if joueur.description_modifiee:
+            personnage << "Description à valider de {} :\n\n{}".format(
+                    joueur.nom, str(joueur.description_a_valider))
         else:
-            if joueur.description_a_valider.paragraphes:
-                personnage << "Description non validée de {} :".format(joueur)
-                personnage << str(joueur.description_a_valider)
-            else:
-                personnage << "{} n'a pas de description à valider.".format(joueur)
+            personnage << "Description validée actuelle de {} :\n\n{}".format(
+                    joueur.nom, str(joueur.description))
