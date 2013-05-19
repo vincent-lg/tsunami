@@ -32,6 +32,9 @@
 
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
+from .edt_annuler import EdtAnnuler
+from .edt_envoyer import EdtEnvoyer
+
 
 class EdtDescedit(Presentation):
 
@@ -52,7 +55,7 @@ class EdtDescedit(Presentation):
         else:
             instance_connexion = None
 
-        Presentation.__init__(self, instance_connexion)
+        Presentation.__init__(self, instance_connexion, joueur, None, False)
         if personnage and joueur:
             self.construire(personnage, joueur)
 
@@ -91,7 +94,6 @@ class EdtDescedit(Presentation):
 
     def construire(self, personnage, joueur):
         """Construction de l'éditeur"""
-
         # Description
         # Si le personnage (l'utilisateur qui édite) est immortel, on travaille
         # directement sur l'attribut description, sinon on utilise
@@ -103,6 +105,21 @@ class EdtDescedit(Presentation):
         else:
             description = self.ajouter_choix("description", "d", \
                     Description, joueur, "description_a_valider")
-            description.apercu = "{objet.description_a_valider.paragraphes_indentes}"
+
+            description.apercu = \
+                    "{objet.description_a_valider.paragraphes_indentes}"
+
         description.parent = self
         description.aide_courte = "Modifier sa description."
+
+        # Envoyer
+        envoyer = self.ajouter_choix(
+                "envoyer la description en validation", "e",
+                EdtEnvoyer, joueur)
+        envoyer.parent = self
+
+        # Annuler
+        annuler = self.ajouter_choix(
+                "annuler et revenir à l'ancienne description", "ann",
+                EdtAnnuler, joueur)
+        annuler.parent = self

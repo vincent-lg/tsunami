@@ -103,7 +103,7 @@ class Module(BaseModule):
             commandes.entrainer.CmdEntrainer(),
             commandes.fixer.CmdFixer(),
             commandes.groupe.CmdGroupe(),
-            #commandes.decrire.CmdDecrire(),
+            commandes.decrire.CmdDecrire(),
             commandes.valider.CmdValider(),
             commandes.distinctions.CmdDistinctions(),
             commandes.module.CmdModule(),

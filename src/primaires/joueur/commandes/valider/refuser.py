@@ -42,11 +42,28 @@ class PrmRefuser(Parametre):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "refuser", "reject")
         self.schema = "<nom_joueur>"
-        self.aide_courte = "Refuser la description d'un joueur."
+        self.aide_courte = "refuse la description d'un joueur."
         self.aide_longue = \
-            "Refuse la description d'un joueur."
+            "Cette commande permet de refuser la description d'un " \
+            "joueur. Ce refus doit être motivé : cette commande crée " \
+            "un nouveau mudmail à l'adresse du joueur dont la description " \
+            "est refusée que vous devez remplir pour préciser les " \
+            "raisons du refus."
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         joueur = dic_masques["nom_joueur"].joueur
-        personnage << "Paramètre encore non disponible."
+        if not joueur.description_modifiee:
+            personnage << "|err|Ce joueur n'a pas de description à " \
+                    "valider.|ff|"
+            return
+
+        joueur.description_modifiee = False
+        mail = importeur.communication.mails.creer_mail(
+                personnage)
+        mail.liste_dest.append(joueur)
+        mail.sujet = "Votre description a été validée mais rejetée"
+        editeur = type(self).importeur.interpreteur.construire_editeur(
+                "medit", personnage, mail)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()
