@@ -49,8 +49,8 @@ class EdtEnvoyer(Editeur):
     def entrer(self):
         joueur = self.objet
         if joueur.est_immortel():
-            joueur.description.paragraphes[:] = \
-                    joueur.description_a_valider.paragraphes
+            joueur.description_a_valider.paragraphes[:] = \
+                    joueur.description.paragraphes
             self.pere.envoyer("Cette description a été automatiquement " \
                     "validée.")
         else:
