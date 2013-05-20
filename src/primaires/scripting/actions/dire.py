@@ -43,6 +43,7 @@ class ClasseAction(Action):
     def init_types(cls):
         cls.ajouter_types(cls.dire_personnage, "Personnage", "str")
         cls.ajouter_types(cls.dire_salle, "Salle", "str")
+        cls.ajouter_types(cls.dire_joueur, "str", "str")
 
     @staticmethod
     def dire_personnage(personnage, message):
@@ -61,3 +62,40 @@ class ClasseAction(Action):
                 variables
         f_variables = get_variables(variables, message)
         salle.envoyer(message, **f_variables)
+
+    @staticmethod
+    def dire_joueur(nom_joueur, message):
+        """Envoie un message ou un mudmail au joueur.
+
+        Si le joueur est déconnecté, le message est envoyé en mudmail
+        par l'intermédiaire du joueur système. Si le joueur est connecté,
+        il le reçoit directement.
+
+        Paramètres à préciser :
+
+          * nom_joueur : le nom du joueur (exemple "kredh")
+          * message : le message à envoyer
+
+        Le message peut éventuellement contenir des variables, comme
+        toute chaîne de caractères. Exemple :
+            dire "kredh" "Le joueur ${personnage} fait une action."
+
+        """
+        nom_joueur = nom_joueur.capitalize()
+        try:
+            joueur = importeur.joueur.joueurs[nom_joueur]
+        except KeyError:
+            raise ErreurExecution("le joueur {} est introuvable".format(repr(
+                    nom_joueur)))
+
+        message = message.format(**variables)
+        if joueur.est_connecte():
+            joueur.envoyer(message)
+        else:
+            joueur_systeme = importeur.joueur.joueur_systeme
+            mail = importeur.communication.mails.creer_mail(
+                    joueur_systeme)
+            mail.liste_dest.append(joueur)
+            mail.sujet = "Message automatique"
+            mail.contenu.paragraphes.append(message)
+            mail.envoyer()
