@@ -67,6 +67,6 @@ class ClasseFonction(Fonction):
             return len(o for o in conteneur.nourriture \
                     if o.prototype is prototype)
         if conteneur.est_de_type("conteneur"):
-            return sum(nb for o, nb in conteneur.conteneur.iter_nombres \
+            return sum(nb for o, nb in conteneur.conteneur.iter_nombres() \
                     if o.prototype is prototype)
         raise ErreurExecution("{} n'est pas un conteneur".format(conteneur))
