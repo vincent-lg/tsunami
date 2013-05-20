@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,15 +33,15 @@
 from primaires.scripting.script import Script
 
 class ScriptSalle(Script):
-    
+
     """Script et évènements propre aux salles.
-    
+
     C'est dans cette classe que sont construits les évènements du scripting
     des salles. Il est ainsi plus facile à modifier si vous souhaitez
     rajouter un évènement.
-    
+
     """
-    
+
     def init(self):
         """Initialisation du script"""
         # Evénement entre
@@ -66,7 +66,7 @@ class ScriptSalle(Script):
             "Cet évènement est appelé après que le personnage soit entré " \
             "dans la salle et après que lui et les autres personnages " \
             "présents en aient été informés."
-        
+
         # Configuration des variables de l'évènement entre
         var_depuis = evt_entre.ajouter_variable("depuis", "str")
         var_depuis.aide = "la direction d'où vient le personnage"
@@ -74,7 +74,7 @@ class ScriptSalle(Script):
         var_salle.aide = "la salle actuelle"
         var_perso = evt_entre.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage se déplaçant"
-        
+
         # Evénement sort
         evt_sort = self.creer_evenement("sort")
         evt_sort_avant = evt_sort.creer_evenement("avant")
@@ -97,7 +97,7 @@ class ScriptSalle(Script):
             "d'une salle. Il n'est pas encore arrivé dans la salle cible " \
             "mais son déplacement est bel et bien en court. Les personnages " \
             "présents dans la salle de départ en ont déjà été informés."
-        
+
         # Configuration des variables de l'événement.
         var_vers = evt_sort.ajouter_variable("vers", "str")
         var_vers.aide = "la direction où va le personnage"
@@ -107,7 +107,7 @@ class ScriptSalle(Script):
         var_destination.aide = "la salle de destination"
         var_perso = evt_sort.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage se déplaçant"
-        
+
         # Evénement dit
         evt_dire = self.creer_evenement("dit")
         evt_dire.aide_courte = "un personnage dit quelque chose dans la salle"
@@ -115,7 +115,7 @@ class ScriptSalle(Script):
             "Cet évènement est appelé quand un personnage dit quelque " \
             "chose dans la salle. Ce qu'il dit se trouve dans la " \
             "variable |ent|message|ff|."
-        
+
         # Configuration des variables de l'événement.
         var_message = evt_dire.ajouter_variable("message", "str")
         var_message.aide = "le message prononcé"
@@ -123,7 +123,7 @@ class ScriptSalle(Script):
         var_salle.aide = "la salle actuelle"
         var_perso = evt_dire.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage qui parle"
-        
+
         # Evénement connecte
         evt_connecte = self.creer_evenement("connecte")
         evt_connecte.aide_courte = "un joueur se connecte dans la salle"
@@ -133,9 +133,20 @@ class ScriptSalle(Script):
             "pour des raisons principalement techniques, les PNJ ne se " \
             "connectent jamais. Cet évènement ne concerne donc que les " \
             "joueurs."
-        
+
         # Configuration des variables de l'événement.
         var_salle = evt_connecte.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle actuelle"
         var_perso = evt_connecte.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage qui se connecte"
+
+        # Evénement tick
+        evt_tick = self.creer_evenement("tick")
+        evt_tick.aide_courte = "la salle se tick"
+        evt_tick.aide_longue = \
+            "Cet évènement est appelé quand la salle se tick (toutes les " \
+            "minutes)."
+
+        # Configuration des variables de l'événement.
+        var_salle = evt_tick.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle actuelle"
