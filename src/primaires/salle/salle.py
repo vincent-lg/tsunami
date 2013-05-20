@@ -539,6 +539,8 @@ class Salle(BaseObj):
             if not affection.e_existe or affection.duree <= 0:
                 del self.affections[cle]
 
+        self.script["tick"].executer(salle=self)
+
     def regrouper_decors(self):
         """Regroupe les décors par nom."""
         decors = OrderedDict()

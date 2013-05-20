@@ -701,8 +701,7 @@ class Module(BaseModule):
             except IndexError:
                 pass
             else:
-                if s.affections:
-                    tick.append(s)
+                tick.append(s)
             i += NB_TICKS
 
         for s in tick:
