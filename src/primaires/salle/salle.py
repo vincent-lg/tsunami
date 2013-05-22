@@ -221,7 +221,12 @@ class Salle(BaseObj):
         c'est-à-dire qu'elles peuvent être entièrement inaccessible.
 
         """
-        return Chemins.salles_autour(self, rayon)
+        if self.accepte_discontinu():
+            empruntable = False
+        else:
+            empruntable = True
+
+        return Chemins.salles_autour(self, rayon, empruntable=empruntable)
 
     def trouver_chemin_absolu(self, destination, rayon=5):
         """Retourne, si trouvé, le chemin menant à destination ou None.
