@@ -185,12 +185,11 @@ class Sort(BaseObj):
             t_variables["salle"] = origine
             t_variables["destination"] = destination
             t_variables["direction"] = nom_complet
-            del t_variables["destination"]
-            del t_variables["direction"]
+            self.script["part"].executer(**t_variables)
+            t_variables = variables.copy()
             t_variables["origine"] = origine
             t_variables["salle"] = destination
-            self.script["part"].executer(**t_variables)
-            self.script["arrive"].executer(**variables)
+            self.script["arrive"].executer(**t_variables)
         self.toucher(personnage, maitrise, cible)
 
     def toucher(self, personnage, maitrise, cible):

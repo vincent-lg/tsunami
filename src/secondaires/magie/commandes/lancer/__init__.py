@@ -60,10 +60,15 @@ class CmdLancer(Commande):
         personnage.agir("lancersort")
         cible = dic_masques["cible_sort"] and dic_masques["cible_sort"].cible \
                 or None
-        if sort.offensif:
-            cible = importeur.combat.cibles.get(personnage)
-        else:
-            cible = personnage
+        if cible is None:
+            if sort.offensif:
+                combat = importeur.combat.combats.get(personnage.salle.ident)
+                if combat is not None:
+                    cible = combat.combattus.get(personnage)
+                else:
+                    cible = importeur.combat.cible.get(personnage)
+            else:
+                cible = personnage
 
         salle_cible = personnage.salle
         if sort.type_cible == "salle" and isinstance(cible, Personnage):
