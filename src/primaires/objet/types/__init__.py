@@ -65,6 +65,7 @@ from .conteneur_potion import ConteneurPotion
 from .conteneur_nourriture import ConteneurNourriture
 from .indefini import *
 from .livre import Livre
+from .miroir import Miroir
 from .potion import Potion
 from .nourriture import Nourriture
 from .pierre_feu import PierreFeu

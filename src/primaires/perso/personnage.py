@@ -893,11 +893,12 @@ class Personnage(BaseObj):
                         self.nom, t_salle.ident, id(message)), 0, self.act_crier,
                         t_salle, salles, message, dist + 1)
 
-    def regarder(self, personnage):
+    def regarder(self, personnage, notifier=True):
         """personnage regarde self."""
-
         equipement = self.equipement
-        msg = "Vous regardez {} :\n".format(self.get_nom_pour(personnage))
+        msg = ""
+        if notifier:
+            msg = "Vous regardez {} :\n".format(self.get_nom_pour(personnage))
         if hasattr(self, "description"):
             msg += "\n" + self.description.regarder(personnage=personnage,
                     elt=self) + "\n\n"
@@ -934,6 +935,9 @@ class Personnage(BaseObj):
         else:
             msg += genre + " porte :\n\n  " + "\n  ".join(objets)
 
-        personnage.envoyer(msg, perso=self)
-        self.envoyer("{} vous regarde.", personnage)
-        personnage.salle.envoyer("{} regarde {}.", personnage, self)
+        if notifier:
+            personnage.envoyer(msg, perso=self)
+            self.envoyer("{} vous regarde.", personnage)
+            personnage.salle.envoyer("{} regarde {}.", personnage, self)
+        else:
+            return msg
