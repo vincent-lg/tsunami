@@ -398,6 +398,17 @@ class Personnage(BaseObj):
 
         return self in combat.combattants
 
+    def peut_etre_attaque(self):
+        """Retourne True si le personnage peut être attaéqué.
+
+        Cela dépend de l'état.
+
+        """
+        if self.etat:
+            return self.etat.peut_etre_attaque
+
+        return True
+
     def detruire(self):
         """Méthode appelée lors de la destruction du personage.
         -   On supprime le personnage de la liste des personnages du squelette
@@ -1003,11 +1014,12 @@ class Personnage(BaseObj):
                         self.nom, t_salle.ident, id(message)), 0, self.act_crier,
                         t_salle, salles, message, dist + 1)
 
-    def regarder(self, personnage):
+    def regarder(self, personnage, notifier=True):
         """personnage regarde self."""
-
         equipement = self.equipement
-        msg = "Vous regardez {} :\n".format(self.get_nom_pour(personnage))
+        msg = ""
+        if notifier:
+            msg = "Vous regardez {} :\n".format(self.get_nom_pour(personnage))
         if hasattr(self, "description"):
             msg += "\n" + self.description.regarder(personnage=personnage,
                     elt=self) + "\n\n"
@@ -1044,9 +1056,12 @@ class Personnage(BaseObj):
         else:
             msg += genre + " porte :\n\n  " + "\n  ".join(objets)
 
-        personnage.envoyer(msg, perso=self)
-        self.envoyer("{} vous regarde.", personnage)
-        personnage.salle.envoyer("{} regarde {}.", personnage, self)
+        if notifier:
+            personnage.envoyer(msg, perso=self)
+            self.envoyer("{} vous regarde.", personnage)
+            personnage.salle.envoyer("{} regarde {}.", personnage, self)
+        else:
+            return msg
 
     def tomber(self):
         """self tombe de salles en salles."""

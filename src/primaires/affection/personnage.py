@@ -42,6 +42,7 @@ class AffectionPersonnage(AffectionAbstraite):
     def __init__(self, cle):
         AffectionAbstraite.__init__(self, cle)
         self.script = ScriptAffectionPersonnage(self)
+        self.etat = ""
 
         # Liste de tuple (force, message)
         self.messages_personnels = []
@@ -49,12 +50,20 @@ class AffectionPersonnage(AffectionAbstraite):
         if cle:
             importeur.affection.aff_personnages[self.cle] = self
 
+    def initialiser(self, affection):
+        """Initialise une affection concrète."""
+        if self.etat:
+            affection.affecte.cle_etat = self.etat
+
     def programmer_destruction(self, affection):
         """Programme la destruction de l'affection de personnage."""
         try:
             self.message_detruire(affection)
         except NotImplementedError:
             self.executer_script("détruit", affection)
+
+        if self.etat and affection.affecte.cle_etat == self.etat:
+            affection.affecte.cle_etat = ""
 
     def message_detruire(self, affection):
         """Retourne le message à afficher quand l'affection se termine.

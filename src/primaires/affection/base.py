@@ -90,6 +90,16 @@ class AffectionAbstraite(BaseObj):
         valeur = type(self).def_flags[nom_flag]
         return self.flags & valeur != 0
 
+    def initialiser(self, affection):
+        """Initialise une affection concrète.
+
+        ATTENTION : cette méthode est appelée quand une affection est donnée
+        (à un personnage ou à une salle par exemple) mais n'est pas
+        appelée quand l'affection est simplement modulée.
+
+        """
+        pass
+
     def message(self, affection):
         """Retourne le message visible en fonction de la forde."""
         messages = self.messages_visibles

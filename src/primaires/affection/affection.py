@@ -49,6 +49,8 @@ class Affection(BaseObj):
         self.age = 0
         self.duree = duree
         self.force = force
+        if affection:
+            affection.initialiser(self)
 
     def __getnewargs__(self):
         return (None, None, 0, 0)
