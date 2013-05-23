@@ -364,6 +364,17 @@ class Personnage(BaseObj):
 
         return self in combat.combattants
 
+    def peut_etre_attaque(self):
+        """Retourne True si le personnage peut être attaéqué.
+
+        Cela dépend de l'état.
+
+        """
+        if self.etat:
+            return self.etat.peut_etre_attaque
+
+        return True
+
     def detruire(self):
         """Méthode appelée lors de la destruction du personage.
         -   On supprime le personnage de la liste des personnages du squelette

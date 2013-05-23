@@ -1,4 +1,3 @@
-
 # -*-coding:Utf-8 -*
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -55,7 +54,7 @@ class CmdTuer(Commande):
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         attaque = dic_masques["personnage_present"].personnage
-        if attaque.est_mort():
+        if attaque.est_mort() or not attaque.peut_etre_attaque():
             personnage << "|err|Vous ne pensez pas que c'est suffisant ?|ff|"
             return
 

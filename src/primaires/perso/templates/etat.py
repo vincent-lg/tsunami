@@ -2,10 +2,10 @@
 
 # Copyright (c) 2011 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,26 +34,26 @@ from corps.fonctions import valider_cle
 from primaires.perso.exceptions.action import ExceptionAction
 
 class Etat:
-    
+
     """Classe représentant un état d'un personnage.
-    
+
     L'état est une classe générique représentant un état d'un personnage.
     Un état est l'état actif du personnage (est en train de combattre,
     est en train de chercher du bois, est en train de pêcher...).
-    
+
     L'état autorise ou interdit certaines actions identifiées simplement
     par leur clé.
     Par exemple, l'état "combat" (est en combat) interdit qu'on ramasse
     un objet.
-    
+
     Si un personnage change d'état, on manipule son attribut 'cle_etat'.
     On ne crée pas un nouvel état pour lui. L'état reste, en somme,
     le même d'un personnage à l'autre.
-    
+
     En terme d'objet, si un personnage entre en combat contre
     un autre personnage, ils partagent le même état.
     L'état ne peut donc pas contenir d'informations propres à un personnage.
-    
+
     Pour notifier qu'un personnage effectue une action dans une commande,
     on appelle la méthode 'agir' du personnage en lui passant en paramètre
     la clé de l'action.
@@ -62,15 +62,15 @@ class Etat:
     une exception interceptée est levée, interrompant l'exécution
     de la commande et envoyant un message de refus au joueur
     (vous êtes en train de combattre).
-    
+
     NOTE : Si seul le dictionnaire des actions interdites est renseigné,
     toutes les actions non interdites sont, par défaut, autorisées. Si seul
     le dictionnaire des actions autorisées est renseigné, toutes les actions
     non autorisées sont interdites. Si les deux sont vides, toutes les actions
     sont interdites.
-    
+
     """
-    
+
     def __init__(self, cle):
         """Constructeur d'un état."""
         self.cle = cle
@@ -79,12 +79,13 @@ class Etat:
         self.act_autorisees = []
         self.act_interdites = []
         self.fact_recuperation = 1 # facteur de récupération
-    
+        self.peut_etre_attaque = True
+
     def peut_faire(self, cle_action):
         """Si ne peut pas faire l'action, lève une exception ExceptionEtat.
-        
+
         Sinon, laisse passer.
-        
+
         """
         if cle_action in self.act_interdites or (not self.act_interdites \
                 and not cle_action in self.act_autorisees):
