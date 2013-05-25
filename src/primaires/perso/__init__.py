@@ -140,11 +140,12 @@ class Module(BaseModule):
         assis.msg_refus = "Vous êtes assis."
         assis.msg_visible = "est assis là"
         assis.act_autorisees = ["regarder", "poser", "parler", "ingerer",
-                "lancersort", "lever"]
+                "lancersort", "lever", "geste"]
         allonge = self.ajouter_etat("allonge")
         allonge.msg_refus = "Vous êtes allongé."
         allonge.msg_visible = "est allongé là"
-        allonge.act_autorisees = ["regarder", "parler", "ingerer", "lever"]
+        allonge.act_autorisees = ["regarder", "parler", "ingerer",
+        "lever", "geste"]
 
         mort = self.ajouter_etat("mort")
         mort.msg_refus = "Vous êtes inconscient."
