@@ -71,7 +71,7 @@ class CmdScruter(Commande):
         for chemin in chemins:
             tmp_sens = sens - (chemin.longueur - 1) * 0.04
             for autre in chemin.destination.personnages:
-                if random() < tmp_sens:
+                if not autre.super_invisible and random() < tmp_sens:
                     cibles.append((chemin, autre))
                     personnage.pratiquer_talent("scruter", 5)
 
