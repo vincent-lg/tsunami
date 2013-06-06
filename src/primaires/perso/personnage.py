@@ -90,8 +90,9 @@ class Personnage(BaseObj):
         self.l_talents = {}
         self.malus = 0
         self.points_malus = 0
-        self.element = None
+        self._element = ""
         self.sorts = {}
+        self.points_tribut = 0
 
         # Etat
         self._cle_etat = ""
@@ -314,6 +315,20 @@ class Personnage(BaseObj):
                 nb += 1
 
         return nb
+
+    def _get_element(self):
+        """Retourne l'élément."""
+        return self._element
+    def _set_element(self, element):
+        """Change l'élément (chaîne vide pour effacer)."""
+        if element:
+            if element not in ("eau", "air", "terre", "feu"):
+                raise ValueError("élément {} inconnu".format(repr(element)))
+        else:
+            element = ""
+
+        self._element = element
+    element = property(_get_element, _set_element)
 
     def peut_voir(self, personnage):
         """Retourne True si peut voir le personnage, False sinon."""

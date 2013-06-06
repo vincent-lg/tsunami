@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 DAVY Guillaume
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -39,11 +39,11 @@ from .editeurs.spedit import EdtSpedit
 from .sorts import Sorts
 
 class Module(BaseModule):
-    
+
     """Ce module gère la magie en jeu, et tout ce qui s'y rattache.
-    
+
     """
-    
+
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "magie", "secondaire")
@@ -51,7 +51,11 @@ class Module(BaseModule):
                 "magie", "magie")
         self.sorts = None
         self.commandes = []
-    
+
+    def config(self):
+        """Configuration du module."""
+        self.importeur.scripting.a_charger.append(self)
+
     def init(self):
         """Initialisation du module"""
         # On récupère les sorts
@@ -61,37 +65,37 @@ class Module(BaseModule):
         else:
             self.logger.info(format_nb(len(sorts), "{nb} sort{s} récupéré{s}"))
         self.sorts = sorts
-        
+
         # Ajout des commandes
         self.commandes = [
             commandes.lancer.CmdLancer(),
             #commandes.oublier.CmdOublier(),
             commandes.sorts.CmdSorts(),
         ]
-        
+
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
-        
+
         # Ajout de l'éditeur de sorts
         self.importeur.interpreteur.ajouter_editeur(EdtSpedit)
-        
+
         # Ajout du niveau magie
         self.importeur.perso.ajouter_niveau("magie", "mysticisme")
-        
+
         # Ajout des talents magiques
         ajouter_talent = self.importeur.perso.ajouter_talent
         ajouter_talent("destruction", "destruction", "magie", 0.20)
         ajouter_talent("alteration", "altération", "magie", 0.25)
         ajouter_talent("invocation", "invocation", "magie", 0.20)
         ajouter_talent("illusion", "illusion", "magie", 0.30)
-        
+
         # Ajout de l'état
         etat = self.importeur.perso.ajouter_etat("magie")
         etat.msg_refus = "Vous êtes en train de lancer un sort."
         etat.msg_visible = "se concentre ici"
-        
+
         BaseModule.init(self)
-    
+
     def supprimer_sort(self, cle):
         """Supprime le sort spécifié"""
         sort = self.sorts[cle]
