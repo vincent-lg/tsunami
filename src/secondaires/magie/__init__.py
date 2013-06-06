@@ -55,6 +55,7 @@ class Module(BaseModule):
     def config(self):
         """Configuration du module."""
         self.importeur.scripting.a_charger.append(self)
+        BaseModule.config(self)
 
     def init(self):
         """Initialisation du module"""
