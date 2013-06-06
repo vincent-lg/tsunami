@@ -92,6 +92,18 @@ class EdtSpedit(Presentation):
             "| |tit|" + "Description du sort {}".format(sort.cle).ljust(76) + \
             "|ff||\n" + self.opts.separateur
 
+        # Points de tribut
+        tribut = self.ajouter_choix("points de tribut", "tr", Entier, sort,
+                "points_tribut", 1)
+        tribut.parent = self
+        tribut.prompt = "Points de tribut nécessaire pour apprendre le sort : "
+        tribut.apercu = "{objet.points_tribut}"
+        tribut.aide_courte = \
+            "Entrez le |ent|nombre de points de tribut|ff| nécessaires "\
+            "pour apprendre le sort\nou |cmd|/|ff| pour revenir à la " \
+            "fenêtre parente.\n\nPoints de tribut actuels : " \
+            "|bc|{objet.points_tribut}|ff|"
+
         # Éléments
         elements = self.ajouter_choix("eléments", "e", Selection, sort,
                 "elements", ELEMENTS)

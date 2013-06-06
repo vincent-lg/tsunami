@@ -63,7 +63,9 @@ class Sort(BaseObj):
         self.duree = 3
         self.difficulte = 0
         self.distance = False
+        self.points_tribut = 1
         self.script = ScriptSort(self)
+
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
 
