@@ -2,10 +2,10 @@
 
 # Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -42,35 +42,35 @@ from primaires.format.fonctions import oui_ou_non
 from . import Editeur
 
 class Flags(Editeur):
-    
+
     """Contexte-éditeur flags.
-    
+
     Ce contexte éditeur permet d'éditer les flags d'un unique attribut.
     Entrer le flag une première fois l'active, entrer son nom une
     seconde fois le désactive.
-    
+
     """
-    
+
     nom = "editeur:base:flags"
-    
+
     def __init__(self, pere, objet=None, attribut=None, flags=None):
         """Constructeur de l'éditeur."""
         Editeur.__init__(self, pere, objet, attribut)
         self.flags = flags or {}
-    
+
     def accueil(self):
         """Message d'accueil du contexte."""
         msg = self.aide_courte.format(objet = self.objet) + "\n\n"
-        msg += "Flats actuels :"
+        msg += "Flags actuels :"
         flags = sorted(self.flags.items())
         flag = getattr(self.objet, self.attribut)
         for nom, valeur in flags:
             msg += "\n  " + nom.capitalize().ljust(20)
             actif = flag & valeur != 0
             msg += " : " + oui_ou_non(actif)
-        
+
         return msg
-    
+
     def interpreter(self, msg):
         """Interprétation du message."""
         msg = msg.lower()

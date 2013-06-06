@@ -39,6 +39,11 @@ class AffectionPersonnage(AffectionAbstraite):
 
     nom_type = "personnage"
     nom_scripting = "affection de salle"
+    def_flags = {
+        "doit être connecté": 1,
+        "doit être vivant": 2,
+    }
+
     def __init__(self, cle):
         AffectionAbstraite.__init__(self, cle)
         self.script = ScriptAffectionPersonnage(self)
@@ -81,3 +86,20 @@ class AffectionPersonnage(AffectionAbstraite):
         """Exécute le script lié."""
         self.script[evenement].executer(personnage=affection.affecte,
                 force=affection.force, duree=affection.duree, **variables)
+
+    def tick(self, affection):
+        """Tick l'affection."""
+        if affection.affecte is None or not affection.affecte.e_existe:
+            affection.e_existe = False
+            return
+
+        if self.a_flag("doit être vivant") and affection.affecte.est_mort():
+            return
+
+        if self.a_flag("doit être connecté"):
+            from primaires.joueur.joueur import Joueur
+            personnage = affection.affecte
+            if isinstance(personnage, Joueur) and not joueur.est_connecte():
+                return False
+
+        AffectionAbstraite.tick(self, affection)
