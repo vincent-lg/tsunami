@@ -454,6 +454,13 @@ class Personnage(BaseObj):
             affection.affection.script["sort"].executer(personnage=self,
                     salle=salle, force=force, duree=duree)
 
+        # On appelle l'évènement 'sort' des affections de la salle
+        for affection in salle.affections.values():
+            duree = affection.duree
+            force = affection.force
+            affection.affection.script["sort"].executer(personnage=self,
+                    salle=salle, force=force, duree=duree)
+
         # On appelle l'événement sort.avant de la salle
         salle.script["sort"]["avant"].executer(vers=sortie.nom,
                 salle=salle, personnage=self, destination=salle_dest)
@@ -521,6 +528,13 @@ class Personnage(BaseObj):
         if self.salle is salle_dest:
             salle_dest.script["entre"]["apres"].executer(
                     depuis=nom_opp, salle=salle_dest, personnage=self)
+
+            # On appelle l'évènement 'sort' des affections de la salle
+            for affection in salle_dest.affections.values():
+                duree = affection.duree
+                force = affection.force
+                affection.affection.script["entre"].executer(personnage=self,
+                        salle=salle_dest, force=force, duree=duree)
 
         # On appelle l'événement personnage.entre si nécessaire
         if hasattr(self, "script"):

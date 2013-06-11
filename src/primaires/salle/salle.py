@@ -361,7 +361,9 @@ class Salle(BaseObj):
 
         res_affections = []
         for affection in self.affections.values():
-            res_affections.append(affection.affection.message(affection))
+            message = affection.affection.message(affection)
+            if message:
+                res_affections.append(message)
 
         if res_affections:
             res += "\n".join(res_affections) + "\n"
