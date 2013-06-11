@@ -79,6 +79,10 @@ class CmdLancer(Commande):
                 personnage << "|err|Vous devez préciser une cible pour ce " \
                         "sort.|ff|"
             else:
+                if not sort.peut_lancer(personnage):
+                    personnage << "|err|Vous ne pouvez lancer ce sort.|ff|"
+                    return
+
                 personnage.agir("magie")
                 personnage.cle_etat = "magie"
                 if parchemin:
@@ -100,6 +104,10 @@ class CmdLancer(Commande):
                 if sort.type_cible == "objet" and not isinstance(cible, Objet):
                     personnage << "|err|Ce sort ne peut être lancé que sur " \
                             "un objet.|ff|"
+                    return
+
+                if not sort.peut_lancer(personnage):
+                    personnage << "|err|Vous ne pouvez lancer ce sort.|ff|"
                     return
 
                 personnage.agir("magie")

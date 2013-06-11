@@ -36,6 +36,7 @@ from random import random
 
 from abstraits.obase import *
 from primaires.format.description import Description
+from primaires.scripting.exceptions import InterrompreCommande
 from .script import ScriptSort
 
 STANDARD = 0
@@ -141,7 +142,7 @@ class Sort(BaseObj):
         variables["personnage"] = personnage
         variables["maitrise"] = maitrise
         variables["salle"] = personnage.salle
-        self.script["concentration"].executer(**variables)
+        self.executer_script(personnage, "concentration", **variables)
         action = self.lancer
         if self.echoue(personnage) and apprendre:
             action = self.echouer
@@ -157,7 +158,7 @@ class Sort(BaseObj):
         variables["personnage"] = personnage
         variables["maitrise"] = maitrise
         variables["salle"] = personnage.salle
-        self.script["echec"].executer(**variables)
+        self.executer_script(personnage, "echec", **variables)
 
     def lancer(self, personnage, maitrise, cible):
         """Fait lancer le sort à personnage."""
@@ -178,7 +179,7 @@ class Sort(BaseObj):
 
                 sorties = chemin.sorties
 
-        self.script["lancement"].executer(**variables)
+        self.executer_script(personnage, "lancement", **variables)
         for sortie in sorties:
             origine = sortie.parent
             destination = sortie.salle_dest
@@ -187,11 +188,11 @@ class Sort(BaseObj):
             t_variables["salle"] = origine
             t_variables["destination"] = destination
             t_variables["direction"] = nom_complet
-            self.script["part"].executer(**t_variables)
+            self.executer_script(personnage, "part", **t_variables)
             t_variables = variables.copy()
             t_variables["origine"] = origine
             t_variables["salle"] = destination
-            self.script["arrive"].executer(**t_variables)
+            self.executer_script(personnage, "arrive", **t_variables)
         self.toucher(personnage, maitrise, cible)
 
     def toucher(self, personnage, maitrise, cible):
@@ -204,7 +205,7 @@ class Sort(BaseObj):
         variables["personnage"] = personnage
         variables["maitrise"] = maitrise
         variables["salle"] = dest
-        self.script["effet"].executer(**variables)
+        self.execucter_script(personnage, "effet", **variables)
 
     def dissiper(self, personnage, maitrise, cible):
         """Dissipe le sort."""
@@ -212,4 +213,32 @@ class Sort(BaseObj):
         variables["personnage"] = personnage
         variables["maitrise"] = maitrise
         variables["salle"] = personnage.salle
-        self.script["dissipe"].executer(**variables)
+        self.executer_script(personnage, "dissipe", **variables)
+
+    def executer_script(self, lanceur, evenement, **variables):
+        """Exécute le script passé en paramètre.
+
+        Si une exception InterrompreCommande est levée lors
+        du scripting, retire l'état au personnage.
+
+        """
+        try:
+            self.script[evenement].executer(**variables)
+        except InterrompreCommande as err:
+            if lanceur.cle_etat == "magie":
+                lanceur.cle_etat = ""
+
+            raise err
+
+    def peut_lancer(self, personnage):
+        """Le personnage peut-il lancer le sort ?"""
+        if personnage.est_immortel():
+            return True
+
+        if self.elements and self.elements[0] != personnage.element:
+            return False
+
+        if self.cle in personnage.sorts_verrouilles:
+            return False
+
+        return True

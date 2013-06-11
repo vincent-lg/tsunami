@@ -329,6 +329,11 @@ class Personnage(BaseObj):
             element = ""
 
         self._element = element
+        if element and not self.est_immortel():
+            for cle, niveau in tuple(self.talents.items()):
+                talent = importeur.perso.talents.get(cle)
+                if talent and talent.cle_niveau == "combat" and niveau > 15:
+                    self.talents[cle] = 15
     element = property(_get_element, _set_element)
 
     def peut_voir(self, personnage):
@@ -675,6 +680,10 @@ class Personnage(BaseObj):
         if self.points_apprentissage >= self.points_apprentissage_max \
                 or (cle_talent in self.l_talents \
                 and self.l_talents[cle_talent] <= avancement):
+            return avancement
+
+        if avancement and avancement >= 15 and self._element and \
+                talent.cle_niveau == "combat" and not self.est_immortel():
             return avancement
 
         configuration = type(self).importeur.perso.cfg_talents
