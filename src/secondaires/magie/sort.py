@@ -205,7 +205,7 @@ class Sort(BaseObj):
         variables["personnage"] = personnage
         variables["maitrise"] = maitrise
         variables["salle"] = dest
-        self.execucter_script(personnage, "effet", **variables)
+        self.executer_script(personnage, "effet", **variables)
 
     def dissiper(self, personnage, maitrise, cible):
         """Dissipe le sort."""
