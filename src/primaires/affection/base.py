@@ -107,7 +107,10 @@ class AffectionAbstraite(BaseObj):
             if affection.force <= t_force:
                 return message
 
-        return messages[-1][1]
+        if messages:
+            return messages[-1][1]
+        else:
+            return ""
 
     def equilibrer_force(self, force):
         """Équilibre la force et retourne la force_max si besoin."""

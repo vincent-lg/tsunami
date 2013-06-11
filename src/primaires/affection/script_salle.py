@@ -46,6 +46,30 @@ class ScriptAffectionSalle(ScriptAffection):
     def init(self):
         """Initialisation du script"""
         ScriptAffection.init(self)
+
+        # Évènement entre
+        evt_entre = self.creer_evenement("entre")
+        evt_entre.aide_courte = "après que le personnage soit arrivé dans " \
+                "la salle"
+        evt_entre.aide_longue = \
+            "Cet évènement est appelé quand un personnage (joueur ou PNJ) " \
+            "arrive dans la salle affectée. Si des messages doivent " \
+            "être envoyés, ils seront affichés après la description " \
+            "et les différentes informations de la commande regarder."
+        var_perso = evt_entre.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage arrivant dans la salle"
+
+        # Évènement sort
+        evt_sort = self.creer_evenement("sort")
+        evt_sort.aide_courte = "avant qu'un personnage ne quitte la salle"
+        evt_sort.aide_longue = \
+            "Cet évènement est appelé quand un personnage quitte la salle " \
+            "affectée. Il est appelé avant que le personnage ne quitte " \
+            "la salle, donc il peut être empêché de bouger par l'action " \
+            "interrompre."
+        var_perso = evt_sort.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage sortant de la salle"
+
         # Ajout de la variable salle
         for evt in self.evenements.values():
             var_salle = evt.ajouter_variable("salle", "Salle")
