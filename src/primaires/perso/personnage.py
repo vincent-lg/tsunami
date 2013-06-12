@@ -1177,8 +1177,8 @@ class Personnage(BaseObj):
                 self.mourir()
         elif tps == 80:
             self.sans_prompt()
-            self << "|att|Vos poumons sont presques vides et vous commencez à " \
-                    "étouffer.|ff|"
+            self << "|att|Vos poumons sont presque vides et vous commencez " \
+                    "à étouffer.|ff|"
         elif tps == 60:
             self.sans_prompt()
             self << "|att|Il ne vous reste plus beaucoup d'air...|ff|"
