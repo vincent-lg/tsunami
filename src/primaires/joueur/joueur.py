@@ -207,11 +207,12 @@ class Joueur(Personnage):
 
         return ret
 
-    def get_nom_pour(self, personnage):
+    def get_nom_pour(self, personnage, retenu=True):
         """Retourne le nom pour le personnage passé en paramètre."""
         if personnage is self:
             return self.nom
-        elif hasattr(personnage, "retenus") and self in personnage.retenus:
+        elif hasattr(personnage, "retenus") and self in personnage.retenus \
+                and retenu:
             return personnage.retenus[self]
         else:
             return self.get_distinction_visible()
