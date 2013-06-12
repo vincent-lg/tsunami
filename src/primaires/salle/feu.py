@@ -182,8 +182,7 @@ class Feu(BaseObj):
         else:
             coef_puissance = 10
         salles = [s.salle_dest for s in self.salle.sorties]
-        salles = [s for s in salles if s.nom_terrain not in \
-                importeur.salle.TERRAINS_SANS_FEU]
+        salles = [s for s in salles if importeur.salle.peut_allumer_feu(s)]
         if not salles:
             return
 

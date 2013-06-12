@@ -709,8 +709,7 @@ class Module(BaseModule):
 
     def peut_allumer_feu(self, salle):
         """Retourne si on peut allumer un feu dans cette salle ou non."""
-        if salle.interieur or salle.nom_terrain in ("rive", "aquatique",
-                    "subaquatique", "ville", "route", "désert"):
+        if salle.interieur or salle.nom_terrain in self.TERRAINS_SANS_FEU:
             return False
 
         for affection in salle.affections.values():
