@@ -450,7 +450,7 @@ class Personnage(BaseObj):
                 if membre.tenu:
                     importeur.objet.supprimer_objet(membre.tenu.identifiant)
 
-    def get_nom_pour(self, personnage):
+    def get_nom_pour(self, personnage, retenu=True):
         """Retourne le nom pour le personnage passé en paramètre."""
         raise NotImplementedError
 
@@ -537,14 +537,14 @@ class Personnage(BaseObj):
             return
 
         # On appelle l'évènement sort des affections du personnage
-        for affection in self.affections.values():
+        for affection in list(self.affections.values()):
             duree = affection.duree
             force = affection.force
             affection.affection.script["sort"].executer(personnage=self,
                     salle=salle, force=force, duree=duree)
 
         # On appelle l'évènement 'sort' des affections de la salle
-        for affection in salle.affections.values():
+        for affection in list(salle.affections.values()):
             duree = affection.duree
             force = affection.force
             affection.affection.script["sort"].executer(personnage=self,
@@ -633,7 +633,7 @@ class Personnage(BaseObj):
                     depuis=nom_opp, salle=salle_dest, personnage=self)
 
             # On appelle l'évènement 'sort' des affections de la salle
-            for affection in salle_dest.affections.values():
+            for affection in list(salle_dest.affections.values()):
                 duree = affection.duree
                 force = affection.force
                 affection.affection.script["entre"].executer(personnage=self,
@@ -948,6 +948,7 @@ class Personnage(BaseObj):
         else:
             concrete = Affection(affection, self, duree, force)
             self.affections[cle] = concrete
+            concrete.affection.executer_script("cree", concrete)
             concrete.prevoir_tick()
 
     def tick(self):
@@ -1058,7 +1059,8 @@ class Personnage(BaseObj):
         equipement = self.equipement
         msg = ""
         if notifier:
-            msg = "Vous regardez {} :\n".format(self.get_nom_pour(personnage))
+            msg = "Vous regardez {} :\n".format(self.get_nom_pour(
+                    personnage, retenu=False))
         if hasattr(self, "description"):
             msg += "\n" + self.description.regarder(personnage=personnage,
                     elt=self) + "\n\n"

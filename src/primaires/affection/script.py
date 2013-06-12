@@ -46,6 +46,15 @@ class ScriptAffection(Script):
 
     def init(self):
         """Initialisation du script"""
+        # Évènement crée
+        evt_cree = self.creer_evenement("crée")
+        evt_cree.aide_courte = "l'affection se crée"
+        evt_cree.aide_longue = \
+            "Cet évènement est appelé quand l'affection est créée, " \
+            "c'est-à-dire que l'affection est donnée. En revanche, si " \
+            "l'affecté a déjà l'affection, elle n'est pas considérée comme " \
+            "créée et cet évènement n'est pas appelé."
+
         # Évènement détruit
         evt_detruit = self.creer_evenement("détruit")
         evt_detruit.aide_courte = "l'affection se détruit"
