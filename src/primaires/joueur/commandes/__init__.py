@@ -34,6 +34,7 @@ from . import afk
 from . import alias
 from . import bannir
 from . import chgroupe
+from . import decrire
 from . import distinctions
 from . import ejecter
 from . import entrainer
@@ -42,6 +43,7 @@ from . import groupe
 from . import module
 from . import options
 from . import oublier
+from . import pk
 from . import pset
 from . import quitter
 from . import restaurer
@@ -49,6 +51,5 @@ from . import retnom
 from . import setquest
 from . import shutdown
 from . import superinv
-from . import where
-from . import decrire
 from . import valider
+from . import where

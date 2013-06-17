@@ -1,5 +1,6 @@
 # -*-coding:Utf-8 -*
-# Copyright (c) 2010 LE GOFF Vincent
+
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,52 +28,47 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'tuer'.
-
-"""
+"""Package contenant la commande 'pk'"""
 
 from primaires.interpreteur.commande.commande import Commande
 
-class CmdTuer(Commande):
+class CmdPK(Commande):
 
-    """Commande 'tuer'.
+    """Commande 'pk'.
 
     """
 
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "tuer", "kill")
-        self.schema = "<personnage_present>"
-        self.nom_categorie = "combat"
-        self.aide_courte = "attaque un personnage présent"
+        Commande.__init__(self, "pk", "pk")
+        self.groupe = "joueur"
+        self.schema = "<etat>"
+        self.aide_courte = "change le flag PK"
         self.aide_longue = \
-            "Cette commande attaque un personnage présent dans la pièce, " \
-            "si vous pouvez le faire. Le combat se terminera plus " \
-            "vraisemblablement par la fuite ou la mort d'un des deux " \
-            "combattants."
+            "Cette commande est utile pour changer la valeur du flag PK " \
+            "(Player Kill). Par défaut, quand votre joueur est créé, " \
+            "ce flag est désactivé : cela signifie que les autres " \
+            "joueurs ne peuvent pas vous attaquer mais que vous ne " \
+            "pouvez pas les attaquer non plus. Si vous souhaitez le " \
+            "réactiver, utilisez cette commande, mais vous ne pourrez " \
+            "pas le désactiver après. Si ce flag est actif, vous pourrez " \
+            "tuer les autres joueurs et eux pourront vous tuer en " \
+            "retour, dans les limites RP habituelles. Utilisez " \
+            "%pk%|cmd| on|ff| pour activer ce flag et gardez à l'esprit " \
+            "que vous ne pourrez pas le désactiver."
 
     def interpreter(self, personnage, dic_masques):
-        """Interprétation de la commande"""
-        from primaires.joueur.joueur import Joueur
-        attaque = dic_masques["personnage_present"].personnage
-        if attaque.est_mort() or not attaque.peut_etre_attaque():
-            personnage << "|err|Vous ne pensez pas que c'est suffisant ?|ff|"
-            return
-
-        if not personnage.est_immortel() and not personnage.pk and \
-                isinstance(attaque, Joueur):
-            personnage << "|err|Votre flag PK n'est pas actif.|ff|"
-            return
-
-        if not attaque.pk:
-            personnage << "|err|Vous ne pouvez attaquer un joueur qui " \
-                    "n'a pas le flag PK activé.|ff|"
-            return
-
-        personnage.agir("tuer")
-        personnage.cle_etat = "combat"
-        attaque.cle_etat = "combat"
-        type(self).importeur.combat.creer_combat(personnage.salle,
-                personnage, attaque)
-        personnage.envoyer("Vous attaquez {}.", attaque)
-        attaque.envoyer("{} vous attaque.", personnage)
+        """Méthode d'interprétation de commande"""
+        etat = dic_masques["etat"].flag
+        if etat:
+            if personnage.pk:
+                personnage << "|err|Vous avez déjà activé ce flag.|ff|"
+            else:
+                personnage.pk = True
+                personnage << "|att|Vous avez activé le flag PK.\n" \
+                    "Vous ne pourrez plus le désactiver pour ce joueur.|ff|"
+        else:
+            if personnage.pk:
+                personnage << "|err|Vous ne pouvez pas désactiver ce flag.|ff|"
+            else:
+                personnage << "Ce flag est déjà désactivé pour ce joueur."

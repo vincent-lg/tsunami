@@ -69,6 +69,7 @@ class Joueur(Personnage):
         self.description = Description(parent=self, scriptable=False)
         self.description_a_valider = Description(parent=self, scriptable=False)
         self.description_modifiee = False
+        self.pk = False
 
     def __getstate__(self):
         retour = dict(self.__dict__)

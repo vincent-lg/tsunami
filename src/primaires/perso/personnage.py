@@ -113,6 +113,7 @@ class Personnage(BaseObj):
         # Système de tips
         self.tips = False
 
+        self.pk = True
         self._construire()
 
     def __getnewargs__(self):

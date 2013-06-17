@@ -104,11 +104,11 @@ class Module(BaseModule):
             commandes.fixer.CmdFixer(),
             commandes.groupe.CmdGroupe(),
             commandes.decrire.CmdDecrire(),
-            commandes.valider.CmdValider(),
             commandes.distinctions.CmdDistinctions(),
             commandes.module.CmdModule(),
             commandes.options.CmdOptions(),
             commandes.oublier.CmdOublier(),
+            commandes.pk.CmdPK(),
             commandes.pset.CmdPset(),
             commandes.quitter.CmdQuitter(),
             commandes.quitter.CmdQuitter(),
@@ -117,6 +117,7 @@ class Module(BaseModule):
             commandes.setquest.CmdSetQuest(),
             commandes.shutdown.CmdShutdown(),
             commandes.superinv.CmdSuperinv(),
+            commandes.valider.CmdValider(),
             commandes.where.CmdWhere(),
         ]
 
