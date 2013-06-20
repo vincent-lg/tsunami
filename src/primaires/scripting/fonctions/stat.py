@@ -30,6 +30,8 @@
 
 """Fichier contenant la fonction stat."""
 
+from fractions import Fraction
+
 from primaires.scripting.fonction import Fonction
 from primaires.scripting.instruction import ErreurExecution
 
@@ -54,4 +56,4 @@ class ClasseFonction(Fonction):
         except KeyError:
             raise ErreurExecution("stat inconnue : {}".format(stat))
         else:
-            return stat.courante
+            return Fraction(stat.courante)

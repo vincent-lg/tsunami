@@ -30,6 +30,8 @@
 
 """Fichier contenant la fonction combien_dans."""
 
+from fractions import Fraction
+
 from primaires.scripting.fonction import Fonction
 from primaires.scripting.instruction import ErreurExecution
 
@@ -46,11 +48,12 @@ class ClasseFonction(Fonction):
     def cb_dans(conteneur):
         """RRenvoie le nombre d'objets contenus dans le conteneur."""
         if conteneur.est_de_type("conteneur de potion"):
-            return 1 if conteneur.potion else 0
+            return Fraction(1) if conteneur.potion else Fraction(0)
         if conteneur.est_de_type("conteneur de nourriture"):
-            return len(conteneur.nourriture)
+            return Fraction(len(conteneur.nourriture))
         if conteneur.est_de_type("conteneur"):
-            return sum(nb for o, nb in conteneur.conteneur.iter_nombres)
+            return Fraction(sum(nb for o, nb in \
+                    conteneur.conteneur.iter_nombres))
         raise ErreurExecution("{} n'est pas un conteneur".format(conteneur))
 
     @staticmethod
@@ -61,11 +64,12 @@ class ClasseFonction(Fonction):
         prototype = importeur.objet.prototypes[prototype]
         if conteneur.est_de_type("conteneur de potion"):
             if conteneur.potion and conteneur.potion.prototype is prototype:
-                return 1
-            return 0
+                return Fraction(1)
+            return Fraction(0)
+
         if conteneur.est_de_type("conteneur de nourriture"):
-            return len(o for o in conteneur.nourriture \
-                    if o.prototype is prototype)
+            return Fraction(len(o for o in conteneur.nourriture \
+                    if o.prototype is prototype))
         if conteneur.est_de_type("conteneur"):
             return sum(nb for o, nb in conteneur.conteneur.iter_nombres() \
                     if o.prototype is prototype)

@@ -30,6 +30,8 @@
 
 """Fichier contenant la fonction niveau."""
 
+from fractions import Fraction
+
 from primaires.scripting.fonction import Fonction
 from primaires.scripting.instruction import ErreurExecution
 
@@ -45,7 +47,7 @@ class ClasseFonction(Fonction):
     @staticmethod
     def niveau_principal(personnage):
         """Retourne le niveau principal du personnage passé en paramètre"""
-        return personnage.niveau
+        return Fraction(personnage.niveau)
 
     @staticmethod
     def niveau_secondaire(personnage, niveau):
@@ -56,6 +58,6 @@ class ClasseFonction(Fonction):
 
         """
         try:
-            return personnage.niveaux[niveau]
+            return Fraction(personnage.niveaux[niveau])
         except KeyError:
             raise ErreurExecution("Niveau inconnu : {}".format(niveau))
