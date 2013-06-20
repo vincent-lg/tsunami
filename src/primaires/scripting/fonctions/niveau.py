@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -30,31 +30,33 @@
 
 """Fichier contenant la fonction niveau."""
 
+from fractions import Fraction
+
 from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
-    
+
     """Retourne le niveau d'un personnage."""
-    
+
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.niveau_principal, "Personnage")
         cls.ajouter_types(cls.niveau_secondaire, "Personnage", "str")
-    
+
     @staticmethod
     def niveau_principal(personnage):
         """Retourne le niveau principal du personnage passé en paramètre"""
-        return personnage.niveau
-    
+        return Fraction(personnage.niveau)
+
     @staticmethod
     def niveau_secondaire(personnage, niveau):
         """Retourne le niveau secondaire du personnage passé en paramètre
-        
+
         Le niveau doit également être précisé sous la forme d'une chaîne
         contenant son nom.
-        
+
         """
         try:
-            return personnage.niveaux[niveau]
+            return Fraction(personnage.niveaux[niveau])
         except KeyError:
             raise ErreurExecution("Niveau inconnu : {}".format(niveau))
