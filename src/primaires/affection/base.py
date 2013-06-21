@@ -154,6 +154,9 @@ class AffectionAbstraite(BaseObj):
         et à mesure que le temps passe.
 
         """
+        if self.infinie:
+            return
+
         if affection.duree == 0:
             return
 
