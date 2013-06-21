@@ -610,13 +610,13 @@ class Personnage(BaseObj):
             self.plonger()
 
         self.salle = salle_dest
-        self.envoyer(self.salle.regarder(self))
 
         # On appelle l'évènement entre.avant
         if self.salle is salle_dest:
             salle_dest.script["entre"]["avant"].executer(
                     depuis=nom_opp, salle=salle_dest, personnage=self)
 
+        self.envoyer(self.salle.regarder(self))
         salle_dest.envoyer("{} arrive.", self)
 
         # Envoi de tips
