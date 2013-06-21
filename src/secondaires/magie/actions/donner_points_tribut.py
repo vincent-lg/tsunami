@@ -58,4 +58,7 @@ class ClasseAction(Action):
         if points <= 0:
             raise ErreurExecution("nombre de points de tribut négatif ou nul")
 
+        s = "s" if points > 1 else ""
         personnage.points_tribut += points
+        personnage << "Vous recevez {} point{s} de tribut !".format(
+                points, s=s)
