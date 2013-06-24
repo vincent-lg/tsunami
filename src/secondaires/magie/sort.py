@@ -126,6 +126,12 @@ class Sort(BaseObj):
 
     def concentrer(self, personnage, cible, apprendre=True):
         """Fait concentrer le sort à 'personnage'."""
+        maitrise = 100
+        if apprendre:
+            maitrise = personnage.pratiquer_sort(self.cle)
+
+        maitrise = Fraction(maitrise)
+
         if self.cout > personnage.mana:
             personnage << "Vous n'avez pas assez de mana pour lancer ce sort."
             self.dissiper(personnage, maitrise)
@@ -133,11 +139,6 @@ class Sort(BaseObj):
             return
 
         personnage.mana -= self.cout
-        maitrise = 100
-        if apprendre:
-            maitrise = personnage.pratiquer_sort(self.cle)
-
-        maitrise = Fraction(maitrise)
         variables = self.get_variables(cible)
         variables["personnage"] = personnage
         variables["maitrise"] = maitrise

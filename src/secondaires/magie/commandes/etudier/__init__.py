@@ -72,8 +72,8 @@ class CmdEtudier(Commande):
             personnage << "|err|Vous connaissez déjà ce sort.|ff|"
             return
 
+        points = sort.points_tribut
         if sort.elements[0] != personnage.element:
-            points = sort.points_tribut
             personnage.points_tribut += points
             s = "s" if points > 1 else ""
             personnage.envoyer("Vous étudiez {{}} et récupérez {} point{s} " \
@@ -91,6 +91,7 @@ class CmdEtudier(Commande):
                 "Vous connaissez à présent le sort {} à {}% !".format(
                 grimoire.get_nom(), sort.nom, niveau)
             personnage << msg
+            personnage.points_tribut -= points
 
         conteneur.retirer(grimoire)
         importeur.objet.supprimer_objet(grimoire.identifiant)
