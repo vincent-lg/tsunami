@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -46,43 +46,43 @@ from abstraits.obase import MetaBaseObj
 expressions = {}
 
 class MetaExpression(MetaBaseObj):
-    
+
     """Métaclasse représentant une expression.
-    
+
     Elle se contente d'ajouter chaque classe avec un nom valide dans
     le dictionnaire des expressions.
-    
+
     """
-    
+
     def __init__(cls, nom, bases, attrs):
         """Constructeur de la classe."""
         MetaBaseObj.__init__(cls, nom, bases, attrs)
         if cls.nom:
             expressions[cls.nom] = cls
             cls.expressions_def = expressions
-    
+
     @staticmethod
     def choisir(types, chaine):
         """Parse la chaîne entre les types sélectionnés et en choisit un.
-        
+
         Les types doivent être donnés sous la forme d'une liste de
         chaînes de caractères, comme ("calcul", "fonction", "variable"].
-        
+
         On retourne l'expression du type choisi et la chaîne non interprétée.
-        
+
         Le choix se fait sur le critère d'interprétation : le type
         d'expression interprétant la plus grande partie de la chaîne
         est choisi.
-        
+
         Si deux types d'expression interprètent autant, c'est la première
         qui est gardée.
-        
+
         """
         types = [expressions[t] for t in types]
         types_app = [type for type in types if type.parsable(chaine)]
         if not types_app:
             raise ValueError("impossible de parser {}".format(chaine))
-        
+
         a_chaine = t_chaine = chaine
         expression = None
         for type in types_app:
@@ -91,7 +91,10 @@ class MetaExpression(MetaBaseObj):
             if len(chaine) < len(t_chaine):
                 t_chaine = chaine
                 expression = exp
-        
+
+        if expression is None:
+            raise ValueError("Impossible de parser {}".format(repr(a_chaine)))
+
         return expression, t_chaine
 
 
