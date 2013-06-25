@@ -55,12 +55,13 @@ class CmdLancer(Commande):
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
+        from primaires.joueur.joueur import Joueur
         sort = dic_masques["nom_sort"].sort
         parchemin = dic_masques["nom_sort"].parchemin
         personnage.agir("lancersort")
         cible = dic_masques["cible_sort"] and dic_masques["cible_sort"].cible \
                 or None
-        if cible is None:
+        if cible is None and sort.type_cible == "personnage":
             if sort.offensif:
                 combat = importeur.combat.combats.get(personnage.salle.ident)
                 if combat is not None:
@@ -73,6 +74,17 @@ class CmdLancer(Commande):
         salle_cible = personnage.salle
         if sort.type_cible == "salle" and isinstance(cible, Personnage):
             cible = cible.salle
+
+        if cible and sort.type_cible == "personnage" and sort.offensif:
+            if not personnage.est_immortel() and not personnage.pk and \
+                    isinstance(cible, Joueur):
+                personnage << "|err|Votre flag PK n'est pas actif.|ff|"
+                return
+
+            if not personnage.est_immortel() and not cible.pk:
+                personnage << "|err|Vous ne pouvez attaquer un joueur qui " \
+                        "n'a pas le flag PK activé.|ff|"
+                return
 
         if cible is None:
             if sort.type_cible != "aucune":

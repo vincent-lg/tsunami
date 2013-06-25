@@ -72,11 +72,6 @@ class CmdViser(Commande):
                 personnage << "|err|Ce nombre est invalide.|ff|"
                 return
 
-            if not cible.pk:
-                personnage << "|err|Vous ne pouvez viser une cible " \
-                        "qui n'a pas le flag PK activé.|ff|"
-                return
-
             importeur.combat.cible[personnage] = cible
             personnage.envoyer("Vous commencez à viser {}.", cible)
         else:

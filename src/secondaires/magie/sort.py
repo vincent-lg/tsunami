@@ -134,7 +134,7 @@ class Sort(BaseObj):
 
         if self.cout > personnage.mana:
             personnage << "Vous n'avez pas assez de mana pour lancer ce sort."
-            self.dissiper(personnage, maitrise)
+            self.dissiper(personnage, maitrise, cible)
             personnage.cle_etat = ""
             return
 
