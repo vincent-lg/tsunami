@@ -72,8 +72,11 @@ class CmdLancer(Commande):
                 cible = personnage
 
         salle_cible = personnage.salle
-        if sort.type_cible == "salle" and isinstance(cible, Personnage):
-            cible = cible.salle
+        if sort.type_cible == "salle":
+            if cible is None:
+                cible = personnage.salle
+            elif isinstance(cible, Personnage):
+                cible = cible.salle
 
         if cible and sort.type_cible == "personnage" and sort.offensif:
             if not personnage.est_immortel() and not personnage.pk and \
