@@ -86,11 +86,6 @@ class CmdTirer(Commande):
                 personnage << "|err|Vous ne visez personne actuellement.|ff|"
                 return
 
-        if not cible.pk:
-            personnage << "|err|Vous ne pouvez tirer sur une cible " \
-                    "qui n'a pas le flag PK activé.|ff|"
-            return
-
         chemin = None
         if personnage.salle is not cible.salle:
             chemin = personnage.salle.trouver_chemin(cible.salle)
@@ -99,8 +94,15 @@ class CmdTirer(Commande):
                         "angle de tir.|ff|"
                 return
 
-        # 1. On fait partir le projectile
         projectile = arme_de_jet.projectile
+        degats = projectile.degats_fixes + projectile.degats_variables
+        if not personnage.est_immortel() and degats > 0:
+            if not cible.pk:
+                personnage << "|err|Vous ne pouvez tirer sur une cible " \
+                        "qui n'a pas le flag PK activé.|ff|"
+                return
+
+        # 1. On fait partir le projectile
         personnage << lisser("Vous libérez la tension de {}.".format(
                 arme_de_jet.get_nom()))
         personnage.salle.envoyer(lisser("{{}} libère la tension de {}.".format(
