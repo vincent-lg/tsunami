@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -31,19 +31,19 @@
 """Fichier définissant la classe BaseNoeud détaillée plus bas."""
 
 class BaseNoeud:
-    
+
     """Classe représentant la base d'un noeud.
     Cette classe est héritée par tous les autres types de noeuds.
-    
+
     """
-    
+
     importeur = None
-    
+
     def __init__(self):
         """Constructeur du noeud de base"""
         self.nom = ""
         self.suivant = None
-    
+
     def valider(self, personnage, dic_masques, commande, tester_fils=True):
         """Validation du noeud.
         Cette méthode est à redéfinir dans chacune des classes-filles créée.
@@ -51,18 +51,18 @@ class BaseNoeud:
         Dans tous les cas, une booléen doit être retourné :
         -   True si le noeud a pu être interprété ;
         -   False sinon.
-        
+
         Note : pour la plupart des noeuds, la validation est aussi fonction
         des fils.
-        
+
         """
         raise NotImplementedError
-    
+
     def _get_fils(self):
         """Retourne les fils du noeud sous la forme d'une liste."""
         return [self.suivant]
     fils = property(_get_fils)
-    
-    def afficher(self, personnage):
+
+    def afficher(self, personnage=None):
         """Retourne un affichage du masque pour les joueurs."""
         return ""
