@@ -158,7 +158,7 @@ class PGFormat:
         else:
             query = \
                 "INSERT INTO commands (slug, french_name, " \
-                "english_name, category, syntaxe, synopsis, " \
+                "english_name, category, syntax, synopsis, " \
                 "help, parent_id) values($1, $2, $3, $4, $5, $6, $7, $8)"
             preparation = self.connexion.prepare(query)
             preparation(slug, commande.nom_francais, commande.nom_anglais,
