@@ -37,6 +37,8 @@ try:
 except ImportError:
     driver = False
 
+from primaires.format.fonctions import supprimer_accents
+
 from secondaires.exportaide.formats.pgsql.config import TEXTE_CFG
 
 class PGFormat:
@@ -76,3 +78,45 @@ class PGFormat:
             return False
 
         return True
+
+    def exporter_commandes(self):
+        """Exporte les commandes."""
+        commandes = [noeud.commande for noeud in \
+                importeur.interpreteur.commandes]
+        commandes = [commande for commande in commandes if \
+                commande.groupe in ("pnj", "joueur")]
+        # Sélectionne les commandes déjà créées
+        query = self.connexion.prepare("SELECT slug FROM commands")
+        crees = list(query())
+        crees = [ligne[0] for ligne in crees]
+        nb_commandes = 0
+        for commande in commandes:
+            slug = self.get_slug_commande(commande)
+            if slug in crees:
+                query = \
+                    "UPDATE commands SET french_name=$1, " \
+                    "english_name=$2, category=$3, " \
+                    "syntax=$4, synopsis=$5, help=$6" \
+                    "WHERE slug=$7"
+                preparation = self.connexion.prepare(query)
+                preparation(commande.nom_francais, commande.nom_anglais,
+                        commande.nom_categorie, commande.schema,
+                        commande.aide_courte, commande.aide_longue, slug)
+            else:
+                query = \
+                    "INSERT INTO commands (slug, french_name, " \
+                    "english_name, category, syntax, synopsis, " \
+                    "help) values($1, $2, $3, $4, $5, $6, $7)"
+                preparation = self.connexion.prepare(query)
+                preparation(slug, commande.nom_francais, commande.nom_anglais,
+                        commande.nom_categorie, commande.schema,
+                        commande.aide_courte, commande.aide_longue)
+                crees.append(slug)
+            nb_commandes += 1
+
+        print(nb_commandes, "commandes migrées")
+
+    def get_slug_commande(self, commande):
+        """Retourne le slug de la commande."""
+        nom = supprimer_accents(commande.nom_francais)
+        return nom

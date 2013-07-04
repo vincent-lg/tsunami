@@ -107,3 +107,5 @@ class Module(BaseModule):
             self.exp_logger.fatal("Initialisation du format {} échouée. " \
                     "Export annulé.".format(repr(nom_format)))
             return
+
+        format.exporter_commandes()
