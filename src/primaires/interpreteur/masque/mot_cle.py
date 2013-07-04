@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,36 +35,36 @@ from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
 
 class MotCle(Commande):
-    
+
     """Un mot-clé est un masque simple.
-    
+
     Il se compose de deux mots-clés en fonction de la langue utilisée :
     -   un en anglais ;
     -   un en français.
-    
+
     """
-    
+
     def __init__(self, francais, anglais):
         """Constructeur du mot-clé"""
         Masque.__init__(self)
         self.francais = francais
         self.anglais = anglais
         self.nom = francais
-    
+
     def __str__(self):
         """Fonction d'affichage"""
         return self.francais + "/" + self.anglais
-    
+
     def init(self):
         """On ne fait rien."""
         pass
-    
+
     def repartir(self, personnage, masques, commande):
         """Répartition du masque.
-        
+
         Si la commande est vide, on va la chercher dans le dernier masque
         réparti.
-        
+
         """
         langue = personnage.langue_cmd
         anglais, francais = self.anglais, self.francais
@@ -74,7 +74,7 @@ class MotCle(Commande):
             mot_cle = francais
         else:
             raise ValueError("langue {} inconnue".format(langue))
-        
+
         if not commande:
             # Le paramètre peut se trouver dans le masque précédent
             masque = masques[-1]
@@ -92,45 +92,48 @@ class MotCle(Commande):
                 valide = False
         else:
             str_commande = liste_vers_chaine(commande)
-            
+
             if str_commande.startswith(mot_cle) or \
                     str_commande.startswith(" " + mot_cle):
                 plus = 0
                 if str_commande.startswith(" "):
                     plus = 1
-                
+
                 commande[:] = commande[len(mot_cle) + plus:]
                 valide = True
             else:
                 valide = False
-        
+
         if valide:
             masques.append(self)
-        
+
         return valide
-    
+
     def valider(self, personnage, dic_masques):
         """Fonction de validation du masque mot-clé.
-        
+
         Un mot-clé a été validé lors de la répartition ; il est donc
         automatiquement validé.
-        
+
         """
         return True
-    
+
     def est_parametre(self):
         """Retourne False puisque c'est un mot-clé."""
         return False
-    
+
     def est_mot_cle(self):
         """Retourne True puisque c'est un mot-clé."""
         return True
-    
-    def nom_complet_pour(self, personnage):
+
+    def nom_complet_pour(self, personnage=None):
         """Retourne le mot-clé en fonction de la langue."""
         mots_cles = {
             "anglais": self.anglais,
             "francais": self.francais,
         }
-        
-        return mots_cles[personnage.langue_cmd]
+
+        if personnage:
+            return mots_cles[personnage.langue_cmd]
+        else:
+            return self.francais + "/" + self.anglais

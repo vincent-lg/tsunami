@@ -144,6 +144,7 @@ class PGFormat:
 
         aide_courte = self.transformer_texte(commande.aide_courte)
         aide_longue = self.transformer_texte(commande.aide_longue)
+        syntaxe = commande.noeud.afficher()
         if slug in crees:
             query = \
                 "UPDATE commands SET french_name=$1, " \
@@ -152,17 +153,17 @@ class PGFormat:
                 "WHERE slug=$8"
             preparation = self.connexion.prepare(query)
             preparation(commande.nom_francais, commande.nom_anglais,
-                    commande.nom_categorie, commande.schema,
-                    aide_courte, aide_longue, parent, slug)
+                    commande.nom_categorie, syntaxe, aide_courte,
+                    aide_longue, parent, slug)
         else:
             query = \
                 "INSERT INTO commands (slug, french_name, " \
-                "english_name, category, syntax, synopsis, " \
+                "english_name, category, syntaxe, synopsis, " \
                 "help, parent_id) values($1, $2, $3, $4, $5, $6, $7, $8)"
             preparation = self.connexion.prepare(query)
             preparation(slug, commande.nom_francais, commande.nom_anglais,
-                    commande.nom_categorie, commande.schema,
-                    aide_courte, aide_longue, parent)
+                    commande.nom_categorie, syntaxe, aide_courte,
+                    aide_longue, parent)
             crees.append(slug)
 
         if commande.parametres:

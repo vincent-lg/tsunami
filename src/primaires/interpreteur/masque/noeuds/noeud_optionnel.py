@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,47 +35,47 @@ from primaires.interpreteur.masque.exceptions.erreur_validation import \
         ErreurValidation
 
 class NoeudOptionnel(BaseNoeud):
-    
+
     """Cette classe contient un noeud optionnel.
     Le noeud masque considéré comme "optionnel" est contenu dans l'attribut
     'interne'.
-    
+
     """
-    
+
     def __init__(self, interne, suivant):
         """Constructeur du noeud optionnel"""
         BaseNoeud.__init__(self)
         self.interne = interne
         self.suivant = suivant
-    
+
     def _get_reste(self):
         """Retourne le reste.
-        
+
         On le demande récursivement au noeud optionnel jusqu'à tomber sur un
         noeud masque.
-        
+
         """
         if self.optionnel:
             reste = self.optionnel.reste
         else:
             reste = ""
-        
+
         return reste
-    
+
     reste = property(_get_reste)
-    
+
     def __str__(self):
         """Méthode d'affichage"""
         msg = "opt("
         if self.interne:
             msg += str(self.interne)
-        
+
         msg += ")"
         if self.suivant:
             msg += " : " + str(self.suivant)
-        
+
         return msg
-    
+
     def get_masque(self, nom_masque):
         """Retourne le masque du nom 'nom_masque'."""
         if self.interne.nom == nom_masque:
@@ -86,7 +86,7 @@ class NoeudOptionnel(BaseNoeud):
             return self.interne.get_masque(nom_masque)
         else:
             return None
-    
+
     def repartir(self, personnage, masques, commande):
         """Répartit dans le masque si possible."""
         try:
@@ -96,36 +96,36 @@ class NoeudOptionnel(BaseNoeud):
                 raise err
             else:
                 pass
-        
+
         valide = True
         if self.suivant:
             valide = self.suivant.repartir(personnage, masques, commande)
-        
+
         return valide
-    
+
     def valider(self, personnage, dic_masques, tester_fils=True):
         """Valide un noeud optionnel.
-        
+
         Un noeud optionnel se valide automatiquement et passe le relais à ses
         fils.
-        
+
         """
         try:
             self.interne.valider(personnage, dic_masques)
         except ErreurValidation:
             pass
-        
+
         if self.suivant and tester_fils:
             valide = self.suivant.valider(personnage, dic_masques)
         else:
             valide = True
-        
+
         return valide
-    
-    def afficher(self, personnage):
+
+    def afficher(self, personnage=None):
         """Retourne un affichage du masque pour les joueurs."""
         msg = "(" + self.interne.afficher(personnage) + ")"
         if self.suivant:
             msg += " " + self.suivant.afficher(personnage)
-        
+
         return msg
