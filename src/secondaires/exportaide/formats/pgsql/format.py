@@ -124,6 +124,10 @@ class PGFormat:
 
         balises = (
             (r"\|cmd\|(.*?)\|ff\|", r"<span class=\"commande\">\1</span>"),
+            (r"\|ent\|(.*?)\|ff\|", r"<span class=\"commande\">\1</span>"),
+            (r"\|att\|(.*?)\|ff\|", r"<span class=\"attention\">\1</span>"),
+            (r"\|err\|(.*?)\|ff\|", r"<span class=\"erreur\">\1</span>"),
+            (r"\|.[2:4]\|", r""),
         )
 
         for pattern, repl in balises:
@@ -153,7 +157,7 @@ class PGFormat:
                 "WHERE slug=$8"
             preparation = self.connexion.prepare(query)
             preparation(commande.nom_francais, commande.nom_anglais,
-                    commande.nom_categorie, syntaxe, aide_courte,
+                    commande.categorie.nom, syntaxe, aide_courte,
                     aide_longue, parent, slug)
         else:
             query = \
