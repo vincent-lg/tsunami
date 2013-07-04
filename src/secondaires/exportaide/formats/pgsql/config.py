@@ -54,4 +54,10 @@ dbpass = ""
 # Précisez le nom de la base de données
 dbname = "dev"
 
+## URL d'accès aux commandes
+# Entrez l'URL (absolue, commençant par /) du chemin menant au détail
+# d'une commande. Notez que cette adresse sera également utilisée
+# pour afficher la liste des commandes.
+adresse_commandes = "/aide/commandes/"
+
 """

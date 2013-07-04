@@ -31,6 +31,8 @@
 
 driver = True
 
+import re
+
 try:
     import postgresql
     from postgresql.exceptions import ClientCannotConnectError
@@ -48,6 +50,7 @@ class PGFormat:
     def __init__(self):
         self.cfg = None
         self.connection = None
+        self.adresse_commandes = ""
 
     def peut_tourner(self):
         return driver
@@ -56,6 +59,7 @@ class PGFormat:
         """Configure le format."""
         self.cfg = type(importeur).anaconf.get_config("exportaide.pg",
                 "exportaide/pgsql/config.cfg", "modele export PG", TEXTE_CFG)
+        self.adresse_commandes = self.cfg.adresse_commandes
 
     def init(self):
         """Initialisation du module.
@@ -83,40 +87,86 @@ class PGFormat:
         """Exporte les commandes."""
         commandes = [noeud.commande for noeud in \
                 importeur.interpreteur.commandes]
-        commandes = [commande for commande in commandes if \
-                commande.groupe in ("pnj", "joueur")]
         # Sélectionne les commandes déjà créées
         query = self.connexion.prepare("SELECT slug FROM commands")
         crees = list(query())
         crees = [ligne[0] for ligne in crees]
         nb_commandes = 0
         for commande in commandes:
-            slug = self.get_slug_commande(commande)
-            if slug in crees:
-                query = \
-                    "UPDATE commands SET french_name=$1, " \
-                    "english_name=$2, category=$3, " \
-                    "syntax=$4, synopsis=$5, help=$6" \
-                    "WHERE slug=$7"
-                preparation = self.connexion.prepare(query)
-                preparation(commande.nom_francais, commande.nom_anglais,
-                        commande.nom_categorie, commande.schema,
-                        commande.aide_courte, commande.aide_longue, slug)
-            else:
-                query = \
-                    "INSERT INTO commands (slug, french_name, " \
-                    "english_name, category, syntax, synopsis, " \
-                    "help) values($1, $2, $3, $4, $5, $6, $7)"
-                preparation = self.connexion.prepare(query)
-                preparation(slug, commande.nom_francais, commande.nom_anglais,
-                        commande.nom_categorie, commande.schema,
-                        commande.aide_courte, commande.aide_longue)
-                crees.append(slug)
-            nb_commandes += 1
+            nb_commandes += self.exporter_commande(commande, crees)
 
         print(nb_commandes, "commandes migrées")
 
     def get_slug_commande(self, commande):
         """Retourne le slug de la commande."""
-        nom = supprimer_accents(commande.nom_francais)
+        nom = supprimer_accents(commande.adresse)
+        nom = nom.replace(":", "_")
         return nom
+
+    def get_nom_commande(self, commande):
+        """Retourne le nom français et anglais de la commande."""
+        return commande.nom_francais + "/" + commande.nom_anglais
+
+    def transformer_texte(self, texte):
+        """Retourne le texte transformé.
+
+        Les caractères spéciaux comme |att|, |cmd| sont transformés
+        en tags HTML.
+
+        """
+        re_cmd = r"\%(.*?)\%"
+        for autre_cmd in list(re.findall(re_cmd, texte)):
+            autre = importeur.interpreteur.trouver_commande(autre_cmd)
+            slug = supprimer_accents(autre_cmd).replace(":", "_")
+            link = "<a href=\"" + self.adresse_commandes + slug
+            link += "\">" + self.get_nom_commande(autre) + "</a>"
+            texte = texte.replace("%" + autre_cmd + "%", link)
+
+        balises = (
+            (r"\|cmd\|(.*?)\|ff\|", r"<span class=\"commande\">\1</span>"),
+        )
+
+        for pattern, repl in balises:
+            texte = re.sub(pattern, repl, texte)
+
+        return texte
+
+    def exporter_commande(self, commande, crees):
+        """Exporte la commande spécifiée."""
+        if commande.groupe not in ("pnj", "joueur"):
+            return 0
+
+        nb = 1
+        slug = self.get_slug_commande(commande)
+        parent = ""
+        if commande.parente:
+            parent = self.get_slug_commande(commande.parente)
+
+        aide_courte = self.transformer_texte(commande.aide_courte)
+        aide_longue = self.transformer_texte(commande.aide_longue)
+        if slug in crees:
+            query = \
+                "UPDATE commands SET french_name=$1, " \
+                "english_name=$2, category=$3, " \
+                "syntax=$4, synopsis=$5, help=$6, parent_id=$7 " \
+                "WHERE slug=$8"
+            preparation = self.connexion.prepare(query)
+            preparation(commande.nom_francais, commande.nom_anglais,
+                    commande.nom_categorie, commande.schema,
+                    aide_courte, aide_longue, parent, slug)
+        else:
+            query = \
+                "INSERT INTO commands (slug, french_name, " \
+                "english_name, category, syntax, synopsis, " \
+                "help, parent_id) values($1, $2, $3, $4, $5, $6, $7, $8)"
+            preparation = self.connexion.prepare(query)
+            preparation(slug, commande.nom_francais, commande.nom_anglais,
+                    commande.nom_categorie, commande.schema,
+                    aide_courte, aide_longue, parent)
+            crees.append(slug)
+
+        if commande.parametres:
+            for parametre in commande.parametres.values():
+                nb += self.exporter_commande(parametre.commande, crees)
+
+        return nb
