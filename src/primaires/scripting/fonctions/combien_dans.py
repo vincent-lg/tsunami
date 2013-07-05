@@ -68,8 +68,8 @@ class ClasseFonction(Fonction):
             return Fraction(0)
 
         if conteneur.est_de_type("conteneur de nourriture"):
-            return Fraction(len(o for o in conteneur.nourriture \
-                    if o.prototype is prototype))
+            return Fraction(len([o for o in conteneur.nourriture if \
+                    o.prototype is prototype]))
         if conteneur.est_de_type("conteneur"):
             return sum(nb for o, nb in conteneur.conteneur.iter_nombres() \
                     if o.prototype is prototype)
