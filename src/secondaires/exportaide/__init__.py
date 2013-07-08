@@ -35,6 +35,8 @@ sujets d'aide) dans différents formats.
 
 """
 
+import traceback
+
 from abstraits.module import *
 
 from secondaires.exportaide.config import CFG_FORMAT
@@ -108,4 +110,15 @@ class Module(BaseModule):
                     "Export annulé.".format(repr(nom_format)))
             return
 
-        format.exporter_commandes()
+        try:
+            format.exporter_commandes()
+        except Exception as err:
+            self.exp_logger.warning("Une erreur s'est produite lors de " \
+                    "l'exportation des commandes :\n" + traceback.format_exc())
+
+        try:
+            format.exporter_sujets()
+        except Exception as err:
+            self.exp_logger.warning("Une erreur s'est produite lors de " \
+                    "l'exportation des sujets d'aide :\n" + \
+                    traceback.format_exc())

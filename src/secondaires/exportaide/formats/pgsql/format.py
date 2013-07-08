@@ -97,6 +97,21 @@ class PGFormat:
 
         print(nb_commandes, "commandes migrées")
 
+    def exporter_sujets(self):
+        """Exporte les sujets d'aide."""
+        sujets = [sujet for sujet in importeur.information.sujets.values() if \
+                sujet.str_groupe in ("aucun", "joueur", "pnj")]
+
+        # Sélectionne les sujets déjà créés
+        query = self.connexion.prepare("SELECT slug FROM topics")
+        crees = list(query())
+        crees = [ligne[0] for ligne in crees]
+        nb_sujets = 0
+        for sujet in sujets:
+            nb_sujets += self.exporter_sujet(sujet, crees)
+
+        print(nb_sujets, "sujets d'aide migrées")
+
     def get_slug_commande(self, commande):
         """Retourne le slug de la commande."""
         nom = supprimer_accents(commande.adresse)
@@ -127,7 +142,7 @@ class PGFormat:
             (r"\|ent\|(.*?)\|ff\|", r"<span class=\"commande\">\1</span>"),
             (r"\|att\|(.*?)\|ff\|", r"<span class=\"attention\">\1</span>"),
             (r"\|err\|(.*?)\|ff\|", r"<span class=\"erreur\">\1</span>"),
-            (r"\|.[2:4]\|", r""),
+            (r"\|[a-z]+?\|", r""),
         )
 
         for pattern, repl in balises:
@@ -175,3 +190,65 @@ class PGFormat:
                 nb += self.exporter_commande(parametre.commande, crees)
 
         return nb
+
+    def exporter_sujet(self, sujet, crees):
+        """Exporte le sujet d'aide spécifié."""
+        if sujet.str_groupe not in ("aucun", "pnj", "joueur"):
+            return 0
+
+        nb = 1
+        cle = sujet.cle
+        profondeur = self.get_profondeur_sujet(sujet)
+        position = self.get_position_sujet(sujet)
+        parent = ""
+        if sujet.pere:
+            parent = sujet.pere.cle
+
+        contenu = []
+        for paragraphe in sujet.contenu.paragraphes:
+            contenu.append(self.transformer_texte(paragraphe))
+
+        contenu = "\n".join(contenu)
+        contenu = contenu.replace("\n\n", "</p><p>")
+        contenu = "<p>" + contenu.replace("\n", "<br />") + "</p>"
+        if cle in crees:
+            query = \
+                "UPDATE topics SET title=$1, content=$2, parent_id=$3, " \
+                "depth=$4, position=$5 WHERE slug=$6"
+            preparation = self.connexion.prepare(query)
+            preparation(sujet.titre, contenu, parent, profondeur, position,
+                    cle)
+        else:
+            query = \
+                "INSERT INTO topics (slug, title, content, parent_id, " \
+                "depth, position) values($1, $2, $3, $4, $5, $6)"
+            preparation = self.connexion.prepare(query)
+            preparation(cle, sujet.titre, contenu, parent, profondeur,
+                    position)
+            crees.append(cle)
+
+        return nb
+
+    def get_profondeur_sujet(self, sujet):
+        """Retourne la profondeur du sujet."""
+        if sujet.pere is None:
+            return 0
+
+        return 1 + self.get_profondeur_sujet(sujet.pere)
+
+    def get_position_sujet(self, sujet):
+        """Retourne la position du sujet.
+
+        La position est une chaîne, "0" si le sujet n'a pas de parent,
+        sinon un e information de position (comme "1.1.5").
+
+        """
+        if sujet.pere is None:
+            return ""
+
+        pos = sujet.pere.sujets_fils.index(sujet) + 1
+        parent = self.get_position_sujet(sujet.pere)
+        if parent:
+            return parent + "." + str(pos)
+
+        return str(pos)
