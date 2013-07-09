@@ -133,8 +133,12 @@ class PGFormat:
         for autre_cmd in list(re.findall(re_cmd, texte)):
             autre = importeur.interpreteur.trouver_commande(autre_cmd)
             slug = supprimer_accents(autre_cmd).replace(":", "_")
-            link = "<a href=\"" + self.adresse_commandes + slug
-            link += "\">" + self.get_nom_commande(autre) + "</a>"
+            link = "<a href=\"" + self.adresse_commandes + slug + "\""
+            link_fr = link + " class=\"comm_lang_fr\">"
+            link_en = link + " class=\"comm_lang_en\">"
+            link_fr = link_fr + autre.nom_francais + "</a>"
+            link_en = link_en + autre.nom_anglais + "</a>"
+            link = link_fr + link_en
             texte = texte.replace("%" + autre_cmd + "%", link)
 
         balises = (
