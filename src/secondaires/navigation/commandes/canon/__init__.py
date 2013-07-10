@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,21 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'canon'."""
 
-from . import allure
-from . import ancre
-from . import amarre
-from . import canon
-from . import debarquer
-from . import detailler
-from . import eltedit
-from . import embarquer
-from . import gouvernail
-from . import loch
-from . import navire
-from . import passerelle
-from . import rames
-from . import shedit
-from . import vent
-from . import voile
+from primaires.interpreteur.commande.commande import Commande
+from .charger import PrmCharger
+from .feu import PrmFeu
+from .pivoter import PrmPivoter
+from .poudre import PrmPoudre
+
+class CmdCanon(Commande):
+
+    """Commande 'canon'"""
+
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "canon", "cannon")
+        self.nom_categorie = "combat"
+        self.aide_courte = "manipule un canon dans la salle"
+        self.aide_longue = \
+            "Cette commande vous permet de manipuler un canon présent " \
+            "(sous la forme d'un élément de navire ou d'un objet) dans " \
+            "la salle où vous vous trouvez. Vous pouvez le charger " \
+            "en poudre et projectile, l'orienter et le faire détonner. " \
+            "Utilisez pour ce faire les sous-commandes proposées."
+
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmCharger())
+        self.ajouter_parametre(PrmFeu())
+        self.ajouter_parametre(PrmPivoter())
+        self.ajouter_parametre(PrmPoudre())

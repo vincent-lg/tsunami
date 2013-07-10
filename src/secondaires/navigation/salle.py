@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -63,15 +63,15 @@ NOMS_CONTRAIRES = {
 }
 
 class SalleNavire(Salle):
-    
+
     """Classe représentant une salle de navire.
-    
+
     Une salle de navire est une salle standard comportant quelques
     informations supplémentaires, comme les éléments dérfinis dans cette
     salle ou le navire qu'elles composent.
-    
+
     """
-    
+
     _nom = "salle_navire"
     _version = 1
     def __init__(self, zone, mnemonic, r_x=0, r_y=0, r_z=0, modele=None,
@@ -87,116 +87,115 @@ class SalleNavire(Salle):
         self.r_z = r_z
         self.noyable = True
         self.poids_eau = 0
-        if navire:
-            # Déduit les coordonnées
-            pass
-    
+        self.sabord_min = None
+        self.sabord_max = 0
+
     @property
     def r_coords(self):
         """Retourne les coordonnées relatives de la salle."""
         return (self.r_x, self.r_y, self.r_z)
-    
+
     @property
     def passerelle(self):
         """Retourne la passerelle de la salle ou None."""
         elts = [e for e in self.elements if e.nom_type == "passerelle"]
         if elts:
             return elts[0]
-        
+
         return None
-    
+
     @property
     def ancre(self):
         """Retourne l'ancre de la salle ou None."""
         elts = [e for e in self.elements if e.nom_type == "ancre"]
         if elts:
             return elts[0]
-        
+
         return None
-    
+
     @property
     def amarre(self):
         """Retourne l'ancre de la salle ou None."""
         elts = [e for e in self.elements if e.nom_type == "amarre"]
         if elts:
             return elts[0]
-        
+
         return None
-    
+
     @property
     def voiles(self):
         """Retourne les voiles de la salle."""
         return [e for e in self.elements if e.nom_type == "voile"]
-    
+
     @property
     def gouvernail(self):
         """Retourne le gouvernail de la salle ou None."""
         elts = [e for e in self.elements if e.nom_type == "gouvernail"]
         if elts:
             return elts[0]
-        
+
         return None
-    
+
     @property
     def loch(self):
         """Retourne le loch de la salle ou None."""
         elts = [e for e in self.elements if e.nom_type == "loch"]
         if elts:
             return elts[0]
-        
+
         return None
-    
+
     @property
     def rames(self):
         """Retourne les rames de la salle ou None."""
         elts = [e for e in self.elements if e.nom_type == "rames"]
         if elts:
             return elts[0]
-        
+
         return None
-    
+
     def get_etendue(self):
         return self.navire and self.navire.etendue or None
-    
+
     def ajouter_element(self, element):
         """Ajoute un élément dans la salle."""
         self.mod_elements.append(element)
-    
+
     def retirer_element(self, cle):
         """Retire l'élément indiqué."""
         for i, elt in enumerate(self.mod_elements):
             if elt.nom_type == cle:
                 del self.mod_elements[i]
                 return
-        
+
         raise ValueError("l'élément {} n'a pas pu être trouvé".format(
                 element))
-    
+
     def decrire_plus(self, personnage):
         """Ajoute les éléments observables dans la description de la salle."""
         msg = []
         for element in self.elements:
             msg.append(element.get_description_ligne(personnage))
-        
+
         return "\n".join(msg)
-    
+
     def get_elements_observables(self, personnage):
         """Retourne la liste des éléments observables."""
         elts = Salle.get_elements_observables(self, personnage)
         for element in self.elements:
             elts.append(element)
-        
+
         return elts
-    
+
     def accepte_discontinu(self):
         """Retourne True si cette salle supporte les chemins discontinu."""
         return True
-    
+
     def get_sortie(self, vecteur, destination):
         """Retourne une sortie en fonction du vecteur donné."""
         if self.navire is None:
             return Salle.get_sortie(self, vecteur, destination)
-        
+
         direction = (vecteur.direction - self.navire.direction.direction) % \
                 360
         if 45 <= direction < 65:
@@ -223,7 +222,7 @@ class SalleNavire(Salle):
         else:
             nom = "avant"
             article = "l'"
-        
+
         sortie = Sortie(vecteur.nom_direction, nom, article,
                 destination, "", self)
         return sortie

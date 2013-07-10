@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,9 +34,9 @@ from abstraits.obase import BaseObj
 from primaires.objet.objet import MethodeObjet
 
 class Element(BaseObj):
-    
+
     """Cette classe contient un élément construit sur un type d'élément.
-    
+
     Petite subtilité : la méthode __getattr__ a été redéfinie pour qu'il
     ne soit pas nécessaire de faire :
     >>> self.prototype.nom
@@ -54,9 +54,9 @@ class Element(BaseObj):
     fasse de nouveau référence au nom du prototype, il est conseillé de
     supprimer le nom de l'élément :
     >>> del self.nom
-    
+
     """
-    
+
     def __init__(self, prototype, parent=None):
         """Constructeur de l'élément"""
         BaseObj.__init__(self)
@@ -71,16 +71,19 @@ class Element(BaseObj):
             for nom, val in prototype._attributs.items():
                 val = val.construire(self)
                 setattr(self, nom, val)
-        
+
+        if prototype and parent:
+            self.construire(parent)
+
         self._construire()
-    
+
     def __getnewargs__(self):
         return (None, )
-    
+
     def __getattr__(self, nom_attr):
         """Si le nom d'attribut n'est pas trouvé, le chercher
         dans le prototype
-        
+
         """
         try:
             attribut = getattr(type(self.prototype), nom_attr)
@@ -88,10 +91,10 @@ class Element(BaseObj):
             return MethodeObjet(attribut, self)
         except (AttributeError, AssertionError):
             return getattr(self.prototype, nom_attr)
-    
+
     def __str__(self):
         return self.nom
-    
+
     def mettre_a_jour_attributs(self):
         """Met à jour les attributs contenus dans _attributs."""
         if self.prototype:
