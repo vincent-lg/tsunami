@@ -169,7 +169,7 @@ class Canon(BaseElement):
         trajectoire = []
         ab = Vecteur(d_x - o_x, d_y - o_y, d_z - o_z)
         for coords, cible in entre:
-            if coords == origine:
+            if cible is salle:
                 continue
 
             x, y, z = coords
