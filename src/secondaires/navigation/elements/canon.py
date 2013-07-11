@@ -113,7 +113,7 @@ class Canon(BaseElement):
             return vec_nul
 
         facteur = self.facteur_charge() / 100
-        norme = facteur * 15 / self.projectile.poids_unitaire
+        norme = facteur * 12 / self.projectile.poids_unitaire * 0.3
 
         # À présent, oriente le vecteur en fonction de l'angle du canon
         vecteur = Vecteur(1, 0, 0, self)
@@ -152,9 +152,9 @@ class Canon(BaseElement):
                 cibles[(o_coords + (etendue.altitude, ))] = obstacle
 
         # On cherche les salles entre origine et destination
-        origine = navire.position.tuple
+        origine = salle.coords.tuple()
         destination = direction.tuple
-        sensibilite = 0.5
+        sensibilite = 0.4
         entre = []
         o_x, o_y, o_z = origine
         d_x, d_y, d_z = destination
