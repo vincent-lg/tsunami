@@ -52,7 +52,7 @@ class PrmPivoter(Parametre):
             "correctement (si vous le retournez complètement, c'est " \
             "votre propre navire qui sera endommagé par l'explosion). " \
             "Précisez l'angle en degrés : un nombre positif (par exemple " \
-            "|ent|90|ff| pour faire pivoter le canon de 90%) fera " \
+            "|ent|90|ff| pour faire pivoter le canon de 90°) fera " \
             "pivoter le canon vers tribord, un nombre négatif (par " \
             "exemple |ent|-90|ff|) fera pivoter le canon sur bâbord."
 

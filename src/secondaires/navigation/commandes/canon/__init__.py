@@ -31,6 +31,7 @@
 """Package contenant la commande 'canon'."""
 
 from primaires.interpreteur.commande.commande import Commande
+
 from .charger import PrmCharger
 from .feu import PrmFeu
 from .pivoter import PrmPivoter
