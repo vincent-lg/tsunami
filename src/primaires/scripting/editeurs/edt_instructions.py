@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -39,15 +39,15 @@ from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
 from primaires.format.fonctions import *
 
 class EdtInstructions(Editeur):
-    
+
     """Contexte-éditeur d'une suite d'instructions.
-    
+
     L'objet appelant est la suite de tests contenant le code.
     Par code, il faut entendre ici la liste des instructions constituant
     un script.
-    
+
     """
-    
+
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
@@ -57,11 +57,12 @@ class EdtInstructions(Editeur):
         self.ajouter_option("?f", self.opt_aide_fonctions)
         self.ajouter_option("?a", self.opt_aide_actions)
         self.ajouter_option("r", self.opt_remplacer_instruction)
+        self.ajouter_option("c", self.opt_corriger_instruction)
         self.ajouter_option("i", self.opt_inserer_instruction)
         self.ajouter_option("d", self.opt_supprimer_instructions)
         self.ajouter_option("o", self.opt_reordonner)
         self.ajouter_option("q", self.opt_relier_quete)
-    
+
     def opt_remplacer_instruction(self, arguments):
         """Remplace une ligne par une nouvelle instruction."""
         test = self.objet
@@ -69,11 +70,11 @@ class EdtInstructions(Editeur):
         if not arguments.strip():
             self.pere << "|err|Entrez un numéro de ligne.|ff|"
             return
-        
+
         arguments = arguments.split(" ")
         no = arguments[0]
         ligne = " ".join(arguments[1:])
-        
+
         try:
             no = int(no) - 1
             assert no >= 0
@@ -81,34 +82,31 @@ class EdtInstructions(Editeur):
         except (ValueError, AssertionError):
             self.pere << "|err|Entrez un numéro de ligne valide.|ff|"
             return
-        
+
         if not ligne.strip():
             self.pere << "|err|Entrez une nouvelle instruction " \
                     "pour remplacer celle de la ligne {}.|ff|".format(no + 1)
             return
-        
+
         try:
             test.remplacer_instruction(no, ligne)
         except ValueError as err:
             self.pere << "|err|" + str(err).capitalize() + "|ff|"
         else:
             self.actualiser()
-    
-    def opt_inserer_instruction(self, arguments):
-        """Insère une instruction avant la ligne précisée.
-        Syntaxe : /i no
-        
-        """
+
+    def opt_corriger_instruction(self, arguments):
+        """Corrige une ligne d'instruction."""
         test = self.objet
         instructions = test.instructions
         if not arguments.strip():
             self.pere << "|err|Entrez un numéro de ligne.|ff|"
             return
-        
+
         arguments = arguments.split(" ")
         no = arguments[0]
-        ligne = " ".join(arguments[1:])
-        
+        reste = " ".join(arguments[1:])
+
         try:
             no = int(no) - 1
             assert no >= 0
@@ -116,23 +114,61 @@ class EdtInstructions(Editeur):
         except (ValueError, AssertionError):
             self.pere << "|err|Entrez un numéro de ligne valide.|ff|"
             return
-        
+
+        try:
+            texte, remplacement = reste.split(" / ")
+        except ValueError:
+            self.pere << "|err|Entrez le texte à remplacer suivi d'un " \
+                    "espace, d'un slash et du texte\nde remplacement. " \
+                    "Exemple : |ent|/c 5 chemise / cravate|ff|"
+            return
+
+        try:
+            test.corriger_instruction(no, texte, remplacement)
+        except ValueError as err:
+            self.pere << "|err|" + str(err).capitalize() + "|ff|"
+        else:
+            self.actualiser()
+
+    def opt_inserer_instruction(self, arguments):
+        """Insère une instruction avant la ligne précisée.
+        Syntaxe : /i no
+
+        """
+        test = self.objet
+        instructions = test.instructions
+        if not arguments.strip():
+            self.pere << "|err|Entrez un numéro de ligne.|ff|"
+            return
+
+        arguments = arguments.split(" ")
+        no = arguments[0]
+        ligne = " ".join(arguments[1:])
+
+        try:
+            no = int(no) - 1
+            assert no >= 0
+            assert no < len(instructions)
+        except (ValueError, AssertionError):
+            self.pere << "|err|Entrez un numéro de ligne valide.|ff|"
+            return
+
         if not ligne.strip():
             self.pere << "|err|Entrez une nouvelle instruction " \
                     "à insérer avant celle de la ligne {}.|ff|".format(no + 1)
             return
-        
+
         try:
             test.inserer_instruction(no, ligne)
         except ValueError as err:
             self.pere << "|err|" + str(err).capitalize() + "|ff|"
         else:
             self.actualiser()
-    
+
     def opt_supprimer_instructions(self, arguments):
         """Supprime des instructions du test.
         Syntaxe : /d x-y ou /d x, y, z... ou /d *
-        
+
         """
         if arguments == "*":
             longueur = len(self.objet.instructions)
@@ -140,7 +176,7 @@ class EdtInstructions(Editeur):
                 self.objet.supprimer_instruction(longueur - (n + 1))
             self.actualiser()
             return
-        
+
         try:
             min, max = arguments.split("-")
             min = int(min)
@@ -168,28 +204,28 @@ class EdtInstructions(Editeur):
             self.objet.supprimer_instruction(n - 1)
         self.actualiser()
         return
-    
+
     def opt_reordonner(self, arguments):
         """Vérifie les niveaux d'indentation des instructions du test et les
         corrige si besoin.
-        
+
         """
         test = self.objet
         test.reordonner()
         self.actualiser()
-    
+
     def opt_relier_quete(self, argument):
         """Relie à une quête.
-        
+
         La quête doit être au format :
             nom_quete:niveau
-        
+
         """
         test = self.objet
         if not argument.strip():
             self.pere << "|err|Précisez <quete:niveau>.|ff|"
             return
-        
+
         try:
             quete, niveau = argument.split(":")
         except ValueError:
@@ -199,7 +235,7 @@ class EdtInstructions(Editeur):
             if not quete in type(self).importeur.scripting.quetes:
                 self.pere << "|err|Quête {} inconnue.|ff|".format(quete)
                 return
-            
+
             quete = type(self).importeur.scripting.quetes[quete]
             try:
                 etape = quete.etapes[niveau]
@@ -207,16 +243,16 @@ class EdtInstructions(Editeur):
                 self.pere << "|err|Le niveau {} est inconnue pour la " \
                         "quête {}.|ff|".format(niveau, quete)
                 return
-            
+
             etape.test = test
             test.etape = etape
             self.actualiser()
-    
+
     def opt_aide_generale(self, argument):
         """Option aide générale.
-        
+
         Aucun argument n'est attendu.
-        
+
         """
         self.pere << \
             "Bienvenue dans l'éditeur d'instructions.\n\n" \
@@ -239,7 +275,7 @@ class EdtInstructions(Editeur):
             "du scripting, tapez |cmd|/?a|ff| pour connaître " \
             "la liste des\nactions et |cmd|/?f|ff| pour connaître " \
             "la liste des fonctions."
-    
+
     def opt_aide_options(self, argument):
         """Option d'aide sur les options.
         Aucun argument attendu.
@@ -249,6 +285,8 @@ class EdtInstructions(Editeur):
             "Options disponibles :\n" \
             " - |cmd|/r <no> <instruction>|ff| : remplace l'instruction en " \
             "ligne |ent|no|ff| par celle précisée\n" \
+            " - |cmd|/c <no> <recherche> / <remplacement>|ff| : corrige " \
+            "l'instruction en ligne |ent|no|ff|\n" \
             " - |cmd|/i <no> <instruction>|ff| : insère " \
             "l'|ent|instruction|ff| " \
             "avant la ligne |ent|no|ff|\n" \
@@ -262,30 +300,30 @@ class EdtInstructions(Editeur):
             "à utiliser si vous\n   constatez une incohérence dans " \
             "l'indentation de votre script (voir |cmd|/?s|ff|).\n" \
             " - |cmd|/q <quete>:<niveau>|ff| : relie le script à une quête"
-    
+
     def opt_aide_syntaxe(self, argument):
         """Option aide syntaxe.
-        
+
         L'argument peut préciser l'aide spécifique.
         -   action      Syntaxe d'une action
         -   condition   Syntaxe d'une condition
         -   affectation Syntaxe d'une affectation
-        
+
         """
         sujets = type(self).importeur.scripting.sujets_aides
         if not argument:
             self.pere << sujets["syntaxe"]
         else:
             self.pere << "A faire..."
-    
+
     def opt_aide_fonctions(self, arguments):
         """Donne de l'aide sur les fonctions existantes.
-        
+
         Syntaxes :
             /?f -- liste les fonctions
             /?f fonction -- affiche l'aide d'une fonction
             /?f fonction no -- affiche l'aide d'une méthode de la fonction
-        
+
         """
         arguments = arguments.strip()
         nom_fonction = fonction = no = methode = None
@@ -300,7 +338,7 @@ class EdtInstructions(Editeur):
                 except (ValueError, AssertionError):
                     self.pere << "|err|Ce numéro est invalide.|ff|"
                     return
-        
+
         if nom_fonction:
             # On cherche la fonction
             try:
@@ -310,14 +348,14 @@ class EdtInstructions(Editeur):
                 self.pere << "|err|La fonction {} est inconnue.|ff|".format(
                         nom_fonction)
                 return
-            
+
             if no:
                 try:
                     methode = fonction.get_methode(no - 1)
                 except IndexError:
                     self.pere << "|err|Ce numéro est invalide.|ff|"
                     return
-        
+
         # Affichage
         if methode:
             # On affiche l'aide de la méthode
@@ -337,7 +375,7 @@ class EdtInstructions(Editeur):
             for i, methode in enumerate(fonction._parametres_possibles.values()):
                 args = "|ff|, |vr|".join(inspect.getargspec(methode).args)
                 doc_methodes.append("{:>2}. (|vr|{}|ff|)".format(i + 1, args))
-            
+
             doc = "\n".join(doc_methodes)
             self.pere << "Fonction |ent|{}|ff| ({}){}\nUsages :\n{}".format(
                     nom, resume[0].lower() + resume[1:-1], description, doc)
@@ -353,7 +391,7 @@ class EdtInstructions(Editeur):
                 resume = doc[0]
                 lignes.append("|ent|{}|ff| : {}".format(nom,
                         resume[0].lower() + resume[1:-1]))
-            
+
             lignes = "  " + "\n  ".join(lignes)
             self.pere << \
                 "Ci-dessous se trouve la liste des fonctions existantes.\n" \
@@ -362,15 +400,15 @@ class EdtInstructions(Editeur):
                 "usages possibles " \
                 "de la fonction, entrez |cmd|/?f fonction numero|ff|.\n\n" \
                 "{}".format(lignes)
-            
+
     def opt_aide_actions(self, arguments):
         """Donne de l'aide sur les actions existantes.
-        
+
         Syntaxes :
             /?a -- liste les actions
             /?a action -- affiche l'aide d'une action
             /?a action no -- affiche l'aide d'une méthode de l'action
-        
+
         """
         arguments = arguments.strip()
         nom_action = action = no = methode = None
@@ -385,7 +423,7 @@ class EdtInstructions(Editeur):
                 except (ValueError, AssertionError):
                     self.pere << "|err|Ce numéro est invalide.|ff|"
                     return
-        
+
         if nom_action:
             # On cherche l'action
             try:
@@ -394,14 +432,14 @@ class EdtInstructions(Editeur):
                 self.pere << "|err|L'action {} est inconnue.|ff|".format(
                         nom_action)
                 return
-            
+
             if no:
                 try:
                     methode = action.get_methode(no - 1)
                 except IndexError:
                     self.pere << "|err|Ce numéro est invalide.|ff|"
                     return
-        
+
         # Affichage
         if methode:
             # On affiche l'aide de la méthode
@@ -420,7 +458,7 @@ class EdtInstructions(Editeur):
             for i, methode in enumerate(action._parametres_possibles.values()):
                 args = " ".join(inspect.getargspec(methode).args)
                 doc_methodes.append("{}. |vr|{}|ff|".format(i + 1, args))
-            
+
             doc = "\n".join(doc_methodes)
             self.pere << "Action |ent|{}|ff| ({}){}\nUsages :\n{}".format(
                     nom, resume[0].lower() + resume[1:-1], description, doc)
@@ -435,7 +473,7 @@ class EdtInstructions(Editeur):
                 resume = doc[0]
                 lignes.append("|ent|{}|ff| : {}".format(nom,
                         resume[0].lower() + resume[1:-1]))
-            
+
             lignes = "  " + "\n  ".join(lignes)
             self.pere << \
                 "Ci-dessous se trouve la liste des actions existantes.\n" \
@@ -444,7 +482,7 @@ class EdtInstructions(Editeur):
                 "l'aide sur un des usages possibles " \
                 "de l'action, entrez |cmd|/?a action numero|ff|.\n\n" \
                 "{}".format(lignes)
-            
+
     def accueil(self):
         """Message d'accueil du contexte"""
         tests = self.objet
@@ -460,7 +498,7 @@ class EdtInstructions(Editeur):
         msg += "|cmd|/?|ff| vous fournira toute l'aide nécessaire si\n"
         msg += "vous n'êtes pas à l'aise avec cet éditeur.\n\n"
         variables = evenement.variables.values()
-        
+
         if tests.etape:
             msg += "|att|ATTENTION : ce script est relié à la quête " \
                     "{} (étape {}).\n\n|ff|".format(tests.etape.quete.cle,
@@ -475,7 +513,7 @@ class EdtInstructions(Editeur):
                     for var in variables]
             msg += "\n".join(lignes)
             msg += "\n\n"
-        
+
         msg += "|cy|Instructions :|ff|\n\n "
         if instructions:
             msg += "\n ".join(["|grf|{:>3}|ff| {}{}".format(i + 1,
@@ -483,9 +521,9 @@ class EdtInstructions(Editeur):
                     for i, instruction in enumerate(instructions)])
         else:
             msg += " Aucune instruction n'est définie dans ce script."
-        
+
         return msg
-    
+
     def interpreter(self, msg):
         """Interprétation de l'éditeur"""
         tests = self.objet
