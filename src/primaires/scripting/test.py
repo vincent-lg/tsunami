@@ -35,7 +35,7 @@ import traceback
 from fractions import Fraction
 
 from abstraits.obase import BaseObj
-from primaires.format.fonctions import echapper_accolades
+from primaires.format.fonctions import *
 from primaires.scripting.parser import expressions
 from primaires.scripting.instruction import Instruction, ErreurExecution
 from primaires.scripting.exceptions import InterrompreCommande
@@ -123,6 +123,40 @@ class Test(BaseObj):
         type_instruction = Instruction.test_interpreter(message)
         instruction = type_instruction.construire(message)
         instruction.niveau = ancienne_instruction.niveau
+        self.__instructions[ligne] = instruction
+        self.reordonner()
+
+    def corriger_instruction(self, ligne, texte, remplacement):
+        """Corrige l'instruction spécifiée.
+
+        On attend en paramètre :
+            ligne -- le numéro de la ligne de l'instruction à corriger
+            texte -- le texte à rechercher
+            remplacement -- le texte à remplacer
+
+        La fonction de recherche ne tient pas compte des accents ni des
+        majuscules.
+
+        """
+        if ligne not in range(len(self.__instructions)):
+            raise IndexError("La ligne {} n'existe pas.".format(ligne))
+
+        instruction = self.__instructions[ligne]
+        niveau = instruction.niveau
+        instruction = supprimer_couleurs(str(instruction))
+        chaine_recherche = supprimer_accents(instruction).lower()
+        texte = supprimer_accents(texte).lower()
+        no_car = chaine_recherche.find(texte)
+        while no_car >= 0:
+            instruction = instruction[:no_car] + remplacement + \
+                    instruction[no_car + len(texte):]
+            chaine_recherche = supprimer_accents(instruction).lower()
+            no_car = chaine_recherche.find(texte)
+
+        message = instruction
+        type_instruction = Instruction.test_interpreter(message)
+        instruction = type_instruction.construire(message)
+        instruction.niveau = niveau
         self.__instructions[ligne] = instruction
         self.reordonner()
 
