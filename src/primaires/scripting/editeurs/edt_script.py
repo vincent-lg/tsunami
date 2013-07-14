@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,21 +34,22 @@ from primaires.interpreteur.editeur import Editeur
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
 from primaires.format.fonctions import *
 from .edt_evenement import EdtEvenement
+from .edt_instructions import EdtInstructions
 
 class EdtScript(Editeur):
-    
+
     """Contexte-éditeur des évènements d'uns script.
-    
+
     L'objet appelant est le script.
     Ses évènements se trouvent dans l'attribut evenements
     (en lecture uniquement).
-    
+
     """
-    
+
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
-    
+
     def accueil(self):
         """Message d'accueil du contexte"""
         script = self.objet
@@ -85,9 +86,18 @@ class EdtScript(Editeur):
             msg += "\n".join(lignes)
         else:
             msg += "|att|Aucun évènement n'est disponible pour cet objet.|ff|"
-        
+
+        msg += "\n\nBlocs définies :\n"
+        if script.blocs:
+            for bloc in sorted(script.blocs.values(), \
+                    key=lambda bloc: bloc.nom):
+                msg += "\n  " + bloc.nom + "("
+                msg += ", ".join(v.nom for v in bloc.variables) + ")"
+        else:
+            msg += "\nAucun bloc n'a été défini dans ce script."
+
         return msg
-    
+
     def interpreter(self, msg):
         """Interprétation de l'éditeur"""
         script = self.objet
@@ -98,7 +108,14 @@ class EdtScript(Editeur):
             enveloppe = EnveloppeObjet(EdtEvenement, evenement)
             enveloppe.parent = self
             contexte = enveloppe.construire(self.pere)
-            
+
+            self.migrer_contexte(contexte)
+        elif nom_evt in script.blocs:
+            bloc = script.blocs[nom_evt]
+            enveloppe = EnveloppeObjet(EdtInstructions, bloc.test)
+            enveloppe.parent = self
+            contexte = enveloppe.construire(self.pere)
+
             self.migrer_contexte(contexte)
         else:
-            self.pere << "|err|Cet évènement n'existe pas.|ff|"
+            self.pere << "|err|Ce bloc ou évènement n'existe pas.|ff|"

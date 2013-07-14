@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -32,109 +32,116 @@
 
 from abstraits.obase import *
 from primaires.format.fonctions import *
+from primaires.scripting.bloc import Bloc
 from primaires.scripting.evenement import Evenement
 
 scripts = []
 
 class Script(BaseObj):
-    
+
     """Classe contenant un script.
-    
+
     Un script est un ensemble d'évènements. Chaque instance devant faire
     appel à un évènement doit contenir un attribut possédant un script
     l'identifiant comme l'auteur des évènements qu'il contient.
-    
+
     Par exemple :
     >>> class Personnage:
     ...     def __init__(self):
     ...         self.script = Script(self)
-    
+
     Comme indiqué, chaque instance de script peut contenir un ou plusieurs
     évènements qu'il est nécessaire de définir précisément avant l'appel.
     Chaque évènement peut contenir plusieurs sous-évènements. Pour plus
     d'informations, voir la classe Evenement définie dans ce package.
-    
+
     A noter que c'est l'évènement qui stocke les instructions, pas le script
     lui-même.
-    
+
     Pour se construire, un script prend en paramètre :
     -   parent -- l'objet qui appellera le script
-    
+
     """
-    
+
     _nom = "script"
     _version = 1
     def __init__(self, parent):
         """Constructeur d'un script"""
         BaseObj.__init__(self)
         self.parent = parent
+        self.__blocs = {}
         self.__evenements = {}
         self._construire()
         self.init()
-    
+
     def __getnewargs__(self):
         return (None, )
-    
+
     def __getitem__(self, evenement):
         """Retourne l'évènement correspondant.
-        
+
         L'évènement doit être une chaîne de caractères.
-        
+
         """
         evenement = supprimer_accents(evenement).lower()
         return self.__evenements[evenement]
-    
+
     def __setstate__(self, dico_attrs):
         """A la récupération du script, appelle init."""
         BaseObj.__setstate__(self, dico_attrs)
         scripts.append(self)
-    
+
     def init(self):
         """Initialisation du script.
-        
+
         Cette méthode est à redéfinir dans les classes-filles pour, par
         exemple, ajouter de nouveaux évènements.
-        
+
         """
         pass
-    
+
     @property
     def evenements(self):
         return dict(self.__evenements)
-    
+
+    @property
+    def blocs(self):
+        """Retourne un dictionnaire déréférencé des blocs."""
+        return dict(self.__blocs)
+
     def creer_evenement(self, evenement):
         """Crée et ajoute l'évènement dont le nom est précisé en paramètre.
-        
+
         L'évènement doit être une chaîne de caractères non vide. Si
         l'évènement existe, le retourne. Sinon, retourne le créé.
-        
+
         """
         if not evenement:
             raise ValueError("Un nom vide a été passé en paramètre de " \
                     "creer_evenement.")
-        
+
         sa_evenement = supprimer_accents(evenement).lower()
-        
+
         if sa_evenement in self.__evenements.keys():
             evt = self.evenements[sa_evenement]
             evt.nom = evenement
             return evt
-        
+
         nouv_evenement = Evenement(self, evenement)
         self.__evenements[sa_evenement] = nouv_evenement
-        
+
         return nouv_evenement
-    
+
     def creer_evenement_dynamique(self, nom):
         """Essaye de créer un évènement dynamique du nom indiqué.
-        
+
         Retourne l'évènement si l'évènement a pu être créé, None sinon.
-        
+
         """
         if supprimer_accents(nom) not in \
                 importeur.scripting.commandes_dynamiques_sa:
             return None
-        
+
         commande = importeur.scripting.get_commande_dynamique(nom)
         evenement = self.creer_evenement(commande.nom_francais)
         evenement.aide_courte = commande.aide_courte_evt
@@ -144,8 +151,17 @@ class Script(BaseObj):
         var_elt = evenement.ajouter_variable("element", "object")
         var_elt.aide = "l'élément observé par le personnage"
         return evenement
-    
+
     def supprimer_evenement(self, evenement):
         """Supprime l'évènement en le retirant du script."""
         evenement = supprimer_accents(evenement).lower()
         del self.__evenements[evenement]
+
+    def creer_bloc(self, nom):
+        """Crée un nouveau bloc."""
+        if nom in self.__blocs:
+            raise ValueError("le bloc '{}' existe déjà".format(nom))
+
+        bloc = Bloc(self, nom)
+        self.__blocs[nom] = bloc
+        return bloc
