@@ -497,7 +497,10 @@ class EdtInstructions(Editeur):
         msg += "ou |cmd|/|ff| pour revenir à la\nfenêtre précédente. L'option "
         msg += "|cmd|/?|ff| vous fournira toute l'aide nécessaire si\n"
         msg += "vous n'êtes pas à l'aise avec cet éditeur.\n\n"
-        variables = evenement.variables.values()
+        if isinstance(evenement.variables, dict):
+            variables = evenement.variables.values()
+        else:
+            variables = evenement.variables
 
         if tests.etape:
             msg += "|att|ATTENTION : ce script est relié à la quête " \
