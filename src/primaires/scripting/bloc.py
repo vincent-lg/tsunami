@@ -116,6 +116,16 @@ class Bloc(BaseObj):
             self.variables.append(variable)
             return variable
 
+    def supprimer_variable(self, nom):
+        """Supprime le variable spécifiée."""
+        variables = dict((variable.nom, variable) for variable in \
+                self.variables)
+        if nom not in variables:
+            raise ValueError("la variable {} n'existe pas".format(repr(nom)))
+
+        variable = variables[nom]
+        self.variables.remove(variable)
+
     def executer(self, *args):
         """Execute le bloc d'instructions.
 

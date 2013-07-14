@@ -165,3 +165,11 @@ class Script(BaseObj):
         bloc = Bloc(self, nom)
         self.__blocs[nom] = bloc
         return bloc
+
+    def supprimer_bloc(self, nom):
+        """Supprime un bloc."""
+        if nom not in self.__blocs:
+            raise ValueError("le bloc '{}' n'existe pas".format(nom))
+
+        self.__blocs[nom].detruire()
+        del self.__blocs[nom]

@@ -49,6 +49,102 @@ class EdtScript(Editeur):
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
+        self.ajouter_option("a", self.opt_ajouter_bloc)
+        self.ajouter_option("d", self.opt_supprimer_bloc)
+        self.ajouter_option("av", self.opt_ajouter_variable)
+        self.ajouter_option("dv", self.opt_supprimer_variable)
+
+    def opt_ajouter_bloc(self, argument):
+        """Ajoute un nouveau bloc.
+
+        Syntaxe :
+            /a <nom du bloc>
+
+        """
+        script = self.objet
+        bloc = supprimer_accents(argument.lower())
+        try:
+            script.creer_bloc(bloc)
+        except ValueError as err:
+            self.pere << "|err|" + str(err).capitalize() + ".|ff|"
+        else:
+            self.actualiser()
+
+    def opt_supprimer_bloc(self, argument):
+        """Supprime un bloc existant.
+
+        Syntaxe :
+            /d <nom du bloc>
+
+        """
+        script = self.objet
+        bloc = supprimer_accents(argument.lower())
+        try:
+            script.supprimer_bloc(bloc)
+        except ValueError as err:
+            self.pere << "|err|" + str(err).capitalize() + ".|ff|"
+        else:
+            self.actualiser()
+
+    def opt_ajouter_variable(self, argument):
+        """Ajoute une variable à un bloc.
+
+        Syntaxe :
+            /av <nom du bloc> <nom de la variable> <type> <aide>
+
+        """
+        script = self.objet
+        arguments = argument.split(" ")
+        if len(arguments) < 4:
+            self.pere << "|err|Précisez le nom du bloc, le nom de la " \
+                    "variable, son type et l'aide de la variable.|ff|\n\n" \
+                    "Exemple : |ent|/av planter age nombre l'âge de la " \
+                    "plante|ff|"
+            return
+
+        bloc = supprimer_accents(arguments[0]).lower()
+        variable = supprimer_accents(arguments[1]).lower()
+        str_type = supprimer_accents(arguments[2])
+        aide = " ".join(arguments[3:])
+        if bloc not in script.blocs:
+            self.pere << "|err|Le bloc '{}' n'existe pas.|ff|".format(bloc)
+            return
+
+        bloc = script.blocs[bloc]
+        try:
+            bloc.ajouter_variable(variable, str_type, aide)
+        except ValueError as err:
+            self.pere << "|err|" + str(err).capitalize() + ".|ff|"
+        else:
+            self.actualiser()
+
+    def opt_supprimer_variable(self, argument):
+        """Retire une variable d'un bloc.
+
+        Syntaxe :
+            /dv <nom du bloc> <nom de la variable>
+
+        """
+        script = self.objet
+        arguments = argument.split(" ")
+        if len(arguments) < 2:
+            self.pere << "|err|Précisez le nom du bloc et le nom de la " \
+                    "variable à supprimer.|ff|"
+            return
+
+        bloc = supprimer_accents(arguments[0]).lower()
+        variable = supprimer_accents(arguments[1]).lower()
+        if bloc not in script.blocs:
+            self.pere << "|err|Le bloc '{}' n'existe pas.|ff|".format(bloc)
+            return
+
+        bloc = script.blocs[bloc]
+        try:
+            bloc.supprimer_variable(variable)
+        except ValueError as err:
+            self.pere << "|err|" + str(err).capitalize() + ".|ff|"
+        else:
+            self.actualiser()
 
     def accueil(self):
         """Message d'accueil du contexte"""
