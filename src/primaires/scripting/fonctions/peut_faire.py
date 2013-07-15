@@ -46,6 +46,7 @@ class ClasseFonction(Fonction):
         """Retourne vrai si le personnage peut faire la quête, faux sinon.
 
         Les paramètres à entrer sont :
+
           * Le personnage à tester
           * La clé de la quête
           * Le niveau testé (sous la forme d'une chaîne, comme "1.2")
