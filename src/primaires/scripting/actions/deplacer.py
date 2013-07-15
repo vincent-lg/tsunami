@@ -65,7 +65,8 @@ class ClasseAction(Action):
         try:
             sortie = personnage.salle.sorties.get_sortie_par_nom_ou_direction(
                     supprimer_accents(sortie).lower())
-        except KeyError:
+            assert sortie
+        except (KeyError, AssertionError):
             raise ErreurExecution("la sortie {} est introuvable en {}".format(
                     sortie, personnage.salle))
 
