@@ -69,6 +69,7 @@ class Bloc(BaseObj):
         self.__test = None
         self.variables = []
         self.espaces = Espaces(self)
+        self.nom_acteur = "personnage"
         self._construire()
 
     def __getnewargs__(self):
