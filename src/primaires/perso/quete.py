@@ -255,7 +255,8 @@ class Quete(BaseObj):
 
         if quete.ordonnee:
             # On récupère le dernier niveau validé
-            dernier_niveau = max(self.__niveaux)
+            niveaux = [n for n in self.__niveaux if len(n) == len(niveau)]
+            dernier_niveau = max(niveaux)
             niveau_suivant = dernier_niveau[:-1] + (dernier_niveau[-1] + 1, )
             niveau_parent = niveau
             if len(niveau) > 1 and niveau[-1] == 1:
