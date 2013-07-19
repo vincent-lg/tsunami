@@ -77,6 +77,7 @@ class Quete(BaseObj):
         self.cle_quete = cle_quete
         self.parent = parent
         self.__verrou = False
+        self.valide = True
 
         # Pour le niveau
         if isinstance(niveau, Quete):
@@ -106,6 +107,11 @@ class Quete(BaseObj):
     @property
     def niveaux(self):
         return list(self.__niveaux)
+
+    @property
+    def vide(self):
+        """Retourne si la quête est complètement vide."""
+        return len(self.__niveaux) == 1 and self.__niveaux[0] == ()
 
     def verrouiller(self):
         """Verrouille la quête."""
@@ -178,6 +184,9 @@ class Quete(BaseObj):
             return etapes
 
         for niveau in sorted(self.__niveaux):
+            if len(niveau) == 0:
+                continue
+
             str_niveau = ".".join(str(n) for n in niveau)
             parent = niveau[:-1]
             str_parent = ".".join(str(n) for n in parent)
@@ -212,6 +221,9 @@ class Quete(BaseObj):
             return etapes
 
         for niveau in sorted(self.__niveaux):
+            if len(niveau) == 0:
+                continue
+
             str_niveau = ".".join(str(n) for n in niveau)
             parent = niveau[:-1]
             str_parent = ".".join(str(n) for n in parent)
@@ -244,6 +256,9 @@ class Quete(BaseObj):
         Le niveau est le niveau demandé.
 
         """
+        if not self.valide:
+            return False
+
         if niveau in self.__niveaux:
             return False
 
@@ -254,6 +269,9 @@ class Quete(BaseObj):
             return True
 
         if quete.ordonnee:
+            if niveau[-1] == 1 and self.vide:
+                return True
+
             # On récupère le dernier niveau validé
             niveaux = [n for n in self.__niveaux if len(n) == len(niveau)]
             dernier_niveau = max(niveaux)
@@ -280,6 +298,9 @@ class Quete(BaseObj):
         sont validées, valide l'étape parent.
 
         """
+        if () in self.__niveaux:
+            self.__niveaux.remove(())
+
         if niveau not in self.__niveaux:
             self.__niveaux.append(niveau)
 
