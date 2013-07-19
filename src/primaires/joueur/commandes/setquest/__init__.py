@@ -81,12 +81,16 @@ class CmdSetQuest(Commande):
                 return
         else:
             if not niveaux:
-                if personnage_mod.quetes[quete.cle].niveaux == [(0, )]:
+                quete_mod = personnage_mod.quetes[quete.cle]
+                if quete_mod.niveaux == [()]:
                     personnage << "|err|{} n'a pas fait la quête " \
                             "{}.|ff|".format(personnage_mod.nom, quete.cle)
                     return
                 ret = "Etapes accomplies par {} dans la quête {} :\n  ".format(
                     personnage_mod.nom, quete.cle)
+                if not quete_mod.valide:
+                    ret = "|rg|Cette quête est verrouillée pour ce " \
+                            "personnage.|ff|\n" + ret
                 etapes = []
                 for n in personnage_mod.quetes[quete.cle].niveaux:
                     n = [str(niv) for niv in n]
