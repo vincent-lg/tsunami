@@ -31,6 +31,7 @@
 
 driver = True
 
+from cgi import escape
 import re
 
 try:
@@ -129,6 +130,7 @@ class PGFormat:
         en tags HTML.
 
         """
+        texte = escape(texte)
         re_cmd = r"\%(.*?)\%"
         for autre_cmd in list(re.findall(re_cmd, texte)):
             autre = importeur.interpreteur.trouver_commande(autre_cmd)
