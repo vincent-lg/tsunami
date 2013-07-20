@@ -73,6 +73,11 @@ class CmdEtudier(Commande):
             return
 
         points = sort.points_tribut
+        if personnage.points_tribut < points:
+            personnage << "|err|Vous n'avez pas assez de points de " \
+                    "tribut pour étudier ce grimoire.|ff|"
+            return
+
         if sort.elements[0] != personnage.element:
             personnage.points_tribut += points
             s = "s" if points > 1 else ""
