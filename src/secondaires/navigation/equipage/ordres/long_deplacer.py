@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,12 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package equipage du module navigation.
+"""Fichier contenant l'ordre LongDeplacer."""
 
-Ce package contient tout ce qui concerne l'équipage.
-Les postes sont listés dans le sous-package postes.
+from secondaires.navigation.equipage.ordres.deplacer import Deplacer
+from ..ordre import *
 
-"""
+class LongDeplacer(Ordre):
 
-from . import ordres
-from secondaires.navigation.equipage.equipage import Equipage
+    """Ordre combinant plusieurs ordres de déplacement."""
+
+    cle = "long_deplacer"
+    def __init__(self, matelot, navire, *directions):
+        Ordre.__init__(self, matelot, navire)
+        self.directions = directions
+
+    def choisir_matelot(self, matelots):
+        """Un matelot de substitution ne peut pas être trouvé pour cet ordre."""
+        raise OrdreSansSubstitution
+
+    def calculer_empechement(self):
+        """Retourne une estimation de l'empêchement du matelot."""
+        if self.matelot.cle_etat:
+            return 100
+        else:
+            return 0
+
+    def executer(self):
+        """Exécute l'ordre : déplace le matelot."""
+        for i, direction in enumerate(self.directions):
+            deplacement = Deplacer(self.matelot, self.navire, direction)
+            deplacement.executer()
+            if i < len(self.directions) - 1:
+                yield 0.2

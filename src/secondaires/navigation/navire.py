@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -37,6 +37,7 @@ from primaires.perso.exceptions.stat import DepassementStat
 from primaires.vehicule.force import Force
 from primaires.vehicule.vecteur import Vecteur
 from primaires.vehicule.vehicule import Vehicule
+from secondaires.navigation.equipage import Equipage
 from .constantes import *
 from .element import Element
 from .salle import SalleNavire
@@ -47,20 +48,20 @@ from .constantes import END_VIT_RAMES
 FACTEUR_MIN = 0.1
 
 class Navire(Vehicule):
-    
+
     """Classe représentant un navire ou une embarcation.
-    
+
     Un navire est un véhicule se déplaçant sur une éttendue d'eau,
     propulsé par ses voiles ou des rameurs.
-    
+
     Le navire est un véhicule se déplaçant sur un repère en 2D.
-    
+
     Chaque navire possède un modèle (qui détermine ses salles, leurs
     descriptions, la position des éléments, leur qualité, l'aérodynamisme
     du navire...). Chaque navire est lié à son modèle en se créant.
-    
+
     """
-    
+
     enregistrer = True
     def __init__(self, modele):
         """Constructeur du navire."""
@@ -68,6 +69,7 @@ class Navire(Vehicule):
         self.propulsion = Propulsion(self)
         self.forces.append(self.propulsion)
         self.etendue = None
+        self.equipage = Equipage(self)
         self.immobilise = False
         if modele:
             self.modele = modele
@@ -82,15 +84,15 @@ class Navire(Vehicule):
                 n_salle.titre = salle.titre
                 n_salle.description = salle.description
                 n_salle.noyable = salle.noyable
-                
+
                 # On recopie les éléments
                 for t_elt in salle.mod_elements:
                     elt = Element(t_elt, n_salle)
                     n_salle.elements.append(elt)
-                
+
                 self.salles[r_coords] = n_salle
                 type(self).importeur.salle.ajouter_salle(n_salle)
-            
+
             # On recopie les sorties
             for salle in modele.salles.values():
                 n_salle = self.salles[salle.r_coords]
@@ -100,40 +102,40 @@ class Navire(Vehicule):
                         n_salle.sorties.ajouter_sortie(dir, sortie.nom,
                                 sortie.article, c_salle,
                                 sortie.correspondante)
-    
+
     def __getnewargs__(self):
         return (None, )
-    
+
     @property
     def taille(self):
         """Retourne la taille du navire déduit de son nombre de salles."""
         return len(self.salles)
-    
+
     @property
     def elements(self):
         """Retourne un tuple des éléments."""
         elts = []
         for salle in self.salles.values():
             elts.extend(salle.elements)
-        
+
         return tuple(elts)
-    
+
     @property
     def voiles(self):
         """Retourne les éléments voiles du navire."""
         elts = self.elements
         return tuple(e for e in elts if e.nom_type == "voile")
-    
+
     @property
     def passerelle(self):
         """Retourne True si la passerelle du navire est dépliée."""
         elts = [e for e in self.elements if e.nom_type == "passerelle"]
         if not elts:
             return False
-        
+
         e = elts[0]
         return e.baissee
-    
+
     @property
     def gouvernail(self):
         """Retourne le gouvernail si le navire en contient un."""
@@ -141,9 +143,9 @@ class Navire(Vehicule):
             gouvernail = salle.gouvernail
             if gouvernail:
                 return gouvernail
-        
+
         return None
-    
+
     @property
     def rames(self):
         """Retourne les paires de rames contenues dans le navire."""
@@ -152,28 +154,28 @@ class Navire(Vehicule):
             t_rames = salle.rames
             if t_rames:
                 rames.append(t_rames)
-        
+
         return rames
-    
+
     @property
     def vent(self):
         """Retourne le vecteur du vent le plus proche.
-        
+
         Il s'agit en fait d'un condensé des vents allentours.
-        
+
         """
         vec_nul = Vecteur(0, 0, 0)
-        
+
         if self.etendue is None:
             return vec_nul
-        
+
         # On récupère le vent le plus proche
         vents = type(self).importeur.navigation.vents_par_etendue.get(
                 self.etendue.cle, [])
-        
+
         if not vents:
             return vec_nul
-        
+
         # On calcul un vecteur des vents restants
         vecteur_vent = Vecteur(0, 0, 0)
         for vent in vents:
@@ -184,11 +186,11 @@ class Navire(Vehicule):
                 facteur = 0.6
             else:
                 facteur = 0.3
-            
+
             vecteur_vent += facteur * vent.vitesse
-        
+
         return vecteur_vent
-    
+
     @property
     def nom_allure(self):
         """Retourne le nom de l'allure."""
@@ -217,33 +219,33 @@ class Navire(Vehicule):
         distance = distance / (TPS_VIRT / DIST_AVA)
         distance *= vit_ecoulement
         return distance * 3600
-    
+
     @property
     def nom(self):
         return self.modele.nom
-    
+
     @property
     def desc_survol(self):
         return self.nom
-    
+
     @property
     def poids_max(self):
         return self.modele.poids_max
-    
+
     @property
     def poids(self):
         poids = 0
         for salle in self.salles.values():
             poids += salle.poids_eau
-        
+
         return poids
-    
+
     def faire_ramer(self):
         """Cette méthode fait ramer les personnages du navire.
-        
+
         Elle consomme l'endurance qu'ils doivent dépenser en fonction de
         la vitesse des rames manipulées.
-        
+
         """
         for rames in self.rames:
             if rames.tenu:
@@ -261,37 +263,37 @@ class Navire(Vehicule):
                         rames.vitesse = "immobile"
                         rames.tenu = None
                         personnage.cle_etat = ""
-    
+
     def valider_coordonnees(self):
         """Pour chaque salle, valide ses coordonnées."""
         for salle in self.salles.values():
             if not salle.coords.valide:
                 salle.coords.valide = True
-    
+
     def vent_debout(self):
         """Retourne le facteur de vitesse par l'allure vent debout."""
         return -0.3
-    
+
     def pres(self):
         """Retourne le facteur de vitesse par l'allure de près."""
         return 0.5
-    
+
     def bon_plein(self):
         """Retourne le facteur de vitesse par l'allure de bon plein."""
         return 0.8
-    
+
     def largue(self):
         """Retourne le facteur de vitesse par l'allure de largue."""
         return 1.2
-    
+
     def grand_largue(self):
         """Retourne le facteur de vitesse par l'allure de grand largue."""
         return 0.9
-    
+
     def vent_arriere(self):
         """Retourne le facteur de vitesse par l'allure par vent arrière."""
         return 0.7
-    
+
     def maj_salles(self):
         d = self.direction.direction + 90
         i = self.direction.inclinaison
@@ -311,7 +313,7 @@ class Navire(Vehicule):
             Vehicule.avancer(self, temps_virtuel)
             vit_fin = self.vitesse_noeuds
             arrive = self.position.copier()
-            
+
             # On contrôle les collisions
             # On cherche toutes les positions successives du navire
             vecteurs = [origine]
@@ -321,9 +323,9 @@ class Navire(Vehicule):
                 for i in range(1, int(distance)):
                     t_vec = origine + i * vec
                     vecteurs.append(t_vec)
-            
+
             vecteurs.append(arrive)
-            
+
             # On parcourt tous les points parcourus par le navire
             nav_points = {}
             nav_salles = {}
@@ -337,7 +339,7 @@ class Navire(Vehicule):
                     if vec not in nav_points:
                         nav_points[vec] = p
                         nav_salles[vec] = salle
-            
+
             # On parcourt chaque point de l'étendue
             etendue = self.etendue
             points = tuple(etendue.points.items())
@@ -362,7 +364,7 @@ class Navire(Vehicule):
                         self.en_collision = True
                         return
                     valide = p
-        
+
         if vit_or == 0 and vit_fin > 0.05:
             if vit_fin < 0.5:
                 self.envoyer("Vous sentez le navire accélérer en douceur.")
@@ -370,7 +372,7 @@ class Navire(Vehicule):
                 self.envoyer("Vous sentez le navire prendre rapidement " \
                         "de la vitesse.")
         self.en_collision = False
-    
+
     def collision(self, salle, contre=None):
         """Méthode appelée lors d'une collision avec un point."""
         Vehicule.collision(self, None)
@@ -389,28 +391,28 @@ class Navire(Vehicule):
             for o_salle in self.salles.values():
                 if o_salle is not salle and o_salle.noyable:
                     o_salle.poids_eau += int(vitesse * 8)
-    
+
     def virer(self, n=1):
         """Vire vers tribord ou bâbord de n degrés.
-        
+
         Si n est inférieure à 0, vire vers bâbord.
         Sinon, vire vers tribord.
-        
+
         """
         self.direction.tourner_autour_z(n)
         self.maj_salles()
-    
+
     def envoyer(self, message):
         """Envoie le message à tous les personnages présents dans le navire."""
         for salle in self.salles.values():
             salle.envoyer(message)
-    
+
     def synchroniser_modele(self):
         """Cette méthode force la synchronisation d'informations sur le modèle.
-        
+
         On parcourt toutes les salles du modèle et recrée certaines
         informations commes les détails si nécessaire.
-        
+
         """
         for m_coords, m_salle in self.modele.salles.items():
             salle = self.salles[m_coords]
@@ -422,7 +424,7 @@ class Navire(Vehicule):
                             modele=m_detail)
                 else:
                     detail = details[det_nom]
-                
+
                 detail.synonymes = list(m_detail.synonymes)
                 detail.titre = m_detail.titre
                 detail.positions = dict(m_detail.positions)
@@ -435,32 +437,32 @@ class Navire(Vehicule):
                 detail.connecteur = m_detail.connecteur
                 detail.nb_places_assises = m_detail.nb_places_assises
                 detail.nb_places_allongees = m_detail.nb_places_allongees
-    
+
     def detruire(self):
         """Destruction du self."""
         for salle in list(self.salles.values()):
             importeur.salle.supprimer_salle(salle.ident)
-        
+
         self.modele.vehicules.remove(self)
         Vehicule.detruire(self)
 
 
 class Propulsion(Force):
-    
+
     """Force de propulsion d'un navire.
-    
+
     Elle doit être fonction du vent, du nombre de voile et de leur
     orientation. Elle est également fonction des rames et rameurs.
-    
+
     """
-    
+
     def __init__(self, subissant):
         """Constructeur de la force."""
         Force.__init__(self, subissant)
-    
+
     def __getnewargs__(self):
         return (None, )
-    
+
     def calcul(self):
         """Retourne le vecteur de la force."""
         vec_nul = Vecteur(0, 0, 0)
@@ -473,7 +475,7 @@ class Propulsion(Force):
             if rames.tenu and not rames.tenu.est_connecte():
                 rames.tenu.cle_etat = ""
                 rames.tenu = None
-        
+
         navire.faire_ramer()
         rames = [r for r in navire.rames if r.tenu is not None]
         vecteur = vec_nul
@@ -493,16 +495,16 @@ class Propulsion(Force):
                 facteur = navire.grand_largue()
             else:
                 facteur = navire.vent_arriere()
-            
+
             vecteur = facteur * fact_voile * vent.norme * direction
-        
+
         # Calcul des rames
         if rames:
             facts = [VIT_RAMES[rame.vitesse] for rame in rames]
             fact = 0.8
             for f in facts:
                 fact *= f
-            
+
             vecteur = vecteur + fact * direction
-        
+
         return vecteur

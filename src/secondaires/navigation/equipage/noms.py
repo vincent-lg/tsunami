@@ -28,12 +28,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package equipage du module navigation.
+"""Fichier contenant les noms des mâtelots."""
 
-Ce package contient tout ce qui concerne l'équipage.
-Les postes sont listés dans le sous-package postes.
-
-"""
-
-from . import ordres
-from secondaires.navigation.equipage.equipage import Equipage
+NOMS_MATELOTS = [
+    "Antoine",
+    "Émile",
+    "Pierre",
+    "Jules",
+    "Jean",
+    "Robert",
+]
