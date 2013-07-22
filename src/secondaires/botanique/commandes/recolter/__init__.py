@@ -84,10 +84,6 @@ class CmdRecolter(Commande):
             t_o = importeur.objet.creer_objet(objet)
             personnage.ramasser_ou_poser(t_o)
 
-        if pris == 0:
-            personnage << "|err|Vous n'avez aucune main de libre.|ff|"
-            return
-
         vegetal.recolter(objet, pris)
         personnage << "Vous récoltez {} depuis {}.".format(
                 objet.get_nom(pris), vegetal.nom)
