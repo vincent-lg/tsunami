@@ -38,6 +38,7 @@ from primaires.affection.affection import Affection
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.file import FileContexte
 from primaires.interpreteur.groupe.groupe import *
+from primaires.objet.conteneur import SurPoids
 
 from .race import Race
 from .equipement import Equipement
@@ -768,13 +769,15 @@ class Personnage(BaseObj):
         """
         for o in self.equipement.inventaire:
             if o is not objet and o is not exception and o.est_de_type(
-                    "conteneur") and o.prefere_type(objet):
+                    "conteneur") and o.prefere_type(objet) and \
+                    o.peut_contenir(objet, qtt):
                 o.conteneur.ajouter(objet, qtt)
                 return o
 
         for o in self.equipement.inventaire:
             if o is not objet and o is not exception and o.est_de_type(
-                    "conteneur") and o.accepte_type(objet):
+                    "conteneur") and o.accepte_type(objet) and \
+                    o.peut_contenir(objet, qtt):
                 o.conteneur.ajouter(objet, qtt)
                 return o
 
@@ -788,6 +791,16 @@ class Personnage(BaseObj):
                 return membre
 
         return None
+
+    def ramasser_ou_poser(self, objet, exception=None, qtt=1):
+        """Ramasse ou pose un objet si ne peut pas prendre."""
+        try:
+            self.ramasser(objet, exception, qtt)
+        except SurPoids as err:
+            self.envoyer(str(err))
+            self << "{} tombe sur le sol".format(
+                    objet.get_nom(qtt).capitalize())
+            self.salle.objets_sol.ajouter(objet, qtt)
 
     def affecte(self, cle, duree, force):
         """Affecte le personnage avec une affection.

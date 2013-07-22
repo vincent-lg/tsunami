@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -38,65 +38,65 @@ from abstraits.obase import BaseObj
 from .objet_non_unique import ObjetNonUnique
 
 class ConteneurObjet(BaseObj):
-    
+
     """Conteneur standard d'objet.
-    
+
     Cette classe peut être héritée (le sol d'une salle par exemple est un
     conteneur d'objet hérité) ou utilisée telle qu'elle.
-    
+
     Un objet conteneur contient lui-même d'autres objets.
     Note : le conteneur d'objet utilise deux listes en fonction de
     l'unicité ou nom des objets.
-    
+
     Les objets uniques, la majorité, sont représentés par une instance
     pour chaque objet. Les objets non uniques, comme la monnaie, sont des
     objets représentés par leur prototype et le nombre d'objets présents.
-    
+
     """
-    
+
     def __init__(self, parent=None):
         """Constructeur du conteneur"""
         BaseObj.__init__(self)
         self._objets = []
         self._non_uniques = []
         self.parent = parent
-    
+
     def __getnewargs__(self):
         return ()
-    
+
     def __iter__(self):
         """Itérateur"""
         liste = list(self._objets) + list(self._non_uniques)
         return iter(liste)
-    
+
     def __str__(self):
         parent = repr(self.parent) if self.parent else "sans parent"
         return parent + " " + str(self._objets) + " " + str(self._non_uniques)
-    
+
     def __contains__(self, objet):
         return objet in self._objets
-    
+
     @property
     def grand_parent(self):
         if hasattr(self.parent, "grand_parent"):
             return self.parent.grand_parent
         else:
             return self.parent
-    
+
     def iter_nombres(self):
         """Parcourt les objets et quantités du conteneur."""
         for objet in self._objets:
             yield (objet, 1)
         for objet in self._non_uniques:
             yield (objet.prototype, objet.nombre)
-    
+
     def get_objets_par_nom(self):
         """Retourne une liste de couples (objet, nombre).
-        
+
         ATTENTION : pour les objets non uniques, on retourne le
         prototype mais le comportement devrait être identique la
         plupart du temps.
-        
+
         """
         objets = OrderedDict()
         nombres = {}
@@ -105,22 +105,22 @@ class ConteneurObjet(BaseObj):
             objets[nom] = objet
             nb = nombres.get(nom, 0)
             nombres[nom] = nb + 1
-        
+
         ret = []
         for objet in self._non_uniques:
             ret.append((objet.prototype, objet.nombre))
-        
+
         for nom, objet in objets.items():
             nombre = nombres[nom]
             ret.append((objet, nombre))
-        
+
         return tuple(ret)
-    
+
     def ajouter(self, objet, nombre=1):
         """On ajoute l'objet dans le conteneur.
-        
+
         On peut très bien ajouter un prototype si l'objet est dit non unique.
-        
+
         """
         prototype = hasattr(objet, "prototype") and objet.prototype or objet
         if prototype.unique:
@@ -141,14 +141,14 @@ class ConteneurObjet(BaseObj):
                     non_unique = objet
                     qtt -= objet.nombre
                     break
-            
-            self.supporter_poids_sup(prototype.poids_unitaire * qtt)
+
+            self.supporter_poids_sup(prototype.poids_unitaire * nombre)
             if non_unique:
                 non_unique.nombre += nombre
             else:
                 non_unique = ObjetNonUnique(prototype, nombre)
                 self._non_uniques.append(non_unique)
-    
+
     def retirer(self, objet, nombre=1):
         """On retire l'objet du conteneur"""
         prototype = hasattr(objet, "prototype") and objet.prototype or objet
@@ -164,39 +164,39 @@ class ConteneurObjet(BaseObj):
                 if objet.prototype == prototype:
                     non_unique = objet
                     break
-            
+
             if non_unique:
                 non_unique.nombre -= nombre
                 self.nettoyer_non_uniques()
             else:
                 raise ValueError("le conteneur {} ne contient pas l'objet " \
                         "{}".format(self, objet))
-    
+
     def nettoyer_non_uniques(self):
         """Nettoie les objets non uniques présents en quantité négative."""
         self._non_uniques = [o for o in self._non_uniques if o.nombre > 0]
-    
+
     def supporter_poids_sup(self, poids, recursif=True):
         """Méthode vérifiant que le conteneur peut contenir le poids.
-        
+
         Le poids indiqué est le poids supplémentaire.
-        
+
         Si recursif est à True, on vérifie que les conteneurs
         qui contiennent l'objet peuvent également supporter ce nouveau poids.
-        
+
         Si une erreur survient (dans cet objet ou l'un de ses pères)
         on lève l'exception SurPoids.
-        
+
         """
         if not self.parent:
             return True
-        
+
         poids_actuel = self.parent.poids
         poids_max = self.parent.poids_max
         if poids_actuel + poids > poids_max:
             raise SurPoids("{} ne peut contenir davantage.".format(
                     self.parent.nom_singulier.capitalize()))
-        
+
         if recursif:
             parent = self.parent
             contenu = hasattr(parent, "contenu") and parent.contenu or parent
@@ -204,7 +204,7 @@ class ConteneurObjet(BaseObj):
 
 
 class SurPoids(ExceptionMUD):
-    
+
     """Exception levée en cas de surpoids."""
-    
+
     pass
