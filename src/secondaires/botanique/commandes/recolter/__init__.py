@@ -86,6 +86,6 @@ class CmdRecolter(Commande):
 
         vegetal.recolter(objet, pris)
         personnage << "Vous récoltez {} depuis {}.".format(
-                objet.get_nom(pris), vegetal.nom)
+                objet.get_nom(nombre), vegetal.nom)
         personnage.salle.envoyer("{{}} récolte {} depuis {}.".format(
-                objet.get_nom(pris), vegetal.nom), personnage)
+                objet.get_nom(nombre), vegetal.nom), personnage)
