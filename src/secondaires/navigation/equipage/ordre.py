@@ -123,6 +123,38 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
         """
         raise NotImplementedError
 
+    def lancer(self):
+        """Exécute l'ordre et ses enfants.
+
+        Cette méthode doit traiter le cas où d'autres ordres sont émis
+        par le premier (décomposition instantanée). Par exemple, l'ordre
+        de déplacement de plusieurs salles est décomposé au momet de
+        l'exécution en plusieurs ordres, un par déplacement. La méthode
+        'executer' du sort est utilisée comme un générateur : elle doit
+        yield au moins une information à la fin de l'exécution qui
+        témoigne qu'elle s'est correctement exécutée. On peut aussi yield
+        un entier ou flottant qui sera considéré comme le temps d'attente
+        avant la reprise de l'exécution.
+
+        """
+            generateur = ordre.executer()
+            self.execution_progressive(generateur)
+
+    def execution_progressive(self, generateur):
+        """Execution progressive de l'ordre."""
+        for signal in generateur:
+            if isinstance(signal, (int, float)):
+                # Le signal est un temps, on met en pause l'ordre
+                tps = signal
+                # On ajoute l'action différée
+                nom = "ordres_{}".format(id(generateur))
+                importeur.diffact.ajouter_action(nom, tps,
+                       self.execution_progressive, generateur)
+            else:
+                raise ValueError("Type de signal inconnu {}".format(
+                        repr(alerte)))
+
+
 class ExceptionOrdre(ExceptionMUD):
 
     """Exception spécifique à un ordre."""

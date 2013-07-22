@@ -99,15 +99,7 @@ class Matelot(BaseObj):
             if ordre.calculer_empechement() > priorite:
                 raise PrioriteTropFaible
 
-            try:
-                alertes = ordre.executer()
-            except Exception as err:
-                print(err)
-            else:
-                if alertes:
-                    self.execution_progressive(alertes)
-            finally:
-                self.ordres.remove(ordre)
+            ordre.lancer()
 
     def execution_progressive(self, generateur):
         """Execution progressive de l'ordre."""
