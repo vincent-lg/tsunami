@@ -795,9 +795,13 @@ class Personnage(BaseObj):
     def ramasser_ou_poser(self, objet, exception=None, qtt=1):
         """Ramasse ou pose un objet si ne peut pas prendre."""
         try:
-            self.ramasser(objet, exception, qtt)
+            conteneur = self.ramasser(objet, exception, qtt)
+            assert conteneur is not None
         except SurPoids as err:
             self.envoyer(str(err))
+            self << "{} tombe sur le sol".format(
+                    objet.get_nom(qtt).capitalize())
+        except AssertionError:
             self << "{} tombe sur le sol".format(
                     objet.get_nom(qtt).capitalize())
             self.salle.objets_sol.ajouter(objet, qtt)
