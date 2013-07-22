@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,9 +34,9 @@ from primaires.interpreteur.commande.commande import Commande
 from primaires.objet.conteneur import SurPoids
 
 class CmdRecolter(Commande):
-    
+
     """Commande 'récolter'"""
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "récolter", "harvest")
@@ -53,7 +53,7 @@ class CmdRecolter(Commande):
                 "que vous pouvez utiliser la notation |ent|X.nom|ff| " \
                 "(par exemple |ent|2.pommier|ff| pour récolter le second " \
                 "pommier présent dans la salle)."
-    
+
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         elt = self.noeud.get_masque("element_recoltable")
@@ -61,42 +61,33 @@ class CmdRecolter(Commande):
                 "dic_masques['vegetal'].vegetal"
         vegetal = self.noeud.get_masque("vegetal")
         vegetal.prioritaire = True
-    
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         nombre = 1
         if dic_masques["nombre"]:
             nombre = dic_masques["nombre"].nombre
-        
+
         element = dic_masques["element_recoltable"].element
         vegetal = dic_masques["vegetal"].vegetal
         qtt = vegetal.elements.get(element.objet, 0)
         if qtt == 0:
             personnage << "|err|Cet élément récoltable est épuisé.|ff|"
             return
-        
+
         if qtt < nombre:
             nombre = qtt
-        
+
         objet = element.objet
         pris = 0
         for i in range(nombre):
             t_o = importeur.objet.creer_objet(objet)
-            try:
-                dans = personnage.ramasser(t_o)
-            except SurPoids as err:
-                personnage << "|err|" + str(err) + "|ff|"
-                importeur.objet.supprimer_objet(t_o.identifiant)
-                return
-            
-            if dans is None:
-                break
-            pris += 1
-            
+            personnage.ramasser_ou_poser(t_o)
+
         if pris == 0:
             personnage << "|err|Vous n'avez aucune main de libre.|ff|"
             return
-        
+
         vegetal.recolter(objet, pris)
         personnage << "Vous récoltez {} depuis {}.".format(
                 objet.get_nom(pris), vegetal.nom)
