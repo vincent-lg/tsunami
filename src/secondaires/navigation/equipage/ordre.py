@@ -137,8 +137,8 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
         avant la reprise de l'exécution.
 
         """
-            generateur = ordre.executer()
-            self.execution_progressive(generateur)
+        generateur = ordre.executer()
+        self.execution_progressive(generateur)
 
     def execution_progressive(self, generateur):
         """Execution progressive de l'ordre."""
