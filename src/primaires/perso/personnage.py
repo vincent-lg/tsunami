@@ -801,6 +801,7 @@ class Personnage(BaseObj):
             self.envoyer(str(err))
             self << "{} tombe sur le sol".format(
                     objet.get_nom(qtt).capitalize())
+            self.salle.objets_sol.ajouter(objet, qtt)
         except AssertionError:
             self << "{} tombe sur le sol".format(
                     objet.get_nom(qtt).capitalize())
