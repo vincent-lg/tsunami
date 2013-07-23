@@ -39,4 +39,4 @@ du signal, l'exécution peut se poursuivre.
 
 from secondaires.navigation.equipage.signaux.base import Signal
 from secondaires.navigation.equipage.signaux.attendre import SignalAttendre
-
+from secondaires.navigation.equipage.signaux.termine import SignalTermine

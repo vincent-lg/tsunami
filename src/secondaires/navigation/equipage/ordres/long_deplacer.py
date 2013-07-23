@@ -30,7 +30,9 @@
 
 """Fichier contenant l'ordre LongDeplacer."""
 
+from secondaires.navigation.equipage.signaux import *
 from secondaires.navigation.equipage.ordres.deplacer import Deplacer
+
 from ..ordre import *
 
 class LongDeplacer(Ordre):
@@ -57,6 +59,9 @@ class LongDeplacer(Ordre):
         """Exécute l'ordre : déplace le matelot."""
         for i, direction in enumerate(self.directions):
             deplacement = Deplacer(self.matelot, self.navire, direction)
-            deplacement.executer()
+            generateur = deplacement.creer_generateur()
+            yield SignalAttendre(generateur)
             if i < len(self.directions) - 1:
-                yield 0.2
+                yield 0.3
+
+        yield SignalTermine()

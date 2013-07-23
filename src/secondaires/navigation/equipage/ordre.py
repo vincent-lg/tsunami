@@ -32,6 +32,7 @@
 
 from abstraits.obase import BaseObj, MetaBaseObj
 from bases.exceptions.base import ExceptionMUD
+from secondaires.navigation.equipage.generateur import GenerateurOrdre
 
 ordres = {}
 
@@ -66,6 +67,7 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
 
     id_actuel = 1
     cle = ""
+    logger = type(importeur).man_logs.get_logger("ordres")
     def __init__(self, matelot, navire):
         """Construit un ordre.
 
@@ -79,12 +81,13 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
         self.id = Ordre.id_actuel
         Ordre.id_actuel += 1
         self.priorite = 1
+        self.suite = None
         if self.matelot is None and navire:
             matelots = navire.matelots
             self.matelot = self.choisir_matelot(matelots)
 
     def __getnewargs__(self):
-        return (None, "", None)
+        return (None, None, )
 
     def __repr__(self):
         return "<ordre '{}({})' pour {}".format(self.cle, self.id,
@@ -93,6 +96,12 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
     @property
     def cle_matelot(self):
         return self.matelot and self.matelot.identifiant or "inconnue"
+
+    def creer_generateur(self):
+        """Crée un générateur spécifique pour cet ordre."""
+        generateur = self.executer()
+        generateur_ordre = GenerateurOrdre(self, generateur)
+        return generateur_ordre
 
     def choisir_matelot(self, matelots):
         """Retourne le meilleur matelot pour cet ordre.
@@ -122,37 +131,6 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
 
         """
         raise NotImplementedError
-
-    def lancer(self):
-        """Exécute l'ordre et ses enfants.
-
-        Cette méthode doit traiter le cas où d'autres ordres sont émis
-        par le premier (décomposition instantanée). Par exemple, l'ordre
-        de déplacement de plusieurs salles est décomposé au momet de
-        l'exécution en plusieurs ordres, un par déplacement. La méthode
-        'executer' du sort est utilisée comme un générateur : elle doit
-        yield au moins une information à la fin de l'exécution qui
-        témoigne qu'elle s'est correctement exécutée. On peut aussi yield
-        un entier ou flottant qui sera considéré comme le temps d'attente
-        avant la reprise de l'exécution.
-
-        """
-        generateur = ordre.executer()
-        self.execution_progressive(generateur)
-
-    def execution_progressive(self, generateur):
-        """Execution progressive de l'ordre."""
-        for signal in generateur:
-            if isinstance(signal, (int, float)):
-                # Le signal est un temps, on met en pause l'ordre
-                tps = signal
-                # On ajoute l'action différée
-                nom = "ordres_{}".format(id(generateur))
-                importeur.diffact.ajouter_action(nom, tps,
-                       self.execution_progressive, generateur)
-            else:
-                raise ValueError("Type de signal inconnu {}".format(
-                        repr(alerte)))
 
 
 class ExceptionOrdre(ExceptionMUD):

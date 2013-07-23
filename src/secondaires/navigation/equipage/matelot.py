@@ -32,6 +32,7 @@
 
 from abstraits.obase import BaseObj
 from primaires.objet.objet import MethodeObjet
+from secondaires.navigation.equipage.signaux import *
 from .ordre import *
 
 class Matelot(BaseObj):
@@ -56,6 +57,8 @@ class Matelot(BaseObj):
     """
 
     enregistrer = True
+    logger = type(importeur).man_logs.get_logger("ordres")
+
     def __init__(self, equipage, personnage):
         """Constructeur du matelot."""
         BaseObj.__init__(self)
@@ -77,16 +80,24 @@ class Matelot(BaseObj):
         except (AttributeError, AssertionError):
             return getattr(self.personnage, nom_attr)
 
-    def executer_ordre(self, priorite=1):
-        """Exécute le premier ordre de la liste.
+    def __repr__(self):
+        return "<mâtelot {} ({})>".format(repr(self.nom), str(self.personnage))
 
-        Traite les cas :
-            Impossibilité anticipée -> annulation
-            Difficulté anticipée -> information
-            Empêchement temporaire -> information
-            Impossibilité constatée -> annulation
+    def executer_ordres(self, priorite=1):
+        """Exécute les ordres du mâtelot, dans l'ordre.
 
-        En fonction du statut de l'ordre, la liste entière peut être affectée.
+        Cette méthode doit retourner assez rapidement mais l'exécution
+        des ordres peut prendre plusieurs secondes (voire minutes). Le
+        module 'diffact' est utilisé pour reprendre l'exécution
+        d'ordres plus tard. Les ordres contenus dans cette liste sont
+        considérés comme étant des ordres parents (ils n'ont que des
+        ordres enfants, mais ceux-ci peuvent avoir des ordres enfants
+        également).
+
+        Les différents cas sont gérés par des signaux. Ceux-ci ne
+        sont pas des exceptions, mais des formes d'étapes : le système
+        peut considérer qu'un signal n'est pas suffisant pour interrompre
+        l'ordre et le relance, si besoin avec une plus grande priorité.
 
         NOTE : le paramètre propriete (entre 1 et 100) permet de rendre
         un ordre plus impératif :
@@ -96,24 +107,37 @@ class Matelot(BaseObj):
         """
         if self.ordres:
             ordre = self.ordres[0]
-            if ordre.calculer_empechement() > priorite:
-                raise PrioriteTropFaible
+            generateur = ordre.creer_generateur()
+            self.executer_generateur(generateur)
 
-            ordre.lancer()
-
-    def execution_progressive(self, generateur):
-        """Execution progressive de l'ordre."""
-        for alerte in generateur:
-            if isinstance(alerte, (int, float)):
-                # L'alerte est un temps, on met en pause l'ordre
-                tps = alerte
-                # On ajoute l'action différée
-                nom = "ordres_{}".format(id(generateur))
-                importeur.diffact.ajouter_action(nom, tps,
-                        self.execution_progressive, generateur)
-            else:
-                raise ValueError("Type d'alerte inconnu {}".format(
-                        repr(alerte)))
+    def executer_generateur(self, generateur, profondeur=0):
+        """Exécute récursivement le générateur."""
+        indent = "  " * profondeur
+        msg = "Exécution du générateur : {}".format(generateur)
+        self.logger.debug(indent + msg)
+        ordre = generateur.ordre
+        matelot = ordre.matelot
+        signal = next(generateur)
+        self.logger.debug(indent + "Signal {} reçu".format(signal))
+        if isinstance(signal, (int, float)):
+            tps = signal
+            # On ajoute l'action différée
+            nom = "ordres_{}".format(id(generateur))
+            self.logger.debug(indent + "Pause pendant {} secondes".format(
+                    tps))
+            importeur.diffact.ajouter_action(nom, tps,
+                    self.executer_generateur, generateur, profondeur)
+        elif signal.termine:
+            if profondeur == 0 and ordre in matelot.ordres:
+                matelot.ordres.remove(ordre)
+            if generateur.parent:
+                self.executer_generateur(generateur.parent, profondeur - 1)
+            if profondeur == 0 and matelot.ordres:
+                matelot.executer_ordres()
+        elif signal.attendre:
+            differe = signal.generateur_enfant
+            differe.parent = generateur
+            self.executer_generateur(differe, profondeur + 1)
 
     def ordonner(self, ordre):
         """Ajoute l'ordre."""

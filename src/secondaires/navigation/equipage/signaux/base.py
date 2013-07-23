@@ -40,4 +40,7 @@ class Signal:
 
     """
 
-    pass
+    def __init__(self):
+        self.suite = None
+        self.attendre = False
+        self.termine = False

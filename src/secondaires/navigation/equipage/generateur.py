@@ -28,31 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe SignalAttendre."""
+"""Fichier contenant la classe GenerateurOrdre."""
 
-from secondaires.navigation.equipage.signaux.base import Signal
+class GenerateurOrdre:
 
-class SignalAttendre(Signal):
+    """Générateur spécialement utilisé pour exécuter un ordre.
 
-    """Signal utilisé pour attendre la fin de l'exécution d'un ordre.
+    C'est censé être un générateur standard, les méthodes next et close (entre autre) sont accessibles. Mais l'objet conserve aussi de'autres informations :
 
-    Cette classe est utilisée pour signaler à un ordre parent que
-    le signal actuel attend l'exécution d'ordre enfant. Par exemple,
-    l'ordre de se déplacer de plusieurs salles ne s'exécute pas
-    instantanément : il fait une légère pause entre chaque déplacement.
-    Si l'ordre de déplacement multiple est utilisé comme sous-ordre,
-    alors quand le déplacement commence le déplacement multiple informe
-    le script parent qu'il doit se mettre en pause le temps que
-    l'action s'exécute.
-
-    Ce signal prend en paramètre l'ordre dont on attend l'exécution.
+    * L'ordre d'origine
+    * Le générateur parent si il en existe un
+    * Le niveau de profondeur de l'exécution
 
     """
 
-    def __init__(self, generateur_enfant):
-        Signal.__init__(self)
-        self.attendre = True
-        self.generateur_enfant = generateur_enfant
+    def __init__(self, ordre, generateur):
+        self.ordre = ordre
+        self.generateur = generateur
+        self.parent = None
+        self.profondeur = 1
 
     def __repr__(self):
-        return "<signal attendre>"
+        return "<GenerateurOrdre {}>".format(str(self.ordre))
+
+    def close(self):
+        return self.generateur.close()
+
+    def __next__(self):
+        return next(self.generateur)

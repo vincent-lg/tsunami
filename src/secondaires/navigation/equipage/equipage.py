@@ -68,6 +68,7 @@ class Equipage(BaseObj):
         matelot.nom_poste = nom_poste
         matelot.nom = self.trouver_nom_matelot()
         self.matelots[supprimer_accents(matelot.nom.lower())] = matelot
+        return matelot
 
     def trouver_nom_matelot(self):
         """Trouve un nom de mâtelot non utilisé."""
@@ -75,7 +76,7 @@ class Equipage(BaseObj):
         noms_disponibles = [nom for nom in NOMS_MATELOTS if nom not in noms]
         return choice(noms_disponibles)
 
-    def ordonner_matelot(self, nom, ordre, *args, **kwargs):
+    def ordonner_matelot(self, nom, ordre, *args, executer=False):
         """Ordonne à un mâtelot en particulier.
 
         Le mâtelot est trouvé en fonction de son nom. Si le nom est trouvé
@@ -87,9 +88,11 @@ class Equipage(BaseObj):
         """
         matelot = self.get_matelot(nom)
         classe_ordre = ordres[ordre]
-        ordre = classe_ordre(matelot, self.navire, *args, **kwargs)
+        ordre = classe_ordre(matelot, self.navire, *args)
         matelot.ordonner(ordre)
-        matelot.executer_ordre()
+        if executer:
+            matelot.executer_ordres()
+
         return ordre
 
     def get_matelot(self, nom):

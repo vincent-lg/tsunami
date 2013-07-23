@@ -30,6 +30,9 @@
 
 """Fichier contenant le module secondaire navigation."""
 
+# Configuration du logger des ordres
+type(importeur).man_logs.creer_logger("navigation", "ordres", "ordres.log")
+
 from abstraits.module import *
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
