@@ -79,13 +79,11 @@ class CmdRecolter(Commande):
             nombre = qtt
 
         objet = element.objet
-        pris = 0
-        for i in range(nombre):
-            t_o = importeur.objet.creer_objet(objet)
-            personnage.ramasser_ou_poser(t_o)
-
-        vegetal.recolter(objet, pris)
         personnage << "Vous récoltez {} depuis {}.".format(
                 objet.get_nom(nombre), vegetal.nom)
         personnage.salle.envoyer("{{}} récolte {} depuis {}.".format(
                 objet.get_nom(nombre), vegetal.nom), personnage)
+        vegetal.recolter(objet, nombre)
+        for i in range(nombre):
+            t_o = importeur.objet.creer_objet(objet)
+            personnage.ramasser_ou_poser(t_o)
