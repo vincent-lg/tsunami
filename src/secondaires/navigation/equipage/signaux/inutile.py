@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,23 +28,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant la classe SignalInutile."""
 
-from . import allure
-from . import ancre
-from . import amarre
-from . import canon
-from . import debarquer
-from . import detailler
-from . import eltedit
-from . import embarquer
-from . import equipage
-from . import gouvernail
-from . import loch
-from . import matelot
-from . import navire
-from . import passerelle
-from . import rames
-from . import shedit
-from . import vent
-from . import voile
+from secondaires.navigation.equipage.signaux.base import Signal
+
+class SignalInutile(Signal):
+
+    """Signal utilisé pour dire que l'ordre est considéré comme inutile.
+
+    L'ordre peut, par exemple, être devenu obsolète entre le temps
+    où il a été ordonné et celui où il doit s'exécuter. Si par exemple
+    l'ordre demande de hisser une voile, cet ordre est inutile si la
+    voile est déjà hissée.
+
+    """
+
+    def __init__(self):
+        Signal.__init__(self, message)
+        self.termine = True
+        self.message = message
+
+    def __repr__(self):
+        return "<signal ordre inutile : {}>".format(self.message)

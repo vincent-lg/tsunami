@@ -240,6 +240,11 @@ class Navire(Vehicule):
 
         return poids
 
+    @property
+    def graph(self):
+        """Retourne le graph défini par le modèle."""
+        return self.modele.graph
+
     def faire_ramer(self):
         """Cette méthode fait ramer les personnages du navire.
 

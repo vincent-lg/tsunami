@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -18,7 +18,7 @@
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# ARE DISCLAIMED. IN NO Eequipage SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
 # LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
 # OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -28,23 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'équipage' et ses sous-commandes.
 
-from . import allure
-from . import ancre
-from . import amarre
-from . import canon
-from . import debarquer
-from . import detailler
-from . import eltedit
-from . import embarquer
-from . import equipage
-from . import gouvernail
-from . import loch
-from . import matelot
-from . import navire
-from . import passerelle
-from . import rames
-from . import shedit
-from . import vent
-from . import voile
+Dans ce fichier se trouve la commande même.
+
+"""
+
+from primaires.interpreteur.commande.commande import Commande
+from .ordre import PrmOrdre
+
+class CmdEquipage(Commande):
+
+    """Commande 'équipage'.
+
+    """
+
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "équipage", "crew")
+        self.nom_categorie = "navire"
+        self.aide_courte = "manipulation de l'équipage"
+        self.aide_longue = \
+            "Cette commande permet de manipuler l'équipage du navire " \
+            "sur lequel vous vous trouvez. Vous pouvez l'utiliser pour " \
+            "donner des ordres, consulter le statut de vos matelots " \
+            "ou les postes auxquels ils ont été affectés. La commande " \
+            "%matelot% permet de manipuler individuellement les " \
+            "matelots de l'équipage."
+
+    def ajouter_parametres(self):
+        """Ajout des paramètres"""
+        self.ajouter_parametre(PrmOrdre())

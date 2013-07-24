@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,23 +28,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant les différents ordres définis chacun dans un fichier.
 
-from . import allure
-from . import ancre
-from . import amarre
-from . import canon
-from . import debarquer
-from . import detailler
-from . import eltedit
-from . import embarquer
-from . import equipage
-from . import gouvernail
-from . import loch
-from . import matelot
-from . import navire
-from . import passerelle
-from . import rames
-from . import shedit
-from . import vent
-from . import voile
+La classe-mère des ordres est définie dans le répertoire parent, fichier
+ordre.py.
+
+"""
+
+from secondaires.navigation.equipage.volontes.hisser_voiles import HisserVoiles

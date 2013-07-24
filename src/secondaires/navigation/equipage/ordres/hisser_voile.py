@@ -28,13 +28,53 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents ordres définis chacun dans un fichier.
+"""Fichier contenant l'ordre HisserVoile."""
 
-La classe-mère des ordres est définie dans le répertoire parent, fichier
-ordre.py.
+from secondaires.navigation.equipage.signaux import *
 
-"""
+from ..ordre import *
 
-from secondaires.navigation.equipage.ordres.deplacer import Deplacer
-from secondaires.navigation.equipage.ordres.hisser_voile import HisserVoile
-from secondaires.navigation.equipage.ordres.long_deplacer import LongDeplacer
+class HisserVoile(Ordre):
+
+    """Ordre hisser_voile.
+
+    Cet ordre est appelé pour demander à un matelot de hisser
+    une voile présente dans la salle où il se trouve.
+
+    """
+
+    cle = "hisser_voile"
+    def calculer_empechement(self):
+        """Retourne une estimation de l'empêchement du matelot."""
+        if self.matelot.cle_etat:
+            return 100
+        else:
+            return 0
+
+    def executer(self):
+        """Exécute l'ordre : déplace le matelot."""
+        personnage = self.matelot.personnage
+        salle = personnage.salle
+        if not hasattr(salle, "voiles"):
+            return
+
+        voiles = salle.voiles
+        if not voiles:
+            return
+
+        voile = voiles[0]
+        if voile.hissee:
+            raise SignalInutile("la voile est déjà hissée")
+        else:
+            personnage << "Vous commencez de hisser la voile, au prise " \
+                    "avec les cordages."
+            salle.envoyer("{} commence à hisser la voile, au prise " \
+                    "avec les cordages", personnage)
+            personnage.cle_etat = "hisser_voile"
+            yield 7
+            personnage.cle_etat = ""
+            voile.hissee = True
+            personnage << "Vous hissez {}.".format(voile.nom.lower())
+            salle.envoyer("{{}} hisse {}.".format(voile.nom.lower()),
+                    personnage)
+            yield SignalTermine()

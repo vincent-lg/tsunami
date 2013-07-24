@@ -82,6 +82,7 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
         Ordre.id_actuel += 1
         self.priorite = 1
         self.suite = None
+        self.volonte = None
         if self.matelot is None and navire:
             matelots = navire.matelots
             self.matelot = self.choisir_matelot(matelots)

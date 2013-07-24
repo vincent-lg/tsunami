@@ -37,6 +37,8 @@ from primaires.format.fonctions import supprimer_accents
 from secondaires.navigation.equipage.ordre import ordres
 from secondaires.navigation.equipage.matelot import Matelot
 from secondaires.navigation.equipage.noms import NOMS_MATELOTS
+from secondaires.navigation.equipage.volonte import volontes
+from secondaires.navigation.equipage.volontes import *
 
 class Equipage(BaseObj):
 
@@ -61,6 +63,13 @@ class Equipage(BaseObj):
     def __repr__(self):
         navire = self.navire and self.navire.cle or "aucun"
         return "<Équipage du navire {}>".format(repr(navire))
+
+    @property
+    def matelots_libres(self):
+        """Retourne les matelots considérés comme libres."""
+        matelots = tuple(self.matelots.values())
+        return tuple(m for m in matelots if m.personnage.cle_etat == "" and \
+                len(m.ordres) == 0)
 
     def ajouter_matelot(self, personnage, nom_poste="matelot"):
         """Ajoute un mâtelot à l'équipage."""
@@ -94,6 +103,18 @@ class Equipage(BaseObj):
             matelot.executer_ordres()
 
         return ordre
+
+    def demander(self, cle_volonte, *parametres):
+        """Exécute une volonté."""
+        volonte = volontes[cle_volonte]
+        volonte = volonte(self.navire, *parametres)
+        self.executer_volonte(volonte)
+
+    def executer_volonte(self, volonte):
+        """Exécute une volonté déjà créée."""
+        Matelot.logger.debug("Demande de {}".format(volonte))
+        retour = volonte.choisir_matelots()
+        volonte.executer(retour)
 
     def get_matelot(self, nom):
         """Retourne, si trouvé, le âtelot recherché.

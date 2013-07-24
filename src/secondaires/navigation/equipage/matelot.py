@@ -116,6 +116,7 @@ class Matelot(BaseObj):
         msg = "Exécution du générateur : {}".format(generateur)
         self.logger.debug(indent + msg)
         ordre = generateur.ordre
+        volonte = ordre.volonte
         matelot = ordre.matelot
         signal = next(generateur)
         self.logger.debug(indent + "Signal {} reçu".format(signal))
@@ -136,6 +137,7 @@ class Matelot(BaseObj):
                 matelot.executer_ordres()
         elif signal.attendre:
             differe = signal.generateur_enfant
+            differe.ordre.volonte = volonte
             differe.parent = generateur
             self.executer_generateur(differe, profondeur + 1)
 
