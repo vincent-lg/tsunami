@@ -46,7 +46,7 @@ class Deplacer(Ordre):
     """
 
     cle = "deplacer"
-    def __init__(self, matelot, navire, direction):
+    def __init__(self, matelot, navire, direction="inconnue"):
         Ordre.__init__(self, matelot, navire)
         self.direction = direction
 
