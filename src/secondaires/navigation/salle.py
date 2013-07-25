@@ -80,6 +80,7 @@ class SalleNavire(Salle):
         Salle.__init__(self, zone, mnemonic, valide=False)
         self.navire = navire
         self.modele = modele
+        self.titre_court = ""
         self.elements = []
         self.mod_elements = []
         self.r_x = r_x

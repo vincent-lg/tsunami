@@ -151,7 +151,6 @@ class ModeleNavire(BaseObj):
         def enrichir_graph(graph, origine, destination, sorties):
             """Enrichit le graph."""
             court = ajouter_paire(graph, origine, destination, sorties)
-            print(origine, destination, sorties, court)
             if court:
                 for (o_mnemo, d_mnemo), chemin in tuple(graph.items()):
                     if o_mnemo == destination.mnemonic:

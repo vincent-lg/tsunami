@@ -31,6 +31,7 @@
 """Fichier contenant la méta-classe et la classe abstraite de volonté."""
 
 from abstraits.obase import BaseObj, MetaBaseObj
+from secondaires.navigation.equipage.ordres.revenir import Revenir
 
 volontes = {}
 
@@ -99,6 +100,21 @@ class Volonte(BaseObj, metaclass=MetaVolonte):
 
         """
         raise NotImplementedError
+
+    def revenir_affectation(self, matelot):
+        """Demande (si nécessaire) au matelot de revenir à sa sa salle."""
+        navire = self.navire
+        personnage = matelot.personnage
+        salle = personnage.salle
+        affectation = matelot.affectation
+        if affectation and affectation is not salle:
+            revenir = Revenir(matelot, navire)
+            revenir.volonte = self
+        else:
+            revenir = None
+
+        return revenir
+
 
     @classmethod
     def tester(cls, msg):

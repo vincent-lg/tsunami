@@ -18,7 +18,7 @@
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO Ematelot SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
 # LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
 # OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -28,34 +28,44 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'matelot' et ses sous-commandes.
+"""Fichier contenant l'ordre Revenir."""
 
-Dans ce fichier se trouve la commande même.
+from secondaires.navigation.equipage.signaux import *
+from secondaires.navigation.equipage.ordres.long_deplacer import LongDeplacer
 
-"""
+from ..ordre import *
 
-from primaires.interpreteur.commande.commande import Commande
-from .affecter import PrmAffecter
-from .liste import PrmListe
+class Revenir(Ordre):
 
-class CmdMatelot(Commande):
+    """Ordre demandant au matelot de revenir à sa salle d'affectation.
 
-    """Commande 'matelot'.
+    Cet ordre est généralement appelé à la fin d'une volonté pour
+    demander au matelot de rejoindre son poste affecté.
 
     """
 
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "matelot", "seaman")
-        self.nom_categorie = "navire"
-        self.aide_courte = "manipulation des matelots"
-        self.aide_longue = \
-            "Cette commande permet de manipuler les matelots de " \
-            "votre équipage individuellement. Il existe également " \
-            "la commande %équipage% qui permet de manipuler l'équipage " \
-            "d'un coup d'un seul."
+    cle = "revenir"
+    def calculer_empechement(self):
+        """Retourne une estimation de l'empêchement du matelot."""
+        if self.matelot.cle_etat:
+            return 100
+        else:
+            return 0
 
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        self.ajouter_parametre(PrmAffecter())
-        self.ajouter_parametre(PrmListe())
+    def executer(self):
+        """Exécute l'ordre : déplace le matelot."""
+        matelot = self.matelot
+        navire = self.navire
+        personnage = matelot.personnage
+        salle = personnage.salle
+        affectation = matelot.affectation
+        if affectation and affectation is not salle:
+            graph = navire.graph
+            chemin = graph.get((salle.mnemonic, affectation.mnemonic))
+            if chemin:
+                long_deplacement = LongDeplacer(matelot, navire, *chemin)
+                generateur = long_deplacement.creer_generateur()
+                yield SignalAttendre(generateur)
+            yield SignalTermine()
+        elif affectation:
+            yield SignalInutile("Je suis déjà dans ma salle affectée")

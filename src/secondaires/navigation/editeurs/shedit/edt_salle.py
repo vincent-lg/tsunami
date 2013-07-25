@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -40,16 +40,16 @@ from primaires.salle.editeurs.redit.edt_details import EdtDetails
 from secondaires.navigation.salle import NOMS_SORTIES
 
 class EdtSalle(Presentation):
-    
+
     """Classe définissant l'éditeur de salle de navire."""
-    
+
     def __init__(self, personnage, salle, attribut=""):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
-        
+
         Presentation.__init__(self, instance_connexion, salle, "", False)
         self.ajouter_option("bab", self.opt_ajouter_babord)
         self.ajouter_option("tri", self.opt_ajouter_tribord)
@@ -60,16 +60,16 @@ class EdtSalle(Presentation):
         self.ajouter_option("elt", self.opt_ajouter_supprimer_element)
         if personnage and salle:
             self.construire(salle)
-    
+
     def __getnewargs__(self):
         return (None, None)
-    
+
     def opt_ajouter_babord(self, arguments):
         """Ajoute une salle à bâbord.
-        
+
         Syntaxe :
             /bab <mnémonic>
-        
+
         """
         salle = self.objet
         try:
@@ -78,13 +78,13 @@ class EdtSalle(Presentation):
             self.pere << "|err|{}|ff|.".format(str(err).capitalize())
         else:
             self.actualiser()
-    
+
     def opt_ajouter_tribord(self, arguments):
         """Ajoute une salle à tribord.
-        
+
         Syntaxe :
             /tri <mnémonic>
-        
+
         """
         salle = self.objet
         try:
@@ -93,13 +93,13 @@ class EdtSalle(Presentation):
             self.pere << "|err|{}|ff|.".format(str(err).capitalize())
         else:
             self.actualiser()
-    
+
     def opt_ajouter_avant(self, arguments):
         """Ajoute une salle à l'avant.
-        
+
         Syntaxe :
             /ava <mnémonic>
-        
+
         """
         salle = self.objet
         try:
@@ -108,13 +108,13 @@ class EdtSalle(Presentation):
             self.pere << "|err|{}|ff|.".format(str(err).capitalize())
         else:
             self.actualiser()
-    
+
     def opt_ajouter_arriere(self, arguments):
         """Ajoute une salle à l'arrière.
-        
+
         Syntaxe :
             /arr <mnémonic>
-        
+
         """
         salle = self.objet
         try:
@@ -123,13 +123,13 @@ class EdtSalle(Presentation):
             self.pere << "|err|{}|ff|.".format(str(err).capitalize())
         else:
             self.actualiser()
-    
+
     def opt_ajouter_bas(self, arguments):
         """Ajoute une salle vers le bas.
-        
+
         Syntaxe :
             /bas <mnémonic>
-        
+
         """
         salle = self.objet
         try:
@@ -138,13 +138,13 @@ class EdtSalle(Presentation):
             self.pere << "|err|{}|ff|.".format(str(err).capitalize())
         else:
             self.actualiser()
-    
+
     def opt_ajouter_haut(self, arguments):
         """Ajoute une salle vers le haut.
-        
+
         Syntaxe :
             /hau <mnémonic>
-        
+
         """
         salle = self.objet
         try:
@@ -153,7 +153,7 @@ class EdtSalle(Presentation):
             self.pere << "|err|{}|ff|.".format(str(err).capitalize())
         else:
             self.actualiser()
-    
+
     def construire(self, salle):
         """Construction de l'éditeur"""
         # Titre
@@ -164,7 +164,18 @@ class EdtSalle(Presentation):
         titre.aide_courte = \
             "Entrez le |ent|titre|ff| de la salle ou |cmd|/|ff| pour revenir " \
             "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
-        
+
+        # Titre court
+        court = self.ajouter_choix("titre court", "co", Uniligne, salle,
+                "titre_court")
+        court.parent = self
+        court.prompt = "Titre court de la salle : "
+        court.apercu = "{objet.titre_court}"
+        court.aide_courte = \
+            "Entrez le |ent|titre court|ff| de la salle ou |cmd|/|ff| " \
+            "pour revenir à la fenêtre parente.\n\nTitre court actuel : " \
+            "|bc|{objet.titre_court}|ff|"
+
         # Description
         description = self.ajouter_choix("description", "d", Description, \
                 salle)
@@ -173,7 +184,7 @@ class EdtSalle(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description de la salle {}".format(salle).ljust(76) + \
             "|ff||\n" + self.opts.separateur
-        
+
         # Détails
         details = self.ajouter_choix("details", "e", EdtDetails, salle,
                 "details")
@@ -192,21 +203,21 @@ class EdtSalle(Presentation):
             "   ajouté à la liste.\n" \
             " - |ent|/d <détail existant>|ff| : supprime le détail " \
             "indiqué\n\n"
-        
+
         # Intérieur / extérieur
         inter = self.ajouter_choix("intérieur", "i", Flag, salle, "interieur")
         inter.parent = self
-        
+
         # Noyable
         noyable = self.ajouter_choix("noyable", "n", Flag, salle, "noyable")
         noyable.parent = self
-    
+
     def opt_ajouter_supprimer_element(self, arguments):
         """Ajoute ou supprime un élément.
-        
+
         Syntaxe :
             /elt <clé_élément>
-        
+
         """
         salle = self.objet
         cle = arguments.strip()
@@ -219,16 +230,16 @@ class EdtSalle(Presentation):
             if cle not in type(self).importeur.navigation.elements:
                 self.pere << "|err|Cet élément est introuvable.|ff|"
                 return
-            
+
             elt = type(self).importeur.navigation.elements[cle]
             if elt.nom_type in types:
                 self.pere << "|err|Un élément de ce type est déjà présent " \
                         "dans cette salle.|ff|"
                 return
-            
+
             salle.ajouter_element(elt)
             self.actualiser()
-    
+
     def accueil(self):
         """Message d'accueil de l'éditeur."""
         salle = self.objet
@@ -243,12 +254,12 @@ class EdtSalle(Presentation):
                         sortie.salle_dest.mnemonic)
             else:
                 msg += "\n   {}".format(nom.capitalize())
-        
+
         msg += "\n"
         # Éléments
         msg += "\n Éléments de navire : " + ", ".join(
                 e.cle for e in salle.mod_elements)
         if not salle.mod_elements:
             msg += "aucun"
-        
+
         return msg

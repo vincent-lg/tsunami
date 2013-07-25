@@ -74,6 +74,7 @@ class Equipage(BaseObj):
     def ajouter_matelot(self, personnage, nom_poste="matelot"):
         """Ajoute un mâtelot à l'équipage."""
         matelot = Matelot(self, personnage)
+        matelot.affectation = personnage.salle
         matelot.nom_poste = nom_poste
         matelot.nom = self.trouver_nom_matelot()
         self.matelots[supprimer_accents(matelot.nom.lower())] = matelot

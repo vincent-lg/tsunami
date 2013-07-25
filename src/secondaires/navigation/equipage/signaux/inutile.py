@@ -43,8 +43,8 @@ class SignalInutile(Signal):
 
     """
 
-    def __init__(self):
-        Signal.__init__(self, message)
+    def __init__(self, message):
+        Signal.__init__(self)
         self.termine = True
         self.message = message
 

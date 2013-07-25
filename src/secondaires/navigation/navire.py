@@ -71,37 +71,11 @@ class Navire(Vehicule):
         self.etendue = None
         self.equipage = Equipage(self)
         self.immobilise = False
+        self.modele = modele
         if modele:
-            self.modele = modele
             modele.vehicules.append(self)
-            # TODO: calculer le n_id suivant disponible
             self.cle = "{}_{}".format(modele.cle, len(modele.vehicules))
-            # On recopie les salles
-            for r_coords, salle in modele.salles.items():
-                n_salle = SalleNavire(self.cle,
-                        salle.mnemonic, salle.r_x, salle.r_y, salle.r_z,
-                        modele, self)
-                n_salle.titre = salle.titre
-                n_salle.description = salle.description
-                n_salle.noyable = salle.noyable
-
-                # On recopie les éléments
-                for t_elt in salle.mod_elements:
-                    elt = Element(t_elt, n_salle)
-                    n_salle.elements.append(elt)
-
-                self.salles[r_coords] = n_salle
-                type(self).importeur.salle.ajouter_salle(n_salle)
-
-            # On recopie les sorties
-            for salle in modele.salles.values():
-                n_salle = self.salles[salle.r_coords]
-                for dir, sortie in salle.sorties._sorties.items():
-                    if sortie and sortie.salle_dest:
-                        c_salle = self.salles[sortie.salle_dest.r_coords]
-                        n_salle.sorties.ajouter_sortie(dir, sortie.nom,
-                                sortie.article, c_salle,
-                                sortie.correspondante)
+            self.construire_depuis_modele()
 
     def __getnewargs__(self):
         return (None, )
@@ -244,6 +218,43 @@ class Navire(Vehicule):
     def graph(self):
         """Retourne le graph défini par le modèle."""
         return self.modele.graph
+
+    def construire_depuis_modele(self):
+        """Construit le navire depuis le modèle."""
+        modele = self.modele
+        # On recopie les salles
+        for r_coords, salle in modele.salles.items():
+            n_salle = self.salles.get(r_coords)
+            if n_salle is None:
+                n_salle = SalleNavire(self.cle, salle.mnemonic,
+                        salle.r_x, salle.r_y, salle.r_z, modele, self)
+            n_salle.titre = salle.titre
+            n_salle.titre_court = salle.titre_court
+            n_salle.description = salle.description
+            n_salle.details = salle.details
+            n_salle.noyable = salle.noyable
+
+            # On recopie les éléments
+            for t_elt in salle.mod_elements:
+                t_elts = [e for e in n_salle.elements if e.prototype is t_elt]
+                if not t_elts:
+                    elt = Element(t_elt, n_salle)
+                    n_salle.elements.append(elt)
+
+            if not r_coords in self.salles:
+                self.salles[r_coords] = n_salle
+            if n_salle not in importeur.salle.salles.values():
+                importeur.salle.ajouter_salle(n_salle)
+
+        # On recopie les sorties
+        for salle in modele.salles.values():
+            n_salle = self.salles[salle.r_coords]
+            for dir, sortie in salle.sorties._sorties.items():
+                if sortie and sortie.salle_dest:
+                    c_salle = self.salles[sortie.salle_dest.r_coords]
+                    n_salle.sorties.ajouter_sortie(dir, sortie.nom,
+                            sortie.article, c_salle,
+                            sortie.correspondante)
 
     def faire_ramer(self):
         """Cette méthode fait ramer les personnages du navire.

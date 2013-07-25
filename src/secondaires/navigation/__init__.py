@@ -60,6 +60,7 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "navigation", "secondaire")
+        self.preparer_apres = ["salle"]
         self.commandes = []
         self.modeles = {}
         self.nav_logger = type(self.importeur).man_logs.creer_logger(
@@ -202,10 +203,15 @@ class Module(BaseModule):
         -   Mise à jour systématique des éléments du navire
 
         """
+        self.nav_logger.info("Mise à jour des navires...")
         for navire in self.navires.values():
             for salle in navire.salles.values():
                 for element in salle.elements:
                     element.mettre_a_jour_attributs()
+            navire.construire_depuis_modele()
+            if not navire.modele.graph:
+                navire.modele.generer_graph()
+        self.nav_logger.info("... mise à jour des navires terminée.")
 
     def creer_modele(self, cle):
         """Crée un modèle de navire et l'ajoute dans le dictionnaire.

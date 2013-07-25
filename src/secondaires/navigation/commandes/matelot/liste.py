@@ -42,6 +42,7 @@ class PrmListe(Parametre):
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "liste", "list")
+        self.tronquer = True
         self.aide_courte = "liste les matelots de l'équipage"
         self.aide_longue = \
             "Cette commande liste les matelots de votre équipage. " \

@@ -64,7 +64,7 @@ class HisserVoile(Ordre):
 
         voile = voiles[0]
         if voile.hissee:
-            raise SignalInutile("la voile est déjà hissée")
+            yield SignalInutile("la voile est déjà hissée")
         else:
             personnage << "Vous commencez de hisser la voile, au prise " \
                     "avec les cordages."

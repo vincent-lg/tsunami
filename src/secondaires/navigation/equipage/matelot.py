@@ -66,6 +66,7 @@ class Matelot(BaseObj):
         self.personnage = personnage
         self.nom_poste = "matelot"
         self.confiance = 0
+        self.affectation = None
         self.ordres = []
 
     def __getnewargs__(self):

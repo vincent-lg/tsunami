@@ -64,17 +64,17 @@ class HisserVoiles(Volonte):
         matelots = self.navire.equipage.matelots_libres
         graph = self.navire.graph
         voiles = self.navire.voiles
+        voiles = [v for v in voiles if not v.hissee]
         for voile in voiles:
             for matelot in matelots:
                 origine = matelot.salle.mnemonic
                 destination = voile.parent.mnemonic
                 if origine == destination:
-                    proches.append((matelot, [], [], voile))
+                    proches.append((matelot, [], voile))
                 else:
                     chemin = graph.get((origine, destination))
-                    retour = graph.get((destination, origine))
-                    if chemin and retour:
-                        proches.append((matelot, chemin, retour, voile))
+                    if chemin:
+                        proches.append((matelot, chemin, voile))
 
         proches = sorted([couple for couple in proches],
                 key=lambda couple: len(couple[1]))
@@ -84,30 +84,28 @@ class HisserVoiles(Volonte):
     def executer(self, proches):
         """Exécute la volonté."""
         navire = self.navire
-        for matelot, sorties, retour, voile in proches:
+        for matelot, sorties, voile in proches:
             ordres = []
             if sorties:
                 aller = LongDeplacer(matelot, navire, *sorties)
-                revenir = LongDeplacer(matelot, navire, *retour)
                 aller.volonte = self
-                revenir.volonte = self
                 ordres.append(aller)
 
             hisser = HisserVoile(matelot, navire)
             hisser.volonte = self
             ordres.append(hisser)
-            if sorties:
-                ordres.append(revenir)
+            ordres.append(self.revenir_affectation(matelot))
 
             for ordre in ordres:
-                matelot.ordonner(ordre)
+                if ordre:
+                    matelot.ordonner(ordre)
 
             matelot.executer_ordres()
 
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""
         nombre = self.nombre
-        msg = "Le capitaine s'écrit : hissez-moi "
+        msg = "{} s'écrie : hissez-moi ".format(personnage.distinction_audible)
         if nombre < 0:
             msg += "ces voiles"
         elif nombre == 1:
