@@ -28,17 +28,43 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents signaux.
-
-Un signal est une classe toute simple, semblable à une exception en
-ce qu'elle permet de transmettre des messages et met en pause l'exécution
-pendant le temps que le message passe. Cependant, après réception
-du signal, l'exécution peut se poursuivre.
-
-"""
+"""Fichier contenant la classe SignalRepete."""
 
 from secondaires.navigation.equipage.signaux.base import Signal
-from secondaires.navigation.equipage.signaux.attendre import SignalAttendre
-from secondaires.navigation.equipage.signaux.inutile import SignalInutile
-from secondaires.navigation.equipage.signaux.repete import SignalRepete
-from secondaires.navigation.equipage.signaux.termine import SignalTermine
+
+class SignalRepete(Signal):
+
+    """Signal utilisé pour répéter le même ordre dans X secondes.
+
+    Ce signal est très utile pour demander à un ordre de boucler
+    (c'est-à-dire de s'exécuter régulièrement). C'est souvent utile
+    pour des ordres de vérification.
+
+    À la différence d'une simple pause dans l'ordre, ce signal demande
+    de reprendre l'ordre du début (techniquement parlant, il ne garde
+    pas trace du générateur créé par l'ordre).
+
+    Ce signal prend en paramètre la longueur de la pause, ens econdes,
+    avant que l'ordre ne soit répété.
+
+    """
+
+    def __init__(self, pause):
+        Signal.__init__(self)
+        self.pause = pause
+
+    def __repr__(self):
+        return "<signal répété dans {} seconde(s)>".format(self.pause)
+
+    def traiter(self, generateur, profondeur):
+        """Traite le générateur."""
+        ordre = generateur.ordre
+        matelot = ordre.matelot
+        nouveau_generateur = ordre.creer_generateur()
+        tps = self.pause
+
+        # On ajoute l'action différée
+        nom = "ordres_{}".format(id(nouveau_generateur))
+        importeur.diffact.ajouter_action(nom, tps,
+                matelot.executer_generateur, nouveau_generateur,
+                profondeur)

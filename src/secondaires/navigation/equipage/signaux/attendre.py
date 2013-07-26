@@ -56,3 +56,12 @@ class SignalAttendre(Signal):
 
     def __repr__(self):
         return "<signal attendre>"
+
+    def traiter(self, generateur, profondeur):
+        """Traite le générateur."""
+        ordre = generateur.ordre
+        matelot = ordre.matelot
+        differe = self.generateur_enfant
+        differe.ordre.volonte = ordre.volonte
+        differe.parent = generateur
+        matelot.executer_generateur(differe, profondeur + 1)

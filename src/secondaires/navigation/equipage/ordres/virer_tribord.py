@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,22 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'ordre HisserVoile."""
+"""Fichier contenant l'ordre VirerTribord."""
 
 from secondaires.navigation.equipage.signaux import *
 
 from ..ordre import *
 
-class HisserVoile(Ordre):
+class VirerTribord(Ordre):
 
-    """Ordre hisser_voile.
+    """Ordre virer_tribord.
 
-    Cet ordre est appelé pour demander à un matelot de hisser
-    une voile présente dans la salle où il se trouve.
+    Cet ordre demande au matelot de faire virer le navire sur tribord
+    jusqu'à ce qu'il soit dans une certaine direction. Le matelot
+    ciblé doit tenir le gouvernail.
 
     """
 
-    cle = "hisser_voile"
+    cle = "virer_tribord"
+    def __init__(self, matelot, navire, direction=0):
+        Ordre.__init__(self, matelot, navire)
+        self.direction = direction
+
     def calculer_empechement(self):
         """Retourne une estimation de l'empêchement du matelot."""
         if self.matelot.cle_etat:
@@ -52,20 +57,32 @@ class HisserVoile(Ordre):
             return 0
 
     def executer(self):
-        """Exécute l'ordre : déplace le matelot."""
-        personnage = self.matelot.personnage
+        """Exécute l'ordre : vire sur tribord."""
+        navire = self.navire
+        matelot = self.matelot
+        personnage = matelot.personnage
         salle = personnage.salle
-        if not hasattr(salle, "voiles"):
+        if not hasattr(salle, "gouvernail"):
             return
 
-        voiles = salle.voiles
-        if not voiles:
-            return
-
-        voile = voiles[0]
-        if voile.hissee:
-            yield SignalInutile("la voile est déjà hissée")
+        gouvernail = salle.gouvernail
+        if gouvernail.tenu is not personnage:
+            yield SignalInutile("je ne tiens pas ce gouvernail")
         else:
-            yield voile.pre_hisser(personnage)
-            voile.post_hisser(personnage)
-            yield SignalTermine()
+            # On change d'inclinaison du gouvernail si nécessaire
+            direction_actuelle = int(navire.direction.direction)
+            direction_voulue = int(self.direction)
+            diff = (direction_voulue - direction_actuelle) % 360
+            if diff == 0:
+                yield SignalTermine()
+            elif diff < 5:
+                orientation = 1
+            elif diff < 15:
+                orientation = 3
+            else:
+                orientation = 5
+
+            if gouvernail.orientation != orientation:
+                gouvernail.virer_tribord(personnage, orientation, True)
+
+            yield SignalRepete(1)

@@ -70,7 +70,7 @@ class PrmOrdre(Parametre):
         equipage = salle.navire.equipage
         for volonte in volontes.values():
             groupes = volonte.tester(message)
-            if groupes:
+            if isinstance(groupes, tuple):
                 arguments = volonte.extraire_arguments(*groupes)
                 volonte = volonte(navire, *arguments)
                 volonte.crier_ordres(personnage)

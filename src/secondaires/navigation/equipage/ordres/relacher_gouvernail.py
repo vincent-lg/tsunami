@@ -28,17 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents signaux.
+"""Fichier contenant l'ordre RelacherGouvernail."""
 
-Un signal est une classe toute simple, semblable à une exception en
-ce qu'elle permet de transmettre des messages et met en pause l'exécution
-pendant le temps que le message passe. Cependant, après réception
-du signal, l'exécution peut se poursuivre.
+from secondaires.navigation.equipage.signaux import *
 
-"""
+from ..ordre import *
 
-from secondaires.navigation.equipage.signaux.base import Signal
-from secondaires.navigation.equipage.signaux.attendre import SignalAttendre
-from secondaires.navigation.equipage.signaux.inutile import SignalInutile
-from secondaires.navigation.equipage.signaux.repete import SignalRepete
-from secondaires.navigation.equipage.signaux.termine import SignalTermine
+class RelacherGouvernail(Ordre):
+
+    """Ordre relacher_gouvernail.
+
+    Cet ordre est appelé pour demander à un matelot de relâcher
+    le gouvernail qu'il tient.
+
+    """
+
+    cle = "relacher_gouvernail"
+    def calculer_empechement(self):
+        """Retourne une estimation de l'empêchement du matelot."""
+        if self.matelot.cle_etat:
+            return 100
+        else:
+            return 0
+
+    def executer(self):
+        """Exécute l'ordre : relâche le gouvernail tenu."""
+        personnage = self.matelot.personnage
+        salle = personnage.salle
+        if not hasattr(salle, "gouvernail"):
+            return
+
+        gouvernail = salle.gouvernail
+        if gouvernail.tenu is not personnage:
+            yield SignalInutile("je ne tiens pas ce gouvernail")
+        else:
+            gouvernail.centrer(personnage)
+            gouvernail.relacher(personnage)
+            yield SignalTermine()

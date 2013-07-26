@@ -128,3 +128,11 @@ class Equipage(BaseObj):
             raise KeyError("matelot {} introuvable".format(repr(nom)))
 
         return self.matelots[nom]
+
+    def get_matelot_depuis_personnage(self, personnage):
+        """Retourne le matelot correspondant au personnage ou None."""
+        for matelot in self.matelots.values():
+            if matelot.personnage is personnage:
+                return matelot
+
+        return matelot

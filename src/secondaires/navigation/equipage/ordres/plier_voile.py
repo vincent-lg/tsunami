@@ -28,17 +28,44 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents signaux.
+"""Fichier contenant l'ordre PlierVoile."""
 
-Un signal est une classe toute simple, semblable à une exception en
-ce qu'elle permet de transmettre des messages et met en pause l'exécution
-pendant le temps que le message passe. Cependant, après réception
-du signal, l'exécution peut se poursuivre.
+from secondaires.navigation.equipage.signaux import *
 
-"""
+from ..ordre import *
 
-from secondaires.navigation.equipage.signaux.base import Signal
-from secondaires.navigation.equipage.signaux.attendre import SignalAttendre
-from secondaires.navigation.equipage.signaux.inutile import SignalInutile
-from secondaires.navigation.equipage.signaux.repete import SignalRepete
-from secondaires.navigation.equipage.signaux.termine import SignalTermine
+class PlierVoile(Ordre):
+
+    """Ordre plier_voile.
+
+    Cet ordre est appelé pour demander à un matelot de plier
+    une voile présente dans la salle où il se trouve.
+
+    """
+
+    cle = "plier_voile"
+    def calculer_empechement(self):
+        """Retourne une estimation de l'empêchement du matelot."""
+        if self.matelot.cle_etat:
+            return 100
+        else:
+            return 0
+
+    def executer(self):
+        """Exécute l'ordre : déplace le matelot."""
+        personnage = self.matelot.personnage
+        salle = personnage.salle
+        if not hasattr(salle, "voiles"):
+            return
+
+        voiles = salle.voiles
+        if not voiles:
+            return
+
+        voile = voiles[0]
+        if not voile.hissee:
+            yield SignalInutile("la voile est déjà pliée")
+        else:
+            yield voile.pre_plier(personnage)
+            voile.post_plier(personnage)
+            yield SignalTermine()

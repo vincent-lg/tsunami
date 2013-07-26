@@ -42,3 +42,14 @@ class SignalTermine(Signal):
 
     def __repr__(self):
         return "<signal terminé>"
+
+    def traiter(self, generateur, profondeur):
+        """Traite le générateur."""
+        ordre = generateur.ordre
+        matelot = ordre.matelot
+        if profondeur == 0 and ordre in matelot.ordres:
+            matelot.ordres.remove(ordre)
+        if generateur.parent:
+            matelot.executer_generateur(generateur.parent, profondeur - 1)
+        if profondeur == 0 and matelot.ordres:
+            matelot.executer_ordres()

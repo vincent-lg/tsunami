@@ -38,3 +38,10 @@ ordre.py.
 from secondaires.navigation.equipage.ordres.deplacer import Deplacer
 from secondaires.navigation.equipage.ordres.hisser_voile import HisserVoile
 from secondaires.navigation.equipage.ordres.long_deplacer import LongDeplacer
+from secondaires.navigation.equipage.ordres.plier_voile import PlierVoile
+from secondaires.navigation.equipage.ordres.relacher_gouvernail import \
+        RelacherGouvernail
+from secondaires.navigation.equipage.ordres.tenir_gouvernail import \
+        TenirGouvernail
+from secondaires.navigation.equipage.ordres.virer_babord import VirerBabord
+from secondaires.navigation.equipage.ordres.virer_tribord import VirerTribord

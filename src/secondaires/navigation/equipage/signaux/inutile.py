@@ -30,9 +30,9 @@
 
 """Fichier contenant la classe SignalInutile."""
 
-from secondaires.navigation.equipage.signaux.base import Signal
+from secondaires.navigation.equipage.signaux.termine import SignalTermine
 
-class SignalInutile(Signal):
+class SignalInutile(SignalTermine):
 
     """Signal utilisé pour dire que l'ordre est considéré comme inutile.
 

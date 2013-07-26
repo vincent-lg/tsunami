@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -37,13 +37,13 @@ from secondaires.navigation.constantes import *
 from .base import BaseElement
 
 class Voile(BaseElement):
-    
+
     """Classe représentant une voile.
-    
+
     """
-    
+
     nom_type = "voile"
-    
+
     def __init__(self, cle=""):
         """Constructeur d'un type"""
         BaseElement.__init__(self, cle)
@@ -52,7 +52,7 @@ class Voile(BaseElement):
             "orientation": Attribut(lambda: 5),
             "hissee": Attribut(lambda: False),
         }
-    
+
     @staticmethod
     def get_nom_orientation(voile):
         """Retourne le nom de l'orientation de la voile."""
@@ -79,16 +79,16 @@ class Voile(BaseElement):
             return "serrée au plus près sur tribord amure"
         else:
             return "parfaitement parallèle au pont"
-    
+
     def get_description_ligne(self, personnage):
         """Retourne une description d'une ligne de l'élément."""
         if self.hissee:
             message = self.get_nom_orientation() + "."
         else:
             message = "repliée contre le mât."
-        
+
         return self.nom.capitalize() + " est " + message
-    
+
     def regarder(self, personnage):
         """personnage regarde self."""
         msg = BaseElement.regarder(self, personnage)
@@ -97,7 +97,7 @@ class Voile(BaseElement):
         if or_voile < 0:
             cote = "bâbord"
             or_voile = -or_voile
-        
+
         or_voile = round(or_voile / 5) * 5
         if self.hissee:
             msg += "\nCette voile est " + self.get_nom_orientation()
@@ -105,9 +105,9 @@ class Voile(BaseElement):
                     orientation=or_voile, cote=cote)
         else:
             msg += "\nCette voile est repliée contre le mât."
-        
+
         return msg
-    
+
     def facteur_orientation(self, navire, vent):
         """Retourne le facteur d'orientation de la voile."""
         allure = (navire.direction.direction - vent.direction) % 360
@@ -128,9 +128,51 @@ class Voile(BaseElement):
             angle = -angle
         if angle == 90 and or_voile < 0:
             angle = -90
-        
+
         facteur = 1 - fabs((angle - or_voile) / 20)
         if facteur < 0:
             facteur = 0
-        
+
         return facteur
+
+    def pre_hisser(self, personnage):
+        """Demande au personnage de pré-hisser la voile.
+
+        Cette méthode doit être appelée avant post_hisser. Il y a
+        généralement un temps (retourné par cette méthode) entre les
+        deux.
+
+        """
+        salle = personnage.salle
+        personnage << "Vous commencez de hisser la voile, au prise " \
+                "avec les cordages."
+        personnage.cle_etat = "hisser_voile"
+        salle.envoyer("{} commence à hisser la voile, au prise " \
+                "avec les cordages", personnage)
+        return 7
+
+    def post_hisser(self, personnage):
+        """Post-hisse la voile."""
+        salle = personnage.salle
+        personnage.cle_etat = ""
+        self.hissee = True
+        personnage << "Vous hissez {}.".format(self.nom.lower())
+        salle.envoyer("{{}} hisse {}.".format(self.nom.lower()),
+                personnage)
+
+    def pre_plier(self, personnage):
+        """Commence à plier une voile."""
+        salle = personnage.salle
+        personnage << "Vous commencez de replier la voile."
+        personnage.cle_etat = "plier_voile"
+        salle.envoyer("{} commence de replier la voile.", personnage)
+        return 7
+
+    def post_plier(self, personnage):
+        """Post-plie la voile."""
+        salle = personnage.salle
+        personnage.cle_etat = ""
+        self.hissee = False
+        personnage << "Vous pliez {}.".format(self.nom.lower())
+        salle.envoyer("{{}} plie {}.".format(self.nom.lower()),
+                personnage)

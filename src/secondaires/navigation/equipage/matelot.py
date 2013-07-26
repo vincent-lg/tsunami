@@ -129,18 +129,8 @@ class Matelot(BaseObj):
                     tps))
             importeur.diffact.ajouter_action(nom, tps,
                     self.executer_generateur, generateur, profondeur)
-        elif signal.termine:
-            if profondeur == 0 and ordre in matelot.ordres:
-                matelot.ordres.remove(ordre)
-            if generateur.parent:
-                self.executer_generateur(generateur.parent, profondeur - 1)
-            if profondeur == 0 and matelot.ordres:
-                matelot.executer_ordres()
-        elif signal.attendre:
-            differe = signal.generateur_enfant
-            differe.ordre.volonte = volonte
-            differe.parent = generateur
-            self.executer_generateur(differe, profondeur + 1)
+        else:
+            signal.traiter(generateur, profondeur)
 
     def ordonner(self, ordre):
         """Ajoute l'ordre."""
