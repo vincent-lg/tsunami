@@ -103,11 +103,7 @@ class Transaction:
         objets = [(o, nb) for o, nb in objets if o.est_de_type("argent")]
         dct_objets = {}
         for o, nb in objets:
-            print(o, nb, dct_objets, o in dct_objets)
-            if o in dct_objets:
-                dct_objets[o] += nb
-            else:
-                dct_objets[o] = nb
+            dct_objets[o] = nb
 
         return dct_objets
 
@@ -136,7 +132,6 @@ class Transaction:
         # probablement décomposé en 9 pièces de 1€.
         if somme > 0:
             argent_dct = Transaction.get_argent(initiateur)
-            print(argent_dct)
             somme_ini = Transaction.somme_argent(argent_dct)
             if somme_ini < somme:
                 raise FondsInsuffisants("la somme d'argent de l'initiateur ({}) " \
@@ -159,8 +154,7 @@ class Transaction:
                 valeur_max = valeur * qtt
                 if valeur_max >= t_somme:
                     # On a le compte (ou plus), on s'arrête ici
-                    qtt_min = ceil((valeur_max - valeur_max % t_somme) / \
-                            valeur)
+                    qtt_min = t_somme // valeur
                     argent_donne.append((argent, qtt_min))
                     break
                 else:
@@ -218,9 +212,8 @@ class Transaction:
                     argent_donne[objet] = qtt - t_qtt
 
         # Le personnage doit ramasser l'argent à rendre
-        print(self.argent_rendu)
         for objet, qtt in self.argent_rendu.items():
-            self.initiateur.ramasser(objet, qtt=qtt)
+            self.initiateur.ramasser_ou_poser(objet, qtt=qtt)
 
         if self.receveur:
             self.receveur.parent.zone.argent_total += self.somme
