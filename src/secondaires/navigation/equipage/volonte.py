@@ -107,12 +107,8 @@ class Volonte(BaseObj, metaclass=MetaVolonte):
         personnage = matelot.personnage
         salle = personnage.salle
         affectation = matelot.affectation
-        if affectation and affectation is not salle:
-            revenir = Revenir(matelot, navire)
-            revenir.volonte = self
-        else:
-            revenir = None
-
+        revenir = Revenir(matelot, navire)
+        revenir.volonte = self
         return revenir
 
 
