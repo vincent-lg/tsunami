@@ -73,6 +73,8 @@ class VirerTribord(Ordre):
             direction_actuelle = int(navire.direction.direction)
             direction_voulue = int(self.direction)
             diff = (direction_voulue - direction_actuelle) % 360
+            if diff > 180:
+                diff = 360 - diff
             if diff == 0:
                 yield SignalTermine()
             elif diff < 5:
