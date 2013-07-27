@@ -37,8 +37,7 @@ from secondaires.navigation.equipage.ordres.relacher_gouvernail import \
         RelacherGouvernail
 from secondaires.navigation.equipage.ordres.tenir_gouvernail import \
         TenirGouvernail
-from secondaires.navigation.equipage.ordres.virer_babord import VirerBabord
-from secondaires.navigation.equipage.ordres.virer_tribord import VirerTribord
+from secondaires.navigation.equipage.ordres.virer import Virer as OrdreVirer
 from secondaires.navigation.equipage.volonte import Volonte
 
 class Virer(Volonte):
@@ -123,12 +122,7 @@ class Virer(Volonte):
             tenir.volonte = self
             ordres.append(tenir)
 
-        par_babord = (nav_direction - direction) % 360
-        par_tribord = (direction - nav_direction) % 360
-        if par_tribord < par_babord:
-            virer = VirerTribord(matelot, navire, direction)
-        else:
-            virer = VirerBabord(matelot, navire, direction)
+        virer = OrdreVirer(matelot, navire, direction)
         virer.volonte = self
         ordres.append(virer)
 

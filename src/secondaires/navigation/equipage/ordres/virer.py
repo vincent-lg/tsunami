@@ -28,19 +28,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'ordre VirerBabord."""
+"""Fichier contenant l'ordre Virer."""
 
 from secondaires.navigation.equipage.signaux import *
 
 from ..ordre import *
 
-class VirerBabord(Ordre):
+class Virer(Ordre):
 
-    """Ordre virer_babord.
+    """Ordre virer.
 
     Cet ordre demande au matelot de faire virer le navire sur bâbord
-    jusqu'à ce qu'il soit dans une certaine direction. Le matelot
-    ciblé doit tenir le gouvernail.
+    ou tribord en fonction du besoin, jusqu'à ce qu'il soit dans une certaine
+    direction. Le matelot ciblé doit tenir le gouvernail.
 
     """
 
@@ -62,21 +62,31 @@ class VirerBabord(Ordre):
         matelot = self.matelot
         personnage = matelot.personnage
         salle = personnage.salle
-        if not hasattr(salle, "gouvernail"):
+        direction = self.direction
+        nav_direction = navire.direction.direction
+        if not hasattr(salle, "gouvernail") or salle.gouvernail is None:
             return
 
         gouvernail = salle.gouvernail
         if gouvernail.tenu is not personnage:
             yield SignalInutile("je ne tiens pas ce gouvernail")
         else:
+            par_babord = (nav_direction - direction) % 360
+            par_tribord = (direction - nav_direction) % 360
+            if par_tribord < par_babord:
+                cote = 1
+            else:
+                cote = -1
+
             # On change d'inclinaison du gouvernail si nécessaire
-            direction_actuelle = int(navire.direction.direction)
-            direction_voulue = int(self.direction)
+            direction_actuelle = int(nav_direction)
+            direction_voulue = int(direction)
             diff = (direction_voulue - direction_actuelle) % 360
             if diff > 180:
                 diff = 360 - diff
 
             if diff == 0:
+                gouvernail.centrer(personnage)
                 yield SignalTermine()
             elif diff < 5:
                 orientation = 1
@@ -84,8 +94,12 @@ class VirerBabord(Ordre):
                 orientation = 3
             else:
                 orientation = 5
+            print(direction_actuelle, direction_voulue, diff, cote * orientation)
 
-            if gouvernail.orientation != -orientation:
-                gouvernail.virer_babord(personnage, orientation, True)
+            if gouvernail.orientation != cote * orientation:
+                if cote == -1:
+                    gouvernail.virer_babord(personnage, orientation, True)
+                else:
+                    gouvernail.virer_tribord(personnage, orientation, True)
 
             yield SignalRepete(1)

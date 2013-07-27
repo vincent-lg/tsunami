@@ -43,5 +43,3 @@ from secondaires.navigation.equipage.ordres.relacher_gouvernail import \
         RelacherGouvernail
 from secondaires.navigation.equipage.ordres.tenir_gouvernail import \
         TenirGouvernail
-from secondaires.navigation.equipage.ordres.virer_babord import VirerBabord
-from secondaires.navigation.equipage.ordres.virer_tribord import VirerTribord
