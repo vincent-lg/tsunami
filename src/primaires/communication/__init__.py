@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -50,15 +50,15 @@ from .boite_mail import BoiteMail
 from .mudmail import *
 
 class Module(BaseModule):
-    
+
     """Classe représentant le module primaire 'communication'.
-    
+
     Ce module gère toutes les communications entre clients (entre joueurs
     la plupart du temps). Il s'occupe également des canaux de communication,
     du mudmail et d'autres systèmes anodins.
-    
+
     """
-    
+
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "communication", "primaire")
@@ -71,7 +71,7 @@ class Module(BaseModule):
         self._canaux = None
         self.derniers_canaux = {}
         self.mails = None
-    
+
     def config(self):
         """Configuration du module"""
         self.cfg_com = type(self.importeur).anaconf.get_config("config_com", \
@@ -84,21 +84,21 @@ class Module(BaseModule):
             "PERSO_AUTOCONNECT": PERSO_AUTOCONNECT,
             "BLOQUE": BLOQUE,
         })
-        
+
         BaseModule.config(self)
-    
+
     def init(self):
         """Initialisation du module"""
         self.conversations = self.importeur.supenr.charger_unique(Conversations)
         if self.conversations is None:
             self.conversations = Conversations()
-        
+
         # On récupère les attitudes
         attitudes = self.importeur.supenr.charger_unique(Attitudes)
         if attitudes is None:
             attitudes = Attitudes()
         self.attitudes = attitudes
-        
+
         # On récupère les canaux
         canaux = self.importeur.supenr.charger_unique(Canaux)
         if canaux is None:
@@ -107,7 +107,7 @@ class Module(BaseModule):
             self.logger.info(format_nb(len(canaux),
                     "{nb} cana{x} de communication récupéré{s}"))
         self._canaux = canaux
-        
+
         # On crée les canaux par défaut
         cfg_com = self.cfg_com
         for ligne in cfg_com.liste_canaux:
@@ -124,7 +124,7 @@ class Module(BaseModule):
             chan_info.clr = cfg_com.couleur_info
             chan_info.flags = MUET | PERSO_AUTOCONNECT
             chan_info.resume = cfg_com.resume_info
-        
+
         # On récupère les mails
         mails = None
         mails = self.importeur.supenr.charger_unique(BoiteMail)
@@ -134,15 +134,15 @@ class Module(BaseModule):
             self.logger.info(format_nb(len(mails),
                     "{nb} mudmail{s} récupéré{s}"))
         self.mails = mails
-        
+
         # On lie la méthode joueur_connecte avec l'hook joueur_connecte
         # La méthode joueur_connecte sera ainsi appelée quand un joueur
         # se connecte
         self.importeur.hook["joueur:connecte"].ajouter_evenement(
                 self.joueur_connecte)
-        
+
         BaseModule.init(self)
-    
+
     def ajouter_commandes(self):
         """Ajout des commandes"""
         self.commandes = [
@@ -158,21 +158,21 @@ class Module(BaseModule):
             commandes.repondre.CmdRepondre(),
             commandes.socedit.CmdSocedit(),
         ]
-        
+
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
-        
+
         # Ajout des éditeurs
         self.importeur.interpreteur.ajouter_editeur(EdtChedit)
         self.importeur.interpreteur.ajouter_editeur(EdtSocedit)
         self.importeur.interpreteur.ajouter_editeur(EdtMedit)
         self.importeur.interpreteur.ajouter_editeur(EdtMessagerie)
-    
+
     @property
     def canaux(self):
         """Retourne les canaux existants"""
         return self._canaux
-    
+
     @property
     def attitudes_jouables(self):
         """Retourne une liste les attitudes jouables"""
@@ -185,23 +185,23 @@ class Module(BaseModule):
         except KeyError:
             ret = []
         return ret
-    
+
     def ajouter_canal(self, nom, auteur):
         """Ajoute un canal à la liste des canaux existants
         Retourne le canal créé.
-        
+
         """
         self._canaux[nom] = Canal(nom, auteur, self._canaux)
         return self._canaux[nom]
-    
+
     def supprimer_canal(self, nom):
         """Supprime le canal de la liste des canaux"""
         del self._canaux[nom]
-    
+
     def rejoindre_ou_creer(self, personnage, arguments):
         """Connecte le joueur au canal passé en argument, ou le crée s'il
         n'existe pas.
-        
+
         """
         if not arguments or arguments.isspace():
             personnage << "|err|Vous devez préciser un canal.|ff|"
@@ -216,7 +216,7 @@ class Module(BaseModule):
             canal = self.ajouter_canal(nom_canal, personnage)
             personnage << "|att|Le canal {} a été créé.|ff|".format(nom_canal)
             canal.rejoindre_ou_quitter(personnage)
-    
+
     def quitter_ou_detruire(self, personnage, arguments):
         """Déconnecte le joueur et détruit le canal s'il est vide"""
         if not arguments or arguments.isspace():
@@ -239,9 +239,9 @@ class Module(BaseModule):
             del self.canaux[nom_canal]
             res += " Vide, il a été détruit."
         personnage << "|att|" + res + "|ff|"
-    
+
     def immerger(self, personnage, arguments):
-        """Immerge le personnage dans le canal choisi"""        
+        """Immerge le personnage dans le canal choisi"""
         if not arguments or arguments.isspace():
             personnage << "|err|Vous devez préciser un canal.|ff|"
             return
@@ -254,7 +254,7 @@ class Module(BaseModule):
             personnage << "|err|Vous n'êtes pas connecté à ce canal.|ff|"
             return
         canal.immerger_ou_sortir(personnage)
-    
+
     def dire_dernier_canal(self, personnage, arguments):
         """Envoie un message au dernier canal utilisé par personnage"""
         if not arguments or arguments.isspace():
@@ -275,7 +275,7 @@ class Module(BaseModule):
                     "{}.|ff|".format(dernier_canal)
             return
         canal.envoyer(personnage, arguments)
-    
+
     def dire_canal(self, personnage, arguments):
         """Envoie un message à un canal, de la part de personnage"""
         nom_canal = arguments.split(" ")[0]
@@ -288,7 +288,7 @@ class Module(BaseModule):
             personnage << "Que voulez-vous dire ?"
             return
         canal.envoyer(personnage, message)
-    
+
     def traiter_commande(self, personnage, commande):
         """Traite les commandes au premier niveau"""
         res = False
@@ -309,16 +309,15 @@ class Module(BaseModule):
         elif commande.split(" ")[0] in noms_canaux_connectes:
             res = True
             self.dire_canal(personnage, commande)
-        
+
         for att in self.attitudes_jouables:
-            print(att.cle, commande)
             if contient(att.cle, commande.split(" ")[0]):
                 res = True
                 self.attitudes[att.cle].jouer(personnage, commande)
                 break
-        
+
         return res
-    
+
     def joueur_connecte(self, joueur):
         """On avertit le joueur s'il a des messages non lus."""
         mails = self.mails.get_mails_pour(joueur, RECU)
