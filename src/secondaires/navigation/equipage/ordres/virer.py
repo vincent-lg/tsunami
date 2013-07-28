@@ -94,7 +94,6 @@ class Virer(Ordre):
                 orientation = 3
             else:
                 orientation = 5
-            print(direction_actuelle, direction_voulue, diff, cote * orientation)
 
             if gouvernail.orientation != cote * orientation:
                 if cote == -1:

@@ -32,6 +32,7 @@
 
 import re
 
+from corps.fonctions import lisser
 from secondaires.navigation.equipage.ordres.long_deplacer import LongDeplacer
 from secondaires.navigation.equipage.ordres.relacher_gouvernail import \
         RelacherGouvernail
@@ -141,12 +142,31 @@ class Virer(Volonte):
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""
         direction = self.direction
-        msg = "{} s'écrie : virez sur {}° !".format(
-                personnage.distinction_audible, direction)
+        if direction < 23 or direction > 337:
+            nom_dir = "l'est"
+        elif direction < 67:
+            nom_dir = "le sud-est"
+        elif direction < 112:
+            nom_dir = "le sud"
+        elif direction < 157:
+            nom_dir = "le sud-est-ouest"
+        elif direction < 202:
+            nom_dir = "l'ouest"
+        elif direction < 247:
+            nom_dir = "le nord-ouest"
+        elif direction < 292:
+            nom_dir = "le nord"
+        else:
+            nom_dir = "le nord-est"
+
+        direction = (direction + 90) % 360
+        nom_dir = lisser("virez à " + nom_dir)
+        msg = "{} s'écrie : {}, {}° !".format(
+                personnage.distinction_audible, nom_dir, direction)
         self.navire.envoyer(msg)
 
     @classmethod
     def extraire_arguments(self, direction):
         """Extrait les arguments de la volonté."""
-        direction = int(direction)
+        direction = (int(direction) - 90) % 360
         return (direction, )

@@ -69,8 +69,8 @@ class PrmAffecter(Parametre):
             return
 
         msg = "{distinction} s'écrie: {nom}, tu es affecté {titre}.".format(
-                distinction=personnage.distinction_audible.capitalize(), nom=matelot.nom.capitalize(),
-                titre=salle.titre_court.lower())
+                distinction=personnage.get_distinction_audible().capitalize(),
+                nom=matelot.nom.capitalize(), titre=salle.titre_court.lower())
         navire.envoyer(msg)
         yield 1
         matelot.affectation = salle
