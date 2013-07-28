@@ -110,6 +110,9 @@ class Gouvernail(BaseElement):
         """Affiche le changement d'orientation."""
         orientation = self.orientation
         diff = (orientation + ancienne) % 5
+        if self.orientation < 0:
+            diff = 5 - diff
+
         if diff == 1:
             adverbe = "presque insensiblement"
         elif diff == 2:
