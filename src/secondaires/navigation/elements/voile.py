@@ -135,6 +135,37 @@ class Voile(BaseElement):
 
         return facteur
 
+    def orienter(self, navire, vent):
+        """Oriente la voile (meilleur angle de propulsion)."""
+        allure = (navire.direction.direction - vent.direction) % 360
+        or_voile = -self.orientation
+        if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
+            angle = ANGLE_DEBOUT
+        elif ALL_PRES < allure < (360 - ALL_PRES):
+            angle = ANGLE_PRES
+        elif ALL_BON_PLEIN < allure < (360 - ALL_BON_PLEIN):
+            angle = ANGLE_BON_PLEIN
+        elif ALL_LARGUE < allure < (360 - ALL_LARGUE):
+            angle = ANGLE_LARGUE
+        elif ALL_GRAND_LARGUE < allure < (360 - ALL_GRAND_LARGUE):
+            angle = ANGLE_GRAND_LARGUE
+        else:
+            angle = ANGLE_ARRIERE
+        if allure < 180:
+            angle = -angle
+        if angle == 90 and or_voile < 0:
+            angle = -90
+
+        # On oriente la voile
+        if angle < 0 and self.orientation >= 0 or \
+                angle > 0 and self.orientation <= 0:
+            self.orientation -= self.orientation
+
+        if -5 < angle < 5:
+            angle = 5
+
+        self.orientation = -angle
+
     def pre_hisser(self, personnage):
         """Demande au personnage de pré-hisser la voile.
 

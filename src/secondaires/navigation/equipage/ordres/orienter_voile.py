@@ -28,18 +28,48 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents ordres définis chacun dans un fichier.
+"""Fichier contenant l'ordre OrienterVoile."""
 
-La classe-mère des ordres est définie dans le répertoire parent, fichier
-ordre.py.
+from secondaires.navigation.constantes import *
+from secondaires.navigation.equipage.signaux import *
 
-"""
+from ..ordre import *
 
-from secondaires.navigation.equipage.volontes.hisser_voiles import HisserVoiles
-from secondaires.navigation.equipage.volontes.orienter_voiles import OrienterVoiles
-from secondaires.navigation.equipage.volontes.plier_voiles import PlierVoiles
-from secondaires.navigation.equipage.volontes.relacher_gouvernail import \
-        RelacherGouvernail
-from secondaires.navigation.equipage.volontes.tenir_gouvernail import \
-        TenirGouvernail
-from secondaires.navigation.equipage.volontes.virer import Virer
+class OrienterVoile(Ordre):
+
+    """Ordre orienter_voile.
+
+    Cet ordre est appelé pour demander à un matelot d'orienter cnvenablement
+    une voile présente dans la salle où il se trouve.
+
+    """
+
+    cle = "orienter_voile"
+    def executer(self):
+        """Exécute l'ordre : oriente la voile."""
+        personnage = self.matelot.personnage
+        salle = personnage.salle
+        if not hasattr(salle, "voiles"):
+            return
+
+        navire = salle.navire
+        voiles = salle.voiles
+        if not voiles:
+            return
+
+        voile = voiles[0]
+        if not voile.hissee:
+            yield SignalInutile("la voile n'est pas hissée")
+        else:
+            vent = navire.vent
+            ancienne = voile.orientation
+            voile.orienter(navire, vent)
+            actuelle = voile.orientation
+            if actuelle < 0 and ancienne > 0 or \
+                    actuelle > 0 and ancienne < 0:
+                personnage << "Vous empannez la voile."
+            if actuelle != ancienne:
+                personnage << "Vous orientez la voile."
+                personnage.salle.envoyer("{{}} oriente {}.".format(voile.nom),
+                        personnage)
+            yield SignalTermine()
