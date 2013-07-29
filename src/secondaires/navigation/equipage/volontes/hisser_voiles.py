@@ -117,7 +117,7 @@ class HisserVoiles(Volonte):
         self.navire.envoyer(msg)
 
     @classmethod
-    def extraire_arguments(self, nombre=1):
+    def extraire_arguments(cls, navire, nombre):
         """Extrait les arguments de la volonté."""
         if nombre == "":
             nombre = 1

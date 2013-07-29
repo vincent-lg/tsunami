@@ -98,6 +98,6 @@ class OrienterVoiles(Volonte):
         self.navire.envoyer(msg)
 
     @classmethod
-    def extraire_arguments(self):
+    def extraire_arguments(cls, navire):
         """Extrait les arguments de la volonté."""
         return ()

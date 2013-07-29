@@ -28,20 +28,43 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents ordres définis chacun dans un fichier.
+"""Fichier contenant la volonté VirerBabord."""
 
-La classe-mère des ordres est définie dans le répertoire parent, fichier
-ordre.py.
+import re
 
-"""
-
-from secondaires.navigation.equipage.volontes.hisser_voiles import HisserVoiles
-from secondaires.navigation.equipage.volontes.orienter_voiles import OrienterVoiles
-from secondaires.navigation.equipage.volontes.plier_voiles import PlierVoiles
-from secondaires.navigation.equipage.volontes.relacher_gouvernail import \
+from corps.fonctions import lisser
+from secondaires.navigation.equipage.ordres.long_deplacer import LongDeplacer
+from secondaires.navigation.equipage.ordres.relacher_gouvernail import \
         RelacherGouvernail
-from secondaires.navigation.equipage.volontes.tenir_gouvernail import \
+from secondaires.navigation.equipage.ordres.tenir_gouvernail import \
         TenirGouvernail
+from secondaires.navigation.equipage.ordres.virer import Virer as OrdreVirer
 from secondaires.navigation.equipage.volontes.virer import Virer
-from secondaires.navigation.equipage.volontes.virer_babord import VirerBabord
-from secondaires.navigation.equipage.volontes.virer_tribord import VirerTribord
+
+class VirerBabord(Virer):
+
+    """Classe représentant une volonté.
+
+    Cette volonté choisit un matelot pour, si besoin, se déplacer
+    dans la salle du gouvernail, le prendre en main et lui demander de
+    virer sur bâbord. Cette volonté utilise donc l'alignement relatif,
+    à la différence de 'virer' qui utilise l'alignement absolu.
+
+    """
+
+    cle = "virer_babord"
+    ordre_court = re.compile(r"^vb([0-9]{1,3})$", re.I)
+    ordre_long = re.compile(r"^virer\s+babord\s+([0-9]{1,3})$", re.I)
+    def crier_ordres(self, personnage):
+        """On fait crier l'ordre au personnage."""
+        direction = int((self.navire.direction.direction - self.direction) % \
+                180)
+        msg = "{} s'écrie : virez de {}° bâbord !".format(
+                personnage.distinction_audible, direction)
+        self.navire.envoyer(msg)
+
+    @classmethod
+    def extraire_arguments(cls, navire, direction):
+        """Extrait les arguments de la volonté."""
+        direction = int(direction) % 180
+        return ((navire.direction.direction - direction) % 360, )

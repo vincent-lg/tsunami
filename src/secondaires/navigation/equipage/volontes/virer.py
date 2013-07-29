@@ -166,7 +166,7 @@ class Virer(Volonte):
         self.navire.envoyer(msg)
 
     @classmethod
-    def extraire_arguments(self, direction):
+    def extraire_arguments(cls, navire, direction):
         """Extrait les arguments de la volonté."""
         direction = (int(direction) - 90) % 360
         return (direction, )

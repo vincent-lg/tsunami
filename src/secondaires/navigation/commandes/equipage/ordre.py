@@ -57,7 +57,7 @@ class PrmOrdre(Parametre):
 
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        message = dic_masques["message"].message
+        message = supprimer_accents(dic_masques["message"].message)
         if message == "?":
             return self.liste_ordres(personnage)
 
@@ -71,7 +71,7 @@ class PrmOrdre(Parametre):
         for volonte in volontes.values():
             groupes = volonte.tester(message)
             if isinstance(groupes, tuple):
-                arguments = volonte.extraire_arguments(*groupes)
+                arguments = volonte.extraire_arguments(navire, *groupes)
                 volonte = volonte(navire, *arguments)
                 volonte.crier_ordres(personnage)
                 yield 0.3
