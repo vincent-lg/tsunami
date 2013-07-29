@@ -44,7 +44,7 @@ class SignalInutile(SignalTermine):
     """
 
     def __init__(self, message):
-        Signal.__init__(self)
+        SignalTermine.__init__(self)
         self.termine = True
         self.message = message
 
