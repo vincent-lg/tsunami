@@ -171,11 +171,11 @@ class PNJ(Personnage):
         """Retourne le nom pour le personnage passé en paramètre."""
         return self.nom_singulier
 
-    def mourir(self, adversaire=None):
+    def mourir(self, adversaire=None, recompenser=True):
         """La mort d'un PNJ signifie sa destruction."""
         self.script["meurt"]["avant"].executer(pnj=self, salle=self.salle,
                 adversaire=adversaire)
-        Personnage.mourir(self, adversaire=adversaire)
+        Personnage.mourir(self, adversaire=adversaire, recompenser=recompenser)
         self.script["meurt"]["apres"].executer(pnj=self, salle=self.salle,
                 adversaire=adversaire)
         cadavre = importeur.objet.creer_objet(importeur.objet.prototypes[
@@ -184,7 +184,7 @@ class PNJ(Personnage):
         self.salle.objets_sol.ajouter(cadavre)
 
         # Gain d'XP
-        if adversaire and self.gain_xp:
+        if adversaire and self.gain_xp and recompenser:
             xp = importeur.perso.gen_niveaux.grille_xp[self.niveau][1]
             xp = xp * self.gain_xp / 100
             adversaire.gagner_xp("combat", xp)
