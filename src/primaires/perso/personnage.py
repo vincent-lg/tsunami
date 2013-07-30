@@ -736,7 +736,7 @@ class Personnage(BaseObj):
         if etat:
             etat.peut_faire(cle_action)
 
-    def mourir(self, adversaire=None):
+    def mourir(self, adversaire=None, recompenser=True):
         """Méthode appelée quand le personage meurt."""
         self.cle_etat = ""
         combat = type(self).importeur.combat.get_combat_depuis_salle(

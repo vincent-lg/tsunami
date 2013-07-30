@@ -328,6 +328,6 @@ class Joueur(Personnage):
                         return
                     break
 
-    def mourir(self, adversaire=None):
-        Personnage.mourir(self, adversaire)
+    def mourir(self, adversaire=None, recompenser=True):
+        Personnage.mourir(self, adversaire, recompenser)
         self.cpt_mort = 0
