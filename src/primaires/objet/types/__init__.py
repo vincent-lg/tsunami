@@ -74,6 +74,7 @@ from .vetement import Vetement
 # Nourriture
 from .viande import *
 from .legume import *
+from .fromage import *
 from .fruit import *
 from .gateau import *
 from .oeuf import *
