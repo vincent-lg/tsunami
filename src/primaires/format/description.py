@@ -38,6 +38,7 @@ from .fonctions import *
 
 # Constantes
 TAILLE_LIGNE = 75
+RE_FLOTTANTE = re.compile(r"@([a-z0-9_:]{3,})")
 
 class Description(BaseObj):
 
@@ -117,6 +118,7 @@ class Description(BaseObj):
 
     def remplacer(self, origine, par):
         """Remplace toutes les occurences de 'origine' par 'par'.
+
         Cette recherche & remplacement se fait dans tous les paragraphes.
         Le remplacement ne tient compte ni des majuscules, ni des accents.
 
@@ -160,23 +162,76 @@ class Description(BaseObj):
 
     def regarder(self, personnage, elt=None):
         """Le personnage regarde la description."""
-        paragraphes = []
+        description = ""
+        desc_flottantes = []
         elt = elt or self.parent
         for paragraphe in self.paragraphes:
             paragraphe = paragraphe.replace("|nl|", "\n").replace(
                     "|tab|", "   ")
             if self.scriptable:
-                evts = re.findall(r"(\$[a-z0-9]+)([\n ,.]|$)", paragraphe)
-                evts = [e[0] for e in evts]
-                for nom_complet in evts:
-                    nom = nom_complet[1:]
-                    evt = self.script["regarde"][nom]
+                # On charge récursivement les descriptions flottantes
+                paragraphe, flottantes = self.charger_descriptions_flottantes(
+                        paragraphe)
+                desc_flottantes += [fl.description for fl in flottantes if \
+                        fl.description not in desc_flottantes]
+                description += paragraphe + "\n"
+
+        description = description.rstrip("\n ")
+        if self.scriptable:
+            evts = re.findall(r"(\$[a-z0-9]+)([\n ,.]|$)", description)
+        else:
+            evts = []
+
+        evts = [e[0] for e in evts]
+        desc_flottantes.insert(0, self)
+        for nom_complet in evts:
+            nom = nom_complet[1:]
+            trouve = False
+            for desc in desc_flottantes:
+                evt = desc.script["regarde"]
+                if nom in evt.evenements:
+                    evt = evt.evenements[nom]
                     evt.executer(True, regarde=elt, personnage=personnage)
-                    print("execute", personnage, elt)
                     retour = evt.espaces.variables["retour"]
-                    paragraphe = paragraphe.replace(nom_complet, retour)
+                    description = description.replace(nom_complet, retour)
+                    trouve = True
+                    break
+
+            if not trouve:
+                raise ValueError("impossible de trouver la description " \
+                    "dynamique '{}'".format(nom))
+
+        paragraphes = []
+        for paragraphe in description.split("\n"):
             paragraphes.append("\n".join(wrap(paragraphe, TAILLE_LIGNE)))
+
+
         return "\n".join(paragraphes)
+
+    def charger_descriptions_flottantes(self, paragraphe):
+        """Charge récursivement les descriptions flottantes."""
+        flottantes = []
+        for flottante in RE_FLOTTANTE.findall(paragraphe):
+            try:
+                desc_flottante = importeur.format.descriptions_flottantes[
+                        flottante]
+            except KeyError:
+                raise ValueError("la description flottante '{}' est " \
+                        "introuvable".format(flottante))
+
+            flottantes.append(desc_flottante)
+            description = "\n".join([paragraphe.replace("|nl|", "\n").replace(
+                    "|tab|", "   ") for paragraphe in \
+                    desc_flottante.description.paragraphes])
+            print("Inclus", repr(description))
+            paragraphe = paragraphe.replace("@" + flottante, description)
+
+        if RE_FLOTTANTE.search(paragraphe):
+            paragraphe, autres = self.charger_descriptions_flottantes(
+                    paragraphe)
+            return paragraphe, flottantes + autres
+
+        return paragraphe, flottantes
 
 # On importe ici pour éviter les boucles
 from primaires.scripting.script import Script
