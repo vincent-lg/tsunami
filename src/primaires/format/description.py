@@ -174,7 +174,8 @@ class Description(BaseObj):
                         paragraphe)
                 desc_flottantes += [fl.description for fl in flottantes if \
                         fl.description not in desc_flottantes]
-                description += paragraphe + "\n"
+
+            description += paragraphe + "\n"
 
         description = description.rstrip("\n ")
         if self.scriptable:
