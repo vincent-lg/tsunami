@@ -32,6 +32,9 @@
 
 from math import sin, atan, radians, sqrt
 
+from vector import Vector, mag
+
+
 from abstraits.obase import BaseObj
 from primaires.vehicule.vecteur import Vecteur
 from .chemin import Chemin
@@ -168,6 +171,8 @@ class Chemins(BaseObj):
         if origine is destination:
             return [origine]
 
+        o_vec = Vector(*origine.coords.tuple())
+        d_vec = Vector(*origine.coords.tuple())
         o_coords = origine.coords.tuple()
         d_coords = destination.coords.tuple()
         if not d3:
@@ -188,49 +193,16 @@ class Chemins(BaseObj):
 
         # On parcourt les salles
         trajectoire = []
-        ab = Vecteur(d_x - o_x, d_y - o_y, d_z - o_z)
         for salle in salles:
-            if salle in (origine, destination):
-                trajectoire.append(salle)
-                continue
-            coords = salle.coords.tuple()
-            x, y, z = coords
-            if not d3:
-                z = 0
-            ac = Vecteur(x - o_x, y - o_y, z - o_z)
-            d = 0
-            # On détermine les angles horizontaux et verticaux entre ab et ac
-            alpha = radians(ab.argument() - ac.argument())
-            if not d3:
-                d = ac.norme * sin(alpha)
-            else:
-                if ab.x or ab.y:
-                    # angle de ab avec (O, x, y) : arctan(z/sqrt(x² + y²))
-                    beta_ab = atan(ab.z / sqrt(ab.x ** 2 + ab.y ** 2))
-                elif ab.z < 0:
-                    beta_ab = radians(-90)
-                else:
-                    beta_ab = radians(90)
-                if ac.x or ac.y:
-                    # angle de ac avec (O, x, y) idem
-                    beta_ac = atan(ac.z / sqrt(ac.x ** 2 + ac.y ** 2))
-                elif ac.z < 0:
-                    beta_ac = radians(-90)
-                else:
-                    beta_ac = radians(90)
-                beta = beta_ab - beta_ac
-                # Distances horizontale et verticale entre c et ab
-                mc_x = ac.norme * sin(alpha)
-                mc_z = ac.norme * sin(beta)
-                d = sqrt(mc_x ** 2 + mc_z ** 2)
+            p_vec = Vector(*salle.coords.tuple())
+            d = o_vec.distance(d_vec, p_vec)
             if d <= sensibilite:
                 trajectoire.append(salle)
 
         # Fonction retournant la distance de la salle à l'origine
         def distance(salle):
             x, y, z = salle.coords.tuple()
-            v_o_salle = Vecteur(x - o_x, y - o_y, z - o_z)
-            return v_o_salle.norme
+            return mag(x, y, z, o_x, o_y, o_z)
 
         trajectoire = sorted(trajectoire, key=distance)
         return trajectoire
