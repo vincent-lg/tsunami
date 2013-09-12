@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -31,12 +31,13 @@
 """Package contenant la commande 'allure'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.vehicule.vecteur import get_direction
 from secondaires.navigation.constantes import *
 
 class CmdAllure(Commande):
-    
+
     """Commande 'allure'"""
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "allure", "trim")
@@ -51,25 +52,25 @@ class CmdAllure(Commande):
             "la direction du navire. Autrement dit, vous ne pourrez " \
             "pas dire que le vent vient du nord avec cette seule " \
             "commande, vous devrez utiliser une boussole pour ce faire."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         salle = personnage.salle
         if not hasattr(salle, "navire") or salle.navire is None:
             personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
             return
-        
+
         navire = salle.navire
-        
+
         # On récupère les directions
         nav_direction = navire.direction.direction
         vent = navire.vent
-        
-        if vent.norme == 0:
+
+        if vent.mag == 0:
             personnage << "|err|Vous ne ressentez aucun souffle de vent.|ff|"
             return
-        
-        ven_direction = vent.direction
+
+        ven_direction = get_direction(vent)
         angle = (nav_direction - ven_direction) % 360
         precision = 10 # précision en degré
         angle = round(angle / precision) * precision
@@ -77,7 +78,7 @@ class CmdAllure(Commande):
         if angle > 180:
             angle = (180 - angle) % 180
             tribord = False
-        
+
         cote = "tribord" if tribord else "bâbord"
         if angle == 0:
             msg_vent = "Le vent souffle directement sur l'arrière du navire."
@@ -92,9 +93,9 @@ class CmdAllure(Commande):
                     "du navire ({angle}°)."
         else:
             msg_vent = "Le vent souffle directement face au navire."
-        
+
         msg_vent = msg_vent.format(cote=cote, angle=angle)
-        
+
         # Allure
         if angle > ALL_DEBOUT:
             msg_allure = "Le navire est au vent debout."
@@ -109,5 +110,5 @@ class CmdAllure(Commande):
             msg_allure = "Le navire est au grand largue."
         else:
             msg_allure = "Le navire est vent arrière."
-        
+
         personnage << msg_vent + "\n" + msg_allure

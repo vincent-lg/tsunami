@@ -30,9 +30,10 @@
 
 """Fichier contenant la classe Voile, détaillée plus bas."""
 
-from math import fabs
+from math import fabs, degrees
 
 from bases.objet.attribut import Attribut
+from primaires.vehicule.vecteur import get_direction
 from secondaires.navigation.constantes import *
 from .base import BaseElement
 
@@ -110,7 +111,7 @@ class Voile(BaseElement):
 
     def facteur_orientation(self, navire, vent):
         """Retourne le facteur d'orientation de la voile."""
-        allure = (navire.direction.direction - vent.direction) % 360
+        allure = (navire.direction.direction - get_direction(vent)) % 360
         or_voile = -self.orientation
         if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
             angle = ANGLE_DEBOUT
