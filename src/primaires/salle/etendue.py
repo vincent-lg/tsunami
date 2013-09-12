@@ -2,10 +2,10 @@
 
 # Copyright (c) 2011 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -30,32 +30,34 @@
 
 """Fichier contenant la classe Etendue, détaillée plus bas."""
 
+from vector import mag
+
 from abstraits.obase import BaseObj
 from .coordonnees import Coordonnees
 
 class Etendue(BaseObj):
-    
+
     """Cette classe représente une étendue d'eau.
-    
+
     Une étendue d'eau peut être un lac, une rivière, une mer ou un océan.
     A noter, cela est extrêmement important, qu'une étendue ne retient
     pas la position où elle se trouve, seulement ses délimiteurs.
     C'est pourquoi faire une étendue d'eau infinie est une mauvaise idée.
-    
+
     Les étendues d'eaux peuvent être chaînées (une rivière se jète dans
     la mer).
-    
+
     Attributs :
         obstacles -- dictionnaire des obstacles
         cotes -- un dictionnaire des côtes ({coord: salle}) [1]
         liens -- un dictionnaire des liens avec d'autres étendues
                 ({coord: etendue})
-    
+
     [1] Les côtes ici sont celles débarcables. Toutes les salles non
         débarcables sont des obstacles.
-    
+
     """
-    
+
     enregistrer = True
     _nom = "etendue"
     _version = 1
@@ -68,42 +70,42 @@ class Etendue(BaseObj):
         self.obstacles = {}
         self.cotes = {}
         self.liens = {}
-    
+
     def __getnewargs__(self):
         return ("", )
-    
+
     def __repr__(self):
         return "<étendue {}>".format(repr(self.cle))
-    
+
     def __str__(self):
         return self.cle
-    
+
     def __contains__(self, coordonnees):
         """Retourne True si les coordonnées sont des côtes de l'étendue.
-        
+
         Les coordonnées peuvent être sous la forme d'un tuple ou d'un objet
         Coordonnees.
-        
+
         """
         coordonnees = self.convertir_coordonnees(coordonnees)
         return coordonnees in self.points.keys()
-    
+
     def __getitem__(self, item):
         """Retourne le point correspondant aux coordonnées entrées.
-        
+
         Les coordonnées peuvent être :
             un tuple
             un objet de type Coordonnees
-        
+
         Le retour peut être de type :
             None : c'est un obstacle
             salle : une côte débarcable
             etendue : une étendue voisine
-        
+
         """
         coordonnees = self.convertir_coordonnees(item)
         return self.points[coordonnees]
-    
+
     @property
     def points(self):
         """Constitution d'un dictionnaire des points."""
@@ -111,15 +113,15 @@ class Etendue(BaseObj):
         points.update(self.cotes)
         points.update(self.liens)
         return points
-    
+
     @staticmethod
     def convertir_coordonnees(coordonnees):
         """Retourne un tuple des coordonnées en 2D.
-        
+
         Le type des coordonnées peut être :
             Un tuple de N dimensions (N >= 2)
             Un objet de type Coordonnees
-        
+
         """
         if isinstance(coordonnees, tuple):
             # Les tuples sont ramenés à 2 dimensions
@@ -130,9 +132,9 @@ class Etendue(BaseObj):
             raise TypeError(
                     "type de coordonnées non traité : {}".format(repr(
                     type(coordonnees))))
-        
+
         return coordonnees
-    
+
     def ajouter_obstacle(self, coordonnees, obstacle):
         """Ajoute l'obstacle."""
         coordonnees = self.convertir_coordonnees(coordonnees)
@@ -140,24 +142,24 @@ class Etendue(BaseObj):
             raise ValueError(
                     "un point de coordonnées {} existe déjà".format(
                     coordonnees))
-        
+
         self.obstacles[coordonnees] = obstacle
-    
+
     def est_obstacle(self, coordonnees):
         """Retourne True si les coordonnées sont un obstacle."""
         coordonnees = self.convertir_coordonnees(coordonnees)
         return coordonnees in self.obstacles
-    
+
     def est_cote(self, salle):
         """Retourne True si la salle est une côte."""
         coordonnees = self.convertir_coordonnees(salle.coords)
         return coordonnees in self.cotes.keys()
-    
+
     def est_lien(self, coordonnees):
         """Retourne True si les coordonnées sont un lien."""
         coordonnees = self.convertir_coordonnees(coordonnees)
         return coordonnees in self.liens.keys()
-    
+
     def ajouter_cote(self, salle):
         """Ajoute la côte accostable (peut-être une île dans l'étendue)."""
         coordonnees = self.convertir_coordonnees(salle.coords)
@@ -165,39 +167,59 @@ class Etendue(BaseObj):
             raise ValueError(
                     "un point de coordonnées {} existe déjà".format(
                     coordonnees))
-        
+
         self.cotes[coordonnees] = salle
         salle.etendue = self
-    
+
     def ajouter_lien(self, coordonnees, etendue):
         """Ajoute le lien vers une autre étendue.
-        
+
         Note : un lien lie deux étendues. Par exemple, on peut dire que le
         point (3, 4) est un lien de l'étendue riviere_picte vers
         mer_sans_fin.
-        
+
         """
         coordonnees = self.convertir_coordonnees(coordonnees)
         if coordonnees in self.points.keys():
             raise ValueError(
                     "un point de coordonnées {} existe déjà".format(
                     coordonnees))
-        
+
         self.liens[coordonnees] = etendue
-    
+
     def supprimer_obstacle(self, coordonnees):
         """Supprime un obstacle."""
         coordonnees = self.convertir_coordonnees(coordonnees)
         del self.obstacles[coordonnees]
-    
+
     def supprimer_cote(self, salle):
         """Supprime la salle des côtes."""
         coordonnees = self.convertir_coordonnees(salle.coords)
         salle = self.cotes[coordonnees]
         salle.etendue = None
         del self.cotes[coordonnees]
-    
+
     def supprimer_lien(self, coordonnees):
         """Supprime un lien."""
         coordonnees = self.convertir_coordonnees(coordonnees)
         del self.liens[coordonnees]
+
+    def get_points_proches(self, x, y, distance):
+        """Retourne les points proches de la position indiquée.
+
+        Paramètres à préciser :
+            x -- la coordonnée X de la position
+            y -- la coordonnée Y de la position
+            distance -- la distance maximum des points recherchés
+
+        """
+        points = self.obstacles.copy()
+        points.update(self.cotes)
+        points.update(self.liens)
+        proches = {}
+        altitude = self.altitude
+        for (bx, by), point in points.items():
+            if mag(x, y, altitude, bx, by, altitude) <= distance:
+                proches[(bx, by)] = point
+
+        return proches

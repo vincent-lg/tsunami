@@ -30,12 +30,14 @@
 
 """Fichier contenant la classe Navire, détaillée plus bas."""
 
-from math import fabs
+from math import fabs, sqrt
+
+from vector import *
 
 from abstraits.obase import BaseObj
 from primaires.perso.exceptions.stat import DepassementStat
 from primaires.vehicule.force import Force
-from primaires.vehicule.vecteur import Vecteur
+from primaires.vehicule.vecteur import *
 from primaires.vehicule.vehicule import Vehicule
 from secondaires.navigation.equipage import Equipage
 from .constantes import *
@@ -79,6 +81,9 @@ class Navire(Vehicule):
 
     def __getnewargs__(self):
         return (None, )
+
+    def __repr__(self):
+        return "<Navire {}>".format(self.cle)
 
     @property
     def taille(self):
@@ -138,22 +143,24 @@ class Navire(Vehicule):
         Il s'agit en fait d'un condensé des vents allentours.
 
         """
-        vec_nul = Vecteur(0, 0, 0)
+        vec_nul = Vector(0, 0, 0)
 
         if self.etendue is None:
             return vec_nul
 
         # On récupère le vent le plus proche
-        vents = type(self).importeur.navigation.vents_par_etendue.get(
+        vents = importeur.navigation.vents_par_etendue.get(
                 self.etendue.cle, [])
 
         if not vents:
             return vec_nul
 
         # On calcul un vecteur des vents restants
-        vecteur_vent = Vecteur(0, 0, 0)
+        vecteur_vent = Vector(0, 0, 0)
         for vent in vents:
-            distance = (vent.position - self.position).norme
+            v_x, v_y = vent.position.x, vent.position.y
+            x, y = self.position.x, self.position.y
+            distance = mag(v_x, v_y, 0, x, y, 0)
             if distance < vent.longueur:
                 facteur = 1
             elif distance < vent.longueur ** 2:
@@ -161,7 +168,8 @@ class Navire(Vehicule):
             else:
                 facteur = 0.3
 
-            vecteur_vent += facteur * vent.vitesse
+            vitesse = Vector(vent.vitesse.x, vent.vitesse.y, vent.vitesse.z)
+            vecteur_vent = vecteur_vent + vitesse * facteur
 
         return vecteur_vent
 
@@ -169,7 +177,7 @@ class Navire(Vehicule):
     def nom_allure(self):
         """Retourne le nom de l'allure."""
         vent = self.vent
-        allure = (self.direction.direction - vent.direction) % 360
+        allure = (self.direction.direction - get_direction(vent)) % 360
         if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
             return "vent debout"
         elif ALL_PRES < allure < (360 - ALL_PRES):
@@ -186,7 +194,7 @@ class Navire(Vehicule):
     @property
     def vitesse_noeuds(self):
         """Retourne la vitesse en noeuds."""
-        vit_ecoulement = type(self).importeur.temps.cfg.vitesse_ecoulement
+        vit_ecoulement = importeur.temps.cfg.vitesse_ecoulement
         vit_ecoulement = eval(vit_ecoulement)
         distance = self.vitesse.norme
         distance = distance * CB_BRASSES / 1000
@@ -218,6 +226,32 @@ class Navire(Vehicule):
     def graph(self):
         """Retourne le graph défini par le modèle."""
         return self.modele.graph
+
+    @property
+    def opt_position(self):
+        """Retourne la position optimisée (Vector)."""
+        coords = (self.position.x, self.position.y, self.position.z)
+        return Vector(*coords)
+
+    @property
+    def opt_vitesse(self):
+        """Retourne la vitesse optimisée (Vector)."""
+        coords = (self.vitesse.x, self.vitesse.y, self.vitesse.z)
+        return Vector(*coords)
+
+    @property
+    def opt_direction(self):
+        """Retourne la direction optimisée (Vector)."""
+        coords = (self.direction.x, self.direction.y, self.direction.z)
+        return Vector(*coords)
+
+    def get_max_distance_au_centre(self):
+        """Retourne la distance maximum par rapport au centre du navire."""
+        distances = []
+        for x, y, z in self.salles.keys():
+            distances.append(sqrt(x ** 2 + y ** 2 + z ** 2))
+
+        return max(distances)
 
     def construire_depuis_modele(self):
         """Construit le navire depuis le modèle."""
@@ -324,53 +358,32 @@ class Navire(Vehicule):
     def avancer(self, temps_virtuel):
         """Fait avancer le navire si il n'est pas immobilisé."""
         vit_or = vit_fin = self.vitesse_noeuds
-        origine = self.position.copier()
+        origine = self.opt_position
+        vitesse = self.opt_vitesse
         if not self.immobilise:
-            Vehicule.avancer(self, temps_virtuel)
-            vit_fin = self.vitesse_noeuds
-            arrive = self.position.copier()
-
             # On contrôle les collisions
             # On cherche toutes les positions successives du navire
-            vecteurs = [origine]
-            distance = (arrive - origine).norme
-            if distance > 0:
-                vec = (1 / distance) * (arrive - origine)
-                for i in range(1, int(distance)):
-                    t_vec = origine + i * vec
-                    vecteurs.append(t_vec)
+            vecteurs = []
+            for coords, salle in self.salles.items():
+                vecteurs.append(origine + Vector(*coords))
 
-            vecteurs.append(arrive)
-
-            # On parcourt tous les points parcourus par le navire
-            nav_points = {}
-            nav_salles = {}
-            d = self.direction.direction + 90
-            i = self.direction.inclinaison
-            operation = lambda p, v: p + v.tourner_autour_z(d).incliner(i)
-            for p in vecteurs:
-                for vec, salle in self.salles.items():
-                    vec = Vecteur(*vec)
-                    vec = operation(p, vec)
-                    if vec not in nav_points:
-                        nav_points[vec] = p
-                        nav_salles[vec] = salle
-
-            # On parcourt chaque point de l'étendue
+            # On récupère les points proches du navire
             etendue = self.etendue
-            points = tuple(etendue.points.items())
+            centre = self.get_max_distance_au_centre()
+            points = tuple(etendue.get_points_proches(origine.x, origine.y,
+                    vitesse.mag * temps_virtuel + centre).items())
             points += importeur.navigation.points_navires(self)
-            valide = vecteurs[0]
-            for c, point in points:
-                c = Vecteur(c[0], c[1], etendue.altitude)
-                for v, p in nav_points.items():
-                    dist = (c - v).norme
-                    if dist < 0.5:
-                        if not self.en_collision:
-                            self.collision(nav_salles[v], point)
-                            self.position.x = valide.x
-                            self.position.y = valide.y
-                            self.position.z = valide.z
+            # Si l'étendue a un point sur le segment
+            # (position -> position + vitesse) alors collision
+            for vecteur in vecteurs:
+                projetee = vecteur + vitesse * temps_virtuel
+                b_arg = [vecteur.x, vecteur.y, vecteur.z, projetee.x, \
+                        projetee.y, projetee.z]
+                for coords, point in points:
+                    v_point = Vector(*coords)
+                    arg = b_arg + list(coords) + [etendue.altitude, 0.5]
+                    if in_rectangle(*arg) and vecteur.distance(
+                            projetee, v_point) < 0.5:
                         self.vitesse.x = 0
                         self.vitesse.y = 0
                         self.vitesse.z = 0
@@ -379,14 +392,17 @@ class Navire(Vehicule):
                         self.acceleration.z = 0
                         self.en_collision = True
                         return
-                    valide = p
 
-        if vit_or == 0 and vit_fin > 0.05:
+            Vehicule.avancer(self, temps_virtuel)
+            vit_fin = self.vitesse_noeuds
+
+        if vit_or <= 0.01 and vit_fin >= 0.05:
             if vit_fin < 0.5:
                 self.envoyer("Vous sentez le navire accélérer en douceur.")
             elif vit_fin >= 0.5:
                 self.envoyer("Vous sentez le navire prendre rapidement " \
                         "de la vitesse.")
+
         self.en_collision = False
 
     def collision(self, salle, contre=None):
@@ -481,10 +497,10 @@ class Propulsion(Force):
 
     def calcul(self):
         """Retourne le vecteur de la force."""
-        vec_nul = Vecteur(0, 0, 0)
+        vec_nul = Vector(0, 0, 0)
         navire = self.subissant
         vent = navire.vent
-        direction = navire.direction
+        direction = navire.opt_direction
         voiles = navire.voiles
         voiles = [v for v in voiles if v.hissee]
         for rames in navire.rames:
@@ -498,7 +514,7 @@ class Propulsion(Force):
         if voiles:
             fact_voile = sum(v.facteur_orientation(navire, vent) \
                     for v in voiles) / len(voiles) * 0.7
-            allure = (direction.direction - vent.direction) % 360
+            allure = (get_direction(direction) - get_direction(vent)) % 360
             if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
                 facteur = navire.vent_debout()
             elif ALL_PRES < allure < (360 - ALL_PRES):
@@ -512,7 +528,7 @@ class Propulsion(Force):
             else:
                 facteur = navire.vent_arriere()
 
-            vecteur = facteur * fact_voile * vent.norme * direction
+            vecteur = direction * facteur * fact_voile * vent.mag
 
         # Calcul des rames
         if rames:
@@ -521,6 +537,6 @@ class Propulsion(Force):
             for f in facts:
                 fact *= f
 
-            vecteur = vecteur + fact * direction
+            vecteur = vecteur + direction * fact
 
-        return vecteur
+        return Vecteur(vecteur.x, vecteur.y, vecteur.z)
