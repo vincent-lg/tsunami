@@ -34,7 +34,7 @@ Il contient également d'autres fonctions utiles à la classe.
 
 """
 
-from math import sqrt, radians
+from math import sqrt, radians, pi
 
 from vector import Vector, mag
 
@@ -78,10 +78,10 @@ def entrer_point(dictionnaire, position, angle, v_dist, coords, point):
     if a_point:
         # Détermine si le point est plus proche ou non
         x, y, p_vecteur, a_point = a_point
-        if (position - p_vecteur).mag == v_dist.mag and isinstance(point,
+        if p_vecteur.mag == v_dist.mag and isinstance(point,
                 Salle):
             dictionnaire[angle] = (coords[0], coords[1], v_dist, point)
-        elif (position - p_vecteur).mag > v_dist.mag:
+        elif v_dist.mag <= p_vecteur.mag:
             dictionnaire[angle] = (coords[0], coords[1], v_dist, point)
     else:
         dictionnaire[angle] = (coords[0], coords[1], v_dist, point)
@@ -146,10 +146,10 @@ class Visible:
             t_vec = Vector(v_dist.x, v_dist.y, v_dist.z)
             c_angle = 0 # va changer au fur et à mesure que l'on tourne
             while test:
-                angle = radians(precision)
-                a_vec = position + t_vec.around_z(angle)
+                t_vec.around_z(radians(precision))
+                a_vec = position + t_vec
                 c_angle += precision
-                if round(a_vec.x) == t_x and round(a_vec.y) == t_y:
+                if (t_vec - v_dist).mag < 1:
                     direction = get_direction(t_vec)
                     r_direction = (direction - \
                             navire.direction.direction) % 360
@@ -166,10 +166,10 @@ class Visible:
             t_vec = Vector(v_dist.x, v_dist.y, v_dist.z)
             c_angle = 0
             while test:
-                angle = radians(precision)
-                a_vec = position + t_vec.around_z(angle)
+                t_vec.around_z(-radians(precision) % (pi * 2))
+                a_vec = position + t_vec
                 c_angle += precision
-                if round(a_vec.x) == t_x and round(a_vec.y) == t_y:
+                if (t_vec - v_dist).mag < 1:
                     direction = get_direction(t_vec)
                     r_direction = (direction - \
                             navire.direction.direction) % 360

@@ -30,6 +30,9 @@
 
 """Fichier contenant la classe Etendue, détaillée plus bas."""
 
+from math import fabs
+from random import choice
+
 from vector import mag
 
 from abstraits.obase import BaseObj
@@ -223,3 +226,65 @@ class Etendue(BaseObj):
                 proches[(bx, by)] = point
 
         return proches
+
+    def ajouter_multiple(self, o_x, o_y, d_x, d_y, nom_terrain):
+        """Construit multiple points dans leétendue.
+
+        Les paramètres à entrer sont :
+            o_x -- l'âxe X du point d'origine
+            o_y -- l'âxe Y du point d'origine
+            d_x -- l'âxe X du point de destination
+            o_y -- l'âxe Y du point de destination
+            nom_terrain -- le nom du terrain
+
+        La construction des multiples points est aléatoire. Le but du
+        système est de créer un nombre variable de points pour relier origine
+        et destination, mais il ne le fait pas nécessairement en ligne
+        droite.
+
+        """
+        dir_x = d_x - o_x
+        dir_y = d_y - o_y
+        obstacle = importeur.salle.obstacles[nom_terrain]
+        fini = False
+        l_x = x = o_x
+        l_y = y = o_y
+        points = [(o_x, o_y)]
+        def_points = self.points
+        while not fini:
+            if d_x > l_x:
+                x = 1
+            elif d_x < l_x:
+                x = -1
+            else:
+                x = 0
+            if d_y > l_y:
+                y = 1
+            elif d_y < l_y:
+                y = -1
+            else:
+                y = 0
+
+            choix = []
+            if x != 0:
+                nb = int(fabs(d_x - l_x))
+                choix += [(l_x + x, l_y)] * nb
+            if y != 0:
+                nb = int(fabs(d_y - l_y))
+                choix += [(l_x, l_y + y)] * nb
+
+            point = choice(choix)
+            l_x, l_y = point
+            points.append((l_x, l_y))
+
+            if l_x == d_x and l_y == d_y:
+                fini = True
+
+        nb = 0
+        for x, y in points:
+            coords = (x, y)
+            if coords not in def_points:
+                self.ajouter_obstacle(coords, obstacle)
+                nb += 1
+
+        return nb
