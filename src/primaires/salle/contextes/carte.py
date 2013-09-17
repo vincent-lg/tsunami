@@ -142,6 +142,7 @@ class CarteEtendue(Contexte):
         options = {
             "q": self.opt_quitter,
             "i": self.opt_info,
+            "a": self.opt_placer,
         }
         if msg.startswith("/"):
             opt = msg.split(" ")[0][1:].lower()
@@ -241,6 +242,29 @@ class CarteEtendue(Contexte):
             return
 
         self.pere << msg
+
+    def opt_placer(self, reste):
+        """Place un nouveau point sur la carte."""
+        coords, message = self.point_unique(reste)
+        if coords is None:
+            self.pere << message
+            return
+
+        etendue = self.etendue
+        message = message.strip()
+        terrain = importeur.salle.get_terrain(message)
+        if not terrain:
+            self.pere << "|err|Terrain {} inconnu.|ff|".format(repr(message))
+            return
+
+        obstacle = importeur.salle.obstacles[terrain.nom]
+        if coords in etendue.obstacles:
+            del etendue.obstacles[coords]
+        if coords in etendue.liens:
+            del etendue.liens[coords]
+
+        etendue.ajouter_obstacle(coords, obstacle)
+        self.actualiser()
 
     def point_unique(self, msg):
         """Retourne le point unique identifié par msg.

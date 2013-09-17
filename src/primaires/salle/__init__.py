@@ -591,6 +591,20 @@ class Module(BaseModule):
         self.terrains[nom] = terrain
         return terrain
 
+    def get_terrain(self, nom):
+        """Retourne le terrain si trouvé.
+
+        La recherche se fait indépendemment des accents, majuscules et
+        minuscules. Si le terrain n'est pas trouvé, retourne None.
+
+        """
+        nom = supprimer_accents(nom).lower()
+        for terrain in self.terrains.values():
+            if supprimer_accents(terrain.nom).lower() == nom:
+                return terrain
+
+        return None
+
     def creer_etendue(self, cle):
         """Crée une étendue d'eau."""
         if cle in self.etendues.keys():
