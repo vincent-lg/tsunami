@@ -207,23 +207,52 @@ class Etendue(BaseObj):
         coordonnees = self.convertir_coordonnees(coordonnees)
         del self.liens[coordonnees]
 
-    def get_points_proches(self, x, y, distance):
+    def get_etendues_proches(self, x, y, distance, exceptions=None):
+        """Retourne les étendues liées à self suffisamment proches.
+
+        Les apramètres à préciser sont :
+            x -- l'âxe X du point de départ
+            y -- l'âxe Y du point de départ
+            distance -- la distance maximale du point de départ
+
+        Les liens sont parcourus pour trouver les étendues proches.
+        Si des étendues sont trouvées, la même recherche est effectuée
+        récursivement dessus.
+
+        """
+        exceptions = exceptions or set()
+        exceptions.add(self)
+        etendues = [self]
+        for (bx, by), etendue in self.liens.items():
+            if mag(x, y, 0, bx, by, 0) <= distance:
+                if etendue not in exceptions:
+                    etendues += etendue.get_etendues_proches(
+                            x, y, distance, exceptions)
+
+        return etendues
+
+    def get_points_proches(self, x, y, distance, liens=True):
         """Retourne les points proches de la position indiquée.
 
         Paramètres à préciser :
             x -- la coordonnée X de la position
             y -- la coordonnée Y de la position
             distance -- la distance maximum des points recherchés
+            liens -- recherche récursive dans les étendues liées
 
         """
-        points = self.obstacles.copy()
-        points.update(self.cotes)
-        points.update(self.liens)
         proches = {}
         altitude = self.altitude
-        for (bx, by), point in points.items():
-            if mag(x, y, altitude, bx, by, altitude) <= distance:
-                proches[(bx, by)] = point
+        etendues = [self]
+        if liens:
+            etendues = self.get_etendues_proches(x, y, distance)
+
+        for etendue in etendues:
+            points = etendue.obstacles.copy()
+            points.update(etendue.cotes)
+            for (bx, by), point in points.items():
+                if mag(x, y, altitude, bx, by, altitude) <= distance:
+                    proches[(bx, by)] = point
 
         return proches
 
