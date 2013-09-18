@@ -74,6 +74,11 @@ class Navire(Vehicule):
         self.equipage = Equipage(self)
         self.immobilise = False
         self.modele = modele
+
+        # Dernier lien (dl)
+        self.dl_x = 0
+        self.dl_y = 0
+
         if modele:
             modele.vehicules.append(self)
             self.cle = "{}_{}".format(modele.cle, len(modele.vehicules))
@@ -395,32 +400,37 @@ class Navire(Vehicule):
 
             Vehicule.avancer(self, temps_virtuel)
             vit_fin = self.vitesse_noeuds
+            n_position = self.opt_position
 
             # Si le navire a croisé un lien, change d'étendue
-            lien = False
-            for vecteur in vecteurs:
-                projetee = vecteur + vitesse * temps_virtuel
-                b_arg = [vecteur.x, vecteur.y, vecteur.z, projetee.x, \
-                        projetee.y, projetee.z]
-                for coords, autre in etendue.liens.items():
-                    v_point = Vector(*coords)
-                    arg = b_arg + list(coords) + [etendue.altitude, 0.5]
-                    if in_rectangle(*arg) and vecteur.distance(
-                            projetee, v_point) <= 0.5:
-                        # C'est un lien, on change d'étendue
-                        # Les autres liens ne sont pas pris en compte
-                        self.etendue = autre
-                        print("On chaneg d'étendue pour", self, self.etendue.cle)
-                        lien = True
-                        break
+            for coords, autre in etendue.liens.items():
+                x, y = coords
+                if autre is etendue or (round(x) == self.dl_x and \
+                        round(y) == self.dl_y):
+                    continue
 
-                if lien:
+                v_point = Vector(*coords)
+                if in_rectangle(origine.x, origine.y, origine.z,
+                        n_position.x, n_position.y, n_position.z,
+                        x, y, etendue.altitude, 0.5) and origine.distance(
+                        n_position, v_point) <= 0.5:
+                    # C'est un lien, on change d'étendue
+                    # Les autres liens ne sont pas pris en compte
+                    self.etendue = autre
+                    self.position.z = autre.altitude
+                    print("On change d'étendue pour", self, self.etendue.cle)
+                    self.dl_x = round(x)
+                    self.dl_y = round(y)
                     break
 
+        if round(self.position.x) != self.dl_x or round(self.position.y) \
+                != self.dl_y:
+            self.dl_x, self.dl_y = 0, 0
+
         if vit_or <= 0.01 and vit_fin >= 0.05:
-            if vit_fin < 0.5:
+            if vit_fin < 0.2:
                 self.envoyer("Vous sentez le navire accélérer en douceur.")
-            elif vit_fin >= 0.5:
+            elif vit_fin >= 0.2:
                 self.envoyer("Vous sentez le navire prendre rapidement " \
                         "de la vitesse.")
 
