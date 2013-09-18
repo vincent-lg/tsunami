@@ -171,6 +171,8 @@ class Module(BaseModule):
                 "des plages de sable blanc")
         self.ajouter_terrain("plage de sable noir",
                 "des plages de sable noir")
+        self.ajouter_terrain("rocher", "un rocher à demi immergé")
+        self.ajouter_terrain("rempart", "un haut mur fortifié")
 
         # On ajoute les niveaux
         importeur.perso.ajouter_niveau("survie", "survie")
