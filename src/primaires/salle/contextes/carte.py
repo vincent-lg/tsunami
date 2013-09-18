@@ -143,6 +143,8 @@ class CarteEtendue(Contexte):
             "q": self.opt_quitter,
             "i": self.opt_info,
             "a": self.opt_placer,
+            "d": self.opt_supprimer,
+            "l": self.opt_lier,
         }
         if msg.startswith("/"):
             opt = msg.split(" ")[0][1:].lower()
@@ -227,7 +229,6 @@ class CarteEtendue(Contexte):
         points = etendue.points
         msg = "Information sur le point {}.{} :\n".format(*coords)
         point = points.get(coords)
-        print("Corodonnées", coords)
         lien = etendue.liens.get(coords)
         if point:
             if hasattr(point, "nom_terrain"):
@@ -236,7 +237,7 @@ class CarteEtendue(Contexte):
             else:
                 msg += "\n  Obstacle de type {}".format(point.nom)
         elif lien:
-            msg += "\n  Lien vers l'étendue {}".format(lien)
+            msg += "\n  Lien vers l'étendue {}".format(lien.cle)
         else:
             self.pere << "Ce point est vide ou inexistant."
             return
@@ -264,6 +265,52 @@ class CarteEtendue(Contexte):
             del etendue.liens[coords]
 
         etendue.ajouter_obstacle(coords, obstacle)
+        self.actualiser()
+
+    def opt_lier(self, reste):
+        """Ajoute un lien à l'étendue."""
+        coords, message = self.point_unique(reste)
+        if coords is None:
+            self.pere << message
+            return
+
+        etendue = self.etendue
+        message = message.strip()
+        try:
+            liee = importeur.salle.etendues[message.lower()]
+        except KeyError:
+            self.pere << "|err|Étendue {} inconnue.|ff|".format(
+                    repr(message))
+            return
+
+        if coords in etendue.obstacles:
+            del etendue.obstacles[coords]
+        if coords in etendue.cotes:
+            del etendue.cotes[coords]
+
+        etendue.ajouter_lien(coords, liee)
+        self.actualiser()
+
+    def opt_supprimer(self, reste):
+        """Supprime un point existant sur la carte."""
+        coords, message = self.point_unique(reste)
+        if coords is None:
+            self.pere << message
+            return
+
+        etendue = self.etendue
+        if coords in etendue.obstacles:
+            etendue.supprimer_obstacle(coords)
+        elif coords in etendue.cotes:
+            salle = etendue.cotes[coords]
+            salle.etendue = None
+            del etendue.cotes[coords]
+        elif coords in etendue.liens:
+            etendue.supprimer_lien(coords)
+        else:
+            self.pere << "|err|Ce point n'a pu être trouvé dans l'étendue.|ff|"
+            return
+
         self.actualiser()
 
     def point_unique(self, msg):

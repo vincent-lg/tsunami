@@ -396,6 +396,27 @@ class Navire(Vehicule):
             Vehicule.avancer(self, temps_virtuel)
             vit_fin = self.vitesse_noeuds
 
+            # Si le navire a croisé un lien, change d'étendue
+            lien = False
+            for vecteur in vecteurs:
+                projetee = vecteur + vitesse * temps_virtuel
+                b_arg = [vecteur.x, vecteur.y, vecteur.z, projetee.x, \
+                        projetee.y, projetee.z]
+                for coords, autre in etendue.liens.items():
+                    v_point = Vector(*coords)
+                    arg = b_arg + list(coords) + [etendue.altitude, 0.5]
+                    if in_rectangle(*arg) and vecteur.distance(
+                            projetee, v_point) <= 0.5:
+                        # C'est un lien, on change d'étendue
+                        # Les autres liens ne sont pas pris en compte
+                        self.etendue = autre
+                        print("On chaneg d'étendue pour", self, self.etendue.cle)
+                        lien = True
+                        break
+
+                if lien:
+                    break
+
         if vit_or <= 0.01 and vit_fin >= 0.05:
             if vit_fin < 0.5:
                 self.envoyer("Vous sentez le navire accélérer en douceur.")

@@ -114,7 +114,6 @@ class Etendue(BaseObj):
         """Constitution d'un dictionnaire des points."""
         points = self.obstacles.copy()
         points.update(self.cotes)
-        points.update(self.liens)
         return points
 
     @staticmethod
@@ -189,6 +188,7 @@ class Etendue(BaseObj):
                     coordonnees))
 
         self.liens[coordonnees] = etendue
+        etendue.liens[coordonnees] = self
 
     def supprimer_obstacle(self, coordonnees):
         """Supprime un obstacle."""
@@ -205,7 +205,9 @@ class Etendue(BaseObj):
     def supprimer_lien(self, coordonnees):
         """Supprime un lien."""
         coordonnees = self.convertir_coordonnees(coordonnees)
-        del self.liens[coordonnees]
+        etendue = self.liens.pop(coordonnees)
+        if coordonnees in etendue.liens:
+            del etendue.liens[coordonnees]
 
     def get_etendues_proches(self, x, y, distance, exceptions=None):
         """Retourne les étendues liées à self suffisamment proches.
