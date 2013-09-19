@@ -166,7 +166,7 @@ class Canon(BaseElement):
                 continue
 
             x, y, z = coords
-            if in_rectangle(o_x, o_y, o_z, d_x, d_y, d_z, x, y, z, 0.1):
+            if in_rectangle(o_x, o_y, o_z, d_x, d_y, d_z, x, y, z, 0.5):
                 points.append(((x, y, z), point))
 
         # On parcourt les points
@@ -174,7 +174,7 @@ class Canon(BaseElement):
         for coords, point in points:
             p_vec = Vector(*coords)
             d = o_vec.distance(d_vec, p_vec)
-            if d <= 0.1:
+            if d <= 0.5:
                 trajectoire.append((coords, point))
 
         def distance(couple):
