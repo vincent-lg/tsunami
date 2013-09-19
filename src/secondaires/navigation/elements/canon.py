@@ -33,6 +33,8 @@
 from datetime import datetime
 from math import *
 
+from vector import *
+
 from bases.objet.attribut import Attribut
 from primaires.perso.exceptions.stat import DepassementStat
 from primaires.salle.salle import Salle
@@ -105,7 +107,7 @@ class Canon(BaseElement):
 
         """
         # D'abord, on calcule la longueur du vecteur (sa norme)
-        vec_nul = Vecteur(0, 0, 0)
+        vec_nul = Vector(0, 0, 0)
         if self.onces == 0:
             return vec_nul
 
@@ -116,9 +118,9 @@ class Canon(BaseElement):
         norme = (facteur * 12) / (self.projectile.poids_unitaire / 3)
 
         # À présent, oriente le vecteur en fonction de l'angle du canon
-        vecteur = Vecteur(1, 0, 0, self)
-        vecteur = norme * vecteur
-        vecteur.orienter(self.h_angle)
+        vecteur = Vector(1, 0, 0)
+        vecteur.mag = norme
+        vecteur.around_z(radians(self.h_angle))
         return vecteur
 
     def cible(self):
@@ -142,8 +144,8 @@ class Canon(BaseElement):
         if navire is None:
             return (direction, None)
 
-        direction.tourner_autour_z(navire.direction.direction)
-        direction = direction + navire.position
+        direction.around_z(radians(navire.direction.direction))
+        direction = direction + navire.opt_position
         # On récupère toutes les salles avec coordonnées
         cibles = importeur.salle._coords
         if navire.etendue:
@@ -152,60 +154,32 @@ class Canon(BaseElement):
                 cibles[(o_coords + (etendue.altitude, ))] = obstacle
 
         # On cherche les salles entre origine et destination
-        origine = salle.coords.tuple()
-        destination = direction.tuple
-        sensibilite = 0.6
-        entre = []
-        o_x, o_y, o_z = origine
-        d_x, d_y, d_z = destination
-        for coords, cible in cibles.items():
-            x, y, z = coords
-            if x <= max(o_x, d_x) and x >= min(o_x, d_x) \
-                and y <= max(o_y, d_y) and y >= min(o_y, d_y) \
-                and z <= max(o_z, d_z) and z >= min(o_z, d_z):
-                entre.append((coords, cible))
-
-        # On parcourt les cibles dans le rectangle
-        trajectoire = []
-        ab = Vecteur(d_x - o_x, d_y - o_y, d_z - o_z)
-        for coords, cible in entre:
-            if cible is salle:
+        o_vec = Vector(*salle.coords.tuple())
+        d_vec = direction
+        o_coords = salle.coords.tuple()
+        d_coords = (direction.x, direction.y, direction.z)
+        points = []
+        o_x, o_y, o_z = o_coords
+        d_x, d_y, d_z = d_coords
+        for coords, point in cibles.items():
+            if point is salle:
                 continue
 
             x, y, z = coords
-            ac = Vecteur(x - o_x, y - o_y, z - o_z)
-            d = 0
-            # On détermine les angles horizontaux et verticaux entre ab et ac
-            alpha = radians(ab.argument() - ac.argument())
-            if ab.x or ab.y:
-                # angle de ab avec (O, x, y) : arctan(z/sqrt(x² + y²))
-                beta_ab = atan(ab.z / sqrt(ab.x ** 2 + ab.y ** 2))
-            elif ab.z < 0:
-                beta_ab = radians(-90)
-            else:
-                beta_ab = radians(90)
-            if ac.x or ac.y:
-                # angle de ac avec (O, x, y) idem
-                beta_ac = atan(ac.z / sqrt(ac.x ** 2 + ac.y ** 2))
-            elif ac.z < 0:
-                beta_ac = radians(-90)
-            else:
-                beta_ac = radians(90)
-            beta = beta_ab - beta_ac
-            # Distances horizontale et verticale entre c et ab
-            mc_x = ac.norme * sin(alpha)
-            mc_z = ac.norme * sin(beta)
-            d = sqrt(mc_x ** 2 + mc_z ** 2)
+            if in_rectangle(o_x, o_y, o_z, d_x, d_y, d_z, x, y, z, 0.1):
+                points.append(((x, y, z), point))
 
-            if d <= sensibilite:
-                trajectoire.append((coords, cible))
+        # On parcourt les points
+        trajectoire = []
+        for coords, point in points:
+            p_vec = Vector(*coords)
+            d = o_vec.distance(d_vec, p_vec)
+            if d <= 0.1:
+                trajectoire.append((coords, point))
 
-        # Fonction retournant la distance du tuple (coords, cible)
         def distance(couple):
-            coords, cible = couple
-            x, y, z = coords
-            v_o_salle = Vecteur(x - o_x, y - o_y, z - o_z)
-            return v_o_salle.norme
+            x, y, z = couple[0]
+            return mag(x, y, z, o_x, o_y, o_z)
 
         trajectoire = sorted(trajectoire, key=distance)
         if trajectoire:
@@ -223,9 +197,9 @@ class Canon(BaseElement):
 
         vecteur, cible = self.cible()
         if self.parent and self.parent.navire:
-            vecteur = self.parent.navire.position - vecteur
+            vecteur = self.parent.navire.opt_position - vecteur
 
-        distance = vecteur.norme
+        distance = vecteur.mag
         temps = distance / 15
         msg = self.message_charge()
         if self.parent:
