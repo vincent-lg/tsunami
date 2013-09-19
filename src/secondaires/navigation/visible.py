@@ -184,11 +184,13 @@ class Visible:
 
         # Ensuite on affiche les navires
         navires = [n for n in importeur.navigation.navires.values() if \
-                n.etendue is etendue and n is not navire]
+                mag(n.position.x, n.position.y, altitude, position.x, \
+                position.y, altitude) - n.get_max_distance_au_centre() <= \
+                portee and n is not navire]
         for t_navire in navires:
             # On détermine la salle la plus proche
             t_salles = [s for s in t_navire.salles.values() if \
-                    s.coords.z == altitude]
+                    s.coords.z == 0]
 
             distance = None
             d_salle = None
@@ -198,7 +200,7 @@ class Visible:
                 # Calcul de la distance entre salle et t_salle
                 t_coords = t_salle.coords.tuple()
                 t_x, t_y, t_z = t_coords
-                t_distance = sqrt((x - t_x) ** 2 + (y - t_y) ** 2)
+                t_distance = mag(x, y, 0, t_x, t_y, 0)
                 if distance is None or t_distance < distance:
                     distance = t_distance
                     d_salle = t_salle
