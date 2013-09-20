@@ -172,7 +172,7 @@ class Chemins(BaseObj):
             return [origine]
 
         o_vec = Vector(*origine.coords.tuple())
-        d_vec = Vector(*origine.coords.tuple())
+        d_vec = Vector(*destination.coords.tuple())
         o_coords = origine.coords.tuple()
         d_coords = destination.coords.tuple()
         if not d3:
