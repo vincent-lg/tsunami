@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,21 +34,23 @@ from primaires.interpreteur.editeur.uniligne import Uniligne
 from bases.objet.attribut import Attribut
 from primaires.objet.types.instrument import Instrument
 from corps.fonctions import lisser
+from primaires.vehicule.vecteur import Vecteur
+
 
 class Boussole(Instrument):
-    
+
     """Type d'objet: boussole.
-    
+
     """
-    
+
     nom_type = "boussole"
-    
+
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         Instrument.__init__(self, cle)
         self.precision = 10
         self.etendre_editeur("r", "précision", Uniligne, self, "precision")
-    
+
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""
         precision = enveloppes["r"]
@@ -62,7 +64,7 @@ class Boussole(Instrument):
             "parente.\n\n" \
             "Précision actuelle : {objet.precision}"
         precision.type = int
-    
+
     # Actions sur les objets
     def regarder(self, personnage):
         """Quand on regarde la boussole."""
@@ -71,9 +73,10 @@ class Boussole(Instrument):
         if not hasattr(salle, "navire") or salle.navire is None or \
                 salle.navire.etendue is None:
             return moi
-        
+
         navire = salle.navire
-        vent = navire.vent.copier()
+        vent = navire.vent
+        vent = Vecteur(vent.x, vent.y, vent.z)
         vent.tourner_autour_z(180)
         ven_dir = (vent.direction + 90) % 360
         ven_dir = round(ven_dir / self.precision) * self.precision
@@ -83,6 +86,6 @@ class Boussole(Instrument):
                 vent.nom_direction, ven_dir))
         msg_navire = lisser("Le navire se dirige vers le {} ({}°).".format(
                 navire.direction.nom_direction, nav_dir))
-        
+
         moi += "\n\n" + msg_vent + "\n" + msg_navire
         return moi
