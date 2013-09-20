@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   create of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -28,32 +28,55 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'créer' de la commande 'questeur'."""
+"""Fichier contenant le paramètre 'retirer' de la commande 'questeur'."""
 
+from primaires.format.fonctions import contient
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmCreer(Parametre):
-    
-    """Commande 'questeur créer'.
-    
+class PrmRetirer(Parametre):
+
+    """Commande 'questeur retirer'.
+
     """
-    
+
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "créer", "create")
-        self.groupe = "administrateur"
-        self.aide_courte = "crée un questeur"
+        Parametre.__init__(self, "retirer", "withdraw")
+        self.schema = "<nombre> <type_piece>"
+        self.aide_courte = "retire de l'argent"
         self.aide_longue = \
-            "Cette commande crée un questeur dans la salle où vous vous " \
-            "trouvez."
-    
+            "Cette commande vous permet de retirer de l'argent depuis un " \
+            "questeur. Les paramètres à préciser sont le nombre de pièces " \
+            "que vous souhaitez retirer de votre compte ainsi que le type " \
+            "de pièce (|ent|bronze|ff| par exemple). Vous devez bien " \
+            "entendu posséder un compte dans le questeur et avoir assez " \
+            "d'argent dessus."
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         salle = personnage.salle
-        if importeur.commerce.questeur_existe(salle):
-            personnage << "|err|Un questeur existe déjà dans cette salle.|ff|"
+        questeur = importeur.commerce.questeurs[salle]
+        nombre = dic_masques["nombre"].nombre
+        nom_type = dic_masques["type_piece"].nom_type
+        prototype = None
+        for t_prototype in questeur.monnaies:
+            if contient(t_prototype.nom_singulier, nom_type):
+                prototype = t_prototype
+                break
+
+        if prototype is None:
+            personnage << "|err|Vous ne pouvez retirer cela.|ff|"
             return
-        
-        questeur = importeur.commerce.creer_questeur(salle)
-        personnage << "Un questeur a été créé dans la salle {}.".format(
-                salle.ident)
+
+        if questeur.servant is None:
+            personnage << "|err|Personne n'est présent pour s'en charger.|ff|"
+            return
+
+        total = nombre * prototype.m_valeur
+        if questeur.comptes.get(personnage, 0) < total:
+            personnage << "|err|Vous ne possédez pas assez sur ce compte.|ff|"
+            return
+
+        personnage.envoyer("{{}} prend {} de ses coffres et vous les " \
+                "donne.".format(prototype.get_nom(nombre)), questeur.servant)
+        questeur.prelever(personnage, prototype, nombre)

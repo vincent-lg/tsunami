@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,49 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module communication."""
+"""Fichier contenant le masque <type_piece>."""
 
-import primaires.commerce.masques.id_objet_magasin
-import primaires.commerce.masques.nom_objet_magasin
-import primaires.commerce.masques.type_piece
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+
+class TypePiece(Masque):
+
+    """Masque <type_piece>.
+
+    On attend un type de pièce en paramètre, mais la validation se fait
+    sans vérification, comme si il s'agissait d'un message de communication.
+
+    """
+
+    nom = "type_piece"
+    nom_complet = "type de pièce"
+
+    def init(self):
+        """Initialisation des attributs"""
+        self.nom_type = ""
+
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque.
+
+        Le masque <type_piece> prend tout le type_piece.
+
+        """
+        type_piece = liste_vers_chaine(commande).lstrip()
+        self.a_interpreter = type_piece
+        commande[:] = []
+        if not type_piece:
+            raise ErreurValidation(
+                "Entrez un type de pièce.")
+
+        masques.append(self)
+        return True
+
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        nom_type = self.a_interpreter
+        self.nom_type = nom_type
+
+        return True
