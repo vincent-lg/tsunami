@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -38,11 +38,13 @@ les extensions n'apparaîtront pas ici.
 
 """
 
-from primaires.interpreteur.editeur.presentation import Presentation
-from primaires.interpreteur.editeur.description import Description
-from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.choix import Choix
+from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.flag import Flag
+from primaires.interpreteur.editeur.flags import Flags
+from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.salle.salle import FLAGS
 from primaires.scripting.editeurs.edt_script import EdtScript
 from .edt_coords import EdtCoords
 from .edt_zone import EdtZone
@@ -54,27 +56,27 @@ from .edt_pnj_repop import EdtPnjRepop
 from .supprimer import NSupprimer
 
 class EdtRedit(Presentation):
-    
+
     """Classe définissant l'éditeur de salle 'redit'.
-    
+
     """
-    
+
     nom = "redit"
-    
+
     def __init__(self, personnage, salle):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
-        
+
         Presentation.__init__(self, instance_connexion, salle)
         if personnage and salle:
             self.construire(salle)
-    
+
     def __getnewargs__(self):
         return (None, None)
-    
+
     def construire(self, salle):
         """Construction de l'éditeur"""
         # Coordonnées
@@ -136,7 +138,7 @@ class EdtRedit(Presentation):
             "|att|Le couple 'zone:mnémonic' doit être unique et différent " \
             "pour chaque salle !|ff|\n\n" \
             "Mnémonic actuel : |bc|{objet.mnemonic}|ff|"
-        
+
         # Terrain
         terrains = sorted(type(self).importeur.salle.terrains.keys())
         terrain = self.ajouter_choix("terrain", "r", Choix, salle,
@@ -149,7 +151,7 @@ class EdtRedit(Presentation):
             "à la fenêtre parente.\n\nTerrains disponibles : {}.\n\n" \
             "Terrain actuel : |bc|{{objet.nom_terrain}}|ff|".format(
             ", ".join(terrains))
-        
+
         # Titre
         titre = self.ajouter_choix("titre", "t", Uniligne, salle, "titre")
         titre.parent = self
@@ -158,7 +160,7 @@ class EdtRedit(Presentation):
         titre.aide_courte = \
             "Entrez le |ent|titre|ff| de la salle ou |cmd|/|ff| pour revenir " \
             "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
-        
+
         # Détails
         details = self.ajouter_choix("details", "e", EdtDetails, salle,
                 "details")
@@ -177,7 +179,7 @@ class EdtRedit(Presentation):
             "   ajouté à la liste.\n" \
             " - |ent|/d <détail existant>|ff| : supprime le détail " \
             "indiqué\n\n"
-        
+
         # Description
         description = self.ajouter_choix("description", "d", Description, \
                 salle)
@@ -186,12 +188,19 @@ class EdtRedit(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description de la salle {}".format(salle).ljust(76) + \
             "|ff||\n" + self.opts.separateur
-        
+
+        # Flags
+        flags = self.ajouter_choix("flags", "fl", Flags, salle, "flags",
+                FLAGS)
+        flags.parent = self
+        flags.aide_courte = \
+            "Flags de la salle de {} :".format(salle.ident)
+
         # Intérieur / extérieur
         interieur = self.ajouter_choix("intérieur", "i", Flag, salle,
                 "interieur")
         interieur.parent = self
-        
+
         # PNJ disponibles au repop
         pnj = self.ajouter_choix("pNJ disponibles au repop", "p", EdtPnjRepop,
                 salle)
@@ -201,7 +210,7 @@ class EdtRedit(Presentation):
             "|ent|nombre|ff| de PNJ à repop\ndans cette salle pour " \
             "l'ajouter et le modifier.\nPrécisez un nombre de |cmd|0|ff| " \
             "pour le retirer."
-        
+
         # Magasin
         magasin = self.ajouter_choix("magasin", "a", EdtMagasin, salle)
         magasin.parent = self
@@ -215,7 +224,7 @@ class EdtRedit(Presentation):
             "produit au stock\n" \
             " - |cmd|/ren|ff| : transfert le stock dans l'inventaire\n" \
             " - |cmd|/h|ff| : fournit de l'aide sur les services disponibles"
-        
+
         # Sorties
         sorties = self.ajouter_choix("sorties", "s", EdtSorties, salle,
                 "sorties")
@@ -242,12 +251,12 @@ class EdtRedit(Presentation):
             "   nord vers picte:2 et dans picte:2, une sortie sud vers " \
             "picte:1.\n" \
             " - |ent|/d <sortie>|ff| : supprime la sortie indiquée\n\n"
-        
+
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,
                 salle.script)
         scripts.parent = self
-        
+
         # Supprimer
         sup = self.ajouter_choix("supprimer", "sup", NSupprimer,
                 salle)

@@ -61,6 +61,13 @@ class CmdLancer(Commande):
         personnage.agir("lancersort")
         cible = dic_masques["cible_sort"] and dic_masques["cible_sort"].cible \
                 or None
+
+        salle = personnage.salle
+        if not personnage.est_immortel() and salle.a_flag("anti magie"):
+            personnage << "|err|Vous ne percevez aucun courant magique " \
+                    "ici.|ff|"
+            return
+
         if cible is None and sort.type_cible == "personnage":
             if sort.offensif:
                 combat = importeur.combat.combats.get(personnage.salle.ident)

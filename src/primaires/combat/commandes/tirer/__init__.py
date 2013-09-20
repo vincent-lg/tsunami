@@ -76,6 +76,11 @@ class CmdTirer(Commande):
             personnage << "|err|Cette arme n'est pas chargée.|ff|"
             return
 
+        salle = personnage.salle
+        if not personnage.est_immortel() and salle.a_flag("anti combat"):
+            personnage << "|err|Vous ne pouvez combattre ici.|ff|"
+            return
+
         # Sélection de la cible
         if dic_masques["personnage_present"]:
             cible = dic_masques["personnage_present"].personnage
@@ -93,6 +98,10 @@ class CmdTirer(Commande):
                 personnage << "|err|Vous ne disposez pas d'un bon " \
                         "angle de tir.|ff|"
                 return
+
+        if not personnage.est_immortel() and cible.salle.a_flag("anti combat"):
+            personnage << "|err|Vous ne pouvez combattre ici.|ff|"
+            return
 
         projectile = arme_de_jet.projectile
         degats = projectile.degats_fixes + projectile.degats_variables

@@ -69,6 +69,9 @@ class CmdScruter(Commande):
         sens = 0.25 + personnage.stats.sensibilite / 300 + savoir / 300
         cibles = []
         for chemin in chemins:
+            if chemin.destination.a_flag("invisible à distance"):
+                continue
+
             tmp_sens = sens - (chemin.longueur - 1) * 0.04
             for autre in chemin.destination.personnages:
                 if not autre.super_invisible and random() < tmp_sens:

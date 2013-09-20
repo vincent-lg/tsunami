@@ -59,6 +59,11 @@ class CmdTuer(Commande):
             personnage << "|err|Vous ne pensez pas que c'est suffisant ?|ff|"
             return
 
+        salle = personnage.salle
+        if not personnage.est_immortel() and salle.a_flag("anti combat"):
+            personnage << "|err|Vous ne pouvez combattre ici.|ff|"
+            return
+
         if not personnage.est_immortel() and not personnage.pk and \
                 isinstance(attaque, Joueur):
             personnage << "|err|Votre flag PK n'est pas actif.|ff|"

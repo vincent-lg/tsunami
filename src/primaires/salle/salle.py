@@ -51,6 +51,11 @@ from .script import ScriptSalle
 # Constantes
 ZONE_VALIDE = r"^[a-z0-9_]{3,20}$"
 MNEMONIC_VALIDE = r"^[a-z0-9_]{1,15}$"
+FLAGS = {
+    "anti combat": 1,
+    "anti magie": 2,
+    "invisible à distance": 4,
+}
 
 class Salle(BaseObj):
 
@@ -101,6 +106,7 @@ class Salle(BaseObj):
         self.script = ScriptSalle(self)
         self.interieur = False
         self.magasin = None
+        self.flags = 0
 
         # Repop
         self.pnj_repop = {}
@@ -201,6 +207,11 @@ class Salle(BaseObj):
     def personnage_est_present(self, personnage):
         """Si le personnage est présent, retourne True, False sinon."""
         return personnage in self._personnages
+
+    def a_flag(self, nom_flag):
+        """Retourne True si la salle a le flag, False sinon."""
+        valeur = FLAGS[nom_flag]
+        return self.flags & valeur != 0
 
     def ajouter_personnage(self, personnage):
         """Ajoute le personnage dans la salle"""
