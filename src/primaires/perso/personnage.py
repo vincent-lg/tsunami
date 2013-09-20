@@ -623,6 +623,9 @@ class Personnage(BaseObj):
         if salle_dest.magasin:
             self.envoyer_tip("Entrez %lister%|vr| pour voir les produits " \
                     "en vente dans ce magasin.")
+        if salle_dest in importeur.commerce.questeurs:
+            self.envoyer_tip("Entrez %questeur%|vr| pour interagir avec " \
+                    "le questeur présent.")
         if salle.nom_terrain != "subaquatique" and \
                 salle_dest.nom_terrain == "subaquatique":
             self.envoyer_tip("Vous êtes sous l'eau. " \
