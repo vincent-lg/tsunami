@@ -94,7 +94,9 @@ class CmdAllure(Commande):
         else:
             msg_vent = "Le vent souffle directement face au navire."
 
-        msg_vent = msg_vent.format(cote=cote, angle=angle)
+
+        angle_contraire = (-angle) % 180
+        msg_vent = msg_vent.format(cote=cote, angle=angle_contraire)
 
         # Allure
         if angle > ALL_DEBOUT:
