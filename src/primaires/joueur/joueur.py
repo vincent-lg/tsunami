@@ -275,9 +275,9 @@ class Joueur(Personnage):
 
         # Faim et soif
         if self.soif < 100:
-            self.soif += 1/3
+            self.soif += 1/6
         if self.faim < 100:
-            self.faim += 1/6
+            self.faim += 1/9
         if self.estomac > 0:
             self.estomac -= 0.1
         msg_soif = [
