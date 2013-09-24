@@ -383,7 +383,6 @@ class Personnage(BaseObj):
 
         """
         BaseObj.detruire(self)
-        print("Destruction de", self, self.equipement)
         if self.equipement and self.equipement.squelette and \
                 self in self.equipement.squelette.personnages:
             self.equipement.squelette.personnages.remove(self)
@@ -392,7 +391,6 @@ class Personnage(BaseObj):
 
         if self.equipement:
             for membre in self.equipement.membres:
-                print("  Membre", membre, membre.equipe, membre.tenu)
                 for objet in membre.equipe:
                     importeur.objet.supprimer_objet(objet.identifiant)
                 if membre.tenu:

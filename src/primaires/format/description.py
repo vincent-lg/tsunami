@@ -207,7 +207,6 @@ class Description(BaseObj):
             paragraphes.append("\n".join(wrap(paragraphe, TAILLE_LIGNE)))
 
 
-        print("Description:", repr("\n".join(paragraphes)), end="\n")
         return "\n".join(paragraphes)
 
     def charger_descriptions_flottantes(self, paragraphe):
@@ -225,7 +224,6 @@ class Description(BaseObj):
             description = "\n".join([paragraphe.replace("|nl|", "\n").replace(
                     "|tab|", "   ") for paragraphe in \
                     desc_flottante.description.paragraphes])
-            print("Inclus", repr(description))
             paragraphe = paragraphe.replace("@" + flottante, description)
 
         if RE_FLOTTANTE.search(paragraphe):

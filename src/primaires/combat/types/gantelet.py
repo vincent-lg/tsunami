@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,18 +28,21 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le type vêtement."""
+"""Fichier contenant le type gantelet."""
 
-from .base import BaseType
+from .armure import Armure
 
-class Vetement(BaseType):
+class Gantelet(Armure):
 
-    """Type d'objet: vêtement.
+    """Type d'objet: gantelet.
 
     """
 
-    nom_type = "vêtement"
+    nom_type = "gantelet"
+
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
-        BaseType.__init__(self, cle)
-        self.empilable_sur = ["vêtement", "armure"]
+        Armure.__init__(self, cle)
+        self.emplacement = "poignets"
+        self.positions = (1, )
+        self.epaisseur = 2
