@@ -32,8 +32,16 @@
 
 from .arme import Arme
 from .arme_de_jet import ArmeDeJet
+from .armure import Armure
+from .botte import Botte
+from .brassard import Brassard
+from .casque import Casque
+from .ceinture_renforcee import CeintureRenforcee
+from .cotte_mailles import CotteMailles
 from .epee import Epee
+from .gantelet import Gantelet
 from .hache import Hache
+from .jambieres import Jambieres
 from .lance import Lance
 from .masse import Masse
 from .projectile import Projectile

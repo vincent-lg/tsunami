@@ -224,7 +224,6 @@ class Description(BaseObj):
             description = "\n".join([paragraphe.replace("|nl|", "\n").replace(
                     "|tab|", "   ") for paragraphe in \
                     desc_flottante.description.paragraphes])
-            print("Inclus", repr(description))
             paragraphe = paragraphe.replace("@" + flottante, description)
 
         if RE_FLOTTANTE.search(paragraphe):

@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -42,13 +42,13 @@ from primaires.format.fonctions import *
 contextes = {} # dictionnaire des différents contextes
 
 class MetaContexte(MetaBaseObj):
-    
+
     """Métaclasse des contextes.
     A chaque fois qu'on crée une classe héritée de Contexte avec un nom
     valide, on l'ajoute dans le dictionnaire 'contextes'.
-    
+
     """
-    
+
     def __init__(cls, nom, bases, contenu):
         """Constructeur de la métaclasse"""
         MetaBaseObj.__init__(cls, nom, bases, contenu)
@@ -57,7 +57,7 @@ class MetaContexte(MetaBaseObj):
 
 class OptionsContexte(BaseObj):
     """Options du contexte.
-    
+
     Liste des options :
     Options de réception :
     *   echp_sp_cars - échapper les caractères spéciaux du message :
@@ -66,7 +66,7 @@ class OptionsContexte(BaseObj):
         Si cette option est à False, les caractères spéciaux ne seront pas
         échappés ce qui permet au client d'entrer des caractères spéciaux (sauts
         de ligne, couleurs...).
-    
+
     Options d'envoi :
     *   aff_sp_cars : affiche les caractères spéciaux
         Utile dans un contexte qui a également l'option 'echp_sp_cars' à
@@ -82,20 +82,20 @@ class OptionsContexte(BaseObj):
         Contient une chaîne de caractères (str) qui est utilisée en tant que
         préfixe du prompt, pour le faire ressortir par rapport aux instructions.
     Ces dernières options dépendent de l'activation ou non de l'option ncod.
-    
+
     Options de navigation :
     *   rci_ctx_prec - raccourci vers le contexte précédent :
         Si un contexte précédent est entré dans cette option, le client pourra
         l'atteindre automatiquement en entrant le raccourci de retour
         (voir la constante 'RCI_PREC').
-    
-    """    
+
+    """
     def __init__(self):
         """Constructeur par défaut des options"""
         BaseObj.__init__(self)
         # Options de réception
         self.echp_sp_cars = True
-        
+
         # Options d'envoi
         self.aff_sp_cars = False
         self.sup_accents = False
@@ -103,10 +103,10 @@ class OptionsContexte(BaseObj):
         self.prompt_clr = ""
         self.prompt_prf = ""
         self.nl = True
-        
+
         # Options de navigation
         self.rci_ctx_prec = ""
-    
+
     def __getnewargs__(self):
         return ()
 
@@ -118,15 +118,15 @@ class Contexte(BaseObj, metaclass=MetaContexte):
     *   Choisissez-le dans les classes-filles de Contexte
     *   Créez une nouvelle sous-classe de Contexte correspondant mieux à vos
         attentes
-    
+
     Cette classe est abstraite. Aucun objet ne doit être créé directement
     depuis cette classe. L'architecture de chaque contexte est à la charge du
     paquet concerné. Consultez la documentation de la classe avant de l'utiliser
     comme contexte.
-    
+
     Les contextes sont des formes d'interpréteur destinés à remplir
     une mission bien précise. Ces contextes sont souvent chaînés.
-    
+
     Par exemple, le contexte chargé de demander son nom à l'utilisateur
     va avoir plusieurs sorties pereibles :
     *   Si le joueur entre un nom valide :
@@ -137,18 +137,18 @@ class Contexte(BaseObj, metaclass=MetaContexte):
     *   Si le nom est invalide, on demande au joueur de l'entrer à nouveau
         Autrement dit, on lui affiche un message d'erreur et on le redirige sur
         le même contexte.
-    
+
     Il s'agit d'un exemple simple, mais des contextes peuvent être plus
     complexes, notamment les éditeurs. En fonction de la récurrence d'un
     contexte, des objets hérités devront être créés avec un certain nombre de
     comportements par défaut déjà programmés.
-    
+
     Pour plus d'informations, visiter les sous-paquets.
 
     """
     importeur = None
     nom = None
-    
+
     def __init__(self, pere):
         """Constructeur d'un contexte."""
         BaseObj.__init__(self)
@@ -159,60 +159,60 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         cfg_charte = type(self.importeur).anaconf.get_config("charte_graph")
         self.opts.prompt_clr = cfg_charte.couleur_prompt
         self.opts.prompt_prf = cfg_charte.prefixe_prompt
-    
+
     def __getnewargs__(self):
         """Méthode retournant les valeurs par défaut du constructeur"""
         return (None, )
-    
+
     def __getstate__(self):
         retour = self.__dict__.copy()
         retour["pere"] = None
         return retour
-    
+
     def __repr__(self):
         """Affichage du nom de l'objet"""
         nom = self.nom
         if not nom:
             nom = "inconnu"
-        
+
         return nom
-    
+
     @property
     def u_nom(self):
         """Retourne le nom pour l'utilisateur"""
         return self.unom if self.unom else type(self).nom
-    
+
     def entrer(self):
         """Méthode appelée quand le père entre dans le contexte"""
         pass
-    
+
     def sortir(self):
         """Méthode appelée quand le père sort du contexte"""
         pass
-    
+
     def get_prompt(self):
         """Retourne le prompt qui sera affiché à chaque message envoyé"""
         return ""
-    
+
     def accueil(self):
         """Retourne un message d'accueil au père du contexte.
         Ce message est envoyé à chaque fois que le client reçoit un message et
         qu'il est dans ce contexte.
-        
+
         """
         return ""
-    
+
     def deconnecter(self):
         """Méthode appelée quand le père se déconnecte du contexte
         (déconnexion non demandée, on ne sort pas du contexte naturellement)
-        
+
         """
         pass
-    
+
     def _get_contexte(self, nom_contexte):
         """Récupère depuis l'interpréteur l'instance du contexte
         dont le nom est fourni.
-        
+
         """
         return type(self).importeur.interpreteur.contextes[nom_contexte]
 
@@ -220,19 +220,19 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         """Méthode appelée pour boucler sur le contexte courant.
         Cela veut dire qu'on ne change pas de contexte, on migre vers 'self'.
         L'émetteur reçoit ainsi le message d'accueil du contexte.
-        
+
         """
         if type(self).nom:
             self.migrer_contexte(type(self).nom)
         else:
             self.migrer_contexte(self)
-    
+
     def migrer_contexte(self, contexte, afficher_accueil=True):
         """Cas de transfert de contexte.
-        
+
         Le contexte peut être sous la forme d'un nom (str)
         ou d'un contexte.
-        
+
         """
         if type(contexte) is str:
             nouveau_contexte = self._get_contexte(contexte)(self.pere)
@@ -248,50 +248,50 @@ class Contexte(BaseObj, metaclass=MetaContexte):
             if self.pere.contexte_actuel.opts.separateur is not None:
                 self.pere.envoyer(self.pere.contexte_actuel.opts.separateur)
             self.pere.envoyer(self.pere.contexte_actuel.accueil(), nl=1)
-    
+
     def interpreter(self, msg):
         """Méthode appelée quand le contexte reçoit un message à interpréter.
             msg - le message sous la forme d'une chaîne
-        
+
         On déduit l'émetteur, c'est le père du contexte (self.pere).
-        
+
         """
         pass
-    
+
     def receptionner(self, msg):
         """Méthode appelée quand le contexte reçoit un message.
         On le redirige vers 'interpreter' après avoir appliqué les options
         de réception.
-        
+
         On déduit l'émetteur, c'est le père du contexte (self.pere).
-        
+
         """
         emt = self.pere
         # Test des aliases
         res = self.traiter_alias_contextes(msg)
         if res:
             return
-        
+
         if self.opts.echp_sp_cars:
             msg = echapper_sp_cars(msg)
-        
+
         # Si un contexte précédent est défini et que le client a entré
         # RCI_PREC, on retourne au contexte précédent
         if self.opts.rci_ctx_prec and msg == RCI_PREC:
             self.migrer_contexte(self.opts.rci_ctx_prec)
         else:
             self.interpreter(msg)
-    
+
     def traiter_alias_contextes(self, msg):
         """Traite les alias des contextes.
-        
+
         Aliases :
             ><commande> : envoie la commande dans le contexte suivant
             <<commande> : envoie la commande dans le contexte précédent
             ?>          : affiche la liste des contextes
             >           : se déplace vers le contexte suivant
             <           : se déplace vers le contexte précédent
-        
+
         """
         emt = self.pere
         joueur = emt.joueur
@@ -300,7 +300,7 @@ class Contexte(BaseObj, metaclass=MetaContexte):
             position = contextes._position
         else:
             return
-        
+
         if msg == "<":
             try:
                 contextes.reculer_position()
@@ -323,18 +323,18 @@ class Contexte(BaseObj, metaclass=MetaContexte):
                 nom = contexte.u_nom
                 if i == position:
                     nom = "|rg|*" + nom + "|ff|"
-                
+
                 noms_contextes.append(nom)
-            
+
             emt << "Contextes : " + ", ".join(noms_contextes)
         elif msg == "/>":
             # Supprime tous les contextes sauf le premier
             contextes._position = 0
             while len(contextes) > 1:
                 contextes.retirer()
-            
+
             emt << contextes.actuel.accueil()
-        
+
         elif msg.startswith("<"):
             actuel = contextes.actuel
             try:
@@ -359,9 +359,9 @@ class Contexte(BaseObj, metaclass=MetaContexte):
                 contextes.position = contextes.get_position(actuel)
         else:
             return
-        
+
         return True
-    
+
     def fermer(self):
         """Fermeture du contexte."""
         self.pere.joueur.contextes.retirer(self)
