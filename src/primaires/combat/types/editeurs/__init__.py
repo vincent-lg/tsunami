@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,13 +28,4 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module perso."""
-
-from . import bander
-from . import degainer
-from . import paix
-from . import rengainer
-from . import scruter
-from . import tirer
-from . import tuer
-from . import viser
+"""Package contenant les éditeurs étendus des types d'objets de combat."""

@@ -105,7 +105,9 @@ class Module(BaseModule):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.bander.CmdBander(),
+            commandes.degainer.CmdDegainer(),
             commandes.paix.CmdPaix(),
+            commandes.rengainer.CmdRengainer(),
             commandes.scruter.CmdScruter(),
             commandes.tirer.CmdTirer(),
             commandes.tuer.CmdTuer(),

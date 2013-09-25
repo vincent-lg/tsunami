@@ -32,6 +32,9 @@
 
 from random import randint
 
+from bases.objet.attribut import Attribut
+from primaires.combat.types.editeurs.fourreau import EdtFourreau
+from primaires.format.fonctions import oui_ou_non
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.objet.types.base import BaseType
 
@@ -52,12 +55,33 @@ class Armure(BaseType):
         self.empilable_sur = ["vêtement"]
         self.encaissement_fixe = 5
         self.encaissement_variable = 0
+        self.fourreau = False
+        self.fourreau_visible = True
+        self.poids_max_fourreau = 1
+        self.types_fourreau = []
+        self._attributs = {
+            "au_fourreau": Attribut(None),
+        }
 
         # Editeurs
         self.etendre_editeur("f", "encaissement fixe", Entier, self,
                 "encaissement_fixe")
         self.etendre_editeur("v", "encaissement variable", Entier, self,
                 "encaissement_variable")
+        self.etendre_editeur("fo", "fourreau", EdtFourreau, self, "")
+
+    @property
+    def str_types_fourreau(self):
+        """Retourne une chaîne représentant les types admis en fourreau."""
+        if len(self.types_fourreau) == 0:
+            return "aucun"
+        else:
+            return ", ".join(self.types_fourreau)
+
+    @property
+    def str_fourreau(self):
+        """Retourne oui ou non."""
+        return oui_ou_non(self.fourreau)
 
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""
@@ -89,6 +113,9 @@ class Armure(BaseType):
             "|ent|7|ff|.\n\nEncaissement variable actuel : " \
             "{objet.encaissement_variable}"
 
+        fourreau = enveloppes["fo"]
+        fourreau.apercu = "{objet.str_fourreau}"
+
     def encaisser(self, personnage, arme, degats):
         """Retourne les dégâts en tenant compte de l'encaissement.
 
@@ -111,3 +138,55 @@ class Armure(BaseType):
             encaissement = degats - 1
 
         return encaissement
+
+    def calculer_poids(self):
+        """Retourne le poids de l'objet et celui des objets contenus."""
+        poids = self.poids_unitaire
+        if self.au_fourreau:
+            poids += self.au_fourreau.poids
+
+        return round(poids, 3)
+
+    def objets_contenus(self, conteneur):
+        """Retourne les objets contenus."""
+        objets = []
+        if conteneur.au_fourreau:
+            objet = conteneur.au_fourreau
+            objets.append(objet)
+            objets.extend(objet.prototype.objets_contenus(objet))
+
+        return objets
+
+    def get_nom(self, nombre=1):
+        """Retourne le nom complet en fonction du nombre.
+
+        Par exemple :
+        Si nombre == 1 : retourne le nom singulier
+        Sinon : retourne le nombre et le nom pluriel
+
+        """
+        ajout = ""
+        if self.fourreau_visible and self.au_fourreau:
+            ajout = " {{" + self.au_fourreau.nom_singulier + "}}"
+
+        if nombre <= 0:
+            raise ValueError("la fonction get_nom a été appelée " \
+                    "avec un nombre négatif ou nul.")
+        elif nombre == 1:
+            return self.nom_singulier + ajout
+        else:
+            if self.noms_sup:
+                noms_sup = list(self.noms_sup)
+                noms_sup.reverse()
+                for nom in noms_sup:
+                    if nombre >= nom[0]:
+                        return nom[1]
+            return str(nombre) + " " + self.nom_pluriel
+
+    def regarder(self, personnage):
+        """Le personnage regarde l'objet"""
+        msg = BaseType.regarder(self, personnage)
+        if self.au_fourreau:
+            msg += "Au fourreau : " + self.au_fourreau.nom_singulier
+
+        return msg

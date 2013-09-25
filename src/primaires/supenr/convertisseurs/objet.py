@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,13 +28,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module perso."""
+"""Fichier contenant les convertisseurs de la classe Objet."""
 
-from . import bander
-from . import degainer
-from . import paix
-from . import rengainer
-from . import scruter
-from . import tirer
-from . import tuer
-from . import viser
+class Convertisseur:
+    """Classe pour envelopper les convertisseurs."""
+    def depuis_version_0(objet, classe):
+        objet.set_version(classe, 1)
+        if objet.est_de_type("armure"):
+            objet.au_fourreau = None
