@@ -56,6 +56,11 @@ class EdtFourreau(Presentation):
                 "fourreau")
         fourreau.parent = self
 
+        # Visible dans le nom
+        visible = self.ajouter_choix("visible dans le nom", "v", Flag,
+                armure, "fourreau_visible")
+        visible.parent = self
+
         # Poids maximum
         poids_max = self.ajouter_choix("poids maximum de l'arme au fourreau",
                 "p", Flottant, armure, "poids_max_fourreau")

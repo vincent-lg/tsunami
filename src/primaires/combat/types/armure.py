@@ -34,6 +34,7 @@ from random import randint
 
 from bases.objet.attribut import Attribut
 from primaires.combat.types.editeurs.fourreau import EdtFourreau
+from primaires.format.fonctions import oui_ou_non
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.objet.types.base import BaseType
 
@@ -55,6 +56,7 @@ class Armure(BaseType):
         self.encaissement_fixe = 5
         self.encaissement_variable = 0
         self.fourreau = False
+        self.fourreau_visible = True
         self.poids_max_fourreau = 1
         self.types_fourreau = []
         self._attributs = {
@@ -75,6 +77,11 @@ class Armure(BaseType):
             return "aucun"
         else:
             return ", ".join(self.types_fourreau)
+
+    @property
+    def str_fourreau(self):
+        """Retourne oui ou non."""
+        return oui_ou_non(self.fourreau)
 
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""
@@ -105,6 +112,9 @@ class Armure(BaseType):
             "|ent|2|ff|\naura un encaissement entre |ent|5|ff| et " \
             "|ent|7|ff|.\n\nEncaissement variable actuel : " \
             "{objet.encaissement_variable}"
+
+        fourreau = enveloppes["fo"]
+        fourreau.apercu = "{objet.str_fourreau}"
 
     def encaisser(self, personnage, arme, degats):
         """Retourne les dégâts en tenant compte de l'encaissement.
@@ -156,8 +166,8 @@ class Armure(BaseType):
 
         """
         ajout = ""
-        if self.au_fourreau:
-            ajout = " {" + self.au_fourreau.nom_singulier + "}"
+        if self.fourreau_visible and self.au_fourreau:
+            ajout = " {{" + self.au_fourreau.nom_singulier + "}}"
 
         if nombre <= 0:
             raise ValueError("la fonction get_nom a été appelée " \

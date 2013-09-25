@@ -2,10 +2,10 @@
 
 # Copyright (c) 2011 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -37,27 +37,27 @@ from .combat import *
 from .types.arme import Arme
 
 class Module(BaseModule):
-    
+
     """Module gérant le combat rapproché.
-    
+
     Ce module gère le combat rapproché et les extensions nécessaires aux
     personnages et PNJ. Il gère également les talents et niveaux liés
     ainsi, naturellement, que les commandes.
-    
+
     """
-    
+
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "combat", "primaire")
         self.combats = {}
         self.cibles = {}
-    
+
     def init(self):
         """Initialisation du module."""
         # Ajout du niveau combat
         ajouter_niveau = self.importeur.perso.ajouter_niveau
         ajouter_niveau("combat", "combat")
-        
+
         # Ajout des talents
         ajouter_talent = self.importeur.perso.ajouter_talent
         for type in Arme.types.values():
@@ -65,10 +65,10 @@ class Module(BaseModule):
                     type.niveau_talent and type.difficulte_talent):
                 raise ValueError("la  définition du talent lié au type " \
                         "d'arme {} est incomplète".format(type.nom_type))
-            
+
             ajouter_talent(type.cle_talent, type.nom_talent,
                     type.niveau_talent, type.difficulte_talent)
-        
+
         ajouter_talent(CLE_TALENT_ESQUIVE, "esquive", "combat", 0.25)
         ajouter_talent(CLE_TALENT_PARADE, "parade", "combat", 0.20)
         ajouter_talent(CLE_TALENT_MAINS_NUES, "combat à mains nues", "combat",
@@ -81,30 +81,32 @@ class Module(BaseModule):
                 "chercherbois", "ouvrir", "fermer", "jouer", "lancersort",
                 "porter", "retirer"]
         BaseModule.init(self)
-        
+
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.degainer.CmdDegainer(),
             commandes.paix.CmdPaix(),
+            commandes.rengainer.CmdRengainer(),
             commandes.scruter.CmdScruter(),
             commandes.tuer.CmdTuer(),
         ]
-        
+
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
-    
+
     def get_combat_depuis_salle(self, salle):
         """Retourne le combat correspondant à la salle ou None."""
         return self.combats.get(salle.ident)
-    
+
     def creer_combat(self, salle, attaquant, attaque):
         """Crée un combat ou met à jour celui existant.
-        
+
         Les paramètres à préciser sont :
             salle -- la salle dans lequel va se dérouler l'action
             attaquant -- celui qui attaque
             attaque -- celui qui est attaqué
-        
+
         """
         combat = self.combats.get(salle.ident) or Combat(salle)
         combat.ajouter_combattants(attaquant, attaque)
@@ -112,7 +114,7 @@ class Module(BaseModule):
             self.combats[salle.ident] = combat
             self.importeur.diffact.ajouter_action(
                 "combat:{}".format(salle.ident), 3, combat.tour, self.importeur)
-    
+
     def supprimer_combat(self, ident):
         """Supprime un combat."""
         if ident in self.combats:
@@ -123,7 +125,7 @@ class Module(BaseModule):
             for personnage in combat.combattants:
                 if personnage.cle_etat == "combat":
                     personnage.cle_etat = ""
-    
+
     def detruire(self):
         """Destruction du module."""
         for combat in self.combats.values():
