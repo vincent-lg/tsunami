@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -48,9 +48,9 @@ ids = {}
 statut_gen = 0 # 0 => OK, 1 => en cours
 
 class MetaBaseObj(type):
-    
+
     """Métaclasse des objets de base.
-    
+
     Cette métaclasse est là pour gérer les versions des différents objets
     BaseObj :
         Si un objet BaseObj change de structure, pour X raison (par exemple
@@ -62,9 +62,9 @@ class MetaBaseObj(type):
         héritées de BaseObj n'ont pas un nom identique et on attribut
         un numéro de version (0) par défaut aux objets issus de ces
         classes hérités.
-    
+
     """
-    
+
     def __init__(cls, nom, bases, contenu):
         """Constructeur de la métaclasse"""
         type.__init__(cls, nom, bases, contenu)
@@ -81,7 +81,7 @@ class MetaBaseObj(type):
                         "possède le même nom que la classe {1}".format( \
                         str(cls), str(objets_base[cls._nom])))
             objets_base[cls._nom] = cls
-            
+
             # On décore la méthode __init__ de la classe
             ancien_init = cls.__init__
             def new_init(self, *args, **kwargs):
@@ -95,14 +95,14 @@ class MetaBaseObj(type):
 INIT, CONSTRUIT = 0, 1
 
 class BaseObj(metaclass=MetaBaseObj):
-    
+
     """Classe devant être héritée de la grande majorité des classes de Kassie.
-    
+
     Le test est simple : si l'objet issu de la classe doit être enregistré,
     l'hériter de BaseObj.
-    
+
     """
-    
+
     importeur = None
     enregistrer = False
     _nom = "base_obj"
@@ -114,12 +114,12 @@ class BaseObj(metaclass=MetaBaseObj):
         self._dict_version = {}
         self.e_existe = True
         self.ajouter_enr()
-    
+
     def __getnewargs__(self):
         raise NotImplementedError(
                 "la classe " + str(type(self)) + " n'a pas de méthode " \
                 "__getnewargs__")
-    
+
     def ajouter_enr(self):
         if self.e_existe and type(self).enregistrer and statut_gen == 0 and \
                 id(self) not in objets:
@@ -127,38 +127,38 @@ class BaseObj(metaclass=MetaBaseObj):
             liste = objets_par_type.get(type(self), [])
             liste.append(self)
             objets_par_type[type(self)] = liste
-    
+
     def version_actuelle(self, classe):
         """Retourne la version actuelle de l'objet.
-        
+
         Cette version est celle enregistrée dans l'objet. Elle peut
         donc être différence de la classe (c'est le cas au chargement d'un
         objet à mettre à jour).
-        
+
         """
         if classe._nom in self._dict_version:
             return self._dict_version[classe._nom]
         else:
             return 0
-    
+
     def set_version(self, classe, version):
         """Met le numéro de version dans le dictionnaire de version."""
         self._dict_version[classe._nom] = version
-    
+
     def _construire(self):
         """Construit l'objet"""
         self._statut = CONSTRUIT
-    
+
     def detruire(self):
         """Marque l'objet comme détruit."""
         self.e_existe = False
         if id(self) in objets:
             del objets[id(self)]
-    
+
     @property
     def construit(self):
         return hasattr(self, "_statut") and self._statut == CONSTRUIT
-    
+
     def __setstate__(self, dico_attrs):
         """Méthode appelée lors de la désérialisation de l'objet"""
         global statut_gen
@@ -171,21 +171,21 @@ class BaseObj(metaclass=MetaBaseObj):
         except NotImplementedError:
             print("Méthode __getnewargs__ non définie pour", classe)
             sys.exit(1)
-        except TypeError:
-            print("Erreur lors de l'appel au constructeur de", classe)
+        except TypeError as err:
+            print("Erreur lors de l'appel au constructeur de", classe, err)
             sys.exit(1)
         self.__dict__.update(dico_attrs)
-        
+
         # On vérifie s'il a besoin d'une vraie mis à jour
         self._update(classe)
         statut_gen = 0
         self.ajouter_enr()
-    
+
     def _update(self, classe):
         """Méthode appelée pendant la désérialisation de l'objet,
         destinée à vérifier si l'objet doit être mis à jour et, le cas
         échéant, le mettre à jour.
-            
+
         """
         # Mise à jour récursive par rapport aux classes-mères
         for base in classe.__bases__:
@@ -209,7 +209,7 @@ class BaseObj(metaclass=MetaBaseObj):
                         "convertisseurs ne possède pas de classe " \
                         "Convertisseur".format(classe._nom))
                 exit()
-            
+
             # On vérifie la version de la classe et celle de l'objet
             # Rappel :
             #   self.version_actuelle() retourne la version enregistrée
@@ -227,15 +227,15 @@ class BaseObj(metaclass=MetaBaseObj):
                     print(traceback.format_exc())
                     exit()
 
-    
+
     def __getattribute__(self, nom_attr):
         """Méthode appelé quand on cherche à récupérer l'attribut nom_attr
-        
+
         Si l'attribut n'existe plus, on retourne None.
-        
+
         """
         objet = object.__getattribute__(self, nom_attr)
         if hasattr(objet, "e_existe") and not objet.e_existe:
             return None
-        
+
         return objet
