@@ -51,7 +51,7 @@ class PrmListe(Parametre):
             en_tete = "+-" + "-" * 15 + "-+-" + "-" * 25 + "-+-" + \
                     "-" * 8 + "-+-" + "-" * 6 + "-+"
             msg = en_tete + "\n"
-            msg += "| Clé             | Salle                    | " \
+            msg += "| Clé             | Salle                     | " \
                     "Chambres | Occupé |\n"
             msg += en_tete
             for auberge in auberges:

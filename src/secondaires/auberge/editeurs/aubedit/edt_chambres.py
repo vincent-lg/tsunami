@@ -71,7 +71,7 @@ class EdtChambres(Editeur):
                     key=lambda c: c.numero)
             for chambre in chambres:
                 msg += "\n  |ent|" + chambre.numero + "|ff|"
-                msg += " vers + " + chambre.ident_salle
+                msg += " vers " + chambre.ident_salle
 
         return msg
 
