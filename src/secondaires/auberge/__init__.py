@@ -36,6 +36,7 @@ from primaires.salle.salle import Salle
 from secondaires.auberge.auberge import Auberge
 from secondaires.auberge.commandes import *
 from secondaires.auberge import editeurs
+from secondaires.auberge import masques
 
 class Module(BaseModule):
 
@@ -126,7 +127,7 @@ class Module(BaseModule):
     @staticmethod
     def peut_entrer(salle, personnage):
         """Retourne True si le personnage peut entrer dans la salle."""
-        for auberge in self.auberges.values():
+        for auberge in importeur.auberge.auberges.values():
             if salle.ident in auberge.chambres:
                 chambre = auberge.chambres[salle.ident]
                 return personnage is chambre.proprietaire

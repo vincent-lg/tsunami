@@ -537,6 +537,12 @@ class Personnage(BaseObj):
                     sortie.nom_complet)
             return
 
+        if not self.est_immortel() and sortie.porte and \
+                sortie.porte.fermee and not sortie.porte.verrouillee and \
+                not salle_dest.peut_entrer(self):
+            self << "|err|Vous ne pouvez ouvrir cette porte.|ff|"
+            return
+
         # On appelle l'évènement sort des affections du personnage
         for affection in list(self.affections.values()):
             duree = affection.duree

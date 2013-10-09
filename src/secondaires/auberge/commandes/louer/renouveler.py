@@ -30,7 +30,11 @@
 
 """Package contenant le paramètre 'renouveler' de la commande 'louer'."""
 
+from datetime import datetime, timedelta
+
+from primaires.commerce.transaction import *
 from primaires.interpreteur.masque.parametre import Parametre
+from secondaires.auberge.chambre import MAX_NB_JOURS
 
 class PrmRenouveler(Parametre):
 
@@ -40,6 +44,7 @@ class PrmRenouveler(Parametre):
         """Constructeur du paramètre."""
         Parametre.__init__(self, "renouveler", "renew")
         self.tronquer = True
+        self.schema = "<chambre_auberge> <nombre>"
         self.aide_courte = "renouvelle une location"
         self.aide_longue = \
             "Cette commande vous permet de renouveler le loyer d'une " \
@@ -60,4 +65,38 @@ class PrmRenouveler(Parametre):
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        pass
+        chambre = dic_masques["chambre_auberge"].chambre
+        auberge = chambre.auberge
+        nombre = dic_masques["nombre"].nombre
+        if auberge.aubergiste is None:
+            personnage << "|err|Aucun aubergiste n'est présent pour " \
+                    "s'en charger.|ff|"
+            return
+
+        if chambre.proprietaire is not personnage or chambre.expire_a is None:
+            personnage << "|err|Vous ne louez pas cette chambre.|ff|"
+            return
+
+        delta = chambre.expire_a - datetime.now()
+        n_delta = delta + timedelta(days=nombre)
+        if n_delta.days > MAX_NB_JOURS:
+            personnage << "|err|Vous ne pouvez réserver autant de jours.|ff|"
+            return
+
+        valeur = chambre.prix(nombre)
+
+        # On crée la transaction associée
+        try:
+            transaction = Transaction.initier(personnage, auberge, valeur)
+        except FondsInsuffisants:
+            personnage << "|err|Vous n'avez pas assez d'argent.|ff|"
+            return
+
+        # On prélève l'argent
+        transaction.payer()
+
+        # On rend le personnage propriétaire
+        chambre.expire_a = datetime.now() + n_delta
+        s = "s" if nombre > 1 else ""
+        personnage << "Vous prolongez la location de la chambre '{}' " \
+                "pour {} jour{s}.".format(chambre.numero, nombre, s=s)

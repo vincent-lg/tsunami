@@ -31,6 +31,7 @@
 """Package contenant le paramètre 'valeur' de la commande 'louer'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
+from secondaires.auberge.chambre import MAX_NB_JOURS
 
 class PrmValeur(Parametre):
 
@@ -40,6 +41,7 @@ class PrmValeur(Parametre):
         """Constructeur du paramètre."""
         Parametre.__init__(self, "valeur", "value")
         self.tronquer = True
+        self.schema = "<chambre_auberge> <nombre>"
         self.aide_courte = "affiche le prix de location"
         self.aide_longue = \
             "Cette commande affiche le prix de location d'une chambre " \
@@ -54,4 +56,18 @@ class PrmValeur(Parametre):
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        pass
+        chambre = dic_masques["chambre_auberge"].chambre
+        nombre = dic_masques["nombre"].nombre
+        if nombre <= 0:
+            personnage << "|err|Le nombre de jour précisé est négatif " \
+                    "ou nul.|ff|"
+            return
+
+        if nombre > MAX_NB_JOURS:
+            personnage << "|err|Vous ne pouvez réserver autant de jours.|ff|"
+            return
+
+        valeur = chambre.prix(nombre)
+        s = "s" if valeur > 1 else ""
+        personnage << "Il vous en coûtera {} pièce{s} de bronze.".format(
+                valeur, s=s)

@@ -78,6 +78,32 @@ class Chambre(BaseObj):
 
         return datetime.now() > self.expire_a
 
+    @property
+    def aff_temps(self):
+        """Affiche le temps avant expiration."""
+        if self.expire_a is None:
+            return
+
+        delta = self.expire_a - datetime.now()
+        if delta.days > 0:
+            valeur = delta.days
+            unite = "jour{s}"
+        elif delta.total_seconds > 3600:
+            valeur = delta.total_seconds // 3600
+            unite = "heure{s}"
+        else:
+            valeur = delta.total_seconds // 60
+            unite = "minute{s}"
+            if 5 <= valeur < 10:
+                valeur = round(valeur // 2) * 2
+            elif 10 <= valeur < 30:
+                valeur = round(valeur // 5) * 5
+            elif valeur >= 30:
+                valeur = round(valeur // 10) * 10
+
+        s = "s" if valeur > 1 else ""
+        return str(valeur) + " " + unite.format(s=s)
+
     def prix(self, nb_jours):
         """Retourne le prix en fonction du nombre de jours loués.
 

@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,9 +36,9 @@ from primaires.interpreteur.masque.exceptions.erreur_interpretation import \
 
 
 class CmdOuvrir(Commande):
-    
+
     """Commande 'ouvrir'"""
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "ouvrir", "open")
@@ -48,14 +48,14 @@ class CmdOuvrir(Commande):
         self.aide_longue = \
             "Cette commande permet d'ouvrir une sortie de la salle où " \
             "vous vous trouvez."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         sortie = dic_masques["nom_sortie"].sortie
         salle = personnage.salle
         nom_complet = sortie.nom_complet.capitalize()
         personnage.agir("ouvrir")
-        
+
         if not sortie.porte:
             raise ErreurInterpretation(
                 "|err|Cette sortie n'est pas une porte.|ff|")
@@ -65,7 +65,11 @@ class CmdOuvrir(Commande):
         if sortie.porte.verrouillee:
             raise ErreurInterpretation(
                 "Cette porte semble fermée à clef.".format(nom_complet))
-        
+        if not personnage.est_immortel() and not sortie.salle_dest.peut_entrer(
+                personnage):
+            raise ErreurInterpretation(
+                "Vous ne pouvez ouvrir cette porte.")
+
         sortie.porte.ouvrir()
         personnage << "Vous ouvrez {}.".format(sortie.nom_complet)
         salle.envoyer("{{}} ouvre {}.".format(sortie.nom_complet), personnage)

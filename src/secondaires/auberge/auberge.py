@@ -118,11 +118,16 @@ class Auberge(BaseObj):
 
         return None
 
+    @property
+    def parent(self):
+        """Utile pour la compatibilité avec les transactions."""
+        return self.comptoir
+
     def get_chambre_avec_numero(self, numero):
         """Retourne la chambre avec le numéro spécifié.
 
         La recherche se fait sans tenir compte de la casse ni des
-        accents.
+        accents. Si la chambre n'est pas trouvée, retourne None.
 
         """
         numero = supprimer_accents(numero.lower())

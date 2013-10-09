@@ -221,7 +221,9 @@ class FileContexte(BaseObj):
         la remet à un nouveau raisonnable.
 
         """
-        if self._position >= len(self._file):
+        if len(self._file) == 0:
+            self._position = 0
+        elif self._position >= len(self._file):
             self._position = len(self._file) - 1
 
 

@@ -40,6 +40,7 @@ les extensions n'apparaîtront pas ici.
 """
 
 from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.uniligne import Uniligne
 from secondaires.auberge.editeurs.aubedit.edt_chambres import EdtChambres
 
 class EdtAubedit(Presentation):
@@ -64,6 +65,27 @@ class EdtAubedit(Presentation):
 
     def construire(self, auberge):
         """Construction de l'éditeur"""
+        # Titre
+        titre = self.ajouter_choix("titre", "t", Uniligne, auberge, "titre")
+        titre.parent = self
+        titre.prompt = "Titre de l'auberge : "
+        titre.apercu = "{objet.titre}"
+        titre.aide_courte = \
+            "Entrez le |ent|titre|ff| de l'auberge ou |cmd|/|ff| pour " \
+            "revenir à la fenêtre parente.\n\nTitre actuel : " \
+            "|bc|{objet.titre}|ff|"
+
+        # Clé de l'aubergiste
+        cle = self.ajouter_choix("clé de l'aubergiste", "a", Uniligne,
+                auberge, "cle_aubergiste")
+        cle.parent = self
+        cle.prompt = "Clé du prototype de l'aubergiste : "
+        cle.apercu = "{objet.cle_aubergiste}"
+        cle.aide_courte = \
+            "Entrez la |ent|clé de l'aubergiste|ff| ou |cmd|/|ff| pour " \
+            "revenir à la fenêtre parente.\n\nClé actuelle : " \
+            "|bc|{objet.cle_aubergiste}|ff|"
+
         # Chambres
         chambres = self.ajouter_choix("chambres", "c", EdtChambres, auberge)
         chambres.parent = self

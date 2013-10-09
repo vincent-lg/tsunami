@@ -50,4 +50,26 @@ class PrmActuelles(Parametre):
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        pass
+        chambres = []
+        for auberge in sorted(importeur.auberge.auberges.values(),
+                key=lambda a: a.titre):
+            for chambre in sorted(auberge.chambres.values(),
+                    key=lambda c: c.numero):
+                if not chambre.expiree and chambre.proprietaire is personnage:
+                    chambres.append(chambre)
+
+        if not chambres:
+            personnage << "Vous ne louez aucune chambre pour l'instant."
+            return
+
+        en_tete = "+-" + "-" * 22 + "-+-" + "-" * 6 + "-+-" + "-" * 10 + "-+"
+        msg = en_tete + "\n"
+        msg += "| Auberge                | Numéro | Temps      |\n"
+        msg += en_tete
+        for chambre in chambres:
+            msg += "\n| " + chambre.auberge.titre.ljust(22)
+            msg += " | " + chambre.numero.ljust(6) + " | "
+            msg += chambre.aff_temps.ljust(10) + " |"
+
+        msg += "\n" + en_tete
+        personnage << msg

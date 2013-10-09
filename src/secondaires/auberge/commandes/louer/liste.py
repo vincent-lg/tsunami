@@ -56,7 +56,7 @@ class PrmListe(Parametre):
             "une chambre pour un jour et la renouveler neuf fois. Si vous " \
             "voulez savoir combien coûterai la location d'une chambre " \
             "pour une durée précise, utilisez la commande %louer% " \
-            "%loeur:valeur%."
+            "%louer:valeur%."
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
