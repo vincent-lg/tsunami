@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,26 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module auberge."""
+"""Package contenant le paramètre 'actuelles' de la commande 'louer'."""
 
-from . import auberge
-from . import louer
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmActuelles(Parametre):
+
+    """Commande 'louer actuelles'"""
+
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "actuelles", "current")
+        self.tronquer = True
+        self.aide_courte = "affiche vos locations"
+        self.aide_longue = \
+            "Cette commande vous permet de consulter la liste des " \
+            "chambres que vous louez actuellement ainsi que la durée " \
+            "restante avant l'expiration de la location, pour chacune. " \
+            "Notez que le temps restant est spécifié en temps réel " \
+            "(pas en temps Vancéen)."
+
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        pass

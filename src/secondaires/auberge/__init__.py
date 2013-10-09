@@ -74,6 +74,7 @@ class Module(BaseModule):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.auberge.CmdAuberge(),
+            commandes.louer.CmdLouer(),
         ]
 
         for cmd in self.commandes:
@@ -82,6 +83,18 @@ class Module(BaseModule):
         # Ajout des éditeurs
         self.importeur.interpreteur.ajouter_editeur(
                 editeurs.aubedit.EdtAubedit)
+
+    def get_auberge(self, salle):
+        """Retourne, si trouvé, l'auberge définie dans la salle.
+
+        Si l'auberge n'est pas trouvé, lève une exception KeyError.
+
+        """
+        for auberge in self.auberges.values():
+            if auberge.comptoir is salle:
+                return auberge
+
+        raise KeyError(salle)
 
     def creer_auberge(self, cle):
         """Crée une nouvelle auberge."""

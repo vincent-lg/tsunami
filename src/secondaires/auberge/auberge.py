@@ -50,6 +50,7 @@ class Auberge(BaseObj):
         BaseObj.__init__(self)
         self.cle = cle
         self.comptoir = None
+        self.titre = "Une auberge"
         self.cle_aubergiste = ""
         self.chambres = {}
 
@@ -101,6 +102,22 @@ class Auberge(BaseObj):
         """Retourne les numéros de chambres."""
         return tuple(c.numero for c in self.chambres.values())
 
+    @property
+    def aubergiste(self):
+        """Retourne, si trouvé, l'aubergiste dans la salle.
+
+        Si l'aubergiste n'est pas trouvé, retourne None.
+
+        """
+        if self.comptoir is None:
+            return None
+
+        for pnj in self.comptoir.PNJ:
+            if pnj.cle == self.cle_aubergiste:
+                return pnj
+
+        return None
+
     def get_chambre_avec_numero(self, numero):
         """Retourne la chambre avec le numéro spécifié.
 
@@ -114,6 +131,13 @@ class Auberge(BaseObj):
                 return chambre
 
         return None
+
+    def verifier_chambres(self):
+        """Vérifie que les chambres louées n'ont pas expirées."""
+        for chambre in self.chambres.values():
+            if chambre.expiree:
+                chambre.proprietaire = None
+                chambre.expire_a = None
 
     def ajouter_chambre(self, numero, salle):
         """Ajoute une nouvelle chambre."""

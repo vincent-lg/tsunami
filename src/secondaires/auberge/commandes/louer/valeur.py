@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,30 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module auberge."""
+"""Package contenant le paramètre 'valeur' de la commande 'louer'."""
 
-from . import auberge
-from . import louer
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmValeur(Parametre):
+
+    """Commande 'louer valeur'"""
+
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "valeur", "value")
+        self.tronquer = True
+        self.aide_courte = "affiche le prix de location"
+        self.aide_longue = \
+            "Cette commande affiche le prix de location d'une chambre " \
+            "d'auberge pour une durée précise. Pour l'utiliser, vous " \
+            "devez vous trouver auprès d'un aubergiste. Le premier " \
+            "paramètre est le numéro de la chambre, tel que vous le voyez " \
+            "dans %louer% %louer:liste% ou %louer% %louer:actuelles%. " \
+            "Le second paramètre est la durée en jour réels. Par " \
+            "exemple : %louer% %louer:valeur%|ent| suite 5|ff| pour " \
+            "obtenir le prix de la location de la suite pour cinq " \
+            "jours."
+
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        pass
