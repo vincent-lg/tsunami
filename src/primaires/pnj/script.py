@@ -141,6 +141,18 @@ class ScriptPNJ(Script):
         var_perso = evt_discute.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage regardant le PNJ"
 
+        # Evénement attaque
+        evt_attaque = self.creer_evenement("attaqué")
+        evt_attaque.aide_courte = "le PNJ est attaqué par un personnage"
+        evt_attaque.aide_longue = \
+            "Cet évènement est appelé quand le PNJ est attaqué en " \
+            "corps-à-corps. Le personnage l'attaquant est stocké dans " \
+            "la variable |ent|personnage|ff|."
+
+        # Configuration des variables de l'évènement attaque
+        var_perso = evt_discute.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage attaquant le PNJ"
+
         # Evénement donne
         evt_donne = self.creer_evenement("donne")
         evt_donne.aide_courte = "un personnage donne un objet au PNJ"

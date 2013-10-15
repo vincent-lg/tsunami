@@ -246,3 +246,7 @@ class PNJ(Personnage):
                 self.controle_par.contextes.retirer(contexte)
                 self.controle_par = None
                 self.instance_connexion = None
+
+    def reagir_attaque(self, personnage):
+        """Réagit à l'attaque."""
+        self.script["attaque"].executer(personnage=personnage, pnj=self)

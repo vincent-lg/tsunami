@@ -65,3 +65,4 @@ class CmdTuer(Commande):
                 personnage, attaque)
         personnage.envoyer("Vous attaquez {}.", attaque)
         attaque.envoyer("{} vous attaque.", personnage)
+        attaque.reagir_attaque(personnage)
