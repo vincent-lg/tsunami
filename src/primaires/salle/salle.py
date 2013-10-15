@@ -430,21 +430,28 @@ class Salle(BaseObj):
         # Si le personnage est un joueur, il se retrouve avec un nombre de 1
         # Si le personnage est un PNJ, on conserve son prototype avec
         # le nombre d'occurences de prototypes apparaissant
+        etats = {}
         for personne in self.personnages:
             if personne is not personnage:
                 if not hasattr(personne, "prototype"):
                     if personnage.peut_voir(personne):
                         personnages[personne] = 1
                 else:
-                    personnages[personne.prototype] = personnages.get(
-                            personne.prototype, 0) + 1
+                    nom = personne.nom_etat_singulier
+                    if nom in etats:
+                        prototype = etats[nom]
+                        personnages[prototype] = \
+                                personnages[prototype] + 1
+                    else:
+                        etats[nom] = personne
+                        personnages[personne] = 1
 
         if len(personnages):
             res += "\n"
 
             for personne, nombre in personnages.items():
-                res += "\n- {}".format(personne.get_nom_etat(personnage,
-                        nombre))
+                res += "\n- {}".format(personne.get_nom_etat(
+                            personnage, nombre))
 
         # Objets
         noms_objets = self.afficher_noms_objets()
@@ -517,7 +524,9 @@ class Salle(BaseObj):
         for pro, nb in self.pnj_repop.items():
             if nb > 0:
                 for i in range(nb):
-                    importeur.pnj.creer_PNJ(pro, self)
+                    pnj = importeur.pnj.creer_PNJ(pro, self)
+                    pnj.script["repop"].executer(pnj=pnj)
+
 
     def affecte(self, cle, duree, force):
         """Affecte la salle avec une affection.

@@ -1079,6 +1079,9 @@ class Personnage(BaseObj):
                         self.nom, t_salle.ident, id(message)), 0, self.act_crier,
                         t_salle, salles, message, dist + 1)
 
+    def reagir_attaque(self, personnage):
+        """Réagit à l'attaque."""
+        pass
     def regarder(self, personnage, notifier=True):
         """personnage regarde self."""
         equipement = self.equipement

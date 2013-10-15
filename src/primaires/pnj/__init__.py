@@ -31,6 +31,7 @@
 """Fichier contenant le module primaire pnj."""
 
 from abstraits.module import *
+from primaires.pnj.chemin import CheminPNJ
 from .prototype import Prototype
 from .pnj import PNJ
 from . import cherchables
@@ -62,6 +63,7 @@ class Module(BaseModule):
         self._PNJ = {}
         self._prototypes = {}
         self.ticks = {}
+        self.chemins = {}
         for no in range(1, NB_TICKS + 1):
             self.ticks[no] = []
 
@@ -75,6 +77,12 @@ class Module(BaseModule):
         pnjs = [p for p in pnjs if hasattr(p, "identifiant")]
         for pnj in pnjs:
             self._PNJ[pnj.identifiant] = pnj
+
+        chemins = self.importeur.supenr.charger_groupe(CheminPNJ)
+        chemins = self.importeur.supenr.charger_groupe(CheminPNJ)
+        for chemin in chemins:
+            self.ajouter_chemin(chemin)
+        print("Chemins:", len(chemins))
 
         # Ajout des actions différées pour chaque tick
         intervalle = 60 / NB_TICKS
@@ -95,6 +103,7 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.chemin.CmdChemin(),
             commandes.controler.CmdControler(),
             commandes.depecer.CmdDepecer(),
             commandes.pedit.CmdPedit(),
@@ -116,6 +125,8 @@ class Module(BaseModule):
 
         for pnj in self._PNJ.values():
             pnj.prototype.pnj.append(pnj)
+            pnj.script["repop"].executer(pnj=pnj)
+
 
             # Ajout des affections à diffact
             for affection in pnj.affections.values():
@@ -179,6 +190,28 @@ class Module(BaseModule):
         del self._PNJ[identifiant]
         pnj.detruire()
 
+    def creer_chemin(self, cle):
+        """Crée le chemin dont la clé est spécifiée."""
+        if cle in self.chemins:
+            raise ValueError("le chemin avec la clé {} existe déjà".format(
+                    cle))
+
+        chemin = CheminPNJ(cle)
+        self.ajouter_chemin(chemin)
+        return chemin
+
+    def ajouter_chemin(self, chemin):
+        """Ajoute le chemin précisé."""
+        if chemin.cle in self.chemins:
+            raise ValueError("le chemin avec la clé {} existe déjà".format(
+                    cle))
+
+        self.chemins[chemin.cle] = chemin
+
+    def supprimer_chemin(self, cle):
+        """Supprime le chemin."""
+        self.chemins.pop(cle).detruire()
+
     def tick(self, no):
         """Exécute un tick."""
         self.importeur.diffact.ajouter_action("ntick_{}".format(no),
@@ -199,3 +232,45 @@ class Module(BaseModule):
 
         for p in tick:
             p.tick()
+
+    def suivre_chemin(self, pnj, temps, chemin, avant=True):
+        """Fait suivre le chemin spécifié au PNJ.
+
+        Concrètement, cette méthode doit :
+
+          * Faire avancer le PNJ d'une salle si possible
+          * Relancer la méthode en action différée si nécessaire.
+
+        Le paramètre 'avant' précise dans quel sens le chemin doit
+        être suivi : si avant est True (par défaut), suit le chemin
+        dans le sens d'origine. Sinon, essaye de suivre le chemin dans
+        le sens contraire (tous les chemins ne peuvent pas être
+        suivis dans les deux sens).
+
+        """
+        salles = {}
+        if avant:
+            salles = chemin.salles
+        elif not chemin.a_flag("ne peut pas être pris à l'envers"):
+            salles = chemin.salles_retour
+
+        salle = pnj.salle
+        direction = salles.get(salle)
+        derniere = chemin.destination if avant else chemin.origine
+        if direction is None:
+            return
+        elif derniere is salle and not chemin.a_flag("circulaire"):
+            return
+
+        nom_action = str(id(chemin)) + str(id(pnj))
+        importeur.diffact.ajouter_action(nom_action, temps,
+                self.suivre_chemin, pnj, temps, chemin, avant)
+        sortie = salle.sorties.get(direction)
+        verrou = False
+        if sortie.porte and sortie.porte.verrouillee:
+            sortie.porte.verrouillee = False
+            verrou = True
+
+        pnj.deplacer_vers(sortie.nom)
+        if verrou:
+            sortie.porte.verrouillee = True

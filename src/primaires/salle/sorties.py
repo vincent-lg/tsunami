@@ -157,6 +157,13 @@ class Sorties(BaseObj):
 
         return sorties.items()
 
+    def get(self, nom, defaut=None):
+        """Retourne la sortie si trouvé ou defaut."""
+        try:
+            return self._sorties[nom]
+        except KeyError:
+            return defaut
+
     def get_sortie_par_nom(self, nom, cachees=True):
         """Récupère la sortie par son nom.
 
