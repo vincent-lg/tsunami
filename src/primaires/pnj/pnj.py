@@ -167,6 +167,14 @@ class PNJ(Personnage):
             self.controle_par.envoyer(msg, *personnages,
                     **kw_personnages)
 
+    def get_nom_etat(self, personnage, nombre=1):
+        """Retourne le nom et l'état (singulier ou pluriel)."""
+        if nombre == 1:
+            return self.nom_singulier + " " + self.etat_singulier
+        else:
+            return str(nombre) + " " + self.nom_pluriel + " " + \
+                    self.etat_pluriel
+
     def get_nom_pour(self, personnage, retenu=True):
         """Retourne le nom pour le personnage passé en paramètre."""
         return self.nom_singulier
@@ -194,6 +202,10 @@ class PNJ(Personnage):
     @property
     def nom_unique(self):
         return self.identifiant
+
+    @property
+    def nom_etat_singulier(self):
+        return self.get_nom_etat(None, 1)
 
     def get_distinction_audible(self):
         return self.nom_singulier

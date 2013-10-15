@@ -164,6 +164,16 @@ class ScriptPNJ(Script):
             "Cet évènement est appelé quand le tick du PNJ se déclenche " \
             "(toutes les minutes)."
 
+        # Evénement repop
+        evt_repop = self.creer_evenement("repop")
+        evt_repop.aide_courte = "le PNJ se repop"
+        evt_repop.aide_longue = \
+            "Cet évènement est appelé quand le PNJ repop, dans deux " \
+            "cas : soit quand le MUD se lance (tous les PNJ sont " \
+            "repop automatiquement, bien qu'ils gardent la plupart " \
+            "de leurs informations) ou quand ils apparaissent dans une " \
+            "salle qui a configuré le PNJ en repop."
+
         # Evénement magasin
         evt_marchand = self.creer_evenement("marchand")
         evt_marchand_ouvre = evt_marchand.creer_evenement("ouvre")
@@ -204,7 +214,8 @@ class ScriptPNJ(Script):
             "Cet évènement est appelé quand le PNJ est déjà mort et que " \
             "son cadavre a été créé sur le sol."
 
-        # Configuration des variables de l'évènement meurt et sous-évènements
+        # Configuration des variables de l'évènement meurt et
+        # sous-évènements
         var_salle = evt_meurt.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle où meurt le PNJ"
         var_adv = evt_meurt.ajouter_variable("adversaire", "Personnage")

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,11 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'chemin liste'."""
 
-from . import chemin
-from . import controler
-from . import pedit
-from . import plist
-from . import ppurge
-from . import pspawn
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmListe(Parametre):
+
+    """Commande 'chemin liste'"""
+
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "liste", "list")
+        self.aide_courte = "affiche la liste des chemins"
+        self.aide_longue = \
+            "Cette commande permet d'afficher la liste des " \
+            "chemins pour PNJ."
+
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande."""
+        chemins = sorted([c for c in \
+                importeur.pnj.chemins.values()],
+                key=lambda c: c.cle)
+        if chemins:
+            msg = "Chemin actuels :\n"
+            for chemin in chemins:
+                msg += "\n  {} ({} salle(s))".format(chemin.cle,
+                        len(chemin.salles))
+
+            personnage << msg
+        else:
+            personnage << "Aucun chemin pour PNJ n'existe pour l'instant."
