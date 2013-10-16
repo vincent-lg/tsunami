@@ -62,12 +62,12 @@ class ClasseAction(Action):
         """
         try:
             del pnj.etat_singulier
-        except TypeError:
+        except AttributeError:
             pass
 
         try:
             del pnj.etat_pluriel
-        except TypeError:
+        except AttributeError:
             pass
 
     @staticmethod
