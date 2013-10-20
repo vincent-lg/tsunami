@@ -48,6 +48,8 @@ class Armure(BaseType):
     """
 
     nom_type = "armure"
+    _nom = "prototype_armure"
+    _version = 1
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
