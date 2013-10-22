@@ -168,7 +168,7 @@ class Armure(BaseType):
 
         """
         ajout = ""
-        if self.fourreau_visible and getattr(self, "au_fourreau"):
+        if self.fourreau_visible and getattr(self, "au_fourreau", None):
             ajout = " {{" + self.au_fourreau.nom_singulier + "}}"
 
         if nombre <= 0:
