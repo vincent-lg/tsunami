@@ -191,6 +191,9 @@ class Conteneur(BaseType):
     def regarder(self, personnage):
         """Le personnage regarde l'objet"""
         msg = BaseType.regarder(self, personnage)
+        if not getattr(self, "conteneur", False):
+            return msg
+
         objets = []
         for o, nb in self.conteneur.get_objets_par_nom():
             objets.append(o.get_nom(nb))

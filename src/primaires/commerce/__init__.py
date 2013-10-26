@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -37,12 +37,12 @@ from . import types
 from .questeur import Questeur
 
 class Module(BaseModule):
-    
+
     """Cette classe contient les informations du module primaire commerce.
-    
+
     Ce module gère le commerce, c'est-à-dire les transactions, les magasins,
     les monnaies.
-    
+
     Note : on peut étendre ce module en proposant de nouveaux objets pouvant
     être vendus. Pour cela, il faut :
     1.  Lors de la configuration du module contenant les nouveaux
@@ -61,9 +61,9 @@ class Module(BaseModule):
         D.  Un attribut d'objet cle (str) correspondant à sa clé dans le
             dictionnaire
         E.  Une méthode acheter réalisant l'achat
-    
+
     """
-    
+
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "commerce", "primaire")
@@ -71,48 +71,49 @@ class Module(BaseModule):
         self.types_services = {}
         self.aides_types = {}
         self.questeurs = {}
-    
+
     def init(self):
         """Initialisation du module."""
         # On récupère les questeurs
         questeurs = self.importeur.supenr.charger_groupe(Questeur)
         for questeur in questeurs:
             self.ajouter_questeur(questeur)
-        
+
         BaseModule.init(self)
-    
+
     def ajouter_commandes(self):
         """Ajout des commandes"""
         self.commandes = [
             commandes.acheter.CmdAcheter(),
+            commandes.info.CmdInfo(),
             commandes.lister.CmdLister(),
             commandes.questeur.CmdQuesteur(),
             commandes.vendre.CmdVendre(),
         ]
-        
+
         for cmd in self.commandes:
             importeur.interpreteur.ajouter_commande(cmd)
-    
+
     def preparer(self):
         """Préparation du module."""
         for cle, questeur in tuple(self.questeurs.items()):
             if not cle.e_existe:
                 del self.questeurs[cle]
-    
+
     def creer_questeur(self, salle):
         """Crée un questeur et l'ajout dans le dictionnaire."""
         questeur = Questeur(salle)
         self.ajouter_questeur(questeur)
         return questeur
-    
+
     def ajouter_questeur(self, questeur):
         """Ajoute le questeur dans le dictionnaire."""
         self.questeurs[questeur.salle] = questeur
-    
+
     def questeur_existe(self, salle):
         """Retourne True ou False si le questeur existe dans la salle."""
         return self.questeurs.get(salle) is not None
-    
+
     def supprimer_questeur(self, salle):
         """Supprime le questeur."""
         questeur = self.questeurs[salle]
