@@ -134,7 +134,7 @@ class ConteneurPotion(BaseType):
     def regarder(self, personnage):
         """Le personnage regarde l'objet"""
         msg = BaseType.regarder(self, personnage)
-        if hasattr(self, "potion") and self.potion:
+        if getattr(self, "potion", False):
             msg += str(self.potion.description)
 
         return msg

@@ -188,7 +188,7 @@ class Armure(BaseType):
     def regarder(self, personnage):
         """Le personnage regarde l'objet"""
         msg = BaseType.regarder(self, personnage)
-        if self.au_fourreau:
+        if getattr(self, "au_fourreau", None):
             msg += "Au fourreau : " + self.au_fourreau.nom_singulier
 
         return msg
