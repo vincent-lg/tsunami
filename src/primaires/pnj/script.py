@@ -150,7 +150,7 @@ class ScriptPNJ(Script):
             "la variable |ent|personnage|ff|."
 
         # Configuration des variables de l'évènement attaque
-        var_perso = evt_discute.ajouter_variable("personnage", "Personnage")
+        var_perso = evt_attaque.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage attaquant le PNJ"
 
         # Evénement donne
@@ -232,6 +232,17 @@ class ScriptPNJ(Script):
         var_salle.aide = "la salle où meurt le PNJ"
         var_adv = evt_meurt.ajouter_variable("adversaire", "Personnage")
         var_adv.aide = "l'adversaire du PNJ (si meurt en combat)"
+
+        # Evénement tue
+        evt_tue = self.creer_evenement("tue")
+        evt_tue.aide_courte = "le PNJ tue un personnage"
+        evt_tue.aide_longue = \
+            "Cet évènement est appelé quand le PNJ tue (en combat rapproché " \
+            "ou non) un autre personnage."
+
+        # Configuration des variables de l'évènement attaque
+        var_perso = evt_tue.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage tué par le PNJ"
 
         # On ajoute à tous les évènements la variable 'pnj'
         for evt in self.evenements.values():

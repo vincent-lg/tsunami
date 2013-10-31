@@ -211,6 +211,7 @@ class Combat:
                                     "plongez dans l'inconscience.|ff|")
                             combattu.salle.envoyer("{} s'écroule sur le sol, " \
                                     "baignant dans son sang.", combattu)
+                            combattant.tuer(combattu)
                             combattu.mourir(adversaire=combattant)
                 else:
                     attaque.envoyer_msg_tentative(combattant, combattu,

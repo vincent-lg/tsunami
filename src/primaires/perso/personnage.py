@@ -927,6 +927,11 @@ class Personnage(BaseObj):
     def reagir_attaque(self, personnage):
         """Réagit à l'attaque."""
         pass
+
+    def tuer(self, victime):
+        """Le personnage self vient de tuer la victime."""
+        pass
+
     def regarder(self, personnage, notifier=True):
         """personnage regarde self."""
         equipement = self.equipement
