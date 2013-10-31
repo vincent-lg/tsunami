@@ -250,3 +250,7 @@ class PNJ(Personnage):
     def reagir_attaque(self, personnage):
         """Réagit à l'attaque."""
         self.script["attaque"].executer(personnage=personnage, pnj=self)
+
+    def tuer(self, victime):
+        """Le personnage self vient de tuer la victime."""
+        self.script["tue"].executer(personnage=victime, pnj=self)

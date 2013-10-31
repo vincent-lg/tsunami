@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,19 +33,20 @@
 from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
-    
+
     """Retourne la clé du prototype d'un objet ou PNJ."""
-    
+
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.nom_prototype_objet, "Objet")
+        cls.ajouter_types(cls.nom_prototype_objet, "PrototypeObjet")
         cls.ajouter_types(cls.nom_prototype_PNJ, "PNJ")
-    
+
     @staticmethod
     def nom_prototype_objet(objet):
         """Retourne la clé du prototype dont est issu l'objet."""
         return objet.cle
-    
+
     @staticmethod
     def nom_prototype_PNJ(pnj):
         """Retourne la clé du prototype dont est issu le PNJ."""
