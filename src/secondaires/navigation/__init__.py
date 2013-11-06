@@ -169,6 +169,8 @@ class Module(BaseModule):
                 self.virer_navires)
         self.importeur.diffact.ajouter_action("nauffrages", 5,
                 self.nauffrages)
+        self.importeur.diffact.ajouter_action("tick_chantiers", 60,
+                self.tick_chantiers)
 
         # Ajout des bateaux au module salle
         self.importeur.salle.salles_a_cartographier.append(
@@ -416,6 +418,13 @@ class Module(BaseModule):
                 self.supprimer_navire(navire.cle)
             elif poids > poids_max / 2:
                 navire.envoyer("L'eau emplit le navire de plus en plus vite.")
+
+    def tick_chantiers(self):
+        """Tick des chantiers navales."""
+        self.importeur.diffact.ajouter_action("tick_chantiers", 60,
+                self.tick_chantiers)
+        for chantier in self.chantiers.values():
+            chantier.executer_commandes()
 
     def navire_amarre(self, salle, liste_messages, flags):
         """Si un navire est amarré, on l'affiche."""

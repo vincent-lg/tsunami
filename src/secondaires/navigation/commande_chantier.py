@@ -33,6 +33,8 @@
 from datetime import datetime, timedelta
 
 from abstraits.obase import BaseObj
+from bases.exceptions.base import ExceptionMUD
+
 
 class CommandeChantierNavale(BaseObj):
 
@@ -85,3 +87,40 @@ class CommandeChantierNavale(BaseObj):
     def a_faire(self):
         """Retourne True si la commande est à faire maintenant, False sinon."""
         return datetime.now() >= self.date_fin
+
+    def executer(self):
+        """Exécute la commande.
+
+        En fonction du type on appelle une méthode différente.
+
+        """
+        nom_type = self.nom_type
+        methode = "cmd_" + nom_type
+        if not callable(getattr(self, methode, None)):
+            raise ValueError("le type de commande {} est invalide".format(
+                    repr(nom_type)))
+
+        getattr(self, methode)()
+
+    # Types de commande
+    def cmd_acheter(self):
+        """Achète un navire."""
+        cle_modele = self.arguments[0]
+        modele = importeur.navigation.modeles[cle_modele]
+
+        # On cherche un emplacement disponible dans le bassin
+        point = None
+        for navire in importeur.navigation.navires.values():
+            t_point = None
+            for point in self.points:
+                v_point = Vector(*point)
+                n_point = navire.opt_position
+                if (n_point - v_point).mag < \
+                        modele.get_max_distance_au_centre():
+                    pass
+
+class CommandeInterrompue(ExceptionMUD):
+
+    """Exception levée quand la commande a été interrompue."""
+
+    pass

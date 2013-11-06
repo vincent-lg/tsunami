@@ -31,7 +31,7 @@
 """Fichier contenant la classe ChantierNavale, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
-from secondaires.navigation.commande_chantier import CommandeChantierNavale
+from secondaires.navigation.commande_chantier import *
 
 class ChantierNavale(BaseObj):
 
@@ -63,3 +63,29 @@ class ChantierNavale(BaseObj):
 
     def __str__(self):
         return self.cle
+
+    def ajouter_commande(self, instigateur, navire, nom_type, duree, *args):
+        """Ajout d'une nouvelle commande.
+
+        Les paramètres à préciser sont :
+            instigateur -- le personnage ayant ordonné la commande
+            navire -- le navire concerné
+            nom_type -- le type de la commande
+            duree -- la durée de la commande (en minutes)
+            *args -- les arguments supplémentaire soptionnels propres au type.
+
+        """
+        commande = CommandeChantierNavale(self, instigateur, navire, nom_type,
+                duree, *args)
+        self.commandes.append(commande)
+
+    def executer_commandes(self):
+        """Exécute les commandes à faire."""
+        for commande in list(self.commandes):
+            if commande.a_faire:
+                try:
+                    commande.executer()
+                except CommandeInterrompue:
+                    pass
+                else:
+                    self.commandes.remove(commande)

@@ -67,6 +67,14 @@ class ModeleNavire(BaseObj):
         """Retourne un tuple des mnémonics des salles."""
         return tuple(s.mnemonic for s in self.salles.values())
 
+    def get_max_distance_au_centre(self):
+        """Retourne la distance maximum par rapport au centre du navire."""
+        distances = []
+        for x, y, z in self.salles.keys():
+            distances.append(sqrt(x ** 2 + y ** 2 + z ** 2))
+
+        return max(distances)
+
     def get_salle(self, mnemonic):
         """Retourne la salle ayant le mnémonic indiqué.
 
