@@ -31,9 +31,13 @@
 """Fichier contenant la classe CommandeChantierNavale, détaillée plus bas."""
 
 from datetime import datetime, timedelta
+from math import radians
+
+from vector import *
 
 from abstraits.obase import BaseObj
 from bases.exceptions.base import ExceptionMUD
+from corps.fonctions import lisser
 
 
 class CommandeChantierNavale(BaseObj):
@@ -88,6 +92,27 @@ class CommandeChantierNavale(BaseObj):
         """Retourne True si la commande est à faire maintenant, False sinon."""
         return datetime.now() >= self.date_fin
 
+    @property
+    def duree_restante(self):
+        """Retourne la durée restante sous la forme d'une chaîne."""
+        if self.a_faire:
+            return "moins d'une minute"
+
+        delta = self.date_fin - datetime.now()
+        secondes = delta.total_seconds()
+        if secondes < 3600:
+            nb = secondes // 60
+            unite = "minute"
+        elif secondes < 24 * 3600:
+            nb = secondes // 3600
+            unite = "heure"
+        else:
+            nb = secondes // (3600 * 24)
+            unite = "jour"
+
+        s = "s" if nb > 1 else ""
+        return "{} {}{s}".format(nb, unite, s=s)
+
     def executer(self):
         """Exécute la commande.
 
@@ -102,6 +127,15 @@ class CommandeChantierNavale(BaseObj):
 
         getattr(self, methode)()
 
+    def get_nom(self):
+        """Retourne le nom correspondant au type."""
+        return getattr(self, "nom_" + self.nom_type)()
+
+    # Noms de type
+    def nom_acheter(self):
+        """Retourne le nom quand un navire est en cours d'achat."""
+        return lisser("Achat de " + self.arguments[0].nom)
+
     # Types de commande
     def cmd_acheter(self):
         """Achète un navire."""
@@ -110,14 +144,52 @@ class CommandeChantierNavale(BaseObj):
 
         # On cherche un emplacement disponible dans le bassin
         point = None
-        for navire in importeur.navigation.navires.values():
-            t_point = None
-            for point in self.points:
-                v_point = Vector(*point)
-                n_point = navire.opt_position
-                if (n_point - v_point).mag < \
-                        modele.get_max_distance_au_centre():
-                    pass
+        points = self.chantier.points
+        for x, y, z in points:
+            vecteur = Vector(x, y, z)
+            vecteurs = []
+            invalide = False
+            for t_x, t_y, t_z in modele.salles.keys():
+                t_vecteur = Vector(t_x, t_y, t_z)
+                t_vecteur.around_z(radians(90))
+                t_vecteur = t_vecteur + vecteur
+                t_x, t_y, t_z = t_vecteur.x, t_vecteur.y, t_vecteur.z
+                if (t_x, t_y, t_z) in points:
+                    vecteurs.append(vecteur)
+                else:
+                    invalide = True
+                    break
+
+            if invalide:
+                continue
+
+            # On vérifie que la distance minimale avec TOUS les points
+            # est supérieure ou égale à 1
+            distances = []
+            for vecteur in vecteurs:
+                distances.append(
+                        importeur.navigation.distance_min_avec_navires(
+                        vecteur))
+            distances = [d for d in distances if d is not None]
+            if len(distances) == 0 or min(distances) >= 1:
+                point = (x, y, z)
+                break
+
+        if point is None:
+            raise CommandeInterrompue("Il n'y a plus de place dans le " \
+                    "chantier navale")
+
+        x, y, z = point
+        navire = importeur.navigation.creer_navire(modele)
+        navire.etendue = self.chantier.etendue
+        navire.position.x = x
+        navire.position.y = y
+        navire.position.z = z
+        navire.maj_salles()
+        navire.valider_coordonnees()
+        navire.proprietaire = self.instigateur
+        navire.arreter()
+
 
 class CommandeInterrompue(ExceptionMUD):
 

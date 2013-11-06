@@ -44,7 +44,7 @@ from .constantes import *
 from .element import Element
 from .salle import SalleNavire
 from .vent import INFLUENCE_MAX
-from .constantes import END_VIT_RAMES
+from .constantes import END_VIT_RAMES, TERRAINS_QUAI
 
 # Constantes
 FACTEUR_MIN = 0.1
@@ -128,6 +128,36 @@ class Navire(Vehicule):
             gouvernail = salle.gouvernail
             if gouvernail:
                 return gouvernail
+
+        return None
+
+    @property
+    def amarre(self):
+        """Retourne l'amarre si le navire en contient."""
+        for salle in self.salles.values():
+            element = salle.get_element("amarre")
+            if element:
+                return element
+
+        return None
+
+    @property
+    def ancre(self):
+        """Retourne la première ancre si le navire en contient."""
+        for salle in self.salles.values():
+            element = salle.get_element("ancre")
+            if element:
+                return element
+
+        return None
+
+    @property
+    def elt_passerelle(self):
+        """Retourne la passerelle si le navire en contient."""
+        for salle in self.salles.values():
+            element = salle.get_element("passerelle")
+            if element:
+                return element
 
         return None
 
@@ -501,6 +531,45 @@ class Navire(Vehicule):
                 detail.connecteur = m_detail.connecteur
                 detail.nb_places_assises = m_detail.nb_places_assises
                 detail.nb_places_allongees = m_detail.nb_places_allongees
+
+    def arreter(self):
+        """Arrête le navire.
+
+        Si le navire possède une ancre et passerelle, on la jète et la déplie.
+        Sinon on essaye de l'amarrer.
+        Cette méthode peut échouer sans erreur.
+
+        """
+        if self.ancre:
+            self.ancre.jetee = True
+            self.immobilise = True
+
+        if self.elt_passerelle:
+            passerelle = self.elt_passerelle
+            passerelle.deplier()
+
+        if self.amarre:
+            amarre = self.amarre
+            salle = amarre.parent
+            navire = salle.navire
+            etendue = navire.etendue
+            distance = 2
+            d_salle = None
+            x, y, z = salle.coords.tuple()
+            for t_salle in etendue.cotes.values():
+                if d_salle.nom_terrain not in TERRAINS_QUAI:
+                    continue
+
+                t_x, t_y, t_z = t_salle.coords.tuple()
+                t_distance = mag(x, y, z, t_x, t_y, t_z)
+                if t_distance < distance:
+                    d_salle = t_salle
+                    distance = t_distance
+
+            if d_salle:
+                amarre.attachee = d_salle
+                navire.immobilise = True
+
 
     def detruire(self):
         """Destruction du self."""

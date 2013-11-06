@@ -31,6 +31,7 @@
 """Fichier contenant la classe ModeleNavire, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
+from primaires.format.description import Description
 from .salle import *
 
 class ModeleNavire(BaseObj):
@@ -53,6 +54,9 @@ class ModeleNavire(BaseObj):
         self.salles = {}
         self.poids_max = 200
         self.graph = {}
+        self.m_valeur = 1000
+        self.duree_construction = 60
+        self.description = Description(parent=self)
 
     def __getnewargs__(self):
         return ("", )

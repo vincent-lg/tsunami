@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,29 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'chantier'."""
 
-from . import allure
-from . import ancre
-from . import amarre
-from . import canon
-from . import chantier
-from . import debarquer
-from . import detailler
-from . import eltedit
-from . import embarquer
-from . import equipage
-from . import gouvernail
-from . import loch
-from . import matelot
-from . import navire
-from . import passerelle
-from . import rames
-from . import shedit
-from . import vent
-from . import voile
+from primaires.interpreteur.commande.commande import Commande
+from .commandes import PrmCommandes
+
+class CmdChantier(Commande):
+
+    """Commande 'chantier'"""
+
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "chantier", "shipyard")
+        self.nom_categorie = "navire"
+        self.aide_courte = "accède aux chantiers navals"
+        self.aide_longue = \
+            "Cette commande permet d'accéder aux chantiers navals. L'achat " \
+            "de navires passe par la commande %acheter% (comme les autres " \
+            "objets), mais pour le réparer, le renommer ou en changer " \
+            "l'aspect, vous devez ensuite passer par cette commande. " \
+            "Après avoir acheté un navire ou si une autre action (comme " \
+            "une réparation) est en cours, vous pourrez la voir en entrant " \
+            "%chantier% %chantier:commandes%."
+
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmCommandes())

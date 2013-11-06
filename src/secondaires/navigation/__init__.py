@@ -33,6 +33,8 @@
 # Configuration du logger des ordres
 type(importeur).man_logs.creer_logger("navigation", "ordres", "ordres.log")
 
+from vector import *
+
 from abstraits.module import *
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
@@ -49,6 +51,7 @@ from .modele import ModeleNavire
 from .constantes import *
 from .equipage.matelot import Matelot
 from .chantier_navale import ChantierNavale
+from .navires_vente import NaviresVente
 
 class Module(BaseModule):
 
@@ -98,6 +101,15 @@ class Module(BaseModule):
         ten_rames.msg_refus = "Vous tenez actuellement les rames"
         ten_rames.msg_visible = "rame ici"
         ten_rames.act_autorisees = ["regarder", "parler"]
+
+        # Ajout des services
+        importeur.commerce.types_services["navire"] = NaviresVente()
+        importeur.commerce.aides_types["navire"] = \
+            "Ce service permet la vente de navires. Vous devez tout " \
+            "simplement préciser la clé du modèle de navire. Attention " \
+            "cependant : pour que la vente de navires dans ce magasin " \
+            "puisse se faire, le magasin doit être relié à un chantier " \
+            "navale."
 
         BaseModule.config(self)
 
@@ -185,6 +197,7 @@ class Module(BaseModule):
             commandes.amarre.CmdAmarre(),
             commandes.ancre.CmdAncre(),
             commandes.canon.CmdCanon(),
+            commandes.chantier.CmdChantier(),
             commandes.debarquer.CmdDebarquer(),
             commandes.detailler.CmdDetailler(),
             commandes.eltedit.CmdEltedit(),
@@ -372,6 +385,14 @@ class Module(BaseModule):
 
         self.chantiers.pop(cle).detruire()
 
+    def get_chantier_navale(self, salle):
+        """Retourne, si trouvé, le chantier naval lié à cette salle."""
+        for chantier in self.chantiers.values():
+            if chantier.salle_magasin is salle:
+                return chantier
+
+        return None
+
     def avancer_navires(self):
         """Fait avancer les navires."""
         self.importeur.diffact.ajouter_action("dep_navire", TPS_VIRT,
@@ -492,3 +513,17 @@ class Module(BaseModule):
                 n.cle.startswith(cle + "_")]
         n_id = max(ids) + 1 if ids else 1
         return "{}_{}".format(cle, n_id)
+
+    def distance_min_avec_navires(self, vecteur):
+        """Retourne la distance minimum avec tous les navires présents."""
+        distances = []
+        for navire in self.navires.values():
+            for salle in navire.salles.values():
+                t_x, t_y, t_z = salle.coords.x, salle.coords.y, salle.coords.z
+                t_vecteur = Vector(t_x, t_y, t_z)
+                distances.append((t_vecteur - vecteur).mag)
+
+        if distances:
+            return min(distances)
+
+        return None

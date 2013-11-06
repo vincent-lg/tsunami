@@ -155,6 +155,14 @@ class SalleNavire(Salle):
 
         return None
 
+    def get_element(self, cle):
+        """Retourne l'élément de type indiqué ou None."""
+        elts = [e for e in self.elements if e.nom_type == cle]
+        if elts:
+            return elts[0]
+
+        return None
+
     def get_etendue(self):
         return self.navire and self.navire.etendue or None
 
