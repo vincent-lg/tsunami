@@ -48,6 +48,7 @@ from . import types
 from .modele import ModeleNavire
 from .constantes import *
 from .equipage.matelot import Matelot
+from .chantier_navale import ChantierNavale
 
 class Module(BaseModule):
 
@@ -71,6 +72,7 @@ class Module(BaseModule):
         self.vents = {}
         self.vents_par_etendue = {}
         self.matelots = {}
+        self.chantiers = {}
 
     def config(self):
         """Configuration du module."""
@@ -150,6 +152,15 @@ class Module(BaseModule):
         nb_mat = len(self.matelots)
         self.nav_logger.info(format_nb(nb_mat,
                 "{nb} matelot{s} récupéré{s}"))
+
+        # On récupère les chantiers navales
+        chantiers = self.importeur.supenr.charger_groupe(ChantierNavale)
+        for chantier in chantiers:
+            self.ajouter_chantier_navale(chantier)
+
+        nb_chantiers = len(chantiers)
+        self.nav_logger.info(format_nb(nb_chantiers,
+                "{nb} chantier{s} navale{s} récupéré{s}"))
 
         # Ajout des actions différées
         self.importeur.diffact.ajouter_action("dep_navire", TPS_VIRT,
@@ -333,6 +344,32 @@ class Module(BaseModule):
         #matelot.detruire()
         pass
 
+    def creer_chantier_navale(self, cle):
+        """Crée un chantier navale."""
+        if cle in self.chantiers:
+            raise ValueError("la clé {} est déjà utilisée par un autre " \
+                    "chantier".format(cle))
+
+        chantier = ChantierNavale(cle)
+        self.ajouter_chantier_navale(chantier)
+        return chantier
+
+    def ajouter_chantier_navale(self, chantier):
+        """Ajoute un chantier navale."""
+        if chantier.cle in self.chantiers:
+            raise ValueError("la clé {} est déjà utilisée par un autre " \
+                    "chantier".format(chantier.cle))
+
+        self.chantiers[chantier.cle] = chantier
+
+    def supprimer_chantier_navale(self, cle):
+        """Suppression d'un chantier navale."""
+        if cle not in self.chantiers:
+            raise ValueError("la clé {} n'est utilisée par aucun " \
+                    "chantier".format(cle))
+
+        self.chantiers.pop(cle).detruire()
+
     def avancer_navires(self):
         """Fait avancer les navires."""
         self.importeur.diffact.ajouter_action("dep_navire", TPS_VIRT,
@@ -433,3 +470,16 @@ class Module(BaseModule):
             l_navires.append(("Navire", False, \
                     (round(navire.position.x), round(navire.position.y))))
         return l_navires
+
+    def dernier_ID(self, cle):
+        """Retourne la prochaine clé non utilisée d'un modèle.
+
+        Si par exemple on passe en paramètre de cette fonction la clé
+        "voilier" et qu'il existe déjà un "voilier_1" et "voilier_2" alors
+        on retourne "voilier_3".
+
+        """
+        ids = [int(n.cle[len(cle) + 1:]) for n in self.navires.values() if \
+                n.cle.startswith(cle + "_")]
+        n_id = max(ids) + 1 if ids else 1
+        return "{}_{}".format(cle, n_id)

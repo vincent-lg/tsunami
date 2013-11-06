@@ -74,6 +74,7 @@ class Navire(Vehicule):
         self.equipage = Equipage(self)
         self.immobilise = False
         self.modele = modele
+        self.proprietaire = None
 
         # Dernier lien (dl)
         self.dl_x = 0
@@ -81,7 +82,7 @@ class Navire(Vehicule):
 
         if modele:
             modele.vehicules.append(self)
-            self.cle = "{}_{}".format(modele.cle, len(modele.vehicules))
+            self.cle = importeur.navigation.dernier_ID(modele.cle)
             self.construire_depuis_modele()
 
     def __getnewargs__(self):
