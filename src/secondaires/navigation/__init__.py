@@ -117,6 +117,8 @@ class Module(BaseModule):
         """Chargement des navires et modèles."""
         self.importeur.hook["salle:regarder"].ajouter_evenement(
                 self.navire_amarre)
+        self.importeur.hook["salle:regarder"].ajouter_evenement(
+                self.navire_accoste)
         self.importeur.interpreteur.categories["navire"] = \
                 "Commandes de navigation"
 
@@ -457,9 +459,27 @@ class Module(BaseModule):
         for navire in navires:
             for t_salle in navire.salles.values():
                 if t_salle.amarre and t_salle.amarre.attachee is salle:
-                    liste_messages.insert(0, "{} est amarrée ici.".format(
-                            navire.nom.capitalize()))
+                    e = "" if navire.modele.masculin else "e"
+                    liste_messages.insert(0, "{} est amarré{e} ici.".format(
+                            navire.desc_survol.capitalize(), e=e))
                     return
+
+    def navire_accoste(self, salle, liste_messages, flags):
+        """Si un navire est accosté, on l'affiche."""
+        if salle.etendue is None or salle.nom_terrain not in TERRAINS_QUAI:
+            return
+
+        try:
+            sortie = salle.sorties.get_sortie_par_nom("passerelle")
+        except KeyError:
+            return
+
+        if sortie and sortie.salle_dest and hasattr(sortie.salle_dest,
+                "navire"):
+            navire = sortie.salle_dest.navire
+            e = "" if navire.modele.masculin else "e"
+            liste_messages.insert(0, "{} a accosté{e} ici.".format(
+                        navire.desc_survol.capitalize(), e=e))
 
     def get_symbole(self, point):
         """Retourne le symbole correspondant."""

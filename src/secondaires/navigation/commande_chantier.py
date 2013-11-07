@@ -68,6 +68,7 @@ class CommandeChantierNaval(BaseObj):
         BaseObj.__init__(self)
         self.chantier = chantier
         self.instigateur = instigateur
+        self.navire = navire
         self.nom_type = nom_type
         self.duree = duree
         self.arguments = args
@@ -100,7 +101,9 @@ class CommandeChantierNaval(BaseObj):
 
         delta = self.date_fin - datetime.now()
         secondes = delta.total_seconds()
-        if secondes < 3600:
+        if secondes < 60:
+            return "moins d'une minute"
+        elif secondes < 3600:
             nb = secondes // 60
             unite = "minute"
         elif secondes < 24 * 3600:
@@ -111,7 +114,7 @@ class CommandeChantierNaval(BaseObj):
             unite = "jour"
 
         s = "s" if nb > 1 else ""
-        return "{} {}{s}".format(nb, unite, s=s)
+        return "{} {}{s}".format(int(nb), unite, s=s)
 
     def executer(self):
         """Exécute la commande.
@@ -136,6 +139,11 @@ class CommandeChantierNaval(BaseObj):
         """Retourne le nom quand un navire est en cours d'achat."""
         modele = importeur.navigation.modeles[self.arguments[0]]
         return lisser("Achat de " + modele.nom)
+
+    def nom_renommer(self):
+        """Retourne le nom de la commande quand on renomme un navire."""
+        navire = self.navire
+        return lisser("Changement de nom de " + navire.nom)
 
     # Types de commande
     def cmd_acheter(self):
@@ -198,6 +206,19 @@ class CommandeChantierNaval(BaseObj):
         navire.valider_coordonnees()
         navire.proprietaire = self.instigateur
         navire.arreter()
+
+    def cmd_renommer(self):
+        """Renomme un navire."""
+        navire = self.navire
+        x, y, z = int(navire.position.x), int(navire.position.y), \
+                int(navire.position.z)
+        if (x, y, z) not in self.chantier.points:
+            raise CommandeInterrompue("Le navire n'est plus dans le " \
+                    "chantier naval")
+
+
+        nom = self.arguments[0]
+        navire.nom_personnalise = nom
 
 
 class CommandeInterrompue(ExceptionMUD):

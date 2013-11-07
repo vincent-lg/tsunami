@@ -102,8 +102,8 @@ class NavireVente(BaseObj):
         chantier.ajouter_commande(acheteur, None, "acheter",
                 modele.duree_construction, modele.cle)
         acheteur << "Votre commande est envoyée au chantier naval."
-        acheteur.envoyer_tip("Pour en voir la liste, entrez la commande %chantier% " \
-                "%chantier:commandes%.")
+        acheteur.envoyer_tip("Pour voir la liste de vos commandes en cours, " \
+                "entrez %chantier% %chantier:commandes%.")
 
     def regarder(self, personnage):
         """Le personnage regarde le service (avant achat)."""

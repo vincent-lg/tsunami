@@ -38,6 +38,7 @@ seront placées dans ce package
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.entier import Entier
+from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_carte import EdtCarte
 
@@ -83,6 +84,11 @@ class EdtShedit(Presentation):
         description_vente.aide_courte = \
             "| |tit|" + "Description en vente du navire {}".format(
                     modele.cle).ljust(76) + "|ff||\n" + self.opts.separateur
+
+        # Genre masculin
+        masculin = self.ajouter_choix("genre masculin", "g", Flag, modele,
+                "masculin")
+        masculin.parent = self
 
         # Prix
         prix = self.ajouter_choix("prix unitaire", "u", Entier, modele,

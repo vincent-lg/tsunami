@@ -28,28 +28,30 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'commandes' de la commande 'chantier'."""
+"""Fichier contenant le paramètre 'liste' de la commande 'chantier'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmCommandes(Parametre):
+class PrmListe(Parametre):
 
-    """Commande 'chantier commandes'.
+    """Commande 'chantier liste'.
 
     """
 
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "commandes", "commands")
-        self.aide_courte = "consulte vos commandes en cours"
+        Parametre.__init__(self, "liste", "list")
+        self.aide_courte = "consulte vos navires"
         self.aide_longue = \
-            "Cette commande vous permet de consulter vos commandes en " \
-            "cours dans ce chantier naval. Les commandes sont des " \
-            "actions en cours (comme la construction d'un navire, sa " \
-            "réparation ou d'autres actions). Vous pouvez voir le temps " \
-            "restant avant l'accomplissement de l'action entreprise. " \
-            "Si vous déplacez le navire concerné par l'action, celle-ci " \
-            "ne pourra pas être conduite."
+            "Cette commande vous permet de consulter la liste des navires " \
+            "que vous possédez, si ils se trouvent dans les eaux du chantier " \
+            "naval dans lequel vous vous trouvez. Si le navire sur " \
+            "lequel vous souhaitez effectuer une opération (changer son " \
+            "nom par exemple), il doit se trouver dans le chantier " \
+            "naval. Cette commande affiche la liste avec chaque navire " \
+            "numéroté. Ces numéros vous permettront d'effectuer d'autres " \
+            "actions dans le chantier naval et vous devrez le préciser " \
+            "lors des autres commandes."
 
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
@@ -70,19 +72,24 @@ class PrmCommandes(Parametre):
             personnage << "|err|Aucun vendeur n'est présent pour l'instant.|ff|"
             return
 
-        commandes = [c for c in chantier.commandes if \
-                c.instigateur is personnage]
-        if commandes:
-            en_tete = "+-" + "-" * 40 + "-+-" + "-" * 20 + "-+"
+        navires = chantier.get_navires_possedes(personnage)
+        if navires:
+            en_tete = "+-" + "-" * 2 + "-+-" + "-" * 25 + "-+-" + "-" * 25 + \
+                    "-+"
             msg = en_tete + "\n"
-            msg += "| " + "Commande".ljust(40) + " | "
-            msg += "Temps restant".ljust(20) + " |\n" + en_tete
-            commandes = sorted(commandes, key=lambda c: c.date_fin)
-            for commande in commandes:
-                msg += "\n| " + commande.get_nom().ljust(40) + " | "
-                msg += commande.duree_restante.ljust(20) + " |"
+            msg += "| ID | " + "Type".ljust(25) + " | "
+            msg += "Nom".ljust(25) + " |\n" + en_tete
+            for i, navire in enumerate(navires):
+                msg += "\n| " + "{:>2} | ".format(i + 1)
+                msg += navire.nom.ljust(25) + " | "
+                if navire.nom_personnalise:
+                    nom_personnalise = navire.nom_personnalise
+                else:
+                    nom_personnalise = "Non précisé"
+
+                msg += nom_personnalise.ljust(25) + " |"
             msg += "\n" + en_tete
             personnage << msg
         else:
-            personnage << "Vous n'avez aucune commande en cours dans ce " \
+            personnage << "Vous n'avez aucun navire dans ce " \
                     "chantier naval."

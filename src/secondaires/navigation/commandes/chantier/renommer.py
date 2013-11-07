@@ -28,31 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'commandes' de la commande 'chantier'."""
+"""Fichier contenant le paramètre 'renommer' de la commande 'chantier'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmCommandes(Parametre):
+class PrmRenommer(Parametre):
 
-    """Commande 'chantier commandes'.
+    """Commande 'chantier renommer'.
 
     """
 
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "commandes", "commands")
-        self.aide_courte = "consulte vos commandes en cours"
+        Parametre.__init__(self, "renommer", "rename")
+        self.schema = "<nombre> <message>"
+        self.aide_courte = "renomme un navire"
         self.aide_longue = \
-            "Cette commande vous permet de consulter vos commandes en " \
-            "cours dans ce chantier naval. Les commandes sont des " \
-            "actions en cours (comme la construction d'un navire, sa " \
-            "réparation ou d'autres actions). Vous pouvez voir le temps " \
-            "restant avant l'accomplissement de l'action entreprise. " \
-            "Si vous déplacez le navire concerné par l'action, celle-ci " \
-            "ne pourra pas être conduite."
+            "Cette commande vous permet de changer le nom d'un navire. " \
+            "Celui-ci doit être dans le chantier naval où vous vous " \
+            "trouvez. Vous devez préciser en premier paramètre le " \
+            "numéro du navire (tel que la commande %chantier% " \
+            "%chantier:liste% l'affiche) et en second paramètre le " \
+            "nouveau nom du navire. Cette action n'est pas instantanée " \
+            ": le navire doit rester dans le chantier naval quelques " \
+            "minutes le temps que les ouvriers repeignent son nom sur " \
+            "la coque. Vous pouvez voir le temps restant pour cette " \
+            "opération en entrant %chantier% %chantier:commandes%."
 
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
+        nombre = dic_masques["nombre"].nombre
+        nom = dic_masques["message"].message
         salle = personnage.salle
         chantier = importeur.navigation.get_chantier_naval(salle)
         if chantier is None:
@@ -70,19 +76,12 @@ class PrmCommandes(Parametre):
             personnage << "|err|Aucun vendeur n'est présent pour l'instant.|ff|"
             return
 
-        commandes = [c for c in chantier.commandes if \
-                c.instigateur is personnage]
-        if commandes:
-            en_tete = "+-" + "-" * 40 + "-+-" + "-" * 20 + "-+"
-            msg = en_tete + "\n"
-            msg += "| " + "Commande".ljust(40) + " | "
-            msg += "Temps restant".ljust(20) + " |\n" + en_tete
-            commandes = sorted(commandes, key=lambda c: c.date_fin)
-            for commande in commandes:
-                msg += "\n| " + commande.get_nom().ljust(40) + " | "
-                msg += commande.duree_restante.ljust(20) + " |"
-            msg += "\n" + en_tete
-            personnage << msg
-        else:
-            personnage << "Vous n'avez aucune commande en cours dans ce " \
-                    "chantier naval."
+        navires = chantier.get_navires_possedes(personnage)
+        try:
+            navire = navires[nombre - 1]
+        except IndexError:
+            personnage << "|err|Numéro de navire introuvable.|ff|"
+            return
+
+        chantier.ajouter_commande(personnage, navire, "renommer", 11, nom)
+        personnage << "Votre requête a été envoyé au chantier naval."

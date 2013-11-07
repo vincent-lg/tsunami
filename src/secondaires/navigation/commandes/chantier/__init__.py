@@ -32,6 +32,8 @@
 
 from primaires.interpreteur.commande.commande import Commande
 from .commandes import PrmCommandes
+from .liste import PrmListe
+from .renommer import PrmRenommer
 
 class CmdChantier(Commande):
 
@@ -54,3 +56,5 @@ class CmdChantier(Commande):
     def ajouter_parametres(self):
         """Ajout des paramètres."""
         self.ajouter_parametre(PrmCommandes())
+        self.ajouter_parametre(PrmListe())
+        self.ajouter_parametre(PrmRenommer())

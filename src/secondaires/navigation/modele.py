@@ -57,6 +57,7 @@ class ModeleNavire(BaseObj):
         self.m_valeur = 1000
         self.duree_construction = 60
         self.description_vente = Description(parent=self)
+        self.masculin = True
 
     def __getnewargs__(self):
         return ("", )

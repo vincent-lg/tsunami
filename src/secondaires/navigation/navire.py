@@ -75,6 +75,7 @@ class Navire(Vehicule):
         self.immobilise = False
         self.modele = modele
         self.proprietaire = None
+        self.nom_personnalise = ""
 
         # Dernier lien (dl)
         self.dl_x = 0
@@ -244,7 +245,16 @@ class Navire(Vehicule):
 
     @property
     def desc_survol(self):
-        return self.nom
+        """Retourne le nom du modèle et le nom personnalisé."""
+        nom = self.nom
+        if self.nom_personnalise:
+            nom += " nommé"
+            if not self.modele.masculin:
+                nom += "e"
+
+            nom += " " + self.nom_personnalise
+
+        return nom
 
     @property
     def poids_max(self):
@@ -556,8 +566,8 @@ class Navire(Vehicule):
             distance = 2
             d_salle = None
             x, y, z = salle.coords.tuple()
-            for t_salle in etendue.cotes.values():
-                if d_salle.nom_terrain not in TERRAINS_QUAI:
+            for coords, t_salle in etendue.cotes.items():
+                if t_salle.nom_terrain not in TERRAINS_QUAI:
                     continue
 
                 t_x, t_y, t_z = t_salle.coords.tuple()
@@ -569,7 +579,6 @@ class Navire(Vehicule):
             if d_salle:
                 amarre.attachee = d_salle
                 navire.immobilise = True
-
 
     def detruire(self):
         """Destruction du self."""
