@@ -50,7 +50,7 @@ from . import types
 from .modele import ModeleNavire
 from .constantes import *
 from .equipage.matelot import Matelot
-from .chantier_navale import ChantierNavale
+from .chantier_naval import ChantierNaval
 from .navires_vente import NaviresVente
 
 class Module(BaseModule):
@@ -109,7 +109,7 @@ class Module(BaseModule):
             "simplement préciser la clé du modèle de navire. Attention " \
             "cependant : pour que la vente de navires dans ce magasin " \
             "puisse se faire, le magasin doit être relié à un chantier " \
-            "navale."
+            "naval."
 
         BaseModule.config(self)
 
@@ -165,14 +165,14 @@ class Module(BaseModule):
         self.nav_logger.info(format_nb(nb_mat,
                 "{nb} matelot{s} récupéré{s}"))
 
-        # On récupère les chantiers navales
-        chantiers = self.importeur.supenr.charger_groupe(ChantierNavale)
+        # On récupère les chantiers navals
+        chantiers = self.importeur.supenr.charger_groupe(ChantierNaval)
         for chantier in chantiers:
-            self.ajouter_chantier_navale(chantier)
+            self.ajouter_chantier_naval(chantier)
 
         nb_chantiers = len(chantiers)
         self.nav_logger.info(format_nb(nb_chantiers,
-                "{nb} chantier{s} navale{s} récupéré{s}"))
+                "{nb} chantier{s} naval{s} récupéré{s}"))
 
         # Ajout des actions différées
         self.importeur.diffact.ajouter_action("dep_navire", TPS_VIRT,
@@ -359,33 +359,33 @@ class Module(BaseModule):
         #matelot.detruire()
         pass
 
-    def creer_chantier_navale(self, cle):
-        """Crée un chantier navale."""
+    def creer_chantier_naval(self, cle):
+        """Crée un chantier naval."""
         if cle in self.chantiers:
             raise ValueError("la clé {} est déjà utilisée par un autre " \
                     "chantier".format(cle))
 
-        chantier = ChantierNavale(cle)
-        self.ajouter_chantier_navale(chantier)
+        chantier = ChantierNaval(cle)
+        self.ajouter_chantier_naval(chantier)
         return chantier
 
-    def ajouter_chantier_navale(self, chantier):
-        """Ajoute un chantier navale."""
+    def ajouter_chantier_naval(self, chantier):
+        """Ajoute un chantier naval."""
         if chantier.cle in self.chantiers:
             raise ValueError("la clé {} est déjà utilisée par un autre " \
                     "chantier".format(chantier.cle))
 
         self.chantiers[chantier.cle] = chantier
 
-    def supprimer_chantier_navale(self, cle):
-        """Suppression d'un chantier navale."""
+    def supprimer_chantier_naval(self, cle):
+        """Suppression d'un chantier naval."""
         if cle not in self.chantiers:
             raise ValueError("la clé {} n'est utilisée par aucun " \
                     "chantier".format(cle))
 
         self.chantiers.pop(cle).detruire()
 
-    def get_chantier_navale(self, salle):
+    def get_chantier_naval(self, salle):
         """Retourne, si trouvé, le chantier naval lié à cette salle."""
         for chantier in self.chantiers.values():
             if chantier.salle_magasin is salle:
@@ -441,7 +441,7 @@ class Module(BaseModule):
                 navire.envoyer("L'eau emplit le navire de plus en plus vite.")
 
     def tick_chantiers(self):
-        """Tick des chantiers navales."""
+        """Tick des chantiers navals."""
         self.importeur.diffact.ajouter_action("tick_chantiers", 60,
                 self.tick_chantiers)
         for chantier in self.chantiers.values():

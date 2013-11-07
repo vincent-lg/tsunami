@@ -28,18 +28,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe ChantierNavale, détaillée plus bas."""
+"""Fichier contenant la classe ChantierNaval, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
 from secondaires.navigation.commande_chantier import *
 
-class ChantierNavale(BaseObj):
+class ChantierNaval(BaseObj):
 
-    """Classe décrivant un chantier navale.
+    """Classe décrivant un chantier naval.
 
-    Un chantier navale est un ensemble de salles que l'on peut utiliser pour
+    Un chantier naval est un ensemble de salles que l'on peut utiliser pour
     la réparation et la personnalisation d'un navire en particulier. Un
-    chantier navale possède une salle d'interaction (nommée 'salle_magasin')
+    chantier naval possède une salle d'interaction (nommée 'salle_magasin')
     et des points d'occupation qui déterminent le lieu des bassins. Si le
     navire souhaité n'est pas dans le bassin d'un chantier, le chantier ne
     pourra pas travailler dessus.
@@ -60,7 +60,7 @@ class ChantierNavale(BaseObj):
         return ("inconnu", )
 
     def __repr__(self):
-        return "<ChantierNavale {}>".format(repr(self.cle))
+        return "<ChantierNaval {}>".format(repr(self.cle))
 
     def __str__(self):
         return self.cle
@@ -76,7 +76,7 @@ class ChantierNavale(BaseObj):
             *args -- les arguments supplémentaire soptionnels propres au type.
 
         """
-        commande = CommandeChantierNavale(self, instigateur, navire, nom_type,
+        commande = CommandeChantierNaval(self, instigateur, navire, nom_type,
                 duree, *args)
         self.commandes.append(commande)
 

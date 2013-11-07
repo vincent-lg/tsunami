@@ -54,7 +54,7 @@ class PrmCommandes(Parametre):
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         salle = personnage.salle
-        chantier = importeur.navigation.get_chantier_navale(salle)
+        chantier = importeur.navigation.get_chantier_naval(salle)
         if chantier is None:
             personnage << "|err|Vous ne vous trouvez pas dans un chantier " \
                     "naval.|ff|"

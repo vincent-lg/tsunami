@@ -56,7 +56,7 @@ class ModeleNavire(BaseObj):
         self.graph = {}
         self.m_valeur = 1000
         self.duree_construction = 60
-        self.description = Description(parent=self)
+        self.description_vente = Description(parent=self)
 
     def __getnewargs__(self):
         return ("", )

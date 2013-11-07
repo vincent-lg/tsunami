@@ -41,9 +41,9 @@ class CmdChantier(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "chantier", "shipyard")
         self.nom_categorie = "navire"
-        self.aide_courte = "accède aux chantiers navals"
+        self.aide_courte = "accède aux chantiers navales"
         self.aide_longue = \
-            "Cette commande permet d'accéder aux chantiers navals. L'achat " \
+            "Cette commande permet d'accéder aux chantiers navales. L'achat " \
             "de navires passe par la commande %acheter% (comme les autres " \
             "objets), mais pour le réparer, le renommer ou en changer " \
             "l'aspect, vous devez ensuite passer par cette commande. " \

@@ -30,7 +30,10 @@
 
 """Fichier contenant la classe Passerelle, détaillée plus bas."""
 
+from math import sqrt
+
 from bases.objet.attribut import Attribut
+from primaires.salle.sorties import NOMS_OPPOSES
 from primaires.vehicule.vecteur import Vecteur
 from secondaires.navigation.constantes import *
 from .base import BaseElement
@@ -110,6 +113,6 @@ class Passerelle(BaseElement):
 
         salle.sorties.ajouter_sortie(dir, "passerelle", "la", dest, oppose)
         dest.sorties.ajouter_sortie(oppose, "passerelle", "la", salle, dir)
-        passerelle.baissee = True
+        self.baissee = True
         if personnage:
-            personnage << "Vous déployez {}.".format(passerelle.nom)
+            personnage << "Vous déployez {}.".format(self.nom)

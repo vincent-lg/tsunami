@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe CommandeChantierNavale, détaillée plus bas."""
+"""Fichier contenant la classe CommandeChantierNaval, détaillée plus bas."""
 
 from datetime import datetime, timedelta
 from math import radians
@@ -40,9 +40,9 @@ from bases.exceptions.base import ExceptionMUD
 from corps.fonctions import lisser
 
 
-class CommandeChantierNavale(BaseObj):
+class CommandeChantierNaval(BaseObj):
 
-    """Classe décrivant une commande dans un chantier navale.
+    """Classe décrivant une commande dans un chantier naval.
 
     Une commande est une opération "à faire" dans le chantier spécifié. Par
     exemple : le joueur X veut acheter un navire Y (mais l'achat du navire
@@ -54,10 +54,10 @@ class CommandeChantierNavale(BaseObj):
     def __init__(self, chantier, instigateur, navire, nom_type, duree, *args):
         """Constructeur d'une commande.
 
-        Notez qu'il est préférable de passer par la méthode 'ajouter_commande' de ChantierNavale.
+        Notez qu'il est préférable de passer par la méthode 'ajouter_commande' de ChantierNaval.
 
         Les paramètres à préciser sont :
-            chantier -- le chantier navale (parent)
+            chantier -- le chantier naval (parent)
             instigateur -- le personnage ordonnant la commande
             navire -- le navire traité
             nom_type -- le type de commande
@@ -78,7 +78,7 @@ class CommandeChantierNavale(BaseObj):
         return (None, None, None, "inconnu", 0, )
 
     def __repr__(self):
-        return "<CommandeChantierNavale {} pour {}>".format(
+        return "<CommandeChantierNaval {} pour {}>".format(
                 repr(self.nom_type), self.instigateur)
 
     @property
@@ -134,7 +134,8 @@ class CommandeChantierNavale(BaseObj):
     # Noms de type
     def nom_acheter(self):
         """Retourne le nom quand un navire est en cours d'achat."""
-        return lisser("Achat de " + self.arguments[0].nom)
+        modele = importeur.navigation.modeles[self.arguments[0]]
+        return lisser("Achat de " + modele.nom)
 
     # Types de commande
     def cmd_acheter(self):
@@ -150,17 +151,24 @@ class CommandeChantierNavale(BaseObj):
             vecteurs = []
             invalide = False
             for t_x, t_y, t_z in modele.salles.keys():
+                if t_z != 0:
+                    # La salle est ignorée
+                    continue
+
                 t_vecteur = Vector(t_x, t_y, t_z)
                 t_vecteur.around_z(radians(90))
                 t_vecteur = t_vecteur + vecteur
                 t_x, t_y, t_z = t_vecteur.x, t_vecteur.y, t_vecteur.z
+                t_x, t_y, t_z = int(t_x), int(t_y), int(t_z)
                 if (t_x, t_y, t_z) in points:
                     vecteurs.append(vecteur)
                 else:
+                    print(t_x, t_y, t_z, "not in", points)
                     invalide = True
                     break
 
             if invalide:
+                print("Point invalide", x, y, z, t_x, t_y, t_z)
                 continue
 
             # On vérifie que la distance minimale avec TOUS les points
@@ -171,13 +179,14 @@ class CommandeChantierNavale(BaseObj):
                         importeur.navigation.distance_min_avec_navires(
                         vecteur))
             distances = [d for d in distances if d is not None]
+            print("Distances", x, y, z, distances)
             if len(distances) == 0 or min(distances) >= 1:
                 point = (x, y, z)
                 break
 
         if point is None:
             raise CommandeInterrompue("Il n'y a plus de place dans le " \
-                    "chantier navale")
+                    "chantier naval")
 
         x, y, z = point
         navire = importeur.navigation.creer_navire(modele)
