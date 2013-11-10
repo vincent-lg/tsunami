@@ -224,6 +224,7 @@ class Evenement(BaseObj):
 
     def executer(self, forcer=False, **variables):
         """Exécution de l'évènement."""
+        self.espaces = Espaces(self)
         self.espaces.variables.update(variables)
         var_manquantes = tuple(v for v in self.variables \
                 if v not in self.espaces.variables)
