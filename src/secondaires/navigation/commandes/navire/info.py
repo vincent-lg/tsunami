@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,11 +34,11 @@ from primaires.interpreteur.masque.parametre import Parametre
 from primaires.format.fonctions import oui_ou_non
 
 class PrmInfo(Parametre):
-    
+
     """Commande 'navire info'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "info", "info")
@@ -48,7 +48,7 @@ class PrmInfo(Parametre):
             "Cette commande donne des informations, soit sur le navire " \
             "passé en paramètre, soit sur le navire où vous vous trouvez " \
             "si aucun paramètre n'est précisé."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         navire = dic_masques["cle_navire"]
@@ -57,11 +57,11 @@ class PrmInfo(Parametre):
             if not hasattr(salle, "navire") or salle.navire is None:
                 personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
                 return
-            
+
             navire = salle.navire
         else:
             navire = navire.navire
-        
+
         modele = navire.modele
         etendue = navire.etendue
         etendue = etendue and etendue.cle or "aucune"
@@ -93,9 +93,13 @@ class PrmInfo(Parametre):
                 msg_gouv = "parfaitement au centre"
         else:
             msg_gouv = "aucun"
-        
+
         msg = "Informations sur le navire {} :\n".format(navire.cle)
         msg += "\n  Modèle : {} ({})".format(modele.cle, modele.nom)
+        msg += "\n  Nom : " + (navire.nom_personnalise if \
+                navire.nom_personnalise else "Aucun")
+        msg += "\n  Propriétaire : " + (navire.proprietaire and \
+                navire.proprietaire.nom or "Aucun")
         msg += "\n  Étendue : " + etendue
         msg += "\n  Immobilisé : {}   En collision : {}".format(
                 oui_ou_non(navire.immobilise), oui_ou_non(navire.en_collision))
