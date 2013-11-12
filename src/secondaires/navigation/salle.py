@@ -34,6 +34,7 @@ from collections import OrderedDict
 
 from primaires.salle.salle import Salle
 from primaires.salle.sortie import Sortie
+from secondaires.navigation.constantes import *
 
 # Constantes
 NOMS_SORTIES = OrderedDict()
@@ -87,7 +88,7 @@ class SalleNavire(Salle):
         self.r_y = r_y
         self.r_z = r_z
         self.noyable = True
-        self.voie_eau = 0
+        self.voie_eau = COQUE_INTACTE
         self.poids_eau = 0
         self.sabord_min = None
         self.sabord_max = 0
@@ -192,11 +193,11 @@ class SalleNavire(Salle):
         if not self.noyable:
             return
 
-        if self.voie_eau == 1:
+        if self.voie_eau == COQUE_COLMATEE:
             degats = int(degats * 1.5)
 
-        self.voie_eau = 0
-        self.poids_eau = degats
+        self.voie_eau = COQUE_OUVERTE
+        self.poids_eau += degats
 
     def decrire_plus(self, personnage):
         """Ajoute les éléments observables dans la description de la salle."""
@@ -204,13 +205,12 @@ class SalleNavire(Salle):
         for element in self.elements:
             msg.append(element.get_description_ligne(personnage))
 
-        if self.noyable and self.voie_eau:
-            if self.voie_eau == 0:
-                msg.append("Une brèche dans la coque laisse entrer l'eau " \
-                        "sans contrainte.")
-            elif self.voie_eau == 1:
-                msg.append("Une brèche hâtivement colmatée peut se voir ici.")
-        if self.noyable and self.poids_eau > 0:
+        if self.noyable and self.voie_eau == COQUE_OUVERTE:
+            msg.append("Une brèche dans la coque laisse entrer l'eau " \
+                    "sans contrainte.")
+        elif self.noyable and self.voie_eau == COQUE_COLMATEE:
+            msg.append("Une brèche hâtivement colmatée peut se voir ici.")
+        if self.noyable and self.poids_eau > 1:
             if self.poids_eau < 10:
                 msg.append("Une mare d'eau se trouve ici.")
             elif self.poids_eau < 25:

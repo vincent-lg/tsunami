@@ -241,6 +241,10 @@ class Canon(BaseElement):
                             "douleur.|ff|"
                     personnage.salle.envoyer("{} s'effondre sous l'effet " \
                             "de la douleur.", personnage)
+
+            # Inflige des dégâts au navire
+            if hasattr(cible, "navire"):
+                cible.noyer(int(degats / 2))
         else:
             titre = cible.desc_survol
 

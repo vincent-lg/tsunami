@@ -81,3 +81,8 @@ TERRAINS_QUAI = [
     "quai de bois",
     "quai de pierre",
 ]
+
+# Dégâts sur la coque
+COQUE_INTACTE = 0
+COQUE_COLMATEE = 1
+COQUE_OUVERTE = 2

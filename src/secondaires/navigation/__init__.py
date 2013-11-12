@@ -426,7 +426,7 @@ class Module(BaseModule):
                 self.nauffrages)
         for navire in list(self.navires.values()):
             for salle in navire.salles.values():
-                if salle.noyable and salle.voie_eau == 0:
+                if salle.noyable and salle.voie_eau == COQUE_OUVERTE:
                     salle.poids_eau = int(salle.poids_eau * 1.2)
 
             poids = navire.poids

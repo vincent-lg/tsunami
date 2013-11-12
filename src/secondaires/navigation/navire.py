@@ -415,8 +415,6 @@ class Navire(Vehicule):
                 t_vecteur = Vector(*coords)
                 t_vecteur.around_z(angle_radians)
                 vecteurs.append((origine + t_vecteur, salle))
-            if self.cle == "barque_peche_1":
-                print(self.cle, vecteurs)
 
             # On récupère les points proches du navire
             etendue = self.etendue
