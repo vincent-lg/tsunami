@@ -426,7 +426,8 @@ class Module(BaseModule):
                 self.nauffrages)
         for navire in list(self.navires.values()):
             for salle in navire.salles.values():
-                salle.poids_eau = int(salle.poids_eau * 1.2)
+                if salle.noyable and salle.voie_eau == 0:
+                    salle.poids_eau = int(salle.poids_eau * 1.2)
 
             poids = navire.poids
             poids_max = navire.poids_max

@@ -87,6 +87,7 @@ class SalleNavire(Salle):
         self.r_y = r_y
         self.r_z = r_z
         self.noyable = True
+        self.voie_eau = 0
         self.poids_eau = 0
         self.sabord_min = None
         self.sabord_max = 0
@@ -180,12 +181,46 @@ class SalleNavire(Salle):
         raise ValueError("l'élément {} n'a pas pu être trouvé".format(
                 element))
 
+    def noyer(self, degats):
+        """Noie la salle (si noyable).
+
+        Les dégâts doivent être un nombre supérieur à 0 qui sera utilisé tel
+        quel pour donner l'estimation du poids d'eau qui sera chargé dans la
+        salle dès l'impact. La voie d'eau sera créée.
+
+        """
+        if not self.noyable:
+            return
+
+        if self.voie_eau == 1:
+            degats = int(degats * 1.5)
+
+        self.voie_eau = 0
+        self.poids_eau = degats
+
     def decrire_plus(self, personnage):
         """Ajoute les éléments observables dans la description de la salle."""
         msg = []
         for element in self.elements:
             msg.append(element.get_description_ligne(personnage))
 
+        if self.noyable and self.voie_eau:
+            if self.voie_eau == 0:
+                msg.append("Une brèche dans la coque laisse entrer l'eau " \
+                        "sans contrainte.")
+            elif self.voie_eau == 1:
+                msg.append("Une brèche hâtivement colmatée peut se voir ici.")
+        if self.noyable and self.poids_eau > 0:
+            if self.poids_eau < 10:
+                msg.append("Une mare d'eau se trouve ici.")
+            elif self.poids_eau < 25:
+                msg.append("L'eau est à présent au niveau de vos chevilles.")
+            elif self.poids_eau < 70:
+                msg.append("Le pont disparaît sous l'eau qui atteint " \
+                        "à présent vos genoux.")
+            else:
+                msg.append("Le bois est presque invisible sous le poids " \
+                        "de l'eau envahissante.")
         return "\n".join(msg)
 
     def get_elements_observables(self, personnage):

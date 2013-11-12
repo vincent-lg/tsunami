@@ -411,7 +411,7 @@ class Navire(Vehicule):
             # On cherche toutes les positions successives du navire
             vecteurs = []
             for coords, salle in self.salles.items():
-                vecteurs.append(origine + Vector(*coords))
+                vecteurs.append((origine + Vector(*coords), salle))
 
             # On récupère les points proches du navire
             etendue = self.etendue
@@ -421,7 +421,7 @@ class Navire(Vehicule):
             points += importeur.navigation.points_navires(self)
             # Si l'étendue a un point sur le segment
             # (position -> position + vitesse) alors collision
-            for vecteur in vecteurs:
+            for vecteur, t_salle in vecteurs:
                 projetee = vecteur + vitesse * temps_virtuel
                 b_arg = [vecteur.x, vecteur.y, vecteur.z, projetee.x, \
                         projetee.y, projetee.z]
@@ -430,13 +430,13 @@ class Navire(Vehicule):
                     arg = b_arg + list(coords) + [etendue.altitude, 0.5]
                     if in_rectangle(*arg) and vecteur.distance(
                             projetee, v_point) < 0.5:
+                        self.collision(t_salle, point)
                         self.vitesse.x = 0
                         self.vitesse.y = 0
                         self.vitesse.z = 0
                         self.acceleration.x = 0
                         self.acceleration.y = 0
                         self.acceleration.z = 0
-                        self.en_collision = True
                         return
 
             Vehicule.avancer(self, temps_virtuel)
@@ -479,22 +479,18 @@ class Navire(Vehicule):
 
     def collision(self, salle, contre=None):
         """Méthode appelée lors d'une collision avec un point."""
-        Vehicule.collision(self, None)
+        Vehicule.collision(self, salle)
         vitesse = self.vitesse_noeuds
         if vitesse < 0.1:
             pass
-        elif vitesse < 0.6:
+        elif vitesse < 0.4:
             self.envoyer("Un léger choc ébranle le navire.")
         elif vitesse < 1.5:
             self.envoyer("Un choc violent ébranle l'ensemble du navire !")
         else:
             self.envoyer("Le craquement du bois se brisant vous emplit " \
                     "les oreilles.")
-            if salle.noyable:
-                salle.poids_eau += int(vitesse * 20)
-            for o_salle in self.salles.values():
-                if o_salle is not salle and o_salle.noyable:
-                    o_salle.poids_eau += int(vitesse * 8)
+            salle.noyer(vitesse * 20)
 
     def virer(self, n=1):
         """Vire vers tribord ou bâbord de n degrés.
