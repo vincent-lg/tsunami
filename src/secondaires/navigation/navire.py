@@ -30,7 +30,7 @@
 
 """Fichier contenant la classe Navire, détaillée plus bas."""
 
-from math import fabs, sqrt
+from math import fabs, radians, sqrt
 
 from vector import *
 
@@ -410,8 +410,13 @@ class Navire(Vehicule):
             # On contrôle les collisions
             # On cherche toutes les positions successives du navire
             vecteurs = []
+            angle_radians = radians((self.direction.direction + 90) % 360)
             for coords, salle in self.salles.items():
-                vecteurs.append((origine + Vector(*coords), salle))
+                t_vecteur = Vector(*coords)
+                t_vecteur.around_z(angle_radians)
+                vecteurs.append((origine + t_vecteur, salle))
+            if self.cle == "barque_peche_1":
+                print(self.cle, vecteurs)
 
             # On récupère les points proches du navire
             etendue = self.etendue
