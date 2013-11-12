@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,26 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant le type ecope."""
 
-from . import allure
-from . import ancre
-from . import amarre
-from . import calfeutrer
-from . import canon
-from . import chantier
-from . import debarquer
-from . import detailler
-from . import ecoper
-from . import eltedit
-from . import embarquer
-from . import equipage
-from . import gouvernail
-from . import loch
-from . import matelot
-from . import navire
-from . import passerelle
-from . import rames
-from . import shedit
-from . import vent
-from . import voile
+from bases.objet.attribut import Attribut
+from primaires.interpreteur.editeur.flottant import Flottant
+from primaires.objet.types.base import BaseType
+
+class Ecope(BaseType):
+
+    """Type d'objet: écope.
+
+    """
+
+    nom_type = "écope"
+    def __init__(self, cle=""):
+        """Constructeur de l'objet"""
+        BaseType.__init__(self, cle)
+        self.poids_max = 5.0
+        self.etendre_editeur("ma", "poids maximum", Flottant,
+                self, "poids_max")
+
+    def travailler_enveloppes(self, enveloppes):
+        """Travail sur les enveloppes"""
+        poids_max = enveloppes["ma"]
+        poids_max.prompt = "Poids maximum de l'écope : "
+        poids_max.aide_courte = \
+            "Entrez le |ent|poids maximum|ff| en kg " \
+            "de l'écope.\n" \
+            "Entrez |cmd|/|ff| pour revenir à la fenêtre " \
+            "parente.\n\n" \
+            "Poids maximum actuel : {objet.poids_max} kg"

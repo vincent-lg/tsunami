@@ -102,6 +102,9 @@ class Module(BaseModule):
         ten_rames.msg_visible = "rame ici"
         ten_rames.act_autorisees = ["regarder", "parler"]
 
+        # Ajout du niveau
+        importeur.perso.ajouter_niveau("navigation", "navigation")
+
         # Ajout des services
         importeur.commerce.types_services["navire"] = NaviresVente()
         importeur.commerce.aides_types["navire"] = \
@@ -121,6 +124,10 @@ class Module(BaseModule):
                 self.navire_accoste)
         self.importeur.interpreteur.categories["navire"] = \
                 "Commandes de navigation"
+
+        # Ajout des talents
+        importeur.perso.ajouter_talent("calfeutrage", "calfeutrage",
+                "navigation", 0.5)
 
         # On récupère les modèles
         modeles = self.importeur.supenr.charger_groupe(ModeleNavire)
@@ -198,10 +205,12 @@ class Module(BaseModule):
             commandes.allure.CmdAllure(),
             commandes.amarre.CmdAmarre(),
             commandes.ancre.CmdAncre(),
+            commandes.calfeutrer.CmdCalfeutrer(),
             commandes.canon.CmdCanon(),
             commandes.chantier.CmdChantier(),
             commandes.debarquer.CmdDebarquer(),
             commandes.detailler.CmdDetailler(),
+            commandes.ecoper.CmdEcoper(),
             commandes.eltedit.CmdEltedit(),
             commandes.embarquer.CmdEmbarquer(),
             commandes.equipage.CmdEquipage(),
@@ -427,7 +436,7 @@ class Module(BaseModule):
         for navire in list(self.navires.values()):
             for salle in navire.salles.values():
                 if salle.noyable and salle.voie_eau == COQUE_OUVERTE:
-                    salle.poids_eau = int(salle.poids_eau * 1.2)
+                    salle.poids_eau = int(salle.poids_eau * 1.05)
 
             poids = navire.poids
             poids_max = navire.poids_max
@@ -440,7 +449,7 @@ class Module(BaseModule):
                         personnage.salle = salle_retour
                         personnage << salle_retour.regarder(personnage)
                 self.supprimer_navire(navire.cle)
-            elif poids > poids_max / 2:
+            elif poids > poids_max / 2.5:
                 navire.envoyer("L'eau emplit le navire de plus en plus vite.")
 
     def tick_chantiers(self):

@@ -32,6 +32,7 @@
 
 from collections import OrderedDict
 
+from primaires.perso.exceptions.stat import DepassementStat
 from primaires.salle.salle import Salle
 from primaires.salle.sortie import Sortie
 from secondaires.navigation.constantes import *
@@ -198,6 +199,57 @@ class SalleNavire(Salle):
 
         self.voie_eau = COQUE_OUVERTE
         self.poids_eau += degats
+
+    def colmater(self, personnage, calfeutrage):
+        """Colmate la brèche dans la coque."""
+        if calfeutrage.onces_contenu == 0:
+            personnage << "|err|{} est vide.|ff|".format(
+                    calfeutrage.get_nom())
+            return
+
+        talent = personnage.pratiquer_talent("calfeutrage")
+        if self.voie_eau > 5 and self.voie_eau > talent * 10:
+            personnage << "|err|L'eau est trop haute pour vous permettre " \
+                    "de travailler.|ff|"
+            return False
+
+        end = 12
+        try:
+            personnage.stats.endurance -= end
+        except DepassementStat:
+            personnage << "|err|Vous êtes trop fatigué pour cela.|ff|"
+            return False
+
+        calfeutrage.onces_contenu -= 1
+        self.voie_eau = COQUE_COLMATEE
+        personnage << "Vous colmatez la brèche dans la coque avec {}.".format(
+                calfeutrage.get_nom())
+        self.envoyer("{{}} colmate la brèche dans la coque avec {}.".format(
+                calfeutrage.get_nom()), personnage)
+
+    def ecoper(self, personnage, ecope):
+        """Écope dans la salle."""
+        poids_max = personnage.force
+        if poids_max > ecope.poids_max:
+            poids_max = ecope.poids_max
+
+        if poids_max > self.poids_eau:
+            poids_max = self.poids_eau
+
+        end = poids_max
+        try:
+            personnage.stats.endurance -= end
+        except DepassementStat:
+            personnage << "|err|Vous êtes trop fatigué pour cela.|ff|"
+            return False
+
+        self.poids_eau -= poids_max
+        if self.poids_eau < 0:
+            self.poids_eau = 0
+
+        personnage << "Vous écopez avec {}.".format(ecope.get_nom())
+        self.envoyer("{{}} écope avec {}.".format(
+                ecope.get_nom()), personnage)
 
     def decrire_plus(self, personnage):
         """Ajoute les éléments observables dans la description de la salle."""
