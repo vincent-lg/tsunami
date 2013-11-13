@@ -28,37 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'renommer' de la commande 'chantier'."""
+"""Fichier contenant le paramètre 'réparer' de la commande 'chantier'."""
 
+from primaires.commerce.transaction import *
 from primaires.interpreteur.masque.parametre import Parametre
+from secondaires.navigation.constantes import *
 
-class PrmRenommer(Parametre):
+class PrmReparer(Parametre):
 
-    """Commande 'chantier renommer'.
+    """Commande 'chantier réparer'.
 
     """
 
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "renommer", "rename")
-        self.schema = "<nombre> <message>"
-        self.aide_courte = "renomme un navire"
+        Parametre.__init__(self, "réparer", "repair")
+        self.schema = "<nombre>"
+        self.aide_courte = "répare un navire"
         self.aide_longue = \
-            "Cette commande vous permet de changer le nom d'un navire. " \
-            "Celui-ci doit être dans le chantier naval où vous vous " \
-            "trouvez. Vous devez préciser en premier paramètre le " \
-            "numéro du navire (tel que la commande %chantier% " \
-            "%chantier:liste% l'affiche) et en second paramètre le " \
-            "nouveau nom du navire. Cette action n'est pas instantanée " \
-            ": le navire doit rester dans le chantier naval quelques " \
-            "minutes le temps que les ouvriers repeignent son nom sur " \
-            "la coque. Vous pouvez voir le temps restant pour cette " \
-            "opération en entrant %chantier% %chantier:commandes%."
+            "Cette commande vous permet de demander à un chantier naval de " \
+            "réparer entièrement votre navire. La coque sera remise à neuf, " \
+            "remplacée si nécessaire pour retrouver sa qualité d'origine. " \
+            "En fonction de la quantité de réparations à faire, ainsi que " \
+            "de leur nature, vous devrez payer au chantier naval une " \
+            "somme plus ou moins importante. Le temps que le navire devra " \
+            "passer dans le chantier naval avec les ouvriers s'activant " \
+            "autour sera également variable."
 
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         nombre = dic_masques["nombre"].nombre
-        nom = dic_masques["message"].message
         salle = personnage.salle
         chantier = importeur.navigation.get_chantier_naval(salle)
         if chantier is None:
@@ -72,7 +71,8 @@ class PrmRenommer(Parametre):
             return
 
         magasin = salle.magasin
-        if magasin.vendeur is None:
+        vendeur = magasin.vendeur
+        if vendeur is None:
             personnage << "|err|Aucun vendeur n'est présent pour l'instant.|ff|"
             return
 
@@ -83,5 +83,32 @@ class PrmRenommer(Parametre):
             personnage << "|err|Numéro de navire introuvable.|ff|"
             return
 
-        chantier.ajouter_commande(personnage, navire, "renommer", 11, nom)
+        prix = 0
+        temps = 10
+        for n_salle in navire.salles.values():
+            if n_salle.noyable and n_salle.voie_eau != COQUE_INTACTE:
+                if n_salle.voie_eau == COQUE_COLMATEE:
+                    prix += 25
+                else:
+                    prix += 40
+            temps += 4
+
+        if prix == 0:
+            personnage << "Il n'y a aucune réparation à faire sur {}.".format(
+                    navire.desc_survol)
+            return
+
+        # Essaye de payer
+        personnage << "{} vous dit : ça vous en coûtera {} pièces de " \
+                "bronze.".format(vendeur.nom_singulier.capitalize(), prix)
+        try:
+            transaction = Transaction.initier(personnage, magasin, prix)
+        except FondsInsuffisants:
+            personnage << "|err|Vous n'avez pas assez d'argent.|ff|"
+            return
+
+        # On prélève l'argent
+        transaction.payer()
+
+        chantier.ajouter_commande(personnage, navire, "reparer", temps)
         personnage << "Votre requête a été envoyée au chantier naval."

@@ -38,7 +38,7 @@ from vector import *
 from abstraits.obase import BaseObj
 from bases.exceptions.base import ExceptionMUD
 from corps.fonctions import lisser
-
+from secondaires.navigation.constantes import *
 
 class CommandeChantierNaval(BaseObj):
 
@@ -145,6 +145,11 @@ class CommandeChantierNaval(BaseObj):
         navire = self.navire
         return lisser("Changement de nom de " + navire.nom)
 
+    def nom_reparer(self):
+        """Retourne le nom de la commande quand on répare un navire."""
+        navire = self.navire
+        return lisser("Réparation de " + navire.nom)
+
     # Types de commande
     def cmd_acheter(self):
         """Achète un navire."""
@@ -219,6 +224,24 @@ class CommandeChantierNaval(BaseObj):
 
         nom = self.arguments[0]
         navire.nom_personnalise = nom
+
+    def cmd_reparer(self):
+        """Répare le navire."""
+        navire = self.navire
+        x, y, z = int(navire.position.x), int(navire.position.y), \
+                int(navire.position.z)
+        if (x, y, z) not in self.chantier.points:
+            raise CommandeInterrompue("Le navire n'est plus dans le " \
+                    "chantier naval")
+
+
+        for salle in navire.salles.values():
+            if salle.noyable:
+                if salle.voie_eau != COQUE_INTACTE:
+                    salle.voie_eau = COQUE_INTACTE
+                if salle.poids_eau != 0:
+                    salle.poids_eau = 0
+
 
 
 class CommandeInterrompue(ExceptionMUD):

@@ -34,6 +34,7 @@ from primaires.interpreteur.commande.commande import Commande
 from .commandes import PrmCommandes
 from .liste import PrmListe
 from .renommer import PrmRenommer
+from .reparer import PrmReparer
 
 class CmdChantier(Commande):
 
@@ -58,3 +59,4 @@ class CmdChantier(Commande):
         self.ajouter_parametre(PrmCommandes())
         self.ajouter_parametre(PrmListe())
         self.ajouter_parametre(PrmRenommer())
+        self.ajouter_parametre(PrmReparer())
