@@ -28,53 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les constantes d'équipage."""
+"""Fichier contenant le paramètre 'nom' de la commande 'navire'."""
 
-from primaires.format.fonctions import supprimer_accents
+from primaires.interpreteur.masque.parametre import Parametre
 
-# Aptitudes de matelots
-NOMS_APTITUDES = {
-        "calfeutrage": "charpenterie",
-        "escrimeur": "escrimeur",
-}
+class PrmNom(Parametre):
 
-CLES_APTITUDES = {}
-for cle, nom in NOMS_APTITUDES.items():
-    CLES_APTITUDES[supprimer_accents(nom).lower()] = cle
+    """Commande 'navire nom'.
 
-# Niveaux
-NIVEAU_MEDIOCRE = 0
-NIVEAU_FAIBLE = 1
-NIVEAU_MOYEN = 2
-NIVEAU_BON = 3
-NIVEAU_TRES_BON = 4
-NIVEAU_EXCELLENT = 5
+    """
 
-# Noms des niveaux
-NOMS_NIVEAUX = {
-        NIVEAU_MEDIOCRE: "médiocre",
-        NIVEAU_FAIBLE: "peu expérimenté",
-        NIVEAU_MOYEN: "assez expérimenté",
-        NIVEAU_BON: "plutôt expérimenté",
-        NIVEAU_TRES_BON: "très expérimenté",
-        NIVEAU_EXCELLENT: "excellent",
-}
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "nom", "name")
+        self.schema = "<cle_navire> <message>"
+        self.aide_courte = "renomme le navire"
+        self.aide_longue = \
+            "Cette commande permet de changer le nom du navire. Vous " \
+            "devez préciser d'abord la clé du navire et ensuite le " \
+            "nouveau nom."
 
-VALEURS_NIVEAUX = {}
-for nom, niveau in NOMS_NIVEAUX.items():
-    VALEURS_NIVEAUX[supprimer_accents(niveau).lower()] = nom
-
-# Talents
-TALENTS = {
-        "calfeutrage": ["calfeutrage"],
-        "escrimeur": ["maniement_epee", "parade"],
-}
-
-CONNAISSANCES = {
-        NIVEAU_MEDIOCRE: 10,
-        NIVEAU_FAIBLE: 17,
-        NIVEAU_MOYEN: 30,
-        NIVEAU_BON: 50,
-        NIVEAU_TRES_BON: 70,
-        NIVEAU_EXCELLENT: 95,
-}
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        # On récupère le navire et l'nom
+        navire = dic_masques["cle_navire"].navire
+        nom = dic_masques["message"].message
+        navire.nom_personnalise = nom
+        personnage << "Le nom du navire {} a bien été changé pour {}.".format(
+                navire.cle, nom)

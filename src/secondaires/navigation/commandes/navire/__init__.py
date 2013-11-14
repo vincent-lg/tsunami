@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -41,14 +41,17 @@ from .direction import PrmDirection
 from .etendue import PrmEtendue
 from .info import PrmInfo
 from .liste import PrmListe
+from .matelot import PrmMatelot
+from .nom import PrmNom
+from .proprietaire import PrmProprietaire
 from .teleporter import PrmTeleporter
 
 class CmdNavire(Commande):
-    
+
     """Commande 'navire'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "navire", "ship")
@@ -59,7 +62,7 @@ class CmdNavire(Commande):
             "la liste des navires et modèles existants, créer des " \
             "navires, les téléporter, changer leur orientation, " \
             "leur vitesse, les forcer à avancer..."
-    
+
     def ajouter_parametres(self):
         """Ajout des paramètres"""
         prm_creer = PrmCreer()
@@ -69,11 +72,14 @@ class CmdNavire(Commande):
         prm_info = PrmInfo()
         prm_liste = PrmListe()
         prm_teleporter = PrmTeleporter()
-        
+
         self.ajouter_parametre(prm_creer)
         self.ajouter_parametre(prm_detruire)
         self.ajouter_parametre(prm_direction)
         self.ajouter_parametre(prm_etendue)
         self.ajouter_parametre(prm_info)
         self.ajouter_parametre(prm_liste)
+        self.ajouter_parametre(PrmMatelot())
+        self.ajouter_parametre(PrmNom())
+        self.ajouter_parametre(PrmProprietaire())
         self.ajouter_parametre(prm_teleporter)

@@ -28,53 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les constantes d'équipage."""
+"""Fichier contenant le paramètre 'propriétaire' de la commande 'navire'."""
 
-from primaires.format.fonctions import supprimer_accents
+from primaires.interpreteur.masque.parametre import Parametre
 
-# Aptitudes de matelots
-NOMS_APTITUDES = {
-        "calfeutrage": "charpenterie",
-        "escrimeur": "escrimeur",
-}
+class PrmProprietaire(Parametre):
 
-CLES_APTITUDES = {}
-for cle, nom in NOMS_APTITUDES.items():
-    CLES_APTITUDES[supprimer_accents(nom).lower()] = cle
+    """Commande 'navire proprietaire'.
 
-# Niveaux
-NIVEAU_MEDIOCRE = 0
-NIVEAU_FAIBLE = 1
-NIVEAU_MOYEN = 2
-NIVEAU_BON = 3
-NIVEAU_TRES_BON = 4
-NIVEAU_EXCELLENT = 5
+    """
 
-# Noms des niveaux
-NOMS_NIVEAUX = {
-        NIVEAU_MEDIOCRE: "médiocre",
-        NIVEAU_FAIBLE: "peu expérimenté",
-        NIVEAU_MOYEN: "assez expérimenté",
-        NIVEAU_BON: "plutôt expérimenté",
-        NIVEAU_TRES_BON: "très expérimenté",
-        NIVEAU_EXCELLENT: "excellent",
-}
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "propriétaire", "owner")
+        self.schema = "<cle_navire> <nom_joueur>"
+        self.aide_courte = "change le propriétaire du navire"
+        self.aide_longue = \
+            "Cette commande permet de changer le propriétaire du navire. " \
+            "Vous devez préciser d'abord la clé du navire et ensuite le " \
+            "nom du joueur qui deviendra le nouveau propriétaire."
 
-VALEURS_NIVEAUX = {}
-for nom, niveau in NOMS_NIVEAUX.items():
-    VALEURS_NIVEAUX[supprimer_accents(niveau).lower()] = nom
-
-# Talents
-TALENTS = {
-        "calfeutrage": ["calfeutrage"],
-        "escrimeur": ["maniement_epee", "parade"],
-}
-
-CONNAISSANCES = {
-        NIVEAU_MEDIOCRE: 10,
-        NIVEAU_FAIBLE: 17,
-        NIVEAU_MOYEN: 30,
-        NIVEAU_BON: 50,
-        NIVEAU_TRES_BON: 70,
-        NIVEAU_EXCELLENT: 95,
-}
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        # On récupère le navire et le propriétaire
+        navire = dic_masques["cle_navire"].navire
+        proprietaire = dic_masques["nom_joueur"].joueur
+        navire.proprietaire = proprietaire
+        personnage << "Le propriétaire du navire {} a bien été changé pour " \
+                "{}.".format(navire.cle, proprietaire.nom)

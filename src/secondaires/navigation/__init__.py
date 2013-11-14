@@ -52,6 +52,7 @@ from .constantes import *
 from .equipage.fiche import FicheMatelot
 from .chantier_naval import ChantierNaval
 from .navires_vente import NaviresVente
+from .matelots_vente import MatelotsVente
 
 class Module(BaseModule):
 
@@ -113,6 +114,13 @@ class Module(BaseModule):
             "cependant : pour que la vente de navires dans ce magasin " \
             "puisse se faire, le magasin doit être relié à un chantier " \
             "naval."
+        importeur.commerce.types_services["matelot"] = MatelotsVente()
+        importeur.commerce.aides_types["matelot"] = \
+            "Ce service permet la vente de matelots. Vous devez tout " \
+            "simplement préciser la clé du matelot à mettre en vente " \
+            "(sa clé de prototype de PNJ). La fiche du matelot " \
+            "correspondant à ce prototype doit avoir été définie au " \
+            "préalable."
 
         BaseModule.config(self)
 

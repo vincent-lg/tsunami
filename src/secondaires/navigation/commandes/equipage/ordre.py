@@ -67,6 +67,11 @@ class PrmOrdre(Parametre):
             return
 
         navire = salle.navire
+        if navire.proprietaire and navire.proprietaire is not personnage:
+            personnage << "|err|Vous ne pouvez donner d'ordre sur ce " \
+                    "navire.|ff|"
+            return
+
         equipage = salle.navire.equipage
         for volonte in volontes.values():
             groupes = volonte.tester(message)

@@ -28,57 +28,29 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe NavireVente, détaillée plus bas."""
+"""Ce fichier contient la classe MatelotVente, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
 
-class NavireVente(BaseObj):
+class MatelotsVente(BaseObj):
 
-    """Cette classe enveloppe un navire mis en vente.
+    """Classe enveloppe des matelots dans le commerce.
 
-    Elle simule certains comportements d'un objet standard afin de permettre
-    la vente d'un navire en magasin. C'est, en somme, un nouveau type
-    de service.
-
-    L'achat de ce service passe par la création d'une commande en
-    chantier naval.
+    Cette classe est un dictionnaire fictif contenant des FicheMatelot.
 
     """
 
-    type_achat = "navire"
-    def __init__(self, modele):
+    def __init__(self):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
-        self.modele = modele
 
     def __getnewargs__(self):
-        return (None, )
+        return ()
 
-    def __repr__(self):
-        return "<NavireVente {}>".format(self.modele.cle)
+    def __contains__(self, cle):
+        """Teste si on peut vendre une clé modele."""
+        return cle in importeur.navigation.fiches
 
-    def __str__(self):
-        return self.modele.cle
-
-    @property
-    def cle(self):
-        return self.modele.cle
-
-    @property
-    def m_valeur(self):
-        return self.modele.m_valeur
-
-    @property
-    def nom_achat(self):
-        return self.modele.nom
-
-    def get_nom(self, nombre=1):
-        """Retourne le nom complet en fonction du nombre.
-
-        Par exemple :
-        Si nombre == 1 : retourne le nom singulier
-        Sinon : retourne le nombre et le nom pluriel
-
-        """
-        return self.modele.nom
-
+    def __getitem__(self, cle):
+        """Retourne un objet NourritureVente"""
+        return importeur.navigation.fiches[cle]

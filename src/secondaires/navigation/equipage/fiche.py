@@ -31,6 +31,7 @@
 """Fichier contenant la classe FicheMatelot, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
+from primaires.format.description import Description
 from secondaires.navigation.equipage.constantes import *
 
 class FicheMatelot(BaseObj):
@@ -47,12 +48,15 @@ class FicheMatelot(BaseObj):
     """
 
     enregistrer = True
+    type_achat = "matelot"
     def __init__(self, prototype):
         """Constructeur du matelot."""
         BaseObj.__init__(self)
         self.prototype = prototype
         self.poste_defaut = "matelot"
+        self.description = Description(parent=self)
         self.aptitudes = {}
+        self.m_valeur = 40
 
     def __getnewargs__(self):
         return (None, )
@@ -60,11 +64,22 @@ class FicheMatelot(BaseObj):
     def __repr__(self):
         return "<FicheMâtelot {}>".format(repr(self.cle))
 
+    def __str__(self):
+        return self.cle
+
     @property
     def cle(self):
         return self.prototype and self.prototype.cle or "aucune"
 
-    def creer_aptitude(self, nom_aptitude, nom_niveau):
+    @property
+    def nom_achat(self):
+        return self.prototype.nom_singulier
+
+    def get_nom(self, nombre=1):
+        """Retourne le nom complet en fonction du nombre."""
+        return self.prototype.get_nom(nombre)
+
+    def ajouter_aptitude(self, nom_aptitude, nom_niveau):
         """Ajoute une aptitude."""
         nom_aptitude = supprimer_accents(nom_aptitude).lower()
         nom_niveau = supprimer_accents(nom_niveau).lower()
@@ -78,19 +93,45 @@ class FicheMatelot(BaseObj):
 
         self.aptitudes[aptitude] = niveau
 
-    def creer_PNJ(self, salle=None):
+    def creer_PNJ(self, salle=None, nb=1):
         """Crée le PNJ sur la fiche."""
+        pnjs = []
         if self.prototype is None:
             raise ValueError("Le prototype de cette fiche est inconnu")
 
-        pnj = importeur.pnj.creer_PNJ(self.prototype, salle)
+        for i in range(nb):
+            pnj = importeur.pnj.creer_PNJ(self.prototype, salle)
+            pnjs.append(pnj)
 
-        # Modifie les aptitudes
-        for aptitude, niveau in self.aptitudes.items():
-            talents = TALENTS.get(aptitude, [])
-            connaissance = CONNAISSANCES[niveau]
-            for talent in talents:
-                pnj.talents[talent] = connaissance
-                print("SetTalent", talent, connaissance)
+            # Modifie les aptitudes
+            for aptitude, niveau in self.aptitudes.items():
+                talents = TALENTS.get(aptitude, [])
+                connaissance = CONNAISSANCES[niveau]
+                for talent in talents:
+                    pnj.talents[talent] = connaissance
 
-        return pnj
+            # Annonce l'arrivée du PNJ
+            if salle:
+                salle.envoyer("{} arrive.", pnj)
+
+        return pnjs
+
+    def acheter(self, quantite, magasin, transaction):
+        """Achète les matelots dans la quantité spécifiée."""
+        salle = magasin.parent
+        acheteur = transaction.initiateur
+        nom = "trans_" + str(id(transaction))
+        importeur.diffact.ajouter_action(nom, 10, self.creer_PNJ,
+                salle, quantite)
+
+    def regarder(self, personnage):
+        """Le personnage regarde le service (avant achat)."""
+        desc = self.description.regarder(personnage, elt=self.prototype)
+        desc += "\n\nPoste (par défaut) : " + self.poste_defaut
+        if self.aptitudes:
+            desc += "\nAptitudes :\n"
+            for aptitude, niveau in self.aptitudes.items():
+                nom = NOMS_APTITUDES[aptitude]
+                nom_niveau = NOMS_NIVEAUX[niveau]
+                desc += "\n  {:<15} : {:>10} ({} / 6)".format(
+                        nom.capitalize(), nom_niveau, niveau + 1)
