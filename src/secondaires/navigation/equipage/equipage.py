@@ -75,6 +75,12 @@ class Equipage(BaseObj):
         """Ajoute un mâtelot à l'équipage."""
         matelot = Matelot(self, personnage)
         matelot.affectation = personnage.salle
+
+        # Cherche le poste par défaut défini dans la fiche
+        fiche = importeur.navigation.fiches.get(getattr(personnage, "cle", ""))
+        if fiche:
+            nom_poste = fiche.poste_defaut
+
         matelot.nom_poste = nom_poste
         matelot.nom = self.trouver_nom_matelot()
         self.matelots[supprimer_accents(matelot.nom.lower())] = matelot

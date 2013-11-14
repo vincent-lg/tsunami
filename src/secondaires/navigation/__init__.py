@@ -49,7 +49,7 @@ from . import masques
 from . import types
 from .modele import ModeleNavire
 from .constantes import *
-from .equipage.matelot import Matelot
+from .equipage.fiche import FicheMatelot
 from .chantier_naval import ChantierNaval
 from .navires_vente import NaviresVente
 
@@ -74,7 +74,7 @@ class Module(BaseModule):
         self.types_elements = types_elements
         self.vents = {}
         self.vents_par_etendue = {}
-        self.matelots = {}
+        self.fiches = {}
         self.chantiers = {}
 
     def config(self):
@@ -165,14 +165,14 @@ class Module(BaseModule):
         self.nav_logger.info(format_nb(nb_vents,
                 "{nb} vent{s} récupéré{s}"))
 
-        # On récupère les matelots
-        matelots = self.importeur.supenr.charger_groupe(Matelot)
-        for matelot in matelots:
-            self.ajouter_matelot(matelot)
+        # On récupère les fiches
+        fiches = self.importeur.supenr.charger_groupe(FicheMatelot)
+        for fiche in fiches:
+            self.ajouter_fiche_matelot(fiche)
 
-        nb_mat = len(self.matelots)
+        nb_mat = len(self.fiches)
         self.nav_logger.info(format_nb(nb_mat,
-                "{nb} matelot{s} récupéré{s}"))
+                "{nb} fiche{s} de matelot récupérée{s}", fem=True))
 
         # On récupère les chantiers navals
         chantiers = self.importeur.supenr.charger_groupe(ChantierNaval)
@@ -353,22 +353,19 @@ class Module(BaseModule):
         del self.vents[cle]
         vent.detruire()
 
-    def creer_matelot(self, personnage):
-        """Crée un matelot depuis un personnage."""
-        matelot = Matelot(personnage)
-        self.ajouter_matelot(matelot)
-        return matelot
+    def creer_fiche_matelot(self, prototype):
+        """Crée une fiche de matelot sur un prototype de PNJ."""
+        fiche = FicheMatelot(prototype)
+        self.ajouter_fiche_matelot(fiche)
+        return fiche
 
-    def ajouter_matelot(self, matelot):
+    def ajouter_fiche_matelot(self, fiche):
         """Ajoute le matelot."""
-        pass
+        self.fiches[fiche.cle] = fiche
 
-    def supprimer_matelot(self, n_id):
+    def supprimer_fiche_matelot(self, cle):
         """Supprime le matelot."""
-        #matelot = self.matelots[n_id]
-        #del self.matelots[n_id]
-        #matelot.detruire()
-        pass
+        self.fiches.pop(cle).detruire()
 
     def creer_chantier_naval(self, cle):
         """Crée un chantier naval."""
