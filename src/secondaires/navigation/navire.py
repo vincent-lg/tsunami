@@ -583,11 +583,13 @@ class Navire(Vehicule):
         """Fait sombrer le navire."""
         self.envoyer("Un grincement déchirant et le navire s'enfonce sous " \
                 "l'eau !")
+        importeur.navigation.ecrire_suivi("{} sombre.".format(self.cle))
 
         # Cherche la salle la plus proche du nauffrage
         x, y, z = self.position.tuple
         salles = [s for s in importeur.salle._coords.values() if \
-                s.coords.z == z and s.nom_terrain in TERRAINS_ACCOSTABLES]
+                hasattr(s, "coords) and s.coords.z == z and s.nom_terrain in \
+                TERRAINS_ACCOSTABLES]
         salle_choisie = min(salles, key=lambda s: mag(x, y, z, s.coords.x,
                 s.coords.y, s.coords.z))
         for salle in self.salles.values():
@@ -599,7 +601,6 @@ class Navire(Vehicule):
                     personnage.mourir()
 
         importeur.navigation.supprimer_navire(self.cle)
-        importeur.navigation.ecrire_suivi("{} sombre.".format(self.cle))
 
     def detruire(self):
         """Destruction du self."""
