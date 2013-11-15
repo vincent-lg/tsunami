@@ -88,7 +88,7 @@ class Equipage(BaseObj):
 
     def trouver_nom_matelot(self):
         """Trouve un nom de mâtelot non utilisé."""
-        noms = [matelot.nom for matelot in self.matelots]
+        noms = [matelot.nom for matelot in self.matelots.values()]
         noms_disponibles = [nom for nom in NOMS_MATELOTS if nom not in noms]
         return choice(noms_disponibles)
 

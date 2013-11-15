@@ -138,7 +138,8 @@ class Voile(BaseElement):
 
     def orienter(self, navire, vent):
         """Oriente la voile (meilleur angle de propulsion)."""
-        allure = (navire.direction.direction - vent.direction) % 360
+        vent_direction = get_direction(vent)
+        allure = (navire.direction.direction - vent_direction) % 360
         or_voile = -self.orientation
         if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
             angle = ANGLE_DEBOUT
