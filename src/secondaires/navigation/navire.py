@@ -588,7 +588,7 @@ class Navire(Vehicule):
         # Cherche la salle la plus proche du nauffrage
         x, y, z = self.position.tuple
         salles = [s for s in importeur.salle._coords.values() if \
-                hasattr(s, "coords) and s.coords.z == z and s.nom_terrain in \
+                hasattr(s, "coords") and s.coords.z == z and s.nom_terrain in \
                 TERRAINS_ACCOSTABLES]
         salle_choisie = min(salles, key=lambda s: mag(x, y, z, s.coords.x,
                 s.coords.y, s.coords.z))
