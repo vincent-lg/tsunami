@@ -579,6 +579,28 @@ class Navire(Vehicule):
                 amarre.attachee = d_salle
                 navire.immobilise = True
 
+    def sombrer(self):
+        """Fait sombrer le navire."""
+        self.envoyer("Un grincement déchirant et le navire s'enfonce sous " \
+                "l'eau !")
+
+        # Cherche la salle la plus proche du nauffrage
+        x, y, z = self.position.tuple
+        salles = [s for s in importeur.salle._coords.values() if \
+                s.coords.z == z and s.nom_terrain in TERRAINS_ACCOSTABLES]
+        salle_choisie = min(salles, key=lambda s: mag(x, y, z, s.coords.x,
+                s.coords.y, s.coords.z))
+        for salle in self.salles.values():
+            for personnage in salle.personnages:
+                personnage.salle = salle_choisie
+                try:
+                    personnage.stats.vitalite = 0
+                except DepassementStat:
+                    personnage.mourir()
+
+        importeur.navigation.supprimer_navire(self.cle)
+        importeur.navigation.ecrire_suivi("{} sombre.".format(self.cle))
+
     def detruire(self):
         """Destruction du self."""
         for salle in list(self.salles.values()):

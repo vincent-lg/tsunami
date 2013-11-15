@@ -447,20 +447,13 @@ class Module(BaseModule):
         for navire in list(self.navires.values()):
             for salle in navire.salles.values():
                 if salle.noyable and salle.voie_eau == COQUE_OUVERTE:
-                    salle.poids_eau = int(salle.poids_eau * 1.05)
+                    salle.poids_eau = int(salle.poids_eau * 1.1)
 
             poids = navire.poids
             poids_max = navire.poids_max
             if poids >= poids_max:
-                # Nauffrage
-                navire.envoyer("Le navire s'enfonce sous l'eau.")
-                salle_retour = importeur.salle[importeur.salle.salle_retour]
-                for salle in navire.salles.values():
-                    for personnage in salle.personnages:
-                        personnage.salle = salle_retour
-                        personnage << salle_retour.regarder(personnage)
-                self.supprimer_navire(navire.cle)
-            elif poids > poids_max / 2.5:
+                navire.sombrer()
+            elif poids > poids_max / 3:
                 navire.envoyer("L'eau emplit le navire de plus en plus vite.")
 
     def tick_chantiers(self):
