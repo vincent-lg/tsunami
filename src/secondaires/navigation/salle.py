@@ -321,4 +321,5 @@ class SalleNavire(Salle):
 
         sortie = Sortie(vecteur.nom_direction, nom, article,
                 destination, "", self)
+        sortie.longueur = vecteur.norme
         return sortie
