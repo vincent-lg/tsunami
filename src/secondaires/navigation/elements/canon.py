@@ -224,6 +224,8 @@ class Canon(BaseElement):
                         projectile.nom_singulier.capitalize())
 
             importeur.objet.supprimer_objet(projectile.identifiant)
+            importeur.navigation.ecrire_suivi("{} tire un boulet de canon " \
+                    "qui se perd.".format(self.parent.navire.cle))
             return None
 
         if isinstance(cible, Salle):
@@ -252,6 +254,15 @@ class Canon(BaseElement):
             auteur << "{} atteint {} !".format(
                     projectile.nom_singulier.capitalize(), titre.lower())
         importeur.objet.supprimer_objet(projectile.identifiant)
+
+        # Message de suivi
+        if getattr(cible, "navire", None):
+            phrase = "atteint " + cible.navire.cle
+        else:
+            phrase = "atteint " + titre.lower()
+
+        importeur.navigation.ecrire_suivi("{} tire un boulet de canon qui " \
+                "{}.".format(self.parent.navire.cle, phrase))
 
     def construire(self, parent):
         """Construit l'élément basé sur le parent."""

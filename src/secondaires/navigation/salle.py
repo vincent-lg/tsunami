@@ -226,6 +226,8 @@ class SalleNavire(Salle):
                 calfeutrage.get_nom())
         self.envoyer("{{}} colmate la brèche dans la coque avec {}.".format(
                 calfeutrage.get_nom()), personnage)
+        importeur.navigation.ecrire_suivi("{} colmate une brèche en " \
+                "{}.".format(personnage.nom_unique, self.ident))
 
     def ecoper(self, personnage, ecope):
         """Écope dans la salle."""

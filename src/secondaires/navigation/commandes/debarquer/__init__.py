@@ -61,7 +61,7 @@ class CmdDebarquer(Commande):
             personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
             return
 
-        personnage.agir("deplacer")
+        personnage.agir("bouger")
         # On va chercher la salle la plus proche
         etendue = navire.etendue
 

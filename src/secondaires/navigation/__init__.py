@@ -39,6 +39,7 @@ from abstraits.module import *
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
 from primaires.salle.salle import Salle
+from secondaires.navigation.config import CFG_TEXTE
 from .navire import Navire
 from .elements import types as types_elements
 from .elements.base import BaseElement
@@ -67,6 +68,8 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "navigation", "secondaire")
         self.preparer_apres = ["salle"]
         self.commandes = []
+        self.cfg = None
+        self.fichier_suivi = None
         self.modeles = {}
         self.nav_logger = type(self.importeur).man_logs.creer_logger(
                 "navigation", "navires", "navires.log")
@@ -80,6 +83,9 @@ class Module(BaseModule):
 
     def config(self):
         """Configuration du module."""
+        self.cfg = type(self.importeur).anaconf.get_config("navigation",
+                "navigation/navigation.cfg", "modele navigationt", CFG_TEXTE)
+        self.fichier_suivi = self.cfg.fichier_suivi
         self.importeur.scripting.a_charger.append(self)
         his_voile = self.importeur.perso.ajouter_etat("hisser_voile")
         his_voile.msg_refus = "Vous êtes en train de hisser la voile"
@@ -562,3 +568,12 @@ class Module(BaseModule):
             return min(distances)
 
         return None
+
+    def ecrire_suivi(self, message):
+        """Écrit le message dans le fichier de suivi si défin."""
+        try:
+            if self.fichier_suivi:
+                with open(self.fichier_suivi, "a") as fichier:
+                    fichier.write(message + "\n")
+        except Exception as err:
+            print(err)
