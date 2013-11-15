@@ -42,6 +42,7 @@ class SacPoudre(BaseType):
     """
 
     nom_type = "sac de poudre"
+    nettoyer = False
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)

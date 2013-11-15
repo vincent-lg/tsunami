@@ -41,6 +41,7 @@ class Ecope(BaseType):
     """
 
     nom_type = "écope"
+    nettoyer = False
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)

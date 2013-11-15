@@ -28,42 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le type calfeutrage."""
+"""Package contenant la commande 'saborder'."""
 
-from bases.objet.attribut import Attribut
-from primaires.interpreteur.editeur.flag import Flag
-from primaires.interpreteur.editeur.entier import Entier
-from primaires.objet.types.base import BaseType
+from primaires.interpreteur.commande.commande import Commande
 
-class Calfeutrage(BaseType):
+class CmdSaborder(Commande):
 
-    """Type d'objet: calfeutrage.
+    """Commande 'saborder'"""
 
-    """
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "saborder", "scupper")
+        self.tronquer = False
+        self.nom_categorie = "navire"
+        self.aide_courte = "saborde le navire sur lequel vous êtes"
+        self.aide_longue = \
+            "Cette commande permet de saborder le navire sur lequel vous " \
+            "vous trouvez : si vous êtes dans une salle proche ou sous " \
+            "la ligne de flotaison, vous pouvez créer une brèche qui, " \
+            "avec un peu de temps (le temps nécessaire pour évaquer " \
+            "le navire) fera sombrer l'embarquation."
 
-    nom_type = "calfeutrage"
-    nettoyer = False
-    def __init__(self, cle=""):
-        """Constructeur de l'objet"""
-        BaseType.__init__(self, cle)
-        self.onces_max_contenu = 50
-        self.etendre_editeur("on", "nombre d'onces au maximum", Entier,
-                self, "onces_max_contenu")
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        salle = personnage.salle
+        if not hasattr(salle, "navire") or salle.navire is None:
+            personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
+            return
 
-        # Attributs propres à l'objet (non au prototype)
-        self._attributs = {
-            "onces_contenu": Attribut(lambda: self.onces_max_contenu),
-        }
+        navire = salle.navire
+        if not salle.noyable:
+            personnage << "|err|Vous ne pouvez ouvrir de brèche dans la " \
+                    "coque ici.|ff|"
+            return
 
-    def travailler_enveloppes(self, enveloppes):
-        """Travail sur les enveloppes"""
-        contenu = enveloppes["on"]
-        contenu.apercu = "{objet.onces_max_contenu}"
-        contenu.prompt = "Nombre maximum d'onces que peut contenir le " \
-                "conteneur : "
-        contenu.aide_courte = \
-            "Entrez le |ent|contenu|ff| en onces " \
-            "du conteneur pour calfeutrer.\n" \
-            "Entrez |cmd|/|ff| pour revenir à la fenêtre " \
-            "parente.\n\n" \
-            "Onces maximum actuelles : {objet.onces_max_contenu}"
+        salle.noyer(30)
+        personnage << "Vous créez une brèche dans la coque par laquelle " \
+                "l'eau s'engouffre... ne restez pas là !"
