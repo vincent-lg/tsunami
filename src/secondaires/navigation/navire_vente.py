@@ -82,3 +82,29 @@ class NavireVente(BaseObj):
         """
         return self.modele.nom
 
+    def acheter(self, quantite, magasin, transaction):
+        """Achète les objets dans la quantité spécifiée."""
+        salle = magasin.parent
+        acheteur = transaction.initiateur
+        modele = self.modele
+
+        # On essaye de trouver le chantier naval
+        chantier_naval = None
+        for chantier in importeur.navigation.chantiers.values():
+            if chantier.salle_magasin is salle:
+                chantier_naval = chantier
+                break
+
+        if chantier_naval is None:
+            raise ValueError("Impossible de trouver le chantier naval " \
+                    "pour {}".format(salle.ident))
+
+        chantier.ajouter_commande(acheteur, None, "acheter",
+                modele.duree_construction, modele.cle)
+        acheteur << "Votre commande est envoyée au chantier naval."
+        acheteur.envoyer_tip("Pour voir la liste de vos commandes en cours, " \
+                "entrez %chantier% %chantier:commandes%.")
+
+    def regarder(self, personnage):
+        """Le personnage regarde le service (avant achat)."""
+        return self.modele.description_vente.regarder(personnage, self.modele)

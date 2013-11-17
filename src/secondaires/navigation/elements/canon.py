@@ -245,7 +245,7 @@ class Canon(BaseElement):
                             "de la douleur.", personnage)
 
             # Inflige des dégâts au navire
-            if hasattr(cible, "navire"):
+            if hasattr(cible, "navire") and not cible.navire.accoste:
                 cible.noyer(int(degats / 2))
         else:
             titre = cible.desc_survol

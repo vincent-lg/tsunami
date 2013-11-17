@@ -57,6 +57,10 @@ class CmdSaborder(Commande):
             return
 
         navire = salle.navire
+        if navire.accoste:
+            personnage << "|err|Ce navire a accosté, vous ne pouvez le " \
+                    "saborder.|ff|"
+            return
         if not salle.noyable:
             personnage << "|err|Vous ne pouvez ouvrir de brèche dans la " \
                     "coque ici.|ff|"
@@ -65,3 +69,5 @@ class CmdSaborder(Commande):
         salle.noyer(30)
         personnage << "Vous créez une brèche dans la coque par laquelle " \
                 "l'eau s'engouffre... ne restez pas là !"
+        salle.envoyer("{} crée une voie d'eau par laquelle l'eau " \
+                "s'engouffre sans contrainte.", personnage)

@@ -291,6 +291,25 @@ class Navire(Vehicule):
         coords = (self.direction.x, self.direction.y, self.direction.z)
         return Vector(*coords)
 
+    @property
+    def accoste(self):
+        """Retourne si le navire accoste quelque part.
+
+        Un navire accoste si:
+            Il a des amarres rattachées au quai ou
+            Il a une ancre jetée et une passerelle dépliée.
+
+        """
+        amarre = self.amarre
+        ancre = self.ancre
+        passerelle = self.elt_passerelle
+        if amarre and amarre.attachee:
+            return True
+        if ancre and ancre.jetee and passerelle and passerelle.baissee:
+            return True
+
+        return False
+
     def get_max_distance_au_centre(self):
         """Retourne la distance maximum par rapport au centre du navire."""
         distances = []
@@ -584,6 +603,11 @@ class Navire(Vehicule):
         self.envoyer("Un grincement déchirant et le navire s'enfonce sous " \
                 "l'eau !")
         importeur.navigation.ecrire_suivi("{} sombre.".format(self.cle))
+
+        # Replie la passerelle si il y a une passerelle
+        elt_passerelle = self.elt_passerelle
+        if elt_passerelle:
+            elt_passerelle.replier()
 
         # Cherche la salle la plus proche du nauffrage
         x, y, z = self.position.tuple

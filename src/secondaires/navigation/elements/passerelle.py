@@ -116,3 +116,23 @@ class Passerelle(BaseElement):
         self.baissee = True
         if personnage:
             personnage << "Vous déployez {}.".format(self.nom)
+        return True
+
+    def replier(self):
+        """Replie la passerelle."""
+        if self.baissee:
+            salle = self.parent
+            # On cherche la sortie
+            sortie = salle.sorties.get_sortie_par_nom("passerelle")
+            dest = sortie.salle_dest
+            opp_sortie = None
+            for nom, t_sortie in dest.sorties.iter_couple():
+                if t_sortie.salle_dest is salle:
+                    opp_sortie = t_sortie
+                    break
+
+            if opp_sortie:
+                dest.sorties.supprimer_sortie(opp_sortie.direction)
+
+            salle.sorties.supprimer_sortie(sortie.direction)
+            self.baissee = False
