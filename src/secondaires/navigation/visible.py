@@ -244,24 +244,28 @@ class Visible:
         """
         # On commence par trier les points
         points = tuple(self.cotes.items()) + tuple(self.navires)
-        neg = [(a,  p) for a, p in points if a < 0]
+        neg = [(a, p) for a, p in points if a < 0]
         pos = [(a, p) for a, p in points if a >= 0]
-        if pos and min(a for a, p in pos) > 90 and neg:
-            points_1 = sorted([(a, p) for a, p in neg], \
-                    key=lambda couple: couple[0], reverse=True)
-            points_2 = sorted([(a, p) for a, p in pos], \
-                    key=lambda couple: couple[0], reverse=True)
-            points = tuple(points_1) + tuple(points_2)
-        else:
-            points = sorted(points, key=lambda couple: couple[0])
+        points = sorted(points, key=lambda couple: couple[0])
 
         # On formatte les points obtenus
         msg = []
-        limite_inf = direction - limite
-        limite_sup = direction + limite
+        limite_inf = norme_angle(direction - limite)
+        limite_sup = norme_angle(direction + limite)
+        if limite_inf < 0 and limite_sup > 0:
+            r_limite_1 = range(limite_inf, 0)
+            r_limite_2 = range(0, limite_sup + 1)
+        elif limite_sup < 0 and limite_inf > 0:
+            r_limite_1 = range(-180, limite_sup + 1)
+            r_limite_2 = range(limite_inf, 180)
+        elif limite_inf > limite_sup:
+            r_limite_1 = r_limite_2 = range(limite_sup, limite_inf + 1)
+        else:
+            r_limite_1 = r_limite_2 = range(limite_inf, limite_sup + 1)
+
         for angle, point in points:
             x, y, vecteur, point = point
-            if angle < limite_inf or angle > limite_sup:
+            if not (angle in r_limite_1 or angle in r_limite_2):
                 continue
 
             if angle == 0:
