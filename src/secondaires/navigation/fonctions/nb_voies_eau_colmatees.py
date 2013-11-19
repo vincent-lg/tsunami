@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,71 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les constantes de navigation."""
+"""Fichier contenant la fonction nb_voies_eau_colmatees."""
 
-# Facteurs des allures
-ALL_DEBOUT = 140
-ALL_PRES = 125
-ALL_BON_PLEIN = 105
-ALL_LARGUE = 75
-ALL_GRAND_LARGUE = 40
+from fractions import Fraction
 
-# Orientation des voiles
-ANGLE_DEBOUT = 0
-ANGLE_PRES = 8
-ANGLE_BON_PLEIN = 20
-ANGLE_LARGUE = 30
-ANGLE_GRAND_LARGUE = 60
-ANGLE_ARRIERE = 90
+from primaires.scripting.fonction import Fonction
+from secondaires.navigation.constantes import *
 
-# Vitesse
-TPS_VIRT = 3
-DIST_AVA = 0.4
-CB_BRASSES = 3.2 # combien de brasses dans une salle
+class ClasseFonction(Fonction):
 
-# Vitesse des rames
-VIT_RAMES = {
-    "arrière": -0.5,
-    "immobile": 0,
-    "lente": 0.3,
-    "moyenne": 0.7,
-    "rapide": 1.1,
-}
+    """Retourne le nombre de voies d'eau colmatées du navire.
 
-# Endurance consommée par vitesse
-END_VIT_RAMES = {
-    "arrière": 2,
-    "immobile": 0,
-    "lente": 1,
-    "moyenne": 3,
-    "rapide": 6,
-}
+    Cette fonction retourne le nombre de voies d'eau colmatées (c'est-à-dire
+    les brèches dans la coque réparées grâce à la commande calfeutrer/seal).
+    Le nombre renvoyé est au maximum égal au nombre de salles du navire
+    (les salles noyables, du moins).
 
-# Terrains
-TERRAINS_ACCOSTABLES = [
-    "quai de pierre",
-    "quai de bois",
-    "plage de sable blanc",
-    "plage de sable noir",
-    "rocher",
-]
+    """
 
-TERRAINS_QUAI = [
-    "quai de bois",
-    "quai de pierre",
-]
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.nb_voies_eau_colmatees_salle, "Salle")
 
-# Dégâts sur la coque
-COQUE_INTACTE = 0
-COQUE_COLMATEE = 1
-COQUE_OUVERTE = 2
+    @staticmethod
+    def nb_voies_eau_colmatees_salle(salle):
+        """Retourne le nombre de voies d'eau colmatées dans le navire."""
+        if getattr(salle, "navire", None) is None:
+            return 0
 
-# Fonctions
-def get_portee(salle):
-    """Retourne la portée à laquelle on peut voir depuis la salle spécifiée."""
-    navire = salle.navire
-    etendue = navire.etendue
-    alt = etendue.altitude
-    hauteur = salle.coords.z - alt
-    portee = 50 + 50 * hauteur
-    return portee
+        navire = salle.navire
+        nb = len([s for s in navire.salles.values() if \
+                s.voie_eau == COQUE_COLMATEE])
+        return Fraction(nb)

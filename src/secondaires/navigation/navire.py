@@ -44,6 +44,7 @@ from .constantes import *
 from .element import Element
 from .salle import SalleNavire
 from .vent import INFLUENCE_MAX
+from .visible import Visible
 from .constantes import END_VIT_RAMES, TERRAINS_QUAI
 
 # Constantes
@@ -317,6 +318,9 @@ class Navire(Vehicule):
             distances.append(sqrt(x ** 2 + y ** 2 + z ** 2))
 
         return max(distances)
+
+    def get_nom_pour(self, personnage):
+        return self.desc_survol
 
     def construire_depuis_modele(self):
         """Construit le navire depuis le modèle."""
@@ -597,6 +601,29 @@ class Navire(Vehicule):
             if d_salle:
                 amarre.attachee = d_salle
                 navire.immobilise = True
+
+    def regarder(self, personnage):
+        """Le personnage regarde le navire."""
+        salle = personnage.salle
+        navire = salle.navire
+        etendue = navire.etendue
+        portee = get_portee(salle)
+        visible = Visible.observer(personnage, portee, 5, exclure_navire=False)
+        navires = [couple[1][3] for couple in visible.navires]
+        if self not in navires:
+            personnage << "|err|Vous ne pouvez voir ce navire d'ici.|ff|"
+            return
+
+        salle.envoyer("{{}} regarde {}.".format(self.desc_survol.lower()),
+                personnage)
+        centre = self.salles[0, 0, 0]
+        variables = {
+            "nom": self.nom_personnalise,
+        }
+
+        msg = "Vous regardez " + self.desc_survol + " :\n\n"
+        msg += self.modele.description.regarder(personnage, centre, variables)
+        personnage << msg
 
     def sombrer(self):
         """Fait sombrer le navire."""

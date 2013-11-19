@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,33 +35,34 @@ from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
+from secondaires.navigation.constantes import *
 from secondaires.navigation.visible import Visible
 
 class VPointVisible(Masque):
-    
+
     """Masque <point_visible>.
-    
+
     On attend un point observable en paramètre.
-    
+
     """
-    
+
     nom = "point_visible"
     nom_complet = "direction"
-    
+
     def init(self):
         """Initialisation des attributs"""
         self.points = None
         self.retour = ""
-    
+
     def repartir(self, personnage, masques, commande):
         """Répartition du masque."""
         point = liste_vers_chaine(commande)
-        
+
         self.a_interpreter = point
         commande[:] = []
         masques.append(self)
         return True
-    
+
     def valider(self, personnage, dic_masques):
         """Validation du masque"""
         Masque.valider(self, personnage, dic_masques)
@@ -69,15 +70,11 @@ class VPointVisible(Masque):
         salle = personnage.salle
         if not hasattr(salle, "navire"):
             return False
-        
+
         navire = salle.navire
         etendue = navire.etendue
         alt = etendue.altitude
-        hauteur = salle.coords.z - alt
-        portee = 50
-        if hauteur > 0:
-            portee += 50 * hauteur
-        
+        portee = get_portee(salle)
         if point:
             point = supprimer_accents(point)
             limite = 45
@@ -96,7 +93,7 @@ class VPointVisible(Masque):
             direction = 0
             limite = 90
             precision = 15
-        
+
         # On récupère les points
         points = Visible.observer(personnage, portee, precision)
         msg = points.formatter(direction, limite)

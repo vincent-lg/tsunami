@@ -75,6 +75,16 @@ class EdtShedit(Presentation):
             "Entrez le |ent|nom|ff| du navire ou |cmd|/|ff| pour revenir " \
             "à la fenêtre parente.\n\nNom actuel : |bc|{objet.nom}|ff|"
 
+        # Description
+        description = self.ajouter_choix("description", "d",
+                Description, modele, "description")
+        description.parent = self
+        description.apercu = "{objet.description." \
+                "paragraphes_indentes}"
+        description.aide_courte = \
+            "| |tit|" + "Description du navire {}".format(
+                    modele.cle).ljust(76) + "|ff||\n" + self.opts.separateur
+
         # Description à la vente
         description_vente = self.ajouter_choix("description à la vente", "ve",
                 Description, modele, "description_vente")
@@ -102,7 +112,7 @@ class EdtShedit(Presentation):
             "Prix unitaire actuel : |bc|{objet.m_valeur}|ff|"
 
         # Durée de construction
-        duree = self.ajouter_choix("duree de construction (en minutes)", "r", Entier,
+        duree = self.ajouter_choix("durée de construction", "r", Entier,
                 modele, "duree_construction", 1)
         duree.parent = self
         duree.apercu = "{objet.duree_construction} minute(s)"
@@ -118,7 +128,8 @@ class EdtShedit(Presentation):
             "|bc|{objet.duree_construction}|ff| minute(s)"
 
         # Poids max
-        poids_max = self.ajouter_choix("poids maximum", "p", Entier, modele, "poids_max", 1)
+        poids_max = self.ajouter_choix("poids maximum", "p", Entier, modele,
+                "poids_max", 1)
         poids_max.parent = self
         poids_max.apercu = "{objet.poids_max} kg"
         poids_max.prompt = "Poids maximum avant de sombrer (en kg) : "

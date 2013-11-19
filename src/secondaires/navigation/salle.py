@@ -36,6 +36,7 @@ from primaires.perso.exceptions.stat import DepassementStat
 from primaires.salle.salle import Salle
 from primaires.salle.sortie import Sortie
 from secondaires.navigation.constantes import *
+from secondaires.navigation.visible import Visible
 
 # Constantes
 NOMS_SORTIES = OrderedDict()
@@ -282,6 +283,13 @@ class SalleNavire(Salle):
         elts = Salle.get_elements_observables(self, personnage)
         for element in self.elements:
             elts.append(element)
+
+        # Cherche les navires visibles
+        visible = Visible()
+        visible.trouver_navires(personnage, self.navire, 30, 5,
+                exclure_navire=False)
+        for angle, (x, y, vecteur, navire) in visible.navires:
+            elts.append(navire)
 
         return elts
 

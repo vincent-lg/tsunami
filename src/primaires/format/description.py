@@ -160,8 +160,9 @@ class Description(BaseObj):
 
         return indentation + indentation.join(res)
 
-    def regarder(self, personnage, elt=None):
+    def regarder(self, personnage, elt=None, variables=None):
         """Le personnage regarde la description."""
+        variables = variables or {}
         description = ""
         desc_flottantes = []
         elt = elt or self.parent
@@ -188,7 +189,15 @@ class Description(BaseObj):
         for nom_complet in evts:
             nom = nom_complet[1:]
             trouve = False
+            if variables.get(nom):
+                retour = variables[nom]
+                description = description.replace(nom_complet, retour)
+                trouve = True
+
             for desc in desc_flottantes:
+                if trouve:
+                    break
+
                 evt = desc.script["regarde"]
                 if nom in evt.evenements:
                     evt = evt.evenements[nom]
