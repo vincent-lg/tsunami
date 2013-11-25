@@ -73,6 +73,7 @@ class Etendue(BaseObj):
         self.obstacles = {}
         self.cotes = {}
         self.liens = {}
+        self.projections = {}
 
     def __getnewargs__(self):
         return ("", )

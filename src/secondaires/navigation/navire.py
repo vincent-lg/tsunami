@@ -79,8 +79,6 @@ class Navire(Vehicule):
         self.nom_personnalise = ""
 
         # Dernier lien (dl)
-        self.dl_x = 0
-        self.dl_y = 0
 
         if modele:
             modele.vehicules.append(self)
@@ -472,27 +470,23 @@ class Navire(Vehicule):
             # Si le navire a croisé un lien, change d'étendue
             for coords, autre in etendue.liens.items():
                 x, y = coords
-                if autre is etendue or (round(x) == self.dl_x and \
-                        round(y) == self.dl_y):
+                if autre is etendue:
                     continue
 
-                v_point = Vector(*coords)
+                v_point = Vector(x, y, etendue.altitude)
                 if in_rectangle(origine.x, origine.y, origine.z,
                         n_position.x, n_position.y, n_position.z,
                         x, y, etendue.altitude, 0.5) and origine.distance(
                         n_position, v_point) <= 0.5:
-                    # C'est un lien, on change d'étendue
-                    # Les autres liens ne sont pas pris en compte
-                    self.etendue = autre
-                    self.position.z = autre.altitude
-                    print("On change d'étendue pour", self, self.etendue.cle)
-                    self.dl_x = round(x)
-                    self.dl_y = round(y)
-                    break
-
-        if round(self.position.x) != self.dl_x or round(self.position.y) \
-                != self.dl_y:
-            self.dl_x, self.dl_y = 0, 0
+                    # C'est un lien, mais dans le bon sens ?
+                    pr_x, pr_y = etendue.projections[autre]
+                    pr_vec = Vector(pr_x, pr_y, etendue.altitude)
+                    if (n_position - pr_vec).mag < (origine - pr_vec).mag:
+                        # Les autres liens ne sont pas pris en compte
+                        self.etendue = autre
+                        self.position.z = autre.altitude
+                        print("On change d'étendue pour", self, self.etendue.cle)
+                        break
 
         if vit_or <= 0.01 and vit_fin >= 0.05:
             if vit_fin < 0.2:
