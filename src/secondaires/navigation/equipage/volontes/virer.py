@@ -149,7 +149,7 @@ class Virer(Volonte):
         elif direction < 112:
             nom_dir = "le sud"
         elif direction < 157:
-            nom_dir = "le sud-est-ouest"
+            nom_dir = "le sud-ouest"
         elif direction < 202:
             nom_dir = "l'ouest"
         elif direction < 247:

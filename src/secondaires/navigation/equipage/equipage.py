@@ -37,6 +37,7 @@ from primaires.format.fonctions import supprimer_accents
 from secondaires.navigation.equipage.ordre import ordres
 from secondaires.navigation.equipage.matelot import Matelot
 from secondaires.navigation.equipage.noms import NOMS_MATELOTS
+from secondaires.navigation.equipage.postes.hierarchie import HIERARCHIE
 from secondaires.navigation.equipage.volonte import volontes
 from secondaires.navigation.equipage.volontes import *
 
@@ -45,8 +46,8 @@ class Equipage(BaseObj):
     """Classe représentant l'équipage d'un navire.
 
     Un équipage est le lien entre un navire et une liste de mâtelots.
-    Il permet d'exécuter des ordres et de les décomposer si besoin en
-    passant par la mini-intelligence.
+    Il permet d'exécuter des ordres directement ou des volontés
+    (les volontés sont des ordres décomposés).
 
     """
 
@@ -55,6 +56,8 @@ class Equipage(BaseObj):
         BaseObj.__init__(self)
         self.navire = navire
         self.matelots = {}
+        self.autopilot = False
+        self.volontes = []
         self._construire()
 
     def __getnewargs__(self):
@@ -142,3 +145,31 @@ class Equipage(BaseObj):
                 return matelot
 
         return matelot
+
+    def get_matelots_au_poste(self, nom_poste):
+        """Retourne les matelots au poste indiqué.
+
+        Cette méthode retourne toujours une liste, bien que cette
+        liste puisse être vide. Le nom de poste est l'un de ceux
+        définis dans postes/hierarchie.py. Certains postes sont des
+        noms standards dans la hiérarchie des postes (comme 'maître
+        d'équipage'), certains sont des noms englobant plusieurs
+        postes. Par exemple, si on demande les cannoniers d'un navire,
+        on obteint toujours les matelots au poste de 'matelot' tout
+        simplement. Les cannoniers sont les premiers à être retournés
+        mais les matelots standards (c'est-à-dire ceux qui ne sont pas
+        considérés avec une affectation très spécifique) sont retournés
+        ensuite.
+
+        """
+        noms_poste = HIERARCHIE[nom_poste]
+        matelots = []
+        for matelot in self.matelots.values():
+            if matelot.nom_poste in noms_poste:
+                matelots.append(matelot)
+
+        matelots.sort(key=lambda m: noms_poste.index(m.nom_poste))
+        return matelots
+
+    def tick(self):
+        """L'équipage se tick à chaque seconde."""

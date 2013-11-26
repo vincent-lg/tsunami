@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,14 +28,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le poste vigie."""
+"""Module contenant la hiérarchie des postes."""
 
-from . import Poste
-
-class Vigie(Poste):
-
-    """Classe définissant le poste vigie."""
-
-    nom = "vigie"
-    autorite = 15
-    nom_parent = "officier"
+HIERARCHIE = {
+    "matelot": ["matelot"],
+    "artilleur": ["artilleur", "matelot"],
+    "charpentier": ["charpentier", "matelot"],
+    "voilier": ["voilier", "matelot"],
+    "vigie": ["vigie", "matelot"],
+    "maître cuisinier": ["maître cuisinier"],
+    "chirurgien": ["chirurgien"],
+    "officier": ["capitaine", "second", "maître d'équipage", "officier"],
+    "maître d'équipage": ["maître d'équipage", "officier"],
+    "second": ["second", "maître d'équipage", "officier"],
+    "capitaine": ["capitaine", "second", "maître d'équipage"],
+}

@@ -33,6 +33,7 @@
 from abstraits.obase import BaseObj
 from primaires.objet.objet import MethodeObjet
 from secondaires.navigation.equipage.signaux import *
+from secondaires.navigation.equipage.postes import postes
 from .ordre import *
 
 class Matelot(BaseObj):
@@ -56,7 +57,6 @@ class Matelot(BaseObj):
 
     """
 
-    enregistrer = True
     logger = type(importeur).man_logs.get_logger("ordres")
 
     def __init__(self, equipage, personnage):
@@ -83,6 +83,11 @@ class Matelot(BaseObj):
 
     def __repr__(self):
         return "<mâtelot {} ({})>".format(repr(self.nom), str(self.personnage))
+
+    @property
+    def poste(self):
+        """Retourne l'objet Poste."""
+        return postes[self.nom_poste]
 
     def executer_ordres(self, priorite=1):
         """Exécute les ordres du mâtelot, dans l'ordre.
