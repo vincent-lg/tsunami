@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 EILERS Christoff
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,9 +33,9 @@
 from primaires.interpreteur.commande.commande import Commande
 
 class CmdBoire(Commande):
-    
+
     """Commande 'boire'"""
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "boire", "drink")
@@ -47,19 +47,26 @@ class CmdBoire(Commande):
                 "ou autre) depuis un conteneur. Sans argument, vous buvez " \
                 "l'eau à portée s'il y en a (près d'une rivière ou autre " \
                 "étendue d'eau)."
-    
+
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("nom_objet")
         nom_objet.proprietes["conteneurs"] = \
                 "(personnage.equipement.inventaire, )"
-    
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         personnage.agir("ingerer")
-        
+        salle = personnage.salle
+
         if dic_masques["nom_objet"] is None:
-            if personnage.salle.terrain.nom in ("rive", "aquatique",
+            # On regarde si il n'y a pas une fontaine dans les détails
+            fontaine = None
+            for detail in salle.details:
+                if detail.a_flag("fontaine"):
+                    fontaine = detail
+
+            if fontaine or salle.terrain.nom in ("rive", "aquatique",
                     "subaquatique"):
                 if personnage.estomac <= 2.9:
                     personnage << "Vous buvez à grande gorgées."
@@ -75,13 +82,13 @@ class CmdBoire(Commande):
             else:
                 personnage << "|err|Il n'y a pas d'eau par ici.|ff|"
             return
-        
+
         objet = dic_masques["nom_objet"].objet
         if hasattr(objet, "potion"):
             if objet.potion is None:
                 personnage << "Il n'y a rien à boire là-dedans."
                 return
-            
+
             if personnage.estomac + objet.potion.poids_unitaire <= 3:
                 personnage << objet.potion.message_boit
                 personnage.salle.envoyer("{} boit " + objet.get_nom() + ".",
@@ -99,5 +106,5 @@ class CmdBoire(Commande):
                 personnage << "Vous êtes plein{e} ; une gorgée de plus " \
                         "et vous éclaterez.".format(e=e)
             return
-        
+
         personnage << "|err|Vous ne pouvez boire cela.|ff|"

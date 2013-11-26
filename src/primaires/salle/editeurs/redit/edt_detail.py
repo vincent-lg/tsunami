@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,30 +34,32 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.flag import Flag
+from primaires.interpreteur.editeur.flags import Flags
+from primaires.salle.detail import FLAGS
 from primaires.scripting.editeurs.edt_script import EdtScript
 from .edt_repos import EdtRepos
 
 class EdtDetail(Presentation):
-    
+
     """Ce contexte permet d'éditer un detail observable d'une salle.
-    
+
     """
-    
+
     def __init__(self, pere, detail=None, attribut=None):
         """Constructeur de l'éditeur"""
         Presentation.__init__(self, pere, detail, attribut, False)
         if pere and detail:
             self.construire(detail)
-    
+
     def opt_renommer_detail(self, arguments):
         """Renomme le détail courant.
         Syntaxe : /n <nouveau nom>
-        
+
         """
         detail = self.objet
         salle = detail.parent
         nouveau_nom = supprimer_accents(arguments)
-        
+
         if not nouveau_nom:
             self.pere << \
                 "|err|Vous devez indiquer un nouveau nom.|ff|"
@@ -76,27 +78,27 @@ class EdtDetail(Presentation):
             self.pere << \
                 "|err|Ce nom est déjà utilisé.|ff|"
             return
-        
+
         salle.details.ajouter_detail(nouveau_nom, modele=detail)
         del salle.details[detail.nom]
         self.objet = salle.details[nouveau_nom]
         self.actualiser()
-    
+
     def opt_synonymes(self, arguments):
         """Ajoute ou supprime les synonymes passés en paramètres.
         syntaxe : /s <synonyme 1> (/ <synonyme 2> / ...)
-        
+
         """
         detail = self.objet
         salle = detail.parent
         a_synonymes = [supprimer_accents(argument) for argument in \
                 arguments.split(" / ")]
-        
+
         if not a_synonymes:
             self.pere << \
                 "|err|Vous devez préciser au moins un synonyme.|ff|"
             return
-        
+
         for synonyme in a_synonymes:
             if detail.nom == synonyme \
                     or (salle.details.detail_existe(synonyme) \
@@ -113,7 +115,7 @@ class EdtDetail(Presentation):
             else:
                 detail.synonymes.append(synonyme)
                 self.actualiser()
-    
+
     def construire(self, detail):
         """Construction de l'éditeur"""
         # Titre
@@ -124,7 +126,7 @@ class EdtDetail(Presentation):
         titre.aide_courte = \
             "Entrez le |ent|titre|ff| du détail ou |cmd|/|ff| pour revenir " \
             "à la fenêtre parente.\n\nTitre actuel : |bc|{objet.titre}|ff|"
-        
+
         # Description
         description = self.ajouter_choix("description", "d", Description, \
                 detail)
@@ -133,12 +135,19 @@ class EdtDetail(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description du détail {}".format(detail).ljust(76) + \
             "|ff||\n" + self.opts.separateur
-        
+
+        # Flags
+        flags = self.ajouter_choix("flags", "fl", Flags, detail, "flags",
+                FLAGS)
+        flags.parent = self
+        flags.aide_courte = \
+            "Flags du détail {} :".format(detail.titre)
+
         # Est visible
         visible = self.ajouter_choix("est visible", "v", Flag, detail,
                 "est_visible")
         visible.parent = self
-        
+
         # Repos
         repos = self.ajouter_choix("repos", "r", EdtRepos, detail)
         repos.parent = self
@@ -159,7 +168,7 @@ class EdtDetail(Presentation):
             "   la liaison entre l'action et le titre du détail. Par " \
             "exemple : \"Vous vous\n" \
             "   allongez |vr|sur|ff| une table.|ff|\"\n\n"
-        
+
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,
                 detail.script)
