@@ -161,6 +161,13 @@ class PNJ(Personnage):
         pass
     langue_cmd = property(_get_langue_cmd, _set_langue_cmd)
 
+    def _get_distinction_audible(self):
+        return self.get_distinction_audible()
+    def _set_distinction_audible(self, distinction):
+        pass
+    distinction_audible = property(_get_distinction_audible,
+            _set_distinction_audible)
+
     def envoyer(self, msg, *personnages, **kw_personnages):
         """Envoie un message"""
         if self.controle_par:

@@ -89,6 +89,14 @@ class Matelot(BaseObj):
         """Retourne l'objet Poste."""
         return postes[self.nom_poste]
 
+    def get_ordre(self, cle_ordre):
+        """Retourne le premier ordre de clé spécifié ou None."""
+        ordres = [o for o in self.ordres if o.cle == cle_ordre]
+        if ordres:
+            return ordres[0]
+
+        return None
+
     def executer_ordres(self, priorite=1):
         """Exécute les ordres du mâtelot, dans l'ordre.
 

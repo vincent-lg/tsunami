@@ -79,7 +79,7 @@ class Virer(Volonte):
             return (matelot, [])
 
         proches = []
-        matelots = equipage.matelots_libres
+        matelots = equipage.get_matelots_au_poste("officier")
         graph = self.navire.graph
         gouvernail = navire.gouvernail
         for matelot in matelots:
@@ -104,11 +104,17 @@ class Virer(Volonte):
         if couple is None:
             return
 
+        gouvernail = self.navire.gouvernail
+        if gouvernail.tenu:
+            ordre = couple[0].get_ordre("virer")
+            if ordre:
+                ordre.direction = self.direction
+                return
+
         matelot, sorties = couple
         personnage = matelot.personnage
         relacher = False
         navire = self.navire
-        gouvernail = navire.gouvernail
         direction = self.direction
         nav_direction = navire.direction.direction
         ordres = []

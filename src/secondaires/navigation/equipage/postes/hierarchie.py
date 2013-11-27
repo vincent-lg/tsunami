@@ -38,7 +38,7 @@ HIERARCHIE = {
     "vigie": ["vigie", "matelot"],
     "maître cuisinier": ["maître cuisinier"],
     "chirurgien": ["chirurgien"],
-    "officier": ["capitaine", "second", "maître d'équipage", "officier"],
+    "officier": ["officier", "maître d'équipage", "second", "capitaine"],
     "maître d'équipage": ["maître d'équipage", "officier"],
     "second": ["second", "maître d'équipage", "officier"],
     "capitaine": ["capitaine", "second", "maître d'équipage"],

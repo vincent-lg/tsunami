@@ -44,7 +44,7 @@ class Virer(Ordre):
 
     """
 
-    cle = "virer_babord"
+    cle = "virer"
     def __init__(self, matelot, navire, direction=0):
         Ordre.__init__(self, matelot, navire)
         self.direction = direction

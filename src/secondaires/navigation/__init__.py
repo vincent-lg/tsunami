@@ -206,6 +206,8 @@ class Module(BaseModule):
                 self.nauffrages)
         self.importeur.diffact.ajouter_action("tick_chantiers", 60,
                 self.tick_chantiers)
+        self.importeur.diffact.ajouter_action("tick_equipages", 1,
+                self.tick_equipages)
 
         # Ajout des bateaux au module salle
         self.importeur.salle.salles_a_cartographier.append(
@@ -463,6 +465,15 @@ class Module(BaseModule):
                 self.tick_chantiers)
         for chantier in self.chantiers.values():
             chantier.executer_commandes()
+
+    def tick_equipages(self):
+        """Tick des équipages."""
+        self.importeur.diffact.ajouter_action("tick_equipages", 1,
+                self.tick_equipages)
+        equipages = [n.equipage for n in self.navires.values() if \
+                len(n.equipage.matelots) > 0]
+        for equipage in equipages:
+            equipage.tick()
 
     def navire_amarre(self, salle, liste_messages, flags):
         """Si un navire est amarré, on l'affiche."""

@@ -32,8 +32,11 @@
 
 from random import choice
 
+from vector import Vector
+
 from abstraits.obase import BaseObj
 from primaires.format.fonctions import supprimer_accents
+from primaires.vehicule.vecteur import get_direction
 from secondaires.navigation.equipage.ordre import ordres
 from secondaires.navigation.equipage.matelot import Matelot
 from secondaires.navigation.equipage.noms import NOMS_MATELOTS
@@ -56,8 +59,12 @@ class Equipage(BaseObj):
         BaseObj.__init__(self)
         self.navire = navire
         self.matelots = {}
-        self.autopilot = False
-        self.volontes = []
+
+        # Caps choisis
+        self.caps = []
+        self.cap = None
+        self.destination = None
+
         self._construire()
 
     def __getnewargs__(self):
@@ -73,6 +80,19 @@ class Equipage(BaseObj):
         matelots = tuple(self.matelots.values())
         return tuple(m for m in matelots if m.personnage.cle_etat == "" and \
                 len(m.ordres) == 0)
+
+    @property
+    def opt_destination(self):
+        """Retourne le vecteur (Vector) correspondant à la destination.
+
+        Si la destination n'est pas spécifiée, retourne None.
+
+        """
+        if self.destination:
+            x, y = self.destination
+            return Vector(x, y, self.navire.position.z)
+
+        return None
 
     def ajouter_matelot(self, personnage, nom_poste="matelot"):
         """Ajoute un mâtelot à l'équipage."""
@@ -114,10 +134,13 @@ class Equipage(BaseObj):
 
         return ordre
 
-    def demander(self, cle_volonte, *parametres):
+    def demander(self, cle_volonte, *parametres, personnage=None):
         """Exécute une volonté."""
         volonte = volontes[cle_volonte]
         volonte = volonte(self.navire, *parametres)
+        if personnage:
+            volonte.crier_ordres(personnage)
+
         self.executer_volonte(volonte)
 
     def executer_volonte(self, volonte):
@@ -146,7 +169,8 @@ class Equipage(BaseObj):
 
         return matelot
 
-    def get_matelots_au_poste(self, nom_poste):
+    def get_matelots_au_poste(self, nom_poste, libre=True,
+            endurance_min=None):
         """Retourne les matelots au poste indiqué.
 
         Cette méthode retourne toujours une liste, bien que cette
@@ -161,6 +185,11 @@ class Equipage(BaseObj):
         considérés avec une affectation très spécifique) sont retournés
         ensuite.
 
+        Paramètres à préciser :
+            nom_poste -- le nom du poste (par exemple "maître d'équipage")
+            libre -- le matelot est-il libre (sans ordre ni état)
+            endurance_min -- l'endurance minimum que doit avoir le personnage
+
         """
         noms_poste = HIERARCHIE[nom_poste]
         matelots = []
@@ -169,7 +198,66 @@ class Equipage(BaseObj):
                 matelots.append(matelot)
 
         matelots.sort(key=lambda m: noms_poste.index(m.nom_poste))
+        if libre:
+            matelots = [m for m in matelots if \
+                    m.personnage.cle_etat == "" and len(m.ordres) == 0]
+        if endurance_min is not None:
+            matelots = [m for m in matelots if \
+                    m.personnage.endurance <= endurance_min]
+
         return matelots
 
     def tick(self):
-        """L'équipage se tick à chaque seconde."""
+        """L'équipage se tick à chaque seconde.
+
+        Cette méthode est appelée régulièrement pour les navires
+        ayant un équipage (à chaque seconde, en fait). Elle permet
+        d'effectuer des actions semi-automatiques (réparer la coque
+        si il y a des voies d'eau, écoper si il y a du poids d'eau à
+        bord) ou plus complexes (suivre un cap, couler un navire ennemi,
+        réagir aux potentiels offensifs des autres). Les premirèes
+        actions ne nécessitent aucun arrangement particulier : si il
+        y a besoin, les actions sont accomplies par l'équipage. Les
+        dernirèes nécessitent une autorité (un capitaine PNJ, second,
+        maître d'équipage ou, si tout le monde est à l'eau, un officier
+        suffira à assurer le commandement).
+
+        Cette méthode est un point important d'optimisation. Ne pas
+        oublier qu'elle est appelée souvent et sur potentiellement
+        beaucoup de navires.
+
+        """
+        if not self.destination:
+            return
+
+        commandants = self.get_matelots_au_poste("capitaine", False)
+        if commandants:
+            commandant = commandants[0]
+            self.verifier_cap(commandant)
+
+    def verifier_cap(self, commandant):
+        """Vérifie le cap du navire.
+
+        La direction du navire doit être (à peu près) celle nécessaire
+        pour atteindre le point de destination (self.point). Si c'est
+        le cas et que la distance au point est inférieure à une distance
+        préétablie, le commandant prépare son équipage pour le point
+        suivant.
+
+        Si le cap nécessite une correction, il l'a fait ici aussi.
+
+        """
+        destination = self.opt_destination
+        position = self.navire.opt_position
+        distance = destination - position
+        direction = get_direction(distance)
+        ar_direction = round(direction / 3) * 3
+        if self.cap:
+            ar_cap = round(self.cap / 3) * 3
+
+        if self.cap is None or ar_cap != ar_direction:
+            # On change de cap
+            print("Le cap actuel", self.cap, "!=", direction, "pour", destination)
+            self.demander("virer", round(direction),
+                    personnage=commandant.personnage)
+            self.cap = direction
