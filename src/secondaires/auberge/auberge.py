@@ -92,8 +92,10 @@ class Auberge(BaseObj):
         chambres = sorted([c for c in self.chambres.values()],
                 key=lambda c: c.numero)
         for chambre in chambres:
-            msg += "\n   {} ({}) pour {} pièces par jour".format(
+            msg += "\n   {:>8} ({:>15}) pour {:>5} pièces par jour".format(
                     chambre.numero, chambre.ident_salle, chambre.prix_par_jour)
+            if chambre.proprietaire:
+                msg += ", louée par " + chambre.nom_proprietaire
 
         return msg.lstrip("\n")
 

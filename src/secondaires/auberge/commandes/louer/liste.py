@@ -73,20 +73,20 @@ class PrmListe(Parametre):
         auberge.verifier_chambres()
         chambres = sorted([c for c in auberge.chambres.values() if \
                 c.proprietaire is None], key=lambda c: c.numero)
-        en_tete_titre = "+-" + "-" * 22 + "-+"
-        en_tete = "+-" + "-" * 6 + "-+-" + "-" * 13 + "-+"
+        en_tete_titre = "+-" + "-" * 25 + "-+"
+        en_tete = "+-" + "-" * 9 + "-+-" + "-" * 13 + "-+"
         msg = en_tete_titre + "\n"
-        msg += "| " + auberge.titre.ljust(22) + " |\n"
+        msg += "| " + auberge.titre.ljust(25) + " |\n"
         msg += en_tete + "\n"
-        msg += "| Numéro | Prix par jour |\n"
+        msg += "| Numéro    | Prix par jour |\n"
         msg += en_tete
         for chambre in chambres:
-            msg += "\n| " + chambre.numero.ljust(6) + " | "
+            msg += "\n| " + chambre.numero.ljust(9) + " | "
             msg += str(chambre.prix_par_jour).rjust(13) + " |"
 
         if not chambres:
-            msg += "\n| " |att|+ "Aucune chambre n'est disponible".ljust(
-                    24) + "|ff| |"
+            msg += "\n| |att|" + "Aucune chambre disponible".ljust(
+                    25) + "|ff| |"
 
         msg += "\n" + en_tete
         personnage << msg

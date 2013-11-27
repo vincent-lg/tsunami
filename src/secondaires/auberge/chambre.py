@@ -104,6 +104,11 @@ class Chambre(BaseObj):
         s = "s" if valeur > 1 else ""
         return str(valeur) + " " + unite.format(s=s)
 
+    @property
+    def nom_proprietaire(self):
+        """Retourne le nom du propriétaire si louée."""
+        return self.proprietaire and self.proprietaire.nom or "|att|aucun|ff|"
+
     def prix(self, nb_jours):
         """Retourne le prix en fonction du nombre de jours loués.
 
