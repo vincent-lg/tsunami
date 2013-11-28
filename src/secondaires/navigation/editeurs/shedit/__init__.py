@@ -138,6 +138,17 @@ class EdtShedit(Presentation):
             "sombre ou |cmd|/|ff| pour revenir\nà la fenêtre parente.\n\n" \
             "Poids maximum actuel : {objet.poids_max} kg"
 
+        # Poids max dans la cale
+        cale_max = self.ajouter_choix("poids maximum dans la cale", "ca",
+                Entier, modele, "cale_max", 1)
+        cale_max.parent = self
+        cale_max.apercu = "{objet.cale_max} kg"
+        cale_max.prompt = "Poids maximum de la cale (en kg) : "
+        cale_max.aide_courte = \
+            "Entrez |ent|le poids maximum|ff| de la cale du navire " \
+            "ou |cmd|/|ff| pour revenir\nà la fenêtre parente.\n\n" \
+            "Poids maximum actuel de la cale : {objet.cale_max} kg"
+
         # Carte
         carte = self.ajouter_choix("carte", "c", EdtCarte, modele)
         carte.parent = self

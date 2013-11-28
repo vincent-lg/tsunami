@@ -54,6 +54,7 @@ from .equipage.fiche import FicheMatelot
 from .chantier_naval import ChantierNaval
 from .navires_vente import NaviresVente
 from .matelots_vente import MatelotsVente
+from .trajet import Trajet
 
 class Module(BaseModule):
 
@@ -80,6 +81,7 @@ class Module(BaseModule):
         self.vents_par_etendue = {}
         self.fiches = {}
         self.chantiers = {}
+        self.trajets = {}
 
     def config(self):
         """Configuration du module."""
@@ -188,6 +190,15 @@ class Module(BaseModule):
         self.nav_logger.info(format_nb(nb_mat,
                 "{nb} fiche{s} de matelot récupérée{s}", fem=True))
 
+        # On récupère les trajets
+        trajets = self.importeur.supenr.charger_groupe(Trajet)
+        for trajet in trajets:
+            self.ajouter_trajet(trajet)
+
+        nb_trajets = len(self.trajets)
+        self.nav_logger.info(format_nb(nb_trajets,
+                "{nb} trajet{s} maritime{s} récupéré{s}"))
+
         # On récupère les chantiers navals
         chantiers = self.importeur.supenr.charger_groupe(ChantierNaval)
         for chantier in chantiers:
@@ -221,6 +232,7 @@ class Module(BaseModule):
             commandes.allure.CmdAllure(),
             commandes.amarre.CmdAmarre(),
             commandes.ancre.CmdAncre(),
+            commandes.cale.CmdCale(),
             commandes.calfeutrer.CmdCalfeutrer(),
             commandes.canon.CmdCanon(),
             commandes.chantier.CmdChantier(),
@@ -383,6 +395,23 @@ class Module(BaseModule):
     def supprimer_fiche_matelot(self, cle):
         """Supprime le matelot."""
         self.fiches.pop(cle).detruire()
+
+    def creer_trajet(self, cle):
+        """Crée un trajet maritime."""
+        if cle in self.trajets:
+            raise ValueError("la clé {} est déjà utilisée".format(cle))
+
+        trajet = Trajet(cle)
+        self.ajouter_trajet(trajet)
+        return trajet
+
+    def ajouter_trajet(self, trajet):
+        """Ajoute le trajet."""
+        self.trajets[trajet.cle] = trajet
+
+    def supprimer_trajet(self, cle):
+        """Supprime le trajet."""
+        self.trajets.pop(cle).detruire()
 
     def creer_chantier_naval(self, cle):
         """Crée un chantier naval."""

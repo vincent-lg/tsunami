@@ -28,18 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents signaux.
+"""Fichier contenant l'ordre Feu."""
 
-Un signal est une classe toute simple, semblable à une exception en
-ce qu'elle permet de transmettre des messages et met en pause l'exécution
-pendant le temps que le message passe. Cependant, après réception
-du signal, l'exécution peut se poursuivre.
+from secondaires.navigation.equipage.signaux import *
 
-"""
+from ..ordre import *
 
-from secondaires.navigation.equipage.signaux.base import Signal
-from secondaires.navigation.equipage.signaux.attendre import SignalAttendre
-from secondaires.navigation.equipage.signaux.abandonne import SignalAbandonne
-from secondaires.navigation.equipage.signaux.inutile import SignalInutile
-from secondaires.navigation.equipage.signaux.repete import SignalRepete
-from secondaires.navigation.equipage.signaux.termine import SignalTermine
+class Feu(Ordre):
+
+    """Ordre feu.
+
+    Cet ordre demande au matelot de faire feu avec le canon précisé. Le
+    canon est supposé chargé en poudre et boulet.
+
+    """
+
+    cle = "feu"
+    def __init__(self, matelot, navire, canon=None):
+        Ordre.__init__(self, matelot, navire)
+        self.canon = canon
+
+    def executer(self):
+        """Exécute l'ordre : colmate."""
+        navire = self.navire
+        matelot = self.matelot
+        personnage = matelot.personnage
+        canon = self.canon
+        salle = canon.parent
+        if canon.onces == 0:
+            yield SignalInutile("ce canon n'est pas chargé en poudre")
+
+        if canon.projectile is None:
+            yield SignalInutile("ce canon n'est pas chargé en boulet")
+
+        canon.tirer(auteur=personnage)
+        yield SignalTermine()

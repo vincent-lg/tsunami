@@ -239,7 +239,7 @@ class SalleNavire(Salle):
         if poids_max > self.poids_eau:
             poids_max = self.poids_eau
 
-        end = poids_max
+        end = int(poids_max)
         try:
             personnage.stats.endurance -= end
         except DepassementStat:

@@ -33,6 +33,7 @@
 from . import allure
 from . import ancre
 from . import amarre
+from . import cale
 from . import calfeutrer
 from . import canon
 from . import chantier

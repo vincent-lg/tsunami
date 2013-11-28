@@ -77,13 +77,10 @@ class PrmDetacher(Parametre):
             return
 
         navire = d_salle.navire
-        if navire.proprietaire:
-            if personnage is not navire.proprietaire and \
-                    getattr(navire.proprietaire.salle, "navire", None) \
-                    is not navire:
-                personnage << "|err|Vous ne pouvez désamarrer ce " \
-                        "navire.|ff|"
-                return
+        if not navire.a_le_droit(personnage):
+            personnage << "|err|Vous ne pouvez désamarrer ce " \
+                    "navire.|ff|"
+            return
 
         d_salle.amarre.attachee = None
         d_salle.navire.immobilise = False

@@ -94,6 +94,10 @@ class Equipage(BaseObj):
 
         return None
 
+    def get_matelots_ayant_ordre(self, cle_ordre):
+        """Retourne la liste des matelots ayant l'ordre précisé."""
+        return [m for m in self.matelots.values() if m.get_ordre(cle_ordre)]
+
     def ajouter_matelot(self, personnage, nom_poste="matelot"):
         """Ajoute un mâtelot à l'équipage."""
         matelot = Matelot(self, personnage)
@@ -207,6 +211,12 @@ class Equipage(BaseObj):
 
         return matelots
 
+    def ajouter_trajet(self, trajet):
+        """Ajoute le trajet à la liste des caps."""
+        self.caps.append(trajet.cle)
+        if len(self.caps) == 1:
+            self.destination = trajet.point_depart
+
     def tick(self):
         """L'équipage se tick à chaque seconde.
 
@@ -227,6 +237,17 @@ class Equipage(BaseObj):
         beaucoup de navires.
 
         """
+        # Si le navire est endommagé, envoie les charpentiers
+        salles = self.navire.salles_endommagees
+        if salles:
+            matelots = self.get_matelots_ayant_ordre("colmater")
+            en_cours = [m.get_ordre("colmater").salle for m in matelots]
+            for salle in salles:
+                if salle in en_cours:
+                    continue
+
+                self.demander("colmater", salle)
+
         if not self.destination:
             return
 
@@ -255,9 +276,20 @@ class Equipage(BaseObj):
         if self.cap:
             ar_cap = round(self.cap / 3) * 3
 
+        if self.caps and distance.mag <= 2:
+            # On cherche le point suivant sur la carte
+            cle = self.caps[0]
+            trajet = importeur.navigation.trajets[cle]
+            suivant = trajet.points.get(self.destination)
+            if suivant is None and len(self.caps) > 1:
+                del self.caps[0]
+                cle = self.caps[0]
+                trajet = importeur.navigation.trajets[cle]
+                suivant = trajet.point_depart
+            self.destination = suivant
+
         if self.cap is None or ar_cap != ar_direction:
             # On change de cap
-            print("Le cap actuel", self.cap, "!=", direction, "pour", destination)
             self.demander("virer", round(direction),
                     personnage=commandant.personnage)
             self.cap = direction

@@ -40,6 +40,7 @@ from primaires.vehicule.force import Force
 from primaires.vehicule.vecteur import *
 from primaires.vehicule.vehicule import Vehicule
 from secondaires.navigation.equipage import Equipage
+from .cale import Cale
 from .constantes import *
 from .element import Element
 from .salle import SalleNavire
@@ -77,6 +78,7 @@ class Navire(Vehicule):
         self.modele = modele
         self.proprietaire = None
         self.nom_personnalise = ""
+        self.cale = Cale(self)
 
         # Dernier lien (dl)
 
@@ -305,6 +307,39 @@ class Navire(Vehicule):
         if amarre and amarre.attachee:
             return True
         if ancre and ancre.jetee and passerelle and passerelle.baissee:
+            return True
+
+        return False
+
+    @property
+    def salles_endommagees(self):
+        """Retourne la liste des salles endommagées.
+
+        Une salle est endommagée si elle a une voie d'eau ou
+        un certain poids d'eau.
+
+        """
+        return [s for s in self.salles.values() if \
+                s.voie_eau == COQUE_OUVERTE or s.poids_eau > 0]
+
+    def a_le_droit(self, personnage):
+        """Retourne True si le personnage a le droit, False sinon.
+
+        Le droit est calculé selon plsuieurs critères :
+            Si le navire n'a pas de propriétaire, returne True
+            Si le personnage est immortel, retourne True
+            Si le personnage est le propriétaire, retourne True
+
+        """
+        if self.proprietaire is None:
+            return True
+
+        if personnage.est_immortel():
+            return True
+
+        if personnage is self.proprietaire or \
+                        getattr(self.proprietaire.salle, "navire", None) \
+                        is self:
             return True
 
         return False
@@ -652,6 +687,8 @@ class Navire(Vehicule):
         for salle in list(self.salles.values()):
             importeur.salle.supprimer_salle(salle.ident)
 
+        self.equipage.detruire()
+        self.cale.detruire()
         self.modele.vehicules.remove(self)
         Vehicule.detruire(self)
 

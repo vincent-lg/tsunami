@@ -28,18 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents signaux.
+"""Fichier contenant la classe SignalAbandonner."""
 
-Un signal est une classe toute simple, semblable à une exception en
-ce qu'elle permet de transmettre des messages et met en pause l'exécution
-pendant le temps que le message passe. Cependant, après réception
-du signal, l'exécution peut se poursuivre.
-
-"""
-
-from secondaires.navigation.equipage.signaux.base import Signal
-from secondaires.navigation.equipage.signaux.attendre import SignalAttendre
-from secondaires.navigation.equipage.signaux.abandonne import SignalAbandonne
-from secondaires.navigation.equipage.signaux.inutile import SignalInutile
-from secondaires.navigation.equipage.signaux.repete import SignalRepete
 from secondaires.navigation.equipage.signaux.termine import SignalTermine
+
+class SignalAbandonne(SignalTermine):
+
+    """Signal utilisé pour dire que l'ordre ne peut s'exécuter.
+
+    La raison est précisée dans le constructeur. Elle est transmise à tout
+    le navire si transmettre est à True.
+
+    """
+
+    def __init__(self, raison, transmettre=False):
+        SignalTermine.__init__(self)
+        self.raison = raison
+        self.transmettre = transmettre
+
+    def __repr__(self):
+        return "<signal abandonné {}>".format(repr(self.raison))
+
+    def traiter(self, generateur, profondeur):
+        """Traite le générateur."""
+        SignalTermine.traiter(self, generateur, profondeur)
+        ordre = generateur.ordre
+        matelot = ordre.matelot
+        volonte = ordre.volonte
+        personnage = matelot.personnage
+        navire = matelot.equipage.navire
+        if self.transmettre:
+            navire.envoyer("{} s'écrie : {}".format(
+                    personnage.distinction_audible, self.raison))

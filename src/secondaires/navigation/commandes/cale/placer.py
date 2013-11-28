@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,26 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'lever' de la commande 'ancre'."""
+"""Fichier contenant le paramètre 'placer' de la commande 'cale'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmLever(Parametre):
+class PrmPlacer(Parametre):
 
-    """Commande 'ancre lever'.
+    """Commande 'cale placer'.
 
     """
 
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "lever", "weigh")
-        self.aide_courte = "lève l'ancre présente"
+        Parametre.__init__(self, "placer", "in")
+        self.schema = "(<nombre>) <nom_objet>"
+        self.aide_courte = "place des marchandises en cale"
         self.aide_longue = \
-            "Cette commande lève l'ancre présente dans la salle où " \
-            "vous vous trouvez."
+            "Cette commande vous permet de placer certaines marchandises " \
+            "en cale. Vous devez disposez des marchandises sur vous. " \
+            "Notez que le terme marchandise est utilisé de façon large " \
+            "ici (vous pouvez déposer des boulets de canon ou de la " \
+            "poudre). Le premier paramètre est optionnel et il s'agit " \
+            "du nombre d'objets. Le second paramètre est le nom (ou " \
+            "fragment du nom) de l'objet à mettre en cale."
+
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nom_objet = self.noeud.get_masque("nom_objet")
+        nom_objet.proprietes["conteneurs"] = \
+                "(personnage.equipement.inventaire_simple.iter_objets_qtt(" \
+                "True), )"
+        nom_objet.proprietes["quantite"] = "True"
+        nom_objet.proprietes["conteneur"] = "True"
 
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
+        personnage.agir("poser")
         salle = personnage.salle
         if not hasattr(salle, "navire") or salle.navire is None or \
                 salle.navire.etendue is None:
@@ -55,28 +71,18 @@ class PrmLever(Parametre):
             return
 
         navire = salle.navire
-        etendue = navire.etendue
-        if not hasattr(salle, "ancre"):
-            personnage << "|err|Il n'y a pas de ancre ici.|ff|"
-            return
+        cale = navire.cale
+        nombre = 1
+        if dic_masques["nombre"]:
+            nombre = dic_masques["nombre"].nombre
 
-        ancre = salle.ancre
-        if not ancre:
-            personnage << "|err|Vous ne voyez aucune ancre ici.|ff|"
-            return
-
-        vitesse = navire.vitesse
-        if not ancre.jetee:
-            personnage << "|err|Cette ancre n'est pas jetée.|ff|"
-        elif navire.passerelle:
-            personnage << "|err|La passerelle est dépliée.|ff|"
+        objets = list(dic_masques["nom_objet"].objets_qtt_conteneurs)[:nombre]
+        objets = [c[0] for c in objets]
+        objet = objets[0]
+        try:
+            nombre = cale.ajouter_objets(objets)
+        except ValueError as err:
+            personnage << "|err|" + str(err) + "|ff|"
         else:
-            if not navire.a_le_droit(personnage):
-                personnage << "|err|Vous ne pouvez lever l'ancre de ce " \
-                        "navire.|ff|"
-                return
-
-            navire.immobilise = False
-            ancre.jetee = False
-            personnage << "Vous levez l'ancre."
-            personnage.salle.envoyer("{} lève l'ancre.", personnage)
+            personnage << "Vous mettez en cale {}.".format(objet.get_nom(
+                    nombre))

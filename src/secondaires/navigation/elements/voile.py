@@ -164,7 +164,7 @@ class Voile(BaseElement):
             self.orientation -= self.orientation
 
         if -5 < angle < 5:
-            angle = 5
+            angle = 5 if angle >= 0 else -5
 
         self.orientation = -angle
 

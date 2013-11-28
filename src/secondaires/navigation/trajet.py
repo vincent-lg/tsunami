@@ -28,18 +28,54 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents signaux.
+"""Fichier contenant la classe Trajet, détaillée plus bas."""
 
-Un signal est une classe toute simple, semblable à une exception en
-ce qu'elle permet de transmettre des messages et met en pause l'exécution
-pendant le temps que le message passe. Cependant, après réception
-du signal, l'exécution peut se poursuivre.
+from collections import OrderedDict
 
-"""
+from abstraits.obase import BaseObj
 
-from secondaires.navigation.equipage.signaux.base import Signal
-from secondaires.navigation.equipage.signaux.attendre import SignalAttendre
-from secondaires.navigation.equipage.signaux.abandonne import SignalAbandonne
-from secondaires.navigation.equipage.signaux.inutile import SignalInutile
-from secondaires.navigation.equipage.signaux.repete import SignalRepete
-from secondaires.navigation.equipage.signaux.termine import SignalTermine
+class Trajet(BaseObj):
+
+    """Classe représentant un trajet maritime entre deux points.
+
+    Un trajet est une suite de points (deux au minimum). Le premier
+    est le point de départ, le dernier est l'arrivée, les points
+    intermédiaires sont les points intermédiaires entre le point de
+    départ et l'arrivée. Ces points doivent être sélectionnés de telle
+    sorte qu'aucun obstacle prévisible (côte ou obstacle) n'empêche de
+    faire la ligne directe entre deux points.
+
+    """
+
+    enregistrer = True
+    def __init__(self, cle):
+        """Constructeur du trajet."""
+        BaseObj.__init__(self)
+        self.cle = cle
+        self.point_depart = None
+        self.points = OrderedDict()
+
+    def __getnewargs__(self):
+        return ("inconnu", )
+
+    def __repr__(self):
+        return "<Trajet {}>".format(repr(self.cle))
+
+    def __str__(self):
+        return self.cle
+
+    @property
+    def point_arrivee(self):
+        """Retourne le point d'arrivée."""
+        return list(self.points.values())[-1]
+
+    def ajouter_point(self, depuis, vers):
+        """Ajoute le point entre depuis et vers.
+
+        Ces deux paramètres doivent être des tuple (x, y).
+
+        """
+        if self.point_depart is None:
+            raise ValueError("Ce trajet n'a aucun point de départ défini")
+
+        self.points[depuis] = vers

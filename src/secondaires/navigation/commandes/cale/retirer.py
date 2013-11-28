@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,23 +28,29 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'lever' de la commande 'ancre'."""
+"""Fichier contenant le paramètre 'retirer' de la commande 'cale'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmLever(Parametre):
+class PrmRetirer(Parametre):
 
-    """Commande 'ancre lever'.
+    """Commande 'cale retirer'.
 
     """
 
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "lever", "weigh")
-        self.aide_courte = "lève l'ancre présente"
+        Parametre.__init__(self, "retirer", "out")
+        self.schema = "(<nombre>) <objet_cale>"
+        self.aide_courte = "récupère des marchandises depuis la cale"
         self.aide_longue = \
-            "Cette commande lève l'ancre présente dans la salle où " \
-            "vous vous trouvez."
+            "Cette commande permet de récupérer des marchandises depuis " \
+            "la cale. Vous devez pour cela vous trouvez dans une salle " \
+            "du navire dans laquelle la cale est accessible (certains " \
+            "types de marchandise peuvent avoir plusieurs emplacements " \
+            "dans le navire). Vous devez préciser en paramètre optionnel " \
+            "le nombre d'objets à récupérer et ensuite le nom ou " \
+            "fragment du nom de l'objet à récupérer."
 
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
@@ -55,28 +61,15 @@ class PrmLever(Parametre):
             return
 
         navire = salle.navire
-        etendue = navire.etendue
-        if not hasattr(salle, "ancre"):
-            personnage << "|err|Il n'y a pas de ancre ici.|ff|"
+        if navire.accoste and not navire.a_le_droit(personnage):
+            personnage << "|err|Vous n'avez pas le droit de retirer " \
+                    "des objets de la cale.|ff|"
             return
 
-        ancre = salle.ancre
-        if not ancre:
-            personnage << "|err|Vous ne voyez aucune ancre ici.|ff|"
-            return
+        cale = navire.cale
+        prototype = dic_masques["objet_cale"].prototype
+        nombre = 1
+        if dic_masques["nombre"]:
+            nombre = dic_masques["nombre"].nombre
 
-        vitesse = navire.vitesse
-        if not ancre.jetee:
-            personnage << "|err|Cette ancre n'est pas jetée.|ff|"
-        elif navire.passerelle:
-            personnage << "|err|La passerelle est dépliée.|ff|"
-        else:
-            if not navire.a_le_droit(personnage):
-                personnage << "|err|Vous ne pouvez lever l'ancre de ce " \
-                        "navire.|ff|"
-                return
-
-            navire.immobilise = False
-            ancre.jetee = False
-            personnage << "Vous levez l'ancre."
-            personnage.salle.envoyer("{} lève l'ancre.", personnage)
+        cale.recuperer(personnage, prototype.cle, nombre)

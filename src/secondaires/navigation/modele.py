@@ -59,6 +59,7 @@ class ModeleNavire(BaseObj):
         self.description = Description(parent=self)
         self.description_vente = Description(parent=self)
         self.masculin = True
+        self.cale_max = 200
 
     def __getnewargs__(self):
         return ("", )
