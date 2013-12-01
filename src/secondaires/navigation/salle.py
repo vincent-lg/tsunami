@@ -92,7 +92,7 @@ class SalleNavire(Salle):
         self.noyable = True
         self.voie_eau = COQUE_INTACTE
         self.poids_eau = 0
-        self.sabord_min = None
+        self.sabord_min = 0
         self.sabord_max = 0
 
     @property

@@ -32,7 +32,10 @@
 
 import re
 
+from vector import Vector
+
 from primaires.format.fonctions import contient
+from primaires.vehicule.vecteur import get_direction
 from secondaires.navigation.equipage.ordres.charger_boulet import ChargerBoulet
 from secondaires.navigation.equipage.ordres.charger_poudre import ChargerPoudre
 from secondaires.navigation.equipage.ordres.feu import Feu
@@ -64,16 +67,39 @@ class Tirer(Volonte):
         """Propriété à redéfinir si la volonté comprend des arguments."""
         return (self.adverse, self.bruyant)
 
+    def trouver_canon(self, adverse):
+        """Trouve le canon qui peut pointer vers adverse."""
+        centre = adverse.salles.get((0, 0, 0))
+        equipage = self.navire.equipage
+        matelots = equipage.get_matelots_ayant_ordre("feu")
+        canons = [m.get_ordre("feu").canon for m in matelots]
+        canons = list(set(canons))
+        vec_adverse = Vector(*centre.coords.tuple())
+        nav_direction = self.navire.direction.direction
+        canon_utilise = None
+        canon_libre = None
+        for salle in self.navire.salles.values():
+            t_canon = salle.get_element("canon")
+            if t_canon:
+                t_vecteur = Vector(*salle.coords.tuple())
+                t_distance = vec_adverse - t_vecteur
+                t_direction = get_direction(t_distance)
+                t_direction = (t_direction - nav_direction) % 360
+                if salle.sabord_min <= t_direction <= salle.sabord_max:
+                    if t_canon in canons:
+                        canon_utilise = t_canon
+                    else:
+                        canon_libre = t_canon
+                        break
+
+        canon = canon_libre or canon_utilise
+        return canon
+
     def choisir_matelots(self):
         """Retourne le matelot le plus apte à accomplir la volonté."""
         navire = self.navire
         equipage = navire.equipage
-        canon = None
-        for salle in navire.salles.values():
-            canon = salle.get_element("canon")
-            if canon:
-                break
-
+        canon = self.trouver_canon(self.adverse)
         if canon is None:
             return None
 
