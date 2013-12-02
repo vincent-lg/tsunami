@@ -85,7 +85,7 @@ class Tirer(Volonte):
                 t_distance = vec_adverse - t_vecteur
                 t_direction = get_direction(t_distance)
                 t_direction = (t_direction - nav_direction) % 360
-                if salle.sabord_min <= t_direction <= salle.sabord_max:
+                if salle.sabord_oriente(t_direction):
                     if t_canon in canons:
                         canon_utilise = t_canon
                     else:

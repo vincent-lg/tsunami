@@ -73,6 +73,9 @@ class Viser(Ordre):
         # Celles qui ne sont pas dans un angle favorable sont rejetées
         position = Vector(*salle.coords.tuple())
         cible = None
+        if adverse is None or not adverse.e_existe:
+            yield SignalAbandonne("Ce navire est déjà coulé")
+
         for adv_salle in adverse.salles.values():
             if adv_salle.coords.z != salle.coords.z:
                 continue
@@ -81,7 +84,7 @@ class Viser(Ordre):
             direction = adv_vecteur - position
             direction = get_direction(direction)
             direction = (direction - navire.direction.direction) % 360
-            if salle.sabord_min <= direction <= salle.sabord_max:
+            if salle.sabord_oriente(direction):
                 if direction > 180:
                     direction = -360 + direction
 

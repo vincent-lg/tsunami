@@ -37,6 +37,8 @@ from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.flag import Flag
 from primaires.salle.editeurs.redit.edt_details import EdtDetails
+from primaires.interpreteur.editeur.selection import Selection
+from secondaires.navigation.cale import CONTENEURS
 from secondaires.navigation.salle import NOMS_SORTIES
 
 class EdtSalle(Presentation):
@@ -175,6 +177,18 @@ class EdtSalle(Presentation):
             "Entrez le |ent|titre court|ff| de la salle ou |cmd|/|ff| " \
             "pour revenir à la fenêtre parente.\n\nTitre court actuel : " \
             "|bc|{objet.titre_court}|ff|"
+
+        # Cales
+        cales = self.ajouter_choix("types de cale", "ca", Selection,
+                salle, "cales", CONTENEURS)
+        cales.parent = self
+        cales.apercu = "{objet.str_cales}"
+        cales.aide_courte = \
+            "Entrez un |ent|nom de contenu|ff| pour la cale dans " \
+            "cette salle\nou |cmd|/|ff| pour revenir à la fenêtre " \
+            "parente.\n\nSi vous voulez supprimer un nom de contenu, " \
+            "entrez son nom à nouveau.\n\nTypes possibles : " + ", ".join(
+            CONTENEURS) + "\n\nTypes actuels : |bc|{objet.str_cales}|ff|"
 
         # Description
         description = self.ajouter_choix("description", "d", Description, \

@@ -56,7 +56,7 @@ class TenirGouvernail(Volonte):
         graph = self.navire.graph
         gouvernail = self.navire.gouvernail
         if gouvernail is None or gouvernail.tenu is not None:
-            return []
+            return None
 
         for matelot in matelots:
             origine = matelot.salle.mnemonic

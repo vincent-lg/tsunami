@@ -32,6 +32,22 @@
 
 from abstraits.obase import BaseObj
 
+CONTENEURS = [
+        "boulets",
+        "écopes",
+        "sacs de poudre",
+        "tonneaux de poix",
+        "vivres",
+]
+
+TYPES = {
+        "boulet de canon": "boulets",
+        "sac de poudre": "sacs de poudre",
+        "écope": "écopes",
+        "calfeutrage": "tonneaux de poix",
+        "nourriture": "vivres",
+}
+
 class Cale(BaseObj):
 
     """Classe représentant la cale d'un navire.
@@ -56,6 +72,7 @@ class Cale(BaseObj):
         self.sacs_poudre = {}
         self.ecopes = {}
         self.tonneaux_poix = {}
+        self.vivres = {}
 
         self._construire()
 
@@ -94,6 +111,7 @@ class Cale(BaseObj):
                 "sacs de poudre": self.sacs_poudre,
                 "écopes": self.ecopes,
                 "tonneaux de poix": self.tonneaux_poix,
+                "vivres": self.vivres,
         }
 
     @property
@@ -104,7 +122,13 @@ class Cale(BaseObj):
                 "sac de poudre": self.sacs_poudre,
                 "écope": self.ecopes,
                 "calfeutrage": self.tonneaux_poix,
+                "nourriture": self.vivres,
         }
+
+    def accepte(self, salle, nom_type):
+        """Vérifie si la salle en paramtère accepte le nom type."""
+        conteneur = TYPES[nom_type]
+        return conteneur in salle.cales
 
     def ajouter_objets(self, objets):
         """Ajoute les objets précisés dans la cale, si possible."""

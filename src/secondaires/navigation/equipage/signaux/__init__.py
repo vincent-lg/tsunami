@@ -41,5 +41,6 @@ from secondaires.navigation.equipage.signaux.base import Signal
 from secondaires.navigation.equipage.signaux.attendre import SignalAttendre
 from secondaires.navigation.equipage.signaux.abandonne import SignalAbandonne
 from secondaires.navigation.equipage.signaux.inutile import SignalInutile
+from secondaires.navigation.equipage.signaux.relais import SignalRelais
 from secondaires.navigation.equipage.signaux.repete import SignalRepete
 from secondaires.navigation.equipage.signaux.termine import SignalTermine

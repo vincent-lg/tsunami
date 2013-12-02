@@ -28,52 +28,59 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'retirer' de la commande 'cale'."""
+"""Fichier contenant le paramètre 'liste' de la commande 'cale'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmRetirer(Parametre):
+class PrmListe(Parametre):
 
-    """Commande 'cale retirer'.
+    """Commande 'cale liste'.
 
     """
 
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "retirer", "out")
-        self.schema = "(<nombre>) <objet_cale>"
-        self.aide_courte = "récupère des marchandises depuis la cale"
+        Parametre.__init__(self, "liste", "list")
+        self.aide_courte = "liste le contenu de la cale"
         self.aide_longue = \
-            "Cette commande permet de récupérer des marchandises depuis " \
-            "la cale. Vous devez pour cela vous trouvez dans une salle " \
-            "du navire dans laquelle la cale est accessible (certains " \
-            "types de marchandise peuvent avoir plusieurs emplacements " \
-            "dans le navire). Vous devez préciser en paramètre optionnel " \
-            "le nombre d'objets à récupérer et ensuite le nom ou " \
-            "fragment du nom de l'objet à récupérer."
+            "Cette commande vous permet de lister le contenu de la cale. " \
+            "C'est une liste probablement partielle, cependant, puisque " \
+            "vous ne pouvez pas voir toute la cale du même point du " \
+            "navire. La cale n'est cependant pas propre à une salle : si " \
+            "il se trouve deux soutes aux poudres dans le navire par " \
+            "exemple, vous verrez la quantité totale de boulets et de " \
+            "poudre dans les deux, pas une mesure différente pour chacune."
 
     def interpreter(self, personnage, dic_masques):
-        """Interprétation du paramètre"""
+        """Méthode dinterprétation."""
         salle = personnage.salle
-        if not hasattr(salle, "navire") or salle.navire is None or \
-                salle.navire.etendue is None:
-            personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
+        if getattr(salle, "navire", None) is None:
+            personnage << "|err|Vous ne vous trouvez pas sur un navire.|ff|"
+            return
+        elif not salle.cales:
+            personnage << "|err|Il n'y a pas de cale que vous puissiez " \
+                    "manipuler ici.|ff|"
             return
 
-        navire = salle.navire
-        if navire.accoste and not navire.a_le_droit(personnage):
-            personnage << "|err|Vous n'avez pas le droit de retirer " \
-                    "des objets de la cale.|ff|"
-            return
+        msg = ""
+        cale = salle.navire.cale
+        for nom in sorted(salle.cales):
+            liste = cale.conteneurs[nom]
+            msg += "\n" + nom.capitalize() + " :"
+            if liste:
+                contenu = []
+                for cle, nb in liste.items():
+                    try:
+                        prototype = importeur.objet.prototypes[cle]
+                    except KeyError:
+                        continue
 
-        cale = navire.cale
-        prototype = dic_masques["objet_cale"].prototype
-        nombre = 1
-        if dic_masques["nombre"]:
-            nombre = dic_masques["nombre"].nombre
+                    contenu.append((prototype, nb))
 
-        if not cale.accepte(salle, prototype.nom_type):
-            personnage << "|err|Vous ne pouvez pas faire cela d'ici.|ff|"
-            return
+                contenu.sort(key=lambda couple: couple[0].nom_singulier)
+                for prototype, nb in contenu:
+                    msg += "\n  " + prototype.get_nom(nb)
+            else:
+                msg += "\n  Aucun"
 
-        cale.recuperer(personnage, prototype.cle, nombre)
+        personnage << msg.lstrip("\n")

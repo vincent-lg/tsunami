@@ -53,8 +53,10 @@ class RelacherGouvernail(Ordre):
 
     def executer(self):
         """Exécute l'ordre : relâche le gouvernail tenu."""
+        print("a")
         personnage = self.matelot.personnage
         salle = personnage.salle
+        print("b", salle)
         if not hasattr(salle, "gouvernail"):
             return
 
@@ -62,6 +64,8 @@ class RelacherGouvernail(Ordre):
         if gouvernail.tenu is not personnage:
             yield SignalInutile("je ne tiens pas ce gouvernail")
         else:
+            print("c")
             gouvernail.centrer(personnage)
             gouvernail.relacher(personnage)
+            print("d")
             yield SignalTermine()

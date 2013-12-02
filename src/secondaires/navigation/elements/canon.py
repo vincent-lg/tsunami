@@ -218,6 +218,7 @@ class Canon(BaseElement):
     def endommager(self, projectile, cible, auteur=None):
         """Endommage la cible."""
         self.en_cours = False
+        adverse = self.parent.navire
         if cible is None:
             if auteur:
                 auteur << "{} se perd sans faire de dégâts.".format(
@@ -247,6 +248,7 @@ class Canon(BaseElement):
             # Inflige des dégâts au navire
             if hasattr(cible, "navire") and not cible.navire.accoste:
                 cible.noyer(int(degats / 2))
+                cible.navire.equipage.ajouter_ennemi(adverse)
         else:
             titre = cible.desc_survol
 

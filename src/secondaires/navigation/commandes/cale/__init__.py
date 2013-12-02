@@ -31,6 +31,7 @@
 """Package contenant la commande 'cale'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from .liste import PrmListe
 from .placer import PrmPlacer
 from .retirer import PrmRetirer
 
@@ -65,5 +66,6 @@ class CmdCale(Commande):
 
     def ajouter_parametres(self):
         """Ajout des paramètres."""
+        self.ajouter_parametre(PrmListe())
         self.ajouter_parametre(PrmPlacer())
         self.ajouter_parametre(PrmRetirer())

@@ -132,9 +132,26 @@ class Matelot(BaseObj):
         ordre = generateur.ordre
         volonte = ordre.volonte
         matelot = ordre.matelot
+        personnage = matelot.personnage
+        if personnage is None or personnage.est_mort():
+            matelot.relayer_ordres()
+            matelot.ordres[:] = []
+            self.logger.debug(indent + "{} est mort".format(personnage))
+            return
+
+        if personnage.cle_etat not in ("", "tenir_gouvernail"):
+            matelot.relayer_ordres()
+            matelot.ordres[:] = []
+            self.logger.debug(indent + "{} est occupé ({})".format(
+                    personnage, personnage.cle_etat))
+            return
+
         signal = next(generateur)
         self.logger.debug(indent + "Signal {} reçu".format(signal))
-        if isinstance(signal, (int, float)):
+        if signal is None:
+            # On boucle
+            self.executer_generateur(generateur, profondeur)
+        elif isinstance(signal, (int, float)):
             tps = signal
             # On ajoute l'action différée
             nom = "ordres_{}".format(id(generateur))
@@ -148,6 +165,25 @@ class Matelot(BaseObj):
     def ordonner(self, ordre):
         """Ajoute l'ordre."""
         self.ordres.append(ordre)
+
+    def relayer_ordres(self):
+        """Relaye les ordres (demande à être relevé).
+
+        Cette méthode va demander l'ordre à un autre matelot, étant
+        entendu que celui-ci (self) ne peut pas les accomplir (pour
+        diverses raisons, trop fatigué par exemple). Il faut cependant
+        que la raison de la demande de relais soit justifiée et en
+        lien avec la volonté, car sinon le même matelot pourrait
+        être sélectionné pour les mêmes ordres.
+
+        """
+        volontes = []
+        for ordre in self.ordres:
+            if ordre.volonte and ordre.volonte not in volontes:
+                volontes.append(ordre.volonte)
+
+        for volonte in volontes:
+            self.equipage.demander(volonte.cle, *volonte.arguments)
 
     def detruire(self):
         """Destruction du matelot."""

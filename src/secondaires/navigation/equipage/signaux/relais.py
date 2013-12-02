@@ -28,36 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe SignalAbandonner."""
+"""Fichier contenant la classe SignalRelais."""
 
 from secondaires.navigation.equipage.signaux.termine import SignalTermine
 
-class SignalAbandonne(SignalTermine):
+class SignalRelais(SignalTermine):
 
     """Signal utilisé pour dire que l'ordre ne peut s'exécuter.
 
-    La raison est précisée dans le constructeur. Elle est transmise à tout
-    le navire si transmettre est à True.
+    La différence avec le SignalAbandonne, c'est qu'on demande ici
+    à relayer l'ordre (pour X raison, le matelot sélectionné ne peut
+    pas accomplir les ordres qui lui ont été assignés et il demande
+    à d'autres de le faire).
 
     """
 
-    def __init__(self, raison, transmettre=False):
+    def __init__(self, raison):
         SignalTermine.__init__(self)
         self.raison = raison
-        self.transmettre = transmettre
 
     def __repr__(self):
-        return "<signal abandonné {}>".format(repr(self.raison))
+        return "<signal relais {}>".format(repr(self.raison))
 
     def traiter(self, generateur, profondeur):
         """Traite le générateur."""
         ordre = generateur.ordre
         matelot = ordre.matelot
+        matelot.relayer_ordres()
         matelot.ordres[:] = []
         SignalTermine.traiter(self, generateur, profondeur)
-        volonte = ordre.volonte
-        personnage = matelot.personnage
-        navire = matelot.equipage.navire
-        if self.transmettre:
-            navire.envoyer("{} s'écrie : {}".format(
-                    personnage.distinction_audible, self.raison))

@@ -46,6 +46,7 @@ class Ecoper(Ordre):
     """
 
     cle = "écoper"
+    ENDURANCE_MIN = 30
     def __init__(self, matelot, navire, salle=None):
         Ordre.__init__(self, matelot, navire)
         self.salle = salle
@@ -61,6 +62,7 @@ class Ecoper(Ordre):
         if salle.poids_eau == 0:
             yield SignalInutile("il n'y a pas d'eau à écoper ici")
         else:
+            yield self.relayer_si_fatigue(self.ENDURANCE_MIN)
             ecope = self.prendre_ecope(personnage)
             salle.ecoper(personnage, ecope)
             yield SignalRepete(1)

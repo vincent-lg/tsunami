@@ -33,6 +33,7 @@
 from abstraits.obase import BaseObj, MetaBaseObj
 from bases.exceptions.base import ExceptionMUD
 from secondaires.navigation.equipage.generateur import GenerateurOrdre
+from secondaires.navigation.equipage.signaux import *
 
 ordres = {}
 
@@ -113,16 +114,6 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
         """
         raise NotImplementedError
 
-    def calculer_empechement(self):
-        """Retourne une estimation de l'empêchement du matelot.
-
-        Cet empêchement doit être entre 0 et 100 (0 pas du tout empêché,
-        100 gravement empêché). Cet empêchement est confronté à la priorité
-        de l'ordre.
-
-        """
-        return 0
-
     def executer(self):
         """Exécute l'ordre.
 
@@ -133,57 +124,12 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
         """
         raise NotImplementedError
 
+    # Méthodes utilisées par des sous-ordres
+    def relayer_si_fatigue(self, endurance_min):
+        """Relaye l'ordre si le matelot est trop fatigué."""
+        matelot = self.matelot
+        personnage = matelot.personnage
+        if personnage.stats.endurance < endurance_min:
+            return SignalRelais("{} est trop fatigué".format(personnage))
 
-class ExceptionOrdre(ExceptionMUD):
-
-    """Exception spécifique à un ordre."""
-
-    pass
-
-class PrioriteTropFaible(ExceptionOrdre):
-
-    """Exception levée quand la priorité de l'ordre est trop faible."""
-
-    pass
-
-class OrdreDiffere(ExceptionOrdre):
-
-    """Exception levée quand l'ordre doit être différé.
-
-    On attend en paramètre :
-        L'ordre
-        Le message (d'excuse)
-        Le temps estimé pour la mise en attente de l'ordre (en secondes).
-
-    Il s'agit ensuite pour l'intelligence minimale d'annuler l'ordre en
-    utilisant un autre matelot ou d'attendre.
-
-    """
-
-    def __init__(self, ordre, message, temps):
-        self.ordre = ordre
-        self.message = message
-        self.temps = temps
-
-    def __str__(self):
-        return self.message + " (" + str(self.temps) + "s)"
-
-    @property
-    def priorite(self):
-        return self.ordre.differe + temps
-
-class OrdreEmpeche(ExceptionOrdre):
-
-    """Exception levée quand un ordre est impossible de part les circonstances."""
-
-    pass
-
-class OrdreSansSubstitution(ExceptionOrdre):
-
-    """Exception appelée si on cherche un matelot de substitution.
-
-    Tous les ordres n'acceptent pas de choisir des matelots de substitution.
-    Certains ordres sont faits pour UN matelot et ne doivent pas en choisir
-    de substitution.
-
-    """
+        return None

@@ -65,6 +65,9 @@ class Equipage(BaseObj):
         self.cap = None
         self.destination = None
 
+        # Adversaires
+        self.ennemis = []
+
         self._construire()
 
     def __getnewargs__(self):
@@ -78,8 +81,8 @@ class Equipage(BaseObj):
     def matelots_libres(self):
         """Retourne les matelots considérés comme libres."""
         matelots = tuple(self.matelots.values())
-        return tuple(m for m in matelots if m.personnage.cle_etat == "" and \
-                len(m.ordres) == 0)
+        return tuple(m for m in matelots if m.personnage and \
+                m.personnage.cle_etat == "" and len(m.ordres) == 0)
 
     @property
     def opt_destination(self):
@@ -137,6 +140,11 @@ class Equipage(BaseObj):
             matelot.executer_ordres()
 
         return ordre
+
+    def ajouter_ennemi(self, ennemi):
+        """Ajoute un navire ennemi dans la liste des ennemis."""
+        if ennemi not in self.ennemis:
+            self.ennemis.append(ennemi)
 
     def demander(self, cle_volonte, *parametres, personnage=None):
         """Exécute une volonté."""
@@ -207,7 +215,7 @@ class Equipage(BaseObj):
                     m.personnage.cle_etat == "" and len(m.ordres) == 0]
         if endurance_min is not None:
             matelots = [m for m in matelots if \
-                    m.personnage.endurance <= endurance_min]
+                    m.personnage.endurance >= endurance_min]
 
         return matelots
 
@@ -216,6 +224,12 @@ class Equipage(BaseObj):
         self.caps.append(trajet.cle)
         if len(self.caps) == 1:
             self.destination = trajet.point_depart
+
+    def verifier_matelots(self):
+        """Retire les matelots inexistants ou morts."""
+        for cle, matelot in tuple(self.matelots.items()):
+            if matelot.personnage is None or matelot.personnage.est_mort():
+                del self.matelots[cle]
 
     def tick(self):
         """L'équipage se tick à chaque seconde.
@@ -237,21 +251,22 @@ class Equipage(BaseObj):
         beaucoup de navires.
 
         """
+        # Retire les matelots morts
+        self.verifier_matelots()
+
+        # Si le navire n'es tpas bien orienté face au vent, change
+        # l'orientation de ces voiles
+        self.orienter_voiles()
+
         # Si le navire est endommagé, envoie les charpentiers
-        salles = self.navire.salles_endommagees
-        if salles:
-            matelots = self.get_matelots_ayant_ordre("colmater")
-            en_cours = [m.get_ordre("colmater").salle for m in matelots]
-            for salle in salles:
-                if salle in en_cours:
-                    continue
+        self.ordonner_reparations()
 
-                self.demander("colmater", salle)
-
+        commandants = self.get_matelots_au_poste("capitaine", False)
+        if commandants:
+            self.ordonner_attaque()
         if not self.destination:
             return
 
-        commandants = self.get_matelots_au_poste("capitaine", False)
         if commandants:
             commandant = commandants[0]
             self.verifier_cap(commandant)
@@ -293,3 +308,36 @@ class Equipage(BaseObj):
             self.demander("virer", round(direction),
                     personnage=commandant.personnage)
             self.cap = direction
+
+    def orienter_voiles(self):
+        """Oriente les voiles si nécessaire."""
+        navire = self.navire
+        vent = navire.vent
+        voiles = navire.voiles
+        voiles = [v for v in voiles if v.hissee]
+        if not voiles:
+            return
+
+        facteur = sum(v.facteur_orientation(navire, vent) for v in voiles)
+        facteur = facteur / len(voiles)
+        if facteur < 0.85:
+            print("On oriente...")
+            self.demander("orienter_voiles")
+
+    def ordonner_reparations(self):
+        """Ordonne de faire des réparations si nécessaire."""
+        salles = self.navire.salles_endommagees
+        if salles:
+            matelots = self.get_matelots_ayant_ordre("colmater")
+            en_cours = [m.get_ordre("colmater").salle for m in matelots]
+            for salle in salles:
+                if salle in en_cours:
+                    continue
+
+                self.demander("colmater", salle)
+
+    def ordonner_attaque(self):
+        """Ordonne d'attaquer les navires qui sont dans les ennemis."""
+        self.ennemis = [n for n in self.ennemis if n.e_existe]
+        for ennemi in self.ennemis:
+            self.demander("tirer", ennemi, False)

@@ -94,14 +94,7 @@ class PrmPivoter(Parametre):
 
         h_angle = canon.h_angle
         m_angle = (h_angle + angle) % 360
-        if m_angle > 180:
-            m_angle -= 360
-        if sabord_min > 180:
-            sabord_min -= 360
-        if sabord_max > 180:
-            sabord_max -= 360
-
-        if m_angle < sabord_min or m_angle > sabord_max:
+        if not salle.sabord_oriente(m_angle):
             personnage << "|err|Vous ne pouvez faire pivoter ce canon " \
                     "dans ce sens.|ff|"
             return

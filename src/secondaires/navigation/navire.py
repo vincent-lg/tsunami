@@ -371,6 +371,7 @@ class Navire(Vehicule):
             n_salle.noyable = salle.noyable
             n_salle.sabord_min = salle.sabord_min
             n_salle.sabord_max = salle.sabord_max
+            n_salle.cales = salle.cales
 
             # On recopie les éléments
             for t_elt in salle.mod_elements:

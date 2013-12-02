@@ -51,10 +51,15 @@ class Colmater(Volonte):
     cle = "colmater"
     ordre_court = None
     ordre_long = None
-    def __init__(self, navire, salle):
+    def __init__(self, navire, salle=None):
         """Construit une volonté."""
         Volonte.__init__(self, navire)
         self.salle = salle
+
+    @property
+    def arguments(self):
+        """Propriété à redéfinir si la volonté comprend des arguments."""
+        return (self.salle, )
 
     def choisir_matelots(self):
         """Retourne le matelot le plus apte à accomplir la volonté."""
@@ -62,7 +67,8 @@ class Colmater(Volonte):
         salle = self.salle
         equipage = navire.equipage
         proches = []
-        matelots = equipage.get_matelots_au_poste("charpentier")
+        matelots = equipage.get_matelots_au_poste("charpentier",
+                endurance_min=Ecoper.ENDURANCE_MIN)
         graph = self.navire.graph
         for matelot in matelots:
             origine = matelot.salle.mnemonic

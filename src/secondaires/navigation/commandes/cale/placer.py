@@ -79,6 +79,10 @@ class PrmPlacer(Parametre):
         objets = list(dic_masques["nom_objet"].objets_qtt_conteneurs)[:nombre]
         objets = [c[0] for c in objets]
         objet = objets[0]
+        if not cale.accepte(salle, objet.nom_type):
+            personnage << "|err|Vous ne pouvez pas faire cela d'ici.|ff|"
+            return
+
         try:
             nombre = cale.ajouter_objets(objets)
         except ValueError as err:

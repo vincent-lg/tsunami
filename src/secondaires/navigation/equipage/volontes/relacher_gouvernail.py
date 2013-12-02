@@ -56,7 +56,7 @@ class RelacherGouvernail(Volonte):
         equipage = navire.equipage
         gouvernail = self.navire.gouvernail
         if gouvernail is None or gouvernail.tenu is None:
-            return []
+            return None
 
         personnage = gouvernail.tenu
         matelot = equipage.get_matelot_depuis_personnage(personnage)
@@ -64,6 +64,7 @@ class RelacherGouvernail(Volonte):
 
     def executer(self, matelot):
         """Exécute la volonté."""
+        print("1", matelot)
         if matelot is None:
             return
 
@@ -72,11 +73,14 @@ class RelacherGouvernail(Volonte):
         relacher = OrdreRelacherGouvernail(matelot, navire)
         relacher.volonte = self
         ordres.append(relacher)
+        print("2", ordres)
         ordres.append(self.revenir_affectation(matelot))
+        print("3", ordres)
         for ordre in ordres:
             if ordre:
                 matelot.ordonner(ordre)
 
+        print("4 Execution")
         matelot.executer_ordres()
 
     def crier_ordres(self, personnage):

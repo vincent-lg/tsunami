@@ -94,6 +94,7 @@ class SalleNavire(Salle):
         self.poids_eau = 0
         self.sabord_min = 0
         self.sabord_max = 0
+        self.cales = []
 
     @property
     def r_coords(self):
@@ -159,6 +160,10 @@ class SalleNavire(Salle):
 
         return None
 
+    @property
+    def str_cales(self):
+        return ", ".join(sorted(self.cales))
+
     def get_element(self, cle):
         """Retourne l'élément de type indiqué ou None."""
         elts = [e for e in self.elements if e.nom_type == cle]
@@ -169,6 +174,33 @@ class SalleNavire(Salle):
 
     def get_etendue(self):
         return self.navire and self.navire.etendue or None
+
+    def sabord_oriente(self, direction=None):
+        """Retourne True si le sabord est orienté dans la direction.
+
+        La direction peut être None, dans ce cas la méthode vérifie
+        si un sabord existe.
+
+        """
+        if self.sabord_min is None or self.sabord_min < 0:
+            return False
+
+        if direction is None:
+            return True
+
+        sabord_min = (self.sabord_min - self.sabord_max) % 360
+        sabord_max = (self.sabord_min + self.sabord_max) % 360
+        if direction > 180:
+            direction -= 360
+        if sabord_min > 180:
+            sabord_min -= 360
+        if sabord_max > 180:
+            sabord_max -= 360
+
+        if direction < sabord_min or direction > sabord_max:
+            return False
+
+        return True
 
     def ajouter_element(self, element):
         """Ajoute un élément dans la salle."""
