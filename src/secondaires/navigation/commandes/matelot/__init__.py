@@ -37,6 +37,7 @@ Dans ce fichier se trouve la commande même.
 from primaires.interpreteur.commande.commande import Commande
 from .affecter import PrmAffecter
 from .liste import PrmListe
+from .poste import PrmPoste
 
 class CmdMatelot(Commande):
 
@@ -59,3 +60,4 @@ class CmdMatelot(Commande):
         """Ajout des paramètres"""
         self.ajouter_parametre(PrmAffecter())
         self.ajouter_parametre(PrmListe())
+        self.ajouter_parametre(PrmPoste())

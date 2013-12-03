@@ -43,3 +43,17 @@ HIERARCHIE = {
     "second": ["second", "maître d'équipage", "officier"],
     "capitaine": ["capitaine", "second", "maître d'équipage"],
 }
+
+ORDRE = [
+    "matelot",
+    "artilleur",
+    "charpentier",
+    "voilier",
+    "vigie",
+    "maître cuisinier",
+    "chirurgien",
+    "officier",
+    "maître d'équipage",
+    "second",
+    "capitaine",
+]

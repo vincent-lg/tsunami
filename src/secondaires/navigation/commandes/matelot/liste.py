@@ -65,30 +65,30 @@ class PrmListe(Parametre):
             return
 
         taille_nom = 12
-        taille_personnage = 20
+        taille_poste = 20
         taille_salle = 30
-        cadre = "+-" + taille_nom * "-" + "-+-" + taille_personnage * "-" + \
+        cadre = "+-" + taille_nom * "-" + "-+-" + taille_poste * "-" + \
                 "-+-" + taille_salle * "-" + "-+"
         lignes = [
             cadre,
-            "| {} | {} | {} |".format("nom".ljust(taille_nom),
-                    "personnage".ljust(taille_personnage),
-                    "salle".format(taille_salle)),
+            "| {} | {} | {} |".format("Nom".ljust(taille_nom),
+                    "Poste".ljust(taille_poste),
+                    "Affectation".format(taille_salle)),
             cadre,
         ]
         for matelot in matelots:
             nom = matelot.nom.ljust(taille_nom)
-            nom_personnage = matelot.personnage.nom
-            if len(nom_personnage) > taille_personnage:
-                nom_personnage = nom_personnage[:taille_personnage - 3] + "..."
+            nom_poste = matelot.nom_poste.capitalize()
+            if len(nom_poste) > taille_poste:
+                nom_poste = nom_poste[:taille_poste - 3] + "..."
             else:
-                nom_personnage = nom_personnage.ljust(taille_personnage)
-            titre_salle = matelot.personnage.salle.titre
+                nom_poste = nom_poste.ljust(taille_poste)
+            titre_salle = matelot.personnage.salle.titre_court.capitalize()
             if len(titre_salle) > taille_salle:
                 titre_salle = titre_salle[:taille_salle - 3] + "..."
             else:
                 titre_salle = titre_salle.ljust(taille_salle)
-            lignes.append("| {} | {} | {} |".format(nom, nom_personnage,
+            lignes.append("| {} | {} | {} |".format(nom, nom_poste,
                         titre_salle))
         lignes.append(cadre)
 
