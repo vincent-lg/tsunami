@@ -322,6 +322,15 @@ class Navire(Vehicule):
         return [s for s in self.salles.values() if \
                 s.voie_eau == COQUE_OUVERTE or s.poids_eau > 0]
 
+    @property
+    def personnages(self):
+        """Retourne TOUS les personnages présents sur le navire."""
+        personnages = []
+        for salle in self.salles.values():
+            personnages.extend(salle.personnages)
+
+        return personnages
+
     def a_le_droit(self, personnage):
         """Retourne True si le personnage a le droit, False sinon.
 

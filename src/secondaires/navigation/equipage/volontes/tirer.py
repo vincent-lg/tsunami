@@ -36,12 +36,14 @@ from vector import Vector
 
 from primaires.format.fonctions import contient
 from primaires.vehicule.vecteur import get_direction
+from secondaires.navigation.constantes import get_portee
 from secondaires.navigation.equipage.ordres.charger_boulet import ChargerBoulet
 from secondaires.navigation.equipage.ordres.charger_poudre import ChargerPoudre
 from secondaires.navigation.equipage.ordres.feu import Feu
 from secondaires.navigation.equipage.ordres.long_deplacer import LongDeplacer
 from secondaires.navigation.equipage.ordres.viser import Viser
 from secondaires.navigation.equipage.volonte import Volonte
+from secondaires.navigation.visible import Visible
 
 class Tirer(Volonte):
 
@@ -172,8 +174,29 @@ class Tirer(Volonte):
     @classmethod
     def extraire_arguments(cls, navire, nom_navire):
         """Extrait les arguments de la volonté."""
-        for navire in importeur.navigation.navires.values():
+        for navire in self.trouver_navires(navire):
             if contient(navire.desc_survol, nom_navire):
                 return (navire, )
 
-        return ()
+        raise ValueError("Le navire {} n'est pas en vue.".format(
+                nom_navire))
+
+    @staticmethod
+    def trouver_navires(navire):
+        """Trouve les navires autour de navire."""
+        # On recherche d'abord le personnage
+        equipage = navire.equipage
+        vigies = equipage.get_matelots_au_poste("vigie")
+        if vigies:
+            personnage = vigies[0]
+        else:
+            personnage = navire.personnages[0]
+
+        portee = get_portee(personnage.salle)
+        points = Visible.observer(personnage, portee, 5)
+        navires = []
+        for couple in points.navires:
+            autre = couple[1][3]
+            navires.append(autre)
+
+        return navires

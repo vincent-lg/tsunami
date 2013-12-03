@@ -143,7 +143,11 @@ class Equipage(BaseObj):
 
     def ajouter_ennemi(self, ennemi):
         """Ajoute un navire ennemi dans la liste des ennemis."""
-        if ennemi not in self.ennemis:
+        if ennemi is self:
+            return
+
+        commandants = self.get_matelots_au_poste("commandant", libre=False)
+        if commandants and ennemi not in self.ennemis:
             self.ennemis.append(ennemi)
 
     def demander(self, cle_volonte, *parametres, personnage=None):
@@ -261,9 +265,10 @@ class Equipage(BaseObj):
         # Si le navire est endommagé, envoie les charpentiers
         self.ordonner_reparations()
 
+        # Si le navire est attaqué
+        self.ordonner_attaque()
+
         commandants = self.get_matelots_au_poste("capitaine", False)
-        if commandants:
-            self.ordonner_attaque()
         if not self.destination:
             return
 

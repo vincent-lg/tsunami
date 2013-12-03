@@ -79,7 +79,12 @@ class PrmOrdre(Parametre):
 
             groupes = volonte.tester(message)
             if isinstance(groupes, tuple):
-                arguments = volonte.extraire_arguments(navire, *groupes)
+                try:
+                    arguments = volonte.extraire_arguments(navire, *groupes)
+                except ValueError as err:
+                    personnage << "|err|" + str(err) + "|ff|"
+                    return
+
                 volonte = volonte(navire, *arguments)
                 volonte.crier_ordres(personnage)
                 yield 0.3
