@@ -88,11 +88,11 @@ class Chambre(BaseObj):
         if delta.days > 0:
             valeur = delta.days
             unite = "jour{s}"
-        elif delta.total_seconds > 3600:
-            valeur = delta.total_seconds // 3600
+        elif delta.total_seconds() > 3600:
+            valeur = delta.total_seconds() // 3600
             unite = "heure{s}"
         else:
-            valeur = delta.total_seconds // 60
+            valeur = delta.total_seconds() // 60
             unite = "minute{s}"
             if 5 <= valeur < 10:
                 valeur = round(valeur // 2) * 2

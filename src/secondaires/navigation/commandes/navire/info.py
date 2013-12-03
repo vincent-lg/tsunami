@@ -82,6 +82,7 @@ class PrmInfo(Parametre):
         dir_acceleration = round(dir_acceleration, 3)
         dir_acceleration = str(dir_acceleration).replace(".", ",")
         gouvernail = navire.gouvernail
+        cale = navire.cale
         if gouvernail:
             orient = gouvernail.orientation
             if orient < 0:
@@ -103,6 +104,9 @@ class PrmInfo(Parametre):
         msg += "\n  Étendue : " + etendue
         msg += "\n  Immobilisé : {}   En collision : {}".format(
                 oui_ou_non(navire.immobilise), oui_ou_non(navire.en_collision))
+        msg += "\n  Cale : " + str(int(cale.poids)).rjust(6)
+        msg += " / " + str(int(cale.poids_max)).rjust(6) + " ("
+        msg += str(int(cale.poids / cale.poids_max * 100)).rjust(3) + "%)"
         msg += "\n  Coordonnées : {}".format(navire.position.coordonnees)
         msg += "\n  Allure : {}".format(navire.nom_allure)
         msg += "\n  Gouvernail : " + msg_gouv

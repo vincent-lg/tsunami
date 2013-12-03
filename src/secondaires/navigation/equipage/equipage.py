@@ -321,7 +321,6 @@ class Equipage(BaseObj):
         facteur = sum(v.facteur_orientation(navire, vent) for v in voiles)
         facteur = facteur / len(voiles)
         if facteur < 0.85:
-            print("On oriente...")
             self.demander("orienter_voiles")
 
     def ordonner_reparations(self):
