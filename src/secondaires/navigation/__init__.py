@@ -259,6 +259,8 @@ class Module(BaseModule):
 
         # Ajout des éditeurs
         self.importeur.interpreteur.ajouter_editeur(
+                editeurs.matedit.EdtMatedit)
+        self.importeur.interpreteur.ajouter_editeur(
                 editeurs.eltedit.EdtEltedit)
         self.importeur.interpreteur.ajouter_editeur(editeurs.shedit.EdtShedit)
 
@@ -611,3 +613,52 @@ class Module(BaseModule):
                     fichier.write(message + "\n")
         except Exception as err:
             print(err)
+
+    def get_navires_possedes(self, personnage):
+        """Retour les navires proches et possédés par le personnage.
+
+        Deux cas sont à distinguer :
+        * La salle du personnage est une salle de la terre ferme.
+          Dans ce cas, les navires récupérés sont ceux accostés
+          (amarrés ou ancrés) dans la même zone. On part du principe
+          que, si ils sont dans la même zone, alors ils peuvent être
+          joints par sorties.
+        * La salle du personnage est une salle de navire : dans ce
+          cas, on retourne les autres navires autour, c'est-à-dire
+          qui ont une salle à moins de 5 brasses. Cela demande de
+          vérifier chaque salle de chaque navire et est surtout utile
+          pour recruter des matelots d'un autre navire en mer.
+
+        """
+        salle = personnage.salle
+        navires = []
+        if getattr(salle, "navire", None) is None:
+            # Premier cas, salle de la terre ferme
+            for navire in importeur.navigation.navires.values():
+                if navire.proprietaire is not personnage:
+                    continue
+
+                if not navire.accoste:
+                    continue
+
+                if navire.point_accostage.nom_zone == salle.nom_zone:
+                    navires.append(navire)
+        else:
+            # Second cas, c'est une salle de navire
+            navire = salle.navire
+            if navire.accoste:
+                return []
+
+            coords = [s.coords.tuple() for s in navire.salles.values()]
+            for autre in importeur.navigation.navires.values():
+                if navire is autre or autre.proprietaire is not personnage:
+                    continue
+
+                for autre_salle in autre.salles.values():
+                    tup = salle.coords.tuple()
+                    distance = min(mag(tup + c) for c in coords)
+                    if distance < 2:
+                        navires.append(autre)
+
+        navires.sort(key=lambda n: n.cle)
+        return navires

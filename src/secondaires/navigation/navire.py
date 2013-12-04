@@ -312,6 +312,27 @@ class Navire(Vehicule):
         return False
 
     @property
+    def point_accostage(self):
+        """Retourne le point d'accostage.
+
+        Si le navire a une passerelle dépliée, retourne la salle.
+        Si le navire a des amarres, retourne la salle à laquelle
+        il est amarré.
+
+        """
+        if not self.accoste:
+            return None
+
+        amarre = self.amarre
+        passerelle = self.elt_passerelle
+        if amarre and amarre.attachee:
+            return amarre.attachee
+        if passerelle and passerelle.baissee:
+            return passerelle.baissee_vers
+
+        return None
+
+    @property
     def salles_endommagees(self):
         """Retourne la liste des salles endommagées.
 

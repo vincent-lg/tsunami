@@ -18,7 +18,7 @@
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO Ematelot SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
 # LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
 # OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -28,42 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'matelot' et ses sous-commandes.
+"""Fichier contenant le paramètre 'éditer' de la commande 'matelot'."""
 
-Dans ce fichier se trouve la commande même.
+from primaires.interpreteur.masque.parametre import Parametre
 
-"""
+class PrmEditer(Parametre):
 
-from primaires.interpreteur.commande.commande import Commande
-from .affecter import PrmAffecter
-from .creer import PrmCreer
-from .editer import PrmEditer
-from .liste import PrmListe
-from .poste import PrmPoste
-from .recruter import PrmRecruter
-
-class CmdMatelot(Commande):
-
-    """Commande 'matelot'.
+    """Commande 'matelot éditer'.
 
     """
 
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "matelot", "seaman")
-        self.nom_categorie = "navire"
-        self.aide_courte = "manipulation des matelots"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "éditer", "edit")
+        self.nom_groupe = "administrateur"
+        self.schema = "<cle>"
+        self.aide_courte = "édite une fiche de matelot"
         self.aide_longue = \
-            "Cette commande permet de manipuler les matelots de " \
-            "votre équipage individuellement. Il existe également " \
-            "la commande %équipage% qui permet de manipuler l'équipage " \
-            "d'un coup d'un seul."
+                "Cette commande vous permet d'éditer une fiche de " \
+                "matelot existante. Vous devez préciser en paramètre la " \
+                "clé de la fiche (qui est aussi la clé du prototype de " \
+                "PNJ liée à cette fiche)."
 
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        self.ajouter_parametre(PrmAffecter())
-        self.ajouter_parametre(PrmCreer())
-        self.ajouter_parametre(PrmEditer())
-        self.ajouter_parametre(PrmListe())
-        self.ajouter_parametre(PrmPoste())
-        self.ajouter_parametre(PrmRecruter())
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        cle = dic_masques["cle"].cle
+        if cle not in importeur.navigation.fiches:
+            personnage << "|err|La fiche de matelot {} n'existe " \
+                    "pas.|ff|".format(cle)
+            return
+
+        fiche = importeur.navigation.fiches[cle]
+        editeur = type(self).importeur.interpreteur.construire_editeur(
+                "matedit", personnage, fiche)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()

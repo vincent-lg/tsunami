@@ -30,6 +30,8 @@
 
 """Ce fichier contient la classe Element, détaillée plus bas."""
 
+import inspect
+
 from abstraits.obase import BaseObj
 from primaires.objet.objet import MethodeObjet
 
@@ -87,10 +89,19 @@ class Element(BaseObj):
         """
         try:
             attribut = getattr(type(self.prototype), nom_attr)
-            assert callable(attribut)
-            return MethodeObjet(attribut, self)
-        except (AttributeError, AssertionError):
+            if inspect.isdatadescriptor(attribut):
+                return attribut.fget(self)
+            elif callable(attribut):
+                methode = attribut
+            else:
+                raise AttributeError()
+
+            return MethodeObjet(methode, self)
+        except AttributeError:
             return getattr(self.prototype, nom_attr)
+
+    def __repr__(self):
+        return "<Élément de navire {}>".format(repr(self.nom))
 
     def __str__(self):
         return self.nom

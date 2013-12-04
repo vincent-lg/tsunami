@@ -178,18 +178,6 @@ class EdtSalle(Presentation):
             "pour revenir à la fenêtre parente.\n\nTitre court actuel : " \
             "|bc|{objet.titre_court}|ff|"
 
-        # Cales
-        cales = self.ajouter_choix("types de cale", "ca", Selection,
-                salle, "cales", CONTENEURS)
-        cales.parent = self
-        cales.apercu = "{objet.str_cales}"
-        cales.aide_courte = \
-            "Entrez un |ent|nom de contenu|ff| pour la cale dans " \
-            "cette salle\nou |cmd|/|ff| pour revenir à la fenêtre " \
-            "parente.\n\nSi vous voulez supprimer un nom de contenu, " \
-            "entrez son nom à nouveau.\n\nTypes possibles : " + ", ".join(
-            CONTENEURS) + "\n\nTypes actuels : |bc|{objet.str_cales}|ff|"
-
         # Description
         description = self.ajouter_choix("description", "d", Description, \
                 salle)
@@ -225,6 +213,18 @@ class EdtSalle(Presentation):
         # Noyable
         noyable = self.ajouter_choix("noyable", "n", Flag, salle, "noyable")
         noyable.parent = self
+
+        # Cales
+        cales = self.ajouter_choix("types de cale", "ca", Selection,
+                salle, "cales", CONTENEURS)
+        cales.parent = self
+        cales.apercu = "{objet.str_cales}"
+        cales.aide_courte = \
+            "Entrez un |ent|nom de contenu|ff| pour la cale dans " \
+            "cette salle\nou |cmd|/|ff| pour revenir à la fenêtre " \
+            "parente.\n\nSi vous voulez supprimer un nom de contenu, " \
+            "entrez son nom à nouveau.\n\nTypes possibles : " + ", ".join(
+            CONTENEURS) + "\n\nTypes actuels : |bc|{objet.str_cales}|ff|"
 
     def opt_ajouter_supprimer_element(self, arguments):
         """Ajoute ou supprime un élément.

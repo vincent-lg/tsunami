@@ -54,6 +54,15 @@ class Passerelle(BaseElement):
             "baissee": Attribut(lambda: False),
         }
 
+    @property
+    def baissee_vers(self):
+        """Retourne la salle vers laquelle la passerelle est dépliée."""
+        if not self.baissee:
+            return None
+
+        return self.parent.sorties.get_sortie_par_nom(
+                "passerelle").salle_dest
+
     def get_description_ligne(self, personnage):
         """Retourne une description d'une ligne de l'élément."""
         if self.baissee:

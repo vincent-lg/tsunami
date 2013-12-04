@@ -53,10 +53,12 @@ class FicheMatelot(BaseObj):
         """Constructeur du matelot."""
         BaseObj.__init__(self)
         self.prototype = prototype
+        self.nom_singulier = "un matelot"
+        self.nom_pluriel = "matelots"
         self.poste_defaut = "matelot"
         self.description = Description(parent=self)
         self.aptitudes = {}
-        self.m_valeur = 40
+        self.m_valeur = 20
 
     def __getnewargs__(self):
         return (None, )
@@ -73,11 +75,16 @@ class FicheMatelot(BaseObj):
 
     @property
     def nom_achat(self):
-        return self.prototype.nom_singulier
+        return self.nom_singulier
 
     def get_nom(self, nombre=1):
         """Retourne le nom complet en fonction du nombre."""
-        return self.prototype.get_nom(nombre)
+        if nombre == 0:
+            raise ValueError("Nombre invalide")
+        elif nombre == 1:
+            return self.nom_singulier
+        else:
+            return str(nombre) + " " + self.nom_pluriel
 
     def ajouter_aptitude(self, nom_aptitude, nom_niveau):
         """Ajoute une aptitude."""
@@ -116,6 +123,13 @@ class FicheMatelot(BaseObj):
 
         return pnjs
 
+    def recruter(self, personnage, navire):
+        """Recrute le matelot sur la fiche."""
+        salle = navire.salles[0, 0, 0]
+        personnage.salle = salle
+        salle.envoyer("{} arrive.", personnage)
+        navire.equipage.ajouter_matelot(personnage)
+
     def acheter(self, quantite, magasin, transaction):
         """Achète les matelots dans la quantité spécifiée."""
         salle = magasin.parent
@@ -135,3 +149,5 @@ class FicheMatelot(BaseObj):
                 nom_niveau = NOMS_NIVEAUX[niveau]
                 desc += "\n  {:<15} : {:>10} ({} / 6)".format(
                         nom.capitalize(), nom_niveau, niveau + 1)
+
+        return desc

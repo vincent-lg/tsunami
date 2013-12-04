@@ -122,6 +122,10 @@ class Equipage(BaseObj):
         noms_disponibles = [nom for nom in NOMS_MATELOTS if nom not in noms]
         return choice(noms_disponibles)
 
+    def supprimer_matelot(self, nom):
+        """Supprime, si trouvé, le matelot depuis son nom."""
+        del self.matelots[supprimer_accents(nom).lower()]
+
     def ordonner_matelot(self, nom, ordre, *args, executer=False):
         """Ordonne à un mâtelot en particulier.
 
@@ -183,7 +187,7 @@ class Equipage(BaseObj):
             if matelot.personnage is personnage:
                 return matelot
 
-        return matelot
+        return None
 
     def get_matelots_au_poste(self, nom_poste, libre=True,
             endurance_min=None):
