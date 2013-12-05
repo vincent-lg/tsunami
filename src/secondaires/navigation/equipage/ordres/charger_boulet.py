@@ -45,9 +45,10 @@ class ChargerBoulet(Ordre):
     """
 
     cle = "charger_boulet"
-    def __init__(self, matelot, navire, canon=None):
+    def __init__(self, matelot, navire, canon=None, bruyant=False):
         Ordre.__init__(self, matelot, navire)
         self.canon = canon
+        self.bruyant = bruyant
 
     def executer(self):
         """Exécute l'ordre : colmate."""
@@ -58,6 +59,10 @@ class ChargerBoulet(Ordre):
         salle = canon.parent
         yield 0.3
         boulet = self.prendre_boulet_canon(personnage)
+        if boulet is None:
+            yield SignalAbandonne("Il n'y a pas de boulet de canon en " \
+                    "cale !", self.bruyant)
+
         canon.projectile = boulet
         personnage << "Vous chargez {} dans {}.".format(
                 boulet.get_nom(), canon.nom)
@@ -67,6 +72,7 @@ class ChargerBoulet(Ordre):
 
     def prendre_boulet_canon(self, personnage):
         """Prend un boulet de canon depuis la cale si besoin."""
+        self.jeter_ou_entreposer("boulet de canon")
         for objet in list(personnage.equipement.tenus):
             if objet.nom_type == "boulet de canon":
                 personnage.equipement.tenus.retirer(objet)

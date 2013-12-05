@@ -32,6 +32,7 @@
 
 from abstraits.obase import BaseObj
 from primaires.objet.objet import MethodeObjet
+from secondaires.navigation.equipage.constantes import ETATS_AUTORISES
 from secondaires.navigation.equipage.signaux import *
 from secondaires.navigation.equipage.postes import postes
 from .ordre import *
@@ -139,7 +140,7 @@ class Matelot(BaseObj):
             self.logger.debug(indent + "{} est mort".format(personnage))
             return
 
-        if personnage.cle_etat not in ("", "tenir_gouvernail"):
+        if personnage.cle_etat not in ETATS_AUTORISES + ("", ):
             matelot.relayer_ordres()
             matelot.ordres[:] = []
             self.logger.debug(indent + "{} est occupé ({})".format(

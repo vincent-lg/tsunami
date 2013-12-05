@@ -133,3 +133,38 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
             return SignalRelais("{} est trop fatigué".format(personnage))
 
         return None
+
+    # Méthodes de manipulation d'un personnage
+    def jeter_ou_entreposer(self, exception):
+        """Jète les objets tenus ou les met en cale.
+
+        Si l'objet tenu peut être mis en cale, il est entreposé. Sinon
+        il est jeté.
+
+        Cette méthode ne fait quelque chose que si le personnage n'a
+        aucune main libre.
+
+        """
+        personnage = self.matelot.personnage
+        navire = self.navire
+        cale = navire.cale
+        if personnage.nb_mains_libres > 0:
+            return
+
+        for objet in list(personnage.equipement.tenus):
+            if personnage.nb_mains_libres > 0:
+                return
+
+            if objet.nom_type != exception:
+                detruire = False
+                personnage.equipement.tenus.retirer(objet)
+                if objet.nom_type in cale.types:
+                    try:
+                        cale.ajouter_objets([objet])
+                    except ValueError:
+                        detruire = True
+                else:
+                    detruire = True
+
+                if detruire:
+                    importeur.objet.supprimer_objet(objet.identifiant)

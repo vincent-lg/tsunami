@@ -141,12 +141,14 @@ class Tirer(Volonte):
             ordres.append(aller)
 
         if canon.onces == 0:
-            charger_poudre = ChargerPoudre(matelot, navire, canon)
+            charger_poudre = ChargerPoudre(matelot, navire, canon,
+                    self.bruyant)
             charger_poudre.volonte = self
             ordres.append(charger_poudre)
 
         if canon.projectile is None:
-            charger_boulet = ChargerBoulet(matelot, navire, canon)
+            charger_boulet = ChargerBoulet(matelot, navire, canon,
+                    self.bruyant)
             charger_boulet.volonte = self
             ordres.append(charger_boulet)
 
@@ -154,7 +156,7 @@ class Tirer(Volonte):
         viser.volonte = self
         ordres.append(viser)
 
-        feu = Feu(matelot, navire, canon)
+        feu = Feu(matelot, navire, canon, self.bruyant)
         feu.volonte = self
         ordres.append(feu)
 
@@ -174,7 +176,7 @@ class Tirer(Volonte):
     @classmethod
     def extraire_arguments(cls, navire, nom_navire):
         """Extrait les arguments de la volonté."""
-        for navire in self.trouver_navires(navire):
+        for navire in cls.trouver_navires(navire):
             if contient(navire.desc_survol, nom_navire):
                 return (navire, )
 

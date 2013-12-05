@@ -47,6 +47,11 @@ class NomMatelot(Masque):
     nom = "nom_matelot"
     nom_complet = "nom d'un matelot"
 
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self)
+        self.proprietes["nouveau"] = "False"
+
     def init(self):
         """Initialisation des attributs"""
         self.matelot = None
@@ -77,11 +82,19 @@ class NomMatelot(Masque):
 
         navire = salle.navire
         equipage = navire.equipage
+
+        matelot = None
         try:
             matelot = equipage.get_matelot(nom)
         except KeyError:
-            raise ErreurValidation(
-                "|err|Le matelot {} ne peut être trouvé.|ff|".format(nom))
+            if not self.nouveau:
+                raise ErreurValidation(
+                    "|err|Le matelot {} ne peut être trouvé.|ff|".format(nom))
+        else:
+            if self.nouveau:
+                raise ErreurValidation(
+                    "|err|Le matelot {} existe déjà.|ff|".format(nom))
 
+        self.nom = nom
         self.matelot = matelot
         return True

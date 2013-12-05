@@ -116,6 +116,12 @@ class Equipage(BaseObj):
         self.matelots[supprimer_accents(matelot.nom.lower())] = matelot
         return matelot
 
+    def renommer_matelot(self, matelot, nouveau_nom):
+        """Renomme un matelot."""
+        del self.matelots[supprimer_accents(matelot.nom).lower()]
+        matelot.nom = nouveau_nom
+        self.matelots[supprimer_accents(matelot.nom.lower())] = matelot
+
     def trouver_nom_matelot(self):
         """Trouve un nom de mâtelot non utilisé."""
         noms = [matelot.nom for matelot in self.matelots.values()]

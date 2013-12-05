@@ -44,9 +44,10 @@ class Feu(Ordre):
     """
 
     cle = "feu"
-    def __init__(self, matelot, navire, canon=None):
+    def __init__(self, matelot, navire, canon=None, bruyant=False):
         Ordre.__init__(self, matelot, navire)
         self.canon = canon
+        self.bruyant = bruyant
 
     def executer(self):
         """Exécute l'ordre : colmate."""
@@ -56,10 +57,12 @@ class Feu(Ordre):
         canon = self.canon
         salle = canon.parent
         if canon.onces == 0:
-            yield SignalInutile("ce canon n'est pas chargé en poudre")
+            yield SignalAbandonne("Ce canon n'est pas chargé en poudre",
+                    self.bruyant)
 
         if canon.projectile is None:
-            yield SignalInutile("ce canon n'est pas chargé en boulet")
+            yield SignalAbandonne("Ce canon n'est pas chargé en boulet",
+                    self.bruyant)
 
         canon.tirer(auteur=personnage)
         yield SignalTermine()

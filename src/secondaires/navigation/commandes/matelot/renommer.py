@@ -28,44 +28,45 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'matelot' et ses sous-commandes.
+"""Fichier contenant le paramètre 'renommer' de la commande 'matelot'."""
 
-Dans ce fichier se trouve la commande même.
+from primaires.interpreteur.masque.parametre import Parametre
+from secondaires.navigation.equipage.ordres.revenir import Revenir
 
-"""
+class PrmRenommer(Parametre):
 
-from primaires.interpreteur.commande.commande import Commande
-from .affecter import PrmAffecter
-from .creer import PrmCreer
-from .editer import PrmEditer
-from .liste import PrmListe
-from .poste import PrmPoste
-from .recruter import PrmRecruter
-from .renommer import PrmRenommer
-
-class CmdMatelot(Commande):
-
-    """Commande 'matelot'.
+    """Commande 'matelot renommer'.
 
     """
 
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "matelot", "seaman")
-        self.nom_categorie = "navire"
-        self.aide_courte = "manipulation des matelots"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "renommer", "rename")
+        self.schema = "<ancien:nom_matelot> <nouveau:nom_matelot>"
+        self.tronquer = True
+        self.aide_courte = "renomme un matelot"
         self.aide_longue = \
-            "Cette commande permet de manipuler les matelots de " \
-            "votre équipage individuellement. Il existe également " \
-            "la commande %équipage% qui permet de manipuler l'équipage " \
-            "d'un coup d'un seul."
+            "Cette commande permet de changer le nom d'un matelot. " \
+            "Vous devez entrer en premier paramètre son ancien nom " \
+            "et en second paramètre son nouveau nom (un mot seulement)."
 
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        self.ajouter_parametre(PrmAffecter())
-        self.ajouter_parametre(PrmCreer())
-        self.ajouter_parametre(PrmEditer())
-        self.ajouter_parametre(PrmListe())
-        self.ajouter_parametre(PrmPoste())
-        self.ajouter_parametre(PrmRecruter())
-        self.ajouter_parametre(PrmRenommer())
+    def ajouter(self):
+        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
+        nouveau = self.noeud.get_masque("nouveau")
+        nouveau.proprietes["nouveau"] = "True"
+
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        salle = personnage.salle
+        navire = salle.navire
+        matelot = dic_masques["ancien"].matelot
+        nouveau_nom = dic_masques["nouveau"].nom.capitalize()
+        equipage = navire.equipage
+        if navire.proprietaire and navire.proprietaire is not personnage:
+            personnage << "|err|Vous ne pouvez donner d'ordre sur ce " \
+                    "navire.|ff|"
+            return
+
+        personnage << "{} se nomme désormais {}.".format(
+                matelot.nom.capitalize(), nouveau_nom)
+        equipage.renommer_matelot(matelot, nouveau_nom)

@@ -69,6 +69,7 @@ class Ecoper(Ordre):
 
     def prendre_ecope(self, personnage):
         """Prend une écope depuis la cale si besoin."""
+        self.jeter_ou_entreposer("écope")
         ecope = None
         for objet in list(personnage.equipement.tenus):
             if objet.nom_type == "écope":

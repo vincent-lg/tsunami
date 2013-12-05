@@ -38,6 +38,12 @@ CONTENEURS = [
         "sacs de poudre",
         "tonneaux de poix",
         "vivres",
+        "nourriture",
+        "poisson",
+        "viande",
+        "légume",
+        "fruit",
+        "gâteau",
 ]
 
 TYPES = {
@@ -46,6 +52,11 @@ TYPES = {
         "écope": "écopes",
         "calfeutrage": "tonneaux de poix",
         "nourriture": "vivres",
+        "poisson": "vivres",
+        "viande": "vivres",
+        "légume": "vivres",
+        "fruit": "vivres",
+        "gâteau": "vivres",
 }
 
 class Cale(BaseObj):
@@ -123,6 +134,11 @@ class Cale(BaseObj):
                 "écope": self.ecopes,
                 "calfeutrage": self.tonneaux_poix,
                 "nourriture": self.vivres,
+                "poisson": self.vivres,
+                "viande": self.vivres,
+                "légume": self.vivres,
+                "fruit": self.vivres,
+                "gâteau": self.vivres,
         }
 
     def accepte(self, salle, nom_type):
@@ -161,7 +177,7 @@ class Cale(BaseObj):
             nb += 1
             conteneur[objet.prototype.cle] = nb
             poids += objet.prototype.poids_unitaire
-            objet.detruire()
+            importeur.objet.supprimer_objet(objet.identifiant)
             nombre += 1
 
         return nombre

@@ -56,7 +56,13 @@ class PrmListe(Parametre):
             personnage << "|err|Vous n'êtes pas sur un navire."
             return
 
-        equipage = salle.navire.equipage
+        navire = salle.navire
+        equipage = navire.equipage
+        if navire.proprietaire and navire.proprietaire is not personnage:
+            personnage << "|err|Vous ne pouvez donner d'ordre sur ce " \
+                    "navire.|ff|"
+            return
+
         matelots = tuple(equipage.matelots.values())
         matelots = sorted(matelots, \
                 key=lambda m: supprimer_accents(m.nom).lower())

@@ -46,9 +46,10 @@ class Colmater(Ordre):
     """
 
     cle = "colmater"
-    def __init__(self, matelot, navire, salle=None):
+    def __init__(self, matelot, navire, salle=None, bruyant=False):
         Ordre.__init__(self, matelot, navire)
         self.salle = salle
+        self.bruyant = bruyant
 
     def executer(self):
         """Exécute l'ordre : colmate."""
@@ -62,11 +63,16 @@ class Colmater(Ordre):
             yield SignalInutile("la coque n'est pas endommagée ici")
         else:
             calfeutrage = self.prendre_calfeutrage(personnage)
+            if calfeutrage is None:
+                yield SignalAbandonne("Il n'y a pas de poix en cale.",
+                        self.bruyant)
+
             salle.colmater(personnage, calfeutrage)
             yield SignalTermine()
 
     def prendre_calfeutrage(self, personnage):
         """Prend un calfeutrage depuis la cale si besoin."""
+        self.jeter_ou_entreposer("calfeutrage")
         calfeutrage = None
         for objet in list(personnage.equipement.tenus):
             if objet.nom_type == "calfeutrage":

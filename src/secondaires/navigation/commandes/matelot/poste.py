@@ -84,6 +84,11 @@ class PrmPoste(Parametre):
         nom_poste = dic_masques["message"].message
         equipage = navire.equipage
 
+        if navire.proprietaire and navire.proprietaire is not personnage:
+            personnage << "|err|Vous ne pouvez donner d'ordre sur ce " \
+                    "navire.|ff|"
+            return
+
         # On essaye de trouver le nom du poste (sans accents ni majuscules)
         nom = None
         for t_nom in ORDRE:

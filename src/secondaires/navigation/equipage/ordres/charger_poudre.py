@@ -46,10 +46,11 @@ class ChargerPoudre(Ordre):
     """
 
     cle = "charger_poudre"
-    def __init__(self, matelot, navire, canon=None, onces=5):
+    def __init__(self, matelot, navire, canon=None, onces=5, bruyant=False):
         Ordre.__init__(self, matelot, navire)
         self.canon = canon
         self.onces = onces
+        self.bruyant = bruyant
 
     def executer(self):
         """Exécute l'ordre : colmate."""
@@ -63,6 +64,10 @@ class ChargerPoudre(Ordre):
             yield SignalInutile("ce canon est déjà chargé en poudre")
 
         sac = self.prendre_sac_poudre(personnage)
+        if sac is None:
+            yield SignalAbandonne("Il n'y a pas de sac de poudre en cale.",
+                    self.bruyant)
+
         if onces > canon.max_onces - canon.onces:
             onces = canon.max_onces - canon.onces
 
@@ -79,6 +84,7 @@ class ChargerPoudre(Ordre):
 
     def prendre_sac_poudre(self, personnage):
         """Prend un sac de poudre depuis la cale si besoin."""
+        self.jeter_ou_entreposer("sac de poudre")
         sac = None
         for objet in list(personnage.equipement.tenus):
             if objet.nom_type == "sac de poudre":
