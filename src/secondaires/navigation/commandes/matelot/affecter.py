@@ -62,7 +62,8 @@ class PrmAffecter(Parametre):
         salle = personnage.salle
         navire = salle.navire
         matelot = dic_masques["nom_matelot"].matelot
-        if navire.proprietaire and navire.proprietaire is not personnage:
+        if navire.proprietaire and navire.proprietaire is not personnage and \
+                not personnage.est_immortel():
             personnage << "|err|Vous ne pouvez donner d'ordre sur ce " \
                     "navire.|ff|"
             return

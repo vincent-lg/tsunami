@@ -60,9 +60,10 @@ class PrmRenommer(Parametre):
         salle = personnage.salle
         navire = salle.navire
         matelot = dic_masques["ancien"].matelot
-        nouveau_nom = dic_masques["nouveau"].nom.capitalize()
+        nouveau_nom = dic_masques["nouveau"].nom_matelot.capitalize()
         equipage = navire.equipage
-        if navire.proprietaire and navire.proprietaire is not personnage:
+        if navire.proprietaire and navire.proprietaire is not personnage and \
+                not personnage.est_immortel():
             personnage << "|err|Vous ne pouvez donner d'ordre sur ce " \
                     "navire.|ff|"
             return

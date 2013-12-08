@@ -54,6 +54,7 @@ class NomMatelot(Masque):
 
     def init(self):
         """Initialisation des attributs"""
+        self.nom_matelot = ""
         self.matelot = None
 
     def repartir(self, personnage, masques, commande):
@@ -87,14 +88,15 @@ class NomMatelot(Masque):
         try:
             matelot = equipage.get_matelot(nom)
         except KeyError:
-            if not self.nouveau:
-                raise ErreurValidation(
-                    "|err|Le matelot {} ne peut être trouvé.|ff|".format(nom))
-        else:
-            if self.nouveau:
-                raise ErreurValidation(
-                    "|err|Le matelot {} existe déjà.|ff|".format(nom))
+            pass
 
-        self.nom = nom
+        if not self.nouveau and matelot is None:
+            raise ErreurValidation(
+                "|err|Le matelot {} ne peut être trouvé.|ff|".format(nom))
+        elif self.nouveau and matelot:
+            raise ErreurValidation(
+                "|err|Le matelot {} existe déjà.|ff|".format(nom))
+
+        self.nom_matelot = nom
         self.matelot = matelot
         return True
