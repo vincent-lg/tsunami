@@ -82,6 +82,7 @@ class Module(BaseModule):
         self.fiches = {}
         self.chantiers = {}
         self.trajets = {}
+        self.matelots = {}
 
     def config(self):
         """Configuration du module."""
@@ -269,6 +270,7 @@ class Module(BaseModule):
 
         Actions effectuées :
         -   Mise à jour systématique des éléments du navire
+        -   Écriture des matelots
 
         """
         self.nav_logger.info("Mise à jour des navires...")
@@ -280,6 +282,11 @@ class Module(BaseModule):
             if not navire.modele.graph:
                 navire.modele.generer_graph()
         self.nav_logger.info("... mise à jour des navires terminée.")
+
+        for navire in self.navires.values():
+            for matelot in navire.equipage.matelots.values():
+                if matelot.personnage:
+                    self.matelots[matelot.personnage.identifiant] = matelot
 
     def creer_modele(self, cle):
         """Crée un modèle de navire et l'ajoute dans le dictionnaire.

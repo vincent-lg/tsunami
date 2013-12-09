@@ -114,6 +114,7 @@ class Equipage(BaseObj):
         matelot.nom_poste = nom_poste
         matelot.nom = self.trouver_nom_matelot()
         self.matelots[supprimer_accents(matelot.nom.lower())] = matelot
+        importeur.navigation.matelots[personnage.identifiant] = matelot
         return matelot
 
     def renommer_matelot(self, matelot, nouveau_nom):
@@ -130,7 +131,14 @@ class Equipage(BaseObj):
 
     def supprimer_matelot(self, nom):
         """Supprime, si trouvé, le matelot depuis son nom."""
-        del self.matelots[supprimer_accents(nom).lower()]
+        nom = supprimer_accents(nom).lower()
+        matelot = self.matelots[nom]
+        identifiant = matelot.personnage and matelot.personnage.identifiant \
+                or ""
+        if identifiant in importeur.navigation.matelots:
+            del importeur.navigation.matelots[identifiant]
+        matelot.detruire()
+        del self.matelots[nom]
 
     def ordonner_matelot(self, nom, ordre, *args, executer=False):
         """Ordonne à un mâtelot en particulier.
@@ -355,3 +363,10 @@ class Equipage(BaseObj):
         self.ennemis = [n for n in self.ennemis if n.e_existe]
         for ennemi in self.ennemis:
             self.demander("tirer", ennemi, False)
+
+    def detruire(self):
+        """Destruction de l'équipage et des matelots inclus."""
+        for matelot in list(self.matelots.values()):
+            matelot.detruire()
+
+        BaseObj.detruire(self)
