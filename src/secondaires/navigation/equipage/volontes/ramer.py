@@ -45,9 +45,10 @@ class Ramer(TenirRames):
     """
 
     cle = "ramer"
-    ordre_court = re.compile(r"^r\s?(-?[0-3])$", re.I)
+    ordre_court = re.compile(r"^r\s?(-?[0-3cbt])$", re.I)
     ordre_long = re.compile(
-            r"^ramer\s+(arriere|immobile|lente|moyenne|rapide)$", re.I)
+            r"^ramer\s+(arriere|immobile|lente|moyenne|" \
+            r"rapide|centre|babord|tribord)$", re.I)
 
     def __init__(self, navire, vitesse=""):
         """Construit une volonté."""
@@ -72,10 +73,10 @@ class Ramer(TenirRames):
 
             personnage = rames.tenu
             matelot = equipage.get_matelot_depuis_personnage(personnage)
-            matelot.invalider_ordres("ramer")
             if matelot is None:
                 continue
 
+            matelot.invalider_ordres("ramer")
             ordres = []
             ramer = OrdreRamer(matelot, navire, rames, vitesse)
             ramer.volonte = self
@@ -91,6 +92,12 @@ class Ramer(TenirRames):
         vitesse = self.vitesse
         if vitesse == "arrière":
             msg_vitesse = "en arrière"
+        elif vitesse == "centre":
+            msg_vitesse = "au centre"
+        elif vitesse == "droite":
+            msg_vitesse = "sur tribord"
+        elif vitesse == "gauche":
+            msg_vitesse = "sur bâbord"
         elif vitesse == "immobile":
             msg_vitesse = "on arrête"
         elif vitesse == "lente":
@@ -109,6 +116,10 @@ class Ramer(TenirRames):
         """Extrait les arguments de la volonté."""
         if vitesse in ("arriere", "-1"):
             vitesse = "arrière"
+        elif vitesse in ("babord", "b"):
+            vitesse = "gauche"
+        elif vitesse in ("centre", "c"):
+            vitesse = "centre"
         elif vitesse in ("immobile", "0"):
             vitesse = "immobile"
         elif vitesse in ("lente", "1"):
@@ -117,6 +128,8 @@ class Ramer(TenirRames):
             vitesse = "moyenne"
         elif vitesse in ("rapide", "3"):
             vitesse = "rapide"
+        elif vitesse in ("tribord", "t"):
+            vitesse = "droite"
         else:
             raise ValueError("La vitesse {} est inconnue.".format(
                 vitesse))

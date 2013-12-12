@@ -61,11 +61,7 @@ class CmdBoire(Commande):
 
         if dic_masques["nom_objet"] is None:
             # On regarde si il n'y a pas une fontaine dans les détails
-            fontaine = None
-            for detail in salle.details:
-                if detail.a_flag("fontaine"):
-                    fontaine = detail
-
+            fontaine = salle.a_detail_flag("fontaine")
             if fontaine or salle.terrain.nom in ("rive", "aquatique",
                     "subaquatique"):
                 if personnage.estomac <= 2.9:

@@ -57,15 +57,33 @@ class Rames(BaseElement):
 
     def centrer(self):
         """Centre les rames."""
+        ancienne = self.orientation
         self.orientation = 0
+        if self.tenu and ancienne != 0:
+            personnage = self.tenu
+            personnage << "Vous arrêtez de tourner en centrant les rames."
+            personnage.salle.envoyer("{} arrête de tourner en centrant " \
+                    "les rames", personnage)
 
     def virer_tribord(self):
         """Vire à tribord."""
         self.orientation = 1
+        if self.tenu:
+            personnage = self.tenu
+            personnage << "Vous commencez de ramez en tournant vers " \
+                    "tribord."
+            personnage.salle.envoyer("{} commence à ramer vers tribord.",
+                    personnage)
 
     def virer_babord(self):
         """Vire à bâbord."""
         self.orientation = -1
+        if self.tenu:
+            personnage = self.tenu
+            personnage << "Vous commencez de ramez en tournant vers " \
+                    "bâbord."
+            personnage.salle.envoyer("{} commence à ramer vers bâbord.",
+                    personnage)
 
     def tenir(self, personnage):
         """Empoigne les rames."""

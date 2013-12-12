@@ -50,6 +50,8 @@ class Virer(Volonte):
     virer (soit sur bâbord soit sur tribord, en fonction de la direction
     actuelle du navire).
 
+    Cette volonté appelle également les rameurs.
+
     """
 
     cle = "virer"

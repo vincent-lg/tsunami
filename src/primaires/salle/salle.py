@@ -204,6 +204,14 @@ class Salle(BaseObj):
 
         return objets
 
+    def a_detail_flag(self, flag):
+        """Retourne True si la salle a un détail du flag indiqué."""
+        for detail in self.details:
+            if detail.a_flag(flag):
+                return True
+
+        return False
+
     def personnage_est_present(self, personnage):
         """Si le personnage est présent, retourne True, False sinon."""
         return personnage in self._personnages

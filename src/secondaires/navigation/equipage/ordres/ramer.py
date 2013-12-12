@@ -60,18 +60,26 @@ class Ramer(Ordre):
         salle = personnage.salle
         rames = self.rames
         vitesse = self.vitesse
+        vitesses = tuple(VIT_RAMES.keys()) + ("centre", "gauche", "droite")
         if salle is not rames.parent:
             yield SignalAbandonne("Je ne suis pas dans la salle des rames.")
-        elif vitesse not in VIT_RAMES:
+        elif vitesse not in vitesses:
             yield SignalAbandonne("Je ne connais pas la vitesse {}.".format(
                     vitesse))
 
         if rames.tenu is not personnage:
             yield SignalAbandonne("Je ne tiens pas ces rames.")
         else:
-            rames.changer_vitesse(vitesse)
+            if vitesse == "centre":
+                rames.centrer()
+            elif vitesse == "droite":
+                rames.virer_tribord()
+            elif vitesse == "gauche":
+                rames.virer_babord()
+            else:
+                rames.changer_vitesse(vitesse)
+
             while personnage.stats.endurance > 20:
-                print(" ", personnage.stats.endurance)
                 yield 3
 
             rames.relacher()

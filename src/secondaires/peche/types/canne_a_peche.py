@@ -69,6 +69,28 @@ class CanneAPeche(BaseType):
             "se brisera.\n\n" \
             "Tension actuelle : {objet.tension_max}"
 
+    def objets_contenus(self, conteneur):
+        """Retourne les objets contenus."""
+        objets = []
+        if conteneur.appat:
+            objet = conteneur.appat
+            objets.append(objet)
+            if objet.unique:
+                objets.extend(objet.prototype.objets_contenus(objet))
+
+        return objets
+
+    def detruire_objet(self, conteneur):
+        """Détruit l'objet passé en paramètre.
+
+        On va détruire tout ce qu'il contient.
+
+        """
+        if conteneur.appat:
+            objet = conteneur.appat
+            if objet.unique and objet.e_existe:
+                importeur.objet.essayer_supprimer_objet(objet)
+
     # Actions sur les objets
     def regarder(self, personnage):
         """Le personnage regarde l'objet"""
