@@ -78,6 +78,3 @@ CONNAISSANCES = {
         NIVEAU_TRES_BON: 70,
         NIVEAU_EXCELLENT: 95,
 }
-
-# Etats autorisés
-ETATS_AUTORISES = ("hisser_voile", "tenir_gouvernail", "plier_voile")

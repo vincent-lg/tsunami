@@ -37,6 +37,7 @@ from vector import Vector
 from abstraits.obase import BaseObj
 from primaires.format.fonctions import supprimer_accents
 from primaires.vehicule.vecteur import get_direction
+from secondaires.navigation.equipage.configuration import Configuration
 from secondaires.navigation.equipage.ordre import ordres
 from secondaires.navigation.equipage.matelot import Matelot
 from secondaires.navigation.equipage.noms import NOMS_MATELOTS
@@ -68,6 +69,8 @@ class Equipage(BaseObj):
         # Adversaires
         self.ennemis = []
 
+        # Données de configuration
+        self.configuration = Configuration(equipage=self)
         self._construire()
 
     def __getnewargs__(self):

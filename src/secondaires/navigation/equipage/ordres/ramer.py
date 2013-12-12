@@ -28,45 +28,51 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'ordre PlierVoile."""
+"""Fichier contenant l'ordre Ramer."""
 
+from secondaires.navigation.constantes import VIT_RAMES
 from secondaires.navigation.equipage.signaux import *
 
 from ..ordre import *
 
-class PlierVoile(Ordre):
+class Ramer(Ordre):
 
-    """Ordre plier_voile.
+    """Ordre ramer.
 
-    Cet ordre est appelé pour demander à un matelot de plier
-    une voile présente dans la salle où il se trouve.
+    Cet ordre demande au matelot tenant les rames spécifiées de
+    ramer à une vitesse spécifiée. Cet ordre peut être utilisé pour
+    demander de s'arrêter de ramer (pas de relâcher les rames).
 
     """
 
-    cle = "plier_voile"
-    etats_autorises = ("plier_voile", "")
-    def calculer_empechement(self):
-        """Retourne une estimation de l'empêchement du matelot."""
-        if self.matelot.cle_etat:
-            return 100
-        else:
-            return 0
+    cle = "ramer"
+    etats_autorises = ("tenir_rames", )
+
+    def __init__(self, matelot, navire, rames=None, vitesse=""):
+        Ordre.__init__(self, matelot, navire)
+        self.rames = rames
+        self.vitesse = vitesse
 
     def executer(self):
-        """Exécute l'ordre : déplace le matelot."""
-        personnage = self.matelot.personnage
+        """Exécute l'ordre : tient les rames."""
+        matelot = self.matelot
+        personnage = matelot.personnage
         salle = personnage.salle
-        if not hasattr(salle, "voiles"):
-            return
+        rames = self.rames
+        vitesse = self.vitesse
+        if salle is not rames.parent:
+            yield SignalAbandonne("Je ne suis pas dans la salle des rames.")
+        elif vitesse not in VIT_RAMES:
+            yield SignalAbandonne("Je ne connais pas la vitesse {}.".format(
+                    vitesse))
 
-        voiles = salle.voiles
-        if not voiles:
-            return
-
-        voile = voiles[0]
-        if not voile.hissee:
-            yield SignalInutile("la voile est déjà pliée")
+        if rames.tenu is not personnage:
+            yield SignalAbandonne("Je ne tiens pas ces rames.")
         else:
-            yield voile.pre_plier(personnage)
-            voile.post_plier(personnage)
-            yield SignalTermine()
+            rames.changer_vitesse(vitesse)
+            while personnage.stats.endurance > 20:
+                print(" ", personnage.stats.endurance)
+                yield 3
+
+            rames.relacher()
+            yield SignalRelais("Je suis trop fatigué.")

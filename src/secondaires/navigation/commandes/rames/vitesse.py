@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   raise of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,11 +33,11 @@
 from primaires.interpreteur.masque.parametre import Parametre
 
 class PrmVitesse(Parametre):
-    
+
     """Commande 'rames vitesse'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "vitesse", "speed")
@@ -51,7 +51,7 @@ class PrmVitesse(Parametre):
             "|cmd|moyenne|ff| ou |cmd|rapide|ff|. Chaque vitesse " \
             "consomme plus ou moins d'endurance, ainsi, la vitesse " \
             "rapide est plus fatigante que la vitesse lente."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         salle = personnage.salle
@@ -59,41 +59,16 @@ class PrmVitesse(Parametre):
                 salle.navire.etendue is None:
             personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
             return
-        
+
         navire = salle.navire
         rames = salle.rames
         if not rames:
             personnage << "|err|Il n'y a pas de rames ici.|ff|"
             return
-        
+
         if rames.tenu is not personnage:
             personnage << "|err|Vous ne tenez pas ces rames.|ff|"
         else:
             vitesse = rames.vitesse
             n_vitesse = dic_masques["vitesse_rames"].vitesse
-            if vitesse == n_vitesse:
-                personnage << "|err|Vous ramez déjà à cette vitesse.|ff|"
-                return
-            
-            rames.vitesse = n_vitesse
-            msg = "Vous commencez de ramer {vitesse}."
-            msg_autre = "{{personnage}} commence à ramer {vitesse}."
-            msg_vit = ""
-            if n_vitesse == "arrière":
-                msg_vit = "en marche arrière"
-            elif n_vitesse == "immobile":
-                msg = "Vous arrêtez de ramer."
-                msg_autre = "{{personnage}} arrête de ramer."
-            elif n_vitesse == "lente":
-                msg_vit = "à faible vitesse"
-            elif n_vitesse == "moyenne":
-                msg_vit = "à vitesse moyenne"
-            elif n_vitesse == "rapide":
-                msg_vit = "rapidement"
-            else:
-                raise RuntimeError("vitesse non traitée {}".format(n_vitesse))
-            
-            msg = msg.format(vitesse=msg_vit)
-            msg_autre = msg_autre.format(vitesse=msg_vit)
-            personnage << msg
-            salle.envoyer(msg_autre, personnage=personnage)
+            rames.changer_vitesse(n_vitesse)

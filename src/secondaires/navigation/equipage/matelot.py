@@ -32,7 +32,6 @@
 
 from abstraits.obase import BaseObj
 from primaires.objet.objet import MethodeObjet
-from secondaires.navigation.equipage.constantes import ETATS_AUTORISES
 from secondaires.navigation.equipage.signaux import *
 from secondaires.navigation.equipage.postes import postes
 from .ordre import *
@@ -134,17 +133,21 @@ class Matelot(BaseObj):
         volonte = ordre.volonte
         matelot = ordre.matelot
         personnage = matelot.personnage
-        if personnage is None or personnage.est_mort():
-            matelot.relayer_ordres()
-            matelot.ordres[:] = []
-            self.logger.debug(indent + "{} est mort".format(personnage))
+        if ordre.invalide:
+            self.logger.debug(indent + "{} est invalidé".format(ordre))
             return
 
-        if personnage.cle_etat not in ETATS_AUTORISES + ("", ):
+        if personnage is None or personnage.est_mort():
+            self.logger.debug(indent + "{} est mort".format(personnage))
             matelot.relayer_ordres()
             matelot.ordres[:] = []
+            return
+
+        if personnage.cle_etat not in ordre.etats_autorises:
             self.logger.debug(indent + "{} est occupé ({})".format(
                     personnage, personnage.cle_etat))
+            matelot.relayer_ordres()
+            matelot.ordres[:] = []
             return
 
         signal = next(generateur)
@@ -186,6 +189,9 @@ class Matelot(BaseObj):
         for volonte in volontes:
             self.equipage.demander(volonte.cle, *volonte.arguments)
 
-    def detruire(self):
-        """Destruction du matelot."""
-        self.personnage.detruire()
+    def invalider_ordres(self, cle):
+        """Invalide les ordres."""
+        for ordre in list(self.ordres):
+            if ordre.cle == cle:
+                self.ordres.remove(ordre)
+                ordre.invalide = True

@@ -44,6 +44,7 @@ class HisserVoile(Ordre):
     """
 
     cle = "hisser_voile"
+    etats_autorises = ("hisser_voile", "")
     def calculer_empechement(self):
         """Retourne une estimation de l'empêchement du matelot."""
         if self.matelot.cle_etat:

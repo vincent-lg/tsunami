@@ -1,15 +1,15 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
 # * Redistributions of source code must retain the above copyright notice, this
-#   raise of conditions and the following disclaimer.
+#   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
-#   this raise of conditions and the following disclaimer in the documentation
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
@@ -28,38 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'relâcher' de la commande 'rames'."""
+"""Fichier contenant la donnée de configuration 'nb_abandon'."""
 
-from primaires.interpreteur.masque.parametre import Parametre
+from secondaires.navigation.equipage.donnees.base import Donnee
 
-class PrmRelacher(Parametre):
+class NbAbandon(Donnee):
 
-    """Commande 'rames relâcher'.
+    """Classe définissant la donnée de configuration 'nb_abandon'.
+
+    Cette donnée de configuration permet de configurer le nombre minimum
+    de matelots avant que l'équipage se rende. Si cette donnée est à
+    5 et qu'il ne reste plus que 5 matelots dans l'équipage, alors
+    l'équipage se rend.
 
     """
 
-    def __init__(self):
-        """Constructeur du paramètre"""
-        Parametre.__init__(self, "relâcher", "unhold")
-        self.aide_courte = "relâche les rames"
-        self.aide_longue = \
-            "Cette commande permet de relacher les rames."
+    cle = "nb_abandon"
+    expression = Donnee.compiler(r"^([0-9]+) matelots minimum$")
 
-    def interpreter(self, personnage, dic_masques):
-        """Interprétation du paramètre"""
-        salle = personnage.salle
-        if not hasattr(salle, "navire") or salle.navire is None or \
-                salle.navire.etendue is None:
-            personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
-            return
+    def __init__(self, nombre=1):
+        Donnee.__init__(self)
+        self.nombre = nombre
 
-        navire = salle.navire
-        rames = salle.rames
-        if not rames:
-            personnage << "|err|Il n'y a pas de rames ici.|ff|"
-            return
+    def __str__(self):
+        return "Nombre de matelots minimum avant abandon : {}".format(
+                self.nombre)
 
-        if rames.tenu is not personnage:
-            personnage << "|err|Vous ne tenez pas ces rames.|ff|"
-        else:
-            rames.relacher()
+    def valeur(self):
+        return self.nombre
+
+    @classmethod
+    def defaut(cls):
+        """Retourne le nombre minimum de matelots par défaut."""
+        return 0
+
+    @classmethod
+    def convertir(cls, nombre):
+        return (int(nombre), )

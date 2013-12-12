@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   raise of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,11 +33,11 @@
 from primaires.interpreteur.masque.parametre import Parametre
 
 class PrmTenir(Parametre):
-    
+
     """Commande 'rames tenir'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "tenir", "hold")
@@ -45,7 +45,7 @@ class PrmTenir(Parametre):
         self.aide_longue = \
             "Cette commande permet de tenir les rames. Vous ne pouvez " \
             "naturellement pas ramer sans tenir les rames auparavant."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         salle = personnage.salle
@@ -53,21 +53,16 @@ class PrmTenir(Parametre):
                 salle.navire.etendue is None:
             personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
             return
-        
+
         navire = salle.navire
         rames = salle.rames
         if not rames:
             personnage << "|err|Il n'y a pas de rames ici.|ff|"
             return
-        
+
         if rames.tenu is personnage:
             personnage << "|err|Vous tenez déjà ces rames.|ff|"
         elif rames.tenu is not None:
             personnage << "|err|Quelqu'un tient déjà ces rames.|ff|"
         else:
-            rames.tenu = personnage
-            personnage.cle_etat = "tenir_rames"
-            personnage << "Vous empoignez {}.".format(
-                    rames.nom)
-            personnage.salle.envoyer("{{}} empoigne {}.".format(
-                    rames.nom), personnage)
+            rames.tenir(personnage)

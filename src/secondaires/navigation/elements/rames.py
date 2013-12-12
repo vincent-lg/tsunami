@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,13 +34,13 @@ from bases.objet.attribut import Attribut
 from .base import BaseElement
 
 class Rames(BaseElement):
-    
+
     """Classe représentant une paire de rames.
-    
+
     """
-    
+
     nom_type = "rames"
-    
+
     def __init__(self, cle=""):
         """Constructeur d'un type"""
         BaseElement.__init__(self, cle)
@@ -50,19 +50,89 @@ class Rames(BaseElement):
             "orientation": Attribut(lambda: 0),
             "tenu": Attribut(lambda: None),
         }
-    
+
     def get_description_ligne(self, personnage):
         """Retourne la description en une ligne de l'élément."""
         return self.nom.capitalize() + " se trouve là."
-    
+
     def centrer(self):
         """Centre les rames."""
         self.orientation = 0
-    
+
     def virer_tribord(self):
         """Vire à tribord."""
         self.orientation = 1
-    
+
     def virer_babord(self):
         """Vire à bâbord."""
         self.orientation = -1
+
+    def tenir(self, personnage):
+        """Empoigne les rames."""
+        if self.tenu:
+            raise ValueError("Ces rames sont déjà tenues")
+
+        if self.parent is not personnage.salle:
+            raise ValueError("Le personnage {} n'est pas en {}".format(
+                    personnage, self.parent))
+
+        self.tenu = personnage
+        personnage.cle_etat = "tenir_rames"
+        personnage << "Vous empoignez {}.".format(
+                self.nom)
+        personnage.salle.envoyer("{{}} empoigne {}.".format(
+                self.nom), personnage)
+
+    def relacher(self):
+        """Relâche les rames."""
+        if self.tenu is None:
+            raise ValueError("Ces rames ne sont pas tenues")
+
+        personnage = self.tenu
+        salle = self.parent
+        if self.vitesse != "immobile":
+            self.vitesse = "immobile"
+            personnage << "Vous arrêtez de ramer."
+            salle.envoyer("{} arrête de ramer.", personnage)
+        self.centrer()
+        self.tenu = None
+        personnage.cle_etat = ""
+        personnage << "Vous lâchez {}.".format(
+                self.nom)
+        personnage.salle.envoyer("{{}} lâche {}.".format(
+                self.nom), personnage)
+
+    def changer_vitesse(self, n_vitesse):
+        """Change la vitesse des rames."""
+        if self.tenu is None:
+            raise ValueError("Personne ne tient ces rames")
+
+        personnage = self.tenu
+        salle = self.parent
+        vitesse = self.vitesse
+        if vitesse == n_vitesse:
+            personnage << "|err|Vous ramez déjà à cette vitesse.|ff|"
+            return
+
+        self.vitesse = n_vitesse
+        msg = "Vous commencez de ramer {vitesse}."
+        msg_autre = "{{personnage}} commence à ramer {vitesse}."
+        msg_vit = ""
+        if n_vitesse == "arrière":
+            msg_vit = "en marche arrière"
+        elif n_vitesse == "immobile":
+            msg = "Vous arrêtez de ramer."
+            msg_autre = "{{personnage}} arrête de ramer."
+        elif n_vitesse == "lente":
+            msg_vit = "à faible vitesse"
+        elif n_vitesse == "moyenne":
+            msg_vit = "à vitesse moyenne"
+        elif n_vitesse == "rapide":
+            msg_vit = "rapidement"
+        else:
+            raise RuntimeError("vitesse non traitée {}".format(n_vitesse))
+
+        msg = msg.format(vitesse=msg_vit)
+        msg_autre = msg_autre.format(vitesse=msg_vit)
+        personnage << msg
+        salle.envoyer(msg_autre, personnage=personnage)

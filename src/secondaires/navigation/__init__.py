@@ -141,6 +141,10 @@ class Module(BaseModule):
                 self.navire_accoste)
         self.importeur.interpreteur.categories["navire"] = \
                 "Commandes de navigation"
+        self.importeur.hook["pnj:arrive"].ajouter_evenement(
+                self.combat_matelot)
+        self.importeur.hook["pnj:meurt"].ajouter_evenement(
+                self.rendre_equipage)
 
         # Ajout des talents
         importeur.perso.ajouter_talent("calfeutrage", "calfeutrage",
@@ -544,6 +548,31 @@ class Module(BaseModule):
             e = "" if navire.modele.masculin else "e"
             liste_messages.insert(0, "{} a accosté{e} ici.".format(
                         navire.desc_survol.capitalize(), e=e))
+
+    def combat_matelot(self, pnj, arrive):
+        """Méthode appelé quand un PNJ arrive dans la salle d'un autre.
+
+        On profite de cette méthode (reliée à un hook) pour demander
+        à deux matelots de différents équipages de s'attaquer.
+
+        """
+        if pnj is not arrive and hasattr(pnj, "identifiant") and \
+                hasattr(arrive, "identifiant"):
+            if pnj.identifiant in self.matelots and arrive.identifiant in \
+                    self.matelots:
+                matelot = self.matelots[pnj.identifiant]
+                arrive = self.matelots[arrive.identifiant]
+                print(matelot, "arrive", arrive)
+
+    def rendre_equipage(self, pnj, adversaire):
+        """Méthode appelée quand un PNJ meurt.
+
+        Cette méthode est appelée quand un PNJ meurt et permet de
+        déterminer, si le PNJ est un matelot, si l'équipage doit se
+        rendre.
+
+        """
+        print(pnj, "meurt tué par", adversaire)
 
     def get_symbole(self, point):
         """Retourne le symbole correspondant."""

@@ -499,11 +499,9 @@ class Navire(Vehicule):
             # On contrôle les collisions
             # On cherche toutes les positions successives du navire
             vecteurs = []
-            angle_radians = radians((self.direction.direction + 90) % 360)
-            for coords, salle in self.salles.items():
-                t_vecteur = Vector(*coords)
-                t_vecteur.around_z(angle_radians)
-                vecteurs.append((origine + t_vecteur, salle))
+            for salle in self.salles.values():
+                t_vecteur = Vector(*salle.coords.tuple())
+                vecteurs.append((t_vecteur, salle))
 
             # On récupère les points proches du navire
             etendue = self.etendue
@@ -522,6 +520,11 @@ class Navire(Vehicule):
                     arg = b_arg + list(coords) + [etendue.altitude, 0.5]
                     if in_rectangle(*arg) and vecteur.distance(
                             projetee, v_point) < 0.5:
+                        importeur.navigation.nav_logger.warning(
+                                "Collision {}:{}, {}.{}.{} {} {}".format(
+                                t_salle, point, vecteur, projetee,
+                                v_point, in_rectangle(*arg),
+                                vecteur.distance(projetee, v_point)))
                         self.collision(t_salle, point)
                         self.vitesse.x = 0
                         self.vitesse.y = 0
@@ -754,6 +757,8 @@ class Propulsion(Force):
             if rames.tenu and not rames.tenu.est_connecte():
                 rames.tenu.cle_etat = ""
                 rames.tenu = None
+                rames.vitesse = "immobile"
+                rames.centrer()
 
         navire.faire_ramer()
         rames = [r for r in navire.rames if r.tenu is not None]

@@ -46,6 +46,7 @@ class MetaOrdre(MetaBaseObj):
 
     """
 
+    etats_autorises = ("", )
     def __init__(cls, nom, bases, contenu):
         """Constructeur de la métaclasse"""
         MetaBaseObj.__init__(cls, nom, bases, contenu)
@@ -69,6 +70,7 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
     id_actuel = 1
     cle = ""
     logger = type(importeur).man_logs.get_logger("ordres")
+    etats_autorises = ("", )
     def __init__(self, matelot, navire):
         """Construit un ordre.
 
@@ -84,6 +86,7 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
         self.priorite = 1
         self.suite = None
         self.volonte = None
+        self.invalide = False
         if self.matelot is None and navire:
             matelots = navire.matelots
             self.matelot = self.choisir_matelot(matelots)

@@ -40,10 +40,14 @@ from secondaires.navigation.equipage.volontes.feu import Feu
 from secondaires.navigation.equipage.volontes.hisser_voiles import HisserVoiles
 from secondaires.navigation.equipage.volontes.orienter_voiles import OrienterVoiles
 from secondaires.navigation.equipage.volontes.plier_voiles import PlierVoiles
+from secondaires.navigation.equipage.volontes.ramer import Ramer
 from secondaires.navigation.equipage.volontes.relacher_gouvernail import \
         RelacherGouvernail
+from secondaires.navigation.equipage.volontes.relacher_rames import \
+        RelacherRames
 from secondaires.navigation.equipage.volontes.tenir_gouvernail import \
         TenirGouvernail
+from secondaires.navigation.equipage.volontes.tenir_rames import TenirRames
 from secondaires.navigation.equipage.volontes.tirer import Tirer
 from secondaires.navigation.equipage.volontes.virer import Virer
 from secondaires.navigation.equipage.volontes.virer_babord import VirerBabord

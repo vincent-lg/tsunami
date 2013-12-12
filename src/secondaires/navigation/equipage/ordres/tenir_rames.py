@@ -1,15 +1,15 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
 # * Redistributions of source code must retain the above copyright notice, this
-#   raise of conditions and the following disclaimer.
+#   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
-#   this raise of conditions and the following disclaimer in the documentation
+#   this list of conditions and the following disclaimer in the documentation
 #   and/or other materials provided with the distribution.
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
@@ -28,38 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'relâcher' de la commande 'rames'."""
+"""Fichier contenant l'ordre TenirRames."""
 
-from primaires.interpreteur.masque.parametre import Parametre
+from secondaires.navigation.equipage.signaux import *
 
-class PrmRelacher(Parametre):
+from ..ordre import *
 
-    """Commande 'rames relâcher'.
+class TenirRames(Ordre):
+
+    """Ordre tenir_rames.
+
+    Cet ordre est appelé pour demander à un matelot de prendre
+    les rames spécifiées en main. Il ne doit pas encore commencer
+    à ramer mais il les tient (son état est modifié en conséquence).
 
     """
 
-    def __init__(self):
-        """Constructeur du paramètre"""
-        Parametre.__init__(self, "relâcher", "unhold")
-        self.aide_courte = "relâche les rames"
-        self.aide_longue = \
-            "Cette commande permet de relacher les rames."
+    cle = "tenir_rames"
+    etats_autorises = ("tenir_rames", "")
 
-    def interpreter(self, personnage, dic_masques):
-        """Interprétation du paramètre"""
+    def __init__(self, matelot, navire, rames=None):
+        Ordre.__init__(self, matelot, navire)
+        self.rames = rames
+
+    def executer(self):
+        """Exécute l'ordre : tient les rames."""
+        personnage = self.matelot.personnage
         salle = personnage.salle
-        if not hasattr(salle, "navire") or salle.navire is None or \
-                salle.navire.etendue is None:
-            personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
-            return
+        rames = self.rames
+        if salle is not rames.parent:
+            yield SignalAbandonne("Je ne suis pas dans la salle des rames.")
 
-        navire = salle.navire
-        rames = salle.rames
-        if not rames:
-            personnage << "|err|Il n'y a pas de rames ici.|ff|"
-            return
-
-        if rames.tenu is not personnage:
-            personnage << "|err|Vous ne tenez pas ces rames.|ff|"
+        if rames.tenu:
+            yield SignalInutile("ces rames sont déjà tenues")
         else:
-            rames.relacher()
+            rames.tenir(personnage)
+            yield SignalTermine()

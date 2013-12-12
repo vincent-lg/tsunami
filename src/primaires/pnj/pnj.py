@@ -177,7 +177,12 @@ class PNJ(Personnage):
     def get_nom_etat(self, personnage, nombre=1):
         """Retourne le nom et l'état (singulier ou pluriel)."""
         if nombre == 1:
-            return self.nom_singulier + " " + self.etat_singulier
+            nom = self.nom_singulier + " "
+            if self.position or self.etat:
+                nom += Personnage.get_etat(self)
+            else:
+                nom += self.etat_singulier
+            return nom
         else:
             return str(nombre) + " " + self.nom_pluriel + " " + \
                     self.etat_pluriel
@@ -186,6 +191,9 @@ class PNJ(Personnage):
         """Retourne le nom pour le personnage passé en paramètre."""
         return self.nom_singulier
 
+    def est_connecte(self):
+        return True
+
     def mourir(self, adversaire=None, recompenser=True):
         """La mort d'un PNJ signifie sa destruction."""
         self.script["meurt"]["avant"].executer(pnj=self, salle=self.salle,
@@ -193,6 +201,7 @@ class PNJ(Personnage):
         Personnage.mourir(self, adversaire=adversaire, recompenser=recompenser)
         self.script["meurt"]["apres"].executer(pnj=self, salle=self.salle,
                 adversaire=adversaire)
+        importeur.hook["pnj:meurt"].executer(self, adversaire)
         cadavre = importeur.objet.creer_objet(importeur.objet.prototypes[
                 "cadavre"])
         cadavre.pnj = self.prototype

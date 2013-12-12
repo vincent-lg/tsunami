@@ -215,7 +215,7 @@ class Salle(BaseObj):
 
     def ajouter_personnage(self, personnage):
         """Ajoute le personnage dans la salle"""
-        if personnage not in self.personnages:
+        if personnage not in self._personnages:
             self._personnages.append(personnage)
 
     def retirer_personnage(self, personnage):

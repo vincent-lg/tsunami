@@ -67,6 +67,15 @@ class Module(BaseModule):
         for no in range(1, NB_TICKS + 1):
             self.ticks[no] = []
 
+    def config(self):
+        """Méthode de configuration du module"""
+        importeur.hook.ajouter_hook("pnj:arrive",
+                "Hook appelé quand un personnage arrive près du PNJ")
+        importeur.hook.ajouter_hook("pnj:meurt",
+                "Hook appelé quand un PNJ meurt")
+
+        BaseModule.config(self)
+
     def init(self):
         """Initialisation du module"""
         prototypes = self.importeur.supenr.charger_groupe(Prototype)

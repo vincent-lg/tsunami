@@ -568,7 +568,8 @@ class Personnage(BaseObj):
 
         # On appelle les pnj.part des PNJs de la salle
         for perso in self.salle.personnages:
-            if hasattr(perso, "script") and perso.peut_voir(self):
+            if perso is not self and hasattr(perso, "script") and \
+                    perso.peut_voir(self):
                 perso.script["part"].executer(vers=sortie.nom,
                         destination=salle_dest, pnj=perso, personnage=self)
 
@@ -657,9 +658,12 @@ class Personnage(BaseObj):
 
         # On appelle les pnj.arrive des PNJs de la salle
         for perso in salle_dest.personnages:
-            if hasattr(perso, "script") and perso.peut_voir(self):
+            if perso is not self and hasattr(perso, "script") and \
+                    perso.peut_voir(self):
                 perso.script["arrive"].executer(depuis=nom_opp, pnj=perso,
                         personnage=self, salle=salle)
+                importeur.hook["pnj:arrive"].executer(perso,
+                        self)
 
     def essayer_nage(self, origine, destination):
         """Essaye de nager et retourne un booléen de réussite.

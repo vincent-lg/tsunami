@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,69 +28,56 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package postes contenant les différents postes.
+"""Fichier contenant la méta-classe et la classe abstraite de donnée."""
 
-Chaque poste est dans un fichier distinct.
+import re
 
-La définition d'un poste se fait dans la classe Poste, détaillée plus bas.
-Ce fichier contient également la métaclasse des postes, MetaPoste.
+from abstraits.obase import BaseObj, MetaBaseObj
 
-"""
+donnees = {}
 
-postes = {}
+class MetaDonnee(MetaBaseObj):
 
-class MetaPoste(type):
+    """Métaclasse des données de configuration.
 
-    """Métaclasse des postes disponibles pour un membre d'équipage.
-
-    Elle ajoute le poste dans le dictionnaire 'postes' si il possède
-    un nom.
+    Elle ajoute la donnée dans le dictionnaire 'donnees' si elle possède
+    une clé.
 
     """
 
     def __init__(cls, nom, bases, contenu):
         """Constructeur de la métaclasse"""
-        type.__init__(cls, nom, bases, contenu)
-        if cls.nom:
-            postes[cls.nom] = cls()
+        MetaBaseObj.__init__(cls, nom, bases, contenu)
+        if cls.cle:
+            donnees[cls.cle] = cls
 
-class Poste(metaclass=MetaPoste):
+class Donnee(BaseObj, metaclass=MetaDonnee):
 
-    """Classe définissant un poste occupé par un membre d'équipage.
+    """Classe représentant une donnée de configuration."""
 
-    Les attributs d'un poste sont :
-        nom -- le nom du poste
-        autorite -- un entier définissant l'autorité du poste
-        nom_parent -- le nom du poste parent
-
-    """
-
-    nom = ""
+    cle = ""
+    expression = None
     def __init__(self):
-        """Constructeur du poste."""
-        self.autorite = 0
-        self.nom_parent = ""
+        """Construit une volonté."""
+        BaseObj.__init__(self)
 
-    @property
-    def parent(self):
-        """Retourne le poste parent si existe ou None sinon."""
-        return postes.get(self.nom_parent)
+    def __getnewargs__(self):
+        return ()
 
     def __repr__(self):
-        return "<poste {}>".format(repr(self.nom))
+        return "<Donnée de configuration '{}>".format(self.cle)
 
-    def __str__(self):
-        return self.nom
+    @classmethod
+    def tester(cls, chaine):
+        """Test si l'expression parse la chaîne."""
+        resultat = cls.expression.search(chaine)
+        if resultat:
+            resultat = cls.convertir(*resultat.groups())
 
-from . import capitaine
-from . import second
-from . import maitre_equipage
-from . import officier
-from . import matelot
-from . import artilleur
-from . import voilier
-from . import charpentier
-from . import vigie
-from . import rameur
-from . import chirurgien
-from . import maitre_cuisinier
+        print("res", resultat)
+        return resultat
+
+    @staticmethod
+    def compiler(expression):
+        """Compile l'expression et retourne la regexp."""
+        return re.compile(expression, re.I)

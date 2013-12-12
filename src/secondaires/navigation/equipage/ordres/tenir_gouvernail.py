@@ -44,6 +44,7 @@ class TenirGouvernail(Ordre):
     """
 
     cle = "tenir_gouvernail"
+    eats_autorises = ("tenir_gouvernail", "")
     def calculer_empechement(self):
         """Retourne une estimation de l'empêchement du matelot."""
         if self.matelot.cle_etat:

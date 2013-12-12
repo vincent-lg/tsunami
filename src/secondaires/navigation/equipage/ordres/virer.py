@@ -45,6 +45,7 @@ class Virer(Ordre):
     """
 
     cle = "virer"
+    etats_autorises = ("tenir_gouvernail", )
     def __init__(self, matelot, navire, direction=0):
         Ordre.__init__(self, matelot, navire)
         self.direction = direction
