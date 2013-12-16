@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 NOEL-BARON Léo
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,23 +35,24 @@
 import re
 
 from abstraits.obase import BaseObj
+from primaires.format.fonctions import supprimer_accents
 
 class Filtre:
-    
+
     """Classe de filtre.
-    
+
     Cette classe modélise un filtre de recherche et permet de tester
     une valeur.
-    
+
     """
-    
+
     def __init__(self, opt_courte, opt_longue, test, type):
         """Constructeur de la classe"""
         self.opt_courte = opt_courte
         self.opt_longue = opt_longue
         self.test = test
         self.type = type
-    
+
     def __str__(self):
         courte = "-" + self.opt_courte
         longue = "--" + self.opt_longue if self.opt_longue else ""
@@ -59,13 +60,14 @@ class Filtre:
             courte += " ARG"
             longue += "=ARG" if self.opt_longue else ""
         return courte + ", " + longue if self.opt_longue else courte
-    
+
     def tester(self, objet, valeur):
         """Teste le filtre"""
         if self.type:
             if self.type == "str":
                 try:
-                    valeur = re.compile(valeur.replace("_b_", "|"), re.I)
+                    valeur = re.compile(supprimer_accents(
+                            valeur.replace("_b_", "|")), re.I)
                 except re.error:
                     raise TypeError(
                             "le type précisé doit être une chaîne valide")
@@ -88,7 +90,8 @@ class Filtre:
             return self.test(objet, valeur)
         else:
             if self.type == "str":
-                return valeur.search(getattr(objet, self.test))
+                attribut = supprimer_accents(str(getattr(objet, self.test)))
+                return valeur.search(attribut)
             elif self.type in ("int", "bool"):
                 return getattr(objet, self.test) == valeur
             else:

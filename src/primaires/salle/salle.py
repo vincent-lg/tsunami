@@ -187,6 +187,14 @@ class Salle(BaseObj):
     def desc_survol(self):
         return self.terrain.desc_survol
 
+    @property
+    def str_coords(self):
+        x, y, z = self.coords.tuple()
+        if self.coords.valide:
+            return "{}.{}.{}".format(x, y, z)
+
+        return "Aucune"
+
     def get_etendue(self):
         return self.etendue
 
