@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -71,7 +71,7 @@ ACCENTS = {
     "Ë":"E",
     "Ï":"I",
     "Ç":"C",
-    
+
     # Lettres minuscules
     "é":"e",
     "à":"a",
@@ -107,7 +107,7 @@ COULEURS = {
     b"|mgc|": b"\x1b[1;35m", # magenta clair
     b"|cyc|": b"\x1b[1;36m", # cyan clair
     b"|bc|": b"\x1b[1;37m",  # blanc
-    
+
     b"|ff|": b"\x1b[0m",  # fin de formattage
 }
 
@@ -119,18 +119,18 @@ for couleur, valeur in COULEURS.items():
 
 def get_bytes(msg, ncod_optionnel):
     """Retourne un type bytes.
-    
+
     Peut prendre en paramètre :
     -   un type bytes (on le retourne sans rien changer)
     -   un type str (on l'encode avec l'encodage optionnel)
-    
+
     """
     if isinstance(msg, str):
         if ncod_optionnel:
             msg = msg.encode(ncod_optionnel)
         else:
             msg = supprimer_accents(msg).encode()
-    
+
     return msg
 
 # Fonctions à appliquer à la réception de messages
@@ -138,14 +138,14 @@ def get_bytes(msg, ncod_optionnel):
 def echapper_sp_cars(msg):
     """Fonction appelée pour échapper les caractères spéciaux d'une
     chaîne.
-    
+
     Elle doit être appliquée sur les messages réceptionnés, mais pas sur tous.
     Certains messages réceptionnés depuis des personnages immortels doivent
     avoir la possibilité d'ajouter ces codes de formattage.
-    
+
     Pour connaître les caractères à échapper, on se base sur le dictionnaire
     sp_cars_a_echapper.
-    
+
     """
     for car, a_repl in sp_cars_a_echapper.items():
         msg = msg.replace(car, a_repl)
@@ -154,7 +154,7 @@ def echapper_sp_cars(msg):
 def convertir_nl(msg):
     """Cette fonction est appelée pour convertir les sauts de ligne '\n'
     en sauts de ligne compris par tous les clients (y compris telnet).
-    
+
     """
     msg = msg.replace(b"\n", NL)
     return msg
@@ -169,7 +169,7 @@ def ajouter_couleurs(msg, config):
     raccourcis de mise en forme (voir config.py). Le deuxième argument est
     le dictionnaire de ces raccourcis.
     On se base sur la constante dictionnaire 'COULEURS'.
-    
+
     """
     # Création du dictionnaire des options
     FORMAT = {
@@ -179,54 +179,70 @@ def ajouter_couleurs(msg, config):
         b"|att|": config.couleur_attention.encode(),
         b"|err|": config.couleur_erreur.encode()
     }
-    
+
     # On transforme les raccourcis de mise en forme, puis on colorise en ANSI
     for balise, couleur in FORMAT.items():
         msg = msg.replace(balise, couleur)
-    
+
     for balise, code_ansi in COULEURS.items():
         msg = msg.replace(balise, code_ansi)
-    
+
     return msg
+
+def contient_couleurs(msg):
+    """Retourne True si la chaîne contient des signes colorés."""
+    msg = get_bytes(msg, "utf-8")
+    FORMAT = [
+        b"|tit|",
+        b"|cmd|",
+        b"|ent|",
+        b"|att|",
+        b"|err|",
+    ]
+
+    for balise in FORMAT:
+        msg = msg.replace(balise, b"|rg|")
+
+    return any(msg.count(balise) > 0 for balise in COULEURS)
 
 def remplacer_sp_cars(msg):
     """On remplace les caractères d'échappement d'un message, ceux échappés
     par la méthode 'echapper_sp_cars' à la réception du message.
-    
+
     On se base sur le dictionnaire miroir 'sp_cars_a_remplacer'.
-    
+
     """
     for code_car, a_repl in sp_cars_a_remplacer.items():
         msg = msg.replace(code_car.encode(), a_repl.encode())
-    
+
     return msg
 
 def supprimer_accents(msg):
     """Cette fonction permet, avant émission du message, de retirer
     les accents. On se base pour ce faire sur ACCENTS.
     ATTENTION : cette fonction doit accepter 'str' et 'bytes'.
-    
+
     """
     for acc, non_acc in ACCENTS.items():
-        if type(msg) == bytes:
+        if isinstance(msg, bytes):
             acc, non_acc = acc.encode(), non_acc.encode()
         msg = msg.replace(acc, non_acc)
-    
+
     return msg
 
 def souligner_sauts_de_ligne(msg):
     """Cette fonciton souligne les sauts de ligne pour les utilisateurs de
     lecteurs d'écran.
-    
+
     Quand on utilise Jaws avec par exemple MushClient, les lignes complètement
     vides sont ignorées. C'est pratique la plupart du temps, mais il peut
     être bien de voir les lignes vides également. Pour cela, on se contente
     de rendre la ligne non vide, en y insérant un simple espace.
-    
+
     """
     while "\n\n" in msg:
         msg = msg.replace("\n\n", "\n \n")
-    
+
     return msg
 
 def supprimer_couleurs(texte):
@@ -239,7 +255,7 @@ def supprimer_couleurs(texte):
         "|att|",
         "|err|",
     ])
-    
+
     for couleur in couleurs:
         texte = texte.replace(couleur, "")
 
@@ -251,7 +267,7 @@ def contient(nom_complet, fragment):
     nom_complet = supprimer_couleurs(supprimer_accents(nom_complet).lower())
     if not fragment:
         return False
-    
+
     fragment = fragment.replace("'", " ")
     nom_complet = nom_complet.replace("'", " ")
     nom_fragmente = nom_complet.split(" ")
@@ -259,7 +275,7 @@ def contient(nom_complet, fragment):
         nom_partiel = " ".join(nom_fragmente[i:])
         if nom_partiel.startswith(fragment):
             return True
-    
+
     return False
 
 def couper_phrase(phrase, couper):
@@ -286,9 +302,9 @@ def oui_ou_non(flag):
 
 def format_nb(nb, message, fem=False):
     """Formate une chaîne de caractère en fonction de nb.
-    
+
     Le paramètre fem signifie féminin.
-    
+
     """
     mots = {
         "nb": nb,
@@ -300,15 +316,15 @@ def format_nb(nb, message, fem=False):
         mots["nb"] = "Aucune" if fem else "Aucun"
     elif nb == 1:
         mots["nb"] = "Une" if fem else "Un"
-    
+
     return message.format(**mots)
 
 def aff_flottant(flottant, arrondi=3):
     """Retourne le flottant sous la forme d'une chaîne de caractères.
-    
+
     Le point décimal est remplacé par une virgule.
     Le flottant est arrondi à la valeur passée en paramètre (3 par défaut).
-    
+
     """
     flottant = round(flottant, arrondi)
     return str(flottant).replace(".", ",")

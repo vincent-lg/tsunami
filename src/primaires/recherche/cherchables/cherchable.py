@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 NOEL-BARON Léo
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -37,9 +37,9 @@ import getopt
 import inspect
 import re
 import shlex
-import textwrap
 
 from abstraits.obase import BaseObj
+from primaires.format.tableau import Tableau
 from primaires.recherche.filtre import Filtre
 from primaires.recherche.cherchables import MetaCherchable
 
@@ -51,39 +51,39 @@ PARAMS = {"str":"une chaîne",
 }
 
 class Cherchable(BaseObj, metaclass=MetaCherchable):
-    
+
     """Classe de base des objets de recherche.
-    
+
     Cette classe modélise les items que l'on est susceptible de rechercher
     dans l'univers : objets, salles, personnages... Elle associe à chacun une
     liste de filtres de recherche correspondant à des options (syntaxe Unix).
-    
+
     De fait, c'est plutôt une enveloppe de filtres et d'objets à traiter.
     Pour un exemple d'utilisation, voir primaires/objet/cherchables/objet.py.
-    
+
     """
-    
+
     nom_cherchable = ""
-    
+
     def __init__(self):
         """Constructeur de la classe"""
         self.filtres = []
-        
+
         # Initialisation du cherchable
         self.init()
-    
+
     def __getnewargs__(self):
         return ()
-    
+
     def init(self):
         """Méthode d'initialisation.
-        
+
         C'est ici que l'on ajoute réellement les filtres, avec la méthode
         dédiée.
-        
+
         """
         raise NotImplementedError
-    
+
     @property
     def courtes(self):
         """Renvoie une chaîne des options courtes au bon format"""
@@ -98,7 +98,7 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
                 sans += courte
         avec = "".join(sorted(avec))
         return avec + sans
-    
+
     @property
     def longues(self):
         """Renvoie une liste des options longues au bon format"""
@@ -108,27 +108,27 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
                 egal = "=" if filtre.type else ""
                 ret.append(filtre.opt_longue + egal)
         return sorted(ret)
-    
+
     @property
     def items(self):
         """Renvoie la liste des objets traités"""
         raise NotImplementedError
-    
+
     @property
     def attributs_tri(self):
         """Renvoie la liste des attributs par lesquels on peut trier"""
         return []
-    
+
     @property
     def colonnes(self):
         """Retourne un dictionnaire des valeurs que l'on peut disposer en
         colonne à l'affichage final, de la forme :
         >>> {nom: attribut/méthode}
         (une colonne peut être remplie par une méthode du cherchable).
-        
+
         """
         return {}
-    
+
     @property
     def aide(self):
         """Retourne l'aide du cherchable"""
@@ -168,7 +168,7 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
             aide += "par des virgules (par exemple |ent|nom, identifiant, "
             aide += "autre|ff|)."
         return aide.strip()
-    
+
     def ajouter_filtre(self, opt_courte, opt_longue, test, type=""):
         """Ajoute le filtre spécifié"""
         longues = [f.opt_longue for f in self.filtres]
@@ -181,7 +181,7 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
         if type and type not in ("int", "str", "str!", "bool"):
             raise ValueError("le type {} est invalide".format(type))
         self.filtres.append(Filtre(opt_courte, opt_longue, test, type))
-    
+
     def tester(self, options, liste):
         """Teste une liste de couples (option, argument)"""
         if not options:
@@ -203,31 +203,31 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
                 raise ValueError("l'option {} n'existe pas".format(o))
         del options[0]
         return self.tester(options, liste_ret)
-    
+
     def afficher(self, objet):
         """Méthode d'affichage standard des objets traités"""
         raise NotImplementedError
-    
+
     def colonnes_par_defaut(self):
         """Retourne les colonnes d'affichage par défaut.
-        
+
         Si une ou plusieurs colonnes sont spécifiés lors de la recherche,
         les colonnes par défaut ne sont pas utilisées.
-        
+
         Cette méthode doit retourner une liste de nom de colonnes.
-        
+
         """
         raise NotImplementedError
-    
+
     def tri_par_defaut(self):
         """Sur quelle colonne se base-t-on pour trier par défaut ?"""
         raise NotImplementedError
-    
+
     @classmethod
     def trouver_depuis_chaine(cls, chaine):
         """Retourne un message en fonction de la chaîne passée en paramètre."""
         cherchable = cls()
-        
+
         # On crée les listes d'options
         opt_courtes = "ao:c:" + cherchable.courtes
         opt_longues = ["aide", "org=", "colonnes="] + cherchable.longues
@@ -243,7 +243,7 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
             except (getopt.GetoptError, ValueError) as err:
                 return "|err|Une option n'a pas été reconnue ou bien " \
                         "interprétée.|ff|"
-            
+
             # On récupère les options génériques
             nettoyer = []
             for opt, arg in options:
@@ -254,7 +254,7 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
                         tri = arg
                     else:
                         return "|err|Vous ne pouvez trier ainsi.|ff|"
-                    
+
                     nettoyer.append((opt, arg))
                 elif opt in ("-c", "--colonnes"):
                     try:
@@ -265,18 +265,18 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
                     except AssertionError:
                         return "|err|Les colonnes spécifiées sont " \
                                 "invalides.|ff|"
-                    
+
                     nettoyer.append((opt, arg))
-            
+
             for couple in nettoyer:
                 options.remove(couple)
-            
+
             try:
                 retour = cherchable.tester(options, cherchable.items)
             except TypeError:
                 return "|err|Les options n'ont pas été bien " \
                         "interprétées.|ff|"
-        
+
         # Post-traitement et affichage
         if not retour:
             return "|att|Aucun retour pour ces paramètres de " \
@@ -285,56 +285,25 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
             # On trie la liste de retour
             if not tri:
                 tri = cherchable.tri_par_defaut()
-            
+
             retour = sorted(retour, key=lambda obj: getattr(obj, tri))
-            
-            retour_aff = []
+
+            retour_aff = Tableau()
             if not colonnes:
                 colonnes = cherchable.colonnes_par_defaut()
-            
-            retour_tab = []
-            longueurs = []
+
+            for colonne in colonnes:
+                retour_aff.ajouter_colonne(colonne.capitalize())
+
             for i, o in enumerate(retour):
-                retour_tab.append([])
+                ligne = []
                 for l, c in enumerate(colonnes):
                     c = c.strip()
                     if callable(cherchable.colonnes[c]):
                         aff = cherchable.colonnes[c](o)
                     else:
                         aff = getattr(o, cherchable.colonnes[c])
-                    retour_tab[i].append(aff)
-                    try:
-                        if longueurs[l] < len(str(aff)):
-                            longueurs[l] = len(str(aff))
-                    except IndexError:
-                        longueurs.append(len(str(aff)))
-                for i, c in enumerate(colonnes):
-                    if longueurs[i] < len(c):
-                        longueurs[i] = len(c)
-            for ligne in retour_tab:
-                c_ligne = []
-                for l, elt in enumerate(ligne):
-                    plus = len(re.findall("\|[a-z]{2}\|.*\|ff\|",
-                            str(elt))) * 8
-                    plus += len(re.findall("\|[a-z]{3}\|.*\|ff\|",
-                            str(elt))) * 9
-                    c_ligne.append(str(elt).ljust(longueurs[l] + plus))
-                retour_aff.append("| " + " | ".join(c_ligne) + " |")
-            
-            somme_lg = -1
-            for l in longueurs:
-                somme_lg += l + 3
-            
-            en_tete = ["+" + "-" * somme_lg + "+",
-                "| |tit|" + "|ff| | |tit|".join(
-                        [c.capitalize().ljust(longueurs[i]) \
-                        for i, c in enumerate(colonnes)]) + " |ff||",
-                "+" + "-" * somme_lg + "+"]
-            
-            retour_aff = en_tete + retour_aff
-            retour_aff += ["+" + "-" * somme_lg + "+"]
-            
-            if not tri:
-                retour_aff = sorted(retour_aff)
-            
-            return "\n".join(retour_aff)
+                    ligne.append(aff)
+                retour_aff.ajouter_ligne(*ligne)
+
+            return retour_aff.afficher()
