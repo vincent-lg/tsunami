@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,18 +28,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier définit le cherchable des prototypes de PNJ."""
+"""Ce fichier définit le cherchable des joueurs."""
 
 from primaires.format.fonctions import supprimer_accents
 from primaires.recherche.cherchables.cherchable import Cherchable
 
-class CherchablePrototypePNJ(Cherchable):
+class CherchableJoueur(Cherchable):
 
-    """Classe cherchable pour les prototypes d'objet de l'univers.
+    """Classe cherchable pour les joueurs de l'univers."""
 
-    """
-
-    nom_cherchable = "prpnj"
+    nom_cherchable = "joueur"
 
     def init(self):
         """Méthode d'initialisation.
@@ -48,22 +46,19 @@ class CherchablePrototypePNJ(Cherchable):
         dédiée.
 
         """
-        self.ajouter_filtre("n", "nom", "nom_singulier", "str")
-        self.ajouter_filtre("l", "cle", "cle", "str")
-        self.ajouter_filtre("r", "race", "nom_race", "str")
-        self.ajouter_filtre("g", "genre", "genre", "str")
-        self.ajouter_filtre("v", "niveau", "niveau", "int")
-        self.ajouter_filtre("e", "entrainement", self.entraine_stat, "str!")
+        self.ajouter_filtre("n", "nom", "nom", "str")
+        self.ajouter_filtre("m", "compte", "compte", "str")
+        self.ajouter_filtre("g", "groupe", "nom_groupe", "str")
 
     @property
     def items(self):
         """Renvoie la liste des objets traités"""
-        return list(importeur.pnj.prototypes.values())
+        return list(importeur.joueur.joueurs.values())
 
     @property
     def attributs_tri(self):
         """Renvoie la liste des attributs par lesquels on peut trier"""
-        return ["cle", "nom", "race", "niveau"]
+        return ["nom", "compte", "groupe"]
 
     @property
     def colonnes(self):
@@ -74,27 +69,10 @@ class CherchablePrototypePNJ(Cherchable):
 
         """
         return {
-            "nom": "nom_singulier",
-            "cle": "cle",
-            "race": "nom_race",
-            "genre": "genre",
-            "niveau": "niveau",
+            "nom": "nom",
+            "compte": "compte",
+            "groupe": "nom_groupe",
         }
-
-    def entraine_stat(self, prototype, valeur):
-        """Permet une recherche sur le type de l'objet.
-
-        Le type spécifié doit être un type valide et existant ;
-        si l'objet est de ce type ou d'un de ses fils, il sera
-        retourné à la recherche (cette option n'accepte pas les regex).
-
-        """
-        valeur = supprimer_accents(valeur).lower()
-        for nom_stat in prototype.entraine_stats:
-            if supprimer_accents(nom_stat).lower() == valeur:
-                return True
-
-        return False
 
     def colonnes_par_defaut(self):
         """Retourne les colonnes d'affichage par défaut.
@@ -105,8 +83,8 @@ class CherchablePrototypePNJ(Cherchable):
         Cette méthode doit retourner une liste de nom de colonnes.
 
         """
-        return ("cle", "nom")
+        return ("nom", "groupe")
 
     def tri_par_defaut(self):
         """Sur quelle colonne se base-t-on pour trier par défaut ?"""
-        return "cle"
+        return "nom"

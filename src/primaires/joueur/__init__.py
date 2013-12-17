@@ -36,6 +36,7 @@ from primaires.joueur import masques
 from primaires.joueur.config import cfg_joueur
 from primaires.joueur.editeurs.descedit import EdtDescedit
 from .joueur import Joueur
+from . import cherchables
 from . import contextes
 
 # Constantes

@@ -91,14 +91,13 @@ class CherchablePrototypeObjet(Cherchable):
         retourné à la recherche (cette option n'accepte pas les regex).
 
         """
-        valeur = valeur.pattern
         try:
             valeur = importeur.objet.get_type(valeur)
         except KeyError:
             return False
 
         try:
-            return prototype.est_de_type(valeur)
+            return prototype.est_de_type(valeur.nom_type)
         except KeyError:
             return False
 
