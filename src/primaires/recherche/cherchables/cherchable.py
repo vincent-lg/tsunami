@@ -37,6 +37,7 @@ import getopt
 import inspect
 import re
 import shlex
+import textwrap
 
 from abstraits.obase import BaseObj
 from primaires.format.tableau import Tableau
