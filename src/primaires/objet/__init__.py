@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -45,12 +45,12 @@ from .potions_vente import PotionsVente
 from .nourritures_vente import NourrituresVente
 
 class Module(BaseModule):
-    
+
     """Cette classe contient les informations du module primaire objet.
     Ce module gère les objets de l'univers.
-    
+
     """
-    
+
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "objet", "primaire")
@@ -59,7 +59,7 @@ class Module(BaseModule):
         self.cherchable_pr = None
         self.logger = importeur.man_logs.creer_logger(
                 "objets", "objets")
-    
+
     def config(self):
         """Configuration du module."""
         importeur.commerce.types_services["objet"] = self._prototypes
@@ -83,33 +83,33 @@ class Module(BaseModule):
             "d'aliments que vous proposez est supérieur au poids\nmaximum du " \
             "conteneur, l'ajout du service ne fonctionnera pas."
         BaseModule.config(self)
-    
+
     def init(self):
         """Initialisation du module"""
         prototypes = self.importeur.supenr.charger_groupe(BaseType)
         for prototype in prototypes:
             self._prototypes[prototype.cle] = prototype
-        
+
         nb_prototypes = len(prototypes)
         self.logger.info(format_nb(nb_prototypes, "{nb} prototype{s} " \
                 "d'objet récupéré{s}"))
-        
+
         objets = self.importeur.supenr.charger_groupe(Objet)
         for objet in objets:
             self._objets[objet.identifiant] = objet
-        
+
         nb_objets = len(objets)
         self.logger.info(format_nb(nb_objets, "{nb} objet{s} récupéré{s}"))
-        
+
         # Ajout de l'état repas
         etat = self.importeur.perso.ajouter_etat("repas")
         etat.msg_refus = "Vous êtes en train de manger."
         etat.msg_visible = "mange ici"
         etat.act_autorisees = ["regarder", "bouger"]
-        
+
         self.cherchable_pry = cherchables.prototype.CherchablePrototypeObjet
         BaseModule.init(self)
-    
+
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
@@ -129,13 +129,13 @@ class Module(BaseModule):
             commandes.retirer.CmdRetirer(),
             commandes.vider.CmdVider(),
         ]
-        
+
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
-        
+
         # Ajout de l'éditeur 'oedit'
         self.importeur.interpreteur.ajouter_editeur(EdtOedit)
-    
+
     def preparer(self):
         """Préparation du module."""
         if "cadavre" not in self._prototypes:
@@ -152,7 +152,7 @@ class Module(BaseModule):
                     "rafraîchit agréablement le gosier."
             eau.poids_unitaire = 0.1
             eau.prix = 0
-        
+
         # Nettoyage des objets existants sans lien
         existants = []
         for joueur in importeur.connex.joueurs:
@@ -166,12 +166,12 @@ class Module(BaseModule):
             for decor in salle.decors:
                 if hasattr(decor, "elements"):
                     existants.extend(list(decor.elements.values()))
-        
+
         a_detruire = []
         for objet in importeur.objet.objets.values():
             if objet not in existants:
                 a_detruire.append(objet)
-        
+
         a_detruire = [o for o in a_detruire if o and o.prototype]
         self.logger.info(format_nb(len(a_detruire), "{nb} objet{s} à " \
                 "détruire"))
@@ -185,117 +185,123 @@ class Module(BaseModule):
                 importeur.objet.supprimer_objet(objet.identifiant)
             except KeyError:
                 objet.detruire()
-        
+
         for nom, nombre in sorted(types.items(), key=lambda c: c[1], \
                 reverse=True):
             self.logger.info("  Dont {} de type {}".format(nombre, nom))
-        
+
         # Opérations de nettoyage cycliques
         importeur.diffact.ajouter_action("net_boule de neige", 60,
                 self.nettoyage_cyclique, "boule de neige")
-    
+
     @property
     def prototypes(self):
         return dict(self._prototypes)
-    
+
     @property
     def objets(self):
         return dict(self._objets)
-    
+
     @property
     def noms_types(self):
         """Retourne le nom des types d'objets actuels."""
         return [t.nom_type for t in o_types.values()]
-    
+
     @property
     def types(self):
         """Retourne un dictionnaire des types."""
         return dict(o_types)
-    
+
     @property
     def types_premier_niveau(self):
         """Retourne un dictionnaire des types du premier niveau."""
         return BaseType.types
-    
+
     def get_type(self, nom_type):
         """Retourne, si trouvé, le type indiqué ou lève une KeyError.
-        
+
         La recherche se fait indépendemment des majuscules, minuscules ou des
         accents.
-        
+
         """
         nom_type = supprimer_accents(nom_type).lower()
         for type in self.types.values():
             if supprimer_accents(type.nom_type) == nom_type:
                 return type
-        
+
         raise KeyError("type {} introuvable".format(nom_type))
-    
+
     def creer_prototype(self, cle, nom_type="indéfini"):
         """Crée un prototype et l'ajoute aux prototypes existants"""
         if cle in self._prototypes:
             raise ValueError("la clé {} est déjà utilisée comme " \
                     "prototype".format(cle))
-        
+
         cls_type = o_types[nom_type]
         prototype = cls_type(cle)
         self.ajouter_prototype(prototype)
         return prototype
-    
+
     def ajouter_prototype(self, prototype):
         """Ajoute un prototype au dictionnaire des prototypes"""
         if prototype.cle in self._prototypes:
             raise ValueError("la clé {} est déjà utilisée comme " \
                     "prototype".format(prototype.cle))
-        
+
         self._prototypes[prototype.cle] = prototype
-    
+
     def supprimer_prototype(self, cle):
         """Supprime le prototype cle"""
         prototype = self._prototypes[cle]
         del self._prototypes[cle]
         prototype.detruire()
-    
+
     def creer_objet(self, prototype):
         """Crée un objet depuis le prototype prototype.
         L'objet est ensuite ajouté à la liste des objets existants.
-        
+
         """
         if not prototype.unique:
             return prototype
-        
+
         objet = Objet(prototype)
         self.ajouter_objet(objet)
         return objet
-    
+
     def ajouter_objet(self, objet):
         """Ajoute l'objet à la liste des objets"""
         if objet.identifiant in self._objets:
             raise ValueError("l'identifiant {} est déjà utilisé comme " \
                     "objet".format(objet.identifiant))
-        
+
         self._objets[objet.identifiant] = objet
-    
+
     def supprimer_objet(self, identifiant):
         """Supprime l'objet de la liste des objets"""
         objet = self._objets[identifiant]
         del self._objets[identifiant]
         objet.detruire()
-    
+
     def essayer_supprimer_objet(self, objet):
         """Essaye de supprimer l'objet."""
         if not objet.unique:
             return
-        
+
         try:
             self.supprimer_objet(objet.identifiant)
         except KeyError:
             objet.detruire()
-    
+
     def nettoyage_cyclique(self, nom_type):
         """Nettoyage cyclique, appelé toutes les minutes."""
         importeur.diffact.ajouter_action("net_{}".format(nom_type), 60,
                 self.nettoyage_cyclique, nom_type)
-        objets = [o for o in self.objets.values() if o.nom_type == nom_type]
+        boule_neige = o_types["boule de neige"]
+        prototypes = [p for p in self.prototypes.values() if \
+                isinstance(p, boule_neige)]
+        objets = []
+        for prototype in prototypes:
+            objets.extend(prototype.objets)
+
         for objet in objets:
             objet.nettoyage_cyclique()

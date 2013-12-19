@@ -310,9 +310,6 @@ class Equipes(BaseObj):
                 self.equipement.desequiper_objet(membre.nom)
                 return
 
-        raise ValueError("l'objet {} n'a pu être trouvé dans cet " \
-                "équipement".format(objet.cle))
-
     def supporter_poids_sup(self, poids, recursif=True):
         """Supporte le poids supplémentaire spécifiée.
 

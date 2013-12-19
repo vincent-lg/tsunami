@@ -40,7 +40,7 @@ from . import masques
 from .editeurs.pedit import EdtPedit
 
 # Constantes
-NB_TICKS = 12
+NB_TICKS = 20
 
 class Module(BaseModule):
 

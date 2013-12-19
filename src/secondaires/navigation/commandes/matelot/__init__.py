@@ -40,6 +40,7 @@ from .creer import PrmCreer
 from .editer import PrmEditer
 from .liste import PrmListe
 from .poste import PrmPoste
+from .promouvoir import PrmPromouvoir
 from .recruter import PrmRecruter
 from .renommer import PrmRenommer
 
@@ -67,5 +68,6 @@ class CmdMatelot(Commande):
         self.ajouter_parametre(PrmEditer())
         self.ajouter_parametre(PrmListe())
         self.ajouter_parametre(PrmPoste())
+        self.ajouter_parametre(PrmPromouvoir())
         self.ajouter_parametre(PrmRecruter())
         self.ajouter_parametre(PrmRenommer())

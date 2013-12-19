@@ -79,6 +79,7 @@ class Navire(Vehicule):
         self.proprietaire = None
         self.nom_personnalise = ""
         self.cale = Cale(self)
+        self.canots = []
 
         # Dernier lien (dl)
 
@@ -352,7 +353,7 @@ class Navire(Vehicule):
 
         return personnages
 
-    def a_le_droit(self, personnage):
+    def a_le_droit(self, personnage, poste="capitaine", si_present=False):
         """Retourne True si le personnage a le droit, False sinon.
 
         Le droit est calculé selon plsuieurs critères :
@@ -368,11 +369,11 @@ class Navire(Vehicule):
             return True
 
         if personnage is self.proprietaire or \
-                        getattr(self.proprietaire.salle, "navire", None) \
-                        is self:
+                        (si_present and getattr(self.proprietaire.salle,
+                        "navire", None) is self):
             return True
 
-        return False
+        return self.equipage.est_au_poste(poste)
 
     def get_max_distance_au_centre(self):
         """Retourne la distance maximum par rapport au centre du navire."""
@@ -717,6 +718,26 @@ class Navire(Vehicule):
                     personnage.mourir()
 
         importeur.navigation.supprimer_navire(self.cle)
+
+    def enlever_canot(self, canot):
+        """Cette méthode enlève le canot et le met à bord.
+
+        Le canot est un autre navire (supposément un petit). Il
+        est placé dans les canots du bord et pourra être descendu ailleurs.
+
+        """
+        if not canot.modele.canot:
+            raise ValueError("{} n'est pas un canot".format(canot))
+
+        for salle in canot.salles.values():
+            if salle.personnages:
+                raise ValueError("{} a des personnages".format(salle))
+
+        canot.etendue = None
+        for salle in canot.salles.values():
+            salle.coords.valide = False
+
+        self.canots.append(canot.cle)
 
     def detruire(self):
         """Destruction du self."""

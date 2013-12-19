@@ -61,7 +61,8 @@ class PrmRetirer(Parametre):
             return
 
         navire = salle.navire
-        if navire.accoste and not navire.a_le_droit(personnage):
+        if navire.accoste and not navire.a_le_droit(personnage,
+                si_present=True):
             personnage << "|err|Vous n'avez pas le droit de retirer " \
                     "des objets de la cale.|ff|"
             return

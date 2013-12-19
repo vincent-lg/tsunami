@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -40,24 +40,24 @@ from .perturbations import perturbations
 from .perturbations.base import BasePertu, AUCUN_FLAG
 
 class Module(BaseModule):
-    
+
     """Cette classe représente le module primaire meteo.
-    
+
     Comme son nom l'indique, ce module gère la météorologie dans l'univers.
     La météo est régie par un ensemble de perturbations se déplaçant
     de façon semi-aléatoire dans l'univers. Ces perturbations sont décrites
     dans le dossier correspondant ; une partie de leur comportement
     est configurable.
-    
+
     """
-    
+
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "meteo", "primaire")
         self.perturbations_actuelles = []
         self.temperature = 0
         self.temperature_dynamique = True
-    
+
     def config(self):
         """Configuration du module"""
         self.cfg = type(self.importeur).anaconf.get_config("config_meteo",
@@ -66,41 +66,42 @@ class Module(BaseModule):
         self.temperature_dynamique = self.cfg.temperature_dynamique
         importeur.temps.met_changer_jour.append(self.changer_temperature)
         BaseModule.config(self)
-    
+
     def init(self):
-        """Initialisation du module"""        
+        """Initialisation du module"""
         self.importeur.hook["salle:regarder"].ajouter_evenement(
                 self.donner_meteo)
         self.perturbations_actuelles = self.importeur.supenr.charger_groupe(
                 BasePertu)
         BaseModule.init(self)
-    
+
     def ajouter_commandes(self):
         """Ajoute les commandes à l'interpréteur."""
         self.commandes = [
             commandes.meteo.CmdMeteo(),
         ]
-        
+
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
-    
+
     def preparer(self):
         """Préparation du module"""
         if self.temperature_dynamique:
             min, max = self.cfg.temperatures[importeur.temps.temps.mois]
             self.temperature = randint(min, max)
-        
+
         self.cycle_meteo()
-    
+
     @property
     def perturbations(self):
         return perturbations
-    
+
     def cycle_meteo(self):
         self.importeur.diffact.ajouter_action("cycle_meteo", 60,
                 self.cycle_meteo)
         # On tue les perturbations trop vieilles
         for pertu in self.perturbations_actuelles:
+            sous = pertu.liste_salles_sous
             if pertu.age >= pertu.duree:
                 i = randint(0, 100)
                 nom_pertu_enchainer = ""
@@ -111,12 +112,12 @@ class Module(BaseModule):
                         msg_enchainement = fin[1]
                         break
                 if not nom_pertu_enchainer:
-                    for salle in pertu.liste_salles_sous:
+                    for salle in sous:
                         if salle.exterieur:
                             salle.envoyer("|cy|" + pertu.message_fin + "|ff|",
                                     prompt=False)
                 else:
-                    for salle in pertu.liste_salles_sous:
+                    for salle in sous:
                         if salle.exterieur:
                             salle.envoyer("|cy|" + msg_enchainement + "|ff|",
                                     prompt=False)
@@ -133,10 +134,10 @@ class Module(BaseModule):
                 pertu.detruire()
                 self.perturbations_actuelles.remove(pertu)
                 continue
-            
+
             # On fait bouger les perturbations existantes
-            pertu.cycle()
-        
+            pertu.cycle(sous)
+
         # On tente de créer une perturbation
         if len(self.perturbations_actuelles) < self.cfg.nb_pertu_max:
             t_min = t_max = self.temperature
@@ -147,7 +148,7 @@ class Module(BaseModule):
                         importeur.salle.zones.values())
             perturbations = [p for p in self.perturbations if p.origine and ( \
                     p.accepte_temperature(t_min) or p.accepte_temperature(t_max))]
-            salles = list(self.importeur.salle._salles.values())
+            salles = list(self.importeur.salle._coords.values())
             cls_pertu = choice(perturbations)
             if cls_pertu.temperature_min or cls_pertu.temperature_max:
                 t_min = cls_pertu.temperature_min
@@ -178,7 +179,7 @@ class Module(BaseModule):
                                     "|ff|", prompt=False)
                 else:
                     n_pertu.detruire()
-    
+
     def donner_meteo(self, salle, liste_messages, flags):
         """Affichage de la météo d'une salle"""
         if salle.exterieur:
@@ -190,7 +191,7 @@ class Module(BaseModule):
             if not res:
                 res += self.cfg.beau_temps
             liste_messages.append("|cy|" + res + "|ff|")
-    
+
     def changer_temperature(self):
         """Change aléatoirement la température."""
         if self.temperature_dynamique:
@@ -201,5 +202,5 @@ class Module(BaseModule):
                 temperature = min
             elif temperature > max:
                 temperature = max
-            
+
             self.temperature = temperature

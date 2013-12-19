@@ -62,8 +62,7 @@ class PrmRenommer(Parametre):
         matelot = dic_masques["ancien"].matelot
         nouveau_nom = dic_masques["nouveau"].nom_matelot.capitalize()
         equipage = navire.equipage
-        if navire.proprietaire and navire.proprietaire is not personnage and \
-                not personnage.est_immortel():
+        if not navire.a_le_droit(personnage, "maître d'équipage"):
             personnage << "|err|Vous ne pouvez donner d'ordre sur ce " \
                     "navire.|ff|"
             return

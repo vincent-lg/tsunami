@@ -569,7 +569,7 @@ class Salle(BaseObj):
                 return False
 
             sortie = self.sorties["bas"]
-            if sortie and sortie.diff_escalade:
+            if sortie:
                 return False
 
         return True

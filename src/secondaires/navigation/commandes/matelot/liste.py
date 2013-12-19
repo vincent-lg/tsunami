@@ -31,7 +31,9 @@
 """Fichier contenant le paramètre 'liste' de la commande 'matelot'."""
 
 from primaires.format.fonctions import supprimer_accents
+from primaires.format.tableau import Tableau
 from primaires.interpreteur.masque.parametre import Parametre
+from secondaires.navigation.equipage.postes.hierarchie import ORDRE
 
 class PrmListe(Parametre):
 
@@ -58,45 +60,31 @@ class PrmListe(Parametre):
 
         navire = salle.navire
         equipage = navire.equipage
-        if navire.proprietaire and navire.proprietaire is not personnage and \
-                not personnage.est_immortel():
+        if not navire.a_le_droit(personnage, "officier"):
             personnage << "|err|Vous ne pouvez donner d'ordre sur ce " \
                     "navire.|ff|"
             return
 
-        matelots = tuple(equipage.matelots.values())
+        matelots = tuple((m, m.nom_poste) for m in \
+                equipage.matelots.values())
+        matelots += tuple(equipage.joueurs.items())
         matelots = sorted(matelots, \
-                key=lambda m: supprimer_accents(m.nom).lower())
+                key=lambda couple: ORDRE.index(couple[1]), reverse=True)
         if len(matelots) == 0:
             personnage << "|err|Votre équipage ne comprend aucun matelot.|ff|"
             return
 
-        taille_nom = 12
-        taille_poste = 20
-        taille_salle = 30
-        cadre = "+-" + taille_nom * "-" + "-+-" + taille_poste * "-" + \
-                "-+-" + taille_salle * "-" + "-+"
-        lignes = [
-            cadre,
-            "| {} | {} | {} |".format("Nom".ljust(taille_nom),
-                    "Poste".ljust(taille_poste),
-                    "Affectation".format(taille_salle)),
-            cadre,
-        ]
-        for matelot in matelots:
-            nom = matelot.nom.ljust(taille_nom)
-            nom_poste = matelot.nom_poste.capitalize()
-            if len(nom_poste) > taille_poste:
-                nom_poste = nom_poste[:taille_poste - 3] + "..."
-            else:
-                nom_poste = nom_poste.ljust(taille_poste)
-            titre_salle = matelot.personnage.salle.titre_court.capitalize()
-            if len(titre_salle) > taille_salle:
-                titre_salle = titre_salle[:taille_salle - 3] + "..."
-            else:
-                titre_salle = titre_salle.ljust(taille_salle)
-            lignes.append("| {} | {} | {} |".format(nom, nom_poste,
-                        titre_salle))
-        lignes.append(cadre)
+        tableau = Tableau()
+        tableau.ajouter_colonne("Nom")
+        tableau.ajouter_colonne("Poste")
+        tableau.ajouter_colonne("Affectation")
+        for matelot, nom_poste in matelots:
+            nom = matelot.nom
+            nom_poste = nom_poste.capitalize()
+            titre = "Aucune"
+            if hasattr(matelot, "personnage"):
+                titre = matelot.personnage.salle.titre_court.capitalize()
 
-        personnage << "\n".join(lignes)
+            tableau.ajouter_ligne(nom, nom_poste, titre)
+
+        personnage << tableau.afficher()

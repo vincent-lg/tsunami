@@ -36,6 +36,7 @@ from vector import Vector
 
 from abstraits.obase import BaseObj
 from primaires.format.fonctions import supprimer_accents
+from primaires.joueur.joueur import Joueur
 from primaires.vehicule.vecteur import get_direction
 from secondaires.navigation.equipage.configuration import Configuration
 from secondaires.navigation.equipage.ordre import ordres
@@ -60,6 +61,7 @@ class Equipage(BaseObj):
         BaseObj.__init__(self)
         self.navire = navire
         self.matelots = {}
+        self.joueurs = {}
 
         # Caps choisis
         self.caps = []
@@ -125,6 +127,26 @@ class Equipage(BaseObj):
         del self.matelots[supprimer_accents(matelot.nom).lower()]
         matelot.nom = nouveau_nom
         self.matelots[supprimer_accents(matelot.nom.lower())] = matelot
+
+    def changer_poste(self, personnage, poste):
+        """Change le poste du matelot désigné.
+
+        Si le matelot est un joueur, modifie juste le dictionnaire
+        'joueurs'. Les joueurs ont leur libre arbitre sur l'équipage
+        mais ils peuvent avoir des privilèges. Si c'est un personnage
+        au contraire, recherche le matelot derrière et change son
+        poste.
+
+        """
+        if isinstance(personnage, Joueur):
+            self.joueurs[personnage] = poste
+        else:
+            matelot = self.get_matelot_depuis_personnage(personnage)
+            if matelot is None:
+                raise ValueError("Le matelot derrière le personnage " \
+                        "{} est introuvable".format(personnage))
+
+            matelot.nom_poste = poste
 
     def trouver_nom_matelot(self):
         """Trouve un nom de mâtelot non utilisé."""
@@ -243,6 +265,22 @@ class Equipage(BaseObj):
                     m.personnage.endurance >= endurance_min]
 
         return matelots
+
+    def est_au_poste(self, personnage, nom_poste):
+        """Retourne True si le matelot est au poste.
+
+        À la différence de 'get_matelots_au_poste', cette méthode
+        cherche aussi dans les joueurs.
+
+        """
+        noms_poste = HIERARCHIE[nom_poste]
+        matelot = self.get_matelot_depuis_personnage(personnage)
+        if matelot is not None:
+            return matelot.nom_poste in noms_poste
+        elif personnage in self.joueurs:
+            return self.joueurs[personnage] in noms_poste
+
+        return False
 
     def ajouter_trajet(self, trajet):
         """Ajoute le trajet à la liste des caps."""

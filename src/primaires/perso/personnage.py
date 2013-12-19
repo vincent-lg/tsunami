@@ -447,9 +447,16 @@ class Personnage(BaseObj):
         if self.equipement:
             for membre in self.equipement.membres:
                 for objet in membre.equipe:
-                    importeur.objet.supprimer_objet(objet.identifiant)
-                if membre.tenu:
-                    importeur.objet.supprimer_objet(membre.tenu.identifiant)
+                    try:
+                        importeur.objet.supprimer_objet(objet.identifiant)
+                    except KeyError:
+                        pass
+                if membre.tenu and hasattr(membre.tenu, "identifiant"):
+                    try:
+                        importeur.objet.supprimer_objet(
+                                membre.tenu.identifiant)
+                    except KeyError:
+                        pass
 
     def get_nom_pour(self, personnage, retenu=True):
         """Retourne le nom pour le personnage passé en paramètre."""

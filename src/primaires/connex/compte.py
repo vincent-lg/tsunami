@@ -133,3 +133,9 @@ class Compte(BaseObj):
     def supprimer_joueur(self, joueur):
         """Supprime le joueur passé en paramètre de la liste des joueurs"""
         self.joueurs.remove(joueur)
+
+    def detruire(self):
+        """Destruction du compte et de ses joueurs."""
+        for joueur in list(self.joueurs):
+            self.joueurs.remove(joueur)
+            joueur.detruire()

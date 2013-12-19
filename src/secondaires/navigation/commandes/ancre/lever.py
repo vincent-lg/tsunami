@@ -71,7 +71,7 @@ class PrmLever(Parametre):
         elif navire.passerelle:
             personnage << "|err|La passerelle est dépliée.|ff|"
         else:
-            if not navire.a_le_droit(personnage):
+            if not navire.a_le_droit(personnage, si_present=True):
                 personnage << "|err|Vous ne pouvez lever l'ancre de ce " \
                         "navire.|ff|"
                 return

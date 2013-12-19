@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -38,9 +38,9 @@ from corps.aleatoire import *
 from .base import BaseType
 
 class BouleNeige(BaseType):
-    
+
     """Type d'objet: boule de neige."""
-    
+
     nom_type = "boule de neige"
     selectable = False
     def __init__(self, cle=""):
@@ -50,12 +50,12 @@ class BouleNeige(BaseType):
         self.nom_pluriel = "boules de neige"
         self.etat_singulier = "se trouve ici"
         self.etat_pluriel = "se trouvent là"
-        
+
         # Attributs propres à l'objet (non au prototype)
         self._attributs = {
             "apparition": Attribut(datetime.now),
         }
-    
+
     def poser(self, objet, personnage):
         """On pose l'objet."""
         Salle = importlib.import_module("primaires.salle.salle").Salle
@@ -63,14 +63,14 @@ class BouleNeige(BaseType):
                 (datetime.now() - objet.apparition).seconds < 100:
             objet.apparition = datetime.now()
         BaseType.poser(self, objet, personnage)
-    
+
     def veut_jeter(self, personnage, sur):
         """Le personnage veut jeter l'objet sur sur."""
         if hasattr(sur, "equipement"):
             return "jeter_personnage"
-        
+
         return ""
-    
+
     def jeter(self, personnage, adversaire):
         """Jète la boule de neige sur un adversaire."""
         fact = varier(personnage.agilite, 20) / 100
@@ -91,19 +91,21 @@ class BouleNeige(BaseType):
             personnage.salle.envoyer("{{}} envoie {} mais manque {{}}.".format(
                     self.get_nom()), personnage, adversaire)
             importeur.objet.supprimer_objet(self.identifiant)
-        
+
         return reussite
-    
+
     def jeter_personnage(self, personnage, adversaire):
         """Quand on jète la boule de neige, on la détruit."""
         importeur.objet.supprimer_objet(self.identifiant)
-    
+
     def nettoyage_cyclique(self):
         """Nettoyage cyclique de la boule de neige."""
-        Salle = importlib.import_module("primaires.salle.salle").Salle
+        if (datetime.now() - self.apparition).seconds <= 300:
+            return
+
+        from primaires.salle.salle import Salle
         parent = self.grand_parent
-        if not isinstance(parent, Salle) and \
-                (datetime.now() - self.apparition).seconds > 300:
+        if not isinstance(parent, Salle):
             parent.envoyer("{} fond puis disparaît en quelques gouttes " \
                     "d'eau.".format(self.get_nom()))
             importeur.objet.supprimer_objet(self.identifiant)

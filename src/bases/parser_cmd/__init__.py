@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -39,25 +39,25 @@ import sys
 import getopt
 
 class ParserCMD(dict):
-    
+
     """Notre parser de la ligne de commande. Il est hérité de la classe
     dict, puisque se présentant sous la forme d'un dictionnaire contenant :
     { nom_option: valeur_convertie }
-    
+
     Pour parser les options de la ligne de commande, on s'appuie sur
     sys.argv et le module getopt.
-    
+
     """
-    
+
     def interpreter(self):
         """Méthode d'interprétation des options de la ligne de commande.
         Si des options doivent être rajoutées, c'est ici qu'il faut le faire.
         Renseigner également la méthode help() qui doit indiquer les options
         disponibles.
-        
+
         A noter que le corps et les modules primaires sont seuls à pouvoir
         être configurés via la ligne de commande, sauf option générique.
-        
+
         """
         # Syntaxe des options attendues
         # Elle se présente sous la forme de deux variables :
@@ -67,7 +67,7 @@ class ParserCMD(dict):
         #   Les options doivent être entrées dans le même ordre que les
         #   optionss courts correspondants. Pour préciser qu'une option longue
         #   attend un argument, il faut préciser un signe = après le nom.
-        
+
         # Liste des options
         # - c (chemin-configuration) : chemin du dossier contenant les fichiers
         #                             de configuration
@@ -77,11 +77,13 @@ class ParserCMD(dict):
         # - i (interactif) : console interactive
         # - l (chemin-logs) : chemin d'enregistrement des logs
         # - p (port) : port d'écoute du serveur
+        # - r (script) : script avant préparation
         # - s 'serveur) : lancer le serveur (on ou off)
-        flags_courts = "c:e:hil:p:s:"
+        flags_courts = "c:e:hil:p:r:s:"
         flags_longs = ["chemin-configuration=", "chemin-enregistrement=",
-                "help", "interactif", "chemin-logs=", "port=", "serveur="]
-        
+                "help", "interactif", "chemin-logs=", "port=", "script",
+                "serveur="]
+
         # Création de l'objet analysant la ligne de commande
         try:
             opts, args = getopt.getopt(sys.argv[1:], flags_courts,
@@ -89,7 +91,7 @@ class ParserCMD(dict):
         except getopt.GetoptError as err:
             print(err)
             sys.exit(1)
-        
+
         # Analyse itérative des options
         for nom, val in opts:
             # On teste successivement chaque nom
@@ -114,6 +116,8 @@ class ParserCMD(dict):
                     sys.exit(1)
                 else:
                     self["port"] = port
+            elif nom in ["-r", "--script"]:
+                self["script"] = val
             elif nom in ["-s", "--serveur"]:
                 # Les deux valeurs attendus sont :
                 # - on  : on lance le serveur
@@ -126,11 +130,11 @@ class ParserCMD(dict):
                 else:
                     print("Précisez 'on' ou 'of' pour paramétrer le serveur.")
                     sys.exit(1)
-    
+
     def help(self):
         """Méthode retournant l'aide. Si des options sont ajoutées dans
         l'interpréteur, les rajouter ici également.
-        
+
         """
         print(
             "Options disponibles :\n" \
@@ -141,4 +145,5 @@ class ParserCMD(dict):
             "-i, interactif : lance Kassie en mode débuggage interactif\n" \
             "-l, chemin-logs\n" \
             "-p, port : paramètre le port d'écoute du serveur\n" \
+            "-r, script : paramètre le script à exécuter au lancement\n" \
             "-s, serveur (on ou off) : lance ou arrête le serveur")

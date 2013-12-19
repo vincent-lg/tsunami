@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -91,7 +91,7 @@ def arreter_MUD():
     """Fonction appelée pour arrêter le MUD proprement"""
     global importeur, log
     importeur.deconnecter_joueurs()
-    
+
     importeur.tout_detruire()
     importeur.tout_arreter()
     log.info("Fin de la session\n\n\n")
@@ -183,6 +183,7 @@ if not lancer_serveur:
 # On configure, initialise et prépare les modules
 importeur.tout_configurer()
 importeur.tout_initialiser()
+importeur.executer_script(parser_cmd.get("script"))
 importeur.tout_preparer()
 
 # Création si demandée de la console interactive
@@ -203,5 +204,5 @@ if __name__ == "__main__":
         importeur.boucle()
         serveur.verifier_connexions()
         serveur.verifier_receptions()
-    
+
     arreter_MUD()

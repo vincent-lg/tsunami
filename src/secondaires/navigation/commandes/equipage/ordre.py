@@ -67,7 +67,7 @@ class PrmOrdre(Parametre):
             return
 
         navire = salle.navire
-        if navire.proprietaire and navire.proprietaire is not personnage:
+        if not navire.a_le_droit(personnage, "officier"):
             personnage << "|err|Vous ne pouvez donner d'ordre sur ce " \
                     "navire.|ff|"
             return

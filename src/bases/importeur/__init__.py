@@ -203,6 +203,17 @@ class Importeur:
                 Importeur.logger.debug("  Le module {0} a été " \
                         "instancié".format(nom_module))
 
+    def executer_script(self, script=None):
+        """Exécute le script spécifié."""
+        if script:
+            with open(script, "r") as fichier:
+                code = fichier.read()
+
+            try:
+                exec(code, {"importeur": self})
+            except Exception as err:
+                print(traceback.format_exc())
+
     def tout_configurer(self):
         """Méthode permettant de configurer tous les modules qui en ont besoin.
         Les modules qui doivent être configurés sont ceux instanciés.

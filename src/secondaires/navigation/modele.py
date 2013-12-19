@@ -58,6 +58,7 @@ class ModeleNavire(BaseObj):
         self.duree_construction = 60
         self.description = Description(parent=self)
         self.description_vente = Description(parent=self)
+        self.canot = False
         self.masculin = True
         self.cale_max = 200
 

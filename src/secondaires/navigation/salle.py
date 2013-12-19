@@ -175,6 +175,13 @@ class SalleNavire(Salle):
     def get_etendue(self):
         return self.navire and self.navire.etendue or None
 
+    def peut_affecter(self, cle_affection):
+        """La salle self peut-elle être affectée par l'affection ?"""
+        if cle_affection == "neige":
+            return False
+
+        return Salle.peut_affecter(self, cle_affection)
+
     def sabord_oriente(self, direction=None):
         """Retourne True si le sabord est orienté dans la direction.
 

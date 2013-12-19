@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -29,6 +29,8 @@
 
 
 """Ce fichier contient la classe BasePertu, détaillée plus bas."""
+
+from vector import mag
 
 from math import sqrt, pow, ceil
 from random import randint, choice
@@ -50,21 +52,21 @@ STATIQUE = 1
 OPAQUE = 2
 
 class BasePertu(BaseObj, metaclass=MetaPertu):
-    
+
     """Classe abstraite représentant la base d'une perturbation météo.
-    
+
     Cette classe contient tout ce qui est commun à toutes les perturbations
     météorologiques.
-    
+
     """
-    
+
     nom_pertu = ""
     rayon_max = 0 # à redéfinir selon la perturbation
     duree_max = 15 # à peu près en minutes
     temperature_min = None
     temperature_max = None
     origine = True
-    
+
     enregistrer = True
     def __init__(self, pos):
         """Constructeur d'une perturbation météo"""
@@ -98,30 +100,32 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
         # entre 1 et 100 ; la première perturbation de la liste telle que
         # nombre_tire < proba est choisie (voir nuages pour un exemple).
         self.fins_possibles = []
-    
+
     def __getnewargs__(self):
         return (None, )
-    
+
     def __repr__(self):
         """Représentation de la perturbation."""
         return "<{} ({}>)".format(self.nom_pertu, repr(self.centre))
-    
+
     @property
     def liste_salles_sous(self):
         """Renvoie la liste des salles sous la perturbation"""
         ret = []
-        for salle in type(self).importeur.salle._salles.values():
+        for salle in importeur.salle._coords.values():
             if self.est_sur(salle):
                 ret.append(salle)
         return ret
-    
-    def cycle(self):
+
+    def cycle(self, salles=None):
         """Entame un nouveau cycle de la perturbation.
-        
+
         Par défaut, elle se contente de bouger.
-        
+
         """
-        salles = self.liste_salles_sous
+        if salles is None:
+            salles = self.liste_salles_sous
+
         self.action_cycle(salles)
         n_x, n_y = self.calculer_prochaines_coords()
         # Détection des collisions
@@ -133,16 +137,16 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
         if not self.flags & STATIQUE and not self.statique:
             self.bouger(salles, n_x, n_y)
         self.age += 1
-    
+
     def action_cycle(self, salles):
         """Définit une ou plusieurs actions effectuées à chaque cycle.
-        
+
         Méthode à redéfinir pour des perturbations plus originales (l'orage
         par exemple qui tonne à chaque cycle aléatoirement).
-        
+
         """
         pass
-    
+
     def bouger(self, salles, n_x, n_y):
         """Bouge une perturbation"""
         self.centre.x = n_x
@@ -156,32 +160,32 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
                     self.detruire()
                     importeur.meteo.perturbations_actuelles.remove(self)
                     break
-                
+
                 if salle.exterieur:
                     salle.envoyer("|cy|" + self.message_entrer.format(
                             dir=vents_opp[self.dir]) + "|ff|", prompt=False)
-        
+
         for salle in salles:
             if (not self.e_existe or not self.est_sur(salle)) and \
                     salle.exterieur:
                 salle.envoyer("|cy|" + self.message_sortir.format(
                         dir=vents[self.dir]) + "|ff|", prompt=False)
-        
+
         if randint(1, 10) <= self.alea_dir / 2:
             self.dir = randint(0, 7)
-    
+
     def distance_au_centre(self, salle):
         """Retourne la distance de salle au centre de la perturbation"""
         x1 = salle.coords.x
         x2 = self.centre.x
         y1 = salle.coords.y
         y2 = self.centre.y
-        return ceil(sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2)))
-    
+        return ceil(mag(x1, y1, 0, x2, y2, 0))
+
     def est_sur(self, salle):
         """Retourne True si salle est au-dessous de la perturbation"""
         return self.distance_au_centre(salle) <= self.rayon
-    
+
     def message_pour(self, salle):
         """Retourne le message correspondant à la salle"""
         msg = ""
@@ -190,24 +194,24 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
                 msg = etat[1]
                 break
         return msg
-    
+
     @classmethod
     def accepte_temperature(cls, temperature):
         """Retourne True si accepte la température, False sinon.
-        
+
         NOTE: une perturbation accepte une température donnée si
         elle est dans ses bornes de températures minimum et maximum.
         Bien entendu, si ces bornes n'existent pas (restent à None),
         cela n'a pas d'importance et la méthode retournera True.
-        
+
         """
         if cls.temperature_min and cls.temperature_min > temperature:
             return False
         if cls.temperature_max and cls.temperature_max < temperature:
             return False
-        
+
         return True
-    
+
     def calculer_prochaines_coords(self):
         """Retourn les prochains (x, y)."""
         n_x = n_y = 0
@@ -225,6 +229,6 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
         if n_x is None or n_y is None:
             n_x = self.centre.x
             n_y = self.centre.y
-        
+
         return sqrt((pertu.centre.x - n_x) ** 2 + (pertu.centre.y - n_y) ** 2) <= \
                 self.rayon + pertu.rayon

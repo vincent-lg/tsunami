@@ -62,7 +62,7 @@ from . import types
 
 # Constantes
 NB_MIN_NETTOYAGE = 20
-NB_TICKS = 12
+NB_TICKS = 20
 
 class Module(BaseModule):
 
