@@ -186,7 +186,7 @@ class Objet(BaseObj):
 
         return res
 
-    def deplacer_vers(self, sortie, verbe="flotte vers"):
+    def deplacer_vers(self, sortie, sort="flotte vers", arrive="arrive"):
         """Déplacement vers la sortie 'sortie'"""
         salle = self.grand_parent
         salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
@@ -207,18 +207,19 @@ class Objet(BaseObj):
             for personnage in salle.personnages:
                 msg = "{objet} {verbe}... Vous ne voyez pas " \
                         "très bien où."
-                msg = msg.format(sortie=sortie.nom_complet, verbe=verbe,
+                msg = msg.format(sortie=sortie.nom_complet, verbe=sort,
                         objet=self.get_nom())
                 personnage << msg
         else:
-            salle.envoyer("{} {} {}.".format(self.get_nom(), verbe,
+            salle.envoyer("{} {} {}.".format(self.get_nom(), sort,
                     sortie.nom_complet))
 
         # On change l'objet de salle
         salle.objets_sol.retirer(self)
         salle_dest.objets_sol.ajouter(self)
 
-        salle_dest.envoyer("{} arrive en flottant.".format(self.get_nom()))
+        salle_dest.envoyer("{} {}.".format(self.get_nom(),
+                arrive))
 
     def detruire(self):
         """Destruction de l'objet"""

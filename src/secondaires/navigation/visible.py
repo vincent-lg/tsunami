@@ -212,6 +212,7 @@ class Visible:
             d_salle = None
             t_x = t_y = None
             v_dist = None
+            n_x = n_y = None
             for t_salle in t_salles:
                 # Calcul de la distance entre salle et t_salle
                 t_coords = t_salle.coords.tuple()
@@ -220,14 +221,14 @@ class Visible:
                 if distance is None or t_distance < distance:
                     distance = t_distance
                     d_salle = t_salle
-                    t_x, t_y, t_z = t_salle.coords.tuple()
+                    n_x, n_y, n_z = t_salle.coords.tuple()
                 else:
                     continue
 
-            if t_x is None:
+            if n_x is None:
                 continue
 
-            v_point = Vector(t_x, t_y, altitude)
+            v_point = Vector(n_x, n_y, altitude)
             v_dist = v_point - position
             direction = get_direction(v_dist)
             r_direction = (direction - navire.direction.direction) % 360
@@ -238,7 +239,7 @@ class Visible:
             if distance <= portee:
                 # N'y a-t-il pas de terre plus proche
                 v_cote = self.cotes.get(angle, (None, None, None, None))[2]
-                if v_cote is None or v_cote.mag >= v_dist.mag:
+                if v_cote is None or v_cote.mag > v_dist.mag:
                     self.navires.append((angle, (t_x, t_y, v_dist,
                             t_navire)))
 

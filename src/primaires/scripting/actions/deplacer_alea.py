@@ -127,7 +127,7 @@ class ClasseAction(Action):
             pass
 
     @staticmethod
-    def deplacer_alea_objet(objet, verbe):
+    def deplacer_alea_objet(objet, verbes):
         """Déplace aléatoirement l'objet sans aucun critères.
 
         L'objet va choisir une direction aléatoirement autour de lui.
@@ -140,9 +140,20 @@ class ClasseAction(Action):
         Les paramètres à préciser sont :
 
           * objet : l'objet à déplacer
-          * verbe : le verbe qui s'affiche quand il se déplace
+          * verbes : le(s) verbe(s) qui s'affiche(nt) quand il se déplace
 
-        Par exemple :
+        On peut préciser un verbe ou deux verbes séparés par une
+        barre verticale (|). Le premier verbe est obligatoire et
+        est celui envoyé quand l'objet quitte la salle. Le second
+        est facultatif est est envoyé quand l'objet arrive dans une
+        salle.
+
+        Exemple de verbe :
+
+          "s'en va en flottant vers"
+          "s'en va en flottant vers|arrive en flottant depuis"
+
+        Exemple complet :
 
           deplacer_alea(objet, "flotte lentement vers")
 
@@ -152,6 +163,21 @@ class ClasseAction(Action):
         if not hasattr(salle, "sorties"):
             raise ErreurExecution("{} n'est pas posé dans une salle".format(
                     objet.identifiant))
+
+        # Découpage des verbes
+        if not verbes:
+            raise ErreurExecution("aucun verbe n'est précisé")
+
+        verbes = verbes.split("_b_")
+        if len(verbes) not in (1, 2):
+            raise ErreurExecution("nombre de verbes précisés invalides, " \
+                    "1 ou 2 possibles ({} précisés)".format(len(verbes)))
+
+        if len(verbes) == 1:
+            sort = verbes[0]
+            arrive = "arrive"
+        else:
+            sort, arrive = verbes
 
         sorties = []
         for sortie in salle.sorties:
@@ -164,16 +190,27 @@ class ClasseAction(Action):
             return
 
         sortie = choice(sorties)
-        objet.deplacer_vers(sortie, verbe)
+        objet.deplacer_vers(sortie, sort, arrive)
 
-    def deplacer_alea_objet_terrains(objet, verbe, terrains):
+    def deplacer_alea_objet_terrains(objet, verbes, terrains):
         """Déplace aléatoirement l'objet en fonction de terrains.
 
         Les paramètres à entrer sont :
 
           * objet : l'objet à déplacer
-          * verbe : le verbe affiché lors du déplacement
+          * verbes : le(s) verbe(s) qui s'affiche(nt) quand il se déplace
           * terrains : le ou les terrains autorisés.
+
+        On peut préciser un verbe ou deux verbes séparés par une
+        barre verticale (|). Le premier verbe est obligatoire et
+        est celui envoyé quand l'objet quitte la salle. Le second
+        est facultatif est est envoyé quand l'objet arrive dans une
+        salle.
+
+        Exemple de verbe :
+
+          "s'en va en flottant vers"
+          "s'en va en flottant vers|arrive en flottant depuis"
 
         On doit préciser, sous la forme d'une chaîne, le (ou les terrains,
         séparés par le signe |) qui sont autorisés pour cet objet.
@@ -187,11 +224,31 @@ class ClasseAction(Action):
           * Les sorties cachées
           * Les portes verrouillées.
 
+        Exemple complet de la fonction :
+
+          deplacer_alea objet "s'en va en flottant vers|arrive en
+          flottant" "ville|route"
+
         """
         salle = objet.grand_parent
         if not hasattr(salle, "sorties"):
             raise ErreurExecution("{} n'est pas posé dans une salle".format(
                     objet.identifiant))
+
+        # Découpage des verbes
+        if not verbes:
+            raise ErreurExecution("aucun verbe n'est précisé")
+
+        verbes = verbes.split("_b_")
+        if len(verbes) not in (1, 2):
+            raise ErreurExecution("nombre de verbes précisés invalides, " \
+                    "1 ou 2 possibles ({} précisés)".format(len(verbes)))
+
+        if len(verbes) == 1:
+            sort = verbes[0]
+            arrive = "arrive"
+        else:
+            sort, arrive = verbes
 
         # Choix des terrains
         if not terrains:
@@ -215,4 +272,4 @@ class ClasseAction(Action):
             return
 
         sortie = choice(sorties)
-        objet.deplacer_vers(sortie)
+        objet.deplacer_vers(sortie, sort, arrive)

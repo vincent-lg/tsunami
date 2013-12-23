@@ -147,7 +147,7 @@ class Canon(BaseElement):
         direction.around_z(radians(navire.direction.direction))
         direction = direction + navire.opt_position
         # On récupère toutes les salles avec coordonnées
-        cibles = importeur.salle._coords
+        cibles = importeur.salle._coords.copy()
         if navire.etendue:
             etendue = navire.etendue
             for o_coords, obstacle in etendue.obstacles.items():

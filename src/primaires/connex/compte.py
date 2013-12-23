@@ -139,3 +139,5 @@ class Compte(BaseObj):
         for joueur in list(self.joueurs):
             self.joueurs.remove(joueur)
             joueur.detruire()
+
+        BaseObj.detruire(self)

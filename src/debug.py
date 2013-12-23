@@ -40,3 +40,7 @@ autres informations.
 for compte in list(importeur.connex.comptes.values()):
     if compte.nom.lower() not in ("admin", "systeme"):
         importeur.connex.supprimer_compte(compte)
+
+for salle in importeur.salle.salles.values():
+    if "neige" in salle.affections:
+        salle.affections["neige"].force = 1
