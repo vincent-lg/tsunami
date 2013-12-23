@@ -186,6 +186,40 @@ class Objet(BaseObj):
 
         return res
 
+    def deplacer_vers(self, sortie, verbe="flotte vers"):
+        """Déplacement vers la sortie 'sortie'"""
+        salle = self.grand_parent
+        salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
+        o_sortie = salle.sorties.get_sortie_par_nom(sortie)
+        sortie = salle.sorties.get_sortie_par_nom(sortie)
+        sortie_opp = sortie.sortie_opposee
+        nom_opp = sortie_opp and sortie_opp.nom or ""
+        if sortie.porte and sortie.porte.verrouillee:
+            return
+
+        # Si la porte est fermée (pas verrouillée), on l'ouvre
+        if sortie.porte and sortie.porte.fermee and not \
+                sortie.porte.verrouillee:
+            sortie.porte.ouvrir()
+            fermer = True
+
+        if sortie.cachee:
+            for personnage in salle.personnages:
+                msg = "{objet} {verbe}... Vous ne voyez pas " \
+                        "très bien où."
+                msg = msg.format(sortie=sortie.nom_complet, verbe=verbe,
+                        objet=self.get_nom())
+                personnage << msg
+        else:
+            salle.envoyer("{} {} {}.".format(self.get_nom(), verbe,
+                    sortie.nom_complet))
+
+        # On change l'objet de salle
+        salle.objets_sol.retirer(self)
+        salle_dest.objets_sol.ajouter(self)
+
+        salle_dest.envoyer("{} arrive en flottant.".format(self.get_nom()))
+
     def detruire(self):
         """Destruction de l'objet"""
         if self in self.prototype.objets:

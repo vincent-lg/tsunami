@@ -51,6 +51,9 @@ class ClasseAction(Action):
         cls.ajouter_types(cls.deplacer_alea_personnage, "Personnage")
         cls.ajouter_types(cls.deplacer_alea_personnage_terrains, "Personnage",
                 "str")
+        cls.ajouter_types(cls.deplacer_alea_objet, "Objet", "str")
+        cls.ajouter_types(cls.deplacer_alea_objet_terrains, "Objet", "str",
+                "str")
 
     @staticmethod
     def deplacer_alea_personnage(personnage):
@@ -122,3 +125,94 @@ class ClasseAction(Action):
             personnage.deplacer_vers(sortie)
         except ExceptionAction:
             pass
+
+    @staticmethod
+    def deplacer_alea_objet(objet, verbe):
+        """Déplace aléatoirement l'objet sans aucun critères.
+
+        L'objet va choisir une direction aléatoirement autour de lui.
+        Il doit être posé au sol.
+        Il retire cependant du calcul :
+
+          * Les portes verrouillées
+          * Les sorties cachées
+
+        Les paramètres à préciser sont :
+
+          * objet : l'objet à déplacer
+          * verbe : le verbe qui s'affiche quand il se déplace
+
+        Par exemple :
+
+          deplacer_alea(objet, "flotte lentement vers")
+
+        """
+        # Choix de la direction
+        salle = objet.grand_parent
+        if not hasattr(salle, "sorties"):
+            raise ErreurExecution("{} n'est pas posé dans une salle".format(
+                    objet.identifiant))
+
+        sorties = []
+        for sortie in salle.sorties:
+            if sortie and not sortie.cachee and (not sortie.porte or \
+                    not sortie.porte.verrouillee):
+                sorties.append(sortie.nom)
+
+        if not sorties:
+            # Aucune sortie disponible
+            return
+
+        sortie = choice(sorties)
+        objet.deplacer_vers(sortie, verbe)
+
+    def deplacer_alea_objet_terrains(objet, verbe, terrains):
+        """Déplace aléatoirement l'objet en fonction de terrains.
+
+        Les paramètres à entrer sont :
+
+          * objet : l'objet à déplacer
+          * verbe : le verbe affiché lors du déplacement
+          * terrains : le ou les terrains autorisés.
+
+        On doit préciser, sous la forme d'une chaîne, le (ou les terrains,
+        séparés par le signe |) qui sont autorisés pour cet objet.
+
+        Par exemple : "ville|route"
+
+        Dans le cas ci-dessus, l'objet ne choisira dans la salle
+        que des sorties menant à des salles de terrain ville ou route.
+        De plus, sont ignorées :
+
+          * Les sorties cachées
+          * Les portes verrouillées.
+
+        """
+        salle = objet.grand_parent
+        if not hasattr(salle, "sorties"):
+            raise ErreurExecution("{} n'est pas posé dans une salle".format(
+                    objet.identifiant))
+
+        # Choix des terrains
+        if not terrains:
+            raise ErreurExecution("aucun terrain n'est précisé")
+
+        terrains = terrains.split("_b_")
+        for i, terrain in enumerate(terrains):
+            terrains[i] = supprimer_accents(terrain.strip())
+
+        # Choix de la direction
+        sorties = []
+        for sortie in salle.sorties:
+            if sortie and not sortie.cachee and (not sortie.porte or \
+                    not sortie.porte.verrouillee) and sortie.salle_dest and \
+                    supprimer_accents(sortie.salle_dest.nom_terrain) in \
+                    terrains:
+                sorties.append(sortie.nom)
+
+        if not sorties:
+            # Aucune sortie disponible
+            return
+
+        sortie = choice(sorties)
+        objet.deplacer_vers(sortie)
