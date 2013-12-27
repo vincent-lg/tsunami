@@ -68,7 +68,7 @@ class PrmRecruter(Parametre):
         salle = personnage.salle
         navires = importeur.navigation.get_navires_possedes(personnage)
         navire = getattr(salle, "navire", None)
-        if dic_masques["nombre"]:
+        if dic_masques["nombre"] and dic_masques["personnage_present"]:
             nombre = dic_masques["nombre"].nombre
             cible = dic_masques["personnage_present"].personnage
             cle = getattr(cible, "cle", None)

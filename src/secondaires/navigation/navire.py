@@ -373,7 +373,7 @@ class Navire(Vehicule):
                         "navire", None) is self):
             return True
 
-        return self.equipage.est_au_poste(poste)
+        return self.equipage.est_au_poste(personnage, poste)
 
     def get_max_distance_au_centre(self):
         """Retourne la distance maximum par rapport au centre du navire."""
