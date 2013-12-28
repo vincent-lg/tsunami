@@ -95,6 +95,7 @@ class SalleNavire(Salle):
         self.sabord_min = 0
         self.sabord_max = 0
         self.cales = []
+        self.poste = ""
 
     @property
     def r_coords(self):
@@ -372,3 +373,10 @@ class SalleNavire(Salle):
                 destination, "", self)
         sortie.longueur = vecteur.norme
         return sortie
+
+    def peut_entrer(self, personnage):
+        """Si la salle est réservée à un poste."""
+        if self.poste and self.navire:
+            return self.navire.a_le_droit(personnage, self.poste)
+
+        return True

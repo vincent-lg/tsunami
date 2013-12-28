@@ -32,6 +32,7 @@
 
 from math import fabs
 from random import choice
+import sys
 
 from vector import mag
 
@@ -320,3 +321,80 @@ class Etendue(BaseObj):
                 nb += 1
 
         return nb
+
+    def verifier_continuite(self, x, y, e_x=None, e_y=None, o_x=None,
+            o_y=None, obstacles=None):
+        """Vérifie la continuité d'une étendue.
+
+        Cette méthode permet de vérifier qu'une étendue d'eau est
+        complète, c'est-à-dire qu'elle forme bien un cercle. Le principe
+        est qu'on part du point x;y précisé en paramètre et qu'on
+        essaye de faire le tour complet de l'étendue. Il doit y avoir
+        un obstacle, une cote ou un lien sur les points successifs
+        parcourus et on doit pouvoir revenir sur
+        x;y au final.
+
+        """
+        print("Fork", x, y, e_x, e_y)
+        e_x = e_x or x
+        e_y = e_y or y
+        o_x = o_x or x
+        o_y = o_y or y
+        if obstacles is None:
+            obstacles = self.points.copy()
+            obstacles.update(self.liens)
+
+        complet = False
+        while not complet:
+            points = [
+                (x + 1, y),
+                (x - 1, y),
+                (x, y + 1),
+                (x, y - 1),
+            ]
+
+            points = [p for p in points if p not in ((x, y), (e_x, e_y))]
+
+            # Combien de points y'a-t-il ici ?
+            points = [p for p in points if p in obstacles]
+            if len(points) == 0:
+                raise LigneBrisee("Il n'y a aucun point après " \
+                        "{}.{} (e={}.{})".format(x, y, e_x, e_y))
+            elif len(points) == 1:
+                t_x, t_y = points[0]
+                if t_x == o_x and t_y == o_y:
+                    return True
+                elif (t_x, t_y) in obstacles:
+                    x = t_x
+                    y = t_y
+                    continue
+                else:
+                    complet = False
+                    break
+
+            # Sinon on doit explorer plusieurs chemins
+            for t_x, t_y in points:
+                if t_x == o_x and t_y == o_y:
+                    return True
+
+                try:
+                    self.verifier_continuite(t_x, t_y, x, y, o_x, o_y,
+                            obstacles)
+                except LigneBrisee as err:
+                    continue
+                else:
+                    complet = True
+
+            if not complet:
+                break
+
+        if not complet:
+            raise LigneBrisee("Il y avait {} possibilités pour " \
+                    "{}.{} mais elles sont toutes brisées".format(
+                    len(points), x, y) + " " + str(erreur))
+
+        return True
+
+class LigneBrisee(RuntimeError):
+
+    pass

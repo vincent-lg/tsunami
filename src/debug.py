@@ -43,4 +43,4 @@ for compte in list(importeur.connex.comptes.values()):
 
 for salle in importeur.salle.salles.values():
     if "neige" in salle.affections:
-        salle.affections["neige"].force = 1
+        salle.affections["neige"].duree = 1

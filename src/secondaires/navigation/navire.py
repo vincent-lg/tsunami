@@ -399,6 +399,8 @@ class Navire(Vehicule):
             n_salle.titre_court = salle.titre_court
             n_salle.description = salle.description
             n_salle.details = salle.details
+            n_salle.interieur = salle.interieur
+            n_salle.poste = salle.poste
             n_salle.noyable = salle.noyable
             n_salle.sabord_min = salle.sabord_min
             n_salle.sabord_max = salle.sabord_max
@@ -422,9 +424,11 @@ class Navire(Vehicule):
             for dir, sortie in salle.sorties._sorties.items():
                 if sortie and sortie.salle_dest:
                     c_salle = self.salles[sortie.salle_dest.r_coords]
-                    n_salle.sorties.ajouter_sortie(dir, sortie.nom,
-                            sortie.article, c_salle,
+                    t_sortie = n_salle.sorties.ajouter_sortie(dir,
+                            sortie.nom, sortie.article, c_salle,
                             sortie.correspondante)
+                    if sortie.porte:
+                        t_sortie.ajouter_porte()
 
     def faire_ramer(self):
         """Cette méthode fait ramer les personnages du navire.

@@ -137,6 +137,7 @@ class Sorties(BaseObj):
         """
         sortie = Sortie(direction, *args, parent=self.parent, **kwargs)
         self[direction] = sortie
+        return sortie
 
     def supprimer_sortie(self, direction):
         """Supprime la sortie"""

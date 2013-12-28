@@ -33,12 +33,14 @@
 """
 
 from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.flag import Flag
 from primaires.salle.editeurs.redit.edt_details import EdtDetails
 from primaires.interpreteur.editeur.selection import Selection
 from secondaires.navigation.cale import CONTENEURS
+from secondaires.navigation.equipage.postes.hierarchie import ORDRE
 from secondaires.navigation.salle import NOMS_SORTIES
 
 class EdtSalle(Presentation):
@@ -60,6 +62,8 @@ class EdtSalle(Presentation):
         self.ajouter_option("hau", self.opt_ajouter_haut)
         self.ajouter_option("bas", self.opt_ajouter_bas)
         self.ajouter_option("elt", self.opt_ajouter_supprimer_element)
+        self.ajouter_option("s", self.opt_renommer_sortie)
+        self.ajouter_option("p", self.opt_changer_porte)
         if personnage and salle:
             self.construire(salle)
 
@@ -156,6 +160,52 @@ class EdtSalle(Presentation):
         else:
             self.actualiser()
 
+    def opt_renommer_sortie(self, arguments):
+        """Renomme une sortie dans la salle.
+
+        Syntaxe :
+            /s <direction> <nouveau nom>
+
+        """
+        salle = self.objet
+        arguments = arguments.split(" ")
+        direction = arguments[0].lower()
+        nom = " ".join(arguments[1:])
+        if not nom:
+            self.pere << "|err|Syntaxe invalide. Entrez la direction, " \
+                    "un espace et le nouveau nom de la sortie.|ff|"
+            return
+
+        try:
+            sortie = salle.sorties.get_sortie_par_nom(direction)
+        except KeyError:
+            self.pere << "|err|Sortie {} introuvable.|ff|".format(
+                    direction)
+            return
+
+        # Essaye de découper le nom
+        if nom.count("'") == 1:
+            article, nom = nom.split("'")
+            article += "'"
+        elif nom.count(" ") == 1:
+            article, nom = nom.split(" ")
+        else:
+            self.pere << "|err|Syntaxe invalide. Vous devez préciser " \
+                    "l'article et le nom (comme |ent|la cale|err|).|ff|"
+            return
+
+        try:
+            salle.sorties.get_sortie_par_nom(nom.lower())
+        except KeyError:
+            pass
+        else:
+            self.pere << "|err|La sortie {} existe déjà.|ff|".format(nom)
+            return
+
+        sortie.nom = nom.lower()
+        sortie.article = article.lower()
+        self.actualiser()
+
     def construire(self, salle):
         """Construction de l'éditeur"""
         # Titre
@@ -214,6 +264,20 @@ class EdtSalle(Presentation):
         noyable = self.ajouter_choix("noyable", "n", Flag, salle, "noyable")
         noyable.parent = self
 
+        # Poste
+        poste = self.ajouter_choix("salle réservée au grade", "rad",
+                Choix, salle, "poste", ORDRE)
+        poste.parent = self
+        poste.apercu = "{objet.poste}"
+        poste.aide_courte = \
+            "Entrez un |ent|grade|ff| pour réserver cette salle " \
+            "\nou |cmd|/|ff| pour revenir à la fenêtre " \
+            "parente.\n\nSi aucun grade n'est précisé, la salle est " \
+            "ouverte à tous.\nNotez également qu'une salle réservée " \
+            "doit avoir une porte.\n\n" \
+            "Grades possibles : " + ", ".join(ORDRE) + "\n" \
+            "Grade actuel : |bc|{objet.poste}|ff|"
+
         # Cales
         cales = self.ajouter_choix("types de cale", "ca", Selection,
                 salle, "cales", CONTENEURS)
@@ -254,6 +318,31 @@ class EdtSalle(Presentation):
             salle.ajouter_element(elt)
             self.actualiser()
 
+    def opt_changer_porte(self, arguments):
+        """Change le flag de la porte.
+
+        Soit place une porte sur la sortie, soit la retire.
+
+        Syntasxe :
+            /p <direction>
+
+        """
+        salle = self.objet
+        direction = arguments.lower()
+        try:
+            sortie = salle.sorties.get_sortie_par_nom(direction)
+        except KeyError:
+            self.pere << "|err|Sortie {} introuvable.|ff|".format(
+                    direction)
+            return
+
+        if sortie.porte:
+            sortie.supprimer_porte()
+        else:
+            sortie.ajouter_porte()
+
+        self.actualiser()
+
     def accueil(self):
         """Message d'accueil de l'éditeur."""
         salle = self.objet
@@ -266,6 +355,8 @@ class EdtSalle(Presentation):
             if sortie:
                 msg += "\n   {} vers {}".format(sortie.nom.capitalize(),
                         sortie.salle_dest.mnemonic)
+                if sortie.porte:
+                    msg += " (|att|fermée d'une porte|ff|)"
             else:
                 msg += "\n   {}".format(nom.capitalize())
 

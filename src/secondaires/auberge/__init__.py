@@ -132,4 +132,4 @@ class Module(BaseModule):
                 chambre = auberge.chambres[salle.ident]
                 return personnage is chambre.proprietaire
 
-        return True
+        return salle.peut_entrer(personnage)

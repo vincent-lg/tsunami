@@ -79,7 +79,7 @@ class RelacherRames(Volonte):
 
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""
-        msg = "{} s'écrie : rameurs, laissez courrir !".format(
+        msg = "{} s'écrie : rameurs, laissez courir !".format(
                 personnage.distinction_audible)
         self.navire.envoyer(msg)
 
