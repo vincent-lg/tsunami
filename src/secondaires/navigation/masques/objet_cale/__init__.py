@@ -84,6 +84,6 @@ class ObjetCale(Masque):
                     self.prototype = prototype
                     return True
 
-        raise ErreurValidation("Cet objet n'est aps trouvable dans la " \
+        raise ErreurValidation("Cet objet n'est pas trouvable dans la " \
                 "cale de ce navire.")
         return True

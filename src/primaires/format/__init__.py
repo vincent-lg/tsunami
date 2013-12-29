@@ -73,7 +73,6 @@ class Module(BaseModule):
         for flottante in flottantes:
             self.descriptions_flottantes[flottante.cle] = flottante
 
-        print("Flottantes:", len(self.descriptions_flottantes))
         BaseModule.init(self)
 
     def ajouter_commandes(self):

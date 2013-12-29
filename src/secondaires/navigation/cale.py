@@ -38,12 +38,6 @@ CONTENEURS = [
         "sacs de poudre",
         "tonneaux de poix",
         "vivres",
-        "nourriture",
-        "poisson",
-        "viande",
-        "légume",
-        "fruit",
-        "gâteau",
 ]
 
 TYPES = {
@@ -143,7 +137,10 @@ class Cale(BaseObj):
 
     def accepte(self, salle, nom_type):
         """Vérifie si la salle en paramtère accepte le nom type."""
-        conteneur = TYPES[nom_type]
+        conteneur = TYPES.get(nom_type)
+        if conteneur is None:
+            return False
+
         return conteneur in salle.cales
 
     def ajouter_objets(self, objets):

@@ -91,7 +91,6 @@ class Module(BaseModule):
         chemins = self.importeur.supenr.charger_groupe(CheminPNJ)
         for chemin in chemins:
             self.ajouter_chemin(chemin)
-        print("Chemins:", len(chemins))
 
         # Ajout des actions différées pour chaque tick
         intervalle = 60 / NB_TICKS
