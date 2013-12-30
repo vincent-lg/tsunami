@@ -182,7 +182,7 @@ class ClasseAction(Action):
         sorties = []
         for sortie in salle.sorties:
             if sortie and not sortie.cachee and (not sortie.porte or \
-                    not sortie.porte.verrouillee):
+                    not sortie.porte.fermee):
                 sorties.append(sortie.nom)
 
         if not sorties:
@@ -262,7 +262,7 @@ class ClasseAction(Action):
         sorties = []
         for sortie in salle.sorties:
             if sortie and not sortie.cachee and (not sortie.porte or \
-                    not sortie.porte.verrouillee) and sortie.salle_dest and \
+                    not sortie.porte.fermee) and sortie.salle_dest and \
                     supprimer_accents(sortie.salle_dest.nom_terrain) in \
                     terrains:
                 sorties.append(sortie.nom)
