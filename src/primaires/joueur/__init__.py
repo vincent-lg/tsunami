@@ -73,8 +73,10 @@ class Module(BaseModule):
         self.compte_systeme = config.compte_systeme
         self.joueur_systeme = config.joueur_systeme
         # On crée les hooks du module
-        self.importeur.hook.ajouter_hook("joueur:connecte",
+        importeur.hook.ajouter_hook("joueur:connecte",
                 "Hook appelé après qu'un joueur se soit connecté.")
+        importeur.hook.ajouter_hook("joueur:erreur",
+                "Hook appelé quand une erreur se produit.")
 
         BaseModule.config(self)
 

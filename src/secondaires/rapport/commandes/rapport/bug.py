@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,27 +34,44 @@ from primaires.interpreteur.masque.parametre import Parametre
 from primaires.interpreteur.editeur.presentation import Presentation
 
 class PrmBug(Parametre):
-    
+
     """Commande 'rapport bug'"""
-    
+
     def __init__(self):
         """Constructeur du paramètre."""
         Parametre.__init__(self, "bug", "bug")
         self.groupe = "joueur"
-        self.schema = "<message>"
+        self.schema = "(<message>)"
         self.aide_courte = "crée un rapport de bug"
         self.aide_longue = \
             "Cette commande permet de créer un nouveau rapport de " \
             "bug. Vous devez préciser en argument le titre du rapport " \
             "à créer. Un éditeur s'ouvrira alors pour vous permettre " \
             "de renseigner plus précisément le bug rencontré."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        titre = dic_masques["message"].message
+        if dic_masques["message"] is None:
+            commande, trace = importeur.rapport.traces.get(personnage,
+                    (None, None))
+            if trace is None:
+                personnage << "|err|Aucune erreur n'a été rapportée pour " \
+                        "votre joueur.\nVous devez donc préciser un titre " \
+                        "pour le bug que vous voulez rapporter.|ff|"
+                return
+
+            titre = "Erreur durant la commande {}".format(repr(commande))
+            description = trace
+        else:
+            titre = dic_masques["message"].message
+            description = ""
+
         rapport = importeur.rapport.creer_rapport(titre, personnage,
                 ajouter=False)
         rapport.type = "bug"
+        if description:
+            rapport.description.paragraphes.extend(description.split("\n"))
+
         editeur = importeur.interpreteur.construire_editeur(
                 "bugedit", personnage, rapport)
         personnage.contextes.ajouter(editeur)

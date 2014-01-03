@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -40,58 +40,61 @@ from .editeurs.bugedit import EdtBugedit
 from .editeurs.bugedit_p import EdtBugeditP
 
 class Module(BaseModule):
-    
+
     """Classe utilisée pour gérer des rapports de bug et suggestion.
-    
+
     """
-    
+
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "rapport", "secondaire")
         self.rapports = {}
         self.commandes = []
-    
+        self.traces = {}
+
     def init(self):
         """Méthode d'initialisation du module"""
         # On récupère les rapports
         rapports = self.importeur.supenr.charger_groupe(Rapport)
         for rapport in rapports:
             self.rapports[rapport.id] = rapport
-        
+
         if self.rapports:
             Rapport.id_actuel = max(self.rapports.keys()) + 1
         else:
             Rapport.id_actuel = 1
-        
+
         # On lie la méthode joueur_connecte avec l'hook joueur_connecte
         # La méthode joueur_connecte sera ainsi appelée quand un joueur
         # se connecte
         self.importeur.hook["joueur:connecte"].ajouter_evenement(
                 self.joueur_connecte)
-        
+        self.importeur.hook["joueur:erreur"].ajouter_evenement(
+                self.sauver_traceback)
+
         BaseModule.init(self)
-    
+
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.rapport.CmdRapport(),
         ]
-        
+
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
-        
+
         # Ajout des éditeurs 'bugedit*'
         self.importeur.interpreteur.ajouter_editeur(EdtBugedit)
         self.importeur.interpreteur.ajouter_editeur(EdtBugeditP)
-    
+
     def creer_rapport(self, titre, createur=None, ajouter=True):
         """Crée un rapport."""
         rapport = Rapport(titre, createur)
         if ajouter:
             self.ajouter_rapport(rapport)
-        
+
         return rapport
-    
+
     def ajouter_rapport(self, rapport):
         """Ajoute un rapport."""
         if not rapport.source:
@@ -101,7 +104,7 @@ class Module(BaseModule):
             rapport.id = rapport.source.id
             rapport.source.detruire()
             rapport.source = None
-    
+
     def joueur_connecte(self, joueur):
         """On avertit du nombre de rapports qui lui sont assignés."""
         rapports = [r for r in self.rapports.values() if r.ouvert and \
@@ -109,3 +112,9 @@ class Module(BaseModule):
         if rapports:
             joueur << format_nb(len(rapports), "{nb} rapport{s} vous " \
                     "{est} actuellement assigné{s}.")
+
+    def sauver_traceback(self, joueur, commande, trace):
+        """Enregistre le traceback dans le module."""
+        self.traces[joueur] = (commande, trace)
+        joueur.envoyer_tip("Entrez %rapport% %rapport:bug% pour " \
+                "signaler ce bug aux administrateurs.")
