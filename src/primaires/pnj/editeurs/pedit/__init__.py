@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -46,13 +46,14 @@ from .edt_squelette import EdtSquelette
 from .edt_equipement import EdtEquipement
 from .edt_a_depecer import EdtADepecer
 from .edt_entraine import EdtEntraine
+from .supprimer import NSupprimer
 
 class EdtPedit(Presentation):
-    
+
     """Classe définissant l'éditeur de prototype de pnj 'pedit'.
-    
+
     """
-    
+
     nom = "pedit"
     def __init__(self, personnage, prototype, attribut=""):
         """Constructeur de l'éditeur"""
@@ -60,23 +61,23 @@ class EdtPedit(Presentation):
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
-        
+
         Presentation.__init__(self, instance_connexion, prototype)
         if personnage and prototype:
             self.construire(prototype)
-    
+
     def __getnewargs__(self):
         return (None, None)
-    
+
     def construire(self, prototype):
         """Construction de l'éditeur"""
         prototype = self.objet
-        
+
         # Noms
         noms = self.ajouter_choix("noms", "n", EdtNoms, prototype)
         noms.parent = self
         noms.apercu = "{objet.nom_singulier}"
-        
+
         # Description
         description = self.ajouter_choix("description", "d", Description, \
                 prototype)
@@ -85,12 +86,12 @@ class EdtPedit(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description du PNJ {}".format(prototype).ljust(
             76) + "|ff||\n" + self.opts.separateur
-        
+
         # Stats
         stats = self.ajouter_choix("stats", "s", EdtStats, \
                 prototype.stats)
         stats.parent = self
-        
+
         # Race
         race = self.ajouter_choix("race", "r", EdtRace,
                 prototype)
@@ -101,7 +102,7 @@ class EdtPedit(Presentation):
             "Entrez le |ent|nom|ff| de la race ou |cmd|/|ff| " \
             "pour revenir à la fenêtre parente.\n\nRace actuelle : " \
             "|bc|{objet.nom_race}|ff|"
-        
+
         # Genre
         genre = self.ajouter_choix("genre", "g", EdtGenre, prototype)
         genre.parent = self
@@ -112,7 +113,7 @@ class EdtPedit(Presentation):
             "pour revenir à la fenêtre parente.\n\nGenres disponibles : " \
             "|bc|{objet.genres_possibles}|ff|\nGenre actuel : " \
             "|bc|{objet.genre}|ff|"
-        
+
         # Squelette
         squelette = self.ajouter_choix("squelette", "sq", EdtSquelette,
                 prototype)
@@ -123,7 +124,7 @@ class EdtPedit(Presentation):
             "Entrez la |ent|clé identifiante|ff| du squelette ou |cmd|/|ff| " \
             "pour revenir à la fenêtre parente.\n\nSquelette actuel : " \
             "|bc|{objet.cle_squelette}|ff|"
-        
+
         # Squelette
         eq = self.ajouter_choix("equipement", "eq", EdtEquipement,
                 prototype)
@@ -136,7 +137,7 @@ class EdtPedit(Presentation):
             "Exemple : |cmd|main gauche sarbacane_bambou|ff|\n" \
             "Pour supprimer un membre, entrez |cmd|0|ff| comme clé de " \
             "l'objet.\nExemple : |cmd|main gauche 0|ff|\n\n"
-        
+
         # Niveau
         niveau = self.ajouter_choix("niveau", "ni", Entier, prototype,
                 "niveau", 0)
@@ -145,7 +146,7 @@ class EdtPedit(Presentation):
         niveau.prompt = "Entrez un niveau : "
         niveau.aide_courte = \
             "Entrez le niveau du PNJ.\n\nNiveau actuel : {objet.niveau}"
-        
+
         # XP
         xp = self.ajouter_choix("xP", "x", Flottant, prototype,
                 "gain_xp")
@@ -156,7 +157,7 @@ class EdtPedit(Presentation):
             "Entrez le pourcentage d'XP relative gagnée par l'adversaire lors " \
             "de la mort du\nPNJ.\n\n" \
             "Pourcentage actuel : {objet.gain_xp}%"
-        
+
         # Stats à entraîner
         en = self.ajouter_choix("stats pouvant être entraînées", "en",
                 EdtEntraine, prototype)
@@ -167,12 +168,12 @@ class EdtPedit(Presentation):
             "valeur maximum\npouvant être entraînée par ce prototype. Le " \
             "ou les PNJ construits sur ce\nprototype ne pourront pas " \
             "entraîner cette stat au-delà du niveau maximum\nspécifié."
-        
+
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,
                 prototype.script)
         scripts.parent = self
-        
+
         # À dépecer
         depecer = self.ajouter_choix("à dépecer", "dé", EdtADepecer,
                 prototype)
@@ -185,3 +186,13 @@ class EdtPedit(Presentation):
             "Exemple : |cmd|peau_ours 1|\n" \
             "Pour supprimer un objet, entrez |cmd|0|ff| comme nombre " \
             "d'objets.\nExemple : |cmd|peau_ours 0|ff|\n\n"
+
+        # Suppression
+        suppression = self.ajouter_choix("supprimer", "sup", NSupprimer,
+                prototype)
+        suppression.parent = self
+        suppression.aide_courte = "Souhaitez-vous réellement supprimer " \
+                "le prototype de PNJ {} ?".format(prototype.cle)
+        suppression.action = "pnj.supprimer_prototype"
+        suppression.confirme = "Le prototype de PNJ {} a bien été " \
+                "supprimé.".format(prototype.cle)
