@@ -150,7 +150,8 @@ class ModeConnecte(Contexte):
                     "votre commande.|ff|")
 
                 # On appelle l'hook responsabler des erreurs (joueur:erreur)
-                importeur.hook["joueur:erreur"].executer(self, msg, trace)
+                joueur = self.pere.joueur
+                importeur.hook["joueur:erreur"].executer(joueur, msg, trace)
             else:
                 exception = ErreurInterpretation
                 try:

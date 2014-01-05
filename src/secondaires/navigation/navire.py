@@ -678,8 +678,8 @@ class Navire(Vehicule):
         navire = salle.navire
         etendue = navire.etendue
         portee = get_portee(salle)
-        visible = Visible.observer(personnage, portee, 5, exclure_navire=False)
-        navires = [couple[1][3] for couple in visible.navires]
+        visible = Visible.observer(personnage, portee, 5)
+        navires = [couple[1][1] for couple in visible.points.items()]
         if self not in navires:
             personnage << "|err|Vous ne pouvez voir ce navire d'ici.|ff|"
             return

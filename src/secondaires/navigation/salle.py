@@ -325,11 +325,11 @@ class SalleNavire(Salle):
             elts.append(element)
 
         # Cherche les navires visibles
-        visible = Visible()
-        visible.trouver_navires(personnage, self.navire, 30, 5,
-                exclure_navire=False)
-        for angle, (x, y, vecteur, navire) in visible.navires:
-            elts.append(navire)
+        portee = get_portee(personnage.salle)
+        visible = Visible.observer(personnage, portee, 5)
+        for angle, (vecteur, point) in visible.points.items():
+            if hasattr(point, "get_nom_pour"):
+                elts.append(point)
 
         return elts
 

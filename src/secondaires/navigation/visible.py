@@ -1,4 +1,5 @@
 # -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
@@ -28,11 +29,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Visible, détaillée plus bas.
-
-Il contient également d'autres fonctions utiles à la classe.
-
-"""
+"""Ce fichier contient la classe Visible, détaillée plus bas."""
 
 from math import sqrt, radians, pi
 
@@ -67,33 +64,18 @@ def norme_inv_angle(angle):
 
     return angle
 
-def entrer_point(dictionnaire, position, angle, v_dist, coords, point):
-    """Entre un point dans le dictionnaire.
-
-    Si le point est déjà présent on cherche à garder le bon (le plus proche
-    souvent).
-
-    """
-    a_point = dictionnaire.get(angle)
-    if a_point:
-        # Détermine si le point est plus proche ou non
-        x, y, p_vecteur, a_point = a_point
-        if p_vecteur.mag == v_dist.mag and isinstance(point,
-                Salle):
-            dictionnaire[angle] = (coords[0], coords[1], v_dist, point)
-        elif v_dist.mag <= p_vecteur.mag:
-            dictionnaire[angle] = (coords[0], coords[1], v_dist, point)
-    else:
-        dictionnaire[angle] = (coords[0], coords[1], v_dist, point)
-
 ## Classe Visible
 
 class Visible:
 
     """Cette classe contient les éléments visibles depuis une positions.
 
-    Ces éléments sont regroupés dans plusieurs dictionnaire dont la clé
-    est l'angle par rapport à l'observateur et en valeur l'élément observé.
+    Ces éléments sont décrits par ligne en fonction de leur position par
+    rapport au personnage, à la portée et à la précision. Les éléments peuvent
+    être de différents types : par défaut, les obstacles et les navires sont
+    considérés comme des points, mais ce dictionnaire peut être agrandi
+    par d'autres modules. Le dictionnaire des points observables se trouve
+    dans 'importeur.navigation.points_observables'.
 
     On n'utilise pas le constructeur pour générer cette classe, mais
     la méthode de classe observer.
@@ -101,13 +83,71 @@ class Visible:
 
     """
 
-    def __init__(self):
+    def __init__(self, position):
         """Constructeur, à ne pas appeler directement."""
-        self.cotes = {}
-        self.navires = []
+        self.position = position
+        self.points = {}
+
+    def entrer_point(self, angle, v_dist, point, nav_direction,
+            precision, recursif=True):
+        """Entre un point dans le dictionnaire des points.
+
+        On n'entre le point que si il n'y a pas de point plus proche.
+
+        """
+        position = self.position
+        a_point = self.points.get(angle)
+        if a_point is None or a_point[0].mag > v_dist.mag:
+            self.points[angle] = (v_dist, point)
+
+            if not recursif:
+                # On s'arrête là
+                return
+
+            # Si on est assez prêt, un point peut être visible
+            # dans plusieurs directions, sur 0°, mais sur 15 aussi
+            # par exemple. La boucle ci-dessous vérifie qu'on voit
+            # bien tous les points
+            test = True
+            t_vec = Vector(v_dist.x, v_dist.y, v_dist.z)
+            c_angle = 0 # va changer au fur et à mesure que l'on tourne
+            while test:
+                t_vec.around_z(radians(precision))
+                a_vec = position + t_vec
+                c_angle += precision
+                if (t_vec - v_dist).mag <= 0.55:
+                    direction = get_direction(t_vec)
+                    r_direction = (direction - nav_direction) % 360
+                    t_angle = norme_angle(round(r_direction / \
+                            precision) * precision)
+                    self.entrer_point(t_angle, t_vec, point, nav_direction,
+                            precision, recursif=False)
+                else:
+                    test = False
+                if c_angle >= 180:
+                    break
+
+            test = True
+            t_vec = Vector(v_dist.x, v_dist.y, v_dist.z)
+            c_angle = 0
+            while test:
+                t_vec.around_z(radians(-precision))
+                a_vec = position + t_vec
+                c_angle += precision
+                if (t_vec - v_dist).mag <= 0.55:
+                    direction = get_direction(t_vec)
+                    r_direction = (direction - nav_direction) % 360
+                    t_angle = norme_angle(round(r_direction / \
+                            precision) * precision)
+                    self.entrer_point(t_angle, t_vec, point, nav_direction,
+                            precision, recursif=False)
+                else:
+                    test = False
+                if c_angle >= 180:
+                    break
 
     @classmethod
-    def observer(cls, personnage, portee, precision, exclure_navire=True):
+    def observer(cls, personnage, portee, precision):
         """Méthode de classe construisant une instance de classe.
 
         Les paramètres à préciser sont :
@@ -116,17 +156,19 @@ class Visible:
             La précision en degré à laquelle les détails seront arrondis.
 
         """
-        visible = cls()
-        navire = personnage.salle.navire
-        etendue = navire.etendue
-        visible.trouver_cotes(personnage, navire, etendue, portee, precision)
-        visible.trouver_navires(personnage, navire, portee, precision,
-                exclure_navire)
+        position = Vector(*personnage.salle.coords.tuple())
+        visible = cls(position)
+        for methode in importeur.navigation.points_ovservables.values():
+            methode(visible, personnage, portee, precision)
         return visible
 
-    def trouver_cotes(self, personnage, navire, etendue, portee, precision):
+    @staticmethod
+    def trouver_cotes(visible, personnage, portee, precision):
         """Cherche les côtes de l'étendue."""
+        navire = personnage.salle.navire
+        etendue = navire.etendue
         altitude = etendue.altitude
+        nav_direction = navire.direction.direction
         pos_coords = personnage.salle.coords.tuple()
         x, y, z = pos_coords
         position = Vector(x, y, altitude)
@@ -142,106 +184,55 @@ class Visible:
             r_direction = (direction - navire.direction.direction) % 360
             # On détermine l'angle minimum fonction de la précision
             angle = norme_angle(round(r_direction / precision) * precision)
-            entrer_point(self.cotes, position, angle, v_dist, t_coords,
-                    point)
+            visible.entrer_point(angle, v_dist, point, nav_direction,
+                    precision)
 
-            # Si on est assez prêt, un point peut être visible
-            # dans plusieurs directions, sur 0°, mais sur 15 aussi
-            # par exemple. La boucle ci-dessous vérifie qu'on voit
-            # bien tous les points
-            test = True
-            t_vec = Vector(v_dist.x, v_dist.y, v_dist.z)
-            c_angle = 0 # va changer au fur et à mesure que l'on tourne
-            while test:
-                t_vec.around_z(radians(precision))
-                a_vec = position + t_vec
-                c_angle += precision
-                if (t_vec - v_dist).mag < 1:
-                    direction = get_direction(t_vec)
-                    r_direction = (direction - \
-                            navire.direction.direction) % 360
-                    t_angle = norme_angle(round(r_direction / \
-                            precision) * precision)
-                    entrer_point(self.cotes, position, t_angle, t_vec,
-                            t_coords, point)
-                else:
-                    test = False
-                if c_angle >= 360:
-                    break
-
-            test = True
-            t_vec = Vector(v_dist.x, v_dist.y, v_dist.z)
-            c_angle = 0
-            while test:
-                t_vec.around_z(-radians(precision) % (pi * 2))
-                a_vec = position + t_vec
-                c_angle += precision
-                if (t_vec - v_dist).mag < 1:
-                    direction = get_direction(t_vec)
-                    r_direction = (direction - \
-                            navire.direction.direction) % 360
-                    t_angle = norme_angle(round(r_direction / \
-                            precision) * precision)
-                    entrer_point(self.cotes, position, t_angle, t_vec,
-                            t_coords, point)
-                else:
-                    test = False
-                if c_angle >= 360:
-                    break
-
-    def trouver_navires(self, personnage, navire, portee, precision,
-            exclure_navire=True):
+    @staticmethod
+    def trouver_navires(visible, personnage, portee, precision):
         """Cherche les navires autour du personnage."""
+        navire = personnage.salle.navire
+        etendue = navire.etendue
+        altitude = etendue.altitude
+        nav_direction = navire.direction.direction
         pos_coords = personnage.salle.coords.tuple()
         x, y, z = pos_coords
-        altitude = z
         position = Vector(x, y, altitude)
         navires = [n for n in importeur.navigation.navires.values() if \
                 mag(n.position.x, n.position.y, altitude, position.x, \
                 position.y, altitude) - n.get_max_distance_au_centre() <= \
                 portee]
-        if exclure_navire:
-            navires = [n for n in navires if n is not navire]
-
         for t_navire in navires:
             # On détermine la salle la plus proche
             t_salles = [s for s in t_navire.salles.values() if \
                     s.coords.z == 0]
-
-            distance = None
-            d_salle = None
-            t_x = t_y = None
-            v_dist = None
-            n_x = n_y = None
             for t_salle in t_salles:
                 # Calcul de la distance entre salle et t_salle
                 t_coords = t_salle.coords.tuple()
                 t_x, t_y, t_z = t_coords
-                t_distance = mag(x, y, 0, t_x, t_y, 0)
-                if distance is None or t_distance < distance:
-                    distance = t_distance
-                    d_salle = t_salle
-                    n_x, n_y, n_z = t_salle.coords.tuple()
-                else:
-                    continue
+                distance = mag(x, y, 0, t_x, t_y, 0)
+                v_point = Vector(t_x, t_y, altitude)
+                v_dist = v_point - position
+                direction = get_direction(v_dist)
+                r_direction = (direction - nav_direction) % 360
 
-            if n_x is None:
-                continue
+                # On détermine l'angle minimum fonction de la précision
+                angle = norme_angle(round(r_direction / precision) * precision)
 
-            v_point = Vector(n_x, n_y, altitude)
-            v_dist = v_point - position
-            direction = get_direction(v_dist)
-            r_direction = (direction - navire.direction.direction) % 360
+                if distance <= portee:
+                    visible.entrer_point(angle, v_dist, t_navire,
+                            nav_direction, precision)
 
-            # On détermine l'angle minimum fonction de la précision
-            angle = norme_angle(round(r_direction / precision) * precision)
+    def filtrer(self, element):
+        """Retire l'information du tableau des points.
 
-            if distance <= portee:
-                # N'y a-t-il pas de terre plus proche
-                v_cote = self.cotes.get(angle, (None, None, None, None))[2]
-                if v_cote is None or v_cote.mag > v_dist.mag:
-                    self.navires.append((angle, (t_x, t_y, v_dist,
-                            t_navire)))
+        L'information est le point. Ce peut être un navire, une salle, un
+        obstacle ou une information particulière ajoutée par un module.
+
+        """
+        for angle, point in tuple(self.points.items()):
+            point = point[1]
+            if point is element:
+                del self.points[angle]
 
     def formatter(self, direction, limite):
         """On formatte les points.
@@ -258,10 +249,13 @@ class Visible:
 
         """
         # On commence par trier les points
-        points = tuple(self.cotes.items()) + tuple(self.navires)
-        neg = [(a, p) for a, p in points if a < 0]
-        pos = [(a, p) for a, p in points if a >= 0]
+        points = tuple(self.points.items())
         points = sorted(points, key=lambda couple: couple[0])
+        if direction == 180:
+            neg = list(reversed([(a, p) for a, p in points if a < 0]))
+            arr = [(a, p) for a, p in points if a == 180]
+            pos = list(reversed([(a, p) for a, p in points if 0 <= a < 180]))
+            points = neg + arr + pos
 
         # On formatte les points obtenus
         msg = []
@@ -272,14 +266,14 @@ class Visible:
             r_limite_2 = range(0, limite_sup + 1)
         elif limite_sup < 0 and limite_inf > 0:
             r_limite_1 = range(-180, limite_sup + 1)
-            r_limite_2 = range(limite_inf, 180)
+            r_limite_2 = range(limite_inf, 181)
         elif limite_inf > limite_sup:
             r_limite_1 = r_limite_2 = range(limite_sup, limite_inf + 1)
         else:
             r_limite_1 = r_limite_2 = range(limite_inf, limite_sup + 1)
 
         for angle, point in points:
-            x, y, vecteur, point = point
+            vecteur, point = point
             if not (angle in r_limite_1 or angle in r_limite_2):
                 continue
 

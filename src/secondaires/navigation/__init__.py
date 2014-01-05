@@ -44,6 +44,7 @@ from .navire import Navire
 from .elements import types as types_elements
 from .elements.base import BaseElement
 from .vent import Vent
+from .visible import Visible
 from . import commandes
 from . import editeurs
 from . import masques
@@ -83,6 +84,10 @@ class Module(BaseModule):
         self.chantiers = {}
         self.trajets = {}
         self.matelots = {}
+        self.points_ovservables = {
+                "cotes": Visible.trouver_cotes,
+                "navires": Visible.trouver_navires,
+        }
 
     def config(self):
         """Configuration du module."""
