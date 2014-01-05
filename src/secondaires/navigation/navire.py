@@ -512,7 +512,7 @@ class Navire(Vehicule):
             etendue = self.etendue
             centre = self.get_max_distance_au_centre()
             points = tuple(etendue.get_points_proches(origine.x, origine.y,
-                    vitesse.mag * temps_virtuel + centre).items())
+                    vitesse.mag * temps_virtuel + centre + 1).items())
             points += importeur.navigation.points_navires(self)
             # Si l'étendue a un point sur le segment
             # (position -> position + vitesse) alors collision
