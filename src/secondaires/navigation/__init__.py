@@ -55,6 +55,7 @@ from .equipage.fiche import FicheMatelot
 from .chantier_naval import ChantierNaval
 from .navires_vente import NaviresVente
 from .matelots_vente import MatelotsVente
+from .repere import Repere
 from .trajet import Trajet
 
 class Module(BaseModule):
@@ -83,10 +84,12 @@ class Module(BaseModule):
         self.fiches = {}
         self.chantiers = {}
         self.trajets = {}
+        self.reperes = {}
         self.matelots = {}
         self.points_ovservables = {
                 "cotes": Visible.trouver_cotes,
                 "navires": Visible.trouver_navires,
+                "reperes": Repere.trouver_reperes,
         }
 
     def config(self):
@@ -208,6 +211,15 @@ class Module(BaseModule):
         nb_trajets = len(self.trajets)
         self.nav_logger.info(format_nb(nb_trajets,
                 "{nb} trajet{s} maritime{s} récupéré{s}"))
+
+        # On récupère les repères
+        reperes = self.importeur.supenr.charger_groupe(Repere)
+        for repere in reperes:
+            self.ajouter_repere(repere)
+
+        nb_reperes = len(self.reperes)
+        self.nav_logger.info(format_nb(nb_reperes,
+                "{nb} repère{s} récupéré{s}"))
 
         # On récupère les chantiers navals
         chantiers = self.importeur.supenr.charger_groupe(ChantierNaval)
@@ -431,6 +443,23 @@ class Module(BaseModule):
         """Supprime le trajet."""
         self.trajets.pop(cle).detruire()
 
+    def creer_repere(self, x, y):
+        """Crée un repère."""
+        if (x, y) in self.reperes:
+            raise ValueError("le repère en {}.{} existe déjà".format(x, y))
+
+        repere = Repere(x, y)
+        self.ajouter_repere(repere)
+        return repere
+
+    def ajouter_repere(self, repere):
+        """Ajoute le repère."""
+        self.reperes[(repere.x, repere.y)] = repere
+
+    def supprimer_repere(self, x, y):
+        """Supprime le repère."""
+        self.reperes.pop((x, y)).detruire()
+
     def creer_chantier_naval(self, cle):
         """Crée un chantier naval."""
         if cle in self.chantiers:
@@ -586,6 +615,8 @@ class Module(BaseModule):
             return "#"
         elif isinstance(point, Navire):
             return "*"
+        elif isinstance(point, Repere):
+            return "~"
 
         return ""
 
