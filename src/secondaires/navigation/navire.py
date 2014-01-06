@@ -187,7 +187,7 @@ class Navire(Vehicule):
         if self.etendue is None:
             return vec_nul
 
-        # On récupère le vent le plus proche
+        # On récupère les vents le plus proche
         vents = importeur.navigation.vents_par_etendue.get(
                 self.etendue.cle, [])
 
@@ -206,6 +206,7 @@ class Navire(Vehicule):
                 facteur = 0.6
             else:
                 facteur = 0.3
+
 
             vitesse = Vector(vent.vitesse.x, vent.vitesse.y, vent.vitesse.z)
             vecteur_vent = vecteur_vent + vitesse * facteur
@@ -486,11 +487,9 @@ class Navire(Vehicule):
 
     def maj_salles(self):
         d = self.direction.direction + 90
-        i = self.direction.inclinaison
-        operation = lambda v: self.position + v.tourner_autour_z(d).incliner(i)
         for vec, salle in self.salles.items():
             vec = Vecteur(*vec)
-            vec = operation(vec)
+            vec = self.position + vec.tourner_autour_z(d)
             salle.coords.x = vec.x
             salle.coords.y = vec.y
             salle.coords.z = vec.z
@@ -503,47 +502,15 @@ class Navire(Vehicule):
         if not self.immobilise:
             # On contrôle les collisions
             # On cherche toutes les positions successives du navire
-            vecteurs = []
-            for salle in self.salles.values():
-                t_vecteur = Vector(*salle.coords.tuple())
-                vecteurs.append((t_vecteur, salle))
-
-            # On récupère les points proches du navire
-            etendue = self.etendue
-            centre = self.get_max_distance_au_centre()
-            points = tuple(etendue.get_points_proches(origine.x, origine.y,
-                    vitesse.mag * temps_virtuel + centre + 1).items())
-            points += importeur.navigation.points_navires(self)
-            # Si l'étendue a un point sur le segment
-            # (position -> position + vitesse) alors collision
-            for vecteur, t_salle in vecteurs:
-                projetee = vecteur + vitesse * temps_virtuel
-                b_arg = [vecteur.x, vecteur.y, vecteur.z, projetee.x, \
-                        projetee.y, projetee.z]
-                for coords, point in points:
-                    v_point = Vector(*coords)
-                    arg = b_arg + list(coords) + [etendue.altitude, 0.5]
-                    if in_rectangle(*arg) and vecteur.distance(
-                            projetee, v_point) < 0.5:
-                        importeur.navigation.nav_logger.warning(
-                                "Collision {}:{}, {}.{}.{} {} {}".format(
-                                t_salle, point, vecteur, projetee,
-                                v_point, in_rectangle(*arg),
-                                vecteur.distance(projetee, v_point)))
-                        self.collision(t_salle, point)
-                        self.vitesse.x = 0
-                        self.vitesse.y = 0
-                        self.vitesse.z = 0
-                        self.acceleration.x = 0
-                        self.acceleration.y = 0
-                        self.acceleration.z = 0
-                        return
+            if self.controller_collision(vitesse * temps_virtuel):
+                return
 
             Vehicule.avancer(self, temps_virtuel)
             vit_fin = self.vitesse_noeuds
             n_position = self.opt_position
 
             # Si le navire a croisé un lien, change d'étendue
+            etendue = self.etendue
             for coords, autre in etendue.liens.items():
                 x, y = coords
                 if autre is etendue:
@@ -573,6 +540,60 @@ class Navire(Vehicule):
 
         self.en_collision = False
 
+    def controller_collision(self, destination=None, direction=None):
+        """Contrôle les collisions entre la position actuel et la destination.
+
+        Si la direction est précisée, le navire vire (la direction
+        est à préciser en degré).
+
+        """
+        if destination and direction:
+            raise ValueError("La destination et direction sont précisés.")
+
+        origine = self.opt_position
+        destination = destination or Vector(0, 0, 0)
+        direction_absolue = self.direction.direction + 90
+        if direction:
+            direction_absolue += direction
+
+        vecteurs = []
+        for salle in self.salles.values():
+            t_vecteur = Vector(*salle.coords.tuple())
+            vecteurs.append((t_vecteur, salle))
+
+        # On récupère les points proches du navire
+        etendue = self.etendue
+        centre = self.get_max_distance_au_centre()
+        points = tuple(etendue.get_points_proches(origine.x, origine.y,
+                destination.mag + centre + 1).items())
+        points += importeur.navigation.points_navires(self)
+        # Si l'étendue a un point sur le segment
+        # (position -> position + vitesse) alors collision
+        for vecteur, t_salle in vecteurs:
+            if direction:
+                n_destination = Vector(t_salle.r_x, t_salle.r_y, t_salle.r_z)
+                n_destination.around_z(radians(direction_absolue))
+                projetee = origine + n_destination
+            else:
+                projetee = vecteur + destination
+
+            b_arg = [vecteur.x, vecteur.y, vecteur.z, projetee.x, \
+                    projetee.y, projetee.z]
+            for coords, point in points:
+                v_point = Vector(*coords)
+                arg = b_arg + list(coords) + [etendue.altitude, 0.5]
+                if in_rectangle(*arg) and vecteur.distance(
+                        projetee, v_point) < 0.5:
+                    importeur.navigation.nav_logger.warning(
+                            "Collision {}:{}, {}.{}.{} {} {}".format(
+                            t_salle, point, vecteur, projetee,
+                            v_point, in_rectangle(*arg),
+                            vecteur.distance(projetee, v_point)))
+                    self.collision(t_salle, point)
+                    return True
+
+        return False
+
     def collision(self, salle, contre=None):
         """Méthode appelée lors d'une collision avec un point."""
         Vehicule.collision(self, salle)
@@ -587,6 +608,12 @@ class Navire(Vehicule):
             self.envoyer("Le craquement du bois se brisant vous emplit " \
                     "les oreilles.")
             salle.noyer(vitesse * 20)
+        self.vitesse.x = 0
+        self.vitesse.y = 0
+        self.vitesse.z = 0
+        self.acceleration.x = 0
+        self.acceleration.y = 0
+        self.acceleration.z = 0
 
     def virer(self, n=1):
         """Vire vers tribord ou bâbord de n degrés.
@@ -595,6 +622,10 @@ class Navire(Vehicule):
         Sinon, vire vers tribord.
 
         """
+        if self.controller_collision(direction=n):
+            self.envoyer("Un léger choc se répercute sous vos pieds.")
+            return
+
         self.direction.tourner_autour_z(n)
         self.maj_salles()
 
@@ -790,7 +821,7 @@ class Propulsion(Force):
         vecteur = vec_nul
         if voiles:
             fact_voile = sum(v.facteur_orientation(navire, vent) \
-                    for v in voiles) / len(voiles) * 0.7
+                    for v in voiles) / len(navire.voiles) * 0.7
             allure = (get_direction(direction) - get_direction(vent)) % 360
             if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
                 facteur = navire.vent_debout()

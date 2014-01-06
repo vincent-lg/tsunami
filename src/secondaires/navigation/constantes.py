@@ -87,6 +87,19 @@ COQUE_INTACTE = 0
 COQUE_COLMATEE = 1
 COQUE_OUVERTE = 2
 
+# Modification du vent en fonction de la météo
+PERTURBATIONS = {
+        "grele": 0.5,
+        "neige": 0.3,
+        "nuages": 0.1,
+        "nuages_fins": -0.2,
+        "nuages_neige": 0.1,
+        "orage": 2,
+        "pluie": 1.5,
+        "tempete_neige": 3,
+}
+
+
 # Fonctions
 def get_portee(salle):
     """Retourne la portée à laquelle on peut voir depuis la salle spécifiée."""
