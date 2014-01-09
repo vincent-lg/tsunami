@@ -144,7 +144,7 @@ class ArmeDeJet(Arme):
         """Le personnage regarde l'objet"""
         msg = Arme.regarder(self, personnage)
         msg += "\n\n"
-        if self.projectile:
+        if getattr(self, "projectile", None):
             msg += "Projectile :  {}.".format(self.projectile.get_nom())
         else:
             msg += "Aucun projectile n'est chargé sur cette arme."
