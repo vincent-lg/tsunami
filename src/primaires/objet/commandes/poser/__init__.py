@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,9 +34,9 @@ from primaires.interpreteur.commande.commande import Commande
 from primaires.objet.conteneur import SurPoids
 
 class CmdPoser(Commande):
-    
+
     """Commande 'poser'"""
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "poser", "drop")
@@ -46,7 +46,7 @@ class CmdPoser(Commande):
         self.aide_courte = "pose un objet"
         self.aide_longue = \
                 "Cette commande permet de poser un ou plusieurs objets."
-    
+
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("nom_objet")
@@ -61,7 +61,7 @@ class CmdPoser(Commande):
                 "(personnage.equipement.inventaire_simple, " \
                 "personnage.salle.objets_sol)"
         conteneur.proprietes["types"] = "('conteneur', )"
-    
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         personnage.agir("poser")
@@ -71,17 +71,24 @@ class CmdPoser(Commande):
         objets = list(dic_masques["nom_objet"].objets_qtt_conteneurs)[:nombre]
         dans = dic_masques["conteneur"]
         dans = dans.objet if dans else None
-        
+
         pose = 0
         for objet, qtt, conteneur in objets:
             if not objet.peut_prendre:
                 personnage << "Vous ne pouvez pas prendre {} avec vos " \
                         "mains...".format(objet.nom_singulier)
                 return
-            
+
             if qtt > nombre:
                 qtt = nombre
-            
+
+            if dans and not (dans.est_de_type("conteneur") and \
+                    dans.accepte_type(objet) and dans.peut_contenir(
+                    objet, qtt)):
+                personnage << "|err|{} ne peut pas contenir {}.|ff|".format(
+                        dans.get_nom(), objet.get_nom(qtt))
+                return
+
             conteneur.retirer(objet, qtt)
             if dans:
                 if hasattr(dans, "conteneur"):
@@ -95,11 +102,11 @@ class CmdPoser(Commande):
                         return
             else:
                 personnage.salle.objets_sol.ajouter(objet, qtt)
-            
+
             pose += qtt
             if pose >= nombre:
                 break
-        
+
         if dans:
             personnage << "Vous déposez {} dans {}.".format(
                     objet.get_nom(pose), dans.nom_singulier)
@@ -109,9 +116,9 @@ class CmdPoser(Commande):
             personnage << "Vous posez {}.".format(objet.get_nom(pose))
             personnage.salle.envoyer("{{}} pose {}.".format(
                         objet.get_nom(pose)), personnage)
-            
+
             prototype = objet
             if hasattr(objet, "prototype"):
                 prototype = objet.prototype
-            
+
             prototype.poser(objet, personnage)

@@ -944,7 +944,7 @@ class Personnage(BaseObj):
         if not objet.unique:
             return None
 
-        if not self.est_immortel() and self.poids + objet.poids > \
+        if not self.est_immortel() and (self.poids + objet.poids) * qtt > \
                 self.poids_max:
             raise SurPoids("C'est bien trop lourd !")
 
