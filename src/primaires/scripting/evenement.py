@@ -222,6 +222,19 @@ class Evenement(BaseObj):
         evenement = supprimer_accents(evenement).lower()
         del self.__evenements[evenement]
 
+    def renommer_evenement(self, ancien, nouveau):
+        """Renomme un évènement.
+
+        Ldes paramètres à entrer sont :
+
+            ancien -- l'ancien nom de l'évènement
+            nouveau -- le nouveau nom de l'évènement
+
+        """
+        evt = self.__evenements.pop(ancien)
+        evt.nom = nouveau
+        self.__evenements[nouveau] = evt
+
     def executer(self, forcer=False, **variables):
         """Exécution de l'évènement."""
         self.espaces = Espaces(self)

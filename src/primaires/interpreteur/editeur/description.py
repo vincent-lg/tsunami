@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,29 +36,35 @@ from . import Editeur
 from primaires.interpreteur.options import *
 
 class Description(Editeur):
-    
+
     """Contexte-éditeur description.
-    Ce contexte sert à éditer des descriptions.    
-        
+
+    Ce contexte sert à éditer des descriptions.
+
     """
-    
+
     nom = "editeur:base:description"
-    
+
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
         self.opts.echp_sp_cars = False
         self.nom_attribut = attribut or "description"
+        self.ajouter_option("?", self.opt_aide)
+        self.ajouter_option("j", self.opt_ajouter_paragraphe)
+        self.ajouter_option("i", self.opt_inserer_paragraphe)
         self.ajouter_option("d", self.opt_supprimer)
         self.ajouter_option("r", self.opt_remplacer)
         self.ajouter_option("e", self.opt_editer_evt)
+        self.ajouter_option("de", self.opt_supprimer_evt)
+        self.ajouter_option("re", self.opt_renommer_evt)
         self.ajouter_option("o", self.opt_editer_options)
-    
+
     @property
     def description(self):
         """Retourne la description, attribut de self.objet"""
         return getattr(self.objet, self.nom_attribut)
-    
+
     def get_prompt(self):
         """Retourne le prompt."""
         description = self.description
@@ -69,30 +75,31 @@ class Description(Editeur):
             return "-? "
         else:
             return "-> "
-    
+
     def get_apercu(self):
         """Aperçu de la description"""
         return self.apercu.format(objet = self.objet.description)
-    
+
     def accueil(self):
         """Retourne l'aide"""
         description = self.description
-        
+
         # Message d'aide
         msg = self.aide_courte.format(objet = self.objet) + "\n"
         msg += "Entrez une |cmd|phrase|ff| à ajouter à la description " \
                 "ou |ent|/|ff| pour revenir à la\nfenêtre mère.\n" \
                 "Symboles :\n" \
                 " - |ent||tab||ff| : symbolise une tabulation\n" \
-                " - |ent||nl||ff| : symbolise un saut de ligne\n" \
                 "Options :\n" \
+                " - |ent|/?|ff| pour obtenir la liste complète " \
+                "des options disponibles\n" \
                 " - |ent|/d <numéro>/*|ff| : supprime un paragraphe ou " \
                 "toute la description\n" \
                 " - |ent|/r <texte 1> / <texte 2>|ff| : remplace " \
                 "|cmd|texte 1|ff| par |cmd|texte 2|ff|\n" \
                 "Pour ajouter un paragraphe, entrez-le tout simplement.\n\n" \
                 "Description existante :\n"
-        
+
         if len(description.paragraphes) > 0:
             no_ligne = 1
             for paragraphe in description.paragraphes:
@@ -103,16 +110,107 @@ class Description(Editeur):
                 no_ligne += 1
         else:
             msg += "\n Aucune description."
-        
+
         return msg
-    
+
+    def opt_aide(self, arguments):
+        """Affiche la liste des options.
+
+        Syntaxe :
+          /?
+
+        """
+        msg = \
+            "Liste des options disponibles :\n" \
+            " - |ent|/a <numéro du paragraphe> <texte>|ff| pour ajouter " \
+            "du texte\n   à la fin du paragraphe spécifié\n" \
+            " - |ent|/j <numéro du paragraphe> <texte>|ff| pour insérer " \
+            "le\n   paragraphe avant celui spécifié\n" \
+            " - |/r <texte 1> / <texte 2>|ff| pour remplacer " \
+            "|ent|texte 1|ff| par |ent|texte 2|ff|"
+
+        if self.description.scriptable:
+            msg += \
+                "\nScripting de description :\n" \
+                " - |ent|/e (description dynamique)|ff| pour éditer un " \
+                "élément de\n   description dynamique. Sans arguments, " \
+                "affiche les descriptions dynamiques\n   existantes\n" \
+                " - |ent|/de <description dynamique>|ff| supprime la " \
+                "description dynamique\n" \
+                " - |ent|/re <ancien nom> <nouveau nom>|ff| renomme la " \
+                "description dynamique"
+
+            self.pere << msg
+
+    def opt_ajouter_paragraphe(self, arguments):
+        """Ajoute un paragraphe.
+
+        Syntaxe :
+          /j <numéro> <texte>
+
+        """
+        description = self.description
+        paragraphes = description.paragraphes
+        arguments = arguments.split(" ")
+        if len(arguments) < 2:
+            self.pere << "|err|Syntaxe invalide :|ent|/a <numéro du " \
+                    "paragraphe> <texte à insérer>|ff|"
+            return
+
+        numero = arguments[0]
+        texte = " ".join(arguments[1:])
+
+        # Conversion du numéro de paragraphe
+        try:
+            numero = int(numero)
+            assert 1 <= numero <= len(paragraphes)
+        except (ValueError, AssertionError):
+            self.pere << "|err|Le numéro précisé est invalide.|ff|"
+            return
+
+        description.paragraphes.insert(numero - 1, texte)
+        self.actualiser()
+
+    def opt_inserer_paragraphe(self, arguments):
+        """Insère du texte à la fin d'un paragraphe.
+
+        Syntaxe :
+          /a <numéro> <texte>
+
+        """
+        description = self.description
+        paragraphes = description.paragraphes
+        arguments = arguments.split(" ")
+        if len(arguments) < 2:
+            self.pere << "|err|Syntaxe invalide :|ent|/a <numéro du " \
+                    "paragraphe> <texte à insérer>|ff|"
+            return
+
+        numero = arguments[0]
+        texte = " ".join(arguments[1:])
+
+        # Conversion du numéro de paragraphe
+        try:
+            numero = int(numero)
+            assert 1 <= numero <= len(paragraphes)
+        except (ValueError, AssertionError):
+            self.pere << "|err|Le numéro précisé est invalide.|ff|"
+            return
+
+        paragraphe = paragraphes[numero - 1]
+        if not paragraphe.endswith(" "):
+            paragraphe += " "
+        paragraphe += texte
+        description.paragraphes[numero - 1] = paragraphe
+        self.actualiser()
+
     def opt_supprimer(self, arguments):
         """Fonction appelé quand on souhaite supprimer un morceau de la
         description
         Les arguments peuvent être :
-        *   le signe '*' pour supprimer toute la description        
+        *   le signe '*' pour supprimer toute la description
         *   un nombre pour supprimer le paragraphe n°<nombre>
-        
+
         """
         description = self.description
         if arguments == "*": # on supprime toute la description
@@ -130,12 +228,12 @@ class Description(Editeur):
             else:
                 description.supprimer_paragraphe(no)
                 self.actualiser()
-    
+
     def opt_remplacer(self, arguments):
         """Fonction appelé pour remplacer du texte dans la description.
         La syntaxe de remplacement est :
         <texte 1> / <texte à remplacer>
-        
+
         """
         description = self.description
         # On commence par split au niveau du pipe
@@ -146,14 +244,14 @@ class Description(Editeur):
         else:
             description.remplacer(recherche, remplacer_par)
             self.actualiser()
-    
+
     def opt_editer_evt(self, arguments):
         """Edite ou affiche les éléments de la description."""
         description = self.description
         if not description.scriptable:
             self.pere << "|err|Option inconnue.|ff|"
             return
-        
+
         evenements = description.script["regarde"].evenements
         evt = supprimer_accents(arguments).strip()
         if not evt:
@@ -175,16 +273,65 @@ class Description(Editeur):
             enveloppe = EnveloppeObjet(EdtInstructions, evenement.sinon)
             enveloppe.parent = self
             contexte = enveloppe.construire(self.pere.joueur)
-            
+
             self.migrer_contexte(contexte)
+
+    def opt_supprimer_evt(self, arguments):
+        """Supprime un évènement de la description dynamique.
+
+        Syntaxe :
+          /de <nom>
+
+        """
+        description = self.description
+        if not description.scriptable:
+            self.pere << "|err|Option inconnue.|ff|"
+            return
+
+        regarde = description.script["regarde"]
+        evt = supprimer_accents(arguments).strip()
+        if evt in regarde.evenements:
+            regarde.supprimer_evenement(evt)
+            self.actualiser()
+        else:
+            self.pere << "|err|Évènement inconnu : {}.|ff|".format(
+                    repr(evt))
+
+    def opt_renommer_evt(self, arguments):
+        """Renomme un évènement de la description dynamique.
+
+        Syntaxe :
+          /de <nom> <nouveau nom>
+
+        """
+        description = self.description
+        if not description.scriptable:
+            self.pere << "|err|Option inconnue.|ff|"
+            return
+
+        regarde = description.script["regarde"]
+        try:
+            ancien, nouveau = arguments.split(" ")
+        except ValueError:
+            self.pere << "|err|Entrez l'ancien nom, un espace et le " \
+                    "nouveau nom de variable.|ff|"
+            return
+
+        ancien = supprimer_accents(ancien).strip()
+        if ancien in regarde.evenements:
+            regarde.renommer_evenement(ancien, nouveau)
+            self.actualiser()
+        else:
+            self.pere << "|err|Évènement inconnu : {}.|ff|".format(
+                    repr(ancien))
 
     def opt_editer_options(self, arguments):
         """Fonction appelé pour consulter et éditer ses options.
-        
+
         La syntaxe est :
             /o pour consulter ses options
             /o nom pour modifier ses options
-        
+
         """
         arguments = arguments.strip()
         personnage = self.pere.joueur
@@ -203,7 +350,7 @@ class Description(Editeur):
                     personnage)
             self.pere << "Vos options actuelles :\n\n  " + "\n  ".join(
                     options)
-    
+
     def interpreter(self, msg):
         """Interprétation du contexte"""
         description = self.description

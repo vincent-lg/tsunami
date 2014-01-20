@@ -73,7 +73,7 @@ class Alcool(AffectionPersonnage):
             if affection.force <= t_force:
                 return message
 
-        return messages[-1][0]
+        return messages[-1][1]
 
     def moduler(self, affection, duree, force):
         """Module, c'est-à-dire ici ajoute simplement les forces et durées."""
