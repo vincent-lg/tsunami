@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,14 +35,19 @@ import re
 from abstraits.obase import BaseObj
 
 class Zone(BaseObj):
-    
+
     """Classe représentant une zone.
-    
-    Une zone est un ensemble de salle. Certaines informations génériques
-    sont conservés dans la zone plutôt que dans chaque salle.
-    
+
+    Une zone est un ensemble de salles. Certaines informations génériques
+    sont conservées dans la zone plutôt que dans chaque salle.
+
+    Il est à noter que la zone est un ensemble "lâche". On change une
+    salle de zone en changeant son 'nom_zone'. Si le 'nom_zone' réfère à
+    une zone inconnue, la zone est créée automatiquement. Ainsi, les salles
+    constituant une zone peuvent changer facilement de zone.
+
     """
-    
+
     enregistrer = True
     def __init__(self, cle):
         """Constructeur de la zone."""
@@ -52,49 +57,49 @@ class Zone(BaseObj):
         self.ouverte = True
         self.argent_total = 0
         self.mod_temperature = 0
-    
+
     def __getnewargs__(self):
         return ("", )
-    
+
     def __getstate__(self):
         attrs = self.__dict__.copy()
         if "salles" in attrs:
             del attrs["salles"]
-        
+
         return attrs
-    
+
     def __repr__(self):
         return "zone {}".format(repr(self.cle))
-    
+
     def __str__(self):
         return self.cle
-    
+
     @property
     def fermee(self):
         return not self.ouverte
-    
+
     @property
     def temperature(self):
         """Retourne la température actuelle."""
         return importeur.meteo.temperature + self.mod_temperature
-    
+
     def ajouter(self, salle):
         """Ajoute une salle à la zone."""
         if salle not in self.salles:
             self.salles.append(salle)
-    
+
     def retirer(self, salle):
         """Retire la salle de la zone."""
         if salle in self.salles:
             self.salles.remove(salle)
-    
+
     def chercher_mnemonic_libre(self, mnemonic):
         """Cherche le mnémonique libre suivant.
-        
+
         On se base ici sur une partie chaîne et une partie chiffrée. Si
         la partie chaîne est nullée, alors la partie chiffrée sera 1, 2,
         3, ainsi de suite.
-        
+
         """
         re_mnemo = r"^[a-z_]*(\d+)$"
         reg = re.search(re_mnemo, mnemonic)
@@ -104,10 +109,10 @@ class Zone(BaseObj):
         else:
             chaine = mnemonic
             entiere = 0
-        
+
         mnemos = [s.mnemonic for s in self.salles if \
                 s.mnemonic.startswith(chaine)]
-        
+
         trouve = False
         while not trouve:
             entiere += 1
@@ -115,5 +120,5 @@ class Zone(BaseObj):
             if not mnemo in mnemos:
                 trouve = True
                 break
-        
+
         return mnemo

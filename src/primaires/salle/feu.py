@@ -33,6 +33,7 @@
 from random import randint, choice, random
 
 from abstraits.obase import BaseObj
+from corps.fonctions import lisser
 from primaires.perso.exceptions.stat import *
 
 class Feu(BaseObj):
@@ -66,11 +67,42 @@ class Feu(BaseObj):
 
     def __str__(self):
         """Méthode d'affichage du feu (fonction de la puissance)"""
-        cfg_salle = importeur.anaconf.get_config("salle")
-        messages_feu = cfg_salle.messages_feu
-        for puissance_max, msg in messages_feu:
+        cheminee = None
+        msg_cheminee = (
+            (1, "{cheminee} ne contient qu'un tas de cendres encore chaudes."),
+            (5, "{cheminee} contient encore quelques flammes vascillantes."),
+            (8, "Quelques flammes encore vives brûlent dans {cheminee}."),
+            (15, "Un feu clair crépite gaiement au coeur de {cheminee}."),
+            (25, "De hautes flammes dansent au coeur de {cheminee}."),
+            (40, "Un feu trop ardent emplit littéralement {cheminee}."),
+            (55, "Un début d'incendie menace, envahissant peu à peu les lieux."),
+            (70, "Un brasier enthousiaste flamboie ici et vous roussit le " \
+                    "poil."),
+            (85, "Une fournaise étouffante vous prend à la gorge et menace " \
+                    "de vous consummer."),
+            (100, "Un véritable bûcher se dresse tout autour de vous, " \
+                    "sans espoir de survie."),
+        )
+
+        for detail in self.salle.details:
+            if detail.a_flag("cheminée"):
+                messages = msg_cheminee
+                cheminee = detail
+
+        if cheminee is None:
+            cfg_salle = importeur.anaconf.get_config("salle")
+            messages = cfg_salle.messages_feu
+
+        for puissance_max, msg in messages:
             if self.puissance <= puissance_max:
-                return msg
+                retenu = msg
+                break
+
+        if cheminee:
+            retenu = lisser(retenu.format(cheminee=cheminee.titre))
+            retenu = retenu.capitalize()
+
+        return retenu
 
     def _set_puissance(self, valeur):
         if valeur >= 100:
@@ -105,7 +137,7 @@ class Feu(BaseObj):
             "Quelques flammes faiblardes tentent de s'extirper de la cendre.",
             "Les flammes se ravivent un instant, puis retombent, vaincues.",
         ]
-        if self.salle.nom_terrain in importeur.salle.TERRAINS_SANS_FEU:
+        if not importeur.salle.peut_allumer_feu(self.salle):
             self.puissance = 1
 
         if random() < self.stabilite and self.tour == 5:
@@ -128,6 +160,8 @@ class Feu(BaseObj):
                 self.salle.envoyer("Un petit nuage de cendres annonce la " \
                         "mort définitive du feu.", prompt=False)
                 importeur.salle.eteindre_feu(self.salle)
+        elif self.salle.interieur and self.puissance <= 40:
+            return
         elif self.puissance <= 5:
             self.salle.envoyer(choice(messages_fin), prompt=False)
             # On rend le feu instable

@@ -698,7 +698,7 @@ class Module(BaseModule):
         """Si un feu se trouve dans la salle, on l'affiche"""
         if self.feux:
             for feu in self.feux.values():
-                if salle == feu.salle:
+                if salle is feu.salle:
                     liste_messages.insert(0, str(feu))
                     return
 
@@ -725,7 +725,8 @@ class Module(BaseModule):
 
     def peut_allumer_feu(self, salle):
         """Retourne si on peut allumer un feu dans cette salle ou non."""
-        if salle.interieur or salle.nom_terrain in self.TERRAINS_SANS_FEU:
+        if not salle.a_detail_flag("cheminée") and (salle.interieur or \
+                salle.nom_terrain in self.TERRAINS_SANS_FEU):
             return False
 
         for affection in salle.affections.values():

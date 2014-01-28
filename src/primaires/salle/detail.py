@@ -38,6 +38,7 @@ from primaires.scripting.script import Script
 # Constantes
 FLAGS = {
     "fontaine": 1,
+    "cheminée": 2,
 }
 
 class Detail(BaseObj):
