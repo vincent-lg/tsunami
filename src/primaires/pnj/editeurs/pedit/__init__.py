@@ -46,6 +46,7 @@ from .edt_squelette import EdtSquelette
 from .edt_equipement import EdtEquipement
 from .edt_a_depecer import EdtADepecer
 from .edt_entraine import EdtEntraine
+from .edt_talents import EdtTalents
 from .supprimer import NSupprimer
 
 class EdtPedit(Presentation):
@@ -146,6 +147,20 @@ class EdtPedit(Presentation):
         niveau.prompt = "Entrez un niveau : "
         niveau.aide_courte = \
             "Entrez le niveau du PNJ.\n\nNiveau actuel : {objet.niveau}"
+
+        # Squelette
+        talents = self.ajouter_choix("talents", "l", EdtTalents,
+                prototype)
+        talents.parent = self
+        talents.apercu = "{objet.str_talents}"
+        talents.aide_courte = \
+            "Entrez |cmd|/|ff| pour revenir à la fenêtre précédente.\n" \
+            "Pour ajouter un nouveau talent défini dans le prototype, " \
+            "entrez |cmd|le nom du\ntalent|ff| suivi de |cmd|sa valeur " \
+            "à apprendre (entre 1 et 100)|ff|.\n" \
+            "Exemple : |cmd|parade 60|ff|\n" \
+            "Pour supprimer un talent, entrez |cmd|0|ff| comme valeur.\n" \
+            "Exemple : |cmd|parade 0|ff|\n\n"
 
         # XP
         xp = self.ajouter_choix("xP", "x", Flottant, prototype,

@@ -167,13 +167,29 @@ class Prototype(BaseObj):
     def nom_etat_singulier(self):
         return self.nom_singulier + " " + self.etat_singulier
 
+    @property
+    def str_talents(self):
+        if self.talents:
+            msg = ""
+            for cle_talent, niveau in sorted(self.talents.items()):
+                talent = importeur.perso.talents.get(cle_talent)
+                if talent is None:
+                    continue
+
+                msg += "\n  " + talent.nom.capitalize().ljust(25)
+                msg += " : " + str(niveau).rjust(3) + "%"
+        else:
+            msg = "\n  Aucun"
+
+        return msg
+
     def est_immortel(self):
         return False
-    
+
     def detruire(self):
         """Destruction du prototype."""
         for objet, nb in self.a_depecer:
             if self in objet.depecer_de:
                 objet.depecer_de.remove(self)
-        
+
         BaseObj.detruire(self)
