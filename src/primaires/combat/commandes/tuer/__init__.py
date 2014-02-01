@@ -75,10 +75,4 @@ class CmdTuer(Commande):
             return
 
         personnage.agir("tuer")
-        personnage.cle_etat = "combat"
-        attaque.cle_etat = "combat"
-        type(self).importeur.combat.creer_combat(personnage.salle,
-                personnage, attaque)
-        personnage.envoyer("Vous attaquez {}.", attaque)
-        attaque.envoyer("{} vous attaque.", personnage)
-        attaque.reagir_attaque(personnage)
+        personnage.attaquer(attaque)

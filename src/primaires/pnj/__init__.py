@@ -31,6 +31,7 @@
 """Fichier contenant le module primaire pnj."""
 
 from abstraits.module import *
+from primaires.perso.exceptions.action import ExceptionAction
 from primaires.pnj.chemin import CheminPNJ
 from .prototype import Prototype
 from .pnj import PNJ
@@ -105,6 +106,10 @@ class Module(BaseModule):
         depece.act_autorisees = ["regarder", "parler"]
 
         importeur.perso.ajouter_talent("depecage", "dépeçage", "survie", 0.25)
+
+        # On relie l'hook pnj:attaque
+        self.importeur.hook["pnj:attaque"].ajouter_evenement(
+                self.repondre_attaque)
 
         BaseModule.init(self)
 
@@ -282,3 +287,13 @@ class Module(BaseModule):
         pnj.deplacer_vers(sortie.nom)
         if verrou:
             sortie.porte.verrouillee = True
+
+    def repondre_attaque(self, pnj, personnage):
+        """Répond à l'attaque."""
+        if personnage.salle is pnj.salle and not pnj.est_en_combat():
+            try:
+                pnj.agir("tuer")
+            except ExceptionAction:
+                return
+            else:
+                pnj.attaquer(personnage)

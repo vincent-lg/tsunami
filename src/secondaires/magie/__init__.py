@@ -32,6 +32,7 @@
 
 from abstraits.module import *
 from primaires.format.fonctions import *
+from primaires.perso.exceptions.action import ExceptionAction
 from secondaires.magie import commandes
 from secondaires.magie import masques
 from secondaires.magie import types
@@ -95,9 +96,41 @@ class Module(BaseModule):
         etat.msg_refus = "Vous êtes en train de lancer un sort."
         etat.msg_visible = "se concentre ici"
 
+        # On relie l'hook pnj:attaque
+        self.importeur.hook["pnj:attaque"].ajouter_evenement(
+                self.repondre_magiquement)
         BaseModule.init(self)
 
     def supprimer_sort(self, cle):
         """Supprime le sort spécifié"""
         sort = self.sorts[cle]
         del self.sorts[cle]
+
+    def repondre_magiquement(self, pnj, personnage):
+        """Essaye de répondre magiquement à une attaque."""
+        if not pnj.sorts:
+            return
+
+        sorts = tuple(pnj.sorts.items())
+        sorts = sorted(sorts, key=lambda couple: couple[1], reverse=True)
+        sorts = tuple((importeur.magie.sorts[couple[0]], couple[1]) for \
+                couple in sorts)
+        sorts = tuple(couple for couple in sorts if couple[0].offensif and \
+                couple[0].type_cible == "personnage")
+        if pnj.salle is not personnage.salle:
+            sorts = tuple(couple for couple in sorts if couple[0].distance)
+
+        mana = pnj.stats.mana
+        sorts = tuple(couple for couple in sorts if couple[0].cout <= mana)
+        if not sorts:
+            return
+
+        # On sélectionne le premier sort
+        sort = sorts[0][0]
+        try:
+            pnj.agir("magie")
+        except ExceptionAction:
+            return
+
+        pnj.cle_etat = "magie"
+        sort.concentrer(pnj, personnage, lattence_min=False)

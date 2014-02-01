@@ -425,6 +425,9 @@ class Personnage(BaseObj):
 
         return self.stats.vitalite == 0 or self.cle_etat == "mort"
 
+    def est_vivant(self):
+        return not self.est_mort()
+
     def est_connecte(self):
         return False
 
@@ -915,7 +918,6 @@ class Personnage(BaseObj):
         pas suffisant, lève une exception ValueError.
 
         """
-        print("en", nom_stat)
         if self.points_entrainement <= 0:
             raise ValueError("le personnage {} ne peut rien apprendre de " \
                     "plus".format(self))
@@ -1105,6 +1107,16 @@ class Personnage(BaseObj):
                 importeur.diffact.ajouter_action("yell({}).{}:{}".format(
                         self.nom, t_salle.ident, id(message)), 0, self.act_crier,
                         t_salle, salles, message, dist + 1)
+
+    def attaquer(self, personnage):
+        """Attaque le personnage spécifié."""
+        self.cle_etat = "combat"
+        personnage.cle_etat = "combat"
+        importeur.combat.creer_combat(self.salle,
+                self, personnage)
+        self.envoyer("Vous attaquez {}.", personnage)
+        personnage.envoyer("{} vous attaque.", self)
+        personnage.reagir_attaque(self)
 
     def reagir_attaque(self, personnage):
         """Réagit à l'attaque."""

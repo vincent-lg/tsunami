@@ -47,6 +47,7 @@ from .edt_equipement import EdtEquipement
 from .edt_a_depecer import EdtADepecer
 from .edt_entraine import EdtEntraine
 from .edt_talents import EdtTalents
+from .edt_sorts import EdtSorts
 from .supprimer import NSupprimer
 
 class EdtPedit(Presentation):
@@ -148,7 +149,7 @@ class EdtPedit(Presentation):
         niveau.aide_courte = \
             "Entrez le niveau du PNJ.\n\nNiveau actuel : {objet.niveau}"
 
-        # Squelette
+        # Talents
         talents = self.ajouter_choix("talents", "l", EdtTalents,
                 prototype)
         talents.parent = self
@@ -161,6 +162,20 @@ class EdtPedit(Presentation):
             "Exemple : |cmd|parade 60|ff|\n" \
             "Pour supprimer un talent, entrez |cmd|0|ff| comme valeur.\n" \
             "Exemple : |cmd|parade 0|ff|\n\n"
+
+        # Sorts
+        sorts = self.ajouter_choix("sorts", "so", EdtSorts,
+                prototype)
+        sorts.parent = self
+        sorts.apercu = "{objet.str_sorts}"
+        sorts.aide_courte = \
+            "Entrez |cmd|/|ff| pour revenir à la fenêtre précédente.\n" \
+            "Pour ajouter un nouveau sort défini dans le prototype, " \
+            "entrez |cmd|le nom du\nsort|ff| suivi de |cmd|sa valeur " \
+            "à apprendre (entre 1 et 100)|ff|.\n" \
+            "Exemple : |cmd|boule de feu 60|ff|\n" \
+            "Pour supprimer un sort, entrez |cmd|0|ff| comme valeur.\n" \
+            "Exemple : |cmd|boule de feu 0|ff|\n\n"
 
         # XP
         xp = self.ajouter_choix("xP", "x", Flottant, prototype,

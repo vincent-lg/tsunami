@@ -230,6 +230,10 @@ class Sort(BaseObj):
         variables["maitrise"] = maitrise
         variables["salle"] = dest
         self.executer_script(personnage, "effet", **variables)
+        if self.offensif and self.type_cible == "personnage" and \
+                cible.est_vivant():
+            cible.reagir_attaque(personnage)
+            print(cible, "doit réagir")
 
     def dissiper(self, personnage, maitrise, cible):
         """Dissipe le sort."""

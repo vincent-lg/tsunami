@@ -189,6 +189,8 @@ class CmdTirer(Commande):
                     if personnage.salle is not cible.salle:
                         personnage << "Vous entendez un cri d'agonie non loin."
                     cible.mourir(adversaire=personnage)
+                else:
+                    cible.reagir_attaque(personnage)
 
             importeur.objet.supprimer_objet(projectile.identifiant)
         else:

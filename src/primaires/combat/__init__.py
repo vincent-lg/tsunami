@@ -53,6 +53,13 @@ class Module(BaseModule):
         self.cibles = {}
         self.cible = {}
 
+    def config(self):
+        """Méthode de configuration du module"""
+        importeur.hook.ajouter_hook("pnj:attaque",
+                "Hook appelé quand un PNJ est attaqué")
+
+        BaseModule.config(self)
+
     def init(self):
         """Initialisation du module."""
         # Ajout du niveau combat

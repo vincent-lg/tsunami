@@ -71,6 +71,7 @@ class Prototype(BaseObj):
         self.a_depecer = {}
         self.entraine_stats = {}
         self.talents = {}
+        self.sorts = {}
 
         # Salles repop
         self.salles_repop = {}
@@ -177,6 +178,22 @@ class Prototype(BaseObj):
                     continue
 
                 msg += "\n  " + talent.nom.capitalize().ljust(25)
+                msg += " : " + str(niveau).rjust(3) + "%"
+        else:
+            msg = "\n  Aucun"
+
+        return msg
+
+    @property
+    def str_sorts(self):
+        if self.sorts:
+            msg = ""
+            for cle_sort, niveau in sorted(self.talents.items()):
+                sort = importeur.magie.sorts.get(cle_sort)
+                if sort is None:
+                    continue
+
+                msg += "\n  " + sort.nom.capitalize().ljust(25)
                 msg += " : " + str(niveau).rjust(3) + "%"
         else:
             msg = "\n  Aucun"

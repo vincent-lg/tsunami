@@ -81,6 +81,7 @@ class PNJ(Personnage):
             self.lier_equipement(prototype.squelette)
             self.genre = prototype.genre
             self.talents.update(prototype.talents)
+            self.sorts.update(prototype.sorts)
 
             # Copie de l'équipement
             for membre, p_objet in prototype.equipement.items():
@@ -265,7 +266,9 @@ class PNJ(Personnage):
 
     def reagir_attaque(self, personnage):
         """Réagit à l'attaque."""
-        self.script["attaque"].executer(personnage=personnage, pnj=self)
+        if self.est_vivant():
+            self.script["attaque"].executer(personnage=personnage, pnj=self)
+            importeur.hook["pnj:attaque"].executer(self, personnage)
 
     def tuer(self, victime):
         """Le personnage self vient de tuer la victime."""
