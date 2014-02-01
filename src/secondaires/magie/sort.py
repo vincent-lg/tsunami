@@ -35,6 +35,7 @@ from math import ceil
 from random import random
 
 from abstraits.obase import *
+from corps.aleatoire import varier
 from primaires.format.description import Description
 from primaires.scripting.exceptions import InterrompreCommande
 from .script import ScriptSort
@@ -58,6 +59,7 @@ class Sort(BaseObj):
         self.description = Description(parent=self)
         self.offensif = False
         self.elements = []
+        self.stats = []
         self.type = "destruction"
         self._type_cible = "aucune"
         self.cout = 10
@@ -103,6 +105,13 @@ class Sort(BaseObj):
     def str_elements(self):
         return ", ".join(sorted(self.elements))
 
+    @property
+    def str_stats(self):
+        if self.stats:
+            return ", ".join(self.stats)
+
+        return "aucune"
+
     @classmethod
     def get_variables(self, cible=None):
         """Retourne un dictionnaire de variables pré-rempli avec la cible.
@@ -116,15 +125,26 @@ class Sort(BaseObj):
 
         return variables
 
-    def echoue(self, personnage):
+    def echoue(self, personnage, cible):
         """Détermine si personnage réussit ou non à lancer ce sort."""
         maitrise = (100 - personnage.sorts.get(self.cle, 0)) / 100
         difficulte = self.difficulte / 100
         if random() < difficulte * maitrise:
             return True
+
+        if self.offensif and self.type_cible == "personnage":
+            stat_lanceur = 0
+            stat_cible = 0
+            for nom_stat in self.stats:
+                stat_lanceur += varier(getattr(personnage.stats, nom_stat), 10)
+                stat_cible += varier(getattr(cible.stats, nom_stat), 10)
+
+            if stat_lanceur < stat_cible:
+                return True
+
         return False
 
-    def concentrer(self, personnage, cible, apprendre=True):
+    def concentrer(self, personnage, cible, apprendre=True, lattence_min=True):
         """Fait concentrer le sort à 'personnage'."""
         maitrise = 100
         if apprendre:
@@ -145,10 +165,13 @@ class Sort(BaseObj):
         variables["salle"] = personnage.salle
         self.executer_script(personnage, "concentration", **variables)
         action = self.lancer
-        if self.echoue(personnage) and apprendre:
+        if self.echoue(personnage, cible) and apprendre:
             action = self.echouer
         nom_act = "sort_" + self.cle + "_" + personnage.nom
         duree = ceil(self.duree * (100 - maitrise) / 100)
+        if lattence_min:
+            duree += 2
+
         importeur.diffact.ajouter_action(nom_act, duree,
                 action, personnage, maitrise, cible)
 

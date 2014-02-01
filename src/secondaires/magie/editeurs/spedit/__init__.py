@@ -143,6 +143,17 @@ class EdtSpedit(Presentation):
             "{}|ff|.\n\nType actuel : |bc|{{objet.type_cible}}|ff|".format(
             "|ff|, |cmd|".join(types))
 
+        # Stats
+        stats = self.ajouter_choix("stats", "st", Selection, sort,
+                "stats", ("agilite", "intelligence", "sensibilite"))
+        stats.parent = self
+        stats.apercu = "{objet.str_stats}"
+        stats.aide_courte = \
+            "Entrez une |ent|stat|ff| pour l'ajouter " \
+            "ou la retirer\nou |cmd|/|ff| " \
+            "pour revenir à la fenêtre parente.\n\n" \
+            "stats actuelles : |bc|{objet.str_stats}|ff|"
+
         # Difficulté
         difficulte = self.ajouter_choix("difficulté", "i", Entier, sort,
                 "difficulte", 0, 100)

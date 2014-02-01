@@ -337,6 +337,22 @@ class Personnage(BaseObj):
                     self.talents[cle] = 15
     element = property(_get_element, _set_element)
 
+    @property
+    def armure(self):
+        """Retourne l'armure globale calculée sur l'équipoement."""
+        armure = 0
+        if self.equipement is None:
+            return armure
+
+        for membre in self.equipement.membres:
+            for objet in membre.equipe:
+                if objet.est_de_type("armure"):
+                    armure += random.randint(objet.encaissement_fixe,
+                            objet.encaissement_fixe + \
+                            objet.encaissement_variable)
+
+        return armure
+
     def peut_voir(self, personnage):
         """Retourne True si peut voir le personnage, False sinon."""
         if self.est_immortel():
