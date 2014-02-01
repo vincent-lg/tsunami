@@ -85,8 +85,8 @@ class Module(BaseModule):
         etat.msg_refus = "Vous êtes en train de combattre."
         etat.msg_visible = "combat ici"
         etat.act_interdites = ["tuer", "bouger", "prendre", "poser",
-                "chercherbois", "ouvrir", "fermer", "jouer", "lancersort",
-                "porter", "retirer", "ingerer"]
+                "chercherbois", "ouvrir", "fermer", "jouer", "porter",
+                "retirer", "ingerer"]
 
         # État scruter
         etat = self.importeur.perso.ajouter_etat("scruter")
