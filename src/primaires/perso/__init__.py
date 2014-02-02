@@ -145,7 +145,7 @@ class Module(BaseModule):
         allonge.msg_refus = "Vous êtes allongé."
         allonge.msg_visible = "est allongé là"
         allonge.act_autorisees = ["regarder", "parler", "ingerer",
-        "lever", "geste"]
+                "lever", "geste"]
 
         mort = self.ajouter_etat("mort")
         mort.msg_refus = "Vous êtes inconscient."
@@ -160,6 +160,11 @@ class Module(BaseModule):
         entraine.msg_visible = "s'entraîne ici"
         entraine.act_autorisees = ["regarder", "parler"]
 
+        recherche = self.ajouter_etat("recherche")
+        recherche.msg_refus = "Vous êtes un peu occupé."
+        recherche.msg_visible = "cherche quelque chose ici"
+        recherche.act_autorisees = ["parler"]
+
         self.ajouter_talent("escalade", "escalade", "survie", 0.31)
         self.ajouter_talent("nage", "nage", "survie", 0.25)
 
@@ -170,6 +175,7 @@ class Module(BaseModule):
         self.commandes = [
             commandes.allonger.CmdAllonger(),
             commandes.asseoir.CmdAsseoir(),
+            commandes.chercher.CmdChercher(),
             commandes.commande.CmdCommande(),
             commandes.equipement.CmdEquipement(),
             commandes.lever.CmdLever(),

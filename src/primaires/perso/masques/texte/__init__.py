@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,17 +28,48 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des masques du module perso."""
+"""Fichier contenant le masque <texte_libre>."""
 
-from . import cle
-from . import commande
-from . import duree
-from . import etat
-from . import ident
-from . import niveau_secondaire
-from . import nom_stat
-from . import nombre
-from . import personnage
-from . import prompt
-from . import stat_ent
-from . import texte
+from primaires.interpreteur.masque.masque import Masque
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+
+class TexteLibre(Masque):
+
+    """Masque <texte_libre>.
+
+    On attend un n'importe quoi en paramètre.
+
+    """
+
+    nom = "texte_libre"
+    nom_complet = "texte libre"
+
+    def init(self):
+        """Initialisation des attributs"""
+        self.texte = ""
+
+    def repartir(self, personnage, masques, commande):
+        """Répartition du masque.
+
+        Le masque <texte_libre> prend tout le message.
+
+        """
+        message = liste_vers_chaine(commande).lstrip()
+        self.a_interpreter = message
+        commande[:] = []
+        if not message:
+            raise ErreurValidation(
+                "Entrez quelquechose, au moins.")
+
+        masques.append(self)
+        return True
+
+    def valider(self, personnage, dic_masques):
+        """Validation du masque"""
+        Masque.valider(self, personnage, dic_masques)
+        message = self.a_interpreter
+        self.texte = message
+
+        return True

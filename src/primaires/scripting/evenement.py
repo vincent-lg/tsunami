@@ -249,7 +249,9 @@ class Evenement(BaseObj):
         for test in self.__tests:
             if test.tester(self, forcer):
                 test.executer_instructions(self)
-                return
+                return 1
 
         if self.sinon and self.sinon.tester(self, forcer):
             self.sinon.executer_instructions(self)
+
+        return 0

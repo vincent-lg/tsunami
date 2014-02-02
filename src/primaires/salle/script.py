@@ -150,3 +150,28 @@ class ScriptSalle(Script):
         # Configuration des variables de l'événement.
         var_salle = evt_tick.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle actuelle"
+
+        # Evénement recherche
+        evt_recherche = self.creer_evenement("recherche")
+        evt_recherche.aide_courte = "un personnage cherche dans la salle"
+        evt_recherche.aide_longue = \
+            "Cet évènement est appelé quand un personnage utilise la " \
+            "commande chercher/lookfor dans la salle. Le texte recherché " \
+            "est placé dans la variable 'texte'. Utilisez de préférence " \
+            "la fonction 'expression' pour tester le contenu du texte. " \
+            "D'autre part, mettez bien les différents traitements dans " \
+            "des tests séparés : en effet, si le test sinon est executé, " \
+            "le système considère que le texte n'a pas été trouvé et " \
+            "envoie une réponse conforme au personnage. Si au contraire " \
+            "vous faites des tests du type 'expression(texte, " \
+            "\"forêt|arbres\")' par exemple, le système considérera que " \
+            "le test appelé transmet le message de réussite ou d'échec au " \
+            "personnage."
+
+        # Configuration des variables de l'événement.
+        var_texte = evt_recherche.ajouter_variable("texte", "str")
+        var_texte.aide = "le texte recherché"
+        var_salle = evt_recherche.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle actuelle"
+        var_perso = evt_recherche.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage qui fait la recherche"
