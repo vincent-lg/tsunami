@@ -816,7 +816,7 @@ class Personnage(BaseObj):
         niveau_actuel = self.niveaux[niveau] if niveau else self.niveau
         nb_niveaux = type(self).importeur.perso.gen_niveaux.nb_niveaux
         if niveau_actuel >= nb_niveaux:
-            return
+            return 0
 
         grille = list(importeur.perso.gen_niveaux.grille_xp)
         xp_nec = grille[niveau_actuel - 1][1]

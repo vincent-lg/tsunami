@@ -61,7 +61,7 @@ class TexteLibre(Masque):
         commande[:] = []
         if not message:
             raise ErreurValidation(
-                "Entrez quelquechose, au moins.")
+                "Entrez quelque chose, au moins.")
 
         masques.append(self)
         return True

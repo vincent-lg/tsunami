@@ -59,7 +59,11 @@ def get_variables(variables, chaine):
     """Retourne les variables trouvées dans la chaîne."""
     vars = {}
     for var in RE_VAR.findall(chaine):
-        vars[var] = variables[var]
+        try:
+            vars[var] = variables[var]
+        except KeyError:
+            raise ValueError("La variable {} est introuvable.".format(
+                    repr(var)))
 
     return vars
 

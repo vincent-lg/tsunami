@@ -37,7 +37,11 @@ class ClasseAction(Action):
 
     """Dit quelque chose.
 
-    C'est l'action standard pour envoyer un message dans l'univers."""
+    C'est l'action standard pour envoyer un message dans l'univers.
+
+    """
+
+    entrer_variables = True
 
     @classmethod
     def init_types(cls):
@@ -46,27 +50,24 @@ class ClasseAction(Action):
         cls.ajouter_types(cls.dire_joueur, "str", "str")
 
     @staticmethod
-    def dire_personnage(personnage, message):
+    def dire_personnage(personnage, message, variables):
         """Envoie un message au personnage."""
-        variables = importeur.scripting.execute_test[-1].evenement.espaces. \
-                variables
         personnage.envoyer(message, **variables)
 
     @staticmethod
-    def dire_salle(salle, message):
+    def dire_salle(salle, message, variables):
         """Envoie un message aux personnages présents dans la salle.
+
         A noter que tous les personnages contenus dans des variables de
         ce script, s'il y en a, sont exclus de la liste et ne reçoivent
         donc pas ce message.
 
         """
-        variables = importeur.scripting.execute_test[-1].evenement.espaces. \
-                variables
         f_variables = get_variables(variables, message)
         salle.envoyer(message, **f_variables)
 
     @staticmethod
-    def dire_joueur(nom_joueur, message):
+    def dire_joueur(nom_joueur, message, variables):
         """Envoie un message ou un mudmail au joueur.
 
         Si le joueur est déconnecté, le message est envoyé en mudmail
@@ -83,8 +84,6 @@ class ClasseAction(Action):
             dire "kredh" "Le joueur ${personnage} fait une action."
 
         """
-        variables = importeur.scripting.execute_test[-1].evenement.espaces. \
-                variables
         nom_joueur = nom_joueur.capitalize()
         try:
             joueur = importeur.joueur.joueurs[nom_joueur]

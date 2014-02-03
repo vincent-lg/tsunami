@@ -312,7 +312,7 @@ class Test(BaseObj):
         # Constitution des globales
         globales = self.get_globales(evenement)
         try:
-            code = exec(code, globales)
+            exec(code, globales)
         except Exception as err:
             self.erreur_execution(str(err))
         else:

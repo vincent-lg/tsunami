@@ -77,6 +77,7 @@ class Action(Instruction):
 
     _parametres_possibles = None
     verifier = True
+    entrer_variables = False
 
     def __init__(self):
         """Constructeur d'une action"""
@@ -150,6 +151,11 @@ class Action(Instruction):
         """
         if not cls.verifier and cls._parametres_possibles:
             return list(cls._parametres_possibles.values())[0]
+
+        if cls.entrer_variables:
+            parametres = list(parametres)
+            del parametres[-1]
+            parametres = tuple(parametres)
 
         ty_p = [type(p) for p in parametres]
         for types, methode in cls._parametres_possibles.items():
@@ -230,5 +236,8 @@ class Action(Instruction):
         """Retourne le code Python associé à l'action."""
         py_code = "actions['" + self.nom + "']"
         py_args = ["evt"] + [a.code_python for a in self.parametres]
+        if self.entrer_variables:
+            py_args.append("variables")
+
         py_code += ".executer(" + ", ".join(py_args) + ")"
         return py_code

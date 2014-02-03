@@ -75,6 +75,9 @@ class Sort(BaseObj):
     def __getnewargs__(self):
         return ("", )
 
+    def __repr__(self):
+        return self.cle
+
     def __str__(self):
         return "sort:" + self.cle
 

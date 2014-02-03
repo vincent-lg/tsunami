@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,9 +34,9 @@ from primaires.interpreteur.masque.parametre import Parametre
 from primaires.format.fonctions import echapper_accolades
 
 class PrmListe(Parametre):
-    
+
     """Commande 'scripting alerte liste'"""
-    
+
     def __init__(self):
         """Constructeur du paramètre."""
         Parametre.__init__(self, "liste", "list")
@@ -46,22 +46,23 @@ class PrmListe(Parametre):
             "que les alertes, lues ou non, sont affichées. " \
             "Si une erreur est corrigée, utilisez le paramètre " \
             "%scripting:alerte:resoudre%."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         alertes = []
-        for alerte in type(self).importeur.scripting.alertes.values():
+        for alerte in sorted(importeur.scripting.alertes.values(),
+                key=lambda alerte: alerte.no):
             message = alerte.message
             if len(message) > 30:
                 message = message[:30] + "..."
             message = echapper_accolades(message)
-            
+
             msg = str(alerte.no).rjust(3) + " "
             msg += alerte.objet + "[" + alerte.evenement + "]"
             msg += " " + str(alerte.date.date())
             msg += " " + message
             alertes.append(msg)
-        
+
         if alertes:
             personnage << "Liste des alertes non résolues :\n\n  " + \
                     "\n  ".join(alertes)
