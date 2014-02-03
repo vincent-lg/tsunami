@@ -272,7 +272,7 @@ class Quete(BaseObj):
             # On récupère le dernier niveau validé
             niveaux = [n for n in self.__niveaux if len(n) == len(niveau)]
             if len(niveaux) == 0:
-                if niveau != (1, ):
+                if niveau[-1] != 1:
                     return False
             else:
                 dernier_niveau = max(niveaux)
