@@ -55,6 +55,8 @@ class CherchableRapport(Cherchable):
         self.ajouter_filtre("t", "titre", "titre", "str")
         self.ajouter_filtre("s", "assigne", "aff_assigne_a", "str")
         self.ajouter_filtre("r", "createur", "aff_createur", "str")
+        self.ajouter_filtre("g", "categorie", "categorie", "str")
+        self.ajouter_filtre("d", "description", "description", "str")
 
     @property
     def items(self):
