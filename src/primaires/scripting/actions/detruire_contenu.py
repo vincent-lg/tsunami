@@ -53,8 +53,10 @@ class ClasseAction(Action):
             raise ErreurExecution("{} n'est pas un conteneur".format(
                     objet.cle))
         for o in list(objet.conteneur._objets):
-            importeur.objet.supprimer_objet(o.identifiant)
+            try:
+                importeur.objet.supprimer_objet(o.identifiant)
+            except KeyError:
+                pass
 
         objet.conteneur._objets = []
         objet.conteneur._non_uniques = []
-

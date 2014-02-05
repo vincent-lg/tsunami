@@ -48,6 +48,12 @@ class ClasseAction(Action):
     @staticmethod
     def poser_objet(salle, objet):
         """Pose l'objet sur le sol de la salle."""
+        if objet.contenu:
+            try:
+                objet.contenu.retirer(objet)
+            except ValueError:
+                pass
+
         salle.objets_sol.ajouter(objet)
 
     @staticmethod
@@ -65,6 +71,13 @@ class ClasseAction(Action):
         if not conteneur.contenu:
             raise ErreurExecution("{} n'est contenu nul part".format(
                     conteneur.get_nom()))
+
+        if objet.contenu:
+            try:
+                objet.contenu.retirer(objet)
+            except ValueError:
+                pass
+
         conteneur.conteneur.ajouter(objet)
 
     @staticmethod
