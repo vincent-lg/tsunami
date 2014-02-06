@@ -106,10 +106,10 @@ class Action(Instruction):
         raise NotImplementedError
 
     @classmethod
-    def executer(cls, evenement, *parametres):
+    def executer(cls, evenement, *parametres, **kw_parametres):
         """Exécute l'action selon l'évènement."""
         action = cls.quelle_action(parametres)
-        return action(*parametres)
+        return action(*parametres, **kw_parametres)
 
     @classmethod
     def get_methode(self, numero):
@@ -151,11 +151,6 @@ class Action(Instruction):
         """
         if not cls.verifier and cls._parametres_possibles:
             return list(cls._parametres_possibles.values())[0]
-
-        if cls.entrer_variables:
-            parametres = list(parametres)
-            del parametres[-1]
-            parametres = tuple(parametres)
 
         ty_p = [type(p) for p in parametres]
         for types, methode in cls._parametres_possibles.items():
@@ -237,7 +232,7 @@ class Action(Instruction):
         py_code = "actions['" + self.nom + "']"
         py_args = ["evt"] + [a.code_python for a in self.parametres]
         if self.entrer_variables:
-            py_args.append("variables")
+            py_args.append("variables=variables")
 
         py_code += ".executer(" + ", ".join(py_args) + ")"
         return py_code

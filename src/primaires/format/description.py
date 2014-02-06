@@ -203,6 +203,7 @@ class Description(BaseObj):
                     evt = evt.evenements[nom]
                     evt.executer(True, regarde=elt, personnage=personnage)
                     retour = evt.espaces.variables["retour"]
+                    retour = retour.replace("_b_nl_b_", "\n")
                     description = description.replace(nom_complet, retour)
                     trouve = True
                     break
