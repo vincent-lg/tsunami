@@ -285,7 +285,10 @@ class Module(BaseModule):
             msg += "\n===== " + action.nom + " =====\n\n"
             msg += inspect.getdoc(action) + "\n"
             for methode in action._parametres_possibles.values():
-                args = " ".join(inspect.getargspec(methode).args)
+                try:
+                    args = " ".join(inspect.getargspec(methode).args)
+                except ValueError:
+                    args = ""
                 msg += "\n==== " + action.nom + " " + args + " ====\n\n"
                 msg += inspect.getdoc(methode) + "\n"
 
