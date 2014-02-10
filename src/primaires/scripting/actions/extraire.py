@@ -70,6 +70,9 @@ class ClasseAction(Action):
         sinon:
             # L'extraction n'a pas réussie
 
+    Pour plus d'informations sur les expressions régulirèes, rendez-vous
+    [[regex|sur cette page d'aide]].
+
     """
 
     entrer_variables = True

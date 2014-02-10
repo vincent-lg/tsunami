@@ -61,6 +61,9 @@ class ClasseFonction(Fonction):
         standard. De plus, les majuscules ou minuscules n'ont pas
         d'importance dans la recherche.
 
+        Pour plus d'informations sur les expressions régulirèes, rendez-vous
+        [[regex|sur cette page d'aide]].
+
         """
         chaine = supprimer_accents(chaine)
         try:
