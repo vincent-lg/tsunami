@@ -69,6 +69,10 @@ class Module(BaseModule):
                 "{nb} auberge{s} récupérée{s}", fem=True))
 
         Salle.peut_entrer = Module.peut_entrer
+
+        self.importeur.hook["joueur:connecte"].ajouter_evenement(
+                self.expulser_joueur)
+
         BaseModule.init(self)
 
     def ajouter_commandes(self):
@@ -133,3 +137,20 @@ class Module(BaseModule):
                 return personnage is chambre.proprietaire
 
         return True
+
+    def expulser_joueur(self, joueur):
+        """Expulse un joueur si il est dans une chambre qui n'est pas à lui.
+
+        Cette méthode est appelée quand un joueur se connecte.
+
+        """
+        salle = joueur.salle
+        for auberge in self.auberges.values():
+            for chambre in auberge.chambres.values():
+                if salle is chambre.salle:
+                    chambre.verifier_expiration()
+                    if chambre.proprietaire is not joueur:
+                        # On téléporte le joueur dans la salle de l'auberge
+                        joueur << "|att|Vous n'êtes pas le propriétaire. " \
+                                "Vous êtes expulsé de cette chambre !|ff|"
+                        joueur.salle = auberge.comptoir

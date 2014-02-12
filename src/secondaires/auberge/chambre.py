@@ -134,3 +134,9 @@ class Chambre(BaseObj):
             prix = 1
 
         return prix
+
+    def verifier_expiration(self):
+        """Vérifie l'expiration."""
+        if self.expiree:
+            self.proprietaire = None
+            self.expire_a = None
