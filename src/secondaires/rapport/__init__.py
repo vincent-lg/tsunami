@@ -77,6 +77,7 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.bug.CmdBug(),
             commandes.rapport.CmdRapport(),
         ]
 
@@ -116,5 +117,5 @@ class Module(BaseModule):
     def sauver_traceback(self, joueur, commande, trace):
         """Enregistre le traceback dans le module."""
         self.traces[joueur] = (commande, trace)
-        joueur.envoyer_tip("Entrez %rapport% %rapport:bug% pour " \
+        joueur.envoyer_tip("Entrez %bug% pour " \
                 "signaler ce bug aux administrateurs.")
