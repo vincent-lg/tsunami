@@ -367,7 +367,7 @@ class Module(BaseModule):
         tableau.ajouter_colonne("|tit|Nom|ff|")
         tableau.ajouter_colonne("|tit|Message|ff|")
         for date, auteur, canal, message in messages:
-            delta = datetime.now() - date
+            delta = datetime.datetime.now() - date
             secondes = delta.total_seconds()
             duree = 0
             unite = "seconde"
