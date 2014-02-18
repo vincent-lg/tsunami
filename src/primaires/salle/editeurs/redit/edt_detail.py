@@ -35,9 +35,11 @@ from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.flags import Flags
+from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.salle.detail import FLAGS
 from primaires.scripting.editeurs.edt_script import EdtScript
 from .edt_repos import EdtRepos
+from .edt_support import EdtSupport
 
 class EdtDetail(Presentation):
 
@@ -168,6 +170,11 @@ class EdtDetail(Presentation):
             "   la liaison entre l'action et le titre du détail. Par " \
             "exemple : \"Vous vous\n" \
             "   allongez |vr|sur|ff| une table.|ff|\"\n\n"
+
+        # Support
+        support = self.ajouter_choix("support", "p", EdtSupport, detail)
+        support.parent = self
+        support.apercu = "{objet.support}"
 
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,

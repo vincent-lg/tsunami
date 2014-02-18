@@ -34,6 +34,7 @@ import datetime
 
 from abstraits.module import *
 from primaires.format.fonctions import *
+from primaires.format.tableau import Tableau, GAUCHE, DROITE
 from primaires.communication.config import cfg_com
 from primaires.communication import masques
 from primaires.communication import commandes
@@ -154,6 +155,7 @@ class Module(BaseModule):
             commandes.attitudes.CmdAttitudes(),
             commandes.canaux.CmdCanaux(),
             commandes.chuchoter.CmdChuchoter(),
+            commandes.cnvlog.CmdCnvlog(),
             commandes.crier.CmdCrier(),
             commandes.dire.CmdDire(),
             commandes.discuter.CmdDiscuter(),
@@ -349,3 +351,48 @@ class Module(BaseModule):
             conversations.append((datetime.datetime.now(), auteur, canal,
                     message))
             self.messages[cible] = conversations
+
+    def extraire_historique(self, personnage, lignes=10, titre=None):
+        """Extrait l'historique pour le joueur."""
+        titre = titre or "Vos dernières conversations"
+        messages = self.messages.get(personnage, [])
+        if len(messages) == 0:
+            raise ValueError("Il n'y a aucun message pour {}".format(
+                    personnage))
+
+        messages = messages[-lignes:]
+        tableau = Tableau("|tit|" + titre + "|ff|")
+        tableau.ajouter_colonne("|tit|Il y a|ff|")
+        tableau.ajouter_colonne("|tit|Canal|ff|")
+        tableau.ajouter_colonne("|tit|Nom|ff|")
+        tableau.ajouter_colonne("|tit|Message|ff|")
+        for date, auteur, canal, message in messages:
+            delta = datetime.now() - date
+            secondes = delta.total_seconds()
+            duree = 0
+            unite = "seconde"
+            msg_duree = None
+            if secondes < 5:
+                msg_duree = "quelques secondes"
+            elif secondes < 60:
+                duree = secondes // 5 * 5
+            elif secondes < 300:
+                duree = secondes // 60
+                unite = "minute"
+            elif secondes < 3600:
+                duree = secondes / 60 // 5 * 5
+                unite = "minute"
+            elif secondes < 86400:
+                duree = secondes // 3600
+                unite = "heure"
+            else:
+                duree = secondes // 86400
+                unite = "jour"
+
+            s = "s" if duree > 1 else ""
+            if msg_duree is None:
+                msg_duree = "{} {}{s}".format(int(duree), unite, s=s)
+
+            tableau.ajouter_ligne(msg_duree, auteur.nom, canal, message)
+
+        return tableau

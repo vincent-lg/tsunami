@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -60,15 +60,15 @@ for cle, val in NIVEAUX.items():
 FORMAT = "%date% %heurems% [%niveau%] : %message%"
 
 class Logger:
-    
+
     """Cette classe représente des loggers.
-    
+
     Ce sont des objets permettant d'enregistrer différentes informations.
     Une instance d'un logger est créée à chaque fois qu'on souhaite obtenir
     une information indépendante des autres. Par exemple, chaque module
     primaire ou secondaire doit posséder son propre logger. Le corps
     également.
-    
+
     Chaque logger possède :
     -   un fichier de log qui peut être à None
     -   un flag concernant l'affichage des messages dans la console
@@ -85,12 +85,12 @@ class Logger:
     et fatal, respectivement pour chaque niveau d'erreur.
 
     """
-    
+
     en_file = True # par défaut on log en file d'attente
     def __init__(self, man_logs, rep_base, sous_rep, nom_fichier, nom_logger,
             console=True, format=FORMAT, niveau_min=INFO):
         """Constructeur du logger.
-        
+
         Seuls les cinq premiers paramètres sont obligatoires :
         -   le manager créant le logger
         -   le répertoire de base (probablement constant d'un logger à l'autre)
@@ -102,7 +102,7 @@ class Logger:
         -   console (True pour afficher dans la console, False sinon)
         -   le format du message de log enregistré (voir méthode formater)
         -   le niveau minimum pour afficher un message
-        
+
         """
         self.man_logs = man_logs
         self.nom = nom_logger
@@ -115,12 +115,13 @@ class Logger:
         self.console = console
         self.format = format
         self.niveau_min = niveau_min
+        self.messages = []
 
     def _get_rep_complet(self):
         """Cette méthode retourne le répertoire complet rep_base et sous_rep.
-        
+
         Si sous_rep est vide on s'assure que le chemin reste cohérent.
-        
+
         """
         rep_base = self.rep_base
         sous_rep = self.sous_rep
@@ -128,29 +129,29 @@ class Logger:
             rep_complet = rep_base
         else:
             rep_complet = rep_base + os.sep + sous_rep
-        
+
         return rep_complet
-    
+
     rep_complet = property(_get_rep_complet)
-    
+
     def filtrer_niveau(self, niveau_str):
         """Permet de changer le niveau minimum de filtrage des messages.
-        
+
         ATTENTION : le niveau est donné sous la forme d'une chaîne.
-        
+
         """
         self.niveau_min = REV_NIVEAUX[niveau_str]
-    
+
     def verif_rep(self):
         """Cette méthode vérifie si le répertoire de log existe.
-        
+
         Si ce n'est pas le cas, on le crée.
 
         """
         rep = self.rep_complet
         if not os.path.exists(rep):
             os.makedirs(rep)
-    
+
     def ouvrir_fichier(self):
         """Méthode chargée d'ouvrir le fichier configuré."""
         rep = self.rep_complet
@@ -162,21 +163,21 @@ class Logger:
             print("Impossible d'ouvrir le fichier de log {0}".format( \
                     nom_fichier))
             self.fichier = None
-    
+
     def fermer_fichier(self):
         """Méthode chargée de fermer le fichier de log."""
         if self.fichier is not None:
             self.fichier.close()
             self.fichier = None
-    
+
     def formater(self, niveau, message):
         """Méthode retournant la chaîne formatée.
-        
+
         Si des formats spécifiques sont ajoutés, les définir ici.
         On définit un format spécifique comme une partie de chaîne entourée
         de deux signes %.
         Par exemple, %date% sera remplacé par la date actuel dans le message.
-        
+
         """
         sdate = time.struct_time(time.localtime())
         ms = "{0:f}".format(time.time()).split(".")[1][:3]
@@ -193,22 +194,22 @@ class Logger:
         chaine = chaine.replace("%niveau%", niveau)
         chaine = chaine.replace("%message%", message)
         return chaine
-    
+
     def doit_afficher(self, niveau, module):
         """Retourne True si le logger doit afficher le message de ce
         niveau, False sinon.
-        
+
         """
         doit = False
         if module == self.nom:
             if self.console is True and self.niveau_min <= niveau:
                 doit = True
         return doit
-    
+
     def log_formate(self, niveau, message, formate, module):
         """Cette méthode permet de logger un message déjà formaté. La
         méthodes log fait directement appel à elle.
-        
+
         """
         self.ouvrir_fichier()
         if self.fichier is not None:
@@ -217,15 +218,16 @@ class Logger:
                 self.fichier.write(formate + "\n")
             except IOError as io_err:
                 pass
-        
+
         self.fermer_fichier()
-    
+
     def log(self, niveau, message, module):
         """Méthode permettant de logger un message.
-        
+
         Les méthodes info, debug, warning et fatal redirigent dessus.
-        
+
         """
+        self.messages.append(message)
         s_niveau = NIVEAUX[niveau]
         f_message = self.formater(s_niveau, message)
         msg = Message(module, datetime.now(), s_niveau, message)
@@ -238,38 +240,38 @@ class Logger:
             if self.doit_afficher(niveau, module):
                 self.man_logs.messages.append(msg)
                 self.print(message)
-            
+
             self.log_formate(niveau, message, f_message, self.nom)
-    
+
     def enregistrer_file_attente(self):
         """Cette méthode ne doit être appelée qu'une fois.
-        
+
         Elle permet d'enregistrer la file d'attente du logger.
         Cette file d'attente s'est remplie pendant que le module 'log' se
         configurait. Dès son initialisation, le module demande à cette méthode
         que la file d'attente de chaque logger créé soit enregistrée.
-        
+
         """
         for message in self.file_attente:
             self.log_formate(message.niveau, message.message, \
                     message.message_formate,self.nom)
-        
+
     def debug(self, message):
         """Méthode permettant de logger un niveau de message DEBUG"""
         self.log(DEBUG, message, self.nom)
-    
+
     def info(self, message):
         """Méthode permettant de logger un niveau de message INFO"""
         self.log(INFO, message, self.nom)
-    
+
     def warning(self, message):
         """Méthode permettant de logger un niveau de message WARNING"""
         self.log(WARNING, message, self.nom)
-    
+
     def fatal(self, message):
         """Méthode permettant de logger un niveau de message FATAL"""
         self.log(FATAL, message, self.nom)
-    
+
     def print(self, message):
         """Affiche le message en utilisant la fonction print."""
         try:
@@ -278,9 +280,9 @@ class Logger:
             print("*** inconnu ***")
 
 class Message:
-    
+
     """Classe représentant un message de log."""
-    
+
     def __init__(self, module, date, niveau, message):
         """Constructeur d'un message de log."""
         self.module = module

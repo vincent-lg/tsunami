@@ -143,3 +143,7 @@ class CmdRepondre(Commande):
                             cible.nom, message)
                     cible << clr + "{} vous répond : {}|ff|".format(
                             personnage.nom, message)
+                    importeur.communication.rapporter_conversation(
+                            "parler", personnage, message)
+                    importeur.communication.enregistrer_conversation(
+                            "parler", cible, personnage, message)

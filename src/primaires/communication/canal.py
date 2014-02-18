@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -55,11 +55,11 @@ FLAGS = {
 }
 
 class Canal(BaseObj):
-    
+
     """Classe définissant un canal.
-    
+
     """
-    
+
     def __init__(self, nom, auteur, parent):
         """Constructeur du canal"""
         BaseObj.__init__(self)
@@ -74,14 +74,14 @@ class Canal(BaseObj):
         self.connectes = []
         self.liste_noire = []
         self.parent = parent
-    
+
     def __getnewargs__(self):
         return ("", None, None)
-    
+
     def __str__(self):
         """Renvoie le nom du canal"""
         return self.nom
-    
+
     @property
     def infos(self):
         """Renvoie l'aide du canal"""
@@ -89,10 +89,10 @@ class Canal(BaseObj):
         nb_connectes = len(self.actuellement_connectes)
         res += " (|rgc|" + str(nb_connectes) + "|ff|)"
         return res
-    
+
     @property
     def aide(self):
-        res = self.infos + "\n" 
+        res = self.infos + "\n"
         res += (str(self.description) or "Aucune description.")
         res += "\nAdministrateur : |rgc|"
         res += (self.auteur and self.auteur.nom or "aucun") + "|ff|"
@@ -104,17 +104,17 @@ class Canal(BaseObj):
                     sorted([modo.nom for modo in self.moderateurs])) + "|ff|"
         res += modos
         return res
-    
+
     @property
     def clr_nom(self):
         """Renvoie le nom de la couleur du canal"""
         return COULEURS_INV[self.clr]
-    
+
     @property
     def actuellement_connectes(self):
         """Retourne la liste des joueurs connectés au canal et au MUD."""
         return [j for j in self.connectes if j.est_connecte()]
-    
+
     def rejoindre_ou_quitter(self, joueur, aff=True, forcer=False):
         """Connecte ou déconnecte un joueur"""
         if not joueur in self.connectes:
@@ -134,7 +134,7 @@ class Canal(BaseObj):
                             "{}.|ff|".format(self.nom)
         else:
             self.connectes.remove(joueur)
-    
+
     def immerger_ou_sortir(self, joueur, aff=True):
         """Immerge un joueur et le signale aux immergés"""
         if not joueur in self.immerges:
@@ -157,7 +157,7 @@ class Canal(BaseObj):
                         res = self.clr + "<" + joueur.nom
                         res += " sort d'immersion.>|ff|"
                         immerge << res
-    
+
     def dissoudre(self):
         """Détruis le canal et déconnecte tous les joueurs"""
         for joueur in self.connectes:
@@ -166,7 +166,7 @@ class Canal(BaseObj):
             self.rejoindre_ou_quitter(joueur, False)
             joueur << "|err|Le canal {} a été dissous.|ff|".format(self.nom)
         del type(self).importeur.communication.canaux[self.nom]
-    
+
     def ejecter(self, joueur):
         """Ejecte un joueur du canal (méthode de modération)"""
         if joueur in self.immerges:
@@ -182,7 +182,7 @@ class Canal(BaseObj):
                     res += " a été éjecté.|ff|"
                     connecte << res
         joueur << "|rgc|Vous avez été éjecté du canal {}.|ff|".format(self.nom)
-    
+
     def bannir(self, joueur):
         """Bannit un joueur du canal (méthode de modération)"""
         if not joueur in self.liste_noire:
@@ -206,7 +206,7 @@ class Canal(BaseObj):
             self.liste_noire.remove(joueur)
             joueur << "|rgc|Vous n'êtes plus sur la liste noire du canal " \
                     "{}.|ff|".format(self.nom)
-    
+
     def promouvoir_ou_dechoir(self, joueur):
         """Promeut ou déchoit un joueur du statut de modérateur"""
         if not joueur in self.moderateurs:
@@ -246,27 +246,27 @@ class Canal(BaseObj):
                         connecte << self.clr + "[" + self.nom + "] {} a été " \
                                 "déchu du statut de modérateur.|ff|".format(
                                 joueur.nom)
-    
+
     def envoyer_imp(self, message):
         """Envoie un message impersonnel (annonce)"""
         message = echapper_accolades(message)
         ex = self.clr + "[" + self.nom + "] " + message + "|ff|"
         im = self.clr + "<" + message + ">"
-        
+
         for connecte in self.actuellement_connectes:
             if connecte in type(self).importeur.connex.joueurs_connectes:
                 if connecte in self.immerges:
                     connecte << im
                 else:
                     connecte << ex
-    
+
     def envoyer(self, joueur, message):
         """Envoie un message au canal"""
         message = echapper_accolades(message)
         if self.flags & MUET:
             joueur << "|err|Vous ne pouvez parler dans ce canal.|ff|"
             return
-        
+
         type(self).importeur.communication. \
                 derniers_canaux[joueur.nom] = self.nom
         ex_moi = self.clr + "[" + self.nom + "] Vous dites : "
@@ -278,9 +278,14 @@ class Canal(BaseObj):
             joueur << im
         else:
             joueur << ex_moi
-        
+
+        importeur.communication.rapporter_conversation("[" + self.nom + "]",
+                joueur, message)
         for connecte in self.actuellement_connectes:
             if connecte is not joueur:
+                importeur.communication.enregistrer_conversation(
+                        self.clr + self.nom + "|ff|", connecte,
+                        joueur, message)
                 if connecte in self.immerges:
                     connecte << im
                 else:

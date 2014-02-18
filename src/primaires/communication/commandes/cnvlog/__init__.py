@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,18 +28,43 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module communication."""
+"""Package contenant la commande 'cnvlog'"""
 
-from . import attitudes
-from . import canaux
-from . import chuchoter
-from . import cnvlog
-from . import crier
-from . import dire
-from . import discuter
-from . import historique
-from . import emote
-from . import messages
-from . import parler
-from . import repondre
-from . import socedit
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdCnvlog(Commande):
+
+    """Commande 'cnvlog'."""
+
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "cnvlog", "cnvlog")
+        self.groupe = "administrateur"
+        self.schema = "(<texte_libre>)"
+        self.aide_courte = "affiche les dernières conversations"
+        self.aide_longue = \
+            "Cette commande permet d'afficher les dernières " \
+            "conversations reçues (différents canaux sont impliqués, " \
+            "les canaux HRP, le %dire%, le %chuchoter%...). Retourne " \
+            "les 30 derniers messages reçus. Vous pouvez préciser " \
+            "en paramètre un filtre (un nom de canal, un nom de joueur " \
+            "ou autre)."
+
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        filtre = None
+        texte = dic_masques["texte_libre"]
+        if texte:
+            filtre = texte.texte
+
+        messages = importeur.man_logs.loggers["conversation"].messages
+        if filtre:
+            messages = [m for m in messages if filtre in m]
+
+        if not messages:
+            personnage << "Aucun message à afficher."
+            return
+
+        messages = messages[-30:]
+        msg = "\n".join([m for m in messages])
+        personnage << msg

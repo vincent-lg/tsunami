@@ -33,6 +33,7 @@
 from abstraits.obase import *
 from primaires.format.description import Description
 from primaires.format.fonctions import oui_ou_non
+from primaires.objet.conteneur import ConteneurObjet
 from primaires.scripting.script import Script
 
 # Constantes
@@ -70,6 +71,11 @@ class Detail(BaseObj):
         self.nb_places_allongees = 1
         self.parent = parent
         self.flags = 0
+        self.supporte = None
+        self._peut_supporter = 0.0
+        self.message_supporte = "Dessus se trouve"
+        self.message_installation = "Vous posez %objet sur %detail."
+        self.message_desinstallation = "Vous retirez %objet% de %detail."
         if modele is not None:
             self.synonymes = modele.synonymes
             self.titre = modele.titre
@@ -86,6 +92,24 @@ class Detail(BaseObj):
     @property
     def repos(self):
         return oui_ou_non(self.peut_asseoir or self.peut_allonger)
+
+    @property
+    def support(self):
+        """Retourne oui_ou_non."""
+        return oui_ou_non(self._peut_supporter > 0)
+
+    def _get_peut_supporter(self):
+        return self._peut_supporter
+    def _set_peut_supporter(self, poids):
+        self._peut_supporter = poids
+        if poids:
+            if self.supporte is None:
+                self.supporte = ConteneurObjet(self)
+        else:
+            if self.supporte:
+                self.supporte.detruire()
+                self.supporte = None
+    peut_supporter = property(_get_peut_supporter, _set_peut_supporter)
 
     def a_flag(self, nom_flag):
         """Retourne True si le détail a le flag, False sinon."""

@@ -33,7 +33,6 @@
 from datetime import datetime
 
 from primaires.interpreteur.commande.commande import Commande
-from primaires.format.tableau import Tableau, GAUCHE, DROITE
 
 class CmdHistorique(Commande):
 
@@ -61,39 +60,5 @@ class CmdHistorique(Commande):
                     "à rappeler."
             return
 
-        messages = messages[-10:]
-        tableau = Tableau("|tit|Derniers messages reçus|ff|")
-        tableau.ajouter_colonne("|tit|Il y a|ff|")
-        tableau.ajouter_colonne("|tit|Canal|ff|")
-        tableau.ajouter_colonne("|tit|Nom|ff|")
-        tableau.ajouter_colonne("|tit|Message|ff|")
-        for date, auteur, canal, message in messages:
-            delta = datetime.now() - date
-            secondes = delta.total_seconds()
-            duree = 0
-            unite = "seconde"
-            msg_duree = None
-            if secondes < 3:
-                msg_duree = "quelques secondes"
-            elif secondes < 60:
-                duree = secondes // 5 * 5
-            elif secondes < 300:
-                duree = secondes // 60
-                unite = "minute"
-            elif secondes < 3600:
-                duree = secondes / 60 // 5 * 5
-                unite = "minute"
-            elif secondes < 86400:
-                duree = secondes // 3600
-                unite = "heure"
-            else:
-                duree = secondes // 86400
-                unite = "jour"
-
-            s = "s" if duree > 1 else ""
-            if msg_duree is None:
-                msg_duree = "{} {}{s}".format(duree, unite, s=s)
-
-            tableau.ajouter_ligne(msg_duree, auteur.nom, canal, message)
-
+        tableau = importeur.communication.extraire_historique(personnage)
         personnage << tableau.afficher()

@@ -70,6 +70,10 @@ class CmdParler(Commande):
                     message)
             cible << clr + "{} vous dit : {}|ff|".format(personnage.nom,
                     message)
+            importeur.communication.rapporter_conversation("parler",
+                    personnage, message)
+            importeur.communication.enregistrer_conversation("parler",
+                    cible, personnage, message)
             cible.envoyer_tip("Utilisez la commande %repondre% pour " \
                     "répondre.", "repondre", True)
             type(self).importeur.communication.conversations. \

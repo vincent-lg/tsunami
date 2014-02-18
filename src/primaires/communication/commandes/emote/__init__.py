@@ -66,3 +66,5 @@ class CmdEmote(Commande):
         message = echapper_accolades(message)
         personnage.envoyer("{{}} {}".format(message), personnage)
         personnage.salle.envoyer("{{}} {}".format(message), personnage)
+        importeur.communication.rapporter_conversation("emote",
+                personnage, message)
