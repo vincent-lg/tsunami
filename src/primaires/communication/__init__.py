@@ -30,6 +30,8 @@
 
 """Fichier contenant le module primaire communication."""
 
+import datetime
+
 from abstraits.module import *
 from primaires.format.fonctions import *
 from primaires.communication.config import cfg_com
@@ -64,6 +66,8 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "communication", "primaire")
         self.logger = type(self.importeur).man_logs.creer_logger( \
                 "communication", "communication")
+        self.conv_logger = type(self.importeur).man_logs.creer_logger(
+                "communication", "conversation")
         self.masques = []
         self.commandes = []
         self.conversations = None
@@ -71,6 +75,7 @@ class Module(BaseModule):
         self._canaux = None
         self.derniers_canaux = {}
         self.mails = None
+        self.messages = {}
 
     def config(self):
         """Configuration du module"""
@@ -153,6 +158,7 @@ class Module(BaseModule):
             commandes.dire.CmdDire(),
             commandes.discuter.CmdDiscuter(),
             commandes.emote.CmdEmote(),
+            commandes.historique.CmdHistorique(),
             commandes.messages.CmdMessages(),
             commandes.parler.CmdParler(),
             commandes.repondre.CmdRepondre(),
@@ -216,7 +222,7 @@ class Module(BaseModule):
             if not personnage.est_immortel():
                 personnage << "|err|Ce canal n'existe pas.|ff|"
                 return
-            
+
             canal = self.ajouter_canal(nom_canal, personnage)
             personnage << "|att|Le canal {} a été créé.|ff|".format(nom_canal)
             canal.rejoindre_ou_quitter(personnage)
@@ -331,3 +337,15 @@ class Module(BaseModule):
         elif len(mails) > 1:
             joueur << "|jn|Vous avez {} messages non lus.|ff|".format(
                     len(mails))
+
+    def rapporter_conversation(self, canal, auteur, message):
+        """Rapporte une conversation."""
+        self.conv_logger.debug("<{}.{}> {}".format(canal, auteur.nom, message))
+
+    def enregistrer_conversation(self, canal, cible, auteur, message):
+        """Enregistre une conversation pour la cible du message."""
+        if not hasattr(cible, "prototype"):
+            conversations = self.messages.get(cible, [])
+            conversations.append((datetime.datetime.now(), auteur, canal,
+                    message))
+            self.messages[cible] = conversations

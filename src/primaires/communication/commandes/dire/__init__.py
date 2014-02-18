@@ -68,8 +68,12 @@ class CmdDire(Commande):
         autre = "{} dit : " + message
         personnage.envoyer(moi)
         salle.envoyer(autre, personnage)
+        importeur.communication.rapporter_conversation("dire", personnage,
+                message)
         for autre in salle.joueurs:
             if autre is not personnage:
+                importeur.communication.enregistrer_conversation("dire",
+                        autre, personnage, message)
                 autre.envoyer_tip("Utilisez la commande %dire% pour " \
                         "parler en RP dans la salle.", "dire", True)
 
