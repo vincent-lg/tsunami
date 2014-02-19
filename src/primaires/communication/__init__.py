@@ -34,7 +34,7 @@ import datetime
 
 from abstraits.module import *
 from primaires.format.fonctions import *
-from primaires.format.tableau import Tableau, GAUCHE, DROITE
+from primaires.format.tableau import Tableau, CENTRE
 from primaires.communication.config import cfg_com
 from primaires.communication import masques
 from primaires.communication import commandes
@@ -361,7 +361,7 @@ class Module(BaseModule):
                     personnage))
 
         messages = messages[-lignes:]
-        tableau = Tableau("|tit|" + titre + "|ff|")
+        tableau = Tableau("|tit|" + titre + "|ff|", CENTRE)
         tableau.ajouter_colonne("|tit|Il y a|ff|")
         tableau.ajouter_colonne("|tit|Canal|ff|")
         tableau.ajouter_colonne("|tit|Nom|ff|")

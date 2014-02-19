@@ -206,7 +206,12 @@ class Tableau:
         cellule = self.lignes[i][j]
         alignement = self.colonnes[j][1]
         taille_max = self.taille_colonnes[j]
-        lignes = wrap(cellule, taille_max)
+        sc_cellule = supprimer_couleurs(cellule)
+        if len(sc_cellule) <= taille_max:
+            lignes = [cellule]
+        else:
+            lignes = wrap(cellule, taille_max)
+
         for i, ligne in enumerate(lignes):
             lignes[i] = self.aligner(ligne, taille_max, alignement)
             if contient_couleurs(ligne):
