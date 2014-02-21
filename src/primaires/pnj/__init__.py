@@ -74,6 +74,8 @@ class Module(BaseModule):
                 "Hook appelé quand un personnage arrive près du PNJ")
         importeur.hook.ajouter_hook("pnj:meurt",
                 "Hook appelé quand un PNJ meurt")
+        importeur.hook.ajouter_hook("pnj:détruit",
+                "Hook appelé quand le PNJ est détruit pour X raison")
 
         BaseModule.config(self)
 
@@ -200,6 +202,7 @@ class Module(BaseModule):
     def supprimer_PNJ(self, identifiant):
         """Supprime le PNJ de la liste des PNJ."""
         pnj = self._PNJ[identifiant]
+        self.importeur.hook["pnj:détruit"].executer(pnj)
         del self._PNJ[identifiant]
         pnj.detruire()
 
