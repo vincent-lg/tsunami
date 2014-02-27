@@ -111,5 +111,8 @@ from .cadavre import Cadavre
 # Matériau
 from .matiere import Matiere
 from .fourrure import Fourrure
+from .peau import Peau
+from .os import Os
+from .plumage import Plumage
 
 from .boule_neige import BouleNeige
