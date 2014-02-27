@@ -46,13 +46,13 @@ class Arme(BaseType):
     nom_talent = ""
     niveau_talent = "combat"
     difficulte_talent = 0
+    empilable_sur = ["vêtement"]
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
         self.emplacement = "mains"
         self.positions = (1, 2)
-        self.empilable_sur = ["vêtement"]
         self.degats_fixes = 5
         self.degats_variables = 0
         self.peut_depecer = False

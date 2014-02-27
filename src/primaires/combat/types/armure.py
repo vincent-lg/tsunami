@@ -50,11 +50,11 @@ class Armure(BaseType):
     nom_type = "armure"
     _nom = "prototype_armure"
     _version = 1
+    empilable_sur = ["vêtement"]
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
-        self.empilable_sur = ["vêtement"]
         self.encaissement_fixe = 5
         self.encaissement_variable = 0
         self.fourreau = False

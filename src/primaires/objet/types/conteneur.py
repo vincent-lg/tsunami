@@ -46,10 +46,12 @@ class Conteneur(BaseType):
 
     nom_type = "conteneur"
     nettoyer = False
+
+    empilable_sur = ["vêtement", "armure"]
+
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
-        self.empilable_sur = ["vêtement"]
         self.types_admis = ["*"]
         self.poids_max = 10
         self.etendre_editeur("x", "poids max", Flottant, self, "poids_max")

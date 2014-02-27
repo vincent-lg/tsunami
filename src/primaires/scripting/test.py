@@ -151,7 +151,7 @@ class Test(BaseObj):
             instruction = instruction[:no_car] + remplacement + \
                     instruction[no_car + len(texte):]
             chaine_recherche = supprimer_accents(instruction).lower()
-            no_car = chaine_recherche.find(texte, no_car + len(texte))
+            no_car = chaine_recherche.find(texte, no_car + len(remplacement))
 
         message = instruction
         type_instruction = Instruction.test_interpreter(message)
