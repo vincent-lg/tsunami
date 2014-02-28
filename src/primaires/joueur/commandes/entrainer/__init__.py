@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,11 +34,11 @@ from primaires.interpreteur.commande.commande import Commande
 from primaires.perso.exceptions.stat import DepassementStat
 
 class CmdEntrainer(Commande):
-    
+
     """Commande 'entrainer'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "entraîner", "train")
@@ -61,7 +61,7 @@ class CmdEntrainer(Commande):
             "caractéristique : si par exemple vous avez 20 en force, " \
             "vous aurez besoin de 10 pourcent d'XP du niveau secondaire " \
             "choisi pour gagner un point en force."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         # La première étape est de chercher les "maîtres" dans la salle
@@ -86,14 +86,14 @@ class CmdEntrainer(Commande):
                 liste = prototypes.get(pnj, [])
                 liste.append(stat)
                 prototypes[pnj] = liste
-        
+
         if dic_masques["stat_ent"]:
             stat = dic_masques["stat_ent"].stat_ent
             if stat not in stats:
                 personnage << "|err|Aucun maître présent ne peut vous " \
                         "enseigner cela.|ff|"
                 return
-            
+
             maitre = stats[stat]
             max = max[stat]
             xp = xps[stat]
@@ -101,22 +101,23 @@ class CmdEntrainer(Commande):
                 personnage << "|err|Précisez le niveau secondaire " \
                         "contenant l'expérience à verser.|ff|"
                 return
-            
+
             niveau = dic_masques["niveau_secondaire"].niveau_secondaire
-            if personnage.niveaux.get(niveau, 0) < personnage.stats[stat].base:
+            if xp is None or personnage.niveaux.get(niveau, 0) < \
+                    personnage.stats[stat].base:
                 personnage << "|err|Vous n'êtes pas assez expérimenté dans ce niveau.|ff|"
                 return
-            
+
             if personnage.stats[stat].base > max:
                 personnage.envoyer("|err|{} ne peut vous enseigner davantage " \
                         "cette caractéristique.|ff|", maitre)
                 return
-            
+
             if personnage.xps.get(niveau, 0) < xp:
                 personnage << "|err|Vous devez avoir au moins {} xp dans " \
                         "ce niveau.|ff|".format(xp)
                 return
-            
+
             personnage.agir("entrainer")
             end = 20
             try:
@@ -124,7 +125,7 @@ class CmdEntrainer(Commande):
             except DepassementStat:
                 personnage << "|err|Vous êtes trop fatigué pour vous entraîner.|ff|"
                 return
-            
+
             personnage << "Vous commencez à vous entraîner."
             personnage.salle.envoyer("{} commence à s'entraîner.", personnage)
             personnage.cle_etat = "entrainer"
@@ -139,7 +140,7 @@ class CmdEntrainer(Commande):
                 personnage << "|err|Aucun maître n'est actuellement " \
                         "présent.|ff|"
                 return
-            
+
             lignes = []
             for p, l_stats in prototypes.items():
                 lignes.append(p.nom_singulier + " peut vous enseigner :")
@@ -149,8 +150,8 @@ class CmdEntrainer(Commande):
                         xp = "..."
                     else:
                         xp = str(xp)
-                    
+
                     lignes.append("  " + s.ljust(10) + " pour " + \
                             xp.rjust(15) + " XP")
-            
+
             personnage << "\n".join(lignes)

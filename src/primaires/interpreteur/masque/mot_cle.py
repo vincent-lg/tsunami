@@ -30,6 +30,7 @@
 
 """Fichier définissant la classe MotCle, détaillée plus bas."""
 
+from primaires.format.fonctions import supprimer_accents
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
@@ -71,7 +72,7 @@ class MotCle(Commande):
         if langue == "anglais":
             mot_cle = anglais
         elif langue == "francais":
-            mot_cle = francais
+            mot_cle = supprimer_accents(francais)
         else:
             raise ValueError("langue {} inconnue".format(langue))
 
@@ -80,10 +81,11 @@ class MotCle(Commande):
             masque = masques[-1]
             commande[:] = chaine_vers_liste(masque.a_interpreter)
             str_commande = liste_vers_chaine(commande)
+            sa_commande = supprimer_accents(str_commande).lower()
             mot_cle = " " + mot_cle
-            if (mot_cle + " ") in str_commande or str_commande.endswith(
+            if (mot_cle + " ") in sa_commande or sa_commande.endswith(
                     mot_cle):
-                fin = str_commande.index(mot_cle)
+                fin = sa_commande.rindex(mot_cle)
                 masque.a_interpreter = str_commande[:fin]
                 fin += len(mot_cle)
                 commande[:] = commande[fin:]
@@ -92,11 +94,12 @@ class MotCle(Commande):
                 valide = False
         else:
             str_commande = liste_vers_chaine(commande)
+            sa_commande = supprimer_accents(str_commande).lower()
 
-            if str_commande.startswith(mot_cle) or \
-                    str_commande.startswith(" " + mot_cle):
+            if sa_commande.startswith(mot_cle) or \
+                    sa_commande.startswith(" " + mot_cle):
                 plus = 0
-                if str_commande.startswith(" "):
+                if sa_commande.startswith(" "):
                     plus = 1
 
                 commande[:] = commande[len(mot_cle) + plus:]
