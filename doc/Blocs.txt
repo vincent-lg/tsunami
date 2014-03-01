@@ -1,0 +1,144 @@
+h1. Les blocs d'instruction
+
+Pour tout scriptable (salle, PNJ, objet, ...), vous pouvez regrouper plusieurs instructions dans un bloc. Ce bloc pourra être appelé depuis l'extérieur (depuis un autre scriptable, par exemple). En vérité, un bloc est assez semblable à un évènement standard, sauf qu'il est créé et appelé par vous (pas par le système). Ce concept est très utile si vous répétez souvent les mêmes instructions dans un scriptable.
+
+h2. Configuration d'un bloc
+
+Un bloc est facile à appeler et facile à enrichir, mais plus difficile à créer. Tout d'abord, vous devez vous rendre dans les scripts d'un scriptable (par exemple *redit* puis *sc*).
+
+Pour créer un bloc, entrez l'option */a* suivi du nom du bloc. Par exemple :
+
+<pre>
+/a planter_orangers
++-----------------------------------------------------------------------------+
+| Edition des scripts de depart:4                                              |
++-----------------------------------------------------------------------------+
+Voici les différents évènements que vous pouvez éditer pour cet objet.
+Entrez simplement son nom pour éditer un évènement ou / pour revenir à
+la fenêtre parente.
+
+Evènements disponibles :
+
+  ...
+
+Blocs définies :
+
+  planter_orangers()
+</pre>
+
+Le bloc *planter_orangers* a été défini. Notez les parenthèses ouvrantes et fermantes juste après le nom : à l'instar d'une action ou d'une fonction, un bloc peut prendre des paramètres. Ce seront les variables dont vous disposerez dans le bloc. Vous pouvez entrer *planter_orangers* et vous vous retrouverez dans l'éditeur d'instructions du bloc (semblable aux autres éditeurs d'instructions que vous avez pu voir). Nous verrons quoi y mettre un peu plus tard.
+
+Pour l'instant, retournez dans l'éditeur du scriptable en faisant */*. La configuration n'est pas terminée, si vous souhaitez ajouter des paramètres.
+
+Entrez la fonction */av* qui est un peu plus compliquée. Elle prend quatre paramètres séparés par des espaces :
+
+* Le nom du bloc dans lequel ajouter le paramètre
+* Le nom de la variable à utiliser
+* Le type de la variable
+* L'aide de la variable.
+
+Le type est généralement : *nombre*, *personnage*, *salle, *objet* ou *chaine*.
+
+Pour l'exemple nous allons ajouter un paramètre dans notre bloc. Il s'appellera *salle* et sera de type *salle* car il représentera la salle actuelle (souvenez-vous que le bloc peut très bien ne contenir aucun paramètre, il n'a pas même l'appelant défini de base).
+
+Entrez donc :
+
+<pre>/av planter_orangers salle salle La salle actuelle</pre>
+
+Et vous devriez voir dans la définition du bloc :
+
+<pre>
+Blocs définies :
+  planter_orangers(salle)
+</pre>
+
+Vous voyez la différence ? Entre parenthèse se trouve maintenant le paramètre *salle* que nous venons d'ajouter. Si vous entrez *planter_orangers* pour éditer le bloc, vous verrez quelque chose comme ceci :
+
+<pre>
++-----------------------------------------------------------------------------+
+| Edition d'un test de depart:4[planter_orangers]                              |
++-----------------------------------------------------------------------------+
+Entrez directement une instruction pour l'ajouter, ou / pour revenir à la
+fenêtre précédente. L'option /? vous fournira toute l'aide nécessaire si
+vous n'êtes pas à l'aise avec cet éditeur.
+Variables definies dans ce script :
+salle : La salle actuelle
+Instructions :
+  Aucune instruction n'est définie dans ce script.
+</pre>
+
+Créer un paramètre crée une variable par défaut dans notre bloc, une variable que vous pouvez utiliser.
+
+Utilisez les options */d* et */dv* pour supprimer un bloc ou une variable du bloc, respectivement.
+
+h2. Appel d'un bloc
+
+Vous avez créé le bloc et je suppose que vous y avez placé des intstructions (si ce n'est aps le cas, vous pouvez voir un peu plus bas un exemple complet qui vous aidera à comprendre le mécanisme). Maintenant il va falloir l'appeler depuis un autre script, un script qui, lui, est relié à un véritable évènement. En effet pour l'instant le bloc ne peut pas s'exécuter puisque le système ne l'appellera pas de lui-même.
+
+Pour appeler un bloc, il suffit d'utiliser l'action ou la fonction *appeler*. Elles ont le même nom et la même utilisation, mais il y a une petite différence. Parlons de l'action pour commencer.
+
+h3. L'action appeler
+
+Vous devez préciser au moins deux paramètres :
+
+* Le scriptable concerné (ici nous avons fait la salle *depart:4*)
+* Le nom du bloc à appeler.
+
+Les autres paramètres correspondent à ceux que vous avez spécifié dans le bloc : si le bloc prend un paramètre (c'est notre cas ici), vous devez le préciser ici. Si il en contient plus d'un, vous devez les préciser dans l'ordre où vous les avez défini.
+
+Par exemple, dans l'évènement de notre salle *dit*, on pourrait faire :
+
+<pre>
+appeler salle "planter_orangers" salle
+</pre>
+
+On passe en apparence deux fois la salle. Le premier est le scriptable qui contient le bloc, le second est le premier (et unique) paramètre que nous avons défini auparavant. Si vous ne préciseze pas les bons paramètres (ou si vous n'entrez pas les bons types attendus), le système générera une alerte.
+
+h3. La fonction appeler
+
+Il existe également une fonction du même nom qui fait presque la même chose que l'action... mais à un petit détail près : la fonction permet de récupérer une valeur retourné par le bloc.
+
+Nous allons essayer de faire un bloc très simple qui retourne le double du nombre entré en paramètre. Dans l'éditeur de salle du script, entrez :
+
+<pre>
+/a double
+/av double valeur nombre La valeur à doubler
+</pre>
+
+Puis entrez *double* pour entrez dans l'éditeur du bloc :
+
+<pre>
++-----------------------------------------------------------------------------+
+| Edition d'un test de depart:4[double]                                        |
++-----------------------------------------------------------------------------+
+Entrez directement une instruction pour l'ajouter, ou / pour revenir à la
+fenêtre précédente. L'option /? vous fournira toute l'aide nécessaire si
+vous n'êtes pas à l'aise avec cet éditeur.
+Variables definies dans ce script :
+valeur : La valeur à doubler
+Instructions :
+  Aucune instruction n'est définie dans ce script.
+</pre>
+
+Si vous voulez que le bloc retourne quelque chose au script l'appelant, vous devez créer la variable *retour* en lui affectant ce que vous voulez retourner. Ici, on entre donc simplement l'instruction :
+
+<pre>
+retour = valeur * 2
+</pre>
+
+Maintenant nous allons appeler ce bloc depuis un autre script. Je vous conseille de faire le test dans la même salle, évènement *dit*. Dans le test *sinon* (ou un autre, si vous voulez) entrez les instructions suivantes :
+
+<pre>
+double = appeler(salle, "double", 1)
+dire personnage "Le double de 1 est ${double}."
+</pre>
+
+Et essayez vos instructions :
+
+<pre>
+>say essai
+Vous dites : essai
+Le double de 1 est 2.
+</pre>
+
+Voilà ! En bref, la différence entre l'action et la fonction *appeler*, c'est que la seconde permet de récupérer une valeur du bloc, alors que la première non (ce n'est pas toujours utile).

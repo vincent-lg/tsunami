@@ -1,0 +1,119 @@
+h1. Les descriptions dynamiques
+
+project:kassie propose un système intuitif et facilement extensible de description dynamique. On entend par description dynamique une description dont une partie est modifiée en fonction de certains critères.
+
+Un exemple simple ? Une description qui change en partie quand il pleut, quand il fait nuit, quand un PNJ de type renard est présent, quand plus de trois personnages occupent la salle ?
+
+Concrètement, il suffit d'écrire votre description (de salle, par exemple) normalement en spécifiant que certaines parties seront dynamiques et le système calculera les parties dynamiques de votre description quand ce sera nécessaire.
+
+h2. Pour ce faire
+
+Ouvrez un éditeur de description, par exemple *redit* puis *d*. L'éditeur qui apparaît est standard et beaucoup de descriptions acceptent d'être en partie dynamique, ce qui veut dire que vous pouvez appliquer le concept des descriptions dynamiques aux objets ou PNJ par exemple.
+
+Entrez la description statique (la partie qui ne changera pas quelque soit les circonstances). Les parties dynamiques peuvent être insérer comme du texte classique, un mot commençant par un signe dollar ($). Voici par exemple une description mêlant le statique et le dynamique :
+
+<pre>
++-----------------------------------------------------------------------------+
+| Description de la salle ...                                     |
++-----------------------------------------------------------------------------+
+Entrez une phrase à ajouter à la description ou / pour revenir à la
+fenêtre mère.
+Symboles :
+ - |tab| : symbolise une tabulation
+ - |nl| : symbolise un saut de ligne
+Options :
+ - /d <numéro>/* : supprime un paragraphe ou toute la description
+ - /r <texte 1> / <texte 2> : remplace texte 1 par texte 2
+Pour ajouter un paragraphe, entrez-le tout simplement.
+Description existante :
+ 1 |tab|Vous vous trouvez sur un étroit chemin de terre, orienté du nord
+   au sud. $lumiere.
+-> 
+</pre>
+
+La partie statique de la description est la première phrase parlant du chemin. La partie dynamique est @lumiere@ précédé du signe dollar. Le point après $lumiere est une possibilité, non une obligation (nous verrons dans la suite son utilité).
+
+Ne sortez pas de l'éditeur encore, car si vous essayer de regarder la salle, le système va se confondre en excuse car il ne saura pas par quoi remplacer l'expression $lumiere. C'est bien entendu à vous de lui dire.
+
+Dans l'éditeur de description, utilisez l'option @/e@ suivi du nom de notre détail dynamique sans le dollar (ici, c'est donc @lumiere@).
+
+<pre>
+/e lumiere
++-----------------------------------------------------------------------------+
+| Edition d'un test de ... |
++-----------------------------------------------------------------------------+
+Entrez directement une instruction pour l'ajouter, ou / pour revenir à la
+fenêtre précédente. L'option /? vous fournira toute l'aide nécessaire si
+vous n'êtes pas à l'aise avec cet éditeur.
+Variables definies dans ce script :
+personnage : le personnage regardant
+regarde    : l'élément regardé
+Instructions :
+  Aucune instruction n'est définie dans ce script.
+-> </pre>
+
+Et oui, c'est un éditeur de script ! Le but du jeu maintenant est de créer une variable dont le nom est toujours @retour@ qui contiendra le texte à insérer.
+
+<pre>
+Instructions :
+   1 retour = "La lumière est claire ici"
+-> 
+</pre>
+
+Si maintenant vous essayer de regarder la description (en faisant *regarder/look*) :
+
+<pre>
+   Vous vous trouvez sur un étroit chemin de terre, orienté du nord au sud.
+La lumière est claire ici.
+Sorties :    ,    ,      ,    ,     ,    ,    ,    ,    ,     .
+</pre>
+
+Comme vous le voyez, votre expression @$lumiere@ a été remplacé par le texte contenu dans notre variable @retour@.
+
+Jusqu'ici ce n'est peut-être pas très fascinant car notre texte reste toujours le même. Mais retournez dans votre éditeur de description, entrez @/e lumiere@ pour éditer l'élément dynamique @lumiere@ et essayez ce code :
+
+<pre>
+Instructions :
+   1 si il_fait_jour():
+   2   retour = "La lumière est claire sous les arbres puisqu'il fait jour"
+   3 sinon:
+   4   retour = "La lumière est inexistantes, il fait nuit"
+   5 finsi
+-> </pre>
+
+Et si vous regardez la description et qu'il fait jour, vous obtiendrez :
+
+<pre>
+   Vous vous trouvez sur un étroit chemin de terre, orienté du nord au sud.
+La lumière est claire sous les arbres puisqu'il fait jour.
+Sorties :    ,    ,      ,    ,     ,    ,    ,    ,    ,     .
+</pre>
+
+Et si il fait nuit :
+
+<pre>
+   Vous vous trouvez sur un étroit chemin de terre, orienté du nord au sud.
+La lumière est inexistantes, il fait nuit.
+Sorties :    ,    ,      ,    ,     ,    ,    ,    ,    ,     .
+</pre>
+
+Vous pouvez faire autant d'éléments dynamiques de votre description que vous le souhaitez. Vous pouvez même faire toute une description dynamique, sans éléments statiques, même si je ne le conseille pas.
+
+h2. Que mettre dans le script d'un élément dynamique de description
+
+Toute la puissance du scripting vous est offerte. Il n'y a qu'une règle : TOUJOURS renseigner une variable *retour* avec du texte dedans. Si le système ne trouve pas cette variable dans votre script, il ne va pas apprécier.
+
+Sans quoi, vous pouvez :
+
+* Modifier la description en fonction du jour ou de la nuit (fonction @il_fait_jour@ et @il_fait_nuit@)
+* Modifier la description en fonction de l'heure (fonction @heure@)
+* Modifier la description en fonction d'une quête qu'a fait ou non le personnage (fonctions @quete@ et @peut_faire@)
+* Modifier la description en fonction d'une porte, ouverte, fermée, verrouillée ou déverrouillée (fonctions @ouverte@, @fermee@, @verrouillee@, @deverrouillee@)
+* Modifier la description en fonction de si le personnage la regardant équipe ou possède un objet (fonctions @equipe@ ou @possede@)
+* Modifier la description de la salle si le joueur a un certain niveau dans une stat (suffisamment de sensibilité, par exemple, fonction @stat@)
+* Modifier la description en fonction du hasard, tout bêtement (fonction @hasard@)
+* ...
+
+Et plein d'autres possibilités. Vous pouvez accéder au personnage regardant la description au travers la variable @personnage@ ce qui permet de faire de nombreux tests, comme listés plus haut.
+
+* [[Scripting|Retour à la documentation du scripting]]

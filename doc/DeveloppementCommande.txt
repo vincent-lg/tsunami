@@ -1,0 +1,442 @@
+h1. Les commandes dans project:kassie
+
+Le lien entre les commandes (entrées côté client) et leur interprétation côté serveur est gérée par des objets de type @Commande@. La classe-mère est définie dans @src/primaires/interpreteur/commande/commande.py@.
+
+h2. Création basique d'une commande
+
+La procédure minimale pour ajouter une commande consiste à ajouter un package dans le module désiré, sous-packages @commandes@. Par exemple, les commandes du module @objet@ (module primaire) se trouvent dans @src/primaires/objet/commandes@. Chaque commande est un sous-[[GlossairePackage|package]], par définition le nom français de la commande (par exemple @regarder@ ou @prendre@).
+
+Pour ajouter une commande, il faut :
+
+* Créer, si il n'existe pas, le sous-[[GlossairePackage|package]] @commandes@ dans le module désiré. Cela inclut créer un fichier @__init__.py@ dans lequel ne se trouveront que des instructions d'importation
+* Créer un sous-[[GlossairePackage|package]] dans le [[GlossairePackage|package]] @commandes@ du nom français de la commande à créer. Cela inclut créer un fichier @__init__.py@ dans ce nouveau répertoire qui contiendra le code de la commande
+* Placer dans le fichier @__init__.py@ du [[GlossairePackage|package]] contenant la commande le code donné un peu plus bas, créant une nouvelle classe héritée de @Commande@
+* Importer le [[GlossairePackage|package]] de la commande dans le @__init__.py@ du [[GlossairePackage|package]] @commandes@
+* Ajouter la commande dans l'interpréteur.
+
+Le code minimal du fichier @__init__.py@ contenant la commande est le suivant :
+
+<pre>
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdMaCommande(Commande):
+    
+    """Commande macommande."""
+    
+    def __init__(self):
+        Commande.__init__(self, "nom_français", "nom_anglais")
+</pre>
+
+h2. Exemple pas à pas
+
+Vous venez de créer un nouveau module secondaire appelé *monture*. Vous avez créé l'arborescence minimale décrivant [[Module|le module]]. Vous voulez ajouter une unouvelle commande appelée *apprivoiser* en français ou *tame* en anglais.
+
+Voici les étapes :
+
+* Dans le répertoire @src/secondaires/monture@, créer un répertoire *commandes*
+* Dans ce nouveau répertoire *commandes*, créer un fichier @__init__.py@ pour que ce nouveau répertoire soit considéré par Python comme un [[GlossairePackage|package]]. Vous pouvez le laisser vide pour l'heure, nous y ajouterons du code plus tard
+* Dans le répertoire *commandes*, créer un sous-répertoire *apprivoiser*
+* Dans ce répertoire *apprivoiser*, créer un fichier @__init__.py@ contenant le code suivant :
+
+<pre>
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdApprivoiser(Commande):
+    
+    """Commande apprivoiser."""
+    
+    def __init__(self):
+        Commande.__init__(self, "apprivoiser", "tame")
+</pre>
+
+* Dans le fichier @src/secondaires/monture/commandes/__init__.py@ importez la commande en utilisant le code :
+
+<pre>
+from . import apprivoiser
+</pre>
+
+* Enfin, dans le fichier principal du module (@src/secondaires/monture/__init__.py@) ajoutez la commande en :
+** Important le package @commandes@ : @from . import commandes@
+** Créant la méthode @ajouter_commandes@ du module qui contiendra le code suivant :
+
+<pre>
+    def ajouter_commandes(self):
+        """Ajoute les commandes du module."""
+        commandes = [
+            commandes.apprivoiser.CmdApprivoiser(),
+        ]
+        
+        for cmd in commandes:
+            importeur.interpreteur.ajouter_commande(cmd)
+</pre>
+
++*Note*+ : la plupart du temps, le package @commandes@ et la méthode @ajouter_commandes@ existent déjà donc il suffit de modifier le code pour importer et ajouter la commande que vous venez de créer.
+
+h2. Informations attendues par la commande
+
+Dans le fichier @__init__.py@ de notre commande, définir la classe héritée de @Commande@ crée une commande minimaliste, mais beaucoup d'autres informations doivent être ajoutées. Certaines, plus complexes que d'autres, seront détaillées dans d'autres sous-parties.
+
+h3. Les noms français et anglais
+
+Ces deux informations doivent être passées lors à l'appel du constructeur de @Commande@.
+
+<pre>
+Commande.__init__(self, "nom_franoais", "nom_anglais")
+</pre>
+
+Le nom français peut contenir des accents. Le package contenant la commande ne doit cependant pas contenir d'accents.
+
+h3. Le nom de catégorie
+
+Les commandes sont classées en catégories. Cela permet de les regrouper et les classer plus facilement quand un joueur demande la liste des commandes (qui peut être assez longue).
+
+Vous devez préciser le nom de la catégorie (pas l'intitulé que verra le joueur mais celui choisit par le codeur). Si vous souhaitez mettre votre commande dans la même catégorie qu'une commande déjà existante, regardez son nom de catégorie et choisissez le même. Si vous souhaitez créer une nouvelle catégorie, prenez exemple des modules le faisant. Si vous ne précisez aucune catégorie, la catégorie des commandes de base est automatiquement sélectionnée.
+
+<pre>
+self.nom_categorie = "nom_catégorie"
+</pre>
+
+h3. Le groupe autoriser à exécuter la commande
+
+project:kassie possède un système de groupes permettant de déterminer qui a le droit d'exécuter quelle commande. Par défaut, il existe trois groupes :
+
+* *administrateur* : le groupe le plus important, comprenant des commandes de configuration et de création
+* *joueur* : le groupe par défaut pour tout joueur se créant un compte
+* *pnj* : le groupe pour tous les PNJ. La plupart des commandes sont définies dans ce groupe. Elles sont accessibles aux PNJ, donc aux joueurs (membre du groupe *joueur*) et aux administrateurs (*administrateur*). En pratique, seules quelques commandes sont définies dans le groupe *joueur* (comme *quitter*, les PNJ ne sont pas censé se déconnecter).
+
+Vous pouvez ajouter d'autres groupes mais il vous est recommandé de choisir par défaut un de ces trois groupes pour vos commandes. Il vous est ensuite facile de la déplacer dans un autre groupe, mais si pour une raison ou une autre les groupes ciblés n'existe pas (une pertie partielle de données par exemple), le système ne saura pas où placer ces commandes.
+
+Si aucun nom de groupe n'est précisé, le groupe *pnj* est choisi.
+
+<pre>
+self.nom_groupe = "administrateur"
+</pre>
+
+h3. Le schéma
+
+Le [[DeveloppementSchema|schéma]] d'une commande permet de préciser les paramètres attendus. Le [[DeveloppementSchema|schéma]] est très lié à la notion de [[Masque|masques]] :
+
+* Un [[DeveloppementMasque|masque]] permet de définir la donnée attendue par une commande. L'un des masques souvent utilisé est *element_observable* qui attend du joueur un nom d'élément observable dans la salle où il se trouve (un nom de personnage, d'objet, de détail observable...). Un [[DeveloppementMasque|masque]] est une classe, comme la commande, qui définit les informations attendues et les erreurs éventuelles quand elles ne sont pas trouvées
+* Le [[DeveloppementSchema|schéma]] d'une commande est une chaîne décrivant le ou les masques attendus par la commande.
+
+Par exemple, la commande *jouer/play* attend un argument : le nom de l'objet qui représente le plateau de jeu. Quand le joueur entre :
+
+<pre>
+jouer poquiir
+</pre>
+
+La commande doit comprendre que @"poquiir"@ est un nom ou extrait de nom d'objet présent dans la salle du joueur.
+
+Le schéma de la commande *joueur/play* est ainsi : @<nom_objet>@
+
+On précise le nom du masque entre chevrons (< et >). De nombreux codes existent pour rédiger des [[DeveloppementSchema|schéma]] de commandes. Voici quelques exemples :
+
+| Masque | Explication |
+| @<nom_joueur>@ | Le nom d'un joueur |
+| @(<message>)@ | Un message optionnel |
+| @<message> a/to <personnage_present>@ | Un message suivi du mot-clé a (ou to en anglais) suivi d'un nom de personnage présent dans la salle |
+
+Pour obtenir une liste complète des codes existants, rendez-vous dans [[DeveloppementSchema|la rubrique consacrée au schéma]].
+
+Pour en apprendre plus sur la création des masques, rendez-vous dans [[DeveloppementMasque|la rubrique consacrée aux masques]].
+
+Le [[DeveloppementSchema|schéma]] d'une commande est un attribut d'instance défini dans le constructeur :
+
+<pre>
+self.schema = "<nom_objet>"
+</pre>
+
+Si aucun schéma n'est donné, alors la commande n'attend aucun paramètre.
+
+h3. L'aide courte
+
+Une commande doit avoir une aide courte ou synomsis(?). Cette aide doit être courte (moins de (40) caractères) et est affichée si la syntaxe de la commande n'est pas correcte.
+
+L'aide courte est un attribut d'instance, définie dans le constructeur de la commande :
+
+<pre>
+self.aide_courte = "permet de chuchotter quelque chose à quelqu'un"
+</pre>
+
+h3. L'aide longue
+
+L'aide longue reprend généralement en la détaillant l'aide courte. Elle insiste sur l'utilité de la commande ainsi que sur sa syntaxe et peut donner d'autres informations liées à son utilisation ou à ses restrictions. L'aide longue se trouve généralement décrite sur plusieurs lignes, elle est mise en forme sur demande par le système. Dans le code base de Kassie, l'aide longue est décrite ainsi :
+
+<pre>
+self.aide_longue = \
+    "Une aide plus détaillée sur la commande " \
+    "étalée sur plusieurs lignes et " \
+    "réorganisée par le système sur demande. Les sauts " \
+    "de lignes sont ignorés."
+</pre>
+
+h2. La méthode d'interprétation de la commande
+
+Tout ceci est bel et bon, et c'est quelque chose de moins à faire, mais il reste à coder le comportement de la commande. Heureusement, ce code est généralement assez court : la notion de [[DeveloppementMasque|masques]] nous permet d'avoir un code déjà plus léger.
+
+Pour définir le comportement de la commande, il faut redéfinir la méthode @interpreter@. Elle prend deux paramètres :
+
+* @personnage@ : le personnage exécutant la commande (ce n'est pas forcément un joueur)
+* @dic_masques@ : le dictionnaire des masques validés.
+
+Ce dictionnaire se comporte presque comme un dictionnaire normal : les clés sont les noms des masques validés et les valeurs sont les masques eux-mêmes. Voici quelques exemples :
+
+| Schéma | Valeur |
+| @<message>@ | @dic_masques["message"]@ |
+| @<personnage_present>@ | @dic_masques["personnage_present"]@ |
+| @<cible:nom_joueur>@ | @dic_masques["cible"] |
+
+Le dernier exemple montre que, quand on renomme le masque (avec la syntaxe @<nom:type>@) c'est le nom du masque qui est utilisé en clé dans le @dic_masques@. Le nom par défaut est le type du masque. C'est pourquoi renommer les masques est nécessaire quand vous avez deux masques du même type dans le schéma.
+
+Si le masque est facultatif, vous devez d'abord vérifier sa présence dans le @dic_masques@ : si la clé n'est pas présente, @None@ est retournée. Si par exemple vous avez un schéma comme : @"(<nom_joueur)"@, vous pouvez faire quelque chose comme ça :
+
+<pre><code type="python">
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de la commande."""
+        if dic_masques["nom_joueur"]:
+            joueur = dic_masques["nom_joueur"].joueur
+            personnage << "Vous avez sélectionné {}.".format(joueur.nom)
+        else:
+            personnage  "Vous n'avez sélectionné personne."
+</code></pre>
+
+h2. Exemples complets
+
+Voici plusieurs exemples complets de commande.
+
+h3. Sans paramètre
+
+Voici le code complet de la commande quitter (@src/primaires/joueur/commandes/quitter/__init__.py@) :
+
+<pre><code type="python">
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdQuitter(Commande):
+    
+    """Commande 'quitter'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "quitter", "quit")
+        self.groupe = "joueur"
+        self.aide_courte = "se déconnecte du MUD"
+        self.aide_longue = \
+            "Cette commande permet de se déconnecter du jeu. Le personnage " \
+            "que vous manipulez disparaîtra de l'univers et n'évoluera pas " \
+            "pendant votre absence."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        personnage << "\nA bientôt !"
+        # On déconnecte le joueur
+        personnage.instance_connexion.deconnecter(
+                "Déconnexion demandée par le client.")
+</code></pre>
+
+h3. Commande avec un paramètre simple
+
+Voici le code de la commande *restaurer/restore* (@src/primaires/joueur/commandes/restaurer/__init__.py@) :
+
+<pre><code type="python">
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdRestaurer(Commande):
+    
+    """Commande 'restaurer'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "restaurer", "restore")
+        self.groupe = "administrateur"
+        self.schema = "<nom_joueur>"
+        self.aide_courte = "restaure les stats du personnage"
+        self.aide_longue = \
+            "Cette commande permet de restaurer, c'est-à-dire remettre " \
+            "à leur valeur maximum, toutes les stats du personnage."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        personnage_mod = dic_masques["nom_joueur"].joueur
+        personnage_mod.stats.restaurer()
+        personnage << "Le personnage {} a vu ses stats restaurées.".format(
+                personnage_mod.nom)
+</code></pre>
+
+h3. Commande à deux arguments
+
+Voici le code de la commande *parler/tell* (@src/primaires/communication/commandes/parler/__init__.py@).
+
++*NOTE*+ : deux arguments sont possibles car ici, ils n'interfèrent pas : le premier argument, @<nom_joueur>@, ne peut contenir qu'un seul mot et le second contient tout le reste. Vous ne povuez avoir de commandes avec un schéma comme @<message> <message>@ car le système ne serai pas où s'arrête le premier message et où commence le second. Dans ce cas de figure, il faut des mot-clés (voir l'exemple plus bas).
+
+<pre><code type="python">
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdParler(Commande):
+
+    """Commande 'parler'.
+
+    """
+
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "parler", "tell")
+        self.nom_categorie = "parler"
+        self.schema = "<nom_joueur> <message>"
+        self.aide_courte = "dit une phrase à un autre joueur"
+        self.aide_longue = \
+            "Cette commande permet de parler à un autre joueur connecté dans " \
+            "l'univers. Ce que vous dites par ce moyen n'est pas soumis aux " \
+            "règles du RP. La commande prend en paramètres le nom du joueur, " \
+            "et ce que vous souhaitez dire."
+
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation de la commande"""
+        cible = dic_masques["nom_joueur"].joueur
+        message = dic_masques["message"].message
+        if cible is personnage:
+            personnage << "Vous parlez tout seul... Hum."
+        elif cible not in importeur.connex.joueurs_connectes:
+            personnage << "|err|Le joueur passé en paramètre n'a pu être " \
+                    "trouvé.|ff|"
+        else:
+            personnage << "Vous dites à {} : {}".format(cible.nom,
+                    message)
+            cible << "{} vous dit : {}".format(personnage.nom,
+                    message)
+            cible.envoyer_tip("Utilisez la commande %repondre% pour " \
+                    "répondre.", "repondre", True)
+</code></pre>
+
+h3. Commande avec paramètre facultatif
+
+Voici le code de la commande *afk* (Away From Keyboard). Elle prend en argument optionnel un message d'absence. Vous pouvez retrouver le code dans le fichier @src/primaires/joueur/afk/__init__.py@.
+
+<pre><code type="python">
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdAfk(Commande):
+    
+    """Commande 'afk'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "afk", "afk")
+        self.groupe = "joueur"
+        self.schema = "(<message>)"
+        self.aide_courte = "passe AFK"
+        self.aide_longue = \
+            "Cette commande permet de passer AFK (Away From Keyboard). " \
+            "Vous signalez ainsi aux autres joueurs que vous êtes absent " \
+            "pour le moment ; la raison de cette absence, si spécifiée en " \
+            "argument, sera affichée dans la liste de la commande %qui%. " \
+            "Lorsque vous revenez, utilisez à nouveau la commande sans " \
+            "argument pour revenir à l'état normal."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        if dic_masques["message"]:
+            message = dic_masques["message"].message
+            personnage << "Vous passez AFK ({}).".format(message)
+            personnage.afk = message
+        else:
+            if not personnage.afk:
+                personnage << "Vous passez AFK."
+                personnage.afk = "afk"
+            else:
+                personnage << "Vous n'êtes plus AFK."
+                personnage.afk = ""
+</code></pre>
+
+h3. Commande utilisant des mot-clés pour séparer des paramètres
+
+Voici le code de la commande *retnom/remchar*. Elle permet d'identifier une distinction anonyme comme étant lié à un nom (forme de présentation qui induit la cible, non l'auteur). Le code peut être retrouvé dans le fichier @src/primaires/joueur/retnom/__init__.py@.
+
+<pre><code type="python">
+from primaires.interpreteur.commande.commande import Commande
+from primaires.joueur.joueur import Joueur
+
+class CmdRetnom(Commande):
+    
+    """Commande 'retnom'.
+    
+    """
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "retnom", "remchar")
+        self.groupe = "joueur"
+        self.schema = "<personnage_present> comme/as <message>"
+        self.aide_courte = "retient un nom d'un joueur"
+        self.aide_longue = \
+            "Cette commande permet de retenir un joueur. Par défaut, vous " \
+            "ne voyez que la distinction anonyme de ce joueur. Si il vous " \
+            "est présenté dans un contexte RP, vous pouvez le retenir et " \
+            "le lier au nom qu'il vous donne grâce à cette commande. Vous " \
+            "ne verrez plus, quand il fera une action (ou dans le " \
+            "%regarder%), sa distinction anonyme mais le nom que vous " \
+            "avez lié à cette distinction."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        joueur = dic_masques["personnage_present"].personnage
+        message = dic_masques["message"].message
+        if not isinstance(joueur, Joueur):
+            personnage << "|err|Ce personnage n'est pas un joueur.|ff|"
+            return
+        
+        personnage.envoyer("{{}} sera, pour vous, désormais connu sous le " \
+                "nom de {}.".format(message), joueur)
+        personnage.retenus[joueur] = message
+</code></pre>
+
+h3. Plusieurs paramètres alternatifs
+
+Enfin, voici la commande *goto* qui prend en argument, soit un identifiant de salle, soit un nom de joueur. Le schéma en est donc plus complexe et cette commande n'est montrée qu'à titre d'exemples. Vous pouvez retrouver le code de cette commande dans le fichier @src/primaires/salle/commandes/goto/__init__.py@.
+
+<pre><code type="python">
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdGoto(Commande):
+    
+    """Commande 'goto'"""
+    
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "goto", "goto")
+        self.groupe = "administrateur"
+        self.schema = "<identifiant:ident_salle|nom_joueur>"
+        self.nom_categorie = "bouger"
+        self.aide_courte = "permet de se déplacer dans l'univers"
+        self.aide_longue = \
+            "Cette commande vous permet de vous déplacer rapidement dans " \
+            "l'univers. Vous pouvez lui passer en paramètre l'identifiant " \
+            "d'une salle sous la forme |cmd|zone:mnémonic|ff|, " \
+            "par exemple |ent|picte:1|ff|, ou alors un nom de joueur. " \
+            "Exemple : %goto% |ent|nom_du_joueur|ff|."
+    
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        masque = dic_masques["identifiant"]
+        if hasattr(masque, "salle"):
+            salle = masque.salle
+        elif hasattr(masque, "joueur"):
+            salle = masque.joueur.salle
+        else:
+            raise ValueError(
+                    "le masque {} est invalide pour cette commande".format(
+                    masque))
+        
+        salle_courante = personnage.salle
+        salle_courante.envoyer("{} disparaît avec un éclair de " \
+                "|cyc|lumière bleue|ff|.", personnage)
+        personnage.salle = salle
+        personnage << personnage.salle.regarder(personnage)
+        salle.envoyer("{} apparaît avec un éclair de |cyc|lumière " \
+                "bleue|ff|.", personnage)
+</code></pre>
