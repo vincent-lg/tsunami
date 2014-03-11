@@ -28,56 +28,28 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction combinaison."""
+"""Fichier contenant la fonction intervalle."""
 
-
-
-from random import randint, random
 from fractions import Fraction
 
 from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
 
-    """Crée une liste comportant une combinaison générée d'après des paramètres précis.
-
-    Cette fonction reçoit en entrée:
-    - la taille de la liste
-    - la valeur minimale 
-    - la valeur maximale
-    - 0 ou 1 pour définir avec ou sans doublons
-    
-    Elle renvoie une liste contenant la combinaison.
-    """
+    """Retourne une liste contenant un intervalle de valeurs entières entre valMin et valMax -1 inclus. Un paramètre facultatif peut être donné en troisième argument, le pas entre chaque valeur.
+	Cette fonction peut être très pratique pour itérer dans une boucle un nombre fixé de fois."""
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.combinaison, "Fraction", "Fraction", "Fraction", "Fraction")
+        cls.ajouter_types(cls.intervalle, "Fraction", "Fraction")
+        cls.ajouter_types(cls.intervalle_ecart, "Fraction", "Fraction", "Fraction")
 
     @staticmethod
-    def combinaison(taille_liste, val_min, val_max, doublon):
-        """Retourne une liste contenant une combinaison générée d'après des paramètres précis.
-
-    Cette fonction reçoit en entrée:
-    - la taille de la liste
-    - la valeur minimale 
-    - la valeur maximale
-    - 0 ou 1 pour définir avec ou sans doublons
-    
-    Elle renvoie une liste contenant la combinaison.
-    """
-        liste_retour = [];
-        
-        #Tant que la liste n'a pas la taille requise:
-        while len(liste_retour) < taille_liste:
-            #Calculer une nouvelle valeur
-            valeur = Fraction(randint(int(val_min), int(val_max)))
-            
-            #Si besoin de vérifier les doublons et qu'une occurence de cette valeur existe déjà, on recommence
-            if doublon == 1 and liste_retour.count(valeur) != 0:
-                continue
-            
-            #Ajouter la nouvelle valeur
-            liste_retour.append(valeur)
-        
-        return liste_retour
+    def intervalle(val_min, val_max):
+        """Retourne une liste contenant un intervalle de valeurs entières entre valMin et valMax -1 inclus."""
+        return range(int(val_min), int(val_max))
+	
+    @staticmethod
+    def intervalle_ecart(val_min, val_max, ecart):
+        """Retourne une liste contenant un intervalle de valeurs entières entre valMin et valMax -1 inclus, avec un écart entre chaque valeur de ecart."""
+        return range(int(val_min), int(val_max), int(ecart))
