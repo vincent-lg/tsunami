@@ -102,21 +102,24 @@ class ModeConnecte(Contexte):
                 if a_msg:
                     msg += " " + a_msg
 
-        # On commence par parcourir tous les modules
-        res = False
-        for module in type(self).importeur.modules:
-            try:
-                res = module.traiter_commande(self.pere.joueur, msg)
-            except ExceptionAction as err_act:
-                self.pere.joueur << "|err|{}|ff|".format(err_act)
-                return
-            except InterrompreCommande as err:
-                if err.message:
-                    self.pere.joueur << str(err)
-                return
-            else:
-                if res:
-                    break
+        # On commence par parcourir tous les modules si nécessaire
+        res = not importeur.interpreteur.commande_existe(comm,
+                self.pere.joueur.langue_cmd)
+
+        if not res:
+            for module in importeur.modules:
+                try:
+                    res = module.traiter_commande(self.pere.joueur, msg)
+                except ExceptionAction as err_act:
+                    self.pere.joueur << "|err|{}|ff|".format(err_act)
+                    return
+                except InterrompreCommande as err:
+                    if err.message:
+                        self.pere.joueur << str(err)
+                    return
+                else:
+                    if res:
+                        break
 
         if not res:
             interpreteur = type(self).importeur.interpreteur

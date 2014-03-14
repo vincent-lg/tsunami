@@ -58,7 +58,7 @@ class PrmEditer(Parametre):
                     "pas.|ff|".format(cle)
             return
 
-        fiche = importeur.navigation.fiches[cle]
+        fiche = importeur.familier.fiches[cle]
         editeur = type(self).importeur.interpreteur.construire_editeur(
                 "famedit", personnage, fiche)
         personnage.contextes.ajouter(editeur)

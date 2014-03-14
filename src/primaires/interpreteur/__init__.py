@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -50,13 +50,13 @@ from .masque.masque import masques_def
 from .options import UOptions
 
 class Module(BaseModule):
-    
+
     """Cette classe est la classe gérant tous les interpréteurs.
     Elle recense les différents contextes, en crée certains et permet
     à chaque module de créer ses propres contextes, commandes, éditeurs...
-    
+
     """
-    
+
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "interpreteur", "primaire")
@@ -64,27 +64,29 @@ class Module(BaseModule):
                 "interpreteur", "interpreteur")
         self.logger_cmd = type(self.importeur).man_logs.creer_logger( \
                 "interpreteur", "commandes")
-        
+
         # On passe l'interpréteur à certaines classes
         Contexte.importeur = importeur
         Commande.importeur = importeur
         BaseNoeud.importeur = importeur
         Masque.importeur = importeur
-        
+
         # Attributs
         self.contextes = contextes # Dictionnaire des contextes
         self.commandes = []
         self.commandes_francais = []
         self.commandes_anglais = []
+        self.noms_francais = []
+        self.noms_anglais = []
         self.categories = {}
         self.masques = masques_def
-        
+
         # Editeurs
         self.editeurs = {}
-        
+
         # Groupes d'utilisateurs
         self.groupes = None
-        
+
         # Alias
         self.alias_anglais = {
                 "+ooc": "+hrp",
@@ -128,7 +130,7 @@ class Module(BaseModule):
                 "h": "haut",
                 "b": "bas",
         }
-    
+
     def init(self):
         """Initialisation du module"""
         # On récupère ou crée puis configure les groupes d'utilisateur
@@ -142,16 +144,16 @@ class Module(BaseModule):
                 s = "s"
             self.logger.info("{} groupe{s} d'utilisateurs récupéré{s}".format(
                         len(groupes), s = s))
-        
+
         self.groupes = groupes
-        
+
         # On vérifie que les groupes "essentiels" existent
         essentiels = OrderedDict((
             ("pnj", AUCUN),
             ("joueur", AUCUN),
             ("administrateur", IMMORTELS),
         ))
-        
+
         # On crée ceux qui n'existent pas
         groupe_precedent = ""
         for nom_groupe, flags in essentiels.items():
@@ -159,10 +161,10 @@ class Module(BaseModule):
                 groupe = self.groupes.ajouter_groupe(nom_groupe, flags)
                 if groupe_precedent:
                     groupe.ajouter_groupe_inclus(groupe_precedent)
-                self.logger.info("Ajout du groupe d'utilisateurs '{}'".format( 
+                self.logger.info("Ajout du groupe d'utilisateurs '{}'".format(
                         nom_groupe))
             groupe_precedent = nom_groupe
-        
+
         # On crée les catégories de commandes
         self.categories = OrderedDict()
         self.categories["divers"] = "Commandes générales"
@@ -175,15 +177,15 @@ class Module(BaseModule):
         self.categories["moderation"] = "Modération"
         self.categories["groupes"] = "Manipulation des groupes et modules"
         self.categories["batisseur"] = "Commandes de création"
-        
+
         # On récupère les options utilisateurs
         options = self.importeur.supenr.charger_unique(UOptions)
         if options is None:
             options = UOptions()
         self.options = options
-        
+
         BaseModule.init(self)
-    
+
     def preparer(self):
         """Préparation du module."""
         for joueur in importeur.joueur.joueurs.values():
@@ -191,35 +193,40 @@ class Module(BaseModule):
                 joueur.alias_francais.update(self.alias_francais)
             if not joueur.alias_anglais:
                 joueur.alias_anglais.update(self.alias_anglais)
-    
+
     def ajouter_commande(self, commande):
         """Ajoute une commande à l'embranchement"""
         noeud_cmd = NoeudCommande(commande)
         self.commandes.append(noeud_cmd)
-        
+
         # On ajoute la commande dans son groupe
         self.groupes.ajouter_commande(commande)
-        
+
         # On construit ses paramètres
         commande.ajouter_parametres()
-        
+
         # Tri de la liste des commandes, une première fois par ordre
         # alphabétique français la seconde par ordre alphabétique anglais
         self.commandes_francais = sorted(self.commandes, \
             key=lambda noeud: noeud.commande.nom_francais)
         self.commandes_anglais = sorted(self.commandes, \
             key=lambda noeud: noeud.commande.nom_anglais)
-        
+
+        # On ajoute les noms simples
+        self.noms_francais.append(commande.nom_francais)
+        self.noms_anglais.append(commande.nom_anglais)
+
         # On appelle la méthode 'ajouter'
         commande.ajouter()
-    
+
     def get_masque(self, nom_masque):
         """Retourne le masque portant le nom correspondant
+
         On retourne une nouvelle instance du masque.
-        
+
         """
         return self.masques[nom_masque]()
-    
+
     def repartir(self, personnage, masques, lst_commande):
         """Commande de validation"""
         str_commande = liste_vers_chaine(lst_commande)
@@ -229,56 +236,56 @@ class Module(BaseModule):
             commandes.sort(key=lambda c: c.commande.nom_francais)
         elif personnage.langue_cmd == "anglais":
             commandes.sort(key=lambda c: c.commande.nom_anglais)
-        
+
         for cmd in commandes:
             if cmd.repartir(personnage, masques, lst_commande):
                 self.logger_cmd.info("{} envoie {}".format(personnage.nom,
                         str_commande))
                 trouve = True
                 break
-        
+
         if not trouve:
             if lst_commande:
-                raise ErreurValidation("|err|Commande inconnue.|ff|")	
+                raise ErreurValidation("|err|Commande inconnue.|ff|")
             else:
                 raise ErreurValidation()
 
     def valider(self, personnage, dic_masques):
         """Validation du dic_masques.
-        
+
         On valide d'abord les masques prioritaires.
-        
+
         """
         valides = []
         for masque in dic_masques.values():
             if masque.prioritaire:
                 masque.valider(personnage, dic_masques)
                 valides.append(masque)
-        
+
         for masque in dic_masques.values():
             if masque not in valides:
                 masque.valider(personnage, dic_masques)
-    
+
     def trouver_commande(self, lst_commande, commandes=None):
         """On cherche la commande correspondante.
-        
+
         Ce peut être une commande mais aussi une sous-commande, du premier
         niveau ou plus.
-        
+
         Pour indiquer la position de la commande, on a lst_commande contenant
         une chaîne sous la forme : 'commande:sous_commande:sous_sous_commande'
-        
+
         Ainsi, on appelle récursivement cette fonction.
-        
+
         """
         if commandes is None: # premier appel de la récursivité
             commandes = self.commandes
-        
+
         if type(lst_commande) is str:
             lst_commande = chaine_vers_liste(lst_commande)
-        
+
         str_commande = liste_vers_chaine(lst_commande)
-        
+
         nom_commande = str_commande.split(":")[0]
         # On parcourt la liste des commandes
         for noeud in commandes:
@@ -289,28 +296,28 @@ class Module(BaseModule):
                     return self.trouver_commande(lst_commande, fils)
                 else:
                     return noeud.commande
-        
+
         raise ValueError("la commande {} ne peut être trouvée, " \
             "la recherche de {} a échoué".format(str_commande, nom_commande))
-    
+
     def ajouter_editeur(self, editeur):
         """Ajoute l'éditeur en fonction de son nom"""
         self.editeurs[editeur.nom] = editeur
-    
+
     def supprimer_editeur(self, nom):
         """Supprime l'éditeur"""
         del self.editeurs[nom]
-    
+
     def construire_editeur(self, nom, personnage, objet):
         """Retourne l'éditeur construit"""
         cls_editeur = self.editeurs[nom]
         editeur = cls_editeur(personnage, objet)
         return editeur
-    
+
     def creer_mot_cle(self, francais, anglais):
         """Crée et retourne un mot-clé."""
         return MotCle(francais, anglais)
-    
+
     def lister_commandes_pour_groupe(self, groupe):
         """Liste les commandes que le groupe donné a le droit d'exécuter."""
         groupes = self.groupes.commandes.copy()
@@ -320,5 +327,26 @@ class Module(BaseModule):
             t_groupe = groupes[cmd.commande.adresse]
             if t_groupe in p_groupes:
                 commandes.append(cmd)
-        
+
         return commandes
+
+    def commande_existe(self, commande, langue=None):
+        """Retourne True si la commande existe, False sinon.
+
+        Si la langue est précisée ("francais" ou "anglais"),
+        la recherche ne se fait que dans cette langue. Si la
+        langue n'est pas précisée, la recherche se fait dans les
+        deux langues.
+
+        """
+        if langue:
+            if langue == "francais":
+                noms = self.noms_francais
+            elif langue == "anglais":
+                noms = self.noms_anglais
+            else:
+                raise ValueError("langue inconnue {}".format(langue))
+        else:
+            noms = selrf.noms_francais + self.noms_anglais
+
+        return commande in noms

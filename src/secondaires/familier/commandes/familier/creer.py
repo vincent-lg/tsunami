@@ -68,7 +68,7 @@ class PrmCreer(Parametre):
                     "|ff|".format(cle)
             return
 
-        fiche = importeur.navigation.creer_fiche_familier(cle)
+        fiche = importeur.familier.creer_fiche_familier(cle)
         editeur = type(self).importeur.interpreteur.construire_editeur(
                 "famedit", personnage, fiche)
         personnage.contextes.ajouter(editeur)
