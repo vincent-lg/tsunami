@@ -62,6 +62,7 @@ class Familier(BaseObj):
         self.maitre = None
         self.faim = 0
         self.soif = 0
+        self.nom = "Médor"
 
     def __getnewargs__(self):
         return ("", )
@@ -82,3 +83,15 @@ class Familier(BaseObj):
     def fiche(self):
         """Retourne la fiche du familier."""
         return importeur.familier.fiches[self.cle]
+
+    @property
+    def identifiant(self):
+        return self.pnj and self.pnj.identifiant or "aucun"
+
+    @property
+    def nom_maitre(self):
+        return self.maitre and self.maitre.nom or "aucun"
+
+    @property
+    def salle(self):
+        return self.pnj and self.pnj.salle or "aucune"

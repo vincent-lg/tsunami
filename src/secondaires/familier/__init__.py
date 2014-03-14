@@ -32,6 +32,7 @@
 
 from abstraits.module import *
 from primaires.format.fonctions import format_nb
+from secondaires.familier import cherchables
 from secondaires.familier import commandes
 from secondaires.familier import editeurs
 from secondaires.familier.familier import Familier
@@ -161,6 +162,5 @@ class Module(BaseModule):
 
     def detruire_pnj(self, pnj):
         """Détruit le familier si nécessaire."""
-        print("Destruction du PNJ", pnj)
         if pnj.identifiant in self.familiers:
             self.supprimer_familier(pnj.identifiant)

@@ -35,6 +35,7 @@ Dans ce fichier se trouve la commande même.
 """
 
 from primaires.interpreteur.commande.commande import Commande
+from secondaires.familier.commandes.familier.apparaitre import PrmApparaitre
 from secondaires.familier.commandes.familier.creer import PrmCreer
 from secondaires.familier.commandes.familier.editer import PrmEditer
 from secondaires.familier.commandes.familier.liste import PrmListe
@@ -58,6 +59,7 @@ class CmdFamilier(Commande):
 
     def ajouter_parametres(self):
         """Ajout des paramètres"""
+        self.ajouter_parametre(PrmApparaitre())
         self.ajouter_parametre(PrmCreer())
         self.ajouter_parametre(PrmEditer())
         self.ajouter_parametre(PrmListe())
