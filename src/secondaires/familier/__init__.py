@@ -32,6 +32,7 @@
 
 from abstraits.module import *
 from primaires.format.fonctions import format_nb
+from primaires.salle.salle import FLAGS as FLAGS_SALLE
 from secondaires.familier import cherchables
 from secondaires.familier import commandes
 from secondaires.familier import editeurs
@@ -62,6 +63,15 @@ class Module(BaseModule):
         self.commandes = []
         self.logger = self.importeur.man_logs.creer_logger(
                 "familier", "familier")
+
+    def config(self):
+        """Configuration du module."""
+        # Ajout des flags de salle
+        FLAGS_SALLE.ajouter("écurie")
+        FLAGS_SALLE.ajouter("peut chevaucher")
+        FLAGS_SALLE.ajouter("accueille familiers")
+
+        BaseModule.config(self)
 
     def init(self):
         """Chargement des objets du module."""

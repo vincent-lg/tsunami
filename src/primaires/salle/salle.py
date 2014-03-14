@@ -33,6 +33,7 @@
 from collections import OrderedDict
 
 from abstraits.obase import BaseObj
+from bases.collections.flags import Flags
 from corps.fonctions import lisser
 from primaires.affection.affection import Affection
 from primaires.format.description import Description
@@ -51,11 +52,11 @@ from .script import ScriptSalle
 # Constantes
 ZONE_VALIDE = r"^[a-z0-9_]{3,20}$"
 MNEMONIC_VALIDE = r"^[a-z0-9_]{1,15}$"
-FLAGS = {
-    "anti combat": 1,
-    "anti magie": 2,
-    "invisible à distance": 4,
-}
+
+FLAGS = Flags()
+FLAGS.ajouter("anti combat")
+FLAGS.ajouter("anti magie")
+FLAGS.ajouter("invisible à distance")
 
 class Salle(BaseObj):
 
