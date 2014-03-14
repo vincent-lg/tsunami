@@ -34,4 +34,5 @@ REGIMES = [
         "carnivore",
         "fantôme",
         "herbivore",
+        "insectivore",
 ]

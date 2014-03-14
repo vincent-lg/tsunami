@@ -253,7 +253,11 @@ class Importeur:
         Importeur.logger.debug("Initialisation des modules :")
         # On initialise d'abord les modules à initialiser en priorité
         Importeur.logger.debug("Initialisation des modules prioritaires :")
-        for nom_module in conf_glb.modules_a_initialiser:
+        a_initialiser = conf_glb.modules_a_initialiser
+        for nom_module in a_initialiser:
+            if nom_module == "*":
+                break
+
             if hasattr(self, nom_module): # le module est chargé
                 module = getattr(self, nom_module)
                 if module.statut == CONFIGURE:
@@ -262,12 +266,28 @@ class Importeur:
                             "initialisé".format(nom_module))
 
         # Initialisation des modules restants
-        Importeur.logger.debug("Initialisation des modules restants :")
+        if "*" in a_initialiser:
+            indice = a_initialiser.index("*")
+            a_initialiser = a_initialiser[indice:]
+        else:
+            a_initialiser = []
+
+        Importeur.logger.debug("Initialisation des modules non spécifiés :")
         for module in self.__dict__.values():
-            if module.statut == CONFIGURE:
+            if module.statut == CONFIGURE and module.nom not in a_initialiser:
                 module.init()
                 Importeur.logger.debug("  Le module {0} a été " \
                         "initialisé".format(module.nom))
+
+        # On initialise les modules restants
+        Importeur.logger.debug("Initialisation des modules restants :")
+        for nom_module in a_initialiser:
+            if hasattr(self, nom_module): # le module est chargé
+                module = getattr(self, nom_module)
+                if module.statut == CONFIGURE:
+                    module.init()
+                    Importeur.logger.debug("  Le module {0} a été " \
+                            "initialisé".format(nom_module))
 
         for module in self.__dict__.values():
             if module.statut == INITIALISE:

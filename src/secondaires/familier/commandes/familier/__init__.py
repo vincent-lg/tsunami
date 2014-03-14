@@ -46,6 +46,7 @@ class CmdFamilier(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "familier", "pet")
+        self.nom_categorie = "familier"
         self.aide_courte = "manipulation des familiers"
         self.aide_longue = \
             "Cette commande permet de manipuler les familiers. Les " \

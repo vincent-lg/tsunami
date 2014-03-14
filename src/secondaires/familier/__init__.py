@@ -55,7 +55,7 @@ class Module(BaseModule):
 
     def __init__(self, importeur):
         """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "monture", "secondaire")
+        BaseModule.__init__(self, importeur, "familier", "secondaire")
         self.fiches = {}
         self.familiers = {}
         self.commandes = []
@@ -79,6 +79,10 @@ class Module(BaseModule):
 
         self.logger.info(format_nb(len(familiers),
                 "{nb} familier{s} récupéré{s}"))
+
+        # Ajout de la catégorie de commande
+        self.importeur.interpreteur.categories["familier"] = \
+                "Familiers et montures"
 
         # Abonne le module à la destruction d'un PNJ
         self.importeur.hook["pnj:détruit"].ajouter_evenement(
