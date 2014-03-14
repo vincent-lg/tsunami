@@ -393,6 +393,6 @@ class Module(BaseModule):
             if msg_duree is None:
                 msg_duree = "{} {}{s}".format(int(duree), unite, s=s)
 
-            tableau.ajouter_ligne(msg_duree, auteur.nom, canal, message)
+            tableau.ajouter_ligne(msg_duree, canal, auteur.nom, message)
 
         return tableau

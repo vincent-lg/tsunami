@@ -98,6 +98,7 @@ class Bloc(BaseObj):
         types = {
             "nombre": "Fraction",
             "chaine": "str",
+            "liste": "list",
         }
 
         if str_type in types:
