@@ -66,6 +66,6 @@ class PrmListe(Parametre):
             else:
                 nom = "aucun prototype"
 
-            tableau.ajouter_ligne(cle, nom, len(fiche.familiers))
+            tableau.ajouter_ligne(fiche.cle, nom, len(fiche.familiers))
 
         personnage << tableau.afficher()

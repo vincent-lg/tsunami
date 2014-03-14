@@ -79,7 +79,7 @@ class EdtFamedit(Presentation):
         difficulte = self.ajouter_choix("difficulté d'apprivoisement", "d",
                 Entier, fiche, "difficulte_apprivoisement")
         difficulte.parent = self
-        difficulte.apercu = "{objet.difficulte_apprivoisement%"
+        difficulte.apercu = "{objet.difficulte_apprivoisement}%"
         difficulte.prompt = "Entrez la difficulté d'apprivoisement du " \
                 "familier : "
         difficulte.aide_courte = \

@@ -103,7 +103,7 @@ class ModeConnecte(Contexte):
                     msg += " " + a_msg
 
         # On commence par parcourir tous les modules si nécessaire
-        res = not importeur.interpreteur.commande_existe(comm,
+        res = importeur.interpreteur.commande_existe(comm,
                 self.pere.joueur.langue_cmd)
 
         if not res:
@@ -119,57 +119,56 @@ class ModeConnecte(Contexte):
                     return
                 else:
                     if res:
+                        return
+
+        interpreteur = type(self).importeur.interpreteur
+        masques = []
+        dic_masques = DicMasques()
+        lst_commande = chaine_vers_liste(msg)
+        logger = type(self).importeur.man_logs.get_logger("sup")
+        traceback = __import__("traceback")
+        try:
+            interpreteur.repartir(self.pere.joueur, masques, lst_commande)
+            for masque in masques:
+                dic_masques[masque.nom] = masque
+
+            interpreteur.valider(self.pere.joueur, dic_masques)
+        except ErreurValidation as err_val:
+            err_val = str(err_val)
+            for masque in masques:
+                dic_masques[masque.nom] = masque
+            if not err_val and dic_masques:
+                masque = dic_masques.dernier_parametre
+                err_val = masque.erreur_validation(self.pere.joueur, \
+                        dic_masques)
+            self.pere.joueur.envoyer(str(err_val))
+        except Exception:
+            trace = traceback.format_exc()
+            logger.fatal("Exception " \
+                    "levée lors de la validation d'une commande.")
+            logger.fatal(trace)
+            self.pere.joueur.envoyer(
+                "|err|Une erreur s'est produite lors du traitement de " \
+                "votre commande.|ff|")
+
+            # On appelle l'hook responsabler des erreurs (joueur:erreur)
+            joueur = self.pere.joueur
+            importeur.hook["joueur:erreur"].executer(joueur, msg, trace)
+        else:
+            exception = ErreurInterpretation
+            try:
+                # On cherche le dernier paramètre
+                for masque in reversed(list(dic_masques.values())):
+                    if masque.est_parametre():
+                        commande = masque
                         break
 
-        if not res:
-            interpreteur = type(self).importeur.interpreteur
-            masques = []
-            dic_masques = DicMasques()
-            lst_commande = chaine_vers_liste(msg)
-            logger = type(self).importeur.man_logs.get_logger("sup")
-            traceback = __import__("traceback")
-            try:
-                interpreteur.repartir(self.pere.joueur, masques, lst_commande)
-                for masque in masques:
-                    dic_masques[masque.nom] = masque
-
-                interpreteur.valider(self.pere.joueur, dic_masques)
-            except ErreurValidation as err_val:
-                err_val = str(err_val)
-                for masque in masques:
-                    dic_masques[masque.nom] = masque
-                if not err_val and dic_masques:
-                    masque = dic_masques.dernier_parametre
-                    err_val = masque.erreur_validation(self.pere.joueur, \
-                            dic_masques)
-                self.pere.joueur.envoyer(str(err_val))
-            except Exception:
-                trace = traceback.format_exc()
-                logger.fatal("Exception " \
-                        "levée lors de la validation d'une commande.")
-                logger.fatal(trace)
-                self.pere.joueur.envoyer(
-                    "|err|Une erreur s'est produite lors du traitement de " \
-                    "votre commande.|ff|")
-
-                # On appelle l'hook responsabler des erreurs (joueur:erreur)
-                joueur = self.pere.joueur
-                importeur.hook["joueur:erreur"].executer(joueur, msg, trace)
-            else:
-                exception = ErreurInterpretation
-                try:
-                    # On cherche le dernier paramètre
-                    for masque in reversed(list(dic_masques.values())):
-                        if masque.est_parametre():
-                            commande = masque
-                            break
-
-                    commande.execution_differee(self.pere.joueur, dic_masques)
-                except ExceptionAction as err_act:
-                    self.pere.joueur << "|err|{}|ff|".format(err_act)
-                except InterrompreCommande as err:
-                    if err.message:
-                        self.pere.joueur << str(err)
-                    return
-                except exception as err_int:
-                    self.pere.joueur.envoyer(str(err_int))
+                commande.execution_differee(self.pere.joueur, dic_masques)
+            except ExceptionAction as err_act:
+                self.pere.joueur << "|err|{}|ff|".format(err_act)
+            except InterrompreCommande as err:
+                if err.message:
+                    self.pere.joueur << str(err)
+                return
+            except exception as err_int:
+                self.pere.joueur.envoyer(str(err_int))
