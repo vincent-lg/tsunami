@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,33 +28,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction intervalle."""
+"""Fichier contenant l'action ajouter_a_liste"""
+from primaires.perso.exceptions.action import ExceptionAction
+from primaires.scripting.action import Action
+from primaires.scripting.instruction import ErreurExecution
 
-from fractions import Fraction
+class ClasseAction(Action):
 
-from primaires.scripting.fonction import Fonction
-
-class ClasseFonction(Fonction):
-
-    """Retourne une liste contenant un intervalle de valeurs entières itérable."""
-
+    """Modifie le contenu de la case liste[i]
+    """
+    verifier = False
+    
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.intervalle, "Fraction", "Fraction")
-        cls.ajouter_types(cls.intervalle_debut, "Fraction")
-        cls.ajouter_types(cls.intervalle_ecart, "Fraction", "Fraction", "Fraction")
+        cls.ajouter_types(cls.modifier_element_liste, "Object", "Fraction", "list")
+
 
     @staticmethod
-    def intervalle(valMin, valMax):
-        """Retourne une liste contenant un intervalle de valeurs entières entre valMin et valMax inclus."""
-        return range(int(valMin), int(valMax))
-	
-    @staticmethod
-    def intervalle_debut(valMax):
-        """Retourne une liste contenant un intervalle de valeurs entières entre 1 et valMax inclus (pratique pour itérer dans une liste)."""
-        return range(1, int(valMax))
-        
-    @staticmethod
-    def intervalle_ecart(valMin, valMax, ecart):
-        """Retourne une liste contenant un intervalle de valeurs entières entre valMin et valMax inclus, avec un écart entre chaque valeur de ecart."""
-        return range(int(valMin), int(valMax), int(ecart))
+    def modifier_element_liste(element, indice, liste):
+        """Met l'information element dans la case indice de la liste liste. (indices commençant à 1)
+        """
+        liste[indice-1]=element

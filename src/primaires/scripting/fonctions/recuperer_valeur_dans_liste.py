@@ -28,33 +28,22 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction intervalle."""
-
-from fractions import Fraction
+"""Fichier contenant la fonction recuperer_valeur_dans_liste."""
 
 from primaires.scripting.fonction import Fonction
+from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
 
-    """Retourne une liste contenant un intervalle de valeurs entières itérable."""
-
+    """Renvoie la valeur en indice i d'une liste
+    """
+    #En réalité c'est i-1, pour que la valeur Vancienne 1 renvoie liste[0]
+    verifier = False
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.intervalle, "Fraction", "Fraction")
-        cls.ajouter_types(cls.intervalle_debut, "Fraction")
-        cls.ajouter_types(cls.intervalle_ecart, "Fraction", "Fraction", "Fraction")
+        cls.ajouter_types(cls.recuperer_valeur_dans_liste, "list", "Fraction")
 
     @staticmethod
-    def intervalle(valMin, valMax):
-        """Retourne une liste contenant un intervalle de valeurs entières entre valMin et valMax inclus."""
-        return range(int(valMin), int(valMax))
-	
-    @staticmethod
-    def intervalle_debut(valMax):
-        """Retourne une liste contenant un intervalle de valeurs entières entre 1 et valMax inclus (pratique pour itérer dans une liste)."""
-        return range(1, int(valMax))
-        
-    @staticmethod
-    def intervalle_ecart(valMin, valMax, ecart):
-        """Retourne une liste contenant un intervalle de valeurs entières entre valMin et valMax inclus, avec un écart entre chaque valeur de ecart."""
-        return range(int(valMin), int(valMax), int(ecart))
+    def recuperer_valeur_dans_liste(liste, indice):
+        """Retourne l'élément numéro indice dans la liste donnée en argument. (indices commençant à 1)"""
+        return liste[i-1]
