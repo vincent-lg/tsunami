@@ -45,7 +45,8 @@ class ClasseFonction(Fonction):
 
     @staticmethod
     def est_dans_liste(element, liste):
-        """Retourne l'indice de la première occurence de element dans liste"""
+        """Retourne l'indice de la première occurence de element dans liste
+        ATTENTION: si une liste possède exactement le même nombre d'éléments avec chacun les mêmes valeurs que la liste que vous cherchez, alors la fonction la détectera comme étant la liste cherchée."""
         indice = -2
         i = 0
         taille_liste = len(liste)
