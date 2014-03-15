@@ -46,7 +46,7 @@ class ClasseFonction(Fonction):
     @staticmethod
     def est_dans_liste(element, liste):
         """Retourne l'indice de la première occurence de element dans liste"""
-        indice = -1
+        indice = -2
         i = 0
         taille_liste = len(liste)
         while i < taille_liste:
