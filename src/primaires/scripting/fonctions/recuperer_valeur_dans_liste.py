@@ -46,4 +46,4 @@ class ClasseFonction(Fonction):
     @staticmethod
     def recuperer_valeur_dans_liste(liste, indice):
         """Retourne l'élément numéro indice dans la liste donnée en argument. (indices commençant à 1)"""
-        return liste[i-1]
+        return liste[int(indice)-1]

@@ -41,11 +41,11 @@ class ClasseAction(Action):
     
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.modifier_element_liste, "Object", "Fraction", "list")
+        cls.ajouter_types(cls.modifier_element_liste, "object", "Fraction", "list")
 
 
     @staticmethod
     def modifier_element_liste(element, indice, liste):
         """Met l'information element dans la case indice de la liste liste. (indices commençant à 1)
         """
-        liste[indice-1]=element
+        liste[int(indice)-1]=element

@@ -54,4 +54,4 @@ class ClasseFonction(Fonction):
                 indice = i
                 break
             i+=1
-        return indice
+        return indice+1
