@@ -175,7 +175,7 @@ class Module(BaseModule):
         if chance_sur(5) and banc.abondance_actuelle > 0:
             personnage.sans_prompt()
             personnage << "Votre ligne frémit légèrement, comme " \
-                    "sensiblement éfleurée."
+                    "sensiblement effleurée."
             importeur.diffact.ajouter_action("pecher:" + personnage.nom, 10,
                     self.touche, personnage, canne)
         else:
