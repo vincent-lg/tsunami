@@ -330,23 +330,24 @@ class Module(BaseModule):
 
         return commandes
 
-    def commande_existe(self, commande, langue=None):
+    def commande_existe(self, commande, personnage=None):
         """Retourne True si la commande existe, False sinon.
 
-        Si la langue est précisée ("francais" ou "anglais"),
-        la recherche ne se fait que dans cette langue. Si la
-        langue n'est pas précisée, la recherche se fait dans les
-        deux langues.
+        Si le personnage est précisé, fait la recherche en fonction
+        de sa langue et de son groupe.
 
         """
-        if langue:
-            if langue == "francais":
-                noms = self.noms_francais
-            elif langue == "anglais":
-                noms = self.noms_anglais
-            else:
-                raise ValueError("langue inconnue {}".format(langue))
+        if personnage:
+            commandes = self.lister_commandes_pour_groupe(personnage.grp)
         else:
-            noms = selrf.noms_francais + self.noms_anglais
+            commandes = self.commandes
 
-        return commande in noms
+        for cmd in commandes:
+            nom = cmd.commande.nom
+            if personnage:
+                nom = cmd.commande.get_nom_pour(personnage)
+
+            if nom == commande:
+                return True
+
+        return False

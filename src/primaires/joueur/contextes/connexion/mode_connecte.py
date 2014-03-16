@@ -90,6 +90,7 @@ class ModeConnecte(Contexte):
         personnage = self.pere.joueur
 
         # D'abord, on cherche à isoler les alias
+        comm = ""
         if msg:
             msgs = msg.split(" ")
             comm = msgs[0]
@@ -104,7 +105,7 @@ class ModeConnecte(Contexte):
 
         # On commence par parcourir tous les modules si nécessaire
         res = importeur.interpreteur.commande_existe(comm,
-                self.pere.joueur.langue_cmd)
+                self.pere.joueur)
 
         if not res:
             for module in importeur.modules:
