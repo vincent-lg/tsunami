@@ -40,6 +40,7 @@ from secondaires.familier.commandes.familier.creer import PrmCreer
 from secondaires.familier.commandes.familier.editer import PrmEditer
 from secondaires.familier.commandes.familier.liste import PrmListe
 from secondaires.familier.commandes.familier.maitre import PrmMaitre
+from secondaires.familier.commandes.familier.nom import PrmNom
 
 class CmdFamilier(Commande):
 
@@ -65,3 +66,4 @@ class CmdFamilier(Commande):
         self.ajouter_parametre(PrmEditer())
         self.ajouter_parametre(PrmListe())
         self.ajouter_parametre(PrmMaitre())
+        self.ajouter_parametre(PrmNom())

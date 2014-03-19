@@ -55,6 +55,7 @@ class Familier(BaseObj):
     """
 
     enregistrer = True
+
     def __init__(self, pnj):
         """Constructeur du navire."""
         BaseObj.__init__(self)
