@@ -42,7 +42,7 @@ class PrmListe(Parametre):
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "liste", "list")
-        self.nom_groupe = "administrateur"
+        self.groupe = "administrateur"
         self.aide_courte = "liste les fiches de familiers"
         self.aide_longue = \
             "Cette commande liste les fiches de familiers présents " \

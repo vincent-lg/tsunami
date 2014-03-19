@@ -41,7 +41,7 @@ class PrmCreer(Parametre):
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "créer", "create")
-        self.nom_groupe = "administrateur"
+        self.groupe = "administrateur"
         self.schema = "<cle>"
         self.aide_courte = "crée une fiche de familier"
         self.aide_longue = \

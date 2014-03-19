@@ -18,7 +18,7 @@
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT master OR CONTRIBUTORS BE
 # LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
 # OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -28,38 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'éditer' de la commande 'familier'."""
+"""Fichier contenant le paramètre 'maître' de la commande 'familier'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
 
-class PrmEditer(Parametre):
+class PrmMaitre(Parametre):
 
-    """Commande 'familier éditer'.
+    """Commande 'familier maitre'.
 
     """
 
     def __init__(self):
         """Constructeur du paramètre"""
-        Parametre.__init__(self, "éditer", "edit")
+        Parametre.__init__(self, "maître", "master")
         self.groupe = "administrateur"
-        self.schema = "<cle>"
-        self.aide_courte = "édite une fiche de familier"
+        self.schema = "<cle> <nom_joueur>"
+        self.aide_courte = "change le maître du familier"
         self.aide_longue = \
-                "Cette commande vous permet d'éditer une fiche de " \
-                "familier existante. Vous devez préciser en paramètre la " \
-                "clé de la fiche (qui est aussi la clé du prototype de " \
-                "PNJ liée à cette fiche)."
+            "Cette commande permet de changer le maître du familier. " \
+            "Vous devez préciser d'abord l'identifiant du familier, " \
+            "sous la forme |ent|cle_prototype_numero|ff| (par exemple " \
+            "|ent|cheval_1|ff|), ensuite le nom du joueur qui deviendra " \
+            "le nouveau maître."
 
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        cle = dic_masques["cle"].cle
-        if cle not in importeur.familier.fiches:
-            personnage << "|err|La fiche de familier {} n'existe " \
-                    "pas.|ff|".format(cle)
+        # On récupère le familier et le maître
+        identifiant = dic_masques["cle"].cle
+        maitre = dic_masques["nom_joueur"].joueur
+
+        try:
+            familier = importeur.familier.familiers[identifiant]
+        except KeyError:
+            personnage << "|err|Le PNJ {} n'est pas un familier.|ff|".format(
+                    repr(identifiant))
             return
 
-        fiche = importeur.familier.fiches[cle]
-        editeur = type(self).importeur.interpreteur.construire_editeur(
-                "famedit", personnage, fiche)
-        personnage.contextes.ajouter(editeur)
-        editeur.actualiser()
+        familier.maitre = maitre
+        personnage << "Le maître du familier {} a bien été changé pour " \
+                "{}.".format(familier.identifiant, maitre.nom)
