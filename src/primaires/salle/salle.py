@@ -454,7 +454,11 @@ class Salle(BaseObj):
                     if personnage.peut_voir(personne):
                         personnages[personne] = 1
                 else:
-                    nom = personne.nom_etat_singulier
+                    doit = importeur.hook["pnj:doit_afficher"].executer(personne)
+                    if any(not flag for flag in doit):
+                        continue
+
+                    nom = personne.get_nom_etat(personnage)
                     if nom in etats:
                         prototype = etats[nom]
                         personnages[prototype] = \

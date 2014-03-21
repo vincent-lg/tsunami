@@ -76,6 +76,10 @@ class Module(BaseModule):
                 "Hook appelé quand un PNJ meurt")
         importeur.hook.ajouter_hook("pnj:détruit",
                 "Hook appelé quand le PNJ est détruit pour X raison")
+        importeur.hook.ajouter_hook("pnj:nom",
+                "Hook appelé pour changer le nom d'un PNJ")
+        importeur.hook.ajouter_hook("pnj:doit_afficher",
+                "Hook appelé quand on regarde la salle.")
 
         # Ajout des états
         depece = importeur.perso.ajouter_etat("depece")

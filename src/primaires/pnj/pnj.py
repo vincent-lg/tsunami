@@ -178,7 +178,7 @@ class PNJ(Personnage):
     def get_nom_etat(self, personnage, nombre=1):
         """Retourne le nom et l'état (singulier ou pluriel)."""
         if nombre == 1:
-            nom = self.nom_singulier + " "
+            nom = self.get_nom_pour(personnage) + " "
             if self.etats:
                 nom += Personnage.get_etat(self)
             else:
@@ -190,6 +190,10 @@ class PNJ(Personnage):
 
     def get_nom_pour(self, personnage, retenu=True):
         """Retourne le nom pour le personnage passé en paramètre."""
+        noms = importeur.hook["pnj:nom"].executer(self, personnage)
+        if any(noms):
+            return noms[0]
+
         return self.nom_singulier
 
     def est_connecte(self):

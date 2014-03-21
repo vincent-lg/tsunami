@@ -38,6 +38,7 @@ from secondaires.familier import commandes
 from secondaires.familier import editeurs
 from secondaires.familier.familier import Familier
 from secondaires.familier.fiche import FicheFamilier
+from secondaires.familier.templates.chevauche import Chevauche
 
 class Module(BaseModule):
 
@@ -71,6 +72,12 @@ class Module(BaseModule):
         FLAGS_SALLE.ajouter("peut chevaucher")
         FLAGS_SALLE.ajouter("accueille familiers")
 
+        # Ajout des états
+        chevauche = self.importeur.perso.ajouter_etat("chevauche", Chevauche)
+        chevauche.msg_refus = "Vous chevauchez une monture."
+        chevauche.act_autorisees = ["regarder", "poser", "parler", "ingerer",
+                "lancersort", "geste", "bouger", "enfourcher"]
+
         BaseModule.config(self)
 
     def init(self):
@@ -95,17 +102,32 @@ class Module(BaseModule):
         self.importeur.interpreteur.categories["familier"] = \
                 "Familiers et montures"
 
-        # Abonne le module à la destruction d'un PNJ
+        # Abonne le module à plusieurs hooks PNJ
         self.importeur.hook["pnj:détruit"].ajouter_evenement(
                 self.detruire_pnj)
+        self.importeur.hook["pnj:nom"].ajouter_evenement(
+                self.get_nom_familier)
+        self.importeur.hook["pnj:doit_afficher"].ajouter_evenement(
+                self.doit_afficher_pnj)
+
         # Abonne le module au déplacement de personnage
         self.importeur.hook["personnage:peut_deplacer"].ajouter_evenement(
                 self.peut_deplacer_personnage)
+        self.importeur.hook["personnage:deplacer"].ajouter_evenement(
+                self.deplacer_personnage)
+        self.importeur.hook["personnage:calculer_endurance"].ajouter_evenement(
+                self.calculer_endurance)
+        self.importeur.hook["personnage:verbe_deplacer"].ajouter_evenement(
+                self.get_verbe_deplacer)
+        self.importeur.hook["personnage:verbe_arriver"].ajouter_evenement(
+                self.get_verbe_arriver)
+
         BaseModule.init(self)
 
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.enfourcher.CmdEnfourcher(),
             commandes.familier.CmdFamilier(),
         ]
 
@@ -177,7 +199,8 @@ class Module(BaseModule):
         if pnj.identifiant in self.familiers:
             self.supprimer_familier(pnj.identifiant)
 
-    def peut_deplacer_personnage(self, personnage, destination, sortie):
+    def peut_deplacer_personnage(self, personnage, destination, sortie,
+            endurance):
         """Retourne True si le personnage peut se déplacer, False sinon.
 
         Cette méthode est utile pour ajouter la contrainte de déplacement du
@@ -185,5 +208,73 @@ class Module(BaseModule):
         sa monture dans une pièce en intérieur, sauf certains cas).
 
         """
+        if "chevauche" in personnage.etats:
+            etat = personnage.etats.get("chevauche")
+            monture = etat.monture
+            pnj = monture.pnj
+            if monture and monture.pnj:
+                if destination.interieur and not (destination.a_flag(
+                        "écurie") or destination.a_flag("peut chevaucher")):
+                    personnage.envoyer("|err|{} ne peut aller là.|ff|",
+                            monture.pnj)
+                    return False
+                elif sortie.direction in ("haut", "bas"):
+                    personnage.envoyer("|err|{} ne peut aller là.|ff|",
+                            monture.pnj)
+                    return False
+                elif endurance > pnj.stats.endurance:
+                    personnage.envoyer("|err|{} est trop fatigué.|ff|", pnj)
+                    return
+
         return True
 
+    def calculer_endurance(self, personnage, endurance):
+        """Retourne l'endurance réelle consommée."""
+        if "chevauche" in personnage.etats:
+            etat = personnage.etats.get("chevauche")
+            monture = etat.monture
+            pnj = monture.pnj
+            if pnj:
+                return 0
+
+    def deplacer_personnage(self, personnage, destination, sortie, endurance):
+        """Déplace aussi la monture."""
+        if "chevauche" in personnage.etats:
+            etat = personnage.etats.get("chevauche")
+            monture = etat.monture
+            pnj = monture.pnj
+            if pnj:
+                pnj.stats.endurance -= endurance
+                pnj.salle = destination
+
+    def get_verbe_deplacer(self, personnage, destination):
+        """Retourne le verbe de déplacement."""
+        if "chevauche" in personnage.etats:
+            etat = personnage.etats.get("chevauche")
+            monture = etat.monture
+            pnj = monture.pnj
+            if pnj:
+                return "chevauche vers"
+
+    def get_verbe_arriver(self, personnage, destination):
+        """Retourne le verbe d'arriver."""
+        if "chevauche" in personnage.etats:
+            etat = personnage.etats.get("chevauche")
+            monture = etat.monture
+            pnj = monture.pnj
+            if pnj:
+                return "arrive, chevauchant " + pnj.nom_singulier
+
+    def get_nom_familier(self, pnj, personnage):
+        """Retourne le nom du familier si personnage est son maître."""
+        familier = self.familiers.get(pnj.identifiant)
+        if familier and familier.maitre is personnage:
+            return familier.nom
+
+    def doit_afficher_pnj(self, pnj):
+        """Retourne True si doit afficher le PNJ, False sinon."""
+        familier = self.familiers.get(pnj.identifiant)
+        if familier and familier.chevauche_par:
+            return False
+
+        return True

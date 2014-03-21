@@ -468,12 +468,27 @@ class Personnage(BaseObj):
         o_sortie = self.salle.sorties.get_sortie_par_nom(sortie)
         salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
 
+        # Calcul de l'endurance
+        if escalade:
+            end = 8
+        elif nage:
+            end = 10
+        else:
+            end = self.salle.terrain.perte_endurance_dep
+
         # Vérifie que le personnage peut se déplacer (hook)
         retours = importeur.hook["personnage:peut_deplacer"].executer(
-                self, salle_dest, o_sortie)
+                self, salle_dest, o_sortie, end)
 
         if any(not r for r in retours):
             return
+
+        # Modification de l'endurance
+        retours = importeur.hook["personnage:calculer_endurance"].executer(
+                self, end)
+        n_endurance = end
+        if retours:
+            n_endurance = retours[0]
 
         if self.est_en_combat():
             reussite = self.essayer_fuir()
@@ -500,15 +515,8 @@ class Personnage(BaseObj):
                     "direction.|ff|"
             return
 
-        if escalade:
-            end = 8
-        elif nage:
-            end = 10
-        else:
-            end = self.salle.terrain.perte_endurance_dep
-
         try:
-            self.stats.endurance -= end
+            self.stats.endurance -= n_endurance
         except DepassementStat:
             self << "|err|Vous êtes trop fatigué.|ff|"
             return
@@ -594,6 +602,11 @@ class Personnage(BaseObj):
             verbe = "escalade"
         elif nage:
             verbe = "nage vers"
+        else:
+            retours = importeur.hook["personnage:verbe_deplacer"].executer(
+                    self, salle_dest)
+            if retours:
+                verbe = retours[0]
 
         if sortie.cachee:
             for personnage in salle.personnages:
@@ -625,13 +638,23 @@ class Personnage(BaseObj):
 
         self.salle = salle_dest
 
+        # On appelle l'hook de déplacement
+        importeur.hook["personnage:deplacer"].executer(
+                self, salle_dest, o_sortie, end)
+
         # On appelle l'évènement entre.avant
         if self.salle is salle_dest:
             salle_dest.script["entre"]["avant"].executer(
                     depuis=nom_opp, salle=salle_dest, personnage=self)
 
+        verbe = "arrive"
+        retours = importeur.hook["personnage:verbe_arriver"].executer(
+                    self, salle_dest)
+        if retours:
+            verbe = retours[0]
+
         self.envoyer(self.salle.regarder(self))
-        salle_dest.envoyer("{} arrive.", self)
+        salle_dest.envoyer("{{}} {verbe}.".format(verbe=verbe), self)
 
         # Envoi de tips
         if salle_dest.magasin:

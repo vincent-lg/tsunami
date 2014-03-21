@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module auberge."""
+"""Ce fichier définit la classe Chevauche, détaillée plus bas."""
 
-from secondaires.familier.commandes import enfourcher
-from secondaires.familier.commandes import familier
+from primaires.perso.templates.etat import Etat
+
+class Chevauche(Etat):
+
+    """Classe représentant l'état chevauche."""
+
+    cle = "chevauche"
+    sauvegarder_au_reboot = True
+
+    def __init__(self, personnage, monture=None):
+        """Constructeur de l'état."""
+        Etat.__init__(self, personnage)
+        self.monture = monture
+
+    @property
+    def arguments(self):
+        return (self.cle, self.monture)
+
+    def message_visible(self):
+        """Retourne le message pour les autres."""
+        msg = "chevauche"
+        if self.monture:
+            msg += " " + self.monture.pnj.nom_singulier
+        msg += " ici"
+
+        return msg

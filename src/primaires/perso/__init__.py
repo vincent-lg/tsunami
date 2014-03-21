@@ -140,6 +140,14 @@ class Module(BaseModule):
         # Ajout des hooks
         importeur.hook.ajouter_hook("personnage:peut_deplacer",
                 "Hook appelé quand un personnage veut se déplacer.")
+        importeur.hook.ajouter_hook("personnage:calculer_endurance",
+                "Hook appelé pour calculer l'endurance de déplacement.")
+        importeur.hook.ajouter_hook("personnage:deplacer",
+                "Hook appelé quand un personnage se déplace.")
+        importeur.hook.ajouter_hook("personnage:verbe_deplacer",
+                "Hook appelé pour retourner le verbe de déplacement.")
+        importeur.hook.ajouter_hook("personnage:verbe_arriver",
+                "Hook appelé pour retourner le verbe d'arriver.")
 
         BaseModule.config(self)
 

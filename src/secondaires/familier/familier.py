@@ -64,6 +64,7 @@ class Familier(BaseObj):
         self.faim = 0
         self.soif = 0
         self.nom = "Médor"
+        self.chevauche_par = None
 
     def __getnewargs__(self):
         return ("", )
