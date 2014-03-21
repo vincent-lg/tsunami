@@ -58,7 +58,7 @@ class AffectionPersonnage(AffectionAbstraite):
     def initialiser(self, affection):
         """Initialise une affection concrète."""
         if self.etat:
-            affection.affecte.cle_etat = self.etat
+            affection.affecte.etats.ajouter(self.etat, vider=True)
 
     def programmer_destruction(self, affection):
         """Programme la destruction de l'affection de personnage."""
@@ -67,8 +67,8 @@ class AffectionPersonnage(AffectionAbstraite):
         except NotImplementedError:
             self.executer_script("détruit", affection)
 
-        if self.etat and affection.affecte.cle_etat == self.etat:
-            affection.affecte.cle_etat = ""
+        if self.etat and self.etat in affection.affecte.etats:
+            affection.affecte.etats.retirer(self.etat)
 
     def message_detruire(self, affection):
         """Retourne le message à afficher quand l'affection se termine.

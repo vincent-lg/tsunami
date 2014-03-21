@@ -71,15 +71,21 @@ class Etat:
 
     """
 
-    def __init__(self, cle):
+    cle = None
+    msg_refus = "Non précisé."
+    msg_visible = "fait quelque chose"
+    act_autorisees = []
+    act_interdites = []
+    peut_etre_attaque = True
+    sauvegarder_au_reboot = False
+
+    def __init__(self, personnage):
         """Constructeur d'un état."""
-        self.cle = cle
-        self.msg_refus = "Vous ne pouvez faire cela."
-        self.msg_visible = "{personnage} fait quelque chose"
-        self.act_autorisees = []
-        self.act_interdites = []
-        self.fact_recuperation = 1 # facteur de récupération
-        self.peut_etre_attaque = True
+        self.personnage = personnage
+
+    @property
+    def arguments(self):
+        return (self.cle, )
 
     def peut_faire(self, cle_action):
         """Si ne peut pas faire l'action, lève une exception ExceptionEtat.
@@ -90,3 +96,7 @@ class Etat:
         if cle_action in self.act_interdites or (not self.act_interdites \
                 and not cle_action in self.act_autorisees):
             raise ExceptionAction(self.msg_refus)
+
+    def message_visible(self):
+        """Retourne le message pour les autres."""
+        return self.msg_visible

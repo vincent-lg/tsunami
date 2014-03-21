@@ -58,7 +58,7 @@ class Module(BaseModule):
         pecher = self.importeur.perso.ajouter_etat("pecher")
         pecher.msg_refus = "Vous êtes en train de pêcher"
         pecher.msg_visible = "pêche ici"
-        pecher.act_autorisees = ["regarder", "parler", "geste"]
+        pecher.act_autorisees = ["regarder", "parler", "geste", "asseoir"]
 
         BaseModule.config(self)
 
@@ -165,11 +165,11 @@ class Module(BaseModule):
         """Le personnage pêche."""
         banc = self.get_banc_pour(personnage.salle)
         talent = self.get_talent_peche(personnage.salle)
-        if personnage.cle_etat != "pecher":
+        if "pecher" not in personnage.etats:
             return
 
         if canne.appat is None:
-            personnage.cle_etat = ""
+            personnage.etats.retirer("pecher")
 
         personnage.pratiquer_talent(talent, 5)
         if chance_sur(5) and banc.abondance_actuelle > 0:
@@ -188,11 +188,11 @@ class Module(BaseModule):
         """Une touche se transforme ou non en prise."""
         banc = self.get_banc_pour(personnage.salle)
         talent = self.get_talent_peche(personnage.salle)
-        if personnage.cle_etat != "pecher":
+        if "pecher" not in personnage.etats:
             return
 
         if canne.appat is None:
-            personnage.cle_etat = ""
+            personnage.etats.retirer("pecher")
 
         connaissance = personnage.pratiquer_talent(talent, 3)
         qualite = varier(canne.appat.qualite, 2)
@@ -220,11 +220,11 @@ class Module(BaseModule):
         """Pêche le poisson."""
         banc = self.get_banc_pour(personnage.salle)
         talent = self.get_talent_peche(personnage.salle)
-        if personnage.cle_etat != "pecher":
+        if "pecher" not in personnage.etats:
             return
 
         if canne.appat is None:
-            personnage.cle_etat = ""
+            personnage.etats.retirer("pecher")
 
         personnage.pratiquer_talent(talent)
 
@@ -246,7 +246,7 @@ class Module(BaseModule):
         personnage.salle.envoyer_lisser("{} décrit un arc dans les airs " \
                 "et tombe aux pieds de {{}}.".format(poisson.get_nom()),
                 personnage)
-        personnage.cle_etat = ""
+        personnage.etats.retirer("pecher")
         importeur.objet.supprimer_objet(canne.appat.identifiant)
         canne.appat = None
 

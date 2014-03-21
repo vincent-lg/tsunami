@@ -78,7 +78,7 @@ class PrmAffecter(Parametre):
                 nom=matelot.nom.capitalize(), titre=salle.titre_court.lower())
         navire.envoyer(msg)
         yield 1
-        if matelot.ordres or matelot.personnage.cle_etat:
+        if matelot.ordres or matelot.personnage.etats:
             personnage << "|err|{} est occupé ailleurs.|ff|".format(
                     matelot.nom.capitalize())
             return

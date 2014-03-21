@@ -450,10 +450,10 @@ class Navire(Vehicule):
                         personnage << "Vous lâchez les rames d'épuisement."
                         personnage.salle.envoyer("{} lâche les rames " \
                                 "d'épuisement.", personnage)
-                        rames.centrer()
+                        rames.relacher()
                         rames.vitesse = "immobile"
                         rames.tenu = None
-                        personnage.cle_etat = ""
+                        personnage.etats.retirer("tenir_rames")
 
     def valider_coordonnees(self):
         """Pour chaque salle, valide ses coordonnées."""
@@ -811,7 +811,7 @@ class Propulsion(Force):
         voiles = [v for v in voiles if v.hissee]
         for rames in navire.rames:
             if rames.tenu and not rames.tenu.est_connecte():
-                rames.tenu.cle_etat = ""
+                rames.tenu.etats.retirer("tenir_rames")
                 rames.tenu = None
                 rames.vitesse = "immobile"
                 rames.centrer()

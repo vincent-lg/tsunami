@@ -105,9 +105,12 @@ class CmdBander(Commande):
 
         personnage << "Vous commencez à recharger {}.".format(
                 arme_de_jet.get_nom())
-        personnage.cle_etat = "charger"
+        personnage.etats.ajouter("charger")
         yield 1
-        personnage.cle_etat = ""
+        if "charger" not in personnage.etats:
+            return
+
+        personnage.etats.retirer("charger")
 
         # Si l'arme de jet est déjà chargée
         if arme_de_jet.projectile:

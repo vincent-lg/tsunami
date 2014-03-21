@@ -106,7 +106,7 @@ class CmdLancer(Commande):
                     return
 
                 personnage.agir("magie")
-                personnage.cle_etat = "magie"
+                personnage.etats.ajouter("magie")
                 if parchemin:
                     sort.concentrer(personnage, None, apprendre=False)
                     parchemin.charges -= 1
@@ -133,7 +133,7 @@ class CmdLancer(Commande):
                     return
 
                 personnage.agir("magie")
-                personnage.cle_etat = "magie"
+                personnage.etats.ajouter("magie")
                 if parchemin:
                     sort.concentrer(personnage, cible, apprendre=False)
                     parchemin.charges -= 1

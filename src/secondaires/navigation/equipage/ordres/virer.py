@@ -50,13 +50,6 @@ class Virer(Ordre):
         Ordre.__init__(self, matelot, navire)
         self.direction = direction
 
-    def calculer_empechement(self):
-        """Retourne une estimation de l'empêchement du matelot."""
-        if self.matelot.cle_etat:
-            return 100
-        else:
-            return 0
-
     def executer(self):
         """Exécute l'ordre : vire sur bâbord."""
         navire = self.navire

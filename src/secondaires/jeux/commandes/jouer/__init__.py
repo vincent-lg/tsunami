@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 DAVY Guillaume
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,11 +36,11 @@ from secondaires.jeux.contextes.plateau import Plateau as ContextePlateau
 from secondaires.jeux.partie import Partie
 
 class CmdJouer(Commande):
-    
+
     """Commande 'jouer'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "jouer", "play")
@@ -51,12 +51,12 @@ class CmdJouer(Commande):
             "entendu, si quelqu'un est déjà en train de jouer, vous ne " \
             "pouvez commencer votre propre partie à moins qu'il ne vous " \
             "cède la place."
-    
+
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("nom_objet")
         nom_objet.proprietes["type"] = "'plateau de jeu'"
-    
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         objet = dic_masques["nom_objet"].objet
@@ -66,7 +66,7 @@ class CmdJouer(Commande):
         plateau = plateaux[objet.plateau]
         jeu = plateau.jeux[0]
         jeu = jeux[jeu]
-        
+
         partie = objet.partie
         if partie is None:
             plateau = plateau()
@@ -82,8 +82,8 @@ class CmdJouer(Commande):
         elif len(partie.joueurs) >= partie.jeu.nb_joueurs_max:
             personnage << "|err|Il n'y a plus de place libre.|ff|"
             return
-        
-        personnage.cle_etat = "jeu"
+
+        personnage.etats.ajouter("jeu")
         partie.ajouter_joueur(personnage)
         contexte = ContextePlateau(personnage.instance_connexion, objet,
                 partie)

@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,9 +33,9 @@
 from primaires.interpreteur.commande.commande import Commande
 
 class CmdLoch(Commande):
-    
+
     """Commande 'loch'"""
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "loch", "log")
@@ -44,7 +44,7 @@ class CmdLoch(Commande):
         self.aide_longue = \
             "Cette commande permet d'utiliser le loch présent dans la " \
             "salle pour estimer la vitesse du navire."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         personnage.agir("utiliser_loch")
@@ -53,19 +53,22 @@ class CmdLoch(Commande):
                 salle.navire.etendue is None:
             personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
             return
-        
+
         navire = salle.navire
         loch = salle.loch
         if not loch:
             personnage << "|err|Il n'y a pas de loch ici.|ff|"
             return
-        
+
         personnage << "Vous jetez la corde lestée à la mer."
         personnage.salle.envoyer("{} jète le loch.", personnage)
         vitesse_1 = salle.navire.vitesse_noeuds
-        personnage.cle_etat = "utiliser_loch"
+        personnage.etats.ajouter("utiliser_loch")
         yield 6
-        personnage.cle_etat = ""
+        if "utiliser_loch" not in personnage.etats:
+            return
+
+        personnage.etats.retirer("utiliser_loch")
         vitesse_2 = salle.navire.vitesse_noeuds
         vitesse = (vitesse_2 + vitesse_1) / 2
         vitesse = round(vitesse, 1)

@@ -82,6 +82,13 @@ class Module(BaseModule):
             "assiette contenant ces trois légumes).\nSi le poids de la liste " \
             "d'aliments que vous proposez est supérieur au poids\nmaximum du " \
             "conteneur, l'ajout du service ne fonctionnera pas."
+
+        # Ajout de l'état repas
+        etat = self.importeur.perso.ajouter_etat("repas")
+        etat.msg_refus = "Vous êtes en train de manger."
+        etat.msg_visible = "mange ici"
+        etat.act_autorisees = ["regarder", "bouger"]
+
         BaseModule.config(self)
 
     def init(self):
@@ -100,12 +107,6 @@ class Module(BaseModule):
 
         nb_objets = len(objets)
         self.logger.info(format_nb(nb_objets, "{nb} objet{s} récupéré{s}"))
-
-        # Ajout de l'état repas
-        etat = self.importeur.perso.ajouter_etat("repas")
-        etat.msg_refus = "Vous êtes en train de manger."
-        etat.msg_visible = "mange ici"
-        etat.act_autorisees = ["regarder", "bouger"]
 
         self.cherchable_pry = cherchables.prototype.CherchablePrototypeObjet
         BaseModule.init(self)

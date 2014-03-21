@@ -128,9 +128,12 @@ class CmdEntrainer(Commande):
 
             personnage << "Vous commencez à vous entraîner."
             personnage.salle.envoyer("{} commence à s'entraîner.", personnage)
-            personnage.cle_etat = "entrainer"
+            personnage.etats.ajouter("entrainer")
             yield 60
-            personnage.cle_etat = ""
+            if "entrainer" not in personnage.etats:
+                return
+
+            personnage.etats.retirer("entrainer")
             personnage << importeur.perso.cfg_stats.entrainables[stat]
             personnage.xps[niveau] -= xp
             personnage.gagner_stat(stat)

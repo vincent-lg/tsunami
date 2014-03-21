@@ -61,9 +61,12 @@ class CmdScruter(Commande):
         savoir = personnage.pratiquer_talent("scruter", 10)
 
         personnage << "Vous regardez autour de vous."
-        personnage.cle_etat = "scruter"
+        personnage.etats.ajouter("scruter")
         yield 2
-        personnage.cle_etat = ""
+        if "scruter" not in personnage.etats:
+            return
+
+        personnage.etats.retirer("scruter")
 
         # 0.25 <= sens < 0.92
         sens = 0.25 + personnage.stats.sensibilite / 300 + savoir / 300

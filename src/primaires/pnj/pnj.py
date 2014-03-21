@@ -179,7 +179,7 @@ class PNJ(Personnage):
         """Retourne le nom et l'état (singulier ou pluriel)."""
         if nombre == 1:
             nom = self.nom_singulier + " "
-            if self.position or self.etat:
+            if self.etats:
                 nom += Personnage.get_etat(self)
             else:
                 nom += self.etat_singulier

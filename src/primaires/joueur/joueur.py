@@ -262,7 +262,7 @@ class Joueur(Personnage):
             if self.cpt_mort <= 12:
                 return
             else:
-                self.cle_etat = ""
+                self.etats.vider()
                 self.stats.vitalite = 1
                 self.soif = 0
                 self.faim = 0

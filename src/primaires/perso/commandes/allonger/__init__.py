@@ -53,7 +53,7 @@ class CmdAllonger(Commande):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         masque = dic_masques["element_observable"]
-        personnage.agir("bouger")
+        personnage.agir("allonger")
         salle = personnage.salle
         if salle.nom_terrain in ("aquatique", "subaquatique"):
             personnage << "|err|Vous ne pouvez vous allonger ici.|ff|"
@@ -66,22 +66,20 @@ class CmdAllonger(Commande):
                 return
 
             nb = len([p for p in personnage.salle.personnages if \
-                    p.occupe is elt])
+                    "allonge" in p.etats and p.etats.get("allonge").sur is elt])
             if nb >= elt.nb_places_allongees:
                 personnage << "|err|Toutes les places sont prises ici.|ff|"
                 return
 
-            personnage.cle_etat = "allonge"
-            personnage.position = "allonge"
-            personnage.occupe = elt
+            personnage.etats.retirer("assis")
+            personnage.etats.ajouter("allonge", elt)
             personnage << "Vous vous allongez {} {}.".format(
                     elt.connecteur, elt.titre)
             personnage.salle.envoyer("{{}} s'allonge {} {}.".format(
                     elt.connecteur, elt.titre), personnage)
         else:
-            personnage.cle_etat = "allonge"
-            personnage.position = "allonge"
-            personnage.occupe = None
+            personnage.etats.retirer("assis")
+            personnage.etats.ajouter("allonge", None)
             personnage << "Vous vous allongez sur le sol."
             personnage.salle.envoyer("{} s'allonge sur le sol.", personnage)
 

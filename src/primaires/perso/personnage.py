@@ -46,6 +46,7 @@ from .equipement import Equipement
 from .quetes import Quetes
 from .stats import Stats
 from .exceptions.stat import DepassementStat
+from .etats import Etats
 
 class Personnage(BaseObj):
 
@@ -60,7 +61,7 @@ class Personnage(BaseObj):
     """
 
     _nom = "personnage"
-    _version = 5
+    _version = 6
 
     def __init__(self):
         """Constructeur d'un personnage"""
@@ -96,13 +97,9 @@ class Personnage(BaseObj):
         self.points_tribut = 0
 
         # Etat
-        self._cle_etat = ""
+        self.etats = Etats(self)
         self.super_invisible = False
         self.affections = {}
-
-        # Position occupée
-        self.position = ""
-        self.occupe = None
 
         # Niveau primaire et niveaux secondaires
         self.niveau = 1
@@ -226,26 +223,13 @@ class Personnage(BaseObj):
         groupes = type(self).importeur.interpreteur.groupes
         return groupes[self.nom_groupe]
 
-    def _get_cle_etat(self):
-        return self._cle_etat
-    def _set_cle_etat(self, cle):
-        """On vérifie que l'état existe."""
-        if cle:
-            try:
-                etat = type(self).importeur.perso.etats[cle]
-            except KeyError:
-                raise KeyError(cle)
-
-        self._cle_etat = cle
-    cle_etat = property(_get_cle_etat, _set_cle_etat)
-
     @property
     def etat(self):
-        """Retourne l'état correspondant à 'cle_etat'."""
-        if self._cle_etat:
-            return type(self).importeur.perso.etats[self._cle_etat]
-        else:
-            return None
+        """Retourne le dernier état ou None."""
+        if self.etats:
+            return self.etats[-1]
+
+        return None
 
     @property
     def poids(self):
@@ -366,21 +350,10 @@ class Personnage(BaseObj):
 
     def get_etat(self):
         """Retourne l'état visible du personnage."""
-        if self.position and self.occupe:
-            return self.get_position().get_message(self) + " " + \
-                    self.occupe.connecteur + " " + self.occupe.titre
-
-        if self.position:
-            return self.get_position().get_message(self) + " là"
-
         if self.etat:
-            return self.etat.msg_visible
+            return self.etat.message_visible()
 
         return "est là"
-
-    def get_position(self):
-        """Retourne la position actuelle du personnage."""
-        return type(self).importeur.perso.positions[self.position]
 
     def get_armes(self):
         """Retourne les armes portées par le personnage.
@@ -423,7 +396,7 @@ class Personnage(BaseObj):
         if not self.e_existe:
             return True
 
-        return self.stats.vitalite == 0 or self.cle_etat == "mort"
+        return self.stats.vitalite == 0 or "mort" in self.etats
 
     def est_vivant(self):
         return not self.est_mort()
@@ -495,7 +468,7 @@ class Personnage(BaseObj):
             reussite = self.essayer_fuir()
             if reussite:
                 self << "Vous vous enfuyez..."
-                self.cle_etat = ""
+                self.etats.retirer("combat")
                 combat = type(self).importeur.combat.get_combat_depuis_salle(
                         self.salle)
                 combat.supprimer_combattant(self)
@@ -771,19 +744,17 @@ class Personnage(BaseObj):
         Si l'état interdit de faire cette action, une exception est levée.
 
         """
-        etat = self.etat
-        if etat:
+        for etat in self.etats:
             etat.peut_faire(cle_action)
 
     def mourir(self, adversaire=None, recompenser=True):
         """Méthode appelée quand le personage meurt."""
-        self.cle_etat = ""
         combat = type(self).importeur.combat.get_combat_depuis_salle(
                 self.salle)
         if combat and self in combat.combattants:
             combat.supprimer_combattant(self)
 
-        self.cle_etat = "mort"
+        self.etats.ajouter("mort", vider=True)
         self.envoyer_tip("Vous reprendrez conscience d'ici 10 à 15 minutes.",
                 "inconscience", True)
 
@@ -1012,20 +983,22 @@ class Personnage(BaseObj):
             "mana": "intelligence",
             "endurance": "agilite",
         }
+
+        allonge = self.etats.get("allonge")
+        assis = self.etats.get("assis")
         for nom, liee in stats.items():
             stat = self.stats[nom]
             courante = stat.courante
             max = stat.max
             if courante < max:
                 courante_liee = self.stats[liee].courante
-                if self.position == "allonge":
+
+                if allonge:
                     facteur_position = 1.25
-                    if self.occupe != None:
-                        facteur_position *= self.occupe.facteur_allonger
-                elif self.position == "assis":
+                    facteur_position *= allonge.get_facteur()
+                elif assis:
                     facteur_position = 1.1
-                    if self.occupe != None:
-                        facteur_position *= self.occupe.facteur_asseoir
+                    facteur_position *= assis.get_facteur()
                 else:
                     facteur_position = 0.9
                 plus = int(courante_liee * facteur_position * 0.9)
@@ -1110,8 +1083,8 @@ class Personnage(BaseObj):
 
     def attaquer(self, personnage):
         """Attaque le personnage spécifié."""
-        self.cle_etat = "combat"
-        personnage.cle_etat = "combat"
+        self.etats.ajouter("combat", vider=True)
+        personnage.etats.ajouter("combat", vider=True)
         importeur.combat.creer_combat(self.salle,
                 self, personnage)
         self.envoyer("Vous attaquez {}.", personnage)

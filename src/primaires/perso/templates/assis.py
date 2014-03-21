@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,37 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'ordre Revenir."""
+"""Ce fichier définit la classe Assis, détaillée plus bas."""
 
-from secondaires.navigation.equipage.signaux import *
-from secondaires.navigation.equipage.ordres.long_deplacer import LongDeplacer
+from primaires.perso.templates.etat import Etat
 
-from ..ordre import *
+class Assis(Etat):
 
-class Revenir(Ordre):
+    """Classe représentant l'état assis."""
 
-    """Ordre demandant au matelot de revenir à sa salle d'affectation.
+    cle = "assis"
+    sauvegarder_au_reboot = True
 
-    Cet ordre est généralement appelé à la fin d'une volonté pour
-    demander au matelot de rejoindre son poste affecté.
+    def __init__(self, personnage, sur=None):
+        """Constructeur de l'état."""
+        Etat.__init__(self, personnage)
+        self.sur = sur
 
-    """
+    @property
+    def arguments(self):
+        return (self.cle, self.sur)
 
-    cle = "revenir"
-    def executer(self):
-        """Exécute l'ordre : déplace le matelot."""
-        matelot = self.matelot
-        navire = self.navire
-        personnage = matelot.personnage
-        salle = personnage.salle
-        affectation = matelot.affectation
-        if affectation and affectation is not salle:
-            graph = navire.graph
-            chemin = graph.get((salle.mnemonic, affectation.mnemonic))
-            if chemin:
-                long_deplacement = LongDeplacer(matelot, navire, *chemin)
-                generateur = long_deplacement.creer_generateur()
-                yield SignalAttendre(generateur)
-            yield SignalTermine()
-        elif affectation:
-            yield SignalInutile("Je suis déjà dans ma salle affectée")
+    def message_visible(self):
+        """Retourne le message pour les autres."""
+        msg = "est assis"
+        if self.personnage.est_feminin():
+            msg += "e"
+        msg += " "
+        if self.sur:
+            sur = self.sur
+            msg += sur.connecteur + " "
+            msg += sur.titre
+        else:
+            msg += "sur le sol"
+
+        return msg

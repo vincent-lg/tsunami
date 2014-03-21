@@ -179,7 +179,7 @@ class Voile(BaseElement):
         salle = personnage.salle
         personnage << "Vous commencez de hisser la voile, au prise " \
                 "avec les cordages."
-        personnage.cle_etat = "hisser_voile"
+        personnage.etats.ajouter("hisser_voile")
         salle.envoyer("{} commence à hisser la voile, au prise " \
                 "avec les cordages", personnage)
         return 7
@@ -187,7 +187,10 @@ class Voile(BaseElement):
     def post_hisser(self, personnage):
         """Post-hisse la voile."""
         salle = personnage.salle
-        personnage.cle_etat = ""
+        if "hisser_voile" not in personnage.etats:
+            return
+
+        personnage.etats.retirer("hisser_voile")
         self.hissee = True
         personnage << "Vous hissez {}.".format(self.nom.lower())
         salle.envoyer("{{}} hisse {}.".format(self.nom.lower()),
@@ -197,14 +200,17 @@ class Voile(BaseElement):
         """Commence à plier une voile."""
         salle = personnage.salle
         personnage << "Vous commencez de replier la voile."
-        personnage.cle_etat = "plier_voile"
+        personnage.etats.ajouter("plier_voile")
         salle.envoyer("{} commence de replier la voile.", personnage)
         return 7
 
     def post_plier(self, personnage):
         """Post-plie la voile."""
         salle = personnage.salle
-        personnage.cle_etat = ""
+        if "plier_voile" not in personnage.etats:
+            return
+
+        personnage.etats.retirer("plier_voile")
         self.hissee = False
         personnage << "Vous pliez {}.".format(self.nom.lower())
         salle.envoyer("{{}} plie {}.".format(self.nom.lower()),

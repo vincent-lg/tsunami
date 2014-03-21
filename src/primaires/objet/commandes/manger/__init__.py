@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,9 +34,9 @@ from primaires.interpreteur.commande.commande import Commande
 from corps.fonctions import lisser
 
 class CmdManger(Commande):
-    
+
     """Commande 'manger'"""
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "manger", "eat")
@@ -46,24 +46,24 @@ class CmdManger(Commande):
         self.aide_longue = \
                 "Cette commande permet de se nourrir, à condition que " \
                 "l'objet précisé soit comestible."
-    
+
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("nom_objet")
         nom_objet.proprietes["conteneurs"] = \
                 "(personnage.equipement.inventaire_simple, )"
-    
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         objet = dic_masques["nom_objet"].objet
         personnage.agir("ingerer")
-        
+
         if hasattr(objet, "nourriture"):
             if not objet.nourriture:
                 personnage << "Il n'y a rien à manger là-dedans."
                 return
             personnage << "Vous commencez votre repas."
-            personnage.cle_etat = "repas"
+            personnage.etats.ajouter("repas")
             personnage.salle.envoyer("{} commence à manger.", personnage)
             for item in list(objet.nourriture):
                 if not item.est_de_type("nourriture"):
@@ -73,6 +73,10 @@ class CmdManger(Commande):
                             "ventre et ne terminez pas le plat."
                     break
                 yield item.nourrissant
+
+                if "repas" not in personnage.etats:
+                    return
+
                 personnage << "Vous mangez {}.\n{}".format(item.get_nom(),
                         item.message_mange)
                 personnage.faim -= item.nourrissant * 5
@@ -84,13 +88,13 @@ class CmdManger(Commande):
                 importeur.objet.supprimer_objet(item.identifiant)
                 objet.nourriture.remove(item)
             personnage.salle.envoyer("{} termine son repas.", personnage)
-            personnage.cle_etat = ""
+            personnage.etats.retirer("repas")
             return
-        
+
         if not objet.est_de_type("nourriture"):
             personnage << "Visiblement, ce n'est pas comestible."
             return
-        
+
         if personnage.estomac + objet.poids_unitaire <= 3:
             personnage << "Vous mangez {}.\n{}".format(objet.get_nom(),
                     objet.message_mange)

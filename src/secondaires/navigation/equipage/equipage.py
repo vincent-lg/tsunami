@@ -87,7 +87,7 @@ class Equipage(BaseObj):
         """Retourne les matelots considérés comme libres."""
         matelots = tuple(self.matelots.values())
         return tuple(m for m in matelots if m.personnage and \
-                m.personnage.cle_etat == "" and len(m.ordres) == 0)
+                not m.personnage.etats and len(m.ordres) == 0)
 
     @property
     def opt_destination(self):
@@ -259,7 +259,7 @@ class Equipage(BaseObj):
         matelots.sort(key=lambda m: noms_poste.index(m.nom_poste))
         if libre:
             matelots = [m for m in matelots if \
-                    m.personnage.cle_etat == "" and len(m.ordres) == 0]
+                    not m.personnage.etats and len(m.ordres) == 0]
         if endurance_min is not None:
             matelots = [m for m in matelots if \
                     m.personnage.endurance >= endurance_min]

@@ -123,7 +123,7 @@ class Combat:
                     cible = choice(cibles)
                     self.__combattus[combattant] = cible
                 else:
-                    combattant.cle_etat = ""
+                    combattant.etats.retirer("combat")
                     del self.__combattus[combattant]
 
         # On reforme la liste des combattants

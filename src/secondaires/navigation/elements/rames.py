@@ -95,7 +95,7 @@ class Rames(BaseElement):
                     personnage, self.parent))
 
         self.tenu = personnage
-        personnage.cle_etat = "tenir_rames"
+        personnage.etats.ajouter("tenir_rames")
         personnage << "Vous empoignez {}.".format(
                 self.nom)
         personnage.salle.envoyer("{{}} empoigne {}.".format(
@@ -114,7 +114,8 @@ class Rames(BaseElement):
             salle.envoyer("{} arrête de ramer.", personnage)
         self.centrer()
         self.tenu = None
-        personnage.cle_etat = ""
+        personnage.etats.retirer("tenir_rames")
+
         personnage << "Vous lâchez {}.".format(
                 self.nom)
         personnage.salle.envoyer("{{}} lâche {}.".format(

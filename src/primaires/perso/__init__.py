@@ -50,6 +50,8 @@ from .templates.niveau import Niveau
 from .templates.talent import Talent
 from .templates.etat import Etat
 from .templates.position import Position
+from .templates.allonge import Allonge
+from .templates.assis import Assis
 
 class Module(BaseModule):
 
@@ -104,6 +106,37 @@ class Module(BaseModule):
 
         self.ajouter_niveau("art_pisteur", "art du pisteur")
 
+        # Ajout des états (assis et allongé)
+        assis = self.ajouter_etat("assis", Assis)
+        assis.msg_refus = "Vous êtes assis."
+        assis.msg_visible = "est assis là"
+        assis.act_autorisees = ["regarder", "poser", "parler", "ingerer",
+                "lancersort", "lever", "geste", "allonger", "pecher"]
+        allonge = self.ajouter_etat("allonge", Allonge)
+        allonge.msg_refus = "Vous êtes allongé."
+        allonge.msg_visible = "est allongé là"
+        allonge.act_autorisees = ["regarder", "parler", "ingerer",
+                "lever", "geste", "asseoir"]
+
+        mort = self.ajouter_etat("mort")
+        mort.msg_refus = "Vous êtes inconscient."
+        mort.msg_visible = "est inconscient ici"
+        paralyse = self.ajouter_etat("paralyse")
+        paralyse.msg_refus = "Vous ne pouvez bouger un muscle."
+        paralyse.msg_visible = "se tient, rigide, à cet endroit"
+        paralyse.peut_etre_attaque = False
+        paralyse.sauvegarder_au_reboot = True
+
+        entraine = self.ajouter_etat("entrainer")
+        entraine.msg_refus = "Vous êtes en train de vous entraîner."
+        entraine.msg_visible = "s'entraîne ici"
+        entraine.act_autorisees = ["regarder", "parler"]
+
+        recherche = self.ajouter_etat("recherche")
+        recherche.msg_refus = "Vous êtes un peu occupé."
+        recherche.msg_visible = "cherche quelque chose ici"
+        recherche.act_autorisees = ["parler"]
+
         BaseModule.config(self)
 
     def init(self):
@@ -134,36 +167,6 @@ class Module(BaseModule):
         # Positions
         self.ajouter_position("assis", "est assis", "est assise")
         self.ajouter_position("allonge", "est allongé", "est allongée")
-
-        # Ajout des états (assis et allongé)
-        assis = self.ajouter_etat("assis")
-        assis.msg_refus = "Vous êtes assis."
-        assis.msg_visible = "est assis là"
-        assis.act_autorisees = ["regarder", "poser", "parler", "ingerer",
-                "lancersort", "lever", "geste"]
-        allonge = self.ajouter_etat("allonge")
-        allonge.msg_refus = "Vous êtes allongé."
-        allonge.msg_visible = "est allongé là"
-        allonge.act_autorisees = ["regarder", "parler", "ingerer",
-                "lever", "geste"]
-
-        mort = self.ajouter_etat("mort")
-        mort.msg_refus = "Vous êtes inconscient."
-        mort.msg_visible = "est inconscient ici"
-        paralyse = self.ajouter_etat("paralyse")
-        paralyse.msg_refus = "Vous ne pouvez bouger un muscle."
-        paralyse.msg_visible = "se tient, rigide, à cet endroit"
-        paralyse.peut_etre_attaque = False
-
-        entraine = self.ajouter_etat("entrainer")
-        entraine.msg_refus = "Vous êtes en train de vous entraîner."
-        entraine.msg_visible = "s'entraîne ici"
-        entraine.act_autorisees = ["regarder", "parler"]
-
-        recherche = self.ajouter_etat("recherche")
-        recherche.msg_refus = "Vous êtes un peu occupé."
-        recherche.msg_visible = "cherche quelque chose ici"
-        recherche.act_autorisees = ["parler"]
 
         self.ajouter_talent("escalade", "escalade", "survie", 0.31)
         self.ajouter_talent("nage", "nage", "survie", 0.25)
@@ -202,6 +205,7 @@ class Module(BaseModule):
         personnages = list(importeur.joueur.joueurs.values()) + list(
                 importeur.pnj.PNJ.values())
         for personnage in personnages:
+            personnage.etats.reinitialiser()
             if personnage.salle and personnage.salle.nom_terrain == \
                     "subaquatique" and not personnage.est_immortel():
                 personnage.plonger()
@@ -305,15 +309,18 @@ class Module(BaseModule):
         talent = Talent(self.niveaux, cle, nom, niveau, difficulte)
         self.talents[cle] = talent
 
-    def ajouter_etat(self, cle):
+    def ajouter_etat(self, cle, classe=None):
         """Ajoute un état dans le dictionnaire."""
+        if classe is None:
+            classe = type("Etat{}".format(cle.capitalize()), (Etat, ), {})
+            classe.cle = cle
+            print("Création de l'état", classe)
         if cle in self.etats:
             raise ValueError("l'état {} existe déjà".format(cle))
 
-        etat = Etat(cle)
-        self.etats[cle] = etat
+        self.etats[cle] = classe
 
-        return etat
+        return classe
 
     def ajouter_position(self, cle, etat_m, etat_f):
         """Ajoute une position."""

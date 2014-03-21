@@ -62,10 +62,10 @@ class CmdChercher(Commande):
         salle = personnage.salle
         personnage << "Vous commencez à chercher {}.".format(texte)
         salle.envoyer("{} commence à chercher quelque chose...", personnage)
-        personnage.cle_etat = "recherche"
+        personnage.etats.ajouter("recherche")
         yield 7
-        if personnage.cle_etat == "recherche":
-            personnage.cle_etat = ""
+        if "recherche" in personnage.etats:
+            personnage.etats.retirer("recherche")
             nb = salle.script["recherche"].executer(personnage=personnage,
                     salle=salle, texte=texte)
             if nb == 0:

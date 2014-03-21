@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,9 +34,9 @@ from primaires.interpreteur.masque.parametre import Parametre
 from primaires.perso.exceptions.stat import DepassementStat
 
 class PrmBoule(Parametre):
-    
+
     """Commande 'neige boule'"""
-    
+
     def __init__(self):
         """Constructeur du paramètre."""
         Parametre.__init__(self, "boule", "ball")
@@ -45,7 +45,7 @@ class PrmBoule(Parametre):
             "Cette commande permet de rassembler de la neige afin de " \
             "fabriquer une boule de neige. Vous pouvez ensuite la lancer " \
             "sur quelqu'un avec la commande %lancer%."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         salle = personnage.salle
@@ -59,25 +59,25 @@ class PrmBoule(Parametre):
                 personnage << "|err|Il vous faut au moins deux mains " \
                         "de libre.|ff|"
                 return
-            
+
             if "neige" not in salle.affections:
                 personnage << "|err|Il n'y a pas de neige ici.|ff|"
                 return
-            
+
             if salle.affections["neige"].force < 5:
                 personnage << "|err|Il n'y a pas assez de neige ici.|ff|"
                 return
-            
+
             personnage << "Vous commencez à rassembler de la neige."
             salle.envoyer("{} commence à rassembler de la neige.",
                     personnage)
             salle.affections["neige"].force -= 1
-            personnage.cle_etat = "bonhomme_neige"
+            personnage.etats.ajouter("bonhomme_neige")
             yield 3
-            if not personnage.cle_etat == "bonhomme_neige":
+            if "bonhomme_neige" not in personnage.etats:
                 return
-            
-            personnage.cle_etat = ""
+
+            personnage.etats.retirer("bonhomme_neige")
             boule = importeur.objet.creer_objet(importeur.objet.prototypes[
                     "boule_neige"])
             for membre in personnage.equipement.membres:
@@ -85,7 +85,7 @@ class PrmBoule(Parametre):
                     membre.tenu = boule
                     boule.contenu = personnage.equipement.tenus
                     break
-            
+
             personnage << "Vous avez fabriqué {}.".format(boule.get_nom())
             salle.envoyer("{{}} a fabriqué {}.".format(
                     boule.get_nom()), personnage)

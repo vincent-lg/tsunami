@@ -77,6 +77,12 @@ class Module(BaseModule):
         importeur.hook.ajouter_hook("pnj:détruit",
                 "Hook appelé quand le PNJ est détruit pour X raison")
 
+        # Ajout des états
+        depece = importeur.perso.ajouter_etat("depece")
+        depece.msg_refus = "Vous êtes en train de dépecer un cadavre."
+        depece.msg_visible = "dépece un cadavre ici"
+        depece.act_autorisees = ["regarder", "parler"]
+
         BaseModule.config(self)
 
     def init(self):
@@ -100,12 +106,6 @@ class Module(BaseModule):
         for no in self.ticks.keys():
             self.importeur.diffact.ajouter_action("ntick_{}".format(no),
                     intervalle * no, self.tick, no)
-
-        # Ajout des états
-        depece = importeur.perso.ajouter_etat("depece")
-        depece.msg_refus = "Vous êtes en train de dépecer un cadavre."
-        depece.msg_visible = "dépece un cadavre ici"
-        depece.act_autorisees = ["regarder", "parler"]
 
         importeur.perso.ajouter_talent("depecage", "dépeçage", "survie", 0.25)
 

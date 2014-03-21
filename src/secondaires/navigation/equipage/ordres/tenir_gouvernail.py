@@ -45,13 +45,6 @@ class TenirGouvernail(Ordre):
 
     cle = "tenir_gouvernail"
     eats_autorises = ("tenir_gouvernail", "")
-    def calculer_empechement(self):
-        """Retourne une estimation de l'empêchement du matelot."""
-        if self.matelot.cle_etat:
-            return 100
-        else:
-            return 0
-
     def executer(self):
         """Exécute l'ordre : tient le gouvernail."""
         personnage = self.matelot.personnage

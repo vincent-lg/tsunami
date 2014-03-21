@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 DAVY Guillaume
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -38,28 +38,28 @@ Cette classe est détaillée plus bas.
 from abstraits.obase import BaseObj
 
 class BaseJeu(BaseObj):
-    
+
     """Classe définissant un jeu.
-    
+
     Ce jeu est indépendant du plateau. En effet, un plateau peut être
     utilisé pour différents jeux, par exemple on trouve beaucoup de jeux
     différents utilisant 52 cartes.
-    
+
     Le jeu tel que défini dans cette classe est l'ensemble des règles
     du jeu indépendemment du plateau. Le plateau lui va contenir les
     cases, les différents pions et d'autres détails. Les informations
     ponctuelles sur le jeu (la position des joueurs, les tours de chacun)
     va être défini dans la partie.
-    
+
     """
-    
+
     nom = "" # nom du jeu
     def __init__(self):
         """Constructeur d'un jeu.
-        
+
         Il ne doit pas être redéfini. Pour ajouter des attributs,
         redéfinir plutôt la méthode init qui est appelée par le constructeur.
-        
+
         """
         BaseObj.__init__(self)
         self.partie = None
@@ -67,29 +67,29 @@ class BaseJeu(BaseObj):
         self.nb_joueurs_min = 1
         self.nb_joueurs_max = 1
         self._construire()
-    
+
     def __getnewargs__(self):
         return ()
-    
+
     def peut_commencer(self):
         """La partie peut-elle commencée ?"""
         return True
-    
+
     def peut_jouer(self, personnage):
         """Le joueur peut-il jouer ?
-        
+
         Cette méthode retourne True si le joueur peut jouer ou False sinon.
         En outre, si une explication doit être donnée sur le fait que
         ce joueur ne eput pas jouer, ce doit être ici.
-        
+
         """
         return True
-    
+
     def jouer(self, personnage, msg):
         """Joue au jeu.
-        
+
         La variable msg contient le message entré par le joueur voulant jouer.
-        
+
         Pour rappel, le contexte de jeu interprète les messages commençant
         par un slash (/) comme des options. Tous les autres sont des
         ordres adressés au jeu pour jouer et sont transmis à cette méthode.
@@ -100,12 +100,12 @@ class BaseJeu(BaseObj):
         de la carte que l'on souhaite jouer par exemple). Cela est à
         l'initiative de cette méthode de comprendre le message et de
         l'interpréter.
-        
+
         Chaque jeu doit donc redéfinir cette méthode.
-        
+
         """
         self.partie.en_cours = True
-    
+
     # Options
     # Le nom des méthodes est opt_ suivi du raccourci. Ainsi, pour
     # quitter le jeu, il faut entrer /q ce qui redirigera vers
@@ -117,25 +117,24 @@ class BaseJeu(BaseObj):
         self.partie.retirer_joueur(personnage)
         if len(self.partie.joueurs) == 0:
             self.partie.detruire()
-    
+
     def opt_v(self, personnage, message):
         """Affiche le plateau."""
         personnage << self.partie.afficher(personnage)
-    
+
     def opt_o(self, personnage, message):
         """Bascule entre le mode joueur et le mode observateur."""
         if self.partie.en_cours:
             personnage << "|err|La partie a déjà commencée.|ff|"
             return
-        
+
         if personnage in self.partie.joueurs:
             self.partie.retirer_joueur(personnage)
             self.partie.observateurs.append(personnage)
-            personnage.cle_etat = "jeu"
             personnage << "Vous êtes à présent observateur " \
                     "du plateau."
             return
-        
+
         if personnage in self.partie.observateurs:
             self.partie.observateurs.remove(personnage)
             if self.partie.ajouter_joueur(personnage):

@@ -48,13 +48,6 @@ class LongDeplacer(Ordre):
         """Un matelot de substitution ne peut pas être trouvé pour cet ordre."""
         raise OrdreSansSubstitution
 
-    def calculer_empechement(self):
-        """Retourne une estimation de l'empêchement du matelot."""
-        if self.matelot.cle_etat:
-            return 100
-        else:
-            return 0
-
     def executer(self):
         """Exécute l'ordre : déplace le matelot."""
         for i, direction in enumerate(self.directions):

@@ -58,6 +58,25 @@ class Module(BaseModule):
         importeur.hook.ajouter_hook("pnj:attaque",
                 "Hook appelé quand un PNJ est attaqué")
 
+        # Ajout de l'état combat
+        etat = self.importeur.perso.ajouter_etat("combat")
+        etat.msg_refus = "Vous êtes en train de combattre."
+        etat.msg_visible = "combat ici"
+        etat.act_interdites = ["tuer", "bouger", "prendre", "poser",
+                "chercherbois", "ouvrir", "fermer", "jouer", "porter",
+                "retirer", "ingerer"]
+
+        # État scruter
+        etat = self.importeur.perso.ajouter_etat("scruter")
+        etat.msg_refus = "Vous êtes un peu occupé."
+        etat.msg_visible = "se trouve ici"
+
+        # État charger
+        etat = self.importeur.perso.ajouter_etat("charger")
+        etat.msg_refus = "Vous êtes un peu occupé."
+        etat.msg_visible = "se trouve ici"
+        etat.act_autorisees = ["regarder", "parler"]
+
         BaseModule.config(self)
 
     def init(self):
@@ -86,25 +105,6 @@ class Module(BaseModule):
                 0.20)
         ajouter_talent("scruter", "détection des ennemis", "art_pisteur",
                 0.23)
-
-        # Ajout de l'état
-        etat = self.importeur.perso.ajouter_etat("combat")
-        etat.msg_refus = "Vous êtes en train de combattre."
-        etat.msg_visible = "combat ici"
-        etat.act_interdites = ["tuer", "bouger", "prendre", "poser",
-                "chercherbois", "ouvrir", "fermer", "jouer", "porter",
-                "retirer", "ingerer"]
-
-        # État scruter
-        etat = self.importeur.perso.ajouter_etat("scruter")
-        etat.msg_refus = "Vous êtes un peu occupé."
-        etat.msg_visible = "se trouve ici"
-
-        # État charger
-        etat = self.importeur.perso.ajouter_etat("charger")
-        etat.msg_refus = "Vous êtes un peu occupé."
-        etat.msg_visible = "se trouve ici"
-        etat.act_autorisees = ["regarder", "parler"]
 
         BaseModule.init(self)
 
@@ -152,11 +152,11 @@ class Module(BaseModule):
             self.importeur.diffact.retirer_action(
                 "combat:{}".format(ident), warning=False)
             for personnage in combat.combattants:
-                if personnage.cle_etat == "combat":
-                    personnage.cle_etat = ""
+                if "combat" in personnage.etats:
+                    personnage.etats.retirer("combat")
 
     def detruire(self):
         """Destruction du module."""
         for combat in self.combats.values():
             for combattant in combat.combattants:
-                combattant.cle_etat = ""
+                combattant.etats.retirer("combat")

@@ -45,13 +45,6 @@ class PlierVoile(Ordre):
 
     cle = "plier_voile"
     etats_autorises = ("plier_voile", "")
-    def calculer_empechement(self):
-        """Retourne une estimation de l'empêchement du matelot."""
-        if self.matelot.cle_etat:
-            return 100
-        else:
-            return 0
-
     def executer(self):
         """Exécute l'ordre : déplace le matelot."""
         personnage = self.matelot.personnage

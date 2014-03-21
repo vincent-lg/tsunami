@@ -158,7 +158,7 @@ class Sort(BaseObj):
         if self.cout > personnage.mana:
             personnage << "Vous n'avez pas assez de mana pour lancer ce sort."
             self.dissiper(personnage, maitrise, cible)
-            personnage.cle_etat = ""
+            personnage.etats.retirer("magie")
             return
 
         personnage.mana -= self.cout
@@ -180,7 +180,7 @@ class Sort(BaseObj):
 
     def echouer(self, personnage, maitrise, cible):
         """Fait rater le sort à personnage."""
-        personnage.cle_etat = ""
+        personnage.etats.retirer("magie")
         variables = self.get_variables(cible)
         variables["personnage"] = personnage
         variables["maitrise"] = maitrise
@@ -191,7 +191,7 @@ class Sort(BaseObj):
         """Fait lancer le sort à personnage."""
         dest = personnage.salle
         sorties = []
-        personnage.cle_etat = ""
+        personnage.etats.retirer("magie")
         variables = self.get_variables(cible)
         variables["personnage"] = personnage
         variables["maitrise"] = maitrise
@@ -256,8 +256,8 @@ class Sort(BaseObj):
         try:
             self.script[evenement].executer(**variables)
         except InterrompreCommande as err:
-            if lanceur.cle_etat == "magie":
-                lanceur.cle_etat = ""
+            if "magie" in personnage.etats:
+                lanceur.etats.retirer("magie")
 
             raise err
 

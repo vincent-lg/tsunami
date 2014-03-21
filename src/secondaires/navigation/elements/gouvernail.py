@@ -66,7 +66,7 @@ class Gouvernail(BaseElement):
     def tenir(self, personnage):
         """Méthode demandant au personnage de tenir le gouvernail."""
         self.tenu = personnage
-        personnage.cle_etat = "tenir_gouvernail"
+        personnage.etats.ajouter("tenir_gouvernail")
         personnage << "Vous empoignez fermement {}.".format(
                 self.nom.lower())
         personnage.salle.envoyer("{{}} empoigne fermement {}.".format(
@@ -75,7 +75,8 @@ class Gouvernail(BaseElement):
     def relacher(self, personnage):
         """Méthode demandant au personnage de relâcher le gouvernail."""
         self.tenu = None
-        personnage.cle_etat = ""
+        if "tenir_gouvernail" in personnage.etats:
+            personnage.etats.retirer("tenir_gouvernail")
         personnage << "Vous relâchez {}.".format(
                 self.nom.lower())
         personnage.salle.envoyer("{{}} relâche {}.".format(

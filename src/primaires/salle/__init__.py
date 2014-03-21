@@ -177,6 +177,16 @@ class Module(BaseModule):
         # On ajoute les niveaux
         importeur.perso.ajouter_niveau("survie", "survie")
 
+        # On ajoute de l'état
+        etat = importeur.perso.ajouter_etat("collecte_bois")
+        etat.msg_refus = "Vous êtes en train de ramasser du bois."
+        etat.msg_visible = "ramasse du bois"
+        etat.act_autorisees = ["regarder", "parler"]
+
+        etat = importeur.perso.ajouter_etat("bonhomme_neige")
+        etat.msg_refus = "Vous êtes en train de fabriquer un bonhomme de neige."
+        etat.msg_visible = "fabrique un bonhomme de neige"
+        etat.act_autorisees = ["regarder", "parler"]
 
         BaseModule.config(self)
 
@@ -250,17 +260,6 @@ class Module(BaseModule):
                 "survie", 0.55)
         importeur.perso.ajouter_talent("feu_camp", "feu de camp", "survie",
                 0.23)
-
-        # On ajoute de l'état
-        etat = importeur.perso.ajouter_etat("collecte_bois")
-        etat.msg_refus = "Vous êtes en train de ramasser du bois."
-        etat.msg_visible = "ramasse du bois"
-        etat.act_autorisees = ["regarder", "parler"]
-
-        etat = importeur.perso.ajouter_etat("bonhomme_neige")
-        etat.msg_refus = "Vous êtes en train de fabriquer un bonhomme de neige."
-        etat.msg_visible = "fabrique un bonhomme de neige"
-        etat.act_autorisees = ["regarder", "parler"]
 
         # Ajout des actions différées pour chaque tick
         intervalle = 60 / NB_TICKS

@@ -56,6 +56,12 @@ class Module(BaseModule):
     def config(self):
         """Configuration du module."""
         self.importeur.scripting.a_charger.append(self)
+
+        # Ajout de l'état
+        etat = self.importeur.perso.ajouter_etat("magie")
+        etat.msg_refus = "Vous êtes en train de lancer un sort."
+        etat.msg_visible = "se concentre ici"
+
         BaseModule.config(self)
 
     def init(self):
@@ -90,11 +96,6 @@ class Module(BaseModule):
         ajouter_talent("alteration", "altération", "magie", 0.25)
         ajouter_talent("invocation", "invocation", "magie", 0.20)
         ajouter_talent("illusion", "illusion", "magie", 0.30)
-
-        # Ajout de l'état
-        etat = self.importeur.perso.ajouter_etat("magie")
-        etat.msg_refus = "Vous êtes en train de lancer un sort."
-        etat.msg_visible = "se concentre ici"
 
         # On relie l'hook pnj:attaque
         self.importeur.hook["pnj:attaque"].ajouter_evenement(
@@ -132,5 +133,5 @@ class Module(BaseModule):
         except ExceptionAction:
             return
 
-        pnj.cle_etat = "magie"
+        pnj.etats.ajouter("magie")
         sort.concentrer(pnj, personnage, lattence_min=False)

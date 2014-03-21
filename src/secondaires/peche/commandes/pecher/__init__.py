@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,9 +33,9 @@
 from primaires.interpreteur.commande.commande import Commande
 
 class CmdPecher(Commande):
-    
+
     """Commande 'pêcher'"""
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "pêcher", "fish")
@@ -48,7 +48,7 @@ class CmdPecher(Commande):
             "ou de la salle où vous vous trouvez, vous pêcherez dans " \
             "un banc différent. Avant de commencer à pêcher, vous devez " \
             "disposer d'une canne à pêche et l'appâter (voir ...)."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande."""
         salle = personnage.salle
@@ -56,33 +56,33 @@ class CmdPecher(Commande):
         if banc is None:
             personnage << "|err|Vous ne pouvez pêcher ici.|ff|"
             return
-        
-        if personnage.cle_etat == "pecher":
-            personnage.cle_etat = ""
+
+        if "pecher" in personnage.etats:
+            personnage.etats.retirer("pecher")
             personnage << "Vous retirez votre ligne de l'eau."
             personnage.salle.envoyer("{} retire sa ligne de l'eau.",
                     personnage)
             return
-        
+
         canne = None
         for membre in personnage.equipement.membres:
             for objet in membre.equipe:
                 if objet.est_de_type("canne à pêche"):
                     canne = objet
                     break
-        
+
         if canne is None:
             personnage << "|err|Vous n'équipez pas de canne à pêche.|ff|"
             return
-        
+
         if canne.appat is None:
             personnage << "|err|{} n'est pas appâtée.|ff|".format(
                     canne.get_nom().capitalize())
             return
-        
+
         personnage.agir("pecher")
         personnage << "Vous jetez votre ligne à l'eau."
         personnage.salle.envoyer("{} jète sa ligne à l'eau.", personnage)
-        personnage.cle_etat = "pecher"
+        personnage.etats.ajouter("pecher")
         importeur.diffact.ajouter_action("peche:" + personnage.nom, 15,
                 importeur.peche.attendre_pecher, personnage, canne)
