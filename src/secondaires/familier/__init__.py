@@ -98,7 +98,9 @@ class Module(BaseModule):
         # Abonne le module à la destruction d'un PNJ
         self.importeur.hook["pnj:détruit"].ajouter_evenement(
                 self.detruire_pnj)
-
+        # Abonne le module au déplacement de personnage
+        self.importeur.hook["personnage:peut_deplacer"].ajouter_evenement(
+                self.peut_deplacer_personnage)
         BaseModule.init(self)
 
     def ajouter_commandes(self):
@@ -174,3 +176,14 @@ class Module(BaseModule):
         """Détruit le familier si nécessaire."""
         if pnj.identifiant in self.familiers:
             self.supprimer_familier(pnj.identifiant)
+
+    def peut_deplacer_personnage(self, personnage, destination, sortie):
+        """Retourne True si le personnage peut se déplacer, False sinon.
+
+        Cette méthode est utile pour ajouter la contrainte de déplacement du
+        personnage si il est à dos de familier (on ne peut pas rentrer avec
+        sa monture dans une pièce en intérieur, sauf certains cas).
+
+        """
+        return True
+

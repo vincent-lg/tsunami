@@ -464,6 +464,17 @@ class Personnage(BaseObj):
 
     def deplacer_vers(self, sortie, escalade=False, nage=False, fuite=True):
         """Déplacement vers la sortie 'sortie'"""
+        salle = self.salle
+        o_sortie = self.salle.sorties.get_sortie_par_nom(sortie)
+        salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
+
+        # Vérifie que le personnage peut se déplacer (hook)
+        retours = importeur.hook["personnage:peut_deplacer"].executer(
+                self, salle_dest, o_sortie)
+
+        if any(not r for r in retours):
+            return
+
         if self.est_en_combat():
             reussite = self.essayer_fuir()
             if reussite:
@@ -476,9 +487,6 @@ class Personnage(BaseObj):
                 self << "|err|Vous ne parvenez pas à vous enfuir !|ff|"
                 return
         self.agir("bouger")
-        salle = self.salle
-        salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
-        o_sortie = self.salle.sorties.get_sortie_par_nom(sortie)
         if o_sortie.diff_escalade and o_sortie.direction in ("haut", "bas") \
                 and not self.est_immortel() and not escalade:
             self << "|err|Vous devez escalader pour aller dans cette " \
@@ -984,24 +992,22 @@ class Personnage(BaseObj):
             "endurance": "agilite",
         }
 
-        allonge = self.etats.get("allonge")
-        assis = self.etats.get("assis")
+        # Récupère le facteur de récupération
+        facteurs = [e.get_facteur() for e in self.etats]
+        facteur = 1
+        for f in facteurs:
+            facteur *= f
+
+        if facteur > 1:
+            print("Facteur de récupération pour", self, facteur)
+
         for nom, liee in stats.items():
             stat = self.stats[nom]
             courante = stat.courante
             max = stat.max
             if courante < max:
                 courante_liee = self.stats[liee].courante
-
-                if allonge:
-                    facteur_position = 1.25
-                    facteur_position *= allonge.get_facteur()
-                elif assis:
-                    facteur_position = 1.1
-                    facteur_position *= assis.get_facteur()
-                else:
-                    facteur_position = 0.9
-                plus = int(courante_liee * facteur_position * 0.9)
+                plus = int(courante_liee * facteur * 0.9)
                 stat.courante = stat.courante + plus
 
         # Traitement des affections

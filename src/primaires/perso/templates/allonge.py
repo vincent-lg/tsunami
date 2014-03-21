@@ -62,3 +62,11 @@ class Allonge(Etat):
             msg += "sur le sol"
 
         return msg
+
+    def get_facteur(self):
+        """Retourne le facteur de récupération."""
+        facteur = 1.25
+        if self.sur:
+            facteur *= self.sur.facteur_allonger
+
+        return facteur

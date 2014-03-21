@@ -62,3 +62,11 @@ class Assis(Etat):
             msg += "sur le sol"
 
         return msg
+
+    def get_facteur(self):
+        """Retourne le facteur de récupération."""
+        facteur = 1.1
+        if self.sur:
+            facteur *= self.sur.facteur_asseoir
+
+        return facteur

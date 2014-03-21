@@ -137,6 +137,10 @@ class Module(BaseModule):
         recherche.msg_visible = "cherche quelque chose ici"
         recherche.act_autorisees = ["parler"]
 
+        # Ajout des hooks
+        importeur.hook.ajouter_hook("personnage:peut_deplacer",
+                "Hook appelé quand un personnage veut se déplacer.")
+
         BaseModule.config(self)
 
     def init(self):

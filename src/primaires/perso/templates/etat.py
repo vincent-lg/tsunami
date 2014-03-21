@@ -100,3 +100,7 @@ class Etat:
     def message_visible(self):
         """Retourne le message pour les autres."""
         return self.msg_visible
+
+    def get_facteur(self):
+        """Retourne le facteur de récupération."""
+        return 1
