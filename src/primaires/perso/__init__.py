@@ -314,7 +314,6 @@ class Module(BaseModule):
         if classe is None:
             classe = type("Etat{}".format(cle.capitalize()), (Etat, ), {})
             classe.cle = cle
-            print("Création de l'état", classe)
         if cle in self.etats:
             raise ValueError("l'état {} existe déjà".format(cle))
 

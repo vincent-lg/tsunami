@@ -60,7 +60,7 @@ class ClasseAction(Action):
             pass
         else:
             auteur.etats.ajouter("combat", vider=True)
-            cible.etats;ajouter("combat", vider=True)
+            cible.etats.ajouter("combat", vider=True)
             importeur.combat.creer_combat(auteur.salle, auteur, cible)
             auteur.envoyer("Vous attaquez {}.", cible)
             cible.envoyer("{} vous attaque.", auteur)
