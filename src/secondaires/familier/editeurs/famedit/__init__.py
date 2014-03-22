@@ -39,6 +39,7 @@ from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.scripting.editeurs.edt_script import EdtScript
 from secondaires.familier.constantes import REGIMES
 
 class EdtFamedit(Presentation):
@@ -87,3 +88,8 @@ class EdtFamedit(Presentation):
             "(entre |ent|1|ff| et |ent|100|ff|) ou |cmd|/|ff| pour " \
             "revenir à la fenêtre parente.\n\nDifficulté actuelle : " \
             "{objet.difficulte_apprivoisement}%"
+
+        # Script
+        scripts = self.ajouter_choix("scripts", "sc", EdtScript,
+                fiche.script)
+        scripts.parent = self

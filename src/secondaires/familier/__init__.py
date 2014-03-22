@@ -78,10 +78,16 @@ class Module(BaseModule):
         chevauche.act_autorisees = ["regarder", "poser", "parler", "ingerer",
                 "lancersort", "geste", "bouger", "enfourcher"]
 
+        # Ajout du niveau
+        importeur.perso.ajouter_niveau("dressage", "dressage")
+
         BaseModule.config(self)
 
     def init(self):
         """Chargement des objets du module."""
+        # Ajout des talents
+        importeur.perso.ajouter_talent("apprivoisement", "apprivoisement",
+                "dressage", 0.4)
         # On récupère les fiches de familier
         fiches = self.importeur.supenr.charger_groupe(FicheFamilier)
         for fiche in fiches:
@@ -127,6 +133,7 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.apprivoiser.CmdApprivoiser(),
             commandes.enfourcher.CmdEnfourcher(),
             commandes.familier.CmdFamilier(),
         ]
@@ -198,6 +205,10 @@ class Module(BaseModule):
         """Détruit le familier si nécessaire."""
         if pnj.identifiant in self.familiers:
             self.supprimer_familier(pnj.identifiant)
+
+    def familiers_de(self, personnage):
+        """Retourne une liste des familiers de personnage."""
+        return [f for f in self.familiers.values() if f.maitre is personnage]
 
     def peut_deplacer_personnage(self, personnage, destination, sortie,
             endurance):

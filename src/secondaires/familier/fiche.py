@@ -32,6 +32,8 @@
 
 from abstraits.obase import BaseObj
 
+from secondaires.familier.script import ScriptFiche
+
 class FicheFamilier(BaseObj):
 
     """Classe représentant une fiche de familier.
@@ -49,12 +51,15 @@ class FicheFamilier(BaseObj):
     """
 
     enregistrer = True
+    nom_scripting = "familier"
+
     def __init__(self, cle):
         """Constructeur du navire."""
         BaseObj.__init__(self)
         self.cle = cle
         self.regime = "herbivore"
         self.difficulte_apprivoisement = 10
+        self.script = ScriptFiche(self)
 
     def __getnewargs__(self):
         return ("", )

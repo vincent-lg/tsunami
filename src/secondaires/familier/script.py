@@ -28,19 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les constantes des familiers."""
+"""Fichier contenant la classe ScriptFiche détaillée plus bas."""
 
-REGIMES = [
-        "carnivore",
-        "fantôme",
-        "herbivore",
-        "insectivore",
-]
+from primaires.scripting.script import Script
 
-NOMS = (
-        "Médor",
-        "Centaurin",
-        "Éclipse",
-        "Rage",
-        "flamme",
-)
+class ScriptFiche(Script):
+
+    """Script et évènements propre aux fiches de familier."""
+
+    def init(self):
+        """Initialisation du script"""
+        # Evénement apprivoiser
+        evt_appr = self.creer_evenement("apprivoiser")
+        evt_appr_reus = evt_appr.creer_evenement("réussir")
+        evt_appr_echoue = evt_appr.creer_evenement("échoue")
+        evt_appr.aide_courte = "un personnage apprivoise le familier"
+        evt_appr_reus.aide_courte = "l'apprivoisement réussi"
+        evt_appr_echoue.aide_courte = "l'apprivoisement échoue"
+        evt_appr.aide_longue = \
+            "Cet évènement est appelé quand un personnage, joueur ou PNJ, " \
+            "apprivoise un familier. Deux sous-évènements différents " \
+            "sont appelés si il réussi ou échoue l'apprivoisement."
+        evt_appr_reus.aide_longue = \
+            "Cet évènement est appelé quand le personnage réussi à " \
+            "apprivoiser le familier."
+        evt_appr_echoue.aide_longue = \
+            "Cet évènement est appelé quand le personnage n'arrive pas à " \
+            "apprivoiser le familier."
+
+        # Configuration des variables de l'évènement apprivoiser
+        var_perso = evt_appr.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage qui apprivoise"
+        var_pnj = evt_appr.ajouter_variable("familier", "PNJ")
+        var_pnj.aide = "le familier, un PNJ"

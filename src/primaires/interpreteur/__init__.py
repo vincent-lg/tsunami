@@ -231,7 +231,7 @@ class Module(BaseModule):
         """Commande de validation"""
         str_commande = liste_vers_chaine(lst_commande)
         trouve = False
-        commandes = self.lister_commandes_pour_groupe(personnage.grp)
+        commandes = self.lister_commandes_pour_personnage(personnage)
         if personnage.langue_cmd == "francais":
             commandes.sort(key=lambda c: c.commande.nom_francais)
         elif personnage.langue_cmd == "anglais":
@@ -330,6 +330,13 @@ class Module(BaseModule):
 
         return commandes
 
+    def lister_commandes_pour_personnage(self, personnage):
+        """Liste les commandes autorisés pour le personnage."""
+        commandes = self.lister_commandes_pour_groupe(personnage.grp)
+        commandes = [c for c in commandes if c.commande.peut_executer(
+                personnage)]
+        return commandes
+
     def commande_existe(self, commande, personnage=None):
         """Retourne True si la commande existe, False sinon.
 
@@ -338,7 +345,7 @@ class Module(BaseModule):
 
         """
         if personnage:
-            commandes = self.lister_commandes_pour_groupe(personnage.grp)
+            commandes = self.lister_commandes_pour_personnage(personnage)
         else:
             commandes = self.commandes
 

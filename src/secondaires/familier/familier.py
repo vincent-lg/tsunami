@@ -30,7 +30,10 @@
 
 """Fichier contenant la classe Familier, détaillée plus bas."""
 
+from random import choice
+
 from abstraits.obase import BaseObj
+from secondaires.familier.constantes import NOMS
 
 class Familier(BaseObj):
 
@@ -97,3 +100,14 @@ class Familier(BaseObj):
     @property
     def salle(self):
         return self.pnj and self.pnj.salle or "aucune"
+
+    def trouver_nom(self):
+        """Recherche un nom qui n'a pas été déjà pris par les familiers."""
+        noms = []
+        familiers = importeur.familier.familiers_de(self.maitre)
+        noms_ex = [f.nom for f in familiers]
+        for nom in NOMS:
+            if nom not in noms_ex:
+                noms.append(nom)
+
+        self.nom = choice(noms)

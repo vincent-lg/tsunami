@@ -30,5 +30,6 @@
 
 """Package contenant les commandes du module auberge."""
 
+from secondaires.familier.commandes import apprivoiser
 from secondaires.familier.commandes import enfourcher
 from secondaires.familier.commandes import familier
