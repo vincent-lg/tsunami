@@ -143,8 +143,8 @@ class Matelot(BaseObj):
             matelot.ordres[:] = []
             return
 
-        if any(etat.cle for etat in personnage.etats not in \
-                ordre.etats_autorises):
+        etats_autorises = [etat.cle for etat in personnage.etats]
+        if any(cle not in ordre.etats_autorises for cle in etats_autorises):
             self.logger.debug(indent + "{} est occupé ({})".format(
                     personnage, personnage.etats))
             matelot.relayer_ordres()
