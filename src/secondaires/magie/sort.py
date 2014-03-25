@@ -256,7 +256,7 @@ class Sort(BaseObj):
         try:
             self.script[evenement].executer(**variables)
         except InterrompreCommande as err:
-            if "magie" in personnage.etats:
+            if "magie" in lanceur.etats:
                 lanceur.etats.retirer("magie")
 
             raise err
