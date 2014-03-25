@@ -71,6 +71,9 @@ class Module(BaseModule):
                 self.joueur_connecte)
         self.importeur.hook["joueur:erreur"].ajouter_evenement(
                 self.sauver_traceback)
+        # Abonne le module aux stats
+        self.importeur.hook["stats:infos"].ajouter_evenement(
+                self.stats_rapports)
 
         BaseModule.init(self)
 
@@ -119,3 +122,23 @@ class Module(BaseModule):
         self.traces[joueur] = (commande, trace)
         joueur.envoyer_tip("Entrez %bug% pour " \
                 "signaler ce bug aux administrateurs.")
+
+    def stats_rapports(self, infos):
+        """Ajoute les stats concernant les rapports."""
+        rapports = list(self.rapports.values())
+        ouverts = [r for r in rapports if r.ouvert]
+        dupliques = [r for r in rapports if r.statut == "dupliqué"]
+        assignes = [r for r in rapports if r.assigne_a is not None]
+
+        msg = "|tit|Rapports :|ff|"
+        msg += "\n  {} ouverts sur {} en tout".format(
+                len(ouverts), len(rapports))
+        if len(rapports) > 0:
+            msg += " ({}%)".format(int(len(ouverts) / len(rapports) * 100))
+
+        msg += "\n  {} rapports dupliqués".format(len(dupliques))
+        msg += "\n  {} rapports assignés".format(len(assignes))
+        if len(rapports) > 0:
+            msg += " ({}%)".format(int(len(assignes) / len(rapports) * 100))
+
+        infos.append(msg)
