@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -19,7 +19,7 @@
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 # ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCcleAL, SPECIAL, EXEMPLARY, OR
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
 # OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
@@ -28,56 +28,75 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le masque <chambre>."""
+"""Fichier contenant le masque <nom_familier>."""
 
+from primaires.format.fonctions import supprimer_accents
 from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
 
-class Chambre(Masque):
+class NomFamilier(Masque):
 
-    """Masque <chambre>.
+    """Masque <nom_familier>.
 
-    On attend un numéro de chambre en paramètre.
+    On attend un nom unique de familier. Quand le joueur change le nom de
+    son familier, il doit veiller à ce qu'il reste unique.
 
     """
 
-    nom = "chambre_auberge"
-    nom_complet = "numéro de chambre"
+    nom = "nom_familier"
+    nom_complet = "nom d'un familier"
+
+    def __init__(self):
+        """Constructeur du masque"""
+        Masque.__init__(self)
+        self.proprietes["nouveau"] = "False"
+        self.proprietes["salle_identique"] = "True"
 
     def init(self):
         """Initialisation des attributs"""
-        self.chambre = None
+        self.nom_familier = ""
+        self.familier = None
 
     def repartir(self, personnage, masques, commande):
         """Répartition du masque."""
-        no = liste_vers_chaine(commande).lstrip()
+        nom = liste_vers_chaine(commande)
 
-        if not no:
-            raise ErreurValidation( \
-                "Précisez un numéro de chambre.")
+        if not nom:
+            raise ErreurValidation(
+                "Précisez un nom de familier.")
 
-        no = no.split(" ")[0]
-        commande[:] = commande[len(no):]
-        self.a_interpreter = no
+        nom = nom.split(" ")[0].lower()
+        self.a_interpreter = nom
+        commande[:] = commande[len(nom):]
         masques.append(self)
         return True
 
     def valider(self, personnage, dic_masques):
         """Validation du masque"""
         Masque.valider(self, personnage, dic_masques)
-        no = self.a_interpreter
-        try:
-            auberge = importeur.auberge.get_auberge(personnage.salle)
-        except KeyError:
-            raise ErreurValidation(
-                "|err|Il n'y a pas d'auberge ici.|ff|")
+        salle = personnage.salle
+        nom = self.a_interpreter
+        t_nom = supprimer_accents(nom).lower()
+        familiers = importeur.familier.familiers_de(personnage)
+        familiers = [f for f in familiers if f.pnj]
+        if self.salle_identique:
+            familiers = [f for f in familiers if f.pnj.salle is salle]
 
-        chambre = auberge.get_chambre_avec_numero(no)
-        if chambre is None:
-            raise ErreurValidation(
-                "|err|Aucune chambre ne porte ce numéro.|ff|")
+        familier = None
+        for t_familier in familiers:
+            if supprimer_accents(t_familier.nom).lower() == t_nom:
+                familier = t_familier
+                break
 
-        self.chambre = chambre
+        if not self.nouveau and familier is None:
+            raise ErreurValidation(
+                "|err|Le familier {} ne peut être trouvé.|ff|".format(nom))
+        elif self.nouveau and familier:
+            raise ErreurValidation(
+                "|err|Le familier {} existe déjà.|ff|".format(nom))
+
+        self.nom_familier = nom
+        self.familier = familier
         return True

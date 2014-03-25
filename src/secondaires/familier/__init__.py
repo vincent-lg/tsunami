@@ -38,6 +38,7 @@ from secondaires.familier import commandes
 from secondaires.familier import editeurs
 from secondaires.familier.familier import Familier
 from secondaires.familier.fiche import FicheFamilier
+from secondaires.familier import masques
 from secondaires.familier.templates.chevauche import Chevauche
 
 class Module(BaseModule):
