@@ -42,6 +42,7 @@ from secondaires.familier.commandes.familier.emote import PrmEmote
 from secondaires.familier.commandes.familier.liste import PrmListe
 from secondaires.familier.commandes.familier.maitre import PrmMaitre
 from secondaires.familier.commandes.familier.nom import PrmNom
+from secondaires.familier.commandes.familier.renommer import PrmRenommer
 
 class CmdFamilier(Commande):
 
@@ -69,3 +70,4 @@ class CmdFamilier(Commande):
         self.ajouter_parametre(PrmListe())
         self.ajouter_parametre(PrmMaitre())
         self.ajouter_parametre(PrmNom())
+        self.ajouter_parametre(PrmRenommer())
