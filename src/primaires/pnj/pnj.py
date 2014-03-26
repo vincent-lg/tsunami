@@ -199,6 +199,12 @@ class PNJ(Personnage):
     def est_connecte(self):
         return True
 
+    def gagner_xp(self, niveau=None, xp=0, retour=True):
+        """Fait gagner de l'XP au personnage."""
+        res = Personnage.gagner_xp(self, niveau, xp, retour)
+        importeur.hook["pnj:gagner_xp"].executer(self, niveau, xp, retour)
+        return res
+
     def mourir(self, adversaire=None, recompenser=True):
         """La mort d'un PNJ signifie sa destruction."""
         self.script["meurt"]["avant"].executer(pnj=self, salle=self.salle,

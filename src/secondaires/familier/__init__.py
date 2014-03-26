@@ -137,6 +137,8 @@ class Module(BaseModule):
                 self.doit_afficher_pnj)
         self.importeur.hook["pnj:tick"].ajouter_evenement(
                 self.tick_PNJ)
+        self.importeur.hook["pnj:gagner_xp"].ajouter_evenement(
+                self.gagner_xp_PNJ)
 
         # Abonne le module au déplacement de personnage
         self.importeur.hook["personnage:peut_deplacer"].ajouter_evenement(
@@ -465,3 +467,25 @@ class Module(BaseModule):
                 salle.envoyer("{} est terrassé par le manque de nourriture.",
                         pnj)
                 pnj.mourir()
+
+    def gagner_xp_PNJ(self, pnj, niveau, xp, retour):
+        """Le PNJ gagne de l'XP."""
+        identifiant = getattr(pnj, "identifiant", "")
+        salle = pnj.salle
+        if identifiant in self.familiers:
+            familier = self.familiers[identifiant]
+            while pnj.points_entrainement != 0:
+                stats = ["force", "agilite", "robustesse", "intelligence"]
+                selections = []
+                for nom in stats:
+                    stat = pnj.stats[nom]
+                    if stat.base < stat.marge_max:
+                        selections.append(nom)
+
+                if not selections:
+                    return
+
+                stat = choice(selections)
+                self.logger.info("{} gagne en {}.".format(pnj.identifiant,
+                        stat))
+                pnj.gagner_stat(stat)

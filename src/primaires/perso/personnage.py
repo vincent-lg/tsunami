@@ -933,7 +933,6 @@ class Personnage(BaseObj):
 
         # On entraîne la stat liée
         liee = importeur.perso.cfg_stats.entrainement_liees.get(nom_stat)
-        print("liée", liee)
         if liee:
             stat_liee = self.stats[liee]
             stat_liee.courante = stat_liee.courante + stat.courante

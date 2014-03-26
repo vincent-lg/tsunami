@@ -101,6 +101,19 @@ class Familier(BaseObj):
     def salle(self):
         return self.pnj and self.pnj.salle or "aucune"
 
+    @property
+    def titre_salle(self):
+        return self.pnj and self.pnj.salle and self.pnj.salle.titre or \
+                "inconnu"
+
+    @property
+    def str_faim(self):
+        return self.aff_niveau(self.faim)
+
+    @property
+    def str_soif(self):
+        return self.aff_niveau(self.soif)
+
     def trouver_nom(self):
         """Recherche un nom qui n'a pas été déjà pris par les familiers."""
         noms = []
@@ -146,3 +159,18 @@ class Familier(BaseObj):
         return personnage not in (self.maitre, pnj) and pnj.niveau > \
                 personnage.niveau
 
+    @staticmethod
+    def aff_niveau(niveau):
+        """Affiche la faim ou soif en fonction du niveau (entre 0 et 100)."""
+        if niveau < 10:
+            return "Pas du tout"
+        elif niveau < 30:
+            return "Un peu"
+        elif niveau < 50:
+            return "Moyennement"
+        elif niveau < 70:
+            return "Plutôt"
+        elif niveau <= 90:
+            return "Énormément"
+        else:
+            return "Sur le point de dépérir"
