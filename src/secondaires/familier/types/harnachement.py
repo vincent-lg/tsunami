@@ -28,25 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les constantes des familiers."""
+"""Fichier contenant le type harnachement."""
 
-REGIMES = [
-        "carnivore",
-        "fantôme",
-        "herbivore",
-        "insectivore",
-]
+from primaires.interpreteur.editeur.selection import Selection
+from primaires.objet.types.base import BaseType
+from secondaires.familier.constantes import TYPES_HARNACHEMENT
 
-NOMS = (
-        "Médor",
-        "Centaurin",
-        "Éclipse",
-        "Rage",
-        "flamme",
-)
+class Harnachement(BaseType):
 
-# Types d'harnachement
-TYPES_HARNACHEMENT = [
-        "bride",
-        "laisse",
-]
+    """Type d'objet: harnachement."""
+
+    nom_type = "harnachement"
+
+    def __init__(self, cle=""):
+        """Constructeur de l'objet"""
+        BaseType.__init__(self, cle)
+        self.types_harnachement = []
+        self.etendre_editeur("ty", "types d'harnachement", Selection,
+                self, "types_harnachement", TYPES_HARNACHEMENT)
+
+    @property
+    def str_types_harnachement(self):
+        return ", ".join(sorted(self.types_harnachement))
+
+    def travailler_enveloppes(self, enveloppes):
+        """Travail sur les enveloppes"""
+        types = enveloppes["ty"]
+        types.apercu = "{objet.str_types_harnachement}"
+        types.prompt = "Types de harnachement : "
+        types.aide_courte = \
+            "Entrez un |ent|type de harnachement|ff| pour l'ajouter ou " \
+            "le retirer des types supportés\nou |cmd|/|ff| pour revenir " \
+            "à la fenêtre parente.\n\nTypes possibles : " + \
+            ", ".join(TYPES_HARNACHEMENT) + "\nTypes actuels : " \
+            "{objet.str_types_harnachement}"

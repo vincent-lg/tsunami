@@ -33,6 +33,7 @@
 from random import choice
 
 from abstraits.obase import BaseObj
+from primaires.perso.exceptions.action import ExceptionAction
 from secondaires.familier.constantes import NOMS
 
 class Familier(BaseObj):
@@ -174,3 +175,17 @@ class Familier(BaseObj):
             return "Énormément"
         else:
             return "Sur le point de dépérir"
+
+    def attaquer(self, cible):
+        """Attaque un personnage."""
+        auteur = self.pnj
+        try:
+            auteur.agir("tuer")
+        except ExceptionAction:
+            pass
+        else:
+            auteur.etats.ajouter("combat", vider=True)
+            cible.etats.ajouter("combat", vider=True)
+            importeur.combat.creer_combat(auteur.salle, auteur, cible)
+            auteur.envoyer("Vous attaquez {}.", cible)
+            cible.envoyer("{} vous attaque.", auteur)

@@ -18,7 +18,7 @@
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT master OR CONTRIBUTORS BE
 # LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
 # OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -28,25 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les constantes des familiers."""
+"""Fichier contenant le paramètre 'tuer' de la commande 'familier'."""
 
-REGIMES = [
-        "carnivore",
-        "fantôme",
-        "herbivore",
-        "insectivore",
-]
+from primaires.interpreteur.masque.parametre import Parametre
 
-NOMS = (
-        "Médor",
-        "Centaurin",
-        "Éclipse",
-        "Rage",
-        "flamme",
-)
+class PrmTuer(Parametre):
 
-# Types d'harnachement
-TYPES_HARNACHEMENT = [
-        "bride",
-        "laisse",
-]
+    """Commande 'familier tuer'."""
+
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "tuer", "kill")
+        self.schema = "<nom_familier> <personnage_present>"
+        self.aide_courte = "ordonne au familier d'attaquer"
+        self.aide_longue = \
+            "Cette commande permet d'ordonner à un familier d'attaquer " \
+            "un personnage présent dans la salle où vous vous trouvez. " \
+            "Le familier ne voudra pas attaquer son propre maître."
+
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        # On récupère le familier
+        familier = dic_masques["nom_familier"].familier
+        cible = dic_masques["personnage_present"].personnage
+        pnj = familier.pnj
+        if cible is personnage:
+            personnage.envoyer("|err|{} refuse de vous attaquer.", pnj)
+            return
+
+        if cible is pnj:
+            personnage.envoyer("{} ne peut s'attaquer lui-même !", pnj)
+            return
+
+        personnage.envoyer("Vous donnez un ordre à {}", pnj)
+        familier.attaquer(cible)

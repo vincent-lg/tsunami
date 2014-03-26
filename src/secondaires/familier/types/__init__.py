@@ -28,25 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les constantes des familiers."""
+"""Package contenant les types d'objets propres aux familiers."""
 
-REGIMES = [
-        "carnivore",
-        "fantôme",
-        "herbivore",
-        "insectivore",
-]
-
-NOMS = (
-        "Médor",
-        "Centaurin",
-        "Éclipse",
-        "Rage",
-        "flamme",
-)
-
-# Types d'harnachement
-TYPES_HARNACHEMENT = [
-        "bride",
-        "laisse",
-]
+from secondaires.familier.types.harnachement import *

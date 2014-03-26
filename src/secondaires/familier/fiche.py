@@ -59,6 +59,7 @@ class FicheFamilier(BaseObj):
         self.cle = cle
         self.regime = "herbivore"
         self.difficulte_apprivoisement = 10
+        self.harnachements = []
         self.script = ScriptFiche(self)
 
     def __getnewargs__(self):
@@ -87,3 +88,7 @@ class FicheFamilier(BaseObj):
         familiers = list(importeur.familier.familiers.values())
         familiers = [f for f in familiers if f.cle == self.cle]
         return familiers
+
+    @property
+    def str_harnachements(self):
+        return ", ".join(sorted(self.harnachements))

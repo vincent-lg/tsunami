@@ -38,9 +38,10 @@ seront placées dans ce package
 from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.selection import Selection
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.scripting.editeurs.edt_script import EdtScript
-from secondaires.familier.constantes import REGIMES
+from secondaires.familier.constantes import *
 
 class EdtFamedit(Presentation):
 
@@ -75,6 +76,19 @@ class EdtFamedit(Presentation):
             "à la fenêtre parente.\n\nRégimes disponibles : {}.\n\n" \
             "Régime actuel : |bc|{{objet.regime}}|ff|".format(
             ", ".join(REGIMES))
+
+        # Harnachements supportés
+        harnachements = self.ajouter_choix("harnachement supportés", "h",
+                Selection, fiche, "harnachements", TYPES_HARNACHEMENT)
+        harnachements.parent = self
+        harnachements.prompt = "Harnachements supportés : "
+        harnachements.apercu = "{objet.str_harnachements}"
+        harnachements.aide_courte = \
+            "Entrez un |ent|harnachement supporté|ff| pour l'ajouter " \
+            "ou le retirer\nou |cmd|/|ff| pour revenir à la fenêtre " \
+            "parente.\n\nHarnachements possibles : " + \
+            ", ".join(sorted(TYPES_HARNACHEMENT)) + "\nHarnachements " \
+            "supportés actuellement : {objet.str_harnachements}"
 
         # Difficulté d'apprivoisement
         difficulte = self.ajouter_choix("difficulté d'apprivoisement", "d",

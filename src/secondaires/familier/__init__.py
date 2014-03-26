@@ -34,7 +34,6 @@ from random import choice
 
 from abstraits.module import *
 from primaires.format.fonctions import format_nb
-from primaires.perso.exceptions.action import ExceptionAction
 from primaires.salle.salle import FLAGS as FLAGS_SALLE
 from secondaires.familier import cherchables
 from secondaires.familier import commandes
@@ -43,6 +42,7 @@ from secondaires.familier.familier import Familier
 from secondaires.familier.fiche import FicheFamilier
 from secondaires.familier import masques
 from secondaires.familier.templates.chevauche import Chevauche
+from secondaires.familier import types
 
 class Module(BaseModule):
 
@@ -230,7 +230,7 @@ class Module(BaseModule):
         if "chasse" in pnj.etats and pnj.identifiant in self.familiers:
             familier = self.familiers[pnj.identifiant]
             if familier.peut_attaquer(personnage):
-                self.attaquer_PNJ(pnj, personnage)
+                familier.attaquer(personnage)
 
     def meurt_PNJ(self, pnj, adversaire):
         """PNJ meurt, tué par personnage.
@@ -410,21 +410,8 @@ class Module(BaseModule):
         # On analyse le nouvel environnement
         for personnage in pnj.salle.personnages:
             if familier.peut_attaquer(personnage):
-                self.attaquer_PNJ(pnj, personnage)
+                familier.attaquer(personnage)
                 return
-
-    def attaquer_PNJ(self, auteur, cible):
-        """Attaque un personnage."""
-        try:
-            auteur.agir("tuer")
-        except ExceptionAction:
-            pass
-        else:
-            auteur.etats.ajouter("combat", vider=True)
-            cible.etats.ajouter("combat", vider=True)
-            importeur.combat.creer_combat(auteur.salle, auteur, cible)
-            auteur.envoyer("Vous attaquez {}.", cible)
-            cible.envoyer("{} vous attaque.", auteur)
 
     def faire_brouter(self, familier):
         """Fait brouter un familier herbivore."""
