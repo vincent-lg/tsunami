@@ -80,6 +80,8 @@ class Module(BaseModule):
                 "Hook appelé pour changer le nom d'un PNJ")
         importeur.hook.ajouter_hook("pnj:doit_afficher",
                 "Hook appelé quand on regarde la salle.")
+        importeur.hook.ajouter_hook("pnj:tick",
+                "Hook appelé quand le PNJ se tick")
 
         # Ajout des états
         depece = importeur.perso.ajouter_etat("depece")

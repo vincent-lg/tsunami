@@ -75,6 +75,8 @@ class CherchableFamilier(Cherchable):
             "cle": "cle",
             "maitre": "nom_maitre",
             "salle": "salle",
+            "faim": "faim",
+            "soif": "soif",
         }
 
     def colonnes_par_defaut(self):

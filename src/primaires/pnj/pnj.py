@@ -206,11 +206,11 @@ class PNJ(Personnage):
         Personnage.mourir(self, adversaire=adversaire, recompenser=recompenser)
         self.script["meurt"]["apres"].executer(pnj=self, salle=self.salle,
                 adversaire=adversaire)
-        importeur.hook["pnj:meurt"].executer(self, adversaire)
         cadavre = importeur.objet.creer_objet(importeur.objet.prototypes[
                 "cadavre"])
         cadavre.pnj = self.prototype
         self.salle.objets_sol.ajouter(cadavre)
+        importeur.hook["pnj:meurt"].executer(self, adversaire)
 
         # Gain d'XP
         if adversaire and self.gain_xp and recompenser:
@@ -235,6 +235,7 @@ class PNJ(Personnage):
         """Méthode appelée à chaque tick."""
         Personnage.tick(self)
         self.script["tick"].executer(pnj=self)
+        importeur.hook["pnj:tick"].executer(self)
 
     def regarder(self, personnage):
         """personnage regarde self."""

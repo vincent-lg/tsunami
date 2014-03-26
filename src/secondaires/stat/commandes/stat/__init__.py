@@ -98,6 +98,8 @@ class CmdStat(Commande):
 
         ## Mémoire
         nb_jo = len(imp.connex.joueurs)
+        nb_jo_pr = len(importeur.joueur.get_joueurs_presents(
+                60 * 60 * 24 * 7))
         nb_com = len(imp.connex.comptes)
         nb_ob = len(imp.objet.objets)
         nb_pro = len(imp.objet.prototypes)
@@ -105,6 +107,8 @@ class CmdStat(Commande):
         msg = "\n|tit|En mémoire :|ff|"
         msg += "\n  {} joueur{} issus de {} compte{}".format(nb_jo,
                 nb_jo > 1 and "s" or "", nb_com, nb_com > 1 and "s" or "")
+        msg += "\n  {} joueur{s} différent{s} présent{s} dans la " \
+                "semaine".format(nb_jo_pr, s="s" if nb_jo_pr > 1 else "")
         msg += "\n  {} salle{}".format(nb_sa, nb_sa > 1 and "s" or "")
         msg += "\n  {} objet{} issus de {} prototype{}".format(nb_ob,
                 nb_ob > 1 and "s" or "", nb_pro, nb_pro > 1 and "s" or "")

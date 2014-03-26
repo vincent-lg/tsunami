@@ -111,3 +111,38 @@ class Familier(BaseObj):
                 noms.append(nom)
 
         self.nom = choice(noms)
+
+    def diminuer_faim(self, modifieur):
+        """Diminue la faim du familier."""
+        self.faim = round(self.faim - modifieur, 2)
+
+        if self.faim < 0:
+            self.faim = 0
+
+    def diminuer_soif(self, modifieur):
+        """Diminue la soif du PNJ."""
+        self.soif = round(self.soif - modifieur, 2)
+
+        if self.soif < 0:
+            self.soif = 0
+
+    def augmenter_faim(self, modifieur):
+        """Augmente la faim du PNJ."""
+        self.faim = round(self.soif + modifieur, 2)
+
+        if self.faim > 100:
+            self.faim = 100
+
+    def augmenter_soif(self, modifieur):
+        """Augmente la soif du familier."""
+        self.soif = round(self.soif + modifieur, 2)
+
+        if self.soif > 100:
+            self.soif = 100
+
+    def peut_attaquer(self, personnage):
+        """Retourne True si le familier pense pouvoir attaquer la cible."""
+        pnj = self.pnj
+        return personnage not in (self.maitre, pnj) and pnj.niveau > \
+                personnage.niveau
+

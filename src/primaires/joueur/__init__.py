@@ -30,6 +30,8 @@
 
 """Fichier contenant le module primaire joueur."""
 
+from datetime import datetime
+
 from abstraits.module import *
 from primaires.joueur import commandes
 from primaires.joueur import masques
@@ -187,3 +189,15 @@ class Module(BaseModule):
                 60, self.tick, no)
         for joueur in self.ticks[no]:
             joueur.tick()
+
+    def get_joueurs_presents(self, depuis):
+        """Retourne les joueurs qui se sont connectés depuis le temps indqué.
+
+        Le temps (depuis) est donné en secondes.
+
+        """
+        joueurs = [j for j in self.joueurs.values()]
+        mtn = datetime.now()
+        joueurs = [j for j in joueurs if j.derniere_connexion and (mtn - \
+                j.derniere_connexion).total_seconds() <= depuis]
+        return joueurs

@@ -30,8 +30,11 @@
 
 """Fichier contenant le module secondaire familier."""
 
+from random import choice
+
 from abstraits.module import *
 from primaires.format.fonctions import format_nb
+from primaires.perso.exceptions.action import ExceptionAction
 from primaires.salle.salle import FLAGS as FLAGS_SALLE
 from secondaires.familier import cherchables
 from secondaires.familier import commandes
@@ -79,6 +82,18 @@ class Module(BaseModule):
         chevauche.act_autorisees = ["regarder", "poser", "parler", "ingerer",
                 "lancersort", "geste", "bouger", "enfourcher"]
 
+        broute = self.importeur.perso.ajouter_etat("broute")
+        broute.msg_refus = "Vous broutez de l'herbe..."
+        broute.msg_visible = "broute l'herbe ici"
+        broute.act_autorisees = ["regarder", "parler", "ingerer",
+                "lancersort", "geste", "bouger"]
+
+        chasse = self.importeur.perso.ajouter_etat("chasse")
+        chasse.msg_refus = "Vous êtes en train de chasser."
+        chasse.msg_visible = "chasse furtivement ici"
+        chasse.act_autorisees = ["regarder", "parler", "ingerer",
+                "lancersort", "geste", "bouger", "tuer"]
+
         # Ajout du niveau
         importeur.perso.ajouter_niveau("dressage", "dressage")
 
@@ -110,12 +125,18 @@ class Module(BaseModule):
                 "Familiers et montures"
 
         # Abonne le module à plusieurs hooks PNJ
+        self.importeur.hook["pnj:arrive"].ajouter_evenement(
+                self.arrive_PNJ)
+        self.importeur.hook["pnj:meurt"].ajouter_evenement(
+                self.meurt_PNJ)
         self.importeur.hook["pnj:détruit"].ajouter_evenement(
                 self.detruire_pnj)
         self.importeur.hook["pnj:nom"].ajouter_evenement(
                 self.get_nom_familier)
         self.importeur.hook["pnj:doit_afficher"].ajouter_evenement(
                 self.doit_afficher_pnj)
+        self.importeur.hook["pnj:tick"].ajouter_evenement(
+                self.tick_PNJ)
 
         # Abonne le module au déplacement de personnage
         self.importeur.hook["personnage:peut_deplacer"].ajouter_evenement(
@@ -201,6 +222,42 @@ class Module(BaseModule):
                     repr(identifiant)))
 
         self.familiers.pop(identifiant).detruire()
+
+    def arrive_PNJ(self, pnj, personnage):
+        """Quand personnage arrive dans la salle de pnj."""
+        if "chasse" in pnj.etats and pnj.identifiant in self.familiers:
+            familier = self.familiers[pnj.identifiant]
+            if familier.peut_attaquer(personnage):
+                self.attaquer_PNJ(pnj, personnage)
+
+    def meurt_PNJ(self, pnj, adversaire):
+        """PNJ meurt, tué par personnage.
+
+        Si personnage est un familier carnivore, le nourit.
+
+        """
+        identifiant = getattr(adversaire, "identifiant", "")
+        salle = pnj.salle
+        if identifiant in self.familiers:
+            familier = self.familiers[identifiant]
+            fiche = familier.fiche
+            if fiche.regime == "carnivore":
+                # Cherche le cadavre
+                cadavres = [o for o in salle.objets_sol if \
+                        o.est_de_type("cadavre") and o.pnj is pnj.prototype]
+                if len(cadavres) == 0:
+                    self.logger.warning("Le familier {} ne peut trouver " \
+                            "le cadavre de {}.".format(familier.identifiant,
+                            pnj.identifiant))
+                    return
+
+                cadavre = cadavres[0]
+                salle.envoyer("{{}} dévore promptement {}.".format(
+                        cadavre.get_nom()), adversaire)
+                familier.diminuer_faim(pnj.niveau / 3)
+                familier.diminuer_soif(pnj.niveau / 3)
+                salle.objets_sol.retirer(cadavre)
+                importeur.objet.supprimer_objet(cadavre.identifiant)
 
     def detruire_pnj(self, pnj):
         """Détruit le familier si nécessaire."""
@@ -290,3 +347,121 @@ class Module(BaseModule):
             return False
 
         return True
+    def tick_PNJ(self, pnj):
+        """Si le PNJ est un familier, lui donne faim et soif.
+
+        Si le familier est en train de brouter l'herbe ou de chasser,
+        il le fait bouger également.
+        Sinon, le familier va peut-être se mettre à chasser ou à brouter de
+        sa propre initiative.
+
+        """
+        identifiant = getattr(pnj, "identifiant", "")
+        if identifiant in self.familiers:
+            familier = self.familiers[identifiant]
+            fiche = familier.fiche
+            if "chasse" in pnj.etats:
+                self.faire_chasser(familier)
+            elif "broute" in pnj.etats:
+                self.faire_brouter(familier)
+            elif familier.maitre is None or not \
+                    familier.maitre.est_connecte():
+                if fiche.regime == "carnivore":
+                    pnj.etats.ajouter("chasse")
+                elif fiche.regime == "herbivore":
+                    pnj.etats.ajouter("broute")
+
+            if fiche.regime in ("herbivore", "carnivore"):
+                self.donner_faim_soif(familier)
+
+    def faire_chasser(self, familier):
+        """Fait chasser le familier."""
+        pnj = familier.pnj
+        salle = pnj.salle
+
+        if "combat" in pnj.etats:
+            return
+
+        # On cherche les sorties possible de déplacement
+        preferes = []
+        sorties = []
+        for sortie in salle.sorties:
+            if sortie.direction not in ("bas", "haut") and \
+                    sortie.salle_dest and sortie.salle_dest.nom_terrain == \
+                    salle.nom_terrain and not sortie.salle_dest.interieur:
+                sorties.append(sortie)
+
+                for personnage in sortie.salle_dest.personnages:
+                    if familier.peut_attaquer(personnage):
+                        preferes.append(sortie)
+                        break
+
+        if preferes:
+            sortie = choice(preferes)
+        elif sorties:
+            sortie = choice(sorties)
+        else:
+            return
+
+        pnj.deplacer_vers(sortie.nom)
+
+        # On analyse le nouvel environnement
+        for personnage in pnj.salle.personnages:
+            if familier.peut_attaquer(personnage):
+                self.attaquer_PNJ(pnj, personnage)
+                return
+
+    def attaquer_PNJ(self, auteur, cible):
+        """Attaque un personnage."""
+        try:
+            auteur.agir("tuer")
+        except ExceptionAction:
+            pass
+        else:
+            auteur.etats.ajouter("combat", vider=True)
+            cible.etats.ajouter("combat", vider=True)
+            importeur.combat.creer_combat(auteur.salle, auteur, cible)
+            auteur.envoyer("Vous attaquez {}.", cible)
+            cible.envoyer("{} vous attaque.", auteur)
+
+    def faire_brouter(self, familier):
+        """Fait brouter un familier herbivore."""
+        pnj = familier.pnj
+        salle = pnj.salle
+
+        if "combat" in pnj.etats:
+            return
+
+        # On cherche les sorties possible de déplacement
+        sorties = []
+        for sortie in salle.sorties:
+            if sortie.direction not in ("bas", "haut") and \
+                    sortie.salle_dest and sortie.salle_dest.nom_terrain in \
+                    ("rive", "plaine") and not sortie.salle_dest.interieur:
+                sorties.append(sortie)
+
+        if sorties:
+            sortie = choice(sorties)
+        else:
+            return
+
+        pnj.deplacer_vers(sortie.nom)
+        familier.diminuer_faim(1)
+        familier.diminuer_soif(1)
+
+    def donner_faim_soif(self, familier):
+        """Donne faim et soif au familier."""
+        pnj = familier.pnj
+        salle = pnj.salle
+        if not salle.a_flag("écurie"):
+            familier.augmenter_faim(0.07)
+            familier.augmenter_soif(0.12)
+            if familier.faim > 100 or familier.soif > 100:
+                pnj = familier.pnj
+                if pnj is None:
+                    return
+
+                salle = pnj.salle
+                salle.envoyer("{} est terrassé par le manque de nourriture.",
+                        pnj)
+                pnj.mourir()
