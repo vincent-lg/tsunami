@@ -44,9 +44,11 @@ from secondaires.familier.commandes.familier.emote import PrmEmote
 from secondaires.familier.commandes.familier.harnacher import PrmHarnacher
 from secondaires.familier.commandes.familier.liste import PrmListe
 from secondaires.familier.commandes.familier.maitre import PrmMaitre
+from secondaires.familier.commandes.familier.mener import PrmMener
 from secondaires.familier.commandes.familier.miens import PrmMiens
 from secondaires.familier.commandes.familier.niveaux import PrmNiveaux
 from secondaires.familier.commandes.familier.nom import PrmNom
+from secondaires.familier.commandes.familier.relacher import PrmRelacher
 from secondaires.familier.commandes.familier.renommer import PrmRenommer
 from secondaires.familier.commandes.familier.score import PrmScore
 from secondaires.familier.commandes.familier.tuer import PrmTuer
@@ -79,9 +81,11 @@ class CmdFamilier(Commande):
         self.ajouter_parametre(PrmHarnacher())
         self.ajouter_parametre(PrmListe())
         self.ajouter_parametre(PrmMaitre())
+        self.ajouter_parametre(PrmMener())
         self.ajouter_parametre(PrmMiens())
         self.ajouter_parametre(PrmNiveaux())
         self.ajouter_parametre(PrmNom())
+        self.ajouter_parametre(PrmRelacher())
         self.ajouter_parametre(PrmRenommer())
         self.ajouter_parametre(PrmScore())
         self.ajouter_parametre(PrmTuer())

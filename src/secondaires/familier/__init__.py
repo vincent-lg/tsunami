@@ -42,6 +42,8 @@ from secondaires.familier.familier import Familier
 from secondaires.familier.fiche import FicheFamilier
 from secondaires.familier import masques
 from secondaires.familier.templates.chevauche import Chevauche
+from secondaires.familier.templates.guide import Guide
+from secondaires.familier.templates.guide_par import GuidePar
 from secondaires.familier import types
 
 class Module(BaseModule):
@@ -93,6 +95,9 @@ class Module(BaseModule):
         chasse.msg_visible = "chasse furtivement ici"
         chasse.act_autorisees = ["regarder", "parler", "ingerer",
                 "lancersort", "geste", "bouger", "tuer"]
+
+        self.importeur.perso.ajouter_etat("guide", Guide)
+        self.importeur.perso.ajouter_etat("guide_par", GuidePar)
 
         # Ajout du niveau
         importeur.perso.ajouter_niveau("dressage", "dressage")
@@ -264,6 +269,11 @@ class Module(BaseModule):
     def detruire_pnj(self, pnj):
         """Détruit le familier si nécessaire."""
         if pnj.identifiant in self.familiers:
+            familier = self.familiers[pnj.identifiant]
+            if "guide_par" in pnj.etats and familier.maitre:
+                personnage = familier.maitre
+                personnage.etats.retirer("guide")
+
             self.supprimer_familier(pnj.identifiant)
 
     def familiers_de(self, personnage):
@@ -279,23 +289,29 @@ class Module(BaseModule):
         sa monture dans une pièce en intérieur, sauf certains cas).
 
         """
+        familier = None
         if "chevauche" in personnage.etats:
             etat = personnage.etats.get("chevauche")
-            monture = etat.monture
-            pnj = monture.pnj
-            if monture and monture.pnj:
+            familier = etat.monture
+        elif "guide" in personnage.etats:
+            etat = personnage.etats.get("guide")
+            familier = etat.familier
+
+        if familier:
+            pnj = familier.pnj
+            if pnj:
                 if destination.interieur and not (destination.a_flag(
                         "écurie") or destination.a_flag("peut chevaucher")):
                     personnage.envoyer("|err|{} ne peut aller là.|ff|",
-                            monture.pnj)
+                            pnj)
                     return False
                 elif sortie.direction in ("haut", "bas"):
                     personnage.envoyer("|err|{} ne peut aller là.|ff|",
-                            monture.pnj)
+                            pnj)
                     return False
                 elif endurance > pnj.stats.endurance:
                     personnage.envoyer("|err|{} est trop fatigué.|ff|", pnj)
-                    return
+                    return False
 
         return True
 
@@ -310,10 +326,16 @@ class Module(BaseModule):
 
     def deplacer_personnage(self, personnage, destination, sortie, endurance):
         """Déplace aussi la monture."""
+        familier = None
         if "chevauche" in personnage.etats:
             etat = personnage.etats.get("chevauche")
-            monture = etat.monture
-            pnj = monture.pnj
+            familier = etat.monture
+        elif "guide" in personnage.etats:
+            etat = personnage.etats.get("guide")
+            familier = etat.familier
+
+        if familier:
+            pnj = familier.pnj
             if pnj:
                 pnj.stats.endurance -= endurance
                 pnj.salle = destination
@@ -326,6 +348,12 @@ class Module(BaseModule):
             pnj = monture.pnj
             if pnj:
                 return "chevauche vers"
+        elif "guide" in personnage.etats:
+            etat = personnage.etats.get("guide")
+            familier = etat.familier
+            pnj = familier.pnj
+            if pnj:
+                return "mène " + pnj.nom_singulier + " vers"
 
     def get_verbe_arriver(self, personnage, destination):
         """Retourne le verbe d'arriver."""
@@ -335,6 +363,12 @@ class Module(BaseModule):
             pnj = monture.pnj
             if pnj:
                 return "arrive, chevauchant " + pnj.nom_singulier
+        elif "guide" in personnage.etats:
+            etat = personnage.etats.get("guide")
+            familier = etat.familier
+            pnj = familier.pnj
+            if pnj:
+                return "arrive, menant " + pnj.nom_singulier
 
     def get_nom_familier(self, pnj, personnage):
         """Retourne le nom du familier si personnage est son maître."""
@@ -347,8 +381,11 @@ class Module(BaseModule):
         familier = self.familiers.get(pnj.identifiant)
         if familier and familier.chevauche_par:
             return False
+        if "guide_par" in pnj.etats:
+            return False
 
         return True
+
     def tick_PNJ(self, pnj):
         """Si le PNJ est un familier, lui donne faim et soif.
 
@@ -368,7 +405,9 @@ class Module(BaseModule):
                 self.faire_brouter(familier)
             elif familier.maitre is None or not \
                     familier.maitre.est_connecte():
-                if fiche.regime == "carnivore":
+                if pnj.etats:
+                    pass
+                elif fiche.regime == "carnivore":
                     pnj.etats.ajouter("chasse")
                 elif fiche.regime == "herbivore":
                     pnj.etats.ajouter("broute")

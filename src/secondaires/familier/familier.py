@@ -176,6 +176,25 @@ class Familier(BaseObj):
         else:
             return "Sur le point de dépérir"
 
+    def get_harnachement(self, *harnachements):
+        """Retourne l'objet si le familier équipe un harnachement spécifique.
+
+        Le harnachement précisé est un type de harnachement (par exemple
+        "bride"). On peut préciser plusieurs types de harnachement, dans
+        ce cas retourne le premier objet qui a au moins un des types actifs.
+
+        """
+        if self.pnj is None:
+            return None
+
+        for objet in self.pnj.equipement.equipes:
+            if objet.est_de_type("harnachement"):
+                actifs = objet.types_harnachement
+                if any(nom in actifs for nom in harnachements):
+                    return objet
+
+        return None
+
     def attaquer(self, cible):
         """Attaque un personnage."""
         auteur = self.pnj
