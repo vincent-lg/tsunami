@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,72 +28,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction hasard."""
-
-from random import random, choice
+"""Fichier contenant la fonction nom_objet."""
 
 from primaires.scripting.fonction import Fonction
 from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
 
-    """Retourne vrai ou faux aléatoirement.
-
-    Cette fonction peut être utilisée associée à une condition."""
+    """Retourne le nom singulier ou pluriel d'un objet."""
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.hasard, "Fraction")
-        cls.ajouter_types(cls.choix_chaine, "str")
-        cls.ajouter_types(cls.choix_liste, "list")
+        cls.ajouter_types(cls.nom_objet, "str", "Fraction")
 
     @staticmethod
-    def hasard(probabilite):
-        """Retourne vrai ou faux en fonction de la probabilité.
-
-        La probabilité entrée doit être un entier entre 1 et 100.
-        Un test avec une probabilité de 100 sera toujours vrai.
-        Un test avec une probabilité de 50 aura 1/2 chances d'être vrai.
-        Un test avec une probabilité de 0 sera toujours faux.
-
-        """
-        probabilite /= 100
-        probabilite = float(probabilite)
-        chance = random()
-        return chance < probabilite
-
-    @staticmethod
-    def choix_chaine(chaine):
-        """Choisit un des éléments de la chaîne séparé par |.
-
-        La chaîne est sous la forme de plusieurs éléments séparés
-        par |. Par exemple:
-
-            cle = choisir("branche|tronc|racine|tige")
-
-        Dans la variable 'cle' se trouvera soit "branche", soit
-        "tronc", soit "racine", soit "tige".
-
-        """
-        if not chaine:
-            raise ErreurExecution("la chaîne précisée est vide")
-
-        chaines = chaine.split("_b_")
-        return choice(chaines)
-
-    @staticmethod
-    def choix_liste(liste):
-        """Retourne un élément aléatoire d'une liste.
+    def nom_objet(cle_prototype, nombre):
+        """Retourne le nom singulier ou pluriel de l'objet précisé.
 
         Paramètres :
 
-          * liste : la liste dans laquelle l'élément sera sélectionné.
+          * cle_prototype : la clé du prototype d'objet, sous la forme d'une chaîne
+          * nombre : la quantité de l'objet
 
         Exemple d'utilisation :
 
-          liste = liste("chat", "chien", "renard", "poule")
-          element = hasard(liste)
-          # element contiendra peut-être "chien"
+          nom = nom_objet("carotte_crue", 8)
+          # nom devrait contenir quelque chose comme "8 carottes crues"
 
         """
-        return choice(liste)
+        try:
+            prototype = importeur.objet.prototypes[cle_prototype]
+        except KeyError:
+            raise ErreurExecution("prototype d'objet introuvable : {}".format(
+                    repr(cle_prototype)))
+
+        return prototype.get_nom(int(nombre))
