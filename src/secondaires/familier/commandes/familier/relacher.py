@@ -44,7 +44,7 @@ class PrmRelacher(Parametre):
         self.aide_courte = "relâche un familier"
         self.aide_longue = \
             "Cette commande permet de laisser aller un familier que " \
-            "l'on tenait auparavant (%familier% %familier:mener). Vous " \
+            "l'on tenait auparavant (%familier% %familier:mener%). Vous " \
             "devez précisez en paramètre le nom du familier dont vous " \
             "voulez lâcher la bride ou corde."
 
