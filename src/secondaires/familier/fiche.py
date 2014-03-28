@@ -52,14 +52,17 @@ class FicheFamilier(BaseObj):
 
     enregistrer = True
     nom_scripting = "familier"
+    type_achat = "familier"
 
     def __init__(self, cle):
-        """Constructeur du navire."""
+        """Constructeur de la fiche."""
         BaseObj.__init__(self)
         self.cle = cle
         self.regime = "herbivore"
+        self.monture = False
         self.difficulte_apprivoisement = 10
         self.harnachements = []
+        self.m_valeur = 50
         self.script = ScriptFiche(self)
 
     def __getnewargs__(self):
@@ -92,3 +95,44 @@ class FicheFamilier(BaseObj):
     @property
     def str_harnachements(self):
         return ", ".join(sorted(self.harnachements))
+
+    @property
+    def nom_achat(self):
+        return self.prototype and self.prototype.nom_singulier or "inconnu"
+
+    @property
+    def nom_singulier(self):
+        return self.prototype and self.prototype.nom_singulier or "inconnu"
+
+    @property
+    def nom_pluriel(self):
+        return self.prototype and self.prototype.nom_pluriel or "inconnus"
+
+    def get_nom(self, nombre=1):
+        """Retourne le nom complet en fonction du nombre."""
+        if nombre == 0:
+            raise ValueError("Nombre invalide")
+        elif nombre == 1:
+            return self.nom_singulier
+        else:
+            return str(nombre) + " " + self.nom_pluriel
+
+    def acheter(self, quantite, magasin, transaction):
+        """Achète les familiers dans la quantité spécifiée."""
+        salle = magasin.parent
+        acheteur = transaction.initiateur
+        i = 0
+        while i < quantite:
+            i += 1
+            pnj = importeur.pnj.creer_PNJ(self.prototype)
+            pnj.salle = salle
+            familier = importeur.familier.creer_familier(pnj)
+            familier.maitre = acheteur
+            familier.trouver_nom()
+            salle.envoyer("{} arrive.", pnj)
+
+    def regarder(self, personnage):
+        """Le personnage regarde le familier avant achat."""
+        desc = self.prototype.description.regarder(personnage,
+                elt=self.prototype)
+        return desc

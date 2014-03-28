@@ -36,6 +36,7 @@ seront placées dans ce package
 """
 
 from primaires.interpreteur.editeur.choix import Choix
+from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.selection import Selection
@@ -90,6 +91,11 @@ class EdtFamedit(Presentation):
             ", ".join(sorted(TYPES_HARNACHEMENT)) + "\nHarnachements " \
             "supportés actuellement : {objet.str_harnachements}"
 
+        # Monture
+        monture = self.ajouter_choix("peut être monté", "m", Flag, fiche,
+                "monture")
+        monture.parent = self
+
         # Difficulté d'apprivoisement
         difficulte = self.ajouter_choix("difficulté d'apprivoisement", "d",
                 Entier, fiche, "difficulte_apprivoisement")
@@ -102,6 +108,17 @@ class EdtFamedit(Presentation):
             "(entre |ent|1|ff| et |ent|100|ff|) ou |cmd|/|ff| pour " \
             "revenir à la fenêtre parente.\n\nDifficulté actuelle : " \
             "{objet.difficulte_apprivoisement}%"
+
+        # Prix unitaire
+        prix = self.ajouter_choix("prix unitaire", "u",
+                Entier, fiche, "m_valeur")
+        prix.parent = self
+        prix.apercu = "{objet.m_valeur} pièces de bronze"
+        prix.prompt = "Entrez le prix unitaire du familier : "
+        prix.aide_courte = \
+            "Entrez |ent|le prix unitaire|ff| du familier" \
+            "ou |cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
+            "Prix unitaire actuel : {objet.m_valeur}"
 
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,

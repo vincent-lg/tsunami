@@ -88,6 +88,10 @@ class CmdEnfourcher(Commande):
             personnage.envoyer("|err|{} ne vous appartient pas.|ff|", pnj)
             return
 
+        if not familier.fiche.monture:
+            personnage.envoyer("|err|{} n'est pas une monture.|ff|", pnj)
+            return
+
         if familier.chevauche_par:
             personnage << "|err|Il y a déjà quelqu'un en croupe.|ff|"
             return

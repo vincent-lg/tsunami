@@ -124,7 +124,8 @@ class Familier(BaseObj):
             if nom not in noms_ex:
                 noms.append(nom)
 
-        self.nom = choice(noms)
+        if noms:
+            self.nom = choice(noms)
 
     def diminuer_faim(self, modifieur):
         """Diminue la faim du familier."""

@@ -42,7 +42,10 @@ NOMS = (
         "Centaurin",
         "Éclipse",
         "Rage",
-        "flamme",
+        "Flamme",
+        "Cactus",
+        "Jiro",
+        "Arcène",
 )
 
 # Types d'harnachement

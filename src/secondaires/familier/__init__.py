@@ -40,6 +40,7 @@ from secondaires.familier import cherchables
 from secondaires.familier import commandes
 from secondaires.familier import editeurs
 from secondaires.familier.familier import Familier
+from secondaires.familier.familiers_vente import FamiliersVente
 from secondaires.familier.fiche import FicheFamilier
 from secondaires.familier import masques
 from secondaires.familier.templates.attache import Attache
@@ -104,6 +105,12 @@ class Module(BaseModule):
 
         # Ajout du niveau
         importeur.perso.ajouter_niveau("dressage", "dressage")
+
+        importeur.commerce.types_services["familier"] = FamiliersVente()
+        importeur.commerce.aides_types["familier"] = \
+            "Ce service permet la vente de familiers. Vous devez préciser " \
+            "la clé du familier, qui est aussi la clé du prototype de " \
+            "PNJ lié."
 
         BaseModule.config(self)
 
@@ -453,7 +460,10 @@ class Module(BaseModule):
         else:
             return
 
-        pnj.deplacer_vers(sortie.nom)
+        try:
+            pnj.deplacer_vers(sortie.nom)
+        except ExceptionAction:
+            pass
 
         # On analyse le nouvel environnement
         for personnage in pnj.salle.personnages:
@@ -482,7 +492,11 @@ class Module(BaseModule):
         else:
             return
 
-        pnj.deplacer_vers(sortie.nom)
+        try:
+            pnj.deplacer_vers(sortie.nom)
+        except ExceptionAction:
+            pass
+
         familier.diminuer_faim(1)
         familier.diminuer_soif(1)
 
