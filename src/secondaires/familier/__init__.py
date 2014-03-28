@@ -355,6 +355,14 @@ class Module(BaseModule):
             if pnj:
                 pnj.stats.endurance -= endurance
                 pnj.salle = destination
+        else:
+            identifiant = getattr(personnage, "identifiant", "")
+            if identifiant in self.familiers:
+                familier = self.familiers[identifiant]
+                if familier.chevauche_par:
+                    chevauche_par = familier.chevauche_par
+                    chevauche_par.salle = destination
+                    chevauche_par << destination.regarder(chevauche_par)
 
     def get_verbe_deplacer(self, personnage, destination):
         """Retourne le verbe de déplacement."""
