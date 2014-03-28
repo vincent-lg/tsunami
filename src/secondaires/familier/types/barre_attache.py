@@ -28,7 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les types d'objets propres aux familiers."""
+"""Fichier contenant le type barre d'attache."""
 
-from secondaires.familier.types import barre_attache
-from secondaires.familier.types import harnachement
+from primaires.interpreteur.editeur.entier import Entier
+from primaires.objet.types.base import BaseType
+
+class BarreAttache(BaseType):
+
+    """Type d'objet: barre d'attache."""
+
+    nom_type = "barre d'attache"
+
+    def __init__(self, cle=""):
+        """Constructeur de l'objet"""
+        BaseType.__init__(self, cle)
+        self.nb_places = 1
+        self.etendre_editeur("b", "nombre de places", Entier,
+                self, "nb_places")
+
+    def travailler_enveloppes(self, enveloppes):
+        """Travail sur les enveloppes"""
+        nb = enveloppes["b"]
+        nb.apercu = "{objet.nb_places}"
+        nb.prompt = "Nombre de places disponibles sur cette barre " \
+                "d'attache : "
+        nb.aide_courte = \
+            "Entrez le |ent|nombre de places|ff| disponibles sur cette " \
+            "barre d'attache\nou |cmd|/|ff| pour revenir à la fenêtre " \
+            "parente.\n\nNombre de places actuel : {objet.nb_places}"

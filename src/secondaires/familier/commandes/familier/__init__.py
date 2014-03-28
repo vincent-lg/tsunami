@@ -36,9 +36,11 @@ Dans ce fichier se trouve la commande même.
 
 from primaires.interpreteur.commande.commande import Commande
 from secondaires.familier.commandes.familier.apparaitre import PrmApparaitre
+from secondaires.familier.commandes.familier.attacher import PrmAttacher
 from secondaires.familier.commandes.familier.brouter import PrmBrouter
 from secondaires.familier.commandes.familier.chasser import PrmChasser
 from secondaires.familier.commandes.familier.creer import PrmCreer
+from secondaires.familier.commandes.familier.detacher import PrmDetacher
 from secondaires.familier.commandes.familier.editer import PrmEditer
 from secondaires.familier.commandes.familier.emote import PrmEmote
 from secondaires.familier.commandes.familier.harnacher import PrmHarnacher
@@ -73,9 +75,11 @@ class CmdFamilier(Commande):
     def ajouter_parametres(self):
         """Ajout des paramètres"""
         self.ajouter_parametre(PrmApparaitre())
+        self.ajouter_parametre(PrmAttacher())
         self.ajouter_parametre(PrmBrouter())
         self.ajouter_parametre(PrmChasser())
         self.ajouter_parametre(PrmCreer())
+        self.ajouter_parametre(PrmDetacher())
         self.ajouter_parametre(PrmEditer())
         self.ajouter_parametre(PrmEmote())
         self.ajouter_parametre(PrmHarnacher())

@@ -34,6 +34,7 @@ from random import choice
 
 from abstraits.module import *
 from primaires.format.fonctions import format_nb
+from primaires.perso.exceptions.action import ExceptionAction
 from primaires.salle.salle import FLAGS as FLAGS_SALLE
 from secondaires.familier import cherchables
 from secondaires.familier import commandes
@@ -41,6 +42,7 @@ from secondaires.familier import editeurs
 from secondaires.familier.familier import Familier
 from secondaires.familier.fiche import FicheFamilier
 from secondaires.familier import masques
+from secondaires.familier.templates.attache import Attache
 from secondaires.familier.templates.chevauche import Chevauche
 from secondaires.familier.templates.guide import Guide
 from secondaires.familier.templates.guide_par import GuidePar
@@ -98,6 +100,7 @@ class Module(BaseModule):
 
         self.importeur.perso.ajouter_etat("guide", Guide)
         self.importeur.perso.ajouter_etat("guide_par", GuidePar)
+        self.importeur.perso.ajouter_etat("attache", Attache)
 
         # Ajout du niveau
         importeur.perso.ajouter_niveau("dressage", "dressage")
@@ -300,6 +303,12 @@ class Module(BaseModule):
         if familier:
             pnj = familier.pnj
             if pnj:
+                try:
+                    pnj.agir("bouger")
+                except ExceptionAction:
+                    personnage.envoyer("|err|{} ne peut pas bouger.|ff|", pnj)
+                    return False
+
                 if destination.interieur and not (destination.a_flag(
                         "écurie") or destination.a_flag("peut chevaucher")):
                     personnage.envoyer("|err|{} ne peut aller là.|ff|",

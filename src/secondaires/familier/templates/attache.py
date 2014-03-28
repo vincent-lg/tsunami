@@ -28,7 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les types d'objets propres aux familiers."""
+"""Ce fichier définit la classe Attache, détaillée plus bas."""
 
-from secondaires.familier.types import barre_attache
-from secondaires.familier.types import harnachement
+from primaires.perso.templates.etat import Etat
+
+class Attache(Etat):
+
+    """Classe représentant l'état attache."""
+
+    cle = "attache"
+    msg_refus = "Vous êtes attaché."
+    act_autorisees = ["regarder", "parler", "poser", "ingerer", \
+            "lancersort", "geste"]
+    sauvegarder_au_reboot = True
+
+    def __init__(self, personnage, barre_attache=None):
+        """Constructeur de l'état."""
+        Etat.__init__(self, personnage)
+        self.barre_attache = barre_attache
+
+    @property
+    def arguments(self):
+        return (self.cle, self.barre_attache)
+
+    def message_visible(self):
+        """Retourne le message pour les autres."""
+        msg = "est attaché{e} à {} ici"
+        e = "e" if self.personnage.est_feminin() else ""
+        return msg.format(self.barre_attache.get_nom(), e=e)
