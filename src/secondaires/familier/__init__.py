@@ -331,6 +331,9 @@ class Module(BaseModule):
             familier = etat.familier
         elif identifiant:
             familier = self.familiers.get(identifiant)
+            if "guide_par" in personnage.etats:
+                personnage << "|err|Vous ne pouvez bouger.|ff|"
+                return False
 
         if familier:
             pnj = familier.pnj

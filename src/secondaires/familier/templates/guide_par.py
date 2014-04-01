@@ -39,7 +39,7 @@ class GuidePar(Etat):
     cle = "guide_par"
     msg_refus = "Vous êtes guidé."
     act_autorisees = ["regarder", "parler", "poser", "ingerer", \
-            "lancersort", "geste"]
+            "lancersort", "geste", "bouger"]
     sauvegarder_au_reboot = True
 
     def __init__(self, personnage, guide=None, laisse=None):
