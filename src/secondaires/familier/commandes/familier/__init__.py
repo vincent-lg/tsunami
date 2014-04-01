@@ -40,6 +40,7 @@ from secondaires.familier.commandes.familier.attacher import PrmAttacher
 from secondaires.familier.commandes.familier.brouter import PrmBrouter
 from secondaires.familier.commandes.familier.chasser import PrmChasser
 from secondaires.familier.commandes.familier.creer import PrmCreer
+from secondaires.familier.commandes.familier.deplacer import PrmDeplacer
 from secondaires.familier.commandes.familier.detacher import PrmDetacher
 from secondaires.familier.commandes.familier.editer import PrmEditer
 from secondaires.familier.commandes.familier.emote import PrmEmote
@@ -79,6 +80,7 @@ class CmdFamilier(Commande):
         self.ajouter_parametre(PrmBrouter())
         self.ajouter_parametre(PrmChasser())
         self.ajouter_parametre(PrmCreer())
+        self.ajouter_parametre(PrmDeplacer())
         self.ajouter_parametre(PrmDetacher())
         self.ajouter_parametre(PrmEditer())
         self.ajouter_parametre(PrmEmote())

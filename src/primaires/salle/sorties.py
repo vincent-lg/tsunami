@@ -55,6 +55,17 @@ NOMS_ABREGES = { # équivalent des noms abrégés
     "sud-est": "s-e",
 }
 
+NOMS_ABREGES_OP = {
+    "s-o": "sud-ouest",
+    "so": "sud-ouest",
+    "n-o": "nord-ouest",
+    "no": "nord-ouest",
+    "n-e": "nord-est",
+    "ne": "nord-est",
+    "s-e": "sud-est",
+    "se": "sud-est",
+}
+
 NOMS_OPPOSES = {
     "est": "ouest",
     "sud-est": "nord-ouest",
@@ -126,6 +137,15 @@ class Sorties(BaseObj):
         return direction in self._sorties and self._sorties[direction] \
                 is not None
 
+    @property
+    def sorties_par_alpha(self):
+        """Retourne la liste des sorties triées par ordre alphabétique."""
+        sorties = list(self._sorties.values())
+        sorties = [s for s in sorties if s and s.salle_dest]
+        sorties = sorted(sorties, key=lambda sortie: NOMS_SORTIES_ALPHA.index(
+                sortie.direction))
+        return sorties
+
     def ajouter_sortie(self, direction, *args, **kwargs):
         """Ajoute une sortie.
         Le nom doit être un des noms sorties prévu et caractérise une direction.
@@ -165,7 +185,7 @@ class Sorties(BaseObj):
         except KeyError:
             return defaut
 
-    def get_sortie_par_nom(self, nom, cachees=True):
+    def get_sortie_par_nom(self, nom, cachees=True, abrege=False):
         """Récupère la sortie par son nom.
 
         ATTENTION : la méthode __getitem__ semble faire la même chose.
@@ -176,12 +196,16 @@ class Sorties(BaseObj):
 
         """
         nom = supprimer_accents(nom).lower()
-        for sortie in self._sorties.values():
-            if sortie:
-                s_nom = supprimer_accents(sortie.nom).lower()
-                if sortie.salle_dest and s_nom == nom:
-                    if not sortie.cachee or cachees:
-                        return sortie
+        if abrege and nom in NOMS_ABREGES_OP:
+            nom = NOMS_ABREGES_OP[nom]
+
+        for sortie in self.sorties_par_alpha:
+            s_nom = supprimer_accents(sortie.nom).lower()
+            if not sortie.cachee or cachees:
+                if abrege and s_nom.startswith(nom):
+                    return sortie
+                elif s_nom == nom:
+                    return sortie
 
         raise KeyError("le nom de sortie {} est inconnu".format(nom))
 

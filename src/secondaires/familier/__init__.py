@@ -280,6 +280,9 @@ class Module(BaseModule):
         """Détruit le familier si nécessaire."""
         if pnj.identifiant in self.familiers:
             familier = self.familiers[pnj.identifiant]
+            if familier.chevauche_par:
+                chevauche_par = familier.chevauche_par
+                chevauche_par.etats.retirer("chevauche")
             if "guide_par" in pnj.etats and familier.maitre:
                 personnage = familier.maitre
                 personnage.etats.retirer("guide")
@@ -431,6 +434,8 @@ class Module(BaseModule):
                     familier.maitre.est_connecte():
                 if pnj.etats:
                     pass
+                elif pnj.salle.a_flag("écurie"):
+                    pass
                 elif fiche.regime == "carnivore":
                     pnj.etats.ajouter("chasse")
                 elif fiche.regime == "herbivore":
@@ -515,7 +520,7 @@ class Module(BaseModule):
         if not salle.a_flag("écurie"):
             familier.augmenter_faim(0.07)
             familier.augmenter_soif(0.12)
-            if familier.faim > 100 or familier.soif > 100:
+            if familier.faim >= 100 or familier.soif >= 100:
                 pnj = familier.pnj
                 if pnj is None:
                     return
