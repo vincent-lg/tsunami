@@ -169,6 +169,25 @@ class Module(BaseModule):
 
         BaseModule.init(self)
 
+    def preparer(self):
+        """Nettoyage du module.
+
+        On vérifie que pour chaque joueur qui est en croupe, le familier le
+        sait toujours (et réciproquement).
+
+        """
+        for familier in self.familiers.values():
+            familier.chevauche_par = None
+
+        for joueur in importeur.joueur.joueurs.values():
+            if "chevauche" in joueur.etats:
+                etat = joueur.etats.get("chevauche")
+                familier = etat.monture
+                if familier:
+                    familier.chevauche_par = joueur
+                else:
+                    joueur.etats.retirer("chevauche")
+
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
@@ -302,6 +321,7 @@ class Module(BaseModule):
         sa monture dans une pièce en intérieur, sauf certains cas).
 
         """
+        identifiant = getattr(personnage, "identifiant", "")
         familier = None
         if "chevauche" in personnage.etats:
             etat = personnage.etats.get("chevauche")
@@ -309,6 +329,8 @@ class Module(BaseModule):
         elif "guide" in personnage.etats:
             etat = personnage.etats.get("guide")
             familier = etat.familier
+        elif identifiant:
+            familier = self.familiers.get(identifiant)
 
         if familier:
             pnj = familier.pnj
