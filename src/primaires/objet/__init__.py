@@ -279,9 +279,13 @@ class Module(BaseModule):
 
     def supprimer_objet(self, identifiant):
         """Supprime l'objet de la liste des objets"""
-        objet = self._objets[identifiant]
-        del self._objets[identifiant]
-        objet.detruire()
+        try:
+            objet = self._objets[identifiant]
+        except KeyError:
+            pass
+        else:
+            del self._objets[identifiant]
+            objet.detruire()
 
     def essayer_supprimer_objet(self, objet):
         """Essaye de supprimer l'objet."""
