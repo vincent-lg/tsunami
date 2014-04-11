@@ -112,7 +112,7 @@ class CmdCuisiner(Commande):
                             recette.resultat.get_nom(qtt))
                     return
         personnage << "Votre préparation crame et se mue en un résidu " \
-                "noirâtre que vous préférez jeter immédiatament au feu."
+                "noirâtre que vous préférez jeter immédiatement au feu."
         for item in ustensile.nourriture:
             importeur.objet.supprimer_objet(item.identifiant)
         ustensile.nourriture = []

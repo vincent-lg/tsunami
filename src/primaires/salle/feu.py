@@ -38,7 +38,7 @@ from primaires.perso.exceptions.stat import *
 
 class Feu(BaseObj):
 
-    """Classe représentant une feu.
+    """Classe représentant un feu.
 
     Un feu est, aussi simplement que son nom l'indique, un feu de camp, un
     incendie ou autre. Il est caractérisé par une salle parente, et une
@@ -129,7 +129,7 @@ class Feu(BaseObj):
             "Les flammes montent à l'assaut d'un nouveau bout de bois.",
             "Une langue de feu s'échappe vers le ciel dans un souffle.",
             "Une branche un peu verte proteste bruyamment.",
-            "Un noeud dans le bois éclate en une pluie d'étincelle.",
+            "Un noeud dans le bois éclate en une pluie d'étincelles.",
             "Une brusque rafale de vent couche les flammes un instant.",
         ]
         messages_fin = [

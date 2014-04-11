@@ -65,7 +65,7 @@ class CmdBoire(Commande):
             if fontaine or salle.terrain.nom in ("rive", "aquatique",
                     "subaquatique"):
                 if personnage.estomac <= 2.9:
-                    personnage << "Vous buvez à grande gorgées."
+                    personnage << "Vous buvez à grandes gorgées."
                     personnage.salle.envoyer("{} boit à grandes gorgées.",
                             personnage)
                     if personnage.soif > 0:

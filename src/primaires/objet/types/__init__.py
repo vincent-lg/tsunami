@@ -114,5 +114,8 @@ from .fourrure import Fourrure
 from .peau import Peau
 from .os import Os
 from .plumage import Plumage
+from .pierre import Pierre
+from .vegetal import Vegetal
+from .bois import Bois
 
 from .boule_neige import BouleNeige
