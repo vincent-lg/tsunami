@@ -56,3 +56,9 @@ class Chevauche(Etat):
         msg += " ici"
 
         return msg
+
+    def supprimer(self):
+        """L'état se supprime du personnage."""
+        if self.monture:
+            if self.monture.chevauche_par is self.personnage:
+                self.monture.chevauche_par = None

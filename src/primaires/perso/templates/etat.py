@@ -104,3 +104,7 @@ class Etat:
     def get_facteur(self):
         """Retourne le facteur de récupération."""
         return 1
+
+    def supprimer(self):
+        """L'état se supprime du personnage."""
+        pass

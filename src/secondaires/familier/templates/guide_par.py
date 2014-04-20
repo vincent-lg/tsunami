@@ -58,3 +58,9 @@ class GuidePar(Etat):
         e = "e" if self.personnage.est_feminin() else ""
         return msg.format(e=e)
 
+    def supprimer(self):
+        """L'état se supprime du personnage."""
+        if self.guide:
+            personnage = self.guide
+            if "guide" in personnage.etats:
+                personnage.etats.retirer("guide")

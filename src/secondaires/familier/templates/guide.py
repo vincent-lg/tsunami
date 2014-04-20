@@ -60,3 +60,10 @@ class Guide(Etat):
         msg += " ici"
 
         return msg
+
+    def supprimer(self):
+        """L'état se supprime du personnage."""
+        if self.familier and self.familier.pnj:
+            pnj = self.familier.pnj
+            if "guide_par" in pnj.etats:
+                pnj.etats.retirer("guide_par")

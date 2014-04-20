@@ -122,7 +122,7 @@ class Etats(BaseObj):
 
         """
         if vider:
-            self.__etats[:] = []
+            self.vider()
 
         try:
             classe = importeur.perso.etats[cle_etat]
@@ -136,15 +136,20 @@ class Etats(BaseObj):
         """Retire le premier état dont la clé correspond."""
         for i, etat in enumerate(list(self.__etats)):
             if etat.cle == cle_etat:
+                etat.supprimer()
                 del self.__etats[i]
                 return
 
     def vider(self):
         """Vide la liste de tous les états."""
+        for etat in self.__etats:
+            etat.supprimer()
+
         self.__etats[:] = []
 
     def reinitialiser(self):
         """Retire les états à retirer au reboot."""
         for etat in list(self.__etats):
             if not etat.sauvegarder_au_reboot:
+                etat.supprimer()
                 self.__etats.remove(etat)

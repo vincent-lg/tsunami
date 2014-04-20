@@ -71,7 +71,6 @@ class PrmRelacher(Parametre):
             return
 
         personnage.etats.retirer("guide")
-        pnj.etats.retirer("guide_par")
         personnage.envoyer_lisser("Vous relâchez {} de {{}}.".format(
                 laisse.get_nom()), pnj)
         personnage.salle.envoyer_lisser("{{}} relâche {}.".format(

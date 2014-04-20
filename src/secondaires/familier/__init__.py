@@ -130,7 +130,8 @@ class Module(BaseModule):
         # On récupère les familiers
         familiers = self.importeur.supenr.charger_groupe(Familier)
         for familier in familiers:
-            self.ajouter_familier(familier)
+            if familier.pnj:
+                self.ajouter_familier(familier)
 
         self.logger.info(format_nb(len(familiers),
                 "{nb} familier{s} récupéré{s}"))
