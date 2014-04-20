@@ -76,6 +76,7 @@ class Module(BaseModule):
 
     def config(self):
         """Configuration du module."""
+        self.importeur.scripting.a_charger.append(self)
         # Ajout des flags de salle
         FLAGS_SALLE.ajouter("écurie")
         FLAGS_SALLE.ajouter("peut chevaucher")
