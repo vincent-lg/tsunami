@@ -115,17 +115,20 @@ class Familier(BaseObj):
     def str_soif(self):
         return self.aff_niveau(self.soif)
 
-    def trouver_nom(self):
+    def trouver_nom(self, noms=None):
         """Recherche un nom qui n'a pas été déjà pris par les familiers."""
-        noms = []
+        if noms is None:
+            noms = NOMS
+
+        possibles = []
         familiers = importeur.familier.familiers_de(self.maitre)
         noms_ex = [f.nom for f in familiers]
-        for nom in NOMS:
+        for nom in noms:
             if nom not in noms_ex:
-                noms.append(nom)
+                possibles.append(nom)
 
-        if noms:
-            self.nom = choice(noms)
+        if possibles:
+            self.nom = choice(possibles)
 
     def diminuer_faim(self, modifieur):
         """Diminue la faim du familier."""

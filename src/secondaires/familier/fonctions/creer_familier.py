@@ -40,6 +40,7 @@ class ClasseFonction(Fonction):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.creer_familier, "str", "Personnage")
+        cls.ajouter_types(cls.creer_familier_PNJ, "Personnage", "Personnage")
 
     @staticmethod
     def creer_familier(prototype, maitre):
@@ -65,6 +66,35 @@ class ClasseFonction(Fonction):
             raise ErreurExecution("prototype {} sans squelette".format(
                     prototype))
         pnj = importeur.pnj.creer_PNJ(prototype)
+        familier = importeur.familier.creer_familier(pnj)
+        familier.maitre = maitre
+        familier.trouver_nom()
+        return pnj
+
+    @staticmethod
+    def creer_familier_PNJ(pnj, maitre):
+        """Crée un familier sur le PNJ existant.
+
+        Paramètres à préciser :
+
+          * pnj : le PNJ existant
+          * maitre : le personnage qui deviendra le maître du familier
+
+        Cette fonction travaille sur un PNJ déjà existant. Le
+        PNJ doit avoir une fiche de familier valide (et ne pas
+        déjà être un familier). Le PNJ est retourné.
+
+        """
+        cle = getattr(pnj, "cle", None)
+        identifiant = getattr(pnj, "identifiant", None)
+        if cle not in importeur.familier.fiches:
+            raise ErreurExecution("aucune fiche de famillier associée " \
+                    "au personnage {}".format(repr(pnj)))
+
+        if identifiant in importeur.familier.familiers:
+            raise ErreurExecution("le PNJ {} est déjà un familier".format(
+                    repr(pnj)))
+
         familier = importeur.familier.creer_familier(pnj)
         familier.maitre = maitre
         familier.trouver_nom()
