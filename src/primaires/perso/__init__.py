@@ -223,7 +223,7 @@ class Module(BaseModule):
                 personnage.plonger()
 
     def get_niveau_par_nom(self, nom):
-        """Retourne le niveau dont le nom est donn├®."""
+        """Retourne le niveau dont le nom est donné."""
         nom = supprimer_accents(nom).lower()
         for niveau in self.niveaux.values():
             if supprimer_accents(niveau.nom).lower() == nom:
