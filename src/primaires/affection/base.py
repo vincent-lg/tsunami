@@ -157,13 +157,10 @@ class AffectionAbstraite(BaseObj):
         if self.infinie:
             return
 
-        if affection.duree == 0:
+        if affection.duree == 0 or duree == 0:
             return
 
         fact_dec = (affection.duree - duree) / affection.duree
-        # Patch par Anakin pour fixer un problème de division par 0 que je ne comprends pas et qui spam les logs.
-        if fact_dec == 0:
-            fact_dec = 1.0
         duree = affection.duree - duree
         if self.variation == 0: # La force ne bouge pas
             force = affection.force

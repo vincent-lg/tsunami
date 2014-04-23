@@ -33,7 +33,7 @@ pour les objets de recherche (voir plus bas).
 
 """
 
-import getopt
+import argparse
 import inspect
 import re
 import shlex
@@ -65,6 +65,8 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
     """
 
     nom_cherchable = ""
+    recherche_par_defaut = ""
+    noms_colonnes = {}
 
     def __init__(self):
         """Constructeur de la classe"""
@@ -183,27 +185,27 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
             raise ValueError("le type {} est invalide".format(type))
         self.filtres.append(Filtre(opt_courte, opt_longue, test, type))
 
-    def tester(self, options, liste):
+    def tester(self, args, liste):
         """Teste une liste de couples (option, argument)"""
-        if not options:
+        if not args:
             return liste
-        liste_ret = []
-        # On regarde la première option
-        o, a = options[0]
-        # Pour chaque objet de la liste à traiter
-        for item in liste:
-            o_testee = False
-            # On récupère le filtre adéquat
-            for filtre in self.filtres:
-                if o in ("-" + filtre.opt_courte, "--" + filtre.opt_longue):
-                    # Si le filtre dit oui, on retient l'objet en question
-                    if filtre.tester(item, a):
-                        liste_ret.append(item)
-                    o_testee = True
-            if not o_testee:
-                raise ValueError("l'option {} n'existe pas".format(o))
-        del options[0]
-        return self.tester(options, liste_ret)
+
+        if args.defaut and self.recherche_par_defaut:
+            valeur = args.defaut
+            setattr(args, self.recherche_par_defaut, valeur)
+
+        print(args)
+        for filtre in self.filtres:
+            option = filtre.opt_courte
+            if filtre.opt_longue:
+                option = filtre.opt_longue
+
+            if getattr(args, option):
+                valeur = " ".join(getattr(args, option))
+                liste = [item for item in liste if filtre.tester(
+                        item, valeur)]
+
+        return liste
 
     def afficher(self, objet):
         """Méthode d'affichage standard des objets traités"""
@@ -227,11 +229,30 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
     @classmethod
     def trouver_depuis_chaine(cls, chaine):
         """Retourne un message en fonction de la chaîne passée en paramètre."""
+        def n_exit(code, msg):
+            """Ne quitte pas Python."""
+            raise ValueError(msg)
+
         cherchable = cls()
 
         # On crée les listes d'options
-        opt_courtes = "ao:c:" + cherchable.courtes
-        opt_longues = ["aide", "org=", "colonnes="] + cherchable.longues
+        parser = argparse.ArgumentParser()
+        parser.exit = n_exit
+
+        # Ajout des options par défaut
+        parser.add_argument("defaut", nargs='*')
+        parser.add_argument("-a", "--aide", action="store_true")
+        parser.add_argument("-o", "--ordre")
+        parser.add_argument("-c", "--colonnes", nargs='+')
+
+        # Ajout des options du cherchable
+        for filtre in cherchable.filtres:
+            options = ["-" + filtre.opt_courte]
+            if filtre.opt_longue:
+                options.append("--" + filtre.opt_longue)
+
+            parser.add_argument(*options, nargs='+')
+
         retour = []
         tri = ""
         colonnes = []
@@ -239,41 +260,34 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
             retour = cherchable.items
         else:
             try:
-                options, args = getopt.getopt(shlex.split(chaine),
-                        opt_courtes, opt_longues)
-            except (getopt.GetoptError, ValueError) as err:
+                args = parser.parse_args(shlex.split(chaine))
+            except ValueError as err:
                 return "|err|Une option n'a pas été reconnue ou bien " \
-                        "interprétée.|ff|"
+                        "interprétée.|ff|\n" + str(err)
 
             # On récupère les options génériques
-            nettoyer = []
-            for opt, arg in options:
-                if opt in ("-a", "--aide"):
-                    return cherchable.aide
-                elif opt in ("-o", "--org"):
-                    if arg in cherchable.attributs_tri:
-                        tri = arg
-                    else:
-                        return "|err|Vous ne pouvez trier ainsi.|ff|"
+            if args.aide:
+                return cherchable.aide
+            if args.ordre:
+                arg = args.ordre
+                if arg in cherchable.attributs_tri:
+                    tri = arg
+                else:
+                    return "|err|Vous ne pouvez trier ainsi.|ff|"
+            if args.colonnes:
+                arg = " ".join(args.colonnes)
+                try:
+                    colonnes = arg.split(",")
+                    colonnes = [c.strip() for c in colonnes]
+                    for c in colonnes:
+                        assert c in cherchable.colonnes
+                except AssertionError:
+                    return "|err|Les colonnes spécifiées sont " \
+                            "invalides.|ff|"
 
-                    nettoyer.append((opt, arg))
-                elif opt in ("-c", "--colonnes"):
-                    try:
-                        colonnes = arg.split(",")
-                        for c in colonnes:
-                            c = c.strip()
-                            assert c in cherchable.colonnes
-                    except AssertionError:
-                        return "|err|Les colonnes spécifiées sont " \
-                                "invalides.|ff|"
-
-                    nettoyer.append((opt, arg))
-
-            for couple in nettoyer:
-                options.remove(couple)
-
+            # Interprétation des autres options
             try:
-                retour = cherchable.tester(options, cherchable.items)
+                retour = cherchable.tester(args, cherchable.items)
             except TypeError:
                 return "|err|Les options n'ont pas été bien " \
                         "interprétées.|ff|"
@@ -294,6 +308,9 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
                 colonnes = cherchable.colonnes_par_defaut()
 
             for colonne in colonnes:
+                if colonne in cherchable.noms_colonnes:
+                    colonne = cherchable.noms_colonnes[colonne]
+
                 retour_aff.ajouter_colonne(colonne.capitalize())
 
             for i, o in enumerate(retour):

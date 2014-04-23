@@ -140,7 +140,8 @@ class Stat(BaseObj):
 
         """
         base = courante - self.__variable
-        if not self.parent.parent.est_immortel():
+        if self.parent and self.parent.parent and \
+                not self.parent.parent.est_immortel():
             # Levée d'exceptions
             if base < 0 and flags & I0:
                 self.__base = 0
@@ -160,7 +161,8 @@ class Stat(BaseObj):
 
         if self.max and base > self.max:
             base = self.max
-        if self.parent.parent.est_immortel() and self.max:
+        if self.parent and self.parent.parent and \
+                self.parent.parent.est_immortel() and self.max:
             base = self.max
 
         self.__base = base

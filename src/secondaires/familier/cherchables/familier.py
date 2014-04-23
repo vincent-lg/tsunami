@@ -41,6 +41,11 @@ class CherchableFamilier(Cherchable):
     """
 
     nom_cherchable = "familier"
+    recherche_par_defaut = "cle"
+    noms_colonnes = {
+        "cle": "clé",
+        "maitre": "maître",
+    }
 
     def init(self):
         """Méthode d'initialisation.

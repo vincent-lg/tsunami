@@ -40,6 +40,7 @@ class CherchablePrototypePNJ(Cherchable):
     """
 
     nom_cherchable = "prpnj"
+    recherche_par_defaut = "nom"
 
     def init(self):
         """Méthode d'initialisation.

@@ -41,6 +41,7 @@ class CherchablePrototypeObjet(Cherchable):
     """
 
     nom_cherchable = "probjet"
+    recherche_par_defaut = "nom"
 
     def init(self):
         """Méthode d'initialisation.

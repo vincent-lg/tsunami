@@ -41,6 +41,7 @@ class CherchablePNJ(Cherchable):
     """
 
     nom_cherchable = "pnj"
+    recherche_par_defaut = "cle"
 
     def init(self):
         """Méthode d'initialisation.

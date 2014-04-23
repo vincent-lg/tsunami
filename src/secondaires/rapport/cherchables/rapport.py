@@ -43,6 +43,7 @@ class CherchableRapport(Cherchable):
     """
 
     nom_cherchable = "rapport"
+    recherche_par_defaut = "titre"
 
     def init(self):
         """Méthode d'initialisation.

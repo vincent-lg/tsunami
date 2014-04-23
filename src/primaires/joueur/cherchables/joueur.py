@@ -38,6 +38,7 @@ class CherchableJoueur(Cherchable):
     """Classe cherchable pour les joueurs de l'univers."""
 
     nom_cherchable = "joueur"
+    recherche_par_defaut = "nom"
 
     def init(self):
         """Méthode d'initialisation.
