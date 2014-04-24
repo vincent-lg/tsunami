@@ -253,6 +253,10 @@ class Sort(BaseObj):
         du scripting, retire l'état au personnage.
 
         """
+        variables.update({
+                "sort": self,
+        })
+
         try:
             self.script[evenement].executer(**variables)
         except InterrompreCommande as err:
