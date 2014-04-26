@@ -39,6 +39,9 @@ class CherchableJoueur(Cherchable):
 
     nom_cherchable = "joueur"
     recherche_par_defaut = "nom"
+    noms_colonnes = {
+        "element": "élément",
+    }
 
     def init(self):
         """Méthode d'initialisation.
@@ -50,6 +53,7 @@ class CherchableJoueur(Cherchable):
         self.ajouter_filtre("n", "nom", "nom", "str")
         self.ajouter_filtre("m", "compte", "compte", "str")
         self.ajouter_filtre("g", "groupe", "nom_groupe", "str")
+        self.ajouter_filtre("e", "element", "element", "str")
 
     @property
     def items(self):
@@ -73,6 +77,7 @@ class CherchableJoueur(Cherchable):
             "nom": "nom",
             "compte": "compte",
             "groupe": "nom_groupe",
+            "element": "element",
         }
 
     def colonnes_par_defaut(self):

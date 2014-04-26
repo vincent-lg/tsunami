@@ -194,7 +194,6 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
             valeur = args.defaut
             setattr(args, self.recherche_par_defaut, valeur)
 
-        print(args)
         for filtre in self.filtres:
             option = filtre.opt_courte
             if filtre.opt_longue:

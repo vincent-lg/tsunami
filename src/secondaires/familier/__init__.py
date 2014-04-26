@@ -450,7 +450,7 @@ class Module(BaseModule):
 
         """
         identifiant = getattr(pnj, "identifiant", "")
-        if identifiant in self.familiers:
+        if identifiant in self.familiers and pnj.salle:
             familier = self.familiers[identifiant]
             fiche = familier.fiche
             if "chasse" in pnj.etats:
