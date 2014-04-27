@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,65 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction nb_PNJ."""
-
-from fractions import Fraction
+"""Fichier contenant la fonction sortie_existe."""
 
 from primaires.scripting.fonction import Fonction
 from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
 
-    """Retourne le nombre de PNJ."""
+    """Test si une sortie existe."""
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.PNJ_proto, "str")
-        cls.ajouter_types(cls.PNJ_salle, "Salle", "str")
+        cls.ajouter_types(cls.sortie_existe, "Salle", "str")
 
     @staticmethod
-    def PNJ_proto(cle_prototype):
-        """Retourne le nombre de PNJ modelés sur ce prototype.
-
-        Le paramètre à entrer est la clé du prototype sous la forme
-        d'une chaîne.
-
-        Par exemple :
-
-            nb_PNJ("rat_picte")
-
-        Si le prototype de PNJ est introuvable, crée une alerte.
-
-        """
-        try:
-            prototype = importeur.pnj.prototypes[cle_prototype]
-        except KeyError:
-            raise ErreurExecution("prototype inconnu {}".format(
-                    repr(cle_prototype)))
-
-        return Fraction(len(prototype.pnj))
-
-    @staticmethod
-    def PNJ_salle(salle, cle_prototype):
-        """Retourne le nombre de PNJ présents dans la salle.
+    def sortie_existe(salle, nom_sortie):
+        """Retourne vrai si la sortie de la salle existe, faux sinon.
 
         Paramètres à préciser :
 
-          * salle : la salle dans laquelle chercher le ou les PNJ
-          * cle_prototype : la clé du prototype de PNJ.
+          * salle : la salle dans laquelle chercher la sortie
+          * nom_sortie : le nom de la sortie à chercher.
 
-        Par exemple, si vous faites apparaître un prototype
-        'lapin' dans la salle :
+        Vous pouvez préciser soit la direction de la sortie (nord,
+        est, sud...) soit son nom (escalier, porte...).
 
-          nb = nb_PNJ(salle, "lapin")
-          # nb baut 1
+        Exemple d'utilisation :
+
+          si sortie_existe(salle, "nord"):
+              # Fait quelque chose
 
         """
         try:
-            prototype = importeur.pnj.prototypes[cle_prototype]
+            sortie = salle.sorties.get_sortie_par_nom_ou_direction(nom_sortie)
         except KeyError:
-            raise ErreurExecution("prototype inconnu {}".format(
-                    repr(cle_prototype)))
+            return False
 
-        pnjs = [p for p in prototype.pnj if p.salle is salle]
-        return Fraction(len(pnjs))
+        return sortie is not None
