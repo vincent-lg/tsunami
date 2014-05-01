@@ -227,6 +227,14 @@ class Objet(BaseObj):
         salle_dest.envoyer("{} {}.".format(self.get_nom(),
                 arrive))
 
+    def retirer(self, *args):
+        """Méthode alias pour retirer un élément d'un conteneur."""
+        if hasattr(self, "conteneur"):
+            self.conteneur.retirer(*args)
+        else:
+            raise AttributeError("l'objet {} n'a pas de conteneur".format(
+                    self.cle))
+
     def detruire(self):
         """Destruction de l'objet"""
         if self in self.prototype.objets:

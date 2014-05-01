@@ -79,7 +79,7 @@ class CmdPoser(Commande):
                         "mains...".format(objet.nom_singulier)
                 return
 
-            if qtt > nombre:
+            if nombre < qtt:
                 qtt = nombre
 
             if dans and not (dans.est_de_type("conteneur") and \
@@ -105,6 +105,9 @@ class CmdPoser(Commande):
 
             pose += qtt
             if pose >= nombre:
+                break
+            nombre -= qtt
+            if nombre <= 0:
                 break
 
         if dans:

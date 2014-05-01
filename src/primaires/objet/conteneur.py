@@ -69,6 +69,10 @@ class ConteneurObjet(BaseObj):
         liste = list(self._objets) + list(self._non_uniques)
         return iter(liste)
 
+    def __repr__(self):
+        parent = repr(self.parent) if self.parent else "sans parent"
+        return parent
+
     def __str__(self):
         parent = repr(self.parent) if self.parent else "sans parent"
         return parent + " " + str(self._objets) + " " + str(self._non_uniques)
@@ -131,7 +135,7 @@ class ConteneurObjet(BaseObj):
                 self._objets.append(objet)
             else:
                 raise ValueError("le conteneur {} contient déjà l'objet " \
-                        "{}".format(self, objet))
+                        "{}".format(repr(self), objet))
         else:
             qtt = nombre
             # On cherche l'objet non unique correspondant au prototype
@@ -157,11 +161,11 @@ class ConteneurObjet(BaseObj):
                 self._objets.remove(objet)
             else:
                 raise ValueError("le conteneur {} ne contient pas l'objet " \
-                        "{}".format(self, objet))
+                        "{}".format(repr(self), objet))
         else:
             non_unique = None
             for objet in self._non_uniques:
-                if objet.prototype == prototype:
+                if objet.prototype is prototype:
                     non_unique = objet
                     break
 
@@ -170,7 +174,7 @@ class ConteneurObjet(BaseObj):
                 self.nettoyer_non_uniques()
             else:
                 raise ValueError("le conteneur {} ne contient pas l'objet " \
-                        "{}".format(self, objet))
+                        "{} (qtt={})".format(repr(self), objet, qtt))
 
     def nettoyer_non_uniques(self):
         """Nettoie les objets non uniques présents en quantité négative."""

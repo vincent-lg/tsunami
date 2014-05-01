@@ -386,6 +386,9 @@ class Inventaire:
         self.objets = []
         self.contenu_dans = {}
         self.quantite = {}
+        self.non_uniques = []
+        self.nu_contenu_dans = []
+        self.nu_quantite = []
         self.get_objets(simple)
 
     def __iter__(self):
@@ -402,15 +405,37 @@ class Inventaire:
             objets = [o for o in objets if o is not None]
             for objet in objets:
                 objets = objet.extraire_contenus(quantite, contenu_dans)
+                uniques = [o for o in objets if o.unique]
+                non_uniques = [o for o in objets if not o.unique]
                 if simple:
                     del objets[0]
-                res.extend(objets)
+                res.extend(uniques)
                 contenu_dans[objet] = self.equipement.equipes
+                for nu in non_uniques:
+                    if nu not in contenu_dans or nu not in quantite:
+                        continue
+
+                    self.non_uniques.append(nu)
+                    self.nu_contenu_dans.append(contenu_dans[nu])
+                    self.nu_quantite.append(quantite[nu])
+                    del contenu_dans[nu]
+                    del quantite[nu]
 
             if membre.tenu:
                 objets = membre.tenu.extraire_contenus(quantite, contenu_dans)
-                res.extend(objets)
+                uniques = [o for o in objets if o.unique]
+                non_uniques = [o for o in objets if not o.unique]
+                res.extend(uniques)
                 contenu_dans[membre.tenu] = self.equipement.tenus
+                for nu in non_uniques:
+                    if nu not in contenu_dans or nu not in quantite:
+                        continue
+
+                    self.non_uniques.append(nu)
+                    self.nu_contenu_dans.append(contenu_dans[nu])
+                    self.nu_quantite.append(quantite[nu])
+                    del contenu_dans[nu]
+                    del quantite[nu]
 
         self.objets = res
         self.contenu_dans = contenu_dans
@@ -433,3 +458,12 @@ class Inventaire:
                 yield (objet, qtt, t_conteneur)
             else:
                 yield (objet, qtt)
+
+        # Parcours des non uniques
+        for i, prototype in enumerate(self.non_uniques):
+            t_conteneur = self.nu_contenu_dans[i]
+            qtt = self.nu_quantite[i]
+            if conteneur:
+                yield (prototype, qtt, t_conteneur)
+            else:
+                yield (prototype, qtt)
