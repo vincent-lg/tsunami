@@ -170,6 +170,7 @@ class Module(BaseModule):
 
         a_detruire = []
         for objet in importeur.objet.objets.values():
+            objet.supprimer_inexistants()
             if objet not in existants:
                 a_detruire.append(objet)
 

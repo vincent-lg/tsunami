@@ -103,6 +103,7 @@ class CmdManger(Commande):
                 personnage.faim = 0
             personnage.estomac += objet.poids_unitaire
             objet.script["mange"].executer(personnage=personnage, objet=objet)
+            objet.contenu.retirer(objet)
             importeur.objet.supprimer_objet(objet.identifiant)
             personnage.salle.envoyer("{{}} mange {}.".format(objet.get_nom()),
                     personnage)

@@ -88,6 +88,19 @@ class Compte(BaseObj):
 
         return h.digest()
 
+    def changer_mot_de_passe(self, nouveau):
+        """Change le mot de passe pour nouveau, sans confirmation.
+
+        Le mot de passe précisé doit être en clair. Il sera
+        automatiquement hashé.
+
+        """
+        cfg_connex = importeur.anaconf.get_config("connex")
+        type_chiffrement = cfg_connex.type_chiffrement
+        clef_salage = cfg_connex.clef_salage
+        self.mot_de_passe = self.hash_mot_de_pass(
+                clef_salage, type_chiffrement, nouveau)
+
     def get_joueur(self, nom_perso):
         """Retourne le joueur correspondant au nom"""
         joueur = None

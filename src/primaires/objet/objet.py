@@ -151,6 +151,12 @@ class Objet(BaseObj):
         else:
             return parent.nom_unique
 
+    def supprimer_inexistants(self):
+        """Retire les objets inexistants."""
+        if hasattr(self, "conteneur"):
+            self.conteneur._objets = [o for o in self.conteneur._objets if \
+                    o.e_existe]
+
     def extraire_contenus(self, quantite=None, contenu_dans=None):
         """Extrait les objets contenus."""
         res = [self]
