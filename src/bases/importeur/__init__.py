@@ -91,8 +91,10 @@ class Importeur:
         "secondaire": REP_SECONDAIRES,
     }
     py_modules = {}
+    sauvegarde = True
 
-    def __init__(self, parser_cmd, anaconf, man_logs, serveur):
+    def __init__(self, parser_cmd, anaconf, man_logs, serveur,
+            sauvegarde=True):
         """Constructeur de l'importeur. Il vérifie surtout
         qu'un seul est créé.
 
@@ -116,6 +118,7 @@ class Importeur:
         Importeur.man_logs = man_logs
         Importeur.serveur = serveur
         Importeur.logger = man_logs.creer_logger("", "importeur", "")
+        Importeur.sauvegarde = sauvegarde
         BaseObj.importeur = self
         __builtins__["importeur"] = self
 
