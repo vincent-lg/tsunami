@@ -161,6 +161,9 @@ class AffectionAbstraite(BaseObj):
             return
 
         fact_dec = (affection.duree - duree) / affection.duree
+        if fact_dec == 0:
+            return
+
         duree = affection.duree - duree
         if self.variation == 0: # La force ne bouge pas
             force = affection.force
