@@ -408,7 +408,7 @@ class Inventaire:
                 uniques = [o for o in objets if o.unique]
                 non_uniques = [o for o in objets if not o.unique]
                 if simple:
-                    del objets[0]
+                    del uniques[0]
                 res.extend(uniques)
                 contenu_dans[objet] = self.equipement.equipes
                 for nu in non_uniques:
@@ -425,6 +425,9 @@ class Inventaire:
                 objets = membre.tenu.extraire_contenus(quantite, contenu_dans)
                 uniques = [o for o in objets if o.unique]
                 non_uniques = [o for o in objets if not o.unique]
+                if simple:
+                    del uniques[0]
+
                 res.extend(uniques)
                 contenu_dans[membre.tenu] = self.equipement.tenus
                 for nu in non_uniques:
