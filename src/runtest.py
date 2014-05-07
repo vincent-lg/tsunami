@@ -45,10 +45,14 @@ from lib import *
 from bases.anaconf import anaconf
 from bases.importeur import Importeur
 from bases.logs import man_logs
+from bases.logs.logger import Logger
 from bases.parser_cmd import ParserCMD
 from corps.config import pere
 from primaires.format.date import *
 from reseau.connexions.serveur import *
+
+# On neutralise les logs
+Logger.print = lambda l, m: None
 
 parser_cmd = ParserCMD()
 parser_cmd.interpreter()

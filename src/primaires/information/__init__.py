@@ -60,6 +60,8 @@ class Module(BaseModule):
         self.versions = None
         self.annonces = None
         self.newsletters = []
+        self.logger = importeur.man_logs.creer_logger(
+                "information", "information")
 
     def config(self):
         """Configuration du module"""
@@ -77,7 +79,8 @@ class Module(BaseModule):
         sujets = self.importeur.supenr.charger_groupe(SujetAide)
         self.__sujets = sujets
         nb_sujets = len(sujets)
-        print(format_nb(nb_sujets, "{nb} sujet{s} d'aide récupéré{s}"))
+        self.logger.info(format_nb(nb_sujets, "{nb} sujet{s} d'aide " \
+                "récupéré{s}"))
 
         versions = self.importeur.supenr.charger_unique(Versions)
         if versions is None:
