@@ -37,6 +37,7 @@ n'est cependant ni chargée, ni écrasée.
 
 """
 
+import os
 import unittest
 
 from lib import *
@@ -68,6 +69,24 @@ importeur.tout_instancier()
 importeur.tout_configurer()
 importeur.tout_initialiser()
 importeur.tout_preparer()
+
+# Bootstrap
+# Cette partie contient la création d'objets de l'univers
+# On parcourt récursivement les packages et modules dans test.bootstrap
+def charger_bootstrap(pypath):
+    path = pypath.replace(".", os.sep)
+    if os.path.isdir(path):
+        for fichier in os.listdir(path):
+            nom_complet = os.path.join(path, fichier)
+            if os.path.isdir(nom_complet):
+                charger_bootstrap(pypath + "." + fichier)
+            elif os.path.isfile(nom_complet):
+                if fichier.endswith(".py") and not fichier.startswith("_"):
+                    nom_module = pypath + "." + fichier[:-3]
+                    __import__(nom_module)
+
+charger_bootstrap("test.boostrap")
+
 
 tests = unittest.TestLoader().discover('.')
 unittest.TextTestRunner().run(tests)

@@ -102,7 +102,7 @@ class CmdEntrainer(Commande):
                         "contenant l'expérience à verser.|ff|"
                 return
 
-            niveau = dic_masques["niveau_secondaire"].niveau_secondaire
+            niveau = dic_masques["niveau_secondaire"].cle_niveau
             if xp is None or personnage.niveaux.get(niveau, 0) < \
                     personnage.stats[stat].base:
                 personnage << "|err|Vous n'êtes pas assez expérimenté dans ce niveau.|ff|"
