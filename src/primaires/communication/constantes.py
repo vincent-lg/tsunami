@@ -33,10 +33,13 @@
 # Bas de page de l'e-mail automatique
 
 bas_page = """
-
 -------------------------------------------------------------------------------
+Cet e-mail est une notification automatique envoyée pour vous
+avertir d'un MudMail de {expediteur}.
+
 Vous pouvez directement répondre à cet e-mail (répondre à
-equipe@vanciamud.fr) ou bien utiliser l'interface In Game.
+equipe@vanciamud.fr) si vous souhaitez contactez l'équipe des
+immortels, ou bien utiliser l'interface In Game.
 
 Pour ne plus recevoir d'e-mails quand un MudMail vous est envoyé,
 connectez-vous à VanciaMUD :
