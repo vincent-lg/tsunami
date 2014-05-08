@@ -564,16 +564,17 @@ class Navire(Vehicule):
         # On récupère les points proches du navire
         etendue = self.etendue
         centre = self.get_max_distance_au_centre()
+        diametre = destination.mag + centre + 1
         points = tuple(etendue.get_points_proches(origine.x, origine.y,
-                destination.mag + centre + 1).items())
+                diametre).items())
         points += importeur.navigation.points_navires(self)
         # Si l'étendue a un point sur le segment
         # (position -> position + vitesse) alors collision
         for vecteur, t_salle in vecteurs:
             if direction:
-                n_destination = Vector(t_salle.r_x, t_salle.r_y, t_salle.r_z)
-                n_destination.around_z(radians(direction_absolue))
-                projetee = origine + n_destination
+                projetee = Vector(t_salle.r_x, t_salle.r_y, t_salle.r_z)
+                projetee.around_z(radians(direction_absolue))
+                projetee = origine + projetee
             else:
                 projetee = vecteur + destination
 
@@ -628,6 +629,11 @@ class Navire(Vehicule):
 
         self.direction.tourner_autour_z(n)
         self.maj_salles()
+        if self.controller_collision(Vector(0, 0, 0)):
+            # On annule la translation
+            self.envoyer("Un léger choc se répercute sous vos pieds.")
+            self.direction.tourner_autour_z(-n)
+            self.maj_salles()
 
     def envoyer(self, message):
         """Envoie le message à tous les personnages présents dans le navire."""
