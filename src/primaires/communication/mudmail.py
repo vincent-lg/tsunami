@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,6 +33,7 @@
 import datetime
 
 from abstraits.obase import *
+from primaires.communication.constantes import bas_page
 from primaires.format.date import get_date
 from primaires.format.description import Description
 from primaires.format.fonctions import echapper_accolades
@@ -47,14 +48,15 @@ RECU = 4
 class MUDmail(BaseObj):
 
     """Cette classe contient un mudmail.
-    
+
     """
-    
+
     def __init__(self, parent=None, expediteur=None, source=None):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
         self.parent = parent
         self.id = -1
+        self.notifier = True
         if source is not None: # édition d'un brouillon
             self._etat = BROUILLON
             self.sujet = str(source.sujet)
@@ -81,15 +83,15 @@ class MUDmail(BaseObj):
         self.lu = False
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
-    
+
     def __getnewargs__(self):
         return ()
-    
+
     @property
     def etat(self):
         """Renvoie l'état du mail"""
         return self._etat
-    
+
     @property
     def aff_dest(self):
         """Renvoie le(s) destinataire(s) si existant(s)"""
@@ -105,7 +107,7 @@ class MUDmail(BaseObj):
             if not res:
                 res += "aucun"
         return res
-    
+
     @property
     def apercu_contenu(self):
         """Renvoie un aperçu du corps du message"""
@@ -113,12 +115,12 @@ class MUDmail(BaseObj):
         if apercu == "\n   Aucune description.":
             apercu = "\n   Aucun contenu."
         return apercu
-    
+
     @property
     def nom_expediteur(self):
         """Retourne, si trouvé, le nom de l'expéditeur."""
         return self.expediteur and self.expediteur.nom or "inconnu"
-    
+
     def afficher(self):
         """Affiche le mail"""
         ret = "Expéditeur      : " + self.expediteur.nom + "\n"
@@ -127,7 +129,7 @@ class MUDmail(BaseObj):
         ret += echapper_accolades(str(self.contenu))
         ret += "\n" + get_date(self.date.timetuple()).capitalize() + "."
         return ret
-    
+
     def envoyer(self):
         """Envoie le mail"""
         liste_dest = set(self.liste_dest)
@@ -136,10 +138,10 @@ class MUDmail(BaseObj):
                 [liste_dest.add(j) for j in alias.retourner_joueurs()]
         if self.expediteur in liste_dest:
             liste_dest.remove(self.expediteur)
-        
+
         if not liste_dest:
             raise ValueError("la liste de destinataires est vide")
-        
+
         for dest in liste_dest:
             mail = type(self).importeur.communication.mails.creer_mail(
                     self.expediteur)
@@ -153,13 +155,32 @@ class MUDmail(BaseObj):
             mail._etat = RECU
             if dest in type(self).importeur.connex.joueurs_connectes:
                 dest << "\n|jn|Vous avez reçu un nouveau message.|ff|"
+            if self.notifier:
+                self.envoyer_email(dest)
         self.date = datetime.datetime.now()
         self._etat = ENVOYE
-    
+
     def archiver(self):
         """Archive le mail"""
         self._etat = ARCHIVE
-    
+
     def restaurer(self):
         """Restaure le mail"""
         self._etat = RECU
+
+    def envoyer_email(self, dest):
+        """Envoie l'e-mail au destinataire."""
+        destinateur = "equipe"
+        destinataire = dest.compte.adresse_email
+        sujet = "Vous avez reçu un nouveau message sur " \
+                "VanciaMUD : " + self.sujet
+        nom_compte = dest.compte.nom
+        contenu = self.contenu.replace("|tab|", "   ")
+        corps = contenu + bas_page.format(nom_compte=nom_compte)
+        if not importeur.email.serveur_mail:
+            return
+
+        if not destinataire:
+            return
+
+        importeur.email.envoyer(destinateur, destinataire, sujet, corps)

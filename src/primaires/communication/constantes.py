@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,22 +28,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient les constantes du module information."""
+"""Ce fichier contient les constantes du module communication."""
 
-# Bas de page de la News Letter
+# Bas de page de l'e-mail automatique
 
 bas_page = """
 
-
 -------------------------------------------------------------------------------
-Contactez equipe@vanciamud.fr pour réagir.
+Vous pouvez directement répondre à cet e-mail (répondre à
+equipe@vanciamud.fr) ou bien utiliser l'interface In Game.
 
-POUR VOUS DÉSABONNER DE CETTE NEWS LETTER, CONNECTEZ-VOUS :
+Pour ne plus recevoir d'e-mails quand un MudMail vous est envoyé,
+connectez-vous à VanciaMUD :
+
 Nom d'hôte : vanciamud.fr
 Port : 4000
 Compte : {nom_compte}
 
 Une fois connecté sur un joueur du compte, entrez la commande :
-    options newsletter off
+    options email off
 
 """
