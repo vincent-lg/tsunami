@@ -519,7 +519,7 @@ class Navire(Vehicule):
                 v_point = Vector(x, y, etendue.altitude)
                 if in_rectangle(origine.x, origine.y, origine.z,
                         n_position.x, n_position.y, n_position.z,
-                        x, y, etendue.altitude, 0.5) and origine.distance(
+                        x, y, etendue.altitude, 1) and origine.distance(
                         n_position, v_point) <= 0.5:
                     # C'est un lien, mais dans le bon sens ?
                     pr_x, pr_y = etendue.projections[autre]
