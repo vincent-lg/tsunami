@@ -142,6 +142,7 @@ class MUDmail(BaseObj):
         if not liste_dest:
             raise ValueError("la liste de destinataires est vide")
 
+        self.date = datetime.datetime.now()
         for dest in liste_dest:
             mail = type(self).importeur.communication.mails.creer_mail(
                     self.expediteur)
@@ -157,7 +158,6 @@ class MUDmail(BaseObj):
                 dest << "\n|jn|Vous avez reçu un nouveau message.|ff|"
             if self.notifier:
                 self.envoyer_email(dest)
-        self.date = datetime.datetime.now()
         self._etat = ENVOYE
 
     def archiver(self):
@@ -176,9 +176,9 @@ class MUDmail(BaseObj):
         sujet = "Vous avez reçu un nouveau message sur " \
                 "VanciaMUD : " + self.sujet
         nom_compte = dest.compte.nom
-        contenu = self.contenu.replace("|tab|", "   ")
+        contenu = self.afficher().replace("|tab|", "   ")
         corps = contenu + bas_page.format(nom_compte=nom_compte,
-                expediteur=expeditgeur)
+                expediteur=expediteur)
         if not importeur.email.serveur_mail:
             return
 
