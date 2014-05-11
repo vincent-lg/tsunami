@@ -162,6 +162,8 @@ class AffectionAbstraite(BaseObj):
 
         fact_dec = (affection.duree - duree) / affection.duree
         if fact_dec == 0:
+            affection.duree = 0
+            affection.detruire()
             return
 
         duree = affection.duree - duree
