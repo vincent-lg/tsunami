@@ -114,6 +114,20 @@ class Test(BaseObj):
         self.dernier_niveau = instruction.get_niveau_suivant()
         self.__instructions.append(instruction)
 
+    def ajouter_instructions(self, instructions):
+        """Ajoute plusieurs instructions.
+
+        Les instructions doivent être précisées sous la forme d'une
+        chaîne. Chaque instruction est sur une ligne différente.
+        L'indentation et les lignes vides ne sont pas prises en
+        compte.
+
+        """
+        for instruction in instructions.split("\n"):
+            instruction = instruction.strip()
+            if instruction:
+                self.ajouter_instruction(instruction)
+
     def remplacer_instruction(self, ligne, message):
         """Remplace une instruction."""
         if ligne not in range(len(self.__instructions)):
