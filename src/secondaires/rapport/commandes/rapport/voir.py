@@ -31,6 +31,7 @@
 """Fichier contenant le paramètre 'voir' de la commande 'rapport'."""
 
 from primaires.format.date import get_date
+from primaires.format.fonctions import echapper_accolades
 from primaires.interpreteur.masque.parametre import Parametre
 from secondaires.rapport.constantes import CLR_STATUTS, CLR_AVC
 
@@ -73,7 +74,7 @@ class PrmVoir(Parametre):
                 ret += "\nCe rapport est classé en priorité " + \
                         rapport.priorite + "."
                 ret += "\nDétail :\n"
-                ret += str(rapport.description)
+                ret += echapper_accolades(str(rapport.description))
                 ret += "\nRapport envoyé par " + createur + " " + \
                         get_date(rapport.date.timetuple()) + "\n"
                 if personnage.est_immortel():
