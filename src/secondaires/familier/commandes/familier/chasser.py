@@ -75,9 +75,11 @@ class PrmChasser(Parametre):
         pnj = familier.pnj
         if "chasse" in pnj.etats:
             pnj.etats.retirer("chasse")
+            familier.doit_chasser = False
             personnage.salle.envoyer("{} arrête de chasser.", pnj)
             return
 
+        familier.doit_chasser = True
         pnj.etats.ajouter("chasse")
         personnage.salle.envoyer("{} se déplace furtivement, cherchant " \
                 "des proies.", pnj)

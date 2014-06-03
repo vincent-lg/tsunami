@@ -66,6 +66,9 @@ class ClasseAction(Action):
           * Les sorties cachées
 
         """
+        if not ClasseAction.peut_deplacer_personnage(personnage):
+            return
+
         # Choix de la direction
         sorties = []
         for sortie in personnage.salle.sorties:
@@ -99,6 +102,9 @@ class ClasseAction(Action):
           * Les portes verrouillées.
 
         """
+        if not ClasseAction.peut_deplacer_personnage(personnage):
+            return
+
         # Choix des terrains
         if not terrains:
             raise ErreurExecution("aucun terrain n'est précisé")
@@ -273,3 +279,10 @@ class ClasseAction(Action):
 
         sortie = choice(sorties)
         objet.deplacer_vers(sortie, sort, arrive)
+
+    @staticmethod
+    def peut_deplacer_personnage(personnage):
+        """Retourne True si le personnage peut se déplacer, False sinon."""
+        peut = importeur.hook["scripting:deplacer_alea_personnage"].executer(
+                personnage)
+        return all(peut)

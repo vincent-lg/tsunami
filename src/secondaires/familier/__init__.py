@@ -156,6 +156,8 @@ class Module(BaseModule):
                 self.tick_PNJ)
         self.importeur.hook["pnj:gagner_xp"].ajouter_evenement(
                 self.gagner_xp_PNJ)
+        importeur.hook["scripting:deplacer_alea_personnage"].ajouter_evenement(
+                self.peut_deplacer_alea_personnage)
 
         # Abonne le module au déplacement de personnage
         self.importeur.hook["personnage:peut_deplacer"].ajouter_evenement(
@@ -361,6 +363,15 @@ class Module(BaseModule):
 
         return True
 
+    def peut_deplacer_alea_personnage(self, personnage):
+        """Retourne si le personnage peut se déplacer grâce à deplacer_alea.
+
+        Un familier apprivoisé ne le peut pas.
+
+        """
+        identifiant = getattr(personnage, "identifiant", None)
+        return identifiant not in self.familiers
+
     def calculer_endurance(self, personnage, endurance):
         """Retourne l'endurance réelle consommée."""
         if "chevauche" in personnage.etats:
@@ -457,7 +468,7 @@ class Module(BaseModule):
                 self.faire_chasser(familier)
             elif "broute" in pnj.etats:
                 self.faire_brouter(familier)
-            elif familier.maitre is None or not \
+            elif familier.doit_chasser or familier.maitre is None or not \
                     familier.maitre.est_connecte():
                 if pnj.etats:
                     pass

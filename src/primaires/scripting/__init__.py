@@ -102,6 +102,9 @@ class Module(BaseModule):
                 "scripting/exportation.cfg", "config exportation",
                 cfg_exportation)
 
+        # Création des hooks
+        importeur.hook.ajouter_hook("scripting:deplacer_alea_personnage",
+                "Hook appelé quand l'action deplacer_alea est exécutée.")
         BaseModule.config(self)
 
     def init(self):
