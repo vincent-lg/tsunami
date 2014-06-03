@@ -101,7 +101,7 @@ class Periode(BaseObj):
     def periode_suivante(self):
         """Retourne, si trouvée, la période suivante.
 
-        Si aucune période ne vient après, retourne self.
+        Si aucune période ne vient après, retourne la première du cycle.
         Si la période présente ne peut être trouvée dans le cycle, lève une
         exception IndexError.
 
@@ -114,7 +114,7 @@ class Periode(BaseObj):
         try:
             return self.cycle.periodes[indice + 1]
         except IndexError:
-            return self
+            return self.cycle.periodes[0]
 
     @property
     def finie(self):
@@ -177,7 +177,7 @@ class Periode(BaseObj):
             if elt.objet is objet:
                 return elt
 
-        raise ValueError("aucun élément ne correspond à l'objet {}".Format(
+        raise ValueError("aucun élément ne correspond à l'objet {}".format(
                 objet.cle))
 
     def est_element(self, nom):
