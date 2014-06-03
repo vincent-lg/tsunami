@@ -30,6 +30,7 @@
 
 """Fichier contenant le type Conteneur."""
 
+from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.interpreteur.editeur.selection import Selection
 from bases.objet.attribut import Attribut
@@ -54,9 +55,12 @@ class Conteneur(BaseType):
         BaseType.__init__(self, cle)
         self.types_admis = ["*"]
         self.poids_max = 10
+        self.meuble_support = False
         self.etendre_editeur("x", "poids max", Flottant, self, "poids_max")
         self.etendre_editeur("t", "types admis", Selection, self,
                 "types_admis", type(self).importeur.objet.noms_types)
+        self.etendre_editeur("m", "meuble support", Flag, self,
+                "meuble_support")
 
         # Attributs propres à l'objet (non au prototype)
         self._attributs = {
@@ -201,8 +205,14 @@ class Conteneur(BaseType):
             objets.append(o.get_nom(nb))
 
         if objets:
-            msg += "Vous voyez à l'intérieur :\n  " + \
-                    "\n  ".join(objets)
+            msg += "Vous voyez "
+            if self.meuble_support:
+                msg += "dessus :"
+            else:
+                msg += "à l'intérieur :"
+            msg += "\n  " + "\n  ".join(objets)
+        elif self.meuble_support:
+            msg += "Vous ne voyez rien dessus."
         else:
             msg += "Vous ne voyez rien à l'intérieur."
 

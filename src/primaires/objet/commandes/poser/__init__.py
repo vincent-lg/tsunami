@@ -111,10 +111,17 @@ class CmdPoser(Commande):
                 break
 
         if dans:
-            personnage << "Vous déposez {} dans {}.".format(
-                    objet.get_nom(pose), dans.nom_singulier)
-            personnage.salle.envoyer("{{}} dépose {} dans {}.".format(
-                        objet.get_nom(pose), dans.nom_singulier), personnage)
+            if getattr(dans, "meuble_support", False):
+                connecteur = "sur"
+            else:
+                connecteur = "dans"
+
+            personnage << "Vous déposez {} {connecteur} {}.".format(
+                    objet.get_nom(pose), dans.nom_singulier,
+                    connecteur=connecteur)
+            personnage.salle.envoyer("{{}} dépose {} {connecteur} {}.".format(
+                        objet.get_nom(pose), dans.nom_singulier,
+                        connecteur=connecteur), personnage)
         else:
             personnage << "Vous posez {}.".format(objet.get_nom(pose))
             personnage.salle.envoyer("{{}} pose {}.".format(
