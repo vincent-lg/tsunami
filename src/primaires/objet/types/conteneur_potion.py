@@ -82,7 +82,7 @@ class ConteneurPotion(BaseType):
             "Connecteur actuel : {objet.connecteur}"
 
     # Actions sur les objets
-    def get_nom(self, nombre=1):
+    def get_nom(self, nombre=1, pluriels=True):
         """Retourne le nom complet en fonction du nombre.
 
         Par exemple :

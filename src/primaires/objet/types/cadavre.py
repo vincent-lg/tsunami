@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -37,11 +37,11 @@ from corps.fonctions import lisser
 from .base import BaseType
 
 class Cadavre(BaseType):
-    
+
     """Type d'objet: cadavre.
-    
+
     """
-    
+
     nom_type = "cadavre"
     selectable = False
     def __init__(self, cle=""):
@@ -51,26 +51,26 @@ class Cadavre(BaseType):
         self.nom_pluriel = "cadavres"
         self.etat_singulier = "repose ici"
         self.etat_pluriel = "reposent ici"
-        
+
         # Attributs propres à l'objet (non au prototype)
         self._attributs = {
             "pnj": Attribut(),
             "apparition": Attribut(datetime.now),
         }
-    
-    def get_nom(self, nombre=1):
+
+    def get_nom(self, nombre=1, pluriels=True):
         """Retourne le nom complet en fonction du nombre.
-        
+
         Par exemple :
         Si nombre == 1 : retourne le nom singulier
         Sinon : retourne le nombre et le nom pluriel
-        
+
         """
         ajout = ""
         diff = 0
         if hasattr(self, "apparition"):
             diff = (datetime.now() - self.apparition).seconds // 60
-        
+
         if diff < 2:
             ajout += " encore chaud"
         elif diff < 5:
@@ -81,10 +81,10 @@ class Cadavre(BaseType):
             ajout += " plus très frais"
         else:
             ajout += " en putréfaction"
-        
+
         if hasattr(self, "pnj") and self.pnj:
             ajout += lisser(" de " + self.pnj.nom_singulier)
-        
+
         if nombre <= 0:
             raise ValueError("la fonction get_nom a été appelée " \
                     "avec un nombre négatif ou nul.")

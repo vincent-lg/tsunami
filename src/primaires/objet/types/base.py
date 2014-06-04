@@ -203,7 +203,7 @@ class BaseType(BaseObj, metaclass=MetaType):
         """
         pass
 
-    def get_nom(self, nombre=1):
+    def get_nom(self, nombre=1, pluriels=True):
         """Retourne le nom complet en fonction du nombre.
 
         Par exemple :
@@ -217,7 +217,7 @@ class BaseType(BaseObj, metaclass=MetaType):
         elif nombre == 1:
             return self.nom_singulier
         else:
-            if self.noms_sup:
+            if pluriels and self.noms_sup:
                 noms_sup = list(self.noms_sup)
                 noms_sup.reverse()
                 for nom in noms_sup:

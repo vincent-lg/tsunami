@@ -62,4 +62,4 @@ class ClasseFonction(Fonction):
             raise ErreurExecution("prototype d'objet introuvable : {}".format(
                     repr(cle_prototype)))
 
-        return prototype.get_nom(int(nombre))
+        return prototype.get_nom(int(nombre), pluriels=False)
