@@ -70,6 +70,10 @@ class CmdBug(Commande):
         else:
             titre = "Sans titre"
             description = dic_masques["message"].message
+            if len(description) < 10:
+                personnage << "|err|Cette description de bug est trop " \
+                        "courte.|ff|"
+                return
 
         rapport = importeur.rapport.creer_rapport(titre, personnage)
         rapport.type = "bug"
