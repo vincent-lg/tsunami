@@ -41,6 +41,7 @@ class ClasseFonction(Fonction):
     def init_types(cls):
         cls.ajouter_types(cls.salle_personnage, "Personnage")
         cls.ajouter_types(cls.salle_chaine, "str")
+        cls.ajouter_types(cls.salle_objet, "Objet")
 
     @staticmethod
     def salle_personnage(personnage):
@@ -61,3 +62,32 @@ class ClasseFonction(Fonction):
             raise ErreurExecution("salle inconnue : {}".format(cle))
         else:
             return salle
+
+    @staticmethod
+    def salle_objet(objet):
+        """Retourne la salle dans laquelle se trouve l'objet.
+
+        Paramètres à préciser :
+
+          * objet : l'objet dont on veut retrouver la salle.
+
+        Attention : un objet peut se trouver possédé par un personnage. Dans
+        ce cas, la salle retournée est celle dans lequel se trouve le
+        personnage. Notez aussi que l'objet peut se trouver nullepart
+        (cela arrive en cas d'erreur sur une fonction 'creer_objet' par
+        exemple, mais aussi dans d'autres situations pour certains objets
+        détruits). Vérifiez toujours que la valeur retournée par cette
+        fonction existe bien :
+
+          # Retourne toutes les pommes rouges, peu importe où elles sont
+          pour chaque objet dans objets("pomme_rouge"):
+              salle = salle(objet)
+              si salle:
+                  dire salle "Les pommes rouges se mettent à danser !"
+
+        """
+        parent = objet.grand_parent
+        if hasattr(parent, "salle"):
+            return parent.salle
+
+        return parent
