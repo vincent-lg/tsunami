@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -30,14 +30,16 @@
 
 """Package contenant la commande 'prendre'."""
 
+from fractions import Fraction
+
 from primaires.interpreteur.commande.commande import Commande
 from primaires.objet.types.base import FLAGS
 from primaires.objet.conteneur import SurPoids
 
 class CmdPrendre(Commande):
-    
+
     """Commande 'prendre'"""
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "prendre", "get")
@@ -47,7 +49,7 @@ class CmdPrendre(Commande):
         self.aide_courte = "ramasse un objet"
         self.aide_longue = \
                 "Cette commande permet de ramasser un ou plusieurs objets."
-    
+
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("nom_objet")
@@ -63,7 +65,7 @@ class CmdPrendre(Commande):
                 "personnage.salle.objets_sol.iter_nombres())"
         conteneur.proprietes["types"] = "('conteneur', )"
         conteneur.proprietes["quantite"] = "True"
-    
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         personnage.agir("prendre")
@@ -74,7 +76,7 @@ class CmdPrendre(Commande):
         objets = objets[:nombre]
         depuis = dic_masques["conteneur"]
         depuis = depuis and depuis.objet or None
-        
+
         pris = 0
         for objet, qtt, conteneur in objets:
             if not objet.peut_prendre or objet.flags & \
@@ -89,23 +91,23 @@ class CmdPrendre(Commande):
             except SurPoids as err:
                 personnage << "|err|" + str(err) + "|ff|"
                 return
-            
+
             if dans is None:
                 break
-            
+
             if depuis:
                 depuis.conteneur.retirer(objet, nombre)
             else:
                 personnage.salle.objets_sol.retirer(objet, nombre)
             pris += 1
-            
+
         if pris == 0:
             personnage << "|err|Vous n'avez aucune main de libre.|ff|"
             return
-        
+
         if pris < nombre:
             pris = nombre
-        
+
         if depuis:
             personnage << "Vous prenez {} depuis {}.".format(
                     objet.get_nom(pris), depuis.nom_singulier)
@@ -115,5 +117,6 @@ class CmdPrendre(Commande):
             personnage << "Vous ramassez {}.".format(objet.get_nom(pris))
             personnage.salle.envoyer("{{}} ramasse {}.".format(
                     objet.get_nom(pris)), personnage)
-        
-        objet.script["prend"].executer(objet=objet, personnage=personnage)
+
+        objet.script["prend"].executer(objet=objet, personnage=personnage,
+                quantite=Fraction(pris))

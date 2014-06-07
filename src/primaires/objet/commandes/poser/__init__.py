@@ -131,4 +131,4 @@ class CmdPoser(Commande):
             if hasattr(objet, "prototype"):
                 prototype = objet.prototype
 
-            prototype.poser(objet, personnage)
+            prototype.poser(objet, personnage, pose)

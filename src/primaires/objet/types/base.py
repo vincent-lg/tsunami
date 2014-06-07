@@ -30,6 +30,8 @@
 
 """Ce fichier contient la classe BaseType, détaillée plus bas."""
 
+from fractions import Fraction
+
 from abstraits.obase import BaseObj
 from primaires.format.description import Description
 from primaires.objet.script import ScriptObjet
@@ -343,9 +345,10 @@ class BaseType(BaseObj, metaclass=MetaType):
         """
         return False
 
-    def poser(self, objet, personnage):
+    def poser(self, objet, personnage, qtt=1):
         """L'objet est posé."""
-        objet.script["pose"].executer(objet=objet, personnage=personnage)
+        objet.script["pose"].executer(objet=objet, personnage=personnage,
+                quantite=Fraction(qtt))
 
     def detruire(self):
         """Destruction du prototype d'objet."""

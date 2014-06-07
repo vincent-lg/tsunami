@@ -77,6 +77,8 @@ class ScriptObjet(Script):
         var_perso.aide = "le personnage prenant l'objet"
         var_objet = evt_prend.ajouter_variable("objet", "Objet")
         var_objet.aide = "l'objet ramassé"
+        var_quantite = evt_prend.ajouter_variable("quantite", "Fraction")
+        var_quantite.aide = "le nombre d'objets ramassés"
 
         # Evénement pose
         evt_pose = self.creer_evenement("pose")
@@ -89,3 +91,5 @@ class ScriptObjet(Script):
         var_perso.aide = "le personnage posant l'objet"
         var_objet = evt_pose.ajouter_variable("objet", "Objet")
         var_objet.aide = "l'objet posé"
+        var_quantite = evt_pose.ajouter_variable("quantite", "Fraction")
+        var_quantite.aide = "le nombre d'objets posés"

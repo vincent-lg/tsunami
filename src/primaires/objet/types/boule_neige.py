@@ -56,7 +56,7 @@ class BouleNeige(BaseType):
             "apparition": Attribut(datetime.now),
         }
 
-    def poser(self, objet, personnage):
+    def poser(self, objet, personnage, qtt=1):
         """On pose l'objet."""
         Salle = importlib.import_module("primaires.salle.salle").Salle
         if isinstance(objet.contenu, Salle) and \
