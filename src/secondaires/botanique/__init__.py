@@ -36,6 +36,7 @@ from primaires.format.fonctions import format_nb
 from .plante import Plante
 from .prototype import PrototypePlante
 from .detail import DetailMod
+from .cherchables import *
 from . import commandes
 from . import editeurs
 from . import masques
