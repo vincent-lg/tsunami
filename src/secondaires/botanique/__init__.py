@@ -68,6 +68,7 @@ class Module(BaseModule):
         importeur.temps.met_changer_annee.append(self.actualiser_cycles)
         importeur.temps.met_changer_jour.append(self.actualiser_periodes)
         importeur.salle.details_dynamiques.append(self.detailler_salle)
+        self.importeur.scripting.a_charger.append(self)
         BaseModule.config(self)
 
     def init(self):
