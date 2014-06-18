@@ -60,6 +60,18 @@ class Module(BaseModule):
         self.cfg = type(self.importeur).anaconf.get_config("temps",
             "temps/temps.cfg", "config temps", cfg_temps)
 
+        # On crée les hooks du module
+        importeur.hook.ajouter_hook("temps:minute",
+                "Hook appelé quand on change de minute.")
+        importeur.hook.ajouter_hook("temps:heure",
+                "Hook appelé quand on change d'heure.")
+        importeur.hook.ajouter_hook("temps:jour",
+                "Hook appelé quand on change de jour.")
+        importeur.hook.ajouter_hook("temps:mois",
+                "Hook appelé quand on change de mois.")
+        importeur.hook.ajouter_hook("temps:annee",
+                "Hook appelé quand on change d'année.")
+
         BaseModule.config(self)
 
     def init(self):
@@ -114,38 +126,21 @@ class Module(BaseModule):
             liste_messages.append("|cy|" + self.temps.ciel_actuel + "|ff|")
 
     def changer_minute(self):
-        """Change de minute.
+        """Change de minute."""
+        importeur.hook["temps:minute"].executer(self.temps)
 
-        Renouvelle les magasins.
-
-        """
-        magasins = importeur.salle.a_renouveler.get(self.temps.heure_minute,
-                [])
-        for magasin in magasins:
-            magasin.inventaire[:] = []
-            magasin.renouveler()
-
-        magasins = importeur.salle.magasins_a_ouvrir.get(
-                self.temps.heure_minute, [])
-        for magasin in magasins:
-            magasin.ouvrir()
-
-        magasins = importeur.salle.magasins_a_fermer.get(
-                self.temps.heure_minute, [])
-        for magasin in magasins:
-            magasin.fermer()
+    def changer_heure(self):
+        """Change d'heure."""
+        importeur.hook["temps:heure"].executer(self.temps)
 
     def changer_jour(self):
-        """Appel les callbacks contenus dans met_changer_jour."""
-        for met in self.met_changer_jour:
-            met()
+        """Change de jour."""
+        importeur.hook["temps:jour"].executer(self.temps)
 
     def changer_mois(self):
-        """Appel les callbacks contenus dans met_changer_mois."""
-        for met in self.met_changer_mois:
-            met()
+        """Change de mois."""
+        importeur.hook["temps:mois"].executer(self.temps)
 
     def changer_annee(self):
         """Appel les callbacks contenus dans met_changer_annee."""
-        for met in self.met_changer_annee:
-            met()
+        importeur.hook["temps:annee"].executer(self.temps)

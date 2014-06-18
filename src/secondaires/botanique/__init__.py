@@ -66,14 +66,16 @@ class Module(BaseModule):
 
     def config(self):
         """Configuration du module."""
-        importeur.temps.met_changer_annee.append(self.actualiser_cycles)
-        importeur.temps.met_changer_jour.append(self.actualiser_periodes)
         importeur.salle.details_dynamiques.append(self.detailler_salle)
         self.importeur.scripting.a_charger.append(self)
         BaseModule.config(self)
 
     def init(self):
         """Méthode d'initialisation du module."""
+        self.importeur.hook["temps:annee"].ajouter_evenement(
+                self.actualiser_cycles)
+        self.importeur.hook["temps:jour"].ajouter_evenement(
+                self.actualiser_periodes)
         # On récupère les prototypes
         prototypes = importeur.supenr.charger_groupe(PrototypePlante)
         for prototype in prototypes:
@@ -150,7 +152,7 @@ class Module(BaseModule):
         plante.detruire()
         del self.plantes[cle]
 
-    def actualiser_cycles(self):
+    def actualiser_cycles(self, temps):
         """Actualise les cycles de TOUTES les plantes.
 
         Cette méthode n'est censée être appelée qu'à chaque nouvelle année.
@@ -167,7 +169,7 @@ class Module(BaseModule):
             plante.periode = plante.cycle.periodes[0]
             plante.elements.clear()
 
-    def actualiser_periodes(self):
+    def actualiser_periodes(self, temps):
         """Actualise les périodes de TOUTES les plantes.
 
         Cette méthode n'est censée être appelée qu'à chaque nouveau jour.

@@ -74,6 +74,9 @@ class Module(BaseModule):
 
     def init(self):
         """Initialisation du module."""
+        self.importeur.hook["temps:minute"].ajouter_evenement(
+                self.renouveler_magasins)
+
         # On récupère les questeurs
         questeurs = self.importeur.supenr.charger_groupe(Questeur)
         for questeur in questeurs:
@@ -119,3 +122,21 @@ class Module(BaseModule):
         questeur = self.questeurs[salle]
         questeur.detruire()
         del self.questeurs[salle]
+
+    def renouveler_magasins(self, temps):
+        """Renouvelle les magasins."""
+        magasins = importeur.salle.a_renouveler.get(temps.heure_minute,
+                [])
+        for magasin in magasins:
+            magasin.inventaire[:] = []
+            magasin.renouveler()
+
+        magasins = importeur.salle.magasins_a_ouvrir.get(
+                temps.heure_minute, [])
+        for magasin in magasins:
+            magasin.ouvrir()
+
+        magasins = importeur.salle.magasins_a_fermer.get(
+                temps.heure_minute, [])
+        for magasin in magasins:
+            magasin.fermer()

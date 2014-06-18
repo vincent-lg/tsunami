@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,24 +36,24 @@ from abstraits.obase import BaseObj
 from .constantes import *
 
 class Temps(BaseObj):
-    
+
     """Classe contenant les informations d'un temps, enregistrée en fichier.
-    
+
     Cette classe est créée en lui passant en paramètre la configuration du
     module temps.
-    
+
     Si la configuration du module est modifiée, il est nécessaire de supprimer
     le temps enregistré.
-    
+
     """
-    
+
     enregistrer = True
     def __init__(self, config):
         """Constructeur de l'objet"""
         BaseObj.__init__(self)
         if not config:
             return
-        
+
         reglage_init = config.reglage_initial
         self.annee = reglage_init[0]
         self.mois = reglage_init[1] - 1
@@ -61,7 +61,7 @@ class Temps(BaseObj):
         self.heure = reglage_init[3]
         self.minute = reglage_init[4]
         self.seconde = Fraction()
-        
+
         # Différents noms
         self.saisons = config.saisons
         self.mois_saisons = dict(config.mois)
@@ -71,7 +71,7 @@ class Temps(BaseObj):
         else:
             self.noms_jours = [str(i) for i in range(1,
                     config.nombre_jours + 1)]
-        
+
         # On vérifie que le réglage initial est conforme aux noms
         try:
             nom_mois = self.noms_mois[self.mois]
@@ -83,61 +83,61 @@ class Temps(BaseObj):
         except IndexError:
             raise ValueError("erreur lors du réglage de l'heure initiale : " \
                     "le jour {} est invalide".format(self.jour))
-        
+
         self.vitesse_ecoulement = Fraction(config.vitesse_ecoulement)
-        
+
         self.formatage_date = config.formatage_date
         self.formatage_heure = config.formatage_heure
-    
+
     def __getnewargs__(self):
         return (None, )
-    
+
     @property
     def no_j(self):
         return "{:02}".format(self.jour + 1)
-    
+
     @property
     def nm_j(self):
         return self.noms_jours[self.jour]
-    
+
     @property
     def no_m(self):
         return "{:02}".format(self.mois + 1)
-    
+
     @property
     def nm_m(self):
         return self.noms_mois[self.mois]
-    
+
     @property
     def nm_s(self):
         return self.mois_saisons[self.nm_m]
-    
+
     @property
     def no_a(self):
         return "{}".format(self.annee)
-    
+
     @property
     def no_h(self):
         return "{:02}".format(self.heure)
-    
+
     @property
     def no_m(self):
         return "{:02}".format(self.minute)
-    
+
     @property
     def nom_quart(self):
         """Retourne l'heure sous la forme d'un nom de quart.
-        
+
         par exemple :
             une heure moins le quart du matin
-        
+
         """
         heure = self.heure
         minute = self.minute
         quart = round(minute / 15)
         if quart >= 4:
             quart = 3
-        
+
         minutes = ""
         masc_minutes = ""
         if quart == 1:
@@ -149,7 +149,7 @@ class Temps(BaseObj):
             heure += 1
             heure = heure % 24
             masc_minutes = minutes = "moins le quart"
-        
+
         moment = "du matin"
         if heure >= 13:
             if heure < 17:
@@ -157,50 +157,50 @@ class Temps(BaseObj):
             else:
                 moment = "du soir"
             heure = heure % 12
-        
+
         nom_heure = NOMS_HEURES[heure]
         nom_heure = nom_heure.format(minutes=minutes,
                 masc_minutes=masc_minutes, moment=moment)
         nom_heure = nom_heure.replace("  ", " ")
         return nom_heure.rstrip()
-    
+
     @property
     def date_formatee(self):
         """Retourne la date formatée"""
         return self.formatage_date.format(no_j=self.no_j,
                 nm_j=self.nm_j, no_m=self.no_m, nm_m=self.nm_m,
                 nm_s=self.nm_s, no_a=self.no_a)
-    
+
     @property
     def heure_formatee(self):
         """Retourne l'heure formatée"""
         return self.formatage_heure.format(no_h=self.no_h, no_m=self.no_m,
                 nm_q=self.nom_quart)
-    
+
     @property
     def h_lever(self):
         """Retourne l'heure du lever de soleil"""
         for ligne in type(self).importeur.temps.cfg.alternance_jn:
             if ligne[0] == self.nm_s:
                 return ligne[1]
-    
+
     @property
     def h_coucher(self):
         """Retourne l'heure du coucher de soleil"""
         for ligne in type(self).importeur.temps.cfg.alternance_jn:
             if ligne[0] == self.nm_s:
                 return ligne[2]
-        
+
     @property
     def il_fait_jour(self):
         """Retourne True s'il fait jour, False sinon"""
         return self.heure >= self.h_lever and self.heure < self.h_coucher
-    
+
     @property
     def il_fait_nuit(self):
         """Retourne True s'il fait nuit, False sinon"""
         return not self.il_fait_jour
-    
+
     @property
     def ciel_actuel(self):
         """Retourne le message correspondant au ciel actuel selon l'heure"""
@@ -221,8 +221,8 @@ class Temps(BaseObj):
         elif h_now == self.h_coucher:
             return config.post_coucher
         elif h_now > self.h_coucher or h_now < self.h_lever - 1:
-            return config.nuit        
-    
+            return config.nuit
+
     @property
     def heure_minute(self):
         """Retourne un tuple heure, minute."""
@@ -232,38 +232,55 @@ class Temps(BaseObj):
             minute %= 60
             heure += 1
         return (heure, minute)
-    
+
     def inc(self):
         """Incrémente de 1 seconde réelle"""
         self.seconde += 1 / self.vitesse_ecoulement
-        
+        minute = heure = jour = mois = annee = False
+
         if self.seconde >= 60:
             self.seconde = Fraction()
             self.minute += 1
-            importeur.temps.changer_minute()
+            minute = True
         if self.minute >= 60:
             self.minute -= 60
             self.heure += 1
+            heure = True
         if self.heure >= 24:
             self.heure -= 24
             self.jour += 1
-            importeur.temps.changer_jour()
+            jour = True
         if self.jour >= len(self.noms_jours):
             self.jour -= len(self.noms_jours)
             self.mois += 1
-            importeur.temps.changer_mois()
+            mois = True
         if self.mois >= len(self.noms_mois):
             self.mois -= len(self.noms_mois)
             self.annee += 1
+            annee = True
+
+        self.appeler_hook(minute, heure, jour, mois, annee)
+
+    def appeler_hook(self, minute, heure, jour, mois, annee):
+        """Appelle les hooks correspondant au changement de temps."""
+        if minute:
+            importeur.temps.changer_minute()
+        if heure:
+            importeur.temps.changer_heure()
+        if jour:
+            importeur.temps.changer_jour()
+        if mois:
+            importeur.temps.changer_mois()
+        if annee:
             importeur.temps.changer_annee()
-    
+
     @staticmethod
     def convertir_heure(chaine, defaut=None):
         """Convertit la chaîne en un tuple (h, m, s).
-        
+
         Si les minutes ou secondes ne sont pas précisés, retourne defaut
         dans le tuple.
-        
+
         """
         heure = chaine.split(":")
         try:
@@ -277,19 +294,19 @@ class Temps(BaseObj):
                 return heure + (defaut, )
             else:
                 return heure[:3]
-    
+
     # Fonctions mathématiques
     def __hash__(self):
         return hash(str(self))
-    
+
     def __eq__(self, chaine):
         h, m, s = self.convertir_heure(chaine, 0)
         return self.heure == h and self.minute == m and self.seconde == s
-    
+
     def __ne__(self, chaine):
         h, m, s = self.convertir_heure(chaine, 0)
         return self.heure != h or self.minute != m or self.seconde != s
-    
+
     def __le__(self, chaine):
         h, m, s = self.convertir_heure(chaine)
         if self.heure < h:
@@ -301,7 +318,7 @@ class Temps(BaseObj):
                 s is not None and self.seconde <= s:
             return True
         return False
-    
+
     def __lt__(self, chaine):
         h, m, s = self.convertir_heure(chaine)
         if self.heure < h:
@@ -313,7 +330,7 @@ class Temps(BaseObj):
                 s is not None and self.seconde < s:
             return True
         return False
-    
+
     def __ge__(self, chaine):
         h, m, s = self.convertir_heure(chaine)
         if self.heure > h:
@@ -325,7 +342,7 @@ class Temps(BaseObj):
                 s is not None and self.seconde >= s:
             return True
         return False
-    
+
     def __gt__(self, chaine):
         h, m, s = self.convertir_heure(chaine)
         if self.heure > h:
