@@ -79,6 +79,8 @@ class EdtRedit(Presentation):
 
     def construire(self, salle):
         """Construction de l'éditeur"""
+        importeur.salle.inscrire_salle(salle)
+
         # Coordonnées
         coords = self.ajouter_choix("coordonnées", "c", EdtCoords, salle)
         coords.parent = self
@@ -263,3 +265,9 @@ class EdtRedit(Presentation):
         sup.parent = self
         sup.aide_courte = "Souhaitez-vous réellement supprimer " \
                 "la salle {} ?".format(salle.ident)
+
+    def fermer(self):
+        """On ferme l'éditeur."""
+        Presentation.fermer(self)
+        if self.objet:
+            importeur.salle.inscrire_salle(self.objet)

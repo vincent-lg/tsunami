@@ -111,6 +111,11 @@ class Module(BaseModule):
         self.terrains = {}
         self.etendues = {}
         self.obstacles = {}
+        self.ch_minute = []
+        self.ch_heure = []
+        self.ch_jour = []
+        self.ch_mois = []
+        self.ch_annee = []
 
         # Liste des méthodes ajoutant des salles éventuelles à cartographier
         # Par exemple, un éventuel module secondaire de navigation ajoute à
@@ -267,6 +272,18 @@ class Module(BaseModule):
             self.importeur.diffact.ajouter_action("stick_{}".format(no),
                     intervalle * no, self.tick, no)
 
+        # Ajout des hooks de changement de temps
+        self.importeur.hook["temps:minute"].ajouter_evenement(
+                self.changer_minute)
+        self.importeur.hook["temps:heure"].ajouter_evenement(
+                self.changer_heure)
+        self.importeur.hook["temps:jour"].ajouter_evenement(
+                self.changer_jour)
+        self.importeur.hook["temps:mois"].ajouter_evenement(
+                self.changer_mois)
+        self.importeur.hook["temps:annee"].ajouter_evenement(
+                self.changer_annee)
+
         BaseModule.init(self)
 
     def ajouter_commandes(self):
@@ -373,6 +390,9 @@ class Module(BaseModule):
             for personnage in salle.personnages:
                 if personnage.salle is not salle:
                     salle.retirer_personnage(personnage)
+
+            # On ajoute les salles au renouvellement automatique
+            self.inscrire_salle(salle)
 
         # On recrée les obstacles
         for nom, terrain in self.terrains.items():
@@ -816,3 +836,80 @@ class Module(BaseModule):
                         pierre.nom_singulier)
                 conteneur.retirer(pierre)
                 importeur.objet.supprimer_objet(pierre.identifiant)
+
+    def inscrire_salle(self, salle):
+        """Inscrit la salle dans le changement de temps."""
+        if salle.script["changer"]["minute"].tests:
+            if salle not in self.ch_minute:
+                self.ch_minute.append(salle)
+        elif salle in self.ch_minute:
+            self.ch_minute.remove(salle)
+
+        if salle.script["changer"]["heure"].tests:
+            if salle not in self.ch_heure:
+                self.ch_heure.append(salle)
+        elif salle in self.ch_heure:
+            self.ch_heure.remove(salle)
+
+        if salle.script["changer"]["jour"].tests:
+            if salle not in self.ch_jour:
+                self.ch_jour.append(salle)
+        elif salle in self.ch_jour:
+            self.ch_jour.remove(salle)
+
+        if salle.script["changer"]["mois"].tests:
+            if salle not in self.ch_mois:
+                self.ch_mois.append(salle)
+        elif salle in self.ch_mois:
+            self.ch_mois.remove(salle)
+
+        if salle.script["changer"]["année"].tests:
+            if salle not in self.ch_annee:
+                self.ch_annee.append(salle)
+        elif salle in self.ch_annee:
+            self.ch_annee.remove(salle)
+
+    def changer_minute(self, temps):
+        """Hook appelé à chaque changement de minute."""
+        minute, heure, jour, mois, annee = temps.minute, temps.heure, \
+                temps.jour + 1, temps.mois + 1, temps.annee
+        for salle in self.ch_minute:
+            salle.script["changer"]["minute"].executer(salle=salle,
+                    minute=minute, heure=heure, jour=jour, mois=mois,
+                    annee=annee)
+
+    def changer_heure(self, temps):
+        """Hook appelé à chaque changement d'heure."""
+        minute, heure, jour, mois, annee = temps.minute, temps.heure, \
+                temps.jour + 1, temps.mois + 1, temps.annee
+        for salle in self.ch_heure:
+            salle.script["changer"]["heure"].executer(salle=salle,
+                    minute=minute, heure=heure, jour=jour, mois=mois,
+                    annee=annee)
+
+    def changer_jour(self, temps):
+        """Hook appelé à chaque changement de jour."""
+        minute, heure, jour, mois, annee = temps.minute, temps.heure, \
+                temps.jour + 1, temps.mois + 1, temps.annee
+        for salle in self.ch_jour:
+            salle.script["changer"]["jour"].executer(salle=salle,
+                    minute=minute, heure=heure, jour=jour, mois=mois,
+                    annee=annee)
+
+    def changer_mois(self, temps):
+        """Hook appelé à chaque changement de mois."""
+        minute, heure, jour, mois, annee = temps.minute, temps.heure, \
+                temps.jour + 1, temps.mois + 1, temps.annee
+        for salle in self.ch_mois:
+            salle.script["changer"]["mois"].executer(salle=salle,
+                    minute=minute, heure=heure, jour=jour, mois=mois,
+                    annee=annee)
+
+    def changer_annee(self, temps):
+        """Hook appelé à chaque changement d'année."""
+        minute, heure, jour, mois, annee = temps.minute, temps.heure, \
+                temps.jour + 1, temps.mois + 1, temps.annee
+        for salle in self.ch_annee:
+            salle.script["changer"]["annee"].executer(salle=salle,
+                    minute=minute, heure=heure, jour=jour, mois=mois,
+                    annee=annee)
