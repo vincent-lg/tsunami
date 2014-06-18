@@ -104,12 +104,17 @@ class CmdStat(Commande):
         nb_ob = len(imp.objet.objets)
         nb_pro = len(imp.objet.prototypes)
         nb_sa = len(imp.salle)
+        nb_sa_ouv = len([s for s in imp.salle.salles.values() if \
+                s.zone.ouverte])
+        pc_sa_ouv = int(nb_sa_ouv / nb_sa * 100)
         msg = "\n|tit|En mémoire :|ff|"
         msg += "\n  {} joueur{} issus de {} compte{}".format(nb_jo,
                 nb_jo > 1 and "s" or "", nb_com, nb_com > 1 and "s" or "")
         msg += "\n  {} joueur{s} différent{s} présent{s} dans la " \
                 "semaine".format(nb_jo_pr, s="s" if nb_jo_pr > 1 else "")
-        msg += "\n  {} salle{}".format(nb_sa, nb_sa > 1 and "s" or "")
+        msg += "\n  {} salle{ss} dont {} ouverte{os} ({}%)".format(
+                nb_sa, nb_sa_ouv, pc_sa_ouv, ss="s" if nb_sa > 1 else "",
+                os="s" if nb_sa_ouv > 1 else "")
         msg += "\n  {} objet{} issus de {} prototype{}".format(nb_ob,
                 nb_ob > 1 and "s" or "", nb_pro, nb_pro > 1 and "s" or "")
         infos.append(msg)
