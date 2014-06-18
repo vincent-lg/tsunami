@@ -152,7 +152,10 @@ class Rapport(BaseObj):
 
         """
         statut = self._statut
-        attrs = ATTRS_STATUTS[statut]
+        attrs = ATTRS_STATUTS.get(statut)
+        if attrs is None:
+            return
+
         for nom, valeur in attrs:
             setattr(self, nom, valeur)
 
