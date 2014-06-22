@@ -80,6 +80,7 @@ from .fromage import *
 from .fruit import *
 from .gateau import *
 from .oeuf import *
+from .epice import *
 
 from .assiette import Assiette
 from .bol import Bol
