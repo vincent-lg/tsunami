@@ -195,10 +195,8 @@ class Tirer(Volonte):
             personnage = navire.personnages[0]
 
         portee = get_portee(personnage.salle)
-        points = Visible.observer(personnage, portee, 5)
-        navires = []
-        for couple in points.navires:
-            autre = couple[1][3]
-            navires.append(autre)
-
+        points = Visible.observer(personnage, portee, 5,
+                {"": navire})
+        navires = [p[1] for p in points.points.values() if \
+                isinstance(p[1], type(navire))]
         return navires
