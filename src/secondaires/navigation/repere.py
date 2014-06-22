@@ -93,7 +93,8 @@ class Repere(BaseObj):
         personnage << msg
 
     @staticmethod
-    def trouver_reperes(visible, personnage, portee, precision):
+    def trouver_reperes(visible, personnage, portee, precision,
+            exceptions=None):
         """Cherche les repères visibles dans l'étendue."""
         navire = personnage.salle.navire
         etendue = navire.etendue
@@ -116,4 +117,4 @@ class Repere(BaseObj):
             # On détermine l'angle minimum fonction de la précision
             angle = norme_angle(round(r_direction / precision) * precision)
             visible.entrer_point(angle, v_dist, repere, nav_direction,
-                    precision)
+                    precision, exceptions=exceptions)

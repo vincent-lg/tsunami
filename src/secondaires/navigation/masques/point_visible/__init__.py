@@ -95,8 +95,8 @@ class VPointVisible(Masque):
             precision = 15
 
         # On récupère les points
-        points = Visible.observer(personnage, portee, precision)
-        points.filtrer(navire)
+        points = Visible.observer(personnage, portee, precision,
+                {"": navire})
         msg = points.formatter(direction, limite)
         self.points = points
         self.retour = msg

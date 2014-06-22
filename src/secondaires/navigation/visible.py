@@ -89,12 +89,23 @@ class Visible:
         self.points = {}
 
     def entrer_point(self, angle, v_dist, point, nav_direction,
-            precision, recursif=True):
+            precision, recursif=True, exceptions=None):
         """Entre un point dans le dictionnaire des points.
 
         On n'entre le point que si il n'y a pas de point plus proche.
 
         """
+        exceptions = exceptions or {}
+
+        # On élimite les points dans l'exception
+        for cle, valeur in exceptions.items():
+            if cle == "":
+                if point is valeur:
+                    return
+            else:
+                if getattr(point, cle, None) is valeur:
+                    return
+
         position = self.position
         a_point = self.points.get(angle)
         if a_point is None or a_point[0].mag > v_dist.mag:
@@ -121,7 +132,7 @@ class Visible:
                     t_angle = norme_angle(round(r_direction / \
                             precision) * precision)
                     self.entrer_point(t_angle, t_vec, point, nav_direction,
-                            precision, recursif=False)
+                            precision, recursif=False, exceptions=exceptions)
                 else:
                     test = False
                 if c_angle >= 180:
@@ -140,30 +151,39 @@ class Visible:
                     t_angle = norme_angle(round(r_direction / \
                             precision) * precision)
                     self.entrer_point(t_angle, t_vec, point, nav_direction,
-                            precision, recursif=False)
+                            precision, recursif=False, exceptions=exceptions)
                 else:
                     test = False
                 if c_angle >= 180:
                     break
 
     @classmethod
-    def observer(cls, personnage, portee, precision):
+    def observer(cls, personnage, portee, precision, exceptions=None):
         """Méthode de classe construisant une instance de classe.
 
         Les paramètres à préciser sont :
             Le personnage
             La portée à laquelle ce personnage doit voir
             La précision en degré à laquelle les détails seront arrondis.
+            Les exceptions sous la forme d'un dicitonnaire.
+
+        Les exceptions doivent être précisés sous la forme:
+            {"attribut": valeur}
+
+        Pour chaque point, on essaye de récupérer l'attribut (grâce à
+        getattr). Si la valeur correspond, alors le point n'est pas ajouté.
+        Consultez le code de la commande détail/detail pour un exemple
+        concret.
 
         """
         position = Vector(*personnage.salle.coords.tuple())
         visible = cls(position)
         for methode in importeur.navigation.points_ovservables.values():
-            methode(visible, personnage, portee, precision)
+            methode(visible, personnage, portee, precision, exceptions)
         return visible
 
     @staticmethod
-    def trouver_cotes(visible, personnage, portee, precision):
+    def trouver_cotes(visible, personnage, portee, precision, exceptions=None):
         """Cherche les côtes de l'étendue."""
         navire = personnage.salle.navire
         etendue = navire.etendue
@@ -185,11 +205,12 @@ class Visible:
             # On détermine l'angle minimum fonction de la précision
             angle = norme_angle(round(r_direction / precision) * precision)
             visible.entrer_point(angle, v_dist, point, nav_direction,
-                    precision)
+                    precision, exceptions=exceptions)
 
     @staticmethod
-    def trouver_navires(visible, personnage, portee, precision):
+    def trouver_navires(visible, personnage, portee, precision, exceptions=None):
         """Cherche les navires autour du personnage."""
+        exceptions = exceptions or {}
         navire = personnage.salle.navire
         etendue = navire.etendue
         altitude = etendue.altitude
@@ -220,7 +241,7 @@ class Visible:
 
                 if distance <= portee:
                     visible.entrer_point(angle, v_dist, t_navire,
-                            nav_direction, precision)
+                            nav_direction, precision, exceptions=exceptions)
 
     def filtrer(self, element):
         """Retire l'information du tableau des points.
