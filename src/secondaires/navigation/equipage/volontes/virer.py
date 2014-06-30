@@ -54,7 +54,9 @@ class Virer(Volonte):
 
     """
 
-    cle = "virer_gouvernail"
+    cle = "virer"
+    ordre_court = re.compile(r"^v([0-9]{1,3})$", re.I)
+    ordre_long = re.compile(r"^virer\s+([0-9]{1,3})$", re.I)
     def __init__(self, navire, direction=0):
         """Construit une volonté."""
         Volonte.__init__(self, navire)
@@ -65,78 +67,14 @@ class Virer(Volonte):
         """Propriété à redéfinir si la volonté comprend des arguments."""
         return (self.direction, )
 
-    def choisir_matelots(self):
-        """Retourne le matelot le plus apte à accomplir la volonté."""
-        navire = self.navire
-        equipage = navire.equipage
-        gouvernail = self.navire.gouvernail
-        if gouvernail is None:
-            return None
-
-        personnage = gouvernail.tenu
-        matelot = equipage.get_matelot_depuis_personnage(personnage)
-        if gouvernail.tenu:
-            return (matelot, [])
-
-        proches = []
-        matelots = equipage.get_matelots_au_poste("officier")
-        graph = self.navire.graph
-        gouvernail = navire.gouvernail
-        for matelot in matelots:
-            origine = matelot.salle.mnemonic
-            destination = gouvernail.parent.mnemonic
-            if origine == destination:
-                proches.append((matelot, []))
-            else:
-                chemin = graph.get((origine, destination))
-                if chemin:
-                    proches.append((matelot, chemin))
-
-        proches = sorted([couple for couple in proches],
-                key=lambda couple: len(couple[1]))
-        if proches:
-            return proches[0]
-
+    def choisir_matelots(self, exception=None):
+        """On ne retourne aucun matelot."""
         return None
 
-    def executer(self, couple):
+    def executer(self, matelot):
         """Exécute la volonté."""
-        if couple is None:
-            self.terminer()
-            return
-
-        gouvernail = self.navire.gouvernail
-        if gouvernail.tenu:
-            ordre = couple[0].get_ordre("virer")
-            if ordre:
-                ordre.direction = self.direction
-                return
-
-        matelot, sorties = couple
-        personnage = matelot.personnage
-        relacher = False
         navire = self.navire
-        direction = self.direction
-        nav_direction = navire.direction.direction
-        ordres = []
-        if sorties:
-            aller = LongDeplacer(matelot, navire, *sorties)
-            ordres.append(aller)
-
-        if gouvernail.tenu is not personnage:
-            relacher = True
-            tenir = TenirGouvernail(matelot, navire)
-            ordres.append(tenir)
-
-        virer = OrdreVirer(matelot, navire, direction)
-        ordres.append(virer)
-
-        if relacher:
-            relacher = RelacherGouvernail(matelot, navire)
-            ordres.append(relacher)
-            ordres.append(self.revenir_affectation(matelot))
-
-        self.ajouter_ordres(matelot, ordres)
+        navire.equipage.controler("direction", self.direction)
 
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""

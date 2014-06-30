@@ -39,6 +39,8 @@ from primaires.format.fonctions import supprimer_accents
 from primaires.joueur.joueur import Joueur
 from primaires.vehicule.vecteur import get_direction
 from secondaires.navigation.equipage.configuration import Configuration
+import secondaires.navigation.equipage.controles
+from secondaires.navigation.equipage.controle import controles
 from secondaires.navigation.equipage.ordre import ordres
 from secondaires.navigation.equipage.matelot import Matelot
 from secondaires.navigation.equipage.noms import NOMS_MATELOTS
@@ -76,6 +78,10 @@ class Equipage(BaseObj):
 
         # Données de configuration
         self.configuration = Configuration(equipage=self)
+
+        # Contrôles
+        self.controles = {}
+
         self._construire()
 
     def __getnewargs__(self):
@@ -196,21 +202,41 @@ class Equipage(BaseObj):
         if commandants and ennemi not in self.ennemis:
             self.ennemis.append(ennemi)
 
-    def demander(self, cle_volonte, *parametres, personnage=None):
+    def demander(self, cle_volonte, *parametres, personnage=None,
+            exception=None):
         """Exécute une volonté."""
         volonte = volontes[cle_volonte]
         volonte = volonte(self.navire, *parametres)
         if personnage:
             volonte.crier_ordres(personnage)
 
-        self.executer_volonte(volonte)
+        self.executer_volonte(volonte, exception=exception)
 
-    def executer_volonte(self, volonte):
+    def executer_volonte(self, volonte, exception=None):
         """Exécute une volonté déjà créée."""
         self.volontes.append(volonte)
         Matelot.logger.debug("Demande de {}".format(volonte))
-        retour = volonte.choisir_matelots()
+        retour = volonte.choisir_matelots(exception=exception)
         volonte.executer(retour)
+
+    def controler(self, cle, *args):
+        """Définit un nouveau contrôle.
+
+        Le premier paramètre est la clé du contrôle (par exemple
+        'direction'). Les paramètres optionnels sont passés au contrôle
+        pour l'initialisation. La décomposition du contrôle (en volontés)
+        est appelée immédiatement.
+
+        """
+        controle = controles.get(cle)
+        if controle is None:
+            raise ValueError("Aucun contrôle de clé {}".format(repr(cle)))
+
+        controle = controle(self, *args)
+        self.controles[cle] = controle
+        Matelot.logger.debug("Création du contrôle {}".format(controle))
+        controle.decomposer()
+        return controle
 
     def get_matelot(self, nom):
         """Retourne, si trouvé, le âtelot recherché.
@@ -233,7 +259,7 @@ class Equipage(BaseObj):
         return None
 
     def get_matelots_au_poste(self, nom_poste, libre=True,
-            endurance_min=None):
+            endurance_min=None, exception=None):
         """Retourne les matelots au poste indiqué.
 
         Cette méthode retourne toujours une liste, bien que cette
@@ -252,11 +278,15 @@ class Equipage(BaseObj):
             nom_poste -- le nom du poste (par exemple "maître d'équipage")
             libre -- le matelot est-il libre (sans ordre ni état)
             endurance_min -- l'endurance minimum que doit avoir le personnage
+            exception -- le matelot qui ne fera pas parti des choix
 
         """
         noms_poste = HIERARCHIE[nom_poste]
         matelots = []
         for matelot in self.matelots.values():
+            if matelot is exception:
+                continue
+
             if matelot.nom_poste in noms_poste:
                 matelots.append(matelot)
 
@@ -269,6 +299,11 @@ class Equipage(BaseObj):
                     m.personnage.endurance >= endurance_min]
 
         return matelots
+
+    def get_matelots_libres(self, exception):
+        """Retourne les matelots libres."""
+        matelots = self.matelots_libres
+        return [m for m in matelots if m is not exception]
 
     def est_au_poste(self, personnage, nom_poste):
         """Retourne True si le matelot est au poste.

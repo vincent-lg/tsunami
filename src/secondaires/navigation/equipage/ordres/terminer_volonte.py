@@ -39,6 +39,8 @@ class TerminerVolonte(Ordre):
     """Ordre utilisé pour indiquer que la volonté est accomplie."""
 
     cle = "terminer_volonte"
+    etats_autorises = ("*", )
+
     def executer(self):
         """Exécute l'ordre : termine la volonté."""
         volonte = self.volonte

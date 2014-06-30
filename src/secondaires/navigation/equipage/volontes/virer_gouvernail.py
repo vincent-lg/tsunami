@@ -65,7 +65,7 @@ class VirerGouvernail(Volonte):
         """Propriété à redéfinir si la volonté comprend des arguments."""
         return (self.direction, )
 
-    def choisir_matelots(self):
+    def choisir_matelots(self, exception=None):
         """Retourne le matelot le plus apte à accomplir la volonté."""
         navire = self.navire
         equipage = navire.equipage
@@ -79,7 +79,8 @@ class VirerGouvernail(Volonte):
             return (matelot, [])
 
         proches = []
-        matelots = equipage.get_matelots_au_poste("officier")
+        matelots = equipage.get_matelots_au_poste("officier",
+                exception=exception)
         graph = self.navire.graph
         gouvernail = navire.gouvernail
         for matelot in matelots:

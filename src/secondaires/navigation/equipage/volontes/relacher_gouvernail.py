@@ -50,7 +50,7 @@ class RelacherGouvernail(Volonte):
     cle = "relacher_gouvernail"
     ordre_court = re.compile(r"^rg$", re.I)
     ordre_long = re.compile(r"^relacher\s+gouvernail?$", re.I)
-    def choisir_matelots(self):
+    def choisir_matelots(self, exception=None):
         """Retourne le matelot le plus apte à accomplir la volonté."""
         navire = self.navire
         equipage = navire.equipage

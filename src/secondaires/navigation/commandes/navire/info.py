@@ -102,8 +102,9 @@ class PrmInfo(Parametre):
         msg += "\n  Propriétaire : " + (navire.proprietaire and \
                 navire.proprietaire.nom or "Aucun")
         msg += "\n  Étendue : " + etendue
-        msg += "\n  Immobilisé : {}   En collision : {}".format(
-                oui_ou_non(navire.immobilise), oui_ou_non(navire.en_collision))
+        msg += "\n  Immobilisé : {}   En collision : {}   Orientation : " \
+                "{}".format(oui_ou_non(navire.immobilise), oui_ou_non(
+                navire.en_collision), navire.orientation)
         msg += "\n  Cale : " + str(int(cale.poids)).rjust(6)
         msg += " / " + str(int(cale.poids_max)).rjust(6) + " ("
         msg += str(int(cale.poids / cale.poids_max * 100)).rjust(3) + "%)"

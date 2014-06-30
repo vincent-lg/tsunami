@@ -59,7 +59,7 @@ class Feu(Volonte):
         """Propriété à redéfinir si la volonté comprend des arguments."""
         return (self.adverse, )
 
-    def choisir_matelots(self):
+    def choisir_matelots(self, exception=None):
         """Retourne le matelot le plus apte à accomplir la volonté."""
         return None
 

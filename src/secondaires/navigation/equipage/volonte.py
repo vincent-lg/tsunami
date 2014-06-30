@@ -89,7 +89,7 @@ class Volonte(BaseObj, metaclass=MetaVolonte):
     def equipage(self):
         return self.navire and self.navire.equipage or None
 
-    def choisir_matelots(self):
+    def choisir_matelots(self, exception=None):
         """Retourne une liste de matelots les plus aptes.
 
         Cette méthode doit être redéfinie par les classes héritées.

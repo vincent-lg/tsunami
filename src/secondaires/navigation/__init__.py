@@ -241,6 +241,8 @@ class Module(BaseModule):
                 self.tick_chantiers)
         self.importeur.diffact.ajouter_action("tick_equipages", 1,
                 self.tick_equipages)
+        self.importeur.diffact.ajouter_action("controle_equipages", 3,
+                self.controle_equipages)
 
         # Ajout des bateaux au module salle
         self.importeur.salle.salles_a_cartographier.append(
@@ -508,14 +510,7 @@ class Module(BaseModule):
                 self.virer_navires)
         for navire in self.navires.values():
             if not navire.immobilise:
-                gouvernail = navire.gouvernail
-                orientation = 0
-                if gouvernail:
-                    orientation = gouvernail.orientation
-                for rame in navire.rames:
-                    if rame.tenu is not None and rame.orientation != 0:
-                        orientation += rame.orientation * 5 / navire.taille
-                orientation = int(orientation)
+                orientation = navire.orientation
                 if orientation != 0:
                     navire.virer(orientation)
 
@@ -550,6 +545,16 @@ class Module(BaseModule):
                 len(n.equipage.matelots) > 0]
         for equipage in equipages:
             equipage.tick()
+
+    def controle_equipages(self):
+        """Contrôle des équipages."""
+        self.importeur.diffact.ajouter_action("controle_equipages", 3,
+                self.controle_equipages)
+        equipages = [n.equipage for n in self.navires.values() if \
+                len(n.equipage.matelots) > 0]
+        for equipage in equipages:
+            for controle in equipage.controles.values():
+                controle.controler()
 
     def navire_amarre(self, salle, liste_messages, flags):
         """Si un navire est amarré, on l'affiche."""

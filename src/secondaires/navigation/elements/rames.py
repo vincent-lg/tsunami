@@ -46,7 +46,7 @@ class Rames(BaseElement):
         BaseElement.__init__(self, cle)
         # Attributs propres aux ramess
         self._attributs = {
-             "vitesse": Attribut(lambda: "immobile"),
+            "vitesse": Attribut(lambda: "immobile"),
             "orientation": Attribut(lambda: 0),
             "tenu": Attribut(lambda: None),
         }

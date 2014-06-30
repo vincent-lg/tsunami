@@ -97,7 +97,7 @@ class Tirer(Volonte):
         canon = canon_libre or canon_utilise
         return canon
 
-    def choisir_matelots(self):
+    def choisir_matelots(self, exception=None):
         """Retourne le matelot le plus apte à accomplir la volonté."""
         navire = self.navire
         equipage = navire.equipage
@@ -106,7 +106,8 @@ class Tirer(Volonte):
             return None
 
         proches = []
-        matelots = equipage.get_matelots_au_poste("artilleur")
+        matelots = equipage.get_matelots_au_poste("artilleur",
+                exception=exception)
         graph = self.navire.graph
         for matelot in matelots:
             origine = matelot.salle.mnemonic

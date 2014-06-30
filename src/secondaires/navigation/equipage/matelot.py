@@ -143,10 +143,11 @@ class Matelot(BaseObj):
             matelot.ordres[:] = []
             return
 
-        etats_autorises = [etat.cle for etat in personnage.etats]
-        if any(cle not in ordre.etats_autorises for cle in etats_autorises):
-            self.logger.debug(indent + "{} est occupé ({})".format(
-                    personnage, personnage.etats))
+        etats = [etat.cle for etat in personnage.etats]
+        if ordre.etats_autorises != ("*", ) and \
+                any(cle not in ordre.etats_autorises for cle in etats):
+            self.logger.debug(indent + "{} est occupé ({} {})".format(
+                    personnage, personnage.etats, ordre.etats_autorises))
             matelot.relayer_ordres()
             matelot.ordres[:] = []
             return
@@ -188,7 +189,8 @@ class Matelot(BaseObj):
                 volontes.append(ordre.volonte)
 
         for volonte in volontes:
-            self.equipage.demander(volonte.cle, *volonte.arguments)
+            self.equipage.demander(volonte.cle, *volonte.arguments,
+                    exception=self)
 
     def invalider_ordres(self, cle):
         """Invalide les ordres."""

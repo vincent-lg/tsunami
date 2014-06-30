@@ -49,8 +49,29 @@ class Direction(Controle):
 
     cle = "direction"
     def __init__(self, equipage, direction):
-        Controle.__init__(self, equipage)
+        Controle.__init__(self, equipage, direction)
         self.direction = direction
+
+    def controler(self):
+        """Contrôle l'avancement du contrôle."""
+        commandant = self.commandant
+        if commandant is None:
+            return
+
+        personnage = commandant.personnage
+        equipage = self.equipage
+        navire = self.navire
+        gouvernail = navire.gouvernail
+        rames = navire.rames
+        actuelle = navire.direction.direction
+        objectif = self.direction
+        difference = objectif - actuelle
+        f_difference = fabs(difference)
+        pr_rames = navire.orientation
+        pr_rames = 3 if pr_rames < 3 else pr_rames
+        if f_difference <= pr_rames and sum(r.orientation for r in rames) != 0:
+            equipage.demander("ramer", "centre", personnage=personnage,
+                    exception=commandant)
 
     def decomposer(self):
         """Décompose le contrôle en volontés."""
@@ -65,14 +86,24 @@ class Direction(Controle):
         rames = navire.rames
         actuelle = navire.direction.direction
         objectif = self.direction
-        difference = fabs(objectif - actuelle)
-        id difference <= 5 and sum(r.direction for r in rames) != 0:
-            equipage.demander("ramer", "centre", personnage=personnage)
+        difference = objectif - actuelle
+        if difference < -180:
+            difference = 360 - difference
+        elif difference > 180:
+            difference = difference - 360
+
+        print("Difference", difference)
+        f_difference = fabs(difference)
+        if f_difference < 1:
             return
 
+        pr_rames = navire.orientation
         if gouvernail:
-            equipage.demander("virer_gouvernail", objectif)
-        if rames:
-            if (gouvernail and difference > 5) or gouvernail is None:
+            equipage.demander("virer_gouvernail", objectif,
+                    personnage=personnage, exception=commandant)
 
-                equipage.demander("ramer", direction, personnage=personnage)
+        if rames:
+            if f_difference > pr_rames:
+                vers = "gauche" if difference < 0 else "droite"
+                equipage.demander("ramer", vers, personnage=personnage,
+                        exception=commandant)

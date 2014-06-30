@@ -61,14 +61,14 @@ class Colmater(Volonte):
         """Propriété à redéfinir si la volonté comprend des arguments."""
         return (self.salle, )
 
-    def choisir_matelots(self):
+    def choisir_matelots(self, exception=None):
         """Retourne le matelot le plus apte à accomplir la volonté."""
         navire = self.navire
         salle = self.salle
         equipage = navire.equipage
         proches = []
         matelots = equipage.get_matelots_au_poste("charpentier",
-                endurance_min=Ecoper.ENDURANCE_MIN)
+                endurance_min=Ecoper.ENDURANCE_MIN, exception=exception)
         graph = self.navire.graph
         for matelot in matelots:
             origine = matelot.salle.mnemonic

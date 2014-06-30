@@ -354,6 +354,29 @@ class Navire(Vehicule):
 
         return personnages
 
+    @property
+    def orientation(self):
+        """Retourne l'orientation du navire.
+
+        L'orientation est un nombre entier : si il est positif, il
+        indique que le navire tourne vers tribord. Si il est négatif,
+        il indique que le navire tourne vers bâbord. Si il est nul,
+        le navire ne tourne pas. Cette orientation est directement
+        calculée depuis le gouvernail et les rames.
+
+        """
+        gouvernail = self.gouvernail
+        orientation = 0
+        if gouvernail:
+            orientation = gouvernail.orientation
+
+        # Intégration des rames
+        for rame in self.rames:
+            if rame.tenu is not None and rame.orientation != 0:
+                orientation += rame.orientation * 5 / self.taille
+
+        return int(orientation)
+
     def a_le_droit(self, personnage, poste="capitaine", si_present=False):
         """Retourne True si le personnage a le droit, False sinon.
 

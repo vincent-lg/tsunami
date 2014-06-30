@@ -49,10 +49,10 @@ class TenirGouvernail(Volonte):
     cle = "tenir_gouvernail"
     ordre_court = re.compile(r"^tg$", re.I)
     ordre_long = re.compile(r"^tenir\s+gouvernail?$", re.I)
-    def choisir_matelots(self):
+    def choisir_matelots(self, exception=None):
         """Retourne le matelot le plus apte à accomplir la volonté."""
         proches = []
-        matelots = self.navire.equipage.matelots_libres
+        matelots = self.navire.equipage.get_matelots_libres(exception)
         graph = self.navire.graph
         gouvernail = self.navire.gouvernail
         if gouvernail is None or gouvernail.tenu is not None:

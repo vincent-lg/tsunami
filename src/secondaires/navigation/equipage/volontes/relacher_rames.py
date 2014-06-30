@@ -48,7 +48,7 @@ class RelacherRames(Volonte):
     cle = "relacher_rames"
     ordre_court = re.compile(r"^rr$", re.I)
     ordre_long = re.compile(r"^relacher\s+rames?$", re.I)
-    def choisir_matelots(self):
+    def choisir_matelots(self, exception=None):
         """Retourne le matelot le plus apte à accomplir la volonté."""
         equipage = self.navire.equipage
         objectifs = []

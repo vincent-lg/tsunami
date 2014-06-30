@@ -78,13 +78,27 @@ class Controle(BaseObj, metaclass=MetaControle):
     """
 
     cle = None
-    def __init__(self, equipage):
+    def __init__(self, equipage, *args):
         BaseObj.__init__(self)
         self.equipage = equipage
+        self.arguments = args
+
+    def __getnewargs__(self):
+        arguments = (self.equipage, ) + self.arguments
+        return arguments
+
+    def __repr__(self):
+        return "<Contrôle {}:{} {}>".format(self.cle_navire, self.cle,
+                self.arguments)
 
     @property
     def navire(self):
         return self.equipage and self.equipage.navire or None
+
+    @property
+    def cle_navire(self):
+        navire = self.navire
+        return navire and navire.cle or "inconnu"
 
     @property
     def commandant(self):

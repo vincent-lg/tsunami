@@ -48,10 +48,10 @@ class OrienterVoiles(Volonte):
     cle = "orienter_voiles"
     ordre_court = re.compile(r"^ov$", re.I)
     ordre_long = re.compile(r"^orienter\s+voiles?$", re.I)
-    def choisir_matelots(self):
+    def choisir_matelots(self, exception=None):
         """Retourne le matelot le plus apte à accomplir la volonté."""
         proches = []
-        matelots = self.navire.equipage.matelots_libres
+        matelots = self.navire.equipage.get_matelots_libres(exception)
         graph = self.navire.graph
         voiles = self.navire.voiles
         voiles = [v for v in voiles if v.hissee]

@@ -37,3 +37,4 @@ pour plus d'informations).
 
 """
 
+from secondaires.navigation.equipage.controles.direction import Direction

@@ -49,11 +49,11 @@ class TenirRames(Volonte):
     cle = "tenir_rames"
     ordre_court = re.compile(r"^tr$", re.I)
     ordre_long = re.compile(r"^tenir\s+rames?$", re.I)
-    def choisir_matelots(self):
+    def choisir_matelots(self, exception=None):
         """Retourne le matelot le plus apte à accomplir la volonté."""
         objectifs = []
         matelots = self.navire.equipage.get_matelots_au_poste("rameur",
-                endurance_min=30)
+                endurance_min=30, exception=exception)
         graph = self.navire.graph
         rames = self.navire.rames
         rames = [r for r in rames if r.tenu is None]
