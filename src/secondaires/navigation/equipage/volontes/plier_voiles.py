@@ -88,19 +88,12 @@ class PlierVoiles(Volonte):
             ordres = []
             if sorties:
                 aller = LongDeplacer(matelot, navire, *sorties)
-                aller.volonte = self
                 ordres.append(aller)
 
             plier = PlierVoile(matelot, navire)
-            plier.volonte = self
             ordres.append(plier)
             ordres.append(self.revenir_affectation(matelot))
-
-            for ordre in ordres:
-                if ordre:
-                    matelot.ordonner(ordre)
-
-            matelot.executer_ordres()
+            self.ajouter_ordres(matelot, ordres)
 
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""

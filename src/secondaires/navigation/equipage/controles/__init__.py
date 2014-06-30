@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,29 +28,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents ordres définis chacun dans un fichier.
+"""Package contenant les différents contrôles disponibles.
 
-La classe-mère des ordres est définie dans le répertoire parent, fichier
-ordre.py.
+Un contrôle est une définition décomposé d'un objectif avec une clé
+précise. Un équipage ne peut avoir qu'un contrôle actif de la même clé
+au même moment. Voir la classe de base (base.Controle)
+pour plus d'informations).
 
 """
 
-from secondaires.navigation.equipage.volontes.colmater import Colmater
-from secondaires.navigation.equipage.volontes.feu import Feu
-from secondaires.navigation.equipage.volontes.hisser_voiles import HisserVoiles
-from secondaires.navigation.equipage.volontes.orienter_voiles import OrienterVoiles
-from secondaires.navigation.equipage.volontes.plier_voiles import PlierVoiles
-from secondaires.navigation.equipage.volontes.ramer import Ramer
-from secondaires.navigation.equipage.volontes.relacher_gouvernail import \
-        RelacherGouvernail
-from secondaires.navigation.equipage.volontes.relacher_rames import \
-        RelacherRames
-from secondaires.navigation.equipage.volontes.tenir_gouvernail import \
-        TenirGouvernail
-from secondaires.navigation.equipage.volontes.tenir_rames import TenirRames
-from secondaires.navigation.equipage.volontes.tirer import Tirer
-from secondaires.navigation.equipage.volontes.virer import Virer
-from secondaires.navigation.equipage.volontes.virer_babord import VirerBabord
-from secondaires.navigation.equipage.volontes.virer_tribord import VirerTribord
-from secondaires.navigation.equipage.volontes.virer_gouvernail import \
-        VirerGouvernail

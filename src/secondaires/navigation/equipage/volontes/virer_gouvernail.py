@@ -28,51 +28,63 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la volonté Colmater."""
+"""Fichier contenant la volonté VirerGouvernail."""
 
 import re
 
-from secondaires.navigation.equipage.ordres.colmater import Colmater as \
-        OrdreColmater
-from secondaires.navigation.equipage.ordres.ecoper import Ecoper
+from corps.fonctions import lisser
 from secondaires.navigation.equipage.ordres.long_deplacer import LongDeplacer
+from secondaires.navigation.equipage.ordres.relacher_gouvernail import \
+        RelacherGouvernail
+from secondaires.navigation.equipage.ordres.tenir_gouvernail import \
+        TenirGouvernail
+from secondaires.navigation.equipage.ordres.virer import Virer as OrdreVirer
 from secondaires.navigation.equipage.volonte import Volonte
 
-class Colmater(Volonte):
+class VirerGouvernail(Volonte):
 
     """Classe représentant une volonté.
 
     Cette volonté choisit un matelot pour, si besoin, se déplacer
-    dans la salle cible, écoper et colmater la brèche, avant de
-    revenir au point de départ.
+    dans la salle du gouvernail, le prendre en main et lui demander de
+    virer (soit sur bâbord soit sur tribord, en fonction de la direction
+    actuelle du navire).
+
+    Cette volonté appelle également les rameurs.
 
     """
 
-    cle = "colmater"
-    ordre_court = None
-    ordre_long = None
-    def __init__(self, navire, salle=None):
+    cle = "virer_gouvernail"
+    def __init__(self, navire, direction=0):
         """Construit une volonté."""
         Volonte.__init__(self, navire)
-        self.salle = salle
+        self.direction = direction
 
     @property
     def arguments(self):
         """Propriété à redéfinir si la volonté comprend des arguments."""
-        return (self.salle, )
+        return (self.direction, )
 
     def choisir_matelots(self):
         """Retourne le matelot le plus apte à accomplir la volonté."""
         navire = self.navire
-        salle = self.salle
         equipage = navire.equipage
+        gouvernail = self.navire.gouvernail
+        if gouvernail is None:
+            return None
+
+        personnage = gouvernail.tenu
+        matelot = equipage.get_matelot_depuis_personnage(personnage)
+        if gouvernail.tenu:
+            return (matelot, [])
+
         proches = []
-        matelots = equipage.get_matelots_au_poste("charpentier",
-                endurance_min=Ecoper.ENDURANCE_MIN)
+        matelots = equipage.get_matelots_au_poste("officier")
         graph = self.navire.graph
+        gouvernail = navire.gouvernail
         for matelot in matelots:
             origine = matelot.salle.mnemonic
-            destination = salle.mnemonic
+            destination = gouvernail.parent.mnemonic
             if origine == destination:
                 proches.append((matelot, []))
             else:
@@ -93,26 +105,67 @@ class Colmater(Volonte):
             self.terminer()
             return
 
+        gouvernail = self.navire.gouvernail
+        if gouvernail.tenu:
+            ordre = couple[0].get_ordre("virer")
+            if ordre:
+                ordre.direction = self.direction
+                return
+
         matelot, sorties = couple
         personnage = matelot.personnage
+        relacher = False
         navire = self.navire
-        salle = self.salle
+        direction = self.direction
+        nav_direction = navire.direction.direction
         ordres = []
         if sorties:
             aller = LongDeplacer(matelot, navire, *sorties)
-            aller.volonte = self
             ordres.append(aller)
 
-        ecoper = Ecoper(matelot, navire, salle)
-        ecoper.volonte = self
-        ordres.append(ecoper)
+        if gouvernail.tenu is not personnage:
+            relacher = True
+            tenir = TenirGouvernail(matelot, navire)
+            ordres.append(tenir)
 
-        colmater = OrdreColmater(matelot, navire, salle)
-        colmater.volonte = self
-        ordres.append(colmater)
+        virer = OrdreVirer(matelot, navire, direction)
+        ordres.append(virer)
 
-        for ordre in ordres:
-            if ordre:
-                matelot.ordonner(ordre)
+        if relacher:
+            relacher = RelacherGouvernail(matelot, navire)
+            ordres.append(relacher)
+            ordres.append(self.revenir_affectation(matelot))
 
-        matelot.executer_ordres()
+        self.ajouter_ordres(matelot, ordres)
+
+    def crier_ordres(self, personnage):
+        """On fait crier l'ordre au personnage."""
+        direction = self.direction
+        if direction < 23 or direction > 337:
+            nom_dir = "l'est"
+        elif direction < 67:
+            nom_dir = "le sud-est"
+        elif direction < 112:
+            nom_dir = "le sud"
+        elif direction < 157:
+            nom_dir = "le sud-ouest"
+        elif direction < 202:
+            nom_dir = "l'ouest"
+        elif direction < 247:
+            nom_dir = "le nord-ouest"
+        elif direction < 292:
+            nom_dir = "le nord"
+        else:
+            nom_dir = "le nord-est"
+
+        direction = (direction + 90) % 360
+        nom_dir = lisser("virez à " + nom_dir)
+        msg = "{} s'écrie : {}, {}° !".format(
+                personnage.distinction_audible, nom_dir, direction)
+        self.navire.envoyer(msg)
+
+    @classmethod
+    def extraire_arguments(cls, navire, direction):
+        """Extrait les arguments de la volonté."""
+        direction = (int(direction) - 90) % 360
+        return (direction, )

@@ -79,13 +79,8 @@ class Ramer(TenirRames):
             matelot.invalider_ordres("ramer")
             ordres = []
             ramer = OrdreRamer(matelot, navire, rames, vitesse)
-            ramer.volonte = self
             ordres.append(ramer)
-            for ordre in ordres:
-                if ordre:
-                    matelot.ordonner(ordre)
-
-            matelot.executer_ordres()
+            self.ajouter_ordres(matelot, ordres)
 
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""

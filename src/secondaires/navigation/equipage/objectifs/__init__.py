@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,29 +28,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents ordres définis chacun dans un fichier.
+"""Package contenant les objectifs.
 
-La classe-mère des ordres est définie dans le répertoire parent, fichier
-ordre.py.
+Un objectif est un certain but à atteindre. Par exemple, rejoindre
+le point (x, y) indiqué. Pour atteindre cet objectif, le commandant
+doit donner plusieurs ordres à son équipage ayant pour but de modifier
+la vitesse, la direction du navire. Il doit également tenir compte des
+chemins disponibles et des obstacles qui pourraient survenir sur tel
+ou tel chemin. En somme, un objectif est une partie importante de
+l'intelligence artificielle d'un équipage. Un ordre (tel que donné par
+équipage/crew ordonner/order) peut donner un objectif mais il est à noter
+que, dans ce cas, l'objectif sera décomposé en ordres par un commandant
+(c'est-à-dire un capitaine ou second PNJ). Un navire sans capitaine n'est
+pas capable de ce type d'objectifs.
+
+Chaque objectif est décrit dans une classe à part.
 
 """
-
-from secondaires.navigation.equipage.volontes.colmater import Colmater
-from secondaires.navigation.equipage.volontes.feu import Feu
-from secondaires.navigation.equipage.volontes.hisser_voiles import HisserVoiles
-from secondaires.navigation.equipage.volontes.orienter_voiles import OrienterVoiles
-from secondaires.navigation.equipage.volontes.plier_voiles import PlierVoiles
-from secondaires.navigation.equipage.volontes.ramer import Ramer
-from secondaires.navigation.equipage.volontes.relacher_gouvernail import \
-        RelacherGouvernail
-from secondaires.navigation.equipage.volontes.relacher_rames import \
-        RelacherRames
-from secondaires.navigation.equipage.volontes.tenir_gouvernail import \
-        TenirGouvernail
-from secondaires.navigation.equipage.volontes.tenir_rames import TenirRames
-from secondaires.navigation.equipage.volontes.tirer import Tirer
-from secondaires.navigation.equipage.volontes.virer import Virer
-from secondaires.navigation.equipage.volontes.virer_babord import VirerBabord
-from secondaires.navigation.equipage.volontes.virer_tribord import VirerTribord
-from secondaires.navigation.equipage.volontes.virer_gouvernail import \
-        VirerGouvernail

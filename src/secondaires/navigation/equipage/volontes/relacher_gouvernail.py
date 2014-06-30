@@ -64,24 +64,16 @@ class RelacherGouvernail(Volonte):
 
     def executer(self, matelot):
         """Exécute la volonté."""
-        print("1", matelot)
         if matelot is None:
+            self.terminer()
             return
 
         navire = self.navire
         ordres = []
         relacher = OrdreRelacherGouvernail(matelot, navire)
-        relacher.volonte = self
         ordres.append(relacher)
-        print("2", ordres)
         ordres.append(self.revenir_affectation(matelot))
-        print("3", ordres)
-        for ordre in ordres:
-            if ordre:
-                matelot.ordonner(ordre)
-
-        print("4 Execution")
-        matelot.executer_ordres()
+        self.ajouter_ordres(matelot, ordres)
 
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""

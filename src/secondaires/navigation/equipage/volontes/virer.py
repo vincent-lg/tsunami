@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -54,9 +54,7 @@ class Virer(Volonte):
 
     """
 
-    cle = "virer"
-    ordre_court = re.compile(r"^v([0-9]{1,3})$", re.I)
-    ordre_long = re.compile(r"^virer\s+([0-9]{1,3})$", re.I)
+    cle = "virer_gouvernail"
     def __init__(self, navire, direction=0):
         """Construit une volonté."""
         Volonte.__init__(self, navire)
@@ -104,6 +102,7 @@ class Virer(Volonte):
     def executer(self, couple):
         """Exécute la volonté."""
         if couple is None:
+            self.terminer()
             return
 
         gouvernail = self.navire.gouvernail
@@ -122,30 +121,22 @@ class Virer(Volonte):
         ordres = []
         if sorties:
             aller = LongDeplacer(matelot, navire, *sorties)
-            aller.volonte = self
             ordres.append(aller)
 
         if gouvernail.tenu is not personnage:
             relacher = True
             tenir = TenirGouvernail(matelot, navire)
-            tenir.volonte = self
             ordres.append(tenir)
 
         virer = OrdreVirer(matelot, navire, direction)
-        virer.volonte = self
         ordres.append(virer)
 
         if relacher:
             relacher = RelacherGouvernail(matelot, navire)
-            relacher.volonte = self
             ordres.append(relacher)
             ordres.append(self.revenir_affectation(matelot))
 
-        for ordre in ordres:
-            if ordre:
-                matelot.ordonner(ordre)
-
-        matelot.executer_ordres()
+        self.ajouter_ordres(matelot, ordres)
 
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""

@@ -69,13 +69,8 @@ class RelacherRames(Volonte):
             navire = self.navire
             ordres = []
             relacher = OrdreRelacherRames(matelot, navire, rames)
-            relacher.volonte = self
             ordres.append(relacher)
-            for ordre in ordres:
-                if ordre:
-                    matelot.ordonner(ordre)
-
-            matelot.executer_ordres()
+            self.ajouter_ordres(matelot, ordres)
 
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""

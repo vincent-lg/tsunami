@@ -77,19 +77,12 @@ class OrienterVoiles(Volonte):
             ordres = []
             if sorties:
                 aller = LongDeplacer(matelot, navire, *sorties)
-                aller.volonte = self
                 ordres.append(aller)
 
             orienter = OrienterVoile(matelot, navire)
-            orienter.volonte = self
             ordres.append(orienter)
             ordres.append(self.revenir_affectation(matelot))
-
-            for ordre in ordres:
-                if ordre:
-                    matelot.ordonner(ordre)
-
-            matelot.executer_ordres()
+            self.ajouter_ordres(matelot, ordres)
 
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""

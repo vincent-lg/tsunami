@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,29 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents ordres définis chacun dans un fichier.
+"""Module contenant la base classe des objectifs."""
 
-La classe-mère des ordres est définie dans le répertoire parent, fichier
-ordre.py.
+class Objectif:
 
-"""
+    """Définition abstraite d'un objectif.
 
-from secondaires.navigation.equipage.volontes.colmater import Colmater
-from secondaires.navigation.equipage.volontes.feu import Feu
-from secondaires.navigation.equipage.volontes.hisser_voiles import HisserVoiles
-from secondaires.navigation.equipage.volontes.orienter_voiles import OrienterVoiles
-from secondaires.navigation.equipage.volontes.plier_voiles import PlierVoiles
-from secondaires.navigation.equipage.volontes.ramer import Ramer
-from secondaires.navigation.equipage.volontes.relacher_gouvernail import \
-        RelacherGouvernail
-from secondaires.navigation.equipage.volontes.relacher_rames import \
-        RelacherRames
-from secondaires.navigation.equipage.volontes.tenir_gouvernail import \
-        TenirGouvernail
-from secondaires.navigation.equipage.volontes.tenir_rames import TenirRames
-from secondaires.navigation.equipage.volontes.tirer import Tirer
-from secondaires.navigation.equipage.volontes.virer import Virer
-from secondaires.navigation.equipage.volontes.virer_babord import VirerBabord
-from secondaires.navigation.equipage.volontes.virer_tribord import VirerTribord
-from secondaires.navigation.equipage.volontes.virer_gouvernail import \
-        VirerGouvernail
+    Cette classe doit être parente de tous les objectifs utilisés. Les
+    méthodes et attributs donnés dans cette classe doivent pouvoir être
+    utilisés sur tous les objectifs.
+
+    Un objectif définit un but qu'un équipage doit attendre. Ils peuvent
+    être de forme diverses, comme rejoindre un point précis, suivre un
+    navire, le rattraper ou se mettre en formation sur lui. En fonction
+    des objectifs actuels, un capitaine ou second (PNJ) donnera la suite
+    d'ordres nécessaires à leur accomplissement.
+
+    En réalité, un objectif décrit de façon aussi succinte et abstraite
+    que possible un but à atteindre. L'objectif sera ensuite décomposé
+    en contrôles (étape intermédiaire facultative), un contrôle étant
+    un objectif intermédiaire clairement nommé. Par exemple, il existe
+    un contrôle pour contrôler la vitesse : disons que le navire veut se
+    former sur un navire B, il va créer deux contrôles, le premier pour
+    obtenir la même vitesse que le navire B et le second pour contrôler
+    la direction (la même que le navire B). Le contrôle de vitesse notamment
+    est très délicat et le commandant en charge décidera du nombre de
+    voiles ou de rames actives en fonction du besoin.
+
+    """
+
+    def __init__(self, equipage):
+        self.equipage = equipage

@@ -80,24 +80,17 @@ class TenirRames(Volonte):
 
     def executer(self, objectifs):
         """Exécute la volonté."""
-        print(self, objectifs)
         for sequence in objectifs:
             matelot, sorties, rames = sequence
             navire = self.navire
             ordres = []
             if sorties:
                 aller = LongDeplacer(matelot, navire, *sorties)
-                aller.volonte = self
                 ordres.append(aller)
 
             tenir = OrdreTenirRames(matelot, navire, rames)
-            tenir.volonte = self
             ordres.append(tenir)
-            for ordre in ordres:
-                if ordre:
-                    matelot.ordonner(ordre)
-
-            matelot.executer_ordres()
+            self.ajouter_ordres(matelot, ordres)
 
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""

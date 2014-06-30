@@ -78,6 +78,7 @@ class TenirGouvernail(Volonte):
     def executer(self, sequence):
         """Exécute la volonté."""
         if sequence is None:
+            self.terminer()
             return
 
         matelot, sorties, gouvernail = sequence
@@ -85,17 +86,11 @@ class TenirGouvernail(Volonte):
         ordres = []
         if sorties:
             aller = LongDeplacer(matelot, navire, *sorties)
-            aller.volonte = self
             ordres.append(aller)
 
         tenir = OrdreTenirGouvernail(matelot, navire)
-        tenir.volonte = self
         ordres.append(tenir)
-        for ordre in ordres:
-            if ordre:
-                matelot.ordonner(ordre)
-
-        matelot.executer_ordres()
+        self.ajouter_ordres(matelot, ordres)
 
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""

@@ -63,6 +63,9 @@ class Equipage(BaseObj):
         self.matelots = {}
         self.joueurs = {}
 
+        # Volontés
+        self.volontes = []
+
         # Caps choisis
         self.caps = []
         self.cap = None
@@ -204,6 +207,7 @@ class Equipage(BaseObj):
 
     def executer_volonte(self, volonte):
         """Exécute une volonté déjà créée."""
+        self.volontes.append(volonte)
         Matelot.logger.debug("Demande de {}".format(volonte))
         retour = volonte.choisir_matelots()
         volonte.executer(retour)

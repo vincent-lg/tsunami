@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,29 +28,28 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents ordres définis chacun dans un fichier.
+"""Objectif rejoindre."""
 
-La classe-mère des ordres est définie dans le répertoire parent, fichier
-ordre.py.
+from secondaires.navigation.equipage.objectifs.base import Objectif
 
-"""
+class Rejoindre(Objectif):
 
-from secondaires.navigation.equipage.volontes.colmater import Colmater
-from secondaires.navigation.equipage.volontes.feu import Feu
-from secondaires.navigation.equipage.volontes.hisser_voiles import HisserVoiles
-from secondaires.navigation.equipage.volontes.orienter_voiles import OrienterVoiles
-from secondaires.navigation.equipage.volontes.plier_voiles import PlierVoiles
-from secondaires.navigation.equipage.volontes.ramer import Ramer
-from secondaires.navigation.equipage.volontes.relacher_gouvernail import \
-        RelacherGouvernail
-from secondaires.navigation.equipage.volontes.relacher_rames import \
-        RelacherRames
-from secondaires.navigation.equipage.volontes.tenir_gouvernail import \
-        TenirGouvernail
-from secondaires.navigation.equipage.volontes.tenir_rames import TenirRames
-from secondaires.navigation.equipage.volontes.tirer import Tirer
-from secondaires.navigation.equipage.volontes.virer import Virer
-from secondaires.navigation.equipage.volontes.virer_babord import VirerBabord
-from secondaires.navigation.equipage.volontes.virer_tribord import VirerTribord
-from secondaires.navigation.equipage.volontes.virer_gouvernail import \
-        VirerGouvernail
+    """Objectif rejoindre.
+
+    Cet objectif demande à un équipage de rejoindre un point précisé
+    en coordonnées. Le point indiqué doit être statique (il existe un
+    objectif particulier pour les points mobiles, comme les navires, qui
+    intègrent leur propre calcul).
+
+    Cet objectif est responsable de trouver un chemin entre le point
+    actuel et le point visé. Cela inclut le choix de chemins
+    détournés si le chemin direct ne peut être pris avec des calculs qui
+    peuvent être assez complexes pour déterminer la vitesse et direction
+    des chemins intermédiaires.
+
+    """
+
+    def __init__(self, equipage, x, y):
+        Objectif.__init__(self, equipage)
+        self.x = x
+        self.y = y

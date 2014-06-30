@@ -128,6 +128,7 @@ class Tirer(Volonte):
     def executer(self, couple):
         """Exécute la volonté."""
         if couple is None:
+            self.terminer()
             return
 
         navire = self.navire
@@ -137,34 +138,24 @@ class Tirer(Volonte):
         ordres = []
         if sorties:
             aller = LongDeplacer(matelot, navire, *sorties)
-            aller.volonte = self
             ordres.append(aller)
 
         if canon.onces == 0:
             charger_poudre = ChargerPoudre(matelot, navire, canon,
                     self.bruyant)
-            charger_poudre.volonte = self
             ordres.append(charger_poudre)
 
         if canon.projectile is None:
             charger_boulet = ChargerBoulet(matelot, navire, canon,
                     self.bruyant)
-            charger_boulet.volonte = self
             ordres.append(charger_boulet)
 
         viser = Viser(matelot, navire, canon, adverse, self.bruyant)
-        viser.volonte = self
         ordres.append(viser)
 
         feu = Feu(matelot, navire, canon, self.bruyant)
-        feu.volonte = self
         ordres.append(feu)
-
-        for ordre in ordres:
-            if ordre:
-                matelot.ordonner(ordre)
-
-        matelot.executer_ordres()
+        self.ajouter_ordres(matelot, ordres)
 
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""

@@ -249,6 +249,9 @@ class Module(BaseModule):
 
     def ajouter_familier(self, familier):
         """Ajoute le familier."""
+        if familier.pnj is None:
+            raise ValueError("On ne peut ajouter un familier sans PNJ")
+
         if familier.identifiant in self.familiers:
             raise ValueError("le familier d'identifiant {} est " \
                     "déjà défini".format(repr(familier.identifiant)))

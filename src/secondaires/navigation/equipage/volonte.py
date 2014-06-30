@@ -32,6 +32,8 @@
 
 from abstraits.obase import BaseObj, MetaBaseObj
 from secondaires.navigation.equipage.ordres.revenir import Revenir
+from secondaires.navigation.equipage.ordres.terminer_volonte import \
+        TerminerVolonte
 
 volontes = {}
 
@@ -83,6 +85,10 @@ class Volonte(BaseObj, metaclass=MetaVolonte):
         """Propriété à redéfinir si la volonté comprend des arguments."""
         return ()
 
+    @property
+    def equipage(self):
+        return self.navire and self.navire.equipage or None
+
     def choisir_matelots(self):
         """Retourne une liste de matelots les plus aptes.
 
@@ -100,6 +106,29 @@ class Volonte(BaseObj, metaclass=MetaVolonte):
 
         """
         raise NotImplementedError
+
+    def terminer(self):
+        """Cette méthode est appelée quand une volonté est terminée.
+
+        Elle doit être appelée si la volonté est terminée (peu importe
+        qu'elle se soit correctement exécutée ou qu'elle soit
+        impossible).
+
+        """
+        equipage = self.equipage
+        if self in equipage.volontes:
+            equipage.volontes.remove(self)
+
+    def ajouter_ordres(self, matelot, ordres):
+        """Ajoute les ordres au matelot précisé."""
+        terminer = TerminerVolonte(matelot, None)
+        ordres.append(terminer)
+        for ordre in ordres:
+            if ordre:
+                ordre.volonte = self
+                matelot.ordonner(ordre)
+
+        matelot.executer_ordres()
 
     def revenir_affectation(self, matelot):
         """Demande (si nécessaire) au matelot de revenir à sa sa salle."""
