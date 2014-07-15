@@ -45,6 +45,7 @@ class RelacherGouvernail(Ordre):
 
     cle = "relacher_gouvernail"
     etats_autorises = ("tenir_gouvernail", "")
+    peut_deleguer = False
     def executer(self):
         """Exécute l'ordre : relâche le gouvernail tenu."""
         personnage = self.matelot.personnage

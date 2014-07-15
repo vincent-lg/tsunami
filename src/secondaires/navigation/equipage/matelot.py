@@ -137,7 +137,8 @@ class Matelot(BaseObj):
             self.logger.debug(indent + "{} est invalidé".format(ordre))
             return
 
-        if personnage is None or personnage.est_mort():
+        if ordre.peut_deleguer and (personnage is None or \
+                personnage.est_mort()):
             self.logger.debug(indent + "{} est mort".format(personnage))
             matelot.relayer_ordres()
             matelot.ordres[:] = []
@@ -145,7 +146,8 @@ class Matelot(BaseObj):
 
         etats = [etat.cle for etat in personnage.etats]
         if ordre.etats_autorises != ("*", ) and \
-                any(cle not in ordre.etats_autorises for cle in etats):
+                any(cle not in ordre.etats_autorises for cle in etats) and \
+                ordre.peut_deleguer:
             self.logger.debug(indent + "{} est occupé ({} {})".format(
                     personnage, personnage.etats, ordre.etats_autorises))
             matelot.relayer_ordres()

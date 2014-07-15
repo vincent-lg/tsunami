@@ -54,6 +54,7 @@ class SignalRelais(SignalTermine):
         """Traite le générateur."""
         ordre = generateur.ordre
         matelot = ordre.matelot
-        matelot.relayer_ordres()
-        matelot.ordres[:] = []
-        SignalTermine.traiter(self, generateur, profondeur)
+        if ordre.peut_relayer:
+            matelot.relayer_ordres()
+            matelot.ordres[:] = []
+            SignalTermine.traiter(self, generateur, profondeur)

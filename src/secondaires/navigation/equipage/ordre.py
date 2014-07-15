@@ -71,6 +71,7 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
     cle = ""
     logger = type(importeur).man_logs.get_logger("ordres")
     etats_autorises = ("", )
+    peut_deleguer = True
     def __init__(self, matelot, navire):
         """Construit un ordre.
 

@@ -45,6 +45,7 @@ class RelacherRames(Ordre):
 
     cle = "relacher_rames"
     etats_autorises = ("tenir_rames", "")
+    peut_deleguer = False
 
     def __init__(self, matelot, navire, rames=None):
         Ordre.__init__(self, matelot, navire)

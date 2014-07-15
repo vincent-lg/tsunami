@@ -238,6 +238,15 @@ class Equipage(BaseObj):
         controle.decomposer()
         return controle
 
+    def retirer_controle(self, cle):
+        """Retire le contrôle si existant.
+
+        Le seul paramètre à préciser est la clé du contrôle.
+
+        """
+        if cle in self.controles:
+            del self.controles[cle]
+
     def get_matelot(self, nom):
         """Retourne, si trouvé, le âtelot recherché.
 
