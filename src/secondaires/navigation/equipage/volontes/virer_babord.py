@@ -39,9 +39,10 @@ from secondaires.navigation.equipage.ordres.relacher_gouvernail import \
 from secondaires.navigation.equipage.ordres.tenir_gouvernail import \
         TenirGouvernail
 from secondaires.navigation.equipage.ordres.virer import Virer as OrdreVirer
-from secondaires.navigation.equipage.volontes.virer import Virer
+from secondaires.navigation.equipage.volontes.virer_gouvernail import \
+        VirerGouvernail
 
-class VirerBabord(Virer):
+class VirerBabord(VirerGouvernail):
 
     """Classe représentant une volonté.
 
@@ -55,6 +56,12 @@ class VirerBabord(Virer):
     cle = "virer_babord"
     ordre_court = re.compile(r"^vb([0-9]{1,3})$", re.I)
     ordre_long = re.compile(r"^virer\s+babord\s+([0-9]{1,3})$", re.I)
+
+    def executer(self, couple):
+        """Exécute la volonté."""
+        self.navire.equipage.retirer_controle("direction")
+        VirerGouvernail.executer(self, couple)
+
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""
         direction = int((self.navire.direction.direction - self.direction) % \

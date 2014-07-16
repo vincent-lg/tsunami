@@ -46,7 +46,7 @@ class ChargerBoulet(Ordre):
 
     cle = "charger_boulet"
     def __init__(self, matelot, navire, canon=None, bruyant=False):
-        Ordre.__init__(self, matelot, navire)
+        Ordre.__init__(self, matelot, navire, canon, bruyant)
         self.canon = canon
         self.bruyant = bruyant
 

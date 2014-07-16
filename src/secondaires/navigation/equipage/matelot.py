@@ -97,6 +97,22 @@ class Matelot(BaseObj):
 
         return None
 
+    def nettoyer_ordres(self):
+        """Retire les ordres doubles."""
+        volontes = self.equipage.volontes
+        uniques = []
+        args = []
+        for ordre in self.ordres:
+            if ordre.volonte and ordre.volonte not in volontes:
+                continue
+
+            arg = (ordre.cle, ) + ordre.arguments_suplementaires
+            if arg not in args:
+                args.append(arg)
+                uniques.append(ordre)
+
+        self.ordres[:] = uniques
+
     def executer_ordres(self, priorite=1):
         """Exécute les ordres du mâtelot, dans l'ordre.
 

@@ -50,7 +50,7 @@ class Viser(Ordre):
     cle = "viser"
     def __init__(self, matelot, navire, canon=None, adverse=None,
             bruyant=True):
-        Ordre.__init__(self, matelot, navire)
+        Ordre.__init__(self, matelot, navire, canon, adverse, bruyant)
         self.canon = canon
         self.adverse = adverse
         self.bruyant = bruyant

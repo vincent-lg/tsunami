@@ -97,7 +97,7 @@ class Virer(Volonte):
             nom_dir = "le nord-est"
 
         direction = (direction + 90) % 360
-        nom_dir = lisser("virez à " + nom_dir)
+        nom_dir = lisser("cap à " + nom_dir)
         msg = "{} s'écrie : {}, {}° !".format(
                 personnage.distinction_audible, nom_dir, direction)
         self.navire.envoyer(msg)

@@ -49,7 +49,7 @@ class Ramer(Ordre):
     etats_autorises = ("tenir_rames", )
 
     def __init__(self, matelot, navire, rames=None, vitesse=""):
-        Ordre.__init__(self, matelot, navire)
+        Ordre.__init__(self, matelot, navire, rames, vitesse)
         self.rames = rames
         self.vitesse = vitesse
 

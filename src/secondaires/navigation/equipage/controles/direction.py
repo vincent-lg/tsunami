@@ -52,6 +52,11 @@ class Direction(Controle):
         Controle.__init__(self, equipage, direction)
         self.direction = direction
 
+    def afficher(self):
+        """Retourne le message pour l'affichage du contrôle."""
+        direction = (self.direction + 90) % 360
+        return "Sur {}°.".format(direction)
+
     def controler(self):
         """Contrôle l'avancement du contrôle."""
         commandant = self.commandant

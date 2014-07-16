@@ -72,7 +72,7 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
     logger = type(importeur).man_logs.get_logger("ordres")
     etats_autorises = ("", )
     peut_deleguer = True
-    def __init__(self, matelot, navire):
+    def __init__(self, matelot, navire, *arguments):
         """Construit un ordre.
 
         Si le navire existe et qu'aucun matelot n'a été trouvé pour cet ordre,
@@ -91,6 +91,7 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
         if self.matelot is None and navire:
             matelots = navire.matelots
             self.matelot = self.choisir_matelot(matelots)
+        self._arguments_suplementaires = arguments
 
     def __getnewargs__(self):
         return (None, None, )
@@ -102,6 +103,10 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
     @property
     def cle_matelot(self):
         return self.matelot and self.matelot.identifiant or "inconnue"
+
+    @property
+    def arguments_suplementaires(self):
+        return self._arguments_suplementaires
 
     def creer_generateur(self):
         """Crée un générateur spécifique pour cet ordre."""

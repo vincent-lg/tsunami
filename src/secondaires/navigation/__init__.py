@@ -310,6 +310,9 @@ class Module(BaseModule):
             for matelot in navire.equipage.matelots.values():
                 if matelot.personnage:
                     self.matelots[matelot.personnage.identifiant] = matelot
+                if matelot.ordres:
+                    matelot.nettoyer_ordres()
+                    matelot.executer_ordres()
 
     def creer_modele(self, cle):
         """Crée un modèle de navire et l'ajoute dans le dictionnaire.
@@ -601,7 +604,6 @@ class Module(BaseModule):
                     self.matelots:
                 matelot = self.matelots[pnj.identifiant]
                 arrive = self.matelots[arrive.identifiant]
-                print(matelot, "arrive", arrive)
 
     def rendre_equipage(self, pnj, adversaire):
         """Méthode appelée quand un PNJ meurt.

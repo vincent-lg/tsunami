@@ -41,6 +41,10 @@ class TerminerVolonte(Ordre):
     cle = "terminer_volonte"
     etats_autorises = ("*", )
 
+    @property
+    def arguments_suplementaires(self):
+        return (self.volonte, )
+
     def executer(self):
         """Exécute l'ordre : termine la volonté."""
         volonte = self.volonte

@@ -47,7 +47,7 @@ class Deplacer(Ordre):
 
     cle = "deplacer"
     def __init__(self, matelot, navire, direction="inconnue"):
-        Ordre.__init__(self, matelot, navire)
+        Ordre.__init__(self, matelot, navire, direction)
         self.direction = direction
 
     def choisir_matelot(self, matelots):

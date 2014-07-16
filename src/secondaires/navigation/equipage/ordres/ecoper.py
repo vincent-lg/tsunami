@@ -48,7 +48,7 @@ class Ecoper(Ordre):
     cle = "écoper"
     ENDURANCE_MIN = 30
     def __init__(self, matelot, navire, salle=None):
-        Ordre.__init__(self, matelot, navire)
+        Ordre.__init__(self, matelot, navire, salle)
         self.salle = salle
 
     def executer(self):

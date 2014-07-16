@@ -48,7 +48,7 @@ class RelacherRames(Ordre):
     peut_deleguer = False
 
     def __init__(self, matelot, navire, rames=None):
-        Ordre.__init__(self, matelot, navire)
+        Ordre.__init__(self, matelot, navire, rames)
         self.rames = rames
 
     def executer(self):

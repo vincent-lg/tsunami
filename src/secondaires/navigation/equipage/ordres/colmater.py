@@ -47,7 +47,7 @@ class Colmater(Ordre):
 
     cle = "colmater"
     def __init__(self, matelot, navire, salle=None, bruyant=False):
-        Ordre.__init__(self, matelot, navire)
+        Ordre.__init__(self, matelot, navire, salle, bruyant)
         self.salle = salle
         self.bruyant = bruyant
 

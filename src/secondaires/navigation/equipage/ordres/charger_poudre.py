@@ -47,7 +47,7 @@ class ChargerPoudre(Ordre):
 
     cle = "charger_poudre"
     def __init__(self, matelot, navire, canon=None, onces=5, bruyant=False):
-        Ordre.__init__(self, matelot, navire)
+        Ordre.__init__(self, matelot, navire, canon, onces, bruyant)
         self.canon = canon
         self.onces = onces
         self.bruyant = bruyant

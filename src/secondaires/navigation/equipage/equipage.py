@@ -58,6 +58,10 @@ class Equipage(BaseObj):
 
     """
 
+    noms_controles = {
+            "cap": "direction",
+    }
+
     def __init__(self, navire):
         """Constructeur du matelot."""
         BaseObj.__init__(self)

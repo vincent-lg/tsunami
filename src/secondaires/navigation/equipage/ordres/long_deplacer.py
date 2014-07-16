@@ -41,7 +41,7 @@ class LongDeplacer(Ordre):
 
     cle = "long_deplacer"
     def __init__(self, matelot, navire, *directions):
-        Ordre.__init__(self, matelot, navire)
+        Ordre.__init__(self, matelot, navire, *directions)
         self.directions = directions
 
     def choisir_matelot(self, matelots):
