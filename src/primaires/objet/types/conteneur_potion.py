@@ -30,8 +30,10 @@
 
 """Fichier contenant le type ConteneurPotion."""
 
-from primaires.interpreteur.editeur.choix import Choix
+from corps.aleatoire import *
 from corps.fonctions import lisser
+from primaires.interpreteur.editeur.choix import Choix
+from primaires.perso.personnage import Personnage
 from .base import BaseType
 
 # Constante
@@ -138,3 +140,41 @@ class ConteneurPotion(BaseType):
             msg += str(self.potion.description)
 
         return msg
+
+    def veut_jeter(self, personnage, sur):
+        """Le personnage veut jeter l'objet sur sur."""
+        if not isinstance(sur, Personnage):
+            return ""
+
+        return "jeter_personnage"
+
+    def jeter(self, personnage, elt):
+        """Jète la nourriture sur un élément."""
+        fact = varier(personnage.agilite, 20) / 100
+        fact *= (1.6 - personnage.poids / personnage.poids_max)
+        fact_adv = varier(elt.agilite, 20) / 100
+        fact_adv *= (1.6 - elt.poids / elt.poids_max)
+        reussite = fact >= fact_adv
+        if reussite:
+            personnage.envoyer("Vous lancez {} sur {{}}.".format(
+                    self.get_nom()), elt)
+            elt.envoyer("{{}} lance {} droit sur vous.".format(
+                    self.get_nom()), personnage)
+            personnage.salle.envoyer("{{}} envoie {} sur {{}}.".format(
+                    self.get_nom()), personnage, elt)
+        else:
+            personnage.envoyer("Vous lancez {} mais manquez {{}}.".format(
+                    self.get_nom()), elt)
+            elt.envoyer("{{}} lance {} mais vous manque.".format(
+                    self.get_nom()), personnage)
+            personnage.salle.envoyer("{{}} envoie {} mais manque {{}}.".format(
+                    self.get_nom()), personnage, elt)
+
+        personnage.salle.objets_sol.ajouter(self)
+        return reussite
+
+    def jeter_personnage(self, personnage, cible):
+        """Jète la nourriture sur un personnage."""
+        personnage.salle.envoyer("{} tombe au sol et se renverse.".format(
+                self.get_nom().capitalize()))
+        self.potion = None
