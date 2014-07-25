@@ -65,11 +65,10 @@ class CmdEnfourcher(Commande):
             try:
                 familier = importeur.familier.familiers[identifiant]
             except KeyError:
-                personnage << "|err|Vous ne pouvez enfourcher {}.|ff|".format(
+                personnage.envoyer("|err|Vous ne pouvez enfourcher {}.|ff|",
                         pnj)
                 return
 
-        personnage.agir("enfourcher")
         if "chevauche" in personnage.etats:
             familier = personnage.etats.get("chevauche").monture
             pnj = familier.pnj
@@ -94,6 +93,11 @@ class CmdEnfourcher(Commande):
 
         if familier.chevauche_par:
             personnage << "|err|Il y a déjà quelqu'un en croupe.|ff|"
+            return
+
+        if any(aff.affection.a_flag("ne peut chevaucher") for aff in \
+                personnage.affections.values()):
+            personnage << "|err|Vous ne pouvez faire cela.|ff|"
             return
 
         personnage.etats.ajouter("chevauche", familier)

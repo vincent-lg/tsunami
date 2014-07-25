@@ -33,6 +33,7 @@
 from random import choice
 
 from abstraits.module import *
+from primaires.affection.personnage import AffectionPersonnage
 from primaires.format.fonctions import format_nb
 from primaires.perso.exceptions.action import ExceptionAction
 from primaires.salle.salle import FLAGS as FLAGS_SALLE
@@ -77,10 +78,14 @@ class Module(BaseModule):
     def config(self):
         """Configuration du module."""
         self.importeur.scripting.a_charger.append(self)
+
         # Ajout des flags de salle
         FLAGS_SALLE.ajouter("écurie")
         FLAGS_SALLE.ajouter("peut chevaucher")
         FLAGS_SALLE.ajouter("accueille familiers")
+
+        # Ajout des flags des affections
+        AffectionPersonnage.def_flags.ajouter("ne peut chevaucher")
 
         # Ajout des états
         chevauche = self.importeur.perso.ajouter_etat("chevauche", Chevauche)

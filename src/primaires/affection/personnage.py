@@ -30,6 +30,7 @@
 
 """Ce module contient la classe AffectionPersonnage, détaillée plus bas."""
 
+from bases.collections.flags import Flags
 from .base import AffectionAbstraite
 from primaires.affection.script_personnage import ScriptAffectionPersonnage
 
@@ -38,11 +39,10 @@ class AffectionPersonnage(AffectionAbstraite):
     """Affection propre à un personnage."""
 
     nom_type = "personnage"
-    nom_scripting = "affection de salle"
-    def_flags = {
-        "doit être connecté": 1,
-        "doit être vivant": 2,
-    }
+    nom_scripting = "affection de personnage"
+    def_flags = Flags()
+    def_flags.ajouter("doit être connecté")
+    def_flags.ajouter("doit être vivant")
 
     def __init__(self, cle):
         AffectionAbstraite.__init__(self, cle)
