@@ -33,7 +33,6 @@
 from corps.aleatoire import *
 from corps.fonctions import lisser
 from primaires.interpreteur.editeur.choix import Choix
-from primaires.perso.personnage import Personnage
 from .base import BaseType
 
 # Constante
@@ -143,6 +142,7 @@ class ConteneurPotion(BaseType):
 
     def veut_jeter(self, personnage, sur):
         """Le personnage veut jeter l'objet sur sur."""
+        from primaires.perso.personnage import Personnage
         if not isinstance(sur, Personnage):
             return ""
 

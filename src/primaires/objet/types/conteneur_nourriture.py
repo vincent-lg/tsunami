@@ -35,7 +35,6 @@ from math import ceil
 from corps.aleatoire import *
 from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.objet.editeurs.edt_statuts import EdtStatuts
-from primaires.perso.personnage import Personnage
 from bases.objet.attribut import Attribut
 from .base import BaseType
 
@@ -193,6 +192,7 @@ class ConteneurNourriture(BaseType):
 
     def veut_jeter(self, personnage, sur):
         """Le personnage veut jeter l'objet sur sur."""
+        from primaires.perso.personnage import Personnage
         if not isinstance(sur, Personnage):
             return ""
 

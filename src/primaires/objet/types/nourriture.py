@@ -34,7 +34,6 @@ from bases.objet.attribut import Attribut
 from corps.aleatoire import *
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.entier import Entier
-from primaires.perso.personnage import Personnage
 from .base import BaseType
 
 class Nourriture(BaseType):
@@ -97,6 +96,7 @@ class Nourriture(BaseType):
 
     def veut_jeter(self, personnage, sur):
         """Le personnage veut jeter l'objet sur sur."""
+        from primaires.perso.personnage import Personnage
         if not isinstance(sur, Personnage):
             return ""
 
