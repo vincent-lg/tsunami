@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,9 +33,9 @@
 from primaires.interpreteur.commande.commande import Commande
 
 class CmdJeter(Commande):
-    
+
     """Commande 'jeter'"""
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "jeter", "throw")
@@ -47,10 +47,9 @@ class CmdJeter(Commande):
                 "quelque chose ou quelqu'un. Vous devez posséder l'objet " \
                 "devant être jeté (soit dans une main, soit dans l'un de " \
                 "vos sacs) et la cible peut être autant un objet, un " \
-                "personnage, un détail descriptif... |att|Cette commande " \
-                "n'en est encore qu'à ses premiers stades de développement. " \
-                "De nouvelles choses seront ajoutées par la suite.|ff|"
-    
+                "personnage, un détail descriptif... Vous pouvez utiliser " \
+                "cette commande pour jeter des fléchettes ou des armes."
+
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("nom_objet")
@@ -59,7 +58,7 @@ class CmdJeter(Commande):
                 "True), )"
         nom_objet.proprietes["quantite"] = "True"
         nom_objet.proprietes["conteneur"] = "True"
-    
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         personnage.agir("jeter")
@@ -72,7 +71,7 @@ class CmdJeter(Commande):
             tentative = objet.jeter(personnage, elt)
             if not tentative:
                 return
-            
+
             getattr(objet, nom)(personnage, elt)
         else:
             personnage.envoyer("|err|Vous ne pouvez jeter {} sur {{}}" \
