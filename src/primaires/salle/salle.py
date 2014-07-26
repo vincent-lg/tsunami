@@ -299,7 +299,7 @@ class Salle(BaseObj):
         v_origine = Vecteur(*self.coords.tuple())
         v_destination = Vecteur(*destination.coords.tuple())
         distance = (v_destination - v_origine).norme
-        if distance > 18:
+        if distance > 25:
             return None
 
         salles = Chemins.get_salles_entre(self, destination)
