@@ -91,6 +91,15 @@ class Joueur(Personnage):
             raise ValueError("langue {} inconnue pour le joueur {}".format(
                     self.langue_cmd, self.nom))
 
+    @property
+    def adresse_ip(self):
+        return self.instance_connexion and \
+                self.instance_connexion.adresse_ip or "inconnue"
+
+    @property
+    def adresse_email(self):
+        return self.compte and self.compte.adresse_email or "inconnue"
+
     def est_connecte(self):
         """Retourne la valeur de self.connecte"""
         return self.connecte

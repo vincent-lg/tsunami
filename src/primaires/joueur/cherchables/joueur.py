@@ -78,6 +78,8 @@ class CherchableJoueur(Cherchable):
             "compte": "compte",
             "groupe": "nom_groupe",
             "element": "element",
+            "email": "adresse_email",
+            "ip": "adresse_ip",
         }
 
     def colonnes_par_defaut(self):
