@@ -454,8 +454,6 @@ class Module(BaseModule):
         familier = self.familiers.get(pnj.identifiant)
         if familier and familier.chevauche_par:
             return False
-        if "guide_par" in pnj.etats:
-            return False
 
         return True
 

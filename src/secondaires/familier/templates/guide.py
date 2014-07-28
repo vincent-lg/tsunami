@@ -66,4 +66,4 @@ class Guide(Etat):
         if self.familier and self.familier.pnj:
             pnj = self.familier.pnj
             if "guide_par" in pnj.etats:
-                pnj.etats.retirer("guide_par")
+                pnj.etats.retirer("guide_par", supprimer=False)

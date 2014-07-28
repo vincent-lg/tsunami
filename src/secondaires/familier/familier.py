@@ -162,6 +162,12 @@ class Familier(BaseObj):
     def peut_attaquer(self, personnage):
         """Retourne True si le familier pense pouvoir attaquer la cible."""
         pnj = self.pnj
+        if not pnj.peut_voir(personnage):
+            return False
+
+        if personnage.est_mort():
+            return False
+
         return personnage not in (self.maitre, pnj) and pnj.niveau > \
                 personnage.niveau
 

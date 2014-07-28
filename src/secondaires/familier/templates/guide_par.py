@@ -63,4 +63,4 @@ class GuidePar(Etat):
         if self.guide:
             personnage = self.guide
             if "guide" in personnage.etats:
-                personnage.etats.retirer("guide")
+                personnage.etats.retirer("guide", supprimer=False)

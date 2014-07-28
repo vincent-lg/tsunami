@@ -132,11 +132,23 @@ class Etats(BaseObj):
         etat = classe(self.personnage, *args)
         self.__etats.append(etat)
 
-    def retirer(self, cle_etat):
-        """Retire le premier état dont la clé correspond."""
+    def retirer(self, cle_etat, supprimer=True):
+        """Retire le premier état dont la clé correspond.
+
+        Si le flag supprimer est à True (par défaut il l'est), alors l'état
+        est supprimé proprement c'est-à-dire que sa méthode 'suppriemr' est
+        appelée. Certains états redéfinissent cette méthode pour des
+        actions particulières mais il faut s'assurer dans ce cas que la
+        méthode ne s'appelle pas récursivement. Si un état supprimé veut
+        retirer un autre état (ce sont des états couplés), alors mettre
+        le flag supprimer à False pour éviter une récursion infinie.
+
+        """
         for i, etat in enumerate(list(self.__etats)):
             if etat.cle == cle_etat:
-                etat.supprimer()
+                if supprimer:
+                    etat.supprimer()
+
                 del self.__etats[i]
                 return
 
