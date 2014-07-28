@@ -54,6 +54,7 @@ class CherchableJoueur(Cherchable):
         self.ajouter_filtre("m", "compte", "compte", "str")
         self.ajouter_filtre("g", "groupe", "nom_groupe", "str")
         self.ajouter_filtre("e", "element", "element", "str")
+        self.ajouter_filtre("i", "ip", "adresse_ip", "str")
 
     @property
     def items(self):

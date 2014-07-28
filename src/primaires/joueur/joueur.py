@@ -65,6 +65,7 @@ class Joueur(Personnage):
         self.tips = importeur.information.cfg_info.tips
         self.creation = datetime.now()
         self.derniere_connexion = None
+        self.adresse_ip = "inconnue"
         self.cpt_mort = 0
         self.description = Description(parent=self, scriptable=False)
         self.description_a_valider = Description(parent=self, scriptable=False)
@@ -90,11 +91,6 @@ class Joueur(Personnage):
         else:
             raise ValueError("langue {} inconnue pour le joueur {}".format(
                     self.langue_cmd, self.nom))
-
-    @property
-    def adresse_ip(self):
-        return self.instance_connexion and \
-                self.instance_connexion.adresse_ip or "inconnue"
 
     @property
     def adresse_email(self):
@@ -176,6 +172,7 @@ class Joueur(Personnage):
             type(self).importeur.hook["joueur:connecte"].executer(self)
 
         self.derniere_connexion = datetime.now()
+        self.adresse_ip = self.instance_connexion.adresse_ip
 
     def pre_deconnecter(self):
         """Cette méthode prépare la déconnexion du joueur.

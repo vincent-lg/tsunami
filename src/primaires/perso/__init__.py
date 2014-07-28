@@ -111,7 +111,7 @@ class Module(BaseModule):
         assis.msg_refus = "Vous êtes assis."
         assis.msg_visible = "est assis là"
         assis.act_autorisees = ["regarder", "poser", "parler", "ingerer",
-                "lancersort", "lever", "geste", "allonger", "pecher"]
+                "lancersort", "lever", "geste", "allonger", "pecher", "ramer"]
         allonge = self.ajouter_etat("allonge", Allonge)
         allonge.msg_refus = "Vous êtes allongé."
         allonge.msg_visible = "est allongé là"
