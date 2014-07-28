@@ -30,8 +30,11 @@
 
 """Fichier contenant le module secondaire navigation."""
 
-# Configuration du logger des ordres
+# Configuration des loggers
 type(importeur).man_logs.creer_logger("navigation", "ordres", "ordres.log")
+type(importeur).man_logs.creer_logger("navigation", "monstres", "monstres.log")
+
+import os
 
 from vector import *
 
@@ -52,6 +55,7 @@ from . import types
 from .modele import ModeleNavire
 from .constantes import *
 from .equipage.fiche import FicheMatelot
+from .monstre.prototype import PrototypeMonstreMarin, types_monstres
 from .chantier_naval import ChantierNaval
 from .navires_vente import NaviresVente
 from .matelots_vente import MatelotsVente
@@ -86,6 +90,8 @@ class Module(BaseModule):
         self.trajets = {}
         self.reperes = {}
         self.matelots = {}
+        self.types_monstres = types_monstres
+        self.monstres = {}
         self.points_ovservables = {
                 "cotes": Visible.trouver_cotes,
                 "navires": Visible.trouver_navires,
@@ -229,6 +235,23 @@ class Module(BaseModule):
         nb_chantiers = len(chantiers)
         self.nav_logger.info(format_nb(nb_chantiers,
                 "{nb} chantier{s} naval{s} récupéré{s}"))
+
+        # On récupère les monstres marins
+        # On charge les prototypes
+        chemin = os.path.join(self.chemin, "monstre", "types")
+        pychemin = "secondaires.navigation.monstre.types"
+        print("Explore", chemin)
+        for nom_fichier in os.listdir(chemin):
+            if nom_fichier.startswith("_") or not nom_fichier.endswith(".py"):
+                continue
+
+            nom_fichier = pychemin + "." + nom_fichier[:-3]
+            print("Charge", nom_fichier)
+            __import__(nom_fichier)
+
+        #modeles = self.importeur.supenr.charger_groupe(ModeleNavire)
+        #for modele in modeles:
+        #    self.modeles[modele.cle] = modele
 
         # Ajout des actions différées
         self.importeur.diffact.ajouter_action("dep_navire", TPS_VIRT,
