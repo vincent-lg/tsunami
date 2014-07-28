@@ -60,6 +60,7 @@ class PrmTenir(Parametre):
             personnage << "|err|Il n'y a pas de rames ici.|ff|"
             return
 
+        personnage.agir("ramer")
         if rames.tenu is personnage:
             personnage << "|err|Vous tenez déjà ces rames.|ff|"
         elif rames.tenu is not None:
