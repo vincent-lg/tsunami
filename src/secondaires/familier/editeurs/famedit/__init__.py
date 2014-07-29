@@ -96,6 +96,12 @@ class EdtFamedit(Presentation):
                 "monture")
         monture.parent = self
 
+        # Sorties verticales
+        verticales = self.ajouter_choix(
+                "peut emprunter les sorties verticales", "v", Flag, fiche,
+                "sorties_verticales")
+        verticales.parent = self
+
         # Difficulté d'apprivoisement
         difficulte = self.ajouter_choix("difficulté d'apprivoisement", "d",
                 Entier, fiche, "difficulte_apprivoisement")

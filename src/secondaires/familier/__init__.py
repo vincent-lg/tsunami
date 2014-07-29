@@ -361,7 +361,8 @@ class Module(BaseModule):
                     personnage.envoyer("|err|{} ne peut aller là.|ff|",
                             pnj)
                     return False
-                elif sortie.direction in ("haut", "bas"):
+                elif sortie.direction in ("haut", "bas") and not \
+                        familier.fiche.sorties_verticales:
                     personnage.envoyer("|err|{} ne peut aller là.|ff|",
                             pnj)
                     return False
@@ -490,6 +491,7 @@ class Module(BaseModule):
 
     def faire_chasser(self, familier):
         """Fait chasser le familier."""
+        fiche = familier.fiche
         pnj = familier.pnj
         salle = pnj.salle
 
@@ -500,8 +502,11 @@ class Module(BaseModule):
         preferes = []
         sorties = []
         for sortie in salle.sorties:
-            if sortie.direction not in ("bas", "haut") and \
-                    sortie.salle_dest and sortie.salle_dest.nom_terrain == \
+            if sortie.direction in ("bas", "haut") and not \
+                    fiche.sorties_verticales:
+                continue
+
+            if sortie.salle_dest and sortie.salle_dest.nom_terrain == \
                     salle.nom_terrain and not sortie.salle_dest.interieur:
                 sorties.append(sortie)
 
@@ -530,6 +535,7 @@ class Module(BaseModule):
 
     def faire_brouter(self, familier):
         """Fait brouter un familier herbivore."""
+        fiche = familier.fiche
         pnj = familier.pnj
         salle = pnj.salle
 
@@ -539,8 +545,11 @@ class Module(BaseModule):
         # On cherche les sorties possible de déplacement
         sorties = []
         for sortie in salle.sorties:
-            if sortie.direction not in ("bas", "haut") and \
-                    sortie.salle_dest and sortie.salle_dest.nom_terrain in \
+            if sortie.direction in ("bas", "haut") and not \
+                    fiche.sorties_verticales:
+                continue
+
+            if sortie.salle_dest and sortie.salle_dest.nom_terrain in \
                     ("rive", "plaine") and not sortie.salle_dest.interieur:
                 sorties.append(sortie)
 

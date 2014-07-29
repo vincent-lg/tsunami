@@ -60,6 +60,7 @@ class FicheFamilier(BaseObj):
         self.cle = cle
         self.regime = "herbivore"
         self.monture = False
+        self.sorties_verticales = False
         self.difficulte_apprivoisement = 10
         self.harnachements = []
         self.m_valeur = 50
