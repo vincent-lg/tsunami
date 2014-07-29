@@ -46,7 +46,10 @@ class CmdBoire(Commande):
                 "Cette commande permet de boire un liquide (potion " \
                 "ou autre) depuis un conteneur. Sans argument, vous buvez " \
                 "l'eau à portée s'il y en a (près d'une rivière ou autre " \
-                "étendue d'eau)."
+                "étendue d'eau). Sur un navire, cette commande vous " \
+                "permet de boire directement depuis l'eau, si elle est " \
+                "douce, ou de boire une partie de vos réserves d'eau " \
+                "douce, si il y en a dans la cale."
 
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
@@ -62,8 +65,9 @@ class CmdBoire(Commande):
         if dic_masques["nom_objet"] is None:
             # On regarde si il n'y a pas une fontaine dans les détails
             fontaine = salle.a_detail_flag("fontaine")
-            if fontaine or salle.terrain.nom in ("rive", "aquatique",
-                    "subaquatique"):
+            peut = importeur.hook["objet:peut_boire"].executer(personnage)
+            if any(peut) or fontaine or salle.terrain.nom in ("rive",
+                    "aquatique", "subaquatique"):
                 if personnage.estomac <= 2.9:
                     personnage << "Vous buvez à grandes gorgées."
                     personnage.salle.envoyer("{} boit à grandes gorgées.",
@@ -80,6 +84,11 @@ class CmdBoire(Commande):
             return
 
         objet = dic_masques["nom_objet"].objet
+        peut = importeur.hook["objet:peut_boire"].executer(personnage, objet)
+        if any(peut):
+            peut[0](personnage, objet)
+            return
+
         if hasattr(objet, "potion"):
             if objet.potion is None:
                 personnage << "Il n'y a rien à boire là-dedans."

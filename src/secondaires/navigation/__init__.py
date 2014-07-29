@@ -154,6 +154,8 @@ class Module(BaseModule):
                 self.navire_amarre)
         self.importeur.hook["salle:regarder"].ajouter_evenement(
                 self.navire_accoste)
+        self.importeur.hook["objet:peut_boire"].ajouter_evenement(
+                Navire.peut_boire)
         self.importeur.interpreteur.categories["navire"] = \
                 "Commandes de navigation"
         self.importeur.hook["pnj:arrive"].ajouter_evenement(

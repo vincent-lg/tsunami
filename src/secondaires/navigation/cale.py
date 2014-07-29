@@ -51,6 +51,7 @@ TYPES = {
         "légume": "vivres",
         "fruit": "vivres",
         "gâteau": "vivres",
+        "tonneau d'eau": "vivres",
 }
 
 class Cale(BaseObj):
@@ -73,6 +74,7 @@ class Cale(BaseObj):
         """Constructeur du matelot."""
         BaseObj.__init__(self)
         self.navire = navire
+        self.eau_douce = 0
         self.boulets = {}
         self.sacs_poudre = {}
         self.ecopes = {}
@@ -133,6 +135,7 @@ class Cale(BaseObj):
                 "légume": self.vivres,
                 "fruit": self.vivres,
                 "gâteau": self.vivres,
+                "tonneau d'eau": self.vivres,
         }
 
     def accepte(self, salle, nom_type):
@@ -164,6 +167,8 @@ class Cale(BaseObj):
                                 "rempli et ne peut être mis en cale " \
                                 "tel quel.".format(
                                 objet.get_nom().capitalize()))
+                elif nom_type == "tonneau d'eau":
+                    self.eau_douce += objet.gorgees_contenu
             elif poids + objet.prototype.poids_unitaire > poids_max:
                 raise ValueError("Vous ne pouvez remplir la cale davantage.")
             else:
@@ -208,7 +213,38 @@ class Cale(BaseObj):
         objet = None
         for i in range(nb):
             objet = importeur.objet.creer_objet(prototype)
+            if prototype.est_de_type("tonneau d'eau"):
+                nb_max = prototype.gorgees_max_contenu
+                print("nb_max", nb_max)
+                if nb_max > self.eau_douce:
+                    print(" ", self.eau_douce)
+                    objet.gorgees_contenu = self.eau_douce
+                self.eau_douce -= objet.gorgees_contenu
+                print(self.eau_douce)
+
             if donner:
                 personnage.ramasser_ou_poser(objet)
 
         return objet
+
+    def boire(self):
+        """Boit une gorgée, retire un tonneau d'eau si nécessaire."""
+        total = 0
+        plus_petit = None
+        for cle, nb in self.vivres.items():
+            prototype = importeur.objet.prototypes[cle]
+            if prototype.est_de_type("tonneau d'eau"):
+                total += prototype.gorgees_max_contenu * nb
+                if plus_petit is None or plus_petit.gorgees_max_contenu > \
+                        prototype.gorgees_max_contenu:
+                    plus_petit = prototype
+
+        if self.eau_douce == 0:
+            raise ValueError("Il n'y a plus d'eau douce dans la cale.")
+
+        self.eau_douce -= 1
+        if total - plus_petit.gorgees_max_contenu >= self.eau_douce:
+            # On retire le plus petit
+            self.vivres[prototype.cle] -= 1
+            if self.vivres[prototype.cle] <= 0:
+                del self.vivres[prototype.cle]

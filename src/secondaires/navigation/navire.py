@@ -752,6 +752,47 @@ class Navire(Vehicule):
                 amarre.attachee = d_salle
                 navire.immobilise = True
 
+    staticmethod
+    def peut_boire(personnage, objet=None):
+        """Retourne une valeur si le personnage peut boire ici."""
+        salle = personnage.salle
+        navire = getattr(salle, "navire", None)
+        if objet is None:
+            if navire and navire.etendue and navire.etendue.eau_douce:
+                return True
+            elif navire.cale.eau_douce > 0 and navire.a_le_droit(personnage,
+                    si_present=True):
+                navire.cale.boire()
+                return True
+            return False
+        else:
+            if objet.est_de_type("tonneau d'eau"):
+                return Navire.boire
+            return False
+
+    @staticmethod
+    def boire(personnage, objet):
+        """Fait boire le personnage.
+
+        Ou essayer.
+
+        """
+        if objet.est_de_type("tonneau d'eau"):
+            if objet.gorgees_contenu > 0:
+                if personnage.estomac <= 2.9:
+                    if personnage.soif > 0:
+                        personnage.soif -= 8
+                    personnage.estomac += 0.25
+                    objet.gorgees_contenu -= 1
+                    personnage << "Vous buvez {}.".format(objet.get_nom())
+                    personnage.salle.envoyer("{} boit " + objet.get_nom() + \
+                            ".", personnage)
+                else:
+                    e = "e" if personnage.est_feminin() else ""
+                    personnage << "Vous êtes plein{e} ; une gorgée de plus " \
+                            "et vous éclaterez.".format(e=e)
+            else:
+                personnage << "|err|Ce tonneau d'eau est vide.|ff|"
     def regarder(self, personnage):
         """Le personnage regarde le navire."""
         salle = personnage.salle

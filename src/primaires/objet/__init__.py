@@ -83,6 +83,10 @@ class Module(BaseModule):
             "d'aliments que vous proposez est supérieur au poids\nmaximum du " \
             "conteneur, l'ajout du service ne fonctionnera pas."
 
+        # Ajout des hooks
+        importeur.hook.ajouter_hook("objet:peut_boire",
+                "Hook appelé quand un personnage demande à boire.")
+
         # Ajout de l'état repas
         etat = self.importeur.perso.ajouter_etat("repas")
         etat.msg_refus = "Vous êtes en train de manger."

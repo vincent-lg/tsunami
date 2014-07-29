@@ -71,6 +71,7 @@ class Etendue(BaseObj):
         self.cle = cle
         self.altitude = 0
         self.profondeur = 4
+        self.eau_douce = False
         self.obstacles = {}
         self.cotes = {}
         self.liens = {}
