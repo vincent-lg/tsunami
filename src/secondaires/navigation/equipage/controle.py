@@ -84,7 +84,7 @@ class Controle(BaseObj, metaclass=MetaControle):
         self.arguments = args
 
     def __getnewargs__(self):
-        arguments = (None, ) + self.arguments
+        arguments = (None, ) + getattr(self, "arguments", ())
         return arguments
 
     def __repr__(self):

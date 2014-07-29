@@ -48,7 +48,7 @@ class Direction(Controle):
     """
 
     cle = "direction"
-    def __init__(self, equipage, direction):
+    def __init__(self, equipage, direction=0):
         Controle.__init__(self, equipage, direction)
         self.direction = direction
 
