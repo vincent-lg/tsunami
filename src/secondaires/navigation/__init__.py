@@ -48,6 +48,7 @@ from .elements import types as types_elements
 from .elements.base import BaseElement
 from .vent import Vent
 from .visible import Visible
+from . import cherchables
 from . import commandes
 from . import editeurs
 from . import masques

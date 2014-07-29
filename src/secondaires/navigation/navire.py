@@ -81,8 +81,6 @@ class Navire(Vehicule):
         self.cale = Cale(self)
         self.canots = []
 
-        # Dernier lien (dl)
-
         if modele:
             modele.vehicules.append(self)
             self.cle = importeur.navigation.dernier_ID(modele.cle)
@@ -376,6 +374,18 @@ class Navire(Vehicule):
                 orientation += rame.orientation * 5 / self.taille
 
         return int(orientation)
+
+    @property
+    def aff_nom(self):
+        return self.nom_personnalise or "aucun"
+
+    @property
+    def nom_etendue(self):
+        return self.etendue and self.etendue.cle or "aucune"
+
+    @property
+    def nom_proprietaire(self):
+        return self.proprietaire and self.proprietaire.nom or "aucun"
 
     def a_le_droit(self, personnage, poste="capitaine", si_present=False):
         """Retourne True si le personnage a le droit, False sinon.
