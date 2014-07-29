@@ -31,4 +31,5 @@
 """Package contenant les commandes du module rapport."""
 
 from . import bug
+from . import orthographe
 from . import rapport

@@ -81,6 +81,7 @@ class Module(BaseModule):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.bug.CmdBug(),
+            commandes.orthographe.CmdOrthographe(),
             commandes.rapport.CmdRapport(),
         ]
 

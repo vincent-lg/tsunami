@@ -46,6 +46,9 @@ CATEGORIES = (
     "autre",
     "confort",
     "navigation",
+    "cuisine",
+    "magie",
+    "équilibrage",
 )
 
 STATUTS = (
