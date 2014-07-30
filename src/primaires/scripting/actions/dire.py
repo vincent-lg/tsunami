@@ -52,6 +52,7 @@ class ClasseAction(Action):
     @staticmethod
     def dire_personnage(personnage, message, variables):
         """Envoie un message au personnage."""
+        message = message.replace("_b_nl_b_", "\n")
         personnage.envoyer(message, **variables)
 
     @staticmethod
@@ -63,6 +64,7 @@ class ClasseAction(Action):
         donc pas ce message.
 
         """
+        message = message.replace("_b_nl_b_", "\n")
         f_variables = get_variables(variables, message)
         salle.envoyer(message, **f_variables)
 
