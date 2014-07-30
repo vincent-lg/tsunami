@@ -760,8 +760,8 @@ class Navire(Vehicule):
         if objet is None:
             if navire and navire.etendue and navire.etendue.eau_douce:
                 return True
-            elif navire.cale.eau_douce > 0 and navire.a_le_droit(personnage,
-                    si_present=True):
+            elif navire and navire.cale.eau_douce > 0 and navire.a_le_droit(
+                    personnage, si_present=True):
                 navire.cale.boire()
                 return True
             return False
