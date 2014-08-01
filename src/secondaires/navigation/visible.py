@@ -126,7 +126,7 @@ class Visible:
                 t_vec.around_z(radians(precision))
                 a_vec = position + t_vec
                 c_angle += precision
-                if (t_vec - v_dist).mag <= 0.55:
+                if (t_vec - v_dist).mag <= 0.6:
                     direction = get_direction(t_vec)
                     r_direction = (direction - nav_direction) % 360
                     t_angle = norme_angle(round(r_direction / \
@@ -145,7 +145,7 @@ class Visible:
                 t_vec.around_z(radians(-precision))
                 a_vec = position + t_vec
                 c_angle += precision
-                if (t_vec - v_dist).mag <= 0.55:
+                if (t_vec - v_dist).mag <= 0.6:
                     direction = get_direction(t_vec)
                     r_direction = (direction - nav_direction) % 360
                     t_angle = norme_angle(round(r_direction / \
