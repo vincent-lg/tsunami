@@ -67,6 +67,7 @@ class Navire(Vehicule):
     """
 
     enregistrer = True
+    obs_recif = None
     def __init__(self, modele):
         """Constructeur du navire."""
         Vehicule.__init__(self)
@@ -642,7 +643,14 @@ class Navire(Vehicule):
         """Méthode appelée lors d'une collision avec un point."""
         Vehicule.collision(self, salle)
         vitesse = self.vitesse_noeuds
-        if vitesse < 0.1:
+        if contre is type(self).obs_recif:
+            if vitesse < 0.05:
+                pass
+            else:
+                self.envoyer("Le craquement du bois se brisant vous emplit " \
+                        "les oreilles.")
+                salle.noyer(vitesse * 20)
+        elif vitesse < 0.1:
             pass
         elif vitesse < 0.4:
             self.envoyer("Un léger choc ébranle le navire.")

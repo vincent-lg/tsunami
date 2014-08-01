@@ -340,6 +340,9 @@ class Module(BaseModule):
                     matelot.nettoyer_ordres()
                     matelot.executer_ordres()
 
+        # On renseigne le terrain récif
+        Navire.obs_recif = self.importeur.salle.obstacles["récif"]
+
     def creer_modele(self, cle):
         """Crée un modèle de navire et l'ajoute dans le dictionnaire.
 
