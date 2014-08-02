@@ -43,6 +43,7 @@ from .poste import PrmPoste
 from .promouvoir import PrmPromouvoir
 from .recruter import PrmRecruter
 from .renommer import PrmRenommer
+from .score import PrmScore
 
 class CmdMatelot(Commande):
 
@@ -71,3 +72,4 @@ class CmdMatelot(Commande):
         self.ajouter_parametre(PrmPromouvoir())
         self.ajouter_parametre(PrmRecruter())
         self.ajouter_parametre(PrmRenommer())
+        self.ajouter_parametre(PrmScore())

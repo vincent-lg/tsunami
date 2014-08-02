@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -18,7 +18,7 @@
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT master OR CONTRIBUTORS BE
 # LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
 # OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -28,33 +28,28 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe SignalRelais."""
+"""Fichier contenant le paramètre 'score' de la commande 'matelot'."""
 
-from secondaires.navigation.equipage.signaux.termine import SignalTermine
+from primaires.interpreteur.masque.parametre import Parametre
+from primaires.perso.montrer.score import MontrerScore
 
-class SignalRelais(SignalTermine):
+class PrmScore(Parametre):
 
-    """Signal utilisé pour dire que l'ordre ne peut s'exécuter.
+    """Commande 'matelot score'."""
 
-    La différence avec le SignalAbandonne, c'est qu'on demande ici
-    à relayer l'ordre (pour X raison, le matelot sélectionné ne peut
-    pas accomplir les ordres qui lui ont été assignés et il demande
-    à d'autres de le faire).
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "score", "score")
+        self.schema = "<nom_matelot>"
+        self.tronquer = True
+        self.aide_courte = "affiche le score du matelot"
+        self.aide_longue = \
+            "Cette commande permet d'afficher les stats complètes du " \
+            "matelot. Le rendu est identiqué au rendu de votre fiche score."
 
-    """
-
-    def __init__(self, raison):
-        SignalTermine.__init__(self)
-        self.raison = raison
-
-    def __repr__(self):
-        return "<signal relais {}>".format(repr(self.raison))
-
-    def traiter(self, generateur, profondeur):
-        """Traite le générateur."""
-        ordre = generateur.ordre
-        matelot = ordre.matelot
-        if ordre.peut_deleguer:
-            matelot.relayer_ordres()
-            matelot.ordres[:] = []
-            SignalTermine.traiter(self, generateur, profondeur)
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        # On récupère le matelot
+        matelot = dic_masques["nom_matelot"].matelot
+        pnj = matelot.personnage
+        personnage << MontrerScore.montrer(pnj, nom=matelot.nom)

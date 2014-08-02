@@ -463,3 +463,10 @@ class Equipage(BaseObj):
             matelot.detruire()
 
         BaseObj.detruire(self)
+
+    @staticmethod
+    def get_nom_matelot(pnj, personnage):
+        """Retourne le nom du matelot si personnage est gradé."""
+        matelot = importeur.navigation.matelots.get(pnj.identifiant)
+        if matelot and matelot.equipage.est_au_poste(personnage, "officier"):
+            return matelot.nom

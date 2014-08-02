@@ -55,6 +55,7 @@ from . import masques
 from . import types
 from .modele import ModeleNavire
 from .constantes import *
+from .equipage.equipage import Equipage
 from .equipage.fiche import FicheMatelot
 from .monstre.prototype import PrototypeMonstreMarin, types_monstres
 from .chantier_naval import ChantierNaval
@@ -162,6 +163,8 @@ class Module(BaseModule):
                 self.combat_matelot)
         self.importeur.hook["pnj:meurt"].ajouter_evenement(
                 self.rendre_equipage)
+        self.importeur.hook["pnj:nom"].ajouter_evenement(
+                Equipage.get_nom_matelot)
 
         # Ajout des talents
         importeur.perso.ajouter_talent("calfeutrage", "calfeutrage",
