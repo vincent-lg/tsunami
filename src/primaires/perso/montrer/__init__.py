@@ -18,7 +18,7 @@
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT master OR CONTRIBUTORS BE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
 # LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
 # OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -28,33 +28,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'score' de la commande 'familier'."""
+"""Package contenant un objet destiné à montrer des informations.
 
-from primaires.interpreteur.masque.parametre import Parametre
-from primaires.perso.montrer.score import MontrerScore
+Par exemple, vous trouverez dans ce package le module score et la classe
+MontrerScore, destinée à montrer le score d'un personnage. L'intérêt de
+passer par des classes (simple conteneurs, méthodes statiques) est que l'on
+peut utiliser la même classe pour afficher différents scores (celui d'un
+PNJ, d'un joueur, d'un familier, de soi-même).
 
-class PrmScore(Parametre):
-
-    """Commande 'familier score'."""
-
-    def __init__(self):
-        """Constructeur du paramètre"""
-        Parametre.__init__(self, "score", "score")
-        self.schema = "<nom_familier>"
-        self.aide_courte = "affiche le score du familier"
-        self.aide_longue = \
-            "Cette commande permet d'afficher les stats complètes du " \
-            "familier. Le rendu est identiqué au rendu de votre fiche score."
-
-    def ajouter(self):
-        """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
-        familier = self.noeud.get_masque("nom_familier")
-        familier.proprietes["salle_identique"] = "False"
-
-    def interpreter(self, personnage, dic_masques):
-        """Interprétation du paramètre"""
-        # On récupère le familier
-        familier = dic_masques["nom_familier"].familier
-        fiche = familier.fiche
-        pnj = familier.pnj
-        personnage << MontrerScore.montrer(pnj, nom=familier.nom)
+"""
