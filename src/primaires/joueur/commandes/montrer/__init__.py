@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,29 +28,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module joueur."""
+"""Package contenant la commande 'montrer'"""
 
-from . import afk
-from . import alias
-from . import bannir
-from . import chgroupe
-from . import decrire
-from . import distinctions
-from . import ejecter
-from . import entrainer
-from . import fixer
-from . import groupe
-from . import module
-from . import options
-from . import oublier
-from . import montrer
-from . import pk
-from . import pset
-from . import quitter
-from . import restaurer
-from . import retnom
-from . import setquest
-from . import shutdown
-from . import superinv
-from . import valider
-from . import where
+from primaires.interpreteur.commande.commande import Commande
+from primaires.joueur.commandes.montrer.score import PrmScore
+
+class CmdMontrer(Commande):
+
+    """Commande 'montrer'."""
+
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "montrer", "show")
+        self.groupe = "administrateur"
+        self.aide_courte = "montre des informations d'un joueur"
+        self.aide_longue = \
+                "Cette commande permet d'afficher certaines informations " \
+                "d'un joueur, comme son score, ses niveaux, etc. Utilisez " \
+                "les sous-commandes pour obtenir l'information voulue."
+
+    def ajouter_parametres(self):
+        """Méthode d'interprétation de commande"""
+        self.ajouter_parametre(PrmScore())

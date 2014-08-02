@@ -111,6 +111,7 @@ class Module(BaseModule):
             commandes.decrire.CmdDecrire(),
             commandes.distinctions.CmdDistinctions(),
             commandes.module.CmdModule(),
+            commandes.montrer.CmdMontrer(),
             commandes.options.CmdOptions(),
             commandes.oublier.CmdOublier(),
             commandes.pk.CmdPK(),
