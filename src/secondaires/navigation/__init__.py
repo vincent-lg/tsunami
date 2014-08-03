@@ -41,7 +41,9 @@ from vector import *
 from abstraits.module import *
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
+from primaires.salle.chemin import Chemin
 from primaires.salle.salle import Salle
+from primaires.vehicule.vecteur import Vecteur
 from secondaires.navigation.config import CFG_TEXTE
 from .navire import Navire
 from .elements import types as types_elements
@@ -165,6 +167,8 @@ class Module(BaseModule):
                 self.rendre_equipage)
         self.importeur.hook["pnj:nom"].ajouter_evenement(
                 Equipage.get_nom_matelot)
+        self.importeur.hook["salle:trouver_chemins_droits"].ajouter_evenement(
+                self.trouver_chemins_droits)
 
         # Ajout des talents
         importeur.perso.ajouter_talent("calfeutrage", "calfeutrage",
@@ -773,3 +777,32 @@ class Module(BaseModule):
 
         navires.sort(key=lambda n: n.cle)
         return navires
+
+    def trouver_chemins_droits(self, salle, chemins, rayon):
+        """Ajoute aux chemins droits."""
+        if salle.etendue is None and not hasattr(salle, "navire"):
+            print("no test")
+            return
+
+        o_x, o_y, o_z = salle.coords.tuple()
+        salles = []
+        if getattr(salle, "navire", None):
+            for etendue in importeur.salle.etendues.values():
+                salles.extend(list(etendue.cotes.values()))
+
+        if salle.etendue:
+            for navire in self.navires.values():
+                for t_salle in navire.salles.values():
+                    salles.append(t_salle)
+
+        for t_salle in salles:
+            if salle is t_salle:
+                continue
+
+            d_x, d_y, d_z = t_salle.coords.tuple()
+            vecteur = Vecteur(d_x - o_x, d_y - o_y, d_z - o_z)
+            if vecteur.norme < rayon:
+                sortie = salle.get_sortie(vecteur, t_salle)
+                chemin = Chemin()
+                chemin.sorties.append(sortie)
+                chemins.chemins.append(chemin)

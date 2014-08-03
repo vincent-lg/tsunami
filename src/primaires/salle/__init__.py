@@ -156,6 +156,9 @@ class Module(BaseModule):
             "salle/salle.cfg", "config salle", cfg_salle)
         importeur.hook.ajouter_hook("salle:regarder",
                 "Hook appelé dès qu'on regarde une salle.")
+        importeur.hook.ajouter_hook("salle:trouver_chemins_droits",
+                "Hook appelé quand on recherche les chemins droits " \
+                "d'une salle.")
 
         # Ajout des terrain
         self.ajouter_terrain("ville", "quelques maisons")

@@ -56,7 +56,8 @@ class CmdScruter(Commande):
         personnage.agir("regarder")
         salle = personnage.salle
         rayon = 2 + round(personnage.stats.sensibilite / 40)
-        chemins = salle.salles_autour(rayon)
+        chemins = salle.trouver_chemins_droits(rayon)
+        chemins = [c for c in chemins if all(not s.cachee for s in c.sorties)]
         chemins = sorted(chemins, key=lambda chemin: chemin.longueur)
         savoir = personnage.pratiquer_talent("scruter", 10)
 

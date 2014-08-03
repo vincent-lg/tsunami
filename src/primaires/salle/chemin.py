@@ -56,6 +56,9 @@ class Chemin(BaseObj):
     def __bool__(self):
         return True
 
+    def __len__(self):
+        return len(self.sorties)
+
     def __iter__(self):
         return iter(self.sorties)
 

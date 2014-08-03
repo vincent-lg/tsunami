@@ -344,6 +344,45 @@ class Salle(BaseObj):
         """
         return self.etendue is not None
 
+    def trouver_chemins_droits(self, rayon, dir_sortie=None, chemins=None,
+            chemin=None, hook=True):
+        """Cherche les chemins droits d'une salle.
+
+        La recherche de salle peut être étendue par un hook.
+        Les chemins droits veulent dire que l'on vérifie les sorties
+        initiales. Par exemple, si la salle A a la sortie est menant vers
+        B, on demande à la salle B ses sorties... mais on ne sélectionnera
+        que les sorties de même direcition que la salle A (c'est-à-dire est
+        ici).
+
+        """
+        chemins = chemins or Chemins()
+        chemin = chemin or Chemin()
+
+        # On parcourt les sorties de la salle
+        for sortie in self.sorties:
+            if dir_sortie is None or sortie.direction == dir_sortie:
+                n_chemin = Chemin()
+                n_chemin.sorties.extend(chemin.sorties)
+                n_chemin.sorties.append(sortie)
+                origine = n_chemin.origine
+                destination = n_chemin.destination
+                ancien_chemin = chemins.get(destination)
+                if origine is not destination and (ancien_chemin is None or \
+                        len(ancien_chemin) > len(n_chemin)):
+                    # On retire l'ancien chemin si besoin
+                    if ancien_chemin:
+                        chemins.chemins.remove(ancien_chemin)
+                    chemins.chemins.append(n_chemin)
+                    if rayon > 1:
+                        destination.trouver_chemins_droits(rayon - 1,
+                                sortie.direction, chemins, n_chemin, False)
+
+        if hook:
+            importeur.hook["salle:trouver_chemins_droits"].executer(self,
+                    chemins, rayon)
+        return chemins
+
     def get_sortie(self, vecteur, destination):
         """Retourne une sortie en fonction du vecteur donné."""
         sortie = Sortie(vecteur.nom_direction, vecteur.nom_direction,
