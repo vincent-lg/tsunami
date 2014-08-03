@@ -781,7 +781,6 @@ class Module(BaseModule):
     def trouver_chemins_droits(self, salle, chemins, rayon):
         """Ajoute aux chemins droits."""
         if salle.etendue is None and not hasattr(salle, "navire"):
-            print("no test")
             return
 
         o_x, o_y, o_z = salle.coords.tuple()
