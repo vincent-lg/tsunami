@@ -34,4 +34,6 @@ from primaires.scripting.actions.ajouter_a_liste import ClasseAction as CA
 
 class ClasseAction(CA):
 
+    """Ajoute un élément à une liste."""
+
     pass

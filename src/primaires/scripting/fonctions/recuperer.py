@@ -35,4 +35,6 @@ from primaires.scripting.fonctions.recuperer_valeur_dans_liste import \
 
 class ClasseFonction(CF):
 
+    """Récupère la valeur d'une liste."""
+
     pass

@@ -35,4 +35,6 @@ from primaires.scripting.actions.modifier_element_liste import ClasseAction \
 
 class ClasseAction(CA):
 
+    """Modifie l'élément d'une liste."""
+
     pass

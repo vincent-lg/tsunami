@@ -34,4 +34,6 @@ from primaires.scripting.fonctions.longueur_liste import ClasseFonction as CF
 
 class ClasseFonction(CF):
 
+    """Retourne la longueur d'une liste."""
+
     pass
