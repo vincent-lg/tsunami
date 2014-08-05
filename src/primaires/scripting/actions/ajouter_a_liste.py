@@ -36,11 +36,10 @@ from primaires.scripting.instruction import ErreurExecution
 class ClasseAction(Action):
 
     """Ajoute un élément à une liste."""
-    verifier = False
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.ajouter_a_liste)
+        cls.ajouter_types(cls.ajouter_a_liste, "object", "list")
 
     @staticmethod
     def ajouter_a_liste(element, liste):

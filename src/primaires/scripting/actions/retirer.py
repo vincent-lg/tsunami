@@ -36,11 +36,10 @@ from primaires.scripting.instruction import ErreurExecution
 class ClasseAction(Action):
 
     """Retire un élément d'une liste."""
-    verifier = False
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.retirer)
+        cls.ajouter_types(cls.retirer, "object", "list")
 
     @staticmethod
     def retirer(element, liste):
