@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,17 +34,18 @@ from primaires.scripting.fonction import Fonction
 from primaires.format.fonctions import contient
 
 class ClasseFonction(Fonction):
-    
+
     """Teste si une chaîne contient une autre chaîne."""
-    
+
     @classmethod
     def init_types(cls):
+        cls.ajouter_types(cls.contient_element, "list", "object")
         cls.ajouter_types(cls.contient, "str", "str")
-    
+
     @staticmethod
     def contient(chaine_complete, expression):
         """Retourne vrai si la chaine_complete contient expression.
-        
+
         Le test ne tient ni compte des majuscules ni des accents.
         Une expression est contenue dans une chaîne si l'expression
         est le début d'un des mots de la chaîne complète.
@@ -55,6 +56,35 @@ class ClasseFonction(Fonction):
         Mais :
             "table" n'est pas contenue dans "une étable"
         Car "table" n'est pas le début d'un des mots de "une étable".
-        
+
         """
         return contient(chaine_complete, expression)
+
+    @staticmethod
+    def contient_element(liste, element):
+        """Retourne vrai si la liste contient l'élément.
+
+        Paramètres à préciser :
+
+          * liste : la liste d'éléments
+          * element : un élément de n'importe quel type
+
+        Exemples d'utilisation :
+
+          nombres = liste(1, 2, 3, 4, 5)
+          si contient(nombres, 5): # returnera vrai
+              ...
+          si contient(nombres, 12): # retournera faux
+              ...
+          mots = liste("chat", "chien", "cheval")
+          si contient(mots, "chat"): # retournera vrai
+              ...
+          si contient(mots, "canard"): # retournera faux
+              ...
+
+        Bien entendu, votre liste peut aussi contenir des types plus
+        complexes, comme des joueurs, des objets, des salles ou autre.
+        Cette fonction scripting pourra être utilisée dans tous les cas.
+
+        """
+        return element in liste
