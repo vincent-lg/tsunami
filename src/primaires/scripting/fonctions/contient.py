@@ -39,7 +39,7 @@ class ClasseFonction(Fonction):
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.contient_element, "list", "object")
+        cls.ajouter_types(cls.contient_element, "object", "list")
         cls.ajouter_types(cls.contient, "str", "str")
 
     @staticmethod
@@ -61,30 +61,42 @@ class ClasseFonction(Fonction):
         return contient(chaine_complete, expression)
 
     @staticmethod
-    def contient_element(liste, element):
+    def contient_element(element, liste):
         """Retourne vrai si la liste contient l'élément.
 
         Paramètres à préciser :
 
-          * liste : la liste d'éléments
           * element : un élément de n'importe quel type
+          * liste : la liste d'éléments
 
         Exemples d'utilisation :
 
           nombres = liste(1, 2, 3, 4, 5)
-          si contient(nombres, 5): # returnera vrai
+          si contient(5, nombres): # returnera vrai
               ...
-          si contient(nombres, 12): # retournera faux
+          si contient(12, nombres): # retournera faux
               ...
           mots = liste("chat", "chien", "cheval")
-          si contient(mots, "chat"): # retournera vrai
+          si contient("chat", mots): # retournera vrai
               ...
-          si contient(mots, "canard"): # retournera faux
+          si contient("canard", mots): # retournera faux
               ...
 
         Bien entendu, votre liste peut aussi contenir des types plus
         complexes, comme des joueurs, des objets, des salles ou autre.
         Cette fonction scripting pourra être utilisée dans tous les cas.
+        Elle pourra être utilisée sans problème si la liste contient
+        des doublons ou des données de différents types. Notez cependant
+        que :
+
+          varies = liste(1, 2.8, "chouette", "8")
+          si contient(8, varies): # retournera faux
+
+        Ce résultat peut-être inattendu est dû au fait que dans la liste,
+        le dernier élément ("8") est une chaîne de caractères, alors
+        que la fonction contient teste la présence d'un nombre. Ainsi,
+        pour le système, la liste ne contiendra pas 8 alors qu'elle
+        contiendra "8". Faire attention aux types de données.
 
         """
         return element in liste

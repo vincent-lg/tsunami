@@ -45,12 +45,12 @@ class TestContient(TestCommande, ManipulationJoueur, ManipulationScripting,
         with self.scripter(joueur.salle, "dit") as test:
             test.ajouter_instructions("""
                 nombres = liste(1, 2, 3, 4, 5)
-                si contient(nombres, 4):
+                si contient(4, nombres):
                     dire personnage "Dans la liste 1"
                 sinon:
                     dire personnage "Pas dans la liste 1"
                 finsi
-                si contient(nombres, -12):
+                si contient(-12, nombres):
                     dire personnage "Dans la liste 2"
                 sinon:
                     dire personnage "Pas dans la liste 2"
