@@ -38,7 +38,7 @@ class ClasseAction(Action):
     """Modifie le contenu de la case liste[i]
     """
     verifier = False
-    
+
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.modifier_element_liste, "object", "Fraction", "list")
@@ -46,6 +46,45 @@ class ClasseAction(Action):
 
     @staticmethod
     def modifier_element_liste(element, indice, liste):
-        """Met l'information element dans la case indice de la liste liste. (indices commençant à 1)
+        """Modifie l'élément de la liste à l'indice indiqué.
+
+        Paramètres à préciser :
+
+          * element : le nouvel élément à placer à l'indice
+          * indice : l'indice (un nombre entier)
+          * liste : la liste d'éléments à modifier
+
+        Si on se représente une liste comme une suite de cases numérotées
+        (de 1 à N), alors l'indice représente le numéro de la case dans
+        lequel mettre element. Référez-vous aux exemples donnés
+        pour avoir une idée de ce que fait cette action.
+
+        *NOTE* : les actions 'modifier' et 'modifier_element_liste'
+        font strictement la même chose. La seconde est conservée pour des
+        raisons de compatibilité. Préférez utiliser la première
+        ('modifier') dans vos scripts.
+
+        Exemples d'utilisation :
+
+          nombres = liste(5, 9, 7, 8)
+          # On va mettre le nombre 6 dans la seconde case de la liste
+          # qui contient pour l'instant 9
+          modifier 6 2 nombres
+          # La liste contient à présent : [5, 6, 7, 8]
+
         """
-        liste[int(indice)-1]=element
+        if int(indice) != indice: # nombre flottant
+            raise ErreurException("le nombre flottant {} a été précisé " \
+                    "comme indice de liste. Seuls des nombres entiers " \
+                    "(1, 2, 3, ...) sont acceptés".format(indice))
+
+        if indice < 1:
+            raise ErreurExecution("l'indice précisé doit être supérieur " \
+                    "à 0".format(indice))
+
+        if indice > len(liste):
+            raise ErreurExecution("l'indice spécifié ({}) est plus grand " \
+                    "que la taille de la liste ({})".format(indice,
+                    len(liste)))
+
+        liste[int(indice) - 1] = element
