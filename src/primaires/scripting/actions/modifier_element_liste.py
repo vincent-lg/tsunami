@@ -29,20 +29,19 @@
 
 
 """Fichier contenant l'action ajouter_a_liste"""
+
 from primaires.perso.exceptions.action import ExceptionAction
 from primaires.scripting.action import Action
 from primaires.scripting.instruction import ErreurExecution
 
 class ClasseAction(Action):
 
-    """Modifie le contenu de la case liste[i]
-    """
-    verifier = False
+    """Modifie un élément d'une liste."""
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.modifier_element_liste, "object", "Fraction", "list")
-
+        cls.ajouter_types(cls.modifier_element_liste, "object", "Fraction",
+                "list")
 
     @staticmethod
     def modifier_element_liste(element, indice, liste):

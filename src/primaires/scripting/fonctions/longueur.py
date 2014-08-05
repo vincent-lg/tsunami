@@ -28,38 +28,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction longueur_liste."""
+"""Fichier contenant la fonction longueur."""
 
-from fractions import Fraction
+from primaires.scripting.fonctions.longueur_liste import ClasseFonction as CF
 
-from primaires.scripting.fonction import Fonction
-from primaires.scripting.instruction import ErreurExecution
+class ClasseFonction(CF):
 
-class ClasseFonction(Fonction):
-
-    """Renvoie le nombre d'éléments dans une liste (sa longueur)."""
-
-    @classmethod
-    def init_types(cls):
-        cls.ajouter_types(cls.longueur_liste, "list")
-
-    @staticmethod
-    def longueur_liste(liste):
-        """Renvoie le nombre d'éléments dans une liste.
-
-        Paramètres à préciser :
-
-          * liste : la liste dont on veut connaître la longueur
-
-        *NOTE* : la fonction 'longueur' et 'longueur_liste' font
-        strictement la même chose. La seconde est conservée pour des raisons
-        de compatibilité. Préférez utiliser la première dans vos scripts.
-
-        Exemples d'utilisation :
-
-          nombres = liste(1, 2, 3)
-          taille = longueur(liste)
-          # taille contient 3
-
-        """
-        return Fraction(len(liste))
+    pass
