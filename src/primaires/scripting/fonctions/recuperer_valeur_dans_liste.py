@@ -35,15 +35,47 @@ from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
 
-    """Renvoie la valeur en indice i d'une liste
-    """
-    #En réalité c'est i-1, pour que la valeur Vancienne 1 renvoie liste[0]
-    verifier = False
+    """Renvoie la valeur spécifiée d'une liste."""
+
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.recuperer_valeur_dans_liste, "list", "Fraction")
 
     @staticmethod
     def recuperer_valeur_dans_liste(liste, indice):
-        """Retourne l'élément numéro indice dans la liste donnée en argument. (indices commençant à 1)"""
-        return liste[int(indice)-1]
+        """Retourne l'élément spécifié dans la liste.
+
+        Paramètres à préciser :
+
+          * liste : la liste d'éléments
+          * indice : l'indice représentant la case de la liste
+
+        Voir les exemples d'utilisation pour voir comment marche cette fonction.
+
+        *NOTE* : les fonctions 'recuperer' et 'recupere_valeur_dans_liste'
+        font strictement la même chose. La seconde est conservée pour
+        des raisons de compatibilité. Préférez utiliser la première
+        ('recuperer') dans vos scripts.
+
+        Exemples d'utilisation :
+
+          lettres = liste("a", "b", "c", "d", "e", "f")
+          valeur = recuperer(liste, 3)
+          # valeur contient maintenant "c", le troisième élément dans la liste
+
+        """
+        if int(indice) != indice: # nombre flottant
+            raise ErreurException("le nombre flottant {} a été précisé " \
+                    "comme indice de liste. Seuls des nombres entiers " \
+                    "(1, 2, 3, ...) sont acceptés".format(indice))
+
+        if indice < 1:
+            raise ErreurExecution("l'indice précisé doit être supérieur " \
+                    "à 0".format(indice))
+
+        if indice > len(liste):
+            raise ErreurExecution("l'indice spécifié ({}) est plus grand " \
+                    "que la taille de la liste ({})".format(indice,
+                    len(liste)))
+
+        return liste[int(indice) - 1]
