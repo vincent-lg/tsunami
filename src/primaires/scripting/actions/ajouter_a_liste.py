@@ -35,17 +35,40 @@ from primaires.scripting.instruction import ErreurExecution
 
 class ClasseAction(Action):
 
-    """Ajoute un element à une liste. (équivalent du append python)
-    """
+    """Ajoute un élément à une liste."""
     verifier = False
-    
+
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.ajouter_a_liste)
 
-
     @staticmethod
     def ajouter_a_liste(element, liste):
-        """Equivalent du append python. Ajoute l'element donné en paramètre à la liste donnée.
+        """Ajoute un élément à une liste.
+
+        Paramètres à préciser :
+
+          * element : l'élément à ajouter à la liste
+          * liste : la liste à modifier
+
+        L'élément sera ajouté à la fin de la liste. L'élément peut être de
+        différents types, nombres, chaînes de caractères, joueurs, salles,
+        PNJ et autre. La liste spécifiée peut :
+
+          * Contenir des données de différents types
+          * Contenir la même donnée en double.
+
+        *NOTE* : les actions 'ajouter' et 'ajouter_a_liste' font strictement
+        la même chose et s'utilisent de la même façon. La seconde est
+        conservée pour des raisons de compatibilité, préférez utiliser
+        la première ('ajouter').
+
+        Exemples d'utilisation :
+
+          nombres = liste()
+          ajouter 1 nombres
+          ajouter 2 nombres
+          # nombres contient maintenant [1, 2]
+
         """
         liste.append(element)
