@@ -148,7 +148,7 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
             if callable(filtre.test):
                 aide_filtre = inspect.getdoc(filtre.test)
             else:
-                param = PARAMS[filtre.type]
+                param = textwrap.dedent(filtre.type.aide).strip()
                 aide_filtre = "Recherche à partir de l'attribut |cmd|"
                 aide_filtre += filtre.test + "|ff|. Cette option prend en "
                 aide_filtre += "paramètre " + param + "."
@@ -181,8 +181,6 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
         if opt_longue in longues or opt_longue in INTERDITS:
             raise ValueError("l'option longue '{}' est indisponible".format(
                     opt_longue))
-        if type and type not in ("int", "str", "str!", "bool"):
-            raise ValueError("le type {} est invalide".format(type))
         self.filtres.append(Filtre(opt_courte, opt_longue, test, type))
 
     def tester(self, args, liste):
@@ -199,7 +197,7 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
             if filtre.opt_longue:
                 option = filtre.opt_longue
 
-            if getattr(args, option):
+            if getattr(args, option) is not None:
                 valeur = " ".join(getattr(args, option))
                 liste = [item for item in liste if filtre.tester(
                         item, valeur)]
@@ -250,7 +248,7 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
             if filtre.opt_longue:
                 options.append("--" + filtre.opt_longue)
 
-            parser.add_argument(*options, nargs='+')
+            parser.add_argument(*options, nargs='*')
 
         retour = []
         tri = ""
@@ -287,9 +285,9 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
             # Interprétation des autres options
             try:
                 retour = cherchable.tester(args, cherchable.items)
-            except TypeError:
+            except TypeError as err:
                 return "|err|Les options n'ont pas été bien " \
-                        "interprétées.|ff|"
+                        "interprétées : " + str(err) + "|ff|"
 
         # Post-traitement et affichage
         if not retour:

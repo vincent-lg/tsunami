@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 NOEL-BARON Léo
+# Copyright (c) 2014 LE GOFF VINCENT
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,49 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire recherche."""
+"""Type de filtre chaine."""
 
-from abstraits.module import *
-from primaires.recherche import commandes
-from primaires.recherche import filtres
-from primaires.recherche import masques
-from primaires.recherche.cherchables import *
-from primaires.recherche.type_filtre import types
+from primaires.format.fonctions import supprimer_accents
+from primaires.recherche.type_filtre import TypeFiltre
 
-class Module(BaseModule):
+class Chaine(TypeFiltre):
 
-    """Classe représentant le module primaire 'recherche'.
+    """Classe représentant le type de filtre chaîne.
 
-    Ce module constitue le moteur de recherche de la plateforme. On peut
-    y implémenter divers outils dont la finalité est de permettre aux
-    administrateurs de mieux manipuler l'univers qu'ils créent.
+    Ce filtre est utilisé pour comparer des chaînes de caractère simples.
 
     """
 
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "recherche", "primaire")
-        self.logger = type(self.importeur).man_logs.creer_logger( \
-                "recherche", "recherche")
-        self.masques = []
-        self.commandes = []
-        self._cherchables = l_cherchables
-        self.types_filtres = types
+    cle = "chaine"
+    aide = """
+        une chaîne simple comme un ou une suite de mot(s). Les accents
+        et majuscules sont ignorés lors de la recherche.
+    """
 
-    def init(self):
-        """Initialisation du module"""
-        BaseModule.init(self)
+    @classmethod
+    def tester(cls, objet, attribut, valeur):
+        """Méthode testant la valeur.
 
-    def ajouter_commandes(self):
-        """Ajout des commandes"""
-        self.commandes = [
-            commandes.trouver.CmdTrouver(),
-        ]
+        Cette méthode doit retourner True si la valeur correspond à la
+        recherche, False sinon.
 
-        for cmd in self.commandes:
-            self.importeur.interpreteur.ajouter_commande(cmd)
-
-    @property
-    def cherchables(self):
-        """Retourne les cherchables existants"""
-        return dict(self._cherchables)
+        """
+        valeur = supprimer_accents(valeur).lower().replace("_b_", "|")
+        attribut = supprimer_accents(attribut).lower()
+        return valeur in attribut

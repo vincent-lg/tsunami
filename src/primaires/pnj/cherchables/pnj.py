@@ -50,7 +50,7 @@ class CherchablePNJ(Cherchable):
         dédiée.
 
         """
-        self.ajouter_filtre("l", "cle", "cle", "str")
+        self.ajouter_filtre("l", "cle", "cle", "regex")
 
     @property
     def items(self):

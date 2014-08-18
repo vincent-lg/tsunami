@@ -49,10 +49,10 @@ class CherchableSalle(Cherchable):
         dédiée.
 
         """
-        self.ajouter_filtre("t", "titre", "titre", "str")
+        self.ajouter_filtre("t", "titre", "titre", "regex")
         self.ajouter_filtre("i", "interieur", "interieur", "bool")
-        self.ajouter_filtre("r", "coordonnees", "str_coords", "str")
-        self.ajouter_filtre("f", "identifiant", "ident", "str")
+        self.ajouter_filtre("r", "coordonnees", "str_coords", "chaine")
+        self.ajouter_filtre("f", "identifiant", "ident", "regex")
 
     @property
     def items(self):

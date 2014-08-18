@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 NOEL-BARON Léo
+# Copyright (c) 2014 LE GOFF VINCENT
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,49 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire recherche."""
+"""Type de filtre regex."""
 
-from abstraits.module import *
-from primaires.recherche import commandes
-from primaires.recherche import filtres
-from primaires.recherche import masques
-from primaires.recherche.cherchables import *
-from primaires.recherche.type_filtre import types
+import re
 
-class Module(BaseModule):
+from primaires.format.fonctions import supprimer_accents
+from primaires.recherche.type_filtre import TypeFiltre
 
-    """Classe représentant le module primaire 'recherche'.
+class Regex(TypeFiltre):
 
-    Ce module constitue le moteur de recherche de la plateforme. On peut
-    y implémenter divers outils dont la finalité est de permettre aux
-    administrateurs de mieux manipuler l'univers qu'ils créent.
+    """Classe représentant le type de filtre regex.
+
+    Ce filtre est utilisé pour chercher dans une expression rationnelle.
 
     """
 
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "recherche", "primaire")
-        self.logger = type(self.importeur).man_logs.creer_logger( \
-                "recherche", "recherche")
-        self.masques = []
-        self.commandes = []
-        self._cherchables = l_cherchables
-        self.types_filtres = types
+    cle = "regex"
+    aide = """
+        une expression régulière. Ce peut être une chaîne simple mais
+        il y a des options plus précises pour rechercher le début, la
+        fin, des expressions plus précises, etc.
+    """
 
-    def init(self):
-        """Initialisation du module"""
-        BaseModule.init(self)
+    @classmethod
+    def tester(cls, objet, attribut, valeur):
+        """Méthode testant la valeur.
 
-    def ajouter_commandes(self):
-        """Ajout des commandes"""
-        self.commandes = [
-            commandes.trouver.CmdTrouver(),
-        ]
+        Cette méthode doit retourner True si la valeur correspond à la
+        recherche, False sinon.
 
-        for cmd in self.commandes:
-            self.importeur.interpreteur.ajouter_commande(cmd)
-
-    @property
-    def cherchables(self):
-        """Retourne les cherchables existants"""
-        return dict(self._cherchables)
+        """
+        valeur = supprimer_accents(valeur).lower().replace("_b_", "|")
+        attribut = supprimer_accents(attribut).lower()
+        try:
+            valeur = valeur = re.compile(valeur, re.I)
+        except re.error:
+            raise TypeError(
+                    "le type précisé doit être une expression régulière")
+        else:
+            return valeur.search(attribut)

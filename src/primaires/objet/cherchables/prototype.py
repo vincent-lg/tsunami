@@ -50,12 +50,12 @@ class CherchablePrototypeObjet(Cherchable):
         dédiée.
 
         """
-        self.ajouter_filtre("n", "nom", "nom_singulier", "str")
-        self.ajouter_filtre("l", "cle", "cle", "str")
-        self.ajouter_filtre("t", "type", self.test_type, "str!")
-        self.ajouter_filtre("p", "prix", "prix", "int")
-        self.ajouter_filtre("i", "poids", "poids", "int")
-        self.ajouter_filtre("e", "emplacement", "emplacement", "str")
+        self.ajouter_filtre("n", "nom", "nom_singulier", "regex")
+        self.ajouter_filtre("l", "cle", "cle", "regex")
+        self.ajouter_filtre("t", "type", self.test_type, "chaine")
+        self.ajouter_filtre("p", "prix", "prix", "nombre")
+        self.ajouter_filtre("i", "poids", "poids", "nombre")
+        self.ajouter_filtre("e", "emplacement", "emplacement", "chaine")
 
     @property
     def items(self):

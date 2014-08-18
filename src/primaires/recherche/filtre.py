@@ -32,11 +32,6 @@
 
 """
 
-import re
-
-from abstraits.obase import BaseObj
-from primaires.format.fonctions import supprimer_accents
-
 class Filtre:
 
     """Classe de filtre.
@@ -51,7 +46,7 @@ class Filtre:
         self.opt_courte = opt_courte
         self.opt_longue = opt_longue
         self.test = test
-        self.type = type
+        self.type = importeur.recherche.types_filtres[type]
 
     def __str__(self):
         courte = "-" + self.opt_courte
@@ -63,7 +58,11 @@ class Filtre:
 
     def tester(self, objet, valeur):
         """Teste le filtre"""
-        if self.type:
+        attribut = getattr(objet, self.test)
+        if callable(self.test):
+            return self.test(objet, valeur)
+        elif self.type:
+            return self.type.tester(objet, attribut, valeur)
             if self.type == "str":
                 try:
                     valeur = re.compile(supprimer_accents(
@@ -84,11 +83,9 @@ class Filtre:
                 else:
                     valeur = True if valeur != "0" else False
         else:
-            valeur = ""
-        # On teste
-        if callable(self.test):
-            return self.test(objet, valeur)
-        else:
+            raise ValueError("le filtre {} précise un type {} inconnu".format(
+                    self, repr(self.type)))
+
             if self.type == "str":
                 attribut = supprimer_accents(str(getattr(objet, self.test)))
                 return valeur.search(attribut)

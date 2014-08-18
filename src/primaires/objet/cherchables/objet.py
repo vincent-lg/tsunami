@@ -51,11 +51,11 @@ class CherchableObjet(Cherchable):
         dédiée.
 
         """
-        self.ajouter_filtre("n", "nom", "nom_singulier", "str")
-        self.ajouter_filtre("l", "cle", "cle", "str")
-        self.ajouter_filtre("i", "ident", "identifiant", "str")
-        self.ajouter_filtre("t", "type", self.test_type, "str!")
-        self.ajouter_filtre("p", "position", self.test_position, "str!")
+        self.ajouter_filtre("n", "nom", "nom_singulier", "regex")
+        self.ajouter_filtre("l", "cle", "cle", "regex")
+        self.ajouter_filtre("i", "ident", "identifiant", "regex")
+        self.ajouter_filtre("t", "type", self.test_type, "chaine")
+        self.ajouter_filtre("p", "position", self.test_position, "chaine")
 
     @property
     def items(self):

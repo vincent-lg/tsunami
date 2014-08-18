@@ -50,11 +50,11 @@ class CherchableJoueur(Cherchable):
         dédiée.
 
         """
-        self.ajouter_filtre("n", "nom", "nom", "str")
-        self.ajouter_filtre("m", "compte", "compte", "str")
-        self.ajouter_filtre("g", "groupe", "nom_groupe", "str")
-        self.ajouter_filtre("e", "element", "element", "str")
-        self.ajouter_filtre("i", "ip", "adresse_ip", "str")
+        self.ajouter_filtre("n", "nom", "nom", "regex")
+        self.ajouter_filtre("m", "compte", "compte", "regex")
+        self.ajouter_filtre("g", "groupe", "nom_groupe", "regex")
+        self.ajouter_filtre("e", "element", "element", "regex")
+        self.ajouter_filtre("i", "ip", "adresse_ip", "regex")
 
     @property
     def items(self):

@@ -54,7 +54,7 @@ class CherchableFamilier(Cherchable):
         dédiée.
 
         """
-        self.ajouter_filtre("l", "cle", "cle", "str")
+        self.ajouter_filtre("l", "cle", "cle", "chaine")
 
     @property
     def items(self):

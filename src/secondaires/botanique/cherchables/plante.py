@@ -49,9 +49,9 @@ class CherchablePlante(Cherchable):
         dédiée.
 
         """
-        self.ajouter_filtre("n", "nom", "nom", "str")
-        self.ajouter_filtre("i", "identifiant", "identifiant", "str")
-        self.ajouter_filtre("g", "age", "age", "int")
+        self.ajouter_filtre("n", "nom", "nom", "regex")
+        self.ajouter_filtre("i", "identifiant", "identifiant", "chaine")
+        self.ajouter_filtre("g", "age", "age", "nombre")
 
     @property
     def items(self):

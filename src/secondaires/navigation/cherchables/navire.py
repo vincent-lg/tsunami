@@ -50,10 +50,10 @@ class CherchableNavire(Cherchable):
         dédiée.
 
         """
-        self.ajouter_filtre("l", "cle", "cle", "str")
-        self.ajouter_filtre("n", "nom", "aff_nom", "str")
-        self.ajouter_filtre("p", "proprietaire", "nom_proprietaire", "str")
-        self.ajouter_filtre("e", "etendue", "nom_etendue", "str")
+        self.ajouter_filtre("l", "cle", "cle", "chaine")
+        self.ajouter_filtre("n", "nom", "aff_nom", "regex")
+        self.ajouter_filtre("p", "proprietaire", "nom_proprietaire", "regex")
+        self.ajouter_filtre("e", "etendue", "nom_etendue", "chaine")
 
     @property
     def items(self):

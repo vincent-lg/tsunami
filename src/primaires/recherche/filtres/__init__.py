@@ -1,6 +1,6 @@
 ﻿# -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 NOEL-BARON Léo
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,49 +28,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le module primaire recherche."""
+"""Package des types de filtre."""
 
-from abstraits.module import *
-from primaires.recherche import commandes
-from primaires.recherche import filtres
-from primaires.recherche import masques
-from primaires.recherche.cherchables import *
-from primaires.recherche.type_filtre import types
-
-class Module(BaseModule):
-
-    """Classe représentant le module primaire 'recherche'.
-
-    Ce module constitue le moteur de recherche de la plateforme. On peut
-    y implémenter divers outils dont la finalité est de permettre aux
-    administrateurs de mieux manipuler l'univers qu'ils créent.
-
-    """
-
-    def __init__(self, importeur):
-        """Constructeur du module"""
-        BaseModule.__init__(self, importeur, "recherche", "primaire")
-        self.logger = type(self.importeur).man_logs.creer_logger( \
-                "recherche", "recherche")
-        self.masques = []
-        self.commandes = []
-        self._cherchables = l_cherchables
-        self.types_filtres = types
-
-    def init(self):
-        """Initialisation du module"""
-        BaseModule.init(self)
-
-    def ajouter_commandes(self):
-        """Ajout des commandes"""
-        self.commandes = [
-            commandes.trouver.CmdTrouver(),
-        ]
-
-        for cmd in self.commandes:
-            self.importeur.interpreteur.ajouter_commande(cmd)
-
-    @property
-    def cherchables(self):
-        """Retourne les cherchables existants"""
-        return dict(self._cherchables)
+from primaires.recherche.filtres.bool import *
+from primaires.recherche.filtres.chaine import *
+from primaires.recherche.filtres.nombre import *
+from primaires.recherche.filtres.regex import *

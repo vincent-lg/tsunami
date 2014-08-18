@@ -52,13 +52,14 @@ class CherchableRapport(Cherchable):
         dédiée.
 
         """
-        self.ajouter_filtre("i", "id", "id", "int")
-        self.ajouter_filtre("t", "titre", "titre", "str")
-        self.ajouter_filtre("s", "assigne", "aff_assigne_a", "str")
-        self.ajouter_filtre("r", "createur", "aff_createur", "str")
-        self.ajouter_filtre("g", "categorie", "categorie", "str")
-        self.ajouter_filtre("d", "description", "description", "str")
-        self.ajouter_filtre("u", "statut", "statut", "str")
+        self.ajouter_filtre("i", "id", "id", "nombre")
+        self.ajouter_filtre("t", "titre", "titre", "regex")
+        self.ajouter_filtre("s", "assigne", "aff_assigne_a", "regex")
+        self.ajouter_filtre("r", "createur", "aff_createur", "regex")
+        self.ajouter_filtre("g", "categorie", "categorie", "regex")
+        self.ajouter_filtre("d", "description", "description", "regex")
+        self.ajouter_filtre("u", "statut", "statut", "regex")
+        self.ajouter_filtre("v", "ouvert", "ouvert", "bool")
 
     @property
     def items(self):

@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,58 +35,58 @@
 from primaires.recherche.cherchables.cherchable import Cherchable
 
 class CherchableDecor(Cherchable):
-    
+
     """Classe cherchable pour les décors."""
-    
+
     nom_cherchable = "decor"
-    
+
     def init(self):
         """Méthode d'initialisation.
-        
+
         C'est ici que l'on ajoute réellement les filtres, avec la méthode
         dédiée.
-        
+
         """
-        self.ajouter_filtre("l", "cle", "cle_prototype", "str")
-    
+        self.ajouter_filtre("l", "cle", "cle_prototype", "chaine")
+
     @property
     def items(self):
         """Renvoie la liste des objets traités"""
         decors = []
         for salle in importeur.salle.salles.values():
             decors += salle.decors
-        
+
         return decors
-    
+
     @property
     def attributs_tri(self):
         """Renvoie la liste des attributs par lesquels on peut trier"""
         return ["cle"]
-    
+
     @property
     def colonnes(self):
         """Retourne un dictionnaire des valeurs que l'on peut disposer en
         colonne à l'affichage final, de la forme :
         >>> {nom: attribut/méthode}
         (une colonne peut être remplie par une méthode du cherchable).
-        
+
         """
         return {
             "cle": "cle_prototype",
             "salle": "parent",
         }
-    
+
     def colonnes_par_defaut(self):
         """Retourne les colonnes d'affichage par défaut.
-        
+
         Si une ou plusieurs colonnes sont spécifiés lors de la recherche,
         les colonnes par défaut ne sont pas utilisées.
-        
+
         Cette méthode doit retourner une liste de nom de colonnes.
-        
+
         """
         return ("cle", "salle")
-    
+
     def tri_par_defaut(self):
         """Sur quelle colonne se base-t-on pour trier par défaut ?"""
         return "cle_prototype"

@@ -49,12 +49,12 @@ class CherchablePrototypePNJ(Cherchable):
         dédiée.
 
         """
-        self.ajouter_filtre("n", "nom", "nom_singulier", "str")
-        self.ajouter_filtre("l", "cle", "cle", "str")
-        self.ajouter_filtre("r", "race", "nom_race", "str")
-        self.ajouter_filtre("g", "genre", "genre", "str")
-        self.ajouter_filtre("v", "niveau", "niveau", "int")
-        self.ajouter_filtre("e", "entrainement", self.entraine_stat, "str!")
+        self.ajouter_filtre("n", "nom", "nom_singulier", "regex")
+        self.ajouter_filtre("l", "cle", "cle", "regex")
+        self.ajouter_filtre("r", "race", "nom_race", "regex")
+        self.ajouter_filtre("g", "genre", "genre", "chaine")
+        self.ajouter_filtre("v", "niveau", "niveau", "nombre")
+        self.ajouter_filtre("e", "entrainement", self.entraine_stat, "chaine")
 
     @property
     def items(self):
