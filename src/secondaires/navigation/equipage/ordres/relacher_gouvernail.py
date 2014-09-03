@@ -54,7 +54,8 @@ class RelacherGouvernail(Ordre):
             return
 
         gouvernail = salle.gouvernail
-        if gouvernail.tenu is not personnage:
+        if gouvernail is None or gouvernail.tenu is not \
+                personnage:
             yield SignalInutile("je ne tiens pas ce gouvernail")
         else:
             gouvernail.centrer(personnage)
