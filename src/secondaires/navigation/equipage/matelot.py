@@ -170,7 +170,12 @@ class Matelot(BaseObj):
             matelot.ordres[:] = []
             return
 
-        signal = next(generateur)
+        try:
+            signal = next(generateur)
+        except StopIteration:
+            matelot.ordres[:] = []
+            return
+
         self.logger.debug(indent + "Signal {} reçu".format(signal))
         if signal is None:
             # On boucle
