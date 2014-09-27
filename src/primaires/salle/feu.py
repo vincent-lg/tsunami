@@ -70,7 +70,7 @@ class Feu(BaseObj):
         cheminee = None
         msg_cheminee = (
             (1, "{cheminee} ne contient qu'un tas de cendres encore chaudes."),
-            (5, "{cheminee} contient encore quelques flammes vascillantes."),
+            (5, "{cheminee} contient encore quelques flammes vacillantes."),
             (8, "Quelques flammes encore vives brûlent dans {cheminee}."),
             (15, "Un feu clair crépite gaiement au coeur de {cheminee}."),
             (25, "De hautes flammes dansent au coeur de {cheminee}."),
@@ -125,7 +125,7 @@ class Feu(BaseObj):
             "Un crépitement sec retentit.",
             "Une ou deux flammes tentent de s'échapper du foyer.",
             "Les flammes dansent sous un léger coup de vent.",
-            "Le feu vascille, hésite et reprend de plus belle.",
+            "Le feu vacille, hésite et reprend de plus belle.",
             "Les flammes montent à l'assaut d'un nouveau bout de bois.",
             "Une langue de feu s'échappe vers le ciel dans un souffle.",
             "Une branche un peu verte proteste bruyamment.",
