@@ -99,7 +99,7 @@ class Module(BaseModule):
         self.charger()
 
         # Création de l'action différée pour enregistrer périodiquement
-        importeur.diffact.ajouter_action("enregistrement", 60 * 15,
+        importeur.diffact.ajouter_action("enregistrement", 60 * 60,
                 self.enregistrer_periodiquement)
 
         BaseModule.init(self)
@@ -149,7 +149,7 @@ class Module(BaseModule):
         """Cette méthode est appelée périodiquement pour enregistrer les objets.
 
         """
-        importeur.diffact.ajouter_action("enregistrement", 60 * 15,
+        importeur.diffact.ajouter_action("enregistrement", 60 * 60,
                 self.enregistrer_periodiquement)
         if self.enregistre_actuellement:
             return

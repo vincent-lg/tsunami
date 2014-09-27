@@ -35,6 +35,7 @@ Dans ce fichier se trouve la commande même.
 """
 
 from primaires.interpreteur.commande.commande import Commande
+from .annuler import PrmAnnuler
 from .controle import PrmControle
 from .ordre import PrmOrdre
 
@@ -59,5 +60,6 @@ class CmdEquipage(Commande):
 
     def ajouter_parametres(self):
         """Ajout des paramètres"""
+        self.ajouter_parametre(PrmAnnuler())
         self.ajouter_parametre(PrmControle())
         self.ajouter_parametre(PrmOrdre())

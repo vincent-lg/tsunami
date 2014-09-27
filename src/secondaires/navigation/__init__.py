@@ -169,6 +169,8 @@ class Module(BaseModule):
                 Equipage.get_nom_matelot)
         self.importeur.hook["salle:trouver_chemins_droits"].ajouter_evenement(
                 self.trouver_chemins_droits)
+        self.importeur.hook["stats:infos"].ajouter_evenement(
+                self.stats_navigation)
 
         # Ajout des talents
         importeur.perso.ajouter_talent("calfeutrage", "calfeutrage",
@@ -805,3 +807,39 @@ class Module(BaseModule):
                 chemin = Chemin()
                 chemin.sorties.append(sortie)
                 chemins.chemins.append(chemin)
+
+    def stats_navigation(self, infos):
+        """Ajoute les stats concernant la navigation."""
+        navires = len(self.navires)
+        modeles = len(self.modeles)
+        matelots = []
+        for navire in self.navires.values():
+            if navire.equipage:
+                matelots.extend(navire.equipage.matelots.values())
+
+        ordres = []
+        for matelot in matelots:
+            if matelot.ordres:
+                ordres.append((matelot, matelot.ordres))
+
+        ordres = sorted(ordres, key=lambda c: len(c[1]), reverse=True)
+        nb_ordres = sum(len(c[1]) for c in ordres)
+        msg = "|tit|Navigation :|ff|"
+        msg += "\n  {} navires construits sur {} modèles".format(
+                navires, modeles)
+        msg += "\n  {} matelots en jeu".format(len(matelots))
+        msg += "\n  {} ordres en cours".format(nb_ordres)
+        i = 0
+        if ordres:
+            msg += "\n  Matelots les plus solicités :"
+            for matelot, t_ordres in ordres:
+                if i > 2:
+                    break
+
+                msg += "\n    {} en {} : {} ordres".format(
+                        matelot.personnage and matelot.personnage.identifiant \
+                        or "inconnu", matelot.equipage and \
+                        matelot.equipage.navire.cle or "inconnu", len(t_ordres))
+                i += 1
+
+        infos.append(msg)

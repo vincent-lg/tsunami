@@ -33,7 +33,7 @@
 from math import floor
 
 from primaires.interpreteur.masque.parametre import Parametre
-from primaires.format.fonctions import couper_phrase
+from primaires.format.fonctions import couper_phrase, echapper_accolades
 from secondaires.rapport.constantes import CLR_STATUTS, CLR_AVC
 
 class PrmListe(Parametre):
@@ -139,4 +139,4 @@ class PrmListe(Parametre):
                         + titre.ljust(ljust_titre) + " |")
             lignes.append(
                 "+" + "-" * (l_id + l_createur + ljust_titre + 8) + "+")
-            personnage << "\n".join(lignes)
+            personnage << echapper_accolades("\n".join(lignes))
