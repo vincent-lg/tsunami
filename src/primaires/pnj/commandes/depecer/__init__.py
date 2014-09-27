@@ -104,7 +104,7 @@ class CmdDepecer(Commande):
         personnage.etats.retirer("depece")
         connaissance = varier(personnage.pratiquer_talent("depecage") + 1, 5)
         if connaissance < objet.pnj.niveau:
-            personnage << "|err|Vous faites un beau gâchi en essayant de " \
+            personnage << "|err|Vous faites un beau gâchis en essayant de " \
                     "dépecer ce cadavre.|ff|"
             personnage.salle.envoyer("{} fait un beau gâchi en tentant de " \
                     "dépecer " + objet.get_nom() + ".", personnage)
