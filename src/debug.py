@@ -38,9 +38,14 @@ autres informations.
 """
 
 for compte in list(importeur.connex.comptes.values()):
-    if compte.nom.lower() not in ("admin", "systeme"):
+    if compte.nom.lower() not in ("admin", "systeme", "sunami"):
         importeur.connex.supprimer_compte(compte)
 
+importeur.connex.comptes["sunami"].changer_mot_de_passe("azerty")
 for salle in importeur.salle.salles.values():
     if "neige" in salle.affections:
         salle.affections["neige"].duree = 1
+
+for objet in list(importeur.objet.objets.values()):
+    importeur.objet.supprimer_objet(objet.identifiant)
+

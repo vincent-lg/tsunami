@@ -34,6 +34,54 @@ from random import random
 
 from primaires.interpreteur.masque.parametre import Parametre
 
+# Constantes
+AIDE = """
+Cette commande permet de planter un ou plusieurs végétaux, dans une
+salle, répartis aléatoirement sur une zone et avec de nombreux
+paramètres. Elle permet par exemple de planter entre 5 et 7 pommiers
+dans les terrains forêt de la zone picte en les répartissant
+équitablement. Elle permet aussi de planter un unique pommier dans
+la salle où on se trouve.
+
+Paramètres attendus : soit |cmd|-s|ff| pour définir la salle actuelle
+soit d'autres informations pour définir la zone, le terrain et
+éventuellement le mnémonique. Il faut également utiliser
+l'option |cmd|-c|ff| qui doit être suivi de la clé du végétal à planter.
+
+Détails des options :
+    |cmd|-c|ff| (|cmd|--cle|ff|) [cle]
+            Précise la clé du prototype de végétal à planter. Cette
+            option est obligatoire.
+    |cmd|-s|ff| (|cmd|--salle-courante|ff|)
+            Plante le ou les végétaux dans la salle courante.
+            Soit on utilise cette option, soit on doit préciser une
+            zone avec l'option |cmd|-z|ff|.
+    |cmd|-z|ff| (|cmd|--zone|ff|) [zone]
+            Précise une zone dans laquelle les végétaux seront plantés.
+            Les salles dans lesquelles planter seront choisies au hasard.
+            Notez cependant que seuls les terrains récoltables seront
+            sélectionnés, vous pouvez modifier la liste grâce à
+            l'option |cmd|-t|ff|.
+    |cmd|-m|ff| (|cmd|--mnemo|ff|) [mnemonique]
+            Précise le début du mnémonique. Les salles dans la zone
+            et dont le mnémonique commence par celui indiqué seront
+            sélectionnées. Cette option peut être utile si vous
+            voulez planter tous les sapins dans les salles commençant
+            par le mnémonique 'foret' par exemple.
+    |cmd|-t|ff| (|cmd|--terrains|ff|) [terrains]
+            Précise un ou plusieurs terrains. Cette option permet de
+            sélectionner un ou plusieurs terrains dans une zone
+            spécifiée. On doit préciser le nom de terrain ou les
+            différents terrains séparés par le pipe (_b_).
+    |cmd|-n|ff| (|cmd|--nombre|ff|) [nombre]
+            Précise le nombre de végétaux à planter. Ce nombre pourra
+            être varié aléatoirement plus il est élevé.
+    |cmd|-a|ff| (|cmd|--age|ff|) [age]
+            Permet de mettre un âge par défaut pour tous nos végétaux
+            à planter. Par défaut les végétaux apparaissent avec un
+            âge de 0 (des graines, probablement).
+""".strip()
+
 class PrmPlanter(Parametre):
 
     """Commande 'vegetal planter'.
@@ -45,14 +93,7 @@ class PrmPlanter(Parametre):
         Parametre.__init__(self, "planter", "plant")
         self.schema = "<options>"
         self.aide_courte = "plante un végétal"
-        self.aide_longue = \
-            "Cette commande permet de planter un ou plusieurs végétaux, " \
-            "dans une salle, répartis aléatoirement sur une zone " \
-            "et avec de nombreux paramètres. Elle permet par exemple " \
-            "de planter entre 5 et 7 pommiers dans les terrains " \
-            "forêt de la zone picte en les répartissant équitablement. " \
-            "Elle permet aussi de planter un unique pommier dans " \
-            "la salle où on se trouve."
+        self.aide_longue = AIDE
 
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""

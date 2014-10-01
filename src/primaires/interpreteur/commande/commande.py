@@ -328,8 +328,12 @@ class Commande(Masque):
                 aide += "\n" + "     " + taille * " "
                 aide_longue = self.remplacer_mots_cles(personnage,
                         parametre.aide_longue)
-                aide_longue = textwrap.wrap(aide_longue, aligner)
-                aide += ("\n" + (taille + 5) * " ").join(aide_longue)
+                if "\n" not in parametre.aide_longue:
+                    aide_longue = textwrap.wrap(aide_longue, aligner)
+                    aide_longue = ("\n" + (taille + 5) * " ").join(
+                            aide_longue)
+
+                aide += aide_longue
 
         return aide
 
