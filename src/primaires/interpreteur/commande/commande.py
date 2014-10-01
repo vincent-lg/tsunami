@@ -267,6 +267,7 @@ class Commande(Masque):
 
     def aide_longue_pour(self, personnage):
         """Retourne l'aide longue de la commande.
+
         Elle se compose :
         -   du nom de la commande
         -   de son masque (optionnel)
@@ -291,7 +292,11 @@ class Commande(Masque):
         aide += "\n\n"
 
         aide_longue = self.remplacer_mots_cles(personnage, self.aide_longue)
-        aide += textwrap.fill(aide_longue, longueur_ligne)
+        # Si l'aide contient des sauts de ligne, ne formatte pas
+        if "\n" not in aide_longue:
+            aide_longue = textwrap.fill(aide_longue, longueur_ligne)
+
+        aide += aide_longue
 
         # Paramètres
         parametres = [noeud.commande for noeud in self.parametres.values()]
