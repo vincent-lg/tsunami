@@ -38,6 +38,7 @@ import time
 
 from abstraits.module import *
 from abstraits.obase import *
+from primaires.supenr.config import cfg_supenr
 
 # Dossier d'enregistrement des fichiers-données
 # Vous pouvez changer cette variable, ou bien spécifier l'option en
@@ -76,17 +77,23 @@ class Module(BaseModule):
 
         """
         global REP_ENRS
+        self.config = importeur.anaconf.get_config("supenr",
+            "supenr/supenr.cfg", "module d'enregistrement", cfg_supenr)
+
         parser_cmd = type(self.importeur).parser_cmd
         config_globale = type(self.importeur).anaconf.get_config("globale")
-        if config_globale.chemin_enregistrement:
-            REP_ENRS = config_globale.chemin_enregistrement
 
-        if "chemin-enregistrement" in parser_cmd.keys():
-            REP_ENRS = parser_cmd["chemin-enregistrement"]
+        # Si le mode d'enregistrement est pickle
+        if self.config.mode == "pickle":
+            if config_globale.chemin_enregistrement:
+                REP_ENRS = config_globale.chemin_enregistrement
 
-        # On construit le répertoire s'il n'existe pas
-        if not os.path.exists(REP_ENRS):
-            os.makedirs(REP_ENRS)
+            if "chemin-enregistrement" in parser_cmd.keys():
+                REP_ENRS = parser_cmd["chemin-enregistrement"]
+
+            # On construit le répertoire s'il n'existe pas
+            if not os.path.exists(REP_ENRS):
+                os.makedirs(REP_ENRS)
 
         # On augmente la limite de récursion
         sys.setrecursionlimit(12000)
