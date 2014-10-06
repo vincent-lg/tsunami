@@ -36,6 +36,12 @@ import pickle
 import sys
 import time
 
+try:
+    from pymongo import MongoClient
+    from pymongo.errors import ConnectionFailure
+except ImportError:
+    MongoClient = None
+
 from abstraits.module import *
 from abstraits.obase import *
 from primaires.supenr.config import cfg_supenr
@@ -62,6 +68,9 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "supenr", "primaire")
+        self.cfg = None
+        self.mode = "pickle"
+        self.mongo_db = None
         self.logger = type(self.importeur).man_logs.creer_logger("supenr", \
                 "supenr")
         self.enregistre_actuellement = False
@@ -77,14 +86,31 @@ class Module(BaseModule):
 
         """
         global REP_ENRS
-        self.config = importeur.anaconf.get_config("supenr",
+        self.cfg = importeur.anaconf.get_config("supenr",
             "supenr/supenr.cfg", "module d'enregistrement", cfg_supenr)
-
+        mode = self.cfg.mode
         parser_cmd = type(self.importeur).parser_cmd
         config_globale = type(self.importeur).anaconf.get_config("globale")
 
+        # Si le mode d'enregistrement est mongo
+        if mode == "mongo":
+            if MongoClient is None:
+                self.logger.warning("Impossible de charger pymongo, " \
+                        "retour au mode d'enregistrement 'pickle'")
+                mode = "pickle"
+            else:
+                # On essaye de se connecter
+                try:
+                    connexion = MongoClient()
+                except ConnectionFailure:
+                    self.logger.warning("Impossible de se connecter au " \
+                            "serveur MongoDB. Retour sur le mode 'pickle'")
+                    mode = "pickle"
+                else:
+                    self.mongo_db = connexion[self.cfg.nom_mongodb]
+
         # Si le mode d'enregistrement est pickle
-        if self.config.mode == "pickle":
+        if mode == "pickle":
             if config_globale.chemin_enregistrement:
                 REP_ENRS = config_globale.chemin_enregistrement
 
