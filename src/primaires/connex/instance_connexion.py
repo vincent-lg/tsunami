@@ -42,6 +42,7 @@ OPTIONS = {
 }
 
 class InstanceConnexion(BaseObj):
+
     """Classe représentant une instance de connexion.
 
     Elle est là pour faire la jonction entre un client connecté et un
@@ -75,6 +76,7 @@ class InstanceConnexion(BaseObj):
         self.nb_essais = 0
         self.nb_msg = 0 # nombre de messages envoyés
         self.avec_prompt = True
+        self._construire()
 
         if creer_contexte:
             self.contexte = type(self).importeur.interpreteur. \

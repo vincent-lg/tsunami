@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,16 +35,16 @@ from primaires.format.description import Description
 from primaires.perso.quete import Quete
 
 class Etape(BaseObj):
-    
+
     """Classe définissant une étape simple dans la quête.
-    
+
     Une étape simple est liée à une suite d'instructions. Une suite d'étapes
     simple peut constituer une quête mais il est tout à fait possible d'y
     intégrer des étapes plus complexes, comme des embranchements ou des
     sous-quêtes. Ces deux autres étapes plus complexes ne sont pas traitées ici.
-    
+
     """
-    
+
     enregistrer = True
     def __init__(self, quete):
         """Constructeur de l'étape."""
@@ -55,35 +55,36 @@ class Etape(BaseObj):
         self.titre = "non renseigné"
         self.description = Description("", self)
         self.test = None
-    
+        self._construire()
+
     def __getnewargs__(self):
         return (None, )
-    
+
     def __repr__(self):
         return "<étape {}>".format(repr(self.titre))
-    
+
     def __str__(self):
         return self.str_niveau.ljust(5) + " " + self.titre
-    
+
     @property
     def objet_quete(self):
         """Retourne le niveau actuel sous la forme d'un objet Quete."""
         return Quete(None, self.niveau)
-    
+
     @property
     def str_niveau(self):
         return ".".join([str(n) for n in self.niveau])
-    
+
     @property
     def parent(self):
         """Retourne la quête."""
         return self.quete
-    
+
     def afficher_etapes(self, quete=None):
         """Affiche les étapes (en l'occurence, elle-même seulement)."""
         msg = " " + "  " * len(self.niveau) + "|rg|" + self.str_niveau + \
                 "|ff| - " + self.titre
-        
+
         # Statistiques
         nb_quete = importeur.scripting.cb_joueurs_quete(self.quete.cle)
         nb_etape = importeur.scripting.cb_joueurs_etape(self.quete.cle,
@@ -94,7 +95,7 @@ class Etape(BaseObj):
         msg += " - {} / {} ({}%)".format(
                 nb_etape, nb_quete, pc)
         return msg
-    
+
     def mettre_a_jour_niveau(self, niveau):
         """Méthode mettant à jour le niveau de la quête."""
         self.niveau = niveau

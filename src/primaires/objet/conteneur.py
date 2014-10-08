@@ -60,6 +60,7 @@ class ConteneurObjet(BaseObj):
         self._objets = []
         self._non_uniques = []
         self.parent = parent
+        self._construire()
 
     def __getnewargs__(self):
         return ()

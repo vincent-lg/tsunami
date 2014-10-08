@@ -49,6 +49,7 @@ class Affection(BaseObj):
         self.age = 0
         self.duree = duree
         self.force = force
+        self._construire()
         if affection:
             affection.initialiser(self)
 

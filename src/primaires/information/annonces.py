@@ -46,6 +46,7 @@ class Annonces(BaseObj):
         BaseObj.__init__(self)
         self.__annonces = []
         self._deja_vues = {}
+        self._construire()
 
     def __getnewargs__(self):
         return ()

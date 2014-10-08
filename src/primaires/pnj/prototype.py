@@ -76,6 +76,8 @@ class Prototype(BaseObj):
         # Salles repop
         self.salles_repop = {}
 
+        self._construire()
+
     def __getnewargs__(self):
         return ("", )
 

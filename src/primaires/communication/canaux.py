@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,45 +36,47 @@ C'est un objet unique.
 from abstraits.obase import BaseObj
 
 class Canaux(BaseObj):
-    
+
     """Classe contenant les canaux.
+
     C'est une classe enveloppe de dictionnaire.
-    
+
     """
-    
+
     enregistrer = True
     def __init__(self):
         """Constructeur du conteneur"""
         BaseObj.__init__(self)
         self._canaux = {}
-    
+        self._construire()
+
     def __getnewargs__(self):
         return ()
-    
+
     def __contains__(self, nom_canal):
         """Retourne True si le nom de canal est dans le conteneur"""
         return nom_canal in dict(self._canaux)
-    
+
     def __getitem__(self, nom_canal):
         """Retourne le canal si existe dans le conteneur"""
         return self._canaux[nom_canal]
-    
+
     def __setitem__(self, nom_canal, canal):
         """Place 'canal' dans 'nom_canal'"""
         self._canaux[nom_canal] = canal
-    
+
     def __delitem__(self, nom_canal):
         """Supprime le canal"""
         del self._canaux[nom_canal]
-    
+
     def __len__(self):
         """Retourne le nombre de canaux"""
         return len(self._canaux)
-    
+
     def iter(self):
         """Retourne le conteneur sous forme de dictionnaire"""
         return dict(self._canaux)
-    
+
     def get_statut(self, personnage):
         """Retourne le statut de personnage dans les canaux du jeu"""
         statut = "user"
@@ -85,17 +87,17 @@ class Canaux(BaseObj):
             if personnage in canal.moderateurs:
                 statut = "modo"
                 break
-        
+
         return statut
-    
+
     def canaux_connectes(self, personnage):
         """Retourne un tuple contenant les canaux auxquels
         le personnage est connecté.
-        
+
         """
         canaux = []
         for canal in self._canaux.values():
             if personnage in canal.connectes:
                 canaux.append(canal)
-        
+
         return tuple(canaux)

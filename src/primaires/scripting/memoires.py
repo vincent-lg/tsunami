@@ -52,6 +52,7 @@ class Memoires(BaseObj):
         BaseObj.__init__(self)
         self._memoires = {}
         self._a_detruire = {}
+        self._construire()
 
     def __getnewargs__(self):
         return ()

@@ -84,6 +84,7 @@ class Quetes(BaseObj):
         BaseObj.__init__(self)
         self.__quetes = {}
         self.parent = parent
+        self._construire()
 
     def __getnewargs__(self):
         return (None, )

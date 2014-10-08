@@ -49,7 +49,7 @@ class Details(BaseObj):
         self.parent = parent
         self._details = {}
         # On passe le statut en CONSTRUIT
-        self._statut = CONSTRUIT
+        self._construire()
 
     def __getnewargs__(self):
         return ()

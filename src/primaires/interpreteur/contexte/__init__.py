@@ -44,6 +44,7 @@ contextes = {} # dictionnaire des différents contextes
 class MetaContexte(MetaBaseObj):
 
     """Métaclasse des contextes.
+
     A chaque fois qu'on crée une classe héritée de Contexte avec un nom
     valide, on l'ajoute dans le dictionnaire 'contextes'.
 
@@ -56,6 +57,7 @@ class MetaContexte(MetaBaseObj):
             contextes[cls.nom] = cls
 
 class OptionsContexte(BaseObj):
+
     """Options du contexte.
 
     Liste des options :
@@ -113,7 +115,9 @@ class OptionsContexte(BaseObj):
 RCI_PREC = "/"
 
 class Contexte(BaseObj, metaclass=MetaContexte):
+
     """Classe abstraite définissant un contexte.
+
     Si vous voulez utiliser un contexte :
     *   Choisissez-le dans les classes-filles de Contexte
     *   Créez une nouvelle sous-classe de Contexte correspondant mieux à vos
@@ -159,6 +163,7 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         cfg_charte = type(self.importeur).anaconf.get_config("charte_graph")
         self.opts.prompt_clr = cfg_charte.couleur_prompt
         self.opts.prompt_prf = cfg_charte.prefixe_prompt
+        self._construire()
 
     def __getnewargs__(self):
         """Méthode retournant les valeurs par défaut du constructeur"""

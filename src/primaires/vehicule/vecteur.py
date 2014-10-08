@@ -54,6 +54,7 @@ class Vecteur(BaseObj):
         self._x = x
         self._y = y
         self._z = z
+        self._construire()
 
     def __getnewargs__(self):
         return ()

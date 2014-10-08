@@ -65,6 +65,7 @@ class Newsletter(BaseObj):
         self.date_creation = datetime.now()
         self.date_envoi = None
         self.nombre_envois = 0
+        self._construire()
 
     def __getnewargs__(self):
         return ("aucun", )

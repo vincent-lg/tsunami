@@ -78,6 +78,7 @@ class Objet(BaseObj):
         self.prototype = prototype
         self.contenu = None # contenu dans
         self.ajoute_a = datetime.now()
+        self._construire()
         if prototype:
             self.identifiant = prototype.cle + "_" + str(
                     prototype.no)

@@ -49,6 +49,7 @@ class NourritureVente(BaseObj):
         BaseObj.__init__(self)
         self.conteneur = proto_conteneur
         self.nourriture = liste_nourriture
+        self._construire()
 
     def __getnewargs__(self):
         return (None, [])

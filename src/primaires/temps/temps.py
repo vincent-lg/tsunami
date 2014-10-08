@@ -51,6 +51,7 @@ class Temps(BaseObj):
     def __init__(self, config):
         """Constructeur de l'objet"""
         BaseObj.__init__(self)
+        self._construire()
         if not config:
             return
 

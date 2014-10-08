@@ -46,6 +46,7 @@ class Chemins(BaseObj):
     def __init__(self):
         """Constructeur des chemins."""
         self.chemins = []
+        self._construire()
 
     def __repr__(self):
         """Affichage des chemins."""

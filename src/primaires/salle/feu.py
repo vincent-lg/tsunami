@@ -61,6 +61,7 @@ class Feu(BaseObj):
         self.stabilite = 0
         self.generation = 0
         self.tour = 0
+        self._construire()
 
     def __getnewargs__(self):
         return (None, )

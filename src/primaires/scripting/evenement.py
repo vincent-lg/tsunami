@@ -167,7 +167,6 @@ class Evenement(BaseObj):
         """
         if nom in self.variables:
             variable = self.variables[nom]
-            variable.changer_type(type)
             for evt in self.__evenements.values():
                 evt.substituer_variable(nom, variable)
 

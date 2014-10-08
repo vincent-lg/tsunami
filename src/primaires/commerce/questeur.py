@@ -58,6 +58,7 @@ class Questeur(BaseObj):
         self.prototype_servant = None
         self.taux_deposer = 95
         self.montant_min = 5
+        self._construire()
 
     def __getnewargs__(self):
         return (None, )

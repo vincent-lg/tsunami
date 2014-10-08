@@ -62,6 +62,8 @@ class AffectionAbstraite(BaseObj):
         # Liste de tuple (force, message)
         self.messages_visibles = []
 
+        self._construire()
+
     def __getnewargs__(self):
         return ("", )
 

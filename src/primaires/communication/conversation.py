@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -38,10 +38,11 @@ from primaires.format.fonctions import couper_phrase
 class Conversation(BaseObj):
 
     """Cette classe contient deux joueurs en conversation.
+
     Elle est notamment utile au reply.
-    
+
     """
-    
+
     def __init__(self, emetteur, cible, phrase):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
@@ -53,13 +54,14 @@ class Conversation(BaseObj):
         # On déduit l'id
         conversations = type(self).importeur.communication.conversations
         self.id = -1
+        self._construire()
         if emetteur:
             p_conversations = conversations.get_conversations_pour(emetteur)
             self.id = len(p_conversations) + 1
-    
+
     def __getnewargs__(self):
         return (None, None, "")
-    
+
     def _get_phrase(self):
         """Retourne la phrase mise en forme"""
         return couper_phrase(self._phrase, 40)
@@ -67,11 +69,11 @@ class Conversation(BaseObj):
         """Stocke phrase dans self._phrase"""
         self._phrase = phrase
     phrase = property(_get_phrase, _set_phrase)
-    
+
     def __str__(self):
         return "Conversation entre {} et {} : {}".format(self.emetteur.nom,
                 self.cible.nom, self.phrase)
-    
+
     def ch_focus(self):
         """Place le focus sur la conversation courante"""
         if self.focus:

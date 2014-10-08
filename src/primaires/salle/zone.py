@@ -57,6 +57,7 @@ class Zone(BaseObj):
         self.ouverte = True
         self.argent_total = 0
         self.mod_temperature = 0
+        self._construire()
 
     def __getnewargs__(self):
         return ("", )

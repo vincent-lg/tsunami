@@ -76,6 +76,7 @@ class Etendue(BaseObj):
         self.cotes = {}
         self.liens = {}
         self.projections = {}
+        self._construire()
 
     def __getnewargs__(self):
         return ("", )

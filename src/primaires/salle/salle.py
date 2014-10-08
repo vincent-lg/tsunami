@@ -121,6 +121,8 @@ class Salle(BaseObj):
         # Décors
         self.decors = []
 
+        self._construire()
+
     def __getnewargs__(self):
         return ("", "")
 

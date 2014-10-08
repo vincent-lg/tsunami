@@ -81,7 +81,7 @@ class Detail(BaseObj):
             self.titre = modele.titre
             self.description = modele.description
         # On passe le statut en CONSTRUIT
-        self._statut = CONSTRUIT
+        self._construire()
 
     def __getnewargs__(self):
         return ("", "")

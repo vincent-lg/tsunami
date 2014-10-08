@@ -52,6 +52,7 @@ class Equipement(BaseObj):
         self.__membres = []
         self.equipes = Equipes(self)
         self.tenus = Tenus(self)
+        self._construire()
 
         if squelette:
             squelette.personnages.append(personnage)
@@ -281,6 +282,7 @@ class Equipes(BaseObj):
         """Constructeur du conteneur"""
         BaseObj.__init__(self)
         self.equipement = equipement
+        self._construire()
 
     def __getnewargs__(self):
         return (None, )
@@ -330,6 +332,7 @@ class Tenus(BaseObj):
         """Constructeur du conteneur"""
         BaseObj.__init__(self)
         self.equipement = equipement
+        self._construire()
 
     def __getnewargs__(self):
         return (None, )

@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,21 +35,21 @@ from datetime import datetime
 from abstraits.obase import BaseObj
 
 class Alerte(BaseObj):
-    
+
     """Classe définissant une alerte scripting.
-    
+
     Une alerte est levée en cas d'erreur lors de l'exécution d'un script.
     Les alertes sont visibles par un groupe d'immortels. L'alerte
     contient les informations utiles à la correction du bug.
-    
+
     """
-    
+
     no_actuel = 0
     enregistrer = True
     def __init__(self, objet, evenement, test, no_ligne, ligne, message,
             traceback):
         """Cration d'une alerte.
-        
+
         Les paramètres attendus sont :
             objet -- l'objet scripté
             evenement - le nom de l'évènement exécuté
@@ -58,7 +58,7 @@ class Alerte(BaseObj):
             ligne -- la ligne de script elle-même
             message -- le message d'erreur
             traceback -- le traceback complet de l'exception levée.
-        
+
         """
         BaseObj.__init__(self)
         self.no = self.inc_no()
@@ -74,10 +74,11 @@ class Alerte(BaseObj):
         self.ligne = ligne
         self.message = message
         self.traceback = traceback
-    
+        self._construire()
+
     def __getnewargs__(self):
         return (None, "", "", "", "", "", "")
-    
+
     @classmethod
     def inc_no(cls):
         cls.no_actuel += 1

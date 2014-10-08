@@ -118,6 +118,8 @@ class BaseType(BaseObj, metaclass=MetaType):
         # Erreur de validation du type
         self.err_type = "Le type de '{}' est invalide."
 
+        self._construire()
+
     def __getnewargs__(self):
         return ()
 

@@ -49,6 +49,7 @@ class PotionVente(BaseObj):
         BaseObj.__init__(self)
         self.conteneur = proto_conteneur
         self.potion = proto_potion
+        self._construire()
 
     def __getnewargs__(self):
         return (None, None)

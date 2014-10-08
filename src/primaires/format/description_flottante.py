@@ -59,6 +59,7 @@ class DescriptionFlottante(BaseObj):
         BaseObj.__init__(self)
         self.cle = cle
         self.description = Description(parent=self, scriptable=True)
+        self._construire()
 
     def __getnewargs__(self):
         return ("inconnue", )

@@ -74,6 +74,7 @@ class Canal(BaseObj):
         self.connectes = []
         self.liste_noire = []
         self.parent = parent
+        self._construire()
 
     def __getnewargs__(self):
         return ("", None, None)

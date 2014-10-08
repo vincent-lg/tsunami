@@ -73,7 +73,7 @@ class Attitude(BaseObj):
             "odf" : "",
         }
         # On passe le statut en CONSTRUIT
-        self._statut = CONSTRUIT
+        self._construire()
 
     def __getnewargs__(self):
         return ("", None)

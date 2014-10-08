@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,13 +34,13 @@ from abstraits.obase import *
 from primaires.format.fonctions import supprimer_accents
 
 class Genres(BaseObj):
-    
+
     """Conteneur de genres.
     Elle contient les genres disponibles pour une race, ainsi que leur
     correspondance grammaticale (masculin ou féminin).
-    
+
     """
-    
+
     def __init__(self, parent=None):
         """Constructeur du conteneur"""
         BaseObj.__init__(self)
@@ -53,24 +53,24 @@ class Genres(BaseObj):
             "masculin": "un jeune homme",
             "féminin": "une jeune femme",
         }
-        
+
         # On passe le statut en CONSTRUIT
-        self._statut = CONSTRUIT
-    
+        self._construire()
+
     def __getnewargs__(self):
         return ()
-    
+
     def __contains__(self, nom):
         """Retourne True si 'nom' existe, False sinon"""
         for genre in self._genres.keys():
             if nom == supprimer_accents(genre.lower()):
                 return True
         return False
-    
+
     def __len__(self):
         """Retourne le nombre de genres existants"""
         return len(self._genres)
-    
+
     def __getitem__(self, nom):
         """Retourne le genre correspondant"""
         nom = supprimer_accents(nom).lower()
@@ -78,7 +78,7 @@ class Genres(BaseObj):
             if nom == supprimer_accents(genre).lower():
                 return self._genres[genre]
         raise KeyError(nom)
-    
+
     def __delitem__(self, nom):
         """Supprime le genre"""
         for genre in self._genres.keys():
@@ -91,7 +91,7 @@ class Genres(BaseObj):
                 nom = d
                 break
         del self._distinctions[nom]
-    
+
     def ajouter_genre(self, nom, corresp=""):
         """Ajoute un genre"""
         self._genres[nom] = corresp if corresp != "" else nom
@@ -100,7 +100,7 @@ class Genres(BaseObj):
             self._distinctions[nom] = "un jeune homme"
         else:
             self._distinctions[nom] = "une jeune femme"
-    
+
     @property
     def str_genres(self):
         """Retourne une chaîne des genres"""
@@ -110,12 +110,12 @@ class Genres(BaseObj):
                     (corresp != genre and " (" + corresp + ") " or ""))
         ret = ", ".join(ret)
         return ret or "aucun"
-    
+
     @property
     def liste_genres(self):
         """Retourne une liste des genres"""
         return list(self._genres.keys())
-    
+
     @property
     def tableau_genres(self):
         """Retourne une chaîne représentant un tableau des genres."""
@@ -130,14 +130,14 @@ class Genres(BaseObj):
             lignes.append(ligne)
         ret = debut + sep + "\n" + "\n".join(lignes) + "\n" + sep
         return ret if lignes else "|att|Aucun genre défini.|ff|"
-    
+
     def get_distinction(self, genre):
         """Retourne la distinction correspondant au genre."""
         distinctions = {}
         for nom, val in self._distinctions.items():
             distinctions[supprimer_accents(nom.lower())] = val
         return distinctions[genre]
-    
+
     def changer_distinction(self, nom, distinction):
         """Change la distinction par défaut du genre."""
         if nom not in [supprimer_accents(g.lower()) for g in self._genres.keys()]:

@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -55,11 +55,11 @@ FLAGS = {
 }
 
 class Groupe(BaseObj):
-    
+
     """Classe définissant un groupe.
-    
+
     """
-    
+
     def __init__(self, parent, nom, flags):
         """Constructeur d'un groupe"""
         BaseObj.__init__(self)
@@ -67,50 +67,51 @@ class Groupe(BaseObj):
         self.parent = parent
         self.groupes_inclus = []
         self.flags = flags
-    
+        self._construire()
+
     def __getnewargs__(self):
         """Retourne les arguments à passer au constructeur"""
         return (None, "", AUCUN)
-    
+
     def ajouter_groupe_inclus(self, groupe):
         """Ajoute 'groupe' dans les groupes inclus.
         Si le groupe A inclus le groupe B, alors les joueurs du groupe A
         pourront utiliser les commandes du groupe B.
-        
+
         """
         if groupe not in self.groupes_inclus:
             self.groupes_inclus.append(groupe)
-    
+
     def supprimer_groupe_inclus(self, groupe):
         """Supprime 'groupe' des groupes inclus"""
         if groupe in self.groupes_inclus:
             self.groupes_inclus.remove(groupe)
-    
+
     def vider_groupe_inclus(self):
         """Vide les groupes inclus"""
         self.groupes_inclus = []
-    
+
     @property
     def str_flags(self):
         """Retourne une chaîne affichant les flags actifs.
-        
+
         Note : si aucun flag n'est actif, retourne "aucun".
-        
+
         """
         str_flags = []
         for nom, flag in FLAGS.items():
             if flag & self.flags:
                 str_flags.append(nom)
-        
+
         return ", ".join(str_flags) if str_flags else "aucun"
-    
+
     def get_groupes_inclus(self, liste=None):
         """Retourne la liste des groupes inclus, comptant self."""
         if liste is None:
             liste = [self]
-        
+
         for groupe in self.groupes_inclus:
             groupe = type(self).importeur.interpreteur.groupes[groupe]
             liste.extend(groupe.get_groupes_inclus())
-        
+
         return liste

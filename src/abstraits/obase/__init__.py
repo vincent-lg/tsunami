@@ -46,6 +46,7 @@ objets = {}
 objets_par_type = {}
 ids = {}
 statut_gen = 0 # 0 => OK, 1 => en cours
+classes_base = {}
 
 class MetaBaseObj(type):
 
@@ -68,6 +69,7 @@ class MetaBaseObj(type):
     def __init__(cls, nom, bases, contenu):
         """Constructeur de la métaclasse"""
         type.__init__(cls, nom, bases, contenu)
+        classes_base[cls.__module__ + "." + cls.__name__] = cls
         # Si on trouve les attributs _nom et _version,
         # c'est que la classe est versionnée
         if "_nom" in contenu and "_version" in contenu:
@@ -152,6 +154,7 @@ class BaseObj(metaclass=MetaBaseObj):
     def detruire(self):
         """Marque l'objet comme détruit."""
         self.e_existe = False
+        importeur.supenr.detruire_objet(self)
         if id(self) in objets:
             del objets[id(self)]
 
@@ -239,3 +242,12 @@ class BaseObj(metaclass=MetaBaseObj):
             return None
 
         return objet
+
+    def __getstate__(self):
+        return dict(self.__dict__)
+
+    def __setattr__(self, attr, valeur):
+        """L'objet est modifié."""
+        object.__setattr__(self, attr, valeur)
+        if self.construit:
+            importeur.supenr.ajouter_objet(self)

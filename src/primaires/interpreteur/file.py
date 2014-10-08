@@ -39,6 +39,7 @@ from abstraits.obase import BaseObj
 class FileContexte(BaseObj):
 
     """Cette classe définie une file d'attente des contextes.
+
     C'est une classe enveloppe de liste. On interragit avec cette
     classe qu'avec plusieurs méthodes :
         ajouter(self, objet) -- ajoute l'objet en tête de file
@@ -56,6 +57,7 @@ class FileContexte(BaseObj):
         self._taille_min = 1 # la taille minimum de la file d'attente
         self._position = 0 # position dans la file
         self.parent = parent
+        self._construire()
 
     def __getnewargs__(self):
         """Méthode retournant les arguments à passer au constructeur"""
