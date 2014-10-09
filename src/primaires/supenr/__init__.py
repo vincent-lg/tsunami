@@ -345,6 +345,11 @@ class Module(BaseModule):
 
         # Traitement des attributs
         attributs = collection.find_one(_id)
+
+        if attributs is None:
+            del enr["_d"]
+            return None
+
         self.mongo_charger_dictionnaire(attributs)
 
         for transform in transforms:
