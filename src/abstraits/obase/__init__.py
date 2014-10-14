@@ -251,3 +251,10 @@ class BaseObj(metaclass=MetaBaseObj):
         object.__setattr__(self, attr, valeur)
         if self.construit:
             importeur.supenr.ajouter_objet(self)
+
+    def _enregistrer(self):
+        """Force l'enregistrement de l'objet."""
+        print("Enregistrement de", self)
+        importeur.supenr.mongo_debug = True
+        if self.construit:
+            importeur.supenr.ajouter_objet(self)

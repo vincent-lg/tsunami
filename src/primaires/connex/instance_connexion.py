@@ -93,6 +93,11 @@ class InstanceConnexion(BaseObj):
         self.envoyer(msg)
         return self
 
+    def __getstate__(self):
+        attrs = BaseObj.__getstate__(self)
+        del attrs["client"]
+        return attrs
+
     def _get_contexte_actuel(self):
         """Retourne le contexte actuel de l'instance.
         -   si le joueur est défini et connecté, alors on retourne

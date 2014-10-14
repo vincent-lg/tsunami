@@ -106,16 +106,19 @@ class Description(BaseObj):
         """
         self.paragraphes.append(paragraphe)
         self.maj_auto()
+        self._enregistrer()
 
     def supprimer_paragraphe(self, no):
         """Supprime le paragraphe #no"""
         del self.paragraphes[no]
         self.maj_auto()
+        self._enregistrer()
 
     def vider(self):
         """Supprime toute la description"""
         self.paragraphes[:] = []
         self.maj_auto()
+        self._enregistrer()
 
     def remplacer(self, origine, par):
         """Remplace toutes les occurences de 'origine' par 'par'.
@@ -137,6 +140,7 @@ class Description(BaseObj):
                 no_car = paragraphe.find(origine, no_car + len(par))
 
         self.maj_auto()
+        self._enregistrer()
 
     def wrap_paragraphe(self, paragraphe, lien="\n", aff_sp_cars=False):
         """Wrap un paragraphe et le retourne"""

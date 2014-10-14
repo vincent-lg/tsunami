@@ -144,10 +144,12 @@ class Compte(BaseObj):
                     joueur not in canal.connectes:
                 canal.rejoindre_ou_quitter(joueur, aff=False, forcer=True)
         self.joueurs.append(joueur)
+        self._enregistrer()
 
     def supprimer_joueur(self, joueur):
         """Supprime le joueur passé en paramètre de la liste des joueurs"""
         self.joueurs.remove(joueur)
+        self._enregistrer()
 
     def detruire(self):
         """Destruction du compte et de ses joueurs."""

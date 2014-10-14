@@ -39,7 +39,7 @@ class CmdPecher(Commande):
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "pêcher", "fish")
-        self.aide_courte = "jète une ligne à l'eau"
+        self.aide_courte = "jette une ligne à l'eau"
         self.aide_longue = \
             "Cette commande permet de commencer à pêcher en jetant une " \
             "ligne à l'eau. Elle permet également d'arrêter de pêcher à " \
@@ -82,7 +82,7 @@ class CmdPecher(Commande):
 
         personnage.agir("pecher")
         personnage << "Vous jetez votre ligne à l'eau."
-        personnage.salle.envoyer("{} jète sa ligne à l'eau.", personnage)
+        personnage.salle.envoyer("{} jette sa ligne à l'eau.", personnage)
         personnage.etats.ajouter("pecher")
         importeur.diffact.ajouter_action("peche:" + personnage.nom, 15,
                 importeur.peche.attendre_pecher, personnage, canne)

@@ -55,8 +55,8 @@ class CmdBander(Commande):
             "et le placera automatiquement sur l'arme de jet. Sinon, " \
             "vous pouvez préciser après le nom de l'arme de jet le " \
             "mot-clé |cmd|avec|ff| (ou |cmd|with|ff| en anglais) suivi " \
-             "du nom du projectile. Vous devez dans tous les cas " \
-             "posséder le projectile indiqué."
+            "du nom du projectile. Vous devez dans tous les cas " \
+            "posséder le projectile indiqué."
 
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
@@ -95,7 +95,7 @@ class CmdBander(Commande):
 
             if projectile is None or conteneur is None:
                 personnage << "|err|Aucun projectile pour cette arme " \
-                        "de jet ne peut être trouvée sur vous.|ff|"
+                        "de jet ne peut être trouvé sur vous.|ff|"
                 return
 
         if projectile.cle not in arme_de_jet.projectiles_autorises:

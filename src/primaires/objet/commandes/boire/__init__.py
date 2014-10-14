@@ -80,7 +80,7 @@ class CmdBoire(Commande):
                     personnage << "Vous êtes plein{e} ; une gorgée de plus " \
                             "et vous éclaterez.".format(e=e)
             else:
-                personnage << "|err|Il n'y a pas d'eau par ici.|ff|"
+                personnage << "|err|Il n'y a pas d'eau potable par ici.|ff|"
             return
 
         objet = dic_masques["nom_objet"].objet

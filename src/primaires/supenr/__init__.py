@@ -86,6 +86,7 @@ class Module(BaseModule):
         self.mongo_file = set()
         self.mongo_collections = {}
         self.mongo_objets = {}
+        self.mongo_debug = False
 
     def config(self):
         """Configuration du module.
@@ -400,27 +401,38 @@ class Module(BaseModule):
         modifier.
 
         """
+        if not debug:
+            debug = self.mongo_debug
+
         if rappel:
             importeur.diffact.ajouter_action("enregistrement", 10,
                     self.mongo_enregistrer_file)
 
         if debug:
-            print(self.mongo_file)
+            print("Premier passage")
 
         t1 = time.time()
         reste = []
         for objet in self.mongo_file:
             second, attributs = self.extraire_attributs(objet)
+            if debug:
+                print(" ", type(objet), attributs)
             self.mongo_enregistrer_objet(objet, attributs)
             if second:
                 reste.append(objet)
 
+        if debug:
+            print("Second passage")
+
         for objet in reste:
             second, attributs = self.extraire_attributs(objet)
+            if debug:
+                print(" ", type(objet), attributs)
             self.mongo_enregistrer_objet(objet, attributs)
 
-        self.mongo_file = set()
+        self.mongo_file.clear()
         t2 = time.time()
+        self.mongo_debug = False
         return t2 - t1
 
     def mongo_enregistrer_objet(self, objet, attributs):

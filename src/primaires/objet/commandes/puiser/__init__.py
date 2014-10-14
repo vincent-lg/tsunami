@@ -63,7 +63,7 @@ class CmdPuiser(Commande):
         fontaine = salle.a_detail_flag("fontaine")
         if not fontaine and salle.terrain.nom not in ("rive",
                 "aquatique", "subaquatique"):
-            personnage << "|err|Il n'y a pas d'eau par ici.|ff|"
+            personnage << "|err|Il n'y a pas d'eau potable par ici.|ff|"
             return
         if conteneur.potion is not None:
             personnage << "|err|{} contient déjà du liquide.|ff|".format(

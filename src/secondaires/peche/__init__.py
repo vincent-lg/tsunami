@@ -208,7 +208,7 @@ class Module(BaseModule):
             personnage.sans_prompt()
             personnage << "Une violente secousse agite votre ligne !"
             personnage << "Vous rejetez votre canne en arrière..."
-            personnage.salle.envoyer("{} rejète sa canne en arrière...",
+            personnage.salle.envoyer("{} rejette sa canne en arrière...",
                     personnage, prompt=False)
             importeur.diffact.ajouter_action("pecher:" + personnage.nom, tps,
                     self.pecher, personnage, canne, poisson)
