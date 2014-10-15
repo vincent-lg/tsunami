@@ -53,8 +53,7 @@ class Variable(BaseObj):
     def __getnewargs__(self):
         return (None, "")
 
-    @property
-    def type(self):
+    def _get_type(self):
         types = __import__("primaires.scripting.types").scripting.types
         builtins = __builtins__.copy()
         try:
@@ -63,3 +62,7 @@ class Variable(BaseObj):
             type = getattr(types, self.nom_type)
 
         return type
+    def _set_type(self, type):
+        self.nom_type = type.__name__
+    type = property(_get_type, _set_type)
+
