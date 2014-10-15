@@ -58,38 +58,8 @@ class Filtre:
 
     def tester(self, objet, valeur):
         """Teste le filtre"""
-        attribut = getattr(objet, self.test)
         if callable(self.test):
             return self.test(objet, valeur)
         elif self.type:
+            attribut = str(getattr(objet, self.test))
             return self.type.tester(objet, attribut, valeur)
-            if self.type == "str":
-                try:
-                    valeur = re.compile(supprimer_accents(
-                            valeur.replace("_b_", "|")), re.I)
-                except re.error:
-                    raise TypeError(
-                            "le type précisé doit être une chaîne valide")
-            elif self.type == "int":
-                try:
-                    valeur = int(valeur)
-                except ValueError:
-                    raise TypeError("le type précisé doit être un int")
-            elif self.type == "bool":
-                try:
-                    assert valeur in ("1", "0")
-                except AssertionError:
-                    raise TypeError("le type précisé doit être un booléen")
-                else:
-                    valeur = True if valeur != "0" else False
-        else:
-            raise ValueError("le filtre {} précise un type {} inconnu".format(
-                    self, repr(self.type)))
-
-            if self.type == "str":
-                attribut = supprimer_accents(str(getattr(objet, self.test)))
-                return valeur.search(attribut)
-            elif self.type in ("int", "bool"):
-                return getattr(objet, self.test) == valeur
-            else:
-                return bool(getattr(objet, self.test))
