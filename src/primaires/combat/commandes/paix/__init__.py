@@ -2,10 +2,10 @@
 
 # Copyright (c) 2012 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,11 +35,11 @@
 from primaires.interpreteur.commande.commande import Commande
 
 class CmdPaix(Commande):
-    
+
     """Commande 'paix'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "paix", "peace")
@@ -52,18 +52,18 @@ class CmdPaix(Commande):
             "paramètres, la salle est celle où vous vous trouvez, mais " \
             "vous pouvez aussi préciser une salle (sous la forme " \
             "|ent|zone:mnémonique|ff|)."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         if dic_masques["ident_salle"]:
             salle = dic_masques["ident_salle"].salle
         else:
             salle = personnage.salle
-        
+
         if salle.ident not in importeur.combat.combats:
             personnage << "|err|Aucun combat n'existe dans cette salle.|ff|"
             return
-        
+
         importeur.combat.supprimer_combat(salle.ident)
-        personnage << "|err|Le combat a été interrompu en salle '{}'.".format(
-                salle.ident)
+        personnage << "|att|Le combat a été interrompu en salle " \
+                "'{}'|ff|.".format(salle.ident)
