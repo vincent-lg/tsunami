@@ -35,3 +35,4 @@ class Convertisseur:
     def depuis_version_0(objet, classe):
         objet.set_version(classe, 1)
         objet.nom_type = objet.__dict__["type"].__name__
+        print("Change variable", objet.no_type)
