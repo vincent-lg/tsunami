@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,44 +28,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Variable détaillée plus bas."""
+"""Fichier contenant les convertisseurs de la classe Variable."""
 
-from abstraits.obase import *
-
-class Variable(BaseObj):
-
-    """Classe contenant une variable d'évènement.
-
-    Une variable d'évènement contient un nom, un certain type bien entendu,
-    ainsi qu'une aide.
-
-    """
-
-    _nom = "variable_scripting"
-    _version = 1
-
-    def __init__(self, evenement, nom, str_type=None):
-        """Constructeur d'une variable"""
-        BaseObj.__init__(self)
-        self.evenement = evenement
-        self.nom = nom
-        self.nom_type = str_type
-        self.aide = "non précisée"
-        self._construire()
-
-    def __getnewargs__(self):
-        return (None, "")
-
-    def _get_type(self):
-        types = __import__("primaires.scripting.types").scripting.types
-        builtins = __builtins__.copy()
-        try:
-            type = builtins[self.nom_type]
-        except KeyError:
-            type = getattr(types, self.nom_type)
-
-        return type
-    def _set_type(self, type):
-        self.nom_type = type.__name__
-    type = property(_get_type, _set_type)
-
+class Convertisseur:
+    """Classe pour envelopper les convertisseurs."""
+    def depuis_version_0(objet, classe):
+        objet.set_version(classe, 1)
+        objet.nom_type = objet.__dict__["type"].__name__
