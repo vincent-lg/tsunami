@@ -153,6 +153,7 @@ class CmdAddroom(Commande):
                         salle_dest=salle, corresp=direction)
 
             nv_salle.interieur = salle.interieur
+            nv_salle.illuminee = salle.illuminee
             nv_salle.nom_terrain = salle.nom_terrain
             if args.titre:
                 nv_salle.titre = salle.titre

@@ -106,6 +106,7 @@ class Salle(BaseObj):
         self.objets_sol = ObjetsSol(parent=self)
         self.script = ScriptSalle(self)
         self.interieur = False
+        self.illuminee = False
         self.magasin = None
         self.flags = 0
 

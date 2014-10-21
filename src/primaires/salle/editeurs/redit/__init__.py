@@ -203,6 +203,11 @@ class EdtRedit(Presentation):
                 "interieur")
         interieur.parent = self
 
+        # Illuminée
+        illuminee = self.ajouter_choix("illuminée", "l", Flag, salle,
+                "illuminee")
+        illuminee.parent = self
+
         # PNJ disponibles au repop
         pnj = self.ajouter_choix("pNJ disponibles au repop", "p", EdtPnjRepop,
                 salle)
