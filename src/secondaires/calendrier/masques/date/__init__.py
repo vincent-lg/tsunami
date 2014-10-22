@@ -1,4 +1,4 @@
-﻿# -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
 # Copyright (c) 2012 AYDIN Ali-Kémal
 # All rights reserved.

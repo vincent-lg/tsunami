@@ -1,4 +1,4 @@
-﻿# -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
 # Copyright (c) 2013 LE GOFF Vincent
 # All rights reserved.
