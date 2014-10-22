@@ -21,7 +21,7 @@ Evènements disponibles :
 
   ...
 
-Blocs définies :
+Blocs définis :
 
   planter_orangers()
 </pre>
@@ -48,7 +48,7 @@ Entrez donc :
 Et vous devriez voir dans la définition du bloc :
 
 <pre>
-Blocs définies :
+Blocs définis :
   planter_orangers(salle)
 </pre>
 
