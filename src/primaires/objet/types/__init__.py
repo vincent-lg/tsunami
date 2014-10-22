@@ -67,6 +67,7 @@ from .conteneur_nourriture import ConteneurNourriture
 from .flechette import Flechette
 from .indefini import *
 from .livre import Livre
+from .lumiere import Lumiere
 from .miroir import Miroir
 from .potion import Potion
 from .nourriture import Nourriture
