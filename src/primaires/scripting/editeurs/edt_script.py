@@ -183,7 +183,7 @@ class EdtScript(Editeur):
         else:
             msg += "|att|Aucun évènement n'est disponible pour cet objet.|ff|"
 
-        msg += "\n\nBlocs définies :\n"
+        msg += "\n\nBlocs définis :\n"
         if script.blocs:
             for bloc in sorted(script.blocs.values(), \
                     key=lambda bloc: bloc.nom):
