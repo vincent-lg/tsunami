@@ -1,9 +1,9 @@
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -12,7 +12,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -31,11 +31,11 @@
 from primaires.interpreteur.masque.parametre import Parametre
 
 class PrmLister(Parametre):
-    
+
     """Commande 'attitudes lister'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "lister", "list")
@@ -43,7 +43,7 @@ class PrmLister(Parametre):
         self.aide_courte = "liste les attitudes existantes"
         self.aide_longue = \
             "Cette sous-commande offre une liste des attitudes existantes."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         attitudes = None
@@ -51,7 +51,7 @@ class PrmLister(Parametre):
             attitudes = type(self).importeur.communication.attitudes.values()
         else:
             attitudes = type(self).importeur.communication.attitudes_jouables
-        if attitudes is None:
+        if not attitudes:
             res = "|err|Il n'y a aucune attitude pour l'instant.|ff|"
         else:
             res = "+" + "-" * 77 + "+\n"
