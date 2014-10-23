@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -37,15 +37,15 @@ from primaires.interpreteur.masque.exceptions.erreur_validation \
 from primaires.format.fonctions import *
 
 class NomObjet(Masque):
-    
+
     """Masque <nom_objet>.
     On attend un nom d'objet en paramètre.
-    
+
     """
-    
+
     nom = "nom_objet"
     nom_complet = "nom d'un objet"
-    
+
     def __init__(self):
         """Constructeur du masque"""
         Masque.__init__(self)
@@ -54,45 +54,45 @@ class NomObjet(Masque):
         self.proprietes["tout_interpreter"] = "True"
         self.proprietes["quantite"] = "False"
         self.proprietes["conteneur"] = "False"
-    
+
     @property
     def objet(self):
         """Retourne le premier objet."""
         return self.objets[0]
-    
+
     @property
     def objets_qtt(self):
         """Retourne un itérateur de couples (objet, quantite)."""
         for objet, qtt in zip(self.objets, self.quantites):
             yield (objet, qtt)
-    
+
     @property
     def objets_conteneurs(self):
         """Retourne un itérateur de couples (objet, conteneur)."""
         for objet, conteneur in zip(self.objets, self.conteneurs):
             yield (objet, conteneur)
-    
+
     @property
     def objets_qtt_conteneurs(self):
         """Retourne un itérateur de couples (objet, quantite, conteneur)."""
         for objet, qtt, conteneur in \
                 zip(self.objets, self.quantites, self.conteneurs):
             yield (objet, qtt, conteneur)
-    
+
     def init(self):
         """Initialisation des attributs"""
         self.objets = []
         self.quantites = []
         self.conteneurs = []
-    
+
     def repartir(self, personnage, masques, commande):
         """Répartition du masque."""
         nom = liste_vers_chaine(commande)
-        
+
         if not nom:
             raise ErreurValidation( \
                 "Précisez un nom d'objet.")
-        
+
         # Attention : sauf avis contraire, le masque interprète la commande
         # entière. Les "avis contraires" en question sont un masque, comme
         # un mot-clé, cherchant dans les masques précédents
@@ -105,7 +105,7 @@ class NomObjet(Masque):
         self.a_interpreter = nom
         masques.append(self)
         return True
-    
+
     def valider(self, personnage, dic_masques):
         """Validation du masque"""
         Masque.valider(self, personnage, dic_masques)
@@ -116,7 +116,12 @@ class NomObjet(Masque):
         quantites = []
         o_conteneurs = []
         prototype = None
-        
+        salle = personnage.salle
+
+        if not salle.voit_ici(personnage):
+            raise ErreurValidation(
+                "|err|Ce nom d'objet est introuvable.|ff|")
+
         for c in conteneurs:
             for ligne in c:
                 if self.quantite and self.conteneur:
@@ -134,14 +139,14 @@ class NomObjet(Masque):
                 t_proto = hasattr(o, "prototype") and o.prototype or o
                 if prototype and t_proto is not prototype:
                     continue
-                
+
                 if contient(o.get_nom(), nom):
                     if o_types and not [o_t for o_t in o_types \
                             if o.prototype.est_de_type(o_t)]:
                         raise ErreurValidation(
                                 "|err|" + o.err_type.format(o.get_nom()) \
                                 + "|ff|")
-                    
+
                     objets.append(o)
                     quantites.append(qtt)
                     if t_conteneur:
@@ -149,13 +154,13 @@ class NomObjet(Masque):
                     else:
                         o_conteneurs.append(c)
                     prototype = t_proto
-        
+
         if not objets:
             raise ErreurValidation(
                 "|err|Ce nom d'objet est introuvable.|ff|")
         self.objets = objets
         self.quantites = quantites
         self.conteneurs = o_conteneurs
-        
+
         return True
 

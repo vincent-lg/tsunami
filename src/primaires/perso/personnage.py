@@ -342,6 +342,10 @@ class Personnage(BaseObj):
         if self.est_immortel():
             return True
 
+        salle = self.salle
+        if not salle.voit_ici(self):
+            return False
+
         return not personnage.super_invisible
 
     def sans_prompt(self):
