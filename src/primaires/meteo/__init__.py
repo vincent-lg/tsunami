@@ -192,6 +192,14 @@ class Module(BaseModule):
                 res += self.cfg.beau_temps
             liste_messages.append("|cy|" + res + "|ff|")
 
+    def get_perturbation(self, salle):
+        """Retourne la perturbation sur la salle ou None."""
+        for pertu in self.perturbations_actuelles:
+            if pertu.est_sur(salle):
+                return pertu
+
+        return None
+
     def changer_temperature(self):
         """Change aléatoirement la température."""
         if self.temperature_dynamique:

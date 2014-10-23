@@ -216,6 +216,43 @@ class Salle(BaseObj):
 
         return objets
 
+    def voit_ici(self, personnage):
+        """Retourne True si le personnage peut voir ici, False sinon.
+
+        Un personnage peut voir dans la salle si :
+            Il est immortel
+            La salle est illuminée
+            Il y a un feu dans la salle
+            La salle est en extérieure et :
+                Il fait jour ou
+                Le ciel est dégagé
+            Le personnage a une lumière
+
+        """
+        if personnage.est_immortel():
+            return True
+
+        if self.illuminee:
+            return True
+
+        if self.ident in importeur.salle.feux:
+            return True
+
+        if not self.interieur:
+            if importeur.temps.temps.il_fait_jour:
+                return True
+
+            perturbation = importeur.meteo.get_perturbation(self)
+            if perturbation is None or not perturbation.est_opaque():
+                return True
+
+        for objets in personnage.equipement.equipes:
+            for objet in objets:
+                if objet.est_de_type("lumière") and objet.allumee_depuis:
+                    return True
+
+        return False
+
     def a_detail_flag(self, flag):
         """Retourne True si la salle a un détail du flag indiqué."""
         for detail in self.details:
@@ -439,6 +476,11 @@ class Salle(BaseObj):
         if personnage.est_mort():
             personnage << "|err|Vous êtes inconscient et ne voyez pas " \
                     "grand chose...|ff|"
+            return
+
+        if not self.voit_ici(personnage):
+            personnage << "Il y fait trop sombre pour vos sens, " \
+                    "l'obscurité vous environne."
             return
 
         res = ""

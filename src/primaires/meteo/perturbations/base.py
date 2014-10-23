@@ -117,6 +117,9 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
             if self.est_sur(salle):
                 ret.append(salle)
         return ret
+    def est_opaque(self):
+        """Retourne True si on peut voir le ciel, False sinon."""
+        return self.flags & OPAQUE == 0
 
     def cycle(self, salles=None):
         """Entame un nouveau cycle de la perturbation.
