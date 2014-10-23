@@ -348,7 +348,7 @@ class Module(BaseModule):
         attributs = collection.find_one(_id)
 
         if attributs is None:
-            del enr["_d"]
+            del enr[_id]
             return None
 
         self.mongo_charger_dictionnaire(attributs)
@@ -461,7 +461,7 @@ class Module(BaseModule):
             enr[_id] = objet
             self.mongo_objets[nom] = enr
 
-        if nom in ("primaires.connex.compte.Compte", ):
+        if nom in ("primaires.information.sujet.SujetAide", ):
             attrs = collection.find_one(_id)
             self.logger.debug("Confirmation: " + repr(attributs) + " " + repr(attrs))
 
