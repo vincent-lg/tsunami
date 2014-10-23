@@ -401,6 +401,7 @@ class Module(BaseModule):
         modifier.
 
         """
+        logger = self.logger
         if not debug:
             debug = self.mongo_debug
 
@@ -408,26 +409,22 @@ class Module(BaseModule):
             importeur.diffact.ajouter_action("enregistrement", 10,
                     self.mongo_enregistrer_file)
 
-        if debug:
-            print("Premier passage")
+        logger.debug("Premier passage")
 
         t1 = time.time()
         reste = []
         for objet in self.mongo_file:
             second, attributs = self.extraire_attributs(objet)
-            if debug:
-                print(" ", type(objet), attributs)
+            logger.debug("  " + str(type(objet)) + repr(attributs))
             self.mongo_enregistrer_objet(objet, attributs)
             if second:
                 reste.append(objet)
 
-        if debug:
-            print("Second passage")
+        logger.debug("Second passage")
 
         for objet in reste:
             second, attributs = self.extraire_attributs(objet)
-            if debug:
-                print(" ", type(objet), attributs)
+            logger.debug("  " + str(type(objet)) + repr(attributs))
             self.mongo_enregistrer_objet(objet, attributs)
 
         self.mongo_file.clear()
@@ -463,6 +460,10 @@ class Module(BaseModule):
             enr = self.mongo_objets.get(nom, {})
             enr[_id] = objet
             self.mongo_objets[nom] = enr
+
+        if nom in ("primaires.connex.compte.Compte", ):
+            attrs = collection.find_one(_id)
+            self.logger.debug("Confirmation: " + repr(attributs) + " " + repr(attrs))
 
     def extraire_attributs(self, objet):
         """Méthode utilisée par MongoDB pour extraire les attributs d'un objet.

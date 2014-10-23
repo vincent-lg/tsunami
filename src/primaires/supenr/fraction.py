@@ -57,6 +57,8 @@ class TransformFraction(SONManipulator):
             elif isinstance(elt, dict):
                 self.transform_incoming(elt, collection)
 
+            copie.append(elt)
+
         liste[:] = copie
 
     def transform_incoming(self, bson, collection):
