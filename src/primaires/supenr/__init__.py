@@ -313,6 +313,7 @@ class Module(BaseModule):
         """Charge la collection correspondante.
 
         Les objets chargés sont retournés sous la forme d'une liste.
+        Les objets None (qui n'ont pas pu être chargés) ne sont pas ajoutés.
 
         """
         nom = self.qualname(classe)
@@ -321,7 +322,8 @@ class Module(BaseModule):
         for attributs in valeurs:
             _id = attributs["_id"]
             objet = self.mongo_charger_objet(classe, _id)
-            objets.append(objet)
+            if objet is not None:
+                objets.append(objet)
 
         return objets
 

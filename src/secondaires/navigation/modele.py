@@ -61,9 +61,38 @@ class ModeleNavire(BaseObj):
         self.canot = False
         self.masculin = True
         self.cale_max = 200
+        self._construire()
 
     def __getnewargs__(self):
         return ("", )
+
+    def __getstate__(self):
+        """Enregistrement de l'objet.
+
+        On ne peut pas enregistrer les salles telles qu'elles car
+        MongoDB n'aime pas les dictionnaires contenant des tuples en
+        clés.
+
+        """
+        attrs = BaseObj.__getstate__(self)
+        salles = {}
+        for cle, salle in attrs["salles"].items():
+            salles["|".join([str(c) for c in cle])] = salle
+
+        attrs["salles"] = salles
+        return attrs
+
+    def __setstate__(self, attrs):
+        """Récupération de l'objet enregistré."""
+        salles = {}
+        for cle, salle in attrs["salles"].items():
+            if isinstance(cle, str):
+                x, y, z = cle.split("|")
+                cle = int(x), int(y), int(z)
+            salles[cle] = salle
+
+        attrs["salles"] = salles
+        BaseObj.__setstate__(self, attrs)
 
     @property
     def coordonnees_salles(self):
