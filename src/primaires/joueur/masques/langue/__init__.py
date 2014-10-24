@@ -59,7 +59,7 @@ class Langue(Masque):
         if not langue:
             raise ErreurValidation( \
                 "|err|Précisez une langue disponible (|ff||ent|anglais|ff| " \
-                "|err| ou |ff||ent|français|ff||err|).")
+                "|err| ou |ff||ent|français|ff||err|).|ff|")
         
         langue = langue.split(" ")[0].lower()
         langue = supprimer_accents(langue)
