@@ -191,6 +191,7 @@ class Magasin(BaseObj):
                 return
 
         self.stock.append((service, quantite, 0))
+        self._enregistrer()
 
     def retirer_stock(self, type, cle):
         """Retire le service du stock."""
@@ -198,6 +199,7 @@ class Magasin(BaseObj):
             service = ligne[0]
             if service.type_achat == type and service.cle == cle:
                 del self.stock[i]
+                self._enregistrer()
                 return
 
         raise ValueError("le service {} {} n'existe pas".format(type, cle))
@@ -224,6 +226,7 @@ class Magasin(BaseObj):
             services = sorted(services, key=lambda l: l[0].m_valeur)
 
         self.inventaire[:] = services
+        self._enregistrer()
 
     def retirer_inventaire(self, service, qtt):
         """Retire le service indiqué."""
@@ -233,6 +236,7 @@ class Magasin(BaseObj):
                     del self.inventaire[i]
                 else:
                     self.inventaire[i] = (t_service, t_qtt - qtt)
+                self._enregistrer()
                 return
 
         raise ValueError("service introuvable")

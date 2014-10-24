@@ -123,7 +123,7 @@ class Questeur(BaseObj):
         t_montant = self.comptes.get(joueur, 0)
         t_montant += montant
         self.comptes[joueur] = t_montant
-
+        self._enregistrer()
         return montant
 
     def get_valeur_compte(self, joueur):
@@ -147,3 +147,4 @@ class Questeur(BaseObj):
         t_montant = detenu - montant
         self.comptes[joueur] = t_montant
         joueur.ramasser_ou_poser(argent, qtt=nombre)
+        self._enregistrer()
