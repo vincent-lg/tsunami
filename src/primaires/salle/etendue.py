@@ -112,6 +112,65 @@ class Etendue(BaseObj):
         """
         coordonnees = self.convertir_coordonnees(item)
         return self.points[coordonnees]
+    def __getstate__(self):
+        """Enregistrement de l'objet.
+
+        On ne peut pas enregistrer les points tel quel car
+        MongoDB n'aime pas les dictionnaires contenant des tuples en
+        clés.
+
+        """
+        attrs = BaseObj.__getstate__(self)
+        obstacles = {}
+        for cle, point in attrs["obstacles"].items():
+            obstacles["|".join([str(c) for c in cle])] = point
+
+        attrs["obstacles"] = obstacles
+
+        cotes = {}
+        for cle, point in attrs["cotes"].items():
+            cotes["|".join([str(c) for c in cle])] = point
+
+        attrs["cotes"] = cotes
+
+        liens = {}
+        for cle, point in attrs["liens"].items():
+            liens["|".join([str(c) for c in cle])] = point
+
+        attrs["liens"] = liens
+
+        return attrs
+
+    def __setstate__(self, attrs):
+        """Récupération de l'objet enregistré."""
+        obstacles = {}
+        for cle, point in attrs["obstacles"]:
+            if isinstance(cle, str):
+                x, y = cle.split("|")
+                cle = int(x), int(y)
+            obstacles[cle] = point
+
+        attrs["obstacles"] = obstacles
+
+        cotes = {}
+        for cle, point in attrs["cotes"]:
+            if isinstance(cle, str):
+                x, y = cle.split("|")
+                cle = int(x), int(y)
+            cotes[cle] = point
+
+        attrs["cotes"] = cotes
+
+        liens = {}
+        for cle, point in attrs["liens"]:
+            if isinstance(cle, str):
+                x, y = cle.split("|")
+                cle = int(x), int(y)
+            liens[cle] = point
+
+        attrs["liens"] = liens
+
+        BaseObj.__setstate__(self, attrs)
 
     @property
     def points(self):
