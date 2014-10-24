@@ -103,3 +103,8 @@ class AffectionPersonnage(AffectionAbstraite):
                 return False
 
         AffectionAbstraite.tick(self, affection)
+
+    def detruire(self):
+        """Destruction de l'affection."""
+        AffectionAbstraite.detruire(self)
+        self.script.detruire()

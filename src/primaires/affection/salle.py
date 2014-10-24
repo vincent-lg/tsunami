@@ -42,6 +42,7 @@ class AffectionSalle(AffectionAbstraite):
     def_flags = {
         "humide": 1,
     }
+
     def __init__(self, cle):
         AffectionAbstraite.__init__(self, cle)
         self.script = ScriptAffectionSalle(self)
@@ -72,3 +73,8 @@ class AffectionSalle(AffectionAbstraite):
         """Exécute le script lié."""
         self.script[evenement].executer(salle=affection.affecte,
                 force=affection.force, duree=affection.duree, **variables)
+
+    def detruire(self):
+        """Destruction de l'affection."""
+        AffectionAbstraite.detruire(self)
+        self.script.detruire()

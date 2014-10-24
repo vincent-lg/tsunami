@@ -38,7 +38,23 @@ from .affection import Affection
 
 class AffectionAbstraite(BaseObj):
 
-    """Affection abstraite, propre à toutes les affections."""
+    """Affection abstraite, propre à toutes les affections.
+
+    Une affection concrète (primaires.affection.affection.Affection)
+    pointe toujours vers une affection abstraite. Une affection
+    abstraite est une forme de prototype, définissant les caractéristiques
+    communes à un type d'affection.
+
+    Par exemple, la neige est une affection de salle. Quand une salle
+    devient enneigée, elle crée une affection concrète qui pointe vers
+    l'affection neige (héritée de cette classe).
+
+    Une affection abstraite peut être soit créée par le système (la
+    neige par exemple est définie dans le code) ou bien par les
+    administrateurs du jeu grâce à des commandes. C'est pourquoi cette
+    classe hérite de BaseObj.
+
+    """
 
     nom_type = "non renseigné"
     enregistrer = True
