@@ -112,7 +112,7 @@ class Navire(Vehicule):
     def __setstate__(self, attrs):
         """Récupération de l'objet enregistré."""
         salles = {}
-        for cle, salle in attrs["salles"]:
+        for cle, salle in attrs["salles"].items():
             if isinstance(cle, str):
                 x, y, z = cle.split("|")
                 cle = int(x), int(y), int(z)

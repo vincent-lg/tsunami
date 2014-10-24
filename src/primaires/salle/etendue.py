@@ -144,7 +144,7 @@ class Etendue(BaseObj):
     def __setstate__(self, attrs):
         """Récupération de l'objet enregistré."""
         obstacles = {}
-        for cle, point in attrs["obstacles"]:
+        for cle, point in attrs["obstacles"].items():
             if isinstance(cle, str):
                 x, y = cle.split("|")
                 cle = int(x), int(y)
@@ -153,7 +153,7 @@ class Etendue(BaseObj):
         attrs["obstacles"] = obstacles
 
         cotes = {}
-        for cle, point in attrs["cotes"]:
+        for cle, point in attrs["cotes"].items():
             if isinstance(cle, str):
                 x, y = cle.split("|")
                 cle = int(x), int(y)
@@ -162,7 +162,7 @@ class Etendue(BaseObj):
         attrs["cotes"] = cotes
 
         liens = {}
-        for cle, point in attrs["liens"]:
+        for cle, point in attrs["liens"].items():
             if isinstance(cle, str):
                 x, y = cle.split("|")
                 cle = int(x), int(y)
