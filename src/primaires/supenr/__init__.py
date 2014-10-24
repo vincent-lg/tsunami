@@ -447,12 +447,18 @@ class Module(BaseModule):
 
         if "_id" in attributs: # L'objet existe
             _id = attributs.pop("_id")
-            try:
-                collection.update({"_id": _id}, attributs)
-            except InvalidDocument as err:
-                print(err, objet, type(objet), attributs)
-                sys.exit(1)
+            if not attributs.get("e_existe"):
+                self.mongo_db[nom].remove(objet._id)
+            else:
+                try:
+                    collection.update({"_id": _id}, attributs)
+                except InvalidDocument as err:
+                    print(err, objet, type(objet), attributs)
+                    sys.exit(1)
         else:
+            if not attributs.get("e_existe"):
+                return
+
             try:
                 _id = collection.insert(attributs)
             except InvalidDocument as err:
