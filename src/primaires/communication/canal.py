@@ -130,16 +130,19 @@ class Canal(BaseObj):
                         "que sur invitation.|ff|"
             else:
                 self.connectes.append(joueur)
+                self._enregistrer()
                 if aff:
                     joueur << "|att|Vous êtes à présent connecté au canal " \
                             "{}.|ff|".format(self.nom)
         else:
             self.connectes.remove(joueur)
+            self._enregistrer()
 
     def immerger_ou_sortir(self, joueur, aff=True):
         """Immerge un joueur et le signale aux immergés"""
         if not joueur in self.immerges:
             self.immerges.append(joueur)
+            self._enregistrer()
             contexte = Immersion(joueur.instance_connexion)
             contexte.canal = type(self).importeur.communication.canaux[self.nom]
             joueur.contexte_actuel.migrer_contexte(contexte)
@@ -150,6 +153,7 @@ class Canal(BaseObj):
                         immerge << res
         else:
             self.immerges.remove(joueur)
+            self._enregistrer()
             joueur.contextes[Immersion].fermer()
             joueur.envoyer("Vous sortez d'immersion.")
             if aff is True:
@@ -166,7 +170,7 @@ class Canal(BaseObj):
                 self.immerger_ou_sortir(joueur, False)
             self.rejoindre_ou_quitter(joueur, False)
             joueur << "|err|Le canal {} a été dissous.|ff|".format(self.nom)
-        del type(self).importeur.communication.canaux[self.nom]
+        importeur.communication.canaux.pop(self.nom).detruire()
 
     def ejecter(self, joueur):
         """Ejecte un joueur du canal (méthode de modération)"""
@@ -221,6 +225,7 @@ class Canal(BaseObj):
                         connecte << self.clr + "[" + self.nom + "] {} a été " \
                                 "promu modérateur.|ff|".format(joueur.nom)
             self.moderateurs.append(joueur)
+            self._enregistrer()
             if joueur in type(self).importeur.connex.joueurs_connectes:
                 if joueur in self.immerges:
                     joueur << self.clr + "<Vous avez été promu modérateur.>|ff|"
@@ -229,6 +234,7 @@ class Canal(BaseObj):
                             "été promu modérateur.|ff|"
         else:
             self.moderateurs.remove(joueur)
+            self._enregistrer()
             if joueur in type(self).importeur.connex.joueurs_connectes:
                 if joueur in self.immerges:
                     res = self.clr + "<Vous avez été déchu du rang de " \

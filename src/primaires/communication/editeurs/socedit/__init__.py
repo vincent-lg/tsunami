@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -42,20 +42,20 @@ from primaires.interpreteur.editeur import Editeur
 from primaires.communication.attitude import STATUTS
 
 class EdtSocedit(Editeur):
-    
+
     """Classe définissant l'éditeur d'attitude 'socedit'.
-    
+
     """
-    
+
     nom = "socedit"
-    
+
     def __init__(self, personnage, objet, attribut=None):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
-        
+
         Editeur.__init__(self, instance_connexion, objet, attribut)
         self.personnage = personnage
         self.ajouter_option("q", self.opt_quitter)
@@ -69,10 +69,10 @@ class EdtSocedit(Editeur):
         self.ajouter_option("idf", self.opt_idf)
         self.ajouter_option("odm", self.opt_odm)
         self.ajouter_option("odf", self.opt_odf)
-    
+
     def __getnewargs__(self):
         return (None, None)
-    
+
     def accueil(self):
         """Méthode d'accueil de l'éditeur"""
         attitude = self.objet
@@ -119,50 +119,60 @@ class EdtSocedit(Editeur):
         msg += "|ff|\nODF (Observateur Dépendant Féminin) :\n |vr|"
         msg += attitude.dependant["odf"] or \
                 "|grf||acteur| se fait toute petite devant |cible|."
-        
+
         return msg + "|ff|"
-    
+
     def opt_quitter(self, arguments):
         """Option quitter"""
         self.fermer()
         self.pere.envoyer("Fermeture de l'éditeur.")
-    
+
     def opt_aim(self, arguments):
         self.objet.independant["aim"] = arguments
+        self.objet._enregistrer()
         self.actualiser()
-   
+
     def opt_aif(self, arguments):
         self.objet.independant["aif"] = arguments
+        self.objet._enregistrer()
         self.actualiser()
-    
+
     def opt_oim(self, arguments):
         self.objet.independant["oim"] = arguments
+        self.objet._enregistrer()
         self.actualiser()
-    
+
     def opt_oif(self, arguments):
         self.objet.independant["oif"] = arguments
+        self.objet._enregistrer()
         self.actualiser()
-    
+
     def opt_adm(self, arguments):
         self.objet.dependant["adm"] = arguments
+        self.objet._enregistrer()
         self.actualiser()
-   
+
     def opt_adf(self, arguments):
         self.objet.dependant["adf"] = arguments
+        self.objet._enregistrer()
         self.actualiser()
-    
+
     def opt_idm(self, arguments):
         self.objet.dependant["idm"] = arguments
+        self.objet._enregistrer()
         self.actualiser()
-   
+
     def opt_idf(self, arguments):
         self.objet.dependant["idf"] = arguments
+        self.objet._enregistrer()
         self.actualiser()
-    
+
     def opt_odm(self, arguments):
         self.objet.dependant["odm"] = arguments
+        self.objet._enregistrer()
         self.actualiser()
-    
+
     def opt_odf(self, arguments):
         self.objet.dependant["odf"] = arguments
+        self.objet._enregistrer()
         self.actualiser()

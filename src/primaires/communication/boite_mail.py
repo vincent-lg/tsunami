@@ -64,10 +64,12 @@ class BoiteMail(BaseObj):
     def __setitem__(self, id, mail):
         """Modifie un mail"""
         self._mails[id] = mail
+        self._enregistrer()
 
     def __delitem__(self, id):
         """Supprime un mail"""
-        del self._mails[id]
+        self._mails.pop(id).detruire()
+        self._enregistrer()
 
     @property
     def id_suivant(self):
@@ -79,6 +81,7 @@ class BoiteMail(BaseObj):
         mail = MUDmail(self, expediteur, source=source)
         mail.id = self.id_suivant
         self._mails[mail.id] = mail
+        self._enregistrer()
         return mail
 
     def get_mails_pour(self, personnage, etat):
