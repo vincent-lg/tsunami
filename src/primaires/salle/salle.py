@@ -403,7 +403,7 @@ class Salle(BaseObj):
         return sortie.direction in self.sorties
 
     def envoyer(self, message, *personnages, prompt=True, mort=False,
-            **kw_personnages):
+            ignore=True, **kw_personnages):
         """Envoie le message aux personnages présents dans la salle.
 
         Les personnages dans les paramètres supplémentaires (nommés ou non)
@@ -411,7 +411,8 @@ class Salle(BaseObj):
         Ils ne recevront pas le message.
 
         """
-        exceptions = personnages + tuple(kw_personnages.values())
+        exceptions = personnages + tuple(kw_personnages.values()) if ignore \
+                else ()
         for personnage in self.personnages:
             if personnage not in exceptions:
                 if personnage.est_mort() and not mort:

@@ -34,8 +34,45 @@
 
 from primaires.format.constantes import ponctuations_finales
 from primaires.format.fonctions import echapper_accolades
-
 from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+
+# Constantes
+AIDE = r"""
+Cette commande permet de jouer une action RP dans la salle où vous vous
+trouvez. Tous les personnages présents dans la salle vous verront.
+Par exemple, vous pouvez faire |ent|emote sifflote un air mélodieux|ff|
+ou |ent|emote sourit|ff|.
+
+Les messages que vous envoyez doivent être RP et réalistes, formattés
+à la troisième personne du singulier, pour les autres joueurs présents
+dans la salle. Qaund vous entrez |cmd|emote chatonne d'un air distrait|ff|,
+les autres personnages présents verront votre nom suivit du message
+|ent|chantonne d'un air distrait.|ff|. Les règles de RP et de réalisme
+impliquent que vous ne devez pas envoyer de message qui dépasse les
+limites réalistes du gameplay (ne faites pas semblant de vous envoler
+dans la salle) et ne doivent pas obliger d'autres personnages à
+interagir (si vous interagissez avec un personnage présent, n'écrivez
+pas la réaction pour lui, laissez-le libre de réagir comme il le semble
+convenable).
+
+Enfin, vous pouvez utiliser une syntaxe étendue pour inclure des noms
+de personnages, objets ou détails de la salle. Dans votre emote, vous
+pouvez précéder un nom du signe dollar ($). Le nom donné (la partie
+se trouvant entre le signe dollar et un espace ou une ponctuation) sera
+remplacé par le nom de l'élément observé (c'est la même règle que pour
+la commande %regarder%). Par exemple, si vous voulez interagir avec
+un personnage présent dans la salle dont le nom est "un orc à l'air
+difficile", vous pouvez entrer |ent|emote regarde fixement $orc.|ff|
+|ent|$orc|ff| sera cherché dans la salle et le personnage "un orc à l'air
+difficile" sera sélectionné. Au final, les autres personnages présents
+verront un message comme "un tel regarde fixement un orc à l'air difficile".
+Si ils ont associé un nom à la distinction visible du personnage, ils
+verront ce nom. Cette syntaxe peut être également utilisée pour les
+objets (ceux au sol ou ceux dans votre inventaire) ainsi que les
+détails de la salle, décors et autres informations.
+""".strip()
 
 class CmdEmote(Commande):
 
@@ -49,22 +86,42 @@ class CmdEmote(Commande):
         self.nom_categorie = "parler"
         self.schema = "<message>"
         self.aide_courte = "joue une emote dans la salle"
-        self.aide_longue = \
-            "Cette commande permet de jouer une action RP dans la salle oé " \
-            "vous vous trouvez. Tous les personnages présents dans " \
-            "la salle vous verront. Par exemple, vous pouvez faire " \
-            "|ent|emote sifflote un air mélodieux|ff| ou |ent|emote " \
-            "sourit|ff|."
+        self.aide_longue = AIDE
 
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         personnage.agir("geste")
         message = dic_masques["message"].message
         message = message.rstrip(" \n")
+        message = echapper_accolades(message)
+
+        # On traite les détails
+        observable = importeur.interpreteur.masques["element_observable"]()
+        elements = []
+        for mot in list(message.split(" ")):
+            if mot.startswith("$"):
+                nom = mot[1:].rstrip(".,?; ")
+                observable.init()
+                masques = []
+                try:
+                    observable.repartir(personnage, masques, list(nom))
+                except ErreurValidation as err:
+                    personnage << str(err) + "."
+                    return
+
+                try:
+                    observable.valider(personnage, {})
+                except ErreurValidation as err:
+                    personnage << str(err) + "."
+                    return
+
+                elements.append(observable.element)
+                message = message.replace("$" + nom, "{}")
+
         if not message[-1] in ponctuations_finales:
             message += "."
-        message = echapper_accolades(message)
-        personnage.envoyer("{{}} {}".format(message), personnage)
-        personnage.salle.envoyer("{{}} {}".format(message), personnage)
+
+        personnage.salle.envoyer("{{}} {}".format(message), personnage,
+                *elements, ignore=False)
         importeur.communication.rapporter_conversation("emote",
                 personnage, message)
