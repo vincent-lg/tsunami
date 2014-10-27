@@ -122,6 +122,6 @@ class CmdEmote(Commande):
             message += "."
 
         personnage.salle.envoyer("{{}} {}".format(message), personnage,
-                *elements, ignore=False)
+                *elements, ignore=False, lisser=True)
         importeur.communication.rapporter_conversation("emote",
                 personnage, message)
