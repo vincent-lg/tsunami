@@ -34,7 +34,6 @@ from collections import OrderedDict
 
 from abstraits.obase import BaseObj
 from bases.collections.flags import Flags
-from corps.fonctions import lisser
 from primaires.affection.affection import Affection
 from primaires.format.description import Description
 from primaires.vehicule.vecteur import Vecteur
@@ -403,7 +402,7 @@ class Salle(BaseObj):
         return sortie.direction in self.sorties
 
     def envoyer(self, message, *personnages, prompt=True, mort=False,
-            **kw_personnages):
+            ignore=True, lisser=False, **kw_personnages):
         """Envoie le message aux personnages présents dans la salle.
 
         Les personnages dans les paramètres supplémentaires (nommés ou non)
@@ -411,7 +410,8 @@ class Salle(BaseObj):
         Ils ne recevront pas le message.
 
         """
-        exceptions = personnages + tuple(kw_personnages.values())
+        exceptions = personnages + tuple(kw_personnages.values()) if ignore \
+                else ()
         for personnage in self.personnages:
             if personnage not in exceptions:
                 if personnage.est_mort() and not mort:
@@ -420,11 +420,12 @@ class Salle(BaseObj):
                 if hasattr(personnage, "instance_connexion") and \
                         personnage.instance_connexion and not prompt:
                     personnage.instance_connexion.sans_prompt()
-                personnage.envoyer(message, *personnages, **kw_personnages)
+                personnage.envoyer(message, *personnages, lisser=lisser,
+                        **kw_personnages)
 
     def envoyer_lisser(self, chaine, *personnages, **kw_personnages):
         """Méthode redirigeant vers envoyer mais lissant la chaîne."""
-        self.envoyer(lisser(chaine), *personnages, **kw_personnages)
+        self.envoyer(chaine, *personnages, lisser=True, **kw_personnages)
 
     def get_elements_observables(self, personnage):
         """Retourne une liste des éléments observables dans cette salle."""
