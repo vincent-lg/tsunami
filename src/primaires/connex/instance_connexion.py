@@ -171,7 +171,9 @@ class InstanceConnexion(BaseObj):
     def _get_encodage(self):
         """Retourne l'encodage du compte ou 'Utf-8'."""
         encodage = "Utf-8"
-        if self.compte:
+        if self.client:
+            encodage = self.client.encodage
+        elif self.compte:
             encodage = self.compte.encodage
 
         return encodage
@@ -333,7 +335,9 @@ class InstanceConnexion(BaseObj):
         personnage défini.
 
         """
-        self.contexte_actuel.receptionner(message)
+        retours = importeur.hook["connex:cmd"].executer(self, message)
+        if not any(retours):
+            self.contexte_actuel.receptionner(message)
 
     def migrer_contexte(self, nouveau_contexte):
         """Méthode de migration d'un contexte à un autre.
