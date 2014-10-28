@@ -228,26 +228,33 @@ class Salle(BaseObj):
             Le personnage a une lumière
 
         """
+        print("Test", personnage)
         if personnage.est_immortel():
+            print("imm")
             return True
 
         if self.illuminee:
+            print("illum")
             return True
 
         if self.ident in importeur.salle.feux:
+            print("feu")
             return True
 
         if not self.interieur:
             if importeur.temps.temps.il_fait_jour:
+                print("jour")
                 return True
 
             perturbation = importeur.meteo.get_perturbation(self)
             if perturbation is None or not perturbation.est_opaque():
+                print("ciel", perturbation)
                 return True
 
         for objets in personnage.equipement.equipes:
             for objet in objets:
                 if objet.est_de_type("lumière") and objet.allumee_depuis:
+                    print("lumiere")
                     return True
 
         return False
