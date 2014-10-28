@@ -35,6 +35,7 @@ from datetime import datetime
 from bases.objet.attribut import Attribut
 from corps.aleatoire import *
 from primaires.interpreteur.editeur.entier import Entier
+from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.selection import Selection
 from .base import BaseType
 
@@ -53,11 +54,16 @@ class Lumiere(BaseType):
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
+        self.emplacement = "mains"
+        self.positions = (1, 2)
         self.duree_max = 1
         self.types_combustibles = ["pierre"]
+        self.masculin = True
+
         self.etendre_editeur("x", "durée max", Entier, self, "duree_max", 0)
         self.etendre_editeur("ty", "types de combustibles", Selection,
                 self, "types_combustibles", TYPES_COMBUSTIBLES)
+        self.etendre_editeur("ma", "genre masculin", Flag, self, "masculin")
 
         # Attributs propres à l'objet (non au prototype)
         self._attributs = {
@@ -90,7 +96,7 @@ class Lumiere(BaseType):
             return True
 
         actuellement = datetime.now()
-        diff = (actuellement - allumee_depuis).total_seconds()
+        diff = (actuellement - allumee_depuis).total_seconds() / 60
         if duree + diff > self.duree_max:
             return True
 

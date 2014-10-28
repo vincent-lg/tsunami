@@ -118,8 +118,10 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.allumer.CmdAllumer(),
             commandes.boire.CmdBoire(),
             commandes.donner.CmdDonner(),
+            commandes.eteindre.CmdEteindre(),
             commandes.jeter.CmdJeter(),
             commandes.manger.CmdManger(),
             commandes.oedit.CmdOedit(),
@@ -327,6 +329,5 @@ class Module(BaseModule):
         for prototype in prototypes:
             objets.extend(prototype.objets)
 
-        print("Nettoyage", objets)
         for objet in objets:
             objet.nettoyage_cyclique()
