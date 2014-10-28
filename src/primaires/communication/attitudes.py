@@ -53,6 +53,9 @@ class Attitudes(BaseObj):
     def __getnewargs__(self):
         return ()
 
+    def __bool__(self):
+        return bool(self._attitudes)
+
     def __contains__(self, cle):
         """Renvoie True si l'attitude existe, False sinon"""
         return cle in self._attitudes

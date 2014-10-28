@@ -177,10 +177,10 @@ class Voile(BaseElement):
 
         """
         salle = personnage.salle
-        personnage << "Vous commencez de hisser la voile, au prise " \
+        personnage << "Vous commencez de hisser la voile, aux prises " \
                 "avec les cordages."
         personnage.etats.ajouter("hisser_voile")
-        salle.envoyer("{} commence à hisser la voile, au prise " \
+        salle.envoyer("{} commence à hisser la voile, aux prises " \
                 "avec les cordages", personnage)
         return 7
 

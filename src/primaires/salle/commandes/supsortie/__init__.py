@@ -59,12 +59,21 @@ class CmdSupsortie(Commande):
         if not salle.sorties.sortie_existe(direction):
             raise ErreurInterpretation(
                 "|err|Cette direction n'a pas été définie dans cette salle.|ff|")
-        
+
         d_salle = salle.sorties[direction].salle_dest
-        dir_opposee = salle.sorties.get_nom_oppose(direction)
-        
-        d_salle.sorties.supprimer_sortie(dir_opposee)
+
+        # ne supprimer la sortie réciproque que si elle est vraiment réciproque
+        corresp = salle.sorties[direction].correspondante
+        reciproque_definie = corresp is not None and corresp != "" and d_salle is not None
+        if reciproque_definie:
+            dir_opposee = salle.sorties.get_nom_oppose(direction)
+            d_salle.sorties.supprimer_sortie(dir_opposee)
+
         salle.sorties.supprimer_sortie(direction)
-        personnage << "|att|La sortie {} a bien été supprimée de la salle " \
-                "courante.\nLa réciproque a également été supprimée (sortie " \
-                "{} dans {}).|ff|".format(direction, dir_opposee, d_salle)
+        message = "La sortie {} a bien été supprimée de la salle " \
+            "courante.".format(direction)
+        if reciproque_definie:
+            message += "\nLa réciproque a également été supprimée (sortie " \
+                "{} dans {}).".format(dir_opposee, d_salle)
+
+        personnage << "|att|" + message + "|ff|"

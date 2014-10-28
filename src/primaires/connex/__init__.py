@@ -66,6 +66,7 @@ class Module(BaseModule):
 
     def config(self):
         """Configuration du module.
+
         On crée le fichier de configuration afin de l'utiliser plus tard
         dans les contextes.
 
@@ -83,6 +84,10 @@ class Module(BaseModule):
                     "chiffrer les mots de passe n'existe pas.".format(
                     cfg.type_chiffrement))
             sys.exit(1)
+
+        # Création des hooks
+        importeur.hook.ajouter_hook("connex:cmd",
+                "Hook appelé quand un client entre un message")
 
         BaseModule.config(self)
 

@@ -71,7 +71,7 @@ class Observable(Masque):
                 nb = int(nb)
                 assert nb > 0
             except (ValueError, AssertionError):
-                raise ErreurValidation( \
+                    raise ErreurValidation( \
                     "Ce nombre est invalide.", False)
             else:
                 self.nombre = nb

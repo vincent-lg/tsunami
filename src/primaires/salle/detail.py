@@ -87,7 +87,7 @@ class Detail(BaseObj):
         return ("", "")
 
     def __str__(self):
-        return self.nom
+        return self.titre.lower()
 
     @property
     def repos(self):

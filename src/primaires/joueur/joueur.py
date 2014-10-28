@@ -33,6 +33,7 @@
 from datetime import datetime
 
 from abstraits.obase import BaseObj
+from corps.fonctions import lisser as fn_lisser
 from primaires.perso.exceptions.stat import DepassementStat
 from primaires.perso.personnage import Personnage
 from primaires.format.description import Description
@@ -229,7 +230,8 @@ class Joueur(Personnage):
         if self.instance_connexion:
             self.instance_connexion.sans_prompt()
 
-    def envoyer(self, msg, *l_formatter, mort=True, **kw_formatter):
+    def envoyer(self, msg, *l_formatter, mort=True, lisser=False,
+            **kw_formatter):
         """On redirige sur l'envoie de l'instance de connexion."""
         if not msg:
             return
@@ -258,6 +260,9 @@ class Joueur(Personnage):
                 d_aff[cle] = str(objet)
 
         msg = msg.format(*l_aff, **d_aff)
+        if lisser:
+            msg = fn_lisser(msg)
+
         if self.instance_connexion:
             self.instance_connexion.envoyer(msg)
 
