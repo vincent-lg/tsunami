@@ -52,8 +52,10 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "client", "secondaire")
-        self.options = []
         self.adresses = []
+        self.options = {
+                "encoding": self.opt_encodage,
+        }
 
     def config(self):
         """Méthode de configuration.
@@ -66,6 +68,25 @@ class Module(BaseModule):
         self.adresses = cfg.adresses_ip
         BaseModule.config(self)
 
-    def preparer(self):
-        """Préparation du module."""
-        pass
+    def init(self):
+        """Chargement du module."""
+        self.importeur.hook["connex:cmd"].ajouter_evenement(
+                self.interpreter_option)
+
+    def interpreter_option(self, instance_connexion, commande):
+        """Traite les options du client Web."""
+        if instance_connexion.adresse_ip in self.adresses and \
+                commande.startswith("#"):
+            commande = commande[1:]
+            mot = commande.split(" ")[0].lower()
+            reste = " ".join(commande.split(" ")[1:])
+            if mot in self.options:
+                methode = self.options[mot]
+                methode(instance_connexion, reste)
+                return True
+
+    def opt_encodage(self, instance, encodage):
+        """Modifie l'encodage du client."""
+        client = instance.client
+        client.encodage = encodage
+        client.modifier_encodage = False
