@@ -199,6 +199,7 @@ class Module(BaseModule):
         # Opérations de nettoyage cycliques
         importeur.diffact.ajouter_action("net_boule de neige", 60,
                 self.nettoyage_cyclique, "boule de neige")
+        self.nettoyage_lumieres()
 
     @property
     def prototypes(self):
@@ -313,5 +314,19 @@ class Module(BaseModule):
         for prototype in prototypes:
             objets.extend(prototype.objets)
 
+        for objet in objets:
+            objet.nettoyage_cyclique()
+
+    def nettoyage_lumieres(self):
+        """Nettoyage cyclique des lmuières."""
+        importeur.diffact.ajouter_action("net_lumieres", 5,
+                self.nettoyage_lumieres)
+        prototypes = [p for p in self.prototypes.values() if \
+                p.est_de_type("lumière")]
+        objets = []
+        for prototype in prototypes:
+            objets.extend(prototype.objets)
+
+        print("Nettoyage", objets)
         for objet in objets:
             objet.nettoyage_cyclique()

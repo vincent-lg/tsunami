@@ -111,14 +111,18 @@ class Lumiere(BaseType):
         var_objet = evt_allume.ajouter_variable("objet", "Objet")
         var_objet.aide = "l'objet allumé"
 
-        evt_eteint = self.script.creer_evenement("allume")
+        evt_eteint = self.script.creer_evenement("éteint")
         evt_eteint.aide_courte = "le personnage éteint l'objet"
         evt_eteint.aide_longue = \
             "Cet évènement est appelé quand le personnage éteint l'objet " \
             "lumière avec la commande associée. On ne peut pas empêcher " \
             "la commande de s'exécuter dans ce script. Notez que " \
             "l'objet est automatiquement éteint quand le combustible " \
-            "s'épuise, ce qui appelle aussi ce script."
+            "s'épuise, ce qui appelle aussi ce script. Notez que " \
+            "dans ce cas, la variable personnage peut être nulle " \
+            "(la lumière peut être posée à terre, par exemple). Testez " \
+            "si le personnage existe (si personnage:) avant de lui " \
+            "envoyer un message."
         var_perso = evt_eteint.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage éteignant l'objet"
         var_objet = evt_eteint.ajouter_variable("objet", "Objet")
@@ -153,3 +157,14 @@ class Lumiere(BaseType):
             "n'est nécessaire pour l'allumer, ou bien d'avoir une " \
             "lumière\npossédant plusieurs types possibles.\n\n" \
             "Types actuels : {objet.str_types_combustibles}"
+
+    def nettoyage_cyclique(self):
+        """Nettoyage cyclique de la lumière."""
+        if not self.a_brulee():
+            return
+
+        parent = self.grand_parent
+        from primaires.perso.personnage import Personnage
+        if isinstance(parent, Personnage):
+            self.script["éteint"].executer(objet=self, personnage=parent)
+            self.allumee_depuis = None
