@@ -302,6 +302,24 @@ class Personnage(BaseObj):
 
         return nb
 
+    def possede_type(self, type_objet):
+        """Retourne le premier objet du type indiqué ou None.
+
+        Pour chaque objet dans l'inventaire du personnage, on
+        cherche l'objet de type spécifié. Ce eput être un type parent
+        (par exemple, on recherche tous les types vêtement).
+
+        """
+        if self.equipement is None:
+            return None
+
+        inventaire = self.equipement.inventaire
+        for objet in inventaire:
+            if objet.est_de_type(type_objet):
+                return objet
+
+        return None
+
     def _get_element(self):
         """Retourne l'élément."""
         return self._element

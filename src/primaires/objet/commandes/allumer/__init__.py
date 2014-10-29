@@ -70,5 +70,29 @@ class CmdAllumer(Commande):
             return
 
         # Traitement des combustibles
+        types_combustibles = objet.types_combustibles
+        contraintes = []
+        for type_combustible in types_combustibles:
+            if type_combustible == "pierre":
+                # On a besoin d'une pierre à feu
+                pierre = personnage.possede_type("pierre à feu")
+                nb_mains = personnage.nb_mains_libres
+                if pierre is None:
+                    msg_err = "|err|Vous ne possédez pas de pierre à " \
+                            "feu pour allumer {}.|ff|".format(objet.get_nom())
+                    contraintes.append(False)
+                    continue
+
+                if nb_mains < 1:
+                    msg_err = "|err|Il vous faut au moins une main de libre.|ff|"
+                    contraintes.append(False)
+                    continue
+
+                contraintes.append(True)
+
+        if not any(contraintes):
+            personnage << msg_err
+            return
+
         objet.allumee_depuis = datetime.now()
         objet.script["allume"].executer(objet=objet, personnage=personnage)
