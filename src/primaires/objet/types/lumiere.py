@@ -125,6 +125,26 @@ class Lumiere(BaseType):
 
         return False
 
+    def duree_en_cours(self):
+        """Retourne la durée en cours.
+
+        Cette méthode retourne la durée réelle qui tient compte du
+        moment où la lumière a été allumée.
+
+        """
+        duree = getattr(self, "duree", None)
+        allumee_depuis = getattr(self, "allumee_depuis", None)
+
+        if duree is None:
+            duree = 0
+
+        if allumee_depuis is None:
+            allumee_depuis = datetime.now()
+
+        actuellement = datetime.now()
+        diff = (actuellement - allumee_depuis).total_seconds() / 60
+        return duree + diff
+
     def etendre_script(self):
         """Extension du scripting."""
         evt_allume = self.script.creer_evenement("allume")

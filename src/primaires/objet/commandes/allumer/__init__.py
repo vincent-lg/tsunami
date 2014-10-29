@@ -69,7 +69,7 @@ class CmdAllumer(Commande):
                     objet.get_nom().capitalize())
             return
 
-        if objet.duree >= objet.duree_max:
+        if objet.duree is not None and objet.duree >= objet.duree_max:
             e = "" if objet.masculin else "e"
             personnage << "|err|{} a complètement brûlé{e}.|ff|".format(
                     objet.nom_singulier, e=e)
