@@ -69,6 +69,12 @@ class CmdAllumer(Commande):
                     objet.get_nom().capitalize())
             return
 
+        if objet.duree >= objet.duree_max:
+            e = "" if objet.masculin else "e"
+            personnage << "|err|{} a complètement brûlé{e}.|ff|".format(
+                    objet.nom_singulier, e=e)
+            return
+
         # Traitement des combustibles
         types_combustibles = objet.types_combustibles
         contraintes = []
@@ -89,6 +95,33 @@ class CmdAllumer(Commande):
                     continue
 
                 contraintes.append(True)
+                personnage << "Vous frottez {} et obtenez quelques " \
+                        "étincelles.".format(pierre.get_nom())
+                personnage.salle.envoyer("{{}} frotte {} et obtient " \
+                        "quelques étincelles.".format(pierre.get_nom()),
+                        personnage)
+                break
+            elif type_combustible == "foyer":
+                # On a besoin d'un feu
+                salle = personnage.salle
+                feu = importeur.salle.feux.get(salle.ident)
+                if feu is None:
+                    msg_err = "|err|Il n'y a pas de feu ici.|ff|"
+                    contraintes.append(False)
+                    continue
+
+                if feu.puissance < 2:
+                    msg_err = "|err|Les flammes ne sont pas assez fortes.|ff|"
+                    contraintes.append(False)
+                    continue
+
+                contraintes.append(True)
+                personnage << "Vous présentez {} devant les flammes.".format(
+                        objet.get_nom())
+                personnage.salle.envoyer("{{}} présente {} devant les " \
+                        "flammes.".format(objet.get_nom()),
+                        personnage)
+                break
 
         if not any(contraintes):
             personnage << msg_err

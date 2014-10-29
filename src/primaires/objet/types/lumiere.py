@@ -78,6 +78,29 @@ class Lumiere(BaseType):
         else:
             return "Aucun"
 
+    def get_nom(self, nombre=1, pluriels=True):
+        """Retourne le nom complet en fonction du nombre.
+
+        Par exemple :
+        Si nombre == 1 : retourne le nom singulier
+        Sinon : retourne le nombre et le nom pluriel
+
+        """
+        ajout = ""
+        e = "" if self.masculin else "e"
+        if getattr(self, "allumee_depuis", None):
+            ajout = " (allumé{e})".format(e=e)
+        else:
+            ajout = " (éteint{e})".format(e=e)
+
+        if nombre <= 0:
+            raise ValueError("la fonction get_nom a été appelée " \
+                    "avec un nombre négatif ou nul.")
+        elif nombre == 1:
+            return self.nom_singulier + ajout
+        else:
+            return BaseType.get_nom(self, nombre, pluriels)
+
     def a_brulee(self):
         """Cette propriété est vraie si la lumière est épuisée."""
         if self.duree_max == 0:
@@ -174,3 +197,4 @@ class Lumiere(BaseType):
         if isinstance(parent, Personnage):
             self.script["éteint"].executer(objet=self, personnage=parent)
             self.allumee_depuis = None
+            self.duree = self.duree_max
