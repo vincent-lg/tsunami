@@ -221,6 +221,7 @@ class Lumiere(BaseType):
 
     def acheter(self, qtt, magasin, transaction):
         """Quand on achète une lumière."""
+        BaseType.acheter(self, qtt, magasin, transaction)
         personnage = transaction.initiateur
         personnage.envoyer_tip("Entrez la commande %allumer% pour " \
                 "l'utiliser.")

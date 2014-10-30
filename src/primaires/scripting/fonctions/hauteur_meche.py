@@ -42,6 +42,7 @@ class ClasseFonction(Fonction):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.hauteur_meche, "Objet")
+        cls.ajouter_types(cls.prototype_hauteur_meche, "PrototypeObjet")
 
     @staticmethod
     def hauteur_meche(objet):
@@ -84,3 +85,14 @@ class ClasseFonction(Fonction):
 
         return Fraction(100 - (objet.duree_en_cours() / objet.duree_max * \
                 100))
+
+    @staticmethod
+    def prototype_hauteur_meche(prototype):
+        """Retourne invariablement 100.
+
+        Cette fonction est simplement utilisée pour la compatibilité
+        avec l'objet. Quand on examine le prototype, la mèche doit
+        être intacte.
+
+        """
+        return Fraction(100)
