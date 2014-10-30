@@ -218,3 +218,9 @@ class Lumiere(BaseType):
             self.script["éteint"].executer(objet=self, personnage=parent)
             self.allumee_depuis = None
             self.duree = self.duree_max
+
+    def acheter(self, qtt, magasin, transaction):
+        """Quand on achète une lumière."""
+        personnage = transaction.initiateur
+        personnage.envoyer_tip("Entrez la commande %allumer% pour " \
+                "l'utiliser.")
