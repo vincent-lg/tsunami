@@ -30,6 +30,7 @@
 """Fichier décrivant la classe Race, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
+from bases.collections.flags import Flags
 from primaires.format.description import Description
 
 from .stats import Stats
@@ -42,6 +43,9 @@ class Race(BaseObj):
     """
 
     enregistrer = True
+    def_flags = Flags()
+    def_flags.ajouter("nyctalope")
+
     def __init__(self, nom):
         """Constructeur d'une race."""
         BaseObj.__init__(self)
@@ -50,6 +54,7 @@ class Race(BaseObj):
         self.stats = Stats(parent=self)
         self.genres = Genres(parent=self)
         self.squelette = None
+        self.flags = 0
         self._construire()
 
     def __getnewargs__(self):
@@ -75,3 +80,8 @@ class Race(BaseObj):
             res = self.squelette.cle
 
         return res
+
+    def a_flag(self, nom_flag):
+        """Retourne True si la race a le flag, False sinon."""
+        valeur = type(self).def_flags[nom_flag]
+        return self.flags & valeur != 0

@@ -222,6 +222,7 @@ class Salle(BaseObj):
             Il est immortel
             La salle est illuminée
             Il y a un feu dans la salle
+            La race du personnage est nyctalope
             Le personnage a une affection qui lui permet de voir dans le noir
             La salle est en extérieure et :
                 Il fait jour ou
@@ -240,6 +241,11 @@ class Salle(BaseObj):
 
         if self.ident in importeur.salle.feux:
             print("feu")
+            return True
+
+        # Vérification de la race
+        if personnage.race and personnage.race.a_flag("nyctalope"):
+            print("Race")
             return True
 
         # Vérification de l'affection
