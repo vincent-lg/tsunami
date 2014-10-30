@@ -31,6 +31,7 @@
 """Fichier contenant le module primaire objet."""
 
 from abstraits.module import *
+from primaires.affection.personnage import AffectionPersonnage
 from primaires.format.fonctions import format_nb, supprimer_accents
 from . import types
 from . import commandes
@@ -92,6 +93,9 @@ class Module(BaseModule):
         etat.msg_refus = "Vous êtes en train de manger."
         etat.msg_visible = "mange ici"
         etat.act_autorisees = ["regarder", "bouger"]
+
+        # Ajout des flags d'affection
+        AffectionPersonnage.def_flags.ajouter("voit dans le noir")
 
         BaseModule.config(self)
 

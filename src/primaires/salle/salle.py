@@ -222,6 +222,7 @@ class Salle(BaseObj):
             Il est immortel
             La salle est illuminée
             Il y a un feu dans la salle
+            Le personnage a une affection qui lui permet de voir dans le noir
             La salle est en extérieure et :
                 Il fait jour ou
                 Le ciel est dégagé
@@ -241,6 +242,12 @@ class Salle(BaseObj):
             print("feu")
             return True
 
+        # Vérification de l'affection
+        for affection in personnage.affections.values():
+            if affection.affection.a_flag("voit dans le noir"):
+                print("Affection")
+                return True
+
         if not self.interieur:
             if importeur.temps.temps.il_fait_jour:
                 print("jour")
@@ -251,11 +258,10 @@ class Salle(BaseObj):
                 print("ciel", perturbation)
                 return True
 
-        for objets in personnage.equipement.equipes:
-            for objet in objets:
-                if objet.est_de_type("lumière") and objet.allumee_depuis:
-                    print("lumiere")
-                    return True
+        for objet in personnage.equipement.equipes:
+            if objet.est_de_type("lumière") and objet.allumee_depuis:
+                print("lumiere")
+                return True
 
         return False
 
