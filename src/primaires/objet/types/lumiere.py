@@ -209,7 +209,7 @@ class Lumiere(BaseType):
 
     def nettoyage_cyclique(self):
         """Nettoyage cyclique de la lumière."""
-        if not self.a_brulee():
+        if self.allumee_depuis is None or not self.a_brulee():
             return
 
         parent = self.grand_parent
