@@ -30,6 +30,8 @@
 
 """Fichier contenant le masque <nom_objet>."""
 
+import random
+
 from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.exceptions.erreur_validation \
@@ -39,6 +41,7 @@ from primaires.format.fonctions import *
 class NomObjet(Masque):
 
     """Masque <nom_objet>.
+
     On attend un nom d'objet en paramètre.
 
     """
@@ -118,7 +121,10 @@ class NomObjet(Masque):
         prototype = None
         salle = personnage.salle
 
-        if not salle.voit_ici(personnage):
+        sensibilite = personnage.stats.sensibilite
+        facteur = (10 + sensibilite / 5) / 100
+        voit = random.random() <= facteur
+        if not voit and not salle.voit_ici(personnage):
             raise ErreurValidation(
                 "|err|Ce nom d'objet est introuvable.|ff|")
 
