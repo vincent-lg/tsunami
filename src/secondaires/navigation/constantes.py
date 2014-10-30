@@ -108,4 +108,10 @@ def get_portee(salle):
     alt = etendue.altitude
     hauteur = salle.coords.z - alt
     portee = 50 + 50 * hauteur
+    if importeur.temps.temps.il_fait_nuit:
+        portee = round(portee / 2)
+        perturbation = importeur.meteo.get_perturbation(salle)
+        if perturbation and perturbation.est_opaque():
+            portee = round(portee / 3)
+
     return portee
