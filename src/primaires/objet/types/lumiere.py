@@ -115,7 +115,7 @@ class Lumiere(BaseType):
         if allumee_depuis is None:
             allumee_depuis = datetime.now()
 
-        if duree > self.duree_max:
+        if duree >= self.duree_max:
             return True
 
         actuellement = datetime.now()
