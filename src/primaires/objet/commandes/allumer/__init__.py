@@ -58,7 +58,7 @@ class CmdAllumer(Commande):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("nom_objet")
         nom_objet.proprietes["conteneurs"] = \
-                "(personnage.equipement.inventaire, )"
+                "(personnage.equipement.equipes, )"
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
