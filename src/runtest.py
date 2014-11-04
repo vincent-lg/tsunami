@@ -38,6 +38,7 @@ n'est cependant ni chargée, ni écrasée.
 """
 
 import os
+import sys
 import unittest
 
 from lib import *
@@ -93,7 +94,10 @@ charger_bootstrap("test.boostrap")
 
 
 tests = unittest.TestLoader().discover('.')
-unittest.TextTestRunner().run(tests)
+retour = unittest.TextTestRunner().run(tests)
 
 importeur.tout_detruire()
 importeur.tout_arreter()
+
+if not retour.wasSuccessful():
+    sys.exit(1)
