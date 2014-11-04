@@ -66,6 +66,12 @@ class CmdEtudier(Commande):
         objets = list(dic_masques["nom_objet"].objets_qtt_conteneurs)[0]
         grimoire, qtt, conteneur = objets
         personnage.agir("etudiersort")
+
+        if not grimoire.est_de_type("grimoire"):
+            personnage << "|err|{} n'est pas un grimoire.|ff|".format(
+                    grimoire.get_nom().capitalize())
+            return
+
         sort = grimoire.sort
         if sort.cle in personnage.sorts and sort.cle not in \
                 personnage.sorts_verrouilles:
