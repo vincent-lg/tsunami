@@ -34,6 +34,7 @@ from . import cle_navire
 from . import cle_vent
 from . import modele
 from . import nom_matelot
+from . import nom_navire
 from . import objet_cale
 from . import point_visible
 from . import vitesse_rames
