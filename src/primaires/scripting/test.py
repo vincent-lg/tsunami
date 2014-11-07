@@ -61,6 +61,7 @@ class Test(BaseObj):
         self.__evenement = evenement
         self.__tests = None
         self.__instructions = []
+        self.__cache = None
         self.dernier_niveau = 0
         self.etape = None
         self._construire()
@@ -99,6 +100,35 @@ class Test(BaseObj):
         acteur = self.evenement.nom_acteur
         return self.evenement.espaces.variables[acteur]
 
+    def get_cache(self):
+        """Calcul le cache Python si nécessaire.
+
+        Le cache est soit écrit dans l'attribut d'instance __cache,
+        soit à calculer depuis la liste des instructions. Quand le
+        calcul complet a besoin d'être fait, l'attribut d'instance
+        '__cache' est mis à jour. Ce système permet de garder en mémoire
+        le code Python propre à un test au lieu de le redemander à
+        chaque fois, ce qui peut ralentir l'exécution.
+
+        """
+        if self.__cache is None:
+            # Calcul le cache
+            self.calculer_cache()
+
+        return self.__cache
+
+    def calculer_cache(self):
+        """Calcul le cache et l'écrit dans self.__cache."""
+        code = "def script():\n"
+        lignes = []
+        for instruction in self.__instructions:
+            lignes.append((" " * 4 * (instruction.niveau + 1)) + \
+                    instruction.code_python)
+
+        code += "\n".join(lignes)
+        code += "\n    yield None"
+        self.__cache = code
+
     def construire(self, chaine_test):
         """Construit la suite de chaînes en fonction de la chaîne.
 
@@ -113,6 +143,7 @@ class Test(BaseObj):
         instruction.deduire_niveau(self.dernier_niveau)
         self.dernier_niveau = instruction.get_niveau_suivant()
         self.__instructions.append(instruction)
+        self.calculer_cache()
 
     def ajouter_instructions(self, instructions):
         """Ajoute plusieurs instructions.
@@ -139,6 +170,7 @@ class Test(BaseObj):
         instruction.niveau = ancienne_instruction.niveau
         self.__instructions[ligne] = instruction
         self.reordonner()
+        self.calculer_cache()
 
     def corriger_instruction(self, ligne, texte, remplacement):
         """Corrige l'instruction spécifiée.
@@ -173,6 +205,7 @@ class Test(BaseObj):
         instruction.niveau = niveau
         self.__instructions[ligne] = instruction
         self.reordonner()
+        self.calculer_cache()
 
     def inserer_instruction(self, ligne, message):
         """Insère une instruction à la ligne précisée."""
@@ -183,6 +216,7 @@ class Test(BaseObj):
         instruction = type_instruction.construire(message)
         self.__instructions.insert(ligne, instruction)
         self.reordonner()
+        self.calculer_cache()
 
     def supprimer_instruction(self, ligne):
         """Supprime une instruction."""
@@ -191,6 +225,7 @@ class Test(BaseObj):
 
         del self.__instructions[ligne]
         self.reordonner()
+        self.calculer_cache()
 
     def reordonner(self):
         """Vérifie et corrige les tabulations de toutes les instructions."""
@@ -313,15 +348,7 @@ class Test(BaseObj):
         if etape and self.acteur:
             self.acteur.quetes[etape.quete.cle].deverouiller()
 
-        code = "def script():\n"
-        lignes = []
-        instructions = self.instructions
-        for instruction in instructions:
-            lignes.append((" " * 4 * (instruction.niveau + 1)) + \
-                    instruction.code_python)
-
-        code += "\n".join(lignes)
-        code += "\n    yield None"
+        code = self.get_cache()
 
         # Constitution des globales
         globales = self.get_globales(evenement)
