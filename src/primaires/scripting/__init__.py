@@ -86,6 +86,18 @@ class Module(BaseModule):
         }
         self.execute_test = []
 
+        # Statistiques
+        self.tps_actions = -1
+        self.tps_fonctions = -1
+        self.exc_actions = {}
+        self.exc_fonctions = {}
+        self.nb_exc_actions = 0
+        self.nb_exc_fonctions = 0
+        self.moy_actions = 0
+        self.nb_moy_actions = 0
+        self.moy_fonctions = 0
+        self.nb_moy_fonctions = 0
+
     @property
     def commandes_dynamiques_sa(self):
         """Retourne les commandes dynamiques {cle_sans_accent: commande}."""
@@ -154,6 +166,10 @@ class Module(BaseModule):
         # Création de l'action différée pour nettoyer les mémoires
         importeur.diffact.ajouter_action("eff_memoires", 90,
                 self.nettoyer_memoires)
+
+        # Hooks
+        self.importeur.hook["stats:infos"].ajouter_evenement(
+                self.stats_scripting)
 
         BaseModule.init(self)
 
@@ -368,3 +384,34 @@ class Module(BaseModule):
                 if cle_quete in j.quetes and etape in \
                 j.quetes[cle_quete].niveaux]
         return len(joueurs)
+
+    def stats_scripting(self, infos):
+        """Ajoute les stats concernant le scripting."""
+        moy_actions = str(round(self.moy_actions, 3)).replace(".", ",")
+        moy_fonctions = str(round(self.moy_fonctions, 3)).replace(".", ",")
+        tps_actions = str(round(self.tps_actions, 3)).replace(".", ",")
+        tps_fonctions = str(round(self.tps_fonctions, 3)).replace(".", ",")
+        msg = "|tit|Scripting :|ff|"
+        msg += "\n  Nombres d'actions exécutées : {} en {} " \
+                "secondes".format(self.nb_moy_actions, moy_actions)
+        msg += "\n  Nombres d'actions ayant mis plus de {} secondes " \
+                "pour s'exécuter : {}".format(tps_actions, self.nb_exc_actions)
+        if self.exc_actions:
+            msg += "\n  "
+            for nom, tps in sorted(self.exc_actions.items(), \
+                    key=lambda c: c[1], reverse=True):
+                tps = str(round(tps, 5)).replace(".", ",")
+                msg += "  {} ({}s)".format(nom, tps)
+        msg += "\n  Nombres de fonctions exécutées : {} en {} " \
+                "secondes".format(self.nb_moy_fonctions, moy_fonctions)
+        msg += "\n  Nombres de fonctions ayant mis plus de {} secondes " \
+                "pour s'exécuter : {}".format(tps_fonctions,
+                self.nb_exc_fonctions)
+        if self.exc_fonctions:
+            msg += "\n  "
+            for nom, tps in sorted(self.exc_fonctions.items(), \
+                    key=lambda c: c[1], reverse=True):
+                tps = str(round(tps, 5)).replace(".", ",")
+                msg += "  {} ({}s)".format(nom, tps)
+
+        infos.append(msg)
