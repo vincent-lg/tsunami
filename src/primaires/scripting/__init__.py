@@ -97,6 +97,8 @@ class Module(BaseModule):
         self.nb_moy_actions = 0
         self.moy_fonctions = 0
         self.nb_moy_fonctions = 0
+        self.tps_script = 0.3
+        self.scripts_gourmands = {}
 
     @property
     def commandes_dynamiques_sa(self):
@@ -391,27 +393,48 @@ class Module(BaseModule):
         moy_fonctions = str(round(self.moy_fonctions, 3)).replace(".", ",")
         tps_actions = str(round(self.tps_actions, 3)).replace(".", ",")
         tps_fonctions = str(round(self.tps_fonctions, 3)).replace(".", ",")
+        tps_script = str(round(self.tps_script, 3)).replace(".", ",")
         msg = "|tit|Scripting :|ff|"
-        msg += "\n  Nombres d'actions exécutées : {} en {} " \
+        msg += "\n  Actions exécutées : {} en {} " \
                 "secondes".format(self.nb_moy_actions, moy_actions)
         msg += "\n  Actions ayant mis plus de {} secondes " \
                 "pour s'exécuter : {}".format(tps_actions, self.nb_exc_actions)
         if self.exc_actions:
             msg += "\n  "
+            i = 0
             for nom, tps in sorted(self.exc_actions.items(), \
                     key=lambda c: c[1], reverse=True):
                 tps = str(round(tps, 5)).replace(".", ",")
                 msg += "  {} ({}s)".format(nom, tps)
-        msg += "\n  Nombres de fonctions exécutées : {} en {} " \
+                i += 1
+                if i >= 5:
+                    break
+        msg += "\n  Fonctions exécutées : {} en {} " \
                 "secondes".format(self.nb_moy_fonctions, moy_fonctions)
         msg += "\n  Fonctions ayant mis plus de {} secondes " \
                 "pour s'exécuter : {}".format(tps_fonctions,
                 self.nb_exc_fonctions)
         if self.exc_fonctions:
             msg += "\n  "
+            i = 0
             for nom, tps in sorted(self.exc_fonctions.items(), \
                     key=lambda c: c[1], reverse=True):
                 tps = str(round(tps, 5)).replace(".", ",")
                 msg += "  {} ({}s)".format(nom, tps)
+                i += 1
+                if i >= 5:
+                    break
+
+        msg += "\n  Scripts ayant mis plus de {} secondes pour " \
+                "s'exécuter : {}".format(tps_script,
+                len(self.scripts_gourmands))
+        i = 0
+        for ligne, tps in sorted(self.scripts_gourmands.items(),
+                key=lambda c: c[1], reverse=True):
+            tps = str(round(tps, 3)).replace(".", ",")
+            msg += "\n    {}s : {}".format(tps, ligne)
+            i += 1
+            if i >= 5:
+                break
 
         infos.append(msg)

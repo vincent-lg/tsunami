@@ -33,6 +33,7 @@
 import re
 import traceback
 from fractions import Fraction
+from time import time
 
 from abstraits.obase import BaseObj
 from primaires.format.fonctions import *
@@ -270,7 +271,7 @@ class Test(BaseObj):
 
         """
         appelant = self.appelant
-        evenement = str(self.evenement.nom)
+        evenement = str(self.evenement.nom_complet)
         tests = self.__tests and "si " + str(self) or "sinon"
         pile = traceback.format_exc()
 
@@ -306,6 +307,7 @@ class Test(BaseObj):
             Si le retour est None, on s'arrête.
 
         """
+        t1 = time()
         # Exécution
         importeur.scripting.execute_test.append(self)
         try:
@@ -336,6 +338,17 @@ class Test(BaseObj):
                         self.executer_code, evenement, code)
         finally:
             importeur.scripting.execute_test.remove(self)
+            t2 = time()
+            diff = t2 - t1
+            if diff > importeur.scripting.tps_script:
+                appelant = self.appelant
+                appelant = type(appelant).nom_scripting + " " + \
+                        repr(appelant)
+                evenement = str(self.evenement.nom_complet)
+                tests = self.__tests and "si " + str(self) or "sinon"
+                ligne = "{}, évènement {}, test {}".format(appelant,
+                        evenement, tests)
+                importeur.scripting.scripts_gourmands[ligne] = diff
 
     def executer_instructions(self, evenement):
         """Convertit et exécute la suite d'instructions.
