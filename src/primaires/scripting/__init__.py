@@ -87,8 +87,8 @@ class Module(BaseModule):
         self.execute_test = []
 
         # Statistiques
-        self.tps_actions = -1
-        self.tps_fonctions = -1
+        self.tps_actions = 0.003
+        self.tps_fonctions = 0.002
         self.exc_actions = {}
         self.exc_fonctions = {}
         self.nb_exc_actions = 0
@@ -394,7 +394,7 @@ class Module(BaseModule):
         msg = "|tit|Scripting :|ff|"
         msg += "\n  Nombres d'actions exécutées : {} en {} " \
                 "secondes".format(self.nb_moy_actions, moy_actions)
-        msg += "\n  Nombres d'actions ayant mis plus de {} secondes " \
+        msg += "\n  Actions ayant mis plus de {} secondes " \
                 "pour s'exécuter : {}".format(tps_actions, self.nb_exc_actions)
         if self.exc_actions:
             msg += "\n  "
@@ -404,7 +404,7 @@ class Module(BaseModule):
                 msg += "  {} ({}s)".format(nom, tps)
         msg += "\n  Nombres de fonctions exécutées : {} en {} " \
                 "secondes".format(self.nb_moy_fonctions, moy_fonctions)
-        msg += "\n  Nombres de fonctions ayant mis plus de {} secondes " \
+        msg += "\n  Fonctions ayant mis plus de {} secondes " \
                 "pour s'exécuter : {}".format(tps_fonctions,
                 self.nb_exc_fonctions)
         if self.exc_fonctions:
