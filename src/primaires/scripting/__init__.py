@@ -97,7 +97,7 @@ class Module(BaseModule):
         self.nb_moy_actions = 0
         self.moy_fonctions = 0
         self.nb_moy_fonctions = 0
-        self.tps_script = 0.3
+        self.tps_script = 0.15
         self.scripts_gourmands = {}
 
     @property
