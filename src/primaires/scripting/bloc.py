@@ -55,6 +55,7 @@ class Bloc(BaseObj):
 
     """
 
+    nom_scripting = "le bloc"
     def __init__(self, script, nom):
         """Constructeur d'un  bloc.
 
@@ -77,6 +78,10 @@ class Bloc(BaseObj):
 
     def __str__(self):
         return "bloc {}".format(self.nom)
+
+    @property
+    def nom_complet(self):
+        return self.nom
 
     @property
     def test(self):
