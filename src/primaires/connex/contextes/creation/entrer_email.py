@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 DAVY Guillaume
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -42,18 +42,18 @@ class EntrerEmail(Contexte):
     validation qui sera récupéré par le contexte suivant
     Note: si le serveur mail n'est pas actif (option configurable), on valide
     automatiquement le compte.
-    
+
     """
     nom = "connex:creation:entrer_email"
-    
+
     def __init__(self, pere):
         """Constructeur du contexte"""
         Contexte.__init__(self, pere)
-    
+
     def get_prompt(self):
         """Message de prompt"""
         return "Votre adresse mail : "
-    
+
     def accueil(self):
         """Message d'accueil"""
         return \
@@ -63,16 +63,17 @@ class EntrerEmail(Contexte):
             "à cette adresse pour valider le compte ; elle sera " \
             "aussi utilisée si\n" \
             "vous perdez votre |cmd|mot de passe|ff|. Veillez donc à ce " \
-            "qu'elle soit valide."
-    
+            "qu'elle soit valide.\n|att|Les adresses jetables sont " \
+            "interdites sur ce serveur.|ff|"
+
     def deconnecter(self):
         """En cas de déconexion du joueur, on supprime son compte"""
         type(self).importeur.connex.supprimer_compte(self.pere.compte)
-    
+
     def interpreter(self, msg):
         """Méthode appelée quand un message est réceptionné"""
         cfg_email = type(self).importeur.anaconf.get_config("email")
-        
+
         # On passe le message en minuscules
         msg = msg.lower()
         if msg in type(self).importeur.connex.email_comptes:
@@ -81,6 +82,12 @@ class EntrerEmail(Contexte):
         elif RE_MAIL_VALIDE.search(msg) is None:
             self.pere.envoyer("|err|L'adresse spécifiée n'est pas valide.|ff|")
         else:
+            nom_domaine = msg[msg.find("@") + 1:].lower()
+            if nom_domaine in importeur.email.noms_domaines_interdits:
+                self.pere.envoyer("|err|Cette adresse e-mail est " \
+                        "considérée comme une adresse jetable.|ff|")
+                return
+
             self.pere.compte.adresse_email = msg
             if cfg_email.serveur_mail:
                 self.migrer_contexte("connex:creation:validation")
@@ -91,4 +98,4 @@ class EntrerEmail(Contexte):
                     "|ff|\n\nVous pouvez maintenant commencer à créer un " \
                     "personnage...")
                 self.migrer_contexte("connex:connexion:choix_personnages")
-    
+
