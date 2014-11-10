@@ -31,12 +31,16 @@
 """Fichier contenant le masque <nom_objet>."""
 
 import random
+import re
 
 from primaires.interpreteur.masque.masque import Masque
 from primaires.interpreteur.masque.fonctions import *
 from primaires.interpreteur.masque.exceptions.erreur_validation \
         import ErreurValidation
 from primaires.format.fonctions import *
+
+# Constantes
+RE_XNOM = re.compile(r"^(\d+)\.(.*)$")
 
 class NomObjet(Masque):
 
@@ -121,6 +125,13 @@ class NomObjet(Masque):
         prototype = None
         salle = personnage.salle
 
+        # Gestion du suppport X.nom
+        nb = 1
+        xnom = RE_XNOM.search(nom)
+        if xnom:
+            nb, nom = xnom.groups()
+            nb = int(nb)
+
         sensibilite = personnage.stats.sensibilite
         facteur = (10 + sensibilite / 5) / 100
         voit = random.random() <= facteur
@@ -128,6 +139,7 @@ class NomObjet(Masque):
             raise ErreurValidation(
                 "|err|Ce nom d'objet est introuvable.|ff|")
 
+        t_nb = 0
         for c in conteneurs:
             for ligne in c:
                 if self.quantite and self.conteneur:
@@ -147,6 +159,10 @@ class NomObjet(Masque):
                     continue
 
                 if contient(o.get_nom(), nom):
+                    t_nb += 1
+                    if t_nb < nb:
+                        continue
+
                     if o_types and not [o_t for o_t in o_types \
                             if o.prototype.est_de_type(o_t)]:
                         raise ErreurValidation(
