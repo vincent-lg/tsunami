@@ -324,79 +324,74 @@ class Etendue(BaseObj):
 
         return nb
 
-    def verifier_continuite(self, x, y, e_x=None, e_y=None, o_x=None,
-            o_y=None, obstacles=None):
-        """Vérifie la continuité d'une étendue.
+    def get_contour(self, x, y, points=None, contour=None, ligne=None, premier=True):
+        """Détermine les contours de l'étendue.
 
-        Cette méthode permet de vérifier qu'une étendue d'eau est
-        complète, c'est-à-dire qu'elle forme bien un cercle. Le principe
-        est qu'on part du point x;y précisé en paramètre et qu'on
-        essaye de faire le tour complet de l'étendue. Il doit y avoir
-        un obstacle, une cote ou un lien sur les points successifs
-        parcourus et on doit pouvoir revenir sur
-        x;y au final.
+        Cette méthode retourne une liste de tuples représentant le
+        contour ordonnée selon leur proximité. Le point (x, y) donné
+        en paramètre est le point de départ de la recherche. Ensuite,
+        cette méthode cherche les points voisins, c'est-à-dire ceux
+        dont x varie de 1 ou y varie de 1, au choix (ce qui donne
+        4 possibilités). Sur ces quatre possibilités, si il y en a
+        une qui marche (il existe un point), la méthode recherche
+        le point suivant en excluant d'office le point voisin qui
+        a déjà été trouvé. Si il y en a plus d'une, la méthode cherche
+        les points suivants de chaque segment récursivement. Le but
+        est de trouver un contour, c'est-à-dire seulement les points
+        proches constituant le tour de l'étendue (et non les îles).
 
         """
-        print("Fork", x, y, e_x, e_y)
-        e_x = e_x or x
-        e_y = e_y or y
-        o_x = o_x or x
-        o_y = o_y or y
-        if obstacles is None:
-            obstacles = self.points.copy()
-            obstacles.update(self.liens)
+        if points is None:
+            points = self.points.keys()
 
-        complet = False
-        while not complet:
-            points = [
-                (x + 1, y),
+        if contour is None:
+            contour = []
+
+        if ligne is None:
+            ligne = []
+
+        ligne.append((x, y))
+        while True:
+            possibles = [
                 (x - 1, y),
-                (x, y + 1),
+                (x + 1, y),
                 (x, y - 1),
+                (x, y + 1),
             ]
 
-            points = [p for p in points if p not in ((x, y), (e_x, e_y))]
+            t_contour = contour + ligne
+            if len(t_contour) > 2 and t_contour[0] in possibles:
+                contour.extend(ligne)
+                return contour
 
-            # Combien de points y'a-t-il ici ?
-            points = [p for p in points if p in obstacles]
-            if len(points) == 0:
-                raise LigneBrisee("Il n'y a aucun point après " \
-                        "{}.{} (e={}.{})".format(x, y, e_x, e_y))
-            elif len(points) == 1:
-                t_x, t_y = points[0]
-                if t_x == o_x and t_y == o_y:
-                    return True
-                elif (t_x, t_y) in obstacles:
-                    x = t_x
-                    y = t_y
-                    continue
-                else:
-                    complet = False
-                    break
+            # On exclut les points déjà pris
+            # On exclut pas le premier point qui peut nous servir
+            # pour constater que la boucle est bouclée
+            possibles = [p for p in possibles if p not in (contour + ligne)]
 
-            # Sinon on doit explorer plusieurs chemins
-            for t_x, t_y in points:
-                if t_x == o_x and t_y == o_y:
-                    return True
+            # On cherche les points existants
+            possibles = [p for p in possibles if p in points]
 
-                try:
-                    self.verifier_continuite(t_x, t_y, x, y, o_x, o_y,
-                            obstacles)
-                except LigneBrisee as err:
-                    continue
-                else:
-                    complet = True
+            # Si c'est le premier point, on en choisit un au hasard
+            if len(contour + ligne) == 1:
+                possibles = possibles[:1]
 
-            if not complet:
-                break
+            # En fonction du nombre de résultat on agit différemment
+            nb = len(possibles)
+            if nb == 0:
+                if premier:
+                    raise ValueError("Aucun point voisin après {}.{}".format(x, y))
 
-        if not complet:
-            raise LigneBrisee("Il y avait {} possibilités pour " \
-                    "{}.{} mais elles sont toutes brisées".format(
-                    len(points), x, y) + " " + str(erreur))
-
-        return True
-
-class LigneBrisee(RuntimeError):
-
-    pass
+                return False
+            elif nb == 1:
+                # C'est parfait, on a qu'un voisin possible, on continue
+                x, y = possibles[0]
+                ligne.append((x, y))
+            else:
+                # Il y a plusieurs possibilités, on doit les explorer
+                for possible in possibles:
+                    t_ligne = list(ligne)
+                    retour = self.get_contour(possible[0], possible[1],
+                            points, contour, t_ligne, premier=False)
+                    if retour:
+                        return contour
