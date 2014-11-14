@@ -342,7 +342,7 @@ class Etendue(BaseObj):
 
         """
         if points is None:
-            points = self.points.keys()
+            points = list(self.points.keys()) + list(self.liens.keys())
 
         if contour is None:
             contour = []
