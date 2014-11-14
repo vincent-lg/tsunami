@@ -395,3 +395,11 @@ class Etendue(BaseObj):
                             points, contour, t_ligne, premier=False)
                     if retour:
                         return contour
+
+                # À ce stade si on a pas trouvé la branche, on s'arrête
+                if premier:
+                    raise ValueError("Le point {}.{} offrant les branches " \
+                            "{} ne peut former un contour complet".format(x, y,
+                            possibles))
+
+                return False
