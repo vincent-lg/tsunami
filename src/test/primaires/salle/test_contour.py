@@ -98,11 +98,11 @@ class TestContour(unittest.TestCase):
 
     """
 
-    #def test_carre(self):
-    #    """Essaye d'obtenir le contour du carré."""
-    #    carre = importeur.salle.etendues["carre"]
-    #    contour = carre.get_contour(10, 10)
-    #    self.assertEqual(contour, CONTOUR_CARRE)
+    def test_carre(self):
+        """Essaye d'obtenir le contour du carré."""
+        carre = importeur.salle.etendues["carre"]
+        contour = carre.contour
+        self.assertEqual(contour, CONTOUR_CARRE)
 
     def test_complexe(self):
         """Essaye d'obtenir le contour de l'étendue complexe.
@@ -114,5 +114,5 @@ class TestContour(unittest.TestCase):
 
         """
         complexe = importeur.salle.etendues["complexe"]
-        contour = complexe.get_contour(20, 20)
+        contour = complexe.contour
         self.assertEqual(contour, CONTOUR_COMPLEXE)

@@ -1,4 +1,5 @@
 carre = importeur.salle.creer_etendue("carre")
+carre.origine = (10, 10)
 obstacle = importeur.salle.obstacles["falaise"]
 coords = [
         (10, 10),
@@ -23,3 +24,5 @@ coords = [
 
 for coord in coords:
     carre.ajouter_obstacle(coord, obstacle)
+
+carre.trouver_contour()

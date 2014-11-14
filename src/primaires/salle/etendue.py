@@ -76,6 +76,8 @@ class Etendue(BaseObj):
         self.cotes = {}
         self.liens = {}
         self.projections = {}
+        self.origine = (None, None)
+        self.contour = None
         self._construire()
 
     def __getnewargs__(self):
@@ -212,6 +214,14 @@ class Etendue(BaseObj):
         etendue = self.liens.pop(coordonnees)
         if coordonnees in etendue.liens:
             del etendue.liens[coordonnees]
+
+    def trouver_contour(self):
+        """Recherche les contours de l'étendue."""
+        x, y = self.origine
+        if x is None or y is None:
+            raise ValueError("Aucune origine n'est précisée")
+
+        self.contour = self.get_contour(x, y)
 
     def get_etendues_proches(self, x, y, distance, exceptions=None):
         """Retourne les étendues liées à self suffisamment proches.

@@ -334,6 +334,7 @@ class Module(BaseModule):
             toujours là
         -   Chaque salle est dans une zone
         -   Chaque terrain a sa réciproque en obstacle
+        -   Les étendues ont toutes un contour défini
 
         """
         # On récupère la configuration
@@ -406,6 +407,12 @@ class Module(BaseModule):
             # Ajout des affections
             for affection in salle.affections.values():
                 affection.prevoir_tick()
+
+        # On parcour les étendues
+        for etendue in self.etendues.values():
+            x, y = etendue.origine
+            if x is not None and y is not None:
+                etendue.trouver_contour()
 
     def detruire(self):
         """Destruction du module.

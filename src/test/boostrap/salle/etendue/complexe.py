@@ -1,4 +1,5 @@
 complexe = importeur.salle.creer_etendue("complexe")
+complexe.origine = (20, 20)
 obstacle = importeur.salle.obstacles["falaise"]
 
 coords = [
@@ -44,3 +45,5 @@ coords = [
 
 for coord in coords:
     complexe.ajouter_obstacle(coord, obstacle)
+
+complexe.trouver_contour()
