@@ -46,6 +46,7 @@ from primaires.salle.salle import Salle
 from primaires.vehicule.vecteur import Vecteur
 from secondaires.navigation.config import CFG_TEXTE
 from .navire import Navire
+from .navire_automatique import NavireAutomatique
 from .elements import types as types_elements
 from .elements.base import BaseElement
 from .vent import Vent
@@ -85,6 +86,7 @@ class Module(BaseModule):
         self.nav_logger = type(self.importeur).man_logs.creer_logger(
                 "navigation", "navires", "navires.log")
         self.navires = {}
+        self.navires_automatiques = {}
         self.elements = {}
         self.types_elements = types_elements
         self.vents = {}
@@ -193,6 +195,16 @@ class Module(BaseModule):
         nb_navires = len(navires)
         self.nav_logger.info(format_nb(nb_navires,
                 "{nb} navire{s} récupéré{s}"))
+
+        # On récupère les navires automatiques
+        fiches = self.importeur.supenr.charger_groupe(NavireAutomatique)
+        for fiche in fiches:
+            self.ajouter_navire_automatique(fiche)
+
+        nb_autos = len(fiches)
+        self.nav_logger.info(format_nb(nb_autos,
+                "{nb} fiche{s} de navire{s} automatique{s} " \
+                "récupérée{s}", fem=True))
 
         # On récupère les éléments
         elements = self.importeur.supenr.charger_groupe(BaseElement)
@@ -404,6 +416,20 @@ class Module(BaseModule):
         navire = self.navires[cle]
         navire.detruire()
         del self.navires[cle]
+
+    def creer_navire_automatique(self, cle):
+        """Crée un navire automatique."""
+        fiche = NavireAutomatique(cle)
+        self.ajouter_navire_automatique(fiche)
+        return fiche
+
+    def ajouter_navire_automatique(self, fiche):
+        """Ajoute le navire automatique à la liste."""
+        self.navires_automatiques[fiche.cle] = fiche
+
+    def supprimer_navire_automatique(self, cle):
+        """Supprime le navire automatique dont la clé est précisée."""
+        self.navires_automatiques.pop(cle).detruire()
 
     def creer_element(self, cle, type_elt):
         """Crée un élément du type indiqué.

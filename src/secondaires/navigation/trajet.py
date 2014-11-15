@@ -52,6 +52,7 @@ class Trajet(BaseObj):
         """Constructeur du trajet."""
         BaseObj.__init__(self)
         self.cle = cle
+        self.etendue = None
         self.point_depart = None
         self.points = OrderedDict()
 

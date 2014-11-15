@@ -144,7 +144,23 @@ class Cale(BaseObj):
         if conteneur is None:
             return False
 
+        if salle is None:
+            return True
+
         return conteneur in salle.cales
+
+    def ajouter_prototype_objet(self, prototype, nombre=1):
+        """Ajoute les objets spécifiés en cale."""
+        nom_type = prototype.nom_type
+        if nom_type in self.types:
+            conteneur = self.types[nom_type]
+        else:
+            raise ValueError("{} ne peut être mis en " \
+                    "cale.".format(prototype.cle))
+
+        nb = conteneur.get(prototype.cle, 0)
+        nb += nombre
+        conteneur[prototype.cle] = nb
 
     def ajouter_objets(self, objets):
         """Ajoute les objets précisés dans la cale, si possible."""
