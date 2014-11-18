@@ -98,13 +98,17 @@ class PlierVoiles(Volonte):
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""
         nombre = self.nombre
-        msg = "{} s'écrie : pliez-moi ".format(personnage.distinction_audible)
-        if nombre < 0:
-            msg += "ces voiles"
-        elif nombre == 1:
-            msg += "une voile"
+        if nombre is None:
+            msg = "{} s'écrie : toutes les voiles en bas".format(
+                    personnage.distinction_audible)
         else:
-            msg += "{} voiles".format(nombre)
+            msg = "{} s'écrie : pliez-moi ".format(personnage.distinction_audible)
+            if nombre < 0:
+                msg += "ces voiles"
+            elif nombre == 1:
+                msg += "une voile"
+            else:
+                msg += "{} voiles".format(nombre)
 
         msg += ", bande de bons à rien !"
         self.navire.envoyer(msg)

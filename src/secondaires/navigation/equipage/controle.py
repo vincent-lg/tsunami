@@ -120,3 +120,9 @@ class Controle(BaseObj, metaclass=MetaControle):
 
         """
         raise NotImplementedError
+
+    def debug(self, message):
+        """Log le message précisé en paramètre en ajoutant des informations."""
+        message = "Contrôle {}:{}, {}".format(self.cle, self.cle_navire,
+                message)
+        self.logger.debug(message)

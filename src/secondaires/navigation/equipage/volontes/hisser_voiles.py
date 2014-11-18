@@ -98,13 +98,17 @@ class HisserVoiles(Volonte):
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""
         nombre = self.nombre
-        msg = "{} s'écrie : hissez-moi ".format(personnage.distinction_audible)
-        if nombre < 0:
-            msg += "ces voiles"
-        elif nombre == 1:
-            msg += "une voile"
+        if nombre is None:
+            msg = "{} s'écrie : toutes voiles dehors".format(
+                    personnage.distinction_audible)
         else:
-            msg += "{} voiles".format(nombre)
+            msg = "{} s'écrie : hissez-moi ".format(personnage.distinction_audible)
+            if nombre < 0:
+                msg += "ces voiles"
+            elif nombre == 1:
+                msg += "une voile"
+            else:
+                msg += "{} voiles".format(nombre)
 
         msg += ", et qu'ça saute !"
         self.navire.envoyer(msg)

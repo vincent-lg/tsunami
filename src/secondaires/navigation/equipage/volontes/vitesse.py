@@ -53,8 +53,8 @@ class Vitesse(Volonte):
     """
 
     cle = "vitesse"
-    ordre_court = re.compile(r"^vt([0-9]+,[0-9]?)?$", re.I)
-    ordre_long = re.compile(r"^vitesse\s+([0-9]+,[0-9]?)?$", re.I)
+    ordre_court = re.compile(r"^vt([0-9]+,?[0-9]?)?$", re.I)
+    ordre_long = re.compile(r"^vitesse\s+([0-9]+,?[0-9]?)?$", re.I)
 
     def __init__(self, navire, vitesse=None):
         """Construit une volonté."""

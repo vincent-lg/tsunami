@@ -139,12 +139,13 @@ class Vitesse(Controle):
 
         # Écrit dans les logs le choix auquel on est parvenu
         vitesse, vit_rame, nb_voiles = choix
-        self.logger.debug("Le contrôle 'vitesse' choisit la combinaison " \
-                "rames={} et voiles={} pour vitesse={}".format(
-                vit_rame, nb_voiles, vitesse))
+        self.debug("choisit la combinaison rames={} et voiles={} pour " \
+                "vitesse={}".format(vit_rame, nb_voiles, vitesse))
 
         # Donne les ordres correspondant
-        equipage.demander("ramer", vit_rame, personnage=personnage)
+        # Les rames, si nécessaire
+        if any(rame.vitesse != vit_rame for rame in navire.rames):
+            equipage.demander("ramer", vit_rame, personnage=personnage)
 
         # Pour les voiles on cherche celles hissées
         nb_hissees = len([v for v in navire.voiles if v.hissee])
@@ -154,7 +155,7 @@ class Vitesse(Controle):
             equipage.demander("hisser_voiles", diff, personnage=personnage)
         elif diff < 0:
             # On doit pleir au moins une voile
-            equipage.demander("plier_voiles", diff, personnage=personnage)
+            equipage.demander("plier_voiles", -diff, personnage=personnage)
         self.vitesse_optimale = vitesse
 
     def verifier_voiles(self):
@@ -198,6 +199,8 @@ class Vitesse(Controle):
             self.ancienne_vitesse = navire.vitesse_noeuds
             if self.vitesse_optimale is not None and fabs(
                     self.ancienne_vitesse - self.vitesse_optimale) > 0.2:
+                self.debug("optimale={}, actuelle={}".format(
+                        self.vitesse_optimale, self.ancienne_vitesse))
                 self.calculer_vitesse()
 
     def decomposer(self):

@@ -432,6 +432,9 @@ class Equipage(BaseObj):
         vent = navire.vent
         voiles = navire.voiles
         voiles = [v for v in voiles if v.hissee]
+        if navire.nom_allure == "vent debout":
+            return
+
         if not voiles:
             return
 

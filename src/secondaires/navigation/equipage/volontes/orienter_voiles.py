@@ -56,18 +56,20 @@ class OrienterVoiles(Volonte):
         voiles = self.navire.voiles
         voiles = [v for v in voiles if v.hissee]
         for voile in voiles:
+            proche = []
             for matelot in matelots:
                 origine = matelot.salle.mnemonic
                 destination = voile.parent.mnemonic
                 if origine == destination:
-                    proches.append((matelot, [], voile))
+                    proche.append((matelot, [], voile))
                 else:
                     chemin = graph.get((origine, destination))
                     if chemin:
-                        proches.append((matelot, chemin, voile))
+                        proche.append((matelot, chemin, voile))
 
-        proches = sorted([couple for couple in proches],
-                key=lambda couple: len(couple[1]))
+            # Détermine le matelot le plus proche de la voile
+            proches.append(min(proche, key=lambda c: len(c[1])))
+
         return proches
 
     def executer(self, proches):
