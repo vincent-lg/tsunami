@@ -38,3 +38,4 @@ pour plus d'informations).
 """
 
 from secondaires.navigation.equipage.controles.direction import Direction
+from secondaires.navigation.equipage.controles.vitesse import Vitesse

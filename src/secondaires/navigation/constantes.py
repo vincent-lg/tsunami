@@ -115,3 +115,23 @@ def get_portee(salle):
             portee = round(portee / 3)
 
     return portee
+
+def get_vitesse_noeuds(distance):
+    """Retourne la vitesse en noeuds.
+
+    La distance précisée en paramètre est la norme d'un vecteur de
+    déplacement dans l'univers. La distance entre deux salles est de
+    1. La vitesse en noeuds est calculée en utilisant la vitesse
+    d'écoulement, telle que définie dans le module temps. Un noeud
+    est un mille par heure : un mille est 1000 brasses et le nombre
+    de brasses doit être utilisé pour connaître la distance. L'heure
+    est une heure IG, donc la vitesse de l'écoulement du temps est
+    nécessaire.
+
+    """
+    vit_ecoulement = importeur.temps.cfg.vitesse_ecoulement
+    vit_ecoulement = eval(vit_ecoulement)
+    distance = distance * CB_BRASSES / 1000
+    distance = distance / (TPS_VIRT / DIST_AVA)
+    distance *= vit_ecoulement
+    return distance * 3600

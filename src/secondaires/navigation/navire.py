@@ -233,13 +233,7 @@ class Navire(Vehicule):
     @property
     def vitesse_noeuds(self):
         """Retourne la vitesse en noeuds."""
-        vit_ecoulement = importeur.temps.cfg.vitesse_ecoulement
-        vit_ecoulement = eval(vit_ecoulement)
-        distance = self.vitesse.norme
-        distance = distance * CB_BRASSES / 1000
-        distance = distance / (TPS_VIRT / DIST_AVA)
-        distance *= vit_ecoulement
-        return distance * 3600
+        return get_vitesse_noeuds(self.vitesse.norme)
 
     @property
     def nom(self):
@@ -410,6 +404,60 @@ class Navire(Vehicule):
 
         return self.equipage.est_au_poste(personnage, poste)
 
+    def get_vitesse_rames(self, vitesses):
+        """Retourne la vitesse en distance (norme) de vecteur.
+
+        Une liste de vitesses doit être précisée en paramètre,
+        représentant une liste de chaînes dont chaque chaîne est un
+        nom de vitesse (par exemple, "lente"). Pour chaque vitese,
+        on récupère son facteur tel qe défini dans les constantes
+        et le facteur multiplicateur défini dans le modèle.
+
+        """
+        facteur = 1
+        facteur_rames = self.modele.facteur_rames
+        for vitesse in vitesses:
+            facteur_vitesse = VIT_RAMES[vitesse]
+            facteur = facteur * facteur_rames * facteur_vitesse
+
+        return facteur
+
+    def get_vitesse_voiles(self, voiles, vent):
+        """Retourne la vitesse imprimée par les voiles spécifiées.
+
+        Normalement, on ne tient compte que des voiles hissées qui
+        doivent être précisées dans une lsite. Mais cette liste peut
+        contenir des objets None. Dans ce cas, on se rapporte à la
+        taille de la liste et la question posée à cette méthode est
+        simplement "calcul la distance parcourue si le navire avait
+        tant de voiles hissées".
+
+        """
+        direction = self.opt_direction
+        if not any(voiles):
+            fact_voile = len(voiles)
+        else:
+            fact_voile = sum(v.facteur_orientation(self, vent) \
+                    for v in voiles)
+
+        fact_voile = fact_voile / len(self.voiles) * 0.7
+
+        allure = (get_direction(direction) - get_direction(vent)) % 360
+        if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
+            facteur = self.vent_debout()
+        elif ALL_PRES < allure < (360 - ALL_PRES):
+            facteur = self.pres()
+        elif ALL_BON_PLEIN < allure < (360 - ALL_BON_PLEIN):
+            facteur = self.bon_plein()
+        elif ALL_LARGUE < allure < (360 - ALL_LARGUE):
+            facteur = self.largue()
+        elif ALL_GRAND_LARGUE < allure < (360 - ALL_GRAND_LARGUE):
+            facteur = self.grand_largue()
+        else:
+            facteur = self.vent_arriere()
+
+        return facteur * fact_voile * vent.mag
+
     def get_max_distance_au_centre(self):
         """Retourne la distance maximum par rapport au centre du navire."""
         distances = []
@@ -497,27 +545,27 @@ class Navire(Vehicule):
 
     def vent_debout(self):
         """Retourne le facteur de vitesse par l'allure vent debout."""
-        return -0.3
+        return self.modele.facteurs_orientations["vent debout"]
 
     def pres(self):
         """Retourne le facteur de vitesse par l'allure de près."""
-        return 0.5
+        return self.modele.facteurs_orientations["au près"]
 
     def bon_plein(self):
         """Retourne le facteur de vitesse par l'allure de bon plein."""
-        return 0.8
+        return self.modele.facteurs_orientations["bon plein"]
 
     def largue(self):
         """Retourne le facteur de vitesse par l'allure de largue."""
-        return 1.2
+        return self.modele.facteurs_orientations["largue"]
 
     def grand_largue(self):
         """Retourne le facteur de vitesse par l'allure de grand largue."""
-        return 0.9
+        return self.modele.facteurs_orientations["grand largue"]
 
     def vent_arriere(self):
         """Retourne le facteur de vitesse par l'allure par vent arrière."""
-        return 0.7
+        return self.modele.facteurs_orientations["vent arrière"]
 
     def maj_salles(self):
         d = self.direction.direction + 90
@@ -918,31 +966,13 @@ class Propulsion(Force):
         rames = [r for r in navire.rames if r.tenu is not None]
         vecteur = vec_nul
         if voiles:
-            fact_voile = sum(v.facteur_orientation(navire, vent) \
-                    for v in voiles) / len(navire.voiles) * 0.7
-            allure = (get_direction(direction) - get_direction(vent)) % 360
-            if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
-                facteur = navire.vent_debout()
-            elif ALL_PRES < allure < (360 - ALL_PRES):
-                facteur = navire.pres()
-            elif ALL_BON_PLEIN < allure < (360 - ALL_BON_PLEIN):
-                facteur = navire.bon_plein()
-            elif ALL_LARGUE < allure < (360 - ALL_LARGUE):
-                facteur = navire.largue()
-            elif ALL_GRAND_LARGUE < allure < (360 - ALL_GRAND_LARGUE):
-                facteur = navire.grand_largue()
-            else:
-                facteur = navire.vent_arriere()
-
-            vecteur = direction * facteur * fact_voile * vent.mag
+            facteur = navire.get_vitesse_voiles(voiles, vent)
+            vecteur = direction * facteur
 
         # Calcul des rames
         if rames:
-            facts = [VIT_RAMES[rame.vitesse] for rame in rames]
-            fact = 0.8
-            for f in facts:
-                fact *= f
-
-            vecteur = vecteur + direction * fact
+            vitesses = [rame.vitesse for rame in rames]
+            facteur = navire.get_vitesse_rames(vitesses)
+            vecteur = vecteur + direction * facteur
 
         return Vecteur(vecteur.x, vecteur.y, vecteur.z)

@@ -60,6 +60,7 @@ class Equipage(BaseObj):
 
     noms_controles = {
             "cap": "direction",
+            "vitesse": "vitesse",
     }
 
     def __init__(self, navire):

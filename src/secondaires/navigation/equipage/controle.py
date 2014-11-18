@@ -78,6 +78,7 @@ class Controle(BaseObj, metaclass=MetaControle):
     """
 
     cle = None
+    logger = type(importeur).man_logs.get_logger("ordres")
     def __init__(self, equipage, *args):
         BaseObj.__init__(self)
         self.equipage = equipage

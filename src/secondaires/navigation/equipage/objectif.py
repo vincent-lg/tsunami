@@ -57,7 +57,7 @@ class Objectif(BaseObj, metaclass=MetaObjectif):
     méthodes et attributs donnés dans cette classe doivent pouvoir être
     utilisés sur tous les objectifs.
 
-    Un objectif définit un but qu'un équipage doit attendre. Ils peuvent
+    Un objectif définit un but qu'un équipage doit atteindre. Ils peuvent
     être de forme diverses, comme rejoindre un point précis, suivre un
     navire, le rattraper ou se mettre en formation sur lui. En fonction
     des objectifs actuels, un capitaine ou second (PNJ) donnera la suite
@@ -77,6 +77,7 @@ class Objectif(BaseObj, metaclass=MetaObjectif):
     """
 
     cle = None
+    logger = type(importeur).man_logs.get_logger("ordres")
     def __init__(self, equipage):
         BaseObj.__init__(self)
         self.equipage = equipage

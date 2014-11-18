@@ -61,6 +61,15 @@ class ModeleNavire(BaseObj):
         self.canot = False
         self.masculin = True
         self.cale_max = 200
+        self.facteur_rames = 0.8
+        self.facteurs_orientations = {
+                "vent debout": -0.3,
+                "au près": 0.5,
+                "bon plein": 0.8,
+                "largue": 1.2,
+                "grand largue": 0.9,
+                "vent arrière": 0.7,
+        }
 
     def __getnewargs__(self):
         return ("", )

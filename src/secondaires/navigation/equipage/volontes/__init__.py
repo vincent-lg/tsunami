@@ -54,3 +54,4 @@ from secondaires.navigation.equipage.volontes.virer_babord import VirerBabord
 from secondaires.navigation.equipage.volontes.virer_tribord import VirerTribord
 from secondaires.navigation.equipage.volontes.virer_gouvernail import \
         VirerGouvernail
+from secondaires.navigation.equipage.volontes.vitesse import Vitesse
