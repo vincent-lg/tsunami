@@ -114,7 +114,8 @@ class Vitesse(Controle):
         if nb_rames > 0:
             for nom in ("lente", "moyenne", "rapide"):
                 noms = (nom, ) * nb_rames
-                vitesse = get_vitesse_noeuds(navire.get_vitesse_rames(noms))
+                vitesse = get_vitesse_noeuds(navire.get_vitesse_rames(noms) / \
+                        0.7)
                 vitesses[vitesse] = (nom, 0)
                 vit_rames[nom] = vitesse
 
@@ -122,7 +123,7 @@ class Vitesse(Controle):
             for i in range(nb_voiles):
                 voiles = (None, ) * (i + 1)
                 vit_voiles = get_vitesse_noeuds(navire.get_vitesse_voiles(
-                        voiles, vent))
+                        voiles, vent) / 0.7)
                 vitesses[vit_voiles] = ("immobile", i + 1)
                 for nom, vit_rame in vit_rames.items():
                     vitesse = vit_voiles + vit_rame
