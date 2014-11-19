@@ -53,7 +53,7 @@ class Vitesse(Volonte):
     """
 
     cle = "vitesse"
-    ordre_court = re.compile(r"^vt([0-9]+,?[0-9]?)?$", re.I)
+    ordre_court = re.compile(r"^vi([0-9]+,?[0-9]?)?$", re.I)
     ordre_long = re.compile(r"^vitesse\s+([0-9]+,?[0-9]?)?$", re.I)
 
     def __init__(self, navire, vitesse=None):
@@ -83,7 +83,7 @@ class Vitesse(Volonte):
         else:
             vitesse = round(vitesse, 1)
             s = "s" if vitesse != 1 else ""
-            vitesse = str(vitesse).replace(".", ",")
+            vitesse = str(vitesse).rstrip("0.").replace(".", ",")
             msg = "Restez sous {} noeud{s} !".format(vitesse, s=s)
 
         msg = "{} s'écrie : {}".format(
