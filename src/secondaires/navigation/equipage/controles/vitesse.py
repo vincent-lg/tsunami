@@ -72,6 +72,7 @@ class Vitesse(Controle):
         self.vitesse = vitesse
         self.vitesse_optimale = None
         self.derniere_vitesse = None
+        self.force_vent = None
 
     def afficher(self):
         """Retourne le message pour l'affichage du contrôle."""
@@ -103,6 +104,10 @@ class Vitesse(Controle):
         navire = self.navire
         vent = navire.vent
         self.verifier_voiles()
+
+        # Écrit la vitesse actuelle du vent
+        if self.force_vent is None:
+            self.force_vent = vent.mag
 
         # Retrouve tous les éléments propulsifs et cherche les vitesses
         nb_rames = len(navire.rames)
@@ -185,7 +190,7 @@ class Vitesse(Controle):
         """Contrôle l'avancement du contrôle.
 
         On vérifie deux choses :
-            Si s'appliwue, le vent a-t-il changé ?
+            Si s'applique, le vent a-t-il changé ?
             La dernière vitesse et vitesse courante sont-elles différentes ?
 
         """
@@ -195,6 +200,7 @@ class Vitesse(Controle):
 
         equipage = self.equipage
         navire = self.navire
+        vent = navire.vent
         self.verifier_voiles()
         if navire.acceleration.est_nul(1):
             self.ancienne_vitesse = navire.vitesse_noeuds
@@ -202,6 +208,9 @@ class Vitesse(Controle):
                     self.ancienne_vitesse - self.vitesse_optimale) > 0.2:
                 self.debug("optimale={}, actuelle={}".format(
                         self.vitesse_optimale, self.ancienne_vitesse))
+                self.calculer_vitesse()
+            elif fabs(self.force_vent - vent.mag) > 0.3:
+                self.force_vent = vent.mag
                 self.calculer_vitesse()
 
     def decomposer(self):

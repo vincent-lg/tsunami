@@ -89,6 +89,14 @@ class Matelot(BaseObj):
         """Retourne l'objet Poste."""
         return postes[self.nom_poste]
 
+    @property
+    def navire(self):
+        """Retourne le navire de l'équipage."""
+        if self.equipage:
+            return self.equipage.navire
+        else:
+            return None
+
     def get_ordre(self, cle_ordre):
         """Retourne le premier ordre de clé spécifié ou None."""
         ordres = [o for o in self.ordres if o.cle == cle_ordre]

@@ -67,9 +67,12 @@ class SuivreCap(Rejoindre):
         if equipage.destination:
             self.x, self.y = equipage.destination
             distance = self.get_distance()
-            vitesse = get_vitesse_noeuds(distance.norme)
+            norme = distance.norme
+            vitesse = get_vitesse_noeuds(norme)
             if vitesse > self.vitesse_max:
                 vitesse = self.vitesse_max
+            elif norme < 15:
+                vitesse = 1
             elif vitesse < 0.2:
                 vitesse = 0.2
 

@@ -330,6 +330,7 @@ class Equipage(BaseObj):
             if matelot.nom_poste in noms_poste:
                 matelots.append(matelot)
 
+        matelots.sort(key=lambda m: m.personnage.endurance, reverse=True)
         matelots.sort(key=lambda m: noms_poste.index(m.nom_poste))
         if libre:
             matelots = [m for m in matelots if \
@@ -368,7 +369,7 @@ class Equipage(BaseObj):
             self.destination = list(trajet.points.values())[0]
         commandants = self.get_matelots_au_poste("commandant", False)
         if commandants and not self.objectifs:
-            self.ajouter_objectif("suivre_cap", 2.5)
+            self.ajouter_objectif("suivre_cap", 1.5)
 
     def verifier_matelots(self):
         """Retire les matelots inexistants ou morts."""
@@ -497,5 +498,8 @@ class Equipage(BaseObj):
     def get_nom_matelot(pnj, personnage):
         """Retourne le nom du matelot si personnage est gradé."""
         matelot = importeur.navigation.matelots.get(pnj.identifiant)
-        if matelot and matelot.equipage.est_au_poste(personnage, "officier"):
+        navire = getattr(matelot, "navire", None)
+        proprietaire = getattr(navire, "proprietaire", None)
+        if matelot and (matelot.equipage.est_au_poste(personnage,
+                "officier") or personnage is proprietaire):
             return matelot.nom
