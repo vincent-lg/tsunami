@@ -82,6 +82,7 @@ class PrmControle(Parametre):
             nom = equipage.noms_controles.get(texte)
             if nom is None:
                 personnage << "|err|Contrôle introuvable.|ff|"
+                return
 
             equipage.retirer_controle(nom)
             personnage << "Le contrôle {} a été réinitialisé.".format(

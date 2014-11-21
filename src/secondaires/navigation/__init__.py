@@ -290,6 +290,8 @@ class Module(BaseModule):
                 self.tick_equipages)
         self.importeur.diffact.ajouter_action("controle_equipages", 3,
                 self.controle_equipages)
+        self.importeur.diffact.ajouter_action("objectif_equipages", 5,
+                self.objectif_equipages)
 
         # Ajout des bateaux au module salle
         self.importeur.salle.salles_a_cartographier.append(
@@ -622,6 +624,18 @@ class Module(BaseModule):
         for equipage in equipages:
             for controle in equipage.controles.values():
                 controle.controler()
+
+    def objectif_equipages(self):
+        """Travail sur les objectifs des équipages."""
+        self.importeur.diffact.ajouter_action("objectif_equipages", 5,
+                self.objectif_equipages)
+        equipages = [n.equipage for n in self.navires.values() if \
+                len(n.equipage.matelots) > 0]
+        for equipage in equipages:
+            prioritaire = True
+            for objectif in equipage.objectifs:
+                objectif.verifier(prioritaire)
+                prioritaire = False
 
     def navire_amarre(self, salle, liste_messages, flags):
         """Si un navire est amarré, on l'affiche."""

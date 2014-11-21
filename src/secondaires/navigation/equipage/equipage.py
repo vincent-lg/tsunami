@@ -41,6 +41,8 @@ from primaires.vehicule.vecteur import get_direction
 from secondaires.navigation.equipage.configuration import Configuration
 import secondaires.navigation.equipage.controles
 from secondaires.navigation.equipage.controle import controles
+import secondaires.navigation.equipage.objectifs
+from secondaires.navigation.equipage.objectif import objectifs
 from secondaires.navigation.equipage.ordre import ordres
 from secondaires.navigation.equipage.matelot import Matelot
 from secondaires.navigation.equipage.noms import NOMS_MATELOTS
@@ -86,6 +88,9 @@ class Equipage(BaseObj):
 
         # Contrôles
         self.controles = {}
+
+        # Objectifs
+        self.objectifs = []
 
         self._construire()
 
@@ -252,6 +257,27 @@ class Equipage(BaseObj):
         if cle in self.controles:
             del self.controles[cle]
 
+    def ajouter_objectif(self, cle, *args):
+        """Ajoute l'objectif dont la clé est spécifié.
+
+        Les paramètres suplémentaires sont envoyés au constructeur
+        de l'objectif.
+
+        """
+        objectif = objectifs.get(cle)
+        if objectif is None:
+            raise ValueError("Aucun objectif de clé {}".format(repr(cle)))
+
+        objectif = objectif(self, *args)
+        self.objectifs.insert(0, objectif)
+        Matelot.logger.debug("Création de l'objectif {}".format(objectif))
+        objectif.creer()
+        return objectif
+
+    def retirer_objectif(self, indice):
+        """Retire l'objectif d'indice spécifié."""
+        del self.objectifs[indice]
+
     def get_matelot(self, nom):
         """Retourne, si trouvé, le âtelot recherché.
 
@@ -339,7 +365,10 @@ class Equipage(BaseObj):
         """Ajoute le trajet à la liste des caps."""
         self.caps.append(trajet.cle)
         if len(self.caps) == 1:
-            self.destination = trajet.point_depart
+            self.destination = list(trajet.points.values())[0]
+        commandants = self.get_matelots_au_poste("commandant", False)
+        if commandants and not self.objectifs:
+            self.ajouter_objectif("suivre_cap", 2.5)
 
     def verifier_matelots(self):
         """Retire les matelots inexistants ou morts."""
@@ -383,10 +412,6 @@ class Equipage(BaseObj):
         commandants = self.get_matelots_au_poste("capitaine", False)
         if not self.destination:
             return
-
-        if commandants:
-            commandant = commandants[0]
-            self.verifier_cap(commandant)
 
     def verifier_cap(self, commandant):
         """Vérifie le cap du navire.

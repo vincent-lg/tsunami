@@ -123,6 +123,6 @@ class Controle(BaseObj, metaclass=MetaControle):
 
     def debug(self, message):
         """Log le message précisé en paramètre en ajoutant des informations."""
-        message = "Contrôle {}:{}, {}".format(self.cle, self.cle_navire,
+        message = "Contrôle {}:{}, {}".format(self.cle_navire, self.cle,
                 message)
         self.logger.debug(message)
