@@ -81,7 +81,7 @@ class Direction(Controle):
                     exception=commandant)
             return
 
-        if f_difference < 1:
+        if f_difference < 1 or navire.orientation != 0:
             return
 
         pr_rames = navire.orientation

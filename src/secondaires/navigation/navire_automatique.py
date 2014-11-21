@@ -112,7 +112,7 @@ class NavireAutomatique(BaseObj):
                 nb = nb_min
 
             if nb > 0:
-                pnjs = fiche.creer_PNJ(salle)
+                pnjs = fiche.creer_PNJ(salle, nb)
 
                 for pnj in pnjs:
                     matelot = navire.equipage.ajouter_matelot(pnj)
