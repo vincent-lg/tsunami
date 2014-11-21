@@ -41,4 +41,9 @@ NOMS_MATELOTS = [
     "Brutus",
     "Noé",
     "Claude",
+    "Michel",
+    "Arthur",
+    "François",
+    "André",
+    "Éric",
 ]

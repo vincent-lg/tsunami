@@ -66,7 +66,7 @@ class Rejoindre(Objectif):
         d_x = self.x
         d_y = self.y
         distance = Vecteur(d_x - o_x, d_y - o_y, 0)
-        direction = (distance.direction - 90) % 360
+        direction = (distance.direction + 90) % 360
         nb_brasses = round(distance.norme * CB_BRASSES)
 
         # On a plusieurs unités possibles
@@ -99,7 +99,8 @@ class Rejoindre(Objectif):
         else:
             msg_dist = "près d'une brasse"
 
-        return "Cap sur {}°, à {}".format(direction, msg_dist)
+        return "Cap sur {}° ({}), à {}".format(round(direction),
+                distance.nom_direction, msg_dist)
 
     def get_distance(self):
         """Retourne la distance (Vecteur) entre le navire et la destination.
