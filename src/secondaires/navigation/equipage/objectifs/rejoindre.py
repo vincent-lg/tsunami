@@ -67,38 +67,7 @@ class Rejoindre(Objectif):
         d_y = self.y
         distance = Vecteur(d_x - o_x, d_y - o_y, 0)
         direction = (distance.direction + 90) % 360
-        nb_brasses = round(distance.norme * CB_BRASSES)
-
-        # On a plusieurs unités possibles
-        if nb_brasses > 100000: # Très grande distance
-            msg_dist = "plus de cent milles"
-        elif nb_brasses > 50000:
-            msg_dist = "plus de cinquante milles"
-        elif nb_brasses > 10000:
-            nb = round(nb_brasses / 10000) * 10
-            msg_dist = "près de {} milles".format(nb)
-        elif nb_brasses > 2000:
-            nb = round(nb_brasses / 1000)
-            msg_dist = "près de {} milles".format(nb)
-        elif nb_brasses > 1000:
-            msg_dist = "près d'un mille"
-        elif nb_brasses > 200:
-            nb = round(nb_brasses / 100)
-            msg_dist = "près de {} encablures".format(nb)
-        elif nb_brasses > 100:
-            msg_dist = "près d'une encablure"
-        elif nb_brasses > 50:
-            nb = round(nb_brasses / 10) * 10
-            msg_dist = "près de {} brasses".format(nb)
-        elif nb_brasses > 20:
-            nb = round(nb_brasses / 5) * 5
-            msg_dist = "près de {} brasses".format(nb)
-        elif nb_brasses > 10:
-            nb = round(nb_brasses / 2) * 2
-            msg_dist = "près de {} brasses".format(nb)
-        else:
-            msg_dist = "près d'une brasse"
-
+        msg_dist = get_nom_distance(distance)
         return "Cap sur {}° ({}), à {}".format(round(direction),
                 distance.nom_direction, msg_dist)
 

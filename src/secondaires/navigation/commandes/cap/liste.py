@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,29 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'cap liste'."""
 
-from . import allure
-from . import ancre
-from . import amarre
-from . import cale
-from . import calfeutrer
-from . import canon
-from . import cap
-from . import chantier
-from . import debarquer
-from . import detailler
-from . import ecoper
-from . import eltedit
-from . import embarquer
-from . import equipage
-from . import gouvernail
-from . import loch
-from . import matelot
-from . import navire
-from . import passerelle
-from . import rames
-from . import saborder
-from . import shedit
-from . import vent
-from . import voile
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmListe(Parametre):
+
+    """Commande 'cap liste'"""
+
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "liste", "list")
+        self.aide_courte = "affiche la liste des caps"
+        self.aide_longue = \
+            "Cette commande permet d'afficher la liste des " \
+            "caps maritimes. Un cap qui n'a qu'un seul point n'est " \
+            "pas utilisable."
+
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande."""
+        trajets = list(importeur.navigation.trajets.values())
+        trajets.sort(key=lambda t: t.cle)
+        if not trajets:
+            personnage << "|att|Aucun cap maritime n'a été créé.|ff|"
+            return
+
+        msg = "Caps existants :\n"
+        for trajet in trajets:
+            s = "s" if len(trajet.points) > 1 else ""
+            msg += "\n  {:<20} {} point{s}".format(trajet.cle,
+                    len(trajet.points), s=s)
+
+        personnage << msg

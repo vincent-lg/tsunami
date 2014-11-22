@@ -135,3 +135,44 @@ def get_vitesse_noeuds(distance):
     distance = distance / (TPS_VIRT / DIST_AVA)
     distance *= vit_ecoulement
     return distance * 3600
+
+def get_nom_distance(distance):
+    """Retourne le nom de la distance du vecteur précisé.
+
+    Cette fonction attend en argument une distance (un vecteur de
+    la classe primaires.vehicule.vecteur.Vecteur). Elle retourne la
+    distance en terme de brasses, encablures ou milles.
+
+    """
+    nb_brasses = round(distance.norme * CB_BRASSES)
+
+    if nb_brasses > 100000: # Très grande distance
+        msg_dist = "plus de cent milles"
+    elif nb_brasses > 50000:
+        msg_dist = "plus de cinquante milles"
+    elif nb_brasses > 10000:
+        nb = round(nb_brasses / 10000) * 10
+        msg_dist = "près de {} milles".format(nb)
+    elif nb_brasses > 2000:
+        nb = round(nb_brasses / 1000)
+        msg_dist = "près de {} milles".format(nb)
+    elif nb_brasses > 1000:
+        msg_dist = "près d'un mille"
+    elif nb_brasses > 200:
+        nb = round(nb_brasses / 100)
+        msg_dist = "près de {} encablures".format(nb)
+    elif nb_brasses > 100:
+        msg_dist = "près d'une encablure"
+    elif nb_brasses > 50:
+        nb = round(nb_brasses / 10) * 10
+        msg_dist = "près de {} brasses".format(nb)
+    elif nb_brasses > 20:
+        nb = round(nb_brasses / 5) * 5
+        msg_dist = "près de {} brasses".format(nb)
+    elif nb_brasses > 10:
+        nb = round(nb_brasses / 2) * 2
+        msg_dist = "près de {} brasses".format(nb)
+    else:
+        msg_dist = "près d'une brasse"
+
+    return msg_dist
