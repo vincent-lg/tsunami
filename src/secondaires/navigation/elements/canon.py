@@ -304,7 +304,7 @@ class Canon(BaseElement):
         """Retourne le message de charge du canon."""
         facteur = self.facteur_charge()
         messages = [
-            (0, "Ca canon ne contient pas la moindre once de poudre"),
+            (0, "Ce canon ne contient pas la moindre once de poudre"),
             (5, "Ce canon contient quelques grains de poudre"),
             (10, "Ce canon est chargé très légèrement en poudre"),
             (20, "Ce canon est sensiblement chargé en poudre"),
