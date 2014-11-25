@@ -38,6 +38,7 @@ from abstraits.obase import BaseObj
 from primaires.format.fonctions import supprimer_accents
 from primaires.joueur.joueur import Joueur
 from primaires.vehicule.vecteur import get_direction
+from secondaires.navigation.constantes import get_portee
 from secondaires.navigation.equipage.configuration import Configuration
 import secondaires.navigation.equipage.controles
 from secondaires.navigation.equipage.controle import controles
@@ -49,6 +50,7 @@ from secondaires.navigation.equipage.noms import NOMS_MATELOTS
 from secondaires.navigation.equipage.postes.hierarchie import HIERARCHIE
 from secondaires.navigation.equipage.volonte import volontes
 from secondaires.navigation.equipage.volontes import *
+from secondaires.navigation.visible import Visible
 
 class Equipage(BaseObj):
 
@@ -91,6 +93,9 @@ class Equipage(BaseObj):
 
         # Objectifs
         self.objectifs = []
+
+        # Points observés pour la vigie
+        self.vigie_points = []
 
         self._construire()
 
@@ -400,6 +405,9 @@ class Equipage(BaseObj):
         # Retire les matelots morts
         self.verifier_matelots()
 
+        # Appelle la vigie
+        self.verifier_vigie()
+
         # Si le navire n'es tpas bien orienté face au vent, change
         # l'orientation de ces voiles
         self.orienter_voiles()
@@ -410,47 +418,66 @@ class Equipage(BaseObj):
         # Si le navire est attaqué
         self.ordonner_attaque()
 
-        commandants = self.get_matelots_au_poste("capitaine", False)
-        if not self.destination:
-            return
+    def verifier_vigie(self):
+        """Vérifie les vigies pour détecter les terres et navires.
 
-    def verifier_cap(self, commandant):
-        """Vérifie le cap du navire.
-
-        La direction du navire doit être (à peu près) celle nécessaire
-        pour atteindre le point de destination (self.point). Si c'est
-        le cas et que la distance au point est inférieure à une distance
-        préétablie, le commandant prépare son équipage pour le point
-        suivant.
-
-        Si le cap nécessite une correction, il l'a fait ici aussi.
+        Il y a des règles strictes pour avertir des nouveaux points :
+            * Pour les terres, on annonce la première qu'on voit si on
+              ne voyait rien avant
+            * Pour les navires, on annonce tous ceux qui apparaissent
+              et n'avaient pas été signalés
 
         """
-        destination = self.opt_destination
-        position = self.navire.opt_position
-        distance = destination - position
-        direction = get_direction(distance)
-        ar_direction = round(direction / 3) * 3
-        if self.cap:
-            ar_cap = round(self.cap / 3) * 3
+        navire = self.navire
 
-        if self.caps and distance.mag <= 2:
-            # On cherche le point suivant sur la carte
-            cle = self.caps[0]
-            trajet = importeur.navigation.trajets[cle]
-            suivant = trajet.points.get(self.destination)
-            if suivant is None and len(self.caps) > 1:
-                del self.caps[0]
-                cle = self.caps[0]
-                trajet = importeur.navigation.trajets[cle]
-                suivant = trajet.point_depart
-            self.destination = suivant
+        # Si le navire est immobilisé, la vigie n'est pas active
+        if navire.immobilise:
+            return
 
-        if self.cap is None or ar_cap != ar_direction:
-            # On change de cap
-            self.demander("virer", round(direction),
-                    personnage=commandant.personnage)
-            self.cap = direction
+        vigies = self.get_matelots_au_poste("vigie")
+        if not vigies:
+            return
+
+        vigie = vigies[0]
+        personnage = vigie.personnage
+        distinction = personnage.distinction_audible
+        salle = personnage.salle
+        portee = get_portee(salle)
+        points = Visible.observer(personnage, portee, 5,
+                {"": navire})
+
+        # On retire ce qu'on connaît déjà
+        for angle, (vecteur, point) in tuple(points.points.items()):
+            if point in self.vigie_points:
+                del points.points[angle]
+
+        tries = points.get_tries()
+
+        # D'abord on cherche les navires
+        deja_vus = []
+        vu = False
+        for angle, (vecteur, point) in tries.get("navire", {}).items():
+            navire.envoyer("{} s'écrie : navire sur {}° !".format(
+                    distinction, angle))
+            print("navire", navire, angle)
+            deja_vus.append(point)
+            vu = True
+            break
+
+        # Ensuite, on cheerche les obstacles
+        obstacles = tries.get("obstacle", {}).copy()
+        obstacles.update(tries.get("salle", {}))
+        obstacles.update(tries.get("sallenavire", {}))
+        obstacles.update(tries.get("repere", {}))
+
+        if not vu and len(obstacles) == 1:
+            angle, (vecteur, point) = tuple(obstacles.items())[0]
+            print("terre", navire, angle)
+            navire.envoyer("{} s'écrie : {} sur {}° !".format(
+                    distinction, angle))
+
+        self.vigie_points = [p for a, (v, p) in obstacles.items()]
+        self.vigie_points.extend(deja_vus)
 
     def orienter_voiles(self):
         """Oriente les voiles si nécessaire."""

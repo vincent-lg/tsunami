@@ -157,6 +157,34 @@ class Visible:
                 if c_angle >= 180:
                     break
 
+    def get_tries(self):
+        """Retourne les points triés en classes.
+
+        Au lieu d'avoir un seul dictionnaire {angle: (vecteur, point)},
+        on a un dictionnaire contenant en clé le nom de l classe de
+        l'obstacle et en valeur un dictionnaire contenant les obstacles.
+        Par exemple, voilà ce qu'on pourrait obtenir :
+            {
+                "navire": {
+                    5: (vecteur, autre_navire),
+                },
+                "obstacle": {
+                    10, falaise,
+                    15: ville,
+                },
+            }
+
+        """
+        tries = {}
+
+        for angle, (vecteur, point) in self.points.items():
+            nom = type(point).__name__.lower()
+            dictionnaire = tries.get(nom, {})
+            dictionnaire[angle] = (vecteur, point)
+            tries[nom] = dictionnaire
+
+        return tries
+
     @classmethod
     def observer(cls, personnage, portee, precision, exceptions=None):
         """Méthode de classe construisant une instance de classe.
@@ -167,7 +195,7 @@ class Visible:
             La précision en degré à laquelle les détails seront arrondis.
             Les exceptions sous la forme d'un dicitonnaire.
 
-        Les exceptions doivent être précisés sous la forme:
+        Les exceptions doivent être précisées sous la forme :
             {"attribut": valeur}
 
         Pour chaque point, on essaye de récupérer l'attribut (grâce à
