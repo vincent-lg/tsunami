@@ -88,7 +88,7 @@ class PrmPivoter(Parametre):
             sabord_min = (salle.sabord_min - salle.sabord_max) % 360
             sabord_max = (salle.sabord_min + salle.sabord_max) % 360
 
-        if sabord_min is None:
+        if sabord_min is None or sabord_min == 0:
             personnage << "|err|Vous ne pouvez faire pivoter ce canon.|ff|"
             return
 

@@ -193,6 +193,9 @@ class SalleNavire(Salle):
         if self.sabord_min is None or self.sabord_min < 0:
             return False
 
+        if self.sabord_min + self.sabord_max == 0:
+            return False
+
         if direction is None:
             return True
 
