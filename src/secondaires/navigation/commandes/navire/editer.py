@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -28,37 +28,60 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'shedit'."""
+"""Module contenant le paramètre 'éditer' de la commande 'navire'.."""
 
-from primaires.interpreteur.commande.commande import Commande
-from primaires.interpreteur.editeur.presentation import Presentation
-from primaires.interpreteur.editeur.uniligne import Uniligne
+import argparse
+import shlex
 
-class CmdShedit(Commande):
-    
-    """Commande 'shedit'"""
-    
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmEditer(Parametre):
+
+    """Commande 'navire éditer'."""
+
     def __init__(self):
         """Constructeur de la commande"""
-        Commande.__init__(self, "shedit", "shedit")
-        self.groupe = "administrateur"
-        self.schema = "<cle>"
-        self.nom_categorie = "batisseur"
+        Parametre.__init__(self, "éditer", "edit")
+        self.schema = "<texte_libre>"
         self.aide_courte = "ouvre l'éditeur de modèle de navires"
         self.aide_longue = \
             "Cette commande ouvre l'éditeur de prototype de navire. " \
             "Le terme modèle est également utilisé. Vous devez préciser " \
             "en paramètre la clé du modèle (par exemple |cmd|voilier|ff|). " \
-            "Si le modèle n'existe pas, il sera créé."
-    
+            "Si le modèle n'existe pas, vous devrez préciser l'option " \
+            "|cmd|--creer|ff| dans la commande (par exemple %navire% " \
+            "%navire:éditer%|cmd| --creer voilier|ff|)."
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
-        cle = dic_masques["cle"].cle
-        if cle in type(self).importeur.navigation.modeles:
+        def n_exit(code, msg):
+            """Ne quitte pas Python."""
+            raise ValueError(msg)
+        options = dic_masques["texte_libre"].texte
+
+        # Création de l'interpréteur d'option
+        parser = argparse.ArgumentParser()
+        parser.exit = n_exit
+        parser.add_argument("cle")
+        parser.add_argument("--creer", action="store_true")
+
+        try:
+            args = parser.parse_args(shlex.split(options))
+        except ValueError as err:
+            personnage << "|err|Les options n'ont pas été interprétées " \
+                    "correctement : {}.|ff|".format(err)
+            return
+
+        cle = args.cle
+        if cle in importeur.navigation.modeles:
             modele = type(self).importeur.navigation.modeles[cle]
+        elif not args.creer:
+            personnage << "|err|Ce modèle n'existe pas. Utilisez " \
+                    "l'option |cmd|--creer|ff||err|.|ff|"
+            return
         else:
-            modele = type(self).importeur.navigation.creer_modele(cle)
-        
+            modele = importeur.navigation.creer_modele(cle)
+
         editeur = type(self).importeur.interpreteur.construire_editeur(
                 "shedit", personnage, modele)
         personnage.contextes.ajouter(editeur)

@@ -51,6 +51,5 @@ from . import navire
 from . import passerelle
 from . import rames
 from . import saborder
-from . import shedit
 from . import vent
 from . import voile

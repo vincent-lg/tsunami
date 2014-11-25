@@ -38,6 +38,7 @@ from primaires.interpreteur.commande.commande import Commande
 from .creer import PrmCreer
 from .detruire import PrmDetruire
 from .direction import PrmDirection
+from .editer import PrmEditer
 from .etendue import PrmEtendue
 from .info import PrmInfo
 from .liste import PrmListe
@@ -76,6 +77,7 @@ class CmdNavire(Commande):
         self.ajouter_parametre(prm_creer)
         self.ajouter_parametre(prm_detruire)
         self.ajouter_parametre(prm_direction)
+        self.ajouter_parametre(PrmEditer())
         self.ajouter_parametre(prm_etendue)
         self.ajouter_parametre(prm_info)
         self.ajouter_parametre(prm_liste)

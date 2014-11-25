@@ -323,7 +323,6 @@ class Module(BaseModule):
             commandes.passerelle.CmdPasserelle(),
             commandes.rames.CmdRames(),
             commandes.saborder.CmdSaborder(),
-            commandes.shedit.CmdShedit(),
             commandes.vent.CmdVent(),
             commandes.voile.CmdVoile(),
         ]
