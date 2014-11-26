@@ -95,7 +95,9 @@ class Equipage(BaseObj):
         self.objectifs = []
 
         # Points observés pour la vigie
-        self.vigie_points = []
+        self.vigie_terres = []
+        self.vigie_navires = []
+        self.vigie_tries = {}
 
         self._construire()
 
@@ -446,22 +448,21 @@ class Equipage(BaseObj):
         points = Visible.observer(personnage, portee, 5,
                 {"": navire})
 
-        # On retire ce qu'on connaît déjà
-        for angle, (vecteur, point) in tuple(points.points.items()):
-            if point in self.vigie_points:
-                del points.points[angle]
-
         tries = points.get_tries()
+        self.vigie_tries = tries
 
         # D'abord on cherche les navires
-        deja_vus = []
-        vu = False
-        for angle, (vecteur, point) in tries.get("navire", {}).items():
+        navires = tries.get("navire", {})
+        for angle, (vecteur, point) in navires.items():
+            if point.immobilise:
+                continue
+
+            if point in self.vigie_navires:
+                continue
+
             navire.envoyer("{} s'écrie : navire sur {}° !".format(
                     distinction, angle))
-            print("navire", navire, angle)
-            deja_vus.append(point)
-            vu = True
+            self.vigie_navires.append(point)
             break
 
         # Ensuite, on cheerche les obstacles
@@ -470,14 +471,13 @@ class Equipage(BaseObj):
         obstacles.update(tries.get("sallenavire", {}))
         obstacles.update(tries.get("repere", {}))
 
-        if not vu and len(obstacles) == 1:
+        if not self.vigie_terres and obstacles:
+            # Il n'y avait rien en vu auparavant
             angle, (vecteur, point) = tuple(obstacles.items())[0]
-            print("terre", navire, angle)
-            navire.envoyer("{} s'écrie : {} sur {}° !".format(
+            navire.envoyer("{} s'écrie : Terre ! Terre sur {}° !".format(
                     distinction, angle))
 
-        self.vigie_points = [p for a, (v, p) in obstacles.items()]
-        self.vigie_points.extend(deja_vus)
+        self.vigie_terres = [p for a, (v, p) in obstacles.items()]
 
     def orienter_voiles(self):
         """Oriente les voiles si nécessaire."""
