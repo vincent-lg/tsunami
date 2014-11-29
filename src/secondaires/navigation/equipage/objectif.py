@@ -115,6 +115,12 @@ class Objectif(BaseObj, metaclass=MetaObjectif):
                 message)
         self.logger.debug(message)
 
+    def warning(self, message):
+        """Log le message précisé en paramètre en ajoutant des informations."""
+        message = "Objectif {}:{}, {}".format(self.cle_navire, self.cle,
+                message)
+        self.logger.warning(message)
+
     def afficher(self):
         """Méthode à redéfinir retournant l'affichage de l'objectif."""
         raise NotImplementedError

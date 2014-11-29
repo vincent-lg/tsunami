@@ -137,7 +137,6 @@ class Vitesse(Controle):
         # À ce stade, on a chaque vitesse, avec ou sans voiles et rames
         # On cherche la vitesse la plus proche de l'objectif
         diff = attendue = self.vitesse
-        choix = (0, "immobile", 0)
         for vitesse, (vit_rame, nb_voiles) in vitesses.items():
             if fabs(attendue - vitesse) < diff:
                 diff = fabs(attendue - vitesse)

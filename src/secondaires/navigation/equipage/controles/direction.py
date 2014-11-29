@@ -37,7 +37,6 @@ from secondaires.navigation.equipage.controle import Controle
 class Direction(Controle):
 
     """Classe représentant le contrôle 'direction'.
-
     Ce contrôle est en charge de la direction du navire. Si le navire
     est équipé de rames et gouvernail, les deux sont utilisés pour
     contrôler la direction du navire. Malgré tout, le gouvernail a tendance
@@ -90,7 +89,7 @@ class Direction(Controle):
                     personnage=personnage, exception=commandant)
 
         if rames:
-            if f_difference > pr_rames:
+            if f_difference > 3:
                 vers = "gauche" if difference < 0 else "droite"
                 equipage.demander("ramer", vers, personnage=personnage,
                         exception=commandant)

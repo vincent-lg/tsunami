@@ -71,9 +71,9 @@ class SuivreCap(Rejoindre):
             vitesse = get_vitesse_noeuds(norme)
             if vitesse > self.vitesse_max:
                 vitesse = self.vitesse_max
-            elif norme < 15:
+            elif norme < 25:
                 vitesse = 1
-            elif vitesse < 0.2:
+            elif vitesse < 5:
                 vitesse = 0.2
 
             self.vitesse = vitesse
