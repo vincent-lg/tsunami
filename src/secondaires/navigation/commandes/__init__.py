@@ -49,6 +49,7 @@ from . import loch
 from . import matelot
 from . import navire
 from . import passerelle
+from . import point
 from . import rames
 from . import saborder
 from . import vent

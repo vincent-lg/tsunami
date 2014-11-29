@@ -99,6 +99,8 @@ PERTURBATIONS = {
         "tempete_neige": 3,
 }
 
+# Longitude et latitudes
+TAILLE_DEGREE = 100
 
 # Fonctions
 def get_portee(salle):
@@ -176,3 +178,32 @@ def get_nom_distance(distance):
         msg_dist = "près d'une brasse"
 
     return msg_dist
+
+def get_longitude_latitude(x, y, precision=1):
+    """Retourne un message représentant la longitude et latitude."""
+    deg_long = x / TAILLE_DEGREE
+    if deg_long < 0:
+        cote_long = "ouest"
+        deg_long = -deg_long
+    else:
+        cote_long = "est"
+
+    minute_long = (deg_long - int(deg_long)) * 60
+    minute_long = round(minute_long / precision) * precision
+    deg_long = int(deg_long)
+
+    deg_lat = y / TAILLE_DEGREE
+    if deg_lat < 0:
+        cote_lat = "sud"
+        deg_lat = -deg_lat
+    else:
+        cote_lat = "nord"
+
+    minute_lat = (deg_lat - int(deg_lat)) * 60
+    minute_lat = round(minute_lat / precision) * precision
+    deg_lat = int(deg_lat)
+
+    gs = "s" if minute_long > 1 else ""
+    ts = "s" if minute_lat > 1 else ""
+    return "{}° {} minute{gs} {}, {}° {} minute{ts} {}".format(deg_long,
+            minute_long, cote_long, deg_lat, minute_lat, cote_lat, gs=gs, ts=ts)

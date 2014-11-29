@@ -35,4 +35,5 @@ from . import boussole
 from . import ecope
 from . import calfeutrage
 from . import sac_poudre
+from . import sextant
 from . import tonneau_eau

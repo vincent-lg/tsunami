@@ -126,6 +126,10 @@ class Module(BaseModule):
         u_loch.msg_refus = "Vous êtes en train de manipuler le loch"
         u_loch.msg_visible = "manipule le loch ici"
         u_loch.act_autorisees = ["regarder", "parler"]
+        point = self.importeur.perso.ajouter_etat("faire_point")
+        point.msg_refus = "Vous êtes en train de faire votre point"
+        point.msg_visible = "fait le point ici"
+        point.act_autorisees = ["parler"]
 
         ten_rames = self.importeur.perso.ajouter_etat("tenir_rames")
         ten_rames.msg_refus = "Vous tenez actuellement les rames"
@@ -321,6 +325,7 @@ class Module(BaseModule):
             commandes.matelot.CmdMatelot(),
             commandes.navire.CmdNavire(),
             commandes.passerelle.CmdPasserelle(),
+            commandes.point.CmdPoint(),
             commandes.rames.CmdRames(),
             commandes.saborder.CmdSaborder(),
             commandes.vent.CmdVent(),
