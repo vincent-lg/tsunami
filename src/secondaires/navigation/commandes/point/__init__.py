@@ -91,7 +91,7 @@ class CmdPoint(Commande):
         personnage.etats.retirer("faire_point")
         x = salle.coords.x
         y = salle.coords.y
-        personnage << "Après calcul, vous obtenez le point suivant : " + \
-                get_longitude_latitude(x, y, sextant.precision)
+        personnage << "Après calcul, vous obtenez " + get_longitude_latitude(
+                x, y, sextant.precision) + "."
         personnage.salle.envoyer("{{}} baisse {}".format(sextant.get_nom()),
                 personnage)

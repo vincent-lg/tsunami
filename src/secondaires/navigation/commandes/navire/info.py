@@ -32,6 +32,7 @@
 
 from primaires.interpreteur.masque.parametre import Parametre
 from primaires.format.fonctions import oui_ou_non
+from secondaires.navigation.constantes import get_longitude_latitude
 
 class PrmInfo(Parametre):
 
@@ -52,8 +53,8 @@ class PrmInfo(Parametre):
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         navire = dic_masques["cle_navire"]
+        salle = personnage.salle
         if navire is None:
-            salle = personnage.salle
             if not hasattr(salle, "navire") or salle.navire is None:
                 personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
                 return
@@ -83,6 +84,9 @@ class PrmInfo(Parametre):
         dir_acceleration = str(dir_acceleration).replace(".", ",")
         gouvernail = navire.gouvernail
         cale = navire.cale
+        voiles = navire.voiles
+        hissees = [v for v in voiles if v.hissee]
+        rames = navire.rames
         if gouvernail:
             orient = gouvernail.orientation
             if orient < 0:
@@ -94,6 +98,13 @@ class PrmInfo(Parametre):
                 msg_gouv = "parfaitement au centre"
         else:
             msg_gouv = "aucun"
+        msg_rames = ""
+        if rames:
+            for rame in rames:
+                 msg_rames += ", " + rame.vitesse
+            msg_rames = msg_rames.lstrip(", ")
+        else:
+            msg_rames = "Aucune"
 
         msg = "Informations sur le navire {} :\n".format(navire.cle)
         msg += "\n  Modèle : {} ({})".format(modele.cle, modele.nom)
@@ -109,7 +120,11 @@ class PrmInfo(Parametre):
         msg += " / " + str(int(cale.poids_max)).rjust(6) + " ("
         msg += str(int(cale.poids / cale.poids_max * 100)).rjust(3) + "%)"
         msg += "\n  Coordonnées : {}".format(navire.position.coordonnees)
+        msg += "\n  Point : {}".format(get_longitude_latitude(
+                salle.coords.x, salle.coords.y))
         msg += "\n  Allure : {}".format(navire.nom_allure)
+        msg += "\n  Voiles : {} / {}".format(len(hissees), len(voiles))
+        msg += "\n  Rames : " + msg_rames
         msg += "\n  Gouvernail : " + msg_gouv
         msg += "\n  Vitesse : {} ({} noeuds)".format(vitesse, vitesse_n)
         msg += "\n  Accélération : {} ({}°)".format(acceleration,
