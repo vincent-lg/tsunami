@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,53 +28,48 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction existe."""
+"""Fichier contenant la fonction indice."""
+
+from fractions import Fraction
 
 from primaires.scripting.fonction import Fonction
 from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
 
-    """Teste si une variable ou donnée existe."""
+    """Renvoie l'indice de la donnée dans la liste."""
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.variable_existe, "object")
-        cls.ajouter_types(cls.donnee_existe, "str", "str")
+        cls.ajouter_types(cls.liste, "object", "list")
 
     @staticmethod
-    def variable_existe(variable):
-        """Retourne vraie si la variable existe, False sinon."""
-        return variable is not None
+    def liste(element, liste):
+        """Renvoie l'indice de l'élément dans la liste.
 
-    @staticmethod
-    def donnee_existe(type, cle):
-        """Retourne vraie si la donnée existe, faux sinon.
+        Cette fonction retourne l'indice, c'est-à-dire la position
+        (le numéro de la case) dans lequel l'élément transmis est
+        conservé dans la liste. Voyez ci-dessous pour des exemples.
+        Veillez bien à utiliser le même élément : si l'élément n'est
+        pas trouvé dans la liste, une alerte est créée.
 
-        Une donnée peut être de nombreuses choses, comme un
-        prototype d'objet, un PNJ, une plante... Pour savoir ce que
-        vous voulez chercher, vous devez renseigner le type de la
-        donnée (la liste des types est donnée ci-dessous) ainsi que
-        la clé de la donnée. Consultez les exemples ci-dessous pour
-        plus d'informations.
+        Paramètres à préciser :
 
-        Liste des types :
-
-          * "prototype d'objet"
-
+          * element : l'élément (le type veut varier)
+          * liste : la liste dans laquelle chercher.
 
         Exemples d'utilisation :
 
-          # Cherche si le prototype d'objet 'chapeau_gris' existe
-          si existe("prototype d'objet", "chapeau_gris"):
+          animaux = liste("canard", "chien", "grenouille", "chameau", "parapluie")
+          # J'aime bien les parapluies
+          nombre = indice("canard", animaux)
+          # nombre contient à présent 1 (première case de la liste)
+          nombre = indice("chameau", animaux)
+          # nombre contient 4 (la quatrième case de la liste)
 
         """
-        types = {
-            "prototype d'objet": importeur.objet.prototypes,
-        }
-
-        dictionnaire = types.get(type)
-        if dictionnaire is None:
-            raise ErreurExecution("Type {} inconnu".format(repr(type)))
-
-        return cle in dictionnaire
+        if element in liste:
+            return Fraction(liste.index(element) + 1)
+        else:
+            raise ErreurExecution("L'élément {} n'est pas présent " \
+                    "dans cette liste".format(repr(element)))
