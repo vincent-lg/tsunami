@@ -123,7 +123,7 @@ class CmdAllumer(Commande):
                         personnage)
                 break
 
-        if not any(contraintes):
+        if contraintes and not any(contraintes):
             personnage << msg_err
             return
 
