@@ -83,6 +83,9 @@ class ClasseFonction(Fonction):
             raise ErreurExecution("L'objet {} n'est pas une lumière.".format(
                     objet.identifiant))
 
+        if objet.duree is not None and objet.duree >= objet.duree_max:
+            return Fraction(0)
+
         return Fraction(100 - (objet.duree_en_cours() / objet.duree_max * \
                 100))
 
