@@ -82,9 +82,8 @@ class MotCle(Commande):
             commande[:] = chaine_vers_liste(masque.a_interpreter)
             str_commande = liste_vers_chaine(commande)
             sa_commande = supprimer_accents(str_commande).lower()
-            mot_cle = " " + mot_cle
-            if (mot_cle + " ") in sa_commande or sa_commande.endswith(
-                    mot_cle):
+            mot_cle = " " + mot_cle + " "
+            if mot_cle in sa_commande:
                 fin = sa_commande.rindex(mot_cle)
                 masque.a_interpreter = str_commande[:fin]
                 fin += len(mot_cle)
