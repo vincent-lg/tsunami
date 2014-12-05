@@ -58,12 +58,14 @@ class SuivreCap(Rejoindre):
         """Trouve le cap (x, y, vitesse).
 
         Cette méthode trouve le cap tel que renseigné par
-        l'équipage. Elle permet également de changer de cap quand
-        cela s'avère nécessaire. Enfin, elle modifie la vitesse nécessaire
-        pour atteindre la destination.
+        l'équipage.
 
         """
         equipage = self.equipage
+        navire = self.navire
+        if navire.orientation != 0:
+            return
+
         if equipage.destination:
             self.x, self.y = equipage.destination
             distance = self.get_distance()
@@ -91,20 +93,4 @@ class SuivreCap(Rejoindre):
                 equipage.destination = suivant
 
             # On retransmet les contrôles
-            self.transmettre_controles()
-
-    def creer(self):
-        """L'objectif est créé."""
-        equipage = self.equipage
-        commandant = self.commandant
-        if commandant is None:
-            return
-
-        self.trouver_cap()
-
-    def verifier(self, prioritaire):
-        """Vérifie que l'objectif est toujours valide."""
-        Rejoindre.verifier(self, prioritaire)
-        if prioritaire:
-            self.trouver_cap()
-
+            Rejoindre.trouver_cap(self)

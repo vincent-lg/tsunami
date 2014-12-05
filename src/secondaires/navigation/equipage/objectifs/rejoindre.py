@@ -60,9 +60,9 @@ class Rejoindre(Objectif):
         self.x = x
         self.y = y
         self.vitesse = vitesse
-        self.n_x = None
-        self.n_y = None
-        self.n_vitesse = None
+        self.ancienne_vitesse = vitesse
+        self.vitesse_optimale = vitesse
+        self.autre_direction = None
 
     def afficher(self):
         """Méthode à redéfinir retournant l'affichage de l'objectif."""
@@ -90,14 +90,8 @@ class Rejoindre(Objectif):
         position = navire.opt_position
         o_x = position.x
         o_y = position.y
-
-        if self.n_x is None and self.n_y is None:
-            d_x = self.x
-            d_y = self.y
-        else:
-            d_x = self.n_x
-            d_y = self.n_y
-
+        d_x = self.x
+        d_y = self.y
         distance = Vecteur(d_x - o_x, d_y - o_y, 0)
         return distance
 
@@ -106,7 +100,10 @@ class Rejoindre(Objectif):
         equipage = self.equipage
         navire = self.navire
         distance = self.get_distance()
-        direction = round(distance.direction)
+        if self.autre_direction:
+            direction = round(self.autre_direction)
+        else:
+            direction = round(distance.direction)
 
         # Crée ou modifie les contrôles
         if equipage.controles.get("direction"):
@@ -114,40 +111,24 @@ class Rejoindre(Objectif):
         else:
             equipage.controler("direction", direction)
 
-        vitesse = self.vitesse if self.n_vitesse is None else self.n_vitesse
+        vitesse = self.vitesse
         if equipage.controles.get("vitesse"):
-            if fabs(equipage.controles["vitesse"].vitesse - vitesse) >= 0.2:
-                equipage.controles["vitesse"].vitesse_optimale = 0
-            equipage.controles["vitesse"].vitesse = self.vitesse
+            equipage.controles["vitesse"].vitesse = vitesse
+            if self.ancienne_vitesse is not None and vitesse != \
+                    self.ancienne_vitesse:
+                print("Calcul vit")
+                equipage.controles["vitesse"].calculer_vitesse()
+            self.ancienne_vitesse = vitesse
         else:
             equipage.controler("vitesse", self.vitesse)
 
-    def creer(self):
-        """L'objectif est créé.
-
-        On crée les contrôles associés pour atteindre l'objectif
-        visé, à savoir, rejoindre le point (x, y), sans s'inquiéter
-        des obstacles éventuels.
-
-        """
-        equipage = self.equipage
-        commandant = self.commandant
-        if commandant is None:
-            return
-
-        self.transmettre_controles()
-
-    def verifier(self, prioritaire):
-        """Vérifie que l'objectif est toujours valide.
-
-        Dans cette méthode, on vérifie :
-            Qu'il n'y a aucun obstacle sur la trajectoire assignée
-
-        """
+    def trouver_cap(self):
+        """Trouve le cap, tenant compte des obstacles."""
         equipage = self.equipage
         navire = self.navire
-        commandant = self.commandant
-        if commandant is None:
+
+        # Si le navire est en train de virer, pour l'instant annule l'objectif
+        if navire.orientation != 0:
             return
 
         # On examine les points listés par la vigie
@@ -156,6 +137,8 @@ class Rejoindre(Objectif):
 
         # Si le dictionnaire est vide, ne fait rien
         if not tries:
+            self.ancienne_vitesse = None
+            self.autre_direction = None
             return
 
         # On n'examine que les obstacles
@@ -172,25 +155,8 @@ class Rejoindre(Objectif):
 
         # Si il n'y a aucun obstacle, ne continue pas
         if not dangereux:
-            if self.n_x is not None or self.n_y is not None or \
-                    self.n_vitesse is not None:
-                self.warning("Il n'y a plus de danger sur la trajectoire")
-
-            self.n_x = None
-            self.n_y = None
-            self.n_vitesse = None
-            return
-
-        # Peut-être qu'on peut atteindre l'objectif malgré tout
-        position = navire.opt_position
-        projetee = Vector(self.x, self.y, 0) - position
-        if projetee.mag > 15:
-            projetee.mag = 15
-        projetee = position + projetee
-
-        if not navire.controller_collision(projetee, collision=False):
-            self.n_x = None
-            self.n_y = None
+            self.ancienne_vitesse = None
+            self.autre_direction = None
             return
 
         # Maintenant on cherche la distance la plus courte
@@ -203,10 +169,13 @@ class Rejoindre(Objectif):
 
         # En fonction de la distance, modifie la vitesse
         if min_distance < 5:
+            print("vit 0")
             self.vitesse = 0
         elif min_distance < 15:
-            self.vitesse = 0,2
+            print("vit 0.2")
+            self.vitesse = 0.2
         elif min_distance < 30:
+            print("vit 1")
             self.vitesse = 1
         else:
             # Les obstacles sont trop loin pour être inquiétants
@@ -219,6 +188,14 @@ class Rejoindre(Objectif):
         for i in range(1, 18):
             angles.insert((i - 1) * 2, i * -5)
 
+        # Si on est pas exactement dans la bonne direction pour rejoindre
+        # le point (x, y), on envisage de changer de cap
+        o_distance = self.get_distance()
+        if fabs(navire.direction.direction - o_distance.direction) >  2:
+            relative = o_distance.direction - navire.direction.direction
+            angles = sorted(angles, key=lambda a: fabs(a - relative))
+
+        position = navire.opt_position
         while distance > 0:
             for angle in angles:
                 vecteur = navire.opt_direction
@@ -226,14 +203,42 @@ class Rejoindre(Objectif):
                 vecteur.around_z(radians(angle))
                 projetee = position + vecteur
                 if not navire.controller_collision(projetee, collision=False):
-                    self.warning("Obstacle en vue, nouveau cap vers " \
-                            "{}° (x={}, y={}, distance={})".format(
-                            angle, round(projetee.x), round(projetee.y),
-                            distance))
-                    self.n_x = projetee.x
-                    self.n_y = projetee.y
+                    print("d", angle)
+                    self.autre_direction = round((
+                            navire.direction.direction + angle) % 360)
+                    self.transmettre_controles()
                     return
 
             distance -= 5
 
-        # Si on ne trouve aucun chemin, il serai bon de retourner
+    def creer(self):
+        """L'objectif est créé.
+
+        On crée les contrôles associéss pour atteindre l'objectif
+        visé, à savoir, rejoindre le point (x, y), en essayant
+        de trouver les obstacles corresondant et un cap de remplacement
+        si nécessaire.
+
+        """
+        equipage = self.equipage
+        commandant = self.commandant
+        if commandant is None:
+            return
+
+        self.trouver_cap()
+
+    def verifier(self, prioritaire):
+        """Vérifie que l'objectif est toujours valide.
+
+        Dans cette méthode, on vérifie :
+            Qu'il n'y a aucun obstacle sur la trajectoire assignée
+
+        """
+        equipage = self.equipage
+        navire = self.navire
+        commandant = self.commandant
+        if commandant is None:
+            return
+
+        if prioritaire:
+            self.trouver_cap()

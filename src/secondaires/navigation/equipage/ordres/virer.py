@@ -79,7 +79,7 @@ class Virer(Ordre):
             if diff > 180:
                 diff = 360 - diff
 
-            if diff == 0:
+            if diff <= 1:
                 gouvernail.centrer(personnage)
                 yield SignalTermine()
             elif diff < 5:

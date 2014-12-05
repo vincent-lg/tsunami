@@ -83,7 +83,6 @@ class Direction(Controle):
         if f_difference < 1 or navire.orientation != 0:
             return
 
-        pr_rames = navire.orientation
         if gouvernail:
             equipage.demander("virer_gouvernail", objectif,
                     personnage=personnage, exception=commandant)
