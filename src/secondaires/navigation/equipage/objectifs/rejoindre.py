@@ -116,7 +116,6 @@ class Rejoindre(Objectif):
             equipage.controles["vitesse"].vitesse = vitesse
             if self.ancienne_vitesse is not None and vitesse != \
                     self.ancienne_vitesse:
-                print("Calcul vit")
                 equipage.controles["vitesse"].calculer_vitesse()
             self.ancienne_vitesse = vitesse
         else:
@@ -137,6 +136,7 @@ class Rejoindre(Objectif):
 
         # Si le dictionnaire est vide, ne fait rien
         if not tries:
+            print("Rien en vue")
             self.ancienne_vitesse = None
             self.autre_direction = None
             return
@@ -147,14 +147,15 @@ class Rejoindre(Objectif):
         obstacles.update(tries.get("sallenavire", {}))
 
         # On s'intéresse seulement aux obstacles qui ont un angle
-        # dangereux, entre -45° et 45°
+        # dangereux, entre -90° et 90°
         dangereux = obstacles.copy()
         for angle in obstacles.keys():
-            if angle < -45 or angle > 45:
+            if angle < -90 or angle > 90:
                 del dangereux[angle]
 
         # Si il n'y a aucun obstacle, ne continue pas
         if not dangereux:
+            print("Rien de dangereux")
             self.ancienne_vitesse = None
             self.autre_direction = None
             return
@@ -169,17 +170,14 @@ class Rejoindre(Objectif):
 
         # En fonction de la distance, modifie la vitesse
         if min_distance < 5:
-            print("vit 0")
             self.vitesse = 0
         elif min_distance < 15:
-            print("vit 0.2")
             self.vitesse = 0.2
         elif min_distance < 30:
-            print("vit 1")
             self.vitesse = 1
         else:
             # Les obstacles sont trop loin pour être inquiétants
-            return
+            pass
 
         # Cherche ensuite le meilleur cap
         # On cherche le meilleur cap possible (c'est-à-dire le plus long)
@@ -196,13 +194,21 @@ class Rejoindre(Objectif):
             angles = sorted(angles, key=lambda a: fabs(a - relative))
 
         position = navire.opt_position
+
+        # Peut-être changer de cap n'est-il pas nécessaire
+        vecteur = navire.opt_direction
+        vecteur.mag = distance
+        if not navire.controller_collision(vecteur, collision=False):
+            print("Conserve le cap")
+            self.transmettre_controles()
+            return
+
         while distance > 0:
             for angle in angles:
                 vecteur = navire.opt_direction
                 vecteur.mag = distance
                 vecteur.around_z(radians(angle))
-                projetee = position + vecteur
-                if not navire.controller_collision(projetee, collision=False):
+                if not navire.controller_collision(vecteur, collision=False):
                     print("d", angle)
                     self.autre_direction = round((
                             navire.direction.direction + angle) % 360)

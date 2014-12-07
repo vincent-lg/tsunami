@@ -80,7 +80,7 @@ class Direction(Controle):
                     exception=commandant)
             return
 
-        if f_difference < 1 or navire.orientation != 0:
+        if f_difference < 2 or navire.orientation != 0:
             return
 
         if gouvernail:
