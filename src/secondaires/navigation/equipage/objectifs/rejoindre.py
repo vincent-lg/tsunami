@@ -170,19 +170,14 @@ class Rejoindre(Objectif):
 
         # En fonction de la distance, modifie la vitesse
         if min_distance < 5:
-            self.vitesse = 0
-        elif min_distance < 15:
             self.vitesse = 0.2
-        elif min_distance < 30:
+        elif min_distance < 15:
             self.vitesse = 1
-        else:
-            # Les obstacles sont trop loin pour être inquiétants
-            pass
 
         # Cherche ensuite le meilleur cap
         # On cherche le meilleur cap possible (c'est-à-dire le plus long)
         distance = 30
-        angles = [i * 5 for i in range(1, 18)]
+        angles = [i * 5 for i in range(0, 18)]
         for i in range(1, 18):
             angles.insert((i - 1) * 2, i * -5)
 
@@ -194,14 +189,6 @@ class Rejoindre(Objectif):
             angles = sorted(angles, key=lambda a: fabs(a - relative))
 
         position = navire.opt_position
-
-        # Peut-être changer de cap n'est-il pas nécessaire
-        vecteur = navire.opt_direction
-        vecteur.mag = distance
-        if not navire.controller_collision(vecteur, collision=False):
-            print("Conserve le cap")
-            self.transmettre_controles()
-            return
 
         while distance > 0:
             for angle in angles:
