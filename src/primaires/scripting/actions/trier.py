@@ -28,56 +28,47 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction nom_objet."""
+"""Fichier contenant l'action trier"""
 
-from primaires.scripting.fonction import Fonction
+from primaires.perso.exceptions.action import ExceptionAction
+from primaires.scripting.action import Action
 from primaires.scripting.instruction import ErreurExecution
 
-class ClasseFonction(Fonction):
+class ClasseAction(Action):
 
-    """Retourne le nom singulier ou pluriel d'un objet."""
+    """Trie une séquence."""
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.nom_objet, "str", "Fraction")
-        cls.ajouter_types(cls.nom_objet2, "Objet", "Fraction")
+        cls.ajouter_types(cls.trier, "list")
+        cls.ajouter_types(cls.trier, "list", "str")
 
     @staticmethod
-    def nom_objet(cle_prototype, nombre):
-        """Retourne le nom singulier ou pluriel de l'objet précisé.
+    def trier(liste, flags=""):
+        """Trie la liste passée en paramètre.
 
-        Paramètres :
+        Paramètres à préciser :
 
-          * cle_prototype : la clé du prototype d'objet, sous la forme d'une chaîne
-          * nombre : la quantité de l'objet
+          * liste : la liste à trier
+          * flags : les flags pour influencer le tri (voir plus bas).
 
-        Exemple d'utilisation :
+        Flags disponibles :
 
-          nom = nom_objet("carotte_crue", 8)
-          # nom devrait contenir quelque chose comme "8 carottes crues"
+          * "inverse" : trie la liste dans le sens inverse
 
-        """
-        try:
-            prototype = importeur.objet.prototypes[cle_prototype]
-        except KeyError:
-            raise ErreurExecution("prototype d'objet introuvable : {}".format(
-                    repr(cle_prototype)))
+        Exemples d'utilisation :
 
-        return prototype.get_nom(int(nombre), pluriels=False)
-
-    @staticmethod
-    def nom_objet2(objet, nombre):
-        """Retourne le nom singulier ou pluriel de l'objet précisé.
-
-        Paramètres :
-
-          * objet : l'objet concerné
-          * nombre : la quantité de l'objet
-
-        Exemple d'utilisation :
-
-          nom = nom_objet(objet, 8)
-          # nom devrait contenir quelque chose comme "8 carottes crues"
+          nombres = liste(8, -2, 4, 7)
+          trier nombres
+          # nombres contient maintenant -2, 4, 7, 8
+          trier liste "inverse"
+          # nombres contient maintenant 8, 7, 4, -2
 
         """
-        return objet.get_nom(int(nombre), pluriels=False)
+        flags = flags.lower().split(" ")
+        if "inverse" in flags:
+            reverse = True
+        else:
+            reverse = False
+
+        liste.sort(reverse=reverse)
