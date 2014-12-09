@@ -136,9 +136,9 @@ class Rejoindre(Objectif):
 
         # Si le dictionnaire est vide, ne fait rien
         if not tries:
-            print("Rien en vue")
             self.ancienne_vitesse = None
             self.autre_direction = None
+            self.transmettre_controles()
             return
 
         # On n'examine que les obstacles
@@ -155,9 +155,9 @@ class Rejoindre(Objectif):
 
         # Si il n'y a aucun obstacle, ne continue pas
         if not dangereux:
-            print("Rien de dangereux")
             self.ancienne_vitesse = None
             self.autre_direction = None
+            self.transmettre_controles()
             return
 
         # Maintenant on cherche la distance la plus courte
@@ -179,14 +179,13 @@ class Rejoindre(Objectif):
         distance = 30
         angles = [i * 5 for i in range(0, 18)]
         for i in range(1, 18):
-            angles.insert((i - 1) * 2, i * -5)
+            angles.append(i * -5)
 
         # Si on est pas exactement dans la bonne direction pour rejoindre
         # le point (x, y), on envisage de changer de cap
         o_distance = self.get_distance()
-        if fabs(navire.direction.direction - o_distance.direction) >  2:
-            relative = o_distance.direction - navire.direction.direction
-            angles = sorted(angles, key=lambda a: fabs(a - relative))
+        relative = o_distance.direction - navire.direction.direction
+        angles = sorted(angles, key=lambda a: fabs(a - relative))
 
         position = navire.opt_position
 
@@ -196,7 +195,9 @@ class Rejoindre(Objectif):
                 vecteur.mag = distance
                 vecteur.around_z(radians(angle))
                 if not navire.controller_collision(vecteur, collision=False):
-                    print("d", angle)
+                    if angle != 0:
+                        self.info("Cap libre sur {}°".format(angle))
+
                     self.autre_direction = round((
                             navire.direction.direction + angle) % 360)
                     self.transmettre_controles()

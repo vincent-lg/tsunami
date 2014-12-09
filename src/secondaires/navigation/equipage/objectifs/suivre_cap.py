@@ -35,7 +35,7 @@ from secondaires.navigation.constantes import *
 from secondaires.navigation.equipage.objectifs.rejoindre import Rejoindre
 
 # Constantes
-DISTANCE_MIN = 1.5
+DISTANCE_MIN = 3
 
 class SuivreCap(Rejoindre):
 
@@ -75,7 +75,7 @@ class SuivreCap(Rejoindre):
                 vitesse = self.vitesse_max
             elif norme < 25:
                 vitesse = 1
-            elif vitesse < 5:
+            elif vitesse < 7:
                 vitesse = 0.2
 
             self.vitesse = vitesse

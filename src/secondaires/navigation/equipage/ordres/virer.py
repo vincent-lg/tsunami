@@ -73,13 +73,13 @@ class Virer(Ordre):
                 cote = -1
 
             # On change d'inclinaison du gouvernail si nécessaire
-            direction_actuelle = int(nav_direction)
-            direction_voulue = int(direction)
+            direction_actuelle = round(nav_direction)
+            direction_voulue = round(direction)
             diff = (direction_voulue - direction_actuelle) % 360
             if diff > 180:
                 diff = 360 - diff
 
-            if diff <= 1:
+            if diff == 0:
                 gouvernail.centrer(personnage)
                 yield SignalTermine()
             elif diff < 5:
