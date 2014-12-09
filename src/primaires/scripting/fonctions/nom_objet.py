@@ -40,7 +40,7 @@ class ClasseFonction(Fonction):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.nom_objet, "str", "Fraction")
-        cls.ajouter_types(cls.nom, "Objet", "Fraction")
+        cls.ajouter_types(cls.nom_objet2, "Objet", "Fraction")
 
     @staticmethod
     def nom_objet(cle_prototype, nombre):
@@ -66,7 +66,7 @@ class ClasseFonction(Fonction):
         return prototype.get_nom(int(nombre), pluriels=False)
 
     @staticmethod
-    def nom(objet, nombre):
+    def nom_objet2(objet, nombre):
         """Retourne le nom singulier ou pluriel de l'objet précisé.
 
         Paramètres :
