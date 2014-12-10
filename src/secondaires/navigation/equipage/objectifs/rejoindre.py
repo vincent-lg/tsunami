@@ -169,10 +169,10 @@ class Rejoindre(Objectif):
                 min_angle = angle
 
         # En fonction de la distance, modifie la vitesse
-        if min_distance < 5:
+        if min_distance < 8:
             self.vitesse = 0.2
-        elif min_distance < 15:
-            self.vitesse = 1
+        elif min_distance < 25:
+            self.vitesse = 0.6
 
         # Cherche ensuite le meilleur cap
         # On cherche le meilleur cap possible (c'est-à-dire le plus long)
@@ -188,7 +188,6 @@ class Rejoindre(Objectif):
         angles = sorted(angles, key=lambda a: fabs(a - relative))
 
         position = navire.opt_position
-
         while distance > 0:
             for angle in angles:
                 vecteur = navire.opt_direction
@@ -204,6 +203,10 @@ class Rejoindre(Objectif):
                     return
 
             distance -= 5
+
+
+        # On ne change pas de cap mais peut-être change-t-on de vitesse
+        self.transmettre_controles()
 
     def creer(self):
         """L'objectif est créé.
