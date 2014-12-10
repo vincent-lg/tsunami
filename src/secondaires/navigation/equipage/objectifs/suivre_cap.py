@@ -50,7 +50,7 @@ class SuivreCap(Rejoindre):
     """
 
     cle = "suivre_cap"
-    def __init__(self, equipage, vitesse_max):
+    def __init__(self, equipage, vitesse_max=None):
         Rejoindre.__init__(self, equipage)
         self.vitesse_max = vitesse_max
 
