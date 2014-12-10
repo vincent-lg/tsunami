@@ -407,9 +407,6 @@ class Equipage(BaseObj):
         # Retire les matelots morts
         self.verifier_matelots()
 
-        # Appelle la vigie
-        self.verifier_vigie()
-
         # Si le navire n'es tpas bien orienté face au vent, change
         # l'orientation de ces voiles
         self.orienter_voiles()

@@ -627,6 +627,9 @@ class Module(BaseModule):
         equipages = [n.equipage for n in self.navires.values() if \
                 len(n.equipage.matelots) > 0]
         for equipage in equipages:
+            if not equipage.navire.immobilise:
+                equipage.verifier_vigie()
+
             for controle in equipage.controles.values():
                 controle.controler()
 
