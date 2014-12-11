@@ -625,9 +625,9 @@ class Navire(Vehicule):
                         print("On change d'étendue pour", self, self.etendue.cle)
                         break
 
-        # Enregistre la distance parcourue au compteur
-        distance = (n_position - origine).mag
-        self.compteur += distance * CB_BRASSES
+            # Enregistre la distance parcourue au compteur
+            distance = (n_position - origine).mag
+            self.compteur += distance * CB_BRASSES
 
         if vit_or <= 0.01 and vit_fin >= 0.05:
             if vit_fin < 0.2:

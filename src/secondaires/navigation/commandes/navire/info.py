@@ -107,9 +107,9 @@ class PrmInfo(Parametre):
             msg_rames = "Aucune"
         compteur = round(navire.compteur / 1000, 3)
         if compteur >= 2:
-            compteur = "{} milles".format(compteur.replace(".", ","))
+            compteur = "{} milles".format(str(compteur).replace(".", ","))
         else:
-            compteur = "{} mille".format(compteur.replace(".", ","))
+            compteur = "{} mille".format(str(compteur).replace(".", ","))
 
         msg = "Informations sur le navire {} :\n".format(navire.cle)
         msg += "\n  Modèle : {} ({})".format(modele.cle, modele.nom)
