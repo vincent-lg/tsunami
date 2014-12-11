@@ -103,7 +103,7 @@ class PrmObjectif(Parametre):
         equipage = salle.navire.equipage
         nombre = dic_masques["nombre"]
         if nombre:
-            nombre = nombre
+            nombre = nombre.nombre
             if nombre < 0 or nombre > len(equipage.objectifs):
                 personnage << "|err|Numéro d'objectif invalide.|ff|"
                 return

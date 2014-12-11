@@ -127,7 +127,7 @@ class PrmInfo(Parametre):
         msg += "\n  Compteur : {}".format(compteur)
         msg += "\n  Coordonnées : {}".format(navire.position.coordonnees)
         msg += "\n  Point : {}".format(get_longitude_latitude(
-                salle.coords.x, salle.coords.y))
+                navire.position.x, navire.position.y))
         msg += "\n  Allure : {}".format(navire.nom_allure)
         msg += "\n  Voiles : {} / {}".format(len(hissees), len(voiles))
         msg += "\n  Rames : " + msg_rames
