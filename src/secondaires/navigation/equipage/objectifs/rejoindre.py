@@ -193,7 +193,8 @@ class Rejoindre(Objectif):
                 vecteur = navire.opt_direction
                 vecteur.mag = distance
                 vecteur.around_z(radians(angle))
-                if not navire.controller_collision(vecteur, collision=False):
+                if not navire.controller_collision(vecteur, collision=False,
+                        marge=0.8):
                     if angle != 0:
                         self.info("Cap libre sur {}°".format(angle))
 

@@ -638,7 +638,7 @@ class Navire(Vehicule):
 
         self.en_collision = False
 
-    def controller_collision(self, destination=None, direction=None, collision=True):
+    def controller_collision(self, destination=None, direction=None, collision=True, marge=0.5):
         """Contrôle les collisions entre la position actuel et la destination.
 
         Si la direction est précisée, le navire vire (la direction
@@ -680,9 +680,9 @@ class Navire(Vehicule):
                     projetee.y, projetee.z]
             for coords, point in points:
                 v_point = Vector(*coords)
-                arg = b_arg + list(coords) + [etendue.altitude, 0.5]
+                arg = b_arg + list(coords) + [etendue.altitude, marge]
                 if in_rectangle(*arg) and vecteur.distance(
-                        projetee, v_point) < 0.5:
+                        projetee, v_point) < marge:
                     if collision:
                         importeur.navigation.nav_logger.warning(
                                 "Collision entre {} et {}".format(
