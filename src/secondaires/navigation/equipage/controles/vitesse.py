@@ -138,7 +138,7 @@ class Vitesse(Controle):
         # On cherche la vitesse la plus proche de l'objectif
         diff = attendue = self.vitesse
         for vitesse, (vit_rame, nb_voiles) in vitesses.items():
-            if fabs(attendue - vitesse) < diff:
+            if fabs(attendue - vitesse) <= diff:
                 diff = fabs(attendue - vitesse)
                 choix = (vitesse, vit_rame, nb_voiles)
 

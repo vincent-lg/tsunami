@@ -115,6 +115,12 @@ class Objectif(BaseObj, metaclass=MetaObjectif):
                 message)
         self.logger.debug(message)
 
+    def info(self, message):
+        """Log le message précisé en paramètre en ajoutant des informations."""
+        message = "Objectif {}:{}, {}".format(self.cle_navire, self.cle,
+                message)
+        self.logger.info(message)
+
     def warning(self, message):
         """Log le message précisé en paramètre en ajoutant des informations."""
         message = "Objectif {}:{}, {}".format(self.cle_navire, self.cle,

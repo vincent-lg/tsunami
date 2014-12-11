@@ -73,8 +73,8 @@ class Virer(Ordre):
                 cote = -1
 
             # On change d'inclinaison du gouvernail si nécessaire
-            direction_actuelle = int(nav_direction)
-            direction_voulue = int(direction)
+            direction_actuelle = round(nav_direction)
+            direction_voulue = round(direction)
             diff = (direction_voulue - direction_actuelle) % 360
             if diff > 180:
                 diff = 360 - diff

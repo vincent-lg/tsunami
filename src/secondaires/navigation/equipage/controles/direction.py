@@ -73,17 +73,15 @@ class Direction(Controle):
             difference = difference - 360
 
         f_difference = fabs(difference)
-        pr_rames = navire.orientation
-        pr_rames = 3 if pr_rames < 3 else pr_rames
+        pr_rames = 3
         if f_difference <= pr_rames and sum(r.orientation for r in rames) != 0:
             equipage.demander("ramer", "centre", personnage=personnage,
                     exception=commandant)
             return
 
-        if f_difference < 1 or navire.orientation != 0:
+        if f_difference < 2 or navire.orientation != 0:
             return
 
-        pr_rames = navire.orientation
         if gouvernail:
             equipage.demander("virer_gouvernail", objectif,
                     personnage=personnage, exception=commandant)
