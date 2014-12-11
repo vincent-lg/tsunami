@@ -81,6 +81,7 @@ class Navire(Vehicule):
         self.nom_personnalise = ""
         self.cale = Cale(self)
         self.canots = []
+        self.compteur = 0
 
         if modele:
             modele.vehicules.append(self)
@@ -623,6 +624,10 @@ class Navire(Vehicule):
                         self.position.z = autre.altitude
                         print("On change d'étendue pour", self, self.etendue.cle)
                         break
+
+        # Enregistre la distance parcourue au compteur
+        distance = (n_position - origine).mag
+        self.compteur += distance * CB_BRASSES
 
         if vit_or <= 0.01 and vit_fin >= 0.05:
             if vit_fin < 0.2:

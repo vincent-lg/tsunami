@@ -105,6 +105,11 @@ class PrmInfo(Parametre):
             msg_rames = msg_rames.lstrip(", ")
         else:
             msg_rames = "Aucune"
+        compteur = round(navire.compteur / 1000, 3)
+        if compteur >= 2:
+            compteur = "{} milles".format(compteur.replace(".", ","))
+        else:
+            compteur = "{} mille".format(compteur.replace(".", ","))
 
         msg = "Informations sur le navire {} :\n".format(navire.cle)
         msg += "\n  Modèle : {} ({})".format(modele.cle, modele.nom)
@@ -119,6 +124,7 @@ class PrmInfo(Parametre):
         msg += "\n  Cale : " + str(int(cale.poids)).rjust(6)
         msg += " / " + str(int(cale.poids_max)).rjust(6) + " ("
         msg += str(int(cale.poids / cale.poids_max * 100)).rjust(3) + "%)"
+        msg += "\n  Compteur : {}".format(compteur)
         msg += "\n  Coordonnées : {}".format(navire.position.coordonnees)
         msg += "\n  Point : {}".format(get_longitude_latitude(
                 salle.coords.x, salle.coords.y))

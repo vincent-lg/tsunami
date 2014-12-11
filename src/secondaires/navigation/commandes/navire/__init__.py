@@ -46,6 +46,7 @@ from .matelot import PrmMatelot
 from .nom import PrmNom
 from .proprietaire import PrmProprietaire
 from .teleporter import PrmTeleporter
+from .zero import PrmZero
 
 class CmdNavire(Commande):
 
@@ -85,3 +86,4 @@ class CmdNavire(Commande):
         self.ajouter_parametre(PrmNom())
         self.ajouter_parametre(PrmProprietaire())
         self.ajouter_parametre(prm_teleporter)
+        self.ajouter_parametre(PrmZero())
