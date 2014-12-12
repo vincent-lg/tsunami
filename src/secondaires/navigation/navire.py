@@ -410,16 +410,16 @@ class Navire(Vehicule):
 
         Une liste de vitesses doit être précisée en paramètre,
         représentant une liste de chaînes dont chaque chaîne est un
-        nom de vitesse (par exemple, "lente"). Pour chaque vitese,
+        nom de vitesse (par exemple, "lente"). Pour chaque vitesse,
         on récupère son facteur tel qe défini dans les constantes
         et le facteur multiplicateur défini dans le modèle.
 
         """
-        facteur = 1
+        facteur = 0
         facteur_rames = self.modele.facteur_rames
         for vitesse in vitesses:
             facteur_vitesse = VIT_RAMES[vitesse]
-            facteur = facteur * facteur_rames * facteur_vitesse
+            facteur += (facteur_rames * facteur_vitesse) / len(vitesses)
 
         return facteur
 
