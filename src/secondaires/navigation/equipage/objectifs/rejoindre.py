@@ -169,7 +169,7 @@ class Rejoindre(Objectif):
                 min_angle = angle
 
         # En fonction de la distance, modifie la vitesse
-        if min_distance < 8:
+        if min_distance < 10:
             self.vitesse = 0.2
         elif min_distance < 25:
             self.vitesse = 0.6
@@ -200,6 +200,8 @@ class Rejoindre(Objectif):
 
                     self.autre_direction = round((
                             navire.direction.direction + angle) % 360)
+                    if fabs(angle) > 30:
+                        self.vitesse = 0
                     self.transmettre_controles()
                     return
 

@@ -115,32 +115,36 @@ class Vitesse(Controle):
         vitesses = {}
         vit_rames = {}
 
-        # Si il y a des rames, on calcul leur force propulsive
-        if nb_rames > 0:
-            for nom in ("lente", "moyenne", "rapide"):
-                noms = (nom, ) * nb_rames
-                vitesse = get_vitesse_noeuds(navire.get_vitesse_rames(noms) / \
-                        0.7)
-                vitesses[vitesse] = (nom, 0)
-                vit_rames[nom] = vitesse
+        # Si la vitesse est de 0, le calcul est tout fait
+        if self.vitesse == 0:
+            choix = (0, "immobile", 0)
+        else:
+            # Si il y a des rames, on calcul leur force propulsive
+            if nb_rames > 0:
+                for nom in ("lente", "moyenne", "rapide"):
+                    noms = (nom, ) * nb_rames
+                    vitesse = get_vitesse_noeuds(navire.get_vitesse_rames(
+                            noms) / 0.7)
+                    vitesses[vitesse] = (nom, 0)
+                    vit_rames[nom] = vitesse
 
-        if navire.nom_allure != "vent debout":
-            for i in range(nb_voiles):
-                voiles = (None, ) * (i + 1)
-                vit_voiles = get_vitesse_noeuds(navire.get_vitesse_voiles(
-                        voiles, vent) / 0.7)
-                vitesses[vit_voiles] = ("immobile", i + 1)
-                for nom, vit_rame in vit_rames.items():
-                    vitesse = vit_voiles + vit_rame
-                    vitesses[vitesse] = (nom, i + 1)
+            if navire.nom_allure != "vent debout":
+                for i in range(nb_voiles):
+                    voiles = (None, ) * (i + 1)
+                    vit_voiles = get_vitesse_noeuds(navire.get_vitesse_voiles(
+                            voiles, vent) / 0.7)
+                    vitesses[vit_voiles] = ("immobile", i + 1)
+                    for nom, vit_rame in vit_rames.items():
+                        vitesse = vit_voiles + vit_rame
+                        vitesses[vitesse] = (nom, i + 1)
 
-        # À ce stade, on a chaque vitesse, avec ou sans voiles et rames
-        # On cherche la vitesse la plus proche de l'objectif
-        diff = attendue = self.vitesse
-        for vitesse, (vit_rame, nb_voiles) in vitesses.items():
-            if fabs(attendue - vitesse) <= diff:
-                diff = fabs(attendue - vitesse)
-                choix = (vitesse, vit_rame, nb_voiles)
+            # À ce stade, on a chaque vitesse, avec ou sans voiles et rames
+            # On cherche la vitesse la plus proche de l'objectif
+            diff = attendue = self.vitesse
+            for vitesse, (vit_rame, nb_voiles) in vitesses.items():
+                if fabs(attendue - vitesse) <= diff:
+                    diff = fabs(attendue - vitesse)
+                    choix = (vitesse, vit_rame, nb_voiles)
 
         # Écrit dans les logs le choix auquel on est parvenu
         vitesse, vit_rame, nb_voiles = choix
