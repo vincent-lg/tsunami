@@ -514,6 +514,15 @@ class Navire(Vehicule):
                     if sortie.porte:
                         t_sortie.ajouter_porte()
 
+    def reparer(self):
+        """Répare intégralement le navire."""
+        for salle in self.salles.values():
+            if salle.noyable:
+                if salle.voie_eau != COQUE_INTACTE:
+                    salle.voie_eau = COQUE_INTACTE
+                if salle.poids_eau != 0:
+                    salle.poids_eau = 0
+
     def faire_ramer(self):
         """Cette méthode fait ramer les personnages du navire.
 

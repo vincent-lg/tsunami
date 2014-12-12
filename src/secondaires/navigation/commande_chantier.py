@@ -234,14 +234,7 @@ class CommandeChantierNaval(BaseObj):
             raise CommandeInterrompue("Le navire n'est plus dans le " \
                     "chantier naval")
 
-
-        for salle in navire.salles.values():
-            if salle.noyable:
-                if salle.voie_eau != COQUE_INTACTE:
-                    salle.voie_eau = COQUE_INTACTE
-                if salle.poids_eau != 0:
-                    salle.poids_eau = 0
-
+        navire.reparer()
 
 
 class CommandeInterrompue(ExceptionMUD):
