@@ -177,8 +177,8 @@ class Rejoindre(Objectif):
         # Cherche ensuite le meilleur cap
         # On cherche le meilleur cap possible (c'est-à-dire le plus long)
         distance = 30
-        angles = [i * 5 for i in range(0, 18)]
-        for i in range(1, 18):
+        angles = [i * 5 for i in range(0, 35)]
+        for i in range(1, 35):
             angles.append(i * -5)
 
         # Si on est pas exactement dans la bonne direction pour rejoindre
