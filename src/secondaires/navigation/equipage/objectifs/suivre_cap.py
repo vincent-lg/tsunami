@@ -63,9 +63,6 @@ class SuivreCap(Rejoindre):
         """
         equipage = self.equipage
         navire = self.navire
-        if navire.orientation != 0:
-            return
-
         if equipage.destination:
             self.x, self.y = equipage.destination
             distance = self.get_distance()
