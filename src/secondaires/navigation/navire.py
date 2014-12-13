@@ -543,9 +543,13 @@ class Navire(Vehicule):
                         personnage.salle.envoyer("{} lâche les rames " \
                                 "d'épuisement.", personnage)
                         rames.relacher()
-                        rames.vitesse = "immobile"
                         rames.tenu = None
                         personnage.etats.retirer("tenir_rames")
+            else:
+                if rames.vitesse != "immobile":
+                    rames.vitesse = "immobile"
+                if rames.orientation != 0:
+                    rames.orientation = 0
 
     def valider_coordonnees(self):
         """Pour chaque salle, valide ses coordonnées."""
