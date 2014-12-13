@@ -415,11 +415,12 @@ class Navire(Vehicule):
         et le facteur multiplicateur défini dans le modèle.
 
         """
+        rames = self.rames
         facteur = 0
         facteur_rames = self.modele.facteur_rames
         for vitesse in vitesses:
             facteur_vitesse = VIT_RAMES[vitesse]
-            facteur += (facteur_rames * facteur_vitesse) / len(vitesses)
+            facteur += (facteur_rames * facteur_vitesse) / len(rames)
 
         return facteur
 

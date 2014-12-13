@@ -170,7 +170,7 @@ class Rejoindre(Objectif):
 
         # En fonction de la distance, modifie la vitesse
         if min_distance <= 2:
-            self.vitesse = 0
+            self.vitesse = 0.05
         elif min_distance < 10:
             self.vitesse = 0.2
         elif min_distance < 25:
