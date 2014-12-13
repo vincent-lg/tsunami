@@ -63,11 +63,8 @@ class ChargerBoulet(Ordre):
             yield SignalAbandonne("Il n'y a pas de boulet de canon en " \
                     "cale !", self.bruyant)
 
-        canon.projectile = boulet
-        personnage << "Vous chargez {} dans {}.".format(
-                boulet.get_nom(), canon.nom)
-        salle.envoyer("{{}} charge {} dans {}.".format(boulet.get_nom(),
-                canon.nom), personnage)
+        yield canon.pre_charger(personnage)
+        canon.post_charger(personnage, boulet)
         yield SignalTermine()
 
     def prendre_boulet_canon(self, personnage):

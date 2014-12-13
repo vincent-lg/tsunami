@@ -118,6 +118,10 @@ class Module(BaseModule):
         pli_voile.msg_refus = "Vous êtes en train de replier la voile"
         pli_voile.msg_visible = "replie une voile ici"
         pli_voile.act_autorisees = ["regarder", "parler"]
+        charger_canon = self.importeur.perso.ajouter_etat("charger_canon")
+        charger_canon.msg_refus = "Vous êtes en train de charger le canon"
+        charger_canon.msg_visible = "charge le canon ici"
+        charger_canon.act_autorisees = ["parler"]
         ten_gouv = self.importeur.perso.ajouter_etat("tenir_gouvernail")
         ten_gouv.msg_refus = "Vous tenez actuellement le gouvernail"
         ten_gouv.msg_visible = "tient le gouvernail ici"

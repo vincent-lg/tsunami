@@ -86,8 +86,5 @@ class PrmCharger(Parametre):
             salle.objets_sol.ajouter(a_projectile)
 
         conteneur.retirer(projectile)
-        canon.projectile = projectile
-        personnage << "Vous chargez {} dans {}.".format(
-                projectile.get_nom(), canon.nom)
-        salle.envoyer("{{}} charge {} dans {}.".format(projectile.get_nom(),
-                canon.nom), personnage)
+        yield canon.pre_charger(personnage)
+        canon.post_charger(personnage, projectile)

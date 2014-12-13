@@ -74,7 +74,7 @@ class Tirer(Volonte):
         centre = adverse.salles.get((0, 0, 0))
         equipage = self.navire.equipage
         matelots = equipage.get_matelots_ayant_ordre("feu")
-        canons = [m.get_ordre("feu").canon for m in matelots]
+        canons = [m.get_ordre("charger_boulet").canon for m in matelots]
         canons = list(set(canons))
         vec_adverse = Vector(*centre.coords.tuple())
         nav_direction = self.navire.direction.direction

@@ -187,6 +187,32 @@ class Canon(BaseElement):
 
         return (direction, None)
 
+    def pre_charger(self, personnage):
+        """Méthode appelée avant de charger le canon.
+
+        Les paramètres à préciser sont :
+            personnage -- le personnage qui veut charger le canon
+
+        """
+        personnage.etats.ajouter("charger_canon")
+        personnage << "Vous commencez à charger {}.".format(
+                self.nom)
+        personnage.salle.envoyer("{{}} commence à charger {}.".format(
+                self.nom), personnage)
+        return 10
+
+    def post_charger(self, personnage, boulet):
+        """Méthode appelée quand le boulet est chargé."""
+        if "charger_canon" not in personnage.etats:
+            return
+
+        personnage.etats.retirer("charger_canon")
+        self.projectile = boulet
+        personnage << "Vous chargez {} dans {}.".format(
+                boulet.get_nom(), self.nom)
+        personnage.salle.envoyer("{{}} charge {} dans {}.".format(
+                boulet.get_nom(), self.nom), personnage)
+
     def tirer(self, auteur=None):
         """Le canon tire son projectile."""
         if self.onces == 0:
