@@ -35,6 +35,7 @@ type(importeur).man_logs.creer_logger("navigation", "ordres", "ordres.log")
 type(importeur).man_logs.creer_logger("navigation", "monstres", "monstres.log")
 
 import os
+from random import randint
 
 from vector import *
 
@@ -198,7 +199,7 @@ class Module(BaseModule):
         # On récupère les navires
         navires = self.importeur.supenr.charger_groupe(Navire)
         for navire in navires:
-            self.navires[navire.cle] = navire
+            self.ajouter_navire(navire)
 
         nb_navires = len(navires)
         self.nav_logger.info(format_nb(nb_navires,
@@ -294,12 +295,6 @@ class Module(BaseModule):
                 self.nauffrages)
         self.importeur.diffact.ajouter_action("tick_chantiers", 60,
                 self.tick_chantiers)
-        self.importeur.diffact.ajouter_action("tick_equipages", 1,
-                self.tick_equipages)
-        self.importeur.diffact.ajouter_action("controle_equipages", 3,
-                self.controle_equipages)
-        self.importeur.diffact.ajouter_action("objectif_equipages", 5,
-                self.objectif_equipages)
 
         # Ajout des bateaux au module salle
         self.importeur.salle.salles_a_cartographier.append(
@@ -417,7 +412,18 @@ class Module(BaseModule):
 
     def ajouter_navire(self, navire):
         """Ajoute le navire à la liste."""
-        self.navires[navire.cle] = navire
+        cle = navire.cle
+        self.navires[cle] = navire
+
+        # Créé les actions différées
+        self.importeur.diffact.ajouter_action("tick_equipages_{}".format(cle),
+                1, self.tick_equipages, navire)
+        self.importeur.diffact.ajouter_action("tick_vigies_{}".format(cle),
+                randint(0, 20), self.tick_vigies, navire)
+        self.importeur.diffact.ajouter_action("controle_equipages_{}".format(
+                cle), randint(0, 5), self.controle_equipages, navire)
+        self.importeur.diffact.ajouter_action("objectif_equipages_{}".format(
+                cle), randint(0, 15), self.objectif_equipages, navire)
 
     def supprimer_navire(self, cle):
         """Supprime le navire dont la clé est passée en paramètre."""
@@ -425,6 +431,17 @@ class Module(BaseModule):
             raise KeyError("le navire de clé {} est introuvable".format(cle))
 
         navire = self.navires[cle]
+
+        # Destruction des action différées
+        self.importeur.diffact.retirer_action("tick_equipages_{}".format(cle),
+                False)
+        self.importeur.diffact.retirer_action("tick_vigies_{}".format(cle),
+                False)
+        self.importeur.diffact.retirer_action("controle_equipages_{}".format(
+                cle), False)
+        self.importeur.diffact.retirer_action("objectif_equipages_{}".format(
+                cle), False)
+
         navire.detruire()
         del self.navires[cle]
 
@@ -615,39 +632,59 @@ class Module(BaseModule):
         for chantier in self.chantiers.values():
             chantier.executer_commandes()
 
-    def tick_equipages(self):
+    def tick_equipages(self, navire):
         """Tick des équipages."""
-        self.importeur.diffact.ajouter_action("tick_equipages", 1,
-                self.tick_equipages)
-        equipages = [n.equipage for n in self.navires.values() if \
-                len(n.equipage.matelots) > 0]
-        for equipage in equipages:
-            equipage.tick()
+        cle = navire.cle
+        self.importeur.diffact.ajouter_action("tick_equipages_{}".format(cle),
+                1, self.tick_equipages, navire)
 
-    def controle_equipages(self):
+        if not navire.equipage.matelots:
+            return
+
+        navire.equipage.tick()
+
+    def tick_vigies(self, navire):
+        """Tick les vigies."""
+        cle = navire.cle
+        self.importeur.diffact.ajouter_action("tick_vigies_{}".format(
+                cle), 5, self.tick_vigies, navire)
+
+        if not navire.equipage.matelots:
+            return
+
+        if not navire.immobilise and navire.vitesse.norme > 0:
+            navire.equipage.verifier_vigie()
+
+    def controle_equipages(self, navire):
         """Contrôle des équipages."""
-        self.importeur.diffact.ajouter_action("controle_equipages", 3,
-                self.controle_equipages)
-        equipages = [n.equipage for n in self.navires.values() if \
-                len(n.equipage.matelots) > 0]
-        for equipage in equipages:
-            if not equipage.navire.immobilise:
-                equipage.verifier_vigie()
+        cle = navire.cle
+        self.importeur.diffact.ajouter_action("controle_equipages_{}".format(
+                cle), 3, self.controle_equipages, navire)
 
-            for controle in equipage.controles.values():
-                controle.controler()
+        if not navire.equipage.matelots:
+            return
 
-    def objectif_equipages(self):
+        if navire.immobilise:
+            return
+
+        for controle in navire.equipage.controles.values():
+            controle.controler()
+
+    def objectif_equipages(self, navire):
         """Travail sur les objectifs des équipages."""
-        self.importeur.diffact.ajouter_action("objectif_equipages", 5,
-                self.objectif_equipages)
-        equipages = [n.equipage for n in self.navires.values() if \
-                len(n.equipage.matelots) > 0]
-        for equipage in equipages:
-            prioritaire = True
-            for objectif in equipage.objectifs:
-                objectif.verifier(prioritaire)
-                prioritaire = False
+        cle = navire.cle
+        self.importeur.diffact.ajouter_action("objectif_equipages_{}".format(
+                cle), 5, self.objectif_equipages, navire)
+
+        if not navire.equipage.matelots:
+            return
+
+        navire.equipage.objectifs = [o for o in navire.equipage.objectifs if \
+                o.actif]
+        prioritaire = True
+        for objectif in navire.equipage.objectifs:
+            objectif.verifier(prioritaire)
+            prioritaire = False
 
     def navire_amarre(self, salle, liste_messages, flags):
         """Si un navire est amarré, on l'affiche."""

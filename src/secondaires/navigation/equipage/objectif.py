@@ -127,6 +127,11 @@ class Objectif(BaseObj, metaclass=MetaObjectif):
                 message)
         self.logger.warning(message)
 
+    @property
+    def actif(self):
+        """L'objectif est-il toujours actif ?"""
+        return True
+
     def afficher(self):
         """Méthode à redéfinir retournant l'affichage de l'objectif."""
         raise NotImplementedError

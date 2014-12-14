@@ -28,27 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les objectifs.
+"""Objectif rejoindre_et_couler."""
 
-Un objectif est un certain but à atteindre. Par exemple, rejoindre
-le point (x, y) indiqué. Pour atteindre cet objectif, le commandant
-doit donner plusieurs ordres à son équipage ayant pour but de modifier
-la vitesse, la direction du navire. Il doit également tenir compte des
-chemins disponibles et des obstacles qui pourraient survenir sur tel
-ou tel chemin. En somme, un objectif est une partie importante de
-l'intelligence artificielle d'un équipage. Un ordre (tel que donné par
-équipage/crew ordonner/order) peut donner un objectif mais il est à noter
-que, dans ce cas, l'objectif sera décomposé en ordres par un commandant
-(c'est-à-dire un capitaine ou second PNJ). Un navire sans capitaine n'est
-pas capable de ce type d'objectifs.
-
-Chaque objectif est décrit dans une classe à part.
-
-"""
-
-from secondaires.navigation.equipage.objectifs.rejoindre import Rejoindre
 from secondaires.navigation.equipage.objectifs.rejoindre_navire import \
         RejoindreNavire
-from secondaires.navigation.equipage.objectifs.rejoindre_et_couler import \
-        RejoindreEtCouler
-from secondaires.navigation.equipage.objectifs.suivre_cap import SuivreCap
+
+class RejoindreEtCouler(RejoindreNavire):
+
+    """Objectif rejoindre_et_couler.
+
+    Cet objectif, assez offensif, se charge de rejoindre le navire
+    cible (à assez faible distance pour pouvoir l'aborder) tandis
+    qu'il le canone dès qu'il se trouve à portée.
+
+    """
+
+    cle = "rejoindre_et_couler"
+
+    @property
+    def actif(self):
+        """Le contrôle est-il toujours actif ?"""
+        return self.cible is not None and self.cible.e_existe
+
+    def creer(self):
+        """L'objectif est créé.
+
+        On crée les contrôles associés pour atteindre l'objectif
+        et on déclare la cible en ennemi.
+
+        """
+        equipage = self.equipage
+        commandant = self.commandant
+        if commandant is None:
+            return
+
+        personnage = commandant.personnage
+        equipage.demander("feu", self.cible, personnage=personnage)
