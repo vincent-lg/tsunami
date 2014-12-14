@@ -414,9 +414,6 @@ class Equipage(BaseObj):
         # Si le navire est endommagé, envoie les charpentiers
         self.ordonner_reparations()
 
-        # Si le navire est attaqué
-        self.ordonner_attaque()
-
     def verifier_vigie(self):
         """Vérifie les vigies pour détecter les terres et navires.
 
@@ -510,6 +507,18 @@ class Equipage(BaseObj):
         self.ennemis = [n for n in self.ennemis if n.e_existe]
         for ennemi in self.ennemis:
             self.demander("tirer", ennemi, False)
+
+    def get_canons_libres(self):
+        """Retourne les canons libres du navire."""
+        canons = []
+        matelots = self.get_matelots_ayant_ordre("charger_boulet")
+        utilises = [m.get_ordre("charger_boulet").canon for m in matelots]
+        for salle in self.navire.salles.values():
+            canon = salle.get_element("canon")
+            if canon and canon not in utilises:
+                canons.append(canon)
+
+        return canons
 
     def detruire(self):
         """Destruction de l'équipage et des matelots inclus."""
