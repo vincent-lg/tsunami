@@ -45,6 +45,8 @@ class ChargerBoulet(Ordre):
     """
 
     cle = "charger_boulet"
+    etats_autorises = ("charger_canon", "")
+
     def __init__(self, matelot, navire, canon=None, bruyant=False):
         Ordre.__init__(self, matelot, navire, canon, bruyant)
         self.canon = canon
