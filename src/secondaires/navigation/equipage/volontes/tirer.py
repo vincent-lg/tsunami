@@ -73,7 +73,7 @@ class Tirer(Volonte):
         """Trouve le canon qui peut pointer vers adverse."""
         centre = adverse.salles.get((0, 0, 0))
         equipage = self.navire.equipage
-        matelots = equipage.get_matelots_ayant_ordre("feu")
+        matelots = equipage.get_matelots_ayant_ordre("charger_boulet")
         canons = [m.get_ordre("charger_boulet").canon for m in matelots]
         canons = list(set(canons))
         vec_adverse = Vector(*centre.coords.tuple())
