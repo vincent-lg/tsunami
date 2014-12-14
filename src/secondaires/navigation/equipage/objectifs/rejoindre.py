@@ -169,12 +169,13 @@ class Rejoindre(Objectif):
                 min_angle = angle
 
         # En fonction de la distance, modifie la vitesse
-        if min_distance <= 2:
-            self.vitesse = 0.05
-        elif min_distance < 10:
-            self.vitesse = 0.2
-        elif min_distance < 25:
-            self.vitesse = 0.6
+        if -45 <= min_angle <= 45:
+            if min_distance <= 2:
+                self.vitesse = 0.05
+            elif min_distance < 10:
+                self.vitesse = 0.2
+            elif min_distance < 25:
+                self.vitesse = 0.6
 
         # Cherche ensuite le meilleur cap
         # On cherche le meilleur cap possible (c'est-à-dire le plus long)
