@@ -93,7 +93,11 @@ class CmdStat(Commande):
         # Temps moyen du WD
         msg += "\n  Temps moyen : {:.3f}".format(stats.moy_wd)
         # WD maximum
-        msg += "\n  Temps maximum : {:.3f}".format(stats.max_wd)
+        msg += "\n  Nombre de lags : {} ({}%)".format(stats.nb_max_wd,
+                round(stats.nb_max_wd / (stats.nb_max_wd + stats.nb_wd * 100),
+                2))
+        msg += "\n  Temps moyen d'exécution d'un lag : {:.3f}".format(
+                stats.max_wd)
         infos.append(msg)
 
         ## Mémoire
