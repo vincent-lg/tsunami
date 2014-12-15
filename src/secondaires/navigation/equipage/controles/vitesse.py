@@ -140,11 +140,17 @@ class Vitesse(Controle):
 
             # À ce stade, on a chaque vitesse, avec ou sans voiles et rames
             # On cherche la vitesse la plus proche de l'objectif
-            diff = attendue = self.vitesse
-            for vitesse, (vit_rame, nb_voiles) in vitesses.items():
-                if fabs(attendue - vitesse) <= diff:
-                    diff = fabs(attendue - vitesse)
-                    choix = (vitesse, vit_rame, nb_voiles)
+            # Si la vitesse est illimitée, choisit le maximum
+            if self.vitesse is None:
+                vitesses = tuple(vitesses.items())
+                vitesse, (vit_rame, nb_voiles) = max(vitesses)
+                choix = (vitesse, vit_rame, nb_voiles)
+            else:
+                diff = attendue = self.vitesse
+                for vitesse, (vit_rame, nb_voiles) in vitesses.items():
+                    if fabs(attendue - vitesse) <= diff:
+                        diff = fabs(attendue - vitesse)
+                        choix = (vitesse, vit_rame, nb_voiles)
 
         # Écrit dans les logs le choix auquel on est parvenu
         vitesse, vit_rame, nb_voiles = choix
@@ -163,7 +169,7 @@ class Vitesse(Controle):
             # On doit hisser au moins une voile
             equipage.demander("hisser_voiles", diff, personnage=personnage)
         elif diff < 0:
-            # On doit pleir au moins une voile
+            # On doit plier au moins une voile
             equipage.demander("plier_voiles", -diff, personnage=personnage)
         self.vitesse_optimale = vitesse
 

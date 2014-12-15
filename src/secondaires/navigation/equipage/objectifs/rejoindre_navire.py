@@ -99,7 +99,7 @@ class RejoindreNavire(Rejoindre):
         distance, salle_cible = self.trouver_distance_min()
 
         if distance <= distance_min:
-            return
+            self.vitesse = 0
         elif distance < 10:
             self.x = salle_cible.coords.x
             self.y = salle_cible.coords.y
