@@ -30,10 +30,11 @@
 
 """Objectif rejoindre_et_couler."""
 
+from secondaires.navigation.equipage.objectifs.couler import Couler
 from secondaires.navigation.equipage.objectifs.rejoindre_navire import \
         RejoindreNavire
 
-class RejoindreEtCouler(RejoindreNavire):
+class RejoindreEtCouler(RejoindreNavire, Couler):
 
     """Objectif rejoindre_et_couler.
 
@@ -45,22 +46,28 @@ class RejoindreEtCouler(RejoindreNavire):
 
     cle = "rejoindre_et_couler"
 
-    @property
-    def actif(self):
-        """Le contrôle est-il toujours actif ?"""
-        return self.cible is not None and self.cible.e_existe
+    def __init__(self, equipage, cible=None, distance_min=1.3):
+        RejoindreNavire.__init__(self, equipage, cible, distance_min)
+        Couler.__init__(self, equipage, cible)
+
+    actif = Couler.actif
+
+    def afficher(self):
+        """Méthode à redéfinir retournant l'affichage de l'objectif."""
+        cible = self.cible
+        return "Rejoindre et couler {}".format(cible.desc_survol)
 
     def creer(self):
         """L'objectif est créé.
 
         On crée les contrôles associés pour atteindre l'objectif
-        et on déclare la cible en ennemi.
+        et on attaque la cible.
 
         """
-        equipage = self.equipage
-        commandant = self.commandant
-        if commandant is None:
-            return
+        RejoindreNavire.creer(self)
+        Couler.creer(self)
 
-        personnage = commandant.personnage
-        equipage.demander("feu", self.cible, personnage=personnage)
+    def verifier(self, prioritaire):
+        """Vérifie les objectifs."""
+        RejoindreNavire.verifier(self, prioritaire)
+        Couler.verifier(self, prioritaire)
