@@ -133,7 +133,7 @@ class Tirer(Volonte):
 
         if canon.onces == 0:
             charger_poudre = ChargerPoudre(matelot, navire, canon,
-                    self.bruyant)
+                    5, self.bruyant)
             ordres.append(charger_poudre)
 
         if canon.projectile is None:
