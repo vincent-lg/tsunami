@@ -38,7 +38,7 @@ from abstraits.obase import BaseObj
 from primaires.format.fonctions import supprimer_accents
 from primaires.joueur.joueur import Joueur
 from primaires.vehicule.vecteur import get_direction
-from secondaires.navigation.constantes import get_portee
+from secondaires.navigation.constantes import get_portee, get_hauteur
 from secondaires.navigation.equipage.configuration import Configuration
 import secondaires.navigation.equipage.controles
 from secondaires.navigation.equipage.controle import controles
@@ -98,6 +98,9 @@ class Equipage(BaseObj):
         self.vigie_terres = []
         self.vigie_navires = []
         self.vigie_tries = {}
+
+        # Stratégie temporaire
+        self.pirate = False
 
         self._construire()
 
@@ -454,9 +457,14 @@ class Equipage(BaseObj):
             if point in self.vigie_navires:
                 continue
 
-            navire.envoyer("{} s'écrie : navire sur {}° !".format(
-                    distinction, angle))
+            navire.envoyer(distinction + get_hauteur(angle,
+                    " s'écrie : navire en vue ! Navire {direction} !"))
             self.vigie_navires.append(point)
+
+            # Pour l'instant on fait le branchement conditionnel ici
+            if self.pirate:
+                self.ajouter_objectif("rejoindre_et_couler", point)
+
             break
 
         # Ensuite, on cheerche les obstacles
@@ -468,8 +476,8 @@ class Equipage(BaseObj):
         if not self.vigie_terres and obstacles:
             # Il n'y avait rien en vu auparavant
             angle, (vecteur, point) = tuple(obstacles.items())[0]
-            navire.envoyer("{} s'écrie : Terre ! Terre sur {}° !".format(
-                    distinction, angle))
+            navire.envoyer(distinction + get_hauteur(angle,
+                    " s'écrie : terre ! Terre {direction} !"))
 
         self.vigie_terres = [p for a, (v, p) in obstacles.items()]
 

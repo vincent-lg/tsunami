@@ -207,3 +207,21 @@ def get_longitude_latitude(x, y, precision=1):
     ts = "s" if minute_lat > 1 else ""
     return "{}° {} minute{gs} {}, {}° {} minute{ts} {}".format(deg_long,
             minute_long, cote_long, deg_lat, minute_lat, cote_lat, gs=gs, ts=ts)
+
+def get_hauteur(direction, message):
+    """Retourne la direction sous la forme d'une chaîne.
+
+    Cette fonction est appelée get_hauteur pour éviter la confusion
+    avec get_direction.
+
+    """
+    if direction == 0:
+        msg_dir = "sous le vent"
+    elif direction < 0:
+        msg_dir = "sur {}° bâbord".format(int(-direction))
+    elif direction == 180:
+        msg_dir = "droit derrière"
+    else:
+        msg_dir = "sur {}° tribord".format(int(direction))
+
+    return message.format(direction=msg_dir)
