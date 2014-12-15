@@ -46,6 +46,7 @@ Chaque objectif est décrit dans une classe à part.
 
 """
 
+from secondaires.navigation.equipage.objectifs.couler import Couler
 from secondaires.navigation.equipage.objectifs.rejoindre import Rejoindre
 from secondaires.navigation.equipage.objectifs.rejoindre_navire import \
         RejoindreNavire

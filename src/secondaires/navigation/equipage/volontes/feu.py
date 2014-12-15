@@ -65,7 +65,7 @@ class Feu(Volonte):
 
     def executer(self, matelot):
         """Exécute la volonté."""
-        self.navire.equipage.ajouter_ennemi(self.adverse)
+        self.navire.equipage.ajouter_objectif("couler", self.adverse)
 
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""
