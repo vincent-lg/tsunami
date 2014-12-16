@@ -72,6 +72,12 @@ class CmdEtudier(Commande):
                     grimoire.get_nom().capitalize())
             return
 
+        proprietaire = getattr(grimoire, "proprietaire", None)
+        if proprietaire is not personnage:
+            personnage << "|err|Vous n'êtes pas le propriétaire de " \
+                    "ce grimoire.|ff|"
+            return
+
         sort = grimoire.sort
         if sort.cle in personnage.sorts and sort.cle not in \
                 personnage.sorts_verrouilles:

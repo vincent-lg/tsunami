@@ -30,6 +30,7 @@
 
 """Fichier contenant le type Grimoire."""
 
+from bases.objet.attribut import Attribut
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.objet.types.base import BaseType
 
@@ -50,6 +51,11 @@ class Grimoire(BaseType):
         BaseType.__init__(self, cle)
         self._cle_sort = ""
         self.etendre_editeur("s", "sort", Uniligne, self, "cle_sort")
+
+        # Attributs propres à l'objet (non au prototype)
+        self._attributs = {
+            "proprietaire": Attribut(None),
+        }
 
     def _get_cle_sort(self):
         return self._cle_sort
@@ -77,6 +83,14 @@ class Grimoire(BaseType):
             "va sans dire que le sort\nen question doit être déjà créé. " \
             "Entrez |cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
             "Sort actuel : {objet.cle_sort}"
+
+    def acheter(self, quantite, magasin, transaction):
+        """Achète le grimoire."""
+        BaseType.acheter(self, quantite, magasin, transaction)
+        acheteur = transaction.initiateur
+        self.proprietaire = acheteur
+        acheteur.envoyer_tip("Vous êtes propriétaire de ce grimoire. " \
+                "Utilisez la commande %étudier% pour l'étudier.")
 
     def regarder(self, personnage):
         """Le personnage regarde l'objet."""
