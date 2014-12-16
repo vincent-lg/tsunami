@@ -758,7 +758,7 @@ class Navire(Vehicule):
         for salle in self.salles.values():
             salle.envoyer(message)
 
-    def envoyer_autour(self, message, rayon, exclure_navire=True):
+    def envoyer_autour(self, messages, rayon, exclure_navire=True):
         """Envoie le message dans les salles autour du navire.
 
         Par défaut, cette méthode envoie le message aux salles
@@ -766,11 +766,47 @@ class Navire(Vehicule):
 
         Paramètres à préciser :
 
-            message -- le message à envoyer
+            messages -- le ou les messages à envoyer
             rayon -- le rayon maximum (en salles)
             exclure_navire -- exclut ou non le navire-même
 
+        Le premier paramètre peut être soit une chaîne qui sera envoyée
+        à chaque salle autour du navire, peu importe sa distance, ou
+        bien un dictionnaire sous la forme :
+
+            {
+                distance1: "message",
+                distance2: "message2",
+                ...
+            }
+
+        Par exemple :
+
+            messages = {
+                5: "C'est tout près",
+                10: "C'est un peu plus loin",
+                15, "C'est très loin",
+            }
+            navire.envoyer_autour(messages, 20)
+            # Si la salle est à moins de 5 salles du navire, envoie le
+            # premier message, ainsi de suite pour les autres.
+
+        Enfin, les messages peuvent contenir des chaînes de remplacement :
+
+          * distance : une estimation de la distance en brasses
+          * sortie : le nom de la sortie séparant la salle du navire
+          * sortie_complete : le nom complet de la sortie
+
+        Exemple :
+
+          navire.envoyer("Vous entendez un PLOUF vers {sortie_complete} " \
+                "à {distance}."
+
         """
+        # On regroupe les messages
+        if isinstance(messages, str):
+            messages = {rayon: messages}
+
         # On réunit les salles concernées
         exclues = list(self.salles.values()) if exclure_navire else []
         centre = self.position
@@ -792,9 +828,16 @@ class Navire(Vehicule):
         # Envoie le message
         for vecteur, salle in salles:
             sortie = salle.get_sortie(vecteur, None)
-            distance = get_nom_distance(vecteur)
-            salle.envoyer(message.format(distance=distance, sortie=sortie.nom,
-                    sortie_complete=sortie.nom_complet))
+            nom_distance = get_nom_distance(vecteur)
+            norme = vecteur.norme
+
+            # Cherche le bon message
+            for distance, message in sorted(tuple(messages.items())):
+                if norme <= distance:
+                    salle.envoyer(message.format(distance=nom_distance,
+                            sortie=sortie.nom,
+                            sortie_complete=sortie.nom_complet))
+                    break
 
     def synchroniser_modele(self):
         """Cette méthode force la synchronisation d'informations sur le modèle.
