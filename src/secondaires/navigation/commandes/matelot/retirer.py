@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,50 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'matelot' et ses sous-commandes.
+"""Fichier contenant le paramètre 'retirer' de la commande 'matelot'."""
 
-Dans ce fichier se trouve la commande même.
+from primaires.interpreteur.masque.parametre import Parametre
 
-"""
+class PrmRetirer(Parametre):
 
-from primaires.interpreteur.commande.commande import Commande
-from .affecter import PrmAffecter
-from .creer import PrmCreer
-from .editer import PrmEditer
-from .liste import PrmListe
-from .poste import PrmPoste
-from .promouvoir import PrmPromouvoir
-from .recruter import PrmRecruter
-from .renommer import PrmRenommer
-from .retirer import PrmRetirer
-from .score import PrmScore
-
-class CmdMatelot(Commande):
-
-    """Commande 'matelot'.
-
-    """
+    """Commande 'matelot retirer'."""
 
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "matelot", "seaman")
-        self.nom_categorie = "navire"
-        self.aide_courte = "manipulation des matelots"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "retirer", "remove")
+        self.schema = "<nom_matelot>"
+        self.tronquer = True
+        self.aide_courte = "retire un matelot de l'équipage"
         self.aide_longue = \
-            "Cette commande permet de manipuler les matelots de " \
-            "votre équipage individuellement. Il existe également " \
-            "la commande %équipage% qui permet de manipuler l'équipage " \
-            "d'un coup d'un seul."
+            "Cette commande permet de retirer un matelot de votre " \
+            "équipage. Entrez le nom du matelot en paramètre. Le " \
+            "personnage ne sera pas altéré (il s'agit d'un changement " \
+            "de poste un peu sévère, voilà tout) et il restera sur " \
+            "le pont dans l'attente de votre bon plaisir."
 
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        self.ajouter_parametre(PrmAffecter())
-        self.ajouter_parametre(PrmCreer())
-        self.ajouter_parametre(PrmEditer())
-        self.ajouter_parametre(PrmListe())
-        self.ajouter_parametre(PrmPoste())
-        self.ajouter_parametre(PrmPromouvoir())
-        self.ajouter_parametre(PrmRecruter())
-        self.ajouter_parametre(PrmRenommer())
-        self.ajouter_parametre(PrmRetirer())
-        self.ajouter_parametre(PrmScore())
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        salle = personnage.salle
+        navire = salle.navire
+        matelot = dic_masques["nom_matelot"].matelot
+        if not navire.a_le_droit(personnage, "maître d'équipage"):
+            personnage << "|err|Vous ne pouvez donner d'ordre sur ce " \
+                    "navire.|ff|"
+            return
+
+        equipage = navire.equipage
+        equipage.supprimer_matelot(matelot.nom)
+        personnage << "{} a quitté votre équipage.".format(matelot.nom)
