@@ -78,16 +78,15 @@ class Grimoire(BaseType):
             "Entrez |cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
             "Sort actuel : {objet.cle_sort}"
 
-    @staticmethod
-    def regarder(objet, personnage):
+    def regarder(self, personnage):
         """Le personnage regarde l'objet."""
-        sort = objet.sort
+        sort = self.sort
         if sort:
             if sort.elements[0] != personnage.element:
                 return "L'ancre ondule étrangement devant vos yeux... " \
                         "vous ne pouvez lire ce parchemin."
 
-            msg = BaseType.regarder(objet, personnage)
+            msg = BaseType.regarder(self, personnage)
             points = sort.points_tribut
             s = "s" if points > 1 else ""
             phrase = "Il vous faut {} point{s} de tribut pour apprendre ce " \
