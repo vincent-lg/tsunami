@@ -86,9 +86,12 @@ class Grimoire(BaseType):
 
     def acheter(self, quantite, magasin, transaction):
         """Achète le grimoire."""
-        BaseType.acheter(self, quantite, magasin, transaction)
+        objets = BaseType.acheter(self, quantite, magasin, transaction)
         acheteur = transaction.initiateur
-        self.proprietaire = acheteur
+
+        for objet in objets:
+            objet.proprietaire = acheteur
+
         acheteur.envoyer_tip("Vous êtes propriétaire de ce grimoire. " \
                 "Utilisez la commande %étudier% pour l'étudier.")
 
