@@ -758,6 +758,44 @@ class Navire(Vehicule):
         for salle in self.salles.values():
             salle.envoyer(message)
 
+    def envoyer_autour(self, message, rayon, exclure_navire=True):
+        """Envoie le message dans les salles autour du navire.
+
+        Par défaut, cette méthode envoie le message aux salles
+        autour du navire sans comprendre le navire-même.
+
+        Paramètres à préciser :
+
+            message -- le message à envoyer
+            rayon -- le rayon maximum (en salles)
+            exclure_navire -- exclut ou non le navire-même
+
+        """
+        # On réunit les salles concernées
+        exclues = list(self.salles.values()) if exclure_navire else []
+        centre = self.position
+        c_x, c_y, c_z = centre.x, centre.y, centre.z
+        salles = []
+
+        for salle in importeur.salle._coords.values():
+            if salle in exclues:
+                continue
+
+            x, y, z = salle.coords.x, salle.coords.y, salle.coords.z
+            vecteur = Vecteur(c_x - x, c_y - y, c_z - z)
+            if vecteur.norme <= rayon:
+                salles.append((vecteur, salle))
+
+        # Trie en fonction de la distance
+        salles = sorted(salles, key=lambda couple: couple[0].norme)
+
+        # Envoie le message
+        for vecteur, salle in salles:
+            sortie = salle.get_sortie(vecteur, None)
+            distance = get_nom_distance(vecteur)
+            salle.envoyer(message.format(distance=distance, sortie=sortie.nom,
+                    sortie_complete=sortie.nom_complet))
+
     def synchroniser_modele(self):
         """Cette méthode force la synchronisation d'informations sur le modèle.
 
@@ -896,6 +934,9 @@ class Navire(Vehicule):
         self.envoyer("Un grincement déchirant et le navire s'enfonce sous " \
                 "l'eau !")
         importeur.navigation.ecrire_suivi("{} sombre.".format(self.cle))
+        self.envoyer_autour(
+                "Un grand fracas, un grincement final, un navire sombre " \
+                "vers {sortie_complete} à {distance}.", 20)
 
         # Replie la passerelle si il y a une passerelle
         elt_passerelle = self.elt_passerelle

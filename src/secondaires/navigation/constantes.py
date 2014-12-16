@@ -30,6 +30,8 @@
 
 """Fichier contenant les constantes de navigation."""
 
+from vector import Vector
+
 # Facteurs des allures
 ALL_DEBOUT = 140
 ALL_PRES = 125
@@ -142,11 +144,15 @@ def get_nom_distance(distance):
     """Retourne le nom de la distance du vecteur précisé.
 
     Cette fonction attend en argument une distance (un vecteur de
-    la classe primaires.vehicule.vecteur.Vecteur). Elle retourne la
-    distance en terme de brasses, encablures ou milles.
+    la classe primaires.vehicule.vecteur.Vecteur ou vector.Vector).
+    Elle retourne la distance en terme de brasses, encablures ou
+    milles.
 
     """
-    nb_brasses = round(distance.norme * CB_BRASSES)
+    if isinstance(distance, Vector):
+        nb_brasses = round(distance.mag * CB_BRASSES)
+    else:
+        nb_brasses = round(distance.norme * CB_BRASSES)
 
     if nb_brasses > 100000: # Très grande distance
         msg_dist = "plus de cent milles"
@@ -171,7 +177,7 @@ def get_nom_distance(distance):
     elif nb_brasses > 20:
         nb = round(nb_brasses / 5) * 5
         msg_dist = "près de {} brasses".format(nb)
-    elif nb_brasses > 10:
+    elif nb_brasses > 1:
         nb = round(nb_brasses / 2) * 2
         msg_dist = "près de {} brasses".format(nb)
     else:
