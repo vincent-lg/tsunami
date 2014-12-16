@@ -60,6 +60,7 @@ class ModeleNavire(BaseObj):
         self.description_vente = Description(parent=self)
         self.canot = False
         self.masculin = True
+        self.peut_conquerir = True
         self.cale_max = 200
         self.facteur_rames = 0.8
         self.facteurs_orientations = {

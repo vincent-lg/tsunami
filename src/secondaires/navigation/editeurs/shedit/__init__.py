@@ -100,6 +100,11 @@ class EdtShedit(Presentation):
                 "masculin")
         masculin.parent = self
 
+        # Peut conquérir
+        peut_conquerir = self.ajouter_choix("peut conquérir", "co", Flag,
+                modele, "peut_conquerir")
+        peut_conquerir.parent = self
+
         # Prix
         prix = self.ajouter_choix("prix unitaire", "u", Entier, modele,
                 "m_valeur", 1)
