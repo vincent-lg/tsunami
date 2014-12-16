@@ -105,6 +105,20 @@ class EdtShedit(Presentation):
                 modele, "peut_conquerir")
         peut_conquerir.parent = self
 
+        # Niveau
+        niveau = self.ajouter_choix("niveau", "i", Entier, modele, "niveau")
+        niveau.parent = self
+        niveau.apercu = "{objet.niveau}"
+        niveau.prompt = "Niveau du navire : "
+        niveau.aide_courte = \
+            "Entrez |ent|le niveau|ff| du navire ou |cmd|/|ff| pour " \
+            "revenir à la fenêtre parente.\n\n" \
+            "Le niveau détermine le nombre d'XP données en cas de " \
+            "récompense (quand\nun personnage conquit le navire par " \
+            "exemple). Une fraction du niveau\nest donné en XP secondaire " \
+            "du niveau navigation.\n\n" \
+            "Niveau actuel : {objet.niveau}"
+
         # Prix
         prix = self.ajouter_choix("prix unitaire", "u", Entier, modele,
                 "m_valeur", 1)

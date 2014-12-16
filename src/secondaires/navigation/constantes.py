@@ -104,6 +104,9 @@ PERTURBATIONS = {
 # Longitude et latitudes
 TAILLE_DEGREE = 100
 
+# Pourcentage d'XP attribué en cas de conquête
+PCT_XP = 5
+
 # Fonctions
 def get_portee(salle):
     """Retourne la portée à laquelle on peut voir depuis la salle spécifiée."""

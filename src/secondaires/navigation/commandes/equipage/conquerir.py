@@ -31,7 +31,7 @@
 """Fichier contenant le paramètre 'conquérir' de la commande 'équipage'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
-
+from secondaires.navigation.constantes import PCT_XP
 class PrmConquerir(Parametre):
 
     """Commande 'équipage conquérir'."""
@@ -70,3 +70,6 @@ class PrmConquerir(Parametre):
 
         navire.proprietaire = personnage
         personnage << "Vous êtes le nouveau propriétaire de ce navire !"
+        xp = importeur.perso.gen_niveaux.grille_xp[navire.modele.niveau][1]
+        xp = xp * PCT_XP / 100
+        personnage.gagner_xp("navigation", xp)
