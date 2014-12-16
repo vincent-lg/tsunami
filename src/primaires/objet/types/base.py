@@ -283,9 +283,13 @@ class BaseType(BaseObj, metaclass=MetaType):
     def acheter(self, quantite, magasin, transaction):
         """Achète les objets dans la quantité spécifiée."""
         salle = magasin.parent
+        objets = []
         for i in range(quantite):
             objet = importeur.objet.creer_objet(self)
             salle.objets_sol.ajouter(objet)
+            objets.appen(objet)
+
+        return objets
 
     def peut_vendre(self, vendeur):
         """Retourne True si peut vendre l'objet."""
