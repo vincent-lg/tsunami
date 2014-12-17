@@ -38,7 +38,7 @@ from abstraits.obase import BaseObj
 from primaires.format.fonctions import supprimer_accents
 from primaires.joueur.joueur import Joueur
 from primaires.vehicule.vecteur import get_direction
-from secondaires.navigation.constantes import get_portee, get_hauteur
+from secondaires.navigation.constantes import PCT_XP, get_portee, get_hauteur
 from secondaires.navigation.equipage.configuration import Configuration
 import secondaires.navigation.equipage.controles
 from secondaires.navigation.equipage.controle import controles
@@ -218,8 +218,7 @@ class Equipage(BaseObj):
         if ennemi is self:
             return
 
-        commandants = self.get_matelots_au_poste("commandant", libre=False)
-        if commandants and ennemi not in self.ennemis:
+        if ennemi not in self.ennemis:
             self.ennemis.append(ennemi)
 
     def demander(self, cle_volonte, *parametres, personnage=None,
@@ -527,6 +526,31 @@ class Equipage(BaseObj):
                 canons.append(canon)
 
         return canons
+
+    def recompenser_ennemis(self):
+        """Cette méthode récompense les navires ennemis.
+
+        Elle est souvent appelée quand le navire sombre.
+
+        """
+        navire = self.navire
+        xp = importeur.perso.gen_niveaux.grille_xp[navire.modele.niveau][1]
+        xp = xp * PCT_XP / 100
+
+        # On ne prend en compte que les navires proches
+        ennemis = [n for n in self.ennemis if (n.opt_position - \
+                navire.opt_position).mag < 30]
+
+        # Maintenant on récompense en proportion de la distance
+        for ennemi in ennemis:
+            distance = (ennemi.opt_position - navire.opt_position).mag
+            facteur = (30 - distance) / (len(ennemis) * 30)
+            don = xp * facteur
+            personnages = ennemi.personnages
+            don = int(xp / len(personnages))
+            if don > 0:
+                for personnage in personnages:
+                    personnage.gagner_xp("navigation", xp)
 
     def detruire(self):
         """Destruction de l'équipage et des matelots inclus."""
