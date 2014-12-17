@@ -287,7 +287,7 @@ class BaseType(BaseObj, metaclass=MetaType):
         for i in range(quantite):
             objet = importeur.objet.creer_objet(self)
             salle.objets_sol.ajouter(objet)
-            objets.appen(objet)
+            objets.append(objet)
 
         return objets
 
