@@ -176,6 +176,8 @@ class Module(BaseModule):
                 self.combat_matelot)
         self.importeur.hook["pnj:détruit"].ajouter_evenement(
                 self.detruire_pnj)
+        self.importeur.hook["pnj:meurt"].ajouter_evenement(
+                self.meurt_PNJ)
         self.importeur.hook["pnj:nom"].ajouter_evenement(
                 Equipage.get_nom_matelot)
         self.importeur.hook["salle:trouver_chemins_droits"].ajouter_evenement(
@@ -734,6 +736,27 @@ class Module(BaseModule):
                     arrive):
                 pnj.attaquer(arrive)
 
+
+    def meurt_PNJ(self, pnj, adversaire):
+        """PNJ meurt, tué par personnage.
+
+        Si pnj est un matelot, affiche une tip si le statut du navire
+        passe en abordable.
+
+        """
+        if adversaire and hasattr(pnj, "identifiant") and \
+                pnj.identifiant in self.matelots:
+            matelot = self.matelots[pnj.identifiant]
+            navire = matelot.navire
+            equipage = matelot.equipage
+            if equipage:
+                actuels = equipage.points_actuels
+                futurs = actuels - matelot.poste.points
+                if not est_capturable(navire, actuels) and est_capturable(
+                        navire, futurs):
+                    adversaire.envoyer_tip("Vous pouvez maintenant " \
+                            "conquérir ce navire en utilisant %équipage% " \
+                            "%équipage:conquérir%.")
 
     def detruire_pnj(self, pnj):
         """Détruit le matelot spécifié."""

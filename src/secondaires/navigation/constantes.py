@@ -234,3 +234,14 @@ def get_hauteur(direction, message):
         msg_dir = "sur {}° tribord".format(int(direction))
 
     return message.format(direction=msg_dir)
+
+def est_capturable(navire, points):
+    """Retourne True si le navire est capturable."""
+    equipage = navire.equipage
+    if equipage:
+        total = equipage.points_max
+    else:
+        total = 0
+
+    necessaires = round(total * 2 / 3)
+    return points <= necessaires
