@@ -273,13 +273,11 @@ class Module(BaseModule):
         # On charge les prototypes
         chemin = os.path.join(self.chemin, "monstre", "types")
         pychemin = "secondaires.navigation.monstre.types"
-        print("Explore", chemin)
         for nom_fichier in os.listdir(chemin):
             if nom_fichier.startswith("_") or not nom_fichier.endswith(".py"):
                 continue
 
             nom_fichier = pychemin + "." + nom_fichier[:-3]
-            print("Charge", nom_fichier)
             __import__(nom_fichier)
 
         #modeles = self.importeur.supenr.charger_groupe(ModeleNavire)
@@ -732,7 +730,6 @@ class Module(BaseModule):
             navire = matelot.navire
             immobilise = getattr(navire, "immobilise", True)
             equipage = matelot.equipage
-            print(" ", matelot, equipage, immobilise)
             if not immobilise and equipage and not equipage.est_matelot(
                     arrive):
                 pnj.attaquer(arrive)

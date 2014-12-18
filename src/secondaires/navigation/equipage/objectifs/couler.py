@@ -53,7 +53,19 @@ class Couler(Objectif):
     @property
     def actif(self):
         """Retourne True si l'objectif est actif, False sinon."""
-        return self.cible is not None and self.cible.e_existe or False
+        navire = self.navire
+        cible = self.cible
+        if cible is None or not cible.e_existe:
+            return False
+
+        if cible.immobilise:
+            return False
+
+        distance = (navire.opt_position - cible.opt_position).mag
+        if distance > 200:
+            return False
+
+        return True
 
     def afficher(self):
         """Méthode à redéfinir retournant l'affichage de l'objectif."""
