@@ -38,4 +38,5 @@ class Matelot(Poste):
 
     nom = "matelot"
     autorite = 10
+    points = 1
     nom_parent = "officier"

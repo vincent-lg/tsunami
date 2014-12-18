@@ -37,5 +37,6 @@ class Artilleur(Poste):
     """Classe définissant le poste artilleur."""
 
     nom = "artilleur"
+    points = 3
     autorite = 15
     nom_parent = "officier"

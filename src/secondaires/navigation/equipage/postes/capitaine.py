@@ -37,4 +37,5 @@ class Capitaine(Poste):
     """Classe définissant le poste capitaine."""
 
     nom = "capitaine"
+    points = 10
     autorite = 100

@@ -38,4 +38,5 @@ class MaitreCuisinier(Poste):
 
     nom = "maître cuisinier"
     autorite = 20
+    points = 3
     nom_parent = "officier"

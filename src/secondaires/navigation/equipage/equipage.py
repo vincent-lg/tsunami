@@ -102,6 +102,9 @@ class Equipage(BaseObj):
         # Stratégie temporaire
         self.pirate = False
 
+        # Points de poste
+        self.points_max = 0
+
         self._construire()
 
     def __getnewargs__(self):
@@ -131,6 +134,22 @@ class Equipage(BaseObj):
 
         return None
 
+    @property
+    def points_actuels(self):
+        """Retourne la somme des points actuels des matelots.
+
+        Chaque matelot, en fonction de son poste, a des points. Le
+        total forme un nombre qui est comparé au nombre de points
+        actuels en cas d'abordage. Par exemple, si l'équipage comprend
+        un capitaine (qui vaut 10 points) et un matelot (qui en
+        vaut 1), le total est 11. Si le capitaine est tué, le nombre
+        de points actuels est 1 (il ne reste que le matelot). En
+        fonction de la différence entre points au total et points
+        actuels, on considère un navire comme capturable ou non.
+
+        """
+        return sum(m.poste.points for m in self.matelots.values())
+
     def get_matelots_ayant_ordre(self, cle_ordre):
         """Retourne la liste des matelots ayant l'ordre précisé."""
         return [m for m in self.matelots.values() if m.get_ordre(cle_ordre)]
@@ -149,6 +168,10 @@ class Equipage(BaseObj):
         matelot.nom = self.trouver_nom_matelot()
         self.matelots[supprimer_accents(matelot.nom.lower())] = matelot
         importeur.navigation.matelots[personnage.identifiant] = matelot
+
+        # Modifie le nombre de points
+        self.points_max = self.points_actuels
+
         return matelot
 
     def renommer_matelot(self, matelot, nouveau_nom):
@@ -183,8 +206,13 @@ class Equipage(BaseObj):
         noms_disponibles = [nom for nom in NOMS_MATELOTS if nom not in noms]
         return choice(noms_disponibles)
 
-    def supprimer_matelot(self, nom):
-        """Supprime, si trouvé, le matelot depuis son nom."""
+    def supprimer_matelot(self, nom, recalculer=True):
+        """Supprime, si trouvé, le matelot depuis son nom.
+
+        Si 'recalculer' est à True, recalcule le nombre de points
+        maximum de l'équipage.
+
+        """
         nom = supprimer_accents(nom).lower()
         matelot = self.matelots[nom]
         identifiant = matelot.personnage and matelot.personnage.identifiant \
@@ -193,6 +221,10 @@ class Equipage(BaseObj):
             del importeur.navigation.matelots[identifiant]
         matelot.detruire()
         del self.matelots[nom]
+
+        if recalculer:
+            # On recalcule le point max
+            self.points_max = self.points_actuels
 
     def ordonner_matelot(self, nom, ordre, *args, executer=False):
         """Ordonne à un mâtelot en particulier.
@@ -554,8 +586,8 @@ class Equipage(BaseObj):
 
     def detruire(self):
         """Destruction de l'équipage et des matelots inclus."""
-        for matelot in list(self.matelots.values()):
-            matelot.detruire()
+        for nom in list(self.matelots.keys()):
+            self.supprimer_matelot(nom)
 
         BaseObj.detruire(self)
 

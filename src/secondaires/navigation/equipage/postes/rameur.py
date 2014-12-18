@@ -38,4 +38,5 @@ class Rameur(Poste):
 
     nom = "rameur"
     autorite = 15
+    points = 2
     nom_parent = "officier"

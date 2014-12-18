@@ -38,4 +38,5 @@ class Chirurgien(Poste):
 
     nom = "chirurgien"
     autorite = 15
+    points = 4
     nom_parent = "officier"

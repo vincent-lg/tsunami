@@ -174,8 +174,8 @@ class Module(BaseModule):
                 "Commandes de navigation"
         self.importeur.hook["pnj:arrive"].ajouter_evenement(
                 self.combat_matelot)
-        self.importeur.hook["pnj:meurt"].ajouter_evenement(
-                self.rendre_equipage)
+        self.importeur.hook["pnj:détruit"].ajouter_evenement(
+                self.detruire_pnj)
         self.importeur.hook["pnj:nom"].ajouter_evenement(
                 Equipage.get_nom_matelot)
         self.importeur.hook["salle:trouver_chemins_droits"].ajouter_evenement(
@@ -366,6 +366,7 @@ class Module(BaseModule):
                 if matelot.ordres:
                     matelot.nettoyer_ordres()
                     matelot.executer_ordres()
+            navire.equipage.points_max = navire.equipage.points_actuels
 
         # On renseigne le terrain récif
         Navire.obs_recif = self.importeur.salle.obstacles["récif"]
@@ -732,15 +733,15 @@ class Module(BaseModule):
                 matelot = self.matelots[pnj.identifiant]
                 arrive = self.matelots[arrive.identifiant]
 
-    def rendre_equipage(self, pnj, adversaire):
-        """Méthode appelée quand un PNJ meurt.
 
-        Cette méthode est appelée quand un PNJ meurt et permet de
-        déterminer, si le PNJ est un matelot, si l'équipage doit se
-        rendre.
-
-        """
-        print(pnj, "meurt tué par", adversaire)
+    def detruire_pnj(self, pnj):
+        """Détruit le matelot spécifié."""
+        if pnj.identifiant in self.matelots:
+            matelot = self.matelots[pnj.identifiant]
+            if matelot.equipage:
+                matelot.equipage.supprimer_matelot(matelot.nom, False)
+            else:
+                self.matelots.pop(pnj.identifiant).detruire()
 
     def get_symbole(self, point):
         """Retourne le symbole correspondant."""

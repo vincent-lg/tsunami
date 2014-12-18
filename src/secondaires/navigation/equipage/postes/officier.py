@@ -38,4 +38,5 @@ class Officier(Poste):
 
     nom = "officier"
     autorite = 50
+    points = 6
     nom_parent = "maître d'équipage"

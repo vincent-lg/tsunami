@@ -38,4 +38,5 @@ class Second(Poste):
 
     nom = "second"
     autorite = 90
+    points = 9
     nom_parent = "capitaine"
