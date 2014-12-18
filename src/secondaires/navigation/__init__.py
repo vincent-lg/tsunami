@@ -727,11 +727,15 @@ class Module(BaseModule):
 
         """
         if pnj is not arrive and hasattr(pnj, "identifiant") and \
-                hasattr(arrive, "identifiant"):
-            if pnj.identifiant in self.matelots and arrive.identifiant in \
-                    self.matelots:
-                matelot = self.matelots[pnj.identifiant]
-                arrive = self.matelots[arrive.identifiant]
+                pnj.identifiant in self.matelots:
+            matelot = self.matelots[pnj.identifiant]
+            navire = matelot.navire
+            immobilise = getattr(navire, "immobilise", True)
+            equipage = matelot.equipage
+            print(" ", matelot, equipage, immobilise)
+            if not immobilise and equipage and not equipage.est_matelot(
+                    arrive):
+                pnj.attaquer(arrive)
 
 
     def detruire_pnj(self, pnj):

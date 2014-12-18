@@ -174,6 +174,23 @@ class Equipage(BaseObj):
 
         return matelot
 
+    def est_matelot(self, personnage):
+        """Retourne True si le personnage précisé est un matelot de l'équipage.
+
+        Le personnage peut être soit un PNJ soit un joueur. Le
+        propriétaire du navire est automatiquement considéré comme
+        étant matelot de l'équipage.
+
+        """
+        navire = self.navire
+        personnages = [m.personnage for m in self.matelots.values()]
+        personnages.extend(list(self.joueurs.keys()))
+
+        if navire.proprietaire:
+            personnages.append(navire.proprietaire)
+
+        return personnage in personnages
+
     def renommer_matelot(self, matelot, nouveau_nom):
         """Renomme un matelot."""
         del self.matelots[supprimer_accents(matelot.nom).lower()]
@@ -320,7 +337,7 @@ class Equipage(BaseObj):
         del self.objectifs[indice]
 
     def get_matelot(self, nom):
-        """Retourne, si trouvé, le âtelot recherché.
+        """Retourne, si trouvé, le mâtelot recherché.
 
         Si le mâtelot ne peut être trouvé, lève une exception KeyError.
 
@@ -438,9 +455,6 @@ class Equipage(BaseObj):
         beaucoup de navires.
 
         """
-        # Retire les matelots morts
-        self.verifier_matelots()
-
         # Si le navire n'es tpas bien orienté face au vent, change
         # l'orientation de ces voiles
         self.orienter_voiles()
