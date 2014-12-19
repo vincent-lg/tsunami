@@ -86,6 +86,7 @@ class PrmOrdre(Parametre):
                     return
 
                 volonte = volonte(navire, *arguments)
+                volonte.initiateur = personnage
                 volonte.crier_ordres(personnage)
                 yield 0.3
                 return equipage.executer_volonte(volonte)

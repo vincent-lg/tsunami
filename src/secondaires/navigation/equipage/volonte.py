@@ -72,6 +72,7 @@ class Volonte(BaseObj, metaclass=MetaVolonte):
         """Construit une volonté."""
         BaseObj.__init__(self)
         self.navire = navire
+        self.initiateur = None
 
     def __getnewargs__(self):
         return (None, )

@@ -276,6 +276,7 @@ class Equipage(BaseObj):
         volonte = volontes[cle_volonte]
         volonte = volonte(self.navire, *parametres)
         if personnage:
+            volonte.initiateur = personnage
             volonte.crier_ordres(personnage)
 
         self.executer_volonte(volonte, exception=exception)
@@ -314,6 +315,15 @@ class Equipage(BaseObj):
         """
         if cle in self.controles:
             del self.controles[cle]
+
+    def a_objectif(self, cle, *args):
+        """Vérifie que l'équipage n'a pas déjà cet objectif."""
+        for objectif in self.objectifs:
+            t_args = tuple(objectif.arguments[:len(args)])
+            if objectif.cle == cle and args == t_args:
+                return True
+
+        return False
 
     def ajouter_objectif(self, cle, *args):
         """Ajoute l'objectif dont la clé est spécifié.

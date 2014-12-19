@@ -53,3 +53,5 @@ from secondaires.navigation.equipage.objectifs.rejoindre_navire import \
 from secondaires.navigation.equipage.objectifs.rejoindre_et_couler import \
         RejoindreEtCouler
 from secondaires.navigation.equipage.objectifs.suivre_cap import SuivreCap
+from secondaires.navigation.equipage.objectifs.suivre_navire import \
+        SuivreNavire

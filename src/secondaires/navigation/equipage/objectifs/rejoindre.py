@@ -63,16 +63,12 @@ class Rejoindre(Objectif):
         self.ancienne_vitesse = vitesse
         self.vitesse_optimale = vitesse
         self.autre_direction = None
+        self.autoriser_vitesse_sup = True
 
     def afficher(self):
         """Méthode à redéfinir retournant l'affichage de l'objectif."""
         navire = self.navire
-        position = navire.opt_position
-        o_x = position.x
-        o_y = position.y
-        d_x = self.x
-        d_y = self.y
-        distance = Vecteur(d_x - o_x, d_y - o_y, 0)
+        distance = self.get_distance()
         direction = (distance.direction + 90) % 360
         msg_dist = get_nom_distance(distance)
         return "Cap sur {}° ({}), à {}".format(round(direction),
@@ -119,16 +115,13 @@ class Rejoindre(Objectif):
                 equipage.controles["vitesse"].calculer_vitesse()
             self.ancienne_vitesse = vitesse
         else:
-            equipage.controler("vitesse", self.vitesse)
+            equipage.controler("vitesse", self.vitesse,
+                    self.autoriser_vitesse_sup)
 
     def trouver_cap(self):
         """Trouve le cap, tenant compte des obstacles."""
         equipage = self.equipage
         navire = self.navire
-
-        # Si le navire est en train de virer, pour l'instant annule l'objectif
-        if navire.orientation != 0:
-            return
 
         # On examine les points listés par la vigie
         # Si il n'y a pas de vigie, pas le moyen de les éviter
