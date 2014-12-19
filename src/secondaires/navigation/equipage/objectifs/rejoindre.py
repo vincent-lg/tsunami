@@ -30,7 +30,7 @@
 
 """Objectif rejoindre."""
 
-from math import fabs, radians
+from math import fabs, radians, sqrt
 
 from vector import Vector
 
@@ -60,7 +60,7 @@ class Rejoindre(Objectif):
         self.x = x
         self.y = y
         self.vitesse = vitesse
-        self.ancienne_vitesse = vitesse
+        self.ancienne_vitesse = None
         self.vitesse_optimale = vitesse
         self.autre_direction = None
         self.autoriser_vitesse_sup = True
@@ -91,6 +91,36 @@ class Rejoindre(Objectif):
         distance = Vecteur(d_x - o_x, d_y - o_y, 0)
         return distance
 
+    def trouver_distance_min(self, cible):
+        """Trouve la distance minimum.
+
+        Cette distance est fonction de la distance minimum entre
+        une salle du navire d'origine et une salle du navire cible.
+
+        """
+        navire = self.navire
+        etendue = navire.etendue
+        altitude = etendue.altitude
+        salle_cible = None
+        distance = None
+
+        for salle in navire.salles.values():
+            if salle.coords.z != altitude:
+                continue
+
+            x, y = salle.coords.x, salle.coords.y
+            for t_salle in cible.salles.values():
+                if t_salle.coords.z != altitude:
+                    continue
+
+                t_x, t_y = t_salle.coords.x, t_salle.coords.y
+                t_distance = sqrt((t_x - x) ** 2 + (t_y - y) ** 2)
+                if distance is None or t_distance < distance:
+                    distance = t_distance
+                    salle_cible = t_salle
+
+        return distance, salle_cible
+
     def transmettre_controles(self):
         """Donne les contrôles indiqués (vitesse et direction)."""
         equipage = self.equipage
@@ -109,11 +139,10 @@ class Rejoindre(Objectif):
 
         vitesse = self.vitesse
         if equipage.controles.get("vitesse"):
+            ancienne_vitesse = equipage.controles["vitesse"].vitesse
             equipage.controles["vitesse"].vitesse = vitesse
-            if self.ancienne_vitesse is not None and vitesse != \
-                    self.ancienne_vitesse:
+            if vitesse != ancienne_vitesse:
                 equipage.controles["vitesse"].calculer_vitesse()
-            self.ancienne_vitesse = vitesse
         else:
             equipage.controler("vitesse", self.vitesse,
                     self.autoriser_vitesse_sup)
@@ -129,7 +158,6 @@ class Rejoindre(Objectif):
 
         # Si le dictionnaire est vide, ne fait rien
         if not tries:
-            self.ancienne_vitesse = None
             self.autre_direction = None
             self.transmettre_controles()
             return

@@ -97,11 +97,11 @@ class SuivreNavire(Rejoindre):
         self.x = cible.position.x
         self.y = cible.position.y
         distance = self.get_distance()
-        norme = distance.norme
+        norme, salle = self.trouver_distance_min(cible)
 
         if norme <= self.distance_min:
             self.vitesse = 0
-        elif norme < 30:
+        elif norme < 10:
             self.vitesse = round(cible.vitesse_noeuds, 1)
             if self.vitesse < 0.2:
                 self.vitesse = 0.2

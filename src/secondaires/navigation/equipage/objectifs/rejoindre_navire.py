@@ -52,38 +52,9 @@ class RejoindreNavire(Rejoindre):
     cle = "rejoindre_navire"
     def __init__(self, equipage, cible=None, distance_min=1.3):
         Rejoindre.__init__(self, equipage)
+        self.arguments = (cible, distance_min)
         self.cible = cible
         self.distance_min = distance_min
-
-    def trouver_distance_min(self):
-        """Trouve la distance minimum.
-
-        Cette distance est fonction de la distance minimum entre
-        une salle du navire d'origine et une salle du navire cible.
-
-        """
-        navire = self.navire
-        etendue = navire.etendue
-        altitude = etendue.altitude
-        salle_cible = None
-        distance = None
-
-        for salle in navire.salles.values():
-            if salle.coords.z != altitude:
-                continue
-
-            x, y = salle.coords.x, salle.coords.y
-            for t_salle in self.cible.salles.values():
-                if t_salle.coords.z != altitude:
-                    continue
-
-                t_x, t_y = t_salle.coords.x, t_salle.coords.y
-                t_distance = sqrt((t_x - x) ** 2 + (t_y - y) ** 2)
-                if distance is None or t_distance < distance:
-                    distance = t_distance
-                    salle_cible = t_salle
-
-        return distance, salle_cible
 
     def trouver_cap(self):
         """Trouve le cap (x, y, vitesse).
@@ -96,7 +67,7 @@ class RejoindreNavire(Rejoindre):
         navire = self.navire
         cible = self.cible
         distance_min = self.distance_min
-        distance, salle_cible = self.trouver_distance_min()
+        distance, salle_cible = self.trouver_distance_min(cible)
 
         if distance <= distance_min:
             self.vitesse = 0

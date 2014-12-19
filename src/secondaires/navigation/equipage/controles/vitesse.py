@@ -98,6 +98,7 @@ class Vitesse(Controle):
 
         """
         commandant = self.commandant
+        print("vit", self.vitesse, commandant)
         if commandant is None:
             return
 
@@ -160,7 +161,8 @@ class Vitesse(Controle):
         # Écrit dans les logs le choix auquel on est parvenu
         vitesse, vit_rame, nb_voiles = choix
         self.debug("choisit la combinaison rames={} et voiles={} pour " \
-                "vitesse={}".format(vit_rame, nb_voiles, vitesse))
+                "vitesse={} (optimale={})".format(vit_rame, nb_voiles,
+                vitesse, self.vitesse))
 
         # Donne les ordres correspondant
         # Les rames, si nécessaire
@@ -169,6 +171,8 @@ class Vitesse(Controle):
 
         # Pour les voiles on cherche celles hissées
         nb_hissees = len([v for v in navire.voiles if v.hissee])
+        nb_hissees += len(equipage.get_matelots_ayant_ordre("hisser_voile"))
+        nb_hissees -= len(equipage.get_matelots_ayant_ordre("plier_voile"))
         diff = nb_voiles - nb_hissees
         if diff > 0:
             # On doit hisser au moins une voile
