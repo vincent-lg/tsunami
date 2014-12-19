@@ -38,4 +38,5 @@ class Charpentier(Poste):
 
     nom = "charpentier"
     autorite = 15
+    points = 3
     nom_parent = "officier"

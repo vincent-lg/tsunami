@@ -67,9 +67,11 @@ class Vitesse(Controle):
     """
 
     cle = "vitesse"
-    def __init__(self, equipage, vitesse=None):
-        Controle.__init__(self, equipage, vitesse)
+
+    def __init__(self, equipage, vitesse=None, autoriser_vitesse_sup=True):
+        Controle.__init__(self, equipage, vitesse, autoriser_vitesse_sup)
         self.vitesse = vitesse
+        self.autoriser_vitesse_sup = autoriser_vitesse_sup
         self.vitesse_optimale = None
         self.derniere_vitesse = None
         self.force_vent = None
@@ -96,6 +98,7 @@ class Vitesse(Controle):
 
         """
         commandant = self.commandant
+        print("vit", self.vitesse, commandant)
         if commandant is None:
             return
 
@@ -148,6 +151,9 @@ class Vitesse(Controle):
             else:
                 diff = attendue = self.vitesse
                 for vitesse, (vit_rame, nb_voiles) in vitesses.items():
+                    if not self.autoriser_vitesse_sup and vitesse > attendue:
+                        continue
+
                     if fabs(attendue - vitesse) <= diff:
                         diff = fabs(attendue - vitesse)
                         choix = (vitesse, vit_rame, nb_voiles)
@@ -155,7 +161,8 @@ class Vitesse(Controle):
         # Écrit dans les logs le choix auquel on est parvenu
         vitesse, vit_rame, nb_voiles = choix
         self.debug("choisit la combinaison rames={} et voiles={} pour " \
-                "vitesse={}".format(vit_rame, nb_voiles, vitesse))
+                "vitesse={} (optimale={})".format(vit_rame, nb_voiles,
+                vitesse, self.vitesse))
 
         # Donne les ordres correspondant
         # Les rames, si nécessaire
@@ -164,6 +171,8 @@ class Vitesse(Controle):
 
         # Pour les voiles on cherche celles hissées
         nb_hissees = len([v for v in navire.voiles if v.hissee])
+        nb_hissees += len(equipage.get_matelots_ayant_ordre("hisser_voile"))
+        nb_hissees -= len(equipage.get_matelots_ayant_ordre("plier_voile"))
         diff = nb_voiles - nb_hissees
         if diff > 0:
             # On doit hisser au moins une voile

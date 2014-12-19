@@ -174,8 +174,10 @@ class Module(BaseModule):
                 "Commandes de navigation"
         self.importeur.hook["pnj:arrive"].ajouter_evenement(
                 self.combat_matelot)
+        self.importeur.hook["pnj:détruit"].ajouter_evenement(
+                self.detruire_pnj)
         self.importeur.hook["pnj:meurt"].ajouter_evenement(
-                self.rendre_equipage)
+                self.meurt_PNJ)
         self.importeur.hook["pnj:nom"].ajouter_evenement(
                 Equipage.get_nom_matelot)
         self.importeur.hook["salle:trouver_chemins_droits"].ajouter_evenement(
@@ -273,13 +275,11 @@ class Module(BaseModule):
         # On charge les prototypes
         chemin = os.path.join(self.chemin, "monstre", "types")
         pychemin = "secondaires.navigation.monstre.types"
-        print("Explore", chemin)
         for nom_fichier in os.listdir(chemin):
             if nom_fichier.startswith("_") or not nom_fichier.endswith(".py"):
                 continue
 
             nom_fichier = pychemin + "." + nom_fichier[:-3]
-            print("Charge", nom_fichier)
             __import__(nom_fichier)
 
         #modeles = self.importeur.supenr.charger_groupe(ModeleNavire)
@@ -366,6 +366,7 @@ class Module(BaseModule):
                 if matelot.ordres:
                     matelot.nettoyer_ordres()
                     matelot.executer_ordres()
+            navire.equipage.points_max = navire.equipage.points_actuels
 
         # On renseigne le terrain récif
         Navire.obs_recif = self.importeur.salle.obstacles["récif"]
@@ -726,21 +727,45 @@ class Module(BaseModule):
 
         """
         if pnj is not arrive and hasattr(pnj, "identifiant") and \
-                hasattr(arrive, "identifiant"):
-            if pnj.identifiant in self.matelots and arrive.identifiant in \
-                    self.matelots:
-                matelot = self.matelots[pnj.identifiant]
-                arrive = self.matelots[arrive.identifiant]
+                pnj.identifiant in self.matelots:
+            matelot = self.matelots[pnj.identifiant]
+            navire = matelot.navire
+            immobilise = getattr(navire, "immobilise", True)
+            equipage = matelot.equipage
+            if not immobilise and equipage and not equipage.est_matelot(
+                    arrive):
+                pnj.attaquer(arrive)
 
-    def rendre_equipage(self, pnj, adversaire):
-        """Méthode appelée quand un PNJ meurt.
 
-        Cette méthode est appelée quand un PNJ meurt et permet de
-        déterminer, si le PNJ est un matelot, si l'équipage doit se
-        rendre.
+    def meurt_PNJ(self, pnj, adversaire):
+        """PNJ meurt, tué par personnage.
+
+        Si pnj est un matelot, affiche une tip si le statut du navire
+        passe en abordable.
 
         """
-        print(pnj, "meurt tué par", adversaire)
+        if adversaire and hasattr(pnj, "identifiant") and \
+                pnj.identifiant in self.matelots:
+            matelot = self.matelots[pnj.identifiant]
+            navire = matelot.navire
+            equipage = matelot.equipage
+            if equipage:
+                actuels = equipage.points_actuels
+                futurs = actuels - matelot.poste.points
+                if not est_capturable(navire, actuels) and est_capturable(
+                        navire, futurs):
+                    adversaire.envoyer_tip("Vous pouvez maintenant " \
+                            "conquérir ce navire en utilisant %équipage% " \
+                            "%équipage:conquérir%.")
+
+    def detruire_pnj(self, pnj):
+        """Détruit le matelot spécifié."""
+        if pnj.identifiant in self.matelots:
+            matelot = self.matelots[pnj.identifiant]
+            if matelot.equipage:
+                matelot.equipage.supprimer_matelot(matelot.nom, False)
+            else:
+                self.matelots.pop(pnj.identifiant).detruire()
 
     def get_symbole(self, point):
         """Retourne le symbole correspondant."""

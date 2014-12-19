@@ -45,6 +45,7 @@ from secondaires.navigation.equipage.volontes.relacher_gouvernail import \
         RelacherGouvernail
 from secondaires.navigation.equipage.volontes.relacher_rames import \
         RelacherRames
+from secondaires.navigation.equipage.volontes.suivre import Suivre
 from secondaires.navigation.equipage.volontes.tenir_gouvernail import \
         TenirGouvernail
 from secondaires.navigation.equipage.volontes.tenir_rames import TenirRames

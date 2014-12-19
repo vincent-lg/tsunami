@@ -60,7 +60,6 @@ class ChargerPoudre(Ordre):
         canon = self.canon
         salle = canon.parent
         onces = self.onces
-        print(canon.onces, onces, canon.max_onces)
         if canon.onces >= onces or canon.onces >= canon.max_onces:
             yield SignalInutile("ce canon est déjà chargé en poudre")
 

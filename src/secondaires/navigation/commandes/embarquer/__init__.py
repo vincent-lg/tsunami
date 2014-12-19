@@ -106,3 +106,10 @@ class CmdEmbarquer(Commande):
                 navire.nom), personnage)
         importeur.navigation.ecrire_suivi("{} embarque dans {}.".format(
                 personnage.nom_unique, navire.cle))
+
+        # On appelle les pnj.arrive des PNJs de la salle
+        for perso in d_salle.personnages:
+            if perso is not personnage and hasattr(perso, "script") and \
+                    perso.peut_voir(personnage):
+                importeur.hook["pnj:arrive"].executer(perso,
+                        personnage)

@@ -38,7 +38,7 @@ from abstraits.obase import BaseObj
 from primaires.format.fonctions import supprimer_accents
 from primaires.joueur.joueur import Joueur
 from primaires.vehicule.vecteur import get_direction
-from secondaires.navigation.constantes import get_portee, get_hauteur
+from secondaires.navigation.constantes import PCT_XP, get_portee, get_hauteur
 from secondaires.navigation.equipage.configuration import Configuration
 import secondaires.navigation.equipage.controles
 from secondaires.navigation.equipage.controle import controles
@@ -102,6 +102,9 @@ class Equipage(BaseObj):
         # Stratégie temporaire
         self.pirate = False
 
+        # Points de poste
+        self.points_max = 0
+
         self._construire()
 
     def __getnewargs__(self):
@@ -131,6 +134,22 @@ class Equipage(BaseObj):
 
         return None
 
+    @property
+    def points_actuels(self):
+        """Retourne la somme des points actuels des matelots.
+
+        Chaque matelot, en fonction de son poste, a des points. Le
+        total forme un nombre qui est comparé au nombre de points
+        actuels en cas d'abordage. Par exemple, si l'équipage comprend
+        un capitaine (qui vaut 10 points) et un matelot (qui en
+        vaut 1), le total est 11. Si le capitaine est tué, le nombre
+        de points actuels est 1 (il ne reste que le matelot). En
+        fonction de la différence entre points au total et points
+        actuels, on considère un navire comme capturable ou non.
+
+        """
+        return sum(m.poste.points for m in self.matelots.values())
+
     def get_matelots_ayant_ordre(self, cle_ordre):
         """Retourne la liste des matelots ayant l'ordre précisé."""
         return [m for m in self.matelots.values() if m.get_ordre(cle_ordre)]
@@ -149,7 +168,28 @@ class Equipage(BaseObj):
         matelot.nom = self.trouver_nom_matelot()
         self.matelots[supprimer_accents(matelot.nom.lower())] = matelot
         importeur.navigation.matelots[personnage.identifiant] = matelot
+
+        # Modifie le nombre de points
+        self.points_max = self.points_actuels
+
         return matelot
+
+    def est_matelot(self, personnage):
+        """Retourne True si le personnage précisé est un matelot de l'équipage.
+
+        Le personnage peut être soit un PNJ soit un joueur. Le
+        propriétaire du navire est automatiquement considéré comme
+        étant matelot de l'équipage.
+
+        """
+        navire = self.navire
+        personnages = [m.personnage for m in self.matelots.values()]
+        personnages.extend(list(self.joueurs.keys()))
+
+        if navire.proprietaire:
+            personnages.append(navire.proprietaire)
+
+        return personnage in personnages
 
     def renommer_matelot(self, matelot, nouveau_nom):
         """Renomme un matelot."""
@@ -183,8 +223,13 @@ class Equipage(BaseObj):
         noms_disponibles = [nom for nom in NOMS_MATELOTS if nom not in noms]
         return choice(noms_disponibles)
 
-    def supprimer_matelot(self, nom):
-        """Supprime, si trouvé, le matelot depuis son nom."""
+    def supprimer_matelot(self, nom, recalculer=True):
+        """Supprime, si trouvé, le matelot depuis son nom.
+
+        Si 'recalculer' est à True, recalcule le nombre de points
+        maximum de l'équipage.
+
+        """
         nom = supprimer_accents(nom).lower()
         matelot = self.matelots[nom]
         identifiant = matelot.personnage and matelot.personnage.identifiant \
@@ -193,6 +238,10 @@ class Equipage(BaseObj):
             del importeur.navigation.matelots[identifiant]
         matelot.detruire()
         del self.matelots[nom]
+
+        if recalculer:
+            # On recalcule le point max
+            self.points_max = self.points_actuels
 
     def ordonner_matelot(self, nom, ordre, *args, executer=False):
         """Ordonne à un mâtelot en particulier.
@@ -218,8 +267,7 @@ class Equipage(BaseObj):
         if ennemi is self:
             return
 
-        commandants = self.get_matelots_au_poste("commandant", libre=False)
-        if commandants and ennemi not in self.ennemis:
+        if ennemi not in self.ennemis:
             self.ennemis.append(ennemi)
 
     def demander(self, cle_volonte, *parametres, personnage=None,
@@ -228,6 +276,7 @@ class Equipage(BaseObj):
         volonte = volontes[cle_volonte]
         volonte = volonte(self.navire, *parametres)
         if personnage:
+            volonte.initiateur = personnage
             volonte.crier_ordres(personnage)
 
         self.executer_volonte(volonte, exception=exception)
@@ -267,6 +316,15 @@ class Equipage(BaseObj):
         if cle in self.controles:
             del self.controles[cle]
 
+    def a_objectif(self, cle, *args):
+        """Vérifie que l'équipage n'a pas déjà cet objectif."""
+        for objectif in self.objectifs:
+            t_args = tuple(objectif.arguments[:len(args)])
+            if objectif.cle == cle and args == t_args:
+                return True
+
+        return False
+
     def ajouter_objectif(self, cle, *args):
         """Ajoute l'objectif dont la clé est spécifié.
 
@@ -289,7 +347,7 @@ class Equipage(BaseObj):
         del self.objectifs[indice]
 
     def get_matelot(self, nom):
-        """Retourne, si trouvé, le âtelot recherché.
+        """Retourne, si trouvé, le mâtelot recherché.
 
         Si le mâtelot ne peut être trouvé, lève une exception KeyError.
 
@@ -407,9 +465,6 @@ class Equipage(BaseObj):
         beaucoup de navires.
 
         """
-        # Retire les matelots morts
-        self.verifier_matelots()
-
         # Si le navire n'es tpas bien orienté face au vent, change
         # l'orientation de ces voiles
         self.orienter_voiles()
@@ -528,10 +583,35 @@ class Equipage(BaseObj):
 
         return canons
 
+    def recompenser_ennemis(self):
+        """Cette méthode récompense les navires ennemis.
+
+        Elle est souvent appelée quand le navire sombre.
+
+        """
+        navire = self.navire
+        xp = importeur.perso.gen_niveaux.grille_xp[navire.modele.niveau][1]
+        xp = xp * PCT_XP / 100
+
+        # On ne prend en compte que les navires proches
+        ennemis = [n for n in self.ennemis if (n.opt_position - \
+                navire.opt_position).mag < 30]
+
+        # Maintenant on récompense en proportion de la distance
+        for ennemi in ennemis:
+            distance = (ennemi.opt_position - navire.opt_position).mag
+            facteur = (30 - distance) / (len(ennemis) * 30)
+            don = xp * facteur
+            personnages = ennemi.personnages
+            don = int(xp / len(personnages))
+            if don > 0:
+                for personnage in personnages:
+                    personnage.gagner_xp("navigation", xp)
+
     def detruire(self):
         """Destruction de l'équipage et des matelots inclus."""
-        for matelot in list(self.matelots.values()):
-            matelot.detruire()
+        for nom in list(self.matelots.keys()):
+            self.supprimer_matelot(nom)
 
         BaseObj.detruire(self)
 

@@ -31,7 +31,8 @@
 """Fichier contenant le paramètre 'conquérir' de la commande 'équipage'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
-from secondaires.navigation.constantes import PCT_XP
+from secondaires.navigation.constantes import PCT_XP, est_capturable
+
 class PrmConquerir(Parametre):
 
     """Commande 'équipage conquérir'."""
@@ -66,6 +67,12 @@ class PrmConquerir(Parametre):
         if navire.immobilise or not navire.modele.peut_conquerir or \
                 (navire.proprietaire and navire.proprietaire.est_vivant()):
             personnage << "|err|Vous ne pouvez conquérir ce navire.|ff|"
+            return
+
+        actuels = getattr(navire.equipage, "points_actuels", 0)
+        if not est_capturable(navire, actuels):
+            personnage << "|err|L'équipage de ce navire ne s'est pas " \
+                    "rendu.|ff|"
             return
 
         navire.proprietaire = personnage

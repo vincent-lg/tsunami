@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,36 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la volonté Tirer."""
+"""Fichier contenant la volonté Suivre."""
 
 import re
 
+from corps.fonctions import lisser
 from primaires.format.fonctions import contient
 from secondaires.navigation.equipage.volontes.tirer import Tirer
 from secondaires.navigation.equipage.volonte import Volonte
 
-class Feu(Volonte):
+class Suivre(Volonte):
 
     """Classe représentant une volonté.
 
-    Cette volonté inscrit tout simplement le navire précisé
-    comme cible. Il s'en suivra, dans la mesure où l'équipage le
-    peut, un tir continu sur la cible jusqu'à ce qu'elle coule.
+    Cette volonté demande au navire cible de suivre le navire courant.
+    Le personnage utilisant l'ordre doit avoir le droit de donner
+    des objectifs au navire cible. Cette volonté est des plus utile
+    pour ramener sa prise au port ainsi que son autre navire.
 
     """
 
-    cle = "feu"
-    ordre_court = re.compile(r"^f\s+(.*)$", re.I)
-    ordre_long = re.compile(r"^feu\s+(.*)$", re.I)
-    def __init__(self, navire, adverse=None):
+    cle = "suivre"
+    ordre_court = re.compile(r"^s\s+(.*)$", re.I)
+    ordre_long = re.compile(r"^suivre\s+(.*)$", re.I)
+
+    def __init__(self, navire, cible=None):
         """Construit une volonté."""
         Volonte.__init__(self, navire)
-        self.adverse = adverse
+        self.cible = cible
 
     @property
     def arguments(self):
         """Propriété à redéfinir si la volonté comprend des arguments."""
-        return (self.adverse, )
+        return (self.cible, )
 
     def choisir_matelots(self, exception=None):
         """Retourne le matelot le plus apte à accomplir la volonté."""
@@ -65,17 +68,36 @@ class Feu(Volonte):
 
     def executer(self, matelot):
         """Exécute la volonté."""
-        if self.navire.equipage.a_objectif("couler", self.adverse):
+        # Vérifie que l'initiateur a le droit de commander à la cible
+        cible = self.cible
+        personnage = self.initiateur
+        if personnage is None:
+            print("Aucun initiateur")
+            return
+
+        if (self.navire.opt_position - cible.opt_position).mag > 20:
+            personnage << "|err|Ce navire se trouve trop loin.|ff|"
+            return
+
+        if not cible.a_le_droit(personnage, "officier"):
+            personnage << "|err|Vous ne pouvez donner d'ordre sur ce " \
+                    "navire.|ff|"
+            return
+
+        if cible.equipage.a_objectif("suivre_navire", self.navire):
             personnage << "|err|Ce semble être déjà le cas.|ff|"
             return
 
-        self.navire.equipage.ajouter_objectif("couler", self.adverse)
+        cible.equipage.ajouter_objectif("suivre_navire", self.navire)
+        if cible.equipage.matelots:
+            self.navire.envoyer(lisser("L'équipage de {} fait signe " \
+                    "en réponse.".format(cible.desc_survol)))
 
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""
-        adverse = self.adverse
-        msg = "{} s'écrie : feu à volonté sur {} !".format(
-                personnage.distinction_audible, adverse.desc_survol)
+        cible = self.cible
+        msg = "{} s'écrie : envoyez le signal à {}, suivez-nous !".format(
+                personnage.distinction_audible, cible.desc_survol)
         self.navire.envoyer(msg)
 
     @classmethod

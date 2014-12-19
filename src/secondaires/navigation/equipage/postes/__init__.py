@@ -66,6 +66,7 @@ class Poste(metaclass=MetaPoste):
     """
 
     nom = ""
+    points = 0
     def __init__(self):
         """Constructeur du poste."""
         self.autorite = 0

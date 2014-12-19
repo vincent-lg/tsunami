@@ -977,9 +977,26 @@ class Navire(Vehicule):
         self.envoyer("Un grincement déchirant et le navire s'enfonce sous " \
                 "l'eau !")
         importeur.navigation.ecrire_suivi("{} sombre.".format(self.cle))
-        self.envoyer_autour(
-                "Un grand fracas, un grincement final, un navire sombre " \
-                "vers {sortie_complete} à {distance}.", 20)
+
+        messages = {
+                5: "Un grand fracas, un grincement final, un navire sombre " \
+                   "vers {sortie_complete} à {distance}.",
+                12: "Vous entendez un grand fracas vers {sortie_complete}, " \
+                    "il semble qu'un navire sombre.",
+                30: "Vous entendez un craquement vers {sortie_complete}, il " \
+                    "semble qu'un navire sombre.",
+        }
+
+        self.envoyer_autour(messages, 30)
+
+        # Donne une récompense aux ennemis
+        if self.equipage:
+            cles = [n.cle for n in self.equipage.ennemis]
+            importeur.navigation.nav_logger.info("{} sombre " \
+                    "(ennemis={})".format(self.cle, cles))
+            self.equipage.recompenser_ennemis()
+        else:
+            importeur.navigation.nav_logger.info("{} sombre".format(self.cle))
 
         # Replie la passerelle si il y a une passerelle
         elt_passerelle = self.elt_passerelle

@@ -38,4 +38,5 @@ class MaitreEquipage(Poste):
 
     nom = "maître d'équipage"
     autorite = 70
+    points = 7
     nom_parent = "second"

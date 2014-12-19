@@ -38,4 +38,5 @@ class Vigie(Poste):
 
     nom = "vigie"
     autorite = 15
+    points = 2
     nom_parent = "officier"

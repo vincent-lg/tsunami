@@ -39,6 +39,7 @@ from bases.objet.attribut import Attribut
 from primaires.perso.exceptions.stat import DepassementStat
 from primaires.salle.salle import Salle
 from primaires.vehicule.vecteur import Vecteur
+from secondaires.navigation.constantes import est_capturable
 from .base import BaseElement
 
 # Charge minimum pour que le projectile part
@@ -215,6 +216,7 @@ class Canon(BaseElement):
 
     def tirer(self, auteur=None):
         """Le canon tire son projectile."""
+        salle_auteur = getattr(auteur, "salle", None)
         if self.onces == 0:
             return
 
@@ -235,10 +237,11 @@ class Canon(BaseElement):
         self.onces = 0
         self.dernier_tir = datetime.now()
         if temps <= 0.5:
-            self.endommager(projectile, cible, auteur=auteur)
+            self.endommager(projectile, cible, auteur=salle_auteur)
         else:
             importeur.diffact.ajouter_action("canon_" + str(id(self)),
-                    temps, self.endommager, projectile, cible, auteur=auteur)
+                    temps, self.endommager, projectile, cible,
+                    auteur=salle_auteur)
             self.en_cours = True
 
     def endommager(self, projectile, cible, auteur=None):
@@ -247,15 +250,16 @@ class Canon(BaseElement):
         adverse = self.parent.navire
         if cible is None:
             if auteur:
-                auteur << "{} se perd sans faire de dégâts.".format(
-                        projectile.nom_singulier.capitalize())
+                auteur.envoyer("{} se perd sans faire de dégâts.".format(
+                        projectile.nom_singulier.capitalize()))
 
             importeur.objet.supprimer_objet(projectile.identifiant)
-            importeur.navigation.ecrire_suivi("{} tire un boulet de canon " \
-                    "qui se perd.".format(self.parent.navire.cle))
             return None
 
         if isinstance(cible, Salle):
+            navire = getattr(cible, "navire", None)
+            equipage = getattr(navire, "equipage", None)
+            points = equipage and equipage.points_actuels or None
             titre = cible.titre
             cible.envoyer(
                     "|rg|" + projectile.nom_singulier.capitalize() + \
@@ -272,25 +276,24 @@ class Canon(BaseElement):
                             "de la douleur.", personnage)
 
             # Inflige des dégâts au navire
-            if getattr(cible, "navire", None) and not cible.navire.accoste:
+            if navire and not navire.accoste:
                 cible.noyer(int(degats / 2))
                 cible.navire.equipage.ajouter_ennemi(adverse)
+
+            futurs = equipage and equipage.points_actuels or None
+            if equipage and not est_capturable(navire, points) and \
+                    est_capturable(navire, futurs):
+                for personnage in adverse.personnages:
+                    personnage.envoyer_tip("Vous pouvez maintenant " \
+                            "aborder et conquérir {}.".format(
+                            navire.desc_survol))
         else:
             titre = cible.desc_survol
 
         if auteur:
-            auteur << "{} atteint {} !".format(
-                    projectile.nom_singulier.capitalize(), titre.lower())
+            auteur.envoyer("{} atteint {} !".format(
+                    projectile.nom_singulier.capitalize(), titre.lower()))
         importeur.objet.supprimer_objet(projectile.identifiant)
-
-        # Message de suivi
-        if getattr(cible, "navire", None):
-            phrase = "atteint " + cible.navire.cle
-        else:
-            phrase = "atteint " + titre.lower()
-
-        importeur.navigation.ecrire_suivi("{} tire un boulet de canon qui " \
-                "{}.".format(self.parent.navire.cle, phrase))
 
     def construire(self, parent):
         """Construit l'élément basé sur le parent."""

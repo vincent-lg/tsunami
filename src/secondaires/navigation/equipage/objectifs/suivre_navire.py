@@ -28,33 +28,61 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Objectif rejoindre_navire."""
+"""Objectif suivre_navire."""
 
-from math import sqrt
-
-from primaires.vehicule.vecteur import get_direction
 from secondaires.navigation.constantes import *
 from secondaires.navigation.equipage.objectifs.rejoindre import Rejoindre
 
-class RejoindreNavire(Rejoindre):
+class SuivreNavire(Rejoindre):
 
-    """Objectif rejoindre_navire.
+    """Objectif suivre_navire.
 
     Cet objectif, basé sur l'objectif rejoindre, demande à un
-    équipage de suivre navire. Au lieu de rejoindre un point statique,
-    cet objectif est responsable de rejoindre un point mouvant en
-    essayant de prévoir une interception. Le but de l'objectif est
-    d'avoir une distance minimum telle que précisée entre le
-    navire actuel et le navire cible.
+    équipage de suivre un navire. Cet objectif est différent de
+    'rejoindre_navire' en ce qu'il essaye de suivre le navire, pas de
+    le rejoindre : si il est trop près de la cible, l'équipage reçoit
+    l'ordre de s'arrêter. Si il est trop loin, il essaye de le
+    rattraper. Sinon, il va s'accorder sur sa vitesse et sa direction.
 
     """
 
-    cle = "rejoindre_navire"
+    cle = "suivre_navire"
+
     def __init__(self, equipage, cible=None, distance_min=1.3):
         Rejoindre.__init__(self, equipage)
-        self.arguments = (cible, distance_min)
+        self.arguments = (cible, )
         self.cible = cible
         self.distance_min = distance_min
+        self.autoriser_vitesse_sup = False
+
+        if cible:
+            self.x = cible.position.x
+            self.y = cible.position.y
+
+    @property
+    def actif(self):
+        """Retourne True si l'objectif est actif, False sinon."""
+        navire = self.navire
+        cible = self.cible
+        if cible is None or not cible.e_existe:
+            return False
+
+        distance = (navire.opt_position - cible.opt_position).mag
+        if distance > 200:
+            return False
+
+        return True
+
+    def afficher(self):
+        """Méthode à redéfinir retournant l'affichage de l'objectif."""
+        navire = self.navire
+        distance = self.get_distance()
+        cible = self.cible
+        direction = (distance.direction + 90) % 360
+        msg_dist = get_nom_distance(distance)
+        return "Suivre {}, cap sur {}° ({}), à {}".format(
+                cible.desc_survol, round(direction), distance.nom_direction,
+                msg_dist)
 
     def trouver_cap(self):
         """Trouve le cap (x, y, vitesse).
@@ -66,19 +94,18 @@ class RejoindreNavire(Rejoindre):
         equipage = self.equipage
         navire = self.navire
         cible = self.cible
-        distance_min = self.distance_min
-        distance, salle_cible = self.trouver_distance_min(cible)
+        self.x = cible.position.x
+        self.y = cible.position.y
+        distance = self.get_distance()
+        norme, salle = self.trouver_distance_min(cible)
 
-        if distance <= distance_min:
+        if norme <= self.distance_min:
             self.vitesse = 0
-        elif distance < 10:
-            self.x = salle_cible.coords.x
-            self.y = salle_cible.coords.y
-            self.vitesse = 0.5
+        elif norme < 10:
+            self.vitesse = round(cible.vitesse_noeuds, 1)
+            if self.vitesse < 0.2:
+                self.vitesse = 0.2
         else:
-            vecteur = cible.opt_position + cible.opt_vitesse * 10
-            self.x = vecteur.x
-            self.y = vecteur.y
             self.vitesse = None
 
         Rejoindre.trouver_cap(self)
