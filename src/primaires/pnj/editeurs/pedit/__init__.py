@@ -36,8 +36,10 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.entier import Entier
+from primaires.interpreteur.editeur.flags import Flags
 from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.scripting.editeurs.edt_script import EdtScript
+from primaires.pnj.prototype import FLAGS
 from .edt_noms import EdtNoms
 from .edt_stats import EdtStats
 from .edt_race import EdtRace
@@ -88,6 +90,13 @@ class EdtPedit(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description du PNJ {}".format(prototype).ljust(
             76) + "|ff||\n" + self.opts.separateur
+
+        # Flags
+        flags = self.ajouter_choix("flags", "fl", Flags, prototype, "flags",
+                FLAGS)
+        flags.parent = self
+        flags.aide_courte = \
+            "Flags du prototype de PNJ {} :".format(prototype.cle)
 
         # Stats
         stats = self.ajouter_choix("stats", "s", EdtStats, \

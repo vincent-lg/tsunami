@@ -33,9 +33,13 @@
 from collections import OrderedDict
 
 from abstraits.obase import BaseObj
+from bases.collections.flags import Flags
 from primaires.format.description import Description
 from primaires.perso.stats import Stats
 from .script import ScriptPNJ
+
+# Constantes
+FLAGS = Flags()
 
 class Prototype(BaseObj):
 
@@ -72,6 +76,7 @@ class Prototype(BaseObj):
         self.entraine_stats = {}
         self.talents = {}
         self.sorts = {}
+        self.flags = 0
 
         # Salles repop
         self.salles_repop = {}
@@ -204,6 +209,11 @@ class Prototype(BaseObj):
 
     def est_immortel(self):
         return False
+
+    def a_flag(self, nom_flag):
+        """Retourne True si le prototype a le flag, False sinon."""
+        valeur = FLAGS[nom_flag]
+        return self.flags & valeur != 0
 
     def detruire(self):
         """Destruction du prototype."""

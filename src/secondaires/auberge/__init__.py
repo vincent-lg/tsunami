@@ -32,6 +32,7 @@
 
 from abstraits.module import *
 from primaires.format.fonctions import format_nb
+from primaires.pnj.prototype import FLAGS as FLAGS_PNJ
 from primaires.salle.salle import Salle
 from secondaires.auberge.auberge import Auberge
 from secondaires.auberge.commandes import *
@@ -56,6 +57,12 @@ class Module(BaseModule):
         self.commandes = []
         self.logger = self.importeur.man_logs.creer_logger(
                 "auberge", "auberge", "auberge.log")
+
+    def config(self):
+        """Configuration du module."""
+        # Ajout des flags de salle
+        FLAGS_PNJ.ajouter("peut visiter les auberges")
+        BaseModule.config(self)
 
     def init(self):
         """Chargement des navires et modèles."""
@@ -131,6 +138,10 @@ class Module(BaseModule):
     @staticmethod
     def peut_entrer(salle, personnage):
         """Retourne True si le personnage peut entrer dans la salle."""
+        if hasattr(personnage, "identifiant") and personnage.prototype.a_flag(
+                "peut visiter les auberges"):
+            return True
+
         for auberge in importeur.auberge.auberges.values():
             if salle.ident in auberge.chambres:
                 chambre = auberge.chambres[salle.ident]
