@@ -76,6 +76,7 @@ class PrmConquerir(Parametre):
             return
 
         navire.proprietaire = personnage
+        navire.equipage.pirate = False
         personnage << "Vous êtes le nouveau propriétaire de ce navire !"
         xp = importeur.perso.gen_niveaux.grille_xp[navire.modele.niveau][1]
         xp = xp * PCT_XP / 100

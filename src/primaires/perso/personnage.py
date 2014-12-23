@@ -512,17 +512,6 @@ class Personnage(BaseObj):
         if retours:
             n_endurance = retours[0]
 
-        if self.est_en_combat():
-            reussite = self.essayer_fuir()
-            if reussite:
-                self << "Vous vous enfuyez..."
-                self.etats.retirer("combat")
-                combat = type(self).importeur.combat.get_combat_depuis_salle(
-                        self.salle)
-                combat.supprimer_combattant(self)
-            else:
-                self << "|err|Vous ne parvenez pas à vous enfuir !|ff|"
-                return
         self.agir("bouger")
         if o_sortie.diff_escalade and o_sortie.direction in ("haut", "bas") \
                 and not self.est_immortel() and not escalade:
@@ -579,6 +568,18 @@ class Personnage(BaseObj):
                 not salle_dest.peut_entrer(self):
             self << "|err|Vous ne pouvez ouvrir cette porte.|ff|"
             return
+
+        if self.est_en_combat():
+            reussite = self.essayer_fuir()
+            if reussite:
+                self << "Vous vous enfuyez..."
+                self.etats.retirer("combat")
+                combat = type(self).importeur.combat.get_combat_depuis_salle(
+                        self.salle)
+                combat.supprimer_combattant(self)
+            else:
+                self << "|err|Vous ne parvenez pas à vous enfuir !|ff|"
+                return
 
         # On appelle l'évènement sort des affections du personnage
         for affection in list(self.affections.values()):

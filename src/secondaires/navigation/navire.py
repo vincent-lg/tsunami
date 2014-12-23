@@ -970,6 +970,22 @@ class Navire(Vehicule):
 
         msg = "Vous regardez " + self.desc_survol + " :\n\n"
         msg += self.modele.description.regarder(personnage, centre, variables)
+
+        if navire:
+            # On ajoute la direction du navire concurrent
+            direction = navire.direction.direction
+            direction = round((self.direction.direction - direction) / 5) * 5
+            if direction <= -180 or direction >= 180:
+                msg_dir = "sur 180°"
+            elif direction < 0:
+                msg_dir = "sur {}° bâbord".format(-direction)
+            elif direction == 0:
+                msg_dir = "sur 0°"
+            else:
+                msg_dir = "sur {}° tribord".format(direction)
+
+            msg += "\nCe navire se dirige " + msg_dir + "."
+
         personnage << msg
 
     def sombrer(self):

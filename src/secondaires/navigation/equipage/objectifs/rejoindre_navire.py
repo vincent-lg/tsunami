@@ -76,7 +76,7 @@ class RejoindreNavire(Rejoindre):
             self.y = salle_cible.coords.y
             self.vitesse = 0.5
         else:
-            vecteur = cible.opt_position + cible.opt_vitesse * 10
+            vecteur = cible.opt_position + cible.opt_vitesse * 2
             self.x = vecteur.x
             self.y = vecteur.y
             self.vitesse = None
