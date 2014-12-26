@@ -387,14 +387,10 @@ class Navire(Vehicule):
         """Retourne True si le personnage a le droit, False sinon.
 
         Le droit est calculé selon plsuieurs critères :
-            Si le navire n'a pas de propriétaire, returne True
             Si le personnage est immortel, retourne True
             Si le personnage est le propriétaire, retourne True
 
         """
-        if self.proprietaire is None:
-            return True
-
         if personnage.est_immortel():
             return True
 
