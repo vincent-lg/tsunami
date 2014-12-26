@@ -512,7 +512,9 @@ class Personnage(BaseObj):
         if retours:
             n_endurance = retours[0]
 
-        self.agir("bouger")
+        if not self.est_en_combat():
+            self.agir("bouger")
+
         if o_sortie.diff_escalade and o_sortie.direction in ("haut", "bas") \
                 and not self.est_immortel() and not escalade:
             self << "|err|Vous devez escalader pour aller dans cette " \
