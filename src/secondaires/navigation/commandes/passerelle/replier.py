@@ -68,7 +68,8 @@ class PrmReplier(Parametre):
         if not passerelle.baissee:
             personnage << "|err|Cette passerelle est déjà repliée.|ff|"
         else:
-            if not navire.a_le_droit(personnage, si_present=True):
+            if navire.proprietaire and not navire.a_le_droit(personnage,
+                    si_present=True):
                 personnage << "|err|Vous ne pouvez replier la passerelle " \
                         "de ce navire.|ff|"
                 return
