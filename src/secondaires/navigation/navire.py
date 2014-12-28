@@ -960,12 +960,8 @@ class Navire(Vehicule):
         salle.envoyer("{{}} regarde {}.".format(self.desc_survol.lower()),
                 personnage)
         centre = self.salles[0, 0, 0]
-        variables = {
-            "nom": self.nom_personnalise,
-        }
-
         msg = "Vous regardez " + self.desc_survol + " :\n\n"
-        msg += self.modele.description.regarder(personnage, centre, variables)
+        msg += self.modele.description.regarder(personnage, centre)
 
         if navire:
             # On ajoute la direction du navire concurrent
