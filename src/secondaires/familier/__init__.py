@@ -99,6 +99,13 @@ class Module(BaseModule):
         broute.act_autorisees = ["regarder", "parler", "ingerer",
                 "lancersort", "geste", "bouger"]
 
+        # État frugivore
+        frugi = self.importeur.perso.ajouter_etat("frugi")
+        frugi.msg_refus = "Vous êtes en train de chercher des fruits"
+        frugi.msg_visible = "cherche des fruits ici"
+        frugi.act_autorisees = ["regarder", "parler", "ingerer",
+                "lancersort", "geste", "bouger"]
+
         chasse = self.importeur.perso.ajouter_etat("chasse")
         chasse.msg_refus = "Vous êtes en train de chasser."
         chasse.msg_visible = "chasse furtivement ici"
@@ -125,6 +132,7 @@ class Module(BaseModule):
         # Ajout des talents
         importeur.perso.ajouter_talent("apprivoisement", "apprivoisement",
                 "dressage", 0.4)
+
         # On récupère les fiches de familier
         fiches = self.importeur.supenr.charger_groupe(FicheFamilier)
         for fiche in fiches:
@@ -473,20 +481,23 @@ class Module(BaseModule):
             fiche = familier.fiche
             if "chasse" in pnj.etats:
                 self.faire_chasser(familier)
-            elif "broute" in pnj.etats:
+            elif "broute" in pnj.etats or "frugi" in pnj.etats:
                 self.faire_brouter(familier)
             elif familier.doit_chasser or familier.maitre is None or not \
                     familier.maitre.est_connecte():
                 if pnj.etats:
                     pass
                 elif pnj.salle.a_flag("écurie"):
-                    pass
+                    familier.diminuer_faim(1)
+                    familier.diminuer_soif(1)
                 elif fiche.regime == "carnivore":
                     pnj.etats.ajouter("chasse")
                 elif fiche.regime == "herbivore":
                     pnj.etats.ajouter("broute")
+                elif fiche.regime == "frugivore":
+                    pnj.etats.ajouter("frugi")
 
-            if fiche.regime in ("herbivore", "carnivore"):
+            if fiche.regime in ("herbivore", "carnivore", "frugivore"):
                 self.donner_faim_soif(familier)
 
     def faire_chasser(self, familier):
@@ -543,6 +554,11 @@ class Module(BaseModule):
             return
 
         # On cherche les sorties possible de déplacement
+        if fiche.regime == "herbivore":
+            terrains_autorises = ("rive", "plaine")
+        elif fiche.regime == "frugivore":
+            terrains_autorises = ("rive", "plaine", "forêt")
+
         sorties = []
         for sortie in salle.sorties:
             if sortie.direction in ("bas", "haut") and not \
@@ -550,7 +566,7 @@ class Module(BaseModule):
                 continue
 
             if sortie.salle_dest and sortie.salle_dest.nom_terrain in \
-                    ("rive", "plaine") and not sortie.salle_dest.interieur:
+                    terrains_autorises and not sortie.salle_dest.interieur:
                 sorties.append(sortie)
 
         if sorties:

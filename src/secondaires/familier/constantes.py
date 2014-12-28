@@ -35,6 +35,7 @@ REGIMES = [
         "fantôme",
         "herbivore",
         "insectivore",
+        "frugivore",
 ]
 
 NOMS = (
