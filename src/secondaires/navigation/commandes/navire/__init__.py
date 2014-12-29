@@ -36,6 +36,7 @@ Dans ce fichier se trouve la commande même.
 
 from primaires.interpreteur.commande.commande import Commande
 from .creer import PrmCreer
+from .caleseche import PrmCaleseche
 from .detruire import PrmDetruire
 from .direction import PrmDirection
 from .editer import PrmEditer
@@ -76,6 +77,7 @@ class CmdNavire(Commande):
         prm_liste = PrmListe()
         prm_teleporter = PrmTeleporter()
 
+        self.ajouter_parametre(PrmCaleseche())
         self.ajouter_parametre(prm_creer)
         self.ajouter_parametre(prm_detruire)
         self.ajouter_parametre(prm_direction)

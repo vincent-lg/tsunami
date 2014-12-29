@@ -54,6 +54,7 @@ class ChantierNaval(BaseObj):
         self.etendue = None
         self.points = []
         self.commandes = []
+        self.cales_seches = []
         self._construire()
 
     def __getnewargs__(self):

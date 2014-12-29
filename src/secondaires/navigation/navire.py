@@ -648,7 +648,8 @@ class Navire(Vehicule):
 
         self.en_collision = False
 
-    def controller_collision(self, destination=None, direction=None, collision=True, marge=0.5):
+    def controller_collision(self, destination=None, direction=None,
+            collision=True, marge=0.5):
         """Contrôle les collisions entre la position actuel et la destination.
 
         Si la direction est précisée, le navire vire (la direction
@@ -904,7 +905,27 @@ class Navire(Vehicule):
                 amarre.attachee = d_salle
                 navire.immobilise = True
 
-    staticmethod
+    def mettre_en_cale_seche(self):
+        """Essaye de mettre le navire en cale sèche."""
+        # Cherche le chantier navale
+        etendue = self.etendue
+        chantier = None
+        for t_chantier in importeur.navigation.chantiers.values():
+            if t_chantier.etendue is etendue:
+                chantier = t_chantier
+                break
+
+        if chantier is None:
+            raise ValueError("Impossible de trouver le chantier " \
+                    "navale correspondant à l'étendue d'eau.")
+
+        self.etendue = None
+        chantier.cales_seches.append(self)
+
+        for salle in self.salles.values():
+            salle.coords.valide = False
+
+    @staticmethod
     def peut_boire(personnage, objet=None):
         """Retourne une valeur si le personnage peut boire ici."""
         salle = personnage.salle

@@ -253,7 +253,7 @@ class Visible:
         for t_navire in navires:
             # On détermine la salle la plus proche
             t_salles = [s for s in t_navire.salles.values() if \
-                    s.coords.z == 0]
+                    s.coords.z == 0 and s.coords.valide]
             for t_salle in t_salles:
                 # Calcul de la distance entre salle et t_salle
                 t_coords = t_salle.coords.tuple()
