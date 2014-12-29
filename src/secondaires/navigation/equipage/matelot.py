@@ -229,3 +229,78 @@ class Matelot(BaseObj):
             if ordre.cle == cle:
                 self.ordres.remove(ordre)
                 ordre.invalide = True
+
+    # Gestion de l'équipement
+    def jeter_ou_entreposer(self, exception=""):
+        """Jète les objets tenus ou les met en cale.
+
+        Si l'objet tenu peut être mis en cale, il est entreposé. Sinon
+        il est jeté.
+
+        Cette méthode ne fait quelque chose que si le personnage n'a
+        aucune main libre.
+
+        """
+        personnage = self.personnage
+        navire = self.navire
+        cale = navire.cale
+        if personnage.nb_mains_libres > 0:
+            return
+
+        conteneurs = (
+                personnage.equipement.tenus,
+                personnage.equipement.equipes,
+        )
+
+        for conteneur in conteneurs:
+            for objet in list(conteneur):
+                if personnage.nb_mains_libres > 0:
+                    return
+
+                if objet.nom_type != exception:
+                    detruire = False
+                    conteneur.retirer(objet)
+                    if objet.nom_type in cale.types:
+                        try:
+                            cale.ajouter_objets([objet])
+                        except ValueError:
+                            detruire = True
+                    else:
+                        detruire = True
+
+                    if detruire:
+                        importeur.objet.supprimer_objet(objet.identifiant)
+
+    def armer(self):
+        """Arme le personnage si nécessaire.
+
+        Le personnage essaye de récupérer une arme depuis la cale.
+
+        """
+        personnage = self.personnage
+        self.jeter_ou_entreposer()
+
+        # Si le personnage a déjà une arme, laisse courir
+        if any(o.est_de_type("arme") for o in personnage.equipement.equipes):
+            return
+        cale = self.navire.cale
+        armes = cale.armes
+        if not armes:
+            return
+
+        armes = [importeur.objet.prototypes[cle] for cle in \
+                armes.keys()]
+        armes = [a for a in armes if a.cle_talent]
+        armes.sort(key=lambda prototype: \
+                personnage.talents.get(prototype.cle_talent, 0), reverse=True)
+        arme = armes[0]
+        objet = cale.recuperer(personnage, arme.cle)
+        if objet:
+            # On essaye de l'équiper
+            for membre in personnage.equipement.membres:
+                if membre.peut_equiper(objet):
+                    objet.contenu.retirer(objet)
+                    membre.equiper(objet)
+
+            personnage.salle.envoyer("{{}} ramasse {}.".format(
+                    objet.get_nom(1)), personnage)

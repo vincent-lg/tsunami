@@ -174,6 +174,8 @@ class Module(BaseModule):
                 "Commandes de navigation"
         self.importeur.hook["pnj:arrive"].ajouter_evenement(
                 self.combat_matelot)
+        self.importeur.hook["pnj:attaque"].ajouter_evenement(
+                self.armer_matelot)
         self.importeur.hook["pnj:détruit"].ajouter_evenement(
                 self.detruire_pnj)
         self.importeur.hook["pnj:meurt"].ajouter_evenement(
@@ -734,8 +736,24 @@ class Module(BaseModule):
             equipage = matelot.equipage
             if not immobilise and equipage and not equipage.est_matelot(
                     arrive):
+                matelot.armer()
                 pnj.attaquer(arrive)
 
+    def armer_matelot(self, pnj, adversaire):
+        """Méthode appelé quand un PNJ est attaqué.
+
+        On profite de cette méthode (reliée à un hook) pour demander
+        au matelot derrière le PNJ (si existe) de s'armer si besoin.
+
+        """
+        print(pnj, "est attaqué")
+        if hasattr(pnj, "identifiant") and pnj.identifiant in self.matelots:
+            matelot = self.matelots[pnj.identifiant]
+            navire = matelot.navire
+            immobilise = getattr(navire, "immobilise", True)
+            equipage = matelot.equipage
+            if not immobilise and equipage:
+                matelot.armer()
 
     def meurt_PNJ(self, pnj, adversaire):
         """PNJ meurt, tué par personnage.
