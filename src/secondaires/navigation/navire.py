@@ -919,6 +919,11 @@ class Navire(Vehicule):
             raise ValueError("Impossible de trouver le chantier " \
                     "navale correspondant à l'étendue d'eau.")
 
+        # Replie la passerelle si il y a une passerelle
+        elt_passerelle = self.elt_passerelle
+        if elt_passerelle:
+            elt_passerelle.replier()
+
         self.etendue = None
         chantier.cales_seches.append(self)
 

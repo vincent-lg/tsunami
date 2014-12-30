@@ -85,6 +85,7 @@ class ChantierNaval(BaseObj):
         """Retourne les navires dans le chantier naval."""
         navires = [n for n in importeur.navigation.navires.values() if \
                 n.proprietaire is personnage]
+        navires = [n for n in navires if n.etendue]
         navires = [n for n in navires if (int(n.position.x),
                 int(n.position.y), int(n.position.z)) in self.points]
         navires.sort(key=lambda n: n.cle)

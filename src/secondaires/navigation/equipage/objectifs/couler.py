@@ -58,7 +58,7 @@ class Couler(Objectif):
         if cible is None or not cible.e_existe:
             return False
 
-        if cible.immobilise:
+        if cible.accoste:
             return False
 
         distance = (navire.opt_position - cible.opt_position).mag

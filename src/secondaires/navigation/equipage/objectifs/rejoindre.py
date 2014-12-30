@@ -208,6 +208,9 @@ class Rejoindre(Objectif):
         # Si on est pas exactement dans la bonne direction pour rejoindre
         # le point (x, y), on envisage de changer de cap
         o_distance = self.get_distance()
+        if o_distance.norme < 30:
+            distance = o_distance.norme
+
         relative = o_distance.direction - navire.direction.direction
         angles = sorted(angles, key=lambda a: fabs(a - relative))
 
