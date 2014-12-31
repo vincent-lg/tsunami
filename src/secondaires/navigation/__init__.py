@@ -325,6 +325,7 @@ class Module(BaseModule):
             commandes.loch.CmdLoch(),
             commandes.matelot.CmdMatelot(),
             commandes.navire.CmdNavire(),
+            commandes.navire_automatique.CmdNavireAutomatique(),
             commandes.passerelle.CmdPasserelle(),
             commandes.point.CmdPoint(),
             commandes.rames.CmdRames(),

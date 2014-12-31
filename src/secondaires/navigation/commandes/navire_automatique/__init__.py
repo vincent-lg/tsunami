@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2014 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,30 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'navire_automatique'."""
 
-from . import allure
-from . import ancre
-from . import amarre
-from . import cale
-from . import calfeutrer
-from . import canon
-from . import cap
-from . import chantier
-from . import debarquer
-from . import detailler
-from . import ecoper
-from . import eltedit
-from . import embarquer
-from . import equipage
-from . import gouvernail
-from . import loch
-from . import matelot
-from . import navire
-from . import navire_automatique
-from . import passerelle
-from . import point
-from . import rames
-from . import saborder
-from . import vent
-from . import voile
+from primaires.interpreteur.commande.commande import Commande
+from .apparaitre import PrmApparaitre
+
+
+class CmdNavireAutomatique(Commande):
+
+    """Commande 'navire_automatique'"""
+
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "autonavire", "autoship")
+        self.groupe = "administrateur"
+        self.nom_categorie = "navire"
+        self.aide_courte = "manipule les navires automatiques"
+        self.aide_longue = \
+            "Cette commande permet de créer, éditer et lister les " \
+            "navires automatiques. Un navire automatique est une fiche " \
+            "décrivant les propriétés semi-aléatoires d'un navire " \
+            "automatique, par exemple un navire pirate. Un navire " \
+            "automatique a au minimum un modèle de navire, une liste " \
+            "de noms, de caps à emprunter, une description d'équipage " \
+            "et de cale. Quand on veut créer un navire depuis une " \
+            "fiche de navire automatique, le modèle de navire est " \
+            "utilisé. Le navire créé est placé sur le cap choisi, " \
+            "son équipage est constitué automatiquement ainsi que " \
+            "sa cale remplit. Il aura le comportement et la stratégie " \
+            "sélectionné."
+
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmApparaitre())
