@@ -76,6 +76,9 @@ class ModeleNavire(BaseObj):
     def __getnewargs__(self):
         return ("", )
 
+    def __repr__(self):
+        return self.cle
+
     @property
     def coordonnees_salles(self):
         """Retourne un tuple des coorodnnées des salles."""

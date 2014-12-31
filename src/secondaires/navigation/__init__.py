@@ -339,6 +339,8 @@ class Module(BaseModule):
 
         # Ajout des éditeurs
         self.importeur.interpreteur.ajouter_editeur(
+                editeurs.autonavire.EdtNaedit)
+        self.importeur.interpreteur.ajouter_editeur(
                 editeurs.matedit.EdtMatedit)
         self.importeur.interpreteur.ajouter_editeur(
                 editeurs.eltedit.EdtEltedit)

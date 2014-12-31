@@ -30,6 +30,7 @@
 
 """Package contenant les différents éditeurs"""
 
-from . import matedit
+from . import autonavire
 from . import eltedit
+from . import matedit
 from . import shedit

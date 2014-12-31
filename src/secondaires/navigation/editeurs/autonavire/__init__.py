@@ -28,38 +28,44 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'navire_automatique'."""
+"""Package contenant l'éditeur 'anedit'.
 
-from primaires.interpreteur.commande.commande import Commande
-from .apparaitre import PrmApparaitre
-from .editer import PrmEditer
+Si des redéfinitions de contexte-éditeur standard doivent être faites, elles
+seront placées dans ce package
 
+"""
 
-class CmdNavireAutomatique(Commande):
+from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.choix_objet import ChoixObjet
 
-    """Commande 'navire_automatique'"""
+class EdtNaedit(Presentation):
 
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "autonavire", "autoship")
-        self.groupe = "administrateur"
-        self.nom_categorie = "navire"
-        self.aide_courte = "manipule les navires automatiques"
-        self.aide_longue = \
-            "Cette commande permet de créer, éditer et lister les " \
-            "navires automatiques. Un navire automatique est une fiche " \
-            "décrivant les propriétés semi-aléatoires d'un navire " \
-            "automatique, par exemple un navire pirate. Un navire " \
-            "automatique a au minimum un modèle de navire, une liste " \
-            "de noms, de caps à emprunter, une description d'équipage " \
-            "et de cale. Quand on veut créer un navire depuis une " \
-            "fiche de navire automatique, le modèle de navire est " \
-            "utilisé. Le navire créé est placé sur le cap choisi, " \
-            "son équipage est constitué automatiquement ainsi que " \
-            "sa cale remplit. Il aura le comportement et la stratégie " \
-            "sélectionné."
+    """Classe définissant l'éditeur de modèle de navire automatique."""
 
-    def ajouter_parametres(self):
-        """Ajout des paramètres."""
-        self.ajouter_parametre(PrmApparaitre())
-        self.ajouter_parametre(PrmEditer())
+    nom = "naedit"
+
+    def __init__(self, personnage, fiche):
+        """Constructeur de l'éditeur."""
+        if personnage:
+            instance_connexion = personnage.instance_connexion
+        else:
+            instance_connexion = None
+
+        Presentation.__init__(self, instance_connexion, fiche)
+        if personnage and fiche:
+            self.construire(fiche)
+
+    def __getnewargs__(self):
+        return (None, None)
+
+    def construire(self, fiche):
+        """Construction de l'éditeur"""
+        # Modèle
+        modele = self.ajouter_choix("modèle de navire", "m", ChoixObjet,
+                fiche, "modele", importeur.navigation.modeles)
+        modele.parent = self
+        modele.prompt = "Clé du modèle de navire : "
+        modele.apercu = "{objet.modele}"
+        modele.aide_courte = \
+            "Entrez la |ent|clé|ff| du modèle de navire ou |cmd|/|ff| " \
+            "pour revenir à la fenêtre parente.\n\nModèle actuel : {objet}"

@@ -28,38 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'navire_automatique'."""
+"""Fichier contenant le paramètre 'éditer' de la commande 'navire_automatique'."""
 
-from primaires.interpreteur.commande.commande import Commande
-from .apparaitre import PrmApparaitre
-from .editer import PrmEditer
+from primaires.interpreteur.masque.parametre import Parametre
 
+class PrmEditer(Parametre):
 
-class CmdNavireAutomatique(Commande):
+    """Commande 'navire_automatique éditer'.
 
-    """Commande 'navire_automatique'"""
+    """
 
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "autonavire", "autoship")
-        self.groupe = "administrateur"
-        self.nom_categorie = "navire"
-        self.aide_courte = "manipule les navires automatiques"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "éditer", "edit")
+        self.schema = "<cle>"
+        self.aide_courte = "édite un navire automatique"
         self.aide_longue = \
-            "Cette commande permet de créer, éditer et lister les " \
-            "navires automatiques. Un navire automatique est une fiche " \
-            "décrivant les propriétés semi-aléatoires d'un navire " \
-            "automatique, par exemple un navire pirate. Un navire " \
-            "automatique a au minimum un modèle de navire, une liste " \
-            "de noms, de caps à emprunter, une description d'équipage " \
-            "et de cale. Quand on veut créer un navire depuis une " \
-            "fiche de navire automatique, le modèle de navire est " \
-            "utilisé. Le navire créé est placé sur le cap choisi, " \
-            "son équipage est constitué automatiquement ainsi que " \
-            "sa cale remplit. Il aura le comportement et la stratégie " \
-            "sélectionné."
+                "Cette commande vous permet d'éditer une fiche de " \
+                "navire automatique existante. Vous devez préciser " \
+                "en paramètre la clé du navire automatique à éditer."
 
-    def ajouter_parametres(self):
-        """Ajout des paramètres."""
-        self.ajouter_parametre(PrmApparaitre())
-        self.ajouter_parametre(PrmEditer())
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        cle = dic_masques["cle"].cle
+        if cle not in importeur.navigation.navires_automatiques:
+            personnage << "|err|Le navire automatique {} n'existe " \
+                    "pas.|ff|".format(cle)
+            return
+
+        fiche = importeur.navigation.navires_automatiques[cle]
+        editeur = importeur.interpreteur.construire_editeur(
+                "naedit", personnage, fiche)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()
