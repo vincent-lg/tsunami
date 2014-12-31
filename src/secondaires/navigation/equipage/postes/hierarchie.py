@@ -40,9 +40,9 @@ HIERARCHIE = {
     "maître cuisinier": ["maître cuisinier"],
     "chirurgien": ["chirurgien"],
     "officier": ["officier", "maître d'équipage", "second", "capitaine"],
-    "maître d'équipage": ["maître d'équipage", "officier"],
-    "second": ["second", "maître d'équipage", "officier"],
-    "capitaine": ["capitaine", "second", "maître d'équipage"],
+    "maître d'équipage": ["maître d'équipage", "second", "capitaine"],
+    "second": ["second", "capitaine"],
+    "capitaine": ["capitaine"],
     "commandant": ["capitaine", "second"],
 }
 
