@@ -265,24 +265,29 @@ class Canon(BaseElement):
                     "|rg|" + projectile.nom_singulier.capitalize() + \
                     " détonne près de vous !|ff|")
             degats = projectile.degats
-            for personnage in cible.personnages:
-                try:
-                    personnage.stats.vitalite -= degats
-                except DepassementStat:
-                    personnage.mourir()
-                    personnage << "Vous vous écroulez sous l'effet de la " \
-                            "douleur.|ff|"
-                    personnage.salle.envoyer("{} s'effondre sous l'effet " \
-                            "de la douleur.", personnage)
+            if degats > 0:
+                for personnage in cible.personnages:
+                    try:
+                        personnage.stats.vitalite -= degats
+                    except DepassementStat:
+                        personnage.mourir()
+                        personnage << "Vous vous écroulez sous l'effet " \
+                                "de la douleur.|ff|"
+                        personnage.salle.envoyer("{} s'effondre sous " \
+                                "l'effet de la douleur.", personnage)
+
+            projectile.script["atteint"].executer(objet=projectile,
+                    salle=cible)
 
             # Inflige des dégâts au navire
-            if navire and not navire.accoste:
+            if navire and not navire.accoste and degats > 0:
                 cible.noyer(int(degats / 2))
                 cible.navire.equipage.ajouter_ennemi(adverse)
 
             futurs = equipage and equipage.points_actuels or None
-            if equipage and not est_capturable(navire, points) and \
-                    est_capturable(navire, futurs):
+            if points is not None and futurs is not None and not \
+                    est_capturable(navire, points) and est_capturable(
+                    navire, futurs):
                 for personnage in adverse.personnages:
                     personnage.envoyer_tip("Vous pouvez maintenant " \
                             "aborder et conquérir {}.".format(
