@@ -55,4 +55,4 @@ class PrmSupprimer(Parametre):
             personnage << "Le questeur a bien été supprimé."
         else:
             personnage << "|err|Aucun questeur n'a été défini dans " \
-                    "cette salle."
+                    "cette salle.|ff|"

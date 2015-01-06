@@ -57,7 +57,7 @@ class PrmMatelot(Parametre):
         try:
             fiche = importeur.navigation.fiches[cle]
         except KeyError:
-            personnage << "|err|Matelot inconnu : {}.".format(repr(cle))
+            personnage << "|err|Matelot inconnu : {}.|ff|".format(repr(cle))
             return
 
         salle = navire.salles.get((0, 0, 0))

@@ -77,9 +77,9 @@ class Salle(BaseObj):
         modules, comme 'vehicule', de fonctionner. Si votre salle n'a pas de
         coordonnées, vous devrez créer chaque sortie "à la main".
         Les salles ne sont donc pas identifiées par leurs coordonnées, sauf
-        dans certains cas, mais bien par leur zone et mnémonic. Ce couple
+        dans certains cas, mais bien par leur zone et mnémonique. Ce couple
         caractérise de façon unique une salle dans l'univers.
-        Exemple : une ssalle ayant pour zone 'picte' et pour mnémonic '1'
+        Exemple : une salle ayant pour zone 'picte' et pour mnémonique '1'
         sera accessible depuis la clé 'picte:1' ; aucune autre salle de
         l'univers ne pourra posséder cette clé 'picte:1'.
 

@@ -32,7 +32,7 @@ class Uniligne(Editeur):
     """Contexte-éditeur uni_ligne.
 
     Ce contexte sert à modifier des attributs de type 'str', conçu pour
-    être écrits sur une ligne (le titre d'une salle, sa zone, son mnémonic...
+    être écrits sur une ligne (le titre d'une salle, sa zone, son mnémonique...
     par exemple).
 
     """

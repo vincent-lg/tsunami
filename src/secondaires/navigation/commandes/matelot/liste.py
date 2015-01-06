@@ -55,7 +55,7 @@ class PrmListe(Parametre):
         """Interprétation du paramètre"""
         salle = personnage.salle
         if not hasattr(salle, "navire"):
-            personnage << "|err|Vous n'êtes pas sur un navire."
+            personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
             return
 
         navire = salle.navire

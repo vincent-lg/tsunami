@@ -57,7 +57,7 @@ class CmdHistorique(Commande):
         messages = importeur.communication.messages.get(personnage, [])
         if len(messages) == 0:
             personnage << "|err|Vous n'avez encore aucune conversation " \
-                    "à rappeler."
+                    "à rappeler.|ff|"
             return
 
         tableau = importeur.communication.extraire_historique(personnage)

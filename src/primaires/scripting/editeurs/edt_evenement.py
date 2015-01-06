@@ -140,7 +140,7 @@ class EdtEvenement(Editeur):
             msg += " Entrez |ent|une suite de prédicats|ff| pour "
             msg += "ajouter un test\n"
             msg += " Ou |ent|un numéro de ligne|ff| pour l'éditer\n"
-            msg += " Ou |cmd|*|ff| pour ééditer le test sinon\n"
+            msg += " Ou |cmd|*|ff| pour éditer le test sinon\n"
             msg += " |cmd|/d <numéro de ligne>|ff| pour supprimer un test\n"
             msg += " |cmd|/r <numéro de ligne> <prédicats>|ff| pour "
             msg += "modifier un test\n\n"

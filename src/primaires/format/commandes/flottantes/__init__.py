@@ -57,7 +57,7 @@ class CmdFlottantes(Commande):
             "d'abord une description flottante avec une clé explicite (si il " \
             "s'agit d'une description de plusieurs salles, par exemple, " \
             "faites comme si c'était une clé de salle, le nom de la zone, " \
-            "le signe deux points et un mnémonic imaginaire). Ensuite, dans " \
+            "le signe deux points et un mnémonique imaginaire). Ensuite, dans " \
             "les descriptions où vous voulez importer cette description " \
             "flottante, utilisez l'abréviation " \
             "|cmd|@cle_de_la_description_flottante|ff|. Cette commande peut " \

@@ -66,7 +66,7 @@ class PrmObstacleAjouter(Parametre):
                     etendue)
         else:
             if point not in importeur.salle.obstacles:
-                personnage << "|err|Le point {} n'existe pas.".format(point)
+                personnage << "|err|Le point {} n'existe pas.|ff|".format(point)
             elif coords in etendue:
                 personnage << "|err|Ce point existe déjà dans l'étendue.|ff|"
             else:

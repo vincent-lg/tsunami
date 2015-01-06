@@ -86,7 +86,7 @@ class ModeleNavire(BaseObj):
 
     @property
     def mnemonics_salles(self):
-        """Retourne un tuple des mnémonics des salles."""
+        """Retourne un tuple des mnémoniques des salles."""
         return tuple(s.mnemonic for s in self.salles.values())
 
     def get_max_distance_au_centre(self):
@@ -98,7 +98,7 @@ class ModeleNavire(BaseObj):
         return max(distances)
 
     def get_salle(self, mnemonic):
-        """Retourne la salle ayant le mnémonic indiqué.
+        """Retourne la salle ayant le mnémonique indiqué.
 
         Lève une exception ValueError si la salle n'est pas trouvée.
 
@@ -114,7 +114,7 @@ class ModeleNavire(BaseObj):
 
         r_x, r_y et r_z sont les coordonnées relatives par rapport
         au milieu du navire.
-        Si mnemonic est None (par défaut), cherche un mnémonic disponible.
+        Si mnemonic est None (par défaut), cherche un mnémonique disponible.
 
         """
         r_coords = (r_x, r_y, r_z)
@@ -123,7 +123,7 @@ class ModeleNavire(BaseObj):
                     "occupées".format(*r_coords))
 
         if mnemonic is None:
-            # On cherche le plus petit mnémonic non utilisé
+            # On cherche le plus petit mnémonique non utilisé
             mnemonics = sorted(self.mnemonics_salles)
             for i in range(1, int(max(mnemonics, key=int)) + 2):
                 if str(i) not in mnemonics:

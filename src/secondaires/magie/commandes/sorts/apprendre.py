@@ -83,4 +83,4 @@ class PrmApprendre(Parametre):
                     personnage << "Vous avez bien oublié le sort {}.".format(
                             sort.nom)
                 else:
-                    personnage << "|err|Vous ne connaissez pas ce sort."
+                    personnage << "|err|Vous ne connaissez pas ce sort.|ff|"

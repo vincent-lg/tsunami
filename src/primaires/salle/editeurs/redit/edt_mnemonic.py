@@ -38,7 +38,7 @@ from primaires.salle.salle import MNEMONIC_VALIDE
 class EdtMnemonic(Uniligne):
     
     """Classe définissant le contexte éditeur 'mnemonic'.
-    Ce contexte permet simplement d'éditer le mnémonic de la salle.
+    Ce contexte permet simplement d'éditer le mnémonique de la salle.
     
     """
     
@@ -48,7 +48,7 @@ class EdtMnemonic(Uniligne):
         ancien_ident = self.objet.ident
         ident = str(self.objet.zone) + ":" + msg
         if not re.search(MNEMONIC_VALIDE, msg):
-            self.pere.envoyer("|err|Ce mnémonic est invalide. Veuillez " \
+            self.pere.envoyer("|err|Ce mnémonique est invalide. Veuillez " \
                     "réessayer.|ff|")
         elif ident in type(self).importeur.salle and ancien_ident != ident:
             self.pere.envoyer("|err|L'identifiant {} est déjà utilisé " \
