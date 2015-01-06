@@ -93,3 +93,29 @@ class ScriptObjet(Script):
         var_objet.aide = "l'objet posé"
         var_quantite = evt_pose.ajouter_variable("quantite", "Fraction")
         var_quantite.aide = "le nombre d'objets posés"
+
+        # Evénement porte
+        evt_porte = self.creer_evenement("porte")
+        evt_porte.aide_courte = "un personnage équipe l'objet"
+        evt_porte.aide_longue = \
+            "Cet évènement est appelé quand un personnage porte " \
+            "(c'est-à-dire équipe) l'objet."
+
+        # Configuration des variables de l'évènement porte
+        var_perso = evt_porte.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage équipant l'objet"
+        var_objet = evt_porte.ajouter_variable("objet", "Objet")
+        var_objet.aide = "l'objet équipé"
+
+        # Evénement retire
+        evt_retire = self.creer_evenement("retire")
+        evt_retire.aide_courte = "un personnage retire l'objet"
+        evt_retire.aide_longue = \
+            "Cet évènement est appelé quand un personnage retire " \
+            "(c'est-à-dire déséquipe) l'objet."
+
+        # Configuration des variables de l'évènement retire
+        var_perso = evt_retire.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage déséquipant l'objet"
+        var_objet = evt_retire.ajouter_variable("objet", "Objet")
+        var_objet.aide = "l'objet déséquipé"

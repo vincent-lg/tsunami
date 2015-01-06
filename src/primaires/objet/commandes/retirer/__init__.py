@@ -63,8 +63,12 @@ class CmdRetirer(Commande):
 
         # Vérifie que l'objet à retiré n'est pas sur un membre peut tenir
         tenir = False
+        dernier_niveau = False
         for membre in personnage.equipement.membres:
             o = membre.equipe and membre.equipe[-1] or None
+            if o and o is objet:
+                dernier_niveau = True
+
             if membre.tester("peut tenir") and o is objet:
                 tenir = True
                 break
@@ -72,6 +76,10 @@ class CmdRetirer(Commande):
         if personnage.equipement.cb_peut_tenir() < 1 and not tenir:
             personnage << "|err|Il vous faut au moins une main libre pour " \
                     "vous déséquiper.|ff|"
+            return
+
+        if not dernier_niveau:
+            personnage << "|err|Vous ne pouvez pas retirer cet objet.|ff|"
             return
 
         try:
@@ -88,3 +96,6 @@ class CmdRetirer(Commande):
                 personnage.ramasser(objet=objet)
             except SurPoids:
                 personnage.equipement.tenir_objet(objet=objet)
+
+            objet.script["retire"].executer(objet=objet,
+                    personnage=personnage)
