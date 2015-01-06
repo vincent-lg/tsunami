@@ -28,31 +28,49 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le type pavillon."""
+"""Fichier contenant la fonction nom_pavillon."""
 
-from primaires.interpreteur.editeur.choix import Choix
-from primaires.objet.types.base import BaseType
-from secondaires.navigation.constantes import PAVILLONS
+from primaires.scripting.fonction import Fonction
+from primaires.scripting.instruction import ErreurExecution
 
-class Pavillon(BaseType):
+class ClasseFonction(Fonction):
 
-    """Type d'objet: pavillon."""
+    """Retourne le nom du pavillon."""
 
-    nom_type = "pavillon"
-    def __init__(self, cle=""):
-        """Constructeur de l'objet"""
-        BaseType.__init__(self, cle)
-        self.type_pavillon = ""
-        self.etendre_editeur("y", "type de pavillon", Choix, self,
-                "type_pavillon", PAVILLONS)
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.nom_pavillon_salle, "Salle")
 
-    def travailler_enveloppes(self, enveloppes):
-        """Travail sur les enveloppes"""
-        pavillon = enveloppes["y"]
-        pavillon.apercu = "{objet.type_pavillon}"
-        pavillon.prompt = "Type de pavillon : "
-        pavillon.aide_courte = \
-            "Entrez le |ent|type de pavillon|ff| ou |cmd|/|ff| pour " \
-            "revenir à la fenêtre parente.\n\nTypes possibles : " + \
-                    ", ".join(PAVILLONS) + "\n\n" \
-            "Type de pavillon actuel : {objet.type_pavillon}"
+    @staticmethod
+    def nom_pavillon_salle(salle):
+        """Retourne le nom du pavillon du navire.
+
+        Paramètres à préciser :
+
+          * salle : la salle de navire
+
+        Si la salle ne fait pas parti du navire, crée une alerte.
+        Le nom singulier du pavillon est retourné dans le cas contraire.
+        Si le navire n'a pas de pavillon hissé, retourne une chaîne vide.
+
+        Exemple d'utilisation :
+
+          # On sait que la variable 'salle' contient une salle de navire
+          nom = nom_pavillon(salle)
+          # Si le navire n'a pas de pavillon, la chaîne sera vide
+          si nom:
+              # Le navire a un pavillon hissé
+          sinon:
+              # Le navire n'a pas de pavillon hissé
+
+        """
+        if not hasattr(salle, "navire") or salle.navire is None or \
+                salle.navire.etendue is None:
+            raise ErreurExecution("la salle {} n'est pas une salle de " \
+                    "navire".format(salle))
+
+        navire = salle.navire
+        if navire.pavillon is None:
+            return ""
+
+        return navire.pavillon.nom_singulier
