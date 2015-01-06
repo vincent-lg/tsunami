@@ -50,6 +50,7 @@ from . import matelot
 from . import navire
 from . import navire_automatique
 from . import passerelle
+from . import pavillon
 from . import point
 from . import rames
 from . import saborder

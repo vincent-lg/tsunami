@@ -327,6 +327,7 @@ class Module(BaseModule):
             commandes.navire.CmdNavire(),
             commandes.navire_automatique.CmdNavireAutomatique(),
             commandes.passerelle.CmdPasserelle(),
+            commandes.pavillon.CmdPavillon(),
             commandes.point.CmdPoint(),
             commandes.rames.CmdRames(),
             commandes.saborder.CmdSaborder(),

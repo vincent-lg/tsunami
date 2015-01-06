@@ -82,11 +82,14 @@ class Navire(Vehicule):
         self.cale = Cale(self)
         self.canots = []
         self.compteur = 0
+        self.pavillon = None
 
         if modele:
             modele.vehicules.append(self)
             self.cle = importeur.navigation.dernier_ID(modele.cle)
             self.construire_depuis_modele()
+
+        self._construire()
 
     def __getnewargs__(self):
         return (None, )
