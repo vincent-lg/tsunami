@@ -70,6 +70,7 @@ class RelacherGouvernail(Volonte):
 
         navire = self.navire
         ordres = []
+        matelot.invalider_ordres("virer")
         relacher = OrdreRelacherGouvernail(matelot, navire)
         ordres.append(relacher)
         ordres.append(self.revenir_affectation(matelot))
