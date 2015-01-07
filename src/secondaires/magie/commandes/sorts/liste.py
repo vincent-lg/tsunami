@@ -51,7 +51,7 @@ class PrmListe(Parametre):
         sorts = sorted([sort for sort in importeur.magie.sorts.values()], \
                 key=lambda sort: sort.cle)
         if not sorts:
-            personnage << "|err|Aucun sort n'a encore été créé."
+            personnage << "|err|Aucun sort n'a encore été créé.|ff|"
             return
         
         lignes = [

@@ -478,7 +478,7 @@ class Module(BaseModule):
         if not re.search(ZONE_VALIDE, zone):
             raise ValueError("Zone {} invalide".format(zone))
         if not re.search(MNEMONIC_VALIDE, mnemonic):
-            raise ValueError("Mnémonic {} invalide ({})".format(mnemonic,
+            raise ValueError("Mnémonique {} invalide ({})".format(mnemonic,
                     MNEMONIC_VALIDE))
 
         salle = Salle(zone, mnemonic, x, y, z, valide)

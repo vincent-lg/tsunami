@@ -123,23 +123,23 @@ class EdtRedit(Presentation):
             "La nom de la zone peut comporter lettres non accentuées, " \
             "chiffres et\n" \
             "undescores (le signe |ent|_|ff|).\n" \
-            "|att|Le couple 'zone:mnémonic' doit être unique et différent " \
+            "|att|Le couple 'zone:mnémonique' doit être unique et différent " \
             "pour chaque salle !|ff|\n\n" \
             "Zone actuelle : |bc|{objet.zone}|ff|"
 
-        # Mnémonic
+        # Mnémonique
         mnemonic = self.ajouter_choix("mnemonic", "m", EdtMnemonic, salle)
         mnemonic.parent = self
-        mnemonic.prompt = "Nom du mnémonic : "
+        mnemonic.prompt = "Nom du mnémonique : "
         mnemonic.apercu = "{objet.mnemonic}"
         mnemonic.aide_courte = \
-            "Entrez le |ent|mnémonic|ff| de la salle ou |cmd|/|ff| pour " \
+            "Entrez le |ent|mnémonique|ff| de la salle ou |cmd|/|ff| pour " \
             "revenir à la fenêtre mère.\n" \
-            "Le mnémonic peut comporter lettres non accentuées, chiffres et\n" \
-            "undescores (le signe |ent|_|ff|).\n" \
-            "|att|Le couple 'zone:mnémonic' doit être unique et différent " \
+            "Le mnémonique peut comporter lettres non accentuées, chiffres\n" \
+            "et undescores (le signe |ent|_|ff|).\n" \
+            "|att|Le couple 'zone:mnémonique' doit être unique et différent " \
             "pour chaque salle !|ff|\n\n" \
-            "Mnémonic actuel : |bc|{objet.mnemonic}|ff|"
+            "Mnémonique actuel : |bc|{objet.mnemonic}|ff|"
 
         # Terrain
         terrains = sorted(type(self).importeur.salle.terrains.keys())

@@ -137,7 +137,7 @@ class Bloc(BaseObj):
     def executer(self, *args):
         """Execute le bloc d'instructions.
 
-        On valide d'abord le variable et leur type. En cas d'erreur,
+        On valide d'abord les variables et leur type. En cas d'erreur,
         une ErreurExcecution est levée. On récupère le résultat de la
         variable 'retour', si il y en a une, que l'on retourne au cas où.
 

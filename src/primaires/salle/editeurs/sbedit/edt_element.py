@@ -154,7 +154,7 @@ class EdtElement(Editeur):
             nb = int(arguments)
             assert nb > 0 and nb <= len(element.prototype.etats)
         except (ValueError, AssertionError):
-            self.pere << "|err|Nomvre invalide.|ff|"
+            self.pere << "|err|Nombre invalide.|ff|"
         else:
             element.etat_min = nb - 1
             self.actualiser()

@@ -75,7 +75,7 @@ class EdtSalle(Presentation):
         """Ajoute une salle à bâbord.
 
         Syntaxe :
-            /bab <mnémonic>
+            /bab <mnémonique>
 
         """
         salle = self.objet
@@ -90,7 +90,7 @@ class EdtSalle(Presentation):
         """Ajoute une salle à tribord.
 
         Syntaxe :
-            /tri <mnémonic>
+            /tri <mnémonique>
 
         """
         salle = self.objet
@@ -105,7 +105,7 @@ class EdtSalle(Presentation):
         """Ajoute une salle à l'avant.
 
         Syntaxe :
-            /ava <mnémonic>
+            /ava <mnémonique>
 
         """
         salle = self.objet
@@ -120,7 +120,7 @@ class EdtSalle(Presentation):
         """Ajoute une salle à l'arrière.
 
         Syntaxe :
-            /arr <mnémonic>
+            /arr <mnémonique>
 
         """
         salle = self.objet
@@ -135,7 +135,7 @@ class EdtSalle(Presentation):
         """Ajoute une salle vers le bas.
 
         Syntaxe :
-            /bas <mnémonic>
+            /bas <mnémonique>
 
         """
         salle = self.objet
@@ -150,7 +150,7 @@ class EdtSalle(Presentation):
         """Ajoute une salle vers le haut.
 
         Syntaxe :
-            /hau <mnémonic>
+            /hau <mnémonique>
 
         """
         salle = self.objet

@@ -112,7 +112,7 @@ class PrmPromouvoir(Parametre):
 
         if nom is None:
             personnage << "|err|Impossible de trouver le nom du poste : " \
-                    "{}.".format(nom_poste)
+                    "{}.|ff|".format(nom_poste)
         else:
             equipage.changer_poste(joueur, nom)
             personnage << lisser("{} a bien été mis au poste de {}.".format(

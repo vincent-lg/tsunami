@@ -53,7 +53,7 @@ class PrmTuer(Parametre):
         cible = dic_masques["personnage_present"].personnage
         pnj = familier.pnj
         if cible is personnage:
-            personnage.envoyer("|err|{} refuse de vous attaquer.", pnj)
+            personnage.envoyer("|err|{} refuse de vous attaquer.|ff|", pnj)
             return
 
         if cible is pnj:
