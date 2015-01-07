@@ -66,5 +66,5 @@ class PrmRetirer(Parametre):
         navire.envoyer("{} est amené.".format(
                 pavillon.get_nom().capitalize()))
         navire.envoyer_autour("{} amène {}.".format(
-                navire.desc_survol, pavillon.get_nom().capitalize()), 10)
+                navire.desc_survol, pavillon.get_nom().capitalize()), 35)
         personnage.ramasser_ou_poser(pavillon)

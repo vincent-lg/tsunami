@@ -39,6 +39,7 @@ CONTENEURS = [
         "tonneaux de poix",
         "vivres",
         "armes",
+        "pavillons",
 ]
 
 TYPES = {
@@ -59,6 +60,7 @@ TYPES = {
         "lance": "armes",
         "masse": "armes",
         "projectile": "armes",
+        "pavillon": "pavillons",
 }
 
 class Cale(BaseObj):
@@ -88,6 +90,7 @@ class Cale(BaseObj):
         self.tonneaux_poix = {}
         self.vivres = {}
         self.armes = {}
+        self.pavillons = {}
 
         self._construire()
 
@@ -128,6 +131,7 @@ class Cale(BaseObj):
                 "tonneaux de poix": self.tonneaux_poix,
                 "vivres": self.vivres,
                 "armes": self.armes,
+                "pavillons": self.pavillons,
         }
 
     @property
@@ -151,6 +155,7 @@ class Cale(BaseObj):
                 "lance": self.armes,
                 "masse": self.armes,
                 "projectile": self.armes,
+                "pavillon": self.pavillons,
         }
 
     def accepte(self, salle, nom_type):

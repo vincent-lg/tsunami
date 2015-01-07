@@ -81,4 +81,4 @@ class PrmMontrer(Parametre):
                 pavillon.get_nom().capitalize()))
         navire.envoyer_autour("{} est agité sur " \
                 "{}.".format(pavillon.get_nom().capitalize(),
-                navire.desc_survol), 10)
+                navire.desc_survol), 35)

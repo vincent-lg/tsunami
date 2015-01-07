@@ -89,5 +89,5 @@ class PrmHisser(Parametre):
                 pavillon.get_nom().capitalize()))
         navire.envoyer_autour(lisser("{} est hissé en tête de mat de " \
                 "{}.".format(pavillon.get_nom().capitalize(),
-                navire.desc_survol)), 10)
+                navire.desc_survol)), 35)
         importeur.objet.supprimer_objet(pavillon.identifiant)
