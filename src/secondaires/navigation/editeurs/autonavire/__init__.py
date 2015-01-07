@@ -69,3 +69,13 @@ class EdtNaedit(Presentation):
         modele.aide_courte = \
             "Entrez la |ent|clé|ff| du modèle de navire ou |cmd|/|ff| " \
             "pour revenir à la fenêtre parente.\n\nModèle actuel : {objet}"
+
+        # Pavillon
+        pavillon = self.ajouter_choix("pavillon", "p", ChoixObjet,
+                fiche, "pavillon", importeur.objet.prototypes)
+        pavillon.parent = self
+        pavillon.prompt = "Clé du pavillon : "
+        pavillon.apercu = "{objet.pavillon}"
+        pavillon.aide_courte = \
+            "Entrez la |ent|clé|ff| du prototype de pavillon ou |cmd|/|ff| " \
+            "pour revenir à la fenêtre parente.\n\nPavillon actuel : {objet}"

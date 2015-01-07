@@ -62,6 +62,7 @@ class NavireAutomatique(BaseObj):
         self.noms = []
         self.cale = {} # {cle_objet: (nb_min, nb_max)}
         self.trajets = []
+        self.pavillon = None
         self._construire()
 
     def __getnewargs__(self):
@@ -151,5 +152,8 @@ class NavireAutomatique(BaseObj):
             navire.maj_salles()
             navire.valider_coordonnees()
             navire.equipage.ajouter_trajet(trajet)
+
+        if self.pavillon:
+            navire.pavillon = self.pavillon
 
         return navire
