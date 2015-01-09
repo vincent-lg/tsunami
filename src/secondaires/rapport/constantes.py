@@ -36,19 +36,20 @@ TYPES = (
 )
 
 CATEGORIES = (
+    "autre",
+    "communication",
+    "combat",
+    "confort",
+    "cuisine",
     "design",
+    "équilibrage",
+    "familier",
     "faute",
+    "magie",
+    "navigation",
     "réseau",
     "scripting",
     "sécurité",
-    "communication",
-    "combat",
-    "autre",
-    "confort",
-    "navigation",
-    "cuisine",
-    "magie",
-    "équilibrage",
 )
 
 STATUTS = (
