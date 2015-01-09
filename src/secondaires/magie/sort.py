@@ -147,11 +147,17 @@ class Sort(BaseObj):
 
         return False
 
-    def concentrer(self, personnage, cible, apprendre=True, lattence_min=True):
+    def concentrer(self, personnage, cible, apprendre=True,
+            lattence_min=True, maitrise=None):
         """Fait concentrer le sort à 'personnage'."""
-        maitrise = 100
+        print("Maîtrise:", maitrise)
+        if maitrise is None:
+            maitrise = 100
+
         if apprendre:
-            maitrise = personnage.pratiquer_sort(self.cle)
+            p_maitrise = personnage.pratiquer_sort(self.cle)
+            if maitrise < 1 or maitrise > p_maitrise:
+                maitrise = p_maitrise
 
         maitrise = Fraction(maitrise)
 
