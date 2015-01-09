@@ -104,6 +104,8 @@ class CmdEmbarquer(Commande):
                 salle.titre.lower()), personnage)
         salle.envoyer("{{}} saute dans {}.".format(
                 navire.nom), personnage)
+        importeur.hook["personnage:deplacer"].executer(
+                personnage, d_salle, None, 0)
         importeur.navigation.ecrire_suivi("{} embarque dans {}.".format(
                 personnage.nom_unique, navire.cle))
 
