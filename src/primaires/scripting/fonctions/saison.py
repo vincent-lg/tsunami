@@ -28,33 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction mois."""
+"""Fichier contenant la fonction saison."""
 
 from primaires.scripting.fonction import Fonction
 from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
 
-    """Retourne le mois courant."""
+    """Retourne la saison courante."""
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.mois)
+        cls.ajouter_types(cls.saison)
 
     @staticmethod
-    def mois():
-        """Retourne le mois courant dans l'univers.
+    def saison():
+        """Retourne la saison actuelle.
 
-        Le mois est retourné avec l'accentuation et les majuscules
-        éventuelles de la configuration.
+        Cette fonction retourne une chaîne, soit "printemps", soit
+        "été", soit "automne", soit "hiver". Notez bien que ces
+        chaînes sont accentuées.
 
         Exemples d'utilisation :
 
-          mois = mois()
-          si mois == "janvier":
-            # C'est le mois de janvier
-            # Notez que les mois peuvent avoir d'autres noms
-            # dépendant de la configuration
+          saison = saison()
+          si saison == "été":
+              # C'est l'été
 
         """
-        return importeur.temps.temps.nm_m
+        return importeur.temps.temps.nm_s
