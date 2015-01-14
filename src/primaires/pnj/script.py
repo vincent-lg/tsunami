@@ -244,7 +244,23 @@ class ScriptPNJ(Script):
         var_perso = evt_tue.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage tué par le PNJ"
 
+        # Événement dépece
+        evt_depece = self.creer_evenement("dépece")
+        evt_depece.aide_courte = "le PNJ est dépecé"
+        evt_depece.aide_longue = \
+            "Cet évènement est appelé quand le cadavre du PNJ est " \
+            "dépecé. Le personnage dépeçant le PNJ se trouve dans " \
+            "la variable 'personnage'. Cet évènement est appelé " \
+            "après l'envoie du message au personnage."
+
+        # Configuration des variables de l'évènement dépece
+        var_perso = evt_depece.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage dépeçant le PNJ"
+        var_salle = evt_depece.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle où est dépecé le PNJ"
+
         # On ajoute à tous les évènements la variable 'pnj'
         for evt in self.evenements.values():
-            var_pnj = evt.ajouter_variable("pnj", "PNJ")
-            var_pnj.aide = "le PNJ scripté"
+            if evt.nom != "dépece":
+                var_pnj = evt.ajouter_variable("pnj", "PNJ")
+                var_pnj.aide = "le PNJ scripté"

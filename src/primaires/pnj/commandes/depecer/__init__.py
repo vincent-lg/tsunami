@@ -120,5 +120,7 @@ class CmdDepecer(Commande):
                     lame.get_nom() + "."
             personnage.salle.envoyer("{} dépece " + objet.get_nom() + \
                     " avec " + lame.get_nom() + ".", personnage)
+            objet.pnj.script["depece"].executer(personnage=personnage,
+                    salle=personnage.salle)
             personnage.gagner_xp_rel(objet.pnj.niveau, objet.pnj.gain_xp // 3,
                     "survie")
