@@ -102,6 +102,11 @@ class EdtFamedit(Presentation):
                 "sorties_verticales")
         verticales.parent = self
 
+        # Aller en intérieur
+        interieur = self.ajouter_choix("peut aller en intérieur", "l",
+                Flag, fiche, "aller_interieur")
+        interieur.parent = self
+
         # Difficulté d'apprivoisement
         difficulte = self.ajouter_choix("difficulté d'apprivoisement", "d",
                 Entier, fiche, "difficulte_apprivoisement")

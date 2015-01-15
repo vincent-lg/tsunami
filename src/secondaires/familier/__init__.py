@@ -364,8 +364,11 @@ class Module(BaseModule):
                     personnage.envoyer("|err|{} ne peut pas bouger.|ff|", pnj)
                     return False
 
-                if destination.interieur and not (destination.a_flag(
-                        "écurie") or destination.a_flag("peut chevaucher")):
+                if destination.interieur and not \
+                familier.fiche.aller_interieur and \
+                        not (destination.a_flag("écurie") or \
+                        destination.a_flag("peut chevaucher") or \
+                        destination.a_flag("accueille familiers")):
                     personnage.envoyer("|err|{} ne peut aller là.|ff|",
                             pnj)
                     return False
