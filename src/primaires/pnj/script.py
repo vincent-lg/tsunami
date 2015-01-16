@@ -259,6 +259,14 @@ class ScriptPNJ(Script):
         var_salle = evt_depece.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle où est dépecé le PNJ"
 
+        # Événement gagne_niveau
+        evt_niveau = self.creer_evenement("gagne_niveau")
+        evt_niveau.aide_courte = "le PNJ gagne un niveau"
+        evt_niveau.aide_longue = \
+            "Cet évènement est appelé quand le PNJ gagne un niveau, " \
+            "principal ou secondaire. Pour obtenir le niveau actuel " \
+            "du PNJ, vous pouvez utiliser la fonction du même nom."
+
         # On ajoute à tous les évènements la variable 'pnj'
         for evt in self.evenements.values():
             if evt.nom != "dépece":

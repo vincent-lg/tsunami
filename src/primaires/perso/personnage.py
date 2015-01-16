@@ -868,6 +868,9 @@ class Personnage(BaseObj):
             xp_nec = grille[niveau_actuel - 1][1]
             nb_gagne += 1
 
+        if hasattr(self, "script") and nb_gagne > 0:
+            self.script["gagne_niveau"].executer(pnj=self)
+
         if not retour:
             return nb_gagne
 
