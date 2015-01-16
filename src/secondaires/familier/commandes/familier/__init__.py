@@ -55,6 +55,7 @@ from secondaires.familier.commandes.familier.relacher import PrmRelacher
 from secondaires.familier.commandes.familier.renommer import PrmRenommer
 from secondaires.familier.commandes.familier.score import PrmScore
 from secondaires.familier.commandes.familier.tuer import PrmTuer
+from secondaires.familier.commandes.familier.xp import PrmXP
 
 class CmdFamilier(Commande):
 
@@ -95,3 +96,4 @@ class CmdFamilier(Commande):
         self.ajouter_parametre(PrmRenommer())
         self.ajouter_parametre(PrmScore())
         self.ajouter_parametre(PrmTuer())
+        self.ajouter_parametre(PrmXP())
