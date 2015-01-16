@@ -31,6 +31,7 @@
 """Fichier contenant la classe Personnage, détaillée plus bas."""
 
 import random
+from textwrap import wrap
 
 from abstraits.obase import BaseObj
 from corps.aleatoire import varier
@@ -1048,9 +1049,6 @@ class Personnage(BaseObj):
         for f in facteurs:
             facteur *= f
 
-        if facteur > 1:
-            print("Facteur de récupération pour", self, facteur)
-
         for nom, liee in stats.items():
             stat = self.stats[nom]
             courante = stat.courante
@@ -1079,8 +1077,13 @@ class Personnage(BaseObj):
         if unique and importeur.information.entree_tip(self, cle):
             return
 
-        message = "|att|TIP : " + message + "|ff|"
         message = Commande.remplacer_mots_cles(self, message)
+        paragraphes = []
+        for paragraphe in message.split("\n"):
+            paragraphes.append("\n      ".join(wrap(paragraphe, 69)))
+
+        message = "\n      ".join(paragraphes).replace("|ff|", "|att|")
+        message = "|att|TIP : " + message + "|ff|"
         self.envoyer(message)
         if unique:
             importeur.information.noter_tip(self, cle)
