@@ -30,6 +30,8 @@
 
 """Ce module contient la classe AffectionPersonnage, détaillée plus bas."""
 
+from fractions import Fraction
+
 from bases.collections.flags import Flags
 from .base import AffectionAbstraite
 from primaires.affection.script_personnage import ScriptAffectionPersonnage
@@ -85,7 +87,8 @@ class AffectionPersonnage(AffectionAbstraite):
     def executer_script(self, evenement, affection, **variables):
         """Exécute le script lié."""
         self.script[evenement].executer(personnage=affection.affecte,
-                force=affection.force, duree=affection.duree, **variables)
+                force=Fraction(affection.force),
+                duree=Fraction(affection.duree), **variables)
 
     def tick(self, affection):
         """Tick l'affection."""
