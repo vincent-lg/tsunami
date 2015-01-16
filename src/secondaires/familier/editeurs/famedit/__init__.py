@@ -91,6 +91,21 @@ class EdtFamedit(Presentation):
             ", ".join(sorted(TYPES_HARNACHEMENT)) + "\nHarnachements " \
             "supportés actuellement : {objet.str_harnachements}"
 
+        # Stats pouvant progresser
+        stats = self.ajouter_choix("stats pouvant progresser", "st",
+                Selection, fiche, "stats_progres", ["force", "agilite",
+                "robustesse", "intelligence", "charisme", "sensibilite"])
+        stats.parent = self
+        stats.prompt = "Stats pouvant augmenter automatiquement : "
+        stats.apercu = "{objet.str_stats_progres}"
+        stats.aide_courte = \
+            "Entrez un |ent|nom de stat|ff| pour l'ajouter " \
+            "ou le retirer\nou |cmd|/|ff| pour revenir à la fenêtre " \
+            "parente.\n\nQuand le familier gagne un niveau, il va " \
+            "choisir aléatoirement parmi ces stats et les\naugmenter " \
+            "si il a des points d'entraînement disponibles\n\nStats " \
+            "automatiques actuelles : {objet.str_stats_progres}"
+
         # Monture
         monture = self.ajouter_choix("peut être monté", "m", Flag, fiche,
                 "monture")

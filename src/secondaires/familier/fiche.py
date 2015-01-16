@@ -62,6 +62,7 @@ class FicheFamilier(BaseObj):
         self.monture = False
         self.sorties_verticales = False
         self.aller_interieur = False
+        self.stats_progres = ["force", "agilite", "robustesse", "intelligence"]
         self.difficulte_apprivoisement = 10
         self.harnachements = []
         self.m_valeur = 50
@@ -97,6 +98,10 @@ class FicheFamilier(BaseObj):
     @property
     def str_harnachements(self):
         return ", ".join(sorted(self.harnachements))
+
+    @property
+    def str_stats_progres(self):
+        return ", ".join(sorted(self.stats_progres))
 
     @property
     def nom_achat(self):

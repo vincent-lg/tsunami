@@ -609,7 +609,7 @@ class Module(BaseModule):
         if identifiant in self.familiers:
             familier = self.familiers[identifiant]
             while pnj.points_entrainement != 0:
-                stats = ["force", "agilite", "robustesse", "intelligence"]
+                stats = familier.fiche.stats_progres
                 selections = []
                 for nom in stats:
                     stat = pnj.stats[nom]
