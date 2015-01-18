@@ -878,7 +878,7 @@ class Module(BaseModule):
           joints par sorties.
         * La salle du personnage est une salle de navire : dans ce
           cas, on retourne les autres navires autour, c'est-à-dire
-          qui ont une salle à moins de 5 brasses. Cela demande de
+          qui ont une salle à moins de 10 brasses. Cela demande de
           vérifier chaque salle de chaque navire et est surtout utile
           pour recruter des matelots d'un autre navire en mer.
 
@@ -899,19 +899,22 @@ class Module(BaseModule):
         else:
             # Second cas, c'est une salle de navire
             navire = salle.navire
-            if navire.accoste:
-                return []
+            if navire.proprietaire is not personnage:
+                return
 
             coords = [s.coords.tuple() for s in navire.salles.values()]
             for autre in importeur.navigation.navires.values():
-                if navire is autre or autre.proprietaire is not personnage:
+                if navire is autre or autre.proprietaire is not \
+                        personnage or autre.etendue is None:
                     continue
 
                 for autre_salle in autre.salles.values():
                     tup = salle.coords.tuple()
-                    distance = min(mag(tup + c) for c in coords)
-                    if distance < 2:
+                    distance = min(mag(tup[0], tup[1], tup[2], *c) for c in \
+                            coords)
+                    if distance < 4:
                         navires.append(autre)
+                        break
 
         navires.sort(key=lambda n: n.cle)
         return navires

@@ -91,8 +91,7 @@ class PrmRecruter(Parametre):
                 salle.envoyer("{{}} s'en va vers {}.".format(
                         sortie.nom_complet), cible)
             else:
-                personnage << "|err|Ce matelot ne s'est pas rendu.|ff|"
-                return
+                salle.envoyer("{} saute à l'eau.", cible)
                 matelot = navire.equipage.get_matelot_depuis_personnage(
                         cible)
                 if matelot:
