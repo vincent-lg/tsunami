@@ -36,6 +36,7 @@ from .liste import PrmListe
 from .remettre import PrmRemettre
 from .renommer import PrmRenommer
 from .reparer import PrmReparer
+from .vendre import PrmVendre
 
 class CmdChantier(Commande):
 
@@ -62,3 +63,4 @@ class CmdChantier(Commande):
         self.ajouter_parametre(PrmRemettre())
         self.ajouter_parametre(PrmRenommer())
         self.ajouter_parametre(PrmReparer())
+        self.ajouter_parametre(PrmVendre())

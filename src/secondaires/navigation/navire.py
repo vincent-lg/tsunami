@@ -1079,6 +1079,11 @@ class Navire(Vehicule):
 
     def detruire(self):
         """Destruction du self."""
+        # Replie la passerelle si il y a une passerelle
+        elt_passerelle = self.elt_passerelle
+        if elt_passerelle:
+            elt_passerelle.replier()
+
         for salle in list(self.salles.values()):
             importeur.salle.supprimer_salle(salle.ident)
 
