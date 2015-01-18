@@ -36,6 +36,7 @@ from .creer import PrmCreer
 from .editer import PrmEditer
 from .liste import PrmListe
 from .miens import PrmMiens
+from .oublier import PrmOublier
 
 class CmdSorts(Commande):
 
@@ -57,3 +58,4 @@ class CmdSorts(Commande):
         self.ajouter_parametre(PrmEditer())
         self.ajouter_parametre(PrmListe())
         self.ajouter_parametre(PrmMiens())
+        self.ajouter_parametre(PrmOublier())

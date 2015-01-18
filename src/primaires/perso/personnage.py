@@ -95,6 +95,7 @@ class Personnage(BaseObj):
         self._element = ""
         self.sorts = {}
         self.sorts_verrouilles = []
+        self.sorts_oublies = []
         self.points_tribut = 0
 
         # Etat
