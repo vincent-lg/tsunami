@@ -147,8 +147,8 @@ class Observable(Masque):
 
         if not elt:
             nom = supprimer_accents(nom)
-            if salle.details.detail_existe(nom):
-                detail = salle.details.get_detail(nom)
+            if salle.details.detail_existe(nom, flottants=True):
+                detail = salle.details.get_detail(nom, flottants=True)
                 nb += 1
                 if nb == nombre:
                     elt = detail

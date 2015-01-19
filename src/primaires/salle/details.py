@@ -36,6 +36,7 @@ from .detail import Detail
 class Details(BaseObj):
 
     """Cette classe est un conteneur de détails.
+
     Elle contient les détails observables d'une salle, que l'on peut voir
     avec la commande look.
 
@@ -84,19 +85,31 @@ class Details(BaseObj):
 
         return detail
 
-    def get_detail(self, nom):
+    def get_detail(self, nom, flottants=False):
         """Renvoie le détail 'nom', si elle existe.
+
         A la différence de __getitem__(), cette fonction accepte en paramètre
         un des synonymes du détail recherchée.
 
         """
         res = None
-        for d_nom, detail in self._details.items():
+        details = self._details.copy()
+        if self.parent and flottants:
+            description = self.parent.description
+            for paragraphe in description.paragraphes:
+                p, flottantes = description.charger_descriptions_flottantes(
+                        paragraphe)
+                for flottante in flottantes:
+                    for d in flottante.details:
+                        if d.nom not in details:
+                            details[d.nom] = d
+
+        for d_nom, detail in details.items():
             if nom == d_nom or nom in detail.synonymes:
                 res = detail
 
         return res
 
-    def detail_existe(self, nom):
+    def detail_existe(self, nom, flottants=False):
         """Renvoie True si le détail 'nom' existe"""
-        return self.get_detail(nom) is not None
+        return self.get_detail(nom, flottants) is not None
