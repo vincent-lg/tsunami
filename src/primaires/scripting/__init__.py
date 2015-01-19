@@ -371,13 +371,13 @@ class Module(BaseModule):
     def cb_joueurs_quete(self, cle_quete):
         """Retourne le nombre de joueurs ayant fait la quête."""
         joueurs = [j for j in importeur.connex.joueurs \
-                if cle_quete in j.quetes]
+                if cle_quete in j.quetes and j.quetes[cle_quete].niveaux]
         return len(joueurs)
 
     def cb_joueurs_etape(self, cle_quete, etape):
         """Retourne le nombre de joueurs ayant fait la quête à ce niveau.
 
-        La quête doit e^tre précisée sous la forme d'une clé de
+        La quête doit être précisée sous la forme d'une clé de
         quête et le niveau sous la forme d'un tuple ((1, 1, 2)
         par exemple).
 
