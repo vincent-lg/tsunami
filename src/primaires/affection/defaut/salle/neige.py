@@ -42,6 +42,7 @@ class Neige(AffectionSalle):
         self.force_max = 60
         self.duree_max = 120
         self.visible = True
+        self.tick_actif = False
 
     def __getnewargs__(self):
         return ()

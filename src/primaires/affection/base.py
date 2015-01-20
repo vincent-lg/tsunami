@@ -49,6 +49,7 @@ class AffectionAbstraite(BaseObj):
             valider_cle(cle)
 
         BaseObj.__init__(self)
+        self.tick_actif = True
         self.resume = "non spécifié"
         self.visible = True
         self.cle = cle
@@ -206,6 +207,6 @@ class AffectionAbstraite(BaseObj):
             self.executer_script("tick", affection)
 
         # On ajoute l'action différée
-        if affection.e_existe:
+        if affection.e_existe and self.tick_actif:
             importeur.diffact.ajouter_action("aff_" + str(id(affection)),
                     self.duree_tick, self.tick, affection)

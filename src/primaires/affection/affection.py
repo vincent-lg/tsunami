@@ -80,5 +80,6 @@ class Affection(BaseObj):
 
     def prevoir_tick(self):
         """Ajoute l'action à exécuter dans diffact."""
-        importeur.diffact.ajouter_action("aff_" + str(id(self)),
-                self.affection.duree_tick, self.affection.tick, self)
+        if self.affection.tick_actif:
+            importeur.diffact.ajouter_action("aff_" + str(id(self)),
+                    self.affection.duree_tick, self.affection.tick, self)
