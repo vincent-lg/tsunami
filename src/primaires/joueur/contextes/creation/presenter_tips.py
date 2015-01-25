@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,25 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package des différents contextes utiles à la création, suppression
-et connexion de joueurs.
+"""Fichier contenant le contexte "personnage:creation:presenter_tips."""
 
-"""
+from primaires.interpreteur.contexte import Contexte
 
-# Contexte de connexion
-from .connexion.mode_connecte import ModeConnecte
+class PresenterTips(Contexte):
 
-# Contextes de création
-from .creation.choix_race import ChoixRace
-from .creation.choix_genre import ChoixGenre
-from .creation.langue_cmd import LangueCMD
-from .creation.nouveau_nom import NouveauNom
-from .creation.entrer_pass import EntrerPassJoueur
-from .creation.choisir_pass import ChoisirPassJoueur
-from .creation.confirmer_pass import ConfirmerPassJoueur
-from .creation.recup_vancia import RecupVancia
-from .creation.entrer_v_pass import EntrerVPassJoueur
-from .creation.presenter_tips import PresenterTips
+    """Contexte présentant simplement les tips."""
 
-# Contextes de suppression
-from .suppression.suppression import Suppression
+    nom = "personnage:creation:presenter_tips"
+
+    def __init__(self, pere):
+        """Constructeur du contexte"""
+        Contexte.__init__(self, pere)
+
+    def accueil(self):
+        """Message d'accueil du contexte"""
+        return \
+            "\n|tit|-------= Suivez les tips =-------|ff|\n" \
+            "Votre nouveau personnage a bien été créé !\nVous allez " \
+            "à présent arriver dans un lieu propre aux nouveaux\njoueurs. " \
+            "Vous y découvrirez les commandes les plus courantes et\n" \
+            "la façon d'obtenir de l'aide en jeu. Toutes ces informations " \
+            "vous\nseront données sous la forme de \"tips\", des " \
+            "messages |att|colorés|ff|\nqui apparaîtront après l'entrée " \
+            "de commandes, dès votre arrivée dans\nla zone pour " \
+            "débutants. Surveillez l'apparition de ces messages,\n" \
+            "car ils vous donneront des explications concrètes sur " \
+            "les commandes\nà utiliser."
+
+    def get_prompt(self):
+        """Message de prompt"""
+        return "Appuyez sur la touche ENTRÉE pour entrer en jeu."
+
+    def interpreter(self, msg):
+        """Méthode d'interprétation"""
+        importeur.joueur.migrer_ctx_creation(self)

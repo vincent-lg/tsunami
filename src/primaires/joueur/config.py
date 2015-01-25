@@ -74,6 +74,7 @@ joueur_systeme = "système"
 # "choix_race" : choix de la race
 # "langue_cmd" : choix de la langue des commandes
 # "nouveau_nom" : choix du nom du joueur
+# "presenter_tips" : présentation des messages tips à suivre
 ordre_creation = ["nouveau_nom", "langue_cmd", "choix_race", "choix_genre"]
 
 """

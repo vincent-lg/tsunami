@@ -55,7 +55,7 @@ class LangueCMD(Contexte):
     def accueil(self):
         """Message d'accueil du contexte"""
         return \
-            "\n|tit|-------= Choix de la langue des commandes=-------|ff|\n" \
+            "\n|tit|-------= Choix de la langue des commandes =-------|ff|\n" \
             "Entrez l'un des |ent|choix|ff| proposés ci-après.\nLa langue " \
             "choisie sera celle des commandes en jeu ; pas du jeu " \
             "lui-même.\nLe retour des commandes, les descriptions, " \
@@ -84,7 +84,7 @@ class LangueCMD(Contexte):
                 self.pere.joueur.alias_anglais.update(
                         importeur.interpreteur.alias_anglais)
             races = type(self).importeur.perso.races
-            if self.pere.joueur.race is None and races:
+            if races:
                 importeur.joueur.migrer_ctx_creation(self)
             else:
                 self.pere.compte.ajouter_joueur(self.pere.joueur)
