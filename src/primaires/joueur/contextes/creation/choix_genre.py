@@ -70,8 +70,4 @@ class ChoixGenre(Contexte):
             self.pere << "|err|Ce genre n'est pas disponible.|ff|"
         else:
             self.pere.joueur.genre = genre
-
-            if self.pere.joueur not in self.pere.compte.joueurs:
-                self.pere.compte.ajouter_joueur(self.pere.joueur)
-            self.pere.joueur.contextes.vider()
-            self.pere.joueur.pre_connecter()
+            importeur.joueur.migrer_ctx_creation(self)

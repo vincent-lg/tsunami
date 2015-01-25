@@ -63,6 +63,7 @@ class Module(BaseModule):
         self.joueurs = {}
         self.compte_systeme = ""
         self.joueur_systeme = ""
+        self.ordre_creation = []
         self.ticks = {}
         for no in range(1, NB_TICKS + 1):
             self.ticks[no] = []
@@ -74,6 +75,10 @@ class Module(BaseModule):
         self.groupe_par_defaut = config.groupe_par_defaut
         self.compte_systeme = config.compte_systeme
         self.joueur_systeme = config.joueur_systeme
+        ordre = config.ordre_creation
+        for nom in ordre:
+            self.ordre_creation.append("personnage:creation:{}".format(nom))
+
         # On crée les hooks du module
         importeur.hook.ajouter_hook("joueur:connecte",
                 "Hook appelé après qu'un joueur se soit connecté.")
@@ -135,6 +140,7 @@ class Module(BaseModule):
 
     def preparer(self):
         """Préparation du module.
+
         On s'assure que :
         -   les joueurs dits connectés le soient toujours
 
@@ -202,3 +208,27 @@ class Module(BaseModule):
         joueurs = [j for j in joueurs if j.derniere_connexion and (mtn - \
                 j.derniere_connexion).total_seconds() <= depuis]
         return joueurs
+
+    def migrer_ctx_creation(self, contexte):
+        """Cherche le contexte de création suivant.
+
+        Si il n'y a pas de contexte suivant, connecte le joueur.
+
+        """
+        if contexte.nom in self.ordre_creation:
+            actuel = self.ordre_creation.index(contexte.nom)
+            if actuel < (len(self.ordre_creation) - 1):
+                nom = self.ordre_creation[actuel + 1]
+                contexte.migrer_contexte(nom)
+            else:
+                if contexte.pere.joueur not in contexte.pere.compte.joueurs:
+                    contexte.pere.compte.ajouter_joueur(contexte.pere.joueur)
+                contexte.pere.joueur.contextes.vider()
+                contexte.pere.joueur.pre_connecter()
+        else:
+            nouv_joueur = Joueur()
+            nouv_joueur.instance_connexion = contexte.pere
+            contexte.pere.joueur = nouv_joueur
+            nouv_joueur.compte = contexte.pere.compte
+            nom = self.ordre_creation[0]
+            contexte = contexte.migrer_contexte(nom)
