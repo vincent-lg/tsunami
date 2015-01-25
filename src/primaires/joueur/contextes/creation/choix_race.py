@@ -50,9 +50,10 @@ class ChoixRace(Contexte):
         noms_races = [race.nom for race in races]
         return \
             "\n|tit|-------= Choix de la race =--------|ff|\n" \
-            "Entrez l'une des |ent|races|ff| proposées ci-après ou " \
-            "|cmd|info <nom de la race>|ff| pour\n" \
-            "obtenir plus d'informations sur la race (par exemple, " \
+            "Pour choisir la race de votre nouveau personnage, entrez " \
+            "l'une des |ent|races|ff|\nproposées ci-après ou " \
+            "|cmd|info <nom de la race>|ff| pour" \
+            "obtenir\nplus d'informations sur la race (par exemple, " \
             "|cmd|info humain|ff|).\n\n" \
             "Races disponibles :\n\n" \
             "  " + "\n  ".join(noms_races)

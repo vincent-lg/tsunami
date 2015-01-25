@@ -40,10 +40,12 @@ LANGUES_DISPONIBLES = ['francais', 'anglais']
 
 class LangueCMD(Contexte):
     """Contexte demandant au client de choisir la langue de ses commandes.
+
     Les commandes qu'il entrera par la suite seront fonction de cette
     option.
 
     """
+
     nom = "personnage:creation:langue_cmd"
 
     def __init__(self, pere):
@@ -53,12 +55,15 @@ class LangueCMD(Contexte):
     def accueil(self):
         """Message d'accueil du contexte"""
         return \
-            "\n|tit|-------= Choix de la langue =-------|ff|\n" \
+            "\n|tit|-------= Choix de la langue des commandes=-------|ff|\n" \
             "Entrez l'un des |ent|choix|ff| proposés ci-après.\nLa langue " \
-            "choisie sera celle des commandes en jeu ; si vous n'êtes pas\n" \
-            "familiarisé avec les MUDs, nous vous conseillons le français. " \
-            "Une fois\nen jeu, vous pourrez toujours changer grâce à la " \
-            "commande |cmd|options|ff|.\n\n" \
+            "choisie sera celle des commandes en jeu ; pas du jeu " \
+            "lui-même.\nLe retour des commandes, les descriptions, " \
+            "messages, resteront\ndans tous les cas en français.\n" \
+            "Si vous n'êtes pas familiarisé avec les MUDs, nous vous " \
+            "conseillons le " \
+            "|ent|français|ff|.\nUne fois en jeu, vous pourrez toujours " \
+            "changer grâce à la commande |cmd|options|ff|.\n\n" \
             "Langues disponibles : |cmd|français|ff|, |cmd|anglais|ff|"
 
     def get_prompt(self):

@@ -72,12 +72,17 @@ class NouveauNom(Contexte):
     def accueil(self):
         """Message d'accueil du contexte"""
         return \
-            "\n|tit|----= Création d'un personnage =----|ff|\n" \
+            "\n|tit|----= Choix de votre nom =----|ff|\n" \
             "Entrez un |ent|nom|ff| pour votre nouveau personnage|ff|.\n" \
             "Ce nom peut être identique à votre nom de compte ; " \
             "il vous identifiera\n" \
             "auprès des autres joueurs, une fois entré dans notre monde.\n" \
-            "Choisissez-le avec soin."
+            "|att|ATTENTION|ff| : Vancia est soumis aux règles du " \
+            "RP, votre nom doit être :\n-   Prononçable sans " \
+            "difficulté\n-   Cohérent (un parent peut-il nommer un " \
+            "enfant comme cela ?)\nÉvitez les noms :\n-   Typiquement " \
+            "anglophones\n-   D'un personnage d'une autre fiction\n" \
+            "-   D'un pseudonyme de forum"
 
     def get_prompt(self):
         """Message de prompt"""
