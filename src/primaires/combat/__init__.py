@@ -155,6 +155,12 @@ class Module(BaseModule):
                 if "combat" in personnage.etats:
                     personnage.etats.retirer("combat")
 
+    def verifier_cible(self, personnage):
+        """Vérifie et efface éventuellement la cible."""
+        cible = self.cible.get(personnage)
+        if cible and cible.est_mort():
+            del self.cible[personnage]
+
     def detruire(self):
         """Destruction du module."""
         for combat in self.combats.values():

@@ -81,6 +81,7 @@ class CmdLancer(Commande):
                     "ici.|ff|"
             return
 
+        importeur.combat.verifier_cible(personnage)
         if cible is None and sort.type_cible == "personnage":
             if sort.offensif:
                 combat = importeur.combat.combats.get(personnage.salle.ident)
