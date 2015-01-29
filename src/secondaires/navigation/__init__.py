@@ -888,7 +888,7 @@ class Module(BaseModule):
         if getattr(salle, "navire", None) is None:
             # Premier cas, salle de la terre ferme
             for navire in importeur.navigation.navires.values():
-                if navire.proprietaire is not personnage:
+                if not navire.a_le_droit(personnage, "maître d'équipage"):
                     continue
 
                 if not navire.accoste:
@@ -899,13 +899,14 @@ class Module(BaseModule):
         else:
             # Second cas, c'est une salle de navire
             navire = salle.navire
-            if navire.proprietaire is not personnage:
+            if not navire.a_le_droit(personnage, "maître d'équipage"):
                 return
 
             coords = [s.coords.tuple() for s in navire.salles.values()]
             for autre in importeur.navigation.navires.values():
-                if navire is autre or autre.proprietaire is not \
-                        personnage or autre.etendue is None:
+                if navire is autre or not autre.a_le_droit(
+                        personnage, "maître d'équipage") or \
+                        autre.etendue is None:
                     continue
 
                 for autre_salle in autre.salles.values():
