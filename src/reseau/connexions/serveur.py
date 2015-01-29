@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -64,22 +64,22 @@ from reseau.connexions.client_connecte import ClientConnecte
 from bases.fonction import *
 
 class ConnexionServeur:
-    
+
     """Classe représentant le serveur en écoute.
-    
+
     Cette classe représente le socket en écoute sur le port choisi
     dont le rôle est d'ajouter de nouveaux clients et de gérer leurs messages.
-    
+
     Sur une architecture réseau simple, elle n'a besoin d'être instanciée
     qu'une unique fois.
-    
+
     Après son instanciation, on doit appeler dans une boucle les méthodes
     chargées de vérifier les connexions en attente, d'accepter les clients
     éventuels puis d'interroger chaque client pour savoir si des messages
     sont à récupérer.
-    
+
     """
-    
+
     def __init__(self, port, nb_clients_attente=5, nb_max_connectes=-1, \
             attente_connexion=0.05, attente_reception=0.05):
         """Crée un socket en écoute sur le port spécifié.
@@ -102,19 +102,19 @@ class ConnexionServeur:
           de surveiller les sockets connectés. Ce temps est précisé en secondes
           (0.05 s = 50 ms)
           Si on souhaite un Time Out infini mettre cette variable à None.
-        
+
         Petite précision sur l'utilité de select.select :
             On utilise cette fonction pour surveiller un certain nombre
             de sockets. La fonction s'interrompt à la fin du Time Out spécifié
             ou dès qu'un changement est survenu sur les sockets observés.
-        
+
             Ainsi, si on surveille les clients connectés en attendant
             des messages à réceptionner, dès qu'un client aura envoyé un
             nouveau message, la fonction s'interrompera et nous laissera le
             soin de récupérer les messages des clients retournés.
             Si à l'issue du temps d'attente aucun message n'a été réceptionné,
             la fonction s'interrompt et on peut reprendre la main.
-        
+
         """
         # Booléen qui doit passer à False quand on veut arrêter le serveur
         self.lance = True
@@ -139,21 +139,21 @@ class ConnexionServeur:
             "deconnexion": Fonction(None),
             "reception": Fonction(None),
         }
-        
+
         # Information d'uptime (timestamp du moment où l'on crée le serveur)
         self.uptime = time.time()
-    
+
     def init(self):
         """Cette méthode doit être appelée après l'appel au constructeur.
-        
+
         Elle se charge d'initialiser le socket serveur et, en somme,
         de le mettre en écoute sur le port spécifié.
-        
+
         """
         if socket:
             # Initialisation du socket serveur
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            
+
             # On paramètre le socket
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
@@ -257,7 +257,7 @@ class ConnexionServeur:
         """
         if select is None:
             return
-        
+
         self.verifier_deconnexions()
         # On attend avec select.select qu'une connexion se présente
         # Si aucune connexion ne se présente, au bout du temps indiqué
@@ -297,7 +297,7 @@ class ConnexionServeur:
         """
         if select is None:
             return
-        
+
         self.verifier_deconnexions()
         # On attend avec select.select qu'un message soit réceptionné
         # Si aucun message n'est à réceptionner au bout du temps indiqué
@@ -313,7 +313,11 @@ class ConnexionServeur:
         # On parcourt la boucle des clients possédant un message à réceptionner
         for socket in receptions:
             # On récupère le client correspondant
-            client = self.get_client_depuis_socket(socket)
+            try:
+                client = self.get_client_depuis_socket(socket)
+            except KeyError:
+                continue
+
             client.recevoir()
             # On part du principe que le message est récupéré au fur et à
             # mesure dans les fonctions de callback. Sans quoi, cette
@@ -321,26 +325,26 @@ class ConnexionServeur:
             while client.message_est_complet():
                 # On récupère le message décodé
                 msg = client.get_message_decode()
-                
+
                 # On appelle la fonction de callback "reception"
                 self.callbacks["reception"].executer(client, msg)
 
         # On vérifie une dernière fois que tous les clients sont bien
         # connectés
         self.verifier_deconnexions()
-    
+
     def test_select(self):
         """Test grâce à select que tous les clients sont bien en écoute.
-        
+
         Note : dans certaines circonstances, une exception select.error
         est levée. On ne sait pas de quel client vient l'erreur et il faut tester
         chaque client avec un timeout de 0 (pas très élégant, mais ce
         semble être le seul moyen).
-        
+
         """
         if select is None:
             return
-        
+
         for client in self.clients.values():
             try:
                 r, none, none = select.select([client.socket], [], [], 0)
