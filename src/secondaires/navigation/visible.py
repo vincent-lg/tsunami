@@ -247,9 +247,9 @@ class Visible:
         x, y, z = pos_coords
         position = Vector(x, y, altitude)
         navires = [n for n in importeur.navigation.navires.values() if \
-                mag(n.position.x, n.position.y, altitude, position.x, \
-                position.y, altitude) - n.get_max_distance_au_centre() <= \
-                portee]
+                n.etendue and mag(n.position.x, n.position.y, altitude,
+                position.x, position.y, altitude) - \
+                n.get_max_distance_au_centre() <= portee]
         for t_navire in navires:
             # On détermine la salle la plus proche
             t_salles = [s for s in t_navire.salles.values() if \
