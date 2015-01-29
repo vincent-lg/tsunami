@@ -33,6 +33,7 @@
 import traceback
 
 from abstraits.module import *
+from primaires.scripting.exceptions import InterrompreCommande
 from .action_differee import ActionDifferee
 
 class Module(BaseModule):
@@ -146,6 +147,8 @@ class Module(BaseModule):
 
                 try:
                     action.executer()
+                except InterrompreCommande:
+                    pass
                 except Exception:
                     self.logger.fatal("Une erreur s'est produite lors " \
                             "de l'exécution de l'action {}.".format(
