@@ -89,9 +89,11 @@ class Lumiere(BaseType):
         ajout = ""
         e = "" if self.masculin else "e"
         if getattr(self, "allumee_depuis", None):
-            ajout = " (allumé{e})".format(e=e)
+            ajout = " allumé{e}".format(e=e)
+        elif self.a_brulee():
+            ajout = " consumé{e}".format(e=e)
         else:
-            ajout = " (éteint{e})".format(e=e)
+            ajout = " éteint{e}".format(e=e)
 
         if nombre <= 0:
             raise ValueError("la fonction get_nom a été appelée " \
