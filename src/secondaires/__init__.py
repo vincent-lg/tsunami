@@ -53,6 +53,7 @@ Voici un résumé des modules primaires existants :
 -   botanique   Module gérant les végétaux récoltables
 -   calendrier  Module gérant un calendrier d'évènements
 -   cuisine     Module chargé de la cuisine
+-   diligence   Module chargé des diligences maudites
 -   exportaide  Module exportant l'aide dans un autre format
 -   familier    Module gérant les familiers et montures
 -   jeux        Module traitant les jeux et plateaux de jeu
