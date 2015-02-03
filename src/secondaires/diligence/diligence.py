@@ -57,15 +57,24 @@ class DiligenceMaudite(BaseObj):
         """Constructeur de la fiche."""
         BaseObj.__init__(self)
         self.cle = cle
+        self.ouverte = False
+        self._construire()
+
+    def __getnewargs__(self):
+        return ("", )
 
     @property
     def salles(self):
         """Retourne toutes les salles modèle de la diligence."""
-        return importeur.salle.zones.get(self.cle, {})
+        zone = importeur.salle.zones.get(self.cle)
+        if zone:
+            return zone.salles
+
+        return []
 
     def creer_premiere_salle(self):
         """Crée la première salle de la diligence."""
-        return importeur.salle.creer_salle(self.cle, "1")
+        return importeur.salle.creer_salle(self.cle, "1", valide=False)
 
     def apparaitre(self):
         """Fait apparaître la diligence dupliquée."""
@@ -74,7 +83,7 @@ class DiligenceMaudite(BaseObj):
         while (self.cle + "_" + str(nb)) in importeur.salle.zones:
             nb += 1
 
-        cle = self.cle + "_" + nb
+        cle = self.cle + "_" + str(nb)
 
         # Duplication des salles
         for salle in self.salles:
@@ -93,7 +102,7 @@ class DiligenceMaudite(BaseObj):
             for dir, sortie in salle.sorties._sorties.items():
                 if sortie and sortie.salle_dest:
                     n_ident = "{}:{}".format(cle, sortie.salle_dest.mnemonic)
-                    c_salle = self.salles[ident]
+                    c_salle = importeur.salle.salles[n_ident]
                     t_sortie = n_salle.sorties.ajouter_sortie(dir,
                             sortie.nom, sortie.article, c_salle,
                             sortie.correspondante)

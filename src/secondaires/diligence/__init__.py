@@ -32,7 +32,10 @@
 
 from abstraits.module import *
 from primaires.format.fonctions import format_nb
+from secondaires.diligence import commandes
 from secondaires.diligence.diligence import DiligenceMaudite
+from secondaires.diligence import editeurs
+
 
 class Module(BaseModule):
 
@@ -50,6 +53,7 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "diligence", "secondaire")
+        self.commandes = []
         self.diligences = {}
         self.logger = self.importeur.man_logs.creer_logger(
                 "diligence", "diligence")
@@ -62,6 +66,21 @@ class Module(BaseModule):
 
         self.logger.info(format_nb(len(diligences),
                 "{nb} diligence{s} maudite{s} récupérée{s}", fem=True))
+
+        BaseModule.init(self)
+
+    def ajouter_commandes(self):
+        """Ajout des commandes dans l'interpréteur"""
+        self.commandes = [
+            commandes.diligence.CmdDiligence(),
+        ]
+
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)
+
+        # Ajout des éditeurs
+        self.importeur.interpreteur.ajouter_editeur(
+                editeurs.diledit.EdtDiledit)
 
     def creer_diligence(self, cle):
         """Crée une diligence."""
