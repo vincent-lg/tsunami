@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -65,25 +65,26 @@ NOMBRES = {
     19: "dix-neuf",
     20: "vingt",
 }
+
 def valider_cle(chaine):
     """Valide la chaîne passée en paramètre comme étant une clé.
-    
+
     Une clé doit être une chaîne constituée de caractères minuscules,
     de chiffres et du signe _ (souligné).
-    
+
     Si la chaîne passé en paramètre ne remplit pas ces conditions,
     lève une exception ValueError.
-    
+
     """
     if RE_CLE_VALIDE.search(chaine) is None:
         raise ValueError("{} n'est pas une clé valide".format(repr(chaine)))
 
 def lisser(chaine):
     """Retourne la chaîne lisser.
-    
+
     On lisse une chaîne en remplaçant certains schémas comme
     " de le " par " du ".
-    
+
     """
     schemas = (
         (" le a", " l'a"),
@@ -114,16 +115,16 @@ def lisser(chaine):
     )
     for o_val, r_val in schemas:
         chaine = chaine.replace(o_val, r_val)
-    
+
     return chaine
 
 def get_nom_nombre(nombre):
     """Retourne, si trouvé, le nom du nombre.
-    
+
     Si le nombre est 1, retourne par exemple "un".
-    
+
     Si le nombre est trop élevé (seuls les vingt premiers
     nombres sont donnés), retourne le nombre en forme de chaîne.
-    
+
     """
     return NOMBRES.get(nombre, str(nombre))

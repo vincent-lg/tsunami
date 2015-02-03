@@ -31,6 +31,8 @@
 """Fichier contenant le module secondaire diligence."""
 
 from abstraits.module import *
+from primaires.format.fonctions import format_nb
+from secondaires.diligence.diligence import DiligenceMaudite
 
 class Module(BaseModule):
 
@@ -48,3 +50,41 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "diligence", "secondaire")
+        self.diligences = {}
+        self.logger = self.importeur.man_logs.creer_logger(
+                "diligence", "diligence")
+
+    def init(self):
+        """Chargement des objets du module."""
+        diligences = self.importeur.supenr.charger_groupe(DiligenceMaudite)
+        for diligence in diligences:
+            self.ajouter_diligence(diligence)
+
+        self.logger.info(format_nb(len(diligences),
+                "{nb} diligence{s} maudite{s} récupérée{s}", fem=True))
+
+    def creer_diligence(self, cle):
+        """Crée une diligence."""
+        if cle in self.diligences:
+            raise ValueError("la diligence {} existe déjà".format(
+                    repr(cle)))
+
+        diligence = DiligenceMaudite(cle)
+        self.ajouter_diligence(diligence)
+        return diligence
+
+    def ajouter_diligence(self, diligence):
+        """Ajoute le diligence."""
+        if diligence.cle in self.diligences:
+            raise ValueError("la diligence de clé {} est " \
+                    "déjà définie".format(repr(diligence.cle)))
+
+        self.diligences[diligence.cle] = diligence
+
+    def supprimer_diligence(self, cle):
+        """Supprime une diligence."""
+        if cle not in self.diligences:
+            raise ValueError("la diligence {} n'existe pas".format(
+                    repr(cle)))
+
+        self.diligences.pop(cle).detruire()
