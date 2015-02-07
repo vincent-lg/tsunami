@@ -35,12 +35,30 @@ from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
 
-    """Retourne les salles d'une zone."""
+    """Retourne les salles d'une zone ou la zone d'une salle."""
 
     @classmethod
     def init_types(cls):
+        cls.ajouter_types(cls.zone_salle, "Salle")
         cls.ajouter_types(cls.zone, "str")
         cls.ajouter_types(cls.zone_filtre, "str", "str")
+
+    @staticmethod
+    def zone_salle(salle):
+        """Retourne la clé de la zone de la salle précisée.
+
+        Paramètres à préciser :
+
+          * salle : la salle dont on veut la zone
+
+        Exemple d'utilisation :
+
+          # Si salle contient une salle (disons depart:1)
+          zone = zone(salle)
+          # zone contient maintenant "depart"
+
+        """
+        return salle.nom_zone
 
     @staticmethod
     def zone(nom_zone):
