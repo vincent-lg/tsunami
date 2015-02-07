@@ -82,6 +82,17 @@ class Module(BaseModule):
         self.importeur.interpreteur.ajouter_editeur(
                 editeurs.diledit.EdtDiledit)
 
+    @property
+    def zones(self):
+        """Retourne toutes les zones des diligences (actives)."""
+        cles = [cle + "_" for cle in self.diligences.keys()]
+        zones = []
+        for zone in importeur.salle.zones.values():
+            if any(zone.cle.startswith(c) for c in cles):
+                zones.append(zone)
+
+        return zones
+
     def creer_diligence(self, cle):
         """Crée une diligence."""
         if cle in self.diligences:

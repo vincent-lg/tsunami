@@ -35,7 +35,9 @@ Dans ce fichier se trouve la commande même.
 """
 
 from primaires.interpreteur.commande.commande import Commande
+from secondaires.diligence.commandes.diligence.apparaitre import PrmApparaitre
 from secondaires.diligence.commandes.diligence.creer import PrmCreer
+from secondaires.diligence.commandes.diligence.deplacer import PrmDeplacer
 from secondaires.diligence.commandes.diligence.editer import PrmEditer
 from secondaires.diligence.commandes.diligence.liste import PrmListe
 
@@ -73,6 +75,8 @@ class CmdDiligence(Commande):
 
     def ajouter_parametres(self):
         """Ajout des paramètres"""
+        self.ajouter_parametre(PrmApparaitre())
         self.ajouter_parametre(PrmCreer())
+        self.ajouter_parametre(PrmDeplacer())
         self.ajouter_parametre(PrmEditer())
         self.ajouter_parametre(PrmListe())

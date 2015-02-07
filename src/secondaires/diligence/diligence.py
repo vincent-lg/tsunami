@@ -30,6 +30,8 @@
 
 """Fichier contenant la classe DiligenceMaudite, détaillée plus bas."""
 
+from random import choice
+
 from abstraits.obase import BaseObj
 
 class DiligenceMaudite(BaseObj):
@@ -110,3 +112,55 @@ class DiligenceMaudite(BaseObj):
                         t_sortie.ajouter_porte()
                         t_sortie.porte._clef = sortie.porte._clef
                         t_sortie.porte.verrouillee = sortie.porte.verrouillee
+
+        return cle
+
+
+    @staticmethod
+    def lier(origine, salle):
+        """Lie l'origine de la diligence à la salle indiquée."""
+        if origine.sorties.sortie_existe("bas"):
+            raise ValueError("la sortie bas existe en {}".format(
+                    origine.ident))
+
+        if salle.sorties.sortie_existe("haut"):
+            raise ValueError("la sortie haut existe en {}".format(
+                    salle.ident))
+
+        sortie = salle.sorties.ajouter_sortie("haut", "diligence", "la",
+                origine, "bas")
+        origine.sorties.ajouter_sortie("bas", "sortie", "la",
+                salle, "haut")
+        return sortie
+
+    @staticmethod
+    def deplacer(entree):
+        """Déplace la diligence d'une salle, si possible."""
+        origine = entree.sorties.get_sortie_par_nom_ou_direction(
+                "bas").salle_dest
+        terrain = origine.nom_terrain
+        sorties = []
+        for sortie in origine.sorties:
+            if sortie and sortie.salle_dest and sortie.salle_dest.exterieur \
+                    and sortie.salle_dest.nom_terrain == terrain and \
+                    sortie.salle_dest is not entree and not \
+                    sortie.salle_dest.sorties.sortie_existe("haut"):
+                sorties.append(sortie)
+
+        if not sorties:
+            return
+
+        sortie = choice(sorties)
+        salle = sortie.salle_dest
+
+        # Modification de la sortie
+        entree.sorties.supprimer_sortie("bas")
+        origine.sorties.supprimer_sortie("haut")
+        salle.sorties.ajouter_sortie("haut", "diligence", "la",
+                entree, "bas")
+        entree.sorties.ajouter_sortie("bas", "sortie", "la",
+                salle, "haut")
+        origine.envoyer("Une diligence lourd lentement vers {}.".format(
+                sortie.nom_complet))
+        salle.envoyer("Une diligence arrive en roulant pesamment.")
+        return salle
