@@ -58,6 +58,12 @@ class Module(BaseModule):
         self.logger = self.importeur.man_logs.creer_logger(
                 "diligence", "diligence")
 
+    def config(self):
+        """Configuration du module."""
+        self.importeur.scripting.a_charger.append(self)
+
+        BaseModule.config(self)
+
     def init(self):
         """Chargement des objets du module."""
         diligences = self.importeur.supenr.charger_groupe(DiligenceMaudite)
