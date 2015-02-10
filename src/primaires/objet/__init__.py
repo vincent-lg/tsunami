@@ -111,7 +111,8 @@ class Module(BaseModule):
 
         objets = self.importeur.supenr.charger_groupe(Objet)
         for objet in objets:
-            self._objets[objet.identifiant] = objet
+            if objet.prototype:
+                self._objets[objet.identifiant] = objet
 
         nb_objets = len(objets)
         self.logger.info(format_nb(nb_objets, "{nb} objet{s} récupéré{s}"))

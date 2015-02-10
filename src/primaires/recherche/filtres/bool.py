@@ -59,9 +59,9 @@ class Bool(TypeFiltre):
 
         """
         if valeur in ("0", "!"):
-            valeur = False
+            valeur = "False"
         elif valeur in ("", "1", "="):
-            valeur = True
+            valeur = "True"
         else:
             raise TypeError("valeur {} invalide".format(repr(valeur)))
 
