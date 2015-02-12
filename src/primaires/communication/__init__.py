@@ -77,6 +77,7 @@ class Module(BaseModule):
         self.derniers_canaux = {}
         self.mails = None
         self.messages = {}
+        self.orbes_choisis = {}
 
     def config(self):
         """Configuration du module"""
@@ -318,6 +319,9 @@ class Module(BaseModule):
         elif commande.startswith(". "):
             res = True
             self.dire_dernier_canal(personnage, commande[2:])
+        elif commande.startswith("* "):
+            res = True
+            self.dire_tous_orbe(personnage, commande[2:])
         elif commande.split(" ")[0] in noms_canaux_connectes:
             res = True
             self.dire_canal(personnage, commande)
@@ -396,3 +400,38 @@ class Module(BaseModule):
             tableau.ajouter_ligne(msg_duree, canal, auteur.nom, message)
 
         return tableau
+
+    def dire_tous_orbe(self, personnage, message):
+        """Dit le message à tous les orbes."""
+        # On vérifie que le message n'est pas vide
+        if not message:
+            personnage << "|err|Que voulez-vous dire ?|ff|"
+            return
+
+        # On sélectionne les orbes du personnage
+        orbes = personnage.equipement.inventaire.get_objets_type("orbe")
+        if len(orbes) == 0:
+            personnage << "|err|Vous ne possédez pas d'orbe.|ff|"
+            return
+
+        if len(orbes) > 1:
+            orbe = importeur.communication.orbes_choisis.get(personnage)
+            if orbe is None:
+                personnage << "Quel orbe souhaitez-vous utiliser ?"
+                personnage.envoyer_tip("Utilisez la commande %orbe% " \
+                        "%orbe:choisir% pour choisir votre orbe préféré.")
+                return
+        else:
+            orbe = orbes[0]
+
+        # On cherche les connectés qui ont le même type d'orbe
+        joueurs = [personnage]
+        for joueur in importeur.connex.joueurs_connectes:
+            if joueur is not personnage and \
+                    joueur.equipement.inventaire.get_objets_cle(orbe.cle):
+                joueurs.append(joueur)
+
+        # Envoie à chaque joueur du message
+        # (brouillage en fonction de la distance)
+        # (prise de mana)
+        # (temps d'attente)

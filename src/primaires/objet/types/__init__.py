@@ -121,3 +121,6 @@ from .vegetal import Vegetal
 from .bois import Bois
 
 from .boule_neige import BouleNeige
+
+# Orbes de communication
+from .orbe import Orbe

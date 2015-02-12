@@ -470,3 +470,25 @@ class Inventaire:
                 yield (prototype, qtt, t_conteneur)
             else:
                 yield (prototype, qtt)
+
+    def get_objets_cle(self, cle):
+        """Retourne les objets ayant pour clé la clé précisée.
+
+        Cette méthode ne parcourt que les objets uniques.
+
+        """
+        objets = []
+        for objet in self:
+            if objet.cle == cle:
+                objets.append(objet)
+
+        return objets
+
+    def get_objets_type(self, nom_type):
+        """Retourne les objets possédés du type indiqué."""
+        objets = []
+        for objet in self:
+            if objet.est_de_type(nom_type):
+                objets.append(objet)
+
+        return objets
