@@ -42,8 +42,12 @@ class PromptDefaut(Prompt):
     """
 
     nom = "défaut"
+    nom_anglais = "default"
     defaut = "Vit   {stats.vitalite}     Man   {stats.mana}     End   " \
             "{stats.endurance}"
+    aide_courte = "prompt par défaut"
+    aide_longue = "Ce prompt est affiché si aucun autre prompt " \
+            "n'est sélectionné"
     symboles = Prompt.symboles.copy()
 
     @classmethod

@@ -38,6 +38,8 @@ package) et le module perso pour l'ajout du prompt par défaut.
 
 """
 
+from collections import OrderedDict
+
 from primaires.perso.prompt.prompt import Prompt
 
-prompts = {}
+prompts = OrderedDict()

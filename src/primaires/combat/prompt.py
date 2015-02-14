@@ -37,8 +37,16 @@ class PromptCombat(Prompt):
     """Classe représentant le prompt affiché en combat."""
 
     nom = "combat"
+    nom_anglais = "fighting"
     defaut = "[{pct_adv}] Vit   {stats.vitalite}     Man   {stats.mana} " \
             "    End   {stats.endurance}"
+    aide_courte = "prompt de combat"
+    aide_longue = "Ce prompt est affiché quand votre personnage est " \
+            "en combat"
+    symboles_sup = """
+                    %p          Pourcentage de vitalité de l'adversaire
+    """.strip("\n")
+
     symboles = Prompt.symboles.copy()
     symboles["p"] = "pct_adv"
 

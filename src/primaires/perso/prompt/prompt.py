@@ -46,7 +46,11 @@ class Prompt:
     """
 
     nom = ""
+    nom_anglais = ""
     defaut = "" # Prompt par défaut si le prompt n'a pas été changé
+    aide_courte = ""
+    aide_longue = ""
+    symboles_sup = ""
     symboles = {
         "vx": "stats.vitalite_max",
         "mx": "stats.mana_max",

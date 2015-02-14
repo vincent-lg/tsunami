@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,33 +35,58 @@ Les sous-commandes peuvent être trouvées dans le package.
 """
 
 from primaires.interpreteur.commande.commande import Commande
-
 from .defaut import PrmDefaut
 
+# Constantes
+AIDE = """
+Cette commande permet de configurer vos différents prompts. Le prompt
+est un message qui s'affiche généralement après l'entrée d'une commande ou une
+action quelconque dans l'univers. Ce message donne des informations
+générales sur votre personnage (par défaut, sa vitalité, mana et
+endurance).
+Il existe plusieurs prompts. Par exemple, celui que vous verrez à
+votre première connexion est le prompt par défaut qui s'affiche dans
+la plupart des circonstances. Il existe également un prompt de combat
+qui est affiché quand votre personnage est en combat et peut donner
+des informations supplémentaires.
+Vous pouvez ici configurer votre prompt, c'est-à-dire changer ce
+message. En utilisant une des sous-commandes ci-dessous, vous pouvez
+soit consulter soit modifier votre prompt. Ce que vous entrez grâce
+à cette commande deviendra votre prompt. Vous pouvez aussi utiliser
+des symboles (par exemple, vous pouvez entrez
+%prompt% %prompt:défaut%|cmd| Vit(|pc|v) Man(|pc|m) End(|pc|e)|ff| pour
+avoir un prompt sous la forme |ent|Vit(50) Man(50) End(50)|ff|.
+Les symboles sont des combinaisons de lettres précédées du signe
+pourcent (|pc|). Voici les symboles que vous pouvez utiliser pour tous
+les prompts :
+    |pc|v          Vitalité actuelle
+    |pc|m          Mana actuelle
+    |pc|e          Endurance actuelle
+    |pc|vx         Vitalité maximum
+    |pc|mx        Mana maximum
+    |pc|ex         Endurance maximum
+    |pc|f          Force
+    |pc|a          Agilité
+    |pc|r          Robustesse
+    |pc|i          Intelligence
+    |pc|c          Charisme
+    |pc|s          Sensibilité
+""".strip()
+
 class CmdPrompt(Commande):
-    
+
     """Commande 'prompt'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "prompt", "prompt")
         self.schema = ""
         self.aide_courte = "affiche ou configure votre prompt"
-        self.aide_longue = \
-            "Cette commande permet d'afficher ou configurer vos " \
-            "différents prompts. Les prompts sont des messages qui " \
-            "apparaissent régulièrement pour vous signaler, par défaut, " \
-            "les principales stats de votre personnage (sa vitalité, " \
-            "sa mana, son endurance). Chaque prompt est lié à une " \
-            "sous-commande à son nom. Si vous entrez cette " \
-            "sous-commande, vous verrez la valeur actuelle du prompt. Si " \
-            "vous entrez une valeur à la suite, vous modifierez celle " \
-            "existante."
-    
+        self.aide_longue = AIDE
+
     def ajouter_parametres(self):
-        """Ajoute les paramètres à la commande."""
-        prm_defaut = PrmDefaut()
-        
-        self.ajouter_parametre(prm_defaut)
+        """Ajout dynamique des paramètres."""
+        for prompt in importeur.perso.prompts.values():
+            self.ajouter_parametre(PrmDefaut(prompt))
