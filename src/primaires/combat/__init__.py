@@ -156,6 +156,7 @@ class Module(BaseModule):
             self.importeur.diffact.retirer_action(
                 "combat:{}".format(ident), warning=False)
             for personnage in combat.combattants:
+                personnage.deselectionner_prompt("combat")
                 if "combat" in personnage.etats:
                     personnage.etats.retirer("combat")
 

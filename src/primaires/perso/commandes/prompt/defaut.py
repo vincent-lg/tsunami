@@ -34,12 +34,12 @@ from primaires.interpreteur.masque.parametre import Parametre
 
 # Constantes
 AIDE = """
-                Utilisez cette commande pour consulter ou modifier
-                votre {courte}.
-                {longue}.
-                Utilisez %prompt% %prompt:{nom}% sans argument pour
-                consulter votre {courte} actuel, ou %prompt% %prompt:{nom}%
-                suivi du nouveau prompt pour le modifier.
+            Utilisez cette commande pour consulter ou modifier
+            votre {courte}.
+            {longue}.
+            Utilisez %prompt% %prompt:{nom}% sans argument pour
+            consulter votre {courte} actuel, ou %prompt% %prompt:{nom}%
+            suivi du nouveau prompt pour le modifier.
 """.strip()
 
 class PrmDefaut(Parametre):
@@ -61,24 +61,30 @@ class PrmDefaut(Parametre):
         self.aide_longue = AIDE.format(nom=prompt.nom,
                 courte=prompt.aide_courte, longue=prompt.aide_longue)
         if prompt.symboles_sup:
-            self.aide_longue += "\n                Symboles " \
+            self.aide_longue += "\n            Symboles " \
                     "supplémentaires :\n" + prompt.symboles_sup.replace(
                     "%", "|pc|")
 
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         prompt = dic_masques["prompt"] or None
-        nt_stats = type(self).importeur.perso.stats_symboles()
         if prompt:
             prompt = prompt.prompt
             prompt = prompt.replace("{", "{{")
             prompt = prompt.replace("}", "}}")
-            for stat in type(self).importeur.perso.modele_stats:
-                prompt = prompt.replace("%{}".format(stat.symbole),
-                        "{stats." + stat.nom + "}")
-            personnage._prompt = prompt
-            personnage << \
-                "Votre prompt par défaut a bien été mis à jour :\n" + \
-                personnage._prompt.format(stats=nt_stats)
-        else:
-            personnage << personnage._prompt.format(stats=nt_stats)
+            for symbole, repl in sorted(tuple(self.prompt.symboles.items()),
+                    key=lambda c: len(c[0]), reverse=True):
+                prompt = prompt.replace("%{}".format(symbole), "{" + \
+                        repl + "}")
+            personnage.prompts[self.prompt.nom] = prompt
+            personnage << "Votre {} a bien été modifié.".format(
+                    self.prompt.aide_courte)
+
+        prompt = personnage.prompts.get(self.prompt.nom,
+                self.prompt.defaut)
+        for symbole, repl in self.prompt.symboles.items():
+            prompt = prompt.replace("{" + repl + "}", "%" + symbole)
+
+        prompt = prompt.replace("{", "{{").replace("}", "}}")
+        personnage << self.prompt.aide_courte.capitalize() + " actuel : " + \
+                prompt

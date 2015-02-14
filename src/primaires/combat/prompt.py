@@ -44,7 +44,7 @@ class PromptCombat(Prompt):
     aide_longue = "Ce prompt est affiché quand votre personnage est " \
             "en combat"
     symboles_sup = """
-                    %p          Pourcentage de vitalité de l'adversaire
+                %p          Pourcentage de vitalité de l'adversaire
     """.strip("\n")
 
     symboles = Prompt.symboles.copy()
@@ -57,9 +57,8 @@ class PromptCombat(Prompt):
         pct_adv = "???%"
         salle = personnage.salle
         if salle:
-            try:
-                combat = importeur.combat.get_combat_depuis_salle(salle)
-            except KeyError:
+            combat = importeur.combat.get_combat_depuis_salle(salle)
+            if combat is None:
                 personnage.deselectionner_prompt("combat")
             else:
                 adversaire = combat.combattus.get(personnage)
