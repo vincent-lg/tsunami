@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,44 +28,41 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les convertisseurs de la classe Personnage."""
+"""Module contenant la classe Prompt, détaillée plus bas."""
 
-class Convertisseur:
-    """Classe pour envelopper les convertisseurs."""
-    def depuis_version_0(objet, classe):
-        objet.set_version(classe, 1)
+class Prompt:
 
-    def depuis_version_1(objet, classe):
-        objet.set_version(classe, 2)
-        objet.nom = objet.nom.capitalize()
-    def depuis_version_2(objet, classe):
-        objet.set_version(classe, 3)
-        objet.nom_groupe = objet.__dict__["groupe"]
-        del objet.__dict__["groupe"]
-    def depuis_version_3(objet, classe):
-        objet.set_version(classe, 4)
-        objet._prompt = "Vit   {stats.vitalite}     Man   {stats.mana}     " \
-                "End   {stats.endurance}"
-    def depuis_version_4(objet, classe):
-        objet.set_version(classe, 5)
-        objet.stats.parent = objet
+    """Classe représentant un prompt abstrait.
 
-    def depuis_version_5(objet, classe):
-        """Mise à jour des étatts.
+    Créer une classe héritant de Prompt pour créer un nouveau prompt.
+    Un prompt est une ou plusieurs lignes de texte qui apparaissent
+    régulièrement (à pratiquement chaque entrée de commande ou chaque
+    action de l'univers). Ce prompt donne généralement des informations
+    par défaut sur l'état du joueur (comme sa vitalité actuelle). Ce
+    prompt (dit prompt par défaut) peut être complété par d'autres
+    prompts qui ne sont invoqués que dans des situations particulières.
+    Par exemple, on pourrait avoir un prompt spécial combat.
 
-        Les états étaient conserfvés sous l'attribut _cle_etat. Il n'y
-        avait que peu de personnalisation sur les templates et les états
-        simultanés n'étaient pas autorisés. Tout cela change.
+    """
 
-        """
-        objet.set_version(classe, 6)
-        del objet._cle_etat
-        del objet.position
-        del objet.occupe
+    nom = ""
+    defaut = "" # Prompt par défaut si le prompt n'a pas été changé
+    symboles = {
+        "vx": "stats.vitalite_max",
+        "mx": "stats.mana_max",
+        "ex": "stats.endurance_max",
+        "v": "stats.vitalite",
+        "m": "stats.mana",
+        "e": "stats.endurance",
+        "f": "stats.force",
+        "a": "stats.agilite",
+        "r": "stats.robustesse",
+        "i": "stats.intelligence",
+        "c": "stats.charisme",
+        "s": "stats.sensibilite",
+    }
 
-    def depuis_version_6(objet, classe):
-        """Mise à jour du prompt."""
-        objet.set_version(classe, 7)
-        prompt = objet._prompt
-        del objet._prompt
-        objet.prompts["défaut"] = prompt
+    @classmethod
+    def calculer(cls, personnage, prompt):
+        """Calcul et retourne le prompt calculé."""
+        raise NotImplementedError

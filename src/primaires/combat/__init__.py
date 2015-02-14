@@ -34,6 +34,7 @@ from abstraits.module import *
 from . import commandes
 from . import types
 from .combat import *
+from .prompt import PromptCombat
 from .types.arme import Arme
 
 class Module(BaseModule):
@@ -81,6 +82,9 @@ class Module(BaseModule):
 
     def init(self):
         """Initialisation du module."""
+        # Ajout du prompt
+        importeur.perso.ajouter_prompt(PromptCombat)
+
         # Ajout du niveau combat
         ajouter_niveau = self.importeur.perso.ajouter_niveau
         ajouter_niveau("combat", "combat")

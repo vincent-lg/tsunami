@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,44 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les convertisseurs de la classe Personnage."""
+"""Module contenant la classe PromptCombat, détaillée plus bas."""
 
-class Convertisseur:
-    """Classe pour envelopper les convertisseurs."""
-    def depuis_version_0(objet, classe):
-        objet.set_version(classe, 1)
+from primaires.perso.prompt import Prompt
 
-    def depuis_version_1(objet, classe):
-        objet.set_version(classe, 2)
-        objet.nom = objet.nom.capitalize()
-    def depuis_version_2(objet, classe):
-        objet.set_version(classe, 3)
-        objet.nom_groupe = objet.__dict__["groupe"]
-        del objet.__dict__["groupe"]
-    def depuis_version_3(objet, classe):
-        objet.set_version(classe, 4)
-        objet._prompt = "Vit   {stats.vitalite}     Man   {stats.mana}     " \
-                "End   {stats.endurance}"
-    def depuis_version_4(objet, classe):
-        objet.set_version(classe, 5)
-        objet.stats.parent = objet
+class PromptCombat(Prompt):
 
-    def depuis_version_5(objet, classe):
-        """Mise à jour des étatts.
+    """Classe représentant le prompt affiché en combat."""
 
-        Les états étaient conserfvés sous l'attribut _cle_etat. Il n'y
-        avait que peu de personnalisation sur les templates et les états
-        simultanés n'étaient pas autorisés. Tout cela change.
+    nom = "combat"
+    defaut = "[{pct_adv}] Vit   {stats.vitalite}     Man   {stats.mana} " \
+            "    End   {stats.endurance}"
+    symboles = Prompt.symboles.copy()
+    symboles["p"] = "pct_adv"
 
-        """
-        objet.set_version(classe, 6)
-        del objet._cle_etat
-        del objet.position
-        del objet.occupe
+    @classmethod
+    def calculer(cls, personnage, prompt):
+        """Calcul et retourne le prompt calculé."""
+        prompt = prompt if prompt else cls.defaut
+        pct_adv = "???%"
+        salle = personnage.salle
+        if salle:
+            try:
+                combat = importeur.combat.get_combat_depuis_salle(salle)
+            except KeyError:
+                personnage.deselectionner_prompt("combat")
+            else:
+                adversaire = combat.combattus.get(personnage)
+                if adversaire:
+                    pct_adv = round(adversaire.stats.vitalite / \
+                            adversaire.stats.vitalite_max * 20) * 5
+                    pct_adv = str(pct_adv).rjust(3) + "%"
 
-    def depuis_version_6(objet, classe):
-        """Mise à jour du prompt."""
-        objet.set_version(classe, 7)
-        prompt = objet._prompt
-        del objet._prompt
-        objet.prompts["défaut"] = prompt
+        return prompt.format(stats=personnage.stats, pct_adv=pct_adv)
