@@ -83,6 +83,7 @@ class Navire(Vehicule):
         self.canots = []
         self.compteur = 0
         self.pavillon = None
+        self.donnees = {}
 
         if modele:
             modele.vehicules.append(self)

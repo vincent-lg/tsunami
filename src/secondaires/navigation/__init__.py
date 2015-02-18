@@ -67,6 +67,7 @@ from .navires_vente import NaviresVente
 from .matelots_vente import MatelotsVente
 from .repere import Repere
 from .trajet import Trajet
+from .prompt import PromptNavigation
 
 class Module(BaseModule):
 
@@ -164,6 +165,9 @@ class Module(BaseModule):
 
     def init(self):
         """Chargement des navires et modèles."""
+        # Ajout du prompt
+        importeur.perso.ajouter_prompt(PromptNavigation)
+
         self.importeur.hook["salle:regarder"].ajouter_evenement(
                 self.navire_amarre)
         self.importeur.hook["salle:regarder"].ajouter_evenement(
@@ -186,6 +190,8 @@ class Module(BaseModule):
                 self.trouver_chemins_droits)
         self.importeur.hook["stats:infos"].ajouter_evenement(
                 self.stats_navigation)
+        self.importeur.hook["personnage:deplacer"].ajouter_evenement(
+                self.modifier_prompt)
 
         # Ajout des talents
         importeur.perso.ajouter_talent("calfeutrage", "calfeutrage",
@@ -983,3 +989,12 @@ class Module(BaseModule):
                 i += 1
 
         infos.append(msg)
+
+    def modifier_prompt(self, personnage, destination, sortie, endurance):
+        """Modifie le prompt du personnage se déplaçant."""
+        if getattr(destination, "navire", None):
+            # On active le prompt de navigation
+            personnage.selectionner_prompt("navigation")
+        else:
+            # On désélectionne le prompt
+            personnage.deselectionner_prompt("navigation")

@@ -446,6 +446,10 @@ class Personnage(BaseObj):
         Par exemple : personnage.selectionner_prompt("combat")
 
         """
+        if self.prompts_selectionnes and self.prompts_selectionnes[0] == \
+                prompt:
+            return
+
         selectionnes = [p for p in self.prompts_selectionnes if p != prompt]
         selectionnes.insert(0, prompt)
         self.prompts_selectionnes[:] = selectionnes
@@ -456,6 +460,9 @@ class Personnage(BaseObj):
         Par exemple : personnage.deselectionner_prompt("combat")
 
         """
+        if not self.prompts_selectionnes:
+            return
+
         selectionnes = [p for p in self.prompts_selectionnes if p != prompt]
         self.prompts_selectionnes[:] = selectionnes
 
