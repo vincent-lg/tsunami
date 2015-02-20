@@ -31,6 +31,7 @@
 """Module contenant la classe PromptNavigation, détaillée plus bas."""
 
 from primaires.perso.prompt import Prompt
+from primaires.vehicule.vecteur import get_direction
 
 class PromptNavigation(Prompt):
 
@@ -39,9 +40,9 @@ class PromptNavigation(Prompt):
     nom = "navigation"
     nom_anglais = "sailing"
     defaut = "Vit   {stats.vitalite}     Man   {stats.mana} " \
-            "    End   {stats.endurance}     Vitesse {vitesse} " \
-            "{nom_direction} ({direction}°), Vent {nom_direction_vent}" \
-            " ({direction_vent}°)"
+            "    End   {stats.endurance}{sl}Vitesse {vitesse} " \
+            "{nom_direction} ({direction}°), Vent {direction_relative_vent}" \
+            ", {etat_coque}."
 
     aide_courte = "prompt de navigation"
     aide_longue = "Ce prompt est affiché quand votre personnage navigue"
@@ -52,6 +53,8 @@ class PromptNavigation(Prompt):
                 %nd         Nom de la direction du navire
                 %dv         Direction en degrés du vent
                 %ndv        Nom de la direction du vent
+                %drv        Direction relative du vent
+                %ec         État de la coque (intacte ou endommagée)
     """.strip("\n")
 
     symboles = Prompt.symboles.copy()
@@ -61,6 +64,8 @@ class PromptNavigation(Prompt):
     symboles["dv"] = "direction_vent"
     symboles["ndv"] = "nom_direction_vent"
     symboles["n"] = "nom"
+    symboles["drv"] = "direction_relative_vent"
+    symboles["ec"] = "etat_coque"
 
     @classmethod
     def calculer(cls, personnage, prompt):
@@ -73,6 +78,8 @@ class PromptNavigation(Prompt):
         nom_direction = "?"
         direction_vent = "?"
         nom_direction_vent = "?"
+        direction_relative_vent = "?"
+        etat_coque = "?"
         if salle and getattr(salle, "navire", None):
             navire = salle.navire
             nom = navire.nom_personnalise or "?"
@@ -81,6 +88,28 @@ class PromptNavigation(Prompt):
             nom_direction = navire.donnees.get("nom_direction", "?")
             direction_vent = navire.donnees.get("direction_vent", "?")
             nom_direction_vent = navire.donnees.get("nom_direction_vent", "?")
+            if navire.vent:
+                ven_direction = get_direction(navire.vent)
+                direction_vent = round(((180 - navire.direction.direction - \
+                        ven_direction) % 360) / 10) * 10
+                if direction_vent == 180:
+                    direction_relative_vent = "arrière"
+                elif direction_vent == 0 or direction_vent == 360:
+                    direction_relative_vent = "devant"
+                elif direction_vent > 180:
+                    direction_relative_vent = "{}° bâbord".format(360 - \
+                            direction_vent)
+                else:
+                    direction_relative_vent = "{}° tribord".format(
+                            direction_vent)
+
+            voies_eau = navire.nb_voies_eau
+            if voies_eau > 1:
+                etat_coque = "{} coques ouvertes".format(voies_eau)
+            elif voies_eau == 1:
+                etat_coque = "une coque ouverte"
+            else:
+                etat_coque = "intacte"
 
         return prompt.format(
                 stats=personnage.stats,
@@ -91,4 +120,6 @@ class PromptNavigation(Prompt):
                 direction_vent=direction_vent,
                 nom_direction_vent=nom_direction_vent,
                 nom=nom,
+                direction_relative_vent=direction_relative_vent,
+                etat_coque=etat_coque,
         )
