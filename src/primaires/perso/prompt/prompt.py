@@ -64,6 +64,7 @@ class Prompt:
         "i": "stats.intelligence",
         "c": "stats.charisme",
         "s": "stats.sensibilite",
+        "sl": "sl",
     }
 
     @classmethod

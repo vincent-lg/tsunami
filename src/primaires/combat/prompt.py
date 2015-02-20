@@ -67,4 +67,4 @@ class PromptCombat(Prompt):
                             adversaire.stats.vitalite_max * 20) * 5
                     pct_adv = str(pct_adv).rjust(3) + "%"
 
-        return prompt.format(stats=personnage.stats, pct_adv=pct_adv)
+        return prompt.format(stats=personnage.stats, sl="\n", pct_adv=pct_adv)

@@ -51,9 +51,9 @@ qui est affiché quand votre personnage est en combat et peut donner
 des informations supplémentaires.
 Vous pouvez ici configurer votre prompt, c'est-à-dire changer ce
 message. En utilisant une des sous-commandes ci-dessous, vous pouvez
-soit consulter soit modifier votre prompt. Ce que vous entrez grâce
-à cette commande deviendra votre prompt. Vous pouvez aussi utiliser
-des symboles (par exemple, vous pouvez entrez
+soit consulter, masquer, modifier ou réinitialiser votre prompt.
+Ce que vous entrez grâce à cette commande deviendra votre prompt. Vous
+pouvez aussi utiliser des symboles (par exemple, vous pouvez entrer
 %prompt% %prompt:défaut%|cmd| Vit(|pc|v) Man(|pc|m) End(|pc|e)|ff| pour
 avoir un prompt sous la forme |ent|Vit(50) Man(50) End(50)|ff|.
 Les symboles sont des combinaisons de lettres précédées du signe
@@ -65,6 +65,7 @@ les prompts :
     |pc|vx         Vitalité maximum
     |pc|mx        Mana maximum
     |pc|ex         Endurance maximum
+    |pc|sl         Saut de ligne (pour avoir un prompt sur deux lignes)
     |pc|f          Force
     |pc|a          Agilité
     |pc|r          Robustesse

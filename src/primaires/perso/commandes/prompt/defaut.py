@@ -30,6 +30,7 @@
 
 """Fichier contenant le paramètre dynamique de la commande 'prompt'."""
 
+from primaires.format.fonctions import supprimer_accents
 from primaires.interpreteur.masque.parametre import Parametre
 
 # Constantes
@@ -38,8 +39,11 @@ AIDE = """
             votre {courte}.
             {longue}.
             Utilisez %prompt% %prompt:{nom}% sans argument pour
-            consulter votre {courte} actuel, ou %prompt% %prompt:{nom}%
-            suivi du nouveau prompt pour le modifier.
+            consulter votre {courte} actuel. Vous pouvez aussi :
+                Masquer le prompt avec %prompt% %prompt:{nom}%|ent| caché|ff|
+                Réinitialiser le prompt avec %prompt% %prompt:{nom}%|ent| init|ff|
+            Ou encore %prompt% %prompt:{nom}% suivi du nouveau prompt
+            pour le modifier.
 """.strip()
 
 class PrmDefaut(Parametre):
@@ -70,6 +74,19 @@ class PrmDefaut(Parametre):
         prompt = dic_masques["prompt"] or None
         if prompt:
             prompt = prompt.prompt
+            if supprimer_accents(prompt).lower() in ("cache", "cacher"):
+                personnage.prompts[self.prompt.nom] = ""
+                personnage << "Votre {} a bien été masqué.".format(
+                        self.prompt.aide_courte)
+                return
+            if supprimer_accents(prompt).lower() == "init":
+                if self.prompt.nom in personnage.prompts:
+                    del personnage.prompts[self.prompt.nom]
+
+                personnage << "Votre {} a bien été réinitialisé.".format(
+                        self.prompt.aide_courte)
+                return
+
             prompt = prompt.replace("{", "{{")
             prompt = prompt.replace("}", "}}")
             for symbole, repl in sorted(tuple(self.prompt.symboles.items()),

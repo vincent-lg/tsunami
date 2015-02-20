@@ -54,4 +54,4 @@ class PromptDefaut(Prompt):
     def calculer(cls, personnage, prompt):
         """Calcul et retourne le prompt calculé."""
         prompt = prompt if prompt else cls.defaut
-        return prompt.format(stats=personnage.stats)
+        return prompt.format(stats=personnage.stats, sl="\n")

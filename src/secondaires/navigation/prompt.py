@@ -84,6 +84,7 @@ class PromptNavigation(Prompt):
 
         return prompt.format(
                 stats=personnage.stats,
+                sl="\n",
                 vitesse=vitesse,
                 direction=direction,
                 nom_direction=nom_direction,
