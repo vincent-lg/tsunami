@@ -52,6 +52,8 @@ from .templates.etat import Etat
 from .templates.position import Position
 from .templates.allonge import Allonge
 from .templates.assis import Assis
+from .prompt import prompts
+from .prompt.defaut import PromptDefaut
 
 class Module(BaseModule):
 
@@ -80,6 +82,7 @@ class Module(BaseModule):
         self.talents = {}
         self.etats = {}
         self.positions = {}
+        self.prompts = prompts
 
     def config(self):
         """Méthode de configuration.
@@ -153,6 +156,9 @@ class Module(BaseModule):
 
     def init(self):
         """Initialisation du module"""
+        # Ajout du prompt
+        self.ajouter_prompt(PromptDefaut)
+
         # On construit le niveau
         niveaux = Niveaux
         niveaux.nb_niveaux = self.cfg_niveaux.nb_niveaux
@@ -338,3 +344,11 @@ class Module(BaseModule):
         position = Position(cle, etat_m, etat_f)
         self.positions[cle] = position
         return position
+
+    def ajouter_prompt(self, prompt):
+        """Ajoute un prompt.
+
+        Cette méthode attend en paramètre une classe héritée de Prompt.
+
+        """
+        self.prompts[prompt.nom] = prompt

@@ -83,6 +83,7 @@ class Navire(Vehicule):
         self.canots = []
         self.compteur = 0
         self.pavillon = None
+        self.donnees = {}
 
         if modele:
             modele.vehicules.append(self)
@@ -385,6 +386,17 @@ class Navire(Vehicule):
     @property
     def nom_proprietaire(self):
         return self.proprietaire and self.proprietaire.nom or "aucun"
+
+    @property
+    def nb_voies_eau(self):
+        """Retourne le nombre de voies d'eau du navire."""
+        nb = 0
+        for salle in self.salles.values():
+            if salle.noyable:
+                if salle.voie_eau == COQUE_OUVERTE:
+                    nb += 1
+
+        return nb
 
     def a_le_droit(self, personnage, poste="capitaine", si_present=False):
         """Retourne True si le personnage a le droit, False sinon.

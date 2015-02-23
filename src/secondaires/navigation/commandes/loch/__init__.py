@@ -73,5 +73,6 @@ class CmdLoch(Commande):
         vitesse = (vitesse_2 + vitesse_1) / 2
         vitesse = round(vitesse, 1)
         vitesse = str(vitesse).replace(".", ",")
+        navire.donnees["vitesse"] = vitesse
         personnage << "Le loch vous donne une vitesse approximative de " \
                 "{} noeuds.".format(vitesse)

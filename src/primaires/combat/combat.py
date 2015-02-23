@@ -75,6 +75,8 @@ class Combat:
 
     def ajouter_combattants(self, combattant, combattu):
         """Ajoute les combattants."""
+        combattant.selectionner_prompt("combat")
+        combattu.selectionner_prompt("combat")
         if combattant not in self.__combattants:
             self.__combattants.append(combattant)
             self.__combattus[combattant] = combattu
@@ -85,6 +87,7 @@ class Combat:
 
     def supprimer_combattant(self, combattant):
         """Supprime le personnage des combattants / combattus."""
+        combattant.deselectionner_prompt("combat")
         if combattant in self.__combattants:
             self.__combattants.remove(combattant)
 
@@ -104,6 +107,8 @@ class Combat:
             if combattant is None or combattant.salle is not self.salle or \
                     combattant.est_mort():
                 self.__combattants.remove(combattant)
+                if combattant:
+                    combattant.deselectionner_prompt("combat")
 
         for combattant, combattu in list(self.combattus.items()):
             if combattant and combattant.salle is not self.salle:
@@ -125,6 +130,7 @@ class Combat:
                 else:
                     combattant.etats.retirer("combat")
                     del self.__combattus[combattant]
+                    combattant.deselectionner_prompt("combat")
 
         # On reforme la liste des combattants
         self.__combattants = [p for p in self.__combattus.keys()]

@@ -48,6 +48,7 @@ from .quetes import Quetes
 from .stats import Stats
 from .exceptions.stat import DepassementStat
 from .etats import Etats
+from .prompt import prompts
 
 class Personnage(BaseObj):
 
@@ -62,7 +63,7 @@ class Personnage(BaseObj):
     """
 
     _nom = "personnage"
-    _version = 6
+    _version = 7
 
     def __init__(self):
         """Constructeur d'un personnage"""
@@ -73,8 +74,8 @@ class Personnage(BaseObj):
         self.langue_cmd = "francais"
         self._salle = None
         self.stats = Stats(self)
-        self._prompt = "Vit   {stats.vitalite}     Man   {stats.mana}     " \
-                "End   {stats.endurance}"
+        self.prompts_selectionnes = []
+        self.prompts = {}
         self.equipement = None
         self._race = None
         self.genre = "aucun"
@@ -213,7 +214,10 @@ class Personnage(BaseObj):
     @property
     def prompt(self):
         """Retourne le prompt formatté"""
-        prompt = self._prompt.format(stats=self.stats)
+        selectionne = self.prompts_selectionnes and \
+                self.prompts_selectionnes[0] or "défaut"
+        prompt = self.prompts.get(selectionne)
+        prompt = prompts[selectionne].calculer(self, prompt)
         if self.super_invisible:
             prompt = "[i] " + prompt
 
@@ -435,6 +439,36 @@ class Personnage(BaseObj):
             return False
 
         return self in combat.combattants
+
+    def selectionner_prompt(self, prompt):
+        """Sélectionne le prompt du nom indiqué.
+
+        Par exemple : personnage.selectionner_prompt("combat")
+
+        """
+        if self.prompts_selectionnes and self.prompts_selectionnes[0] == \
+                prompt:
+            return
+
+        selectionnes = [p for p in self.prompts_selectionnes if p != prompt]
+        selectionnes.insert(0, prompt)
+        self.prompts_selectionnes[:] = selectionnes
+
+    def deselectionner_prompt(self, prompt):
+        """Déselectionne le prompt indiqué.
+
+        Par exemple : personnage.deselectionner_prompt("combat")
+
+        """
+        if not self.prompts_selectionnes:
+            return
+
+        selectionnes = [p for p in self.prompts_selectionnes if p != prompt]
+        self.prompts_selectionnes[:] = selectionnes
+
+    def deselectionner_tous_prompts(self):
+        """Déselectionne tous les prompts."""
+        self.prompts_selectionnes[:] = []
 
     def peut_etre_attaque(self):
         """Retourne True si le personnage peut être attaéqué.
