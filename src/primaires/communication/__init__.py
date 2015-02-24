@@ -464,7 +464,7 @@ class Module(BaseModule):
                 joueurs.append(joueur)
 
         # Envoie à chaque joueur du message
-        personnage << "[{}] Vous dites : {}".format(orbe.get_nom(),
+        personnage << "|jn|[{}] Vous dites : {}|ff|".format(orbe.get_nom(),
                 message)
         for joueur in joueurs:
             self.envoyer_orbe(personnage, joueur, orbe, message)
@@ -507,9 +507,7 @@ class Module(BaseModule):
 
         orbe_destinataire = None
         orbes = importeur.objet.get_objets_de_type("orbe")
-        print("nom", nom)
         for autre_orbe in orbes:
-            print(autre_orbe.nom_orbe)
             if autre_orbe.nom_orbe == nom:
                 orbe_destinataire = autre_orbe
                 break
@@ -519,7 +517,7 @@ class Module(BaseModule):
             return
 
         destinataire = orbe_destinataire.grand_parent
-        personnage << "[{}] Vous dites à l'orbe {} : {}".format(
+        personnage << "|jn|[{}] Vous dites à l'orbe {} : {}|ff|".format(
                 orbe.get_nom(), orbe_destinataire.nom_orbe, message)
         self.envoyer_orbe(personnage, destinataire, orbe,
                 message, "secrètement ")
@@ -536,7 +534,7 @@ class Module(BaseModule):
             distance = 20
 
         # En fonction de la distance, essaye de prélever de la mana
-        mana = distance / 2
+        mana = int(round(distance / 2))
         if mana < 10:
             mana = 10
         elif mana > 100:
@@ -561,7 +559,9 @@ class Module(BaseModule):
         if temps < 1:
             temps = 1
 
-        message = "[Orbe {}] dit {}: {}".format(orbe.nom_orbe, ajout,
-                message)
+        importeur.communication.enregistrer_conversation("|jn|orbe|ff|",
+                destinataire, auteur, message)
+        message = "|jn|[Orbe {}] dit {}: {}|ff|".format(orbe.nom_orbe,
+                ajout, message)
         importeur.diffact.ajouter_action("orbe_{}".format(str(id(message))),
                 temps, destinataire.envoyer, message)

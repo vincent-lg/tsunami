@@ -53,7 +53,7 @@ class PromptCombat(Prompt):
     @classmethod
     def calculer(cls, personnage, prompt):
         """Calcul et retourne le prompt calculé."""
-        prompt = prompt if prompt else cls.defaut
+        prompt = prompt if prompt is not None else cls.defaut
         pct_adv = "???%"
         salle = personnage.salle
         if salle:
