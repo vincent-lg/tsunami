@@ -30,6 +30,7 @@
 
 """Fichier contenant le type orbe."""
 
+from bases.objet.attribut import Attribut
 from .base import BaseType
 
 class Orbe(BaseType):
@@ -46,5 +47,24 @@ class Orbe(BaseType):
 
         # Attributs propres à l'objet (non au prototype)
         self._attributs = {
-            "nom": Attribut(str),
+            "nom_orbe": Attribut(str),
         }
+
+    def get_nom(self, nombre=1, pluriels=True):
+        """Retourne le nom complet en fonction du nombre.
+
+        Par exemple :
+        Si nombre == 1 : retourne le nom singulier
+        Sinon : retourne le nombre et le nom pluriel
+
+        """
+        ajout = ""
+        if nombre <= 0:
+            raise ValueError("la fonction get_nom a été appelée " \
+                    "avec un nombre négatif ou nul.")
+        elif nombre == 1:
+            nom = getattr(self, "nom_orbe", "")
+            ajout = nom and " (nommé " + nom + ")" or "(sans nom)"
+            return self.nom_singulier + ajout
+        else:
+            return BaseType.get_nom(self, nombre, pluriels)

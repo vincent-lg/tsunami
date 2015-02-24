@@ -245,6 +245,12 @@ class Module(BaseModule):
 
         raise KeyError("type {} introuvable".format(nom_type))
 
+    def get_objets_de_type(self, nom_type):
+        """Retourne les objets de type indiqué ou descendant."""
+        type = self.get_type(nom_type)
+        return [o for o in self.objets.values() if isinstance(
+                o.prototype, type)]
+
     def creer_prototype(self, cle, nom_type="indéfini"):
         """Crée un prototype et l'ajoute aux prototypes existants"""
         if cle in self._prototypes:

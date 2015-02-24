@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,19 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module communication."""
+"""Ce fichier contient la classe Orbes détaillée plus bas."""
 
-from . import attitudes
-from . import canaux
-from . import chuchoter
-from . import cnvlog
-from . import crier
-from . import dire
-from . import discuter
-from . import historique
-from . import emote
-from . import orbe
-from . import messages
-from . import parler
-from . import repondre
-from . import socedit
+from abstraits.obase import BaseObj
+
+class Orbes(BaseObj):
+
+    """Classe mémorisant les orbes par défaut.
+
+    L'association de joueur à orbe se trouve simplement dans le
+    dictionnaire defauts (personnages en clé, objets en valeur).
+
+    """
+
+    enregistrer = True
+    def __init__(self):
+        BaseObj.__init__(self)
+        self.defauts = {}
+        self._construire()
+
+    def __getnewargs__(self):
+        return ()
+
+    def __repr__(self):
+        return "<OrbesParDefaut>"
+
+    def nettoyer(self):
+        """Nettoie le dictionnaire des PNJ morts."""
+        for personnage, orbe in tuple(self.defauts.items()):
+            if personnage.prototype or orbe is None or not orbe.e_existe:
+                del self.defauts[personnage]
