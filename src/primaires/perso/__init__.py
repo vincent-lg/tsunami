@@ -198,8 +198,10 @@ class Module(BaseModule):
             commandes.asseoir.CmdAsseoir(),
             commandes.chercher.CmdChercher(),
             commandes.commande.CmdCommande(),
+            commandes.d.CmdD(),
             commandes.equipement.CmdEquipement(),
             commandes.lever.CmdLever(),
+            commandes.m.CmdM(),
             commandes.niveaux.CmdNiveaux(),
             commandes.prompt.CmdPrompt(),
             commandes.quete.CmdQuete(),
@@ -209,6 +211,7 @@ class Module(BaseModule):
             commandes.skedit.CmdSkedit(),
             commandes.sklist.CmdSklist(),
             commandes.talents.CmdTalents(),
+            commandes.v.CmdV(),
         ]
 
         for cmd in self.commandes:

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,23 +28,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module perso."""
+"""Package contenant la commande 'v'."""
 
-from . import allonger
-from . import asseoir
-from . import chercher
-from . import commande
-from . import d
-from . import equipement
-from . import lever
-from . import m
-from . import niveaux
-from . import prompt
-from . import quete
-from . import qui
-from . import raedit
-from . import score
-from . import skedit
-from . import sklist
-from . import talents
-from . import v
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdV(Commande):
+
+    """Commande 'v'."""
+
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "v", "v")
+        self.aide_courte = "affiche votre vitalité"
+        self.aide_longue = \
+            "Cette commande affiche tout simplement votre vitalité. " \
+            "Elle peut être utile si vous avez décidé de masquer " \
+            "votre prompt (en utilisant par exemple la commande " \
+            "%prompt% %prompt:défaut%|ent| cacher|ff|) mais " \
+            "souhaitez connaître votre vitalité actuelle. Voir " \
+            "les commandes %m% (pour consulter votre mana) et %d% " \
+            "(pour consulter votre endurance)."
+
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation de la commande."""
+        personnage << str(personnage.stats.vitalite)
