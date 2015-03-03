@@ -93,5 +93,6 @@ from . import voilier
 from . import charpentier
 from . import vigie
 from . import rameur
+from . import sabreur
 from . import chirurgien
 from . import maitre_cuisinier

@@ -77,6 +77,18 @@ class PrmConquerir(Parametre):
 
         navire.proprietaire = personnage
         navire.equipage.pirate = False
+        for salle in navire.salles.values():
+            for pnj in salle.PNJ:
+                if pnj.identifiant not in importeur.navigation.matelots:
+                    continue
+
+                matelot = importeur.navigation.matelots[pnj.identifiant]
+                equipage = matelot.equipage
+                if equipage.navire is not navire and \
+                        equipage.navire.a_le_droit(personnage, "officier"):
+                    equipage.supprimer_matelot(matelot.nom)
+                    navire.equipage.ajouter_matelot(pnj)
+
         personnage << "Vous êtes le nouveau propriétaire de ce navire !"
         xp = importeur.perso.gen_niveaux.grille_xp[navire.modele.niveau][1]
         xp = xp * PCT_XP / 100

@@ -366,6 +366,12 @@ class Module(BaseModule):
             for salle in navire.salles.values():
                 for element in salle.elements:
                     element.mettre_a_jour_attributs()
+                rames = salle.rames
+                if rames:
+                    rames.vitesse = "immobile"
+                    rames.centrer()
+                    rames.tenu = None
+
             navire.construire_depuis_modele()
             if not navire.modele.graph:
                 navire.modele.generer_graph()

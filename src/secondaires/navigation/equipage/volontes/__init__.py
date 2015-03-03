@@ -35,6 +35,7 @@ ordre.py.
 
 """
 
+from secondaires.navigation.equipage.volontes.aborder import Aborder
 from secondaires.navigation.equipage.volontes.colmater import Colmater
 from secondaires.navigation.equipage.volontes.feu import Feu
 from secondaires.navigation.equipage.volontes.hisser_voiles import HisserVoiles

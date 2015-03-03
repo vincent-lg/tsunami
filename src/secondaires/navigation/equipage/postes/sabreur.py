@@ -28,34 +28,15 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Orbes détaillée plus bas."""
+"""Fichier contenant le poste sabreur."""
 
-from abstraits.obase import BaseObj
+from . import Poste
 
-class Orbes(BaseObj):
+class Sabreur(Poste):
 
-    """Classe mémorisant les orbes par défaut.
+    """Classe définissant le poste sabreur."""
 
-    L'association de joueur à orbe se trouve simplement dans le
-    dictionnaire defauts (personnages en clé, objets en valeur).
-
-    """
-
-    enregistrer = True
-    def __init__(self):
-        BaseObj.__init__(self)
-        self.defauts = {}
-        self._construire()
-
-    def __getnewargs__(self):
-        return ()
-
-    def __repr__(self):
-        return "<OrbesParDefaut>"
-
-    def nettoyer(self):
-        """Nettoie le dictionnaire des PNJ morts."""
-        for personnage, orbe in tuple(self.defauts.items()):
-            if hasattr(personnage, "prototype") or orbe is None or \
-                    not orbe.e_existe:
-                del self.defauts[personnage]
+    nom = "sabreur"
+    autorite = 15
+    points = 2
+    nom_parent = "officier"
