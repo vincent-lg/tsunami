@@ -80,10 +80,20 @@ class ClasseFonction(Fonction):
             raise ErreurExecution("{} n'a pas de coordonnées valides".format(
                     destination))
 
-        chemin = origine.trouver_chemin(destination)
-        if chemin is None or not chemin.droit:
-            raise ErreurExecution("Chemin entre {} et {} introuvable ou " \
-                    "non droit".format(origine, destination))
+        try:
+            chemin = origine.trouver_chemin(destination, explicite=True)
+        except ValueError as err:
+            raise ErreurExecution("Erreur lors de la recherche du " \
+                    "chemin entre {} et {} : {}".format(origine,
+                    destination, str(err)))
+
+        if chemin is None:
+            raise ErreurExecution("Chemin entre {} et {} introuvable".format(
+                    origine, destination))
+
+        if not chemin.droit:
+            raise ErreurExecution("Chemin entre {} et {} non droit : " \
+                    "{}".format(origine, destination, chemin))
 
         intermediaires = []
         for sortie in chemin:

@@ -305,7 +305,8 @@ class Salle(BaseObj):
 
         return Chemins.salles_autour(self, rayon, empruntable=empruntable)
 
-    def trouver_chemin_absolu(self, destination, rayon=5):
+    def trouver_chemin_absolu(self, destination, rayon=5,
+            explicite=False):
         """Retourne, si trouvé, le chemin menant à destination ou None.
 
         Le rayon passé en argument est celui de recherche. Plus il est
@@ -313,9 +314,13 @@ class Salle(BaseObj):
 
         """
         chemins = Chemins.salles_autour(self, rayon, absolu=True)
-        return chemins.get(destination)
+        chemin = chemins.get(destination)
+        if chemin is None and explicite:
+            raise ValueError("le chemin absolu est introuvable")
 
-    def trouver_chemin(self, destination):
+        return chemin
+
+    def trouver_chemin(self, destination, explicite=False):
         """Recherche et retourne le chemin entre deux salles.
 
         Plusieurs algorithmes de recherche sont utilisés en fonction
@@ -338,10 +343,14 @@ class Salle(BaseObj):
         *   Sinon, cherche le chemin absolu (toutes les salles
             autour de la première salle dans un rayon d'estime).
 
+        Si explicite est mis à True, lève une exception ValueError
+        décrivant pourquoi la recherche a échouée.
+
         """
         # Si l'une des salles n'a pas de coordonnées valide
         if self.coords.invalide or destination.coords.invalide:
-            return self.trouver_chemin_absolu(destination, 4)
+            return self.trouver_chemin_absolu(destination, 4,
+                    explicite=explicite)
 
         # Les deux salles ont des coordonnées valides
         # On vérifie que le rayon n'es tpas trop important
@@ -349,6 +358,10 @@ class Salle(BaseObj):
         v_destination = Vecteur(*destination.coords.tuple())
         distance = (v_destination - v_origine).norme
         if distance > 25:
+            if explicite:
+                raise ValueError("la distance entre les deux salles " \
+                        "est supérieure à 25")
+
             return None
 
         salles = Chemins.get_salles_entre(self, destination)
@@ -375,10 +388,17 @@ class Salle(BaseObj):
             a_salle = d_salle
 
         if chemin.origine is not self or chemin.destination is not destination:
+            if explicite:
+                raise ValueError("le chemin retourné ne commence ou " \
+                        "ne finit pas au bon endroit")
+
             return None
 
         if not continu and (not self.accepte_discontinu() or not \
                 destination.accepte_discontinu()):
+            if explicite:
+                raise ValueError("un chemin non continu a été retourné")
+
             return None
 
         chemin.raccourcir()
