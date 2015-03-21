@@ -52,6 +52,7 @@ Voici un résumé des modules primaires existants :
 -   auberge     Module gérant les auberges
 -   botanique   Module gérant les végétaux récoltables
 -   calendrier  Module gérant un calendrier d'évènements
+-   crafting    Module gérant les guildes
 -   cuisine     Module chargé de la cuisine
 -   diligence   Module chargé des diligences maudites
 -   exportaide  Module exportant l'aide dans un autre format
