@@ -85,6 +85,10 @@ class PrmRecruter(Parametre):
                 personnage << "|err|Ce navire n'est pas visible.|ff|"
                 return
 
+            if cible.etats:
+                personnage.envoyer("{} est occupé.", cible)
+                return
+
             # Feint de partir
             if navire is None:
                 sortie = [s for s in salle.sorties][0]
