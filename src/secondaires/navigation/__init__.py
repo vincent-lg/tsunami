@@ -860,6 +860,9 @@ class Module(BaseModule):
         """Retourne la distance minimum avec tous les navires présents."""
         distances = []
         for navire in self.navires.values():
+            if navire.etendue is None:
+                continue
+
             for salle in navire.salles.values():
                 t_x, t_y, t_z = salle.coords.x, salle.coords.y, salle.coords.z
                 t_vecteur = Vector(t_x, t_y, t_z)

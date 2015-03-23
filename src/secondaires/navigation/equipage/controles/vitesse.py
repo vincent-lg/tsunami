@@ -98,7 +98,6 @@ class Vitesse(Controle):
 
         """
         commandant = self.commandant
-        print("vit", self.vitesse, commandant)
         if commandant is None:
             return
 
