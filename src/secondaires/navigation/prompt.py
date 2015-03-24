@@ -88,20 +88,37 @@ class PromptNavigation(Prompt):
             nom_direction = navire.donnees.get("nom_direction", "?")
             direction_vent = navire.donnees.get("direction_vent", "?")
             nom_direction_vent = navire.donnees.get("nom_direction_vent", "?")
-            if navire.vent:
-                ven_direction = get_direction(navire.vent)
-                direction_vent = round(((180 - navire.direction.direction - \
-                        ven_direction) % 360) / 10) * 10
-                if direction_vent == 180:
-                    direction_relative_vent = "arrière"
-                elif direction_vent == 0 or direction_vent == 360:
-                    direction_relative_vent = "devant"
-                elif direction_vent > 180:
-                    direction_relative_vent = "{}° bâbord".format(360 - \
-                            direction_vent)
+            nav_direction = navire.direction.direction
+            vent = navire.vent
+
+            if vent.mag == 0:
+                direction_relative_vent = "huile"
+            else:
+                ven_direction = get_direction(vent)
+                angle = (nav_direction - ven_direction) % 360
+                precision = 10 # précision en degré
+                angle = round(angle / precision) * precision
+                tribord = True
+                if angle > 180:
+                    angle = (180 - angle) % 180
+                    tribord = False
+
+                cote = "tribord" if tribord else "bâbord"
+                if angle == 0:
+                    msg_vent = "arrière"
+                elif angle < 50:
+                    msg_vent = "arrière-{cote} ({angle}°)."
+                elif angle < 130:
+                    msg_vent = "hanche {cote} ({angle}°)."
+                elif angle < 180:
+                    msg_vent = "avant-{cote} ({angle}°)."
                 else:
-                    direction_relative_vent = "{}° tribord".format(
-                            direction_vent)
+                    msg_vent = "devant"
+
+
+                angle_contraire = (-angle) % 180
+                direction_relative_vent = msg_vent.format(cote=cote,
+                        angle=angle_contraire)
 
             voies_eau = navire.nb_voies_eau
             if voies_eau > 1:
