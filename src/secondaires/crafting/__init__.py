@@ -34,7 +34,7 @@ from abstraits.module import *
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
 from secondaires.crafting.guilde import Guilde
-
+from secondaires.crafting.membres import Membres
 
 class Module(BaseModule):
 
@@ -51,6 +51,7 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "crafting", "secondaire")
         self.guildes = {}
+        self.membres = None
         self.logger = self.importeur.man_logs.creer_logger(
                 "crafting", "guilde")
 
@@ -62,6 +63,10 @@ class Module(BaseModule):
 
         self.logger.info(format_nb(len(guildes),
                 "{nb} guilde{s} récupérée{s}", fem=True))
+
+        self.membres = self.importeur.supenr.charger_unique(Membres)
+        if self.membres is None:
+            self.membres = Membres()
 
         BaseModule.init(self)
 
@@ -97,3 +102,19 @@ class Module(BaseModule):
                     repr(cle)))
 
         self.guildes.pop(cle).detruire()
+
+    def get_points_guilde_disponibles(self, personnage):
+        """Retourne les points de guilde disponibles.
+
+        La somme des points de guilde déjà consommés (en fonction
+        des guildes rejointes et du rang dans chacune) est soustraite
+        au nombre de points disponibles. Cette méthode retourne
+        un nombre négatif si il y a eu trop de points consommés
+        par rapport aux points disponibles.
+
+        """
+        points = self.membres.points_guilde
+        for progression in self.membres.membres.get(personnage, []):
+            points -= progression.rang.total_points_guilde
+
+        return points
