@@ -114,6 +114,9 @@ class Module(BaseModule):
 
         """
         points = self.membres.points_guilde
+        malus = self.membres.malus.get(personnage, 0)
+        points -= malus
+
         for progression in self.membres.membres.get(personnage, []):
             points -= progression.rang.total_points_guilde
 

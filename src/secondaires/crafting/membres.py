@@ -47,8 +47,9 @@ class Membres(BaseObj):
     def __init__(self):
         """Constructeur du conteneur"""
         BaseObj.__init__(self)
-        self.membres = {}
         self.points_guilde = 10
+        self.membres = {}
+        self.malus = {}
         self._construire()
 
     def __getnewargs__(self):

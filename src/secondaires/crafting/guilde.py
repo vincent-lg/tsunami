@@ -30,6 +30,8 @@
 
 """Fichier contenant la classe Guilde, détaillée plus bas."""
 
+from math import ceil
+
 from abstraits.obase import BaseObj
 from secondaires.crafting.exception import ExceptionCrafting
 from secondaires.crafting.progression import Progression
@@ -149,15 +151,25 @@ class Guilde(BaseObj):
         Lève l'exception :
             NonMembre si le personnage n'est pas membre de la guilde
 
+        Déclare une partie des points de guilde récupérés en
+        malus (5).
+
         """
         if personnage not in self.membres:
             raise NonMebre("le personnage {} n'est pas membre de " \
                     "la guilde {}".format(personnage, self.cle))
 
+        progression = self.membres[personnage]
+        points = progression.rang.total_points_guilde
         del self.membres[personnage]
         progressions = [p for p in importeur.crafting.membres.membres[
                 personnage] if p.rang.guilde is not self]
         importeur.crafting.membres.membres[personnage] = progressions
+
+        # Écriture du malus
+        malus = ceil(points * 5 / 100)
+        malus += importeur.crafting.membres.malus.get(personnage, 0)
+        importeur.crafting.membres.malus[personnage] = malus
 
     def changer_rang(self, personnage, rang):
         """Change le rang du personnage précisé.

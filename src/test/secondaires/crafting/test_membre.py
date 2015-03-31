@@ -129,11 +129,11 @@ class TestMembre(ManipulationJoueur, unittest.TestCase):
         # Le joueur devait avoir 10 points
         # Puis 8 en devenant apprenti
         # Puis 4 en devenant artisan
-        # Puis e nouveau 10 en quittant la guilde
+        # Puis 9 (10 - 1 de malus)
         self.assertEqual(avant, 10)
         self.assertEqual(a_apprenti, 8)
         self.assertEqual(a_artisan, 4)
-        self.assertEqual(apres, 10)
+        self.assertEqual(apres, 9)
 
         importeur.crafting.supprimer_guilde("forgerons")
         self.supprimer_joueur(joueur)
