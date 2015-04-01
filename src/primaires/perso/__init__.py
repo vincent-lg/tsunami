@@ -151,6 +151,8 @@ class Module(BaseModule):
                 "Hook appelé pour retourner le verbe de déplacement.")
         importeur.hook.ajouter_hook("personnage:verbe_arriver",
                 "Hook appelé pour retourner le verbe d'arriver.")
+        importeur.hook.ajouter_hook("personnage:score",
+                "Hook appelé quand un personnage consulte son score.")
 
         BaseModule.config(self)
 

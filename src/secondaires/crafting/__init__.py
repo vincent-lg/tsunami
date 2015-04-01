@@ -68,6 +68,10 @@ class Module(BaseModule):
         if self.membres is None:
             self.membres = Membres()
 
+        # Ajout des hooks
+        self.importeur.hook["personnage:score"].ajouter_evenement(
+                self.etendre_score)
+
         BaseModule.init(self)
 
     @property
@@ -121,3 +125,31 @@ class Module(BaseModule):
             points -= progression.rang.total_points_guilde
 
         return points
+
+    def etendre_score(self, personnage, msgs):
+        """Extension du score pour le crafting.
+
+        On affiche deux informations :
+            Le nombre de points de guilde disponibles
+            Les différents rangs actuels
+
+        """
+        points = self.get_points_guilde_disponibles(personnage)
+        if points < 0:
+            points = 0
+
+        msgs.append("Points de guilde disponibles : {:>3}".format(
+                points))
+
+        progressions = self.membres.membres.get(personnage, [])
+        if progressions:
+            msgs.append("")
+
+            progressions = sorted(progressions,
+                    key=lambda p: p.rang.guilde.nom)
+            for progression in progressions:
+                msgs.append("{} de {}".format(
+                        progression.rang.nom.capitalize(),
+                        progression.rang.guilde.nom))
+
+        msgs.append("")

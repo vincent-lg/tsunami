@@ -49,8 +49,9 @@ chn_score = r"""
 |                                              |
 | Points de tribut : {p_tr:>2}                        |
 |                                              |
-\----------------------------------------------/
 """
+
+fin = "\----------------------------------------------/"
 
 class MontrerScore:
 
@@ -90,4 +91,13 @@ class MontrerScore:
         }
 
         informations.update(kwargs)
-        return chn_score.format(**informations).strip()
+        score = chn_score.format(**informations)
+
+        # Appelle de l'hook utilisé pour rajouter des informations
+        msg_sup = []
+        importeur.hook["personnage:score"].executer(personnage, msg_sup)
+
+        for msg in msg_sup:
+            score += "| " + msg.center(44) + " |\n"
+
+        return (score + fin).strip()
