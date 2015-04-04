@@ -52,6 +52,7 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "crafting", "secondaire")
         self.guildes = {}
         self.membres = None
+        self.types = []
         self.logger = self.importeur.man_logs.creer_logger(
                 "crafting", "guilde")
 
@@ -59,6 +60,16 @@ class Module(BaseModule):
         """Configuration du module."""
         # Ajout du niveau
         importeur.perso.ajouter_niveau("profession", "profession")
+
+        # Récupération de la configuration crafting YML
+        crafting = importeur.supenr.fichiers.get("crafting")
+        if crafting:
+            self.types = crafting.get("types", [])
+        else:
+            self.logger.info("Création du fichier YML de crafting")
+            importeur.supenr.sauver_fichier("crafting", {
+                    "types": self.types,
+            })
 
         BaseModule.config(self)
 
