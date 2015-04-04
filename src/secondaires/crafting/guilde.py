@@ -36,6 +36,7 @@ from abstraits.obase import BaseObj
 from secondaires.crafting.exception import ExceptionCrafting
 from secondaires.crafting.progression import Progression
 from secondaires.crafting.rang import Rang, RangIntrouvable
+from secondaires.crafting.talent import Talent
 
 class Guilde(BaseObj):
 
@@ -65,10 +66,35 @@ class Guilde(BaseObj):
         self.types = []
         self.membres = {}
         self.rangs = []
+        self.talents = {}
         self._construire()
 
     def __getnewargs__(self):
         return ("", )
+
+    @property
+    def talents_ouverts_a_tous(self):
+        """Retourne la liste des talents ouverts à tous."""
+        return [t for t in self.talents.values() if t.ouvert_a_tous]
+
+    @property
+    def talents_fermes(self):
+        """Retourne la liste des talents fermés (non ouverts à tous)."""
+        return [t for t in self.talents.values() if not t.ouvert_a_tous]
+
+    def ouvrir(self):
+        """Ouverture de la guilde.
+
+        Cette commande rend les commandes, talents, états, disponibles
+        pour les joueurs. Elle doit donc être appelée soit à l'ouverture
+        de la guilde en jeu, soit au moment de la récupération
+        des guildes.
+
+        """
+        self.ouverte = True
+        for talent in self.talents.values():
+            importeur.perso.ajouter_talent(talent.cle, talent.nom,
+                    talent.niveau, talent.difficulte, talent.ouvert_a_tous)
 
     def rejoindre(self, personnage):
         """Permet au personnage passé en paramètre de rejoindre la guilde.
@@ -190,6 +216,22 @@ class Guilde(BaseObj):
         rang = Rang(self, cle)
         self.rangs.append(rang)
         return rang
+
+    def ajouter_talent(self, cle, nom, ouvert_a_tous=False):
+        """Ajoute un talent à la guilde."""
+        if cle in importeur.perso.talents:
+            raise ValueError("la clé de talent {} est déjà utilisée".format(
+                    repr(cle)))
+
+        if cle in self.talents:
+            raise ValueError("la clé de talent {} existe déjà dans " \
+                    "cette guilde".format(repr(cle)))
+
+        talent = Talent(self, cle)
+        talent.nom = nom
+        talent.ouvert_a_tous = ouvert_a_tous
+        self.talents[cle] = talent
+        return talent
 
 
 class GuildeSansRang(ExceptionCrafting):

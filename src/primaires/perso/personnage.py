@@ -258,7 +258,7 @@ class Personnage(BaseObj):
 
     @property
     def points_apprentissage_max(self):
-        return len(importeur.perso.talents) * 50
+        return importeur.perso.get_points_apprentissage(self)
 
     @property
     def argent_total(self):

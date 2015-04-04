@@ -55,6 +55,13 @@ class Module(BaseModule):
         self.logger = self.importeur.man_logs.creer_logger(
                 "crafting", "guilde")
 
+    def config(self):
+        """Configuration du module."""
+        # Ajout du niveau
+        importeur.perso.ajouter_niveau("profession", "profession")
+
+        BaseModule.config(self)
+
     def init(self):
         """Chargement des objets du module."""
         guildes = self.importeur.supenr.charger_groupe(Guilde)
@@ -71,8 +78,20 @@ class Module(BaseModule):
         # Ajout des hooks
         self.importeur.hook["personnage:score"].ajouter_evenement(
                 self.etendre_score)
+        self.importeur.hook[
+                "personnage:points_apprentissage"].ajouter_evenement(
+                self.ajouter_points_apprentissage)
 
         BaseModule.init(self)
+
+    def preparer(self):
+        """On ajoute les guildes déjà ouvertes."""
+        guildes = self.guildes_ouvertes
+        for guilde in guildes:
+            guilde.ouvrir()
+
+        self.logger.info(format_nb(len(guildes),
+                "{nb} guilde{s} ouverte{s}", fem=True))
 
     @property
     def guildes_ouvertes(self):
@@ -153,3 +172,19 @@ class Module(BaseModule):
                         progression.rang.guilde.nom))
 
         msgs.append("")
+
+    def ajouter_points_apprentissage(self, personnage):
+        """Ajoute des points d'apprentissage disponibles.
+
+        Cette méthode retourne 0 si le personnage n'est dans aucune
+        guilde. Sinon, retourne un nombre (50 fois le nombre de
+        talents disponibles dans la guilde).
+
+        """
+        nb = 0
+        progressions = self.membres.membres.get(personnage, [])
+        for progression in progressions:
+            guilde = progression.rang.guilde
+            nb += len(guilde.talents_fermes) * 50
+
+        return nb

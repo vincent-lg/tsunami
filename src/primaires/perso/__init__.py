@@ -153,6 +153,8 @@ class Module(BaseModule):
                 "Hook appelé pour retourner le verbe d'arriver.")
         importeur.hook.ajouter_hook("personnage:score",
                 "Hook appelé quand un personnage consulte son score.")
+        importeur.hook.ajouter_hook("personnage:points_apprentissage",
+                "Hook pour ajouter des points d'apprentissage")
 
         BaseModule.config(self)
 
@@ -324,12 +326,29 @@ class Module(BaseModule):
         niveau = Niveau(cle, nom)
         self.niveaux[cle] = niveau
 
-    def ajouter_talent(self, cle, nom, niveau, difficulte):
+    def get_points_apprentissage(self, personnage):
+        """Retourne le nombre de points d'apprentissage maximum.
+
+        Ce calcul ne prend pas en compte les points déjà consommés
+        par le personnage. On peut étendre le calcul (en ajoutant
+        des talents "caché") grâce à l'hook
+        'personnage:points_apprentissage'.
+
+        """
+        talents = [t for t in self.talents.values() if t.liberer_points]
+        plus = importeur.hook["personnage:points_apprentissage"].executer(
+                personnage)
+        talents = len(talents) * 50 + sum(plus)
+        return talents
+
+    def ajouter_talent(self, cle, nom, niveau, difficulte,
+            liberer_points=True):
         """Ajoute un talent."""
         if cle in self.talents:
             raise ValueError("un talent de clé {} existe déjà".format(cle))
 
-        talent = Talent(self.niveaux, cle, nom, niveau, difficulte)
+        talent = Talent(self.niveaux, cle, nom, niveau, difficulte,
+                liberer_points)
         self.talents[cle] = talent
 
     def ajouter_etat(self, cle, classe=None):
