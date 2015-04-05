@@ -35,6 +35,8 @@ from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
 from secondaires.crafting.guilde import Guilde
 from secondaires.crafting.membres import Membres
+from secondaires.crafting import type as def_type
+from secondaires.crafting.type import Type
 
 class Module(BaseModule):
 
@@ -52,7 +54,7 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "crafting", "secondaire")
         self.guildes = {}
         self.membres = None
-        self.types = []
+        self.types = {}
         self.logger = self.importeur.man_logs.creer_logger(
                 "crafting", "guilde")
 
@@ -67,9 +69,13 @@ class Module(BaseModule):
             self.types = crafting.get("types", [])
         else:
             self.logger.info("Création du fichier YML de crafting")
-            importeur.supenr.sauver_fichier("crafting", {
-                    "types": self.types,
-            })
+            self.enregistrer_YML()
+
+        # Création des types dynamiques
+        for nom, informations in self.types.items():
+            parent = informations["parent"]
+            classe = Type.creer_type(parent, nom)
+            setattr(def_type, classe.__name__, classe)
 
         BaseModule.config(self)
 
@@ -199,3 +205,17 @@ class Module(BaseModule):
             nb += len(guilde.talents_fermes) * 50
 
         return nb
+
+    def enregistrer_YML(self):
+        """Enregistrement de la configuration YML."""
+        self.types = {}
+
+        for guilde in self.guildes.values():
+            for type in guilde.types:
+                self.types[type.nom] = {
+                        "parent": type.parent,
+                }
+
+        importeur.supenr.sauver_fichier("crafting", {
+                "types": self.types,
+        })

@@ -37,6 +37,8 @@ from secondaires.crafting.exception import ExceptionCrafting
 from secondaires.crafting.progression import Progression
 from secondaires.crafting.rang import Rang, RangIntrouvable
 from secondaires.crafting.talent import Talent
+from secondaires.crafting import type as def_type
+from secondaires.crafting.type import Type
 
 class Guilde(BaseObj):
 
@@ -232,6 +234,26 @@ class Guilde(BaseObj):
         talent.ouvert_a_tous = ouvert_a_tous
         self.talents[cle] = talent
         return talent
+
+    def ajouter_type(self, nom_parent, nom_type):
+        """Création du type précisé."""
+        parent = importeur.objet.get_type(nom_parent)
+        nom_parent = parent.nom_type
+
+        try:
+            importeur.objet.get_type(nom_type)
+        except KeyError:
+            pass
+        else:
+            raise ValueError("le type {} existe déjà".format(
+                    repr(nom_type)))
+
+        type = Type(self, nom_parent, nom_type)
+        self.types.append(type)
+        importeur.crafting.enregistrer_YML()
+        classe = type.creer()
+        setattr(def_type, classe.__name__, classe)
+        return type
 
 
 class GuildeSansRang(ExceptionCrafting):
