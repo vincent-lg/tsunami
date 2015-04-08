@@ -259,6 +259,9 @@ class EdtRedit(Presentation):
             "picte:1.\n" \
             " - |ent|/d <sortie>|ff| : supprime la sortie indiquée\n\n"
 
+        # Extensions de l'éditeur
+        importeur.hook["editeur:etendre"].executer("salle", self, salle)
+
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,
                 salle.script)

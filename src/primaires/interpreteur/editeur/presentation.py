@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -41,14 +41,15 @@ from .flag import Flag
 from .flottant import Flottant
 
 class Presentation(Editeur):
-    
+
     """Contexte-éditeur présentation.
+
     Ce contexte présente un objet, c'est-à-dire qu'il va être à la racine
     des différentes manipulations de l'objet. C'est cet objet que l'on
     manipule si on souhaite ajouter des configurations possibles.
-    
+
     """
-    
+
     nom = "editeur:base:presentation"
     def __init__(self, pere, objet=None, attribut=None, peut_quitter=True):
         """Constructeur de l'éditeur"""
@@ -58,16 +59,16 @@ class Presentation(Editeur):
         self.nom_quitter = "quitter la fenêtre" if peut_quitter else ""
         if peut_quitter:
             self.ajouter_choix(self.nom_quitter, "q", Quitter)
-    
+
     def get_raccourci_depuis_nom(self, recherche):
         """Retourne le raccourci grâce au nom"""
         for raccourci, nom in self.raccourcis.items():
             if nom == recherche:
                 return raccourci
-        
+
         raise KeyError("le raccourci du nom {} est introuvable".format(
                 recherche))
-    
+
     def ajouter_choix(self, nom, raccourci, objet_editeur,
             objet_edite=None, attribut=None, *sup):
         """Ajoute un choix possible :
@@ -76,22 +77,22 @@ class Presentation(Editeur):
         -   objet_editeur : l'objet contexte-édieur (ex. zone de texte)
         -   objet édité : l'objet à éditer (par défaut self.objet)
         -   l'attribut à éditer : par défaut aucun
-        
+
         """
         return self.ajouter_choix_avant(self.nom_quitter, nom, raccourci,
                 objet_editeur, objet_edite, attribut, *sup)
-        
+
     def ajouter_choix_apres(self, apres, nom, raccourci, objet_editeur,
             objet_edite=None, attribut=None, *sup):
         """Ajout le choix après 'apres'.
         Pour les autres arguments, voir la méthode 'ajouter_choix'.
-        
+
         """
         if raccourci in self.raccourcis.keys():
             raise ValueError(
                 "Le raccourci {} est déjà utilisé dans cet éditeur".format(
                 raccourci))
-        
+
         enveloppe = EnveloppeObjet(objet_editeur, objet_edite, attribut, *sup)
         self.choix[nom] = enveloppe
         passage_apres = False
@@ -101,7 +102,7 @@ class Presentation(Editeur):
                     self.choix.move_to_end(cle)
                 if cle == apres:
                     passage_apres = True
-        
+
         self.raccourcis[raccourci] = nom
         return enveloppe
 
@@ -109,13 +110,13 @@ class Presentation(Editeur):
             objet_edite=None, attribut=None, *sup):
         """Ajoute le choix avant 'avant''.
         Pour les autres arguments, voir la méthode 'ajouter_choix'.
-        
+
         """
         if raccourci in self.raccourcis.keys():
             raise ValueError(
                 "Le raccourci {} est déjà utilisé dans cet éditeur".format(
                 raccourci))
-        
+
         enveloppe = EnveloppeObjet(objet_editeur, objet_edite, attribut, *sup)
         self.choix[nom] = enveloppe
         passage_apres = False
@@ -125,7 +126,7 @@ class Presentation(Editeur):
                     passage_apres = True
                 if passage_apres and cle != nom:
                     self.choix.move_to_end(cle)
-        
+
         self.raccourcis[raccourci] = nom
         return enveloppe
 
@@ -135,16 +136,18 @@ class Presentation(Editeur):
         for cle, valeur in tuple(self.raccourcis.items()):
             if valeur == nom:
                 del self.raccourcis[cle]
-        
+
         del self.choix[nom]
-    
+
     def accueil(self):
         """Message d'accueil du contexte"""
         msg = "| |tit|Edition de {}|ff|".format(self.objet).ljust(87) + "|\n"
         msg += self.opts.separateur + "\n"
+
         # Parcourt des choix possibles
         for nom, objet in self.choix.items():
             raccourci = self.get_raccourci_depuis_nom(nom)
+
             # On constitue le nom final
             # Si le nom d'origine est 'description' et le raccourci est 'd',
             # le nom final doit être '[D]escription'
@@ -166,9 +169,9 @@ class Presentation(Editeur):
                 apercu = enveloppe.get_apercu()
             if apercu:
                 msg += " : " + apercu
-        
+
         return msg
-    
+
     def interpreter(self, msg):
         """Interprétation de la présentation"""
         try:
@@ -179,13 +182,13 @@ class Presentation(Editeur):
         else:
             contexte = self.choix[nom].construire(self.pere)
             self.migrer_contexte(contexte)
-    
+
     def autre_interpretation(self, msg):
         """Cette méthode peut être redéfini par les filles de presentation.
-        
+
         Elle permet de rendre l'éditeur capable d'interpréter d'autres
         choses que des options et des raccourcis.
         Par défaut, envoie un message d'erreur à l'utilisateur.
-        
+
         """
         self.pere << "|err|Raccourci inconnu ({}).|ff|".format(msg)

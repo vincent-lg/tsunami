@@ -52,6 +52,7 @@ from .options import UOptions
 class Module(BaseModule):
 
     """Cette classe est la classe gérant tous les interpréteurs.
+
     Elle recense les différents contextes, en crée certains et permet
     à chaque module de créer ses propres contextes, commandes, éditeurs...
 
@@ -130,6 +131,14 @@ class Module(BaseModule):
                 "h": "haut",
                 "b": "bas",
         }
+
+    def config(self):
+        """Configuration du module."""
+        # Ajout des hooks
+        importeur.hook.ajouter_hook("editeur:etendre",
+                "Hook appelé pour étendre les éditeurs.")
+
+        BaseModule.config(self)
 
     def init(self):
         """Initialisation du module"""

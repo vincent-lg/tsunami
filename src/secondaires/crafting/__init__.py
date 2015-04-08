@@ -33,6 +33,8 @@
 from abstraits.module import *
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
+from secondaires.crafting.configuration import Configuration
+from secondaires.crafting.extension import Extension
 from secondaires.crafting.guilde import Guilde
 from secondaires.crafting.membres import Membres
 from secondaires.crafting import type as def_type
@@ -92,12 +94,19 @@ class Module(BaseModule):
         if self.membres is None:
             self.membres = Membres()
 
-        # Ajout des hooks
+        self.configuration = self.importeur.supenr.charger_unique(
+                Configuration)
+        if self.configuration is None:
+            self.configuration = Configuration()
+
+        # Connexion aux hooks
         self.importeur.hook["personnage:score"].ajouter_evenement(
                 self.etendre_score)
         self.importeur.hook[
                 "personnage:points_apprentissage"].ajouter_evenement(
                 self.ajouter_points_apprentissage)
+        self.importeur.hook["editeur:etendre"].ajouter_evenement(
+                Extension.etendre_editeur)
 
         BaseModule.init(self)
 

@@ -34,6 +34,7 @@ from math import ceil
 
 from abstraits.obase import BaseObj
 from secondaires.crafting.exception import ExceptionCrafting
+from secondaires.crafting.extension import Extension
 from secondaires.crafting.progression import Progression
 from secondaires.crafting.rang import Rang, RangIntrouvable
 from secondaires.crafting.talent import Talent
@@ -69,6 +70,7 @@ class Guilde(BaseObj):
         self.membres = {}
         self.rangs = []
         self.talents = {}
+        self.extensions = []
         self._construire()
 
     def __getnewargs__(self):
@@ -254,6 +256,12 @@ class Guilde(BaseObj):
         classe = type.creer()
         setattr(def_type, classe.__name__, classe)
         return type
+
+    def ajouter_extension(self, editeur, nom):
+        """Ajout d'une extension."""
+        extension = Extension(self, editeur, nom)
+        self.extensions.append(extension)
+        return extension
 
 
 class GuildeSansRang(ExceptionCrafting):
