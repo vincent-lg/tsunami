@@ -60,7 +60,7 @@ class Flags(Editeur):
 
     def accueil(self):
         """Message d'accueil du contexte."""
-        msg = self.aide_courte.format(objet = self.objet) + "\n\n"
+        msg = self.aide_courte.format(objet=self.objet) + "\n\n"
         msg += "Flags actuels :"
         flags = sorted(self.flags.items())
         flag = getattr(self.objet, self.attribut)
@@ -70,6 +70,26 @@ class Flags(Editeur):
             msg += " : " + oui_ou_non(actif)
 
         return msg
+
+    @staticmethod
+    def afficher_apercu(apercu, objet, valeur, flags):
+        """Affichage de l'aperçu."""
+        flags = sorted(flags.items())
+        flag = valeur
+        actifs = []
+        for nom, valeur in flags:
+            actif = flag & valeur != 0
+            if actif:
+                actifs.append(nom)
+
+        if actifs:
+            valeur = ", ".join(actifs)
+            Valeur = valeur.capitalize()
+        else:
+            valeur = "|att|aucun|ff|"
+            Valeur = "|att|Aucun|ff|"
+
+        return apercu.format(objet=objet, valeur=valeur, Valeur=Valeur)
 
     def interpreter(self, msg):
         """Interprétation du message."""

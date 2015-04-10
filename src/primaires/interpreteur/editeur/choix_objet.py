@@ -66,6 +66,22 @@ class ChoixObjet(Editeur):
 
         return self.aide_courte.format(objet=objet)
 
+
+    @staticmethod
+    def afficher_apercu(apercu, objet, valeur, dictionnaire=None,
+            none=False, feminin=False):
+        """Affichage de l'aperçu."""
+        if valeur is None:
+            if feminin:
+                valeur = "|att|aucune|ff|"
+                Valeur = "|att|Aucune|ff|"
+            else:
+                valeur = "|att|aucun|ff|"
+                Valeur = "|att|Aucun|ff|"
+
+        Valeur = valeur
+        return apercu.format(objet=objet, valeur=valeur, Valeur=Valeur)
+
     def opt_supprimer(self, arguments):
         """Supprime l'objet si autorisé."""
         if self.autoriser_none:

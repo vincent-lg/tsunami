@@ -37,6 +37,8 @@ seront placées dans ce package
 
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.choix_objet import ChoixObjet
+from primaires.interpreteur.editeur.tableau import Tableau
+from secondaires.navigation.equipage.postes.hierarchie import ORDRE
 
 class EdtNaedit(Presentation):
 
@@ -69,6 +71,41 @@ class EdtNaedit(Presentation):
         modele.aide_courte = \
             "Entrez la |ent|clé|ff| du modèle de navire ou |cmd|/|ff| " \
             "pour revenir à la fenêtre parente.\n\nModèle actuel : {objet}"
+
+        # Équipage
+        matelots = list(importeur.navigation.fiches.keys())
+        mnemo_coords = {}
+        coords_court = {}
+        if fiche.modele:
+            for coords, salle in fiche.modele.salles.items():
+                mnemo_coords[salle.mnemonic] = coords
+                coords_court[coords] = salle.titre_court
+
+        equipage = self.ajouter_choix("équipage", "u", Tableau,
+                fiche, "equipage",
+                (("poste", ORDRE), ("matelot", matelots),
+                ("salle", mnemo_coords), ("min", "entier"),
+                ("max", "entier")), {2: coords_court})
+        equipage.parent = self
+        equipage.apercu = "{taille}"
+        equipage.aide_courte = \
+            "Vous pouvez configurer ici le tableau de l'équipage " \
+            "du navire\nautomatique à créer. Ce tableau comprend " \
+            "5 colonnes :\n-   Le nom du poste (capitaine, second, " \
+            "maître d'équipage...)\n-   La clé de la fiche de " \
+            "mâtelot correspondant au prototype de PNJ\n-   La salle " \
+            "où faire apparaître le membre d'équipage\n-   Le nombre " \
+            "minimum de mâtelots de ce type à créer\n-   Le nombre " \
+            "maximum de mâtelots de ce type à créer\n\nVous pouvez " \
+            "ajouter une ligne dans le tableau en entrant :\n" \
+            "    |ent|<poste> / <fiche> / <mnémonique> / <min> / " \
+            "<max>|ff|\n\nPar exemple :\n    |cmd|rameur / " \
+            "pirate_couchant / 1 / 3 / 5|ff|\nPour créer entre 3 et " \
+            "5 rameurs modelés sur le prototype de PNJ\n'pirate_couchant', " \
+            "devant apparaître en salle de ménmonique '1'\n(probablement " \
+            "le pont central).\n\nPour supprimer une information, " \
+            "entrez :\n |cmd|/s <nom du poste|ff|\n\nÉquipage " \
+            "actuel :\n{valeur}"
 
         # Pavillon
         pavillon = self.ajouter_choix("pavillon", "p", ChoixObjet,

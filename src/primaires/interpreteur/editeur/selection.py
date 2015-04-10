@@ -56,6 +56,17 @@ class Selection(Editeur):
         """Retourne l'aide courte"""
         return self.aide_courte.format(objet=self.objet)
 
+    @staticmethod
+    def afficher_apercu(apercu, objet, valeur, liste=None):
+        """Affichage de l'aperçu."""
+        liste = liste or []
+        if valeur == ["*"]:
+            valeur = "tous"
+        else:
+            valeur = ", ".join([str(v) for v in valeur])
+        Valeur = valeur.capitalize()
+        return apercu.format(objet=objet, valeur=valeur, Valeur=Valeur)
+
     def interpreter(self, msg):
         """Interprétation du contexte"""
         nom = msg

@@ -116,4 +116,6 @@ class Extension(BaseObj):
                             importeur.crafting.configuration[objet],
                             extension.nom)
                     enveloppe.parent = presentation
-                    enveloppe.aide_courte = extension.aide
+                    enveloppe.apercu = "{objet." + extension.nom + "}"
+                    enveloppe.aide_courte = extension.aide.replace(
+                            "$valeur", "{objet." + extension.nom + "}")

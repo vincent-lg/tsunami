@@ -142,6 +142,7 @@ class EdtDetail(Presentation):
         flags = self.ajouter_choix("flags", "fl", Flags, detail, "flags",
                 FLAGS)
         flags.parent = self
+        flags.apercu = "\n    {Valeur}"
         flags.aide_courte = \
             "Flags du détail {} :".format(detail.titre)
 
