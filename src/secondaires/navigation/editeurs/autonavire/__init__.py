@@ -37,6 +37,7 @@ seront placées dans ce package
 
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.choix_objet import ChoixObjet
+from primaires.interpreteur.editeur.selection_objet import SelectionObjet
 from primaires.interpreteur.editeur.tableau import Tableau
 from secondaires.navigation.equipage.postes.hierarchie import ORDRE
 
@@ -71,6 +72,16 @@ class EdtNaedit(Presentation):
         modele.aide_courte = \
             "Entrez la |ent|clé|ff| du modèle de navire ou |cmd|/|ff| " \
             "pour revenir à la fenêtre parente.\n\nModèle actuel : {objet}"
+
+        # Caps
+        caps = self.ajouter_choix("caps par défaut", "c", SelectionObjet,
+                fiche, "trajets", importeur.navigation.trajets)
+        caps.parent = self
+        caps.prompt = "Clé du cap à ajouter ou supprimer : "
+        caps.apercu = "{valeur}"
+        caps.aide_courte = \
+            "Entrez la |ent|clé|ff| d'un cap pour l'ajouter ou " \
+            "le supprimer.\n\nCaps actuels : {valeur}"
 
         # Équipage
         matelots = list(importeur.navigation.fiches.keys())
