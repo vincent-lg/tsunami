@@ -30,9 +30,20 @@
 
 """Fichier contenant la classe Extenson, détaillée plus bas."""
 
+import re
+
 from abstraits.obase import BaseObj
 from primaires.format.fonctions import supprimer_accents
+from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.uniligne import Uniligne
+
+# Constantes
+TYPES = {
+    "entier": re.compile(r"^nombre|entier" \
+            r"( (?P<signe>positif|negatif|positif ou nul|negatif ou nul))?" \
+            r"( entre (?P<min>[0-9]+) et (?P<max>[0-9]+))?$"),
+    "chaîne": re.compile("^chaine$"),
+}
 
 class Extension(BaseObj):
 
@@ -64,7 +75,8 @@ class Extension(BaseObj):
         self.editeur = editeur
         self.nom = nom
         self.titre = nom
-        self.type = "chaîne"
+        self._type = "chaîne"
+        self.sup = {}
         self.aide = "non précisée"
         self._construire()
 
@@ -73,6 +85,85 @@ class Extension(BaseObj):
 
     def __repr__(self):
         return "<Extension d'éditeur {} ({})>".format(self.editeur, self.nom)
+
+    def _get_type(self):
+        return self._type
+    def _set_type(self, chaine):
+        """Change le type."""
+        chaine = supprimer_accents(chaine).lower()
+        for n_type, expression in TYPES.items():
+            match = expression.match(chaine)
+            if match:
+                self._type = n_type
+                self.sup = match.groupdict()
+                return
+
+        raise ValueError("le type {} est invalide".format(repr(chaine)))
+    type = property(_get_type, _set_type)
+
+    @property
+    def type_editeur(self):
+        """Retourne le type d'éditeur sélectionné."""
+        nom_type = self._type
+        sup = self.sup
+
+        if nom_type == "chaîne":
+            return Uniligne, ()
+        elif nom_type == "entier":
+            borne_min = borne_max = None
+            signe = sup["signe"]
+            if signe == "positif":
+                borne_min = 1
+            elif signe == "negatif":
+                borne_sup = -1
+            elif signe == "positif ou nul":
+                borne_min = 0
+            elif signe == "negatif ou nul":
+                borne_sup = 0
+
+            if sup["min"] is not None:
+                borne_min = int(sup["min"])
+                borne_max = int(sup["max"])
+
+            return Entier, (borne_min, borne_max)
+        else:
+            raise ValueError("type {} inconnu".format(repr(nom_type)))
+
+    def creer(self, presentation, objet):
+        """Création de l'extension grâce à l'éditeur."""
+        titre = supprimer_accents(self.titre).lower()
+
+        # On cherche le raccourci
+        raccourci = None
+        nb = 1
+        while nb < len(titre):
+            i = 0
+            while i + nb <= len(titre):
+                morceau = titre[i:i + nb]
+                if morceau not in presentation.raccourcis:
+                    raccourci = morceau
+                    break
+
+                i += 1
+
+            if raccourci:
+                break
+
+            nb += 1
+
+        if raccourci is None:
+            raise ValueError("Impossible de trouver " \
+                    "le raccourci pour {}".format(self))
+
+        TypeEditeur, sup = self.type_editeur
+        enveloppe = presentation.ajouter_choix(
+                self.titre, raccourci, TypeEditeur,
+                importeur.crafting.configuration[objet],
+                self.nom, *sup)
+        enveloppe.parent = presentation
+        enveloppe.apercu = "{valeur}"
+        enveloppe.aide_courte = self.aide.replace("{", "{{").replace("}",
+                "}}").replace("$valeur", "{valeur}")
 
     @staticmethod
     def etendre_editeur(editeur, presentation, objet):
@@ -89,33 +180,4 @@ class Extension(BaseObj):
                 key=lambda guilde: guilde.cle):
             for extension in guilde.extensions:
                 if extension.editeur == editeur:
-                    titre = supprimer_accents(extension.titre).lower()
-                    # On cherche le raccourci
-                    raccourci = None
-                    nb = 1
-                    while nb < len(titre):
-                        i = 0
-                        while i + nb <= len(titre):
-                            morceau = titre[i:i + nb]
-                            if morceau not in presentation.raccourcis:
-                                raccourci = morceau
-                                break
-
-                            i += 1
-
-                        if raccourci:
-                            break
-
-                        nb += 1
-
-                    if raccourci is None:
-                        raise ValueError("Impossible de trouver " \
-                                "le raccourci pour {}".format(extension))
-                    enveloppe = presentation.ajouter_choix(
-                            extension.titre, raccourci, Uniligne,
-                            importeur.crafting.configuration[objet],
-                            extension.nom)
-                    enveloppe.parent = presentation
-                    enveloppe.apercu = "{objet." + extension.nom + "}"
-                    enveloppe.aide_courte = extension.aide.replace(
-                            "$valeur", "{objet." + extension.nom + "}")
+                    extension.creer(presentation, objet)

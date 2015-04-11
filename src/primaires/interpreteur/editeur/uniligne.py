@@ -61,7 +61,8 @@ class Uniligne(Editeur):
 
     def accueil(self):
         """Retourne l'aide courte"""
-        return self.aide_courte.format(objet = self.objet)
+        valeur = getattr(self.objet, self.attribut)
+        return self.aide_courte.format(objet = self.objet, valeur=valeur)
 
     def interpreter(self, msg):
         """Interprétation du contexte"""

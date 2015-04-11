@@ -86,9 +86,9 @@ class EnveloppeObjet(BaseObj):
 
     def get_apercu(self):
         """Retourne l'aperçu"""
-        if hasattr(self.editeur, "afficher_apercu"):
+        valeur = ""
+        if self.attribut:
             valeur = getattr(self.objet, self.attribut)
-            return self.editeur.afficher_apercu(self.apercu, self.objet,
-                    valeur, *self.sup)
 
-        return self.apercu.format(objet=self.objet)
+        return self.editeur.afficher_apercu(self.apercu, self.objet,
+                    valeur, *self.sup)

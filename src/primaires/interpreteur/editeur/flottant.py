@@ -57,7 +57,7 @@ class Flottant(Editeur):
         """Retourne l'aide courte"""
         valeur = str(getattr(self.objet, self.attribut)).replace(".", ",") + \
                 self.signe
-        return self.aide_courte.format(objet=self.objet)
+        return self.aide_courte.format(objet=self.objet, valeur=valeur)
 
     def interpreter(self, msg):
         """Interprétation du contexte"""

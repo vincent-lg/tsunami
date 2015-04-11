@@ -64,7 +64,7 @@ class ChoixObjet(Editeur):
             if self.feminin:
                 objet = "|att|aucune|ff|"
 
-        return self.aide_courte.format(objet=objet)
+        return self.aide_courte.format(objet=objet, valeur=objet)
 
 
     @staticmethod

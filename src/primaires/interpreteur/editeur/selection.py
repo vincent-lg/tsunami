@@ -54,7 +54,9 @@ class Selection(Editeur):
 
     def accueil(self):
         """Retourne l'aide courte"""
-        return self.aide_courte.format(objet=self.objet)
+        valeur = getattr(self.objet, self.attribut)
+        valeur = ", ".join([str(v) for v in valeur])
+        return self.aide_courte.format(objet=self.objet, valeur=valeur)
 
     @staticmethod
     def afficher_apercu(apercu, objet, valeur, liste=None):

@@ -105,7 +105,7 @@ class Tableau(Editeur):
                 tableau.ajouter_ligne(*ligne)
             valeur = "\n" + tableau.afficher()
         else:
-            valeur = "|att|\nAucun tableau à afficher pour l'instant|ff|"
+            valeur = "|att|\nAucune donnée à afficher pour l'instant|ff|"
 
         return self.aide_courte.format(objet=objet, valeur=valeur)
 
