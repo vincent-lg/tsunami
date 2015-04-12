@@ -43,7 +43,7 @@ from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.flags import Flags
 from primaires.interpreteur.editeur.presentation import Presentation
-from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.uniligne import Uniligne, CAPITALIZE
 from primaires.salle.salle import FLAGS
 from primaires.scripting.editeurs.edt_script import EdtScript
 from .edt_coords import EdtCoords
@@ -155,7 +155,8 @@ class EdtRedit(Presentation):
             ", ".join(terrains))
 
         # Titre
-        titre = self.ajouter_choix("titre", "t", Uniligne, salle, "titre")
+        titre = self.ajouter_choix("titre", "t", Uniligne, salle, "titre",
+                0, CAPITALIZE)
         titre.parent = self
         titre.prompt = "Titre de la salle : "
         titre.apercu = "{objet.titre}"
