@@ -71,3 +71,57 @@ class TestExtensions(unittest.TestCase):
         self.assertEqual(extension.sup, {
                 "signe": "positif", "min": "40", "max": "200"})
         importeur.crafting.supprimer_guilde("forgerons")
+
+    def test_tableau(self):
+        """Test le type tableau."""
+        guilde = importeur.crafting.creer_guilde("forgerons")
+        extension = guilde.ajouter_extension("salle", "minerais")
+
+        # Test de 2 colonnes
+        extension.type = \
+            "tableau avec les colonnes nom (chaîne) et chiffre (entier)"
+        self.assertEqual(extension.type, "tableau")
+        self.assertEqual(extension.sup, {
+                "ncol1": "nom", "tcol1": "chaine",
+                "ncol2": "chiffre", "tcol2": "entier",
+                "ncol3": None, "tcol3": None,
+                "ncol4": None, "tcol4": None,
+                "ncol5": None, "tcol5": None})
+
+        # Test de 3 colonnes
+        extension.type = \
+            "tableau avec les colonnes n1 (chaîne), n2 (entier) et n3 " \
+            "(chaîne)"
+        self.assertEqual(extension.type, "tableau")
+        self.assertEqual(extension.sup, {
+                "ncol1": "n1", "tcol1": "chaine",
+                "ncol2": "n2", "tcol2": "entier",
+                "ncol3": "n3", "tcol3": "chaine",
+                "ncol4": None, "tcol4": None,
+                "ncol5": None, "tcol5": None})
+
+        # Test de 4 colonnes
+        extension.type = \
+            "tableau avec les colonnes salle (salle), clé (chaîne), " \
+            "min (entier) et max (entier)"
+        self.assertEqual(extension.type, "tableau")
+        self.assertEqual(extension.sup, {
+                "ncol1": "salle", "tcol1": "salle",
+                "ncol2": "cle", "tcol2": "chaine",
+                "ncol3": "min", "tcol3": "entier",
+                "ncol4": "max", "tcol4": "entier",
+                "ncol5": None, "tcol5": None})
+
+        # Test de 5 colonnes
+        extension.type = \
+            "tableau avec les colonnes salle (chaine), PNJ (chaine), " \
+            "nombre (entier), eq1 (chaine), eq2 (chaîne)"
+        self.assertEqual(extension.type, "tableau")
+        self.assertEqual(extension.sup, {
+                "ncol1": "salle", "tcol1": "chaine",
+                "ncol2": "pnj", "tcol2": "chaine",
+                "ncol3": "nombre", "tcol3": "entier",
+                "ncol4": "eq1", "tcol4": "chaine",
+                "ncol5": "eq2", "tcol5": "chaine"})
+
+        importeur.crafting.supprimer_guilde("forgerons")

@@ -39,10 +39,26 @@ from primaires.interpreteur.editeur.uniligne import Uniligne
 
 # Constantes
 TYPES = {
-    "entier": re.compile(r"^nombre|entier" \
-            r"( (?P<signe>positif|negatif|positif ou nul|negatif ou nul))?" \
-            r"( entre (?P<min>[0-9]+) et (?P<max>[0-9]+))?$"),
+    "entier": re.compile(r"""
+            ^nombre|entier
+            # signe
+            (\ (?P<signe>positif|negatif|positif\ ou\ nul|negatif\ ou\ nul))?
+            # Bornes
+            (\ entre\ (?P<min>[0-9]+)\ et\ (?P<max>[0-9]+))?$""", re.X),
     "chaîne": re.compile("^chaine$"),
+    "tableau": re.compile(r"""
+            tableau\ avec\ les\ colonnes
+            # Colonne 1 (obligatoire)
+            \ (?P<ncol1>.*?)\ \((?P<tcol1>.*?)\)(,|\ et)
+            # Colonne 2 (obligatoire)
+            \ (?P<ncol2>.*?)\ \((?P<tcol2>.*?)\)
+            # Colonne 3 (optionnelle)
+            ((,|\ et)\ (?P<ncol3>.*?)\ \((?P<tcol3>.*?)\))?
+            # Colonne 4 (optionnelle)
+            ((,|\ et)\ (?P<ncol4>.*?)\ \((?P<tcol4>.*?)\))?
+            # Colonne 5 (optionnelle)
+            ((,|\ et)\ (?P<ncol5>.*?)\ \((?P<tcol5>.*?)\))?
+            $""", re.X),
 }
 
 class Extension(BaseObj):
