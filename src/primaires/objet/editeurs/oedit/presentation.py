@@ -150,6 +150,9 @@ class EdtPresentation(Presentation):
             env = self.ajouter_choix(ligne, rac, editeur, objet, attr, *sup)
             env.parent = self
 
+        # Extensions de l'éditeur
+        importeur.hook["editeur:etendre"].executer("objet", self, prototype)
+
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,
                 prototype.script)

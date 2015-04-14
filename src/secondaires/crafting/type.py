@@ -44,26 +44,48 @@ class Type(BaseObj):
         self.guilde = guilde
         self.parent = parent
         self.nom = nom
+        self.attributs = []
         self._construire()
 
     def __getnewargs__(self):
         return (None, "", "")
 
+    def ajouter_attribut(self, attribut):
+        """Ajout d'un attribut."""
+        self.attributs.append(attribut)
+        importeur.crafting.enregistrer_YML()
+
+    def supprimer_attribut(self, attribut):
+        """Supprime l'attribut précisé."""
+        while attribut in self.attributs:
+            self.attributs.remove(attribut)
+
+        importeur.crafting.enregistrer_YML()
+
     def creer(self):
         """Création du type."""
-        return self.creer_type(self.parent, self.nom)
+        return self.creer_type(self.parent, self.nom, self.attributs)
 
     @classmethod
-    def creer_type(cls, parent, nom):
+    def creer_type(cls, parent, nom, attributs):
         """Crée le type d'objet (la classe)."""
         parent = importeur.objet.types[parent]
-        nom_classe = supprimer_accents(nom)
-        nom_classe = "".join(mot.capitalize() for mot in nom_classe.split(" "))
 
-        # Création de la classe dynamiquement
-        classe = MetaType(nom_classe, (parent, ), {"nom_type": nom})
+        # Si la classe existe, on la modifie juste
+        try:
+            classe = importeur.objet.get_type(nom)
+            importeur.crafting.logger.info("Extension du type {} ({})".format(
+                    repr(nom), classe))
+        except KeyError:
+            nom_classe = supprimer_accents(nom)
+            nom_classe = "".join(mot.capitalize() for mot in nom_classe.split(
+                    " "))
 
-        importeur.crafting.logger.info("Création du type {} ({})".format(
-                repr(nom), classe))
+            # Création de la classe dynamiquement
+            classe = MetaType(nom_classe, (parent, ), {"nom_type": nom})
+            importeur.crafting.logger.info("Création du type {} ({})".format(
+                    repr(nom), classe))
+
+        classe.attributs_crafting = list(attributs)
 
         return classe

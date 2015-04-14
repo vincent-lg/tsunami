@@ -33,6 +33,7 @@
 from abstraits.module import *
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
+from primaires.interpreteur.editeur.tableau import Tableau
 from secondaires.crafting.configuration import Configuration
 from secondaires.crafting.extension import Extension
 from secondaires.crafting.guilde import Guilde
@@ -76,7 +77,8 @@ class Module(BaseModule):
         # Création des types dynamiques
         for nom, informations in self.types.items():
             parent = informations["parent"]
-            classe = Type.creer_type(parent, nom)
+            attributs = informations.get("attributs", [])
+            classe = Type.creer_type(parent, nom, attributs)
             setattr(def_type, classe.__name__, classe)
 
         BaseModule.config(self)
@@ -105,6 +107,8 @@ class Module(BaseModule):
         self.importeur.hook[
                 "personnage:points_apprentissage"].ajouter_evenement(
                 self.ajouter_points_apprentissage)
+        self.importeur.hook["editeur:etendre"].ajouter_evenement(
+                self.ajouter_attributs)
         self.importeur.hook["editeur:etendre"].ajouter_evenement(
                 Extension.etendre_editeur)
 
@@ -223,8 +227,27 @@ class Module(BaseModule):
             for type in guilde.types:
                 self.types[type.nom] = {
                         "parent": type.parent,
+                        "attributs": type.attributs,
                 }
 
         importeur.supenr.sauver_fichier("crafting", {
                 "types": self.types,
         })
+
+    def ajouter_attributs(self, editeur, presentation, objet):
+        """Ajoute l'éditeur d'attributs à l'objet."""
+        if editeur == "objet":
+            lst_attributs = list(getattr(objet,
+                    "attributs_crafting", []))
+            attributs = presentation.ajouter_choix("attributs", "at",
+                    Tableau, importeur.crafting.configuration[objet],
+                    "attributs", (("attribut", lst_attributs),
+                    ("valeur", "chaîne")))
+            attributs.parent = presentation
+            attributs.aide_courte = \
+                "Vous pouvez configurer ici les attributs de " \
+                "l'objet.\nLa liste d'attributs configurée dans le " \
+                "type est la suivante :\n" + ", ".join(lst_attributs) + "\n" \
+                "Entrez |ent|le nom de l'attribut|ff|, un signe |ent|/|ff| " \
+                "et\nsa valeur pour la modifier. Par exemple : " \
+                "|cmd|couleur / rouge|ff|.\n\nAttributs actuels :\n{valeur}"

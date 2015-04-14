@@ -77,6 +77,7 @@ class Tableau(Editeur):
     def accueil(self):
         """Retourne l'aide courte"""
         objet = getattr(self.objet, self.attribut)
+        objet = objet or {}
         if isinstance(objet, dict):
             lignes = []
             for cle, valeur in objet.items():
@@ -113,7 +114,10 @@ class Tableau(Editeur):
     def afficher_apercu(apercu, objet, valeur, colonnes=None,
             affichage=None):
         """Affichage de l'aperçu."""
-        taille = len(valeur)
+        taille = 0
+        if valeur:
+            taille = len(valeur)
+
         return apercu.format(objet=objet, taille=taille)
 
     def opt_supprimer(self, arguments):
@@ -131,7 +135,7 @@ class Tableau(Editeur):
             else:
                 self.pere << "|err|Impossible de supprimer {}.|ff|".format(
                         repr(cle))
-        else:
+        elif isinstance(objet, list):
             try:
                 indice = int(cle)
                 assert indice > 0
@@ -145,6 +149,10 @@ class Tableau(Editeur):
     def interpreter(self, msg):
         """Interprétation du contexte"""
         objet = getattr(self.objet, self.attribut)
+        if objet is None:
+            objet = {}
+            setattr(self.objet, self.attribut, objet)
+
         msgs = msg.split(" / ")
         colonnes = self.colonnes
         if len(msgs) != len(colonnes):
