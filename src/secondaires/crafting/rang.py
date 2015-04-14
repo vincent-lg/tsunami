@@ -32,6 +32,7 @@
 
 from abstraits.obase import BaseObj
 from secondaires.crafting.exception import ExceptionCrafting
+from secondaires.crafting.recette import Recette
 
 class Rang(BaseObj):
 
@@ -44,6 +45,7 @@ class Rang(BaseObj):
         self.cle = cle
         self.nom = "rang inconnu"
         self.points_guilde = 10
+        self.recettes = []
         self._construire()
 
     def __getnewargs__(self):
@@ -69,6 +71,26 @@ class Rang(BaseObj):
 
         precedents = guilde.rangs[:indice]
         return sum(p.points_guilde for p in precedents) + self.points_guilde
+
+    def ajouter_recette(self, resultat):
+        """Ajoute une recette.
+
+        Le résultat doit être la clé du prototype de résultat.
+
+        """
+        recette = Recette(self)
+        recette.resultat = resultat
+        self.recettes.append(recette)
+        return recette
+
+    def retirer_recette(self, recette):
+        """Retire la recette spécifiée."""
+        if recette not in self.recettes:
+            raise ValueError("la recette {} n'est pas dans le rang " \
+                    "{}".format(repr(recette), repr(self)))
+
+        self.recettes.remove(recette)
+        recette.detruire()
 
 
 class RangIntrouvable(ExceptionCrafting):
