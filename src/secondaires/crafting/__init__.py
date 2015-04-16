@@ -34,7 +34,9 @@ from abstraits.module import *
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
 from primaires.interpreteur.editeur.tableau import Tableau
+from secondaires.crafting import commandes
 from secondaires.crafting.configuration import Configuration
+from secondaires.crafting import editeurs
 from secondaires.crafting.extension import Extension
 from secondaires.crafting.guilde import Guilde
 from secondaires.crafting.membres import Membres
@@ -113,6 +115,19 @@ class Module(BaseModule):
                 Extension.etendre_editeur)
 
         BaseModule.init(self)
+
+    def ajouter_commandes(self):
+        """Ajout des commandes dans l'interpréteur"""
+        self.commandes = [
+            commandes.guilde.CmdGuilde(),
+        ]
+
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)
+
+        # Ajout des éditeurs
+        self.importeur.interpreteur.ajouter_editeur(
+                editeurs.gldedit.GldEdit)
 
     def preparer(self):
         """On ajoute les guildes déjà ouvertes."""
