@@ -33,6 +33,7 @@
 from math import ceil
 
 from abstraits.obase import BaseObj
+from secondaires.crafting.atelier import Atelier
 from secondaires.crafting.exception import ExceptionCrafting
 from secondaires.crafting.extension import Extension
 from secondaires.crafting.progression import Progression
@@ -55,6 +56,7 @@ class Guilde(BaseObj):
 
     """
 
+
     enregistrer = True
 
     def __init__(self, cle):
@@ -75,6 +77,12 @@ class Guilde(BaseObj):
 
     def __getnewargs__(self):
         return ("", )
+
+    def __repr__(self):
+        return "<Guilde {}>".format(repr(self.cle))
+
+    def __str__(self):
+        return self.cle
 
     @property
     def talents_ouverts_a_tous(self):
@@ -263,6 +271,16 @@ class Guilde(BaseObj):
         self.extensions.append(extension)
         return extension
 
+    def ajouter_atelier(self, cle):
+        """Ajoute un atelier à la guilde."""
+        if cle in [a.cle for a in self.ateliers]:
+            raise AtelierExiste("Cette clé d'atlier est déjà utilisée".format(
+                    repr(cle)))
+
+        atelier = Atelier(self, cle)
+        self.ateliers.append(atelier)
+        return atelier
+
 
 class GuildeSansRang(ExceptionCrafting):
 
@@ -292,3 +310,7 @@ class PointsGuildeInsuffisants(ExceptionCrafting):
     """
 
     pass
+
+class AtelierExiste(ExceptionCrafting):
+
+    """Exception levée quand l'atelier précisé existe déjà."""
