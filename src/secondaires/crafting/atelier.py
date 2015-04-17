@@ -42,6 +42,7 @@ class Atelier(BaseObj):
         BaseObj.__init__(self)
         self.guilde = guilde
         self.cle = cle
+        self.nom = "un atelier"
         self.matieres = {}
         self._construire()
 
@@ -54,6 +55,11 @@ class Atelier(BaseObj):
 
     def __str__(self):
         return "atelier {} de la guilde {}".format(self.cle, str(self.guilde))
+
+    @property
+    def cle_complete(self):
+        """Retourne une clé plus agréable à la lecture."""
+        return self.cle + " : " + self.nom
 
     def ajouter_matiere(self, cle, quantite=1):
         """Ajoute un prototype de type matière dans l'atelier."""

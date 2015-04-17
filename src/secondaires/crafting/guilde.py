@@ -271,6 +271,18 @@ class Guilde(BaseObj):
         self.extensions.append(extension)
         return extension
 
+    def get_atelier(self, cle):
+        """Retourne, si trouvé, l'atelier.
+
+        Lève une exception ValueError si l'atelier n'est pas trouvé.
+
+        """
+        for atelier in self.ateliers:
+            if atelier.cle.lower() == cle.lower():
+                return atelier
+
+        raise ValueError("Atelier {} introuvable".format(repr(cle)))
+
     def ajouter_atelier(self, cle):
         """Ajoute un atelier à la guilde."""
         if cle in [a.cle for a in self.ateliers]:
@@ -280,6 +292,12 @@ class Guilde(BaseObj):
         atelier = Atelier(self, cle)
         self.ateliers.append(atelier)
         return atelier
+
+    def supprimer_atelier(self, cle):
+        """Supprime l'atelier depuis la clé indiquée."""
+        atelier = self.get_atelier(cle)
+        self.ateliers.remove(atelier)
+        atelier.detruire()
 
 
 class GuildeSansRang(ExceptionCrafting):
