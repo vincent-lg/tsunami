@@ -33,6 +33,7 @@
 from math import ceil
 
 from abstraits.obase import BaseObj
+from corps.fonctions import valider_cle
 from secondaires.crafting.atelier import Atelier
 from secondaires.crafting.exception import ExceptionCrafting
 from secondaires.crafting.extension import Extension
@@ -56,7 +57,6 @@ class Guilde(BaseObj):
 
     """
 
-
     enregistrer = True
 
     def __init__(self, cle):
@@ -67,7 +67,6 @@ class Guilde(BaseObj):
         self.ouverte = False
         self.ateliers = []
         self.commandes = []
-        self.talents = []
         self.types = []
         self.membres = {}
         self.rangs = []
@@ -223,14 +222,59 @@ class Guilde(BaseObj):
         progressions.append(progression)
         importeur.crafting.membres.membres[personnage] = progressions
 
+    def get_rang(self, cle, exception=True):
+        """Retourne le rang indiqué, si trouvé.
+
+        Si le rang n'est pas trouvé, lève une exception ValueError,
+        sauf si 'exception' est à False. Dans ce derneir cas,
+        retourne simplement None.
+
+        """
+        cle = cle.lower()
+        for rang in self.rangs:
+            if rang.cle.lower() == cle:
+                return rang
+
+        if exception:
+            raise ValueError("Rang {} introuvable".format(repr(cle)))
+
     def ajouter_rang(self, cle):
         """Ajoute le rang indiqué."""
+        valider_cle(cle)
+        if self.get_rang(cle, exception=False):
+            raise ValueError("Le rang de clé {} existe déjà".format(
+                    repr(cle)))
+
         rang = Rang(self, cle)
         self.rangs.append(rang)
         return rang
 
+    def supprimer_rang(self, cle):
+        """Supprime le rang dont la clé est indiquée.
+
+        Si le rang en question comporte des membres, lève l'exception
+        ValueError.
+
+        """
+        cle = cle.lower()
+        for rang in list(self.rangs):
+            if rang.cle.lower() == cle:
+                # Vérifie qu'il n'y a pas de membres dans ce rang
+                membres = [p for p in self.membres.values() if p.rang is rang]
+                if len(membres) > 0:
+                    s = "s" if len(membres) > 1 else ""
+                    raise ValueError("Le rang {} possède {} membre{s}".format(
+                            rang.cle, len(membres), s=s))
+
+                self.rangs.remove(rang)
+                rang.detruire()
+                return
+
+        raise ValueError("Rang {} introuvable".format(repr(cle)))
+
     def ajouter_talent(self, cle, nom, ouvert_a_tous=False):
         """Ajoute un talent à la guilde."""
+        valider_cle(cle)
         if cle in importeur.perso.talents:
             raise ValueError("la clé de talent {} est déjà utilisée".format(
                     repr(cle)))

@@ -28,76 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant l'éditeur de guilde 'gldedit'.
+"""Module contenant l'éditeur d'ateliers de guilde."""
 
-Si des redéfinitions de contexte-éditeur standard doivent être faites, elles
-seront placées dans ce package
-
-Note importante : ce package contient la définition d'un éditeur, mais
-celui-ci peut très bien être étendu par d'autres modules. Au quel cas,
-les extensions n'apparaîtront pas ici.
-
-"""
-
-from primaires.interpreteur.editeur.aes import AES
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
-from secondaires.crafting.editeurs.gldedit import atelier
-from secondaires.crafting.editeurs.gldedit import rang
 
-class GldEdit(Presentation):
+class GldAtelierEdit(Presentation):
 
-    """Classe définissant l'éditeur de guilde."""
+    """Classe définissant l'éditeur d'ateliers."""
 
-    nom = "gldedit"
+    nom = "gldedit:atelier"
 
-    def __init__(self, personnage, guilde):
+    def __init__(self, personnage, atelier, attribut):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
 
-        Presentation.__init__(self, instance_connexion, guilde)
-        if personnage and guilde:
-            self.construire(guilde)
+        Presentation.__init__(self, instance_connexion, atelier, None, False)
+        if personnage and atelier:
+            self.construire(atelier)
 
     def __getnewargs__(self):
         return (None, None)
 
-    def construire(self, guilde):
+    def construire(self, atelier):
         """Construction de l'éditeur"""
         # Nom
-        nom = self.ajouter_choix("nom", "n", Uniligne, guilde, "nom")
+        nom = self.ajouter_choix("nom", "n", Uniligne, atelier, "nom")
         nom.parent = self
-        nom.prompt = "Nom de la guilde : "
+        nom.prompt = "Nom de la atelier : "
         nom.apercu = "{valeur}"
         nom.aide_courte = \
-            "Entrez le |ent|nom|ff| de la guilde ou |cmd|/|ff| pour " \
+            "Entrez le |ent|nom|ff| de l'atelier ou |cmd|/|ff| pour " \
             "revenir à la fenêtre parente.\n\nNom actuel : " \
             "|bc|{valeur}|ff|"
-
-        # Ateliers
-        ateliers = self.ajouter_choix("ateliers", "a", AES,
-                guilde, "ateliers", "gldedit:atelier", (("clé", "clé"), ),
-                "get_atelier", "ajouter_atelier", "supprimer_atelier",
-                "cle_complete")
-        ateliers.parent = self
-        ateliers.apercu = "{valeur}"
-        ateliers.aide_courte = \
-            "Entrez la clé d'un atelier pour l'éditer ou :\n" \
-            " |ent|/a <clé de l'atelier à créer>|ff|\n" \
-            " |ent|/s <clé de l'atelier à supprimer>|ff|\n\n" \
-            "Ateliers actuels :{valeur}"
-
-        # Rangs
-        rangs = self.ajouter_choix("rangs", "r", AES,
-                guilde, "rangs", "gldedit:rang", (("clé", "clé"), ),
-                "get_rang", "ajouter_rang", "supprimer_rang", "nom_complet")
-        rangs.parent = self
-        rangs.apercu = "{valeur}"
-        rangs.aide_courte = \
-            "Entrez la clé d'un rang pour l'éditer ou :\n" \
-            " |ent|/a <clé du rang à créer>|ff|\n" \
-            " |ent|/s <clé du rang à supprimer>|ff|\n\n" \
-            "Rangs actuels :{valeur}"

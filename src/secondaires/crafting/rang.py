@@ -72,6 +72,31 @@ class Rang(BaseObj):
         precedents = guilde.rangs[:indice]
         return sum(p.points_guilde for p in precedents) + self.points_guilde
 
+    @property
+    def membres(self):
+        """Retourne la liste des membres (personnages) à ce rang."""
+        progressions = self.guilde.membres.values()
+        membres = []
+
+        for progression in progressions:
+            if progression.rang is self:
+                membres.append(progression.membre)
+
+        return membres
+
+    @property
+    def nom_complet(self):
+        """Retourne le nom complet du rang."""
+        membres = self.membres
+        ps = "s" if self.points_guilde > 1 else ""
+        ms = "s" if len(membres) > 1 else ""
+
+        msg = "{}, nom : {}, {} point{ps} de guilde ({} accumulés), " \
+                "{} membre{ms}".format(self.cle, self.nom, self.points_guilde,
+                self.total_points_guilde, len(membres), ps=ps, ms=ms)
+
+        return msg
+
     def ajouter_recette(self, resultat):
         """Ajoute une recette.
 
