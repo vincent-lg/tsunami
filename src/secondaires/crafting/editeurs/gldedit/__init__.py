@@ -44,6 +44,7 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from secondaires.crafting.editeurs.gldedit import atelier
 from secondaires.crafting.editeurs.gldedit import rang
+from secondaires.crafting.editeurs.gldedit import recette
 
 class GldEdit(Presentation):
 

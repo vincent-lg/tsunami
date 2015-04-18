@@ -97,25 +97,46 @@ class Rang(BaseObj):
 
         return msg
 
+    def get_recette(self, cle, exception=True):
+        """Récupère la recette correspondant à la clé.
+
+        La clé est celle du résultat.
+
+        """
+        cle = cle.lower()
+        for recette in self.recettes:
+            if recette.resultat == cle:
+                return recette
+
+        if exception:
+            raise ValueError("Recette {} inconnue".format(repr(cle)))
+
     def ajouter_recette(self, resultat):
         """Ajoute une recette.
 
         Le résultat doit être la clé du prototype de résultat.
 
         """
+        if self.get_recette(resultat, False):
+            raise ValueError("La recette {} existe déjà".format(
+                    repr(resultat)))
+
         recette = Recette(self)
         recette.resultat = resultat
         self.recettes.append(recette)
         return recette
 
-    def retirer_recette(self, recette):
+    def supprimer_recette(self, cle):
         """Retire la recette spécifiée."""
-        if recette not in self.recettes:
-            raise ValueError("la recette {} n'est pas dans le rang " \
-                    "{}".format(repr(recette), repr(self)))
+        cle = cle.lower()
+        for recette in list(self.recettes):
+            if recette.resultat == cle:
+                self.recettes.remove(recette)
+                recette.detruire()
+                return
 
-        self.recettes.remove(recette)
-        recette.detruire()
+        raise ValueError("Recette {} introuvable".format(repr(cle)))
+
 
 
 class RangIntrouvable(ExceptionCrafting):

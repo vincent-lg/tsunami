@@ -66,7 +66,33 @@ class Recette(BaseObj):
         return "<Recette pour {}>".format(self.resultat)
 
     def __str__(self):
-        return "recette pour {}".format(repr(self.cle))
+        return "recette pour {}".format(repr(self.resultat))
+
+    @property
+    def description(self):
+        msg = self.resultat + "("
+        premier = True
+
+        # Affichage des types
+        for cle, qtt in self.ingredients_types.items():
+            if premier:
+                premier = False
+            else:
+                msg += ", "
+
+            msg += "type {} X {}".format(cle, qtt)
+
+        # Affichage des objets
+        for cle, qtt in self.ingredients_objets.items():
+            if premier:
+                premier = False
+            else:
+                msg += ", "
+
+            msg += "objet {} X {}".format(cle, qtt)
+
+        msg += ")"
+        return msg
 
     def ajouter_type(self, nom_type, quantite=1):
         """Ajoute un type d'ingrédient."""

@@ -30,6 +30,7 @@
 
 """Module contenant l'éditeur de rangs de guilde."""
 
+from primaires.interpreteur.editeur.aes import AES
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
@@ -77,3 +78,15 @@ class GldRangEdit(Presentation):
             "Entrez |ent|le nombre de points|ff| de guilde nécessaires " \
             "ou |cmd|/|ff| pour revenir\nà la fenêtre parente.\n\n" \
             "Points actuels : {valeur}"
+
+        # Recettes
+        recettes = self.ajouter_choix("recettes", "r", AES,
+                rang, "recettes", "gldedit:recette", (("resultat", "clé"), ),
+                "get_recette", "ajouter_recette", "supprimer_recette", "description")
+        recettes.parent = self
+        recettes.apercu = "{valeur}"
+        recettes.aide_courte = \
+            "Entrez la clé d'une recette pour l'éditer ou :\n" \
+            " |ent|/a <clé de l'objet résultat de la recette à créer>|ff|\n" \
+            " |ent|/s <clé de la recette à supprimer>|ff|\n\n" \
+            "Recettes actuelles :{valeur}"
