@@ -181,6 +181,7 @@ class Guilde(BaseObj):
                     personnage, suivant.points_guilde, disponibles))
 
         self.changer_rang(personnage, suivant)
+        return suivant
 
     def quitter(self, personnage):
         """Quitte la guilde.

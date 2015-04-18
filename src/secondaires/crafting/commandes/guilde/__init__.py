@@ -38,6 +38,9 @@ from primaires.interpreteur.commande.commande import Commande
 from secondaires.crafting.commandes.guilde.creer import PrmCreer
 from secondaires.crafting.commandes.guilde.editer import PrmEditer
 from secondaires.crafting.commandes.guilde.liste import PrmListe
+from secondaires.crafting.commandes.guilde.promouvoir import PrmPromouvoir
+from secondaires.crafting.commandes.guilde.quitter import PrmQuitter
+from secondaires.crafting.commandes.guilde.rejoindre import PrmRejoindre
 
 class CmdGuilde(Commande):
 
@@ -61,3 +64,6 @@ class CmdGuilde(Commande):
         self.ajouter_parametre(PrmCreer())
         self.ajouter_parametre(PrmEditer())
         self.ajouter_parametre(PrmListe())
+        self.ajouter_parametre(PrmPromouvoir())
+        self.ajouter_parametre(PrmQuitter())
+        self.ajouter_parametre(PrmRejoindre())
