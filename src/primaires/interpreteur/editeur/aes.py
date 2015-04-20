@@ -182,6 +182,10 @@ class AES(Editeur):
         Syntaxe : /s <clé></clÃ>
 
         """
+        if self.suppression is None:
+            self.pere << "|err|Vous ne pouvez faire cela.|ff|"
+            return
+
         arg = arguments.strip()
         methode = getattr(self.objet, self.suppression)
 

@@ -1,4 +1,5 @@
 # -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
 # Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
@@ -34,6 +35,7 @@ from math import ceil
 
 from abstraits.obase import BaseObj
 from corps.fonctions import valider_cle
+from primaires.format.fonctions import supprimer_accents
 from secondaires.crafting.atelier import Atelier
 from secondaires.crafting.exception import ExceptionCrafting
 from secondaires.crafting.extension import Extension
@@ -290,9 +292,28 @@ class Guilde(BaseObj):
         self.talents[cle] = talent
         return talent
 
+    def get_type(self, nom_type):
+        """Cherche le type."""
+        nom_type = supprimer_accents(nom_type).lower()
+        for n_type in self.types:
+            if supprimer_accents(n_type.nom).lower() == nom_type:
+                return n_type
+
+        raise ValueError("Le type de nom {} est introuvable.".format(
+                repr(nçm_type)))
+
     def ajouter_type(self, nom_parent, nom_type):
         """Création du type précisé."""
-        parent = importeur.objet.get_type(nom_parent)
+        materiau = importeur.objet.get_type("matériau")
+        try:
+            parent = importeur.objet.get_type(nom_parent)
+        except KeyError:
+            raise ValueError("Le type parent {} est introuvable".format(
+                    repr(nom_parent)))
+        if not issubclass(parent, materiau):
+            raise ValueError("Le type parent {} n'est pas de type " \
+                    "matériau".format(repr(nom_type)))
+
         nom_parent = parent.nom_type
 
         try:

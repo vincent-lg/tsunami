@@ -43,8 +43,11 @@ from primaires.interpreteur.editeur.aes import AES
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from secondaires.crafting.editeurs.gldedit import atelier
+from secondaires.crafting.editeurs.gldedit import extension
 from secondaires.crafting.editeurs.gldedit import rang
 from secondaires.crafting.editeurs.gldedit import recette
+from secondaires.crafting.editeurs.gldedit import type
+from secondaires.crafting.editeurs.gldedit.types import EdtTypes
 
 class GldEdit(Presentation):
 
@@ -102,3 +105,16 @@ class GldEdit(Presentation):
             " |ent|/a <clé du rang à créer>|ff|\n" \
             " |ent|/s <clé du rang à supprimer>|ff|\n\n" \
             "Rangs actuels :{valeur}"
+
+        # Types
+        types = self.ajouter_choix("types dynamiques", "t", EdtTypes,
+                guilde, "types", "gldedit:type",
+                (("parent", "chaîne"), ("nom", "chaîne")), "get_type",
+                "ajouter_type", None, "nom_complet")
+        types.parent = self
+        types.apercu = "{valeur}"
+        types.aide_courte = \
+            "Entrez |ent|le nom du type|ff| pour l'éditer ou :\n" \
+            " |ent|/a <nom du type parent / nom du type à créer>|ff|\n" \
+            " |ent|/i <nom du type pour plus d'informations>|ff|\n\n" \
+            "Types définis dans cette guilde :{valeur}"

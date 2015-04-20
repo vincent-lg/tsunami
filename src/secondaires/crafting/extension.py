@@ -33,6 +33,7 @@
 import re
 
 from abstraits.obase import BaseObj
+from primaires.format.description import Description
 from primaires.format.fonctions import supprimer_accents
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.uniligne import Uniligne
@@ -84,16 +85,17 @@ class Extension(BaseObj):
 
     """
 
-    def __init__(self, guilde, editeur, nom):
+    def __init__(self, parent, editeur, nom):
         """Constructeur du talent."""
         BaseObj.__init__(self)
-        self.guilde = guilde
+        self.parent = parent
         self.editeur = editeur
         self.nom = nom
         self.titre = nom
+        self.description = Description(parent=self, scriptable=False)
         self._type = "chaîne"
         self.sup = {}
-        self.aide = "non précisée"
+        self.type_complet = "inconnu"
         self._construire()
 
     def __getnewargs__(self):
@@ -102,20 +104,28 @@ class Extension(BaseObj):
     def __repr__(self):
         return "<Extension d'éditeur {} ({})>".format(self.editeur, self.nom)
 
+    def __str__(self):
+        return "extension {}".format(self.nom)
+
     def _get_type(self):
         return self._type
-    def _set_type(self, chaine):
+    def _set_type(self, o_chaine):
         """Change le type."""
-        chaine = supprimer_accents(chaine).lower()
+        chaine = supprimer_accents(o_chaine).lower()
         for n_type, expression in TYPES.items():
             match = expression.match(chaine)
             if match:
                 self._type = n_type
                 self.sup = match.groupdict()
+                self.type_complet = o_chaine
                 return
 
         raise ValueError("le type {} est invalide".format(repr(chaine)))
     type = property(_get_type, _set_type)
+
+    @property
+    def nom_complet(self):
+        return "{} ({})".format(self.nom, self.type_complet)
 
     @property
     def type_editeur(self):
@@ -178,8 +188,8 @@ class Extension(BaseObj):
                 self.nom, *sup)
         enveloppe.parent = presentation
         enveloppe.apercu = "{valeur}"
-        enveloppe.aide_courte = self.aide.replace("{", "{{").replace("}",
-                "}}").replace("$valeur", "{valeur}")
+        enveloppe.aide_courte = str(self.description).replace("{",
+        "{{").replace("}", "}}").replace("$valeur", "{valeur}")
 
     @staticmethod
     def etendre_editeur(editeur, presentation, objet):
@@ -197,3 +207,10 @@ class Extension(BaseObj):
             for extension in guilde.extensions:
                 if extension.editeur == editeur:
                     extension.creer(presentation, objet)
+
+            # Extensions de type
+            if editeur == "objet":
+                for n_type in guilde.types:
+                    if objet.est_de_type(n_type.nom):
+                        for extension in n_type.extensions:
+                            extension.creer(presentation, objet)

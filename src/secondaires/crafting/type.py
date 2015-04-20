@@ -33,6 +33,7 @@
 from abstraits.obase import BaseObj
 from primaires.objet.types import MetaType
 from primaires.format.fonctions import supprimer_accents
+from secondaires.crafting.extension import Extension
 
 class Type(BaseObj):
 
@@ -45,15 +46,23 @@ class Type(BaseObj):
         self.parent = parent
         self.nom = nom
         self.attributs = []
+        self.extensions = []
         self._construire()
 
     def __getnewargs__(self):
         return (None, "", "")
 
+    @property
+    def nom_complet(self):
+        """Retourne le nom complet."""
+        return "{} (parent : {})".format(self.nom, self.parent)
+
     def ajouter_attribut(self, attribut):
         """Ajout d'un attribut."""
         self.attributs.append(attribut)
         importeur.crafting.enregistrer_YML()
+        classe = importeur.objet.get_type(self.nom)
+        classe.attributs_crafting = list(self.attributs)
 
     def supprimer_attribut(self, attribut):
         """Supprime l'attribut précisé."""
@@ -61,6 +70,35 @@ class Type(BaseObj):
             self.attributs.remove(attribut)
 
         importeur.crafting.enregistrer_YML()
+        classe = importeur.objet.get_type(self.nom)
+        classe.attributs_crafting = list(self.attributs)
+
+    def get_extension(self, nom, exception=True):
+        """Retourne l'extension précisée."""
+        nom = supprimer_accents(nom).lower()
+
+        for extension in self.extensions:
+            if supprimer_accents(extension.nom).lower() == nom:
+                return extension
+
+        if exception:
+            raise ValueError("L'extension {} n'existe pas".format(repr(nom)))
+
+    def ajouter_extension(self, nom, nom_type):
+        """Ajout d'une extension."""
+        if self.get_extension(nom, False):
+            raise ValueError("L'extension {} existe déj)".format(repr(nom)))
+
+        extension = Extension(self, None, nom)
+        extension.type = nom_type
+        self.extensions.append(extension)
+        return extension
+
+    def supprimer_extension(self, nom):
+        """Supprime l'extension précisée."""
+        extension = self.get_extension(nom)
+        self.extensions.remove(extension)
+        extension.detruire()
 
     def creer(self):
         """Création du type."""
