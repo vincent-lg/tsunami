@@ -138,6 +138,16 @@ class Module(BaseModule):
         self.logger.info(format_nb(len(guildes),
                 "{nb} guilde{s} ouverte{s}", fem=True))
 
+        # Ajout des commandes dynamiques
+        nb_cmd = 0
+        for guilde in self.guildes.values():
+            for commande in guilde.commandes:
+                commande.ajouter()
+                nb_cmd += 1
+
+        self.logger.info(format_nb(nb_cmd,
+                "{nb} commande{s} dynamique{s} créée{s}", fem=True))
+
     @property
     def guildes_ouvertes(self):
         """Retourne la liste des guildes ouvertes."""

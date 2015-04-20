@@ -37,6 +37,7 @@ from abstraits.obase import BaseObj
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import supprimer_accents
 from secondaires.crafting.atelier import Atelier
+from secondaires.crafting.commande_dynamique import CommandeDynamique
 from secondaires.crafting.exception import ExceptionCrafting
 from secondaires.crafting.extension import Extension
 from secondaires.crafting.progression import Progression
@@ -365,6 +366,53 @@ class Guilde(BaseObj):
         self.ateliers.remove(atelier)
         atelier.detruire()
 
+    def get_commande(self, nom, exception=True):
+        """Cherche la commande indiquée."""
+        sa_nom = supprimer_accents(nom).lower()
+        for commande in self.commandes:
+            if supprimer_accents(commande.nom_complet).lower() == sa_nom:
+                return commande
+
+        if exception:
+            raise ValueError("La commande {} est introuvable".format(
+                    repr(nom)))
+
+    def ajouter_commande(self, nom):
+        """Ajout d'une commande.
+
+        Le nom est sous la forme 'nom_francais/nom_anglais'. Il
+        peut être aussi sous la forme
+        'commande:parametre_francais/parametre_anglais'.
+
+        """
+        if self.get_commande(nom, exception=False):
+            raise ValueError("La commande {} existe déjà".format(repr(nom)))
+
+        parent = ""
+        if ":" in nom:
+            noms = nom.split(":")
+            parent = ":".join(noms[:-1])
+            importeur.interpreteur.trouver_commande(parent)
+            nom = noms[-1]
+
+        if nom.count("/") != 1:
+            raise ValueError("Précisez <nom_français/nom_anglais>")
+
+        nom_francais, nom_anglais = nom.split("/")
+        nom_francais = nom_francais.strip()
+        nom_anglais = nom_anglais.strip()
+        commande = CommandeDynamique(parent, nom_francais, nom_anglais)
+        self.commandes.append(commande)
+        return commande
+
+    def supprimer_commande(self, nom):
+        """Supprime la commande indiquée."""
+        commande = self.get_commande(nom)
+        if commande.brouillon:
+            self.commandes.remove(commande)
+            commande.detruire()
+        else:
+            raise ValueError("Cette commande est déjà ouverte")
 
 class GuildeSansRang(ExceptionCrafting):
 

@@ -43,6 +43,7 @@ from primaires.interpreteur.editeur.aes import AES
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from secondaires.crafting.editeurs.gldedit import atelier
+from secondaires.crafting.editeurs.gldedit import commande
 from secondaires.crafting.editeurs.gldedit import extension
 from secondaires.crafting.editeurs.gldedit import rang
 from secondaires.crafting.editeurs.gldedit import recette
@@ -118,3 +119,24 @@ class GldEdit(Presentation):
             " |ent|/a <nom du type parent / nom du type à créer>|ff|\n" \
             " |ent|/i <nom du type pour plus d'informations>|ff|\n\n" \
             "Types définis dans cette guilde :{valeur}"
+
+        # Commandes dynamique
+        commandes = self.ajouter_choix("commandes dynamiques", "c", AES,
+                guilde, "commandes", "gldedit:commande",
+                (("nom", "chaîne"), ), "get_commande",
+                "ajouter_commande", "supprimer_commande", "nom_complet")
+        commandes.parent = self
+        commandes.apercu = "{valeur}"
+        commandes.aide_courte = \
+            "Entrez |ent|le nom de la commande|ff| pour l'éditer ou :\n" \
+            " |ent|/a <nom de la commande à ajouter>|ff|\n" \
+            " |ent|/s <nom de la commande à supprimer>|ff|\n\n" \
+            "Le nom d'une commande doit être composé du nom éventuel " \
+            "des commandes\nparentes, un signe deux points, le " \
+            "nom français, un signe |ent|/|ff|\net le nom anglais.\n\n" \
+            "Par exemple :\n" \
+            "    |ent|chanter/sing|ff|\n" \
+            "Pour créer la commande sans parent. Ou :\n" \
+            "    |ent|oeuf:casser/break|ff|\n" \
+            "Pour ajouter le paramètre casser/break à la commande " \
+            "oeuf.\n\nCommandes définies dans cette guilde :{valeur}"

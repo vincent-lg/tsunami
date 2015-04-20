@@ -296,6 +296,7 @@ class Module(BaseModule):
         str_commande = liste_vers_chaine(lst_commande)
 
         nom_commande = str_commande.split(":")[0]
+
         # On parcourt la liste des commandes
         for noeud in commandes:
             if noeud.commande.nom_francais == nom_commande:
