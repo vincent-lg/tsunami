@@ -146,14 +146,14 @@ class Tableau(Editeur):
             except (ValueError, AssertionError):
                 self.pere << "|err|Indice de suppression invalide.|ff|"
             else:
-                del objet[indice]
+                del objet[indice - 1]
                 self.actualiser()
 
     def interpreter(self, msg):
         """Interprétation du contexte"""
         objet = getattr(self.objet, self.attribut)
         if objet is None:
-            objet = {}
+            objet = []
             setattr(self.objet, self.attribut, objet)
 
         msgs = msg.split(" / ")

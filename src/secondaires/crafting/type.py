@@ -87,7 +87,7 @@ class Type(BaseObj):
     def ajouter_extension(self, nom, nom_type):
         """Ajout d'une extension."""
         if self.get_extension(nom, False):
-            raise ValueError("L'extension {} existe déj)".format(repr(nom)))
+            raise ValueError("L'extension {} existe déjà".format(repr(nom)))
 
         extension = Extension(self, None, nom)
         extension.type = nom_type

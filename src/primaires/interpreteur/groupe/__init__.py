@@ -76,7 +76,7 @@ class ConteneurGroupes(BaseObj):
     @property
     def nom_groupes(self):
         """Retourne une liste des noms des groupes existants."""
-        return [g.nom for g in self._groupes.values()]
+        return sorted([g.nom for g in self._groupes.values()])
 
     def ajouter_groupe(self, nom_groupe, flags=AUCUN):
         """Méthode appelée pour ajouter un groupe.

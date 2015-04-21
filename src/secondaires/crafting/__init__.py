@@ -65,6 +65,9 @@ class Module(BaseModule):
 
     def config(self):
         """Configuration du module."""
+        # Extension du crafting
+        self.importeur.scripting.a_charger.append(self)
+
         # Ajout du niveau
         importeur.perso.ajouter_niveau("profession", "profession")
 

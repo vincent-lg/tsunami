@@ -332,11 +332,37 @@ class Guilde(BaseObj):
         setattr(def_type, classe.__name__, classe)
         return type
 
-    def ajouter_extension(self, editeur, nom):
+    def get_extension(self, nom, exception=True):
+        """Retourne l'extension précisée."""
+        nom = supprimer_accents(nom).lower()
+
+        for extension in self.extensions:
+            if supprimer_accents(extension.nom).lower() == nom:
+                return extension
+
+        if exception:
+            raise ValueError("L'extension {} n'existe pas".format(repr(nom)))
+
+    def ajouter_extension(self, editeur, nom, nom_type="chaîne"):
         """Ajout d'une extension."""
+        editeur = editeur.lower()
+        if self.get_extension(nom, False):
+            raise ValueError("L'extension {} existe déjà".format(repr(nom)))
+
+        if editeur not in ("salle", "pnj", "objet"):
+            raise ValueError("Type d'éditeur {} inconnu".format(
+                    repr(editeur)))
+
         extension = Extension(self, editeur, nom)
+        extension.type = nom_type
         self.extensions.append(extension)
         return extension
+
+    def supprimer_extension(self, nom):
+        """Supprime l'extension précisée."""
+        extension = self.get_extension(nom)
+        self.extensions.remove(extension)
+        extension.detruire()
 
     def get_atelier(self, cle):
         """Retourne, si trouvé, l'atelier.

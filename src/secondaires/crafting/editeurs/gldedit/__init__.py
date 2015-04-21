@@ -140,3 +140,30 @@ class GldEdit(Presentation):
             "    |ent|oeuf:casser/break|ff|\n" \
             "Pour ajouter le paramètre casser/break à la commande " \
             "oeuf.\n\nCommandes définies dans cette guilde :{valeur}"
+
+        # Extensions
+        extensions = self.ajouter_choix("extensions d'éditeur", "e", AES,
+                guilde, "extensions", "gldedit:extension",
+                (("éditeur", "chaîne"), ("nom", "chaîne"), ("type", "chaîne")),
+                "get_extension", "ajouter_extension", "supprimer_extension",
+                "nom_complet")
+        extensions.parent = self
+        extensions.apercu = "{valeur}"
+        extensions.aide_courte = \
+            "Entrez |ent|le nom de l'extension|ff| pour l'éditer ou :\n" \
+            " |ent|/a <éditeur / nom de l'extension à ajouter / type>|ff|\n" \
+            " |ent|/s <nom de l'extension à supprimer>|ff|\n\n" \
+            "Les éditeurs possibles sont : |ent|salle|ff|, " \
+            "|ent|objet|ff| ou |ent|PNJ|ff|.\n" \
+            "Les types d'extension possibles sont :\n" \
+            "    chaîne (une chaîne de caractères sans contrainte)\n" \
+            "    entier (un nombre entier sans contrainte)\n" \
+            "    entier positif / négatif / positif ou nul / " \
+            "négatif ou nul\n" \
+            "    entier entre X et Y\n" \
+            "    tableau avec les colonnes nom (type), nom2 (type2)...\n\n" \
+            "Exemples de types :\n" \
+            "    entier positif ou nul\n" \
+            "    entier entre 5 et 32\n" \
+            "    tableau avec les colonnes nom (chaîne), âge (entier)\n\n" \
+            "Extensions actuelles :{valeur}"

@@ -66,6 +66,7 @@ class CommandeDynamique(BaseObj):
         self.commande = None # commande statique liée
         self._utilisable = False
         self.doit_etre_membre = True
+        self._groupe = "pnj"
         self._nom_categorie = "divers"
         self._aide_courte = "à renseigner..."
         self.aide_longue = Description(parent=self, scriptable=False,
@@ -115,6 +116,15 @@ class CommandeDynamique(BaseObj):
         self._nom_categorie = categorie
         self.maj()
     nom_categorie = property(_get_nom_categorie, _set_nom_categorie)
+
+    def _get_groupe(self):
+        return self._groupe
+    def _set_groupe(self, groupe):
+        self._groupe = groupe
+        if self.commande:
+            importeur.interpreteur.groupes.changer_groupe_commande(
+                    self.commande.adresse, groupe)
+    groupe = property(_get_groupe, _set_groupe)
 
     def _get_utilisable(self):
         return self._utilisable
@@ -194,6 +204,7 @@ class CommandeDynamique(BaseObj):
             commande = Commande(self.nom_francais, self.nom_anglais)
 
         commande.schema = self.schema
+        commande.groupe = self._groupe
         commande.nom_categorie = self.nom_categorie
         commande.aide_courte = self.aide_courte
         commande.aide_longue = str(self.aide_longue)

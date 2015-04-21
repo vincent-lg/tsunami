@@ -60,6 +60,18 @@ class EdtCmdedit(Presentation):
 
     def construire(self, commande):
         """Construction de l'éditeur"""
+        # Groupe
+        groupes = importeur.interpreteur.groupes.nom_groupes
+        groupe = self.ajouter_choix("groupe", "r", Choix, commande,
+                "groupe", groupes)
+        groupe.parent = self
+        groupe.apercu = "{valeur}"
+        groupe.aide_courte = \
+            "Entrez le |ent|groupe d'exécution|ff| de la commande ou\n" \
+            "|cmd|/|ff| pour revenir à la fenêtre " \
+            "parente.\n\nGroupes existants : " + ", ".join(groupes) + \
+            ".\n\nGroupe actuel : |bc|{valeur}|ff|"
+
         # Catégorie
         categories = sorted(list(importeur.interpreteur.categories.items()),
                 key=lambda c: c[1])

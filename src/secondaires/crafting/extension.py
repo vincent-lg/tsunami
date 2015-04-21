@@ -36,7 +36,8 @@ from abstraits.obase import BaseObj
 from primaires.format.description import Description
 from primaires.format.fonctions import supprimer_accents
 from primaires.interpreteur.editeur.entier import Entier
-from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.tableau import Tableau
+from primaires.interpreteur.editeur.uniligne import Uniligne, CLE
 
 # Constantes
 TYPES = {
@@ -47,6 +48,7 @@ TYPES = {
             # Bornes
             (\ entre\ (?P<min>[0-9]+)\ et\ (?P<max>[0-9]+))?$""", re.X),
     "chaîne": re.compile("^chaine$"),
+    "clé": re.compile("^cle$"),
     "tableau": re.compile(r"""
             tableau\ avec\ les\ colonnes
             # Colonne 1 (obligatoire)
@@ -135,6 +137,8 @@ class Extension(BaseObj):
 
         if nom_type == "chaîne":
             return Uniligne, ()
+        elif nom_type == "clé":
+            return Uniligne, (CLE, )
         elif nom_type == "entier":
             borne_min = borne_max = None
             signe = sup["signe"]
@@ -152,6 +156,31 @@ class Extension(BaseObj):
                 borne_max = int(sup["max"])
 
             return Entier, (borne_min, borne_max)
+        elif nom_type == "tableau":
+            colonnes = []
+            for i in range(4):
+                ncol = sup["ncol{}".format(i + 1)]
+                tcol = sup["tcol{}".format(i + 1)]
+                if not ncol or not tcol:
+                    break
+
+                if tcol == "chaine":
+                    tcol = "chaîne"
+                elif tcol == "cl":
+                    tcol = "clé"
+                elif tcol == "prototype d'objet":
+                    tcol = importeur.objet.prototypes.copy()
+                elif tcol == "prototype de pnj":
+                    tcol = importeur.pnj.prototypes.copy()
+                elif tcol == "entier":
+                    pass
+                else:
+                    raise ValueError("Colonne {} ({}) : type {} " \
+                            "inconnu".format(i + 1, ncol, repr(tcol)))
+
+                colonnes.append((ncol, tcol))
+
+            return Tableau, (colonnes, )
         else:
             raise ValueError("type {} inconnu".format(repr(nom_type)))
 
