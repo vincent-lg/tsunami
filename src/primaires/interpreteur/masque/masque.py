@@ -166,6 +166,9 @@ class Masque(metaclass=MetaMasque):
 
         return True
 
+    def __repr__(self):
+        return "<Masque {}>".format(self.nom)
+
     def __str__(self):
         """Affichage du masque"""
         return self.nom

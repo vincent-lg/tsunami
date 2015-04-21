@@ -80,6 +80,7 @@ class Uniligne(Editeur):
 
     def interpreter(self, msg):
         """Interprétation du contexte"""
+        msg = msg.strip()
         try:
             msg = self.type(msg)
         except ValueError:

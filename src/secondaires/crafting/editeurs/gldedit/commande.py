@@ -30,10 +30,12 @@
 
 """Module contenant l'éditeur de commande dynamique."""
 
+from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.scripting.editeurs.edt_script import EdtScript
 
 class EdtCmdedit(Presentation):
 
@@ -57,6 +59,48 @@ class EdtCmdedit(Presentation):
 
     def construire(self, commande):
         """Construction de l'éditeur"""
+        # Catégorie
+        categories = sorted(list(importeur.interpreteur.categories.items()),
+                key=lambda c: c[1])
+        categorie = self.ajouter_choix("catégorie", "c", Choix, commande,
+                "nom_categorie", list(
+                importeur.interpreteur.categories.keys()))
+        categorie.parent = self
+        categorie.apercu = "{valeur}"
+        categorie.aide_courte = \
+            "Entrez la |ent|catégorie|ff| de la commande ou " \
+            "|cmd|/|ff| pour revenir à la fenêtre " \
+            "parente.\n\nCatégories possibles :"
+
+        for identifiant, nom in categories:
+            categorie.aide_courte += "\n  |ent|{}|ff| ({})".format(
+                    identifiant, nom)
+
+        categorie.aide_courte += \
+            "\n\nCatégorie actuelle : |bc|{valeur}|ff|"
+
+        # Schéma
+        schema = self.ajouter_choix("schéma", "h", Uniligne, commande,
+                "schema")
+        schema.parent = self
+        schema.prompt = "Schéma de la commande : "
+        schema.apercu = "{valeur}"
+        schema.aide_courte = \
+            "Entrez le |ent|schéma|ff| de la commande ou |cmd|/|ff| " \
+            "pour revenir à la fenêtre parente.\n\n" \
+            "Le schéma d'une commande représente les informations " \
+            "qui\ndoivent être passées en paramètre de la commande. " \
+            "La syntaxe\ncomplète d'un schéma peut parfois être " \
+            "assez complexe et mérite de\nplus longues explications. " \
+            "En fonction du schéma choisit, certaines\nvariables seront " \
+            "accessibles dans le script de la commande.\n\nQuelques " \
+            "exemples :\n" \
+            "    <message>\n" \
+            "    (<texte_libre>)\n" \
+            "    (<nombre>) <objet_inventaire>\n" \
+            "    <objet_sol> dans/into <objet_inventaire>\n\n" \
+            "Schéma actuel : |bc|{valeur}|ff|"
+
         # Aide courte
         synopsys = self.ajouter_choix("synopsys", "s", Uniligne, commande,
                 "aide_courte")
@@ -81,3 +125,9 @@ class EdtCmdedit(Presentation):
         utilisable = self.ajouter_choix("commande utilisable", "uti",
                 Flag, commande, "utilisable")
         utilisable.parent = self
+
+        # Script
+        scripts = self.ajouter_choix("scripts", "sc", EdtScript,
+                commande.script)
+        scripts.parent = self
+

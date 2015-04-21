@@ -114,6 +114,10 @@ class Module(BaseModule):
         self.importeur.hook["editeur:etendre"].ajouter_evenement(
                 Extension.etendre_editeur)
 
+        # Ajout de la catégorie de commande
+        self.importeur.interpreteur.categories["profession"] = \
+                "Commandes de profession"
+
         BaseModule.init(self)
 
     def ajouter_commandes(self):

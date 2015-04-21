@@ -401,14 +401,14 @@ class Guilde(BaseObj):
         nom_francais, nom_anglais = nom.split("/")
         nom_francais = nom_francais.strip()
         nom_anglais = nom_anglais.strip()
-        commande = CommandeDynamique(parent, nom_francais, nom_anglais)
+        commande = CommandeDynamique(self, parent, nom_francais, nom_anglais)
         self.commandes.append(commande)
         return commande
 
     def supprimer_commande(self, nom):
         """Supprime la commande indiquée."""
         commande = self.get_commande(nom)
-        if commande.brouillon:
+        if not commande.utilisable:
             self.commandes.remove(commande)
             commande.detruire()
         else:

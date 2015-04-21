@@ -229,3 +229,12 @@ class NoeudMasque(BaseNoeud):
             msg += " " + self.suivant.afficher(personnage)
 
         return msg
+
+    def extraire_masques(self, masques=None):
+        """Extraction des masques de la commande."""
+        for masque in self.masques:
+            masques[masque.nom] = masque
+
+        for fils in self.fils:
+            if fils:
+                fils.extraire_masques(masques)

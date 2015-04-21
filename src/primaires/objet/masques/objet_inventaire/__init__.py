@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,40 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe DicMasques."""
+"""Fichier contenant le masque <objet_inventaire>."""
 
-from collections import OrderedDict
+from primaires.objet.masques.nom_objet import NomObjet
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+from primaires.format.fonctions import *
 
-class DicMasques(OrderedDict):
+class ObjetInventaire(NomObjet):
 
-    """Dictionnaire ordonné contenant les masques.
+    """Masque <objet_inventaire>.
+
+    On attend un nom d'objet en paramètre.
+    Cet objet se trouve dans l'inventaire du personnage.
 
     """
 
-    def __getitem__(self, item):
-        """Retourne l'item si présent ou None sinon"""
-        if item not in self:
-            res = None
-        else:
-            res = OrderedDict.__getitem__(self, item)
+    nom = "objet_inventaire"
+    nom_complet = "nom d'un objet dans votre inventaire"
 
-        return res
-
-    @property
-    def premier(self):
-        """Retourne le premier élément du dictionnaire"""
-        return tuple(self.values())[0]
-
-    @property
-    def dernier(self):
-        """Retourne le dernier élément du dictionnaire"""
-        return tuple(self.values())[-1]
-
-    @property
-    def dernier_parametre(self):
-        """Retourne le dernier paramètre"""
-        for masque in reversed(list(self.values())):
-            if masque.est_parametre():
-                return masque
-
-        raise ValueError("aucun paramètre dans ce dictionnaire")
+    def __init__(self):
+        """Constructeur du masque"""
+        NomObjet.__init__(self)
+        self.proprietes["conteneurs"] = \
+                "(personnage.equipement.inventaire_simple.iter_objets_qtt(" \
+                "True), )"
+        self.proprietes["quantite"] = "True"
+        self.proprietes["conteneur"] = "True"

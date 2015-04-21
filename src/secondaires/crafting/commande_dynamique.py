@@ -34,6 +34,7 @@ from abstraits.obase import BaseObj
 from primaires.format.description import Description
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.masque.parametre import Parametre
+from primaires.scripting.script import Script
 
 class CommandeDynamique(BaseObj):
 
@@ -53,22 +54,28 @@ class CommandeDynamique(BaseObj):
 
     """
 
-    def __init__(self, parent, nom_francais, nom_anglais):
+    nom_scripting = "la commande dynamique"
+
+    def __init__(self, guilde, parent, nom_francais, nom_anglais):
         """Constructeur d'une commande dynamique."""
         BaseObj.__init__(self)
+        self.guilde = guilde
         self.parent = parent
         self.nom_francais = nom_francais
         self.nom_anglais = nom_anglais
         self.commande = None # commande statique liée
         self._utilisable = False
+        self.doit_etre_membre = True
         self._nom_categorie = "divers"
         self._aide_courte = "à renseigner..."
         self.aide_longue = Description(parent=self, scriptable=False,
                 callback="maj")
+        self._schema = ""
+        self.script = ScriptCommande(self)
         self._construire()
 
     def __getnewargs__(self):
-        return ("", "", "")
+        return (None, "", "", "")
 
     def __repr__(self):
         parent = "{}:".format(self.parent) if self.parent else ""
@@ -104,7 +111,7 @@ class CommandeDynamique(BaseObj):
     def _get_nom_categorie(self):
         return self._nom_categorie
     def _set_nom_categorie(self, categorie):
-        self._nom_categorie = nom_categorie
+        self._nom_categorie = categorie
         self.maj()
     nom_categorie = property(_get_nom_categorie, _set_nom_categorie)
 
@@ -115,6 +122,57 @@ class CommandeDynamique(BaseObj):
         if utilisable and self.commande is None:
             self.ajouter()
     utilisable = property(_get_utilisable, _set_utilisable)
+
+    def _get_schema(self):
+        return self._schema
+    def _set_schema(self, schema):
+        self._schema = schema
+        if self.commande:
+            self.commande.noeud.construire_arborescence(schema)
+            self.maj_variables()
+    schema = property(_get_schema, _set_schema)
+
+    def maj_variables(self):
+        """Met à jour les variables en fonction du schéma."""
+        # Supprime les variables scripting
+        evt = self.script["exécute"]
+        for nom in list(evt.variables.keys()):
+            if nom not in ("personnage", ):
+                evt.supprimer_variable(nom)
+
+        noeud = self.commande.noeud
+        masques = noeud.extraire_masques()
+
+        # Parcourt des masques
+        for masque in masques.values():
+            n_type = getattr(type(masque), "nom", "")
+            if n_type == "message":
+                var = evt.ajouter_variable(masque.nom, "str")
+                var.aide = "le message entré"
+            elif n_type == "texte_libre":
+                nom = masque.nom
+                if nom == "texte_libre":
+                    nom = "texte"
+
+                var = evt.ajouter_variable(nom, "str")
+                var.aide = "le texte libre entré"
+            elif n_type == "nom_joueur":
+                nom = masque.nom
+                if nom == "nom_joueur":
+                    nom = "joueur"
+
+                var = evt.ajouter_variable(nom, "Personnage")
+                var.aide = "le joueur dont le nom a été entré"
+            elif n_type == "nombre":
+                var = evt.ajouter_variable(masque.nom, "Fraction")
+                var.aide = "le nombre entré"
+            elif n_type in ("objet_equipe", "objet_inventaire"):
+                nom = masque.nom
+                if nom in ("objet_equipe", "objet_inventaire"):
+                    nom = "objets"
+
+                var = evt.ajouter_variable(nom, "list")
+                var.aide = "la liste des objets entrée"
 
     def ajouter(self):
         """Ajoute la commande dans l'interpréteur.
@@ -134,9 +192,11 @@ class CommandeDynamique(BaseObj):
         else:
             commande = Commande(self.nom_francais, self.nom_anglais)
 
+        commande.schema = self.schema
         commande.nom_categorie = self.nom_categorie
         commande.aide_courte = self.aide_courte
         commande.aide_longue = str(self.aide_longue)
+        commande.peut_executer = self.peut_executer
         commande.interpreter = self.interpreter
         if parent:
             parent.ajouter_parametre(commande)
@@ -146,11 +206,52 @@ class CommandeDynamique(BaseObj):
         self.commande = commande
         return commande
 
+    def peut_executer(self, personnage):
+        """Retourne True si le personnage peut ecuter la commande."""
+        if self.doit_etre_membre:
+            guilde = self.guilde
+            if personnage not in guilde.membres:
+                return False
+
+        return True
+
     def interpreter(self, personnage, dic_masques):
         """Méthode outre-passant l'interprétation de la commande statique.
 
+        On exécute le script de la commande, évènement 'exécute'.
+        Les masques interprétés se retrouvent en partie dans les
+        variables du script.
+
         """
-        personnage << "Bien joué !"
+        variables = {}
+
+        # On parcourt tous les masques
+        for masque in dic_masques.values():
+            n_type = getattr(type(masque), "nom", "")
+            if n_type == "message":
+                variables[masque.nom] = masque.message
+            elif n_type == "texte_libre":
+                nom = masque.nom
+                if nom == "texte_libre":
+                    nom = "texte"
+
+                variables[nom] = masque.texte
+            elif n_type == "nom_joueur":
+                nom = masque.nom
+                if nom == "nom_joueur":
+                    nom = "joueur"
+
+                variables[nom] = masque.joueur
+            elif n_type == "nombre":
+                variables[masque.nom] = masque.nombre
+            elif n_type in ("objet_equipe", "objet_inventaire"):
+                nom = masque.nom
+                if nom in ("objet_equipe", "objet_inventaire"):
+                    nom = "objets"
+
+                variables[nom] = masque.objets
+
+        self.script["exécute"].executer(personnage=personnage, **variables)
 
     def maj(self):
         """Mise à jour de la commande dynamique."""
@@ -159,3 +260,23 @@ class CommandeDynamique(BaseObj):
             self.commande.aide_courte = self._aide_courte
             self.commande.aide_longue = str(self.aide_longue)
 
+
+class ScriptCommande(Script):
+
+    """Script et évènements propres aux commandes dynamiques."""
+
+    def init(self):
+        """Initialisation du script"""
+        # Événement exécute
+        evt_execute = self.creer_evenement("exécute")
+        evt_execute.aide_courte = "un personnage exécute la commande"
+        evt_execute.aide_longue = \
+            "Cet évènement est appelé quand un personnage exécute " \
+            "la commande. Il doit en avoir le droit (être membre " \
+            "de la guilde si la commande est limitée aux membres, " \
+            "par exemple). Le schéma de la commande est interprété " \
+            "et disponible grâce à des variables, listées ci-dessous."
+
+        # Configuration des variables de l'évènement exécute
+        var_perso = evt_execute.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage exécutant la commande"

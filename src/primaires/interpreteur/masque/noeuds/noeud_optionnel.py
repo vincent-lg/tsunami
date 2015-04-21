@@ -129,3 +129,10 @@ class NoeudOptionnel(BaseNoeud):
             msg += " " + self.suivant.afficher(personnage)
 
         return msg
+    def extraire_masques(self, masques=None):
+        """Extraction des masques de la commande."""
+        if self.suivant:
+            self.suivant.extraire_masques(masques)
+
+        if self.interne:
+            self.interne.extraire_masques(masques)
