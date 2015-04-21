@@ -30,9 +30,10 @@
 
 """Ce fichier définit le contexte-éditeur 'Tableau'."""
 
-from . import Editeur
+from corps.fonctions import valider_cle
 from primaires.format.fonctions import *
 from primaires.format.tableau import Tableau as AffTableau, DROITE, GAUCHE
+from . import Editeur
 
 class Tableau(Editeur):
 
@@ -67,11 +68,12 @@ class Tableau(Editeur):
     nom = "editeur:base:tableau"
 
     def __init__(self, pere, objet=None, attribut=None, colonnes=None,
-            affichage=None):
+            affichage=None, callback=None):
         """Constructeur de l'éditeur."""
         Editeur.__init__(self, pere, objet, attribut)
         self.colonnes = colonnes
         self.affichage = affichage or {}
+        self.callback = callback
         self.ajouter_option("s", self.opt_supprimer)
 
     def accueil(self):
@@ -96,7 +98,8 @@ class Tableau(Editeur):
                 if n_type in ("entier", "flottant"):
                     alignement = DROITE
 
-                tableau.ajouter_colonne(nom, alignement=alignement)
+                tableau.ajouter_colonne(nom.capitalize(),
+                        alignement=alignement)
 
             # Parcourt des lignes
             for ligne in lignes:
@@ -112,13 +115,13 @@ class Tableau(Editeur):
 
     @staticmethod
     def afficher_apercu(apercu, objet, valeur, colonnes=None,
-            affichage=None):
+            affichage=None, callback=None):
         """Affichage de l'aperçu."""
         taille = 0
         if valeur:
             taille = len(valeur)
 
-        return apercu.format(objet=objet, taille=taille)
+        return apercu.format(objet=objet, taille=taille, valeur=taille)
 
     def opt_supprimer(self, arguments):
         """Supprime l'objet si autorisé."""
@@ -169,6 +172,13 @@ class Tableau(Editeur):
             if isinstance(n_type, str):
                 if n_type == "chaîne":
                     pass
+                elif n_type == "clé":
+                    try:
+                        valider_cle(valeur)
+                    except ValueError:
+                        self.pere << "|err|Colonne {} : {} n'est " \
+                                "pas ue clé valide.".format(i + 1, valeur)
+                        return
                 elif n_type == "entier":
                     try:
                         valeur = int(valeur)
@@ -220,5 +230,9 @@ class Tableau(Editeur):
             objet[cle] = args
         else:
             objet.append(msgs)
+
+        if self.callback:
+            methode = getattr(self.objet, self.callback)
+            methode()
 
         self.actualiser()

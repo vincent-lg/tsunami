@@ -34,6 +34,7 @@ from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.tableau import Tableau
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.scripting.editeurs.edt_script import EdtScript
 
@@ -125,6 +126,37 @@ class EdtCmdedit(Presentation):
         utilisable = self.ajouter_choix("commande utilisable", "uti",
                 Flag, commande, "utilisable")
         utilisable.parent = self
+
+        # États
+        etats = self.ajouter_choix("états", "t", Tableau,
+                commande, "etats",
+                (("clé", "clé"), ("refus", "chaîne"), ("visible", "chaîne"),
+                ("actions autorisées", "chaîne")), None, "maj")
+        etats.parent = self
+        etats.apercu = "{taille}"
+        etats.aide_courte = \
+            "Vous pouvez configurer ici le tableau des états.\n" \
+            "Un état empêche un personnage d'effectuer certaines " \
+            "actions.\nPar exemple, si le personnage est en train " \
+            "de pêcher (un état\nspécifique est associé à la pêche), " \
+            "il ne peut se déplacer. Le\nconcept d'états permet " \
+            "de mettre en pause une certaine action en\ngarantissant " \
+            "que le joueur est toujours occupé.\nPour créer un état, " \
+            "précisez quatre arguments séparés par le\nsigne |ent|/|ff| :\n" \
+            "    |ent|La clé de l'état|ff| (utile pour le scripting " \
+            "notammment)\n" \
+            "    |ent|Le message de refus|ff| (par exemple " \
+            "|cmd|Vous êtes en train de pêcher|ff|)\n" \
+            "    |ent|Le message visible pour les personnages " \
+            "présents dans la salle|ff| ;\n" \
+            "    |ent|Les actions autorisées|ff| séparées par un " \
+            "espace.\n(Les actions peuvent être |ent|parler|ff|, " \
+            "|ent|regarder|ff| ou |ent|ingérer|ff| par exemple)\n\n" \
+            "Par exemple :\n    |ent|peche / Vous êtes en train de " \
+            "pêcher / pêche tranquillement ici|ff|\n\n" \
+            "Pour supprimer un état, utilisez :\n" \
+            " |ent|/s <clé de l'état à supprimer>|ff|\n\n" \
+            "États actuel :\n{valeur}"
 
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,

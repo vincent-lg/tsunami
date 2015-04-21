@@ -71,6 +71,7 @@ class CommandeDynamique(BaseObj):
         self.aide_longue = Description(parent=self, scriptable=False,
                 callback="maj")
         self._schema = ""
+        self.etats = {}
         self.script = ScriptCommande(self)
         self._construire()
 
@@ -259,6 +260,20 @@ class CommandeDynamique(BaseObj):
             self.commande.nom_categorie = self.nom_categorie
             self.commande.aide_courte = self._aide_courte
             self.commande.aide_longue = str(self.aide_longue)
+
+        # Ajout des états
+        for cle, couple in self.etats.items():
+            refus = couple[0]
+            visible = couple[1]
+            actions = couple[2]
+            if cle in importeur.perso.etats:
+                etat = importeur.perso.etats[cle]
+            else:
+                etat = importeur.perso.ajouter_etat(cle)
+
+            etat.msg_refus = refus.capitalize().strip(".!;,? ")
+            etat.msg_visible = visible.lower().strip(" .?!")
+            etat.act_autorisees = actions.split(" ")
 
 
 class ScriptCommande(Script):

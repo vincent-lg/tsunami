@@ -77,11 +77,23 @@ class Module(BaseModule):
             self.enregistrer_YML()
 
         # Création des types dynamiques
-        for nom, informations in self.types.items():
-            parent = informations["parent"]
-            attributs = informations.get("attributs", [])
-            classe = Type.creer_type(parent, nom, attributs)
-            setattr(def_type, classe.__name__, classe)
+        complet = False
+        while not complet:
+            complet = True
+            for nom, informations in self.types.items():
+                parent = informations["parent"]
+                try:
+                    importeur.objet.get_type(parent)
+                except KeyError:
+                    complet = False
+                    continue
+
+                try:
+                    importeur.objet.get_type(nom)
+                except KeyError:
+                    attributs = informations.get("attributs", [])
+                    classe = Type.creer_type(parent, nom, attributs)
+                    setattr(def_type, classe.__name__, classe)
 
         BaseModule.config(self)
 
@@ -147,6 +159,7 @@ class Module(BaseModule):
         for guilde in self.guildes.values():
             for commande in guilde.commandes:
                 commande.ajouter()
+                commande.maj()
                 nb_cmd += 1
 
         self.logger.info(format_nb(nb_cmd,
