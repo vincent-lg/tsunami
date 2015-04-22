@@ -85,6 +85,7 @@ class Module(BaseModule):
             "syntaxe": syntaxe,
         }
         self.execute_test = []
+        self.alarmes = {}
 
         # Statistiques
         self.tps_actions = 0.003
@@ -386,6 +387,29 @@ class Module(BaseModule):
                 if cle_quete in j.quetes and etape in \
                 j.quetes[cle_quete].niveaux]
         return len(joueurs)
+
+    def alarme_existe(self, personnage, alarme):
+        """Retourne True si l'alarme existe."""
+        alarmes = self.alarmes.get(personnage, [])
+        return alarme in alarmes
+
+    def ecrire_alarme(self, personnage, alarme):
+        """Écrit l'alarme."""
+        print("On écrit l'alarme", personnage, alarme)
+        if personnage not in self.alarmes:
+            self.alarmes[personnage] = []
+
+        if alarme not in self.alarmes[personnage]:
+            self.alarmes[personnage].append(alarme)
+
+    def supprimer_alarme(self, personnage, alarme):
+        """Supprime l'alarme."""
+        if personnage not in self.alarmes:
+            return
+
+        while alarme in self.alarmes[personnage]:
+            print("On supprime l'alarme", personnage, alarme)
+            self.alarmes[personnage].remove(alarme)
 
     def stats_scripting(self, infos):
         """Ajoute les stats concernant le scripting."""

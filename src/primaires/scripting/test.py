@@ -296,17 +296,23 @@ class Test(BaseObj):
                         "l'exécution d'un script.\nL'alerte {} a été " \
                         "créée pour en rendre compte.|ff|".format(alerte.no)
 
-    def executer_code(self, evenement, code):
+    def executer_code(self, evenement, code, personnage=None,
+            alarme=None):
         """Exécute le code passé en paramètre.
 
         Le code est sous la forme d'un générateur. On appelle donc
         la fonction next et récupère le retour (la valeur suivant
         le yield).
             Si ce retour est 0, on continue l'exécution (appel récursif).
+            Si le retour est un tuple, on crée une alarme
             Si le retour est un autre nombre, on diffère l'exécutçion
             Si le retour est None, on s'arrête.
 
         """
+        if personnage and alarme:
+            if not importeur.scripting.alarme_existe(personnage, alarme):
+                return
+
         t1 = time()
         # Exécution
         importeur.scripting.execute_test.append(self)
@@ -323,19 +329,30 @@ class Test(BaseObj):
                 return
 
             tps = 0
-            try:
-                tps = int(ret)
-                assert tps >= 0
-            except (ValueError, AssertionError):
-                pass
+            personnage = alarme = None
+            if isinstance(ret, tuple):
+                personnage = ret[1]
+                alarme = ret[2]
+                try:
+                    tps = int(ret[0])
+                    assert tps >= 0
+                except (ValueError, AssertionError):
+                    pass
+            else:
+                try:
+                    tps = int(ret)
+                    assert tps >= 0
+                except (ValueError, AssertionError):
+                    pass
 
             if tps == 0:
-                self.executer_code(evenement, code)
+                self.executer_code(evenement, code, personnage, alarme)
             else:
                 # On diffère l'exécution du script
                 nom = "script_dif<" + str(id(code)) + ">"
                 importeur.diffact.ajouter_action(nom, tps,
-                        self.executer_code, evenement, code)
+                        self.executer_code, evenement, code, personnage,
+                        alarme)
         finally:
             importeur.scripting.execute_test.remove(self)
             t2 = time()
