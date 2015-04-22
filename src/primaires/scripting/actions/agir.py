@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,61 +28,46 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction xp."""
+"""Fichier contenant l'action agir."""
 
-from fractions import Fraction
+from primaires.perso.exceptions.action import ExceptionAction
+from primaires.scripting.action import Action
+from primaires.scripting.exceptions import InterrompreCommande
+from primaires.scripting.instruction import ErreurExecution
 
-from primaires.scripting.fonction import Fonction
+class ClasseAction(Action):
 
-class ClasseFonction(Fonction):
-
-    """Retourne l'XP d'un PNJ passé en paramètre."""
+    """Force le personnage d'agir pour vérifier ses états."""
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.xp, "Personnage")
-        cls.ajouter_types(cls.xp_niveau, "Fraction")
+        cls.ajouter_types(cls.agir, "Personnage")
+        cls.ajouter_types(cls.agir, "Personnage", "str")
 
     @staticmethod
-    def xp(pnj):
-        """Retourne le gain d'XP absolu que le bénéficiaire doit récupérer.
+    def agir(personnage, cle_action=""):
+        """Force un personnage à agir.
 
-        Les paramètres à entrer sont :
+        Cette action est utile pour vérifier qu'un personnage a
+        le droit de faire une action. Un état (ou plusieurs)
+        pourraient l'en empêcher. Si un état empêche le personnage
+        d'agir, un message de refus lui est envoyé (par exemple,
+        "Vous êtes en train de combattre" ou "Vous êtes inconscient")
+        et le script est interrompu.
 
-          * pnj : le PNJ (la victime)
+        Paramètres à renseigner :
 
-        ATTENTION : cette fonction ne donne pas de l'XP, elle retourne
-        simplement l'XP sous la forme d'un nombre absolu.
+          * personnage : le personnage qui doit agir
+          * cle_action : la clé de l'action (peut être laissée vide)
 
-        Voici un exemple d'utilisation :
-
-          xp = xp(pnj)
-          donner_xp personnage "combat" xp
-
-        """
-        if pnj.gain_xp:
-            xp = importeur.perso.gen_niveaux.grille_xp[pnj.niveau][1]
-            xp = xp * pnj.gain_xp / 100
-            return Fraction(xp)
-
-        return Fraction(0)
-
-    @staticmethod
-    def xp_niveau(niveau):
-        """Retourne l'XP du niveau sélectionné.
-
-        Le numéro du niveau doit être précisé (entre 1 et 100,
-        ou le nombre réel en fonction de votre configuration).
-
-        Paramètres à entrer :
-
-          * niveau : le numéro du niveau (un nombre)
-
-        Exemple d'utilisation :
-
-          xp = xp(5)
-          donner_xp personnage "combat" xp
+        Changer la clé de l'action permet spécifiquement
+        d'autoriser certains états à être valiés quand même.
 
         """
-        xp = importeur.perso.gen_niveaux.grille_xp[int(niveau)][1]
-        return Fraction(xp)
+        cle_action = cle_action or "action"
+
+        try:
+            personnage.agir(cle_action)
+        except ExceptionAction as err:
+            personnage << "|err|{}|ff|".format(str(err))
+            raise InterrompreCommande()
