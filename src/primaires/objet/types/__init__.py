@@ -112,6 +112,8 @@ from .cadavre import Cadavre
 
 # Matériau
 from .matiere import Matiere
+from .outil import Outil
+from .machine import Machine
 from .fourrure import Fourrure
 from .peau import Peau
 from .os import Os

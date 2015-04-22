@@ -306,14 +306,17 @@ class Guilde(BaseObj):
     def ajouter_type(self, nom_parent, nom_type):
         """Création du type précisé."""
         materiau = importeur.objet.get_type("matériau")
+        outil = importeur.objet.get_type("outil")
+        machine = importeur.objet.get_type("machine")
+
         try:
             parent = importeur.objet.get_type(nom_parent)
         except KeyError:
             raise ValueError("Le type parent {} est introuvable".format(
                     repr(nom_parent)))
-        if not issubclass(parent, materiau):
+        if not issubclass(parent, (materiau, outil, machine)):
             raise ValueError("Le type parent {} n'est pas de type " \
-                    "matériau".format(repr(nom_type)))
+                    "matériau, outil ou machine".format(repr(nom_type)))
 
         nom_parent = parent.nom_type
 
