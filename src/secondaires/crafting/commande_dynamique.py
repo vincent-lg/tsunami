@@ -35,12 +35,13 @@ from primaires.format.description import Description
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.masque.parametre import Parametre
 from primaires.scripting.script import Script
+from primaires.scripting import types
 
 class CommandeDynamique(BaseObj):
 
     """Classe décrivant les commandes dynamiques du crafting.
 
-    Il existe deux types de ocmmandes dynamiques : celles définies
+    Il existe deux types de commandes dynamiques : celles définies
     dans le scripting, qui font systématiquement référence à
     des éléments observables, et celles définies dans le crafting,
     qui sont plus configurables et permettent presque autant de
@@ -310,3 +311,5 @@ class ScriptCommande(Script):
         var_commande = evt_execute.ajouter_variable("commande", "Commande")
         var_commande.aide = "la commande-même (utile pour les blocs)"
 
+
+types.Commande = CommandeDynamique

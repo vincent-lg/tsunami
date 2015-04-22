@@ -297,7 +297,7 @@ class Test(BaseObj):
                         "créée pour en rendre compte.|ff|".format(alerte.no)
 
     def executer_code(self, evenement, code, personnage=None,
-            alarme=None):
+            alarme=None, exc_interruption=True):
         """Exécute le code passé en paramètre.
 
         Le code est sous la forme d'un générateur. On appelle donc
@@ -321,7 +321,8 @@ class Test(BaseObj):
         except ErreurExecution as err:
             self.erreur_execution(str(err))
         except InterrompreCommande as err:
-            raise err
+            if exc_interruption:
+                raise err
         except Exception as err:
             self.erreur_execution(str(err))
         else:
@@ -346,13 +347,13 @@ class Test(BaseObj):
                     pass
 
             if tps == 0:
-                self.executer_code(evenement, code, personnage, alarme)
+                self.executer_code(evenement, code, personnage, alarme, False)
             else:
                 # On diffère l'exécution du script
                 nom = "script_dif<" + str(id(code)) + ">"
                 importeur.diffact.ajouter_action(nom, tps,
                         self.executer_code, evenement, code, personnage,
-                        alarme)
+                        alarme, False)
         finally:
             importeur.scripting.execute_test.remove(self)
             t2 = time()
