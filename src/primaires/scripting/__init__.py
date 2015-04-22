@@ -311,6 +311,7 @@ class Module(BaseModule):
                     args = " ".join(inspect.getargspec(methode).args)
                 except ValueError:
                     args = ""
+                args = args.replace(", variables)", ")")
                 msg += "\n==== " + action.nom + " " + args + " ====\n\n"
                 msg += inspect.getdoc(methode) + "\n"
 
@@ -334,6 +335,7 @@ class Module(BaseModule):
             msg += inspect.getdoc(fonction) + "\n"
             for methode in fonction._parametres_possibles.values():
                 args = ", ".join(inspect.getargspec(methode).args)
+                args = args.replace(", variables)", ")")
                 msg += "\n==== " + nom + "(" + args + ") ====\n\n"
                 msg += inspect.getdoc(methode) + "\n"
 
