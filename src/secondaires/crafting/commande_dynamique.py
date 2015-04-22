@@ -148,7 +148,7 @@ class CommandeDynamique(BaseObj):
         # Supprime les variables scripting
         evt = self.script["exécute"]
         for nom in list(evt.variables.keys()):
-            if nom not in ("personnage", ):
+            if nom not in ("personnage", "commande"):
                 evt.supprimer_variable(nom)
 
         noeud = self.commande.noeud
@@ -263,7 +263,8 @@ class CommandeDynamique(BaseObj):
 
                 variables[nom] = masque.objets
 
-        self.script["exécute"].executer(personnage=personnage, **variables)
+        self.script["exécute"].executer(personnage=personnage, commande=self,
+                **variables)
 
     def maj(self):
         """Mise à jour de la commande dynamique."""
@@ -306,3 +307,6 @@ class ScriptCommande(Script):
         # Configuration des variables de l'évènement exécute
         var_perso = evt_execute.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage exécutant la commande"
+        var_commande = evt_execute.ajouter_variable("commande", "Commande")
+        var_commande.aide = "la commande-même (utile pour les blocs)"
+
