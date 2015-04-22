@@ -164,7 +164,7 @@ class EdtCmdedit(Presentation):
             "    |ent|Les actions autorisées|ff| séparées par un " \
             "espace.\n(Les actions peuvent être |ent|parler|ff|, " \
             "|ent|regarder|ff| ou |ent|ingérer|ff| par exemple)\n\n" \
-            "Par exemple :\n    |ent|peche / Vous êtes en train de " \
+            "Par exemple :\n    |ent|pecher / Vous êtes en train de " \
             "pêcher / pêche tranquillement ici|ff|\n\n" \
             "Pour supprimer un état, utilisez :\n" \
             " |ent|/s <clé de l'état à supprimer>|ff|\n\n" \

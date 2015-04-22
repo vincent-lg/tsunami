@@ -284,7 +284,10 @@ class CommandeDynamique(BaseObj):
             else:
                 etat = importeur.perso.ajouter_etat(cle)
 
-            etat.msg_refus = refus.capitalize().strip(".!;,? ")
+            etat.msg_refus = refus.capitalize()
+            if not etat.msg_refus.endswith((".", "?", "!")):
+                etat.msg_refus += "."
+
             etat.msg_visible = visible.lower().strip(" .?!")
             etat.act_autorisees = actions.split(" ")
 

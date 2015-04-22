@@ -35,16 +35,28 @@ from fractions import Fraction
 from primaires.scripting.fonction import Fonction
 from primaires.scripting.instruction import ErreurExecution
 
+# Fonction de conversion
+def convertir_liste(liste):
+    """Convertit la liste passée en argument, récursivement."""
+    for i, elt in enumerate(liste):
+        if isinstance(elt, (int, float)):
+            liste[i] = Fraction(elt)
+        elif isinstance(elt, list):
+            convertir_liste(elt)
+
+
 class ClasseFonction(Fonction):
 
     """Retourne la configuration d'une salle, personnage ou objet."""
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.configuration, "Salle", "str")
+        cls.ajouter_types(cls.configuration_salle, "Salle", "str")
+        cls.ajouter_types(cls.configuration_personnage, "Personnage", "str")
+        cls.ajouter_types(cls.configuration_objet, "Objet", "str")
 
     @staticmethod
-    def configuration(salle, nom_configuration):
+    def configuration_salle(salle, nom_configuration):
         """Retourne la configuration spécifique à une salle.
 
         La configuration est le résultat de l'extension du
@@ -74,15 +86,113 @@ class ClasseFonction(Fonction):
               # forme n'est pas vide, vous pouvez travailler avec
 
         """
-        def convertir_liste(liste):
-            """Convertit la liste passée en argument, récursivement."""
-            for i, elt in enumerate(liste):
-                if isinstance(elt, (int, float)):
-                    liste[i] = Fraction(elt)
-                elif isinstance(elt, list):
-                    convertir_liste(elt)
-
         donnee = getattr(importeur.crafting.configuration[salle],
+                nom_configuration)
+
+        if isinstance(donnee, (int, float)):
+            donnee = Fraction(donnee)
+        elif isinstance(donnee, list):
+            # Déréférence
+            donnee = list(donnee)
+            convertir_liste(donnee)
+
+        return donnee
+
+    @staticmethod
+    def configuration_personnage(personnage, nom_configuration):
+        """Retourne la configuration spécifique à un personnage.
+
+        La configuration est le résultat de l'extension du
+        crafting. Chaque guilde peut configurer ses propres
+        extensions d'éditeur. Cette fonction scripting permet de
+        récupérer la valeur particulière. Si la configuration n'existe
+        pas, retourne simplement une variable vide. Vous pouvez
+        (et devriez) contrôler la validité de la variable retournée
+        grâce à une simple condition (voir les exemples plus bas).
+
+        Notez que si vous passez un joueur à cette fonction, le
+        retour sera toujours vide (les joueurs n'ont pas de
+        configuration crafting propre). Les PNJ retourneront la
+        configuration spécifique de leur prototype, car la configuration
+        est définie au niveau prototype, pas au niveau PNJ.
+
+        Paramètres à préciser :
+
+          * personnage : le personnage spécifique
+          * nom_configuration : le nom de la configuration (une chaîne)
+
+        Si vous avez créé, dans une guilde, une extension dont le
+        nom est "humeur" s'appliquant à l'éditeur de PNJ, par exemple,
+        vous pouvez récupérer la valeur pour chaque PNJ configuré
+        grâce à l'instruction :
+
+          humeur = configuration(pnj, "humeur")
+
+        Assurez-vous que la configuration existe. Si la configuration
+        n'a pas été renseignée dans l'éditeur, elle sera vide.
+
+          si humeur:
+              # humeur n'est pas vide, vous pouvez travailler avec
+
+        """
+        prototype = getattr(personnage, "prototype", None)
+        if prototype is None:
+            return None
+
+        donnee = getattr(importeur.crafting.configuration[prototype],
+                nom_configuration)
+
+        if isinstance(donnee, (int, float)):
+            donnee = Fraction(donnee)
+        elif isinstance(donnee, list):
+            # Déréférence
+            donnee = list(donnee)
+            convertir_liste(donnee)
+
+        return donnee
+
+    @staticmethod
+    def configuration_objet(objet, nom_configuration):
+        """Retourne la configuration spécifique à un objet.
+
+        La configuration est le résultat de l'extension du
+        crafting. Chaque guilde peut configurer ses propres
+        extensions d'éditeur. Cette fonction scripting permet de
+        récupérer la valeur particulière. Si la configuration n'existe
+        pas, retourne simplement une variable vide. Vous pouvez
+        (et devriez) contrôler la validité de la variable retournée
+        grâce à une simple condition (voir les exemples plus bas).
+
+        Notez que les objets retourneront la configuration
+        spécifique de leur prototype, car la configuration est
+        définie au niveau prototype, pas au niveau objet.
+
+        Paramètres à préciser :
+
+          * objet : l'objet spécifique
+          * nom_configuration : le nom de la configuration (une chaîne)
+
+        Si vous avez créé, dans une guilde, une extension dont le
+        nom est "qualité" s'appliquant à l'éditeur d'objet, par exemple,
+        vous pouvez récupérer la valeur pour chaque objet configuré
+        grâce à l'instruction :
+
+          qualite = configuration(objet, "qualité")
+
+        Notez que le même système s'applique pour des types
+        particuliers avec leurs extensions spécifiques.
+        Assurez-vous que la configuration existe. Si la configuration
+        n'a pas été renseignée dans l'éditeur, elle sera vide.
+
+          si qualite:
+              # qualite n'est pas vide, vous pouvez travailler avec
+
+        """
+        prototype = getattr(objet, "prototype", None)
+        if prototype is None:
+            return None
+
+        donnee = getattr(importeur.crafting.configuration[prototype],
                 nom_configuration)
 
         if isinstance(donnee, (int, float)):
