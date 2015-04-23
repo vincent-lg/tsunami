@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,48 +28,47 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction contenus_dans."""
-
-from fractions import Fraction
+"""Fichier contenant la fonction est_de_type."""
 
 from primaires.scripting.fonction import Fonction
-from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
 
-    """Renvoie les objets contenus dans un conteneur."""
+    """Retourne vrai si l'objet ou prototype est de type indiqué."""
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.contenus_dans, "Objet")
+        cls.ajouter_types(cls.est_de_type_objet, "Objet", "str")
+        cls.ajouter_types(cls.est_de_type_objet, "PrototypeObjet", "str")
 
     @staticmethod
-    def contenus_dans(conteneur):
-        """Renvoie la liste des objets contenus dans ce conteneur.
+    def est_de_type_objet(objet, nom_type):
+        """Retourne vrai si l'objet est du type indiqué.
 
-        On doit donc utiliser une boucle pour pardcourir les objets
-        retournés par cette fonction. Le conteneur peut être un conteneur
-        simple, une machine, un conteneur de nourriture ou de potion.
-        Dans ce dernier cas, il ne retourne qu'un seul objet
-        qui est la potion contenue.
+        Retourne vrai également si le nom de type est un parent du
+        type de l'objet. Par exemple, si l'objet est un fruit
+        mais que l'on test si c'est une nourriture.
 
-        NOTE IMPORTANTE : si le conteneur est un conteneur standard
-        ou une machine, ne retourne que les objets uniques. C'est-à-dire,
-        principalement, que l'argent ne sera pas retourné.
+        Paramètres à entrer :
 
-        Vous pouvez utiliser la fonction 'grouper_par_nom' pour
-        avoir un groupage par nom d'objets, ce qui a tendance à
-        être plus agréable, notamment pour l'affichage.
+          * objet : l'objet à tester
+          * nom_type : le nom du type
 
         """
-        if conteneur.est_de_type("conteneur de potion"):
-            return [conteneur.potion] if conteneur.potion else []
+        return objet.est_de_type(nom_type)
 
-        if conteneur.est_de_type("conteneur de nourriture"):
-            return list(conteneur.nourriture)
+    @staticmethod
+    def est_de_type_prototype(prototype, nom_type):
+        """Retourne vrai si le prototype d'objet est du type indiqué.
 
-        if conteneur.est_de_type("conteneur") or conteneur.est_de_type(
-                "machine"):
-            return list(conteneur.conteneur._objets)
+        Retourne vrai également si le nom de type est un parent du
+        type du prototype. Par exemple, si le prototype est un fruit
+        mais que l'on test si c'est une nourriture.
 
-        raise ErreurExecution("{} n'est pas un conteneur".format(conteneur))
+        Paramètres à entrer :
+
+          * prototype : le prototype d'objet à tester
+          * nom_type : le nom du type
+
+        """
+        return prototype.est_de_type(nom_type)

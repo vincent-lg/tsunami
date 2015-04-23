@@ -60,7 +60,6 @@ class CmdPoser(Commande):
         conteneur.proprietes["conteneurs"] = \
                 "(personnage.equipement.inventaire_simple, " \
                 "personnage.salle.objets_sol)"
-        conteneur.proprietes["types"] = "('conteneur', )"
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -73,6 +72,7 @@ class CmdPoser(Commande):
         dans = dans.objet if dans else None
 
         pose = 0
+        poses = []
         for objet, qtt, conteneur in objets:
             if not objet.peut_prendre:
                 personnage << "Vous ne pouvez pas prendre {} avec vos " \
@@ -84,10 +84,15 @@ class CmdPoser(Commande):
 
             if dans and not (dans.est_de_type("conteneur") and \
                     dans.accepte_type(objet) and dans.peut_contenir(
-                    objet, qtt)):
+                    objet, qtt)) and not (dans.est_de_type("machine") and \
+                    dans.machine_conteneur and dans.peut_contenir(objet, qtt)):
                 personnage << "|err|{} ne peut pas contenir {}.|ff|".format(
                         dans.get_nom(), objet.get_nom(qtt))
                 return
+
+            if dans and dans.est_de_type("machine"):
+                dans.script["entrepose"]["avant"].executer(
+                        personnage=personnage, machine=dans, objet=objet)
 
             conteneur.retirer(objet, qtt)
             if dans:
@@ -104,6 +109,7 @@ class CmdPoser(Commande):
                 personnage.salle.objets_sol.ajouter(objet, qtt)
 
             pose += qtt
+            poses.append(objet)
             if pose >= nombre:
                 break
             nombre -= qtt
@@ -111,17 +117,22 @@ class CmdPoser(Commande):
                 break
 
         if dans:
-            if getattr(dans, "meuble_support", False):
-                connecteur = "sur"
+            if dans.est_de_type("machine"):
+                dans.script["entrepose"]["après"].executer(
+                        personnage=personnage, machine=dans, objets=poses)
             else:
-                connecteur = "dans"
+                if getattr(dans, "meuble_support", False):
+                    connecteur = "sur"
+                else:
+                    connecteur = "dans"
 
-            personnage << "Vous déposez {} {connecteur} {}.".format(
-                    objet.get_nom(pose), dans.nom_singulier,
-                    connecteur=connecteur)
-            personnage.salle.envoyer("{{}} dépose {} {connecteur} {}.".format(
+                personnage << "Vous déposez {} {connecteur} {}.".format(
                         objet.get_nom(pose), dans.nom_singulier,
-                        connecteur=connecteur), personnage)
+                        connecteur=connecteur)
+                personnage.salle.envoyer("{{}} dépose {} {connecteur} " \
+                            "{}.".format(objet.get_nom(pose),
+                            dans.nom_singulier, connecteur=connecteur),
+                            personnage)
         else:
             personnage << "Vous posez {}.".format(objet.get_nom(pose))
             personnage.salle.envoyer("{{}} pose {}.".format(

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction contenus_dans."""
+"""Fichier contenant la fonction grouper_par_nom."""
 
 from fractions import Fraction
 
@@ -37,39 +37,48 @@ from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
 
-    """Renvoie les objets contenus dans un conteneur."""
+    """Groupe les objets par nom."""
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.contenus_dans, "Objet")
+        cls.ajouter_types(cls.grouper_objets, "list")
 
     @staticmethod
-    def contenus_dans(conteneur):
-        """Renvoie la liste des objets contenus dans ce conteneur.
+    def grouper_objets(objets):
+        """Groupe les objets par nom.
 
-        On doit donc utiliser une boucle pour pardcourir les objets
-        retournés par cette fonction. Le conteneur peut être un conteneur
-        simple, une machine, un conteneur de nourriture ou de potion.
-        Dans ce dernier cas, il ne retourne qu'un seul objet
-        qui est la potion contenue.
+        Cette fonction travaille depuis une liste d'objets, et
+        retourne une liste de listes sous la forme liste(liste(objet1,
+        quantite1), liste(objet2, quantite2), ...)
 
-        NOTE IMPORTANTE : si le conteneur est un conteneur standard
-        ou une machine, ne retourne que les objets uniques. C'est-à-dire,
-        principalement, que l'argent ne sera pas retourné.
+        Paramètres à entrer :
 
-        Vous pouvez utiliser la fonction 'grouper_par_nom' pour
-        avoir un groupage par nom d'objets, ce qui a tendance à
-        être plus agréable, notamment pour l'affichage.
+          * objets : la liste des objets
+
+        Exemple d'utilisation :
+
+          # objets contient une liste d'objets
+          groupe = grouper_par_nom(objets)
+          pour chaque couple dans groupe:
+              objet = recuperer(liste, 1)
+              quantite = recuperer(liste, 2)
+              nom = nom_objet(objet, quantite)
+          fait
 
         """
-        if conteneur.est_de_type("conteneur de potion"):
-            return [conteneur.potion] if conteneur.potion else []
+        noms = {}
+        liens = {}
 
-        if conteneur.est_de_type("conteneur de nourriture"):
-            return list(conteneur.nourriture)
+        for objet in objets:
+            nom = objet.get_nom()
+            if nom not in noms:
+                noms[nom] = 0
+            noms[nom] += 1
+            liens[nom] = objet
 
-        if conteneur.est_de_type("conteneur") or conteneur.est_de_type(
-                "machine"):
-            return list(conteneur.conteneur._objets)
+        groupe = []
+        for nom, qtt in noms.items():
+            objet = liens[nom]
+            groupe.append([objet, Fraction(qtt)])
 
-        raise ErreurExecution("{} n'est pas un conteneur".format(conteneur))
+        return groupe
