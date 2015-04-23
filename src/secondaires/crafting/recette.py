@@ -74,7 +74,9 @@ class Recette(BaseObj):
         premier = True
 
         # Affichage des types
-        for cle, qtt in self.ingredients_types.items():
+        for cle, (qtt_min, qtt_max) in self.ingredients_types.items():
+            qtt = qtt_min if qtt_min == qtt_max else "{}-{}".format(
+                    qtt_min, qtt_max)
             if premier:
                 premier = False
             else:
@@ -83,7 +85,9 @@ class Recette(BaseObj):
             msg += "type {} X {}".format(cle, qtt)
 
         # Affichage des objets
-        for cle, qtt in self.ingredients_objets.items():
+        for cle, (qtt_min, qtt_max) in self.ingredients_objets.items():
+            qtt = qtt_min if qtt_min == qtt_max else "{}-{}".format(
+                    qtt_min, qtt_max)
             if premier:
                 premier = False
             else:
@@ -94,38 +98,6 @@ class Recette(BaseObj):
         msg += ")"
         return msg
 
-    def ajouter_type(self, nom_type, quantite=1):
-        """Ajoute un type d'ingrédient."""
-        if nom_type not in self.ingredients_types:
-            self.ingredients_types[nom_type] = 0
-        self.ingredients_types[nom_type] += quantite
-
-    def ajouter_objet(self, cle, quantite=1):
-        """Ajoute une clé de prototype d'ingrédient."""
-        if cle not in self.ingredients_objets:
-            self.ingredients_objets[cle] = 0
-        self.ingredients_objets[cle] += quantite
-
-    def retirer_type(self, nom_type, quantite=1):
-        """Retire le type de la liste des ingrédients."""
-        if nom_type not in self.ingredients_types:
-            raise ValueError("le type {} n'est pas dans la liste " \
-                    "d'ingrédients".format(repr(nom_type)))
-
-        self.ingredients_types[nom_type] -= quantite
-        if self.ingredients_types[nom_type] <= 0:
-            del self.ingredients_types[nom_type]
-
-    def retirer_objet(self, cle, quantite=1):
-        """Retire la clé de prototype de la liste des ingrédients."""
-        if cle not in self.ingredients_objets:
-            raise ValueError("l'objet {} n'est pas dans la liste " \
-                    "d'ingrédients".format(repr(cle)))
-
-        self.ingredients_objets[cle] -= quantite
-        if self.ingredients_objets[cle] <= 0:
-            del self.ingredients_objets[cle]
-
     def peut_faire(self, ingredients):
         """Vérifie si la liste des ingrédients fait la recette.
 
@@ -135,27 +107,41 @@ class Recette(BaseObj):
         n'est pas sélectionnée.
 
         """
-        types = self.ingredients_objets.copy()
-        objets = self.ingredients_types.copy()
+        types = self.ingredients_types.copy()
+        types_min = dict((t, q) for t, (q, x) in types.items())
+        types_max = dict((t, x - q) for t, (q, x) in types.items() if \
+                x - q > 0)
+        objets = self.ingredients_objets.copy()
+        objets_min = dict((o, q) for o, (q, x) in objets.items())
+        objets_max = dict((o, x - q) for o, (q, x) in objets.items() if \
+                x - q > 0)
 
         for ingredient in list(ingredients):
             cle = ingredient.cle
             nom_type = ingredient.nom_type
 
-            if cle in objets:
-                objets[cle] -= 1
-                if objets[cle] <= 0:
-                    del objets[cle]
-            elif nom_type in types:
-                types[nom_type] -= 1
-                if types[nom_type] <= 0:
-                    del types[nom_type]
+            if cle in objets_min:
+                objets_min[cle] -= 1
+                if objets_min[cle] <= 0:
+                    del objets_min[cle]
+            elif cle in objets_max:
+                objets_max[cle] -= 1
+                if objets_max[cle] <= 0:
+                    del objets_max[cle]
+            elif nom_type in types_min:
+                types_min[nom_type] -= 1
+                if types_min[nom_type] <= 0:
+                    del types_min[nom_type]
+            elif nom_type in types_max:
+                types_max[nom_type] -= 1
+                if types_max[nom_type] <= 0:
+                    del types_max[nom_type]
             else:
                 return False
 
             ingredients.remove(ingredient)
 
-        if types == {} and objets == {} and ingredients == []:
+        if types_min == {} and objets_min == {} and ingredients == []:
             # L'attente a été remplie
             return True
 

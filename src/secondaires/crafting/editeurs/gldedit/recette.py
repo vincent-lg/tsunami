@@ -72,7 +72,8 @@ class GldRecetteEdit(Presentation):
         liste_types = list(importeur.objet.types.keys())
         types = self.ajouter_choix("types", "t", Tableau,
                 recette, "ingredients_types",
-                (("type", liste_types), ("quantité", "entier")))
+                (("type", liste_types), ("minimum", "entier"),
+                ("maximum", "entier")))
         types.parent = self
         types.apercu = "{taille}"
         types.aide_courte = \
@@ -82,16 +83,17 @@ class GldRecetteEdit(Presentation):
             "exemple fourrure) ou les\nclés d'objet précises (par " \
             "exemple rubis). Ce tableau\ncontient les types " \
             "d'objet et leur quantité. Précisez :\n |cmd|<nom " \
-            "du type> / <quantité>|ff|\nPar exemple :\n |cmd|légume " \
-            "/ 8|ff|\n\nPour supprimer un type d'ingrédient, " \
-            "utilisez l'option :\n |cmd|/s <nom du type à " \
-            "supprimer>|ff|\n\nTypes actuel :\n{valeur}"
+            "du type> / <tt minimum> / <qtt maximum>|ff|\nPar " \
+            "exemple :\n |cmd|légume / 8 / 15|ff|\n\nPour supprimer " \
+            "un type d'ingrédient, utilisez l'option :\n |cmd|/s <nom " \
+            "du type à supprimer>|ff|\n\nTypes actuel :\n{valeur}"
 
         # Objets
         liste_objets = list(importeur.objet.prototypes.keys())
         objets = self.ajouter_choix("objets", "o", Tableau,
                 recette, "ingredients_objets",
-                (("prototype", liste_objets), ("quantité", "entier")))
+                (("prototype", liste_objets), ("minimum", "entier"),
+                ("maximum", "entier")))
         objets.parent = self
         objets.apercu = "{taille}"
         objets.aide_courte = \
@@ -101,8 +103,8 @@ class GldRecetteEdit(Presentation):
             "exemple fourrure) ou les\nclés d'objet précises (par " \
             "exemple rubis). Ce tableau\ncontient les objets " \
             "et leur quantité. Précisez :\n |cmd|<clé " \
-            "du prototype> / <quantité>|ff|\nPar exemple :\n |cmd|" \
-            "pomme_rouge / 8|ff|\n\nPour supprimer un ingrédient, " \
-            "utilisez l'option :\n |cmd|/s <clé du prototype à " \
-            "supprimer>|ff|\n\nObjets actuel :\n{valeur}"
+            "du prototype> / <qtt minimum> / <qtt maximum>|ff|\nPar " \
+            "exemple :\n |cmd|pomme_rouge / 8 / 12|ff|\n\nPour " \
+            "supprimer un ingrédient, utilisez l'option :\n |cmd|/s " \
+            "<clé du prototype à supprimer>|ff|\n\nObjets actuel :\n{valeur}"
 
