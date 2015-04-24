@@ -287,7 +287,7 @@ class Module(BaseModule):
             attributs = presentation.ajouter_choix("attributs", "at",
                     Tableau, importeur.crafting.configuration[objet],
                     "attributs", (("attribut", lst_attributs),
-                    ("valeur", "chaîne")))
+                    ("valeur", "chaîne")), None, None, "dict")
             attributs.parent = presentation
             attributs.aide_courte = \
                 "Vous pouvez configurer ici les attributs de " \

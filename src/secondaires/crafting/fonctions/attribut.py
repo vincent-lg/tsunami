@@ -28,51 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction recette."""
+"""Fichier contenant la fonction attribut."""
 
 from primaires.scripting.fonction import Fonction
 from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
 
-    """Retourne la recette si trouvée."""
+    """Retourne l'attribut crafting d'un objet."""
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.recette, "Personnage", "str", "list")
+        cls.ajouter_types(cls.attribut, "Objet", "str")
 
     @staticmethod
-    def recette(personnage, cle_guilde, ingredients):
-        """Cherche et fabrique la recette si trouvée.
+    def attribut(objet, nom_attribut):
+        """Retourne l'attribut spécifié 'un objet.
 
-        Si la recette n'est pas trouvé dans la guilde, retourne
-        une variable vide. Sinon, retourne l'objet nouvellement
-        créé.
+        L'attribut est un ajout de crafting, modifiable dans
+        l'éditeur 'oedit'. Il s'applique à un objet ou à son
+        prototype, si l'attribut n'est pas trouvé dans l'objet-même.
 
         Paramètres à préciser :
 
-          * personnage : le personnage voulant fabriquer la recette
-          * cle_guilde : la clé de la guilde (une chaîne)
-          * ingredients : la liste des ingrédients (liste d'objets)
-
-        Exemple d'utilisation :
-
-          resultat = recette(personnage, "forgerons", ingredients)
-          si resultat:
-              # 'resultat' est un objet
+          * objet : l'objet dont on veut récupérer l'attribut
+          * nom_attribut : le nom de l'attribut (une chaîne)
 
         """
-        cle_guilde = cle_guilde.lower()
-        if cle_guilde not in importeur.crafting.guildes:
-            raise ErreurExecution("La guilde {} n'existe pas".format(
-                    repr(cle_guilde)))
+        attributs = importeur.crafting.configuration[objet].attributs
+        if attributs and nom_attribut in attributs:
+            return attributs[nom_attribut]
 
-        guilde = importeur.crafting.guildes[cle_guilde]
-
-        # Ajouter : vérification de rang
-        for rang in guilde.rangs:
-            for recette in rang.recettes:
-                if recette.peut_faire(ingredients):
-                    return recette.creer_resultat(personnage, ingredients)
+        attributs = importeur.crafting.configuration[objet.prototype].attributs
+        if attributs and nom_attribut in attributs:
+            return attributs[nom_attribut]
 
         return None

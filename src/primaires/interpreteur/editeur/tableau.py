@@ -68,18 +68,19 @@ class Tableau(Editeur):
     nom = "editeur:base:tableau"
 
     def __init__(self, pere, objet=None, attribut=None, colonnes=None,
-            affichage=None, callback=None):
+            affichage=None, callback=None, nouveau="list"):
         """Constructeur de l'éditeur."""
         Editeur.__init__(self, pere, objet, attribut)
         self.colonnes = colonnes
         self.affichage = affichage or {}
         self.callback = callback
+        self.nouveau = [] if nouveau == "list" else {}
         self.ajouter_option("s", self.opt_supprimer)
 
     def accueil(self):
         """Retourne l'aide courte"""
         objet = getattr(self.objet, self.attribut)
-        objet = objet or {}
+        objet = objet or self.nouveau
         if isinstance(objet, dict):
             lignes = []
             for cle, valeur in objet.items():
@@ -115,7 +116,7 @@ class Tableau(Editeur):
 
     @staticmethod
     def afficher_apercu(apercu, objet, valeur, colonnes=None,
-            affichage=None, callback=None):
+            affichage=None, callback=None, nouveau=None):
         """Affichage de l'aperçu."""
         taille = 0
         if valeur:
@@ -127,6 +128,7 @@ class Tableau(Editeur):
         """Supprime l'objet si autorisé."""
         cle = supprimer_accents(arguments).lower()
         objet = getattr(self.objet, self.attribut)
+        objet = objet or self.nouveau
         if isinstance(objet, dict):
             # cle doit être une clé dans le dictionnaire
             cles = tuple(objet.keys())
@@ -153,7 +155,7 @@ class Tableau(Editeur):
         """Interprétation du contexte"""
         objet = getattr(self.objet, self.attribut)
         if objet is None:
-            objet = []
+            objet = self.nouveau
             setattr(self.objet, self.attribut, objet)
 
         msgs = msg.split(" / ")

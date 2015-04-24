@@ -51,6 +51,8 @@ class Recette(BaseObj):
 
     """
 
+    nom_scripting = "la recette"
+
     def __init__(self, rang):
         """Constructeur de la fiche."""
         BaseObj.__init__(self)
@@ -109,6 +111,7 @@ class Recette(BaseObj):
         n'est pas sélectionnée.
 
         """
+        ingredients = list(ingredients)
         types = self.ingredients_types.copy()
         types_min = dict((t, q) for t, (q, x) in types.items())
         types_max = dict((t, x - q) for t, (q, x) in types.items() if \
@@ -152,17 +155,18 @@ class Recette(BaseObj):
     def creer_resultat(self, personnage, ingredients):
         """Créé la recette et retourne l'objet créé."""
         if not self.peut_faire(ingredients):
-            raise ValueError("Les ingrédients ne peuvent pas être " \
-                    "utilisés pour cette recette")
+            raise ValueError("Les ingrédients {} ne peuvent pas être " \
+                    "utilisés pour cette recette {}".format(
+                    ingredients, repr(self.resultat)))
 
         prototype = importeur.objet.prototypes[self.resultat]
         objet = importeur.objet.creer_objet(prototype)
         personnage.salle.objets_sol.ajouter(objet)
-        recette.script["fabrique"].executer(personnage=personnage,
+        self.script["fabrique"].executer(personnage=personnage,
                 objet=objet, ingredients=ingredients)
 
-        for objet in ingredients:
-            importeur.objet.supprimer_objet(objet.identifiant)
+        for ingredient in ingredients:
+            importeur.objet.supprimer_objet(ingredient.identifiant)
 
         return objet
 

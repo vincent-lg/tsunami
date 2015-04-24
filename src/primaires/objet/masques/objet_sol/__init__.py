@@ -28,51 +28,22 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction recette."""
+"""Fichier contenant le masque <objet_inventaire>."""
 
-from primaires.scripting.fonction import Fonction
-from primaires.scripting.instruction import ErreurExecution
+from primaires.objet.masques.nom_objet import NomObjet
+from primaires.interpreteur.masque.fonctions import *
+from primaires.interpreteur.masque.exceptions.erreur_validation \
+        import ErreurValidation
+from primaires.format.fonctions import *
 
-class ClasseFonction(Fonction):
+class ObjetSol(NomObjet):
 
-    """Retourne la recette si trouvée."""
+    """Masque <objet_sol>.
 
-    @classmethod
-    def init_types(cls):
-        cls.ajouter_types(cls.recette, "Personnage", "str", "list")
+    On attend un nom d'objet en paramètre.
+    Cet objet se trouve sur le sol.
 
-    @staticmethod
-    def recette(personnage, cle_guilde, ingredients):
-        """Cherche et fabrique la recette si trouvée.
+    """
 
-        Si la recette n'est pas trouvé dans la guilde, retourne
-        une variable vide. Sinon, retourne l'objet nouvellement
-        créé.
-
-        Paramètres à préciser :
-
-          * personnage : le personnage voulant fabriquer la recette
-          * cle_guilde : la clé de la guilde (une chaîne)
-          * ingredients : la liste des ingrédients (liste d'objets)
-
-        Exemple d'utilisation :
-
-          resultat = recette(personnage, "forgerons", ingredients)
-          si resultat:
-              # 'resultat' est un objet
-
-        """
-        cle_guilde = cle_guilde.lower()
-        if cle_guilde not in importeur.crafting.guildes:
-            raise ErreurExecution("La guilde {} n'existe pas".format(
-                    repr(cle_guilde)))
-
-        guilde = importeur.crafting.guildes[cle_guilde]
-
-        # Ajouter : vérification de rang
-        for rang in guilde.rangs:
-            for recette in rang.recettes:
-                if recette.peut_faire(ingredients):
-                    return recette.creer_resultat(personnage, ingredients)
-
-        return None
+    nom = "objet_sol"
+    nom_complet = "nom d'un objet sur le sol"

@@ -34,3 +34,4 @@ from . import ident_prototype_objet
 from . import nom_objet
 from . import objet_equipe
 from . import objet_inventaire
+from . import objet_sol
