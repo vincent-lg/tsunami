@@ -31,6 +31,7 @@
 """Fichier contenant la classe Recette, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
+from primaires.scripting.script import Script
 
 class Recette(BaseObj):
 
@@ -57,6 +58,7 @@ class Recette(BaseObj):
         self.ingredients_objets = {}
         self.ingredients_types = {}
         self.resultat = ""
+        self.script = ScriptRecette(self)
         self._construire()
 
     def __getnewargs__(self):
@@ -146,3 +148,45 @@ class Recette(BaseObj):
             return True
 
         return False
+
+    def creer_resultat(self, personnage, ingredients):
+        """Créé la recette et retourne l'objet créé."""
+        if not self.peut_faire(ingredients):
+            raise ValueError("Les ingrédients ne peuvent pas être " \
+                    "utilisés pour cette recette")
+
+        prototype = importeur.objet.prototypes[self.resultat]
+        objet = importeur.objet.creer_objet(prototype)
+        personnage.salle.objets_sol.ajouter(objet)
+        recette.script["fabrique"].executer(personnage=personnage,
+                objet=objet, ingredients=ingredients)
+
+        for objet in ingredients:
+            importeur.objet.supprimer_objet(objet.identifiant)
+
+        return objet
+
+class ScriptRecette(Script):
+
+    """Script et évènements propres aux recettes."""
+
+    def init(self):
+        """Initialisation du script"""
+        # Événement fabrique
+        evt_fabrique = self.creer_evenement("fabrique")
+        evt_fabrique.aide_courte = "la recette est fabriquée"
+        evt_fabrique.aide_longue = \
+            "Cet évènement est appelé quand un personnage fabrique " \
+            "la recette. Elle est appelée après la fabrication de " \
+            "la recette et permet de personnaliser l'objet créé " \
+            "depuis les ingrédients (variable 'objet'). Les " \
+            "ingrédients sont aussi disponibles dans la variable " \
+            "'ingredients'."
+
+        # Configuration des variables de l'évènement fabrique
+        var_perso = evt_fabrique.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage fabriquant la recette"
+        var_objet = evt_fabrique.ajouter_variable("objet", "Objet")
+        var_objet.aide = "l'objet créé par la recette"
+        var_ingredients = evt_fabrique.ajouter_variable("ingredients", "list")
+        var_ingredients.aide = "la liste des ingrédients (liste d'objets)"

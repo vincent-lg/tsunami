@@ -33,6 +33,7 @@
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.tableau import Tableau
+from primaires.scripting.editeurs.edt_script import EdtScript
 
 class GldRecetteEdit(Presentation):
 
@@ -83,7 +84,7 @@ class GldRecetteEdit(Presentation):
             "exemple fourrure) ou les\nclés d'objet précises (par " \
             "exemple rubis). Ce tableau\ncontient les types " \
             "d'objet et leur quantité. Précisez :\n |cmd|<nom " \
-            "du type> / <tt minimum> / <qtt maximum>|ff|\nPar " \
+            "du type> / <qtt minimum> / <qtt maximum>|ff|\nPar " \
             "exemple :\n |cmd|légume / 8 / 15|ff|\n\nPour supprimer " \
             "un type d'ingrédient, utilisez l'option :\n |cmd|/s <nom " \
             "du type à supprimer>|ff|\n\nTypes actuel :\n{valeur}"
@@ -108,3 +109,7 @@ class GldRecetteEdit(Presentation):
             "supprimer un ingrédient, utilisez l'option :\n |cmd|/s " \
             "<clé du prototype à supprimer>|ff|\n\nObjets actuel :\n{valeur}"
 
+        # Script
+        scripts = self.ajouter_choix("scripts", "sc", EdtScript,
+                recette.script)
+        scripts.parent = self
