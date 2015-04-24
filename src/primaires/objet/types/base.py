@@ -300,9 +300,10 @@ class BaseType(BaseObj, metaclass=MetaType):
         valeur = self.m_valeur
         return valeur * 0.7
 
-    def regarder(self, personnage):
+    def regarder(self, personnage, variables=None):
         """Le personnage regarde l'objet"""
         salle = personnage.salle
+        variables = variables or {}
         personnage << "Vous regardez {} :".format(self.get_nom())
         autre = "{{}} regarde {}.".format(self.get_nom())
         salle.envoyer(autre, personnage)
@@ -311,7 +312,7 @@ class BaseType(BaseObj, metaclass=MetaType):
         self.script["regarde"]["avant"].executer(
                 objet=self, personnage=personnage)
 
-        description = self.description.regarder(personnage, self)
+        description = self.description.regarder(personnage, self, variables)
         if not description:
             description = "Il n'y a rien de bien intéressant à voir."
 

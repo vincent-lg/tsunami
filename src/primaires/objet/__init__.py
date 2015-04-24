@@ -245,6 +245,19 @@ class Module(BaseModule):
 
         raise KeyError("type {} introuvable".format(nom_type))
 
+    def get_types_herites(self, nom_type):
+        """Retourne le nom des types hérités."""
+        def get_types(classe, types):
+            """Fonction récursive appelée pour extraire les types enfants."""
+            for nom, sous_classe in classe.types.items():
+                types.append(nom)
+                get_types(sous_classe, types)
+
+        classe = self.get_type(nom_type)
+        types = [classe.nom_type]
+        get_types(classe, types)
+        return types
+
     def get_objets_de_type(self, nom_type):
         """Retourne les objets de type indiqué ou descendant."""
         type = self.get_type(nom_type)
