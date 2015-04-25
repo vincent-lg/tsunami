@@ -300,8 +300,19 @@ class Guilde(BaseObj):
             if supprimer_accents(n_type.nom).lower() == nom_type:
                 return n_type
 
+        # On essaye d'éditer un type déjà existant
+        try:
+            n_type = importeur.objet.get_type(nom_type)
+        except KeyError:
+            pass
+        else:
+            nom_parent = getattr(n_type.__bases__[0], "nom_type", "")
+            type = Type(self, nom_parent, nom_type)
+            self.types.append(type)
+            return type
+
         raise ValueError("Le type de nom {} est introuvable.".format(
-                repr(nçm_type)))
+                repr(nom_type)))
 
     def ajouter_type(self, nom_parent, nom_type):
         """Création du type précisé."""
@@ -319,14 +330,6 @@ class Guilde(BaseObj):
                     "matériau, outil ou machine".format(repr(nom_type)))
 
         nom_parent = parent.nom_type
-
-        try:
-            importeur.objet.get_type(nom_type)
-        except KeyError:
-            pass
-        else:
-            raise ValueError("le type {} existe déjà".format(
-                    repr(nom_type)))
 
         type = Type(self, nom_parent, nom_type)
         self.types.append(type)

@@ -88,5 +88,5 @@ class ClasseFonction(Fonction):
             type_objet = importeur.objet.get_type(type_ou_prototype)
             return [o for o in objets if o.est_de_type(type_ou_prototype)]
 
-        prototype = importeur.objet.prototypes[type_ou_prototype]
-        return [o for o in objets if isinstance(o, prototype)]
+        return [o for o in objets if o.cle == type_ou_prototype]
+

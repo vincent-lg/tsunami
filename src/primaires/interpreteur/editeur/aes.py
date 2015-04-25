@@ -30,6 +30,8 @@
 
 """Ce fichier définit le contexte-éditeur 'AES'."""
 
+import traceback
+
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import supprimer_accents
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
@@ -205,6 +207,7 @@ class AES(Editeur):
         try:
             element = methode(msg)
         except Exception as err:
+            print(traceback.format_exc())
             self.pere << "|err|" + str(err) + ".|ff|"
             return
 
