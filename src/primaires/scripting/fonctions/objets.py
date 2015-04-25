@@ -40,6 +40,8 @@ class ClasseFonction(Fonction):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.objets_prototype, "str")
+        cls.ajouter_types(cls.objets_salle, "Salle")
+        cls.ajouter_types(cls.objets_salle, "Salle", "str")
 
     @staticmethod
     def objets_prototype(cle_prototype):
@@ -62,3 +64,42 @@ class ClasseFonction(Fonction):
                     repr(cle_prototype)))
 
         return list(prototype.objets)
+
+    @staticmethod
+    def objets_salle(salle, type_ou_prototype=""):
+        """Retourne les objets posés dans la salle (éventuellement filtrés).
+
+        Cette fonction prend un argument obligatoire : la salle
+        dans laquelle chercher. Elle retourne une liste des objets
+        posés sur le sol de cette salle. Vous pouvez également
+        préciser un second paramètre, sous la forme d'une chaîne,
+        contenant la clé du prototype d'objet ou le type grâce
+        auquel filtrer les résultats. Voir les exemples cidessous
+        pour plus d'informations.
+
+        Paramètres à préciser :
+
+          * salle : la salle dans laquelle chercher
+          * type_ou_prototype (optionnel) : paramètre pour filtrer la liste
+
+        Exemples d'utilisation :
+
+          # Retourne tous les objets posés dans la salle
+          objets = objets(salle)
+          # Retourne les objets dans la salle du prototype "pomme_rouge"
+          pommes = objets(salle, "pomme_rouge")
+          # Retourne les objets posés dans la salle de type "arme"
+          armes = objets(salle, "+arme")
+          # Si aucun objet n'est trouvé, retourne une liste vide
+
+        """
+        objets = [o for o in salle.objets_sol._objets]
+        if type_ou_prototype:
+            if type_ou_prototype.startswith("+"):
+                nom_type = type_ou_prototype[1:]
+                objets = [o for o in objets if o.est_de_type(nom_type)]
+            else:
+                cle_prototype = type_ou_prototype
+                objets = [o for o in objets if o.cle == cle_prototype]
+
+        return objets
