@@ -355,10 +355,18 @@ class Module(BaseModule):
                 self.nettoyer_memoires)
         mtn = datetime.now()
         for cle, entrees in list(self.memoires._a_detruire.items()):
+            script = getattr(cle, "script", None)
+            evenement = script.evenements.get("effacer_memoire") if \
+                    script else None
+
             for valeur, moment in list(entrees.items()):
                 if moment <= mtn:
                     del self.memoires._a_detruire[cle][valeur]
                     if cle in self.memoires and valeur in self.memoires[cle]:
+                        if evenement:
+                            evenement.executer(objet=cle, nom=valeur,
+                                    valeur=self.memoires[cle][valeur])
+
                         del self.memoires[cle][valeur]
 
             if not self.memoires._a_detruire[cle]:

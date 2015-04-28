@@ -30,11 +30,17 @@
 
 """Fichier contenant le type SacMateriau."""
 
+import re
+
 from bases.objet.attribut import Attribut
+from corps.fonctions import lisser
 from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.interpreteur.editeur.selection import Selection
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from .base import BaseType
+
+# Constantes
+NOM = re.compile(r"^(.*?)( de | d\')(.*)$")
 
 class SacMateriau(BaseType):
 
@@ -80,8 +86,12 @@ class SacMateriau(BaseType):
         if hasattr(self, "materiau"):
             materiau = self.materiau
             quantite = self.quantite
-            ajout = " {} {}".format(self.connecteur, materiau.get_nom(
-                    quantite))
+            nom = materiau.get_nom(quantite)
+            regex = NOM.search(nom)
+            if regex:
+                mesure, connecteur, nom = regex.groups()
+                ajout = lisser(" {} {} de {}".format(self.connecteur,
+                        nom, mesure))
 
         if nombre <= 0:
             raise ValueError("la fonction get_nom a été appelée " \

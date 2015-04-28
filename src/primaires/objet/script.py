@@ -119,3 +119,20 @@ class ScriptObjet(Script):
         var_perso.aide = "le personnage déséquipant l'objet"
         var_objet = evt_retire.ajouter_variable("objet", "Objet")
         var_objet.aide = "l'objet déséquipé"
+
+        # Evénement effacer_memoire
+        evt_effacer_memoire = self.creer_evenement("effacer_memoire")
+        evt_effacer_memoire.aide_courte = "une mémoire est effacée"
+        evt_effacer_memoire.aide_longue = \
+            "Cet évènement est appelé quand une mémoire " \
+            "enregistrée dans l'objet est effacée par le système. " \
+            "C'est très utile pour exécuter une action particulière " \
+            "quand une mémoire expire."
+
+        # Configuration des variables de l'évènement effacer_memoire
+        var_objet = evt_effacer_memoire.ajouter_variable("objet", "Objet")
+        var_objet.aide = "l'objet-même"
+        var_nom = evt_effacer_memoire.ajouter_variable("nom", "str")
+        var_nom.aide = "le nom de la mémoire à effacer"
+        var_valeur = evt_effacer_memoire.ajouter_variable("valeur", "Object")
+        var_valeur.aide = "la valeur de la mémoire qu'on va effacer"

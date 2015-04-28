@@ -116,12 +116,6 @@ class Machine(BaseType):
             "l'exécution de la commande. L'évènement \"après\", " \
             "au contraire, est appelé quand les objets ont été " \
             "entreposés et ne devrait servir qu'à l'affichage."
-        var_perso = evt_entrepose.ajouter_variable("personnage", "Personnage")
-        var_perso.aide = "le personnage entreposant les objets"
-        var_objet = evt_entrepose.ajouter_variable("machine", "Objet")
-        var_objet.aide = "la machine-même"
-
-        # Sous-évènements
         evt_entrepose_avt = evt_entrepose.creer_evenement("avant")
         evt_entrepose_avt.aide_courte = "avant d'entreposer"
         evt_entrepose_avt.aide_longue = \
@@ -132,9 +126,6 @@ class Machine(BaseType):
             "à vérifier d'autres facteurs. Cet évènement permet " \
             "donc de contrôler les types des objets que l'on veut " \
             "entreposer et appliquer un traitement particulier dessus."
-        var_objet = evt_entrepose_avt.ajouter_variable("objet", "Objet")
-        var_objet.aide = "l'objet que l'on veut entreposé"
-
         evt_entrepose_apr = evt_entrepose.creer_evenement("après")
         evt_entrepose_apr.aide_courte = "après avoir entreposé"
         evt_entrepose_apr.aide_longue = \
@@ -142,9 +133,18 @@ class Machine(BaseType):
             "correctement entreposés. Il s'agit surtout du moment " \
             "d'afficher le message personnalisé confirmant que " \
             "l'on a bien entreposé dans la machine."
+        var_perso = evt_entrepose.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage entreposant les objets"
+        var_objet = evt_entrepose.ajouter_variable("machine", "Objet")
+        var_objet.aide = "la machine-même"
+
+        # Sous-évènements
+        var_objet = evt_entrepose_avt.ajouter_variable("objet", "Objet")
+        var_objet.aide = "l'objet que l'on veut entreposé"
         var_objets = evt_entrepose_apr.ajouter_variable("objets", "list")
         var_objets.aide = "les objets entreposés"
 
+        # Évènement récupère
         evt_recupere = self.script.creer_evenement("récupère")
         evt_recupere.aide_courte = "le personnage récupère quelque " \
                 "chose dans la machine"
@@ -156,20 +156,11 @@ class Machine(BaseType):
             "l'exécution de la commande. L'évènement \"après\", " \
             "au contraire, est appelé quand les objets ont été " \
             "récupérés et ne devrait servir qu'à l'affichage."
-        var_perso = evt_recupere.ajouter_variable("personnage", "Personnage")
-        var_perso.aide = "le personnage récupérant les objets"
-        var_objet = evt_recupere.ajouter_variable("machine", "Objet")
-        var_objet.aide = "la machine-même"
-
-        # Sous-évènements
         evt_recupere_avt = evt_recupere.creer_evenement("avant")
         evt_recupere_avt.aide_courte = "avant de récupérer"
         evt_recupere_avt.aide_longue = \
             "Cet évènement est appelé avant que le personnage " \
             "ne récupère dans la machine."
-        var_objet = evt_recupere_avt.ajouter_variable("objet", "Objet")
-        var_objet.aide = "l'objet que l'on veut récupérer"
-
         evt_recupere_apr = evt_recupere.creer_evenement("après")
         evt_recupere_apr.aide_courte = "après avoir récupéré"
         evt_recupere_apr.aide_longue = \
@@ -177,6 +168,14 @@ class Machine(BaseType):
             "correctement récupérés. Il s'agit surtout du moment " \
             "d'afficher le message personnalisé confirmant que " \
             "l'on a bien récupéré depuis la machine."
+        var_perso = evt_recupere.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage récupérant les objets"
+        var_objet = evt_recupere.ajouter_variable("machine", "Objet")
+        var_objet.aide = "la machine-même"
+
+        # Sous-évènements
+        var_objet = evt_recupere_avt.ajouter_variable("objet", "Objet")
+        var_objet.aide = "l'objet que l'on veut récupérer"
         var_objets = evt_recupere_apr.ajouter_variable("objets", "list")
         var_objets.aide = "les objets récupérés"
 

@@ -41,6 +41,7 @@ class ClasseFonction(Fonction):
     def init_types(cls):
         cls.ajouter_types(cls.nom_objet, "str", "Fraction")
         cls.ajouter_types(cls.nom_objet2, "Objet", "Fraction")
+        cls.ajouter_types(cls.nom_objet2, "Objet", "Fraction", "str")
 
     @staticmethod
     def nom_objet(cle_prototype, nombre):
@@ -66,18 +67,31 @@ class ClasseFonction(Fonction):
         return prototype.get_nom(int(nombre), pluriels=False)
 
     @staticmethod
-    def nom_objet2(objet, nombre):
+    def nom_objet2(objet, nombre, flags=""):
         """Retourne le nom singulier ou pluriel de l'objet précisé.
 
-        Paramètres :
+        Paramètres à préciser :
 
           * objet : l'objet concerné
           * nombre : la quantité de l'objet
+          * flags (optionnel : les flags de transformation à appliquer
+
+        Liste des flags :
+
+          * "ra" : retire l'article (le premier mot) du nom
 
         Exemple d'utilisation :
 
           nom = nom_objet(objet, 8)
           # nom devrait contenir quelque chose comme "8 carottes crues"
+          nom = nom_objet(objet, 8, "ra")
+          # Cette fois, 'nom' contient "carottes crues"
 
         """
-        return objet.get_nom(int(nombre), pluriels=False)
+        nom = objet.get_nom(int(nombre), pluriels=False)
+        flags = flags.lower().split(" ")
+        for flag in flags:
+            if flag == "ra":
+                nom = " ".join(nom.split(" ")[1:])
+
+        return nom

@@ -94,7 +94,11 @@ class CmdPoser(Commande):
                 dans.script["entrepose"]["avant"].executer(
                         personnage=personnage, machine=dans, objet=objet)
 
+            if not objet.e_existe:
+                continue
+
             conteneur.retirer(objet, qtt)
+
             if dans:
                 if hasattr(dans, "conteneur"):
                     try:
