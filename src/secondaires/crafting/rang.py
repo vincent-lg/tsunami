@@ -97,6 +97,18 @@ class Rang(BaseObj):
 
         return msg
 
+    @property
+    def rangs_parents(self):
+        """Retourne les rangs parents, incluant self."""
+        guilde = self.guilde
+        try:
+            indice = guilde.rangs.index(self)
+        except ValueError:
+            raise RangIntrouvable("le rang {} ne peut être trouvé " \
+                    "dans la guilde {}".format(self.cle, guilde.cle))
+
+        return guilde.rangs[:indice + 1]
+
     def get_recette(self, cle, exception=True):
         """Récupère la recette correspondant à la clé.
 

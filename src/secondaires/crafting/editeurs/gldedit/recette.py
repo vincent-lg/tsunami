@@ -30,9 +30,10 @@
 
 """Module contenant l'éditeur d'recettes de rang."""
 
-from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.choix import Choix
+from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.tableau import Tableau
+from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.scripting.editeurs.edt_script import EdtScript
 
 class GldRecetteEdit(Presentation):
@@ -68,6 +69,19 @@ class GldRecetteEdit(Presentation):
             "revenir à la fenêtre parente.\n\nLe résultat d'une " \
             "recette doit être la clé du prototype d'objet.\n\nRésultat " \
             "actuel : |bc|{valeur}|ff|"
+
+        # Nom
+        nom = self.ajouter_choix("nom", "n", Uniligne, recette, "nom")
+        nom.parent = self
+        nom.prompt = "Nom de la recette : "
+        nom.apercu = "{valeur}"
+        nom.aide_courte = \
+            "Entrez le |ent|nom|ff| de l'recette ou |cmd|/|ff| pour " \
+            "revenir à la fenêtre parente.\n\nCertaines guildes ont " \
+            "besoin de nommer leur recette, car elles\nutilisent des " \
+            "recettes avec des ingrédients identiques. Il faut\ndonc " \
+            "demander précisément au joueur ce qu'il veut fabriquer, d'où\n" \
+            "l'utilité des noms.\n\nNom actuel : |bc|{valeur}|ff|"
 
         # Types
         liste_types = list(importeur.objet.types.keys())

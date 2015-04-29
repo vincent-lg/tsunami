@@ -57,6 +57,7 @@ class Recette(BaseObj):
         """Constructeur de la fiche."""
         BaseObj.__init__(self)
         self.rang = rang
+        self.nom = ""
         self.ingredients_objets = {}
         self.ingredients_types = {}
         self.resultat = ""
@@ -74,7 +75,11 @@ class Recette(BaseObj):
 
     @property
     def description(self):
-        msg = self.resultat + "("
+        msg = ""
+        if self.nom:
+            msg = self.nom + " pour "
+
+        msg += self.resultat + "("
         premier = True
 
         # Affichage des types

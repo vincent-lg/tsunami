@@ -30,6 +30,7 @@
 
 """Fichier contenant la fonction recette."""
 
+from primaires.format.fonctions import supprimer_accents
 from primaires.scripting.fonction import Fonction
 from primaires.scripting.instruction import ErreurExecution
 
@@ -40,9 +41,10 @@ class ClasseFonction(Fonction):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.recette, "Personnage", "str", "list")
+        cls.ajouter_types(cls.recette, "Personnage", "str", "list", "str")
 
     @staticmethod
-    def recette(personnage, cle_guilde, ingredients):
+    def recette(personnage, cle_guilde, ingredients, nom=""):
         """Cherche et fabrique la recette si trouvée.
 
         Si la recette n'est pas trouvé dans la guilde, retourne
@@ -54,14 +56,21 @@ class ClasseFonction(Fonction):
           * personnage : le personnage voulant fabriquer la recette
           * cle_guilde : la clé de la guilde (une chaîne)
           * ingredients : la liste des ingrédients (liste d'objets)
+          * nom (optionnel) : le nom de la recette
+
+        Le dernier paramètre est utile si la guilde créé comporte
+        potentiellement plusieurs recettes utilisant les mêmes
+        ingrédients.
 
         Exemple d'utilisation :
 
           resultat = recette(personnage, "forgerons", ingredients)
           si resultat:
               # 'resultat' est un objet
+              poser salle resultat
 
         """
+        nom = supprimer_accents(nom).lower()
         cle_guilde = cle_guilde.lower()
         if cle_guilde not in importeur.crafting.guildes:
             raise ErreurExecution("La guilde {} n'existe pas".format(
@@ -69,10 +78,20 @@ class ClasseFonction(Fonction):
 
         guilde = importeur.crafting.guildes[cle_guilde]
 
-        # Ajouter : vérification de rang
+        if personnage not in guilde.membres:
+            return
+
+        # On ne cherche que les rangs parents
+        rangs_parents = guilde.membres[personnage].rang.rangs_parents
+
         for rang in guilde.rangs:
+            if rang not in rangs_parents:
+                continue
+
             for recette in rang.recettes:
                 if recette.peut_faire(ingredients):
-                    return recette.creer_resultat(personnage, ingredients)
+                    if nom == "" or nom == supprimer_accents(
+                            recette.nom).lower():
+                        return recette.creer_resultat(personnage, ingredients)
 
         return None
