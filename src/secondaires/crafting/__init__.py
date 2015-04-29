@@ -34,6 +34,7 @@ from abstraits.module import *
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
 from primaires.interpreteur.editeur.tableau import Tableau
+from primaires.objet.objet import Objet
 from secondaires.crafting import commandes
 from secondaires.crafting.configuration import Configuration
 from secondaires.crafting import editeurs
@@ -128,6 +129,8 @@ class Module(BaseModule):
                 self.ajouter_attributs)
         self.importeur.hook["editeur:etendre"].ajouter_evenement(
                 Extension.etendre_editeur)
+        self.importeur.hook["description:ajouter_variables"].ajouter_evenement(
+                self.ajouter_variables)
 
         # Ajout de la catégorie de commande
         self.importeur.interpreteur.categories["profession"] = \
@@ -296,3 +299,8 @@ class Module(BaseModule):
                 "Entrez |ent|le nom de l'attribut|ff|, un signe |ent|/|ff| " \
                 "et\nsa valeur pour la modifier. Par exemple : " \
                 "|cmd|couleur / rouge|ff|.\n\nAttributs actuels :\n{valeur}"
+
+    def ajouter_variables(self, description, personnage, element):
+        """Ajoute les attributs."""
+        if isinstance(element, Objet):
+            return self.configuration[element].attributs

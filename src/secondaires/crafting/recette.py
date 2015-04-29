@@ -31,6 +31,7 @@
 """Fichier contenant la classe Recette, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
+from primaires.format.fonctions import supprimer_accents
 from primaires.scripting.script import Script
 
 class Recette(BaseObj):
@@ -166,6 +167,25 @@ class Recette(BaseObj):
 
         prototype = importeur.objet.prototypes[self.resultat]
         objet = importeur.objet.creer_objet(prototype)
+
+        # Transfert des attributs
+        attributs = {}
+        for ingredient in ingredients:
+            prototype = ingredient.prototype
+            attrs = importeur.crafting.configuration[prototype].attributs
+            if attrs:
+                attributs.update(attrs)
+
+            attrs = importeur.crafting.configuration[ingredient].attributs
+            if attrs:
+                attributs.update(attrs)
+
+        sa_attributs = {}
+        for cle, valeur in attributs.items():
+            sa_attributs[supprimer_accents(cle).lower()] = valeur
+
+        importeur.crafting.configuration[objet].attributs = sa_attributs
+
         personnage.salle.objets_sol.ajouter(objet)
         self.script["fabrique"].executer(personnage=personnage,
                 objet=objet, ingredients=ingredients)

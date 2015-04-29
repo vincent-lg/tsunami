@@ -60,6 +60,10 @@ class Module(BaseModule):
         type(self.importeur).anaconf.get_config("charte_graph", \
             "format/charte.cfg", "modele charte graphique", cfg_charte)
 
+        # Ajout des hooks
+        importeur.hook.ajouter_hook("description:ajouter_variables",
+                "Hook appelé pour ajouter des variables aux descriptions")
+
         BaseModule.config(self)
         self.descriptions_flottantes = {}
 

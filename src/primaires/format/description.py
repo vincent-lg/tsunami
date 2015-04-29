@@ -34,6 +34,7 @@ import re
 from textwrap import wrap
 
 from abstraits.obase import BaseObj
+from corps.fonctions import lisser
 from .fonctions import *
 
 # Constantes
@@ -168,6 +169,10 @@ class Description(BaseObj):
     def regarder(self, personnage, elt=None, variables=None):
         """Le personnage regarde la description."""
         variables = variables or {}
+        for ajout in importeur.hook["description:ajouter_variables"].executer(
+                self, personnage, elt):
+            variables.update(ajout)
+
         description = ""
         desc_flottantes = []
         elt = elt or self.parent
@@ -219,7 +224,8 @@ class Description(BaseObj):
 
         paragraphes = []
         for paragraphe in description.split("\n"):
-            paragraphes.append("\n".join(wrap(paragraphe, TAILLE_LIGNE)))
+            paragraphes.append("\n".join(wrap(lisser(paragraphe),
+                    TAILLE_LIGNE)))
 
 
         return "\n".join(paragraphes)
