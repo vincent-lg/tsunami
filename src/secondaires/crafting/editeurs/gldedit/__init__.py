@@ -157,10 +157,12 @@ class GldEdit(Presentation):
             "|ent|objet|ff| ou |ent|PNJ|ff|.\n" \
             "Les types d'extension possibles sont :\n" \
             "    chaîne (une chaîne de caractères sans contrainte)\n" \
+            "    clé (une chaîne sans accent ni majuscules)\n" \
             "    entier (un nombre entier sans contrainte)\n" \
             "    entier positif / négatif / positif ou nul / " \
             "négatif ou nul\n" \
             "    entier entre X et Y\n" \
+            "    prototype d'objet (un prototype d'objet)\n" \
             "    tableau avec les colonnes nom (type), nom2 (type2)...\n\n" \
             "Exemples de types :\n" \
             "    entier positif ou nul\n" \

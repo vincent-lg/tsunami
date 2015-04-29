@@ -35,6 +35,7 @@ import re
 from abstraits.obase import BaseObj
 from primaires.format.description import Description
 from primaires.format.fonctions import supprimer_accents
+from primaires.interpreteur.editeur.choix_objet import ChoixObjet
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.tableau import Tableau
 from primaires.interpreteur.editeur.uniligne import Uniligne, CLE
@@ -49,6 +50,7 @@ TYPES = {
             (\ entre\ (?P<min>[0-9]+)\ et\ (?P<max>[0-9]+))?$""", re.X),
     "chaîne": re.compile("^chaine$"),
     "clé": re.compile("^cle$"),
+    "prototype d'objet": re.compile("^prototype d'objet$"),
     "tableau": re.compile(r"""
             tableau\ avec\ les\ colonnes
             # Colonne 1 (obligatoire)
@@ -139,6 +141,8 @@ class Extension(BaseObj):
             return Uniligne, ()
         elif nom_type == "clé":
             return Uniligne, (CLE, )
+        elif nom_type == "prototype d'objet":
+            return ChoixObjet, (importeur.objet.prototypes, )
         elif nom_type == "entier":
             borne_min = borne_max = None
             signe = sup["signe"]
