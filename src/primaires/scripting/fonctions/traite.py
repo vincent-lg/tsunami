@@ -30,6 +30,7 @@
 
 """Fichier contenant la fonction traite."""
 
+from corps.fonctions import lisser
 from primaires.format.fonctions import supprimer_accents
 from primaires.scripting.fonction import Fonction
 from primaires.scripting.instruction import ErreurExecution
@@ -64,6 +65,7 @@ class ClasseFonction(Fonction):
           * majuscule : met la chaîne en majuscule
           * capital : met chaque première lettre de chaque mot en majuscule
           * sans_accents : retire les accents.
+          * lisser : change "de un" en "d'un", "le un" en "l'un"...
 
         Exemples d'utilisation :
 
@@ -78,6 +80,9 @@ class ClasseFonction(Fonction):
           # Puis met chaine en majuscule
           chaine = traite(chaine, "majuscule")
           # chaine contient à présent "BONNE JOURNEE"
+          chaine = "C'est une porte de acier."
+          chaine = traite(chaine, "lisser")
+          # chaine contient "C'est une porte d'acier."
 
         """
         operations = operations.lower()
@@ -94,5 +99,7 @@ class ClasseFonction(Fonction):
                 chaine = chaine.title()
             elif operation == "sans_accents":
                 chaine = supprimer_accents(chaine)
+            elif operation == "lisser":
+                chaine = lisser(chaine)
 
         return chaine

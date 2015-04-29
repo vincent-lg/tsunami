@@ -95,6 +95,20 @@ class TestTraite(TestCommande, ManipulationJoueur, ManipulationScripting,
 
         self.supprimer_joueur(joueur)
 
+    def test_lisser(self):
+        """Teste le lissage de chaîne."""
+        joueur = self.creer_joueur("simple", "Kredh")
+        with self.scripter(joueur.salle, "dit") as test:
+            test.ajouter_instructions("""
+                essai = "Une porte de acier."
+                essai = traite(essai, "lisser")
+                dire personnage essai
+            """)
+            msg = self.entrer_commande(joueur, "dire k")
+            self.assertEqual(msg, "Vous dites : k\nUne porte d'acier.")
+
+        self.supprimer_joueur(joueur)
+
     def test_multiple(self):
         """Teste d'opérations multiples."""
         joueur = self.creer_joueur("simple", "Kredh")
