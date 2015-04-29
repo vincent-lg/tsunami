@@ -35,6 +35,7 @@ from bases.objet.attribut import Attribut
 from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.interpreteur.editeur.selection import Selection
+from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.objet.conteneur import ConteneurObjet
 from .base import BaseType
 
@@ -51,10 +52,16 @@ class Machine(BaseType):
         self.flags = 1 # ne peut pas prendre
         self.machine_conteneur = False
         self.poids_max = 0
+        self.message_contenu = "Vous voyez à l'intérieur :"
+        self.message_vide = "Il n'y a rien à l'intérieur."
 
         self.etendre_editeur("m", "machine conteneur", Flag, self,
                 "machine_conteneur")
         self.etendre_editeur("x", "poids max", Flottant, self, "poids_max")
+        self.etendre_editeur("co", "message de contenu", Uniligne, self,
+                "message_contenu")
+        self.etendre_editeur("vi", "message vide", Uniligne, self,
+                "message_vide")
 
         # Attributs propres à l'objet (non au prototype)
         self._attributs = {
@@ -189,6 +196,26 @@ class Machine(BaseType):
             "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
             "Poids maximum actuel : {objet.poids_max}"
 
+        # Message contenu
+        message_contenu = enveloppes["co"]
+        message_contenu.apercu = "{valeur}"
+        message_contenu.prompt = "Message affiché quand la machine " \
+                "contient des objets : "
+        message_contenu.aide_courte = \
+            "Entrez le |ent|message de contenu|ff| ou " \
+            "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
+            "Message de contenu actuel : {valeur}"
+
+        # Message vide
+        message_vide = enveloppes["vi"]
+        message_vide.apercu = "{valeur}"
+        message_vide.prompt = "Message affiché quand la machine " \
+                "est vide : "
+        message_vide.aide_courte = \
+            "Entrez le |ent|message à vide|ff| ou " \
+            "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
+            "Message à vide actuel : {valeur}"
+
     def objets_contenus(self, conteneur):
         """Retourne les objets contenus."""
         objets = []
@@ -220,9 +247,9 @@ class Machine(BaseType):
             objets.append(o.get_nom(nb))
 
         if objets:
-            msg += "Vous voyez à l'intérieur :"
+            msg += self.message_contenu
             msg += "\n  " + "\n  ".join(objets)
         else:
-            msg += "Vous ne voyez rien à l'intérieur."
+            msg += self.message_vide
 
         return msg

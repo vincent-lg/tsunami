@@ -56,6 +56,13 @@ class ClasseAction(Action):
         if not objet.peut_prendre:
             raise ErreurExecution("{} ne peut pas être manipulé".format(
                     objet.get_nom()))
+
+        if objet.contenu:
+            try:
+                objet.contenu.retirer(objet)
+            except ValueError:
+                pass
+
         personnage.ramasser_ou_poser(objet)
 
     @staticmethod
