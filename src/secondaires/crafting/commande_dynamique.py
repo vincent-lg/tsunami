@@ -264,7 +264,15 @@ class CommandeDynamique(BaseObj):
 
                 variables[nom] = masque.objets
 
-        self.script["exécute"].executer(personnage=personnage, commande=self,
+        evenement = self.script["exécute"]
+        for nom in evenement.variables:
+            if nom in ("personnage", "commande"):
+                continue
+
+            if nom not in variables:
+                variables[nom] = None
+
+        evenement.executer(personnage=personnage, commande=self,
                 **variables)
 
     def maj(self):
