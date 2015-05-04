@@ -100,7 +100,8 @@ class Module(BaseModule):
             self._prototypes[prototype.cle] = prototype
 
         pnjs = self.importeur.supenr.charger_groupe(PNJ)
-        pnjs = [p for p in pnjs if hasattr(p, "identifiant")]
+        pnjs = [p for p in pnjs if hasattr(p, "identifiant") and \
+                p.prototype]
         for pnj in pnjs:
             self._PNJ[pnj.identifiant] = pnj
 
