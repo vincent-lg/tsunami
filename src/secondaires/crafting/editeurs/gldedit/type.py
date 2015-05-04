@@ -39,7 +39,7 @@ class GldTypeEdit(Presentation):
 
     nom = "gldedit:type"
 
-    def __init__(self, personnage, type, attribut):
+    def __init__(self, personnage, type, attribut=None):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
