@@ -363,11 +363,10 @@ class Module(BaseModule):
                 if moment <= mtn:
                     del self.memoires._a_detruire[cle][valeur]
                     if cle in self.memoires and valeur in self.memoires[cle]:
+                        del self.memoires[cle][valeur]
                         if evenement:
                             evenement.executer(objet=cle, nom=valeur,
                                     valeur=self.memoires[cle][valeur])
-
-                        del self.memoires[cle][valeur]
 
             if not self.memoires._a_detruire[cle]:
                 del self.memoires._a_detruire[cle]
