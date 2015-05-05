@@ -363,10 +363,11 @@ class Module(BaseModule):
                 if moment <= mtn:
                     del self.memoires._a_detruire[cle][valeur]
                     if cle in self.memoires and valeur in self.memoires[cle]:
+                        valeur_memoire = self.memoires[cle][valeur]
                         del self.memoires[cle][valeur]
                         if evenement:
                             evenement.executer(objet=cle, nom=valeur,
-                                    valeur=self.memoires[cle][valeur])
+                                    valeur=valeur_memoire)
 
             if not self.memoires._a_detruire[cle]:
                 del self.memoires._a_detruire[cle]
@@ -404,7 +405,6 @@ class Module(BaseModule):
 
     def ecrire_alarme(self, personnage, alarme):
         """Écrit l'alarme."""
-        print("On écrit l'alarme", personnage, alarme)
         if personnage not in self.alarmes:
             self.alarmes[personnage] = []
 
@@ -417,7 +417,6 @@ class Module(BaseModule):
             return
 
         while alarme in self.alarmes[personnage]:
-            print("On supprime l'alarme", personnage, alarme)
             self.alarmes[personnage].remove(alarme)
 
     def stats_scripting(self, infos):
