@@ -40,22 +40,30 @@ class ClasseFonction(Fonction):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.nom_objet, "str", "Fraction")
+        cls.ajouter_types(cls.nom_objet, "str", "Fraction", "str")
         cls.ajouter_types(cls.nom_objet2, "Objet", "Fraction")
         cls.ajouter_types(cls.nom_objet2, "Objet", "Fraction", "str")
 
     @staticmethod
-    def nom_objet(cle_prototype, nombre):
+    def nom_objet(cle_prototype, nombre, flags=""):
         """Retourne le nom singulier ou pluriel de l'objet précisé.
 
         Paramètres :
 
           * cle_prototype : la clé du prototype d'objet, sous la forme d'une chaîne
           * nombre : la quantité de l'objet
+          * flags (optionnel) : les flags sous la forme d'une chaîne
+
+        Flags disponibles :
+
+          * "ra" : retire l'article du nom (le premier mot)
 
         Exemple d'utilisation :
 
           nom = nom_objet("carotte_crue", 8)
           # nom devrait contenir quelque chose comme "8 carottes crues"
+          nom = nom_objet("carotte_crue", 8, "ra")
+          # Cette fois, nom devrait contenir "carottes crues"
 
         """
         try:
@@ -64,7 +72,13 @@ class ClasseFonction(Fonction):
             raise ErreurExecution("prototype d'objet introuvable : {}".format(
                     repr(cle_prototype)))
 
-        return prototype.get_nom(int(nombre), pluriels=False)
+        nom = prototype.get_nom(int(nombre), pluriels=False)
+        flags = flags.lower().split(" ")
+        for flag in flags:
+            if flag == "ra":
+                nom = " ".join(nom.split(" ")[1:])
+
+        return nom
 
     @staticmethod
     def nom_objet2(objet, nombre, flags=""):
