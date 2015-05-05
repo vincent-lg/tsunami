@@ -28,53 +28,49 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Talent, détaillée plus bas."""
+"""Fichier contenant la fonction talent."""
 
-from abstraits.obase import BaseObj
+from fractions import Fraction
 
-class Talent(BaseObj):
+from primaires.format.fonctions import supprimer_accents
+from primaires.scripting.fonction import Fonction
+from primaires.scripting.instruction import ErreurExecution
 
-    """Classe représentant un talent de guilde.
+class ClasseFonction(Fonction):
 
-    Il s'agit pratiquement d'un talent standard mais avec des
-    informations spécifiques aux guildes.
+    """Retourne le niveau d'un talent connu par un personnage."""
 
-    """
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.talent, "Personnage", "str")
 
-    def __init__(self, guilde, cle):
-        """Constructeur du talent."""
-        BaseObj.__init__(self)
-        self.guilde = guilde
-        self.cle = cle
-        self.nom = "talent inconnu"
-        self.niveau = "profession"
-        self.difficulte = 25
-        self._ouvert = False
-        self.ouvert_a_tous = False
-        self._construire()
+    @staticmethod
+    def talent(personnage, nom_talent):
+        """Retourne le pourcentage du talent connu par le personnage.
 
-    def __getnewargs__(self):
-        return (None, "")
+        Si le personnage ne connaît pas le talent, retourne 0.
 
-    def __repr__(self):
-        return "<Talent {}>".format(self.cle)
+        Paramètres à entrer :
 
-    def __str__(self):
-        return self.cle
+          * personnage : le personnage à tester
+          * nom_talent : le nom du talent (chaîne)
 
-    @property
-    def nom_complet(self):
-        return "{:<20} : {}".format(self.cle, self.nom)
+        Exemple d'utilisation :
 
-    def _get_ouvert(self):
-        return self._ouvert
-    def _set_ouvert(self, ouvert):
-        self._ouvert = ouvert
-        if ouvert:
-            self.ajouter()
-    ouvert = property(_get_ouvert, _set_ouvert)
+          niveau = talent(personnage, "maniement de l'épée")
 
-    def ajouter(self):
-        """Ajoute le talent dans la liste des talents."""
-        importeur.perso.ajouter_talent(self.cle, self.nom,
-                self.niveau, self.difficulte, self.ouvert_a_tous)
+        """
+        nom_talent = supprimer_accents(nom_talent).lower()
+        cle = None
+        talent = None
+        for t_talent in importeur.perso.talents.values():
+            if supprimer_accents(t_talent.nom) == nom_talent:
+                talent = t_talent
+                cle = talent.cle
+                break
+
+        if talent is None:
+            raise ErreurExecution("talent inconnu : {}".format(repr(
+                    nom_talent)))
+
+        return  Fraction(personnage.talents.get(cle, 0))

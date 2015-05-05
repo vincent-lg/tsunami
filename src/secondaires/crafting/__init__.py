@@ -168,6 +168,10 @@ class Module(BaseModule):
                 commande.maj()
                 nb_cmd += 1
 
+            for talent in guilde.talents.values():
+                if talent.ouvert:
+                    talent.ajouter()
+
         self.logger.info(format_nb(nb_cmd,
                 "{nb} commande{s} dynamique{s} créée{s}", fem=True))
 

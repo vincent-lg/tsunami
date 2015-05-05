@@ -276,7 +276,16 @@ class Guilde(BaseObj):
 
         raise ValueError("Rang {} introuvable".format(repr(cle)))
 
-    def ajouter_talent(self, cle, nom, ouvert_a_tous=False):
+    def get_talent(self, cle):
+        """Retourne le talent correspondant à la clé."""
+        try:
+            return self.talents[cle.lower()]
+        except KeyError:
+            raise ValueError("Talent {} introuvable dans cette " \
+                    "guilde.".format(repr(cle)))
+
+    def ajouter_talent(self, cle, nom="un talent inconnu",
+            ouvert_a_tous=False):
         """Ajoute un talent à la guilde."""
         valider_cle(cle)
         if cle in importeur.perso.talents:

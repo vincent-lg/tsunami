@@ -91,6 +91,9 @@ class AES(Editeur):
         if valeur is None:
             valeur = []
 
+        if isinstance(valeur, dict):
+            valeur = list(valeur.values())
+
         if len(valeur) == 0:
             valeur = "\n  |att|Aucun élément à afficher|ff|"
         else:

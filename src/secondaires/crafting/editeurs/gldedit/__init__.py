@@ -47,6 +47,7 @@ from secondaires.crafting.editeurs.gldedit import commande
 from secondaires.crafting.editeurs.gldedit import extension
 from secondaires.crafting.editeurs.gldedit import rang
 from secondaires.crafting.editeurs.gldedit import recette
+from secondaires.crafting.editeurs.gldedit import talent
 from secondaires.crafting.editeurs.gldedit import type
 from secondaires.crafting.editeurs.gldedit.types import EdtTypes
 
@@ -140,6 +141,19 @@ class GldEdit(Presentation):
             "    |ent|oeuf:casser/break|ff|\n" \
             "Pour ajouter le paramètre casser/break à la commande " \
             "oeuf.\n\nCommandes définies dans cette guilde :{valeur}"
+
+
+        # Talents
+        talents = self.ajouter_choix("talents", "l", AES,
+                guilde, "talents", "gldedit:talent",
+                (("clé", "clé"), ), "get_talent", "ajouter_talent", None,
+                "nom_complet")
+        talents.parent = self
+        talents.apercu = "{valeur}"
+        talents.aide_courte = \
+            "Entrez |ent|la clé du talent|ff| pour l'éditer ou :\n" \
+            " |ent|/a <clé du talent à ajouter>|ff|\n\n" \
+            "Talents actuels :{valeur}"
 
         # Extensions
         extensions = self.ajouter_choix("extensions d'éditeur", "e", AES,
