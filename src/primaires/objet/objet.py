@@ -128,7 +128,7 @@ class Objet(BaseObj):
         """Retourne le poids total.
 
         Ce peut être :
-        *   Le point unitaire pour un objet standard
+        *   Le poids unitaire pour un objet standard
         *   Le poids unitaire plus le poids de tous les objets
             contenus pour un conteneur.
 
