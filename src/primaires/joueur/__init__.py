@@ -82,6 +82,8 @@ class Module(BaseModule):
         # On crée les hooks du module
         importeur.hook.ajouter_hook("joueur:connecte",
                 "Hook appelé après qu'un joueur se soit connecté.")
+        importeur.hook.ajouter_hook("joueur:deconnecte",
+                "Hook appelé avant qu'un joueur se déconnecte.")
         importeur.hook.ajouter_hook("joueur:erreur",
                 "Hook appelé quand une erreur se produit.")
 
@@ -144,6 +146,8 @@ class Module(BaseModule):
         On s'assure que :
         -   les joueurs dits connectés le soient toujours
 
+        On ajoute aussi les évènements.
+
         """
         for joueur in self.importeur.connex.joueurs:
             i_c = joueur.instance_connexion
@@ -175,6 +179,12 @@ class Module(BaseModule):
             self.compte_systeme.creer_joueur(self.joueur_systeme)
 
         self.joueur_systeme = self.joueurs[self.joueur_systeme]
+
+        # Ajout des évènements
+        importeur.evt.ajouter_evenement("connecte", "Un joueur se connecte",
+                "Connexion de {joueur}.", "joueur:connecte")
+        importeur.evt.ajouter_evenement("deconnecte", "Un joueur se " \
+                "déconnecte", "Déconnexion de {joueur}.", "joueur:deconnecte")
 
     def ajouter_joueur_tick(self, joueur):
         """Ajoute un joueur au tick semblant le moins chargé."""

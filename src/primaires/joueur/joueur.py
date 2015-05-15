@@ -184,6 +184,9 @@ class Joueur(Personnage):
         retiré de l'univers) mais son client peut être maintenu.
 
         """
+        if self.connecte:
+            importeur.hook["joueur:deconnecte"].executer(self)
+
         self.connecte = False
         salle = self.salle
         if salle:
