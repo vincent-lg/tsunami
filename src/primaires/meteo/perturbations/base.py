@@ -121,6 +121,67 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
         """Retourne True si on peut voir le ciel, False sinon."""
         return self.flags & OPAQUE != 0
 
+    def envoyer_message_fin(self, salles=None):
+        """Envoie le message de fin de la perturbation.
+
+        Les salles peuvent être précisées pour l'optimisation. Si
+        elles ne le sont pas, les salles sous la perturbation sont
+        sélectionnées.
+
+        """
+        if salles is None:
+            salles = self.liste_salles_sous
+
+        for salle in salles:
+            if salle.exterieur:
+                salle.envoyer("|cy|" + self.message_fin + "|ff|",
+                        prompt=False)
+
+    def tick(self):
+        """Tick la perturbation à chaque minute.
+
+        Si nécessaire, transforme la perturbation en une autre.
+        Cette méthode appelle également les actions du cycle (qui
+        font bouger la perturbation).
+
+        """
+        sous = self.liste_salles_sous
+        if self.age >= self.duree:
+            i = randint(0, 100)
+            nom_pertu_enchainer = ""
+            msg_enchainement = ""
+            for fin in self.fins_possibles:
+                if i <= fin[2]:
+                    nom_pertu_enchainer = fin[0]
+                    msg_enchainement = fin[1]
+                    break
+
+            if not nom_pertu_enchainer:
+                self.envoyer_message_fin(sous)
+            else:
+                for salle in sous:
+                    if salle.exterieur:
+                        salle.envoyer("|cy|" + msg_enchainement + "|ff|",
+                                prompt=False)
+                cls_pertu_enchainer = None
+                for pertu_existante in importeur.meteo.perturbations:
+                    if pertu_existante.nom_pertu == nom_pertu_enchainer:
+                        cls_pertu_enchainer = pertu_existante
+                        break
+
+                if cls_pertu_enchainer:
+                    pertu_enchainer = cls_pertu_enchainer(self.centre)
+                    pertu_enchainer.rayon = self.rayon
+                    pertu_enchainer.dir = self.dir
+                    importeur.meteo.perturbations_actuelles.append(
+                            pertu_enchainer)
+            self.detruire()
+            importeur.meteo.perturbations_actuelles.remove(self)
+            return
+
+        # On fait bouger les perturbations existantes
+        self.cycle(sous)
+
     def cycle(self, salles=None):
         """Entame un nouveau cycle de la perturbation.
 
@@ -132,14 +193,18 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
 
         self.action_cycle(salles)
         n_x, n_y = self.calculer_prochaines_coords()
+
         # Détection des collisions
         if self.flags & STATIQUE:
             self.flags = self.flags ^ STATIQUE
-        for pertu in type(self).importeur.meteo.perturbations_actuelles:
+
+        for pertu in importeur.meteo.perturbations_actuelles:
             if pertu is not self and self.va_recouvrir(pertu, n_x, n_y):
                 self.flags = self.flags ^ STATIQUE
+
         if not self.flags & STATIQUE and not self.statique:
             self.bouger(salles, n_x, n_y)
+
         self.age += 1
 
     def action_cycle(self, salles):
@@ -152,15 +217,25 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
         pass
 
     def bouger(self, salles, n_x, n_y):
-        """Bouge une perturbation"""
+        """Bouge une perturbation.
+
+        Paramètres de cette méthode :
+            salles -- les salles sous la perturbation AVANT qu'elle ne bouge
+            n_x -- la nouvelle coordonnée X
+            n_y -- la nouvelle coordonnée Y
+
+        """
         self.centre.x = n_x
         self.centre.y = n_y
-        for salle in self.liste_salles_sous:
+        nouvelles = self.liste_salles_sous
+
+        for salle in nouvelles:
             if salle not in salles:
                 temperature = salle.zone.temperature
                 if (self.temperature_min and temperature < \
                         self.temperature_min) or (self.temperature_max and \
                         temperature > self.temperature_max):
+                    self.envoyer_message_fin(salles)
                     self.detruire()
                     importeur.meteo.perturbations_actuelles.remove(self)
                     break
@@ -170,7 +245,7 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
                             dir=vents_opp[self.dir]) + "|ff|", prompt=False)
 
         for salle in salles:
-            if (not self.e_existe or not self.est_sur(salle)) and \
+            if (not self.e_existe or salle not in nouvelles) and \
                     salle.exterieur:
                 salle.envoyer("|cy|" + self.message_sortir.format(
                         dir=vents[self.dir]) + "|ff|", prompt=False)
