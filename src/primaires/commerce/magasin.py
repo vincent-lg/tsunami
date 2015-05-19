@@ -35,6 +35,8 @@ import re
 from abstraits.obase import *
 from primaires.format.constantes import COULEURS
 from primaires.format.tableau import Tableau, GAUCHE, DROITE
+from primaires.objet.objet import Objet
+from primaires.objet.vente_unique import VenteUnique
 
 class Magasin(BaseObj):
 
@@ -205,6 +207,11 @@ class Magasin(BaseObj):
     def ajouter_inventaire(self, service, qtt, inc_qtt=True):
         """Ajoute des services dans l'inventaire.
 
+        Si service est de type objet, on applique la règle
+        d'unicité : si l'objet semble unique (son nom est différent
+        de celui de son prototype), on l'ajoute dans un service à
+        part.
+
         Si inc_qtt est à True, la quantité spécifiée est ajoutée à celle
         du service de l'inventaire, si présent. Sinon, la quantité du
         service, si présent, est remplacée par la nouvelle.
@@ -212,12 +219,18 @@ class Magasin(BaseObj):
         """
         services = list(self.inventaire)
         trouve = False
-        for i, (t_service, t_qtt) in enumerate(services):
-            if t_service is service:
-                qtt = qtt if not inc_qtt else qtt + t_qtt
-                services[i] = (t_service, qtt)
-                trouve = True
-                break
+        if isinstance(service, Objet):
+            if service.nom_singulier != service.prototype.nom_singulier:
+                service = VenteUnique(service)
+            else:
+                importeur.objet.supprimer_objet(service.identifiant)
+        else:
+            for i, (t_service, t_qtt) in enumerate(services):
+                if t_service is service:
+                    qtt = qtt if not inc_qtt else qtt + t_qtt
+                    services[i] = (t_service, qtt)
+                    trouve = True
+                    break
 
         if not trouve:
             services.append((service, qtt))

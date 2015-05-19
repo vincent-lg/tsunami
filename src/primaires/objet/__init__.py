@@ -85,6 +85,8 @@ class Module(BaseModule):
             "conteneur, l'ajout du service ne fonctionnera pas."
 
         # Ajout des hooks
+        importeur.hook.ajouter_hook("objet:doit_garder",
+                "Hook appelé pour connaître les objets à ne pas détruire")
         importeur.hook.ajouter_hook("objet:peut_boire",
                 "Hook appelé quand un personnage demande à boire.")
 
@@ -186,6 +188,11 @@ class Module(BaseModule):
                 a_detruire.append(objet)
 
         a_detruire = [o for o in a_detruire if o and o.prototype]
+        for a_garder in importeur.hook["objet:doit_garder"].executer():
+            for objet in a_garder:
+                if objet in a_detruire:
+                    a_detruire.remove(objet)
+
         self.logger.info(format_nb(len(a_detruire), "{nb} objet{s} à " \
                 "détruire"))
         types = {}

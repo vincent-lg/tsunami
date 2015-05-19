@@ -42,6 +42,7 @@ class ClasseAction(CA):
         cls.ajouter_types(cls.ajouter_a_liste, "object", "list")
         cls.ajouter_types(cls.ajouter_magasin, "Salle", "Fraction",
                 "str", "str")
+        cls.ajouter_types(cls.ajouter_magasin_unique, "Salle", "Objet")
 
     @staticmethod
     def ajouter_magasin(salle, quantite, service, cle):
@@ -96,3 +97,42 @@ class ClasseAction(CA):
 
         service = objets[cle]
         salle.magasin.ajouter_inventaire(service, quantite)
+
+    @staticmethod
+    def ajouter_magasin_unique(salle, objet):
+        """Ajoute un objet unique à l'inventaire du magasin.
+
+        Cette action permet d'ajouter un objet unique dans
+        l'inventaire du magasin. À la différence de la plupart
+        des services, l'objet unique conserve l'objet dans le
+        magasin, au lieu de son prototype. Ce peut donc être
+        nécessaire si vous manipulez des objets modifiés (dont vous
+        avez changé le nom, le poids, le prix et autre, probablement
+        par scripting). L'objet peut-être soit dans un conteneur,
+        posé au sol, ou bien sans aucun lien (nouvellement créé).
+        Consultez les exemples ci-dessous pour des plus d'informations.
+
+        Paramètres à préciser :
+
+          * salle : la salle contenant le magasin
+          * objet : l'objet à ajouter dans l'inventaire du magasin
+
+        Exemples d'utilisation :
+
+          salle = salle("zone:mnemo")
+          # Ajoute un objet unique posé sur le sol
+          # (contenu dans la variable 'objet')
+          ajouter salle objet
+          # Ou bien crée un objet unique
+          objet = creer_objet("cle_du_prototype")
+          # ... Modification de l'objet
+          ajouter salle objet
+
+        """
+        if objet.contenu:
+            try:
+                objet.contenu.retirer(objet)
+            except ValueError:
+                pass
+
+        salle.magasin.ajouter_inventaire(objet, 1)
