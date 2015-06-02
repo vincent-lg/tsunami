@@ -41,6 +41,7 @@ les extensions n'apparaîtront pas ici.
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.entier import Entier
+from primaires.scripting.editeurs.edt_script import EdtScript
 
 class EdtZedit(Presentation):
 
@@ -81,7 +82,6 @@ class EdtZedit(Presentation):
             "Entrez |ent|le trésor|ff| de la zone.\n\nTrésor actuel : " \
             "{objet.argent_total}"
 
-
         # Température
         temperature = self.ajouter_choix("modificateur de température", "m",
                 Entier, zone, "mod_temperature", None, None)
@@ -101,3 +101,9 @@ class EdtZedit(Presentation):
             "jamais de neige, alors\nqu'une zone tout le temps froide " \
             "en aura constamment.\n\nModificateur de température " \
             "actuel : {valeur}°"
+
+        # Script
+        scripts = self.ajouter_choix("scripts", "sc", EdtScript,
+                zone.script)
+        scripts.parent = self
+

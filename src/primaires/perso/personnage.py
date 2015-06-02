@@ -734,6 +734,10 @@ class Personnage(BaseObj):
             salle_dest.script["entre"]["apres"].executer(
                     depuis=nom_opp, salle=salle_dest, personnage=self)
 
+            if salle.nom_zone != salle_dest.nom_zone:
+                salle_dest.zone.script["entre"].executer(
+                    origine=salle, salle=salle_dest, personnage=self)
+
             # On appelle l'évènement 'sort' des affections de la salle
             for affection in list(salle_dest.affections.values()):
                 duree = affection.duree

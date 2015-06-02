@@ -33,6 +33,7 @@
 import re
 
 from abstraits.obase import BaseObj
+from primaires.scripting.script import Script
 
 class Zone(BaseObj):
 
@@ -57,6 +58,7 @@ class Zone(BaseObj):
         self.ouverte = True
         self.argent_total = 0
         self.mod_temperature = 0
+        self.script = ScriptZone(self)
         self._construire()
 
     def __getnewargs__(self):
@@ -123,3 +125,30 @@ class Zone(BaseObj):
                 break
 
         return mnemo
+
+
+class ScriptZone(Script):
+
+    """Script et évènements propre aux zones."""
+
+    def init(self):
+        """Initialisation du script"""
+        # Evénement entre
+        evt_entre = self.creer_evenement("entre")
+        evt_entre.aide_courte = "un personnage entre dans la zone"
+        evt_entre.aide_longue = \
+            "Cet évènement est appelé quand un personnage, joueur ou PNJ, " \
+            "entre dans la zone, quelque soit sa salle de provenance et " \
+            "son moyen de déplacement, tant que la salle d'origine " \
+            "est différente de la salle actuelle. Il faut cependant " \
+            "retirer le déplacement par |cmd|goto|ff| qui ne déclenche " \
+            "pas cet évènement."
+
+        # Configuration des variables de l'évènement entre
+        var_origine = evt_entre.ajouter_variable("origine", "Salle")
+        var_origine.aide = "la salle d'origine du personnage"
+        var_salle = evt_entre.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle actuelle (le point d'entrée dans " \
+                "la zone)"
+        var_perso = evt_entre.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage se déplaçant"

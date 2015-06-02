@@ -37,7 +37,6 @@ class ClasseFonction(Fonction):
 
     """Vérifie qu'un bloc d'instruction existe."""
 
-
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.bloc_existe, "object", "str")
@@ -48,8 +47,13 @@ class ClasseFonction(Fonction):
 
         Paramètres à entrer :
 
-          * scriptable : le scriptable (salle, objet, PNJ, ...)
+          * scriptable : le scriptable (salle, objet, PNJ, ... ou chaîne)
           * nom_bloc : le nom du bloc dont on veut vérifier la présence.
+
+        Vous pouvez entrer une information de localisation de
+        scriptable sous la forme d'une chaîne. Par exemple
+        "zone picte" pour faire référence au scriptable de la zone
+        picte.
 
         Exemple d'utilisation :
 
@@ -58,7 +62,32 @@ class ClasseFonction(Fonction):
           finsi
 
         """
-        if not hasattr(scriptable, "script"):
+        scriptables = {
+                "objet": importeur.objet.objets,
+                "prototype d'objet": importeur.objet.prototypes,
+                "salle": importeur.salle.salles,
+                "zone": importeur.salle.zones,
+        }
+
+        if isinstance(scriptable, str):
+            trouve = False
+            for nom, dictionnaire in scriptables.items():
+                if scriptable.startswith(nom):
+                    cle = scriptable[len(nom) + 1:].lower()
+                    if cle not in dictionnaire:
+                        raise ErreurExecution("Impossible de trouver " \
+                                "le scriptable {} : clé {} " \
+                                "introuvable".format(repr(scriptable), repr(cle)))
+
+                    trouve = True
+                    scriptable = dictionnaire[cle]
+                    break
+
+            if not trouve:
+                raise ErreurExecution("Impossible de trouver le scriptable " \
+                        "{} : type d'information introuvable".format(
+                        repr(scriptable), repr(cle)))
+        elif not hasattr(scriptable, "script"):
             raise ErreurExecution("le scriptable {} ne semble pas avoir " \
                     "de script".format(scriptable))
 

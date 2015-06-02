@@ -54,16 +54,45 @@ class ClasseAction(Action):
 
         Cette action prend au moins deux paramètres :
 
-        * Le script contenant le bloc. Si le bloc est défini dans le script
-          d'une salle précis, passez en premier paramètre cette salle.
-        * Le nom du bloc à appeler.
+          * Le script contenant le bloc. Si le bloc est défini dans le script
+            d'une salle précis, passez en premier paramètre cette salle.
+          * Le nom du bloc à appeler.
 
         Les autres paramètres dépendent du bloc : celui-ci peut avoir aucun,
         un ou plusieurs paramètres. Vous devez les appeler dans l'ordre dans
         cette action.
 
+        Notez qu'à la place de l'appelant (premier paramètre),
+        vous pouvez préciser un nom (chaîne) identifiant le scriptable.
+        Par exemple, "zone picte" ou "salle picte:8".
+
         """
-        if not hasattr(appelant, "script"):
+        scriptables = {
+                "objet": importeur.objet.objets,
+                "prototype d'objet": importeur.objet.prototypes,
+                "salle": importeur.salle.salles,
+                "zone": importeur.salle.zones,
+        }
+
+        if isinstance(appelant, str):
+            trouve = False
+            for t_nom, dictionnaire in scriptables.items():
+                if appelant.startswith(t_nom):
+                    cle = appelant[len(t_nom) + 1:].lower()
+                    if cle not in dictionnaire:
+                        raise ErreurExecution("Impossible de trouver " \
+                                "le scriptable {} : clé {} " \
+                                "introuvable".format(repr(appelant), repr(cle)))
+
+                    trouve = True
+                    appelant = dictionnaire[cle]
+                    break
+
+            if not trouve:
+                raise ErreurExecution("Impossible de trouver le scriptable " \
+                        "{} : type d'information introuvable".format(
+                        repr(appelant), repr(cle)))
+        elif not hasattr(appelant, "script"):
             raise ErreurExecution("l'appelant {} ne semble pas avoir " \
                     "de script".format(appelant))
 
