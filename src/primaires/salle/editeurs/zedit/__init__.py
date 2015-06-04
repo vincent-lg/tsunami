@@ -102,6 +102,9 @@ class EdtZedit(Presentation):
             "en aura constamment.\n\nModificateur de température " \
             "actuel : {valeur}°"
 
+        # Extensions de l'éditeur
+        importeur.hook["editeur:etendre"].executer("zone", self, zone)
+
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,
                 zone.script)

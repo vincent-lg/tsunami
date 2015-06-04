@@ -54,6 +54,7 @@ class ClasseFonction(Fonction):
         cls.ajouter_types(cls.configuration_salle, "Salle", "str")
         cls.ajouter_types(cls.configuration_personnage, "Personnage", "str")
         cls.ajouter_types(cls.configuration_objet, "Objet", "str")
+        cls.ajouter_types(cls.configuration_chaine, "str", "str")
 
     @staticmethod
     def configuration_salle(salle, nom_configuration):
@@ -193,6 +194,78 @@ class ClasseFonction(Fonction):
             return None
 
         donnee = getattr(importeur.crafting.configuration[prototype],
+                nom_configuration)
+
+        if isinstance(donnee, (int, float)):
+            donnee = Fraction(donnee)
+        elif isinstance(donnee, list):
+            # Déréférence
+            donnee = list(donnee)
+            convertir_liste(donnee)
+
+        return donnee
+
+    @staticmethod
+    def configuration_chaine(adresse, nom_configuration):
+        """Retourne la configuration spécifique à un donnée variable.
+
+        La configuration est le résultat de l'extension du
+        crafting. Chaque guilde peut configurer ses propres
+        extensions d'éditeur. Cette fonction scripting permet de
+        récupérer la valeur particulière. Si la configuration n'existe
+        pas, retourne simplement une variable vide. Vous pouvez
+        (et devriez) contrôler la validité de la variable retournée
+        grâce à une simple condition (voir les exemples plus bas).
+
+        À la différence des autres usages, vous devez ici préciser
+        en premier paramètre l'adresse d'une donnée sous la forme
+        d'une chaîne : par exemple, "zone picte" pour récupérer
+        l'extension de la zone Picte. Ce système permet de récupérer
+        certaines données qui ne sont pas définies en crafting (comme
+        les zones).
+
+        Paramètres à préciser :
+
+          * adresse : l'adresse de l'information configurée (une chaîne)
+          * nom_configuration : le nom de la configuration (une chaîne)
+
+        Si vous avez créé, dans une guilde, une extension dont le
+        nom est "qualité" s'appliquant à l'éditeur de zone, par exemple,
+        vous pouvez récupérer la valeur pour chaque zone configurée
+        grâce à l'instruction :
+
+          qualite = configuration("zone NOMZONE", "qualité")
+
+        Notez que le même système s'applique pour des types
+        particuliers avec leurs extensions spécifiques.
+        Assurez-vous que la configuration existe. Si la configuration
+        n'a pas été renseignée dans l'éditeur, elle sera vide.
+
+          si qualite:
+              # qualite n'est pas vide, vous pouvez travailler avec
+
+        """
+        adresse = adresse.lower()
+        objets = {
+                "zone": importeur.salle.zones,
+        }
+
+        objet = None
+        for nom, dictionnaire in objets.items():
+            if adresse.startswith(nom + " "):
+                cle = adresse[len(nom) + 1:]
+                if cle not in dictionnaire:
+                    raise ValueError("{} introuvable : {}".format(
+                            nom, repr(cle)))
+
+                objet = dictionnaire[cle]
+                break
+
+        if objet is None:
+            raise ErreurExecution("Adresse {} introuvable".format(
+                    repr(adresse)))
+
+        donnee = getattr(importeur.crafting.configuration[objet],
                 nom_configuration)
 
         if isinstance(donnee, (int, float)):

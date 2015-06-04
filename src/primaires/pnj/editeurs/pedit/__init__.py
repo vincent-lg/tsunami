@@ -208,6 +208,9 @@ class EdtPedit(Presentation):
             "ou les PNJ construits sur ce\nprototype ne pourront pas " \
             "entraîner cette stat au-delà du niveau maximum\nspécifié."
 
+        # Extensions de l'éditeur
+        importeur.hook["editeur:etendre"].executer("pnj", self, prototype)
+
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,
                 prototype.script)

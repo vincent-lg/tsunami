@@ -75,7 +75,10 @@ class Uniligne(Editeur):
 
     def accueil(self):
         """Retourne l'aide courte"""
-        valeur = getattr(self.objet, self.attribut)
+        valeur = "inconnue"
+        if isinstance(self.attribut, str):
+            valeur = getattr(self.objet, self.attribut, "inconnue")
+
         return self.aide_courte.format(objet = self.objet, valeur=valeur)
 
     def interpreter(self, msg):

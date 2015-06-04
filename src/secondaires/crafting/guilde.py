@@ -364,7 +364,7 @@ class Guilde(BaseObj):
         if self.get_extension(nom, False):
             raise ValueError("L'extension {} existe déjà".format(repr(nom)))
 
-        if editeur not in ("salle", "pnj", "objet"):
+        if editeur not in ("salle", "pnj", "objet", "zone"):
             raise ValueError("Type d'éditeur {} inconnu".format(
                     repr(editeur)))
 
