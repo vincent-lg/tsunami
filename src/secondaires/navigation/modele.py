@@ -30,6 +30,8 @@
 
 """Fichier contenant la classe ModeleNavire, détaillée plus bas."""
 
+from queue import Queue
+
 from abstraits.obase import BaseObj
 from primaires.format.description import Description
 from .salle import *
@@ -161,49 +163,57 @@ class ModeleNavire(BaseObj):
         (origine, destination) et en valeur la liste des sorties
         nécessaires pour s'y rendre.
 
+        L'algorithme Dijkstra est utilisé.
+
         """
-        def ajouter_paire(graph, origine, destination, sorties):
-            """Ajoute une paire unique au graph."""
-
-            o_mnemo = origine if isinstance(origine, str) else origine.mnemonic
-            d_mnemo = destination if isinstance(destination, str) else \
-                    destination.mnemonic
-            if o_mnemo == d_mnemo:
-                return False
-
-            chemin = graph.get((o_mnemo, d_mnemo))
-            if chemin is None or len(sorties) < len(chemin):
-                graph[(o_mnemo, d_mnemo)] = sorties
-                return True
-
-            return False
-
-        def enrichir_graph(graph, origine, destination, sorties):
-            """Enrichit le graph."""
-            court = ajouter_paire(graph, origine, destination, sorties)
-            if court:
-                for (o_mnemo, d_mnemo), chemin in tuple(graph.items()):
-                    if o_mnemo == destination.mnemonic:
-                        n_chemin = list(sorties) + list(chemin)
-                        ajouter_paire(graph, origine, d_mnemo, n_chemin)
-
-                for sortie in destination.sorties:
-                    if sortie.salle_dest:
-                        enrichir_graph(graph, destination, sortie.salle_dest,
-                                [sortie.nom])
-
-                for (o_mnemo, d_mnemo), chemin in tuple(graph.items()):
-                    if o_mnemo == destination.mnemonic:
-                        n_chemin = list(sorties) + list(chemin)
-                        ajouter_paire(graph, origine, d_mnemo, n_chemin)
-
         graph = {}
-        origine = self.salles.get((0, 0, 0))
-        if origine:
-            for sortie in origine.sorties:
-                if sortie and sortie.salle_dest:
-                    enrichir_graph(graph, origine, sortie.salle_dest,
-                            [sortie.nom])
+        aretes = {}
+        sorties = {}
+
+        # On remplit le chemin avec toutes les liaisons
+        for salle in self.salles.values():
+            origine = salle.mnemonic
+            aretes[origine] = []
+            for sortie in salle.sorties:
+                destination = sortie.salle_dest.mnemonic
+                aretes[origine].append(destination)
+                sorties[origine, destination] = sortie.nom
+
+        # Population des chemins dans le graph
+        for origine in range(1, len(self.salles) + 1):
+            origine = str(origine)
+            for destination in range(1, len(self.salles) + 1):
+                destination = str(destination)
+                if origine == destination:
+                    continue
+
+                frontier = Queue()
+                frontier.put(origine)
+                origines = {origine: None}
+                while not frontier.empty():
+                    actuel = frontier.get()
+                    if actuel == destination:
+                        break
+
+                    for fils in aretes[actuel]:
+                        if fils not in origines:
+                            frontier.put(fils)
+                            origines[fils] = actuel
+
+
+                # Recherche la liste des sorties
+                parent = Queue()
+                parent.put(destination)
+                chemin = []
+                while not parent.empty():
+                    actuel = parent.get()
+                    precedent = origines[actuel]
+                    sortie = sorties[precedent, actuel]
+                    chemin.insert(0, sortie)
+                    if precedent != origine:
+                        parent.put(precedent)
+
+                graph[origine, destination] = chemin
 
         self.graph = graph
 
