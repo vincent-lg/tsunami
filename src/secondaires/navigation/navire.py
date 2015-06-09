@@ -757,12 +757,15 @@ class Navire(Vehicule):
             self.envoyer("Un léger choc se répercute sous vos pieds.")
             return
 
+        x, y, z = self.direction.tuple
         self.direction.tourner_autour_z(n)
         self.maj_salles()
         if self.controller_collision(collision=False):
             # On annule la translation
             self.envoyer("Un léger choc se répercute sous vos pieds.")
-            self.direction.tourner_autour_z(-n)
+            self.direction.x = x
+            self.direction.y = y
+            self.direction.z = z
             self.maj_salles()
 
     def envoyer(self, message):
