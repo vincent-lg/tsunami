@@ -608,6 +608,21 @@ class Equipage(BaseObj):
                 for personnage in personnages:
                     personnage.gagner_xp("navigation", xp)
 
+    def reagir_collision(self, salle, contre):
+        """Réagit à une collision.
+
+        Si un objectif est défini, la méthode 'reagir_collision' de
+        l'objectif prioritaire (le premier) est appelée. En d'autres
+        termes, si le navire est contrôlé par le système, ou par
+        le joueur en mode automatique, l'équipage va essayer de
+        réagir face à une collision (en reculant, par exemple, si
+        cela est possible, ou tout au moins en interrompant la
+        vitesse).
+
+        """
+        if self.objectifs:
+            self.objectifs[0].reagir_collision(salle, contre)
+
     def detruire(self):
         """Destruction de l'équipage et des matelots inclus."""
         for nom in list(self.matelots.keys()):

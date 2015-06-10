@@ -97,6 +97,9 @@ class Vitesse(Controle):
             Transmet les ordres appropriés à l'équipage.
 
         """
+        if self.navire.en_collision:
+            return
+
         commandant = self.commandant
         if commandant is None:
             return

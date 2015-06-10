@@ -692,6 +692,7 @@ class Navire(Vehicule):
         points = tuple(etendue.get_points_proches(origine.x, origine.y,
                 diametre).items())
         points += importeur.navigation.points_navires(self)
+
         # Si l'étendue a un point sur le segment
         # (position -> position + vitesse) alors collision
         for vecteur, t_salle in vecteurs:
@@ -713,7 +714,7 @@ class Navire(Vehicule):
                         importeur.navigation.nav_logger.warning(
                                 "Collision entre {} et {}".format(
                                 t_salle, point))
-                        self.collision(t_salle, point)
+                    self.collision(t_salle, point)
                     return True
 
         return False
@@ -745,6 +746,10 @@ class Navire(Vehicule):
         self.acceleration.x = 0
         self.acceleration.y = 0
         self.acceleration.z = 0
+
+        # On prévient l'équipage
+        if self.equipage:
+            self.equipage.reagir_collision(salle, contre)
 
     def virer(self, n=1):
         """Vire vers tribord ou bâbord de n degrés.

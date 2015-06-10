@@ -64,9 +64,13 @@ class Rejoindre(Objectif):
         self.vitesse_optimale = vitesse
         self.autre_direction = None
         self.autoriser_vitesse_sup = True
+        self.doit_reculer = ()
 
     def afficher(self):
         """Méthode à redéfinir retournant l'affichage de l'objectif."""
+        if self.doit_reculer:
+            return "Doit reculer"
+
         navire = self.navire
         distance = self.get_distance()
         direction = (distance.direction + 90) % 360
@@ -151,6 +155,18 @@ class Rejoindre(Objectif):
         """Trouve le cap, tenant compte des obstacles."""
         equipage = self.equipage
         navire = self.navire
+
+        # Si on doit reculer, vérifie que c'est toujours vrai
+        if self.doit_reculer:
+            x, y = self.doit_reculer
+            p_x = navire.position.x
+            p_y = navire.position.y
+            max_distance = navire.get_max_distance_au_centre()
+            if sqrt((x - p_x) ** 2 + (y - p_y) ** 2) > max_distance + 1:
+                self.doit_reculer = ()
+            else:
+                return
+
 
         # On examine les points listés par la vigie
         # Si il n'y a pas de vigie, pas le moyen de les éviter
@@ -269,3 +285,35 @@ class Rejoindre(Objectif):
 
         if prioritaire:
             self.trouver_cap()
+
+    def reagir_collision(self, salle, contre):
+        """Réagit à une collision."""
+        if not self.doit_reculer:
+            commandant = self.commandant
+            if commandant is None:
+                return
+
+            personnage = commandant.personnage
+            navire = self.navire
+            equipage = self.equipage
+            p_x = navire.position.x
+            p_y = navire.position.y
+            self.warning("Essaye de faire reculer le navire")
+            self.doit_reculer = (p_x, p_y)
+
+            # Supprime le contrôle de cap, si il existe
+            equipage.retirer_controle("direction")
+
+            if navire.gouvernail:
+                equipage.demander("relacher_gouvernail",
+                        personnage=personnage)
+
+            # Demande de ramer en marche arrière
+            rames = navire.rames
+            if rames:
+                # On doit centrer les rames si besoin
+                if any(r.orientation != 0 for r in rames):
+                    equipage.demander("ramer", "centre",
+                            personnage=personnage)
+
+                equipage.demander("ramer", "arrière", personnage=personnage)

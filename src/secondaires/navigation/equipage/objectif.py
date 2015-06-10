@@ -174,3 +174,7 @@ class Objectif(BaseObj, metaclass=MetaObjectif):
 
         """
         raise NotImplementedError
+
+    def reagir_collision(self, salle, contre):
+        """Réagit à une collision."""
+        pass
