@@ -308,6 +308,10 @@ class Rejoindre(Objectif):
                 equipage.demander("relacher_gouvernail",
                         personnage=personnage)
 
+            # Demande de plier les voiles si besoin
+            if any(v.hissee for v in navire.voiles):
+                equipage.demander("plier_voiles", None, personnage=personnage)
+
             # Demande de ramer en marche arrière
             rames = navire.rames
             if rames:
