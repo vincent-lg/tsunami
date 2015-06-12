@@ -617,7 +617,7 @@ class Navire(Vehicule):
                 return
 
             Vehicule.avancer(self, temps_virtuel)
-            if self.controller_collision(collision=False):
+            if self.controller_collision():
                 # On annule le déplacement
                 self.position.x = x
                 self.position.y = y
@@ -714,7 +714,7 @@ class Navire(Vehicule):
                         importeur.navigation.nav_logger.warning(
                                 "Collision entre {} et {}".format(
                                 t_salle, point))
-                    self.collision(t_salle, point)
+                        self.collision(t_salle, point)
                     return True
 
         return False
@@ -765,7 +765,7 @@ class Navire(Vehicule):
         x, y, z = self.direction.tuple
         self.direction.tourner_autour_z(n)
         self.maj_salles()
-        if self.controller_collision(collision=False):
+        if self.controller_collision():
             # On annule la translation
             self.envoyer("Un léger choc se répercute sous vos pieds.")
             self.direction.x = x
