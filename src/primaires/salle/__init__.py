@@ -335,6 +335,7 @@ class Module(BaseModule):
         -   Chaque salle est dans une zone
         -   Chaque terrain a sa réciproque en obstacle
         -   Les étendues ont toutes un contour défini
+        -   Les étendues détemrinent leurs segments de liens
 
         """
         # On récupère la configuration
@@ -413,6 +414,8 @@ class Module(BaseModule):
             x, y = etendue.origine
             if x is not None and y is not None:
                 etendue.trouver_contour()
+
+            etendue.determiner_segments_liens()
 
     def detruire(self):
         """Destruction du module.

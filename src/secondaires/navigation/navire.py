@@ -630,25 +630,12 @@ class Navire(Vehicule):
 
             # Si le navire a croisé un lien, change d'étendue
             etendue = self.etendue
-            for coords, autre in etendue.liens.items():
-                x, y = coords
-                if autre is etendue:
-                    continue
-
-                v_point = Vector(x, y, etendue.altitude)
-                if in_rectangle(origine.x, origine.y, origine.z,
-                        n_position.x, n_position.y, n_position.z,
-                        x, y, etendue.altitude, 1) and origine.distance(
-                        n_position, v_point) <= 0.5:
-                    # C'est un lien, mais dans le bon sens ?
-                    pr_x, pr_y = etendue.projections[autre]
-                    pr_vec = Vector(pr_x, pr_y, etendue.altitude)
-                    if (n_position - pr_vec).mag < (origine - pr_vec).mag:
-                        # Les autres liens ne sont pas pris en compte
-                        self.etendue = autre
-                        self.position.z = autre.altitude
-                        print("On change d'étendue pour", self, self.etendue.cle)
-                        break
+            autre = etendue.croise_lien((origine.x, origine.y),
+                    (n_position.x, n_position.y))
+            if autre:
+                print(self, "change d'étendue:", autre)
+                self.etendue = autre
+                self.position.z = autre.altitude
 
             # Enregistre la distance parcourue au compteur
             distance = (n_position - origine).mag

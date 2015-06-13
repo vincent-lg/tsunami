@@ -75,7 +75,7 @@ class Etendue(BaseObj):
         self.obstacles = {}
         self.cotes = {}
         self.liens = {}
-        self.projections = {}
+        self.segments_liens = {}
         self.origine = (None, None)
         self.contour = None
         self._construire()
@@ -143,6 +143,85 @@ class Etendue(BaseObj):
 
         return coordonnees
 
+    def determiner_segments_liens(self):
+        """Détermine les segments des liens en fonctions des liens définis.
+
+        À la différence des liens, qui ne sont que des points avec
+        deux coordonnées (X, Y), le segment de lien définit un
+        segment décrit par deux points. Les segments de liens sont
+        utiles pour savoir, par exemple, si un navire traverse la
+        ligne et change donc d'étendue.
+
+        """
+        liens = self.liens.copy()
+        while liens:
+            coords = list(liens.keys())[0]
+            etendue = liens[coords]
+            del liens[coords]
+            voisins = []
+
+            # On cherche tous les voisins
+            # D'abord en variant X
+            x, y = coords
+            while ((x + 1), y) in liens:
+                x += 1
+                voisin = (x, y)
+                vers = liens[voisin]
+                if etendue is vers:
+                    voisins.append(voisin)
+                    del liens[voisin]
+
+            x, y = coords
+            while ((x - 1), y) in liens:
+                x -= 1
+                voisin = (x, y)
+                vers = liens[voisin]
+                if etendue is vers:
+                    voisins.append(voisin)
+                    del liens[voisin]
+
+            if not voisins:
+                # Puis en variant Y
+                x, y = coords
+                while (x, (y + 1)) in liens:
+                    y += 1
+                    voisin = (x, y)
+                    vers = liens[voisin]
+                    if etendue is vers:
+                        voisins.append(voisin)
+                        del liens[voisin]
+
+                x, y = coords
+                while (x, (y - 1)) in liens:
+                    y -= 1
+                    voisin = (x, y)
+                    vers = liens[voisin]
+                    if etendue is vers:
+                        voisins.append(voisin)
+                        del liens[voisin]
+
+            # voisins fait 0 ou plus d'une coords de longueur
+            if len(voisins) == 0:
+                x, y = coords
+                if (x - 1, y) in etendue.points:
+                    origine = ((x - 1), y)
+                    extremite = ((x + 1), y)
+                else:
+                    origine = (x, (y - 1))
+                    extremite = (x, (y + 1))
+            else:
+                voisins.append(coords)
+                origine = min(voisins)
+                extremite = max(voisins)
+                if origine[0] < extremite[0]:
+                    origine = (origine[0] - 1, origine[1])
+                    extremite = (extremite[0] + 1, extremite[1])
+                else:
+                    origine = (origine[0], origine[1] - 1)
+                    extremite = (extremite[0], extremite[1] + 1)
+
+            self.segments_liens[(origine, extremite)] = etendue
+
     def ajouter_obstacle(self, coordonnees, obstacle):
         """Ajoute l'obstacle."""
         coordonnees = self.convertir_coordonnees(coordonnees)
@@ -196,6 +275,10 @@ class Etendue(BaseObj):
         self.liens[coordonnees] = etendue
         etendue.liens[coordonnees] = self
 
+        # On détermine les segments de liens
+        self.determiner_segments_liens()
+        etendue.determiner_segments_liens()
+
     def supprimer_obstacle(self, coordonnees):
         """Supprime un obstacle."""
         coordonnees = self.convertir_coordonnees(coordonnees)
@@ -214,6 +297,10 @@ class Etendue(BaseObj):
         etendue = self.liens.pop(coordonnees)
         if coordonnees in etendue.liens:
             del etendue.liens[coordonnees]
+
+        # On détermine les segments de liens
+        self.determiner_segments_liens()
+        etendue.determiner_segments_liens()
 
     def trouver_contour(self):
         """Recherche les contours de l'étendue."""
@@ -413,3 +500,92 @@ class Etendue(BaseObj):
                             possibles))
 
                 return False
+
+    def croise_lien(self, origine, destination):
+        """Vérifie si le segment (origine, destination) croise un lien.
+
+        La comparaison est effectuée grâce aux segments de liens
+        définis dans l'étendue. Merlin/Gulfalf a contribué de façon
+        significative à l'algorithme de croisement. Merci à lui.
+        Si le segment croise un lien, retourne l'étendue de
+        destination. Sinon retourne None.
+
+        """
+        # On inverse les coordonnées si besoin
+        if origine[0] > destination[0]:
+            origine, destination = destination, origine
+
+        for (o_lien, d_lien), etendue in self.segments_liens.items():
+            # Définition des segments
+            # Segment AB
+            (ax, ay) = origine
+            (bx, by) = destination
+
+            # Segment CD
+            (cx, cy) = o_lien
+            (dx, dy) = d_lien
+
+            # Cas particulier : droite // à l'axe des ordonnées
+            k1 = k2 = False
+
+            # Calcul de l'équation du segment AB
+            if ax != bx: # La droite n'est pas // à l'axe des ordonnées
+                # Y = A1 X + B1
+                a1 = (by - ay) / (bx - ax)
+                b1 = ay - (ax * a1)
+            else: # La droite est // à l'axe des ordonnées
+                # X = C1
+                k1 = True
+
+            # Calcul de l'équation du segment CD
+            if cx != dx: # La droite n'est pas // à l'axe des ordonnées
+                # Y = A2 X + B2
+                a2 = (dy - cy) / (dx - cx)
+                b2 = cy - (cx * a2)
+            else: # La droite est // à l'axe des ordonnées
+                # X = C2
+                k2 = True
+
+            if k1 == False and k2 == False: # Cas général
+                # Comparaison de la pente des 2 segments
+                if a1 == a2:
+                    return
+                else:
+                    # On calcule leur point sécant
+                    x = (b2 - b1) / (a1 - a2)
+                    y = (a1 * x ) + b1
+
+                    # Le point (X, Y) appartient bien à l'espace
+                    # de points du segment AB
+                    condition_ab = x >= ax and x <= bx
+
+                    # Le point (X, Y) appartient bien à l'espace de points
+                    # du segment CD
+                    condition_cd = x >= cx and x <= dx
+
+                    # Conclusion
+                    if condition_ab and condition_cd:
+                        return etendue
+                    else:
+                        return
+            elif k1 == True and k2 == False:
+                # Le segment AB est // à l'axe des ordonnées
+                x = ax
+                y = (a2 * x) + b2
+                liste_y = sorted([ay, by])
+                if x >= cx and x <= dx and y >= liste_y[0] and y <= liste_y[1]:
+                    return etendue
+                else:
+                    return
+            elif k1 == False and k2 == True:
+                # Les segment CD est // à 'axe des ordonnées
+                x = cx
+                y = (a1 * x) + b1
+                liste_y = sorted([cy, dy])
+                if x >= ax and x <= bx and y >= liste_y[0] and y <= liste_y[1]:
+                    return etendue
+                else:
+                    return
+            else:
+                # Les 2 segments sont // à l'axe des ordonnées
+                return
