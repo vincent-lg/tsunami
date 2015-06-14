@@ -59,20 +59,10 @@ class Evenement(BaseObj):
 
     def exc_hook(self, *args, **kwargs):
         """Méthode générique appelé pour gérer l'évènement."""
-        args = tuple(args) + tuple(kwargs.values())
-        joueur = None
-        nom = ""
-        for arg in args:
-            if isinstance(arg, Joueur):
-                joueur = arg
-                nom = joueur.nom
-                break
-
-        message = self.message.format(joueur=nom)
+        message = self.message.format(*args, **kwargs)
 
         # Envoie le message aux immortels inscrits
         for connecte in importeur.connex.joueurs_connectes:
-            if connecte.est_immortel() and connecte in self.inscrits and \
-                    connecte is not joueur:
+            if connecte.est_immortel() and connecte in self.inscrits:
                 connecte.sans_prompt()
-                connecte.envoyer("|bl|-_-|ff| " + message)
+                connecte.envoyer("|bl|_-_|ff| " + message)

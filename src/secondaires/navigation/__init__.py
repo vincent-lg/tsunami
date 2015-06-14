@@ -161,6 +161,10 @@ class Module(BaseModule):
             "correspondant à ce prototype doit avoir été définie au " \
             "préalable."
 
+        # Ajout d'hooks
+        importeur.hook.ajouter_hook("navire:sombre",
+                "Hook appelé quand un navire fait nauffrage.")
+
         BaseModule.config(self)
 
     def init(self):
@@ -292,10 +296,6 @@ class Module(BaseModule):
             nom_fichier = pychemin + "." + nom_fichier[:-3]
             __import__(nom_fichier)
 
-        #modeles = self.importeur.supenr.charger_groupe(ModeleNavire)
-        #for modele in modeles:
-        #    self.modeles[modele.cle] = modele
-
         # Ajout des actions différées
         self.importeur.diffact.ajouter_action("dep_navire", TPS_VIRT,
                 self.avancer_navires)
@@ -310,6 +310,9 @@ class Module(BaseModule):
         self.importeur.salle.salles_a_cartographier.append(
                 self.get_navires_presents)
 
+        # Ajout d'évènements
+        importeur.evt.ajouter_evenement("sombre", "Un navire sombre",
+                "Nauffrage de {navire.cle}.", "navire:sombre")
         BaseModule.init(self)
 
     def ajouter_commandes(self):

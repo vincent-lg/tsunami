@@ -1025,6 +1025,8 @@ class Navire(Vehicule):
 
     def sombrer(self):
         """Fait sombrer le navire."""
+        importeur.hook["navire:sombre"].executer(navire=self)
+
         self.envoyer("Un grincement déchirant et le navire s'enfonce sous " \
                 "l'eau !")
         importeur.navigation.ecrire_suivi("{} sombre.".format(self.cle))

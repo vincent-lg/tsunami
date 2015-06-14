@@ -182,9 +182,9 @@ class Module(BaseModule):
 
         # Ajout des évènements
         importeur.evt.ajouter_evenement("connecte", "Un joueur se connecte",
-                "Connexion de {joueur}.", "joueur:connecte")
+                "Connexion de {0.nom}.", "joueur:connecte")
         importeur.evt.ajouter_evenement("deconnecte", "Un joueur se " \
-                "déconnecte", "Déconnexion de {joueur}.", "joueur:deconnecte")
+                "déconnecte", "Déconnexion de {0.nom}.", "joueur:deconnecte")
 
     def ajouter_joueur_tick(self, joueur):
         """Ajoute un joueur au tick semblant le moins chargé."""
