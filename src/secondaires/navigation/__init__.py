@@ -165,6 +165,8 @@ class Module(BaseModule):
 
     def init(self):
         """Chargement des navires et modèles."""
+        self.importeur.scripting.valeurs["navire"] = self.navires
+
         # Ajout du prompt
         importeur.perso.ajouter_prompt(PromptNavigation)
 

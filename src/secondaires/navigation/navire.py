@@ -180,6 +180,11 @@ class Navire(Vehicule):
         return rames
 
     @property
+    def centre(self):
+        """Retourne la salle au centre du navire."""
+        return self.salles.get((0, 0, 0))
+
+    @property
     def vent(self):
         """Retourne le vecteur du vent le plus proche.
 
@@ -636,6 +641,8 @@ class Navire(Vehicule):
                 print(self, "change d'étendue:", autre)
                 self.etendue = autre
                 self.position.z = autre.altitude
+                autre.script["entre"].executer(centre=self.centre,
+                        cle=self.cle, origine=etendue.cle)
 
             # Enregistre la distance parcourue au compteur
             distance = (n_position - origine).mag

@@ -101,6 +101,9 @@ class Module(BaseModule):
         self.tps_script = 0.15
         self.scripts_gourmands = {}
 
+        # Scriptables
+        self.valeurs = {}
+
     @property
     def commandes_dynamiques_sa(self):
         """Retourne les commandes dynamiques {cle_sans_accent: commande}."""
@@ -173,6 +176,13 @@ class Module(BaseModule):
         # Hooks
         self.importeur.hook["stats:infos"].ajouter_evenement(
                 self.stats_scripting)
+
+
+        # Valeurs
+        self.valeurs.update({
+                "prototype d'objet": importeur.objet.prototypes,
+                "objet": importeur.objet.objets,
+        })
 
         BaseModule.init(self)
 

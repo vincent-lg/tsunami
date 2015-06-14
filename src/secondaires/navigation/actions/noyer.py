@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,50 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction existe."""
+"""Fichier contenant l'action noyer."""
 
-from primaires.scripting.fonction import Fonction
+from primaires.scripting.action import Action
 from primaires.scripting.instruction import ErreurExecution
 
-class ClasseFonction(Fonction):
+class ClasseAction(Action):
 
-    """Teste si une variable ou donnée existe."""
+    """Essaye de noyer une salle de navire."""
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.variable_existe, "object")
-        cls.ajouter_types(cls.donnee_existe, "str", "str")
+        cls.ajouter_types(cls.noyer, "Salle", "Fraction")
 
     @staticmethod
-    def variable_existe(variable):
-        """Retourne vraie si la variable existe, False sinon."""
-        return variable is not None
+    def noyer(salle, degats):
+        """Noie une salle de navire.
 
-    @staticmethod
-    def donnee_existe(type, cle):
-        """Retourne vraie si la donnée existe, faux sinon.
+        Les dégâts précisés sont sous la forme de kilos : si vous
+        entrez des dégâts de 50 et que la salle est noyable, la
+        salle indiquée aura une brèche qui laissera entrer 50 kilos
+        (plus ou moins 50 litres) d'eau. Si la salle n'est pas
+        noyable, rien ne se passe. Si la salle n'est pas une salle
+        de navire, une alerte est créée.
 
-        Une donnée peut être de nombreuses choses, comme un
-        prototype d'objet, un PNJ, une plante... Pour savoir ce que
-        vous voulez chercher, vous devez renseigner le type de la
-        donnée (la liste des types est donnée ci-dessous) ainsi que
-        la clé de la donnée. Consultez les exemples ci-dessous pour
-        plus d'informations.
+        Paramètres à renseigner :
 
-        Liste des types :
+          * salle : la salle de navire à noyer
+          * degats : les dégâts sous la forme d'un nombre
 
-          * "prototype d'objet"
+        Exemple d'utilisation :
 
-
-        Exemples d'utilisation :
-
-          # Cherche si le prototype d'objet 'chapeau_gris' existe
-          si existe("prototype d'objet", "chapeau_gris"):
+          noyer salle 30
 
         """
-        types = importeur.scripting.valeurs
-        dictionnaire = types.get(type)
-        if dictionnaire is None:
-            raise ErreurExecution("Type {} inconnu".format(repr(type)))
+        if not hasattr(salle, "noyer"):
+            raise ErreurExecution("La salle {} n'est pas une salle " \
+                    "de navire".format(salle))
 
-        return cle in dictionnaire
+        salle.noyer(int(degats))

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,48 +28,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'étendue' et ses sous-commandes.
-Dans ce fichier se trouve la commande même.
+"""Package contenant le paramètre 'éditer' de la commande 'étendue'."""
 
-"""
+from primaires.interpreteur.masque.parametre import Parametre
 
-from primaires.interpreteur.commande.commande import Commande
-from .carte import PrmCarte
-from .creer import PrmCreer
-from .cote import PrmCote
-from .editer import PrmEditer
-from .info import PrmInfo
-from .obstacle import PrmObstacle
+class PrmEditer(Parametre):
 
-class CmdEtendue(Commande):
-
-    """Commande 'étendue'.
-
-    """
+    """Commande 'étendue éditer'"""
 
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "étendue", "area")
-        self.groupe = "administrateur"
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "manipulation des étendues d'eaux"
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "éditer", "edit")
+        self.schema = "<cle>"
+        self.aide_courte = "édite l'étendue indiquée"
         self.aide_longue = \
-            "Cette commande permet de manipuler les étendues d'eaux. " \
-            "Cela inclut en créer, ajouter des obstacles, côtes et " \
-            "liens dans une étendue mais aussi les modifier et les " \
-            "supprimer."
+            "Cette commande ouvre l'éditeur d'étendue. Vous devez " \
+            "préciser en argument la clé de l'étendue à éditer. " \
+            "Certaines fonctionnalités, comme la manipulation des " \
+            "côtes, obstacles et liens ne seront pas accessibles " \
+            "dans l'éditeur. À l'inverse, certaines fonctionnalités, " \
+            "notamment les scripts d'étendue, ne seront accessibles " \
+            "que dans l'éditeur."
 
-    def ajouter_parametres(self):
-        """Ajout des paramètres"""
-        prm_carte = PrmCarte()
-        prm_creer = PrmCreer()
-        prm_cote = PrmCote()
-        prm_info = PrmInfo()
-        prm_obstacle = PrmObstacle()
-
-        self.ajouter_parametre(prm_carte)
-        self.ajouter_parametre(prm_creer)
-        self.ajouter_parametre(prm_cote)
-        self.ajouter_parametre(PrmEditer())
-        self.ajouter_parametre(prm_info)
-        self.ajouter_parametre(prm_obstacle)
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        cle = dic_masques["cle"].cle
+        try:
+            etendue = importeur.salle.etendues[cle]
+        except KeyError:
+            personnage << "|err|Étendue {} inconnue.|ff|".format(cle)
+        else:
+            editeur = importeur.interpreteur.construire_editeur(
+                    "aedit", personnage, etendue)
+            personnage.contextes.ajouter(editeur)
+            editeur.actualiser()

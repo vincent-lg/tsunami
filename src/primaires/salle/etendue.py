@@ -37,6 +37,7 @@ import sys
 from vector import mag
 
 from abstraits.obase import BaseObj
+from primaires.scripting.script import Script
 from .coordonnees import Coordonnees
 
 class Etendue(BaseObj):
@@ -78,6 +79,7 @@ class Etendue(BaseObj):
         self.segments_liens = {}
         self.origine = (None, None)
         self.contour = None
+        self.script = ScriptEtendue(self)
         self._construire()
 
     def __getnewargs__(self):
@@ -549,7 +551,7 @@ class Etendue(BaseObj):
             if k1 == False and k2 == False: # Cas général
                 # Comparaison de la pente des 2 segments
                 if a1 == a2:
-                    return
+                    continue
                 else:
                     # On calcule leur point sécant
                     x = (b2 - b1) / (a1 - a2)
@@ -567,7 +569,7 @@ class Etendue(BaseObj):
                     if condition_ab and condition_cd:
                         return etendue
                     else:
-                        return
+                        continue
             elif k1 == True and k2 == False:
                 # Le segment AB est // à l'axe des ordonnées
                 x = ax
@@ -576,7 +578,7 @@ class Etendue(BaseObj):
                 if x >= cx and x <= dx and y >= liste_y[0] and y <= liste_y[1]:
                     return etendue
                 else:
-                    return
+                    continue
             elif k1 == False and k2 == True:
                 # Les segment CD est // à 'axe des ordonnées
                 x = cx
@@ -585,7 +587,29 @@ class Etendue(BaseObj):
                 if x >= ax and x <= bx and y >= liste_y[0] and y <= liste_y[1]:
                     return etendue
                 else:
-                    return
+                    continue
             else:
                 # Les 2 segments sont // à l'axe des ordonnées
-                return
+                continue
+
+class ScriptEtendue(Script):
+
+    """Script et évènements propres aux étendues d'eau."""
+
+    def init(self):
+        """Initialisation du script"""
+        # Événement entre
+        evt_entre = self.creer_evenement("entre")
+        evt_entre.aide_courte = "un navire entre dans l'étendue"
+        evt_entre.aide_longue = \
+            "Cet évènement est appelé quand un navire entre dans " \
+            "l'étendue, venant d'une étendue différente et " \
+            "traversant donc un lien entre étendues."
+
+        # Configuration des variables de l'évènement entre
+        var_centre = evt_entre.ajouter_variable("centre", "Salle")
+        var_centre.aide = "la salle au centre du navire"
+        var_cle = evt_entre.ajouter_variable("cle", "str")
+        var_cle.aide = "la clé complète du navire (par exemple \"barque_8\")"
+        var_origine = evt_entre.ajouter_variable("origine", "str")
+        var_origine.aide = "la clé de l'étendue d'où vient le navire"

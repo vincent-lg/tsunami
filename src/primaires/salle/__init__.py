@@ -51,6 +51,7 @@ from .sortie import Sortie
 from .sorties import NOMS_SORTIES
 from .zone import Zone
 from .templates.terrain import Terrain
+from .editeurs.aedit import EdtAedit
 from .editeurs.decedit import EdtDecedit
 from .editeurs.redit import EdtRedit
 from .editeurs.sbedit import EdtSbedit
@@ -318,6 +319,7 @@ class Module(BaseModule):
             importeur.interpreteur.ajouter_commande(cmd)
 
         # Ajout des éditeurs 'decedit', 'redit' et 'zedit'
+        importeur.interpreteur.ajouter_editeur(EdtAedit)
         importeur.interpreteur.ajouter_editeur(EdtDecedit)
         importeur.interpreteur.ajouter_editeur(EdtRedit)
         importeur.interpreteur.ajouter_editeur(EdtSbedit)
