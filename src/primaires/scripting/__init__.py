@@ -179,10 +179,8 @@ class Module(BaseModule):
 
 
         # Valeurs
-        self.valeurs.update({
-                "prototype d'objet": importeur.objet.prototypes,
-                "objet": importeur.objet.objets,
-        })
+        self.valeurs["prototype d'objet"] = importeur.objet._prototypes
+        self.valeurs["objet"] = importeur.objet._objets
 
         BaseModule.init(self)
 

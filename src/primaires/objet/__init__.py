@@ -120,6 +120,7 @@ class Module(BaseModule):
         self.logger.info(format_nb(nb_objets, "{nb} objet{s} récupéré{s}"))
 
         self.cherchable_pry = cherchables.prototype.CherchablePrototypeObjet
+
         BaseModule.init(self)
 
     def ajouter_commandes(self):
