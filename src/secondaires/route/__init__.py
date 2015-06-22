@@ -33,6 +33,7 @@
 from abstraits.module import *
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
+from secondaires.route.route import Route
 
 class Module(BaseModule):
 
@@ -65,3 +66,38 @@ class Module(BaseModule):
         self.routes = {}
         self.logger = self.importeur.man_logs.creer_logger(
                 "route", "route")
+        self.en_cours = {}
+
+    def init(self):
+        """Chargement des objets du module."""
+        routes = self.importeur.supenr.charger_groupe(Route)
+        for route in routes:
+            if route.ident:
+                self.ajouter_route(route)
+
+        self.logger.info(format_nb(len(routes),
+                "{nb} route{s} récupérée{s}", fem=True))
+
+        BaseModule.init(self)
+
+    def creer_route(self, salle):
+        """Crée une route."""
+        route = Route(salle)
+        self.ajouter_route(route)
+        return route
+
+    def ajouter_route(self, route):
+        """Ajoute la route en cours de construction."""
+        self.routes[route.ident] = route
+
+    def supprimer_route(self, ident):
+        """Supprime la route dont l'identifiant est précisé.
+
+        L'identifiant est un tuple composé de deux chaînes :
+        l'identifiant de la salle d'origine et l'identifiant de la
+        salle de destination. Si la route est en construction, seul
+        l'identifiant de la salle d'origine est disponible (le tuple
+        a une longueur de 1 au lieu de 2).
+
+        """
+        self.routes.pop(ident).detruire()
