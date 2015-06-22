@@ -62,6 +62,7 @@ Voici un résumé des modules primaires existants :
 -   navigation  Module gérant la navigation, navires, équipages
 -   peche       Module gérant la pêche
 -   rapport     Module chargé de traiter les rapports de bug et suggestions
+-   route       Module gérant le graph des routes de l'univers
 -   stat        Module chargé d'effectuer des statistiques sur le serveur
 -   systeme     Module offrant des commandes de manipulation système
 
