@@ -35,6 +35,7 @@ from queue import PriorityQueue
 from abstraits.module import *
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
+from secondaires.route.description import DescriptionRoute
 from secondaires.route.route import Route
 
 class Module(BaseModule):
@@ -225,4 +226,13 @@ class Module(BaseModule):
             raise ValueError("impossible de trouver la route " \
                     "entre {} et {}".format(origine, destination))
 
-        return courte
+        # Création de la description de route
+        print("min", courte)
+        description = DescriptionRoute(origine)
+        for route in courte:
+            print("  Ajout", route)
+            description.ajouter_route(route)
+
+        description.completer(destination)
+        print(description.afficher(50, True))
+        return description
