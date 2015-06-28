@@ -88,8 +88,8 @@ class DescriptionRoute:
             # La description est vide, cherche l'origine dans la route
             if self.origine in route.salles:
                 indice = route.salles.index(self.origine)
-                self.salles.extend(route.salles[indice - 1:])
-                self.sorties.extend(route.sorties[indice - 1:])
+                self.salles.extend(route.salles[indice + 1:])
+                self.sorties.extend(route.sorties[indice + 1:])
             elif self.origine is route.origine:
                 self.salles.extend(route.salles)
                 self.sorties.extend(route.sorties)
@@ -108,8 +108,8 @@ class DescriptionRoute:
                     self.str_ident))
 
         indice = self.salles.index(destination)
-        self.salles[:] = self.salles[:indice]
-        self.sorties[:] = self.sorties[:indice]
+        self.salles[:] = self.salles[:indice + 1]
+        self.sorties[:] = self.sorties[:indice + 1]
 
     def afficher(self, tronquer=0, ligne=False):
         """Affichage de la route."""

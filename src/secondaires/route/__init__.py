@@ -35,6 +35,7 @@ from queue import PriorityQueue
 from abstraits.module import *
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
+from secondaires.route import commandes
 from secondaires.route.description import DescriptionRoute
 from secondaires.route.route import Route
 
@@ -86,6 +87,15 @@ class Module(BaseModule):
 
         BaseModule.init(self)
 
+    def ajouter_commandes(self):
+        """Ajout des commandes dans l'interpréteur"""
+        self.commandes = [
+            commandes.route.CmdRoute(),
+        ]
+
+        for cmd in self.commandes:
+            self.importeur.interpreteur.ajouter_commande(cmd)
+
     def creer_route(self, salle):
         """Crée une route."""
         route = Route(salle)
@@ -130,7 +140,8 @@ class Module(BaseModule):
         if personnage in self.en_cours:
             route = self.en_cours[personnage]
             route.ajouter_sortie(destination)
-            print("On ajoute", destination, "à", route)
+            personnage << "Ajout de {} à la route {}.".format(
+                    destination, route.str_ident)
 
     def trouver_chemin(self, origine, destination):
         """Trouve le chemin le plus court entre deux salles.
@@ -164,11 +175,13 @@ class Module(BaseModule):
 
         # Si une route directe existe entre les deux salles, la retourne
         communes = [r for r in routes_origines if r in routes_destinations]
+        communes = [r for r in communes if r.precede(origine, destination)]
         if communes:
             route = communes[0]
-            indice_origine = route.salles.index(origine)
-            indice_destination = route.salles.index(destination)
-            return route.sorties[indice_origine + 1:indice_destination]
+            description = DescriptionRoute(origine)
+            description.ajouter_route(route)
+            description.completer(destination)
+            return description
 
         # On explore maintenant toutes les possibilités de liaison
         couts = {}
@@ -227,12 +240,9 @@ class Module(BaseModule):
                     "entre {} et {}".format(origine, destination))
 
         # Création de la description de route
-        print("min", courte)
         description = DescriptionRoute(origine)
         for route in courte:
-            print("  Ajout", route)
             description.ajouter_route(route)
 
         description.completer(destination)
-        print(description.afficher(50, True))
         return description

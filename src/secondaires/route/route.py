@@ -31,6 +31,7 @@
 """Fichier contenant la classe Route, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
+from secondaires.route.description import DescriptionRoute
 
 class Route(BaseObj):
 
@@ -127,6 +128,22 @@ class Route(BaseObj):
         """
         routes = list(importeur.route.routes.values())
         return [r for r in routes if r.finie and r.origine is self.destination]
+
+    @property
+    def description(self):
+        """Retourne la description de la route."""
+        description = DescriptionRoute(self.origine)
+        description.ajouter_route(self)
+        if self.destination:
+            description.completer(self.destination)
+
+        return description
+
+    def precede(self, origine, destination):
+        """Retourne true si origine précède destination."""
+        salles = [self.origine]
+        salles.extend(self.salles)
+        return salles.index(origine) < salles.index(destination)
 
     def ajouter_sortie(self, salle):
         """Cherche à ajouter une nouvelle sortie.
