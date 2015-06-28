@@ -52,7 +52,7 @@ class GldExtensionEdit(Presentation):
             self.construire(extension)
 
     def __getnewargs__(self):
-        return (None, None)
+        return (None, None, None)
 
     def construire(self, extension):
         """Construction de l'éditeur"""
