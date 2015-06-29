@@ -72,6 +72,8 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "scripting", "primaire")
+        self.logger = importeur.man_logs.creer_logger("scripting",
+                "scripting")
         self.cfg_exportation = None
         self.memoires = None
         self.a_charger = []

@@ -72,6 +72,13 @@ class Module(BaseModule):
                 "route", "route")
         self.en_cours = {}
 
+    def config(self):
+        """Configuration du module."""
+        # Extension du scripting
+        self.importeur.scripting.a_charger.append(self)
+
+        BaseModule.config(self)
+
     def init(self):
         """Chargement des objets du module."""
         routes = self.importeur.supenr.charger_groupe(Route)
