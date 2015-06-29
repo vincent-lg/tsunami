@@ -60,7 +60,6 @@ class EdtInstructions(Editeur):
         self.ajouter_option("c", self.opt_corriger_instruction)
         self.ajouter_option("i", self.opt_inserer_instruction)
         self.ajouter_option("d", self.opt_supprimer_instructions)
-        self.ajouter_option("o", self.opt_reordonner)
         self.ajouter_option("q", self.opt_relier_quete)
 
     def opt_remplacer_instruction(self, arguments):
@@ -130,8 +129,13 @@ class EdtInstructions(Editeur):
         else:
             self.actualiser()
 
+    def opt_reordonner(self, arguments):
+        """Obsolète. Ne plus utiliser."""
+        self.actualiser()
+
     def opt_inserer_instruction(self, arguments):
         """Insère une instruction avant la ligne précisée.
+
         Syntaxe : /i no
 
         """
@@ -167,6 +171,7 @@ class EdtInstructions(Editeur):
 
     def opt_supprimer_instructions(self, arguments):
         """Supprime des instructions du test.
+
         Syntaxe : /d x-y ou /d x, y, z... ou /d *
 
         """
@@ -204,15 +209,6 @@ class EdtInstructions(Editeur):
             self.objet.supprimer_instruction(n - 1)
         self.actualiser()
         return
-
-    def opt_reordonner(self, arguments):
-        """Vérifie les niveaux d'indentation des instructions du test et les
-        corrige si besoin.
-
-        """
-        test = self.objet
-        test.reordonner()
-        self.actualiser()
 
     def opt_relier_quete(self, argument):
         """Relie à une quête.
@@ -278,8 +274,9 @@ class EdtInstructions(Editeur):
 
     def opt_aide_options(self, argument):
         """Option d'aide sur les options.
+
         Aucun argument attendu.
-        ridoq
+
         """
         self.pere << \
             "Options disponibles :\n" \
@@ -530,10 +527,14 @@ class EdtInstructions(Editeur):
     def interpreter(self, msg):
         """Interprétation de l'éditeur"""
         tests = self.objet
-        try:
-            tests.ajouter_instruction(msg)
-        except ValueError as err:
-            print(traceback.format_exc())
-            self.pere << "|err|" + str(err).capitalize() + "|ff|"
-        else:
+
+        if not msg:
             self.actualiser()
+        else:
+            try:
+                tests.ajouter_instruction(msg)
+            except ValueError as err:
+                print(traceback.format_exc())
+                self.pere << "|err|" + str(err).capitalize() + "|ff|"
+            else:
+                self.actualiser()
