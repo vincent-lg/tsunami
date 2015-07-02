@@ -160,7 +160,7 @@ class Rapport(BaseObj):
         le rapport en changeant son avancement par exemple.
 
         """
-        statut = self._statut
+        statut = self.str_statut
         attrs = ATTRS_STATUTS.get(statut)
         if attrs is None:
             return

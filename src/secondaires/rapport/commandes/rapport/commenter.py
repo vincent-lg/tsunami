@@ -33,7 +33,9 @@
 import argparse
 import shlex
 
+from primaires.format.fonctions import supprimer_accents
 from primaires.interpreteur.masque.parametre import Parametre
+from secondaires.rapport.constantes import CATEGORIES
 
 # Constantes
 AIDE = """
@@ -70,39 +72,115 @@ class PrmCommenter(Parametre):
             personnage << "|err|Ce rapport n'existe pas.|ff|"
             return
 
-        args = {
-                "fermer": False,
-        }
+        parser = argparse.ArgumentParser(conflict_handler='resolve')
+        parser.exit = n_exit
+
+        # Ajout des options
+        parser.add_argument("defaut", nargs='*')
+        parser.add_argument("-f", "--fermer", action="store_true")
+        parser.add_argument("-o", "--ouvrir", action="store_true")
+        parser.add_argument("-a", "--assigner")
+        parser.add_argument("-i", "--auto-assigner", action="store_true")
+        parser.add_argument("-c", "--categorie")
+        parser.add_argument("-v", "--avancement")
+        parser.add_argument("-b", "--boost", action="count")
+        commentaire = None
 
         if personnage.est_immortel():
-            parser = argparse.ArgumentParser(conflict_handler='resolve')
-            parser.exit = n_exit
-
-            # Ajout des options
-            parser.add_argument("defaut", nargs='*')
-            parser.add_argument("-f", "--fermer", action="store_true")
-
-            try:
-                args = parser.parse_args(shlex.split(texte))
-            except ValueError as err:
-                personnage << "|err|Les options n'ont pas été interprétées " \
-                        "correctement : {}.|ff|".format(err)
-                return
-
-            texte = " ".join(args.defaut)
+            options = texte
         elif rapport.createur is not personnage and not rapport.public:
             personnage << "|err|Vous n'avez pas le droit de commenter " \
                     "ce rapport.|ff|"
             return
         else:
+            options = "ok"
             commentaire = texte
 
+        try:
+            args = parser.parse_args(shlex.split(options))
+        except ValueError as err:
+            personnage << "|err|Les options n'ont pas été interprétées " \
+                    "correctement : {}.|ff|".format(err)
+            return
+
+        if commentaire:
+            texte = commentaire
+        else:
+            texte = " ".join(args.defaut)
+
+        # Traitement des options
+        if args.fermer:
+            rapport.statut = "fermé"
+            personnage << "Fermeture du rapport."
+        elif args.ouvrir:
+            rapport.statut = "en cours"
+            personnage << "Passage du rapport en statut \"en cours\"."
+
+        # Assigné
+        if args.auto_assigner:
+            rapport.assigne_a = personnage
+            personnage << "Vous vous êtes auto-assigné ce rapport."
+        elif args.assigner:
+            nom_joueur = args.assigner
+            try:
+                autre = importeur.joueur.get_joueur(nom_joueur)
+            except KeyError:
+                personnage << "|err|Le joueur {} est introuvable.|ff|".format(
+                        repr(nom_joueur))
+                return
+            else:
+                if autre.est_immortel():
+                    rapport.assigne_a = autre
+                    personnage << "Ce rapport a été assigné à {}.".format(
+                            nom_joueur)
+                else:
+                    personnage << "|err|Le joueur {} n'est pas " \
+                            "immortel.|ff|".format(repr(nom_joueur))
+                    return
+
+        # Catégorie
+        if args.categorie:
+            nom_categorie = supprimer_accents(args.categorie).lower()
+            trouve = False
+            for categorie in CATEGORIES:
+                if supprimer_accents(categorie).startswith(nom_categorie):
+                    rapport.categorie = categorie
+                    personnage << "Placement du rapport dans la " \
+                            "catégorie {}.".format(categorie)
+                    trouve = True
+                    break
+
+            if not trouve:
+                personnage << "|err|Catégorie {} inconnue.|ff|".format(
+                        repr(nom_categorie))
+                return
+
+        # Avancement
+        if args.avancement:
+            avancement = args.avancement
+            try:
+                avancement = int(avancement)
+                assert avancement >= 0 and avancement <= 100
+            except (ValueError, AssertionError):
+                personnage << "|err|Avancement {} invalide.|ff|".format(
+                        repr(avancement))
+                return
+            else:
+                rapport.avancement = avancement
+                personnage << "Changement de l'avancement du rapport."
+        elif args.boost:
+            avancement = rapport.avancement
+            avancement += 10 * args.boost
+            if avancement > 100:
+                avancement = 100
+
+            rapport.avancement = avancement
+            personnage << "Le rapport est à présent avancé à {}%.".format(
+                    avancement)
+
+        # Création du commentaire à proprement parlé
         commentaire = rapport.commenter(personnage, texte)
         personnage << "|att|Le rapport #{} a bien été commenté.|ff|".format(
                 rapport.id)
-
-        if args.fermer:
-            personnage << "Fermeture du rapport."
-            rapport.statut = "fermé"
 
         commentaire.notifier()

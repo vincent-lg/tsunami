@@ -33,6 +33,7 @@
 from datetime import datetime
 
 from abstraits.module import *
+from primaires.format.fonctions import supprimer_accents
 from primaires.joueur import commandes
 from primaires.joueur import masques
 from primaires.joueur.config import cfg_joueur
@@ -55,6 +56,7 @@ class Module(BaseModule):
     primaire 'perso'.
 
     """
+
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "joueur", "primaire")
@@ -206,6 +208,34 @@ class Module(BaseModule):
                 60, self.tick, no)
         for joueur in self.ticks[no]:
             joueur.tick()
+
+    def get_joueur(self, nom_joueur):
+        """Retourne le joueur dont le nom est indiqué.
+
+        Si le joueur du nom indiqué n'est pas retrouvé, lève
+        une exception KeyError.
+        La recherche se fait indépenemment des majuscules et accents.
+
+        """
+        nom_joueur = supprimer_accents(nom_joueur).lower()
+        for joueur in self.joueurs.values():
+            if supprimer_accents(joueur.nom).lower() == nom_joueur:
+                return joueur
+
+        raise KeyError("joueur {} introuvable".format(repr(nom_joueur)))
+
+    def joueur_existe(self, nom_joueur):
+        """Retourne True si le joueur indiqué existe, False sinon.
+
+        La recherche se fait indépendamment des majuscules ou accents.
+
+        """
+        try:
+            joueur = self.get_joueur(nom_joueur)
+        except KeyError:
+            return False
+
+        return True
 
     def get_joueurs_presents(self, depuis):
         """Retourne les joueurs qui se sont connectés depuis le temps indqué.

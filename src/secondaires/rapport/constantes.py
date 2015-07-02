@@ -61,11 +61,11 @@ STATUTS = (
 )
 
 CLR_STATUTS = {
-    "nouveau":"|vrc|",
-    "en cours":"|vr|",
-    "fermé":"|grf|",
-    "rejeté":"|rgc|",
-    "dupliqué":"|cy|",
+    "nouveau": "|vrc|",
+    "en cours": "|vr|",
+    "fermé": "|grf|",
+    "rejeté": "|rgc|",
+    "dupliqué": "|cy|",
 }
 
 CLR_AVC = (
@@ -88,21 +88,24 @@ PRIORITES = (
 )
 
 PRIORITES_VAL = {
-    "faible":0,
-    "normale":1,
-    "haute":2,
-    "urgente":3,
-    "immédiate":4,
+    "faible": 0,
+    "normale": 1,
+    "haute": 2,
+    "urgente": 3,
+    "immédiate": 4,
 }
 
 ATTRS_STATUTS = {
+    "en cours": (
+        ("avancement", 0),
+        ("ouvert", True)),
     "fermé": (
         ("avancement", 100),
         ("ouvert", False)),
     "rejeté": (
         ("ouvert", False),),
     "dupliqué": (
-        ("ouvert", False),),
+        ("ouvert", False ),),
 }
 
 COMPLETE = {
