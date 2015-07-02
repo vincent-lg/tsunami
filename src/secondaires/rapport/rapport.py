@@ -31,9 +31,13 @@
 """Ce fichier contient la classe Rapport, détaillée plus bas."""
 
 from datetime import datetime
+from textwrap import wrap
 
 from abstraits.obase import BaseObj
+from primaires.format.date import get_date
 from primaires.format.description import Description
+from primaires.format.fonctions import echapper_accolades
+from secondaires.rapport.commentaire import Commentaire
 from .constantes import *
 
 class Rapport(BaseObj):
@@ -49,6 +53,8 @@ class Rapport(BaseObj):
 
     enregistrer = True
     id_actuel = 1
+    _nom = "rapport"
+    _version = 1
 
     def __init__(self, titre, createur=None):
         """Constructeur d'un rapport."""
@@ -67,9 +73,12 @@ class Rapport(BaseObj):
         self.public = False # Rapport non public de base.
         self._priorite = "normale"
         self._categorie = ""
-        self._statut = "nouveau"
+        self.str_statut = "nouveau"
+
         # Copie
         self.source = None
+        self.commentaires = []
+        #self._construire()
 
     def __getnewargs__(self):
         return ("", None)
@@ -103,11 +112,11 @@ class Rapport(BaseObj):
     priorite = property(_get_priorite, _set_priorite)
 
     def _get_statut(self):
-        return self._statut
+        return self.str_statut
     def _set_statut(self, statut):
         if statut not in STATUTS:
             raise ValueError("statut {} inconnu".format(statut))
-        self._statut = statut
+        self.str_statut = statut
         self.appliquer_statut()
     statut = property(_get_statut, _set_statut)
 
@@ -133,7 +142,7 @@ class Rapport(BaseObj):
         self._type = autre.type
         self._priorite = autre.priorite
         self._categorie = autre.categorie
-        self._statut = autre.statut
+        self.str_statut = autre.str_statut
 
     def verifier(self):
         """Vérifie que createur et assigne_a sont toujours présents."""
@@ -180,3 +189,40 @@ class Rapport(BaseObj):
                 champs.append(nom)
 
         return champs
+
+    def get_description_pour(self, personnage):
+        """Retourne la description textuelle pour le personnage."""
+        createur = self.createur.nom if self.createur else "personne"
+        ret = "Rapport #" + str(self.id) + " : " + self.titre
+        ret += "\nCatégorie : " + self.type + " (" + \
+                self.categorie + ")"
+        ret += "\nStatut : " + self.statut + ", avancement : " + \
+                str(self.avancement) + "%"
+        ret += "\nCe rapport est classé en priorité " + \
+                self.priorite + "."
+        ret += "\nDétail :\n"
+        ret += echapper_accolades(str(self.description))
+        ret += "\nRapport envoyé par " + createur + \
+                get_date(self.date.timetuple()) + "\n"
+        if personnage.est_immortel():
+            ret += "Depuis " + str(self.salle) + " "
+        ret += "Assigné à " + self.aff_assigne_a + "."
+
+        # Comemntaires
+        if self.commentaires:
+            ret += "\n\nCommentaires du rapport:"
+            for i, commentaire in enumerate(self.commentaires):
+                auteur = commentaire.auteur and commentaire.auteur.nom or \
+                        "inconnu"
+                ret += "\n {:> 2} - par {}, {}".format(i + 1, auteur,
+                        get_date(commentaire.date.timetuple()))
+                ret += "\n      " + ("\n      ").join(wrap(
+                        echapper_accolades(commentaire.texte), 70))
+
+        return ret
+
+    def commenter(self, auteur, texte):
+        """Commente un rapport."""
+        commentaire = Commentaire(self, auteur, texte)
+        self.commentaires.append(commentaire)
+        return commentaire

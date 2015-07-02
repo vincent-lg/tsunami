@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,38 +28,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'voir' de la commande 'rapport'."""
+"""Fichier contenant les convertisseurs de la classe Rapport."""
 
-from primaires.interpreteur.masque.parametre import Parametre
-from secondaires.rapport.constantes import CLR_STATUTS, CLR_AVC
+class Convertisseur:
 
-class PrmVoir(Parametre):
+    """Classe pour envelopper les convertisseurs."""
 
-    """Commande 'rapport voir'.
-
-    """
-
-    def __init__(self):
-        """Constructeur du paramètre"""
-        Parametre.__init__(self, "voir", "view")
-        self.schema = "<nombre>"
-        self.aide_courte = "visionne un rapport particulier"
-        self.aide_longue = \
-            "Cette commande offre un affichage détaillé d'un rapport."
-
-    def interpreter(self, personnage, dic_masques):
-        """Interprétation du paramètre"""
-        id = dic_masques["nombre"].nombre
-        try:
-            rapport = importeur.rapport.rapports[id]
-        except KeyError:
-            if personnage.est_immortel():
-                personnage << "|err|Ce rapport n'existe pas.|ff|"
-            else:
-                personnage << "|err|Vous ne pouvez lire ce rapport.|ff|"
-        else:
-            if not personnage.est_immortel() and rapport.createur is not \
-                    personnage and not rapport.public:
-                personnage << "|err|Vous ne pouvez lire ce rapport.|ff|"
-            else:
-                personnage << rapport.get_description_pour(personnage)
+    def depuis_version_0(objet, classe):
+        objet.set_version(classe, 1)
+        objet.str_statut = objet._statut

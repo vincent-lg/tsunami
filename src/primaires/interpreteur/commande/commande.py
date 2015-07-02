@@ -292,6 +292,7 @@ class Commande(Masque):
         aide += "\n\n"
 
         aide_longue = self.remplacer_mots_cles(personnage, self.aide_longue)
+
         # Si l'aide contient des sauts de ligne, ne formatte pas
         if "\n" not in aide_longue:
             aide_longue = textwrap.fill(aide_longue, longueur_ligne)
@@ -332,6 +333,9 @@ class Commande(Masque):
                     aide_longue = textwrap.wrap(aide_longue, aligner)
                     aide_longue = ("\n" + (taille + 5) * " ").join(
                             aide_longue)
+                else:
+                    aide_longue = ("\n" + (taille + 5) * " ").join(
+                            aide_longue.split("\n"))
 
                 aide += aide_longue
 

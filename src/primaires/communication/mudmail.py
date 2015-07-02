@@ -173,8 +173,7 @@ class MUDmail(BaseObj):
         destinateur = "equipe"
         destinataire = dest.compte.adresse_email
         expediteur = self.expediteur.nom
-        sujet = "Vous avez reçu un nouveau message sur " \
-                "VanciaMUD : " + self.sujet
+        sujet = "[VanciaMUD] : " + self.sujet
         nom_compte = dest.compte.nom
         contenu = self.afficher().replace("|tab|", "   ")
         corps = contenu + bas_page.format(nom_compte=nom_compte,
