@@ -49,8 +49,9 @@ class PrmMien(Parametre):
 
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        rapports = [r for r in list(importeur.rapport.rapports.values()) \
-                if r.ouvert and r.assigne_a is personnage]
+        rapports = [r for r in list(importeur.rapport.rapports.values()) if \
+                r.ouvert and r.assigne_a is personnage]
+        rapports = sorted(rapports, key=lambda r: r.int_priorite)
         if not rapports:
             personnage << "|err|Aucun rapport ne vous est assigné.|ff|"
             return

@@ -78,7 +78,7 @@ class Rapport(BaseObj):
         # Copie
         self.source = None
         self.commentaires = []
-        #self._construire()
+        self._construire()
 
     def __getnewargs__(self):
         return ("", None)
@@ -94,6 +94,11 @@ class Rapport(BaseObj):
     @property
     def aff_createur(self):
         return self.createur and self.createur.nom or "inconnu"
+
+    @property
+    def int_priorite(self):
+        """Retourne la priorité sous la forme d'un entier."""
+        return PRIORITES.index(self._priorite)
 
     def _get_type(self):
         return self._type

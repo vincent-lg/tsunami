@@ -35,7 +35,7 @@ import shlex
 
 from primaires.format.fonctions import supprimer_accents
 from primaires.interpreteur.masque.parametre import Parametre
-from secondaires.rapport.constantes import CATEGORIES
+from secondaires.rapport.constantes import CATEGORIES, PRIORITES
 
 # Constantes
 AIDE = """
@@ -84,6 +84,7 @@ class PrmCommenter(Parametre):
         parser.add_argument("-c", "--categorie")
         parser.add_argument("-v", "--avancement")
         parser.add_argument("-b", "--boost", action="count")
+        parser.add_argument("-p", "--priorite")
         commentaire = None
 
         if personnage.est_immortel():
@@ -177,6 +178,22 @@ class PrmCommenter(Parametre):
             rapport.avancement = avancement
             personnage << "Le rapport est à présent avancé à {}%.".format(
                     avancement)
+
+        # Priorité
+        if args.priorite:
+            nom_priorite = supprimer_accents(args.priorite).lower()
+            trouve = False
+            for priorite in PRIORITES:
+                if supprimer_accents(priorite).startswith(nom_priorite):
+                    rapport.priorite = priorite
+                    personnage << "Changement de la priorité du rapport."
+                    trouve = True
+                    break
+
+            if not trouve:
+                personnage << "|err|Priorité {} introuvable.|ff|".format(
+                        repr(nom_priorite))
+                return
 
         # Création du commentaire à proprement parlé
         commentaire = rapport.commenter(personnage, texte)
