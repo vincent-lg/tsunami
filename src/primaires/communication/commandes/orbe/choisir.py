@@ -65,7 +65,7 @@ class PrmChoisir(Parametre):
         orbe = objets[0]
         if not orbe.est_de_type("orbe"):
             personnage << "|err|{} n'est pas un orbe.|ff|".format(
-                    pavillon.get_nom().capitalize())
+                    orbe.get_nom().capitalize())
             return
 
         importeur.communication.orbes.defauts[personnage] = orbe
