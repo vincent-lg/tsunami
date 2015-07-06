@@ -30,6 +30,7 @@
 
 """Fichier contenant la fonction appeler."""
 
+from primaires.format.fonctions import supprimer_accents
 from primaires.scripting.fonction import Fonction
 from primaires.scripting.instruction import ErreurExecution
 
@@ -67,14 +68,10 @@ class ClasseFonction(Fonction):
         Par exemple, "zone picte" ou "salle picte:8".
 
         """
-        scriptables = {
-                "objet": importeur.objet.objets,
-                "prototype d'objet": importeur.objet.prototypes,
-                "salle": importeur.salle.salles,
-                "zone": importeur.salle.zones,
-        }
+        scriptables = importeur.scripting.valeurs
 
         if isinstance(appelant, str):
+            appelant = supprimer_accents(appelant).lower()
             trouve = False
             for t_nom, dictionnaire in scriptables.items():
                 if appelant.startswith(t_nom):

@@ -181,8 +181,13 @@ class Module(BaseModule):
 
 
         # Valeurs
-        self.valeurs["prototype d'objet"] = importeur.objet._prototypes
-        self.valeurs["objet"] = importeur.objet._objets
+        self.valeurs.update({
+                "etendue": importeur.salle.etendues,
+                "objet": importeur.objet._objets,
+                "prototype d'objet": importeur.objet._prototypes,
+                "salle": importeur.salle._salles,
+                "zone": importeur.salle._zones,
+        })
 
         BaseModule.init(self)
 

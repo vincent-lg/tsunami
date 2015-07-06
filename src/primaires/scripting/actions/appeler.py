@@ -30,6 +30,7 @@
 
 """Fichier contenant l'action appeler."""
 
+from primaires.format.fonctions import supprimer_accents
 from primaires.scripting.action import Action
 from primaires.scripting.instruction import ErreurExecution
 
@@ -62,19 +63,30 @@ class ClasseAction(Action):
         un ou plusieurs paramètres. Vous devez les appeler dans l'ordre dans
         cette action.
 
+        Exemple d'utilisation :
+
+          # si salle contient une salle, pour appeler son bloc 'transmettre'
+          appeler salle "transmettre"
+          # ou avec ds paramètres
+          appeler salle "transmettre" "une chaîne" 5
+
         Notez qu'à la place de l'appelant (premier paramètre),
         vous pouvez préciser un nom (chaîne) identifiant le scriptable.
-        Par exemple, "zone picte" ou "salle picte:8".
+        Par exemple, "zone picte" ou "salle picte:8". Ces noms doivent
+        être sous la forme d'une chaîne, constituée de deux éléments
+        séparés par un espace : le nom du type de scriptable (comme
+        salle, prototype d'objet...) et l'identifiant du scriptable
+        (comme "prototype d'objet pomme_rouge").
+
+        Exeple d'utilisation :
+
+          appeler "salle depart:5" "transmettre"
 
         """
-        scriptables = {
-                "objet": importeur.objet.objets,
-                "prototype d'objet": importeur.objet.prototypes,
-                "salle": importeur.salle.salles,
-                "zone": importeur.salle.zones,
-        }
+        scriptables = importeur.scripting.valeurs
 
         if isinstance(appelant, str):
+            appelant = supprimer_accents(appelant).lower()
             trouve = False
             for t_nom, dictionnaire in scriptables.items():
                 if appelant.startswith(t_nom):

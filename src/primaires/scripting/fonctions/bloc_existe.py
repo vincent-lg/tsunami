@@ -30,6 +30,7 @@
 
 """Fichier contenant la fonction bloc_existe."""
 
+from primaires.format.fonctions import supprimer_accents
 from primaires.scripting.fonction import Fonction
 from primaires.scripting.instruction import ErreurExecution
 
@@ -62,14 +63,10 @@ class ClasseFonction(Fonction):
           finsi
 
         """
-        scriptables = {
-                "objet": importeur.objet.objets,
-                "prototype d'objet": importeur.objet.prototypes,
-                "salle": importeur.salle.salles,
-                "zone": importeur.salle.zones,
-        }
+        scriptables = importeur.scripting.valeurs
 
         if isinstance(scriptable, str):
+            scriptable = supprimer_accents(scriptable).lower()
             trouve = False
             for nom, dictionnaire in scriptables.items():
                 if scriptable.startswith(nom):
