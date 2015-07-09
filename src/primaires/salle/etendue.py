@@ -64,8 +64,10 @@ class Etendue(BaseObj):
     """
 
     enregistrer = True
+    nom_scripting = "l'étendue d'eau"
     _nom = "etendue"
     _version = 1
+
     def __init__(self, cle):
         """Création de l'éttendue."""
         BaseObj.__init__(self)
