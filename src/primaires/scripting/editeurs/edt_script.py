@@ -150,7 +150,7 @@ class EdtScript(Editeur):
         """Message d'accueil du contexte"""
         script = self.objet
         msg = "| |tit|"
-        msg += "Edition des scripts de {}".format(script.parent).ljust(76)
+        msg += "Édition des scripts de {}".format(script.parent).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += "Voici les différents évènements que vous pouvez éditer pour " \
                 "cet objet.\n" \
@@ -160,13 +160,7 @@ class EdtScript(Editeur):
         evenements = sorted(script.evenements.values(),
                 key=lambda evt: evt.nom)
         if evenements:
-            def compter_lignes(evt):
-                if not evt.evenements:
-                    sinon = len(evt.sinon.instructions) if evt.sinon else 0
-                    return sum(len(t.instructions) for t in evt.tests) + sinon
-                else:
-                    return sum(compter_lignes(e) for e in evt.evenements.values())
-            msg += "|cy|Evènements disponibles :|ff|\n\n"
+            msg += "|cy|Évènements disponibles :|ff|\n\n"
             t_max = 0
             for evt in evenements:
                 if len(evt.nom) > t_max:
@@ -174,7 +168,7 @@ class EdtScript(Editeur):
             lignes = []
             for evt in evenements:
                 ligne = "  " + evt.nom.ljust(t_max) + " : " + evt.aide_courte
-                nb_lignes = compter_lignes(evt)
+                nb_lignes = evt.nb_lignes
                 if nb_lignes > 0:
                     ligne += " (|rgc|{}|ff| ligne{s})".format( \
                             nb_lignes, s="s" if nb_lignes > 1 else "")

@@ -89,7 +89,7 @@ class ClasseFonction(Fonction):
                 continue
 
             for recette in rang.recettes:
-                if recette.peut_faire(ingredients):
+                if recette.peut_faire(personnage, ingredients):
                     if nom == "" or nom == supprimer_accents(
                             recette.nom).lower():
                         return recette.creer_resultat(personnage, ingredients)

@@ -140,6 +140,15 @@ class Evenement(BaseObj):
         """Retourne un dictionnaire déréférencé des évènements."""
         return self.__evenements.copy()
 
+    @property
+    def nb_lignes(self):
+        """Retourne le nombre de lignes de l'évènement et sous-évènements."""
+        if not self.evenements:
+            sinon = len(self.sinon.instructions) if self.sinon else 0
+            return sum(len(t.instructions) for t in self.tests) + sinon
+        else:
+            return sum(e.nb_lignes for e in self.evenements.values())
+
     def creer_sinon(self):
         """Création du test sinon si il n'existe pas."""
         if self.__sinon is None:
