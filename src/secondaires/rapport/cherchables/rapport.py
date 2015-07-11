@@ -58,6 +58,7 @@ class CherchableRapport(Cherchable):
         self.ajouter_filtre("r", "createur", "aff_createur", "regex")
         self.ajouter_filtre("g", "categorie", "categorie", "regex")
         self.ajouter_filtre("d", "description", "description", "regex")
+        self.ajouter_filtre("n", "nonassigne", "nonassigne", "bool")
         self.ajouter_filtre("u", "statut", "statut", "regex")
         self.ajouter_filtre("v", "ouvert", "ouvert", "bool")
 
@@ -79,15 +80,16 @@ class CherchableRapport(Cherchable):
         (une colonne peut être remplie par une méthode du cherchable).
 
         """
-        return {"id":lambda objet: str(objet.id),
-            "titre": "titre",
-            "date": lambda objet: get_date(objet.date.timetuple()),
-            "salle": "salle",
-            "categorie": "categorie",
-            "statut": "statut",
-            "assigne_a": "aff_assigne_a",
-            "priorite": "priorite",
-            "createur": self.get_createur,
+        return {
+                "id": "id",
+                "titre": "aff_titre",
+                "date": lambda objet: get_date(objet.date.timetuple()),
+                "salle": "salle",
+                "categorie": "categorie",
+                "statut": "statut",
+                "assigne_a": "aff_assigne_a",
+                "priorite": "priorite",
+                "createur": self.get_createur,
         }
 
     def get_createur(self, objet):

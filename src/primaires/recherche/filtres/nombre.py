@@ -82,6 +82,8 @@ class Nombre(TypeFiltre):
         recherche, False sinon.
 
         """
+        attribut = float(attribut)
+
         # Est-ce un simple nombre ?
         if RE_SIMPLE.search(valeur):
             valeur = valeur.replace(",", ".")

@@ -88,6 +88,11 @@ class Rapport(BaseObj):
                 self.type, self.id, self.avancement)
 
     @property
+    def nonassigne(self):
+        """Retourne True si le rapport n'est pas assigné."""
+        return self.assigne_a is None
+
+    @property
     def aff_assigne_a(self):
         return self.assigne_a and self.assigne_a.nom or "personne"
 
@@ -99,6 +104,11 @@ class Rapport(BaseObj):
     def int_priorite(self):
         """Retourne la priorité sous la forme d'un entier."""
         return PRIORITES.index(self._priorite)
+
+    @property
+    def aff_titre(self):
+        """Retourne le titre échappé."""
+        return echapper_accolades(self.titre)
 
     def _get_type(self):
         return self._type

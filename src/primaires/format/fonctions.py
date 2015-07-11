@@ -127,9 +127,9 @@ def get_bytes(msg, ncod_optionnel):
     """
     if isinstance(msg, str):
         if ncod_optionnel:
-            msg = msg.encode(ncod_optionnel)
+            msg = msg.encode(ncod_optionnel, errors="replace")
         else:
-            msg = supprimer_accents(msg).encode()
+            msg = supprimer_accents(msg).encode(errors="replace")
 
     return msg
 
