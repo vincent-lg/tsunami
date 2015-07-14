@@ -42,13 +42,16 @@ RE_NOM_VALIDE = re.compile(r"^[A-Za-z]*$")
 
 class NouveauNom(Contexte):
     """Contexte demandant au client d'entrer le nom de son nouveau personnage.
+
     La validité du nom est établie par la regex 'RE_NOM_VALIDE' et par
     des données de configuration
     précisant la taille minimum du nom, et sa taille maximum.
+    On ne peut évidemment n'avoir qu'un seul joueur du même nom.
 
     Si le nom est valide, on passe au contexte de création suivant.
 
     """
+
     nom = "personnage:creation:nouveau_nom"
 
     def __init__(self, pere):
@@ -58,6 +61,7 @@ class NouveauNom(Contexte):
 
     def sortir(self):
         """En sortant du contexte :
+
         -   on vérifie que la salle du joueur est valide
 
         """
@@ -97,7 +101,7 @@ class NouveauNom(Contexte):
         if len(msg) < t_min or len(msg) > t_max:
             self.pere.envoyer("|err|Le nom de votre joueur doit faire entre " \
                     "{0} et {1} caractères.|ff|".format(t_min, t_max))
-        elif msg in type(self).importeur.connex.nom_joueurs:
+        elif importeur.joueur.joueur_existe(msg):
             self.pere.envoyer("|err|Ce nom de personnage est déjà utilisé. " \
                     "Choisissez-en un autre.|ff|")
         elif RE_NOM_VALIDE.search(supprimer_accents(msg).lower()):

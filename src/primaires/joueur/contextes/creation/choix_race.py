@@ -36,7 +36,10 @@ from primaires.format.fonctions import *
 class ChoixRace(Contexte):
     """Contexte demandant au client de choisir la race de son personnage.
 
+    Le client peut également demander de l'aide sur chaque race.
+
     """
+
     nom = "personnage:creation:choix_race"
 
     def __init__(self, pere):
@@ -66,6 +69,9 @@ class ChoixRace(Contexte):
         """Méthode d'interprétation"""
         msg = supprimer_accents(msg).lower()
         info = False
+        if msg == "":
+            return self.pere.envoyer(self.accueil())
+
         if msg.startswith("info "):
             msg = msg[5:]
             info = True
@@ -98,5 +104,6 @@ class ChoixRace(Contexte):
                         "=" + "-" * (nb_tirets)
                 if len(race.nom) % 2 != 0:
                     titre += "-"
-                self.pere << "|tit|{}|ff|\n{}".format(
-                        titre, race.description)
+                self.pere << "|tit|{}|ff|\n{}\n|att|Appuyez sur " \
+                        "|ent|ENTRÉE|att| pour voir de nouveau la " \
+                        "liste des races.|ff|".format(titre, race.description)

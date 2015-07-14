@@ -55,8 +55,8 @@ class ClasseFonction(Fonction):
 
         """
         nom = nom.capitalize()
-        if nom in importeur.joueur.joueurs:
-            return importeur.joueur.joueurs[nom]
-        else:
+        try:
+            return importeur.joueur.get_joueur(nom)
+        except KeyError:
             raise ErreurExecution("Joueur inconnu : {}".format(
                     repr(nom)))

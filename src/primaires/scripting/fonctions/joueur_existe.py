@@ -53,5 +53,4 @@ class ClasseFonction(Fonction):
           si joueur_existe("kredh"):
 
         """
-        nom = nom.capitalize()
-        return nom in importeur.joueur.joueurs
+        return importeur.joueur.joueur_existe(nom)
