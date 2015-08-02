@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,12 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module information."""
+"""Fichier contenant le paramètre 'supprimer' de la commande 'roadmap'."""
 
-from . import aide
-from . import annonces
-from . import hedit
-from . import newsletter
-from . import roadmap
-from . import tips
-from . import versions
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmSupprimer(Parametre):
+
+    """Commande 'roadmap supprimer'."""
+
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "supprimer", "delete")
+        self.groupe = "administrateur"
+        self.schema = "<nombre>"
+        self.aide_courte = "supprime un élément de feuille de route"
+        self.aide_longue = \
+            "Cette sous-commande supprime l'élément d'une feuille " \
+            "de route dont vous précisez le numéro tel qu'affiché " \
+            "dans la commande %roadmap% sans argument."
+
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        id = dic_masques["nombre"].nombre
+        roadmaps = importeur.information.roadmaps
+        if id > len(roadmaps):
+            personnage << "|err|Aucun élément ne correspond à l'ID " \
+                    "spécifié.|ff|"
+        else:
+            id -= 1
+            importeur.information.supprimer_roadmap(id)
+            personnage << "|att|La feuille de route a bien été modifiée.|ff|"
