@@ -142,7 +142,7 @@ class Plante(BaseObj):
         """Ajuste automatiquement le cycle et la période de la plante."""
         cycle = None
         for t_cycle in self.prototype.cycles:
-            if self.age <= t_cycle.age:
+            if self.age <= t_cycle.age_max:
                 cycle = t_cycle
                 break
 
