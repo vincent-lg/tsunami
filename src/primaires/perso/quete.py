@@ -287,9 +287,7 @@ class Quete(BaseObj):
             elif niveau_suivant != niveau_parent:
                 return False
 
-            return self.peut_faire(quete.parent, niveau)
-        else:
-            return self.peut_faire(quete.parent, niveau[:-1])
+        return self.peut_faire(quete.parent, niveau[:-1])
 
     def valider(self, quete, niveau):
         """Valide la quête passée en paramètre.
