@@ -760,6 +760,10 @@ class Personnage(BaseObj):
                 importeur.hook["pnj:arrive"].executer(perso,
                         self)
 
+    def noyable(self):
+        """Retourne True si le personnage est noyable, False sinon."""
+        return not self.est_immortel()
+
     def essayer_nage(self, origine, destination):
         """Essaye de nager et retourne un booléen de réussite.
 
@@ -1294,7 +1298,7 @@ class Personnage(BaseObj):
         self << "|att|Vous prenez une grande inspiration avant " \
                 "de plonger.|ff|"
         nom = "noyade_" + self.nom_unique
-        if not self.est_immortel() and nom not in \
+        if self.noyable() and nom not in \
                 importeur.diffact.actions:
             importeur.diffact.ajouter_action(nom, 5, self.act_noyer, 5)
 

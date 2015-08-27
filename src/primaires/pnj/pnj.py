@@ -284,3 +284,12 @@ class PNJ(Personnage):
     def tuer(self, victime):
         """Le personnage self vient de tuer la victime."""
         self.script["tue"].executer(personnage=victime, pnj=self)
+
+    def noyable(self):
+        """Retourne True si le personnage est noyable, False sinon."""
+        return False
+
+    def essayer_nage(self, origine, destination):
+        """Essaye de nager (un PNJ réussit toujours)."""
+        return True
+
