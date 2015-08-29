@@ -31,6 +31,7 @@
 """Module contenant l'éditeur d'recettes de rang."""
 
 from primaires.interpreteur.editeur.choix import Choix
+from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.tableau import Tableau
 from primaires.interpreteur.editeur.uniligne import Uniligne
@@ -82,6 +83,24 @@ class GldRecetteEdit(Presentation):
             "recettes avec des ingrédients identiques. Il faut\ndonc " \
             "demander précisément au joueur ce qu'il veut fabriquer, d'où\n" \
             "l'utilité des noms.\n\nNom actuel : |bc|{valeur}|ff|"
+
+        # Nombre nécessaire pour la progression
+        nb_max = self.ajouter_choix("nombre d'objets nécessaires " \
+                "pour progresser dans le rang", "b", Entier, recette,
+                "nb_max", 1)
+        nb_max.parent = self
+        nb_max.apercu = "{valeur} fois"
+        nb_max.prompt = "Nombre maximum d'objets à faire dans ce rang : "
+        nb_max.aide_courte = \
+            "Entrez |ent|le nombre d'objets|ff| nécessaires " \
+            "ou |cmd|/|ff| pour revenir\nà la fenêtre parente.\n\n" \
+            "Chaque rang définit des objets de rang. Les artisans " \
+            "doivent fabriquer\nces objets pour progresser. Chaque " \
+            "objet doit être fait une ou plusieurs\nfois. Ce nombre " \
+            "est définit ici. Si vous renseigner |ent|3|ff| par\nexemple, " \
+            "alors le membre devra faire cette recette trois fois pour\n" \
+            "pouvoir progresser. Si il ne le fabrique pas trois fois, " \
+            "il ne pourra\npas finir son rang.\n\nNombre actuel : {valeur}"
 
         # Types
         liste_types = list(importeur.objet.types.keys())

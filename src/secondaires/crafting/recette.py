@@ -59,6 +59,7 @@ class Recette(BaseObj):
         BaseObj.__init__(self)
         self.rang = rang
         self.nom = ""
+        self.nb_max = 1
         self.ingredients_objets = {}
         self.ingredients_types = {}
         self.resultat = ""

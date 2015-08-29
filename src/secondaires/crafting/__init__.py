@@ -249,9 +249,9 @@ class Module(BaseModule):
             progressions = sorted(progressions,
                     key=lambda p: p.rang.guilde.nom)
             for progression in progressions:
-                msgs.append("{} de {}".format(
+                msgs.append("{} de {} ({:>3}%)".format(
                         progression.rang.nom.capitalize(),
-                        progression.rang.guilde.nom))
+                        progression.rang.guilde.nom, progression.progression))
 
         msgs.append("")
 
