@@ -102,6 +102,12 @@ class CommandeDynamique(BaseObj):
         parent = "{}:".format(self.parent) if self.parent else ""
         return parent + self.nom_francais + "/" + self.nom_anglais
 
+    @property
+    def nom_francais_complet(self):
+        """Retourne le nom français complet (parent:nom_francais)."""
+        parent = "{}:".format(self.parent) if self.parent else ""
+        return parent + self.nom_francais
+
     def _get_aide_courte(self):
         return self._aide_courte
     def _set_aide_courte(self, aide):

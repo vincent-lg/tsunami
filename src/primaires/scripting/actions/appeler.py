@@ -103,7 +103,7 @@ class ClasseAction(Action):
             if not trouve:
                 raise ErreurExecution("Impossible de trouver le scriptable " \
                         "{} : type d'information introuvable".format(
-                        repr(appelant), repr(cle)))
+                        repr(appelant)))
         elif not hasattr(appelant, "script"):
             raise ErreurExecution("l'appelant {} ne semble pas avoir " \
                     "de script".format(appelant))

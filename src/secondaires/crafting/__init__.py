@@ -61,6 +61,7 @@ class Module(BaseModule):
         self.guildes = {}
         self.membres = None
         self.types = {}
+        self.commandes_dynamiques = {}
         self.logger = self.importeur.man_logs.creer_logger(
                 "crafting", "guilde")
 
@@ -71,6 +72,9 @@ class Module(BaseModule):
 
         # Ajout du niveau
         importeur.perso.ajouter_niveau("profession", "profession")
+
+        # Extension des valeurs scriptables
+        importeur.scripting.valeurs["commande"] = self.commandes_dynamiques
 
         # Récupération de la configuration crafting YML
         crafting = importeur.supenr.fichiers.get("crafting")
@@ -164,6 +168,8 @@ class Module(BaseModule):
         nb_cmd = 0
         for guilde in self.guildes.values():
             for commande in guilde.commandes:
+                self.commandes_dynamiques[commande.nom_francais_complet] = \
+                        commande
                 commande.ajouter()
                 commande.maj()
                 nb_cmd += 1
