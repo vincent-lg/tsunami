@@ -218,13 +218,16 @@ class Magasin(BaseObj):
 
         """
         services = list(self.inventaire)
-        trouve = False
+        trouve = unique = False
         if isinstance(service, Objet):
             if service.nom_singulier != service.prototype.nom_singulier:
                 service = VenteUnique(service)
+                unique = True
             else:
                 importeur.objet.supprimer_objet(service.identifiant)
-        else:
+                service = service.prototype
+
+        if not unique:
             for i, (t_service, t_qtt) in enumerate(services):
                 if t_service is service:
                     qtt = qtt if not inc_qtt else qtt + t_qtt
@@ -301,8 +304,11 @@ class Magasin(BaseObj):
 
         return valeur_achat * qtt
 
-    def renouveler(self):
+    def renouveler(self, vider=False):
         """Renouvelle l'inventaire depuis le stock."""
+        if vider:
+            self.inventaire[:] = []
+
         for service, qtt, flags in self.stock:
             self.ajouter_inventaire(service, qtt, inc_qtt=False)
 

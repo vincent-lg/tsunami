@@ -40,14 +40,20 @@ class ClasseAction(Action):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.renouveler_inventaire_salle, "Salle")
+        cls.ajouter_types(cls.renouveler_inventaire_salle, "Salle", "str")
 
     @staticmethod
-    def renouveler_inventaire_salle(salle):
+    def renouveler_inventaire_salle(salle, flags=""):
         """Renouvelle l'inventaire d'un magasin dans la salle précisée.
 
         Paramètres à préciser :
 
-            * salle : la salle à renouveler (type salle)
+          * salle : la salle à renouveler (type salle)
+          * flags (optionnel) : une liste de flags
+
+        Flags disponibles :
+
+          * "vider" : vide l'inventaire du magasin avant de renouveler
 
         La salle précisée doit contenir un magasin. Renouveler
         l'inventaire d'un magasin permet de transférer le stock dans
@@ -61,10 +67,17 @@ class ClasseAction(Action):
 
           salle = salle("zone:mnemo")
           renouveler salle
+          #Vide l'inventaire avant de renouveler le stock
+          renouveler salle "vider"
 
         """
         if salle.magasin is None:
             raise ErreurExecution("La salle {} n'est pas un " \
                     "magasin".format(repr(salle.ident)))
 
-        salle.magasin.renouveler()
+        flags = flags.lower().split(" ")
+        variables = {}
+        if "vider" in flags:
+            variables["vider"] = True
+
+        salle.magasin.renouveler(**variables)
