@@ -247,6 +247,7 @@ class ClasseFonction(Fonction):
         """
         adresse = adresse.lower()
         objets = {
+                "prototype d'objet": importeur.objet._prototypes,
                 "zone": importeur.salle.zones,
         }
 
