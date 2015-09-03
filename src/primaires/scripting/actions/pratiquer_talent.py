@@ -92,4 +92,4 @@ class ClasseAction(Action):
             raise ErreurExecution("talent inconnu : {}".format(repr(
                     nom_talent)))
 
-        personnage.pratiquer_talent(cle,  1 / int(probabilite))
+        personnage.pratiquer_talent(cle, 1 / float(probabilite))
