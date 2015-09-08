@@ -43,7 +43,7 @@ class GldRecetteEdit(Presentation):
 
     nom = "gldedit:recette"
 
-    def __init__(self, personnage, recette, attribut):
+    def __init__(self, personnage, recette, attribut=None):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion

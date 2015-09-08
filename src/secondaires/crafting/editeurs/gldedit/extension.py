@@ -40,7 +40,7 @@ class GldExtensionEdit(Presentation):
 
     nom = "gldedit:extension"
 
-    def __init__(self, personnage, extension, attribut):
+    def __init__(self, personnage, extension, attribut=None):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion

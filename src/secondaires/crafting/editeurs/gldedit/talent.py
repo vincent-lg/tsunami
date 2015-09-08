@@ -41,7 +41,7 @@ class GldTalentEdit(Presentation):
 
     nom = "gldedit:talent"
 
-    def __init__(self, personnage, talent, attribut):
+    def __init__(self, personnage, talent, attribut=None):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion

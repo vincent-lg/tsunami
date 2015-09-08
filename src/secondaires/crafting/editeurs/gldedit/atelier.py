@@ -39,7 +39,7 @@ class GldAtelierEdit(Presentation):
 
     nom = "gldedit:atelier"
 
-    def __init__(self, personnage, atelier, attribut):
+    def __init__(self, personnage, atelier, attribut=None):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
