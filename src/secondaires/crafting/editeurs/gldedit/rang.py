@@ -41,7 +41,7 @@ class GldRangEdit(Presentation):
 
     nom = "gldedit:rang"
 
-    def __init__(self, personnage, rang, attribut):
+    def __init__(self, personnage, rang, attribut=None):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion

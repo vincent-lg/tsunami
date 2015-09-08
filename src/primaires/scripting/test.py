@@ -311,6 +311,7 @@ class Test(BaseObj):
         """
         if personnage and alarme:
             if not importeur.scripting.alarme_existe(personnage, alarme):
+                print("-", personnage, alarme)
                 return
 
         t1 = time()
@@ -334,6 +335,7 @@ class Test(BaseObj):
             if isinstance(ret, tuple):
                 personnage = ret[1]
                 alarme = ret[2]
+                print(personnage, alarme, id(code))
                 try:
                     tps = int(ret[0])
                     assert tps >= 0
