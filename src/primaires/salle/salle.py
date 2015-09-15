@@ -215,6 +215,17 @@ class Salle(BaseObj):
 
         return objets
 
+    @property
+    def a_magasin(self):
+        """Y a-t-il un magasin dans cette salle ?"""
+        return self.magasin is not None
+    
+    @property
+    def nb_sorties(self):
+        """Retourne le mombre de sorties."""
+        sorties = [s for s in self.sorties if s and s.salle_dest]
+        return len(sorties)
+    
     def voit_ici(self, personnage):
         """Retourne True si le personnage peut voir ici, False sinon.
 
