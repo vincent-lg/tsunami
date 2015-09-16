@@ -56,11 +56,14 @@ class EdtInstructions(Editeur):
         self.ajouter_option("?o", self.opt_aide_options)
         self.ajouter_option("?f", self.opt_aide_fonctions)
         self.ajouter_option("?a", self.opt_aide_actions)
-        self.ajouter_option("r", self.opt_remplacer_instruction)
         self.ajouter_option("c", self.opt_corriger_instruction)
-        self.ajouter_option("i", self.opt_inserer_instruction)
         self.ajouter_option("d", self.opt_supprimer_instructions)
+        self.ajouter_option("i", self.opt_inserer_instruction)
+        self.ajouter_option("o", self.opt_copier)
         self.ajouter_option("q", self.opt_relier_quete)
+        self.ajouter_option("r", self.opt_remplacer_instruction)
+        self.ajouter_option("v", self.opt_coller)
+        self.ajouter_option("x", self.opt_couper)
 
     def opt_remplacer_instruction(self, arguments):
         """Remplace une ligne par une nouvelle instruction."""
@@ -208,7 +211,113 @@ class EdtInstructions(Editeur):
         for n in lignes:
             self.objet.supprimer_instruction(n - 1)
         self.actualiser()
+
+    def copier_instructions(self, arguments, supprimer=False):
+        """Copie (ou coupe) les instructions précisées."""
+        if arguments.isdigit():
+            # C'est de toute évidence un nombre
+            nb = int(arguments)
+            if nb <= 0 or nb > len(self.objet.instructions):
+                self.pere << "|err|Ce nu;éro de ligne est invalide.|ff|"
+                return
+            
+            indices = [nb - 1]
+        elif arguments == "*":
+            indices = range(0, len(self.objet.instructions))
+        else:
+            try:
+                min, max = arguments.split("-")
+                min = int(min)
+                max = int(max)
+                lignes = [n for n in range(min, max + 1)]
+                assert min < max
+                assert min > 0
+                assert max <= len(self.objet.instructions)
+            except (ValueError, AssertionError):
+                self.pere << "|err|Précisez un intervalle correct " \
+                        "(|ent|min-max|err|).|ff|"
+                return
+            
+            indices = [l - 1 for l in lignes]
+        
+        indices = sorted(indices, reverse=True)
+        lignes = []
+        for n in indices:
+            instruction = self.objet.instructions[n]
+            ligne = instruction.sans_couleurs
+            lignes.insert(0, ligne)
+            if supprimer:
+                self.objet.supprimer_instruction(n)
+        
+        lignes.insert(0, "instructions")
+        importeur.scripting.presse_papier[self.pere.joueur] = lignes
+        self.actualiser()
         return
+
+    def opt_couper(self, arguments):
+        """Coupe une ou plusieurs lignes.
+
+        Syntaxe : /x * ou /x X ou /x X-Y
+
+        """
+        self.copier_instructions(arguments, supprimer=True)
+
+    def opt_copier(self, arguments):
+        """Copie une ou plusieurs lignes.
+
+        Syntaxe : /o * ou /o X ou /o X-Y
+
+        """
+        self.copier_instructions(arguments)
+
+    def opt_coller(self, arguments):
+        """Colle le texte contenu dans le presse-papier.
+        
+        Syntaxe : /p ou /p <indice de la ligne ou insérer le code>
+        
+        """
+        presse_papier = importeur.scripting.presse_papier.get(
+                self.pere.joueur)
+        
+        if presse_papier is None or len(presse_papier) == 0:
+            self.pere << "Vous n'avez aucun texte dans le presse-papier."
+            return
+        
+        p_type = presse_papier[0]
+        if p_type != "instructions":
+            self.pere << "Ce presse-papier ne contient pas d'instructions " \
+                    " : type {}.".format(p_type)
+            return
+        
+        if not arguments.strip():
+            msg = "Presse-papier actuel :\n"
+            i = 1
+            for ligne in presse_papier[1:]:
+                msg += "\n{:>3} {}".format(i, ligne)
+                i += 1
+            
+            self.pere << msg
+            return
+        
+        test = self.objet
+        instructions = test.instructions
+        no = arguments
+        try:
+            no = int(no) - 1
+            assert no >= 0
+            assert no < len(instructions)
+        except (ValueError, AssertionError):
+            self.pere << "|err|Entrez un numéro de ligne valide.|ff|"
+            return
+
+        for ligne in reversed(presse_papier[1:]):
+            try:
+                test.inserer_instruction(no, ligne)
+            except ValueError as err:
+                self.pere << "|err|" + str(err).capitalize() + "|ff|"
+                return
+        
+        self.actualiser()
 
     def opt_relier_quete(self, argument):
         """Relie à une quête.

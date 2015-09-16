@@ -105,6 +105,9 @@ class Module(BaseModule):
 
         # Scriptables
         self.valeurs = {}
+        
+        # Paramètres te;poraires
+        self.presse_papier = {}
 
     @property
     def commandes_dynamiques_sa(self):
