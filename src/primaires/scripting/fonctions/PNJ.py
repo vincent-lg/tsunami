@@ -40,11 +40,12 @@ class ClasseFonction(Fonction):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.PNJ_salle, "Salle")
+        cls.ajouter_types(cls.PNJ_salle, "Salle", "str")
         cls.ajouter_types(cls.tous_PNJ, "str")
         cls.ajouter_types(cls.zone_PNJ, "str", "str")
 
     @staticmethod
-    def PNJ_salle(salle):
+    def PNJ_salle(salle, cle=""):
         """Retourne tous les PNJ présents dans la salle.
 
         Cette fonction retourne les PNJ présents (pas les joueurs).
@@ -52,17 +53,29 @@ class ClasseFonction(Fonction):
         Paramètres à préciser :
 
           * salle : la salle dans laquelle trouver les PNJ
+          * cle (optionnel) : la clé de prototype des PNJ
 
         Exemple d'utilisation :
 
           # En admettant qu'une salle est contenue dans la variable salle
+          # Capture tous les PNJ d'une salle
           liste = PNJ(salle)
           pour chaque pnj dans liste:
               ...
+          fait
+          # Capture seulement les PNJ de prototype 'souris'
+          liste = PNJ(salle, "souris")
+          pour chaque pnj dans liste:
+              ...
+          fait
 
         """
-        return salle.PNJ
-
+        pnj = salle.PNJ
+        if cle:
+            pnj = [p for p in pnj if p.cle == cle]
+        
+        return pnj
+    
     @staticmethod
     def tous_PNJ(cle_prototype):
         """Retourne tous les PNJ d'un prototype.
