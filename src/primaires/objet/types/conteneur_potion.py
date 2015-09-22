@@ -171,6 +171,16 @@ class ConteneurPotion(BaseType):
                         return nom[1] + ajout
             return str(nombre) + " " + self.nom_pluriel + ajout
 
+    def est_plein(self):
+        """Retourne True si le conteneur de potion est plein."""
+        nb_max = self.onces_max
+        return getattr(self, "onces", nb_max) == nb_max
+
+    def est_vide(self):
+        """Retourne True si le conteneur de potion est vide."""
+        nb_max = self.onces_max
+        return getattr(self, "onces", nb_max) == 0
+
     def objets_contenus(self, conteneur):
         """Retourne les objets contenus."""
         objets = []

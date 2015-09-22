@@ -69,8 +69,8 @@ class CmdBoire(Commande):
             if any(peut) or fontaine or salle.terrain.nom in ("rive",
                     "aquatique", "subaquatique"):
                 if personnage.estomac <= 2.9:
-                    personnage << "Vous buvez à grandes gorgées."
-                    personnage.salle.envoyer("{} boit à grandes gorgées.",
+                    personnage << "Vous buvez à longues gorgées."
+                    personnage.salle.envoyer("{} boit à longues gorgées.",
                             personnage)
                     if personnage.soif > 0:
                         personnage.soif -= 8
@@ -90,13 +90,14 @@ class CmdBoire(Commande):
             return
 
         if hasattr(objet, "potion"):
-            if objet.potion is None:
+            if objet.potion is None or objet.est_vide():
                 personnage << "Il n'y a rien à boire là-dedans."
                 return
 
             if personnage.estomac + objet.potion.poids_unitaire <= 3:
                 personnage << objet.potion.message_boit
-                personnage.salle.envoyer("{} boit " + objet.get_nom() + ".",
+                personnage.salle.envoyer("{} boit une longue gorgée " \
+                        "depuis " + objet.get_nom() + ".",
                         personnage)
                 personnage.soif -= objet.potion.remplissant * 5
                 if personnage.soif < 0:
@@ -104,8 +105,10 @@ class CmdBoire(Commande):
                 personnage.estomac += objet.potion.poids_unitaire
                 objet.potion.script["boit"].executer(personnage=personnage,
                         objet=objet)
-                importeur.objet.supprimer_objet(objet.potion.identifiant)
-                objet.potion = None
+                objet.onces -= 1
+                if objet.est_vide():
+                    importeur.objet.supprimer_objet(objet.potion.identifiant)
+                    objet.potion = None
             else:
                 e = "e" if personnage.est_feminin() else ""
                 personnage << "Vous êtes plein{e} ; une gorgée de plus " \
