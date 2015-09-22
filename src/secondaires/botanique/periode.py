@@ -76,6 +76,7 @@ class Periode(BaseObj):
         self.variation = 0
         self.elements = []
         self.poids_max = 0
+        self.visible = True
 
     def __getnewargs__(self):
         return ("", None)

@@ -131,3 +131,7 @@ class EdtPeriode(Presentation):
         poids.aide_courte = \
             "Entrez le poids maximum que peut porter la plante.\n\nPoids " \
             "actuel : {objet.poids_max} kg"
+
+        # Visible
+        visible = self.ajouter_choix("visible", "vi", Flag, periode, "visible")
+        visible.parent = self
