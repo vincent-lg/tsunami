@@ -181,6 +181,11 @@ class ConteneurPotion(BaseType):
         nb_max = self.onces_max
         return getattr(self, "onces", nb_max) == 0
 
+    def remplir(self):
+        """Rempli le conteneur de potion."""
+        nb_max = self.onces_max
+        self.onces = nb_max
+        
     def objets_contenus(self, conteneur):
         """Retourne les objets contenus."""
         objets = []
