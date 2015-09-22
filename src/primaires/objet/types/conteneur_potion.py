@@ -30,19 +30,42 @@
 
 """Fichier contenant le type ConteneurPotion."""
 
+from bases.objet.attribut import Attribut
 from corps.aleatoire import *
 from corps.fonctions import lisser
 from primaires.interpreteur.editeur.choix import Choix
+from primaires.interpreteur.editeur.flag import Flag
+from primaires.interpreteur.editeur.entier import Entier
 from .base import BaseType
 
 # Constante
-LISTE_CONNECTEURS = [
-        "de",
-        "rempli{s} de",
-        "remplie{s} de",
-        "plein{s} de",
-        "pleine{s} de",
-]
+LISTE_CONNECTEURS = {
+        "de": [
+            "de {liquide} presque vide{s}",
+            "de {liquide} à moitié plein{e}{s}",
+            "plein{e}{s} de {liquide}",
+        ],
+        "rempli{s} de": [
+            "presque vide{s} de {liquide}",
+            "de {liquide} à moitié rempli{s}",
+            "rempli{s} de {liquide}",
+        ],
+        "remplie{s} de": [
+            "presque vide{s} de {liquide}",
+            "de {liquide} à moitié remplie{s}",
+            "remplie{s} de {liquide}",
+        ],
+        "plein{s} de": [
+            "presque vide{s} de {liquide}",
+            "de {liquide} à moitié plein{s}",
+            "plein{s} de {liquide}",
+        ],
+        "pleine{s} de": [
+            "presque vide{s} de {liquide}",
+            "de {liquide} à moitié pleine{s}",
+            "pleine{s} de {liquide}",
+        ],
+}
 
 class ConteneurPotion(BaseType):
 
@@ -59,9 +82,21 @@ class ConteneurPotion(BaseType):
         BaseType.__init__(self, cle)
         self.potion = None
         self.connecteur = "de"
+        self.masculin = True
+        self.onces_max = 1
+        
+        # Extensions d'éditeur
         self.etendre_editeur("c", "connecteur", Choix, self,
                 "connecteur", LISTE_CONNECTEURS)
+        self.etendre_editeur("on", "nombre d'onces au maximum", Entier,
+                self, "onces_max")
+        self.etendre_editeur("ma", "genre masculin", Flag, self, "masculin")
 
+        # Attributs
+        self._attributs = {
+            "onces": Attribut(lambda: self.onces_max),
+        }
+        
         # Erreur de validation du type
         self.err_type = "Laissez ce liquide à sa place, non mais."
 
@@ -81,6 +116,19 @@ class ConteneurPotion(BaseType):
             "|grf|un tonneau|ff| |bc|plein de|ff| |grf|bière|ff|.\n\n" \
             "Choix possibles : {objet.connecteurs}\n\n" \
             "Connecteur actuel : {objet.connecteur}"
+        
+        contenu = enveloppes["on"]
+        contenu.apercu = "{valeur}"
+        contenu.prompt = "Nombre maximum d'onces que peut contenir l'objet : "
+        contenu.aide_courte = \
+            "Entrez le |ent|contenu|ff| en onces " \
+            "du conteneur de potion\n" \
+            "Entrez |cmd|/|ff| pour revenir à la fenêtre " \
+            "parente.\n\n" \
+            "Il suffit de savoir qu'une once peut être bue en une " \
+            "longue gorgée\npour les joueurs. Remplacez donc once par " \
+            "gorgée si c'est plus simple.\n\n" \
+            "Onces maximum actuelles : {valeur}"
 
     # Actions sur les objets
     def get_nom(self, nombre=1, pluriels=True):
@@ -95,7 +143,20 @@ class ConteneurPotion(BaseType):
         if self.potion is not None:
             s = "s" if nombre > 1 else ""
             nom = self.potion.get_nom()
-            ajout = lisser(" " + self.connecteur.format(s=s) + " " + nom)
+            connecteurs = LISTE_CONNECTEURS[self.connecteur]
+            nb_max = self.onces_max
+            nb = getattr(self, "onces", nb_max)
+            rempli = nb / nb_max
+            if rempli <= 0.2:
+                connecteur = connecteurs[0]
+            elif rempli <= 0.7:
+                connecteur = connecteurs[1]
+            else:
+                connecteur = connecteurs[2]
+                
+            e = "e" if not self.masculin else ""
+            ajout = lisser(" " + connecteur.format(s=s, e=e, liquide=nom))
+            
         if nombre <= 0:
             raise ValueError("la fonction get_nom a été appelée " \
                     "avec un nombre négatif ou nul.")
@@ -110,6 +171,21 @@ class ConteneurPotion(BaseType):
                         return nom[1] + ajout
             return str(nombre) + " " + self.nom_pluriel + ajout
 
+    def est_plein(self):
+        """Retourne True si le conteneur de potion est plein."""
+        nb_max = self.onces_max
+        return getattr(self, "onces", nb_max) == nb_max
+
+    def est_vide(self):
+        """Retourne True si le conteneur de potion est vide."""
+        nb_max = self.onces_max
+        return getattr(self, "onces", nb_max) == 0
+
+    def remplir(self):
+        """Rempli le conteneur de potion."""
+        nb_max = self.onces_max
+        self.onces = nb_max
+        
     def objets_contenus(self, conteneur):
         """Retourne les objets contenus."""
         objets = []

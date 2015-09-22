@@ -72,6 +72,7 @@ class CmdPuiser(Commande):
 
         eau = importeur.objet.creer_objet(importeur.objet.prototypes["eau"])
         conteneur.potion = eau
+        conteneur.remplir()
         personnage << "Vous puisez {}.".format(
                 conteneur.get_nom())
         personnage.salle.envoyer("{{}} puise {}.".format(
