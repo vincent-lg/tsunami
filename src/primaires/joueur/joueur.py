@@ -271,6 +271,9 @@ class Joueur(Personnage):
 
     def tick(self):
         """Méthode appelée à chaque tick."""
+        if self.afk:
+            return
+        
         if self.est_mort():
             self.cpt_mort += 1
             if self.cpt_mort <= 12:
