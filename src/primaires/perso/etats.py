@@ -137,7 +137,7 @@ class Etats(BaseObj):
         """Retire le premier état dont la clé correspond.
 
         Si le flag supprimer est à True (par défaut il l'est), alors l'état
-        est supprimé proprement c'est-à-dire que sa méthode 'suppriemr' est
+        est supprimé proprement c'est-à-dire que sa méthode 'supprimer' est
         appelée. Certains états redéfinissent cette méthode pour des
         actions particulières mais il faut s'assurer dans ce cas que la
         méthode ne s'appelle pas récursivement. Si un état supprimé veut
