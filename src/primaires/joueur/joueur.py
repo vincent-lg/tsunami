@@ -300,7 +300,7 @@ class Joueur(Personnage):
         msg_soif = [
             (20, ("Vous avez soif.", 0)),
             (60, ("La soif vous assèche le gosier.", 0)),
-            (80, ("Votre gorge asséchée vous fait souffrir le martyr.", 5)),
+            (80, ("Votre gorge asséchée vous fait souffrir le martyre.", 5)),
             (95, ("Votre vision se trouble sous l'effet de la déshydratation.",
                     20)),
         ]
