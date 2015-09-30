@@ -88,7 +88,7 @@ class Module(BaseModule):
         # Ajout des états
         depece = importeur.perso.ajouter_etat("depece")
         depece.msg_refus = "Vous êtes en train de dépecer un cadavre."
-        depece.msg_visible = "dépece un cadavre ici"
+        depece.msg_visible = "dépèce un cadavre ici"
         depece.act_autorisees = ["regarder", "parler"]
 
         BaseModule.config(self)
