@@ -168,6 +168,26 @@ class EdtShedit(Presentation):
             "ou |cmd|/|ff| pour revenir\nà la fenêtre parente.\n\n" \
             "Poids maximum actuel de la cale : {objet.cale_max} kg"
 
+        # Tirant d'eau
+        tirant = self.ajouter_choix("tirant d'eau", "ti", Entier, modele,
+                "tirant_eau", 1)
+        tirant.parent = self
+        tirant.apercu = "{valeur} brasses"
+        tirant.prompt = "Tirant d'eau en brasses : "
+        tirant.aide_courte = \
+            "Entrez |ent|le tirant d'eau|ff| ou |cmd|/|ff| pour revenir " \
+            "à la fenêtre parente.\n\nLe tirant d'eau du navire est " \
+            "la distance verticale qui sépare la flotaison\nde la quille " \
+            ": c'est donc la partie immergée. Un navire avec un tirant\n" \
+            "d'eau trop important ne porura pas s'approcher des terres. " \
+            "En fonction\nde la profondeur de l'étendue, également " \
+            "spécifiée en brasses, tous\nles navires ne pourront pas " \
+            "s'y aventurer.\n\nTirant d'eau actuel : {valeur} brasses"
+
+        # Fond plat
+        plat = self.ajouter_choix("fond plat", "pl", Flag, modele, "fond_plat")
+        plat.parent = self
+
         # Carte
         carte = self.ajouter_choix("carte", "c", EdtCarte, modele)
         carte.parent = self

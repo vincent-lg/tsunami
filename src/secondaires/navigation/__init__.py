@@ -622,7 +622,7 @@ class Module(BaseModule):
         """Fait avancer les navires."""
         self.importeur.diffact.ajouter_action("dep_navire", TPS_VIRT,
                 self.avancer_navires)
-        for navire in self.navires.values():
+        for navire in list(self.navires.values()):
             if navire.etendue:
                 navire.avancer(DIST_AVA)
 

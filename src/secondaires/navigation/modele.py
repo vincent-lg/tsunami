@@ -55,6 +55,8 @@ class ModeleNavire(BaseObj):
         self.vehicules = []
         self.salles = {}
         self.poids_max = 200
+        self.tirant_eau = 3
+        self.fond_plat = False
         self.graph = {}
         self.m_valeur = 1000
         self.duree_construction = 60

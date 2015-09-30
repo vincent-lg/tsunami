@@ -31,7 +31,7 @@
 """Fichier contenant la classe Navire, détaillée plus bas."""
 
 from math import fabs, radians, sqrt
-
+from random import random
 from vector import *
 
 from abstraits.obase import BaseObj
@@ -612,9 +612,20 @@ class Navire(Vehicule):
         x = self.position.x
         y = self.position.y
         z = self.position.z
+        etendue = self.etendue
         vit_or = vit_fin = self.vitesse_noeuds
         origine = self.opt_position
         vitesse = self.opt_vitesse
+        
+        # Si le navire est à fond plat
+        if self.modele.fond_plat and not etendue.eau_douce and \
+                etendue.profondeur > 4 and random() < 0.07:
+            print(self, "chavire")
+            self.envoyer("|err|Une vague plus haute que les autres " \
+                    "fait chavirer l'embarcation !|ff|")
+            self.sombrer()
+            return
+        
         if not self.immobilise:
             # On contrôle les collisions
             # On cherche toutes les positions successives du navire
@@ -634,11 +645,20 @@ class Navire(Vehicule):
             n_position = self.opt_position
 
             # Si le navire a croisé un lien, change d'étendue
-            etendue = self.etendue
             autre = etendue.croise_lien((origine.x, origine.y),
                     (n_position.x, n_position.y))
             if autre:
                 print(self, "change d'étendue:", autre)
+                if autre.profondeur < self.modele.tirant_eau:
+                    self.envoyer("Un grincement sonore, la quille " \
+                            "touche le fond.")
+                    # On annule le déplacement
+                    self.position.x = x
+                    self.position.y = y
+                    self.position.z = z
+                    self.maj_salles()
+                    return
+                
                 self.etendue = autre
                 self.position.z = autre.altitude
                 autre.script["entre"].executer(centre=self.centre,
