@@ -217,7 +217,7 @@ class Rapport(BaseObj):
                 self.priorite + "."
         ret += "\nDétail :\n"
         ret += echapper_accolades(str(self.description))
-        ret += "\nRapport envoyé par " + createur + \
+        ret += "\nRapport envoyé par " + createur + " " +\
                 get_date(self.date.timetuple()) + "\n"
         if personnage.est_immortel():
             ret += "Depuis " + str(self.salle) + " "
