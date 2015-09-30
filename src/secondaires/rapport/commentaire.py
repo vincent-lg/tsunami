@@ -85,7 +85,7 @@ class Commentaire(BaseObj):
             mail = importeur.communication.mails.creer_mail(systeme)
             mail.liste_dest.append(participant)
             article = self.auteur is participant and "de votre" or "du"
-            mail.sujet = "Comentaire {article} rapport #{} par {}".format(
+            mail.sujet = "Commentaire {article} rapport #{} par {}".format(
                     rid, self.auteur.nom, article=article)
             mail.contenu.paragraphes.extend([
                     "|tab|Un nouveau commentaire a été ajouté par " \
