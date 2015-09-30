@@ -55,6 +55,7 @@ class CmdPrendre(Commande):
         nom_objet = self.noeud.get_masque("nom_objet")
         nom_objet.proprietes["conteneurs"] = \
                 "dic_masques['conteneur'] and " \
+                "hasattr(dic_masques['conteneur'].objet, 'conteneur') and " \
                 "(dic_masques['conteneur'].objet.conteneur.iter_nombres(), " \
                 ") or (personnage.salle.objets_sol.iter_nombres(), )"
         nom_objet.proprietes["quantite"] = "True"
