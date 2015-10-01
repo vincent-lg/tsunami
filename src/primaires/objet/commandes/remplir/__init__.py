@@ -89,6 +89,7 @@ class CmdRemplir(Commande):
             if poids_total > dans.poids_max:
                 if pose == 0:
                     personnage << "Vous ne pouvez rien y poser de plus."
+                    return
                 else:
                     break
             
