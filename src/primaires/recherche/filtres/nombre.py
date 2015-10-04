@@ -105,7 +105,10 @@ class Nombre(TypeFiltre):
                 if valeur.startswith(operateur):
                     valeur = valeur[len(operateur):]
                     valeur = valeur.replace(",", ".")
-                    valeur = float(valeur)
+                    try:
+                        valeur = float(valeur)
+                    except ValueError:
+                        raise TypeError("format de nombre {} inconnu".format(repr(valeur)))
                     return fonction(attribut, valeur)
 
         raise TypeError("format de nombre {} inconnu".format(repr(valeur)))
