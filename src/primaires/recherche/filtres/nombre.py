@@ -93,8 +93,8 @@ class Nombre(TypeFiltre):
         intervalle = RE_COMPLETE.search(valeur)
         if intervalle:
             groupes = intervalle.groups()
-            borne_inf = groupes[0] + "." + groupes[1] if groupes[1] else "0"
-            borne_sup = groupes[2] + "." + groupes[3] if groupes[3] else "0"
+            borne_inf = groupes[0] + "." + (groupes[1] if groupes[1] else "0")
+            borne_sup = groupes[2] + "." + (groupes[3] if groupes[3] else "0")
             borne_inf = float(borne_inf)
             borne_sup = float(borne_sup)
             return borne_inf <= attribut <= borne_sup
