@@ -104,6 +104,9 @@ class Personnage(BaseObj):
         self.super_invisible = False
         self.affections = {}
 
+        # Noyade
+        self.degre_noyade = 0
+
         # Niveau primaire et niveaux secondaires
         self.niveau = 1
         self.niveaux = {}
@@ -693,9 +696,15 @@ class Personnage(BaseObj):
             self.envoyer("Vous passez {} et refermez derrière vous.".format(
                     sortie.nom_complet))
 
+        # Plonger sous l'eau
         if salle.nom_terrain != "subaquatique" and \
                 salle_dest.nom_terrain == "subaquatique":
             self.plonger()
+
+        # Emerger de sous l'eau
+        if salle.nom_terrain == "subaquatique" and \
+                salle_dest.nom_terrain != "subaquatique":
+            self.emerger()
 
         self.salle = salle_dest
 
@@ -1300,9 +1309,15 @@ class Personnage(BaseObj):
         nom = "noyade_" + self.nom_unique
         if self.noyable() and nom not in \
                 importeur.diffact.actions:
-            importeur.diffact.ajouter_action(nom, 5, self.act_noyer, 5)
+            importeur.diffact.ajouter_action(nom, 5, self.act_noyer)
 
-    def act_noyer(self, tps):
+    def emerger(self):
+        """self émerge."""
+        self << "|att|Vous sortez la tête de l'eau et emplissez enfin " \
+                "vos poumons d'air frais.|ff|"
+        self.degre_noyade = 0
+
+    def act_noyer(self):
         """Noie progressivement le joueur."""
         if self.salle.nom_terrain != "subaquatique":
             return
@@ -1310,24 +1325,23 @@ class Personnage(BaseObj):
         nom = "noyade_" + self.nom_unique
 
         if self.est_mort():
-            tps = 0
+            self.degre_noyade = 0
 
-        importeur.diffact.ajouter_action(nom, 5, self.act_noyer,
-                tps + 5)
+        importeur.diffact.ajouter_action(nom, 5, self.act_noyer)
 
         if self.est_mort():
             return
 
-        if tps >= 90:
+        if self.degre_noyade >= 90:
             try:
                 self.vitalite = 0
             except DepassementStat:
                 self << "|err|Vos poumons vides se remplissent d'eau...|ff|"
                 self.mourir()
-        elif tps == 80:
+        elif self.degre_noyade == 80:
             self.sans_prompt()
             self << "|att|Vos poumons sont presque vides et vous commencez " \
                     "à étouffer.|ff|"
-        elif tps == 60:
+        elif self.degre_noyade == 60:
             self.sans_prompt()
             self << "|att|Il ne vous reste plus beaucoup d'air...|ff|"
