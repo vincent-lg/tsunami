@@ -73,14 +73,14 @@ class CmdPoser(Commande):
 
         pose = 0
         poses = []
+        nombre_restant = nombre
         for objet, qtt, conteneur in objets:
             if not objet.peut_prendre:
                 personnage << "Vous ne pouvez pas prendre {} avec vos " \
                         "mains...".format(objet.nom_singulier)
                 return
 
-            if nombre < qtt:
-                qtt = nombre
+            qtt = min(nombre_restant, qtt)
 
             if dans and not (dans.est_de_type("conteneur") and \
                     dans.accepte_type(objet) and dans.peut_contenir(
@@ -116,8 +116,8 @@ class CmdPoser(Commande):
             poses.append(objet)
             if pose >= nombre:
                 break
-            nombre -= qtt
-            if nombre <= 0:
+            nombre_restant -= qtt
+            if nombre_restant <= 0:
                 break
 
         if dans:
