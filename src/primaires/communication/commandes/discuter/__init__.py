@@ -79,7 +79,7 @@ class CmdDiscuter(Commande):
             message = ""
             ret = "Vous engagez la discussion avec {}."
         else:
-            message = dic_masques["message"].message
+            message = echapper_accolades(dic_masques["message"].message)
             ret = "Vous engagez la discussion avec {} à propos de \"{}\"."
         pnj = dic_masques["nom_pnj"].pnj
         personnage << ret.format(pnj.get_nom_pour(personnage), message)
