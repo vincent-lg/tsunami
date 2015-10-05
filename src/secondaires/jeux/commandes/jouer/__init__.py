@@ -63,6 +63,9 @@ class CmdJouer(Commande):
         personnage.agir("jouer")
         jeux = type(self).importeur.jeux.jeux
         plateaux = type(self).importeur.jeux.plateaux
+        if not objet.est_de_type("plateau de jeu"):
+            personnage << "|err|L'objet {} n'est pas un plateau de jeu.|ff|".format(objet)
+            return
         plateau = plateaux[objet.plateau]
         jeu = plateau.jeux[0]
         jeu = jeux[jeu]
