@@ -55,6 +55,11 @@ class PrmRetirer(Parametre):
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         salle = personnage.salle
+        if not importeur.commerce.questeur_existe(salle):
+            personnage << "|err|Aucun questeur n'est présent là où " \
+                    "vous vous trouvez.|ff|"
+            return
+
         questeur = importeur.commerce.questeurs[salle]
         nombre = dic_masques["nombre"].nombre
         nom_type = dic_masques["type_piece"].nom_type
