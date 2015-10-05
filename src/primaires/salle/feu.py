@@ -177,6 +177,8 @@ class Feu(BaseObj):
         else:
             # Cas de l'incendie
             for personnage in self.salle.personnages:
+                if personnage.est_mort():
+                    continue
                 dommages = int(0.1 * personnage.vitalite_max)
                 personnage << "Le feu vous brûle la couenne."
                 try:
