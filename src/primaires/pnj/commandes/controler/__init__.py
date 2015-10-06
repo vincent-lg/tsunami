@@ -54,16 +54,33 @@ class CmdControler(Commande):
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         cle = dic_masques["cle"].cle
-        try:
-            pnj = importeur.pnj.PNJ[cle]
-        except KeyError:
-            personnage << "|err|Ce PNJ est introuvable.|ff|"
-        else:
+
+        # Si la clé correspond exactement à un identifant de PNJ, c'est lui
+        pnj = importeur.pnj.PNJ.get(cle)
+        if pnj is not None:
             if pnj.controle_par is not None:
                 personnage << "|err|Ce PNJ est déjà contrôlé.|ff|"
                 return
-            
+
             pnj.controle_par = personnage
             contexte = Controler(personnage, pnj)
             personnage.contextes.ajouter(contexte)
             personnage << contexte.accueil()
+            return
+
+        # Sinon c'est peut-être un nom de prototype
+        proto = importeur.pnj.prototypes.get(cle)
+        if proto is not None:
+            if not len(proto.pnj):
+                # proto trouvé mais pas de PNJ
+                personnage << "Il n'existe aucun PNJ pour le " \
+                              "prototype {}.".format(proto)
+                return
+
+            # Lister les PNJ du proto
+            ids = [ x.identifiant for x in proto.pnj ]
+            personnage << "PNJ existants pour le prototype {} :\n{}" \
+                          "".format(proto, '\n'.join(ids))
+            return
+
+        personnage << "|err|Aucun PNJ ou prototype de ce nom trouvé.|ff|"
