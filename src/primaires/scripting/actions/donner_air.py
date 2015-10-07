@@ -59,8 +59,4 @@ class ClasseAction(Action):
         if personnage.est_mort() or personnage.est_immortel():
             return
 
-        nom = "noyade_" + personnage.nom_unique
-        if nom in importeur.diffact.actions:
-            # On supprime l'ancienne action
-            importeur.diffact.retirer_action(nom)
-            importeur.diffact.ajouter_action(nom, 5, personnage.act_noyer, 5)
+        personnage.degre_noyade = 0
