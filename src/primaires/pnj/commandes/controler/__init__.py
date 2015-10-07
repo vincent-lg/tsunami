@@ -57,7 +57,25 @@ class CmdControler(Commande):
 
         # Si la clé correspond exactement à un identifant de PNJ, c'est lui
         pnj = importeur.pnj.PNJ.get(cle)
-        if pnj is not None:
+        if not pnj:
+            # Sinon c'est peut-être une clé de prototype
+            proto = importeur.pnj.prototypes.get(cle)
+            if proto:
+                if len(proto.pnj) == 0:
+                    # proto trouvé mais pas de PNJ
+                    personnage << "Il n'existe aucun PNJ pour le " \
+                                  "prototype {}.".format(proto)
+                    return
+                elif len(proto.pnj) == 1:
+                    pnj = proto.pnj[0]
+                else:
+                    # Lister les PNJ du proto
+                    ids = [x.identifiant for x in proto.pnj]
+                    personnage << "PNJ existants pour le prototype {} :\n" \
+                            "  {}".format(proto, '\n  '.join(ids))
+                    return
+
+        if pnj:
             if pnj.controle_par is not None:
                 personnage << "|err|Ce PNJ est déjà contrôlé.|ff|"
                 return
@@ -67,20 +85,4 @@ class CmdControler(Commande):
             personnage.contextes.ajouter(contexte)
             personnage << contexte.accueil()
             return
-
-        # Sinon c'est peut-être un nom de prototype
-        proto = importeur.pnj.prototypes.get(cle)
-        if proto is not None:
-            if not len(proto.pnj):
-                # proto trouvé mais pas de PNJ
-                personnage << "Il n'existe aucun PNJ pour le " \
-                              "prototype {}.".format(proto)
-                return
-
-            # Lister les PNJ du proto
-            ids = [ x.identifiant for x in proto.pnj ]
-            personnage << "PNJ existants pour le prototype {} :\n{}" \
-                          "".format(proto, '\n'.join(ids))
-            return
-
         personnage << "|err|Aucun PNJ ou prototype de ce nom trouvé.|ff|"
