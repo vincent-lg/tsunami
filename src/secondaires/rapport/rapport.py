@@ -223,7 +223,7 @@ class Rapport(BaseObj):
             ret += "Depuis " + str(self.salle) + " "
         ret += "Assigné à " + self.aff_assigne_a + "."
 
-        # Comemntaires
+        # Commentaires
         if self.commentaires:
             ret += "\n\nCommentaires du rapport:"
             for i, commentaire in enumerate(self.commentaires):

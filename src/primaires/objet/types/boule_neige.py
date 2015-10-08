@@ -72,7 +72,7 @@ class BouleNeige(BaseType):
         return ""
 
     def jeter(self, personnage, adversaire):
-        """Jète la boule de neige sur un adversaire."""
+        """Jette la boule de neige sur un adversaire."""
         fact = varier(personnage.agilite, 20) / 100
         fact *= (1.6 - personnage.poids / personnage.poids_max)
         fact_a = varier(adversaire.agilite, 20) / 100

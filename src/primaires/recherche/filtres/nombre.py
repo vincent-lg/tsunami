@@ -54,7 +54,7 @@ class Nombre(TypeFiltre):
 
     Ce filtre est utilisé pour chercher un nombre avec des opérateurs
     spécifiques. Par exemple on peut chercher 5 pour une recherche simple
-    (égale à 5). On peut aussi chercher <3 pour trouver ceux inférieures à 3.
+    (égale à 5). On peut aussi chercher <3 pour trouver ceux inférieurs à 3.
 
     """
 

@@ -341,7 +341,7 @@ class BaseType(BaseObj, metaclass=MetaType):
         return ""
 
     def jeter(self, personnage, sur):
-        """Jète self sur sur.
+        """Jette self sur sur.
 
         Les paramètres sont les mêmes que veut_jeter.
 

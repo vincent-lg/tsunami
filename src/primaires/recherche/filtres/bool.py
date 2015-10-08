@@ -45,7 +45,7 @@ class Bool(TypeFiltre):
     aide = """
         une valeur optionnelle. Si la valeur n'est pas précisée,
         le booléen est considéré comme vrai. Vous pouvez préciser |ent|1|ff|
-        ou |ent|0|ff| pour indiquer, respedctivement, que le booléen
+        ou |ent|0|ff| pour indiquer, respectivement, que le booléen
         doit être vrai (c'est déjà le cas par défaut) ou faux. Les
         caractères |ent|=|ff| et |ent|!|ff| ont la même valeur.
     """
