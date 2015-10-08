@@ -82,6 +82,11 @@ class CmdPoser(Commande):
 
             qtt = min(nombre_restant, qtt)
 
+            if dans and objet.cle == dans.cle:
+                personnage << "Impossible de mettre {} dans soi-même !" \
+                        "".format(objet.nom_singulier)
+                return
+
             if dans and not (dans.est_de_type("conteneur") and \
                     dans.accepte_type(objet) and dans.peut_contenir(
                     objet, qtt)) and not (dans.est_de_type("machine") and \
