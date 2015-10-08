@@ -315,11 +315,11 @@ class Joueur(Personnage):
         ]
         if not self.est_immortel():
             if self.soif >= 100:
-                self << "Vous mourrez de soif."
+                self << "Vous mourez de soif."
                 self.mourir()
                 return
             if self.faim >= 100:
-                self << "Vous mourrez de faim."
+                self << "Vous mourez de faim."
                 self.mourir()
                 return
             for seuil, msg in reversed(msg_soif):
@@ -329,7 +329,7 @@ class Joueur(Personnage):
                     try:
                         self.vitalite -= msg[1]
                     except DepassementStat:
-                        self << "Vous mourrez de soif."
+                        self << "Vous mourez de soif."
                         self.mourir()
                         return
                     break
@@ -340,7 +340,7 @@ class Joueur(Personnage):
                     try:
                         self.vitalite -= msg[1]
                     except DepassementStat:
-                        self << "Vous mourrez de faim."
+                        self << "Vous mourez de faim."
                         self.mourir()
                         return
                     break
