@@ -41,6 +41,7 @@ class CanneAPeche(BaseType):
     """
 
     nom_type = "canne à pêche"
+    empilable_sur = ["vêtement"]
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
