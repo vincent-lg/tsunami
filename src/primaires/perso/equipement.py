@@ -396,7 +396,7 @@ class Inventaire:
 
     def __iter__(self):
         """Parcourt des objets."""
-        return iter(self.objets)
+        return iter(self.objets + self.non_uniques)
 
     def get_objets(self, simple=False):
         """Récupère les objets de l'inventaire."""
