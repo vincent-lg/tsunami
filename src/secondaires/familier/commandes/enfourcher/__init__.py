@@ -100,6 +100,7 @@ class CmdEnfourcher(Commande):
             personnage << "|err|Vous ne pouvez faire cela.|ff|"
             return
 
+        personnage.agir("enfourcher")
         personnage.etats.ajouter("chevauche", familier)
         familier.chevauche_par = personnage
         personnage.envoyer("Vous enfourchez {}.", pnj)
