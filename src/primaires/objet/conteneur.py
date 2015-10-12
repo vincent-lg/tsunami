@@ -163,6 +163,7 @@ class ConteneurObjet(BaseObj):
             else:
                 raise ValueError("le conteneur {} ne contient pas l'objet " \
                         "{}".format(repr(self), objet))
+            return nombre
         else:
             non_unique = None
             for objet in self._non_uniques:
@@ -171,11 +172,23 @@ class ConteneurObjet(BaseObj):
                     break
 
             if non_unique:
-                non_unique.nombre -= nombre
+                nombre_retirable = min(nombre, non_unique.nombre)
+                non_unique.nombre -= nombre_retirable
                 self.nettoyer_non_uniques()
+                nombre_a_retirer = nombre - nombre_retirable
+                # S'il en reste à retirer, retrait récursif parmi les enfants
+                if nombre_a_retirer > 0:
+                    sous_conteneurs = [o for o in self._objets \
+                                       if o.est_de_type("conteneur")]
+                    for sc in sous_conteneurs:
+                        nombre_a_retirer = \
+                                sc.conteneur.retirer(objet, nombre_a_retirer)
+                        if nombre_a_retirer == 0:
+                            break
+                return nombre_a_retirer
             else:
                 raise ValueError("le conteneur {} ne contient pas l'objet " \
-                        "{} (qtt={})".format(repr(self), objet, qtt))
+                        "{} (qtt={})".format(repr(self), objet, nombre))
 
     def nettoyer_non_uniques(self):
         """Nettoie les objets non uniques présents en quantité négative."""
