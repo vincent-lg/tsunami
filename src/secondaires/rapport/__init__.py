@@ -129,17 +129,18 @@ class Module(BaseModule):
         tous_rapports = list(self.rapports.values())
         msg = "|tit|Rapports :|ff|"
         for type_rapport in "bug", "évolution", "suggestion":
+            e = "" if type_rapport == "bug" else "e"
             rapports = [r for r in tous_rapports if r.type == type_rapport]
             ouverts = [r for r in rapports if r.ouvert]
-            dupliques = [r for r in rapports if r.statut == "dupliqué"]
             assignes = [r for r in rapports if r.assigne_a is not None
                     and r.ouvert]
 
-            msg += "\n  {}{} ouverts".format((type_rapport + " :").ljust(14),
-                    len(ouverts))
-            if len(rapports) > 0:
-                msg += " ({}%)".format(int(len(ouverts) / len(rapports) * 100))
-            msg += ", {} assignés, {} dupliqués, {} en tout".format(
-                    len(assignes), len(dupliques), len(rapports))
+            msg += "\n  {:<10} : {} ouvert{e}s".format(
+                    type_rapport.capitalize() + "s", len(ouverts), e=e)
+            if len(rapports):
+                msg += " ({:>3}%)".format(
+                        int(len(ouverts) / len(rapports) * 100))
+            msg += ", {} assigné{e}s, {} en tout".format(
+                    len(assignes), len(rapports), e=e)
 
         infos.append(msg)
