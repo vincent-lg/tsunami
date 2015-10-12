@@ -143,6 +143,20 @@ class Conteneur(BaseType):
 
         return False
 
+    def contient_recursif(self, objet):
+        """ Retourne True si le conteneur ou un de ses enfants contient l'objet
+
+        Aucun test de quantité ici contrairement à la méthode contient.
+
+        """
+        for o in self.conteneur:
+            if o is objet:
+                return True
+            if o.est_de_type("conteneur") and o.contient_recursif(objet):
+                return True
+
+        return False
+
     def combien_dans(self, objet):
         """Retourne combien d'objet indiqué sont dans le conteneur."""
         for o, qtt in self.conteneur.iter_nombres():
