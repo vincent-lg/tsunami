@@ -135,7 +135,7 @@ class Module(BaseModule):
             assignes = [r for r in rapports if r.assigne_a is not None
                     and r.ouvert]
 
-            msg += "\n  {:<10} : {} ouvert{e}s".format(
+            msg += "\n  {:<11} : {} ouvert{e}s".format(
                     type_rapport.capitalize() + "s", len(ouverts), e=e)
             if len(rapports):
                 msg += " ({:>3}%)".format(
