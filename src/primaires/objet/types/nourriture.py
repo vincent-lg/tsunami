@@ -103,7 +103,7 @@ class Nourriture(BaseType):
         return "jeter_personnage"
 
     def jeter(self, personnage, elt):
-        """Jète la nourriture sur un élément."""
+        """Jette la nourriture sur un élément."""
         fact = varier(personnage.agilite, 20) / 100
         fact *= (1.6 - personnage.poids / personnage.poids_max)
         fact_adv = varier(elt.agilite, 20) / 100
@@ -128,5 +128,5 @@ class Nourriture(BaseType):
         return reussite
 
     def jeter_personnage(self, personnage, cible):
-        """Jète la nourriture sur un personnage."""
+        """Jette la nourriture sur un personnage."""
         pass

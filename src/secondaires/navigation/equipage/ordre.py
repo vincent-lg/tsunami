@@ -145,7 +145,7 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
 
     # Méthodes de manipulation d'un personnage
     def jeter_ou_entreposer(self, exception):
-        """Jète les objets tenus ou les met en cale.
+        """Jette les objets tenus ou les met en cale.
 
         Si l'objet tenu peut être mis en cale, il est entreposé. Sinon
         il est jeté.

@@ -103,7 +103,7 @@ class Objet(BaseObj):
         - D'abord on cherche dans la classe
           Si trouvé et que c'est une méthode d'objet on lui passe en
           paramètre l'objet au lieu du prototype
-        - Sinon on regarde dans le prorotype.
+        - Sinon on regarde dans le prototype.
 
         """
         try:

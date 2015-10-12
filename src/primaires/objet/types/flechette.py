@@ -50,7 +50,7 @@ class Flechette(BaseType):
         return "jeter_cible"
     
     def jeter(self, personnage, elt):
-        """Jète la fléchette sur un élément."""
+        """Jette la fléchette sur un élément."""
         fact = varier(personnage.agilite, 20) / 100
         fact *= (1.6 - personnage.poids / personnage.poids_max)
         reussite = chance_sur(fact * 100 + varier(30, 10))
