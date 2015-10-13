@@ -143,6 +143,21 @@ class Rapport(BaseObj):
         self._categorie = categorie
     categorie = property(_get_categorie, _set_categorie)
 
+    @property
+    def bug(self):
+        """Retourne True si le rapport est un bug."""
+        return self._type == "bug"
+    
+    @property
+    def evolution(self):
+        """Retourne True si le rapport est une évolution."""
+        return self._type == "évolution"
+    
+    @property
+    def suggestion(self):
+        """Retourne True si le rapport est une suggestion."""
+        return self._type == "suggestion"
+    
     def copier(self, autre):
         """Copie les attributs d'un autre rapport."""
         self.source = autre

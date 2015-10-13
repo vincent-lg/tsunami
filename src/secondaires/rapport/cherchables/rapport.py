@@ -54,6 +54,9 @@ class CherchableRapport(Cherchable):
         """
         self.ajouter_filtre("i", "id", "id", "nombre")
         self.ajouter_filtre("t", "titre", "titre", "regex")
+        self.ajouter_filtre("b", "bug", "bug", "bool")
+        self.ajouter_filtre("e", "suggestion", "suggestion", "bool")
+        self.ajouter_filtre("l", "evolution", "evolution", "bool")
         self.ajouter_filtre("s", "assigne", "aff_assigne_a", "regex")
         self.ajouter_filtre("r", "createur", "aff_createur", "regex")
         self.ajouter_filtre("g", "categorie", "categorie", "regex")
