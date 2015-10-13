@@ -232,6 +232,8 @@ class Salle(BaseObj):
         Un personnage peut voir dans la salle si :
             Il est immortel
             La salle est illuminée
+            Le personnage est un PNJ nyctalope
+            Le personnage est un PNJ contrôlé par un immortel
             Il y a un feu dans la salle
             La race du personnage est nyctalope
             Le personnage a une affection qui lui permet de voir dans le noir
@@ -247,6 +249,11 @@ class Salle(BaseObj):
         if self.illuminee:
             return True
 
+        if hasattr(personnage, "prototype") and \
+                (personnage.prototype.a_flag("nyctalope") or \
+                personnage.controle_par):
+            return True
+        
         if self.ident in importeur.salle.feux:
             return True
 
