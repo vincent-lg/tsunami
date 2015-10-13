@@ -61,7 +61,7 @@ class Module(BaseModule):
     def config(self):
         """Configuration du module."""
         # Ajout des flags de salle
-        FLAGS_PNJ.ajouter("peut visiter les auberges")
+        FLAGS_PNJ.ajouter("peut visiter les auberges", 1)
         BaseModule.config(self)
 
     def init(self):

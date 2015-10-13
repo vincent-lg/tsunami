@@ -80,12 +80,12 @@ class Module(BaseModule):
         self.importeur.scripting.a_charger.append(self)
 
         # Ajout des flags de salle
-        FLAGS_SALLE.ajouter("écurie")
-        FLAGS_SALLE.ajouter("peut chevaucher")
-        FLAGS_SALLE.ajouter("accueille familiers")
+        FLAGS_SALLE.ajouter("écurie", 8)
+        FLAGS_SALLE.ajouter("peut chevaucher", 16)
+        FLAGS_SALLE.ajouter("accueille familiers", 32)
 
         # Ajout des flags des affections
-        AffectionPersonnage.def_flags.ajouter("ne peut chevaucher")
+        AffectionPersonnage.def_flags.ajouter("ne peut chevaucher", 4)
 
         # Ajout des états
         chevauche = self.importeur.perso.ajouter_etat("chevauche", Chevauche)

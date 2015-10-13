@@ -1,4 +1,5 @@
 # -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010 LE GOFF Vincent
 # All rights reserved.
@@ -40,6 +41,7 @@ from .script import ScriptPNJ
 
 # Constantes
 FLAGS = Flags()
+FLAGS.ajouter("nyctalope", 2)
 
 class Prototype(BaseObj):
 

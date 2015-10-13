@@ -97,7 +97,7 @@ class Module(BaseModule):
         etat.act_autorisees = ["regarder", "bouger"]
 
         # Ajout des flags d'affection
-        AffectionPersonnage.def_flags.ajouter("voit dans le noir")
+        AffectionPersonnage.def_flags.ajouter("voit dans le noir", 8)
 
         BaseModule.config(self)
 

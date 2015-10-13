@@ -53,9 +53,9 @@ ZONE_VALIDE = r"^[a-z0-9_]{3,20}$"
 MNEMONIC_VALIDE = r"^[a-z0-9_]{1,15}$"
 
 FLAGS = Flags()
-FLAGS.ajouter("anti combat")
-FLAGS.ajouter("anti magie")
-FLAGS.ajouter("invisible à distance")
+FLAGS.ajouter("anti combat", 1)
+FLAGS.ajouter("anti magie", 2)
+FLAGS.ajouter("invisible à distance", 4)
 
 class Salle(BaseObj):
 

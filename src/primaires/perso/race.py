@@ -44,7 +44,7 @@ class Race(BaseObj):
 
     enregistrer = True
     def_flags = Flags()
-    def_flags.ajouter("nyctalope")
+    def_flags.ajouter("nyctalope", 1)
 
     def __init__(self, nom):
         """Constructeur d'une race."""

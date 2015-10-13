@@ -43,8 +43,8 @@ class AffectionPersonnage(AffectionAbstraite):
     nom_type = "personnage"
     nom_scripting = "affection de personnage"
     def_flags = Flags()
-    def_flags.ajouter("doit être connecté")
-    def_flags.ajouter("doit être vivant")
+    def_flags.ajouter("doit être connecté", 1)
+    def_flags.ajouter("doit être vivant", 2)
 
     def __init__(self, cle):
         AffectionAbstraite.__init__(self, cle)

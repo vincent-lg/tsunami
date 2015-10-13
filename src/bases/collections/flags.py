@@ -37,7 +37,8 @@ class Flags:
     Elle est simple à utiliser : d'abord, on crée le flag en constante
     (par exemple une variable de premier niveau du module), ensuite on
     ajoute les flags grâce à la méthode 'ajouter' en précisant le nom du
-    flag. On peut accéder à l'objet des flags comme un dictionnaire (avec
+    flag et sa valeur binaire (1, 2, 4, 8, 16, 32...).
+    On peut accéder à l'objet des flags comme un dictionnaire (avec
     les méthodes 'keys', 'values' et 'items').
 
     """
@@ -55,16 +56,23 @@ class Flags:
         raise RuntimeError("Operation non permise, utiliser la méthode " \
                 "'ajouter'")
 
-    def ajouter(self, nom):
+    def ajouter(self, nom, binaire=0):
         flags = list(self.flags.values())
+        if binaire in self.flags.values():
+            raise ValueError("le flag {} est déjà utilisé".format(binaire))
         if flags:
             flag = max(flags)
             flag = flag * 2
         else:
             flag = 1
 
-        self.flags[nom] = flag
-        return flag
+        if binaire:
+            self.flags[nom] = binaire
+        else:
+            raise ValueError("le flag {} n'a pas de valeur binaire " \
+                    "spécifiée, attend {}".format(nom, flag))
+        
+        return binaire
 
     def keys(self):
         return self.flags.keys()
