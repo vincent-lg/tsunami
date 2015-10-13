@@ -78,8 +78,9 @@ class CmdAppater(Commande):
             personnage << "|err|Vous n'équipez aucune canne à pêche.|ff|"
             return
         
-        if (appat.prototype == canne.appat.prototype):
-            personnage << "|err|Vous avez déjà appâté {} avec {}.".format(
+        if (getattr(canne, "appat", None) is not None
+                and appat.prototype == canne.appat.prototype):
+            personnage << "|err|Vous avez déjà appâté {} avec {}.|ff|".format(
                     canne.get_nom(), appat.get_nom())
             return
         
