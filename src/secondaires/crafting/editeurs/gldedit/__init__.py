@@ -42,6 +42,7 @@ les extensions n'apparaîtront pas ici.
 from primaires.interpreteur.editeur.aes import AES
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.scripting.editeurs.edt_script import EdtScript
 from secondaires.crafting.editeurs.gldedit import atelier
 from secondaires.crafting.editeurs.gldedit import commande
 from secondaires.crafting.editeurs.gldedit import extension
@@ -183,3 +184,8 @@ class GldEdit(Presentation):
             "    entier entre 5 et 32\n" \
             "    tableau avec les colonnes nom (chaîne), âge (entier)\n\n" \
             "Extensions actuelles :{valeur}"
+        
+        # Script
+        scripts = self.ajouter_choix("scripts", "sc", EdtScript,
+                guilde.script)
+        scripts.parent = self

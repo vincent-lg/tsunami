@@ -75,6 +75,7 @@ class Module(BaseModule):
 
         # Extension des valeurs scriptables
         importeur.scripting.valeurs["commande"] = self.commandes_dynamiques
+        importeur.scripting.valeurs["guilde"] = self.guildes
 
         # Récupération de la configuration crafting YML
         crafting = importeur.supenr.fichiers.get("crafting")

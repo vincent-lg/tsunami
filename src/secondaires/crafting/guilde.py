@@ -1,5 +1,4 @@
 # -*-coding:Utf-8 -*
-# -*-coding:Utf-8 -*
 
 # Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
@@ -42,6 +41,7 @@ from secondaires.crafting.exception import ExceptionCrafting
 from secondaires.crafting.extension import Extension
 from secondaires.crafting.progression import Progression
 from secondaires.crafting.rang import Rang, RangIntrouvable
+from secondaires.crafting.script import ScriptGuilde
 from secondaires.crafting.talent import Talent
 from secondaires.crafting import type as def_type
 from secondaires.crafting.type import Type
@@ -61,6 +61,7 @@ class Guilde(BaseObj):
     """
 
     enregistrer = True
+    nom_scripting = "la guilde"
 
     def __init__(self, cle):
         """Constructeur de la fiche."""
@@ -75,6 +76,7 @@ class Guilde(BaseObj):
         self.rangs = []
         self.talents = {}
         self.extensions = []
+        self.script = ScriptGuilde(self)
         self._construire()
 
     def __getnewargs__(self):
