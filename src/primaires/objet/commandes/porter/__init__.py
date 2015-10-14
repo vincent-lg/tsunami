@@ -60,15 +60,14 @@ class CmdPorter(Commande):
         objet, conteneur = objets
         personnage.agir("porter")
 
-        # Vérifie que l'objet à équiper n'est pas sur un membre peut tenir
-        tenir = False
+        # Si l'objet est tenu en main, ne pas exiger une main libre
+        est_tenu = False
         for membre in personnage.equipement.membres:
-            o = membre.equipe and membre.equipe[-1] or None
-            if membre.tester("peut tenir") and o is objet:
-                tenir = True
+            if membre.peut_tenir() and membre.tenu is objet:
+                est_tenu = True
                 break
 
-        if personnage.equipement.cb_peut_tenir() < 1 and not tenir:
+        if not est_tenu and personnage.equipement.cb_peut_tenir() < 1:
             personnage << "|err|Il vous faut au moins une main libre pour " \
                     "vous équiper.|ff|"
             return
