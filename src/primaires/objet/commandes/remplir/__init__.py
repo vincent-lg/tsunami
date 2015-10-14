@@ -61,7 +61,7 @@ class CmdRemplir(Commande):
         plat.proprietes["conteneurs"] = \
                 "(personnage.equipement.inventaire, " \
                 "personnage.salle.objets_sol)"
-        plat.proprietes["types"] = "('conteneur de nourriture')"
+        plat.proprietes["types"] = "('conteneur de nourriture', )"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
