@@ -1320,13 +1320,15 @@ class Personnage(BaseObj):
     def act_noyer(self):
         """Noie progressivement le joueur."""
         if self.salle.nom_terrain != "subaquatique":
+            self.degre_noyade = 0
             return
-
-        nom = "noyade_" + self.nom_unique
 
         if self.est_mort():
             self.degre_noyade = 0
+        else:
+            self.degre_noyade += 5
 
+        nom = "noyade_" + self.nom_unique
         importeur.diffact.ajouter_action(nom, 5, self.act_noyer)
 
         if self.est_mort():
