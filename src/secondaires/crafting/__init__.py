@@ -86,6 +86,7 @@ class Module(BaseModule):
             self.enregistrer_YML()
 
         # Création des types dynamiques
+        charges = []
         complet = False
         while not complet:
             complet = True
@@ -97,12 +98,13 @@ class Module(BaseModule):
                     complet = False
                     continue
 
-                try:
-                    importeur.objet.get_type(nom)
-                except KeyError:
-                    attributs = informations.get("attributs", [])
-                    classe = Type.creer_type(parent, nom, attributs)
-                    setattr(def_type, classe.__name__, classe)
+                if nom in charges:
+                    continue
+                
+                attributs = informations.get("attributs", [])
+                classe = Type.creer_type(parent, nom, attributs)
+                setattr(def_type, classe.__name__, classe)
+                charges.append(nom)
 
         BaseModule.config(self)
 

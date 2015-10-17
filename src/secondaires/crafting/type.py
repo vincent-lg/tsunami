@@ -112,8 +112,8 @@ class Type(BaseObj):
         # Si la classe existe, on la modifie juste
         try:
             classe = importeur.objet.get_type(nom)
-            importeur.crafting.logger.info("Extension du type {} ({})".format(
-                    repr(nom), classe))
+            importeur.crafting.logger.info("Extension du type {} (attributs {})".format(
+                    repr(nom), list(attributs)))
         except KeyError:
             nom_classe = supprimer_accents(nom)
             nom_classe = "".join(mot.capitalize() for mot in nom_classe.split(
@@ -121,8 +121,8 @@ class Type(BaseObj):
 
             # Création de la classe dynamiquement
             classe = MetaType(nom_classe, (parent, ), {"nom_type": nom})
-            importeur.crafting.logger.info("Création du type {} ({})".format(
-                    repr(nom), classe))
+            importeur.crafting.logger.info("Création du type {} (attributs {})".format(
+                    repr(nom), list(attributs)))
 
         classe.attributs_crafting = list(attributs)
 
