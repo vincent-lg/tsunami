@@ -64,7 +64,7 @@ class CanneAPeche(BaseType):
         tension.aide_courte = \
             "Entrez la |ent|tension maximum|ff| de la canne ou |cmd|/|ff| " \
             "pour revenir à la fenêtre parente.\n\n" \
-            "La tension maximum défini le plus lourd poisson " \
+            "La tension maximum définit le plus lourd poisson " \
             "pouvant être pêché. Si\n" \
             "un poisson plus lourd se porte sur la canne, celle-ci " \
             "se brisera.\n\n" \

@@ -54,8 +54,8 @@ class CmdQuesteur(Commande):
         self.groupe = "joueur"
         self.aide_courte = "manipulation des questeurs"
         self.aide_longue = \
-            "Cette commande permet d'interragir avec un questeur présent " \
-            "dans la salle où vous vous trouver, pour déposer de " \
+            "Cette commande permet d'intéragir avec un questeur présent " \
+            "dans la salle où vous vous trouvez, pour déposer de " \
             "l'argent, en retirer ou consulter votre compte ouvert " \
             "chez ce questeur."
 

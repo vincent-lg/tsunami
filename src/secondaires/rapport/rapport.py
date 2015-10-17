@@ -235,7 +235,7 @@ class Rapport(BaseObj):
         ret += "\nRapport envoyé par " + createur + " " +\
                 get_date(self.date.timetuple()) + "\n"
         if personnage.est_immortel():
-            ret += "Depuis " + str(self.salle) + " "
+            ret += "Depuis " + str(self.salle) + "\n"
         ret += "Assigné à " + self.aff_assigne_a + "."
 
         # Commentaires
