@@ -46,7 +46,7 @@ class ClasseFonction(Fonction):
 
     @staticmethod
     def cb_dans(conteneur):
-        """RRenvoie le nombre d'objets contenus dans le conteneur."""
+        """Renvoie le nombre d'objets contenus dans le conteneur."""
         if conteneur.est_de_type("conteneur de potion"):
             return Fraction(1) if conteneur.potion else Fraction(0)
         if conteneur.est_de_type("conteneur de nourriture"):

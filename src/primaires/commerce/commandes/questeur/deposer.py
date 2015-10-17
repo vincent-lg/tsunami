@@ -102,7 +102,7 @@ class PrmDeposer(Parametre):
         
         montant = questeur.deposer(personnage, prototype, somme)
         if montant == 0:
-            personnage << "|err|Vous n'avez rien à déposer apparemment.|ff|"
+            personnage << "|err|Vous ne pouvez pas déposer cette somme.|ff|"
         else:
             personnage.envoyer("{{}} entrepose votre argent dans ses " \
                     "coffres et ajoute {} pièces de bronze sur votre " \
