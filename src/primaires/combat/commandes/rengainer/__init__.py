@@ -85,9 +85,10 @@ class CmdRengainer(Commande):
             fourreau = dic_masques["conteneur"].objet
         else:
             # On recherche un fourreau disponible
-            fourreaux = [membre.equipe[-1] for membre in \
-                    personnage.equipement.membres if len(membre.equipe) > 0]
-            fourreaux = [objet for objet in fourreaux if objet and \
+            equipement = []
+            for membre in personnage.equipement.membres:
+                equipement += membre.equipe
+            fourreaux = [objet for objet in equipement if objet and \
                     objet.est_de_type("armure")]
             fourreaux = [fourreau for fourreau in fourreaux if \
                     fourreau.fourreau and fourreau.au_fourreau is None]
