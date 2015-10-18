@@ -47,7 +47,7 @@ class CmdOrthographe(Commande):
             "cette commande avec le texte de la faute et la correction. " \
             "Par exemple |cmd|%orthographe% parmis / parmi|ff| pour " \
             "indiquer que dans la description de la salle à cet endroit " \
-            "se trouve une faute : parmis (éfcrit avec un s) alors qu'il " \
+            "se trouve une faute : parmis (écrit avec un s) alors qu'il " \
             "devrait être écrit sans s. Notez que cette syntaxe n'est " \
             "pas obligatoire et ne sera pas analysée par le système, vous " \
             "pouvez aussi rapporter des fautes d'orthographes dans " \

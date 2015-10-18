@@ -44,9 +44,9 @@ class CmdEscalader(Commande):
         Commande.__init__(self, "escalader", "climb")
         self.nom_categorie = "bouger"
         self.schema = "<nom_sortie>"
-        self.aide_courte = "escalade une paroie"
+        self.aide_courte = "escalade une paroi"
         self.aide_longue = \
-            "Cette commande permet d'escalader une paroie. Il vous faut " \
+            "Cette commande permet d'escalader une paroi. Il vous faut " \
             "préciser le nom de la sortie à escalader."
     
     def interpreter(self, personnage, dic_masques):
