@@ -128,9 +128,16 @@ class Module(BaseModule):
         """Ajoute les stats concernant les rapports."""
         tous_rapports = list(self.rapports.values())
         msg = "|tit|Rapports :|ff|"
-        for type_rapport in "bug", "évolution", "suggestion":
+        for type_rapport in "faute", "bug", "évolution", "suggestion":
             e = "" if type_rapport == "bug" else "e"
-            rapports = [r for r in tous_rapports if r.type == type_rapport]
+            type_reel = "bug" if type_rapport == "faute" else type_rapport
+            rapports = [r for r in tous_rapports if r.type == type_reel]
+            if type_rapport == "faute":
+                rapports = [r for r in rapports
+                        if r.titre == "Faute d'orthographe"]
+            elif type_rapport == "bug":
+                rapports = [r for r in rapports
+                        if r.titre != "Faute d'orthographe"]
             ouverts = [r for r in rapports if r.ouvert]
             assignes = [r for r in rapports if r.assigne_a is not None
                     and r.ouvert]
