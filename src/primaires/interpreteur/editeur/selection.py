@@ -87,6 +87,8 @@ class Selection(Editeur):
             elif self.liste:
                 liste_sa = [supprimer_accents(l) for l in self.liste]
                 if msg_sa in liste_sa:
+                    if "*" in selectionnes:
+                        selectionnes.remove("*")
                     selectionnes.append(self.liste[liste_sa.index(msg_sa)])
                 else:
                     self.pere << "Élément introuvable : {}".format(msg)
