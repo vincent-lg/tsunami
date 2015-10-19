@@ -109,7 +109,7 @@ class PrmListe(Parametre):
                             avc=avc))
                 lignes.append("+" + "-" * (l_id + l_createur + ljust_titre + \
                         32) + "+")
-                personnage << "\n".join(lignes)
+                personnage << echapper_accolades("\n".join(lignes))
         else:
             if not rapports:
                 personnage << "|err|Aucun rapport n'a été envoyé.|ff|"

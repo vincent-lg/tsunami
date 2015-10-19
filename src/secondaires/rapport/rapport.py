@@ -223,7 +223,7 @@ class Rapport(BaseObj):
     def get_description_pour(self, personnage):
         """Retourne la description textuelle pour le personnage."""
         createur = self.createur.nom if self.createur else "personne"
-        ret = "Rapport #" + str(self.id) + " : " + self.titre
+        ret = "Rapport #" + str(self.id) + " : " + echapper_accolades(self.titre)
         ret += "\nCatégorie : " + self.type + " (" + \
                 self.categorie + ")"
         ret += "\nStatut : " + self.statut + ", avancement : " + \
