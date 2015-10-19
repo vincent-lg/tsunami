@@ -61,6 +61,7 @@ class NomObjet(Masque):
         self.proprietes["tout_interpreter"] = "True"
         self.proprietes["quantite"] = "False"
         self.proprietes["conteneur"] = "False"
+        self.proprietes["heterogene"] = "False"
 
     @property
     def objet(self):
@@ -155,7 +156,8 @@ class NomObjet(Masque):
                     qtt = 1
                     t_conteneur = None
                 t_proto = hasattr(o, "prototype") and o.prototype or o
-                if prototype and t_proto is not prototype:
+                if prototype and t_proto is not prototype \
+                        and not self.heterogene:
                     continue
 
                 if contient(o.get_nom(), nom):
