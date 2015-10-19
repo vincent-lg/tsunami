@@ -134,10 +134,10 @@ class Module(BaseModule):
             rapports = [r for r in tous_rapports if r.type == type_reel]
             if type_rapport == "faute":
                 rapports = [r for r in rapports
-                        if r.titre == "Faute d'orthographe"]
+                        if r.categorie == "faute"]
             elif type_rapport == "bug":
                 rapports = [r for r in rapports
-                        if r.titre != "Faute d'orthographe"]
+                        if r.categorie != "faute"]
             ouverts = [r for r in rapports if r.ouvert]
             assignes = [r for r in rapports if r.assigne_a is not None
                     and r.ouvert]
