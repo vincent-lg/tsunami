@@ -55,14 +55,19 @@ class CmdDegainer(Commande):
         nom_objet = self.noeud.get_masque("nom_objet")
         nom_objet.proprietes["conteneurs"] = \
                 "(personnage.equipement.equipes, )"
+        nom_objet.proprietes["heterogene"] = "True"
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         personnage.agir("degainer")
-        fourreau = dic_masques["nom_objet"].objet
-        if not fourreau.est_de_type("armure") or not fourreau.fourreau:
+        fourreau_trouve = False
+        for fourreau in dic_masques["nom_objet"].objets:
+            if fourreau.est_de_type("armure") and fourreau.fourreau:
+                fourreau_trouve = True
+                break
+        if not fourreau_trouve:
             personnage << "|err|{} n'est pas un fourreau.|ff|".format(
-                    fourreau.nom_singulier)
+                    dic_masques["nom_objet"].objet.nom_singulier)
             return
 
         arme = fourreau.au_fourreau

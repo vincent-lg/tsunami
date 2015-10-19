@@ -67,6 +67,7 @@ class CmdRengainer(Commande):
                 "True), )"
         nom_objet.proprietes["quantite"] = "True"
         nom_objet.proprietes["conteneur"] = "True"
+        nom_objet.proprietes["heterogene"] = "True"
         conteneur = self.noeud.get_masque("conteneur")
         conteneur.proprietes["conteneurs"] = \
                 "(personnage.equipement.equipes, )"
@@ -74,8 +75,19 @@ class CmdRengainer(Commande):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         personnage.agir("rengainer")
-        arme, qtt, conteneur_arme = list(dic_masques[
-                "nom_objet"].objets_qtt_conteneurs)[0]
+        arme_trouvee = False
+        # On ne peut dégainer qu'un objet de type
+        for arme, _, conteneur_arme in \
+                (dic_masques["nom_objet"].objets_qtt_conteneurs):
+            if arme.est_de_type("arme"):
+                arme_trouvee = True
+                break
+        # Pas de telle arme trouvée dans l'équipement, sélectionner le premier
+        # objet de dic_masques["nom_objet"] pour permettre d'afficher un
+        # message de refus précis au joueur.
+        if not arme_trouvee:
+            arme, _, conteneur_arme = list(dic_masques[
+                    "nom_objet"].objets_qtt_conteneurs)[0]
         if not arme.est_de_type("arme"):
             personnage << "|err|Vous ne pouvez mettre {} au " \
                     "fourreau.|ff|".format(arme.get_nom())
