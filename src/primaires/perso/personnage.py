@@ -531,7 +531,7 @@ class Personnage(BaseObj):
 
         # Calcul de l'endurance
         if escalade:
-            end = 8
+            end = min(8, o_sortie.diff_escalade * 2)
         elif nage:
             end = 10
         else:
@@ -578,8 +578,27 @@ class Personnage(BaseObj):
             return
 
         if escalade:
-            connaissance = varier(self.pratiquer_talent("escalade"), 10)
-            reussir = connaissance / 10 >= o_sortie.diff_escalade
+            valeur_talent = self.get_talent("escalade")
+            # note : la proba d'apprentissage du talent diminue si la pente
+            # est trop facile par rapport au talent déjà possédé.
+            # Si la connaissance dépasse la difficulté de plus de deux niveaux,
+            # on divise par quatre la proba d'apprentissage
+            if (valeur_talent / 10 > (o_sortie.diff_escalade + 2)):
+                diviseur_proba = 4
+            # Si la connaissance dépasse la difficulté de plus d'un niveau,
+            # on divise par deux la proba d'apprentissage
+            if (valeur_talent / 10 > (o_sortie.diff_escalade + 1)):
+                diviseur_proba = 2
+            else:
+                diviseur_proba = 1
+            valeur_talent = self.pratiquer_talent("escalade", diviseur_proba)
+            # on rajoute une valeur entre -10 et +10 au talent aléatoirement
+            # ainsi à partir de 10 en-dessous de la difficulté fois 10, on
+            # commence à avoir une petite chance (si on est nu). À partir de
+            # 10 au-dessus de la difficulté fois 10, on ne peut plus échouer
+            # (si on est nu).
+            tentative = varier(valeur_talent, 10)
+            reussir = tentative / 10 >= o_sortie.diff_escalade
             if not reussir:
                 self.tomber()
                 return
