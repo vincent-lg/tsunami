@@ -25,10 +25,12 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# pereIBILITY OF SUCH DAMAGE.
+# POSSIBILITY OF SUCH DAMAGE.
 
 
 """Fichier contenant le contexte 'personnage:connexion:mode_connecte"""
+
+import traceback
 
 from primaires.interpreteur.contexte import Contexte
 from primaires.interpreteur.masque.dic_masques import DicMasques
@@ -44,6 +46,7 @@ class ModeConnecte(Contexte):
 
     """Le contexte de mode connecté.
     C'est une petite institution à lui tout seul.
+
     A partir du moment où un joueur se connecte, il est connecté à ce contexte.
     Les commandes se trouvent définies dans ce contexte. En revanche, d'autres
     contextes peuvent venir se greffer par-dessus celui-ci. Mais il reste
@@ -51,6 +54,7 @@ class ModeConnecte(Contexte):
     lors qu'il est connecté.
 
     """
+
     nom = "personnage:connexion:mode_connecte"
 
     def __init__(self, pere):
@@ -122,17 +126,20 @@ class ModeConnecte(Contexte):
                     if res:
                         return
 
-        interpreteur = type(self).importeur.interpreteur
+        interpreteur = importeur.interpreteur
         masques = []
         dic_masques = DicMasques()
         lst_commande = chaine_vers_liste(msg)
-        logger = type(self).importeur.man_logs.get_logger("sup")
-        traceback = __import__("traceback")
+        logger = importeur.man_logs.get_logger("sup")
         try:
             interpreteur.repartir(self.pere.joueur, masques, lst_commande)
             for masque in masques:
                 dic_masques[masque.nom] = masque
 
+            importeur.interpreteur.logger_cmd.info(
+                    "{} envoie {}".format(personnage.nom, dic_masques))
+            importeur.interpreteur.erreurs[(personnage, msg)] = str(
+                    dic_masques)
             interpreteur.valider(self.pere.joueur, dic_masques)
         except ErreurValidation as err_val:
             err_val = str(err_val)
@@ -152,9 +159,10 @@ class ModeConnecte(Contexte):
                 "|err|Une erreur s'est produite lors du traitement de " \
                 "votre commande.|ff|")
 
-            # On appelle l'hook responsabler des erreurs (joueur:erreur)
+            # On appelle l'hook responsable des erreurs (joueur:erreur)
             joueur = self.pere.joueur
-            importeur.hook["joueur:erreur"].executer(joueur, msg, trace)
+            importeur.hook["joueur:erreur"].executer(joueur, str(dic_masques),
+                    trace)
         else:
             exception = ErreurInterpretation
             try:

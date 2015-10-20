@@ -182,6 +182,7 @@ class Commande(Masque):
             fin_pos = len(str_commande)
 
         str_commande = str_commande[:fin_pos]
+        
         # Si la commande est gvide, elle n'est pas validée
         if not str_commande:
             return False

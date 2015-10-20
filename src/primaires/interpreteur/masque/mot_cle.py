@@ -56,6 +56,10 @@ class MotCle(Commande):
         """Fonction d'affichage"""
         return self.francais + "/" + self.anglais
 
+    @property
+    def nom_francais(self):
+        return self.francais
+    
     def init(self):
         """On ne fait rien."""
         pass

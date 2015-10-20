@@ -131,6 +131,9 @@ class Module(BaseModule):
                 "h": "haut",
                 "b": "bas",
         }
+        
+        # Erreurs des commandes
+        self.erreurs = {}
 
     def config(self):
         """Configuration du module."""
@@ -248,8 +251,6 @@ class Module(BaseModule):
 
         for cmd in commandes:
             if cmd.repartir(personnage, masques, lst_commande):
-                self.logger_cmd.info("{} envoie {}".format(personnage.nom,
-                        str_commande))
                 trouve = True
                 break
 

@@ -56,6 +56,8 @@ def cb_reception(serveur, importeur, logger, client, msg):
     try:
         instance.receptionner(msg)
     except Exception:
+        msg = importeur.interpreteur.erreurs.get((instance.joueur,
+                msg), msg)
         trace = traceback.format_exc()
         logger.fatal("Exception levée lors de l'interprétation de " \
                 "l'entrée : {}".format(msg))

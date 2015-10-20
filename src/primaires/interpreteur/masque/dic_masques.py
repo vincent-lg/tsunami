@@ -34,10 +34,20 @@ from collections import OrderedDict
 
 class DicMasques(OrderedDict):
 
-    """Dictionnaire ordonné contenant les masques.
+    """Dictionnaire ordonné contenant les masques."""
 
-    """
-
+    def __str__(self):
+        """Affichage plus propre des masques."""
+        msgs = []
+        for cle, masque in self.items():
+            if masque.a_interpreter:
+                msg = cle + "=" + repr(masque.a_interpreter)
+            else:
+                msg = masque.nom_francais
+            msgs.append(msg)
+        
+        return " ".join(msgs)
+    
     def __getitem__(self, item):
         """Retourne l'item si présent ou None sinon"""
         if item not in self:
