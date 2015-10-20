@@ -587,7 +587,7 @@ class Personnage(BaseObj):
                 diviseur_proba = 4
             # Si la connaissance dépasse la difficulté de plus d'un niveau,
             # on divise par deux la proba d'apprentissage
-            if (valeur_talent / 10 > (o_sortie.diff_escalade + 1)):
+            elif (valeur_talent / 10 > (o_sortie.diff_escalade + 1)):
                 diviseur_proba = 2
             else:
                 diviseur_proba = 1
