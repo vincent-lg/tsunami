@@ -598,6 +598,9 @@ class Personnage(BaseObj):
             # 10 au-dessus de la difficulté fois 10, on ne peut plus échouer
             # (si on est nu).
             tentative = varier(valeur_talent, 10)
+            importeur.salle.logger.debug(
+                "{} essaye d'escalader (réussir={}, difficulté={})".format(
+                self.nom, round(tentative / 10, 2), o_sortie.diff_escalade))
             reussir = tentative / 10 >= o_sortie.diff_escalade
             if not reussir:
                 self.tomber()
