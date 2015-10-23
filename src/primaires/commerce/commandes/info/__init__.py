@@ -41,11 +41,11 @@ class CmdInfo(Commande):
         Commande.__init__(self, "infos", "infos")
         self.nom_categorie = "objets"
         self.schema = "<objet:id_objet_magasin|nom_objet_magasin>"
-        self.aide_courte = "affiche des informations surn un produit"
+        self.aide_courte = "affiche des informations sur un produit"
         self.aide_longue = \
             "Cette commande permet d'afficher des informations sur un " \
             "produit vendu par un magasin. Vous pouvez utiliser, comme pour " \
-            "la commade %acheter%, soit le nom d'un objet en vente soit son " \
+            "la commande %acheter%, soit le nom d'un objet en vente soit son " \
             "|ent|#<numéro>|ff|, comme |ent|#1|ff|. Pour un objet, vous " \
             "pourrez regarder le produit avant de l'acheter, ce qui peut " \
             "parfois être utile. Cette commande donne différentes " \

@@ -104,7 +104,7 @@ class Importeur:
         -   le gestionnaire des loggers
         -   le serveur
         Ces informations sont stockées comme des attributs de classe.
-        Si un module souaite y faire apel il n'aura qu'à faire
+        Si un module souhaite y faire appel il n'aura qu'à faire
         'Importeur.attribut'.
 
         """

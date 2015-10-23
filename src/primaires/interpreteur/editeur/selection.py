@@ -77,7 +77,7 @@ class Selection(Editeur):
         if self.liste and msg == "*":
             setattr(self.objet, self.attribut, ["*"])
         else:
-            # Si la chaîne est déjà sélectionéne, on la supprime
+            # Si la chaîne est déjà sélectionnée, on la supprime
             selectionnes = getattr(self.objet, self.attribut)
             selectionnes_sa = [supprimer_accents(s).lower() for s in \
                     selectionnes]
