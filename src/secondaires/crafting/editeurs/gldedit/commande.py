@@ -139,6 +139,11 @@ class EdtCmdedit(Presentation):
                 Flag, commande, "utilisable")
         utilisable.parent = self
 
+        # Utilisable par les membres
+        membre = self.ajouter_choix("doit être membre pour utiliser", "mem",
+                Flag, commande, "doit_etre_membre")
+        membre.parent = self
+        
         # États
         etats = self.ajouter_choix("états", "t", Tableau,
                 commande, "etats",

@@ -40,6 +40,7 @@ les extensions n'apparaîtront pas ici.
 """
 
 from primaires.interpreteur.editeur.aes import AES
+from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.scripting.editeurs.edt_script import EdtScript
@@ -83,6 +84,11 @@ class GldEdit(Presentation):
             "Entrez le |ent|nom|ff| de la guilde ou |cmd|/|ff| pour " \
             "revenir à la fenêtre parente.\n\nNom actuel : " \
             "|bc|{valeur}|ff|"
+
+        # Ouverte
+        ouverte = self.ajouter_choix("ouverte", "ouv", Flag, guilde, 
+                "ouverte")
+        ouverte.parent = self
 
         # Ateliers
         ateliers = self.ajouter_choix("ateliers", "a", AES,
