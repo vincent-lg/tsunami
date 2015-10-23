@@ -39,11 +39,11 @@ class DicMasques(OrderedDict):
     def __str__(self):
         """Affichage plus propre des masques."""
         msgs = []
-        for cle, masque in self.items():
-            if masque.a_interpreter:
-                msg = cle + "=" + repr(masque.a_interpreter)
-            else:
+        for masque in self.values():
+            if hasattr(masque, "nom_francais"):
                 msg = masque.nom_francais
+            else:
+                msg = repr(masque.a_interpreter)
             msgs.append(msg)
         
         return " ".join(msgs)
