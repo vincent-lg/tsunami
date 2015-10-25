@@ -1,11 +1,11 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -28,30 +28,26 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'niveaux'.
+"""Module contenant la commande 'montrer niveaux'."""
 
-"""
-
-from primaires.interpreteur.commande.commande import Commande
+from primaires.interpreteur.masque.parametre import Parametre
 from primaires.perso.montrer.niveaux import MontrerNiveaux
 
-class CmdNiveaux(Commande):
-    
-    """Commande 'niveaux'.
-    
-    """
-    
+class PrmNiveaux(Parametre):
+
+    """Commande 'montrer niveaux'."""
+
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "niveaux", "levels")
-        self.aide_courte = "affiche vos niveaux actuels"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "niveaux", "levels")
+        self.tronquer = True
+        self.schema = "<nom_joueur>"
+        self.aide_courte = "affiche le niveaux d'un joueur"
         self.aide_longue = \
-            "Cette commande affiche la liste de vos niveaux ainsi " \
-            "que l'avancement dans chacun des niveaux. Vous noterez, " \
-            "invariablement, le niveau principal, ainsi " \
-            "qu'optionnellement des niveaux secondaires " \
-            "qui caractériseront plus vos aptitudes plus spécifiques."
-    
+            "Cette commande montre les niveaux d'un joueur. Vous devez " \
+            "simplement préciser le nom du joueur en paramètre."
+
     def interpreter(self, personnage, dic_masques):
-        """Interprétation de la commande"""
-        personnage << MontrerNiveaux.montrer(personnage)
+        """Méthode d'interprétation de commande"""
+        joueur = dic_masques["nom_joueur"].joueur
+        personnage << MontrerNiveaux.montrer(joueur)

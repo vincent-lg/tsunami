@@ -99,19 +99,9 @@ class Guilde(BaseObj):
         return [t for t in self.talents.values() if not t.ouvert_a_tous]
 
     def ouvrir(self):
-        """Ouverture de la guilde.
-
-        Cette commande rend les commandes, talents, états, disponibles
-        pour les joueurs. Elle doit donc être appelée soit à l'ouverture
-        de la guilde en jeu, soit au moment de la récupération
-        des guildes.
-
-        """
+        """Ouvre la guilde."""
         self.ouverte = True
-        for talent in self.talents.values():
-            importeur.perso.ajouter_talent(talent.cle, talent.nom,
-                    talent.niveau, talent.difficulte, talent.ouvert_a_tous)
-
+    
     def rejoindre(self, personnage):
         """Permet au personnage passé en paramètre de rejoindre la guilde.
 

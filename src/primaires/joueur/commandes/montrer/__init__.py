@@ -31,6 +31,7 @@
 """Package contenant la commande 'montrer'"""
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.joueur.commandes.montrer.niveaux import PrmNiveaux
 from primaires.joueur.commandes.montrer.score import PrmScore
 
 class CmdMontrer(Commande):
@@ -49,4 +50,5 @@ class CmdMontrer(Commande):
 
     def ajouter_parametres(self):
         """Méthode d'interprétation de commande"""
+        self.ajouter_parametre(PrmNiveaux())
         self.ajouter_parametre(PrmScore())

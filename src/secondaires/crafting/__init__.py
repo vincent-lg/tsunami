@@ -161,9 +161,6 @@ class Module(BaseModule):
     def preparer(self):
         """On ajoute les guildes déjà ouvertes."""
         guildes = self.guildes_ouvertes
-        for guilde in guildes:
-            guilde.ouvrir()
-
         self.logger.info(format_nb(len(guildes),
                 "{nb} guilde{s} ouverte{s}", fem=True))
 
