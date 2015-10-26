@@ -33,6 +33,7 @@
 """
 
 from primaires.interpreteur.commande.commande import Commande
+from primaires.perso.montrer.score import MontrerScore
 
 class CmdScore(Commande):
 
