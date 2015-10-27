@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,28 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Module contenant les différents types de données manipulées par le
-scripting.
+import unittest
 
-"""
+from test.primaires.connex.static.commande import TestCommande
+from test.primaires.joueur.static.joueur import ManipulationJoueur
+from test.primaires.scripting.static.scripting import ManipulationScripting
 
-from fractions import Fraction
+# Constantes
+TABLEAU = """
++----------------------+----------+
+| Nom                  | Quantité |
++----------------------+----------+
+| un chien empaillé    |        5 |
+| un moule à gâteau    |       12 |
+| une soucoupe volante |        8 |
++----------------------+----------+
+""".strip()
 
-from abstraits.obase import BaseObj
-from primaires.format.tableau import Tableau
-from primaires.perso.personnage import Personnage
-from primaires.salle.salle import Salle
-from primaires.objet.types.base import BaseType as PrototypeObjet
-from primaires.objet.objet import Objet
-from primaires.pnj.pnj import PNJ
+class TestTraite(TestCommande, ManipulationJoueur, ManipulationScripting,
+        unittest.TestCase):
 
-def get(nom):
-    """Retourne le type portant le nom."""
-    builtins = __builtins__.copy()
-    types = __import__("primaires.scripting.types").scripting.types
-    try:
-        t = builtins[nom]
-    except KeyError:
-        t = getattr(types, nom)
+    """Tests unitaires de la fonction scripting 'traite'."""
 
-    return t
+    def test_majuscule(self):
+        """Teste la mise en majuscule."""
+        joueur = self.creer_joueur("simple", "Kredh")
+        with self.scripter(joueur.salle, "dit") as test:
+            test.ajouter_instructions("""
+                tableau = creer_tableau()
+                ajouter_colonne tableau "Nom"
+                ajouter_colonne tableau "Quantité" "droite"
+                ajouter_ligne tableau "un chien empaillé" 5
+                ajouter_ligne tableau "un moule à gâteau" 12
+                ajouter_ligne tableau "une soucoupe volante" 8
+                dire personnage "${tableau}"
+            """)
+            msg = self.entrer_commande(joueur, "dire k")
+            self.assertEqual(msg, "Vous dites : k\n" + TABLEAU)
+
+        self.supprimer_joueur(joueur)
