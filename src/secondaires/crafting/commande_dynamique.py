@@ -181,6 +181,9 @@ class CommandeDynamique(BaseObj):
 
                 var = evt.ajouter_variable(nom, "Personnage")
                 var.aide = "le joueur dont le nom a été entré"
+            elif n_type == "cle":
+                var = evt.ajouter_variable(masque.nom, "str")
+                var.aide = "la clé entrée (une chaîne)"
             elif n_type == "nombre":
                 var = evt.ajouter_variable(masque.nom, "Fraction")
                 var.aide = "le nombre entré"
@@ -261,6 +264,8 @@ class CommandeDynamique(BaseObj):
                     nom = "joueur"
 
                 variables[nom] = masque.joueur
+            elif n_type == "cle":
+                variables[masque.nom] = masque.cle
             elif n_type == "nombre":
                 variables[masque.nom] = masque.nombre
             elif n_type in ("objet_equipe", "objet_inventaire", "objet_sol"):
