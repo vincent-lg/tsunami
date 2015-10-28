@@ -395,7 +395,15 @@ class Module(BaseModule):
             navire.equipage.points_max = navire.equipage.points_actuels
 
         # On renseigne le terrain récif
-        Navire.obs_recif = self.importeur.salle.obstacles["récif"]
+        Navire.obs_recif = (
+                self.importeur.salle.obstacles["récif"],
+                self.importeur.salle.obstacles["rapide"],
+                self.importeur.salle.obstacles["banc de sable"],
+                self.importeur.salle.obstacles["corail"],
+        )
+        
+        for obstacle in Navire.obs_recif:
+            obstacle.symbole = "!"
 
     def creer_modele(self, cle):
         """Crée un modèle de navire et l'ajoute dans le dictionnaire.
@@ -814,6 +822,8 @@ class Module(BaseModule):
         if isinstance(point, Salle) and point.nom_terrain in \
                 TERRAINS_ACCOSTABLES:
             return "#"
+        elif hasattr(point, "symbole"):
+            return point.symbole
         elif isinstance(point, Navire):
             return "*"
         elif isinstance(point, Repere):

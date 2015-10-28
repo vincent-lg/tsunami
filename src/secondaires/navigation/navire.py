@@ -67,7 +67,7 @@ class Navire(Vehicule):
     """
 
     enregistrer = True
-    obs_recif = None
+    obs_recif = ()
     def __init__(self, modele):
         """Constructeur du navire."""
         Vehicule.__init__(self)
@@ -678,7 +678,7 @@ class Navire(Vehicule):
         self.en_collision = False
 
     def controller_collision(self, destination=None, direction=None,
-            collision=True, marge=0.5):
+            collision=True, marge=0.5, debug=False):
         """Contrôle les collisions entre la position actuel et la destination.
 
         Si la direction est précisée, le navire vire (la direction
@@ -706,6 +706,9 @@ class Navire(Vehicule):
         points = tuple(etendue.get_points_proches(origine.x, origine.y,
                 diametre).items())
         points += importeur.navigation.points_navires(self)
+        if debug:
+            print("Etendue={}, centre={}, diamètre={}, nb_points={}".format(
+                    etendue.cle, centre, diametre, len(points)))
 
         # Si l'étendue a un point sur le segment
         # (position -> position + vitesse) alors collision
@@ -717,13 +720,23 @@ class Navire(Vehicule):
             else:
                 projetee = vecteur + destination
 
-            b_arg = [vecteur.x, vecteur.y, vecteur.z, projetee.x, \
+            b_arg = [vecteur.x, vecteur.y, vecteur.z, projetee.x,
                     projetee.y, projetee.z]
             for coords, point in points:
-                v_point = Vector(*coords)
+                if debug:
+                    print("De x={} y={} vers x={} y={} comparé à " \
+                            "x={} y={}".format(round(vecteur.x, 2),
+                            round(vecteur.y, 2), round(projetee.x, 2),
+                            round(projetee.y, 2), round(coords[0], 2),
+                            round(coords[1], 2)))
+                v_point = Vector(coords[0], coords[1], etendue.altitude)
                 arg = b_arg + list(coords) + [etendue.altitude, marge]
-                if in_rectangle(*arg) and vecteur.distance(
-                        projetee, v_point) < marge:
+                rectangle = in_rectangle(*arg)
+                d_marge = vecteur.distance(projetee, v_point)
+                if debug:
+                    print("in_rectangle={}, distance={}".format(
+                            rectangle, d_marge))
+                if rectangle and d_marge < marge:
                     if collision:
                         importeur.navigation.nav_logger.warning(
                                 "Collision entre {} et {}".format(
@@ -737,7 +750,8 @@ class Navire(Vehicule):
         """Méthode appelée lors d'une collision avec un point."""
         Vehicule.collision(self, salle)
         vitesse = self.vitesse_noeuds
-        if contre is type(self).obs_recif:
+        print("Collision", contre)
+        if contre in type(self).obs_recif:
             if vitesse < 0.05:
                 pass
             else:

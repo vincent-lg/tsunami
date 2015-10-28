@@ -48,6 +48,7 @@ class Obstacle(BaseObj):
         BaseObj.__init__(self)
         self.nom = nom
         self.desc_survol = desc_survol
+        self.symbole = ""
         self._construire()
 
     def __getnewargs__(self):
