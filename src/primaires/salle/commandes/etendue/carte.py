@@ -65,6 +65,13 @@ class PrmCarte(Parametre):
             return
 
         etendue = type(self).importeur.salle.etendues[cle]
-        contexte = CarteEtendue(personnage.instance_connexion)
+        if not personnage.salle.coords.valide:
+            personnage << "|err|La salle où vous vous trouvez n'a pas " \
+                    "de coordonnées valides.|ff|"
+            return
+        
+        x = int(personnage.salle.coords.x) - 15
+        y = int(personnage.salle.coords.y) - 8
+        contexte = CarteEtendue(personnage.instance_connexion, x, y)
         contexte.etendue = etendue
         personnage.contexte_actuel.migrer_contexte(contexte)
