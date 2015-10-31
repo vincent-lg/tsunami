@@ -31,6 +31,7 @@
 """Fichier contenant la classe Temps, détaillée plus bas."""
 
 from fractions import Fraction
+from random import choice
 
 from abstraits.obase import BaseObj
 from .constantes import *
@@ -236,6 +237,7 @@ class Temps(BaseObj):
 
     def inc(self):
         """Incrémente de 1 seconde réelle"""
+        avt_fait_jour = self.il_fait_jour
         self.seconde += 1 / self.vitesse_ecoulement
         minute = heure = jour = mois = annee = False
 
@@ -260,7 +262,41 @@ class Temps(BaseObj):
             self.annee += 1
             annee = True
 
+        apr_fait_jour = self.il_fait_jour
+        if not avt_fait_jour and apr_fait_jour:
+            print("Lever de soleil")
+            self.lever_soleil()
+        elif avt_fait_jour and not apr_fait_jour:
+            print("Coucher de soleil")
+            self.coucher_soleil()
+        
         self.appeler_hook(minute, heure, jour, mois, annee)
+
+    def lever_soleil(self):
+        """Méthode appelée au moment du lever de soleil."""
+        phrase = choice(importeur.temps.cfg.msgs_lever)
+        for salle in importeur.salle.salles.values():
+            # On n'affiche le message que dans les salles où on voit le ciel
+            # Ce code pourrait ëtre optimisé
+            if salle.interieur:
+                continue
+            
+            perturbation = importeur.meteo.get_perturbation(salle)
+            if perturbation is None or not perturbation.est_opaque():
+                salle.envoyer(phrase, prompt=False)
+
+    def coucher_soleil(self):
+        """Méthode appelée au moment du coucher de soleil."""
+        phrase = choice(importeur.temps.cfg.msgs_coucher)
+        for salle in importeur.salle.salles.values():
+            # On n'affiche le message que dans les salles où on voit le ciel
+            # Ce code pourrait ëtre optimisé
+            if salle.interieur:
+                continue
+            
+            perturbation = importeur.meteo.get_perturbation(salle)
+            if perturbation is None or not perturbation.est_opaque():
+                salle.envoyer(phrase, prompt=False)
 
     def appeler_hook(self, minute, heure, jour, mois, annee):
         """Appelle les hooks correspondant au changement de temps."""

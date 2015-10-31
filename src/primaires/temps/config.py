@@ -164,4 +164,13 @@ post_coucher = "Les premières étoiles s'allument dans la nuit encore claire."
 nuit = "La voûte céleste vous surplombant est sombre, piquetée d'étoiles " \
     "lointaines."
 
+# Messages de lever et coucher de soleil
+msgs_lever = (
+        "Le soleil se lève à l'est.",
+)
+
+msgs_coucher = (
+        "Le soleil se couche à l'ouest.",
+)
+
 """
