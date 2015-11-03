@@ -92,8 +92,10 @@ class Commande(Masque):
     def _set_aide_courte(self, aide):
         """Change l'aide courte"""
         if len(aide) > NB_MAX_CAR_AIDE_COURTE:
-            raise ValueError("la chaîne d'aide entrée pour cette commande " \
-                    "est trop longue")
+            aide = aide[:NB_MAX_CAR_AIDE_COURTE]
+            print("la chaîne d'aide entrée pour la commande {} " \
+                    "est trop longue ({} caractères)".format(self.nom,
+                    len(aide)))
 
         self._aide_courte = aide
 

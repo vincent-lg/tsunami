@@ -249,7 +249,14 @@ class Test(BaseObj):
 
         py_code = self.__tests.code_python
         globales = self.get_globales(evenement)
-        return bool(eval(py_code, globales))
+        res = False
+        try:
+            res = bool(eval(py_code, globales))
+        except Exception as err:
+            self.erreur_execution(str(err))
+        
+        return res
+        
 
     def get_globales(self, evenement):
         """Retourne le dictionnaire des globales d'exécution."""
@@ -277,8 +284,11 @@ class Test(BaseObj):
 
         # Extraction de la ligne d'erreur
         reg = re.search("File \"\<string\>\", line ([0-9]+)", pile)
+        no_ligne = -1
         if reg:
             no_ligne = int(reg.groups()[-1]) - 1
+        
+        if no_ligne > 0:
             ligne = echapper_accolades(str(self.__instructions[no_ligne - 1]))
         else:
             no_ligne = "|err|inconnue|ff|"
