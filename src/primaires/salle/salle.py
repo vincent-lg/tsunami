@@ -226,6 +226,26 @@ class Salle(BaseObj):
         sorties = [s for s in self.sorties if s and s.salle_dest]
         return len(sorties)
     
+    @property
+    def details_etendus(self):
+        """Retourne la liste des détails étendus.
+        
+        Cette méthode retourne les détails de la salle et ceux des
+        flottantes contenus dans la description.
+        
+        """
+        details = self.details._details.copy()
+        description = self.description
+        for paragraphe in description.paragraphes:
+            p, flottantes = description.charger_descriptions_flottantes(
+                    paragraphe)
+            for flottante in flottantes:
+                for d in flottante.details:
+                    if d.nom not in details:
+                        details[d.nom] = d
+        
+        return tuple(details.values())
+
     def voit_ici(self, personnage):
         """Retourne True si le personnage peut voir ici, False sinon.
 
@@ -286,6 +306,15 @@ class Salle(BaseObj):
             if detail.a_flag(flag):
                 return True
 
+        description = self.description
+        for paragraphe in description.paragraphes:
+            p, flottantes = description.charger_descriptions_flottantes(
+                    paragraphe)
+            for flottante in flottantes:
+                for d in flottante.details:
+                    if d.a_flag(flag):
+                        return True
+        
         return False
 
     def personnage_est_present(self, personnage):

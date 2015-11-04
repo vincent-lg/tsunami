@@ -85,7 +85,7 @@ class Feu(BaseObj):
                     "sans espoir de survie."),
         )
 
-        for detail in self.salle.details:
+        for detail in self.salle.details_etendus:
             if detail.a_flag("cheminée"):
                 messages = msg_cheminee
                 cheminee = detail
