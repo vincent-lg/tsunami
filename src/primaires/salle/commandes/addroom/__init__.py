@@ -50,14 +50,18 @@ Options possibles :
         |cmd|-t|ff| ou |cmd|--titre|ff|
                 Cette option va créer la nouvelle salle en copiant
                 le titre de la salle actuel.
-        |cmd|-d|ff| ou |cmd|--descriptionn|ff|
+        |cmd|-d|ff| ou |cmd|--description|ff|
                 Copie la description de la salle courante vers
                 la salle cible. Cette option est très utile si les
                 deux salles sont destinées à utiliser des flottantes.
-                Soyez prudent cependant : cette option crée les
-                descriptions telles qu'elles. Elle ne copie pas
-                les scripts qui pourraient être présents si la
-                description utilise des éléments dynamiques.
+                Les scripts de la description (c'est-à-dire les
+                éléments dynamiques) sont également copiés.
+        |cmd|-e|ff| ou |cmd|--details|ff|
+                Copie les détails de la salle d'origine. Cette option
+                copie également les scripts des détails (éléments
+                dynamiques des descriptions et actions liées à des
+                commandes dynamiques). Notez qu'il est tout de même
+                préférable d'utiliser des flottantes, sauf cas particulier.
         |cmd|-m|ff| ou |cmd|--mnemonique|ff| |ent[ARG]|ff|
                 Cette option est utile si vous voulez que la nouvelle
                 salle soit créée avec un mnémonique spécifique. Vous
@@ -70,6 +74,12 @@ Options possibles :
                 %addroom%|cmd| est -m auberge|ff|, la nouvelle salle
                 sera créé dans la même zone que la salle où vous vous
                 trouvez mais elle aura pour mnémonique |ent|auberge|ff|.
+        |cmd|-c|ff| ou |cmd|--script|ff|
+                Copie les scripts de la salle d'origine. Les évènements,
+                sous-évènements et tests sont copiés et déréférencés :
+                cela signifie que vous pourrez modifier un des  scripts
+                d'une des salles sans que cela ne modifie celui de
+                l'autre.
         |cmd|-s|ff| ou |cmd|--sorties|ff|
                 Si la salle créée a des coordonnées valides, crée
                 toutes les sorties (est, sud-est, sud, sud-ouest...
@@ -154,7 +164,9 @@ class CmdAddroom(Commande):
         parser.exit = n_exit
         parser.add_argument("-t", "--titre", action="store_true")
         parser.add_argument("-d", "--description", action="store_true")
+        parser.add_argument("-e", "--details", action="store_true")
         parser.add_argument("-m", "--mnemonique")
+        parser.add_argument("-c", "--script", action="store_true")
         parser.add_argument("-s", "--sorties", action="store_true")
         parser.add_argument("-h", "--horizontales", action="store_true")
         parser.add_argument("-v", "--verticales", action="store_true")
@@ -213,8 +225,11 @@ class CmdAddroom(Commande):
             if args.titre:
                 nv_salle.titre = salle.titre
             if args.description:
-                nv_salle.description.paragraphes = list(
-                        salle.description.paragraphes)
+                nv_salle.description.copier_depuis(salle.description)
+            if args.details:
+                nv_salle.details.copier_depuis(salle.details, True)
+            if args.script:
+                nv_salle.script.copier_depuis(salle.script)
 
             personnage << "|att|La salle {} a bien été ajouté vers {}.|ff|". \
                     format(nv_salle.ident, salle.sorties[direction].nom_complet)

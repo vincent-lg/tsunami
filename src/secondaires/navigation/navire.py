@@ -504,7 +504,7 @@ class Navire(Vehicule):
                 n_salle.details = salle.details
             elif premiere:
                 n_salle.description.copier_depuis(salle.description)
-                n_salle.details.copier_depuis(salle.details)
+                n_salle.details.copier_depuis(salle.details, True)
             
             n_salle.interieur = salle.interieur
             n_salle.poste = salle.poste
