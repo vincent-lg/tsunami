@@ -487,9 +487,10 @@ class Navire(Vehicule):
     def get_nom_pour(self, personnage):
         return self.desc_survol
 
-    def construire_depuis_modele(self):
+    def construire_depuis_modele(self, premiere=True):
         """Construit le navire depuis le modèle."""
         modele = self.modele
+        
         # On recopie les salles
         for r_coords, salle in modele.salles.items():
             n_salle = self.salles.get(r_coords)
@@ -498,8 +499,13 @@ class Navire(Vehicule):
                         salle.r_x, salle.r_y, salle.r_z, modele, self)
             n_salle.titre = salle.titre
             n_salle.titre_court = salle.titre_court
-            n_salle.description = salle.description
-            n_salle.details = salle.details
+            if not modele.descriptions_independantes:
+                n_salle.description = salle.description
+                n_salle.details = salle.details
+            elif premiere:
+                n_salle.description.copier_depuis(salle.description)
+                n_salle.details.copier_depuis(salle.details)
+            
             n_salle.interieur = salle.interieur
             n_salle.poste = salle.poste
             n_salle.noyable = salle.noyable

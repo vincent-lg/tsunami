@@ -76,6 +76,7 @@ class ModeleNavire(BaseObj):
                 "grand largue": 0.9,
                 "vent arrière": 0.7,
         }
+        self.descriptions_independantes = False
 
     def __getnewargs__(self):
         return ("", )

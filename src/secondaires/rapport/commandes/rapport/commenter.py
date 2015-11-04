@@ -93,6 +93,10 @@ class PrmCommenter(Parametre):
             personnage << "|err|Vous n'avez pas le droit de commenter " \
                     "ce rapport.|ff|"
             return
+        elif not rapport.ouvert:
+            personnage << "|err|Ce rapport est fermé, vous ne pouvez " \
+                    "le commenter.|ff|"
+            return
         else:
             options = "ok"
             commentaire = texte

@@ -41,7 +41,7 @@ class PrmFermer(Parametre):
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "fermer", "close")
-        self.schema = "<nombre>"
+        self.schema = "<nombre> <texte_libre>"
         self.groupe = "administrateur"
         self.aide_courte = "ferme un rapport"
         self.aide_longue = \
@@ -50,6 +50,7 @@ class PrmFermer(Parametre):
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         id = dic_masques["nombre"].nombre
+        texte = dic_masques["texte_libre"].texte
         try:
             rapport = importeur.rapport.rapports[id]
         except KeyError:
@@ -57,3 +58,7 @@ class PrmFermer(Parametre):
         else:
             rapport.statut = "fermé"
             personnage << "|att|Le rapport #{} a été fermé.|ff|".format(id)
+            
+            # Création du commentaire à proprement parlé
+            commentaire = rapport.commenter(personnage, texte)
+            commentaire.notifier()

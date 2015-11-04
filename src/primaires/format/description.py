@@ -96,6 +96,16 @@ class Description(BaseObj):
         """Retourne True si la description n'est pas vide, False sinon."""
         return bool(str(self))
 
+    def copier_depuis(self, description):
+        """Copie une description dans une autre.
+        
+        Cette méthode copie le contenu de la description et des scripts.
+        
+        """
+        self.paragraphes = list(description.paragraphes)
+        self.scriptable = description.scriptable
+        self.script.copier_depuis(description.script)
+        
     def maj_auto(self):
         """Appelle le callback (si défini) pour mettre à jour le parent."""
         if self.parent and self.callback:

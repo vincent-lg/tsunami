@@ -149,6 +149,37 @@ class Evenement(BaseObj):
         else:
             return sum(e.nb_lignes for e in self.evenements.values())
 
+    def copier_depuis(self, evenement):
+        """Copie le script self depuis l'évènement."""
+        for sous in evenement.evenements.values():
+            sa_sous = supprimer_accents(sous.nom).lower()
+            if sa_sous in self.__evenements.keys():
+                evt = self.__evenements[sa_sous]
+            else:
+                evt = self.creer_evenement(sous.nom)
+            
+            evt.copier_depuis(sous)
+
+        tests = list(evenement.tests)
+        if evenement.sinon:
+            tests.append(evenement.sinon)
+        
+        for ancien_test in tests:
+            sc_test = ancien_test.sc_tests
+            if ancien_test.tests:
+                self.ajouter_test(sc_test)
+                nouveau_test = self.tests[-1]
+            else:
+                self.creer_sinon()
+                nouveau_test = self.__sinon
+            
+            lignes = []
+            for instruction in reversed(ancien_test.instructions):
+                ligne = instruction.sans_couleurs
+                lignes.insert(0, ligne)
+            
+            nouveau_test.ajouter_instructions("\n".join(lignes))
+            
     def creer_sinon(self):
         """Création du test sinon si il n'existe pas."""
         if self.__sinon is None:

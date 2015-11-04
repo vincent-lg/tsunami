@@ -100,6 +100,11 @@ class EdtShedit(Presentation):
                 "masculin")
         masculin.parent = self
 
+        # Descriptions indépendantes
+        independantes = self.ajouter_choix("descriptions indépendantes", "in", Flag,
+                modele, "descriptions_independantes")
+        independantes.parent = self
+
         # Peut conquérir
         peut_conquerir = self.ajouter_choix("peut conquérir", "co", Flag,
                 modele, "peut_conquerir")

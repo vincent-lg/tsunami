@@ -377,7 +377,7 @@ class Module(BaseModule):
                     rames.centrer()
                     rames.tenu = None
 
-            navire.construire_depuis_modele()
+            navire.construire_depuis_modele(False)
             if (len(navire.salles) ** 2 - len(navire.salles)) != \
                     len(navire.modele.graph):
                 self.nav_logger.info("Calcul du graph du modèle de " \

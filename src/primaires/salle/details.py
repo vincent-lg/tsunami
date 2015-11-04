@@ -113,3 +113,38 @@ class Details(BaseObj):
     def detail_existe(self, nom, flottants=False):
         """Renvoie True si le détail 'nom' existe"""
         return self.get_detail(nom, flottants) is not None
+
+    def copier_depuis(self, details, dereferencer=False):
+        """Copie les détails depuis d'autres.
+        
+        Si 'deferencer' est à True, alors les descriptions des
+        détails sont déréferencées au fur et à mesure.
+        
+        """
+        for detail in details:
+            nom = detail.nom
+            n_detail = self.get_detail(nom)
+            if n_detail is None:
+                n_detail = self.ajouter_detail(nom)
+            
+            n_detail.synonymes = list(detail.synonymes)
+            n_detail.titre = detail.titre
+            if dereferencer:
+                n_detail.description.copier_depuis(detail.description)
+            else:
+                n_detail.description = detail.description
+            n_detail.positions = dict(detail.positions)
+            n_detail.est_visible = detail.est_visible
+            n_detail.script.copier_depuis(detail.script)
+            n_detail.peut_asseoir = detail.peut_asseoir
+            n_detail.peut_allonger = detail.peut_allonger
+            n_detail.facteur_asseoir = detail.facteur_asseoir
+            n_detail.facteur_allonger = detail.facteur_allonger
+            n_detail.connecteur = detail.connecteur
+            n_detail.nb_places_assises = detail.nb_places_assises
+            n_detail.nb_places_allongees = detail.nb_places_allongees
+            n_detail.flags = detail.flags
+            n_detail._peut_supporter = detail._peut_supporter
+            n_detail.message_supporte = detail.message_supporte
+            n_detail.message_installation = detail.message_installation
+            n_detail.message_desinstallation = detail.message_desinstallation

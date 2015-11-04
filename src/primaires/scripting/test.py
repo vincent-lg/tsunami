@@ -101,6 +101,21 @@ class Test(BaseObj):
         acteur = self.evenement.nom_acteur
         return self.evenement.espaces.variables[acteur]
 
+    @property
+    def tests(self):
+        """Retourne le test."""
+        return self.__tests
+    
+    @property
+    def sc_tests(self):
+        """Retourne le test sans couleurs sous la forme d'une chaîne.
+        
+        Il s'agit de la chaîne de test scripting tel qu'elle
+        est affichée dans l'éditeur, mais sans couleurs.
+        
+        """
+        return supprimer_couleurs(str(self.__tests))
+    
     def get_cache(self):
         """Calcul le cache Python si nécessaire.
 
