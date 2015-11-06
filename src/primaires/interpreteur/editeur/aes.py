@@ -122,7 +122,7 @@ class AES(Editeur):
         """Ajout d'un élément.
 
         Syntaxe :
-          /a <paramètres></paramÃ>
+          /a <paramètres>
 
         """
         colonnes = self.colonnes
@@ -184,7 +184,8 @@ class AES(Editeur):
     def opt_supprimer(self, arguments):
         """Suppression d'un élément.
 
-        Syntaxe : /s <clé></clÃ>
+        Syntaxe :
+            /s <clé>
 
         """
         if self.suppression is None:

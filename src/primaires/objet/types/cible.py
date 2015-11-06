@@ -32,6 +32,10 @@
 
 from abstraits.obase import BaseObj
 from primaires.format.fonctions import supprimer_accents
+from primaires.interpreteur.editeur.aes import AES
+from primaires.interpreteur.editeur.entier import Entier
+from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.uniligne import Uniligne
 from .base import BaseType
 
 class Cible(BaseType):
@@ -41,11 +45,30 @@ class Cible(BaseType):
     """
     
     nom_type = "cible"
+    
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
         self.elements = []
-    
+        self.etendre_editeur("l", "élémemnts de la cible", AES, self,
+                "elements", "objet:cible:element",
+                (("nom", "chaîne"), ("probabilité", "entier"),
+                ("points", "entier")), "get_element", "ajouter_element",
+                "supprimer_element", "nom_complet")
+
+    def travailler_enveloppes(self, enveloppes):
+        """Travail sur les enveloppes"""
+        elements = enveloppes["l"]
+        elements.apercu = "{valeur}"
+        elements.aide_courte = \
+            "Entrez |ent|le nom d'un rang|ff| pour l'éditer ou :\n" \
+            " |ent|/a <nom de l'élément à créer> / <probabilité> / <points> " \
+            "|ff|\n (Exemple : |cmd|/a bras gauche / 8 / 3|ff|)\n" \
+            " |ent|/s <nom de l'élément à supprimer>|ff|\n\n" \
+            "La probabilité de toucher un élément est calculée en " \
+            "fonciton\nde la probabilité totale de tous les éléments.\n\n" \
+            "Éléments actuels de la cible :{valeur}"
+
     def get_element(self, nom):
         """Retourne l'élément du nom indiqué.
         
@@ -81,7 +104,7 @@ class Cible(BaseType):
         if self.est_element(nom):
             raise ValueError("l'élément {} est déjà utilisé".format(nom))
         
-        element = Element(nom, *args, **kwargs)
+        element = Element(self, nom, *args, **kwargs)
         self.elements.append(element)
         return element
     
@@ -109,18 +132,25 @@ class Element(BaseObj):
     
     """
     
-    def __init__(self, nom, probabilite=1, points=1):
+    def __init__(self, cible, nom, probabilite=1, points=1):
         """Constructeur de l'élément."""
         BaseObj.__init__(self)
+        self.cible = cible
         self.nom = nom
         self.probabilite = probabilite
         self.points = points
     
     def __getnewargs__(self):
-        return ("inconnu", )
+        return (None, "inconnu", )
     
     def __repr__(self):
         return "<élément de cible {}>".format(self.nom)
+    
+    @property
+    def nom_complet(self):
+        """Retourne le nom complet."""
+        return "{:25} (probabilité={}, {})".format(
+                self.nom, self.probabilite_sur, self.msg_points)
     
     @property
     def msg_points(self):
@@ -130,3 +160,67 @@ class Element(BaseObj):
             return "{} points".format(points)
         else:
             return "{} point".format(points)
+
+    @property
+    def probabilite_sur(self):
+        """Retourne la probabilité sur la probabilité totale."""
+        if getattr(self, "cible", None):
+            total = sum(e.probabilite for e in self.cible.elements)
+        else:
+            total = "|err|inconnu|ff|"
+        
+        return "{} / {}".format(self.probabilite, total)
+
+class CibleElementEdt(Presentation):
+
+    """Classe définissant l'éditeur d'éléments."""
+
+    nom = "objet:cible:element"
+
+    def __init__(self, personnage, elt, attribut=None):
+        """Constructeur de l'éditeur"""
+        if personnage:
+            instance_connexion = personnage.instance_connexion
+        else:
+            instance_connexion = None
+
+        Presentation.__init__(self, instance_connexion, elt, None, False)
+        if personnage and elt:
+            self.construire(elt)
+
+    def __getnewargs__(self):
+        return (None, None)
+
+    def construire(self, elt):
+        """Construction de l'éditeur."""
+        # Nom
+        nom = self.ajouter_choix("nom", "n", Uniligne, elt, "nom")
+        nom.parent = self
+        nom.prompt = "Nom de l'élément : "
+        nom.apercu = "{valeur}"
+        nom.aide_courte = \
+            "Entrez le |ent|nom|ff| de l'élément ou |cmd|/|ff| pour " \
+            "revenir à la fenêtre parente.\n\nNom actuel : " \
+            "|bc|{valeur}|ff|"
+
+        # Probabilité
+        probabilite = self.ajouter_choix("probabilité de toucher l'élément",
+                "r", Entier, elt, "probabilite")
+        probabilite.parent = self
+        probabilite.apercu = "{objet.probabilite_sur}"
+        probabilite.prompt = "Probabilité de toucher l'élément : "
+        probabilite.aide_courte = \
+            "Entrez |ent|la probabilité|ff| de toucher l'élément " \
+            "ou |cmd|/|ff| pour revenir\nà la fenêtre parente.\n\n" \
+            "Probabilité actuelle : {valeur}"
+        
+        # Points
+        points = self.ajouter_choix("points de l'élément", "p", Entier,
+                elt, "points")
+        points.parent = self
+        points.apercu = "{objet.msg_points}"
+        points.prompt = "Points de l'élément : "
+        points.aide_courte = \
+            "Entrez |ent|le nombre de points|ff| de l'élément " \
+            "ou |cmd|/|ff| pour revenir\nà la fenêtre parente.\n\n" \
+            "Points actuels : {valeur}"
