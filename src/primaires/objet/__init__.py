@@ -215,7 +215,11 @@ class Module(BaseModule):
         importeur.diffact.ajouter_action("net_boule de neige", 60,
                 self.nettoyage_cyclique, "boule de neige")
         self.nettoyage_lumieres()
-
+        
+        # Réinitialisation des scripts des prototypes
+        for prototype in self._prototypes.values():
+            prototype.etendre_script()
+        
     @property
     def prototypes(self):
         return dict(self._prototypes)

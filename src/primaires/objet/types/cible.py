@@ -69,6 +69,30 @@ class Cible(BaseType):
             "fonciton\nde la probabilité totale de tous les éléments.\n\n" \
             "Éléments actuels de la cible :{valeur}"
 
+    def etendre_script(self):
+        """Extension du scripting."""
+        evt_touche = self.script.creer_evenement("touche")
+        evt_touche.aide_courte = "le personnage touche la cible avec " \
+                "une fléchette"
+        evt_touche.aide_longue = \
+            "Cet évènement est appelé quand le personnage touche " \
+            "la cible avec une fléchette. Cet évènement est appelé " \
+            "après le message indiquant au joueur qu'il a touché telle " \
+            "ou telle élément de la cible. La fléchette sera sur le " \
+            "sol à ce moment. La cible, la fléchette, " \
+            "l'élément et le nombre de points sont accessibles dans " \
+            "des variables de l'évènement."
+        var_perso = evt_touche.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage mangeant l'objet"
+        var_cible = evt_touche.ajouter_variable("cible", "Objet")
+        var_cible.aide = "la cible touchée"
+        var_flechette = evt_touche.ajouter_variable("flechette", "Objet")
+        var_flechette.aide = "la fléchette ayant touché la cible"
+        var_elt = evt_touche.ajouter_variable("element", "str")
+        var_elt.aide = "le nom de l'élément touché"
+        var_points = evt_touche.ajouter_variable("points", "Fraction")
+        var_points.aide = "le nombre de points du lancé"
+
     def get_element(self, nom):
         """Retourne l'élément du nom indiqué.
         
@@ -112,7 +136,7 @@ class Cible(BaseType):
         """Supprime l'élément du nom indiqué."""
         nom = supprimer_accents(nom).lower()
         for i, element in enumerate(self.elements):
-            if supprimer_accents(element.nom).lower == nom:
+            if supprimer_accents(element.nom).lower() == nom:
                 del self.elements[i]
                 return
         

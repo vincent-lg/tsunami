@@ -40,7 +40,7 @@ class CmdJeter(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "jeter", "throw")
         self.nom_categorie = "objets"
-        self.schema = "<nom_objet> sur/to <element_observable>"
+        self.schema = "<nom_objet> sur/at <element_observable>"
         self.aide_courte = "jète un objet"
         self.aide_longue = \
                 "Cette commande permet de jeter un objet vers ou sur " \

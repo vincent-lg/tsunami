@@ -30,6 +30,8 @@
 
 """Fichier contenant le type fléchette."""
 
+from fractions import Fraction
+
 from corps.aleatoire import *
 from .base import BaseType
 from .cible import Cible
@@ -71,3 +73,6 @@ class Flechette(BaseType):
         personnage.salle.envoyer("{} frappe {} ({}) !".format(
                 self.get_nom().capitalize(), touche.nom, touche.msg_points))
         personnage.salle.objets_sol.ajouter(self)
+        cible.script["touche"].executer(personnage=personnage,
+                cible=cible, flechette=self, element=touche.nom,
+                points=Fraction(touche.points))
