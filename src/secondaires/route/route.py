@@ -68,11 +68,11 @@ class Route(BaseObj):
 
     def __eq__(self, route):
         """Aide à la comparaison : ==."""
-        return len(self) == len(route)
+        return self.origine is route.origine and self.salles == route.salles
 
     def __ne__(self, route):
         """Aide à la comparaison : !=."""
-        return len(self) != len(route)
+        return not (self == route)
 
     def __ge__(self, route):
         """Aide à la comparaison : <=."""

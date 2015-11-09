@@ -33,6 +33,7 @@
 from primaires.interpreteur.commande.commande import Commande
 from secondaires.route.commandes.route.liste import PrmListe
 from secondaires.route.commandes.route.marquer import PrmMarquer
+from secondaires.route.commandes.route.supprimer import PrmSupprimer
 from secondaires.route.commandes.route.trouver import PrmTrouver
 from secondaires.route.commandes.route.voir import PrmVoir
 
@@ -73,5 +74,6 @@ class CmdRoute(Commande):
         """Ajout des paramètres."""
         self.ajouter_parametre(PrmListe())
         self.ajouter_parametre(PrmMarquer())
+        self.ajouter_parametre(PrmSupprimer())
         self.ajouter_parametre(PrmTrouver())
         self.ajouter_parametre(PrmVoir())

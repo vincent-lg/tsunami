@@ -30,6 +30,7 @@
 
 """Package contenant la commande 'route trouver'."""
 
+import traceback
 from textwrap import wrap
 
 from primaires.interpreteur.masque.parametre import Parametre
@@ -61,6 +62,7 @@ class PrmTrouver(Parametre):
             description = importeur.route.trouver_chemin(origine,
                     destination)
         except ValueError as err:
+            print(traceback.format_exc())
             personnage << "|err|" + str(err).capitalize() + ".|ff|"
         else:
             personnage << "\n".join(wrap(description.afficher(ligne=True)))

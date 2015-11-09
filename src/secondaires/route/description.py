@@ -110,7 +110,29 @@ class DescriptionRoute:
         indice = self.salles.index(destination)
         self.salles[:] = self.salles[:indice + 1]
         self.sorties[:] = self.sorties[:indice + 1]
+        self.raccourcir()
 
+    def raccourcir(self):
+        """Raccourci la route.
+        
+        Si la route prend les salles 1 2 3 2 4 5, cette méthode
+        raccourci la route à 1 2 4 5.
+        
+        """
+        i = 0
+        salles = []
+        sorties = []
+        while i < len(self.salles):
+            salle = self.salles[i]
+            sortie = self.sorties[i]
+            salles.append(salle)
+            sorties.append(sortie)
+            i = len(self.salles) - list(reversed(self.salles)).index(
+                    salle)
+        
+        self.salles[:] = salles
+        self.sorties[:] = sorties
+        
     def afficher(self, tronquer=0, ligne=False):
         """Affichage de la route."""
         chaine = "{} ({} salles) : ".format(self.origine, len(self.salles))

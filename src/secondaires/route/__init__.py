@@ -181,7 +181,11 @@ class Module(BaseModule):
                     "complexe des routes".format(destination))
 
         # Si une route directe existe entre les deux salles, la retourne
-        communes = [r for r in routes_origines if r in routes_destinations]
+        communes = []
+        for route in routes_origines:
+            if route in routes_destinations:
+                communes.append(route)
+        
         communes = [r for r in communes if r.precede(origine, destination)]
         if communes:
             route = communes[0]
