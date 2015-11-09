@@ -163,7 +163,7 @@ class Module(BaseModule):
 
         # Ajout d'hooks
         importeur.hook.ajouter_hook("navire:sombre",
-                "Hook appelé quand un navire fait nauffrage.")
+                "Hook appelé quand un navire fait naufrage.")
 
         BaseModule.config(self)
 
@@ -312,7 +312,7 @@ class Module(BaseModule):
 
         # Ajout d'évènements
         importeur.evt.ajouter_evenement("sombre", "Un navire sombre",
-                "Nauffrage de {navire.cle}.", "navire:sombre")
+                "Naufrage de {navire.cle}.", "navire:sombre")
         BaseModule.init(self)
 
     def ajouter_commandes(self):
@@ -645,7 +645,7 @@ class Module(BaseModule):
                     navire.virer(orientation)
 
     def nauffrages(self):
-        """Gère les nauffrages."""
+        """Gère les naufrages."""
         self.importeur.diffact.ajouter_action("nauffrages", 5,
                 self.nauffrages)
         for navire in list(self.navires.values()):
@@ -732,8 +732,8 @@ class Module(BaseModule):
             for t_salle in navire.salles.values():
                 if t_salle.amarre and t_salle.amarre.attachee is salle:
                     e = "" if navire.modele.masculin else "e"
-                    liste_messages.insert(0, "{} est amarré{e} ici.".format(
-                            navire.desc_survol.capitalize(), e=e))
+                    liste_messages.insert(0, "*  {} est amarré{e} ici.".format(
+                            navire.desc_survol, e=e))
                     return
 
     def navire_accoste(self, salle, liste_messages, flags):
@@ -749,9 +749,8 @@ class Module(BaseModule):
         if sortie and sortie.salle_dest and hasattr(sortie.salle_dest,
                 "navire"):
             navire = sortie.salle_dest.navire
-            e = "" if navire.modele.masculin else "e"
-            liste_messages.insert(0, "{} a accosté{e} ici.".format(
-                        navire.desc_survol.capitalize(), e=e))
+            liste_messages.insert(0, "*  {} a accosté ici.".format(
+                        navire.desc_survol))
 
     def combat_matelot(self, pnj, arrive):
         """Méthode appelé quand un PNJ arrive dans la salle d'un autre.
