@@ -35,6 +35,7 @@ import re
 from abstraits.obase import BaseObj
 from primaires.scripting.espaces import Espaces
 from primaires.scripting.instruction import ErreurExecution
+from primaires.scripting.jeton import Jeton
 from primaires.scripting.test import Test
 from primaires.scripting.variable import Variable
 
@@ -143,6 +144,8 @@ class Bloc(BaseObj):
 
         """
         variables = {}
+        jeton = Jeton()
+        jeton.complet = True
         for i, def_variable in enumerate(self.variables):
             try:
                 variable = args[i]
@@ -162,9 +165,9 @@ class Bloc(BaseObj):
 
         self.espaces.variables.update(variables)
         if self.__test:
-            self.__test.executer_instructions(self)
+            self.__test.executer_instructions(self, jeton)
 
         if "retour" in self.espaces.variables:
             return self.espaces.variables["retour"]
 
-        return None
+        return jeton

@@ -39,6 +39,7 @@ from abstraits.obase import BaseObj
 from primaires.format.fonctions import *
 from primaires.scripting.parser import expressions
 from primaires.scripting.instruction import Instruction, ErreurExecution
+from primaires.scripting.jeton import Jeton
 from primaires.scripting.exceptions import InterrompreCommande
 from primaires.scripting.constantes.connecteurs import CONNECTEURS
 from primaires.scripting.utile.fonctions import *
@@ -322,7 +323,7 @@ class Test(BaseObj):
                         "créée pour en rendre compte.|ff|".format(alerte.no)
 
     def executer_code(self, evenement, code, personnage=None,
-            alarme=None, exc_interruption=True):
+            alarme=None, exc_interruption=True, bloquant=None, jeton=None):
         """Exécute le code passé en paramètre.
 
         Le code est sous la forme d'un générateur. On appelle donc
@@ -339,7 +340,15 @@ class Test(BaseObj):
                 return
 
         t1 = time()
+        
         # Exécution
+        if bloquant and not bloquant.complet:
+            nom = "script_dif<" + str(id(code)) + ">"
+            importeur.diffact.ajouter_action(nom, 1,
+                    self.executer_code, evenement, code, personnage,
+                    alarme, False, bloquant, jeton)
+            return
+        
         importeur.scripting.execute_test.append(self)
         try:
             ret = next(code)
@@ -352,6 +361,8 @@ class Test(BaseObj):
             self.erreur_execution(str(err))
         else:
             if ret is None:
+                if jeton:
+                    jeton.completer()
                 return
 
             tps = 0
@@ -367,6 +378,9 @@ class Test(BaseObj):
                     assert tps >= 0
                 except (ValueError, AssertionError):
                     pass
+            elif isinstance(ret, Jeton):
+                tps = 1
+                bloquant = ret
             else:
                 try:
                     tps = int(ret)
@@ -381,7 +395,7 @@ class Test(BaseObj):
                 nom = "script_dif<" + str(id(code)) + ">"
                 importeur.diffact.ajouter_action(nom, tps,
                         self.executer_code, evenement, code, personnage,
-                        alarme, False)
+                        alarme, False, bloquant, jeton)
         finally:
             importeur.scripting.execute_test.remove(self)
             t2 = time()
@@ -396,7 +410,7 @@ class Test(BaseObj):
                         evenement, tests)
                 importeur.scripting.scripts_gourmands[ligne] = diff
 
-    def executer_instructions(self, evenement):
+    def executer_instructions(self, evenement, jeton=None):
         """Convertit et exécute la suite d'instructions.
 
         Pour plus de facilité, on convertit le script en Python pour l'heure
@@ -417,7 +431,7 @@ class Test(BaseObj):
             self.erreur_execution(str(err))
         else:
             code = globales['script']()
-            self.executer_code(evenement, code)
+            self.executer_code(evenement, code, jeton=jeton)
 
         # Si le test est relié à une quête
         if etape and self.acteur:
