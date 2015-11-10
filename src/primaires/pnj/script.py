@@ -267,6 +267,25 @@ class ScriptPNJ(Script):
             "principal ou secondaire. Pour obtenir le niveau actuel " \
             "du PNJ, vous pouvez utiliser la fonction du même nom."
 
+        # Événement dit
+        evt_dit = self.creer_evenement("dit")
+        evt_dit.aide_courte = "un personnage dit quelque chose dans la " \
+                "salle du PNJ"
+        evt_dit.aide_longue = \
+            "Cet évènement est appelé quand un personnage dit quelque " \
+            "chose dans la salle. Il est appelé après la diffusion " \
+            "du message à tous les personnages présents. Notez que, " \
+            "si le PNJ parle via commande, son propre script n'est " \
+            "pas appelé."
+
+        # Configuration des variables de l'évènement dit
+        var_message = evt_dit.ajouter_variable("message", "str")
+        var_message.aide = "ce qui est dit par le personnage"
+        var_perso = evt_dit.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage disant quelque chose"
+        var_salle = evt_dit.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle dans laquelle le personnage parle"
+        
         # On ajoute à tous les évènements la variable 'pnj'
         for evt in self.evenements.values():
             if evt.nom != "dépece":

@@ -78,6 +78,14 @@ class CmdDire(Commande):
                 autre.envoyer_tip("Utilisez la commande %dire% pour " \
                         "parler en RP dans la salle.", "dire", True)
 
-        # Appel de l'évènement 'dire' de la salle
+        # Appel de l'évènement 'dit' de la salle
         salle.script["dit"].executer(personnage=personnage,
                 salle=salle, message=message)
+        
+        # Appel de l'évènement 'dit' des PNJ présents
+        for pnj in salle.PNJ:
+            if pnj is personnage:
+                continue
+            
+            pnj.script["dit"].executer(personnage=personnage,
+                    message=message, pnj=pnj, salle=salle)
