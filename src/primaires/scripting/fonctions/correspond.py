@@ -66,6 +66,7 @@ class ClasseFonction(Fonction):
 
         """
         chaine = supprimer_accents(chaine)
+        chaine = chaine.replace("_b_", "|")
         try:
             return re.search(expression, chaine, re.I)
         except re.error as err:
