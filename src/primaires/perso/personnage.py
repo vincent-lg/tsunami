@@ -1237,8 +1237,11 @@ class Personnage(BaseObj):
         equipement = self.equipement
         msg = ""
         if notifier:
-            msg = "Vous regardez {} :\n".format(self.get_nom_pour(
+            msg = "Vous regardez {} :".format(self.get_nom_pour(
                     personnage, retenu=False))
+            if personnage.est_immortel():
+                msg += self.ajout_description_pour_imm()
+            msg += "\n"
         if hasattr(self, "description"):
             msg += "\n" + self.description.regarder(personnage=personnage,
                     elt=self) + "\n\n"
@@ -1281,6 +1284,10 @@ class Personnage(BaseObj):
             personnage.salle.envoyer("{} regarde {}.", personnage, self)
         else:
             return msg
+
+    def ajout_description_pour_imm(self):
+        """ Complément d'information pour l'imm qui regarde le personnage """
+        return ""
 
     def tomber(self):
         """self tombe de salles en salles."""

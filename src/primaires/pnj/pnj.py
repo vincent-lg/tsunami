@@ -196,6 +196,9 @@ class PNJ(Personnage):
 
         return self.nom_singulier
 
+    def ajout_description_pour_imm(self):
+        return " |vr|[{}: {}]|ff|".format(self.cle, self.identifiant)
+
     def est_connecte(self):
         return True
 
