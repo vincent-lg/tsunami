@@ -197,6 +197,25 @@ class Evenement(BaseObj):
         test.detruire()
         del self.__tests[indice]
 
+    def remonter_test(self, indice):
+        """Remonte le test indiqué."""
+        tests = self.__tests
+        test = tests[indice]
+        if indice == 0:
+            raise ValueError("Impossible de remonter ce test.")
+        
+        tests[:] = tests[:indice - 1] + [test, tests[indice - 1]] + \
+                tests[indice + 1:]
+    
+    def descendre_test(self, indice):
+        """Descend le test indiqué."""
+        tests = self.__tests
+        test = tests[indice]
+        if indice == len(tests) - 1:
+            raise ValueError("Impossible de descendre ce test.")
+        
+        tests[:] = tests[:indice] + [tests[indice + 1], test] + tests[indice + 2:]
+    
     def ajouter_variable(self, nom, type):
         """Ajoute une variable au dictionnaire des variables.
 

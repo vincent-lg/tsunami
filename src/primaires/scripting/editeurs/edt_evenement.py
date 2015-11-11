@@ -50,6 +50,8 @@ class EdtEvenement(Editeur):
         Editeur.__init__(self, pere, objet, attribut)
         self.ajouter_option("d", self.opt_supprimer_test)
         self.ajouter_option("r", self.opt_modifier_test)
+        self.ajouter_option("h", self.opt_remonter_test)
+        self.ajouter_option("b", self.opt_descendre_test)
 
     def opt_supprimer_test(self, arguments):
         """Supprime un test.
@@ -104,6 +106,42 @@ class EdtEvenement(Editeur):
         else:
             self.actualiser()
 
+    def opt_remonter_test(self, arguments):
+        """Remonte un test.
+
+        Syntaxe :
+            /h no
+
+        """
+        evenement = self.objet
+        try:
+            no = int(arguments) - 1
+            assert no > 0
+            assert no < len(evenement.tests)
+        except (ValueError, AssertionError):
+            self.pere << "|err|Numéro invalide ({}).|ff|".format(arguments)
+        else:
+            evenement.remonter_test(no)
+            self.actualiser()
+
+    def opt_descendre_test(self, arguments):
+        """Descend un test.
+
+        Syntaxe :
+            /b no
+
+        """
+        evenement = self.objet
+        try:
+            no = int(arguments) - 1
+            assert no >= 0
+            assert no < len(evenement.tests) - 1
+        except (ValueError, AssertionError):
+            self.pere << "|err|Numéro invalide ({}).|ff|".format(arguments)
+        else:
+            evenement.descendre_test(no)
+            self.actualiser()
+    
     def accueil(self):
         """Message d'accueil du contexte"""
         evenement = self.objet
@@ -143,7 +181,9 @@ class EdtEvenement(Editeur):
             msg += " Ou |cmd|*|ff| pour éditer le test sinon\n"
             msg += " |cmd|/d <numéro de ligne>|ff| pour supprimer un test\n"
             msg += " |cmd|/r <numéro de ligne> <prédicats>|ff| pour "
-            msg += "modifier un test\n\n"
+            msg += "modifier un test\n"
+            msg += " |cmd|/h <numéro de ligne>|ff| pour remonter un test\n"
+            msg += " |cmd|/b <numéro de ligne>|ff| pour descendre un test\n\n"
             msg += "|cy|Conditions :|ff|\n"
             tests = evenement.tests
             longueur = 1
