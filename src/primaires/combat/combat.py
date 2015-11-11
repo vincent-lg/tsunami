@@ -32,7 +32,7 @@
 
 from random import choice, randint
 
-from corps.aleatoire import varier
+from corps.aleatoire import varier, chance_sur
 from primaires.perso.exceptions.stat import DepassementStat
 from .attaque import Coup
 
@@ -153,9 +153,7 @@ class Combat:
         poids_combattant = combattant.poids / combattant.poids_max
         poids_combattu = combattu.poids / combattu.poids_max
         diff = (poids_combattant - poids_combattu) * 30
-        conn = combattu.get_talent("mains_nues")
-        if armes_def:
-            conn = combattu.get_talent(armes_def[0].cle_talent)
+        # esquive
         if varier(combattu.pratiquer_talent(CLE_TALENT_ESQUIVE), 15) + diff >= \
                 varier(90, 10):
             attaque.envoyer_msg_tentative(combattant, combattu, membre, arme)
@@ -164,18 +162,37 @@ class Combat:
                     combattant)
             combattant.salle.envoyer("{} esquive le coup porté par {}.",
                     combattu, combattant)
-            degats = 0
-        elif len([arme for arme in armes_def if arme.nom_type in \
-                ARMES_PARADE]) > 0 and varier(combattu.pratiquer_talent(
-                CLE_TALENT_PARADE), 10) >= varier(conn, 15):
-            attaque.envoyer_msg_tentative(combattant, combattu, membre, arme)
-            combattant.envoyer("{} pare votre coup.", combattu)
-            combattu.envoyer("Vous parez le coup porté par {}.",
-                    combattant)
-            combattant.salle.envoyer("{} pare le coup porté par {}.",
-                    combattu, combattant)
-            degats = 0
-        elif membre:
+            return 0
+        # parade
+        armes_parade = [a for a in armes_def if a.nom_type in ARMES_PARADE]
+        if len(armes_parade) > 0:
+            # Les chances maximum (avec tous les talents concernés à 100%)
+            # de parade dépendent du nombre d'armes pouvant parer et du talent
+            # de l'attaquant au maniement de son arme.
+            chances_max = 40
+            if arme:
+                chances_max -= \
+                        15 * 0.01 * combattant.get_talent(arme.cle_talent)
+            chances_max = chances_max * (1 + 0.4 * (len(armes_parade) -1)) \
+                    / len(armes_parade)
+            talent_parade = 0.01 * combattu.pratiquer_talent(CLE_TALENT_PARADE)
+            for arme_parade in armes_parade:
+                talent_arme = 0.01 * combattu.get_talent(arme_parade.cle_talent)
+                if chance_sur(chances_max * talent_parade * talent_arme):
+                    attaque.envoyer_msg_tentative(combattant, combattu, membre,
+                            arme)
+                    combattant.envoyer()(
+                            "{} pare votre coup avec {}.",
+                            combattu, arme_parade)
+                    combattu.envoyer(
+                            "Vous parez le coup porté par {} avec {}.",
+                            combattant, arme_parade)
+                    combattant.salle.envoyer(
+                            "{} pare le coup porté par {}.",
+                            combattu, combattant)
+                    return 0
+        # infliger le coup s'il a porté
+        if membre:
             objets = len(membre.equipe) and membre.equipe or []
             for objet in objets:
                 if objet and objet.est_de_type("armure"):
