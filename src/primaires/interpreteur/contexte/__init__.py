@@ -306,7 +306,7 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         else:
             return
 
-        if msg in "<(":
+        if msg and msg in "<(":
             try:
                 contextes.reculer_position()
             except IndexError:
@@ -314,7 +314,7 @@ class Contexte(BaseObj, metaclass=MetaContexte):
                         "contextes.|ff|"
             else:
                 emt << emt.contexte_actuel.accueil()
-        elif msg in ">)":
+        elif msg and msg in ">)":
             try:
                 contextes.avancer_position()
             except IndexError:
