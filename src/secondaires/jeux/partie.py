@@ -41,6 +41,7 @@ class Partie(BaseObj):
     """
 
     enregistrer = True
+    
     def __init__(self, objet, jeu, plateau):
         """Constructeur de la partie."""
         BaseObj.__init__(self)

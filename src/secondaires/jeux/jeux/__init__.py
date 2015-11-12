@@ -54,6 +54,7 @@ class BaseJeu(BaseObj):
     """
 
     nom = "" # nom du jeu
+    
     def __init__(self):
         """Constructeur d'un jeu.
 
@@ -115,7 +116,10 @@ class BaseJeu(BaseObj):
         personnage.contextes.retirer()
         personnage << "Vous quittez la partie."
         self.partie.retirer_joueur(personnage)
-        if len(self.partie.joueurs) == 0:
+        if personnage in self.partie.observateurs:
+            self.partie.observateurs.remove(personnage)
+        
+        if len(self.partie.joueurs + self.partie.observateurs) == 0:
             self.partie.detruire()
 
     def opt_v(self, personnage, message):
