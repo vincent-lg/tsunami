@@ -48,6 +48,11 @@ class Jeu(BaseJeu):
     """
     
     nom = "solitaire"
+    
+    def init(self):
+        """Construction du jeu."""
+        pass
+    
     @property
     def personnage(self):
         """Retourne le personnage jouant au jeu."""
