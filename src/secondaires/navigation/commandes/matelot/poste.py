@@ -99,7 +99,7 @@ class PrmPoste(Parametre):
 
         if nom is None:
             personnage << "|err|Impossible de trouver le nom du poste : " \
-                    "{}.".format(nom_poste)
+                    "{}.|ff|".format(nom_poste)
         elif matelot.nom_poste == nom:
             personnage << "|err|Ce matelot est déjà à ce poste.|ff|"
         else:
