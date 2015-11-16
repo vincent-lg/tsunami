@@ -114,7 +114,7 @@ class CmdPoser(Commande):
                     try:
                         dans.conteneur.ajouter(objet, qtt)
                     except SurPoids as err:
-                        personnage << "|err|" + str(err) + ".|ff|"
+                        personnage << "|err|" + str(err) + "|ff|"
                         personnage << "|err|{} tombe sur le sol.|ff|".format(
                                 objet.get_nom(qtt))
                         personnage.salle.objets_sol.ajouter(objet, qtt)
