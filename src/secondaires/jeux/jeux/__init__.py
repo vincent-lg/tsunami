@@ -73,7 +73,7 @@ class BaseJeu(BaseObj):
         return ()
 
     def peut_commencer(self):
-        """La partie peut-elle commencée ?"""
+        """La partie peut-elle commencer ?"""
         return True
 
     def peut_jouer(self, personnage):
@@ -129,7 +129,7 @@ class BaseJeu(BaseObj):
     def opt_o(self, personnage, message):
         """Bascule entre le mode joueur et le mode observateur."""
         if self.partie.en_cours:
-            personnage << "|err|La partie a déjà commencée.|ff|"
+            personnage << "|err|La partie a déjà commencé.|ff|"
             return
 
         if personnage in self.partie.joueurs:
