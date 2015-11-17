@@ -69,7 +69,7 @@ class Jeu(BaseJeu):
         """La partie peut-elle commencer ?"""
         if not self.partie.en_cours:
             self.partie.envoyer(
-                    "|err|La partie n'a pas encore commencée.|ff|")
+                    "|err|La partie n'a pas encore commencé.|ff|")
             return False
         
         if self.petite_blinde == 0:
@@ -442,7 +442,7 @@ class Jeu(BaseJeu):
     def opt_b(self, personnage, montant):
         """Change la petite blinde."""
         if self.partie.en_cours:
-            personnage << "|err|La partie a déjà commencée.|ff|"
+            personnage << "|err|La partie a déjà commencé.|ff|"
             return
         
         if not montant:
