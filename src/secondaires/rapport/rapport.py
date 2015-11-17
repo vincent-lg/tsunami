@@ -247,7 +247,7 @@ class Rapport(BaseObj):
                 ret += "\n {:> 2} - par {}, {}".format(i + 1, auteur,
                         get_date(commentaire.date.timetuple()))
                 ret += "\n      " + ("\n      ").join(wrap(
-                        echapper_accolades(commentaire.texte), 70))
+                        echapper_accolades(commentaire.texte), 69))
 
         return ret
 
