@@ -30,6 +30,8 @@
 
 """Fichier contenant l'action alerte."""
 
+import sys
+
 from primaires.scripting.action import Action
 from primaires.scripting.instruction import ErreurExecution
 
@@ -58,4 +60,8 @@ class ClasseAction(Action):
         situations diverses.
 
         """
-        raise ErreurExecution(message)
+        print("Alerte")
+        if importeur.scripting.debug:
+            print(message, file=sys.__stdout__)
+        else:
+            raise ErreurExecution(message)

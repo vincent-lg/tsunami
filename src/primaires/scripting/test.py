@@ -32,6 +32,7 @@
 
 import re
 import traceback
+import sys
 from fractions import Fraction
 from time import time
 
@@ -106,17 +107,17 @@ class Test(BaseObj):
     def tests(self):
         """Retourne le test."""
         return self.__tests
-    
+
     @property
     def sc_tests(self):
         """Retourne le test sans couleurs sous la forme d'une chaîne.
-        
+
         Il s'agit de la chaîne de test scripting tel qu'elle
         est affichée dans l'éditeur, mais sans couleurs.
-        
+
         """
         return supprimer_couleurs(str(self.__tests))
-    
+
     def get_cache(self):
         """Calcul le cache Python si nécessaire.
 
@@ -270,9 +271,9 @@ class Test(BaseObj):
             res = bool(eval(py_code, globales))
         except Exception as err:
             self.erreur_execution(str(err))
-        
+
         return res
-        
+
 
     def get_globales(self, evenement):
         """Retourne le dictionnaire des globales d'exécution."""
@@ -303,7 +304,7 @@ class Test(BaseObj):
         no_ligne = -1
         if reg:
             no_ligne = int(reg.groups()[-1]) - 1
-        
+
         if no_ligne > 0:
             ligne = echapper_accolades(str(self.__instructions[no_ligne - 1]))
         else:
@@ -335,22 +336,29 @@ class Test(BaseObj):
             Si le retour est None, on s'arrête.
 
         """
+        if importeur.scripting.debug:
+            print("Avant test", file=sys.__stdout__)
+
         if personnage and alarme:
             if not importeur.scripting.alarme_existe(personnage, alarme):
                 return
 
         t1 = time()
-        
+
         # Exécution
+        if importeur.scripting.debug:
+            print("Avant bloquant", file=sys.__stdout__)
         if bloquant and not bloquant.complet:
             nom = "script_dif<" + str(id(code)) + ">"
             importeur.diffact.ajouter_action(nom, 1,
                     self.executer_code, evenement, code, personnage,
                     alarme, False, bloquant, jeton)
             return
-        
+
         importeur.scripting.execute_test.append(self)
         try:
+            if importeur.scripting.debug:
+                print("next...", file=sys.__stdout__)
             ret = next(code)
         except ErreurExecution as err:
             self.erreur_execution(str(err))
@@ -360,6 +368,8 @@ class Test(BaseObj):
         except Exception as err:
             self.erreur_execution(str(err))
         else:
+            if importeur.scripting.debug:
+                print("... fin test", ret, file=sys.__stdout__)
             if ret is None:
                 if jeton:
                     jeton.completer()

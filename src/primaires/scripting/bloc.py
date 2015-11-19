@@ -31,6 +31,7 @@
 """Fichier contenant la classe Bloc détaillée plus bas."""
 
 import re
+import sys
 
 from abstraits.obase import BaseObj
 from primaires.scripting.espaces import Espaces
@@ -135,6 +136,14 @@ class Bloc(BaseObj):
         variable = variables[nom]
         self.variables.remove(variable)
 
+    def debug(self, *args):
+        """Exécution débuggée du bloc."""
+        importeur.scripting.debug = True
+        print("Exécution débuggée du bloc", self, file=sys.__stdout__)
+        res = self.executer(*args)
+        importeur.scripting.debug = False
+        return res
+
     def executer(self, *args):
         """Execute le bloc d'instructions.
 
@@ -162,6 +171,9 @@ class Bloc(BaseObj):
                         type(variable)))
 
             variables[def_variable.nom] = variable
+
+        if importeur.scripting.debug:
+            print("Variables du bloc", variables, file=sys.__stdout__)
 
         self.espaces.variables.update(variables)
         if self.__test:
