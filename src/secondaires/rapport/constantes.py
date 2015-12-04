@@ -36,20 +36,31 @@ TYPES = (
 )
 
 CATEGORIES = (
+    "auberge",
     "autre",
-    "communication",
+    "botanique",
     "combat",
+    "commerce",
+    "communication",
     "confort",
+    "crafting",
     "cuisine",
     "design",
+    "exploration",
     "équilibrage",
     "familier",
     "faute",
+    "jeu",
     "magie",
+    "météo",
+    "modération",
     "navigation",
+    "progression",
+    "quête",
     "réseau",
     "scripting",
     "sécurité",
+    "XP",
 )
 
 STATUTS = (
