@@ -249,3 +249,20 @@ class ScriptSalle(Script):
         var_salle.aide = "la salle actuelle"
         var_perso = evt_recherche.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage qui fait la recherche"
+
+        # Événement effacer_memoire
+        evt_effacer_memoire = self.creer_evenement("effacer_memoire")
+        evt_effacer_memoire.aide_courte = "une mémoire est effacée"
+        evt_effacer_memoire.aide_longue = \
+            "Cet évènement est appelé quand une mémoire " \
+            "enregistrée dans l'objet est effacée par le système. " \
+            "C'est très utile pour exécuter une action particulière " \
+            "quand une mémoire expire."
+
+        # Configuration des variables de l'évènement effacer_memoire
+        var_salle = evt_effacer_memoire.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle-même"
+        var_nom = evt_effacer_memoire.ajouter_variable("nom", "str")
+        var_nom.aide = "le nom de la mémoire à effacer"
+        var_valeur = evt_effacer_memoire.ajouter_variable("valeur", "Object")
+        var_valeur.aide = "la valeur de la mémoire qu'on va effacer"

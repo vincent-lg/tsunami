@@ -105,7 +105,7 @@ class Module(BaseModule):
 
         # Scriptables
         self.valeurs = {}
-        
+
         # Paramètres te;poraires
         self.presse_papier = {}
 
@@ -384,8 +384,9 @@ class Module(BaseModule):
                         valeur_memoire = self.memoires[cle][valeur]
                         del self.memoires[cle][valeur]
                         if evenement:
-                            evenement.executer(objet=cle, nom=valeur,
-                                    valeur=valeur_memoire)
+                            variables = evenement.deduire_variables(
+                                    cle, nom=valeur, valeur=valeur_memoire)
+                            evenement.executer(**variables)
 
             if not self.memoires._a_detruire[cle]:
                 del self.memoires._a_detruire[cle]

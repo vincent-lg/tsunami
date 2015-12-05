@@ -42,6 +42,7 @@ from primaires.salle.salle import Salle
 from primaires.objet.types.base import BaseType as PrototypeObjet
 from primaires.objet.objet import Objet
 from primaires.pnj.pnj import PNJ
+from primaires.pnj.prototype import Prototype as PrototypePNJ
 
 def get(nom):
     """Retourne le type portant le nom."""

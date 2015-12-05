@@ -149,6 +149,42 @@ class Evenement(BaseObj):
         else:
             return sum(e.nb_lignes for e in self.evenements.values())
 
+    def deduire_variables(self, *args, **kwargs):
+        """Déduit les variables en fonction des arguments nommés ou non.
+
+        Cette méthode retourne un dictionnaire si elle a pu déterminer
+        les variables. La façon la plus simple de l'utiliser est de
+        préciser toutes les variables nommées de l'évènement, sauf
+        une (une dont on ne connaît pas le nom). Dans ce cas,
+        l'évènement sera capable de retrouver la variable manquante.
+
+        Par exemple, si l'évènement a les variables 'personnage',
+        'message' et 'salle', si on veut appeler cet évènement en
+        connaissant 'personnage' et 'message', mais sans connaître
+        'salle', on peut faire :
+            variables = evenement.deduire_variables(objet,
+                    personnage=personnage, message=chaine)
+            evenement.executer(**variables)
+
+        """
+        variables = {}
+        args = list(args)
+
+        for nom, variable in self.variables.items():
+            if nom in kwargs:
+                variables[nom] = kwargs[nom]
+            elif len(args) == 0:
+                raise ValueError("Évènement {} : impossible de " \
+                        "constituer une liste des variables, il n'y " \
+                        "a pas de paramètres non nommés disponibles. " \
+                        "Variables actuelles : {}".format(self.nom_complet,
+                        variables))
+            else:
+                variables[nom] = args[0]
+                del args[0]
+
+        return variables
+
     def copier_depuis(self, evenement):
         """Copie le script self depuis l'évènement."""
         for sous in evenement.evenements.values():
@@ -157,13 +193,13 @@ class Evenement(BaseObj):
                 evt = self.__evenements[sa_sous]
             else:
                 evt = self.creer_evenement(sous.nom)
-            
+
             evt.copier_depuis(sous)
 
         tests = list(evenement.tests)
         if evenement.sinon:
             tests.append(evenement.sinon)
-        
+
         for ancien_test in tests:
             sc_test = ancien_test.sc_tests
             if ancien_test.tests:
@@ -172,14 +208,14 @@ class Evenement(BaseObj):
             else:
                 self.creer_sinon()
                 nouveau_test = self.__sinon
-            
+
             lignes = []
             for instruction in reversed(ancien_test.instructions):
                 ligne = instruction.sans_couleurs
                 lignes.insert(0, ligne)
-            
+
             nouveau_test.ajouter_instructions("\n".join(lignes))
-            
+
     def creer_sinon(self):
         """Création du test sinon si il n'existe pas."""
         if self.__sinon is None:
@@ -203,19 +239,19 @@ class Evenement(BaseObj):
         test = tests[indice]
         if indice == 0:
             raise ValueError("Impossible de remonter ce test.")
-        
+
         tests[:] = tests[:indice - 1] + [test, tests[indice - 1]] + \
                 tests[indice + 1:]
-    
+
     def descendre_test(self, indice):
         """Descend le test indiqué."""
         tests = self.__tests
         test = tests[indice]
         if indice == len(tests) - 1:
             raise ValueError("Impossible de descendre ce test.")
-        
+
         tests[:] = tests[:indice] + [tests[indice + 1], test] + tests[indice + 2:]
-    
+
     def ajouter_variable(self, nom, type):
         """Ajoute une variable au dictionnaire des variables.
 

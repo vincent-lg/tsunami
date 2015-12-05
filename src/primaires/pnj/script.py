@@ -285,9 +285,36 @@ class ScriptPNJ(Script):
         var_perso.aide = "le personnage disant quelque chose"
         var_salle = evt_dit.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle dans laquelle le personnage parle"
-        
+
+
+        # Événement effacer_memoire
+        evt_effacer_memoire = self.creer_evenement("effacer_memoire")
+        evt_effacer_memoire.aide_courte = "une mémoire est effacée"
+        evt_effacer_memoire.aide_longue = \
+            "Cet évènement est appelé quand une mémoire " \
+            "enregistrée dans le prototype de PNJ est effacée par le " \
+            "système. C'est très utile pour exécuter une action " \
+            "particulière quand une mémoire expire. |att|ATTENTION|ff| : " \
+            "les mémoires de PNJ sont stockées dans le prototype de " \
+            "PNJ. Ainsi, quand la mémoire s'efface, c'est le " \
+            "prototype de PNJ qui est considérée, pas le PNJ. La " \
+            "variable 'prototype' contient donc le prototype de PNJ. " \
+            "Vous pouvez récupérer sa clé avec la fonction " \
+            "'cle_prototype'."
+
+        # Configuration des variables de l'évènement effacer_memoire
+        var_proto = evt_effacer_memoire.ajouter_variable("prototype",
+                "PrototypePNJ")
+        var_proto.aide = "le prototype de PNJ"
+        var_nom = evt_effacer_memoire.ajouter_variable("nom", "str")
+        var_nom.aide = "le nom de la mémoire à effacer"
+        var_valeur = evt_effacer_memoire.ajouter_variable("valeur", "Object")
+        var_valeur.aide = "la valeur de la mémoire qu'on va effacer"
+
         # On ajoute à tous les évènements la variable 'pnj'
         for evt in self.evenements.values():
-            if evt.nom != "dépece":
-                var_pnj = evt.ajouter_variable("pnj", "PNJ")
-                var_pnj.aide = "le PNJ scripté"
+            if evt.nom in ("dépece", "effacer_memoire"):
+                continue
+
+            var_pnj = evt.ajouter_variable("pnj", "PNJ")
+            var_pnj.aide = "le PNJ scripté"
