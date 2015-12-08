@@ -30,21 +30,32 @@
 
 """Fichier contenant la classe ConsoleInteractive détaillée plus bas."""
 
-from code import InteractiveConsole
+from code import InteractiveConsole, InteractiveInterpreter
 import sys
 import traceback
+from threading import Thread
 
 class ConsoleInteractive:
 
     """Classe représentant une console interactive.
 
     Dans cette console peut être entrée du code Python. Si Kassie est
-    lancé avec l'option -i (--interactif), à chaque tour de boucle
+    lancée avec l'option -i (--interactif), à chaque tour de boucle
     l'utilisateur pourra entrer du code Python et voir le résultat affiché
-    à l'écran.
+    à l'écran. Ce mode n'est maintenant plus bloquant :
+    l'utilisateur peut ne rien entrer pendant des heures, le MUD
+    continuera à tourner. Cependant, le résultat des logs ne sera
+    pas affiché dans ce contexte. Il appartiendra à l'utilisateur de
+    regarder la console autrement (de faire un 'tail -f' sur un
+    fichier de retour, par exemple).
 
     Cette console est utile si le réseau est inactif sur la machine (ou
     inopérant) et que vous souhaitez tester Kassie malgré tout.
+    Elle est aussi très pratique pour des opérations de débuggage,
+    correction de bugs ponctuels ou tests de certaines conditions.
+    Elle doit cependant être utilisée avec autant de prudence que
+    la commande 'systeme', car elle donne un accès complet à Python
+    et l'univers.
 
     """
 
@@ -52,29 +63,54 @@ class ConsoleInteractive:
         """Constructeur."""
         self.espace = {
             "importeur": importeur,
-            "fermer": self.fermer,
         }
-        self.console = InteractiveConsole(self.espace)
+        self.console = Console(self.espace)
         self.prompt = ">>> "
-        self.ouverte = True
 
-    def fermer(self):
-        """Ferme la console."""
-        self.ouverte = False
+    def input(self):
+        """Récupère l'input de l'utilisateur."""
+        try:
+            code = input(self.prompt)
+        except (KeyboardInterrupt, EOFError):
+            importeur.serveur.lance = False
+            return
 
-    def boucle(self):
-        """A chaque tour de boucle."""
-        if self.ouverte:
-            try:
-                code = input(self.prompt)
-            except (KeyboardInterrupt, EOFError):
-                importeur.serveur.lance = False
-                return
+        try:
+            ret = self.console.push(code)
+        except Exception:
+            print(traceback.format_exc())
+        else:
+            self.prompt = "... " if ret else ">>> "
 
-            try:
-                ret = self.console.push(code)
-            except Exception:
-                print(traceback.format_exc())
-            else:
-                self.prompt = "... " if ret else ">>> "
 
+class ThreadConsole(Thread):
+
+    """Support pour une console dans un thread différent."""
+
+    def __init__(self, console):
+        Thread.__init__(self)
+        self.console = console
+
+    def run(self):
+        """Lance le thread."""
+        while importeur.serveur.lance:
+            self.console.input()
+
+class Console(InteractiveConsole):
+
+    """Exécute le code en différé."""
+
+    def __init__(self, espace):
+        InteractiveConsole.__init__(self, espace)
+        self.codes = []
+
+    def runcode(self, code):
+        """Diffère l'exécution du code."""
+        self.codes.append(code)
+
+    def runcodes(self):
+        """Exécute les codes en attente."""
+        codes = list(self.codes)
+        self.codes.clear()
+        for code in codes:
+            InteractiveInterpreter.runcode(self, code)

@@ -83,7 +83,7 @@ from bases.anaconf import anaconf
 from bases.logs import man_logs
 from corps.config import pere
 from primaires.format.date import *
-from bases.interactif import ConsoleInteractive
+from bases.interactif import ConsoleInteractive, ThreadConsole
 
 # Définition des fonctions appelées pour arrêter le MUD
 # Le lancement du MUD se trouve sous la fonction
@@ -192,6 +192,11 @@ if "interactif" in parser_cmd.keys():
 else:
     console = None
 
+# Création du thread pour la console interactive
+if console:
+    thread = ThreadConsole(console)
+    thread.start()
+
 # Lancement de la boucle synchro
 # Note: tout se déroule ici, dans une boucle temps réelle qui se répète
 # jusqu'à l'arrêt du MUD. De cette manière, on garde le contrôle total
@@ -200,7 +205,7 @@ else:
 if __name__ == "__main__":
     while serveur.lance:
         if console:
-            console.boucle()
+            console.console.runcodes()
         importeur.boucle()
         serveur.verifier_connexions()
         serveur.verifier_receptions()
