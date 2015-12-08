@@ -67,4 +67,23 @@ class CmdMeteo(Commande):
                 importeur.meteo.temperature)
         msg += "\n  Température dans la zone {} : {}°".format(
                 zone.cle, zone.temperature)
+
+        # Affichage des perturbations les plus proches
+        salle = personnage.salle
+        if len(importeur.meteo.perturbations_actuelles) == 0:
+            msg += "  \nIl n'y a pas de perturbations en jeu."
+        elif salle.coords.valide:
+            proches = sorted([(p, p.distance_au_centre(salle)) for p in \
+                    importeur.meteo.perturbations_actuelles],
+                    key=lambda c: c[1])
+            msg += "\n  Perturbations proches :"
+            for i, (perturbation, distance) in enumerate(proches):
+                if i > 2:
+                    break
+
+                msg += "\n    {} distant de {} salles".format(
+                        perturbation.nom_pertu, round(distance))
+        else:
+            msg += "\n  La salle actuelle n'a pas de coordonnées valides."
+
         return msg
