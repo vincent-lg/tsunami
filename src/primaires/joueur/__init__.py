@@ -72,6 +72,7 @@ class Module(BaseModule):
 
     def config(self):
         """Méthode de configuration du module"""
+        type(importeur).espace["joueurs"] = self.joueurs
         config = type(self.importeur).anaconf.get_config("joueur",
             "joueur/joueur.cfg", "config joueur", cfg_joueur)
         self.groupe_par_defaut = config.groupe_par_defaut
@@ -177,10 +178,12 @@ class Module(BaseModule):
 
         self.compte_systeme = self.importeur.connex.get_compte(
                 self.compte_systeme)
+        type(importeur).espace["compte_systeme"] = self.compte_systeme
         if self.joueur_systeme not in self.joueurs.keys():
             self.compte_systeme.creer_joueur(self.joueur_systeme)
 
         self.joueur_systeme = self.joueurs[self.joueur_systeme]
+        type(importeur).espace["systeme"] = self.joueur_systeme
 
         # Ajout des évènements
         importeur.evt.ajouter_evenement("connecte", "Un joueur se connecte",

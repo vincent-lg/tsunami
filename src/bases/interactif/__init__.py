@@ -62,10 +62,7 @@ class ConsoleInteractive:
 
     def __init__(self, importeur):
         """Constructeur."""
-        self.espace = {
-            "importeur": importeur,
-        }
-        self.console = Console(self.espace)
+        self.console = Console(type(importeur).espace)
         self.prompt = ">>> "
 
     def input(self):

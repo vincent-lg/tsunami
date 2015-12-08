@@ -57,6 +57,7 @@ class Module(BaseModule):
         self.commandes = []
         self.logger = self.importeur.man_logs.creer_logger(
                 "auberge", "auberge", "auberge.log")
+        type(importeur).espace["auberges"] = self.auberges
 
     def config(self):
         """Configuration du module."""

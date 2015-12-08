@@ -72,6 +72,7 @@ class Module(BaseModule):
         self.types_services = {}
         self.aides_types = {}
         self.questeurs = {}
+        type(importeur).espace["questeurs"] = self.questeurs
 
     def init(self):
         """Initialisation du module."""

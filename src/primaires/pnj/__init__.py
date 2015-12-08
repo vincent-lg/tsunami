@@ -68,6 +68,9 @@ class Module(BaseModule):
         for no in range(1, NB_TICKS + 1):
             self.ticks[no] = []
 
+        type(importeur).espace["prototypes_pnj"] = self._prototypes
+        type(importeur).espace["PNJ"] = self._PNJ
+
     def config(self):
         """Méthode de configuration du module"""
         importeur.hook.ajouter_hook("pnj:arrive",

@@ -63,6 +63,7 @@ class Module(BaseModule):
                 "connex", "comptes")
         self.joueurs_bannis = []
         self.bannissements_temporaires = {}
+        type(importeur).espace["comptes"] = self.comptes
 
     def config(self):
         """Configuration du module.

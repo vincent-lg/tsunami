@@ -51,6 +51,7 @@ class Module(BaseModule):
         self.rapports = {}
         self.commandes = []
         self.traces = {}
+        type(importeur).espace["rapports"] = self.rapports
 
     def init(self):
         """Méthode d'initialisation du module"""

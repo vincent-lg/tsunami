@@ -60,6 +60,8 @@ class Module(BaseModule):
         self.cherchable_pr = None
         self.logger = importeur.man_logs.creer_logger(
                 "objets", "objets")
+        type(importeur).espace["prototypes_objets"] = self._prototypes
+        type(importeur).espace["objets"] = self._objets
 
     def config(self):
         """Configuration du module."""
@@ -215,11 +217,11 @@ class Module(BaseModule):
         importeur.diffact.ajouter_action("net_boule de neige", 60,
                 self.nettoyage_cyclique, "boule de neige")
         self.nettoyage_lumieres()
-        
+
         # Réinitialisation des scripts des prototypes
         for prototype in self._prototypes.values():
             prototype.etendre_script()
-        
+
     @property
     def prototypes(self):
         return dict(self._prototypes)

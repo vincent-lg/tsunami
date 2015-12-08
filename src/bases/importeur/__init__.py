@@ -92,6 +92,7 @@ class Importeur:
     }
     py_modules = {}
     sauvegarde = True
+    espace = {}
 
     def __init__(self, parser_cmd, anaconf, man_logs, serveur,
             sauvegarde=True):
@@ -121,6 +122,7 @@ class Importeur:
         Importeur.sauvegarde = sauvegarde
         BaseObj.importeur = self
         __builtins__["importeur"] = self
+        type(self).espace["importeur"] = self
 
     def __str__(self):
         """Retourne sous une forme un peu plus lisible les modules importés."""

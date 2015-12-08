@@ -141,6 +141,9 @@ class Module(BaseModule):
         for no in range(1, NB_TICKS + 1):
             self.ticks[no] = []
 
+        type(importeur).espace["salles"] = self._salles
+        type(importeur).espace["zones"] = self._zones
+
     @property
     def salles(self):
         """Retourne un dictionnaire déréférencé des salles."""

@@ -105,6 +105,7 @@ class Module(BaseModule):
                 "navires": Visible.trouver_navires,
                 "reperes": Repere.trouver_reperes,
         }
+        type(importeur).espace["navires"] = self.navires
 
     def config(self):
         """Configuration du module."""
@@ -401,7 +402,7 @@ class Module(BaseModule):
                 self.importeur.salle.obstacles["banc de sable"],
                 self.importeur.salle.obstacles["corail"],
         )
-        
+
         for obstacle in Navire.obs_recif:
             obstacle.symbole = "!"
 

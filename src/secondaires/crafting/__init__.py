@@ -100,7 +100,7 @@ class Module(BaseModule):
 
                 if nom in charges:
                     continue
-                
+
                 attributs = informations.get("attributs", [])
                 classe = Type.creer_type(parent, nom, attributs)
                 setattr(def_type, classe.__name__, classe)
