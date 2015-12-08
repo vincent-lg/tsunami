@@ -32,6 +32,7 @@
 
 from code import InteractiveConsole, InteractiveInterpreter
 import sys
+import time
 import traceback
 from threading import Thread
 
@@ -94,7 +95,10 @@ class ThreadConsole(Thread):
     def run(self):
         """Lance le thread."""
         while importeur.serveur.lance:
-            self.console.input()
+            if len(self.console.console.codes):
+                time.sleep(0.02)
+            else:
+                self.console.input()
 
 class Console(InteractiveConsole):
 
