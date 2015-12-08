@@ -51,6 +51,7 @@ from secondaires.familier.commandes.familier.mener import PrmMener
 from secondaires.familier.commandes.familier.miens import PrmMiens
 from secondaires.familier.commandes.familier.niveaux import PrmNiveaux
 from secondaires.familier.commandes.familier.nom import PrmNom
+from secondaires.familier.commandes.familier.nourrir import PrmNourrir
 from secondaires.familier.commandes.familier.relacher import PrmRelacher
 from secondaires.familier.commandes.familier.renommer import PrmRenommer
 from secondaires.familier.commandes.familier.score import PrmScore
@@ -92,6 +93,7 @@ class CmdFamilier(Commande):
         self.ajouter_parametre(PrmMiens())
         self.ajouter_parametre(PrmNiveaux())
         self.ajouter_parametre(PrmNom())
+        self.ajouter_parametre(PrmNourrir())
         self.ajouter_parametre(PrmRelacher())
         self.ajouter_parametre(PrmRenommer())
         self.ajouter_parametre(PrmScore())
