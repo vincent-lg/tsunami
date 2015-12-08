@@ -34,7 +34,7 @@ from code import InteractiveConsole, InteractiveInterpreter
 import sys
 import time
 import traceback
-from threading import Thread
+from threading import Thread, Timer
 
 class ConsoleInteractive:
 
@@ -64,13 +64,17 @@ class ConsoleInteractive:
         """Constructeur."""
         self.console = Console(type(importeur).espace)
         self.prompt = ">>> "
+        self.timer = None
         sys.__stdout__.write("Python {}\nChargement du MUD en " \
                 "cours...\n---".format(sys.version))
         sys.__stdout__.flush()
 
     def input(self):
         """Récupère l'input de l'utilisateur."""
-        sys.__stdout__.write(self.prompt)
+        if not importeur.serveur.lance:
+            return
+
+        sys.__stdout__.write("\r" + self.prompt)
         sys.__stdout__.flush()
         try:
             code = input()
@@ -99,6 +103,7 @@ class ThreadConsole(Thread):
 
     def __init__(self, console):
         Thread.__init__(self)
+        self.daemon = True
         self.console = console
 
     def run(self):
