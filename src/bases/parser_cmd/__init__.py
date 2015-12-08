@@ -35,8 +35,9 @@ et traite chaque cas indépendamment.
 
 """
 
-import sys
 import getopt
+import os
+import sys
 
 class ParserCMD(dict):
 
@@ -79,9 +80,9 @@ class ParserCMD(dict):
         # - p (port) : port d'écoute du serveur
         # - r (script) : script avant préparation
         # - s 'serveur) : lancer le serveur (on ou off)
-        flags_courts = "c:e:hil:p:r:s:"
+        flags_courts = "c:e:hi:l:p:r:s:"
         flags_longs = ["chemin-configuration=", "chemin-enregistrement=",
-                "help", "interactif", "chemin-logs=", "port=", "script",
+                "help", "interactif=", "chemin-logs=", "port=", "script",
                 "serveur="]
 
         # Création de l'objet analysant la ligne de commande
@@ -107,6 +108,13 @@ class ParserCMD(dict):
                 sys.exit(1)
             elif nom in ["-i", "--interactif"]:
                 self["interactif"] = True
+                if val == "0":
+                    fichier = open(os.devnull, "w", encoding="utf-8")
+                else:
+                    fichier = open(val, "w", encoding="utf-8")
+
+                sys.stdout = fichier
+                sys.stderr = fichier
             elif nom in ["-p", "--port"]:
                 # On doit tenter de convertir le port
                 try:

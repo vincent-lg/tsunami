@@ -70,18 +70,27 @@ class ConsoleInteractive:
 
     def input(self):
         """Récupère l'input de l'utilisateur."""
+        sys.__stdout__.write(self.prompt)
+        sys.__stdout__.flush()
         try:
-            code = input(self.prompt)
+            code = input()
         except (KeyboardInterrupt, EOFError):
             importeur.serveur.lance = False
             return
 
+        stdout = sys.stdout
+        stderr = sys.stderr
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
         try:
             ret = self.console.push(code)
         except Exception:
             print(traceback.format_exc())
         else:
             self.prompt = "... " if ret else ">>> "
+        finally:
+            sys.stdout = stdout
+            sys.stderr = stderr
 
 
 class ThreadConsole(Thread):
@@ -116,5 +125,14 @@ class Console(InteractiveConsole):
         """Exécute les codes en attente."""
         codes = list(self.codes)
         self.codes.clear()
+
+        # Rétablit sus.stdout et sys.stderr
+        stdout = sys.stdout
+        stderr = sys.stderr
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
         for code in codes:
             InteractiveInterpreter.runcode(self, code)
+
+        sys.stdout = stdout
+        sys.stderr = stderr
