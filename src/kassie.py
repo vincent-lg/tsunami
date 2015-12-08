@@ -180,17 +180,17 @@ serveur.callbacks["reception"].args = (serveur, importeur, log)
 if not lancer_serveur:
     serveur.lance = False
 
-# On configure, initialise et prépare les modules
-importeur.tout_configurer()
-importeur.tout_initialiser()
-importeur.executer_script(parser_cmd.get("script"))
-importeur.tout_preparer()
-
 # Création si demandée de la console interactive
 if "interactif" in parser_cmd.keys():
     console = ConsoleInteractive(importeur)
 else:
     console = None
+
+# On configure, initialise et prépare les modules
+importeur.tout_configurer()
+importeur.tout_initialiser()
+importeur.executer_script(parser_cmd.get("script"))
+importeur.tout_preparer()
 
 # Création du thread pour la console interactive
 if console:

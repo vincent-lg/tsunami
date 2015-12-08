@@ -111,7 +111,7 @@ class ParserCMD(dict):
                 if val == "0":
                     fichier = open(os.devnull, "w", encoding="utf-8")
                 else:
-                    fichier = open(val, "w+", encoding="utf-8")
+                    fichier = open(val, "a", buffering=1, encoding="utf-8")
 
                 sys.stdout = fichier
                 sys.stderr = fichier

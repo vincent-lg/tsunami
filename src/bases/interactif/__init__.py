@@ -64,6 +64,9 @@ class ConsoleInteractive:
         """Constructeur."""
         self.console = Console(type(importeur).espace)
         self.prompt = ">>> "
+        sys.__stdout__.write("Python {}\nChargement du MUD en " \
+                "cours...\n---".format(sys.version))
+        sys.__stdout__.flush()
 
     def input(self):
         """Récupère l'input de l'utilisateur."""
