@@ -66,6 +66,7 @@ class FicheFamilier(BaseObj):
         self.difficulte_apprivoisement = 10
         self.harnachements = []
         self.m_valeur = 50
+        self.peut_manger = []
         self.script = ScriptFiche(self)
 
     def __getnewargs__(self):

@@ -65,7 +65,7 @@ class Selection(Editeur):
         if valeur == ["*"]:
             valeur = "tous"
         else:
-            valeur = ", ".join([str(v) for v in valeur])
+            valeur = ", ".join(sorted([str(v) for v in valeur]))
         Valeur = valeur.capitalize()
         return apercu.format(objet=objet, valeur=valeur, Valeur=Valeur)
 

@@ -35,6 +35,8 @@ seront placées dans ce package
 
 """
 
+from textwrap import dedent
+
 from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.entier import Entier
@@ -105,6 +107,31 @@ class EdtFamedit(Presentation):
             "choisir aléatoirement parmi ces stats et les\naugmenter " \
             "si il a des points d'entraînement disponibles\n\nStats " \
             "automatiques actuelles : {objet.str_stats_progres}"
+
+        # Aliments supplémentaires
+        aliments_sup = []
+        for nom_type in importeur.objet.get_types_herites("nourriture"):
+            aliments_sup.append("+" + nom_type)
+            for prototype in importeur.objet.get_prototypes_de_type(nom_type):
+                aliments_sup.append(prototype.cle)
+
+        print(aliments_sup)
+        aliments = self.ajouter_choix("aliments supplémentaires", "al",
+                Selection, fiche, "peut_manger", aliments_sup)
+        aliments.parent = self
+        aliments.prompt = "Aliments que l'on peut donner au familier " \
+                "pour qu'il se nourrisse : "
+        aliments.apercu = "{valeur}"
+        aliments.aide_courte = dedent("""\
+            Entrez |cmd|/|ff| pour revenir à la fenêtre parente.
+
+            Pour ajouter ou retirer un aliment, entrez simplement sa clé,
+            comme |ent|pomme_rouge|ff|, ou son type précédé d'un signe
+            |ent|+|ff|, comme |ent|+légume|ff|. Si un nom de type est
+            précisé, le maître du familier pourra nourrir celui-ci en
+            utilisant n'importe quel objet de ce type.
+
+            Types actuels : {valeur}""")
 
         # Monture
         monture = self.ajouter_choix("peut être monté", "m", Flag, fiche,
