@@ -115,7 +115,6 @@ class EdtFamedit(Presentation):
             for prototype in importeur.objet.get_prototypes_de_type(nom_type):
                 aliments_sup.append(prototype.cle)
 
-        print(aliments_sup)
         aliments = self.ajouter_choix("aliments supplémentaires", "al",
                 Selection, fiche, "peut_manger", aliments_sup)
         aliments.parent = self
@@ -131,7 +130,7 @@ class EdtFamedit(Presentation):
             précisé, le maître du familier pourra nourrir celui-ci en
             utilisant n'importe quel objet de ce type.
 
-            Types actuels : {valeur}""")
+            Aliments actuels : {valeur}""")
 
         # Monture
         monture = self.ajouter_choix("peut être monté", "m", Flag, fiche,
