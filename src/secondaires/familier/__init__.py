@@ -44,6 +44,7 @@ from secondaires.familier.familier import Familier
 from secondaires.familier.familiers_vente import FamiliersVente
 from secondaires.familier.fiche import FicheFamilier
 from secondaires.familier import masques
+from secondaires.familier.prompt import PromptMonture
 from secondaires.familier.templates.attache import Attache
 from secondaires.familier.templates.chevauche import Chevauche
 from secondaires.familier.templates.guide import Guide
@@ -129,6 +130,9 @@ class Module(BaseModule):
 
     def init(self):
         """Chargement des objets du module."""
+        # Ajout du prompt
+        importeur.perso.ajouter_prompt(PromptMonture)
+
         # Ajout des talents
         importeur.perso.ajouter_talent("apprivoisement", "apprivoisement",
                 "dressage", 0.4)

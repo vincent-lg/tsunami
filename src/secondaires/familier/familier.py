@@ -219,3 +219,15 @@ class Familier(BaseObj):
             importeur.combat.creer_combat(auteur.salle, auteur, cible)
             auteur.envoyer("Vous attaquez {}.", cible)
             cible.envoyer("{} vous attaque.", auteur)
+
+    def enfourcher(self, personnage):
+        """Enfourche le familier."""
+        personnage.etats.ajouter("chevauche", self)
+        self.chevauche_par = personnage
+        personnage.selectionner_prompt("monture")
+
+    def desarconner(self, personnage):
+        """Descend du dos de ce familier."""
+        personnage.etats.retirer("chevauche")
+        self.chevauche_par = None
+        personnage.deselectionner_prompt("monture")

@@ -71,9 +71,8 @@ class CmdEnfourcher(Commande):
 
         if "chevauche" in personnage.etats:
             familier = personnage.etats.get("chevauche").monture
+            familier.desarconner(personnage)
             pnj = familier.pnj
-            personnage.etats.retirer("chevauche")
-            familier.chevauche_par = None
             personnage.envoyer_lisser("Vous descendez du dos de {}.", pnj)
             personnage.salle.envoyer("{} descend du dos de {}.", personnage,
                     pnj)
@@ -101,7 +100,6 @@ class CmdEnfourcher(Commande):
             return
 
         personnage.agir("enfourcher")
-        personnage.etats.ajouter("chevauche", familier)
-        familier.chevauche_par = personnage
+        familier.enfourcher(personnage)
         personnage.envoyer("Vous enfourchez {}.", pnj)
         personnage.salle.envoyer("{} enfourche {}.", personnage, pnj)
