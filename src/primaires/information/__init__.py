@@ -43,6 +43,7 @@ from .sujet import SujetAide
 from .tips import Tips
 from .versions import Versions
 from .annonces import Annonces
+from primaires.information.reboot import Reboot
 
 class Module(BaseModule):
 
@@ -64,6 +65,7 @@ class Module(BaseModule):
         self.roadmaps = []
         self.logger = importeur.man_logs.creer_logger(
                 "information", "information")
+        self.reboot = None
 
     def config(self):
         """Configuration du module"""
@@ -310,3 +312,11 @@ class Module(BaseModule):
             liste.append(cle)
 
         self.tips.personnages[personnage] = liste
+
+    def programmer_reboot(self, secondes):
+        """Programme un reboot."""
+        if self.reboot:
+            self.reboot.actif = False
+
+        self.reboot = Reboot()
+        self.reboot.programmer(secondes)
