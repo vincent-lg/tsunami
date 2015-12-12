@@ -111,6 +111,10 @@ class Detail(BaseObj):
                 self.supporte = None
     peut_supporter = property(_get_peut_supporter, _set_peut_supporter)
 
+    def get_nom_pour(self, personnage):
+        """Retourne le nom pour le personnage précisé."""
+        return self.titre
+
     def a_flag(self, nom_flag):
         """Retourne True si le détail a le flag, False sinon."""
         valeur = FLAGS[nom_flag]
