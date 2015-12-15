@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,13 +28,30 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module information."""
+"""Fichier contenant le paramètre 'programmer' de la commande 'reboot'."""
 
-from . import aide
-from . import annonces
-from . import hedit
-from . import newsletter
-from . import reboot
-from . import roadmap
-from . import tips
-from . import versions
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmProgrammer(Parametre):
+
+    """Commande 'reboot programmer'."""
+
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "programmer", "program")
+        self.tronquer = True
+        self.schema = "<nombre>"
+        self.aide_courte = "programme un reboot"
+        self.aide_longue = \
+            "Cette sous-commande programme un reboot. Vous devez " \
+            "préciser en paramètre le temps en minutes avant reboot. " \
+            "Par exemple %reboot% %reboot:programmer%|ent| 15|ff| " \
+            "pour programmer un reboot dans 15 minutes."
+
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        nombre = dic_masques["nombre"].nombre
+        s = "s" if nombre > 1 else ""
+        personnage << "Programmation d'un reboot dans {} minute{s}.".format(
+                nombre, s=s)
+        importeur.information.programmer_reboot(nombre * 60)

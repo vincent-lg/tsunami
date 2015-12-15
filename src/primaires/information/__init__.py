@@ -43,6 +43,7 @@ from .sujet import SujetAide
 from .tips import Tips
 from .versions import Versions
 from .annonces import Annonces
+from primaires.information.reboot import Reboot
 
 class Module(BaseModule):
 
@@ -64,6 +65,7 @@ class Module(BaseModule):
         self.roadmaps = []
         self.logger = importeur.man_logs.creer_logger(
                 "information", "information")
+        self.reboot = None
 
     def config(self):
         """Configuration du module"""
@@ -121,6 +123,7 @@ class Module(BaseModule):
             commandes.annonces.CmdAnnonces(),
             commandes.hedit.CmdHedit(),
             commandes.newsletter.CmdNewsletter(),
+            commandes.reboot.CmdReboot(),
             commandes.roadmap.CmdRoadmap(),
             commandes.tips.CmdTips(),
             commandes.versions.CmdVersions(),
@@ -310,3 +313,31 @@ class Module(BaseModule):
             liste.append(cle)
 
         self.tips.personnages[personnage] = liste
+
+    def get_reboot(self):
+        """Création ou retour du reboot actuel."""
+        if self.reboot:
+            return self.reboot
+
+        self.reboot = Reboot()
+        return self.reboot
+
+    def programmer_reboot(self, secondes):
+        """Programme un reboot."""
+        anciennes_versions = []
+        if self.reboot:
+            anciennes_versions = list(self.reboot.versions)
+            self.reboot.actif = False
+
+        self.reboot = Reboot()
+        for version in anciennes_versions:
+            self.reboot.versions.append(version)
+
+        self.reboot.programmer(secondes)
+
+    def detruire(self):
+        """Destruction du module."""
+        BaseModule.detruire(self)
+        if self.reboot:
+            for version in self.reboot.versions:
+                self.versions.append(version)
