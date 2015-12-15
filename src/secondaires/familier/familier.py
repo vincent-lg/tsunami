@@ -147,7 +147,7 @@ class Familier(BaseObj):
 
     def augmenter_faim(self, modifieur):
         """Augmente la faim du PNJ."""
-        self.faim = round(self.soif + modifieur, 2)
+        self.faim = round(self.faim + modifieur, 2)
 
         if self.faim > 100:
             self.faim = 100

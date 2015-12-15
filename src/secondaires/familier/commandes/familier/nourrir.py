@@ -70,11 +70,6 @@ class PrmNourrir(Parametre):
         objets = list(dic_masques["nom_objet"].objets_conteneurs)[0]
         objet, conteneur = objets
         personnage.agir("ingérer")
-        if not objet.est_de_type("nourriture"):
-            personnage << "{} n'est pas mangeable.".format(
-                    objet.get_nom().capitalize())
-            return
-
         peut_manger = False
         for aliment in fiche.peut_manger:
             if aliment.startswith("+") and objet.est_de_type(aliment[1:]):
@@ -96,12 +91,15 @@ class PrmNourrir(Parametre):
         if familier.faim > 0:
             personnage.envoyer("Vous donnez {} à {{}}.".format(
                     objet.get_nom()), pnj)
+            message_mange = getattr(objet, "message_mange", "")
             pnj << "Vous mangez {}.\n{}".format(objet.get_nom(),
-                    objet.message_mange)
-            familier.diminuer_faim(objet.nourrissant * 5)
+                    message_mange).strip()
+            nourrissant = getattr(objet, "nourrissant", objet.poids * 4) * 5
+            familier.diminuer_faim(nourrissant)
             pnj.salle.envoyer("{{}} mange {}.".format(objet.get_nom()),
                     pnj)
-            objet.script["mange"].executer(personnage=pnj, objet=objet)
+            if "mange" in objet.script.evenements:
+                objet.script["mange"].executer(personnage=pnj, objet=objet)
             objet.contenu.retirer(objet)
             importeur.objet.supprimer_objet(objet.identifiant)
         else:
