@@ -110,7 +110,9 @@ class EdtFamedit(Presentation):
 
         # Aliments supplémentaires
         aliments_sup = []
-        for nom_type in importeur.objet.get_types_herites("nourriture"):
+        noms_types = ["appât"] + list(importeur.objet.get_types_herites(
+                "nourriture"))
+        for nom_type in noms_types:
             aliments_sup.append("+" + nom_type)
             for prototype in importeur.objet.get_prototypes_de_type(nom_type):
                 aliments_sup.append(prototype.cle)
