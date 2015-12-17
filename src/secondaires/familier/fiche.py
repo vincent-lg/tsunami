@@ -62,11 +62,13 @@ class FicheFamilier(BaseObj):
         self.monture = False
         self.sorties_verticales = False
         self.aller_interieur = False
-        self.stats_progres = ["force", "agilite", "robustesse", "intelligence"]
+        self.stats_progres = [
+                "force", "agilite", "robustesse", "intelligence"]
         self.difficulte_apprivoisement = 10
         self.harnachements = []
         self.m_valeur = 50
         self.peut_manger = []
+        self.aptitudes = {}
         self.script = ScriptFiche(self)
 
     def __getnewargs__(self):
