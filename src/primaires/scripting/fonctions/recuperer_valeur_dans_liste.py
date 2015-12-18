@@ -62,6 +62,9 @@ class ClasseFonction(Fonction):
           lettres = liste("a", "b", "c", "d", "e", "f")
           valeur = recuperer(liste, 3)
           # valeur contient maintenant "c", le troisième élément dans la liste
+          # L'indice peut également être négatif
+          valeur = recuperer(liste, -1)
+          # valeur contient à présent "f", la dernière lettre
 
         """
         if int(indice) != indice: # nombre flottant
@@ -69,13 +72,18 @@ class ClasseFonction(Fonction):
                     "comme indice de liste. Seuls des nombres entiers " \
                     "(1, 2, 3, ...) sont acceptés".format(indice))
 
-        if indice < 1:
-            raise ErreurExecution("l'indice précisé doit être supérieur " \
-                    "à 0".format(indice))
+        if indice == 1:
+            raise ErreurExecution("l'indice précisé doit être positif ou " \
+                    "négatif".format(indice))
 
-        if indice > len(liste):
-            raise ErreurExecution("l'indice spécifié ({}) est plus grand " \
-                    "que la taille de la liste ({})".format(indice,
+        if indice < 0:
+            indice = int(indice)
+        else:
+            indice = int(indice) - 1
+
+        try:
+            return liste[indice]
+        except IndexError:
+            raise ErreurExecution("l'indice spécifié ({}) est invalide " \
+                    "dans cette liste de taille {}".format(indice,
                     len(liste)))
-
-        return liste[int(indice) - 1]
