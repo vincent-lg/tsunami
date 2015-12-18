@@ -225,7 +225,7 @@ class Joueur(Personnage):
         elif hasattr(personnage, "retenus") and self in personnage.retenus \
                 and retenu:
             return personnage.retenus[self]
-        elif hasattr(personnage, "controle_par") and personnage.controle_par:
+        elif getattr(personnage, "controle_par", None):
             return self.get_nom_pour(personnage.controle_par, retenu)
         else:
             return self.get_distinction_visible()
