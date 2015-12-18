@@ -43,7 +43,9 @@ from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.selection import Selection
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.tableau import Tableau
 from primaires.scripting.editeurs.edt_script import EdtScript
+from secondaires.familier.aptitudes import APTITUDES
 from secondaires.familier.constantes import *
 
 class EdtFamedit(Presentation):
@@ -79,6 +81,33 @@ class EdtFamedit(Presentation):
             "à la fenêtre parente.\n\nRégimes disponibles : {}.\n\n" \
             "Régime actuel : |bc|{{objet.regime}}|ff|".format(
             ", ".join(REGIMES))
+
+        # Aptitudes
+        noms = ", ".join(list(APTITUDES.keys()))
+        aptitudes = self.ajouter_choix("aptitudes", "a", Tableau,
+                fiche, "aptitudes",
+                (("Aptitude", list(APTITUDES.keys())), ("Niveau", "entier")))
+        aptitudes.parent = self
+        aptitudes.apercu = "{valeur}"
+        aptitudes.aide_courte = dedent("""\
+            Entrez |cmd|/|ff| pour revenir à la fenêtre parente.
+
+            Vous pouvez configurer ici les aptitudes du familier. Le
+            tableau ci-dessous représente les aptitudes du familier
+            et le niveau à partir duquel cette aptitude est active.
+            Si vous voulez qu'un familier ait l'aptitude dès son apparition,
+            précisez un niveau de 1 (les PNJ ne peuvent pas avoir un niveau
+            inférieur). Un niveau au-delà de 100 n'aura aucun effet.
+            Aptitudes existantes : {noms}.
+            Pour ajouter une ligne dans le tableau, entrez le nom de
+            l'aptitude, un signe |cmd|/|ff| et le niveau d'activation
+            de l'aptitude. Par exemple :
+             |ent|suivre_maitre / 30|ff|
+            Utilisez l'option |ent|/s|ff| suivi du nom de l'aptitude
+            pour l'effacer de ce tableau. Par exemple :
+             |cmd|/s suivre_maitre|ff|
+            Apttitudes configurées pour ce familier :
+            {{valeur}}""".format(noms=noms))
 
         # Harnachements supportés
         harnachements = self.ajouter_choix("harnachement supportés", "h",

@@ -78,6 +78,10 @@ class Decor(BaseObj):
     def get_nom_etat(self, nombre=1):
         return self.prototype.get_nom_etat(nombre)
 
+    def get_nom_pour(self, personnage):
+        """Retourne le nom pour le personnage précisé."""
+        return self.get_nom()
+
     def regarder(self, personnage):
         """Le personnage regarde self."""
         ret = "Vous regardez {} :\n\n".format(self.get_nom())

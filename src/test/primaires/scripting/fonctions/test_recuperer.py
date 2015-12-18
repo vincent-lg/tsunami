@@ -39,7 +39,7 @@ class TestRecuperer(TestCommande, ManipulationJoueur, ManipulationScripting,
 
     """Tests unitaires de la fonction scripting 'recuperer'."""
 
-    def test_liste(self):
+    def test_positif(self):
         """Essaye de récupérer un élément d'une liste."""
         joueur = self.creer_joueur("simple", "Kredh")
         with self.scripter(joueur.salle, "dit") as test:
@@ -50,5 +50,19 @@ class TestRecuperer(TestCommande, ManipulationJoueur, ManipulationScripting,
             """)
             msg = self.entrer_commande(joueur, "dire k")
             self.assertEqual(msg, "Vous dites : k\nd")
+
+        self.supprimer_joueur(joueur)
+
+    def test_negatif(self):
+        """Essaye de récupérer un élément d'une liste avec indice négatif."""
+        joueur = self.creer_joueur("simple", "Kredh")
+        with self.scripter(joueur.salle, "dit") as test:
+            test.ajouter_instructions("""
+                lettres = liste("a", "b", "c", "d", "e", "f", "g")
+                extrait = recuperer(lettres, -1)
+                dire personnage "${extrait}"
+            """)
+            msg = self.entrer_commande(joueur, "dire k")
+            self.assertEqual(msg, "Vous dites : k\ng")
 
         self.supprimer_joueur(joueur)

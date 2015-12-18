@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,13 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module information."""
+"""Fichier contenant la fonction nom_familier."""
 
-from . import aide
-from . import annonces
-from . import hedit
-from . import newsletter
-from . import reboot
-from . import roadmap
-from . import tips
-from . import versions
+from primaires.scripting.fonction import Fonction
+from primaires.scripting.instruction import ErreurExecution
+
+class ClasseFonction(Fonction):
+
+    """Retourne le nom du familier derrière un PNJ."""
+
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.nom_familier, "Personnage")
+
+    @staticmethod
+    def nom_familier(pnj):
+        """Retourne le nom du familier derrière un PNJ.
+
+        Paramètres à préciser :
+
+          * pnj : le PNJ familier
+
+        Si le PNJ précisé n'est pas un familier, envoie une alerte
+        au système. Il est donc plus judicieux de vérifier auparavant
+        que le PNJ est bien un familier :
+
+          si est_familier(pnj):
+              nom = nom_familier(pnj)
+
+        """
+        identifiant = getattr(pnj, "identifiant", None)
+        if identifiant not in importeur.familier.familiers:
+            raise ErreurExecution("le PNJ {} n'est pas un familier".format(
+                    repr(identifiant)))
+
+        familier = importeur.familier.familiers[identifiant]
+        return familier.nom

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,13 +28,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module information."""
+"""Fichier contenant la classe Aptitude détaillée plus bas."""
 
-from . import aide
-from . import annonces
-from . import hedit
-from . import newsletter
-from . import reboot
-from . import roadmap
-from . import tips
-from . import versions
+class Aptitude:
+
+    """Classe abstraite parente des aptitudes.
+
+    Les aptitudes des families représentent des savoirs faire propres
+    à certains et dépendant généralement du niveau principal du
+    familier. Si bien qu'un familier gagne souvent en aptitudes au
+    fur et à mesure qu'il est entraîné.
+
+    Cette classe définit la méthode de classe 'agir' qui prend un
+    nombre variable de paramètres, dépendant de l'aptitude (le contexte
+    d'appel de cette méthode est spécifique à un évènement).
+
+    """
+
+    @classmethod
+    def agir(self, familier):
+        """Fait agir le familier selon son aptitude."""
+        raise NotImplementedError

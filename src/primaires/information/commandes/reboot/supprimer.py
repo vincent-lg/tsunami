@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,13 +28,31 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module information."""
+"""Fichier contenant le paramètre 'supprimer' de la commande 'reboot'."""
 
-from . import aide
-from . import annonces
-from . import hedit
-from . import newsletter
-from . import reboot
-from . import roadmap
-from . import tips
-from . import versions
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmSupprimer(Parametre):
+
+    """Commande 'reboot supprimer'."""
+
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "supprimer", "del")
+        self.schema = "<nombre>"
+        self.aide_courte = "supprime une version différée"
+        self.aide_longue = \
+            "Cette sous-commande supprime la version différée " \
+            "présente dans le reboot programmé. Vous devez préciser " \
+            "le numéro de la version, entre 1 et N."
+
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        nb = dic_masques["nombre"].nombre
+        reboot = importeur.information.get_reboot()
+        try:
+            del reboot.versions[nb - 1]
+        except IndexError:
+            personnage << "|err|Cette version ne peut être trouvée.|ff|"
+        else:
+            personnage << "La version #{} a bien été supprimée.".format(nb)

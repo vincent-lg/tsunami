@@ -403,6 +403,10 @@ class Navire(Vehicule):
 
         return nb
 
+    def get_nom_pour(self, personnage):
+        """Retourne le nom pour le personnage précisé."""
+        return self.desc_survol
+
     def a_le_droit(self, personnage, poste="capitaine", si_present=False):
         """Retourne True si le personnage a le droit, False sinon.
 
@@ -490,7 +494,7 @@ class Navire(Vehicule):
     def construire_depuis_modele(self, premiere=True):
         """Construit le navire depuis le modèle."""
         modele = self.modele
-        
+
         # On recopie les salles
         for r_coords, salle in modele.salles.items():
             n_salle = self.salles.get(r_coords)
@@ -505,7 +509,7 @@ class Navire(Vehicule):
             elif premiere:
                 n_salle.description.copier_depuis(salle.description)
                 n_salle.details.copier_depuis(salle.details, True)
-            
+
             n_salle.interieur = salle.interieur
             n_salle.poste = salle.poste
             n_salle.noyable = salle.noyable
@@ -622,7 +626,7 @@ class Navire(Vehicule):
         vit_or = vit_fin = self.vitesse_noeuds
         origine = self.opt_position
         vitesse = self.opt_vitesse
-        
+
         # Si le navire est à fond plat
         if self.modele.fond_plat and not etendue.eau_douce and \
                 etendue.profondeur > 4 and random() < 0.07:
@@ -631,7 +635,7 @@ class Navire(Vehicule):
                     "fait chavirer l'embarcation !|ff|")
             self.sombrer()
             return
-        
+
         if not self.immobilise:
             # On contrôle les collisions
             # On cherche toutes les positions successives du navire
@@ -664,7 +668,7 @@ class Navire(Vehicule):
                     self.position.z = z
                     self.maj_salles()
                     return
-                
+
                 self.etendue = autre
                 self.position.z = autre.altitude
                 autre.script["entre"].executer(centre=self.centre,

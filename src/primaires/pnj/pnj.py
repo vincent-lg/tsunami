@@ -190,9 +190,10 @@ class PNJ(Personnage):
 
     def get_nom_pour(self, personnage, retenu=True):
         """Retourne le nom pour le personnage passé en paramètre."""
-        noms = importeur.hook["pnj:nom"].executer(self, personnage)
-        if any(noms):
-            return noms[0]
+        if retenu:
+            noms = importeur.hook["pnj:nom"].executer(self, personnage)
+            if any(noms):
+                return noms[0]
 
         return self.nom_singulier
 

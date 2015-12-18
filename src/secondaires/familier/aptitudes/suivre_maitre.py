@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,13 +28,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module information."""
+"""Fichier contenant la classe SuivreMaitre détaillée plus bas."""
 
-from . import aide
-from . import annonces
-from . import hedit
-from . import newsletter
-from . import reboot
-from . import roadmap
-from . import tips
-from . import versions
+from secondaires.familier.aptitudes.aptitude import Aptitude
+
+class SuivreMaitre(Aptitude):
+
+    """Aptitude demandant à un familier de suivre son maître.
+
+    La méthode de classe 'agir' est ainsi appelée au moment du déplacement
+    du maître, si le familier se trouve dans la même salle.
+
+    """
+
+    @classmethod
+    def agir(self, familier, personnage, sortie):
+        """Fait agir le familier selon son aptitude."""
+        familier.pnj.deplacer_sortie(sortie)

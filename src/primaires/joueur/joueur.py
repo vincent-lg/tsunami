@@ -225,7 +225,7 @@ class Joueur(Personnage):
         elif hasattr(personnage, "retenus") and self in personnage.retenus \
                 and retenu:
             return personnage.retenus[self]
-        elif hasattr(personnage, "controle_par") and personnage.controle_par:
+        elif getattr(personnage, "controle_par", None):
             return self.get_nom_pour(personnage.controle_par, retenu)
         else:
             return self.get_distinction_visible()
@@ -254,6 +254,8 @@ class Joueur(Personnage):
                     l_aff.append(objet.get_nom_pour(self))
                 else:
                     return
+            elif hasattr(objet, "get_nom_pour"):
+                l_aff.append(objet.get_nom_pour(self))
             else:
                 l_aff.append(str(objet))
 
@@ -264,6 +266,8 @@ class Joueur(Personnage):
                     d_aff[cle] = objet.get_nom_pour(self)
                 else:
                     return
+            elif hasattr(objet, "get_nom_pour"):
+                d_aff[cle] = objet.get_nom_pour(self)
             else:
                 d_aff[cle] = str(objet)
 
@@ -278,7 +282,7 @@ class Joueur(Personnage):
         """Méthode appelée à chaque tick."""
         if self.afk:
             return
-        
+
         if self.est_mort():
             self.cpt_mort += 1
             if self.cpt_mort <= 12:

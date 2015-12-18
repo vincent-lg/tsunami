@@ -90,6 +90,8 @@ from bases.interactif import ConsoleInteractive, ThreadConsole
 def arreter_MUD():
     """Fonction appelée pour arrêter le MUD proprement"""
     global importeur, log
+    sys.__stdout__.write("\rArrêt du MUD en cours...\n")
+    sys.__stdout__.flush()
     importeur.deconnecter_joueurs()
 
     importeur.tout_detruire()

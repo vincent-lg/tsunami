@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2015 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,13 +28,21 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module information."""
+"""Fichier contenant la classe ProtegerMaitre détaillée plus bas."""
 
-from . import aide
-from . import annonces
-from . import hedit
-from . import newsletter
-from . import reboot
-from . import roadmap
-from . import tips
-from . import versions
+from secondaires.familier.aptitudes.aptitude import Aptitude
+
+class ProtegerMaitre(Aptitude):
+
+    """Aptitude demandant à un familier de protéger son maître en combat.
+
+    Si un personnage attaque le maître, le familier va essayer de
+    s'interposer. Cette aptitude n'est pas appelée quand le maître
+    attaque un personnage.
+
+    """
+
+    @classmethod
+    def agir(self, familier, maitre, adversaire, combat):
+        """Fait agir le familier selon son aptitude."""
+        pass

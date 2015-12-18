@@ -229,6 +229,10 @@ class BaseType(BaseObj, metaclass=MetaType):
                         return nom[1]
             return str(nombre) + " " + self.nom_pluriel
 
+    def get_nom_pour(self, personnage):
+        """Retourne le nom pour le personnage précisé."""
+        return self.get_nom()
+
     def get_nom_etat(self, nombre):
         """Retourne le nom et l'état en fonction du nombre."""
         nom = self.get_nom(nombre)
