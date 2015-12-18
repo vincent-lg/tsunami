@@ -72,7 +72,7 @@ class ClasseFonction(Fonction):
                     "comme indice de liste. Seuls des nombres entiers " \
                     "(1, 2, 3, ...) sont acceptés".format(indice))
 
-        if indice == 1:
+        if indice == 0:
             raise ErreurExecution("l'indice précisé doit être positif ou " \
                     "négatif".format(indice))
 
