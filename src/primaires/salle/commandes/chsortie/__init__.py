@@ -41,10 +41,16 @@ from primaires.interpreteur.masque.exceptions.erreur_interpretation import \
 AIDE = """
 Cette commande permet de configurer une sortie de la salle où vous
 vous trouvez. Vous devez lui préciser le nom de la direction absolue
-dans laquelle vous voulez créer votre sortie, puis l'identifiant de la
-salle à lier. Si vous vous trouvez dans la salle |ent|picte:1|ff| et
-que vous entrez %chsortie% |ent|nord picte:2|ff|, une sortie |ent|nord|ff|
-sera créée menant de la salle |ent|picte:1|ff|  |ent|picte:2|ff|. Sauf
+dans laquelle vous voulez créer votre sortie. Vous pouvez préciser
+en paramètre supplémentaire l'identifiant de la salle à lier. Si
+cette information n'est pas précisée, le système essaye de trouver
+la salle se trouvant aux coordonnées correspondantes.
+Si vous vous trouvez dans la salle en coordonnées |ent|0.0.0|ff| et faites
+%chsortie%|cmd| est|ff|, le système essayera de relier la salle
+actuelle à la salle de coordonnées |ent|1.0.0|ff|.
+Si vous vous trouvez dans la salle |ent|picte:1|ff| et que vous entrez
+%chsortie% |ent|nord picte:2|ff|, une sortie |ent|nord|ff| sera créée
+menant de la salle |ent|picte:1|ff|  |ent|picte:2|ff|. Sauf
 option, sa réciproque sera également créée, c'est-à-dire la sortie
 |ent|sud|ff| menant de |ent|picte:2|ff| vers |ent|picte:1|ff|.
 Après l'identifiant de la salle cible, vous pouvez préciser des options
@@ -67,7 +73,7 @@ class CmdChsortie(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "chsortie", "setexit")
         self.groupe = "administrateur"
-        self.schema = "<direction> <ident_salle> (<texte_libre>)"
+        self.schema = "<direction> (<ident_salle> <texte_libre>)"
         self.nom_categorie = "batisseur"
         self.aide_courte = "modifie une sortie de la salle courante"
         self.aide_longue = AIDE
@@ -80,7 +86,21 @@ class CmdChsortie(Commande):
 
         direction = dic_masques["direction"].direction
         salle = personnage.salle
-        d_salle = dic_masques["ident_salle"].salle
+        if dic_masques["ident_salle"]:
+            d_salle = dic_masques["ident_salle"].salle
+        elif salle.coords.valide:
+            d_coords = getattr(salle.coords, direction.replace("-", ""))
+            d_salle = importeur.salle._coords.get(d_coords.tuple())
+            if d_salle is None:
+                personnage << "|err|Impossible de trouver la salle " \
+                        "dans la direction {} de coordonnées {}.|ff|".format(
+                        direction, d_coords)
+                return
+        else:
+            personnage << "|err|La salle actuelle n'a pas de coordonnées " \
+                    "valides.|ff|"
+            return
+
         options = ""
         if dic_masques["texte_libre"]:
             options = dic_masques["texte_libre"].texte
