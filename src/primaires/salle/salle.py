@@ -219,20 +219,20 @@ class Salle(BaseObj):
     def a_magasin(self):
         """Y a-t-il un magasin dans cette salle ?"""
         return self.magasin is not None
-    
+
     @property
     def nb_sorties(self):
         """Retourne le mombre de sorties."""
         sorties = [s for s in self.sorties if s and s.salle_dest]
         return len(sorties)
-    
+
     @property
     def details_etendus(self):
         """Retourne la liste des détails étendus.
-        
+
         Cette méthode retourne les détails de la salle et ceux des
         flottantes contenus dans la description.
-        
+
         """
         details = self.details._details.copy()
         description = self.description
@@ -243,7 +243,7 @@ class Salle(BaseObj):
                 for d in flottante.details:
                     if d.nom not in details:
                         details[d.nom] = d
-        
+
         return tuple(details.values())
 
     def voit_ici(self, personnage):
@@ -260,6 +260,7 @@ class Salle(BaseObj):
             La salle est en extérieure et :
                 Il fait jour ou
                 Le ciel est dégagé
+            Une lumière est posée sur le sol
             Le personnage a une lumière
 
         """
@@ -273,7 +274,7 @@ class Salle(BaseObj):
                 (personnage.prototype.a_flag("nyctalope") or \
                 personnage.controle_par):
             return True
-        
+
         if self.ident in importeur.salle.feux:
             return True
 
@@ -294,6 +295,12 @@ class Salle(BaseObj):
             if perturbation is None or not perturbation.est_opaque():
                 return True
 
+        # Vérification des lumières au sol
+        for objet in self.objets_sol:
+            if objet.est_de_type("lumière") and objet.allumee_depuis:
+                return True
+
+        # Vérification des lumières équipées
         for objet in personnage.equipement.equipes:
             if objet.est_de_type("lumière") and objet.allumee_depuis:
                 return True
@@ -314,7 +321,7 @@ class Salle(BaseObj):
                 for d in flottante.details:
                     if d.a_flag(flag):
                         return True
-        
+
         return False
 
     def personnage_est_present(self, personnage):
