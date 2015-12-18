@@ -64,7 +64,9 @@ class ClasseAction(Action):
 
         """
         if "chevauche" in personnage.etats:
-            personnage.etats.retirer("chevauche")
+            etat = personnage.etats.get("chevauche")
+            if etat.monture:
+                etat.familier.desarconner(personnage)
         else:
             raise ErreurExecution("le personnage {} ne chevauche aucune " \
                     "monture".format(personnage))

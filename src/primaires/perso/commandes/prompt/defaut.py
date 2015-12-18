@@ -102,6 +102,5 @@ class PrmDefaut(Parametre):
         for symbole, repl in self.prompt.symboles.items():
             prompt = prompt.replace("{" + repl + "}", "%" + symbole)
 
-        prompt = prompt.replace("{", "{{").replace("}", "}}")
         personnage << self.prompt.aide_courte.capitalize() + " actuel : " + \
                 prompt
