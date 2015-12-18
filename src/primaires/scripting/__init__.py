@@ -188,6 +188,8 @@ class Module(BaseModule):
                 "etendue": importeur.salle.etendues,
                 "objet": importeur.objet._objets,
                 "prototype d'objet": importeur.objet._prototypes,
+                "PNJ": importeur.pnj._PNJ,
+                "prototype de PNJ": importeur.pnj._prototypes,
                 "salle": importeur.salle._salles,
                 "zone": importeur.salle._zones,
         })
