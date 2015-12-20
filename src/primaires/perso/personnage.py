@@ -1040,6 +1040,22 @@ class Personnage(BaseObj):
             stat_liee = self.stats[liee]
             stat_liee.courante = stat_liee.courante + stat.courante
 
+    def retirer(self, objet, qtt=1):
+        """Retire l'objet indiqué de l'inventaire."""
+        if self.equipement:
+            for membre in self.equipement.membres:
+                objets = list(membre.equipe) + [membre.tenu]
+                for objet in objets:
+                    if hasattr(objet, "conteneur"):
+                        qtt -= objet.conteneur.retirer(objet, qtt)
+                        if qtt <= 0:
+                            break
+
+                if qtt <= 0:
+                    break
+
+            print("On a essayé de retirer", objet, qtt)
+
     def ramasser(self, objet, exception=None, qtt=1):
         """Ramasse l'objet objet.
 
