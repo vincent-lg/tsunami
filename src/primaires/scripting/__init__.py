@@ -58,6 +58,7 @@ from .script import scripts
 from .alerte import Alerte
 from .commande_dynamique import CommandeDynamique
 from .memoires import Memoires
+from .structure import StructureComplete
 
 class Module(BaseModule):
 
@@ -88,6 +89,7 @@ class Module(BaseModule):
         }
         self.execute_test = []
         self.alarmes = {}
+        self.structures = {}
 
         # Statistiques
         self.tps_actions = 0.003
@@ -164,6 +166,11 @@ class Module(BaseModule):
         for cmd in commandes_dynamiques:
             self.commandes_dynamiques[cmd.nom_francais] = cmd
             cmd.ajouter()
+
+        # Chargement des structures
+        structures = self.importeur.supenr.charger_groupe(StructureComplete)
+        for structure in structures:
+            self.ajouter_structure(structure)
 
         if alertes:
             Alerte.no_actuel = max(a.no for a in alertes)
@@ -309,6 +316,44 @@ class Module(BaseModule):
         commande.ajouter()
         self.commandes_dynamiques[nom_francais] = commande
         return commande
+
+    def creer_structure(self, nom):
+        """Crée une structure complète, c'est-à-dire enregistrable."""
+        structure = StructureComplete(nom)
+        return self.ajouter_structure(structure)
+
+    def ajouter_structure(self, structure):
+        """Ajout d'une structure complète.
+
+        On en profite pour vérifier si la sstructure à un ID valide,
+        et sinon, on en cherche un.
+
+        """
+        nom = structure.structure
+        groupe = self.structures.get(nom, {})
+        if groupe:
+            id_libre = max(s.id for s in groupe.values()) + 1
+        else:
+            id_libre = 1
+
+        if structure.id == 0:
+            structure.id = id_libre
+
+        if structure.id in groupe:
+            raise ValueError("La structure {} d'ID {} existe déjà".format(
+                    nom, structure.id))
+
+        groupe[structure.id] = structure
+        if nom not in self.structures:
+            self.structures[nom] = groupe
+
+        return structure
+
+    def supprimer_structure(self, structure):
+        """Supprime la structure indiquée."""
+        groupe = self.structures[structure.structure]
+        del groupe[structure.id]
+        structure.detruire()
 
     def ecrire_documentation(self):
         """Écrit la documentation disponible au format Dokuwiki.
