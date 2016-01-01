@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 EILERS Christoff
+# Copyright (c) 2010-2016 EILERS Christoff
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
