@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 NOEL-BARON Léo
+# Copyright (c) 2010-2016 NOEL-BARON Léo
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
