@@ -28,41 +28,54 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction recuperer."""
+"""Fichier contenant l'action ecrire."""
 
 from corps.fonctions import valider_cle
-from primaires.scripting.fonctions.recuperer_valeur_dans_liste import \
-        ClasseFonction as CF
+from primaires.scripting.action import Action
+from primaires.scripting.instruction import ErreurExecution
 
-class ClasseFonction(CF):
+class ClasseAction(Action):
 
-    """Récupère la valeur d'une liste."""
+    """écrit une information dans une structure."""
 
     @classmethod
     def init_types(cls):
-        super(ClasseFonction, cls).init_types()
-        cls.ajouter_types(cls.recuperer_structure, "Structure", "str")
+        cls.ajouter_types(cls.ecrire, "Structure", "str", "object")
 
     @staticmethod
-    def recuperer_structure(structure, cle):
-        """Récupère la valeur contenue dans la case de clé indiquée.
+    def ecrire(structure, cle, valeur):
+        """Écrit l'information dans la structure indiquée.
 
         Paramètres à préciser :
 
-          * structure : la structure qui nous occupe ici
-          * cle : la clé de la case d'information à retrouver
+          * structure : la structure à modifier
+          * cle : la clé de la case à modifier
+          * valeur : la valeur de la case à écrire (tous types acceptés)
 
         Exemple d'utilisation :
 
-          # Sur une structure enregistrée dans un groupe, on pourrait faire :
-          id = recuperer(structure, "id")
-          # Pour récupérer son ID. Ou bien une autre case :
-          message = recuperer(structure, "message")
-          # Si la case de la clé indiquée n'existe pas, retourne
-          # une valeur nulle qu'on peut donc tester.
-          si message:
-            # ...
+          ecrire structure "nom" "Quelque chose"
+          ecrire structure "numero" 5
+          ecrire structure "elements" liste(1, 2, 3, 8)
+          ecrire structure "coupable" joueur("Kredh")
+
+        **ATTENTION** : la clé de case doit être une clé (sans
+        majuscules ni accents, ne comprenant que des lettres et
+        des chiffres, ainsi que le signe souligné _, si il n'est
+        pas en début de mot). Les noms suivants sont par ailleurs interdits :
+
+          "e_existe", "get_nom_pour", "id", "structure"
 
         """
         valider_cle(cle)
-        return getattr(structure, cle, None)
+
+        if cle.startswith("_"):
+            raise ErreurExecution("la clé précisée {} commence par " \
+                    "un signe souligné".format(repr(cle)))
+
+        interdits = ("e_existe", "get_nom_pour", "id", "structure")
+        if cle in interdits:
+            raise ErreurExecution("Ce nom de clé est interdit. Clés " \
+                    "interdites : {}.".format(repr(interdits)))
+
+        setattr(structure, cle, valeur)

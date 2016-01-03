@@ -28,41 +28,52 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction recuperer."""
+"""Fichier contenant la fonction structure."""
 
-from corps.fonctions import valider_cle
-from primaires.scripting.fonctions.recuperer_valeur_dans_liste import \
-        ClasseFonction as CF
+from primaires.scripting.fonction import Fonction
+from primaires.scripting.instruction import ErreurExecution
 
-class ClasseFonction(CF):
+class ClasseFonction(Fonction):
 
-    """Récupère la valeur d'une liste."""
+    """Retourne la structure précisée."""
 
     @classmethod
     def init_types(cls):
-        super(ClasseFonction, cls).init_types()
-        cls.ajouter_types(cls.recuperer_structure, "Structure", "str")
+        cls.ajouter_types(cls.structure, "str", "Fraction")
 
     @staticmethod
-    def recuperer_structure(structure, cle):
-        """Récupère la valeur contenue dans la case de clé indiquée.
+    def structure(groupe, id):
+        """Retourne la structure spécifiée.
+
+        Cette fonction retourne la structure du groupe et de l'ID
+        indiquée. Elle crée une alerte si la structure ne peut être
+        trouvée.
 
         Paramètres à préciser :
 
-          * structure : la structure qui nous occupe ici
-          * cle : la clé de la case d'information à retrouver
+          * groupe : le nom du groupe de la sstructure (une chaîne)
+          * id : l'identifiant cette structure dans son groupe (un nombre)
 
-        Exemple d'utilisation :
+        La première structure créée dans un groupe possède l'ID
+        1. La seconde l'ID 2. Et ainsi de suite. Ne vous fiez pas
+        au nombre de structures du groupe pour déduire les ID,
+        cependant. Si les structures d'ID 1, 2 puis 3 sont créées,
+        puis que celle d'ID 2 est supprimée, la prochaine créée
+        aura l'ID 4. Il y aura donc les structures d'ID 1, 3 et 4.
 
-          # Sur une structure enregistrée dans un groupe, on pourrait faire :
-          id = recuperer(structure, "id")
-          # Pour récupérer son ID. Ou bien une autre case :
-          message = recuperer(structure, "message")
-          # Si la case de la clé indiquée n'existe pas, retourne
-          # une valeur nulle qu'on peut donc tester.
-          si message:
-            # ...
+        Exemples d'utilisation :
+
+          journal = structure("journal", 8)
 
         """
-        valider_cle(cle)
-        return getattr(structure, cle, None)
+        st_groupe = importeur.scripting.structures.get(groupe)
+        if st_groupe is None:
+            raise ErreurExecution("Le groupe {} est inconnu".format(repr(
+                    groupe)))
+
+        structure = st_groupe.get(int(id))
+        if structure is None:
+            raise ErreurExecution("La structure de groupe {} et d'ID " \
+                    "{} est introuvable".format(repr(groupe), int(id)))
+
+        return structure

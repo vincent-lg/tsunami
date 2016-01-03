@@ -79,6 +79,10 @@ class StructureSimple(BaseObj):
         else:
             self.donnees[nom] = valeur
 
+    def get_nom_pour(self, personnage):
+        """Affichage d'une structure."""
+        return str(self)
+
 
 class StructureComplete(StructureSimple):
 

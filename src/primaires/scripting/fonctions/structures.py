@@ -28,41 +28,44 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction recuperer."""
+"""Fichier contenant la fonction structures."""
 
-from corps.fonctions import valider_cle
-from primaires.scripting.fonctions.recuperer_valeur_dans_liste import \
-        ClasseFonction as CF
+from primaires.scripting.fonction import Fonction
+from primaires.scripting.instruction import ErreurExecution
 
-class ClasseFonction(CF):
+class ClasseFonction(Fonction):
 
-    """Récupère la valeur d'une liste."""
+    """Retourne les structures du groupe indiqué."""
 
     @classmethod
     def init_types(cls):
-        super(ClasseFonction, cls).init_types()
-        cls.ajouter_types(cls.recuperer_structure, "Structure", "str")
+        cls.ajouter_types(cls.structures, "str")
 
     @staticmethod
-    def recuperer_structure(structure, cle):
-        """Récupère la valeur contenue dans la case de clé indiquée.
+    def structures(groupe):
+        """Retourne les structures du groupe indiqué.
 
         Paramètres à préciser :
 
-          * structure : la structure qui nous occupe ici
-          * cle : la clé de la case d'information à retrouver
+          * groupe : le nom du groupe des structures
 
-        Exemple d'utilisation :
+        Exemples d'utilisation :
 
-          # Sur une structure enregistrée dans un groupe, on pourrait faire :
-          id = recuperer(structure, "id")
-          # Pour récupérer son ID. Ou bien une autre case :
-          message = recuperer(structure, "message")
-          # Si la case de la clé indiquée n'existe pas, retourne
-          # une valeur nulle qu'on peut donc tester.
-          si message:
-            # ...
+          journaux = structures("journal")
+          # C'est une liste que l'on peut parcourir
 
         """
-        valider_cle(cle)
-        return getattr(structure, cle, None)
+        st_groupe = importeur.scripting.structures.get(groupe)
+        if st_groupe is None:
+            raise ErreurExecution("Le groupe {} est inconnu".format(repr(
+                    groupe)))
+
+        structures = list(st_groupe.values())
+        structures = sorted(structures, key=lambda s: s.id)
+        return structures
+
+        if structures is None:
+            raise ErreurExecution("La structures de groupe {} et d'ID " \
+                    "{} est introuvable".format(repr(groupe), int(id)))
+
+        return structures
