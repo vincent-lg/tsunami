@@ -59,6 +59,7 @@ from .alerte import Alerte
 from .commande_dynamique import CommandeDynamique
 from .memoires import Memoires
 from .structure import StructureComplete
+from .editeur_personnalise import EditeurPersonnalise
 
 class Module(BaseModule):
 
@@ -90,6 +91,7 @@ class Module(BaseModule):
         self.execute_test = []
         self.alarmes = {}
         self.structures = {}
+        self.editeurs = {}
 
         # Statistiques
         self.tps_actions = 0.003
@@ -171,6 +173,11 @@ class Module(BaseModule):
         structures = self.importeur.supenr.charger_groupe(StructureComplete)
         for structure in structures:
             self.ajouter_structure(structure)
+
+        # Chargement des editeurs
+        editeurs = self.importeur.supenr.charger_groupe(EditeurPersonnalise)
+        for editeur in editeurs:
+            self.ajouter_editeur(editeur)
 
         if alertes:
             Alerte.no_actuel = max(a.no for a in alertes)
@@ -354,6 +361,29 @@ class Module(BaseModule):
         groupe = self.structures[structure.structure]
         del groupe[structure.id]
         structure.detruire()
+
+    def creer_editeur(self, structure):
+        """Crée un éditeur sur le nom de la structure."""
+        if structure in self.editeurs:
+            raise ValueError("L'éditeur pour la structure {} existe " \
+                    "déjà".format(repr(structure)))
+
+        editeur = EditeurPersonnalise(structure)
+        self.ajouter_editeur(editeur)
+        return editeur
+
+    def ajouter_editeur(self, editeur):
+        """Ajoute un éditeur personnalisé."""
+        structure = editeur.structure
+        if structure in self.editeurs:
+            raise ValueError("L'éditeur pour la structure {} existe " \
+                    "déjà".format(repr(structure)))
+
+        self.editeurs[structure] = editeur
+
+    def supprimer_editeur(self, structure):
+        """Supprime l'éditeur personnalisé indiqué."""
+        self.editeurs.pop(structure).detruire()
 
     def ecrire_documentation(self):
         """Écrit la documentation disponible au format Dokuwiki.

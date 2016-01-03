@@ -33,7 +33,7 @@
 from collections import OrderedDict
 
 from corps.math import aff_flottant
-from primaires.format.fonctions import oui_ou_non
+from primaires.format.fonctions import oui_ou_non, supprimer_accents
 from . import Editeur
 from .quitter import Quitter
 from .env_objet import EnveloppeObjet
@@ -72,6 +72,7 @@ class Presentation(Editeur):
     def ajouter_choix(self, nom, raccourci, objet_editeur,
             objet_edite=None, attribut=None, *sup):
         """Ajoute un choix possible :
+
         -   nom : le nom affiché dans la présentation (exemple 'description')
         -   raccourci : le raccourci pour entrer dans le sous éditeur ('d')
         -   objet_editeur : l'objet contexte-édieur (ex. zone de texte)
@@ -79,12 +80,35 @@ class Presentation(Editeur):
         -   l'attribut à éditer : par défaut aucun
 
         """
+        if raccourci is None:
+            titre = supprimer_accents(nom).lower()
+            nb = 1
+            while nb < len(titre):
+                i = 0
+                while i + nb <= len(titre):
+                    morceau = titre[i:i + nb]
+                    if morceau not in self.raccourcis:
+                        raccourci = morceau
+                        break
+
+                    i += 1
+
+                if raccourci:
+                    break
+
+                nb += 1
+
+            if raccourci is None:
+                raise ValueError("Impossible de trouver " \
+                    "le raccourci pour {}".format(self))
+
         return self.ajouter_choix_avant(self.nom_quitter, nom, raccourci,
                 objet_editeur, objet_edite, attribut, *sup)
 
     def ajouter_choix_apres(self, apres, nom, raccourci, objet_editeur,
             objet_edite=None, attribut=None, *sup):
         """Ajout le choix après 'apres'.
+
         Pour les autres arguments, voir la méthode 'ajouter_choix'.
 
         """

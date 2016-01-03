@@ -70,7 +70,7 @@ class StructureSimple(BaseObj):
         if "_statut" not in self.__dict__ or not self.construit:
             return object.__getattr__(self, nom)
         else:
-            return self.donnees[nom]
+            return self.donnees.get(nom)
 
     def __setattr__(self, nom, valeur):
         """Modifie la donnée."""
