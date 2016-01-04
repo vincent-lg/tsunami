@@ -78,6 +78,8 @@ class Uniligne(Editeur):
         valeur = "inconnue"
         if isinstance(self.attribut, str):
             valeur = getattr(self.objet, self.attribut, "inconnue")
+            if valeur is None:
+                valeur = "non précisé"
 
         return self.aide_courte.format(objet = self.objet, valeur=valeur)
 

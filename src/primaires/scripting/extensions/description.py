@@ -28,18 +28,28 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package 'extension' du moedule scripting.
+"""Module contenant la classe description, détaillée plus bas."""
 
-Dans ce package sont définis les extensions d'un éditeur personnalisé.
+from primaires.interpreteur.editeur.description import Description as EdtDesc
+from primaires.scripting.extensions.base import Extension
 
-"""
+class Description(Extension):
 
-from primaires.scripting.extensions.chaine import Chaine
-from primaires.scripting.extensions.description import Description
-from primaires.scripting.extensions.nombre import Nombre
+    """Classe représentant le type éditable 'description'.
 
-EXTENSIONS = {
-        "chaine": Chaine,
-        "description": Description,
-        "nombre": Nombre,
-}
+    Ce type utilise l'éditeur Description.
+
+    """
+
+    extension = "description"
+    aide = "une description, comprenant plusieurs paragraphes"
+
+    @property
+    def editeur(self):
+        """Retourne le type d'éditeur."""
+        return EdtDesc
+
+    @property
+    def arguments(self):
+        """Retourne les arguments de l'éditeur."""
+        return ()
