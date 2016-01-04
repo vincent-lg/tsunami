@@ -28,30 +28,70 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant l'éditeur d'éditeur personnalisé."""
+"""Fichier contenant la classe EdtPresentation, détaillée plus bas."""
 
-from primaires.interpreteur.editeur.presentation import Presentation
-from primaires.scripting.editeurs.personnalise import personnalise
+from primaires.interpreteur.editeur.aes import AES
+from primaires.scripting.extensions import EXTENSIONS
 
-class EdtEditeur(Presentation):
+aide = """
+Entrez |cmd|/q|ff| pour quitter cet éditeur.
+Ou |ent|la clé de l'éditeur|ff| pour l'éditer.
+Utilisez les options :
+ |ent|/a <clé_de_l_éditeur> / <type de donnée>|ff| pour ajouter un éditeur
+ |ent|/s <cle_de_l_éditeur>|ff| pour supprimer l'éditeur
 
-    """Classe définissant l'éditeur d'éditeur personnalisé."""
+Types de données existants :{types}
 
-    def __init__(self, personnage, editeur, structure):
-        """Constructeur de l'éditeur"""
+Exemples :
+ |cmd|/a titre / chaîne|ff|
+ (Ajoute l'éditeur de clé 'titre' et de type 'chaîne')
+ |cmd|titre|ff|
+ (Édite l'éditeur 'titre')
+ |cmd|/s titre|ff|
+ (Supprime l'éditeur 'titre')
+
+Éditeurs actuels :{{valeur}}
+""".strip()
+
+class EdtEditeurs(AES):
+
+    """Classe définissant l'éditeur d'une quête.
+
+    """
+
+    nom = "editeur"
+
+    def __init__(self, personnage, editeur):
+        """Constructeur de l'éditeur."""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
 
-        Presentation.__init__(self, instance_connexion, editeur)
-        if personnage and editeur and structure:
-            self.construire(editeur, structure)
+        AES.__init__(self, instance_connexion, editeur, "editeurs",
+                "personnalise", (("cle", "clé"), ("type", "chaîne")),
+                "get_editeur", "ajouter_editeur", "supprimer_editeur",
+                "cle_type")
+
+        # Options
+        types = ""
+        for extension in sorted(list(EXTENSIONS.values()),
+                key=lambda e: e.extension):
+            types += "\n  |ent|{:<10}|ff| : {}".format(
+                    extension.extension, extension.aide)
+
+        self.aide_courte = aide.format(types=types)
+        self.ajouter_option("q", self.opt_quitter)
 
     def __getnewargs__(self):
-        return (None, None, None)
+        return (None, None)
 
-    def construire(self, editeur, structure):
-        """Construction de l'éditeur"""
-        for sous_editeur in editeur.editeurs:
-            sous_editeur.creer(self, structure)
+    def opt_quitter(self, argument):
+        """Ferme l'éditeur.
+
+        Syntaxe :
+            /q
+
+        """
+        self.fermer()
+        self.pere.envoyer("Fermeture de l'éditeur.")

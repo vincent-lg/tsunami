@@ -52,6 +52,7 @@ from .quete.etape import Etape
 from .test import Test
 from .editeurs.qedit import EdtQedit
 from .editeurs.cmdedit import EdtCmdedit
+from .editeurs.personnalise.editeurs import EdtEditeurs
 from .config import *
 from .constantes.aide import *
 from .script import scripts
@@ -174,7 +175,7 @@ class Module(BaseModule):
         for structure in structures:
             self.ajouter_structure(structure)
 
-        # Chargement des editeurs
+        # Chargement des eurs
         editeurs = self.importeur.supenr.charger_groupe(EditeurPersonnalise)
         for editeur in editeurs:
             self.ajouter_editeur(editeur)
@@ -214,6 +215,7 @@ class Module(BaseModule):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.dyncom.CmdDyncom(),
+            commandes.editeur.CmdEditeur(),
             commandes.qedit.CmdQedit(),
             commandes.scripting.CmdScripting(),
         ]
@@ -224,6 +226,7 @@ class Module(BaseModule):
         # Ajout des éditeurs 'qedit' et 'cmdedit'
         self.importeur.interpreteur.ajouter_editeur(EdtQedit)
         self.importeur.interpreteur.ajouter_editeur(EdtCmdedit)
+        self.importeur.interpreteur.ajouter_editeur(EdtEditeurs)
 
     def preparer(self):
         """Préparation du module.

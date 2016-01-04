@@ -48,23 +48,30 @@ class AES(Editeur):
     ou retirer des éléments et éditer un élément précis (ce qui
     crée un nouvel éditeur).
 
-    Le constructeur attend un paramètre supplémentaire, la liste des
-    informations et de leur type, sous la forme d'un tuple de tuples
-    comme par exemple (("nom", "chaîne), ("age", "entier")). Ces
-    informations sont utilisées comme les colonnes d'un tableau à
-    la création. La première colonne est une colonne unique
-    (dans ce contexte, on ne peut avoir deux objets du même nom
-    dans la liste). L'information de la première colonne est utilisée
-    pour l'édition ou la suppression.
+    Le constructeur attend plusieurs paramètres, dont les deux premiers sont obligatoires :
 
-    Le constructeur possède également deux autres paramètres, le
-    nom de la méthode d'ajout et le nom de la méthode de suppression.
-    On peut préciser après un point (.) le type d'objet à renseigner.
-    Ce peut être "indice" (pour spécifier l'indice de la liste),
-    "clé" pour spécifier la première colonne ou "objet" pour
-    préciser l'objet à supprimer. Par exemple,
-    "supprimer_element.objet" enverra à la méthode 'supprimer_element'
-    de self.objet l'élément-même à supprimer.
+    *   Le nom de l'éditeur suivant appelé lors de l'édition
+        (peut rester à None si l'éditeur ne supporte pas l'édition
+        de sous-éléments) ;
+    *   La liste des informations et de leur type, sous la forme
+        d'un tuple de tuples comme par exemple
+        (("nom", "chaîne), ("age", "entier")). Ces informations sont
+        utilisées comme les colonnes d'un tableau à la création.
+        La première colonne est une colonne unique (dans ce contexte,
+        on ne peut avoir deux objets du même nom dans la liste).
+        L'information de la première colonne est utilisée pour l'édition
+        ou la suppression ;
+    *   Le nom de la méthode de récupération (le nom d'une méthode
+        définie dans l'objet passé en paramètre) ;
+    *   Le nom de la méthode d'ajout ;
+    *   Le nom de la méthode de suppression ;
+    *   Le nom de l'attribut d'affichage. Ce nom est recherché sur
+        l'élément ajouté, pas l'objet. Ce peut aussi être une propriété.
+
+    Utiliser cet éditeur est un peu complexe, mais beaucoup de code
+    est mis en place pour permettre une édition sur plusieurs niveaux
+    de façon transparente. Consultez les exemples dans le code pour
+    avoir une bonne idée de l'utilisation de cette méthode.
 
     """
 

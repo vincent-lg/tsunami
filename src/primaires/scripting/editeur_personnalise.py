@@ -87,8 +87,25 @@ class EditeurPersonnalise(BaseObj):
     def __str__(self):
         return self.structure
 
+    def get_editeur(self, nom, exception=True):
+        """Recherche l'éditeur passé en paramètre."""
+        nom = nom.lower()
+        for extension in self.editeurs:
+            if extension.nom == nom:
+                return extension
+
+        if exception:
+            raise ValueError("Extension {} inconnue".format(repr(nom)))
+
+        return None
+
     def ajouter_editeur(self, attribut, nom_type):
         """Ajoute un sous-éditeur, c'est-à-dire une extension."""
+        extension = self.get_editeur(attribut, False)
+        if extension:
+            raise ValueError("L'éditeur {} existe déjà".format(repr(
+                    attribut)))
+
         classe = None
         nom_type = supprimer_accents(nom_type).lower()
         for nom, extension in EXTENSIONS.items():
@@ -102,6 +119,11 @@ class EditeurPersonnalise(BaseObj):
         extension = classe(self.structure, attribut)
         self.editeurs.append(extension)
         return extension
+
+    def supprimer_editeur(self, nom):
+        """Supprime un sous-éditeur."""
+        extension = self.get_editeur(nom)
+        self.editeurs.remove(extension)
 
     def editer(self, personnage, structure):
         """Fait éditer le personnage."""

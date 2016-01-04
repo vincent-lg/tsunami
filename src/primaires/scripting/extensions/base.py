@@ -72,6 +72,10 @@ class Extension(BaseObj):
 
 
     @property
+    def cle_type(self):
+        return self.nom + " / " + type(self).extension
+
+    @property
     def editeur(self):
         """Retourne le type d'éditeur."""
         raise NotImplementedError

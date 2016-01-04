@@ -28,9 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant le paramètre 'editer' de la commande 'éditeur'."""
 
-from . import dyncom
-from . import editeur
-from . import qedit
-from . import scripting
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmEditer(Parametre):
+
+    """Paramètre 'éditer de la commande 'éditeur'."""
+
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "éditer", "edit")
+        self.schema = "<cle>"
+        self.aide_courte = "édite l'éditeur personnalisé"
+        self.aide_longue = \
+            "Cette commande permet d'éditer l'éditeur personnalisé " \
+            "lié à une structure. Vous devez passer en paramètre la " \
+            "clé de l'éditeur à éditer, qui est également la clé " \
+            "de la structure liée."
+
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        cle = dic_masques["cle"].cle
+
+        if cle not in importeur.scripting.editeurs:
+            personnage << "|err|L'éditeur {} n'existe pas.|ff|".format(
+                    repr(cle))
+            return
+
+        editeur = importeur.scripting.editeurs[cle]
+        editeur = importeur.interpreteur.construire_editeur("editeur",
+                personnage, editeur)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()

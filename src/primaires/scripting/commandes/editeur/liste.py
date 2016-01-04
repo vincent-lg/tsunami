@@ -28,9 +28,30 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'editeurs liste'."""
 
-from . import dyncom
-from . import editeur
-from . import qedit
-from . import scripting
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmListe(Parametre):
+
+    """Commande 'editeurs liste'"""
+
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "liste", "list")
+        self.aide_courte = "affiche les éditeurs personnalisés"
+        self.aide_longue = \
+            "Cette commande affiche la liste des éditeurs personnalisés."
+
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande."""
+        editeurs = sorted(list(importeur.scripting.editeurs.values()),
+                key=lambda e: e.structure)
+        if editeurs:
+            msg = "Éditeurs personnalisés existants :"
+            for editeur in editeurs:
+                msg += "\n  " + editeur.structure
+
+            personnage << msg
+        else:
+            personnage << "Aucun'éditeur personnalisé n'a encore été créé."

@@ -28,9 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'editeur'."""
 
-from . import dyncom
-from . import editeur
-from . import qedit
-from . import scripting
+from primaires.interpreteur.commande.commande import Commande
+from primaires.scripting.commandes.editeur.creer import PrmCreer
+from primaires.scripting.commandes.editeur.editer import PrmEditer
+from primaires.scripting.commandes.editeur.liste import PrmListe
+
+class CmdEditeur(Commande):
+
+    """Commande 'editeur'"""
+
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "editeur", "editor")
+        self.groupe = "administrateur"
+        self.nom_categorie = "batisseur"
+        self.aide_courte = "manipule les éditeurs personnalisés"
+        self.aide_longue = \
+            "Cette commande permet de créer, éditer et lister " \
+            "des éditeurs personnalisés. Un éditeur personnalisé " \
+            "est un éditeur... pour créer d'autres éditeurs. À l'instar " \
+            "de %dyncom% pour créer des commandes dynamiques, %editeur% " \
+            "permet de créer des éditeurs dynamiques, créables et " \
+            "scriptables par les bâtisseurs. Pour une explication " \
+            "détaillée, et un tutoriel pas à pas sur la création " \
+            "d'éditeurs, consultez http://redmine.kassie.fr/projects/" \
+            "documentation/wiki/EditeurPersonnalise"
+
+    def ajouter_parametres(self):
+        """Ajout des paramètres."""
+        self.ajouter_parametre(PrmCreer())
+        self.ajouter_parametre(PrmEditer())
+        self.ajouter_parametre(PrmListe())

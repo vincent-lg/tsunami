@@ -42,6 +42,7 @@ class Chaine(Extension):
     """
 
     extension = "chaîne"
+    aide = "une chaîne de caractères"
 
     @property
     def editeur(self):
@@ -52,3 +53,7 @@ class Chaine(Extension):
     def arguments(self):
         """Retourne les arguments de l'éditeur."""
         return ()
+
+    def etendre_editeur(self, presentation):
+        """Ëtend l'éditeur en fonction du type de l'extension."""
+        pass
