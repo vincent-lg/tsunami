@@ -218,6 +218,7 @@ class Module(BaseModule):
             commandes.editeur.CmdEditeur(),
             commandes.qedit.CmdQedit(),
             commandes.scripting.CmdScripting(),
+            commandes.structure.CmdStructure(),
         ]
 
         for cmd in self.commandes:

@@ -28,10 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant la fonction structure_existe."""
 
-from . import dyncom
-from . import editeur
-from . import qedit
-from . import scripting
-from . import structure
+from primaires.scripting.fonction import Fonction
+from primaires.scripting.instruction import ErreurExecution
+
+class ClasseFonction(Fonction):
+
+    """Retourne vrai ou faux si la structure précisée existe."""
+
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.structure_existe, "str", "Fraction")
+
+    @staticmethod
+    def structure_existe(groupe, id):
+        """Retourne vrai si la structure existe, faux sinon.
+
+        Si le groupe précisé est vide ou inconnu, retourne faux.
+
+        Paramètres à préciser :
+
+          * groupe : la clé du groupe (une chaîne)
+          * id : l'identifiant unique de la structure (un nombre)
+
+        Exemple d'utilisation :
+
+          si structure_existe("journal", 1):
+              # ...
+
+        """
+        st_groupe = importeur.scripting.structures.get(groupe)
+        if st_groupe is None:
+            return False
+
+        structure = st_groupe.get(int(id))
+        if structure is None:
+            return False
+
+        return True
