@@ -32,6 +32,7 @@
 
 from primaires.interpreteur.commande.commande import Commande
 from primaires.scripting.commandes.structure.liste import PrmListe
+from primaires.scripting.commandes.structure.supprimer import PrmSupprimer
 from primaires.scripting.commandes.structure.voir import PrmVoir
 
 class CmdStructure(Commande):
@@ -62,4 +63,5 @@ class CmdStructure(Commande):
     def ajouter_parametres(self):
         """Ajout des paramètres."""
         self.ajouter_parametre(PrmListe())
+        self.ajouter_parametre(PrmSupprimer())
         self.ajouter_parametre(PrmVoir())
