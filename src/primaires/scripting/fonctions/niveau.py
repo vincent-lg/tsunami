@@ -53,11 +53,21 @@ class ClasseFonction(Fonction):
     def niveau_secondaire(personnage, niveau):
         """Retourne le niveau secondaire du personnage passé en paramètre
 
-        Le niveau doit également être précisé sous la forme d'une chaîne
-        contenant son nom.
+        Retourne le niveau secondaire précisé.
+
+        Paramètres à entrer :
+
+          * personnage : le personnage dont on souhaite connaître le niveau
+          * niveau : le nom du niveau secondaire (une chaîne)
+
+        Exemple d'utilisation :
+
+          niveau = niveau(personnage, "art du pisteur")
 
         """
         try:
-            return Fraction(personnage.niveaux[niveau])
-        except KeyError:
+            niveau = importeur.perso.get_niveau_par_nom(niveau)
+        except ValueError:
             raise ErreurExecution("Niveau inconnu : {}".format(niveau))
+        else:
+            return Fraction(personnage.niveaux.get(niveau.cle, 1))
