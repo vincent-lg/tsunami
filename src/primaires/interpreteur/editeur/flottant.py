@@ -42,9 +42,12 @@ class Flottant(Editeur):
 
     nom = "editeur:base:flottant"
 
-    def __init__(self, pere, objet=None, attribut=None, signe=""):
+    def __init__(self, pere, objet=None, attribut=None, inf=0, sup=None,
+            signe=""):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
+        self.limite_inf = inf
+        self.limite_sup = sup
         self.signe = signe
 
     @staticmethod
@@ -64,8 +67,21 @@ class Flottant(Editeur):
         try:
             msg = msg.replace(",", ".")
             msg = float(msg)
+            if self.limite_inf is not None:
+                assert msg >= self.limite_inf
+            if self.limite_sup is not None:
+                assert msg <= self.limite_sup
         except ValueError:
             self.pere << "|err|Cette valeur est invalide.|ff|"
+        except AssertionError:
+            sup = "supérieur à {}".format(self.limite_inf) if self.limite_inf \
+                    is not None else ""
+            inf = "inférieur à {}".format(self.limite_sup) if self.limite_sup \
+                    is not None else ""
+            et = " et " if sup and inf else ""
+            err = "|err|Le nombre entré doit être {sup}{et}{inf}.|ff|".format(
+                    sup=sup, et=et, inf=inf)
+            self.pere << err
         else:
             setattr(self.objet, self.attribut, msg)
             self.actualiser()

@@ -73,14 +73,14 @@ class Chaine(Extension):
         """Ëtend l'éditeur en fonction du type de l'extension."""
         # Flags de vérification
         verification = presentation.ajouter_choix("flags de vérification",
-                None, Flags, self, "verification", VERIFICATION)
+                "v", Flags, self, "verification", VERIFICATION)
         verification.parent = presentation
         verification.aide_courte = \
             "Flags de vérification avant modification :"
 
         # Flags de modification
         modification = presentation.ajouter_choix("flags de modification",
-                None, Flags, self, "modification", MODIFICATION)
+                "m", Flags, self, "modification", MODIFICATION)
         modification.parent = presentation
         modification.aide_courte = \
             "Flags de modification de la chaîne entrée :"

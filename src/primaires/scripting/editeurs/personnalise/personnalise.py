@@ -91,7 +91,7 @@ class EdtPersonnalise(Presentation):
         # Description
         description = self.ajouter_choix("aide", "a", Description, extension)
         description.parent = self
-        description.apercu = "{valeur}"
+        description.apercu = "{objet.description.paragraphes_indentes}"
         description.aide_courte = \
             "| |tit|" + "Aide du menu".ljust(76) + "|ff||\n" + \
             self.opts.separateur

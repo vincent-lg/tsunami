@@ -35,7 +35,9 @@ Dans ce package sont définis les extensions d'un éditeur personnalisé.
 """
 
 from primaires.scripting.extensions.chaine import Chaine
+from primaires.scripting.extensions.nombre import Nombre
 
 EXTENSIONS = {
         "chaine": Chaine,
+        "nombre": Nombre,
 }
