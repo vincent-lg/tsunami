@@ -94,3 +94,7 @@ class Extension(BaseObj):
         enveloppe.aide_courte = str(self.description).replace("{",
                 "{{").replace("}", "}}").replace("$valeur", "{valeur}")
         return enveloppe
+
+    def etendre_editeur(self, presentation):
+        """Étend l'éditeur en fonction de l'extension."""
+        pass

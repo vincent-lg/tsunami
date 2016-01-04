@@ -30,8 +30,18 @@
 
 """Module contenant la classe Chaine, détaillée plus bas."""
 
+from primaires.interpreteur.editeur.flags import Flags
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.scripting.extensions.base import Extension
+
+# Constantes
+VERIFICATION = {
+        "doit être une clé valide": 1,
+}
+
+MODIFICATION = {
+        "première lettre en majuscule": 1,
+}
 
 class Chaine(Extension):
 
@@ -44,6 +54,11 @@ class Chaine(Extension):
     extension = "chaîne"
     aide = "une chaîne de caractères"
 
+    def __init__(self, structure, nom):
+        Extension.__init__(self, structure, nom)
+        self.verification = 0
+        self.modification = 0
+
     @property
     def editeur(self):
         """Retourne le type d'éditeur."""
@@ -52,8 +67,20 @@ class Chaine(Extension):
     @property
     def arguments(self):
         """Retourne les arguments de l'éditeur."""
-        return ()
+        return (self.verification, self.modification)
 
     def etendre_editeur(self, presentation):
         """Ëtend l'éditeur en fonction du type de l'extension."""
-        pass
+        # Flags de vérification
+        verification = presentation.ajouter_choix("flags de vérification",
+                None, Flags, self, "verification", VERIFICATION)
+        verification.parent = presentation
+        verification.aide_courte = \
+            "Flags de vérification avant modification :"
+
+        # Flags de modification
+        modification = presentation.ajouter_choix("flags de modification",
+                None, Flags, self, "modification", MODIFICATION)
+        modification.parent = presentation
+        modification.aide_courte = \
+            "Flags de modification de la chaîne entrée :"

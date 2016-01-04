@@ -101,7 +101,7 @@ class Uniligne(Editeur):
             # Modification
             modification = self.modification
             if modification & CAPITALIZE:
-                msg = msg.capitalize()
+                msg = msg[0].upper() + msg[1:]
 
             setattr(self.objet, self.attribut, msg)
             self.actualiser()
