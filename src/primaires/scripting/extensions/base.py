@@ -62,6 +62,7 @@ class Extension(BaseObj):
         self.titre = nom
         self.description = Description(parent=self, scriptable=False)
         self.apercu = "$valeur"
+        self.raccourci = None
         self._construire()
 
     def __getnewargs__(self):
@@ -87,8 +88,8 @@ class Extension(BaseObj):
 
     def creer(self, parent, structure):
         """Crée l'éditeur sur le modèle du parent."""
-        enveloppe = parent.ajouter_choix(self.titre, None, self.editeur,
-                structure, self.nom, *self.arguments)
+        enveloppe = parent.ajouter_choix(self.titre, self.raccourci,
+                self.editeur, structure, self.nom, *self.arguments)
         enveloppe.parent = parent
         enveloppe.apercu = self.apercu.replace("$valeur", "{valeur}")
         enveloppe.aide_courte = str(self.description).replace("{",

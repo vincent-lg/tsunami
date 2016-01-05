@@ -65,12 +65,9 @@ class Action(Extension):
 
     def creer(self, parent, structure):
         """Crée l'éditeur sur le modèle du parent."""
-        enveloppe = parent.ajouter_choix(self.titre, None, EdtAction,
-                structure, self.nom, self, "action", structure)
+        enveloppe = parent.ajouter_choix(self.titre, self.raccourci,
+                EdtAction, structure, self.nom, self, "action", structure)
         enveloppe.parent = parent
-        enveloppe.apercu = self.apercu.replace("$valeur", "{valeur}")
-        enveloppe.aide_courte = str(self.description).replace("{",
-                "{{").replace("}", "}}").replace("$valeur", "{valeur}")
         return enveloppe
 
     def action(self, editeur, structure):

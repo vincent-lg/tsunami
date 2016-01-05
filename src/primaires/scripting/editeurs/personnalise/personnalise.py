@@ -118,5 +118,38 @@ class EdtPersonnalise(Presentation):
 
             Aperçu actuel : |bc|{valeur}|ff|""".strip("\n"))
 
+        # Raccourci
+        raccourci = self.ajouter_choix("raccourci", "r", Uniligne, extension,
+                "raccourci")
+        raccourci.parent = self
+        raccourci.prompt = "Raccourci du menu : "
+        raccourci.apercu = "{valeur}"
+        raccourci.aide_courte = dedent("""
+            Entrez |ent|le raccourci|ff| du menu ou
+            |cmd|/|ff| pour revenir à la fenêtre parente.
+
+            Le raccourci est une suite de lettres permettant d'accéder
+            au menu. Si ce champ est laissé à sa valeur par défaut
+            (une valeur nulle), le système choisira tout seul un
+            raccourci disponible. Le raccourci peut être constitué
+            d'une ou plusieurs lettres, minuscules et sans accent,
+            présentes dans le titre. Par exemple si le titre est
+            |ent|description|ff|, le raccourci pourrait être |ent|d|ff|
+            ou |ent|de|ff| ou |ent|cr|ff| car ces lettres ou combinaisons
+            se trouvent dans le titre. Le raccourci ne pourrait pas
+            être |ent|dsc|ff|, car |ent|ddescription|ff| ne comprend
+            pas |ent|dsc|ff| à la suite. Enfin, il faut ajouter que
+            si le raccourci a été utilisé par un autre menu dans le
+            même éditeur, l'éditeur ne pourra être créé. Ainsi, de
+            manière générale, si vous n'y accordez pas trop d'importanc,
+            il est préférable de laisser le système s'occuper de ce
+            détail, sauf si vous éditez un menu dont vous voulez absolument
+            changer le raccourci. Si par exemple vous faites une
+            action dans le menu |ent|supprimer|ff|, il peut êtr eutile
+            de mettre un raccourci |ent|sup|ff| (qui sera plus long
+            à entrer et évitera les suppressions involontaires).
+
+            raccourci actuel : |bc|{valeur}|ff|""".strip("\n"))
+
         # Autres informations
         extension.etendre_editeur(self)
