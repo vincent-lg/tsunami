@@ -75,6 +75,7 @@ class EditeurPersonnalise(BaseObj):
         """Constructeur d'un éditeur personnalisé."""
         BaseObj.__init__(self)
         self.structure = structure
+        self.afficher_quitter = True
         self.editeurs = []
         self._construire()
 

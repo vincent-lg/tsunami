@@ -34,11 +34,11 @@ from primaires.interpreteur.editeur.aes import AES
 from primaires.scripting.extensions import EXTENSIONS
 
 aide = """
-Entrez |cmd|/q|ff| pour quitter cet éditeur.
-Ou |ent|la clé de l'éditeur|ff| pour l'éditer.
+Entrez |cmd|/|ff| pour revenir à la fenêtre parente.
 Utilisez les options :
  |ent|/a <clé_de_l_éditeur> / <type de donnée>|ff| pour ajouter un éditeur
  |ent|/s <cle_de_l_éditeur>|ff| pour supprimer l'éditeur
+ |ent|<clé_de_l_éditeur>|ff| pour éditer l'éditeur
 
 Types de données existants :{types}
 
@@ -59,39 +59,24 @@ class EdtEditeurs(AES):
 
     """
 
-    nom = "editeur"
-
-    def __init__(self, personnage, editeur):
+    def __init__(self, instance_connexion, editeur, attribut=None):
         """Constructeur de l'éditeur."""
-        if personnage:
-            instance_connexion = personnage.instance_connexion
-        else:
-            instance_connexion = None
-
         AES.__init__(self, instance_connexion, editeur, "editeurs",
                 "personnalise", (("cle", "clé"), ("type", "chaîne")),
                 "get_editeur", "ajouter_editeur", "supprimer_editeur",
                 "cle_type")
 
-        # Options
+    def __getnewargs__(self):
+        return (None, None)
+
+    def _get_aide_courte(self):
         types = ""
         for extension in sorted(list(EXTENSIONS.values()),
                 key=lambda e: e.extension):
             types += "\n  |ent|{:<10}|ff| : {}".format(
                     extension.extension, extension.aide)
 
-        self.aide_courte = aide.format(types=types)
-        self.ajouter_option("q", self.opt_quitter)
-
-    def __getnewargs__(self):
-        return (None, None)
-
-    def opt_quitter(self, argument):
-        """Ferme l'éditeur.
-
-        Syntaxe :
-            /q
-
-        """
-        self.fermer()
-        self.pere.envoyer("Fermeture de l'éditeur.")
+        return aide.format(types=types)
+    def _set_aide_courte(self, aide):
+        pass
+    aide_courte = property(_get_aide_courte, _set_aide_courte)

@@ -28,35 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant l'éditeur d'éditeur personnalisé."""
+"""Fichier contenant l'éditeur présentation pour editeur/editor.."""
 
+from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.presentation import Presentation
-from primaires.scripting.editeurs.personnalise import personnalise
-from primaires.scripting.editeurs.personnalise import presentation
+from primaires.scripting.editeurs.personnalise.editeurs import EdtEditeurs
 
-class EdtEditeur(Presentation):
+class EdtPresentation(Presentation):
 
-    """Classe définissant l'éditeur d'éditeur personnalisé."""
+    """Classe définissant l'éditeur de présentation."""
 
-    def __init__(self, personnage, editeur, structure):
+    nom = "editeur"
+
+    def __init__(self, personnage, editeur, attribut=None):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
 
-        quitter = True
-        if editeur:
-            quitter = editeur.afficher_quitter
-
-        Presentation.__init__(self, instance_connexion, editeur, None, quitter)
-        if personnage and editeur and structure:
-            self.construire(editeur, structure)
+        Presentation.__init__(self, instance_connexion, editeur)
+        if personnage and editeur:
+            self.construire(editeur)
 
     def __getnewargs__(self):
         return (None, None, None)
 
-    def construire(self, editeur, structure):
+    def construire(self, editeur):
         """Construction de l'éditeur"""
-        for sous_editeur in editeur.editeurs:
-            sous_editeur.creer(self, structure)
+        # Éditeurs
+        editeurs = self.ajouter_choix("éditeurs", "t", EdtEditeurs, editeur)
+        editeurs.parent = self
+
+        # Afficher quitter
+        quitter = self.ajouter_choix("afficher le menu quitter", "a",
+                Flag, editeur, "afficher_quitter")
+        quitter.parent = self
