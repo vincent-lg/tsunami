@@ -28,20 +28,30 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package 'extension' du moedule scripting.
+"""Fichier contenant l'action supprimer_structure."""
 
-Dans ce package sont définis les extensions d'un éditeur personnalisé.
+from primaires.scripting.action import Action
+from primaires.scripting.instruction import ErreurExecution
 
-"""
+class ClasseAction(Action):
 
-from primaires.scripting.extensions.action import Action
-from primaires.scripting.extensions.chaine import Chaine
-from primaires.scripting.extensions.description import Description
-from primaires.scripting.extensions.nombre import Nombre
+    """Supprime une structure."""
 
-EXTENSIONS = {
-        "action": Action,
-        "chaine": Chaine,
-        "description": Description,
-        "nombre": Nombre,
-}
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.supprimer_structure, "Structure")
+
+    @staticmethod
+    def supprimer_structure(structure):
+        """Supprime la structure passée en paramètre.
+
+        Paramètres à préciser :
+
+          * structure : la structure à supprimer.
+
+        Exemple d'utilisation :
+
+          supprimer_structure structure
+
+        """
+        importeur.scripting.supprimer_structure(structure)

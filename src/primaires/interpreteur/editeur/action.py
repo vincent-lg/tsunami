@@ -25,23 +25,37 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
+# pereIBILITY OF SUCH DAMAGE.
 
 
-"""Package 'extension' du moedule scripting.
+"""Ce fichier définit le contexte-éditeur 'action'."""
 
-Dans ce package sont définis les extensions d'un éditeur personnalisé.
+from . import Editeur
 
-"""
+class Action(Editeur):
 
-from primaires.scripting.extensions.action import Action
-from primaires.scripting.extensions.chaine import Chaine
-from primaires.scripting.extensions.description import Description
-from primaires.scripting.extensions.nombre import Nombre
+    """Contexte-éditeur action.
 
-EXTENSIONS = {
-        "action": Action,
-        "chaine": Chaine,
-        "description": Description,
-        "nombre": Nombre,
-}
+    Ce contexte sert à faire une action particulière, appelle une
+    méthode avec les paramètres indiqués.
+
+    """
+
+    nom = "editeur:base:action"
+
+    def __init__(self, pere, objet=None, attribut=None, callback=None,
+            methode=None, *arguments):
+        """Constructeur de l'éditeur"""
+        Editeur.__init__(self, pere, objet, attribut)
+        self.callback = callback
+        self.methode = methode
+        self.arguments = arguments
+
+    def entrer(self):
+        """Quand on entre dans le contexte"""
+        self.fermer()
+        callback = self.callback
+        methode = self.methode
+        arguments = self.arguments
+        if callback and methode:
+            getattr(callback, methode)(self, *arguments)
