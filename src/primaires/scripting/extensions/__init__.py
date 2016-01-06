@@ -36,12 +36,14 @@ Dans ce package sont définis les extensions d'un éditeur personnalisé.
 
 from primaires.scripting.extensions.action import Action
 from primaires.scripting.extensions.chaine import Chaine
+from primaires.scripting.extensions.choix import Choix
 from primaires.scripting.extensions.description import Description
 from primaires.scripting.extensions.nombre import Nombre
 
 EXTENSIONS = {
         "action": Action,
         "chaine": Chaine,
+        "choix": Choix,
         "description": Description,
         "nombre": Nombre,
 }

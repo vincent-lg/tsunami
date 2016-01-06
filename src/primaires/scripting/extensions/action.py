@@ -100,7 +100,9 @@ class ScriptAction(Script):
             "est quitté à ce moment et une action particulière peut " \
             "être scriptée (changer le statut d'une structure, " \
             "l'effacer, envoyer un mudmail pour avertir un administrateur, " \
-            "etc...)"
+            "etc...). Aucun message n'est envoyé au joueur qui active " \
+            "ce menu, c'est donc une des choses qui doit être scriptée " \
+            "ici."
 
         # Configuration des variables de l'évènement active
         var_perso = evt_active.ajouter_variable("personnage", "Personnage")
