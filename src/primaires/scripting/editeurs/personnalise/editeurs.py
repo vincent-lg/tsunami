@@ -38,7 +38,9 @@ Entrez |cmd|/|ff| pour revenir à la fenêtre parente.
 Utilisez les options :
  |ent|/a <clé_de_l_éditeur> / <type de donnée>|ff| pour ajouter un éditeur
  |ent|/s <cle_de_l_éditeur>|ff| pour supprimer l'éditeur
- |ent|<clé_de_l_éditeur>|ff| pour éditer l'éditeur
+ |ent|<cle_de_l_editeur>|ff| pour éditer l'éditeur
+ |ent|/h <cle_de_l_editeur>|ff| pour remonter l'éditeur dans la liste
+ |ent|/b <cle_de_l_editeur>|ff| pour redescendre l'éditeur dans la liste
 
 Types de données existants :{types}
 

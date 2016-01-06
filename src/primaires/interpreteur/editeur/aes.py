@@ -92,6 +92,11 @@ class AES(Editeur):
         self.ajouter_option("a", self.opt_ajouter)
         self.ajouter_option("s", self.opt_supprimer)
 
+        valeur = getattr(objet, attribut)
+        if isinstance(valeur, list):
+            self.ajouter_option("h", self.opt_haut)
+            self.ajouter_option("b", self.opt_bas)
+
     @staticmethod
     def get_valeur(valeur, affichage):
         """Retourne la valeur à afficher."""
@@ -209,6 +214,58 @@ class AES(Editeur):
             return
 
         self.actualiser()
+
+    def opt_haut(self, arguments):
+        """Déplace la sélection vers le haut.
+
+        Syntaxe :
+            /h <indice ou clé>
+
+        """
+        liste = getattr(self.objet, self.attribut)
+        methode = getattr(self.objet, self.recuperation)
+
+        try:
+            element = methode(arguments)
+        except Exception as err:
+            print(traceback.format_exc())
+            self.pere << "|err|" + str(err) + ".|ff|"
+            return
+        else:
+            indice = liste.index(element)
+            if indice == 0:
+                self.pere << "Cet élément est déjà tout en haut."
+                return
+
+            del liste[indice]
+            liste.insert(indice - 1, element)
+            self.actualiser()
+
+    def opt_bas(self, arguments):
+        """Déplace la sélection vers le bas.
+
+        Syntaxe :
+            /b <indice ou clé>
+
+        """
+        liste = getattr(self.objet, self.attribut)
+        methode = getattr(self.objet, self.recuperation)
+
+        try:
+            element = methode(arguments)
+        except Exception as err:
+            print(traceback.format_exc())
+            self.pere << "|err|" + str(err) + ".|ff|"
+            return
+        else:
+            indice = liste.index(element)
+            if indice == len(liste) - 1:
+                self.pere << "Cet élément est déjà tout en bas."
+                return
+
+            del liste[indice]
+            liste.insert(indice + 1, element)
+            self.actualiser()
 
     def interpreter(self, msg):
         """Interprétation de l'éditeur."""
