@@ -38,16 +38,17 @@ class EdtEditeur(Presentation):
 
     """Classe définissant l'éditeur d'éditeur personnalisé."""
 
-    def __init__(self, personnage, editeur, structure):
+    def __init__(self, personnage, editeur, structure, quitter=None):
         """Constructeur de l'éditeur"""
-        if personnage:
+        if hasattr(personnage, "instance_connexion"):
             instance_connexion = personnage.instance_connexion
         else:
-            instance_connexion = None
+            instance_connexion = personnage
 
-        quitter = True
-        if editeur:
-            quitter = editeur.afficher_quitter
+        if quitter is None:
+            quitter = True
+            if editeur:
+                quitter = editeur.afficher_quitter
 
         Presentation.__init__(self, instance_connexion, editeur, None, quitter)
         if personnage and editeur and structure:

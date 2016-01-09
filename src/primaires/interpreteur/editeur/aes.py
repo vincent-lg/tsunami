@@ -67,6 +67,9 @@ class AES(Editeur):
     *   Le nom de la méthode de suppression ;
     *   Le nom de l'attribut d'affichage. Ce nom est recherché sur
         l'élément ajouté, pas l'objet. Ce peut aussi être une propriété.
+    *   L'objet de callback. Si défini, au lieu d'appeler les
+        méthodes sur l'objet, on l'appelle sur le callback, ce qui
+        permet pas mal de personnalisation.
 
     Utiliser cet éditeur est un peu complexe, mais beaucoup de code
     est mis en place pour permettre une édition sur plusieurs niveaux
@@ -79,7 +82,7 @@ class AES(Editeur):
 
     def __init__(self, pere, objet=None, attribut=None,
             editeur_suivant=None, colonnes=None, recuperation=None,
-            ajout=None, suppression=None, affichage=None):
+            ajout=None, suppression=None, affichage=None, callback=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
         self.editeur_suivant = editeur_suivant or ""
@@ -88,6 +91,7 @@ class AES(Editeur):
         self.ajout = ajout or ""
         self.suppression = suppression or ""
         self.affichage = affichage or ""
+        self.callback = callback
 
         self.ajouter_option("a", self.opt_ajouter)
         self.ajouter_option("s", self.opt_supprimer)
@@ -98,7 +102,7 @@ class AES(Editeur):
             self.ajouter_option("b", self.opt_bas)
 
     @staticmethod
-    def get_valeur(valeur, affichage):
+    def get_valeur(valeur, affichage, callback=None):
         """Retourne la valeur à afficher."""
         if valeur is None:
             valeur = []
@@ -106,10 +110,15 @@ class AES(Editeur):
         if isinstance(valeur, dict):
             valeur = list(valeur.values())
 
+        liste = valeur
         if len(valeur) == 0:
             valeur = "\n  |att|Aucun élément à afficher|ff|"
         else:
-            if affichage:
+            if callback:
+                valeur = "\n  " + "\n  ".join(
+                        [getattr(callback, affichage)(liste, v) for v in \
+                        valeur])
+            elif affichage:
                 valeur = "\n  " + "\n  ".join([getattr(v, affichage) for \
                         v in valeur])
             else:
@@ -119,16 +128,23 @@ class AES(Editeur):
 
     @staticmethod
     def afficher_apercu(apercu, objet, valeur, suivant=None, colonnes=None,
-            recuperation=None, ajout=None, suppression=None, affichage=None):
+            recuperation=None, ajout=None, suppression=None, affichage=None, callback=None):
         """Affichage de l'aperçu."""
-        valeur = AES.get_valeur(valeur, affichage)
+        valeur = AES.get_valeur(valeur, affichage, callback)
         return apercu.format(objet=objet, valeur=valeur)
 
     def accueil(self):
         """Retourne l'aide"""
         valeur = getattr(self.objet, self.attribut)
-        valeur = AES.get_valeur(valeur, self.affichage)
+        valeur = AES.get_valeur(valeur, self.affichage, self.callback)
         return self.aide_courte.format(objet=self.objet, valeur=valeur)
+
+    def entrer(self):
+        """Quand on entre dans le contexte"""
+        valeur = getattr(self.objet, self.attribut, None)
+        if valeur is None:
+            print("reset")
+            setattr(self.objet, self.attribut, [])
 
     def opt_ajouter(self, arguments):
         """Ajout d'un élément.
@@ -137,6 +153,8 @@ class AES(Editeur):
           /a <paramètres>
 
         """
+        valeur = getattr(self.objet, self.attribut)
+        objet = self.callback or self.objet
         colonnes = self.colonnes
         ajout = self.ajout
         arguments = arguments.strip().split(" / ")
@@ -184,9 +202,12 @@ class AES(Editeur):
                         i + 1, repr(n_type)))
 
         # On essaye d'ajouter l'élément
-        methode = getattr(self.objet, ajout)
+        methode = getattr(objet, ajout)
         try:
-            methode(*arguments)
+            if self.callback:
+                methode(valeur, *arguments)
+            else:
+                methode(*arguments)
         except Exception as err:
             self.pere << "|err|" + str(err) + ".|ff|"
             return
@@ -200,15 +221,20 @@ class AES(Editeur):
             /s <clé>
 
         """
+        valeur = getattr(self.objet, self.attribut)
+        objet = self.callback or self.objet
         if self.suppression is None:
             self.pere << "|err|Vous ne pouvez faire cela.|ff|"
             return
 
         arg = arguments.strip()
-        methode = getattr(self.objet, self.suppression)
+        methode = getattr(objet, self.suppression)
 
         try:
-            methode(arg)
+            if self.callback:
+                methode(valeur, arg)
+            else:
+                methode(arg)
         except Exception as err:
             self.pere << "|err|" + str(err) + ".|ff|"
             return
@@ -222,11 +248,16 @@ class AES(Editeur):
             /h <indice ou clé>
 
         """
+        valeur = getattr(self.objet, self.attribut)
+        objet = self.callback or self.objet
         liste = getattr(self.objet, self.attribut)
-        methode = getattr(self.objet, self.recuperation)
+        methode = getattr(objet, self.recuperation)
 
         try:
-            element = methode(arguments)
+            if self.callback:
+                element = methode(valeur, arguments)
+            else:
+                element = methode(arguments)
         except Exception as err:
             print(traceback.format_exc())
             self.pere << "|err|" + str(err) + ".|ff|"
@@ -248,11 +279,16 @@ class AES(Editeur):
             /b <indice ou clé>
 
         """
+        valeur = getattr(self.objet, self.attribut)
+        objet = self.callback or self.objet
         liste = getattr(self.objet, self.attribut)
-        methode = getattr(self.objet, self.recuperation)
+        methode = getattr(objet, self.recuperation)
 
         try:
-            element = methode(arguments)
+            if self.callback:
+                element = methode(valeur, arguments)
+            else:
+                element = methode(arguments)
         except Exception as err:
             print(traceback.format_exc())
             self.pere << "|err|" + str(err) + ".|ff|"
@@ -269,18 +305,25 @@ class AES(Editeur):
 
     def interpreter(self, msg):
         """Interprétation de l'éditeur."""
+        objet = self.callback or self.objet
         liste = getattr(self.objet, self.attribut)
-        methode = getattr(self.objet, self.recuperation)
+        methode = getattr(objet, self.recuperation)
 
         try:
-            element = methode(msg)
+            if self.callback:
+                element = methode(liste, msg)
+            else:
+                element = methode(msg)
         except Exception as err:
             print(traceback.format_exc())
             self.pere << "|err|" + str(err) + ".|ff|"
             return
 
-        TypeEditeur = importeur.interpreteur.contextes[self.editeur_suivant]
-        enveloppe = EnveloppeObjet(TypeEditeur, element, None)
-        enveloppe.parent = self
-        contexte = enveloppe.construire(self.pere.joueur)
-        self.migrer_contexte(contexte)
+        if self.callback:
+            self.callback.editer_element(self, self.objet, liste, element)
+        else:
+            TypeEditeur = importeur.interpreteur.contextes[self.editeur_suivant]
+            enveloppe = EnveloppeObjet(TypeEditeur, element, None)
+            enveloppe.parent = self
+            contexte = enveloppe.construire(self.pere.joueur)
+            self.migrer_contexte(contexte)

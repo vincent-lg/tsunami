@@ -38,6 +38,7 @@ from primaires.scripting.extensions.action import Action
 from primaires.scripting.extensions.chaine import Chaine
 from primaires.scripting.extensions.choix import Choix
 from primaires.scripting.extensions.description import Description
+from primaires.scripting.extensions.liste import Liste
 from primaires.scripting.extensions.nombre import Nombre
 from primaires.scripting.extensions.selection import Selection
 
@@ -46,6 +47,7 @@ EXTENSIONS = {
         "chaine": Chaine,
         "choix": Choix,
         "description": Description,
+        "liste": Liste,
         "nombre": Nombre,
         "selection": Selection,
 }
