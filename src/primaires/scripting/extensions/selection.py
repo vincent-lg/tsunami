@@ -79,12 +79,6 @@ class Selection(Extension):
         selection = dict(zip(cles, valeurs))
         return (selection, )
 
-    def creer(self, parent, structure):
-        """Crée l'éditeur sur le modèle du parent."""
-        Extension.creer(self, parent, structure)
-        if getattr(structure, self.nom) is None:
-            setattr(structure, self.nom, [])
-
     def etendre_editeur(self, presentation):
         """Ëtend l'éditeur en fonction du type de l'extension."""
         # Selection

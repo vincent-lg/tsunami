@@ -32,6 +32,7 @@
 
 from primaires.format.tableau import Tableau, DROITE
 from primaires.interpreteur.masque.parametre import Parametre
+from primaires.scripting.structure import StructureComplete
 
 class PrmVoir(Parametre):
 
@@ -75,6 +76,18 @@ class PrmVoir(Parametre):
         tableau.ajouter_colonne("Valeur")
         donnees = sorted(tuple(structure.donnees.items()))
         for champ, valeur in donnees:
+            if isinstance(valeur, StructureComplete):
+                valeur = valeur.structure + " " + str(valeur.id)
+            elif isinstance(valeur, list):
+                liste = []
+                for element in valeur:
+                    if isinstance(element, StructureComplete):
+                        element = element.structure + " " + str(element.id)
+
+                    liste.append(element)
+
+                valeur = liste
+
             tableau.ajouter_ligne(champ, valeur)
 
         personnage << tableau.afficher()

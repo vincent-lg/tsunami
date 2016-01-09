@@ -35,7 +35,9 @@ from textwrap import dedent
 from primaires.interpreteur.editeur.aes import AES
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
 from primaires.interpreteur.editeur.uniligne import Uniligne, CLE
+from primaires.scripting.editeurs.edt_script import EdtScript
 from primaires.scripting.extensions.base import Extension
+from primaires.scripting.script import Script
 
 class Liste(Extension):
 
@@ -51,6 +53,7 @@ class Liste(Extension):
 
     def __init__(self, structure, nom):
         Extension.__init__(self, structure, nom)
+        self.script = ScriptListe(self)
         self.structure_externe = None
         self.case_affichage = None
 
@@ -118,6 +121,11 @@ class Liste(Extension):
 
             Nom actuel de la case : {valeur}""".strip("\n"))
 
+        # Script
+        scripts = presentation.ajouter_choix("scripts", "sc", EdtScript,
+                self.script)
+        scripts.parent = presentation
+
     def get_element(self, liste, numero, exception=True):
         """Retourne l'élément dans la case indiquée."""
         try:
@@ -132,17 +140,19 @@ class Liste(Extension):
         else:
             return liste[numero - 1]
 
-    def ajouter_element(self, liste, information):
+    def ajouter_element(self, structure, liste, information):
         """Ajoute un élément."""
         element = importeur.scripting.creer_structure(self.structure_externe)
         setattr(element, self.case_affichage, information)
         liste.append(element)
+        self.script["ajout"].executer(structure=structure, externe=element)
 
-    def supprimer_element(self, liste, numero):
+    def supprimer_element(self, structure, liste, numero):
         """Supprime un élément."""
         element = self.get_element(liste, numero)
         liste.remove(element)
         importeur.scripting.supprimer_structure(element)
+        self.script["supprime"].executer(structure=structure, externe=element)
 
     def afficher_element(self, liste, element):
         """Affichage de l'élément de la liste."""
@@ -162,3 +172,44 @@ class Liste(Extension):
         enveloppe.parent = editeur
         contexte = enveloppe.construire(pere)
         editeur.migrer_contexte(contexte)
+
+
+class ScriptListe(Script):
+
+    """Définition des ajout scriptables."""
+
+    def init(self):
+        """Initialisation du script."""
+        # Événement ajout
+        evt_ajout = self.creer_evenement("ajout")
+        evt_ajout.aide_courte = "un joueur ajoute un élément dans la liste"
+        evt_ajout.aide_longue = \
+            "Cet évènement est appelé quand un joueur dans l'éditeur " \
+            "ajoute un élément à l'aide de l'option |cmd|/a|ff|. La " \
+            "structure externe est créée et ajoutée à la liste " \
+            "d'éléments. Cet évènement peut être utile pour établir " \
+            "un lien entre la structure externe et la structure " \
+            "parente. L'évènement 'supprime' est utile dans l'autre sens."
+
+        # Configuration des variables de l'évènement ajout
+        var_structure = evt_ajout.ajouter_variable("structure", "Structure")
+        var_structure.aide = "la structure parente éditée"
+        var_externe = evt_ajout.ajouter_variable("externe", "Structure")
+        var_externe.aide = "la structure externe ajoutée"
+
+        # Événement supprime
+        evt_supprime = self.creer_evenement("supprime")
+        evt_supprime.aide_courte = "un joueur supprime un élément dans la liste"
+        evt_supprime.aide_longue = \
+            "Cet évènement est appelé quand un joueur dans l'éditeur " \
+            "supprime un élément à l'aide de l'option |cmd|/s|ff|. La " \
+            "structure externe est supprimée et retirée de la liste " \
+            "d'éléments. Cet évènement peut être utile pour détruire " \
+            "un lien entre la structure externe et la structure " \
+            "parente. L'évènement 'ajoute' est utile dans l'autre sens."
+
+        # Configuration des variables de l'évènement supprime
+        var_structure = evt_supprime.ajouter_variable("structure", "Structure")
+        var_structure.aide = "la structure parente éditée"
+        var_externe = evt_supprime.ajouter_variable("externe", "Structure")
+        var_externe.aide = "la structure externe supprimée"

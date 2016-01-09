@@ -52,6 +52,13 @@ class Selection(Editeur):
         Editeur.__init__(self, pere, objet, attribut)
         self.liste = liste or []
 
+    def entrer(self):
+        """Quand on entre dans le contexte"""
+        valeur = getattr(self.objet, self.attribut, None)
+        if valeur is None:
+            print("reset selection")
+            setattr(self.objet, self.attribut, [])
+
     def accueil(self):
         """Retourne l'aide courte"""
         valeur = getattr(self.objet, self.attribut)

@@ -143,7 +143,6 @@ class AES(Editeur):
         """Quand on entre dans le contexte"""
         valeur = getattr(self.objet, self.attribut, None)
         if valeur is None:
-            print("reset")
             setattr(self.objet, self.attribut, [])
 
     def opt_ajouter(self, arguments):
@@ -205,7 +204,7 @@ class AES(Editeur):
         methode = getattr(objet, ajout)
         try:
             if self.callback:
-                methode(valeur, *arguments)
+                methode(self.objet, valeur, *arguments)
             else:
                 methode(*arguments)
         except Exception as err:
@@ -232,7 +231,7 @@ class AES(Editeur):
 
         try:
             if self.callback:
-                methode(valeur, arg)
+                methode(self.objet, valeur, arg)
             else:
                 methode(arg)
         except Exception as err:

@@ -50,6 +50,12 @@ class SelectionObjet(Editeur):
         Editeur.__init__(self, pere, objet, attribut)
         self.dictionnaire = dictionnaire or {}
 
+    def entrer(self):
+        """Quand on entre dans le contexte"""
+        valeur = getattr(self.objet, self.attribut, None)
+        if valeur is None:
+            setattr(self.objet, self.attribut, [])
+
     def accueil(self):
         """Retourne l'aide courte"""
         valeur = getattr(self.objet, self.attribut)
