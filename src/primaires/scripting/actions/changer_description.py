@@ -42,6 +42,7 @@ class ClasseAction(Action):
         cls.ajouter_types(cls.description_salle, "Salle", "str")
         cls.ajouter_types(cls.description_personnage, "Personnage", "str")
         cls.ajouter_types(cls.description_objet, "Objet", "str")
+        cls.ajouter_types(cls.description_objet, "PrototypeObjet", "str")
 
     @staticmethod
     def description_salle(salle, description):
@@ -85,22 +86,24 @@ class ClasseAction(Action):
         personnage.description.paragraphes[:] = description.split("\n")
 
     @staticmethod
-    def description_objet(objet, description):
-        """Change la description de l'objet.
+    def description_objet(prototype_ou_objet, description):
+        """Change la description de l'objet ou de son prototype.
 
         Paramètres à entrer :
 
-          * objet : l'objet dont on veut changer la description ;
+          * prototype_ou_objet : l'objet dont on veut changer la description ;
           * description : la nouvelle description (une chaîne).
 
         Cette action modifie la description d'un objet.
         Le prototype d'objet est modifié, ce qui modifie la description de
-        tous les objets créés sur le même prototype.
+        tous les objets créés sur le même prototype, que l'on
+        précise en premier paramètre un objet ou un prototype d'objet.
 
         Exemple d'utilisation :
 
           changer_description objet "C'est une pomme."
 
         """
-        description = description.replace("_b_nl_b_", "\n")
-        objet.description.paragraphes[:] = description.split("\n")
+        description = description.replace("_b_", "|")
+        description = description.replace("|nl|", "\n")
+        prototype_ou_objet.description.paragraphes[:] = description.split("\n")

@@ -28,39 +28,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant l'action changer_poids."""
+"""Fichier contenant l'action changer_prix."""
 
 from primaires.scripting.action import Action
 from primaires.scripting.instruction import ErreurExecution
 
 class ClasseAction(Action):
 
-    """Change le poids unitaire de l'objet."""
+    """Change le prix de l'objet ou de son prototype."""
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.changer_poids, "Objet", "Fraction")
-        cls.ajouter_types(cls.changer_poids, "PrototypeObjet", "Fraction")
+        cls.ajouter_types(cls.changer_prix, "Objet", "Fraction")
+        cls.ajouter_types(cls.changer_prix, "PrototypeObjet", "Fraction")
 
     @staticmethod
-    def changer_poids(prototype_ou_objet, poids):
-        """Change le poids unitaire de l'objet ou du prototype précisé.
+    def changer_prix(prototype_ou_objet, prix):
+        """Change le prix de l'objet ou du prototype précisé.
 
-        Le poids (tel que renvoyé par la fonction 'poids') et le
-        poids unitaire (tel que modifié par l'action 'changer_poids')
-        peuvent varier pour certains types. Par exemple, les
-        conteneurs ont un poids formé de leur poids unitaire et de
-        la somme des poids des objets qu'ils contiennent. L'action
-        'changer_poids' ne s'applique qu'au poids unitaire.
+        Le prix modifié est à donner en valeur 1 (la plus petite
+        monnaie disponible). Il s'agit donc d'une modification
+        dans la même unité que dans l'éditeur d'objet 'oedit'.
 
         Paramètres à préciser :
 
-          * prototype_ou_objet : l'objet dont on veut changer le poids
-          * poids : le nouveau poids (en kilo).
+          * prototype_ou_objet : l'objet dont on veut changer le prix
+          * prix : le nouveau prix
 
         Exemple d'utilisation :
 
-          changer_poids(objet, 10)
+          changer_prix objet 10
 
         """
-        prototype_ou_objet.poids_unitaire = float(poids)
+        prototype_ou_objet._prix = int(prix)

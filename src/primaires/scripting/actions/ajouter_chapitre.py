@@ -40,6 +40,8 @@ class ClasseAction(Action):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.ajouter_chapitre, "str", "str", "str")
+        cls.ajouter_types(cls.ajouter_chapitre_prototype, "PrototypeObjet",
+                "str", "str")
 
     @staticmethod
     def ajouter_chapitre(cle_livre, titre, texte):
@@ -53,6 +55,7 @@ class ClasseAction(Action):
 
         Cette action modifie les chapitres du prototype d'objet. Tous
         les objets créés sur ce prototype sont donc affectés.
+
         Exemple d'utilisation :
 
           ajouter_chapitre "chants_noel" "Jingle bells" "Dashin' through the snow"
@@ -71,4 +74,31 @@ class ClasseAction(Action):
 
         chapitre = livre.ajouter_chapitre(titre)
         texte = texte.replace("_b_nl_b_", "\n")
+        chapitre.description.paragraphes[:] = texte.split("\n")
+
+    @staticmethod
+    def ajouter_chapitre_prototype(livre, titre, texte):
+        """Ajoute un chapitre au livre précisé en paramètre.
+
+        Paramètres à préciser :
+
+          * livre : le prototype d'objet de type livre à modifier ;
+          * titre : une chaîne de caractères contenant le titre du chapitre ;
+          * texte : une chaîne de caractères contenant le texte du chapitre.
+
+        Cette action modifie les chapitres du prototype d'objet. Tous
+        les objets créés sur ce prototype sont donc affectés.
+
+        Exemple d'utilisation :
+
+          ajouter_chapitre "chants_noel" "Jingle bells" "Dashin' through the snow"
+
+        """
+        if not livre.est_de_type("livre"):
+            raise ErreurExecution("le prototype d'objet {} n'est pas " \
+                    "de type livre".format(repr(cle_livre)))
+
+        chapitre = livre.ajouter_chapitre(titre)
+        texte = texte.replace("_b_", "|")
+        texte = texte.replace("|nl|", "\n")
         chapitre.description.paragraphes[:] = texte.split("\n")

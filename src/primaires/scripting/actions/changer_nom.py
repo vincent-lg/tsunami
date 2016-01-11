@@ -49,6 +49,8 @@ class ClasseAction(Action):
         cls.ajouter_types(cls.changer_nom, "PNJ", "str", "str")
         cls.ajouter_types(cls.remettre_nom_objet, "Objet")
         cls.ajouter_types(cls.changer_nom_objet, "Objet", "str", "str")
+        cls.ajouter_types(cls.changer_nom_objet, "PrototypeObjet", "str",
+                "str")
 
     @staticmethod
     def remettre_nom(pnj):
@@ -124,18 +126,22 @@ class ClasseAction(Action):
             pass
 
     @staticmethod
-    def changer_nom_objet(objet, nom_singulier, nom_pluriel):
-        """Change le nom singulier et pluriel d'un objet.
+    def changer_nom_objet(prototype_ou_objet, nom_singulier, nom_pluriel):
+        """Change le nom singulier et pluriel d'un objet ou prototype.
 
         Paramètres à préciser :
 
-          * objet : la variable contenant l'objet
+          * prototype_ou_objet : la variable contenant l'objet ou le prototype
           * nom_singulier : le nouveau nom singulier
           * nom_pluriel : le nouveau nom pluriel.
 
         Exemple d'utilisation :
 
           changer_nom objet "une pomme rouge" "pommes rouges"
+          # Pour changer un prototype d'objet que l'on vient de créer :
+          prototype = creer_prototype_objet("pomme_rouge", "fruit")
+          changer_nom prototype "une pomme rouge" "pommes rouges"
+          # Identique à une modification dans l'éditeur 'oedit'
 
         Le nom pluriel est nécessaire si plusieurs objet ont le même
         nom singulier. Si par exemple vous définissez plusieurs objet
@@ -148,6 +154,6 @@ class ClasseAction(Action):
         sûr qu'il n'y aura qu'un seul objet de ce prototype en jeu.
 
         """
-        objet.nom_singulier = nom_singulier
+        prototype_ou_objet.nom_singulier = nom_singulier
         if nom_pluriel:
-            objet.nom_pluriel = nom_pluriel
+            prototype_ou_objet.nom_pluriel = nom_pluriel

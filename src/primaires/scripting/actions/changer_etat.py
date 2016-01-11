@@ -34,7 +34,7 @@ from primaires.scripting.action import Action
 
 class ClasseAction(Action):
 
-    """Modifie l'état singulier et pluriel d'un PNJ.
+    """Modifie l'état singulier et pluriel d'un PNJ ou objet.
 
     Cette action modifie l'état singulier et pluriel d'un PNJ. L'état
     singulier et pluriel par défaut (celui défini dans le prototype)
@@ -47,6 +47,9 @@ class ClasseAction(Action):
     def init_types(cls):
         cls.ajouter_types(cls.remettre_etat, "PNJ")
         cls.ajouter_types(cls.changer_etat, "PNJ", "str", "str")
+        cls.ajouter_types(cls.remettre_etat, "Objet")
+        cls.ajouter_types(cls.changer_etat, "Objet", "str", "str")
+        cls.ajouter_types(cls.changer_etat, "PrototypeObjet", "str", "str")
 
     @staticmethod
     def remettre_etat(pnj):
@@ -98,3 +101,54 @@ class ClasseAction(Action):
         pnj.etat_singulier = etat_singulier
         if etat_pluriel:
             pnj.etat_pluriel = etat_pluriel
+
+    @staticmethod
+    def remettre_etat(objet):
+        """Remet l'état singulier et pluriel à leur valeur par défaut.
+
+        Paramètres à préciser :
+
+          * objet : la variable contenant l'objet.
+
+        Les états (singulier et pluriel) du prototype d'objet seront
+        remis à leur valeur précisée par défaut.
+
+        """
+        try:
+            del objet.etat_singulier
+        except AttributeError:
+            pass
+
+        try:
+            del objet.etat_pluriel
+        except AttributeError:
+            pass
+
+    @staticmethod
+    def changer_etat(prototype_ou_objet, etat_singulier, etat_pluriel):
+        """Change l'état singulier et pluriel d'un objet ou prototype.
+
+        Paramètres à préciser :
+
+          * prototype_ou_objet : la variable contenant l'objet ou le prototype
+          * etat_singulier : le nouvel état singulier
+          * etat_pluriel : le nouvel état pluriel.
+
+        Exemple d'utilisation :
+
+          changer_etat objet "est posé là" "sont posés là"
+
+        L'état pluriel est nécessaire si plusieurs objet ont le même
+        état singulier. Si par exemple vous définissez plusieurs objet
+        sur le même prototype et que vous modifiez l'état singulier
+        de plusieurs, alors l'état pluriel personnalisé (si il existe)
+        sera appliqué.
+
+        Vous pouvez préciser une chaîne vide en état pluriel mais
+        ceci n'est pas conseillé. Faites-le si vous êtes absolument
+        sûr qu'il n'y aura qu'un seul objet de ce prototype en jeu.
+
+        """
+        prototype_ou_objet.etat_singulier = etat_singulier
+        if etat_pluriel:
+            prototype_ou_objet.etat_pluriel = etat_pluriel
