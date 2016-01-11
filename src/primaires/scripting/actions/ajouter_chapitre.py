@@ -28,53 +28,47 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction joueurs."""
+"""Fichier contenant l'action ajouter_chapitre"""
 
-from primaires.scripting.fonction import Fonction
+from primaires.scripting.action import Action
+from primaires.scripting.instruction import ErreurExecution
 
-class ClasseFonction(Fonction):
+class ClasseAction(Action):
 
-    """Retourne tous les joueurs."""
+    """Ajoute un chapitre à un livre."""
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.joueurs)
-        cls.ajouter_types(cls.joueurs_salle, "Salle")
+        cls.ajouter_types(cls.ajouter_chapitre, "str", "str", "str")
 
     @staticmethod
-    def joueurs():
-        """Retourne une liste de tous les joueurs de l'univers.
-
-        Cette fonction n'attend aucun paramètre. Elle retourne tous
-        les joueurs de l'univers sans distinction.
-
-        Exemple d'utilisation :
-
-          joueurs = joueurs()
-          pour chaque joueur dans joueurs:
-              nom = nom(joueur)
-              ...
-          fait
-
-        """
-        return list(importeur.joueur.joueurs.values())
-
-    @staticmethod
-    def joueurs_salle(salle):
-        """Retourne tous les joueurs présents dans la salle.
-
-        Cette fonction retourne les joueurs présents, pas les PNJ.
+    def ajouter_chapitre(cle_livre, titre, texte):
+        """Ajoute un chapitre au livre précisé en paramètre.
 
         Paramètres à préciser :
 
-          * salle : la salle dans laquelle chercher les joueurs.
+          * cle_livre : la clé identifiant le prototype d'objet de type livre ;
+          * titre : une chaîne de caractères contenant le titre du chapitre ;
+          * texte : une chaîne de caractères contenant le texte du chapitre.
 
+        Cette action modifie les chapitres du prototype d'objet. Tous
+        les objets créés sur ce prototype sont donc affectés.
         Exemple d'utilisation :
 
-          presents = joueurs(salle)
-          pour chaque joueur dans presents:
-              ...
-          fait
+          ajouter_chapitre "chants_noel" "Jingle bells" "Dashin' through the snow"
 
         """
-        return salle.joueurs
+        cle_livre = cle_livre.lower()
+        try:
+            livre = importeur.objet.prototypes[cle_livre]
+        except KeyError:
+            raise ErreurExecution("le prototype d'objet {} est " \
+                    "introuvable".format(repr(cle_livre)))
+
+        if not livre.est_de_type("livre"):
+            raise ErreurExecution("le prototype d'objet {} n'est pas " \
+                    "de type livre".format(repr(cle_livre)))
+
+        chapitre = livre.ajouter_chapitre(titre)
+        texte = texte.replace("_b_nl_b_", "\n")
+        chapitre.description.paragraphes[:] = texte.split("\n")

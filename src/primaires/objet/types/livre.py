@@ -60,6 +60,7 @@ class Livre(BaseType):
         """Ajoute un nouveau chapitre à la fin."""
         chapitre = Chapitre(self, titre)
         self.chapitres.append(chapitre)
+        return chapitre
 
     def supprimer_chapitre(self, no):
         """Supprime le chapitre."""
