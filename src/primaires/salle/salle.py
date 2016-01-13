@@ -31,11 +31,14 @@
 """Fichier contenant la classe Salle, détaillée plus bas."""
 
 from collections import OrderedDict
+from fractions import Fraction
 
 from abstraits.obase import BaseObj
 from bases.collections.flags import Flags
 from primaires.affection.affection import Affection
 from primaires.format.description import Description
+from primaires.format.fonctions import supprimer_accents
+from primaires.scripting.structure import StructureSimple
 from primaires.vehicule.vecteur import Vecteur
 from .bonhomme_neige import *
 from .chemin import Chemin
@@ -137,6 +140,12 @@ class Salle(BaseObj):
     def _get_nom_zone(self):
         return self._nom_zone
     def _set_nom_zone(self, zone):
+        prochain_ident = zone.lower() + ":" + self._mnemonic
+        autre = importeur.salle.salles.get(prochain_ident)
+        if autre is not None and autre is not self:
+            raise ValueError("L'identifiant {} est déjà utilisé".format(
+                    repr(prochain_ident)))
+
         ident = self.ident
         self._nom_zone = zone.lower()
         type(self).importeur.salle.changer_ident(ident, self.ident)
@@ -144,6 +153,12 @@ class Salle(BaseObj):
     def _get_mnemonic(self):
         return self._mnemonic
     def _set_mnemonic(self, mnemonic):
+        prochain_ident = self._nom_zone + ":" + mnemonic.lower()
+        autre = importeur.salle.salles.get(prochain_ident)
+        if autre is not None and autre is not self:
+            raise ValueError("L'identifiant {} est déjà utilisé".format(
+                    repr(prochain_ident)))
+
         ident = self.ident
         self._mnemonic = mnemonic.lower()
         type(self).importeur.salle.changer_ident(ident, self.ident)
@@ -184,7 +199,7 @@ class Salle(BaseObj):
     @property
     def terrain(self):
         """Retourne l'objet terrain."""
-        return type(self).importeur.salle.terrains[self.nom_terrain]
+        return importeur.salle.terrains[self.nom_terrain]
 
     @property
     def desc_survol(self):
@@ -245,6 +260,17 @@ class Salle(BaseObj):
                         details[d.nom] = d
 
         return tuple(details.values())
+
+    def changer_terrain(self, nouveau_terrain):
+        """Change le terrain de la salle."""
+        nouveau_terrain = supprimer_accents(nouveau_terrain).lower()
+        for terrain in importeur.salle.terrains.keys():
+            sa_terrain = supprimer_accents(terrain).lower()
+            if sa_terrain == nouveau_terrain:
+                self.nom_terrain = terrain
+                return
+
+        raise ValueError("terrain {} inconnu".format(repr(nouveau_terrain)))
 
     def voit_ici(self, personnage):
         """Retourne True si le personnage peut voir ici, False sinon.
@@ -800,3 +826,34 @@ class Salle(BaseObj):
         """Supprime les décors de clé indiquée."""
         for decor in self.get_decors(cle):
             self.supprimer_decor(decor)
+
+    def get_structure(self):
+        """Retourne la structure de la salle."""
+        structure = StructureSimple()
+        structure.zone = self._nom_zone
+        structure.mnemonique = self._mnemonic
+        structure.terrain = self.nom_terrain
+        structure.titre = self.titre
+        structure.interieur = Fraction(self.interieur)
+        structure.illuminee = Fraction(self.illuminee)
+        return structure
+
+    def appliquer_structure(self, structure):
+        """Applique la structure passée en paramètre."""
+        if structure.zone:
+            self.nom_zone = structure.zone
+
+        if structure.mnemonique:
+            self.mnemonic = structure.mneomnique
+
+        if structure.terrain:
+            self.changer_terrain(structure.terrain)
+
+        if structure.titre:
+            self.titre = structure.titre
+
+        if structure.interieur:
+            self.interieur = bool(structure.interieur)
+
+        if structure.illuminee:
+            self.illuminee = bool(structure.illuminee)
